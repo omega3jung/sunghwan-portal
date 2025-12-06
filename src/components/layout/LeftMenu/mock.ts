@@ -9,26 +9,27 @@ export const items = [
   },
   {
     title: "Playground",
-    url: "/playground",
+    url: "/home/playground",
     icon: Puzzle,
-    children: [{ title: "IT Help Desk", path: "/playground/helpdesk" }],
+    children: [{ title: "IT Help Desk", path: "/home/playground/it-help-desk" }],
   },
   {
     title: "Custom Components",
-    url: "/components",
+    url: "/home/customs",
     icon: Shapes,
     children: [
-      { title: "Date Range Picker", path: "/components/dateRangePicker" },
+      { title: "Date Range Picker", path: "/home/customs/date-range-picker" },
+      { title: "Multi Combobox", path: "/home/customs/multi-combo-box" },
     ],
   },
   {
     title: "Documents",
-    url: "/documents",
+    url: "/home/documents",
     icon: BookOpen,
   },
   {
     title: "Settings",
-    url: "/settings",
+    url: "/home/settings",
     icon: Settings,
   },
 ];
