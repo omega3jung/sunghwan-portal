@@ -5,41 +5,17 @@ import { Period } from "@/components/custom/DateRangePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { ranges } from "./mock";
 
 export default function DateRangePickerPage() {
   const [period, setPeriod] = useState<Period | undefined>("this_month");
   const [range, setRange] = useState<DateRange>();
 
-  const ranges = [
-    "today",
-    "this_week",
-    "this_month",
-    "this_year",
-    "last_week",
-    "last_2week",
-    "last_3week",
-    "last_4week",
-    "last_month",
-    "last_2month",
-    "last_3month",
-    "last_4month",
-    "last_5month",
-    "last_6month",
-    "last_7month",
-    "last_8month",
-    "last_9month",
-    "last_10month",
-    "last_11month",
-    "last_year",
-    "last_2year",
-    "range",
-  ];
-
   const testData = ranges.map((range) => {
     return { value: range, label: range };
   });
 
-  const [choise, setChoise] = useState<Array<Period>>([
+  const [selectedRanges, setSelectedRanges] = useState<Array<Period>>([
     "today",
     "this_week",
     "this_month",
@@ -53,14 +29,21 @@ export default function DateRangePickerPage() {
 
         <MultiComboBox
           options={testData}
-          value={choise}
+          value={selectedRanges}
           onSelect={(selected: string) => {
-            setChoise([...choise, selected as Period]);
+            const newList = [...selectedRanges, selected as Period];
+
+            // sort by ranges order.
+            setSelectedRanges(
+              newList.sort((a, b) => ranges.indexOf(a) - ranges.indexOf(b))
+            );
           }}
           onRemove={(selected: string) => {
-            const newChoise = choise?.filter((value) => value !== selected);
+            const newChoise = selectedRanges?.filter(
+              (value) => value !== selected
+            );
 
-            setChoise(newChoise);
+            setSelectedRanges(newChoise);
           }}
         />
       </div>
@@ -74,7 +57,7 @@ export default function DateRangePickerPage() {
           range={range}
           setRange={setRange}
           showRange={true}
-          options={choise}
+          options={selectedRanges}
         />
       </div>
     </div>

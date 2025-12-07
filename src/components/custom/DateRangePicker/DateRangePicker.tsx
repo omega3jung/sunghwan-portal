@@ -1,4 +1,3 @@
-import { VariantProps } from "class-variance-authority";
 import {
   addMonths,
   addWeeks,
@@ -12,14 +11,13 @@ import {
   startOfYear,
 } from "date-fns";
 import {
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { DateRange, SelectRangeEventHandler } from "react-day-picker";
+import { SelectRangeEventHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";

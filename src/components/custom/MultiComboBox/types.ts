@@ -4,9 +4,11 @@ import { ValueLabel } from "@/types/common";
 import { badgeVariants } from "@/components/ui/badge";
 import { comboBoxVariants } from "./variants";
 
-export type ButtonVariant = VariantProps<typeof badgeVariants>["variant"] | "rainbow";
+export type ButtonVariant =
+  | VariantProps<typeof badgeVariants>["variant"]
+  | "rainbow";
 
-export type Props = {
+export type MultiComboboxProps = {
   placeholder?: string;
   options?: ValueLabel[];
   background?: boolean;
@@ -21,7 +23,7 @@ export type Props = {
 
 export interface ComboBoxProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
-    Props,
+    MultiComboboxProps,
     VariantProps<typeof comboBoxVariants> {
   value: string[];
   asChild?: boolean;

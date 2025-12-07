@@ -10,12 +10,11 @@ import {
 } from "@/components/custom/MultiComboBox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ValueLabel } from "@/types/common";
-
-type comboBoxVariant = VariantProps<typeof comboBoxVariants>["variant"];
-type indexVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+import { buttonVariantData, comboBoxVariantData, keys } from "./mock";
+import { comboBoxVariant, indexVariant } from "./type";
 
 export default function MultiComboBoxPage() {
-  const [choise, setChoise] = useState<Array<string>>([
+  const [selectedRanges, setSelectedRanges] = useState<Array<string>>([
     "January",
     "February",
     "March",
@@ -27,31 +26,7 @@ export default function MultiComboBoxPage() {
     useState<comboBoxVariant>("default");
   const [buttonVariant, setButtonVariant] = useState<ButtonVariant>("rainbow");
 
-  const comboBoxVariantData = ["default", "ghost"];
-  const buttonVariantData = [
-    "default",
-    "secondary",
-    "overdue",
-    "destructive",
-    "outline",
-    "rainbow",
-  ];
-
   const testData = useMemo<Array<ValueLabel>>(() => {
-    const keys = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
     const keyData = keys.map((key) => {
       return { value: key, label: key } as ValueLabel;
     });
@@ -126,14 +101,16 @@ export default function MultiComboBoxPage() {
           rainbowStart={rainbowStart as indexVariant}
           rainbowPick={rainbowPick as indexVariant}
           options={testData}
-          value={choise}
+          value={selectedRanges}
           onSelect={(selected: string) => {
-            setChoise([...choise, selected]);
+            setSelectedRanges([...selectedRanges, selected]);
           }}
           onRemove={(selected: string) => {
-            const newChoise = choise?.filter((value) => value !== selected);
+            const newChoise = selectedRanges?.filter(
+              (value) => value !== selected
+            );
 
-            setChoise(newChoise);
+            setSelectedRanges(newChoise);
           }}
         />
       </div>

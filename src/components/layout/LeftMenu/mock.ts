@@ -14,12 +14,13 @@ export const items = [
     children: [{ title: "IT Help Desk", path: "/home/playground/it-help-desk" }],
   },
   {
-    title: "Custom Components",
-    url: "/home/customs",
+    title: "Components Demo",
+    url: "/home/demo",
     icon: Shapes,
     children: [
-      { title: "Date Range Picker", path: "/home/customs/date-range-picker" },
-      { title: "Multi Combobox", path: "/home/customs/multi-combo-box" },
+      { title: "Avatar Multi Combo Box", path: "/home/demo/avatar-multi-combo-box" },
+      { title: "Date Range Picker", path: "/home/demo/date-range-picker" },
+      { title: "Multi Combobox", path: "/home/demo/multi-combo-box" },
     ],
   },
   {

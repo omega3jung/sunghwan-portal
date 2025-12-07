@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Check, ChevronDown, Loader2, X } from "lucide-react";
 import React, { Fragment, useRef } from "react";
@@ -19,11 +19,11 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-import { ComboBoxProps } from "./types";
+import { MultiComboboxProps, ComboBoxProps } from "./types";
 import { comboBoxVariants } from "./variants";
 import { badgeColors } from "./styles";
 
-const Component = (props: ComboBoxProps & ComboBoxProps, _: any) => {
+const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
   const {
     placeholder,
     options = [],

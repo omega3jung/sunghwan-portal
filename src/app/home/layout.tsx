@@ -20,7 +20,7 @@ export default function HomeLayout({
         <main className="overflow-auto p-4 min-h-0">{children}</main>
 
         <footer className="h-12 p-4 border-t text-sm text-muted-foreground">
-          © 2025 My Portfolio
+          © 2025 Portfolio of Sunghwan Jung for demo.
         </footer>
       </div>
     </SidebarProvider>
