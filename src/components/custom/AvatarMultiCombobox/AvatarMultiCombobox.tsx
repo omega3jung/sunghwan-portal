@@ -23,6 +23,7 @@ import { initials } from "@/utils";
 import { comboBoxVariants } from "./variants";
 import { AvatarMultiComboboxProps, ComboBoxProps } from "./types";
 import { ImageValueLabel } from "@/types";
+import { UserAvatar } from "../UserAvatar";
 
 const Component = (props: AvatarMultiComboboxProps & ComboBoxProps, _: any) => {
   const {
@@ -234,13 +235,7 @@ const Component = (props: AvatarMultiComboboxProps & ComboBoxProps, _: any) => {
                             : handleSelect(user.value)
                         }
                       >
-                        <Avatar className="mx-1 h-8 w-8">
-                          {/* value.includes(item.value) */}
-                          <AvatarImage src={user.image} alt={user.label} />
-                          <AvatarFallback className="bg-gray-800 text-white">
-                            {initials(user.label)}
-                          </AvatarFallback>
-                        </Avatar>
+                        <UserAvatar item={user} className="mx-1" />
                         <div>
                           <h4 className="text-xs">{user.label}</h4>
                           <h4 className="text-xs">{user.value}</h4>

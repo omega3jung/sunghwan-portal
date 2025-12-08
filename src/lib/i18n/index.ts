@@ -5,6 +5,7 @@ import { es } from "./locales/es";
 import { fr } from "./locales/fr";
 import { ko } from "./locales/ko";
 import { dateRangePickerLocales } from "@/components/custom/DateRangePicker/locales";
+import { stepperLocales } from "@/components/custom/Stepper";
 import { supportedLocales } from "@/lib/i18n/types";
 
 // init i18next for all options read: https://www.i18next.com/overview/configuration-options
@@ -32,6 +33,10 @@ supportedLocales.forEach((lng) => {
     true,
     false
   );
+});
+
+supportedLocales.forEach((lng) => {
+  i18n.addResourceBundle(lng, "Stepper", stepperLocales[lng], true, false);
 });
 
 export default i18n;

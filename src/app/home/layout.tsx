@@ -20,7 +20,8 @@ export default function HomeLayout({
         <main className="overflow-auto p-4 min-h-0">{children}</main>
 
         <footer className="h-12 p-4 border-t text-sm text-muted-foreground">
-          © 2025 Portfolio of Sunghwan Jung for demo.
+          © 2025 SungHwan Jung.
+          <a href="https://github.com/omega3jung/sunghwan-portal"></a>
         </footer>
       </div>
     </SidebarProvider>

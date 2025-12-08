@@ -1,4 +1,3 @@
-import { ValueLabel } from "@/types/common";
 import { type VariantProps } from "class-variance-authority";
 import { comboBoxVariants } from "./variants";
 import { ImageValueLabel } from "@/types/common";
