@@ -21,11 +21,11 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { initials } from "@/utils";
 import { comboBoxVariants } from "./variants";
-import { AvatarMultiComboboxProps, ComboBoxProps } from "./types";
+import { AvatarMultiComboBoxProps, Props } from "./types";
 import { ImageValueLabel } from "@/types";
 import { UserAvatar } from "../UserAvatar";
 
-const Component = (props: AvatarMultiComboboxProps & ComboBoxProps, _: any) => {
+const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   const {
     placeholder,
     options = [],
@@ -253,6 +253,4 @@ const Component = (props: AvatarMultiComboboxProps & ComboBoxProps, _: any) => {
   );
 };
 
-export const AvatarMultiCombobox = React.forwardRef<any, ComboBoxProps>(
-  Component
-);
+export const AvatarMultiComboBox = React.forwardRef<any, Props>(Component);

@@ -2,7 +2,7 @@ import { type VariantProps } from "class-variance-authority";
 import { comboBoxVariants } from "./variants";
 import { ImageValueLabel } from "@/types/common";
 
-export type AvatarMultiComboboxProps = {
+export type AvatarMultiComboBoxProps = {
   placeholder?: string;
   options?: ImageValueLabel[];
   background?: boolean;
@@ -13,9 +13,9 @@ export type AvatarMultiComboboxProps = {
   maxImages?: number;
 };
 
-export interface ComboBoxProps
+export interface Props
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
-    AvatarMultiComboboxProps,
+  AvatarMultiComboBoxProps,
     VariantProps<typeof comboBoxVariants> {
   value: string[];
   asChild?: boolean;

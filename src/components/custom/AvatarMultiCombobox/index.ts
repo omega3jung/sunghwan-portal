@@ -1,3 +1,3 @@
-export { AvatarMultiCombobox } from "./AvatarMultiCombobox";
-export type { ComboBoxProps } from "./types";
+export { AvatarMultiComboBox } from "./AvatarMultiComboBox";
+export type { AvatarMultiComboBoxProps } from "./types";
 export { comboBoxVariants } from "./variants";

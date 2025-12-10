@@ -4,3 +4,4 @@ export type ValueLabel = {
 };
 
 export type ImageValueLabel = ValueLabel & { image?: string };
+

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AvatarMultiCombobox } from "@/components/custom/AvatarMultiCombobox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { data } from "./mock";
 import { Input } from "@/components/ui/input";
 
@@ -24,7 +24,7 @@ export default function AvatarMultiComboBoxPage() {
       <div>
         <h4 className="p-2">Avatar Multi Combo Box</h4>
 
-        <AvatarMultiCombobox
+        <AvatarMultiComboBox
           options={data ? data : []}
           value={userValue}
           maxImages={maxCount}
