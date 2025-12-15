@@ -1,3 +1,5 @@
+// src/app/(protected)/home/layout.tsx
+
 import { LeftMenu } from "@/components/layout/LeftMenu";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 

@@ -1,6 +1,8 @@
+"use client";
+
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { Check, Globe, Settings } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Check, Globe } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Label } from "@/components/ui/label";
@@ -12,7 +14,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useLanguageState } from "@/services/language";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { AvailableLanguages, ColorTheme } from "@/types";
 import {
@@ -21,11 +22,6 @@ import {
   usePutUserSetting,
 } from "@/hooks/useUserSetting";
 
-type Props = {
-  displayExtra: boolean;
-  onExtraClick: (status: boolean) => void;
-};
-
 const themeButtons = [
   { name: "Emerald", hex: "bg-[#008844]" },
   { name: "Topaz", hex: "bg-[#F97414]" },
@@ -33,18 +29,18 @@ const themeButtons = [
   { name: "Aquamarine", hex: "bg-[#0F9D9F]" },
 ] as { name: ColorTheme; hex: string }[];
 
-export const SettingMenu = (props: Partial<Props>) => {
-  const { language, setLanguage } = useLanguageState();
+type PreferencesMenuProps = {
+  trigger: ReactNode;
+};
+
+export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
 
   const [open, setOpen] = useState(false);
-
   const [mode, setMode] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [theme, setTheme] = useState("Aquamarine");
 
-  const [theme, setTheme] = useState(() =>
-    localStorage.getItem("selectedTheme")
-  );
+  const { language, setLanguage } = useLanguageState();
 
   const { data: userSetting } = useFetchUserSetting();
   const { mutate: createUserSetting } = usePostUserSetting();
@@ -98,16 +94,7 @@ export const SettingMenu = (props: Partial<Props>) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
-      <PopoverTrigger asChild className="gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-18 h-8 rounded-full hover:bg-transparent"
-          ref={buttonRef}
-        >
-          <Settings name="settings" className="text-[#D9D9D9]" size={16} />
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverPrimitive.Portal>
         <PopoverContent className="h-full w-80 p-6">
           <div id="SettingMenu" className="flex flex-col gap-2">

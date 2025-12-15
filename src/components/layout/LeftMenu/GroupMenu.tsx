@@ -7,13 +7,12 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { groupMenuItems } from "./mock";
+import { Settings } from "lucide-react";
+import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 
 export function LeftMenu() {
   return (
@@ -22,11 +21,11 @@ export function LeftMenu() {
       <SidebarContent>
         {groupMenuItems.map((item) =>
           item.children ? (
-            <SidebarGroup>
+            <SidebarGroup key={item.title}>
               <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 {item.children.map((subItem) => (
-                  <SidebarMenu>
+                  <SidebarMenu key={subItem.title}>
                     <SidebarMenuItem key={subItem.title}>
                       <SidebarMenuButton>
                         <subItem.icon />
@@ -51,7 +50,18 @@ export function LeftMenu() {
           )
         )}
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenuItem key={"Preferences"}>
+          <PreferencesMenu
+            trigger={
+              <SidebarMenuButton asChild>
+                <Settings />
+                <span>{"Preferences"}</span>
+              </SidebarMenuButton>
+            }
+          ></PreferencesMenu>
+        </SidebarMenuItem>
+      </SidebarFooter>
     </Sidebar>
   );
 }

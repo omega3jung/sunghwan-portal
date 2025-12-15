@@ -6,7 +6,7 @@ export function useLanguageState() {
   const { i18n } = useTranslation();
 
   const [state, setState] = useState(() =>
-    sessionStorage.getItem("NEXT_LOCALE")
+    sessionStorage.getItem("NEXT_LOCALE") ?? "en"
   );
 
   const setLanguage = (language: string) => {

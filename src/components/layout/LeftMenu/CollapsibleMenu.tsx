@@ -32,7 +32,7 @@ export function LeftMenu() {
             <SidebarMenu>
               {collapsibleItems.map((item) =>
                 item.children ? (
-                  <Collapsible className="group/collapsible">
+                  <Collapsible className="group/collapsible" key={item.title}>
                     <SidebarMenuItem key={item.title}>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton>

@@ -11,7 +11,7 @@ export const usePostUserSetting = () => {
   return useMutation({
     mutationFn: repo.post,
     onSuccess: () => {
-      queryClient.invalidateQueries([USER_SETTING_KEY]);
+      queryClient.invalidateQueries({ queryKey: [USER_SETTING_KEY] });
     },
   });
 };
