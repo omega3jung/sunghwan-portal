@@ -1,7 +1,7 @@
 import { SessionContextValue, useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { useSessionStore, SessionState } from "@/lib/sessionStore";
-import { CurrentSessionUser } from "@/types/user";
+import { AuthUser } from "@/types";
 
 /**
  * =========================================================
@@ -33,7 +33,7 @@ import { CurrentSessionUser } from "@/types/user";
 export type CurrentSession = Omit<SessionContextValue, "data" | "update"> & {
   data: {
     expires: string;
-    user?: CurrentSessionUser;
+    user?: AuthUser;
     ui: {
       isAdmin: boolean;
     };
@@ -60,7 +60,7 @@ export const useCurrentSession = (): CurrentSession => {
    * - userId
    */
   const store = useSessionStore();
-  
+
   /**
    * UI에서 바로 쓰기 위한 세션 데이터 가공
    *
@@ -75,22 +75,20 @@ export const useCurrentSession = (): CurrentSession => {
         ui: {
           isAdmin: false,
         },
-      } as CurrentSession["data"];
+      };
     }
-
-    const current = data.user;
 
     return {
       expires: data.expires,
       user: {
-        ...current,
+        ...data.user, // AuthUser.
         // 필요 시 store.userId 를 합성할 수 있음
       },
       ui: {
         // 추후 관리자 UI, IT Help Desk 설정 등에 활용 가능
         isAdmin: false,
       },
-    } as CurrentSession["data"];
+    };
   }, [data, store]);
 
   /**
@@ -110,7 +108,7 @@ export const useCurrentSession = (): CurrentSession => {
   useEffect(() => {
     store.hydrateSession();
   }, []);
-  
+
   return {
     ...session,
     data: sessionData,

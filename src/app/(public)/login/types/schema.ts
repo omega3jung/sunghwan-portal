@@ -2,10 +2,10 @@ import * as z from "zod";
 
 /**
  * Login form validation schema
- * Used for user authentication (userid + password)
+ * Used for user authentication (username + password)
  */
 export const loginFormSchema = z.object({
-  userid: z.string().min(1, "common:actions.requiredField"),
+  username: z.string().min(1, "common:actions.requiredField"),
   password: z.string().min(1, "common:actions.requiredField"),
 });
 
@@ -16,7 +16,7 @@ export type LoginFormType = z.infer<typeof loginFormSchema>;
  * Used in "Forgot Password" flow before password reset
  */
 export const verifyOTPFormSchema = z.object({
-  userid: z.string().trim().min(1, "User ID is required"),
+  username: z.string().trim().min(1, "User ID is required"),
   email: z.email("Invalid email"),
   otp: z.string().length(6).regex(/^\d+$/),
 });
@@ -29,7 +29,7 @@ export type VerifyOTPFormType = z.infer<typeof verifyOTPFormSchema>;
  */
 export const changePasswordformSchema = z
   .object({
-    userid: z.string().min(1),
+    username: z.string().min(1),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirm: z.string(),
   })

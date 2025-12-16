@@ -17,20 +17,20 @@ import { ChangePasswordformType, changePasswordformSchema } from "../types";
 
 type Props = {
   isLoading: boolean;
-  userid: string;
-  hideUserID?: boolean;
+  username: string;
+  hideUserName?: boolean;
   onSubmit: (values: ChangePasswordformType) => Promise<void>;
   onBack: VoidFunction;
 };
 
 export const ChangePasswordForm = (props: Props) => {
   const { t } = useTranslation("login");
-  const { isLoading, userid, hideUserID = false, onSubmit, onBack } = props;
+  const { isLoading, username, hideUserName = false, onSubmit, onBack } = props;
 
   const form = useForm<ChangePasswordformType>({
     resolver: zodResolver(changePasswordformSchema),
     defaultValues: {
-      userid: userid ?? "",
+      username: username ?? "",
       password: "",
       confirm: "",
     },
@@ -43,10 +43,10 @@ export const ChangePasswordForm = (props: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex w-full flex-col gap-2"
         >
-          {!hideUserID && (
+          {!hideUserName && (
             <FormField
               control={form.control}
-              name="userid"
+              name="username"
               render={({ field }) => (
                 <FormItem className="space-y-0 pb-4">
                   <FormLabel className="text-sm">User ID</FormLabel>

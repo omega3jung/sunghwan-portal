@@ -1,21 +1,22 @@
 import axios from "axios";
-import { UseQueryOptions } from "@tanstack/react-query";
-import { ENVIRONMENT } from "@/lib/publicRuntimeConfig";
+import { getSession } from "next-auth/react";
+import { ENVIRONMENT } from "@/lib/environment";
 
-export type FetcherOptions = Omit<
-  UseQueryOptions<string, unknown, string, string[]>,
-  "queryKey" | "queryFn"
->;
-
-const DefaultClient = (baseURL?: string) => {
+const createClient = (baseURL?: string) => {
   const instance = axios.create({
     timeout: 15_000,
     baseURL,
   });
 
-  instance.interceptors.request.use((config) => {
-    config.headers["Accept"] ??= "application/json, text/plain";
+  instance.interceptors.request.use(async (config) => {
+    config.headers["Accept"] ??= "application/json";
     config.headers["Content-Type"] ??= "application/json";
+
+    const session = await getSession();
+
+    if (session?.user?.access_token) {
+      config.headers.Authorization = `Bearer ${session.user.access_token}`;
+    }
 
     return config;
   });
@@ -24,18 +25,9 @@ const DefaultClient = (baseURL?: string) => {
 };
 
 const fetcher = {
-  portal: DefaultClient(ENVIRONMENT.PORTAL_API_URL),
-  api: DefaultClient(ENVIRONMENT.NODE_API_URL),
-  files: DefaultClient(ENVIRONMENT.PORTAL_API_URL),
+  api: createClient(ENVIRONMENT.API.NODE),
+  portal: createClient(ENVIRONMENT.API.PORTAL),
+  files: createClient(ENVIRONMENT.API.PORTAL),
 } as const;
-
-export function setFetcherToken(token?: string) {
-  if (!token) {
-    fetcher.api.defaults.headers.common["Authorization"] = "";
-    return;
-  }
-
-  fetcher.api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-}
 
 export default fetcher;

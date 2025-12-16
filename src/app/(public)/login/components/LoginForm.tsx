@@ -27,7 +27,7 @@ export const LoginForm = (props: Props) => {
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      userid: "",
+      username: "",
       password: "",
     },
   });
@@ -41,7 +41,7 @@ export const LoginForm = (props: Props) => {
         >
           <FormField
             control={form.control}
-            name="userid"
+            name="username"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">

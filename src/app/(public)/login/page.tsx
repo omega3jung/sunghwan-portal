@@ -8,10 +8,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { ENVIRONMENT } from "@/lib/publicRuntimeConfig";
+import { ENVIRONMENT } from "@/lib/environment";
 import { cn } from "@/lib/utils";
-import { setFetcherToken } from "@/services/fetcher";
-import { CurrentSessionUser } from "@/types";
+import Image from "next/image";
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -23,6 +22,7 @@ import {
   ResetPasswordState,
 } from "./types";
 import { LOGIN_ERROR_CODES, LOGIN_ERROR_MESSAGES } from "./constants";
+import { getToken } from "next-auth/jwt";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function LoginPage() {
 
     try {
       const response = await signIn("credentials", {
-        userId: values.userid,
+        username: values.username,
         password: values.password,
         redirect: false,
       });
@@ -60,10 +60,7 @@ export default function LoginPage() {
         throw response;
       }
 
-      const user = session.user as CurrentSessionUser;
-
-      //setFetcherToken(user.access_token);
-      await update({ userId: values.userid }, true);
+      await update({ userId: values.username }, true);
 
       redirect();
     } catch (error) {
@@ -73,7 +70,7 @@ export default function LoginPage() {
         LOGIN_ERROR_MESSAGES[key] ?? LOGIN_ERROR_MESSAGES.default;
 
       if (key === LOGIN_ERROR_CODES.Expired) {
-        setCurrentID(values.userid);
+        setCurrentID(values.username);
         setFormType(LoginStateEnum.CHANGE);
       } else {
         switch (severity) {
@@ -101,13 +98,12 @@ export default function LoginPage() {
 
   const onTryDemo = async () => {
     await update({ userId: "_demo" }, true);
-    setFetcherToken("demo");
     redirect();
   };
 
-  const onVerifyOTP = async ({ userid, email, otp }: VerifyOTPFormType) => {
+  const onVerifyOTP = async ({ username, email, otp }: VerifyOTPFormType) => {
     // verify OTP to server, for later.
-    //const { resetToken } = await verifyOTPApi({ userid, email, otp });
+    //const { resetToken } = await verifyOTPApi({ username, email, otp });
 
     // for demo.
     if (otp !== "123456") {
@@ -116,18 +112,18 @@ export default function LoginPage() {
     }
 
     // set reset token.
-    setResetToken({ userId: userid, resetToken: "true" });
+    setResetToken({ username: username, resetToken: "true" });
 
     // change to ChangePasswordForm with RESET type.
-    setCurrentID(userid);
+    setCurrentID(username);
     setFormType(LoginStateEnum.CHANGE);
   };
 
   const onChangePassword = async ({
-    userid,
+    username,
     password,
   }: ChangePasswordformType) => {
-    if (userid !== resetToken?.userId) {
+    if (username !== resetToken?.username) {
       toast.error("Verified ID is different", {
         description:
           "Verified ID is different with current ID. Please verify OTP again.",
@@ -139,7 +135,7 @@ export default function LoginPage() {
 
     try {
       // TODO. change password.
-      //const response = await resetPassword("credentials", { userid, password, resetToken });
+      //const response = await resetPassword("credentials", { username, password, resetToken });
 
       //if (!response?.ok || !session?.user) { throw response; }
 
@@ -191,10 +187,16 @@ export default function LoginPage() {
     >
       <div className="flex grow items-center justify-center">
         <div className="flex w-full max-w-2xl justify-center">
+          <Image
+            src="/images/logo_light.png"
+            alt="logo"
+            width={200}
+            height={60}
+            priority
+          />
           <img
-            src={`${ENVIRONMENT.BASE_PATH}/images/login/logo.svg`}
+            src={`${ENVIRONMENT.BASE_PATH}/public/images/logo_light.png`}
             alt={"logo"}
-            className="w-full"
           />
         </div>
       </div>
@@ -252,7 +254,7 @@ export default function LoginPage() {
             {formType === LoginStateEnum.CHANGE && (
               <ChangePasswordForm
                 isLoading={loading}
-                userid={currentID}
+                username={currentID}
                 onSubmit={onChangePassword}
                 onBack={() => setFormType(LoginStateEnum.LOGIN)}
               />

@@ -6,7 +6,7 @@ import { create } from "zustand";
  * ---------------------------------------------------------
  * 역할:
  * - 프론트엔드 세션의 "저장소(Single Source of Truth)"
- * - access_token, userId 등 인증 관련 최소 상태를 관리
+ * - access_token, user_id 등 인증 관련 최소 상태를 관리
  * - sessionStorage 와 상태를 동기화
  *
  * 특징:
@@ -29,7 +29,7 @@ const STORAGE_KEYS = {
 
 /**
  * 세션에 저장되는 최소 상태
- * - userId: 로그인된 사용자 ID 또는 '_demo'
+ * - user_id: 로그인된 사용자 ID 또는 '_demo'
  * - access_token: API 호출에 사용되는 토큰
  */
 export interface SessionState {

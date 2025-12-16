@@ -5,6 +5,6 @@ export enum LoginStateEnum {
 }
 
 export interface ResetPasswordState {
-  userId: string;
+  username: string;
   resetToken: string | null;
 }
