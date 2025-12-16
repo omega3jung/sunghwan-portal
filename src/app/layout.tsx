@@ -1,6 +1,10 @@
+// app/layout.tsx.
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../styles/globals.css";
+import { Toaster } from "sonner";
+import { Providers } from "./providers";
 
 const geistSans = localFont({
   src: "../public/fonts/GeistVF.woff",
@@ -16,6 +20,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Sunghwan Portal",
   description: "IT Help Desk (Portfolio)",
+  icons: {
+    icon: "/favicon.ico",
+  },
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
@@ -28,7 +36,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );
