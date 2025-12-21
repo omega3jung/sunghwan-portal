@@ -1,16 +1,13 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { getSession, signIn } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { ENVIRONMENT } from "@/lib/environment";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -22,17 +19,19 @@ import {
   ResetPasswordState,
 } from "./types";
 import { LOGIN_ERROR_CODES, LOGIN_ERROR_MESSAGES } from "./constants";
-import { getToken } from "next-auth/jwt";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const { status } = useSession();
   const { updateSession: update } = useCurrentSession();
 
   const { t } = useTranslation("login");
 
+  const [hasSignedIn, setHasSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [resetToken, setResetToken] = useState<ResetPasswordState | null>(null);
   const [formType, setFormType] = useState<LoginStateEnum>(
     LoginStateEnum.LOGIN
@@ -40,29 +39,39 @@ export default function LoginPage() {
 
   const [currentID, setCurrentID] = useState<string>("");
 
+  // set to use light style.
   useEffect(() => {
     document.documentElement.classList.remove("dark");
   }, []);
 
-  const onSubmit = async (values: LoginFormType) => {
+  // submit from LoginForm.tsx.
+  const onSubmit = (values: LoginFormType): Promise<void> => {
     setLoading(true);
+    return onSignIn(values);
+  };
 
+  // try demo click.
+  const onTryDemo = (): Promise<void> => {
+    setDemoLoading(true);
+    return onSignIn({ username: "__demo__", password: "__demo__" });
+  };
+
+  // process sign in.
+  const onSignIn = async (values: LoginFormType): Promise<void> => {
     try {
-      const response = await signIn("credentials", {
+      setHasSignedIn(true);
+
+      await signIn("credentials", {
         username: values.username,
         password: values.password,
         redirect: false,
+        callbackUrl: undefined,
       });
 
-      const session = await getSession();
-
-      if (!response?.ok || !session?.user) {
-        throw response;
-      }
+      // After logging in, if the status is authenticated, you will be redirected.
+      // this file #L184.
 
       await update({ userId: values.username }, true);
-
-      redirect();
     } catch (error) {
       const key = (error as { error: LOGIN_ERROR_CODES }).error;
 
@@ -92,15 +101,13 @@ export default function LoginPage() {
         }
       }
     } finally {
+      setHasSignedIn(false);
+      setDemoLoading(false);
       setLoading(false);
     }
   };
 
-  const onTryDemo = async () => {
-    await update({ userId: "_demo" }, true);
-    redirect();
-  };
-
+  // submit from ResetPasswordForm.tsx.
   const onVerifyOTP = async ({ username, email, otp }: VerifyOTPFormType) => {
     // verify OTP to server, for later.
     //const { resetToken } = await verifyOTPApi({ username, email, otp });
@@ -119,6 +126,7 @@ export default function LoginPage() {
     setFormType(LoginStateEnum.CHANGE);
   };
 
+  // submit from ChangePasswordForm.tsx.
   const onChangePassword = async ({
     username,
     password,
@@ -160,129 +168,92 @@ export default function LoginPage() {
     setFormType(LoginStateEnum.LOGIN);
   };
 
+  // redirect after sign in.
   const redirect = () => {
-    const r = searchParams.get("r");
+    const r = searchParams.get("r") ?? "";
+
     const params = new URLSearchParams(searchParams.toString());
 
     params.delete("r");
 
     // open redirect block.
-    const isSafePath = r?.startsWith("/");
-    const target = isSafePath && r ? r : "/home";
+    const isSafePath = r.startsWith("/");
+    const target = isSafePath && r ? r : "/";
 
     const queryString = params.toString();
 
     router.push(queryString ? `${target}?${queryString}` : target);
   };
 
+  useEffect(() => {
+    if (hasSignedIn && status === "authenticated") {
+      redirect();
+    }
+  }, [hasSignedIn, status]);
+
   return (
-    <div
-      className={cn(
-        "flex h-screen w-screen flex-col gap-12 p-4 md:flex-row-reverse lg:gap-32 lg:px-32",
-        "bg-cover bg-bottom bg-no-repeat"
+    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:gap-9 xl:p-10 xl:py-12">
+      {formType === LoginStateEnum.LOGIN && (
+        <div>
+          <LoginForm onSubmit={onSubmit} isLoading={loading} />
+          <Button
+            className="mt-6 h-12 rounded-lg text-base font-normal w-full"
+            type="button"
+            variant={"secondary"}
+            data-testid="forgot-open"
+            onClick={onTryDemo}
+          >
+            {demoLoading ? (
+              <>
+                {t("loading.loggingIn")}
+                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+              </>
+            ) : (
+              t("loginForm.tryDemo")
+            )}
+          </Button>
+        </div>
       )}
-      style={{
-        backgroundImage: `url(${ENVIRONMENT.BASE_PATH}/images/login/app-background.webp)`,
-      }}
-    >
-      <div className="flex grow items-center justify-center">
-        <div className="flex w-full max-w-2xl justify-center">
-          <Image
-            src="/images/logo_light.png"
-            alt="logo"
-            width={200}
-            height={60}
-            priority
-          />
-          <img
-            src={`${ENVIRONMENT.BASE_PATH}/public/images/logo_light.png`}
-            alt={"logo"}
-          />
-        </div>
-      </div>
 
-      <div className="flex flex-col items-center justify-center text-white">
-        <div className="flex w-full flex-col gap-5 rounded-lg bg-portal-background p-4 xl:w-[40rem] xl:gap-9 xl:p-10 xl:py-12">
-          <div>
-            <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
-              {formType === LoginStateEnum.LOGIN && t("welcome")}
-              {formType === LoginStateEnum.CHANGE &&
-                t("managePasswordDialog.reset.title")}
-              {formType === LoginStateEnum.RESET &&
-                t("forgotPasswordForm.title")}
-            </p>
-            <p className="text-center text-lg leading-5 text-white">
-              {formType === LoginStateEnum.RESET &&
-                t("forgotPasswordForm.message")}
-              {formType !== LoginStateEnum.RESET && t("signInMessage")}
-            </p>
-            {formType === LoginStateEnum.RESET && (
-              <p className="mt-2 text-center text-sm leading-5 text-gray-300">
-                {t("forgotPasswordForm.dontHaveEmail")}
-              </p>
-            )}
-          </div>
+      {formType === LoginStateEnum.RESET && (
+        <ResetPasswordForm
+          isLoading={loading}
+          onSubmit={onVerifyOTP}
+          onBack={() => setFormType(LoginStateEnum.LOGIN)}
+        />
+      )}
 
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            {formType === LoginStateEnum.LOGIN && (
-              <div>
-                <LoginForm
-                  onSubmit={onSubmit}
-                  isLoading={loading}
-                  onForgotPassword={() => setFormType(LoginStateEnum.RESET)}
-                />
-                <Button
-                  className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
-                  type="button"
-                  data-testid="forgot-open"
-                  onClick={onTryDemo}
-                >
-                  {t("loginForm.tryDemo")}
-                  {loading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
-                </Button>
-              </div>
-            )}
+      {formType === LoginStateEnum.CHANGE && (
+        <ChangePasswordForm
+          isLoading={loading}
+          username={currentID}
+          onSubmit={onChangePassword}
+          onBack={() => setFormType(LoginStateEnum.LOGIN)}
+        />
+      )}
 
-            {formType === LoginStateEnum.RESET && (
-              <ResetPasswordForm
-                isLoading={loading}
-                onSubmit={onVerifyOTP}
-                onBack={() => setFormType(LoginStateEnum.LOGIN)}
-              />
-            )}
+      <div className="mt-6 flex flex-col justify-center text-center">
+        <p>
+          <Button
+            variant="link"
+            className="py-0 text-base font-semibold uppercase"
+            onClick={() => setFormType(LoginStateEnum.CHANGE)}
+          >
+            {t("loginForm.canNotLogin")}
+          </Button>
+          <Button variant="link" className="py-0 text-base font-normal">
+            {t("loginForm.helpCenter")}
+          </Button>
+        </p>
 
-            {formType === LoginStateEnum.CHANGE && (
-              <ChangePasswordForm
-                isLoading={loading}
-                username={currentID}
-                onSubmit={onChangePassword}
-                onBack={() => setFormType(LoginStateEnum.LOGIN)}
-              />
-            )}
-
-            <div className="mt-8 flex flex-col justify-center text-center">
-              <p className="mb-2 font-semibold uppercase">
-                {t("loginForm.cantLogin")}
-              </p>
-
-              <p>
-                {t("loginForm.connectMessage")}
-                <Button variant="link" className="py-0 text-base font-normal">
-                  {t("loginForm.helpCenter")}
-                </Button>
-              </p>
-
-              <p>
-                <Button
-                  variant="link"
-                  className="py-0 text-base font-normal text-white"
-                >
-                  {t("loginForm.privacyAndTerms")}
-                </Button>
-              </p>
-            </div>
-          </div>
-        </div>
+        <p>
+          <Button
+            variant="link"
+            className="py-0 text-base font-normal text-primary"
+          >
+            {t("loginForm.privacyAndTerms")}
+          </Button>
+        </p>
       </div>
     </div>
   );

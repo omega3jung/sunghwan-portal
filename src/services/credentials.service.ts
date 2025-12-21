@@ -9,6 +9,7 @@ export type LoginResponse = {
   access_token: string;
 };
 
+// process login.
 export const loginApi = async ({
   username,
   password,
@@ -17,6 +18,20 @@ export const loginApi = async ({
   password: string;
 }): Promise<LoginResponse> => {
   try {
+    // demo login
+    if (username === "__demo__") {
+      console.log(username);
+      return {
+        id: "demo",
+        name: "Demo User",
+        email: "demo@sunghwan.dev",
+        roles: ["DEMO"],
+        access_token: "demo-token",
+      };
+    }
+    console.log("real login");
+
+    // real login
     const res = await fetcher.api.post<LoginResponse>("/auth/login", {
       username,
       password,

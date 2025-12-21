@@ -1,0 +1,77 @@
+{
+  "common": {
+    "language": "Idioma",
+    "languagePlaceholder": "Selector de idioma",
+    "submit": "Enviar",
+    "goBack": "Volver"
+  },
+  "sessionMenu": {
+    "greet": "Hola",
+    "changeOrganizations": "Estás cambiando de organización",
+    "addAccount": "Añadir otra cuenta",
+    "apply": "Aplicar",
+    "signOut": "Cerrar sesión en todas las cuentas",
+    "newTab": "Aplicar en una nueva pestaña"
+  },
+  "loading": {
+    "credentials": "Comprobando tus credenciales",
+    "setUp": "Configurando cuenta de grupo",
+    "openTab": "Abriendo nueva pestaña",
+    "loggingIn": "Iniciando sesión"
+  },
+  "loginForm": {
+    "welcome": "¡Hola, bienvenido!",
+    "signInMessage": "Inicia sesión para acceder a tu cuenta.",
+    "username": "ID de usuario",
+    "usernamePlaceholder": "Ingresar ID de usuario",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresar contraseña",
+    "forgotPassword": "¿Olvidó su contraseña?",
+    "logIn": "Iniciar sesión",
+    "tryDemo": "Probar demo",
+    "canNotLogin": "¿No puede iniciar sesión?",
+    "useDifferentAccount": "Iniciar sesión con otra cuenta",
+    "connectMessage": "Conectar con el portal",
+    "helpCenter": "Centro de ayuda",
+    "privacyAndTerms": "Privacidad y términos"
+  },
+  "ChangePasswordForm": {
+    "title": "Administrar contraseña",
+    "reset": {
+      "title": "Restablecer su contraseña",
+      "message": "Primero debe solicitarlo a través de su gerente o de RR. HH."
+    },
+    "update": {
+      "title": "Actualiza tu contraseña",
+      "username": "ID de usuario",
+      "usernamePlaceholder": "Ingresa tu ID de usuario",
+      "currentPassword": "Contraseña actual",
+      "currentPasswordPlaceholder": "Ingresa tu contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "newPasswordPlaceholder": "Ingresa tu nueva contraseña",
+      "confirmPassword": "Confirma la nueva contraseña",
+      "confirmPlaceholder": "Confirma la nueva contraseña",
+      "passwordDontMatch": "Las contraseñas no coinciden"
+    }
+  },
+  "resetPasswordForm": {
+    "title": "¿Olvidaste tu contraseña?",
+    "message": "Ingresa tu ID y correo electrónico y te enviaremos un OTP para restablecer tu contraseña.",
+    "dontHaveEmail": "Si no tienes un correo electrónico asociado a tu cuenta, por favor contacta con RR. HH.",
+    "userid": "ID de usuario",
+    "idPlaceholder": "Ingrese su ID",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "Ingrese su dirección de correo electrónico",
+    "otpSend": "Enviar OTP",
+    "otpResend": "Reenviar OTP"
+  },
+  "errors": {
+    "title": "Error: Error al iniciar sesión",
+    "default": "No pudimos encontrar su ID o su contraseña no coincide",
+    "credentials-dont-match": "No pudimos encontrar su ID o su contraseña no coincide",
+    "expired-credentials": "Su contraseña no se ha actualizado en los últimos 6 meses. Restablezca su contraseña",
+    "new-password-required": "Necesita configurar una contraseña",
+    "internal-error": "Algo salió mal. Envíe un ticket",
+    "two-factor-authentication-required": ""
+  }
+}

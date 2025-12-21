@@ -37,7 +37,15 @@ export const ChangePasswordForm = (props: Props) => {
   });
 
   return (
-    <div className="relative flex w-full justify-center">
+    <div className="flex w-full flex-col items-center justify-center gap-2">
+      <div>
+        <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
+          {t("managePasswordDialog.reset.title")}
+        </p>
+        <p className="text-center text-lg leading-5 text-primary">
+          {t("signInMessage")}
+        </p>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -66,7 +74,7 @@ export const ChangePasswordForm = (props: Props) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  {t("managePasswordDialog.update.newPassword")}
+                  {t("ChangePasswordForm.update.newPassword")}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -94,7 +102,7 @@ export const ChangePasswordForm = (props: Props) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  {t("managePasswordDialog.update.confirmPassword")}
+                  {t("ChangePasswordForm.update.confirmPassword")}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -119,7 +127,7 @@ export const ChangePasswordForm = (props: Props) => {
             type="submit"
             disabled={isLoading}
           >
-            {t("submit")}
+            {t("common.submit")}
             {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
           </Button>
         </form>
@@ -131,7 +139,7 @@ export const ChangePasswordForm = (props: Props) => {
         data-testid="forgot-open"
         onClick={onBack}
       >
-        {t("loginForm.onBack")}
+        {t("common.goBack")}
         {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
       </Button>
     </div>

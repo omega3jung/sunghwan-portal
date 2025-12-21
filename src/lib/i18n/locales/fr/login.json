@@ -1,0 +1,77 @@
+{
+  "common": {
+    "language": "Langue",
+    "languagePlaceholder": "Sélecteur de langue",
+    "submit": "Envoyer",
+    "goBack": "Retour"
+  },
+  "sessionMenu": {
+    "greet": "Bonjour",
+    "changeOrganizations": "Vous changez d'organisation",
+    "addAccount": "Ajouter un autre compte",
+    "apply": "Appliquer",
+    "signOut": "Se déconnecter de tous les comptes",
+    "newTab": "Appliquer dans un nouvel onglet"
+  },
+  "loading": {
+    "credentials": "Vérification de vos identifiants",
+    "setUp": "Configuration du compte de groupe",
+    "openTab": "Ouverture d'un nouvel onglet",
+    "loggingIn": "Connexion"
+  },
+  "loginForm": {
+    "welcome": "Bonjour, bienvenue !",
+    "signInMessage": "Connectez-vous pour accéder à votre compte.",
+    "username": "Identifiant utilisateur",
+    "usernamePlaceholder": "Saisissez votre identifiant utilisateur",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Saisir le mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "logIn": "Se connecter",
+    "tryDemo": "Essayer la démo",
+    "canNotLogin": "Impossible de se connecter?",
+    "useDifferentAccount": "Se connecter avec un autre compte",
+    "connectMessage": "Se connecter au portail",
+    "helpCenter": "Centre d'aide",
+    "privacyAndTerms": "Confidentialité et conditions d'utilisation"
+  },
+  "ChangePasswordForm": {
+    "title": "Gérer le mot de passe",
+    "reset": {
+      "title": "Réinitialiser votre mot de passe",
+      "message": "Vous devez d'abord en faire la demande auprès de votre responsable ou des RH."
+    },
+    "update": {
+      "title": "Mettre à jour votre mot de passe",
+      "username": "Identifiant utilisateur",
+      "usernamePlaceholder": "Saisissez votre identifiant utilisateur",
+      "currentPassword": "Mot de passe actuel",
+      "currentPasswordPlaceholder": "Saisissez votre mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Saisissez votre nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "confirmPlaceholder": "Confirmer le nouveau mot de passe",
+      "passwordDontMatch": "Les mots de passe ne correspondent pas"
+    }
+  },
+  "resetPasswordForm": {
+    "title": "Mot de passe oublié",
+    "message": "Saisissez votre identifiant et votre adresse e-mail. Nous vous enverrons ensuite un code OTP pour réinitialiser votre mot de passe.",
+    "dontHaveEmail": "Si vous n'avez pas d'adresse e-mail associée à votre compte, veuillez contacter les ressources humaines.",
+    "userid": "Identifiant utilisateur",
+    "idPlaceholder": "Saisissez votre ID",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "Saisissez votre adresse e-mail",
+    "otpSend": "Envoyer le code OTP",
+    "otpResend": "Renvoyer le code OTP"
+  },
+  "errors": {
+    "title": "Erreur: Échec de la connexion",
+    "default": "Nous n'avons pas trouvé votre identifiant ou votre mot de passe ne correspond pas",
+    "credentials-dont-match": "Nous n'avons pas trouvé votre identifiant ou votre mot de passe ne correspond pas",
+    "expired-credentials": "Votre mot de passe n'a pas été mis à jour depuis 6mois. Veuillez le réinitialiser.",
+    "new-password-required": "Vous devez définir un mot de passe.",
+    "internal-error": "Une erreur s'est produite. Veuillez ouvrir un ticket.",
+    "two-factor-authentication-required": ""
+  }
+}

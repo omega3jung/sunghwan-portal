@@ -10,7 +10,12 @@ import { supportedLocales } from "@/lib/i18n/types";
 
 // init i18next for all options read: https://www.i18next.com/overview/configuration-options
 i18n.use(initReactI18next).init({
+  lng: "en",
   fallbackLng: "en",
+
+  ns: ["common", "login"],
+  defaultNS: "common",
+
   interpolation: {
     escapeValue: false,
   },
@@ -25,6 +30,10 @@ i18n.use(initReactI18next).init({
   },
 });
 
+
+// add custom component locales.
+
+// DateRangePicker.
 supportedLocales.forEach((lng) => {
   i18n.addResourceBundle(
     lng,
@@ -35,6 +44,7 @@ supportedLocales.forEach((lng) => {
   );
 });
 
+// Stepper.
 supportedLocales.forEach((lng) => {
   i18n.addResourceBundle(lng, "Stepper", stepperLocales[lng], true, false);
 });
