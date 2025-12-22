@@ -15,7 +15,7 @@ export const authorize = async (credentials?: {
       id: user.id,
       name: user.name,
       email: user.email,
-      roles: user.roles,
+      permission: user.permission,
       access_token: user.access_token,
     };
   } catch (error) {

@@ -1,12 +1,14 @@
 import fetcher from "@/services/fetcher";
+import { Permission } from "@/types";
 import axios from "axios";
 
 export type LoginResponse = {
   id: string;
   name: string;
   email: string;
-  roles: string[];
+  permission: Permission;
   access_token: string;
+  isSuperUser?: boolean;
 };
 
 // process login.
@@ -25,8 +27,9 @@ export const loginApi = async ({
         id: "demo",
         name: "Demo User",
         email: "demo@sunghwan.dev",
-        roles: ["DEMO"],
+        permission: { scope: "LOCAL", role: "VISITOR" },
         access_token: "demo-token",
+        isSuperUser: true,
       };
     }
     console.log("real login");

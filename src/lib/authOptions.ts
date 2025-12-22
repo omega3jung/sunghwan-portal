@@ -2,6 +2,7 @@ import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginApi } from "@/services/credentials.service";
 import { ENVIRONMENT } from "@/lib/environment";
+import { Permission } from "@/types";
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -29,7 +30,7 @@ export const authOptions: AuthOptions = {
             id: user.id,
             name: user.name,
             email: user.email,
-            roles: user.roles,
+            permission: user.permission,
             access_token: user.access_token,
           };
         } catch {
@@ -43,14 +44,14 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.user = {
           id: user.id,
-          roles: user.roles,
+          permission: user.permission,
         };
         token.access_token = user.access_token;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.roles = token.roles as string[];
+      session.user.permission = token.permission as Permission;
       (session as any).access_token = token.access_token;
       return session;
     },
