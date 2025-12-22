@@ -35,14 +35,14 @@ export const ResetPasswordForm = (props: Props) => {
   const form = useForm<VerifyOTPFormType>({
     resolver: zodResolver(verifyOTPFormSchema),
     defaultValues: {
-      userid: "",
+      username: "",
       email: "",
       otp: "",
     },
   });
 
   const onSendOTP = async () => {
-    const isValid = await form.trigger(["userid", "email"]);
+    const isValid = await form.trigger(["username", "email"]);
     if (!isValid) return;
 
     // set remain time as 3 mins.
@@ -95,7 +95,15 @@ export const ResetPasswordForm = (props: Props) => {
   }, [remainTime]);
 
   return (
-    <div className="relative flex w-full justify-center">
+    <div className="flex w-full flex-col items-center justify-center gap-2">
+      <div>
+        <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
+          {t("resetPasswordForm.title")}
+        </p>
+        <p className="text-center text-md leading-5 text-primary">
+          {t("resetPasswordForm.message")}
+        </p>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -103,17 +111,17 @@ export const ResetPasswordForm = (props: Props) => {
         >
           <FormField
             control={form.control}
-            name="userid"
+            name="username"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">
-                  {t("forgotPasswordForm.userid")}
+                  {t("resetPasswordForm.userid")}
                 </FormLabel>
                 <FormControl>
                   <Input
-                    data-testid="forgot-password-userid"
+                    data-testid="reset-password-userid"
                     disabled={isLoading || step === "otp"}
-                    placeholder={t("forgotPasswordForm.idPlaceholder")}
+                    placeholder={t("resetPasswordForm.idPlaceholder")}
                     {...field}
                   />
                 </FormControl>
@@ -127,13 +135,13 @@ export const ResetPasswordForm = (props: Props) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">
-                  {t("forgotPasswordForm.email")}
+                  {t("resetPasswordForm.email")}
                 </FormLabel>
                 <FormControl>
                   <Input
-                    data-testid="forgot-password-email"
+                    data-testid="reset-password-email"
                     disabled={isLoading || step === "otp"}
-                    placeholder={t("forgotPasswordForm.emailPlaceholder")}
+                    placeholder={t("resetPasswordForm.emailPlaceholder")}
                     {...field}
                   />
                 </FormControl>
@@ -148,7 +156,7 @@ export const ResetPasswordForm = (props: Props) => {
             data-testid="send-otp"
             onClick={onSendOTP}
           >
-            {step === "otp" ? t("otp.resend") : t("otp.send")}
+            {step === "otp" ? t("resetPasswordForm.otpResend") : t("resetPasswordForm.otpSend")}
             {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
           </Button>
 
@@ -160,7 +168,7 @@ export const ResetPasswordForm = (props: Props) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      {t("forgotPasswordForm.otp")}
+                      {t("resetPasswordForm.otp")}
                     </FormLabel>
                     <FormControl>
                       <Input {...field} placeholder={timeLimit} maxLength={6} />
@@ -173,7 +181,7 @@ export const ResetPasswordForm = (props: Props) => {
                 className="h-12 rounded-lg text-base font-normal md:w-full"
                 type="submit"
                 disabled={isLoading}
-                data-testid="forgot-password-submit"
+                data-testid="reset-password-submit"
               >
                 {t("submit")}
                 {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
@@ -187,10 +195,10 @@ export const ResetPasswordForm = (props: Props) => {
         className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
         type="button"
         disabled={isLoading}
-        data-testid="forgot-open"
+        data-testid="reset-open"
         onClick={onBack}
       >
-        {t("loginForm.onBack")}
+        {t("common.goBack")}
         {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
       </Button>
     </div>

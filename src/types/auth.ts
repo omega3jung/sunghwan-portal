@@ -4,5 +4,6 @@ export interface AuthUser {
   name?: string | null;
   email?: string | null;
   access_token: string;
-  roles: string[];
+  role: string;  
+  isSuperUser?: boolean;
 }

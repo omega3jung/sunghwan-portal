@@ -7,12 +7,12 @@ import { Toaster } from "sonner";
 import { Providers } from "./providers";
 
 const geistSans = localFont({
-  src: "../public/fonts/GeistVF.woff",
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "../public/fonts/GeistMonoVF.woff",
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Sunghwan Portal",
   description: "IT Help Desk (Portfolio)",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/images/icon_light.png",
   },
   viewport: "width=device-width, initial-scale=1",
 };

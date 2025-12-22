@@ -1,5 +1,6 @@
 // app/(public)/login/layout.tsx
 
+import I18nProvider from "@/components/layout/I18nProvider/I18nProvider";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
 
@@ -30,5 +31,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     return <UnsupportedBrowser />;
   }
 
-  return <div className="public-wrapper">{children}</div>;
+  return (
+    <I18nProvider namespaces={["common", "login"]}>{children}</I18nProvider>
+  );
 }

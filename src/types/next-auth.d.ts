@@ -1,5 +1,15 @@
 import { DefaultSession } from "next-auth";
-import { AuthUser } from "./auth";
+import { Permission } from "@/types/user";
+
+// user type for authorization.
+export interface AuthUser {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  access_token: string;
+  permission: Permission;
+  isSuperUser?: boolean;
+}
 
 declare module "next-auth" {
   interface Session {
@@ -14,6 +24,7 @@ declare module "next-auth/jwt" {
     id: string;
     email?: string;
     access_token: string;
-    roles: string[];
+    permission: Permission;
+    isSuperUser?: boolean;
   }
 }

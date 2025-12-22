@@ -13,16 +13,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoginFormType, loginFormSchema } from "../types";
+import i18n from "@/lib/i18n";
 
 type Props = {
   isLoading: boolean;
   onSubmit: (values: LoginFormType) => Promise<void>;
-  onForgotPassword: VoidFunction;
 };
 
 export const LoginForm = (props: Props) => {
   const { t } = useTranslation("login");
-  const { isLoading, onSubmit, onForgotPassword } = props;
+  const { isLoading, onSubmit } = props;
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginFormSchema),
@@ -33,7 +33,15 @@ export const LoginForm = (props: Props) => {
   });
 
   return (
-    <div className="relative flex w-full justify-center">
+    <div className="flex w-full flex-col items-center justify-center gap-2">
+      <div>
+        <p className="text-center text-2xl font-normal leading-[48px] md:text-4xl">
+          {t("loginForm.welcome")}
+        </p>
+        <p className="text-center leading-5 md:text-lg">
+          {t("loginForm.signInMessage")}
+        </p>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -82,29 +90,23 @@ export const LoginForm = (props: Props) => {
               </FormItem>
             )}
           />
-
           <Button
-            className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
+            className="mt-6 h-12 rounded-lg text-base font-normal w-full"
             type="submit"
             disabled={isLoading}
             data-testid="login-submit"
           >
-            {t("loginForm.logIn")}
-            {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
+            {isLoading ? (
+              <>
+                {t("loading.loggingIn")}
+                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+              </>
+            ) : (
+              t("loginForm.logIn")
+            )}
           </Button>
         </form>
       </Form>
-
-      <Button
-        className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
-        type="button"
-        disabled={isLoading}
-        data-testid="forgot-open"
-        onClick={onForgotPassword}
-      >
-        {t("loginForm.forgotPassword")}
-        {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
-      </Button>
     </div>
   );
 };

@@ -1,11 +1,16 @@
 # sunghwan-portal
 Portfolio of Sunghwan Jung
 
-**Sunghwan Jung의 데모 포트폴리오 프로젝트**  
-실무에서 바로 사용할 수 있는 **Next.js 14 기반 프론트엔드 템플릿**을 목표로 개발 중입니다.
+🌐 **Languages**
+- [English](README.md)
+- [한국어](README.ko.md)
 
-> 단순 UI 데모가 아닌,  
-> **인증 · 권한 · 세션 · 환경 분리**까지 고려한 실전형 구조를 지향합니다.
+**Sunghwan Jung's Demo Portfolio Project**
+
+I'm developing a **Next.js 14-based front-end template** designed for immediate use in real-world applications.
+
+> Beyond a simple UI demo,  
+> this project aims for a production-oriented structure that considers **authentication, authorization, sessions, and environment separation**.
 
 ---
 
@@ -23,32 +28,32 @@ Portfolio of Sunghwan Jung
 
 ## Project Goals
 
-- 실무에서 재사용 가능한 **프론트엔드 기초 템플릿**
-- 인증 / 인가 로직의 명확한 책임 분리
-- 환경별 설정이 명확한 구조
-- 이후 DB / API 확장이 쉬운 구조
+- A reusable **front-end base template**
+- A clear separation of responsibilities for authentication/authorization logic
+- A structure with clear configuration for each environment
+- A structure that facilitates future DB/API expansion
 
 ---
 
 ## Authentication & Session Architecture
 
-이 프로젝트는 **NextAuth를 중심으로 인증을 단순화**하면서도  
-실무에서 자주 요구되는 확장성을 고려해 설계되었습니다.
+This project was designed to **simplify authentication with NextAuth at its core**,
+while also considering the scalability often required in practice.
 
 ### Authentication Flow
 
-1. 사용자가 보호된 경로 접근
-2. `middleware.ts`에서 인증 여부 확인
-3. 미인증 시 `/login`으로 redirect
-4. 로그인 성공 시 JWT 기반 세션 생성
-5. 이후 요청은 session 기반으로 access_token 사용
+1. The user accesses a protected path.
+2. Authentication is checked in `middleware.ts`.
+3. If not authenticated, redirect to `/login`.
+4. Upon successful login, create a JWT-based session.
+5. Subsequent requests use the session-based access_token.
 
 ### Key Points
 
-- **JWT Strategy 사용**
-- access_token은 NextAuth session에 저장
-- API 요청 시 axios interceptor에서 자동으로 Authorization 헤더 주입
-- layout은 인증 판단을 하지 않고 UI 역할만 담당
+- **Using JWT Strategy**
+- The access_token is stored in the NextAuth session
+- An Axios interceptor automatically injects the Authorization header into API requests
+- The layout does not perform authentication decisions and only serves as the UI.
 
 ---
 
@@ -59,7 +64,8 @@ app/
  ├─ (public)/
  │   └─ login/
  ├─ (protected)/
- │   ├─ home/
+ │   ├─ demo/
+ │   ├─ it-help-desk/
  │   └─ layout.tsx
  ├─ api/
  │   └─ auth/
@@ -87,10 +93,10 @@ types/
 
 ## Environment & Configuration
 
-- 환경 변수는 env-cmd를 사용해 관리합니다.
+- Environment variables are managed using env-cmd.
 - .env-cmdrc Example
 
-```txt
+```json
 {
   "sandbox": {
     "NEXTAUTH_URL": "http://localhost:3000",
@@ -109,22 +115,35 @@ types/
 
 ## Getting Started
 
-```txt
+```npm
 npm install
 npm run dev
 ```
-- 브라우저에서 아래 주소로 확인할 수 있습니다.
+- Open the application in your browser at:
 ```txt
 http://localhost:3000
 ```
 
 ---
 
+## Internationalization (i18n)
+
+This project supports multiple languages at the application level:
+
+- English
+- Spanish
+- French
+- Korean
+
+Language preferences are managed at the system level and can be extended easily.
+
+---
+
 ## Notes
 
-- 본 프로젝트는 포트폴리오 목적의 데모 프로젝트입니다.
-- 일부 API는 Mock / Demo API 기준으로 구성되어 있습니다.
-- 인증 구조는 실무 기준으로 설계되어 있어 OAuth, Role 기반 권한, DB 인증 등으로 확장이 가능합니다.
+- This project is a demo project for portfolio purposes.
+- Some APIs are based on mock/demo APIs.
+- The authentication structure is designed for practical use and can be expanded with OAuth, role-based authorization, and database authentication.
 
 ---
 

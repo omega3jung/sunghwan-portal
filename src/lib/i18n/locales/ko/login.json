@@ -1,0 +1,81 @@
+{
+  "common": {
+    "language": "언어",
+    "languagePlaceholder": "언어 선택기",
+    "submit": "제출",
+    "goBack": "뒤로 가기"
+  },
+  "sessionMenu": {
+    "greet": "안녕하세요",
+    "changeOrganizations": "조직을 변경합니다",
+    "addAccount": "다른 계정 추가",
+    "apply": "적용",
+    "signOut": "모든 계정에서 로그아웃",
+    "newTab": "새 탭에서 적용"
+  },
+
+  "loading": {
+    "credentials": "자격 증명 확인 중",
+    "setUp": "그룹 계정 설정 중",
+    "openTab": "새 탭 열기",
+    "loggingIn": "로그인 중"
+  },
+
+  "loginForm": {
+    "welcome": "안녕하세요, 환영합니다!",
+    "signInMessage": "계정에 접속하려면 로그인하세요.",
+    "username": "사용자 ID",
+    "usernamePlaceholder": "사용자 ID를 입력하세요",
+    "password": "비밀번호",
+    "passwordPlaceholder": "비밀번호를 입력하세요",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "logIn": "로그인",
+    "tryDemo": "데모 체험",
+    "canNotLogin": "로그인할 수 없나요?",
+    "useDifferentAccount": "다른 계정으로 로그인",
+    "connectMessage": "포털에 연결",
+    "helpCenter": "고객 지원 센터",
+    "privacyAndTerms": "개인 정보 보호 및 이용 약관"
+  },
+
+  "ChangePasswordForm": {
+    "title": "비밀번호 관리",
+    "reset": {
+      "title": "비밀번호 재설정",
+      "message": "비밀번호 재설정을 요청해야 합니다. 먼저 관리자 또는 인사팀에 문의하십시오."
+    },
+    "update": {
+      "title": "비밀번호를 업데이트하세요",
+      "username": "사용자 ID",
+      "usernamePlaceholder": "사용자 ID를 입력하세요",
+      "currentPassword": "현재 비밀번호",
+      "currentPasswordPlaceholder": "현재 비밀번호를 입력하세요",
+      "newPassword": "새 비밀번호",
+      "newPasswordPlaceholder": "새 비밀번호를 입력하세요",
+      "confirmPassword": "새 비밀번호 확인",
+      "confirmPlaceholder": "새 비밀번호를 다시 입력하세요",
+      "passwordDontMatch": "비밀번호가 일치하지 않습니다"
+    }
+  },
+  "resetPasswordForm": {
+    "title": "비밀번호를 잊으셨나요?",
+    "message": "ID와 이메일을 입력하시면 비밀번호를 재설정할 수 있는 OTP를 보내드립니다.",
+    "dontHaveEmail": "계정에 연결된 이메일 주소가 없는 경우, 인사담당자에게 문의해 주세요.",
+    "userid": "사용자 ID",
+    "idPlaceholder": "ID를 입력하세요",
+    "email": "이메일",
+    "emailPlaceholder": "이메일 주소를 입력하세요",
+    "otpSend": "OTP 전송",
+    "otpResend": "OTP 재전송"
+  },
+
+  "errors": {
+    "title": "오류: 로그인 실패",
+    "default": "ID를 찾을 수 없거나 비밀번호가 일치하지 않습니다.",
+    "credentials-dont-match": "ID를 찾을 수 없거나 비밀번호가 일치하지 않습니다.",
+    "expired-credentials": "비밀번호가 지난 6개월 동안 업데이트되지 않았습니다. 비밀번호를 재설정하세요.",
+    "new-password-required": "비밀번호를 설정해야 합니다.",
+    "internal-error": "문제가 발생했습니다. 티켓을 제출해 주세요.",
+    "two-factor-authentication-required": "2단계 인증 필요"
+  }
+}
