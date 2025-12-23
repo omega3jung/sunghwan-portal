@@ -1,10 +1,11 @@
-import { loginApi } from "./credentials.service";
+import { loginApi } from "./credentials";
+import { AuthUser } from "@/types/next-auth.d";
 
 // next-auth signIn will call this.
 export const authorize = async (credentials?: {
   username: string;
   password: string;
-}) => {
+}): Promise<AuthUser | null> => {
   if (!credentials) return null;
 
   try {
@@ -16,7 +17,9 @@ export const authorize = async (credentials?: {
       name: user.name,
       email: user.email,
       permission: user.permission,
-      access_token: user.access_token,
+      preference: user.preference,
+      accessToken: user.access_token,
+      isAdmin: user.is_admin,
     };
   } catch (error) {
     // ❗ CredentialsProvider에서는 throw 금지

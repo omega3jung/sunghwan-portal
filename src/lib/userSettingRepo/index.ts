@@ -4,10 +4,10 @@ import { remoteUserSettingRepo } from "./remoteUserSettingRepo";
 export * from "./keys";
 
 export const getUserSettingRepository = () => {
-  const userId = useSessionStore.getState().userId;
+  const { dataScope } = useSessionStore.getState();
 
   // demo mode.
-  if (userId === "_demo") {
+  if (dataScope === "LOCAL") {
     return localUserSettingRepo;
   }
 

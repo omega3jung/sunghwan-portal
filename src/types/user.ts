@@ -1,17 +1,16 @@
 import { ColorTheme, ScreenMode } from "./config";
+import { DataScope } from "./session";
 
 export type LoginCredentials = {
   username: string;
   password: string;
 } & Record<string, string>;
 
-export interface UserSettings {
+export interface Preference {
   screenMode: ScreenMode;
   colorTheme: ColorTheme;
   language: string;
 }
-
-export type DataScope = "LOCAL" | "REMOTE";
 
 export const ROLE_PRIORITY = {
   MANAGER: 9,
@@ -29,15 +28,12 @@ export type Permission = {
   role: Role;
 };
 
-// User info from API.
-export interface UserSession {
-  id: number;
+// user type.
+export interface AppUser {
+  id: string;
   name: string;
   email: string;
-  settings: UserSettings;
   permission: Permission; // required permission info.
-  isSuperUser?: boolean;
+  preference?: Preference;
+  accessToken?: string;
 }
-
-// Session user type for front end.
-export type CurrentSessionUser = UserSession;

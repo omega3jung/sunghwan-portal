@@ -1,7 +1,8 @@
-import { SessionContextValue, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { useSessionStore, SessionState } from "@/lib/sessionStore";
-import { AuthUser } from "@/types";
+import { DataScope, UseCurrentSessionResult, CurrentSession } from "@/types";
+import { AuthUser } from "@/types/next-auth.d";
 
 /**
  * =========================================================
@@ -20,39 +21,13 @@ import { AuthUser } from "@/types";
  * =========================================================
  */
 
-/**
- * 프론트엔드에서 사용하는 최종 세션 타입
- *
- * 구성:
- * - next-auth SessionContextValue (data, update 제외)
- * - sessionStore 액션들 (setSession 제외)
- * - UI에서 바로 쓰는 data 구조
- * - updateSession: 세션 갱신의 단일 진입점
- */
-
-export type CurrentSession = Omit<SessionContextValue, "data" | "update"> & {
-  data: {
-    expires: string;
-    user?: AuthUser;
-    ui: {
-      isAdmin: boolean;
-    };
-  };
-  updateSession: (
-    data: Partial<SessionState>,
-    force?: boolean
-  ) => Promise<void>;
-  hydrateSession: () => void;
-  clearSession: () => void;
-};
-
-export const useCurrentSession = (): CurrentSession => {
+export const useCurrentSession = (): UseCurrentSessionResult => {
   /**
    * next-auth 세션
    * - 인증 상태 (authenticated / unauthenticated)
    * - expires
    */
-  const { data, ...session } = useSession();
+  const session = useSession();
 
   /**
    * zustand 세션 스토어
@@ -68,28 +43,39 @@ export const useCurrentSession = (): CurrentSession => {
    * - page / component 에서 계산 로직을 없앤다
    * - 세션 데이터 구조 변경 시 이 훅만 수정
    */
-  const sessionData = useMemo(() => {
-    if (!data?.user) {
+  const current = useMemo<CurrentSession>(() => {
+    const { dataScope, user, accessToken } = store;
+
+    // local, demo.
+    if (dataScope === "LOCAL") {
       return {
+        dataScope,
+        user,
+        accessToken,
         expires: "",
-        ui: {
-          isAdmin: false,
-        },
+        isAdmin: true,
+      };
+    }
+
+    // remote
+    if (!session.data?.user) {
+      return {
+        dataScope: "REMOTE" as DataScope,
+        user: undefined, // AuthUser.
+        accessToken,
+        expires: "",
+        isAdmin: false,
       };
     }
 
     return {
-      expires: data.expires,
-      user: {
-        ...data.user, // AuthUser.
-        // 필요 시 store.userId 를 합성할 수 있음
-      },
-      ui: {
-        // 추후 관리자 UI, IT Help Desk 설정 등에 활용 가능
-        isAdmin: false,
-      },
+      dataScope: "REMOTE" as DataScope,
+      user: session.data.user as AuthUser,
+      accessToken,
+      expires: session.data.expires,
+      isAdmin: false, // can get admin access from home.
     };
-  }, [data, store]);
+  }, [session.data, store]);
 
   /**
    * 세션 업데이트의 단일 진입점
@@ -98,7 +84,7 @@ export const useCurrentSession = (): CurrentSession => {
    * - next-auth 세션을 강제로 revalidate
    * - 이후 zustand 세션 갱신
    */
-  const update = async (state: Partial<SessionState>, force = false) => {
+  const updateSession = async (state: Partial<SessionState>, force = false) => {
     if (force) {
       await session.update();
     }
@@ -109,10 +95,21 @@ export const useCurrentSession = (): CurrentSession => {
     store.hydrateSession();
   }, []);
 
+  useEffect(() => {
+    if (session.status !== "authenticated") return;
+    if (!session.data?.user) return;
+
+    store.setSession({
+      dataScope: session.data.user.permission.scope, // LOCAL | REMOTE
+      user: session.data.user,
+      accessToken: session.data.user.accessToken,
+    });
+  }, [session.status, session.data?.user]);
+
   return {
     ...session,
-    data: sessionData,
-    updateSession: update,
+    current,
+    updateSession,
     hydrateSession: store.hydrateSession,
     clearSession: store.clearSession,
   };

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+@layer base {
+  html[data-theme='rose'] {
+    --primary: #f17ead;
+    --muted-primary: #eecfe5;
+    --light-background: #fdeef4;
+
+    /* PORTAL */
+    --portal-logo: #fa98bc;
+  }
+
+  html[data-theme='rose'].dark {
+    --portal-accent: #5f3a3e;
+    --portal-branding: #1b1b1d;
+    --portal-light-accent: #96646a;
+    --portal-foreground: #e58f9a;
+    --portal-background: #1e1f21;
+  }
+}

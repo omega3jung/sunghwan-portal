@@ -1,6 +1,6 @@
-// src/app/(protected)/home/demo/page.tsx
+// src/app/(protected)/demo/page.tsx
 
-export default function HomePage() {
+export default function DemoPage() {
   return (
     <main>
       <div>Custom components main page.</div>

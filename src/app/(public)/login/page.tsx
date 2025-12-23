@@ -59,21 +59,27 @@ export default function LoginPage() {
   // process sign in.
   const onSignIn = async (values: LoginFormType): Promise<void> => {
     try {
-      setHasSignedIn(true);
-
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         username: values.username,
         password: values.password,
         redirect: false,
-        callbackUrl: undefined,
       });
 
-      // After logging in, if the status is authenticated, you will be redirected.
-      // this file #L184.
+      // handle error.
+      if (!result?.ok) {
+        throw result?.error ?? LOGIN_ERROR_CODES.Default;
+      }
 
-      await update({ userId: values.username }, true);
+      setHasSignedIn(true);
+      // After logging in, if the status is authenticated, you will be redirected.
+      // go to redirect, #L175.
     } catch (error) {
-      const key = (error as { error: LOGIN_ERROR_CODES }).error;
+      setHasSignedIn(false);
+
+      const key =
+        error instanceof Error
+          ? (error.message as LOGIN_ERROR_CODES)
+          : LOGIN_ERROR_CODES.Default;
 
       const { textKey, severity } =
         LOGIN_ERROR_MESSAGES[key] ?? LOGIN_ERROR_MESSAGES.default;
@@ -101,7 +107,6 @@ export default function LoginPage() {
         }
       }
     } finally {
-      setHasSignedIn(false);
       setDemoLoading(false);
       setLoading(false);
     }

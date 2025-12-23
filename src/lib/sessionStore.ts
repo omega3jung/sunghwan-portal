@@ -1,41 +1,29 @@
 import { create } from "zustand";
+import { CurrentSession } from "@/types";
 
 /**
  * =========================================================
  * Session Store (zustand)
  * ---------------------------------------------------------
  * 역할:
- * - 프론트엔드 세션의 "저장소(Single Source of Truth)"
- * - access_token, user_id 등 인증 관련 최소 상태를 관리
- * - sessionStorage 와 상태를 동기화
- *
- * 특징:
- * - next-auth, UI 로직과 완전히 분리됨
- * - "어디에 / 어떻게 저장하는지"만 책임짐
- * - 컴포넌트에서는 직접 접근하지 않고
- *   useCurrentSession 훅을 통해서만 사용
+ * - 프론트엔드 "도메인 세션"의 Single Source of Truth
+ * - LOCAL / REMOTE 세션을 동일한 구조로 관리
+ * - sessionStorage 와 상태 동기화
  * =========================================================
  */
 
-/*
- * sessionStorage는 탭 단위라 key가 같아도 충돌은 없지만,
- * 향후 localStorage 전환이나 멀티 포털 확장을 고려해서
- * 앱 단위로 명확한 key 네이밍을 사용.
- */
 const STORAGE_KEYS = {
-  USER_ID: "sunghwan_portal_user_id",
-  ACCESS_TOKEN: "sunghwan_portal_access_token",
+  SESSION: "sunghwan_portal_session",
 } as const;
 
 /**
  * 세션에 저장되는 최소 상태
- * - user_id: 로그인된 사용자 ID 또는 '_demo'
- * - access_token: API 호출에 사용되는 토큰
+ * - dataScope: LOCAL | REMOTE
+ * - user: 유저 정보
+ * - accessToken: API 호출에 사용되는 토큰
+ * - isAdmin: admin 권한 여부
  */
-export interface SessionState {
-  userId: string | null; // '_demo' or ID.
-  accessToken: string | null;
-}
+export interface SessionState extends Omit<CurrentSession, "expires"> {}
 
 /**
  * 세션 상태를 조작하는 액션들
@@ -52,12 +40,20 @@ export interface SessionActions {
 }
 
 /**
+ * 초기 상태
+ * - 기본은 LOCAL (Try Demo 진입 가능)
+ */
+const initialState: SessionState = {
+  dataScope: "LOCAL",
+  isAdmin: false,
+};
+
+/**
  * 실제 zustand store
  */
 export const useSessionStore = create<SessionState & SessionActions>()(
   (set, get) => ({
-    userId: null,
-    accessToken: null,
+    ...initialState,
 
     /**
      * 앱 시작 시 호출
@@ -65,16 +61,13 @@ export const useSessionStore = create<SessionState & SessionActions>()(
      */
     hydrateSession: () => {
       try {
-        const userId = sessionStorage.getItem(STORAGE_KEYS.USER_ID);
-        const accessToken = sessionStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+        const raw = sessionStorage.getItem(STORAGE_KEYS.SESSION);
+        if (!raw) return;
 
-        set({
-          userId: userId ? JSON.parse(userId) : null,
-          accessToken: accessToken ? JSON.parse(accessToken) : null,
-        });
+        const parsed = JSON.parse(raw) as SessionState;
+        set(parsed);
       } catch {
-        // 파싱 실패 시 안전하게 초기화
-        set({ userId: null, accessToken: null });
+        set(initialState);
       }
     },
 
@@ -83,22 +76,9 @@ export const useSessionStore = create<SessionState & SessionActions>()(
      * - 메모리 상태 + sessionStorage 동기화
      */
     setSession: (data) => {
-      const current = get();
-      const next = { ...current, ...data };
+      const next = { ...get(), ...data };
 
-      if (next.userId !== undefined) {
-        sessionStorage.setItem(
-          STORAGE_KEYS.USER_ID,
-          JSON.stringify(next.userId)
-        );
-      }
-
-      if (next.accessToken !== undefined) {
-        sessionStorage.setItem(
-          STORAGE_KEYS.ACCESS_TOKEN,
-          JSON.stringify(next.accessToken)
-        );
-      }
+      sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(next));
 
       set(next);
     },
@@ -109,9 +89,8 @@ export const useSessionStore = create<SessionState & SessionActions>()(
      * - 메모리 상태 초기화
      */
     clearSession: () => {
-      sessionStorage.removeItem(STORAGE_KEYS.USER_ID);
-      sessionStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      set({ userId: null, accessToken: null });
+      sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+      set(initialState);
     },
   })
 );

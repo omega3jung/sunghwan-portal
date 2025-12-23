@@ -1,4 +1,4 @@
-import { UserSettings } from "@/types";
+import { Preference } from "@/types";
 
 export const remoteUserSettingRepo = {
   fetch: async () => {
@@ -7,7 +7,7 @@ export const remoteUserSettingRepo = {
     return await res.json();
   },
 
-  post: async (data: UserSettings) => {
+  post: async (data: Preference) => {
     const res = await fetch("/api/user-setting", {
       method: "POST",
       body: JSON.stringify(data),
@@ -16,7 +16,7 @@ export const remoteUserSettingRepo = {
     return await res.json();
   },
 
-  put: async (data: UserSettings) => {
+  put: async (data: Preference) => {
     const res = await fetch("/api/user-setting", {
       method: "PUT",
       body: JSON.stringify(data),

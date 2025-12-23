@@ -1,94 +1,105 @@
-import { Shapes, Home, Puzzle, BookOpen, Settings } from "lucide-react";
+import {
+  Shapes,
+  Home,
+  Puzzle,
+  BookOpen,
+  Settings,
+  CircleUserRound,
+  CalendarRange,
+  SquareStack,
+  UserStar,
+  User,
+  UserCog,
+  Contact,
+} from "lucide-react";
 
-// Collapsible Menu Items.
-export const collapsibleItems = [
+// contents Items.
+const content = [
   {
     title: "Home",
-    url: "#",
+    path: "#",
     icon: Home,
   },
   {
     title: "Playground",
-    url: "/home/playground",
+    path: "/playground",
     icon: Puzzle,
-    children: [
-      { title: "IT Help Desk", path: "/home/playground/it-help-desk" },
-    ],
-  },
-  {
-    title: "Components Demo",
-    url: "/home/demo",
-    icon: Shapes,
-    children: [
-      {
-        title: "Avatar Multi Combo Box",
-        path: "/home/demo/avatar-multi-combo-box",
-      },
-      { title: "Date Range Picker", path: "/home/demo/date-range-picker" },
-      { title: "Multi Combobox", path: "/home/demo/multi-combo-box" },
-      { title: "Stepper", path: "/home/demo/stepper" },
-    ],
-  },
-  {
-    title: "Documents",
-    url: "/home/documents",
-    icon: BookOpen,
-  },
-  {
-    title: "Settings",
-    url: "/home/settings",
-    icon: Settings,
-  },
-];
-
-// Group Menu Items.
-export const groupMenuItems = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Playground",
     children: [
       {
         title: "IT Help Desk",
-        path: "/home/playground/it-help-desk",
+        path: "/playground/it-help-desk",
         icon: Puzzle,
       },
     ],
   },
   {
     title: "Components Demo",
-    url: "/home/demo",
+    path: "/demo",
     icon: Shapes,
     children: [
       {
         title: "Avatar Multi Combo Box",
-        path: "/home/demo/avatar-multi-combo-box",
-        icon: Shapes,
+        path: "/demo/avatar-multi-combo-box",
+        icon: CircleUserRound,
       },
       {
         title: "Date Range Picker",
-        path: "/home/demo/date-range-picker",
-        icon: Shapes,
+        path: "/demo/date-range-picker",
+        icon: CalendarRange,
       },
       {
         title: "Multi Combobox",
-        path: "/home/demo/multi-combo-box",
-        icon: Shapes,
+        path: "/demo/multi-combo-box",
+        icon: SquareStack,
       },
-      { title: "Stepper", path: "/home/demo/stepper", icon: Shapes },
+      { title: "Stepper", path: "/demo/stepper", icon: Shapes },
     ],
   },
   {
-    title: "Documents",
-    url: "/home/documents",
-    icon: BookOpen,
-  },
-  {
-    title: "Settings",
-    url: "/home/settings",
-    icon: Settings,
+    title: "Permission Menu",
+    path: "/",
+    icon: Shapes,
+    children: [
+      {
+        title: "Manager Privilege Menu",
+        path: "/",
+        icon: UserStar,
+      },
+      {
+        title: "Leader Privilege Menu",
+        path: "/",
+        icon: UserCog,
+      },
+      {
+        title: "Employee Privilege Menu",
+        path: "/",
+        icon: User,
+      },
+      {
+        title: "Visitor Privilege Menu",
+        path: "/",
+        icon: Contact,
+      },
+    ],
   },
 ];
+
+// footer Items.
+const footer = [
+  {
+    title: "Settings",
+    path: "/settings",
+    icon: Settings,
+  },
+  {
+    title: "Documents",
+    path: "/documents",
+    icon: BookOpen,
+  },
+];
+
+// menu Items.
+export const menuItems = {
+  content,
+  footer,
+};
