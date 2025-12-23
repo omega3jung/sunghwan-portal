@@ -56,7 +56,7 @@ const content = [
     ],
   },
   {
-    title: "Permission Menu",
+    title: "Role-based Rendering Menu",
     path: "/",
     icon: Shapes,
     children: [

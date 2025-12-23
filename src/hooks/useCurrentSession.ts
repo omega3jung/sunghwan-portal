@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useSessionStore, SessionState } from "@/lib/sessionStore";
 import { DataScope, UseCurrentSessionResult, CurrentSession } from "@/types";
 import { AuthUser } from "@/types/next-auth.d";
+import { useImpersonationStore } from "@/lib/impersonationStore";
 
 /**
  * =========================================================
@@ -35,6 +36,13 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - userId
    */
   const store = useSessionStore();
+
+  /**
+   * zustand 대리 사용자 스토어
+   * - actor
+   * - subject
+   */
+  const impersonation = useImpersonationStore();
 
   /**
    * UI에서 바로 쓰기 위한 세션 데이터 가공
@@ -91,10 +99,12 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     store.setSession(state);
   };
 
+  // seesion hydreate.
   useEffect(() => {
     store.hydrateSession();
   }, []);
 
+  // set session when sign in.
   useEffect(() => {
     if (session.status !== "authenticated") return;
     if (!session.data?.user) return;
@@ -104,7 +114,17 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       user: session.data.user,
       accessToken: session.data.user.accessToken,
     });
+
+    impersonation.setActor({ ...session.data.user });
   }, [session.status, session.data?.user]);
+
+  // clear session and impersonation when sign out.
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      impersonation.reset();
+      store.clearSession();
+    }
+  }, [session.status]);
 
   return {
     ...session,

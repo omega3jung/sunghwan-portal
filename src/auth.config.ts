@@ -40,6 +40,8 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       session.user = {
         id: token.id,
+        name: token.name,
+        email: token.email,
         accessToken: token.accessToken,
         permission: token.permission,
         isAdmin: false,

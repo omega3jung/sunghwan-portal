@@ -9,6 +9,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { menuItems } from "./mock";
 import { Settings2 } from "lucide-react";
@@ -17,14 +19,18 @@ import { ENVIRONMENT } from "@/lib/environment";
 
 export function LeftMenu() {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b-[1px]">
+    <Sidebar collapsible="icon" className="group">
+      <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
+        <SidebarTrigger />
         <img
-          className="h-[39px] w-fit"
+          className="h-full w-fit
+          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden
+          "
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt={"logo"}
         />
       </SidebarHeader>
+      <SidebarSeparator className="mx-0" />
       <SidebarContent>
         {menuItems.content.map((item) => (
           <SidebarGroup key={item.title}>

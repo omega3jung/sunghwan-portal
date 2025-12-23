@@ -37,3 +37,9 @@ export interface AppUser {
   preference?: Preference;
   accessToken?: string;
 }
+
+// Impersonation User type.
+export type ActingUser = {
+  actor: AppUser;      // 실제 로그인한 사용자
+  subject?: AppUser;   // 대리 사용자 (optional)
+};

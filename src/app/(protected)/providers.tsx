@@ -33,7 +33,7 @@ export function ProtectedProviders({ children }: Props) {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider namespaces={["common", "home"]}>
-        <SidebarProvider>{children}</SidebarProvider>
+        <SidebarProvider className="ui-root relative">{children}</SidebarProvider>
       </I18nProvider>
     </QueryClientProvider>
   );

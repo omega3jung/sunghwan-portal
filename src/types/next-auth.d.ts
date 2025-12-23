@@ -4,8 +4,8 @@ import { Permission, Preference } from "@/types/user";
 // user type for authorization.
 export interface AuthUser {
   id: string;
-  name?: string | null;
-  email?: string | null;
+  name: string;
+  email: string;
   accessToken: string;
   permission: Permission;
   preference?: Preference;
@@ -23,7 +23,8 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    email?: string;
+    name: string;
+    email: string;
     accessToken: string;
     permission: Permission;
   }
