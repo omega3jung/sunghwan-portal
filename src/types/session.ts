@@ -6,14 +6,15 @@ export type DataScope = "LOCAL" | "REMOTE";
 
 export interface CurrentSession  {
   dataScope: DataScope; // LOCAL | REMOTE
-  user?: AuthUser;
-  accessToken?: string;
-  expires?: string;
-  isAdmin: boolean; // valid for current session only.
+  user: AuthUser;
+  accessToken: string;
+  expires: string;
+  isSuperUser: boolean;
+  superUserActivated?: Date; 
 }
 
 export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {
-  current: CurrentSession ;
+  current: CurrentSession;
   updateSession: (
     data: Partial<SessionState>,
     force?: boolean

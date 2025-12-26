@@ -1,5 +1,4 @@
 import { ColorTheme, ScreenMode } from "./config";
-import { DataScope } from "./session";
 
 export type LoginCredentials = {
   username: string;
@@ -12,30 +11,28 @@ export interface Preference {
   language: string;
 }
 
-export const ROLE_PRIORITY = {
-  MANAGER: 9,
-  LEADER: 7,
-  EMPLOYEE: 3,
-  VISITOR: 1,
-  // 8, 6, 5, 4, 2 are for later.
-  // 0 is no permission.
+export const ACCESS_LEVEL = {
+  ADMIN: 9,
+  MANAGER: 7,
+  USER: 3,
+  GUEST: 1,
+  // 8, 6, 5, 4, 2 reserved.
+  // 0 = no permission.
 } as const;
 
-export type Role = keyof typeof ROLE_PRIORITY;
-
-export type Permission = {
-  scope: DataScope;
-  role: Role;
-};
+export type AccessLevel = keyof typeof ACCESS_LEVEL;
 
 // user type.
 export interface AppUser {
   id: string;
   name: string;
-  email: string;
-  permission: Permission; // required permission info.
+  email?: string;
+  image?: string;
+  permission: AccessLevel; // permission represents user's access level (not feature permissions)
   preference?: Preference;
   accessToken?: string;
+  canUseSuperUser?: boolean; // from server.
+  canUseImpersonation?: boolean; // from server.
 }
 
 // Impersonation User type.

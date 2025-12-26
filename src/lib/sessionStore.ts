@@ -23,7 +23,7 @@ const STORAGE_KEYS = {
  * - accessToken: API 호출에 사용되는 토큰
  * - isAdmin: admin 권한 여부
  */
-export interface SessionState extends Omit<CurrentSession, "expires"> {}
+export interface SessionState extends Omit<CurrentSession, "expires"> { }
 
 /**
  * 세션 상태를 조작하는 액션들
@@ -45,7 +45,9 @@ export interface SessionActions {
  */
 const initialState: SessionState = {
   dataScope: "LOCAL",
-  isAdmin: false,
+  isSuperUser: false,
+  user: { id: undefined as never, name: undefined as never, email: undefined as never },
+  accessToken: undefined as never
 };
 
 /**

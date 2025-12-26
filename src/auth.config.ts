@@ -2,9 +2,8 @@
 import NextAuth, { type AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { authorize } from "@/auth";
+import { authorize, authSession } from "@/auth";
 import { ENVIRONMENT } from "@/lib/environment";
-import { Permission } from "@/types";
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -27,29 +26,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.permission = user.permission;
-        token.accessToken = user.accessToken;
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      session.user = {
-        id: token.id,
-        name: token.name,
-        email: token.email,
-        accessToken: token.accessToken,
-        permission: token.permission,
-        isAdmin: false,
-      };
-
-      return session;
-    },
-  },
+  callbacks: authSession
 };
 
 export default NextAuth(authOptions);

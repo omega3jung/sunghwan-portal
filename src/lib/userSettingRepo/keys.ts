@@ -1,1 +1,0 @@
-export const USER_SETTING_KEY = 'USER-SETTING';

@@ -17,10 +17,10 @@ import { useLanguageState } from "@/services/language";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { AvailableLanguages, ColorTheme } from "@/types";
 import {
-  useFetchUserSetting,
-  usePostUserSetting,
-  usePutUserSetting,
-} from "@/hooks/useUserSetting";
+  useFetchUserPreference,
+  usePostUserPreference,
+  usePutUserPreference,
+} from "@/hooks/useUserPreference";
 
 const themeButtons = [
   { name: "Aquamarine", hex: "bg-[#1d0f9f]" },
@@ -42,9 +42,9 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
 
   const { language, setLanguage } = useLanguageState();
 
-  const { data: userSetting } = useFetchUserSetting();
-  const { mutate: createUserSetting } = usePostUserSetting();
-  const { mutate: updateUserSetting } = usePutUserSetting();
+  const { data: userSetting } = useFetchUserPreference();
+  const { mutate: createUserSetting } = usePostUserPreference();
+  const { mutate: updateUserSetting } = usePutUserPreference();
 
   useEffect(() => {
     setOpen(false);
@@ -95,7 +95,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   //changeTheme();
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="h-full w-80 p-6">
         <div id="SettingMenu" className="flex flex-col gap-2">

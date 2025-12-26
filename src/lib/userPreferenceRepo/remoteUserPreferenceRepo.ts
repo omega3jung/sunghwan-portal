@@ -1,14 +1,14 @@
 import { Preference } from "@/types";
 
-export const remoteUserSettingRepo = {
+export const remoteUserPreferenceRepo = {
   fetch: async () => {
-    const res = await fetch("/api/user-setting", { method: "GET" });
-    if (!res.ok) throw new Error("Failed to fetch user setting");
+    const res = await fetch("/api/user-rreference", { method: "GET" });
+    if (!res.ok) throw new Error("Failed to fetch user preference");
     return await res.json();
   },
 
   post: async (data: Preference) => {
-    const res = await fetch("/api/user-setting", {
+    const res = await fetch("/api/user-preference", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
@@ -17,7 +17,7 @@ export const remoteUserSettingRepo = {
   },
 
   put: async (data: Preference) => {
-    const res = await fetch("/api/user-setting", {
+    const res = await fetch("/api/user-preference", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },

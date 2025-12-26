@@ -25,26 +25,30 @@ import { useImpersonationStore } from "@/lib/impersonationStore";
 export const useCurrentSession = (): UseCurrentSessionResult => {
   /**
    * next-auth 세션
-   * - 인증 상태 (authenticated / unauthenticated)
+   * - authorizatoin status (loading, authenticated / unauthenticated)
    * - expires
    */
   const session = useSession();
 
   /**
-   * zustand 세션 스토어
-   * - access_token
-   * - userId
+   * zustand session store.
+   * - dataScope
+   * - isSuperUser
+   * - user: { id, name, email, dataScope }
+   * - accessToken
    */
   const store = useSessionStore();
 
   /**
-   * zustand 대리 사용자 스토어
+   * zustand impersonation user store.
    * - actor
    * - subject
    */
   const impersonation = useImpersonationStore();
 
   /**
+   * 🔒 여기부터는 authenticated가 타입 레벨에서 보장됨
+   * 
    * UI에서 바로 쓰기 위한 세션 데이터 가공
    *
    * 원칙:
@@ -52,38 +56,28 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - 세션 데이터 구조 변경 시 이 훅만 수정
    */
   const current = useMemo<CurrentSession>(() => {
-    const { dataScope, user, accessToken } = store;
+    const { user, accessToken } = store;
 
-    // local, demo.
-    if (dataScope === "LOCAL") {
+    // local / demo
+    if (user.id === "demo") {
       return {
-        dataScope,
+        dataScope: "LOCAL",
         user,
-        accessToken,
+        accessToken: "demo-token",
         expires: "",
-        isAdmin: true,
+        isSuperUser: false,
       };
     }
 
     // remote
-    if (!session.data?.user) {
-      return {
-        dataScope: "REMOTE" as DataScope,
-        user: undefined, // AuthUser.
-        accessToken,
-        expires: "",
-        isAdmin: false,
-      };
-    }
-
     return {
-      dataScope: "REMOTE" as DataScope,
-      user: session.data.user as AuthUser,
+      dataScope: "REMOTE",
+      user,
       accessToken,
-      expires: session.data.expires,
-      isAdmin: false, // can get admin access from home.
+      expires: "",
+      isSuperUser: false,
     };
-  }, [session.data, store]);
+  }, [store, session.data]);
 
   /**
    * 세션 업데이트의 단일 진입점
@@ -92,16 +86,21 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - next-auth 세션을 강제로 revalidate
    * - 이후 zustand 세션 갱신
    */
-  const updateSession = async (state: Partial<SessionState>, force = false) => {
+  const updateSession = async (
+    state: Partial<SessionState>,
+    force = false
+  ) => {
     if (force) {
       await session.update();
     }
     store.setSession(state);
   };
 
-  // seesion hydreate.
+  // hydrate once
   useEffect(() => {
-    store.hydrateSession();
+    if (session.status === "unauthenticated") {
+      store.hydrateSession();
+    }
   }, []);
 
   // set session when sign in.
@@ -110,12 +109,9 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     if (!session.data?.user) return;
 
     store.setSession({
-      dataScope: session.data.user.permission.scope, // LOCAL | REMOTE
       user: session.data.user,
-      accessToken: session.data.user.accessToken,
     });
 
-    impersonation.setActor({ ...session.data.user });
   }, [session.status, session.data?.user]);
 
   // clear session and impersonation when sign out.

@@ -1,6 +1,5 @@
 import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
-import { Permission } from "@/types";
 
 export const authSession = {
   /*
@@ -14,7 +13,8 @@ export const authSession = {
   jwt: async ({ token, user }: { token: JWT; user?: any }) => {
     if (user) {
       token.id = user.id;
-      token.permission = user.permission;
+      token.name = user.name;
+      token.email = user.email;
       token.accessToken = user.accessToken;
     }
     return token;
@@ -29,9 +29,8 @@ export const authSession = {
    */
   session: async ({ session, token }: { session: Session; token: JWT }) => {
     session.user.id = token.id as string;
-    session.user.permission = token.permission as Permission;
-    session.user.accessToken = token.accessToken as string;
-
+    session.user.name = token.name;
+    session.user.email = token.email;
     return session;
   },
 };

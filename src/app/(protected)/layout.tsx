@@ -5,11 +5,11 @@ import { ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { LeftMenu } from "@/components/layout/LeftMenu";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavigationBar } from "@/components/layout/NavigationBar";
-import { ProtectedProviders } from "./providers";
+import { ProtectedProviders } from "./_providers";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ import { signOut } from "next-auth/react";
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const session = useCurrentSession();
-  const isDemoUser = session.data?.user?.permission.scope === "LOCAL";
+  const isDemoUser = session.current.dataScope === "LOCAL";
 
   const testSignOut = function () {
     signOut();
@@ -31,6 +31,11 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
     );
   }
 
+  if (session.status === "unauthenticated") {
+    redirect("/login");
+  }
+
+  // 👇 여기서부터는 authenticated 보장.
   return (
     // UI root container (absolute overlays are positioned relative to this)
     <ProtectedProviders>

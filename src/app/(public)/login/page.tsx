@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -25,7 +24,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { updateSession: update } = useCurrentSession();
 
   const { t } = useTranslation("login");
 

@@ -1,15 +1,12 @@
 import { DefaultSession } from "next-auth";
-import { Permission, Preference } from "@/types/user";
+import { DataScope, Preference } from "@/types/user";
 
 // user type for authorization.
+// properties are required info only.
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
-  accessToken: string;
-  permission: Permission;
-  preference?: Preference;
-  isAdmin: boolean;
 }
 
 declare module "next-auth" {
@@ -17,7 +14,7 @@ declare module "next-auth" {
     user: AuthUser;
   }
 
-  interface User extends AuthUser {}
+  interface User extends AuthUser { }
 }
 
 declare module "next-auth/jwt" {
@@ -25,7 +22,7 @@ declare module "next-auth/jwt" {
     id: string;
     name: string;
     email: string;
+    dataScope: DataScope;
     accessToken: string;
-    permission: Permission;
   }
 }
