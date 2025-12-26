@@ -9,7 +9,8 @@ import { useImpersonation } from "@/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
 import { cn } from "@/lib/utils";
 import { LinkBarItem, LinksBar } from "./LinksBar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UserMenu } from "@/components/menu/UserMenu";
+import { Separator } from "@/components/ui/separator";
 
 export type NavbarLink = {
   name: ReactNode;
@@ -46,16 +47,13 @@ export const useBreadcrumbs = () => {
 
 export const NavigationBar = (props: Props) => {
   const { update, isOpen: isOpenStore } = useLeftMenuStore();
-  const { data: session } = useCurrentSession();
-  const user = session?.user;
-
+  const { effective, isImpersonating } = useImpersonation();
   const pathName = usePathname();
 
   // remove after once ojet gets deprecated
   // const screenName = ORACLE_ROUTES[pathName as RouteKey];
   // remove after once ojet gets deprecated
 
-  const { effective, isImpersonating } = useImpersonation();
 
   const {
     title: componentTitle,
@@ -152,7 +150,7 @@ export const NavigationBar = (props: Props) => {
     <nav
       data-testid="screen-navigation-bar"
       className={cn(
-        "col-span-full flex items-center gap-3 border-b px-2 sm:px-6 md:col-start-2",
+        "col-span-full flex items-center gap-3 border-b px-2  md:col-start-2",
         props.className
       )}
     >
@@ -194,6 +192,8 @@ export const NavigationBar = (props: Props) => {
       {!!tabs?.length && <LinksBar items={tabs} />}
 
       {!!actions && <div className="flex h-full items-center">{actions}</div>}
+      <Separator orientation="vertical" className="my-2"/>
+      <UserMenu></UserMenu>
     </nav>
   );
 };
