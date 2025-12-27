@@ -1,16 +1,17 @@
 import { ChevronRight, LucideIcon, LucideProps, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { ReactElement, ReactNode, useEffect, useMemo } from "react";
+import React, { ReactElement, ReactNode, useMemo } from "react";
+
+import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
-import ShieldBadge from "./ShieldBadge";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { Separator } from "@/components/ui/separator";
 import { useImpersonation } from "@/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
 import { cn } from "@/lib/utils";
+
 import { LinkBarItem, LinksBar } from "./LinksBar";
-import { UserMenu } from "@/components/menu/UserMenu";
-import { Separator } from "@/components/ui/separator";
+import ShieldBadge from "./ShieldBadge";
 
 export type NavbarLink = {
   name: ReactNode;
@@ -53,7 +54,6 @@ export const NavigationBar = (props: Props) => {
   // remove after once ojet gets deprecated
   // const screenName = ORACLE_ROUTES[pathName as RouteKey];
   // remove after once ojet gets deprecated
-
 
   const {
     title: componentTitle,
@@ -150,7 +150,7 @@ export const NavigationBar = (props: Props) => {
     <nav
       data-testid="screen-navigation-bar"
       className={cn(
-        "col-span-full flex items-center gap-3 border-b px-2  md:col-start-2",
+        "col-span-full flex items-center gap-3 border-b px-2 md:col-start-2",
         props.className
       )}
     >
@@ -192,8 +192,10 @@ export const NavigationBar = (props: Props) => {
       {!!tabs?.length && <LinksBar items={tabs} />}
 
       {!!actions && <div className="flex h-full items-center">{actions}</div>}
-      <Separator orientation="vertical" className="my-2"/>
-      <UserMenu></UserMenu>
+      <div className="flex items-center h-full py-2 gap-1">
+        <Separator orientation="vertical" className="" />
+        <UserMenu></UserMenu>
+      </div>
     </nav>
   );
 };

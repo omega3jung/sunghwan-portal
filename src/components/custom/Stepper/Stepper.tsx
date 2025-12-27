@@ -1,12 +1,14 @@
 "use client";
 
+import React from "react";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+
+import { ButtonContent } from "./ButtonContent";
 import { StepperProps } from "./types";
 import { stepsBackgroundVariant, stepsVariant } from "./variants";
-import { ButtonContent } from "./ButtonContent";
-import React from "react";
 
 const Component = (props: StepperProps) => {
   const {

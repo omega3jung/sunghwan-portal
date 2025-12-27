@@ -2,8 +2,10 @@
 
 import { Check, Globe } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+
 import { ComboBox } from "@/components/custom/ComboBox";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -11,22 +13,21 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
-import { useLanguageState } from "@/services/language";
-import { useWindowDimensions } from "@/hooks/useWindowDimensions";
-import { AvailableLanguages, ColorTheme } from "@/types";
 import {
   useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
 } from "@/hooks/useUserPreference";
-import { useTranslation } from "react-i18next";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { useLanguageState } from "@/services/language";
+import { AvailableLanguages, ColorTheme } from "@/types";
+import { cn } from "@/utils";
 
 const themeButtons = [
-  { name: "Aquamarine", hex: "bg-[#1d0f9f]" },
-  { name: "Emerald", hex: "bg-[#008844]" },
-  { name: "Topaz", hex: "bg-[#F97414]" },
-  { name: "Ruby", hex: "bg-[#F17EAD]" },
+  { name: "aquamarine", hex: "bg-[#1d0f9f]" },
+  { name: "emerald", hex: "bg-[#0f9d9f]" },
+  { name: "topaz", hex: "bg-[#f97414]" },
+  { name: "ruby", hex: "bg-[#f17ead]" },
 ] as { name: ColorTheme; hex: string }[];
 
 type PreferencesMenuProps = {

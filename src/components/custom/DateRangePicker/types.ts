@@ -1,31 +1,32 @@
 import { VariantProps } from "class-variance-authority";
 import { SetStateAction } from "react";
 import { DateRange } from "react-day-picker";
+
 import { selectVariants } from "@/components/ui/select";
 
 export type Range = {
-  today: String;
-  this_week: String;
-  this_month: String;
-  this_year: String;
-  last_week: String;
-  last_2week: String;
-  last_3week: String;
-  last_4week: String;
-  last_month: String;
-  last_2month: String;
-  last_3month: String;
-  last_4month: String;
-  last_5month: String;
-  last_6month: String;
-  last_7month: String;
-  last_8month: String;
-  last_9month: String;
-  last_10month: String;
-  last_11month: String;
-  last_year: String;
-  last_2year: String;
-  range: String;
+  today: string;
+  this_week: string;
+  this_month: string;
+  this_year: string;
+  last_week: string;
+  last_2week: string;
+  last_3week: string;
+  last_4week: string;
+  last_month: string;
+  last_2month: string;
+  last_3month: string;
+  last_4month: string;
+  last_5month: string;
+  last_6month: string;
+  last_7month: string;
+  last_8month: string;
+  last_9month: string;
+  last_10month: string;
+  last_11month: string;
+  last_year: string;
+  last_2year: string;
+  range: string;
 };
 
 export type Period =

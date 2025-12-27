@@ -1,36 +1,36 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
-import { useSessionStore, SessionState } from "@/lib/sessionStore";
-import { DataScope, UseCurrentSessionResult, CurrentSession } from "@/types";
-import { AuthUser } from "@/types/next-auth.d";
-import { useImpersonationStore } from "@/lib/impersonationStore";
 
-/**
+import { useImpersonationStore } from "@/lib/impersonationStore";
+import { SessionState, useSessionStore } from "@/lib/sessionStore";
+import { CurrentSession, UseCurrentSessionResult } from "@/types";
+
+/*
  * =========================================================
  * useCurrentSession Hook
  * ---------------------------------------------------------
- * 역할:
- * - next-auth 세션 + sessionStore(zustand)를 결합
- * - UI / page 에서 사용하기 좋은 형태로 가공
+ * Role:
+ * - Combines next-auth session + sessionStore (zustand)
+ * - Processes it into a form suitable for use in UI/pages
  *
- * 이 훅의 목적:
- * ❌ sessionStorage 직접 접근 금지
- * ❌ zustand store 직접 접근 금지
- * ✅ "세션을 어떻게 쓴다"에만 집중하게 함
+ * Purpose of this hook:
+ * ❌ Prevents direct access to sessionStorage
+ * ❌ Prevents direct access to the zustand store
+ * ✅ Focuses solely on "how to use the session"
  *
- * 즉, 프론트엔드용 세션 Facade (중간 계층)
- * =========================================================
+ * In other words, a session facade (middle layer) for the frontend
+ * =======================================================================================
  */
 
 export const useCurrentSession = (): UseCurrentSessionResult => {
-  /**
-   * next-auth 세션
-   * - authorizatoin status (loading, authenticated / unauthenticated)
+  /*
+   * next-auth session.
+   * - authorization status (loading, authenticated / unauthenticated)
    * - expires
    */
   const session = useSession();
 
-  /**
+  /*
    * zustand session store.
    * - dataScope
    * - isSuperUser
@@ -39,31 +39,30 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    */
   const store = useSessionStore();
 
-  /**
+  /*
    * zustand impersonation user store.
    * - actor
    * - subject
    */
   const impersonation = useImpersonationStore();
 
-  /**
-   * 🔒 여기부터는 authenticated가 타입 레벨에서 보장됨
-   * 
-   * UI에서 바로 쓰기 위한 세션 데이터 가공
+  /*
+   * 🔒 From here on, authenticated is guaranteed at the type level.
    *
-   * 원칙:
-   * - page / component 에서 계산 로직을 없앤다
-   * - 세션 데이터 구조 변경 시 이 훅만 수정
+   * Processing session data for direct use in the UI.
+   *
+   * Principles:
+   * - Eliminate calculation logic from page/component.
+   * - Only update this hook when the session data structure changes.
    */
   const current = useMemo<CurrentSession>(() => {
-    const { user, accessToken } = store;
+    const { user } = store;
 
     // local / demo
     if (user.id === "demo") {
       return {
         dataScope: "LOCAL",
         user,
-        accessToken: "demo-token",
         expires: "",
         isSuperUser: false,
       };
@@ -73,23 +72,19 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     return {
       dataScope: "REMOTE",
       user,
-      accessToken,
       expires: "",
       isSuperUser: false,
     };
-  }, [store, session.data]);
+  }, [store]);
 
-  /**
-   * 세션 업데이트의 단일 진입점
+  /*
+   * Single entry point for session updates
    *
    * force = true:
-   * - next-auth 세션을 강제로 revalidate
-   * - 이후 zustand 세션 갱신
+   * - Force revalidation of the next-auth session
+   * - Renew the zustand session afterward
    */
-  const updateSession = async (
-    state: Partial<SessionState>,
-    force = false
-  ) => {
+  const updateSession = async (state: Partial<SessionState>, force = false) => {
     if (force) {
       await session.update();
     }
@@ -101,7 +96,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     if (session.status === "unauthenticated") {
       store.hydrateSession();
     }
-  }, []);
+  }, [session.status, store]);
 
   // set session when sign in.
   useEffect(() => {
@@ -111,7 +106,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     store.setSession({
       user: session.data.user,
     });
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status, session.data?.user]);
 
   // clear session and impersonation when sign out.
@@ -120,6 +115,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       impersonation.reset();
       store.clearSession();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status]);
 
   return {

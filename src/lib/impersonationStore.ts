@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import { AppUser } from "@/types";
 
 export type ImpersonationState = {
@@ -20,5 +21,10 @@ export const useImpersonationStore = create<ImpersonationState>((set, get) => ({
   setActor: (user) => set({ actor: user, subject: null, effective: user }),
   startImpersonation: (user) => set({ subject: user, effective: user }),
   stopImpersonation: () => set({ subject: null, effective: get().actor }),
-  reset: () => set({ actor: undefined as never, subject: null, effective: undefined as never }),
+  reset: () =>
+    set({
+      actor: undefined as never,
+      subject: null,
+      effective: undefined as never,
+    }),
 }));

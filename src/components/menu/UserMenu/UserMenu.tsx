@@ -1,3 +1,14 @@
+import { AvatarImage } from "@radix-ui/react-avatar";
+import {
+  Bell,
+  LogOut,
+  UserRound,
+  UserRoundMinus,
+  UserRoundPlus,
+} from "lucide-react";
+import { signOut } from "next-auth/react";
+import { useTranslation } from "react-i18next";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,21 +24,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useImpersonation } from "@/hooks/useImpersonation";
-import { cn, initials } from "@/utils";
-import { AvatarImage } from "@radix-ui/react-avatar";
-import {
-  Bell,
-  LogOut,
-  UserRound,
-  UserRoundMinus,
-  UserRoundPlus,
-} from "lucide-react";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { AccessLevel, AppUser } from "@/types";
-import { signOut } from "next-auth/react";
-import { useTranslation } from "react-i18next";
+import { useImpersonation } from "@/hooks/useImpersonation";
 import i18n from "@/lib/i18n";
+import { AccessLevel, AppUser } from "@/types";
+import { cn, initials } from "@/utils";
 
 const ns = {
   ns: "UserMenu",

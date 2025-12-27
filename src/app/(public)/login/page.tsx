@@ -1,23 +1,25 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
-import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
-import {
-  LoginStateEnum,
-  LoginFormType,
-  VerifyOTPFormType,
-  ChangePasswordformType,
-  ResetPasswordState,
-} from "./types";
+import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LOGIN_ERROR_CODES, LOGIN_ERROR_MESSAGES } from "./constants";
+import {
+  ChangePasswordformType,
+  LoginFormType,
+  LoginStateEnum,
+  ResetPasswordState,
+  VerifyOTPFormType,
+} from "./types";
 
 export default function LoginPage() {
   const router = useRouter();

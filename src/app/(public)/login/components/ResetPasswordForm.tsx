@@ -1,13 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { VerifyOTPFormType, verifyOTPFormSchema } from "../types";
+
+import { verifyOTPFormSchema, VerifyOTPFormType } from "../types";
 
 type Props = {
   isLoading: boolean;

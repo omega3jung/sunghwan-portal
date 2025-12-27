@@ -2,10 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ChangePasswordformType, changePasswordformSchema } from "../types";
+
+import { changePasswordformSchema, ChangePasswordformType } from "../types";
 import { LoginStateEnum } from "../types";
 
 type Props = {
@@ -113,9 +115,7 @@ export const ChangePasswordForm = (props: Props) => {
                   id="change-input-confirm-password"
                   data-testid="change-confirm-password-password"
                   disabled={isLoading}
-                  placeholder={t(
-                    "changePasswordForm.confirmPlaceholder"
-                  )}
+                  placeholder={t("changePasswordForm.confirmPlaceholder")}
                   type="password"
                   required
                   {...form.register("confirm")}

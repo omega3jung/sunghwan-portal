@@ -1,6 +1,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { create } from "zustand";
+
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 type LeftMenuState = {

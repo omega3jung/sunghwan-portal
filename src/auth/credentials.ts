@@ -1,11 +1,12 @@
-import fetcher from "@/services/fetcher";
-import { AccessLevel, DataScope, Preference } from "@/types";
 import axios from "axios";
+
+import fetcher from "@/services/fetcher";
 
 export type LoginResponse = {
   id: string;
   name: string;
   email: string;
+  accessToken: string;
 };
 
 // process login.
@@ -24,6 +25,7 @@ export const loginApi = async ({
         id: "demo",
         name: "Demo Guest",
         email: "demo@sunghwan.dev",
+        accessToken: "demo-token",
       };
     }
     console.log("real login");

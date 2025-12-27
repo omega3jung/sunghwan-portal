@@ -1,5 +1,6 @@
 import { Check, Minus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
 import { Step } from "./types";
 
 export const ButtonContent = ({

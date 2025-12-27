@@ -2,10 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { LoginFormType, loginFormSchema } from "../types";
+
+import { loginFormSchema, LoginFormType } from "../types";
 
 type Props = {
   isLoading: boolean;

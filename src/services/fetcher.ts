@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
+
 import { ENVIRONMENT } from "@/lib/environment";
 
 const createClient = (baseURL?: string) => {
@@ -14,8 +15,8 @@ const createClient = (baseURL?: string) => {
 
     const session = await getSession();
 
-    if (session?.user?.access_token) {
-      config.headers.Authorization = `Bearer ${session.user.access_token}`;
+    if (session?.user?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.user.accessToken}`;
     }
 
     return config;

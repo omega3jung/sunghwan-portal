@@ -1,2 +1,2 @@
 export type ScreenMode = "light" | "dark" | "system";
-export type ColorTheme = "Aquamarine" | "Emerald" | "Ruby" | "Topaz";
+export type ColorTheme = "aquamarine" | "emerald" | "ruby" | "topaz";

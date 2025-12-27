@@ -1,6 +1,7 @@
 import { ValueLabel } from "@/types/common";
+
 import { isNumber } from "./number";
-import { isChecked, isString, isJson, isBoolean } from "./string";
+import { isBoolean, isChecked, isJson, isString } from "./string";
 
 export const mapValueLabelToType = <T>(data: ValueLabel[]): T => {
   const obj: Record<string, any> = {};

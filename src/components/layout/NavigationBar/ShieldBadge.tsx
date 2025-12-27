@@ -1,4 +1,4 @@
-import { Eye, LucideProps, Shield, ShieldCheck } from 'lucide-react';
+import { Eye, LucideProps, Shield, ShieldCheck } from "lucide-react";
 
 export interface ShieldBadgeProps extends LucideProps {
   badgeText: string;
@@ -15,7 +15,7 @@ const ShieldBadge = ({ ...props }: ShieldBadgeProps) => {
     shieldText,
     strokeWidth,
     size,
-    viewOnly
+    viewOnly,
   } = props;
 
   return (
@@ -25,12 +25,14 @@ const ShieldBadge = ({ ...props }: ShieldBadgeProps) => {
           <div className="relative">
             <Shield
               size={size}
-              className={`text-${color ?? 'primary'} absolute left-0 -top-1.5`}
+              className={`text-${color ?? "primary"} absolute left-0 -top-1.5`}
               absoluteStrokeWidth={absoluteStrokeWidth}
               strokeWidth={strokeWidth}
             />
             <p
-              className={`text-${color ?? 'primary'} absolute left-[3.5px] top-[-8px] text-[6px] font-extrabold italic`}
+              className={`text-${
+                color ?? "primary"
+              } absolute left-[3.5px] top-[-8px] text-[6px] font-extrabold italic`}
             >
               {shieldText}
             </p>
@@ -41,7 +43,7 @@ const ShieldBadge = ({ ...props }: ShieldBadgeProps) => {
           <div className="relative">
             <ShieldCheck
               size={size}
-              className={`text-${color ?? 'primary'} absolute left-0 -top-1.5`}
+              className={`text-${color ?? "primary"} absolute left-0 -top-1.5`}
               absoluteStrokeWidth={absoluteStrokeWidth}
               strokeWidth={strokeWidth}
             />
@@ -52,7 +54,7 @@ const ShieldBadge = ({ ...props }: ShieldBadgeProps) => {
           <div className="relative">
             <Eye
               size={size}
-              className={`text-${color ?? 'primary'} absolute left-0 -top-1.5`}
+              className={`text-${color ?? "primary"} absolute left-0 -top-1.5`}
               absoluteStrokeWidth={absoluteStrokeWidth}
               strokeWidth={strokeWidth}
             />
@@ -60,7 +62,9 @@ const ShieldBadge = ({ ...props }: ShieldBadgeProps) => {
         )}
 
         <p
-          className={`hidden sm:block ml-3 font-extrabold italic tracking-[-0.8px] text-${color ?? 'primary'}`}
+          className={`hidden sm:block ml-3 font-extrabold italic tracking-[-0.8px] text-${
+            color ?? "primary"
+          }`}
         >
           {badgeText}
         </p>

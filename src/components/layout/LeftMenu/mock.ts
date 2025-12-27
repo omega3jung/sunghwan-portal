@@ -1,18 +1,19 @@
-import i18n from "@/lib/i18n";
 import {
-  Shapes,
+  BookOpen,
+  CalendarRange,
+  CircleUserRound,
+  Contact,
   Home,
   Puzzle,
-  BookOpen,
   Settings,
-  CircleUserRound,
-  CalendarRange,
+  Shapes,
   SquareStack,
-  UserStar,
   User,
   UserCog,
-  Contact,
+  UserStar,
 } from "lucide-react";
+
+import i18n from "@/lib/i18n";
 
 const ns = {
   ns: "LeftMenu",
@@ -22,7 +23,7 @@ const ns = {
 const content = [
   {
     title: i18n.t("home", ns),
-    path: "#",
+    path: "/",
     icon: Home,
   },
   {

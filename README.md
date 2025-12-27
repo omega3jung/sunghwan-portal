@@ -240,6 +240,6 @@ Language preferences are managed at the system level and can be extended easily.
 **Sunghwan Jung**
 Frontend Developer (React / Next.js)
 
-- GitHub: https://github.com/omega3jung
-- Repository: https://github.com/omega3jung/sunghwan-portal
-- LinkedIn: https://www.linkedin.com/in/sunghwan4jung/
+- GitHub: <https://github.com/omega3jung>
+- Repository: <https://github.com/omega3jung/sunghwan-portal>
+- LinkedIn: <https://www.linkedin.com/in/sunghwan4jung/>
