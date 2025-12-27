@@ -7,8 +7,6 @@ import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { ProtectedProviders } from "./_providers";
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 // force-dynamic to block cache store.
@@ -18,10 +16,6 @@ import { redirect } from "next/navigation";
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const session = useCurrentSession();
   const isDemoUser = session.current.dataScope === "LOCAL";
-
-  const testSignOut = function () {
-    signOut();
-  };
 
   if (session.status === "loading") {
     return (
@@ -48,18 +42,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
       {/* Right Main Screen */}
       <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
         {/* Top Navigation */}
-        <NavigationBar
-          className="h-14"
-          actions={
-            <Button
-              className="rounded-lg text-base font-normal w-full"
-              type="button"
-              onClick={testSignOut}
-            >
-              logout
-            </Button>
-          }
-        />
+        <NavigationBar className="h-14" />
 
         {/* Page Content */}
         <main className="overflow-auto p-4 min-h-0 bg-background">

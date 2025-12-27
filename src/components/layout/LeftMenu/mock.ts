@@ -1,3 +1,4 @@
+import i18n from "@/lib/i18n";
 import {
   Shapes,
   Home,
@@ -13,70 +14,74 @@ import {
   Contact,
 } from "lucide-react";
 
+const ns = {
+  ns: "LeftMenu",
+};
+
 // contents Items.
 const content = [
   {
-    title: "Home",
+    title: i18n.t("home", ns),
     path: "#",
     icon: Home,
   },
   {
-    title: "Playground",
+    title: i18n.t("playground", ns),
     path: "/playground",
     icon: Puzzle,
     children: [
       {
-        title: "IT Help Desk",
+        title: i18n.t("itHelpDesk", ns),
         path: "/playground/it-help-desk",
         icon: Puzzle,
       },
     ],
   },
   {
-    title: "Components Demo",
+    title: i18n.t("componentsDemo", ns),
     path: "/demo",
     icon: Shapes,
     children: [
       {
-        title: "Avatar Multi Combo Box",
+        title: i18n.t("avatarMultiComboBox", ns),
         path: "/demo/avatar-multi-combo-box",
         icon: CircleUserRound,
       },
       {
-        title: "Date Range Picker",
+        title: i18n.t("dateRangePicker", ns),
         path: "/demo/date-range-picker",
         icon: CalendarRange,
       },
       {
-        title: "Multi Combobox",
+        title: i18n.t("multiCombobox", ns),
         path: "/demo/multi-combo-box",
         icon: SquareStack,
       },
-      { title: "Stepper", path: "/demo/stepper", icon: Shapes },
+      { title: i18n.t("stepper", ns), path: "/demo/stepper", icon: Shapes },
     ],
   },
   {
-    title: "Role-based Rendering Menu",
+    title: i18n.t("permissionBasedRenderingMenu", ns),
     path: "/",
     icon: Shapes,
     children: [
       {
-        title: "Manager Privilege Menu",
+        title: i18n.t("adminPrivilegeMenu", ns),
         path: "/",
         icon: UserStar,
       },
       {
-        title: "Leader Privilege Menu",
+        title: i18n.t("managerPrivilegeMenu", ns),
         path: "/",
         icon: UserCog,
       },
       {
-        title: "Employee Privilege Menu",
+        title: i18n.t("userPrivilegeMenu", ns),
         path: "/",
         icon: User,
       },
       {
-        title: "Visitor Privilege Menu",
+        title: i18n.t("guestPrivilegeMenu", ns),
         path: "/",
         icon: Contact,
       },
@@ -87,12 +92,12 @@ const content = [
 // footer Items.
 const footer = [
   {
-    title: "Settings",
+    title: i18n.t("settings", ns),
     path: "/settings",
     icon: Settings,
   },
   {
-    title: "Documents",
+    title: i18n.t("documents", ns),
     path: "/documents",
     icon: BookOpen,
   },

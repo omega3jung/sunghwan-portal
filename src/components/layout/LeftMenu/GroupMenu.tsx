@@ -16,8 +16,11 @@ import { menuItems } from "./mock";
 import { Settings2 } from "lucide-react";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import { ENVIRONMENT } from "@/lib/environment";
+import { useTranslation } from "react-i18next";
 
 export function LeftMenu() {
+  const { t } = useTranslation("LeftMenu");
+
   return (
     <Sidebar collapsible="icon" className="group">
       <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
@@ -84,7 +87,7 @@ export function LeftMenu() {
           <PreferencesMenu>
             <SidebarMenuButton>
               <Settings2 />
-              <span>{"Preferences"}</span>
+              {t("preferences")}
             </SidebarMenuButton>
           </PreferencesMenu>
         </SidebarMenuItem>

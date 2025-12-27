@@ -1,8 +1,7 @@
 "use client";
 
-import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Check, Globe } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Label } from "@/components/ui/label";
@@ -21,6 +20,7 @@ import {
   usePostUserPreference,
   usePutUserPreference,
 } from "@/hooks/useUserPreference";
+import { useTranslation } from "react-i18next";
 
 const themeButtons = [
   { name: "Aquamarine", hex: "bg-[#1d0f9f]" },
@@ -45,6 +45,8 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   const { data: userSetting } = useFetchUserPreference();
   const { mutate: createUserSetting } = usePostUserPreference();
   const { mutate: updateUserSetting } = usePutUserPreference();
+
+  const { t } = useTranslation("PreferencesMenu");
 
   useEffect(() => {
     setOpen(false);
@@ -92,32 +94,31 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     }
   };
 
-  //changeTheme();
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="h-full w-80 p-6">
         <div id="SettingMenu" className="flex flex-col gap-2">
-          <div className="font-semibold">Color theme</div>
+          <div className="font-semibold">{t("colorTheme")}</div>
           <div className="flex w-full items-center justify-between px-8 py-2">
-            {themeButtons.map((e) => {
+            {themeButtons.map((item) => {
               return (
                 <Button
-                  key={e.name}
+                  key={item.name}
+                  title={item.name}
                   className={cn(
                     "rounded-full",
-                    e.hex,
-                    theme === e.name ? "h-8 w-8 p-0" : "h-4 w-4 p-0"
+                    item.hex,
+                    theme === item.name ? "h-8 w-8 p-0" : "h-4 w-4 p-0"
                   )}
-                  onClick={() => handleThemeChange(e.name)}
+                  onClick={() => handleThemeChange(item.name)}
                 >
-                  <Check className={theme === e.name ? "" : "hidden"} />
+                  <Check className={theme === item.name ? "" : "hidden"} />
                 </Button>
               );
             })}
           </div>
-          <div className="pt-4 font-semibold">Dark Mode</div>
+          <div className="pt-4 font-semibold">{t("darkMode")}</div>
           <div>
             <Switch
               checked={mode}
@@ -144,7 +145,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
 
           <div className="pt-6">
             <Label htmlFor="language-picker" className="font-semibold">
-              Language
+              {t("language")}
             </Label>
             <ComboBox
               id="language-picker"
