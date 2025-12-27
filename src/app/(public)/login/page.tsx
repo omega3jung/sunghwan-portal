@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -25,7 +24,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { updateSession: update } = useCurrentSession();
 
   const { t } = useTranslation("login");
 
@@ -59,21 +57,27 @@ export default function LoginPage() {
   // process sign in.
   const onSignIn = async (values: LoginFormType): Promise<void> => {
     try {
-      setHasSignedIn(true);
-
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         username: values.username,
         password: values.password,
         redirect: false,
-        callbackUrl: undefined,
       });
 
-      // After logging in, if the status is authenticated, you will be redirected.
-      // this file #L184.
+      // handle error.
+      if (!result?.ok) {
+        throw result?.error ?? LOGIN_ERROR_CODES.Default;
+      }
 
-      await update({ userId: values.username }, true);
+      setHasSignedIn(true);
+      // After logging in, if the status is authenticated, you will be redirected.
+      // go to redirect, #L175.
     } catch (error) {
-      const key = (error as { error: LOGIN_ERROR_CODES }).error;
+      setHasSignedIn(false);
+
+      const key =
+        error instanceof Error
+          ? (error.message as LOGIN_ERROR_CODES)
+          : LOGIN_ERROR_CODES.Default;
 
       const { textKey, severity } =
         LOGIN_ERROR_MESSAGES[key] ?? LOGIN_ERROR_MESSAGES.default;
@@ -101,7 +105,6 @@ export default function LoginPage() {
         }
       }
     } finally {
-      setHasSignedIn(false);
       setDemoLoading(false);
       setLoading(false);
     }

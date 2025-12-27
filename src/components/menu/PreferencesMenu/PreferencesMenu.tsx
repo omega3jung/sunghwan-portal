@@ -17,23 +17,23 @@ import { useLanguageState } from "@/services/language";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { AvailableLanguages, ColorTheme } from "@/types";
 import {
-  useFetchUserSetting,
-  usePostUserSetting,
-  usePutUserSetting,
-} from "@/hooks/useUserSetting";
+  useFetchUserPreference,
+  usePostUserPreference,
+  usePutUserPreference,
+} from "@/hooks/useUserPreference";
 
 const themeButtons = [
+  { name: "Aquamarine", hex: "bg-[#1d0f9f]" },
   { name: "Emerald", hex: "bg-[#008844]" },
   { name: "Topaz", hex: "bg-[#F97414]" },
   { name: "Ruby", hex: "bg-[#F17EAD]" },
-  { name: "Aquamarine", hex: "bg-[#0F9D9F]" },
 ] as { name: ColorTheme; hex: string }[];
 
 type PreferencesMenuProps = {
-  trigger: ReactNode;
+  children: React.ReactElement; // Popover trigger.
 };
 
-export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
+export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
 
   const [open, setOpen] = useState(false);
@@ -42,9 +42,9 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
 
   const { language, setLanguage } = useLanguageState();
 
-  const { data: userSetting } = useFetchUserSetting();
-  const { mutate: createUserSetting } = usePostUserSetting();
-  const { mutate: updateUserSetting } = usePutUserSetting();
+  const { data: userSetting } = useFetchUserPreference();
+  const { mutate: createUserSetting } = usePostUserPreference();
+  const { mutate: updateUserSetting } = usePutUserPreference();
 
   useEffect(() => {
     setOpen(false);
@@ -74,7 +74,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
     if (userSetting.language) {
       setLanguage(userSetting.language);
     }
-  }, [setLanguage, userSetting]);
+  }, [userSetting]);
 
   const handleThemeChange = (newTheme: string) => {
     document.querySelector("html")?.setAttribute("data-theme", newTheme);
@@ -92,73 +92,73 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
     }
   };
 
+  //changeTheme();
+
   return (
-    <Popover open={open} onOpenChange={setOpen} modal>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverPrimitive.Portal>
-        <PopoverContent className="h-full w-80 p-6">
-          <div id="SettingMenu" className="flex flex-col gap-2">
-            <div className="font-semibold">Color theme</div>
-            <div className="flex w-full items-center justify-between px-8 py-2">
-              {themeButtons.map((e) => {
-                return (
-                  <Button
-                    key={e.name}
-                    className={cn(
-                      "rounded-full",
-                      e.hex,
-                      theme === e.name ? "h-8 w-8 p-0" : "h-4 w-4 p-0"
-                    )}
-                    onClick={() => handleThemeChange(e.name)}
-                  >
-                    <Check className={theme === e.name ? "" : "hidden"} />
-                  </Button>
-                );
-              })}
-            </div>
-            <div className="pt-4 font-semibold">Dark Mode</div>
-            <div>
-              <Switch
-                checked={mode}
-                onCheckedChange={(isDark) => {
-                  setMode(isDark);
-
-                  document.documentElement.classList[isDark ? "add" : "remove"](
-                    "dark"
-                  );
-
-                  const payload = {
-                    ...userSetting,
-                    screenMode: isDark ? "dark" : "light",
-                  };
-
-                  if (!userSetting) {
-                    createUserSetting(payload);
-                  } else {
-                    updateUserSetting(payload);
-                  }
-                }}
-              />
-            </div>
-
-            <div className="pt-6">
-              <Label htmlFor="language-picker" className="font-semibold">
-                Language
-              </Label>
-              <ComboBox
-                id="language-picker"
-                className="my-2"
-                placeholder="Language Picker"
-                variant="icon"
-                options={AvailableLanguages}
-                onChange={setLanguage}
-                icon={<Globe />}
-                value={language ?? "en"}
-              />
-            </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent className="h-full w-80 p-6">
+        <div id="SettingMenu" className="flex flex-col gap-2">
+          <div className="font-semibold">Color theme</div>
+          <div className="flex w-full items-center justify-between px-8 py-2">
+            {themeButtons.map((e) => {
+              return (
+                <Button
+                  key={e.name}
+                  className={cn(
+                    "rounded-full",
+                    e.hex,
+                    theme === e.name ? "h-8 w-8 p-0" : "h-4 w-4 p-0"
+                  )}
+                  onClick={() => handleThemeChange(e.name)}
+                >
+                  <Check className={theme === e.name ? "" : "hidden"} />
+                </Button>
+              );
+            })}
           </div>
-        </PopoverContent>
-      </PopoverPrimitive.Portal>
+          <div className="pt-4 font-semibold">Dark Mode</div>
+          <div>
+            <Switch
+              checked={mode}
+              onCheckedChange={(isDark) => {
+                setMode(isDark);
+
+                document.documentElement.classList[isDark ? "add" : "remove"](
+                  "dark"
+                );
+
+                const payload = {
+                  ...userSetting,
+                  screenMode: isDark ? "dark" : "light",
+                };
+
+                if (!userSetting) {
+                  createUserSetting(payload);
+                } else {
+                  updateUserSetting(payload);
+                }
+              }}
+            />
+          </div>
+
+          <div className="pt-6">
+            <Label htmlFor="language-picker" className="font-semibold">
+              Language
+            </Label>
+            <ComboBox
+              id="language-picker"
+              className="my-2"
+              placeholder="Language Picker"
+              variant="icon"
+              options={AvailableLanguages}
+              onChange={setLanguage}
+              icon={<Globe />}
+              value={language ?? "en"}
+            />
+          </div>
+        </div>
+      </PopoverContent>
     </Popover>
   );
 };

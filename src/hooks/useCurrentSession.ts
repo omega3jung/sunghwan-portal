@@ -1,7 +1,9 @@
-import { SessionContextValue, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { useSessionStore, SessionState } from "@/lib/sessionStore";
-import { AuthUser } from "@/types";
+import { DataScope, UseCurrentSessionResult, CurrentSession } from "@/types";
+import { AuthUser } from "@/types/next-auth.d";
+import { useImpersonationStore } from "@/lib/impersonationStore";
 
 /**
  * =========================================================
@@ -20,76 +22,62 @@ import { AuthUser } from "@/types";
  * =========================================================
  */
 
-/**
- * 프론트엔드에서 사용하는 최종 세션 타입
- *
- * 구성:
- * - next-auth SessionContextValue (data, update 제외)
- * - sessionStore 액션들 (setSession 제외)
- * - UI에서 바로 쓰는 data 구조
- * - updateSession: 세션 갱신의 단일 진입점
- */
-
-export type CurrentSession = Omit<SessionContextValue, "data" | "update"> & {
-  data: {
-    expires: string;
-    user?: AuthUser;
-    ui: {
-      isAdmin: boolean;
-    };
-  };
-  updateSession: (
-    data: Partial<SessionState>,
-    force?: boolean
-  ) => Promise<void>;
-  hydrateSession: () => void;
-  clearSession: () => void;
-};
-
-export const useCurrentSession = (): CurrentSession => {
+export const useCurrentSession = (): UseCurrentSessionResult => {
   /**
    * next-auth 세션
-   * - 인증 상태 (authenticated / unauthenticated)
+   * - authorizatoin status (loading, authenticated / unauthenticated)
    * - expires
    */
-  const { data, ...session } = useSession();
+  const session = useSession();
 
   /**
-   * zustand 세션 스토어
-   * - access_token
-   * - userId
+   * zustand session store.
+   * - dataScope
+   * - isSuperUser
+   * - user: { id, name, email, dataScope }
+   * - accessToken
    */
   const store = useSessionStore();
 
   /**
+   * zustand impersonation user store.
+   * - actor
+   * - subject
+   */
+  const impersonation = useImpersonationStore();
+
+  /**
+   * 🔒 여기부터는 authenticated가 타입 레벨에서 보장됨
+   * 
    * UI에서 바로 쓰기 위한 세션 데이터 가공
    *
    * 원칙:
    * - page / component 에서 계산 로직을 없앤다
    * - 세션 데이터 구조 변경 시 이 훅만 수정
    */
-  const sessionData = useMemo(() => {
-    if (!data?.user) {
+  const current = useMemo<CurrentSession>(() => {
+    const { user, accessToken } = store;
+
+    // local / demo
+    if (user.id === "demo") {
       return {
+        dataScope: "LOCAL",
+        user,
+        accessToken: "demo-token",
         expires: "",
-        ui: {
-          isAdmin: false,
-        },
+        isSuperUser: false,
       };
     }
 
+    // remote
     return {
-      expires: data.expires,
-      user: {
-        ...data.user, // AuthUser.
-        // 필요 시 store.userId 를 합성할 수 있음
-      },
-      ui: {
-        // 추후 관리자 UI, IT Help Desk 설정 등에 활용 가능
-        isAdmin: false,
-      },
+      dataScope: "REMOTE",
+      user,
+      accessToken,
+      expires: "",
+      isSuperUser: false,
     };
-  }, [data, store]);
+  }, [store, session.data]);
 
   /**
    * 세션 업데이트의 단일 진입점
@@ -98,21 +86,46 @@ export const useCurrentSession = (): CurrentSession => {
    * - next-auth 세션을 강제로 revalidate
    * - 이후 zustand 세션 갱신
    */
-  const update = async (state: Partial<SessionState>, force = false) => {
+  const updateSession = async (
+    state: Partial<SessionState>,
+    force = false
+  ) => {
     if (force) {
       await session.update();
     }
     store.setSession(state);
   };
 
+  // hydrate once
   useEffect(() => {
-    store.hydrateSession();
+    if (session.status === "unauthenticated") {
+      store.hydrateSession();
+    }
   }, []);
+
+  // set session when sign in.
+  useEffect(() => {
+    if (session.status !== "authenticated") return;
+    if (!session.data?.user) return;
+
+    store.setSession({
+      user: session.data.user,
+    });
+
+  }, [session.status, session.data?.user]);
+
+  // clear session and impersonation when sign out.
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      impersonation.reset();
+      store.clearSession();
+    }
+  }, [session.status]);
 
   return {
     ...session,
-    data: sessionData,
-    updateSession: update,
+    current,
+    updateSession,
     hydrateSession: store.hydrateSession,
     clearSession: store.clearSession,
   };

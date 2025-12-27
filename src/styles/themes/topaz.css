@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+@layer base {
+  html[data-theme='topaz'] {
+    --primary: #f97414;
+    --muted-primary: #f4d1b7;
+    --light-background: #ffe8d6;
+
+    /* PORTAL */
+    --portal-logo: #ff8c39;
+  }
+
+  html[data-theme='topaz'].dark {
+    --portal-accent: #5f4431;
+    --portal-branding: #1b1b1d;
+    --portal-light-accent: #5f4431;
+    --portal-foreground: #f56c09;
+    --portal-background: #1e1f21;
+  }
+}

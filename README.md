@@ -6,8 +6,8 @@ Portfolio of Sunghwan Jung
 - [한국어](README.ko.md)
 
 **Sunghwan Jung's Demo Portfolio Project**
-
-I'm developing a **Next.js 14-based front-end template** designed for immediate use in real-world applications.
+I'm developing a **Next.js 14-based front-end architecture template**
+focused on **authentication, session design, and real-world scalability**.
 
 > Beyond a simple UI demo,  
 > this project aims for a production-oriented structure that considers **authentication, authorization, sessions, and environment separation**.
@@ -18,7 +18,7 @@ I'm developing a **Next.js 14-based front-end template** designed for immediate 
 
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
-- **Auth**: NextAuth (Credentials Provider, JWT Strategy)
+- **Auth**: NextAuth v4 (Credentials Provider, JWT Strategy)
 - **State**: Zustand
 - **Data Fetching**: Axios + TanStack Query
 - **UI**: Tailwind CSS, shadcn/ui
@@ -37,23 +37,50 @@ I'm developing a **Next.js 14-based front-end template** designed for immediate 
 
 ## Authentication & Session Architecture
 
-This project was designed to **simplify authentication with NextAuth at its core**,
-while also considering the scalability often required in practice.
+This project uses **NextAuth v4 with a JWT-based session strategy**,
+designed for use with the **Next.js 14 App Router** and Edge Middleware.
+
+The authentication layer is intentionally separated into
+**configuration**, **domain logic**, and **runtime enforcement**.
 
 ### Authentication Flow
 
-1. The user accesses a protected path.
-2. Authentication is checked in `middleware.ts`.
-3. If not authenticated, redirect to `/login`.
-4. Upon successful login, create a JWT-based session.
-5. Subsequent requests use the session-based access_token.
+1. User accesses a protected route.
+2. Edge Middleware validates authentication using a JWT
+   (no database or server session lookup).
+3. If unauthenticated, the request is redirected to `/login`.
+4. On successful login:
+   - Credentials are validated via `authorize`
+   - JWT is issued and stored as an HTTP-only cookie
+5. JWT becomes the single source of truth for authentication.
+6. Client-side session is derived from the JWT for UI consumption.
 
-### Key Points
 
-- **Using JWT Strategy**
-- The access_token is stored in the NextAuth session
-- An Axios interceptor automatically injects the Authorization header into API requests
-- The layout does not perform authentication decisions and only serves as the UI.
+### Key Design Decisions
+
+- **JWT Strategy (No Database Session)**
+- Authentication is enforced at the **middleware level**
+- `getToken()` is used for Edge-safe authentication checks
+- `access_token` and permission data are stored inside the JWT
+- UI layouts remain authentication-agnostic
+- The structure is compatible with future OAuth or role-based authorization
+
+### Why JWT + Session Facade?
+
+This project intentionally separates authentication concerns into
+**three layers**, instead of relying solely on NextAuth defaults.
+
+- **JWT (source of truth)**  
+  Used for stateless authentication and edge-safe authorization checks.
+
+- **NextAuth Session (UI projection)**  
+  A client-friendly abstraction derived from JWT, optimized for React usage.
+
+- **Session Facade (useCurrentSession + Zustand)**  
+  A domain-specific session layer that:
+  - normalizes session shape for UI
+  - supports LOCAL / REMOTE data scopes
+  - isolates session logic from pages and components
 
 ---
 
@@ -71,23 +98,35 @@ app/
  │   └─ auth/
  │       └─ [...nextauth]/route.ts
 
+auth/
+ ├─ authorize.ts      # Credential validation & user normalization
+ ├─ credentials.ts    # Login API abstraction
+ ├─ session.ts        # JWT ↔ Session projection logic
+ └─ index.ts
+
 lib/
  ├─ environment.ts
- ├─ authOptions.ts
- └─ sessionStore.ts
+ ├─ routes.ts
+ └─ sessionStore.ts   # Client-side session cache (Zustand)
 
 services/
  ├─ fetcher.ts
- └─ credentials.service.ts
-
-hooks/
- ├─ useCurrentSession.ts
- └─ useDatabaseUser.ts
+ ├─ credentials.ts
+ └─ sessionStore.ts
 
 types/
- ├─ auth.ts
+ ├─ next-auth.d.ts
+ ├─ session.ts
  └─ user.ts
+
+middleware.ts
+auth.config.ts
 ```
+
+- Authentication logic is grouped under the `auth/` domain
+- JWT is treated as the authentication source of truth
+- Client session is intentionally derived and reshaped for UI usage
+- Middleware relies solely on JWT for Edge compatibility
 
 ---
 
@@ -143,7 +182,8 @@ Language preferences are managed at the system level and can be extended easily.
 
 - This project is a demo project for portfolio purposes.
 - Some APIs are based on mock/demo APIs.
-- The authentication structure is designed for practical use and can be expanded with OAuth, role-based authorization, and database authentication.
+- The authentication structure is designed for practical use and supports future expansion to OAuth providers, role-based authorization, and database-backed sessions.
+
 
 ---
 

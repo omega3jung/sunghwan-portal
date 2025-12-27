@@ -92,3 +92,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+@import 'themes/aquamarine.css';
+@import 'themes/emerald.css';
+@import 'themes/ruby.css';
+@import 'themes/topaz.css';

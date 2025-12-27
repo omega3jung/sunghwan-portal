@@ -13,7 +13,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { collapsibleItems } from "./mock";
+import { menuItems } from "./mock";
 import {
   Collapsible,
   CollapsibleContent,
@@ -30,7 +30,7 @@ export function LeftMenu() {
           <SidebarGroupLabel>Portfolio Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {collapsibleItems.map((item) =>
+              {menuItems.content.map((item) =>
                 item.children ? (
                   <Collapsible className="group/collapsible" key={item.title}>
                     <SidebarMenuItem key={item.title}>
@@ -61,7 +61,7 @@ export function LeftMenu() {
                 ) : (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <a href={item.path}>
                         <item.icon />
                         <span>{item.title}</span>
                       </a>

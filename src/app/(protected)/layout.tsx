@@ -5,8 +5,11 @@ import { ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { LeftMenu } from "@/components/layout/LeftMenu";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import I18nProvider from "@/components/layout/I18nProvider/I18nProvider";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { ProtectedProviders } from "./_providers";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";
@@ -14,6 +17,11 @@ import I18nProvider from "@/components/layout/I18nProvider/I18nProvider";
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const session = useCurrentSession();
+  const isDemoUser = session.current.dataScope === "LOCAL";
+
+  const testSignOut = function () {
+    signOut();
+  };
 
   if (session.status === "loading") {
     return (
@@ -23,29 +31,59 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
     );
   }
 
+  if (session.status === "unauthenticated") {
+    redirect("/login");
+  }
+
+  // 👇 여기서부터는 authenticated 보장.
   return (
-    <I18nProvider namespaces={["common", "home"]}>
-      {children}
-      <SidebarProvider className="flex h-full">
-        {/* Left Menu */}
-        <LeftMenu></LeftMenu>
+    // UI root container (absolute overlays are positioned relative to this)
+    <ProtectedProviders>
+      {/* Demo Overlay */}
+      {isDemoUser && <DemoOverlay />}
 
-        {/* Right Main Screen */}
-        <div className="grid grid-rows-[auto_1fr_auto] h-full w-full min-h-0">
-          {/* Top Navigation */}
-          <header className="h-14 flex items-center">
-            <SidebarTrigger />
-          </header>
+      {/* Left Menu */}
+      <LeftMenu></LeftMenu>
 
-          {/* Page Content */}
-          <main className="overflow-auto p-4 min-h-0">{children}</main>
+      {/* Right Main Screen */}
+      <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
+        {/* Top Navigation */}
+        <NavigationBar
+          className="h-14"
+          actions={
+            <Button
+              className="rounded-lg text-base font-normal w-full"
+              type="button"
+              onClick={testSignOut}
+            >
+              logout
+            </Button>
+          }
+        />
 
-          <footer className="h-12 p-4 border-t text-sm text-muted-foreground">
+        {/* Page Content */}
+        <main className="overflow-auto p-4 min-h-0 bg-background">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="h-10 px-4 py-2 border-t text-sm text-muted-foreground">
+          <a href="https://github.com/omega3jung/sunghwan-portal">
             © 2025 SungHwan Jung.
-            <a href="https://github.com/omega3jung/sunghwan-portal"></a>
-          </footer>
-        </div>
-      </SidebarProvider>
-    </I18nProvider>
+          </a>
+        </footer>
+      </div>
+    </ProtectedProviders>
   );
 }
+
+const DemoOverlay = () => {
+  return (
+    <>
+      <div className="absolute inset-0 w-full h-full border-2 border-orange-400 z-50 pointer-events-none"></div>
+      <div className="absolute bottom-2 right-4 text-xl font-bold text-orange-400 z-50 pointer-events-none">
+        Demo
+      </div>
+    </>
+  );
+};
