@@ -1,94 +1,173 @@
 # sunghwan-portal
-Portfolio of Sunghwan Jung
 
-**Sunghwan Jung의 데모 포트폴리오 프로젝트**  
-실무에서 바로 사용할 수 있는 **Next.js 14 기반 프론트엔드 템플릿**을 목표로 개발 중입니다.
+정성환 포트폴리오
 
-> 단순 UI 데모가 아닌,  
-> **인증 · 권한 · 세션 · 환경 분리**까지 고려한 실전형 구조를 지향합니다.
+**정성환 데모 포트폴리오 프로젝트**
+**Next.js 14 기반 프런트엔드 아키텍처 템플릿**을 개발 중입니다.
+**인증, 세션 설계 및 실제 확장성**에 중점을 두었습니다.
+
+> 단순한 UI 데모를 넘어,
+> 이 프로젝트는 **인증, 권한 부여, 세션 및 환경 분리**를 고려한 실제 운영 환경에 적합한 구조를 목표로 합니다.
 
 ---
 
-## Tech Stack
+## 기술 스택
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Auth**: NextAuth (Credentials Provider, JWT Strategy)
-- **State**: Zustand
-- **Data Fetching**: Axios + TanStack Query
+- **프레임워크**: Next.js 14 (앱 라우터)
+- **언어**: TypeScript
+- **인증**: NextAuth v4 (자격 증명 제공자, JWT 전략)
+- **상태**: Zustand
+- **데이터 가져오기**: Axios + TanStack 쿼리
 - **UI**: Tailwind CSS, shadcn/ui
-- **Icons**: lucide-react
+- **아이콘**: lucide-react-
+- **상태 관리**: Zustand (클라이언트 상태)
+- **데이터 가져오기**: Axios + TanStack 쿼리
 
 ---
 
-## Project Goals
+## 프로젝트 목표
 
-- 실무에서 재사용 가능한 **프론트엔드 기초 템플릿**
-- 인증 / 인가 로직의 명확한 책임 분리
-- 환경별 설정이 명확한 구조
-- 이후 DB / API 확장이 쉬운 구조
-
----
-
-## Authentication & Session Architecture
-
-이 프로젝트는 **NextAuth를 중심으로 인증을 단순화**하면서도  
-실무에서 자주 요구되는 확장성을 고려해 설계되었습니다.
-
-### Authentication Flow
-
-1. 사용자가 보호된 경로 접근
-2. `middleware.ts`에서 인증 여부 확인
-3. 미인증 시 `/login`으로 redirect
-4. 로그인 성공 시 JWT 기반 세션 생성
-5. 이후 요청은 session 기반으로 access_token 사용
-
-### Key Points
-
-- **JWT Strategy 사용**
-- access_token은 NextAuth session에 저장
-- API 요청 시 axios interceptor에서 자동으로 Authorization 헤더 주입
-- layout은 인증 판단을 하지 않고 UI 역할만 담당
+- 재사용 가능한 **프런트엔드 기본 템플릿**
+- 인증/인가 로직에 대한 책임 분리 명확화
+- 각 환경에 대한 명확한 설정이 가능한 구조
+- 향후 DB/API 확장을 용이하게 하는 구조
 
 ---
 
-## Project Structure (Simplified)
+## 이 프로젝트에서 보여주는 내용
+
+이 프로젝트는 프런트엔드 데모에서 종종 간과되는 아키텍처적 고려 사항에 중점을 둡니다. 응용 분야:
+
+- 엣지 레이어에서의 인증 강제 적용
+- 인증, 세션, UI 관련 사항의 명확한 분리
+- 확장 가능한 UI 사용을 위한 도메인 중심 세션 모델링
+- 환경 인식 구성
+- 실용적인 협업 규칙(PR, 레이블, 소유권)
+
+목표는 기능 완성도가 아니라 구조적 명확성과 확장성입니다.
+
+---
+
+## 협업 및 워크플로
+
+개인 데모 프로젝트이지만, 실제 팀 워크플로를 반영하도록 구성되었습니다.
+
+- 관례적인 브랜치 접두사(`feat/`, `fix/`, `refactor/`, `docs/`, `chore/`, `test/`)
+- 문서화를 통한 PR 제목 규칙 준수
+- 브랜치 접두사를 기반으로 한 PR 레이블 자동 지정
+- 코드 소유자 정의를 통해 검토 범위 명확화
+- 별도의 CONTRIBUTING 가이드(영어/코인큐베이터)
+
+이러한 규칙들은 의도적으로 최소화되었으며, 불필요한 복잡성을 추가하지 않고 확장 가능하도록 설계되었습니다.
+
+---
+
+## 인증 및 세션 아키텍처
+
+이 프로젝트는 **Next.js 14 앱 라우터** 및 엣지 미들웨어와 함께 사용하도록 설계된 **JWT 기반 세션 전략을 사용하는 NextAuth v4**를 사용합니다.
+
+인증 계층은 의도적으로
+**설정**, **도메인 로직** 및 **런타임 적용**으로 분리되어 있습니다.
+
+---
+
+### 인증 흐름
+
+이 흐름은 런타임 결합을 최소화하면서
+인증 적용을 중앙 집중화하도록 설계되었습니다.
+
+1. 사용자가 보호된 경로에 접근합니다.
+2. 엣지 미들웨어는 JWT를 사용하여 인증을 검증합니다.
+   (데이터베이스 또는 서버 세션 조회 없음)
+3. 인증되지 않은 경우 요청은 `/login`으로 리디렉션됩니다.
+4. 로그인에 성공하면:
+   - `authorize`를 통해 자격 증명을 검증합니다.
+   - JWT가 발급되어 HTTP 전용 쿠키로 저장됩니다.
+5. JWT는 인증의 유일한 원천이 됩니다.
+6. 클라이언트 측 세션은 UI에서 사용하기 위해 JWT에서 파생됩니다.
+
+---
+
+### 주요 설계 결정 사항
+
+- **JWT 전략 (데이터베이스 세션 없음)**
+- 인증은 **미들웨어 레벨**에서 시행됩니다.
+- `getToken()`을 사용하여 엣지 환경에서도 안전한 인증 검사를 수행합니다.
+- `access_token`과 권한 데이터는 JWT 내부에 저장됩니다.
+- UI 레이아웃은 인증 방식에 관계없이 동일하게 유지됩니다.
+- 이 구조는 향후 OAuth 또는 역할 기반 권한 부여와 호환됩니다.
+
+### JWT + 세션 파사드를 사용하는 이유
+
+이 프로젝트는 NextAuth의 기본 기능에만 의존하는 대신, 인증 관련 사항을 의도적으로 세 가지 계층으로 분리했습니다.
+
+- **JWT (진실의 원천)**
+  상태 비저장 인증 및 엣지 환경에서도 안전한 권한 부여 검사에 사용됩니다.
+
+- **NextAuth 세션 (UI 프로젝션)**
+  JWT에서 파생된 클라이언트 친화적인 추상화로, React 사용에 최적화되어 있습니다.
+
+- **세션 파사드(useCurrentSession + 상태)**
+  다음과 같은 기능을 제공하는 도메인별 세션 레이어입니다.
+
+- UI를 위한 세션 형태 정규화
+
+- 로컬/원격 데이터 범위 지원
+
+- 세션 로직을 페이지 및 컴포넌트와 분리
+
+---
+
+## 프로젝트 구조 (간소화)
 
 ```txt
 app/
- ├─ (public)/
- │   └─ login/
- ├─ (protected)/
- │   ├─ home/
- │   └─ layout.tsx
- ├─ api/
- │   └─ auth/
- │       └─ [...nextauth]/route.ts
+├─ (공개)/
+│ └─ login/
+├─ (보호됨)/
+│ ├─ demo/
+│ ├─ it-help-desk/
+│ └─ layout.tsx
+├─ api/
+│ └─ auth/
+│ └─ [...nextauth]/route.ts
+
+auth/
+├─ authorize.ts # 자격 증명 유효성 검사 및 사용자 정규화
+├─ credentials.ts # 로그인 API 추상화
+├─ session.ts # JWT ↔ 세션 프로젝션 로직
+└─ index.ts
 
 lib/
- ├─ environment.ts
- ├─ authOptions.ts
- └─ sessionStore.ts
+├─ environment.ts
+├─ routes.ts
+└─ sessionStore.ts # 클라이언트 측 세션 캐시(상태)
 
 services/
- ├─ fetcher.ts
- └─ credentials.service.ts
-
-hooks/
- ├─ useCurrentSession.ts
- └─ useDatabaseUser.ts
+├─ fetcher.ts
+├─ credentials.ts
+└─ sessionStore.ts
 
 types/
- ├─ auth.ts
- └─ user.ts
+├─ next-auth.d.ts
+├─ session.ts
+└─ user.ts
+
+middleware.ts
+auth.config.ts
 ```
+
+- 인증 로직은 `auth/` 도메인에 그룹화되어 있습니다.
+- JWT는 인증의 핵심 정보원으로 사용됩니다.
+- 클라이언트 세션은 UI 사용에 맞게 의도적으로 파생 및 재구성됩니다.
+- 미들웨어는 에지 컴퓨팅과의 호환성을 위해 JWT에만 의존합니다.
 
 ---
 
-## Environment & Configuration
+## 환경 및 설정
 
-- 환경 변수는 env-cmd를 사용해 관리합니다.
-- .env-cmdrc Example
+- 환경 변수는 env-cmd를 사용하여 관리됩니다.
+- .env-cmdrc 예시
 
 ```json
 {
@@ -107,45 +186,55 @@ types/
 
 ---
 
-## Getting Started
+## 시작하기
+
+이 프로젝트에는 데모 인증 흐름이 포함되어 있습니다.
+일부 사용자 데이터 및 권한은 데모 목적으로 모의되었습니다.
 
 ```npm
 npm install
 npm run dev
 ```
-- 브라우저에서 아래 주소로 확인할 수 있습니다.
+
+- 브라우저에서 다음 주소로 애플리케이션을 엽니다.
+
 ```txt
 http://localhost:3000
 ```
 
+_선택 사항_:
+
+> 데모 자격 증명 및 가장 흐름은 코드베이스에 문서화되어 있습니다.
+
 ---
 
-## Internationalization (i18n)
+## 국제화(i18n)
 
-이 프로젝트는 애플리케이션 수준에서 다은과 같은 다국어를 지원합니다:
+이 프로젝트는 애플리케이션 수준에서 다국어를 지원하여,
+언어 로직을 페이지에 종속시키지 않고도 전 세계적으로 사용 가능한 UI를 구현할 수 있습니다.
 
 - 영어
 - 스페인어
 - 프랑스어
 - 한국어
 
-언어 설정은 시스템 수준에서 관리되며, 필요에 따라 쉽게 확장할 수 있습니다..
+언어 기본 설정은 시스템 수준에서 관리되며 쉽게 확장할 수 있습니다.
 
 ---
 
-## Notes
+## 참고 사항
 
-- 본 프로젝트는 포트폴리오 목적의 데모 프로젝트입니다.
-- 일부 API는 Mock / Demo API 기준으로 구성되어 있습니다.
-- 인증 구조는 실무 기준으로 설계되어 있어 OAuth, Role 기반 권한, DB 인증 등으로 확장이 가능합니다.
+- 이 프로젝트는 포트폴리오용 데모 프로젝트입니다.
+- 일부 API는 모의/데모 API를 기반으로 합니다.
+- 인증 구조는 실제 사용을 위해 설계되었으며, 향후 OAuth 제공업체, 역할 기반 권한 부여 및 데이터베이스 기반 세션으로 확장할 수 있도록 지원합니다.
 
 ---
 
-## Author
+## 작성자
 
-**Sunghwan Jung**
-Frontend Developer (React / Next.js)
+**정성환**
+프론트엔드 개발자 (React / Next.js)
 
 - GitHub: https://github.com/omega3jung
-- Repository: https://github.com/omega3jung/sunghwan-portal
+- 저장소: https://github.com/omega3jung/sunghwan-portal
 - LinkedIn: https://www.linkedin.com/in/sunghwan4jung/

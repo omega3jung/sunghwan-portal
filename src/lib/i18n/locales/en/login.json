@@ -68,6 +68,6 @@
     "expired-credentials": "Your Password has not been updated for last 6 months, Please reset your password",
     "new-password-required": "You need to set up a password.",
     "internal-error": "Something went wrong. Please submit a ticket",
-    "two-factor-authentication-required": ""
+    "two-factor-authentication-required": "Two factor authentication is required"
   }
 }
