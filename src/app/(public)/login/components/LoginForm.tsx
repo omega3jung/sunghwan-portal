@@ -3,17 +3,9 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { LoginFormType, loginFormSchema } from "../types";
-import i18n from "@/lib/i18n";
 
 type Props = {
   isLoading: boolean;
@@ -34,79 +26,70 @@ export const LoginForm = (props: Props) => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2">
-      <div>
+      <div className="pb-2">
         <p className="text-center text-2xl font-normal leading-[48px] md:text-4xl">
-          {t("loginForm.welcome")}
+          {t("loginForm.title")}
         </p>
         <p className="text-center leading-5 md:text-lg">
-          {t("loginForm.signInMessage")}
+          {t("loginForm.message")}
         </p>
       </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-2"
-        >
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">
-                  {t("loginForm.username")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    data-testid="login-username"
-                    disabled={isLoading}
-                    className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
-                    placeholder={t("loginForm.usernamePlaceholder")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">
-                  {t("loginForm.password")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    data-testid="login-password"
-                    disabled={isLoading}
-                    className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
-                    placeholder={t("loginForm.passwordPlaceholder")}
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            className="mt-6 h-12 rounded-lg text-base font-normal w-full"
-            type="submit"
-            disabled={isLoading}
-            data-testid="login-submit"
-          >
-            {isLoading ? (
-              <>
-                {t("loading.loggingIn")}
-                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-              </>
-            ) : (
-              t("loginForm.logIn")
-            )}
-          </Button>
-        </form>
-      </Form>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col gap-2"
+      >
+        <FieldGroup>
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="login-input-username">
+                  {t("common.username")}
+                </FieldLabel>
+                <Input
+                  id="login-input-username"
+                  data-testid="login-username"
+                  disabled={isLoading}
+                  className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
+                  placeholder={t("common.usernamePlaceholder")}
+                  required
+                  {...form.register("username")}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="login-input-password">
+                  {t("common.password")}
+                </FieldLabel>
+                <Input
+                  id="login-input-password"
+                  disabled={isLoading}
+                  className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
+                  placeholder={t("common.passwordPlaceholder")}
+                  type="password"
+                  required
+                  {...form.register("password")}
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <Field>
+            <Button
+              className="mt-6 h-12 rounded-lg text-base font-normal w-full"
+              type="submit"
+              disabled={isLoading}
+              data-testid="login-submit"
+            >
+              {isLoading ? (
+                <>
+                  {t("loading.loggingIn")}
+                  <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                </>
+              ) : (
+                t("loginForm.logIn")
+              )}
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
     </div>
   );
 };

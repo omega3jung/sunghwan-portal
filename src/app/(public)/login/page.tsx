@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -230,17 +230,18 @@ export default function LoginPage() {
         <ChangePasswordForm
           isLoading={loading}
           username={currentID}
+          formType={LoginStateEnum.CHANGE}
           onSubmit={onChangePassword}
           onBack={() => setFormType(LoginStateEnum.LOGIN)}
         />
       )}
 
-      <div className="mt-6 flex flex-col justify-center text-center">
+      <div className="flex flex-col justify-center text-center border-t-[1px] border-primary/20 pt-6">
         <p>
           <Button
             variant="link"
             className="py-0 text-base font-semibold uppercase"
-            onClick={() => setFormType(LoginStateEnum.CHANGE)}
+            onClick={() => setFormType(LoginStateEnum.RESET)}
           >
             {t("loginForm.canNotLogin")}
           </Button>

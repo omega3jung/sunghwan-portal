@@ -1,5 +1,9 @@
 {
   "common": {
+    "username": "ID de usuario",
+    "usernamePlaceholder": "Ingresa tu ID de usuario",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
     "language": "Idioma",
     "languagePlaceholder": "Selector de idioma",
     "submit": "Enviar",
@@ -20,48 +24,40 @@
     "loggingIn": "Iniciando sesión"
   },
   "loginForm": {
-    "welcome": "¡Hola, bienvenido!",
-    "signInMessage": "Inicia sesión para acceder a tu cuenta.",
-    "username": "ID de usuario",
-    "usernamePlaceholder": "Ingresar ID de usuario",
-    "password": "Contraseña",
-    "passwordPlaceholder": "Ingresar contraseña",
-    "forgotPassword": "¿Olvidó su contraseña?",
+    "title": "¡Hola, bienvenido!",
+    "message": "Inicia sesión para acceder a tu cuenta.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
     "logIn": "Iniciar sesión",
-    "tryDemo": "Probar demo",
-    "canNotLogin": "¿No puede iniciar sesión?",
+    "tryDemo": "Probar la demo",
+    "canNotLogin": "¿No puedes iniciar sesión?",
     "useDifferentAccount": "Iniciar sesión con otra cuenta",
     "connectMessage": "Conectar con el portal",
     "helpCenter": "Centro de ayuda",
     "privacyAndTerms": "Privacidad y términos"
   },
-  "ChangePasswordForm": {
-    "title": "Administrar contraseña",
+  "changePasswordForm": {
     "reset": {
-      "title": "Restablecer su contraseña",
-      "message": "Primero debe solicitarlo a través de su gerente o de RR. HH."
+      "title": "Restablece tu contraseña",
+      "message": "OTP confirmado. Por favor, establece tu nueva contraseña."
     },
-    "update": {
+    "change": {
       "title": "Actualiza tu contraseña",
-      "username": "ID de usuario",
-      "usernamePlaceholder": "Ingresa tu ID de usuario",
+      "message": "Introduce tu contraseña actual y establece la nueva.",
       "currentPassword": "Contraseña actual",
-      "currentPasswordPlaceholder": "Ingresa tu contraseña actual",
-      "newPassword": "Nueva contraseña",
-      "newPasswordPlaceholder": "Ingresa tu nueva contraseña",
-      "confirmPassword": "Confirma la nueva contraseña",
-      "confirmPlaceholder": "Confirma la nueva contraseña",
-      "passwordDontMatch": "Las contraseñas no coinciden"
-    }
+      "currentPlaceholder": "Introduce tu contraseña actual"
+    },
+    "newPassword": "Nueva contraseña",
+    "newPasswordPlaceholder": "Introduce tu nueva contraseña",
+    "confirmPassword": "Confirma la nueva contraseña",
+    "confirmPlaceholder": "Confirma la nueva contraseña",
+    "passwordDontMatch": "Las contraseñas no coinciden"
   },
   "resetPasswordForm": {
     "title": "¿Olvidaste tu contraseña?",
-    "message": "Ingresa tu ID y correo electrónico y te enviaremos un OTP para restablecer tu contraseña.",
-    "dontHaveEmail": "Si no tienes un correo electrónico asociado a tu cuenta, por favor contacta con RR. HH.",
-    "userid": "ID de usuario",
-    "idPlaceholder": "Ingrese su ID",
+    "message": "Te enviaremos un OTP para restablecer tu contraseña por correo electrónico.",
+    "dontHaveEmail": "Si no tienes un correo electrónico asociado a tu cuenta, contacta con RR. HH.",
     "email": "Correo electrónico",
-    "emailPlaceholder": "Ingrese su dirección de correo electrónico",
+    "emailPlaceholder": "Introduce tu correo electrónico address",
     "otpSend": "Enviar OTP",
     "otpResend": "Reenviar OTP"
   },
@@ -72,6 +68,6 @@
     "expired-credentials": "Su contraseña no se ha actualizado en los últimos 6 meses. Restablezca su contraseña",
     "new-password-required": "Necesita configurar una contraseña",
     "internal-error": "Algo salió mal. Envíe un ticket",
-    "two-factor-authentication-required": ""
+    "two-factor-authentication-required": "Se requiere autenticación de dos factores"
   }
 }

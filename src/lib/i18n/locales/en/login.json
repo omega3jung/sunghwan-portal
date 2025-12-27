@@ -1,5 +1,9 @@
 {
   "common": {
+    "username": "User ID",
+    "usernamePlaceholder": "Enter your User ID",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your Password",
     "language": "Language",
     "languagePlaceholder": "Language Picker",
     "submit": "Submit",
@@ -20,12 +24,8 @@
     "loggingIn": "Logging in"
   },
   "loginForm": {
-    "welcome": "Hi, Welcome!",
-    "signInMessage": "Sign in to access your account.",
-    "username": "User ID",
-    "usernamePlaceholder": "Enter User ID",
-    "password": "Password",
-    "passwordPlaceholder": "Enter Password",
+    "title": "Hi, Welcome!",
+    "message": "Sign in to access your account.",
     "forgotPassword": "Forgot Password?",
     "logIn": "Log in",
     "tryDemo": "Try Demo",
@@ -35,31 +35,27 @@
     "helpCenter": "Help Center",
     "privacyAndTerms": "Privacy and Terms"
   },
-  "ChangePasswordForm": {
-    "title": "Manage Password",
+  "changePasswordForm": {
     "reset": {
       "title": "Reset your password",
-      "message": "You need to request via your Manger or HR first."
+      "message": "OTP has been confirmed. Please set your new password."
     },
-    "update": {
+    "change": {
       "title": "Update your password",
-      "username": "User ID",
-      "usernamePlaceholder": "Enter your User ID",
+      "message": "Please enter current password and set your new password.",
       "currentPassword": "Current Password",
-      "currentPasswordPlaceholder": "Enter your current password",
-      "newPassword": "New Password",
-      "newPasswordPlaceholder": "Enter your new password",
-      "confirmPassword": "Confirm New Password",
-      "confirmPlaceholder": "Confirm the new password",
-      "passwordDontMatch": "Passwords don't match"
-    }
+      "currentPlaceholder": "Enter your current password"
+    },
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm New Password",
+    "confirmPlaceholder": "Confirm the new password",
+    "passwordDontMatch": "Passwords don't match"
   },
   "resetPasswordForm": {
     "title": "Forgot password",
-    "message": "Enter your ID and email then we'll send you an OTP to reset your password.",
+    "message": "We'll send you an OTP to reset your password through email.",
     "dontHaveEmail": "If you don't have an email associated with your account, please contact HR.",
-    "userid": "User ID",
-    "idPlaceholder": "Enter your ID",
     "email": "Email",
     "emailPlaceholder": "Enter your email address",
     "otpSend": "Send OTP",

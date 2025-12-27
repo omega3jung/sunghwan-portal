@@ -30,6 +30,7 @@ export type VerifyOTPFormType = z.infer<typeof verifyOTPFormSchema>;
 export const changePasswordformSchema = z
   .object({
     username: z.string().min(1),
+    current: z.string(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirm: z.string(),
   })
