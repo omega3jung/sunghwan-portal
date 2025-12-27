@@ -26,7 +26,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
-  callbacks: authSession
+  callbacks: authSession,
 };
 
 export default NextAuth(authOptions);

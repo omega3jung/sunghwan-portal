@@ -1,7 +1,9 @@
 import { type VariantProps } from "class-variance-authority";
 import React from "react";
-import { ValueLabel } from "@/types/common";
+
 import { badgeVariants } from "@/components/ui/badge";
+import { ValueLabel } from "@/types/common";
+
 import { comboBoxVariants } from "./variants";
 
 export type ButtonVariant =

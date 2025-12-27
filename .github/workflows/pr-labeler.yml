@@ -1,0 +1,45 @@
+name: Auto label PR by branch prefix
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label based on branch name
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+
+            let label = null;
+
+            if (branch.startsWith('feat/')) {
+              label = 'feat';
+            } else if (branch.startsWith('fix/')) {
+              label = 'fix';
+            } else if (branch.startsWith('refactor/')) {
+              label = 'refactor';
+            } else if (branch.startsWith('docs/')) {
+              label = 'docs';
+            } else if (branch.startsWith('chore/')) {
+              label = 'chore';
+            } else if (branch.startsWith('test/')) {
+              label = 'test';
+            }
+
+            if (!label) {
+              console.log(`No matching label for branch: ${branch}`);
+              return;
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [label],
+            });

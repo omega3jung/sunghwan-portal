@@ -7,7 +7,7 @@ export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
     language: "Language",
   },
 
-  es: {    
+  es: {
     colorTheme: "Tema de color",
     darkMode: "Modo oscuro",
     language: "Idioma",

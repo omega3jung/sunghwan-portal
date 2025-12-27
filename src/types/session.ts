@@ -1,16 +1,17 @@
-import { SessionState } from "@/lib/sessionStore";
-import { AuthUser } from "./next-auth.d";
 import { SessionContextValue } from "next-auth/react";
+
+import { SessionState } from "@/lib/sessionStore";
+
+import { AuthUser } from "./next-auth.d";
 
 export type DataScope = "LOCAL" | "REMOTE";
 
-export interface CurrentSession  {
+export interface CurrentSession {
   dataScope: DataScope; // LOCAL | REMOTE
   user: AuthUser;
-  accessToken: string;
   expires: string;
   isSuperUser: boolean;
-  superUserActivated?: Date; 
+  superUserActivated?: Date;
 }
 
 export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {

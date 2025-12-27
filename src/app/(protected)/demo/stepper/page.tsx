@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { data } from "./mock";
-import { Input } from "@/components/ui/input";
+
 import { Stepper } from "@/components/custom/Stepper";
+import { Input } from "@/components/ui/input";
+
+import { data } from "./mock";
 
 export default function AvatarMultiComboBoxPage() {
-  const [userValue, setUserValue] = useState<string[]>([]);
   const [maxCount, setMaxCount] = useState<number>(2);
 
   const [currentStep, setCurrentStep] = useState(1);

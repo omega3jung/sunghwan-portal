@@ -1,14 +1,15 @@
 import { create } from "zustand";
+
 import { CurrentSession } from "@/types";
 
-/**
+/*
  * =========================================================
  * Session Store (zustand)
  * ---------------------------------------------------------
- * 역할:
- * - 프론트엔드 "도메인 세션"의 Single Source of Truth
- * - LOCAL / REMOTE 세션을 동일한 구조로 관리
- * - sessionStorage 와 상태 동기화
+ * Role:
+ * - Single Source of Truth for Frontend "Domain Sessions"
+ * - Manage LOCAL / REMOTE Sessions with the Same Structure
+ * - Synchronize State with SessionStorage
  * =========================================================
  */
 
@@ -16,22 +17,22 @@ const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_session",
 } as const;
 
-/**
- * 세션에 저장되는 최소 상태
+/*
+ * Minimum state stored in the session
  * - dataScope: LOCAL | REMOTE
- * - user: 유저 정보
- * - accessToken: API 호출에 사용되는 토큰
- * - isAdmin: admin 권한 여부
+ * - user: User information
+ * - accessToken: Token used for API calls
+ * - isAdmin: Whether the user has admin privileges
  */
-export interface SessionState extends Omit<CurrentSession, "expires"> { }
+export type SessionState = Omit<CurrentSession, "expires">;
 
-/**
- * 세션 상태를 조작하는 액션들
+/*
+ * Actions that manipulate session state
  *
- * 네이밍 컨벤션:
- * - hydrateSession : 스토리지 → 메모리 복구
- * - setSession     : 세션 업데이트 (부분 갱신)
- * - clearSession   : 로그아웃 / 세션 초기화
+ * Naming conventions:
+ * - hydrateSession: Recovers storage from memory
+ * - setSession: Updates the session (partial refresh)
+ * - clearSession: Logs out / clears the session
  */
 export interface SessionActions {
   hydrateSession: () => void; // sessionStorage → store
@@ -39,27 +40,31 @@ export interface SessionActions {
   clearSession: () => void; // 로그아웃
 }
 
-/**
- * 초기 상태
- * - 기본은 LOCAL (Try Demo 진입 가능)
+/*
+ * Initial state
+ * - Default is LOCAL (Try Demo access possible)
  */
 const initialState: SessionState = {
   dataScope: "LOCAL",
   isSuperUser: false,
-  user: { id: undefined as never, name: undefined as never, email: undefined as never },
-  accessToken: undefined as never
+  user: {
+    id: undefined as never,
+    name: undefined as never,
+    email: undefined as never,
+    accessToken: undefined as never,
+  },
 };
 
-/**
- * 실제 zustand store
+/*
+ * Actual zustand store
  */
 export const useSessionStore = create<SessionState & SessionActions>()(
   (set, get) => ({
     ...initialState,
 
     /**
-     * 앱 시작 시 호출
-     * sessionStorage 에 저장된 값을 메모리로 복구
+     * Called when the app starts
+     * Restores values ​​stored in sessionStorage to memory
      */
     hydrateSession: () => {
       try {
@@ -74,8 +79,8 @@ export const useSessionStore = create<SessionState & SessionActions>()(
     },
 
     /**
-     * 세션 정보 갱신
-     * - 메모리 상태 + sessionStorage 동기화
+     * Update session information
+     * - Synchronize memory status and sessionStorage
      */
     setSession: (data) => {
       const next = { ...get(), ...data };
@@ -86,9 +91,9 @@ export const useSessionStore = create<SessionState & SessionActions>()(
     },
 
     /**
-     * 로그아웃 시 호출
-     * - sessionStorage 전체 제거
-     * - 메모리 상태 초기화
+     * Called upon logout
+     * - Clears all sessionStorage
+     * - Resets memory state
      */
     clearSession: () => {
       sessionStorage.removeItem(STORAGE_KEYS.SESSION);

@@ -4,7 +4,7 @@
 
 /* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
 @layer base {
-  html[data-theme='rose'] {
+  html[data-theme="ruby"] {
     --primary: #f17ead;
     --muted-primary: #eecfe5;
     --light-background: #fdeef4;
@@ -13,7 +13,7 @@
     --portal-logo: #fa98bc;
   }
 
-  html[data-theme='rose'].dark {
+  html[data-theme="ruby"].dark {
     --portal-accent: #5f3a3e;
     --portal-branding: #1b1b1d;
     --portal-light-accent: #96646a;

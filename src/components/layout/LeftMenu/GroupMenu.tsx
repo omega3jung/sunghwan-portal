@@ -1,3 +1,7 @@
+import { Settings2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,
   SidebarContent,
@@ -12,11 +16,9 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { menuItems } from "./mock";
-import { Settings2 } from "lucide-react";
-import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import { ENVIRONMENT } from "@/lib/environment";
-import { useTranslation } from "react-i18next";
+
+import { menuItems } from "./mock";
 
 export function LeftMenu() {
   const { t } = useTranslation("LeftMenu");

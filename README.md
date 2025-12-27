@@ -1,7 +1,9 @@
 # sunghwan-portal
+
 Portfolio of Sunghwan Jung
 
 🌐 **Languages**
+
 - [English](README.md)
 - [한국어](README.ko.md)
 
@@ -22,7 +24,9 @@ focused on **authentication, session design, and real-world scalability**.
 - **State**: Zustand
 - **Data Fetching**: Axios + TanStack Query
 - **UI**: Tailwind CSS, shadcn/ui
-- **Icons**: lucide-react
+- **Icons**: lucide-react-
+- **State Management**: Zustand (client state)
+- **Data Fetching**: Axios + TanStack Query
 
 ---
 
@@ -32,6 +36,37 @@ focused on **authentication, session design, and real-world scalability**.
 - A clear separation of responsibilities for authentication/authorization logic
 - A structure with clear configuration for each environment
 - A structure that facilitates future DB/API expansion
+
+---
+
+## What This Project Demonstrates
+
+This project focuses on architectural concerns often overlooked
+in front-end demo applications:
+
+- Authentication enforcement at the Edge layer
+- Clear separation between authentication, session, and UI concerns
+- Domain-driven session modeling for scalable UI consumption
+- Environment-aware configuration
+- Practical collaboration conventions (PRs, labels, ownership)
+
+The goal is not feature completeness, but structural clarity and extensibility.
+
+---
+
+## Collaboration & Workflow
+
+Although this is a personal demo project, it is structured to reflect
+real-world team workflows.
+
+- Conventional branch prefixes (`feat/`, `fix/`, `refactor/`, `docs/`, `chore/`, `test/`)
+- PR title conventions enforced by documentation
+- Automatic PR labeling based on branch prefixes
+- CODEOWNERS defined to clarify review boundaries
+- Separate CONTRIBUTING guides (EN / KO)
+
+These conventions are intentionally minimal and designed to scale
+without adding unnecessary complexity.
 
 ---
 
@@ -45,6 +80,9 @@ The authentication layer is intentionally separated into
 
 ### Authentication Flow
 
+This flow is designed to minimize runtime coupling
+while keeping authentication enforcement centralized.
+
 1. User accesses a protected route.
 2. Edge Middleware validates authentication using a JWT
    (no database or server session lookup).
@@ -55,6 +93,7 @@ The authentication layer is intentionally separated into
 5. JWT becomes the single source of truth for authentication.
 6. Client-side session is derived from the JWT for UI consumption.
 
+---
 
 ### Key Design Decisions
 
@@ -154,20 +193,30 @@ auth.config.ts
 
 ## Getting Started
 
+This project includes a demo authentication flow.
+Some user data and permissions are mocked for demonstration purposes.
+
 ```npm
 npm install
 npm run dev
 ```
+
 - Open the application in your browser at:
+
 ```txt
 http://localhost:3000
 ```
+
+_Optional_:
+
+> Demo credentials and impersonation flows are documented in the codebase.
 
 ---
 
 ## Internationalization (i18n)
 
-This project supports multiple languages at the application level:
+This project supports multiple languages at the application level,
+enabling a global-ready UI without coupling language logic to pages.
 
 - English
 - Spanish
@@ -184,7 +233,6 @@ Language preferences are managed at the system level and can be extended easily.
 - Some APIs are based on mock/demo APIs.
 - The authentication structure is designed for practical use and supports future expansion to OAuth providers, role-based authorization, and database-backed sessions.
 
-
 ---
 
 ## Author
@@ -192,6 +240,6 @@ Language preferences are managed at the system level and can be extended easily.
 **Sunghwan Jung**
 Frontend Developer (React / Next.js)
 
-- GitHub: https://github.com/omega3jung
-- Repository: https://github.com/omega3jung/sunghwan-portal
-- LinkedIn: https://www.linkedin.com/in/sunghwan4jung/
+- GitHub: <https://github.com/omega3jung>
+- Repository: <https://github.com/omega3jung/sunghwan-portal>
+- LinkedIn: <https://www.linkedin.com/in/sunghwan4jung/>

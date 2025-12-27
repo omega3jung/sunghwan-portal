@@ -3,6 +3,7 @@
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Check, ChevronDown, Loader2 } from "lucide-react";
 import React, { useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
 import { ComboBoxProps, Props } from "./type";
 import { comboBoxVariants } from "./variants";
 

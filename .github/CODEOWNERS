@@ -1,0 +1,30 @@
+# This project is currently maintained by a single owner,
+# but CODEOWNERS is defined to demonstrate review boundaries
+# for a future team environment.
+
+# Global default
+
+-                       @omega3jung
+
+# Authentication & session
+
+/app/api/auth/** @omega3jung
+/lib/auth/** @omega3jung
+/services/fetcher.ts @omega3jung
+
+# State management
+
+/store/\*\* @omega3jung
+
+# UI & layout
+
+/app/(home)/** @omega3jung
+/components/** @omega3jung
+
+# Internationalization
+
+/i18n/\*\* @omega3jung
+
+# Config & infra
+
+/.github/\*\* @omega3jung

@@ -1,3 +1,5 @@
+// src/components/custom/DateRangePicker/index.ts
+
 export { DateRangePicker } from "./DateRangePicker";
-export type { Range, Period, SelectVariant, DatePickerProps } from "./types";
 export { dateRangePickerLocales } from "./locales";
+export type { DatePickerProps, Period, Range, SelectVariant } from "./types";

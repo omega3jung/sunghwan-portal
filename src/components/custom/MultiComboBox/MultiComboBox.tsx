@@ -2,6 +2,8 @@
 
 import { Check, ChevronDown, Loader2, X } from "lucide-react";
 import React, { Fragment, useRef } from "react";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -17,11 +19,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
-import { MultiComboboxProps, ComboBoxProps } from "./types";
-import { comboBoxVariants } from "./variants";
 import { badgeColors } from "./styles";
+import { ComboBoxProps, MultiComboboxProps } from "./types";
+import { comboBoxVariants } from "./variants";
 
 const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
   const {

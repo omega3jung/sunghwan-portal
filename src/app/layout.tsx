@@ -1,9 +1,13 @@
 // app/layout.tsx.
 
+import "@/styles/globals.css";
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "../styles/globals.css";
 import { Toaster } from "sonner";
+
+import { detectBrowserLanguage } from "@/lib/i18n/detectLanguage";
+
 import { RootProviders } from "./providers";
 
 const geistSans = localFont({
@@ -35,8 +39,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lang = detectBrowserLanguage();
+
   return (
-    <html lang="en">
+    <html lang={lang}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

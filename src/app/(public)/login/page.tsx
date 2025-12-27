@@ -1,23 +1,25 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
-import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LoginForm } from "./components/LoginForm";
-import {
-  LoginStateEnum,
-  LoginFormType,
-  VerifyOTPFormType,
-  ChangePasswordformType,
-  ResetPasswordState,
-} from "./types";
+import { ResetPasswordForm } from "./components/ResetPasswordForm";
 import { LOGIN_ERROR_CODES, LOGIN_ERROR_MESSAGES } from "./constants";
+import {
+  ChangePasswordformType,
+  LoginFormType,
+  LoginStateEnum,
+  ResetPasswordState,
+  VerifyOTPFormType,
+} from "./types";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -230,17 +232,18 @@ export default function LoginPage() {
         <ChangePasswordForm
           isLoading={loading}
           username={currentID}
+          formType={LoginStateEnum.CHANGE}
           onSubmit={onChangePassword}
           onBack={() => setFormType(LoginStateEnum.LOGIN)}
         />
       )}
 
-      <div className="mt-6 flex flex-col justify-center text-center">
+      <div className="flex flex-col justify-center text-center border-t-[1px] border-primary/20 pt-6">
         <p>
           <Button
             variant="link"
             className="py-0 text-base font-semibold uppercase"
-            onClick={() => setFormType(LoginStateEnum.CHANGE)}
+            onClick={() => setFormType(LoginStateEnum.RESET)}
           >
             {t("loginForm.canNotLogin")}
           </Button>

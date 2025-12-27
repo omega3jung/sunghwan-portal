@@ -2,6 +2,7 @@
 
 import { ChevronDown, Loader2 } from "lucide-react";
 import React, { useMemo, useRef } from "react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +20,12 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { initials } from "@/utils";
-import { comboBoxVariants } from "./variants";
-import { AvatarMultiComboBoxProps, Props } from "./types";
 import { ImageValueLabel } from "@/types";
+import { initials } from "@/utils";
+
 import { UserAvatar } from "../UserAvatar";
+import { AvatarMultiComboBoxProps, Props } from "./types";
+import { comboBoxVariants } from "./variants";
 
 const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   const {

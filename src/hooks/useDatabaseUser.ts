@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import fetcher from "@/services/fetcher";
+
 import { useCurrentSession } from "@/hooks/useCurrentSession";
+import fetcher from "@/services/fetcher";
 import { AppUser } from "@/types";
 
 export const useDatabaseUser = () => {

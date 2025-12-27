@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
-import { data } from "./mock";
 import { Input } from "@/components/ui/input";
+
+import { data } from "./mock";
 
 export default function AvatarMultiComboBoxPage() {
   const [userValue, setUserValue] = useState<string[]>([]);

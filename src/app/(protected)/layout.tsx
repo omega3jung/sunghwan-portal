@@ -1,13 +1,15 @@
 // app/(protected)/layout.tsx
 "use client";
 
-import { ReactNode } from "react";
 import { Loader2 } from "lucide-react";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { redirect } from "next/navigation";
+import { ReactNode } from "react";
+
 import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
+
 import { ProtectedProviders } from "./_providers";
-import { redirect } from "next/navigation";
 
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";
@@ -29,7 +31,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
     redirect("/login");
   }
 
-  // 👇 여기서부터는 authenticated 보장.
+  // 👇 From here on, authenticated is guaranteed.
   return (
     // UI root container (absolute overlays are positioned relative to this)
     <ProtectedProviders>

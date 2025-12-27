@@ -1,15 +1,28 @@
 // middleware.ts
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+
 import { ENVIRONMENT } from "@/lib/environment";
 import { isPublicRoute } from "@/lib/routes";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // 정적 파일
+  // static / internal assets.
   if (pathname.includes(".")) {
     return NextResponse.next();
+  }
+
+  // Detect unsupported browsers.
+  const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
+
+  const isIE =
+    ua.includes("trident") ||
+    ua.includes("msie") ||
+    ua.includes("windows nt 6.1; wow64; trident");
+
+  if (isIE && !request.nextUrl.pathname.startsWith("/unsupported-browser")) {
+    return NextResponse.redirect(new URL("/unsupported-browser", request.url));
   }
 
   // public route
@@ -22,13 +35,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // HTML navigation만 보호
+  // Protects only HTML navigation requests
   const accept = request.headers.get("accept") || "";
   if (!accept.includes("text/html")) {
     return NextResponse.next();
   }
 
-  // ✅ JWT 기준 로그인 체크 (v4 정석)
+  // ✅ JWT-based login check (v4 standard)
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
@@ -38,7 +51,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ❌ 비로그인 → login redirect
+  // ❌ Not logged in → login redirect
   const loginUrl = request.nextUrl.clone();
   loginUrl.pathname = `${ENVIRONMENT.BASE_PATH}/login`;
   loginUrl.search = "";
@@ -55,7 +68,7 @@ export async function middleware(request: NextRequest) {
   return NextResponse.redirect(loginUrl, {
     headers: { "Cache-Control": "no-store" },
   });
-};
+}
 
 export const config = {
   matcher: ["/((?!api|_next|images|favicon.ico|login).*)"],

@@ -10,15 +10,11 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { SelectRangeEventHandler } from "react-day-picker";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
+import { DateRange, OnSelectHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -33,11 +29,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import i18n from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ValueLabel } from "@/types/common";
-import { Range, Period, DatePickerProps } from "./types";
-import i18n from "@/lib/i18n";
-import React from "react";
+
+import { DatePickerProps, Period, Range } from "./types";
 
 const ns = {
   ns: "DateRangePicker",
@@ -229,25 +225,22 @@ export const Component = (props: DatePickerProps) => {
     }
   };
 
-  const onDateSelect: SelectRangeEventHandler = (...args) => {
-    const [range] = args;
+  const onDateSelect: OnSelectHandler<DateRange | undefined> = (range) => {
+    if (!range) return;
 
-    const formattedStartDate = range?.from
-      ? format(range.from, "dd MMM yyyy")
-      : "";
-    const formattedEndDate = range?.to ? format(range.to, "dd MMM yyyy") : "";
+    const { from, to } = range;
 
-    setDisplayText(`${formattedStartDate} - ${formattedEndDate}`);
+    const formattedStartDate = from ? format(from, "dd MMM yyyy") : "";
+    const formattedEndDate = to ? format(to, "dd MMM yyyy") : "";
 
-    if (setRangeText) {
-      setRangeText(`${formattedStartDate} - ${formattedEndDate}`);
-    }
-    setRange({
-      from: range?.from,
-      to: range?.to,
-    });
+    const text = `${formattedStartDate} - ${formattedEndDate}`;
 
-    if (!!range?.from && !!range?.to) {
+    setDisplayText(text);
+    setRangeText?.(text);
+
+    setRange({ from, to });
+
+    if (from && to) {
       setOpen(false);
     }
   };

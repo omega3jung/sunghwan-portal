@@ -1,11 +1,12 @@
 // app/(public)/login/layout.tsx
 "use client";
 
-import { ReactNode } from "react";
 import { Loader2 } from "lucide-react";
+import { ReactNode } from "react";
+
 import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { cn } from "@/utils";
 import { ENVIRONMENT } from "@/lib/environment";
+import { cn } from "@/utils";
 
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";

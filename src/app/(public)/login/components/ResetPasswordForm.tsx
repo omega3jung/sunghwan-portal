@@ -1,20 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { VerifyOTPFormType, verifyOTPFormSchema } from "../types";
+
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
+import { verifyOTPFormSchema, VerifyOTPFormType } from "../types";
 
 type Props = {
   isLoading: boolean;
@@ -96,7 +91,7 @@ export const ResetPasswordForm = (props: Props) => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2">
-      <div>
+      <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
           {t("resetPasswordForm.title")}
         </p>
@@ -104,96 +99,95 @@ export const ResetPasswordForm = (props: Props) => {
           {t("resetPasswordForm.message")}
         </p>
       </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-6"
-        >
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">
-                  {t("resetPasswordForm.userid")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    data-testid="reset-password-userid"
-                    disabled={isLoading || step === "otp"}
-                    placeholder={t("resetPasswordForm.idPlaceholder")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col gap-6"
+      >
+        <FieldGroup>
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="reset-input-userid">
+                  {t("common.username")}
+                </FieldLabel>
+                <Input
+                  id="reset-input-userid"
+                  data-testid="reset-password-userid"
+                  disabled={isLoading || step === "otp"}
+                  placeholder={t("common.usernamePlaceholder")}
+                  required
+                  {...form.register("username")}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="reset-input-email">
                   {t("resetPasswordForm.email")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    data-testid="reset-password-email"
-                    disabled={isLoading || step === "otp"}
-                    placeholder={t("resetPasswordForm.emailPlaceholder")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            className="h-12 rounded-lg text-base font-normal md:w-full"
-            type="button"
-            disabled={isLoading}
-            data-testid="send-otp"
-            onClick={onSendOTP}
-          >
-            {step === "otp" ? t("resetPasswordForm.otpResend") : t("resetPasswordForm.otpSend")}
-            {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
-          </Button>
-
-          {step === "otp" && (
-            <>
-              <FormField
-                control={form.control}
-                name="otp"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">
-                      {t("resetPasswordForm.otp")}
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder={timeLimit} maxLength={6} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                </FieldLabel>
+                <Input
+                  id="reset-input-email"
+                  data-testid="reset-password-email"
+                  disabled={isLoading || step === "otp"}
+                  placeholder={t("resetPasswordForm.emailPlaceholder")}
+                  required
+                  {...form.register("email")}
+                />
+              </Field>
+            </FieldGroup>
+            <Field>
               <Button
                 className="h-12 rounded-lg text-base font-normal md:w-full"
-                type="submit"
+                type="button"
                 disabled={isLoading}
-                data-testid="reset-password-submit"
+                data-testid="send-otp"
+                onClick={onSendOTP}
               >
-                {t("submit")}
+                {step === "otp"
+                  ? t("resetPasswordForm.otpResend")
+                  : t("resetPasswordForm.otpSend")}
                 {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
-            </>
+            </Field>
+          </FieldSet>
+
+          {step === "otp" && (
+            <FieldSet>
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="reset-input-otp">
+                    {t("resetPasswordForm.otp")}
+                  </FieldLabel>
+                  <Input
+                    id="reset-input-otp"
+                    data-testid="reset-password-otp"
+                    {...form.register("otp")}
+                    placeholder={timeLimit}
+                    maxLength={6}
+                  />
+                </Field>
+              </FieldGroup>
+
+              <Field>
+                <Button
+                  className="h-12 rounded-lg text-base font-normal md:w-full"
+                  type="submit"
+                  disabled={isLoading}
+                  data-testid="reset-password-submit"
+                >
+                  {t("submit")}
+                  {isLoading && (
+                    <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                  )}
+                </Button>
+              </Field>
+            </FieldSet>
           )}
-        </form>
-      </Form>
+        </FieldGroup>
+      </form>
 
       <Button
         className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
         type="button"
+        variant={"outline"}
         disabled={isLoading}
         data-testid="reset-open"
         onClick={onBack}

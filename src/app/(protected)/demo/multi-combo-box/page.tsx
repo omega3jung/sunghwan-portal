@@ -1,15 +1,15 @@
 "use client";
 
-import { VariantProps } from "class-variance-authority";
 import { useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
+
 import {
   ButtonVariant,
-  comboBoxVariants,
   MultiComboBox,
 } from "@/components/custom/MultiComboBox";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ValueLabel } from "@/types/common";
+
 import { buttonVariantData, comboBoxVariantData, keys } from "./mock";
 import { comboBoxVariant, indexVariant } from "./type";
 
