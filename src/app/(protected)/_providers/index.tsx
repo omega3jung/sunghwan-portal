@@ -7,8 +7,6 @@ import { useState } from "react";
 import I18nProvider from "@/components/layout/I18nProvider/I18nProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-import { AppUserProvider } from "./AppUserProvider";
-
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";
 //export const revalidate = 0;
@@ -35,13 +33,11 @@ export function ProtectedProviders({ children }: Props) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppUserProvider>
-        <I18nProvider namespaces={["common", "home"]}>
-          <SidebarProvider className="ui-root relative">
-            {children}
-          </SidebarProvider>
-        </I18nProvider>
-      </AppUserProvider>
+      <I18nProvider namespaces={["common", "home"]}>
+        <SidebarProvider className="ui-root relative">
+          {children}
+        </SidebarProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

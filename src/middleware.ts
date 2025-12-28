@@ -36,8 +36,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protects only HTML navigation requests
-  const accept = request.headers.get("accept") || "";
-  if (!accept.includes("text/html")) {
+  const isDocumentNavigation =
+    request.headers.get("sec-fetch-dest") === "document";
+
+  if (!isDocumentNavigation) {
+    return NextResponse.next();
+  }
+
+  // ⛔ Internal protected page movement is not blocked by middleware.
+  const isProtectedRoot =
+    pathname === `${ENVIRONMENT.BASE_PATH}` ||
+    pathname === `${ENVIRONMENT.BASE_PATH}/`;
+
+  if (!isProtectedRoot) {
     return NextResponse.next();
   }
 
@@ -71,5 +82,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|images|favicon.ico|login).*)"],
+  matcher: ["/((?!api|_next|images|favicon.ico|login).*)", "/"],
 };

@@ -1,4 +1,5 @@
 import { Settings2 } from "lucide-react";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
@@ -46,11 +47,11 @@ export function LeftMenu() {
                   {item.children.map((subItem) => (
                     <SidebarMenu key={subItem.title}>
                       <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton>
-                          <subItem.icon />
-                          <a href={subItem.path}>
+                        <SidebarMenuButton asChild>
+                          <Link href={subItem.path}>
+                            <subItem.icon />
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
@@ -61,10 +62,10 @@ export function LeftMenu() {
               <SidebarGroupContent>
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.path}>
+                    <Link href={item.path}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarGroupContent>
@@ -76,11 +77,11 @@ export function LeftMenu() {
         {menuItems.footer.map((item) => (
           <SidebarMenuItem key={item.title}>
             <PreferencesMenu>
-              <SidebarMenuButton>
-                <item.icon />
-                <a href={item.path}>
+              <SidebarMenuButton asChild>
+                <Link href={item.path}>
+                  <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </PreferencesMenu>
           </SidebarMenuItem>

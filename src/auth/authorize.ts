@@ -22,7 +22,7 @@ export const authorize = async (credentials?: {
       accessToken: user.accessToken,
     };
   } catch (error) {
-    // ❗ CredentialsProvider에서는 throw 금지
+    // ❗ CredentialsProvider does not allow throwing errors.
     return null;
   }
 };

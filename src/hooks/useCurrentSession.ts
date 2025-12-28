@@ -91,12 +91,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     store.setSession(state);
   };
 
-  // hydrate once
+  // hydrate once on mount (restore sessionStorage -> store)
   useEffect(() => {
-    if (session.status === "unauthenticated") {
-      store.hydrateSession();
-    }
-  }, [session.status, store]);
+    store.hydrateSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // set session when sign in.
   useEffect(() => {

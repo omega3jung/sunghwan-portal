@@ -37,6 +37,6 @@ export interface AppUser {
 
 // Impersonation User type.
 export type ActingUser = {
-  actor: AppUser; // 실제 로그인한 사용자
-  subject?: AppUser; // 대리 사용자 (optional)
+  actor: AppUser; // The actual logged-in user
+  subject?: AppUser; // The impersonated user (optional)
 };

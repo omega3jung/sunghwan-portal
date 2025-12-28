@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n/types";
+import type { Locale } from "@/types";
 
 export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
   en: {

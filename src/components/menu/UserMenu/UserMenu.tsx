@@ -35,10 +35,10 @@ const ns = {
 };
 
 const demoNameData: Record<string, string> = {
-  demoAdmin: i18n.t("demoAdmin", ns),
-  demoManager: i18n.t("demoManager", ns),
-  demoUser: i18n.t("demoUser", ns),
-  demoGuest: i18n.t("demoGuest", ns),
+  admin: i18n.t("adminDemo", ns),
+  manager: i18n.t("managerDemo", ns),
+  user: i18n.t("userDemo", ns),
+  guest: i18n.t("guestDemo", ns),
 };
 
 export function UserMenu() {
@@ -66,16 +66,16 @@ export function UserMenu() {
 
     switch (permission) {
       case "ADMIN":
-        user.name = demoNameData.demoAdmin;
+        user.name = demoNameData.admin;
         break;
       case "MANAGER":
-        user.name = demoNameData.demoManager;
+        user.name = demoNameData.manager;
         break;
       case "USER":
-        user.name = demoNameData.demoUser;
+        user.name = demoNameData.user;
         break;
       case "GUEST":
-        user.name = demoNameData.demoGuest;
+        user.name = demoNameData.guest;
         break;
     }
 

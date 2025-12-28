@@ -64,7 +64,10 @@ const rangeData: Range = {
   range: i18n.t("dateRange", ns),
 };
 
-export const Component = (props: DatePickerProps) => {
+export const Component = (
+  props: DatePickerProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) => {
   const {
     className,
     variant,
@@ -253,7 +256,7 @@ export const Component = (props: DatePickerProps) => {
   }, [calculateAndSetDisplayText, period, range]);
 
   return (
-    <div className="relative">
+    <div ref={ref} className="relative">
       <Select
         value={period}
         onValueChange={(value: Period) => {
@@ -303,6 +306,7 @@ export const Component = (props: DatePickerProps) => {
   );
 };
 
-export const DateRangePicker = React.forwardRef<any, DatePickerProps>(
-  Component
-);
+export const DateRangePicker = React.forwardRef<
+  HTMLDivElement,
+  DatePickerProps
+>(Component);

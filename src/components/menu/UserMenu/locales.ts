@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n/types";
+import type { Locale } from "@/types";
 
 export const userMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
@@ -13,6 +13,10 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     asManager: "As manager",
     asUser: "As user",
     asGuest: "As guest",
+    adminDemo: "Admin Demo",
+    managerDemo: "Manager Demo",
+    userDemo: "User Demo",
+    guestDemo: "Guest Demo",
   },
 
   es: {
@@ -20,13 +24,17 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     myActivities: "Mis Actividades",
     notifications: "Notificaciones",
     logOut: "Cerrar Sesión",
-    impersonation: "Impersonación",
-    stopImpersonation: "Detener Impersonación",
-    startImpersonation: "Iniciar Impersonación",
+    impersonation: "Suplantación",
+    startImpersonation: "Iniciar suplantación",
+    stopImpersonation: "Detener suplantación",
     asAdmin: "Como administrador",
     asManager: "Como manager",
     asUser: "Como usuario",
     asGuest: "Como invitado",
+    adminDemo: "Administrador demo",
+    managerDemo: "Manager demo",
+    userDemo: "Usuario demo",
+    guestDemo: "Invitado demo",
   },
 
   fr: {
@@ -34,13 +42,17 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     myActivities: "Mes Activités",
     notifications: "Notifications",
     logOut: "Déconnexion",
-    impersonation: "Impersonation",
-    stopImpersonation: "Arrêter l'Impersonation",
-    startImpersonation: "Démarrer l'Impersonation",
+    impersonation: "Se connecter en tant que",
+    startImpersonation: "Se connecter en tant que",
+    stopImpersonation: "Quitter le mode impersonation",
     asAdmin: "En tant qu'administrateur",
     asManager: "En tant que manager",
     asUser: "En tant qu'utilisateur",
     asGuest: "En tant qu'invité",
+    adminDemo: "Administrateur de la démo",
+    managerDemo: "Gestionnaire de la démo",
+    userDemo: "Utilisateur de la démo",
+    guestDemo: "Invité de la démo",
   },
 
   ko: {
@@ -55,5 +67,9 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     asManager: "관리자",
     asUser: "사용자",
     asGuest: "게스트",
+    adminDemo: "시스템 관리자 데모",
+    managerDemo: "관리자 데모",
+    userDemo: "사용자 데모",
+    guestDemo: "게스트 데모",
   },
 };

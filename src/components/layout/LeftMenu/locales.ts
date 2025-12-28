@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n/types";
+import type { Locale } from "@/types";
 
 export const leftMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
