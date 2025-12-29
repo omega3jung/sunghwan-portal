@@ -39,7 +39,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
       {/* Right Main Screen */}
       <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
         {/* Top Navigation */}
-        <NavigationBar className="h-14" />
+        <NavigationBar className="h-[57px]" />
 
         {/* Page Content */}
         <main className="overflow-auto p-4 min-h-0 bg-background">

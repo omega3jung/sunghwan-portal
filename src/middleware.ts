@@ -1,5 +1,4 @@
 // middleware.ts
-import { redirect } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
@@ -8,6 +7,18 @@ import { isPublicRoute } from "@/lib/routes";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+
+  // Bypass non-HTML requests (e.g., API, static assets, images, etc.)
+  const accept = request.headers.get("accept") ?? "";
+
+  if (!accept.includes("text/html")) {
+    return NextResponse.next();
+  }
+
+  // Next.js internals.
+  if (pathname.startsWith("/_next")) {
+    return NextResponse.next();
+  }
 
   // static / internal assets.
   if (pathname.includes(".")) {
@@ -54,17 +65,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // ✅ JWT-based login check (v4 standard)
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  let token = null;
+
+  try {
+    token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+  } catch (e) {
+    console.error("[middleware] getToken failed", e);
+  }
 
   if (token?.accessToken) {
     return NextResponse.next();
-  }
-
-  if (token?.accessToken && pathname.startsWith("/login")) {
-    redirect("/");
   }
 
   // ❌ Not logged in → login redirect
@@ -87,5 +100,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|images|favicon.ico|login).*)", "/"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|_next/webpack|favicon.ico|login).*)",
+  ],
 };

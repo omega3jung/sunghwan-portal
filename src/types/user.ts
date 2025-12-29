@@ -20,7 +20,8 @@ export const ACCESS_LEVEL = {
   // 0 = no permission.
 } as const;
 
-export type AccessLevel = keyof typeof ACCESS_LEVEL;
+//export type AccessLevel = keyof typeof ACCESS_LEVEL;
+export type AccessLevel = (typeof ACCESS_LEVEL)[keyof typeof ACCESS_LEVEL];
 
 // user type.
 export interface AppUser {

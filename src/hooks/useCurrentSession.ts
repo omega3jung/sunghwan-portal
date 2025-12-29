@@ -65,6 +65,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
         user,
         expires: "",
         isSuperUser: false,
+        security: {
+          loginLockedUntil: null,
+          failedAttempts: 0,
+          requiresCaptcha: false,
+        },
       };
     }
 
@@ -74,6 +79,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       user,
       expires: "",
       isSuperUser: false,
+      security: {
+        loginLockedUntil: null,
+        failedAttempts: 0,
+        requiresCaptcha: false,
+      },
     };
   }, [store]);
 

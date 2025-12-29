@@ -2,13 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./themes/emerald.css";
+@import "./themes/ruby.css";
+@import "./themes/sapphire.css";
+@import "./themes/topaz.css";
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
-
-
 
 @layer base {
   :root {
@@ -82,8 +85,6 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -92,8 +93,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@import 'themes/aquamarine.css';
-@import 'themes/emerald.css';
-@import 'themes/ruby.css';
-@import 'themes/topaz.css';

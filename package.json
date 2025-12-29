@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dev:clean": "taskkill /F /IM node.exe 2>nul || exit 0 && rmdir /s /q .next && npm run dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

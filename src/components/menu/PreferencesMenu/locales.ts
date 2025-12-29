@@ -3,25 +3,37 @@ import type { Locale } from "@/types";
 export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
     colorTheme: "Color theme",
-    darkMode: "Dark Mode",
+    theme: "Mode",
+    light: "Light",
+    dark: "Dark",
+    system: "System",
     language: "Language",
   },
 
   es: {
     colorTheme: "Tema de color",
-    darkMode: "Modo oscuro",
+    theme: "Modo",
+    light: "Claro",
+    dark: "Oscuro",
+    system: "Sistema",
     language: "Idioma",
   },
 
   fr: {
     colorTheme: "Thème de couleur",
-    darkMode: "Mode sombre",
+    theme: "Mode",
+    light: "Clair",
+    dark: "Sombre",
+    system: "Système",
     language: "Langue",
   },
 
   ko: {
     colorTheme: "색상 테마",
-    darkMode: "다크 모드",
+    theme: "모드",
+    light: "라이트",
+    dark: "다크",
+    system: "시스템",
     language: "언어",
   },
 };

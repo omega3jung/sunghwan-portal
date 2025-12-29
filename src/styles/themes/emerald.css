@@ -1,23 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* emerald.css */
 /* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
-@layer base {
-  html[data-theme="emerald"] {
-    --primary: #0f9d9f;
-    --muted-primary: #d6f0f0;
-    --light-background: #e0f7f7;
 
-    /* PORTAL */
-    --portal-logo: #35fcff;
-  }
+html[data-theme="emerald"] {
+  /* Core */
+  --primary: 168 75% 32%;
+  --muted-primary: 168 40% 88%;
+  --light-background: 168 55% 94%;
 
-  html[data-theme="aquamarine"].dark {
-    --portal-accent: #2f4f4f;
-    --portal-branding: #1b1b1d;
-    --portal-light-accent: #434343;
-    --portal-foreground: #0f9d9f;
-    --portal-background: #1e1f21;
-  }
+  /* PORTAL */
+  --portal-logo: 168 85% 55%;
+}
+
+html[data-theme="emerald"].dark {
+  --portal-accent: 168 30% 25%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 168 20% 35%;
+  --portal-foreground: 168 65% 50%;
+  --portal-background: 220 7% 13%;
 }

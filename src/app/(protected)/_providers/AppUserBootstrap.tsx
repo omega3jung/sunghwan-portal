@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { useAppUser } from "@/hooks/useAppUser";
 import { useFetchUserPreference } from "@/hooks/useUserPreference";
 import { useImpersonationStore } from "@/lib/impersonationStore";
+import { ACCESS_LEVEL } from "@/types";
 import { AuthUser } from "@/types/next-auth";
 
 type Props = {
@@ -28,7 +29,7 @@ export function AppUserBootstrap({ user, children }: Props) {
     if (user.id === "demo") {
       impersonation.setActor({
         ...user,
-        permission: "GUEST",
+        permission: ACCESS_LEVEL.GUEST,
         preference: preferenceQuery.data,
         canUseSuperUser: false,
       });
