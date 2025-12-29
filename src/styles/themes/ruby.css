@@ -1,0 +1,20 @@
+/* ruby.css */
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+
+html[data-theme="ruby"] {
+  /* Core */
+  --primary: 350 65% 48%;
+  --muted-primary: 350 40% 88%;
+  --light-background: 350 65% 95%;
+
+  /* PORTAL */
+  --portal-logo: 350 75% 60%;
+}
+
+html[data-theme="ruby"].dark {
+  --portal-accent: 350 25% 28%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 350 20% 38%;
+  --portal-foreground: 350 70% 60%;
+  --portal-background: 220 7% 13%;
+}

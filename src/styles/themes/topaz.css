@@ -1,0 +1,20 @@
+/* topaz.css */
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+
+html[data-theme="topaz"] {
+  /* Core */
+  --primary: 38 90% 48%;
+  --muted-primary: 38 55% 88%;
+  --light-background: 38 80% 94%;
+
+  /* PORTAL */
+  --portal-logo: 32 95% 55%;
+}
+
+html[data-theme="topaz"].dark {
+  --portal-accent: 32 30% 28%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 32 25% 38%;
+  --portal-foreground: 32 90% 55%;
+  --portal-background: 220 7% 13%;
+}

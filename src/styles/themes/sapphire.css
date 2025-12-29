@@ -1,0 +1,20 @@
+/* sapphire.css */
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+
+html[data-theme="sapphire"] {
+  /* Core */
+  --primary: 221 84% 34%; /* Deep sapphire blue */
+  --muted-primary: 221 45% 88%;
+  --light-background: 221 65% 95%;
+
+  /* PORTAL */
+  --portal-logo: 232 55% 48%;
+}
+
+html[data-theme="sapphire"].dark {
+  --portal-accent: 221 30% 28%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 221 20% 38%;
+  --portal-foreground: 221 75% 58%;
+  --portal-background: 220 7% 13%;
+}

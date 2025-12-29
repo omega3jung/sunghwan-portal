@@ -1,0 +1,20 @@
+/* emerald.css */
+/* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
+
+html[data-theme="emerald"] {
+  /* Core */
+  --primary: 168 75% 32%;
+  --muted-primary: 168 40% 88%;
+  --light-background: 168 55% 94%;
+
+  /* PORTAL */
+  --portal-logo: 168 85% 55%;
+}
+
+html[data-theme="emerald"].dark {
+  --portal-accent: 168 30% 25%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 168 20% 35%;
+  --portal-foreground: 168 65% 50%;
+  --portal-background: 220 7% 13%;
+}

@@ -1,14 +1,22 @@
+// app/layout.tsx.
+
+import "@/styles/globals.css";
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "../styles/globals.css";
+import { Toaster } from "sonner";
+
+import { detectBrowserLanguage } from "@/lib/i18n/detectLanguage";
+
+import { RootProviders } from "./providers";
 
 const geistSans = localFont({
-  src: "../public/fonts/GeistVF.woff",
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "../public/fonts/GeistMonoVF.woff",
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -16,6 +24,14 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Sunghwan Portal",
   description: "IT Help Desk (Portfolio)",
+  icons: {
+    icon: "/images/icon_light.png",
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -23,12 +39,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lang = detectBrowserLanguage();
+
   return (
-    <html lang="en">
+    <html lang={lang} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <RootProviders>
+          {/* <SessionInitializer /> ❌ */}
+          {children}
+        </RootProviders>
+        <Toaster />
       </body>
     </html>
   );

@@ -1,0 +1,73 @@
+{
+  "common": {
+    "username": "ID de usuario",
+    "usernamePlaceholder": "Ingresa tu ID de usuario",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "language": "Idioma",
+    "languagePlaceholder": "Selector de idioma",
+    "submit": "Enviar",
+    "goBack": "Volver"
+  },
+  "sessionMenu": {
+    "greet": "Hola",
+    "changeOrganizations": "Estás cambiando de organización",
+    "addAccount": "Añadir otra cuenta",
+    "apply": "Aplicar",
+    "signOut": "Cerrar sesión en todas las cuentas",
+    "newTab": "Aplicar en una nueva pestaña"
+  },
+  "loading": {
+    "credentials": "Comprobando tus credenciales",
+    "setUp": "Configurando cuenta de grupo",
+    "openTab": "Abriendo nueva pestaña",
+    "loggingIn": "Iniciando sesión"
+  },
+  "loginForm": {
+    "title": "¡Hola, bienvenido!",
+    "message": "Inicia sesión para acceder a tu cuenta.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "logIn": "Iniciar sesión",
+    "tryDemo": "Probar la demo",
+    "canNotLogin": "¿No puedes iniciar sesión?",
+    "useDifferentAccount": "Iniciar sesión con otra cuenta",
+    "connectMessage": "Conectar con el portal",
+    "helpCenter": "Centro de ayuda",
+    "privacyAndTerms": "Privacidad y términos"
+  },
+  "changePasswordForm": {
+    "reset": {
+      "title": "Restablece tu contraseña",
+      "message": "OTP confirmado. Por favor, establece tu nueva contraseña."
+    },
+    "change": {
+      "title": "Actualiza tu contraseña",
+      "message": "Introduce tu contraseña actual y establece la nueva.",
+      "currentPassword": "Contraseña actual",
+      "currentPlaceholder": "Introduce tu contraseña actual"
+    },
+    "newPassword": "Nueva contraseña",
+    "newPasswordPlaceholder": "Introduce tu nueva contraseña",
+    "confirmPassword": "Confirma la nueva contraseña",
+    "confirmPlaceholder": "Confirma la nueva contraseña",
+    "passwordDontMatch": "Las contraseñas no coinciden"
+  },
+  "resetPasswordForm": {
+    "title": "¿Olvidaste tu contraseña?",
+    "message": "Te enviaremos un OTP para restablecer tu contraseña por correo electrónico.",
+    "dontHaveEmail": "Si no tienes un correo electrónico asociado a tu cuenta, contacta con RR. HH.",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "Introduce tu correo electrónico address",
+    "otpSend": "Enviar OTP",
+    "otpResend": "Reenviar OTP"
+  },
+  "errors": {
+    "title": "Error: Error al iniciar sesión",
+    "default": "No pudimos encontrar su ID o su contraseña no coincide",
+    "credentials-dont-match": "No pudimos encontrar su ID o su contraseña no coincide",
+    "expired-credentials": "Su contraseña no se ha actualizado en los últimos 6 meses. Restablezca su contraseña",
+    "new-password-required": "Necesita configurar una contraseña",
+    "internal-error": "Algo salió mal. Envíe un ticket",
+    "two-factor-authentication-required": "Se requiere autenticación de dos factores"
+  }
+}

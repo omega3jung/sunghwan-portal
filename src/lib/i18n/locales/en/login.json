@@ -1,0 +1,73 @@
+{
+  "common": {
+    "username": "User ID",
+    "usernamePlaceholder": "Enter your User ID",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your Password",
+    "language": "Language",
+    "languagePlaceholder": "Language Picker",
+    "submit": "Submit",
+    "goBack": "Go Back"
+  },
+  "sessionMenu": {
+    "greet": "Hi",
+    "changeOrganizations": "You're changing organizations",
+    "addAccount": "Add another account",
+    "apply": "Apply",
+    "signOut": "Sign out of all accounts",
+    "newTab": "Apply on new tab"
+  },
+  "loading": {
+    "credentials": "Checking your credentials",
+    "setUp": "Setting up group account",
+    "openTab": "Opening new tab",
+    "loggingIn": "Logging in"
+  },
+  "loginForm": {
+    "title": "Hi, Welcome!",
+    "message": "Sign in to access your account.",
+    "forgotPassword": "Forgot Password?",
+    "logIn": "Log in",
+    "tryDemo": "Try Demo",
+    "canNotLogin": "Can't log in?",
+    "useDifferentAccount": "Sign in with a different account",
+    "connectMessage": "Connect with portal",
+    "helpCenter": "Help Center",
+    "privacyAndTerms": "Privacy and Terms"
+  },
+  "changePasswordForm": {
+    "reset": {
+      "title": "Reset your password",
+      "message": "OTP has been confirmed. Please set your new password."
+    },
+    "change": {
+      "title": "Update your password",
+      "message": "Please enter current password and set your new password.",
+      "currentPassword": "Current Password",
+      "currentPlaceholder": "Enter your current password"
+    },
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm New Password",
+    "confirmPlaceholder": "Confirm the new password",
+    "passwordDontMatch": "Passwords don't match"
+  },
+  "resetPasswordForm": {
+    "title": "Forgot password",
+    "message": "We'll send you an OTP to reset your password through email.",
+    "dontHaveEmail": "If you don't have an email associated with your account, please contact HR.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "otpSend": "Send OTP",
+    "otpResend": "Resend OTP"
+  },
+  "errors": {
+    "title": "Error: Login Failed",
+    "default": "We couldn't find your ID or your password doesn't match",
+    "credentials-dont-match": "We couldn't find your ID or your password doesn't match",
+    "expired-credentials": "Your Password has not been updated for last 6 months, Please reset your password",
+    "new-password-required": "You need to set up a password.",
+    "internal-error": "Something went wrong. Please submit a ticket",
+    "two-factor-authentication-required": "Two factor authentication is required"
+  }
+}
