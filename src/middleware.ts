@@ -1,4 +1,5 @@
 // middleware.ts
+import { redirect } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
@@ -60,6 +61,10 @@ export async function middleware(request: NextRequest) {
 
   if (token?.accessToken) {
     return NextResponse.next();
+  }
+
+  if (token?.accessToken && pathname.startsWith("/login")) {
+    redirect("/");
   }
 
   // ❌ Not logged in → login redirect

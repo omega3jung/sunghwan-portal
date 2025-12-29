@@ -15,7 +15,7 @@ export const authSession = {
       token.id = user.id;
       token.name = user.name;
       token.email = user.email;
-      token.access_token = user.access_token;
+      token.accessToken = user.accessToken;
     }
     return token;
   },

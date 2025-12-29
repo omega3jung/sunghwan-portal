@@ -1,10 +1,8 @@
 // app/(public)/login/layout.tsx
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { ReactNode } from "react";
 
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { ENVIRONMENT } from "@/lib/environment";
 import { cn } from "@/utils";
 
@@ -13,16 +11,6 @@ import { cn } from "@/utils";
 //export const revalidate = 0;
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
-  const session = useCurrentSession();
-
-  if (session.status === "loading") {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div
       className={cn(

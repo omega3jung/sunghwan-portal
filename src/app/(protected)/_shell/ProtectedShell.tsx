@@ -12,7 +12,6 @@ import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
-  const isDemoUser = session.current?.dataScope === "LOCAL";
 
   if (session.status === "loading") {
     return (
@@ -25,6 +24,8 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
   if (session.status === "unauthenticated") {
     redirect("/login");
   }
+
+  const isDemoUser = session.current?.dataScope === "LOCAL";
 
   return (
     // UI root container (absolute overlays are positioned relative to this)

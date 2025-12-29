@@ -42,7 +42,7 @@ export default function RootLayout({
   const lang = detectBrowserLanguage();
 
   return (
-    <html lang={lang}>
+    <html lang={lang} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
