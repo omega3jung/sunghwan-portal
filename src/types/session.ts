@@ -12,6 +12,13 @@ export interface CurrentSession {
   expires: string;
   isSuperUser: boolean;
   superUserActivated?: Date;
+
+  // Security-related information for public sessions.
+  security: {
+    loginLockedUntil: number | null;
+    failedAttempts: number;
+    requiresCaptcha: boolean;
+  };
 }
 
 export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {

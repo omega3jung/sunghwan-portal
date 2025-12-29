@@ -235,6 +235,6 @@ _선택 사항_:
 **정성환**
 프론트엔드 개발자 (React / Next.js)
 
-- GitHub: https://github.com/omega3jung
-- 저장소: https://github.com/omega3jung/sunghwan-portal
-- LinkedIn: https://www.linkedin.com/in/sunghwan4jung/
+- GitHub: <https://github.com/omega3jung>
+- 저장소: <https://github.com/omega3jung/sunghwan-portal>
+- LinkedIn: <https://www.linkedin.com/in/sunghwan4jung/>

@@ -1,23 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* topaz.css */
 /* OVERRIDE ANY VALUE FROM THE GLOBALS STYLE SHEET */
-@layer base {
-  html[data-theme='topaz'] {
-    --primary: #f97414;
-    --muted-primary: #f4d1b7;
-    --light-background: #ffe8d6;
 
-    /* PORTAL */
-    --portal-logo: #ff8c39;
-  }
+html[data-theme="topaz"] {
+  /* Core */
+  --primary: 38 90% 48%;
+  --muted-primary: 38 55% 88%;
+  --light-background: 38 80% 94%;
 
-  html[data-theme='topaz'].dark {
-    --portal-accent: #5f4431;
-    --portal-branding: #1b1b1d;
-    --portal-light-accent: #5f4431;
-    --portal-foreground: #f56c09;
-    --portal-background: #1e1f21;
-  }
+  /* PORTAL */
+  --portal-logo: 32 95% 55%;
+}
+
+html[data-theme="topaz"].dark {
+  --portal-accent: 32 30% 28%;
+  --portal-branding: 240 6% 11%;
+  --portal-light-accent: 32 25% 38%;
+  --portal-foreground: 32 90% 55%;
+  --portal-background: 220 7% 13%;
 }

@@ -65,6 +65,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
         user,
         expires: "",
         isSuperUser: false,
+        security: {
+          loginLockedUntil: null,
+          failedAttempts: 0,
+          requiresCaptcha: false,
+        },
       };
     }
 
@@ -74,6 +79,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       user,
       expires: "",
       isSuperUser: false,
+      security: {
+        loginLockedUntil: null,
+        failedAttempts: 0,
+        requiresCaptcha: false,
+      },
     };
   }, [store]);
 
@@ -91,12 +101,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     store.setSession(state);
   };
 
-  // hydrate once
+  // hydrate once on mount (restore sessionStorage -> store)
   useEffect(() => {
-    if (session.status === "unauthenticated") {
-      store.hydrateSession();
-    }
-  }, [session.status, store]);
+    store.hydrateSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // set session when sign in.
   useEffect(() => {

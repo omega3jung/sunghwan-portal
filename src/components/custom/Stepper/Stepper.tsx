@@ -10,7 +10,7 @@ import { ButtonContent } from "./ButtonContent";
 import { StepperProps } from "./types";
 import { stepsBackgroundVariant, stepsVariant } from "./variants";
 
-const Component = (props: StepperProps) => {
+const Component = (props: StepperProps, ref: React.ForwardedRef<HTMLDivElement>) => {
   const {
     steps,
     currentStep,
@@ -24,6 +24,7 @@ const Component = (props: StepperProps) => {
 
   return (
     <div
+      ref={ref}
       data-testid="stepper"
       data-orientation={orientation}
       className={cn(stepsBackgroundVariant({ variant }))}
@@ -106,4 +107,6 @@ const Component = (props: StepperProps) => {
   );
 };
 
-export const Stepper = React.forwardRef<any, StepperProps>(Component);
+export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
+  Component
+);

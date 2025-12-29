@@ -1,18 +1,28 @@
 /** Get initial of name */
-export const initials = (name: string | undefined) => {
+export const initials = (name: string, maxLength = 2) => {
   if (!name) {
     return "";
   }
 
+  const trimmed = name.trim();
+  if (!trimmed) return "";
+
+  // 1️⃣ CJK (Chinese, Japanese, Korean)
+  const cjkRegex = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]/;
+  if (cjkRegex.test(trimmed)) {
+    return [...trimmed].slice(0, maxLength).join("");
+  }
+
   try {
-    return name
-      .replace(/[^a-zA-Z ]/g, "")
-      .split(" ")
-      .map((word) => (word.length > 0 ? word[0].toUpperCase() : word))
+    return trimmed
+      .replace(/[^a-zA-ZÀ-ÿ ]/g, "")
+      .split(/\s+/)
+      .map((word) => word[0]?.toUpperCase())
+      .filter(Boolean)
       .join("")
-      .slice(0, 2);
+      .slice(0, maxLength);
   } catch (e) {
-    return name[0].toUpperCase();
+    return name[0].slice(0, maxLength);
   }
 };
 

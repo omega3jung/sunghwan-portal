@@ -1,4 +1,6 @@
 import { Settings2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
@@ -16,28 +18,49 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useImpersonation } from "@/hooks/useImpersonation";
 import { ENVIRONMENT } from "@/lib/environment";
 
-import { menuItems } from "./mock";
+import { filterMenuByAccessLevel } from "./menu.utils";
+import { createMenuItems } from "./mock";
 
 export function LeftMenu() {
+  const { effective } = useImpersonation();
+
   const { t } = useTranslation("LeftMenu");
+  const menuItems = createMenuItems(t);
+
+  const filteredMenu = {
+    content: filterMenuByAccessLevel(menuItems.content, effective?.permission),
+    footer: filterMenuByAccessLevel(menuItems.footer, effective?.permission),
+  };
 
   return (
     <Sidebar collapsible="icon" className="group">
       <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
         <SidebarTrigger />
-        <img
-          className="h-full w-fit
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden
-          "
+        <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
-          alt={"logo"}
+          alt="Portal Logo"
+          className="block dark:hidden
+          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          width={120}
+          height={32}
+          priority
+        />
+        <Image
+          src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
+          alt="Portal Logo"
+          className="hidden dark:block
+          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          width={120}
+          height={32}
+          priority
         />
       </SidebarHeader>
       <SidebarSeparator className="mx-0" />
       <SidebarContent>
-        {menuItems.content.map((item) => (
+        {filteredMenu.content.map((item) => (
           <SidebarGroup key={item.title}>
             {item.children ? (
               <>
@@ -46,11 +69,11 @@ export function LeftMenu() {
                   {item.children.map((subItem) => (
                     <SidebarMenu key={subItem.title}>
                       <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton>
-                          <subItem.icon />
-                          <a href={subItem.path}>
+                        <SidebarMenuButton asChild>
+                          <Link href={subItem.path}>
+                            <subItem.icon />
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
@@ -61,10 +84,10 @@ export function LeftMenu() {
               <SidebarGroupContent>
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.path}>
+                    <Link href={item.path}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarGroupContent>
@@ -73,16 +96,14 @@ export function LeftMenu() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        {menuItems.footer.map((item) => (
+        {filteredMenu.footer.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <PreferencesMenu>
-              <SidebarMenuButton>
+            <SidebarMenuButton asChild>
+              <Link href={item.path}>
                 <item.icon />
-                <a href={item.path}>
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </PreferencesMenu>
+                <span>{item.title}</span>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem key={"Preferences"}>

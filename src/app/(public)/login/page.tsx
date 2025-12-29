@@ -1,13 +1,21 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Globe, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import {
+  useFetchUserPreference,
+  usePostUserPreference,
+  usePutUserPreference,
+} from "@/hooks/useUserPreference";
+import { useLanguageState } from "@/services/language";
+import { AvailableLanguages } from "@/types";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -26,8 +34,12 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
+  const { data: userPreference } = useFetchUserPreference();
+  const { mutate: createUserPreference } = usePostUserPreference();
+  const { mutate: updateUserPreference } = usePutUserPreference();
 
   const { t } = useTranslation("login");
+  const { language, setLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,6 +55,16 @@ export default function LoginPage() {
   useEffect(() => {
     document.documentElement.classList.remove("dark");
   }, []);
+
+  // set language.
+  useEffect(() => {
+    if (!userPreference) return;
+
+    if (userPreference.language) {
+      setLanguage(userPreference.language);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userPreference]);
 
   // submit from LoginForm.tsx.
   const onSubmit = (values: LoginFormType): Promise<void> => {
@@ -190,6 +212,21 @@ export default function LoginPage() {
     router.push(queryString ? `${target}?${queryString}` : target);
   };
 
+  const handleLanguageChange = (newLang: string) => {
+    setLanguage(newLang);
+
+    const payload = {
+      ...userPreference,
+      language: newLang,
+    };
+
+    if (!userPreference) {
+      createUserPreference(payload);
+    } else {
+      updateUserPreference(payload);
+    }
+  };
+
   useEffect(() => {
     if (hasSignedIn && status === "authenticated") {
       redirect();
@@ -197,7 +234,7 @@ export default function LoginPage() {
   }, [hasSignedIn, status]);
 
   return (
-    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:gap-9 xl:p-10 xl:py-12">
+    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
       {formType === LoginStateEnum.LOGIN && (
         <div>
           <LoginForm onSubmit={onSubmit} isLoading={loading} />
@@ -247,18 +284,32 @@ export default function LoginPage() {
           >
             {t("loginForm.canNotLogin")}
           </Button>
-          <Button variant="link" className="py-0 text-base font-normal">
-            {t("loginForm.helpCenter")}
-          </Button>
         </p>
 
         <p>
+          <Button variant="link" className="py-0 text-base font-normal">
+            {t("loginForm.helpCenter")}
+          </Button>
+          ·
           <Button
             variant="link"
             className="py-0 text-base font-normal text-primary"
           >
             {t("loginForm.privacyAndTerms")}
           </Button>
+        </p>
+
+        <p>
+          <ComboBox
+            id="language-picker"
+            className="mt-2 w-48"
+            placeholder="Language Picker"
+            variant="icon"
+            options={AvailableLanguages}
+            onChange={handleLanguageChange}
+            icon={<Globe />}
+            value={language ?? "en"}
+          />
         </p>
       </div>
     </div>

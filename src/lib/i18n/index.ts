@@ -8,16 +8,18 @@ import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locale
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
 import { SUPPORTED_LANGUAGES } from "@/types";
 
+import { detectBrowserLanguage } from "./detectLanguage";
 import { en } from "./locales/en";
 import { es } from "./locales/es";
 import { fr } from "./locales/fr";
 import { ko } from "./locales/ko";
 
+const lang = detectBrowserLanguage();
+
 // init i18next for all options read: https://www.i18next.com/overview/configuration-options
 i18n.use(initReactI18next).init({
-  //lng: detectBrowserLanguage(),
-  lng: "en",
-  fallbackLng: "en",
+  lng: lang,
+  fallbackLng: lang,
 
   ns: ["common", "login"],
   defaultNS: "common",

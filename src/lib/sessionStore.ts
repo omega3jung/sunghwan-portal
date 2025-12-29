@@ -36,8 +36,8 @@ export type SessionState = Omit<CurrentSession, "expires">;
  */
 export interface SessionActions {
   hydrateSession: () => void; // sessionStorage → store
-  setSession: (data: Partial<SessionState>) => void; // store + storage 동기화
-  clearSession: () => void; // 로그아웃
+  setSession: (data: Partial<SessionState>) => void; // store + storage synchronization
+  clearSession: () => void; // logout / clear session
 }
 
 /*

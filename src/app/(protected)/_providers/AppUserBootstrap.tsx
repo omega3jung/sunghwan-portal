@@ -1,45 +1,51 @@
-import { useEffect } from "react";
+// (protected)/_providers/AppUserBootstrap.tsx
+"use client";
+
+import { useEffect, useRef } from "react";
 
 import { useAppUser } from "@/hooks/useAppUser";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useFetchUserPreference } from "@/hooks/useUserPreference";
 import { useImpersonationStore } from "@/lib/impersonationStore";
+import { ACCESS_LEVEL } from "@/types";
+import { AuthUser } from "@/types/next-auth";
 
 type Props = {
+  user: AuthUser;
   children: React.ReactNode;
 };
 
-export const AppUserProvider = ({ children }: Props) => {
-  const { current } = useCurrentSession();
+export function AppUserBootstrap({ user, children }: Props) {
   const impersonation = useImpersonationStore();
+  const initializedRef = useRef(false);
 
-  const userId = current.user?.id;
-  const appUserQuery = useAppUser(userId);
+  const appUserQuery = useAppUser(user.id);
   const preferenceQuery = useFetchUserPreference();
 
   useEffect(() => {
-    if (!current.user) return;
+    if (!user.id) return;
+    if (initializedRef.current) return;
 
     // demo user
-    if (current.user.id === "demo") {
+    if (user.id === "demo") {
       impersonation.setActor({
-        ...current.user,
-        permission: "GUEST",
+        ...user,
+        permission: ACCESS_LEVEL.GUEST,
         preference: preferenceQuery.data,
         canUseSuperUser: false,
       });
+      initializedRef.current = true;
       return;
     }
 
-    // remote user
     if (!appUserQuery.data) return;
 
     impersonation.setActor({
       ...appUserQuery.data,
       preference: preferenceQuery.data,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.user, appUserQuery.data, preferenceQuery.data]);
+
+    initializedRef.current = true;
+  }, [user, appUserQuery.data, preferenceQuery.data]);
 
   return <>{children}</>;
-};
+}

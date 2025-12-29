@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Link } from "lucide-react";
 
 import {
   Collapsible,
@@ -47,9 +47,9 @@ export function LeftMenu() {
                           {item.children.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuButton asChild className="ml-2">
-                                <a href={subItem.path}>
+                                <Link href={subItem.path}>
                                   <span>{subItem.title}</span>
-                                </a>
+                                </Link>
                               </SidebarMenuButton>
                             </SidebarMenuSubItem>
                           ))}
@@ -63,10 +63,10 @@ export function LeftMenu() {
                 ) : (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.path}>
+                      <Link href={item.path}>
                         <item.icon />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )

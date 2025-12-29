@@ -27,7 +27,7 @@ import {
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useImpersonation } from "@/hooks/useImpersonation";
 import i18n from "@/lib/i18n";
-import { AccessLevel, AppUser } from "@/types";
+import { ACCESS_LEVEL, AccessLevel, AppUser } from "@/types";
 import { cn, initials } from "@/utils";
 
 const ns = {
@@ -35,10 +35,10 @@ const ns = {
 };
 
 const demoNameData: Record<string, string> = {
-  demoAdmin: i18n.t("demoAdmin", ns),
-  demoManager: i18n.t("demoManager", ns),
-  demoUser: i18n.t("demoUser", ns),
-  demoGuest: i18n.t("demoGuest", ns),
+  admin: i18n.t("adminDemo", ns),
+  manager: i18n.t("managerDemo", ns),
+  user: i18n.t("userDemo", ns),
+  guest: i18n.t("guestDemo", ns),
 };
 
 export function UserMenu() {
@@ -65,17 +65,17 @@ export function UserMenu() {
     } as AppUser;
 
     switch (permission) {
-      case "ADMIN":
-        user.name = demoNameData.demoAdmin;
+      case ACCESS_LEVEL.ADMIN:
+        user.name = demoNameData.admin;
         break;
-      case "MANAGER":
-        user.name = demoNameData.demoManager;
+      case ACCESS_LEVEL.MANAGER:
+        user.name = demoNameData.manager;
         break;
-      case "USER":
-        user.name = demoNameData.demoUser;
+      case ACCESS_LEVEL.USER:
+        user.name = demoNameData.user;
         break;
-      case "GUEST":
-        user.name = demoNameData.demoGuest;
+      case ACCESS_LEVEL.GUEST:
+        user.name = demoNameData.guest;
         break;
     }
 
@@ -137,23 +137,31 @@ export function UserMenu() {
         <DropdownMenuSubTrigger>{t("impersonation")}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent>
-            {permission !== "ADMIN" && (
-              <DropdownMenuItem onClick={() => demoImpersonating("ADMIN")}>
+            {permission !== ACCESS_LEVEL.ADMIN && (
+              <DropdownMenuItem
+                onClick={() => demoImpersonating(ACCESS_LEVEL.ADMIN)}
+              >
                 {t("asAdmin")}
               </DropdownMenuItem>
             )}
-            {permission !== "MANAGER" && (
-              <DropdownMenuItem onClick={() => demoImpersonating("MANAGER")}>
+            {permission !== ACCESS_LEVEL.MANAGER && (
+              <DropdownMenuItem
+                onClick={() => demoImpersonating(ACCESS_LEVEL.MANAGER)}
+              >
                 {t("asManager")}
               </DropdownMenuItem>
             )}
-            {permission !== "USER" && (
-              <DropdownMenuItem onClick={() => demoImpersonating("USER")}>
+            {permission !== ACCESS_LEVEL.USER && (
+              <DropdownMenuItem
+                onClick={() => demoImpersonating(ACCESS_LEVEL.USER)}
+              >
                 {t("asUser")}
               </DropdownMenuItem>
             )}
-            {permission !== "GUEST" && (
-              <DropdownMenuItem onClick={() => demoImpersonating("GUEST")}>
+            {permission !== ACCESS_LEVEL.GUEST && (
+              <DropdownMenuItem
+                onClick={() => demoImpersonating(ACCESS_LEVEL.GUEST)}
+              >
                 {t("asGuest")}
               </DropdownMenuItem>
             )}
