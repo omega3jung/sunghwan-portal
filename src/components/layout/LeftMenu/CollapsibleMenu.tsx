@@ -21,7 +21,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import { menuItems } from "./mock";
+import { menuItems } from "../../../app/_mocks/components/leftMenu";
 
 export function LeftMenu() {
   return (

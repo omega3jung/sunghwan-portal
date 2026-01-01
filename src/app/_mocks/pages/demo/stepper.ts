@@ -1,4 +1,4 @@
-export const data = [
+export const stepperMock = [
   { label: "Receiving" },
   { label: "Triage" },
   { label: "Estimate" },

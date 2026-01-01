@@ -1,10 +1,13 @@
+// lib/api/userPreferenceApi.ts
 import { Preference } from "@/types";
 
-export const remoteUserPreferenceRepo = {
-  fetch: async () => {
-    const res = await fetch("/api/user-rreference", { method: "GET" });
-    if (!res.ok) throw new Error("Failed to fetch user preference");
-    return await res.json();
+export const USER_PREFERENCE_KEY = "USER-PREFERENCE";
+
+export const userPreferenceApi = {
+  fetch: async (): Promise<Preference> => {
+    const res = await fetch("/api/user-preference");
+    if (!res.ok) throw new Error("Failed to fetch");
+    return res.json();
   },
 
   post: async (data: Preference) => {
@@ -13,7 +16,7 @@ export const remoteUserPreferenceRepo = {
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
     });
-    return await res.json();
+    return res.json();
   },
 
   put: async (data: Preference) => {
@@ -22,6 +25,6 @@ export const remoteUserPreferenceRepo = {
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
     });
-    return await res.json();
+    return res.json();
   },
 };

@@ -8,9 +8,13 @@ import {
 } from "@/components/custom/MultiComboBox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  buttonVariantData,
+  comboBoxVariantData,
+  keys,
+} from "@/app/_mocks/pages/demo/multi-combo-box";
 import { ValueLabel } from "@/types/common";
 
-import { buttonVariantData, comboBoxVariantData, keys } from "./mock";
 import { comboBoxVariant, indexVariant } from "./type";
 
 export default function MultiComboBoxPage() {

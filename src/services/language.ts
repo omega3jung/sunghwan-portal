@@ -4,18 +4,17 @@ import { useTranslation } from "react-i18next";
 export function useLanguageState() {
   const { i18n } = useTranslation();
 
-  const [state, setState] = useState(
-    () => sessionStorage.getItem("NEXT_LOCALE") ?? "en"
-  );
+  const [language, setLanguage] = useState<string>("en");
 
-  const setLanguage = (language: string) => {
+  const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
     sessionStorage.setItem("NEXT_LOCALE", language);
-    setState(language);
+    setLanguage(language);
+    document.documentElement.lang = language;
   };
 
   return {
-    language: state,
-    setLanguage,
+    language,
+    changeLanguage,
   };
 }
