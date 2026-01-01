@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import { demoUser } from "@/domain/user/demo";
 import fetcher from "@/services/fetcher";
 
 export type LoginResponse = {
@@ -21,12 +22,7 @@ export const loginApi = async ({
     // demo login
     if (username === "__demo__") {
       console.log(username);
-      return {
-        id: "demo",
-        name: "Demo Guest",
-        email: "demo@sunghwan.dev",
-        accessToken: "demo-token",
-      };
+      return demoUser;
     }
     console.log("real login");
 

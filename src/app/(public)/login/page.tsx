@@ -39,7 +39,7 @@ export default function LoginPage() {
   const { mutate: updateUserPreference } = usePutUserPreference();
 
   const { t } = useTranslation("login");
-  const { language, setLanguage } = useLanguageState();
+  const { language, changeLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ export default function LoginPage() {
     if (!userPreference) return;
 
     if (userPreference.language) {
-      setLanguage(userPreference.language);
+      changeLanguage(userPreference.language);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPreference]);
@@ -213,7 +213,7 @@ export default function LoginPage() {
   };
 
   const handleLanguageChange = (newLang: string) => {
-    setLanguage(newLang);
+    changeLanguage(newLang);
 
     const payload = {
       ...userPreference,
@@ -231,10 +231,19 @@ export default function LoginPage() {
     if (hasSignedIn && status === "authenticated") {
       redirect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSignedIn, status]);
 
+  if (status === "loading") {
+    return (
+      <div className="flex w-full items-center justify-center gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:min-h-[44rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
+        <Loader2 className="h-20 w-20 animate-spin text-background" />{" "}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
+    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:min-h-[44rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
       {formType === LoginStateEnum.LOGIN && (
         <div>
           <LoginForm onSubmit={onSubmit} isLoading={loading} />

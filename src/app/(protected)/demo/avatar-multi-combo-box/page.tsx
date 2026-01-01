@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Input } from "@/components/ui/input";
 
-import { data } from "./mock";
+import { avatarComboMock } from "../../../_mocks/pages/demo/avatar-multi-combo-box";
 
 export default function AvatarMultiComboBoxPage() {
   const [userValue, setUserValue] = useState<string[]>([]);
@@ -27,7 +27,7 @@ export default function AvatarMultiComboBoxPage() {
         <h4 className="p-2">Avatar Multi Combo Box</h4>
 
         <AvatarMultiComboBox
-          options={data ? data : []}
+          options={avatarComboMock}
           value={userValue}
           maxImages={maxCount}
           placeholder="Select Users"

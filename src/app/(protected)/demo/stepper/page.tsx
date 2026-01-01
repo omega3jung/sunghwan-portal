@@ -4,8 +4,7 @@ import { useState } from "react";
 
 import { Stepper } from "@/components/custom/Stepper";
 import { Input } from "@/components/ui/input";
-
-import { data } from "./mock";
+import { stepperMock } from "@/app/_mocks/pages/demo/stepper";
 
 export default function AvatarMultiComboBoxPage() {
   const [maxCount, setMaxCount] = useState<number>(2);
@@ -29,12 +28,12 @@ export default function AvatarMultiComboBoxPage() {
 
         <Stepper
           currentStep={currentStep}
-          steps={data}
+          steps={stepperMock}
           setStep={setCurrentStep}
         />
         <Stepper
           currentStep={currentStep}
-          steps={data}
+          steps={stepperMock}
           setStep={setCurrentStep}
           variant="circle"
           orientation={"vertical"}

@@ -7,6 +7,7 @@ import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { Button } from "@/components/ui/button";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { withLeadingSlash } from "@/utils";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 
@@ -22,7 +23,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
   }
 
   if (session.status === "unauthenticated") {
-    redirect("/login");
+    redirect(withLeadingSlash("/login"));
   }
 
   const isDemoUser = session.current?.dataScope === "LOCAL";

@@ -53,6 +53,11 @@ const initialState: SessionState = {
     email: undefined as never,
     accessToken: undefined as never,
   },
+  security: {
+    loginLockedUntil: null,
+    failedAttempts: 0,
+    requiresCaptcha: false,
+  },
 };
 
 /*

@@ -6,14 +6,13 @@ import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/custom/DateRangePicker/DateRangePicker";
 import { Period } from "@/components/custom/DateRangePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
-
-import { ranges } from "./mock";
+import { dateRangeMock } from "@/app/_mocks/pages/demo/date-range-picker";
 
 export default function DateRangePickerPage() {
   const [period, setPeriod] = useState<Period | undefined>("this_month");
   const [range, setRange] = useState<DateRange>();
 
-  const testData = ranges.map((range) => {
+  const testData = dateRangeMock.map((range) => {
     return { value: range, label: range };
   });
 

@@ -48,7 +48,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
 
   const [colorTheme, setColorTheme] = useState("default");
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage } = useLanguageState();
+  const { language, changeLanguage } = useLanguageState();
 
   const { data: userPreference } = useFetchUserPreference();
   const { mutate: createUserPreference } = usePostUserPreference();
@@ -76,7 +76,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
 
     // language.
     if (userPreference.language) {
-      setLanguage(userPreference.language);
+      changeLanguage(userPreference.language);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPreference]);
@@ -101,7 +101,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   };
 
   const handleLanguageChange = (newLang: string) => {
-    setLanguage(newLang);
+    changeLanguage(newLang);
 
     handleSavePreferences({
       ...userPreference,

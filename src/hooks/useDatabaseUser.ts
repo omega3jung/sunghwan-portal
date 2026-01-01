@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/hooks/useCurrentSession";
 import fetcher from "@/services/fetcher";
 import { AppUser } from "@/types";
+import { AuthUser } from "@/types/next-auth";
 
-export const useDatabaseUser = () => {
-  const { data: session } = useCurrentSession();
+export const useDatabaseUser = (user: AuthUser | AppUser) => {
+  const userId = user?.id;
 
   return useQuery({
-    queryKey: ["DATABASE_USER", session?.user?.id],
+    queryKey: ["DATABASE_USER", userId],
     queryFn: async () => {
-      const res = await fetcher.api<AppUser>(`/users/${session!.user?.id}`);
+      const res = await fetcher.api<AppUser>(`/users/${userId}`);
       return res.data;
     },
-    enabled: !!session?.user?.id,
+    enabled: !!userId,
   });
 };

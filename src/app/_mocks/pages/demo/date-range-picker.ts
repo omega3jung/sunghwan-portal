@@ -1,4 +1,6 @@
-export const ranges = [
+import { Period } from "@/components/custom/DateRangePicker/types";
+
+export const dateRangeMock: Period[] = [
   "today",
   "this_week",
   "this_month",

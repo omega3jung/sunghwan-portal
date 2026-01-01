@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
+import { createMenuItems } from "@/app/_mocks";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,
@@ -22,7 +23,6 @@ import { useImpersonation } from "@/hooks/useImpersonation";
 import { ENVIRONMENT } from "@/lib/environment";
 
 import { filterMenuByAccessLevel } from "./menu.utils";
-import { createMenuItems } from "./mock";
 
 export function LeftMenu() {
   const { effective } = useImpersonation();
