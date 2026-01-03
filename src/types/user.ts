@@ -1,4 +1,4 @@
-import { ColorTheme, ScreenMode } from "./config";
+import { ColorTheme, Locale, ScreenMode } from "./config";
 
 export type LoginCredentials = {
   username: string;
@@ -8,7 +8,7 @@ export type LoginCredentials = {
 export interface Preference {
   screenMode: ScreenMode;
   colorTheme: ColorTheme;
-  language: string;
+  language: Locale;
 }
 
 export const ACCESS_LEVEL = {

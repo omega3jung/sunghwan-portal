@@ -1,0 +1,101 @@
+{
+  "disabledRouteMessage": {
+    "title": "Not implemented in this demo",
+    "description": "This page exists to demonstrate the settings architecture."
+  },
+  "settingsNavigation": {
+    "dataSetup": {
+      "title": "Data Setup",
+      "description": "Manage foundational master data for device repair operations.",
+      "carrier": {
+        "title": "Carrier",
+        "description": "Manage carrier information for devices."
+      },
+      "project": {
+        "title": "Project",
+        "description": "Manage project information that groups device repair processes."
+      },
+      "maker": {
+        "title": "Maker",
+        "description": "Manage device maker information."
+      },
+      "model": {
+        "title": "Model",
+        "description": "Manage device model information including specifications and features."
+      },
+      "label": {
+        "title": "Label",
+        "description": "Manage labels used throughout the device's repair process and shipping."
+      }
+    },
+
+    "accountSettings": {
+      "title": "Account Settings",
+      "description": "Manage items related to basic account information.",
+      "company": {
+        "title": "Company",
+        "description": "Manage company profile and organizational settings."
+      },
+      "departments": {
+        "title": "Departments",
+        "description": "Manage departments within the company."
+      },
+      "jobFields": {
+        "title": "Job Fields",
+        "description": "Manage various job fields and roles in the organization."
+      },
+      "shifts": {
+        "title": "Shifts",
+        "description": "Manage work shifts and schedules for employees."
+      },
+      "users": {
+        "title": "Users",
+        "description": "Manage users and their access levels."
+      },
+      "workspaces": {
+        "title": "Workspaces",
+        "description": "Manage different workspaces for organizing projects and teams."
+      }
+    },
+    "accessControl": {
+      "title": "Access Control",
+      "description": "Manage access permissions for users and groups.",
+      "userPermissions": {
+        "title": "User Permissions",
+        "description": "Manage the permissions you grant to individuals."
+      },
+      "groupPermissions": {
+        "title": "Group Permissions",
+        "description": "Manage the permissions you grant to groups."
+      }
+    },
+    "workflowSettings": {
+      "title": "Workflow Settings",
+      "description": "Manage workflow steps and validation rules.",
+      "steps": {
+        "title": "Steps",
+        "description": "Manage workflow steps involved in the device repair process."
+      },
+      "validations": {
+        "title": "Validations",
+        "description": "Manage validation rules to ensure data integrity during the workflow."
+      }
+    },
+    "itServiceDeskSettings": {
+      "title": "IT Service Desk Settings",
+      "description": "Manage categories, approval steps, and assignment rules for IT service desk tickets.",
+      "category": {
+        "title": "Category",
+        "description": "Manage categories and sub-categories for IT service desk tickets."
+      },
+      "approvalSteps": {
+        "title": "Approval Steps",
+        "description": "Manage approval steps required before IT service desk tickets are routed to assignees."
+      },
+      "assignmentRules": {
+        "title": "Assignment Rules",
+        "description": "Manage assignment rules for IT service desk tickets."
+      }
+    }
+  }
+}

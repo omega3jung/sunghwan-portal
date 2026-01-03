@@ -8,7 +8,6 @@ export function useLanguageState() {
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
-    sessionStorage.setItem("NEXT_LOCALE", language);
     setLanguage(language);
     document.documentElement.lang = language;
   };

@@ -1,0 +1,101 @@
+{
+  "disabledRouteMessage": {
+    "title": "이 데모에서는 구현되지 않음",
+    "description": "이 페이지는 설정 구조를 보여주기 위해 존재합니다."
+  },
+  "settingsNavigation": {
+    "dataSetup": {
+      "title": "데이터 설정",
+      "description": "디바이스 수리 운영을 위한 기본 마스터 데이터를 관리합니다.",
+      "carrier": {
+        "title": "통신사",
+        "description": "디바이스에 적용되는 통신사 정보를 관리합니다."
+      },
+      "project": {
+        "title": "프로젝트",
+        "description": "디바이스 수리 프로세스를 그룹화하는 프로젝트 정보를 관리합니다."
+      },
+      "maker": {
+        "title": "제조사",
+        "description": "디바이스 제조사 정보를 관리합니다."
+      },
+      "model": {
+        "title": "모델",
+        "description": "사양 및 기능을 포함한 디바이스 모델 정보를 관리합니다."
+      },
+      "label": {
+        "title": "라벨",
+        "description": "디바이스 수리 및 배송 과정 전반에 사용되는 라벨을 관리합니다."
+      }
+    },
+
+    "accountSettings": {
+      "title": "계정 설정",
+      "description": "기본 계정 정보와 관련된 항목을 관리합니다.",
+      "company": {
+        "title": "회사",
+        "description": "회사 프로필 및 조직 설정을 관리합니다."
+      },
+      "departments": {
+        "title": "부서",
+        "description": "회사 내 부서를 관리합니다."
+      },
+      "jobFields": {
+        "title": "직무",
+        "description": "조직 내 다양한 직무 및 역할을 관리합니다."
+      },
+      "shifts": {
+        "title": "근무 시간",
+        "description": "직원의 근무 시간 및 근무 일정을 관리합니다."
+      },
+      "users": {
+        "title": "사용자",
+        "description": "사용자 및 접근 권한 수준을 관리합니다."
+      },
+      "workspaces": {
+        "title": "워크스페이스",
+        "description": "프로젝트와 팀 구성을 위한 워크스페이스를 관리합니다."
+      }
+    },
+    "accessControl": {
+      "title": "접근 제어",
+      "description": "사용자 및 그룹의 접근 권한을 관리합니다.",
+      "userPermissions": {
+        "title": "사용자 권한",
+        "description": "개별 사용자에게 부여되는 권한을 관리합니다."
+      },
+      "groupPermissions": {
+        "title": "그룹 권한",
+        "description": "그룹에 부여되는 권한을 관리합니다."
+      }
+    },
+    "workflowSettings": {
+      "title": "작업순서 설정",
+      "description": "작업순서 단계 및 검증 규칙을 관리합니다.",
+      "steps": {
+        "title": "단계",
+        "description": "디바이스 수리 프로세스에 포함된 작업순서 단계를 관리합니다."
+      },
+      "validations": {
+        "title": "검증",
+        "description": "작업별 진행 중 데이터 무결성을 보장하기 위한 검증 규칙을 관리합니다."
+      }
+    },
+    "itServiceDeskSettings": {
+      "title": "IT 서비스 데스크 설정",
+      "description": "IT 서비스 데스크 티켓의 분류, 승인 단계 및 할당 규칙을 관리합니다.",
+      "category": {
+        "title": "카테고리",
+        "description": "IT 서비스 데스크 티켓의 카테고리 및 하위 카테고리를 관리합니다."
+      },
+      "approvalSteps": {
+        "title": "승인 단계",
+        "description": "IT 서비스 데스크 티켓이 담당자에게 할당되기 전 필요한 승인 단계를 관리합니다."
+      },
+      "assignmentRules": {
+        "title": "할당 규칙",
+        "description": "IT 서비스 데스크 티켓의 할당 규칙을 관리합니다."
+      }
+    }
+  }
+}

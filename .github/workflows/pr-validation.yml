@@ -1,0 +1,27 @@
+name: Validate PR Template
+
+on:
+    pull_request:
+        types: [opened, edited, synchronize]
+
+jobs:
+    check-template:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Validate main PR template
+              if: github.base_ref == 'main'
+              run: |
+                  PR_BODY="${{ github.event.pull_request.body }}"
+
+                  if [[ -z "$PR_BODY" ]]; then
+                    echo "❌ PR description is empty. Main PR must use main template."
+                    exit 1
+                  fi
+
+                  if ! echo "$PR_BODY" | grep -q "## Deployment Checklist"; then
+                    echo "❌ Main PR must include '## Deployment Checklist' section."
+                    exit 1
+                  fi
+
+                  echo "✅ Main PR template validation passed."

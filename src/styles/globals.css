@@ -48,6 +48,30 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* design tokens (icon, widgets) */
+    --iturquoise: 172 83% 40%;
+    --iturquoise-foreground: 0 0% 100%;
+    --iskyblue: 191 95% 42%;
+    --iskyblue-foreground: 0 0% 100%;
+    --ipink: 330 89% 70%;
+    --ipink-foreground: 0 0% 12%;
+    --iorange: 21 94% 53%;
+    --iorange-foreground: 0 0% 12%;
+    --iblue: 201 97% 39%;
+    --iblue-foreground: 0 0% 100%;
+    --isalmon: 353 96% 82%;
+    --isalmon-foreground: 0 0% 12%;
+    --iyellow: 44 100% 50%;
+    --iyellow-foreground: 0 0% 12%;
+    --ipinkdark: 351 94% 71%;
+    --ipinkdark-foreground: 0 0% 100%;
+    --ililac: 262 94% 75%;
+    --ililac-foreground: 0 0% 12%;
+    --iskyblue2: 199 93% 60%;
+    --iskyblue2-foreground: 0 0% 12%;
+    --igreen: 142 71% 45%;
+    --igreen-foreground: 0 0% 100%;
   }
   .dark {
     --background: 0 0% 3.9%;

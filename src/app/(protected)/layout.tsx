@@ -6,8 +6,8 @@ import { ProtectedProviders } from "./_providers";
 import { ProtectedShell } from "./_shell/ProtectedShell";
 
 // force-dynamic to block cache store.
-//export const dynamic = "force-dynamic";
-//export const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   // use client ❌ session ❌ redirect ❌

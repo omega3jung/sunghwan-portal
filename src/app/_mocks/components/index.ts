@@ -1,2 +1,2 @@
 // src/mock/components/index.ts
-export { createMenuItems } from "./leftMenu";
+export { createMenuMock } from "./leftMenu";

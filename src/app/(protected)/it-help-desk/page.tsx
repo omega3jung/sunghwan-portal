@@ -1,9 +1,9 @@
-// src/app/(protected)/it-help-desk/page.tsx
+// src/app/(protected)/it-Service-desk/page.tsx
 
-export default function ItHelpDeskPage() {
+export default function ItServiceDeskPage() {
   return (
     <main>
-      <div>IT Help Desk main page.</div>
+      <div>IT Service Desk main page.</div>
     </main>
   );
 }

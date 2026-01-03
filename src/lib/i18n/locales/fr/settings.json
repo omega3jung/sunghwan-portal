@@ -1,0 +1,101 @@
+{
+  "disabledRouteMessage": {
+    "title": "Non implémenté dans cette démo",
+    "description": "Cette page sert à illustrer l'architecture des paramètres."
+  },
+  "settingsNavigation": {
+    "dataSetup": {
+      "title": "Configuration des Données",
+      "description": "Gère les données de référence fondamentales pour les opérations de réparation des appareils.",
+      "carrier": {
+        "title": "Opérateur",
+        "description": "Gère les informations des opérateurs pour les appareils."
+      },
+      "project": {
+        "title": "Projet",
+        "description": "Gère les informations des projets regroupant les processus de réparation des appareils."
+      },
+      "maker": {
+        "title": "Fabricant",
+        "description": "Gère les informations du fabricant de l’appareil."
+      },
+      "model": {
+        "title": "Modèle",
+        "description": "Gère les informations du modèle de l’appareil, y compris les spécifications et les fonctionnalités."
+      },
+      "label": {
+        "title": "Étiquette",
+        "description": "Gère les étiquettes utilisées tout au long du processus de réparation et d’expédition de l’appareil."
+      }
+    },
+
+    "accountSettings": {
+      "title": "Paramètres du Compte",
+      "description": "Gère les éléments liés aux informations de base du compte.",
+      "company": {
+        "title": "Entreprise",
+        "description": "Gère le profil de l’entreprise et les paramètres organisationnels."
+      },
+      "departments": {
+        "title": "Départements",
+        "description": "Gère les départements au sein de l’entreprise."
+      },
+      "jobFields": {
+        "title": "Fonctions",
+        "description": "Gère les différentes fonctions et rôles au sein de l’organisation."
+      },
+      "shifts": {
+        "title": "Horaires",
+        "description": "Gère les horaires et les plannings de travail des employés."
+      },
+      "users": {
+        "title": "Utilisateurs",
+        "description": "Gère les utilisateurs et leurs niveaux d’accès."
+      },
+      "workspaces": {
+        "title": "Espaces de Travail",
+        "description": "Gère les différents espaces de travail pour organiser les projets et les équipes."
+      }
+    },
+    "accessControl": {
+      "title": "Contrôle d’Accès",
+      "description": "Gère les autorisations d’accès pour les utilisateurs et les groupes.",
+      "userPermissions": {
+        "title": "Autorisations Utilisateur",
+        "description": "Gère les autorisations accordées aux utilisateurs individuels."
+      },
+      "groupPermissions": {
+        "title": "Autorisations de Groupe",
+        "description": "Gère les autorisations accordées aux groupes."
+      }
+    },
+    "workflowSettings": {
+      "title": "Paramètres du Flux de Travail",
+      "description": "Gère les étapes du flux de travail et les règles de validation.",
+      "steps": {
+        "title": "Étapes",
+        "description": "Gère les étapes du flux de travail impliquées dans le processus de réparation des appareils."
+      },
+      "validation": {
+        "title": "Validations",
+        "description": "Gère les règles de validation afin de garantir l’intégrité des données tout au long du flux de travail."
+      }
+    },
+    "itServiceDeskSettings": {
+      "title": "Paramètres du Support Informatique",
+      "description": "Gère les catégories, les étapes d’approbation et les règles d’attribution des tickets du support informatique.",
+      "category": {
+        "title": "Catégorie",
+        "description": "Gère les catégories et sous-catégories des tickets du support informatique."
+      },
+      "approvalSteps": {
+        "title": "Étapes d’Approbation",
+        "description": "Gère les étapes d’approbation requises avant que les tickets du support informatique ne soient attribués aux responsables."
+      },
+      "assignmentRules": {
+        "title": "Règles d’Attribution",
+        "description": "Gère les règles d’attribution des tickets du support informatique."
+      }
+    }
+  }
+}

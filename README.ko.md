@@ -126,7 +126,7 @@ app/
 │ └─ login/
 ├─ (보호됨)/
 │ ├─ demo/
-│ ├─ it-help-desk/
+│ ├─ it-service-desk/
 │ └─ layout.tsx
 ├─ api/
 │ └─ auth/

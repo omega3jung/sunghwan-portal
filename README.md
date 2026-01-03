@@ -131,7 +131,7 @@ app/
  │   └─ login/
  ├─ (protected)/
  │   ├─ demo/
- │   ├─ it-help-desk/
+ │   ├─ it-service-desk/
  │   └─ layout.tsx
  ├─ api/
  │   └─ auth/

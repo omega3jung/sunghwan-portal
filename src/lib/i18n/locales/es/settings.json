@@ -1,0 +1,101 @@
+{
+  "disabledRouteMessage": {
+    "title": "No implementado en esta demostración",
+    "description": "Esta página existe para demostrar la arquitectura de la configuración."
+  },
+  "settingsNavigation": {
+    "dataSetup": {
+      "title": "Configuración de Datos",
+      "description": "Gestiona los datos maestros fundamentales para las operaciones de reparación de dispositivos.",
+      "carrier": {
+        "title": "Operador",
+        "description": "Gestiona la información del operador para los dispositivos."
+      },
+      "project": {
+        "title": "Proyecto",
+        "description": "Gestiona la información de proyectos que agrupan los procesos de reparación de dispositivos."
+      },
+      "maker": {
+        "title": "Fabricante",
+        "description": "Gestiona la información del fabricante del dispositivo."
+      },
+      "model": {
+        "title": "Modelo",
+        "description": "Gestiona la información del modelo del dispositivo, incluidas sus especificaciones y características."
+      },
+      "label": {
+        "title": "Etiqueta",
+        "description": "Gestiona las etiquetas utilizadas durante el proceso de reparación y envío del dispositivo."
+      }
+    },
+
+    "accountSettings": {
+      "title": "Configuración de la Cuenta",
+      "description": "Gestiona los elementos relacionados con la información básica de la cuenta.",
+      "company": {
+        "title": "Empresa",
+        "description": "Gestiona el perfil de la empresa y la configuración organizativa."
+      },
+      "departments": {
+        "title": "Departamentos",
+        "description": "Gestiona los departamentos dentro de la empresa."
+      },
+      "jobFields": {
+        "title": "Áreas de Trabajo",
+        "description": "Gestiona las distintas áreas de trabajo y roles dentro de la organización."
+      },
+      "shifts": {
+        "title": "Turnos",
+        "description": "Gestiona los turnos y horarios de trabajo de los empleados."
+      },
+      "users": {
+        "title": "Usuarios",
+        "description": "Gestiona los usuarios y sus niveles de acceso."
+      },
+      "workspaces": {
+        "title": "Espacios de Trabajo",
+        "description": "Gestiona los diferentes espacios de trabajo para organizar proyectos y equipos."
+      }
+    },
+    "accessControl": {
+      "title": "Control de Acceso",
+      "description": "Gestiona los permisos de acceso para usuarios y grupos.",
+      "userPermissions": {
+        "title": "Permisos de Usuario",
+        "description": "Gestiona los permisos otorgados a los usuarios individuales."
+      },
+      "groupPermissions": {
+        "title": "Permisos de Grupo",
+        "description": "Gestiona los permisos otorgados a los grupos."
+      }
+    },
+    "workflowSettings": {
+      "title": "Configuración del Flujo de Trabajo",
+      "description": "Gestiona los pasos del flujo de trabajo y las reglas de validación.",
+      "steps": {
+        "title": "Pasos",
+        "description": "Gestiona los pasos del flujo de trabajo involucrados en el proceso de reparación del dispositivo."
+      },
+      "validations": {
+        "title": "Validaciones",
+        "description": "Gestiona las reglas de validación para garantizar la integridad de los datos durante el flujo de trabajo."
+      }
+    },
+    "itServiceDeskSettings": {
+      "title": "Configuración de la Mesa de Ayuda de TI",
+      "description": "Gestiona las categorías, los pasos de aprobación y las reglas de asignación de los tickets de la mesa de ayuda de TI.",
+      "category": {
+        "title": "Categoría",
+        "description": "Gestiona las categorías y subcategorías de los tickets de la mesa de ayuda de TI."
+      },
+      "approvalSteps": {
+        "title": "Pasos de Aprobación",
+        "description": "Gestiona los pasos de aprobación requeridos antes de que los tickets de la mesa de ayuda de TI se asignen a los responsables."
+      },
+      "assignmentRules": {
+        "title": "Reglas de Asignación",
+        "description": "Gestiona las reglas de asignación para los tickets de la mesa de ayuda de TI."
+      }
+    }
+  }
+}

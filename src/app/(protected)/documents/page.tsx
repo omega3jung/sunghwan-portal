@@ -1,6 +1,6 @@
-// src/app/(protected)/it-help-desk/page.tsx
+// src/app/(protected)/it-service-desk/page.tsx
 
-export default function ItHelpDeskPage() {
+export default function ItServiceDeskPage() {
   return (
     <main>
       <div>Documents main page.</div>

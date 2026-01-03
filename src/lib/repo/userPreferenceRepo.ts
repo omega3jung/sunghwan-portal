@@ -6,7 +6,7 @@ import { Preference } from "@/types";
 export const USER_PREFERENCE_KEY = "USER-PREFERENCE";
 
 export const userPreferenceRepo = {
-  async fetch() {
+  async fetch(): Promise<Preference> {
     const { dataScope } = useSessionStore.getState();
 
     if (dataScope === "LOCAL") {

@@ -150,7 +150,7 @@ export const NavigationBar = (props: Props) => {
     <nav
       data-testid="screen-navigation-bar"
       className={cn(
-        "col-span-full flex items-center gap-3 border-b px-2 md:col-start-2",
+        "col-span-full flex items-center gap-3 border-b pl-6 pr-2 md:col-start-2",
         props.className
       )}
     >

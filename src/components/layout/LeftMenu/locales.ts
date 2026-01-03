@@ -4,7 +4,7 @@ export const leftMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
     home: "Home",
     playground: "Playground",
-    itHelpDesk: "IT Help Desk",
+    itServiceDesk: "IT Service Desk",
     componentsDemo: "Components Demo",
     avatarMultiComboBox: "Avatar Multi Combo Box",
     dateRangePicker: "Date Range Picker",
@@ -23,7 +23,7 @@ export const leftMenuLocales: Record<Locale, Record<string, string>> = {
   es: {
     home: "Inicio",
     playground: "Playground",
-    itHelpDesk: "Mesa de ayuda de TI",
+    itServiceDesk: "Mesa de ayuda de TI",
     componentsDemo: "Demostración de componentes",
     avatarMultiComboBox: "Cuadro combinado múltiple con avatar",
     dateRangePicker: "Selector de rango de fechas",
@@ -42,7 +42,7 @@ export const leftMenuLocales: Record<Locale, Record<string, string>> = {
   fr: {
     home: "Accueil",
     playground: "Playground",
-    itHelpDesk: "Support informatique",
+    itServiceDesk: "Support informatique",
     componentsDemo: "Démonstration des composants",
     avatarMultiComboBox: "Liste déroulante multiple avec avatar",
     dateRangePicker: "Sélecteur de plage de dates",
@@ -61,7 +61,7 @@ export const leftMenuLocales: Record<Locale, Record<string, string>> = {
   ko: {
     home: "홈",
     playground: "플레이그라운드",
-    itHelpDesk: "IT 헬프 데스크",
+    itServiceDesk: "IT 서비스 데스크",
     componentsDemo: "컴포넌트 데모",
     avatarMultiComboBox: "아바타 멀티 콤보 박스",
     dateRangePicker: "날짜 범위 선택",

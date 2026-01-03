@@ -43,7 +43,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
         <NavigationBar className="h-[57px]" />
 
         {/* Page Content */}
-        <main className="overflow-auto p-4 min-h-0 bg-background">
+        <main className="overflow-auto p-2 min-h-0 bg-background">
           {children}
         </main>
 
