@@ -123,6 +123,66 @@ This project intentionally separates authentication concerns into
 
 ---
 
+## Fetcher Architecture
+
+This project intentionally abstracts all HTTP communication
+behind a unified `fetcher` interface.
+
+The goal is to decouple **UI logic** from **infrastructure decisions**
+(such as axios vs fetch, internal vs external APIs, or DB access patterns),
+allowing future backend architecture changes without refactoring UI code.
+
+---
+
+### Fetcher Responsibilities
+
+The `fetcher` layer is divided by responsibility, not by implementation:
+
+- **fetcher.api**
+
+  - Client → Internal API (BFF)
+  - Used by feature-level API modules
+  - Hides whether the backend is local, remote, or proxied
+
+- **fetcher.db**
+
+  - Server-only fetcher for DB or internal service access
+  - Used exclusively inside `app/api` route handlers
+  - Adapts UI-friendly filter state into DB-compatible query formats
+
+- **fetcher.portal**
+
+  - Integration layer for legacy or internal portals
+
+- **fetcher.files**
+  - File upload / download abstraction
+
+---
+
+### DB Fetcher Responsibility
+
+`fetcher.db` is responsible for adapting **UI-oriented filter state**
+(e.g. `RuleGroupTypeIC`) into **DB-compatible query formats**
+such as SQL query strings.
+
+This responsibility is intentionally limited to
+**protected, internal tools** (e.g. admin or portal features).
+
+For public-facing APIs, filters should be sent as
+structured DTOs and parsed server-side to avoid exposing
+query implementation details.
+
+---
+
+The HTTP client implementation behind `fetcher.db`
+(e.g. axios, fetch, or others) is intentionally abstracted.
+
+This allows backend developers to choose or change
+infrastructure decisions later without affecting
+feature-level or UI code.
+
+---
+
 ## Project Structure (Simplified)
 
 ```txt

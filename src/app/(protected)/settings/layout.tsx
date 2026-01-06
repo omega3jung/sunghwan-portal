@@ -1,4 +1,4 @@
-// app/(protected)/layout.tsx
+// app/(protected)/settings/layout.tsx
 
 import { ReactNode } from "react";
 

@@ -2,6 +2,7 @@ export const ENVIRONMENT = {
   BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
 
   API: {
+    DB: process.env.NEXT_PUBLIC_DB_API_URL ?? "",
     PORTAL: process.env.NEXT_PUBLIC_PORTAL_API_URL ?? "",
     NODE: process.env.NEXT_PUBLIC_NODE_API_URL ?? "",
   },

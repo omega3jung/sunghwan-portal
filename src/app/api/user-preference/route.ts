@@ -1,17 +1,12 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
+import { isRemoteRequest } from "@/app/api/_helpers";
 import { defaultPreference } from "@/domain/user";
 import { Preference } from "@/types";
 
 export async function GET(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  const isRemote = token?.dataScope === "REMOTE";
+  const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
@@ -39,12 +34,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  const isRemote = token?.dataScope === "REMOTE";
+  const isRemote = await isRemoteRequest(request);
 
   const body = (await request.json()) as Preference;
 
@@ -64,12 +54,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  const isRemote = token?.dataScope === "REMOTE";
+  const isRemote = await isRemoteRequest(request);
 
   const body = (await request.json()) as Preference;
 

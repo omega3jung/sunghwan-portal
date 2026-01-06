@@ -21,7 +21,8 @@ export const ACCESS_LEVEL = {
 } as const;
 
 //export type AccessLevel = keyof typeof ACCESS_LEVEL;
-export type AccessLevel = (typeof ACCESS_LEVEL)[keyof typeof ACCESS_LEVEL];
+export type Role = keyof typeof ACCESS_LEVEL;
+export type AccessLevel = (typeof ACCESS_LEVEL)[Role];
 
 // user type.
 export interface AppUser {
@@ -30,10 +31,13 @@ export interface AppUser {
   email?: string;
   image?: string;
   permission: AccessLevel; // permission represents user's access level (not feature permissions)
+  role?: Role; // optional, derived or explicit
   preference?: Preference;
   accessToken?: string;
   canUseSuperUser?: boolean; // from server.
   canUseImpersonation?: boolean; // from server.
+  userScope: "INTERNAL" | "TENANT"; // from server.
+  tenantId?: string; // from server.
 }
 
 // Impersonation User type.
