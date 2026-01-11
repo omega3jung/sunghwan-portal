@@ -7,6 +7,7 @@ import { isPublicRoute } from "@/lib/routes";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+  const MAX_DURATION = 24 * 60 * 1000; // 24hours.
 
   // Bypass non-HTML requests (e.g., API, static assets, images, etc.)
   const accept = request.headers.get("accept") ?? "";
@@ -78,6 +79,12 @@ export async function middleware(request: NextRequest) {
 
   if (token?.accessToken) {
     return NextResponse.next();
+  }
+
+  if (token?.impersonation) {
+    if (Date.now() - token.impersonation.activatedAt > MAX_DURATION) {
+      // stop impersonation
+    }
   }
 
   // ❌ Not logged in → login redirect

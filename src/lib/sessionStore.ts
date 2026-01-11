@@ -47,17 +47,13 @@ export interface SessionActions {
 const initialState: SessionState = {
   dataScope: "LOCAL",
   isSuperUser: false,
-  user: {
-    id: undefined as never,
-    name: undefined as never,
-    email: undefined as never,
-    accessToken: undefined as never,
-  },
+  user: null,
   security: {
     loginLockedUntil: null,
     failedAttempts: 0,
     requiresCaptcha: false,
   },
+  superUserActivated: null,
 };
 
 /*

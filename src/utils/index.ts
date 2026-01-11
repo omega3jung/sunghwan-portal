@@ -2,6 +2,7 @@ export * from "./array";
 export * from "./classnames";
 export * from "./file";
 export * from "./mapping";
+export * from "./normalize";
 export * from "./number";
 export * from "./path";
 export * from "./string";

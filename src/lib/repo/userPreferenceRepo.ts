@@ -6,7 +6,7 @@ import { Preference } from "@/types";
 export const USER_PREFERENCE_KEY = "USER-PREFERENCE";
 
 export const userPreferenceRepo = {
-  async fetch(): Promise<Preference> {
+  async fetch(userId?: string) {
     const { dataScope } = useSessionStore.getState();
 
     if (dataScope === "LOCAL") {
@@ -16,7 +16,7 @@ export const userPreferenceRepo = {
       if (raw) return JSON.parse(raw);
     }
 
-    return userPreferenceApi.fetch();
+    return userPreferenceApi.fetch(userId);
   },
 
   async post(data: Preference) {

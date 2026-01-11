@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import { adminAuth } from "@/domain/user";
 import {
   useFetchUserPreference,
   usePostUserPreference,
@@ -75,7 +76,7 @@ export default function LoginPage() {
   // try demo click.
   const onTryDemo = (): Promise<void> => {
     setDemoLoading(true);
-    return onSignIn({ username: "__demo__", password: "__demo__" });
+    return onSignIn({ username: adminAuth.id, password: adminAuth.id });
   };
 
   // process sign in.

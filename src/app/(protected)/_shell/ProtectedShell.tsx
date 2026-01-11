@@ -14,6 +14,7 @@ import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
 
+  // 1️⃣ next-auth loading
   if (session.status === "loading") {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
@@ -22,15 +23,25 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // 2️⃣ not authenticated
   if (session.status === "unauthenticated") {
     redirect(withLeadingSlash("/login"));
   }
 
-  const isDemoUser = session.current?.dataScope === "LOCAL";
+  // 3️⃣ authenticated BUT AppUser not hydrated yet
+  if (!session.current || !session.current.user) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin" />
+      </div>
+    );
+  }
+
+  const isDemoUser = session.current?.isDemoUser;
 
   return (
     // UI root container (absolute overlays are positioned relative to this)
-    <AppUserBootstrap user={session.current!.user}>
+    <AppUserBootstrap userId={session.current!.user!.id}>
       {/* Demo Overlay */}
       {isDemoUser && <DemoOverlay />}
 

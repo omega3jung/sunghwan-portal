@@ -2,16 +2,14 @@ import { SessionContextValue } from "next-auth/react";
 
 import { SessionState } from "@/lib/sessionStore";
 
-import { AuthUser } from "./next-auth.d";
-
-export type DataScope = "LOCAL" | "REMOTE";
+import { AppUser } from "./user";
 
 export interface CurrentSession {
-  dataScope: DataScope; // LOCAL | REMOTE
-  user: AuthUser;
+  user: AppUser | null;
   expires: string;
+  isDemoUser: boolean;
   isSuperUser: boolean;
-  superUserActivated?: Date;
+  superUserActivated: Date | null;
 
   // Security-related information for public sessions.
   security: {

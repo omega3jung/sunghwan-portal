@@ -1,28 +1,31 @@
-import { DataScope } from "@/types/user";
+import { AuthUser } from "@/types/auth-user";
 
-// user type for authorization.
-// properties are required info only.
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string;
-  accessToken: string;
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string; // effective user.
+    name: string;
+    email: string;
+    accessToken: string;
+
+    dataScope: DataScope;
+    userScope: UserScope;
+    tenantId: string | null;
+    permission: AccessLevel;
+    role: Role;
+
+    impersonation?: {
+      actorId: string; // loggin in user.
+      subjectId: string; // impersonating user.
+      activatedAt: number; // Date.now()
+    };
+  }
 }
 
 declare module "next-auth" {
   interface Session {
-    user: AuthUser;
-  }
+    user: Pick<AuthUser, "id" | "name" | "email" | "dataScope">;
 
-  type User = AuthUser;
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    name: string;
-    email: string;
-    dataScope: DataScope;
-    accessToken: string;
+    // impersonation
+    impersonation?: { subjectId: string };
   }
 }

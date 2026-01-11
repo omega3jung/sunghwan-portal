@@ -23,25 +23,45 @@ export const ACCESS_LEVEL = {
 //export type AccessLevel = keyof typeof ACCESS_LEVEL;
 export type Role = keyof typeof ACCESS_LEVEL;
 export type AccessLevel = (typeof ACCESS_LEVEL)[Role];
+export type UserScope = "INTERNAL" | "TENANT";
+export type DataScope = "LOCAL" | "REMOTE";
 
-// user type.
+// user type for authorization.
+// properties are required info only.
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  accessToken: string;
+
+  dataScope: DataScope; // 🔐 server-trusted
+  userScope: UserScope; // 🔐 server-trusted
+  tenantId: string | null; // 🔐 server-trusted
+  permission: AccessLevel; // permission represents user's access level (not feature permissions)
+  role: Role; // 🔐 server-trusted
+}
+
+// user type for app.
 export interface AppUser {
   id: string;
   name: string;
-  email?: string;
+  email: string | null;
   image?: string;
-  permission: AccessLevel; // permission represents user's access level (not feature permissions)
-  role?: Role; // optional, derived or explicit
-  preference?: Preference;
-  accessToken?: string;
-  canUseSuperUser?: boolean; // from server.
-  canUseImpersonation?: boolean; // from server.
-  userScope: "INTERNAL" | "TENANT"; // from server.
-  tenantId?: string; // from server.
+
+  userScope: UserScope;
+  tenantId: string | null;
+
+  permission: AccessLevel;
+  role: Role | null;
+
+  preference: Preference | null;
+
+  canUseSuperUser: boolean | null; // from server.
+  canUseImpersonation: boolean | null; // from server.
 }
 
 // Impersonation User type.
 export type ActingUser = {
   actor: AppUser; // The actual logged-in user
-  subject?: AppUser; // The impersonated user (optional)
+  subject: AppUser | null; // The impersonated user (optional)
 };

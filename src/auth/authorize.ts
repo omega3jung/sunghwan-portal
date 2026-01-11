@@ -1,4 +1,4 @@
-import { AuthUser } from "@/types/next-auth.d";
+import { AuthUser } from "@/types";
 
 import { loginApi } from "./credentials";
 
@@ -20,6 +20,11 @@ export const authorize = async (credentials?: {
       name: user.name,
       email: user.email,
       accessToken: user.accessToken,
+      dataScope: user.dataScope,
+      userScope: user.userScope,
+      tenantId: user.tenantId,
+      permission: user.permission,
+      role: user.role,
     };
   } catch (error) {
     // ❗ CredentialsProvider does not allow throwing errors.

@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 
+import { meApi } from "@/lib/api";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 import { SessionState, useSessionStore } from "@/lib/sessionStore";
 import { CurrentSession, UseCurrentSessionResult } from "@/types";
@@ -56,15 +57,15 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - Only update this hook when the session data structure changes.
    */
   const current = useMemo<CurrentSession>(() => {
-    const { user } = store;
+    const isDemoUser = session.data?.user?.dataScope === "LOCAL";
 
-    // local / demo
-    if (user.id === "demo") {
+    if (!store.user) {
       return {
-        dataScope: "LOCAL",
-        user,
+        user: null,
         expires: "",
+        isDemoUser,
         isSuperUser: false,
+        superUserActivated: null,
         security: {
           loginLockedUntil: null,
           failedAttempts: 0,
@@ -73,17 +74,13 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       };
     }
 
-    // remote
     return {
-      dataScope: "REMOTE",
-      user,
+      user: store.user,
       expires: "",
-      isSuperUser: false,
-      security: {
-        loginLockedUntil: null,
-        failedAttempts: 0,
-        requiresCaptcha: false,
-      },
+      isDemoUser,
+      isSuperUser: store.isSuperUser,
+      superUserActivated: store.superUserActivated,
+      security: store.security,
     };
   }, [store]);
 
@@ -112,9 +109,12 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     if (session.status !== "authenticated") return;
     if (!session.data?.user) return;
 
-    store.setSession({
-      user: session.data.user,
+    meApi.get().then((appUser) => {
+      store.setSession({
+        user: appUser,
+      });
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status, session.data?.user]);
 

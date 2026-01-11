@@ -8,7 +8,7 @@ import {
 export const useFetchUserPreference = () => {
   return useQuery({
     queryKey: [USER_PREFERENCE_KEY],
-    queryFn: userPreferenceRepo.fetch,
+    queryFn: () => userPreferenceRepo.fetch(),
   });
 };
 

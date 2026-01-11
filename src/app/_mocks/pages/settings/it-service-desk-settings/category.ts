@@ -1,6 +1,6 @@
 import { TFunction } from "i18next";
 
-import { MainCategoryData } from "@/app/(protected)/settings/it-service-desk-settings/types";
+import { MainCategoryData } from "@/app/(protected)/(admin)/settings/it-service-desk-settings/types";
 
 const ns = { ns: "itServiceDeskSettings" };
 

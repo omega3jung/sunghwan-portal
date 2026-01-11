@@ -1,42 +1,38 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import { getEffectiveUserId, isRemoteRequest } from "@/app/api/_helpers";
 import { defaultPreference } from "@/domain/user";
+import fetcher from "@/services/fetcher";
 import { Preference } from "@/types";
 
-export async function GET(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
+export async function GET(req: NextRequest) {
+  const isRemote = await isRemoteRequest(req);
 
-  // demo mode
-  if (!isRemote) {
+  const userId = await getEffectiveUserId(req);
+
+  // local demo mode.
+  if (!isRemote || !userId) {
     // Return mock user preference.
     return NextResponse.json(defaultPreference);
   }
 
   // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/user-preference`, {
-    headers: {
-      Authorization: `Bearer TOKEN`, // 필요 시
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
+  try {
+    const res = await fetcher.db.get(`/user-profile/${userId}`);
+    return NextResponse.json(res.data);
+  } catch {
     return NextResponse.json(
       { message: "Failed to fetch user preference" },
       { status: 500 }
     );
   }
-
-  const data = await res.json();
-  return NextResponse.json(data);
 }
 
-export async function POST(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
+export async function POST(req: NextRequest) {
+  const isRemote = await isRemoteRequest(req);
 
-  const body = (await request.json()) as Preference;
+  const body = (await req.json()) as Preference;
 
   // demo mode
   if (!isRemote) {
@@ -53,10 +49,10 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(data);
 }
 
-export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
+export async function PUT(req: NextRequest) {
+  const isRemote = await isRemoteRequest(req);
 
-  const body = (await request.json()) as Preference;
+  const body = (await req.json()) as Preference;
 
   // demo mode
 
