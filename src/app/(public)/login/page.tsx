@@ -14,9 +14,10 @@ import {
   useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
-} from "@/hooks/useUserPreference";
+} from "@/feature/user/preference/queries";
 import { useLanguageState } from "@/services/language";
 import { AvailableLanguages } from "@/types";
+import { isLocale } from "@/utils";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -35,7 +36,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { data: userPreference } = useFetchUserPreference();
+  const { data: userPreference } = useFetchUserPreference(null);
   const { mutate: createUserPreference } = usePostUserPreference();
   const { mutate: updateUserPreference } = usePutUserPreference();
 
@@ -214,6 +215,9 @@ export default function LoginPage() {
   };
 
   const handleLanguageChange = (newLang: string) => {
+    if (!userPreference) return;
+    if (!isLocale(newLang)) return;
+
     changeLanguage(newLang);
 
     const payload = {
@@ -222,9 +226,9 @@ export default function LoginPage() {
     };
 
     if (!userPreference) {
-      createUserPreference(payload);
+      createUserPreference({ userId: null, data: payload });
     } else {
-      updateUserPreference(payload);
+      updateUserPreference({ userId: null, data: payload });
     }
   };
 

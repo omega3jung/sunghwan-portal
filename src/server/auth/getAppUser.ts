@@ -16,10 +16,16 @@ export async function getAppUser() {
 
   const authUser = session.user as AuthUser;
 
-  let user = mapAuthUserToAppUser(authUser, {});
+  let user = mapAuthUserToAppUser(authUser);
 
   for (const enhance of enhancers) {
-    user = await enhance(authUser, user);
+    /*
+     * An enhancer only returns its own responsibility.
+     * AuthUser properties cannot be mixed.
+     * AppUser changes are always explicitly merged.
+     */
+    const patch = await enhance(authUser, user);
+    user = { ...user, ...patch };
   }
 
   return user;

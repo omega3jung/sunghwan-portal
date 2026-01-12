@@ -1,5 +1,5 @@
+import { DbParams, OResponse } from "@/feature/query/types";
 import fetcher from "@/services/fetcher";
-import { DbParams, OResponse } from "@/types";
 
 import { ApprovalStep } from "../types";
 

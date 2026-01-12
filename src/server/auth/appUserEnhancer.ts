@@ -3,5 +3,5 @@ import { AppUser, AuthUser } from "@/types";
 
 export type AppUserEnhancer = (
   auth: AuthUser,
-  user: AppUser
-) => Promise<AppUser> | AppUser;
+  user: Readonly<AppUser>
+) => Promise<Partial<AppUser>>;

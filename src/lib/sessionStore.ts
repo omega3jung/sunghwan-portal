@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { CurrentSession } from "@/types";
+import { AppUser, CurrentSession } from "@/types";
 
 /*
  * =========================================================
@@ -26,6 +26,10 @@ const STORAGE_KEYS = {
  */
 export type SessionState = Omit<CurrentSession, "expires">;
 
+export type SessionPatch = Omit<Partial<SessionState>, "user"> & {
+  user?: Partial<AppUser> | null;
+};
+
 /*
  * Actions that manipulate session state
  *
@@ -36,7 +40,7 @@ export type SessionState = Omit<CurrentSession, "expires">;
  */
 export interface SessionActions {
   hydrateSession: () => void; // sessionStorage → store
-  setSession: (data: Partial<SessionState>) => void; // store + storage synchronization
+  setSession: (patch: SessionPatch) => void; // store + storage synchronization
   clearSession: () => void; // logout / clear session
 }
 
@@ -45,7 +49,7 @@ export interface SessionActions {
  * - Default is LOCAL (Try Demo access possible)
  */
 const initialState: SessionState = {
-  dataScope: "LOCAL",
+  isDemoUser: false,
   isSuperUser: false,
   user: null,
   security: {
@@ -83,11 +87,38 @@ export const useSessionStore = create<SessionState & SessionActions>()(
      * Update session information
      * - Synchronize memory status and sessionStorage
      */
-    setSession: (data) => {
-      const next = { ...get(), ...data };
+    setSession: (patch) => {
+      const prev = get();
+
+      let nextUser: AppUser | null;
+
+      if (patch.user === undefined) {
+        nextUser = prev.user;
+      } else if (patch.user === null) {
+        nextUser = null;
+      } else {
+        // patch.user is Partial<AppUser>
+        if (!prev.user) {
+          // ❗ This case is "If there is no user, but only a patch is received."
+          // → This is a logically incorrect condition, so defend against it.
+          throw new Error(
+            "[SessionStore] Cannot patch user when prev.user is null"
+          );
+        }
+
+        nextUser = {
+          ...prev.user,
+          ...patch.user,
+        };
+      }
+
+      const next: SessionState = {
+        ...prev,
+        ...patch,
+        user: nextUser,
+      };
 
       sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(next));
-
       set(next);
     },
 

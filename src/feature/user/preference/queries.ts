@@ -1,14 +1,13 @@
+// src/feature/user/preference/queries.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import {
-  USER_PREFERENCE_KEY,
-  userPreferenceRepo,
-} from "@/lib/repo/userPreferenceRepo";
+import { userPreferenceQueryKeys } from "./queryKeys";
+import { userPreferenceRepo } from "./repo";
 
-export const useFetchUserPreference = () => {
+export const useFetchUserPreference = (userId: string | null) => {
   return useQuery({
-    queryKey: [USER_PREFERENCE_KEY],
-    queryFn: () => userPreferenceRepo.fetch(),
+    queryKey: userPreferenceQueryKeys.detail(userId),
+    queryFn: () => userPreferenceRepo.fetch(userId),
   });
 };
 
@@ -18,7 +17,7 @@ export const usePostUserPreference = () => {
   return useMutation({
     mutationFn: userPreferenceRepo.post,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [USER_PREFERENCE_KEY] });
+      queryClient.invalidateQueries({ queryKey: userPreferenceQueryKeys.all });
     },
   });
 };
@@ -29,7 +28,7 @@ export const usePutUserPreference = () => {
   return useMutation({
     mutationFn: userPreferenceRepo.put,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [USER_PREFERENCE_KEY] });
+      queryClient.invalidateQueries({ queryKey: userPreferenceQueryKeys.all });
     },
   });
 };

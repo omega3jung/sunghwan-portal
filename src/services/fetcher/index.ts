@@ -1,12 +1,10 @@
 // src/services/fetcher/index.ts
-import { apiClient } from "./api";
-import { dbFetcher } from "./db";
+import { api } from "./api";
 import { files } from "./files";
 import { portal } from "./portal";
 
 const fetcher = {
-  api: apiClient,
-  db: dbFetcher,
+  api: api,
   files,
   portal,
 } as const;

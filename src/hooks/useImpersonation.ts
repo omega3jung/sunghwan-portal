@@ -1,39 +1,37 @@
 // hooks/useImpersonation.ts
-import { useSession } from "next-auth/react";
 import React from "react";
 
-import { userProfileApi } from "@/lib/api";
+import { userProfileApi } from "@/feature/user/profile/api";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { mapAuthUserToAppUser } from "@/server/auth/mapAuthUserToAppUser";
+
+import { useCurrentSession } from "./useCurrentSession";
 
 export const useImpersonation = () => {
-  const { data: session } = useSession();
+  const { current } = useCurrentSession();
   const { actor, subject, effective, syncFromSession, reset } =
     useImpersonationStore();
 
   // Store synchronization when session changed.
   React.useEffect(() => {
-    if (!session?.user) {
+    if (!current?.user) {
       reset();
       return;
     }
 
-    const effectiveUser = mapAuthUserToAppUser(session.user, {});
-
     // impersonating.
-    if (session.impersonation?.subjectId) {
+    if (subject) {
       // fetch subject user.
 
-      userProfileApi.fetch(effectiveUser.id).then((subjectProfile) => {
+      userProfileApi.fetch(current.user.id).then((subjectProfile) => {
         syncFromSession({
-          actor: actor ?? effectiveUser,
+          actor: actor ?? current.user!,
           subject: subjectProfile,
         });
       });
     } else {
-      syncFromSession({ actor: effectiveUser, subject: null });
+      syncFromSession({ actor: current.user, subject: null });
     }
-  }, [session?.user, session?.impersonation]);
+  }, [current.user, subject]);
 
   return {
     actor,

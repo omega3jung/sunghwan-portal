@@ -33,7 +33,7 @@ export async function startImpersonation({
     console.log("real impersonation");
 
     // real impersonation.
-    await fetcher.db.post("/auth/impersonation", {
+    await fetcher.api.post("/auth/impersonation", {
       subjectId,
     });
 

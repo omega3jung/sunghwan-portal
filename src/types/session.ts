@@ -1,6 +1,6 @@
 import { SessionContextValue } from "next-auth/react";
 
-import { SessionState } from "@/lib/sessionStore";
+import { SessionPatch } from "@/lib/sessionStore";
 
 import { AppUser } from "./user";
 
@@ -21,10 +21,7 @@ export interface CurrentSession {
 
 export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {
   current: CurrentSession;
-  updateSession: (
-    data: Partial<SessionState>,
-    force?: boolean
-  ) => Promise<void>;
+  updateSession: (patch: SessionPatch, force?: boolean) => Promise<void>;
   hydrateSession: () => void;
   clearSession: () => void;
 };

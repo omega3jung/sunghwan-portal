@@ -1,4 +1,4 @@
-export function useImpersonationApi() {
+export function userImpersonationApi() {
   const start = (subjectId: string) =>
     fetch("/api/auth/impersonation", {
       method: "POST",

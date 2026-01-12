@@ -5,7 +5,7 @@ import { AuthUser, Preference } from "@/types";
 
 export async function getUserPreference(
   authUser: AuthUser
-): Promise<Partial<Preference>> {
+): Promise<Preference> {
   // demo / tenant (LOCAL)
   if (authUser.dataScope === "LOCAL") {
     const profiles = [...demoProfiles, ...tenantProfiles];
@@ -19,8 +19,8 @@ export async function getUserPreference(
   }
 
   // remote backend
-  const res = await fetcher.db.get<Partial<Preference>>(
-    `/user-preference/${authUser.id}`
+  const res = await fetcher.api.get<Preference>(
+    `/user/${authUser.id}/preference`
   );
   return res.data;
 }

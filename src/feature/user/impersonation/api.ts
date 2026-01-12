@@ -1,5 +1,5 @@
+import { DbParams, OResponse } from "@/feature/query/types";
 import fetcher from "@/services/fetcher";
-import { DbParams, OResponse } from "@/types";
 
 import { Category } from "../types";
 
@@ -10,7 +10,7 @@ export const fetchItServiceDeskCategory = async (
 ): Promise<Category[]> => {
   if (!params) return [];
 
-  const res = await .get<CategoryResponse>(
+  const res = await fetcher.api.get<CategoryResponse>(
     "it-service-desk/category",
     { params }
   );

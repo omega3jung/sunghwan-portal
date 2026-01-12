@@ -19,8 +19,8 @@ export async function getUserProfile(
   }
 
   // remote backend
-  const res = await fetcher.db.get<Partial<AppUser>>(
-    `/user-profile/${authUser.id}`
+  const res = await fetcher.api.get<Partial<AppUser>>(
+    `/user/${authUser.id}/profile`
   );
   return res.data;
 }

@@ -34,7 +34,7 @@ export const loginApi = async ({
     console.log("real login");
 
     // real login
-    const res = await fetcher.db.post<LoginResponse>("/auth/login", {
+    const res = await fetcher.api.post<LoginResponse>("/auth/login", {
       username,
       password,
     });

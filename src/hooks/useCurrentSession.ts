@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 
 import { meApi } from "@/lib/api";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { SessionState, useSessionStore } from "@/lib/sessionStore";
+import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
 import { CurrentSession, UseCurrentSessionResult } from "@/types";
 
 /*
@@ -91,11 +91,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - Force revalidation of the next-auth session
    * - Renew the zustand session afterward
    */
-  const updateSession = async (state: Partial<SessionState>, force = false) => {
+  const updateSession = async (patch: SessionPatch, force = false) => {
     if (force) {
       await session.update();
     }
-    store.setSession(state);
+    store.setSession(patch);
   };
 
   // hydrate once on mount (restore sessionStorage -> store)

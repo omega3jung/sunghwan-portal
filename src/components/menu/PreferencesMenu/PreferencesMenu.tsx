@@ -2,7 +2,7 @@
 
 import { Check, Globe } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ComboBox } from "@/components/custom/ComboBox";
@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-  useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
-} from "@/hooks/useUserPreference";
+} from "@/feature/user/preference/queries";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useLanguageState } from "@/services/language";
 import {
@@ -27,7 +27,7 @@ import {
   Preference,
   ScreenMode,
 } from "@/types";
-import { applyColorTheme, cn } from "@/utils";
+import { applyColorTheme, cn, isLocale } from "@/utils";
 
 const themeButtons = [
   { name: "default", primary: "0,0%,9%", muted: "0,0%,96.1%" },
@@ -43,6 +43,7 @@ type PreferencesMenuProps = {
 
 export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
+  const { current, updateSession } = useCurrentSession();
 
   const [open, setOpen] = useState(false);
 
@@ -50,7 +51,10 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   const { theme, setTheme } = useTheme();
   const { language, changeLanguage } = useLanguageState();
 
-  const { data: userPreference } = useFetchUserPreference();
+  const userPreference = useMemo(
+    () => current.user?.preference,
+    [current.user?.preference]
+  );
   const { mutate: createUserPreference } = usePostUserPreference();
   const { mutate: updateUserPreference } = usePutUserPreference();
 
@@ -82,6 +86,8 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   }, [userPreference]);
 
   const handleThemeChange = (newTheme: ScreenMode) => {
+    if (!userPreference) return;
+
     setTheme(newTheme);
 
     handleSavePreferences({
@@ -91,6 +97,8 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   };
 
   const handleColorThemeChange = (newColor: ColorTheme) => {
+    if (!userPreference) return;
+
     applyColorTheme(newColor);
     setColorTheme(newColor);
 
@@ -101,6 +109,9 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   };
 
   const handleLanguageChange = (newLang: string) => {
+    if (!userPreference) return;
+    if (!isLocale(newLang)) return;
+
     changeLanguage(newLang);
 
     handleSavePreferences({
@@ -111,10 +122,12 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
 
   const handleSavePreferences = (payload: Preference) => {
     if (!userPreference) {
-      createUserPreference(payload);
+      createUserPreference({ userId: null, data: payload });
     } else {
-      updateUserPreference(payload);
+      updateUserPreference({ userId: null, data: payload });
     }
+
+    updateSession({ user: { preference: payload } });
   };
 
   return (
