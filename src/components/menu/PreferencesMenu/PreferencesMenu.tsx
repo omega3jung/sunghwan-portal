@@ -1,8 +1,7 @@
 "use client";
 
 import { Check, Globe } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ComboBox } from "@/components/custom/ComboBox";
@@ -18,9 +17,8 @@ import {
   usePostUserPreference,
   usePutUserPreference,
 } from "@/feature/user/preference/queries";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
-import { useLanguageState } from "@/services/language";
 import {
   AvailableLanguages,
   ColorTheme,
@@ -43,18 +41,15 @@ type PreferencesMenuProps = {
 
 export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
-  const { current, updateSession } = useCurrentSession();
 
   const [open, setOpen] = useState(false);
 
-  const [colorTheme, setColorTheme] = useState("default");
-  const { theme, setTheme } = useTheme();
-  const { language, changeLanguage } = useLanguageState();
-
-  const userPreference = useMemo(
-    () => current.user?.preference,
-    [current.user?.preference]
-  );
+  const {
+    current: userPreference,
+    setLanguage,
+    setColorTheme,
+    setScreenMode,
+  } = useCurrentPreference();
   const { mutate: createUserPreference } = usePostUserPreference();
   const { mutate: updateUserPreference } = usePutUserPreference();
 
@@ -64,31 +59,10 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setOpen(false);
   }, [width]);
 
-  useEffect(() => {
-    if (!userPreference) return;
-
-    // color theme.
-    if (userPreference.colorTheme) {
-      setColorTheme(userPreference.colorTheme);
-      applyColorTheme(userPreference.colorTheme);
-    }
-
-    // theme. light/dark mode
-    if (userPreference.screenMode) {
-      setTheme(userPreference.screenMode);
-    }
-
-    // language.
-    if (userPreference.language) {
-      changeLanguage(userPreference.language);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userPreference]);
-
   const handleThemeChange = (newTheme: ScreenMode) => {
     if (!userPreference) return;
 
-    setTheme(newTheme);
+    setScreenMode(newTheme);
 
     handleSavePreferences({
       ...userPreference,
@@ -112,7 +86,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     if (!userPreference) return;
     if (!isLocale(newLang)) return;
 
-    changeLanguage(newLang);
+    setLanguage(newLang);
 
     handleSavePreferences({
       ...userPreference,
@@ -126,8 +100,6 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     } else {
       updateUserPreference({ userId: null, data: payload });
     }
-
-    updateSession({ user: { preference: payload } });
   };
 
   return (
@@ -151,11 +123,13 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
                   }
                   className={cn(
                     "rounded-full bg-[var(--theme-primary)] hover:bg-[var(--theme-muted)] transition-colors",
-                    colorTheme === item.name ? "h-8 w-8 p-0" : "h-4 w-4 p-0"
+                    userPreference.colorTheme === item.name
+                      ? "h-8 w-8 p-0"
+                      : "h-4 w-4 p-0"
                   )}
                   onClick={() => handleColorThemeChange(item.name)}
                 >
-                  {colorTheme === item.name && (
+                  {userPreference.colorTheme === item.name && (
                     <Check className="text-white/80" />
                   )}
                 </Button>
@@ -165,7 +139,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
           <div className="pt-4 font-semibold">{t("theme")}</div>
           <div>
             <RadioGroup
-              value={theme}
+              value={userPreference.screenMode}
               onValueChange={(value: string) =>
                 handleThemeChange(value as ScreenMode)
               }
@@ -201,7 +175,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
               options={AvailableLanguages}
               onChange={handleLanguageChange}
               icon={<Globe />}
-              value={language ?? "en"}
+              value={userPreference.language ?? "en"}
             />
           </div>
         </div>

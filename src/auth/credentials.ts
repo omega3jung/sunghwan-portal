@@ -19,7 +19,7 @@ export const loginApi = async ({
     const demoAuth = resolveDemoAuth(username);
 
     if (demoAuth) {
-      console.log(demoAuth.name);
+      console.log(demoAuth.displayName);
       return { ...demoAuth, dataScope: "LOCAL" };
     }
 
@@ -27,7 +27,7 @@ export const loginApi = async ({
     const tenantDemoAuth = resolveTenantAuth(username);
 
     if (tenantDemoAuth) {
-      console.log(tenantDemoAuth.name);
+      console.log(tenantDemoAuth.displayName);
       return { ...tenantDemoAuth, dataScope: "LOCAL" };
     }
 

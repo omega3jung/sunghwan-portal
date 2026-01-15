@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { resolveTenantAuth } from "@/domain/user";
 import fetcher from "@/services/fetcher";
-import { ACCESS_LEVEL, AuthUser } from "@/types";
+import { ACCESS_LEVEL, AppUser, AuthUser } from "@/types";
 
 export async function startImpersonation({
   actor,
@@ -13,30 +13,51 @@ export async function startImpersonation({
   actor: AuthUser;
   subjectId: string;
 }) {
-  // check permission.
-  if (actor.permission < ACCESS_LEVEL.ADMIN) {
+  // 1. check permission.
+  if (actor.userScope !== "INTERNAL" || actor.permission < ACCESS_LEVEL.ADMIN) {
     throw new Error("FORBIDDEN");
   }
 
   try {
-    // tenant demo impersonation.
-    const tenantDemoAuth = resolveTenantAuth(subjectId);
+    // 2-a. tenant demo impersonation.
+    if (actor.dataScope === "LOCAL") {
+      // 3-a. search subject.
+      const tenantDemoAuth = resolveTenantAuth(subjectId);
 
-    if (tenantDemoAuth) {
-      console.log(tenantDemoAuth.name);
+      if (!tenantDemoAuth) {
+        throw new Error("SUBJECT_NOT_FOUND");
+      }
+
+      // 4-a. check subject scope
+      if (tenantDemoAuth.userScope !== "TENANT") {
+        throw new Error("FORBIDDEN_SUBJECT");
+      }
+
+      // 5-a. allow impersonation
+      console.log(tenantDemoAuth.displayName);
       return {
-        subjectId: subjectId,
+        actorId: actor.id,
+        subjectId: tenantDemoAuth.id,
         activatedAt: Date.now(),
       };
     }
 
+    // 2-b. real impersonation.
     console.log("real impersonation");
 
-    // real impersonation.
-    await fetcher.api.post("/auth/impersonation", {
-      subjectId,
-    });
+    // 3-b. search subject.
+    const res = await fetcher.api.get<AppUser>(`/user/${subjectId}/profile`);
 
+    if (!res.data) {
+      throw new Error("SUBJECT_NOT_FOUND");
+    }
+
+    // 4-a. check subject scope
+    if (res.data.userScope !== "TENANT") {
+      throw new Error("FORBIDDEN_SUBJECT");
+    }
+
+    // 5-b. allow impersonation
     return {
       subjectId: subjectId,
       activatedAt: Date.now(),

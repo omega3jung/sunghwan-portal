@@ -9,7 +9,7 @@ export const useDatabaseUser = (user: AuthUser | AppUser) => {
   return useQuery({
     queryKey: ["DATABASE_USER", userId],
     queryFn: async () => {
-      const res = await fetcher.api<AppUser>(`/users/${userId}`);
+      const res = await fetcher.api.get<AppUser>(`/users/${userId}`);
       return res.data;
     },
     enabled: !!userId,

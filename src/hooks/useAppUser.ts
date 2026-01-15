@@ -6,13 +6,12 @@ import { AppUser } from "@/types";
 export const USER_DATA_KEY = "USER-DATA";
 
 // fetch user data.
-export const useAppUser = (userId: string) => {
+export const useAppUser = () => {
   return useQuery<AppUser>({
-    queryKey: [USER_DATA_KEY, userId],
+    queryKey: [USER_DATA_KEY],
     queryFn: async () => {
-      const res = await fetcher.api.post<AppUser>("/auth/user", { userId });
+      const res = await fetcher.api.post<AppUser>("/api/me");
       return { ...res.data, dataScope: "REMOTE" };
     },
-    enabled: !!userId,
   });
 };

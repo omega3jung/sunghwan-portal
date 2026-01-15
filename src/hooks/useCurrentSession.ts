@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 
-import { meApi } from "@/lib/api";
+import { useFetchMyProfile } from "@/feature/user/profile/queries";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
 import { CurrentSession, UseCurrentSessionResult } from "@/types";
@@ -48,6 +48,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const impersonation = useImpersonationStore();
 
   /*
+   * The ID that last called meApi or userProfileApi
+   */
+  const { data: effectiveUserProfile } = useFetchMyProfile(session.data);
+
+  /*
    * 🔒 From here on, authenticated is guaranteed at the type level.
    *
    * Processing session data for direct use in the UI.
@@ -57,9 +62,10 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - Only update this hook when the session data structure changes.
    */
   const current = useMemo<CurrentSession>(() => {
+    const { user, isSuperUser, superUserActivated, security } = store;
     const isDemoUser = session.data?.user?.dataScope === "LOCAL";
 
-    if (!store.user) {
+    if (!user) {
       return {
         user: null,
         expires: "",
@@ -75,14 +81,14 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     }
 
     return {
-      user: store.user,
+      user: user,
       expires: "",
       isDemoUser,
-      isSuperUser: store.isSuperUser,
-      superUserActivated: store.superUserActivated,
-      security: store.security,
+      isSuperUser: isSuperUser,
+      superUserActivated: superUserActivated,
+      security: security,
     };
-  }, [store]);
+  }, [store.user, store.isSuperUser, store.superUserActivated, store.security]);
 
   /*
    * Single entry point for session updates
@@ -107,16 +113,12 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   // set session when sign in.
   useEffect(() => {
     if (session.status !== "authenticated") return;
-    if (!session.data?.user) return;
+    if (!effectiveUserProfile) return;
 
-    meApi.get().then((appUser) => {
-      store.setSession({
-        user: appUser,
-      });
-    });
+    store.setSession({ user: effectiveUserProfile });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status, session.data?.user]);
+  }, [session.status, effectiveUserProfile]);
 
   // clear session and impersonation when sign out.
   useEffect(() => {

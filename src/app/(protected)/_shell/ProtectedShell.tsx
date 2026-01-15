@@ -10,12 +10,13 @@ import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { withLeadingSlash } from "@/utils";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
+import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
 
   // 1️⃣ next-auth loading
-  if (session.status === "loading") {
+  if (session.status === "loading" && !session.current) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin" />
@@ -41,7 +42,10 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
 
   return (
     // UI root container (absolute overlays are positioned relative to this)
-    <AppUserBootstrap userId={session.current!.user!.id}>
+    <AppUserBootstrap user={session.current?.user}>
+      {/* All user preferences are automatically applied */}
+      <PreferenceBootstrap />
+
       {/* Demo Overlay */}
       {isDemoUser && <DemoOverlay />}
 
@@ -70,7 +74,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
               )
             }
           >
-            © 2025 SungHwan Jung.
+            © 2025 Sunghwan Jung.
           </Button>
         </footer>
       </div>

@@ -1,7 +1,9 @@
 import { SessionContextValue } from "next-auth/react";
 
+import { PreferencePatch } from "@/lib/preferenceStore";
 import { SessionPatch } from "@/lib/sessionStore";
 
+import { ColorTheme, Locale, Preference, ScreenMode } from "./config";
 import { AppUser } from "./user";
 
 export interface CurrentSession {
@@ -24,4 +26,17 @@ export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {
   updateSession: (patch: SessionPatch, force?: boolean) => Promise<void>;
   hydrateSession: () => void;
   clearSession: () => void;
+};
+
+export type UseCurrentPreferenceResult = {
+  status: "loading" | "ready";
+  current: Preference;
+
+  setLanguage: (language: Locale) => void;
+  setColorTheme: (theme: ColorTheme) => void;
+  setScreenMode: (mode: ScreenMode) => void;
+
+  updatePreference: (patch: PreferencePatch, force?: boolean) => Promise<void>;
+  hydratePreference: () => void;
+  clearPreference: () => void;
 };

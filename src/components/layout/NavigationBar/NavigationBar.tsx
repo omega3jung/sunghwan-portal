@@ -178,7 +178,9 @@ export const NavigationBar = (props: Props) => {
         {title}
         <ShieldBadge
           badgeText={
-            userRoleBadge ?? !isImpersonating ? "Owner" : effective?.name ?? ""
+            userRoleBadge ?? !isImpersonating
+              ? "Owner"
+              : effective?.displayName ?? ""
           }
           shieldText={userRoleBadge}
           viewOnly={false}

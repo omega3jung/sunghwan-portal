@@ -13,8 +13,6 @@ export function mapAuthUserToAppUser(auth: AuthUser): AppUser {
     permission: auth.permission,
     role: auth.role,
 
-    preference: null,
-
     canUseSuperUser: null,
     canUseImpersonation: null,
   };

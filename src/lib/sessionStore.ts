@@ -98,18 +98,8 @@ export const useSessionStore = create<SessionState & SessionActions>()(
         nextUser = null;
       } else {
         // patch.user is Partial<AppUser>
-        if (!prev.user) {
-          // ❗ This case is "If there is no user, but only a patch is received."
-          // → This is a logically incorrect condition, so defend against it.
-          throw new Error(
-            "[SessionStore] Cannot patch user when prev.user is null"
-          );
-        }
 
-        nextUser = {
-          ...prev.user,
-          ...patch.user,
-        };
+        nextUser = mergeAndAssertUser(prev.user, patch.user);
       }
 
       const next: SessionState = {
@@ -133,3 +123,17 @@ export const useSessionStore = create<SessionState & SessionActions>()(
     },
   })
 );
+
+function mergeAndAssertUser(
+  user: AppUser | null,
+  patch?: Partial<AppUser>
+): AppUser {
+  const newUser = { ...user, ...patch };
+
+  // check required property.
+  if (!newUser.id) {
+    throw new Error("[SessionStore] Cannot patch user when prev.user is null");
+  }
+
+  return newUser as AppUser;
+}

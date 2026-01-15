@@ -20,7 +20,8 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
      */
     if (user && isAuthUser(user)) {
       token.id = user.id; // actor id (never changes)
-      token.name = user.name;
+      token.username = user.username;
+      token.displayName = user.displayName;
       token.email = user.email;
       token.accessToken = user.accessToken;
 
@@ -29,9 +30,6 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
       token.tenantId = user.tenantId;
       token.permission = user.permission;
       token.role = user.role;
-
-      // no impersonation on initial login
-      delete token.impersonation;
     }
 
     /**
@@ -62,15 +60,14 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
   session: async ({ session, token }: { session: Session; token: JWT }) => {
     session.user = {
       id: token.id,
-      name: token.name,
+      username: token.username,
+      displayName: token.displayName,
       email: token.email,
       dataScope: token.dataScope,
     };
 
     if (token.impersonation) {
-      session.impersonation = {
-        subjectId: token.impersonation.subjectId,
-      };
+      session.impersonation = token.impersonation;
     } else {
       delete session.impersonation;
     }

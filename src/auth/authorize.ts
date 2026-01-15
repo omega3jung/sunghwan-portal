@@ -17,7 +17,8 @@ export const authorize = async (credentials?: {
 
     return {
       id: user.id,
-      name: user.name,
+      username: user.username,
+      displayName: user.displayName,
       email: user.email,
       accessToken: user.accessToken,
       dataScope: user.dataScope,

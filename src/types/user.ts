@@ -1,15 +1,7 @@
-import { ColorTheme, Locale, ScreenMode } from "./config";
-
 export type LoginCredentials = {
   username: string;
   password: string;
 } & Record<string, string>;
-
-export interface Preference {
-  screenMode: ScreenMode;
-  colorTheme: ColorTheme;
-  language: Locale;
-}
 
 export const ACCESS_LEVEL = {
   ADMIN: 9,
@@ -29,8 +21,9 @@ export type DataScope = "LOCAL" | "REMOTE";
 // user type for authorization.
 // properties are required info only.
 export interface AuthUser {
-  id: string;
-  name: string;
+  id: string; // uuid
+  username: string; // user account
+  displayName: string; // user name
   email: string;
   accessToken: string;
 
@@ -44,7 +37,8 @@ export interface AuthUser {
 // user type for app.
 export interface AppUser {
   id: string;
-  name: string;
+  username: string; // user account
+  displayName: string; // user name
   email: string | null;
   image?: string;
 
@@ -53,8 +47,6 @@ export interface AppUser {
 
   permission: AccessLevel;
   role: Role | null;
-
-  preference: Preference | null;
 
   canUseSuperUser: boolean | null; // from server.
   canUseImpersonation: boolean | null; // from server.

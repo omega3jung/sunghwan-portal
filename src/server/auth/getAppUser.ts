@@ -4,11 +4,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 import { AuthUser } from "@/types";
 
-import { withPreference, withProfile } from "./enhancers";
+import { withProfile } from "./enhancers";
 import { mapAuthUserToAppUser } from "./mapAuthUserToAppUser";
 
 // permission needs profile. it should be after profile.
-const enhancers = [withProfile, withPreference];
+const enhancers = [withProfile];
 
 export async function getAppUser() {
   const session = await getServerSession(authOptions);

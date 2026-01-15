@@ -30,7 +30,7 @@ export const userProfileApi = {
   },
 
   me: async () => {
-    const res = await fetcher.api.get<AppUser>("/api/user-profile/me");
+    const res = await fetcher.api.get<AppUser>("/api/user/me");
 
     return res.data;
   },

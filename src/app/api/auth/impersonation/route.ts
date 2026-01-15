@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { z } from "zod";
 
+import { tokenToAuthUser } from "@/app/api/_helpers";
 import { startImpersonation, stopImpersonation } from "@/auth/impersonation";
-
-import { tokenToAuthUser } from "../../_helpers";
 
 export async function POST(req: NextRequest) {
   const token = await getToken({ req });
@@ -13,7 +13,11 @@ export async function POST(req: NextRequest) {
   }
 
   const actor = tokenToAuthUser(token);
-  const { subjectId } = await req.json();
+  const schema = z.object({
+    subjectId: z.uuid(), // or .min(1)
+  });
+
+  const { subjectId } = schema.parse(await req.json());
 
   const impersonation = await startImpersonation({
     actor,

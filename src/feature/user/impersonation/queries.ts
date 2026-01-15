@@ -1,15 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { DbParams } from "@/types";
+import { userImpersonationApi } from "./api";
+import { userImpersonationQueryKeys } from "./queryKeys";
 
-import { fetchItServiceDeskCategory } from "./api";
-import { categoryQueryKeys } from "./queryKeys";
+export const useStartUserImpersonation = () => {
+  const queryClient = useQueryClient();
 
-export const useFetchItServiceDeskCategory = (params: DbParams) => {
-  return useQuery({
-    queryKey: categoryQueryKeys.list(params),
-    queryFn: () => fetchItServiceDeskCategory(params),
-    enabled: true,
-    staleTime: 60_000,
+  return useMutation({
+    mutationFn: userImpersonationApi.start,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: userImpersonationQueryKeys.all,
+      });
+    },
+  });
+};
+
+export const useStopUserImpersonation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userImpersonationApi.stop,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: userImpersonationQueryKeys.all,
+      });
+    },
   });
 };

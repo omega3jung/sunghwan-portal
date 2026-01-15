@@ -1,5 +1,6 @@
 // src/feature/user/preference/queries.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Session } from "next-auth";
 
 import { userProfileApi } from "./api";
 import { userProfileQueryKeys } from "./queryKeys";
@@ -31,5 +32,23 @@ export const usePutUserProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userProfileQueryKeys.all });
     },
+  });
+};
+
+export const useFetchMyProfile = (session: Session | null) => {
+  const effectiveUserId = session?.impersonation
+    ? session.impersonation.subjectId
+    : session?.user.id;
+
+  return useQuery({
+    queryKey: session?.impersonation
+      ? ["impersonated-user", effectiveUserId]
+      : ["me"],
+    queryFn: () =>
+      session?.impersonation
+        ? userProfileApi.fetch(effectiveUserId!)
+        : userProfileApi.me(),
+    enabled: !!effectiveUserId && session !== undefined && session !== null,
+    staleTime: 1000 * 60,
   });
 };

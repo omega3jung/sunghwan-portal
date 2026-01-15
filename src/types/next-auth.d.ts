@@ -3,7 +3,8 @@ import { AuthUser } from "@/types/auth-user";
 declare module "next-auth/jwt" {
   interface JWT {
     id: string; // effective user.
-    name: string;
+    username: string; // user account
+    displayName: string; // user name
     email: string;
     accessToken: string;
 
@@ -13,6 +14,7 @@ declare module "next-auth/jwt" {
     permission: AccessLevel;
     role: Role;
 
+    // impersonation (server truth)
     impersonation?: {
       actorId: string; // loggin in user.
       subjectId: string; // impersonating user.
@@ -23,9 +25,16 @@ declare module "next-auth/jwt" {
 
 declare module "next-auth" {
   interface Session {
-    user: Pick<AuthUser, "id" | "name" | "email" | "dataScope">;
+    user: Pick<
+      AuthUser,
+      "id" | "username" | "displayName" | "email" | "dataScope"
+    >;
 
     // impersonation
-    impersonation?: { subjectId: string };
+    impersonation?: {
+      actorId: string;
+      subjectId: string;
+      activatedAt: number;
+    };
   }
 }

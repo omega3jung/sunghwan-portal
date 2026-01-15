@@ -1,35 +1,33 @@
-// (protected)/_providers/AppUserBootstrap.tsx
+// src/app/(protected)/_providers/AppUserBootstrap.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-import { useAppUser } from "@/hooks/useAppUser";
 import { useImpersonationStore } from "@/lib/impersonationStore";
+import { AppUser } from "@/types";
 
 type Props = {
-  userId: string;
+  user: AppUser;
   children: React.ReactNode;
 };
 
-export function AppUserBootstrap({ userId, children }: Props) {
+export function AppUserBootstrap({ user, children }: Props) {
   const impersonation = useImpersonationStore();
-  const initializedRef = useRef(false);
-
-  const appUserQuery = useAppUser(userId);
 
   useEffect(() => {
-    if (!userId) return;
-    if (initializedRef.current) return;
+    if (!user) return;
 
-    if (!appUserQuery.data) return;
+    // 🔑 Do not overwrite actor while impersonating
+    if (impersonation.subject) return;
+
+    // 🔑 If it's already the same actor, there's no need to sync again.
+    if (impersonation.actor?.id === user.id) return;
 
     impersonation.syncFromSession({
-      actor: appUserQuery.data,
+      actor: user,
       subject: null,
     });
-
-    initializedRef.current = true;
-  }, [userId, appUserQuery.data]);
+  }, [user, impersonation.subject]);
 
   return <>{children}</>;
 }

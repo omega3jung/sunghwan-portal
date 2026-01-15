@@ -1,19 +1,22 @@
-import { DbParams, OResponse } from "@/feature/query/types";
+// src/feature/user/impersonation/api.ts
 import fetcher from "@/services/fetcher";
 
-import { Category } from "../types";
+export const userImpersonationApi = {
+  start: async (subjectId: string) => {
+    const res = await fetcher.api.post<{
+      actorId: string;
+      subjectId: string;
+      activatedAt: number;
+    }>("/api/auth/impersonation", {
+      subjectId,
+    });
 
-type CategoryResponse = OResponse<Category>;
+    return res.data;
+  },
 
-export const fetchItServiceDeskCategory = async (
-  params: DbParams
-): Promise<Category[]> => {
-  if (!params) return [];
+  stop: async () => {
+    await fetcher.api.delete("/api/auth/impersonation");
 
-  const res = await fetcher.api.get<CategoryResponse>(
-    "it-service-desk/category",
-    { params }
-  );
-
-  return res.data.items;
+    return null;
+  },
 };
