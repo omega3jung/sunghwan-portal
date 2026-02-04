@@ -97,5 +97,27 @@
         "description": "Manage assignment rules for IT service desk tickets."
       }
     }
+  },
+  "itServiceDeskSettings": {
+    "title": "Not implemented in this demo",
+    "description": "This page exists to demonstrate the settings architecture.",
+    "general": {
+      "category": "Category",
+      "categories": "Categories",
+      "approvalStep": "Approval Step",
+      "approvalSteps": "Approval Steps",
+      "assignmentRule": "Assignment Rule",
+      "assignmentRules": "Assignment Rules",
+      "client": "Client",
+      "clients": "Clients",
+      "total": "Total"
+    },
+    "categoryTab": {
+      "total": "Total",
+      "name": "Name",
+      "description": "Description",
+      "placeholder": "Placeholder",
+      "active": "Active"
+    }
   }
 }

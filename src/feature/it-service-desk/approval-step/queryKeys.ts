@@ -2,7 +2,7 @@ import {
   IT_SERVICE_DESK_APPROVAL_STEP_KEY,
   IT_SERVICE_DESK_KEY,
 } from "@/feature/it-service-desk/keys";
-import { DbParams } from "@/types";
+import { DbParams } from "@/feature/query/types";
 
 export const approvalStepQueryKeys = {
   all: [IT_SERVICE_DESK_KEY, IT_SERVICE_DESK_APPROVAL_STEP_KEY] as const,

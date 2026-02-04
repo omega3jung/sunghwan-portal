@@ -48,7 +48,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   // to display selected items on top.
-  const selected = useMemo<Array<ImageValueLabel>>(() => {
+  const selected = useMemo<ImageValueLabel[]>(() => {
     const currentSelected = options.filter((option) =>
       value?.includes(option.value)
     );
@@ -59,7 +59,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   }, [options, value]);
 
   // to display selected items on top.
-  const notSelected = useMemo<Array<ImageValueLabel>>(() => {
+  const notSelected = useMemo<ImageValueLabel[]>(() => {
     return options.filter((option) => !value?.includes(option.value));
   }, [options, value]);
 

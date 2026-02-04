@@ -1,0 +1,198 @@
+{
+  "category_id": "31",
+  "category_index": 3,
+  "category_agent": [],
+  "category_active": true,
+  "category_translations": {
+    "en": {
+      "category_name": "Software & Application",
+      "category_description": "This category is used to request support for software and application-related issues.",
+      "category_placeholder": ""
+    },
+    "es": {
+      "category_name": "Software y Aplicaciones",
+      "category_description": "Esta categoría se utiliza para solicitar soporte relacionado con software y aplicaciones.",
+      "category_placeholder": ""
+    },
+    "fr": {
+      "category_name": "Logiciels et Applications",
+      "category_description": "Cette catégorie est utilisée pour demander de l’assistance concernant les logiciels et les applications.",
+      "category_placeholder": ""
+    },
+    "ko": {
+      "category_name": "소프트웨어 & 어플리케이션",
+      "category_description": "소프트웨어와 어플리케이션 문제 해결에 관련된 카테고리입니다.",
+      "category_placeholder": ""
+    }
+  },
+  "sub_category": [
+    {
+      "category_id": "32",
+      "category_index": 1,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Software installation",
+          "category_description": "Request the installation or update of required software on a device.",
+          "category_placeholder": "Please include the software name, version (if applicable), and device information."
+        },
+        "es": {
+          "category_name": "Instalación de software",
+          "category_description": "Solicite la instalación o actualización del software requerido en un dispositivo.",
+          "category_placeholder": "Incluya el nombre del software, la versión (si corresponde) y la información del dispositivo."
+        },
+        "fr": {
+          "category_name": "Installation de logiciel",
+          "category_description": "Demandez l’installation ou la mise à jour d’un logiciel requis sur un appareil.",
+          "category_placeholder": "Veuillez inclure le nom du logiciel, la version (le cas échéant) et les informations de l’appareil."
+        },
+        "ko": {
+          "category_name": "소프트웨어 설치",
+          "category_description": "기기에 필요한 소프트웨어의 설치 또는 업데이트를 요청합니다.",
+          "category_placeholder": "설치 또는 업데이트가 필요한 소프트웨어와 기기 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "33",
+      "category_index": 2,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Application access issue",
+          "category_description": "Request assistance when access to an application is unavailable or restricted.",
+          "category_placeholder": "Please specify the application name and where the access issue occurs."
+        },
+        "es": {
+          "category_name": "Problema de acceso a la aplicación",
+          "category_description": "Solicite asistencia cuando no pueda acceder a una aplicación o el acceso esté restringido.",
+          "category_placeholder": "Especifique el nombre de la aplicación y en qué parte ocurre el problema de acceso."
+        },
+        "fr": {
+          "category_name": "Problème d’accès à l’application",
+          "category_description": "Demandez de l’assistance lorsque l’accès à une application est indisponible ou restreint.",
+          "category_placeholder": "Veuillez préciser le nom de l’application et à quel niveau le problème d’accès se produit."
+        },
+        "ko": {
+          "category_name": "애플리케이션 접근 문제",
+          "category_description": "애플리케이션 사용에 문제가 있는 경우 해결을 요청합니다.",
+          "category_placeholder": "애플리케이션 어느 부분에서 사용에 문제가 생겼는지에 관련된 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "34",
+      "category_index": 3,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Application bug / error",
+          "category_description": "Request support for bugs or errors occurring within an application.",
+          "category_placeholder": "Please describe where the issue occurs and what behavior is observed."
+        },
+        "es": {
+          "category_name": "Error / fallo de la aplicación",
+          "category_description": "Solicite soporte para errores o fallos que ocurren dentro de una aplicación.",
+          "category_placeholder": "Describa dónde ocurre el problema y qué comportamiento se observa."
+        },
+        "fr": {
+          "category_name": "Bug / erreur de l’application",
+          "category_description": "Demandez de l’assistance pour des bugs ou erreurs survenant dans une application.",
+          "category_placeholder": "Veuillez décrire où le problème se produit et le comportement observé."
+        },
+        "ko": {
+          "category_name": "애플리케이션 버그 / 오류",
+          "category_description": "애플리케이션에 버그 혹은 오류가 있는 경우 해결을 요청합니다.",
+          "category_placeholder": "애플리케이션 어느 부분에서 어떤 문제가 발생했는지에 관련된 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "35",
+      "category_index": 4,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "New feature request",
+          "category_description": "Request the development of a new feature to support new or changed business processes.",
+          "category_placeholder": "Please include details of the required feature and the related business process."
+        },
+        "es": {
+          "category_name": "Solicitud de nueva funcionalidad",
+          "category_description": "Solicite el desarrollo de una nueva funcionalidad para respaldar procesos de negocio nuevos o modificados.",
+          "category_placeholder": "Incluya los detalles de la funcionalidad requerida y el proceso de negocio relacionado."
+        },
+        "fr": {
+          "category_name": "Demande de nouvelle fonctionnalité",
+          "category_description": "Demandez le développement d’une nouvelle fonctionnalité pour prendre en charge des processus métier nouveaux ou modifiés.",
+          "category_placeholder": "Veuillez inclure les détails de la fonctionnalité requise et du processus métier concerné."
+        },
+        "ko": {
+          "category_name": "새로운 기능 요청",
+          "category_description": "공정 추가 혹은 변경이 된 경우 이를 반영하기 위한 새로운 기능을 요청합니다.",
+          "category_placeholder": "필요한 새로운 기능에 관련된 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "36",
+      "category_index": 5,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Version upgrade request",
+          "category_description": "Request an upgrade to a newer version of an application.",
+          "category_placeholder": "Please include the application name and the desired target version."
+        },
+        "es": {
+          "category_name": "Solicitud de actualización de versión",
+          "category_description": "Solicite la actualización a una versión más reciente de una aplicación.",
+          "category_placeholder": "Incluya el nombre de la aplicación y la versión objetivo deseada."
+        },
+        "fr": {
+          "category_name": "Demande de mise à niveau de version",
+          "category_description": "Demandez la mise à niveau vers une version plus récente d’une application.",
+          "category_placeholder": "Veuillez inclure le nom de l’application et la version cible souhaitée."
+        },
+        "ko": {
+          "category_name": "버전 업그레이드 요청",
+          "category_description": "애플리케이션 버전의 업그레이드를 요청합니다.",
+          "category_placeholder": "업그레이드가 필요한 애플리케이션 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "37",
+      "category_index": 6,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "License issue",
+          "category_description": "Request assistance for expired, missing, or invalid software licenses.",
+          "category_placeholder": "Please include the license details and the affected device or application."
+        },
+        "es": {
+          "category_name": "Problema de licencia",
+          "category_description": "Solicite asistencia para licencias de software vencidas, faltantes o inválidas.",
+          "category_placeholder": "Incluya los detalles de la licencia y el dispositivo o la aplicación afectada."
+        },
+        "fr": {
+          "category_name": "Problème de licence",
+          "category_description": "Demandez de l’assistance pour des licences logicielles expirées, manquantes ou invalides.",
+          "category_placeholder": "Veuillez inclure les détails de la licence ainsi que l’appareil ou l’application concernée."
+        },
+        "ko": {
+          "category_name": "라이센스 문제",
+          "category_description": "라이센스가 만료되었거나 문제가 생긴 경우에 대해 해결을 요청합니다.",
+          "category_placeholder": "문제가 생긴 라이센스와 기기 정보를 포함하여 요청해주세요."
+        }
+      }
+    }
+  ]
+}

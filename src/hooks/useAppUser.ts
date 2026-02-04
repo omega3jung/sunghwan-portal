@@ -11,7 +11,7 @@ export const useAppUser = () => {
     queryKey: [USER_DATA_KEY],
     queryFn: async () => {
       const res = await fetcher.api.post<AppUser>("/api/me");
-      return { ...res.data, dataScope: "REMOTE" };
+      return { ...res.data };
     },
   });
 };

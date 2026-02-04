@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Locale } from "@/types";
+
 export function useLanguageState() {
   const { i18n } = useTranslation();
 
-  const [language, setLanguage] = useState<string>("en");
+  const [language, setLanguage] = useState<Locale>("en");
 
-  const changeLanguage = (language: string) => {
+  const changeLanguage = (language: Locale) => {
     i18n.changeLanguage(language);
     setLanguage(language);
     document.documentElement.lang = language;

@@ -1,34 +1,18 @@
-import { AuthUser } from "@/types/auth-user";
+import { AuthUser } from "@/types/user";
 
 declare module "next-auth/jwt" {
-  interface JWT {
-    id: string; // effective user.
-    username: string; // user account
-    displayName: string; // user name
-    email: string;
-    accessToken: string;
-
-    dataScope: DataScope;
-    userScope: UserScope;
-    tenantId: string | null;
-    permission: AccessLevel;
-    role: Role;
-
-    // impersonation (server truth)
+  interface JWT extends AuthUser {
     impersonation?: {
-      actorId: string; // loggin in user.
-      subjectId: string; // impersonating user.
-      activatedAt: number; // Date.now()
+      actorId: string;
+      subjectId: string;
+      activatedAt: number;
     };
   }
 }
 
 declare module "next-auth" {
   interface Session {
-    user: Pick<
-      AuthUser,
-      "id" | "username" | "displayName" | "email" | "dataScope"
-    >;
+    user: Omit<AuthUser, "accessToken">;
 
     // impersonation
     impersonation?: {

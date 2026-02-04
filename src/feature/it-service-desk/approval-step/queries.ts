@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { DbParams } from "@/types";
+import { DbParams } from "@/feature/query/types";
 
 import { fetchItServiceDeskApprovalStep } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";

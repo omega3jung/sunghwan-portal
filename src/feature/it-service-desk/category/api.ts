@@ -1,18 +1,18 @@
+import { DbParams, OResponse } from "@/feature/query/types";
 import fetcher from "@/services/fetcher";
-import { DbParams, OResponse } from "@/types";
 
-import { Category } from "../types";
+import { FullCategories } from "../types";
 
-type CategoryResponse = OResponse<Category>;
+type CategoryResponse = OResponse<FullCategories>;
 
 export const fetchItServiceDeskCategory = async (
-  params: DbParams
-): Promise<Category[]> => {
+  params: DbParams,
+): Promise<FullCategories[]> => {
   if (!params) return [];
 
-  const res = await .get<CategoryResponse>(
-    "it-service-desk/category",
-    { params }
+  const res = await fetcher.api.get<CategoryResponse>(
+    "/api/it-service-desk/category",
+    { params },
   );
 
   return res.data.items;

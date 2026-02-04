@@ -3,22 +3,22 @@
 import { useMemo, useState } from "react";
 
 import {
+  buttonVariantData,
+  comboBoxVariantData,
+  keys,
+} from "@/app/_mocks/pages/demo/multi-combo-box";
+import {
   ButtonVariant,
   MultiComboBox,
 } from "@/components/custom/MultiComboBox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  buttonVariantData,
-  comboBoxVariantData,
-  keys,
-} from "@/app/_mocks/pages/demo/multi-combo-box";
 import { ValueLabel } from "@/types/common";
 
 import { comboBoxVariant, indexVariant } from "./type";
 
 export default function MultiComboBoxPage() {
-  const [selectedRanges, setSelectedRanges] = useState<Array<string>>([
+  const [selectedRanges, setSelectedRanges] = useState<string[]>([
     "January",
     "February",
     "March",
@@ -30,7 +30,7 @@ export default function MultiComboBoxPage() {
     useState<comboBoxVariant>("default");
   const [buttonVariant, setButtonVariant] = useState<ButtonVariant>("rainbow");
 
-  const testData = useMemo<Array<ValueLabel>>(() => {
+  const testData = useMemo<ValueLabel[]>(() => {
     const keyData = keys.map((key) => {
       return { value: key, label: key } as ValueLabel;
     });

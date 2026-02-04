@@ -1,10 +1,12 @@
-// app/api/user-preference/route.ts
+// app/api/it-service-desk/category/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { createCategorySettingsMock } from "@/app/_mocks/pages/settings/it-service-desk-settings/category";
-import { isRemoteRequest } from "@/app/api/_helpers";
+import {
+  internalCategorySettingsMock,
+  tenantCategorySettingsMock,
+} from "@/app/_mocks/pages/it-service-desk/categories";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { DbParams } from "@/feature/query/types";
-import fetcher from "@/services/fetcher";
 import { Preference } from "@/types";
 
 export async function GET(request: NextRequest) {
@@ -13,22 +15,49 @@ export async function GET(request: NextRequest) {
   // demo mode
   if (!isRemote) {
     // Return mock user preference.
-    return NextResponse.json(createCategorySettingsMock);
+
+    const isInternal = await isInternalUser(request);
+
+    // internal demo.
+    if (isInternal) {
+      return NextResponse.json({
+        items: internalCategorySettingsMock,
+        total: internalCategorySettingsMock.length,
+      });
+    }
+
+    // tenant demo.
+    return NextResponse.json({
+      items: tenantCategorySettingsMock,
+      total: tenantCategorySettingsMock.length,
+    });
   }
 
   // real backend
   const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
 
-  try {
-    const res = await fetcher.api.get("/it-service-desk/category", { params });
+  const query = new URLSearchParams(params as any).toString();
 
-    return NextResponse.json(res.data);
-  } catch (error) {
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/it-service-desk/category?${query}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer TOKEN`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  if (!res.ok) {
     return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 }
+      { message: "Failed to fetch category" },
+      { status: res.status },
     );
   }
+
+  const data = await res.json();
+  return NextResponse.json(data);
 }
 
 export async function POST(request: NextRequest) {
@@ -41,19 +70,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(body, { status: 201 }); // POST is 201.
   }
 
-  // real backend
-  const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/it-service-desk/category`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer TOKEN`,
+      },
+      body: JSON.stringify(body),
+    },
+  );
 
-  try {
-    const res = await fetcher.api.post("/it-service-desk/category", { params });
-
-    return NextResponse.json(res.data);
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 }
-    );
-  }
+  const data = await res.json();
+  return NextResponse.json(data);
 }
 
 export async function PUT(request: NextRequest) {
@@ -62,28 +92,31 @@ export async function PUT(request: NextRequest) {
   const body = (await request.json()) as Preference;
 
   // demo mode
-
   if (!isRemote) {
     return NextResponse.json(body, { status: 200 }); // PUT is 200.
   }
 
   // real backend
-  const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/it-service-desk/category`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer TOKEN`,
+      },
+      body: JSON.stringify(body),
+    },
+  );
 
-  try {
-    const res = await fetcher.api.put("/it-service-desk/category", { params });
-
-    return NextResponse.json(res.data);
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 }
-    );
-  }
+  const data = await res.json();
+  return NextResponse.json(data);
 }
 
 export async function DELETE(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
+
+  const body = (await request.json()) as Preference;
 
   // demo mode
 
@@ -92,16 +125,18 @@ export async function DELETE(request: NextRequest) {
   }
 
   // real backend
-  const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/it-service-desk/category`,
+    {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
 
-  try {
-    await fetcher.api.put("/it-service-desk/category", { params });
-
-    return NextResponse.json(null);
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 }
-    );
+  if (res.status !== 204) {
+    await res.json();
   }
+
+  return NextResponse.json(null, { status: 204 });
 }

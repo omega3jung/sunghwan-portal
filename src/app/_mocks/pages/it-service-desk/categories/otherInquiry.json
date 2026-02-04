@@ -1,0 +1,114 @@
+{
+  "category_id": "91",
+  "category_index": 9,
+  "category_agent": [],
+  "category_active": true,
+  "category_translations": {
+    "en": {
+      "category_name": "Other / General Inquiry",
+      "category_description": "Request assistance for issues that do not fit into the provided categories.",
+      "category_placeholder": ""
+    },
+    "es": {
+      "category_name": "Otros / Consulta general",
+      "category_description": "Solicite asistencia para problemas que no encajan en las categorías proporcionadas.",
+      "category_placeholder": ""
+    },
+    "fr": {
+      "category_name": "Autres / Demande générale",
+      "category_description": "Demander une assistance pour des problèmes ne correspondant pas aux catégories proposées.",
+      "category_placeholder": ""
+    },
+    "ko": {
+      "category_name": "기타 / 일반 문의",
+      "category_description": "제공된 카테고리에 해당하지 않는 문제에 대해 해결을 요청합니다.",
+      "category_placeholder": ""
+    }
+  },
+  "sub_category": [
+    {
+      "category_id": "92",
+      "category_index": 1,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "General inquiry",
+          "category_description": "Submit general questions or inquiries related to system usage or support.",
+          "category_placeholder": "Please provide details about your inquiry."
+        },
+        "es": {
+          "category_name": "Consulta general",
+          "category_description": "Envíe preguntas o consultas generales relacionadas con el uso del sistema o soporte.",
+          "category_placeholder": "Proporcione detalles sobre su consulta."
+        },
+        "fr": {
+          "category_name": "Demande générale",
+          "category_description": "Soumettre des questions ou demandes générales concernant l’utilisation du système ou le support.",
+          "category_placeholder": "Veuillez fournir les détails de votre demande."
+        },
+        "ko": {
+          "category_name": "일반 문의",
+          "category_description": "사용자 문제에 대해 확인/수정/해결 등 문의를 요청합니다.",
+          "category_placeholder": "문의하려는 사항에 대한 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "93",
+      "category_index": 2,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Guidance / how-to",
+          "category_description": "Request guidance or instructions on how to use systems or features.",
+          "category_placeholder": "Please specify the system or feature you need guidance on."
+        },
+        "es": {
+          "category_name": "Guía / cómo usar",
+          "category_description": "Solicite orientación o instrucciones sobre cómo utilizar sistemas o funciones.",
+          "category_placeholder": "Especifique el sistema o la función sobre la que necesita orientación."
+        },
+        "fr": {
+          "category_name": "Guide / mode d’emploi",
+          "category_description": "Demander des conseils ou des instructions sur l’utilisation des systèmes ou des fonctionnalités.",
+          "category_placeholder": "Veuillez préciser le système ou la fonctionnalité concernée."
+        },
+        "ko": {
+          "category_name": "안내 / 사용 방법",
+          "category_description": "시스템 사용에 대한 안내 또는 매뉴얼을 요청합니다.",
+          "category_placeholder": "안내가 필요한 시스템 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "94",
+      "category_index": 3,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Other issue",
+          "category_description": "Report issues that do not fall under any existing category.",
+          "category_placeholder": "Please describe the issue in detail."
+        },
+        "es": {
+          "category_name": "Otro problema",
+          "category_description": "Informe problemas que no pertenecen a ninguna categoría existente.",
+          "category_placeholder": "Describa el problema en detalle."
+        },
+        "fr": {
+          "category_name": "Autre problème",
+          "category_description": "Signaler des problèmes qui ne relèvent d’aucune catégorie existante.",
+          "category_placeholder": "Veuillez décrire le problème en détail."
+        },
+        "ko": {
+          "category_name": "기타 문제",
+          "category_description": "제공된 카테고리에 해당하지 않는 문제에 대해 해결을 요청합니다.",
+          "category_placeholder": "해결이 필요한 문제 정보를 상세히 포함하여 요청해주세요."
+        }
+      }
+    }
+  ]
+}

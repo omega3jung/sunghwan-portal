@@ -1,0 +1,198 @@
+{
+  "category_id": "21",
+  "category_index": 2,
+  "category_agent": [],
+  "category_active": true,
+  "category_translations": {
+    "en": {
+      "category_name": "Hardware & Device",
+      "category_description": "Requests and issue resolution related to PCs, laptops, mobile devices, and peripheral hardware.",
+      "category_placeholder": ""
+    },
+    "es": {
+      "category_name": "Hardware y Dispositivos",
+      "category_description": "Solicitudes y resolución de problemas relacionados con PCs, portátiles, dispositivos móviles y hardware periférico.",
+      "category_placeholder": ""
+    },
+    "fr": {
+      "category_name": "Matériel et Appareils",
+      "category_description": "Demandes et résolution de problèmes liés aux PC, ordinateurs portables, appareils mobiles et périphériques.",
+      "category_placeholder": ""
+    },
+    "ko": {
+      "category_name": "하드웨어 & 기기",
+      "category_description": "PC, 노트북, 모바일 등 하드웨어 및 주변 기기에 관한 요청과 문제 해결을 위한 카테고리입니다.",
+      "category_placeholder": ""
+    }
+  },
+  "sub_category": [
+    {
+      "category_id": "22",
+      "category_index": 1,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "New device request (PC / Laptop / Mobile)",
+          "category_description": "Request a new device required for work purposes.",
+          "category_placeholder": "Please include the type of device and department information."
+        },
+        "es": {
+          "category_name": "Solicitud de nuevo dispositivo (PC / Portátil / Móvil)",
+          "category_description": "Solicite un nuevo dispositivo necesario para fines laborales.",
+          "category_placeholder": "Incluya el tipo de dispositivo y la información del departamento."
+        },
+        "fr": {
+          "category_name": "Demande de nouvel appareil (PC / Ordinateur portable / Mobile)",
+          "category_description": "Demande d’un nouvel appareil nécessaire pour le travail.",
+          "category_placeholder": "Veuillez inclure le type d’appareil et les informations du service."
+        },
+        "ko": {
+          "category_name": "새로운 기기 요청",
+          "category_description": "부서에 추가로 필요한 기기를 요청합니다.",
+          "category_placeholder": "필요한 기기와 부서정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "23",
+      "category_index": 2,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Peripheral issue (monitor / mouse / keyboard)",
+          "category_description": "Report issues or request replacement for peripheral devices.",
+          "category_placeholder": "Please include the peripheral type and department information."
+        },
+        "es": {
+          "category_name": "Problema de periféricos (monitor / ratón / teclado)",
+          "category_description": "Informe problemas o solicite el reemplazo de dispositivos periféricos.",
+          "category_placeholder": "Incluya el tipo de periférico y la información del departamento."
+        },
+        "fr": {
+          "category_name": "Problème de périphérique (écran / souris / clavier)",
+          "category_description": "Signaler un problème ou demander le remplacement d’un périphérique.",
+          "category_placeholder": "Veuillez inclure le type de périphérique et les informations du service."
+        },
+        "ko": {
+          "category_name": "주변 기기 문제",
+          "category_description": "부서에 추가로 필요한 주변 기기를 요청합니다.",
+          "category_placeholder": "필요한 주변 기기와 부서정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "24",
+      "category_index": 3,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Device replacement",
+          "category_description": "Request a replacement for a device that is damaged or malfunctioning.",
+          "category_placeholder": "Please include the device details and department information."
+        },
+        "es": {
+          "category_name": "Reemplazo de dispositivo",
+          "category_description": "Solicite el reemplazo de un dispositivo dañado o con fallas.",
+          "category_placeholder": "Incluya los detalles del dispositivo y la información del departamento."
+        },
+        "fr": {
+          "category_name": "Remplacement d’appareil",
+          "category_description": "Demande de remplacement d’un appareil défectueux ou endommagé.",
+          "category_placeholder": "Veuillez inclure les détails de l’appareil et les informations du service."
+        },
+        "ko": {
+          "category_name": "기기 교체 요청",
+          "category_description": "기존 기기에 문제가 있는 경우 교체를 요청합니다.",
+          "category_placeholder": "교체를 요청할 기기와 부서 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "25",
+      "category_index": 4,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Device relocation",
+          "category_description": "Request relocation of a device to a different location.",
+          "category_placeholder": "Please include the device details and new location information."
+        },
+        "es": {
+          "category_name": "Reubicación de dispositivo",
+          "category_description": "Solicite la reubicación de un dispositivo a otra ubicación.",
+          "category_placeholder": "Incluya los detalles del dispositivo y la nueva ubicación."
+        },
+        "fr": {
+          "category_name": "Déplacement d’appareil",
+          "category_description": "Demande de déplacement d’un appareil vers un autre emplacement.",
+          "category_placeholder": "Veuillez inclure les détails de l’appareil et la nouvelle localisation."
+        },
+        "ko": {
+          "category_name": "기기 재배치",
+          "category_description": "기기 배치를 변경해야 하는 경우 재배치를 요청합니다.",
+          "category_placeholder": "재배치가 필요한 기기와 위치 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "26",
+      "category_index": 5,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Device setup / imaging",
+          "category_description": "Request device setup, configuration, or OS imaging.",
+          "category_placeholder": "Please include the device information and required setup details."
+        },
+        "es": {
+          "category_name": "Configuración / Imagen del dispositivo",
+          "category_description": "Solicite la configuración del dispositivo o la instalación de imagen del sistema.",
+          "category_placeholder": "Incluya la información del dispositivo y los detalles de configuración."
+        },
+        "fr": {
+          "category_name": "Configuration / Image système",
+          "category_description": "Demande de configuration de l’appareil ou d’imagerie du système.",
+          "category_placeholder": "Veuillez inclure les informations de l’appareil et les détails requis."
+        },
+        "ko": {
+          "category_name": "기기 설정 / 이미징",
+          "category_description": "기기에 설정에 변경 혹은 오류가 있는 경우 설정을 요청합니다.",
+          "category_placeholder": "설정이 필요한 기기 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "27",
+      "category_index": 6,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Asset inventory update",
+          "category_description": "Request an update to hardware asset inventory records.",
+          "category_placeholder": "Please include the asset information that needs to be updated."
+        },
+        "es": {
+          "category_name": "Actualización del inventario de activos",
+          "category_description": "Solicite la actualización de los registros de inventario de activos de hardware.",
+          "category_placeholder": "Incluya la información del activo que necesita actualización."
+        },
+        "fr": {
+          "category_name": "Mise à jour de l’inventaire des actifs",
+          "category_description": "Demande de mise à jour des registres d’inventaire du matériel.",
+          "category_placeholder": "Veuillez inclure les informations de l’actif à mettre à jour."
+        },
+        "ko": {
+          "category_name": "자산 목록 갱신",
+          "category_description": "갱신이 필요한 자산 목록에 대해 요청합니다.",
+          "category_placeholder": "갱신이 필요한 자산 정보를 포함하여 요청해주세요."
+        }
+      }
+    }
+  ]
+}

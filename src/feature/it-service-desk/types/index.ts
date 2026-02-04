@@ -1,4 +1,5 @@
 // src/feature/it-service-desk/types/index.ts
+export * from "./domain";
 export * from "./enums";
-export * from "./models";
+export * from "./shared";
 export * from "./ui";

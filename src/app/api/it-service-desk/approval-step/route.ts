@@ -1,7 +1,7 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { createCategorySettingsMock } from "@/app/_mocks/pages/settings/it-service-desk-settings/category";
+import { createCategorySettingsMock } from "@/app/_mocks/pages/it-service-desk/categories/category";
 import { isRemoteRequest } from "@/app/api/_helpers";
 import { DbParams } from "@/feature/query/types";
 import fetcher from "@/services/fetcher";
@@ -28,13 +28,13 @@ export async function GET(request: NextRequest) {
       },
       cache: "no-store",
       body: JSON.stringify(params),
-    }
+    },
   );
 
   if (!res.ok) {
     return NextResponse.json(
       { message: "Failed to fetch approval step" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -61,13 +61,13 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
-    }
+    },
   );
 
   if (!res.ok) {
     return NextResponse.json(
       { message: "Failed to fetch approval step" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -96,7 +96,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { message: "Failed to fetch user preference" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -120,7 +120,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { message: "Failed to fetch user preference" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

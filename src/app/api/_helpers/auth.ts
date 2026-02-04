@@ -9,6 +9,12 @@ export async function isRemoteRequest(req: NextRequest) {
   return token?.dataScope === "REMOTE";
 }
 
+export async function isInternalUser(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  return token?.userScope === "INTERNAL";
+}
+
 export async function getEffectiveUserId(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   return token?.id;
@@ -30,12 +36,12 @@ export type AuthResult =
   | { ok: false; status: 401 | 403 };
 
 export function tokenToAuthUser(token: JWT): AuthUser {
-  return { ...token };
+  return { ...token, email: token.email ?? "" };
 }
 
 export async function checkAdminOrSelf(
   req: NextRequest,
-  targetUserId: string
+  targetUserId: string,
 ): Promise<AuthResult> {
   const token = await getToken({
     req,

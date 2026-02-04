@@ -1,0 +1,310 @@
+{
+  "category_id": "101",
+  "category_index": 0,
+  "category_agent": [],
+  "category_active": true,
+  "category_translations": {
+    "en": {
+      "category_name": "Portal / System Issues",
+      "category_description": "Request support for errors, access issues, or performance problems related to the portal or system.",
+      "category_placeholder": ""
+    },
+    "es": {
+      "category_name": "Problemas del portal / sistema",
+      "category_description": "Solicite asistencia para errores, problemas de acceso o rendimiento relacionados con el portal o el sistema.",
+      "category_placeholder": ""
+    },
+    "fr": {
+      "category_name": "Problèmes du portail / système",
+      "category_description": "Demandez une assistance pour les erreurs, les problèmes d’accès ou de performance liés au portail ou au système.",
+      "category_placeholder": ""
+    },
+    "ko": {
+      "category_name": "포털 / 시스템 문제",
+      "category_description": "포털 또는 시스템 전반에서 발생하는 오류, 접근 문제, 성능 저하 등에 대한 해결을 요청합니다.",
+      "category_placeholder": ""
+    }
+  },
+  "sub_category": [
+    {
+      "category_id": "102",
+      "category_index": 1,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Login / Authentication",
+          "category_description": "Request support for issues occurring during login or authentication.",
+          "category_placeholder": "Please include the affected account information."
+        },
+        "es": {
+          "category_name": "Inicio de sesión / Autenticación",
+          "category_description": "Solicite asistencia para problemas durante el inicio de sesión o la autenticación.",
+          "category_placeholder": "Incluya la información de la cuenta afectada."
+        },
+        "fr": {
+          "category_name": "Connexion / Authentification",
+          "category_description": "Demandez une assistance pour les problèmes liés à la connexion ou à l’authentification.",
+          "category_placeholder": "Veuillez inclure les informations du compte concerné."
+        },
+        "ko": {
+          "category_name": "로그인 / 인증",
+          "category_description": "로그인과 인증 과정에 발생한 문제에 대해 해결을 요청합니다.",
+          "category_placeholder": "문제가 발생한 계정 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "103",
+      "category_index": 2,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Permission / Role Issues",
+          "category_description": "Request support for system changes related to permissions or roles.",
+          "category_placeholder": "Please include the relevant permission or role details."
+        },
+        "es": {
+          "category_name": "Problemas de permisos / roles",
+          "category_description": "Solicite asistencia para cambios del sistema relacionados con permisos o roles.",
+          "category_placeholder": "Incluya los detalles del permiso o rol correspondiente."
+        },
+        "fr": {
+          "category_name": "Problèmes de permissions / rôles",
+          "category_description": "Demandez une assistance pour les modifications système liées aux permissions ou aux rôles.",
+          "category_placeholder": "Veuillez inclure les détails des permissions ou rôles concernés."
+        },
+        "ko": {
+          "category_name": "권한 / 직책 문제",
+          "category_description": "권한 혹은 직책에 대해 시스템 수정이 필요한 경우 해결을 요청합니다.",
+          "category_placeholder": "권한 혹은 직책 정보와 수정 사항을 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "104",
+      "category_index": 3,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "UI / Page Errors",
+          "category_description": "Request support for errors occurring in the UI or specific pages.",
+          "category_placeholder": "Please specify the page and error details."
+        },
+        "es": {
+          "category_name": "Errores de interfaz / página",
+          "category_description": "Solicite asistencia para errores en la interfaz o en páginas específicas.",
+          "category_placeholder": "Indique la página y los detalles del error."
+        },
+        "fr": {
+          "category_name": "Erreurs d’interface / de page",
+          "category_description": "Demandez une assistance pour les erreurs sur l’interface ou certaines pages.",
+          "category_placeholder": "Veuillez préciser la page et les détails de l’erreur."
+        },
+        "ko": {
+          "category_name": "UI / 페이지 오류",
+          "category_description": "UI 혹은 페이지에서 발생한 오류에 대해 해결을 요청합니다.",
+          "category_placeholder": "문제가 발생한 UI 혹은 페이지와 오류 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "105",
+      "category_index": 4,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Performance / Availability",
+          "category_description": "Request support for degraded performance or system availability issues.",
+          "category_placeholder": "Please include details about the performance or availability issue."
+        },
+        "es": {
+          "category_name": "Rendimiento / disponibilidad",
+          "category_description": "Solicite asistencia por problemas de rendimiento o disponibilidad del sistema.",
+          "category_placeholder": "Incluya detalles sobre el problema de rendimiento o disponibilidad."
+        },
+        "fr": {
+          "category_name": "Performance / disponibilité",
+          "category_description": "Demandez une assistance pour les problèmes de performance ou de disponibilité du système.",
+          "category_placeholder": "Veuillez inclure les détails du problème de performance ou de disponibilité."
+        },
+        "ko": {
+          "category_name": "성능 / 가용성",
+          "category_description": "성능 혹은 가용성이 저하된 문제의 해결이나 개선을 요청합니다.",
+          "category_placeholder": "성능 혹은 가용성이 저하된 문제나 개선이 필요한 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "106",
+      "category_index": 5,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Data Correction",
+          "category_description": "Request corrections to portal or system-related data.",
+          "category_placeholder": "Please include the data that requires correction."
+        },
+        "es": {
+          "category_name": "Corrección de datos",
+          "category_description": "Solicite correcciones de datos relacionados con el portal o el sistema.",
+          "category_placeholder": "Incluya la información de los datos que deben corregirse."
+        },
+        "fr": {
+          "category_name": "Correction des données",
+          "category_description": "Demandez une correction des données liées au portail ou au système.",
+          "category_placeholder": "Veuillez inclure les données à corriger."
+        },
+        "ko": {
+          "category_name": "데이터 수정",
+          "category_description": "포털 / 시스템 데이터에 수정을 요청합니다.",
+          "category_placeholder": "수정이 필요한 포털 / 시스템 데이터 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "107",
+      "category_index": 6,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Configuration / Settings Issues",
+          "category_description": "Request support for issues related to portal or system configuration and settings.",
+          "category_placeholder": "Please include the relevant configuration or settings details."
+        },
+        "es": {
+          "category_name": "Problemas de configuración / ajustes",
+          "category_description": "Solicite asistencia para problemas relacionados con la configuración o ajustes del portal o sistema.",
+          "category_placeholder": "Incluya los detalles de la configuración o ajustes relevantes."
+        },
+        "fr": {
+          "category_name": "Problèmes de configuration / paramètres",
+          "category_description": "Demandez une assistance pour les problèmes liés à la configuration ou aux paramètres du portail ou du système.",
+          "category_placeholder": "Veuillez inclure les détails de la configuration ou des paramètres concernés."
+        },
+        "ko": {
+          "category_name": "구성 / 설정 문제",
+          "category_description": "포털 / 시스템 구성이나 설정 문제에 대해 해결을 요청합니다.",
+          "category_placeholder": "수정이 필요한 포털 / 시스템 구성이나 설정 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "108",
+      "category_index": 7,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Feature Behavior Issues",
+          "category_description": "Request support when a feature does not behave as expected.",
+          "category_placeholder": "Please describe the expected and actual behavior."
+        },
+        "es": {
+          "category_name": "Problemas de comportamiento de funciones",
+          "category_description": "Solicite asistencia cuando una función no se comporta como se espera.",
+          "category_placeholder": "Describa el comportamiento esperado y el comportamiento actual."
+        },
+        "fr": {
+          "category_name": "Problèmes de comportement des fonctionnalités",
+          "category_description": "Demandez une assistance lorsqu’une fonctionnalité ne se comporte pas comme prévu.",
+          "category_placeholder": "Veuillez décrire le comportement attendu et le comportement réel."
+        },
+        "ko": {
+          "category_name": "기능 동작 문제",
+          "category_description": "포털 / 시스템 기능에 대해 문제가 있거나 수정이 필요한 경우 해결을 요청합니다.",
+          "category_placeholder": "수정이 필요한 포털 / 시스템 기능 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "109",
+      "category_index": 8,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Tenant Access Scope Issues",
+          "category_description": "Request support for issues related to tenant access scope or data visibility.",
+          "category_placeholder": "Please specify the affected menu, data, or access scope."
+        },
+        "es": {
+          "category_name": "Problemas de alcance de acceso del tenant",
+          "category_description": "Solicite asistencia para problemas relacionados con el alcance de acceso o visibilidad de datos del tenant.",
+          "category_placeholder": "Especifique el menú, los datos o el alcance de acceso afectado."
+        },
+        "fr": {
+          "category_name": "Problèmes de périmètre d’accès du tenant",
+          "category_description": "Demandez une assistance pour les problèmes liés au périmètre d’accès ou à la visibilité des données du tenant.",
+          "category_placeholder": "Veuillez préciser le menu, les données ou le périmètre d’accès concerné."
+        },
+        "ko": {
+          "category_name": "고객사 접근 범위 문제",
+          "category_description": "고객용으로 제한된 포털 / 시스템 메뉴에 접근이 필요한 경우 수정을 요청합니다.",
+          "category_placeholder": "접근이 필요한 포털 / 시스템 메뉴 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "110",
+      "category_index": 9,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Integration / External System Issues",
+          "category_description": "Request support for issues related to integrations or external systems.",
+          "category_placeholder": "Please include the affected system and error details."
+        },
+        "es": {
+          "category_name": "Problemas de integración / sistemas externos",
+          "category_description": "Solicite asistencia para problemas relacionados con integraciones o sistemas externos.",
+          "category_placeholder": "Incluya el sistema afectado y los detalles del error."
+        },
+        "fr": {
+          "category_name": "Problèmes d’intégration / systèmes externes",
+          "category_description": "Demandez une assistance pour les problèmes liés aux intégrations ou aux systèmes externes.",
+          "category_placeholder": "Veuillez inclure le système concerné et les détails de l’erreur."
+        },
+        "ko": {
+          "category_name": "통합 / 외부 시스템 문제",
+          "category_description": "통합 포털 혹은 외부 시스템에 발생한 문제에 대해 해결을 요청합니다.",
+          "category_placeholder": "해결이 필요한 포털 / 시스템 문제 정보를 포함하여 요청해주세요."
+        }
+      }
+    },
+    {
+      "category_id": "111",
+      "category_index": 10,
+      "category_agent": [],
+      "category_active": true,
+      "category_translations": {
+        "en": {
+          "category_name": "Issue Investigation Request",
+          "category_description": "Request an investigation for portal or system issues that do not fit other categories.",
+          "category_placeholder": "Please describe the issue and any relevant context."
+        },
+        "es": {
+          "category_name": "Solicitud de investigación de problemas",
+          "category_description": "Solicite una investigación para problemas del portal o sistema que no encajen en otras categorías.",
+          "category_placeholder": "Describa el problema y cualquier contexto relevante."
+        },
+        "fr": {
+          "category_name": "Demande d’investigation de problème",
+          "category_description": "Demandez une investigation pour des problèmes du portail ou du système ne correspondant pas aux autres catégories.",
+          "category_placeholder": "Veuillez décrire le problème et tout contexte pertinent."
+        },
+        "ko": {
+          "category_name": "문제 처리 요청",
+          "category_description": "카테고리에 해당하지 않는 포털 / 시스템에 발생한 문제에 대해 처리를 요청합니다.",
+          "category_placeholder": "조사 또는 해결이 필요한 포털 / 시스템 문제 정보를 포함하여 요청해주세요."
+        }
+      }
+    }
+  ]
+}

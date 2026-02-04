@@ -1,0 +1,86 @@
+[
+  {
+    "category_id": "112",
+    "category_index": 11,
+    "category_agent": [],
+    "category_active": true,
+    "category_translations": {
+      "en": {
+        "category_name": "Tenant-Specific Issue 1",
+        "category_description": "Request support for tenant-specific issues that are unique to your organization.",
+        "category_placeholder": "Please provide details about the issue you are experiencing."
+      },
+      "es": {
+        "category_name": "Problema específico del tenant 1",
+        "category_description": "Solicite asistencia para problemas específicos del tenant que sean propios de su organización.",
+        "category_placeholder": "Proporcione detalles sobre el problema que está experimentando."
+      },
+      "fr": {
+        "category_name": "Problème spécifique au tenant 1",
+        "category_description": "Demandez une assistance pour les problèmes spécifiques au tenant propres à votre organisation.",
+        "category_placeholder": "Veuillez fournir des détails sur le problème rencontré."
+      },
+      "ko": {
+        "category_name": "고객사 특화 문제 1",
+        "category_description": "고객사 특화 문제 1에 대해 해결을 요청합니다.",
+        "category_placeholder": "발생한 문제에 대한 정보를 포함하여 요청해주세요."
+      }
+    }
+  },
+  {
+    "category_id": "113",
+    "category_index": 12,
+    "category_agent": [],
+    "category_active": true,
+    "category_translations": {
+      "en": {
+        "category_name": "Tenant-Specific Issue 2",
+        "category_description": "Request support for custom operational or system-related issues defined by your tenant.",
+        "category_placeholder": "Please describe the issue and any relevant context."
+      },
+      "es": {
+        "category_name": "Problema específico del tenant 2",
+        "category_description": "Solicite asistencia para problemas operativos o del sistema personalizados definidos por su tenant.",
+        "category_placeholder": "Describa el problema y cualquier contexto relevante."
+      },
+      "fr": {
+        "category_name": "Problème spécifique au tenant 2",
+        "category_description": "Demandez une assistance pour des problèmes opérationnels ou système personnalisés définis par votre tenant.",
+        "category_placeholder": "Veuillez décrire le problème et tout contexte pertinent."
+      },
+      "ko": {
+        "category_name": "고객사 특화 문제 2",
+        "category_description": "고객사 특화 문제 2에 대해 해결을 요청합니다.",
+        "category_placeholder": "발생한 문제에 대한 정보를 포함하여 요청해주세요."
+      }
+    }
+  },
+  {
+    "category_id": "114",
+    "category_index": 13,
+    "category_agent": [],
+    "category_active": false,
+    "category_translations": {
+      "en": {
+        "category_name": "Tenant-Specific Issue 3",
+        "category_description": "Request support for additional tenant-defined issues not covered by standard categories.",
+        "category_placeholder": "Please include any information that may help with investigation or resolution."
+      },
+      "es": {
+        "category_name": "Problema específico del tenant 3",
+        "category_description": "Solicite asistencia para problemas adicionales definidos por el tenant que no estén cubiertos por las categorías estándar.",
+        "category_placeholder": "Incluya cualquier información que ayude a la investigación o resolución."
+      },
+      "fr": {
+        "category_name": "Problème spécifique au tenant 3",
+        "category_description": "Demandez une assistance pour des problèmes supplémentaires définis par le tenant et non couverts par les catégories standard.",
+        "category_placeholder": "Veuillez inclure toute information utile à l’investigation ou à la résolution."
+      },
+      "ko": {
+        "category_name": "고객사 특화 문제 3",
+        "category_description": "고객사 특화 문제 3에 대해 해결을 요청합니다.",
+        "category_placeholder": "발생한 문제에 대한 정보를 포함하여 요청해주세요."
+      }
+    }
+  }
+]
