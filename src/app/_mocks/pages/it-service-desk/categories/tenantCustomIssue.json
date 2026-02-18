@@ -4,7 +4,7 @@
     "category_index": 11,
     "category_agent": [],
     "category_active": true,
-    "category_translations": {
+    "category_translation": {
       "en": {
         "category_name": "Tenant-Specific Issue 1",
         "category_description": "Request support for tenant-specific issues that are unique to your organization.",
@@ -32,7 +32,7 @@
     "category_index": 12,
     "category_agent": [],
     "category_active": true,
-    "category_translations": {
+    "category_translation": {
       "en": {
         "category_name": "Tenant-Specific Issue 2",
         "category_description": "Request support for custom operational or system-related issues defined by your tenant.",
@@ -60,7 +60,7 @@
     "category_index": 13,
     "category_agent": [],
     "category_active": false,
-    "category_translations": {
+    "category_translation": {
       "en": {
         "category_name": "Tenant-Specific Issue 3",
         "category_description": "Request support for additional tenant-defined issues not covered by standard categories.",

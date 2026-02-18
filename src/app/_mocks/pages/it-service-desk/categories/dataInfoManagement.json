@@ -3,7 +3,7 @@
   "category_index": 7,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Data & Information Management",
       "category_description": "Requests related to data correction, access, reporting, and controlled data handling.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Data correction request",
           "category_description": "Request correction of inconsistent or incorrect data.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Data access request",
           "category_description": "Request access to restricted or specific data.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Report data issue",
           "category_description": "Report issues related to report or dashboard data.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Data export request",
           "category_description": "Request export of data beyond standard reports.",

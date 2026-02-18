@@ -97,5 +97,42 @@
         "description": "Gère les règles d’attribution des tickets du support informatique."
       }
     }
+  },
+
+  "itServiceDeskSettings": {
+    "general": {
+      "category": "Catégorie",
+      "categoryList": "Liste des catégories",
+      "approvalStep": "Étape d'approbation",
+      "approvalStepList": "Liste des étapes d'approbation",
+      "assignmentRule": "Règle d'attribution",
+      "assignmentRuleList": "Liste des règles d'attribution",
+      "client": "Client",
+      "clientList": "Liste des clients",
+      "noResults": "Aucun résultat",
+      "saveChanges": "Enregistrer les modifications"
+    },
+    "categoryTab": {
+      "name": "Nom",
+      "description": "Description",
+      "placeholder": "Espace réservé",
+      "active": "Actif",
+      "addCategory": "Ajouter une catégorie",
+      "saveChanges": "Enregistrer les modifications"
+    },
+    "approvalStepTab": {
+      "name": "Nom",
+      "description": "Description",
+      "assigneeType": "Type de responsable",
+      "assigneeTypes": {
+        "upperManager": "Supérieur hiérarchique",
+        "department": "Département",
+        "role": "Rôle",
+        "employee": "Employé"
+      }
+    },
+    "assignmentRuleTab": {
+      "selectAssignee": "Sélectionner le responsable"
+    }
   }
 }

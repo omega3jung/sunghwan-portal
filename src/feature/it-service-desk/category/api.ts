@@ -1,13 +1,13 @@
 import { DbParams, OResponse } from "@/feature/query/types";
 import fetcher from "@/services/fetcher";
 
-import { FullCategories } from "../types";
+import { ClientCategoryTree } from "../types";
 
-type CategoryResponse = OResponse<FullCategories>;
+type CategoryResponse = OResponse<ClientCategoryTree>;
 
 export const fetchItServiceDeskCategory = async (
   params: DbParams,
-): Promise<FullCategories[]> => {
+): Promise<ClientCategoryTree[]> => {
   if (!params) return [];
 
   const res = await fetcher.api.get<CategoryResponse>(

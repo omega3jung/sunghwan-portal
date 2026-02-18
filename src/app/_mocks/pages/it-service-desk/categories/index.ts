@@ -1,4 +1,7 @@
-import { Category, FullCategories } from "@/feature/it-service-desk/types";
+import {
+  DbCategory,
+  DbClientCategoryTree,
+} from "@/lib/mappers/itServiceDesk/category";
 
 import accountAccessCategoryMock from "./accountAccess.json";
 import clientUserSupportCategoryMock from "./clientUserSupport.json";
@@ -13,7 +16,7 @@ import softwareApplicationCategoryMock from "./softwareApplication.json";
 import tenantCustomIssueSubCategoryMock from "./tenantCustomIssue.json";
 import tenantPortalSystemIssueCategoryMock from "./tenantPortalSystemIssue.json";
 
-const mergeTenantCustomCategory = (customSubCategory: Category[]) => {
+const mergeTenantCustomCategory = (customSubCategory: DbCategory[]) => {
   return {
     ...tenantPortalSystemIssueCategoryMock,
     sub_category: [
@@ -23,7 +26,7 @@ const mergeTenantCustomCategory = (customSubCategory: Category[]) => {
   };
 };
 
-export const internalCategorySettingsMock: FullCategories[] = [
+export const internalCategorySettingsMock: DbClientCategoryTree[] = [
   {
     client_id: "internal",
     client_name: "Internal Demo Corporation",
@@ -55,7 +58,7 @@ export const internalCategorySettingsMock: FullCategories[] = [
   },
 ];
 
-export const tenantCategorySettingsMock: FullCategories[] = [
+export const tenantCategorySettingsMock: DbClientCategoryTree[] = [
   {
     client_id: "tenant_1",
     client_name: "Tenant Demo Corporation",

@@ -7,6 +7,7 @@ import {
 } from "@/app/_mocks/pages/it-service-desk/categories";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { DbParams } from "@/feature/query/types";
+import { camelClientCategoryTreeMapper } from "@/lib/mappers/itServiceDesk/category";
 import { Preference } from "@/types";
 
 export async function GET(request: NextRequest) {
@@ -14,22 +15,30 @@ export async function GET(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    // Return mock user preference.
+    // Return mock categories of it service deck.
 
     const isInternal = await isInternalUser(request);
 
     // internal demo.
     if (isInternal) {
+      const internalCategories = camelClientCategoryTreeMapper(
+        internalCategorySettingsMock,
+      );
+
       return NextResponse.json({
-        items: internalCategorySettingsMock,
-        total: internalCategorySettingsMock.length,
+        items: internalCategories,
+        total: internalCategories.length,
       });
     }
 
+    const tenantCategories = camelClientCategoryTreeMapper(
+      tenantCategorySettingsMock,
+    );
+
     // tenant demo.
     return NextResponse.json({
-      items: tenantCategorySettingsMock,
-      total: tenantCategorySettingsMock.length,
+      items: tenantCategories,
+      total: tenantCategories.length,
     });
   }
 

@@ -15,6 +15,12 @@ export async function isInternalUser(req: NextRequest) {
   return token?.userScope === "INTERNAL";
 }
 
+export async function getTenantId(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  return token?.tenantId;
+}
+
 export async function getEffectiveUserId(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   return token?.id;

@@ -4,8 +4,10 @@
 html[data-theme="emerald"] {
   /* Core */
   --primary: 168 75% 32%;
-  --muted-primary: 168 40% 88%;
-  --light-background: 168 55% 94%;
+  --primary-muted: 168 40% 88%;
+  --primary-subtle: 168 55% 94%;
+  --primary-accent: 168 65% 25%;
+  --primary-foreground-weak: 168 30% 35%;
 
   /* PORTAL */
   --portal-logo: 168 85% 55%;

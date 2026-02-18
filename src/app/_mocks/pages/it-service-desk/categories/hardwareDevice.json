@@ -3,7 +3,7 @@
   "category_index": 2,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Hardware & Device",
       "category_description": "Requests and issue resolution related to PCs, laptops, mobile devices, and peripheral hardware.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "New device request (PC / Laptop / Mobile)",
           "category_description": "Request a new device required for work purposes.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Peripheral issue (monitor / mouse / keyboard)",
           "category_description": "Report issues or request replacement for peripheral devices.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Device replacement",
           "category_description": "Request a replacement for a device that is damaged or malfunctioning.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Device relocation",
           "category_description": "Request relocation of a device to a different location.",
@@ -143,7 +143,7 @@
       "category_index": 5,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Device setup / imaging",
           "category_description": "Request device setup, configuration, or OS imaging.",
@@ -171,7 +171,7 @@
       "category_index": 6,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Asset inventory update",
           "category_description": "Request an update to hardware asset inventory records.",

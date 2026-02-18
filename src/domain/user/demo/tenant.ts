@@ -4,7 +4,7 @@ import { DEMO_USER_IDS } from "./enum";
 import { toAuth, toProfile } from "./util";
 
 export function resolveTenantAuth(
-  id: string
+  id: string,
 ): Omit<AuthUser, "dataScope"> | null {
   return tenantAuths.find((u) => u.id === id) ?? null;
 }
@@ -20,7 +20,7 @@ export const tenantAdminData = {
   email: "demoTenantAdmin@sunghwan-portal.dev",
   accessToken: "demo-tenant-admin-token",
   userScope: "TENANT",
-  tenantId: null,
+  tenantId: "tenant_1",
   permission: 9,
   role: "ADMIN",
   canUseSuperUser: null,
@@ -37,7 +37,7 @@ export const tenantManagerData = {
   email: "demoTenantManager@sunghwan-portal.dev",
   accessToken: "demo-tenant-manager-token",
   userScope: "TENANT",
-  tenantId: null,
+  tenantId: "tenant_1",
   permission: 7,
   role: "MANAGER",
   canUseSuperUser: null,
@@ -54,7 +54,7 @@ export const tenantUserData = {
   email: "demoTenantUser@sunghwan-portal.dev",
   accessToken: "demo-tenant-user-token",
   userScope: "TENANT",
-  tenantId: null,
+  tenantId: "tenant_1",
   permission: 3,
   role: "USER",
   canUseSuperUser: null,
@@ -71,7 +71,7 @@ export const tenantGuestData = {
   email: "demoTenantGuest@sunghwan-portal.dev",
   accessToken: "demo-tenant-guest-token",
   userScope: "TENANT",
-  tenantId: null,
+  tenantId: "tenant_1",
   permission: 1,
   role: "GUEST",
   canUseSuperUser: null,

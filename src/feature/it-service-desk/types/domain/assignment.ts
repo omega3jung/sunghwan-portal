@@ -5,7 +5,7 @@ import { User } from "../shared";
 type Assignee = User;
 
 export interface AssignmentRule {
-  category_id: string; // toString(number). can use parseInt.
+  category_id: string; // string number. can use parseInt.
   rule_seq: number;
   rule_assignee: Assignee[];
   rule_active: boolean;

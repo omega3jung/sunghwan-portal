@@ -3,7 +3,7 @@
   "category_index": 0,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Portal / System Issues",
       "category_description": "Request support for errors, access issues, or performance problems related to the portal or system.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Login / Authentication",
           "category_description": "Request support for issues occurring during login or authentication.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Permission / Role Issues",
           "category_description": "Request support for system changes related to permissions or roles.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "UI / Page Errors",
           "category_description": "Request support for errors occurring in the UI or specific pages.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Performance / Availability",
           "category_description": "Request support for degraded performance or system availability issues.",
@@ -143,7 +143,7 @@
       "category_index": 5,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Workflow Changes",
           "category_description": "Request changes to workflows or system-related processes.",

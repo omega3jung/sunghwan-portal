@@ -4,8 +4,10 @@
 html[data-theme="ruby"] {
   /* Core */
   --primary: 350 65% 48%;
-  --muted-primary: 350 40% 88%;
-  --light-background: 350 65% 95%;
+  --primary-muted: 350 40% 88%;
+  --primary-subtle: 350 65% 95%;
+  --primary-accent: 350 60% 38%;
+  --primary-foreground-weak: 350 30% 35%;
 
   /* PORTAL */
   --portal-logo: 350 75% 60%;

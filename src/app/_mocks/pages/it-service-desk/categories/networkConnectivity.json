@@ -3,7 +3,7 @@
   "category_index": 4,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Network & Connectivity",
       "category_description": "Request support for internet, network, or device connectivity-related issues.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Internet connectivity issue",
           "category_description": "Request assistance when internet access is unavailable or disconnected.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "VPN issue",
           "category_description": "Request support for VPN connection or authentication issues.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Wi-Fi issue",
           "category_description": "Request assistance for Wi-Fi or wireless network connection issues.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Network performance issue",
           "category_description": "Request support for slow, unstable, or unresponsive network connections.",
@@ -143,7 +143,7 @@
       "category_index": 5,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Firewall / IP request",
           "category_description": "Request support for firewall restrictions or IP address changes or additions.",

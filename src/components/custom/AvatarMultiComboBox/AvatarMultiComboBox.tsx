@@ -30,6 +30,7 @@ import { comboBoxVariants } from "./variants";
 const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   const {
     placeholder,
+    placeholderClassName,
     options = [],
     value = [],
     onSelect,
@@ -50,11 +51,11 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   // to display selected items on top.
   const selected = useMemo<ImageValueLabel[]>(() => {
     const currentSelected = options.filter((option) =>
-      value?.includes(option.value)
+      value?.includes(option.value),
     );
 
     return currentSelected.sort(
-      (a, b) => value.indexOf(a.value) - value.indexOf(b.value)
+      (a, b) => value.indexOf(a.value) - value.indexOf(b.value),
     );
   }, [options, value]);
 
@@ -86,7 +87,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
               disabled={disabled || readOnly}
             >
               {!selected.length ? (
-                <div>{placeholder}</div>
+                <div className={placeholderClassName}>{placeholder}</div>
               ) : (
                 <div className="flex items-center -space-x-3">
                   {[...selected].splice(0, maxImages + 1).map((item, index) => {
@@ -100,7 +101,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                             key={`space-${item.value}`}
                             className={cn(
                               "h-8 w-8 ring-2 ring-foreground",
-                              `z-[${selected.length - index}]`
+                              `z-[${selected.length - index}]`,
                             )}
                           >
                             {/* value.includes(item.value) */}
@@ -115,7 +116,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                             key={`space-${item.value}`}
                             className={cn(
                               "h-8 w-8 ring-2 ring-foreground",
-                              `z-[${selected.length - index}]`
+                              `z-[${selected.length - index}]`,
                             )}
                           >
                             <AvatarFallback
@@ -175,7 +176,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
               }
 
               const found = ocurrences.find((e) =>
-                value.toUpperCase().includes(e.toUpperCase())
+                value.toUpperCase().includes(e.toUpperCase()),
               );
 
               if (found) {

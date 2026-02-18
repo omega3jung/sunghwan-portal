@@ -4,8 +4,10 @@
 html[data-theme="topaz"] {
   /* Core */
   --primary: 38 90% 48%;
-  --muted-primary: 38 55% 88%;
-  --light-background: 38 80% 94%;
+  --primary-muted: 38 55% 88%;
+  --primary-subtle: 38 80% 94%;
+  --primary-accent: 38 85% 38%;
+  --primary-foreground-weak: 38 40% 35%;
 
   /* PORTAL */
   --portal-logo: 32 95% 55%;

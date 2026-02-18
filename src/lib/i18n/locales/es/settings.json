@@ -97,5 +97,41 @@
         "description": "Gestiona las reglas de asignación para los tickets de la mesa de ayuda de TI."
       }
     }
+  },
+  "itServiceDeskSettings": {
+    "general": {
+      "category": "Categoría",
+      "categoryList": "Lista de categorías",
+      "approvalStep": "Paso de aprobación",
+      "approvalStepList": "Lista de pasos de aprobación",
+      "assignmentRule": "Regla de asignación",
+      "assignmentRuleList": "Lista de reglas de asignación",
+      "client": "Cliente",
+      "clientList": "Lista de clientes",
+      "noResults": "Sin resultados",
+      "saveChanges": "Guardar cambios"
+    },
+    "categoryTab": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "placeholder": "Marcador de posición",
+      "active": "Activo",
+      "addCategory": "Añadir categoría",
+      "saveChanges": "Guardar cambios"
+    },
+    "approvalStepTab": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "assigneeType": "Tipo de asignado",
+      "assigneeTypes": {
+        "upperManager": "Gerente superior",
+        "department": "Departamento",
+        "role": "Rol",
+        "employee": "Empleado"
+      }
+    },
+    "assignmentRuleTab": {
+      "selectAssignee": "Seleccionar asignado"
+    }
   }
 }

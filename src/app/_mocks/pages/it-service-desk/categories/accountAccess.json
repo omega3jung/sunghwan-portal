@@ -3,7 +3,7 @@
   "category_index": 1,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Account & Access",
       "category_description": "This category is for requesting new accounts, access permissions, or resolving issues related to existing accounts.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "New account request",
           "category_description": "Request the creation of a new account for an employee.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Access permission change",
           "category_description": "Request changes to access permissions for an existing account.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Role / group assignment",
           "category_description": "Request assignment or modification of roles or group permissions for an existing account.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Password reset / MFA issue",
           "category_description": "Request a password reset or report issues related to multi-factor authentication.",
@@ -143,7 +143,7 @@
       "category_index": 5,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Account lock / unlock",
           "category_description": "Request account deactivation for departed employees or reactivation for returning employees.",
@@ -171,7 +171,7 @@
       "category_index": 6,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Email account issue",
           "category_description": "Request assistance for issues related to an email account.",

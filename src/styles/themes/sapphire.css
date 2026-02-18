@@ -4,8 +4,10 @@
 html[data-theme="sapphire"] {
   /* Core */
   --primary: 221 84% 34%; /* Deep sapphire blue */
-  --muted-primary: 221 45% 88%;
-  --light-background: 221 65% 95%;
+  --primary-muted: 221 45% 88%;
+  --primary-subtle: 221 65% 95%;
+  --primary-accent: 221 80% 26%;
+  --primary-foreground-weak: 221 35% 40%;
 
   /* PORTAL */
   --portal-logo: 232 55% 48%;

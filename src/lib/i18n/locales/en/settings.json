@@ -99,25 +99,38 @@
     }
   },
   "itServiceDeskSettings": {
-    "title": "Not implemented in this demo",
-    "description": "This page exists to demonstrate the settings architecture.",
     "general": {
       "category": "Category",
-      "categories": "Categories",
+      "categoryList": "Category List",
       "approvalStep": "Approval Step",
-      "approvalSteps": "Approval Steps",
+      "approvalStepList": "Approval Step List",
       "assignmentRule": "Assignment Rule",
-      "assignmentRules": "Assignment Rules",
+      "assignmentRuleList": "Assignment Rule List",
       "client": "Client",
-      "clients": "Clients",
-      "total": "Total"
+      "clientList": "Client List",
+      "noResults": "No Result",
+      "saveChanges": "Save Changes"
     },
     "categoryTab": {
-      "total": "Total",
       "name": "Name",
       "description": "Description",
       "placeholder": "Placeholder",
-      "active": "Active"
+      "active": "Active",
+      "addCategory": "Add Category"
+    },
+    "approvalStepTab": {
+      "name": "Name",
+      "description": "Description",
+      "assigneeType": "Assignee type",
+      "assigneeTypes": {
+        "upperManager": "Upper Manager",
+        "department": "Department",
+        "role": "Role",
+        "employee": "Employee"
+      }
+    },
+    "assignmentRuleTab": {
+      "selectAssignee": "Select assignee"
     }
   }
 }

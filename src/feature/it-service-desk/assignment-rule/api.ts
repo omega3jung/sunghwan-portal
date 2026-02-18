@@ -11,7 +11,7 @@ export const fetchItServiceDeskAssignmentRule = async (
   if (!params) return [];
 
   const res = await fetcher.api.get<AssignmentRuleResponse>(
-    "/api/it-service-desk/category",
+    "/api/it-service-desk/assignment-rule",
     { params },
   );
 

@@ -3,7 +3,7 @@
   "category_index": 6,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "HR Systems & Payroll",
       "category_description": "Requests and issue resolution related to HR systems, employee records, and payroll.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Work log / attendance issue",
           "category_description": "Report issues related to work logs or attendance records.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Payroll issue",
           "category_description": "Report issues related to processed or paid payroll.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Leave / vacation system issue",
           "category_description": "Report issues related to leave or vacation management systems.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Employee profile correction",
           "category_description": "Request corrections to employee profile information.",

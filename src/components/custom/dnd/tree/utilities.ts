@@ -186,13 +186,19 @@ export function removeChildrenOf<T>(
   items: FlattenedNode<T>[],
   ids: UniqueIdentifier[],
 ) {
-  const excludeParentIds = [...ids];
+  const collapsedIds = new Set(ids);
+  const excluded = new Set<UniqueIdentifier>();
 
   return items.filter((item) => {
-    if (item.parentId && excludeParentIds.includes(item.parentId)) {
-      if (item.children.length) {
-        excludeParentIds.push(item.id);
-      }
+    // already removed by parent.
+    if (excluded.has(item.id)) return false;
+
+    // if parent is collapsed, this node is exclude.
+    if (
+      item.parentId &&
+      (collapsedIds.has(item.parentId) || excluded.has(item.parentId))
+    ) {
+      excluded.add(item.id);
       return false;
     }
 

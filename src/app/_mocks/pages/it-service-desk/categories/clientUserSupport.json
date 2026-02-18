@@ -3,7 +3,7 @@
   "category_index": 8,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Client / External User Support",
       "category_description": "Support requests related to clients or external users.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Client account access",
           "category_description": "Request support for client or external user account access issues.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Client data correction",
           "category_description": "Request correction of incorrect or inconsistent client data.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Client feature request",
           "category_description": "Request development of new features required by clients.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Client issue inquiry",
           "category_description": "Submit inquiries related to client issues, verification, or resolution.",

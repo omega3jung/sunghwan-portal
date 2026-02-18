@@ -6,6 +6,7 @@ import { comboBoxVariants } from "./variants";
 
 export type AvatarMultiComboBoxProps = {
   placeholder?: string;
+  placeholderClassName?: string;
   options?: ImageValueLabel[];
   background?: boolean;
   onSelect?: (value: string) => void;
@@ -16,7 +17,8 @@ export type AvatarMultiComboBoxProps = {
 };
 
 export interface Props
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
     AvatarMultiComboBoxProps,
     VariantProps<typeof comboBoxVariants> {
   value: string[];

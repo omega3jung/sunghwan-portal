@@ -3,7 +3,7 @@
   "category_index": 3,
   "category_agent": [],
   "category_active": true,
-  "category_translations": {
+  "category_translation": {
     "en": {
       "category_name": "Software & Application",
       "category_description": "This category is used to request support for software and application-related issues.",
@@ -31,7 +31,7 @@
       "category_index": 1,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Software installation",
           "category_description": "Request the installation or update of required software on a device.",
@@ -59,7 +59,7 @@
       "category_index": 2,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Application access issue",
           "category_description": "Request assistance when access to an application is unavailable or restricted.",
@@ -87,7 +87,7 @@
       "category_index": 3,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Application bug / error",
           "category_description": "Request support for bugs or errors occurring within an application.",
@@ -115,7 +115,7 @@
       "category_index": 4,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "New feature request",
           "category_description": "Request the development of a new feature to support new or changed business processes.",
@@ -143,7 +143,7 @@
       "category_index": 5,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "Version upgrade request",
           "category_description": "Request an upgrade to a newer version of an application.",
@@ -171,7 +171,7 @@
       "category_index": 6,
       "category_agent": [],
       "category_active": true,
-      "category_translations": {
+      "category_translation": {
         "en": {
           "category_name": "License issue",
           "category_description": "Request assistance for expired, missing, or invalid software licenses.",

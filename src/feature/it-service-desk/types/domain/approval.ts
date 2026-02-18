@@ -1,24 +1,55 @@
-import { Locale } from "@/types";
+import { AccessLevel, Locale } from "@/types";
 
-import { User } from "../shared";
+import { Category } from "./category";
 
-type Approver = User;
+// category data structure.
+export type CategoryApprovalSettings = Category & {
+  approvalSteps: ApprovalStep[];
+};
 
 export interface ApprovalStep {
-  category_id: string; // toString(number). can use parseInt.
-  step_seq: number;
-  step_approver: Approver[];
-  step_active: boolean;
-  step_translations: ApprovalStepTranslations;
+  id: string; // string number. can use parseInt.
+  index: number;
+
+  categoryId: string; // string number. can use parseInt.
+  stepAssignee: ApprovalAssigneeType;
+
+  /**
+   * If requester's access level is greater than or equal to this value,
+   * this approval step will be skipped.
+   */
+  skipAccessLevel?: AccessLevel;
+  translations?: ApprovalStepTranslations; // default language : en
 }
 
-export interface ApprovalStepI18n {
-  step_name: string;
-  step_description?: string;
+export const APPROVAL_ASSIGNEE_TYPES = [
+  "UPPER_MANAGER",
+  "DEPARTMENT",
+  "ROLE",
+  "EMPLOYEE",
+] as const;
+
+export type ApprovalAssigneeTypeValue =
+  (typeof APPROVAL_ASSIGNEE_TYPES)[number];
+
+export type ApprovalAssigneePayloadMap = {
+  UPPER_MANAGER: { level: 1 | 2 };
+  DEPARTMENT: { departmentId: string }; // string number. can use parseInt.
+  ROLE: { roleCode: string }; // string number. can use parseInt.
+  EMPLOYEE: { employeeIds: string[] }; // string number. can use parseInt.
+};
+
+export type ApprovalAssigneeType = {
+  [K in ApprovalAssigneeTypeValue]: {
+    type: K;
+  } & ApprovalAssigneePayloadMap[K];
+}[ApprovalAssigneeTypeValue];
+
+interface ApprovalStepI18n {
+  name: string;
+  description?: string;
 }
 
-type DefaultLocale = "en";
-type OptionalLocale = Exclude<Locale, DefaultLocale>;
-
-type ApprovalStepTranslations = Record<DefaultLocale, ApprovalStepI18n> &
-  Partial<Record<OptionalLocale, ApprovalStepI18n>>;
+export type ApprovalStepTranslations = Partial<
+  Record<Locale, ApprovalStepI18n>
+>;
