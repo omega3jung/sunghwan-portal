@@ -1,0 +1,13 @@
+{
+  "Stepper": {
+    "stepper": "Stepper",
+    "variants": "Variación",
+    "orientation": "Orientación",
+    "stepVariant": "Forma del paso",
+    "labelPosition": "Posición de la etiqueta",
+    "stepColor": "Color",
+    "showOrderLabel": "Mostrar etiqueta del paso",
+    "startIndex": "Número inicial",
+    "step": "Paso"
+  }
+}

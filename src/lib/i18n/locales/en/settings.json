@@ -130,7 +130,8 @@
       }
     },
     "assignmentRuleTab": {
-      "selectAssignee": "Select assignee"
+      "selectAssignee": "Select assignee",
+      "skipAccessLevel": "Skip access level"
     }
   }
 }
