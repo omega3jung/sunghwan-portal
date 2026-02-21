@@ -2,7 +2,7 @@
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth.config";
-import { AuthUser } from "@/types";
+import { AuthUser } from "@/domain/auth";
 
 import { withProfile } from "./enhancers";
 import { mapAuthUserToAppUser } from "./mapAuthUserToAppUser";

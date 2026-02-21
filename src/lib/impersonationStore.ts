@@ -1,7 +1,7 @@
 // lib/impersonationStore.ts
 import { create } from "zustand";
 
-import { AppUser } from "@/types";
+import { AppUser } from "@/domain/user";
 
 export type ImpersonationState = {
   actor: AppUser | null;

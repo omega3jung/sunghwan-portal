@@ -7,16 +7,16 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { adminAuth } from "@/app/_mocks";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
-import { adminAuth } from "@/domain/user";
 import {
   useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
 } from "@/feature/user/preference/queries";
 import { useLanguageState } from "@/services/language";
-import { AvailableLanguages } from "@/types";
+import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/utils";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
@@ -48,7 +48,7 @@ export default function LoginPage() {
   const [demoLoading, setDemoLoading] = useState(false);
   const [resetToken, setResetToken] = useState<ResetPasswordState | null>(null);
   const [formType, setFormType] = useState<LoginStateEnum>(
-    LoginStateEnum.LOGIN
+    LoginStateEnum.LOGIN,
   );
 
   const [currentID, setCurrentID] = useState<string>("");
@@ -319,7 +319,7 @@ export default function LoginPage() {
             className="mt-2 w-48"
             placeholder="Language Picker"
             variant="icon"
-            options={AvailableLanguages}
+            options={languageOptions}
             onChange={handleLanguageChange}
             icon={<Globe />}
             value={language ?? "en"}

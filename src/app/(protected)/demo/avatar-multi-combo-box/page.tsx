@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 
+import { avatarComboMock } from "@/app/_mocks/pages/demo/avatar-multi-combo-box";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Input } from "@/components/ui/input";
-
-import { avatarComboMock } from "../../../_mocks/pages/demo/avatar-multi-combo-box";
 
 export default function AvatarMultiComboBoxPage() {
   const [userValue, setUserValue] = useState<string[]>([]);

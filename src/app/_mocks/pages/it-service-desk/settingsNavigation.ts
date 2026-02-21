@@ -1,7 +1,7 @@
 import { TFunction } from "i18next";
 import { Database, Eye, Headset, UserRound, Workflow } from "lucide-react";
 
-import { LucideIcon } from "@/types";
+import { LucideIcon } from "@/shared/types";
 
 interface SettingsCardGroup {
   triggerTitle: string;
@@ -30,7 +30,7 @@ export function createSettingsCardMock(t: TFunction): SettingsCardGroup[] {
       triggerTitle: t("settingsNavigation.accountSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.accountSettings.description",
-        ns
+        ns,
       ),
       path: "/settings/account-settings/",
       icon: UserRound,
@@ -45,7 +45,7 @@ export function createSettingsCardMock(t: TFunction): SettingsCardGroup[] {
       triggerTitle: t("settingsNavigation.workflowSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.workflowSettings.description",
-        ns
+        ns,
       ),
       path: "/settings/workflow-settings/",
       icon: Workflow,
@@ -54,7 +54,7 @@ export function createSettingsCardMock(t: TFunction): SettingsCardGroup[] {
       triggerTitle: t("settingsNavigation.itServiceDeskSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.itServiceDeskSettings.description",
-        ns
+        ns,
       ),
       path: "/settings/it-service-desk-settings",
       icon: Headset,
@@ -63,7 +63,7 @@ export function createSettingsCardMock(t: TFunction): SettingsCardGroup[] {
 }
 
 export function createSettingsNavigationMock(
-  t: TFunction
+  t: TFunction,
 ): SettingsNavigationGroup[] {
   return [
     {
@@ -75,7 +75,7 @@ export function createSettingsNavigationMock(
           path: "/settings/data-setup/carrier",
           description: t(
             "settingsNavigation.dataSetup.carrier.description",
-            ns
+            ns,
           ),
         },
         {
@@ -83,7 +83,7 @@ export function createSettingsNavigationMock(
           path: "/settings/data-setup/project",
           description: t(
             "settingsNavigation.dataSetup.project.description",
-            ns
+            ns,
           ),
         },
         {
@@ -107,7 +107,7 @@ export function createSettingsNavigationMock(
       triggerTitle: t("settingsNavigation.accountSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.accountSettings.description",
-        ns
+        ns,
       ),
       items: [
         {
@@ -115,7 +115,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/company",
           description: t(
             "settingsNavigation.accountSettings.company.description",
-            ns
+            ns,
           ),
         },
         {
@@ -123,7 +123,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/departments",
           description: t(
             "settingsNavigation.accountSettings.departments.description",
-            ns
+            ns,
           ),
         },
         {
@@ -131,7 +131,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/job-fields",
           description: t(
             "settingsNavigation.accountSettings.jobFields.description",
-            ns
+            ns,
           ),
         },
         {
@@ -139,7 +139,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/shifts",
           description: t(
             "settingsNavigation.accountSettings.shifts.description",
-            ns
+            ns,
           ),
         },
         {
@@ -147,7 +147,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/users",
           description: t(
             "settingsNavigation.accountSettings.users.description",
-            ns
+            ns,
           ),
         },
         {
@@ -155,7 +155,7 @@ export function createSettingsNavigationMock(
           path: "/settings/account-settings/workspaces",
           description: t(
             "settingsNavigation.accountSettings.workspaces.description",
-            ns
+            ns,
           ),
         },
       ],
@@ -167,23 +167,23 @@ export function createSettingsNavigationMock(
         {
           title: t(
             "settingsNavigation.accessControl.userPermissions.title",
-            ns
+            ns,
           ),
           path: "/settings/access-control/user-permissions",
           description: t(
             "settingsNavigation.accessControl.userPermissions.description",
-            ns
+            ns,
           ),
         },
         {
           title: t(
             "settingsNavigation.accessControl.groupPermissions.title",
-            ns
+            ns,
           ),
           path: "/settings/access-control/group-permissions",
           description: t(
             "settingsNavigation.accessControl.groupPermissions.description",
-            ns
+            ns,
           ),
         },
       ],
@@ -192,7 +192,7 @@ export function createSettingsNavigationMock(
       triggerTitle: t("settingsNavigation.workflowSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.workflowSettings.description",
-        ns
+        ns,
       ),
       items: [
         {
@@ -200,7 +200,7 @@ export function createSettingsNavigationMock(
           path: "/settings/workflow-settings/steps",
           description: t(
             "settingsNavigation.workflowSettings.steps.description",
-            ns
+            ns,
           ),
         },
         {
@@ -208,7 +208,7 @@ export function createSettingsNavigationMock(
           path: "/settings/workflow-settings/validations",
           description: t(
             "settingsNavigation.workflowSettings.validations.description",
-            ns
+            ns,
           ),
         },
       ],
@@ -217,40 +217,40 @@ export function createSettingsNavigationMock(
       triggerTitle: t("settingsNavigation.itServiceDeskSettings.title", ns),
       triggerDescription: t(
         "settingsNavigation.itServiceDeskSettings.description",
-        ns
+        ns,
       ),
       items: [
         {
           title: t(
             "settingsNavigation.itServiceDeskSettings.category.title",
-            ns
+            ns,
           ),
           path: "/settings/it-service-desk-settings/category",
           description: t(
             "settingsNavigation.itServiceDeskSettings.category.description",
-            ns
+            ns,
           ),
         },
         {
           title: t(
             "settingsNavigation.itServiceDeskSettings.approvalSteps.title",
-            ns
+            ns,
           ),
           path: "/settings/it-service-desk-settings/approval-steps",
           description: t(
             "settingsNavigation.itServiceDeskSettings.approvalSteps.description",
-            ns
+            ns,
           ),
         },
         {
           title: t(
             "settingsNavigation.itServiceDeskSettings.assignmentRules.title",
-            ns
+            ns,
           ),
           path: "/settings/it-help-desk-settings/assignment-rules",
           description: t(
             "settingsNavigation.itServiceDeskSettings.assignmentRules.description",
-            ns
+            ns,
           ),
         },
       ],

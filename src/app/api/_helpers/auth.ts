@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
-import { ACCESS_LEVEL, AuthUser, UserScope } from "@/types";
+import { ACCESS_LEVEL, AuthUser, UserScope } from "@/domain/auth";
 
 export async function isRemoteRequest(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });

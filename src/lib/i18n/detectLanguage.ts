@@ -2,7 +2,7 @@ import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
   SupportedLanguage,
-} from "@/types";
+} from "@/domain/config";
 
 export function detectBrowserLanguage(): SupportedLanguage {
   if (typeof navigator === "undefined") {

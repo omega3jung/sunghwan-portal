@@ -13,7 +13,7 @@ import {
 } from "@/components/custom/MultiComboBox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ValueLabel } from "@/types/common";
+import { ValueLabel } from "@/shared/types";
 
 import { comboBoxVariant, indexVariant } from "./type";
 
@@ -111,7 +111,7 @@ export default function MultiComboBoxPage() {
           }}
           onRemove={(selected: string) => {
             const newChoise = selectedRanges?.filter(
-              (value) => value !== selected
+              (value) => value !== selected,
             );
 
             setSelectedRanges(newChoise);

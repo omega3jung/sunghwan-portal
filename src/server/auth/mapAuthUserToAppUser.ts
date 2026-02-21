@@ -1,10 +1,11 @@
-// src/server/auth/mapAuthUserToAppUser.ts
-import { AppUser, AuthUser } from "@/types";
+import { AuthUser } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 
 export function mapAuthUserToAppUser(auth: AuthUser): AppUser {
   return {
     id: auth.id,
-    name: auth.name,
+    username: auth.username,
+    displayName: auth.displayName,
     email: auth.email ?? null,
 
     userScope: auth.userScope,

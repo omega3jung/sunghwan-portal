@@ -1,5 +1,6 @@
 // src/feature/user/preference/repo.ts
-import { Preference } from "@/types";
+
+import { Preference } from "@/domain/config";
 
 import { userPreferenceApi } from "./api";
 
@@ -23,7 +24,7 @@ export const userPreferenceRepo = {
     if (!userId) {
       localStorage.setItem(
         "sunghwan_portal_user_preference",
-        JSON.stringify(data)
+        JSON.stringify(data),
       );
       return;
     }
@@ -38,7 +39,7 @@ export const userPreferenceRepo = {
     if (!userId) {
       localStorage.setItem(
         "sunghwan_portal_user_preference",
-        JSON.stringify(data)
+        JSON.stringify(data),
       );
       return;
     }

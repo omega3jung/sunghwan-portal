@@ -1,6 +1,6 @@
 import { type VariantProps } from "class-variance-authority";
 
-import { ImageValueLabel } from "@/types/common";
+import { ImageValueLabel } from "@/shared/types/options";
 
 import { comboBoxVariants } from "./variants";
 

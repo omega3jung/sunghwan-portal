@@ -5,7 +5,7 @@ import { dateRangePickerLocales } from "@/components/custom/DateRangePicker/loca
 import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "@/types";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "@/domain/config";
 
 import { en } from "./locales/en";
 import { es } from "./locales/es";

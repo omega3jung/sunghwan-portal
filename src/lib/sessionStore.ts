@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
-import { AppUser, CurrentSession } from "@/types";
+import { CurrentSession } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 
 /*
  * =========================================================
@@ -121,12 +122,12 @@ export const useSessionStore = create<SessionState & SessionActions>()(
       sessionStorage.removeItem(STORAGE_KEYS.SESSION);
       set(initialState);
     },
-  })
+  }),
 );
 
 function mergeAndAssertUser(
   user: AppUser | null,
-  patch?: Partial<AppUser>
+  patch?: Partial<AppUser>,
 ): AppUser {
   const newUser = { ...user, ...patch };
 

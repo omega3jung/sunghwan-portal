@@ -1,4 +1,4 @@
-import { AuthUser } from "@/types";
+import { AuthUser } from "@/domain/auth";
 
 import { loginApi } from "./credentials";
 

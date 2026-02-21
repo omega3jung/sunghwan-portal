@@ -1,10 +1,11 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 
-import { useFetchMyProfile } from "@/feature/user/profile/queries";
+import { CurrentSession } from "@/domain/auth";
+import { UseCurrentSessionResult } from "@/feature/auth";
+import { useFetchMyProfile } from "@/feature/auth/hooks";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
-import { CurrentSession, UseCurrentSessionResult } from "@/types";
 
 /*
  * =========================================================
@@ -88,7 +89,13 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       superUserActivated: superUserActivated,
       security: security,
     };
-  }, [store.user, store.isSuperUser, store.superUserActivated, store.security]);
+  }, [
+    store.user,
+    store.isSuperUser,
+    store.superUserActivated,
+    store.security,
+    session.data?.user?.dataScope,
+  ]);
 
   /*
    * Single entry point for session updates

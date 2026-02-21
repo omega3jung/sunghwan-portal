@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { ImageValueLabel } from "@/types";
+import { ImageValueLabel } from "@/shared/types/options";
 import { initials } from "@/utils";
 
 import { UserAvatar } from "../UserAvatar";

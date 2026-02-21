@@ -15,10 +15,9 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useFetchItServiceDeskCategory } from "@/feature/it-service-desk/category/queries";
-import { Client } from "@/feature/it-service-desk/types";
-import { DbParams } from "@/feature/query/types";
+import { Client, useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
 import { useLanguageState } from "@/services/language";
+import { DbParams } from "@/shared/types/api";
 import { cn } from "@/utils";
 
 import { CategoryData, MainCategoryData } from "../types";

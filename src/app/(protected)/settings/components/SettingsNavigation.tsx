@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { useFetchUserPreference } from "@/feature/user/preference/queries";
+import { useFetchUserPreference } from "@/feature/user";
 import { cn } from "@/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";

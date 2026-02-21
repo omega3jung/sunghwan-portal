@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Locale } from "@/types";
+import { Locale } from "@/domain/config";
 
 export function useLanguageState() {
   const { i18n } = useTranslation();

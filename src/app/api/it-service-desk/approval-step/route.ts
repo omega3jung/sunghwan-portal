@@ -1,19 +1,43 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { createCategorySettingsMock } from "@/app/_mocks/pages/it-service-desk/categories/category";
-import { isRemoteRequest } from "@/app/api/_helpers";
-import { DbParams } from "@/feature/query/types";
+import { internalApprovalStepSettingsMock } from "@/app/_mocks/pages/it-service-desk/approvalSteps";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { Preference } from "@/domain/config";
+import { camelCategoryApprovalSettingMapper } from "@/lib/mappers";
 import fetcher from "@/services/fetcher";
-import { Preference } from "@/types";
+import { DbParams } from "@/shared/types/api";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
-    // Return mock user preference.
-    return NextResponse.json(createCategorySettingsMock);
+    // Return mock categories of it service deck.
+
+    const isInternal = await isInternalUser(request);
+
+    // internal demo.
+    if (isInternal) {
+      const internalCategories = camelCategoryApprovalSettingMapper(
+        internalApprovalStepSettingsMock,
+      );
+
+      return NextResponse.json({
+        items: internalCategories,
+        total: internalCategories.length,
+      });
+    }
+
+    const tenantCategories = camelCategoryApprovalSettingMapper(
+      internalApprovalStepSettingsMock,
+    );
+
+    // tenant demo.
+    return NextResponse.json({
+      items: tenantCategories,
+      total: tenantCategories.length,
+    });
   }
 
   // real backend

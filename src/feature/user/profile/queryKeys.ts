@@ -1,4 +1,4 @@
-// src/feature/user/preference/queryKeys.ts
+// src/feature/user/profile/queryKeys.ts
 
 import { USER_KEY } from "../keys";
 

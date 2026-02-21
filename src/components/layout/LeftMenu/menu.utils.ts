@@ -1,8 +1,10 @@
-import { AccessLevel, MenuItem } from "@/types";
+import { AccessLevel } from "@/domain/auth";
+
+import { MenuItem } from "./types";
 
 export function filterMenuByAccessLevel(
   items: MenuItem[],
-  userAccessLevel?: AccessLevel
+  userAccessLevel?: AccessLevel,
 ): MenuItem[] {
   const level = userAccessLevel ?? 0;
 

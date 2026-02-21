@@ -7,6 +7,8 @@ import { ChevronRight, Loader2, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { avatarComboMock } from "@/app/_mocks/pages";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { DragHandle } from "@/components/custom/dnd/DragHandle";
 import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
 import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
@@ -31,15 +33,17 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useFetchItServiceDeskApprovalStep } from "@/feature/it-service-desk/approval-step/queries";
+import { Locale } from "@/domain/config/language";
 import {
   APPROVAL_ASSIGNEE_TYPES,
+  ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
   CategoryApprovalSettings,
-} from "@/feature/it-service-desk/types";
-import { DbParams } from "@/feature/query/types";
+  useFetchItServiceDeskApprovalStep,
+} from "@/feature/itServiceDesk";
 import { useLanguageState } from "@/services/language";
-import { AvailableLanguages, Locale } from "@/types";
+import { languageOptions } from "@/shared/constants";
+import { DbParams } from "@/shared/types/api";
 import { cn } from "@/utils";
 import { camelCase } from "@/utils/case";
 
@@ -68,6 +72,7 @@ export default function CategoryPage() {
     useFetchItServiceDeskApprovalStep(params);
 
   const maxChildCount = 5;
+  const [maxAssigneeCount, setMaxAssigneeCount] = useState<number>(20);
   const [approvalStepTree, setApprovalStepTree] = useState<
     TreeNodes<CategoryApprovalStepData | ApprovalStepData>
   >([]);
@@ -215,7 +220,7 @@ export default function CategoryPage() {
         label: approval.translations?.[language]?.name || approval.id,
       });
     }
-    steps.push({ label: "assign" });
+    steps.push({ label: "Assign" });
 
     return steps;
   }, [currentCategory, language]);
@@ -243,7 +248,31 @@ export default function CategoryPage() {
       );
     };
 
-  const onApprovalTypeChange = (approvalType: ApprovalAssigneeTypeValue) => {
+  const onAssigneeTypeChange = (approvalType: ApprovalAssigneeTypeValue) => {
+    assigneeValueChange(getDefaultAssigneePayload(approvalType));
+  };
+
+  const onAssigneeValueChange = (approvalValue: string) => {
+    if (!selectedNode || selectedNode.nodeType !== "approvalStep") return;
+
+    const data = getDefaultAssigneePayload(selectedNode.stepAssignee.type);
+
+    switch (data.type) {
+      case "DEPARTMENT":
+        data.departmentId = approvalValue;
+        break;
+      case "ROLE":
+        data.roleCode = approvalValue;
+        break;
+      case "UPPER_MANAGER":
+        const level = parseInt(approvalValue);
+        data.level = level > 1 ? 2 : 1;
+        break;
+    }
+    assigneeValueChange(data);
+  };
+
+  const assigneeValueChange = (approvalValue: ApprovalAssigneeType) => {
     if (!selectedNode || selectedNode.nodeType !== "approvalStep") return;
 
     setApprovalStepTree((prev) =>
@@ -253,7 +282,7 @@ export default function CategoryPage() {
         return {
           ...data,
           editType: data.editType === undefined ? "update" : data.editType,
-          stepAssignee: getDefaultAssigneePayload(approvalType),
+          stepAssignee: approvalValue,
         };
       }),
     );
@@ -410,7 +439,7 @@ export default function CategoryPage() {
         </ScrollArea>
       </div>
 
-      {/* Category details */}
+      {/* Approval Steps */}
       <div className="p-2">
         <div className="flex justify-end pb-2">
           <Button
@@ -427,17 +456,29 @@ export default function CategoryPage() {
           <>
             <div className="pb-4">
               <Stepper
+                className={cn("py-3 px-6 rounded-md border")}
                 currentStep={currentStep}
-                steps={currentApprovalSteps || []}
-                setStep={setCurrentStep}
-              />
+                onStepChange={setCurrentStep}
+              >
+                {currentApprovalSteps?.map((step, idx) => (
+                  <Stepper.Item
+                    key={idx}
+                    index={idx}
+                    total={currentApprovalSteps.length}
+                  >
+                    <Stepper.Trigger index={idx - 1}>
+                      <Stepper.Label>{step.label}</Stepper.Label>
+                    </Stepper.Trigger>
+                  </Stepper.Item>
+                ))}
+              </Stepper>
             </div>
             <Tabs
               value={languageTab}
               onValueChange={(value) => setLanguageTab(value as Locale)}
             >
               <TabsList className="w-full justify-start">
-                {AvailableLanguages.map((lang) => (
+                {languageOptions.map((lang) => (
                   <TabsTrigger
                     key={lang.value}
                     value={lang.value}
@@ -452,11 +493,11 @@ export default function CategoryPage() {
               <FieldSet>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel htmlFor="category-input-name">
+                    <FieldLabel htmlFor="approval-input-name">
                       {t("itServiceDeskSettings.approvalStepTab.name")}
                     </FieldLabel>
                     <Input
-                      id="category-input-name"
+                      id="approval-input-name"
                       data-testid="category-name"
                       disabled={!selectedNode}
                       className="!disabled:border-primary"
@@ -469,11 +510,11 @@ export default function CategoryPage() {
                     />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="category-textarea-description">
+                    <FieldLabel htmlFor="approval-textarea-description">
                       {t("itServiceDeskSettings.approvalStepTab.description")}
                     </FieldLabel>
                     <Textarea
-                      id="category-textarea-description"
+                      id="approval-textarea-description"
                       disabled={!selectedNode}
                       className="!disabled:border-primary"
                       value={
@@ -486,17 +527,156 @@ export default function CategoryPage() {
                     />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="category-textarea-placeholder">
+                    <FieldLabel htmlFor="approval-select-assignee-type">
                       {t("itServiceDeskSettings.approvalStepTab.assigneeType")}
                     </FieldLabel>
                     <Select
                       value={selectedNode.stepAssignee.type}
                       onValueChange={(value) =>
-                        onApprovalTypeChange(value as ApprovalAssigneeTypeValue)
+                        onAssigneeTypeChange(value as ApprovalAssigneeTypeValue)
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Theme" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent id="approval-select-assignee-type">
+                        {approvalTypeValueLabels.map((approvalType) => (
+                          <SelectItem
+                            key={`select_item_${approvalType.value}`}
+                            value={approvalType.value}
+                          >
+                            {approvalType.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {selectedNode.stepAssignee.type === "UPPER_MANAGER" && (
+                      <Field>
+                        <FieldLabel htmlFor="approval-select-manager-level">
+                          {t("itServiceDeskSettings.approvalStepTab.level")}
+                        </FieldLabel>
+                        <Input
+                          id="start-index-input"
+                          className="w-20"
+                          value={selectedNode.stepAssignee.level}
+                          onChange={(e) => {
+                            onAssigneeValueChange(e.target.value);
+                          }}
+                          type={"number"}
+                          min={1}
+                          max={2}
+                        />
+                      </Field>
+                    )}
+
+                    {selectedNode.stepAssignee.type === "DEPARTMENT" && (
+                      <Field>
+                        <FieldLabel htmlFor="approval-select-department">
+                          {t("itServiceDeskSettings.approvalStepTab.level")}
+                        </FieldLabel>
+                        <Select
+                          value={selectedNode.stepAssignee.type}
+                          onValueChange={onAssigneeValueChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent id="approval-select-department">
+                            {approvalTypeValueLabels.map((approvalType) => (
+                              <SelectItem
+                                key={`select_item_${approvalType.value}`}
+                                value={approvalType.value}
+                              >
+                                {approvalType.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    )}
+
+                    {selectedNode.stepAssignee.type === "ROLE" && (
+                      <Field>
+                        <FieldLabel htmlFor="approval-select-role">
+                          {t("itServiceDeskSettings.approvalStepTab.level")}
+                        </FieldLabel>
+                        <Select
+                          value={selectedNode.stepAssignee.type}
+                          onValueChange={onAssigneeValueChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent id="approval-select-role">
+                            {approvalTypeValueLabels.map((approvalType) => (
+                              <SelectItem
+                                key={`select_item_${approvalType.value}`}
+                                value={approvalType.value}
+                              >
+                                {approvalType.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    )}
+
+                    {selectedNode.stepAssignee.type === "EMPLOYEE" && (
+                      <Field>
+                        <FieldLabel htmlFor="approval-select-department">
+                          {t("itServiceDeskSettings.approvalStepTab.level")}
+                        </FieldLabel>
+                        <AvatarMultiComboBox
+                          placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
+                          variant={"ghost"}
+                          options={avatarComboMock}
+                          value={selectedNode.stepAssignee.employeeIds}
+                          maxImages={maxAssigneeCount}
+                          placeholder={t(
+                            "itServiceDeskSettings.assignmentRuleTab.selectAssignee",
+                          )}
+                          onSelect={(e) => {
+                            if (e) {
+                              const currentValue = [
+                                ...selectedNode.stepAssignee.employeeIds,
+                              ];
+                              currentValue.push(e);
+                              assigneeValueChange({
+                                type: "EMPLOYEE",
+                                employeeIds: currentValue,
+                              });
+                            }
+                          }}
+                          onRemove={(e) => {
+                            const currentValue = [
+                              ...selectedNode.stepAssignee.employeeIds,
+                            ];
+                            const currentValueindex = currentValue.indexOf(e);
+
+                            if (currentValueindex > -1) {
+                              currentValue.splice(currentValueindex, 1);
+                              assigneeValueChange({
+                                type: "EMPLOYEE",
+                                employeeIds: currentValue,
+                              });
+                            } else {
+                              return;
+                            }
+                          }}
+                        />
+                      </Field>
+                    )}
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="category-switch-active">
+                      {t(
+                        "itServiceDeskSettings.approvalStepTab.skipAccessLevel",
+                      )}
+                    </FieldLabel>
+                    <Select value={selectedNode.stepAssignee.type}>
+                      <SelectTrigger>
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         {approvalTypeValueLabels.map((approvalType) => (
@@ -509,12 +689,6 @@ export default function CategoryPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </Field>
-                  <Field>
-                    <FieldLabel htmlFor="category-switch-active">
-                      {t("itServiceDeskSettings.categoryTab.active")}
-                    </FieldLabel>
-                    <span></span>
                   </Field>
                 </FieldGroup>
               </FieldSet>

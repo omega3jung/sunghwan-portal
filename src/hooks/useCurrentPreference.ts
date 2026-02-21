@@ -2,16 +2,14 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
-import { defaultPreference } from "@/domain/user";
-import { userPreferenceRepo } from "@/feature/user/preference/repo";
+import { ColorTheme, Locale, ScreenMode } from "@/domain/config";
+import {
+  createDefaultPreference,
+  UseCurrentPreferenceResult,
+} from "@/domain/preference";
+import { userPreferenceRepo } from "@/feature/user/preference";
 import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { useLanguageState } from "@/services/language";
-import {
-  ColorTheme,
-  Locale,
-  ScreenMode,
-  UseCurrentPreferenceResult,
-} from "@/types";
 import { applyColorTheme } from "@/utils";
 
 /*
@@ -60,7 +58,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * - Eliminate calculation logic from page/component.
    * - Only update this hook when the session data structure changes.
    */
-  const current = store ?? defaultPreference;
+  const current = store ?? createDefaultPreference();
 
   const status = session.status === "loading" ? "loading" : "ready";
   /*

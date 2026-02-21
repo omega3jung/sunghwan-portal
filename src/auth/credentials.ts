@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import { resolveDemoAuth, resolveTenantAuth } from "@/domain/user";
+import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/user";
+import { AuthUser } from "@/domain/auth";
 import fetcher from "@/services/fetcher";
-import { AuthUser } from "@/types";
 
 export type LoginResponse = AuthUser;
 

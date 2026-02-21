@@ -2,12 +2,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isRemoteRequest } from "@/app/api/_helpers";
-import { defaultPreference } from "@/domain/user";
-import { Preference } from "@/types";
+import { Preference } from "@/domain/config";
+import { createDefaultPreference } from "@/domain/preference";
 
 export async function GET(
   req: NextRequest,
-  context: { params: { userId: string } }
+  context: { params: { userId: string } },
 ) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
@@ -15,7 +15,7 @@ export async function GET(
   // local demo mode.
   if (!isRemote) {
     // Return mock user preference.
-    return NextResponse.json(defaultPreference);
+    return NextResponse.json(createDefaultPreference());
   }
 
   // real backend
@@ -28,13 +28,13 @@ export async function GET(
       },
       cache: "no-store",
       body: JSON.stringify(userId),
-    }
+    },
   );
 
   if (!res.ok) {
     return NextResponse.json(
       { message: "Failed to fetch user preference" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -44,7 +44,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  context: { params: { userId: string } }
+  context: { params: { userId: string } },
 ) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
@@ -62,7 +62,7 @@ export async function POST(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    }
+    },
   );
 
   const data = await res.json();
@@ -71,7 +71,7 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { userId: string } }
+  context: { params: { userId: string } },
 ) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
@@ -90,7 +90,7 @@ export async function PUT(
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    }
+    },
   );
 
   const data = await res.json();

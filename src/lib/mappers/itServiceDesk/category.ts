@@ -1,10 +1,10 @@
+import { Locale } from "@/domain/config";
 import {
   Category,
   CategoryTranslations,
   ClientCategoryTree,
   MainCategory,
-} from "@/feature/it-service-desk/types";
-import { Locale } from "@/types";
+} from "@/feature/itServiceDesk";
 
 import { ArrayMapper, Mapper } from "../utils";
 

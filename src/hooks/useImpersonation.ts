@@ -2,8 +2,8 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import { userImpersonationApi } from "@/feature/user/impersonation/api";
-import { userProfileApi } from "@/feature/user/profile/api";
+import { userImpersonationApi } from "@/feature/auth";
+import { userProfileApi } from "@/feature/user/profile";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 
 import { useCurrentSession } from "./useCurrentSession";

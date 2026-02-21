@@ -2,9 +2,10 @@
 
 import axios from "axios";
 
-import { resolveTenantAuth } from "@/domain/user";
+import { resolveTenantAuth } from "@/app/_mocks/user";
+import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 import fetcher from "@/services/fetcher";
-import { ACCESS_LEVEL, AppUser, AuthUser } from "@/types";
 
 export async function startImpersonation({
   actor,

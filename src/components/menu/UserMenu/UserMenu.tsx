@@ -23,25 +23,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ACCESS_LEVEL } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useImpersonation } from "@/hooks/useImpersonation";
-import i18n from "@/lib/i18n";
-import { ACCESS_LEVEL, AppUser } from "@/types";
 import { cn, initials } from "@/utils";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
-
-const ns = {
-  ns: "UserMenu",
-};
-
-const demoNameData: Record<string, string> = {
-  admin: i18n.t("adminDemo", ns),
-  manager: i18n.t("managerDemo", ns),
-  user: i18n.t("userDemo", ns),
-  guest: i18n.t("guestDemo", ns),
-};
 
 export function UserMenu() {
   const { current } = useCurrentSession();
@@ -73,7 +62,7 @@ export function UserMenu() {
 
   const hasSubject = useMemo<boolean>(
     () => isImpersonating && !!subject,
-    [isImpersonating, subject]
+    [isImpersonating, subject],
   );
 
   const onUserSwitch = async (profile: AppUser) => {
@@ -103,7 +92,7 @@ export function UserMenu() {
 
   const renderUserAvatar = (
     user: AppUser | null,
-    options?: { size?: number; muted?: boolean }
+    options?: { size?: number; muted?: boolean },
   ) => {
     if (!user) return null;
 
@@ -115,7 +104,7 @@ export function UserMenu() {
         <AvatarFallback
           className={cn(
             muted ? "bg-muted-foreground" : "bg-foreground",
-            "text-background"
+            "text-background",
           )}
         >
           {initials(user.displayName)}
@@ -126,7 +115,7 @@ export function UserMenu() {
 
   const renderImpersonationAvatar = (
     actor: AppUser | null,
-    subject: AppUser | null
+    subject: AppUser | null,
   ) => {
     if (!actor || !subject) return null;
 

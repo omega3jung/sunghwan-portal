@@ -1,24 +1,25 @@
-import { AuthUser } from "@/types/user";
-
+import type { ImpersonationInfo, SessionUser } from "@/domain/auth";
 declare module "next-auth/jwt" {
-  interface JWT extends AuthUser {
-    impersonation?: {
-      actorId: string;
-      subjectId: string;
-      activatedAt: number;
-    };
+  interface JWT {
+    id: string;
+    username: string;
+    displayName: string;
+    email: string;
+    accessToken: string;
+
+    dataScope: DataScope;
+    userScope: UserScope;
+    tenantId: string | null;
+    permission: AccessLevel;
+    role: Role;
+
+    impersonation?: ImpersonationInfo;
   }
 }
 
 declare module "next-auth" {
   interface Session {
-    user: Omit<AuthUser, "accessToken">;
-
-    // impersonation
-    impersonation?: {
-      actorId: string;
-      subjectId: string;
-      activatedAt: number;
-    };
+    user: SessionUser;
+    impersonation?: ImpersonationInfo;
   }
 }

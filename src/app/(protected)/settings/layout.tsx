@@ -4,8 +4,8 @@ import { Separator } from "@radix-ui/react-select";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
+import { ACCESS_LEVEL } from "@/domain/auth";
 import { getEffectiveUser } from "@/server/user";
-import { ACCESS_LEVEL } from "@/types";
 
 import { SettingsNavigation } from "./components";
 import { SettingsScopeProvider } from "./SettingsScopeProvider";

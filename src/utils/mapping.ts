@@ -1,4 +1,4 @@
-import { ValueLabel } from "@/types/common";
+import { ValueLabel } from "@/shared/types";
 
 import { isNumber } from "./number";
 import { isBoolean, isChecked, isJson, isString } from "./string";

@@ -36,12 +36,14 @@ export default function DateRangePickerPage() {
 
             // sort by ranges order.
             setSelectedRanges(
-              newList.sort((a, b) => ranges.indexOf(a) - ranges.indexOf(b))
+              newList.sort(
+                (a, b) => selectedRanges.indexOf(a) - selectedRanges.indexOf(b),
+              ),
             );
           }}
           onRemove={(selected: string) => {
             const newChoise = selectedRanges?.filter(
-              (value) => value !== selected
+              (value) => value !== selected,
             );
 
             setSelectedRanges(newChoise);

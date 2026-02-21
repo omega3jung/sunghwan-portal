@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import { DataScope, UserScope } from "@/types";
+import { DataScope, UserScope } from "@/domain/auth";
 
 type SettingsScopeContextValue = {
   isDemo: boolean;

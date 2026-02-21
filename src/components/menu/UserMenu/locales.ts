@@ -1,4 +1,4 @@
-import type { Locale } from "@/types";
+import { Locale } from "@/domain/config";
 
 export const userMenuLocales: Record<Locale, Record<string, string>> = {
   en: {

@@ -1,6 +1,6 @@
 // src/feature/user/profile/api.ts
+import { AppUser } from "@/domain/user";
 import fetcher from "@/services/fetcher";
-import { AppUser } from "@/types";
 
 export const userProfileApi = {
   fetch: async (userId: string) => {

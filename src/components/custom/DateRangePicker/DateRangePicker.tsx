@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import i18n from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { ValueLabel } from "@/types/common";
+import { ValueLabel } from "@/shared/types/options";
 
 import { DatePickerProps, Period, Range } from "./types";
 
@@ -66,7 +66,7 @@ const rangeData: Range = {
 
 export const Component = (
   props: DatePickerProps,
-  ref: React.ForwardedRef<HTMLDivElement>
+  ref: React.ForwardedRef<HTMLDivElement>,
 ) => {
   const {
     className,
@@ -115,7 +115,7 @@ export const Component = (
         value: item,
         label: rangeData[item],
       })) as ValueLabel[],
-    [options]
+    [options],
   );
 
   const trigerValue = useMemo<string>(() => {
@@ -143,7 +143,7 @@ export const Component = (
           setRange({ from: startWeek, to: endWeek });
           text = `${format(startWeek, "dd MMM yyyy")} - ${format(
             endWeek,
-            "dd MMM yyyy"
+            "dd MMM yyyy",
           )}`;
           break;
         }
@@ -155,7 +155,7 @@ export const Component = (
           setRange({ from: startMonth, to: endMonth });
           text = `${format(startMonth, "dd MMM yyyy")} - ${format(
             endMonth,
-            "dd MMM yyyy"
+            "dd MMM yyyy",
           )}`;
           break;
         }
@@ -167,7 +167,7 @@ export const Component = (
           setRange({ from: startMonth, to: endMonth });
           text = `${format(startMonth, "dd MMM yyyy")} - ${format(
             endMonth,
-            "dd MMM yyyy"
+            "dd MMM yyyy",
           )}`;
           break;
         }
@@ -185,7 +185,7 @@ export const Component = (
           setRange({ from: startDate, to: today });
           text = `${format(startDate, "dd MMM yyyy")} - ${format(
             today,
-            "dd MMM yyyy"
+            "dd MMM yyyy",
           )}`;
           break;
         }
@@ -198,7 +198,7 @@ export const Component = (
       }
       setOpen(false);
     },
-    [setRange, setRangeText]
+    [setRange, setRangeText],
   );
 
   const setLastNPeriod = (period: Period) => {

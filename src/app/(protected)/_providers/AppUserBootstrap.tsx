@@ -3,8 +3,8 @@
 
 import { useEffect } from "react";
 
+import { AppUser } from "@/domain/user";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { AppUser } from "@/types";
 
 type Props = {
   user: AppUser;

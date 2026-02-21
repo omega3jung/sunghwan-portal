@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
-import { defaultPreference } from "@/domain/user";
-import { ColorTheme, Locale, Preference, ScreenMode } from "@/types";
+import { ColorTheme, Locale, Preference, ScreenMode } from "@/domain/config";
+import { createDefaultPreference } from "@/domain/preference";
 
 /*
  * =========================================================
@@ -51,7 +51,7 @@ export interface PreferenceActions {
  */
 export const usePreferenceStore = create<Preference & PreferenceActions>()(
   (set, get) => ({
-    ...defaultPreference,
+    ...createDefaultPreference(),
 
     /**
      * Called when the app starts
@@ -65,7 +65,7 @@ export const usePreferenceStore = create<Preference & PreferenceActions>()(
         const parsed = JSON.parse(raw) as Preference;
         set(parsed);
       } catch {
-        set(defaultPreference);
+        set(createDefaultPreference());
       }
     },
 
@@ -93,7 +93,7 @@ export const usePreferenceStore = create<Preference & PreferenceActions>()(
      */
     clearPreference: () => {
       sessionStorage.removeItem(STORAGE_KEYS.SESSION);
-      set(defaultPreference);
+      set(createDefaultPreference());
     },
-  })
+  }),
 );

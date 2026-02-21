@@ -31,11 +31,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useFetchItServiceDeskCategory } from "@/feature/it-service-desk/category/queries";
-import { Client } from "@/feature/it-service-desk/types";
-import { DbParams } from "@/feature/query/types";
+import { Locale } from "@/domain/config/language";
+import { Client, useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
 import { useLanguageState } from "@/services/language";
-import { AvailableLanguages, Locale } from "@/types";
+import { languageOptions } from "@/shared/constants";
+import { DbParams } from "@/shared/types/api";
 import { cn } from "@/utils";
 
 import {
@@ -412,7 +412,7 @@ export default function CategoryPage() {
           onValueChange={(value) => setLanguageTab(value as Locale)}
         >
           <TabsList className="w-full justify-start">
-            {AvailableLanguages.map((lang) => (
+            {languageOptions.map((lang) => (
               <TabsTrigger
                 key={lang.value}
                 value={lang.value}

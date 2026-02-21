@@ -14,7 +14,8 @@ import {
   UserStar,
 } from "lucide-react";
 
-import { ACCESS_LEVEL, type MenuItem } from "@/types";
+import { MenuItem } from "@/components/layout/LeftMenu/types";
+import { ACCESS_LEVEL } from "@/domain/auth";
 
 const ns = { ns: "LeftMenu" };
 

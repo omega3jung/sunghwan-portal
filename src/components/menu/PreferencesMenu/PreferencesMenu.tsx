@@ -13,18 +13,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
 import {
   usePostUserPreference,
   usePutUserPreference,
 } from "@/feature/user/preference/queries";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
-import {
-  AvailableLanguages,
-  ColorTheme,
-  Preference,
-  ScreenMode,
-} from "@/types";
+import { languageOptions } from "@/shared/constants/options/language";
 import { applyColorTheme, cn, isLocale } from "@/utils";
 
 const themeButtons = [
@@ -125,7 +121,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
                     "rounded-full bg-[var(--theme-primary)] hover:bg-[var(--theme-muted)] transition-colors",
                     userPreference.colorTheme === item.name
                       ? "h-8 w-8 p-0"
-                      : "h-4 w-4 p-0"
+                      : "h-4 w-4 p-0",
                   )}
                   onClick={() => handleColorThemeChange(item.name)}
                 >
@@ -172,7 +168,7 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
               className="my-2"
               placeholder="Language Picker"
               variant="icon"
-              options={AvailableLanguages}
+              options={languageOptions}
               onChange={handleLanguageChange}
               icon={<Globe />}
               value={userPreference.language ?? "en"}

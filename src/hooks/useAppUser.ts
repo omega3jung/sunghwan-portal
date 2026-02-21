@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { AppUser } from "@/domain/user";
 import fetcher from "@/services/fetcher";
-import { AppUser } from "@/types";
 
 export const USER_DATA_KEY = "USER-DATA";
 

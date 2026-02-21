@@ -6,9 +6,9 @@ import {
   tenantCategorySettingsMock,
 } from "@/app/_mocks/pages/it-service-desk/categories";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
-import { DbParams } from "@/feature/query/types";
-import { camelClientCategoryTreeMapper } from "@/lib/mappers/itServiceDesk/category";
-import { Preference } from "@/types";
+import { Preference } from "@/domain/config";
+import { camelClientCategoryTreeMapper } from "@/lib/mappers/itServiceDesk";
+import { DbParams } from "@/shared/types/api";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

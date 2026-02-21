@@ -2,7 +2,7 @@ import type { CallbacksOptions } from "next-auth";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
-import { AuthUser } from "@/types";
+import { AuthUser } from "@/domain/auth";
 
 export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
   /*
@@ -64,6 +64,10 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
       displayName: token.displayName,
       email: token.email,
       dataScope: token.dataScope,
+      userScope: token.userScope,
+      tenantId: token.tenantId,
+      permission: token.permission,
+      role: token.role,
     };
 
     if (token.impersonation) {

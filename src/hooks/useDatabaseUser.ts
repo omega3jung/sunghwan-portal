@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { AuthUser } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 import fetcher from "@/services/fetcher";
-import { AppUser, AuthUser } from "@/types";
 
 export const useDatabaseUser = (user: AuthUser | AppUser) => {
   const userId = user?.id;
