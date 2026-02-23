@@ -15,7 +15,7 @@ import {
   usePostUserPreference,
   usePutUserPreference,
 } from "@/feature/user/preference/queries";
-import { useLanguageState } from "@/services/language";
+import { useLanguageState } from "@/hooks/useLanguage";
 import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/utils";
 

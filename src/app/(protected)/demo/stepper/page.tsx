@@ -21,7 +21,7 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { useLanguageState } from "@/services/language";
+import { useLanguageState } from "@/hooks/useLanguage";
 import { cn } from "@/utils";
 
 export default function AvatarMultiComboBoxPage() {

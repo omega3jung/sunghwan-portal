@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { Fragment, ReactElement, ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 export type LinkBarItem = {
   text: ReactNode;
@@ -38,7 +38,7 @@ export const LinksBar = (props: Props) => {
         path === link.route ? "font-bold text-primary" : "",
         link === firstSelectedItem
           ? "rounded-md border-b-[3px] border-b-primary bg-foreground font-bold text-primary"
-          : ""
+          : "",
       )}
     >
       <div className="mt-0.5">{link.text}</div>
@@ -65,7 +65,7 @@ export const LinksBar = (props: Props) => {
           : "cursor-pointer",
         link === firstSelectedItem
           ? "rounded-md border-b-[3px] border-b-primary bg-foreground font-bold text-primary"
-          : ""
+          : "",
       )}
       data-active={link === firstSelectedItem}
       style={{
@@ -79,7 +79,7 @@ export const LinksBar = (props: Props) => {
         React.cloneElement(link?.icon, {
           className: cn(
             "mr-2 w-[14px] h-[14px] mr-1",
-            !link.selected ? "text-primary" : "text-muted-foreground"
+            !link.selected ? "text-primary" : "text-muted-foreground",
           ),
         })}
       <div className="mt-0.5">{link.text}</div>

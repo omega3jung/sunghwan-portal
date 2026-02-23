@@ -1,4 +1,5 @@
-import { Locale } from "./language";
+import { Locale } from "@/shared/types";
+
 import { ColorTheme, ScreenMode } from "./ui.types";
 
 export interface Preference {

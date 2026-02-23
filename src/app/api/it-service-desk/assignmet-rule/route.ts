@@ -1,14 +1,14 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import client from "@/api/client";
+import { camelClientCategoryTreeMapper } from "@/api/itServiceDesk/category";
 import {
   internalCategorySettingsMock,
   tenantCategorySettingsMock,
 } from "@/app/_mocks/pages/it-service-desk/categories";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
-import { camelClientCategoryTreeMapper } from "@/lib/mappers";
-import fetcher from "@/services/fetcher";
 import { DbParams } from "@/shared/types/api";
 
 export async function GET(request: NextRequest) {
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
 
   try {
-    const res = await fetcher.api.get("/it-service-desk/category", { params });
+    const res = await client.api.get("/it-service-desk/category", { params });
 
     return NextResponse.json(res.data);
   } catch (error) {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
 
   try {
-    const res = await fetcher.api.post("/it-service-desk/category", { params });
+    const res = await client.api.post("/it-service-desk/category", { params });
 
     return NextResponse.json(res.data);
   } catch (error) {
@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
 
   try {
-    const res = await fetcher.api.put("/it-service-desk/category", { params });
+    const res = await client.api.put("/it-service-desk/category", { params });
 
     return NextResponse.json(res.data);
   } catch (error) {
@@ -122,7 +122,7 @@ export async function DELETE(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
 
   try {
-    await fetcher.api.put("/it-service-desk/category", { params });
+    await client.api.put("/it-service-desk/category", { params });
 
     return NextResponse.json(null);
   } catch (error) {

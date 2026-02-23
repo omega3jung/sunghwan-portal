@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { itServiceDeskAssignmentRuleApi } from "@/api/itServiceDesk/assignmentRule";
 import { DbParams } from "@/shared/types/api";
 
-import { itServiceDeskAssignmentRuleApi } from "./api";
 import { assignmentRuleQueryKeys } from "./queryKeys";
 
 export const useFetchItServiceDeskAssignmentRule = (params: DbParams) => {

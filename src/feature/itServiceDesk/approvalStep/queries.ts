@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { itServiceDeskApprovalStepApi } from "@/api/itServiceDesk/approvalStep";
 import { DbParams } from "@/shared/types/api";
 
-import { itServiceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
 
 export const useFetchItServiceDeskApprovalStep = (params: DbParams) => {

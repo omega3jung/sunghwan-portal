@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { StepperContext } from "./StepperContext";
 import { StepperProps } from "./types";
@@ -18,13 +18,6 @@ const Root = ({
   className,
   children,
 }: StepperProps) => {
-  const paddingMap = {
-    top: "pt-6",
-    bottom: "pb-6",
-    left: "",
-    right: "",
-  };
-
   return (
     <StepperContext.Provider
       value={{
@@ -38,9 +31,11 @@ const Root = ({
     >
       <div
         className={cn(
-          stepperContainer({ orientation }),
-          orientation === "vertical" && "items-center",
-          stepVariant === "circle" && paddingMap[labelPosition],
+          stepperContainer({
+            orientation,
+            variant: stepVariant,
+            label: labelPosition,
+          }),
           className,
         )}
       >

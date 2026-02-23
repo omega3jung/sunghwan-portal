@@ -31,13 +31,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Locale } from "@/domain/config/language";
-import { Client, useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
-import { useLanguageState } from "@/services/language";
+import { Client } from "@/domain/itServiceDesk";
+import { useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
+import { useLanguageState } from "@/hooks/useLanguage";
 import { languageOptions } from "@/shared/constants";
-import { DbParams } from "@/shared/types/api";
+import { DbParams, Locale } from "@/shared/types";
 import { cn } from "@/utils";
 
+import { useSettingsScope } from "../../SettingsScopeProvider";
 import {
   getDefaultCateogoryData,
   getDefaultSubCateogoryData,
@@ -45,6 +46,7 @@ import {
 import { CategoryData, MainCategoryData } from "../types";
 
 export default function CategoryPage() {
+  const { isInternal } = useSettingsScope();
   const { t } = useTranslation("settings");
   const { language } = useLanguageState();
 
@@ -153,7 +155,7 @@ export default function CategoryPage() {
         children: [],
       };
 
-      // 부모 바로 뒤, 첫 번째 children.
+      // next of parent, first child.
       const insertIndex = parentIndex + 1;
 
       const next = [
@@ -193,13 +195,7 @@ export default function CategoryPage() {
         setProperty(prev, selectedId, "data", (data) => ({
           ...data,
           editType: data.editType === undefined ? "update" : data.editType,
-          translations: {
-            ...data.translations,
-            [languageTab]: {
-              ...data.translations[languageTab],
-              [key]: value,
-            },
-          },
+          [key]: { ...[key], [languageTab]: value },
         })),
       );
     };
@@ -255,7 +251,7 @@ export default function CategoryPage() {
         className="flex flex-col gap-2 p-2 pr-10"
         style={{ "--settings-offset": "18rem" } as React.CSSProperties}
       >
-        {true && (
+        {isInternal && (
           <div className="flex flex-col gap-2 pt-2 pb-6">
             <span>{t("itServiceDeskSettings.general.client")}</span>
             <Select
@@ -319,9 +315,14 @@ export default function CategoryPage() {
                 >
                   {({ dragHandleProps }) => (
                     <div
+                      data-selected={item.id === selectedId}
                       className={cn(
                         "flex items-center justify-between w-full pl-3 pr-5 py-2",
                         "border-b last:border-b-0",
+                        "border-l-[3px] border-l-transparent",
+                        "data-[selected='true']:border-l-primary",
+                        "data-[selected='true']:bg-primary/5",
+                        "transition-colors",
                         "bg-background hover:bg-muted/50 text-foreground",
                         isSub && "text-sm",
                       )}
@@ -348,13 +349,11 @@ export default function CategoryPage() {
                           <span className="w-4" />
                         )}
 
-                        <span className="truncate">
-                          {data.translations.en.name}
-                        </span>
+                        <span className="truncate">{data.name.en}</span>
 
-                        {language !== "en" && data.translations[language] && (
+                        {language !== "en" && data.name[language] && (
                           <span className="text-muted-foreground truncate">
-                            {data.translations[language].name}
+                            {data.name[language]}
                           </span>
                         )}
                       </div>
@@ -435,9 +434,7 @@ export default function CategoryPage() {
                   data-testid="category-name"
                   disabled={!selectedCategory}
                   className="!disabled:border-primary"
-                  value={
-                    selectedCategory?.translations[languageTab]?.name ?? ""
-                  }
+                  value={selectedCategory?.name[languageTab] ?? ""}
                   onChange={(e) => updateTranslation("name")(e.target.value)}
                 />
               </Field>
@@ -449,10 +446,7 @@ export default function CategoryPage() {
                   id="category-textarea-description"
                   disabled={!selectedCategory}
                   className="!disabled:border-primary"
-                  value={
-                    selectedCategory?.translations[languageTab]?.description ??
-                    ""
-                  }
+                  value={selectedCategory?.description?.[languageTab] ?? ""}
                   onChange={(e) =>
                     updateTranslation("description")(e.target.value)
                   }
@@ -466,10 +460,7 @@ export default function CategoryPage() {
                   id="category-textarea-placeholder"
                   disabled={!selectedCategory}
                   className="!disabled:border-primary"
-                  value={
-                    selectedCategory?.translations[languageTab]?.placeholder ??
-                    ""
-                  }
+                  value={selectedCategory?.placeholder?.[languageTab] ?? ""}
                   onChange={(e) =>
                     updateTranslation("placeholder")(e.target.value)
                   }

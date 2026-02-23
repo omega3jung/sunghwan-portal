@@ -1,8 +1,8 @@
 import axios from "axios";
 
+import client from "@/api/client";
 import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/user";
 import { AuthUser } from "@/domain/auth";
-import fetcher from "@/services/fetcher";
 
 export type LoginResponse = AuthUser;
 
@@ -34,7 +34,7 @@ export const loginApi = async ({
     console.log("real login");
 
     // real login
-    const res = await fetcher.api.post<LoginResponse>("/auth/login", {
+    const res = await client.api.post<LoginResponse>("/auth/login", {
       username,
       password,
     });

@@ -5,4 +5,3 @@ export * from "./assignmentRule";
 export * from "./category";
 export * from "./keys";
 export * from "./ticket";
-export * from "./shared";

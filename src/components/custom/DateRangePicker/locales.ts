@@ -1,4 +1,4 @@
-import { Locale } from "@/domain/config";
+import { Locale } from "@/shared/types";
 
 export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
   en: {

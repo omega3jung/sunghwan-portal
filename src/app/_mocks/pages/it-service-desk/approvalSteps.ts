@@ -28,7 +28,7 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: internalPortalSystemIssueCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -54,7 +54,7 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: accountAccessCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -80,7 +80,7 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: hardwareDeviceCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -106,7 +106,7 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: softwareApplicationCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -132,8 +132,8 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: networkConnectivityCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "IT Manager",
+          type: "JOB_FIELD",
+          field_id: "IT Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -159,7 +159,7 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: printingOfficeEquipmentCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -185,8 +185,8 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: hrSystemPayrollCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "HR Manager",
+          type: "JOB_FIELD",
+          field_id: "HR Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -211,8 +211,8 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: dataInfoManagementCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "IT Manager",
+          type: "JOB_FIELD",
+          field_id: "IT Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -237,8 +237,8 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: clientUserSupportCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "Account Manager",
+          type: "JOB_FIELD",
+          field_id: "Account Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -276,7 +276,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: tenantPortalSystemIssueCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -292,8 +292,8 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 2,
         category_id: tenantPortalSystemIssueCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "IT Manager",
+          type: "JOB_FIELD",
+          field_id: "IT Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -318,7 +318,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: accountAccessCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -344,7 +344,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: hardwareDeviceCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -370,7 +370,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: softwareApplicationCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -396,8 +396,8 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: networkConnectivityCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "IT Manager",
+          type: "JOB_FIELD",
+          field_id: "IT Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {
@@ -423,7 +423,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: printingOfficeEquipmentCategoryMock.category_id,
         approval_step_assignee: {
-          type: "UPPER_MANAGER",
+          type: "MANAGER",
           level: 1,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
@@ -449,8 +449,8 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
         approval_step_index: 1,
         category_id: hrSystemPayrollCategoryMock.category_id,
         approval_step_assignee: {
-          type: "ROLE",
-          role_code: "HR Manager",
+          type: "JOB_FIELD",
+          field_id: "HR Manager",
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
         translation: {

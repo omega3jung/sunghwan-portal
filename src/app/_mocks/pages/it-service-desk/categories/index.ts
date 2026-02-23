@@ -1,7 +1,7 @@
 import {
   DbCategory,
   DbClientCategoryTree,
-} from "@/lib/mappers/itServiceDesk/category";
+} from "@/api/itServiceDesk/category/mapper";
 
 import accountAccessCategoryMock from "./accountAccess.json";
 import clientUserSupportCategoryMock from "./clientUserSupport.json";

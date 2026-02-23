@@ -2,14 +2,15 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
-import { ColorTheme, Locale, ScreenMode } from "@/domain/config";
+import { ColorTheme, ScreenMode } from "@/domain/config";
 import {
   createDefaultPreference,
   UseCurrentPreferenceResult,
-} from "@/domain/preference";
+} from "@/domain/user/preference";
 import { userPreferenceRepo } from "@/feature/user/preference";
 import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
-import { useLanguageState } from "@/services/language";
+import { useLanguageState } from "@/hooks/useLanguage";
+import { Locale } from "@/shared/types";
 import { applyColorTheme } from "@/utils";
 
 /*

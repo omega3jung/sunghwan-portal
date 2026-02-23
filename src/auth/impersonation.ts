@@ -2,10 +2,10 @@
 
 import axios from "axios";
 
+import client from "@/api/client";
 import { resolveTenantAuth } from "@/app/_mocks/user";
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import fetcher from "@/services/fetcher";
 
 export async function startImpersonation({
   actor,
@@ -47,7 +47,7 @@ export async function startImpersonation({
     console.log("real impersonation");
 
     // 3-b. search subject.
-    const res = await fetcher.api.get<AppUser>(`/user/${subjectId}/profile`);
+    const res = await client.api.get<AppUser>(`/users/${subjectId}/profile`);
 
     if (!res.data) {
       throw new Error("SUBJECT_NOT_FOUND");

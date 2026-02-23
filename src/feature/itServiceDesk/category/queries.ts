@@ -3,10 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { itServiceDeskCategoryApi } from "@/api/itServiceDesk/category";
 import { STATIC_QUERY_OPTIONS } from "@/lib/react-query";
 import { DbParams } from "@/shared/types/api";
 
-import { itServiceDeskCategoryApi } from "./api";
 import { categoryQueryKeys } from "./queryKeys";
 
 export const useFetchItServiceDeskCategory = (params: DbParams) => {

@@ -123,15 +123,22 @@
       "description": "Description",
       "assigneeType": "Assignee type",
       "assigneeTypes": {
-        "upperManager": "Upper Manager",
+        "manager": "Manager",
         "department": "Department",
-        "role": "Role",
+        "jobField": "Job title",
         "employee": "Employee"
-      }
+      },
+      "managerLevel": "Manager level",
+      "department": "Department",
+      "departmentPlaceholder": "Select department",
+      "jobField": "Job title",
+      "jobFieldPlaceholder": "Select job title",
+      "employee": "Employee",
+      "employeePlaceholder": "Select assignee",
+      "skipAccessLevel": "Skip access level"
     },
     "assignmentRuleTab": {
-      "selectAssignee": "Select assignee",
-      "skipAccessLevel": "Skip access level"
+      "selectAssignee": "Select assignee"
     }
   }
 }

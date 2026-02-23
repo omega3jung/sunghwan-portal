@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { badgeColors } from "./styles";
 import { ComboBoxProps, MultiComboboxProps } from "./types";
@@ -90,7 +90,7 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
                               !rainbowPick
                                 ? (rainbowStart + index) % 10
                                 : rainbowPick
-                            ]
+                            ],
                       )}
                     >
                       {item.label}
@@ -132,7 +132,7 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.includes(item.value) ? "opacity-100" : "opacity-0"
+                      value.includes(item.value) ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {item.label}

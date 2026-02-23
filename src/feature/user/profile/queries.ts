@@ -1,7 +1,8 @@
 // src/feature/user/profile/queries.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { userProfileApi } from "./api";
+import { userProfileApi } from "@/api/user";
+
 import { userProfileQueryKeys } from "./queryKeys";
 
 export const useFetchUserProfile = (userId: string) => {

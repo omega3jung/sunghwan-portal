@@ -2,7 +2,7 @@ import { ACCESS_LEVEL } from "@/domain/auth";
 import {
   ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
-} from "@/feature/itServiceDesk";
+} from "@/domain/itServiceDesk";
 
 import { ApprovalStepData } from "../types";
 
@@ -16,14 +16,14 @@ export const getDefaultApprovalData = (
     index: 1,
     categoryId: categoryId,
     stepAssignee: {
-      type: "UPPER_MANAGER",
+      type: "MANAGER",
       level: 1,
     },
     skipAccessLevel: ACCESS_LEVEL.MANAGER,
     translations: {
       en: {
-        name: "Upper manager's approval",
-        description: "Check to prevent duplicate issues",
+        name: `New Step ${count}`,
+        description: "",
       },
     },
     nodeType: "approvalStep",
@@ -35,12 +35,12 @@ export const getDefaultAssigneePayload = (
   type: ApprovalAssigneeTypeValue,
 ): ApprovalAssigneeType => {
   switch (type) {
-    case "UPPER_MANAGER":
+    case "MANAGER":
       return { type, level: 1 };
     case "DEPARTMENT":
       return { type, departmentId: "" };
-    case "ROLE":
-      return { type, roleCode: "" };
+    case "JOB_FIELD":
+      return { type, jobFieldId: "" };
     case "EMPLOYEE":
       return { type, employeeIds: [] };
   }

@@ -1,9 +1,14 @@
-// server/auth/getEffectiveUser.ts
+// server/user/getEffectiveUser.ts
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth.config";
 
 export async function getEffectiveUser() {
   const session = await getServerSession(authOptions);
-  return session?.user;
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  return session.user;
 }

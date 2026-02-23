@@ -8,16 +8,10 @@ const newSubCategoryNamePrefix = "New Sub Category ";
 export const getDefaultCateogoryData = (count: number): MainCategoryData => {
   return {
     id: `${newCategoryIdPrefix}${count}`,
+    name: { en: `${newCategoryNamePrefix}${count}` },
     index: 1,
     agents: [],
     active: true,
-    translations: {
-      en: {
-        name: `${newCategoryNamePrefix}${count}`,
-        description: "",
-        placeholder: "",
-      },
-    },
     subCategories: [],
     editType: "create",
   };
@@ -26,16 +20,10 @@ export const getDefaultCateogoryData = (count: number): MainCategoryData => {
 export const getDefaultSubCateogoryData = (count: number): CategoryData => {
   return {
     id: `${newSubCategoryIdPrefix}${count}`,
+    name: { en: `${newSubCategoryNamePrefix}${count}` },
     index: 1,
     agents: [],
     active: true,
-    translations: {
-      en: {
-        name: `${newSubCategoryNamePrefix}${count}`,
-        description: "",
-        placeholder: "",
-      },
-    },
     editType: "create",
   };
 };

@@ -3,10 +3,10 @@
 import { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { useStepperContext } from "./StepperContext";
-import { triggerVariant } from "./variants";
+import { triggerIndexVariant, triggerVariant } from "./variants";
 
 type Props = {
   index: number;
@@ -36,8 +36,7 @@ export const StepperTrigger = ({ index, className, children }: Props) => {
       {stepVariant === "circle" && (
         <span
           className={cn(
-            stepVariant === "circle" && state === "completed" && "text-white",
-            "group-hover:text-white",
+            triggerIndexVariant({ variant: stepVariant, state, color }),
           )}
         >
           {index + 1}

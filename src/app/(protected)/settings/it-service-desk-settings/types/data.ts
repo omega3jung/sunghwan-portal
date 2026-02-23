@@ -3,7 +3,7 @@ import {
   ApprovalStep,
   AssignmentRule,
   Category,
-} from "@/feature/itServiceDesk";
+} from "@/domain/itServiceDesk";
 
 type EditType = {
   editType?: "create" | "update" | "delete";

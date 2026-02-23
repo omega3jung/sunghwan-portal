@@ -1,4 +1,4 @@
-import { Locale } from "@/domain/config";
+import { Locale } from "@/shared/types";
 import { ValueLabel } from "@/shared/types/options";
 
 export const languageOptions: ValueLabel<Locale>[] = [

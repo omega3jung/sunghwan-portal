@@ -125,11 +125,19 @@
       "description": "Description",
       "assigneeType": "Type de responsable",
       "assigneeTypes": {
-        "upperManager": "Supérieur hiérarchique",
-        "department": "Département",
-        "role": "Rôle",
-        "employee": "Employé"
-      }
+        "manager": "Manager",
+        "department": "Department",
+        "jobField": "Fob title",
+        "employee": "Employee"
+      },
+      "managerLevel": "Manager level",
+      "department": "Department",
+      "departmentPlaceholder": "Select department",
+      "jobField": "Fob title",
+      "jobFieldPlaceholder": "Select job title",
+      "employee": "Employee",
+      "employeePlaceholder": "Select assigned for",
+      "skipAccessLevel": "Skip access level"
     },
     "assignmentRuleTab": {
       "selectAssignee": "Sélectionner le responsable"

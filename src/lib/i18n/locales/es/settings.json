@@ -124,11 +124,19 @@
       "description": "Descripción",
       "assigneeType": "Tipo de asignado",
       "assigneeTypes": {
-        "upperManager": "Gerente superior",
+        "manager": "Gerente",
         "department": "Departamento",
-        "role": "Rol",
+        "jobField": "Puesto",
         "employee": "Empleado"
-      }
+      },
+      "managerLevel": "Nivel de gerente",
+      "department": "Departamento",
+      "departmentPlaceholder": "Seleccionar departamento",
+      "jobField": "Puesto",
+      "jobFieldPlaceholder": "Seleccionar puesto",
+      "employee": "Empleado",
+      "employeePlaceholder": "Seleccionar cesionario",
+      "skipAccessLevel": "Omitir nivel de acceso"
     },
     "assignmentRuleTab": {
       "selectAssignee": "Seleccionar asignado"

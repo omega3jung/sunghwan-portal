@@ -1,8 +1,8 @@
 // src/server/user/getUserProfile.ts
+import client from "@/api/client";
 import { demoProfiles, tenantProfiles } from "@/app/_mocks/user";
 import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import fetcher from "@/services/fetcher";
 
 export async function getUserProfile(
   authUser: AuthUser,
@@ -20,8 +20,8 @@ export async function getUserProfile(
   }
 
   // remote backend
-  const res = await fetcher.api.get<Partial<AppUser>>(
-    `/user/${authUser.id}/profile`,
+  const res = await client.api.get<Partial<AppUser>>(
+    `/users/${authUser.id}/profile`,
   );
   return res.data;
 }

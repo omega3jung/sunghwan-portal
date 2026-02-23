@@ -15,8 +15,9 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Client, useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
-import { useLanguageState } from "@/services/language";
+import { Client } from "@/domain/itServiceDesk";
+import { useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
+import { useLanguageState } from "@/hooks/useLanguage";
 import { DbParams } from "@/shared/types/api";
 import { cn } from "@/utils";
 
@@ -192,13 +193,11 @@ export default function AssignmentRulePage() {
                         <span className="w-4" />
                       )}
 
-                      <span className="truncate">
-                        {data.translations.en.name}
-                      </span>
+                      <span className="truncate">{data.name.en}</span>
 
-                      {language !== "en" && data.translations[language] && (
+                      {language !== "en" && data.name[language] && (
                         <span className="text-muted-foreground truncate">
-                          {data.translations[language].name}
+                          {data.name[language]}
                         </span>
                       )}
                     </div>

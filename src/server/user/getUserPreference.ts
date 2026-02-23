@@ -1,9 +1,9 @@
 // src/server/user/getUserProfile.ts
+import client from "@/api/client";
 import { demoProfiles, tenantProfiles } from "@/app/_mocks/user";
 import { AuthUser } from "@/domain/auth";
 import { Preference } from "@/domain/config";
-import { createDefaultPreference } from "@/domain/preference";
-import fetcher from "@/services/fetcher";
+import { createDefaultPreference } from "@/domain/user/preference";
 
 export async function getUserPreference(
   authUser: AuthUser,
@@ -21,8 +21,8 @@ export async function getUserPreference(
   }
 
   // remote backend
-  const res = await fetcher.api.get<Preference>(
-    `/user/${authUser.id}/preference`,
+  const res = await client.api.get<Preference>(
+    `/users/${authUser.id}/preference`,
   );
   return res.data;
 }

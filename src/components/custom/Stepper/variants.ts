@@ -6,7 +6,44 @@ export const stepperContainer = cva("w-full", {
       horizontal: "flex items-center",
       vertical: "flex flex-col",
     },
+    variant: {
+      square: "",
+      circle: "",
+    },
+    label: {
+      top: "",
+      bottom: "",
+      right: "",
+      left: "",
+    },
   },
+  compoundVariants: [
+    // 🔥 vertical - text (circle)
+    {
+      orientation: "vertical",
+      variant: "circle",
+      label: "top",
+      className: "items-center pt-6",
+    },
+    {
+      orientation: "vertical",
+      variant: "circle",
+      label: "bottom",
+      className: "items-center pb-6",
+    },
+    {
+      orientation: "vertical",
+      variant: "circle",
+      label: "right",
+      className: "items-start",
+    },
+    {
+      orientation: "vertical",
+      variant: "circle",
+      label: "left",
+      className: "items-end",
+    },
+  ],
 });
 
 export const triggerVariant = cva(
@@ -63,7 +100,7 @@ export const triggerVariant = cva(
         variant: "circle",
         state: "completed",
         color: "secondary",
-        className: "text-secondary",
+        className: "text-foreground",
       },
 
       // 🔥 COMPLETED - text (square)
@@ -82,6 +119,39 @@ export const triggerVariant = cva(
     ],
   },
 );
+
+export const triggerIndexVariant = cva("group-hover:text-white", {
+  variants: {
+    variant: {
+      circle: "",
+      square: "",
+    },
+    state: {
+      active: "",
+      completed: "",
+      future: "",
+    },
+    color: {
+      primary: "",
+      secondary: "",
+    },
+  },
+  compoundVariants: [
+    // 🔥 COMPLETED - text (circle)
+    {
+      variant: "circle",
+      state: "completed",
+      color: "primary",
+      className: "text-white",
+    },
+    {
+      variant: "circle",
+      state: "completed",
+      color: "secondary",
+      className: "text-foreground",
+    },
+  ],
+});
 
 export const connectorVariant = cva("transition-colors", {
   variants: {

@@ -139,19 +139,16 @@ allowing future backend architecture changes without refactoring UI code.
 The `fetcher` layer is divided by responsibility, not by implementation:
 
 - **fetcher.api**
-
   - Client → Internal API (BFF)
   - Used by feature-level API modules
   - Hides whether the backend is local, remote, or proxied
 
 - **fetcher.db**
-
   - Server-only fetcher for DB or internal service access
   - Used exclusively inside `app/api` route handlers
   - Adapts UI-friendly filter state into DB-compatible query formats
 
 - **fetcher.portal**
-
   - Integration layer for legacy or internal portals
 
 - **fetcher.files**
@@ -220,6 +217,18 @@ types/
 
 middleware.ts
 auth.config.ts
+```
+
+```text
+
+domain                # Purely business
+api                   # Server communication
+feature               # Screen-level functionality
+components            # Shared UI
+server                # Server-specific logic
+
+auth/hooks/lib/types  # System/application-specific
+
 ```
 
 - Authentication logic is grouped under the `auth/` domain

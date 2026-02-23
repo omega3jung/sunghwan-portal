@@ -123,11 +123,19 @@
       "description": "설명",
       "assigneeType": "담당자 유형",
       "assigneeTypes": {
-        "upperManager": "상위 관리자",
+        "manager": "관리자",
         "department": "부서",
-        "role": "역할",
+        "jobField": "직책",
         "employee": "직원"
-      }
+      },
+      "managerLevel": "관리자 레벨",
+      "department": "부서",
+      "departmentPlaceholder": "부서 선택",
+      "jobField": "직책",
+      "jobFieldPlaceholder": "직책 선택",
+      "employee": "직원",
+      "employeePlaceholder": "담당자 선택",
+      "skipAccessLevel": "접근 레벨 건너뛰기"
     },
     "assignmentRuleTab": {
       "selectAssignee": "담당자 선택"

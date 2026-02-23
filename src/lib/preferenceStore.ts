@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
-import { ColorTheme, Locale, Preference, ScreenMode } from "@/domain/config";
-import { createDefaultPreference } from "@/domain/preference";
+import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
+import { createDefaultPreference } from "@/domain/user/preference";
+import { Locale } from "@/shared/types";
 
 /*
  * =========================================================
