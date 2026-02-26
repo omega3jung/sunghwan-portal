@@ -1,10 +1,8 @@
 import { ISODateString } from "@/shared/types/date";
 import { ImageValueLabel } from "@/shared/types/options";
 
-import { Attach, ItServiceDeskUser } from "../types";
+import { Attach } from "../types";
 import { Priority, Status } from "../types/enums";
-
-type Assignee = ItServiceDeskUser;
 
 // read only ticket info.
 interface TicketSystemBase {
@@ -37,7 +35,7 @@ interface TicketProcessState {
   // processed history.
   status: Status;
   priority: Priority;
-  assignee: Assignee[];
+  assignee: string[];
   lastCommentTime: Date;
   lastCommenterEmail: string;
   trackTime: number;

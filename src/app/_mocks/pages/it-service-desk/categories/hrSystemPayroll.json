@@ -1,143 +1,112 @@
 {
   "category_id": "61",
-  "category_index": 6,
-  "category_agent": [],
-  "category_active": true,
-  "category_translation": {
-    "en": {
-      "category_name": "HR Systems & Payroll",
-      "category_description": "Requests and issue resolution related to HR systems, employee records, and payroll.",
-      "category_placeholder": ""
-    },
-    "es": {
-      "category_name": "Sistemas de RR. HH. y Nómina",
-      "category_description": "Solicitudes y resolución de problemas relacionados con sistemas de recursos humanos, registros de empleados y nómina.",
-      "category_placeholder": ""
-    },
-    "fr": {
-      "category_name": "Systèmes RH et Paie",
-      "category_description": "Demandes et résolution de problèmes liés aux systèmes RH, aux dossiers des employés et à la paie.",
-      "category_placeholder": ""
-    },
-    "ko": {
-      "category_name": "인사 시스템 & 급여",
-      "category_description": "인사 정보 혹은 급여 문제에 대해 해결을 요청합니다.",
-      "category_placeholder": ""
-    }
+  "category_name": {
+    "en": "HR Systems & Payroll",
+    "es": "Sistemas de RR. HH. y Nómina",
+    "fr": "Systèmes RH et Paie",
+    "ko": "인사 시스템 & 급여"
   },
+  "category_description": {
+    "en": "Requests and issue resolution related to HR systems, employee records, and payroll.",
+    "es": "Solicitudes y resolución de problemas relacionados con sistemas de recursos humanos, registros de empleados y nómina.",
+    "fr": "Demandes et résolution de problèmes liés aux systèmes RH, aux dossiers des employés et à la paie.",
+    "ko": "인사 정보 혹은 급여 문제에 대해 해결을 요청합니다."
+  },
+  "category_placeholder": { "en": "", "es": "", "fr": "", "ko": "" },
+  "category_index": 6,
+  "category_active": true,
   "sub_category": [
     {
       "category_id": "62",
+      "category_name": {
+        "en": "Work log / attendance issue",
+        "es": "Problema de registro laboral / asistencia",
+        "fr": "Problème de pointage / présence",
+        "ko": "근무 일지 / 출근 문제"
+      },
+      "category_description": {
+        "en": "Report issues related to work logs or attendance records.",
+        "es": "Informe problemas relacionados con registros de trabajo o asistencia.",
+        "fr": "Signaler des problèmes liés aux journaux de travail ou aux enregistrements de présence.",
+        "ko": "근무 일지나 출근 기록에 이상이 있는 문제에 대해 해결을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the affected date(s) and details of the attendance issue.",
+        "es": "Incluya la(s) fecha(s) afectada(s) y los detalles del problema.",
+        "fr": "Veuillez inclure la ou les dates concernées et les détails du problème.",
+        "ko": "문제가 발생한 날짜와 이상 정보를 포함하여 요청해주세요."
+      },
       "category_index": 1,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Work log / attendance issue",
-          "category_description": "Report issues related to work logs or attendance records.",
-          "category_placeholder": "Please include the affected date(s) and details of the attendance issue."
-        },
-        "es": {
-          "category_name": "Problema de registro laboral / asistencia",
-          "category_description": "Informe problemas relacionados con registros de trabajo o asistencia.",
-          "category_placeholder": "Incluya la(s) fecha(s) afectada(s) y los detalles del problema."
-        },
-        "fr": {
-          "category_name": "Problème de pointage / présence",
-          "category_description": "Signaler des problèmes liés aux journaux de travail ou aux enregistrements de présence.",
-          "category_placeholder": "Veuillez inclure la ou les dates concernées et les détails du problème."
-        },
-        "ko": {
-          "category_name": "근무 일지 / 출근 문제",
-          "category_description": "근무 일지나 출근 기록에 이상이 있는 문제에 대해 해결을 요청합니다.",
-          "category_placeholder": "문제가 발생한 날짜와 이상 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "63",
+      "category_name": {
+        "en": "Payroll issue",
+        "es": "Problema de nómina",
+        "fr": "Problème de paie",
+        "ko": "급여 문제"
+      },
+      "category_description": {
+        "en": "Report issues related to processed or paid payroll.",
+        "es": "Informe problemas relacionados con nóminas ya procesadas o pagadas.",
+        "fr": "Signaler des problèmes liés à une paie déjà traitée ou versée.",
+        "ko": "이미 지급된 급여가 이상이 있는 문제에 대해 해결을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the pay period and details of the payroll issue.",
+        "es": "Incluya el período de pago y los detalles del problema.",
+        "fr": "Veuillez inclure la période de paie et les détails du problème.",
+        "ko": "문제가 발생한 날짜와 급여 이상 정보를 포함하여 요청해주세요."
+      },
       "category_index": 2,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Payroll issue",
-          "category_description": "Report issues related to processed or paid payroll.",
-          "category_placeholder": "Please include the pay period and details of the payroll issue."
-        },
-        "es": {
-          "category_name": "Problema de nómina",
-          "category_description": "Informe problemas relacionados con nóminas ya procesadas o pagadas.",
-          "category_placeholder": "Incluya el período de pago y los detalles del problema."
-        },
-        "fr": {
-          "category_name": "Problème de paie",
-          "category_description": "Signaler des problèmes liés à une paie déjà traitée ou versée.",
-          "category_placeholder": "Veuillez inclure la période de paie et les détails du problème."
-        },
-        "ko": {
-          "category_name": "급여 문제",
-          "category_description": "이미 지급된 급여가 이상이 있는 문제에 대해 해결을 요청합니다.",
-          "category_placeholder": "문제가 발생한 날짜와 급여 이상 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "64",
+      "category_name": {
+        "en": "Leave / vacation system issue",
+        "es": "Problema del sistema de permisos / vacaciones",
+        "fr": "Problème du système de congés",
+        "ko": "휴가 / 연차 시스템 문제"
+      },
+      "category_description": {
+        "en": "Report issues related to leave or vacation management systems.",
+        "es": "Informe problemas relacionados con el sistema de gestión de permisos o vacaciones.",
+        "fr": "Signaler des problèmes liés au système de gestion des congés.",
+        "ko": "휴가와 연차에 관련된 문제에 대해 해결을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the affected date(s) and leave or vacation details.",
+        "es": "Incluya la(s) fecha(s) afectada(s) y los detalles del permiso o vacaciones.",
+        "fr": "Veuillez inclure la ou les dates concernées et les détails du congé.",
+        "ko": "문제가 발생한 날짜와 휴가 혹은 연차 정보를 포함하여 요청해주세요."
+      },
       "category_index": 3,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Leave / vacation system issue",
-          "category_description": "Report issues related to leave or vacation management systems.",
-          "category_placeholder": "Please include the affected date(s) and leave or vacation details."
-        },
-        "es": {
-          "category_name": "Problema del sistema de permisos / vacaciones",
-          "category_description": "Informe problemas relacionados con el sistema de gestión de permisos o vacaciones.",
-          "category_placeholder": "Incluya la(s) fecha(s) afectada(s) y los detalles del permiso o vacaciones."
-        },
-        "fr": {
-          "category_name": "Problème du système de congés",
-          "category_description": "Signaler des problèmes liés au système de gestion des congés.",
-          "category_placeholder": "Veuillez inclure la ou les dates concernées et les détails du congé."
-        },
-        "ko": {
-          "category_name": "휴가 / 연차 시스템 문제",
-          "category_description": "휴가와 연차에 관련된 문제에 대해 해결을 요청합니다.",
-          "category_placeholder": "문제가 발생한 날짜와 휴가 혹은 연차 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "65",
+      "category_name": {
+        "en": "Employee profile correction",
+        "es": "Corrección de perfil de empleado",
+        "fr": "Correction du profil employé",
+        "ko": "직원 프로필 수정"
+      },
+      "category_description": {
+        "en": "Request corrections to employee profile information.",
+        "es": "Solicite correcciones en la información del perfil del empleado.",
+        "fr": "Demande de correction des informations du profil de l’employé.",
+        "ko": "직원 프로필을 올바르게 수정할 수 있게 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the employee details and the information to be corrected.",
+        "es": "Incluya los datos del empleado y la información a corregir.",
+        "fr": "Veuillez inclure les informations de l’employé et les éléments à corriger.",
+        "ko": "수정이 필요한 직원 정보를 포함하여 요청해주세요."
+      },
       "category_index": 4,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Employee profile correction",
-          "category_description": "Request corrections to employee profile information.",
-          "category_placeholder": "Please include the employee details and the information to be corrected."
-        },
-        "es": {
-          "category_name": "Corrección de perfil de empleado",
-          "category_description": "Solicite correcciones en la información del perfil del empleado.",
-          "category_placeholder": "Incluya los datos del empleado y la información a corregir."
-        },
-        "fr": {
-          "category_name": "Correction du profil employé",
-          "category_description": "Demande de correction des informations du profil de l’employé.",
-          "category_placeholder": "Veuillez inclure les informations de l’employé et les éléments à corriger."
-        },
-
-        "ko": {
-          "category_name": "직원 프로필 수정",
-          "category_description": "직원 프로필을 올바르게 수정할 수 있게 요청합니다.",
-          "category_placeholder": "수정이 필요한 직원 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     }
   ]
 }

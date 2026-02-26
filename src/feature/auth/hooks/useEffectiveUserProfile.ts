@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Session } from "next-auth";
 
-import { userProfileApi } from "@/feature/user";
+import { userProfileApi } from "@/api/user";
 
 export const useFetchMyProfile = (session: Session | null) => {
   const effectiveUserId = session?.impersonation

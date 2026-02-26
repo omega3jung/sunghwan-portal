@@ -8,8 +8,8 @@ import {
   UseCurrentPreferenceResult,
 } from "@/domain/user/preference";
 import { userPreferenceRepo } from "@/feature/user/preference";
-import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { useLanguageState } from "@/hooks/useLanguage";
+import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
 import { applyColorTheme } from "@/utils";
 

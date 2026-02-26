@@ -4,7 +4,10 @@ import {
   ApprovalAssigneeTypeValue,
 } from "@/domain/itServiceDesk";
 
-import { ApprovalStepData } from "../types";
+import { ApprovalStepData } from "./types";
+
+export const MAX_APPROVAL_STEP_PER_CATEGORY = 5;
+export const MAX_ASSIGNEE_PER_APPROVAL = 10;
 
 export const getDefaultApprovalData = (
   categoryId: string,
@@ -13,6 +16,7 @@ export const getDefaultApprovalData = (
   return {
     id: `newApproval:${count}`,
     approvalId: `${count}`,
+    name: { en: `New Step ${count}` },
     index: 1,
     categoryId: categoryId,
     stepAssignee: {
@@ -20,14 +24,7 @@ export const getDefaultApprovalData = (
       level: 1,
     },
     skipAccessLevel: ACCESS_LEVEL.MANAGER,
-    translations: {
-      en: {
-        name: `New Step ${count}`,
-        description: "",
-      },
-    },
     nodeType: "approvalStep",
-    editType: "create",
   };
 };
 

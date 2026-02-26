@@ -5,4 +5,5 @@ export type ValueLabel<T extends string = string> = {
 
 export type ImageValueLabel<T extends string = string> = ValueLabel<T> & {
   image?: string;
+  displayName?: string;
 };

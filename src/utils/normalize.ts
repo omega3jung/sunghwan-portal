@@ -1,10 +1,9 @@
-// src/utils/normalize.ts
 export function normalizeNullable<
   T extends object,
-  K extends readonly (keyof T)[]
+  K extends readonly (keyof T)[],
 >(
   source: T,
-  keys: K
+  keys: K,
 ): {
   [P in keyof T]: P extends K[number] ? T[P] | null : T[P];
 } {

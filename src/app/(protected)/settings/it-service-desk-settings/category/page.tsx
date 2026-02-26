@@ -2,25 +2,11 @@
 
 "use client";
 
-import { UniqueIdentifier } from "@dnd-kit/core";
-import { ChevronRight, Loader2, Plus, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DragHandle } from "@/components/custom/dnd/DragHandle";
-import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import {
-  buildTree,
-  flattenTree,
-  removeChildrenOf,
-  setProperty,
-} from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -28,188 +14,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { Client } from "@/domain/itServiceDesk";
 import { useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
 import { useLanguageState } from "@/hooks/useLanguage";
-import { languageOptions } from "@/shared/constants";
-import { DbParams, Locale } from "@/shared/types";
-import { cn } from "@/utils";
+import { DbParams } from "@/shared/types";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
-import {
-  getDefaultCateogoryData,
-  getDefaultSubCateogoryData,
-} from "../constants/category";
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryForm } from "./components/CategoryForm";
+import { CategoryTree } from "./components/CategoryTree";
+import { useCategoryTree } from "./hooks/useCategoryTree";
 
 export default function CategoryPage() {
   const { isInternal } = useSettingsScope();
   const { t } = useTranslation("settings");
   const { language } = useLanguageState();
 
-  const [clientSelection, setClientSelection] = useState<string>();
-  const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [languageTab, setLanguageTab] = useState<Locale>(language);
-
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [clientData, setClientData] = useState<Client[]>([]);
-  const [params, setParams] = useState<DbParams>({
-    filter: { rules: [{ rules: [] }] },
-    page: 1,
-    size: 10,
-  });
 
-  const [newCategoryCount, setNewCategoryCount] = useState<number>(1);
-  const [newSubCategoryCount, setNewSubCategoryCount] = useState<number>(1);
-
+  const params: DbParams = {};
   const { data: categories, isLoading } = useFetchItServiceDeskCategory(params);
 
-  const maxChildCount = 20;
-  const [categoryTree, setCategoryTree] = useState<
-    TreeNodes<CategoryData | MainCategoryData>
-  >([]);
-
-  const mapCategoryData = useCallback(
-    (clientId: string): MainCategoryData[] => {
-      if (!categories?.length) {
-        return [];
-      }
-
-      const current = categories.find((category) => category.id === clientId);
-
-      if (!current) {
-        return [];
-      }
-
-      return current.category.map((cat) => ({
-        ...cat,
-        subCategories: cat.subCategories?.map((sub) => ({
-          ...sub,
-        })),
-      }));
-    },
-    [categories],
-  );
-
-  const categoryToTree = (
-    categories: MainCategoryData[],
-  ): TreeNodes<CategoryData | MainCategoryData> => {
-    return categories.map((main) => ({
-      id: main.id,
-      data: main,
-      collapsed: false,
-      children:
-        main.subCategories?.map((sub) => ({
-          id: sub.id,
-          data: sub,
-          children: [],
-        })) ?? [],
-    }));
-  };
-
-  const onClientChanged = (client: string) => {
-    if (!categories) return;
-
-    setClientSelection(client);
-    const mapped = mapCategoryData(client);
-    setCategoryTree(categoryToTree(mapped));
-  };
-
-  const addNewCategory = () => {
-    setCategoryTree((prev) => {
-      const newCategory = categoryToTree([
-        getDefaultCateogoryData(newCategoryCount),
-      ]);
-
-      return [...newCategory, ...prev];
-    });
-    setNewCategoryCount(newCategoryCount + 1);
-  };
-
-  // 🔴 only for not saved category. existing category can not be deleted.
-  const removeCategory = (id: string) => {
-    setCategoryTree((prev) => {
-      const flattened = flattenTree(prev);
-      const filtered = removeChildrenOf(flattened, [id]);
-      return buildTree(filtered);
-    });
-  };
-
-  const addNewSubCategory = (parentId: UniqueIdentifier) => {
-    setCategoryTree((prev) => {
-      const flattened = flattenTree(prev);
-
-      const parentIndex = flattened.findIndex((item) => item.id === parentId);
-      if (parentIndex === -1) return prev;
-
-      const newSubCategory = getDefaultSubCateogoryData(newSubCategoryCount);
-
-      const newNode = {
-        id: newSubCategory.id,
-        parentId,
-        depth: 1,
-        index: 0,
-        data: newSubCategory,
-        children: [],
-      };
-
-      // next of parent, first child.
-      const insertIndex = parentIndex + 1;
-
-      const next = [
-        ...flattened.slice(0, insertIndex),
-        newNode,
-        ...flattened.slice(insertIndex),
-      ];
-
-      return buildTree(next);
-    });
-
-    setNewSubCategoryCount((c) => c + 1);
-  };
-
-  const selectedCategory = useMemo(() => {
-    if (!selectedId) return null;
-
-    const findNode = (
-      nodes: TreeNodes<CategoryData | MainCategoryData>,
-    ): CategoryData | MainCategoryData | null => {
-      for (const node of nodes) {
-        if (node.id === selectedId) return node.data;
-        const found = findNode(node.children);
-        if (found) return found;
-      }
-      return null;
-    };
-
-    return findNode(categoryTree);
-  }, [selectedId, categoryTree]);
-
-  const updateTranslation =
-    (key: "name" | "description" | "placeholder") => (value: string) => {
-      if (!selectedId) return;
-
-      setCategoryTree((prev) =>
-        setProperty(prev, selectedId, "data", (data) => ({
-          ...data,
-          editType: data.editType === undefined ? "update" : data.editType,
-          [key]: { ...[key], [languageTab]: value },
-        })),
-      );
-    };
-
-  const onActiveChange = (checked: boolean) => {
-    if (!selectedId) return;
-
-    setCategoryTree((prev) =>
-      setProperty(prev, selectedId, "data", (data) => ({
-        ...data,
-        category_active: checked,
-      })),
-    );
-  };
+  const {
+    tree,
+    setTree,
+    selectedId,
+    setSelectedId,
+    selectedNode,
+    addCategory,
+    removeCategory,
+    addSubCategory,
+  } = useCategoryTree({ selectedClient, categories, language });
 
   const onSaveChange = () => {
     // TODO : save shanges
@@ -218,23 +53,20 @@ export default function CategoryPage() {
 
   // trigered when categories loaded.
   useEffect(() => {
-    if (!categories) return;
+    if (!categories?.length) return;
 
-    const firstClient = categories[0].id;
-    const mapped = mapCategoryData(firstClient);
+    const firstClient = categories[0]?.id ?? null;
 
     setClientData(
-      categories.map((client) => {
-        return {
-          id: client.id,
-          name: client.name,
-          color: client.color,
-        };
-      }),
+      categories.map((client) => ({
+        id: client.id,
+        name: client.name,
+        color: client.color,
+      })),
     );
-    setClientSelection(firstClient);
-    setCategoryTree(categoryToTree(mapped));
-  }, [categories, mapCategoryData]);
+
+    setSelectedClient(firstClient);
+  }, [categories]);
 
   if (isLoading) {
     return (
@@ -255,11 +87,13 @@ export default function CategoryPage() {
           <div className="flex flex-col gap-2 pt-2 pb-6">
             <span>{t("itServiceDeskSettings.general.client")}</span>
             <Select
-              value={clientSelection ?? ""}
-              onValueChange={onClientChanged}
+              value={selectedClient ?? ""}
+              onValueChange={setSelectedClient}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Theme" />
+                <SelectValue
+                  placeholder={t("itServiceDeskSettings.general.client")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {clientData.map((client) => (
@@ -269,7 +103,8 @@ export default function CategoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className={`w-3 h-3 bg-[#000000] rounded-full`}
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: client.color }}
                         title={client.color}
                       ></span>
                       {client.name}
@@ -289,108 +124,21 @@ export default function CategoryPage() {
             type="button"
             size="sm"
             disabled={isLoading}
-            onClick={addNewCategory}
+            onClick={addCategory}
           >
             {t("itServiceDeskSettings.categoryTab.addCategory")}
           </Button>
         </div>
-        <ScrollArea className="h-full w-full border-y md:h-[calc(100vh-var(--settings-offset))]">
-          <SortableTree
-            items={categoryTree}
-            onChange={(nextTree) => {
-              setCategoryTree(nextTree);
-            }}
-            collapsible={true}
-            renderItem={(item, { onCollapse }) => {
-              const data = item.data;
-              const isSub = item.depth > 0;
-
-              return (
-                <SortableTreeItem
-                  key={item.id}
-                  id={item.id}
-                  depth={item.depth}
-                  indentationWidth={20}
-                  onClick={() => setSelectedId(item.id)}
-                >
-                  {({ dragHandleProps }) => (
-                    <div
-                      data-selected={item.id === selectedId}
-                      className={cn(
-                        "flex items-center justify-between w-full pl-3 pr-5 py-2",
-                        "border-b last:border-b-0",
-                        "border-l-[3px] border-l-transparent",
-                        "data-[selected='true']:border-l-primary",
-                        "data-[selected='true']:bg-primary/5",
-                        "transition-colors",
-                        "bg-background hover:bg-muted/50 text-foreground",
-                        isSub && "text-sm",
-                      )}
-                    >
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        {item.children.length ? (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-4 w-4"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onCollapse?.(item.id);
-                            }}
-                          >
-                            <ChevronRight
-                              className={cn(
-                                "transition-transform",
-                                !item.collapsed && "rotate-90",
-                              )}
-                            />
-                          </Button>
-                        ) : (
-                          <span className="w-4" />
-                        )}
-
-                        <span className="truncate">{data.name.en}</span>
-
-                        {language !== "en" && data.name[language] && (
-                          <span className="text-muted-foreground truncate">
-                            {data.name[language]}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {!isSub && item.children.length < maxChildCount && (
-                          <Button
-                            variant="ghost"
-                            type="button"
-                            size="icon_xs"
-                            disabled={isLoading}
-                            onClick={() => addNewSubCategory(data.id)}
-                          >
-                            <Plus />
-                          </Button>
-                        )}
-                        {data.editType === "create" ? (
-                          <Button
-                            variant="ghost"
-                            type="button"
-                            size="icon_xs"
-                            disabled={isLoading}
-                            onClick={() => removeCategory(data.id)}
-                          >
-                            <X />
-                          </Button>
-                        ) : (
-                          <span className="w-5"></span>
-                        )}
-                        <DragHandle {...dragHandleProps} />
-                      </div>
-                    </div>
-                  )}
-                </SortableTreeItem>
-              );
-            }}
-          />
-        </ScrollArea>
+        <CategoryTree
+          tree={tree}
+          setTree={setTree}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          addSubCategory={addSubCategory}
+          removeCategory={removeCategory}
+          language={language}
+          isLoading={isLoading}
+        />
       </div>
 
       {/* Category details */}
@@ -406,83 +154,11 @@ export default function CategoryPage() {
             {t("itServiceDeskSettings.general.saveChanges")}
           </Button>
         </div>
-        <Tabs
-          value={languageTab}
-          onValueChange={(value) => setLanguageTab(value as Locale)}
-        >
-          <TabsList className="w-full justify-start">
-            {languageOptions.map((lang) => (
-              <TabsTrigger
-                key={lang.value}
-                value={lang.value}
-                className="min-w-20 gap-2 data-[state=inactive]:border-none"
-              >
-                {lang.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-        <FieldGroup className="mt-8 pt-2">
-          <FieldSet>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="category-input-name">
-                  {t("itServiceDeskSettings.categoryTab.name")}
-                </FieldLabel>
-                <Input
-                  id="category-input-name"
-                  data-testid="category-name"
-                  disabled={!selectedCategory}
-                  className="!disabled:border-primary"
-                  value={selectedCategory?.name[languageTab] ?? ""}
-                  onChange={(e) => updateTranslation("name")(e.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-textarea-description">
-                  {t("itServiceDeskSettings.categoryTab.description")}
-                </FieldLabel>
-                <Textarea
-                  id="category-textarea-description"
-                  disabled={!selectedCategory}
-                  className="!disabled:border-primary"
-                  value={selectedCategory?.description?.[languageTab] ?? ""}
-                  onChange={(e) =>
-                    updateTranslation("description")(e.target.value)
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-textarea-placeholder">
-                  {t("itServiceDeskSettings.categoryTab.placeholder")}
-                </FieldLabel>
-                <Textarea
-                  id="category-textarea-placeholder"
-                  disabled={!selectedCategory}
-                  className="!disabled:border-primary"
-                  value={selectedCategory?.placeholder?.[languageTab] ?? ""}
-                  onChange={(e) =>
-                    updateTranslation("placeholder")(e.target.value)
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-switch-active">
-                  {t("itServiceDeskSettings.categoryTab.active")}
-                </FieldLabel>
-                <span>
-                  <Switch
-                    id="category-switch-active"
-                    disabled={!selectedCategory}
-                    className="!disabled:color-primary"
-                    checked={selectedCategory?.active ?? false}
-                    onCheckedChange={onActiveChange}
-                  />
-                </span>
-              </Field>
-            </FieldGroup>
-          </FieldSet>
-        </FieldGroup>
+        <CategoryForm
+          selectedNode={selectedNode}
+          language={language}
+          setTree={setTree}
+        />
       </div>
     </div>
   );

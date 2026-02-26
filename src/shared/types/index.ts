@@ -5,5 +5,5 @@ export * from "./date";
 export * from "./icon";
 export * from "./language";
 export * from "./locale";
-export * from "../../lib/mappers/utils";
+export * from "./mapper";
 export * from "./options";

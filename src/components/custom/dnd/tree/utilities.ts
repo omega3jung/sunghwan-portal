@@ -128,22 +128,16 @@ export function findItemDeep<T>(
   }
 }
 
-export function removeItem<T>(items: TreeNodes<T>, id: UniqueIdentifier) {
-  const newItems = [];
-
-  for (const item of items) {
-    if (item.id === id) {
-      continue;
-    }
-
-    if (item.children.length) {
-      item.children = removeItem(item.children, id);
-    }
-
-    newItems.push(item);
-  }
-
-  return newItems;
+export function removeItem<T>(
+  items: TreeNodes<T>,
+  id: UniqueIdentifier,
+): TreeNodes<T> {
+  return items
+    .filter((item) => item.id !== id)
+    .map((item) => ({
+      ...item,
+      children: removeItem(item.children, id),
+    }));
 }
 
 export function setProperty<TData, K extends keyof TreeNode<TData>>(

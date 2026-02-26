@@ -6,7 +6,7 @@ import { camelCategoryApprovalSettingMapper } from "@/api/itServiceDesk/approval
 import { internalApprovalStepSettingsMock } from "@/app/_mocks/pages/it-service-desk/approvalSteps";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
-import { DbParams } from "@/shared/types/api";
+import { DbParams } from "@/shared/types";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

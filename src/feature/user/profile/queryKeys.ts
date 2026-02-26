@@ -1,8 +1,6 @@
 // src/feature/user/profile/queryKeys.ts
 
-import { USER_KEY } from "../keys";
-
-export const USER_PROFILE_KEY = "profile";
+import { USER_KEY, USER_PROFILE_KEY } from "../keys";
 
 export const userProfileQueryKeys = {
   all: [USER_KEY, USER_PROFILE_KEY] as const,

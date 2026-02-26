@@ -20,6 +20,5 @@ export interface Category {
   description?: LocalizedText;
   placeholder?: LocalizedText;
   index: number;
-  agents: string[]; // string number. can use parseInt.
   active: boolean;
 }

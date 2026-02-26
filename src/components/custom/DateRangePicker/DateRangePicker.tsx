@@ -30,8 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import i18n from "@/lib/i18n";
-import { cn } from "@/utils";
 import { ValueLabel } from "@/shared/types/options";
+import { cn } from "@/utils";
 
 import { DatePickerProps, Period, Range } from "./types";
 

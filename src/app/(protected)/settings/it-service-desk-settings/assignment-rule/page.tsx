@@ -4,10 +4,9 @@
 
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { ChevronRight, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { avatarComboMock } from "@/app/_mocks/pages/demo/avatar-multi-combo-box";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
 import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
@@ -15,13 +14,25 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Client } from "@/domain/itServiceDesk";
 import { useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
+import { useFetchEmployee } from "@/feature/organization/employee";
+import { useFetchJobField } from "@/feature/organization/jobField";
 import { useLanguageState } from "@/hooks/useLanguage";
+import { ImageValueLabel, ValueLabel } from "@/shared/types";
 import { DbParams } from "@/shared/types/api";
 import { cn } from "@/utils";
 
-import { CategoryData, MainCategoryData } from "../types";
+import { AssignmentRuleData, MainAssignmentRuleData } from "./types";
 
 export default function AssignmentRulePage() {
   const { t } = useTranslation("settings");
@@ -41,11 +52,14 @@ export default function AssignmentRulePage() {
 
   const [maxAssigneeCount, setMaxAssigneeCount] = useState<number>(10);
   const [categoryTree, setCategoryTree] = useState<
-    TreeNodes<CategoryData | MainCategoryData>
+    TreeNodes<AssignmentRuleData | MainAssignmentRuleData>
   >([]);
 
+  const { data: jobFields } = useFetchJobField(params);
+  const { data: employees } = useFetchEmployee(params);
+
   const mapCategoryData = useCallback(
-    (clientId: string): MainCategoryData[] => {
+    (clientId: string): MainAssignmentRuleData[] => {
       if (!categories?.length) {
         return [];
       }
@@ -67,8 +81,8 @@ export default function AssignmentRulePage() {
   );
 
   const categoryToTree = (
-    categories: MainCategoryData[],
-  ): TreeNodes<CategoryData | MainCategoryData> => {
+    categories: MainAssignmentRuleData[],
+  ): TreeNodes<AssignmentRuleData | MainAssignmentRuleData> => {
     return categories.map((main) => ({
       id: main.id,
       data: main,
@@ -81,6 +95,43 @@ export default function AssignmentRulePage() {
         })) ?? [],
     }));
   };
+
+  const jobFieldData = useMemo((): Array<{
+    groupLabel: string;
+    items: ValueLabel[];
+  }> => {
+    if (!jobFields) return [];
+
+    const jobFieldGroup = [];
+
+    for (const jobField of jobFields) {
+      const item = {
+        value: jobField.id,
+        label: jobField.name[language] || jobField.name["en"],
+      };
+      if (jobField.parentId === "0") {
+        jobFieldGroup.push({ groupLabel: item.label, items: [item] });
+      } else {
+        jobFieldGroup[jobFieldGroup.length - 1].items.push(item);
+      }
+    }
+
+    return jobFieldGroup;
+  }, [jobFields, language]);
+
+  const employeeData = useMemo((): ImageValueLabel[] => {
+    if (!employees) return [];
+
+    return employees.map((employee) => {
+      const name = employee.name[language] || employee.name["en"];
+      return {
+        value: employee.id,
+        label: `${name.first} ${name.last}`,
+        displayName: employee.email,
+        image: employee.imageUrl,
+      };
+    });
+  }, [employees, language]);
 
   const updateAssignee = (assignee: string[]) => {
     if (!selectedId) return;
@@ -202,10 +253,43 @@ export default function AssignmentRulePage() {
                       )}
                     </div>
 
+                    <Select
+                      value={item.data.agents.jobFieldId}
+                      onValueChange={onAssigneeValueChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={t(
+                            "itServiceDeskSettings.approvalStepTab.jobFieldPlaceholder",
+                          )}
+                        />
+                      </SelectTrigger>
+                      <SelectContent id="approval-select-job-field">
+                        {jobFieldData.map((jobField) => (
+                          <SelectGroup
+                            key={`select_group_${jobField.items[0].value}`}
+                          >
+                            <SelectLabel className="bg-muted/50 text-xs rounded">
+                              {jobField.items[0].label}
+                            </SelectLabel>
+                            {jobField.items.map((item) => (
+                              <SelectItem
+                                className="text-xs ml-2"
+                                key={`select_item_${item.value}`}
+                                value={item.value}
+                              >
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                     <AvatarMultiComboBox
                       placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
                       variant={"ghost"}
-                      options={avatarComboMock}
+                      options={employeeData}
                       value={data.agents}
                       maxImages={maxAssigneeCount}
                       placeholder={t(

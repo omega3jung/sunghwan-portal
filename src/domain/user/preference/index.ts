@@ -1,4 +1,4 @@
-// src/feature/preference/index.ts
+// src/domain/user/preference/index.ts
 
 export * from "./constants";
 export * from "./types";

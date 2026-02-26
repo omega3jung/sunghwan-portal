@@ -22,5 +22,17 @@ export const comboBoxVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
+
+export const badgeVariants = cva("", {
+  variants: {
+    badgeVariant: {
+      default: "bg-foreground text-background",
+      primary: "bg-primary text-background",
+    },
+  },
+  defaultVariants: {
+    badgeVariant: "default",
+  },
+});

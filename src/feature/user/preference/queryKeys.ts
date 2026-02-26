@@ -1,8 +1,6 @@
 // src/feature/user/preference/queryKeys.ts
 
-import { USER_KEY } from "../keys";
-
-export const USER_PREFERENCE_KEY = "preference";
+import { USER_KEY, USER_PREFERENCE_KEY } from "../keys";
 
 export const userPreferenceQueryKeys = {
   all: [USER_KEY, USER_PREFERENCE_KEY] as const,

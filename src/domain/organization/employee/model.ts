@@ -1,6 +1,6 @@
 import { Locale } from "@/shared/types/locale";
 
-type LocalizedName = {
+export type LocalizedName = {
   en: {
     first: string;
     middle?: string;

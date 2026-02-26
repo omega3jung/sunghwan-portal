@@ -113,6 +113,26 @@ export function SortableTree<T>({
       ? projected.parentId
       : activeItem.parentId;
 
+    // ✅ children 수가 maximum을 넘지 않는 경우에만 구조 변경 허용
+    const parent = clonedItems.find((i) => i.id === nextParentId);
+    const limit = parent?.maximum;
+
+    if (limit != null) {
+      const siblings = clonedItems.filter(
+        (node) => node.parentId === nextParentId,
+      );
+
+      const isMovingWithinSameParent = activeItem.parentId === nextParentId;
+
+      const effectiveCount = isMovingWithinSameParent
+        ? siblings.length
+        : siblings.length + 1;
+
+      if (effectiveCount > limit) {
+        return; // 🚫 drop 취소
+      }
+    }
+
     clonedItems[activeIndex] = {
       ...activeItem,
       depth: nextDepth,

@@ -1,15 +1,15 @@
 import { LocalizedText } from "@/shared/types/language";
 
-export interface jobField {
+export interface JobField {
   id: string;
 
   // basic info
   name: LocalizedText;
-  level: number; // AccessLevel.
-  description?: string;
+  description?: LocalizedText;
 
   // organization
   departmentId: string;
+  parentId: string | null; // parent field id.
 
   // system
   active: boolean;

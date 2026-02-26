@@ -4,4 +4,3 @@ export * from "./approvalStep";
 export * from "./assignmentRule";
 export * from "./category";
 export * from "./keys";
-export * from "./ticket";

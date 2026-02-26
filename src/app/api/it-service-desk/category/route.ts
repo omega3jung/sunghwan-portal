@@ -1,13 +1,13 @@
 // app/api/it-service-desk/category/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { camelClientCategoryTreeMapper } from "@/api/itServiceDesk/category";
 import {
   internalCategorySettingsMock,
   tenantCategorySettingsMock,
 } from "@/app/_mocks/pages/it-service-desk/categories";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
-import { camelClientCategoryTreeMapper } from "@/lib/mappers/itServiceDesk";
 import { DbParams } from "@/shared/types/api";
 
 export async function GET(request: NextRequest) {

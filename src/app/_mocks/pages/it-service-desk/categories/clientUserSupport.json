@@ -1,142 +1,112 @@
 {
   "category_id": "81",
-  "category_index": 8,
-  "category_agent": [],
-  "category_active": true,
-  "category_translation": {
-    "en": {
-      "category_name": "Client / External User Support",
-      "category_description": "Support requests related to clients or external users.",
-      "category_placeholder": ""
-    },
-    "es": {
-      "category_name": "Soporte para clientes y usuarios externos",
-      "category_description": "Solicitudes de soporte relacionadas con clientes o usuarios externos.",
-      "category_placeholder": ""
-    },
-    "fr": {
-      "category_name": "Support client et utilisateurs externes",
-      "category_description": "Demandes de support liées aux clients ou aux utilisateurs externes.",
-      "category_placeholder": ""
-    },
-    "ko": {
-      "category_name": "고객사 / 외부 사용자 지원",
-      "category_description": "고객사 또는 외부 사용자의 문제 해결을 요청합니다.",
-      "category_placeholder": ""
-    }
+  "category_name": {
+    "en": "Client / External User Support",
+    "es": "Soporte para clientes y usuarios externos",
+    "fr": "Support client et utilisateurs externes",
+    "ko": "고객사 / 외부 사용자 지원"
   },
+  "category_description": {
+    "en": "Support requests related to clients or external users.",
+    "es": "Solicitudes de soporte relacionadas con clientes o usuarios externos.",
+    "fr": "Demandes de support liées aux clients ou aux utilisateurs externes.",
+    "ko": "고객사 또는 외부 사용자의 문제 해결을 요청합니다."
+  },
+  "category_placeholder": { "en": "", "es": "", "fr": "", "ko": "" },
+  "category_index": 8,
+  "category_active": true,
   "sub_category": [
     {
       "category_id": "82",
+      "category_name": {
+        "en": "Client account access",
+        "es": "Acceso a cuentas de clientes",
+        "fr": "Accès au compte client",
+        "ko": "고객사 계정 사용"
+      },
+      "category_description": {
+        "en": "Request support for client or external user account access issues.",
+        "es": "Solicite soporte para problemas de acceso a cuentas de clientes o usuarios externos.",
+        "fr": "Demander une assistance pour les problèmes d’accès aux comptes clients ou utilisateurs externes.",
+        "ko": "고객사 또는 외부 사용자 계정 사용에 관련된 문제에 해결을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the account details requiring assistance.",
+        "es": "Incluya los detalles de la cuenta que requiere asistencia.",
+        "fr": "Veuillez inclure les informations du compte nécessitant une assistance.",
+        "ko": "도움이 필요한 계정 정보를 포함하여 요청해주세요."
+      },
       "category_index": 1,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Client account access",
-          "category_description": "Request support for client or external user account access issues.",
-          "category_placeholder": "Please include the account details requiring assistance."
-        },
-        "es": {
-          "category_name": "Acceso a cuentas de clientes",
-          "category_description": "Solicite soporte para problemas de acceso a cuentas de clientes o usuarios externos.",
-          "category_placeholder": "Incluya los detalles de la cuenta que requiere asistencia."
-        },
-        "fr": {
-          "category_name": "Accès au compte client",
-          "category_description": "Demander une assistance pour les problèmes d’accès aux comptes clients ou utilisateurs externes.",
-          "category_placeholder": "Veuillez inclure les informations du compte nécessitant une assistance."
-        },
-        "ko": {
-          "category_name": "고객사 계정 사용",
-          "category_description": "고객사 또는 외부 사용자 계정 사용에 관련된 문제에 해결을 요청합니다.",
-          "category_placeholder": "도움이 필요한 계정 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "83",
+      "category_name": {
+        "en": "Client data correction",
+        "es": "Corrección de datos del cliente",
+        "fr": "Correction des données client",
+        "ko": "고객사 데이터 수정"
+      },
+      "category_description": {
+        "en": "Request correction of incorrect or inconsistent client data.",
+        "es": "Solicite la corrección de datos incorrectos o inconsistentes del cliente.",
+        "fr": "Demander la correction de données client incorrectes ou incohérentes.",
+        "ko": "불일치한 고객사 데이터에 수정을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include the data to be corrected and relevant details.",
+        "es": "Incluya los datos a corregir y la información relevante.",
+        "fr": "Veuillez inclure les données à corriger et les informations pertinentes.",
+        "ko": "수정이 필요한 데이터 정보를 포함하여 요청해주세요."
+      },
       "category_index": 2,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Client data correction",
-          "category_description": "Request correction of incorrect or inconsistent client data.",
-          "category_placeholder": "Please include the data to be corrected and relevant details."
-        },
-        "es": {
-          "category_name": "Corrección de datos del cliente",
-          "category_description": "Solicite la corrección de datos incorrectos o inconsistentes del cliente.",
-          "category_placeholder": "Incluya los datos a corregir y la información relevante."
-        },
-        "fr": {
-          "category_name": "Correction des données client",
-          "category_description": "Demander la correction de données client incorrectes ou incohérentes.",
-          "category_placeholder": "Veuillez inclure les données à corriger et les informations pertinentes."
-        },
-        "ko": {
-          "category_name": "고객사 데이터 수정",
-          "category_description": "불일치한 고객사 데이터에 수정을 요청합니다.",
-          "category_placeholder": "수정이 필요한 데이터 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "84",
+      "category_name": {
+        "en": "Client feature request",
+        "es": "Solicitud de nueva funcionalidad del cliente",
+        "fr": "Demande de fonctionnalité client",
+        "ko": "고객사 신규 기능 요청"
+      },
+      "category_description": {
+        "en": "Request development of new features required by clients.",
+        "es": "Solicite el desarrollo de nuevas funciones requeridas por clientes.",
+        "fr": "Demander le développement de nouvelles fonctionnalités requises par les clients.",
+        "ko": "고객사에 필요한 신규 기능의 개발을 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please describe the requested feature in detail.",
+        "es": "Describa detalladamente la funcionalidad solicitada.",
+        "fr": "Veuillez décrire la fonctionnalité demandée en détail.",
+        "ko": "신규 기능 정보를 상세히 포함하여 요청해주세요."
+      },
       "category_index": 3,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Client feature request",
-          "category_description": "Request development of new features required by clients.",
-          "category_placeholder": "Please describe the requested feature in detail."
-        },
-        "es": {
-          "category_name": "Solicitud de nueva funcionalidad del cliente",
-          "category_description": "Solicite el desarrollo de nuevas funciones requeridas por clientes.",
-          "category_placeholder": "Describa detalladamente la funcionalidad solicitada."
-        },
-        "fr": {
-          "category_name": "Demande de fonctionnalité client",
-          "category_description": "Demander le développement de nouvelles fonctionnalités requises par les clients.",
-          "category_placeholder": "Veuillez décrire la fonctionnalité demandée en détail."
-        },
-        "ko": {
-          "category_name": "고객사 신규 기능 요청",
-          "category_description": "고객사에 필요한 신규 기능의 개발을 요청합니다.",
-          "category_placeholder": "신규 기능 정보를 상세히 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     },
     {
       "category_id": "85",
+      "category_name": {
+        "en": "Client issue inquiry",
+        "es": "Consulta sobre problemas del cliente",
+        "fr": "Demande concernant un problème client",
+        "ko": "고객사 문제 문의"
+      },
+      "category_description": {
+        "en": "Submit inquiries related to client issues, verification, or resolution.",
+        "es": "Envíe consultas relacionadas con problemas, verificación o resolución de clientes.",
+        "fr": "Soumettre des demandes concernant des problèmes clients, des vérifications ou des résolutions.",
+        "ko": "고객사 문제에 대해 확인/수정/해결 등 문의를 요청합니다."
+      },
+      "category_placeholder": {
+        "en": "Please include details about the issue or inquiry.",
+        "es": "Incluya los detalles del problema o consulta.",
+        "fr": "Veuillez inclure les détails du problème ou de la demande.",
+        "ko": "문의하려는 사항에 대한 정보를 포함하여 요청해주세요."
+      },
       "category_index": 4,
-      "category_agent": [],
-      "category_active": true,
-      "category_translation": {
-        "en": {
-          "category_name": "Client issue inquiry",
-          "category_description": "Submit inquiries related to client issues, verification, or resolution.",
-          "category_placeholder": "Please include details about the issue or inquiry."
-        },
-        "es": {
-          "category_name": "Consulta sobre problemas del cliente",
-          "category_description": "Envíe consultas relacionadas con problemas, verificación o resolución de clientes.",
-          "category_placeholder": "Incluya los detalles del problema o consulta."
-        },
-        "fr": {
-          "category_name": "Demande concernant un problème client",
-          "category_description": "Soumettre des demandes concernant des problèmes clients, des vérifications ou des résolutions.",
-          "category_placeholder": "Veuillez inclure les détails du problème ou de la demande."
-        },
-        "ko": {
-          "category_name": "고객사 문제 문의",
-          "category_description": "고객사 문제에 대해 확인/수정/해결 등 문의를 요청합니다.",
-          "category_placeholder": "문의하려는 사항에 대한 정보를 포함하여 요청해주세요."
-        }
-      }
+      "category_active": true
     }
   ]
 }

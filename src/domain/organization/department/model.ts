@@ -6,10 +6,10 @@ export interface Department {
   // basic info
   name: LocalizedText;
   code?: string; // HR, IT, QC.
-  description?: string;
+  description?: LocalizedText;
 
   // organization
-  parentId: string;
+  parentId: string | null;
 
   // system
   active: boolean;

@@ -16,6 +16,7 @@ export interface TreeNode<T = unknown> {
   id: UniqueIdentifier;
   children: TreeNode<T>[];
   collapsed?: boolean;
+  maximum?: number;
   data: T;
 }
 

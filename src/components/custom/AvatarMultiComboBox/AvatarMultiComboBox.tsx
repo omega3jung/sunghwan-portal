@@ -19,13 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/utils";
 import { ImageValueLabel } from "@/shared/types/options";
+import { cn } from "@/utils";
 import { initials } from "@/utils";
 
-import { UserAvatar } from "../UserAvatar";
 import { AvatarMultiComboBoxProps, Props } from "./types";
-import { comboBoxVariants } from "./variants";
+import { badgeVariants, comboBoxVariants } from "./variants";
 
 const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
   const {
@@ -36,6 +35,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
     onSelect,
     onRemove,
     variant,
+    badgeVariant,
     size,
     isLoading = false,
     disabled = false,
@@ -83,7 +83,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
               ref={buttonRef}
               variant="outline"
               role="combobox"
-              className={cn(comboBoxVariants({ variant, size }))}
+              className={cn(comboBoxVariants({ variant, size }), "py-0.5")}
               disabled={disabled || readOnly}
             >
               {!selected.length ? (
@@ -100,13 +100,18 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                           <Avatar
                             key={`space-${item.value}`}
                             className={cn(
-                              "h-8 w-8 ring-2 ring-foreground",
+                              "h-8 w-8 ring-2 ring-background",
                               `z-[${selected.length - index}]`,
                             )}
                           >
                             {/* value.includes(item.value) */}
                             <AvatarImage src={item.image} alt={item.label} />
-                            <AvatarFallback className="bg-gray-800 text-white">
+                            <AvatarFallback
+                              className={cn(
+                                badgeVariants({ badgeVariant }),
+                                "font-normal",
+                              )}
+                            >
                               {initials(item.label)}
                             </AvatarFallback>
                           </Avatar>
@@ -121,7 +126,10 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                           >
                             <AvatarFallback
                               key={"extrausers"}
-                              className="bg-gray-800 pl-2 text-white"
+                              className={cn(
+                                badgeVariants({ badgeVariant }),
+                                "font-normal",
+                              )}
                             >
                               {"+"}
                               {selected.length - maxImages}
@@ -147,10 +155,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
           </div>
         </PopoverTrigger>
 
-        <PopoverContent
-          className="w-full translate-y-0 p-0"
-          style={{ width: "300px" }}
-        >
+        <PopoverContent className="w-full translate-y-0 p-0">
           <Command
             filter={(value, search) => {
               if (!options) {
@@ -194,7 +199,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
               {/* selectd item on top */}
               {selected.length > 0 && (
                 <CommandGroup>
-                  {selected.map((user) => (
+                  {selected.map((user, index) => (
                     <CommandItem
                       className="flex items-center"
                       value={user.value}
@@ -205,15 +210,22 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                           : handleSelect(user.value)
                       }
                     >
-                      <Avatar className="mx-1 h-8 w-8 ring-2 ring-primary">
+                      <Avatar className="mx-1 h-8 w-8">
                         <AvatarImage src={user.image} alt={user.label} />
-                        <AvatarFallback className="bg-gray-800 text-white">
+                        <AvatarFallback
+                          className={cn(
+                            badgeVariants({ badgeVariant }),
+                            "font-normal",
+                          )}
+                        >
                           {initials(user.label)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <h4 className="text-xs">{user.label}</h4>
-                        <h4 className="text-xs">{user.value}</h4>
+                        <h4 className="text-xs">
+                          {user.displayName || user.value}
+                        </h4>
                       </div>
                     </CommandItem>
                   ))}
@@ -228,7 +240,7 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                   <CommandGroup data-testid={`unselected-list`}>
                     {notSelected.map((user, index) => (
                       <CommandItem
-                        className="flex items-center"
+                        className="flex items-center w-"
                         value={user.value}
                         key={`option-${user.value}`}
                         data-testid={`unselected-list-item-${index}`}
@@ -238,10 +250,22 @@ const Component = (props: AvatarMultiComboBoxProps & Props, _: any) => {
                             : handleSelect(user.value)
                         }
                       >
-                        <UserAvatar item={user} className="mx-1" />
+                        <Avatar className="mx-1 h-8 w-8">
+                          <AvatarImage src={user.image} alt={user.label} />
+                          <AvatarFallback
+                            className={cn(
+                              badgeVariants({ badgeVariant }),
+                              "font-normal",
+                            )}
+                          >
+                            {initials(user.label)}
+                          </AvatarFallback>
+                        </Avatar>
                         <div>
                           <h4 className="text-xs">{user.label}</h4>
-                          <h4 className="text-xs">{user.value}</h4>
+                          <h4 className="text-xs">
+                            {user.displayName || user.value}
+                          </h4>
                         </div>
                       </CommandItem>
                     ))}

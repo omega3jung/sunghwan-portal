@@ -24,7 +24,6 @@ export interface DbCategory {
   category_description?: LocalizedText;
   category_placeholder?: LocalizedText;
   category_index: number;
-  category_agent: string[];
   category_active: boolean;
 }
 
@@ -49,7 +48,6 @@ export const camelCategoryMapper: ArrayMapper<DbMainCategory, MainCategory> = (
     description: item.category_description,
     placeholder: item.category_placeholder,
     index: item.category_index,
-    agents: item.category_agent,
     active: item.category_active,
     subCategories: camelSubCategoryMapper(item.sub_category),
   }));
@@ -62,7 +60,6 @@ const camelSubCategoryMapper: ArrayMapper<DbCategory, Category> = (data) => {
     description: item.category_description,
     placeholder: item.category_placeholder,
     index: item.category_index,
-    agents: item.category_agent,
     active: item.category_active,
   }));
 };
@@ -76,7 +73,6 @@ export const snakeCategoryMapper: ArrayMapper<MainCategory, DbCategory> = (
     category_description: item.description,
     category_placeholder: item.placeholder,
     category_index: item.index,
-    category_agent: item.agents,
     category_active: item.active,
     sub_category: snakeSubCategoryMapper(item.subCategories),
   }));
@@ -89,7 +85,6 @@ const snakeSubCategoryMapper: ArrayMapper<Category, DbCategory> = (data) => {
     category_description: item.description,
     category_placeholder: item.placeholder,
     category_index: item.index,
-    category_agent: item.agents,
     category_active: item.active,
   }));
 };

@@ -135,7 +135,7 @@
       "jobFieldPlaceholder": "Select job title",
       "employee": "Employee",
       "employeePlaceholder": "Select assignee",
-      "skipAccessLevel": "Skip access level"
+      "skipAccessLevel": "Skipable access level"
     },
     "assignmentRuleTab": {
       "selectAssignee": "Select assignee"

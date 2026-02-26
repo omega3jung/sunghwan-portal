@@ -46,3 +46,8 @@ export type ApprovalAssigneeType = {
     type: K;
   } & ApprovalAssigneePayloadMap[K];
 }[ApprovalAssigneeTypeValue];
+
+export type AssigneeByType<T extends ApprovalAssigneeTypeValue> = Extract<
+  ApprovalAssigneeType,
+  { type: T }
+>;

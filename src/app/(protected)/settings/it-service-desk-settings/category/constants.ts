@@ -1,4 +1,6 @@
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, MainCategoryData } from "./types";
+
+export const MAX_SUB_CATEGORY_PER_CATEGORY = 20;
 
 const newCategoryIdPrefix = "new_category_";
 const newCategoryNamePrefix = "New Category ";
@@ -10,10 +12,9 @@ export const getDefaultCateogoryData = (count: number): MainCategoryData => {
     id: `${newCategoryIdPrefix}${count}`,
     name: { en: `${newCategoryNamePrefix}${count}` },
     index: 1,
-    agents: [],
     active: true,
     subCategories: [],
-    editType: "create",
+    isCreated: true,
   };
 };
 
@@ -22,8 +23,7 @@ export const getDefaultSubCateogoryData = (count: number): CategoryData => {
     id: `${newSubCategoryIdPrefix}${count}`,
     name: { en: `${newSubCategoryNamePrefix}${count}` },
     index: 1,
-    agents: [],
     active: true,
-    editType: "create",
+    isCreated: true,
   };
 };

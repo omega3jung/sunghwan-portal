@@ -4,7 +4,7 @@ import {
   ApprovalStep,
   CategoryApprovalSettings,
 } from "@/domain/itServiceDesk";
-import { ArrayMapper, Locale, LocalizedText, Mapper } from "@/shared/types";
+import { ArrayMapper, LocalizedText, Mapper } from "@/shared/types";
 
 import { DbCategory } from "../category/mapper";
 
@@ -27,7 +27,6 @@ export interface DbApprovalStep {
    * this approval step will be skipped.
    */
   skip_access_level?: AccessLevel;
-  translation?: DbApprovalStepTranslations; // default language : en
 }
 
 type DbApprovalAssigneeType =
@@ -48,13 +47,6 @@ type DbApprovalAssigneeType =
       employee_id: string[]; // string number. can use parseInt.
     };
 
-export interface DbApprovalStepI18n {
-  step_name: string;
-  step_description?: string;
-}
-
-type DbApprovalStepTranslations = Partial<Record<Locale, DbApprovalStepI18n>>;
-
 export const camelCategoryApprovalSettingMapper: ArrayMapper<
   DbCategoryApprovalSettings,
   CategoryApprovalSettings
@@ -64,7 +56,6 @@ export const camelCategoryApprovalSettingMapper: ArrayMapper<
     name: item.category_name,
     description: item.category_description,
     index: item.category_index,
-    agents: item.category_agent,
     active: item.category_active,
     approvalSteps: camelApprovalStepMapper(item.approval_step),
   }));

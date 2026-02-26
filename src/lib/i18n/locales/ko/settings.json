@@ -135,7 +135,7 @@
       "jobFieldPlaceholder": "직책 선택",
       "employee": "직원",
       "employeePlaceholder": "담당자 선택",
-      "skipAccessLevel": "접근 레벨 건너뛰기"
+      "skipAccessLevel": "승인이 필요없는 접근 레벨"
     },
     "assignmentRuleTab": {
       "selectAssignee": "담당자 선택"
