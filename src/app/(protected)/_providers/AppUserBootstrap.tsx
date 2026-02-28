@@ -1,51 +1,33 @@
-// (protected)/_providers/AppUserBootstrap.tsx
+// src/app/(protected)/_providers/AppUserBootstrap.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-import { useAppUser } from "@/hooks/useAppUser";
-import { useFetchUserPreference } from "@/hooks/useUserPreference";
+import { AppUser } from "@/domain/user";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { ACCESS_LEVEL } from "@/types";
-import { AuthUser } from "@/types/next-auth";
 
 type Props = {
-  user: AuthUser;
+  user: AppUser;
   children: React.ReactNode;
 };
 
 export function AppUserBootstrap({ user, children }: Props) {
   const impersonation = useImpersonationStore();
-  const initializedRef = useRef(false);
-
-  const appUserQuery = useAppUser(user.id);
-  const preferenceQuery = useFetchUserPreference();
 
   useEffect(() => {
-    if (!user.id) return;
-    if (initializedRef.current) return;
+    if (!user) return;
 
-    // demo user
-    if (user.id === "demo") {
-      impersonation.setActor({
-        ...user,
-        permission: ACCESS_LEVEL.GUEST,
-        preference: preferenceQuery.data,
-        canUseSuperUser: false,
-      });
-      initializedRef.current = true;
-      return;
-    }
+    // 🔑 Do not overwrite actor while impersonating
+    if (impersonation.subject) return;
 
-    if (!appUserQuery.data) return;
+    // 🔑 If it's already the same actor, there's no need to sync again.
+    if (impersonation.actor?.id === user.id) return;
 
-    impersonation.setActor({
-      ...appUserQuery.data,
-      preference: preferenceQuery.data,
+    impersonation.syncFromSession({
+      actor: user,
+      subject: null,
     });
-
-    initializedRef.current = true;
-  }, [user, appUserQuery.data, preferenceQuery.data]);
+  }, [user, impersonation.subject]);
 
   return <>{children}</>;
 }

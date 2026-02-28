@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { ImageValueLabel } from "@/types/common";
-import { initials } from "@/utils";
+import { ImageValueLabel } from "@/shared/types/options";
+import { cn, initials } from "@/utils";
 
 export const UserAvatar = ({
   item,

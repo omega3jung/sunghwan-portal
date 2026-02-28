@@ -62,7 +62,7 @@ export type DatePickerProps = {
   setRange: (value: SetStateAction<DateRange | undefined>) => void;
   showRange?: boolean;
   setRangeText?: (value: SetStateAction<string>) => void;
-  options?: Array<Period>;
+  options?: Period[];
   variant?: SelectVariant;
   className?: string;
 };

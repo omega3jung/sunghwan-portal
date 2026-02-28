@@ -1,5 +1,7 @@
 import { ChevronRight, Link } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
+import { createMenuMock } from "@/app/_mocks";
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,10 +22,21 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useImpersonation } from "@/hooks/useImpersonation";
 
-import { menuItems } from "./mock";
+import { filterMenuByAccessLevel } from "./menu.utils";
 
 export function LeftMenu() {
+  const { effective } = useImpersonation();
+
+  const { t } = useTranslation("LeftMenu");
+  const menuItems = createMenuMock(t);
+
+  const filteredMenu = {
+    content: filterMenuByAccessLevel(menuItems.content, effective?.permission),
+    footer: filterMenuByAccessLevel(menuItems.footer, effective?.permission),
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader />
@@ -32,7 +45,7 @@ export function LeftMenu() {
           <SidebarGroupLabel>Portfolio Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.content.map((item) =>
+              {filteredMenu.content.map((item) =>
                 item.children ? (
                   <Collapsible className="group/collapsible" key={item.title}>
                     <SidebarMenuItem key={item.title}>
@@ -69,7 +82,7 @@ export function LeftMenu() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>

@@ -6,8 +6,10 @@ import {
   UserRoundMinus,
   UserRoundPlus,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,29 +19,18 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ACCESS_LEVEL } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useImpersonation } from "@/hooks/useImpersonation";
-import i18n from "@/lib/i18n";
-import { ACCESS_LEVEL, AccessLevel, AppUser } from "@/types";
 import { cn, initials } from "@/utils";
 
-const ns = {
-  ns: "UserMenu",
-};
-
-const demoNameData: Record<string, string> = {
-  admin: i18n.t("adminDemo", ns),
-  manager: i18n.t("managerDemo", ns),
-  user: i18n.t("userDemo", ns),
-  guest: i18n.t("guestDemo", ns),
-};
+import { DemoImpersonation } from "./DemoImpersonation";
+import { DemoUserSwitch } from "./DemoUserSwitch";
 
 export function UserMenu() {
   const { current } = useCurrentSession();
@@ -50,49 +41,58 @@ export function UserMenu() {
     startImpersonation,
     stopImpersonation,
   } = useImpersonation();
+  const signingRef = useRef(false);
 
   const { t } = useTranslation("UserMenu");
 
-  const isDemo = current.dataScope === "LOCAL";
-  const canImpersonate =
-    current.dataScope === "REMOTE" && actor?.canUseImpersonation;
-  const hasSubject = isImpersonating && !!subject;
+  const isDemo = current.isDemoUser;
 
-  const demoImpersonating = (permission: AccessLevel) => {
-    const user = {
-      ...actor,
-      permission: permission,
-    } as AppUser;
+  const canDemoImpersonate = useMemo(() => {
+    if (!isDemo) return false;
+    if (!actor || subject) return false;
+    if (actor.userScope === "TENANT") return false;
+    return actor.permission >= ACCESS_LEVEL.ADMIN;
+  }, [actor, isDemo, subject]);
 
-    switch (permission) {
-      case ACCESS_LEVEL.ADMIN:
-        user.name = demoNameData.admin;
-        break;
-      case ACCESS_LEVEL.MANAGER:
-        user.name = demoNameData.manager;
-        break;
-      case ACCESS_LEVEL.USER:
-        user.name = demoNameData.user;
-        break;
-      case ACCESS_LEVEL.GUEST:
-        user.name = demoNameData.guest;
-        break;
+  const canImpersonate = useMemo(() => {
+    if (isDemo) return false;
+    if (!actor || subject) return false;
+    return actor?.canUseImpersonation === true;
+  }, [actor, isDemo, subject]);
+
+  const hasSubject = useMemo<boolean>(
+    () => isImpersonating && !!subject,
+    [isImpersonating, subject],
+  );
+
+  const onUserSwitch = async (profile: AppUser) => {
+    // loggin in.
+    if (signingRef.current) return;
+    signingRef.current = true;
+
+    try {
+      const result = await signIn("credentials", {
+        username: profile.id,
+        password: profile.id,
+        redirect: false,
+      });
+
+      // handle error.
+      if (!result?.ok) {
+        throw result?.error;
+      }
+
+      signingRef.current = false;
+    } catch (error) {
+      toast(t("errors.title"), {
+        description: "login switch error",
+      });
     }
-
-    onStartImpersonating(user);
-  };
-
-  const onStartImpersonating = (user: AppUser) => {
-    startImpersonation(user);
-  };
-
-  const onStopImpersonating = () => {
-    stopImpersonation();
   };
 
   const renderUserAvatar = (
     user: AppUser | null,
-    options?: { size?: number; muted?: boolean }
+    options?: { size?: number; muted?: boolean },
   ) => {
     if (!user) return null;
 
@@ -100,20 +100,23 @@ export function UserMenu() {
 
     return (
       <Avatar className={cn(`h-${size} w-${size}`)}>
-        <AvatarImage src={user.image} alt={user.name} />
+        <AvatarImage src={user.image} alt={user.displayName} />
         <AvatarFallback
           className={cn(
             muted ? "bg-muted-foreground" : "bg-foreground",
-            "text-background"
+            "text-background",
           )}
         >
-          {initials(user.name)}
+          {initials(user.displayName)}
         </AvatarFallback>
       </Avatar>
     );
   };
 
-  const renderImpersonationAvatar = (actor: AppUser, subject: AppUser) => {
+  const renderImpersonationAvatar = (
+    actor: AppUser | null,
+    subject: AppUser | null,
+  ) => {
     if (!actor || !subject) return null;
 
     return (
@@ -131,45 +134,9 @@ export function UserMenu() {
     );
   };
 
-  const DemoImpersonation = ({ permission }: { permission: AccessLevel }) => {
-    return (
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>{t("impersonation")}</DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-          <DropdownMenuSubContent>
-            {permission !== ACCESS_LEVEL.ADMIN && (
-              <DropdownMenuItem
-                onClick={() => demoImpersonating(ACCESS_LEVEL.ADMIN)}
-              >
-                {t("asAdmin")}
-              </DropdownMenuItem>
-            )}
-            {permission !== ACCESS_LEVEL.MANAGER && (
-              <DropdownMenuItem
-                onClick={() => demoImpersonating(ACCESS_LEVEL.MANAGER)}
-              >
-                {t("asManager")}
-              </DropdownMenuItem>
-            )}
-            {permission !== ACCESS_LEVEL.USER && (
-              <DropdownMenuItem
-                onClick={() => demoImpersonating(ACCESS_LEVEL.USER)}
-              >
-                {t("asUser")}
-              </DropdownMenuItem>
-            )}
-            {permission !== ACCESS_LEVEL.GUEST && (
-              <DropdownMenuItem
-                onClick={() => demoImpersonating(ACCESS_LEVEL.GUEST)}
-              >
-                {t("asGuest")}
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-      </DropdownMenuSub>
-    );
-  };
+  if (!current.user) {
+    return <Skeleton className="w-10 h-10 rounded-full" />;
+  }
 
   return (
     <DropdownMenu>
@@ -187,7 +154,7 @@ export function UserMenu() {
               muted: hasSubject,
             })}
             <div className="flex flex-col">
-              <span>{actor?.name}</span>
+              <span>{actor?.displayName}</span>
               <span className="text-muted-foreground font-normal">
                 {actor?.email}
               </span>
@@ -208,7 +175,16 @@ export function UserMenu() {
               {t("notifications")}
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          {isDemo && (
+            <DropdownMenuGroup>
+              <DemoUserSwitch
+                user={current.user}
+                disabled={isImpersonating}
+                onDemoUserSwitch={onUserSwitch}
+              />
+              <DropdownMenuSeparator />
+            </DropdownMenuGroup>
+          )}
           <DropdownMenuItem onClick={() => signOut()}>
             <LogOut />
             {t("logOut")}
@@ -221,7 +197,7 @@ export function UserMenu() {
             <DropdownMenuLabel className="flex gap-2">
               {renderUserAvatar(subject)}
               <div className="flex flex-col">
-                <span>{subject.name}</span>
+                <span>{subject.displayName}</span>
                 <span className="text-muted-foreground font-normal">
                   {subject.email}
                 </span>
@@ -230,17 +206,25 @@ export function UserMenu() {
 
             <DropdownMenuSeparator />
 
-            {isDemo && <DemoImpersonation permission={subject.permission} />}
+            {canDemoImpersonate && (
+              <DemoImpersonation
+                user={current.user}
+                onDemoImpersonate={startImpersonation}
+              />
+            )}
 
-            <DropdownMenuItem onClick={onStopImpersonating}>
+            <DropdownMenuItem onClick={stopImpersonation}>
               <UserRoundMinus />
               {t("stopImpersonation")}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         )}
 
-        {!hasSubject && isDemo && actor && (
-          <DemoImpersonation permission={actor.permission} />
+        {!hasSubject && canDemoImpersonate && (
+          <DemoImpersonation
+            user={current.user}
+            onDemoImpersonate={startImpersonation}
+          />
         )}
 
         {!hasSubject && canImpersonate && (

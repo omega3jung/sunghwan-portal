@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
+import { createMenuMock } from "@/app/_mocks";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,
@@ -22,13 +23,12 @@ import { useImpersonation } from "@/hooks/useImpersonation";
 import { ENVIRONMENT } from "@/lib/environment";
 
 import { filterMenuByAccessLevel } from "./menu.utils";
-import { createMenuItems } from "./mock";
 
 export function LeftMenu() {
   const { effective } = useImpersonation();
 
   const { t } = useTranslation("LeftMenu");
-  const menuItems = createMenuItems(t);
+  const menuItems = createMenuMock(t);
 
   const filteredMenu = {
     content: filterMenuByAccessLevel(menuItems.content, effective?.permission),

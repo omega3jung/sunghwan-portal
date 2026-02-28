@@ -1,0 +1,2 @@
+export const MAX_JOB_FIELD_PER_CATEGORY = 5;
+export const MAX_EMPLOYEE_PER_CATEGORY = 20;

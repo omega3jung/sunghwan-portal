@@ -1,1 +1,0 @@
-export const USER_PREFERENCE_KEY = "USER-PREFERENCE";

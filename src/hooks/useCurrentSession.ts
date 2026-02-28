@@ -1,9 +1,11 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 
+import { CurrentSession } from "@/domain/auth";
+import { UseCurrentSessionResult } from "@/feature/auth";
+import { useFetchMyProfile } from "@/feature/auth/hooks";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { SessionState, useSessionStore } from "@/lib/sessionStore";
-import { CurrentSession, UseCurrentSessionResult } from "@/types";
+import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
 
 /*
  * =========================================================
@@ -47,6 +49,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const impersonation = useImpersonationStore();
 
   /*
+   * The ID that last called meApi or userProfileApi
+   */
+  const { data: effectiveUserProfile } = useFetchMyProfile(session.data);
+
+  /*
    * 🔒 From here on, authenticated is guaranteed at the type level.
    *
    * Processing session data for direct use in the UI.
@@ -56,15 +63,16 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - Only update this hook when the session data structure changes.
    */
   const current = useMemo<CurrentSession>(() => {
-    const { user } = store;
+    const { user, isSuperUser, superUserActivated, security } = store;
+    const isDemoUser = session.data?.user?.dataScope === "LOCAL";
 
-    // local / demo
-    if (user.id === "demo") {
+    if (!user) {
       return {
-        dataScope: "LOCAL",
-        user,
+        user: null,
         expires: "",
+        isDemoUser,
         isSuperUser: false,
+        superUserActivated: null,
         security: {
           loginLockedUntil: null,
           failedAttempts: 0,
@@ -73,19 +81,21 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       };
     }
 
-    // remote
     return {
-      dataScope: "REMOTE",
-      user,
+      user: user,
       expires: "",
-      isSuperUser: false,
-      security: {
-        loginLockedUntil: null,
-        failedAttempts: 0,
-        requiresCaptcha: false,
-      },
+      isDemoUser,
+      isSuperUser: isSuperUser,
+      superUserActivated: superUserActivated,
+      security: security,
     };
-  }, [store]);
+  }, [
+    store.user,
+    store.isSuperUser,
+    store.superUserActivated,
+    store.security,
+    session.data?.user?.dataScope,
+  ]);
 
   /*
    * Single entry point for session updates
@@ -94,11 +104,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    * - Force revalidation of the next-auth session
    * - Renew the zustand session afterward
    */
-  const updateSession = async (state: Partial<SessionState>, force = false) => {
+  const updateSession = async (patch: SessionPatch, force = false) => {
     if (force) {
       await session.update();
     }
-    store.setSession(state);
+    store.setSession(patch);
   };
 
   // hydrate once on mount (restore sessionStorage -> store)
@@ -110,13 +120,12 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   // set session when sign in.
   useEffect(() => {
     if (session.status !== "authenticated") return;
-    if (!session.data?.user) return;
+    if (!effectiveUserProfile) return;
 
-    store.setSession({
-      user: session.data.user,
-    });
+    store.setSession({ user: effectiveUserProfile });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status, session.data?.user]);
+  }, [session.status, effectiveUserProfile]);
 
   // clear session and impersonation when sign out.
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
-import { CurrentSession } from "@/types";
+import { CurrentSession } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 
 /*
  * =========================================================
@@ -26,6 +27,10 @@ const STORAGE_KEYS = {
  */
 export type SessionState = Omit<CurrentSession, "expires">;
 
+export type SessionPatch = Omit<Partial<SessionState>, "user"> & {
+  user?: Partial<AppUser> | null;
+};
+
 /*
  * Actions that manipulate session state
  *
@@ -36,7 +41,7 @@ export type SessionState = Omit<CurrentSession, "expires">;
  */
 export interface SessionActions {
   hydrateSession: () => void; // sessionStorage → store
-  setSession: (data: Partial<SessionState>) => void; // store + storage synchronization
+  setSession: (patch: SessionPatch) => void; // store + storage synchronization
   clearSession: () => void; // logout / clear session
 }
 
@@ -45,14 +50,15 @@ export interface SessionActions {
  * - Default is LOCAL (Try Demo access possible)
  */
 const initialState: SessionState = {
-  dataScope: "LOCAL",
+  isDemoUser: false,
   isSuperUser: false,
-  user: {
-    id: undefined as never,
-    name: undefined as never,
-    email: undefined as never,
-    accessToken: undefined as never,
+  user: null,
+  security: {
+    loginLockedUntil: null,
+    failedAttempts: 0,
+    requiresCaptcha: false,
   },
+  superUserActivated: null,
 };
 
 /*
@@ -82,11 +88,28 @@ export const useSessionStore = create<SessionState & SessionActions>()(
      * Update session information
      * - Synchronize memory status and sessionStorage
      */
-    setSession: (data) => {
-      const next = { ...get(), ...data };
+    setSession: (patch) => {
+      const prev = get();
+
+      let nextUser: AppUser | null;
+
+      if (patch.user === undefined) {
+        nextUser = prev.user;
+      } else if (patch.user === null) {
+        nextUser = null;
+      } else {
+        // patch.user is Partial<AppUser>
+
+        nextUser = mergeAndAssertUser(prev.user, patch.user);
+      }
+
+      const next: SessionState = {
+        ...prev,
+        ...patch,
+        user: nextUser,
+      };
 
       sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(next));
-
       set(next);
     },
 
@@ -99,5 +122,19 @@ export const useSessionStore = create<SessionState & SessionActions>()(
       sessionStorage.removeItem(STORAGE_KEYS.SESSION);
       set(initialState);
     },
-  })
+  }),
 );
+
+function mergeAndAssertUser(
+  user: AppUser | null,
+  patch?: Partial<AppUser>,
+): AppUser {
+  const newUser = { ...user, ...patch };
+
+  // check required property.
+  if (!newUser.id) {
+    throw new Error("[SessionStore] Cannot patch user when prev.user is null");
+  }
+
+  return newUser as AppUser;
+}

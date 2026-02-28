@@ -1,0 +1,13 @@
+{
+  "stepper": {
+    "stepper": "단계 선택",
+    "variants": "바리에이션",
+    "orientation": "방향",
+    "stepVariant": "단계 모양",
+    "labelPosition": "라벨 위치",
+    "stepColor": "색상",
+    "showOrderLabel": "단계 라벨 표시",
+    "startIndex": "시작 번호",
+    "step": "단계"
+  }
+}

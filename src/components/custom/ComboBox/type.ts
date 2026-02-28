@@ -1,7 +1,7 @@
 import { VariantProps } from "class-variance-authority";
 import { ReactNode } from "react";
 
-import { ValueLabel } from "@/types";
+import { ValueLabel } from "@/shared/types/options";
 
 import { comboBoxVariants } from "./variants";
 
@@ -25,6 +25,7 @@ type PartialButtonProps = Omit<
 >;
 
 export interface Props
-  extends PartialButtonProps,
+  extends
+    PartialButtonProps,
     ComboBoxProps,
     VariantProps<typeof comboBoxVariants> {}

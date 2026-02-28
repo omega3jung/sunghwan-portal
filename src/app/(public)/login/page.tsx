@@ -7,15 +7,17 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { adminAuth } from "@/app/_mocks";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
 import {
   useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
-} from "@/hooks/useUserPreference";
-import { useLanguageState } from "@/services/language";
-import { AvailableLanguages } from "@/types";
+} from "@/feature/user/preference/queries";
+import { useLanguageState } from "@/hooks/useLanguage";
+import { languageOptions } from "@/shared/constants/options/language";
+import { isLocale } from "@/utils";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -34,19 +36,19 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { data: userPreference } = useFetchUserPreference();
+  const { data: userPreference } = useFetchUserPreference(null);
   const { mutate: createUserPreference } = usePostUserPreference();
   const { mutate: updateUserPreference } = usePutUserPreference();
 
   const { t } = useTranslation("login");
-  const { language, setLanguage } = useLanguageState();
+  const { language, changeLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [resetToken, setResetToken] = useState<ResetPasswordState | null>(null);
   const [formType, setFormType] = useState<LoginStateEnum>(
-    LoginStateEnum.LOGIN
+    LoginStateEnum.LOGIN,
   );
 
   const [currentID, setCurrentID] = useState<string>("");
@@ -61,7 +63,7 @@ export default function LoginPage() {
     if (!userPreference) return;
 
     if (userPreference.language) {
-      setLanguage(userPreference.language);
+      changeLanguage(userPreference.language);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPreference]);
@@ -75,7 +77,7 @@ export default function LoginPage() {
   // try demo click.
   const onTryDemo = (): Promise<void> => {
     setDemoLoading(true);
-    return onSignIn({ username: "__demo__", password: "__demo__" });
+    return onSignIn({ username: adminAuth.id, password: adminAuth.id });
   };
 
   // process sign in.
@@ -213,7 +215,10 @@ export default function LoginPage() {
   };
 
   const handleLanguageChange = (newLang: string) => {
-    setLanguage(newLang);
+    if (!userPreference) return;
+    if (!isLocale(newLang)) return;
+
+    changeLanguage(newLang);
 
     const payload = {
       ...userPreference,
@@ -221,9 +226,9 @@ export default function LoginPage() {
     };
 
     if (!userPreference) {
-      createUserPreference(payload);
+      createUserPreference({ userId: null, data: payload });
     } else {
-      updateUserPreference(payload);
+      updateUserPreference({ userId: null, data: payload });
     }
   };
 
@@ -231,10 +236,19 @@ export default function LoginPage() {
     if (hasSignedIn && status === "authenticated") {
       redirect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSignedIn, status]);
 
+  if (status === "loading") {
+    return (
+      <div className="flex w-full items-center justify-center gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:min-h-[44rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
+        <Loader2 className="h-20 w-20 animate-spin text-background" />{" "}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
+    <div className="flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:w-[40rem] xl:min-h-[44rem] xl:gap-9 xl:pt-12 xl:pb-8 xl:px-10">
       {formType === LoginStateEnum.LOGIN && (
         <div>
           <LoginForm onSubmit={onSubmit} isLoading={loading} />
@@ -305,7 +319,7 @@ export default function LoginPage() {
             className="mt-2 w-48"
             placeholder="Language Picker"
             variant="icon"
-            options={AvailableLanguages}
+            options={languageOptions}
             onChange={handleLanguageChange}
             icon={<Globe />}
             value={language ?? "en"}

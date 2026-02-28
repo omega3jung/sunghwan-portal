@@ -1,13 +1,10 @@
 import axios from "axios";
 
-import fetcher from "@/services/fetcher";
+import client from "@/api/client";
+import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/user";
+import { AuthUser } from "@/domain/auth";
 
-export type LoginResponse = {
-  id: string;
-  name: string;
-  email: string;
-  accessToken: string;
-};
+export type LoginResponse = AuthUser;
 
 // process login.
 export const loginApi = async ({
@@ -19,23 +16,29 @@ export const loginApi = async ({
 }): Promise<LoginResponse> => {
   try {
     // demo login
-    if (username === "__demo__") {
-      console.log(username);
-      return {
-        id: "demo",
-        name: "Demo Guest",
-        email: "demo@sunghwan.dev",
-        accessToken: "demo-token",
-      };
+    const demoAuth = resolveDemoAuth(username);
+
+    if (demoAuth) {
+      console.log(demoAuth.displayName);
+      return { ...demoAuth, dataScope: "LOCAL" };
     }
+
+    // tenant demo login
+    const tenantDemoAuth = resolveTenantAuth(username);
+
+    if (tenantDemoAuth) {
+      console.log(tenantDemoAuth.displayName);
+      return { ...tenantDemoAuth, dataScope: "LOCAL" };
+    }
+
     console.log("real login");
 
     // real login
-    const res = await fetcher.api.post<LoginResponse>("/auth/login", {
+    const res = await client.api.post<LoginResponse>("/auth/login", {
       username,
       password,
     });
-    return { ...res.data };
+    return { ...res.data, dataScope: "REMOTE" };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {

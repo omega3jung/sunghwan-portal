@@ -3,7 +3,7 @@
 
 import { ReactNode } from "react";
 
-import { ENVIRONMENT } from "@/lib/environment";
+import { withBasePath } from "@/utils";
 import { cn } from "@/utils";
 
 // force-dynamic to block cache store.
@@ -18,15 +18,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         "md:flex-row-reverse lg:gap-32 lg:px-32"
       )}
       style={{
-        backgroundImage: `url(${ENVIRONMENT.BASE_PATH}/images/background.jpg)`,
+        backgroundImage: `url(${withBasePath("/images/background.jpg")})`,
       }}
     >
       <div className="flex grow items-center justify-center">
         <div className="flex w-full max-w-2xl justify-center">
-          <img
-            src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
-            alt={"logo"}
-          />
+          <img src={`${withBasePath("/images/logo_light.png")}`} alt={"logo"} />
         </div>
       </div>
       <div className="flex flex-col items-center justify-center text-primary">

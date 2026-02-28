@@ -1,4 +1,4 @@
-import type { Locale } from "@/types";
+import { Locale } from "@/shared/types";
 
 export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
