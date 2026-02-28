@@ -64,7 +64,9 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
             disabled={disabled || readOnly}
           >
             {!value.length ? (
-              <div>{placeholder}</div>
+              <div className="font-normal text-muted-foreground px-2">
+                {placeholder}
+              </div>
             ) : (
               <div className="flex flex-wrap items-center gap-1">
                 {options.map((item, index) => {

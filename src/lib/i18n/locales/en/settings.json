@@ -103,12 +103,12 @@
       "category": "Category",
       "categoryList": "Category List",
       "approvalStep": "Approval Step",
-      "approvalStepList": "Approval Step List",
+      "approvalStepList": "Approval Steps",
       "assignmentRule": "Assignment Rule",
-      "assignmentRuleList": "Assignment Rule List",
+      "assignmentRuleList": "Assignment Rules",
       "client": "Client",
       "clientList": "Client List",
-      "noResults": "No Result",
+      "noResults": "No results found",
       "saveChanges": "Save Changes"
     },
     "categoryTab": {
@@ -121,24 +121,29 @@
     "approvalStepTab": {
       "name": "Name",
       "description": "Description",
-      "assigneeType": "Assignee type",
+      "assigneeType": "Assignee Type",
       "assigneeTypes": {
         "manager": "Manager",
         "department": "Department",
-        "jobField": "Job title",
+        "jobField": "Job Title",
         "employee": "Employee"
       },
-      "managerLevel": "Manager level",
+      "managerLevel": "Manager Level",
       "department": "Department",
-      "departmentPlaceholder": "Select department",
-      "jobField": "Job title",
-      "jobFieldPlaceholder": "Select job title",
+      "departmentPlaceholder": "Select a department",
+      "jobField": "Job Title",
+      "jobFieldPlaceholder": "Select a job title",
       "employee": "Employee",
-      "employeePlaceholder": "Select assignee",
-      "skipAccessLevel": "Skipable access level"
+      "employeePlaceholder": "Select an assignee",
+      "skipAccessLevel": "Skippable Access Level"
     },
     "assignmentRuleTab": {
-      "selectAssignee": "Select assignee"
+      "name": "Category",
+      "namePlaceholder": "Select a category",
+      "jobField": "Job Title",
+      "selectAssigneJobField": "Select Assignee Job Title",
+      "employee": "Employee",
+      "selectAssignee": "Select Assignee"
     }
   }
 }

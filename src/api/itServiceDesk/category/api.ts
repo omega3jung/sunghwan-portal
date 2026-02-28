@@ -10,7 +10,7 @@ export const itServiceDeskCategoryApi = {
     if (!params) return [];
 
     const res = await client.api.get<CategoryResponse>(
-      "/api/it-service-desk/category",
+      "/api/it-service-desk/categories",
       { params },
     );
 
@@ -18,7 +18,7 @@ export const itServiceDeskCategoryApi = {
   },
 
   post: async (data: Category) => {
-    const res = await fetch("/api/it-service-desk/category", {
+    const res = await fetch("/api/it-service-desk/categories", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
@@ -27,7 +27,7 @@ export const itServiceDeskCategoryApi = {
   },
 
   put: async (data: Category) => {
-    const res = await fetch("/api/it-service-desk/category", {
+    const res = await fetch("/api/it-service-desk/categories", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export const itServiceDeskCategoryApi = {
   },
 
   delete: async (data: Category) => {
-    await fetch("/api/it-service-desk/category", {
+    await fetch("/api/it-service-desk/categories", {
       method: "DELETE",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },

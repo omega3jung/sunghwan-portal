@@ -10,7 +10,7 @@ export const itServiceDeskAssignmentRuleApi = {
     if (!params) return [];
 
     const res = await client.api.get<AssignmentRuleResponse>(
-      "/api/it-service-desk/assignment-rule",
+      "/api/it-service-desk/assignment-rules",
       { params },
     );
 
@@ -18,7 +18,7 @@ export const itServiceDeskAssignmentRuleApi = {
   },
 
   post: async (data: AssignmentRule) => {
-    const res = await fetch("/api/it-service-desk/assignment-rule", {
+    const res = await fetch("/api/it-service-desk/assignment-rules", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
@@ -27,7 +27,7 @@ export const itServiceDeskAssignmentRuleApi = {
   },
 
   put: async (data: AssignmentRule) => {
-    const res = await fetch("/api/it-service-desk/assignment-rule", {
+    const res = await fetch("/api/it-service-desk/assignment-rules", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export const itServiceDeskAssignmentRuleApi = {
   },
 
   delete: async (data: AssignmentRule) => {
-    await fetch("/api/it-service-desk/assignment-rule", {
+    await fetch("/api/it-service-desk/assignment-rules", {
       method: "DELETE",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },

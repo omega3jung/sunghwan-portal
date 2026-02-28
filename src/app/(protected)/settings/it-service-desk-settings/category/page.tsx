@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Globe, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/select";
 import { Client } from "@/domain/itServiceDesk";
 import { useFetchItServiceDeskCategory } from "@/feature/itServiceDesk";
-import { useLanguageState } from "@/hooks/useLanguage";
-import { DbParams } from "@/shared/types";
+import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { languageOptions } from "@/shared/constants";
+import { DbParams, Locale } from "@/shared/types";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
 import { CategoryForm } from "./components/CategoryForm";
@@ -27,7 +28,9 @@ import { useCategoryTree } from "./hooks/useCategoryTree";
 export default function CategoryPage() {
   const { isInternal } = useSettingsScope();
   const { t } = useTranslation("settings");
-  const { language } = useLanguageState();
+
+  const { current: userPreference } = useCurrentPreference();
+  const [language, setLanguage] = useState<Locale>(userPreference.language);
 
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [clientData, setClientData] = useState<Client[]>([]);
@@ -44,7 +47,7 @@ export default function CategoryPage() {
     addCategory,
     removeCategory,
     addSubCategory,
-  } = useCategoryTree({ selectedClient, categories, language });
+  } = useCategoryTree({ selectedClient, categories });
 
   const onSaveChange = () => {
     // TODO : save shanges
@@ -77,10 +80,10 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {/* Category Tree */}
       <div
-        className="flex flex-col gap-2 p-2 pr-10"
+        className="col-span-3 flex flex-col gap-2 p-2 pr-10"
         style={{ "--settings-offset": "18rem" } as React.CSSProperties}
       >
         {isInternal && (
@@ -115,10 +118,31 @@ export default function CategoryPage() {
             </Select>
           </div>
         )}
-        <div className="flex items-end justify-between">
-          <span className="">
-            {t("itServiceDeskSettings.general.categoryList")}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-nowrap">
+              {t("itServiceDeskSettings.general.categoryList")}
+            </span>
+            <Select
+              value={language}
+              onValueChange={(value) => setLanguage(value as Locale)}
+            >
+              <SelectTrigger className="border-none">
+                <Globe className="w-4 mr-1" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {languageOptions.map((language) => (
+                  <SelectItem
+                    key={`select_item_${language.value}`}
+                    value={language.value}
+                  >
+                    {language.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <Button
             variant="outline"
             type="button"
@@ -142,13 +166,13 @@ export default function CategoryPage() {
       </div>
 
       {/* Category details */}
-      <div className="p-2">
+      <div className="col-span-2 p-2">
         <div className="flex justify-end pb-2">
           <Button
             className=""
             type="button"
             size="sm"
-            disabled={true || isLoading}
+            disabled={true || isLoading} // TODO. after connect to DB.
             onClick={onSaveChange}
           >
             {t("itServiceDeskSettings.general.saveChanges")}

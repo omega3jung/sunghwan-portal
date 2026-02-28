@@ -1,41 +1,42 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { ChevronRight, Plus, X } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
 
-import { DragHandle } from "@/components/custom/dnd/DragHandle";
 import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
 import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { cn } from "@/utils";
 
-import { CategoryData, MainCategoryData } from "../types";
+import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
 
 type Props = {
-  tree: TreeNodes<MainCategoryData | CategoryData>;
+  tree: TreeNodes<MainAssignmentRuleData | AssignmentRuleData>;
   setTree: (
-    value: SetStateAction<TreeNodes<MainCategoryData | CategoryData>>,
+    value: SetStateAction<
+      TreeNodes<MainAssignmentRuleData | AssignmentRuleData>
+    >,
   ) => void;
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;
-  addSubCategory: (parentId: UniqueIdentifier) => void;
-  removeCategory: (id: UniqueIdentifier) => void;
   language: SupportedLanguage;
   isLoading: boolean;
 };
 
-export const CategoryTree = ({
+export const AsgginmentRuleTree = ({
   tree,
   setTree,
   selectedId,
   setSelectedId,
-  addSubCategory,
-  removeCategory,
   language,
   isLoading,
 }: Props) => {
+  const { t } = useTranslation("settings");
+
   return (
     <ScrollArea className="h-full w-full border-y md:h-[calc(100vh-var(--settings-offset))]">
       <SortableTree
@@ -47,7 +48,6 @@ export const CategoryTree = ({
         renderItem={(item, { onCollapse }) => {
           const data = item.data;
           const isSub = item.depth > 0;
-          const limit = item.maximum;
 
           return (
             <SortableTreeItem
@@ -57,7 +57,7 @@ export const CategoryTree = ({
               indentationWidth={20}
               onClick={() => setSelectedId(item.id)}
             >
-              {({ dragHandleProps }) => (
+              {() => (
                 <div
                   data-selected={item.id === selectedId}
                   className={cn(
@@ -97,36 +97,24 @@ export const CategoryTree = ({
                       {data.name[language] ?? data.name.en}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {!isSub &&
-                      !isSub &&
-                      limit != null &&
-                      item.children.length < limit && (
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          size="icon_xs"
-                          disabled={isLoading}
-                          onClick={() => addSubCategory(data.id)}
-                        >
-                          <Plus />
-                        </Button>
-                      )}
-                    {data.isCreated ? (
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon_xs"
-                        disabled={isLoading}
-                        onClick={() => removeCategory(data.id)}
-                      >
-                        <X />
-                      </Button>
+                  <span className="grid grid-cols-2 gap-2">
+                    {data.jobFieldIds.length > 0 ? (
+                      <Badge className="rounded-full w-fit" variant="secondary">
+                        {data.jobFieldIds.length > 0 &&
+                          `${data.jobFieldIds.length} ${t("itServiceDeskSettings.assignmentRuleTab.jobField")}`}
+                      </Badge>
                     ) : (
-                      <span className="w-5"></span>
+                      <span />
                     )}
-                    <DragHandle {...dragHandleProps} />
-                  </div>
+                    {data.employeeIds.length > 0 ? (
+                      <Badge className="rounded-full">
+                        {data.employeeIds.length > 0 &&
+                          `${data.employeeIds.length} ${t("itServiceDeskSettings.assignmentRuleTab.employee")}`}
+                      </Badge>
+                    ) : (
+                      <span />
+                    )}
+                  </span>
                 </div>
               )}
             </SortableTreeItem>

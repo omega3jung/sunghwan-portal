@@ -14,7 +14,7 @@ import {
   getDefaultApprovalData,
   MAX_APPROVAL_STEP_PER_CATEGORY,
 } from "../constnats";
-import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
+import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 import { approvalStepToTree, mapApprovalData } from "../util.mapper";
 
 type Params = {

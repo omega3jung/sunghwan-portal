@@ -7,27 +7,21 @@ import {
   flattenTree,
   removeItem,
 } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
 import { ClientCategoryTree } from "@/domain/itServiceDesk";
 
 import {
   getDefaultCateogoryData,
   getDefaultSubCateogoryData,
 } from "../constants";
-import type { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, MainCategoryData } from "../types";
 import { categoryToTree, mapCategoryData } from "../util.mapper";
 
 type Params = {
   selectedClient: string | null;
   categories: ClientCategoryTree[] | undefined;
-  language: SupportedLanguage;
 };
 
-export function useCategoryTree({
-  selectedClient,
-  categories,
-  language,
-}: Params) {
+export function useCategoryTree({ selectedClient, categories }: Params) {
   const [tree, setTree] = useState<TreeNodes<CategoryData | MainCategoryData>>(
     [],
   );

@@ -116,8 +116,7 @@
       "description": "Descripción",
       "placeholder": "Marcador de posición",
       "active": "Activo",
-      "addCategory": "Añadir categoría",
-      "saveChanges": "Guardar cambios"
+      "addCategory": "Agregar categoría"
     },
     "approvalStepTab": {
       "name": "Nombre",
@@ -129,16 +128,21 @@
         "jobField": "Puesto",
         "employee": "Empleado"
       },
-      "managerLevel": "Nivel de gerente",
+      "managerLevel": "Nivel del gerente",
       "department": "Departamento",
       "departmentPlaceholder": "Seleccionar departamento",
       "jobField": "Puesto",
       "jobFieldPlaceholder": "Seleccionar puesto",
       "employee": "Empleado",
-      "employeePlaceholder": "Seleccionar cesionario",
-      "skipAccessLevel": "Omitir nivel de acceso"
+      "employeePlaceholder": "Seleccionar asignado",
+      "skipAccessLevel": "Nivel de acceso omitible"
     },
     "assignmentRuleTab": {
+      "name": "Nombre",
+      "namePlaceholder": "Seleccionar una categoría",
+      "jobField": "Puesto",
+      "selectAssigneJobField": "Seleccionar puesto del asignado",
+      "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado"
     }
   }

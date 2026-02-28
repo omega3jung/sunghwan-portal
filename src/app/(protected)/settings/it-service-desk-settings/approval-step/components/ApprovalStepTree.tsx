@@ -100,31 +100,9 @@ export const ApprovalStepTree = ({
                         <span className="w-4" />
                       )}
 
-                      {data.nodeType === "category" && (
-                        <>
-                          <span className="truncate">{data.name.en}</span>
-
-                          {language !== "en" && data.name[language] && (
-                            <span className="text-muted-foreground truncate">
-                              {data.name[language]}
-                            </span>
-                          )}
-                        </>
-                      )}
-
-                      {data.nodeType === "approvalStep" && (
-                        <>
-                          <span className="truncate">
-                            {data.name.en || `step ${item.index}`}
-                          </span>
-
-                          {language !== "en" && data.name[language] && (
-                            <span className="text-muted-foreground truncate">
-                              {data.name[language]}
-                            </span>
-                          )}
-                        </>
-                      )}
+                      <span className="truncate">
+                        {data.name[language] ?? data.name.en}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {!isSub &&

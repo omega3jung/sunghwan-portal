@@ -98,15 +98,14 @@
       }
     }
   },
-
   "itServiceDeskSettings": {
     "general": {
       "category": "Catégorie",
       "categoryList": "Liste des catégories",
       "approvalStep": "Étape d'approbation",
       "approvalStepList": "Liste des étapes d'approbation",
-      "assignmentRule": "Règle d'attribution",
-      "assignmentRuleList": "Liste des règles d'attribution",
+      "assignmentRule": "Règle d’attribution",
+      "assignmentRuleList": "Liste des règles d’attribution",
       "client": "Client",
       "clientList": "Liste des clients",
       "noResults": "Aucun résultat",
@@ -115,32 +114,36 @@
     "categoryTab": {
       "name": "Nom",
       "description": "Description",
-      "placeholder": "Espace réservé",
+      "placeholder": "Texte indicatif",
       "active": "Actif",
-      "addCategory": "Ajouter une catégorie",
-      "saveChanges": "Enregistrer les modifications"
+      "addCategory": "Ajouter une catégorie"
     },
     "approvalStepTab": {
       "name": "Nom",
       "description": "Description",
-      "assigneeType": "Type de responsable",
+      "assigneeType": "Type d’attributaire",
       "assigneeTypes": {
-        "manager": "Manager",
-        "department": "Department",
-        "jobField": "Fob title",
-        "employee": "Employee"
+        "manager": "Responsable",
+        "department": "Département",
+        "jobField": "Poste",
+        "employee": "Employé"
       },
-      "managerLevel": "Manager level",
-      "department": "Department",
-      "departmentPlaceholder": "Select department",
-      "jobField": "Fob title",
-      "jobFieldPlaceholder": "Select job title",
-      "employee": "Employee",
-      "employeePlaceholder": "Select assigned for",
-      "skipAccessLevel": "Skip access level"
+      "managerLevel": "Niveau du responsable",
+      "department": "Département",
+      "departmentPlaceholder": "Sélectionner un département",
+      "jobField": "Poste",
+      "jobFieldPlaceholder": "Sélectionner un poste",
+      "employee": "Employé",
+      "employeePlaceholder": "Sélectionner l’attributaire",
+      "skipAccessLevel": "Niveau d’accès pouvant être ignoré"
     },
     "assignmentRuleTab": {
-      "selectAssignee": "Sélectionner le responsable"
+      "name": "Nom",
+      "namePlaceholder": "Sélectionner une catégorie",
+      "jobField": "Poste",
+      "selectAssigneJobField": "Sélectionner le poste de l’attributaire",
+      "employee": "Employé",
+      "selectAssignee": "Sélectionner l’attributaire"
     }
   }
 }
