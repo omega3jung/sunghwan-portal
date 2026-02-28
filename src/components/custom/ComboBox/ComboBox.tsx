@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { ComboBoxProps, Props } from "./type";
 import { comboBoxVariants } from "./variants";
@@ -117,7 +117,7 @@ const Component = (props: ComboBoxProps & Props, _: any) => {
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === item.value ? "opacity-100" : "opacity-0"
+                        value === item.value ? "opacity-100" : "opacity-0",
                       )}
                     />
                   )}

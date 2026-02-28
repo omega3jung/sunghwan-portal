@@ -2,7 +2,7 @@ import { type VariantProps } from "class-variance-authority";
 import React from "react";
 
 import { badgeVariants } from "@/components/ui/badge";
-import { ValueLabel } from "@/types/common";
+import { ValueLabel } from "@/shared/types/options";
 
 import { comboBoxVariants } from "./variants";
 
@@ -24,7 +24,8 @@ export type MultiComboboxProps = {
 };
 
 export interface ComboBoxProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
     MultiComboboxProps,
     VariantProps<typeof comboBoxVariants> {
   value: string[];

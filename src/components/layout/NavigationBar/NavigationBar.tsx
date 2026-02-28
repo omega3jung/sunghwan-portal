@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useImpersonation } from "@/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
 import ShieldBadge from "./ShieldBadge";
@@ -103,7 +103,7 @@ export const NavigationBar = (props: Props) => {
         React.cloneElement(props.pathRoute[0]?.icon, {
           className: cn(
             "w-5 h-5 mr-1",
-            props.pathRoute[0]?.icon?.props.className
+            props.pathRoute[0]?.icon?.props.className,
           ),
         })
       );
@@ -115,7 +115,7 @@ export const NavigationBar = (props: Props) => {
           <span
             className={cn(
               "mr-3.5 hidden text-cell dark:text-label-title sm:block",
-              route.icon && "ms-1"
+              route.icon && "ms-1",
             )}
           >
             {route.name}
@@ -123,7 +123,7 @@ export const NavigationBar = (props: Props) => {
           <span
             className={cn(
               "mr-3.5 text-cell dark:text-label-title sm:hidden",
-              route.icon && "ms-1"
+              route.icon && "ms-1",
             )}
           >
             ...
@@ -150,8 +150,8 @@ export const NavigationBar = (props: Props) => {
     <nav
       data-testid="screen-navigation-bar"
       className={cn(
-        "col-span-full flex items-center gap-3 border-b px-2 md:col-start-2",
-        props.className
+        "col-span-full flex items-center gap-3 border-b pl-6 pr-2 md:col-start-2",
+        props.className,
       )}
     >
       <Button
@@ -178,7 +178,9 @@ export const NavigationBar = (props: Props) => {
         {title}
         <ShieldBadge
           badgeText={
-            userRoleBadge ?? !isImpersonating ? "Owner" : effective?.name ?? ""
+            (userRoleBadge ?? !isImpersonating)
+              ? "Owner"
+              : (effective?.displayName ?? "")
           }
           shieldText={userRoleBadge}
           viewOnly={false}

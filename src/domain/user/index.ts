@@ -1,2 +1,4 @@
-export * from "./defaultPreference";
-export * from "./demo";
+// src/domain/user/index.ts
+
+export * from "./model";
+export * from "./preference";

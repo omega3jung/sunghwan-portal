@@ -1,0 +1,1030 @@
+[
+  {
+    "employee_id": "51",
+    "employee_name": {
+      "en": { "first": "James", "middle": "", "last": "Smith" }
+    },
+    "employee_phone": "",
+    "employee_email": "james.smith@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "20",
+    "employee_job_field_id": "30",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "52",
+    "employee_name": {
+      "en": { "first": "Olivia", "middle": "", "last": "Johnson" }
+    },
+    "employee_phone": "",
+    "employee_email": "olivia.johnson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "20",
+    "employee_job_field_id": "31",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "53",
+    "employee_name": {
+      "en": { "first": "Liam", "middle": "", "last": "Williams" }
+    },
+    "employee_phone": "",
+    "employee_email": "liam.williams@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "32",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "54",
+    "employee_name": {
+      "en": { "first": "Emma", "middle": "", "last": "Brown" }
+    },
+    "employee_phone": "",
+    "employee_email": "emma.brown@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "33",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "55",
+    "employee_name": {
+      "en": { "first": "Noah", "middle": "", "last": "Jones" }
+    },
+    "employee_phone": "",
+    "employee_email": "noah.jones@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "33",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "56",
+    "employee_name": {
+      "en": { "first": "Ava", "middle": "", "last": "Garcia" }
+    },
+    "employee_phone": "",
+    "employee_email": "ava.garcia@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "34",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "57",
+    "employee_name": {
+      "en": { "first": "William", "middle": "", "last": "Miller" }
+    },
+    "employee_phone": "",
+    "employee_email": "william.miller@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "34",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "58",
+    "employee_name": {
+      "en": { "first": "Sophia", "middle": "", "last": "Davis" }
+    },
+    "employee_phone": "",
+    "employee_email": "sophia.davis@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "21",
+    "employee_job_field_id": "34",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "59",
+    "employee_name": {
+      "en": { "first": "Benjamin", "middle": "", "last": "Rodriguez" }
+    },
+    "employee_phone": "",
+    "employee_email": "benjamin.rodriguez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "35",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "60",
+    "employee_name": {
+      "en": { "first": "Isabella", "middle": "", "last": "Martinez" }
+    },
+    "employee_phone": "",
+    "employee_email": "isabella.martinez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "36",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "61",
+    "employee_name": {
+      "en": { "first": "Lucas", "middle": "", "last": "Hernandez" }
+    },
+    "employee_phone": "",
+    "employee_email": "lucas.hernandez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "36",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "62",
+    "employee_name": {
+      "en": { "first": "Mia", "middle": "", "last": "Lopez" }
+    },
+    "employee_phone": "",
+    "employee_email": "mia.lopez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "63",
+    "employee_name": {
+      "en": { "first": "Henry", "middle": "", "last": "Gonzalez" }
+    },
+    "employee_phone": "",
+    "employee_email": "henry.gonzalez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "64",
+    "employee_name": {
+      "en": { "first": "Charlotte", "middle": "", "last": "Wilson" }
+    },
+    "employee_phone": "",
+    "employee_email": "charlotte.wilson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "65",
+    "employee_name": {
+      "en": { "first": "Alexander", "middle": "", "last": "Anderson" }
+    },
+    "employee_phone": "",
+    "employee_email": "alexander.anderson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "66",
+    "employee_name": {
+      "en": { "first": "Amelia", "middle": "", "last": "Thomas" }
+    },
+    "employee_phone": "",
+    "employee_email": "amelia.thomas@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "67",
+    "employee_name": {
+      "en": { "first": "Michael", "middle": "", "last": "Taylor" }
+    },
+    "employee_phone": "",
+    "employee_email": "michael.taylor@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "22",
+    "employee_job_field_id": "37",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "68",
+    "employee_name": {
+      "en": { "first": "Harper", "middle": "", "last": "Moore" }
+    },
+    "employee_phone": "",
+    "employee_email": "harper.moore@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "52",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "69",
+    "employee_name": {
+      "en": { "first": "Daniel", "middle": "", "last": "Jackson" }
+    },
+    "employee_phone": "",
+    "employee_email": "daniel.jackson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "70",
+    "employee_name": {
+      "en": { "first": "Evelyn", "middle": "", "last": "Martin" }
+    },
+    "employee_phone": "",
+    "employee_email": "evelyn.martin@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "71",
+    "employee_name": {
+      "en": { "first": "Matthew", "middle": "", "last": "Lee" }
+    },
+    "employee_phone": "",
+    "employee_email": "matthew.lee@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "72",
+    "employee_name": {
+      "en": { "first": "Abigail", "middle": "", "last": "Perez" }
+    },
+    "employee_phone": "",
+    "employee_email": "abigail.perez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "73",
+    "employee_name": {
+      "en": { "first": "Joseph", "middle": "", "last": "Thompson" }
+    },
+    "employee_phone": "",
+    "employee_email": "joseph.thompson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "74",
+    "employee_name": {
+      "en": { "first": "Emily", "middle": "", "last": "White" }
+    },
+    "employee_phone": "",
+    "employee_email": "emily.white@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "31",
+    "employee_job_field_id": "53",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "75",
+    "employee_name": {
+      "en": { "first": "David", "middle": "", "last": "Harris" }
+    },
+    "employee_phone": "",
+    "employee_email": "david.harris@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "54",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "76",
+    "employee_name": {
+      "en": { "first": "Ella", "middle": "", "last": "Sanchez" }
+    },
+    "employee_phone": "",
+    "employee_email": "ella.sanchez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "77",
+    "employee_name": {
+      "en": { "first": "Samuel", "middle": "", "last": "Clark" }
+    },
+    "employee_phone": "",
+    "employee_email": "samuel.clark@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "78",
+    "employee_name": {
+      "en": { "first": "Avery", "middle": "", "last": "Ramirez" }
+    },
+    "employee_phone": "",
+    "employee_email": "avery.ramirez@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "79",
+    "employee_name": {
+      "en": { "first": "Logan", "middle": "", "last": "Lewis" }
+    },
+    "employee_phone": "",
+    "employee_email": "logan.lewis@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "80",
+    "employee_name": {
+      "en": { "first": "Sofia", "middle": "", "last": "Robinson" }
+    },
+    "employee_phone": "",
+    "employee_email": "sofia.robinson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "81",
+    "employee_name": {
+      "en": { "first": "Sebastian", "middle": "", "last": "Walker" }
+    },
+    "employee_phone": "",
+    "employee_email": "sebastian.walker@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "32",
+    "employee_job_field_id": "55",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 12
+  },
+  {
+    "employee_id": "82",
+    "employee_name": {
+      "en": { "first": "Aria", "middle": "", "last": "Young" }
+    },
+    "employee_phone": "",
+    "employee_email": "aria.young@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "33",
+    "employee_job_field_id": "56",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "83",
+    "employee_name": {
+      "en": { "first": "Jack", "middle": "", "last": "Allen" }
+    },
+    "employee_phone": "",
+    "employee_email": "jack.allen@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "33",
+    "employee_job_field_id": "57",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "84",
+    "employee_name": {
+      "en": { "first": "Scarlett", "middle": "", "last": "King" }
+    },
+    "employee_phone": "",
+    "employee_email": "scarlett.king@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "34",
+    "employee_job_field_id": "58",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "85",
+    "employee_name": {
+      "en": { "first": "Owen", "middle": "", "last": "Wright" }
+    },
+    "employee_phone": "",
+    "employee_email": "owen.wright@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "34",
+    "employee_job_field_id": "59",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "86",
+    "employee_name": {
+      "en": { "first": "Grace", "middle": "", "last": "Scott" }
+    },
+    "employee_phone": "",
+    "employee_email": "grace.scott@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "34",
+    "employee_job_field_id": "59",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "87",
+    "employee_name": {
+      "en": { "first": "Theodore", "middle": "", "last": "Green" }
+    },
+    "employee_phone": "",
+    "employee_email": "theodore.green@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "34",
+    "employee_job_field_id": "59",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "88",
+    "employee_name": {
+      "en": { "first": "Chloe", "middle": "", "last": "Baker" }
+    },
+    "employee_phone": "",
+    "employee_email": "chloe.baker@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "35",
+    "employee_job_field_id": "60",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "89",
+    "employee_name": {
+      "en": { "first": "Julian", "middle": "", "last": "Adams" }
+    },
+    "employee_phone": "",
+    "employee_email": "julian.adams@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "35",
+    "employee_job_field_id": "61",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "90",
+    "employee_name": {
+      "en": { "first": "Victoria", "middle": "", "last": "Nelson" }
+    },
+    "employee_phone": "",
+    "employee_email": "victoria.nelson@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "35",
+    "employee_job_field_id": "61",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "91",
+    "employee_name": {
+      "en": { "first": "Ethan", "middle": "", "last": "Carter" }
+    },
+    "employee_phone": "",
+    "employee_email": "Ethan.Carter@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "36",
+    "employee_job_field_id": "62",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "92",
+    "employee_name": {
+      "en": { "first": "Madison", "middle": "", "last": "Reed" }
+    },
+    "employee_phone": "",
+    "employee_email": "Madison.Reed@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "36",
+    "employee_job_field_id": "63",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "93",
+    "employee_name": {
+      "en": { "first": "Caleb", "middle": "", "last": "Morgan" }
+    },
+    "employee_phone": "",
+    "employee_email": "Caleb.Morgan@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "36",
+    "employee_job_field_id": "63",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "94",
+    "employee_name": {
+      "en": { "first": "Lily", "middle": "", "last": "Bell" }
+    },
+    "employee_phone": "",
+    "employee_email": "Lily.Bell@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "38",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "95",
+    "employee_name": {
+      "en": { "first": "Nathan", "middle": "", "last": "Bailey" }
+    },
+    "employee_phone": "",
+    "employee_email": "Nathan.Bailey@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "39",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "96",
+    "employee_name": {
+      "en": { "first": "Zoe", "middle": "", "last": "Cooper" }
+    },
+    "employee_phone": "",
+    "employee_email": "Zoe.Cooper@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "39",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "97",
+    "employee_name": {
+      "en": { "first": "Aaron", "middle": "", "last": "Richardson" }
+    },
+    "employee_phone": "",
+    "employee_email": "Aaron.Richardson@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "40",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "98",
+    "employee_name": {
+      "en": { "first": "Hannah", "middle": "", "last": "Cox" }
+    },
+    "employee_phone": "",
+    "employee_email": "Hannah.Cox@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "40",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "99",
+    "employee_name": {
+      "en": { "first": "Isaac", "middle": "", "last": "Ward" }
+    },
+    "employee_phone": "",
+    "employee_email": "Isaac.Ward@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "40",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "100",
+    "employee_name": {
+      "en": { "first": "Natalie", "middle": "", "last": "Torres" }
+    },
+    "employee_phone": "",
+    "employee_email": "Natalie.Torres@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "40",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "101",
+    "employee_name": {
+      "en": { "first": "Leah", "middle": "", "last": "Gray" }
+    },
+    "employee_phone": "",
+    "employee_email": "Leah.Gray@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "23",
+    "employee_job_field_id": "40",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "102",
+    "employee_name": {
+      "en": { "first": "Adrian", "middle": "", "last": "Ramsey" }
+    },
+    "employee_phone": "",
+    "employee_email": "Adrian.Ramsey@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "41",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "103",
+    "employee_name": {
+      "en": { "first": "Stella", "middle": "", "last": "Barnes" }
+    },
+    "employee_phone": "",
+    "employee_email": "Stella.Barnes@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "42",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "104",
+    "employee_name": {
+      "en": { "first": "Jason", "middle": "", "last": "Hughes" }
+    },
+    "employee_phone": "",
+    "employee_email": "Jason.Hughes@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "42",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "105",
+    "employee_name": {
+      "en": { "first": "Claire", "middle": "", "last": "Price" }
+    },
+    "employee_phone": "",
+    "employee_email": "Claire.Price@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "42",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "106",
+    "employee_name": {
+      "en": { "first": "Miles", "middle": "", "last": "Bennett" }
+    },
+    "employee_phone": "",
+    "employee_email": "Miles.Bennett@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "42",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "107",
+    "employee_name": {
+      "en": { "first": "Ruby", "middle": "", "last": "Wood" }
+    },
+    "employee_phone": "",
+    "employee_email": "Ruby.Wood@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "24",
+    "employee_job_field_id": "42",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "108",
+    "employee_name": {
+      "en": { "first": "Dominic", "middle": "", "last": "Coleman" }
+    },
+    "employee_phone": "",
+    "employee_email": "Dominic.Coleman@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "26",
+    "employee_job_field_id": "45",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "109",
+    "employee_name": {
+      "en": { "first": "Sadie", "middle": "", "last": "Foster" }
+    },
+    "employee_phone": "",
+    "employee_email": "Sadie.Foster@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "26",
+    "employee_job_field_id": "46",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "110",
+    "employee_name": {
+      "en": { "first": "Blake", "middle": "", "last": "Simmons" }
+    },
+    "employee_phone": "",
+    "employee_email": "Blake.Simmons@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "26",
+    "employee_job_field_id": "46",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "111",
+    "employee_name": {
+      "en": { "first": "Elena", "middle": "", "last": "Patterson" }
+    },
+    "employee_phone": "",
+    "employee_email": "Elena.Patterson@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "26",
+    "employee_job_field_id": "46",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "112",
+    "employee_name": {
+      "en": { "first": "Tristan", "middle": "", "last": "Russell" }
+    },
+    "employee_phone": "",
+    "employee_email": "Tristan.Russell@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "27",
+    "employee_job_field_id": "47",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "113",
+    "employee_name": {
+      "en": { "first": "Maya", "middle": "", "last": "Griffin" }
+    },
+    "employee_phone": "",
+    "employee_email": "Maya.Griffin@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "27",
+    "employee_job_field_id": "48",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "114",
+    "employee_name": {
+      "en": { "first": "Victor", "middle": "", "last": "Diaz" }
+    },
+    "employee_phone": "",
+    "employee_email": "Victor.Diaz@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "27",
+    "employee_job_field_id": "49",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "115",
+    "employee_name": {
+      "en": { "first": "Penelope", "middle": "", "last": "Hayes" }
+    },
+    "employee_phone": "",
+    "employee_email": "Penelope.Hayes@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "27",
+    "employee_job_field_id": "49",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 11
+  },
+  {
+    "employee_id": "116",
+    "employee_name": {
+      "en": { "first": "Colin", "middle": "", "last": "Myers" }
+    },
+    "employee_phone": "",
+    "employee_email": "Colin.Myers@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "27",
+    "employee_job_field_id": "49",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true
+  },
+  {
+    "employee_id": "117",
+    "employee_name": {
+      "en": { "first": "Vivian", "middle": "", "last": "Long" }
+    },
+    "employee_phone": "",
+    "employee_email": "Vivian.Long@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "28",
+    "employee_job_field_id": "50",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "118",
+    "employee_name": {
+      "en": { "first": "Jasper", "middle": "", "last": "Powell" }
+    },
+    "employee_phone": "",
+    "employee_email": "Jasper.Powell@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "28",
+    "employee_job_field_id": "51",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "119",
+    "employee_name": {
+      "en": { "first": "Naomi", "middle": "", "last": "Jenkins" }
+    },
+    "employee_phone": "",
+    "employee_email": "Naomi.Jenkins@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "28",
+    "employee_job_field_id": "51",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  },
+  {
+    "employee_id": "120",
+    "employee_name": {
+      "en": { "first": "Connor", "middle": "", "last": "Peterson" }
+    },
+    "employee_phone": "",
+    "employee_email": "Connor.Peterson@@sunghwan-portal.dev",
+    "employee_image_url": "",
+    "employee_department_id": "28",
+    "employee_job_field_id": "51",
+    "employee_company_id": "1",
+    "employee_shift_id": "1",
+    "employee_active": true,
+    "employee_hour_rate": 10
+  }
+]

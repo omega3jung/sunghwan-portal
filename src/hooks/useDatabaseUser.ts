@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-import fetcher from "@/services/fetcher";
-import { AppUser } from "@/types";
-import { AuthUser } from "@/types/next-auth";
+import client from "@/api/client";
+import { AuthUser } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 
 export const useDatabaseUser = (user: AuthUser | AppUser) => {
   const userId = user?.id;
@@ -10,7 +10,7 @@ export const useDatabaseUser = (user: AuthUser | AppUser) => {
   return useQuery({
     queryKey: ["DATABASE_USER", userId],
     queryFn: async () => {
-      const res = await fetcher.api<AppUser>(`/users/${userId}`);
+      const res = await client.api.get<AppUser>(`/users/${userId}`);
       return res.data;
     },
     enabled: !!userId,

@@ -14,15 +14,14 @@ import {
   UserStar,
 } from "lucide-react";
 
-import { ACCESS_LEVEL, type MenuItem } from "@/types";
+import { MenuItem } from "@/components/layout/LeftMenu/types";
+import { ACCESS_LEVEL } from "@/domain/auth";
 
-const ns = {
-  ns: "LeftMenu",
-};
+const ns = { ns: "LeftMenu" };
 
 type MenuItems = { content: MenuItem[]; footer: MenuItem[] };
 
-export function createMenuItems(t: TFunction): MenuItems {
+export function createMenuMock(t: TFunction): MenuItems {
   return {
     content: [
       {
@@ -36,8 +35,8 @@ export function createMenuItems(t: TFunction): MenuItems {
         icon: Puzzle,
         children: [
           {
-            title: t("itHelpDesk", ns),
-            path: "/playground/it-help-desk",
+            title: t("itServiceDesk", ns),
+            path: "/playground/it-service-desk",
             icon: Puzzle,
           },
         ],

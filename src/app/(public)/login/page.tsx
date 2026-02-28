@@ -7,15 +7,17 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { adminAuth } from "@/app/_mocks";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
 import {
   useFetchUserPreference,
   usePostUserPreference,
   usePutUserPreference,
-} from "@/hooks/useUserPreference";
-import { useLanguageState } from "@/services/language";
-import { AvailableLanguages } from "@/types";
+} from "@/feature/user/preference/queries";
+import { useLanguageState } from "@/hooks/useLanguage";
+import { languageOptions } from "@/shared/constants/options/language";
+import { isLocale } from "@/utils";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -34,7 +36,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { data: userPreference } = useFetchUserPreference();
+  const { data: userPreference } = useFetchUserPreference(null);
   const { mutate: createUserPreference } = usePostUserPreference();
   const { mutate: updateUserPreference } = usePutUserPreference();
 
@@ -46,7 +48,7 @@ export default function LoginPage() {
   const [demoLoading, setDemoLoading] = useState(false);
   const [resetToken, setResetToken] = useState<ResetPasswordState | null>(null);
   const [formType, setFormType] = useState<LoginStateEnum>(
-    LoginStateEnum.LOGIN
+    LoginStateEnum.LOGIN,
   );
 
   const [currentID, setCurrentID] = useState<string>("");
@@ -75,7 +77,7 @@ export default function LoginPage() {
   // try demo click.
   const onTryDemo = (): Promise<void> => {
     setDemoLoading(true);
-    return onSignIn({ username: "__demo__", password: "__demo__" });
+    return onSignIn({ username: adminAuth.id, password: adminAuth.id });
   };
 
   // process sign in.
@@ -213,6 +215,9 @@ export default function LoginPage() {
   };
 
   const handleLanguageChange = (newLang: string) => {
+    if (!userPreference) return;
+    if (!isLocale(newLang)) return;
+
     changeLanguage(newLang);
 
     const payload = {
@@ -221,9 +226,9 @@ export default function LoginPage() {
     };
 
     if (!userPreference) {
-      createUserPreference(payload);
+      createUserPreference({ userId: null, data: payload });
     } else {
-      updateUserPreference(payload);
+      updateUserPreference({ userId: null, data: payload });
     }
   };
 
@@ -314,7 +319,7 @@ export default function LoginPage() {
             className="mt-2 w-48"
             placeholder="Language Picker"
             variant="icon"
-            options={AvailableLanguages}
+            options={languageOptions}
             onChange={handleLanguageChange}
             icon={<Globe />}
             value={language ?? "en"}

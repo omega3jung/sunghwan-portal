@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
+import { dateRangeMock } from "@/app/_mocks/pages/demo/date-range-picker";
 import { DateRangePicker } from "@/components/custom/DateRangePicker/DateRangePicker";
 import { Period } from "@/components/custom/DateRangePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
-import { dateRangeMock } from "@/app/_mocks/pages/demo/date-range-picker";
 
 export default function DateRangePickerPage() {
   const [period, setPeriod] = useState<Period | undefined>("this_month");
@@ -16,7 +16,7 @@ export default function DateRangePickerPage() {
     return { value: range, label: range };
   });
 
-  const [selectedRanges, setSelectedRanges] = useState<Array<Period>>([
+  const [selectedRanges, setSelectedRanges] = useState<Period[]>([
     "today",
     "this_week",
     "this_month",
@@ -36,12 +36,14 @@ export default function DateRangePickerPage() {
 
             // sort by ranges order.
             setSelectedRanges(
-              newList.sort((a, b) => ranges.indexOf(a) - ranges.indexOf(b))
+              newList.sort(
+                (a, b) => selectedRanges.indexOf(a) - selectedRanges.indexOf(b),
+              ),
             );
           }}
           onRemove={(selected: string) => {
             const newChoise = selectedRanges?.filter(
-              (value) => value !== selected
+              (value) => value !== selected,
             );
 
             setSelectedRanges(newChoise);

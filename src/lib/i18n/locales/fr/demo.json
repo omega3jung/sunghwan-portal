@@ -1,0 +1,13 @@
+{
+  "Stepper": {
+    "stepper": "Stepper",
+    "variants": "Variation",
+    "orientation": "Orientation",
+    "stepVariant": "Forme de l'étape",
+    "labelPosition": "Position de l'étiquette",
+    "stepColor": "Couleur",
+    "showOrderLabel": "Afficher l'étiquette de l'étape",
+    "startIndex": "Numéro de départ",
+    "step": "Étape"
+  }
+}

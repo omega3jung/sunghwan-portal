@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 import { badgeColors } from "./styles";
 import { ComboBoxProps, MultiComboboxProps } from "./types";
@@ -64,7 +64,9 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
             disabled={disabled || readOnly}
           >
             {!value.length ? (
-              <div>{placeholder}</div>
+              <div className="font-normal text-muted-foreground px-2">
+                {placeholder}
+              </div>
             ) : (
               <div className="flex flex-wrap items-center gap-1">
                 {options.map((item, index) => {
@@ -90,7 +92,7 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
                               !rainbowPick
                                 ? (rainbowStart + index) % 10
                                 : rainbowPick
-                            ]
+                            ],
                       )}
                     >
                       {item.label}
@@ -132,7 +134,7 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.includes(item.value) ? "opacity-100" : "opacity-0"
+                      value.includes(item.value) ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {item.label}

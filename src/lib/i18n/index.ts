@@ -1,12 +1,12 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+import { SUPPORTED_LANGUAGES } from "@/app/config/language";
 import { dateRangePickerLocales } from "@/components/custom/DateRangePicker/locales";
-import { stepperLocales } from "@/components/custom/Stepper";
 import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
-import { SUPPORTED_LANGUAGES } from "@/types";
+import { DEFAULT_LANGUAGE } from "@/domain/config";
 
 import { en } from "./locales/en";
 import { es } from "./locales/es";
@@ -15,8 +15,8 @@ import { ko } from "./locales/ko";
 
 // init i18next for all options read: https://www.i18next.com/overview/configuration-options
 i18n.use(initReactI18next).init({
-  lng: "en",
-  fallbackLng: "en",
+  lng: DEFAULT_LANGUAGE,
+  fallbackLng: DEFAULT_LANGUAGE,
 
   ns: ["common", "login"],
   defaultNS: "common",
@@ -41,7 +41,7 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
     "DateRangePicker",
     dateRangePickerLocales[lng],
     true,
-    false
+    false,
   );
 });
 
@@ -54,23 +54,13 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
     "DateRangePicker",
     dateRangePickerLocales[lng],
     true,
-    false
+    false,
   );
-});
-
-// Stepper.
-SUPPORTED_LANGUAGES.forEach((lng) => {
-  i18n.addResourceBundle(lng, "Stepper", stepperLocales[lng], true, false);
 });
 
 // Left Menu.
 SUPPORTED_LANGUAGES.forEach((lng) => {
   i18n.addResourceBundle(lng, "LeftMenu", leftMenuLocales[lng], true, false);
-});
-
-// Navigation Bar.
-SUPPORTED_LANGUAGES.forEach((lng) => {
-  i18n.addResourceBundle(lng, "Stepper", stepperLocales[lng], true, false);
 });
 
 // Preferences Menu.
@@ -80,7 +70,7 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
     "PreferencesMenu",
     preferencesMenuLocales[lng],
     true,
-    false
+    false,
   );
 });
 

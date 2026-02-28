@@ -7,3 +7,8 @@ export const stepperMock = [
   { label: "QC" },
   { label: "Shipping" },
 ];
+
+export const orientationData = ["horizontal", "vertical"];
+export const stepVariantData = ["square", "circle"];
+export const stepColorData = ["primary", "secondary"];
+export const labelPositionData = ["top", "bottom", "right", "left"];

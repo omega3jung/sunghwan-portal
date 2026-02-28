@@ -1,6 +1,12 @@
-// src/components/custom/Stepper/index.ts
+import { Stepper as Root } from "./Stepper";
+import { StepperConnector } from "./StepperConnector";
+import { StepperItem } from "./StepperItem";
+import { StepperLabel } from "./StepperLabel";
+import { StepperTrigger } from "./StepperTrigger";
 
-export { stepperLocales } from "./locales";
-export { Stepper } from "./Stepper";
-export type { Step, StepperProps } from "./types";
-export { stepsBackgroundVariant, stepsVariant } from "./variants";
+export const Stepper = Object.assign(Root, {
+  Item: StepperItem,
+  Trigger: StepperTrigger,
+  Label: StepperLabel,
+  Connector: StepperConnector,
+});

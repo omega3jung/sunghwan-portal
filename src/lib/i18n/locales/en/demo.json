@@ -1,0 +1,13 @@
+{
+  "stepper": {
+    "stepper": "Stepper",
+    "variants": "Variants",
+    "orientation": "Orientaion",
+    "stepVariant": "Step variant",
+    "labelPosition": "Label position",
+    "stepColor": "Step color",
+    "showOrderLabel": "Show order label",
+    "startIndex": "Start index",
+    "step": "Step"
+  }
+}
