@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { LabelPosition, useStepperContext } from "./StepperContext";
 

@@ -81,7 +81,7 @@
         "description": "Gère les règles de validation afin de garantir l’intégrité des données tout au long du flux de travail."
       }
     },
-    "itServiceDeskSettings": {
+    "serviceDeskSettings": {
       "title": "Paramètres du Support Informatique",
       "description": "Gère les catégories, les étapes d’approbation et les règles d’attribution des tickets du support informatique.",
       "category": {
@@ -98,7 +98,7 @@
       }
     }
   },
-  "itServiceDeskSettings": {
+  "serviceDeskSettings": {
     "general": {
       "category": "Catégorie",
       "categoryList": "Liste des catégories",
@@ -114,7 +114,8 @@
     "categoryTab": {
       "name": "Nom",
       "description": "Description",
-      "placeholder": "Texte indicatif",
+      "requestTemplate": "RequestTemplate",
+      "resolutionDays": "Jours de résolution",
       "active": "Actif",
       "addCategory": "Ajouter une catégorie"
     },

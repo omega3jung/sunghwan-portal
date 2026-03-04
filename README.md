@@ -188,7 +188,7 @@ app/
  │   └─ login/
  ├─ (protected)/
  │   ├─ demo/
- │   ├─ it-service-desk/
+ │   ├─ service-desk/
  │   └─ layout.tsx
  ├─ api/
  │   └─ auth/

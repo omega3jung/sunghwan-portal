@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useLanguageState } from "@/hooks/useLanguage";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 export default function AvatarMultiComboBoxPage() {
   const { t } = useTranslation("demo");

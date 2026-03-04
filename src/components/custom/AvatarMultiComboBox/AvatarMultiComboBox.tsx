@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { ImageValueLabel } from "@/shared/types/options";
-import { cn } from "@/utils";
-import { initials } from "@/utils";
+import { cn } from "@/shared/utils";
+import { initials } from "@/shared/utils";
 
 import { AvatarMultiComboBoxProps, Props } from "./types";
 import { badgeVariants, comboBoxVariants } from "./variants";

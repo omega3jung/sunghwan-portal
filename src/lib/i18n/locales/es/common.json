@@ -1,0 +1,56 @@
+{
+  "buttons": {
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "retry": "Reintentar",
+    "search": "Buscar",
+    "reset": "Restablecer"
+  },
+  "table": {
+    "noData": "No hay datos disponibles",
+    "loading": "Cargando...",
+    "rowsPerPage": "Filas por página",
+    "total": "Total {{count}} elementos",
+    "selected": "{{count}} seleccionados"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "first": "Primera",
+    "last": "Última",
+    "page": "Página {{page}}"
+  },
+  "genericLabels": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "status": "Estado",
+    "date": "Fecha",
+    "createdAt": "Creado el",
+    "updatedAt": "Actualizado el",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "category": "Categoría",
+    "assignee": "Asignado a",
+    "owner": "Propietario"
+  },
+  "messages": {
+    "saveSuccess": "Guardado correctamente.",
+    "deleteSuccess": "Eliminado correctamente.",
+    "errorOccurred": "Ocurrió un error.",
+    "confirmDelete": "¿Está seguro de que desea eliminar esto?",
+    "unsavedChanges": "Tiene cambios sin guardar."
+  },
+  "validation": {
+    "required": "Este campo es obligatorio.",
+    "minLength": "Debe tener al menos {{count}} caracteres.",
+    "maxLength": "Debe tener menos de {{count}} caracteres."
+  }
+}

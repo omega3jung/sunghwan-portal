@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createSettingsNavigationMock } from "@/app/_mocks/pages/it-service-desk/settingsNavigation";
+import { createSettingsNavigationMock } from "@/app/_mocks/pages/service-desk/settingsNavigation";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -16,7 +16,7 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { useFetchUserPreference } from "@/feature/user";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 

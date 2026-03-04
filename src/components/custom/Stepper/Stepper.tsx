@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { StepperContext } from "./StepperContext";
 import { StepperProps } from "./types";

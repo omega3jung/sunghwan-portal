@@ -1,5 +1,5 @@
 import { ImageValueLabel } from "@/shared/types";
-import { withBasePath } from "@/utils";
+import { withBasePath } from "@/shared/utils";
 
 export const avatarComboMock: ImageValueLabel[] = [
   // Korean

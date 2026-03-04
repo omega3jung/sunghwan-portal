@@ -1,0 +1,56 @@
+{
+  "buttons": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "back": "Retour",
+    "retry": "Réessayer",
+    "search": "Rechercher",
+    "reset": "Réinitialiser"
+  },
+  "table": {
+    "noData": "Aucune donnée disponible",
+    "loading": "Chargement...",
+    "rowsPerPage": "Lignes par page",
+    "total": "{{count}} éléments au total",
+    "selected": "{{count}} sélectionnés"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "first": "Premier",
+    "last": "Dernier",
+    "page": "Page {{page}}"
+  },
+  "genericLabels": {
+    "name": "Nom",
+    "description": "Description",
+    "status": "Statut",
+    "date": "Date",
+    "createdAt": "Créé le",
+    "updatedAt": "Mis à jour le",
+    "email": "Email",
+    "phone": "Téléphone",
+    "category": "Catégorie",
+    "assignee": "Assigné à",
+    "owner": "Propriétaire"
+  },
+  "messages": {
+    "saveSuccess": "Enregistré avec succès.",
+    "deleteSuccess": "Supprimé avec succès.",
+    "errorOccurred": "Une erreur est survenue.",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "unsavedChanges": "Vous avez des modifications non enregistrées."
+  },
+  "validation": {
+    "required": "Ce champ est requis.",
+    "minLength": "Doit contenir au moins {{count}} caractères.",
+    "maxLength": "Doit contenir moins de {{count}} caractères."
+  }
+}

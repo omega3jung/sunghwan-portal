@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useImpersonation } from "@/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
 import ShieldBadge from "./ShieldBadge";

@@ -1,7 +1,7 @@
 // TreeItem.tsx
 import React, { forwardRef, HTMLAttributes } from "react";
 
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import styles from "./TreeItem.module.css";
 

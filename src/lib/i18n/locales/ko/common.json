@@ -1,0 +1,56 @@
+{
+  "buttons": {
+    "confirm": "확인",
+    "cancel": "취소",
+    "save": "저장",
+    "edit": "수정",
+    "delete": "삭제",
+    "create": "생성",
+    "update": "수정",
+    "submit": "제출",
+    "close": "닫기",
+    "back": "뒤로",
+    "retry": "다시 시도",
+    "search": "검색",
+    "reset": "초기화"
+  },
+  "table": {
+    "noData": "데이터가 없습니다",
+    "loading": "로딩 중...",
+    "rowsPerPage": "페이지당 행 수",
+    "total": "총 {{count}}개",
+    "selected": "{{count}}개 선택됨"
+  },
+  "pagination": {
+    "previous": "이전",
+    "next": "다음",
+    "first": "처음",
+    "last": "마지막",
+    "page": "{{page}} 페이지"
+  },
+  "genericLabels": {
+    "name": "이름",
+    "description": "설명",
+    "status": "상태",
+    "date": "날짜",
+    "createdAt": "생성일",
+    "updatedAt": "수정일",
+    "email": "이메일",
+    "phone": "전화번호",
+    "category": "카테고리",
+    "assignee": "담당자",
+    "owner": "요청자"
+  },
+  "messages": {
+    "saveSuccess": "저장되었습니다.",
+    "deleteSuccess": "삭제되었습니다.",
+    "errorOccurred": "오류가 발생했습니다.",
+    "confirmDelete": "정말로 삭제하시겠습니까?",
+    "unsavedChanges": "저장되지 않은 변경 사항이 있습니다."
+  },
+  "validation": {
+    "required": "필수 입력 항목입니다.",
+    "minLength": "최소 {{count}}자 이상 입력해야 합니다.",
+    "maxLength": "최대 {{count}}자 미만으로 입력해야 합니다."
+  }
+}

@@ -81,7 +81,7 @@
         "description": "Manage validation rules to ensure data integrity during the workflow."
       }
     },
-    "itServiceDeskSettings": {
+    "serviceDeskSettings": {
       "title": "IT Service Desk Settings",
       "description": "Manage categories, approval steps, and assignment rules for IT service desk tickets.",
       "category": {
@@ -98,7 +98,7 @@
       }
     }
   },
-  "itServiceDeskSettings": {
+  "serviceDeskSettings": {
     "general": {
       "category": "Category",
       "categoryList": "Category List",
@@ -114,7 +114,8 @@
     "categoryTab": {
       "name": "Name",
       "description": "Description",
-      "placeholder": "Placeholder",
+      "requestTemplate": "RequestTemplate",
+      "resolutionDays": "Resolution Days",
       "active": "Active",
       "addCategory": "Add Category"
     },

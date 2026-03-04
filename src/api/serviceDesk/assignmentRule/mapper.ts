@@ -1,0 +1,39 @@
+import { AssignmentRule } from "@/domain/serviceDesk";
+import { ArrayMapper } from "@/shared/types";
+
+// back-end data structures.
+export interface DbAssigneeGroup {
+  job_field_id: number[]; // string number. can use parseInt.
+  employee_id: number[]; // string number. can use parseInt.
+}
+
+export interface DbAssignmentRule {
+  category_id: number; // string number. can use parseInt.
+  assignee: DbAssigneeGroup;
+}
+
+export const camelAssignmentRuleMapper: ArrayMapper<
+  DbAssignmentRule,
+  AssignmentRule
+> = (data) => {
+  return data.map((item) => ({
+    categoryId: item.category_id.toString(),
+    assignee: {
+      jobFieldIds: item.assignee.job_field_id.map((id) => id.toString()),
+      employeeIds: item.assignee.employee_id.map((id) => id.toString()),
+    },
+  }));
+};
+
+export const snakeAssignmentRuleMapper: ArrayMapper<
+  AssignmentRule,
+  DbAssignmentRule
+> = (data) => {
+  return data.map((item) => ({
+    category_id: parseInt(item.categoryId),
+    assignee: {
+      job_field_id: item.assignee.jobFieldIds.map((id) => parseInt(id)),
+      employee_id: item.assignee.employeeIds.map((id) => parseInt(id)),
+    },
+  }));
+};

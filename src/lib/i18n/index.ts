@@ -7,6 +7,7 @@ import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
 import { DEFAULT_LANGUAGE } from "@/domain/config";
+import { statusBadgeLocales } from "@/shared/ui/StatusBadge/locales";
 
 import { en } from "./locales/en";
 import { es } from "./locales/es";
@@ -77,6 +78,17 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
 // User Menu.
 SUPPORTED_LANGUAGES.forEach((lng) => {
   i18n.addResourceBundle(lng, "UserMenu", userMenuLocales[lng], true, false);
+});
+
+// Status Badge.
+SUPPORTED_LANGUAGES.forEach((lng) => {
+  i18n.addResourceBundle(
+    lng,
+    "StatusBadge",
+    statusBadgeLocales[lng],
+    true,
+    false,
+  );
 });
 
 export default i18n;

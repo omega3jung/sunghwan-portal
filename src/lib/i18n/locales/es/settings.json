@@ -81,7 +81,7 @@
         "description": "Gestiona las reglas de validación para garantizar la integridad de los datos durante el flujo de trabajo."
       }
     },
-    "itServiceDeskSettings": {
+    "serviceDeskSettings": {
       "title": "Configuración de la Mesa de Ayuda de TI",
       "description": "Gestiona las categorías, los pasos de aprobación y las reglas de asignación de los tickets de la mesa de ayuda de TI.",
       "category": {
@@ -98,7 +98,7 @@
       }
     }
   },
-  "itServiceDeskSettings": {
+  "serviceDeskSettings": {
     "general": {
       "category": "Categoría",
       "categoryList": "Lista de categorías",
@@ -114,7 +114,8 @@
     "categoryTab": {
       "name": "Nombre",
       "description": "Descripción",
-      "placeholder": "Marcador de posición",
+      "requestTemplate": "Plantilla de solicitud",
+      "resolutionDays": "Días de resolución",
       "active": "Activo",
       "addCategory": "Agregar categoría"
     },

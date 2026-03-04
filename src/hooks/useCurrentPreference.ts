@@ -11,7 +11,7 @@ import { userPreferenceRepo } from "@/feature/user/preference";
 import { useLanguageState } from "@/hooks/useLanguage";
 import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
-import { applyColorTheme } from "@/utils";
+import { applyColorTheme } from "@/shared/utils";
 
 /*
  * =========================================================
@@ -79,6 +79,10 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   const setLanguage = (language: Locale) => {
     updatePreference({ language });
     changeLanguage(language);
+  };
+
+  const useCurrentLanguage = () => {
+    return current.language;
   };
 
   const setColorTheme = (colorTheme: ColorTheme) => {

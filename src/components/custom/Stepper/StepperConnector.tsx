@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { useStepperContext } from "./StepperContext";
 import { connectorVariant } from "./variants";

@@ -3,8 +3,8 @@
 
 import { ReactNode } from "react";
 
-import { withBasePath } from "@/utils";
-import { cn } from "@/utils";
+import { withBasePath } from "@/shared/utils";
+import { cn } from "@/shared/utils";
 
 // force-dynamic to block cache store.
 //export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     <div
       className={cn(
         "flex h-screen w-screen flex-col gap-12 p-4 bg-cover bg-bottom bg-no-repeat",
-        "md:flex-row-reverse lg:gap-32 lg:px-32"
+        "md:flex-row-reverse lg:gap-32 lg:px-32",
       )}
       style={{
         backgroundImage: `url(${withBasePath("/images/background.jpg")})`,

@@ -17,7 +17,7 @@ import {
 } from "@/feature/user/preference/queries";
 import { useLanguageState } from "@/hooks/useLanguage";
 import { languageOptions } from "@/shared/constants/options/language";
-import { isLocale } from "@/utils";
+import { isLocale } from "@/shared/utils";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";

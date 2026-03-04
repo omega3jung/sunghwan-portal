@@ -1,6 +1,8 @@
 // src/lib/i18n/locales/es/index.ts
 
+import common from "./common.json";
 import demo from "./demo.json";
+import domain from "./domain.json";
 import home from "./home.json";
 import login from "./login.json";
 import settings from "./settings.json";
@@ -12,4 +14,6 @@ export const es = {
   home,
   settings,
   unsupportedBrowser,
+  domain,
+  common,
 };

@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils";
 
 import { badgeColors } from "./styles";
 import { ComboBoxProps, MultiComboboxProps } from "./types";
