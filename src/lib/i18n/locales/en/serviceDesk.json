@@ -1,0 +1,129 @@
+{
+  "action": {
+    "comment": "Comment",
+    "memo": "Memo",
+    "assign": "Assign",
+    "assignMyself": "Assign myself",
+    "reject": "Reject"
+  },
+
+  "chart": {
+    "category": {
+      "title": "Tickets by Category",
+      "label": "Category"
+    },
+
+    "department": {
+      "title": "Tickets by Request Department",
+      "label": "Department"
+    },
+
+    "assignee": {
+      "title": "Tickets by Assignee",
+      "label": "Assignee"
+    },
+
+    "sla": {
+      "title": "SLA Performance",
+
+      "status": {
+        "withinSla": "Within SLA",
+        "resolvedLate": "Resolved Late",
+        "overdue": "Overdue",
+        "inProgress": "In Progress"
+      }
+    }
+  },
+
+  "field": {
+    "keyword": {
+      "label": "keyword",
+      "placeholder": "Search by keyword"
+    },
+    "draft": {
+      "label": "Draft"
+    },
+    "reason": {
+      "label": "Reason"
+    },
+    "ticket": {
+      "label": "Ticket",
+      "placeholder": "Enter ticket number"
+    },
+    "tickets": {
+      "label": "Tickets",
+      "placeholder": "Enter ticket number"
+    },
+    "comment": {
+      "label": "Comment"
+    },
+    "comments": {
+      "label": "Comments"
+    }
+  },
+
+  "message": {
+    "groupBy": "Group by",
+    "filteringBy": "Filtering by",
+    "from": "From",
+    "assignTo": "Assign to",
+    "dueBy": "Due by",
+    "lastComment": "Last comment",
+
+    "commentList": "Comments",
+
+    "ticketSummary": "Ticket Summary",
+    "requesterInformation": "Requester Information",
+
+    "created": "Created",
+    "at": "at",
+    "ago": "ago",
+
+    "validationPoint": "Select validation point",
+
+    "dragDropFile": "Drag & Drop File",
+    "fileUploadLimit": "File Upload (max. 10 files)",
+
+    "approvalTitle": "Approval",
+    "foundDraft": "Found draft",
+    "loadDraft": "Do you want to load draft? If not, previous draft will discard."
+  },
+
+  "priority": {
+    "urgent": "Urgent",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+
+  "response": {
+    "agent": "Agent responded",
+    "requester": "Requester responded",
+    "none": "No response"
+  },
+
+  "sort": {
+    "latest": "Sort by latest",
+    "oldest": "Sort by oldest"
+  },
+
+  "status": {
+    "pre": "Pre",
+    "open": "Open",
+    "approved": "Approved",
+    "declined": "Declined",
+    "working": "Working",
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+
+  "tab": {
+    "tickets": "Tickets",
+    "reports": "Reports",
+    "pendingApprovals": "Pending Approvals",
+    "openTickets": "Open Tickets",
+    "closedTickets": "Closed Tickets",
+    "overdueTickets": "Overdue Tickets"
+  }
+}

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
 import { dateRangeMock } from "@/app/_mocks/pages/demo/date-range-picker";
-import { DateRangePicker } from "@/components/custom/DateRangePicker/DateRangePicker";
-import { Period } from "@/components/custom/DateRangePicker/types";
+import { DateRangePicker } from "@/components/custom/DatePicker/DateRangePicker";
+import { Period } from "@/components/custom/DatePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
 
 export default function DateRangePickerPage() {

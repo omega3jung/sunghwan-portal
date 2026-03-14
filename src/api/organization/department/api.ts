@@ -5,39 +5,34 @@ import { DbParams, OResponse } from "@/shared/types/api";
 type DepartmentResponse = OResponse<Department>;
 
 export const departmentApi = {
-  fetch: async (params: DbParams): Promise<Department[]> => {
+  list: async (params: DbParams): Promise<Department[]> => {
     if (!params) return [];
 
     const res = await client.api.get<DepartmentResponse>("/api/departments", {
       params,
     });
-
     return res.data.items;
   },
-  post: async (data: Department) => {
-    const res = await fetch("/api/departments", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+
+  get: async (id: string | number): Promise<Department | null> => {
+    if (!id) return null;
+
+    const res = await client.api.get<Department>(`/api/departments/${id}`);
+    return res.data;
   },
 
-  put: async (data: Department) => {
-    const res = await fetch("/api/departments", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  create: async (data: Department) => {
+    const res = await client.api.post<Department>(`/api/departments`, data);
+    return res.data;
   },
 
-  delete: async (data: Department) => {
-    await fetch("/api/departments", {
-      method: "DELETE",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
+  update: async (data: Department) => {
+    const res = await client.api.put(`/api/departments`, data);
+    return res.data;
+  },
+
+  remove: async (id: string | number) => {
+    await client.api.delete(`/api/departments/${id}`);
     return null;
   },
 };

@@ -15,13 +15,13 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { useFetchUserPreference } from "@/feature/user";
+import { useUserPreferenceQuery } from "@/feature/user";
 import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 
 export function SettingsNavigation() {
-  const { data: userPreference } = useFetchUserPreference(null);
+  const { data: userPreference } = useUserPreferenceQuery(null);
   const lang = userPreference?.language ?? "en";
 
   const { t } = useTranslation("settings");

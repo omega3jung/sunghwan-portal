@@ -10,8 +10,8 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupportedLanguage } from "@/domain/config";
-import { useFetchEmployee } from "@/feature/organization/employee";
-import { useFetchJobField } from "@/feature/organization/jobField";
+import { useEmployeeListQuery } from "@/feature/organization/employee";
+import { useJobFieldListQuery } from "@/feature/organization/jobField";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel, Locale, ValueLabel } from "@/shared/types";
 
@@ -39,8 +39,8 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
         setTree,
       });
 
-    const { data: jobFields } = useFetchJobField({});
-    const { data: employees } = useFetchEmployee({});
+    const { data: jobFields } = useJobFieldListQuery({});
+    const { data: employees } = useEmployeeListQuery({});
 
     const jobFieldData = useMemo((): ValueLabel[] => {
       if (!jobFields) return [];

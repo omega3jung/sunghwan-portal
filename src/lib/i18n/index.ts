@@ -2,7 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
 import { SUPPORTED_LANGUAGES } from "@/app/config/language";
-import { dateRangePickerLocales } from "@/components/custom/DateRangePicker/locales";
+import { datePickerLocales } from "@/components/custom/DatePicker/locales";
 import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
@@ -13,6 +13,8 @@ import { en } from "./locales/en";
 import { es } from "./locales/es";
 import { fr } from "./locales/fr";
 import { ko } from "./locales/ko";
+
+export * from "./namespace";
 
 // init i18next for all options read: https://www.i18next.com/overview/configuration-options
 i18n.use(initReactI18next).init({
@@ -36,24 +38,14 @@ i18n.use(initReactI18next).init({
   },
 });
 
-SUPPORTED_LANGUAGES.forEach((lng) => {
-  i18n.addResourceBundle(
-    lng,
-    "DateRangePicker",
-    dateRangePickerLocales[lng],
-    true,
-    false,
-  );
-});
-
 // add custom component locales.
 
-// DateRangePicker.
+// DatePicker and DateRangePicker.
 SUPPORTED_LANGUAGES.forEach((lng) => {
   i18n.addResourceBundle(
     lng,
-    "DateRangePicker",
-    dateRangePickerLocales[lng],
+    "DatePicker",
+    datePickerLocales[lng],
     true,
     false,
   );

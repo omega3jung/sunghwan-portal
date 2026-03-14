@@ -103,7 +103,7 @@ export const Component = (
     ],
   } = props;
 
-  const { t } = useTranslation("DateRangePicker");
+  const { t } = useTranslation("DatePicker");
 
   const [open, setOpen] = useState<boolean>(false);
   const [displayText, setDisplayText] = useState<string>("");
@@ -119,9 +119,7 @@ export const Component = (
   );
 
   const trigerValue = useMemo<string>(() => {
-    return showRange && !!displayText
-      ? displayText
-      : t("dateRangePicker.dateRange");
+    return showRange && !!displayText ? displayText : t("datePicker.dateRange");
   }, [showRange, displayText, t]);
 
   const calculateAndSetDisplayText = useCallback(
@@ -267,12 +265,12 @@ export const Component = (
         <SelectTrigger
           variant={variant}
           className={cn("border-slate-150 h-10", className)}
-          title={t("dateRangePicker.placeHolder")}
+          title={t("datePicker.rangePlaceholder")}
         >
           {period === "range" ? (
             trigerValue
           ) : (
-            <SelectValue placeholder={t("dateRangePicker.placeHolder")} />
+            <SelectValue placeholder={t("datePicker.rangePlaceholder")} />
           )}
         </SelectTrigger>
         <SelectContent>

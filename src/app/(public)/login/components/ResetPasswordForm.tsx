@@ -20,7 +20,7 @@ type Props = {
 type Step = "email" | "otp";
 
 export const ResetPasswordForm = (props: Props) => {
-  const { t } = useTranslation("login");
+  const { t } = useTranslation("auth");
   const { onSubmit, isLoading, onBack } = props;
 
   const [step, setStep] = useState<Step>("email");
@@ -93,10 +93,10 @@ export const ResetPasswordForm = (props: Props) => {
     <div className="flex w-full flex-col items-center justify-center gap-2">
       <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
-          {t("resetPasswordForm.title")}
+          {t("resetPassword.title")}
         </p>
         <p className="text-center text-md leading-5 text-primary">
-          {t("resetPasswordForm.message")}
+          {t("resetPassword.message")}
         </p>
       </div>
       <form
@@ -121,13 +121,13 @@ export const ResetPasswordForm = (props: Props) => {
               </Field>
               <Field>
                 <FieldLabel htmlFor="reset-input-email">
-                  {t("resetPasswordForm.email")}
+                  {t("resetPassword.email")}
                 </FieldLabel>
                 <Input
                   id="reset-input-email"
                   data-testid="reset-password-email"
                   disabled={isLoading || step === "otp"}
-                  placeholder={t("resetPasswordForm.emailPlaceholder")}
+                  placeholder={t("resetPassword.emailPlaceholder")}
                   required
                   {...form.register("email")}
                 />
@@ -142,8 +142,8 @@ export const ResetPasswordForm = (props: Props) => {
                 onClick={onSendOTP}
               >
                 {step === "otp"
-                  ? t("resetPasswordForm.otpResend")
-                  : t("resetPasswordForm.otpSend")}
+                  ? t("resetPassword.otpResend")
+                  : t("resetPassword.otpSend")}
                 {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
             </Field>
@@ -154,7 +154,7 @@ export const ResetPasswordForm = (props: Props) => {
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="reset-input-otp">
-                    {t("resetPasswordForm.otp")}
+                    {t("resetPassword.otp")}
                   </FieldLabel>
                   <Input
                     id="reset-input-otp"

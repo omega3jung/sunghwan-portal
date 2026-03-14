@@ -1,4 +1,4 @@
-import { Period } from "@/components/custom/DateRangePicker/types";
+import { Period } from "@/components/custom/DatePicker/types";
 
 export const dateRangeMock: Period[] = [
   "today",

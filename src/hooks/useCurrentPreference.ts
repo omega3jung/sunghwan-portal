@@ -109,7 +109,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     const remoteId =
       session.data?.user.dataScope === "LOCAL" ? null : session.data?.user.id;
 
-    userPreferenceRepo.fetch(remoteId).then((preference) => {
+    userPreferenceRepo.get(remoteId).then((preference) => {
       store.setPreference(preference);
     });
 

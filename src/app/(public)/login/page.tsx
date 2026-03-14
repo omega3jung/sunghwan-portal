@@ -11,10 +11,10 @@ import { adminAuth } from "@/app/_mocks";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
 import {
-  useFetchUserPreference,
-  usePostUserPreference,
-  usePutUserPreference,
-} from "@/feature/user/preference/queries";
+  useCreateUserPreference,
+  useUpdateUserPreference,
+  useUserPreferenceQuery,
+} from "@/feature/user/preference";
 import { useLanguageState } from "@/hooks/useLanguage";
 import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/shared/utils";
@@ -36,11 +36,11 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const { status } = useSession();
-  const { data: userPreference } = useFetchUserPreference(null);
-  const { mutate: createUserPreference } = usePostUserPreference();
-  const { mutate: updateUserPreference } = usePutUserPreference();
+  const { data: userPreference } = useUserPreferenceQuery(null);
+  const { mutate: createUserPreference } = useCreateUserPreference();
+  const { mutate: updateUserPreference } = useUpdateUserPreference();
 
-  const { t } = useTranslation("login");
+  const { t } = useTranslation("auth");
   const { language, changeLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);
@@ -265,7 +265,7 @@ export default function LoginPage() {
                 <Loader2 className="ml-2 h-5 w-5 animate-spin" />
               </>
             ) : (
-              t("loginForm.tryDemo")
+              t("login.tryDemo")
             )}
           </Button>
         </div>
@@ -296,20 +296,20 @@ export default function LoginPage() {
             className="py-0 text-base font-semibold uppercase"
             onClick={() => setFormType(LoginStateEnum.RESET)}
           >
-            {t("loginForm.canNotLogin")}
+            {t("login.canNotLogin")}
           </Button>
         </p>
 
         <p>
           <Button variant="link" className="py-0 text-base font-normal">
-            {t("loginForm.helpCenter")}
+            {t("login.helpCenter")}
           </Button>
           ·
           <Button
             variant="link"
             className="py-0 text-base font-normal text-primary"
           >
-            {t("loginForm.privacyAndTerms")}
+            {t("login.privacyAndTerms")}
           </Button>
         </p>
 

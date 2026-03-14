@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFetchServiceDeskApprovalStep } from "@/feature/serviceDesk";
+import { useServiceDeskApprovalStepListQuery } from "@/feature/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
@@ -31,7 +31,7 @@ export default function ApprovalStepPage() {
   const params: DbParams = {};
 
   const { data: approvalSteps, isLoading } =
-    useFetchServiceDeskApprovalStep(params);
+    useServiceDeskApprovalStepListQuery(params);
 
   const {
     tree,

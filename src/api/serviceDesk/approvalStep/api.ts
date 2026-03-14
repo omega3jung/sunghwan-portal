@@ -6,41 +6,43 @@ type ApprovalStepResponse = OResponse<CategoryApprovalSettings>;
 
 // feature-scoped API.
 export const serviceDeskApprovalStepApi = {
-  fetch: async (params: DbParams): Promise<CategoryApprovalSettings[]> => {
+  list: async (params: DbParams): Promise<CategoryApprovalSettings[]> => {
     if (!params) return [];
 
     const res = await client.api.get<ApprovalStepResponse>(
-      "/api/service-desk/approval-steps",
+      `/api/service-desk/approval-steps`,
       { params },
     );
-
     return res.data.items;
   },
 
-  post: async (data: ApprovalStep) => {
-    const res = await fetch("/api/service-desk/approval-steps", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  get: async (id: string | number): Promise<ApprovalStep | null> => {
+    if (!id) return null;
+
+    const res = await client.api.get<ApprovalStep>(
+      `/api/service-desk/approval-steps/${id}`,
+    );
+    return res.data;
   },
 
-  put: async (data: ApprovalStep) => {
-    const res = await fetch("/api/service-desk/approval-steps", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  create: async (data: ApprovalStep) => {
+    const res = await client.api.post<ApprovalStep>(
+      `/api/service-desk/approval-steps`,
+      data,
+    );
+    return res.data;
   },
 
-  delete: async (data: ApprovalStep) => {
-    await fetch("/api/service-desk/approval-steps", {
-      method: "DELETE",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
+  update: async (data: ApprovalStep) => {
+    const res = await client.api.put(
+      `/api/service-desk/approval-steps/${data.id}`,
+      data,
+    );
+    return res.data;
+  },
+
+  remove: async (id: string | number) => {
+    await client.api.delete(`/api/service-desk/approval-steps/${id}`);
     return null;
   },
 };

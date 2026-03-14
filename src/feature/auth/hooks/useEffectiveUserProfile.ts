@@ -3,7 +3,7 @@ import { Session } from "next-auth";
 
 import { userProfileApi } from "@/api/user";
 
-export const useFetchMyProfile = (session: Session | null) => {
+export const useMyProfileQuery = (session: Session | null) => {
   const effectiveUserId = session?.impersonation
     ? session.impersonation.subjectId
     : session?.user.id;
@@ -14,7 +14,7 @@ export const useFetchMyProfile = (session: Session | null) => {
       if (!effectiveUserId) throw new Error("No user id");
 
       return session?.impersonation
-        ? userProfileApi.fetch(effectiveUserId)
+        ? userProfileApi.get(effectiveUserId)
         : userProfileApi.me();
     },
     enabled: !!effectiveUserId,

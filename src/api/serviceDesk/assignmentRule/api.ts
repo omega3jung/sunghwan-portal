@@ -6,41 +6,43 @@ type AssignmentRuleResponse = OResponse<AssignmentRule>;
 
 // feature-scoped API.
 export const serviceDeskAssignmentRuleApi = {
-  fetch: async (params: DbParams): Promise<AssignmentRule[]> => {
+  list: async (params: DbParams): Promise<AssignmentRule[]> => {
     if (!params) return [];
 
     const res = await client.api.get<AssignmentRuleResponse>(
-      "/api/service-desk/assignment-rules",
+      `/api/service-desk/assignment-rules`,
       { params },
     );
-
     return res.data.items;
   },
 
-  post: async (data: AssignmentRule) => {
-    const res = await fetch("/api/service-desk/assignment-rules", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  get: async (id: string | number): Promise<AssignmentRule | null> => {
+    if (!id) return null;
+
+    const res = await client.api.get<AssignmentRule>(
+      `/api/service-desk/assignment-rules/${id}`,
+    );
+    return res.data;
   },
 
-  put: async (data: AssignmentRule) => {
-    const res = await fetch("/api/service-desk/assignment-rules", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  create: async (data: AssignmentRule) => {
+    const res = await client.api.post<AssignmentRule>(
+      `/api/service-desk/assignment-rules`,
+      data,
+    );
+    return res.data;
   },
 
-  delete: async (data: AssignmentRule) => {
-    await fetch("/api/service-desk/assignment-rules", {
-      method: "DELETE",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
+  update: async (data: AssignmentRule) => {
+    const res = await client.api.put(
+      `/api/service-desk/assignment-rules/${data.categoryId}`,
+      data,
+    );
+    return res.data;
+  },
+
+  remove: async (id: string | number) => {
+    await client.api.delete(`/api/service-desk/assignment-rules/${id}`);
     return null;
   },
 };

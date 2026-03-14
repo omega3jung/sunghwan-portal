@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useFetchDepartment } from "@/feature/organization/department";
+import { useDepartmentListQuery } from "@/feature/organization/department";
 import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";
 
@@ -26,7 +26,7 @@ type Props = {
 export function DepartmentField({ stepAssignee, onChange, language }: Props) {
   const { t } = useTranslation("settings");
   const tLocal = useLocalizedText(language);
-  const { data: departments } = useFetchDepartment({});
+  const { data: departments } = useDepartmentListQuery({});
 
   const departmentData = useMemo((): Array<{
     groupLabel: string;

@@ -6,41 +6,43 @@ type CategoryResponse = OResponse<ClientCategoryTree>;
 
 // feature-scoped API.
 export const serviceDeskCategoryApi = {
-  fetch: async (params: DbParams): Promise<ClientCategoryTree[]> => {
+  list: async (params: DbParams): Promise<ClientCategoryTree[]> => {
     if (!params) return [];
 
     const res = await client.api.get<CategoryResponse>(
-      "/api/service-desk/categories",
+      `/api/service-desk/categories`,
       { params },
     );
 
     return res.data.items;
   },
+  get: async (id: string | number): Promise<Category | null> => {
+    if (!id) return null;
 
-  post: async (data: Category) => {
-    const res = await fetch("/api/service-desk/categories", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+    const res = await client.api.get<Category>(
+      `/api/service-desk/categories/${id}`,
+    );
+    return res.data;
   },
 
-  put: async (data: Category) => {
-    const res = await fetch("/api/service-desk/categories", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  create: async (data: Category) => {
+    const res = await client.api.post<Category>(
+      `/api/service-desk/categories`,
+      data,
+    );
+    return res.data;
   },
 
-  delete: async (data: Category) => {
-    await fetch("/api/service-desk/categories", {
-      method: "DELETE",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
+  update: async (data: Category) => {
+    const res = await client.api.post(
+      `/api/service-desk/categories/${data.id}`,
+      data,
+    );
+    return res.data;
+  },
+
+  remove: async (id: string | number) => {
+    await client.api.delete(`/api/service-desk/categories/${id}`);
     return null;
   },
 };

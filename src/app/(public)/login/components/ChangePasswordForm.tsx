@@ -20,7 +20,7 @@ type Props = {
 };
 
 export const ChangePasswordForm = (props: Props) => {
-  const { t } = useTranslation("login");
+  const { t } = useTranslation("auth");
   const {
     isLoading,
     username,
@@ -44,13 +44,13 @@ export const ChangePasswordForm = (props: Props) => {
       <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
           {formType === LoginStateEnum.CHANGE
-            ? t("changePasswordForm.change.title")
-            : t("changePasswordForm.reset.title")}
+            ? t("changePassword.change.title")
+            : t("changePassword.reset.title")}
         </p>
         <p className="text-center text-lg leading-5 text-primary">
           {formType === LoginStateEnum.CHANGE
-            ? t("changePasswordForm.change.message")
-            : t("changePasswordForm.reset.message")}
+            ? t("changePassword.change.message")
+            : t("changePassword.reset.message")}
         </p>
       </div>
       <form
@@ -78,15 +78,13 @@ export const ChangePasswordForm = (props: Props) => {
               {formType === LoginStateEnum.CHANGE && (
                 <Field>
                   <FieldLabel htmlFor="change-input-current-password">
-                    {t("changePasswordForm.change.currentPassword")}
+                    {t("changePassword.change.currentPassword")}
                   </FieldLabel>
                   <Input
                     id="change-input-current-password"
                     data-testid="change-current-password-password"
                     disabled={isLoading}
-                    placeholder={t(
-                      "changePasswordForm.change.currentPlaceholder"
-                    )}
+                    placeholder={t("changePassword.change.currentPlaceholder")}
                     type="current"
                     required
                     {...form.register("current")}
@@ -95,13 +93,13 @@ export const ChangePasswordForm = (props: Props) => {
               )}
               <Field>
                 <FieldLabel htmlFor="change-input-new-password">
-                  {t("changePasswordForm.newPassword")}
+                  {t("changePassword.newPassword")}
                 </FieldLabel>
                 <Input
                   id="change-input-new-password"
                   data-testid="change-new-password-password"
                   disabled={isLoading}
-                  placeholder={t("changePasswordForm.newPasswordPlaceholder")}
+                  placeholder={t("changePassword.newPasswordPlaceholder")}
                   type="password"
                   required
                   {...form.register("password")}
@@ -109,13 +107,13 @@ export const ChangePasswordForm = (props: Props) => {
               </Field>
               <Field>
                 <FieldLabel htmlFor="change-input-confirm-password">
-                  {t("changePasswordForm.confirmPassword")}
+                  {t("changePassword.confirmPassword")}
                 </FieldLabel>
                 <Input
                   id="change-input-confirm-password"
                   data-testid="change-confirm-password-password"
                   disabled={isLoading}
-                  placeholder={t("changePasswordForm.confirmPlaceholder")}
+                  placeholder={t("changePassword.confirmPlaceholder")}
                   type="password"
                   required
                   {...form.register("confirm")}

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Client } from "@/domain/serviceDesk";
-import { useFetchServiceDeskCategory } from "@/feature/serviceDesk";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
@@ -36,7 +36,8 @@ export default function CategoryPage() {
   const [clientData, setClientData] = useState<Client[]>([]);
 
   const params: DbParams = {};
-  const { data: categories, isLoading } = useFetchServiceDeskCategory(params);
+  const { data: categories, isLoading } =
+    useServiceDeskCategoryListQuery(params);
 
   const {
     tree,

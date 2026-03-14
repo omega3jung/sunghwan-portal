@@ -5,7 +5,7 @@ import { AppUser } from "@/domain/user";
 
 export const USER_DATA_KEY = "USER-DATA";
 
-// fetch user data.
+// get user data.
 export const useAppUser = () => {
   return useQuery<AppUser>({
     queryKey: [USER_DATA_KEY],

@@ -6,4 +6,5 @@ export * from "./icon";
 export * from "./language";
 export * from "./locale";
 export * from "./mapper";
+export * from "./mutationAction";
 export * from "./options";

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useFetchJobField } from "@/feature/organization/jobField";
+import { useJobFieldListQuery } from "@/feature/organization/jobField";
 import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";
 
@@ -26,7 +26,7 @@ type Props = {
 export function JobFieldField({ stepAssignee, onChange, language }: Props) {
   const { t } = useTranslation("settings");
   const tLocal = useLocalizedText(language);
-  const { data: jobFields } = useFetchJobField({});
+  const { data: jobFields } = useJobFieldListQuery({});
 
   const jobFieldData = useMemo((): Array<{
     groupLabel: string;

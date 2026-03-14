@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Client } from "@/domain/serviceDesk";
 import {
-  useFetchServiceDeskAssignmentRule,
-  useFetchServiceDeskCategory,
+  useServiceDeskAssignmentRuleListQuery,
+  useServiceDeskCategoryListQuery,
 } from "@/feature/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { languageOptions } from "@/shared/constants";
@@ -40,9 +40,9 @@ export default function CategoryPage() {
 
   const params: DbParams = {};
   const { data: categories, isLoading: isCategoriesLoading } =
-    useFetchServiceDeskCategory(params);
+    useServiceDeskCategoryListQuery(params);
   const { data: assignmentRules, isLoading: isAssignmentRulesLoading } =
-    useFetchServiceDeskAssignmentRule(params);
+    useServiceDeskAssignmentRuleListQuery(params);
 
   const { tree, setTree, selectedId, setSelectedId, selectedNode } =
     useAssignmentRuleTree({

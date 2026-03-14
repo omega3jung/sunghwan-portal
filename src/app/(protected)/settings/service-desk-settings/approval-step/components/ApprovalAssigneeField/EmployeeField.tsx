@@ -5,7 +5,7 @@ import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useFetchEmployee } from "@/feature/organization/employee";
+import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
 
@@ -20,7 +20,7 @@ type Props = {
 export function EmployeeField({ stepAssignee, onChange, language }: Props) {
   const { t } = useTranslation("settings");
   const tLocal = useLocalizedValue(language);
-  const { data: employees } = useFetchEmployee({});
+  const { data: employees } = useEmployeeListQuery({});
 
   const employeeData = useMemo((): ImageValueLabel[] => {
     if (!employees) return [];

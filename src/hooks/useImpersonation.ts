@@ -39,8 +39,8 @@ export const useImpersonation = () => {
       // ✅ if same subject, then do nothing.
       if (subject?.id === impersonationSubjectId) return;
 
-      // fetch subject user.
-      userProfileApi.fetch(impersonationSubjectId).then((subjectProfile) => {
+      // get subject user.
+      userProfileApi.get(impersonationSubjectId).then((subjectProfile) => {
         syncFromSession({
           actor: actor ?? current.user!,
           subject: subjectProfile,

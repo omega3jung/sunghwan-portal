@@ -1,8 +1,9 @@
 import { Locale } from "@/shared/types";
 
-export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
+export const datePickerLocales: Record<Locale, Record<string, string>> = {
   en: {
-    placeHolder: "Select Date Range",
+    placeholder: "Select Date",
+    rangePlaceholder: "Select Date Range",
     today: "Today",
     thisWeek: "This Week",
     thisMonth: "This Month",
@@ -28,7 +29,8 @@ export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
   },
 
   es: {
-    placeHolder: "Seleccionar rango de fechas",
+    placeholder: "Seleccionar fecha",
+    rangePlaceholder: "Seleccionar rango de fechas",
     today: "Hoy",
     thisWeek: "Esta semana",
     thisMonth: "Este mes",
@@ -54,7 +56,8 @@ export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
   },
 
   fr: {
-    placeHolder: "Sélectionner une plage de dates",
+    placeholder: "Sélectionnez une date",
+    rangePlaceholder: "Sélectionner une plage de dates",
     today: "Aujourd'hui",
     thisWeek: "Cette semaine",
     thisMonth: "Ce mois",
@@ -80,7 +83,8 @@ export const dateRangePickerLocales: Record<Locale, Record<string, string>> = {
   },
 
   ko: {
-    placeHolder: "기간을 선택해주세요",
+    placeholder: "날짜를 선택해주세요",
+    rangePlaceholder: "기간을 선택해주세요",
     today: "오늘",
     thisWeek: "이번 주",
     thisMonth: "이번 달",

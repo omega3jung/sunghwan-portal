@@ -5,39 +5,34 @@ import { DbParams, OResponse } from "@/shared/types/api";
 type EmployeeResponse = OResponse<Employee>;
 
 export const employeeApi = {
-  fetch: async (params: DbParams): Promise<Employee[]> => {
+  list: async (params: DbParams): Promise<Employee[]> => {
     if (!params) return [];
 
     const res = await client.api.get<EmployeeResponse>("/api/employees", {
       params,
     });
-
     return res.data.items;
   },
-  post: async (data: Employee) => {
-    const res = await fetch("/api/employees", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+
+  get: async (id: string | number): Promise<Employee | null> => {
+    if (!id) return null;
+
+    const res = await client.api.get<Employee>(`/api/employees/${id}`);
+    return res.data;
   },
 
-  put: async (data: Employee) => {
-    const res = await fetch("/api/employees", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json();
+  create: async (data: Employee) => {
+    const res = await client.api.post<Employee>(`/api/employees`, data);
+    return res.data;
   },
 
-  delete: async (data: Employee) => {
-    await fetch("/api/employees", {
-      method: "DELETE",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
+  update: async (data: Employee) => {
+    const res = await client.api.put(`/api/employees/${data.id}`, data);
+    return res.data;
+  },
+
+  remove: async (id: string | number) => {
+    await client.api.delete(`/api/employees/${id}`);
     return null;
   },
 };

@@ -4,7 +4,7 @@ import { userPreferenceApi } from "@/api/user";
 import { Preference } from "@/domain/config";
 
 export const userPreferenceRepo = {
-  async fetch(userId: string | null): Promise<Preference> {
+  async get(userId: string | null): Promise<Preference> {
     // local demo.
     if (!userId) {
       const raw = localStorage.getItem("sunghwan_portal_user_preference");
@@ -15,10 +15,10 @@ export const userPreferenceRepo = {
       throw new Error("User preference not found (demo)");
     }
 
-    return userPreferenceApi.fetch(userId);
+    return userPreferenceApi.get(userId);
   },
 
-  async post({ userId, data }: { userId: string | null; data: Preference }) {
+  async create({ userId, data }: { userId: string | null; data: Preference }) {
     // local demo.
     if (!userId) {
       localStorage.setItem(
@@ -28,12 +28,12 @@ export const userPreferenceRepo = {
       return;
     }
 
-    const result = await userPreferenceApi.post(userId, data);
+    const result = await userPreferenceApi.create(userId, data);
 
     return result;
   },
 
-  async put({ userId, data }: { userId: string | null; data: Preference }) {
+  async update({ userId, data }: { userId: string | null; data: Preference }) {
     // local demo.
     if (!userId) {
       localStorage.setItem(
@@ -43,7 +43,7 @@ export const userPreferenceRepo = {
       return;
     }
 
-    const result = await userPreferenceApi.put(userId, data);
+    const result = await userPreferenceApi.update(userId, data);
 
     return result;
   },

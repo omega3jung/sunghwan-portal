@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 
 import { CurrentSession } from "@/domain/auth";
 import { UseCurrentSessionResult } from "@/feature/auth";
-import { useFetchMyProfile } from "@/feature/auth/hooks";
+import { useMyProfileQuery } from "@/feature/auth/hooks";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
 
@@ -51,7 +51,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   /*
    * The ID that last called meApi or userProfileApi
    */
-  const { data: effectiveUserProfile } = useFetchMyProfile(session.data);
+  const { data: effectiveUserProfile } = useMyProfileQuery(session.data);
 
   /*
    * 🔒 From here on, authenticated is guaranteed at the type level.

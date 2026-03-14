@@ -15,9 +15,9 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
 import {
-  usePostUserPreference,
-  usePutUserPreference,
-} from "@/feature/user/preference/queries";
+  useCreateUserPreference,
+  useUpdateUserPreference,
+} from "@/feature/user/preference";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { languageOptions } from "@/shared/constants/options/language";
@@ -46,8 +46,8 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setColorTheme,
     setScreenMode,
   } = useCurrentPreference();
-  const { mutate: createUserPreference } = usePostUserPreference();
-  const { mutate: updateUserPreference } = usePutUserPreference();
+  const { mutate: createUserPreference } = useCreateUserPreference();
+  const { mutate: updateUserPreference } = useUpdateUserPreference();
 
   const { t } = useTranslation("PreferencesMenu");
 
