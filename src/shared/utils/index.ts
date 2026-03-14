@@ -10,5 +10,6 @@ export * from "./number";
 export * from "./path";
 export * from "./string";
 export * from "./theme";
+export * from "./toast";
 export * from "./valueLabel";
 export * from "./viewport";

@@ -1,5 +1,5 @@
 export type SystemStatus =
-  | "Pre"
+  | "Draft"
   | "Open"
   | "Approved"
   | "Declined"

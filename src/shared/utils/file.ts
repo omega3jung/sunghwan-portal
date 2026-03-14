@@ -19,3 +19,28 @@ export const dataURLtoFile = (dataurl: string, filename: string) => {
 
   return new File([u8arr], filename, { type: mime });
 };
+
+export const bytesToKB = (size: number) =>
+  Math.round((size / 1024 + Number.EPSILON) * 100) / 100;
+
+export const bytesToMB = (size: number) =>
+  Math.round((size / (1024 * 1024) + Number.EPSILON) * 100) / 100;
+
+export const validateFiles = (
+  files: File[],
+  maxCount: number,
+  maxSizeMB: number,
+): "count" | "size" | null => {
+  if (files.length > maxCount) {
+    return "count";
+  }
+
+  const maxBytes = maxSizeMB * 1024 * 1024;
+  const total = files.reduce((acc, f) => acc + f.size, 0);
+
+  if (total > maxBytes) {
+    return "size";
+  }
+
+  return null;
+};

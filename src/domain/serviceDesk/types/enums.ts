@@ -1,7 +1,7 @@
 import { Period } from "@/domain/common/types";
 
 export type TicketStatus =
-  | "Pre"
+  | "Draft" // creating ticket.
   | "Open"
   | "Approved"
   | "Declined"
@@ -13,3 +13,5 @@ export type TicketStatus =
 export type TicketPeriod = Exclude<Period, "today">;
 
 export type TicketAttach = "file" | "image";
+
+export type CommentVisibility = "public" | "internal";
