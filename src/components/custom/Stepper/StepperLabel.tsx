@@ -19,7 +19,7 @@ export const StepperLabel = ({ className, children }: Props) => {
       "absolute left-full ml-3 px-1 top-1/2 -translate-y-1/2 bg-background",
   };
 
-  // 🔥 square일 땐 렌더하지 않음
+  // Do not render when the step variant is square
   if (stepVariant === "square")
     return (
       <span

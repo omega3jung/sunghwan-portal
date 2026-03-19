@@ -8,7 +8,7 @@ import {
   keys,
 } from "@/app/_mocks/pages/demo/multi-combo-box";
 import {
-  ButtonVariant,
+  type ButtonVariant,
   MultiComboBox,
 } from "@/components/custom/MultiComboBox";
 import { Input } from "@/components/ui/input";
@@ -23,12 +23,12 @@ export default function MultiComboBoxPage() {
     "February",
     "March",
   ]);
-  const [rainbowStart, setRainboStart] = useState<number>(1);
-  const [rainbowPick, setRainbowPick] = useState<number>();
+  const [paletteStart, setPaletteStart] = useState<number>(1);
+  const [palettePick, setPalettePick] = useState<number>();
 
   const [comboBoxVariant, setComboBoxVariant] =
     useState<comboBoxVariant>("default");
-  const [buttonVariant, setButtonVariant] = useState<ButtonVariant>("rainbow");
+  const [badgeVariant, setBadgeVariant] = useState<ButtonVariant>("palette");
 
   const testData = useMemo<ValueLabel[]>(() => {
     const keyData = keys.map((key) => {
@@ -62,8 +62,8 @@ export default function MultiComboBoxPage() {
         <h4 className="p-2">Button Variants</h4>
         <RadioGroup
           className="flex px-2"
-          value={buttonVariant as string}
-          onValueChange={(value) => setButtonVariant(value as ButtonVariant)}
+          value={badgeVariant as string}
+          onValueChange={(value) => setBadgeVariant(value as ButtonVariant)}
         >
           {buttonVariantData.map((variant) => (
             <div key={variant} className="flex items-center space-x-2">
@@ -75,22 +75,22 @@ export default function MultiComboBoxPage() {
       </div>
 
       <div>
-        <h4 className="p-2">Rainbow Options</h4>
+        <h4 className="p-2">Palette Options</h4>
         <div className="flex items-center gap-4 px-2">
-          <h6>rainbowStart</h6>
+          <h6>Palette Start</h6>
           <Input
             className="w-20"
-            value={rainbowStart}
-            onChange={(e) => setRainboStart(parseInt(e.target.value))}
+            value={paletteStart}
+            onChange={(e) => setPaletteStart(parseInt(e.target.value))}
             type={"number"}
             min={1}
             max={10}
           />
-          <h6>rainbowPick</h6>
+          <h6>Palette Pick</h6>
           <Input
             className="w-20"
-            value={rainbowPick}
-            onChange={(e) => setRainbowPick(parseInt(e.target.value))}
+            value={palettePick}
+            onChange={(e) => setPalettePick(parseInt(e.target.value))}
             type={"number"}
             min={1}
             max={10}
@@ -101,9 +101,9 @@ export default function MultiComboBoxPage() {
       <div className="max-w-sm p-2">
         <MultiComboBox
           variant={comboBoxVariant}
-          buttonVariant={buttonVariant}
-          rainbowStart={rainbowStart as indexVariant}
-          rainbowPick={rainbowPick as indexVariant}
+          badgeVariant={badgeVariant}
+          paletteStart={paletteStart as indexVariant}
+          palettePick={palettePick as indexVariant}
           options={testData}
           value={selectedRanges}
           onSelect={(selected: string) => {

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   addMonths,
   addWeeks,
@@ -10,15 +12,16 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import React from "react";
-import { DateRange, OnSelectHandler } from "react-day-picker";
+import type { ForwardedRef } from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import type { DateRange, OnSelectHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
+  PopoverAnchor,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
@@ -29,46 +32,99 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import i18n from "@/lib/i18n";
-import { ValueLabel } from "@/shared/types/options";
+import type { ValueLabel } from "@/shared/types/options";
 import { cn } from "@/shared/utils";
 
-import { DatePickerProps, Period, Range } from "./types";
+import type { DatePickerProps, Period } from "./types";
 
-const ns = {
-  ns: "DateRangePicker",
+const DEFAULT_OPTIONS: Period[] = [
+  "today",
+  "this_week",
+  "this_month",
+  "this_year",
+  "last_week",
+  "last_2week",
+  "last_3week",
+  "last_4week",
+  "last_month",
+  "last_2month",
+  "last_3month",
+  "last_4month",
+  "last_5month",
+  "last_6month",
+  "last_7month",
+  "last_8month",
+  "last_9month",
+  "last_10month",
+  "last_11month",
+  "last_year",
+  "last_2year",
+  "range",
+];
+
+const RANGE_LABEL_KEYS: Record<Period, string> = {
+  today: "today",
+  this_week: "thisWeek",
+  this_month: "thisMonth",
+  this_year: "thisYear",
+  last_week: "lastWeek",
+  last_2week: "last2Week",
+  last_3week: "last3Week",
+  last_4week: "last4Week",
+  last_month: "lastMonth",
+  last_2month: "last2Month",
+  last_3month: "last3Month",
+  last_4month: "last4Month",
+  last_5month: "last5Month",
+  last_6month: "last6Month",
+  last_7month: "last7Month",
+  last_8month: "last8Month",
+  last_9month: "last9Month",
+  last_10month: "last10Month",
+  last_11month: "last11Month",
+  last_year: "lastYear",
+  last_2year: "last2Year",
+  range: "dateRange",
 };
 
-const rangeData: Range = {
-  today: i18n.t("today", ns),
-  this_week: i18n.t("thisWeek", ns),
-  this_month: i18n.t("thisMonth", ns),
-  this_year: i18n.t("thisYear", ns),
-  last_week: i18n.t("lastWeek", ns),
-  last_2week: i18n.t("last2Week", ns),
-  last_3week: i18n.t("last3Week", ns),
-  last_4week: i18n.t("last4Week", ns),
-  last_month: i18n.t("lastMonth", ns),
-  last_2month: i18n.t("last2Month", ns),
-  last_3month: i18n.t("last3Month", ns),
-  last_4month: i18n.t("last4Month", ns),
-  last_5month: i18n.t("last5Month", ns),
-  last_6month: i18n.t("last6Month", ns),
-  last_7month: i18n.t("last7Month", ns),
-  last_8month: i18n.t("last8Month", ns),
-  last_9month: i18n.t("last9Month", ns),
-  last_10month: i18n.t("last10Month", ns),
-  last_11month: i18n.t("last11Month", ns),
-  last_year: i18n.t("lastYear", ns),
-  last_2year: i18n.t("last2Year", ns),
-  range: i18n.t("dateRange", ns),
+const DATE_FORMAT = "dd MMM yyyy";
+
+const formatRangeText = (from?: Date, to?: Date) => {
+  const formattedStartDate = from ? format(from, DATE_FORMAT) : "";
+  const formattedEndDate = to ? format(to, DATE_FORMAT) : "";
+
+  return `${formattedStartDate} - ${formattedEndDate}`.trim();
 };
 
-export const Component = (
-  props: DatePickerProps,
-  ref: React.ForwardedRef<HTMLDivElement>,
-) => {
-  const {
+const getRelativeStartDate = (period: Period) => {
+  const today = new Date();
+  const match = /^last_(\d+)?(week|month|year)$/.exec(period);
+
+  if (!match) {
+    return today;
+  }
+
+  const [, amountValue, unit] = match;
+  const amount = amountValue ? Number.parseInt(amountValue, 10) : 1;
+
+  if (Number.isNaN(amount)) {
+    return today;
+  }
+
+  switch (unit) {
+    case "week":
+      return addWeeks(today, -amount);
+    case "month":
+      return addMonths(today, -amount);
+    case "year":
+      return addYears(today, -amount);
+    default:
+      return today;
+  }
+};
+
+const Component = (
+  {
     className,
     variant,
     period,
@@ -77,73 +133,56 @@ export const Component = (
     setRange,
     showRange = false,
     setRangeText,
-    options = [
-      "today",
-      "this_week",
-      "this_month",
-      "this_year",
-      "last_week",
-      "last_2week",
-      "last_3week",
-      "last_4week",
-      "last_month",
-      "last_2month",
-      "last_3month",
-      "last_4month",
-      "last_5month",
-      "last_6month",
-      "last_7month",
-      "last_8month",
-      "last_9month",
-      "last_10month",
-      "last_11month",
-      "last_year",
-      "last_2year",
-      "range",
-    ],
-  } = props;
-
+    options = DEFAULT_OPTIONS,
+  }: DatePickerProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) => {
   const { t } = useTranslation("DatePicker");
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [displayText, setDisplayText] = useState<string>("");
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [displayText, setDisplayText] = useState("");
 
   const optionData = useMemo<ValueLabel[]>(
     () =>
       options.map((item) => ({
         value: item,
-        label: rangeData[item],
-      })) as ValueLabel[],
-    [options],
+        label: t(RANGE_LABEL_KEYS[item]),
+      })),
+    [options, t],
   );
 
-  const trigerValue = useMemo<string>(() => {
-    return showRange && !!displayText ? displayText : t("datePicker.dateRange");
-  }, [showRange, displayText, t]);
+  const triggerValue = useMemo(() => {
+    return showRange && displayText ? displayText : t("dateRange");
+  }, [displayText, showRange, t]);
+
+  const updateDisplayText = useCallback(
+    (text: string) => {
+      setDisplayText(text);
+      setRangeText?.(text);
+    },
+    [setRangeText],
+  );
 
   const calculateAndSetDisplayText = useCallback(
     (value: Period) => {
-      let text;
       const today = new Date();
 
       switch (value) {
-        case "today":
+        case "today": {
           setRange({ from: today, to: today });
-          text = `${format(today, "dd MMM yyyy")}`;
+          updateDisplayText(format(today, DATE_FORMAT));
           setOpen(false);
-          break;
+          return;
+        }
 
         case "this_week": {
           const startWeek = startOfWeek(today, { weekStartsOn: 1 });
           const endWeek = endOfWeek(today, { weekStartsOn: 1 });
 
           setRange({ from: startWeek, to: endWeek });
-          text = `${format(startWeek, "dd MMM yyyy")} - ${format(
-            endWeek,
-            "dd MMM yyyy",
-          )}`;
-          break;
+          updateDisplayText(formatRangeText(startWeek, endWeek));
+          setOpen(false);
+          return;
         }
 
         case "this_month": {
@@ -151,94 +190,50 @@ export const Component = (
           const endMonth = endOfMonth(today);
 
           setRange({ from: startMonth, to: endMonth });
-          text = `${format(startMonth, "dd MMM yyyy")} - ${format(
-            endMonth,
-            "dd MMM yyyy",
-          )}`;
-          break;
+          updateDisplayText(formatRangeText(startMonth, endMonth));
+          setOpen(false);
+          return;
         }
 
         case "this_year": {
-          const startMonth = startOfYear(today);
-          const endMonth = endOfYear(today);
+          const startYear = startOfYear(today);
+          const endYear = endOfYear(today);
 
-          setRange({ from: startMonth, to: endMonth });
-          text = `${format(startMonth, "dd MMM yyyy")} - ${format(
-            endMonth,
-            "dd MMM yyyy",
-          )}`;
-          break;
+          setRange({ from: startYear, to: endYear });
+          updateDisplayText(formatRangeText(startYear, endYear));
+          setOpen(false);
+          return;
         }
 
         case "range":
           setRange(undefined);
+          updateDisplayText("");
           setOpen(true);
+          return;
 
-          return; // Early return to avoid setting text when opening the calendar.
-
-        // last n weeks, months, years.
         default: {
-          const startDate = setLastNPeriod(value);
+          const startDate = getRelativeStartDate(value);
 
           setRange({ from: startDate, to: today });
-          text = `${format(startDate, "dd MMM yyyy")} - ${format(
-            today,
-            "dd MMM yyyy",
-          )}`;
-          break;
+          updateDisplayText(formatRangeText(startDate, today));
+          setOpen(false);
         }
       }
-
-      setDisplayText(text);
-
-      if (setRangeText) {
-        setRangeText(text);
-      }
-      setOpen(false);
     },
-    [setRange, setRangeText],
+    [setRange, updateDisplayText],
   );
 
-  const setLastNPeriod = (period: Period) => {
-    try {
-      const today = new Date();
-
-      if (period.endsWith("week")) {
-        const amountString = period.replace("last_", "").replace("week", "");
-        const amount = !amountString.length ? 1 : parseInt(amountString);
-
-        return addWeeks(today, -amount);
-      } else if (period.endsWith("month")) {
-        const amountString = period.replace("last_", "").replace("month", "");
-        const amount = !amountString.length ? 1 : parseInt(amountString);
-
-        return addMonths(today, -amount);
-      } else if (period.endsWith("year")) {
-        const amountString = period.replace("last_", "").replace("year", "");
-        const amount = !amountString.length ? 1 : parseInt(amountString);
-
-        return addYears(today, -amount);
-      }
-
-      return today;
-    } catch (error) {
-      return new Date();
+  const onDateSelect: OnSelectHandler<DateRange | undefined> = (selectedRange) => {
+    if (!selectedRange) {
+      setRange(undefined);
+      updateDisplayText("");
+      return;
     }
-  };
 
-  const onDateSelect: OnSelectHandler<DateRange | undefined> = (range) => {
-    if (!range) return;
+    const { from, to } = selectedRange;
+    const text = formatRangeText(from, to);
 
-    const { from, to } = range;
-
-    const formattedStartDate = from ? format(from, "dd MMM yyyy") : "";
-    const formattedEndDate = to ? format(to, "dd MMM yyyy") : "";
-
-    const text = `${formattedStartDate} - ${formattedEndDate}`;
-
-    setDisplayText(text);
-    setRangeText?.(text);
-
+    updateDisplayText(text);
     setRange({ from, to });
 
     if (from && to) {
@@ -246,12 +241,22 @@ export const Component = (
     }
   };
 
-  // trigered to set range when loading.
   useEffect(() => {
-    if (!!period && !range) {
+    if (period && !range) {
       calculateAndSetDisplayText(period);
     }
   }, [calculateAndSetDisplayText, period, range]);
+
+  useEffect(() => {
+    if (!range?.from) {
+      if (period !== "range") {
+        updateDisplayText("");
+      }
+      return;
+    }
+
+    updateDisplayText(formatRangeText(range.from, range.to));
+  }, [period, range, updateDisplayText]);
 
   return (
     <div ref={ref} className="relative">
@@ -265,36 +270,31 @@ export const Component = (
         <SelectTrigger
           variant={variant}
           className={cn("border-slate-150 h-10", className)}
-          title={t("datePicker.rangePlaceholder")}
+          title={t("rangePlaceholder")}
         >
           {period === "range" ? (
-            trigerValue
+            triggerValue
           ) : (
-            <SelectValue placeholder={t("datePicker.rangePlaceholder")} />
+            <SelectValue placeholder={t("rangePlaceholder")} />
           )}
         </SelectTrigger>
         <SelectContent>
           {optionData.map((item) => (
-            <SelectItem key={item.value} value={`${item.value}`}>
+            <SelectItem key={item.value} value={item.value}>
               {item.label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <Popover
-        open={open}
-        onOpenChange={() => {
-          if (buttonRef.current) {
-            buttonRef.current.click();
-          }
-        }}
-      >
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverAnchor className="absolute left-1/2 top-0 h-10 w-0 -translate-x-1/2" />
         <PopoverTrigger asChild>
           <Button
-            ref={buttonRef}
-            className="absolute left-1/2 top-0 -z-[1]"
+            aria-hidden="true"
+            tabIndex={-1}
+            className="absolute left-1/2 top-0 -z-[1] h-10 w-0 -translate-x-1/2 overflow-hidden p-0 opacity-0"
             variant="ghost"
-          ></Button>
+          />
         </PopoverTrigger>
         <PopoverContent className="z-[51] w-auto p-0" align="center">
           <Calendar mode="range" selected={range} onSelect={onDateSelect} />
@@ -304,7 +304,9 @@ export const Component = (
   );
 };
 
-export const DateRangePicker = React.forwardRef<
-  HTMLDivElement,
-  DatePickerProps
->(Component);
+export const DateRangePicker = forwardRef<HTMLDivElement, DatePickerProps>(
+  Component,
+);
+
+DateRangePicker.displayName = "DateRangePicker";
+

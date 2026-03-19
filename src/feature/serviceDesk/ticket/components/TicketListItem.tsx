@@ -23,7 +23,7 @@ export const TicketListItem = ({ ticket, users, language, onClick }: Props) => {
       onClick={onClick}
       className="flex flex-col gap-3 border-b p-4 hover:bg-muted cursor-pointer"
     >
-      {/* 상단 영역 */}
+      {/* Top section */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -43,7 +43,7 @@ export const TicketListItem = ({ ticket, users, language, onClick }: Props) => {
         <StatusBadge status={ticket.status} />
       </div>
 
-      {/* 하단 영역 (반응형) */}
+      {/* Bottom section (responsive) */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">

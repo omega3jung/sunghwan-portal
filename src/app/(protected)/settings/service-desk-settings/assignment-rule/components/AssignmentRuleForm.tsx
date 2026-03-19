@@ -111,7 +111,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                 <MultiComboBox
                   id="assignment-rule-select-job-field"
                   variant="default"
-                  buttonVariant="secondary"
+                  badgeVariant="secondary"
                   options={jobFieldData}
                   value={selectedNode?.jobFieldIds || []}
                   disabled={!selectedNode}

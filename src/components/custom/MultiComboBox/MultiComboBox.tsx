@@ -1,16 +1,15 @@
 "use client";
 
-import { Check, ChevronDown, Loader2, X } from "lucide-react";
-import React, { Fragment, useRef } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
+import type { ForwardedRef } from "react";
+import { forwardRef, useMemo } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import {
@@ -20,12 +19,18 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils";
 
-import { badgeColors } from "./styles";
-import { ComboBoxProps, MultiComboboxProps } from "./types";
+import { MultiComboBoxBadgeList } from "./MultiComboBoxBadgeList";
+import { MultiComboBoxOptionItem } from "./MultiComboBoxOptionItem";
+import type { ComboBoxProps } from "./types";
+import {
+  createCommandFilter,
+  EMPTY_OPTION_TEXT,
+  getSelectedOptions,
+} from "./utils";
 import { comboBoxVariants } from "./variants";
 
-const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
-  const {
+const Component = (
+  {
     placeholder,
     options = [],
     value = [],
@@ -33,112 +38,84 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
     onRemove,
     variant,
     size,
-    buttonVariant = "default",
-    rainbowStart = 1,
-    rainbowPick = undefined,
+    badgeVariant,
+    paletteStart,
+    palettePick,
     isLoading = false,
     disabled = false,
     readOnly = false,
-  } = props;
+    className,
+    ...buttonProps
+  }: ComboBoxProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) => {
+  const resolvedBadgeVariant = badgeVariant ?? "default";
+  const resolvedPaletteStart = paletteStart ?? 1;
+  const resolvedPalettePick = palettePick;
 
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const selectedOptions = useMemo(
+    () => getSelectedOptions(options, value),
+    [options, value],
+  );
+  const commandFilter = useMemo(() => createCommandFilter(options), [options]);
 
-  const handleSelect = (selection: string) => {
+  const handleToggleOption = (selection: string) => {
+    if (value.includes(selection)) {
+      onRemove?.(selection);
+      return;
+    }
+
     onSelect?.(selection);
-  };
-
-  const handleRemove = (selection: string) => {
-    onRemove?.(selection);
   };
 
   return (
     <Popover>
-      <PopoverTrigger asChild className="flex items-start">
-        <div className="relative">
-          <Button
-            ref={buttonRef}
-            variant="outline"
-            role="combobox"
-            type="button"
-            className={cn(comboBoxVariants({ variant, size }))}
-            disabled={disabled || readOnly}
-          >
-            {!value.length ? (
-              <div className="font-normal text-muted-foreground px-2">
-                {placeholder}
-              </div>
-            ) : (
-              <div className="flex flex-wrap items-center gap-1">
-                {options.map((item, index) => {
-                  if (value.indexOf(item.value) < 0) {
-                    return <Fragment key={`space-${item.value}`} />;
-                  }
+      <PopoverTrigger asChild>
+        <Button
+          {...buttonProps}
+          ref={ref}
+          variant="outline"
+          role="combobox"
+          type="button"
+          className={cn(comboBoxVariants({ variant, size }), className)}
+          disabled={disabled || readOnly}
+        >
+          {!selectedOptions.length ? (
+            <div className="px-2 font-normal text-muted-foreground">
+              {placeholder}
+            </div>
+          ) : (
+            <MultiComboBoxBadgeList
+              items={selectedOptions}
+              badgeVariant={resolvedBadgeVariant}
+              paletteStart={resolvedPaletteStart}
+              palettePick={resolvedPalettePick}
+              readOnly={readOnly}
+              onRemove={onRemove}
+            />
+          )}
 
-                  return (
-                    <Badge
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemove(item.value);
-                      }}
-                      key={`space-${item.value}`}
-                      variant={
-                        buttonVariant === "rainbow" ? null : buttonVariant
-                      }
-                      className={cn(
-                        "flex h-6 cursor-pointer gap-2 text-nowrap rounded-lg pr-1",
-                        buttonVariant !== "rainbow"
-                          ? null
-                          : badgeColors[
-                              !rainbowPick
-                                ? (rainbowStart + index) % 10
-                                : rainbowPick
-                            ],
-                      )}
-                    >
-                      {item.label}
-                      <X size="16" />
-                    </Badge>
-                  );
-                })}
-
-                {!value.length && <div>{placeholder}</div>}
-              </div>
-            )}
-
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : !readOnly ? (
-              <ChevronDown className="ml-2 mr-2 h-4 w-4 shrink-0 text-basic" />
-            ) : (
-              ""
-            )}
-          </Button>
-        </div>
+          {isLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : !readOnly ? (
+            <ChevronDown className="ml-2 mr-2 h-4 w-4 shrink-0 text-basic" />
+          ) : null}
+        </Button>
       </PopoverTrigger>
 
-      <PopoverContent
-        className="translate-y-0 p-0"
-        style={{ width: buttonRef.current?.offsetWidth }}
-      >
-        <Command>
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+        <Command filter={commandFilter}>
           <CommandInput placeholder={placeholder} />
           <CommandList className="max-h-48 min-h-0">
-            <CommandEmpty>No option found.</CommandEmpty>
+            <CommandEmpty>{EMPTY_OPTION_TEXT}</CommandEmpty>
             <CommandGroup>
               {options.map((item) => (
-                <CommandItem
-                  value={item.label}
-                  key={`option-${item.value}`}
-                  onSelect={() => handleSelect(item.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value.includes(item.value) ? "opacity-100" : "opacity-0",
-                    )}
-                  />
-                  {item.label}
-                </CommandItem>
+                <MultiComboBoxOptionItem
+                  key={item.value}
+                  item={item}
+                  selected={value.includes(item.value)}
+                  onSelect={handleToggleOption}
+                />
               ))}
             </CommandGroup>
           </CommandList>
@@ -148,4 +125,8 @@ const Component = (props: MultiComboboxProps & ComboBoxProps, _: any) => {
   );
 };
 
-export const MultiComboBox = React.forwardRef<any, ComboBoxProps>(Component);
+export const MultiComboBox = forwardRef<HTMLButtonElement, ComboBoxProps>(
+  Component,
+);
+
+MultiComboBox.displayName = "MultiComboBox";

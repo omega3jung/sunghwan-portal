@@ -1,33 +1,39 @@
-import { type VariantProps } from "class-variance-authority";
-import React from "react";
+import type { VariantProps } from "class-variance-authority";
+import type { ButtonHTMLAttributes } from "react";
 
 import { badgeVariants } from "@/components/ui/badge";
-import { ValueLabel } from "@/shared/types/options";
+import type { ValueLabel } from "@/shared/types/options";
 
 import { comboBoxVariants } from "./variants";
 
-export type ButtonVariant =
-  | VariantProps<typeof badgeVariants>["variant"]
-  | "rainbow";
+export type NativeBadgeVariant = VariantProps<typeof badgeVariants>["variant"];
+export type PaletteIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type MultiColorBadgeVariant = "palette" | "overdue";
+export type BadgeVariant = NativeBadgeVariant | MultiColorBadgeVariant;
+export type ButtonVariant = BadgeVariant;
+export type ComboBoxVariant = VariantProps<typeof comboBoxVariants>["variant"];
+export type ComboBoxSize = VariantProps<typeof comboBoxVariants>["size"];
 
-export type MultiComboboxProps = {
+export type MultiComboBoxProps = {
   placeholder?: string;
   options?: ValueLabel[];
-  background?: boolean;
-  buttonVariant?: ButtonVariant;
-  rainbowStart?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-  rainbowPick?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | undefined;
+  badgeVariant?: BadgeVariant;
+  paletteStart?: PaletteIndex;
+  palettePick?: PaletteIndex;
   onSelect?: (value: string) => void;
   onRemove?: (value: string) => void;
   isLoading?: boolean;
-  readOnly?: any;
+  readOnly?: boolean;
 };
+
+export type MultiComboboxProps = MultiComboBoxProps;
 
 export interface ComboBoxProps
   extends
-    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
-    MultiComboboxProps,
-    VariantProps<typeof comboBoxVariants> {
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
+    MultiComboBoxProps {
   value: string[];
   asChild?: boolean;
+  variant?: ComboBoxVariant;
+  size?: ComboBoxSize;
 }

@@ -1,6 +1,7 @@
 // src/shared/types/index.ts
 
 export * from "./api";
+export * from "./chart";
 export * from "./date";
 export * from "./icon";
 export * from "./language";

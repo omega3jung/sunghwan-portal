@@ -5,7 +5,7 @@ export const buttonVariantData = [
   "overdue",
   "destructive",
   "outline",
-  "rainbow",
+  "palette",
 ];
 
 export const keys = [

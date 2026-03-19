@@ -11,10 +11,10 @@ interface Props {
 }
 
 export const useTicketFilter = ({ form, categories }: Props) => {
-  // form 상태 직접 watch
+  // Watch form state directly
   const selectedCategory = form.watch("category");
 
-  // category 옵션
+  // Category options
   const categoryOptions = useMemo(() => {
     return categories.map((c) => ({
       value: c.id.toString(),
@@ -22,7 +22,7 @@ export const useTicketFilter = ({ form, categories }: Props) => {
     }));
   }, [categories]);
 
-  // subCategory 옵션 (category 기반 파생)
+  // Subcategory options derived from the selected category
   const subCategoryOptions = useMemo(() => {
     if (!selectedCategory?.length) return [];
 

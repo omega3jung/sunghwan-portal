@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const TicketListSkeleton = () => {
   return (
     <div className="flex flex-col gap-3 border-b p-4">
-      {/* 상단 영역 */}
+      {/* Top section */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -15,7 +15,7 @@ export const TicketListSkeleton = () => {
         <Skeleton className="h-6 w-20 rounded-full" /> {/* StatusBadge */}
       </div>
 
-      {/* 하단 영역 */}
+      {/* Bottom section */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2">
           <Skeleton className="h-6 w-6 rounded-full" /> {/* Avatar */}

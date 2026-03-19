@@ -104,7 +104,7 @@ export function SortableTree<T>({
 
     const activeItem = clonedItems[activeIndex];
 
-    // ✅ depth가 같은 경우에만 구조 변경 허용
+    // Only allow structural changes when the depth stays the same
     const allowDepthChange = projected.depth === activeItem.depth;
 
     const nextDepth = allowDepthChange ? projected.depth : activeItem.depth;
@@ -113,7 +113,7 @@ export function SortableTree<T>({
       ? projected.parentId
       : activeItem.parentId;
 
-    // ✅ children 수가 maximum을 넘지 않는 경우에만 구조 변경 허용
+    // Only allow structural changes when the child count does not exceed the maximum
     const parent = clonedItems.find((i) => i.id === nextParentId);
     const limit = parent?.maximum;
 
@@ -129,7 +129,7 @@ export function SortableTree<T>({
         : siblings.length + 1;
 
       if (effectiveCount > limit) {
-        return; // 🚫 drop 취소
+        return; // Cancel the drop
       }
     }
 

@@ -15,7 +15,7 @@ type Params = {
 export function useApprovalStepper({ selectedNode, tree, language }: Params) {
   const [currentStep, setCurrentStep] = useState(1);
 
-  // 1️⃣ steps 계산
+  // 1. Compute the step list
   const steps = useMemo(() => {
     if (!selectedNode) return [];
 
@@ -42,7 +42,7 @@ export function useApprovalStepper({ selectedNode, tree, language }: Params) {
     return result;
   }, [selectedNode, tree, language]);
 
-  // 2️⃣ currentStep 자동 동기화
+  // 2. Sync currentStep automatically
   useEffect(() => {
     if (!selectedNode) return;
     if (selectedNode.nodeType === "category") return;

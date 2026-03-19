@@ -1,5 +1,6 @@
 export * from "./array";
 export * from "./case";
+export * from "./chart";
 export * from "./classnames";
 export * from "./currency";
 export * from "./file";
