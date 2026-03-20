@@ -1,0 +1,61 @@
+{
+  "common": {
+    "create": {
+      "title": "Creado",
+      "loading": "Creando {{item}}",
+      "success": "{{item}} creado.",
+      "successWithId": "{{item}} {{id}} creado.",
+      "successfully": "Creado correctamente."
+    },
+    "save": {
+      "title": "Guardado",
+      "loading": "Guardando {{item}}",
+      "success": "{{item}} guardado.",
+      "successWithId": "{{item}} {{id}} guardado.",
+      "successfully": "Guardado correctamente."
+    },
+    "update": {
+      "title": "Actualizado",
+      "loading": "Actualizando {{item}}",
+      "success": "{{item}} actualizado.",
+      "successWithId": "{{item}} {{id}} actualizado.",
+      "successfully": "Actualizado correctamente."
+    },
+    "delete": {
+      "title": "Eliminado",
+      "loading": "Eliminando {{item}}",
+      "success": "{{item}} eliminado.",
+      "successWithId": "{{item}} {{id}} eliminado.",
+      "successfully": "Eliminado correctamente."
+    },
+    "confirm": {
+      "title": "Confirmación",
+      "create": "¿Seguro que quieres crear esto?",
+      "save": "¿Seguro que quieres guardar?",
+      "saveChanges": "¿Seguro que quieres guardar los cambios?",
+      "update": "¿Seguro que quieres actualizar este elemento?",
+      "updateChanges": "¿Seguro que quieres aplicar estos cambios?",
+      "delete": "¿Seguro que quieres eliminar este elemento?"
+    },
+    "cancel": {
+      "title": "Cancelado",
+      "success": "{{item}} cancelado.",
+      "successWithId": "{{item}} {{id}} cancelado.",
+      "successfully": "Cancelado correctamente."
+    },
+    "validation": {
+      "title": "Validación",
+      "errorTitle": "Error de validación"
+    }
+  },
+  "reply": {
+    "title": "Respuesta enviada",
+    "success": "La respuesta se envió correctamente.",
+    "successWithId": "La respuesta se envió para {{id}}."
+  },
+  "user": {
+    "create": {
+      "success": "El usuario se creó correctamente."
+    }
+  }
+}

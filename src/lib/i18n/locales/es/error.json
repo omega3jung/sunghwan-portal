@@ -1,7 +1,39 @@
 {
+  "common": {
+    "failed": "Failed",
+    "load": {
+      "title": "Failed to load",
+      "message": "Failed to load {{item}}"
+    },
+    "create": {
+      "title": "Failed to create",
+      "message": "Failed to create {{item}}"
+    },
+    "update": {
+      "title": "Failed to update",
+      "message": "Failed to update {{item}}"
+    },
+    "delete": {
+      "title": "Failed to delete",
+      "message": "Failed to delete {{item}}"
+    },
+    "add": {
+      "title": "Failed to add",
+      "message": "Failed to add {{item}}"
+    },
+    "save": {
+      "title": "Failed to save",
+      "message": "Failed to save {{item}}"
+    },
+    "remove": {
+      "title": "Failed to remove",
+      "message": "Failed to remove {{item}}"
+    }
+  },
   "unsupportedBrowser": {
     "title": "Navegador no compatible",
     "description": "El navegador actual no es compatible.",
     "browserRecommendation": "Para una experiencia óptima, por favor actualice a la última versión de Chrome, Firefox, Edge o Safari."
-  }
+  },
+  "ticket": {}
 }

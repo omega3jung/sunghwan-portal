@@ -28,7 +28,6 @@
         "description": "Gère les étiquettes utilisées tout au long du processus de réparation et d’expédition de l’appareil."
       }
     },
-
     "accountSettings": {
       "title": "Paramètres du Compte",
       "description": "Gère les éléments liés aux informations de base du compte.",
@@ -76,7 +75,7 @@
         "title": "Étapes",
         "description": "Gère les étapes du flux de travail impliquées dans le processus de réparation des appareils."
       },
-      "validation": {
+      "validations": {
         "title": "Validations",
         "description": "Gère les règles de validation afin de garantir l’intégrité des données tout au long du flux de travail."
       }

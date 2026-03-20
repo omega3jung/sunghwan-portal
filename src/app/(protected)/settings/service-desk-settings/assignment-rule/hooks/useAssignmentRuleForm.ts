@@ -9,7 +9,7 @@ import { Locale } from "@/shared/types";
 
 import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
 
-type Params = {
+type UseAssignmentRuleFormOptions = {
   selectedNode: AssignmentRuleData | MainAssignmentRuleData | null;
   setTree: React.Dispatch<
     React.SetStateAction<TreeNodes<AssignmentRuleData | MainAssignmentRuleData>>
@@ -21,7 +21,7 @@ export const useAssignmentRuleForm = ({
   selectedNode,
   setTree,
   language,
-}: Params) => {
+}: UseAssignmentRuleFormOptions) => {
   const [languageTab, setLanguageTab] = useState<Locale>(language);
 
   const updateNode = (

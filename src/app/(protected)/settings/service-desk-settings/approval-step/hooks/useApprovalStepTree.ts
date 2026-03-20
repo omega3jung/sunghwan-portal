@@ -13,16 +13,19 @@ import { CategoryApprovalSettings } from "@/domain/serviceDesk";
 import {
   getDefaultApprovalData,
   MAX_APPROVAL_STEP_PER_CATEGORY,
-} from "../constnats";
+} from "../constants";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 import { approvalStepToTree, mapApprovalData } from "../util.mapper";
 
-type Params = {
+type UseApprovalStepTreeOptions = {
   approvalSteps: CategoryApprovalSettings[] | undefined;
   language: SupportedLanguage;
 };
 
-export function useApprovalStepTree({ approvalSteps, language }: Params) {
+export function useApprovalStepTree({
+  approvalSteps,
+  language,
+}: UseApprovalStepTreeOptions) {
   const [tree, setTree] = useState<
     TreeNodes<CategoryApprovalStepData | ApprovalStepData>
   >([]);

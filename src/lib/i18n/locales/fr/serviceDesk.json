@@ -1,1 +1,111 @@
-{}
+{
+  "action": {
+    "comment": "Commentaire",
+    "memo": "Note",
+    "assign": "Assigner",
+    "assignMyself": "M'assigner",
+    "reject": "Rejeter"
+  },
+  "chart": {
+    "category": {
+      "title": "Tickets par catégorie",
+      "label": "Catégorie"
+    },
+    "department": {
+      "title": "Tickets par département demandeur",
+      "label": "Département"
+    },
+    "assignee": {
+      "title": "Tickets par responsable",
+      "label": "Responsable"
+    },
+    "sla": {
+      "title": "Performance du SLA",
+      "status": {
+        "withinSla": "Dans le SLA",
+        "resolvedLate": "Résolu en retard",
+        "overdue": "En retard",
+        "inProgress": "En cours"
+      }
+    }
+  },
+  "field": {
+    "keyword": {
+      "label": "Mot-clé",
+      "placeholder": "Rechercher par mot-clé"
+    },
+    "draft": {
+      "label": "Brouillon"
+    },
+    "reason": {
+      "label": "Motif"
+    },
+    "ticket": {
+      "label": "Ticket",
+      "placeholder": "Saisir le numéro du ticket"
+    },
+    "tickets": {
+      "label": "Tickets",
+      "placeholder": "Saisir le numéro du ticket"
+    },
+    "comment": {
+      "label": "Commentaire"
+    },
+    "comments": {
+      "label": "Commentaires"
+    }
+  },
+  "message": {
+    "groupBy": "Regrouper par",
+    "filteringBy": "Filtré par",
+    "from": "De",
+    "assignTo": "Assigner à",
+    "dueBy": "Échéance le",
+    "lastComment": "Dernier commentaire",
+    "commentList": "Commentaires",
+    "ticketSummary": "Résumé du ticket",
+    "requesterInformation": "Informations du demandeur",
+    "created": "Créé",
+    "at": "à",
+    "ago": "il y a",
+    "validationPoint": "Sélectionner un point de validation",
+    "dragDropFile": "Glisser-déposer le fichier",
+    "fileUploadLimit": "Téléversement de fichiers (max. 10 fichiers)",
+    "approvalTitle": "Approbation",
+    "foundDraft": "Brouillon trouvé",
+    "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé."
+  },
+  "priority": {
+    "urgent": "Urgent",
+    "high": "Haute",
+    "medium": "Moyenne",
+    "low": "Basse"
+  },
+  "response": {
+    "agent": "L'agent a répondu",
+    "requester": "Le demandeur a répondu",
+    "none": "Aucune réponse"
+  },
+  "sort": {
+    "latest": "Trier par les plus récents",
+    "oldest": "Trier par les plus anciens"
+  },
+  "status": {
+    "pre": "Pré",
+    "open": "Ouvert",
+    "approved": "Approuvé",
+    "declined": "Refusé",
+    "working": "En cours",
+    "pending": "En attente",
+    "resolved": "Résolu",
+    "closed": "Fermé"
+  },
+  "tab": {
+    "tickets": "Tickets",
+    "reports": "Rapports",
+    "pendingApprovals": "Approbations en attente",
+    "openTickets": "Tickets ouverts",
+    "closedTickets": "Tickets fermés",
+    "overdueTickets": "Tickets en retard"
+  }
+}

@@ -63,6 +63,9 @@ export default function DateRangePickerPage() {
           options={selectedRanges}
         />
       </div>
+      <div>
+        <h6 className="p-2">{`${range?.from} ~ ${range?.to}`}</h6>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
   "stepper": {
     "stepper": "Stepper",
     "variants": "Variants",
-    "orientation": "Orientaion",
+    "orientation": "Orientation",
     "stepVariant": "Step variant",
     "labelPosition": "Label position",
     "stepColor": "Step color",

@@ -6,9 +6,9 @@ import { SupportedLanguage } from "@/domain/config";
 import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 
 import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
-import { AssignmentRuleToTree, mapAssignmentRuleData } from "../util.mapper";
+import { assignmentRuleToTree, mapAssignmentRuleData } from "../util.mapper";
 
-type Params = {
+type UseAssignmentRuleTreeOptions = {
   selectedClient: string | null;
   categories: ClientCategoryTree[] | undefined;
   assignmentRules: AssignmentRule[] | undefined;
@@ -20,7 +20,7 @@ export function useAssignmentRuleTree({
   categories,
   assignmentRules,
   language,
-}: Params) {
+}: UseAssignmentRuleTreeOptions) {
   const [tree, setTree] = useState<
     TreeNodes<AssignmentRuleData | MainAssignmentRuleData>
   >([]);
@@ -36,7 +36,7 @@ export function useAssignmentRuleTree({
       assignmentRules,
     );
 
-    setTree(AssignmentRuleToTree(mapped));
+    setTree(assignmentRuleToTree(mapped));
     setSelectedId(null); // reset selection when client changed.
   }, [assignmentRules, categories, selectedClient]);
 

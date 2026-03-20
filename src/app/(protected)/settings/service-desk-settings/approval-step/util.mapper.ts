@@ -1,7 +1,7 @@
 import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { CategoryApprovalSettings } from "@/domain/serviceDesk";
 
-import { MAX_APPROVAL_STEP_PER_CATEGORY } from "./constnats";
+import { MAX_APPROVAL_STEP_PER_CATEGORY } from "./constants";
 import type { ApprovalStepData, CategoryApprovalStepData } from "./types";
 
 export function mapApprovalData(

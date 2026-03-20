@@ -30,7 +30,7 @@
   },
 
   "empty": {
-    "noResults": "No Results"
+    "noResults": "No results"
   },
 
   "field": {
@@ -85,15 +85,15 @@
       "label": "Email",
       "placeholder": "Enter email",
       "to": {
-        "label": "Email To",
+        "label": "To",
         "placeholder": "Enter recipient"
       },
       "cc": {
-        "label": "Email Cc",
+        "label": "CC",
         "placeholder": "Enter cc recipients"
       },
       "bcc": {
-        "label": "Email Bcc",
+        "label": "BCC",
         "placeholder": "Enter bcc recipients"
       }
     },

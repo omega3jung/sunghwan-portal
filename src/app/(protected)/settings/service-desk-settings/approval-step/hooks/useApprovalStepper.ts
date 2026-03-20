@@ -6,13 +6,17 @@ import { SupportedLanguage } from "@/domain/config";
 
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 
-type Params = {
+type UseApprovalStepperOptions = {
   selectedNode: CategoryApprovalStepData | ApprovalStepData | null;
   tree: TreeNodes<CategoryApprovalStepData | ApprovalStepData>;
   language: SupportedLanguage;
 };
 
-export function useApprovalStepper({ selectedNode, tree, language }: Params) {
+export function useApprovalStepper({
+  selectedNode,
+  tree,
+  language,
+}: UseApprovalStepperOptions) {
   const [currentStep, setCurrentStep] = useState(1);
 
   // 1. Compute the step list

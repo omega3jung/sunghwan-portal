@@ -1,0 +1,61 @@
+{
+  "common": {
+    "create": {
+      "title": "Créé",
+      "loading": "Création de {{item}}",
+      "success": "{{item}} créé.",
+      "successWithId": "{{item}} {{id}} créé.",
+      "successfully": "Créé avec succès."
+    },
+    "save": {
+      "title": "Enregistré",
+      "loading": "Enregistrement de {{item}}",
+      "success": "{{item}} enregistré.",
+      "successWithId": "{{item}} {{id}} enregistré.",
+      "successfully": "Enregistré avec succès."
+    },
+    "update": {
+      "title": "Mis à jour",
+      "loading": "Mise à jour de {{item}}",
+      "success": "{{item}} mis à jour.",
+      "successWithId": "{{item}} {{id}} mis à jour.",
+      "successfully": "Mis à jour avec succès."
+    },
+    "delete": {
+      "title": "Supprimé",
+      "loading": "Suppression de {{item}}",
+      "success": "{{item}} supprimé.",
+      "successWithId": "{{item}} {{id}} supprimé.",
+      "successfully": "Supprimé avec succès."
+    },
+    "confirm": {
+      "title": "Confirmation",
+      "create": "Voulez-vous vraiment créer cet élément ?",
+      "save": "Voulez-vous vraiment enregistrer ?",
+      "saveChanges": "Voulez-vous vraiment enregistrer les modifications ?",
+      "update": "Voulez-vous vraiment mettre à jour cet élément ?",
+      "updateChanges": "Voulez-vous vraiment appliquer ces modifications ?",
+      "delete": "Voulez-vous vraiment supprimer cet élément ?"
+    },
+    "cancel": {
+      "title": "Annulé",
+      "success": "{{item}} annulé.",
+      "successWithId": "{{item}} {{id}} annulé.",
+      "successfully": "Annulé avec succès."
+    },
+    "validation": {
+      "title": "Validation",
+      "errorTitle": "Erreur de validation"
+    }
+  },
+  "reply": {
+    "title": "Réponse envoyée",
+    "success": "La réponse a été envoyée avec succès.",
+    "successWithId": "La réponse a été envoyée pour {{id}}."
+  },
+  "user": {
+    "create": {
+      "success": "L'utilisateur a été créé avec succès."
+    }
+  }
+}

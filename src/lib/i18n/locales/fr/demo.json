@@ -1,5 +1,5 @@
 {
-  "Stepper": {
+  "stepper": {
     "stepper": "Stepper",
     "variants": "Variation",
     "orientation": "Orientation",

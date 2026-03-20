@@ -1,56 +1,169 @@
 {
-  "buttons": {
-    "confirm": "확인",
-    "cancel": "취소",
-    "save": "저장",
-    "edit": "수정",
-    "delete": "삭제",
-    "create": "생성",
-    "update": "수정",
-    "submit": "제출",
-    "close": "닫기",
+  "action": {
+    "add": "추가",
     "back": "뒤로",
+    "cancel": "취소",
+    "close": "닫기",
+    "confirm": "확인",
+    "create": "생성",
+    "delete": "삭제",
+    "download": "다운로드",
+    "edit": "수정",
+    "filter": "필터",
+    "load": "불러오기",
+    "next": "다음",
+    "preview": "미리보기",
+    "reset": "초기화",
     "retry": "다시 시도",
+    "save": "저장",
     "search": "검색",
-    "reset": "초기화"
+    "submit": "제출",
+    "update": "수정",
+    "upload": "업로드",
+    "withItem": "{{item}} {{action}}"
   },
-  "table": {
-    "noData": "데이터가 없습니다",
-    "loading": "로딩 중...",
-    "rowsPerPage": "페이지당 행 수",
-    "total": "총 {{count}}개",
-    "selected": "{{count}}개 선택됨"
+  "boolean": {
+    "no": "아니요",
+    "yes": "예"
+  },
+  "empty": {
+    "noResults": "검색 결과가 없습니다"
+  },
+  "field": {
+    "age": {
+      "label": "나이",
+      "placeholder": "나이를 입력하세요"
+    },
+    "agent": {
+      "label": "에이전트",
+      "placeholder": "에이전트를 선택하세요"
+    },
+    "assignee": {
+      "label": "담당자",
+      "placeholder": "담당자를 선택하세요"
+    },
+    "category": {
+      "label": "카테고리",
+      "placeholder": "카테고리를 선택하세요"
+    },
+    "comment": {
+      "label": "코멘트",
+      "placeholder": "코멘트를 입력하세요"
+    },
+    "contact": {
+      "label": "연락처",
+      "placeholder": "연락처를 입력하세요"
+    },
+    "createdAt": {
+      "label": "생성일"
+    },
+    "date": {
+      "label": "날짜",
+      "placeholder": "날짜를 선택하세요"
+    },
+    "department": {
+      "label": "부서",
+      "placeholder": "부서를 선택하세요"
+    },
+    "description": {
+      "label": "설명",
+      "placeholder": "설명을 입력하세요"
+    },
+    "details": {
+      "label": "상세 내용",
+      "placeholder": "상세 내용을 입력하세요"
+    },
+    "dueDate": {
+      "label": "완료 기한",
+      "placeholder": "완료 기한을 선택하세요"
+    },
+    "email": {
+      "label": "이메일",
+      "placeholder": "이메일을 입력하세요",
+      "to": {
+        "label": "받는 사람",
+        "placeholder": "받는 사람을 입력하세요"
+      },
+      "cc": {
+        "label": "참조",
+        "placeholder": "참조 대상을 입력하세요"
+      },
+      "bcc": {
+        "label": "숨은 참조",
+        "placeholder": "숨은 참조 대상을 입력하세요"
+      }
+    },
+    "endDate": {
+      "label": "종료일",
+      "placeholder": "종료일을 선택하세요"
+    },
+    "history": {
+      "label": "이력"
+    },
+    "location": {
+      "label": "위치",
+      "placeholder": "위치를 입력하세요"
+    },
+    "name": {
+      "label": "이름",
+      "placeholder": "이름을 입력하세요"
+    },
+    "owner": {
+      "label": "소유자",
+      "placeholder": "소유자를 선택하세요"
+    },
+    "period": {
+      "label": "기간",
+      "placeholder": "기간을 선택하세요"
+    },
+    "phone": {
+      "label": "전화번호",
+      "placeholder": "전화번호를 입력하세요"
+    },
+    "priority": {
+      "label": "우선순위",
+      "placeholder": "우선순위를 선택하세요"
+    },
+    "requester": {
+      "label": "요청자",
+      "placeholder": "요청자를 선택하세요"
+    },
+    "startDate": {
+      "label": "시작일",
+      "placeholder": "시작일을 선택하세요"
+    },
+    "status": {
+      "label": "상태",
+      "placeholder": "상태를 선택하세요"
+    },
+    "step": {
+      "label": "단계",
+      "placeholder": "단계를 선택하세요"
+    },
+    "subject": {
+      "label": "제목",
+      "placeholder": "제목을 입력하세요"
+    },
+    "type": {
+      "label": "유형",
+      "placeholder": "유형을 선택하세요"
+    },
+    "updatedAt": {
+      "label": "수정일"
+    }
   },
   "pagination": {
-    "previous": "이전",
-    "next": "다음",
     "first": "처음",
     "last": "마지막",
-    "page": "{{page}} 페이지"
+    "next": "다음",
+    "page": "{{page}}페이지",
+    "previous": "이전"
   },
-  "genericLabels": {
-    "name": "이름",
-    "description": "설명",
-    "status": "상태",
-    "date": "날짜",
-    "createdAt": "생성일",
-    "updatedAt": "수정일",
-    "email": "이메일",
-    "phone": "전화번호",
-    "category": "카테고리",
-    "assignee": "담당자",
-    "owner": "요청자"
-  },
-  "messages": {
-    "saveSuccess": "저장되었습니다.",
-    "deleteSuccess": "삭제되었습니다.",
-    "errorOccurred": "오류가 발생했습니다.",
-    "confirmDelete": "정말로 삭제하시겠습니까?",
-    "unsavedChanges": "저장되지 않은 변경 사항이 있습니다."
-  },
-  "validation": {
-    "required": "필수 입력 항목입니다.",
-    "minLength": "최소 {{count}}자 이상 입력해야 합니다.",
-    "maxLength": "최대 {{count}}자 미만으로 입력해야 합니다."
+  "table": {
+    "loading": "로딩 중...",
+    "noData": "데이터가 없습니다",
+    "rowsPerPage": "페이지당 행 수",
+    "selected": "{{count}}개 선택됨",
+    "total": "총 {{count}}개 항목"
   }
 }

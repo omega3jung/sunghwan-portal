@@ -6,8 +6,10 @@ import dashboard from "./dashboard.json";
 import demo from "./demo.json";
 import domain from "./domain";
 import error from "./error.json";
+import message from "./message.json";
 import serviceDesk from "./serviceDesk.json";
 import settings from "./settings.json";
+import validation from "./validation.json";
 
 export const fr = {
   demo,
@@ -15,6 +17,8 @@ export const fr = {
   dashboard,
   settings,
   error,
+  validation,
+  message,
   domain,
   common,
   serviceDesk,

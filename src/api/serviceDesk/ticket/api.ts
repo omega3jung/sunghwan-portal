@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
-import { TicketFormValues } from "@/feature/serviceDesk/ticket/hooks/useTicketForm";
+import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms/ticket";
 import { DbParams, OResponse } from "@/shared/types/api";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;

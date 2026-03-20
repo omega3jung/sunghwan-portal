@@ -14,7 +14,7 @@
     },
 
     "department": {
-      "title": "Tickets by Request Department",
+      "title": "Tickets by Requesting Department",
       "label": "Department"
     },
 
@@ -37,7 +37,7 @@
 
   "field": {
     "keyword": {
-      "label": "keyword",
+      "label": "Keyword",
       "placeholder": "Search by keyword"
     },
     "draft": {
@@ -86,7 +86,7 @@
 
     "approvalTitle": "Approval",
     "foundDraft": "Found draft",
-    "loadDraft": "Do you want to load draft? If not, previous draft will discard."
+    "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
   },
 
   "priority": {

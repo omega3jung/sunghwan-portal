@@ -40,7 +40,7 @@ export const mapAssignmentRuleData = (
   });
 };
 
-export const AssignmentRuleToTree = (
+export const assignmentRuleToTree = (
   categories: MainAssignmentRuleData[],
 ): TreeNodes<AssignmentRuleData | MainAssignmentRuleData> => {
   return categories.map((main) => ({

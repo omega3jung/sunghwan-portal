@@ -23,7 +23,7 @@
   "riskLevel": {
     "label": "Risk Level",
     "options": {
-      "critical": "critical",
+      "critical": "Critical",
       "high": "High",
       "medium": "Medium",
       "low": "Low"
@@ -35,7 +35,7 @@
     "options": {
       "today": "Today",
       "thisWeek": "This Week",
-      "this2Week": "This 2 Week",
+      "this2Week": "This 2-Week Period",
       "thisMonth": "This Month",
       "lastWeek": "Last Week",
       "last2Week": "Last 2 Weeks",
@@ -48,14 +48,14 @@
     "label": "Due Date",
     "options": {
       "all": "All",
-      "overDue": "Over Due",
+      "overDue": "Overdue",
       "today": "Today",
       "thisWeek": "This Week",
-      "this2Week": "This 2 Week",
+      "this2Week": "This 2-Week Period",
       "thisMonth": "This Month",
-      "withinWeek": "Within Week",
+      "withinWeek": "Within a Week",
       "within2Week": "Within 2 Weeks",
-      "withinMonth": "Within Month",
+      "withinMonth": "Within a Month",
       "custom": "Custom"
     }
   }

@@ -18,7 +18,7 @@ export const getDefaultApprovalData = (
     approvalId: `${count}`,
     name: { en: `New Step ${count}` },
     index: 1,
-    categoryId: categoryId,
+    categoryId,
     stepAssignee: {
       type: "MANAGER",
       level: 1,

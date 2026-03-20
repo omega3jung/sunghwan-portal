@@ -28,7 +28,6 @@
         "description": "Gestiona las etiquetas utilizadas durante el proceso de reparación y envío del dispositivo."
       }
     },
-
     "accountSettings": {
       "title": "Configuración de la Cuenta",
       "description": "Gestiona los elementos relacionados con la información básica de la cuenta.",

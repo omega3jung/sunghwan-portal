@@ -8,22 +8,28 @@ import {
   endOfWeek,
   endOfYear,
   format,
+  isSameDay,
   startOfMonth,
   startOfWeek,
   startOfYear,
 } from "date-fns";
 import type { ForwardedRef } from "react";
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { DateRange, OnSelectHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
-  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
   Select,
@@ -141,6 +147,7 @@ const Component = (
 
   const [open, setOpen] = useState(false);
   const [displayText, setDisplayText] = useState("");
+  const openTimeoutRef = useRef<number | null>(null);
 
   const optionData = useMemo<ValueLabel[]>(
     () =>
@@ -163,12 +170,28 @@ const Component = (
     [setRangeText],
   );
 
+  const clearScheduledOpen = useCallback(() => {
+    if (openTimeoutRef.current !== null) {
+      window.clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  }, []);
+
+  const scheduleOpen = useCallback(() => {
+    clearScheduledOpen();
+    openTimeoutRef.current = window.setTimeout(() => {
+      setOpen(true);
+      openTimeoutRef.current = null;
+    }, 0);
+  }, [clearScheduledOpen]);
+
   const calculateAndSetDisplayText = useCallback(
     (value: Period) => {
       const today = new Date();
 
       switch (value) {
         case "today": {
+          clearScheduledOpen();
           setRange({ from: today, to: today });
           updateDisplayText(format(today, DATE_FORMAT));
           setOpen(false);
@@ -176,6 +199,7 @@ const Component = (
         }
 
         case "this_week": {
+          clearScheduledOpen();
           const startWeek = startOfWeek(today, { weekStartsOn: 1 });
           const endWeek = endOfWeek(today, { weekStartsOn: 1 });
 
@@ -186,6 +210,7 @@ const Component = (
         }
 
         case "this_month": {
+          clearScheduledOpen();
           const startMonth = startOfMonth(today);
           const endMonth = endOfMonth(today);
 
@@ -196,6 +221,7 @@ const Component = (
         }
 
         case "this_year": {
+          clearScheduledOpen();
           const startYear = startOfYear(today);
           const endYear = endOfYear(today);
 
@@ -208,10 +234,11 @@ const Component = (
         case "range":
           setRange(undefined);
           updateDisplayText("");
-          setOpen(true);
+          scheduleOpen();
           return;
 
         default: {
+          clearScheduledOpen();
           const startDate = getRelativeStartDate(value);
 
           setRange({ from: startDate, to: today });
@@ -220,10 +247,12 @@ const Component = (
         }
       }
     },
-    [setRange, updateDisplayText],
+    [clearScheduledOpen, scheduleOpen, setRange, updateDisplayText],
   );
 
-  const onDateSelect: OnSelectHandler<DateRange | undefined> = (selectedRange) => {
+  const onDateSelect: OnSelectHandler<DateRange | undefined> = (
+    selectedRange,
+  ) => {
     if (!selectedRange) {
       setRange(undefined);
       updateDisplayText("");
@@ -236,10 +265,22 @@ const Component = (
     updateDisplayText(text);
     setRange({ from, to });
 
-    if (from && to) {
+    if (from && to && !isSameDay(from, to)) {
       setOpen(false);
     }
   };
+
+  const handleRangeReselect = useCallback(() => {
+    if (period === "range") {
+      calculateAndSetDisplayText("range");
+    }
+  }, [calculateAndSetDisplayText, period]);
+
+  useEffect(() => {
+    return () => {
+      clearScheduledOpen();
+    };
+  }, [clearScheduledOpen]);
 
   useEffect(() => {
     if (period && !range) {
@@ -259,48 +300,62 @@ const Component = (
   }, [period, range, updateDisplayText]);
 
   return (
-    <div ref={ref} className="relative">
-      <Select
-        value={period}
-        onValueChange={(value: Period) => {
-          setPeriod(value);
-          calculateAndSetDisplayText(value);
-        }}
-      >
-        <SelectTrigger
-          variant={variant}
-          className={cn("border-slate-150 h-10", className)}
-          title={t("rangePlaceholder")}
-        >
-          {period === "range" ? (
-            triggerValue
-          ) : (
-            <SelectValue placeholder={t("rangePlaceholder")} />
-          )}
-        </SelectTrigger>
-        <SelectContent>
-          {optionData.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverAnchor className="absolute left-1/2 top-0 h-10 w-0 -translate-x-1/2" />
-        <PopoverTrigger asChild>
-          <Button
-            aria-hidden="true"
-            tabIndex={-1}
-            className="absolute left-1/2 top-0 -z-[1] h-10 w-0 -translate-x-1/2 overflow-hidden p-0 opacity-0"
-            variant="ghost"
-          />
-        </PopoverTrigger>
-        <PopoverContent className="z-[51] w-auto p-0" align="center">
-          <Calendar mode="range" selected={range} onSelect={onDateSelect} />
-        </PopoverContent>
-      </Popover>
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverAnchor asChild>
+        <div ref={ref} className="relative">
+          <Select
+            value={period}
+            onValueChange={(value: Period) => {
+              setPeriod(value);
+              calculateAndSetDisplayText(value);
+            }}
+          >
+            <SelectTrigger
+              variant={variant}
+              className={cn("border-slate-150 h-10", className)}
+              title={t("rangePlaceholder")}
+            >
+              {period === "range" ? (
+                triggerValue
+              ) : (
+                <SelectValue placeholder={t("rangePlaceholder")} />
+              )}
+            </SelectTrigger>
+            <SelectContent>
+              {optionData.map((item) => (
+                <SelectItem
+                  key={item.value}
+                  value={item.value}
+                  onPointerUp={() => {
+                    if (item.value === "range") {
+                      handleRangeReselect();
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      item.value === "range" &&
+                      (event.key === "Enter" || event.key === " ")
+                    ) {
+                      handleRangeReselect();
+                    }
+                  }}
+                >
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </PopoverAnchor>
+      <PopoverContent className="z-[51] w-auto p-0" align="start">
+        <Calendar
+          mode="range"
+          selected={range}
+          onSelect={onDateSelect}
+          captionLayout="dropdown"
+        />
+      </PopoverContent>
+    </Popover>
   );
 };
 
@@ -309,4 +364,3 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DatePickerProps>(
 );
 
 DateRangePicker.displayName = "DateRangePicker";
-

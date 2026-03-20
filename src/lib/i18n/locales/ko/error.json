@@ -1,7 +1,39 @@
 {
+  "common": {
+    "failed": "Failed",
+    "load": {
+      "title": "Failed to load",
+      "message": "Failed to load {{item}}"
+    },
+    "create": {
+      "title": "Failed to create",
+      "message": "Failed to create {{item}}"
+    },
+    "update": {
+      "title": "Failed to update",
+      "message": "Failed to update {{item}}"
+    },
+    "delete": {
+      "title": "Failed to delete",
+      "message": "Failed to delete {{item}}"
+    },
+    "add": {
+      "title": "Failed to add",
+      "message": "Failed to add {{item}}"
+    },
+    "save": {
+      "title": "Failed to save",
+      "message": "Failed to save {{item}}"
+    },
+    "remove": {
+      "title": "Failed to remove",
+      "message": "Failed to remove {{item}}"
+    }
+  },
   "unsupportedBrowser": {
     "title": "지원되지 않는 브라우저",
     "description": "현재 사용 중인 브라우저는 지원되지 않습니다.",
     "browserRecommendation": "원활한 사용을 위해 최신 버전의 Chrome, Firefox, Edge 또는 Safari로 업그레이드해 주세요."
-  }
+  },
+  "ticket": {}
 }

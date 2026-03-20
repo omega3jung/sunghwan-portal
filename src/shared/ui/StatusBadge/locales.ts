@@ -3,7 +3,7 @@ import { Locale } from "@/shared/types";
 import { SystemStatus } from "./types";
 
 export const statusLocaleKey: Record<SystemStatus, string> = {
-  Pre: "pre",
+  Draft: "draft",
   Open: "open",
   Approved: "approved",
   Declined: "declined",
@@ -15,7 +15,7 @@ export const statusLocaleKey: Record<SystemStatus, string> = {
 
 export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   en: {
-    pre: "Pre",
+    draft: "Draft",
     open: "Open",
     approved: "Approved",
     declined: "Declined",
@@ -26,9 +26,9 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   },
 
   es: {
-    pre: "Pre",
+    draft: "Borrador",
     open: "Abierto",
-    approval: "Aprobación",
+    approval: "Aprobacion",
     approved: "Aprobado",
     declined: "Rechazado",
     working: "Trabajando",
@@ -38,20 +38,20 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   },
 
   fr: {
-    pre: "Pré",
-    open: "Ouvrir",
+    draft: "Brouillon",
+    open: "Ouvert",
     approval: "Approbation",
-    approved: "Approuvé",
-    declined: "Décliné",
-    working: "Fonctionnement",
+    approved: "Approuve",
+    declined: "Refuse",
+    working: "En cours",
     pending: "En attente",
-    resolved: "Résolu",
-    closed: "Fermée",
+    resolved: "Resolue",
+    closed: "Ferme",
   },
 
   ko: {
-    pre: "임시",
-    open: "신규",
+    draft: "임시",
+    open: "열림",
     approved: "승인됨",
     declined: "거절됨",
     working: "작업 중",

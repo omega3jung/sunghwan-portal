@@ -203,6 +203,8 @@ i18n 문서는 번역 파일이 어떻게 구성되는지, 그리고 validation 
 - [2026-01 Impersonation](./08-dev-strategy/decision-log/2026-01-impersonation.md)
 - [2026-01 Session User Boundary](./08-dev-strategy/decision-log/2026-01-session-user-boundary.md)
 - [2026-02 Service Desk Settings](./08-dev-strategy/decision-log/2026-02-service-desk-settings.md)
+- [2026-03 Service Desk](./08-dev-strategy/decision-log/2026-03-service-desk.md)
+- [2026-03 Ticket Form Dialog](./08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md)
 
 ---
 

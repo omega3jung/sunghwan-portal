@@ -1,4 +1,4 @@
-// src/lib/i18n/locales/ko/domain/index.ts
+// src/lib/i18n/locales/en/domain/index.ts
 
 import enumLocale from "./enum.json";
 

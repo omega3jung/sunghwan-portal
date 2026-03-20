@@ -1,56 +1,169 @@
 {
-  "buttons": {
-    "confirm": "Confirmar",
-    "cancel": "Cancelar",
-    "save": "Guardar",
-    "edit": "Editar",
-    "delete": "Eliminar",
-    "create": "Crear",
-    "update": "Actualizar",
-    "submit": "Enviar",
-    "close": "Cerrar",
+  "action": {
+    "add": "Agregar",
     "back": "Volver",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "edit": "Editar",
+    "filter": "Filtrar",
+    "load": "Cargar",
+    "next": "Siguiente",
+    "preview": "Vista previa",
+    "reset": "Restablecer",
     "retry": "Reintentar",
+    "save": "Guardar",
     "search": "Buscar",
-    "reset": "Restablecer"
+    "submit": "Enviar",
+    "update": "Actualizar",
+    "upload": "Subir",
+    "withItem": "{{action}} {{item}}"
   },
-  "table": {
-    "noData": "No hay datos disponibles",
-    "loading": "Cargando...",
-    "rowsPerPage": "Filas por página",
-    "total": "Total {{count}} elementos",
-    "selected": "{{count}} seleccionados"
+  "boolean": {
+    "no": "No",
+    "yes": "Sí"
+  },
+  "empty": {
+    "noResults": "Sin resultados"
+  },
+  "field": {
+    "age": {
+      "label": "Edad",
+      "placeholder": "Ingrese la edad"
+    },
+    "agent": {
+      "label": "Agente",
+      "placeholder": "Seleccione un agente"
+    },
+    "assignee": {
+      "label": "Asignado a",
+      "placeholder": "Seleccione un responsable"
+    },
+    "category": {
+      "label": "Categoría",
+      "placeholder": "Seleccione una categoría"
+    },
+    "comment": {
+      "label": "Comentario",
+      "placeholder": "Ingrese un comentario"
+    },
+    "contact": {
+      "label": "Contacto",
+      "placeholder": "Ingrese un contacto"
+    },
+    "createdAt": {
+      "label": "Creado el"
+    },
+    "date": {
+      "label": "Fecha",
+      "placeholder": "Seleccione una fecha"
+    },
+    "department": {
+      "label": "Departamento",
+      "placeholder": "Seleccione un departamento"
+    },
+    "description": {
+      "label": "Descripción",
+      "placeholder": "Ingrese una descripción"
+    },
+    "details": {
+      "label": "Detalles",
+      "placeholder": "Ingrese los detalles"
+    },
+    "dueDate": {
+      "label": "Fecha límite",
+      "placeholder": "Seleccione la fecha límite"
+    },
+    "email": {
+      "label": "Correo electrónico",
+      "placeholder": "Ingrese el correo electrónico",
+      "to": {
+        "label": "Para",
+        "placeholder": "Ingrese el destinatario"
+      },
+      "cc": {
+        "label": "CC",
+        "placeholder": "Ingrese los destinatarios en copia"
+      },
+      "bcc": {
+        "label": "BCC",
+        "placeholder": "Ingrese los destinatarios en copia oculta"
+      }
+    },
+    "endDate": {
+      "label": "Fecha de finalización",
+      "placeholder": "Seleccione la fecha de finalización"
+    },
+    "history": {
+      "label": "Historial"
+    },
+    "location": {
+      "label": "Ubicación",
+      "placeholder": "Ingrese la ubicación"
+    },
+    "name": {
+      "label": "Nombre",
+      "placeholder": "Ingrese el nombre"
+    },
+    "owner": {
+      "label": "Propietario",
+      "placeholder": "Seleccione un propietario"
+    },
+    "period": {
+      "label": "Período",
+      "placeholder": "Seleccione un período"
+    },
+    "phone": {
+      "label": "Teléfono",
+      "placeholder": "Ingrese el teléfono"
+    },
+    "priority": {
+      "label": "Prioridad",
+      "placeholder": "Seleccione la prioridad"
+    },
+    "requester": {
+      "label": "Solicitante",
+      "placeholder": "Seleccione un solicitante"
+    },
+    "startDate": {
+      "label": "Fecha de inicio",
+      "placeholder": "Seleccione la fecha de inicio"
+    },
+    "status": {
+      "label": "Estado",
+      "placeholder": "Seleccione un estado"
+    },
+    "step": {
+      "label": "Paso",
+      "placeholder": "Seleccione un paso"
+    },
+    "subject": {
+      "label": "Asunto",
+      "placeholder": "Ingrese el asunto"
+    },
+    "type": {
+      "label": "Tipo",
+      "placeholder": "Seleccione un tipo"
+    },
+    "updatedAt": {
+      "label": "Actualizado el"
+    }
   },
   "pagination": {
-    "previous": "Anterior",
-    "next": "Siguiente",
     "first": "Primera",
     "last": "Última",
-    "page": "Página {{page}}"
+    "next": "Siguiente",
+    "page": "Página {{page}}",
+    "previous": "Anterior"
   },
-  "genericLabels": {
-    "name": "Nombre",
-    "description": "Descripción",
-    "status": "Estado",
-    "date": "Fecha",
-    "createdAt": "Creado el",
-    "updatedAt": "Actualizado el",
-    "email": "Correo electrónico",
-    "phone": "Teléfono",
-    "category": "Categoría",
-    "assignee": "Asignado a",
-    "owner": "Propietario"
-  },
-  "messages": {
-    "saveSuccess": "Guardado correctamente.",
-    "deleteSuccess": "Eliminado correctamente.",
-    "errorOccurred": "Ocurrió un error.",
-    "confirmDelete": "¿Está seguro de que desea eliminar esto?",
-    "unsavedChanges": "Tiene cambios sin guardar."
-  },
-  "validation": {
-    "required": "Este campo es obligatorio.",
-    "minLength": "Debe tener al menos {{count}} caracteres.",
-    "maxLength": "Debe tener menos de {{count}} caracteres."
+  "table": {
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "rowsPerPage": "Filas por página",
+    "selected": "{{count}} seleccionados",
+    "total": "{{count}} elementos en total"
   }
 }

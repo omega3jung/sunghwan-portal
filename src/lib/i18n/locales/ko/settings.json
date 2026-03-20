@@ -28,7 +28,6 @@
         "description": "디바이스 수리 및 배송 과정 전반에 사용되는 라벨을 관리합니다."
       }
     },
-
     "accountSettings": {
       "title": "계정 설정",
       "description": "기본 계정 정보와 관련된 항목을 관리합니다.",

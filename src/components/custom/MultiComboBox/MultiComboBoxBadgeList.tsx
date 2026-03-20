@@ -1,0 +1,54 @@
+import { X } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import type { ValueLabel } from "@/shared/types/options";
+
+import { getBadgeClassName, resolveBadgeVariant } from "./styles";
+import type { BadgeVariant, PaletteIndex } from "./types";
+
+type MultiComboBoxBadgeListProps = {
+  items: ValueLabel[];
+  badgeVariant?: BadgeVariant;
+  paletteStart: PaletteIndex;
+  palettePick?: PaletteIndex;
+  readOnly?: boolean;
+  onRemove?: (value: string) => void;
+};
+
+export function MultiComboBoxBadgeList({
+  items,
+  badgeVariant,
+  paletteStart,
+  palettePick,
+  readOnly = false,
+  onRemove,
+}: MultiComboBoxBadgeListProps) {
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      {items.map((item, index) => (
+        <Badge
+          key={item.value}
+          variant={resolveBadgeVariant(badgeVariant)}
+          className={getBadgeClassName(
+            badgeVariant,
+            index,
+            paletteStart,
+            palettePick,
+            readOnly ? undefined : "cursor-pointer",
+          )}
+          onClick={(event) => {
+            if (readOnly) {
+              return;
+            }
+
+            event.stopPropagation();
+            onRemove?.(item.value);
+          }}
+        >
+          {item.label}
+          {!readOnly && <X size={16} />}
+        </Badge>
+      ))}
+    </div>
+  );
+}

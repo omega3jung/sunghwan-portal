@@ -1,1 +1,111 @@
-{}
+{
+  "action": {
+    "comment": "코멘트",
+    "memo": "메모",
+    "assign": "할당",
+    "assignMyself": "나에게 할당",
+    "reject": "반려"
+  },
+  "chart": {
+    "category": {
+      "title": "카테고리별 티켓",
+      "label": "카테고리"
+    },
+    "department": {
+      "title": "요청 부서별 티켓",
+      "label": "부서"
+    },
+    "assignee": {
+      "title": "담당자별 티켓",
+      "label": "담당자"
+    },
+    "sla": {
+      "title": "SLA 성과",
+      "status": {
+        "withinSla": "SLA 준수",
+        "resolvedLate": "지연 해결",
+        "overdue": "기한 초과",
+        "inProgress": "진행 중"
+      }
+    }
+  },
+  "field": {
+    "keyword": {
+      "label": "키워드",
+      "placeholder": "키워드로 검색"
+    },
+    "draft": {
+      "label": "임시 저장"
+    },
+    "reason": {
+      "label": "사유"
+    },
+    "ticket": {
+      "label": "티켓",
+      "placeholder": "티켓 번호를 입력하세요"
+    },
+    "tickets": {
+      "label": "티켓",
+      "placeholder": "티켓 번호를 입력하세요"
+    },
+    "comment": {
+      "label": "코멘트"
+    },
+    "comments": {
+      "label": "코멘트"
+    }
+  },
+  "message": {
+    "groupBy": "그룹 기준",
+    "filteringBy": "필터 기준",
+    "from": "부터",
+    "assignTo": "할당 대상",
+    "dueBy": "기한",
+    "lastComment": "마지막 코멘트",
+    "commentList": "코멘트",
+    "ticketSummary": "티켓 요약",
+    "requesterInformation": "요청자 정보",
+    "created": "생성",
+    "at": "에",
+    "ago": "전",
+    "validationPoint": "검증 지점을 선택하세요",
+    "dragDropFile": "파일을 끌어다 놓으세요",
+    "fileUploadLimit": "파일 업로드(최대 10개)",
+    "approvalTitle": "승인",
+    "foundDraft": "임시 저장 내용을 찾았습니다",
+    "loadDraft": "임시 저장 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
+  },
+  "priority": {
+    "urgent": "긴급",
+    "high": "높음",
+    "medium": "보통",
+    "low": "낮음"
+  },
+  "response": {
+    "agent": "담당자가 응답함",
+    "requester": "요청자가 응답함",
+    "none": "응답 없음"
+  },
+  "sort": {
+    "latest": "최신순 정렬",
+    "oldest": "오래된순 정렬"
+  },
+  "status": {
+    "pre": "사전",
+    "open": "열림",
+    "approved": "승인됨",
+    "declined": "반려됨",
+    "working": "처리 중",
+    "pending": "대기 중",
+    "resolved": "해결됨",
+    "closed": "종료됨"
+  },
+  "tab": {
+    "tickets": "티켓",
+    "reports": "보고서",
+    "pendingApprovals": "승인 대기",
+    "openTickets": "오픈 티켓",
+    "closedTickets": "종료된 티켓",
+    "overdueTickets": "기한 초과 티켓"
+  }
+}

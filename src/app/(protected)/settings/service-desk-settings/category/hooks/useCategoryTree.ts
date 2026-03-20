@@ -10,18 +10,21 @@ import {
 import { ClientCategoryTree } from "@/domain/serviceDesk";
 
 import {
-  getDefaultCateogoryData,
-  getDefaultSubCateogoryData,
+  getDefaultCategoryData,
+  getDefaultSubCategoryData,
 } from "../constants";
 import { CategoryData, MainCategoryData } from "../types";
 import { categoryToTree, mapCategoryData } from "../util.mapper";
 
-type Params = {
+type UseCategoryTreeOptions = {
   selectedClient: string | null;
   categories: ClientCategoryTree[] | undefined;
 };
 
-export function useCategoryTree({ selectedClient, categories }: Params) {
+export function useCategoryTree({
+  selectedClient,
+  categories,
+}: UseCategoryTreeOptions) {
   const [tree, setTree] = useState<TreeNodes<CategoryData | MainCategoryData>>(
     [],
   );
@@ -60,7 +63,7 @@ export function useCategoryTree({ selectedClient, categories }: Params) {
   const addCategory = () => {
     setTree((prev) => {
       const newCategory = categoryToTree([
-        getDefaultCateogoryData(newCategoryCount),
+        getDefaultCategoryData(newCategoryCount),
       ]);
 
       return [...newCategory, ...prev];
@@ -83,7 +86,7 @@ export function useCategoryTree({ selectedClient, categories }: Params) {
       const parentIndex = flattened.findIndex((item) => item.id === parentId);
       if (parentIndex === -1) return prev;
 
-      const newSubCategory = getDefaultSubCateogoryData(newSubCategoryCount);
+      const newSubCategory = getDefaultSubCategoryData(newSubCategoryCount);
 
       const newNode = {
         id: newSubCategory.id,

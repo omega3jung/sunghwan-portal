@@ -114,7 +114,7 @@
     "categoryTab": {
       "name": "Name",
       "description": "Description",
-      "requestTemplate": "RequestTemplate",
+      "requestTemplate": "Request Template",
       "resolutionDays": "Resolution Days",
       "active": "Active",
       "addCategory": "Add Category"

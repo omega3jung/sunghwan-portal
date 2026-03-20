@@ -1,1 +1,111 @@
-{}
+{
+  "action": {
+    "comment": "Comentario",
+    "memo": "Nota",
+    "assign": "Asignar",
+    "assignMyself": "Asignarme",
+    "reject": "Rechazar"
+  },
+  "chart": {
+    "category": {
+      "title": "Tickets por categoría",
+      "label": "Categoría"
+    },
+    "department": {
+      "title": "Tickets por departamento solicitante",
+      "label": "Departamento"
+    },
+    "assignee": {
+      "title": "Tickets por responsable",
+      "label": "Responsable"
+    },
+    "sla": {
+      "title": "Rendimiento de SLA",
+      "status": {
+        "withinSla": "Dentro del SLA",
+        "resolvedLate": "Resuelto con retraso",
+        "overdue": "Vencido",
+        "inProgress": "En curso"
+      }
+    }
+  },
+  "field": {
+    "keyword": {
+      "label": "Palabra clave",
+      "placeholder": "Buscar por palabra clave"
+    },
+    "draft": {
+      "label": "Borrador"
+    },
+    "reason": {
+      "label": "Motivo"
+    },
+    "ticket": {
+      "label": "Ticket",
+      "placeholder": "Ingrese el número de ticket"
+    },
+    "tickets": {
+      "label": "Tickets",
+      "placeholder": "Ingrese el número de ticket"
+    },
+    "comment": {
+      "label": "Comentario"
+    },
+    "comments": {
+      "label": "Comentarios"
+    }
+  },
+  "message": {
+    "groupBy": "Agrupar por",
+    "filteringBy": "Filtrando por",
+    "from": "Desde",
+    "assignTo": "Asignar a",
+    "dueBy": "Vence el",
+    "lastComment": "Último comentario",
+    "commentList": "Comentarios",
+    "ticketSummary": "Resumen del ticket",
+    "requesterInformation": "Información del solicitante",
+    "created": "Creado",
+    "at": "a las",
+    "ago": "hace",
+    "validationPoint": "Seleccione el punto de validación",
+    "dragDropFile": "Arrastre y suelte el archivo",
+    "fileUploadLimit": "Carga de archivos (máx. 10 archivos)",
+    "approvalTitle": "Aprobación",
+    "foundDraft": "Se encontró un borrador",
+    "loadDraft": "¿Desea cargar el borrador? Si no lo hace, el borrador anterior se descartará."
+  },
+  "priority": {
+    "urgent": "Urgente",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja"
+  },
+  "response": {
+    "agent": "El agente respondió",
+    "requester": "El solicitante respondió",
+    "none": "Sin respuesta"
+  },
+  "sort": {
+    "latest": "Ordenar por más recientes",
+    "oldest": "Ordenar por más antiguos"
+  },
+  "status": {
+    "pre": "Pre",
+    "open": "Abierto",
+    "approved": "Aprobado",
+    "declined": "Rechazado",
+    "working": "En progreso",
+    "pending": "Pendiente",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "tab": {
+    "tickets": "Tickets",
+    "reports": "Reportes",
+    "pendingApprovals": "Aprobaciones pendientes",
+    "openTickets": "Tickets abiertos",
+    "closedTickets": "Tickets cerrados",
+    "overdueTickets": "Tickets vencidos"
+  }
+}

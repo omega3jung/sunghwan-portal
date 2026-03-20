@@ -9,15 +9,19 @@ import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
 
-import { MAX_ASSIGNEE_PER_APPROVAL } from "../../constnats";
+import { MAX_ASSIGNEE_PER_APPROVAL } from "../../constants";
 
-type Props = {
+type EmployeeFieldProps = {
   stepAssignee: AssigneeByType<"EMPLOYEE">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
 };
 
-export function EmployeeField({ stepAssignee, onChange, language }: Props) {
+export function EmployeeField({
+  stepAssignee,
+  onChange,
+  language,
+}: EmployeeFieldProps) {
   const { t } = useTranslation("settings");
   const tLocal = useLocalizedValue(language);
   const { data: employees } = useEmployeeListQuery({});

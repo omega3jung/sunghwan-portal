@@ -1,0 +1,29 @@
+{
+  "required": {
+    "default": "Este campo es obligatorio.",
+    "withField": "{{field}} es obligatorio."
+  },
+  "length": {
+    "min": "Debe tener al menos {{count}} caracteres.",
+    "minWithField": "{{field}} debe tener al menos {{count}} caracteres.",
+    "max": "Debe tener como máximo {{count}} caracteres.",
+    "maxWithField": "{{field}} debe tener como máximo {{count}} caracteres."
+  },
+  "format": {
+    "invalid": "Formato no válido.",
+    "invalidWithField": "{{field}} no es válido."
+  },
+  "number": {
+    "invalid": "Debe ser un número.",
+    "invalidWithField": "{{field}} debe ser un número."
+  },
+  "date": {
+    "invalid": "Debe ser una fecha válida.",
+    "invalidWithField": "{{field}} debe ser una fecha válida."
+  },
+  "file": {
+    "maxCount": "Se permiten como máximo {{count}} archivos.",
+    "maxSize": "El tamaño máximo de archivo es {{size}}.",
+    "invalidType": "Tipo de archivo no compatible."
+  }
+}

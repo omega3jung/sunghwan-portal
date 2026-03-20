@@ -14,10 +14,10 @@ import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
 import { camelCase } from "@/shared/utils";
 
-import { getDefaultAssigneePayload } from "../constnats";
+import { getDefaultAssigneePayload } from "../constants";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 
-type Params = {
+type UseApprovalStepFormOptions = {
   selectedNode: CategoryApprovalStepData | ApprovalStepData | null;
   language: SupportedLanguage;
   setTree: React.Dispatch<
@@ -29,7 +29,7 @@ export const useApprovalStepForm = ({
   selectedNode,
   language,
   setTree,
-}: Params) => {
+}: UseApprovalStepFormOptions) => {
   const { t } = useTranslation("settings");
 
   const [languageTab, setLanguageTab] = useState<Locale>(language);

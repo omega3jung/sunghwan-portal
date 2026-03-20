@@ -8,7 +8,7 @@ import { Locale } from "@/shared/types";
 
 import { CategoryData, MainCategoryData } from "../types";
 
-type Params = {
+type UseCategoryFormOptions = {
   selectedNode: CategoryData | MainCategoryData | null;
   language: SupportedLanguage;
   setTree: React.Dispatch<
@@ -20,7 +20,7 @@ export const useCategoryForm = ({
   selectedNode,
   language,
   setTree,
-}: Params) => {
+}: UseCategoryFormOptions) => {
   const [languageTab, setLanguageTab] = useState<Locale>(language);
 
   const updateNode = (
