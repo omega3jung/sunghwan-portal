@@ -1,13 +1,12 @@
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import type { ValueLabel } from "@/shared/types/options";
 
 import { getBadgeClassName, resolveBadgeVariant } from "./styles";
-import type { BadgeVariant, PaletteIndex } from "./types";
+import type { BadgeVariant, MultiComboBoxItem, PaletteIndex } from "./types";
 
 type MultiComboBoxBadgeListProps = {
-  items: ValueLabel[];
+  items: MultiComboBoxItem[];
   badgeVariant?: BadgeVariant;
   paletteStart: PaletteIndex;
   palettePick?: PaletteIndex;

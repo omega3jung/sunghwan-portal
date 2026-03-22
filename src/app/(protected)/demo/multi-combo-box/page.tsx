@@ -1,19 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import {
   buttonVariantData,
   comboBoxVariantData,
-  keys,
+  multiComboBoxMocks,
+  treeMultiComboBoxMocks,
 } from "@/app/_mocks/pages/demo/multi-combo-box";
 import {
   type ButtonVariant,
   MultiComboBox,
+  TreeMultiComboBox,
 } from "@/components/custom/MultiComboBox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ValueLabel } from "@/shared/types";
 
 import { comboBoxVariant, indexVariant } from "./type";
 
@@ -29,14 +30,6 @@ export default function MultiComboBoxPage() {
   const [comboBoxVariant, setComboBoxVariant] =
     useState<comboBoxVariant>("default");
   const [badgeVariant, setBadgeVariant] = useState<ButtonVariant>("palette");
-
-  const testData = useMemo<ValueLabel[]>(() => {
-    const keyData = keys.map((key) => {
-      return { value: key, label: key } as ValueLabel;
-    });
-
-    return keyData;
-  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -99,12 +92,13 @@ export default function MultiComboBoxPage() {
       </div>
 
       <div className="max-w-sm p-2">
+        <h4 className="p-2">Multi ComboBox</h4>
         <MultiComboBox
           variant={comboBoxVariant}
           badgeVariant={badgeVariant}
           paletteStart={paletteStart as indexVariant}
           palettePick={palettePick as indexVariant}
-          options={testData}
+          options={multiComboBoxMocks}
           value={selectedRanges}
           onSelect={(selected: string) => {
             setSelectedRanges([...selectedRanges, selected]);
@@ -116,6 +110,19 @@ export default function MultiComboBoxPage() {
 
             setSelectedRanges(newChoise);
           }}
+        />
+      </div>
+
+      <div className="max-w-sm p-2">
+        <h4 className="p-2">Tree Multi ComboBox</h4>
+        <TreeMultiComboBox
+          variant={comboBoxVariant}
+          badgeVariant={badgeVariant}
+          paletteStart={paletteStart as indexVariant}
+          palettePick={palettePick as indexVariant}
+          options={treeMultiComboBoxMocks}
+          value={selectedRanges}
+          onChange={setSelectedRanges}
         />
       </div>
     </div>

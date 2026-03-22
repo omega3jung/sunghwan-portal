@@ -60,6 +60,12 @@ const Component = (
   const commandFilter = useMemo(() => createCommandFilter(options), [options]);
 
   const handleToggleOption = (selection: string) => {
+    const selectedOption = options.find((item) => item.value === selection);
+
+    if (selectedOption?.disabled) {
+      return;
+    }
+
     if (value.includes(selection)) {
       onRemove?.(selection);
       return;
