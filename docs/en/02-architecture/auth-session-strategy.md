@@ -268,7 +268,7 @@ The frontend uses a layered access pattern:
 ```txt
 NextAuth session
 -> fetch effective AppUser
--> sync into sessionStore
+-> sync into authSessionStore
 -> consume via useCurrentSession()
 ```
 
@@ -282,7 +282,7 @@ It combines:
 
 - NextAuth session state (`useSession`)
 - effective user profile query (`useMyProfileQuery`)
-- Zustand `sessionStore`
+- Zustand `authSessionStore`
 - Zustand `impersonationStore`
 
 Its purpose is to give pages and components a stable UI-oriented session object:
@@ -305,9 +305,9 @@ This is the object the protected UI actually consumes.
 
 ---
 
-### `sessionStore`
+### `authSessionStore`
 
-`sessionStore` is a client-side runtime cache for `CurrentSession`.
+`authSessionStore` is a client-side runtime cache for `CurrentSession`.
 
 It is used to:
 
@@ -318,7 +318,7 @@ It is used to:
 
 Important limitation:
 
-> `sessionStore` is **not** the source of truth for authentication.
+> `authSessionStore` is **not** the source of truth for authentication.
 > It is a frontend runtime cache/facade.
 
 The trusted source remains the JWT-backed NextAuth auth flow.
@@ -353,7 +353,7 @@ The runtime flow is:
 User authenticated
 -> useSession() resolves
 -> useMyProfileQuery() fetches effective AppUser
--> sessionStore.setSession({ user })
+-> authSessionStore.setSession({ user })
 -> ProtectedShell renders
 -> AppUserBootstrap syncs actor into impersonation store
 ```
@@ -539,7 +539,7 @@ That means:
 
 ### 3. Client Stores Are Runtime Helpers Only
 
-- `sessionStore` and `impersonationStore` improve runtime ergonomics
+- `authSessionStore` and `impersonationStore` improve runtime ergonomics
 - server validation must still use JWT/session-derived auth context
 
 ---

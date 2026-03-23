@@ -23,18 +23,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Category } from "@/domain/serviceDesk";
-import { TicketFormValues } from "@/feature/serviceDesk/ticket/hooks/useTicketForm";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
   MAX_EMAIL_COUNT,
-} from "@/feature/serviceDesk/ticket/types/constnats";
+} from "@/feature/serviceDesk/ticket/types/constants";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ImageValueLabel, ValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
+import { TicketFormValues } from "../../forms/ticket";
 import { AttachmentList } from "./AttachmentStep";
 import { useAttachments } from "./AttachmentStep/useAttachments";
 

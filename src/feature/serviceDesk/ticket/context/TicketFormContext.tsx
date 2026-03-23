@@ -4,7 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { MainCategory } from "@/domain/serviceDesk";
 import { ImageValueLabel } from "@/shared/types";
 
-import { TicketFormValues } from "../hooks";
+import { TicketFormValues } from "../forms/ticket";
 
 type TicketFormContextValue = {
   form: UseFormReturn<TicketFormValues>;
@@ -15,13 +15,13 @@ type TicketFormContextValue = {
 const TicketFormContext = createContext<TicketFormContextValue | null>(null);
 
 export const useTicketFormContext = () => {
-  const ctx = useContext(TicketFormContext);
+  const contextValue = useContext(TicketFormContext);
 
-  if (!ctx) {
+  if (!contextValue) {
     throw new Error("useTicketFormContext must be used inside provider");
   }
 
-  return ctx;
+  return contextValue;
 };
 
 export const TicketFormProvider = TicketFormContext.Provider;

@@ -10,6 +10,7 @@ export const statusLocaleKey: Record<SystemStatus, string> = {
   Working: "working",
   Pending: "pending",
   Resolved: "resolved",
+  Rejected: "rejected",
   Closed: "closed",
 };
 

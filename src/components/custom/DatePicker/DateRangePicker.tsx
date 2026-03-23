@@ -1,27 +1,7 @@
 "use client";
 
-import {
-  addMonths,
-  addWeeks,
-  addYears,
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  format,
-  isSameDay,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-} from "date-fns";
 import type { ForwardedRef } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import type { DateRange, OnSelectHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
@@ -38,266 +18,89 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { ValueLabel } from "@/shared/types/options";
+import {
+  DATE_RANGE_PRESET_LABEL_KEYS,
+  DEFAULT_DATE_RANGE_PRESETS,
+} from "@/shared/constants/date";
+import { DateRangePreset } from "@/shared/types";
 import { cn } from "@/shared/utils";
 
-import type { DatePickerProps, Period } from "./types";
-
-const DEFAULT_OPTIONS: Period[] = [
-  "today",
-  "this_week",
-  "this_month",
-  "this_year",
-  "last_week",
-  "last_2week",
-  "last_3week",
-  "last_4week",
-  "last_month",
-  "last_2month",
-  "last_3month",
-  "last_4month",
-  "last_5month",
-  "last_6month",
-  "last_7month",
-  "last_8month",
-  "last_9month",
-  "last_10month",
-  "last_11month",
-  "last_year",
-  "last_2year",
-  "range",
-];
-
-const RANGE_LABEL_KEYS: Record<Period, string> = {
-  today: "today",
-  this_week: "thisWeek",
-  this_month: "thisMonth",
-  this_year: "thisYear",
-  last_week: "lastWeek",
-  last_2week: "last2Week",
-  last_3week: "last3Week",
-  last_4week: "last4Week",
-  last_month: "lastMonth",
-  last_2month: "last2Month",
-  last_3month: "last3Month",
-  last_4month: "last4Month",
-  last_5month: "last5Month",
-  last_6month: "last6Month",
-  last_7month: "last7Month",
-  last_8month: "last8Month",
-  last_9month: "last9Month",
-  last_10month: "last10Month",
-  last_11month: "last11Month",
-  last_year: "lastYear",
-  last_2year: "last2Year",
-  range: "dateRange",
-};
-
-const DATE_FORMAT = "dd MMM yyyy";
-
-const formatRangeText = (from?: Date, to?: Date) => {
-  const formattedStartDate = from ? format(from, DATE_FORMAT) : "";
-  const formattedEndDate = to ? format(to, DATE_FORMAT) : "";
-
-  return `${formattedStartDate} - ${formattedEndDate}`.trim();
-};
-
-const getRelativeStartDate = (period: Period) => {
-  const today = new Date();
-  const match = /^last_(\d+)?(week|month|year)$/.exec(period);
-
-  if (!match) {
-    return today;
-  }
-
-  const [, amountValue, unit] = match;
-  const amount = amountValue ? Number.parseInt(amountValue, 10) : 1;
-
-  if (Number.isNaN(amount)) {
-    return today;
-  }
-
-  switch (unit) {
-    case "week":
-      return addWeeks(today, -amount);
-    case "month":
-      return addMonths(today, -amount);
-    case "year":
-      return addYears(today, -amount);
-    default:
-      return today;
-  }
-};
+import type { DateRangePickerProps } from "./types";
+import { formatRangeText, resolvePresetRange } from "./utils";
 
 const Component = (
   {
     className,
     variant,
     period,
-    setPeriod,
+    onPeriodChange,
     range,
-    setRange,
-    showRange = false,
-    setRangeText,
-    options = DEFAULT_OPTIONS,
-  }: DatePickerProps,
+    onRangeChange,
+    showRangeText = false,
+    options = DEFAULT_DATE_RANGE_PRESETS,
+  }: DateRangePickerProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
   const { t } = useTranslation("DatePicker");
-
   const [open, setOpen] = useState(false);
-  const [displayText, setDisplayText] = useState("");
-  const openTimeoutRef = useRef<number | null>(null);
 
-  const optionData = useMemo<ValueLabel[]>(
+  const optionData = useMemo(
     () =>
-      options.map((item) => ({
-        value: item,
-        label: t(RANGE_LABEL_KEYS[item]),
+      options.map((value) => ({
+        value,
+        label: t(DATE_RANGE_PRESET_LABEL_KEYS[value]),
       })),
     [options, t],
   );
 
-  const triggerValue = useMemo(() => {
-    return showRange && displayText ? displayText : t("dateRange");
-  }, [displayText, showRange, t]);
+  const displayText = useMemo(() => {
+    if (period !== "range") {
+      return "";
+    }
 
-  const updateDisplayText = useCallback(
-    (text: string) => {
-      setDisplayText(text);
-      setRangeText?.(text);
+    return formatRangeText(range);
+  }, [period, range]);
+
+  const triggerText = useMemo(() => {
+    if (!showRangeText || period !== "range" || !displayText) {
+      return t("dateRange");
+    }
+
+    return displayText;
+  }, [displayText, period, showRangeText, t]);
+
+  const applyPreset = useCallback(
+    (nextPeriod: DateRangePreset) => {
+      onPeriodChange(nextPeriod);
+
+      if (nextPeriod === "range") {
+        setOpen(true);
+        return;
+      }
+
+      const nextRange = resolvePresetRange(nextPeriod);
+      onRangeChange(nextRange);
+      setOpen(false);
     },
-    [setRangeText],
+    [onPeriodChange, onRangeChange],
   );
 
-  const clearScheduledOpen = useCallback(() => {
-    if (openTimeoutRef.current !== null) {
-      window.clearTimeout(openTimeoutRef.current);
-      openTimeoutRef.current = null;
-    }
-  }, []);
+  const handleDateSelect: OnSelectHandler<DateRange | undefined> = useCallback(
+    (selectedRange) => {
+      onRangeChange(selectedRange);
 
-  const scheduleOpen = useCallback(() => {
-    clearScheduledOpen();
-    openTimeoutRef.current = window.setTimeout(() => {
-      setOpen(true);
-      openTimeoutRef.current = null;
-    }, 0);
-  }, [clearScheduledOpen]);
-
-  const calculateAndSetDisplayText = useCallback(
-    (value: Period) => {
-      const today = new Date();
-
-      switch (value) {
-        case "today": {
-          clearScheduledOpen();
-          setRange({ from: today, to: today });
-          updateDisplayText(format(today, DATE_FORMAT));
-          setOpen(false);
-          return;
-        }
-
-        case "this_week": {
-          clearScheduledOpen();
-          const startWeek = startOfWeek(today, { weekStartsOn: 1 });
-          const endWeek = endOfWeek(today, { weekStartsOn: 1 });
-
-          setRange({ from: startWeek, to: endWeek });
-          updateDisplayText(formatRangeText(startWeek, endWeek));
-          setOpen(false);
-          return;
-        }
-
-        case "this_month": {
-          clearScheduledOpen();
-          const startMonth = startOfMonth(today);
-          const endMonth = endOfMonth(today);
-
-          setRange({ from: startMonth, to: endMonth });
-          updateDisplayText(formatRangeText(startMonth, endMonth));
-          setOpen(false);
-          return;
-        }
-
-        case "this_year": {
-          clearScheduledOpen();
-          const startYear = startOfYear(today);
-          const endYear = endOfYear(today);
-
-          setRange({ from: startYear, to: endYear });
-          updateDisplayText(formatRangeText(startYear, endYear));
-          setOpen(false);
-          return;
-        }
-
-        case "range":
-          setRange(undefined);
-          updateDisplayText("");
-          scheduleOpen();
-          return;
-
-        default: {
-          clearScheduledOpen();
-          const startDate = getRelativeStartDate(value);
-
-          setRange({ from: startDate, to: today });
-          updateDisplayText(formatRangeText(startDate, today));
-          setOpen(false);
-        }
+      if (selectedRange?.from && selectedRange?.to) {
+        setOpen(false);
       }
     },
-    [clearScheduledOpen, scheduleOpen, setRange, updateDisplayText],
+    [onRangeChange],
   );
-
-  const onDateSelect: OnSelectHandler<DateRange | undefined> = (
-    selectedRange,
-  ) => {
-    if (!selectedRange) {
-      setRange(undefined);
-      updateDisplayText("");
-      return;
-    }
-
-    const { from, to } = selectedRange;
-    const text = formatRangeText(from, to);
-
-    updateDisplayText(text);
-    setRange({ from, to });
-
-    if (from && to && !isSameDay(from, to)) {
-      setOpen(false);
-    }
-  };
 
   const handleRangeReselect = useCallback(() => {
     if (period === "range") {
-      calculateAndSetDisplayText("range");
+      setOpen(true);
     }
-  }, [calculateAndSetDisplayText, period]);
-
-  useEffect(() => {
-    return () => {
-      clearScheduledOpen();
-    };
-  }, [clearScheduledOpen]);
-
-  useEffect(() => {
-    if (period && !range) {
-      calculateAndSetDisplayText(period);
-    }
-  }, [calculateAndSetDisplayText, period, range]);
-
-  useEffect(() => {
-    if (!range?.from) {
-      if (period !== "range") {
-        updateDisplayText("");
-      }
-      return;
-    }
-
-    updateDisplayText(formatRangeText(range.from, range.to));
-  }, [period, range, updateDisplayText]);
+  }, [period]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -305,9 +108,8 @@ const Component = (
         <div ref={ref} className="relative">
           <Select
             value={period}
-            onValueChange={(value: Period) => {
-              setPeriod(value);
-              calculateAndSetDisplayText(value);
+            onValueChange={(value: DateRangePreset) => {
+              applyPreset(value);
             }}
           >
             <SelectTrigger
@@ -316,16 +118,19 @@ const Component = (
               title={t("rangePlaceholder")}
             >
               {period === "range" ? (
-                triggerValue
+                <span className="truncate">{triggerText}</span>
               ) : (
                 <SelectValue placeholder={t("rangePlaceholder")} />
               )}
             </SelectTrigger>
+
             <SelectContent>
               {optionData.map((item) => (
                 <SelectItem
                   key={item.value}
                   value={item.value}
+                  // Re-open the calendar when the already-selected "range" item is selected again.
+                  // Select does not fire onValueChange when the value does not change.
                   onPointerUp={() => {
                     if (item.value === "range") {
                       handleRangeReselect();
@@ -347,11 +152,12 @@ const Component = (
           </Select>
         </div>
       </PopoverAnchor>
+
       <PopoverContent className="z-[51] w-auto p-0" align="start">
         <Calendar
           mode="range"
           selected={range}
-          onSelect={onDateSelect}
+          onSelect={handleDateSelect}
           captionLayout="dropdown"
         />
       </PopoverContent>
@@ -359,7 +165,7 @@ const Component = (
   );
 };
 
-export const DateRangePicker = forwardRef<HTMLDivElement, DatePickerProps>(
+export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   Component,
 );
 

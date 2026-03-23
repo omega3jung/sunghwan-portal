@@ -16,6 +16,7 @@ const statusClassMap: Record<SystemStatus, string> = {
   Working: "bg-orange-100 text-orange-500",
   Pending: "bg-gray-100 text-gray-600",
   Resolved: "bg-emerald-100 text-emerald-600",
+  Rejected: "bg-red-200 text-red-700",
   Closed: "bg-cyan-100 text-cyan-600",
 };
 

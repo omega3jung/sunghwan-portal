@@ -4,7 +4,8 @@
     "memo": "Memo",
     "assign": "Assign",
     "assignMyself": "Assign myself",
-    "reject": "Reject"
+    "reject": "Reject",
+    "searchCriteria": "Search criteria"
   },
 
   "chart": {

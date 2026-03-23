@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/shared/utils";
 
-type Props = {
+type UploadDropzoneProps = {
   files: File[];
   maxCount: number;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,7 +20,7 @@ export const UploadDropzone = ({
   onSelect,
   onDrop,
   inputRef,
-}: Props) => {
+}: UploadDropzoneProps) => {
   const { t } = useTranslation("serviceHub");
 
   const handleDrop = (e: React.DragEvent<HTMLButtonElement>) => {

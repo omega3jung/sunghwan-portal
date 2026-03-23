@@ -7,15 +7,19 @@ import {
   useServiceDeskTicketDraftQuery,
   useUpdateServiceDeskTicketDraft,
 } from "../api";
-import { TicketFormValues } from "./useTicketForm";
+import { TicketFormValues } from "../forms/ticket";
 
-type Params = {
+type UseTicketDraftOptions = {
   userId?: string;
   mode: "create" | "update" | "view";
   form: UseFormReturn<TicketFormValues>;
 };
 
-export const useTicketDraft = ({ userId, mode, form }: Params) => {
+export const useTicketDraft = ({
+  userId,
+  mode,
+  form,
+}: UseTicketDraftOptions) => {
   const [draftId, setDraftId] = useState<string | null>(null);
 
   const savingRef = useRef(false);

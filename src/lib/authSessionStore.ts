@@ -5,7 +5,7 @@ import { AppUser } from "@/domain/user";
 
 /*
  * =========================================================
- * Session Store (zustand)
+ * Auth Session Store (zustand)
  * ---------------------------------------------------------
  * Role:
  * - Single Source of Truth for Frontend "Domain Sessions"
@@ -64,7 +64,7 @@ const initialState: SessionState = {
 /*
  * Actual zustand store
  */
-export const useSessionStore = create<SessionState & SessionActions>()(
+export const useAuthSessionStore = create<SessionState & SessionActions>()(
   (set, get) => ({
     ...initialState,
 
@@ -133,7 +133,9 @@ function mergeAndAssertUser(
 
   // check required property.
   if (!newUser.id) {
-    throw new Error("[SessionStore] Cannot patch user when prev.user is null");
+    throw new Error(
+      "[AuthSessionStore] Cannot patch user when prev.user is null",
+    );
   }
 
   return newUser as AppUser;

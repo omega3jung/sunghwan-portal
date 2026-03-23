@@ -1,4 +1,4 @@
-import { Period } from "@/domain/common/types";
+import { TicketSearchPeriod } from "@/domain/common";
 
 export type TicketStatus =
   | "Draft" // creating ticket.
@@ -10,7 +10,7 @@ export type TicketStatus =
   | "Resolved"
   | "Closed";
 
-export type TicketPeriod = Exclude<Period, "today">;
+export type TicketPeriod = Exclude<TicketSearchPeriod, "today">;
 
 export type TicketAttach = "file" | "image";
 

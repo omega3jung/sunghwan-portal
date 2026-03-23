@@ -6,6 +6,7 @@ export type SystemStatus =
   | "Working"
   | "Pending"
   | "Resolved"
+  | "Rejected"
   | "Closed";
 
 export interface StatusBadgeProps {

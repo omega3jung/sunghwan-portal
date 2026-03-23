@@ -4,15 +4,15 @@ import { useEffect, useMemo } from "react";
 import { CurrentSession } from "@/domain/auth";
 import { UseCurrentSessionResult } from "@/feature/auth";
 import { useMyProfileQuery } from "@/feature/auth/hooks";
+import { SessionPatch, useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
-import { SessionPatch, useSessionStore } from "@/lib/sessionStore";
 
 /*
  * =========================================================
  * useCurrentSession Hook
  * ---------------------------------------------------------
  * Role:
- * - Combines next-auth session + sessionStore (zustand)
+ * - Combines next-auth session + authSessionStore (zustand)
  * - Processes it into a form suitable for use in UI/pages
  *
  * Purpose of this hook:
@@ -33,13 +33,13 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const session = useSession();
 
   /*
-   * zustand session store.
+   * zustand auth session store.
    * - dataScope
    * - isSuperUser
    * - user: { id, name, email, dataScope }
    * - accessToken
    */
-  const store = useSessionStore();
+  const store = useAuthSessionStore();
 
   /*
    * zustand impersonation user store.

@@ -31,7 +31,8 @@ import { ImageValueLabel } from "@/shared/types";
 import { useMutationToast } from "@/shared/utils";
 
 import { TicketFormProvider } from "../../context/TicketFormContext";
-import { TicketFormValues, useTicketDraft, useTicketForm } from "../../hooks";
+import { TicketFormValues } from "../../forms/ticket";
+import { useTicketDraft, useTicketForm } from "../../hooks";
 import {
   useCreateServiceDeskTicket,
   useUpdateServiceDeskTicket,
@@ -40,7 +41,7 @@ import { AttachmentStep } from "./AttachmentStep";
 import { InfoStep } from "./InfoStep";
 import { ReviewStep } from "./ReviewStep";
 
-type Props = {
+type TicketFormDialogProps = {
   mode?: "create" | "update" | "view";
   categories: MainCategory[];
   users: ImageValueLabel[];
@@ -50,22 +51,22 @@ type Props = {
 
 type TicketStep = "info" | "attachment" | "review";
 
-export const CreateTicketDialog = (props: Props) => {
-  const { mode = "create", categories, users, trigger } = props;
+export const TicketFormDialog = (props: TicketFormDialogProps) => {
+  const { mode = "create", categories, users } = props;
   const { t } = useTranslation("serviceHub");
 
   const [open, setOpen] = useState(false);
   const { data: currentSession } = useCurrentSession();
   const ticketForm = useTicketForm(currentSession?.user);
 
-  const [tab, setTab] = useState<TicketStep>();
+  const [currentStep, setCurrentStep] = useState<TicketStep>();
 
   // ticket mutataions.
-  const { mutateAsync: createTicketMutateAsync } = useCreateServiceDeskTicket();
-  const { mutateAsync: updateTicketMutateAsync } = useUpdateServiceDeskTicket();
+  const { mutateAsync: createTicketAsync } = useCreateServiceDeskTicket();
+  const { mutateAsync: updateTicketAsync } = useUpdateServiceDeskTicket();
 
   // draft mutations.
-  const ticketDraft = useTicketDraft({
+  const ticketDraftState = useTicketDraft({
     userId: currentSession?.user.id,
     mode,
     form: ticketForm,
@@ -76,34 +77,34 @@ export const CreateTicketDialog = (props: Props) => {
 
   const onOpen = async () => {
     ticketForm.reset();
-    setTab(mode === "view" ? "review" : "info");
+    setCurrentStep(mode === "view" ? "review" : "info");
     setOpen(true);
   };
 
   const moveToBack = () => {
-    if (tab === "review") {
-      setTab("attachment");
+    if (currentStep === "review") {
+      setCurrentStep("attachment");
     }
 
-    if (tab === "attachment") {
-      setTab("info");
+    if (currentStep === "attachment") {
+      setCurrentStep("info");
     }
 
-    if (tab === "info") {
+    if (currentStep === "info") {
       setOpen(false);
     }
   };
 
   const moveToNext = () => {
-    if (tab === "info") {
-      setTab("attachment");
+    if (currentStep === "info") {
+      setCurrentStep("attachment");
     }
 
-    if (tab === "attachment") {
-      setTab("review");
+    if (currentStep === "attachment") {
+      setCurrentStep("review");
     }
 
-    if (tab === "review") {
+    if (currentStep === "review") {
       onSubmit(ticketForm.getValues());
     }
   };
@@ -115,16 +116,16 @@ export const CreateTicketDialog = (props: Props) => {
   const onSubmit = async (data: TicketFormValues) => {
     // create ticket.
     if (mode === "create") {
-      mutationToast(createTicketMutateAsync(data), "save", t("field.ticket"));
+      mutationToast(createTicketAsync(data), "save", t("field.ticket"));
     }
 
     // update ticket.
     if (mode === "update") {
-      mutationToast(updateTicketMutateAsync(data), "update", t("field.ticket"));
+      mutationToast(updateTicketAsync(data), "update", t("field.ticket"));
     }
 
     // remove draft.
-    await ticketDraft.removeDraft();
+    await ticketDraftState.removeDraft();
 
     // auto close dialog after finish.
     setOpen(false);
@@ -135,7 +136,7 @@ export const CreateTicketDialog = (props: Props) => {
   };
 
   const handleClose = async () => {
-    const draft = await ticketDraft.saveDraftNow();
+    const draft = await ticketDraftState.saveDraftNow();
 
     if (draft) {
       toast.success(
@@ -147,41 +148,47 @@ export const CreateTicketDialog = (props: Props) => {
   };
 
   useEffect(() => {
-    if (ticketDraft?.draftId) {
+    if (ticketDraftState.draftId) {
       toast(t("message.foundDraft"), {
         description: t("message.loadDraft"),
         action: {
           label: t("action.load", { ns: NS.common }),
           onClick: () => {
-            if (ticketDraft.ticketDraft) {
-              ticketForm.setValue("id", ticketDraft.ticketDraft.id);
+            if (ticketDraftState.ticketDraft) {
+              ticketForm.setValue("id", ticketDraftState.ticketDraft.id);
               ticketForm.setValue(
                 "category",
-                ticketDraft.ticketDraft.categoryId,
+                ticketDraftState.ticketDraft.categoryId,
               );
-              ticketForm.setValue("subject", ticketDraft.ticketDraft.subject);
-              ticketForm.setValue("body", ticketDraft.ticketDraft.body);
+              ticketForm.setValue(
+                "subject",
+                ticketDraftState.ticketDraft.subject,
+              );
+              ticketForm.setValue("body", ticketDraftState.ticketDraft.body);
               ticketForm.setValue(
                 "dueDate",
-                new Date(ticketDraft.ticketDraft.dueDate),
+                new Date(ticketDraftState.ticketDraft.dueDate),
               );
-              ticketForm.setValue("priority", ticketDraft.ticketDraft.priority);
-              ticketForm.setValue("email", ticketDraft.ticketDraft.email);
+              ticketForm.setValue(
+                "priority",
+                ticketDraftState.ticketDraft.priority,
+              );
+              ticketForm.setValue("email", ticketDraftState.ticketDraft.email);
               ticketForm.setValue(
                 "requester",
-                ticketDraft.ticketDraft.requester,
+                ticketDraftState.ticketDraft.requester,
               );
             }
           },
         },
       });
     }
-  }, [ticketDraft.draftId]);
+  }, [ticketDraftState.draftId]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {trigger ?? (
+        {props.trigger ?? (
           <Button type="button" className="gap-2" onClick={onOpen}>
             <Plus />
             {t("action.withItem", {
@@ -207,7 +214,7 @@ export const CreateTicketDialog = (props: Props) => {
 
             <div className="flex w-full items-center justify-between md:hidden">
               <Button type="button" variant="ghost" onClick={moveToBack}>
-                {tab === "info" ? <X /> : <ChevronLeft />}
+                {currentStep === "info" ? <X /> : <ChevronLeft />}
               </Button>
               <DialogTitle>{t("createTicketDialog.dialogTitle")}</DialogTitle>
               <Button
@@ -215,11 +222,11 @@ export const CreateTicketDialog = (props: Props) => {
                 size="icon"
                 onClick={moveToNext}
                 disabled={
-                  tab === "info" &&
+                  currentStep === "info" &&
                   !hasRequiredTicketContent(ticketForm.getValues())
                 }
               >
-                {tab !== "review" ? <ChevronRight /> : <Check />}
+                {currentStep !== "review" ? <ChevronRight /> : <Check />}
               </Button>
             </div>
           </DialogHeader>
@@ -227,8 +234,8 @@ export const CreateTicketDialog = (props: Props) => {
         <form className="p-6">
           <TicketFormProvider value={{ form: ticketForm, categories, users }}>
             <Tabs
-              value={tab}
-              onValueChange={(value) => setTab(value as TicketStep)}
+              value={currentStep}
+              onValueChange={(value) => setCurrentStep(value as TicketStep)}
             >
               {mode !== "view" && (
                 <TabsList className="w-full justify-start border-b-2">
@@ -279,7 +286,7 @@ export const CreateTicketDialog = (props: Props) => {
           </TicketFormProvider>
         </form>
         <DialogFooter>
-          {tab === "info" ? (
+          {currentStep === "info" ? (
             <div className="w-40"></div>
           ) : (
             <Button
@@ -300,11 +307,11 @@ export const CreateTicketDialog = (props: Props) => {
             className="w-48 gap-2"
             onClick={moveToNext}
             disabled={
-              tab === "info" &&
+              currentStep === "info" &&
               !hasRequiredTicketContent(ticketForm.getValues())
             }
           >
-            {tab !== "review" ? (
+            {currentStep !== "review" ? (
               <>
                 <MoveRight />
                 {t("action.next", { ns: NS.common })}
@@ -321,3 +328,5 @@ export const CreateTicketDialog = (props: Props) => {
     </Dialog>
   );
 };
+
+export const CreateTicketDialog = TicketFormDialog;

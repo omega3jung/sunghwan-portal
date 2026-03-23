@@ -16,7 +16,9 @@ export const RISK_LEVEL = {
 
 export type RiskLevel = keyof typeof RISK_LEVEL;
 
-export type Period =
+// Subset of DateRangePreset, intentionally defined locally
+// to keep Service Desk search criteria independent from shared preset changes.
+export type TicketSearchPeriod =
   | "today"
   | "thisWeek"
   | "this2Week"
@@ -25,7 +27,7 @@ export type Period =
   | "last2Week"
   | "lastMonth"
   | "last6Month"
-  | "custom";
+  | "range";
 
 export type DueDate =
   | "all"
@@ -37,4 +39,4 @@ export type DueDate =
   | "withinWeek"
   | "within2Week"
   | "withinMonth"
-  | "custom";
+  | "range";

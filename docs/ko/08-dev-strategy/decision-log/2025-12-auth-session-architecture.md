@@ -135,7 +135,7 @@ NextAuth (JWT + Session)
 
 ---
 
-### 4. sessionStore (Zustand)
+### 4. authSessionStore (Zustand)
 
 - 클라이언트 측 세션 캐시다
 - 전역 접근 경로를 제공한다
@@ -164,7 +164,7 @@ Login -> authorize()
 Request -> middleware -> JWT 검증
 
 Client -> useSession()
--> sync -> sessionStore
+-> sync -> authSessionStore
 
 UI -> useCurrentSession()
 ```

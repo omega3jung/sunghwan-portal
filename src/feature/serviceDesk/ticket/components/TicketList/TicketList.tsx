@@ -7,7 +7,7 @@ import { ImageValueLabel } from "@/shared/types";
 import { TicketListItem } from "./TicketListItem";
 import { TicketListSkeleton } from "./TicketListSkeleton";
 
-interface Props {
+interface TicketListProps {
   tickets: TicketSummary[];
   onTicketSelected: (ticketId: string) => void;
   users: ImageValueLabel[];
@@ -21,7 +21,7 @@ export const TicketList = ({
   users,
   language,
   isLoading,
-}: Props) => {
+}: TicketListProps) => {
   if (isLoading) return <TicketListSkeleton />;
 
   if (!tickets.length)

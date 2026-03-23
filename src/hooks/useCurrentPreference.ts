@@ -15,10 +15,10 @@ import { applyColorTheme } from "@/shared/utils";
 
 /*
  * =========================================================
- * useCurrentSession Hook
+ * useCurrentPreference Hook
  * ---------------------------------------------------------
  * Role:
- * - Combines next-auth session + sessionStore (zustand)
+ * - Combines next-auth session status + preferenceStore (zustand)
  * - Processes it into a form suitable for use in UI/pages
  *
  * Purpose of this hook:
@@ -39,11 +39,10 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   const session = useSession();
 
   /*
-   * zustand session store.
-   * - dataScope
-   * - isSuperUser
-   * - user: { id, name, email, dataScope }
-   * - accessToken
+   * zustand preference store.
+   * - language
+   * - colorTheme
+   * - screenMode
    */
   const store = usePreferenceStore();
 

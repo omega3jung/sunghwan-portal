@@ -3,20 +3,22 @@
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
-import { dateRangeMock } from "@/app/_mocks/pages/demo/date-range-picker";
 import { DateRangePicker } from "@/components/custom/DatePicker/DateRangePicker";
-import { Period } from "@/components/custom/DatePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
+import { DEFAULT_DATE_RANGE_PRESETS } from "@/shared/constants/date";
+import { DateRangePreset } from "@/shared/types";
 
 export default function DateRangePickerPage() {
-  const [period, setPeriod] = useState<Period | undefined>("this_month");
+  const [period, setPeriod] = useState<DateRangePreset | undefined>(
+    "this_month",
+  );
   const [range, setRange] = useState<DateRange>();
 
-  const testData = dateRangeMock.map((range) => {
+  const testData = DEFAULT_DATE_RANGE_PRESETS.map((range) => {
     return { value: range, label: range };
   });
 
-  const [selectedRanges, setSelectedRanges] = useState<Period[]>([
+  const [selectedRanges, setSelectedRanges] = useState<DateRangePreset[]>([
     "today",
     "this_week",
     "this_month",
@@ -32,7 +34,7 @@ export default function DateRangePickerPage() {
           options={testData}
           value={selectedRanges}
           onSelect={(selected: string) => {
-            const newList = [...selectedRanges, selected as Period];
+            const newList = [...selectedRanges, selected as DateRangePreset];
 
             // sort by ranges order.
             setSelectedRanges(
@@ -56,10 +58,10 @@ export default function DateRangePickerPage() {
         <DateRangePicker
           variant={"underline"}
           period={period}
-          setPeriod={setPeriod}
+          onPeriodChange={setPeriod}
           range={range}
-          setRange={setRange}
-          showRange={true}
+          onRangeChange={setRange}
+          showRangeText={true}
           options={selectedRanges}
         />
       </div>

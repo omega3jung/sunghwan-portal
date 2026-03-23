@@ -268,7 +268,7 @@ GET /api/users/[userId]/profile
 ```txt
 NextAuth session
 -> fetch effective AppUser
--> sync into sessionStore
+-> sync into authSessionStore
 -> consume via useCurrentSession()
 ```
 
@@ -282,7 +282,7 @@ NextAuth session
 
 - NextAuth session state (`useSession`)
 - effective user profile query (`useMyProfileQuery`)
-- Zustand `sessionStore`
+- Zustand `authSessionStore`
 - Zustand `impersonationStore`
 
 목적은 page와 component에 안정적인 UI 지향 session object를 제공하는 것이다.
@@ -305,9 +305,9 @@ type CurrentSession = {
 
 ---
 
-### `sessionStore`
+### `authSessionStore`
 
-`sessionStore`는 `CurrentSession`을 위한 client-side runtime cache다.
+`authSessionStore`는 `CurrentSession`을 위한 client-side runtime cache다.
 
 용도는 다음과 같다.
 
@@ -318,7 +318,7 @@ type CurrentSession = {
 
 중요한 제한:
 
-> `sessionStore`는 인증의 source of truth가 아니다.
+> `authSessionStore`는 인증의 source of truth가 아니다.
 > 이것은 프론트엔드 런타임 cache/facade다.
 
 신뢰 가능한 기준 소스는 여전히 JWT 기반 NextAuth auth flow다.
@@ -353,7 +353,7 @@ protected shell은 `useCurrentSession()`에 의존하며, `AppUser`가 준비될
 User authenticated
 -> useSession() resolves
 -> useMyProfileQuery() fetches effective AppUser
--> sessionStore.setSession({ user })
+-> authSessionStore.setSession({ user })
 -> ProtectedShell renders
 -> AppUserBootstrap syncs actor into impersonation store
 ```
@@ -538,7 +538,7 @@ preference는 `useCurrentPreference()`와 `PreferenceBootstrap`을 통한 별도
 
 ### 3. Client Stores Are Runtime Helpers Only
 
-- `sessionStore`와 `impersonationStore`는 런타임 사용성을 개선한다
+- `authSessionStore`와 `impersonationStore`는 런타임 사용성을 개선한다
 - 서버 검증은 여전히 JWT/session 기반 auth context를 사용해야 한다
 
 ---

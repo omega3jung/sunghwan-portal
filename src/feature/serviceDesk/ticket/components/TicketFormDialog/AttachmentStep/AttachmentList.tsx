@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { bytesToKB } from "@/shared/utils";
 
-type Props = {
+type AttachmentListProps = {
   files: File[];
   onRemove?: (index: number) => void;
   totalSizeMB: number;
@@ -18,7 +18,7 @@ export const AttachmentList = ({
   totalSizeMB,
   maxCount,
   maxSize,
-}: Props) => {
+}: AttachmentListProps) => {
   const { t } = useTranslation("serviceHub");
 
   return (

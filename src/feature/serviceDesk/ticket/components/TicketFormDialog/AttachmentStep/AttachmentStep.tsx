@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
-} from "@/feature/serviceDesk/ticket/types/constnats";
+} from "@/feature/serviceDesk/ticket/types/constants";
 
 import { useTicketFormContext } from "../../../context/TicketFormContext";
 import { AttachmentList } from "./AttachmentList";

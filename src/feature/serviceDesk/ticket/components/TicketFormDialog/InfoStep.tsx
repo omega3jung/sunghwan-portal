@@ -23,8 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Category } from "@/domain/serviceDesk";
-import { TicketFormValues } from "@/feature/serviceDesk/ticket/hooks/useTicketForm";
-import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/types/constnats";
+import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms/ticket";
+import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/types/constants";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ImageValueLabel, ValueLabel } from "@/shared/types";

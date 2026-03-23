@@ -10,14 +10,19 @@ import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { initials } from "@/shared/utils";
 import { formatTimeDistanceFromNow } from "@/shared/utils/date";
 
-interface Props {
+interface TicketListItemProps {
   ticket: TicketSummary;
   users: ImageValueLabel[];
   language: SupportedLanguage;
   onClick: () => void;
 }
 
-export const TicketListItem = ({ ticket, users, language, onClick }: Props) => {
+export const TicketListItem = ({
+  ticket,
+  users,
+  language,
+  onClick,
+}: TicketListItemProps) => {
   return (
     <div
       onClick={onClick}
