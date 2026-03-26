@@ -36,7 +36,7 @@ export function createMenuMock(t: TFunction): MenuItems {
         children: [
           {
             title: t("serviceDesk", ns),
-            path: "/playground/service-desk",
+            path: "/service-desk",
             icon: Puzzle,
           },
         ],

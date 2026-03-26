@@ -19,7 +19,7 @@ export const useServiceDeskTicketListQuery = (params: DbParams) => {
 export const useServiceDeskTicketQuery = (id: string | number) => {
   return useQuery({
     queryKey: ticketQueryKeys.detail(id),
-    queryFn: () => serviceDeskTicketApi.get(id),
+    queryFn: () => serviceDeskTicketApi.get(String(id)),
     enabled: !!id,
     ...DYNAMIC_QUERY_OPTIONS,
   });

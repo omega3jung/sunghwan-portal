@@ -1,4 +1,9 @@
-export const commentFormDefaultValues = {
-  comment: "",
-  visibility: "public" as const,
+import { TicketCommentFormValues } from "./types";
+
+export const ticketCommentFormDefaultValues: TicketCommentFormValues = {
+  id: "",
+  body: "",
+  visibility: "public",
+  files: [],
+  images: [],
 };

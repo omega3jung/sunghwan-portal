@@ -1,3 +1,13 @@
+/**
+ * Returns the current responsive breakpoint label based on the browser window width.
+ *
+ * Use for:
+ * - Branching UI behavior by Tailwind-like breakpoint names
+ * - Reading the active viewport range in client-only logic
+ *
+ * @param none - This function does not accept any arguments
+ * @returns A breakpoint label of `sm`, `md`, `lg`, `xl`, or `xxl` for the current window width
+ */
 export const getCurrentBreakpoint = (): string => {
   const width = window.innerWidth;
 

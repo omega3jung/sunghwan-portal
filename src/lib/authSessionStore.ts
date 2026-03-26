@@ -3,17 +3,6 @@ import { create } from "zustand";
 import { CurrentSession } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
-/*
- * =========================================================
- * Auth Session Store (zustand)
- * ---------------------------------------------------------
- * Role:
- * - Single Source of Truth for Frontend "Domain Sessions"
- * - Manage LOCAL / REMOTE Sessions with the Same Structure
- * - Synchronize State with SessionStorage
- * =========================================================
- */
-
 const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_session",
 } as const;
@@ -40,9 +29,9 @@ export type SessionPatch = Omit<Partial<SessionState>, "user"> & {
  * - clearSession: Logs out / clears the session
  */
 export interface SessionActions {
-  hydrateSession: () => void; // sessionStorage → store
-  setSession: (patch: SessionPatch) => void; // store + storage synchronization
-  clearSession: () => void; // logout / clear session
+  hydrateSession: () => void;
+  setSession: (patch: SessionPatch) => void;
+  clearSession: () => void;
 }
 
 /*
@@ -61,16 +50,29 @@ const initialState: SessionState = {
   superUserActivated: null,
 };
 
-/*
- * Actual zustand store
+/**
+ * Creates the client-side auth session store and persists its state in `sessionStorage`.
+ *
+ * Use for:
+ * - Reading and updating authenticated user session data from React components
+ * - Hydrating, patching, and clearing session state through a shared Zustand store
+ *
+ * @param none - This store hook does not accept any arguments
+ * @returns A Zustand hook exposing auth session state together with session management actions
  */
 export const useAuthSessionStore = create<SessionState & SessionActions>()(
   (set, get) => ({
     ...initialState,
 
     /**
-     * Called when the app starts
-     * Restores values ​​stored in sessionStorage to memory
+     * Restores auth session state from `sessionStorage` into the in-memory store.
+     *
+     * Use for:
+     * - Hydrating client session state after application startup
+     * - Recovering previously persisted session values during browser navigation
+     *
+     * @param none - This action does not accept any arguments
+     * @returns Nothing; the function updates the store with restored or fallback session state
      */
     hydrateSession: () => {
       try {
@@ -85,8 +87,14 @@ export const useAuthSessionStore = create<SessionState & SessionActions>()(
     },
 
     /**
-     * Update session information
-     * - Synchronize memory status and sessionStorage
+     * Applies a partial auth session update and synchronizes the result to `sessionStorage`.
+     *
+     * Use for:
+     * - Updating selected session fields without replacing the entire session object
+     * - Persisting auth session changes after login, refresh, or profile updates
+     *
+     * @param patch - The partial session fields to merge into the current auth session state
+     * @returns Nothing; the function writes the merged session state to storage and the store
      */
     setSession: (patch) => {
       const prev = get();
@@ -98,8 +106,6 @@ export const useAuthSessionStore = create<SessionState & SessionActions>()(
       } else if (patch.user === null) {
         nextUser = null;
       } else {
-        // patch.user is Partial<AppUser>
-
         nextUser = mergeAndAssertUser(prev.user, patch.user);
       }
 
@@ -114,9 +120,14 @@ export const useAuthSessionStore = create<SessionState & SessionActions>()(
     },
 
     /**
-     * Called upon logout
-     * - Clears all sessionStorage
-     * - Resets memory state
+     * Clears the persisted auth session and resets the in-memory store to its initial state.
+     *
+     * Use for:
+     * - Removing auth session data during logout
+     * - Resetting client session state after authentication becomes invalid
+     *
+     * @param none - This action does not accept any arguments
+     * @returns Nothing; the function removes stored session data and restores default state
      */
     clearSession: () => {
       sessionStorage.removeItem(STORAGE_KEYS.SESSION);
@@ -125,13 +136,23 @@ export const useAuthSessionStore = create<SessionState & SessionActions>()(
   }),
 );
 
+/**
+ * Merges a partial user patch into the current user and ensures required user identity fields still exist.
+ *
+ * Use for:
+ * - Safely updating nested user fields inside the auth session store
+ * - Preventing invalid session state when patching a missing user object
+ *
+ * @param user - The current stored user, or `null` when no user is present yet
+ * @param patch - The partial user fields to merge into the current user
+ * @returns A complete `AppUser` object containing the merged user state
+ */
 function mergeAndAssertUser(
   user: AppUser | null,
   patch?: Partial<AppUser>,
 ): AppUser {
   const newUser = { ...user, ...patch };
 
-  // check required property.
   if (!newUser.id) {
     throw new Error(
       "[AuthSessionStore] Cannot patch user when prev.user is null",

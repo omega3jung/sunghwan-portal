@@ -5,7 +5,16 @@ import { AppUser } from "@/domain/user";
 
 export const USER_DATA_KEY = "USER-DATA";
 
-// get user data.
+/**
+ * Fetches the currently authenticated application user profile.
+ *
+ * Use for:
+ * - Loading the signed-in user's profile data in client features
+ * - Reusing a shared react-query cache entry for the current user
+ *
+ * @param none - This hook does not accept any arguments
+ * @returns A react-query result containing the current `AppUser` request state and data
+ */
 export const useAppUser = () => {
   return useQuery<AppUser>({
     queryKey: [USER_DATA_KEY],

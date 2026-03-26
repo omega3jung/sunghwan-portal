@@ -5,6 +5,16 @@ import { NS } from "@/lib/i18n";
 
 import { MutationAction } from "../types";
 
+/**
+ * Creates localized helpers for common saved and deleted toast notifications.
+ *
+ * Use for:
+ * - Showing consistent success feedback after create or delete actions
+ * - Reusing translated toast messaging across feature modules
+ *
+ * @param none - This hook does not accept any arguments
+ * @returns An object containing `saved` and `deleted` helper functions that accept an item label
+ */
 export const useToastMessage = () => {
   const { t: tMessage } = useTranslation(NS.message);
 
@@ -24,6 +34,17 @@ export const useToastMessage = () => {
   };
 };
 
+/**
+ * Wraps a promise with loading, success, and error toast states.
+ *
+ * Use for:
+ * - Displaying async mutation progress with a single helper call
+ * - Reusing custom toast copy for non-standard promise flows
+ *
+ * @param promise - The promise whose lifecycle should drive the toast states
+ * @param messages - The loading, success, and error messages or message builders for the toast
+ * @returns The same promise wrapped by `toast.promise`
+ */
 export const mutationToast = <T>(
   promise: Promise<T>,
   messages: {
@@ -35,6 +56,16 @@ export const mutationToast = <T>(
   return toast.promise(promise, messages);
 };
 
+/**
+ * Creates a localized toast helper for common mutation actions such as create, update, or delete.
+ *
+ * Use for:
+ * - Showing standardized mutation feedback with translated copy
+ * - Avoiding repeated toast configuration in API mutation handlers
+ *
+ * @param none - This hook does not accept any arguments
+ * @returns A function that accepts a mutation promise, action type, and item label and shows localized toast states
+ */
 export const useMutationToast = () => {
   const { t: tMessage } = useTranslation(NS.message);
   const { t: tError } = useTranslation(NS.error);

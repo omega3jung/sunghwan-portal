@@ -8,22 +8,6 @@ import {
   writeSessionStorage,
 } from "@/lib/sessionStorage";
 
-/*
- * =========================================================
- * useSessionStorageState
- * ---------------------------------------------------------
- * Role:
- * - React-friendly wrapper for sessionStorage
- * - Handles hydrate / sync automatically
- * - Provides state + persistence abstraction
- *
- * Responsibility:
- * ❌ Does NOT know domain meaning
- * ❌ Does NOT manage server state
- * ✅ Only handles client persistence
- * =========================================================
- */
-
 type Options<T> = {
   key: string;
   initialValue: T;
@@ -33,6 +17,16 @@ type Options<T> = {
 
 type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
+/**
+ * Persists React state in `sessionStorage` and keeps the stored value synchronized with local state.
+ *
+ * Use for:
+ * - Storing client-only UI state that should survive page navigation within the session
+ * - Hydrating local component state from `sessionStorage` with optional version migration
+ *
+ * @param options - Configuration for the storage key, initial value, version, and optional migration logic
+ * @returns An object containing the hydrated flag, current value, and helpers to update, reset, or remove the stored state
+ */
 export function useSessionStorageState<T>({
   key,
   initialValue,
@@ -45,6 +39,7 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   const [state, setState] = useState<T>(initialValue);
+  const [hydrated, setHydrated] = useState(false);
 
   /*
    * ---------------------------------------------------------
@@ -59,6 +54,7 @@ export function useSessionStorageState<T>({
     });
 
     setState(stored);
+    setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
@@ -68,8 +64,10 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   useEffect(() => {
+    if (!hydrated) return;
+
     writeSessionStorage(key, state, version);
-  }, [key, state, version]);
+  }, [hydrated, key, state, version]);
 
   /*
    * ---------------------------------------------------------
@@ -98,6 +96,7 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   return {
+    hydrated,
     value: state,
     setValue: set,
     reset,

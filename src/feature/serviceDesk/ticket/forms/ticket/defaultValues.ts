@@ -1,4 +1,6 @@
-export const ticketFormDefaultValues = {
+import { TicketFormValues } from "./types";
+
+export const ticketFormDefaultValues: TicketFormValues = {
   id: null,
   category: undefined,
   subject: "",

@@ -1,3 +1,18 @@
+/**
+ * Counts how often each value appears for a specific field and converts the result into chart-friendly pairs.
+ *
+ * Use for:
+ * - Building summary datasets for pie or bar charts
+ * - Aggregating categorical values from a collection of records
+ *
+ * @param data - The collection of records to aggregate
+ * @param key - The field whose value or values should be counted
+ * @returns An array of objects containing a chart label in `name` and its count in `value`
+ *
+ * @example
+ * aggregateBy([{ status: "open" }, { status: "open" }, { status: "closed" }], "status");
+ * // [{ name: "open", value: 2 }, { name: "closed", value: 1 }]
+ */
 export function aggregateBy<T>(
   data: T[],
   key: keyof T,

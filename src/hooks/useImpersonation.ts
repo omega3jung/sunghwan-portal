@@ -8,17 +8,47 @@ import { useImpersonationStore } from "@/lib/impersonationStore";
 
 import { useCurrentSession } from "./useCurrentSession";
 
+/**
+ * Provides impersonation state and actions for starting, stopping, and syncing impersonation sessions.
+ *
+ * Use for:
+ * - Managing admin impersonation flows from client components
+ * - Reading the effective user alongside actor and subject information
+ *
+ * @param none - This hook does not accept any arguments
+ * @returns An impersonation facade containing actor, subject, effective user state, and control actions
+ */
 export const useImpersonation = () => {
   const { current } = useCurrentSession();
   const session = useSession();
   const { actor, subject, effective, syncFromSession, reset } =
     useImpersonationStore();
 
+  /**
+   * Starts impersonation for a target user and refreshes the session with the returned impersonation payload.
+   *
+   * Use for:
+   * - Entering impersonation mode from an admin control flow
+   * - Switching the effective session context to another user
+   *
+   * @param subjectId - The id of the user to impersonate
+   * @returns A promise that resolves after the impersonation request and session update complete
+   */
   const startImpersonation = async (subjectId: string) => {
     const impersonation = await userImpersonationApi.start(subjectId);
     await session.update(impersonation);
   };
 
+  /**
+   * Stops the current impersonation session and clears impersonation data from the active session.
+   *
+   * Use for:
+   * - Exiting impersonation mode from the UI
+   * - Restoring the original actor as the only active session identity
+   *
+   * @param none - This function does not accept any arguments
+   * @returns A promise that resolves after the impersonation session is cleared and the session is updated
+   */
   const stopImpersonation = async () => {
     await userImpersonationApi.stop();
     await session.update({ impersonation: null });

@@ -7,23 +7,16 @@ import { useMyProfileQuery } from "@/feature/auth/hooks";
 import { SessionPatch, useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 
-/*
- * =========================================================
- * useCurrentSession Hook
- * ---------------------------------------------------------
- * Role:
- * - Combines next-auth session + authSessionStore (zustand)
- * - Processes it into a form suitable for use in UI/pages
+/**
+ * Combines the NextAuth session and the auth session store into a single session facade for the UI.
  *
- * Purpose of this hook:
- * ❌ Prevents direct access to sessionStorage
- * ❌ Prevents direct access to the zustand store
- * ✅ Focuses solely on "how to use the session"
+ * Use for:
+ * - Reading authenticated user state without coupling components to multiple stores
+ * - Updating or clearing session data through a single frontend access point
  *
- * In other words, a session facade (middle layer) for the frontend
- * =======================================================================================
+ * @param none - This hook does not accept any arguments
+ * @returns A session facade containing the current session snapshot, NextAuth state, and session update helpers
  */
-
 export const useCurrentSession = (): UseCurrentSessionResult => {
   /*
    * next-auth session.
@@ -54,7 +47,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const { data: effectiveUserProfile } = useMyProfileQuery(session.data);
 
   /*
-   * 🔒 From here on, authenticated is guaranteed at the type level.
+   * From here on, authenticated is guaranteed at the type level.
    *
    * Processing session data for direct use in the UI.
    *
@@ -97,12 +90,16 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     session.data?.user?.dataScope,
   ]);
 
-  /*
-   * Single entry point for session updates
+  /**
+   * Updates the auth session store and optionally refreshes the server-backed session first.
    *
-   * force = true:
-   * - Force revalidation of the next-auth session
-   * - Renew the zustand session afterward
+   * Use for:
+   * - Applying partial session changes from client workflows
+   * - Revalidating the NextAuth session before synchronizing local session state
+   *
+   * @param patch - The partial session fields to merge into the current auth session store
+   * @param force - Whether to refresh the NextAuth session before writing to the local store
+   * @returns A promise that resolves after any requested session refresh and store update complete
    */
   const updateSession = async (patch: SessionPatch, force = false) => {
     if (force) {

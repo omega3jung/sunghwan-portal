@@ -13,23 +13,16 @@ import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
 import { applyColorTheme } from "@/shared/utils";
 
-/*
- * =========================================================
- * useCurrentPreference Hook
- * ---------------------------------------------------------
- * Role:
- * - Combines next-auth session status + preferenceStore (zustand)
- * - Processes it into a form suitable for use in UI/pages
+/**
+ * Combines session, preference store, theme state, and language state into a single preference facade for the UI.
  *
- * Purpose of this hook:
- * ❌ Prevents direct access to sessionStorage
- * ❌ Prevents direct access to the zustand store
- * ✅ Focuses solely on "how to use the session"
+ * Use for:
+ * - Reading the current user preference state from one hook
+ * - Updating language, color theme, and screen mode without touching storage details directly
  *
- * In other words, a session facade (middle layer) for the frontend
- * =======================================================================================
+ * @param none - This hook does not accept any arguments
+ * @returns A preference facade containing the current preference state, readiness status, and update helpers
  */
-
 export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   /*
    * next-auth session.
@@ -50,7 +43,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   const { language, changeLanguage } = useLanguageState();
 
   /*
-   * 🔒 From here on, authenticated is guaranteed at the type level.
+   * From here on, authenticated is guaranteed at the type level.
    *
    * Processing session data for direct use in the UI.
    *
@@ -61,12 +54,16 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   const current = store ?? createDefaultPreference();
 
   const status = session.status === "loading" ? "loading" : "ready";
-  /*
-   * Single entry point for session updates
+  /**
+   * Updates the preference store and optionally refreshes the server-backed session first.
    *
-   * force = true:
-   * - Force revalidation of the next-auth session
-   * - Renew the zustand session afterward
+   * Use for:
+   * - Applying partial preference changes from UI controls
+   * - Revalidating the current session before synchronizing updated preference state
+   *
+   * @param patch - The partial preference values to merge into the current preference state
+   * @param force - Whether to refresh the NextAuth session before writing to the local store
+   * @returns A promise that resolves after any requested session refresh and store update complete
    */
   const updatePreference = async (patch: PreferencePatch, force = false) => {
     if (force) {
@@ -75,6 +72,16 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     store.setPreference(patch);
   };
 
+  /**
+   * Updates the active language in both the preference store and the i18n runtime.
+   *
+   * Use for:
+   * - Applying a newly selected locale from the UI
+   * - Keeping persisted preference state aligned with the active translation language
+   *
+   * @param language - The locale code to persist and activate
+   * @returns Nothing; the function triggers preference and i18n updates
+   */
   const setLanguage = (language: Locale) => {
     updatePreference({ language });
     changeLanguage(language);
@@ -84,11 +91,31 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     return current.language;
   };
 
+  /**
+   * Updates the stored color theme and immediately applies it to the document.
+   *
+   * Use for:
+   * - Persisting a newly selected color theme
+   * - Synchronizing stored preference state with the active DOM theme attribute
+   *
+   * @param colorTheme - The color theme to store and apply
+   * @returns Nothing; the function updates preference state and the document theme
+   */
   const setColorTheme = (colorTheme: ColorTheme) => {
     updatePreference({ colorTheme });
     applyColorTheme(colorTheme);
   };
 
+  /**
+   * Updates the stored screen mode and applies it through the theme provider.
+   *
+   * Use for:
+   * - Switching between light and dark screen modes
+   * - Persisting screen mode choices in the preference store
+   *
+   * @param screenMode - The screen mode to store and activate
+   * @returns Nothing; the function updates preference state and the active theme mode
+   */
   const setScreenMode = (screenMode: ScreenMode) => {
     updatePreference({ screenMode });
     setTheme(screenMode);

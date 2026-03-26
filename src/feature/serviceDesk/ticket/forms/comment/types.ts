@@ -1,5 +1,11 @@
-import z from "zod";
+import { z } from "zod";
 
-import { commentFormSchema } from "./schema";
+import { ticketCommentFormSchema } from "./schema";
 
-export type CommentFormValues = z.infer<typeof commentFormSchema>;
+export type TicketCommentFormValues = z.infer<typeof ticketCommentFormSchema>;
+
+export interface TicketCommentInput {
+  ticketId: string;
+  commentNo?: string; // required for update
+  values: TicketCommentFormValues;
+}

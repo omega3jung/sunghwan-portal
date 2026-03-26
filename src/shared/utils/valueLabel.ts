@@ -3,6 +3,20 @@ import { ValueLabel } from "@/shared/types";
 import { isNumber } from "./number";
 import { isBoolean, isChecked, isJson, isString } from "./string";
 
+/**
+ * Converts value-label pairs into an object while inferring primitive value types from each entry.
+ *
+ * Use for:
+ * - Translating dynamic form metadata into a typed object payload
+ * - Reconstructing primitive values from string-based label/value collections
+ *
+ * @param data - The list of label/value entries to convert into an object
+ * @returns An object keyed by each label with values converted to numbers, booleans, strings, or parsed JSON when applicable
+ *
+ * @example
+ * valueLabelToObject([{ label: "count", value: "3" }]);
+ * // { count: 3 }
+ */
 export const valueLabelToObject = <T>(data: ValueLabel[]): T => {
   const obj: Record<string, any> = {};
 

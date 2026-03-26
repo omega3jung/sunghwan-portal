@@ -4,6 +4,16 @@ import client from "@/api/client";
 import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
+/**
+ * Fetches the persisted database user record for a given authenticated or application user.
+ *
+ * Use for:
+ * - Loading additional user fields that are stored outside the auth session
+ * - Querying a user record when a component only has a lightweight auth user object
+ *
+ * @param user - The authenticated or application user whose database record should be loaded
+ * @returns A react-query result for the requested `AppUser`, disabled when the user has no id
+ */
 export const useDatabaseUser = (user: AuthUser | AppUser) => {
   const userId = user?.id;
 

@@ -1,8 +1,8 @@
-import z from "zod";
+import { z } from "zod";
 
 export const ticketFormSchema = z.object({
   id: z.string().nullable(),
-  category: z.string(),
+  category: z.string().optional(),
   subject: z.string().max(200),
   body: z.string(),
   dueDate: z.date(),

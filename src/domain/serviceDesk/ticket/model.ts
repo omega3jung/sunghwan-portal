@@ -1,107 +1,174 @@
 import { Priority } from "@/domain/common";
 import { ISODateString } from "@/shared/types/date";
-import { ImageValueLabel } from "@/shared/types/options";
 
 import { Attach } from "../types";
-import { CommentVisibility, TicketStatus } from "../types/enums";
+import {
+  CommentVisibility,
+  HistoryType,
+  TicketHistoryAction,
+  TicketStatus,
+} from "../types/enums";
 
-// read only ticket info.
-interface TicketSystemBase {
-  // ticket info.
+/**
+ * Ticket core identifiers and audit fields.
+ */
+interface TicketBase {
   id: string;
   ticketNumber: string;
-  createdDate: ISODateString;
-  updatedDate: ISODateString;
 
-  // requester info.
-  requester: { id: string; email: string; name: string; imageUrl: string };
+  createdAt: ISODateString;
+  updatedAt: ISODateString;
+
+  requesterId: string;
 }
 
-// editable ticket info.
-interface TicketEditable {
-  // ticket info.
+/**
+ * Ticket workflow state.
+ * These fields represent the current processing state of a ticket.
+ */
+interface TicketWorkflowState {
+  status: TicketStatus;
+  priority: Priority;
+  assigneeIds: string[];
+}
+
+/**
+ * Ticket metrics or derived operational state.
+ * These values are useful for domain-level summary/detail reads.
+ */
+interface TicketMetrics {
+  trackTimeMinutes: number;
+
+  lastCommentAt?: ISODateString;
+  lastCommenterEmail?: string;
+}
+
+/**
+ * Shared ticket flags and due-date state.
+ */
+interface TicketViewState {
+  dueAt: ISODateString;
+
+  owner: boolean;
+  assigned: boolean;
+  active: boolean;
+}
+
+/**
+ * Ticket content fields.
+ * These are the main editable fields of a ticket.
+ */
+interface TicketContent {
   categoryId: string;
-  subCategoryId: string;
-  approvalStepId: string;
+  approvalStepId?: string;
+
   subject: string;
   body: string;
+
   email: {
     to: string[];
     cc: string[];
     bcc: string[];
   };
+
   files: Attach[];
   images: Attach[];
 }
 
-interface TicketProcessState {
-  // processed history.
-  status: TicketStatus;
-  priority: Priority;
-  assignee: string[];
-  lastCommentTime: ISODateString;
-  lastCommenterEmail: string;
-  trackTime: number;
-}
+/**
+ * Ticket summary for list/read use.
+ * Uses display-friendly fields where appropriate.
+ */
+export interface TicketSummary
+  extends TicketBase, TicketWorkflowState, TicketMetrics, TicketViewState {
+  categoryName: string;
+  approvalStepName?: string;
 
-export interface TicketSummary extends TicketSystemBase, TicketProcessState {
-  category: string;
-  subCategory: string;
-  approvalStep: string;
   subject: string;
-  dueDate: ISODateString;
-
   age: number;
-  owner: boolean;
-  assigned: boolean;
-  active: boolean; // no removing tickets, leave it as history.
 }
 
+/**
+ * Ticket detail for full read/edit use.
+ * Uses domain identifiers rather than display labels.
+ */
 export interface TicketDetail
-  extends TicketSystemBase, TicketEditable, TicketProcessState {
-  dueDate: ISODateString;
+  extends
+    TicketBase,
+    TicketWorkflowState,
+    TicketMetrics,
+    TicketViewState,
+    TicketContent {}
 
-  owner: boolean;
-  assigned: boolean;
-  active: boolean; // no removing tickets, leave it as history.
-}
-
-export interface Comment {
+/**
+ * Ticket comment domain model.
+ *
+ * commentNo is ticket-scoped, not globally unique.
+ * Recommended identity: (ticketId, commentNo)
+ */
+export interface TicketComment {
   ticketId: string;
-  id: string;
-  body: string;
+  commentNo: string;
 
-  owner: { id: string; email: string; name: string; imageUrl: string };
+  body: string;
+  ownerId: string;
 
   visibility: CommentVisibility;
 
-  createdDate: ISODateString;
-  updatedDate: ISODateString;
+  createdAt: ISODateString;
+  updatedAt: ISODateString;
   active: boolean;
 
   files: Attach[];
   images: Attach[];
 }
 
-export interface TrackTime {
+/**
+ * Ticket time tracking entry.
+ *
+ * trackTimeNo is ticket-scoped, not globally unique.
+ * Recommended identity: (ticketId, trackTimeNo)
+ */
+export interface TicketTrackTime {
   ticketId: string;
-  assignee: {
-    id: string;
-    name: string;
-    email: string;
-    imageUrl: string;
-  };
-  time: number;
+  trackTimeNo: string;
+
+  assigneeId: string;
+
+  startAt: ISODateString;
+  endAt: ISODateString | null;
+
+  durationMinutes: number | null;
+
+  note?: string;
+
+  createdAt: ISODateString;
+  updatedAt: ISODateString;
 }
 
-export interface History {
+/**
+ * Ticket history domain model.
+ *
+ * historyNo is ticket-scoped, not globally unique.
+ * Recommended identity: (ticketId, historyNo)
+ *
+ * commentNo:
+ * - null   => ticket-level history
+ * - string => comment-level history
+ */
+export interface TicketHistory {
   ticketId: string;
-  replyId: string;
-  id: string;
-  approvalStep: string;
-  Type: string;
-  user: ImageValueLabel[];
-  date: ISODateString;
-  note: string;
-  active: boolean;
+  historyNo: string;
+
+  type: HistoryType;
+  action: TicketHistoryAction;
+
+  actorId: string | null;
+  commentNo: string | null;
+
+  fromValue?: unknown;
+  toValue?: unknown;
+  metadata?: Record<string, unknown>;
+
+  createdAt: ISODateString;
 }

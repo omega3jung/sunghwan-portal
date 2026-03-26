@@ -1,4 +1,18 @@
-/** Get initial of name */
+/**
+ * Extracts initials from a name and preserves visible characters for CJK names.
+ *
+ * Use for:
+ * - Building avatar fallbacks from display names
+ * - Generating short labels for users when no profile image exists
+ *
+ * @param name - The raw name string to convert into initials
+ * @param maxLength - The maximum number of characters to include in the result
+ * @returns A trimmed initials string, or an empty string when the name is blank
+ *
+ * @example
+ * initials("Jane Doe");
+ * // "JD"
+ */
 export const initials = (name: string, maxLength = 2) => {
   if (!name) {
     return "";
@@ -7,7 +21,7 @@ export const initials = (name: string, maxLength = 2) => {
   const trimmed = name.trim();
   if (!trimmed) return "";
 
-  // 1️⃣ CJK (Chinese, Japanese, Korean)
+  // Keep the first visible characters for CJK names instead of splitting by spaces.
   const cjkRegex = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]/;
   if (cjkRegex.test(trimmed)) {
     return [...trimmed].slice(0, maxLength).join("");
@@ -26,6 +40,16 @@ export const initials = (name: string, maxLength = 2) => {
   }
 };
 
+/**
+ * Checks whether a value is a string primitive or a `String` object.
+ *
+ * Use for:
+ * - Guarding dynamic values before string-specific operations
+ * - Interpreting loose data structures that may wrap strings as objects
+ *
+ * @param data - The unknown value to test
+ * @returns `true` when the value is a string-like value, otherwise `false`
+ */
 export const isString = (data: any) => {
   return (
     typeof data == "string" ||
@@ -33,6 +57,16 @@ export const isString = (data: any) => {
   );
 };
 
+/**
+ * Checks whether a value can be parsed successfully by `JSON.parse`.
+ *
+ * Use for:
+ * - Detecting serialized JSON payloads in string fields
+ * - Guarding deserialization before attempting to parse stored values
+ *
+ * @param obj - The raw value to attempt to parse as JSON
+ * @returns `true` when parsing succeeds, otherwise `false`
+ */
 export const isJson = (obj: any) => {
   try {
     JSON.parse(obj);
@@ -43,10 +77,30 @@ export const isJson = (obj: any) => {
   return true;
 };
 
+/**
+ * Checks whether a string matches the application's checkbox state markers.
+ *
+ * Use for:
+ * - Interpreting checked-state values from value-label pairs
+ * - Validating checkbox-like strings before converting them to numeric flags
+ *
+ * @param value - The string value to compare against supported checkbox markers
+ * @returns `true` when the value is `"checked"` or `"unchecked"`, otherwise `false`
+ */
 export const isChecked = (value: string) => {
   return value === "checked" || value === "unchecked";
 };
 
+/**
+ * Checks whether a value represents a boolean when converted to a string.
+ *
+ * Use for:
+ * - Detecting boolean-like values in serialized form data
+ * - Guarding string-to-boolean conversion in loose input structures
+ *
+ * @param bool - The value to inspect as a potential boolean string
+ * @returns `true` when the value stringifies to `"true"` or `"false"`, otherwise `false`
+ */
 export const isBoolean = (bool: any) => {
   const isBool = String(bool) === "true" || String(bool) === "false";
 

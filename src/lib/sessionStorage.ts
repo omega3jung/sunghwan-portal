@@ -1,16 +1,3 @@
-/*
- * =========================================================
- * Session Storage Utility
- * ---------------------------------------------------------
- * Role:
- * - Safe wrapper around browser sessionStorage
- * - SSR-safe (Next.js App Router compatible)
- * - JSON serialization / deserialization
- * - Fault-tolerant (parse errors fallback)
- * - Optional versioning support
- * =========================================================
- */
-
 type ReadOptions<T> = {
   fallback: T;
   version?: number;
@@ -22,19 +9,30 @@ type StoredValue<T> = {
   value: T;
 };
 
-/*
- * ---------------------------------------------------------
- * Internal: environment check
- * ---------------------------------------------------------
+/**
+ * Checks whether the current runtime has access to the browser `window` object.
+ *
+ * Use for:
+ * - Guarding browser-only storage access in shared modules
+ * - Keeping session storage helpers safe during server-side rendering
+ *
+ * @param none - This function does not accept any arguments
+ * @returns `true` when the code is running in a browser environment, otherwise `false`
  */
 function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
-/*
- * ---------------------------------------------------------
- * Read from sessionStorage
- * ---------------------------------------------------------
+/**
+ * Reads and deserializes a value from `sessionStorage` with optional version migration support.
+ *
+ * Use for:
+ * - Restoring persisted client state with a safe fallback value
+ * - Migrating stored values when the persisted shape changes between versions
+ *
+ * @param key - The `sessionStorage` key to read from
+ * @param options - The fallback value and optional versioning or migration settings for the stored entry
+ * @returns The restored value, a migrated value, or the provided fallback when reading fails
  */
 export function readSessionStorage<T>(key: string, options: ReadOptions<T>): T {
   const { fallback, version, migrate } = options;
@@ -47,14 +45,12 @@ export function readSessionStorage<T>(key: string, options: ReadOptions<T>): T {
 
     const parsed = JSON.parse(raw) as StoredValue<T> | T;
 
-    // case 1: stored without wrapper (legacy)
     if (!("value" in (parsed as any))) {
       return (parsed as T) ?? fallback;
     }
 
     const stored = parsed as StoredValue<T>;
 
-    // version mismatch → migrate or fallback
     if (version !== undefined && stored.version !== version) {
       if (migrate) {
         return migrate(stored.value);
@@ -68,10 +64,17 @@ export function readSessionStorage<T>(key: string, options: ReadOptions<T>): T {
   }
 }
 
-/*
- * ---------------------------------------------------------
- * Write to sessionStorage
- * ---------------------------------------------------------
+/**
+ * Serializes and writes a value to `sessionStorage`, optionally attaching a version wrapper.
+ *
+ * Use for:
+ * - Persisting client-only state between page navigations in the same session
+ * - Storing versioned values that may need migration on future reads
+ *
+ * @param key - The `sessionStorage` key to write to
+ * @param value - The value to serialize and store
+ * @param version - The optional version number to persist alongside the stored value
+ * @returns Nothing; the function writes the serialized value when browser storage is available
  */
 export function writeSessionStorage<T>(
   key: string,
@@ -92,10 +95,15 @@ export function writeSessionStorage<T>(
   }
 }
 
-/*
- * ---------------------------------------------------------
- * Remove single key
- * ---------------------------------------------------------
+/**
+ * Removes a single key from `sessionStorage`.
+ *
+ * Use for:
+ * - Clearing one persisted UI state entry without affecting other stored values
+ * - Resetting a specific session-scoped cache item
+ *
+ * @param key - The `sessionStorage` key to remove
+ * @returns Nothing; the function removes the key when browser storage is available
  */
 export function removeSessionStorage(key: string): void {
   if (!isBrowser()) return;
@@ -107,10 +115,15 @@ export function removeSessionStorage(key: string): void {
   }
 }
 
-/*
- * ---------------------------------------------------------
- * Clear all sessionStorage (⚠️ use carefully)
- * ---------------------------------------------------------
+/**
+ * Clears every key from `sessionStorage` for the current browser origin.
+ *
+ * Use for:
+ * - Resetting all session-scoped client state during logout or recovery flows
+ * - Removing all persisted temporary values in a browser session
+ *
+ * @param none - This function does not accept any arguments
+ * @returns Nothing; the function clears all session storage when browser storage is available
  */
 export function clearSessionStorage(): void {
   if (!isBrowser()) return;
