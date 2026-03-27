@@ -23,23 +23,25 @@ export const TicketListItem = ({
   language,
   onClick,
 }: TicketListItemProps) => {
+  const requester = users.find((user) => user.value === ticket.requesterId);
+  const requesterName = requester?.label ?? ticket.requesterId;
+
   return (
     <div
       onClick={onClick}
-      className="flex flex-col gap-3 border-b p-4 hover:bg-muted cursor-pointer"
+      className="cursor-pointer flex flex-col gap-3 border-b p-4 hover:bg-muted"
     >
-      {/* Top section */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-primary">#{ticket.id}</span>
-            <span className="font-semibold truncate">{ticket.subject}</span>
+            <span className="truncate font-semibold">{ticket.subject}</span>
           </div>
 
           <div className="text-xs text-muted-foreground">
-            {ticket.requester.name} ·{" "}
+            {requesterName} ·{" "}
             {formatTimeDistanceFromNow(
-              ticket.createdDate,
+              ticket.createdAt,
               dateLocaleMap[language],
             )}
           </div>
@@ -48,24 +50,23 @@ export const TicketListItem = ({
         <StatusBadge status={ticket.status} />
       </div>
 
-      {/* Bottom section (responsive) */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
-            <AvatarImage src={ticket.requester.imageUrl} />
-            <AvatarFallback>{initials(ticket.requester.name)}</AvatarFallback>
+            <AvatarImage src={requester?.image} />
+            <AvatarFallback>{initials(requesterName)}</AvatarFallback>
           </Avatar>
 
           <span className="text-xs text-muted-foreground">
             Due{" "}
-            {formatTimeDistanceFromNow(ticket.dueDate, dateLocaleMap[language])}
+            {formatTimeDistanceFromNow(ticket.dueAt, dateLocaleMap[language])}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <AvatarMultiComboBox
-            variant={"ghost"}
-            value={ticket.assignee}
+            variant="ghost"
+            value={ticket.assigneeIds}
             options={users}
             maxImages={3}
             readOnly={true}

@@ -1,14 +1,14 @@
 import { createContext, useContext } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { MainCategory } from "@/domain/serviceDesk";
+import { Category } from "@/domain/serviceDesk";
 import { ImageValueLabel } from "@/shared/types";
 
 import { TicketFormValues } from "../forms/ticket";
 
 type TicketFormContextValue = {
   form: UseFormReturn<TicketFormValues>;
-  categories: MainCategory[];
+  categories: Category[];
   users: ImageValueLabel[];
 };
 

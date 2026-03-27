@@ -17,7 +17,7 @@ export const serviceDeskTicketApi = {
     return res.data.items;
   },
 
-  get: async (id: string | number): Promise<TicketDetail | null> => {
+  get: async (id: string): Promise<TicketDetail | null> => {
     if (!id) return null;
 
     const res = await client.api.get<TicketDetail>(
@@ -26,7 +26,7 @@ export const serviceDeskTicketApi = {
     return res.data;
   },
 
-  create: async (data: TicketFormValues) => {
+  create: async (data: TicketFormValues): Promise<TicketDetail> => {
     const res = await client.api.post<TicketDetail>(
       `/api/service-desk/tickets`,
       data,
@@ -34,8 +34,8 @@ export const serviceDeskTicketApi = {
     return res.data;
   },
 
-  update: async (data: TicketFormValues) => {
-    const res = await client.api.put(
+  update: async (data: TicketFormValues): Promise<TicketDetail> => {
+    const res = await client.api.put<TicketDetail>(
       `/api/service-desk/tickets/${data.id}`,
       data,
     );
@@ -43,8 +43,10 @@ export const serviceDeskTicketApi = {
   },
 
   // soft delete. set disabled in db.
-  remove: async (id: string | number) => {
-    await client.api.put(`/api/service-desk/tickets/${id}`);
+  remove: async (id: string): Promise<null> => {
+    await client.api.put(`/api/service-desk/tickets/${id}`, {
+      active: false,
+    });
     return null;
   },
 
@@ -54,11 +56,12 @@ export const serviceDeskTicketApi = {
 
       const res = await client.api.get<TicketDetail>(
         `/api/service-desk/tickets/draft`,
+        { params: { userId } },
       );
       return res.data;
     },
 
-    create: async (data: TicketFormValues) => {
+    create: async (data: TicketFormValues): Promise<TicketDetail> => {
       const res = await client.api.post<TicketDetail>(
         `/api/service-desk/tickets/draft`,
         data,
@@ -66,8 +69,8 @@ export const serviceDeskTicketApi = {
       return res.data;
     },
 
-    update: async (data: TicketFormValues) => {
-      const res = await client.api.put(
+    update: async (data: TicketFormValues): Promise<TicketDetail> => {
+      const res = await client.api.put<TicketDetail>(
         `/api/service-desk/tickets/draft/${data.id}`,
         data,
       );
@@ -75,7 +78,7 @@ export const serviceDeskTicketApi = {
     },
 
     // real delete draft data in db.
-    remove: async (id: string | number) => {
+    remove: async (id: string): Promise<null> => {
       await client.api.delete(`/api/service-desk/tickets/draft/${id}`);
       return null;
     },

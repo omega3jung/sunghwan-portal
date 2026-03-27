@@ -1,6 +1,7 @@
 import { Priority } from "@/domain/common";
 import { ISODateString } from "@/shared/types/date";
 
+import { CategoryScope } from "../category";
 import { Attach } from "../types";
 import {
   CommentVisibility,
@@ -55,6 +56,14 @@ interface TicketViewState {
 }
 
 /**
+ * Ticket scope fields.
+ * These are the key fields for determining the ticket classification.
+ */
+interface TicketScopeContext {
+  scope: CategoryScope;
+}
+
+/**
  * Ticket content fields.
  * These are the main editable fields of a ticket.
  */
@@ -80,7 +89,12 @@ interface TicketContent {
  * Uses display-friendly fields where appropriate.
  */
 export interface TicketSummary
-  extends TicketBase, TicketWorkflowState, TicketMetrics, TicketViewState {
+  extends
+    TicketBase,
+    TicketWorkflowState,
+    TicketMetrics,
+    TicketViewState,
+    TicketScopeContext {
   categoryName: string;
   approvalStepName?: string;
 
@@ -98,6 +112,7 @@ export interface TicketDetail
     TicketWorkflowState,
     TicketMetrics,
     TicketViewState,
+    TicketScopeContext,
     TicketContent {}
 
 /**

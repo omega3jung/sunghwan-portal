@@ -13,7 +13,7 @@ import {
   getDefaultCategoryData,
   getDefaultSubCategoryData,
 } from "../constants";
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, SubCategoryData } from "../types";
 import { categoryToTree, mapCategoryData } from "../util.mapper";
 
 type UseCategoryTreeOptions = {
@@ -25,7 +25,7 @@ export function useCategoryTree({
   selectedClient,
   categories,
 }: UseCategoryTreeOptions) {
-  const [tree, setTree] = useState<TreeNodes<CategoryData | MainCategoryData>>(
+  const [tree, setTree] = useState<TreeNodes<CategoryData | SubCategoryData>>(
     [],
   );
 
@@ -47,8 +47,8 @@ export function useCategoryTree({
     if (!selectedId) return null;
 
     const findNode = (
-      nodes: TreeNodes<CategoryData | MainCategoryData>,
-    ): CategoryData | MainCategoryData | null => {
+      nodes: TreeNodes<CategoryData | SubCategoryData>,
+    ): CategoryData | SubCategoryData | null => {
       for (const node of nodes) {
         if (node.id === selectedId) return node.data;
         const found = findNode(node.children);

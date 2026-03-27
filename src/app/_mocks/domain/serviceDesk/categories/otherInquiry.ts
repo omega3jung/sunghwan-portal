@@ -1,0 +1,106 @@
+import { DbCategory } from "@/api/serviceDesk/category";
+
+const otherInquiryCategoryMock = {
+  category_id: 91,
+  category_name: {
+    en: "Other / General Inquiry",
+    es: "Otros / Consulta general",
+    fr: "Autres / Demande générale",
+    ko: "기타 / 일반 문의",
+  },
+  category_description: {
+    en: "Request assistance for issues that do not fit into the provided categories.",
+    es: "Solicite asistencia para problemas que no encajan en las categorías proporcionadas.",
+    fr: "Demander une assistance pour des problèmes ne correspondant pas aux catégories proposées.",
+    ko: "제공된 카테고리에 해당하지 않는 문제에 대해 해결을 요청합니다.",
+  },
+  category_request_template: { en: "", es: "", fr: "", ko: "" },
+  category_index: 9,
+  category_active: true,
+  category_scope: "INTERNAL",
+  default_priority: "medium",
+  default_risk_level: "low",
+  default_sla_days: 3,
+  sub_category: [
+    {
+      category_id: 92,
+      category_name: {
+        en: "General inquiry",
+        es: "Consulta general",
+        fr: "Demande générale",
+        ko: "일반 문의",
+      },
+      category_description: {
+        en: "Submit general questions or inquiries related to system usage or support.",
+        es: "Envíe preguntas o consultas generales relacionadas con el uso del sistema o soporte.",
+        fr: "Soumettre des questions ou demandes générales concernant l’utilisation du système ou le support.",
+        ko: "사용자 문제에 대해 확인/수정/해결 등 문의를 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please provide details about your inquiry.",
+        es: "Proporcione detalles sobre su consulta.",
+        fr: "Veuillez fournir les détails de votre demande.",
+        ko: "문의하려는 사항에 대한 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 1,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: null,
+      default_sla_days: null,
+    },
+    {
+      category_id: 93,
+      category_name: {
+        en: "Guidance / how-to",
+        es: "Guía / cómo usar",
+        fr: "Guide / mode d’emploi",
+        ko: "안내 / 사용 방법",
+      },
+      category_description: {
+        en: "Request guidance or instructions on how to use systems or features.",
+        es: "Solicite orientación o instrucciones sobre cómo utilizar sistemas o funciones.",
+        fr: "Demander des conseils ou des instructions sur l’utilisation des systèmes ou des fonctionnalités.",
+        ko: "시스템 사용에 대한 안내 또는 매뉴얼을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please specify the system or feature you need guidance on.",
+        es: "Especifique el sistema o la función sobre la que necesita orientación.",
+        fr: "Veuillez préciser le système ou la fonctionnalité concernée.",
+        ko: "안내가 필요한 시스템 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 2,
+      category_active: true,
+      default_priority: "low",
+      default_risk_level: null,
+      default_sla_days: 5,
+    },
+    {
+      category_id: 94,
+      category_name: {
+        en: "Other issue",
+        es: "Otro problema",
+        fr: "Autre problème",
+        ko: "기타 문제",
+      },
+      category_description: {
+        en: "Report issues that do not fall under any existing category.",
+        es: "Informe problemas que no pertenecen a ninguna categoría existente.",
+        fr: "Signaler des problèmes qui ne relèvent d’aucune catégorie existante.",
+        ko: "제공된 카테고리에 해당하지 않는 문제에 대해 해결을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please describe the issue in detail.",
+        es: "Describa el problema en detalle.",
+        fr: "Veuillez décrire le problème en détail.",
+        ko: "해결이 필요한 문제 정보를 상세히 포함하여 요청해주세요.",
+      },
+      category_index: 3,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: "medium",
+      default_sla_days: 2,
+    },
+  ],
+} satisfies DbCategory;
+
+export default otherInquiryCategoryMock;

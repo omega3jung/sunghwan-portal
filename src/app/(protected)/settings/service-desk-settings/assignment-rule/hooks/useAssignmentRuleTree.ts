@@ -5,7 +5,7 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { SupportedLanguage } from "@/domain/config";
 import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 
-import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
+import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { assignmentRuleToTree, mapAssignmentRuleData } from "../util.mapper";
 
 type UseAssignmentRuleTreeOptions = {
@@ -22,7 +22,7 @@ export function useAssignmentRuleTree({
   language,
 }: UseAssignmentRuleTreeOptions) {
   const [tree, setTree] = useState<
-    TreeNodes<AssignmentRuleData | MainAssignmentRuleData>
+    TreeNodes<AssignmentRuleData | SubAssignmentRuleData>
   >([]);
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
@@ -44,8 +44,8 @@ export function useAssignmentRuleTree({
     if (!selectedId) return null;
 
     const findNode = (
-      nodes: TreeNodes<AssignmentRuleData | MainAssignmentRuleData>,
-    ): AssignmentRuleData | MainAssignmentRuleData | null => {
+      nodes: TreeNodes<AssignmentRuleData | SubAssignmentRuleData>,
+    ): AssignmentRuleData | SubAssignmentRuleData | null => {
       for (const node of nodes) {
         if (node.id === selectedId) return node.data;
         const found = findNode(node.children);

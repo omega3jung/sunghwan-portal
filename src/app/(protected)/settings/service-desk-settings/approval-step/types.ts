@@ -10,7 +10,7 @@ export type ApprovalStepData = ApprovalStep & {
   stepAssignee: ApprovalAssigneeType;
 };
 
-export type CategoryApprovalStepData = Category & {
+export type CategoryApprovalStepData = Omit<Category, "subCategories"> & {
   categoryId: string;
   nodeType: "category";
   approvalSteps: ApprovalStepData[];

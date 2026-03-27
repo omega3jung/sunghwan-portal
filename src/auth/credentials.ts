@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import client from "@/api/client";
-import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/user";
+import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
 
 export type LoginResponse = AuthUser;

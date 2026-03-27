@@ -6,13 +6,13 @@ import { SupportedLanguage } from "@/domain/config";
 import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
 
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, SubCategoryData } from "../types";
 
 type UseCategoryFormOptions = {
-  selectedNode: CategoryData | MainCategoryData | null;
+  selectedNode: CategoryData | SubCategoryData | null;
   language: SupportedLanguage;
   setTree: React.Dispatch<
-    React.SetStateAction<TreeNodes<CategoryData | MainCategoryData>>
+    React.SetStateAction<TreeNodes<CategoryData | SubCategoryData>>
   >;
 };
 
@@ -25,8 +25,8 @@ export const useCategoryForm = ({
 
   const updateNode = (
     updater: (
-      data: CategoryData | MainCategoryData,
-    ) => CategoryData | MainCategoryData,
+      data: CategoryData | SubCategoryData,
+    ) => CategoryData | SubCategoryData,
   ) => {
     if (!selectedNode) return;
 
@@ -51,7 +51,7 @@ export const useCategoryForm = ({
     };
 
   const updateValue =
-    (key: keyof CategoryData | keyof MainCategoryData) => (value: any) => {
+    (key: keyof CategoryData | keyof SubCategoryData) => (value: any) => {
       updateNode((data) => ({
         ...data,
         [key]: value,

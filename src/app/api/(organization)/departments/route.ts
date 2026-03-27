@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { camelDepartmentMapper } from "@/api/organization/department/mapper";
-import { departmentsMock } from "@/app/_mocks/organization";
+import { departmentsMock } from "@/app/_mocks/domain/organization";
 import { isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
 import { DbParams } from "@/shared/types/api";

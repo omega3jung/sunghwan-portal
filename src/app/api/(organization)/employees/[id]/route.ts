@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { camelEmployeeMapper } from "@/api/organization/employee/mapper";
-import { employeesMock } from "@/app/_mocks/organization/employee/employees";
+import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee/employees";
 import { isRemoteRequest } from "@/app/api/_helpers";
 import { Employee } from "@/domain/organization";
 
@@ -17,7 +17,7 @@ export async function GET(
   if (!isRemote) {
     // Return mock department.
 
-    const employeeData = camelEmployeeMapper(employeesMock);
+    const employeeData = camelEmployeeMapper(createEmployeesMock());
     const targetEmployee = employeeData.find((employee) => employee.id === id);
 
     if (!targetEmployee) {

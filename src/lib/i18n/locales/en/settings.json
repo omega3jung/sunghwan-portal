@@ -114,6 +114,7 @@
     "categoryTab": {
       "name": "Name",
       "description": "Description",
+      "scope": "Scope",
       "requestTemplate": "Request Template",
       "resolutionDays": "Resolution Days",
       "active": "Active",
@@ -142,7 +143,7 @@
       "name": "Category",
       "namePlaceholder": "Select a category",
       "jobField": "Job Title",
-      "selectAssigneJobField": "Select Assignee Job Title",
+      "selectAssigneeJobField": "Select Assignee Job Title",
       "employee": "Employee",
       "selectAssignee": "Select Assignee"
     }

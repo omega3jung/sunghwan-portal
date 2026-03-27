@@ -10,7 +10,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
 import { DbCategory } from "../category/mapper";
 
 // back-end data structures.
-export type DbCategoryApprovalSettings = DbCategory & {
+export type DbCategoryApprovalSettings = Omit<DbCategory, "sub_category"> & {
   approval_step: DbApprovalStep[];
 };
 
@@ -58,8 +58,10 @@ export const camelCategoryApprovalSettingMapper: ArrayMapper<
     description: nullToUndefined(item.category_description),
     index: item.category_index,
     active: item.category_active,
-    defaultPriority: nullToUndefined(item.default_priority),
-    defaultRiskLevel: nullToUndefined(item.default_risk_level),
+    scope: item.category_scope,
+    defaultPriority: item.default_priority,
+    defaultRiskLevel: item.default_risk_level,
+    defaultSlaDays: item.default_sla_days,
     approvalSteps: camelApprovalStepMapper(item.approval_step),
   }));
 };

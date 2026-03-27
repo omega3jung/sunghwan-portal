@@ -1,11 +1,11 @@
-// app/api/service-desk/category/route.ts
+// src/app/api/service-desk/categories/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import { camelClientCategoryTreeMapper } from "@/api/serviceDesk/category";
 import {
   internalCategorySettingsMock,
   tenantCategorySettingsMock,
-} from "@/app/_mocks/pages/service-desk/categories";
+} from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
 import { DbParams } from "@/shared/types/api";

@@ -56,7 +56,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
       return accessLevelOptions.map((accessLevel) => {
         return {
           value: accessLevel.value.toString(),
-          label: t(`accessLevel.options.${accessLevel.label}`, {
+          label: t(`enum.accessLevel.options.${accessLevel.label}`, {
             ns: "domain",
           }),
         };

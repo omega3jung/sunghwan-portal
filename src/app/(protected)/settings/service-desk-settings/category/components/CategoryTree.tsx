@@ -12,12 +12,12 @@ import { SupportedLanguage } from "@/domain/config";
 import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
 
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, SubCategoryData } from "../types";
 
 type Props = {
-  tree: TreeNodes<MainCategoryData | CategoryData>;
+  tree: TreeNodes<CategoryData | SubCategoryData>;
   setTree: (
-    value: SetStateAction<TreeNodes<MainCategoryData | CategoryData>>,
+    value: SetStateAction<TreeNodes<CategoryData | SubCategoryData>>,
   ) => void;
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;

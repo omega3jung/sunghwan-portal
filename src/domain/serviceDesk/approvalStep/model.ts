@@ -4,7 +4,7 @@ import { LocalizedText } from "@/shared/types";
 import { Category } from "../category/model";
 
 // category data structure.
-export type CategoryApprovalSettings = Category & {
+export type CategoryApprovalSettings = Omit<Category, "subCategories"> & {
   approvalSteps: ApprovalStep[];
 };
 

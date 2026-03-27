@@ -13,13 +13,13 @@ import { SupportedLanguage } from "@/domain/config";
 import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
 
-import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
+import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 
 type Props = {
-  tree: TreeNodes<MainAssignmentRuleData | AssignmentRuleData>;
+  tree: TreeNodes<AssignmentRuleData | SubAssignmentRuleData>;
   setTree: (
     value: SetStateAction<
-      TreeNodes<MainAssignmentRuleData | AssignmentRuleData>
+      TreeNodes<AssignmentRuleData | SubAssignmentRuleData>
     >,
   ) => void;
   selectedId: UniqueIdentifier | null;

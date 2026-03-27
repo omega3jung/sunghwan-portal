@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { camelJobFieldMapper } from "@/api/organization/jobField/mapper";
-import { jobFieldsMock } from "@/app/_mocks/organization/jobFields";
+import { jobFieldsMock } from "@/app/_mocks/domain/organization/jobFields";
 import { isRemoteRequest } from "@/app/api/_helpers";
 import { JobField } from "@/domain/organization";
 

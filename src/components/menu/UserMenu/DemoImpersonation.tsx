@@ -2,7 +2,7 @@ import { Contact, User, UserCog, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { tenantProfiles } from "@/app/_mocks/user";
+import { tenantProfiles } from "@/app/_mocks/domain/user";
 import {
   DropdownMenuItem,
   DropdownMenuPortal,

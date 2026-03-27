@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { avatarComboMock } from "@/app/_mocks/pages/demo/avatar-multi-combo-box";
+import { avatarComboMock } from "@/app/_mocks/ui/demo/avatar-multi-combo-box";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Input } from "@/components/ui/input";
 
@@ -42,10 +42,10 @@ export default function AvatarMultiComboBoxPage() {
           onRemove={(e) => {
             const currentValue = [...userValue];
 
-            const currentValueindex = currentValue.indexOf(e);
+            const currentValueIndex = currentValue.indexOf(e);
 
-            if (currentValueindex > -1) {
-              currentValue.splice(currentValueindex, 1);
+            if (currentValueIndex > -1) {
+              currentValue.splice(currentValueIndex, 1);
               setUserValue(currentValue);
             } else {
               return;

@@ -3,7 +3,7 @@
 import enumLocale from "./enum.json";
 
 const domain = {
-  enumLocale,
+  enum: enumLocale,
 };
 
 export default domain;

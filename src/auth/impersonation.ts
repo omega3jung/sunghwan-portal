@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import client from "@/api/client";
-import { resolveTenantAuth } from "@/app/_mocks/user";
+import { resolveTenantAuth } from "@/app/_mocks/domain/user";
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 

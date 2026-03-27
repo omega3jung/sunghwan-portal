@@ -23,20 +23,23 @@ import {
 } from "@/feature/serviceDesk/shared/options";
 import { Locale, ValueLabel } from "@/shared/types";
 
+import { scopeData } from "../constants";
 import { useCategoryForm } from "../hooks/useCategoryForm";
-import { CategoryData, MainCategoryData } from "../types";
+import { CategoryData, SubCategoryData } from "../types";
 
 type Props = {
-  selectedNode: MainCategoryData | CategoryData | null;
+  selectedNode: CategoryData | SubCategoryData | null;
   language: SupportedLanguage;
   setTree: React.Dispatch<
-    React.SetStateAction<TreeNodes<MainCategoryData | CategoryData>>
+    React.SetStateAction<TreeNodes<CategoryData | SubCategoryData>>
   >;
 };
 
 export const CategoryForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
     const { t } = useTranslation("settings");
+    const isCategoryNode = !!selectedNode && "subCategories" in selectedNode;
+    const isScopeEnabled = isCategoryNode && selectedNode.isCreated;
 
     const {
       languageTab,
@@ -56,7 +59,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
       return priorityOptions.map((priority) => {
         return {
           value: priority.value,
-          label: t(`priority.options.${priority.value}`, { ns: "domain" }),
+          label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
         };
       });
     }, [t]);
@@ -67,7 +70,9 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
       return riskLevelOptions.map((riskLevel) => {
         return {
           value: riskLevel.value,
-          label: t(`riskLevel.options.${riskLevel.value}`, { ns: "domain" }),
+          label: t(`enum.riskLevel.options.${riskLevel.value}`, {
+            ns: "domain",
+          }),
         };
       });
     }, [t]);
@@ -134,10 +139,31 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   }
                 />
               </Field>
+              <Field>
+                <FieldLabel htmlFor="category-select-scope">
+                  {t("serviceDeskSettings.categoryTab.scope")}
+                </FieldLabel>
+                <Select
+                  value={isCategoryNode ? selectedNode.scope : undefined}
+                  onValueChange={updateValue("scope")}
+                  disabled={!isScopeEnabled}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent id="category-select-scope">
+                    {scopeData.map((scope) => (
+                      <SelectItem key={scope.value} value={scope.value}>
+                        {scope.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <div className="grid grid-cols-3 gap-2">
                 <Field>
                   <FieldLabel htmlFor="category-select-priority">
-                    {t("priority.label", { ns: "domain" })}
+                    {t("enum.priority.label", { ns: "domain" })}
                   </FieldLabel>
                   <Select
                     value={selectedNode?.defaultPriority}
@@ -157,7 +183,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="category-select-risk-level">
-                    {t("riskLevel.label", { ns: "domain" })}
+                    {t("enum.riskLevel.label", { ns: "domain" })}
                   </FieldLabel>
                   <Select
                     value={selectedNode?.defaultPriority}

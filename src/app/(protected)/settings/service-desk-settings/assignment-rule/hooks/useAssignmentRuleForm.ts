@@ -7,12 +7,12 @@ import { AssigneeGroup } from "@/domain/serviceDesk";
 import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
 
-import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
+import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 
 type UseAssignmentRuleFormOptions = {
-  selectedNode: AssignmentRuleData | MainAssignmentRuleData | null;
+  selectedNode: AssignmentRuleData | SubAssignmentRuleData | null;
   setTree: React.Dispatch<
-    React.SetStateAction<TreeNodes<AssignmentRuleData | MainAssignmentRuleData>>
+    React.SetStateAction<TreeNodes<AssignmentRuleData | SubAssignmentRuleData>>
   >;
   language: SupportedLanguage;
 };
@@ -26,8 +26,8 @@ export const useAssignmentRuleForm = ({
 
   const updateNode = (
     updater: (
-      data: AssignmentRuleData | MainAssignmentRuleData,
-    ) => AssignmentRuleData | MainAssignmentRuleData,
+      data: AssignmentRuleData | SubAssignmentRuleData,
+    ) => AssignmentRuleData | SubAssignmentRuleData,
   ) => {
     if (!selectedNode) return;
 

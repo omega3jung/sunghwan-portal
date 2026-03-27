@@ -13,17 +13,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MainCategory } from "@/domain/serviceDesk";
+import { Category } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
-import { TicketSearchCriteriaFormValues } from "../forms/searchCriteria";
-import { TicketSearchCriteriaFields } from "./TicketSearchCriteria/TicketSearchCriteriaFields";
+import { TicketSearchCriteriaFormValues } from "../../forms/searchCriteria";
+import { TicketSearchCriteriaFields } from "./TicketSearchCriteriaFields";
 
 type FilterProps = {
   trigger?: React.ReactNode;
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
-  categories: MainCategory[];
+  categories: Category[];
   users: ImageValueLabel[];
   onSubmit: (values: TicketSearchCriteriaFormValues) => Promise<void>;
 };

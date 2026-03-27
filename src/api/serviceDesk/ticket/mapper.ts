@@ -1,110 +1,200 @@
-import { Priority, RiskLevel } from "@/domain/common";
+import { Priority } from "@/domain/common";
 import {
-  Category,
-  ClientCategoryTree,
-  MainCategory,
+  Attach,
+  CategoryScope,
+  TicketDetail,
+  TicketStatus,
+  TicketSummary,
 } from "@/domain/serviceDesk";
-import { ArrayMapper, LocalizedText } from "@/shared/types";
+import { ArrayMapper } from "@/shared/types";
+import { ISODateString } from "@/shared/types/date";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
 
-// back-end data structures.
-export type DbClient = {
-  client_id: number;
-  client_name: string;
-  client_color: string;
-};
+export interface DbTicketSummary {
+  id: string;
+  ticket_number: string;
 
-export type DbClientCategoryTree = DbClient & { category: DbMainCategory[] };
+  created_at: ISODateString;
+  updated_at: ISODateString;
 
-export type DbMainCategory = DbCategory & {
-  default_priority: Priority;
-  default_risk_level: RiskLevel;
-  default_sla_days: number;
-  sub_category: DbCategory[];
-};
+  requester_id: string;
 
-export interface DbCategory {
-  category_id: number; // string number. can use parseInt.
-  category_name: LocalizedText;
-  category_description: LocalizedText | null;
-  category_request_template: LocalizedText | null;
-  category_index: number;
-  category_active: boolean;
-  default_priority: Priority | null;
-  default_risk_level: RiskLevel | null;
-  default_sla_days: number | null;
+  status: TicketStatus;
+  priority: Priority;
+  assignee_id: string[];
+
+  last_comment_at: ISODateString | null;
+  last_commenter_email: string | null;
+  track_time_minutes: number;
+
+  due_at: ISODateString;
+
+  owner: boolean;
+  assigned: boolean;
+  active: boolean;
+
+  scope: CategoryScope;
+  category_name: string;
+  approval_step_name: string | null;
+
+  subject: string;
+  age: number;
 }
 
-export const camelClientCategoryTreeMapper: ArrayMapper<
-  DbClientCategoryTree,
-  ClientCategoryTree
+export interface DbTicketDetail {
+  id: string;
+  ticket_number: string;
+
+  created_at: ISODateString;
+  updated_at: ISODateString;
+
+  requester_id: string;
+
+  status: TicketStatus;
+  priority: Priority;
+  assignee_id: string[];
+
+  last_comment_at: ISODateString | null;
+  last_commenter_email: string | null;
+  track_time_minutes: number;
+
+  due_at: ISODateString;
+
+  owner: boolean;
+  assigned: boolean;
+  active: boolean;
+
+  scope: CategoryScope;
+  category_id: string;
+  approval_step_id: string | null;
+
+  subject: string;
+  body: string;
+
+  email: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  };
+
+  files: Attach[];
+  images: Attach[];
+}
+
+export const camelTicketSummaryMapper: ArrayMapper<
+  DbTicketSummary,
+  TicketSummary
 > = (data) => {
   return data.map((item) => ({
-    id: item.client_id.toString(),
-    name: item.client_name,
-    color: item.client_color,
-    category: camelCategoryMapper(item.category),
+    id: item.id,
+    ticketNumber: item.ticket_number,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+    requesterId: item.requester_id,
+    status: item.status,
+    priority: item.priority,
+    assigneeIds: item.assignee_id,
+    lastCommentAt: nullToUndefined(item.last_comment_at),
+    lastCommenterEmail: nullToUndefined(item.last_commenter_email),
+    trackTimeMinutes: item.track_time_minutes,
+    dueAt: item.due_at,
+    owner: item.owner,
+    assigned: item.assigned,
+    active: item.active,
+    scope: item.scope,
+    categoryName: item.category_name,
+    approvalStepName: nullToUndefined(item.approval_step_name),
+    subject: item.subject,
+    age: item.age,
   }));
 };
 
-export const camelCategoryMapper: ArrayMapper<DbMainCategory, MainCategory> = (
-  data,
-) => {
+export const camelTicketDetailMapper: ArrayMapper<
+  DbTicketDetail,
+  TicketDetail
+> = (data) => {
   return data.map((item) => ({
-    id: item.category_id.toString(),
-    name: item.category_name,
-    description: nullToUndefined(item.category_description),
-    requestTemplate: nullToUndefined(item.category_request_template),
-    index: item.category_index,
-    active: item.category_active,
-    defaultPriority: item.default_priority,
-    defaultSlaDays: item.default_sla_days,
-    defaultRiskLevel: item.default_risk_level,
-    subCategories: camelSubCategoryMapper(item.sub_category),
+    id: item.id,
+    ticketNumber: item.ticket_number,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+    requesterId: item.requester_id,
+    status: item.status,
+    priority: item.priority,
+    assigneeIds: item.assignee_id,
+    lastCommentAt: nullToUndefined(item.last_comment_at),
+    lastCommenterEmail: nullToUndefined(item.last_commenter_email),
+    trackTimeMinutes: item.track_time_minutes,
+    dueAt: item.due_at,
+    owner: item.owner,
+    assigned: item.assigned,
+    active: item.active,
+    scope: item.scope,
+    categoryId: item.category_id,
+    approvalStepId: nullToUndefined(item.approval_step_id),
+    subject: item.subject,
+    body: item.body,
+    email: item.email,
+    files: item.files,
+    images: item.images,
   }));
 };
 
-const camelSubCategoryMapper: ArrayMapper<DbCategory, Category> = (data) => {
+export const snakeTicketSummaryMapper: ArrayMapper<
+  TicketSummary,
+  DbTicketSummary
+> = (data) => {
   return data.map((item) => ({
-    id: item.category_id.toString(),
-    name: item.category_name,
-    description: nullToUndefined(item.category_description),
-    requestTemplate: nullToUndefined(item.category_request_template),
-    index: item.category_index,
-    active: item.category_active,
-    defaultPriority: nullToUndefined(item.default_priority),
-    defaultRiskLevel: nullToUndefined(item.default_risk_level),
-    defaultSlaDays: nullToUndefined(item.default_sla_days),
+    id: item.id,
+    ticket_number: item.ticketNumber,
+    created_at: item.createdAt,
+    updated_at: item.updatedAt,
+    requester_id: item.requesterId,
+    status: item.status,
+    priority: item.priority,
+    assignee_id: item.assigneeIds,
+    last_comment_at: undefinedToNull(item.lastCommentAt),
+    last_commenter_email: undefinedToNull(item.lastCommenterEmail),
+    track_time_minutes: item.trackTimeMinutes,
+    due_at: item.dueAt,
+    owner: item.owner,
+    assigned: item.assigned,
+    active: item.active,
+    scope: item.scope,
+    category_name: item.categoryName,
+    approval_step_name: undefinedToNull(item.approvalStepName),
+    subject: item.subject,
+    age: item.age,
   }));
 };
 
-export const snakeCategoryMapper: ArrayMapper<MainCategory, DbCategory> = (
-  data,
-) => {
+export const snakeTicketDetailMapper: ArrayMapper<
+  TicketDetail,
+  DbTicketDetail
+> = (data) => {
   return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: item.defaultPriority,
-    default_risk_level: item.defaultRiskLevel,
-    default_sla_days: item.defaultSlaDays,
-    sub_category: snakeSubCategoryMapper(item.subCategories),
-  }));
-};
-
-const snakeSubCategoryMapper: ArrayMapper<Category, DbCategory> = (data) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: undefinedToNull(item.defaultPriority),
-    default_risk_level: undefinedToNull(item.defaultRiskLevel),
-    default_sla_days: undefinedToNull(item.defaultSlaDays),
+    id: item.id,
+    ticket_number: item.ticketNumber,
+    created_at: item.createdAt,
+    updated_at: item.updatedAt,
+    requester_id: item.requesterId,
+    status: item.status,
+    priority: item.priority,
+    assignee_id: item.assigneeIds,
+    last_comment_at: undefinedToNull(item.lastCommentAt),
+    last_commenter_email: undefinedToNull(item.lastCommenterEmail),
+    track_time_minutes: item.trackTimeMinutes,
+    due_at: item.dueAt,
+    owner: item.owner,
+    assigned: item.assigned,
+    active: item.active,
+    scope: item.scope,
+    category_id: item.categoryId,
+    approval_step_id: undefinedToNull(item.approvalStepId),
+    subject: item.subject,
+    body: item.body,
+    email: item.email,
+    files: item.files,
+    images: item.images,
   }));
 };

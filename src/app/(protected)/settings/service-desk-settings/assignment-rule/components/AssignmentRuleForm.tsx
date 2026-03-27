@@ -17,13 +17,13 @@ import { ImageValueLabel, Locale, ValueLabel } from "@/shared/types";
 
 import { MAX_EMPLOYEE_PER_CATEGORY } from "../constants";
 import { useAssignmentRuleForm } from "../hooks/useAssignmentRuleForm";
-import { AssignmentRuleData, MainAssignmentRuleData } from "../types";
+import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 
 type Props = {
-  selectedNode: MainAssignmentRuleData | AssignmentRuleData | null;
+  selectedNode: AssignmentRuleData | SubAssignmentRuleData | null;
   language: SupportedLanguage;
   setTree: React.Dispatch<
-    React.SetStateAction<TreeNodes<MainAssignmentRuleData | AssignmentRuleData>>
+    React.SetStateAction<TreeNodes<AssignmentRuleData | SubAssignmentRuleData>>
   >;
 };
 
@@ -116,7 +116,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   value={selectedNode?.jobFieldIds || []}
                   disabled={!selectedNode}
                   placeholder={t(
-                    "serviceDeskSettings.assignmentRuleTab.selectAssigneJobField",
+                    "serviceDeskSettings.assignmentRuleTab.selectAssigneeJobField",
                   )}
                   onSelect={(selected: string) => {
                     assigneeChange("jobFieldIds")([
@@ -125,11 +125,11 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                     ]);
                   }}
                   onRemove={(selected: string) => {
-                    const newChoise = selectedNode?.jobFieldIds?.filter(
+                    const newChoice = selectedNode?.jobFieldIds?.filter(
                       (value) => value !== selected,
                     );
 
-                    assigneeChange("jobFieldIds")([...(newChoise || [])]);
+                    assigneeChange("jobFieldIds")([...(newChoice || [])]);
                   }}
                 />
               </Field>
@@ -158,10 +158,10 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   }}
                   onRemove={(selected) => {
                     const currentValue = selectedNode?.employeeIds || [];
-                    const currentValueindex = currentValue.indexOf(selected);
+                    const currentValueIndex = currentValue.indexOf(selected);
 
-                    if (currentValueindex > -1) {
-                      currentValue.splice(currentValueindex, 1);
+                    if (currentValueIndex > -1) {
+                      currentValue.splice(currentValueIndex, 1);
                       assigneeChange("employeeIds")([...currentValue]);
                     } else {
                       return;

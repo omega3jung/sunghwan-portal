@@ -1,7 +1,7 @@
 // app/api/user-profile/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { demoProfiles, tenantProfiles } from "@/app/_mocks/user";
+import { demoProfiles, tenantProfiles } from "@/app/_mocks/domain/user";
 import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_helpers";
 import { AppUser } from "@/domain/user";
 

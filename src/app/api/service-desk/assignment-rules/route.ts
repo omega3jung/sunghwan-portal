@@ -1,4 +1,4 @@
-// app/api/user-preference/route.ts
+// src/app/api/service-desk/assignment-rules/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import client from "@/api/client";
@@ -6,7 +6,7 @@ import { camelAssignmentRuleMapper } from "@/api/serviceDesk/assignmentRule/mapp
 import {
   internalAssignmentRuleSettingsMock,
   tenantAssignmentRuleSettingsMock,
-} from "@/app/_mocks/pages/service-desk/assignmentRules";
+} from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
 import { DbParams } from "@/shared/types/api";

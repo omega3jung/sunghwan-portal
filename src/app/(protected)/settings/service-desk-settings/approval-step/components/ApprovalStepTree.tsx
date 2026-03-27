@@ -124,7 +124,7 @@ export const ApprovalStepTree = ({
                                     : "default"
                               }
                             >
-                              {`${t("riskLevel.label")} ${t(`riskLevel.options.${data.defaultRiskLevel}`)}`}
+                              {`${t("enum.riskLevel.label")} ${t(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
                             </Badge>
                             <Button
                               variant="ghost"

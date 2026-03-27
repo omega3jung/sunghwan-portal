@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { createMenuMock } from "@/app/_mocks";
+import { createMenuMock } from "@/app/_mocks/ui/navigation/leftMenu";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,

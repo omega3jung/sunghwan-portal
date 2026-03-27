@@ -111,6 +111,7 @@
       "saveChanges": "Enregistrer les modifications"
     },
     "categoryTab": {
+      "scope": "Portée",
       "name": "Nom",
       "description": "Description",
       "requestTemplate": "RequestTemplate",
@@ -141,7 +142,7 @@
       "name": "Nom",
       "namePlaceholder": "Sélectionner une catégorie",
       "jobField": "Poste",
-      "selectAssigneJobField": "Sélectionner le poste de l’attributaire",
+      "selectAssigneeJobField": "Sélectionner le poste de l’attributaire",
       "employee": "Employé",
       "selectAssignee": "Sélectionner l’attributaire"
     }

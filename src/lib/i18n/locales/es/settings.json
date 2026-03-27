@@ -111,6 +111,7 @@
       "saveChanges": "Guardar cambios"
     },
     "categoryTab": {
+      "scope": "Alcance",
       "name": "Nombre",
       "description": "Descripción",
       "requestTemplate": "Plantilla de solicitud",
@@ -141,7 +142,7 @@
       "name": "Nombre",
       "namePlaceholder": "Seleccionar una categoría",
       "jobField": "Puesto",
-      "selectAssigneJobField": "Seleccionar puesto del asignado",
+      "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado"
     }

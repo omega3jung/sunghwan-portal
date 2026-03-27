@@ -1,6 +1,6 @@
 // src/server/user/getUserProfile.ts
 import client from "@/api/client";
-import { demoProfiles, tenantProfiles } from "@/app/_mocks/user";
+import { demoProfiles, tenantProfiles } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
 import { Preference } from "@/domain/config";
 import { createDefaultPreference } from "@/domain/user/preference";

@@ -62,11 +62,9 @@ export const InfoStep = () => {
   );
 
   const onChangeTemplate = (subCatId: string) => {
-    const subCategories = [] as Category[];
-
-    for (const category of categories) {
-      subCategories.concat(category.subCategories);
-    }
+    const subCategories = categories.flatMap(
+      (category) => category.subCategories as Category[],
+    );
 
     const selected = subCategories.find((subCat) => subCat.id === subCatId);
 
@@ -76,6 +74,7 @@ export const InfoStep = () => {
         : "",
     );
   };
+
   return (
     <FieldGroup>
       <Field>

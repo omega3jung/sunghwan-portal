@@ -1,6 +1,7 @@
-import { AssigneeGroup, Category } from "@/domain/serviceDesk";
+import { AssigneeGroup, Category, SubCategory } from "@/domain/serviceDesk";
 
-export type AssignmentRuleData = Category & AssigneeGroup;
-export type MainAssignmentRuleData = AssignmentRuleData & {
-  subCategories: AssignmentRuleData[];
-};
+export type SubAssignmentRuleData = SubCategory & AssigneeGroup;
+export type AssignmentRuleData = Omit<Category, "subCategories"> &
+  AssigneeGroup & {
+    subCategories: SubAssignmentRuleData[];
+  };

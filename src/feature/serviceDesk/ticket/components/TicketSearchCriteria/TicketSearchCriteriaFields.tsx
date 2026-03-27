@@ -9,7 +9,7 @@ import {
   type TreeMultiComboBoxOption,
 } from "@/components/custom/MultiComboBox";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import type { MainCategory } from "@/domain/serviceDesk";
+import type { Category } from "@/domain/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
@@ -25,15 +25,11 @@ import { appendUnique, removeValue } from "./utils";
 
 type Props = {
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
-  categories: MainCategory[];
+  categories: Category[];
   users: ImageValueLabel[];
 };
 
-export function TicketSearchCriteriaFields({
-  form,
-  categories,
-  users,
-}: Props) {
+export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(userPreference.language);

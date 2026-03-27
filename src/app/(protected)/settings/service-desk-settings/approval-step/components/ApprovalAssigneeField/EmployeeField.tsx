@@ -74,10 +74,10 @@ export function EmployeeField({
           if (current.type !== "EMPLOYEE") return;
 
           const currentValue = [...current.employeeIds];
-          const currentValueindex = currentValue.indexOf(e);
+          const currentValueIndex = currentValue.indexOf(e);
 
-          if (currentValueindex > -1) {
-            currentValue.splice(currentValueindex, 1);
+          if (currentValueIndex > -1) {
+            currentValue.splice(currentValueIndex, 1);
             onChange({
               type: "EMPLOYEE",
               employeeIds: currentValue,

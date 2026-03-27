@@ -1,7 +1,7 @@
 import { ChevronRight, Link } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { createMenuMock } from "@/app/_mocks";
+import { createMenuMock } from "@/app/_mocks/ui/navigation/leftMenu";
 import {
   Collapsible,
   CollapsibleContent,

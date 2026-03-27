@@ -44,11 +44,11 @@ export default function DateRangePickerPage() {
             );
           }}
           onRemove={(selected: string) => {
-            const newChoise = selectedRanges?.filter(
+            const newChoice = selectedRanges?.filter(
               (value) => value !== selected,
             );
 
-            setSelectedRanges(newChoise);
+            setSelectedRanges(newChoice);
           }}
         />
       </div>

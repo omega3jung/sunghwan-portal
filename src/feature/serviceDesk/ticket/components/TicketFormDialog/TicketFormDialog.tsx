@@ -24,15 +24,15 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupportedLanguage } from "@/domain/config";
-import { MainCategory } from "@/domain/serviceDesk";
+import { Category } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 import { useMutationToast } from "@/shared/utils";
 
 import { TicketFormProvider } from "../../context/TicketFormContext";
-import { TicketFormValues } from "../../forms/ticket";
-import { useTicketDraft, useTicketForm } from "../../hooks";
+import { TicketFormValues, useTicketForm } from "../../forms/ticket";
+import { useTicketDraft } from "../../hooks";
 import {
   useCreateServiceDeskTicket,
   useUpdateServiceDeskTicket,
@@ -43,7 +43,7 @@ import { ReviewStep } from "./ReviewStep";
 
 type TicketFormDialogProps = {
   mode?: "create" | "update" | "view";
-  categories: MainCategory[];
+  categories: Category[];
   users: ImageValueLabel[];
   language: SupportedLanguage;
   trigger?: React.ReactNode;
@@ -91,7 +91,7 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
     }
 
     if (currentStep === "info") {
-      setOpen(false);
+      void handleClose();
     }
   };
 
@@ -131,8 +131,13 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
     setOpen(false);
   };
 
-  const handleOpenChange = (value: boolean) => {
-    return value ? handleClose() : setOpen(true);
+  const handleOpenChange = async (value: boolean) => {
+    if (value) {
+      await onOpen();
+      return;
+    }
+
+    await handleClose();
   };
 
   const handleClose = async () => {
@@ -155,6 +160,11 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
           label: t("action.load", { ns: NS.common }),
           onClick: () => {
             if (ticketDraftState.ticketDraft) {
+              const requester = users.find(
+                (user) =>
+                  user.value === ticketDraftState.ticketDraft?.requesterId,
+              );
+
               ticketForm.setValue("id", ticketDraftState.ticketDraft.id);
               ticketForm.setValue(
                 "category",
@@ -167,29 +177,36 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
               ticketForm.setValue("body", ticketDraftState.ticketDraft.body);
               ticketForm.setValue(
                 "dueDate",
-                new Date(ticketDraftState.ticketDraft.dueDate),
+                new Date(ticketDraftState.ticketDraft.dueAt),
               );
               ticketForm.setValue(
                 "priority",
                 ticketDraftState.ticketDraft.priority,
               );
               ticketForm.setValue("email", ticketDraftState.ticketDraft.email);
-              ticketForm.setValue(
-                "requester",
-                ticketDraftState.ticketDraft.requester,
-              );
+              ticketForm.setValue("requester", {
+                id: ticketDraftState.ticketDraft.requesterId,
+                email: requester?.displayName ?? "",
+                name: requester?.label ?? "",
+              });
             }
           },
         },
       });
     }
-  }, [ticketDraftState.draftId]);
+  }, [
+    t,
+    ticketDraftState.draftId,
+    ticketDraftState.ticketDraft,
+    ticketForm,
+    users,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {props.trigger ?? (
-          <Button type="button" className="gap-2" onClick={onOpen}>
+          <Button type="button" className="gap-2">
             <Plus />
             {t("action.withItem", {
               ns: NS.common,

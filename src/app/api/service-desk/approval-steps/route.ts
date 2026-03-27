@@ -1,9 +1,9 @@
-// app/api/user-preference/route.ts
+// src/app/api/service-desk/approval-steps/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import client from "@/api/client";
 import { camelCategoryApprovalSettingMapper } from "@/api/serviceDesk/approvalStep";
-import { internalApprovalStepSettingsMock } from "@/app/_mocks/pages/service-desk/approvalSteps";
+import { internalApprovalStepSettingsMock } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
 import { Preference } from "@/domain/config";
 import { DbParams } from "@/shared/types";

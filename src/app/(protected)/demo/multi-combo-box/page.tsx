@@ -7,7 +7,7 @@ import {
   comboBoxVariantData,
   multiComboBoxMocks,
   treeMultiComboBoxMocks,
-} from "@/app/_mocks/pages/demo/multi-combo-box";
+} from "@/app/_mocks/ui/demo/multi-combo-box";
 import {
   type ButtonVariant,
   MultiComboBox,
@@ -104,11 +104,11 @@ export default function MultiComboBoxPage() {
             setSelectedRanges([...selectedRanges, selected]);
           }}
           onRemove={(selected: string) => {
-            const newChoise = selectedRanges?.filter(
+            const newChoice = selectedRanges?.filter(
               (value) => value !== selected,
             );
 
-            setSelectedRanges(newChoise);
+            setSelectedRanges(newChoice);
           }}
         />
       </div>

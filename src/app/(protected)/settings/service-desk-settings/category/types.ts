@@ -1,7 +1,10 @@
-import { Category } from "@/domain/serviceDesk";
+import { Category, SubCategory } from "@/domain/serviceDesk";
 
-export type CategoryData = Category & { isCreated: boolean };
-export type MainCategoryData = CategoryData & {
+export interface SubCategoryData extends SubCategory {
   isCreated: boolean;
-  subCategories: CategoryData[];
-};
+}
+
+export interface CategoryData extends Omit<Category, "subCategories"> {
+  isCreated: boolean;
+  subCategories: SubCategoryData[];
+}

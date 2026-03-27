@@ -9,7 +9,7 @@ import {
   stepColorData,
   stepperMock,
   stepVariantData,
-} from "@/app/_mocks/pages/demo/stepper";
+} from "@/app/_mocks/ui/demo/stepper";
 import { Stepper } from "@/components/custom/Stepper";
 import {
   LabelPosition,

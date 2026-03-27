@@ -3,7 +3,7 @@ import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
 export interface DbTicketComment {
-  ticke_id: string;
+  ticket_id: string;
   comment_no: string;
 
   body: string;
@@ -24,7 +24,7 @@ export const camelTicketCommentMapper: ArrayMapper<
   TicketComment
 > = (data) => {
   return data.map((item) => ({
-    ticketId: item.ticke_id,
+    ticketId: item.ticket_id,
     commentNo: item.comment_no,
     body: item.body,
     ownerId: item.owner_id,
@@ -42,7 +42,7 @@ export const snakeTicketCommentMapper: ArrayMapper<
   DbTicketComment
 > = (data) => {
   return data.map((item) => ({
-    ticke_id: item.ticketId,
+    ticket_id: item.ticketId,
     comment_no: item.commentNo,
     body: item.body,
     owner_id: item.ownerId,
