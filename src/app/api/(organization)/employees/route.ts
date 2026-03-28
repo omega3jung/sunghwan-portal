@@ -1,11 +1,18 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { camelEmployeeMapper } from "@/api/organization/employee/mapper";
+import {
+  camelEmployeeMapper,
+  mapEmployeeItemPayload,
+  mapEmployeeListPayload,
+} from "@/api/organization/employee/mapper";
+import {
+  CreateEmployeeInput,
+  toEmployeeMockResource,
+  toEmployeeWritePayload,
+} from "@/api/organization/employee/write";
 import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee/employees";
-import { isRemoteRequest } from "@/app/api/_helpers";
-import { Employee } from "@/domain/organization";
-import { DbParams } from "@/shared/types/api";
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -23,97 +30,29 @@ export async function GET(request: NextRequest) {
   }
 
   // real backend
-  const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
-
-  const query = new URLSearchParams(params as any).toString();
-
-  const res = await fetch(`${process.env.API_BASE_URL}/employee?${query}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer TOKEN`,
-    },
-    cache: "no-store",
+  return proxyJson(request, {
+    path: "/employee",
+    query: request.nextUrl.searchParams,
+    errorMessage: "Failed to fetch employees",
+    mapData: mapEmployeeListPayload,
   });
-
-  if (!res.ok) {
-    return NextResponse.json(
-      { message: "Failed to fetch category" },
-      { status: res.status },
-    );
-  }
-
-  const data = await res.json();
-  return NextResponse.json(data);
 }
 
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
-  const body = (await request.json()) as Employee;
+  const body = (await request.json()) as CreateEmployeeInput;
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(body, { status: 201 }); // POST is 201.
+    return NextResponse.json(toEmployeeMockResource(body), { status: 201 });
   }
 
-  const res = await fetch(`${process.env.API_BASE_URL}/employee`, {
+  return proxyJson(request, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer TOKEN`,
-    },
-    body: JSON.stringify(body),
+    path: "/employee",
+    body: toEmployeeWritePayload(body),
+    errorMessage: "Failed to create employee",
+    mapData: mapEmployeeItemPayload,
   });
-
-  const data = await res.json();
-  return NextResponse.json(data);
-}
-
-export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-
-  const body = (await request.json()) as Employee;
-
-  // demo mode
-  if (!isRemote) {
-    return NextResponse.json(body, { status: 200 }); // PUT is 200.
-  }
-
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/employee`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer TOKEN`,
-    },
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json();
-  return NextResponse.json(data);
-}
-
-export async function DELETE(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-
-  const body = (await request.json()) as Employee;
-
-  // demo mode
-
-  if (!isRemote) {
-    return NextResponse.json(null, { status: 204 }); // DELETE is 204.
-  }
-
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/employee`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (res.status !== 204) {
-    await res.json();
-  }
-
-  return NextResponse.json(null, { status: 204 });
 }

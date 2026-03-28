@@ -34,7 +34,7 @@ export const serviceDeskCategoryApi = {
   },
 
   update: async (data: Category) => {
-    const res = await client.api.post(
+    const res = await client.api.put(
       `/api/service-desk/categories/${data.id}`,
       data,
     );

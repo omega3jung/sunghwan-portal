@@ -1,3 +1,7 @@
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { Priority } from "@/domain/common";
 import {
   Attach,
@@ -198,3 +202,10 @@ export const snakeTicketDetailMapper: ArrayMapper<
     images: item.images,
   }));
 };
+
+export const mapTicketSummaryListPayload = createListPayloadMapper(
+  camelTicketSummaryMapper,
+);
+export const mapTicketDetailPayload = createItemPayloadMapper(
+  camelTicketDetailMapper,
+);

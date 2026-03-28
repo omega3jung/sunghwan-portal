@@ -1,4 +1,8 @@
 import { idToNumber, numberToId } from "@/api/utils/mapId";
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { JobField } from "@/domain/organization";
 import { ArrayMapper, LocalizedText } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
@@ -38,3 +42,10 @@ export const snakeJobFieldMapper: ArrayMapper<JobField, DbJobField> = (
     job_field_active: item.active,
   }));
 };
+
+export const mapJobFieldListPayload = createListPayloadMapper(
+  camelJobFieldMapper,
+);
+export const mapJobFieldItemPayload = createItemPayloadMapper(
+  camelJobFieldMapper,
+);

@@ -1,4 +1,8 @@
 import { idToNumber, numberToId } from "@/api/utils/mapId";
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { Employee, LocalizedName } from "@/domain/organization";
 import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
@@ -65,3 +69,10 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
     employee_hour_rate: undefinedToNull(item.hourRate),
   }));
 };
+
+export const mapEmployeeListPayload = createListPayloadMapper(
+  camelEmployeeMapper,
+);
+export const mapEmployeeItemPayload = createItemPayloadMapper(
+  camelEmployeeMapper,
+);

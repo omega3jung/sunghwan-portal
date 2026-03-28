@@ -1,21 +1,31 @@
-// app/api/service-desk/category/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  mapTicketDetailPayload,
+  mapTicketSummaryListPayload,
+} from "@/api/serviceDesk/ticket/mapper";
+import {
+  toTicketMockDetail,
+  toTicketMockSummaryResource,
+} from "@/api/serviceDesk/ticket/mock";
+import {
+  CreateTicketInput,
+  toTicketWritePayload,
+} from "@/api/serviceDesk/ticket/write";
 import {
   internalTicketsMock,
   tenantTicketsMock,
 } from "@/app/_mocks/scenarios/serviceDesk/tickets";
-import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
-import { Preference } from "@/domain/config";
-import { DbParams } from "@/shared/types/api";
+import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-
-    const items = isInternal ? internalTicketsMock : tenantTicketsMock;
+    const items = (isInternal ? internalTicketsMock : tenantTicketsMock).map(
+      toTicketMockSummaryResource,
+    );
 
     return NextResponse.json({
       items,
@@ -23,108 +33,27 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const params = Object.fromEntries(request.nextUrl.searchParams) as DbParams;
-  const query = new URLSearchParams(params as any).toString();
-
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/service-desk/tickets?${query}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer TOKEN`,
-      },
-      cache: "no-store",
-    },
-  );
-
-  if (!res.ok) {
-    return NextResponse.json(
-      { message: "Failed to fetch tickets" },
-      { status: res.status },
-    );
-  }
-
-  const data = await res.json();
-  return NextResponse.json(data);
+  return proxyJson(request, {
+    path: "/service-desk/tickets",
+    query: request.nextUrl.searchParams,
+    errorMessage: "Failed to fetch tickets",
+    mapData: mapTicketSummaryListPayload,
+  });
 }
 
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
-
-  const body = (await request.json()) as Preference;
-
-  // demo mode
-  if (!isRemote) {
-    return NextResponse.json(body, { status: 201 }); // POST is 201.
-  }
-
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/service-desk/categories`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer TOKEN`,
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  const data = await res.json();
-  return NextResponse.json(data);
-}
-
-export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-
-  const body = (await request.json()) as Preference;
-
-  // demo mode
-  if (!isRemote) {
-    return NextResponse.json(body, { status: 200 }); // PUT is 200.
-  }
-
-  // real backend
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/service-desk/categories`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer TOKEN`,
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  const data = await res.json();
-  return NextResponse.json(data);
-}
-
-export async function DELETE(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-
-  const body = (await request.json()) as Preference;
-
-  // demo mode
+  const body = (await request.json()) as CreateTicketInput;
 
   if (!isRemote) {
-    return NextResponse.json(null, { status: 204 }); // DELETE is 204.
+    return NextResponse.json(toTicketMockDetail(body), { status: 201 });
   }
 
-  // real backend
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/service-desk/categories`,
-    {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
-
-  if (res.status !== 204) {
-    await res.json();
-  }
-
-  return NextResponse.json(null, { status: 204 });
+  return proxyJson(request, {
+    method: "POST",
+    path: "/service-desk/tickets",
+    body: toTicketWritePayload(body),
+    errorMessage: "Failed to create ticket",
+    mapData: mapTicketDetailPayload,
+  });
 }

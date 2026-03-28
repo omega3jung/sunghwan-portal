@@ -1,17 +1,22 @@
 // app/api/job-fields/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { camelJobFieldMapper } from "@/api/organization/jobField/mapper";
+import {
+  camelJobFieldMapper,
+  mapJobFieldItemPayload,
+} from "@/api/organization/jobField/mapper";
+import {
+  toJobFieldMockResource,
+  toJobFieldWritePayload,
+  UpdateJobFieldInput,
+} from "@/api/organization/jobField/write";
 import { jobFieldsMock } from "@/app/_mocks/domain/organization/jobFields";
-import { isRemoteRequest } from "@/app/api/_helpers";
-import { JobField } from "@/domain/organization";
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { IdRouteContext } from "@/app/api/_helpers/types";
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } },
-) {
+export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
-  const isRemote = await isRemoteRequest(req);
+  const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
@@ -29,101 +34,45 @@ export async function GET(
     return NextResponse.json(targetDepartment);
   }
 
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/job-field/${id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer TOKEN`,
-    },
-    cache: "no-store",
-    body: JSON.stringify(id),
+  return proxyJson(request, {
+    path: `/job-field/${id}`,
+    errorMessage: "Failed to fetch job field",
+    mapData: mapJobFieldItemPayload,
   });
-
-  if (!res.ok) {
-    return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 },
-    );
-  }
-
-  const data = await res.json();
-  return NextResponse.json(data);
 }
 
-export async function POST(
-  req: NextRequest,
-  context: { params: { id: string } },
-) {
+export async function PUT(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
-  const isRemote = await isRemoteRequest(req);
+  const isRemote = await isRemoteRequest(request);
 
-  const body = (await req.json()) as JobField;
+  const body = (await request.json()) as UpdateJobFieldInput;
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(body, { status: 201 }); // POST is 201.
+    return NextResponse.json(toJobFieldMockResource(body, id), { status: 200 });
   }
 
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/job-field/${id}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json();
-  return NextResponse.json(data);
-}
-
-export async function PUT(
-  req: NextRequest,
-  context: { params: { id: string } },
-) {
-  const { id } = context.params;
-  const isRemote = await isRemoteRequest(req);
-
-  const body = (await req.json()) as JobField;
-
-  // demo mode
-  if (!isRemote) {
-    return NextResponse.json(body, { status: 200 }); // PUT is 200.
-  }
-
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/job-field/${id}`, {
+  return proxyJson(request, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    path: `/job-field/${id}`,
+    body: toJobFieldWritePayload({ ...body, id }),
+    errorMessage: "Failed to update job field",
+    mapData: mapJobFieldItemPayload,
   });
-
-  const data = await res.json();
-  return NextResponse.json(data);
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } },
-) {
+export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
-  const isRemote = await isRemoteRequest(req);
-
-  const body = (await req.json()) as JobField;
+  const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(null, { status: 204 }); // DELETE is 204.
+    return new NextResponse(null, { status: 204 }); // DELETE is 204.
   }
 
-  // real backend
-  const res = await fetch(`${process.env.API_BASE_URL}/job-field/${id}`, {
+  return proxyJson(request, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    path: `/job-field/${id}`,
+    errorMessage: "Failed to delete job field",
   });
-
-  if (res.status !== 204) {
-    await res.json();
-  }
-
-  return NextResponse.json(null, { status: 204 });
 }

@@ -3,37 +3,46 @@ import { getToken, JWT } from "next-auth/jwt";
 
 import { ACCESS_LEVEL, AuthUser, UserScope } from "@/domain/auth";
 
+export async function getAuthToken(req: NextRequest) {
+  return getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+}
+
+export async function getAccessToken(req: NextRequest) {
+  const token = await getAuthToken(req);
+  return token?.accessToken ?? null;
+}
+
 export async function isRemoteRequest(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
 
   return token?.dataScope === "REMOTE";
 }
 
 export async function isInternalUser(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
 
   return token?.userScope === "INTERNAL";
 }
 
 export async function getTenantId(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
 
   return token?.tenantId;
 }
 
 export async function getEffectiveUserId(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
   return token?.id;
 }
 
 export async function getActorUserId(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
 
   return token?.impersonation?.actorId;
 }
 
 export async function getSubjectUserId(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getAuthToken(req);
   return token?.impersonation?.subjectId;
 }
 
@@ -49,10 +58,7 @@ export async function checkAdminOrSelf(
   req: NextRequest,
   targetUserId: string,
 ): Promise<AuthResult> {
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  const token = await getAuthToken(req);
 
   if (!token) return { ok: false, status: 401 };
 

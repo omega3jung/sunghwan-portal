@@ -27,7 +27,7 @@ export const departmentApi = {
   },
 
   update: async (data: Department) => {
-    const res = await client.api.put(`/api/departments`, data);
+    const res = await client.api.put(`/api/departments/${data.id}`, data);
     return res.data;
   },
 

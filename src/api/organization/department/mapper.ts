@@ -1,4 +1,8 @@
 import { idToNumber, numberToId } from "@/api/utils/mapId";
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { Department } from "@/domain/organization";
 import { ArrayMapper, LocalizedText } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
@@ -38,3 +42,10 @@ export const snakeDepartmentMapper: ArrayMapper<Department, DbDepartment> = (
     department_active: item.active,
   }));
 };
+
+export const mapDepartmentListPayload = createListPayloadMapper(
+  camelDepartmentMapper,
+);
+export const mapDepartmentItemPayload = createItemPayloadMapper(
+  camelDepartmentMapper,
+);

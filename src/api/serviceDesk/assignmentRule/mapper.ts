@@ -1,3 +1,7 @@
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { AssignmentRule } from "@/domain/serviceDesk";
 import { ArrayMapper } from "@/shared/types";
 
@@ -37,3 +41,10 @@ export const snakeAssignmentRuleMapper: ArrayMapper<
     },
   }));
 };
+
+export const mapAssignmentRuleListPayload = createListPayloadMapper(
+  camelAssignmentRuleMapper,
+);
+export const mapAssignmentRuleItemPayload = createItemPayloadMapper(
+  camelAssignmentRuleMapper,
+);

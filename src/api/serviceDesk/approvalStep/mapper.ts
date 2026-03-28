@@ -1,3 +1,7 @@
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { AccessLevel } from "@/domain/auth";
 import {
   ApprovalAssigneeType,
@@ -133,3 +137,10 @@ const snakeAssigneeTypeMapper: Mapper<
       };
   }
 };
+
+export const mapApprovalSettingsListPayload = createListPayloadMapper(
+  camelCategoryApprovalSettingMapper,
+);
+export const mapApprovalStepItemPayload = createItemPayloadMapper(
+  camelApprovalStepMapper,
+);

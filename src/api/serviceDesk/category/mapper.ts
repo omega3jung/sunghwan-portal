@@ -1,3 +1,7 @@
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { Priority, RiskLevel } from "@/domain/common";
 import {
   Category,
@@ -121,3 +125,9 @@ const snakeSubCategoryMapper: ArrayMapper<SubCategory, DbSubCategory> = (
     default_sla_days: undefinedToNull(item.defaultSlaDays),
   }));
 };
+
+export const mapCategoryListPayload = createListPayloadMapper(
+  camelClientCategoryTreeMapper,
+);
+export const mapCategoryItemPayload =
+  createItemPayloadMapper(camelCategoryMapper);

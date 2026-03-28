@@ -44,9 +44,7 @@ export const serviceDeskTicketApi = {
 
   // soft delete. set disabled in db.
   remove: async (id: string): Promise<null> => {
-    await client.api.put(`/api/service-desk/tickets/${id}`, {
-      active: false,
-    });
+    await client.api.delete(`/api/service-desk/tickets/${id}`);
     return null;
   },
 
