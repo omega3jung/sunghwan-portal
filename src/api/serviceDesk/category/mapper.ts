@@ -4,9 +4,9 @@ import {
 } from "@/api/utils/payload";
 import { Priority, RiskLevel } from "@/domain/common";
 import {
-  Category,
   CategoryScope,
   ClientCategoryTree,
+  MainCategory,
   SubCategory,
 } from "@/domain/serviceDesk";
 import { ArrayMapper, LocalizedText } from "@/shared/types";
@@ -50,49 +50,73 @@ export const camelClientCategoryTreeMapper: ArrayMapper<
   DbClientCategoryTree,
   ClientCategoryTree
 > = (data) => {
-  return data.map((item) => ({
-    id: item.client_id.toString(),
-    name: item.client_name,
-    color: item.client_color,
-    categories: camelCategoryMapper(item.category),
-  }));
+  return data.flatMap((item) => {
+    if (!item) {
+      return [];
+    }
+
+    return [
+      {
+        id: item.client_id.toString(),
+        name: item.client_name,
+        color: item.client_color,
+        categories: camelCategoryMapper(item.category ?? []),
+      },
+    ];
+  });
 };
 
-export const camelCategoryMapper: ArrayMapper<DbCategory, Category> = (
+export const camelCategoryMapper: ArrayMapper<DbCategory, MainCategory> = (
   data,
 ) => {
-  return data.map((item) => ({
-    id: item.category_id.toString(),
-    name: item.category_name,
-    description: nullToUndefined(item.category_description),
-    requestTemplate: nullToUndefined(item.category_request_template),
-    scope: item.category_scope,
-    index: item.category_index,
-    active: item.category_active,
-    defaultPriority: item.default_priority,
-    defaultSlaDays: item.default_sla_days,
-    defaultRiskLevel: item.default_risk_level,
-    subCategories: camelSubCategoryMapper(item.sub_category),
-  }));
+  return data.flatMap((item) => {
+    if (!item) {
+      return [];
+    }
+
+    return [
+      {
+        id: item.category_id.toString(),
+        name: item.category_name,
+        description: nullToUndefined(item.category_description),
+        requestTemplate: nullToUndefined(item.category_request_template),
+        scope: item.category_scope,
+        index: item.category_index,
+        active: item.category_active,
+        defaultPriority: item.default_priority,
+        defaultSlaDays: item.default_sla_days,
+        defaultRiskLevel: item.default_risk_level,
+        subCategories: camelSubCategoryMapper(item.sub_category ?? []),
+      },
+    ];
+  });
 };
 
 const camelSubCategoryMapper: ArrayMapper<DbSubCategory, SubCategory> = (
   data,
 ) => {
-  return data.map((item) => ({
-    id: item.category_id.toString(),
-    name: item.category_name,
-    description: nullToUndefined(item.category_description),
-    requestTemplate: nullToUndefined(item.category_request_template),
-    index: item.category_index,
-    active: item.category_active,
-    defaultPriority: nullToUndefined(item.default_priority),
-    defaultRiskLevel: nullToUndefined(item.default_risk_level),
-    defaultSlaDays: nullToUndefined(item.default_sla_days),
-  }));
+  return data.flatMap((item) => {
+    if (!item) {
+      return [];
+    }
+
+    return [
+      {
+        id: item.category_id.toString(),
+        name: item.category_name,
+        description: nullToUndefined(item.category_description),
+        requestTemplate: nullToUndefined(item.category_request_template),
+        index: item.category_index,
+        active: item.category_active,
+        defaultPriority: nullToUndefined(item.default_priority),
+        defaultRiskLevel: nullToUndefined(item.default_risk_level),
+        defaultSlaDays: nullToUndefined(item.default_sla_days),
+      },
+    ];
+  });
 };
 
-export const snakeCategoryMapper: ArrayMapper<Category, DbCategory> = (
+export const snakeCategoryMapper: ArrayMapper<MainCategory, DbCategory> = (
   data,
 ) => {
   return data.map((item) => ({

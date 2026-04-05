@@ -62,8 +62,8 @@ type AuthUser = {
   accessToken: string;
 
   dataScope: "LOCAL" | "REMOTE";
-  userScope: "INTERNAL" | "TENANT";
-  tenantId: string | null;
+  userScope: "INTERNAL" | "CLIENT";
+  clientId: string | null;
   permission: AccessLevel;
   role: Role;
 };
@@ -109,7 +109,7 @@ type AppUser = {
   image?: string;
 
   userScope: UserScope;
-  tenantId: string | null;
+  clientId: string | null;
 
   permission: AccessLevel;
   role: Role | null;
@@ -131,11 +131,11 @@ Compared to `AuthUser`, `AppUser` is:
 
 There are two different responsibilities:
 
-| Model | Responsibility |
-| ----- | -------------- |
-| `AuthUser` | Authentication and trusted identity |
-| `SessionUser` | Session-safe identity projection |
-| `AppUser` | UI and application behavior |
+| Model         | Responsibility                      |
+| ------------- | ----------------------------------- |
+| `AuthUser`    | Authentication and trusted identity |
+| `SessionUser` | Session-safe identity projection    |
+| `AppUser`     | UI and application behavior         |
 
 This separation avoids a common problem:
 
@@ -153,7 +153,7 @@ The project uses `CredentialsProvider`.
 
 `authorize()` resolves an `AuthUser` through:
 
-- LOCAL demo resolvers (`resolveDemoAuth`, `resolveTenantAuth`)
+- LOCAL demo resolvers (`resolveDemoAuth`, `resolveClientAuth`)
 - or REMOTE API login (`/auth/login`)
 
 ---
@@ -169,7 +169,7 @@ On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 - `accessToken`
 - `dataScope`
 - `userScope`
-- `tenantId`
+- `clientId`
 - `permission`
 - `role`
 
@@ -189,7 +189,7 @@ session.user = {
   email,
   dataScope,
   userScope,
-  tenantId,
+  clientId,
   permission,
   role,
 };
@@ -422,7 +422,7 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 Based on the current implementation:
 
 - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `TENANT` user
+- the impersonation target must be a `CLIENT` user
 
 This rule lives in the auth layer, not in the UI.
 
@@ -486,7 +486,7 @@ Belongs here:
 
 - identity
 - access context
-- tenant scope
+- client scope
 - impersonation metadata
 
 Does not belong here:

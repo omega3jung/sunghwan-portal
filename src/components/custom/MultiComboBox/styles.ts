@@ -9,16 +9,29 @@ import type {
 } from "./types";
 
 export const multiComboBoxPalette: Record<PaletteIndex, string> = {
-  1: "border-transparent bg-[#CDFFDA] text-[#377D22] hover:bg-[#CDFFDA]",
-  2: "border-transparent bg-[#F0F6FF] text-[#36A2EB] hover:bg-[#F0F6FF]",
-  3: "border-transparent bg-[#FFDBE2] text-[#FF6384] hover:bg-[#FFDBE2]",
-  4: "border-transparent bg-[#FFFAC5] text-[#FF9F40] hover:bg-[#FFFAC5]",
-  5: "border-transparent bg-[#DCF2F0] text-[#29B2B2] hover:bg-[#DCF2F0]",
-  6: "border-transparent bg-[#FAF1FF] text-[#9966FF] hover:bg-[#FAF1FF]",
-  7: "border-transparent bg-[#FFEADB] text-[#784315] hover:bg-[#FFEADB]",
-  8: "border-transparent bg-[#FFD9ED] text-[#EF88BE] hover:bg-[#FFD9ED]",
-  9: "border-transparent bg-[#DAE8FF] text-[#00129A] hover:bg-[#DAE8FF]",
-  10: "border-transparent bg-[#EDEDED] text-[#212121] hover:bg-[#EDEDED]",
+  1: "border-transparent bg-[#E6F6EC] text-[#2E7D4F] hover:bg-[#E6F6EC]", // green
+  2: "border-transparent bg-[#EAF2FF] text-[#2F6FD6] hover:bg-[#EAF2FF]", // blue
+  3: "border-transparent bg-[#FCEDEE] text-[#C94A5A] hover:bg-[#FCEDEE]", // muted red
+  4: "border-transparent bg-[#FFF4E5] text-[#C7771A] hover:bg-[#FFF4E5]", // muted orange
+  5: "border-transparent bg-[#E8F7F6] text-[#2C9C9C] hover:bg-[#E8F7F6]", // teal
+  6: "border-transparent bg-[#F2ECFF] text-[#7A5AE0] hover:bg-[#F2ECFF]", // purple
+  7: "border-transparent bg-[#F5EFEA] text-[#7A5230] hover:bg-[#F5EFEA]", // brown
+  8: "border-transparent bg-[#F9EDF5] text-[#C05A9B] hover:bg-[#F9EDF5]", // muted pink
+  9: "border-transparent bg-[#E9F0FF] text-[#2B4EA2] hover:bg-[#E9F0FF]", // deep blue
+  10: "border-transparent bg-[#F3F3F3] text-[#424242] hover:bg-[#F3F3F3]", // gray
+};
+
+export const multiComboBoxPaletteAccent: Record<PaletteIndex, string> = {
+  1: "bg-[#7ED9A3]", // green accent
+  2: "bg-[#8BB8FF]", // blue accent
+  3: "bg-[#F28A9A]", // muted red accent
+  4: "bg-[#F5B66A]", // orange accent
+  5: "bg-[#6ECFCF]", // teal accent
+  6: "bg-[#B39DFF]", // purple accent
+  7: "bg-[#C89A6B]", // brown accent
+  8: "bg-[#E79AC6]", // muted pink accent
+  9: "bg-[#6F8FEF]", // deep blue accent
+  10: "bg-[#BDBDBD]", // gray accent
 };
 
 const customBadgeVariantClasses: Record<
@@ -41,7 +54,8 @@ export const isPaletteBadgeVariant = (variant?: BadgeVariant): boolean => {
 
 export const normalizePaletteIndex = (value: number): PaletteIndex => {
   const paletteSize = Object.keys(multiComboBoxPalette).length;
-  const normalizedValue = ((value - 1) % paletteSize + paletteSize) % paletteSize;
+  const normalizedValue =
+    (((value - 1) % paletteSize) + paletteSize) % paletteSize;
 
   return (normalizedValue + 1) as PaletteIndex;
 };
@@ -75,16 +89,41 @@ export const resolveBadgeClassName = (
   palettePick?: PaletteIndex,
 ): string | undefined => {
   if (isPaletteBadgeVariant(variant)) {
-    const paletteIndex = resolvePaletteIndex(itemIndex, paletteStart, palettePick);
+    const paletteIndex = resolvePaletteIndex(
+      itemIndex,
+      paletteStart,
+      palettePick,
+    );
 
     return multiComboBoxPalette[paletteIndex];
   }
 
   if (variant && variant in customBadgeVariantClasses) {
-    return customBadgeVariantClasses[variant as keyof typeof customBadgeVariantClasses];
+    return customBadgeVariantClasses[
+      variant as keyof typeof customBadgeVariantClasses
+    ];
   }
 
   return undefined;
+};
+
+export const resolveBadgeAccentClassName = (
+  variant: BadgeVariant | undefined,
+  itemIndex: number,
+  paletteStart: PaletteIndex,
+  palettePick?: PaletteIndex,
+): string | undefined => {
+  if (!isPaletteBadgeVariant(variant)) {
+    return undefined;
+  }
+
+  const paletteIndex = resolvePaletteIndex(
+    itemIndex,
+    paletteStart,
+    palettePick,
+  );
+
+  return multiComboBoxPaletteAccent[paletteIndex];
 };
 
 export const getBadgeClassName = (
@@ -95,7 +134,7 @@ export const getBadgeClassName = (
   className?: string,
 ) => {
   return cn(
-    "flex h-6 gap-2 rounded-lg pr-1 text-nowrap",
+    "flex h-6 items-center gap-1.5 rounded-md border border-black/[0.04] pr-1 text-nowrap shadow-none",
     resolveBadgeClassName(variant, itemIndex, paletteStart, palettePick),
     className,
   );

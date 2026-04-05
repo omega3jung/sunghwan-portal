@@ -1,10 +1,10 @@
 import { AccessLevel } from "@/domain/auth";
 import { LocalizedText } from "@/shared/types";
 
-import { Category } from "../category/model";
+import { MainCategory } from "../category/model";
 
 // category data structure.
-export type CategoryApprovalSettings = Omit<Category, "subCategories"> & {
+export type CategoryApprovalSettings = Omit<MainCategory, "subCategories"> & {
   approvalSteps: ApprovalStep[];
 };
 

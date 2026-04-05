@@ -1,3 +1,3 @@
 import { TicketDetail } from "@/domain/serviceDesk";
 
-export const tenantTicketsMock: TicketDetail[] = [];
+export const clientTicketsMock: TicketDetail[] = [];

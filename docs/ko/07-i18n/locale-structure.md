@@ -122,7 +122,7 @@ locales/
 ### 예시
 
 ```ts id="default-ns"
-const { t } = useTranslation("serviceDesk");
+const { t } = useTranslation(NS.serviceDesk);
 ```
 
 ---

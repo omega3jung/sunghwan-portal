@@ -122,7 +122,7 @@ Each feature defines a **default namespace**.
 ### Example
 
 ```ts id="default-ns"
-const { t } = useTranslation("serviceDesk");
+const { t } = useTranslation(NS.serviceDesk);
 ```
 
 ---

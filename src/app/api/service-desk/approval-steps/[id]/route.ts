@@ -11,7 +11,7 @@ import {
 } from "@/api/serviceDesk/approvalStep/write";
 import {
   internalApprovalStepSettingsMock,
-  tenantApprovalStepSettingsMock,
+  clientApprovalStepSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     const approvalStep = camelCategoryApprovalSettingMapper(
       isInternal
         ? internalApprovalStepSettingsMock
-        : tenantApprovalStepSettingsMock,
+        : clientApprovalStepSettingsMock,
     )
       .flatMap((category) => category.approvalSteps)
       .find((item) => item.id === id);

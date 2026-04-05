@@ -29,128 +29,43 @@
   "empty": {
     "noResults": "Aucun résultat"
   },
+  "placeholder": {
+    "enter": "Saisir {{target}}",
+    "search": "Rechercher {{target}}",
+    "select": "Sélectionner {{target}}"
+  },
   "field": {
-    "age": {
-      "label": "Âge",
-      "placeholder": "Saisir l'âge"
-    },
-    "agent": {
-      "label": "Agent",
-      "placeholder": "Sélectionner un agent"
-    },
-    "assignee": {
-      "label": "Assigné à",
-      "placeholder": "Sélectionner un responsable"
-    },
-    "category": {
-      "label": "Catégorie",
-      "placeholder": "Sélectionner une catégorie"
-    },
-    "comment": {
-      "label": "Commentaire",
-      "placeholder": "Saisir un commentaire"
-    },
-    "contact": {
-      "label": "Contact",
-      "placeholder": "Saisir un contact"
-    },
-    "createdAt": {
-      "label": "Créé le"
-    },
-    "date": {
-      "label": "Date",
-      "placeholder": "Sélectionner une date"
-    },
-    "department": {
-      "label": "Département",
-      "placeholder": "Sélectionner un département"
-    },
-    "description": {
-      "label": "Description",
-      "placeholder": "Saisir une description"
-    },
-    "details": {
-      "label": "Détails",
-      "placeholder": "Saisir les détails"
-    },
-    "dueDate": {
-      "label": "Date d'échéance",
-      "placeholder": "Sélectionner une date d'échéance"
-    },
-    "email": {
-      "label": "E-mail",
-      "placeholder": "Saisir l'adresse e-mail",
-      "to": {
-        "label": "À",
-        "placeholder": "Saisir le destinataire"
-      },
-      "cc": {
-        "label": "CC",
-        "placeholder": "Saisir les destinataires en copie"
-      },
-      "bcc": {
-        "label": "BCC",
-        "placeholder": "Saisir les destinataires en copie cachée"
-      }
-    },
-    "endDate": {
-      "label": "Date de fin",
-      "placeholder": "Sélectionner une date de fin"
-    },
-    "history": {
-      "label": "Historique"
-    },
-    "location": {
-      "label": "Emplacement",
-      "placeholder": "Saisir l'emplacement"
-    },
-    "name": {
-      "label": "Nom",
-      "placeholder": "Saisir le nom"
-    },
-    "owner": {
-      "label": "Propriétaire",
-      "placeholder": "Sélectionner un propriétaire"
-    },
-    "period": {
-      "label": "Période",
-      "placeholder": "Sélectionner une période"
-    },
-    "phone": {
-      "label": "Téléphone",
-      "placeholder": "Saisir le numéro de téléphone"
-    },
-    "priority": {
-      "label": "Priorité",
-      "placeholder": "Sélectionner une priorité"
-    },
-    "requester": {
-      "label": "Demandeur",
-      "placeholder": "Sélectionner un demandeur"
-    },
-    "startDate": {
-      "label": "Date de début",
-      "placeholder": "Sélectionner une date de début"
-    },
-    "status": {
-      "label": "Statut",
-      "placeholder": "Sélectionner un statut"
-    },
-    "step": {
-      "label": "Étape",
-      "placeholder": "Sélectionner une étape"
-    },
-    "subject": {
-      "label": "Sujet",
-      "placeholder": "Saisir le sujet"
-    },
-    "type": {
-      "label": "Type",
-      "placeholder": "Sélectionner un type"
-    },
-    "updatedAt": {
-      "label": "Mis à jour le"
-    }
+    "age": "Âge",
+    "agent": "Agent",
+    "assignee": "Assigné à",
+    "category": "Catégorie",
+    "comment": "Commentaire",
+    "contact": "Contact",
+    "createdAt": "Créé le",
+    "date": "Date",
+    "department": "Département",
+    "description": "Description",
+    "details": "Détails",
+    "dueDate": "Date d'échéance",
+    "email": "E-mail",
+    "emailTo": "À",
+    "emailCc": "CC",
+    "emailBcc": "BCC",
+    "endDate": "Date de fin",
+    "history": "Historique",
+    "location": "Emplacement",
+    "name": "Nom",
+    "owner": "Propriétaire",
+    "period": "Période",
+    "phone": "Téléphone",
+    "priority": "Priorité",
+    "requester": "Demandeur",
+    "startDate": "Date de début",
+    "status": "Statut",
+    "step": "Étape",
+    "subject": "Sujet",
+    "type": "Type",
+    "updatedAt": "Mis à jour le"
   },
   "pagination": {
     "first": "Premier",

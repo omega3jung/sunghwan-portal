@@ -24,10 +24,10 @@ export async function isInternalUser(req: NextRequest) {
   return token?.userScope === "INTERNAL";
 }
 
-export async function getTenantId(req: NextRequest) {
+export async function getCompanyId(req: NextRequest) {
   const token = await getAuthToken(req);
 
-  return token?.tenantId;
+  return token ? resolveCompanyId(token) : null;
 }
 
 export async function getEffectiveUserId(req: NextRequest) {
@@ -51,7 +51,11 @@ export type AuthResult =
   | { ok: false; status: 401 | 403 };
 
 export function tokenToAuthUser(token: JWT): AuthUser {
-  return { ...token, email: token.email ?? "" };
+  return {
+    ...token,
+    email: token.email ?? "",
+    companyId: resolveCompanyId(token),
+  };
 }
 
 export async function checkAdminOrSelf(
@@ -72,10 +76,17 @@ export async function checkAdminOrSelf(
 type ImpersonationPolicy = Record<UserScope, readonly UserScope[]>;
 
 const IMPERSONATION_POLICY: ImpersonationPolicy = {
-  INTERNAL: ["TENANT"], // from INTERNAL to [].
-  TENANT: [], // from TENANT to [].
+  INTERNAL: ["CLIENT"], // from INTERNAL to [].
+  CLIENT: [], // from CLIENT to [].
 } as const;
 
 export function canImpersonate(actorScope: UserScope, subjectScope: UserScope) {
   return IMPERSONATION_POLICY[actorScope]?.includes(subjectScope);
+}
+
+function resolveCompanyId(token: {
+  companyId?: string;
+  clientId?: string | null;
+}) {
+  return token.companyId ?? token.clientId ?? "";
 }

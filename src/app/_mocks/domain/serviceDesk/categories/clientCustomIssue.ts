@@ -1,18 +1,18 @@
 import { DbSubCategory } from "@/api/serviceDesk/category";
 
-const tenantCustomIssueCategoryMock = [
+const clientCustomIssueCategoryMock = [
   {
     category_id: 112,
     category_name: {
-      en: "Tenant-Specific Issue 1",
-      es: "Problema específico del tenant 1",
-      fr: "Problème spécifique au tenant 1",
+      en: "Client-Specific Issue 1",
+      es: "Problema específico del cliente 1",
+      fr: "Problème spécifique au client 1",
       ko: "고객사 특화 문제 1",
     },
     category_description: {
-      en: "Request support for tenant-specific issues that are unique to your organization.",
-      es: "Solicite asistencia para problemas específicos del tenant que sean propios de su organización.",
-      fr: "Demandez une assistance pour les problèmes spécifiques au tenant propres à votre organisation.",
+      en: "Request support for client-specific issues that are unique to your organization.",
+      es: "Solicite asistencia para problemas específicos del cliente que sean propios de su organización.",
+      fr: "Demandez une assistance pour les problèmes spécifiques au client propres à votre organisation.",
       ko: "고객사 특화 문제 1에 대해 해결을 요청합니다.",
     },
     category_request_template: {
@@ -30,15 +30,15 @@ const tenantCustomIssueCategoryMock = [
   {
     category_id: 113,
     category_name: {
-      en: "Tenant-Specific Issue 2",
-      es: "Problema específico del tenant 2",
-      fr: "Problème spécifique au tenant 2",
+      en: "Client-Specific Issue 2",
+      es: "Problema específico del cliente 2",
+      fr: "Problème spécifique au client 2",
       ko: "고객사 특화 문제 2",
     },
     category_description: {
-      en: "Request support for custom operational or system-related issues defined by your tenant.",
-      es: "Solicite asistencia para problemas operativos o del sistema personalizados definidos por su tenant.",
-      fr: "Demandez une assistance pour des problèmes opérationnels ou système personnalisés définis par votre tenant.",
+      en: "Request support for custom operational or system-related issues defined by your client.",
+      es: "Solicite asistencia para problemas operativos o del sistema personalizados definidos por su cliente.",
+      fr: "Demandez une assistance pour des problèmes opérationnels ou système personnalisés définis par votre client.",
       ko: "고객사 특화 문제 2에 대해 해결을 요청합니다.",
     },
     category_request_template: {
@@ -56,15 +56,15 @@ const tenantCustomIssueCategoryMock = [
   {
     category_id: 114,
     category_name: {
-      en: "Tenant-Specific Issue 3",
-      es: "Problema específico del tenant 3",
-      fr: "Problème spécifique au tenant 3",
+      en: "Client-Specific Issue 3",
+      es: "Problema específico del cliente 3",
+      fr: "Problème spécifique au client 3",
       ko: "고객사 특화 문제 3",
     },
     category_description: {
-      en: "Request support for additional tenant-defined issues not covered by standard categories.",
-      es: "Solicite asistencia para problemas adicionales definidos por el tenant que no estén cubiertos por las categorías estándar.",
-      fr: "Demandez une assistance pour des problèmes supplémentaires définis par le tenant et non couverts par les catégories standard.",
+      en: "Request support for additional client-defined issues not covered by standard categories.",
+      es: "Solicite asistencia para problemas adicionales definidos por el cliente que no estén cubiertos por las categorías estándar.",
+      fr: "Demandez une assistance pour des problèmes supplémentaires définis par le client et non couverts par les catégories standard.",
       ko: "고객사 특화 문제 3에 대해 해결을 요청합니다.",
     },
     category_request_template: {
@@ -81,4 +81,4 @@ const tenantCustomIssueCategoryMock = [
   },
 ] satisfies DbSubCategory[];
 
-export default tenantCustomIssueCategoryMock;
+export default clientCustomIssueCategoryMock;

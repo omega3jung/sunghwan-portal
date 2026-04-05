@@ -9,7 +9,7 @@ export function mapAuthUserToAppUser(auth: AuthUser): AppUser {
     email: auth.email ?? null,
 
     userScope: auth.userScope,
-    tenantId: auth.tenantId,
+    companyId: auth.companyId,
 
     permission: auth.permission,
     role: auth.role,

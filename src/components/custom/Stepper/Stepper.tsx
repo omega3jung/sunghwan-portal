@@ -11,22 +11,36 @@ import { stepperContainer } from "./variants";
 const Root = ({
   currentStep,
   onStepChange,
+  defaultStep,
   orientation = "horizontal",
   stepVariant = "square",
   labelPosition = "left",
   color = "primary",
+  connectorStyle = "solid",
+  leadingConnector = false,
+  disabled = false,
   className,
   children,
 }: StepperProps) => {
+  const [uncontrolledStep, setUncontrolledStep] = React.useState(
+    defaultStep ?? 0,
+  );
+
+  const resolvedCurrentStep = currentStep ?? uncontrolledStep;
+  const resolvedOnStepChange = onStepChange ?? setUncontrolledStep;
+
   return (
     <StepperContext.Provider
       value={{
-        currentStep,
-        onStepChange,
+        currentStep: resolvedCurrentStep,
+        onStepChange: resolvedOnStepChange,
         orientation,
         stepVariant,
         labelPosition,
         color,
+        connectorStyle,
+        leadingConnector,
+        disabled,
       }}
     >
       <div

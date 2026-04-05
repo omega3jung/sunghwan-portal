@@ -11,7 +11,7 @@ import {
 } from "@/api/serviceDesk/assignmentRule/write";
 import {
   internalAssignmentRuleSettingsMock,
-  tenantAssignmentRuleSettingsMock,
+  clientAssignmentRuleSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     const assignmentRule = camelAssignmentRuleMapper(
       isInternal
         ? internalAssignmentRuleSettingsMock
-        : tenantAssignmentRuleSettingsMock,
+        : clientAssignmentRuleSettingsMock,
     ).find((item) => item.categoryId === id);
 
     if (!assignmentRule) {

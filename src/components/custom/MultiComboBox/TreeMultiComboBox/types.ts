@@ -51,9 +51,14 @@ export type TreeMultiComboBoxValue = string[];
  * A normalized item used for badge and summary rendering.
  * Helps the trigger area render parent and child selections differently.
  */
-export type TreeMultiComboBoxSelectedItem = MultiComboBoxItem & {
-  kind: "parent" | "child";
-};
+export type TreeMultiComboBoxSelectedItem =
+  | (MultiComboBoxItem & {
+      kind: "parent";
+    })
+  | (MultiComboBoxItem & {
+      kind: "child";
+      parentValue: string;
+    });
 
 /**
  * An index structure for fast lookup.

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
+  connectorStyleData,
   labelPositionData,
   orientationData,
   stepColorData,
@@ -12,20 +13,23 @@ import {
 } from "@/app/_mocks/ui/demo/stepper";
 import { Stepper } from "@/components/custom/Stepper";
 import {
+  ConnectorStyle,
   LabelPosition,
   Orientation,
   StepColor,
   StepVariant,
 } from "@/components/custom/Stepper/StepperContext";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useLanguageState } from "@/hooks/useLanguage";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 export default function AvatarMultiComboBoxPage() {
-  const { t } = useTranslation("demo");
+  const { t } = useTranslation(NS.demo);
   const { language } = useLanguageState();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -33,8 +37,11 @@ export default function AvatarMultiComboBoxPage() {
   const [stepVariant, setStepVariant] = useState<StepVariant>("square");
   const [labelPosition, setLabelPosition] = useState<LabelPosition>("left");
   const [stepColor, setStepColor] = useState<StepColor>("primary");
+  const [connectorStyle, setConnectorStyle] = useState<ConnectorStyle>("solid");
 
   const [showStepOrderLabel, setShowStepOrderLabel] = useState<boolean>(true);
+  const [disableSteps, setDisableSteps] = useState<boolean>(false);
+  const [leadingConnector, setLeadingConnector] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState<number>(1);
 
   const demoSteps = useMemo<{ label: string }[]>(() => {
@@ -58,7 +65,7 @@ export default function AvatarMultiComboBoxPage() {
       <h4 className="p-2">{t("stepper.variants")}</h4>
       <FieldGroup className="mt-4 p-2">
         <FieldSet>
-          <FieldGroup className="flex flex-row">
+          <FieldGroup className="grid grid-cols-4">
             <Field>
               <FieldLabel htmlFor="orientation-radio">
                 {t("stepper.orientation")}
@@ -96,6 +103,24 @@ export default function AvatarMultiComboBoxPage() {
               </RadioGroup>
             </Field>
             <Field>
+              <FieldLabel htmlFor="step-color-radio">
+                {t("stepper.stepColor")}
+              </FieldLabel>
+              <RadioGroup
+                id="step-color-radio"
+                className="flex px-2"
+                value={stepColor as string}
+                onValueChange={(value) => setStepColor(value as StepColor)}
+              >
+                {stepColorData.map((variant) => (
+                  <div key={variant} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant} />
+                    <h6>{variant}</h6>
+                  </div>
+                ))}
+              </RadioGroup>
+            </Field>
+            <Field>
               <FieldLabel htmlFor="label-position-radio">
                 {t("stepper.labelPosition")}
               </FieldLabel>
@@ -115,36 +140,57 @@ export default function AvatarMultiComboBoxPage() {
                 ))}
               </RadioGroup>
             </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
             <Field>
-              <FieldLabel htmlFor="step-color-radio">
-                {t("stepper.stepColor")}
+              <FieldLabel htmlFor="connector-style-radio">
+                Connector Style
               </FieldLabel>
-              <RadioGroup
-                id="step-color-radio"
-                className="flex px-2"
-                value={stepColor as string}
-                onValueChange={(value) => setStepColor(value as StepColor)}
-              >
-                {stepColorData.map((variant) => (
-                  <div key={variant} className="flex items-center space-x-2">
-                    <RadioGroupItem value={variant} />
-                    <h6>{variant}</h6>
-                  </div>
-                ))}
-              </RadioGroup>
+              <div className="grid grid-cols-2">
+                <RadioGroup
+                  id="connector-style-radio"
+                  className="flex"
+                  value={connectorStyle}
+                  onValueChange={(value) =>
+                    setConnectorStyle(value as ConnectorStyle)
+                  }
+                >
+                  {connectorStyleData.map((variant) => (
+                    <div key={variant} className="flex items-center space-x-2">
+                      <RadioGroupItem value={variant} />
+                      <h6>{variant}</h6>
+                    </div>
+                  ))}
+                </RadioGroup>
+                <span className="col-span-2 flex items-center gap-2 pt-2">
+                  <Checkbox
+                    checked={leadingConnector}
+                    onCheckedChange={(value) =>
+                      setLeadingConnector(value === "indeterminate" || value)
+                    }
+                  />
+                  Leading Connector
+                </span>
+              </div>
             </Field>
+
             <Field>
               <FieldLabel htmlFor="order-label-switch">
                 {t("stepper.showOrderLabel")}
               </FieldLabel>
-              <div>
+              <div className="grid grid-cols-2">
                 <Switch
                   id="order-label-switch"
                   checked={showStepOrderLabel}
                   onCheckedChange={setShowStepOrderLabel}
                 />
+                <span className="flex items-center gap-2">
+                  <Checkbox
+                    checked={disableSteps}
+                    onCheckedChange={(value) =>
+                      setDisableSteps(value === "indeterminate" || value)
+                    }
+                  />
+                  {t("stepper.disable")}
+                </span>
               </div>
             </Field>
             <Field>
@@ -171,6 +217,9 @@ export default function AvatarMultiComboBoxPage() {
         stepVariant={stepVariant}
         labelPosition={labelPosition}
         color={stepColor}
+        connectorStyle={connectorStyle}
+        leadingConnector={leadingConnector}
+        disabled={disableSteps}
       >
         {demoSteps.map((step, idx) => (
           <Stepper.Item key={idx} index={idx} total={demoSteps.length}>

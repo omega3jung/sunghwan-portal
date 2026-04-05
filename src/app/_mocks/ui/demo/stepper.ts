@@ -12,3 +12,4 @@ export const orientationData = ["horizontal", "vertical"];
 export const stepVariantData = ["square", "circle"];
 export const stepColorData = ["primary", "secondary"];
 export const labelPositionData = ["top", "bottom", "right", "left"];
+export const connectorStyleData = ["solid", "dashed", "dotted"];

@@ -13,6 +13,17 @@ export const createOptionMap = <T extends MultiComboBoxItem>(options: T[]) => {
 };
 
 /**
+ * Creates a value-keyed map of the original `options` order.
+ * Useful when selected values should keep their own render order,
+ * while derived UI like palette colors must stay aligned with source options.
+ */
+export const createOptionOrderMap = <T extends MultiComboBoxItem>(
+  options: T[],
+) => {
+  return new Map(options.map((option, index) => [option.value, index]));
+};
+
+/**
  * Rebuilds the selected option list in the order of `selectedValues`,
  * not in the original `options` order.
  * Used when rendering badges.

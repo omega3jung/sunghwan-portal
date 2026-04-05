@@ -1,10 +1,10 @@
 import { idToNumber } from "@/api/utils/mapId";
-import { Category, SubCategory } from "@/domain/serviceDesk";
+import { MainCategory, SubCategory } from "@/domain/serviceDesk";
 import { undefinedToNull } from "@/shared/utils/nullable";
 
 import { DbCategory, DbSubCategory } from "./mapper";
 
-type CategoryWriteFields = Omit<Category, "id" | "subCategories"> & {
+type CategoryWriteFields = Omit<MainCategory, "id" | "subCategories"> & {
   subCategories: CategorySubCategoryWriteInput[];
 };
 
@@ -47,7 +47,7 @@ export function toCategoryWritePayload(
 export function toCategoryMockResource(
   input: CreateCategoryInput | UpdateCategoryInput,
   id = createMockId(),
-): Category {
+): MainCategory {
   return {
     ...input,
     id,

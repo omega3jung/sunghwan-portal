@@ -8,18 +8,33 @@ import { connectorVariant } from "./variants";
 type Props = {
   index: number;
   total: number;
+  isLeading?: boolean;
 };
 
-export const StepperConnector = ({ index, total }: Props) => {
-  const { currentStep, orientation, color } = useStepperContext();
+export const StepperConnector = ({
+  index,
+  total,
+  isLeading = false,
+}: Props) => {
+  const { currentStep, orientation, color, connectorStyle, disabled } =
+    useStepperContext();
 
-  if (index === total - 1) return null;
+  if (!isLeading && index === total - 1) return null;
 
-  const isCompleted = index < currentStep;
+  const connectorIndex = isLeading ? index - 1 : index;
+  const isCompleted = connectorIndex < currentStep;
 
   return (
     <div
-      className={cn(connectorVariant({ orientation, isCompleted, color }))}
+      className={cn(
+        connectorVariant({
+          orientation,
+          isCompleted,
+          color,
+          style: connectorStyle,
+        }),
+        disabled && "border-border",
+      )}
     />
   );
 };

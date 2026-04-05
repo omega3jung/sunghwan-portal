@@ -12,20 +12,24 @@ import {
 } from "@/api/serviceDesk/approvalStep/write";
 import {
   internalApprovalStepSettingsMock,
-  tenantApprovalStepSettingsMock,
+  clientApprovalStepSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+
+import { filterItemsByQuery } from "../../_helpers/filter";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
+  // demo mode
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const items = camelCategoryApprovalSettingMapper(
+    const allItems = camelCategoryApprovalSettingMapper(
       isInternal
         ? internalApprovalStepSettingsMock
-        : tenantApprovalStepSettingsMock,
+        : clientApprovalStepSettingsMock,
     );
+    const items = filterItemsByQuery(request.nextUrl.searchParams, allItems);
 
     return NextResponse.json({
       items,
@@ -33,6 +37,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // real backend
   return proxyJson(request, {
     path: "/service-desk/approval-steps",
     query: request.nextUrl.searchParams,

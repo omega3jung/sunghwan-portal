@@ -3,6 +3,7 @@ import { DbCategory } from "@/api/serviceDesk/category";
 import { ACCESS_LEVEL } from "@/domain/auth";
 
 import accountAccessCategoryMock from "./categories/accountAccess";
+import clientPortalSystemIssueCategoryMock from "./categories/clientPortalSystemIssue";
 import clientUserSupportCategoryMock from "./categories/clientUserSupport";
 import dataInfoManagementCategoryMock from "./categories/dataInfoManagement";
 import hardwareDeviceCategoryMock from "./categories/hardwareDevice";
@@ -12,7 +13,6 @@ import networkConnectivityCategoryMock from "./categories/networkConnectivity";
 import otherInquiryCategoryMock from "./categories/otherInquiry";
 import printingOfficeEquipmentCategoryMock from "./categories/printingOfficeEquipment";
 import softwareApplicationCategoryMock from "./categories/softwareApplication";
-import tenantPortalSystemIssueCategoryMock from "./categories/tenantPortalSystemIssue";
 
 const categoryApprovalSettingsHelper = (
   categoryMock: DbCategory,
@@ -212,8 +212,18 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
     approval_step: [
       {
         approval_step_id: 7,
-        approval_step_name: { en: "Upper manager's approval" },
-        approval_step_description: { en: "Check to prevent duplicate issues" },
+        approval_step_name: {
+          en: "HR manager's approval",
+          es: "Aprobación del gerente de recursos humanos",
+          fr: "Approbation du responsable des ressources humaines",
+          ko: "인사부장 승인",
+        },
+        approval_step_description: {
+          en: "Check to if HR issue",
+          es: "Comprobar si hay problemas de HR",
+          fr: "Vérifier si le problème concerne les RH",
+          ko: "인사 문제 관련 유무 확인",
+        },
         approval_step_index: 1,
         category_id: hrSystemPayrollCategoryMock.category_id,
         approval_step_assignee: {
@@ -287,10 +297,10 @@ export const internalApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
 ];
 
-export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
+export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   /* Portal / System */
   {
-    ...categoryApprovalSettingsHelper(tenantPortalSystemIssueCategoryMock),
+    ...categoryApprovalSettingsHelper(clientPortalSystemIssueCategoryMock),
     approval_step: [
       {
         approval_step_id: 11,
@@ -307,7 +317,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: tenantPortalSystemIssueCategoryMock.category_id,
+        category_id: clientPortalSystemIssueCategoryMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -329,7 +339,7 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "네트워크 문제의 IT와 관련 유무를 확인",
         },
         approval_step_index: 2,
-        category_id: tenantPortalSystemIssueCategoryMock.category_id,
+        category_id: clientPortalSystemIssueCategoryMock.category_id,
         approval_step_assignee: {
           type: "JOB_FIELD",
           field_id: JOB_FIELD_ID.IT_MANAGER,
@@ -508,21 +518,21 @@ export const tenantApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
 ];
 
-const tenantApprovalStepSettingsMocks: Record<
+const clientApprovalStepSettingsMocks: Record<
   string,
   DbCategoryApprovalSettings[]
 > = {
-  tenant_1: tenantApprovalStepSettingsMock,
-  tenant_2: tenantApprovalStepSettingsMock,
+  client_1: clientApprovalStepSettingsMock,
+  client_2: clientApprovalStepSettingsMock,
 };
 
-const defaultTenantApprovalStepSettingsMock = tenantApprovalStepSettingsMock;
+const defaultClientApprovalStepSettingsMock = clientApprovalStepSettingsMock;
 
-export const getTenantApprovalStepSettingsMock = (
-  tenantId: string,
+export const getClientApprovalStepSettingsMock = (
+  clientId: string,
 ): DbCategoryApprovalSettings[] => {
   return (
-    tenantApprovalStepSettingsMocks[tenantId] ??
-    defaultTenantApprovalStepSettingsMock
+    clientApprovalStepSettingsMocks[clientId] ??
+    defaultClientApprovalStepSettingsMock
   );
 };

@@ -2,7 +2,7 @@ import { Contact, User, UserCog, UsersRound, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { internalProfiles, tenantProfiles } from "@/app/_mocks/domain/user";
+import { clientProfiles, internalProfiles } from "@/app/_mocks/domain/user";
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -30,8 +30,8 @@ export function DemoUserSwitch(props: Props) {
     return internalProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
-  const switchTenantUserProfiles = useMemo<AppUser[]>(() => {
-    return tenantProfiles.filter((profile) => profile.id !== user.id);
+  const switchClientUserProfiles = useMemo<AppUser[]>(() => {
+    return clientProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
   const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
@@ -74,8 +74,8 @@ export function DemoUserSwitch(props: Props) {
             );
           })}
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("tenantUserSwitchLabel")}</DropdownMenuLabel>
-          {switchTenantUserProfiles.map((profile) => {
+          <DropdownMenuLabel>{t("clientUserSwitchLabel")}</DropdownMenuLabel>
+          {switchClientUserProfiles.map((profile) => {
             return (
               <DropdownMenuItem
                 key={`switch_${profile.displayName.replaceAll(" ", "_")}`}

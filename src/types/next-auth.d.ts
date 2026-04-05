@@ -9,7 +9,7 @@ declare module "next-auth/jwt" {
 
     dataScope: DataScope;
     userScope: UserScope;
-    tenantId: string | null;
+    companyId: string;
     permission: AccessLevel;
     role: Role;
 

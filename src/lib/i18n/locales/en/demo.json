@@ -8,6 +8,7 @@
     "stepColor": "Step color",
     "showOrderLabel": "Show order label",
     "startIndex": "Start index",
-    "step": "Step"
+    "step": "Step",
+    "disable": "Disable"
   }
 }

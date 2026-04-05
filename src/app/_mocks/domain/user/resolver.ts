@@ -2,7 +2,7 @@ import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
 import { internalAuths, internalProfiles } from "./data.internal";
-import { tenantAuths, tenantProfiles } from "./data.tenant";
+import { clientAuths, clientProfiles } from "./data.client";
 
 export function resolveInternalAuth(
   id: string,
@@ -14,12 +14,12 @@ export function resolveInternalProfile(id: string): AppUser | null {
   return internalProfiles.find((u) => u.id === id) ?? null;
 }
 
-export function resolveTenantAuth(
+export function resolveClientAuth(
   id: string,
 ): Omit<AuthUser, "dataScope"> | null {
-  return tenantAuths.find((u) => u.id === id) ?? null;
+  return clientAuths.find((u) => u.id === id) ?? null;
 }
 
-export function resolveTenantProfile(id: string): AppUser | null {
-  return tenantProfiles.find((u) => u.id === id) ?? null;
+export function resolveClientProfile(id: string): AppUser | null {
+  return clientProfiles.find((u) => u.id === id) ?? null;
 }

@@ -175,12 +175,12 @@ UI -> useCurrentSession()
 
 ### 1. 관심사 분리
 
-| 레이어 | 책임 |
-| ----- | --- |
-| NextAuth | 인증 |
-| JWT | 신원 |
-| Session | 런타임 컨텍스트 |
-| Zustand | 클라이언트 접근 레이어 |
+| 레이어   | 책임                   |
+| -------- | ---------------------- |
+| NextAuth | 인증                   |
+| JWT      | 신원                   |
+| Session  | 런타임 컨텍스트        |
+| Zustand  | 클라이언트 접근 레이어 |
 
 ---
 
@@ -190,7 +190,7 @@ UI -> useCurrentSession()
 - 앞으로 다음 기능을 수용할 수 있다
   - impersonation
   - role-based access
-  - multi-tenant logic
+  - multi-client logic
 
 ---
 

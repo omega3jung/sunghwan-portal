@@ -39,6 +39,30 @@ export const createTreeOptionIndex = (
 };
 
 /**
+ * Creates a value-keyed palette order map for trigger badges.
+ *
+ * Rules for the current 2-depth tree:
+ * - Parent items use the top-level parent order only.
+ * - Child items start at `parent palette index + 1`
+ *   and continue in their own sibling order.
+ */
+export const createTreeBadgeOrderMap = (
+  options: TreeMultiComboBoxOption[],
+) => {
+  const orderMap = new Map<string, number>();
+
+  for (const [parentIndex, parent] of options.entries()) {
+    orderMap.set(parent.value, parentIndex);
+
+    for (const [childIndex, child] of parent.children.entries()) {
+      orderMap.set(child.value, parentIndex + childIndex + 1);
+    }
+  }
+
+  return orderMap;
+};
+
+/**
  * Flattens parent and child items into a single array.
  * Useful for search and rendering helpers.
  */
@@ -418,6 +442,7 @@ export const getSelectedTreeItems = (
         value: child.value,
         label: child.label,
         disabled: child.disabled,
+        parentValue: getParentByChildValue(child.value, index)?.value ?? "",
       },
     ];
   });

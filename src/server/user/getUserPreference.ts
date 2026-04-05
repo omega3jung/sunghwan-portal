@@ -1,6 +1,6 @@
 // src/server/user/getUserProfile.ts
 import client from "@/api/client";
-import { demoProfiles, tenantProfiles } from "@/app/_mocks/domain/user";
+import { clientProfiles, demoProfiles } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
 import { Preference } from "@/domain/config";
 import { createDefaultPreference } from "@/domain/user/preference";
@@ -8,9 +8,9 @@ import { createDefaultPreference } from "@/domain/user/preference";
 export async function getUserPreference(
   authUser: AuthUser,
 ): Promise<Preference> {
-  // demo / tenant (LOCAL)
+  // demo / client (LOCAL)
   if (authUser.dataScope === "LOCAL") {
-    const profiles = [...demoProfiles, ...tenantProfiles];
+    const profiles = [...demoProfiles, ...clientProfiles];
     const profile = profiles.find((p) => p.id === authUser.id);
 
     if (!profile) {

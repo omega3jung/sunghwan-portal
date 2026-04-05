@@ -10,8 +10,8 @@ import {
   UpdateTicketInput,
 } from "@/api/serviceDesk/ticket/write";
 import {
+  clientTicketsMock,
   internalTicketsMock,
-  tenantTicketsMock,
 } from "@/app/_mocks/scenarios/serviceDesk/tickets";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const ticket = (isInternal ? internalTicketsMock : tenantTicketsMock).find(
+    const ticket = (isInternal ? internalTicketsMock : clientTicketsMock).find(
       (item) => item.id === ticketId,
     );
 

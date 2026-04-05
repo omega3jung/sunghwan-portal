@@ -1,7 +1,7 @@
 // app/api/user-profile/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { demoProfiles, tenantProfiles } from "@/app/_mocks/domain/user";
+import { clientProfiles, demoProfiles } from "@/app/_mocks/domain/user";
 import {
   checkAdminOrSelf,
   isRemoteRequest,
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
   // demo mode
   if (!isRemote) {
     // Return mock user preference.
-    const demoUserProfiles = [...demoProfiles, ...tenantProfiles];
+    const demoUserProfiles = [...demoProfiles, ...clientProfiles];
 
     const targetProfile = demoUserProfiles.find(
       (profile) => profile.id === userId,

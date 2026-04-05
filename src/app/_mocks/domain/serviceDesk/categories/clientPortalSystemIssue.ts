@@ -1,6 +1,6 @@
 import { DbCategory } from "@/api/serviceDesk/category";
 
-const tenantPortalSystemIssueCategoryMock = {
+const clientPortalSystemIssueCategoryMock = {
   category_id: 101,
   category_name: {
     en: "Portal / System Issues",
@@ -207,15 +207,15 @@ const tenantPortalSystemIssueCategoryMock = {
     {
       category_id: 109,
       category_name: {
-        en: "Tenant Access Scope Issues",
-        es: "Problemas de alcance de acceso del tenant",
-        fr: "Problèmes de périmètre d’accès du tenant",
+        en: "Client Access Scope Issues",
+        es: "Problemas de alcance de acceso del cliente",
+        fr: "Problèmes de périmètre d’accès du client",
         ko: "고객사 접근 범위 문제",
       },
       category_description: {
-        en: "Request support for issues related to tenant access scope or data visibility.",
-        es: "Solicite asistencia para problemas relacionados con el alcance de acceso o visibilidad de datos del tenant.",
-        fr: "Demandez une assistance pour les problèmes liés au périmètre d’accès ou à la visibilité des données du tenant.",
+        en: "Request support for issues related to client access scope or data visibility.",
+        es: "Solicite asistencia para problemas relacionados con el alcance de acceso o visibilidad de datos del cliente.",
+        fr: "Demandez une assistance pour les problèmes liés au périmètre d’accès ou à la visibilité des données du client.",
         ko: "고객용으로 제한된 포털 / 시스템 메뉴에 접근이 필요한 경우 수정을 요청합니다.",
       },
       category_request_template: {
@@ -285,4 +285,4 @@ const tenantPortalSystemIssueCategoryMock = {
   ],
 } satisfies DbCategory;
 
-export default tenantPortalSystemIssueCategoryMock;
+export default clientPortalSystemIssueCategoryMock;

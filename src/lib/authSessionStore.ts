@@ -41,6 +41,7 @@ export interface SessionActions {
 const initialState: SessionState = {
   isDemoUser: false,
   isSuperUser: false,
+  isClient: false,
   user: null,
   security: {
     loginLockedUntil: null,

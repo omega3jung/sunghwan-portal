@@ -62,8 +62,8 @@ type AuthUser = {
   accessToken: string;
 
   dataScope: "LOCAL" | "REMOTE";
-  userScope: "INTERNAL" | "TENANT";
-  tenantId: string | null;
+  userScope: "INTERNAL" | "CLIENT";
+  clientId: string | null;
   permission: AccessLevel;
   role: Role;
 };
@@ -109,7 +109,7 @@ type AppUser = {
   image?: string;
 
   userScope: UserScope;
-  tenantId: string | null;
+  clientId: string | null;
 
   permission: AccessLevel;
   role: Role | null;
@@ -131,11 +131,11 @@ type AppUser = {
 
 두 모델은 서로 다른 책임을 가진다.
 
-| Model | Responsibility |
-| ----- | -------------- |
-| `AuthUser` | 인증과 신뢰 가능한 identity |
+| Model         | Responsibility                   |
+| ------------- | -------------------------------- |
+| `AuthUser`    | 인증과 신뢰 가능한 identity      |
 | `SessionUser` | session-safe identity projection |
-| `AppUser` | UI와 application behavior |
+| `AppUser`     | UI와 application behavior        |
 
 이 분리는 다음과 같은 흔한 문제를 피하게 해준다.
 
@@ -153,7 +153,7 @@ type AppUser = {
 
 `authorize()`는 다음 경로 중 하나로 `AuthUser`를 해석한다.
 
-- LOCAL demo resolver (`resolveDemoAuth`, `resolveTenantAuth`)
+- LOCAL demo resolver (`resolveDemoAuth`, `resolveClientAuth`)
 - 또는 REMOTE API login (`/auth/login`)
 
 ---
@@ -169,7 +169,7 @@ sign-in 시 `jwt` callback은 다음 신뢰 가능한 auth field를 token에 저
 - `accessToken`
 - `dataScope`
 - `userScope`
-- `tenantId`
+- `clientId`
 - `permission`
 - `role`
 
@@ -189,7 +189,7 @@ session.user = {
   email,
   dataScope,
   userScope,
-  tenantId,
+  clientId,
   permission,
   role,
 };
@@ -422,7 +422,7 @@ impersonation을 종료하면 반대 흐름을 수행하며 session의 impersona
 현재 구현 기준 규칙은 다음과 같다.
 
 - `INTERNAL` 사용자이면서 최소 `ADMIN` 권한 이상인 경우만 impersonation을 시작할 수 있다
-- impersonation 대상은 `TENANT` 사용자여야 한다
+- impersonation 대상은 `CLIENT` 사용자여야 한다
 
 이 규칙은 UI가 아니라 auth layer에 위치한다.
 
@@ -486,7 +486,7 @@ auth model은 두 런타임 모드를 지원한다.
 
 - identity
 - access context
-- tenant scope
+- client scope
 - impersonation metadata
 
 여기에 속하지 않는 것:

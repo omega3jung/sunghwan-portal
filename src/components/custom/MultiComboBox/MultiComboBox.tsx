@@ -24,6 +24,7 @@ import { MultiComboBoxOptionItem } from "./MultiComboBoxOptionItem";
 import type { ComboBoxProps } from "./types";
 import {
   createCommandFilter,
+  createOptionOrderMap,
   EMPTY_OPTION_TEXT,
   getSelectedOptions,
 } from "./utils";
@@ -39,6 +40,7 @@ const Component = (
     variant,
     size,
     badgeVariant,
+    badgeOrderMap,
     paletteStart,
     palettePick,
     isLoading = false,
@@ -56,6 +58,10 @@ const Component = (
   const selectedOptions = useMemo(
     () => getSelectedOptions(options, value),
     [options, value],
+  );
+  const optionOrderMap = useMemo(
+    () => badgeOrderMap ?? createOptionOrderMap(options),
+    [badgeOrderMap, options],
   );
   const commandFilter = useMemo(() => createCommandFilter(options), [options]);
 
@@ -93,6 +99,7 @@ const Component = (
           ) : (
             <MultiComboBoxBadgeList
               items={selectedOptions}
+              itemOrderMap={optionOrderMap}
               badgeVariant={resolvedBadgeVariant}
               paletteStart={resolvedPaletteStart}
               palettePick={resolvedPalettePick}

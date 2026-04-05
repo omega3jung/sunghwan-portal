@@ -30,6 +30,8 @@ export function DatePicker({
   minDate,
   maxDate,
   className,
+  variant = "outline",
+  size = "lg",
   ...buttonProps
 }: DatePickerProps) {
   const { t } = useTranslation("DatePicker");
@@ -51,9 +53,11 @@ export function DatePicker({
       <PopoverTrigger asChild>
         <Button
           {...buttonProps}
+          variant={variant}
+          size={size}
           className={cn(
-            "border-slate-150 flex h-8 w-full items-center justify-between rounded border bg-foreground px-3 py-2 text-sm font-normal text-basic focus:border-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-accent",
-            !date ? "text-muted-foreground" : "",
+            "w-full justify-between border-slate-150 bg-transparent px-3 font-normal text-basic hover:bg-transparent hover:text-basic [&>span]:truncate",
+            !date && "text-muted-foreground",
             className,
           )}
         >

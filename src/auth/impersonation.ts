@@ -3,7 +3,7 @@
 import axios from "axios";
 
 import client from "@/api/client";
-import { resolveTenantAuth } from "@/app/_mocks/domain/user";
+import { resolveClientAuth } from "@/app/_mocks/domain/user";
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
@@ -20,25 +20,25 @@ export async function startImpersonation({
   }
 
   try {
-    // 2-a. tenant demo impersonation.
+    // 2-a. client demo impersonation.
     if (actor.dataScope === "LOCAL") {
       // 3-a. search subject.
-      const tenantDemoAuth = resolveTenantAuth(subjectId);
+      const clientDemoAuth = resolveClientAuth(subjectId);
 
-      if (!tenantDemoAuth) {
+      if (!clientDemoAuth) {
         throw new Error("SUBJECT_NOT_FOUND");
       }
 
       // 4-a. check subject scope
-      if (tenantDemoAuth.userScope !== "TENANT") {
+      if (clientDemoAuth.userScope !== "CLIENT") {
         throw new Error("FORBIDDEN_SUBJECT");
       }
 
       // 5-a. allow impersonation
-      console.log(tenantDemoAuth.displayName);
+      console.log(clientDemoAuth.displayName);
       return {
         actorId: actor.id,
-        subjectId: tenantDemoAuth.id,
+        subjectId: clientDemoAuth.id,
         activatedAt: Date.now(),
       };
     }
@@ -54,7 +54,7 @@ export async function startImpersonation({
     }
 
     // 4-a. check subject scope
-    if (res.data.userScope !== "TENANT") {
+    if (res.data.userScope !== "CLIENT") {
       throw new Error("FORBIDDEN_SUBJECT");
     }
 

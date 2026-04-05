@@ -33,128 +33,44 @@
     "noResults": "No results"
   },
 
+  "placeholder": {
+    "enter": "Enter {{target}}",
+    "search": "Search {{target}}",
+    "select": "Select {{target}}"
+  },
+
   "field": {
-    "age": {
-      "label": "Age",
-      "placeholder": "Enter age"
-    },
-    "agent": {
-      "label": "Agent",
-      "placeholder": "Select agent"
-    },
-    "assignee": {
-      "label": "Assignee",
-      "placeholder": "Select assignee"
-    },
-    "category": {
-      "label": "Category",
-      "placeholder": "Select category"
-    },
-    "comment": {
-      "label": "Comment",
-      "placeholder": "Enter comment"
-    },
-    "contact": {
-      "label": "Contact",
-      "placeholder": "Enter contact"
-    },
-    "createdAt": {
-      "label": "Created At"
-    },
-    "date": {
-      "label": "Date",
-      "placeholder": "Select date"
-    },
-    "department": {
-      "label": "Department",
-      "placeholder": "Select department"
-    },
-    "description": {
-      "label": "Description",
-      "placeholder": "Enter description"
-    },
-    "details": {
-      "label": "Details",
-      "placeholder": "Enter details"
-    },
-    "dueDate": {
-      "label": "Due Date",
-      "placeholder": "Select due date"
-    },
-    "email": {
-      "label": "Email",
-      "placeholder": "Enter email",
-      "to": {
-        "label": "To",
-        "placeholder": "Enter recipient"
-      },
-      "cc": {
-        "label": "CC",
-        "placeholder": "Enter cc recipients"
-      },
-      "bcc": {
-        "label": "BCC",
-        "placeholder": "Enter bcc recipients"
-      }
-    },
-    "endDate": {
-      "label": "End Date",
-      "placeholder": "Select end date"
-    },
-    "history": {
-      "label": "History"
-    },
-    "location": {
-      "label": "Location",
-      "placeholder": "Enter location"
-    },
-    "name": {
-      "label": "Name",
-      "placeholder": "Enter name"
-    },
-    "owner": {
-      "label": "Owner",
-      "placeholder": "Select owner"
-    },
-    "period": {
-      "label": "Period",
-      "placeholder": "Select period"
-    },
-    "phone": {
-      "label": "Phone",
-      "placeholder": "Enter phone"
-    },
-    "priority": {
-      "label": "Priority",
-      "placeholder": "Select priority"
-    },
-    "requester": {
-      "label": "Requester",
-      "placeholder": "Select requester"
-    },
-    "startDate": {
-      "label": "Start Date",
-      "placeholder": "Select start date"
-    },
-    "status": {
-      "label": "Status",
-      "placeholder": "Select status"
-    },
-    "step": {
-      "label": "Step",
-      "placeholder": "Select step"
-    },
-    "subject": {
-      "label": "Subject",
-      "placeholder": "Enter subject"
-    },
-    "type": {
-      "label": "Type",
-      "placeholder": "Select type"
-    },
-    "updatedAt": {
-      "label": "Updated At"
-    }
+    "age": "Age",
+    "agent": "Agent",
+    "assignee": "Assignee",
+    "category": "Category",
+    "comment": "Comment",
+    "contact": "Contact",
+    "createdAt": "Created At",
+    "date": "Date",
+    "department": "Department",
+    "description": "Description",
+    "details": "Details",
+    "dueDate": "Due Date",
+    "email": "Email",
+    "emailTo": "To",
+    "emailCc": "CC",
+    "emailBcc": "BCC",
+    "endDate": "End Date",
+    "history": "History",
+    "location": "Location",
+    "name": "Name",
+    "owner": "Owner",
+    "period": "Period",
+    "phone": "Phone",
+    "priority": "Priority",
+    "requester": "Requester",
+    "startDate": "Start Date",
+    "status": "Status",
+    "step": "Step",
+    "subject": "Subject",
+    "type": "Type",
+    "updatedAt": "Updated At"
   },
 
   "pagination": {

@@ -26,6 +26,7 @@ export type MultiComboBoxProps = {
   placeholder?: string;
   options?: MultiComboBoxItem[];
   badgeVariant?: BadgeVariant;
+  badgeOrderMap?: ReadonlyMap<string, number>;
   paletteStart?: PaletteIndex;
   palettePick?: PaletteIndex;
   onSelect?: (value: string) => void;

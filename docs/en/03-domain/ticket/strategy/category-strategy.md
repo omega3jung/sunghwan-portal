@@ -34,7 +34,7 @@ Each level plays a specific role in defining ticket behavior.
 
 ### 1. Client
 
-- Represents a tenant (organization or customer)
+- Represents a client (organization or customer)
 - Ensures full isolation between different clients
 
 ---

@@ -11,7 +11,7 @@ import {
 } from "@/api/serviceDesk/category/write";
 import {
   internalCategorySettingsMock,
-  tenantCategorySettingsMock,
+  clientCategorySettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
     const category = camelClientCategoryTreeMapper(
-      isInternal ? internalCategorySettingsMock : tenantCategorySettingsMock,
+      isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
     )
       .flatMap((client) => client.categories)
       .find((item) => item.id === id);

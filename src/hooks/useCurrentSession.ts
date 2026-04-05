@@ -58,6 +58,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const current = useMemo<CurrentSession>(() => {
     const { user, isSuperUser, superUserActivated, security } = store;
     const isDemoUser = session.data?.user?.dataScope === "LOCAL";
+    const isClient = user?.userScope === "CLIENT";
 
     if (!user) {
       return {
@@ -65,6 +66,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
         expires: "",
         isDemoUser,
         isSuperUser: false,
+        isClient: false,
         superUserActivated: null,
         security: {
           loginLockedUntil: null,
@@ -79,6 +81,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       expires: "",
       isDemoUser,
       isSuperUser: isSuperUser,
+      isClient,
       superUserActivated: superUserActivated,
       security: security,
     };

@@ -1,7 +1,7 @@
 import {
   ApprovalAssigneeType,
   ApprovalStep,
-  Category,
+  MainCategory,
 } from "@/domain/serviceDesk";
 
 export type ApprovalStepData = ApprovalStep & {
@@ -10,7 +10,7 @@ export type ApprovalStepData = ApprovalStep & {
   stepAssignee: ApprovalAssigneeType;
 };
 
-export type CategoryApprovalStepData = Omit<Category, "subCategories"> & {
+export type CategoryApprovalStepData = Omit<MainCategory, "subCategories"> & {
   categoryId: string;
   nodeType: "category";
   approvalSteps: ApprovalStepData[];

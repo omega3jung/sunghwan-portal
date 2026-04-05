@@ -23,7 +23,7 @@ export const authorize = async (credentials?: {
       accessToken: user.accessToken,
       dataScope: user.dataScope,
       userScope: user.userScope,
-      tenantId: user.tenantId,
+      companyId: user.companyId,
       permission: user.permission,
       role: user.role,
     };

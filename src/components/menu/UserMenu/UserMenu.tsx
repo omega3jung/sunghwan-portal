@@ -50,7 +50,7 @@ export function UserMenu() {
   const canDemoImpersonate = useMemo(() => {
     if (!isDemo) return false;
     if (!actor || subject) return false;
-    if (actor.userScope === "TENANT") return false;
+    if (actor.userScope === "CLIENT") return false;
     return actor.permission >= ACCESS_LEVEL.ADMIN;
   }, [actor, isDemo, subject]);
 

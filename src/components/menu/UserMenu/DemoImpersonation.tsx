@@ -2,7 +2,7 @@ import { Contact, User, UserCog, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { tenantProfiles } from "@/app/_mocks/domain/user";
+import { clientProfiles } from "@/app/_mocks/domain/user";
 import {
   DropdownMenuItem,
   DropdownMenuPortal,
@@ -24,7 +24,7 @@ export function DemoImpersonation(props: Props) {
   const { t } = useTranslation("UserMenu");
 
   const impersonationUserProfiles = useMemo(() => {
-    return tenantProfiles.filter((profile) => profile.id !== user.id);
+    return clientProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
   const getPermissionIcon = (accessLevel: AccessLevel | Role) => {

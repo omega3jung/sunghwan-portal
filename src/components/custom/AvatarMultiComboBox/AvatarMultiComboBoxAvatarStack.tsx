@@ -21,7 +21,16 @@ export function AvatarMultiComboBoxAvatarStack({
   maxImages,
 }: AvatarMultiComboBoxAvatarStackProps) {
   if (!selected.length) {
-    return <div className={placeholderClassName}>{placeholder}</div>;
+    return (
+      <div
+        className={cn(
+          "px-2 font-normal text-muted-foreground",
+          placeholderClassName,
+        )}
+      >
+        {placeholder}
+      </div>
+    );
   }
 
   const visibleSelected = selected.slice(0, maxImages);

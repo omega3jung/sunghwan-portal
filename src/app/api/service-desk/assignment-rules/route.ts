@@ -12,19 +12,20 @@ import {
 } from "@/api/serviceDesk/assignmentRule/write";
 import {
   internalAssignmentRuleSettingsMock,
-  tenantAssignmentRuleSettingsMock,
+  clientAssignmentRuleSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
+  // demo mode
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
     const items = camelAssignmentRuleMapper(
       isInternal
         ? internalAssignmentRuleSettingsMock
-        : tenantAssignmentRuleSettingsMock,
+        : clientAssignmentRuleSettingsMock,
     );
 
     return NextResponse.json({
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // real backend
   return proxyJson(request, {
     path: "/service-desk/assignment-rules",
     query: request.nextUrl.searchParams,
@@ -46,7 +48,9 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as CreateAssignmentRuleInput;
 
   if (!isRemote) {
-    return NextResponse.json(toAssignmentRuleMockResource(body), { status: 201 });
+    return NextResponse.json(toAssignmentRuleMockResource(body), {
+      status: 201,
+    });
   }
 
   return proxyJson(request, {

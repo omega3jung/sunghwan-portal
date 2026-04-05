@@ -1,12 +1,14 @@
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/shared/utils";
 
 import { getBadgeClassName, resolveBadgeVariant } from "./styles";
 import type { BadgeVariant, MultiComboBoxItem, PaletteIndex } from "./types";
 
 type MultiComboBoxBadgeListProps = {
   items: MultiComboBoxItem[];
+  itemOrderMap?: ReadonlyMap<string, number>;
   badgeVariant?: BadgeVariant;
   paletteStart: PaletteIndex;
   palettePick?: PaletteIndex;
@@ -16,6 +18,7 @@ type MultiComboBoxBadgeListProps = {
 
 export function MultiComboBoxBadgeList({
   items,
+  itemOrderMap,
   badgeVariant,
   paletteStart,
   palettePick,
@@ -30,10 +33,13 @@ export function MultiComboBoxBadgeList({
           variant={resolveBadgeVariant(badgeVariant)}
           className={getBadgeClassName(
             badgeVariant,
-            index,
+            itemOrderMap?.get(item.value) ?? index,
             paletteStart,
             palettePick,
-            readOnly ? undefined : "cursor-pointer",
+            cn(
+              "font-medium",
+              readOnly ? undefined : "cursor-pointer",
+            ),
           )}
           onClick={(event) => {
             if (readOnly) {

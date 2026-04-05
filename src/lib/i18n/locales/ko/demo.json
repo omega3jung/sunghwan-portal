@@ -8,6 +8,7 @@
     "stepColor": "색상",
     "showOrderLabel": "단계 라벨 표시",
     "startIndex": "시작 번호",
-    "step": "단계"
+    "step": "단계",
+    "disable": "비활성화"
   }
 }

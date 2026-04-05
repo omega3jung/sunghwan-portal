@@ -1,7 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common/types";
 import { LocalizedText } from "@/shared/types";
 
-// tenant data structure.
+// client data structure.
 export type Client = {
   id: string;
   name: string;
@@ -27,7 +27,7 @@ export interface SubCategory extends CategoryBase {
 }
 
 // parent category.
-export interface Category extends CategoryBase {
+export interface MainCategory extends CategoryBase {
   scope: CategoryScope;
   defaultPriority: Priority; // required to category.
   defaultRiskLevel: RiskLevel; // required to category.
@@ -35,5 +35,5 @@ export interface Category extends CategoryBase {
   subCategories: SubCategory[];
 }
 
-// tenant-category tree.
-export type ClientCategoryTree = Client & { categories: Category[] };
+// client-category tree.
+export type ClientCategoryTree = Client & { categories: MainCategory[] };

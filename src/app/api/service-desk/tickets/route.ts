@@ -13,17 +13,18 @@ import {
   toTicketWritePayload,
 } from "@/api/serviceDesk/ticket/write";
 import {
+  clientTicketsMock,
   internalTicketsMock,
-  tenantTicketsMock,
 } from "@/app/_mocks/scenarios/serviceDesk/tickets";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
+  // demo mode
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const items = (isInternal ? internalTicketsMock : tenantTicketsMock).map(
+    const items = (isInternal ? internalTicketsMock : clientTicketsMock).map(
       toTicketMockSummaryResource,
     );
 
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // real backend
   return proxyJson(request, {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,

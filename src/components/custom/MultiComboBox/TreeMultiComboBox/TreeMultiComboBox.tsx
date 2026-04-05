@@ -4,7 +4,6 @@ import { ChevronDown, Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, useMemo, useState } from "react";
 
-import { MultiComboBoxBadgeList } from "@/components/custom/MultiComboBox/MultiComboBoxBadgeList";
 import { comboBoxVariants } from "@/components/custom/MultiComboBox/variants";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +20,11 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils";
 
+import { TreeMultiComboBoxBadgeList } from "./TreeMultiComboBoxBadgeList";
 import { TreeMultiComboBoxParentItem } from "./TreeMultiComboBoxParentItem";
 import type { TreeMultiComboBoxProps } from "./types";
 import {
+  createTreeBadgeOrderMap,
   createTreeCommandFilter,
   createTreeOptionIndex,
   EMPTY_OPTION_TEXT,
@@ -77,6 +78,7 @@ const Component = (
     [options, value],
   );
   const optionIndex = useMemo(() => createTreeOptionIndex(options), [options]);
+  const badgeOrderMap = useMemo(() => createTreeBadgeOrderMap(options), [options]);
   const selectedItems = useMemo(
     () => getSelectedTreeItems(normalizedValue, options),
     [normalizedValue, options],
@@ -149,8 +151,9 @@ const Component = (
               {placeholder}
             </div>
           ) : (
-            <MultiComboBoxBadgeList
+            <TreeMultiComboBoxBadgeList
               items={selectedItems}
+              itemOrderMap={badgeOrderMap}
               badgeVariant={resolvedBadgeVariant}
               paletteStart={resolvedPaletteStart}
               palettePick={resolvedPalettePick}

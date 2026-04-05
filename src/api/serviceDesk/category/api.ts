@@ -1,5 +1,5 @@
 import client from "@/api/client";
-import { Category, ClientCategoryTree } from "@/domain/serviceDesk";
+import { ClientCategoryTree, MainCategory } from "@/domain/serviceDesk";
 import { DbParams, OResponse } from "@/shared/types/api";
 
 type CategoryResponse = OResponse<ClientCategoryTree>;
@@ -16,24 +16,24 @@ export const serviceDeskCategoryApi = {
 
     return res.data.items;
   },
-  get: async (id: string | number): Promise<Category | null> => {
+  get: async (id: string | number): Promise<MainCategory | null> => {
     if (!id) return null;
 
-    const res = await client.api.get<Category>(
+    const res = await client.api.get<MainCategory>(
       `/api/service-desk/categories/${id}`,
     );
     return res.data;
   },
 
-  create: async (data: Category) => {
-    const res = await client.api.post<Category>(
+  create: async (data: MainCategory) => {
+    const res = await client.api.post<MainCategory>(
       `/api/service-desk/categories`,
       data,
     );
     return res.data;
   },
 
-  update: async (data: Category) => {
+  update: async (data: MainCategory) => {
     const res = await client.api.put(
       `/api/service-desk/categories/${data.id}`,
       data,

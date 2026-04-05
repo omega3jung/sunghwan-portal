@@ -12,9 +12,11 @@ import {
 } from "@/api/serviceDesk/category/write";
 import {
   internalCategorySettingsMock,
-  tenantCategorySettingsMock,
+  clientCategorySettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+
+import { filterItemsByQuery } from "../../_helpers/filter";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -22,9 +24,11 @@ export async function GET(request: NextRequest) {
   // demo mode
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const items = camelClientCategoryTreeMapper(
-      isInternal ? internalCategorySettingsMock : tenantCategorySettingsMock,
+    const allItems = camelClientCategoryTreeMapper(
+      isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
     );
+
+    const items = filterItemsByQuery(request.nextUrl.searchParams, allItems);
 
     return NextResponse.json({
       items,
@@ -32,6 +36,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // real backend
   return proxyJson(request, {
     path: "/service-desk/categories",
     query: request.nextUrl.searchParams,

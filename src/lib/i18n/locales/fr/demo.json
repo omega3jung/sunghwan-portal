@@ -8,6 +8,7 @@
     "stepColor": "Couleur",
     "showOrderLabel": "Afficher l'étiquette de l'étape",
     "startIndex": "Numéro de départ",
-    "step": "Étape"
+    "step": "Étape",
+    "disable": "Désactiver"
   }
 }

@@ -4,6 +4,8 @@ import {
 } from "@/api/serviceDesk/category/mapper";
 
 import accountAccessCategoryMock from "./accountAccess";
+import clientCustomIssueSubCategoryMock from "./clientCustomIssue";
+import clientPortalSystemIssueCategoryMock from "./clientPortalSystemIssue";
 import clientUserSupportCategoryMock from "./clientUserSupport";
 import dataInfoManagementCategoryMock from "./dataInfoManagement";
 import hardwareDeviceCategoryMock from "./hardwareDevice";
@@ -13,14 +15,12 @@ import networkConnectivityCategoryMock from "./networkConnectivity";
 import otherInquiryCategoryMock from "./otherInquiry";
 import printingOfficeEquipmentCategoryMock from "./printingOfficeEquipment";
 import softwareApplicationCategoryMock from "./softwareApplication";
-import tenantCustomIssueSubCategoryMock from "./tenantCustomIssue";
-import tenantPortalSystemIssueCategoryMock from "./tenantPortalSystemIssue";
 
-const mergeTenantCustomCategory = (customSubCategory: DbSubCategory[]) => {
+const mergeClientCustomCategory = (customSubCategory: DbSubCategory[]) => {
   return {
-    ...tenantPortalSystemIssueCategoryMock,
+    ...clientPortalSystemIssueCategoryMock,
     sub_category: [
-      ...tenantPortalSystemIssueCategoryMock.sub_category,
+      ...clientPortalSystemIssueCategoryMock.sub_category,
       ...customSubCategory,
     ],
   };
@@ -46,25 +46,25 @@ export const internalCategorySettingsMock: DbClientCategoryTree[] = [
   },
   {
     client_id: 11,
-    client_name: "Tenant Demo Corporation",
+    client_name: "Client Demo Corporation",
     client_color: "#B22222",
-    category: [tenantPortalSystemIssueCategoryMock],
+    category: [clientPortalSystemIssueCategoryMock],
   },
   {
     client_id: 12,
-    client_name: "Tenant Demo Industry",
+    client_name: "Client Demo Industry",
     client_color: "#006400",
-    category: [mergeTenantCustomCategory(tenantCustomIssueSubCategoryMock)],
+    category: [mergeClientCustomCategory(clientCustomIssueSubCategoryMock)],
   },
 ];
 
-export const tenantCategorySettingsMock: DbClientCategoryTree[] = [
+export const clientCategorySettingsMock: DbClientCategoryTree[] = [
   {
     client_id: 11,
-    client_name: "Tenant Demo Corporation",
+    client_name: "Client Demo Corporation",
     client_color: "#B22222",
     category: [
-      tenantPortalSystemIssueCategoryMock,
+      clientPortalSystemIssueCategoryMock,
       accountAccessCategoryMock,
       hardwareDeviceCategoryMock,
       softwareApplicationCategoryMock,

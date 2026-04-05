@@ -29,128 +29,43 @@
   "empty": {
     "noResults": "검색 결과가 없습니다"
   },
+  "placeholder": {
+    "enter": "{{target}} 입력",
+    "search": "{{target}} 검색",
+    "select": "{{target}} 선택"
+  },
   "field": {
-    "age": {
-      "label": "나이",
-      "placeholder": "나이를 입력하세요"
-    },
-    "agent": {
-      "label": "에이전트",
-      "placeholder": "에이전트를 선택하세요"
-    },
-    "assignee": {
-      "label": "담당자",
-      "placeholder": "담당자를 선택하세요"
-    },
-    "category": {
-      "label": "카테고리",
-      "placeholder": "카테고리를 선택하세요"
-    },
-    "comment": {
-      "label": "코멘트",
-      "placeholder": "코멘트를 입력하세요"
-    },
-    "contact": {
-      "label": "연락처",
-      "placeholder": "연락처를 입력하세요"
-    },
-    "createdAt": {
-      "label": "생성일"
-    },
-    "date": {
-      "label": "날짜",
-      "placeholder": "날짜를 선택하세요"
-    },
-    "department": {
-      "label": "부서",
-      "placeholder": "부서를 선택하세요"
-    },
-    "description": {
-      "label": "설명",
-      "placeholder": "설명을 입력하세요"
-    },
-    "details": {
-      "label": "상세 내용",
-      "placeholder": "상세 내용을 입력하세요"
-    },
-    "dueDate": {
-      "label": "완료 기한",
-      "placeholder": "완료 기한을 선택하세요"
-    },
-    "email": {
-      "label": "이메일",
-      "placeholder": "이메일을 입력하세요",
-      "to": {
-        "label": "받는 사람",
-        "placeholder": "받는 사람을 입력하세요"
-      },
-      "cc": {
-        "label": "참조",
-        "placeholder": "참조 대상을 입력하세요"
-      },
-      "bcc": {
-        "label": "숨은 참조",
-        "placeholder": "숨은 참조 대상을 입력하세요"
-      }
-    },
-    "endDate": {
-      "label": "종료일",
-      "placeholder": "종료일을 선택하세요"
-    },
-    "history": {
-      "label": "이력"
-    },
-    "location": {
-      "label": "위치",
-      "placeholder": "위치를 입력하세요"
-    },
-    "name": {
-      "label": "이름",
-      "placeholder": "이름을 입력하세요"
-    },
-    "owner": {
-      "label": "소유자",
-      "placeholder": "소유자를 선택하세요"
-    },
-    "period": {
-      "label": "기간",
-      "placeholder": "기간을 선택하세요"
-    },
-    "phone": {
-      "label": "전화번호",
-      "placeholder": "전화번호를 입력하세요"
-    },
-    "priority": {
-      "label": "우선순위",
-      "placeholder": "우선순위를 선택하세요"
-    },
-    "requester": {
-      "label": "요청자",
-      "placeholder": "요청자를 선택하세요"
-    },
-    "startDate": {
-      "label": "시작일",
-      "placeholder": "시작일을 선택하세요"
-    },
-    "status": {
-      "label": "상태",
-      "placeholder": "상태를 선택하세요"
-    },
-    "step": {
-      "label": "단계",
-      "placeholder": "단계를 선택하세요"
-    },
-    "subject": {
-      "label": "제목",
-      "placeholder": "제목을 입력하세요"
-    },
-    "type": {
-      "label": "유형",
-      "placeholder": "유형을 선택하세요"
-    },
-    "updatedAt": {
-      "label": "수정일"
-    }
+    "age": "나이",
+    "agent": "에이전트",
+    "assignee": "담당자",
+    "category": "카테고리",
+    "comment": "코멘트",
+    "contact": "연락처",
+    "createdAt": "생성일",
+    "date": "날짜",
+    "department": "부서",
+    "description": "설명",
+    "details": "상세 내용",
+    "dueDate": "완료 기한",
+    "email": "이메일",
+    "emailTo": "받는 사람",
+    "emailCc": "참조",
+    "emailBcc": "숨은 참조",
+    "endDate": "종료일",
+    "history": "이력",
+    "location": "위치",
+    "name": "이름",
+    "owner": "소유자",
+    "period": "기간",
+    "phone": "전화번호",
+    "priority": "우선순위",
+    "requester": "요청자",
+    "startDate": "시작일",
+    "status": "상태",
+    "step": "단계",
+    "subject": "제목",
+    "type": "유형",
+    "updatedAt": "수정일"
   },
   "pagination": {
     "first": "처음",

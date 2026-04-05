@@ -8,6 +8,7 @@
     "stepColor": "Color",
     "showOrderLabel": "Mostrar etiqueta del paso",
     "startIndex": "Número inicial",
-    "step": "Paso"
+    "step": "Paso",
+    "disable": "Deshabilitar"
   }
 }
