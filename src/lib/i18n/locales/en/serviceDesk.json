@@ -5,6 +5,7 @@
     "assign": "Assign",
     "assignMyself": "Assign myself",
     "reject": "Reject",
+    "filter": "Filter",
     "searchCriteria": "Search criteria"
   },
 
@@ -37,35 +38,23 @@
   },
 
   "field": {
-    "keyword": {
-      "label": "Keyword",
-      "placeholder": "Search by keyword"
-    },
-    "draft": {
-      "label": "Draft"
-    },
-    "reason": {
-      "label": "Reason"
-    },
-    "ticket": {
-      "label": "Ticket",
-      "placeholder": "Enter ticket number"
-    },
-    "tickets": {
-      "label": "Tickets",
-      "placeholder": "Enter ticket number"
-    },
-    "comment": {
-      "label": "Comment"
-    },
-    "comments": {
-      "label": "Comments"
-    }
+    "keyword": "Keyword",
+    "ticket": "Ticket",
+    "category": "Category",
+    "status": "Status",
+    "priority": "Priority",
+    "riskLevel": "Risk level",
+    "assignee": "Assignee",
+    "requester": "Requester",
+    "period": "Period",
+    "dueBy": "Due by",
+    "total": "Total"
   },
 
   "message": {
     "groupBy": "Group by",
     "filteringBy": "Filtering by",
+    "refineSearchCriteria": "Refine your search criteria",
     "from": "From",
     "assignTo": "Assign to",
     "dueBy": "Due by",
@@ -80,8 +69,16 @@
     "at": "at",
     "ago": "ago",
 
+    "createTicket": "Create ticket",
+    "editTicket": "Edit ticket",
+    "ticketCreation": "Ticket Creation",
+    "processingFlow": "Processing Flow",
+
     "validationPoint": "Select validation point",
 
+    "dragDrop": "Drag and drop files here",
+    "uploadFile": "or click to browse",
+    "noAttaches": "No attaches",
     "dragDropFile": "Drag & Drop File",
     "fileUploadLimit": "File Upload (max. 10 files)",
 
@@ -117,6 +114,14 @@
     "pending": "Pending",
     "resolved": "Resolved",
     "closed": "Closed"
+  },
+
+  "step": {
+    "issueDetails": "Issue Details",
+    "attachments": "Attachments",
+    "review": "Review & Submit",
+    "approval": "apporval",
+    "assign": "Assign"
   },
 
   "tab": {

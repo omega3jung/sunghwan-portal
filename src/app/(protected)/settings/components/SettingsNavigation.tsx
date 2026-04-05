@@ -16,6 +16,7 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { useUserPreferenceQuery } from "@/feature/user";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
@@ -24,7 +25,7 @@ export function SettingsNavigation() {
   const { data: userPreference } = useUserPreferenceQuery(null);
   const lang = userPreference?.language ?? "en";
 
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const settingsNavigationItems = createSettingsNavigationMock(t);
 
   const router = useRouter();

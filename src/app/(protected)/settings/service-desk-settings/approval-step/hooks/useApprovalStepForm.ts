@@ -10,6 +10,7 @@ import {
   ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
 } from "@/domain/serviceDesk";
+import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
 import { camelCase } from "@/shared/utils";
@@ -30,7 +31,7 @@ export const useApprovalStepForm = ({
   language,
   setTree,
 }: UseApprovalStepFormOptions) => {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
 
   const [languageTab, setLanguageTab] = useState<Locale>(language);
 

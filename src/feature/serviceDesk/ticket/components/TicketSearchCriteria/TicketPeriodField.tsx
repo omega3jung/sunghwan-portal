@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { DateRange } from "react-day-picker";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -15,35 +16,62 @@ type Props = {
   control: Control<TicketSearchCriteriaFormValues>;
 };
 
+type TicketPeriodInputValue = {
+  type: DateRangePreset;
+  dateRange: DateRange | undefined;
+};
+
+function TicketPeriodFieldInput({
+  value,
+  onChange,
+}: {
+  value: TicketPeriodInputValue;
+  onChange: (value: TicketPeriodInputValue) => void;
+}) {
+  const nextTypeRef = useRef<DateRangePreset>(value.type);
+
+  useEffect(() => {
+    nextTypeRef.current = value.type;
+  }, [value.type]);
+
+  return (
+    <DateRangePicker
+      period={value.type}
+      onPeriodChange={(selected) => {
+        nextTypeRef.current = selected ?? value.type;
+        onChange({
+          type: selected ?? value.type,
+          dateRange: value.dateRange,
+        });
+      }}
+      range={value.dateRange}
+      onRangeChange={(selected) => {
+        onChange({
+          type: nextTypeRef.current,
+          dateRange: selected,
+        });
+      }}
+      showTextType="all"
+      options={TICKET_PERIOD_OPTIONS}
+    />
+  );
+}
+
 export function TicketPeriodField({ control }: Props) {
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
     <Field>
       <FieldLabel htmlFor="ticket-search-select-period">
-        {t("general.period")}
+        {t("field.period")}
       </FieldLabel>
       <Controller
         control={control}
         name="period"
         render={({ field }) => (
-          <DateRangePicker
-            period={field.value.type as DateRangePreset}
-            onPeriodChange={(selected) => {
-              field.onChange({
-                type: selected,
-                dateRange: field.value.dateRange,
-              });
-            }}
-            range={field.value.dateRange as DateRange | undefined}
-            onRangeChange={(selected) => {
-              field.onChange({
-                type: field.value.type,
-                dateRange: selected,
-              });
-            }}
-            showRangeText={true}
-            options={TICKET_PERIOD_OPTIONS}
+          <TicketPeriodFieldInput
+            value={field.value as TicketPeriodInputValue}
+            onChange={field.onChange}
           />
         )}
       />

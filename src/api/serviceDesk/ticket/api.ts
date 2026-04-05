@@ -49,35 +49,35 @@ export const serviceDeskTicketApi = {
   },
 
   draft: {
-    get: async (userId?: string | null): Promise<TicketDetail | null> => {
+    get: async (userId?: string | null): Promise<TicketFormValues | null> => {
       if (!userId) return null;
 
-      const res = await client.api.get<TicketDetail>(
+      const res = await client.api.get<TicketFormValues>(
         `/api/service-desk/tickets/draft`,
         { params: { userId } },
       );
       return res.data;
     },
 
-    create: async (data: TicketFormValues): Promise<TicketDetail> => {
-      const res = await client.api.post<TicketDetail>(
+    create: async (data: TicketFormValues): Promise<TicketFormValues> => {
+      const res = await client.api.post<TicketFormValues>(
         `/api/service-desk/tickets/draft`,
         data,
       );
       return res.data;
     },
 
-    update: async (data: TicketFormValues): Promise<TicketDetail> => {
-      const res = await client.api.put<TicketDetail>(
-        `/api/service-desk/tickets/draft/${data.id}`,
+    update: async (data: TicketFormValues): Promise<TicketFormValues> => {
+      const res = await client.api.put<TicketFormValues>(
+        `/api/service-desk/tickets/draft/`,
         data,
       );
       return res.data;
     },
 
     // real delete draft data in db.
-    remove: async (id: string): Promise<null> => {
-      await client.api.delete(`/api/service-desk/tickets/draft/${id}`);
+    remove: async (): Promise<null> => {
+      await client.api.delete(`/api/service-desk/tickets/draft/`);
       return null;
     },
   },

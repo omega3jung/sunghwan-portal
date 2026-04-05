@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
+import type { MainCategory } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/keys";
@@ -22,14 +23,19 @@ import {
 } from "@/feature/serviceDesk/ticket/forms/searchCriteria";
 import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticket/utils/mapSearchCriteriaToDbParams";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useSessionStorageState } from "@/hooks/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
+
+const isPresent = <T,>(value: T | null | undefined): value is T =>
+  value !== null && value !== undefined;
 
 export default function ServiceDeskPage() {
   const router = useRouter();
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
+  const { data: currentSession } = useCurrentSession();
 
   const searchCriteriaState =
     useSessionStorageState<TicketSearchCriteriaFormValues>({
@@ -42,15 +48,30 @@ export default function ServiceDeskPage() {
     mapSearchCriteriaToDbParams(ticketSearchCriteriaFormDefaultValues),
   );
 
-  const { data: categoryTrees } = useServiceDeskCategoryListQuery({});
+  const { data: categoryTrees } = useServiceDeskCategoryListQuery({
+    filter: {
+      rules: [
+        {
+          field: "id",
+          operator: "=",
+          value: currentSession?.user.companyId,
+        },
+      ],
+    },
+  });
   const { data: employees } = useEmployeeListQuery({});
   const { data: tickets, isLoading: isTicketListLoading } =
     useServiceDeskTicketListQuery(params);
 
-  const categories = useMemo(
-    () => categoryTrees?.flatMap((client) => client.categories) ?? [],
-    [categoryTrees],
-  );
+  const categories = useMemo<MainCategory[]>(() => {
+    return (categoryTrees ?? [])
+      .flatMap((client) => client?.categories ?? [])
+      .filter(isPresent)
+      .map((category) => ({
+        ...category,
+        subCategories: (category.subCategories ?? []).filter(isPresent),
+      }));
+  }, [categoryTrees]);
 
   const users = useMemo<ImageValueLabel[]>(() => {
     if (!employees) {

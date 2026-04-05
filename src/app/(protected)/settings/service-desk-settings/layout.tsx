@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NS } from "@/lib/i18n";
 
 export default function ServiceDeskSettingsLayout({
   children,
@@ -14,7 +15,7 @@ export default function ServiceDeskSettingsLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
 
   const currentTab = pathname.split("/").at(-1);
 

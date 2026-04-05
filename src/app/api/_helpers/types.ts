@@ -6,6 +6,12 @@ export type RouteContext<
   params: TParams;
 };
 
+export type FilterRule = {
+  field?: string;
+  operator?: string;
+  value?: string;
+};
+
 export type IdRouteContext = RouteContext<{ id: string }>;
 export type TicketIdRouteContext = RouteContext<{ ticketId: string }>;
 export type UserIdRouteContext = RouteContext<{ userId: string }>;

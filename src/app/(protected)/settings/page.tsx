@@ -7,13 +7,14 @@ import { toast } from "sonner";
 
 import { createSettingsCardMock } from "@/app/_mocks/ui/navigation/settingsNavigation";
 import { Card } from "@/components/ui/card";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "./constants";
 import { SETTINGS_THEME } from "./constants/style";
 
 export default function SettingsPage() {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const settingsCardItems = createSettingsCardMock(t);
 
   const router = useRouter();

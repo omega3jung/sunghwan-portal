@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
+import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
 
@@ -36,7 +37,7 @@ export const AsgginmentRuleTree = ({
   language,
   isLoading,
 }: Props) => {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
 
   return (

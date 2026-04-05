@@ -35,7 +35,7 @@
     "options": {
       "today": "Today",
       "thisWeek": "This Week",
-      "this2Week": "This 2-Week Period",
+      "this2Week": "This 2 Weeks",
       "thisMonth": "This Month",
       "lastWeek": "Last Week",
       "last2Week": "Last 2 Weeks",
@@ -51,7 +51,7 @@
       "overDue": "Overdue",
       "today": "Today",
       "thisWeek": "This Week",
-      "this2Week": "This 2-Week Period",
+      "this2Week": "This 2 Weeks",
       "thisMonth": "This Month",
       "withinWeek": "Within a Week",
       "within2Week": "Within 2 Weeks",

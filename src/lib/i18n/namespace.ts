@@ -1,6 +1,7 @@
 export const NS = {
   auth: "auth",
   common: "common",
+  domain: "domain",
   dashboard: "dashboard",
   demo: "demo",
   error: "error",

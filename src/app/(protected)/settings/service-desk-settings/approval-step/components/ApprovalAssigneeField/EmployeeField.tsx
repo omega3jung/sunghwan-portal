@@ -6,6 +6,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
+import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
 
@@ -22,7 +23,7 @@ export function EmployeeField({
   onChange,
   language,
 }: EmployeeFieldProps) {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue(language);
   const { data: employees } = useEmployeeListQuery({});
 

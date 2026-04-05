@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { serviceDeskApprovalStepApi } from "@/api/serviceDesk/approvalStep";
 import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
@@ -6,11 +6,12 @@ import { DbParams } from "@/shared/types/api";
 
 import { approvalStepQueryKeys } from "./queryKeys";
 
-export const useServiceDeskApprovalStepListQuery = (params: DbParams) => {
+export const useServiceDeskApprovalStepListQuery = (params?: DbParams) => {
   return useQuery({
     queryKey: approvalStepQueryKeys.list(params),
     queryFn: () => serviceDeskApprovalStepApi.list(params),
-    enabled: !!params,
+    placeholderData: keepPreviousData,
+    enabled: params !== undefined,
     ...STATIC_QUERY_OPTIONS,
   });
 };

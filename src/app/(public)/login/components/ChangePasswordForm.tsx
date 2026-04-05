@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 
 import { changePasswordformSchema, ChangePasswordformType } from "../types";
 import { LoginStateEnum } from "../types";
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export const ChangePasswordForm = (props: Props) => {
-  const { t } = useTranslation("auth");
+  const { t } = useTranslation(NS.auth);
   const {
     isLoading,
     username,

@@ -16,6 +16,7 @@ import {
   useUserPreferenceQuery,
 } from "@/feature/user/preference";
 import { useLanguageState } from "@/hooks/useLanguage";
+import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/shared/utils";
 
@@ -40,7 +41,7 @@ export default function LoginPage() {
   const { mutate: createUserPreference } = useCreateUserPreference();
   const { mutate: updateUserPreference } = useUpdateUserPreference();
 
-  const { t } = useTranslation("auth");
+  const { t } = useTranslation(NS.auth);
   const { language, changeLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);

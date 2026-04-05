@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 
 import { verifyOTPFormSchema, VerifyOTPFormType } from "../types";
 
@@ -20,7 +21,7 @@ type Props = {
 type Step = "email" | "otp";
 
 export const ResetPasswordForm = (props: Props) => {
-  const { t } = useTranslation("auth");
+  const { t } = useTranslation(NS.auth);
   const { onSubmit, isLoading, onBack } = props;
 
   const [step, setStep] = useState<Step>("email");

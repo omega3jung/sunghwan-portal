@@ -16,6 +16,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { SupportedLanguage } from "@/domain/config";
+import { NS } from "@/lib/i18n";
 import { accessLevelOptions } from "@/shared/constants";
 import { ValueLabel } from "@/shared/types";
 
@@ -33,7 +34,7 @@ type Props = {
 
 export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
-    const { t } = useTranslation("settings");
+    const { t } = useTranslation(NS.settings);
 
     const {
       languageTab,

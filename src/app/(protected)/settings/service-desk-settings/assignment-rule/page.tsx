@@ -20,6 +20,7 @@ import {
   useServiceDeskCategoryListQuery,
 } from "@/feature/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
 
@@ -30,7 +31,7 @@ import { useAssignmentRuleTree } from "./hooks/useAssignmentRuleTree";
 
 export default function CategoryPage() {
   const { isInternal } = useSettingsScope();
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
 
   const { current: userPreference } = useCurrentPreference();
   const [language, setLanguage] = useState<Locale>(userPreference.language);

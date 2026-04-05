@@ -6,7 +6,7 @@ type ApprovalStepResponse = OResponse<CategoryApprovalSettings>;
 
 // feature-scoped API.
 export const serviceDeskApprovalStepApi = {
-  list: async (params: DbParams): Promise<CategoryApprovalSettings[]> => {
+  list: async (params?: DbParams): Promise<CategoryApprovalSettings[]> => {
     if (!params) return [];
 
     const res = await client.api.get<ApprovalStepResponse>(

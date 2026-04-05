@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupportedLanguage } from "@/domain/config";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useJobFieldListQuery } from "@/feature/organization/jobField";
+import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel, Locale, ValueLabel } from "@/shared/types";
 
@@ -29,7 +30,7 @@ type Props = {
 
 export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
-    const { t } = useTranslation("settings");
+    const { t } = useTranslation(NS.settings);
     const tLocal = useLocalizedValue(language);
 
     const { languageTab, setLanguageTab, languageOptions, assigneeChange } =

@@ -1,244 +1,117 @@
-import { ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Control, Controller } from "react-hook-form";
+import Image from "@tiptap/extension-image";
+import { TableKit } from "@tiptap/extension-table";
+import { Placeholder } from "@tiptap/extensions";
+import { Markdown } from "@tiptap/markdown";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
-import { DatePicker } from "@/components/custom/DatePicker";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Category } from "@/domain/serviceDesk";
-import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms/ticket";
-import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/types/constants";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
-import { ImageValueLabel, ValueLabel } from "@/shared/types";
-import { camelCase } from "@/shared/utils";
+import { cn } from "@/shared/utils";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
-
-const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
-type EmailFieldName = (typeof EMAIL_FIELDS)[number];
+import { TicketInfoFields } from "./TicketInfoFields";
 
 export const InfoStep = () => {
-  const { form, categories, users } = useTicketFormContext();
-
-  const { t } = useTranslation("serviceDesk");
+  const { form, categories } = useTicketFormContext();
+  const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
 
-  const [requestTemplate, setRequestTemplate] = useState<string>("");
+  const requestTemplateRef = useRef("");
+  const bodyValue = form.watch("body");
+  const subCategoryValue = form.watch("subCategory");
 
-  const categoryData = useMemo(
-    (): Array<{
-      category: ValueLabel;
-      subCategories: ValueLabel[];
-    }> =>
-      categories.map((category) => ({
-        category: {
-          value: category.id,
-          label: tLocal(category.name),
-        },
-        subCategories: category.subCategories.map((sub) => ({
-          value: sub.id,
-          label: tLocal(sub.name),
-        })),
-      })),
-    [categories, tLocal],
-  );
-
-  const onChangeTemplate = (subCatId: string) => {
+  const requestTemplate = useMemo(() => {
     const subCategories = categories.flatMap(
-      (category) => category.subCategories as Category[],
+      (category) => category.subCategories,
+    );
+    const selected = subCategories.find(
+      (subCat) => subCat.id === subCategoryValue,
     );
 
-    const selected = subCategories.find((subCat) => subCat.id === subCatId);
+    return selected?.requestTemplate !== undefined
+      ? tLocal(selected.requestTemplate)
+      : "";
+  }, [categories, subCategoryValue, tLocal]);
 
-    setRequestTemplate(
-      selected?.requestTemplate !== undefined
-        ? tLocal(selected?.requestTemplate)
-        : "",
-    );
-  };
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      Markdown,
+      StarterKit,
+      Image,
+      TableKit,
+      Placeholder.configure({
+        placeholder: () => requestTemplateRef.current,
+      }),
+    ],
+    content: bodyValue,
+    contentType: "markdown",
+    editorProps: {
+      attributes: {
+        class: "min-h-32 rounded-md px-3 py-2 text-sm focus:outline-none",
+      },
+    },
+    onUpdate: ({ editor: currentEditor }) => {
+      const markdown = currentEditor.getMarkdown();
 
-  return (
-    <FieldGroup>
-      <Field>
-        <FieldLabel htmlFor="info-step-select-category">
-          {t("field.category.label", { ns: "common" })}
-        </FieldLabel>
+      if (markdown === form.getValues("body")) {
+        return;
+      }
 
-        <Controller
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <Select
-              onValueChange={(subCat) => {
-                field.onChange(subCat);
-                onChangeTemplate(subCat);
-              }}
-            >
-              <SelectTrigger id="info-step-select-category" value={field.value}>
-                <SelectValue placeholder={t("placeholder.category")} />
-              </SelectTrigger>
+      form.setValue("body", markdown, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    },
+  });
 
-              <SelectContent>
-                {categoryData.map((group) => (
-                  <SelectGroup key={group.category.value}>
-                    <SelectLabel className="bg-muted/50 text-xs rounded">
-                      {group.category.label}
-                    </SelectLabel>
+  useEffect(() => {
+    requestTemplateRef.current = requestTemplate;
 
-                    {group.subCategories.map((sub) => (
-                      <SelectItem
-                        key={sub.value}
-                        value={sub.value}
-                        className="text-xs ml-2"
-                      >
-                        {sub.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </Field>
+    if (editor?.isEmpty) {
+      editor.view.dispatch(editor.state.tr);
+    }
+  }, [editor, requestTemplate]);
 
-      <Field>
-        <FieldLabel htmlFor="info-step-input-due-date">
-          {t("field.dueDate", { ns: "common" })}
-        </FieldLabel>
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
 
-        <Controller
-          control={form.control}
-          name="dueDate"
-          render={({ field }) => (
-            <DatePicker
-              id="info-step-input-due-date"
-              value={field.value}
-              onChange={(date) => field.onChange(date ?? new Date())}
-            />
-          )}
-        />
-      </Field>
+    if ((bodyValue ?? "") === editor.getMarkdown()) {
+      return;
+    }
 
-      <Collapsible>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="group w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
-          >
-            <ChevronRight className="transition-transform group-data-[state=open]:rotate-90" />
-            {t("field.email.label", { ns: "common" })}
-          </Button>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <Field>
-            {EMAIL_FIELDS.map((fieldName) => (
-              <EmailField
-                key={fieldName}
-                control={form.control}
-                emailFieldName={fieldName}
-                users={users}
-              />
-            ))}
-          </Field>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Field>
-        <FieldLabel htmlFor="info-step-input-subject">
-          {t("field.subject", { ns: "common" })}
-        </FieldLabel>
-
-        <Controller
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <Input
-              id="info-step-input-subject"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-      </Field>
-
-      <Field>
-        <FieldLabel htmlFor="info-step-input-body">
-          {t("field.body", { ns: "common" })}
-        </FieldLabel>
-
-        <Controller
-          control={form.control}
-          name="body"
-          render={({ field }) => (
-            <Input
-              id="info-step-input-body"
-              value={field.value}
-              onChange={field.onChange}
-              placeholder={requestTemplate}
-            />
-          )}
-        />
-      </Field>
-    </FieldGroup>
-  );
-};
-
-type EmailFieldProps = {
-  control: Control<TicketFormValues>;
-  emailFieldName: EmailFieldName;
-  users: ImageValueLabel[];
-};
-
-const EmailField = ({ control, emailFieldName, users }: EmailFieldProps) => {
-  const { t } = useTranslation("serviceDesk");
-
-  const localeField = camelCase(emailFieldName.replace(".", "_"));
+    editor.commands.setContent(bodyValue ?? "", {
+      contentType: "markdown",
+      emitUpdate: false,
+    });
+  }, [bodyValue, editor]);
 
   return (
-    <Controller
-      control={control}
-      name={emailFieldName}
-      render={({ field }) => (
-        <AvatarMultiComboBox
-          id={`info-step-select-${localeField}`}
-          placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
-          variant="ghost"
-          badgeVariant="primary"
-          options={users}
-          value={field.value ?? []}
-          maxImages={MAX_EMAIL_COUNT}
-          placeholder={t(`field.${localeField}.placeholder`, {
-            ns: NS.common,
-          })}
-          onSelect={(value) => field.onChange([...(field.value ?? []), value])}
-          onRemove={(selected) =>
-            field.onChange(
-              (field.value ?? []).filter((value) => value !== selected),
-            )
-          }
-        />
-      )}
-    />
+    <>
+      <TicketInfoFields mode="edit" />
+
+      <Field className="pt-4 gap-1">
+        <FieldLabel htmlFor="info-step-input-description">
+          {t("field.description", { ns: "common" })}
+        </FieldLabel>
+
+        <div className="space-y-2">
+          <EditorContent
+            id="info-step-input-description"
+            className={cn(
+              "editor-wrapper rounded-md border border-input bg-transparent shadow-sm min-h-52",
+              "[&_.is-editor-empty:first-child::before]:pointer-events-none [&_.is-editor-empty:first-child::before]:float-left [&_.is-editor-empty:first-child::before]:h-0 [&_.is-editor-empty:first-child::before]:text-muted-foreground [&_.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]",
+            )}
+            editor={editor}
+          />
+        </div>
+      </Field>
+    </>
   );
 };

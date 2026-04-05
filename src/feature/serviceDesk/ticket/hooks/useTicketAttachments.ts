@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { NS } from "@/lib/i18n";
+
 export const useTicketAttachments = ({
   maxCount,
   maxSizeMB,
@@ -9,7 +11,7 @@ export const useTicketAttachments = ({
   maxCount: number;
   maxSizeMB: number;
 }) => {
-  const { t } = useTranslation("serviceDesk");
+  const { t } = useTranslation(NS.serviceDesk);
   const [files, setFiles] = useState<File[]>([]);
 
   const addFiles = (fileList: FileList) => {

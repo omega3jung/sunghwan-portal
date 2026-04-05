@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { serviceDeskTicketApi } from "@/api/serviceDesk/ticket";
 
+import { TicketFormValues } from "../forms/ticket";
+import { useTicketDraftRepoContext } from "./helper";
 import { ticketQueryKeys } from "./queryKeys";
+import { serviceDeskTicketDraftRepo } from "./repo";
 
 export const useCreateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
@@ -39,37 +42,49 @@ export const useDeleteServiceDeskTicket = () => {
   });
 };
 
-export const useCreateServiceDeskTicketDraft = () => {
+export function useCreateServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
+  const context = useTicketDraftRepoContext();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketApi.draft.create,
+    mutationFn: (data: TicketFormValues) =>
+      serviceDeskTicketDraftRepo.create({
+        ...context,
+        data,
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.drafts() });
     },
   });
-};
+}
 
-export const useUpdateServiceDeskTicketDraft = () => {
+export function useUpdateServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
+  const context = useTicketDraftRepoContext();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketApi.draft.update,
+    mutationFn: (data: TicketFormValues) =>
+      serviceDeskTicketDraftRepo.update({
+        ...context,
+        data,
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.drafts() });
     },
   });
-};
+}
 
-export const useDeleteServiceDeskTicketDraft = () => {
+export function useRemoveServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
+  const context = useTicketDraftRepoContext();
+
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketApi.draft.remove,
+    mutationFn: () => serviceDeskTicketDraftRepo.remove(context),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.drafts() });
     },
   });
-};
+}

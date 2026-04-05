@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
+import { NS } from "@/lib/i18n";
 
 type Props = {
   stepAssignee: AssigneeByType<"MANAGER">;
@@ -10,7 +11,7 @@ type Props = {
 };
 
 export function ManagerField({ stepAssignee, onChange }: Props) {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
 
   return (
     <Field className="col-span-2">

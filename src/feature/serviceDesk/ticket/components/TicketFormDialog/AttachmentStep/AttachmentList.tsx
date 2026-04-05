@@ -2,6 +2,7 @@ import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { NS } from "@/lib/i18n";
 import { bytesToKB } from "@/shared/utils";
 
 type AttachmentListProps = {
@@ -19,14 +20,14 @@ export const AttachmentList = ({
   maxCount,
   maxSize,
 }: AttachmentListProps) => {
-  const { t } = useTranslation("serviceHub");
+  const { t } = useTranslation(NS.serviceDesk);
 
   return (
     <>
       <div className="space-y-2 max-h-48 overflow-y-auto">
         {files.length === 0 && (
           <div className="text-sm text-muted-foreground">
-            {t("general.noAttaches")}
+            {t("message.noAttaches")}
           </div>
         )}
 
@@ -62,7 +63,7 @@ export const AttachmentList = ({
 
       <div className="mt-3 flex justify-between text-sm text-muted-foreground">
         <span>
-          {t("attachList.total")} : {files.length}/{maxCount}
+          {t("field.total")} : {files.length}/{maxCount}
         </span>
         <span>
           {totalSizeMB}/{maxSize} MB

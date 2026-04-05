@@ -2,11 +2,13 @@ import { z } from "zod";
 
 export const ticketFormSchema = z.object({
   id: z.string().nullable(),
-  category: z.string().optional(),
+  mainCategory: z.string().optional(),
+  subCategory: z.string().optional(),
   subject: z.string().max(200),
   body: z.string(),
   dueDate: z.date(),
   priority: z.string().nullable(),
+  riskLevel: z.string().nullable(),
   email: z.object({
     to: z.string().array(),
     cc: z.string().array(),

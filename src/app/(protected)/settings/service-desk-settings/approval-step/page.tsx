@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useServiceDeskApprovalStepListQuery } from "@/feature/serviceDesk";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
 
@@ -23,7 +24,7 @@ import { ApprovalStepTree } from "./components/ApprovalStepTree";
 import { useApprovalStepTree } from "./hooks/useApprovalStepTree";
 
 export default function ApprovalStepPage() {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
 
   const { current: userPreference } = useCurrentPreference();
   const [language, setLanguage] = useState<Locale>(userPreference.language);

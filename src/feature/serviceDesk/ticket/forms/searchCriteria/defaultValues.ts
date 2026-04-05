@@ -9,14 +9,14 @@ export const ticketSearchCriteriaFormDefaultValues: TicketSearchCriteriaFormValu
     assignee: [],
     requester: [],
     period: {
-      type: "lastMonth",
+      type: "last_month",
       dateRange: {
         from: addMonths(new Date(), -1),
         to: new Date(),
       },
     },
     dueBy: {
-      type: "within2Week",
+      type: "within_2week",
       dateRange: {
         from: addMonths(new Date(), -1),
         to: new Date(),

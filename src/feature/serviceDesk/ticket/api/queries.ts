@@ -4,7 +4,9 @@ import { serviceDeskTicketApi } from "@/api/serviceDesk/ticket";
 import { DYNAMIC_QUERY_OPTIONS } from "@/lib/reactQuery";
 import { DbParams } from "@/shared/types/api";
 
+import { useTicketDraftRepoContext } from "./helper";
 import { ticketQueryKeys } from "./queryKeys";
+import { serviceDeskTicketDraftRepo } from "./repo";
 
 export const useServiceDeskTicketListQuery = (params: DbParams) => {
   return useQuery({
@@ -25,11 +27,13 @@ export const useServiceDeskTicketQuery = (id: string | number) => {
   });
 };
 
-export const useServiceDeskTicketDraftQuery = (userId?: string | null) => {
+export const useServiceDeskTicketDraftQuery = () => {
+  const context = useTicketDraftRepoContext();
+
   return useQuery({
-    queryKey: ticketQueryKeys.all,
-    queryFn: () => serviceDeskTicketApi.draft.get(userId),
-    enabled: !!userId,
+    queryKey: ticketQueryKeys.draft(context),
+    queryFn: () => serviceDeskTicketDraftRepo.get(context),
+    enabled: context.isReady,
     ...DYNAMIC_QUERY_OPTIONS,
   });
 };

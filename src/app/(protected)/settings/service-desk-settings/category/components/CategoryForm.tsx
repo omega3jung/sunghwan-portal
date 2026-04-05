@@ -21,6 +21,7 @@ import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
+import { NS } from "@/lib/i18n";
 import { Locale, ValueLabel } from "@/shared/types";
 
 import { scopeData } from "../constants";
@@ -37,7 +38,7 @@ type Props = {
 
 export const CategoryForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
-    const { t } = useTranslation("settings");
+    const { t } = useTranslation(NS.settings);
     const isCategoryNode = !!selectedNode && "subCategories" in selectedNode;
     const isScopeEnabled = isCategoryNode && selectedNode.isCreated;
 

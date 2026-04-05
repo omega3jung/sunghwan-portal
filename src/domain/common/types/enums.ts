@@ -20,23 +20,23 @@ export type RiskLevel = keyof typeof RISK_LEVEL;
 // to keep Service Desk search criteria independent from shared preset changes.
 export type TicketSearchPeriod =
   | "today"
-  | "thisWeek"
-  | "this2Week"
-  | "thisMonth"
-  | "lastWeek"
-  | "last2Week"
-  | "lastMonth"
-  | "last6Month"
+  | "this_week"
+  | "this_2week"
+  | "this_month"
+  | "last_week"
+  | "last_2week"
+  | "last_month"
+  | "last_6month"
   | "range";
 
 export type DueDate =
   | "all"
   | "overdue"
   | "today"
-  | "thisWeek"
-  | "this2Week"
-  | "thisMonth"
-  | "withinWeek"
-  | "within2Week"
-  | "withinMonth"
+  | "this_week"
+  | "this_2week"
+  | "this_month"
+  | "within_week"
+  | "within_2week"
+  | "within_month"
   | "range";

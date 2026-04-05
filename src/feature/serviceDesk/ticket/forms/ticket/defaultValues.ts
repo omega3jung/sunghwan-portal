@@ -2,11 +2,13 @@ import { TicketFormValues } from "./types";
 
 export const ticketFormDefaultValues: TicketFormValues = {
   id: null,
-  category: undefined,
+  mainCategory: undefined,
+  subCategory: undefined,
   subject: "",
   body: "",
   dueDate: new Date(),
   priority: "Medium",
+  riskLevel: "Medium",
   email: {
     to: [],
     cc: [],

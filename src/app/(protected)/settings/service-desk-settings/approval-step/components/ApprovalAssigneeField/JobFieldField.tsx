@@ -14,6 +14,7 @@ import {
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
 import { useJobFieldListQuery } from "@/feature/organization/jobField";
+import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";
 
@@ -24,7 +25,7 @@ type Props = {
 };
 
 export function JobFieldField({ stepAssignee, onChange, language }: Props) {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
   const { data: jobFields } = useJobFieldListQuery({});
 

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 type UploadDropzoneProps = {
@@ -21,7 +22,7 @@ export const UploadDropzone = ({
   onDrop,
   inputRef,
 }: UploadDropzoneProps) => {
-  const { t } = useTranslation("serviceHub");
+  const { t } = useTranslation(NS.serviceDesk);
 
   const handleDrop = (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -46,13 +47,11 @@ export const UploadDropzone = ({
         )}
       >
         <div className="flex flex-col items-center gap-3">
-          <div className="flex gap-2 font-semibold">
+          <div className="flex items-center gap-2 font-semibold text-primary">
             <FileUp />
-            <h5 className="text-base">{t("createTicketDialog.dragDrop")}</h5>
+            <h5 className="text-base">{t("message.dragDrop")}</h5>
           </div>
-          <h5 className="text-base font-normal">
-            {t("createTicketDialog.fileUpload")}
-          </h5>
+          <h5 className="font-normal">{t("message.uploadFile")}</h5>
         </div>
       </Button>
 

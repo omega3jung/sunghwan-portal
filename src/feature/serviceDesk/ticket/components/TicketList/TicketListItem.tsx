@@ -29,7 +29,7 @@ export const TicketListItem = ({
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer flex flex-col gap-3 border-b p-4 hover:bg-muted"
+      className="cursor-pointer flex flex-col gap-3 border-b px-4 py-2 hover:bg-muted"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">

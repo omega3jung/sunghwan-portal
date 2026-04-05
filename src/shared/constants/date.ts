@@ -26,7 +26,7 @@ export const DATE_RANGE_PRESET_LABEL_KEYS: Record<DateRangePreset, string> = {
 };
 
 export const WEEK_STARTS_ON = 1 as const;
-export const DATE_FORMAT = "dd MMM yyyy";
+export const DATE_FORMAT = "yyyy-MM-dd";
 
 export const DEFAULT_DATE_RANGE_PRESETS: DateRangePreset[] = [
   "today",
