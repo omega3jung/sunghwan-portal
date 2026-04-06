@@ -1,5 +1,7 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 import { TimelineItem } from "./TimelineItem";
@@ -12,6 +14,8 @@ const Root = ({
   itemClassName,
   compact = false,
 }: TimelineProps) => {
+  const { t } = useTranslation();
+
   const sortedItems = useMemo(() => {
     if (order === "asc") {
       return items;
@@ -23,7 +27,7 @@ const Root = ({
   if (sortedItems.length === 0) {
     return (
       <div className={cn("py-2 text-sm text-muted-foreground", className)}>
-        No history yet.
+        {t("empty.withItem", { ns: NS.common, item: t("field.history") })}
       </div>
     );
   }

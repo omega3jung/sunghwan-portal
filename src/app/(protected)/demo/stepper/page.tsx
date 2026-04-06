@@ -61,9 +61,8 @@ export default function AvatarMultiComboBoxPage() {
   }, [language, showStepOrderLabel, startIndex, t]);
 
   return (
-    <div className="flex flex-col">
-      <h4 className="p-2">{t("stepper.variants")}</h4>
-      <FieldGroup className="mt-4 p-2">
+    <div className="flex flex-col p-4">
+      <FieldGroup>
         <FieldSet>
           <FieldGroup className="grid grid-cols-4">
             <Field>

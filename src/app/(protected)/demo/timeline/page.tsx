@@ -52,7 +52,9 @@ export default function TimelineDemoPage() {
         ...item,
         badge: showBadge ? item.badge : undefined,
         description: showDescription ? item.description : undefined,
-        markerIcon: showMarkerIcon ? <MarkerIcon strokeWidth={2.25} /> : undefined,
+        markerIcon: showMarkerIcon ? (
+          <MarkerIcon strokeWidth={2.25} />
+        ) : undefined,
         meta: showMeta ? item.meta : undefined,
       };
     });
@@ -66,10 +68,8 @@ export default function TimelineDemoPage() {
   ]);
 
   return (
-    <div className="flex flex-col">
-      <h4 className="p-2">Timeline Demo</h4>
-
-      <FieldGroup className="mt-4 p-2">
+    <div className="flex flex-col p-4">
+      <FieldGroup>
         <FieldSet>
           <FieldGroup className="grid grid-cols-4 gap-6">
             <Field>
@@ -102,9 +102,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-compact">
-                Compact Mode
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-compact">Compact Mode</FieldLabel>
               <span className="flex items-center gap-2 pt-2">
                 <Checkbox
                   checked={compact}
@@ -118,9 +116,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-order">
-                Order
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-order">Order</FieldLabel>
               <RadioGroup
                 id="timeline-order"
                 className="flex px-2"
@@ -137,9 +133,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-icons">
-                Marker Icons
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-icons">Marker Icons</FieldLabel>
               <span className="flex items-center gap-2 pt-2">
                 <Checkbox
                   checked={showMarkerIcon}
@@ -153,9 +147,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-empty">
-                Empty State
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-empty">Empty State</FieldLabel>
               <span className="flex items-center gap-2 pt-2">
                 <Checkbox
                   checked={showEmptyState}
@@ -169,9 +161,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-badge">
-                Badge
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-badge">Badge</FieldLabel>
               <span className="flex items-center gap-2 pt-2">
                 <Checkbox
                   checked={showBadge}
@@ -201,9 +191,7 @@ export default function TimelineDemoPage() {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="timeline-meta">
-                Meta
-              </FieldLabel>
+              <FieldLabel htmlFor="timeline-meta">Meta</FieldLabel>
               <span className="flex items-center gap-2 pt-2">
                 <Checkbox
                   checked={showMeta}
@@ -219,9 +207,9 @@ export default function TimelineDemoPage() {
         </FieldSet>
       </FieldGroup>
 
-      <h4 className="p-2 pt-10">Timeline Preview</h4>
+      <h4 className="py-2 pt-10">Timeline Preview</h4>
 
-      <div className="grid gap-6 px-2 pb-6 lg:grid-cols-[minmax(320px,420px)_1fr]">
+      <div className="grid gap-6 pb-6 lg:grid-cols-[minmax(320px,420px)_1fr]">
         <section
           className={cn(
             "rounded-xl border bg-card p-4 shadow-sm",

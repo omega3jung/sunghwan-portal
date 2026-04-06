@@ -6,6 +6,7 @@ import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/custom/DatePicker/DateRangePicker";
 import { ShowTextType } from "@/components/custom/DatePicker/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DEFAULT_DATE_RANGE_PRESETS } from "@/shared/constants/date";
 import { DateRangePreset } from "@/shared/types";
@@ -34,49 +35,63 @@ export default function DateRangePickerPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h4 className="p-2">Period Variants</h4>
+    <div className="flex flex-col p-4">
+      <FieldGroup>
+        <FieldSet>
+          <FieldGroup className="grid grid-cols-4 gap-6">
+            <Field className="col-span-3">
+              <FieldLabel htmlFor="options-combo-box">
+                Period Options
+              </FieldLabel>
+              <MultiComboBox
+                id="options-combo-box"
+                options={testData}
+                value={selectedRanges}
+                onSelect={(selected: string) => {
+                  // sort by ranges order.
+                  const order = DEFAULT_DATE_RANGE_PRESETS;
 
-        <MultiComboBox
-          options={testData}
-          value={selectedRanges}
-          onSelect={(selected: string) => {
-            // sort by ranges order.
-            const order = DEFAULT_DATE_RANGE_PRESETS;
+                  setSelectedRanges(
+                    [...selectedRanges, selected as DateRangePreset].sort(
+                      (a, b) => order.indexOf(a) - order.indexOf(b),
+                    ),
+                  );
+                }}
+                onRemove={(selected: string) => {
+                  const newChoice = selectedRanges?.filter(
+                    (value) => value !== selected,
+                  );
 
-            setSelectedRanges(
-              [...selectedRanges, selected as DateRangePreset].sort(
-                (a, b) => order.indexOf(a) - order.indexOf(b),
-              ),
-            );
-          }}
-          onRemove={(selected: string) => {
-            const newChoice = selectedRanges?.filter(
-              (value) => value !== selected,
-            );
+                  setSelectedRanges(newChoice);
+                }}
+              />
+            </Field>
 
-            setSelectedRanges(newChoice);
-          }}
-        />
-      </div>
-      <div>
-        <h4 className="p-2">Range Text Variants</h4>
-        <RadioGroup
-          className="flex px-2"
-          value={rangeTextVariant as string}
-          onValueChange={(value) => setRangeTextVariant(value as ShowTextType)}
-        >
-          {variantData.map((variant) => (
-            <div key={variant} className="flex items-center space-x-2">
-              <RadioGroupItem value={variant} />
-              <h6>{variant}</h6>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
-      <div>
-        <h4 className="p-2">Date Range Picker</h4>
+            <Field>
+              <FieldLabel htmlFor="text-variants">
+                Range Text Variants
+              </FieldLabel>
+              <RadioGroup
+                id="text-variants"
+                className="flex px-2"
+                value={rangeTextVariant as string}
+                onValueChange={(value) =>
+                  setRangeTextVariant(value as ShowTextType)
+                }
+              >
+                {variantData.map((variant) => (
+                  <div key={variant} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant} />
+                    <h6>{variant}</h6>
+                  </div>
+                ))}
+              </RadioGroup>
+            </Field>
+          </FieldGroup>
+        </FieldSet>
+      </FieldGroup>
+      <div className="pt-10">
+        <h4 className="py-2">Date Range Picker</h4>
 
         <DateRangePicker
           variant={"underline"}

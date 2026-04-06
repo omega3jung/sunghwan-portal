@@ -109,7 +109,7 @@ export default function ServiceDeskPage() {
   };
 
   return (
-    <main className="flex h-full min-h-0 flex-col gap-4 p-4 md:p-6">
+    <main className="flex h-full min-h-0 flex-col gap-4 p-4 md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">IT Service Desk</h1>

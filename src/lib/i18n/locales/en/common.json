@@ -30,7 +30,8 @@
   },
 
   "empty": {
-    "noResults": "No results"
+    "noResults": "No results",
+    "withItem": "No {{item}}"
   },
 
   "placeholder": {

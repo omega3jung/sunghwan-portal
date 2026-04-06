@@ -13,6 +13,7 @@ import {
   MultiComboBox,
   TreeMultiComboBox,
 } from "@/components/custom/MultiComboBox";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -32,67 +33,84 @@ export default function MultiComboBoxPage() {
   const [badgeVariant, setBadgeVariant] = useState<ButtonVariant>("palette");
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h4 className="p-2">Combo Box Variants</h4>
-        <RadioGroup
-          className="flex px-2"
-          value={comboBoxVariant as string}
-          onValueChange={(value) =>
-            setComboBoxVariant(value as comboBoxVariant)
-          }
-        >
-          {comboBoxVariantData.map((variant) => (
-            <div key={variant} className="flex items-center space-x-2">
-              <RadioGroupItem value={variant} />
-              <h6>{variant}</h6>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
+    <div className="flex flex-col gap-4 p-4">
+      <FieldGroup>
+        <FieldSet>
+          <FieldGroup className="grid grid-cols-4">
+            <Field className="col-span-4">
+              <FieldLabel htmlFor="combo-box-variants-radio">
+                Combo Box Variants
+              </FieldLabel>
+              <RadioGroup
+                id="combo-box-variants-radio"
+                className="flex px-2"
+                value={comboBoxVariant as string}
+                onValueChange={(value) =>
+                  setComboBoxVariant(value as comboBoxVariant)
+                }
+              >
+                {comboBoxVariantData.map((variant) => (
+                  <div key={variant} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant} />
+                    <h6>{variant}</h6>
+                  </div>
+                ))}
+              </RadioGroup>
+            </Field>
 
-      <div>
-        <h4 className="p-2">Button Variants</h4>
-        <RadioGroup
-          className="flex px-2"
-          value={badgeVariant as string}
-          onValueChange={(value) => setBadgeVariant(value as ButtonVariant)}
-        >
-          {buttonVariantData.map((variant) => (
-            <div key={variant} className="flex items-center space-x-2">
-              <RadioGroupItem value={variant} />
-              <h6>{variant}</h6>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
+            <Field className="col-span-4">
+              <FieldLabel htmlFor="button-variants-radio">
+                Button Variants
+              </FieldLabel>
+              <RadioGroup
+                id="button-variants-radio"
+                className="flex px-2"
+                value={badgeVariant as string}
+                onValueChange={(value) =>
+                  setBadgeVariant(value as ButtonVariant)
+                }
+              >
+                {buttonVariantData.map((variant) => (
+                  <div key={variant} className="flex items-center space-x-2">
+                    <RadioGroupItem value={variant} />
+                    <h6>{variant}</h6>
+                  </div>
+                ))}
+              </RadioGroup>
+            </Field>
 
-      <div>
-        <h4 className="p-2">Palette Options</h4>
-        <div className="flex items-center gap-4 px-2">
-          <h6>Palette Start</h6>
-          <Input
-            className="w-20"
-            value={paletteStart}
-            onChange={(e) => setPaletteStart(parseInt(e.target.value))}
-            type={"number"}
-            min={1}
-            max={10}
-          />
-          <h6>Palette Pick</h6>
-          <Input
-            className="w-20"
-            value={palettePick}
-            onChange={(e) => setPalettePick(parseInt(e.target.value))}
-            type={"number"}
-            min={1}
-            max={10}
-          />
-        </div>
-      </div>
+            <Field>
+              <FieldLabel htmlFor="palette-start-input">
+                Palette Start
+              </FieldLabel>
+              <Input
+                id="palette-start-input"
+                className="w-20"
+                value={paletteStart}
+                onChange={(e) => setPaletteStart(parseInt(e.target.value))}
+                type={"number"}
+                min={1}
+                max={10}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="palette-pick-input">Palette Pick</FieldLabel>
+              <Input
+                id="palette-pick-input"
+                className="w-20"
+                value={palettePick}
+                onChange={(e) => setPalettePick(parseInt(e.target.value))}
+                type={"number"}
+                min={1}
+                max={10}
+              />
+            </Field>
+          </FieldGroup>
+        </FieldSet>
+      </FieldGroup>
 
-      <div className="max-w-sm p-2">
-        <h4 className="p-2">Multi ComboBox</h4>
+      <div className="max-w-sm">
+        <h4 className="py-2">Multi ComboBox</h4>
         <MultiComboBox
           variant={comboBoxVariant}
           badgeVariant={badgeVariant}
@@ -113,8 +131,8 @@ export default function MultiComboBoxPage() {
         />
       </div>
 
-      <div className="max-w-sm p-2">
-        <h4 className="p-2">Tree Multi ComboBox</h4>
+      <div className="max-w-sm">
+        <h4 className="py-2">Tree Multi ComboBox</h4>
         <TreeMultiComboBox
           variant={comboBoxVariant}
           badgeVariant={badgeVariant}
