@@ -2,3 +2,4 @@
 export * from "./avatar-multi-combo-box";
 export * from "./multi-combo-box";
 export * from "./stepper";
+export * from "./timeline";

@@ -4,13 +4,16 @@ import {
   CalendarRange,
   CircleUserRound,
   Contact,
+  History,
   Home,
   Puzzle,
+  RectangleEllipsis,
   Settings,
   Shapes,
   SquareStack,
   User,
   UserCog,
+  UserRoundCog,
   UserStar,
 } from "lucide-react";
 
@@ -64,14 +67,19 @@ export function createMenuMock(t: TFunction): MenuItems {
           {
             title: t("stepper", ns),
             path: "/demo/stepper",
-            icon: Shapes,
+            icon: RectangleEllipsis,
+          },
+          {
+            title: t("timeline", ns),
+            path: "/demo/timeline",
+            icon: History,
           },
         ],
       },
       {
         title: t("permissionBasedRenderingMenu", ns),
         path: "/",
-        icon: Shapes,
+        icon: UserRoundCog,
         children: [
           {
             title: t("adminPrivilegeMenu", ns),
