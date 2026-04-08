@@ -10,7 +10,7 @@ export const serviceDeskTicketHistoryApi = {
     if (!ticketId) return [];
 
     const res = await client.api.get<TicketHistoryResponse>(
-      `/api/service-desk/tickets/${ticketId}/history`,
+      `/api/service-desk/tickets/${ticketId}/histories`,
     );
 
     return res.data.items;

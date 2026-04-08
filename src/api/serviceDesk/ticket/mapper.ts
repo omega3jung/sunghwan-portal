@@ -19,7 +19,7 @@ export interface DbTicketSummary {
   ticket_number: string;
 
   created_at: ISODateString;
-  updated_at: ISODateString;
+  updated_at: ISODateString | null;
 
   requester_id: string;
 
@@ -50,7 +50,7 @@ export interface DbTicketDetail {
   ticket_number: string;
 
   created_at: ISODateString;
-  updated_at: ISODateString;
+  updated_at: ISODateString | null;
 
   requester_id: string;
 
@@ -93,7 +93,7 @@ export const camelTicketSummaryMapper: ArrayMapper<
     id: item.id,
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
-    updatedAt: item.updated_at,
+    updatedAt: nullToUndefined(item.updated_at),
     requesterId: item.requester_id,
     status: item.status,
     priority: item.priority,
@@ -121,7 +121,7 @@ export const camelTicketDetailMapper: ArrayMapper<
     id: item.id,
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
-    updatedAt: item.updated_at,
+    updatedAt: nullToUndefined(item.updated_at),
     requesterId: item.requester_id,
     status: item.status,
     priority: item.priority,
@@ -152,7 +152,7 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     id: item.id,
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
-    updated_at: item.updatedAt,
+    updated_at: undefinedToNull(item.updatedAt),
     requester_id: item.requesterId,
     status: item.status,
     priority: item.priority,
@@ -180,7 +180,7 @@ export const snakeTicketDetailMapper: ArrayMapper<
     id: item.id,
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
-    updated_at: item.updatedAt,
+    updated_at: undefinedToNull(item.updatedAt),
     requester_id: item.requesterId,
     status: item.status,
     priority: item.priority,

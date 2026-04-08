@@ -1,16 +1,16 @@
 import {
-  TicketTrackDurationFormValues,
-  TicketTrackRangeFormValues,
+  TicketTrackDurationFormInput,
+  TicketTrackRangeFormInput,
 } from "./types";
 
-export const ticketTrackTimeRangeFormDefaultValues: TicketTrackRangeFormValues =
+export const ticketTrackTimeRangeFormDefaultValues: TicketTrackRangeFormInput =
   {
     startAt: "",
     endAt: "",
     note: "",
   };
 
-export const ticketTrackTimeDurationFormDefaultValues: TicketTrackDurationFormValues =
+export const ticketTrackTimeDurationFormDefaultValues: TicketTrackDurationFormInput =
   {
     durationMinutes: undefined,
     note: "",

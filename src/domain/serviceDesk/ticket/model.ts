@@ -18,7 +18,7 @@ interface TicketBase {
   ticketNumber: string;
 
   createdAt: ISODateString;
-  updatedAt: ISODateString;
+  updatedAt?: ISODateString;
 
   requesterId: string;
 }
@@ -123,7 +123,7 @@ export interface TicketDetail
  */
 export interface TicketComment {
   ticketId: string;
-  commentNo: string;
+  commentNo: number;
 
   body: string;
   ownerId: string;
@@ -131,7 +131,7 @@ export interface TicketComment {
   visibility: CommentVisibility;
 
   createdAt: ISODateString;
-  updatedAt: ISODateString;
+  updatedAt?: ISODateString;
   active: boolean;
 
   files: Attach[];
@@ -146,7 +146,7 @@ export interface TicketComment {
  */
 export interface TicketTrackTime {
   ticketId: string;
-  trackTimeNo: string;
+  trackTimeNo: number;
 
   assigneeId: string;
 
@@ -158,7 +158,7 @@ export interface TicketTrackTime {
   note?: string;
 
   createdAt: ISODateString;
-  updatedAt: ISODateString;
+  updatedAt?: ISODateString;
 }
 
 /**
@@ -173,7 +173,7 @@ export interface TicketTrackTime {
  */
 export interface TicketHistory {
   ticketId: string;
-  historyNo: string;
+  historyNo: number;
 
   type: HistoryType;
   action: TicketHistoryAction;

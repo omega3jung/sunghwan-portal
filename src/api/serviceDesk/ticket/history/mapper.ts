@@ -1,4 +1,8 @@
 import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
+import {
   HistoryType,
   TicketHistory,
   TicketHistoryAction,
@@ -8,7 +12,7 @@ import { ISODateString } from "@/shared/types/date";
 
 export interface DbTicketHistory {
   ticket_id: string;
-  history_no: string;
+  history_no: number;
 
   type: HistoryType;
   action: TicketHistoryAction;
@@ -58,3 +62,10 @@ export const snakeTicketHistoryMapper: ArrayMapper<
     created_at: item.createdAt,
   }));
 };
+
+export const mapTicketHistoryListPayload = createListPayloadMapper(
+  camelTicketHistoryMapper,
+);
+export const mapTicketHistoryPayload = createItemPayloadMapper(
+  camelTicketHistoryMapper,
+);

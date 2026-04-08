@@ -5,7 +5,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
 
 export interface DbTicketTrackTime {
   ticket_id: string;
-  track_time_no: string;
+  track_time_no: number;
   assignee_id: string;
 
   start_at: ISODateString;
@@ -15,7 +15,7 @@ export interface DbTicketTrackTime {
   note: string | null;
 
   created_at: ISODateString;
-  updated_at: ISODateString;
+  updated_at: ISODateString | null;
 }
 
 export const camelTicketTrackTimeMapper: ArrayMapper<
@@ -31,7 +31,7 @@ export const camelTicketTrackTimeMapper: ArrayMapper<
     durationMinutes: item.duration_minutes,
     note: nullToUndefined(item.note),
     createdAt: item.created_at,
-    updatedAt: item.updated_at,
+    updatedAt: nullToUndefined(item.updated_at),
   }));
 };
 
@@ -48,6 +48,6 @@ export const snakeTicketTrackTimeMapper: ArrayMapper<
     duration_minutes: item.durationMinutes,
     note: undefinedToNull(item.note),
     created_at: item.createdAt,
-    updated_at: item.updatedAt,
+    updated_at: undefinedToNull(item.updatedAt),
   }));
 };

@@ -13,8 +13,8 @@ import {
   toTicketWritePayload,
 } from "@/api/serviceDesk/ticket/write";
 import {
-  clientTicketsMock,
-  internalTicketsMock,
+  clientTicketsMocks,
+  internalTicketsMocks,
 } from "@/app/_mocks/scenarios/serviceDesk/tickets";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   // demo mode
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const items = (isInternal ? internalTicketsMock : clientTicketsMock).map(
+    const items = (isInternal ? internalTicketsMocks : clientTicketsMocks).map(
       toTicketMockSummaryResource,
     );
 
