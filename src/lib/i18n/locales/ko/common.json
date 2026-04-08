@@ -27,7 +27,8 @@
     "yes": "예"
   },
   "empty": {
-    "noResults": "검색 결과가 없습니다"
+    "noResults": "검색 결과가 없습니다",
+    "withItem": "{{item}} 없음"
   },
   "placeholder": {
     "enter": "{{target}} 입력",
@@ -56,6 +57,7 @@
     "location": "위치",
     "name": "이름",
     "owner": "소유자",
+    "password": "비밀번호",
     "period": "기간",
     "phone": "전화번호",
     "priority": "우선순위",

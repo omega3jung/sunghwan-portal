@@ -62,6 +62,7 @@
     "location": "Location",
     "name": "Name",
     "owner": "Owner",
+    "password": "Password",
     "period": "Period",
     "phone": "Phone",
     "priority": "Priority",

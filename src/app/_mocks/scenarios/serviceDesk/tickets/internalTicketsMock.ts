@@ -9,7 +9,7 @@ export const internalTicketsMock1: DbTicketDetail = {
   status: "Resolved",
   priority: "medium",
   assignee_id: ["41"],
-  track_time_minutes: 18,
+  track_time_minutes: 60,
   last_comment_at: "2026-03-27T15:02:13Z",
   last_commenter_email: "liam.williams@sunghwan-portal.dev",
   due_at: "2026-04-02T18:00:00Z",
