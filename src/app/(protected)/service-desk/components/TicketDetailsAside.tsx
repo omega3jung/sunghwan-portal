@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Mail, UserRound } from "lucide-react";
+import { Info, Mail, UserRound, UserRoundKey } from "lucide-react";
 
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { ImageValueLabel } from "@/shared/types";
@@ -34,7 +34,7 @@ export function TicketDetailsAside({
         />
       </InfoCard>
 
-      <InfoCard icon={<UserRound className="h-4 w-4" />} title="Assignee">
+      <InfoCard icon={<UserRoundKey className="h-4 w-4" />} title="Assignee">
         {assignees.length > 0 ? (
           <div className="space-y-3">
             {assignees.map((assignee) => (

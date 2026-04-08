@@ -65,5 +65,12 @@
     "create": {
       "success": "User created successfully."
     }
+  },
+
+  "otp": {
+    "sent": "Enter {{code}} within {{minutes}} minutes.",
+    "resent": "OTP has been resent.",
+    "timeout": "Time expired",
+    "differentId": "Verified ID is different with current ID. Please verify OTP again."
   }
 }

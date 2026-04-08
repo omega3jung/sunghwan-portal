@@ -57,5 +57,11 @@
     "create": {
       "success": "El usuario se creó correctamente."
     }
+  },
+  "otp": {
+    "sent": "Ingrese {{code}} dentro de {{minutes}} minutos.",
+    "resent": "El OTP ha sido reenviado.",
+    "timeout": "El tiempo ha expirado.",
+    "differentId": "El ID verificado es diferente del ID actual. Verifique el OTP nuevamente."
   }
 }

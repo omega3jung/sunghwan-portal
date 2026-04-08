@@ -27,7 +27,8 @@
     "yes": "Sí"
   },
   "empty": {
-    "noResults": "Sin resultados"
+    "noResults": "Sin resultados",
+    "withItem": "Sin {{item}}"
   },
   "placeholder": {
     "enter": "Ingrese {{target}}",
@@ -56,6 +57,7 @@
     "location": "Ubicación",
     "name": "Nombre",
     "owner": "Propietario",
+    "password": "Contraseña",
     "period": "Período",
     "phone": "Teléfono",
     "priority": "Prioridad",

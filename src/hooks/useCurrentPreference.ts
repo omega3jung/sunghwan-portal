@@ -39,7 +39,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    */
   const store = usePreferenceStore();
 
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const { language, changeLanguage } = useLanguageState();
 
   /*
@@ -85,10 +85,6 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   const setLanguage = (language: Locale) => {
     updatePreference({ language });
     changeLanguage(language);
-  };
-
-  const useCurrentLanguage = () => {
-    return current.language;
   };
 
   /**
@@ -152,13 +148,13 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   useEffect(() => {
     if (!store.screenMode) return;
     setTheme(store.screenMode);
-  }, [store.screenMode]);
+  }, [setTheme, store.screenMode]);
 
   // language
   useEffect(() => {
-    if (!store.language) return;
+    if (!store.language || store.language === language) return;
     changeLanguage(store.language);
-  }, [store.language]);
+  }, [changeLanguage, language, store.language]);
 
   // clear session and impersonation when sign out.
   useEffect(() => {
