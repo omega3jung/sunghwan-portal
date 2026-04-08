@@ -1,10 +1,12 @@
-export enum LoginStateEnum {
-  LOGIN = "login",
-  CHANGE = "change",
-  RESET = "reset",
+export enum LoginView {
+  Login = "login",
+  ResetPassword = "reset-password",
+  ChangePassword = "change-password",
 }
 
-export interface ResetPasswordState {
+export interface PasswordResetSession {
   username: string;
   resetToken: string | null;
 }
+
+export type ResetPasswordStep = "email" | "otp";

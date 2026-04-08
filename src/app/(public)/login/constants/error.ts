@@ -1,36 +1,51 @@
-export enum LOGIN_ERROR_CODES {
+export enum LoginErrorCode {
   Default = "default",
-  Match = "credentials-dont-match",
-  Expired = "expired-credentials",
-  CredentialsSignin = "internal-error",
+  CredentialsDontMatch = "credentials-dont-match",
+  ExpiredCredentials = "expired-credentials",
+  InternalError = "internal-error",
 }
 
-type MessageSeverity =
-  | "default"
-  | "success"
-  | "info"
-  | "warning"
-  | "error"
-  | "promise";
+export type LoginToastSeverity = "default" | "warning" | "error";
 
-export const LOGIN_ERROR_MESSAGES: Record<
-  LOGIN_ERROR_CODES,
-  { severity: MessageSeverity; textKey: string }
-> = {
-  [LOGIN_ERROR_CODES.Default]: {
+type LoginErrorFeedback = {
+  severity: LoginToastSeverity;
+  textKey: string;
+};
+
+const LOGIN_ERROR_FEEDBACK: Record<LoginErrorCode, LoginErrorFeedback> = {
+  [LoginErrorCode.Default]: {
     severity: "default",
-    textKey: "errors." + LOGIN_ERROR_CODES.Default,
+    textKey: `errors.${LoginErrorCode.Default}`,
   },
-  [LOGIN_ERROR_CODES.Match]: {
+  [LoginErrorCode.CredentialsDontMatch]: {
     severity: "default",
-    textKey: "errors." + LOGIN_ERROR_CODES.Match,
+    textKey: `errors.${LoginErrorCode.CredentialsDontMatch}`,
   },
-  [LOGIN_ERROR_CODES.Expired]: {
+  [LoginErrorCode.ExpiredCredentials]: {
     severity: "warning",
-    textKey: "errors." + LOGIN_ERROR_CODES.Expired,
+    textKey: `errors.${LoginErrorCode.ExpiredCredentials}`,
   },
-  [LOGIN_ERROR_CODES.CredentialsSignin]: {
+  [LoginErrorCode.InternalError]: {
     severity: "default",
-    textKey: "errors." + LOGIN_ERROR_CODES.CredentialsSignin,
+    textKey: `errors.${LoginErrorCode.InternalError}`,
   },
-} as const;
+};
+
+export const getLoginErrorCode = (error: unknown): LoginErrorCode => {
+  if (!(error instanceof Error)) {
+    return LoginErrorCode.Default;
+  }
+
+  const errorCode = error.message as LoginErrorCode;
+
+  return errorCode in LOGIN_ERROR_FEEDBACK ? errorCode : LoginErrorCode.Default;
+};
+
+export const getLoginErrorFeedback = (error: unknown) => {
+  const code = getLoginErrorCode(error);
+
+  return {
+    code,
+    ...LOGIN_ERROR_FEEDBACK[code],
+  };
+};
