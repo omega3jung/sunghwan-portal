@@ -1,42 +1,43 @@
 import * as z from "zod";
 
-/**
- * Login form validation schema
- * Used for user authentication (username + password)
- */
+import { DEMO_OTP_CODE } from "../constants";
+
+const VALIDATION_MESSAGES = {
+  required: "validation:required.default",
+  invalidFormat: "validation:format.invalid",
+  minLength: "validation:length.min",
+  passwordMismatch: "auth:changePassword.passwordDontMatch",
+} as const;
+
 export const loginFormSchema = z.object({
-  username: z.string().min(1, "common:actions.requiredField"),
-  password: z.string().min(1, "common:actions.requiredField"),
+  username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
+  password: z.string().min(1, VALIDATION_MESSAGES.required),
 });
 
-export type LoginFormType = z.infer<typeof loginFormSchema>;
+export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-/**
- * OTP verification form schema
- * Used in "Forgot Password" flow before password reset
- */
-export const verifyOTPFormSchema = z.object({
-  username: z.string().trim().min(1, "User ID is required"),
-  email: z.email("Invalid email"),
-  otp: z.string().length(6).regex(/^\d+$/),
+export const verifyOtpFormSchema = z.object({
+  username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
+  email: z.string().trim().email(VALIDATION_MESSAGES.invalidFormat),
+  otp: z
+    .string()
+    .trim()
+    .length(DEMO_OTP_CODE.length, VALIDATION_MESSAGES.invalidFormat)
+    .regex(/^\d+$/, VALIDATION_MESSAGES.invalidFormat),
 });
 
-export type VerifyOTPFormType = z.infer<typeof verifyOTPFormSchema>;
+export type VerifyOtpFormValues = z.infer<typeof verifyOtpFormSchema>;
 
-/**
- * OTP verification form schema
- * Used in "Forgot Password" flow before password reset
- */
-export const changePasswordformSchema = z
+export const changePasswordFormSchema = z
   .object({
-    username: z.string().min(1),
+    username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
     current: z.string(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirm: z.string(),
+    password: z.string().min(8, VALIDATION_MESSAGES.minLength),
+    confirm: z.string().min(1, VALIDATION_MESSAGES.required),
   })
   .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
+    message: VALIDATION_MESSAGES.passwordMismatch,
     path: ["confirm"],
   });
 
-export type ChangePasswordformType = z.infer<typeof changePasswordformSchema>;
+export type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;

@@ -7,18 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { loginFormSchema, LoginFormType } from "../types";
+import { loginFormSchema, LoginFormValues } from "../types";
 
-type Props = {
+type LoginFormProps = {
   isLoading: boolean;
-  onSubmit: (values: LoginFormType) => Promise<void>;
+  onSubmit: (values: LoginFormValues) => Promise<void>;
 };
 
-export const LoginForm = (props: Props) => {
+export const LoginForm = ({ isLoading, onSubmit }: LoginFormProps) => {
   const { t } = useTranslation("login");
-  const { isLoading, onSubmit } = props;
 
-  const form = useForm<LoginFormType>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       username: "",
@@ -51,7 +50,7 @@ export const LoginForm = (props: Props) => {
                   id="login-input-username"
                   data-testid="login-username"
                   disabled={isLoading}
-                  className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
+                  className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
                   placeholder={t("common.usernamePlaceholder")}
                   required
                   {...form.register("username")}
@@ -64,7 +63,7 @@ export const LoginForm = (props: Props) => {
                 <Input
                   id="login-input-password"
                   disabled={isLoading}
-                  className="h-12 rounded-lg border border-primary bg-portal-accent placeholder:text-white lg:w-full"
+                  className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
                   placeholder={t("common.passwordPlaceholder")}
                   type="password"
                   required
@@ -75,7 +74,7 @@ export const LoginForm = (props: Props) => {
           </FieldSet>
           <Field>
             <Button
-              className="mt-6 h-12 rounded-lg text-base font-normal w-full"
+              className="mt-6 h-12 w-full rounded-lg text-base font-normal"
               type="submit"
               disabled={isLoading}
               data-testid="login-submit"
