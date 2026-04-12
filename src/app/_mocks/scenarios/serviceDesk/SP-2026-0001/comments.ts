@@ -1,10 +1,10 @@
 import { DbTicketComment } from "@/api/serviceDesk/ticket/comment";
 
-import { internalTicketsMock1 } from "../tickets";
+import { ticket } from "./ticket";
 
-export const internalCommentsMock1: DbTicketComment[] = [
+export const comments: DbTicketComment[] = [
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     comment_no: 1,
 
     body: "Hello, Liam.<br>I couldn't find 84321565 in the system. Could you check the device ID is correct?<br> Thank you.",
@@ -20,7 +20,7 @@ export const internalCommentsMock1: DbTicketComment[] = [
     images: [],
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     comment_no: 2,
 
     body: "84321565 is correct. Please check the screenshot.<br><img src='/_mocks/scenarios/serviceDesk/ticket-2026-1/comment-2_image-1.png' />",
@@ -44,7 +44,7 @@ export const internalCommentsMock1: DbTicketComment[] = [
     ],
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     comment_no: 3,
 
     body: "It was ' 84321565'. There is blank before 84321565.<br> I updated the device ID to 84321585.<br> Thanks and regards.",
@@ -60,7 +60,7 @@ export const internalCommentsMock1: DbTicketComment[] = [
     images: [],
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     comment_no: 4,
 
     body: "Thank you!!",
@@ -75,8 +75,4 @@ export const internalCommentsMock1: DbTicketComment[] = [
     files: [],
     images: [],
   },
-];
-
-export const internalCommentsMocks: DbTicketComment[] = [
-  ...internalCommentsMock1,
 ];

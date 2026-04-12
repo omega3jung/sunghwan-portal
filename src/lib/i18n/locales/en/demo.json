@@ -1,4 +1,131 @@
 {
+  "home": {
+    "hero": {
+      "protectedBadge": "Protected Home",
+      "enterpriseBadge": "Enterprise portal demo",
+      "title": "Workspace home for service operations, references, and platform setup.",
+      "description": "This protected home is designed as the first screen after sign-in. It gives a stable internal-portal overview of the current demo project, highlights the main work areas, and makes the next action obvious without turning the page into a heavy analytics dashboard.",
+      "actions": {
+        "openServiceDesk": "Open Service Desk",
+        "browseDocumentation": "Browse Documentation",
+        "reviewSettings": "Review Settings"
+      }
+    },
+    "calendar": {
+      "title": "Calendar"
+    },
+    "about": {
+      "title": "About This Home",
+      "description": "A practical entry screen for the current portfolio portal.",
+      "currentScope": {
+        "title": "Current scope",
+        "description": "Service desk flows, protected navigation, settings surfaces, and implementation-oriented documentation."
+      },
+      "architectureNotes": {
+        "note1": "Protected routes are framed as an internal portal rather than a public landing page.",
+        "note2": "Home content is structured around quick navigation, operational summary, and current implementation focus.",
+        "note3": "All content is lightweight mock data so the page can later be connected to real ticket, document, and approval APIs."
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Open the main work areas you are most likely to need right after sign-in.",
+      "openWorkspace": "Open workspace",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Browse tickets, review queue status, and continue current work.",
+          "meta": "Core workspace"
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Open working notes, design references, and implementation docs.",
+          "meta": "Knowledge hub"
+        },
+        "systemSettings": {
+          "title": "System Settings",
+          "description": "Review portal configuration areas and operating preferences.",
+          "meta": "Administration"
+        },
+        "serviceDeskSetup": {
+          "title": "Service Desk Setup",
+          "description": "Inspect categories, approval steps, and assignment rule structure.",
+          "meta": "Platform setup"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Work Summary",
+      "description": "Lightweight operational context for the demo portal home.",
+      "items": {
+        "openTickets": {
+          "label": "Open Tickets",
+          "description": "Issues currently in progress across support queues."
+        },
+        "pendingApprovals": {
+          "label": "Pending Approvals",
+          "description": "Requests waiting for workflow or policy confirmation."
+        },
+        "workingItems": {
+          "label": "Working Items",
+          "description": "Active implementation and follow-up tasks in this demo scope."
+        },
+        "resolvedThisWeek": {
+          "label": "Resolved This Week",
+          "description": "Completed tickets, fixes, and iteration outcomes."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Recent & Highlights",
+      "description": "Areas that best represent the current project direction and recent work context.",
+      "viewSection": "View section",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Ticket Workspace",
+          "description": "Main working area for search, filtering, and ticket follow-up.",
+          "category": "Service Desk",
+          "status": "Ready"
+        },
+        "authSessionFlow": {
+          "title": "Auth & Session Flow",
+          "description": "Login experience, redirect handling, and protected shell behavior.",
+          "category": "Architecture",
+          "status": "Current focus"
+        },
+        "serviceDeskSettings": {
+          "title": "Service Desk Settings",
+          "description": "Approval step, assignment rule, and category management surfaces.",
+          "category": "Administration",
+          "status": "In review"
+        },
+        "documentsHub": {
+          "title": "Documents Hub",
+          "description": "Reference area for docs, notes, and future decision records.",
+          "category": "Documentation",
+          "status": "Planned growth"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Current Focus",
+      "description": "A compact briefing panel for what this portal is emphasizing right now.",
+      "panelTitle": "Enterprise Portal Direction",
+      "panelDescription": "The home screen is intentionally scoped as an internal workspace entry point.",
+      "primaryGoals": {
+        "title": "Primary experience goals",
+        "items": {
+          "goal1": "Clear first-step navigation after authentication",
+          "goal2": "Balanced information density without dashboard overload",
+          "goal3": "Easy replacement of mock summary content with real data later"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Suggested next integrations",
+        "description": "Connect the summary cards to ticket counts, approvals, and recent document activity once the protected home is ready to consume real workspace data."
+      }
+    }
+  },
   "stepper": {
     "stepper": "Stepper",
     "variants": "Variants",

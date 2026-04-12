@@ -9,10 +9,8 @@ import {
   toTicketWritePayload,
   UpdateTicketInput,
 } from "@/api/serviceDesk/ticket/write";
-import {
-  clientTicketsMocks,
-  internalTicketsMocks,
-} from "@/app/_mocks/scenarios/serviceDesk/tickets";
+import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTicketsMock";
+import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 

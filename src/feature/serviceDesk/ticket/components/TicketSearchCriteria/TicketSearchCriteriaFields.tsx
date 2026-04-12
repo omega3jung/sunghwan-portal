@@ -45,6 +45,7 @@ const statusBadgeOrderByValue: Record<SystemStatus, number> = {
 export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedText(userPreference.language);
 
   const statusOptions = useMemo(
@@ -71,13 +72,13 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
     <FieldSet className="gap-10">
       <div>
         <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
-          Primary filters
+          {t("searchCriteria.primaryFilters")}
         </h3>
         <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/[0.18] p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <FieldGroup className="gap-5">
             <Field>
               <FieldLabel htmlFor="ticket-search-select-category">
-                {t("field.category")}
+                {tCommon("field.category")}
               </FieldLabel>
               <Controller
                 control={form.control}
@@ -92,7 +93,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                     onChange={field.onChange}
                     placeholder={t("placeholder.select", {
                       ns: NS.common,
-                      target: t("field.category"),
+                      target: tCommon("field.category"),
                     })}
                   />
                 )}
@@ -101,7 +102,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
 
             <Field>
               <FieldLabel htmlFor="ticket-search-select-status">
-                {t("field.status")}
+                {tCommon("field.status")}
               </FieldLabel>
               <Controller
                 control={form.control}
@@ -122,7 +123,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                     }}
                     placeholder={t("placeholder.select", {
                       ns: NS.common,
-                      target: t("field.status"),
+                      target: tCommon("field.status"),
                     })}
                     {...form.register("status")}
                   />
@@ -135,12 +136,12 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
       <FieldGroup className="gap-5">
         <div className="border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
-            Additional filters
+            {t("searchCriteria.additionalFilters")}
           </h3>
         </div>
         <Field>
           <FieldLabel htmlFor="ticket-search-select-priority">
-            {t("field.priority")}
+            {tCommon("field.priority")}
           </FieldLabel>
           <Controller
             control={form.control}
@@ -160,7 +161,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 }}
                 placeholder={t("placeholder.select", {
                   ns: NS.common,
-                  target: t("field.priority"),
+                  target: tCommon("field.priority"),
                 })}
               />
             )}
@@ -198,7 +199,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
 
         <Field>
           <FieldLabel htmlFor="ticket-search-select-assignee">
-            {t("field.assignee")}
+            {tCommon("field.assignee")}
           </FieldLabel>
           <Controller
             control={form.control}
@@ -216,7 +217,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 maxImages={3}
                 placeholder={t("placeholder.select", {
                   ns: NS.common,
-                  target: t("field.assignee"),
+                  target: tCommon("field.assignee"),
                 })}
               />
             )}
@@ -225,7 +226,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
 
         <Field>
           <FieldLabel htmlFor="ticket-search-select-requester">
-            {t("field.requester")}
+            {tCommon("field.requester")}
           </FieldLabel>
           <Controller
             control={form.control}
@@ -243,7 +244,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 maxImages={3}
                 placeholder={t("placeholder.select", {
                   ns: NS.common,
-                  target: t("field.requester"),
+                  target: tCommon("field.requester"),
                 })}
               />
             )}
@@ -254,7 +255,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
       <FieldGroup className="gap-5">
         <div className="pt-2 border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
-            Date filters
+            {t("searchCriteria.dateFilters")}
           </h3>
         </div>
         <TicketPeriodField control={form.control} />

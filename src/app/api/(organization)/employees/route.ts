@@ -11,7 +11,7 @@ import {
   toEmployeeMockResource,
   toEmployeeWritePayload,
 } from "@/api/organization/employee/write";
-import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee/employees";
+import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee";
 import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
 export async function GET(request: NextRequest) {

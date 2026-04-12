@@ -63,7 +63,7 @@ export function TicketPeriodField({ control }: Props) {
   return (
     <Field>
       <FieldLabel htmlFor="ticket-search-select-period">
-        {t("field.period")}
+        {t("field.period", { ns: NS.common })}
       </FieldLabel>
       <Controller
         control={control}

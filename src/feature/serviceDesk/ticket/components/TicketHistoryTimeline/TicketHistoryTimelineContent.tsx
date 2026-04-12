@@ -2,6 +2,7 @@
 
 import { ClockArrowDown, ClockArrowUp } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   Timeline,
@@ -12,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import type { TicketHistory } from "@/domain/serviceDesk";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 
 import { mapTicketHistoryToTimelineItem } from "./mapper";
@@ -35,11 +37,19 @@ export function TicketHistoryTimelineContent({
   showSortAction = true,
   className,
 }: TicketHistoryTimelineContentProps) {
+  const { t } = useTranslation(NS.serviceDesk);
+  const { t: tHistory } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "recentActivity",
+  });
+  const { t: tStatus } = useTranslation("StatusBadge");
+
   const mappedItems = useMemo<TimelineItemData[]>(() => {
     const resolvedItems = items?.length ? items : [];
 
-    return resolvedItems.map(mapTicketHistoryToTimelineItem);
-  }, [items]);
+    return resolvedItems.map((item) =>
+      mapTicketHistoryToTimelineItem(item, { t, tHistory, tStatus }),
+    );
+  }, [items, t, tHistory, tStatus]);
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
@@ -50,7 +60,10 @@ export function TicketHistoryTimelineContent({
               <div className="pointer-events-none sticky top-0 z-10 h-0">
                 <div className="absolute right-2 top-2 pointer-events-auto">
                   <Toggle
-                    aria-label="Toggle timeline order"
+                    aria-label={t(
+                      order === "desc" ? "sort.oldest" : "sort.latest",
+                      { ns: NS.common },
+                    )}
                     size="sm"
                     pressed={order === "asc"}
                     onPressedChange={(pressed) =>

@@ -1,3 +1,4 @@
+import { TFunction } from "i18next";
 import {
   Bot,
   Check,
@@ -13,30 +14,98 @@ import {
 
 import type { TimelineItemData } from "@/components/custom/Timeline";
 import type { TicketHistory } from "@/domain/serviceDesk";
+import { statusLocaleKey } from "@/shared/ui/StatusBadge/locales";
+import type { SystemStatus } from "@/shared/ui/StatusBadge/types";
 
 import { formatHistoryMeta } from "./utils";
 
-export function resolveHistoryBadge(history: TicketHistory): string {
+type HistoryTimelineMapperTranslation = {
+  t: TFunction;
+  tHistory: TFunction;
+  tStatus: TFunction;
+};
+
+export function resolveHistoryBadge(
+  history: TicketHistory,
+  t: TFunction,
+): string {
   switch (history.type) {
     case "STATUS":
-      return "Status";
+      return t("historyTimeline.badge.status");
     case "FIELD":
-      return "Field";
+      return t("historyTimeline.badge.field");
     case "ASSIGNMENT":
-      return "Assignment";
+      return t("historyTimeline.badge.assignment");
     case "APPROVAL":
-      return "Approval";
+      return t("historyTimeline.badge.approval");
     case "COMMENT":
-      return "Comment";
+      return t("historyTimeline.badge.comment");
     case "TRACK_TIME":
-      return "Track Time";
+      return t("historyTimeline.badge.trackTime");
     case "SLA":
-      return "SLA";
+      return t("historyTimeline.badge.sla");
     case "SYSTEM":
-      return "System";
+      return t("historyTimeline.badge.system");
     default:
-      return "History";
+      return t("historyTimeline.badge.default");
   }
+}
+
+export function getHistorySummary(
+  history: {
+    action: string;
+    fromValue?: unknown;
+    toValue?: unknown;
+  },
+  t: TFunction,
+  tStatus: TFunction,
+) {
+  switch (history.action) {
+    case "DELETED":
+      return t("history.DELETED");
+    case "STATUS_CHANGED":
+      if (history.fromValue && history.toValue) {
+        return t("history.STATUS_CHANGED", {
+          from: resolveHistoryStatusLabel(history.fromValue, tStatus),
+          to: resolveHistoryStatusLabel(history.toValue, tStatus),
+        });
+      }
+      return t("history.STATUS_CHANGED_SIMPLE");
+    case "ASSIGNEE_CHANGED":
+      return t("history.ASSIGNEE_CHANGED");
+    case "APPROVAL_REQUESTED":
+      return t("history.APPROVAL_REQUESTED");
+    case "APPROVAL_APPROVED":
+      return t("history.APPROVAL_APPROVED");
+    case "APPROVAL_DECLINED":
+      return t("history.APPROVAL_DECLINED");
+    case "COMMENT_CREATED":
+      return t("history.COMMENT_CREATED");
+    case "COMMENT_UPDATED":
+      return t("history.COMMENT_UPDATED");
+    case "COMMENT_DELETED":
+      return t("history.COMMENT_DELETED");
+    case "TRACK_TIME_UPDATED":
+      return t("history.TRACK_TIME_UPDATED");
+    case "UPDATED":
+      return t("history.UPDATED");
+    case "CREATED":
+      return t("history.CREATED");
+    default:
+      return t("history.DEFAULT");
+  }
+}
+
+function isSystemStatus(value: unknown): value is SystemStatus {
+  return typeof value === "string" && value in statusLocaleKey;
+}
+
+function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
+  if (isSystemStatus(value)) {
+    return tStatus(statusLocaleKey[value]);
+  }
+
+  return String(value);
 }
 
 export function resolveHistoryIcon(history: TicketHistory) {
@@ -90,62 +159,19 @@ export function resolveHistoryIcon(history: TicketHistory) {
   }
 }
 
-export function resolveHistoryTitle(history: TicketHistory): string {
-  switch (history.action) {
-    case "CREATED":
-      return "Ticket created";
-
-    case "UPDATED":
-      return "Ticket updated";
-
-    case "DELETED":
-      return "Ticket deleted";
-
-    case "STATUS_CHANGED": {
-      if (history.fromValue && history.toValue) {
-        return `Status changed from ${String(history.fromValue)} to ${String(history.toValue)}`;
-      }
-      return "Status changed";
-    }
-
-    case "ASSIGNEE_CHANGED":
-      return "Assignee changed";
-
-    case "APPROVAL_REQUESTED":
-      return "Approval requested";
-
-    case "APPROVAL_APPROVED":
-      return "Approval approved";
-
-    case "APPROVAL_DECLINED":
-      return "Approval declined";
-
-    case "COMMENT_CREATED":
-      return "Comment added";
-
-    case "COMMENT_UPDATED":
-      return "Comment updated";
-
-    case "COMMENT_DELETED":
-      return "Comment deleted";
-
-    case "TRACK_TIME_UPDATED":
-      return "Track time updated";
-
-    default:
-      return "History updated";
-  }
-}
-
 export function resolveHistoryDescription(
   history: TicketHistory,
+  t: TFunction,
 ): string | undefined {
   if (
     history.type === "FIELD" &&
     history.fromValue !== undefined &&
     history.toValue !== undefined
   ) {
-    return `${String(history.fromValue)} ??${String(history.toValue)}`;
+    return t("historyTimeline.valueChanged", {
+      from: String(history.fromValue),
+      to: String(history.toValue),
+    });
   }
 
   if (history.metadata && typeof history.metadata === "object") {
@@ -168,13 +194,14 @@ export function resolveHistoryDescription(
 
 export function mapTicketHistoryToTimelineItem(
   history: TicketHistory,
+  { t, tHistory, tStatus }: HistoryTimelineMapperTranslation,
 ): TimelineItemData {
   return {
     id: `${history.ticketId}:${history.historyNo}`,
-    title: resolveHistoryTitle(history),
-    description: resolveHistoryDescription(history),
+    title: getHistorySummary(history, tHistory, tStatus),
+    description: resolveHistoryDescription(history, t),
     meta: formatHistoryMeta(history),
-    badge: resolveHistoryBadge(history),
+    badge: resolveHistoryBadge(history, t),
     markerIcon: resolveHistoryIcon(history),
     palette: undefined,
   };

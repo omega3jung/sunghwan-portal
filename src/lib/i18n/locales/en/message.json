@@ -1,11 +1,17 @@
 {
   "common": {
+    "backToList": "Back to ticket list",
+
+    "openDetailAside": "Open the aside to see ticket details",
+    "openHistoryDrawer": "Open the aside to see history of this ticket",
+
     "create": {
       "title": "Created",
       "loading": "Creating {{item}}",
       "success": "{{item}} created.",
       "successWithId": "{{item}} {{id}} created.",
-      "successfully": "Created successfully."
+      "successfully": "Created successfully.",
+      "age": "Created {{date}} ago."
     },
 
     "save": {

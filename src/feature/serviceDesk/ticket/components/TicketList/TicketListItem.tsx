@@ -1,9 +1,12 @@
 // TicketListItem.tsx
 
+import { useTranslation } from "react-i18next";
+
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SupportedLanguage } from "@/domain/config";
 import { TicketSummary } from "@/domain/serviceDesk";
+import { NS } from "@/lib/i18n";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
@@ -23,8 +26,17 @@ export const TicketListItem = ({
   language,
   onClick,
 }: TicketListItemProps) => {
+  const { t } = useTranslation(NS.serviceDesk);
   const requester = users.find((user) => user.value === ticket.requesterId);
   const requesterName = requester?.label ?? ticket.requesterId;
+  const createdTime = formatTimeDistanceFromNow(
+    ticket.createdAt,
+    dateLocaleMap[language],
+  );
+  const dueTime = formatTimeDistanceFromNow(
+    ticket.dueAt,
+    dateLocaleMap[language],
+  );
 
   return (
     <div
@@ -39,11 +51,10 @@ export const TicketListItem = ({
           </div>
 
           <div className="text-xs text-muted-foreground">
-            {requesterName} ·{" "}
-            {formatTimeDistanceFromNow(
-              ticket.createdAt,
-              dateLocaleMap[language],
-            )}
+            {t("ticketList.requesterMeta", {
+              name: requesterName,
+              time: createdTime,
+            })}
           </div>
         </div>
 
@@ -58,8 +69,7 @@ export const TicketListItem = ({
           </Avatar>
 
           <span className="text-xs text-muted-foreground">
-            Due{" "}
-            {formatTimeDistanceFromNow(ticket.dueAt, dateLocaleMap[language])}
+            {t("ticketList.dueMeta", { time: dueTime })}
           </span>
         </div>
 

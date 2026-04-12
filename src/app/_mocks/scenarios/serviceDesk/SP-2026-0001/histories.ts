@@ -1,10 +1,10 @@
 import { DbTicketHistory } from "@/api/serviceDesk/ticket/history";
 
-import { internalTicketsMock1 } from "../tickets";
+import { ticket } from "./ticket";
 
-export const internalHistoriesMock1: DbTicketHistory[] = [
+export const histories: DbTicketHistory[] = [
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 1,
 
     type: "SYSTEM",
@@ -16,7 +16,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-26T22:44:33Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 2,
 
     type: "APPROVAL",
@@ -28,7 +28,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-26T22:44:34Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 3,
 
     type: "APPROVAL",
@@ -40,7 +40,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T08:48:37Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 4,
 
     type: "ASSIGNMENT",
@@ -55,7 +55,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T08:48:38Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 5,
 
     type: "COMMENT",
@@ -67,7 +67,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T09:15:00Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 6,
 
     type: "COMMENT",
@@ -79,7 +79,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T12:55:58Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 7,
 
     type: "COMMENT",
@@ -91,7 +91,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T14:36:47Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 8,
 
     type: "STATUS",
@@ -106,7 +106,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T14:37:05Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 9,
 
     type: "TRACK_TIME",
@@ -118,7 +118,7 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
     created_at: "2026-03-27T14:38:25Z",
   },
   {
-    ticket_id: internalTicketsMock1.id,
+    ticket_id: ticket.id,
     history_no: 10,
 
     type: "COMMENT",
@@ -129,8 +129,4 @@ export const internalHistoriesMock1: DbTicketHistory[] = [
 
     created_at: "2026-03-27T15:02:13Z",
   },
-];
-
-export const internalHistoriesMocks: DbTicketHistory[] = [
-  ...internalHistoriesMock1,
 ];

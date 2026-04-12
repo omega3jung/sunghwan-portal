@@ -5,7 +5,6 @@
     "assign": "Assign",
     "assignMyself": "Assign myself",
     "reject": "Reject",
-    "filter": "Filter",
     "searchCriteria": "Search criteria"
   },
 
@@ -40,15 +39,10 @@
   "field": {
     "keyword": "Keyword",
     "ticket": "Ticket",
-    "category": "Category",
-    "status": "Status",
-    "priority": "Priority",
     "riskLevel": "Risk level",
-    "assignee": "Assignee",
-    "requester": "Requester",
-    "period": "Period",
     "dueBy": "Due by",
-    "total": "Total"
+    "total": "Total",
+    "list": "List"
   },
 
   "message": {
@@ -100,11 +94,6 @@
     "none": "No response"
   },
 
-  "sort": {
-    "latest": "Sort by latest",
-    "oldest": "Sort by oldest"
-  },
-
   "status": {
     "pre": "Pre",
     "open": "Open",
@@ -112,6 +101,7 @@
     "declined": "Declined",
     "working": "Working",
     "pending": "Pending",
+    "rejected": "Rejected",
     "resolved": "Resolved",
     "closed": "Closed"
   },
@@ -131,5 +121,161 @@
     "openTickets": "Open Tickets",
     "closedTickets": "Closed Tickets",
     "overdueTickets": "Overdue Tickets"
+  },
+
+  "detailAside": {
+    "recipientsTitle": "Recipients",
+    "unassigned": "Unassigned",
+    "ticketId": "Ticket ID"
+  },
+
+  "historySheet": {
+    "title": "Ticket History",
+    "description": "Review the ticket history timeline."
+  },
+
+  "detailPage": {
+    "detailsTitle": "Ticket Details",
+    "descriptionTitleHint": "Core request details and the latest at-a-glance activity.",
+    "replyTitle": "Reply",
+    "replyTitleHint": "Reply, leave an internal note, and review discussion in one continuous workflow.",
+    "notFound": "Ticket not found."
+  },
+
+  "recentActivity": {
+    "title": "Recent activity",
+
+    "latestUpdate": {
+      "label": "Latest update",
+      "empty": "No history yet",
+      "fallbackMeta": "Timeline will appear here"
+    },
+
+    "conversation": {
+      "label": "Conversation",
+      "empty": "No comments yet",
+      "latestPrefix": "Latest",
+      "start": "Start the conversation below",
+      "count_one": "{{count}} comment",
+      "count_other": "{{count}} comments"
+    },
+
+    "lastCommenter": {
+      "label": "Last commenter",
+      "emptyName": "No commenter yet",
+      "emptyEmail": "Updates will appear as the ticket moves"
+    },
+
+    "history": {
+      "STATUS_CHANGED": "Status moved from {{from}} to {{to}}",
+      "STATUS_CHANGED_SIMPLE": "Status changed",
+      "ASSIGNEE_CHANGED": "Assignee updated",
+      "APPROVAL_REQUESTED": "Approval requested",
+      "APPROVAL_APPROVED": "Approval approved",
+      "APPROVAL_DECLINED": "Approval declined",
+      "COMMENT_CREATED": "Comment added",
+      "COMMENT_UPDATED": "Comment updated",
+      "COMMENT_DELETED": "Comment deleted",
+      "TRACK_TIME_UPDATED": "Tracked time updated",
+      "UPDATED": "Ticket updated",
+      "DELETED": "Ticket deleted",
+      "CREATED": "Ticket created",
+      "DEFAULT": "History updated"
+    }
+  },
+
+  "historyTimeline": {
+    "description": "Timeline view for recent ticket activity.",
+
+    "badge": {
+      "status": "Status",
+      "field": "Field",
+      "assignment": "Assignment",
+      "approval": "Approval",
+      "comment": "Comment",
+      "trackTime": "Track Time",
+      "sla": "SLA",
+      "system": "System",
+      "default": "History"
+    },
+
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+
+  "comment": {
+    "attachments": {
+      "images": "Images",
+      "files": "Files"
+    },
+
+    "empty": {
+      "noResult": "No comments match your search."
+    },
+
+    "item": {
+      "toggleDetails": "Toggle comment details",
+      "number": "Comment #{{number}}",
+      "edited": "Edited",
+
+      "visibility": {
+        "public": "Public",
+        "internal": "Internal note"
+      }
+    },
+
+    "list": {
+      "titleHint": "Search, sort, and review ticket discussion history.",
+      "countLabel_one": "comment",
+      "countLabel_other": "comments"
+    },
+
+    "search": {
+      "placeholder": "Search comments"
+    },
+
+    "editor": {
+      "placeholderPublic": "Write a comment and keep the conversation moving",
+      "placeholderInternal": "Share an internal note for this ticket",
+      "validationEmpty": "Please enter a comment before submitting."
+    },
+
+    "composer": {
+      "currentUser": "Current user",
+      "helperPublic": "Public comments are part of the visible ticket conversation.",
+      "helperInternal": "Internal notes are visible only to internal teams.",
+      "submitPublic": "Post comment",
+      "submitInternal": "Post internal note",
+      "internalNoteLabel": "Internal note",
+      "launcherPublicDescription": "Write a visible reply on the ticket thread.",
+      "launcherInternalDescription": "Leave context that stays within internal teams."
+    },
+
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "quote": "Quote",
+      "codeBlock": "Code block",
+      "undo": "Undo",
+      "redo": "Redo"
+    }
+  },
+
+  "listPage": {
+    "title": "IT Service Desk",
+    "description": "Search and browse service desk tickets."
+  },
+
+  "ticketList": {
+    "empty": "No tickets found",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "Due {{time}}"
+  },
+
+  "searchCriteria": {
+    "primaryFilters": "Primary filters",
+    "additionalFilters": "Additional filters",
+    "dateFilters": "Date filters"
   }
 }

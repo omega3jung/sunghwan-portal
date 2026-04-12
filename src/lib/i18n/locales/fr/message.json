@@ -1,11 +1,17 @@
 {
   "common": {
+    "backToList": "Retour à la liste des tickets",
+
+    "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
+    "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket",
+
     "create": {
       "title": "Créé",
       "loading": "Création de {{item}}",
       "success": "{{item}} créé.",
       "successWithId": "{{item}} {{id}} créé.",
-      "successfully": "Créé avec succès."
+      "successfully": "Créé avec succès.",
+      "age": "Créé il y a {{date}}."
     },
     "save": {
       "title": "Enregistré",

@@ -1,7 +1,10 @@
 // TicketList.tsx
 
+import { useTranslation } from "react-i18next";
+
 import { SupportedLanguage } from "@/domain/config";
 import { TicketSummary } from "@/domain/serviceDesk";
+import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import { TicketListItem } from "./TicketListItem";
@@ -22,12 +25,14 @@ export const TicketList = ({
   language,
   isLoading,
 }: TicketListProps) => {
+  const { t } = useTranslation(NS.serviceDesk);
+
   if (isLoading) return <TicketListSkeleton />;
 
   if (!tickets.length)
     return (
       <div className="flex h-40 items-center justify-center text-muted-foreground">
-        No tickets found
+        {t("ticketList.empty")}
       </div>
     );
 

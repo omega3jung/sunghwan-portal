@@ -1,5 +1,10 @@
 import { formatDistance, formatISO, Locale } from "date-fns";
 
+const MINUTES_PER_HOUR = 60;
+const MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
+const MINUTES_PER_MONTH = MINUTES_PER_DAY * 30;
+const MINUTES_PER_YEAR = MINUTES_PER_DAY * 365;
+
 /**
  * Formats a date-like value as a relative time string from now.
  *
@@ -22,6 +27,67 @@ export const formatTimeDistanceFromNow = (
   const date = typeof timeStamp === "string" ? new Date(timeStamp) : timeStamp;
 
   return formatDistance(new Date(), date, { locale, addSuffix: true });
+};
+
+/**
+ * Formats a timestamp into a compact elapsed label such as `14d`, `3h`, or `2mo`.
+ *
+ * @param timeStamp - The date value to compare against the current time
+ * @returns A compact elapsed label, or an empty string when the input is invalid
+ */
+export const formatCompactTimeDistanceFromNow = (
+  timeStamp?: string | Date | null,
+) => {
+  if (!timeStamp) {
+    return "";
+  }
+
+  const date = typeof timeStamp === "string" ? new Date(timeStamp) : timeStamp;
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const diffInMinutes = Math.max(
+    0,
+    Math.floor(Math.abs(Date.now() - date.getTime()) / (1000 * 60)),
+  );
+
+  return formatCompactDurationFromMinutes(diffInMinutes);
+};
+
+/**
+ * Formats a duration in minutes into a compact label such as `45m`, `3h`, or `2mo`.
+ *
+ * @param minutes - The total duration in minutes
+ * @returns A compact duration label, or an empty string when the input is invalid
+ */
+export const formatCompactDurationFromMinutes = (
+  minutes?: number | null,
+) => {
+  if (minutes == null || Number.isNaN(minutes)) {
+    return "";
+  }
+
+  const safeMinutes = Math.max(0, Math.floor(minutes));
+
+  if (safeMinutes < MINUTES_PER_HOUR) {
+    return `${safeMinutes}m`;
+  }
+
+  if (safeMinutes < MINUTES_PER_DAY) {
+    return `${Math.floor(safeMinutes / MINUTES_PER_HOUR)}h`;
+  }
+
+  if (safeMinutes < MINUTES_PER_MONTH) {
+    return `${Math.floor(safeMinutes / MINUTES_PER_DAY)}d`;
+  }
+
+  if (safeMinutes < MINUTES_PER_YEAR) {
+    return `${Math.floor(safeMinutes / MINUTES_PER_MONTH)}mo`;
+  }
+
+  return `${Math.floor(safeMinutes / MINUTES_PER_YEAR)}y`;
 };
 
 /**

@@ -7,6 +7,7 @@ export type TicketStatus =
   | "Declined"
   | "Working"
   | "Pending"
+  | "Rejected"
   | "Resolved"
   | "Closed";
 

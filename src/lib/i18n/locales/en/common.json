@@ -20,26 +20,16 @@
     "submit": "Submit",
     "update": "Update",
     "upload": "Upload",
-
     "withItem": "{{action}} {{item}}"
   },
-
   "boolean": {
     "no": "No",
     "yes": "Yes"
   },
-
   "empty": {
     "noResults": "No results",
     "withItem": "No {{item}}"
   },
-
-  "placeholder": {
-    "enter": "Enter {{target}}",
-    "search": "Search {{target}}",
-    "select": "Select {{target}}"
-  },
-
   "field": {
     "age": "Age",
     "agent": "Agent",
@@ -54,9 +44,9 @@
     "details": "Details",
     "dueDate": "Due Date",
     "email": "Email",
-    "emailTo": "To",
-    "emailCc": "CC",
     "emailBcc": "BCC",
+    "emailCc": "CC",
+    "emailTo": "To",
     "endDate": "End Date",
     "history": "History",
     "location": "Location",
@@ -74,7 +64,6 @@
     "type": "Type",
     "updatedAt": "Updated At"
   },
-
   "pagination": {
     "first": "First",
     "last": "Last",
@@ -82,7 +71,15 @@
     "page": "Page {{page}}",
     "previous": "Previous"
   },
-
+  "placeholder": {
+    "enter": "Enter {{target}}",
+    "search": "Search {{target}}",
+    "select": "Select {{target}}"
+  },
+  "sort": {
+    "latest": "Sort by latest",
+    "oldest": "Sort by oldest"
+  },
   "table": {
     "loading": "Loading...",
     "noData": "No data available",

@@ -1,28 +1,35 @@
 "use client";
 
-import { ChevronLeft, Clock3, PanelLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api";
+import { useServiceDeskTicketCommentListQuery } from "@/feature/serviceDesk/ticket/api/comment";
 import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticket/api/history";
+import { TicketCommentAttachments } from "@/feature/serviceDesk/ticket/components/TicketAttachmentList";
+import {
+  TicketCommentComposer,
+  TicketCommentList,
+} from "@/feature/serviceDesk/ticket/components/TicketComment";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils";
 
 import {
-  TicketDetailMain,
   TicketDetailsAside,
   TicketDetailsAsideSkeleton,
   TicketDetailSkeleton,
   TicketHistorySheet,
+  TicketSummary,
 } from "../components";
+import { TicketHeader } from "../components/TicketHeader";
+import { TicketRecentActivity } from "../components/TicketRecentActivity";
 
 type Props = {
   params: {
@@ -31,16 +38,21 @@ type Props = {
 };
 
 export default function ServiceDeskTicketDetailPage({ params }: Props) {
-  const router = useRouter();
   const [isDetailsAsideOpen, setIsDetailsAsideOpen] = useState(true);
   const [isHistorySheetOpen, setIsHistorySheetOpen] = useState(false);
+  const { t } = useTranslation(NS.serviceDesk);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
 
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
+
+  const { data: ticketComments, isLoading: isTicketCommentsLoading } =
+    useServiceDeskTicketCommentListQuery(params.ticketId);
+
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
     useServiceDeskTicketHistoryListQuery(params.ticketId);
+
   const { data: employees } = useEmployeeListQuery({});
 
   const users = useMemo<ImageValueLabel[]>(() => {
@@ -60,6 +72,11 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     });
   }, [employees, tLocal]);
 
+  const userMap = useMemo(
+    () => new Map(users.map((user) => [user.value, user])),
+    [users],
+  );
+
   const requester = useMemo(
     () => users.find((user) => user.value === ticket?.requesterId),
     [ticket?.requesterId, users],
@@ -76,111 +93,38 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     [userPreference.language],
   );
 
+  const activeComments = useMemo(
+    () => (ticketComments ?? []).filter((comment) => comment.active),
+    [ticketComments],
+  );
+
+  const latestComment = useMemo(() => {
+    return [...activeComments].sort(
+      (left, right) =>
+        new Date(right.createdAt).getTime() -
+        new Date(left.createdAt).getTime(),
+    )[0];
+  }, [activeComments]);
+
+  const latestHistory = useMemo(() => {
+    return [...(ticketHistories ?? [])].sort(
+      (left, right) =>
+        new Date(right.createdAt).getTime() -
+        new Date(left.createdAt).getTime(),
+    )[0];
+  }, [ticketHistories]);
+
+  const latestCommentOwner = latestComment
+    ? userMap.get(latestComment.ownerId)
+    : undefined;
+
   return (
-    <>
-      <div className="flex h-full min-h-0 flex-col p-2 pt-1">
-        <div className="flex items-center justify-between pb-2 pr-4 text-foreground">
-          <Button
-            type="button"
-            variant="ghost"
-            className="rounded-xl pl-1"
-            onClick={() => {
-              router.push("/service-desk/");
-            }}
-          >
-            <ChevronLeft className="p-0" />
-            List
-          </Button>
-
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="hidden h-8 w-8 rounded-md xl:inline-flex"
-              onClick={() => {
-                setIsDetailsAsideOpen((previous) => !previous);
-              }}
-            >
-              <PanelLeft
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  isDetailsAsideOpen && "rotate-180 text-primary",
-                )}
-              />
-              <span className="sr-only">Toggle ticket details aside</span>
-            </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-md"
-              onClick={() => {
-                setIsHistorySheetOpen(true);
-              }}
-            >
-              <Clock3 className="h-4 w-4" />
-              <span className="sr-only">Open ticket history</span>
-            </Button>
-          </div>
-        </div>
-
-        <div className="h-1 rounded bg-primary-muted" />
-
-        <div className="flex min-h-0 flex-1 pt-4">
-          <main className="min-w-0 flex-1">
-            <ScrollArea className="h-full w-full">
-              <div className="space-y-6 p-2">
-                {isTicketLoading ? (
-                  <TicketDetailSkeleton />
-                ) : ticket ? (
-                  <TicketDetailMain
-                    assignees={assignees}
-                    dateLocale={dateLocale}
-                    requester={requester}
-                    ticket={ticket}
-                  />
-                ) : (
-                  <div className="rounded-2xl border border-dashed p-10 text-center text-sm text-muted-foreground">
-                    Ticket not found.
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          </main>
-
-          <div
-            className={cn(
-              "hidden overflow-hidden transition-[width] duration-200 ease-linear xl:block",
-              isDetailsAsideOpen ? "w-[320px]" : "w-0",
-            )}
-          >
-            <aside
-              className={cn(
-                "h-full w-[320px] shrink-0 transition-[opacity,transform] duration-200 ease-linear",
-                isDetailsAsideOpen
-                  ? "translate-x-0 opacity-100"
-                  : "pointer-events-none translate-x-2 opacity-0",
-              )}
-            >
-              <ScrollArea className="h-full">
-                <div className="space-y-4 p-2">
-                  {isTicketLoading || !ticket ? (
-                    <TicketDetailsAsideSkeleton />
-                  ) : (
-                    <TicketDetailsAside
-                      assignees={assignees}
-                      requester={requester}
-                      ticket={ticket}
-                    />
-                  )}
-                </div>
-              </ScrollArea>
-            </aside>
-          </div>
-        </div>
-      </div>
+    <div className="flex h-full min-h-0 flex-col p-2 pt-1">
+      <TicketHeader
+        isDetailsAsideOpen={isDetailsAsideOpen}
+        onToggleDetailsAside={setIsDetailsAsideOpen}
+        onOpenHistorySheet={setIsHistorySheetOpen}
+      />
 
       <TicketHistorySheet
         open={isHistorySheetOpen}
@@ -188,6 +132,135 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
         items={ticketHistories}
         isLoading={isTicketHistoriesLoading}
       />
-    </>
+
+      <div className="h-1 rounded bg-primary-muted" />
+
+      <div className="flex min-h-0 flex-1 pt-4">
+        <main className="min-w-0 flex-1">
+          <ScrollArea className="h-full w-full">
+            <div className="mx-auto max-w-[1040px] p-2 pb-10">
+              {isTicketLoading ? (
+                <TicketDetailSkeleton />
+              ) : ticket ? (
+                <article className="space-y-9">
+                  <TicketSummary ticket={ticket} requester={requester} />
+
+                  <TicketRecentActivity
+                    latestHistory={latestHistory}
+                    activeComments={activeComments}
+                    latestComment={latestComment}
+                    latestCommentName={
+                      latestCommentOwner?.label || ticket.lastCommenterEmail
+                    }
+                    latestCommentEmail={
+                      latestCommentOwner?.displayName ||
+                      ticket.lastCommenterEmail
+                    }
+                    dateLocale={dateLocale}
+                  />
+
+                  {/* ticket description */}
+                  <section className="space-y-3">
+                    <h2
+                      className="text-base font-semibold tracking-[-0.01em]"
+                      title={t("detailPage.descriptionTitleHint")}
+                    >
+                      {t("field.description", { ns: NS.common })}
+                    </h2>
+
+                    <div
+                      className="prose prose-sm max-w-none break-words text-foreground prose-p:my-3 prose-p:leading-7 prose-a:text-primary prose-img:rounded-lg"
+                      dangerouslySetInnerHTML={{
+                        __html: ticket.body || "<p>-</p>",
+                      }}
+                    />
+                    <TicketCommentAttachments
+                      files={ticket.files}
+                      images={ticket.images}
+                    />
+                  </section>
+
+                  {/* ticket details */}
+                  <section className="space-y-4 border-t border-border/50 pt-7 xl:hidden">
+                    <h2 className="text-base font-semibold tracking-[-0.01em]">
+                      {t("detailPage.detailsTitle")}
+                    </h2>
+
+                    <div className="rounded-xl border border-border/40 bg-background/60 p-1">
+                      <TicketDetailsAside
+                        assignees={assignees}
+                        requester={requester}
+                        ticket={ticket}
+                      />
+                    </div>
+                  </section>
+
+                  {/* reply comment */}
+                  <section className="space-y-3 border-t border-border/50 pt-7">
+                    <h2
+                      className="text-base font-semibold tracking-[-0.01em]"
+                      title={t("detailPage.replyTitleHint")}
+                    >
+                      {t("detailPage.replyTitle")}
+                    </h2>
+
+                    <TicketCommentComposer
+                      ticketId={params.ticketId}
+                      users={users}
+                      showHeader={false}
+                    />
+                  </section>
+
+                  {/* conversation */}
+                  <section className="space-y-3 border-t border-border/50 pt-7">
+                    <TicketCommentList
+                      comments={ticketComments}
+                      isLoading={isTicketCommentsLoading}
+                      users={users}
+                      dateLocale={dateLocale}
+                      showHeader
+                    />
+                  </section>
+                </article>
+              ) : (
+                <div className="rounded-2xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+                  {t("detailPage.notFound")}
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </main>
+
+        <div
+          className={cn(
+            "hidden overflow-hidden transition-[width] duration-200 ease-linear xl:block",
+            isDetailsAsideOpen ? "w-[320px]" : "w-0",
+          )}
+        >
+          <aside
+            className={cn(
+              "h-full w-[320px] shrink-0 transition-[opacity,transform] duration-200 ease-linear",
+              isDetailsAsideOpen
+                ? "translate-x-0 opacity-100"
+                : "pointer-events-none translate-x-2 opacity-0",
+            )}
+          >
+            <ScrollArea className="h-full">
+              <div className="space-y-4 p-2">
+                {isTicketLoading || !ticket ? (
+                  <TicketDetailsAsideSkeleton />
+                ) : (
+                  <TicketDetailsAside
+                    assignees={assignees}
+                    requester={requester}
+                    ticket={ticket}
+                  />
+                )}
+              </div>
+            </ScrollArea>
+          </aside>
+        </div>
+      </div>
+    </div>
   );
 }

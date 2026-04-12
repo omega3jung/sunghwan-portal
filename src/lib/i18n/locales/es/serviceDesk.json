@@ -5,29 +5,23 @@
     "assign": "Asignar",
     "assignMyself": "Asignarme",
     "reject": "Rechazar",
-    "filter": "Filtro",
     "searchCriteria": "Criterios de búsqueda"
   },
-
   "chart": {
     "category": {
       "title": "Tickets por categoría",
       "label": "Categoría"
     },
-
     "department": {
       "title": "Tickets por departamento solicitante",
       "label": "Departamento"
     },
-
     "assignee": {
       "title": "Tickets por responsable",
       "label": "Responsable"
     },
-
     "sla": {
       "title": "Rendimiento del SLA",
-
       "status": {
         "withinSla": "Dentro del SLA",
         "resolvedLate": "Resuelto con retraso",
@@ -36,21 +30,14 @@
       }
     }
   },
-
   "field": {
     "keyword": "Palabra clave",
     "ticket": "Ticket",
-    "category": "Categoría",
-    "status": "Estado",
-    "priority": "Prioridad",
     "riskLevel": "Nivel de riesgo",
-    "assignee": "Responsable",
-    "requester": "Solicitante",
-    "period": "Período",
     "dueBy": "Fecha límite",
-    "total": "Total"
+    "total": "Total",
+    "list": "Lista"
   },
-
   "message": {
     "groupBy": "Agrupar por",
     "filteringBy": "Filtrar por",
@@ -59,52 +46,37 @@
     "assignTo": "Asignar a",
     "dueBy": "Fecha límite",
     "lastComment": "Último comentario",
-
     "commentList": "Comentarios",
-
     "ticketSummary": "Resumen del ticket",
     "requesterInformation": "Información del solicitante",
-
     "created": "Creado",
     "at": "a las",
     "ago": "hace",
-
     "createTicket": "Crear ticket",
     "editTicket": "Editar ticket",
     "ticketCreation": "Creación del ticket",
     "processingFlow": "Flujo de procesamiento",
-
     "validationPoint": "Seleccione el punto de validación",
-
     "dragDrop": "Arrastre y suelte archivos aquí",
     "uploadFile": "o haga clic para explorar",
     "noAttaches": "Sin archivos adjuntos",
     "dragDropFile": "Arrastre y suelte el archivo",
     "fileUploadLimit": "Carga de archivos (máx. 10 archivos)",
-
     "approvalTitle": "Aprobación",
     "foundDraft": "Borrador encontrado",
     "loadDraft": "¿Desea cargar el borrador? Si no lo hace, el borrador anterior se descartará."
   },
-
   "priority": {
     "urgent": "Urgente",
     "high": "Alta",
     "medium": "Media",
     "low": "Baja"
   },
-
   "response": {
     "agent": "El agente respondió",
     "requester": "El solicitante respondió",
     "none": "Sin respuesta"
   },
-
-  "sort": {
-    "latest": "Ordenar por más recientes",
-    "oldest": "Ordenar por más antiguos"
-  },
-
   "status": {
     "pre": "Pre",
     "open": "Abierto",
@@ -112,10 +84,10 @@
     "declined": "Rechazado",
     "working": "En progreso",
     "pending": "Pendiente",
+    "rejected": "Rechazado",
     "resolved": "Resuelto",
     "closed": "Cerrado"
   },
-
   "step": {
     "issueDetails": "Detalles del problema",
     "attachments": "Archivos adjuntos",
@@ -123,7 +95,6 @@
     "approval": "Aprobación",
     "assign": "Asignar"
   },
-
   "tab": {
     "tickets": "Tickets",
     "reports": "Informes",
@@ -131,5 +102,138 @@
     "openTickets": "Tickets abiertos",
     "closedTickets": "Tickets cerrados",
     "overdueTickets": "Tickets vencidos"
+  },
+  "detailAside": {
+    "recipientsTitle": "Destinatarios",
+    "unassigned": "Sin asignar",
+    "ticketId": "ID del ticket"
+  },
+  "historySheet": {
+    "title": "Historial del ticket",
+    "description": "Revise la línea de tiempo del historial del ticket."
+  },
+  "detailPage": {
+    "detailsTitle": "Detalles del ticket",
+    "descriptionTitleHint": "Detalles principales de la solicitud y la actividad reciente de un vistazo.",
+    "replyTitle": "Responder",
+    "replyTitleHint": "Responda, deje una nota interna y revise la conversación en un flujo continuo.",
+    "notFound": "No se encontró el ticket."
+  },
+  "recentActivity": {
+    "title": "Actividad reciente",
+    "latestUpdate": {
+      "label": "Última actualización",
+      "empty": "Aún no hay historial",
+      "fallbackMeta": "La cronología aparecerá aquí"
+    },
+    "conversation": {
+      "label": "Conversación",
+      "empty": "Aún no hay comentarios",
+      "latestPrefix": "Último",
+      "start": "Inicie la conversación abajo",
+      "count_one": "{{count}} comentario",
+      "count_other": "{{count}} comentarios"
+    },
+    "lastCommenter": {
+      "label": "Último comentarista",
+      "emptyName": "Aún no hay comentarista",
+      "emptyEmail": "Las actualizaciones aparecerán a medida que avance el ticket"
+    },
+    "history": {
+      "STATUS_CHANGED": "El estado cambió de {{from}} a {{to}}",
+      "STATUS_CHANGED_SIMPLE": "El estado cambió",
+      "ASSIGNEE_CHANGED": "El responsable fue actualizado",
+      "APPROVAL_REQUESTED": "Aprobación solicitada",
+      "APPROVAL_APPROVED": "Aprobación aprobada",
+      "APPROVAL_DECLINED": "Aprobación rechazada",
+      "COMMENT_CREATED": "Comentario agregado",
+      "COMMENT_UPDATED": "Comentario actualizado",
+      "COMMENT_DELETED": "Comentario eliminado",
+      "TRACK_TIME_UPDATED": "Tiempo registrado actualizado",
+      "UPDATED": "Ticket actualizado",
+      "CREATED": "Ticket creado",
+      "DEFAULT": "Historial actualizado",
+      "DELETED": "Ticket eliminado"
+    }
+  },
+  "historyTimeline": {
+    "description": "Vista de cronología para la actividad reciente del ticket.",
+    "badge": {
+      "status": "Estado",
+      "field": "Campo",
+      "assignment": "Asignación",
+      "approval": "Aprobación",
+      "comment": "Comentario",
+      "trackTime": "Tiempo registrado",
+      "sla": "SLA",
+      "system": "Sistema",
+      "default": "Historial"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "Imágenes",
+      "files": "Archivos"
+    },
+    "empty": {
+      "noResult": "Ningún comentario coincide con su búsqueda."
+    },
+    "item": {
+      "toggleDetails": "Mostrar u ocultar detalles del comentario",
+      "number": "Comentario #{{number}}",
+      "edited": "Editado",
+      "visibility": {
+        "public": "Público",
+        "internal": "Nota interna"
+      }
+    },
+    "list": {
+      "titleHint": "Busque, ordene y revise el historial de discusión del ticket.",
+      "countLabel_one": "comentario",
+      "countLabel_other": "comentarios"
+    },
+    "search": {
+      "placeholder": "Buscar comentarios"
+    },
+    "editor": {
+      "placeholderPublic": "Escriba un comentario y mantenga la conversación en marcha",
+      "placeholderInternal": "Comparta una nota interna para este ticket",
+      "validationEmpty": "Ingrese un comentario antes de enviarlo."
+    },
+    "composer": {
+      "currentUser": "Usuario actual",
+      "helperPublic": "Los comentarios públicos forman parte de la conversación visible del ticket.",
+      "helperInternal": "Las notas internas solo son visibles para los equipos internos.",
+      "submitPublic": "Publicar comentario",
+      "submitInternal": "Publicar nota interna",
+      "internalNoteLabel": "Nota interna",
+      "launcherPublicDescription": "Escriba una respuesta visible en el hilo del ticket.",
+      "launcherInternalDescription": "Deje contexto que se mantenga dentro de los equipos internos."
+    },
+    "toolbar": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "bulletList": "Lista con viñetas",
+      "numberedList": "Lista numerada",
+      "quote": "Cita",
+      "codeBlock": "Bloque de código",
+      "undo": "Deshacer",
+      "redo": "Rehacer"
+    }
+  },
+  "listPage": {
+    "title": "Mesa de Servicio de TI",
+    "description": "Busque y consulte tickets de la mesa de servicio."
+  },
+  "ticketList": {
+    "empty": "No se encontraron tickets",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "Vence {{time}}"
+  },
+  "searchCriteria": {
+    "primaryFilters": "Filtros principales",
+    "additionalFilters": "Filtros adicionales",
+    "dateFilters": "Filtros de fecha"
   }
 }

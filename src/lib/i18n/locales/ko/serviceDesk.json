@@ -5,29 +5,23 @@
     "assign": "할당",
     "assignMyself": "나에게 할당",
     "reject": "반려",
-    "filter": "필터",
     "searchCriteria": "검색 조건"
   },
-
   "chart": {
     "category": {
       "title": "카테고리별 티켓",
       "label": "카테고리"
     },
-
     "department": {
       "title": "요청 부서별 티켓",
       "label": "부서"
     },
-
     "assignee": {
       "title": "담당자별 티켓",
       "label": "담당자"
     },
-
     "sla": {
       "title": "SLA 성과",
-
       "status": {
         "withinSla": "SLA 준수",
         "resolvedLate": "지연 해결",
@@ -36,21 +30,14 @@
       }
     }
   },
-
   "field": {
     "keyword": "키워드",
     "ticket": "티켓",
-    "category": "카테고리",
-    "status": "상태",
-    "priority": "우선순위",
     "riskLevel": "위험도",
-    "assignee": "담당자",
-    "requester": "요청자",
-    "period": "기간",
     "dueBy": "기한",
-    "total": "총계"
+    "total": "총계",
+    "list": "목록"
   },
-
   "message": {
     "groupBy": "그룹 기준",
     "filteringBy": "필터 기준",
@@ -59,52 +46,37 @@
     "assignTo": "할당 대상",
     "dueBy": "기한",
     "lastComment": "마지막 코멘트",
-
     "commentList": "코멘트",
-
     "ticketSummary": "티켓 요약",
     "requesterInformation": "요청자 정보",
-
     "created": "생성",
     "at": "에",
     "ago": "전",
-
     "createTicket": "티켓 생성",
     "editTicket": "티켓 수정",
     "ticketCreation": "티켓 생성",
     "processingFlow": "처리 흐름",
-
     "validationPoint": "검증 지점을 선택하세요",
-
     "dragDrop": "여기에 파일을 끌어다 놓으세요",
     "uploadFile": "또는 클릭하여 찾아보세요",
     "noAttaches": "첨부파일이 없습니다",
     "dragDropFile": "파일을 끌어다 놓으세요",
     "fileUploadLimit": "파일 업로드 (최대 10개)",
-
     "approvalTitle": "승인",
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
   },
-
   "priority": {
     "urgent": "긴급",
     "high": "높음",
     "medium": "보통",
     "low": "낮음"
   },
-
   "response": {
     "agent": "담당자가 응답함",
     "requester": "요청자가 응답함",
     "none": "응답 없음"
   },
-
-  "sort": {
-    "latest": "최신순 정렬",
-    "oldest": "오래된순 정렬"
-  },
-
   "status": {
     "pre": "사전",
     "open": "열림",
@@ -112,10 +84,10 @@
     "declined": "반려됨",
     "working": "처리 중",
     "pending": "대기 중",
+    "rejected": "반려됨",
     "resolved": "해결됨",
     "closed": "종료됨"
   },
-
   "step": {
     "issueDetails": "문제 상세",
     "attachments": "첨부파일",
@@ -123,7 +95,6 @@
     "approval": "승인",
     "assign": "할당"
   },
-
   "tab": {
     "tickets": "티켓",
     "reports": "보고서",
@@ -131,5 +102,138 @@
     "openTickets": "열린 티켓",
     "closedTickets": "종료된 티켓",
     "overdueTickets": "기한 초과 티켓"
+  },
+  "detailAside": {
+    "recipientsTitle": "수신자",
+    "unassigned": "미할당",
+    "ticketId": "티켓 ID"
+  },
+  "historySheet": {
+    "title": "티켓 이력",
+    "description": "티켓 이력 타임라인을 확인하세요."
+  },
+  "detailPage": {
+    "detailsTitle": "티켓 상세 정보",
+    "descriptionTitleHint": "핵심 요청 내용과 최근 활동을 한눈에 확인하세요.",
+    "replyTitle": "답글",
+    "replyTitleHint": "답글을 작성하고, 내부 메모를 남기고, 대화를 한 흐름에서 검토하세요.",
+    "notFound": "티켓을 찾을 수 없습니다."
+  },
+  "recentActivity": {
+    "title": "최근 활동",
+    "latestUpdate": {
+      "label": "최신 업데이트",
+      "empty": "아직 이력이 없습니다",
+      "fallbackMeta": "타임라인이 여기에 표시됩니다"
+    },
+    "conversation": {
+      "label": "대화",
+      "empty": "아직 댓글이 없습니다",
+      "latestPrefix": "최근",
+      "start": "아래에서 대화를 시작하세요",
+      "count_one": "댓글 {{count}}개",
+      "count_other": "댓글 {{count}}개"
+    },
+    "lastCommenter": {
+      "label": "마지막 댓글 작성자",
+      "emptyName": "아직 댓글 작성자가 없습니다",
+      "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
+    },
+    "history": {
+      "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경",
+      "STATUS_CHANGED_SIMPLE": "상태가 변경",
+      "ASSIGNEE_CHANGED": "담당자가 업데이트됨",
+      "APPROVAL_REQUESTED": "승인 요청",
+      "APPROVAL_APPROVED": "승인 완료",
+      "APPROVAL_DECLINED": "승인 반려",
+      "COMMENT_CREATED": "댓글이 추가됨",
+      "COMMENT_UPDATED": "댓글이 수정됨",
+      "COMMENT_DELETED": "댓글이 삭제됨",
+      "TRACK_TIME_UPDATED": "추적 시간이 업데이트됨",
+      "UPDATED": "티켓이 업데이트됨",
+      "CREATED": "티켓이 생성됨",
+      "DEFAULT": "이력이 업데이트됨",
+      "DELETED": "티켓이 삭제되었습니다"
+    }
+  },
+  "historyTimeline": {
+    "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
+    "badge": {
+      "status": "상태",
+      "field": "필드",
+      "assignment": "할당",
+      "approval": "승인",
+      "comment": "댓글",
+      "trackTime": "추적 시간",
+      "sla": "SLA",
+      "system": "시스템",
+      "default": "이력"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "이미지",
+      "files": "파일"
+    },
+    "empty": {
+      "noResult": "검색 조건과 일치하는 댓글이 없습니다."
+    },
+    "item": {
+      "toggleDetails": "댓글 상세 보기 전환",
+      "number": "댓글 #{{number}}",
+      "edited": "수정됨",
+      "visibility": {
+        "public": "공개",
+        "internal": "내부 메모"
+      }
+    },
+    "list": {
+      "titleHint": "티켓 대화 이력을 검색하고, 정렬하고, 검토하세요.",
+      "countLabel_one": "댓글",
+      "countLabel_other": "댓글"
+    },
+    "search": {
+      "placeholder": "댓글 검색"
+    },
+    "editor": {
+      "placeholderPublic": "댓글을 작성해 대화를 이어가세요",
+      "placeholderInternal": "이 티켓에 대한 내부 메모를 남기세요",
+      "validationEmpty": "제출하기 전에 댓글을 입력하세요."
+    },
+    "composer": {
+      "currentUser": "현재 사용자",
+      "helperPublic": "공개 댓글은 티켓 대화에 표시됩니다.",
+      "helperInternal": "내부 메모는 내부 팀에게만 표시됩니다.",
+      "submitPublic": "댓글 등록",
+      "submitInternal": "내부 메모 등록",
+      "internalNoteLabel": "내부 메모",
+      "launcherPublicDescription": "티켓 스레드에 표시되는 답글을 작성하세요.",
+      "launcherInternalDescription": "내부 팀 안에서만 공유되는 메모를 남기세요."
+    },
+    "toolbar": {
+      "bold": "굵게",
+      "italic": "기울임꼴",
+      "bulletList": "글머리 기호 목록",
+      "numberedList": "번호 목록",
+      "quote": "인용문",
+      "codeBlock": "코드 블록",
+      "undo": "실행 취소",
+      "redo": "다시 실행"
+    }
+  },
+  "listPage": {
+    "title": "IT 서비스 데스크",
+    "description": "서비스 데스크 티켓을 검색하고 조회하세요."
+  },
+  "ticketList": {
+    "empty": "티켓이 없습니다",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "기한 {{time}}"
+  },
+  "searchCriteria": {
+    "primaryFilters": "주요 필터",
+    "additionalFilters": "추가 필터",
+    "dateFilters": "날짜 필터"
   }
 }

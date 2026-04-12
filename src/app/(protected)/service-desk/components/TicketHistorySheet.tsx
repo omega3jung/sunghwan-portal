@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { type TimelineOrder } from "@/components/custom/Timeline";
 import {
@@ -15,6 +16,7 @@ import {
   TicketHistoryTimelineContent,
   TicketHistoryTimelineHeader,
 } from "@/feature/serviceDesk/ticket/components/TicketHistoryTimeline";
+import { NS } from "@/lib/i18n";
 
 type TicketHistorySheetProps = {
   open: boolean;
@@ -30,6 +32,7 @@ export function TicketHistorySheet({
   isLoading = false,
 }: TicketHistorySheetProps) {
   const [order, setOrder] = useState<TimelineOrder>("desc");
+  const { t } = useTranslation(NS.serviceDesk);
 
   return (
     <Sheet modal={true} open={open} onOpenChange={onOpenChange}>
@@ -40,9 +43,9 @@ export function TicketHistorySheet({
         className="gap-0 sm:w-[380px]"
       >
         <SheetHeader className="sr-only">
-          <SheetTitle>Ticket History</SheetTitle>
+          <SheetTitle>{t("historySheet.title")}</SheetTitle>
           <SheetDescription>
-            Review the ticket history timeline.
+            {t("historySheet.description")}
           </SheetDescription>
         </SheetHeader>
         <div className="flex h-full min-h-0 flex-col bg-background">

@@ -1,4 +1,131 @@
 {
+  "home": {
+    "hero": {
+      "protectedBadge": "Inicio protegido",
+      "enterpriseBadge": "Demostración del portal empresarial",
+      "title": "Inicio del espacio de trabajo para operaciones de servicio, referencias y configuración de la plataforma.",
+      "description": "Este inicio protegido está diseñado como la primera pantalla después de iniciar sesión. Ofrece una vista estable del portal interno del proyecto de demostración actual, destaca las principales áreas de trabajo y hace evidente la siguiente acción sin convertir la página en un panel analítico pesado.",
+      "actions": {
+        "openServiceDesk": "Abrir Service Desk",
+        "browseDocumentation": "Explorar documentación",
+        "reviewSettings": "Revisar configuración"
+      }
+    },
+    "calendar": {
+      "title": "Calendario"
+    },
+    "about": {
+      "title": "Sobre este inicio",
+      "description": "Una pantalla de entrada práctica para el portal de portafolio actual.",
+      "currentScope": {
+        "title": "Alcance actual",
+        "description": "Flujos de service desk, navegación protegida, superficies de configuración y documentación orientada a la implementación."
+      },
+      "architectureNotes": {
+        "note1": "Las rutas protegidas están planteadas como un portal interno en lugar de una página pública.",
+        "note2": "El contenido de inicio está organizado en torno a navegación rápida, resumen operativo y foco actual de implementación.",
+        "note3": "Todo el contenido utiliza datos simulados ligeros para que la página pueda conectarse más adelante a APIs reales de tickets, documentos y aprobaciones."
+      }
+    },
+    "quickActions": {
+      "title": "Acciones rápidas",
+      "description": "Abra las principales áreas de trabajo que probablemente necesite justo después de iniciar sesión.",
+      "openWorkspace": "Abrir espacio de trabajo",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Explore tickets, revise el estado de la cola y continúe el trabajo actual.",
+          "meta": "Espacio central"
+        },
+        "documentation": {
+          "title": "Documentación",
+          "description": "Abra notas de trabajo, referencias de diseño y documentación de implementación.",
+          "meta": "Centro de conocimiento"
+        },
+        "systemSettings": {
+          "title": "Configuración del sistema",
+          "description": "Revise áreas de configuración del portal y preferencias operativas.",
+          "meta": "Administración"
+        },
+        "serviceDeskSetup": {
+          "title": "Configuración de Service Desk",
+          "description": "Revise categorías, pasos de aprobación y la estructura de reglas de asignación.",
+          "meta": "Configuración de la plataforma"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Resumen de trabajo",
+      "description": "Contexto operativo ligero para la página de inicio del portal de demostración.",
+      "items": {
+        "openTickets": {
+          "label": "Tickets abiertos",
+          "description": "Incidencias actualmente en curso en las colas de soporte."
+        },
+        "pendingApprovals": {
+          "label": "Aprobaciones pendientes",
+          "description": "Solicitudes en espera de confirmación de flujo o política."
+        },
+        "workingItems": {
+          "label": "Elementos en curso",
+          "description": "Tareas activas de implementación y seguimiento dentro de este alcance de demostración."
+        },
+        "resolvedThisWeek": {
+          "label": "Resueltos esta semana",
+          "description": "Tickets, correcciones y resultados de iteración completados."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Recientes y destacados",
+      "description": "Áreas que mejor representan la dirección actual del proyecto y el contexto del trabajo reciente.",
+      "viewSection": "Ver sección",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Espacio de tickets",
+          "description": "Área principal de trabajo para búsqueda, filtrado y seguimiento de tickets.",
+          "category": "Service Desk",
+          "status": "Listo"
+        },
+        "authSessionFlow": {
+          "title": "Flujo de autenticación y sesión",
+          "description": "Experiencia de inicio de sesión, manejo de redirecciones y comportamiento del shell protegido.",
+          "category": "Arquitectura",
+          "status": "Foco actual"
+        },
+        "serviceDeskSettings": {
+          "title": "Configuración de Service Desk",
+          "description": "Superficies para pasos de aprobación, reglas de asignación y gestión de categorías.",
+          "category": "Administración",
+          "status": "En revisión"
+        },
+        "documentsHub": {
+          "title": "Centro de documentos",
+          "description": "Área de referencia para documentos, notas y futuros registros de decisiones.",
+          "category": "Documentación",
+          "status": "Crecimiento planificado"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Enfoque actual",
+      "description": "Un panel de resumen compacto sobre lo que este portal está enfatizando ahora mismo.",
+      "panelTitle": "Dirección del portal empresarial",
+      "panelDescription": "La pantalla de inicio está deliberadamente acotada como un punto de entrada al espacio de trabajo interno.",
+      "primaryGoals": {
+        "title": "Objetivos principales de experiencia",
+        "items": {
+          "goal1": "Navegación clara del primer paso después de la autenticación",
+          "goal2": "Densidad de información equilibrada sin sobrecargar el panel",
+          "goal3": "Sustitución sencilla del contenido resumido simulado por datos reales más adelante"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Próximas integraciones sugeridas",
+        "description": "Conecte las tarjetas de resumen con recuentos de tickets, aprobaciones y actividad reciente de documentos una vez que el inicio protegido esté listo para consumir datos reales del espacio de trabajo."
+      }
+    }
+  },
   "stepper": {
     "stepper": "Stepper",
     "variants": "Variación",

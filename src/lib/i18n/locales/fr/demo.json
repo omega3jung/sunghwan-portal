@@ -1,4 +1,131 @@
 {
+  "home": {
+    "hero": {
+      "protectedBadge": "Accueil protégé",
+      "enterpriseBadge": "Démo du portail d'entreprise",
+      "title": "Accueil de l'espace de travail pour les opérations de service, les références et la configuration de la plateforme.",
+      "description": "Cet accueil protégé est conçu comme le premier écran après la connexion. Il offre une vue d'ensemble stable du portail interne du projet de démonstration actuel, met en avant les principales zones de travail et rend l'action suivante évidente sans transformer la page en tableau de bord analytique lourd.",
+      "actions": {
+        "openServiceDesk": "Ouvrir le Service Desk",
+        "browseDocumentation": "Parcourir la documentation",
+        "reviewSettings": "Vérifier les paramètres"
+      }
+    },
+    "calendar": {
+      "title": "Calendrier"
+    },
+    "about": {
+      "title": "À propos de cet accueil",
+      "description": "Un écran d'entrée pratique pour le portail de portfolio actuel.",
+      "currentScope": {
+        "title": "Périmètre actuel",
+        "description": "Flux de service desk, navigation protégée, surfaces de paramètres et documentation orientée implémentation."
+      },
+      "architectureNotes": {
+        "note1": "Les routes protégées sont présentées comme un portail interne plutôt que comme une page publique.",
+        "note2": "Le contenu d'accueil est structuré autour de la navigation rapide, du résumé opérationnel et de la priorité d'implémentation actuelle.",
+        "note3": "Tout le contenu repose sur des données fictives légères afin que la page puisse ensuite être connectée à de vraies API de tickets, de documents et d'approbations."
+      }
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "description": "Ouvrez les principales zones de travail dont vous avez le plus besoin juste après la connexion.",
+      "openWorkspace": "Ouvrir l'espace de travail",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Parcourez les tickets, consultez l'état de la file et poursuivez le travail en cours.",
+          "meta": "Espace principal"
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Ouvrez les notes de travail, les références de conception et la documentation d'implémentation.",
+          "meta": "Centre de connaissances"
+        },
+        "systemSettings": {
+          "title": "Paramètres système",
+          "description": "Consultez les zones de configuration du portail et les préférences de fonctionnement.",
+          "meta": "Administration"
+        },
+        "serviceDeskSetup": {
+          "title": "Configuration du Service Desk",
+          "description": "Examinez les catégories, les étapes d'approbation et la structure des règles d'affectation.",
+          "meta": "Configuration de la plateforme"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Résumé du travail",
+      "description": "Contexte opérationnel léger pour la page d'accueil du portail de démonstration.",
+      "items": {
+        "openTickets": {
+          "label": "Tickets ouverts",
+          "description": "Incidents actuellement en cours dans les files de support."
+        },
+        "pendingApprovals": {
+          "label": "Approbations en attente",
+          "description": "Demandes en attente de confirmation de workflow ou de politique."
+        },
+        "workingItems": {
+          "label": "Éléments en cours",
+          "description": "Tâches actives d'implémentation et de suivi dans ce périmètre de démonstration."
+        },
+        "resolvedThisWeek": {
+          "label": "Résolus cette semaine",
+          "description": "Tickets, corrections et résultats d'itération terminés."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Récents et points forts",
+      "description": "Zones qui représentent le mieux la direction actuelle du projet et le contexte de travail récent.",
+      "viewSection": "Voir la section",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Espace ticket",
+          "description": "Zone principale de travail pour la recherche, le filtrage et le suivi des tickets.",
+          "category": "Service Desk",
+          "status": "Prêt"
+        },
+        "authSessionFlow": {
+          "title": "Flux d'authentification et de session",
+          "description": "Expérience de connexion, gestion des redirections et comportement du shell protégé.",
+          "category": "Architecture",
+          "status": "Priorité actuelle"
+        },
+        "serviceDeskSettings": {
+          "title": "Paramètres du Service Desk",
+          "description": "Surfaces de gestion des étapes d'approbation, des règles d'affectation et des catégories.",
+          "category": "Administration",
+          "status": "En révision"
+        },
+        "documentsHub": {
+          "title": "Espace documents",
+          "description": "Espace de référence pour les documents, les notes et les futurs relevés de décision.",
+          "category": "Documentation",
+          "status": "Croissance prévue"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Priorité actuelle",
+      "description": "Un panneau de briefing compact sur ce que ce portail met en avant en ce moment.",
+      "panelTitle": "Orientation du portail d'entreprise",
+      "panelDescription": "L'écran d'accueil est volontairement cadré comme un point d'entrée vers l'espace de travail interne.",
+      "primaryGoals": {
+        "title": "Objectifs principaux de l'expérience",
+        "items": {
+          "goal1": "Navigation claire de la première étape après l'authentification",
+          "goal2": "Densité d'information équilibrée sans surcharge de tableau de bord",
+          "goal3": "Remplacement facile du contenu récapitulatif fictif par de vraies données plus tard"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Prochaines intégrations suggérées",
+        "description": "Connectez les cartes récapitulatives aux comptes de tickets, aux approbations et à l'activité récente des documents lorsque l'accueil protégé sera prêt à consommer de vraies données d'espace de travail."
+      }
+    }
+  },
   "stepper": {
     "stepper": "Stepper",
     "variants": "Variation",

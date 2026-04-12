@@ -35,6 +35,10 @@
     "search": "{{target}} 검색",
     "select": "{{target}} 선택"
   },
+  "sort": {
+    "latest": "최신순 정렬",
+    "oldest": "오래된순 정렬"
+  },
   "field": {
     "age": "나이",
     "agent": "에이전트",

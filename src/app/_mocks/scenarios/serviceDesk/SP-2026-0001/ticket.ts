@@ -1,6 +1,6 @@
 import { DbTicketDetail } from "@/api/serviceDesk/ticket";
 
-export const internalTicketsMock1: DbTicketDetail = {
+export const ticket: DbTicketDetail = {
   id: "sunghwan-portal-2026-1",
   ticket_number: "SP-2026-0001",
   created_at: "2026-03-26T22:44:33Z",
@@ -32,5 +32,3 @@ export const internalTicketsMock1: DbTicketDetail = {
   files: [],
   images: [],
 };
-
-export const internalTicketsMocks: DbTicketDetail[] = [internalTicketsMock1];

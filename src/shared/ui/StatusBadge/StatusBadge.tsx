@@ -8,7 +8,7 @@ import { cn } from "@/shared/utils";
 import { statusLocaleKey } from "./locales";
 import { StatusBadgeProps, SystemStatus } from "./types";
 
-const statusClassMap: Record<SystemStatus, string> = {
+export const statusClassMap: Record<SystemStatus, string> = {
   Draft: "bg-muted text-muted-foreground",
   Open: "bg-blue-100 text-blue-600",
   Approved: "bg-blue-50 text-blue-500",

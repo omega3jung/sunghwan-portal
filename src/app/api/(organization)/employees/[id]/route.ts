@@ -10,7 +10,7 @@ import {
   toEmployeeWritePayload,
   UpdateEmployeeInput,
 } from "@/api/organization/employee/write";
-import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee/employees";
+import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee";
 import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 

@@ -2,8 +2,10 @@
 
 "use client";
 
+import { RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,6 +27,7 @@ import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticket/utils/
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useSessionStorageState } from "@/hooks/useSessionStorageState";
+import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
 
@@ -33,6 +36,7 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 
 export default function ServiceDeskPage() {
   const router = useRouter();
+  const { t } = useTranslation(NS.serviceDesk);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const { data: currentSession } = useCurrentSession();
@@ -60,8 +64,11 @@ export default function ServiceDeskPage() {
     },
   });
   const { data: employees } = useEmployeeListQuery({});
-  const { data: tickets, isLoading: isTicketListLoading } =
-    useServiceDeskTicketListQuery(params);
+  const {
+    data: tickets,
+    isLoading: isTicketListLoading,
+    refetch: reftechTickets,
+  } = useServiceDeskTicketListQuery(params);
 
   const categories = useMemo<MainCategory[]>(() => {
     return (categoryTrees ?? [])
@@ -112,13 +119,20 @@ export default function ServiceDeskPage() {
     <main className="flex h-full min-h-0 flex-col gap-4 p-4 md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">IT Service Desk</h1>
+          <h1 className="text-2xl font-semibold">{t("listPage.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Search and browse service desk tickets.
+            {t("listPage.description")}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            className="p-2.5"
+            variant="softPrimary"
+            onClick={() => reftechTickets}
+          >
+            <RefreshCw />
+          </Button>
           <TicketSearchCriteria
             form={form}
             categories={categories}
@@ -130,7 +144,7 @@ export default function ServiceDeskPage() {
             categories={categories}
             users={users}
             language={userPreference.language as SupportedLanguage}
-            trigger={<Button type="button">Create Ticket</Button>}
+            trigger={<Button type="button">{t("message.createTicket")}</Button>}
           />
         </div>
       </div>

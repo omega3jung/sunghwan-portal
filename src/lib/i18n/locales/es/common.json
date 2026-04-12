@@ -35,6 +35,10 @@
     "search": "Buscar {{target}}",
     "select": "Seleccione {{target}}"
   },
+  "sort": {
+    "latest": "Ordenar por más recientes",
+    "oldest": "Ordenar por más antiguos"
+  },
   "field": {
     "age": "Edad",
     "agent": "Agente",

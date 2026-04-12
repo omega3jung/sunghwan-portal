@@ -6,11 +6,9 @@ import {
   mapTicketCommentListPayload,
   mapTicketCommentPayload,
 } from "@/api/serviceDesk/ticket/comment";
-import { internalCommentsMocks } from "@/app/_mocks/scenarios/serviceDesk/comments/internalCommentsMock";
-import {
-  clientTicketsMocks,
-  internalTicketsMocks,
-} from "@/app/_mocks/scenarios/serviceDesk/tickets";
+import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTicketsMock";
+import { internalCommentsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalCommentsMock";
+import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
 import {
   getEffectiveUserId,
   isInternalUser,
@@ -27,15 +25,6 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const tickets = isInternal ? internalTicketsMocks : clientTicketsMocks;
-    const ticket = tickets.find((item) => item.id === ticketId);
-
-    if (!ticket) {
-      return NextResponse.json(
-        { message: "Ticket not found" },
-        { status: 404 },
-      );
-    }
 
     const items = (isInternal ? internalCommentsMocks : []).filter(
       (item) => item.ticket_id === ticketId,

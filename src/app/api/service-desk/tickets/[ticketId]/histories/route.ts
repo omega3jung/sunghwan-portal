@@ -4,11 +4,7 @@ import {
   camelTicketHistoryMapper,
   mapTicketHistoryListPayload,
 } from "@/api/serviceDesk/ticket/history";
-import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/histories/internalHistoriesMock";
-import {
-  clientTicketsMocks,
-  internalTicketsMocks,
-} from "@/app/_mocks/scenarios/serviceDesk/tickets";
+import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 
@@ -18,15 +14,6 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
-    const tickets = isInternal ? internalTicketsMocks : clientTicketsMocks;
-    const ticket = tickets.find((item) => item.id === ticketId);
-
-    if (!ticket) {
-      return NextResponse.json(
-        { message: "Ticket not found" },
-        { status: 404 },
-      );
-    }
 
     const items = (isInternal ? internalHistoriesMocks : []).filter(
       (item) => item.ticket_id === ticketId,
