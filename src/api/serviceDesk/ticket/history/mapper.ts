@@ -18,7 +18,7 @@ export interface DbTicketHistory {
   action: TicketHistoryAction;
 
   actor_id: string | null;
-  comment_no: string | null;
+  action_no: string | null;
 
   from_value?: unknown;
   to_value?: unknown;
@@ -37,7 +37,7 @@ export const camelTicketHistoryMapper: ArrayMapper<
     type: item.type,
     action: item.action,
     actorId: item.actor_id,
-    commentNo: item.comment_no,
+    actionNo: item.action_no,
     fromValue: item.from_value,
     toValue: item.to_value,
     metadata: item.metadata,
@@ -55,7 +55,7 @@ export const snakeTicketHistoryMapper: ArrayMapper<
     type: item.type,
     action: item.action,
     actor_id: item.actorId,
-    comment_no: item.commentNo,
+    action_no: item.actionNo,
     from_value: item.fromValue,
     to_value: item.toValue,
     metadata: item.metadata,

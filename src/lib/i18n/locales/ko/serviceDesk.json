@@ -1,27 +1,33 @@
 {
   "action": {
-    "comment": "코멘트",
-    "memo": "메모",
+    "comment": "댓글",
+    "note": "메모",
     "assign": "할당",
-    "assignMyself": "나에게 할당",
     "reject": "반려",
+    "merge": "병합",
+    "adjust": "조정",
     "searchCriteria": "검색 조건"
   },
+
   "chart": {
     "category": {
       "title": "카테고리별 티켓",
       "label": "카테고리"
     },
+
     "department": {
       "title": "요청 부서별 티켓",
       "label": "부서"
     },
+
     "assignee": {
       "title": "담당자별 티켓",
       "label": "담당자"
     },
+
     "sla": {
       "title": "SLA 성과",
+
       "status": {
         "withinSla": "SLA 준수",
         "resolvedLate": "지연 해결",
@@ -30,102 +36,65 @@
       }
     }
   },
+
   "field": {
-    "keyword": "키워드",
     "ticket": "티켓",
     "riskLevel": "위험도",
     "dueBy": "기한",
     "total": "총계",
     "list": "목록"
   },
+
   "message": {
-    "groupBy": "그룹 기준",
-    "filteringBy": "필터 기준",
-    "refineSearchCriteria": "검색 조건을 구체화해주세요",
-    "from": "부서",
-    "assignTo": "할당 대상",
-    "dueBy": "기한",
-    "lastComment": "마지막 코멘트",
-    "commentList": "코멘트",
-    "ticketSummary": "티켓 요약",
-    "requesterInformation": "요청자 정보",
-    "created": "생성",
-    "at": "에",
-    "ago": "전",
+    "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
+    "lastComment": "마지막 댓글",
+
     "createTicket": "티켓 생성",
-    "editTicket": "티켓 수정",
     "ticketCreation": "티켓 생성",
     "processingFlow": "처리 흐름",
-    "validationPoint": "검증 지점을 선택하세요",
+
     "dragDrop": "여기에 파일을 끌어다 놓으세요",
-    "uploadFile": "또는 클릭하여 찾아보세요",
-    "noAttaches": "첨부파일이 없습니다",
-    "dragDropFile": "파일을 끌어다 놓으세요",
-    "fileUploadLimit": "파일 업로드 (최대 10개)",
-    "approvalTitle": "승인",
+    "uploadFile": "또는 클릭해서 찾아보세요",
+    "noAttaches": "첨부 파일이 없습니다",
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
   },
-  "priority": {
-    "urgent": "긴급",
-    "high": "높음",
-    "medium": "보통",
-    "low": "낮음"
-  },
-  "response": {
-    "agent": "담당자가 응답함",
-    "requester": "요청자가 응답함",
-    "none": "응답 없음"
-  },
-  "status": {
-    "pre": "사전",
-    "open": "열림",
-    "approved": "승인됨",
-    "declined": "반려됨",
-    "working": "처리 중",
-    "pending": "대기 중",
-    "rejected": "반려됨",
-    "resolved": "해결됨",
-    "closed": "종료됨"
-  },
+
   "step": {
     "issueDetails": "문제 상세",
-    "attachments": "첨부파일",
+    "attachments": "첨부 파일",
     "review": "검토 및 제출",
-    "approval": "승인",
     "assign": "할당"
   },
-  "tab": {
-    "tickets": "티켓",
-    "reports": "보고서",
-    "pendingApprovals": "승인 대기",
-    "openTickets": "열린 티켓",
-    "closedTickets": "종료된 티켓",
-    "overdueTickets": "기한 초과 티켓"
-  },
+
   "detailAside": {
     "recipientsTitle": "수신자",
     "unassigned": "미할당",
     "ticketId": "티켓 ID"
   },
+
   "historySheet": {
     "title": "티켓 이력",
     "description": "티켓 이력 타임라인을 확인하세요."
   },
+
   "detailPage": {
     "detailsTitle": "티켓 상세 정보",
-    "descriptionTitleHint": "핵심 요청 내용과 최근 활동을 한눈에 확인하세요.",
+    "descriptionTitleHint": "핵심 요청 내용과 최신 활동을 한눈에 확인하세요.",
     "replyTitle": "답글",
-    "replyTitleHint": "답글을 작성하고, 내부 메모를 남기고, 대화를 한 흐름에서 검토하세요.",
+    "replyTitleHint": "답글을 남기고, 내부 메모를 작성하고, 대화를 한 흐름에서 검토하세요.",
     "notFound": "티켓을 찾을 수 없습니다."
   },
+
   "recentActivity": {
     "title": "최근 활동",
+
     "latestUpdate": {
       "label": "최신 업데이트",
       "empty": "아직 이력이 없습니다",
       "fallbackMeta": "타임라인이 여기에 표시됩니다"
     },
+
     "conversation": {
       "label": "대화",
       "empty": "아직 댓글이 없습니다",
@@ -134,103 +103,153 @@
       "count_one": "댓글 {{count}}개",
       "count_other": "댓글 {{count}}개"
     },
+
     "lastCommenter": {
       "label": "마지막 댓글 작성자",
       "emptyName": "아직 댓글 작성자가 없습니다",
       "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
     },
+
     "history": {
-      "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경",
-      "STATUS_CHANGED_SIMPLE": "상태가 변경",
+      "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
+      "STATUS_CHANGED_SIMPLE": "상태가 변경됨",
       "ASSIGNEE_CHANGED": "담당자가 업데이트됨",
-      "APPROVAL_REQUESTED": "승인 요청",
-      "APPROVAL_APPROVED": "승인 완료",
-      "APPROVAL_DECLINED": "승인 반려",
+      "APPROVAL_REQUESTED": "승인 요청됨",
+      "APPROVAL_APPROVED": "승인 완료됨",
+      "APPROVAL_DECLINED": "승인 반려됨",
       "COMMENT_CREATED": "댓글이 추가됨",
+      "NOTE_CREATED": "메모가 추가됨",
       "COMMENT_UPDATED": "댓글이 수정됨",
       "COMMENT_DELETED": "댓글이 삭제됨",
       "TRACK_TIME_UPDATED": "추적 시간이 업데이트됨",
+      "MERGED": "{{target}} 티켓으로 병합됨",
+      "TICKET_REJECTED": "티켓이 반려됨",
       "UPDATED": "티켓이 업데이트됨",
+      "DELETED": "티켓이 삭제됨",
       "CREATED": "티켓이 생성됨",
-      "DEFAULT": "이력이 업데이트됨",
-      "DELETED": "티켓이 삭제되었습니다"
+      "DEFAULT": "이력이 업데이트됨"
     }
   },
+
+  "merge": {
+    "badge": "병합됨",
+    "into": "{{ticketId}} 티켓으로 병합됨"
+  },
+
   "historyTimeline": {
     "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
+
     "badge": {
       "status": "상태",
-      "field": "필드",
       "assignment": "할당",
       "approval": "승인",
       "comment": "댓글",
+      "category": "카테고리",
+      "note": "메모",
       "trackTime": "추적 시간",
-      "sla": "SLA",
+      "planning": "계획",
       "system": "시스템",
       "default": "이력"
     },
+
     "valueChanged": "{{from}} -> {{to}}"
   },
+
   "comment": {
     "attachments": {
       "images": "이미지",
       "files": "파일"
     },
-    "empty": {
-      "noResult": "검색 조건과 일치하는 댓글이 없습니다."
-    },
-    "item": {
-      "toggleDetails": "댓글 상세 보기 전환",
-      "number": "댓글 #{{number}}",
-      "edited": "수정됨",
-      "visibility": {
-        "public": "공개",
-        "internal": "내부 메모"
-      }
-    },
-    "list": {
-      "titleHint": "티켓 대화 이력을 검색하고, 정렬하고, 검토하세요.",
-      "countLabel_one": "댓글",
-      "countLabel_other": "댓글"
-    },
-    "search": {
-      "placeholder": "댓글 검색"
-    },
+
     "editor": {
-      "placeholderPublic": "댓글을 작성해 대화를 이어가세요",
-      "placeholderInternal": "이 티켓에 대한 내부 메모를 남기세요",
-      "validationEmpty": "제출하기 전에 댓글을 입력하세요."
+      "validationEmpty": "제출하기 전에 댓글을 입력해 주세요."
     },
-    "composer": {
-      "currentUser": "현재 사용자",
-      "helperPublic": "공개 댓글은 티켓 대화에 표시됩니다.",
-      "helperInternal": "내부 메모는 내부 팀에게만 표시됩니다.",
-      "submitPublic": "댓글 등록",
-      "submitInternal": "내부 메모 등록",
-      "internalNoteLabel": "내부 메모",
-      "launcherPublicDescription": "티켓 스레드에 표시되는 답글을 작성하세요.",
-      "launcherInternalDescription": "내부 팀 안에서만 공유되는 메모를 남기세요."
-    },
+
     "toolbar": {
       "bold": "굵게",
       "italic": "기울임꼴",
       "bulletList": "글머리 기호 목록",
       "numberedList": "번호 목록",
-      "quote": "인용문",
+      "quote": "인용",
       "codeBlock": "코드 블록",
       "undo": "실행 취소",
       "redo": "다시 실행"
     }
   },
+
+  "actionTool": {
+    "currentUser": "현재 사용자",
+    "currentUserFallback": "나",
+    "launcherTitle": {
+      "comment": "댓글",
+      "note": "메모",
+      "assign": "할당",
+      "adjust": "계획 조정",
+      "merge": "병합",
+      "reject": "반려"
+    },
+    "launcher": {
+      "comment": "요청자와 참조자에게 공개 답글을 남기세요.",
+      "note": "팀 내부에만 남는 내부 메모를 작성하세요.",
+      "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
+      "reject": "요청을 닫기 전에 반려 사유를 기록하세요.",
+      "merge": "이 티켓을 다른 티켓에 병합하세요.",
+      "adjust": "우선순위, 위험도, 기한 설정을 업데이트하세요."
+    },
+    "helper": {
+      "comment": "이 티켓을 지켜보는 모두에게 공개 업데이트를 공유하세요.",
+      "note": "서비스 데스크 팀을 위한 내부 메모를 남기세요.",
+      "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
+      "reject": "이 요청을 왜 반려하는지 남기세요.",
+      "merge": "병합할 대상 티켓을 선택하고 짧은 메모를 남기세요.",
+      "adjust": "변경 적용 전에 우선순위, 위험도, 기한을 검토하세요."
+    },
+    "submit": {
+      "comment": "댓글 등록",
+      "note": "메모 저장",
+      "assign": "할당 저장",
+      "reject": "티켓 반려",
+      "merge": "티켓 병합",
+      "adjust": "계획 업데이트"
+    },
+    "list": {
+      "title": "활동",
+      "titleHint": "티켓 액션을 검색하고, 정렬하고, 검토하세요.",
+      "empty": "아직 액션이 없습니다",
+      "noResult": "검색 조건과 일치하는 액션이 없습니다.",
+      "toggleDetails": "액션 상세 보기 전환",
+      "number": "액션 #{{number}}",
+      "edited": "수정됨",
+      "searchPlaceholder": "액션 검색",
+      "countLabel_one": "활동",
+      "countLabel_other": "활동"
+    },
+    "form": {
+      "editorLabel": "사유",
+      "editorPlaceholder": {
+        "comment": "댓글을 작성하고 대화를 이어가세요",
+        "note": "이 티켓에 대한 내부 메모를 남기세요",
+        "assign": "다음 담당자를 위한 할당 맥락을 남기세요",
+        "reject": "이 티켓을 반려해야 하는 이유를 설명하세요",
+        "merge": "이 티켓들을 병합해야 하는 이유를 설명하세요",
+        "adjust": "이 값들을 조정해야 하는 이유를 설명하세요"
+      },
+      "targetTicketId": "대상 티켓",
+      "mergeTargetPlaceholder": "대표 티켓 id를 입력하세요"
+    }
+  },
+
   "listPage": {
     "title": "IT 서비스 데스크",
     "description": "서비스 데스크 티켓을 검색하고 조회하세요."
   },
+
   "ticketList": {
     "empty": "티켓이 없습니다",
     "requesterMeta": "{{name}} • {{time}}",
     "dueMeta": "기한 {{time}}"
   },
+
   "searchCriteria": {
     "primaryFilters": "주요 필터",
     "additionalFilters": "추가 필터",

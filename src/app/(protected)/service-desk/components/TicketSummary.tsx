@@ -1,9 +1,11 @@
 import { Pickaxe, Timer } from "lucide-react";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { TicketDetail } from "@/domain/serviceDesk";
+import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
+import { ROUTES } from "@/lib/routes";
 import { ImageValueLabel, ISODateString } from "@/shared/types";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
 import {
@@ -21,6 +23,9 @@ type TicketSummaryProps = {
 
 export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
   const { t } = useTranslation(NS.serviceDesk);
+  const mergedIntoTicketHref = ticket.mergedIntoTicketId
+    ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
+    : null;
 
   return (
     <section className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -68,7 +73,25 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
             <li>
               <PriorityBadge priority={ticket.priority} />
             </li>
+            {isMergedChildTicket(ticket) ? (
+              <li>
+                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+              </li>
+            ) : null}
           </ul>
+
+          {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
+            <p className="text-sm text-muted-foreground">
+              <Link
+                className="text-primary underline-offset-4 hover:underline"
+                href={mergedIntoTicketHref}
+              >
+                {t("merge.into", {
+                  ticketId: ticket.mergedIntoTicketId,
+                })}
+              </Link>
+            </p>
+          ) : null}
         </section>
       </div>
 

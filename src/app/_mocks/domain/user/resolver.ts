@@ -1,8 +1,8 @@
 import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
-import { internalAuths, internalProfiles } from "./data.internal";
 import { clientAuths, clientProfiles } from "./data.client";
+import { internalAuths, internalProfiles } from "./data.internal";
 
 export function resolveInternalAuth(
   id: string,

@@ -2,26 +2,26 @@ import { Locale } from "date-fns";
 import { MessageSquareText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { TicketComment, TicketHistory } from "@/domain/serviceDesk";
+import { TicketAction, TicketHistory } from "@/domain/serviceDesk";
 import { getHistorySummary } from "@/feature/serviceDesk/ticket/components/TicketHistoryTimeline/mapper";
 import { NS } from "@/lib/i18n";
 import { formatTimeDistanceFromNow } from "@/shared/utils/date";
 
 type TicketRecentActivityProps = {
   latestHistory: TicketHistory;
-  activeComments: TicketComment[];
-  latestComment: TicketComment;
-  latestCommentName?: string;
-  latestCommentEmail?: string;
+  activeActions: TicketAction[];
+  latestAction: TicketAction;
+  latestActionName?: string;
+  latestActionEmail?: string;
   dateLocale: Locale;
 };
 
 export function TicketRecentActivity({
   latestHistory,
-  activeComments,
-  latestComment,
-  latestCommentName,
-  latestCommentEmail,
+  activeActions,
+  latestAction,
+  latestActionName,
+  latestActionEmail,
   dateLocale,
 }: TicketRecentActivityProps) {
   const { t } = useTranslation(NS.serviceDesk, {
@@ -52,14 +52,14 @@ export function TicketRecentActivity({
         <ActivityPreview
           label={t("conversation.label")}
           value={
-            activeComments.length > 0
-              ? t("conversation.count", { count: activeComments.length })
+            activeActions.length > 0
+              ? t("conversation.count", { count: activeActions.length })
               : t("conversation.empty")
           }
           meta={
-            latestComment
+            latestAction
               ? `${t("conversation.latestPrefix")} ${formatTimeDistanceFromNow(
-                  latestComment.createdAt,
+                  latestAction.createdAt,
                   dateLocale,
                 )}`
               : t("conversation.start")
@@ -67,8 +67,8 @@ export function TicketRecentActivity({
         />
         <ActivityPreview
           label={t("lastCommenter.label")}
-          value={latestCommentName || t("lastCommenter.emptyName")}
-          meta={latestCommentEmail || t("lastCommenter.emptyEmail")}
+          value={latestActionName || t("lastCommenter.emptyName")}
+          meta={latestActionEmail || t("lastCommenter.emptyEmail")}
         />
       </div>
     </div>

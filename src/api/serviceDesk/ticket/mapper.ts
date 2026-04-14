@@ -2,11 +2,12 @@ import {
   createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/api/utils/payload";
-import { Priority } from "@/domain/common";
+import { Priority, RiskLevel } from "@/domain/common";
 import {
   Attach,
   CategoryScope,
   TicketDetail,
+  TicketResolutionReason,
   TicketStatus,
   TicketSummary,
 } from "@/domain/serviceDesk";
@@ -24,8 +25,11 @@ export interface DbTicketSummary {
   requester_id: string;
 
   status: TicketStatus;
+  close_reason?: TicketResolutionReason | null;
   priority: Priority;
+  risk_level: RiskLevel;
   assignee_id: string[];
+  merged_into_ticket_id?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
@@ -55,8 +59,11 @@ export interface DbTicketDetail {
   requester_id: string;
 
   status: TicketStatus;
+  close_reason?: TicketResolutionReason | null;
   priority: Priority;
+  risk_level: RiskLevel;
   assignee_id: string[];
+  merged_into_ticket_id?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
@@ -73,7 +80,7 @@ export interface DbTicketDetail {
   approval_step_id: string | null;
 
   subject: string;
-  body: string;
+  content: string;
 
   email: {
     to: string[];
@@ -96,8 +103,11 @@ export const camelTicketSummaryMapper: ArrayMapper<
     updatedAt: nullToUndefined(item.updated_at),
     requesterId: item.requester_id,
     status: item.status,
+    closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
+    riskLevel: item.risk_level,
     assigneeIds: item.assignee_id,
+    mergedIntoTicketId: item.merged_into_ticket_id,
     lastCommentAt: nullToUndefined(item.last_comment_at),
     lastCommenterEmail: nullToUndefined(item.last_commenter_email),
     trackTimeMinutes: item.track_time_minutes,
@@ -124,8 +134,11 @@ export const camelTicketDetailMapper: ArrayMapper<
     updatedAt: nullToUndefined(item.updated_at),
     requesterId: item.requester_id,
     status: item.status,
+    closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
+    riskLevel: item.risk_level,
     assigneeIds: item.assignee_id,
+    mergedIntoTicketId: item.merged_into_ticket_id,
     lastCommentAt: nullToUndefined(item.last_comment_at),
     lastCommenterEmail: nullToUndefined(item.last_commenter_email),
     trackTimeMinutes: item.track_time_minutes,
@@ -137,7 +150,7 @@ export const camelTicketDetailMapper: ArrayMapper<
     categoryId: item.category_id,
     approvalStepId: nullToUndefined(item.approval_step_id),
     subject: item.subject,
-    body: item.body,
+    content: item.content,
     email: item.email,
     files: item.files,
     images: item.images,
@@ -155,8 +168,11 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     updated_at: undefinedToNull(item.updatedAt),
     requester_id: item.requesterId,
     status: item.status,
+    close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
+    risk_level: item.riskLevel,
     assignee_id: item.assigneeIds,
+    merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
     last_commenter_email: undefinedToNull(item.lastCommenterEmail),
     track_time_minutes: item.trackTimeMinutes,
@@ -183,8 +199,11 @@ export const snakeTicketDetailMapper: ArrayMapper<
     updated_at: undefinedToNull(item.updatedAt),
     requester_id: item.requesterId,
     status: item.status,
+    close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
+    risk_level: item.riskLevel,
     assignee_id: item.assigneeIds,
+    merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
     last_commenter_email: undefinedToNull(item.lastCommenterEmail),
     track_time_minutes: item.trackTimeMinutes,
@@ -196,7 +215,7 @@ export const snakeTicketDetailMapper: ArrayMapper<
     category_id: item.categoryId,
     approval_step_id: undefinedToNull(item.approvalStepId),
     subject: item.subject,
-    body: item.body,
+    content: item.content,
     email: item.email,
     files: item.files,
     images: item.images,

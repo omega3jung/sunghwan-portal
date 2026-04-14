@@ -8,6 +8,7 @@ export const ticket: DbTicketDetail = {
   requester_id: "53",
   status: "Resolved",
   priority: "medium",
+  risk_level: "high",
   assignee_id: ["41"],
   track_time_minutes: 30,
   last_comment_at: "2026-03-27T09:15:11Z",
@@ -20,7 +21,8 @@ export const ticket: DbTicketDetail = {
   category_id: "75",
   approval_step_id: null,
   subject: "Request to SKU-12345 receving report",
-  body: "Hi, we requested receving report of all SKU-12345 devices from customer to check info is correct.<br>Please send it ASAP.",
+  content:
+    "Hi, we requested receving report of all SKU-12345 devices from customer to check info is correct.<br>Please send it ASAP.",
   email: {
     to: [
       "isabella.martinez@sunghwan-portal.dev",

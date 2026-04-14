@@ -8,6 +8,7 @@ export const ticket: DbTicketDetail = {
   requester_id: "53",
   status: "Resolved",
   priority: "medium",
+  risk_level: "medium",
   assignee_id: ["41"],
   track_time_minutes: 60,
   last_comment_at: "2026-03-27T15:02:13Z",
@@ -20,7 +21,8 @@ export const ticket: DbTicketDetail = {
   category_id: "72",
   approval_step_id: null,
   subject: "Request to correct a received device ID",
-  body: "Hi, we found that one of the received B4 device IDs is incorrect.<br>Please update the device ID from 84321565 to 84321585.",
+  content:
+    "Hi, we found that one of the received B4 device IDs is incorrect.<br>Please update the device ID from 84321565 to 84321585.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "liam.williams@sunghwan-portal.dev"],
     cc: [

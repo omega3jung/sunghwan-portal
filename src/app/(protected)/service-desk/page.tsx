@@ -14,7 +14,7 @@ import type { MainCategory } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/keys";
-import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/api/queries";
+import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/api";
 import { CreateTicketDialog } from "@/feature/serviceDesk/ticket/components/TicketFormDialog";
 import { TicketList } from "@/feature/serviceDesk/ticket/components/TicketList";
 import { TicketSearchCriteria } from "@/feature/serviceDesk/ticket/components/TicketSearchCriteria";

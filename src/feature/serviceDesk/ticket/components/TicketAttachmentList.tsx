@@ -1,21 +1,18 @@
 import { FileText, ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import type { TicketComment } from "@/domain/serviceDesk";
+import type { Attach } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 
-type TicketCommentFile = TicketComment["files"][number];
-type TicketCommentImage = TicketComment["images"][number];
-
-type TicketCommentAttachmentsProps = {
-  files: TicketCommentFile[];
-  images: TicketCommentImage[];
+type TicketActionAttachmentsProps = {
+  files: Attach[];
+  images: Attach[];
 };
 
-export function TicketCommentAttachments({
+export function TicketActionAttachments({
   files,
   images,
-}: TicketCommentAttachmentsProps) {
+}: TicketActionAttachmentsProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const hasAttachments = files.length > 0 || images.length > 0;
 

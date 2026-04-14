@@ -11,8 +11,8 @@ import {
   toAssignmentRuleWritePayload,
 } from "@/api/serviceDesk/assignmentRule/write";
 import {
-  internalAssignmentRuleSettingsMock,
   clientAssignmentRuleSettingsMock,
+  internalAssignmentRuleSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 

@@ -1,15 +1,15 @@
-# 티켓 모델
+# Ticket Model
 
-## 목적
+## 목표
 
-티켓 모델은 서비스 데스크 시스템에서 티켓을 워크플로 엔티티로 표현하는
-핵심 도메인 구조를 정의한다.
+Ticket model은 Service Desk 시스템에서 workflow entity로서 티켓의
+핵심 도메인 구조를 정의합니다.
 
-이 모델의 목표는 다음과 같다.
+이 모델의 목표는 다음과 같습니다.
 
-- 티켓을 구조화되고 상태를 가진 엔티티로 표현한다.
-- 단순 CRUD가 아니라 워크플로 중심 동작을 지원한다.
-- API, UI, 도메인 로직 전반의 일관성을 유지한다.
+- 티켓을 구조화되고 상태를 가진 entity로 표현한다.
+- 단순 CRUD가 아니라 workflow 중심의 운영을 지원한다.
+- API, UI, 도메인 로직 전반에서 일관성을 유지한다.
 - 데이터 처리와 렌더링을 위한 명확한 계약을 제공한다.
 
 ---
@@ -17,28 +17,28 @@
 ## 핵심 개념
 
 ```txt
-A ticket is not just data; it is a workflow entity with state, ownership, and context.
+티켓은 단순한 데이터가 아니라, 상태와 소유권, 컨텍스트를 가진 workflow entity다.
 ```
 
-티켓은 다음과 같은 대상을 나타낸다.
+티켓은 다음 중 하나를 나타냅니다.
 
-- 요청
-- 이슈
-- 작업
+- request
+- issue
+- task
 
-그리고 이 대상은 정의된 생명주기를 따라 이동하며, 할당된 사용자에 의해 처리된다.
+이들은 정의된 라이프사이클을 따라 이동하며, 할당된 사용자에 의해 처리됩니다.
 
-단순한 데이터 모델과 달리, 티켓은 다음 특징을 가진다.
+단순한 데이터 모델과 달리 티켓은:
 
-- 시간에 따라 변화한다.
-- 여러 도메인 시스템과 상호작용한다.
-- 이력과 감사 가능성을 유지한다.
+- 시간에 따라 변화합니다.
+- 여러 도메인 시스템과 상호작용합니다.
+- 이력과 감사 가능성을 유지합니다.
 
 ---
 
-## 도메인 형태
+## 도메인 구조
 
-티켓 모델은 워크플로, 운영 UI, 관련 시스템이 필요로 하는 현재 상태를 노출한다.
+Ticket model은 workflow, 운영 UI, 관련 시스템에 필요한 현재 상태를 제공합니다.
 
 ```ts
 export interface Ticket {
@@ -82,55 +82,56 @@ export interface Ticket {
 
 ## 핵심 모델 영역
 
-### 식별 정보
+### Identity
 
 - `id`: 고유 식별자
 - `ticketNumber`: 사람이 읽을 수 있는 참조 번호
 
-### 타임스탬프
+### Timestamps
 
-- `createdAt`: 티켓이 생성된 시점
-- `updatedAt`: 마지막 수정 시점
+- `createdAt`: 티켓 생성 시각
+- `updatedAt`: 마지막 수정 시각
 
-### 요청 컨텍스트
+### Request Context
 
 - `requesterId`: 티켓을 생성한 사용자
-- `subject`: 요청 요약
+- `subject`: 요청의 짧은 요약
 - `body`: 상세 설명
 
-### 상태와 워크플로
+### Status and Workflow
 
-- `status`: 현재 워크플로 상태
-- `priority`: 긴급도 수준
-- `approvalStepId`: 필요한 경우 현재 승인 컨텍스트
+- `status`: 현재 workflow 상태
+- `priority`: 긴급도
+- `approvalStepId`: 해당되는 경우 현재 승인 컨텍스트
 
 관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
 
 ---
 
-### 카테고리
+### Category
 
-- `categoryId`: 티켓을 카테고리 설정과 연결한다.
+- `categoryId`: 티켓을 category configuration과 연결합니다.
 
-카테고리는 다음을 결정한다.
+Category는 다음을 결정합니다.
 
-- 할당
-- SLA 동작
-- 승인 필요 여부
-- 워크플로 동작
+- assignment
+- SLA behavior
+- approval requirement
+- workflow behavior
 
-즉, 티켓은 이러한 규칙을 내부에 직접 담기보다 카테고리 설정에 의존한다.
+따라서 ticket은 이러한 business rule을 직접 내장하지 않고,
+category configuration에 의존합니다.
 
 관련 문서: [Category Strategy](./strategy/category-strategy.md)
 
 ---
 
-### 할당
+### Assignment
 
 - `assigneeIds`: 현재 책임 사용자 목록
 
-할당은 실행, 소유권, 운영 가시성에 직접 영향을 주기 때문에
-핵심 모델의 일부로 취급된다.
+Assignment는 실행, 소유권, 운영 가시성에 직접 영향을 주므로
+핵심 모델의 일부입니다.
 
 관련 문서: [Assignment Policy](./strategy/assignment-policy.md)
 
@@ -138,36 +139,42 @@ export interface Ticket {
 
 ### SLA
 
-- `dueAt`: SLA 규칙에 따라 계산된 마감 시점
+- `dueAt`: SLA rule에 따라 계산된 마감 시각
 
-이 필드를 통해 긴급도와 시간 기대치를 티켓 수준에서 직접 드러낼 수 있다.
+이를 통해 긴급도와 시간 기대치를 ticket 수준에서 드러낼 수 있습니다.
 
 관련 문서: [SLA Strategy](./strategy/sla-strategy.md)
 
 ---
 
-### 작업 추적
+### Work Tracking
 
 - `trackTimeMinutes`: 집계된 작업 시간
 
-실제 작업 세션은 별도의 track-time 모델에서 관리된다.
+실제 작업 세션은 track-time model에서 별도로 관리됩니다.
 
 관련 문서: [Ticket Track Time](./ticket-track-time.md)
 
 ---
 
-### 활동 메타데이터
+### Activity Metadata
 
 - `lastCommentAt`: 마지막 상호작용 시각
-- `lastCommenterEmail`: 빠른 UI 렌더링을 위한 마지막 행위자 정보
+- `lastCommenterEmail`: 빠른 UI 렌더링을 위한 마지막 actor
 
-이 필드들은 전체 이력을 모두 읽지 않고도 최근 활동을 UI에 노출할 수 있게 해 준다.
+이 필드들은 전체 history를 즉시 로드하지 않아도,
+UI에서 최근 activity를 노출할 수 있게 도와줍니다.
+
+관련 문서:
+
+- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket History](./ticket-history.md)
 
 ---
 
-### 소유권 플래그
+### Ownership Flags
 
-티켓은 파생된 소유권 플래그도 함께 제공한다.
+Ticket은 파생된 ownership flag도 제공합니다.
 
 ```ts
 type Ownership = {
@@ -176,32 +183,32 @@ type Ownership = {
 };
 ```
 
-- `owner`: 현재 사용자가 요청자인 경우
-- `assigned`: 현재 사용자가 담당자인 경우
+- `owner`: 현재 사용자가 requester인지 여부
+- `assigned`: 현재 사용자가 assignee인지 여부
 
-이 플래그는 다음과 같은 용도로 유용하다.
+이 flag는 다음에 유용합니다.
 
-- 권한 처리
-- 조건부 UI 렌더링
+- permission 처리
+- UI 조건부 렌더링
 
 ---
 
-### 첨부파일
+### Attachments
 
 - `files`: 일반 첨부파일
-- `images`: 이미지 전용 첨부파일
+- `images`: 이미지 첨부파일
 
-첨부파일의 세부 동작은 별도 시스템이 처리할 수 있지만,
-티켓 컨텍스트의 일부로 유지된다.
+첨부파일 동작은 보조 시스템이 처리하더라도,
+attachments는 ticket context의 일부로 남습니다.
 
 ---
 
-### 활성 상태
+### Active State
 
-- `active`: soft-delete 플래그
+- `active`: soft-delete flag
 
-일반적인 워크플로에서는 티켓을 물리적으로 삭제하지 않는다.
-이 모델은 이력, 리포팅, 참조 무결성을 보존하기 위해 이를 유지한다.
+일반적인 workflow 운영에서 ticket은 물리적으로 삭제되지 않습니다.
+이 모델은 history, reporting, reference integrity를 위해 티켓을 보존합니다.
 
 관련 문서: [Ticket History](./ticket-history.md)
 
@@ -209,17 +216,17 @@ type Ownership = {
 
 ## 도메인 특성
 
-### 1. 워크플로 중심
+### 1. Workflow-Oriented
 
-티켓은 정적인 데이터가 아니다.
+티켓은 정적인 데이터가 아닙니다.
 
-- 시간에 따라 상태가 바뀐다.
-- 도메인 이벤트를 발생시킨다.
-- 여러 하위 시스템과 상호작용한다.
+- 시간에 따라 상태가 바뀝니다.
+- domain event를 발생시킵니다.
+- 여러 subsystem과 상호작용합니다.
 
-### 2. 카테고리 중심 동작
+### 2. Category-Driven Behavior
 
-티켓 자체는 전체 비즈니스 규칙을 모두 포함하지 않는다.
+티켓 자체가 전체 business rule 집합을 담고 있지는 않습니다.
 
 대신:
 
@@ -227,33 +234,42 @@ type Ownership = {
 Ticket -> Category -> Behavior
 ```
 
-이 방식은 모델을 더 깔끔하게 유지하고,
-동작을 더 구성 가능하게 만든다.
+이 구조는 모델을 더 깔끔하게 만들고, 동작을 더 잘 설정 가능하게 만듭니다.
 
 ### 3. 티켓 외부의 불변 이력
 
-티켓은 내부에 자체 이력을 저장하지 않는다.
+티켓은 자기 자신의 history를 내부에 저장하지 않습니다.
 
 대신:
 
-- 모든 변경은 `TicketHistory` 에 기록된다.
-- 티켓은 현재 상태만 표현한다.
+- 모든 변경은 `TicketHistory`에 기록됩니다.
+- ticket은 현재 상태만 표현합니다.
 
-### 4. 세션 기반 작업 추적
+### 4. 관련 상호작용 모델로서의 Activity
 
-작업은 하나의 원본 수치로 표현되지 않는다.
+티켓은 커뮤니케이션과 운영 상호작용을 위한 activity model에도 참여합니다.
 
 대신:
 
-- 작업은 세션들의 집합이다.
-- `trackTimeMinutes` 는 파생값 또는 집계값이다.
-- 상세 추적은 별도 모델에서 처리된다.
+- 의미 있는 상호작용은 `TicketActivity`로 표현됩니다.
+- 구조화된 커뮤니케이션과 운영 액션은 통합 모델을 공유합니다.
+- 최근 activity metadata는 빠른 UI 접근을 위해 ticket read model에 노출됩니다.
+
+### 5. Session-Based Work Tracking
+
+작업은 하나의 단일 숫자 source-of-truth로 표현되지 않습니다.
+
+대신:
+
+- 작업은 여러 session의 집합입니다.
+- `trackTimeMinutes`는 파생되거나 집계됩니다.
+- 상세 추적은 별도 모델에서 처리됩니다.
 
 ---
 
 ## 관계
 
-티켓은 여러 도메인 모델과 상호작용한다.
+Ticket은 여러 도메인 모델과 상호작용합니다.
 
 ```txt
 Ticket
@@ -261,70 +277,74 @@ Ticket
   -> Approval
   -> Assignment
   -> SLA
+  -> TicketActivity
   -> TicketHistory
   -> TicketTrackTime
-  -> Comment / Attachment
+  -> Attachment
 ```
 
-이 관계 구조 때문에 티켓 모델은 특히 명확하고 분명해야 한다.
+이 관계 구조는 ticket model이 명확하고 명시적으로 유지되어야 하는 이유 중 하나입니다.
+
+관련 전략 문서: [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
-## 읽기 모델과 쓰기 모델
+## Read Model vs Write Model
 
 ### Write Model
 
-- 업데이트에 최적화되어 있다.
-- 정규화된 필드를 포함한다.
-- API 및 백엔드 로직에서 사용된다.
+- 업데이트에 최적화됩니다.
+- 정규화된 필드를 포함합니다.
+- API와 backend logic에서 사용됩니다.
 
 ### Read Model
 
-- UI에 최적화되어 있다.
-- 다음과 같은 파생 필드를 포함할 수 있다.
+- UI에 최적화됩니다.
+- 다음과 같은 파생 필드를 포함할 수 있습니다.
   - `owner`
   - `assigned`
   - 집계된 시간
-  - 표시용 메타데이터
+  - display 중심 metadata
 
 ---
 
-## 파생 상태
+## Derived State
 
-어떤 값들은 무조건 저장하기보다 파생해서 계산하는 편이 더 적절하다.
+일부 값은 무조건 저장하기보다 파생해야 합니다.
 
 ```ts
 const isOwner = ticket.requesterId === currentUser.id;
 ```
 
-특히 사용자별 컨텍스트는 가능한 한 파생 상태로 계산하는 것이 바람직하다.
+특히 사용자별 컨텍스트는 가능하면 파생 상태로 처리하는 것이 좋습니다.
 
 ---
 
 ## 설계 트레이드오프
 
-### 장점
+### Pros
 
-- 구조가 명확하고 예측 가능하다.
-- 복잡한 워크플로를 지원할 수 있다.
-- 도메인 복잡도 증가에 맞춰 확장 가능하다.
-- 관심사를 효과적으로 분리한다.
+- 명확하고 예측 가능한 구조
+- 복잡한 workflow 지원
+- 도메인 복잡도에 따라 확장 가능
+- 관심사 분리가 효과적
 
-### 단점
+### Cons
 
-- 기본 CRUD 모델보다 더 복잡하다.
-- 관련 시스템에 대한 이해가 필요하다.
-- 초기 설계 비용이 더 높다.
+- 기본 CRUD 모델보다 복잡함
+- 관련 시스템에 대한 이해가 필요함
+- 초기 설계 비용이 더 큼
 
 ---
 
 ## 요약
 
-티켓 모델은 서비스 데스크 시스템의 중심 도메인 엔티티이다.
+Ticket model은 Service Desk 시스템의 중심 도메인 entity입니다.
 
-이 모델은 다음을 목표로 설계되었다.
+이 모델은 다음을 목표로 설계되었습니다.
 
-- 워크플로 상태를 표현한다.
-- 카테고리 중심 설정과 통합된다.
+- workflow 상태를 표현한다.
+- category-driven configuration과 통합된다.
+- activity/history model과 자연스럽게 연결된다.
 - 감사 가능성과 SLA 추적을 지원한다.
-- 상세 동작은 관련 시스템에 위임함으로써 모델 자체는 깔끔하게 유지한다.
+- 세부 동작을 관련 시스템에 위임하여 모델 자체는 깔끔하게 유지한다.

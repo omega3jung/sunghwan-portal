@@ -4,9 +4,11 @@ import {
   Check,
   CircleDot,
   Clock3,
+  GitMerge,
   MessageSquare,
   Pencil,
   RefreshCcw,
+  StickyNote,
   Trash2,
   UserPlus,
   X,
@@ -32,18 +34,20 @@ export function resolveHistoryBadge(
   switch (history.type) {
     case "STATUS":
       return t("historyTimeline.badge.status");
-    case "FIELD":
-      return t("historyTimeline.badge.field");
+    case "CATEGORY":
+      return t("historyTimeline.badge.category");
     case "ASSIGNMENT":
       return t("historyTimeline.badge.assignment");
     case "APPROVAL":
       return t("historyTimeline.badge.approval");
     case "COMMENT":
       return t("historyTimeline.badge.comment");
+    case "NOTE":
+      return t("historyTimeline.badge.note");
     case "TRACK_TIME":
       return t("historyTimeline.badge.trackTime");
-    case "SLA":
-      return t("historyTimeline.badge.sla");
+    case "PLANNING":
+      return t("historyTimeline.badge.planning");
     case "SYSTEM":
       return t("historyTimeline.badge.system");
     default:
@@ -53,13 +57,51 @@ export function resolveHistoryBadge(
 
 export function getHistorySummary(
   history: {
+    type?: string;
     action: string;
     fromValue?: unknown;
     toValue?: unknown;
+    metadata?: Record<string, unknown>;
   },
   t: TFunction,
   tStatus: TFunction,
 ) {
+  if (history.type === "STATUS" && history.action === "UPDATED") {
+    if (history.fromValue && history.toValue) {
+      return t("history.STATUS_CHANGED", {
+        from: resolveHistoryStatusLabel(history.fromValue, tStatus),
+        to: resolveHistoryStatusLabel(history.toValue, tStatus),
+      });
+    }
+
+    return t("history.STATUS_CHANGED_SIMPLE");
+  }
+
+  if (history.type === "ASSIGNMENT" && history.action === "UPDATED") {
+    return t("history.ASSIGNEE_CHANGED");
+  }
+
+  if (history.type === "COMMENT") {
+    switch (history.action) {
+      case "CREATED":
+        return t("history.COMMENT_CREATED");
+      case "UPDATED":
+        return t("history.COMMENT_UPDATED");
+      case "DELETED":
+        return t("history.COMMENT_DELETED");
+      default:
+        break;
+    }
+  }
+
+  if (history.type === "NOTE" && history.action === "CREATED") {
+    return t("history.NOTE_CREATED");
+  }
+
+  if (history.type === "TRACK_TIME" && history.action === "UPDATED") {
+    return t("history.TRACK_TIME_UPDATED");
+  }
+
   switch (history.action) {
     case "DELETED":
       return t("history.DELETED");
@@ -79,14 +121,13 @@ export function getHistorySummary(
       return t("history.APPROVAL_APPROVED");
     case "APPROVAL_DECLINED":
       return t("history.APPROVAL_DECLINED");
-    case "COMMENT_CREATED":
-      return t("history.COMMENT_CREATED");
-    case "COMMENT_UPDATED":
-      return t("history.COMMENT_UPDATED");
-    case "COMMENT_DELETED":
-      return t("history.COMMENT_DELETED");
-    case "TRACK_TIME_UPDATED":
-      return t("history.TRACK_TIME_UPDATED");
+    case "TICKET_MERGED":
+    case "MERGED":
+      return t("history.MERGED", {
+        target: resolveMergeTargetLabel(history.metadata),
+      });
+    case "TICKET_REJECTED":
+      return t("history.TICKET_REJECTED");
     case "UPDATED":
       return t("history.UPDATED");
     case "CREATED":
@@ -109,19 +150,40 @@ function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
 }
 
 export function resolveHistoryIcon(history: TicketHistory) {
+  if (history.type === "COMMENT" && history.action === "CREATED") {
+    return <MessageSquare className="h-3 w-3" />;
+  }
+
+  if (history.type === "NOTE" && history.action === "CREATED") {
+    return <StickyNote className="h-3 w-3" />;
+  }
+
+  if (history.type === "STATUS" && history.action === "UPDATED") {
+    return <RefreshCcw className="h-3 w-3" />;
+  }
+
+  if (history.type === "ASSIGNMENT" && history.action === "UPDATED") {
+    return <RefreshCcw className="h-3 w-3" />;
+  }
+
+  if (history.type === "TRACK_TIME" && history.action === "UPDATED") {
+    return <RefreshCcw className="h-3 w-3" />;
+  }
+
   switch (history.action) {
     case "CREATED":
       return <CircleDot className="h-3 w-3" />;
 
     case "UPDATED":
-    case "STATUS_CHANGED":
-    case "ASSIGNEE_CHANGED":
-    case "COMMENT_UPDATED":
-    case "TRACK_TIME_UPDATED":
       return <RefreshCcw className="h-3 w-3" />;
 
+    case "TICKET_MERGED":
+      return <GitMerge className="h-3 w-3" />;
+
+    case "TICKET_REJECTED":
+      return <X className="h-3 w-3" />;
+
     case "DELETED":
-    case "COMMENT_DELETED":
       return <Trash2 className="h-3 w-3" />;
 
     case "APPROVAL_REQUESTED":
@@ -130,12 +192,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
     case "APPROVAL_APPROVED":
       return <Check className="h-3 w-3" />;
 
-    case "APPROVAL_DECLINED":
-      return <X className="h-3 w-3" />;
-
-    case "COMMENT_CREATED":
-      return <MessageSquare className="h-3 w-3" />;
-
     default:
       break;
   }
@@ -143,15 +199,17 @@ export function resolveHistoryIcon(history: TicketHistory) {
   switch (history.type) {
     case "ASSIGNMENT":
       return <UserPlus className="h-3 w-3" />;
-    case "FIELD":
+    case "CATEGORY":
       return <Pencil className="h-3 w-3" />;
     case "TRACK_TIME":
-    case "SLA":
+    case "PLANNING":
       return <Clock3 className="h-3 w-3" />;
     case "SYSTEM":
       return <Bot className="h-3 w-3" />;
     case "COMMENT":
       return <MessageSquare className="h-3 w-3" />;
+    case "NOTE":
+      return <StickyNote className="h-3 w-3" />;
     case "APPROVAL":
       return <Check className="h-3 w-3" />;
     default:
@@ -159,12 +217,24 @@ export function resolveHistoryIcon(history: TicketHistory) {
   }
 }
 
+function resolveMergeTargetLabel(metadata?: Record<string, unknown>): string {
+  if (
+    metadata &&
+    "targetTicketId" in metadata &&
+    typeof metadata.targetTicketId === "string"
+  ) {
+    return metadata.targetTicketId;
+  }
+
+  return "-";
+}
+
 export function resolveHistoryDescription(
   history: TicketHistory,
   t: TFunction,
 ): string | undefined {
   if (
-    history.type === "FIELD" &&
+    history.type === "CATEGORY" &&
     history.fromValue !== undefined &&
     history.toValue !== undefined
   ) {

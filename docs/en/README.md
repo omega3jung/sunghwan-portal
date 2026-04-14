@@ -93,17 +93,20 @@ They cover:
 - ticket overview and system scope
 - ticket lifecycle and state transitions
 - ticket model and ownership
+- ticket activity and action-oriented interaction modeling
 - work session tracking
 - ticket history and audit trail
-- category-driven strategy for approval, assignment, and SLA
+- category-driven strategy for actions, approval, assignment, and SLA
 
 Key documents:
 
 - [Ticket System Overview](./03-domain/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](./03-domain/ticket/ticket-lifecycle.md)
 - [Ticket Model](./03-domain/ticket/ticket-model.md)
+- [Ticket Activity Model](./03-domain/ticket/ticket-activity.md)
 - [Ticket Track Time](./03-domain/ticket/ticket-track-time.md)
 - [Ticket History](./03-domain/ticket/ticket-history.md)
+- [Action Strategy](./03-domain/ticket/strategy/action-strategy.md)
 - [Category Strategy](./03-domain/ticket/strategy/category-strategy.md)
 - [Approval System](./03-domain/ticket/strategy/approval-system.md)
 - [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
@@ -237,17 +240,19 @@ If you are new to the project, this order gives the clearest overview:
 3. [Ticket System Overview](./03-domain/ticket/ticket-system-overview.md)
 4. [Ticket Lifecycle](./03-domain/ticket/ticket-lifecycle.md)
 5. [Ticket Model](./03-domain/ticket/ticket-model.md)
-6. [Category Strategy](./03-domain/ticket/strategy/category-strategy.md)
-7. [Approval System](./03-domain/ticket/strategy/approval-system.md)
-8. [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
-9. [SLA Strategy](./03-domain/ticket/strategy/sla-strategy.md)
-10. [Ticket Track Time](./03-domain/ticket/ticket-track-time.md)
-11. [Ticket History](./03-domain/ticket/ticket-history.md)
-12. [Component Boundary](./04-ui-ux/component-boundary.md)
-13. [React Query Strategy](./05-data-fetching/react-query-strategy.md)
-14. [Ticket Form Design](./06-form-design/ticket-form.md)
-15. [Locale Structure](./07-i18n/locale-structure.md)
-16. [Development Approach](./08-dev-strategy/development-approach.md)
+6. [Ticket Activity Model](./03-domain/ticket/ticket-activity.md)
+7. [Ticket History](./03-domain/ticket/ticket-history.md)
+8. [Action Strategy](./03-domain/ticket/strategy/action-strategy.md)
+9. [Category Strategy](./03-domain/ticket/strategy/category-strategy.md)
+10. [Approval System](./03-domain/ticket/strategy/approval-system.md)
+11. [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
+12. [SLA Strategy](./03-domain/ticket/strategy/sla-strategy.md)
+13. [Ticket Track Time](./03-domain/ticket/ticket-track-time.md)
+14. [Component Boundary](./04-ui-ux/component-boundary.md)
+15. [React Query Strategy](./05-data-fetching/react-query-strategy.md)
+16. [Ticket Form Design](./06-form-design/ticket-form.md)
+17. [Locale Structure](./07-i18n/locale-structure.md)
+18. [Development Approach](./08-dev-strategy/development-approach.md)
 
 ---
 

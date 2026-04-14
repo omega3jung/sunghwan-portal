@@ -7,138 +7,121 @@ export const histories: DbTicketHistory[] = [
     ticket_id: ticket.id,
     history_no: 1,
 
-    type: "SYSTEM",
+    type: "TICKET",
     action: "CREATED",
 
-    actor_id: "52",
-    comment_no: null,
+    actor_id: "141",
+    action_no: null,
 
-    created_at: "2026-03-31T16:25:38Z",
+    created_at: "2026-04-02T06:03:14Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 2,
 
     type: "ASSIGNMENT",
-    action: "ASSIGNEE_CHANGED",
+    action: "UPDATED",
 
     actor_id: null,
-    comment_no: null,
+    action_no: null,
 
     from_value: null,
-    to_value: "41",
+    to_value: "41,31",
 
-    created_at: "2026-03-31T16:31:12Z",
+    created_at: "2026-04-02T06:06:20Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 3,
 
     type: "STATUS",
-    action: "STATUS_CHANGED",
+    action: "UPDATED",
 
     actor_id: "41",
-    comment_no: null,
+    action_no: null,
 
     from_value: "Open",
     to_value: "Working",
 
-    created_at: "2026-03-31T16:44:05Z",
+    created_at: "2026-04-02T06:10:27Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 4,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "41",
-    comment_no: "1",
+    action_no: "1",
 
-    created_at: "2026-03-31T17:02:41Z",
+    created_at: "2026-04-02T06:15:48Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 5,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
-    actor_id: "41",
-    comment_no: "2",
+    actor_id: "141",
+    action_no: "2",
 
-    created_at: "2026-03-31T17:06:18Z",
+    created_at: "2026-04-02T06:19:36Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 6,
 
-    type: "ASSIGNMENT",
-    action: "ASSIGNEE_CHANGED",
+    type: "NOTE",
+    action: "CREATED",
 
-    actor_id: "41",
-    comment_no: null,
+    actor_id: "31",
+    action_no: "3",
 
-    from_value: "41",
-    to_value: "41,31",
-
-    created_at: "2026-04-01T00:48:22Z",
+    created_at: "2026-04-02T06:52:08Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 7,
 
-    type: "COMMENT",
-    action: "COMMENT_CREATED",
+    type: "TRACK_TIME",
+    action: "UPDATED",
 
     actor_id: "31",
-    comment_no: "3",
+    action_no: null,
 
-    created_at: "2026-04-01T01:26:17Z",
+    created_at: "2026-04-02T07:05:12Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 8,
 
-    type: "TRACK_TIME",
-    action: "TRACK_TIME_UPDATED",
+    type: "STATUS",
+    action: "UPDATED",
 
     actor_id: "31",
-    comment_no: null,
+    action_no: null,
 
-    created_at: "2026-04-01T02:10:44Z",
+    from_value: "Working",
+    to_value: "Resolved",
+
+    metadata: {
+      reason: "DB lock released and blocked transactions recovered",
+    },
+
+    created_at: "2026-04-02T07:20:31Z",
   },
   {
     ticket_id: ticket.id,
     history_no: 9,
 
-    type: "STATUS",
-    action: "STATUS_CHANGED",
-
-    actor_id: "31",
-    comment_no: null,
-
-    from_value: "Working",
-    to_value: "Rejected",
-
-    metadata: {
-      reason:
-        "Unit ID modification is restricted to maintain data integrity and auditability",
-      note: "Please escalate correction requests through team leader for validation",
-    },
-
-    created_at: "2026-04-01T03:18:06Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 10,
-
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "31",
-    comment_no: "4",
+    action_no: "4",
 
-    created_at: "2026-04-01T03:22:49Z",
+    created_at: "2026-04-02T07:21:42Z",
   },
 ];

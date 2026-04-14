@@ -1,12 +1,15 @@
 // TicketListItem.tsx
 
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { SupportedLanguage } from "@/domain/config";
-import { TicketSummary } from "@/domain/serviceDesk";
+import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
+import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
@@ -37,6 +40,9 @@ export const TicketListItem = ({
     ticket.dueAt,
     dateLocaleMap[language],
   );
+  const mergedIntoTicketHref = ticket.mergedIntoTicketId
+    ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
+    : null;
 
   return (
     <div
@@ -56,6 +62,28 @@ export const TicketListItem = ({
               time: createdTime,
             })}
           </div>
+
+          {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <Badge
+                variant="secondary"
+                className="bg-amber-50/70 text-amber-600 font-medium"
+              >
+                {t("merge.badge")}
+              </Badge>
+              <Link
+                className="text-primary underline-offset-4 hover:underline"
+                href={mergedIntoTicketHref}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                {t("merge.into", {
+                  ticketId: ticket.mergedIntoTicketId,
+                })}
+              </Link>
+            </div>
+          ) : null}
         </div>
 
         <StatusBadge status={ticket.status} />

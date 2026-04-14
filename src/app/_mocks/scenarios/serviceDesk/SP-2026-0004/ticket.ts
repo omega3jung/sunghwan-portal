@@ -8,6 +8,7 @@ export const ticket: DbTicketDetail = {
   requester_id: "52",
   status: "Rejected",
   priority: "medium",
+  risk_level: "medium",
   assignee_id: ["41", "31"],
   track_time_minutes: 95,
   last_comment_at: "2026-04-01T03:22:49Z",
@@ -20,7 +21,8 @@ export const ticket: DbTicketDetail = {
   category_id: "72",
   approval_step_id: null,
   subject: "Request to extend Unit ID edit permission for repair staff",
-  body: "During repair work, input mistakes on Unit ID happen frequently and correction requests take too long.<br>Currently, Unit ID modification is allowed only for leader level and above.<br>Please grant Unit ID edit permission to Repair Technician as well.",
+  content:
+    "During repair work, input mistakes on Unit ID happen frequently and correction requests take too long.<br>Currently, Unit ID modification is allowed only for leader level and above.<br>Please grant Unit ID edit permission to Repair Technician as well.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
     cc: ["liam.williams@sunghwan-portal.dev"],

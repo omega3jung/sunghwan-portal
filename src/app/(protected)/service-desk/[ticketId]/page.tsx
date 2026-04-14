@@ -6,14 +6,15 @@ import { useTranslation } from "react-i18next";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
 import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api";
-import { useServiceDeskTicketCommentListQuery } from "@/feature/serviceDesk/ticket/api/comment";
+import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticket/api/action";
 import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticket/api/history";
-import { TicketCommentAttachments } from "@/feature/serviceDesk/ticket/components/TicketAttachmentList";
 import {
-  TicketCommentComposer,
-  TicketCommentList,
-} from "@/feature/serviceDesk/ticket/components/TicketComment";
+  TicketActionList,
+  TicketActionTool,
+} from "@/feature/serviceDesk/ticket/components/TicketAction";
+import { TicketActionAttachments } from "@/feature/serviceDesk/ticket/components/TicketAttachmentList";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
@@ -47,11 +48,12 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
 
-  const { data: ticketComments, isLoading: isTicketCommentsLoading } =
-    useServiceDeskTicketCommentListQuery(params.ticketId);
+  const { data: ticketActions, isLoading: isTicketActionsLoading } =
+    useServiceDeskTicketActionListQuery(params.ticketId);
 
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
     useServiceDeskTicketHistoryListQuery(params.ticketId);
+  const { data: categoryTrees } = useServiceDeskCategoryListQuery({});
 
   const { data: employees } = useEmployeeListQuery({});
 
@@ -93,18 +95,23 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     [userPreference.language],
   );
 
-  const activeComments = useMemo(
-    () => (ticketComments ?? []).filter((comment) => comment.active),
-    [ticketComments],
+  const categories = useMemo(
+    () => categoryTrees?.flatMap((tree) => tree.categories) ?? [],
+    [categoryTrees],
   );
 
-  const latestComment = useMemo(() => {
-    return [...activeComments].sort(
+  const activeActions = useMemo(
+    () => (ticketActions ?? []).filter((action) => action.active),
+    [ticketActions],
+  );
+
+  const latestAction = useMemo(() => {
+    return [...activeActions].sort(
       (left, right) =>
         new Date(right.createdAt).getTime() -
         new Date(left.createdAt).getTime(),
     )[0];
-  }, [activeComments]);
+  }, [activeActions]);
 
   const latestHistory = useMemo(() => {
     return [...(ticketHistories ?? [])].sort(
@@ -114,8 +121,8 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     )[0];
   }, [ticketHistories]);
 
-  const latestCommentOwner = latestComment
-    ? userMap.get(latestComment.ownerId)
+  const latestActionOwner = latestAction
+    ? userMap.get(latestAction.ownerId)
     : undefined;
 
   return (
@@ -147,13 +154,13 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
                   <TicketRecentActivity
                     latestHistory={latestHistory}
-                    activeComments={activeComments}
-                    latestComment={latestComment}
-                    latestCommentName={
-                      latestCommentOwner?.label || ticket.lastCommenterEmail
+                    activeActions={activeActions}
+                    latestAction={latestAction}
+                    latestActionName={
+                      latestActionOwner?.label || ticket.lastCommenterEmail
                     }
-                    latestCommentEmail={
-                      latestCommentOwner?.displayName ||
+                    latestActionEmail={
+                      latestActionOwner?.displayName ||
                       ticket.lastCommenterEmail
                     }
                     dateLocale={dateLocale}
@@ -171,10 +178,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                     <div
                       className="prose prose-sm max-w-none break-words text-foreground prose-p:my-3 prose-p:leading-7 prose-a:text-primary prose-img:rounded-lg"
                       dangerouslySetInnerHTML={{
-                        __html: ticket.body || "<p>-</p>",
+                        __html: ticket.content || "<p>-</p>",
                       }}
                     />
-                    <TicketCommentAttachments
+                    <TicketActionAttachments
                       files={ticket.files}
                       images={ticket.images}
                     />
@@ -204,18 +211,19 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                       {t("detailPage.replyTitle")}
                     </h2>
 
-                    <TicketCommentComposer
+                    <TicketActionTool
                       ticketId={params.ticketId}
+                      ticket={ticket}
                       users={users}
-                      showHeader={false}
+                      categories={categories}
                     />
                   </section>
 
                   {/* conversation */}
                   <section className="space-y-3 border-t border-border/50 pt-7">
-                    <TicketCommentList
-                      comments={ticketComments}
-                      isLoading={isTicketCommentsLoading}
+                    <TicketActionList
+                      actions={ticketActions}
+                      isLoading={isTicketActionsLoading}
                       users={users}
                       dateLocale={dateLocale}
                       showHeader

@@ -11,8 +11,8 @@ import {
   toApprovalStepWritePayload,
 } from "@/api/serviceDesk/approvalStep/write";
 import {
-  internalApprovalStepSettingsMock,
   clientApprovalStepSettingsMock,
+  internalApprovalStepSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 

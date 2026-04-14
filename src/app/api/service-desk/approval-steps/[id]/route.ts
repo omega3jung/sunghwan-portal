@@ -10,8 +10,8 @@ import {
   UpdateApprovalStepInput,
 } from "@/api/serviceDesk/approvalStep/write";
 import {
-  internalApprovalStepSettingsMock,
   clientApprovalStepSettingsMock,
+  internalApprovalStepSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";

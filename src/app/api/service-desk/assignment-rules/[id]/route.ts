@@ -10,8 +10,8 @@ import {
   UpdateAssignmentRuleInput,
 } from "@/api/serviceDesk/assignmentRule/write";
 import {
-  internalAssignmentRuleSettingsMock,
   clientAssignmentRuleSettingsMock,
+  internalAssignmentRuleSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";

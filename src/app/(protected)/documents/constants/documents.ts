@@ -84,10 +84,22 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "03-domain/ticket/ticket-model.md",
       },
       {
+        id: "ticket-activity",
+        title: "Ticket Activity",
+        description: "Activity model for communication and operational actions.",
+        relativePath: "03-domain/ticket/ticket-activity.md",
+      },
+      {
         id: "ticket-history",
         title: "Ticket History",
         description: "Auditability and history timeline strategy.",
         relativePath: "03-domain/ticket/ticket-history.md",
+      },
+      {
+        id: "action-strategy",
+        title: "Action Strategy",
+        description: "Action-oriented interaction and metadata design strategy.",
+        relativePath: "03-domain/ticket/strategy/action-strategy.md",
       },
       {
         id: "category-strategy",
@@ -253,6 +265,12 @@ export const documentGroups: DocumentGroup[] = [
         description: "Entity naming decision log entry.",
         relativePath:
           "08-dev-strategy/decision-log/2026-04-entity-status-naming.md",
+      },
+      {
+        id: "decision-ticket-action",
+        title: "2026-04 Ticket Action Model Introduction",
+        description: "Ticket action model introduction decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2026-04-ticket-action.md",
       },
     ],
   },

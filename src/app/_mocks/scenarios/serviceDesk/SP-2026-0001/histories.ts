@@ -7,11 +7,11 @@ export const histories: DbTicketHistory[] = [
     ticket_id: ticket.id,
     history_no: 1,
 
-    type: "SYSTEM",
+    type: "TICKET",
     action: "CREATED",
 
     actor_id: "53",
-    comment_no: null,
+    action_no: null,
 
     created_at: "2026-03-26T22:44:33Z",
   },
@@ -23,7 +23,7 @@ export const histories: DbTicketHistory[] = [
     action: "APPROVAL_REQUESTED",
 
     actor_id: null,
-    comment_no: null,
+    action_no: null,
 
     created_at: "2026-03-26T22:44:34Z",
   },
@@ -35,7 +35,7 @@ export const histories: DbTicketHistory[] = [
     action: "APPROVAL_APPROVED",
 
     actor_id: "52",
-    comment_no: null,
+    action_no: null,
 
     created_at: "2026-03-27T08:48:37Z",
   },
@@ -44,10 +44,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 4,
 
     type: "ASSIGNMENT",
-    action: "ASSIGNEE_CHANGED",
+    action: "UPDATED",
 
     actor_id: null,
-    comment_no: null,
+    action_no: null,
 
     from_value: null,
     to_value: "41",
@@ -59,10 +59,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 5,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "41",
-    comment_no: "1",
+    action_no: "1",
 
     created_at: "2026-03-27T09:15:00Z",
   },
@@ -71,10 +71,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 6,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "53",
-    comment_no: "2",
+    action_no: "2",
 
     created_at: "2026-03-27T12:55:58Z",
   },
@@ -83,10 +83,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 7,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "41",
-    comment_no: "3",
+    action_no: "3",
 
     created_at: "2026-03-27T14:36:47Z",
   },
@@ -95,10 +95,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 8,
 
     type: "STATUS",
-    action: "STATUS_CHANGED",
+    action: "UPDATED",
 
     actor_id: "41",
-    comment_no: null,
+    action_no: null,
 
     from_value: "Working",
     to_value: "Resolved",
@@ -110,10 +110,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 9,
 
     type: "TRACK_TIME",
-    action: "TRACK_TIME_UPDATED",
+    action: "UPDATED",
 
     actor_id: "41",
-    comment_no: null,
+    action_no: null,
 
     created_at: "2026-03-27T14:38:25Z",
   },
@@ -122,10 +122,10 @@ export const histories: DbTicketHistory[] = [
     history_no: 10,
 
     type: "COMMENT",
-    action: "COMMENT_CREATED",
+    action: "CREATED",
 
     actor_id: "53",
-    comment_no: "4",
+    action_no: "4",
 
     created_at: "2026-03-27T15:02:13Z",
   },

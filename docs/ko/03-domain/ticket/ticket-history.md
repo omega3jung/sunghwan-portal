@@ -1,35 +1,62 @@
-# 티켓 이력
+# Ticket History
 
-## 목적
+## 목표
 
-티켓 이력 모델은 티켓의 생명주기 전반에서 발생하는
-의미 있는 모든 변경과 이벤트를 추적하기 위해 설계되었다.
+Ticket history 모델은 티켓의 라이프사이클 전반에서 발생하는
+모든 의미 있는 변경과 이벤트를 추적하도록 설계되었습니다.
 
-이를 통해 다음을 보장한다.
+이를 통해 다음을 보장합니다.
 
-- 액션에 대한 완전한 추적 가능성
+- 액션의 전체 추적 가능성
 - 사용자 책임 추적
 - 컴플라이언스를 위한 감사 가능성
-- 운영 과정의 투명성
+- 운영의 투명성
 
 ---
 
 ## 핵심 개념
 
-중요한 모든 티켓 변경은 이력 이벤트를 생성한다.
+모든 중요한 티켓 변경은 history event를 생성합니다.
 
 ```txt
 Action -> Event -> Stored History Record
 ```
 
-이 시스템은 추적 관점에서 이벤트 중심(event-driven)으로 동작하며,
-단순한 상태 중심 모델이 아니다.
+이 시스템은 상태 중심이 아니라, 추적 관점에서는 event-driven 방식입니다.
+
+---
+
+## Ticket Activity와의 관계
+
+Ticket history와 ticket activity는 서로 관련되어 있지만 목적은 다릅니다.
+
+### Ticket Activity
+
+- 사용자에게 보이는 커뮤니케이션과 운영 액션을 표현합니다.
+- 의도, 메시지, 구조화된 액션 컨텍스트를 저장합니다.
+- 통합된 ticket timeline을 구성합니다.
+
+### Ticket History
+
+- 티켓 변경으로부터 생성된 불변 event trace를 기록합니다.
+- before/after 값과 감사 가능성을 강조합니다.
+- 실제로 무엇이 발생했는지에 대한 더 낮은 수준의 운영 기록을 보존합니다.
+
+### 실무적 구분
+
+```txt
+Activity = 의미 있는 상호작용 또는 운영 액션
+History = 변경에 의해 생성된 불변 이벤트 기록
+```
+
+이 구분 덕분에 UI 수준에서는 도메인을 풍부하게 표현하면서도,
+감사와 디버깅 관점에서는 정밀함을 유지할 수 있습니다.
 
 ---
 
 ## 무엇을 추적하는가
 
-시스템은 중요한 티켓 변경 사항을 기록한다.
+시스템은 모든 핵심 티켓 변경을 기록합니다.
 
 ### 1. 상태 변경
 
@@ -47,7 +74,7 @@ Action -> Event -> Stored History Record
 - risk level
 - category
 - assignee
-- 필요 시 description
+- description, 필요한 경우
 
 ### 3. 할당 이벤트
 
@@ -76,9 +103,9 @@ Action -> Event -> Stored History Record
 
 ---
 
-## 이력 레코드 구조
+## History Record 구조
 
-각 이력 항목은 일관된 구조를 따른다.
+각 history entry는 일관된 구조를 따릅니다.
 
 ```ts
 type History = {
@@ -88,7 +115,7 @@ type History = {
   type: HistoryType;
   action: string;
 
-  actorId: string | null; // 시스템 액션의 경우 null
+  actorId: string | null; // system action인 경우 null
 
   fromValue?: unknown;
   toValue?: unknown;
@@ -101,9 +128,9 @@ type History = {
 
 ---
 
-## 이력 유형
+## History Types
 
-### 예시 Enum
+### Example Enum
 
 ```ts
 type HistoryType =
@@ -117,11 +144,11 @@ type HistoryType =
 
 ---
 
-## 행위자 모델
+## Actor Model
 
-각 이력 레코드는 누가 해당 액션을 수행했는지를 식별한다.
+각 history record는 누가 해당 액션을 수행했는지 식별합니다.
 
-### 행위자 유형
+### Actor Types
 
 - user
 - requester
@@ -129,97 +156,97 @@ type HistoryType =
 
 ---
 
-## 이벤트 세분성
+## 이벤트 세분화 수준
 
-### 세분화된 추적
+### Fine-Grained Tracking
 
-각 변경은 개별 이벤트로 기록된다.
+각 변경은 개별 이벤트로 기록됩니다.
 
-#### 예시
+#### Example
 
 ```txt
 Priority: Medium -> High
 Status: Open -> Working
 ```
 
-이 경우 두 개의 개별 이력 레코드가 생성된다.
+이 경우 두 개의 분리된 history record가 생성됩니다.
 
-### 트레이드오프
+### Trade-Off
 
 | Approach     | Pros               | Cons            |
 | ------------ | ------------------ | --------------- |
-| Fine-grained | Precise, auditable | More records    |
-| Aggregated   | Less storage       | Harder to trace |
+| Fine-grained | 정확하고 감사 가능 | 레코드 수 증가  |
+| Aggregated   | 저장량 감소        | 추적이 더 어려움 |
 
 ---
 
-## 읽기 모델과 쓰기 모델
+## Read Model vs Write Model
 
 ### Write Model
 
-- 이벤트 저장에 최적화됨
-- append-only 구조
+- 이벤트 저장에 최적화됩니다.
+- append-only 구조를 가집니다.
 
 ### Read Model
 
-- 타임라인 표시를 위해 최적화됨
-- UI 가독성을 위해 항목을 집계하거나 포맷할 수 있음
+- timeline 표시를 위해 최적화됩니다.
+- UI 가독성을 위해 entry를 집계하거나 포맷할 수 있습니다.
 
 ---
 
 ## 불변성
 
-이력 레코드는 불변이다.
+History record는 immutable합니다.
 
-### 규칙
+### Rules
 
-- 업데이트할 수 없다.
-- 일반 운영에서는 삭제할 수 없다.
-- 수정이 필요하면 새로운 이벤트로 기록한다.
+- 업데이트할 수 없습니다.
+- 일반 운영에서 삭제할 수 없습니다.
+- 수정 사항은 새로운 이벤트로 기록합니다.
 
 ---
 
 ## 정렬과 일관성
 
-이력은 시간 순서대로 정렬되어야 한다.
+History는 시간 순서대로 정렬되어야 합니다.
 
-### 고려사항
+### Considerations
 
-- 서버 타임스탬프를 사용한다.
-- 클라이언트 측 정렬에 의존하지 않는다.
-- 동시 업데이트를 신중하게 처리한다.
+- server timestamp를 사용합니다.
+- client-side ordering에 의존하지 않습니다.
+- 동시 업데이트를 신중히 처리합니다.
 
 ---
 
 ## UI 표현
 
-### 타임라인 뷰
+### Timeline View
 
-- 이벤트를 시간순 목록으로 표시
-- 최신순 또는 토글 가능한 정렬 지원
+- 시간순 이벤트 목록
+- 최신순 또는 전환 가능한 정렬 방식
 
-### 예시
+### Example
 
 ```txt
-[10:32] Assigned to John
-[10:30] Status changed to Working
-[10:20] Ticket Created
+[10:32] John에게 할당됨
+[10:30] 상태가 Working으로 변경됨
+[10:20] Ticket 생성됨
 ```
 
-### 핵심 UX 요소
+### Key UX Elements
 
 - 명확한 액션 설명
-- 행위자 표시
-- 타임스탬프
+- 보이는 actor
+- timestamp
 - 중요한 변경에 대한 강조
 
 ---
 
-## 메타데이터 활용
+## Metadata 사용
 
-메타데이터는 단순한 before/after 값만으로는 부족한 추가 문맥을 제공한다.
+단순한 before/after 값만으로 부족할 때 metadata가 추가 컨텍스트를 제공합니다.
 
-### 예시
+### Example
 
 ```ts
 metadata: {
@@ -230,11 +257,11 @@ metadata: {
 
 ---
 
-## 시스템 액션과 사용자 액션
+## System vs User Actions
 
-시스템이 생성한 이벤트는 사용자 액션과 구분될 수 있어야 한다.
+시스템이 생성한 이벤트는 사용자 액션과 구분 가능해야 합니다.
 
-### 예시
+### Examples
 
 - "Auto-assigned by system"
 - "Escalated due to SLA breach"
@@ -243,82 +270,84 @@ metadata: {
 
 ## 성능 고려사항
 
-### 과제
+### Challenges
 
-- 높은 이력 레코드 수
+- 많은 양의 history record
 - 빈번한 쓰기 작업
 
-### 해결 방안
+### Solutions
 
-- `ticketId`, `createdAt` 기준 인덱스 조회
-- UI 페이징
-- 필요한 경우 오래된 레코드 아카이빙
+- `ticketId`와 `createdAt` 기준 index query
+- UI pagination
+- 필요 시 오래된 record 아카이빙
 
 ---
 
-## 다른 도메인과의 연계
+## 다른 도메인과의 통합
 
 ### SLA
 
-- SLA 생명주기 이벤트를 기록한다.
+- SLA 라이프사이클 이벤트를 기록합니다.
 
 ### Assignment
 
-- 소유권 변경을 추적한다.
+- 소유권 변경을 추적합니다.
 
 ### Approval
 
-- 승인 결정을 기록한다.
+- 승인 결정을 기록합니다.
 
 ### Track Time
 
-- 시작, 종료, 전환, 수동 수정 등을 기록한다.
+- 시작, 종료, 전환, 수동 보정을 기록합니다.
 
 ---
 
-## 예외 상황
+## Edge Cases
 
-### 1. 짧은 시간 내 연속 업데이트
+### 1. Rapid Consecutive Updates
 
-- 밀리초 단위로 여러 이벤트가 발생할 수 있다.
-- 그럼에도 정렬은 결정 가능하게 유지되어야 한다.
+- 여러 이벤트가 몇 밀리초 안에 연속 발생할 수 있습니다.
+- 그래도 정렬은 결정적으로 유지되어야 합니다.
 
-### 2. 일괄 업데이트
+### 2. Bulk Updates
 
-- 하나의 액션이 여러 필드를 동시에 바꿀 수 있다.
-- 시스템은 이를 나눠 기록할지, 묶어서 기록할지 결정해야 한다.
+- 하나의 액션이 여러 필드를 동시에 바꿀 수 있습니다.
+- 시스템은 이를 분리할지 집계할지 결정해야 합니다.
 
-### 3. 시스템 실패
+### 3. System Failures
 
-- 부분적인 이력 기록은 허용되지 않는다.
-- 가능하다면 트랜잭션 처리가 선호된다.
+- 부분적인 history write는 허용되지 않습니다.
+- 가능하다면 transactional handling이 바람직합니다.
 
-### 4. 민감 데이터 변경
+### 4. Sensitive Data Changes
 
-- 민감한 값을 그대로 저장해서는 안 된다.
-- 마스킹 또는 생략이 필요할 수 있다.
+- 민감한 값은 그대로 저장하면 안 됩니다.
+- masking이나 omission이 필요할 수 있습니다.
 
 ---
 
-## 왜 전체 Event Sourcing을 사용하지 않는가?
+## 왜 Full Event Sourcing이 아닌가?
 
-이 시스템은 하이브리드 접근을 채택한다.
+이 시스템은 hybrid 접근을 채택합니다.
 
-- 메인 모델은 상태 기반
-- 이력 추적은 이벤트 기반
+- 상태 기반 메인 모델
+- 이벤트 기반 history tracking
 
-### 이유
+### Reason
 
-- 구현이 더 단순하다.
-- 감사 기능으로는 충분하다.
-- 성능 균형이 더 좋다.
+- 구현이 더 단순합니다.
+- 감사 기능으로 충분합니다.
+- 성능 균형이 더 좋습니다.
 
 ---
 
 ## 관련 문서
 
+- [Ticket Activity Model](./ticket-activity.md)
 - [Ticket Lifecycle](./ticket-lifecycle.md)
 - [Ticket Track Time](./ticket-track-time.md)
+- [Action Strategy](./strategy/action-strategy.md)
 - [Approval System](./strategy/approval-system.md)
 - [Assignment Policy](./strategy/assignment-policy.md)
 - [SLA Strategy](./strategy/sla-strategy.md)
@@ -327,6 +356,5 @@ metadata: {
 
 ## 요약
 
-티켓 이력 모델은 중요한 티켓 이벤트를 포괄적이고, 구조적이며, 불변하게 기록한다.
-
-이를 통해 워크플로는 운영, 디버깅, 리뷰 관점에서 설명 가능하고 추적 가능한 형태가 된다.
+Ticket history 모델은 중요한 티켓 이벤트에 대한 포괄적이고, 불변이며,
+구조화된 기록을 제공하여 운영, 디버깅, 리뷰 관점에서 워크플로를 설명 가능하게 만듭니다.

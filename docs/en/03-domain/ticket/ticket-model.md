@@ -167,6 +167,11 @@ Related document: [Ticket Track Time](./ticket-track-time.md)
 These fields help the UI surface recent activity without loading the entire
 history immediately.
 
+Related documents:
+
+- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket History](./ticket-history.md)
+
 ---
 
 ### Ownership Flags
@@ -242,7 +247,18 @@ Instead:
 - all changes are recorded in `TicketHistory`
 - the ticket represents the current state only
 
-### 4. Session-Based Work Tracking
+### 4. Activity as a Related Interaction Model
+
+The ticket also participates in an activity model used for communication and
+operational interaction.
+
+Instead:
+
+- meaningful interactions are represented in `TicketActivity`
+- structured communication and operational actions share a unified model
+- recent activity metadata is surfaced on the ticket read model for fast UI access
+
+### 5. Session-Based Work Tracking
 
 Work is not represented as a single source-of-truth number.
 
@@ -264,13 +280,16 @@ Ticket
   -> Approval
   -> Assignment
   -> SLA
+  -> TicketActivity
   -> TicketHistory
   -> TicketTrackTime
-  -> Comment / Attachment
+  -> Attachment
 ```
 
 This relationship structure is one reason the ticket model should remain clear
 and explicit.
+
+Related strategy document: [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
@@ -330,5 +349,6 @@ It is designed to:
 
 - represent workflow state
 - integrate with category-driven configuration
+- connect cleanly with activity and history models
 - support auditability and SLA tracking
 - remain clean by delegating detailed behavior to related systems

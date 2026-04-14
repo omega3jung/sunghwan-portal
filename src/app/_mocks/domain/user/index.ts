@@ -1,9 +1,9 @@
-import { internalAuths, internalProfiles } from "./data.internal";
 import { clientAuths, clientProfiles } from "./data.client";
+import { internalAuths, internalProfiles } from "./data.internal";
 
+export * from "./data.client";
 export * from "./data.ids";
 export * from "./data.internal";
-export * from "./data.client";
 export * from "./mapper";
 export * from "./resolver";
 

@@ -1,12 +1,13 @@
-import { Priority } from "@/domain/common";
+import { Priority, RiskLevel } from "@/domain/common";
 import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../category";
 import { Attach } from "../types";
 import {
-  CommentVisibility,
   HistoryType,
+  TicketActionType,
   TicketHistoryAction,
+  TicketResolutionReason,
   TicketStatus,
 } from "../types/enums";
 
@@ -30,7 +31,9 @@ interface TicketBase {
 interface TicketWorkflowState {
   status: TicketStatus;
   priority: Priority;
+  riskLevel: RiskLevel;
   assigneeIds: string[];
+  closeReason?: TicketResolutionReason;
 }
 
 /**
@@ -72,7 +75,7 @@ interface TicketContent {
   approvalStepId?: string;
 
   subject: string;
-  body: string;
+  content: string;
 
   email: {
     to: string[];
@@ -85,6 +88,13 @@ interface TicketContent {
 }
 
 /**
+ * Ticket merge info fields.
+ */
+interface TicketRelation {
+  mergedIntoTicketId?: string | null;
+}
+
+/**
  * Ticket summary for list/read use.
  * Uses display-friendly fields where appropriate.
  */
@@ -94,7 +104,8 @@ export interface TicketSummary
     TicketWorkflowState,
     TicketMetrics,
     TicketViewState,
-    TicketScopeContext {
+    TicketScopeContext,
+    TicketRelation {
   categoryName: string;
   approvalStepName?: string;
 
@@ -113,22 +124,22 @@ export interface TicketDetail
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,
-    TicketContent {}
+    TicketContent,
+    TicketRelation {}
 
 /**
- * Ticket comment domain model.
+ * Ticket action domain model.
  *
- * commentNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, commentNo)
+ * actionNo is ticket-scoped, not globally unique.
+ * Recommended identity: (ticketId, actionNo)
  */
-export interface TicketComment {
+export interface TicketAction {
   ticketId: string;
-  commentNo: number;
+  actionNo: number;
 
-  body: string;
+  actionType: TicketActionType;
+  content: string;
   ownerId: string;
-
-  visibility: CommentVisibility;
 
   createdAt: ISODateString;
   updatedAt?: ISODateString;
@@ -167,9 +178,9 @@ export interface TicketTrackTime {
  * historyNo is ticket-scoped, not globally unique.
  * Recommended identity: (ticketId, historyNo)
  *
- * commentNo:
+ * actionNo:
  * - null   => ticket-level history
- * - string => comment-level history
+ * - string => action-level history
  */
 export interface TicketHistory {
   ticketId: string;
@@ -179,7 +190,7 @@ export interface TicketHistory {
   action: TicketHistoryAction;
 
   actorId: string | null;
-  commentNo: string | null;
+  actionNo: string | null;
 
   fromValue?: unknown;
   toValue?: unknown;

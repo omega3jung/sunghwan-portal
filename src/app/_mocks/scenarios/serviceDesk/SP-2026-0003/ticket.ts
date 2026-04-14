@@ -8,6 +8,7 @@ export const ticket: DbTicketDetail = {
   requester_id: "53",
   status: "Working",
   priority: "medium",
+  risk_level: "low",
   assignee_id: ["41", "43"],
   track_time_minutes: 80,
   last_comment_at: "2026-03-30T01:48:10Z",
@@ -20,7 +21,7 @@ export const ticket: DbTicketDetail = {
   category_id: "53",
   approval_step_id: null,
   subject: "Set up barcode",
-  body: "Hi, we got smaple barcode form customer.<br>Could you set it up?",
+  content: "Hi, we got smaple barcode form customer.<br>Could you set it up?",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "liam.williams@sunghwan-portal.dev"],
     cc: ["Mason.Kwon@sunghwan-portal.dev"],

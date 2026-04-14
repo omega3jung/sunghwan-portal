@@ -17,26 +17,44 @@ export type TicketAttach = "file" | "image";
 
 export type CommentVisibility = "public" | "internal";
 
+export type TicketActionType =
+  | "COMMENT"
+  | "NOTE"
+  | "ASSIGN"
+  | "REJECT"
+  | "MERGE"
+  | "ADJUST";
+
+/* TicketHistory is defined by combination of HistoryType and TicketHistoryAction.
+ * exception is defined to TicketHistoryAction.
+ *
+ * ex) ticket created = "TICKET", "CREATED"
+ * ex) comment updated = "COMMENT", "UPDATED"
+ * ex) approval declined = "APPROVAL", "APPROVAL_DECLINED"
+ */
 export type HistoryType =
+  | "TICKET"
   | "STATUS"
-  | "FIELD"
+  | "CATEGORY"
   | "ASSIGNMENT"
   | "APPROVAL"
   | "COMMENT"
+  | "NOTE"
   | "TRACK_TIME"
-  | "SLA"
+  | "PLANNING"
   | "SYSTEM";
 
 export type TicketHistoryAction =
   | "CREATED"
   | "UPDATED"
   | "DELETED"
-  | "STATUS_CHANGED"
-  | "ASSIGNEE_CHANGED"
+  | "TICKET_REJECTED"
+  | "TICKET_MERGED"
   | "APPROVAL_REQUESTED"
-  | "APPROVAL_APPROVED"
-  | "APPROVAL_DECLINED"
-  | "COMMENT_CREATED"
-  | "COMMENT_UPDATED"
-  | "COMMENT_DELETED"
-  | "TRACK_TIME_UPDATED";
+  | "APPROVAL_APPROVED";
+
+export type TicketResolutionReason =
+  | "Completed"
+  | "Merged"
+  | "Rejected"
+  | "Canceled";

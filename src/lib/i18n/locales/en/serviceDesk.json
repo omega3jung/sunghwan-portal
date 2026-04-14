@@ -1,10 +1,11 @@
 {
   "action": {
     "comment": "Comment",
-    "memo": "Memo",
+    "note": "Note",
     "assign": "Assign",
-    "assignMyself": "Assign myself",
     "reject": "Reject",
+    "merge": "Merge",
+    "adjust": "Adjust",
     "searchCriteria": "Search criteria"
   },
 
@@ -37,7 +38,6 @@
   },
 
   "field": {
-    "keyword": "Keyword",
     "ticket": "Ticket",
     "riskLevel": "Risk level",
     "dueBy": "Due by",
@@ -46,81 +46,25 @@
   },
 
   "message": {
-    "groupBy": "Group by",
-    "filteringBy": "Filtering by",
     "refineSearchCriteria": "Refine your search criteria",
-    "from": "From",
-    "assignTo": "Assign to",
-    "dueBy": "Due by",
     "lastComment": "Last comment",
 
-    "commentList": "Comments",
-
-    "ticketSummary": "Ticket Summary",
-    "requesterInformation": "Requester Information",
-
-    "created": "Created",
-    "at": "at",
-    "ago": "ago",
-
     "createTicket": "Create ticket",
-    "editTicket": "Edit ticket",
     "ticketCreation": "Ticket Creation",
     "processingFlow": "Processing Flow",
-
-    "validationPoint": "Select validation point",
 
     "dragDrop": "Drag and drop files here",
     "uploadFile": "or click to browse",
     "noAttaches": "No attaches",
-    "dragDropFile": "Drag & Drop File",
-    "fileUploadLimit": "File Upload (max. 10 files)",
-
-    "approvalTitle": "Approval",
     "foundDraft": "Found draft",
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
-  },
-
-  "priority": {
-    "urgent": "Urgent",
-    "high": "High",
-    "medium": "Medium",
-    "low": "Low"
-  },
-
-  "response": {
-    "agent": "Agent responded",
-    "requester": "Requester responded",
-    "none": "No response"
-  },
-
-  "status": {
-    "pre": "Pre",
-    "open": "Open",
-    "approved": "Approved",
-    "declined": "Declined",
-    "working": "Working",
-    "pending": "Pending",
-    "rejected": "Rejected",
-    "resolved": "Resolved",
-    "closed": "Closed"
   },
 
   "step": {
     "issueDetails": "Issue Details",
     "attachments": "Attachments",
     "review": "Review & Submit",
-    "approval": "apporval",
     "assign": "Assign"
-  },
-
-  "tab": {
-    "tickets": "Tickets",
-    "reports": "Reports",
-    "pendingApprovals": "Pending Approvals",
-    "openTickets": "Open Tickets",
-    "closedTickets": "Closed Tickets",
-    "overdueTickets": "Overdue Tickets"
   },
 
   "detailAside": {
@@ -174,9 +118,12 @@
       "APPROVAL_APPROVED": "Approval approved",
       "APPROVAL_DECLINED": "Approval declined",
       "COMMENT_CREATED": "Comment added",
+      "NOTE_CREATED": "Note added",
       "COMMENT_UPDATED": "Comment updated",
       "COMMENT_DELETED": "Comment deleted",
       "TRACK_TIME_UPDATED": "Tracked time updated",
+      "MERGED": "Merged into {{target}}",
+      "TICKET_REJECTED": "Ticket rejected",
       "UPDATED": "Ticket updated",
       "DELETED": "Ticket deleted",
       "CREATED": "Ticket created",
@@ -184,17 +131,23 @@
     }
   },
 
+  "merge": {
+    "badge": "Merged",
+    "into": "Merged into {{ticketId}}"
+  },
+
   "historyTimeline": {
     "description": "Timeline view for recent ticket activity.",
 
     "badge": {
       "status": "Status",
-      "field": "Field",
       "assignment": "Assignment",
       "approval": "Approval",
       "comment": "Comment",
+      "category": "Category",
+      "note": "Note",
       "trackTime": "Track Time",
-      "sla": "SLA",
+      "planning": "Planning",
       "system": "System",
       "default": "History"
     },
@@ -208,46 +161,8 @@
       "files": "Files"
     },
 
-    "empty": {
-      "noResult": "No comments match your search."
-    },
-
-    "item": {
-      "toggleDetails": "Toggle comment details",
-      "number": "Comment #{{number}}",
-      "edited": "Edited",
-
-      "visibility": {
-        "public": "Public",
-        "internal": "Internal note"
-      }
-    },
-
-    "list": {
-      "titleHint": "Search, sort, and review ticket discussion history.",
-      "countLabel_one": "comment",
-      "countLabel_other": "comments"
-    },
-
-    "search": {
-      "placeholder": "Search comments"
-    },
-
     "editor": {
-      "placeholderPublic": "Write a comment and keep the conversation moving",
-      "placeholderInternal": "Share an internal note for this ticket",
       "validationEmpty": "Please enter a comment before submitting."
-    },
-
-    "composer": {
-      "currentUser": "Current user",
-      "helperPublic": "Public comments are part of the visible ticket conversation.",
-      "helperInternal": "Internal notes are visible only to internal teams.",
-      "submitPublic": "Post comment",
-      "submitInternal": "Post internal note",
-      "internalNoteLabel": "Internal note",
-      "launcherPublicDescription": "Write a visible reply on the ticket thread.",
-      "launcherInternalDescription": "Leave context that stays within internal teams."
     },
 
     "toolbar": {
@@ -259,6 +174,68 @@
       "codeBlock": "Code block",
       "undo": "Undo",
       "redo": "Redo"
+    }
+  },
+
+  "actionTool": {
+    "currentUser": "Current user",
+    "currentUserFallback": "You",
+    "launcherTitle": {
+      "comment": "Comment",
+      "note": "Note",
+      "assign": "Assign",
+      "adjust": "Adjust plan",
+      "merge": "Merge",
+      "reject": "Reject"
+    },
+    "launcher": {
+      "comment": "Post a public reply to the requester and watchers.",
+      "note": "Leave an internal note that stays inside the team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "reject": "Record a rejection reason before closing the request.",
+      "merge": "Merge this ticket into another ticket.",
+      "adjust": "Update priority, risk level, and due date settings."
+    },
+    "helper": {
+      "comment": "Share a public update with everyone following this ticket.",
+      "note": "Add an internal note for the service desk team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "reject": "Capture why this request is being rejected.",
+      "merge": "Choose the ticket to merge into and leave a short note.",
+      "adjust": "Review priority, risk level, and due date before applying changes."
+    },
+    "submit": {
+      "comment": "Post comment",
+      "note": "Save note",
+      "assign": "Save assignment",
+      "reject": "Reject ticket",
+      "merge": "Merge ticket",
+      "adjust": "Update plan"
+    },
+    "list": {
+      "title": "Activity",
+      "titleHint": "Search, sort, and review ticket actions.",
+      "empty": "No actions yet",
+      "noResult": "No actions match your search.",
+      "toggleDetails": "Toggle action details",
+      "number": "Action #{{number}}",
+      "edited": "Edited",
+      "searchPlaceholder": "Search actions",
+      "countLabel_one": "activity",
+      "countLabel_other": "activities"
+    },
+    "form": {
+      "editorLabel": "Reason",
+      "editorPlaceholder": {
+        "comment": "Write a comment and keep the conversation moving",
+        "note": "Share an internal note for this ticket",
+        "assign": "Share assignment context for the next owner",
+        "reject": "Describe why this ticket should be rejected",
+        "merge": "Explain why these tickets should be merged",
+        "adjust": "Describe why these values need to be adjusted"
+      },
+      "targetTicketId": "Target ticket",
+      "mergeTargetPlaceholder": "Enter the representative ticket id"
     }
   },
 

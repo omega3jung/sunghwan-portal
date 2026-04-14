@@ -11,8 +11,8 @@ import {
   toCategoryWritePayload,
 } from "@/api/serviceDesk/category/write";
 import {
-  internalCategorySettingsMock,
   clientCategorySettingsMock,
+  internalCategorySettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 
