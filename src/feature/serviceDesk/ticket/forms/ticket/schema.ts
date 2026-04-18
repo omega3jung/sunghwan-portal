@@ -6,7 +6,7 @@ export const ticketFormSchema = z.object({
   subCategory: z.string().optional(),
   subject: z.string().max(200),
   body: z.string(),
-  dueDate: z.date(),
+  dueAt: z.date(),
   priority: z.string().nullable(),
   riskLevel: z.string().nullable(),
   email: z.object({

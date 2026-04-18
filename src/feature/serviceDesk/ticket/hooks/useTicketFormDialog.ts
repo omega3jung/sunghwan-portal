@@ -75,7 +75,7 @@ export const useTicketFormDialog = ({
   const createInitialTicketFormValues = useCallback(
     (): TicketFormValues => ({
       ...ticketFormDefaultValues,
-      dueDate: new Date(),
+      dueAt: new Date(),
       requester: {
         id: currentSession?.user.username ?? "",
         email: currentSession?.user.email ?? "",
@@ -112,11 +112,19 @@ export const useTicketFormDialog = ({
   const onSubmit = useCallback(
     async (data: TicketFormValues) => {
       if (mode === "create") {
-        mutationToast(createTicketAsync(data), "save", t("field.ticket"));
+        mutationToast(
+          createTicketAsync(data),
+          "save",
+          t("field.ticket", { ns: NS.common }),
+        );
       }
 
       if (mode === "update") {
-        mutationToast(updateTicketAsync(data), "update", t("field.ticket"));
+        mutationToast(
+          updateTicketAsync(data),
+          "update",
+          t("field.ticket", { ns: NS.common }),
+        );
       }
 
       await ticketDraftState.removeDraft();
@@ -211,7 +219,7 @@ export const useTicketFormDialog = ({
     (ticketDraft: TicketFormValues) => {
       ticketForm.reset({
         ...ticketDraft,
-        dueDate: new Date(ticketDraft.dueDate),
+        dueAt: new Date(ticketDraft.dueAt),
       });
       toast.dismiss(TICKET_DRAFT_TOAST_ID);
       setShouldShowDraftToast(false);

@@ -1,5 +1,4 @@
 import { Separator } from "@radix-ui/react-separator";
-import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -10,9 +9,8 @@ import {
 import { NS } from "@/lib/i18n";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
+import { AttachmentList, useAttachments } from "../attachments";
 import { MarkdownPreview } from "../MarkdownPreview";
-import { AttachmentList } from "./AttachmentStep";
-import { useAttachments } from "./AttachmentStep/useAttachments";
 import { TicketInfoFields } from "./TicketInfoFields";
 
 export const ReviewStep = () => {
@@ -21,7 +19,7 @@ export const ReviewStep = () => {
   const bodyValue = form.watch("body");
   const { files, totalSizeMB } = useAttachments({
     form,
-    fileField: "attachment",
+    name: "attachment",
     maxCount: MAX_ATTACH_COUNT,
     maxSizeMB: MAX_ATTACH_SIZE,
   });
@@ -45,7 +43,7 @@ export const ReviewStep = () => {
           files={files}
           totalSizeMB={totalSizeMB}
           maxCount={MAX_ATTACH_COUNT}
-          maxSize={MAX_ATTACH_SIZE}
+          maxSizeMB={MAX_ATTACH_SIZE}
         />
       </Field>
     </>

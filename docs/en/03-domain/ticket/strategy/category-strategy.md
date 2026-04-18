@@ -164,7 +164,7 @@ SLA is calculated based on category configuration.
 ### Rule
 
 ```
-dueDate = createdDate + SLA
+dueAt = createdDate + SLA
 ```
 
 ### Resolution

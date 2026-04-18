@@ -170,7 +170,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
 
         <Field>
           <FieldLabel htmlFor="ticket-search-select-risk">
-            {t("field.riskLevel")}
+            {tCommon("field.riskLevel")}
           </FieldLabel>
           <Controller
             control={form.control}
@@ -190,7 +190,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 }}
                 placeholder={t("placeholder.select", {
                   ns: NS.common,
-                  target: t("field.riskLevel"),
+                  target: tCommon("field.riskLevel"),
                 })}
               />
             )}

@@ -1,4 +1,4 @@
-import { DueDate, Priority } from "@/domain/common/types";
+import { dueAt, Priority } from "@/domain/common/types";
 import { ISODateString } from "@/shared/types";
 
 import { TicketPeriod, TicketStatus } from "./enums";
@@ -9,7 +9,7 @@ export interface FilterSetting {
   assignee: string[];
   requester: string[];
   period: { type: TicketPeriod; from: ISODateString; to: ISODateString };
-  dueBy: { type: DueDate; from: ISODateString; to: ISODateString };
+  dueBy: { type: dueAt; from: ISODateString; to: ISODateString };
   priority: Priority[];
   keyword: string;
 }

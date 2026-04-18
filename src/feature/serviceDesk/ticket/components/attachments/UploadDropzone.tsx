@@ -1,5 +1,5 @@
 import { FileUp } from "lucide-react";
-import { RefObject } from "react";
+import type { ChangeEvent, DragEvent, RefObject } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { cn } from "@/shared/utils";
 type UploadDropzoneProps = {
   files: File[];
   maxCount: number;
-  onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
   onDrop: (files: FileList) => void;
   inputRef: RefObject<HTMLInputElement>;
 };
@@ -24,10 +24,14 @@ export const UploadDropzone = ({
 }: UploadDropzoneProps) => {
   const { t } = useTranslation(NS.serviceDesk);
 
-  const handleDrop = (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (!e.dataTransfer.files?.length) return;
-    onDrop(e.dataTransfer.files);
+  const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (!event.dataTransfer.files?.length) {
+      return;
+    }
+
+    onDrop(event.dataTransfer.files);
   };
 
   return (
@@ -38,8 +42,8 @@ export const UploadDropzone = ({
         disabled={files.length >= maxCount}
         onClick={() => inputRef.current?.click()}
         onDrop={handleDrop}
-        onDragEnter={(e) => e.preventDefault()}
-        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={(event) => event.preventDefault()}
+        onDragOver={(event) => event.preventDefault()}
         className={cn(
           "rounded-xs h-32 w-full border border-dashed",
           files.length >= maxCount &&

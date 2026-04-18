@@ -8,26 +8,21 @@
     "adjust": "Adjust",
     "searchCriteria": "Search criteria"
   },
-
   "chart": {
     "category": {
       "title": "Tickets by Category",
       "label": "Category"
     },
-
     "department": {
       "title": "Tickets by Requesting Department",
       "label": "Department"
     },
-
     "assignee": {
       "title": "Tickets by Assignee",
       "label": "Assignee"
     },
-
     "sla": {
       "title": "SLA Performance",
-
       "status": {
         "withinSla": "Within SLA",
         "resolvedLate": "Resolved Late",
@@ -36,48 +31,35 @@
       }
     }
   },
-
   "field": {
-    "ticket": "Ticket",
-    "riskLevel": "Risk level",
-    "dueBy": "Due by",
-    "total": "Total",
-    "list": "List"
+    "dueBy": "Due by"
   },
-
   "message": {
     "refineSearchCriteria": "Refine your search criteria",
     "lastComment": "Last comment",
-
-    "createTicket": "Create ticket",
     "ticketCreation": "Ticket Creation",
     "processingFlow": "Processing Flow",
-
     "dragDrop": "Drag and drop files here",
     "uploadFile": "or click to browse",
     "noAttaches": "No attaches",
     "foundDraft": "Found draft",
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
   },
-
   "step": {
     "issueDetails": "Issue Details",
     "attachments": "Attachments",
     "review": "Review & Submit",
     "assign": "Assign"
   },
-
   "detailAside": {
     "recipientsTitle": "Recipients",
     "unassigned": "Unassigned",
     "ticketId": "Ticket ID"
   },
-
   "historySheet": {
     "title": "Ticket History",
     "description": "Review the ticket history timeline."
   },
-
   "detailPage": {
     "detailsTitle": "Ticket Details",
     "descriptionTitleHint": "Core request details and the latest at-a-glance activity.",
@@ -85,16 +67,13 @@
     "replyTitleHint": "Reply, leave an internal note, and review discussion in one continuous workflow.",
     "notFound": "Ticket not found."
   },
-
   "recentActivity": {
     "title": "Recent activity",
-
     "latestUpdate": {
       "label": "Latest update",
       "empty": "No history yet",
       "fallbackMeta": "Timeline will appear here"
     },
-
     "conversation": {
       "label": "Conversation",
       "empty": "No comments yet",
@@ -103,13 +82,11 @@
       "count_one": "{{count}} comment",
       "count_other": "{{count}} comments"
     },
-
     "lastCommenter": {
       "label": "Last commenter",
       "emptyName": "No commenter yet",
       "emptyEmail": "Updates will appear as the ticket moves"
     },
-
     "history": {
       "STATUS_CHANGED": "Status moved from {{from}} to {{to}}",
       "STATUS_CHANGED_SIMPLE": "Status changed",
@@ -130,15 +107,12 @@
       "DEFAULT": "History updated"
     }
   },
-
   "merge": {
     "badge": "Merged",
     "into": "Merged into {{ticketId}}"
   },
-
   "historyTimeline": {
     "description": "Timeline view for recent ticket activity.",
-
     "badge": {
       "status": "Status",
       "assignment": "Assignment",
@@ -151,20 +125,16 @@
       "system": "System",
       "default": "History"
     },
-
     "valueChanged": "{{from}} -> {{to}}"
   },
-
   "comment": {
     "attachments": {
       "images": "Images",
       "files": "Files"
     },
-
     "editor": {
       "validationEmpty": "Please enter a comment before submitting."
     },
-
     "toolbar": {
       "bold": "Bold",
       "italic": "Italic",
@@ -176,7 +146,6 @@
       "redo": "Redo"
     }
   },
-
   "actionTool": {
     "currentUser": "Current user",
     "currentUserFallback": "You",
@@ -236,20 +205,24 @@
       },
       "targetTicketId": "Target ticket",
       "mergeTargetPlaceholder": "Enter the representative ticket id"
+    },
+    "validation": {
+      "contentRequired": "Please enter a reason before submitting.",
+      "contentMaxLength": "Reason must be 2000 characters or less.",
+      "assigneeRequired": "Select at least one assignee.",
+      "targetTicketRequired": "Enter the target ticket id.",
+      "adjustNoChanges": "Change priority, risk level, or due date before updating."
     }
   },
-
   "listPage": {
     "title": "IT Service Desk",
     "description": "Search and browse service desk tickets."
   },
-
   "ticketList": {
     "empty": "No tickets found",
     "requesterMeta": "{{name}} • {{time}}",
     "dueMeta": "Due {{time}}"
   },
-
   "searchCriteria": {
     "primaryFilters": "Primary filters",
     "additionalFilters": "Additional filters",

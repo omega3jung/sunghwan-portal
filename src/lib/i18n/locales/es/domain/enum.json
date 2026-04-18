@@ -44,7 +44,7 @@
     }
   },
 
-  "dueDate": {
+  "dueAt": {
     "label": "Fecha de vencimiento",
     "options": {
       "all": "Todos",

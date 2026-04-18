@@ -51,7 +51,7 @@
     "department": "Departamento",
     "description": "Descripción",
     "details": "Detalles",
-    "dueDate": "Fecha límite",
+    "dueAt": "Fecha límite",
     "email": "Correo electrónico",
     "emailTo": "Para",
     "emailCc": "CC",
@@ -71,7 +71,11 @@
     "step": "Paso",
     "subject": "Asunto",
     "type": "Tipo",
-    "updatedAt": "Actualizado el"
+    "updatedAt": "Actualizado el",
+    "ticket": "Ticket",
+    "riskLevel": "Nivel de riesgo",
+    "total": "Total",
+    "list": "Lista"
   },
   "pagination": {
     "first": "Primera",

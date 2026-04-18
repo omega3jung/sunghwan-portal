@@ -1,6 +1,21 @@
-import { TicketActionFormValues } from "./types";
+import type {
+  TicketActionDraftFormValues,
+  TicketActionPayloadValues,
+} from "./types";
 
-export const ticketActionFormDefaultValues: TicketActionFormValues = {
+export const ticketActionDraftFormDefaultValues: TicketActionDraftFormValues = {
+  actionType: "COMMENT",
+  content: "",
+  attachment: [],
+  assigneeIds: [],
+  categoryId: "",
+  targetTicketId: "",
+  priority: "",
+  riskLevel: "",
+  dueAt: undefined,
+};
+
+export const ticketActionFormDefaultValues: TicketActionPayloadValues = {
   id: "",
   actionType: "COMMENT",
   content: "",

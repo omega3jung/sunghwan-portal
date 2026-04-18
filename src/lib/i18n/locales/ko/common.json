@@ -51,7 +51,7 @@
     "department": "부서",
     "description": "설명",
     "details": "상세 내용",
-    "dueDate": "완료 기한",
+    "dueAt": "완료 기한",
     "email": "이메일",
     "emailTo": "받는 사람",
     "emailCc": "참조",
@@ -71,7 +71,11 @@
     "step": "단계",
     "subject": "제목",
     "type": "유형",
-    "updatedAt": "수정일"
+    "updatedAt": "수정일",
+    "ticket": "티켓",
+    "riskLevel": "위험도",
+    "total": "총계",
+    "list": "목록"
   },
   "pagination": {
     "first": "처음",

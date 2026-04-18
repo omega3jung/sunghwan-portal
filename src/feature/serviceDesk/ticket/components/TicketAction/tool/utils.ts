@@ -1,3 +1,6 @@
+import type { FieldPath, PathValue, UseFormReturn } from "react-hook-form";
+
+import type { TicketActionDraftFormValues } from "@/feature/serviceDesk/ticket/forms/action";
 import { NS } from "@/lib/i18n";
 
 export type TicketActionFormMode =
@@ -62,4 +65,26 @@ export function isControlledEditorMode(mode: TicketActionFormMode) {
     mode === "merge" ||
     mode === "reject"
   );
+}
+
+export const setActionFieldValue = <
+  TFieldName extends FieldPath<TicketActionDraftFormValues>,
+>(
+  form: UseFormReturn<TicketActionDraftFormValues>,
+  fieldName: TFieldName,
+  value: PathValue<TicketActionDraftFormValues, TFieldName>,
+) => {
+  form.setValue(fieldName, value, {
+    shouldDirty: true,
+    shouldValidate:
+      form.formState.isSubmitted ||
+      Boolean(form.getFieldState(fieldName).error),
+  });
+};
+
+export function resolveActionErrorMessage(
+  message: string | undefined,
+  t: Translate,
+) {
+  return message ? t(message) : "";
 }

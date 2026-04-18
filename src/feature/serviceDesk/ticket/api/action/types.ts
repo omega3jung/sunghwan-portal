@@ -2,9 +2,9 @@ import type { z } from "zod";
 
 import type { TicketAction, TicketActionType } from "@/domain/serviceDesk";
 
-import { ticketActionFormSchema } from "../../forms/action";
+import { ticketActionPayloadSchema } from "../../forms/action";
 
-export type TicketActionFormValues = z.infer<typeof ticketActionFormSchema>;
+export type TicketActionFormValues = z.infer<typeof ticketActionPayloadSchema>;
 
 export interface TicketActionCommandInput {
   ticketId: string;

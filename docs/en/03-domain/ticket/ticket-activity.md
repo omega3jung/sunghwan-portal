@@ -115,7 +115,7 @@ Each action type may include action-specific metadata.
 
 - `priority`
 - `riskLevel`
-- `dueDate`
+- `dueAt`
 
 #### `merge`
 

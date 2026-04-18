@@ -72,7 +72,7 @@ export function toTicketMockDetail(
     assigneeIds: [],
     mergedIntoTicketId: null,
     trackTimeMinutes: 0,
-    dueAt: toIsoString(input.dueDate),
+    dueAt: toIsoString(input.dueAt),
     owner: true,
     assigned: false,
     active: true,

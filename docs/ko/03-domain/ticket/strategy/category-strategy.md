@@ -164,7 +164,7 @@ SLA는 카테고리 설정에 따라 계산된다.
 ### 규칙
 
 ```txt
-dueDate = createdDate + SLA
+dueAt = createdDate + SLA
 ```
 
 ### 해석 방식

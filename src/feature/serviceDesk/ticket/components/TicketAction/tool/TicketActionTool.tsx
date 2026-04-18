@@ -1,7 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { type Editor } from "@tiptap/react";
 import { useEffect, useMemo, useState } from "react";
+import { type FieldErrors, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import type {
@@ -10,6 +12,15 @@ import type {
   TicketDetail,
 } from "@/domain/serviceDesk";
 import { useTicketActionMutation } from "@/feature/serviceDesk/ticket/api/action";
+import {
+  ACTION_ADJUST_NO_CHANGES_KEY,
+  buildTicketActionPayload,
+  createTicketActionDraftValues,
+  hasTicketActionAdjustChanges,
+  ticketActionDraftFormDefaultValues,
+  ticketActionDraftFormSchema,
+  type TicketActionDraftFormValues,
+} from "@/feature/serviceDesk/ticket/forms/action";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
@@ -23,10 +34,9 @@ import { TicketActionToolLauncher } from "./TicketActionToolLauncher";
 /**
  * TicketActionTool
  *
- * 역할:
- * - action mode 관리
- * - form state orchestration
- * - actionType → mutation 연결 (향후)
+ * ??븷:
+ * - action mode 愿由? * - form state orchestration
+ * - actionType ??mutation ?곌껐 (?ν썑)
  * - UI entry point
  */
 
@@ -58,6 +68,34 @@ const ACTION_TYPE_BY_MODE: Record<
   adjust: "ADJUST",
 };
 
+function resolveFormErrorMessage(
+  errors: FieldErrors<TicketActionDraftFormValues>,
+) {
+  const errorFieldNames: Array<keyof TicketActionDraftFormValues> = [
+    "content",
+    "assigneeIds",
+    "targetTicketId",
+    "priority",
+    "riskLevel",
+    "dueAt",
+  ];
+
+  for (const fieldName of errorFieldNames) {
+    const error = errors[fieldName];
+
+    if (
+      error &&
+      typeof error === "object" &&
+      "message" in error &&
+      typeof error.message === "string"
+    ) {
+      return error.message;
+    }
+  }
+
+  return "";
+}
+
 export function TicketActionTool({
   ticketId,
   ticket,
@@ -68,20 +106,13 @@ export function TicketActionTool({
   const { current } = useCurrentSession();
   const mutationToast = useMutationToast();
   const { mutateAsync: createAction, isPending } = useTicketActionMutation();
+  const actionForm = useForm<TicketActionDraftFormValues>({
+    resolver: zodResolver(ticketActionDraftFormSchema),
+    defaultValues: ticketActionDraftFormDefaultValues,
+  });
 
   const [mode, setMode] = useState<TicketActionMode>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [assignContent, setAssignContent] = useState("");
-  const [assignAssigneeIds, setAssignAssigneeIds] = useState<string[]>([]);
-  const [assignCategoryId, setAssignCategoryId] = useState("");
-  const [rejectContent, setRejectContent] = useState("");
-  const [mergeContent, setMergeContent] = useState("");
-  const [mergeTargetTicketId, setMergeTargetTicketId] = useState("");
-  const [adjustContent, setAdjustContent] = useState("");
-  const [adjustPriority, setAdjustPriority] = useState("");
-  const [adjustRiskLevel, setAdjustRiskLevel] = useState("");
-  const [adjustDueDate, setAdjustDueDate] = useState<Date | undefined>();
 
   const currentUser = current.user;
   const currentUserOption = useMemo(
@@ -97,26 +128,8 @@ export function TicketActionTool({
     currentUserOption?.displayName || currentUser?.email || "";
   const currentUserImage = currentUserOption?.image || currentUser?.image;
   const isOpen = mode !== "idle";
-
-  useEffect(() => {
-    if (mode === "assign") {
-      setAssignAssigneeIds(ticket?.assigneeIds ?? []);
-      setAssignCategoryId(ticket?.categoryId ?? "");
-    }
-
-    if (mode === "adjust") {
-      setAdjustPriority(ticket?.priority ?? "");
-      setAdjustRiskLevel(ticket?.riskLevel ?? "");
-      setAdjustDueDate(ticket?.dueAt ? new Date(ticket.dueAt) : undefined);
-    }
-  }, [
-    mode,
-    ticket?.assigneeIds,
-    ticket?.categoryId,
-    ticket?.dueAt,
-    ticket?.priority,
-    ticket?.riskLevel,
-  ]);
+  const errorMessageKey = resolveFormErrorMessage(actionForm.formState.errors);
+  const errorMessage = errorMessageKey ? t(errorMessageKey) : "";
 
   useEffect(() => {
     if (!isOpen) {
@@ -127,23 +140,14 @@ export function TicketActionTool({
   }, [editor, isOpen]);
 
   const resetDraft = () => {
-    editor?.commands.clearContent();
-    setErrorMessage("");
-    setAssignContent("");
-    setAssignAssigneeIds(ticket?.assigneeIds ?? []);
-    setAssignCategoryId(ticket?.categoryId ?? "");
-    setRejectContent("");
-    setMergeContent("");
-    setMergeTargetTicketId("");
-    setAdjustContent("");
-    setAdjustPriority(ticket?.priority ?? "");
-    setAdjustRiskLevel(ticket?.riskLevel ?? "");
-    setAdjustDueDate(ticket?.dueAt ? new Date(ticket.dueAt) : undefined);
+    actionForm.reset(ticketActionDraftFormDefaultValues);
   };
 
   const openMode = (nextMode: Exclude<TicketActionMode, "idle">) => {
+    actionForm.reset(
+      createTicketActionDraftValues(ACTION_TYPE_BY_MODE[nextMode], ticket),
+    );
     setMode(nextMode);
-    setErrorMessage("");
   };
 
   const closeMode = () => {
@@ -153,69 +157,54 @@ export function TicketActionTool({
 
   const helperText = mode === "idle" ? "" : t(`actionTool.helper.${mode}`);
   const submitLabel = mode === "idle" ? "" : t(`actionTool.submit.${mode}`);
-  const actionContent =
-    mode === "assign"
-      ? assignContent
-      : mode === "reject"
-        ? rejectContent
-        : mode === "merge"
-          ? mergeContent
-          : mode === "adjust"
-            ? adjustContent
-            : "";
 
-  const handleActionContentChange = (value: string) => {
-    if (mode === "assign") {
-      setAssignContent(value);
-      return;
-    }
+  const handleSubmit = actionForm.handleSubmit(
+    async (values) => {
+      if (!currentUser || mode === "idle") {
+        return;
+      }
 
-    if (mode === "reject") {
-      setRejectContent(value);
-      return;
-    }
+      if (
+        values.actionType === "ADJUST" &&
+        !hasTicketActionAdjustChanges(values, ticket)
+      ) {
+        actionForm.setError("priority", {
+          type: "validate",
+          message: ACTION_ADJUST_NO_CHANGES_KEY,
+        });
+        actionForm.setError("riskLevel", {
+          type: "validate",
+          message: ACTION_ADJUST_NO_CHANGES_KEY,
+        });
+        actionForm.setError("dueAt", {
+          type: "validate",
+          message: ACTION_ADJUST_NO_CHANGES_KEY,
+        });
+        return;
+      }
 
-    if (mode === "merge") {
-      setMergeContent(value);
-      return;
-    }
+      const payload = buildTicketActionPayload({
+        userId: currentUser.id,
+        values,
+      });
 
-    if (mode === "adjust") {
-      setAdjustContent(value);
-    }
-  };
+      const promise = createAction({
+        ticketId,
+        actionType: payload.actionType,
+        values: payload,
+      });
 
-  const handleSubmit = async () => {
-    if (!currentUser || mode === "idle") {
-      return;
-    }
+      await mutationToast(promise, "create", "comment");
+      closeMode();
+    },
+    (errors) => {
+      if (errors.content) {
+        editor?.commands.focus("start");
+      }
+    },
+  );
 
-    const plainText = editor?.getText().trim() ?? "";
-
-    if (!plainText) {
-      setErrorMessage(t("comment.editor.validationEmpty"));
-      editor?.commands.focus("start");
-      return;
-    }
-
-    const promise = createAction({
-      ticketId,
-      actionType: ACTION_TYPE_BY_MODE[mode],
-      values: {
-        id: currentUser.id,
-        actionType: ACTION_TYPE_BY_MODE[mode],
-        content: editor?.getHTML() ?? "",
-        files: [],
-        images: [],
-      },
-    });
-
-    await mutationToast(promise, "create", "comment");
-    closeMode();
-  };
-
-  const disableSubmit =
-    isPending || (mode === "comment" || mode === "note" ? !editor : false);
+  const disableSubmit = isPending || !editor;
 
   return (
     <section className="space-y-3">
@@ -231,42 +220,14 @@ export function TicketActionTool({
           />
 
           <TicketActionForm
+            ticketId={ticketId}
+            originalCategoryId={ticket?.categoryId}
             mode={mode}
+            form={actionForm}
             editor={editor}
-            errorMessage={errorMessage}
             onEditorReady={setEditor}
-            onTextChange={(hasText) => {
-              if (errorMessage && hasText) {
-                setErrorMessage("");
-              }
-            }}
-            assigneeIds={assignAssigneeIds}
-            categoryId={assignCategoryId}
-            content={actionContent}
             categories={categories}
             users={users}
-            onAssigneeAdd={(value) =>
-              setAssignAssigneeIds((currentIds) =>
-                currentIds.includes(value)
-                  ? currentIds
-                  : [...currentIds, value],
-              )
-            }
-            onAssigneeRemove={(value) =>
-              setAssignAssigneeIds((currentIds) =>
-                currentIds.filter((item) => item !== value),
-              )
-            }
-            onCategoryChange={setAssignCategoryId}
-            onContentChange={handleActionContentChange}
-            targetTicketId={mergeTargetTicketId}
-            onTargetTicketIdChange={setMergeTargetTicketId}
-            priority={adjustPriority}
-            riskLevel={adjustRiskLevel}
-            dueDate={adjustDueDate}
-            onPriorityChange={setAdjustPriority}
-            onRiskLevelChange={setAdjustRiskLevel}
-            onDueDateChange={setAdjustDueDate}
           />
 
           <TicketActionToolFooter

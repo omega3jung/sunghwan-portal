@@ -25,7 +25,7 @@ export type TicketWriteFields = {
   category?: string;
   subject: string;
   body: string;
-  dueDate: DateInput;
+  dueAt: DateInput;
   priority: string | null;
   email: TicketEmailInput;
   requester: TicketRequesterInput;
@@ -40,7 +40,7 @@ export type DbTicketWriteInput = {
   category: string | null;
   subject: string;
   body: string;
-  dueDate: string;
+  dueAt: string;
   priority: string | null;
   email: TicketEmailInput;
   requester: TicketRequesterInput;
@@ -55,7 +55,7 @@ export function toTicketWritePayload(
     category: input.category ?? null,
     subject: input.subject,
     body: input.body,
-    dueDate: toIsoString(input.dueDate),
+    dueAt: toIsoString(input.dueAt),
     priority: normalizePriority(input.priority),
     email: input.email,
     requester: input.requester,
@@ -83,5 +83,7 @@ function normalizePriority(priority: string | null): Priority | null {
 }
 
 function toIsoString(value: DateInput) {
-  return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
+  return value instanceof Date
+    ? value.toISOString()
+    : new Date(value).toISOString();
 }

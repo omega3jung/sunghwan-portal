@@ -1,6 +1,6 @@
 import type { SearchDateFilterOption } from "@/components/custom/DatePicker";
 import type { TreeMultiComboBoxOption } from "@/components/custom/MultiComboBox";
-import type { DueDate } from "@/domain/common";
+import type { dueAt } from "@/domain/common";
 import type { MainCategory } from "@/domain/serviceDesk";
 import type { DateRangePreset } from "@/shared/types";
 
@@ -34,35 +34,35 @@ export const createTicketCategoryOptions = (
 
 export const createTicketDueByOptions = (
   tDomain: Translate,
-): SearchDateFilterOption<DueDate>[] => {
+): SearchDateFilterOption<dueAt>[] => {
   return [
-    { value: "all", label: tDomain("enum.dueDate.options.all") },
-    { value: "overdue", label: tDomain("enum.dueDate.options.overDue") },
-    { value: "today", label: tDomain("enum.dueDate.options.today") },
+    { value: "all", label: tDomain("enum.dueAt.options.all") },
+    { value: "overdue", label: tDomain("enum.dueAt.options.overDue") },
+    { value: "today", label: tDomain("enum.dueAt.options.today") },
     {
       value: "this_week",
-      label: tDomain("enum.dueDate.options.thisWeek"),
+      label: tDomain("enum.dueAt.options.thisWeek"),
     },
     {
       value: "this_2week",
-      label: tDomain("enum.dueDate.options.this2Week"),
+      label: tDomain("enum.dueAt.options.this2Week"),
     },
     {
       value: "this_month",
-      label: tDomain("enum.dueDate.options.thisMonth"),
+      label: tDomain("enum.dueAt.options.thisMonth"),
     },
     {
       value: "within_week",
-      label: tDomain("enum.dueDate.options.withinWeek"),
+      label: tDomain("enum.dueAt.options.withinWeek"),
     },
     {
       value: "within_2week",
-      label: tDomain("enum.dueDate.options.within2Week"),
+      label: tDomain("enum.dueAt.options.within2Week"),
     },
     {
       value: "within_month",
-      label: tDomain("enum.dueDate.options.withinMonth"),
+      label: tDomain("enum.dueAt.options.withinMonth"),
     },
-    { value: "range", label: tDomain("enum.dueDate.options.custom") },
+    { value: "range", label: tDomain("enum.dueAt.options.custom") },
   ];
 };

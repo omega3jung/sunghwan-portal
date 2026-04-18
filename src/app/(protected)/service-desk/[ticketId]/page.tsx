@@ -16,6 +16,7 @@ import {
 } from "@/feature/serviceDesk/ticket/components/TicketAction";
 import { TicketActionAttachments } from "@/feature/serviceDesk/ticket/components/TicketAttachmentList";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
@@ -44,6 +45,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const { t } = useTranslation(NS.serviceDesk);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
+  const { data: currentSession } = useCurrentSession();
 
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
@@ -53,7 +55,17 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
     useServiceDeskTicketHistoryListQuery(params.ticketId);
-  const { data: categoryTrees } = useServiceDeskCategoryListQuery({});
+  const { data: categoryTrees } = useServiceDeskCategoryListQuery({
+    filter: {
+      rules: [
+        {
+          field: "id",
+          operator: "=",
+          value: currentSession?.user.companyId,
+        },
+      ],
+    },
+  });
 
   const { data: employees } = useEmployeeListQuery({});
 

@@ -6,7 +6,7 @@ export const ticketFormDefaultValues: TicketFormValues = {
   subCategory: undefined,
   subject: "",
   body: "",
-  dueDate: new Date(),
+  dueAt: new Date(),
   priority: "Medium",
   riskLevel: "Medium",
   email: {

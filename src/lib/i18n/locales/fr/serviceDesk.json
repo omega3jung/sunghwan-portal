@@ -8,26 +8,21 @@
     "adjust": "Ajuster",
     "searchCriteria": "Critères de recherche"
   },
-
   "chart": {
     "category": {
       "title": "Tickets par catégorie",
       "label": "Catégorie"
     },
-
     "department": {
       "title": "Tickets par département demandeur",
       "label": "Département"
     },
-
     "assignee": {
       "title": "Tickets par responsable",
       "label": "Responsable"
     },
-
     "sla": {
       "title": "Performance du SLA",
-
       "status": {
         "withinSla": "Dans le SLA",
         "resolvedLate": "Résolu en retard",
@@ -36,48 +31,35 @@
       }
     }
   },
-
   "field": {
-    "ticket": "Ticket",
-    "riskLevel": "Niveau de risque",
-    "dueBy": "Échéance",
-    "total": "Total",
-    "list": "Liste"
+    "dueBy": "Échéance"
   },
-
   "message": {
     "refineSearchCriteria": "Affinez vos critères de recherche",
     "lastComment": "Dernier commentaire",
-
-    "createTicket": "Créer un ticket",
     "ticketCreation": "Création du ticket",
     "processingFlow": "Flux de traitement",
-
     "dragDrop": "Glissez-déposez les fichiers ici",
     "uploadFile": "ou cliquez pour parcourir",
     "noAttaches": "Aucune pièce jointe",
     "foundDraft": "Brouillon trouvé",
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé."
   },
-
   "step": {
     "issueDetails": "Détails du problème",
     "attachments": "Pièces jointes",
     "review": "Vérifier et envoyer",
     "assign": "Assigner"
   },
-
   "detailAside": {
     "recipientsTitle": "Destinataires",
     "unassigned": "Non attribué",
     "ticketId": "ID du ticket"
   },
-
   "historySheet": {
     "title": "Historique du ticket",
     "description": "Consultez la chronologie de l'historique du ticket."
   },
-
   "detailPage": {
     "detailsTitle": "Détails du ticket",
     "descriptionTitleHint": "Détails essentiels de la demande et activité récente en un coup d'œil.",
@@ -85,16 +67,13 @@
     "replyTitleHint": "Répondez, laissez une note interne et consultez la discussion dans un flux continu.",
     "notFound": "Ticket introuvable."
   },
-
   "recentActivity": {
     "title": "Activité récente",
-
     "latestUpdate": {
       "label": "Dernière mise à jour",
       "empty": "Aucun historique pour le moment",
       "fallbackMeta": "La chronologie apparaîtra ici"
     },
-
     "conversation": {
       "label": "Conversation",
       "empty": "Aucun commentaire pour le moment",
@@ -103,13 +82,11 @@
       "count_one": "{{count}} commentaire",
       "count_other": "{{count}} commentaires"
     },
-
     "lastCommenter": {
       "label": "Dernier commentateur",
       "emptyName": "Aucun commentateur pour le moment",
       "emptyEmail": "Les mises à jour apparaîtront au fil de l'avancement du ticket"
     },
-
     "history": {
       "STATUS_CHANGED": "Le statut est passé de {{from}} à {{to}}",
       "STATUS_CHANGED_SIMPLE": "Le statut a changé",
@@ -130,15 +107,12 @@
       "DEFAULT": "Historique mis à jour"
     }
   },
-
   "merge": {
     "badge": "Fusionné",
     "into": "Fusionné dans {{ticketId}}"
   },
-
   "historyTimeline": {
     "description": "Vue chronologique de l'activité récente du ticket.",
-
     "badge": {
       "status": "Statut",
       "assignment": "Attribution",
@@ -151,20 +125,16 @@
       "system": "Système",
       "default": "Historique"
     },
-
     "valueChanged": "{{from}} -> {{to}}"
   },
-
   "comment": {
     "attachments": {
       "images": "Images",
       "files": "Fichiers"
     },
-
     "editor": {
       "validationEmpty": "Veuillez saisir un commentaire avant l'envoi."
     },
-
     "toolbar": {
       "bold": "Gras",
       "italic": "Italique",
@@ -176,7 +146,6 @@
       "redo": "Rétablir"
     }
   },
-
   "actionTool": {
     "currentUser": "Utilisateur actuel",
     "currentUserFallback": "Vous",
@@ -238,18 +207,15 @@
       "mergeTargetPlaceholder": "Saisissez l'id du ticket principal"
     }
   },
-
   "listPage": {
     "title": "Centre de Services IT",
     "description": "Recherchez et parcourez les tickets du centre de services."
   },
-
   "ticketList": {
     "empty": "Aucun ticket trouvé",
     "requesterMeta": "{{name}} • {{time}}",
     "dueMeta": "Échéance {{time}}"
   },
-
   "searchCriteria": {
     "primaryFilters": "Filtres principaux",
     "additionalFilters": "Filtres supplémentaires",

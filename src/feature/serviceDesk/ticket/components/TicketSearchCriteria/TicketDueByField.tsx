@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next";
 
 import { SearchDateFilter } from "@/components/custom/DatePicker";
 import { Field, FieldLabel } from "@/components/ui/field";
-import type { DueDate } from "@/domain/common";
+import type { dueAt } from "@/domain/common";
 import { NS } from "@/lib/i18n";
 
 import type { TicketSearchCriteriaFormValues } from "../../forms/searchCriteria";
-import { convertDueDate } from "../../utils";
+import { convertdueAt } from "../../../shared/utils";
 import { createTicketDueByOptions } from "./options";
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 };
 
 type TicketDueByInputValue = {
-  type: DueDate;
+  type: dueAt;
   dateRange: DateRange | undefined;
 };
 
@@ -31,7 +31,7 @@ function TicketDueByFieldInput({
   onChange: (value: TicketDueByInputValue) => void;
   options: ReturnType<typeof createTicketDueByOptions>;
 }) {
-  const nextTypeRef = useRef<DueDate>(value.type);
+  const nextTypeRef = useRef<dueAt>(value.type);
 
   useEffect(() => {
     nextTypeRef.current = value.type;
@@ -56,7 +56,7 @@ function TicketDueByFieldInput({
       }}
       showTextType="all"
       options={options}
-      resolveRange={convertDueDate}
+      resolveRange={convertdueAt}
       rangeValue="range"
     />
   );

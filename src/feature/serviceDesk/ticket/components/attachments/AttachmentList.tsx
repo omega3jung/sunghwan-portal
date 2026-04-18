@@ -10,7 +10,7 @@ type AttachmentListProps = {
   onRemove?: (index: number) => void;
   totalSizeMB: number;
   maxCount: number;
-  maxSize: number;
+  maxSizeMB: number;
 };
 
 export const AttachmentList = ({
@@ -18,18 +18,19 @@ export const AttachmentList = ({
   onRemove,
   totalSizeMB,
   maxCount,
-  maxSize,
+  maxSizeMB,
 }: AttachmentListProps) => {
-  const { t } = useTranslation(NS.serviceDesk);
+  const { t: tCommon } = useTranslation(NS.common);
+  const { t: tServiceDesk } = useTranslation(NS.serviceDesk);
 
   return (
     <>
-      <div className="space-y-2 max-h-48 overflow-y-auto">
-        {files.length === 0 && (
+      <div className="max-h-48 space-y-2 overflow-y-auto">
+        {files.length === 0 ? (
           <div className="text-sm text-muted-foreground">
-            {t("message.noAttaches")}
+            {tServiceDesk("message.noAttaches")}
           </div>
-        )}
+        ) : null}
 
         {files.map((file, index) => (
           <div
@@ -43,30 +44,27 @@ export const AttachmentList = ({
               </span>
             </div>
 
-            {
-              /* if onRemove is undefined, then read only list. */
-              onRemove && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() => onRemove(index)}
-                >
-                  <Trash2 size={18} />
-                </Button>
-              )
-            }
+            {onRemove ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="text-destructive"
+                onClick={() => onRemove(index)}
+              >
+                <Trash2 size={18} />
+              </Button>
+            ) : null}
           </div>
         ))}
       </div>
 
       <div className="mt-3 flex justify-between text-sm text-muted-foreground">
         <span>
-          {t("field.total")} : {files.length}/{maxCount}
+          {tCommon("field.total")} : {files.length}/{maxCount}
         </span>
         <span>
-          {totalSizeMB}/{maxSize} MB
+          {totalSizeMB}/{maxSizeMB} MB
         </span>
       </div>
     </>

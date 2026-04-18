@@ -20,7 +20,7 @@ export function TicketHeader({
 }: TicketHeaderProps) {
   const router = useRouter();
 
-  const { t } = useTranslation(NS.serviceDesk);
+  const { t } = useTranslation(NS.common);
   const { t: tMessage } = useTranslation(NS.message);
 
   return (

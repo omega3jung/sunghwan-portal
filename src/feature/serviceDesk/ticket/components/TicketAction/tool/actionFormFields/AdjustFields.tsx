@@ -1,7 +1,9 @@
 import { addDays, startOfToday } from "date-fns";
+import { useMemo } from "react";
+import { UseFormReturn, useWatch } from "react-hook-form";
 
 import { DatePicker } from "@/components/custom/DatePicker";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -13,34 +15,59 @@ import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
+import { TicketActionDraftFormValues } from "@/feature/serviceDesk/ticket/forms/action";
 import { NS } from "@/lib/i18n";
 
-import type { Translate } from "./utils";
+import { setActionFieldValue, type Translate } from "../utils";
 
 type AdjustFieldsProps = {
-  priority?: string;
-  riskLevel?: string;
-  dueDate?: Date;
-  onPriorityChange?: (value: string) => void;
-  onRiskLevelChange?: (value: string) => void;
-  onDueDateChange?: (value?: Date) => void;
+  form: UseFormReturn<TicketActionDraftFormValues>;
   t: Translate;
 };
 
-export function AdjustFields({
-  priority = "",
-  riskLevel = "",
-  dueDate,
-  onPriorityChange = () => undefined,
-  onRiskLevelChange = () => undefined,
-  onDueDateChange = () => undefined,
-  t,
-}: AdjustFieldsProps) {
-  const minDueDate = addDays(startOfToday(), 1);
+export function AdjustFields({ form, t }: AdjustFieldsProps) {
+  const mindueAt = addDays(startOfToday(), 1);
+
+  const priority = useWatch({ control: form.control, name: "priority" });
+  const riskLevel = useWatch({ control: form.control, name: "riskLevel" });
+  const dueAt = useWatch({ control: form.control, name: "dueAt" });
+
+  const onPriorityChange = (value: string) => {
+    form.clearErrors(["priority", "riskLevel", "dueAt"]);
+    setActionFieldValue(form, "priority", value);
+  };
+
+  const onRiskLevelChange = (value: string) => {
+    form.clearErrors(["priority", "riskLevel", "dueAt"]);
+    setActionFieldValue(form, "riskLevel", value);
+  };
+
+  const ondueAtChange = (value: Date | undefined) => {
+    form.clearErrors(["priority", "riskLevel", "dueAt"]);
+    setActionFieldValue(form, "dueAt", value);
+  };
+
+  const adjustError = useMemo(() => {
+    const errorKeys = [
+      form.formState.errors.priority?.message,
+      form.formState.errors.riskLevel?.message,
+      form.formState.errors.dueAt?.message,
+    ];
+    const matchedKey = errorKeys.find(
+      (value): value is string => typeof value === "string",
+    );
+
+    return matchedKey ? t(matchedKey) : "";
+  }, [
+    form.formState.errors.dueAt?.message,
+    form.formState.errors.priority?.message,
+    form.formState.errors.riskLevel?.message,
+    t,
+  ]);
 
   return (
     <>
-      <Field>
+      <Field data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.priority", { ns: NS.common })}</FieldLabel>
         <Select value={priority} onValueChange={onPriorityChange}>
           <SelectTrigger>
@@ -56,11 +83,13 @@ export function AdjustFields({
         </Select>
       </Field>
 
-      <Field>
-        <FieldLabel>{t("field.riskLevel")}</FieldLabel>
+      <Field data-invalid={Boolean(adjustError)}>
+        <FieldLabel>{t("field.riskLevel", { ns: NS.common })}</FieldLabel>
         <Select value={riskLevel} onValueChange={onRiskLevelChange}>
           <SelectTrigger>
-            <SelectValue placeholder={t("field.riskLevel")} />
+            <SelectValue
+              placeholder={t("field.riskLevel", { ns: NS.common })}
+            />
           </SelectTrigger>
           <SelectContent>
             {riskLevelOptions.map((option) => (
@@ -72,15 +101,16 @@ export function AdjustFields({
         </Select>
       </Field>
 
-      <Field className="col-span-2">
-        <FieldLabel>{t("field.dueDate", { ns: NS.common })}</FieldLabel>
+      <Field className="col-span-2" data-invalid={Boolean(adjustError)}>
+        <FieldLabel>{t("field.dueAt", { ns: NS.common })}</FieldLabel>
         <DatePicker
           id="ticket-action-input-due-date"
           className="h-9"
-          value={dueDate}
-          onChange={onDueDateChange}
-          minDate={minDueDate}
+          value={dueAt}
+          onChange={ondueAtChange}
+          minDate={mindueAt}
         />
+        <FieldError>{adjustError}</FieldError>
       </Field>
     </>
   );

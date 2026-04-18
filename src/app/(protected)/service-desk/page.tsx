@@ -37,6 +37,7 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 export default function ServiceDeskPage() {
   const router = useRouter();
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tCommon } = useTranslation(NS.common);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const { data: currentSession } = useCurrentSession();
@@ -144,7 +145,14 @@ export default function ServiceDeskPage() {
             categories={categories}
             users={users}
             language={userPreference.language as SupportedLanguage}
-            trigger={<Button type="button">{t("message.createTicket")}</Button>}
+            trigger={
+              <Button type="button">
+                {tCommon("action.withItem", {
+                  action: tCommon("action.create"),
+                  item: tCommon("field.ticket"),
+                })}
+              </Button>
+            }
           />
         </div>
       </div>

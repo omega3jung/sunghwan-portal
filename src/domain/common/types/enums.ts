@@ -29,7 +29,7 @@ export type TicketSearchPeriod =
   | "last_6month"
   | "range";
 
-export type DueDate =
+export type dueAt =
   | "all"
   | "overdue"
   | "today"

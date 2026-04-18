@@ -8,26 +8,21 @@
     "adjust": "조정",
     "searchCriteria": "검색 조건"
   },
-
   "chart": {
     "category": {
       "title": "카테고리별 티켓",
       "label": "카테고리"
     },
-
     "department": {
       "title": "요청 부서별 티켓",
       "label": "부서"
     },
-
     "assignee": {
       "title": "담당자별 티켓",
       "label": "담당자"
     },
-
     "sla": {
       "title": "SLA 성과",
-
       "status": {
         "withinSla": "SLA 준수",
         "resolvedLate": "지연 해결",
@@ -36,48 +31,35 @@
       }
     }
   },
-
   "field": {
-    "ticket": "티켓",
-    "riskLevel": "위험도",
-    "dueBy": "기한",
-    "total": "총계",
-    "list": "목록"
+    "dueBy": "기한"
   },
-
   "message": {
     "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
     "lastComment": "마지막 댓글",
-
-    "createTicket": "티켓 생성",
     "ticketCreation": "티켓 생성",
     "processingFlow": "처리 흐름",
-
     "dragDrop": "여기에 파일을 끌어다 놓으세요",
     "uploadFile": "또는 클릭해서 찾아보세요",
     "noAttaches": "첨부 파일이 없습니다",
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
   },
-
   "step": {
     "issueDetails": "문제 상세",
     "attachments": "첨부 파일",
     "review": "검토 및 제출",
     "assign": "할당"
   },
-
   "detailAside": {
     "recipientsTitle": "수신자",
     "unassigned": "미할당",
     "ticketId": "티켓 ID"
   },
-
   "historySheet": {
     "title": "티켓 이력",
     "description": "티켓 이력 타임라인을 확인하세요."
   },
-
   "detailPage": {
     "detailsTitle": "티켓 상세 정보",
     "descriptionTitleHint": "핵심 요청 내용과 최신 활동을 한눈에 확인하세요.",
@@ -85,16 +67,13 @@
     "replyTitleHint": "답글을 남기고, 내부 메모를 작성하고, 대화를 한 흐름에서 검토하세요.",
     "notFound": "티켓을 찾을 수 없습니다."
   },
-
   "recentActivity": {
     "title": "최근 활동",
-
     "latestUpdate": {
       "label": "최신 업데이트",
       "empty": "아직 이력이 없습니다",
       "fallbackMeta": "타임라인이 여기에 표시됩니다"
     },
-
     "conversation": {
       "label": "대화",
       "empty": "아직 댓글이 없습니다",
@@ -103,13 +82,11 @@
       "count_one": "댓글 {{count}}개",
       "count_other": "댓글 {{count}}개"
     },
-
     "lastCommenter": {
       "label": "마지막 댓글 작성자",
       "emptyName": "아직 댓글 작성자가 없습니다",
       "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
     },
-
     "history": {
       "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
       "STATUS_CHANGED_SIMPLE": "상태가 변경됨",
@@ -130,15 +107,12 @@
       "DEFAULT": "이력이 업데이트됨"
     }
   },
-
   "merge": {
     "badge": "병합됨",
     "into": "{{ticketId}} 티켓으로 병합됨"
   },
-
   "historyTimeline": {
     "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
-
     "badge": {
       "status": "상태",
       "assignment": "할당",
@@ -151,20 +125,16 @@
       "system": "시스템",
       "default": "이력"
     },
-
     "valueChanged": "{{from}} -> {{to}}"
   },
-
   "comment": {
     "attachments": {
       "images": "이미지",
       "files": "파일"
     },
-
     "editor": {
       "validationEmpty": "제출하기 전에 댓글을 입력해 주세요."
     },
-
     "toolbar": {
       "bold": "굵게",
       "italic": "기울임꼴",
@@ -176,7 +146,6 @@
       "redo": "다시 실행"
     }
   },
-
   "actionTool": {
     "currentUser": "현재 사용자",
     "currentUserFallback": "나",
@@ -238,18 +207,15 @@
       "mergeTargetPlaceholder": "대표 티켓 id를 입력하세요"
     }
   },
-
   "listPage": {
     "title": "IT 서비스 데스크",
     "description": "서비스 데스크 티켓을 검색하고 조회하세요."
   },
-
   "ticketList": {
     "empty": "티켓이 없습니다",
     "requesterMeta": "{{name}} • {{time}}",
     "dueMeta": "기한 {{time}}"
   },
-
   "searchCriteria": {
     "primaryFilters": "주요 필터",
     "additionalFilters": "추가 필터",

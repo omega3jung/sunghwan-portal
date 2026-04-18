@@ -114,7 +114,7 @@ type TicketActivity = {
 
 - `priority`
 - `riskLevel`
-- `dueDate`
+- `dueAt`
 
 #### `merge`
 

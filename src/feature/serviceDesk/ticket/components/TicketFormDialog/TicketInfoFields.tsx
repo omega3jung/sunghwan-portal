@@ -55,11 +55,11 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
 
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
-  const [minDueDate, setMinDueDate] = useState<Date>(new Date());
+  const [mindueAt, setMindueAt] = useState<Date>(new Date());
 
   const isViewMode = mode === "view";
   const subCategoryValue = form.watch("subCategory");
-  const dueDateValue = form.watch("dueDate");
+  const dueAtValue = form.watch("dueAt");
   const subjectValue = form.watch("subject");
 
   const categoryData = useMemo(
@@ -116,7 +116,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     return parentLabel ? `${parentLabel} / ${selectedLabel}` : selectedLabel;
   }, [categories, categoryData, subCategoryValue, tLocal]);
 
-  const dueDateDisplayValue = dueDateValue ? format(dueDateValue, "PPP") : "-";
+  const dueAtDisplayValue = dueAtValue ? format(dueAtValue, "PPP") : "-";
 
   useEffect(() => {
     if (isViewMode) {
@@ -124,13 +124,10 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     }
 
     const { selected } = resolveCategoryMeta(subCategoryValue);
-    const nextMinDueDate = addDays(
-      startOfToday(),
-      selected?.defaultSlaDays ?? 0,
-    );
+    const nextMindueAt = addDays(startOfToday(), selected?.defaultSlaDays ?? 0);
 
-    setMinDueDate((prev) =>
-      prev.getTime() === nextMinDueDate.getTime() ? prev : nextMinDueDate,
+    setMindueAt((prev) =>
+      prev.getTime() === nextMindueAt.getTime() ? prev : nextMindueAt,
     );
   }, [categories, isViewMode, subCategoryValue]);
 
@@ -148,10 +145,10 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     const slaDays = selected?.defaultSlaDays ?? 0;
 
     form.setValue("mainCategory", parentCategory?.id);
-    form.setValue("dueDate", addDays(endOfToday(), slaDays));
+    form.setValue("dueAt", addDays(endOfToday(), slaDays));
     form.setValue("priority", selected?.defaultPriority ?? null);
     form.setValue("riskLevel", selected?.defaultRiskLevel ?? null);
-    setMinDueDate(addDays(startOfToday(), slaDays));
+    setMindueAt(addDays(startOfToday(), slaDays));
   };
 
   return (
@@ -212,22 +209,22 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
 
           <Field className="w-80 gap-1">
             <FieldLabel htmlFor="ticket-info-input-due-date">
-              {t("field.dueDate", { ns: "common" })}
+              {t("field.dueAt", { ns: "common" })}
             </FieldLabel>
 
             {isViewMode ? (
-              <ReadOnlyValue>{dueDateDisplayValue}</ReadOnlyValue>
+              <ReadOnlyValue>{dueAtDisplayValue}</ReadOnlyValue>
             ) : (
               <Controller
                 control={form.control}
-                name="dueDate"
+                name="dueAt"
                 render={({ field }) => (
                   <DatePicker
                     id="ticket-info-input-due-date"
                     className="h-9"
                     value={field.value}
                     onChange={(date) => field.onChange(date ?? new Date())}
-                    minDate={minDueDate}
+                    minDate={mindueAt}
                   />
                 )}
               />

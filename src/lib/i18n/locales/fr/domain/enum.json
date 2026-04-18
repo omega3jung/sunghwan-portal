@@ -43,7 +43,7 @@
     }
   },
 
-  "dueDate": {
+  "dueAt": {
     "label": "Date d'échéance",
     "options": {
       "all": "Tous",

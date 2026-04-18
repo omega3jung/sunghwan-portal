@@ -1,3 +1,3 @@
-import { TicketDetail } from "@/domain/serviceDesk";
+import { DbTicketDetail } from "@/api/serviceDesk/ticket";
 
-export const clientTicketsMocks: TicketDetail[] = [];
+export const clientTicketsMocks: DbTicketDetail[] = [];

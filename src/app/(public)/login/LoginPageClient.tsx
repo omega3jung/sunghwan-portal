@@ -68,10 +68,6 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
       : LoginView.ChangePassword;
 
   useEffect(() => {
-    document.documentElement.classList.remove("dark");
-  }, []);
-
-  useEffect(() => {
     if (userPreference?.language && userPreference.language !== language) {
       changeLanguage(userPreference.language);
     }

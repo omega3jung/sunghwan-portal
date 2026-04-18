@@ -44,7 +44,7 @@
     }
   },
 
-  "dueDate": {
+  "dueAt": {
     "label": "마감일",
     "options": {
       "all": "전체",

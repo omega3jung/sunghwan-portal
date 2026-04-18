@@ -420,7 +420,7 @@ Due date calculation is category-based.
 ### Rule
 
 ```txt
-dueDate = createdDate + defaultSlaDays
+dueAt = createdDate + defaultSlaDays
 ```
 
 If the `SubCategory` defines its own SLA value, it overrides the `MainCategory` value.

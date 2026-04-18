@@ -101,7 +101,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
           value={ticket.createdAt}
         />
         <DateStack
-          label={t("field.dueDate", { ns: NS.common })}
+          label={t("field.dueAt", { ns: NS.common })}
           value={ticket.dueAt}
         />
         <DateStack

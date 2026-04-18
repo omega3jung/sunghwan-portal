@@ -31,7 +31,13 @@ export const TicketFormDialogHeader = ({
   return (
     <DialogHeader className="px-4 py-3 md:px-6 md:py-4">
       <div className="hidden w-full flex-row justify-center md:flex">
-        <DialogTitle>{t("message.createTicket")}</DialogTitle>
+        <DialogTitle>
+          {t("action.withItem", {
+            ns: NS.common,
+            action: t("action.create", { ns: NS.common }),
+            item: t("field.ticket", { ns: NS.common }),
+          })}
+        </DialogTitle>
       </div>
 
       <div className="flex w-full items-center justify-between md:hidden">

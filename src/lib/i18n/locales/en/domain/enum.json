@@ -44,7 +44,7 @@
     }
   },
 
-  "dueDate": {
+  "dueAt": {
     "label": "Due Date",
     "options": {
       "all": "All",
