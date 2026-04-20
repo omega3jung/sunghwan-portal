@@ -199,8 +199,8 @@ If impersonation is active, the callback also exposes:
 
 ```ts
 session.impersonation = {
-  actorId,
-  subjectId,
+  originalUserId,
+  impersonatedUserId,
   activatedAt,
 };
 ```
@@ -215,7 +215,7 @@ Instead, the application resolves `AppUser` separately.
 
 ### Server-Side Resolution
 
-`getAppUser()` performs this flow:
+`getCurrentAppUser()` performs this flow:
 
 ```txt
 getServerSession()
@@ -267,7 +267,7 @@ The frontend uses a layered access pattern:
 
 ```txt
 NextAuth session
--> fetch effective AppUser
+-> fetch current AppUser
 -> sync into authSessionStore
 -> consume via useCurrentSession()
 ```
@@ -281,7 +281,7 @@ NextAuth session
 It combines:
 
 - NextAuth session state (`useSession`)
-- effective user profile query (`useMyProfileQuery`)
+- current user profile query (`useCurrentUserProfileQuery`)
 - Zustand `authSessionStore`
 - Zustand `impersonationStore`
 
@@ -352,10 +352,10 @@ The runtime flow is:
 ```txt
 User authenticated
 -> useSession() resolves
--> useMyProfileQuery() fetches effective AppUser
+-> useCurrentUserProfileQuery() fetches current AppUser
 -> authSessionStore.setSession({ user })
 -> ProtectedShell renders
--> AppUserBootstrap syncs actor into impersonation store
+-> AppUserBootstrap syncs originalUser into impersonation store
 ```
 
 This gives the protected app a stable layout-level user context before feature pages render.
@@ -372,8 +372,8 @@ The NextAuth session carries only minimal impersonation metadata:
 
 ```ts
 type ImpersonationInfo = {
-  actorId: string;
-  subjectId: string;
+  originalUserId: string;
+  impersonatedUserId: string;
   activatedAt: number;
 };
 ```
@@ -388,29 +388,29 @@ The client store expands that into a richer UI model:
 
 ```ts
 type ImpersonationState = {
-  actor: AppUser | null;
-  subject: AppUser | null;
-  effective: AppUser | null;
+  originalUser: AppUser | null;
+  impersonatedUser: AppUser | null;
+  currentUser: AppUser | null;
 };
 ```
 
 Meaning:
 
-- `actor`: the real logged-in user
-- `subject`: the impersonated user
-- `effective`: the user the UI should act as
+- `originalUser`: the real logged-in user
+- `impersonatedUser`: the impersonation target
+- `currentUser`: the user the UI and authz should act as
 
 ---
 
 ### Runtime Flow
 
 ```txt
-startImpersonation(subjectId)
+startImpersonation(impersonatedUserId)
 -> POST /api/auth/impersonation
 -> session.update({ impersonation })
--> useImpersonation() fetches subject profile
+-> useImpersonation() fetches impersonated user profile
 -> impersonationStore.syncFromSession()
--> effective user switches in UI
+-> currentUser switches in UI
 ```
 
 Stopping impersonation performs the reverse flow and clears session impersonation metadata.

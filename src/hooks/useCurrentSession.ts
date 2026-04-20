@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { CurrentSession } from "@/domain/auth";
 import { UseCurrentSessionResult } from "@/feature/auth";
-import { useMyProfileQuery } from "@/feature/auth/hooks";
+import { useCurrentUserProfileQuery } from "@/feature/auth/hooks";
 import { SessionPatch, useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 
@@ -42,11 +42,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   const session = useSession();
 
   /**
-   * AppUser used by the UI.
+   * Current AppUser used by the UI.
    * - Loaded from the current session user id
-   * - Resolves the effective user during impersonation
+   * - Resolves the current user during impersonation
    */
-  const { data: effectiveUserProfile } = useMyProfileQuery(session.data);
+  const { data: currentUserProfile } = useCurrentUserProfileQuery(session.data);
 
   /**
    * Zustand store slices.
@@ -154,10 +154,10 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    */
   useEffect(() => {
     if (session.status !== "authenticated") return;
-    if (!effectiveUserProfile) return;
+    if (!currentUserProfile) return;
 
-    setSession({ user: effectiveUserProfile });
-  }, [effectiveUserProfile, session.status, setSession]);
+    setSession({ user: currentUserProfile });
+  }, [currentUserProfile, session.status, setSession]);
 
   /**
    * 3. Reset client state after becoming unauthenticated

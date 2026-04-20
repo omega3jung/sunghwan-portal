@@ -247,7 +247,8 @@ Ticket -> Category -> Behavior
 
 ### 4. 관련 상호작용 모델로서의 Activity
 
-티켓은 커뮤니케이션과 운영 상호작용을 위한 activity model에도 참여합니다.
+Ticket은 시스템의 현재 상태를 표현하고,
+Activity와 History는 시스템이 어떻게 변화하는지를 표현합니다.
 
 대신:
 

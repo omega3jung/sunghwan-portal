@@ -12,22 +12,25 @@ type Props = {
 };
 
 export function AppUserBootstrap({ user, children }: Props) {
-  const impersonation = useImpersonationStore();
+  const impersonatedUser = useImpersonationStore(
+    (state) => state.impersonatedUser,
+  );
+  const originalUserId = useImpersonationStore((state) => state.originalUser?.id);
+  const syncFromSession = useImpersonationStore((state) => state.syncFromSession);
 
   useEffect(() => {
     if (!user) return;
 
-    // 🔑 Do not overwrite actor while impersonating
-    if (impersonation.subject) return;
+    // Do not overwrite the original user while impersonation is active.
+    if (impersonatedUser) return;
 
-    // 🔑 If it's already the same actor, there's no need to sync again.
-    if (impersonation.actor?.id === user.id) return;
+    if (originalUserId === user.id) return;
 
-    impersonation.syncFromSession({
-      actor: user,
-      subject: null,
+    syncFromSession({
+      originalUser: user,
+      impersonatedUser: null,
     });
-  }, [user, impersonation.subject]);
+  }, [impersonatedUser, originalUserId, syncFromSession, user]);
 
   return <>{children}</>;
 }

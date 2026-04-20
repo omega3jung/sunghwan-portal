@@ -3,13 +3,7 @@ import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../category";
 import { Attach } from "../types";
-import {
-  HistoryType,
-  TicketActionType,
-  TicketHistoryAction,
-  TicketResolutionReason,
-  TicketStatus,
-} from "../types/enums";
+import { TicketResolutionReason, TicketStatus } from "../types/enums";
 
 /**
  * Ticket core identifiers and audit fields.
@@ -126,75 +120,3 @@ export interface TicketDetail
     TicketScopeContext,
     TicketContent,
     TicketRelation {}
-
-/**
- * Ticket action domain model.
- *
- * actionNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, actionNo)
- */
-export interface TicketAction {
-  ticketId: string;
-  actionNo: number;
-
-  actionType: TicketActionType;
-  content: string;
-  ownerId: string;
-
-  createdAt: ISODateString;
-  updatedAt?: ISODateString;
-  active: boolean;
-
-  files: Attach[];
-  images: Attach[];
-}
-
-/**
- * Ticket time tracking entry.
- *
- * trackTimeNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, trackTimeNo)
- */
-export interface TicketTrackTime {
-  ticketId: string;
-  trackTimeNo: number;
-
-  assigneeId: string;
-
-  startAt: ISODateString;
-  endAt: ISODateString | null;
-
-  durationMinutes: number | null;
-
-  note?: string;
-
-  createdAt: ISODateString;
-  updatedAt?: ISODateString;
-}
-
-/**
- * Ticket history domain model.
- *
- * historyNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, historyNo)
- *
- * actionNo:
- * - null   => ticket-level history
- * - string => action-level history
- */
-export interface TicketHistory {
-  ticketId: string;
-  historyNo: number;
-
-  type: HistoryType;
-  action: TicketHistoryAction;
-
-  actorId: string | null;
-  actionNo: string | null;
-
-  fromValue?: unknown;
-  toValue?: unknown;
-  metadata?: Record<string, unknown>;
-
-  createdAt: ISODateString;
-}

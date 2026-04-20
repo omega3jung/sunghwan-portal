@@ -5,6 +5,7 @@ import { SystemStatus } from "./types";
 export const statusLocaleKey: Record<SystemStatus, string> = {
   Draft: "draft",
   Open: "open",
+  Reopen: "reopen",
   Approved: "approved",
   Declined: "declined",
   Working: "working",
@@ -18,6 +19,7 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   en: {
     draft: "Draft",
     open: "Open",
+    reopen: "Reopen",
     approved: "Approved",
     declined: "Declined",
     working: "Working",
@@ -30,6 +32,7 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   es: {
     draft: "Borrador",
     open: "Abierto",
+    reopen: "Reabierto",
     approval: "Aprobacion",
     approved: "Aprobado",
     declined: "Rechazado",
@@ -43,6 +46,7 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   fr: {
     draft: "Brouillon",
     open: "Ouvert",
+    reopen: "Rouvert",
     approval: "Approbation",
     approved: "Approuve",
     declined: "Refuse",

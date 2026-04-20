@@ -249,8 +249,8 @@ Instead:
 
 ### 4. Activity as a Related Interaction Model
 
-The ticket also participates in an activity model used for communication and
-operational interaction.
+Ticket represents the current state of the system,
+while Activity and History represent how the system evolves.
 
 Instead:
 

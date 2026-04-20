@@ -15,7 +15,7 @@ import { AppUser } from "@/domain/user";
 
 type Props = {
   user: AppUser;
-  onDemoImpersonate: (userId: string) => Promise<void>;
+  onDemoImpersonate: (impersonatedUserId: string) => Promise<void>;
 };
 
 export function DemoImpersonation(props: Props) {
@@ -23,7 +23,7 @@ export function DemoImpersonation(props: Props) {
 
   const { t } = useTranslation("UserMenu");
 
-  const impersonationUserProfiles = useMemo(() => {
+  const impersonationCandidates = useMemo(() => {
     return clientProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
@@ -52,7 +52,7 @@ export function DemoImpersonation(props: Props) {
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          {impersonationUserProfiles.map((profile) => {
+          {impersonationCandidates.map((profile) => {
             return (
               <DropdownMenuItem
                 key={`impersonate_${profile.displayName.replaceAll(" ", "_")}`}

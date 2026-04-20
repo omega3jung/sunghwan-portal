@@ -23,6 +23,8 @@ Action -> Event -> Stored History Record
 ```
 
 The system is event-driven in terms of tracking, not state-driven.
+History is always generated as a result of activity execution,
+ensuring that all changes are traceable and immutable.
 
 ---
 

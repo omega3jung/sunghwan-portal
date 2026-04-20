@@ -19,7 +19,7 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
      * user is only defined on signIn
      */
     if (user && isAuthUser(user)) {
-      token.id = user.id; // actor id (never changes)
+      token.id = user.id; // original user id (stable across impersonation)
       token.username = user.username;
       token.displayName = user.displayName;
       token.email = user.email;
@@ -58,6 +58,8 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
    * A session is a view model derived from JWT and does not change the authentication status.
    */
   session: async ({ session, token }: { session: Session; token: JWT }) => {
+    // `session.user` remains the original authenticated projection.
+    // The current UI user is resolved separately from impersonation metadata.
     session.user = {
       id: token.id,
       username: token.username,

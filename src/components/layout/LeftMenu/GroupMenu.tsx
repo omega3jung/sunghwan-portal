@@ -25,14 +25,14 @@ import { ENVIRONMENT } from "@/lib/environment";
 import { filterMenuByAccessLevel } from "./menu.utils";
 
 export function LeftMenu() {
-  const { effective } = useImpersonation();
+  const { currentUser } = useImpersonation();
 
   const { t } = useTranslation("LeftMenu");
   const menuItems = createMenuMock(t);
 
   const filteredMenu = {
-    content: filterMenuByAccessLevel(menuItems.content, effective?.permission),
-    footer: filterMenuByAccessLevel(menuItems.footer, effective?.permission),
+    content: filterMenuByAccessLevel(menuItems.content, currentUser?.permission),
+    footer: filterMenuByAccessLevel(menuItems.footer, currentUser?.permission),
   };
 
   return (

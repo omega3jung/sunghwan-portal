@@ -48,7 +48,7 @@ export const useBreadcrumbs = () => {
 
 export const NavigationBar = (props: Props) => {
   const { update, isOpen: isOpenStore } = useLeftMenuStore();
-  const { effective, isImpersonating } = useImpersonation();
+  const { currentUser, isImpersonating } = useImpersonation();
   const pathName = usePathname();
 
   // remove after once ojet gets deprecated
@@ -180,7 +180,7 @@ export const NavigationBar = (props: Props) => {
           badgeText={
             (userRoleBadge ?? !isImpersonating)
               ? "Owner"
-              : (effective?.displayName ?? "")
+              : (currentUser?.displayName ?? "")
           }
           shieldText={userRoleBadge}
           viewOnly={false}

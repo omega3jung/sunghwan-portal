@@ -5,6 +5,7 @@ import { SystemStatus } from "./types";
 
 const statusOptionValues = [
   "Open",
+  "Reopen",
   "Approved",
   "Declined",
   "Working",

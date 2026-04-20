@@ -3,7 +3,7 @@ import { TicketTrackTime } from "@/domain/serviceDesk";
 import {
   TicketTrackDurationFormValues,
   TicketTrackRangeFormValues,
-} from "@/feature/serviceDesk/ticket/forms/trackTime";
+} from "@/feature/serviceDesk/ticket/trackTime/forms";
 import { OResponse } from "@/shared/types/api";
 
 type TicketTrackTimeResponse = OResponse<TicketTrackTime>;

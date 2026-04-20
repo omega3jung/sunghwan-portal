@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
-import { ACCESS_LEVEL, AuthUser, UserScope } from "@/domain/auth";
+import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
 
 export async function getAuthToken(req: NextRequest) {
   return getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -30,27 +30,36 @@ export async function getCompanyId(req: NextRequest) {
   return token ? resolveCompanyId(token) : null;
 }
 
-export async function getEffectiveUserId(req: NextRequest) {
+export async function getOriginalUserId(req: NextRequest) {
   const token = await getAuthToken(req);
   return token?.id;
 }
 
-export async function getActorUserId(req: NextRequest) {
+export async function getImpersonatedUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-
-  return token?.impersonation?.actorId;
+  return token?.impersonation?.impersonatedUserId ?? null;
 }
 
-export async function getSubjectUserId(req: NextRequest) {
+export async function getCurrentUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.impersonation?.subjectId;
+  return token?.impersonation?.impersonatedUserId ?? token?.id ?? null;
+}
+
+export async function getUserRole(req: NextRequest): Promise<Role | null> {
+  const token = await getAuthToken(req);
+  return token?.role ?? null;
+}
+
+export async function isManagerRole(req: NextRequest): Promise<boolean> {
+  const token = await getAuthToken(req);
+  return token?.role === "ADMIN" || token?.role === "MANAGER";
 }
 
 export type AuthResult =
   | { ok: true; token: JWT }
   | { ok: false; status: 401 | 403 };
 
-export function tokenToAuthUser(token: JWT): AuthUser {
+export function tokenToOriginalAuthUser(token: JWT): AuthUser {
   return {
     ...token,
     email: token.email ?? "",
@@ -80,8 +89,13 @@ const IMPERSONATION_POLICY: ImpersonationPolicy = {
   CLIENT: [], // from CLIENT to [].
 } as const;
 
-export function canImpersonate(actorScope: UserScope, subjectScope: UserScope) {
-  return IMPERSONATION_POLICY[actorScope]?.includes(subjectScope);
+export function canImpersonate(
+  originalUserScope: UserScope,
+  impersonatedUserScope: UserScope,
+) {
+  return IMPERSONATION_POLICY[originalUserScope]?.includes(
+    impersonatedUserScope,
+  );
 }
 
 function resolveCompanyId(token: {

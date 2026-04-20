@@ -1,10 +1,9 @@
 // app/api/me/route.ts
 import { NextResponse } from "next/server";
 
-import { getAppUser } from "@/server/auth/getAppUser";
+import { getCurrentAppUser } from "@/server/auth/getCurrentAppUser";
 
 export async function GET() {
-  // real backend
-  const user = await getAppUser();
+  const user = await getCurrentAppUser();
   return NextResponse.json(user);
 }

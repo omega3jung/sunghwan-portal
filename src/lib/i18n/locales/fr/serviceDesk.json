@@ -134,16 +134,27 @@
     },
     "editor": {
       "validationEmpty": "Veuillez saisir un commentaire avant l'envoi."
-    },
+    }
+  },
+  "richEditor": {
     "toolbar": {
       "bold": "Gras",
       "italic": "Italique",
+      "underline": "Souligner",
+      "strike": "Barré",
       "bulletList": "Liste à puces",
       "numberedList": "Liste numérotée",
       "quote": "Citation",
       "codeBlock": "Bloc de code",
+      "link": "Lien",
+      "image": "Image",
+      "table": "Tableau",
       "undo": "Annuler",
       "redo": "Rétablir"
+    },
+    "prompt": {
+      "link": "Saisissez une URL",
+      "image": "Saisissez l'URL d'une image"
     }
   },
   "actionTool": {

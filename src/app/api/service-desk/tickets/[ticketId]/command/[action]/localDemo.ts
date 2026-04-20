@@ -9,8 +9,9 @@ import { DbTicketHistory } from "@/api/serviceDesk/ticket/history";
 import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
-import { mapFileToAttach } from "@/feature/serviceDesk/ticket/utils/mapFileToAttach";
+import { mapFileToAttach } from "@/feature/serviceDesk/ticket/shared/utils/mapFileToAttach";
 
+import { getNextStatus } from "./execution/actionEffects";
 import {
   DbTicketActionLocalContext,
   ExecutedLocalAction,
@@ -19,6 +20,7 @@ import {
   LocalActionRuntimeContext,
   LocalActionSpec,
   TicketActionApiType,
+  TicketActionExecutionMode,
 } from "./types";
 import {
   createUpdatedTicket,
@@ -39,7 +41,7 @@ type CreateTicketActionContext = Pick<
 >;
 
 type ExecuteLocalActionContext = LocalActionRuntimeContext & {
-  action: TicketActionApiType;
+  actionMode: TicketActionExecutionMode;
 };
 
 const createTicketAction = ({
@@ -97,6 +99,60 @@ const requireTicket = ({
   }
 
   return ticket;
+};
+
+const resolveNextTicketStatus = (
+  actionMode: TicketActionExecutionMode,
+  ticket?: DbTicketDetail,
+) => {
+  if (!ticket) {
+    return undefined;
+  }
+
+  return getNextStatus(actionMode, { currentStatus: ticket.status });
+};
+
+const requireNextStatus = ({
+  nextStatus,
+}: Pick<LocalActionRuntimeContext, "nextStatus">) => {
+  if (!nextStatus) {
+    throw new Error("Next status could not be resolved");
+  }
+
+  return nextStatus;
+};
+
+const buildTicketStatusPatch = (
+  ticket?: DbTicketDetail,
+  nextStatus?: DbTicketDetail["status"],
+): Partial<DbTicketDetail> | undefined => {
+  if (!ticket || !nextStatus || nextStatus === ticket.status) {
+    return undefined;
+  }
+
+  return { status: nextStatus };
+};
+
+const mergeActionPatch = (
+  ...patches: Array<Partial<DbTicketDetail> | undefined>
+): Partial<DbTicketDetail> | undefined => {
+  const mergedPatch = Object.assign(
+    {},
+    ...patches.filter(
+      (patch): patch is Partial<DbTicketDetail> => patch !== undefined,
+    ),
+  );
+
+  return Object.keys(mergedPatch).length > 0 ? mergedPatch : undefined;
+};
+
+const mergeAssigneeIds = (
+  currentAssigneeIds: DbTicketDetail["assignee_id"],
+  userId: string,
+) => {
+  return currentAssigneeIds.includes(userId)
+    ? currentAssigneeIds
+    : [...currentAssigneeIds, userId];
 };
 
 const toMergeAwareTicket = (ticket: DbTicketDetail) => ({
@@ -157,6 +213,21 @@ const validateMergeTarget = (
   };
 };
 
+const createStatusHistory: LocalActionHandler = (context) => {
+  const ticket = requireTicket(context);
+  const nextStatus = requireNextStatus(context);
+
+  return {
+    history: {
+      type: "STATUS",
+      action: "UPDATED",
+      from_value: ticket.status,
+      to_value: nextStatus,
+      metadata: toHistoryMetadata(context.content),
+    },
+  };
+};
+
 const createMessageHistory =
   (
     type: Extract<DbTicketHistory["type"], "COMMENT" | "NOTE">,
@@ -187,16 +258,16 @@ const assignTicket: LocalActionHandler = (context) => {
 
 const rejectTicket: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
+  const nextStatus = requireNextStatus(context);
 
   return {
     history: {
       type: "TICKET",
       action: "TICKET_REJECTED",
       from_value: ticket.status,
-      to_value: "Rejected",
+      to_value: nextStatus,
       metadata: toHistoryMetadata(context.content),
     },
-    ticketPatch: { status: "Rejected" },
   };
 };
 
@@ -213,7 +284,6 @@ const mergeTicket: LocalActionHandler = (context) => {
       metadata: toHistoryMetadata(context.content),
     },
     ticketPatch: {
-      status: "Closed",
       close_reason: "Merged",
       merged_into_ticket_id: targetTicketId,
     },
@@ -253,6 +323,25 @@ const adjustTicket: LocalActionHandler = (context) => {
   };
 };
 
+const assignMyselfTicket: LocalActionHandler = (context) => {
+  const ticket = requireTicket(context);
+  const assigneeIds =
+    ticket.status === "Working"
+      ? mergeAssigneeIds(ticket.assignee_id, context.userId)
+      : [context.userId];
+
+  return {
+    history: {
+      type: "ASSIGNMENT",
+      action: "UPDATED",
+      from_value: ticket.assignee_id,
+      to_value: assigneeIds,
+      metadata: toHistoryMetadata(context.content),
+    },
+    ticketPatch: { assignee_id: assigneeIds },
+  };
+};
+
 const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
   comment: { handler: createMessageHistory("COMMENT") },
   note: { handler: createMessageHistory("NOTE") },
@@ -260,24 +349,35 @@ const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
   reject: { handler: rejectTicket, needsTicket: true },
   merge: { handler: mergeTicket, needsTicket: true },
   adjust: { handler: adjustTicket, needsTicket: true },
+  reportResolved: { handler: createStatusHistory, needsTicket: true },
+  reviewRejected: { handler: createStatusHistory, needsTicket: true },
+  assignMyself: { handler: assignMyselfTicket, needsTicket: true },
 };
 
 const executeLocalAction = ({
-  action,
   ...context
 }: ExecuteLocalActionContext): ExecutedLocalAction => {
-  const spec = actionSpecMap[action];
+  const spec = actionSpecMap[context.action];
   const ticket = spec.needsTicket
     ? getTicketContext(context.ticketId, context.isInternal).ticket
     : undefined;
-  const runtimeContext = { ...context, ticket };
+  const nextStatus = resolveNextTicketStatus(context.actionMode, ticket);
+  const runtimeContext = {
+    ...context,
+    ticket,
+    nextStatus,
+  };
   const effect = spec.handler(runtimeContext);
+  const ticketPatch = mergeActionPatch(
+    buildTicketStatusPatch(ticket, nextStatus),
+    effect.ticketPatch,
+  );
 
   return {
     history: buildHistory(runtimeContext, effect.history),
     updatedTicket:
-      ticket && effect.ticketPatch
-        ? createUpdatedTicket(ticket, effect.ticketPatch, context.createdAt)
+      ticket && ticketPatch
+        ? createUpdatedTicket(ticket, ticketPatch, context.createdAt)
         : undefined,
   };
 };
@@ -287,6 +387,7 @@ export function localPost({
   userId,
   content,
   action,
+  actionMode,
   isInternal = false,
 }: DbTicketActionLocalContext) {
   try {
@@ -307,6 +408,7 @@ export function localPost({
       createdAt,
       isInternal,
       action,
+      actionMode,
     });
 
     internalActionsMocks.push(ticketAction);

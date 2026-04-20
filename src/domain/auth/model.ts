@@ -18,8 +18,9 @@ export interface AuthUser {
   role: Role; // 🔐 server-trusted
 }
 
-// Impersonation User type.
-export type ActingUser = {
-  actor: AppUser; // The actual logged-in user
-  subject: AppUser | null; // The impersonated user (optional)
+// UI-facing impersonation identities.
+export type ImpersonationUsers = {
+  originalUser: AppUser;
+  impersonatedUser: AppUser | null;
+  currentUser: AppUser;
 };

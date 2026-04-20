@@ -2,13 +2,13 @@
 import client from "@/api/client";
 
 export const userImpersonationApi = {
-  start: async (subjectId: string) => {
+  start: async (impersonatedUserId: string) => {
     const res = await client.api.post<{
-      actorId: string;
-      subjectId: string;
+      originalUserId: string;
+      impersonatedUserId: string;
       activatedAt: number;
     }>("/api/auth/impersonation", {
-      subjectId,
+      impersonatedUserId,
     });
 
     return res.data;

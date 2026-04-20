@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { mapTicketActionPayload } from "@/api/serviceDesk/ticket/action";
-import {
-  getEffectiveUserId,
-  isInternalUser,
-  isRemoteRequest,
-  proxyJson,
-} from "@/app/api/_helpers";
+import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
-import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/forms/action";
+import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
+import type { TicketActionMode } from "@/feature/serviceDesk/ticket/action/types";
 
+import {
+  isManagerLevelTicketActionAllowed,
+  resolveActionAuthorizationContext,
+} from "./authz";
 import { localPost } from "./localDemo";
 import { ACTION_PATH_BY_TYPE, TicketActionApiType } from "./types";
 
@@ -17,6 +17,15 @@ type TicketActionRouteContext = RouteContext<{
   ticketId: string;
   action: TicketActionApiType;
 }>;
+
+const MANAGER_ACTION_MODE_BY_PATH: Partial<
+  Record<TicketActionApiType, TicketActionMode>
+> = {
+  assign: "assignManager",
+  adjust: "adjustManager",
+  merge: "mergeManager",
+  reject: "rejectManager",
+};
 
 const validateMergeRequest = (
   ticketId: string,
@@ -46,6 +55,17 @@ const validateMergeRequest = (
   return null;
 };
 
+const resolveActionMode = (
+  action: TicketActionApiType,
+  isManager: boolean,
+): TicketActionMode => {
+  if (!isManager) {
+    return action;
+  }
+
+  return MANAGER_ACTION_MODE_BY_PATH[action] ?? action;
+};
+
 export async function POST(
   request: NextRequest,
   context: TicketActionRouteContext,
@@ -54,21 +74,24 @@ export async function POST(
   const isRemote = await isRemoteRequest(request);
   const content = (await request.json()) as TicketActionFormValues;
 
-  if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
-    return NextResponse.json(
-      { message: "Action path and payload do not match." },
-      { status: 400 },
-    );
-  }
-
-  const mergeValidationResponse = validateMergeRequest(ticketId, action, content);
+  const mergeValidationResponse = validateMergeRequest(
+    ticketId,
+    action,
+    content,
+  );
+  const authzContext = await resolveActionAuthorizationContext(request);
 
   if (mergeValidationResponse) {
     return mergeValidationResponse;
   }
 
+  const actionMode = resolveActionMode(
+    action,
+    isManagerLevelTicketActionAllowed(authzContext),
+  );
+
   if (!isRemote) {
-    const userId = await getEffectiveUserId(request);
+    const userId = authzContext?.userId;
 
     if (!userId) {
       return NextResponse.json({ message: "No user data" }, { status: 503 });
@@ -76,12 +99,26 @@ export async function POST(
 
     const isInternal = await isInternalUser(request);
 
-    return localPost({ ticketId, userId, action, content, isInternal });
+    if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
+      return NextResponse.json(
+        { message: "Action path and payload do not match." },
+        { status: 400 },
+      );
+    }
+
+    return localPost({
+      ticketId,
+      userId,
+      action,
+      actionMode,
+      content,
+      isInternal,
+    });
   }
 
   return proxyJson(request, {
     method: "POST",
-    path: `/service-desk/tickets/${ticketId}/command/${action}`,
+    path: `/service-desk/tickets/${ticketId}/command/${actionMode}`,
     body: content,
     errorMessage: "Failed to execute ticket command",
     mapData: mapTicketActionPayload,

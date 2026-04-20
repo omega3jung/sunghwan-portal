@@ -14,16 +14,18 @@ import type { MainCategory } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/keys";
-import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/api";
-import { CreateTicketDialog } from "@/feature/serviceDesk/ticket/components/TicketFormDialog";
-import { TicketList } from "@/feature/serviceDesk/ticket/components/TicketList";
-import { TicketSearchCriteria } from "@/feature/serviceDesk/ticket/components/TicketSearchCriteria";
+import {
+  CreateTicketDialog,
+  mapSearchCriteriaToDbParams,
+  TicketList,
+  TicketSearchCriteria,
+  useServiceDeskTicketListQuery,
+} from "@/feature/serviceDesk/ticket";
 import {
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
   useTicketSearchCriteriaForm,
-} from "@/feature/serviceDesk/ticket/forms/searchCriteria";
-import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticket/utils/mapSearchCriteriaToDbParams";
+} from "@/feature/serviceDesk/ticket/search";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useSessionStorageState } from "@/hooks/useSessionStorageState";

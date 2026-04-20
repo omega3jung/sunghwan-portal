@@ -7,14 +7,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
-import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api";
-import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticket/api/action";
-import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticket/api/history";
 import {
   TicketActionList,
   TicketActionTool,
-} from "@/feature/serviceDesk/ticket/components/TicketAction";
-import { TicketActionAttachments } from "@/feature/serviceDesk/ticket/components/TicketAttachmentList";
+  TicketAttachmentList,
+  useServiceDeskTicketActionListQuery,
+  useServiceDeskTicketHistoryListQuery,
+  useServiceDeskTicketQuery,
+} from "@/feature/serviceDesk/ticket";
 import { useCurrentPreference } from "@/hooks/useCurrentPreference";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
@@ -193,7 +193,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                         __html: ticket.content || "<p>-</p>",
                       }}
                     />
-                    <TicketActionAttachments
+                    <TicketAttachmentList
                       files={ticket.files}
                       images={ticket.images}
                     />

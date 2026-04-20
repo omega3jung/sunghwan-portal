@@ -50,18 +50,20 @@ Client state -> Server session (NextAuth)
 
 ```ts id="dual-identity-session"
 session = {
-  user: effectiveUser,
-  originalUser: originalUser,
-  isImpersonating: boolean,
+  user: originalUser,
+  impersonation: {
+    originalUserId,
+    impersonatedUserId,
+  },
 };
 ```
 
 ---
 
-### effectiveUser
+### currentUser
 
 - The user currently acting in the system
-- Used for UI rendering and API requests
+- Used for UI rendering and application authorization
 
 ---
 
@@ -92,7 +94,7 @@ Stop impersonation -> Restore originalUser -> Reset session
 
 ### Behavior
 
-- All API requests use `effectiveUser`
+- UI and feature authorization use `currentUser`
 - The UI reflects the impersonated identity
 - The system still preserves `originalUser` for audit and security checks
 
@@ -125,7 +127,7 @@ Stop impersonation -> Restore originalUser -> Reset session
 
 ### 4. Auditability
 
-- Preserves both original and effective user identity
+- Preserves both original and current user identity
 - Enables full action tracing
 
 ---
@@ -143,9 +145,8 @@ Keep the default authentication flow and extend the session through callbacks.
 ```ts id="nextauth-session-example"
 callbacks: {
   async session({ session, token }) {
-    session.user = token.effectiveUser;
-    session.originalUser = token.originalUser;
-    session.isImpersonating = token.isImpersonating;
+    session.user = token.originalUser;
+    session.impersonation = token.impersonation;
     return session;
   }
 }
@@ -173,9 +174,9 @@ Impersonation must not allow privilege escalation
 
 ### Behavior
 
-- Actions are performed as `effectiveUser`
+- Actions are performed as `currentUser`
 - The system still validates permissions with awareness of `originalUser`
-- The original actor remains traceable throughout the flow
+- The original user remains traceable throughout the flow
 
 ---
 
@@ -183,7 +184,7 @@ Impersonation must not allow privilege escalation
 
 - Admin impersonates a user
 - Actions are taken in the user context
-- The system still knows the original actor is the admin
+- The system still knows the original user is the admin
 
 ---
 
@@ -212,7 +213,7 @@ When impersonation is active, the UI should:
 ### Behavior
 
 - The server reads the session
-- Data access uses `effectiveUser`
+- Data access uses `currentUser`
 - Audit logging stores `originalUser`
 
 ---

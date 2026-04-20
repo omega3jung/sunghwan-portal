@@ -1,10 +1,10 @@
 import client from "@/api/client";
 import type { TicketAction } from "@/domain/serviceDesk";
-import { TICKET_ACTION_TYPE_TO_PATH } from "@/feature/serviceDesk/ticket/api/action";
+import { TICKET_ACTION_TYPE_TO_PATH } from "@/feature/serviceDesk/ticket/action/constants";
 import {
   TicketActionCommandInput,
   TicketActionDeleteInput,
-} from "@/feature/serviceDesk/ticket/api/action/types";
+} from "@/feature/serviceDesk/ticket/action/types";
 import { OResponse } from "@/shared/types";
 
 type TicketActionResponse = OResponse<TicketAction>;

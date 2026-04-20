@@ -11,6 +11,7 @@ import { StatusBadgeProps, SystemStatus } from "./types";
 export const statusClassMap: Record<SystemStatus, string> = {
   Draft: "bg-muted text-muted-foreground",
   Open: "bg-blue-100 text-blue-600",
+  Reopen: "bg-indigo-100 text-indigo-600",
   Approved: "bg-blue-50 text-blue-500",
   Declined: "bg-red-100 text-red-500",
   Working: "bg-orange-100 text-orange-500",

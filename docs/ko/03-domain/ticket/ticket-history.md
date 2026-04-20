@@ -23,6 +23,8 @@ Action -> Event -> Stored History Record
 ```
 
 이 시스템은 상태 중심이 아니라, 추적 관점에서는 event-driven 방식입니다.
+History는 항상 activity 실행의 결과로 생성되며,
+이를 통해 모든 변경이 추적 가능하고 불변으로 유지됩니다.
 
 ---
 

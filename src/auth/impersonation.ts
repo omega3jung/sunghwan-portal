@@ -8,37 +8,40 @@ import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
 export async function startImpersonation({
-  actor,
-  subjectId,
+  originalUser,
+  impersonatedUserId,
 }: {
-  actor: AuthUser;
-  subjectId: string;
+  originalUser: AuthUser;
+  impersonatedUserId: string;
 }) {
   // 1. check permission.
-  if (actor.userScope !== "INTERNAL" || actor.permission < ACCESS_LEVEL.ADMIN) {
+  if (
+    originalUser.userScope !== "INTERNAL" ||
+    originalUser.permission < ACCESS_LEVEL.ADMIN
+  ) {
     throw new Error("FORBIDDEN");
   }
 
   try {
     // 2-a. client demo impersonation.
-    if (actor.dataScope === "LOCAL") {
-      // 3-a. search subject.
-      const clientDemoAuth = resolveClientAuth(subjectId);
+    if (originalUser.dataScope === "LOCAL") {
+      // 3-a. search impersonated user.
+      const clientDemoAuth = resolveClientAuth(impersonatedUserId);
 
       if (!clientDemoAuth) {
-        throw new Error("SUBJECT_NOT_FOUND");
+        throw new Error("IMPERSONATED_USER_NOT_FOUND");
       }
 
-      // 4-a. check subject scope
+      // 4-a. check impersonated user scope
       if (clientDemoAuth.userScope !== "CLIENT") {
-        throw new Error("FORBIDDEN_SUBJECT");
+        throw new Error("FORBIDDEN_IMPERSONATED_USER");
       }
 
       // 5-a. allow impersonation
       console.log(clientDemoAuth.displayName);
       return {
-        actorId: actor.id,
-        subjectId: clientDemoAuth.id,
+        originalUserId: originalUser.id,
+        impersonatedUserId: clientDemoAuth.id,
         activatedAt: Date.now(),
       };
     }
@@ -46,21 +49,24 @@ export async function startImpersonation({
     // 2-b. real impersonation.
     console.log("real impersonation");
 
-    // 3-b. search subject.
-    const res = await client.api.get<AppUser>(`/users/${subjectId}/profile`);
+    // 3-b. search impersonated user.
+    const res = await client.api.get<AppUser>(
+      `/users/${impersonatedUserId}/profile`,
+    );
 
     if (!res.data) {
-      throw new Error("SUBJECT_NOT_FOUND");
+      throw new Error("IMPERSONATED_USER_NOT_FOUND");
     }
 
-    // 4-a. check subject scope
+    // 4-a. check impersonated user scope
     if (res.data.userScope !== "CLIENT") {
-      throw new Error("FORBIDDEN_SUBJECT");
+      throw new Error("FORBIDDEN_IMPERSONATED_USER");
     }
 
     // 5-b. allow impersonation
     return {
-      subjectId: subjectId,
+      originalUserId: originalUser.id,
+      impersonatedUserId,
       activatedAt: Date.now(),
     };
   } catch (error) {

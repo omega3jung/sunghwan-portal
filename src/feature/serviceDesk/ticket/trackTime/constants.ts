@@ -1,0 +1,1 @@
+export const TICKET_TRACK_TIME_NOTE_MAX_LENGTH = 500;

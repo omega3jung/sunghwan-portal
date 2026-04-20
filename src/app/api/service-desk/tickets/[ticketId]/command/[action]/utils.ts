@@ -4,7 +4,7 @@ import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/interna
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
 import { Priority, RiskLevel } from "@/domain/common";
-import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/forms/action";
+import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
 
 type TicketContext = {
   targetMock: DbTicketDetail[];

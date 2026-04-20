@@ -1,6 +1,7 @@
 export type SystemStatus =
   | "Draft"
   | "Open"
+  | "Reopen"
   | "Approved"
   | "Declined"
   | "Working"

@@ -13,15 +13,21 @@ import { useCurrentSession } from "./useCurrentSession";
  *
  * Use for:
  * - Managing admin impersonation flows from client components
- * - Reading the effective user alongside actor and subject information
+ * - Reading current user context alongside original and impersonated users
  *
  * @param none - This hook does not accept any arguments
- * @returns An impersonation facade containing actor, subject, effective user state, and control actions
+ * @returns An impersonation facade containing originalUser, impersonatedUser, currentUser state, and control actions
  */
 export const useImpersonation = () => {
   const { current } = useCurrentSession();
   const session = useSession();
-  const { actor, subject, effective, syncFromSession, reset } =
+  const {
+    originalUser,
+    impersonatedUser,
+    currentUser,
+    syncFromSession,
+    reset,
+  } =
     useImpersonationStore();
 
   /**
@@ -29,13 +35,13 @@ export const useImpersonation = () => {
    *
    * Use for:
    * - Entering impersonation mode from an admin control flow
-   * - Switching the effective session context to another user
+   * - Switching the current session context to another user
    *
-   * @param subjectId - The id of the user to impersonate
+   * @param impersonatedUserId - The id of the user to impersonate
    * @returns A promise that resolves after the impersonation request and session update complete
    */
-  const startImpersonation = async (subjectId: string) => {
-    const impersonation = await userImpersonationApi.start(subjectId);
+  const startImpersonation = async (impersonatedUserId: string) => {
+    const impersonation = await userImpersonationApi.start(impersonatedUserId);
     await session.update(impersonation);
   };
 
@@ -44,7 +50,7 @@ export const useImpersonation = () => {
    *
    * Use for:
    * - Exiting impersonation mode from the UI
-   * - Restoring the original actor as the only active session identity
+   * - Restoring the original user as the only active session identity
    *
    * @param none - This function does not accept any arguments
    * @returns A promise that resolves after the impersonation session is cleared and the session is updated
@@ -61,31 +67,55 @@ export const useImpersonation = () => {
       return;
     }
 
-    const impersonationSubjectId =
-      session.data?.impersonation?.subjectId ?? null;
+    const originalUserId = session.data?.user.id ?? null;
+    const impersonatedUserId =
+      session.data?.impersonation?.impersonatedUserId ?? null;
 
-    // impersonating.
-    if (impersonationSubjectId) {
-      // ✅ if same subject, then do nothing.
-      if (subject?.id === impersonationSubjectId) return;
-
-      // get subject user.
-      userProfileApi.get(impersonationSubjectId).then((subjectProfile) => {
-        syncFromSession({
-          actor: actor ?? current.user!,
-          subject: subjectProfile,
-        });
-      });
-    } else {
-      syncFromSession({ actor: current.user, subject: null });
+    if (!originalUserId) {
+      reset();
+      return;
     }
-  }, [current.user?.id, session.data?.impersonation?.subjectId]);
+
+    if (impersonatedUserId) {
+      const originalUserPromise =
+        originalUser?.id === originalUserId
+          ? Promise.resolve(originalUser)
+          : userProfileApi.get(originalUserId);
+
+      const impersonatedUserPromise =
+        impersonatedUser?.id === impersonatedUserId
+          ? Promise.resolve(impersonatedUser)
+          : userProfileApi.get(impersonatedUserId);
+
+      Promise.all([originalUserPromise, impersonatedUserPromise]).then(
+        ([resolvedOriginalUser, resolvedImpersonatedUser]) => {
+          syncFromSession({
+            originalUser: resolvedOriginalUser,
+            impersonatedUser: resolvedImpersonatedUser,
+          });
+        },
+      );
+    } else {
+      syncFromSession({
+        originalUser: current.user,
+        impersonatedUser: null,
+      });
+    }
+  }, [
+    current.user?.id,
+    impersonatedUser?.id,
+    originalUser?.id,
+    reset,
+    session.data?.impersonation?.impersonatedUserId,
+    session.data?.user.id,
+    syncFromSession,
+  ]);
 
   return {
-    actor,
-    subject,
-    effective,
-    isImpersonating: !!session.data?.impersonation?.subjectId,
+    originalUser,
+    impersonatedUser,
+    currentUser,
+    isImpersonating: !!session.data?.impersonation?.impersonatedUserId,
     startImpersonation,
     stopImpersonation,
   };
