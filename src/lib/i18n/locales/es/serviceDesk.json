@@ -3,9 +3,13 @@
     "comment": "Comentario",
     "note": "Nota",
     "assign": "Asignar",
+    "assignToMe": "Asignarme",
     "reject": "Rechazar",
     "merge": "Fusionar",
     "adjust": "Ajustar",
+    "adjustPlan": "Ajustar plan",
+    "reopenIssue": "Reabrir incidencia",
+    "resubmitRequest": "Reenviar solicitud",
     "searchCriteria": "Criterios de búsqueda"
   },
   "chart": {
@@ -54,7 +58,8 @@
   "detailAside": {
     "recipientsTitle": "Destinatarios",
     "unassigned": "Sin asignar",
-    "ticketId": "ID del ticket"
+    "ticketId": "ID del ticket",
+    "currentUserBadge": "Yo"
   },
   "historySheet": {
     "title": "Historial del ticket",
@@ -161,25 +166,34 @@
       "comment": "Publica una respuesta visible para el solicitante y las personas observadoras.",
       "note": "Deja una nota interna que permanezca dentro del equipo.",
       "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
+      "assignSelf": "Asume este ticket de inmediato con una nota de actividad automática.",
       "reject": "Registra el motivo del rechazo antes de cerrar la solicitud.",
       "merge": "Fusiona este ticket con otro ticket.",
-      "adjust": "Actualiza la prioridad, el nivel de riesgo y la fecha límite."
+      "adjust": "Actualiza la prioridad, el nivel de riesgo y la fecha límite.",
+      "reopen": "Reabre el ticket cuando el resultado resuelto aún requiere más trabajo.",
+      "resubmit": "Vuelve a enviar esta solicitud rechazada para su revisión."
     },
     "helper": {
       "comment": "Comparte una actualización pública con todas las personas que siguen este ticket.",
       "note": "Agrega una nota interna para el equipo de service desk.",
       "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
+      "assignSelf": "Esta acción registra automáticamente que asumiste la responsabilidad del ticket.",
       "reject": "Explica por qué se está rechazando esta solicitud.",
       "merge": "Elige el ticket con el que se fusionará y deja una nota breve.",
-      "adjust": "Revisa la prioridad, el nivel de riesgo y la fecha límite antes de aplicar los cambios."
+      "adjust": "Revisa la prioridad, el nivel de riesgo y la fecha límite antes de aplicar los cambios.",
+      "reopen": "Explica qué queda por resolver antes de que este ticket pueda permanecer cerrado.",
+      "resubmit": "Explica qué cambió antes de volver a enviar esta solicitud rechazada."
     },
     "submit": {
       "comment": "Publicar comentario",
       "note": "Guardar nota",
       "assign": "Guardar asignación",
+      "assignSelf": "Asignarme",
       "reject": "Rechazar ticket",
       "merge": "Fusionar ticket",
-      "adjust": "Actualizar plan"
+      "adjust": "Actualizar plan",
+      "reopen": "Reabrir incidencia",
+      "resubmit": "Reenviar solicitud"
     },
     "list": {
       "title": "Actividad",
@@ -199,17 +213,34 @@
         "comment": "Escribe un comentario y mantén la conversación en marcha",
         "note": "Comparte una nota interna para este ticket",
         "assign": "Comparte el contexto de asignación para la siguiente persona responsable",
+        "assignSelf": "Esta nota de actividad se genera automáticamente",
         "reject": "Describe por qué este ticket debe ser rechazado",
         "merge": "Explica por qué estos tickets deben fusionarse",
-        "adjust": "Describe por qué estos valores deben ajustarse"
+        "adjust": "Describe por qué estos valores deben ajustarse",
+        "reopen": "Describe qué sigue pendiente de resolver",
+        "resubmit": "Describe qué cambió antes de volver a enviar este ticket"
       },
       "targetTicketId": "Ticket de destino",
       "mergeTargetPlaceholder": "Ingresa el id del ticket principal"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} ha decidido hacerse cargo de este ticket. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "Introduce un motivo antes de enviarlo.",
+      "contentMaxLength": "El motivo debe tener 2000 caracteres o menos.",
+      "assigneeRequired": "Selecciona al menos una persona asignada.",
+      "targetTicketRequired": "Introduce el id del ticket de destino.",
+      "adjustNoChanges": "Cambia la prioridad, el nivel de riesgo o la fecha límite antes de actualizar."
     }
   },
   "listPage": {
     "title": "Mesa de Servicio de TI",
     "description": "Busca y consulta tickets de la mesa de servicio."
+  },
+  "reports": {
+    "title": "Informes de la mesa de servicio",
+    "description": "La migración de los informes heredados está prevista para el siguiente paso."
   },
   "ticketList": {
     "empty": "No se encontraron tickets",
@@ -220,5 +251,78 @@
     "primaryFilters": "Filtros principales",
     "additionalFilters": "Filtros adicionales",
     "dateFilters": "Filtros de fecha"
+  },
+  "ticketFormContext": {
+    "missingProvider": "useTicketFormContext debe usarse dentro del provider."
+  },
+  "api": {
+    "common": {
+      "notFound": "No encontrado."
+    },
+    "approvalSteps": {
+      "fetchList": "No se pudieron obtener los pasos de aprobación.",
+      "create": "No se pudo crear el paso de aprobación.",
+      "fetch": "No se pudo obtener el paso de aprobación.",
+      "update": "No se pudo actualizar el paso de aprobación.",
+      "delete": "No se pudo eliminar el paso de aprobación."
+    },
+    "assignmentRules": {
+      "fetchList": "No se pudieron obtener las reglas de asignación.",
+      "create": "No se pudo crear la regla de asignación.",
+      "fetch": "No se pudo obtener la regla de asignación.",
+      "update": "No se pudo actualizar la regla de asignación.",
+      "delete": "No se pudo eliminar la regla de asignación."
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "La recomendación de asignación requiere categoryId y assigneeIds.",
+      "fetch": "No se pudieron obtener las recomendaciones de asignación."
+    },
+    "categories": {
+      "fetchList": "No se pudieron obtener las categorías.",
+      "create": "No se pudo crear la categoría.",
+      "fetch": "No se pudo obtener la categoría.",
+      "update": "No se pudo actualizar la categoría.",
+      "delete": "No se pudo eliminar la categoría."
+    },
+    "tickets": {
+      "fetchList": "No se pudieron obtener los tickets.",
+      "create": "No se pudo crear el ticket.",
+      "notFound": "Ticket no encontrado.",
+      "fetch": "No se pudo obtener el ticket.",
+      "update": "No se pudo actualizar el ticket.",
+      "delete": "No se pudo eliminar el ticket."
+    },
+    "ticketActions": {
+      "fetchList": "No se pudieron obtener las acciones del ticket.",
+      "notFound": "Acción no encontrada.",
+      "fetch": "No se pudo obtener la acción del ticket.",
+      "remove": "No se pudo eliminar la acción del ticket."
+    },
+    "ticketHistories": {
+      "fetchList": "No se pudieron obtener los historiales del ticket."
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "La acción de fusión requiere targetTicketId.",
+      "mergeSameTicket": "No se puede fusionar con el mismo ticket.",
+      "employeeUnavailable": "No autorizado: la identidad del empleado no está disponible.",
+      "actionMismatch": "La ruta de la acción y la carga útil no coinciden.",
+      "execute": "No se pudo ejecutar el comando del ticket.",
+      "localDemo": {
+        "createFailed": "No se pudo crear la acción.",
+        "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
+        "assigneeRequired": "La acción ASSIGN requiere assigneeIds.",
+        "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
+        "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
+        "mergeTargetNotFound": "No se encontró el ticket de destino para la fusión.",
+        "draftCannotBeMerged": "Los tickets en borrador no se pueden fusionar.",
+        "cannotMergeIntoDraft": "No se puede fusionar con un ticket en borrador.",
+        "ticketAlreadyMerged": "El ticket ya está fusionado.",
+        "mergeTargetAlreadyMerged": "El ticket de destino ya está fusionado.",
+        "invalidMergeTarget": "Destino de fusión no válido.",
+        "invalidPriority": "Prioridad no válida: {{value}}.",
+        "invalidRiskLevel": "Nivel de riesgo no válido: {{value}}.",
+        "actionNotAllowed": "La acción {{action}} no está permitida en el estado {{status}}."
+      }
+    }
   }
 }

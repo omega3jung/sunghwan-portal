@@ -51,15 +51,19 @@
     "department": "Departamento",
     "description": "Descripción",
     "details": "Detalles",
+    "dueBy": "Fecha límite",
     "dueAt": "Fecha límite",
+    "duration": "Duración",
     "email": "Correo electrónico",
     "emailTo": "Para",
     "emailCc": "CC",
     "emailBcc": "BCC",
     "endDate": "Fecha de finalización",
+    "endTime": "Hora de finalización",
     "history": "Historial",
     "location": "Ubicación",
     "name": "Nombre",
+    "note": "Nota",
     "owner": "Propietario",
     "password": "Contraseña",
     "period": "Período",
@@ -67,6 +71,7 @@
     "priority": "Prioridad",
     "requester": "Solicitante",
     "startDate": "Fecha de inicio",
+    "startTime": "Hora de inicio",
     "status": "Estado",
     "step": "Paso",
     "subject": "Asunto",
@@ -90,5 +95,26 @@
     "rowsPerPage": "Filas por página",
     "selected": "{{count}} seleccionados",
     "total": "{{count}} elementos en total"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "bulletList": "Lista con viñetas",
+      "numberedList": "Lista numerada",
+      "quote": "Cita",
+      "codeBlock": "Bloque de código",
+      "link": "Enlace",
+      "image": "Imagen",
+      "table": "Tabla",
+      "undo": "Deshacer",
+      "redo": "Rehacer"
+    },
+    "prompt": {
+      "link": "Introduce una URL",
+      "image": "Introduce la URL de una imagen"
+    }
   }
 }

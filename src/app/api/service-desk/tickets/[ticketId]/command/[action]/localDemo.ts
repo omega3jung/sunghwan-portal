@@ -6,12 +6,21 @@ import {
   DbTicketAction,
 } from "@/api/serviceDesk/ticket/action";
 import { DbTicketHistory } from "@/api/serviceDesk/ticket/history";
+import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee";
 import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
+import {
+  ServiceDeskApiError,
+  tServiceDesk,
+} from "@/app/api/service-desk/messages";
 import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
 import { mapFileToAttach } from "@/feature/serviceDesk/ticket/shared/utils/mapFileToAttach";
 
-import { getNextStatus } from "./execution/actionEffects";
+import {
+  getLocalDemoNextStatus,
+  isLocalDemoExecutionAllowed,
+  resolveLocalDemoExecutionMode,
+} from "./localDemoRules";
 import {
   DbTicketActionLocalContext,
   ExecutedLocalAction,
@@ -37,16 +46,19 @@ import {
 
 type CreateTicketActionContext = Pick<
   LocalActionRuntimeContext,
-  "ticketId" | "userId" | "content" | "actionNo" | "createdAt"
+  "ticketId" | "employeeId" | "content" | "actionNo" | "createdAt"
 >;
 
-type ExecuteLocalActionContext = LocalActionRuntimeContext & {
-  actionMode: TicketActionExecutionMode;
-};
+const employeeEmailById = new Map(
+  createEmployeesMock().map((employee) => [
+    employee.employee_id.toString(),
+    employee.employee_email,
+  ]),
+);
 
 const createTicketAction = ({
   ticketId,
-  userId,
+  employeeId,
   content,
   actionNo,
   createdAt,
@@ -56,7 +68,7 @@ const createTicketAction = ({
 
   action_type: content.actionType,
   content: content.content,
-  owner_id: userId,
+  owner_id: employeeId,
 
   created_at: createdAt,
   updated_at: null,
@@ -68,7 +80,7 @@ const createTicketAction = ({
 
 const buildHistoryBase = ({
   ticketId,
-  userId,
+  employeeId,
   actionNo,
   createdAt,
 }: LocalActionRuntimeContext): Pick<
@@ -77,7 +89,7 @@ const buildHistoryBase = ({
 > => ({
   ticket_id: ticketId,
   history_no: getMaxHistoryNo(ticketId),
-  actor_id: userId,
+  actor_id: employeeId,
   action_no: actionNo.toString(),
   created_at: createdAt,
 });
@@ -95,7 +107,11 @@ const requireTicket = ({
   ticketId,
 }: LocalActionRuntimeContext): DbTicketDetail => {
   if (!ticket) {
-    throw new Error(`Ticket ${ticketId} not found`);
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.ticketNotFound",
+      404,
+      { ticketId },
+    );
   }
 
   return ticket;
@@ -109,14 +125,17 @@ const resolveNextTicketStatus = (
     return undefined;
   }
 
-  return getNextStatus(actionMode, { currentStatus: ticket.status });
+  return getLocalDemoNextStatus(actionMode, ticket.status);
 };
 
 const requireNextStatus = ({
   nextStatus,
 }: Pick<LocalActionRuntimeContext, "nextStatus">) => {
   if (!nextStatus) {
-    throw new Error("Next status could not be resolved");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.nextStatusUnresolved",
+      400,
+    );
   }
 
   return nextStatus;
@@ -148,11 +167,29 @@ const mergeActionPatch = (
 
 const mergeAssigneeIds = (
   currentAssigneeIds: DbTicketDetail["assignee_id"],
-  userId: string,
+  employeeId: string,
 ) => {
-  return currentAssigneeIds.includes(userId)
+  return currentAssigneeIds.includes(employeeId)
     ? currentAssigneeIds
-    : [...currentAssigneeIds, userId];
+    : [...currentAssigneeIds, employeeId];
+};
+
+const mergeTicketToEmails = (
+  ticket: DbTicketDetail,
+  assigneeIds: string[],
+): DbTicketDetail["email"] => {
+  const assigneeEmails = assigneeIds
+    .map((assigneeId) => employeeEmailById.get(assigneeId))
+    .filter((email): email is string => Boolean(email));
+
+  if (assigneeEmails.length === 0) {
+    return ticket.email;
+  }
+
+  return {
+    ...ticket.email,
+    to: [...new Set([...ticket.email.to, ...assigneeEmails])],
+  };
 };
 
 const toMergeAwareTicket = (ticket: DbTicketDetail) => ({
@@ -171,27 +208,38 @@ const validateMergeTarget = (
   const targetTicket = tickets.find((ticket) => ticket.id === targetTicketId);
 
   if (!targetTicket) {
-    throw new Error("Merge target not found");
-  }
-
-  if (sourceTicket.id === targetTicket.id) {
-    throw new Error("Cannot merge into the same ticket");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.mergeTargetNotFound",
+      404,
+    );
   }
 
   if (sourceTicket.status === "Draft") {
-    throw new Error("Draft tickets cannot be merged");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.draftCannotBeMerged",
+      400,
+    );
   }
 
   if (targetTicket.status === "Draft") {
-    throw new Error("Cannot merge into a draft ticket");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.cannotMergeIntoDraft",
+      400,
+    );
   }
 
   if (sourceTicket.merged_into_ticket_id) {
-    throw new Error("Ticket is already merged");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.ticketAlreadyMerged",
+      400,
+    );
   }
 
   if (targetTicket.merged_into_ticket_id) {
-    throw new Error("Merge target is already merged");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.mergeTargetAlreadyMerged",
+      400,
+    );
   }
 
   const canMerge = canMergeTicketInto(
@@ -204,7 +252,10 @@ const validateMergeTarget = (
   );
 
   if (!canMerge) {
-    throw new Error("Invalid merge target");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.invalidMergeTarget",
+      400,
+    );
   }
 
   return {
@@ -252,7 +303,34 @@ const assignTicket: LocalActionHandler = (context) => {
       to_value: assigneeIds,
       metadata: toHistoryMetadata(context.content),
     },
-    ticketPatch: { assignee_id: assigneeIds },
+    ticketPatch: {
+      assignee_id: assigneeIds,
+      email: mergeTicketToEmails(ticket, assigneeIds),
+      assigned: assigneeIds.includes(context.employeeId),
+    },
+  };
+};
+
+const assignSelfTicket: LocalActionHandler = (context) => {
+  const ticket = requireTicket(context);
+  const assigneeIds =
+    ticket.status === "Working"
+      ? mergeAssigneeIds(ticket.assignee_id, context.employeeId)
+      : [context.employeeId];
+
+  return {
+    history: {
+      type: "ASSIGNMENT",
+      action: "UPDATED",
+      from_value: ticket.assignee_id,
+      to_value: assigneeIds,
+      metadata: toHistoryMetadata(context.content),
+    },
+    ticketPatch: {
+      assignee_id: assigneeIds,
+      email: mergeTicketToEmails(ticket, assigneeIds),
+      assigned: true,
+    },
   };
 };
 
@@ -323,50 +401,48 @@ const adjustTicket: LocalActionHandler = (context) => {
   };
 };
 
-const assignMyselfTicket: LocalActionHandler = (context) => {
-  const ticket = requireTicket(context);
-  const assigneeIds =
-    ticket.status === "Working"
-      ? mergeAssigneeIds(ticket.assignee_id, context.userId)
-      : [context.userId];
-
-  return {
-    history: {
-      type: "ASSIGNMENT",
-      action: "UPDATED",
-      from_value: ticket.assignee_id,
-      to_value: assigneeIds,
-      metadata: toHistoryMetadata(context.content),
-    },
-    ticketPatch: { assignee_id: assigneeIds },
-  };
-};
-
 const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
   comment: { handler: createMessageHistory("COMMENT") },
   note: { handler: createMessageHistory("NOTE") },
   assign: { handler: assignTicket, needsTicket: true },
+  assignSelf: { handler: assignSelfTicket, needsTicket: true },
   reject: { handler: rejectTicket, needsTicket: true },
   merge: { handler: mergeTicket, needsTicket: true },
   adjust: { handler: adjustTicket, needsTicket: true },
-  reportResolved: { handler: createStatusHistory, needsTicket: true },
-  reviewRejected: { handler: createStatusHistory, needsTicket: true },
-  assignMyself: { handler: assignMyselfTicket, needsTicket: true },
+  reopen: { handler: createStatusHistory, needsTicket: true },
+  resubmit: { handler: createStatusHistory, needsTicket: true },
 };
 
 const executeLocalAction = ({
   ...context
-}: ExecuteLocalActionContext): ExecutedLocalAction => {
+}: LocalActionRuntimeContext): ExecutedLocalAction => {
   const spec = actionSpecMap[context.action];
   const ticket = spec.needsTicket
     ? getTicketContext(context.ticketId, context.isInternal).ticket
     : undefined;
-  const nextStatus = resolveNextTicketStatus(context.actionMode, ticket);
+
+  const actionMode = resolveLocalDemoExecutionMode(
+    context.action,
+    context.isAdmin,
+  );
+  const nextStatus = resolveNextTicketStatus(actionMode, ticket);
   const runtimeContext = {
     ...context,
     ticket,
     nextStatus,
   };
+
+  if (ticket && !isLocalDemoExecutionAllowed(actionMode, ticket.status)) {
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.actionNotAllowed",
+      400,
+      {
+        action: actionMode,
+        status: ticket.status,
+      },
+    );
+  }
+
   const effect = spec.handler(runtimeContext);
   const ticketPatch = mergeActionPatch(
     buildTicketStatusPatch(ticket, nextStatus),
@@ -384,10 +460,10 @@ const executeLocalAction = ({
 
 export function localPost({
   ticketId,
-  userId,
+  employeeId,
   content,
   action,
-  actionMode,
+  isAdmin = false,
   isInternal = false,
 }: DbTicketActionLocalContext) {
   try {
@@ -395,20 +471,20 @@ export function localPost({
     const createdAt = new Date().toISOString();
     const ticketAction = createTicketAction({
       ticketId,
-      userId,
+      employeeId,
       content,
       actionNo,
       createdAt,
     });
     const { history: createdHistory, updatedTicket } = executeLocalAction({
       ticketId,
-      userId,
+      employeeId,
       content,
       actionNo,
       createdAt,
       isInternal,
+      isAdmin,
       action,
-      actionMode,
     });
 
     internalActionsMocks.push(ticketAction);
@@ -424,14 +500,12 @@ export function localPost({
     });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Failed to create action";
-    const status = message.includes("not found")
-      ? 404
-      : message.includes("merge") ||
-          message.includes("merged") ||
-          message.includes("Draft")
-        ? 400
-        : 500;
+      error instanceof ServiceDeskApiError
+        ? error.message
+        : error instanceof Error
+          ? error.message
+          : tServiceDesk("api.ticketCommand.localDemo.createFailed");
+    const status = error instanceof ServiceDeskApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });
   }

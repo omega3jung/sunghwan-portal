@@ -1,24 +1,18 @@
 import { Locale } from "@/shared/types/locale";
 
+export type DisplayName = {
+  first: string;
+  middle?: string;
+  last: string;
+};
+
 export type LocalizedName = {
-  en: {
-    first: string;
-    middle?: string;
-    last: string;
-  };
-} & Partial<
-  Record<
-    Exclude<Locale, "en">,
-    {
-      first: string;
-      middle?: string;
-      last: string;
-    }
-  >
->;
+  en: DisplayName;
+} & Partial<Record<Exclude<Locale, "en">, DisplayName>>;
 
 export interface Employee {
   id: string;
+  displayName: string;
 
   // basic info
   name: LocalizedName;

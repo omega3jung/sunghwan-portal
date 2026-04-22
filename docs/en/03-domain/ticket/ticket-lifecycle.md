@@ -246,12 +246,12 @@ Examples:
 | submit ticket                  | `Draft`                             | `Open`     |
 | approve                        | `Open`                              | `Approved` |
 | update declined ticket         | `Declined`                          | `Open`     |
-| assign / assign myself         | `Open` or `Approved`                | `Working`  |
+| assign / assignSelf         | `Open` or `Approved`                | `Working`  |
 | pause or hold work             | `Working`                           | `Pending`  |
 | resume work                    | `Pending`                           | `Working`  |
 | reject                         | `Working` or `Pending`              | `Rejected` |
-| reportResolved                | `Resolved`                          | `Reopen`   |
-| reviewRejected               | `Rejected`                          | `Open`     |
+| reopen                | `Resolved`                          | `Reopen`   |
+| resubmit               | `Rejected`                          | `Open`     |
 | manager reassign               | `Declined` or `Rejected`            | `Reopen`   |
 | merge                          | `Working`, `Pending`, or `Resolved` | `Closed`   |
 | manager merge                  | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
@@ -370,8 +370,8 @@ Examples:
 
 - `assign` may move a ticket into `Working`
 - `reject` may move a ticket into `Rejected`
-- `reportResolved` may move a ticket into `Reopen`
-- `reviewRejected` may move a ticket into `Open`
+- `reopen` may move a ticket into `Reopen`
+- `resubmit` may move a ticket into `Open`
 
 This distinction keeps the lifecycle strict while allowing operational actions
 to remain expressive.

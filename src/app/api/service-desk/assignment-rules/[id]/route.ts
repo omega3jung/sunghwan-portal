@@ -15,6 +15,7 @@ import {
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
@@ -29,7 +30,10 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     ).find((item) => item.categoryId === id);
 
     if (!assignmentRule) {
-      return NextResponse.json({ message: "Not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: tServiceDesk("api.common.notFound") },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(assignmentRule);
@@ -37,7 +41,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
   return proxyJson(request, {
     path: `/service-desk/assignment-rules/${id}`,
-    errorMessage: "Failed to fetch assignment rule",
+    errorMessage: tServiceDesk("api.assignmentRules.fetch"),
     mapData: mapAssignmentRuleItemPayload,
   });
 }
@@ -57,7 +61,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     method: "PUT",
     path: `/service-desk/assignment-rules/${id}`,
     body: toAssignmentRuleWritePayload(body),
-    errorMessage: "Failed to update assignment rule",
+    errorMessage: tServiceDesk("api.assignmentRules.update"),
     mapData: mapAssignmentRuleItemPayload,
   });
 }
@@ -73,6 +77,6 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/assignment-rules/${id}`,
-    errorMessage: "Failed to delete assignment rule",
+    errorMessage: tServiceDesk("api.assignmentRules.delete"),
   });
 }

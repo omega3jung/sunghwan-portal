@@ -86,7 +86,14 @@ export const TicketListItem = ({
           ) : null}
         </div>
 
-        <StatusBadge status={ticket.status} />
+        <div className="flex gap-2">
+          {ticket.assigned && (
+            <Badge variant={"destructive"} className="font-normal">
+              Assigned
+            </Badge>
+          )}
+          <StatusBadge status={ticket.status} />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -106,7 +113,7 @@ export const TicketListItem = ({
             variant="ghost"
             value={ticket.assigneeIds}
             options={users}
-            maxImages={3}
+            maxImages={5}
             readOnly={true}
           />
         </div>

@@ -32,6 +32,10 @@ export type TicketAssignDraftValues = TicketActionDraftBase & {
   categoryId: string;
 };
 
+export type TicketAssignSelfDraftValues = TicketActionDraftBase & {
+  actionType: "ASSIGN_SELF";
+};
+
 export type TicketRejectDraftValues = TicketActionDraftBase & {
   actionType: "REJECT";
 };
@@ -46,6 +50,14 @@ export type TicketAdjustDraftValues = TicketActionDraftBase & {
   priority: string;
   riskLevel: string;
   dueAt?: Date;
+};
+
+export type TicketReopenDraftValues = TicketActionDraftBase & {
+  actionType: "REOPEN";
+};
+
+export type TicketResubmitDraftValues = TicketActionDraftBase & {
+  actionType: "RESUBMIT";
 };
 
 export interface TicketActionInput {

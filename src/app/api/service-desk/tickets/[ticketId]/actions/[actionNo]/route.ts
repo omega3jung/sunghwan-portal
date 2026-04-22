@@ -7,6 +7,7 @@ import {
 import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
@@ -30,7 +31,7 @@ export async function GET(
 
     if (!item) {
       return NextResponse.json(
-        { message: "Action not found" },
+        { message: tServiceDesk("api.ticketActions.notFound") },
         { status: 404 },
       );
     }
@@ -40,7 +41,7 @@ export async function GET(
 
   return proxyJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
-    errorMessage: "Failed to fetch ticket action",
+    errorMessage: tServiceDesk("api.ticketActions.fetch"),
     mapData: mapTicketActionPayload,
   });
 }
@@ -69,6 +70,6 @@ export async function PATCH(
     method: "PATCH",
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
     body,
-    errorMessage: "Failed to remove ticket action",
+    errorMessage: tServiceDesk("api.ticketActions.remove"),
   });
 }

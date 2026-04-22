@@ -81,7 +81,7 @@ The current rule set is organized into two areas:
 ### 2. Ticket Action Rules
 
 - rules for communication and operational actions
-- lifecycle-affecting behavior such as reject, merge, `reportResolved`, and `reviewRejected`
+- lifecycle-affecting behavior such as reject, merge, `reopen`, and `resubmit`
 
 ---
 
@@ -129,7 +129,7 @@ action-specific rules apply.
 - purpose: support ticket operation and communication
 - restriction:
   - only `comment` and `note` can be edited or deleted
-  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `reportResolved`, and `reviewRejected` are immutable
+  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `reopen`, and `resubmit` are immutable
   - content is required for all actions
   - no action can be edited or deleted in `Closed`
   - delete is soft delete via `active = false`
@@ -285,7 +285,7 @@ state, ownership, or planning data.
 
 ---
 
-### Report Resolved
+### Reopen
 
 - who: requester
 - when: status = `Resolved`
@@ -297,7 +297,7 @@ state, ownership, or planning data.
 
 ---
 
-### Review Rejected
+### Resubmit
 
 - who: requester
 - when: status = `Rejected`
@@ -309,7 +309,7 @@ state, ownership, or planning data.
 
 ---
 
-### Assign Myself
+### Assign Self
 
 - who: category assignee or a user matching the job-field rule
 - when: status in `Open`, `Approved`, `Working`

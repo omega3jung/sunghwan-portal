@@ -38,6 +38,7 @@ export function TicketHistoryTimelineContent({
   className,
 }: TicketHistoryTimelineContentProps) {
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tCommon } = useTranslation(NS.common);
   const { t: tHistory } = useTranslation(NS.serviceDesk, {
     keyPrefix: "recentActivity",
   });
@@ -47,9 +48,9 @@ export function TicketHistoryTimelineContent({
     const resolvedItems = items?.length ? items : [];
 
     return resolvedItems.map((item) =>
-      mapTicketHistoryToTimelineItem(item, { t, tHistory, tStatus }),
+      mapTicketHistoryToTimelineItem(item, { t, tCommon, tHistory, tStatus }),
     );
-  }, [items, t, tHistory, tStatus]);
+  }, [items, t, tCommon, tHistory, tStatus]);
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>

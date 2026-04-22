@@ -3,6 +3,7 @@ import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTic
 import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
+import { ServiceDeskApiError } from "@/app/api/service-desk/messages";
 import { Priority, RiskLevel } from "@/domain/common";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
 
@@ -39,7 +40,11 @@ export const getTicketContext = (
   const index = targetMock.findIndex((item) => item.id === ticketId);
 
   if (index < 0) {
-    throw new Error(`Ticket ${ticketId} not found`);
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.ticketNotFound",
+      404,
+      { ticketId },
+    );
   }
 
   return {
@@ -65,7 +70,10 @@ export const toHistoryMetadata = (
 
 export const requireAssigneeIds = (content: TicketActionFormValues) => {
   if (!content.assigneeIds) {
-    throw new Error("ASSIGN action requires assigneeIds");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.assigneeRequired",
+      400,
+    );
   }
 
   return content.assigneeIds;
@@ -73,7 +81,10 @@ export const requireAssigneeIds = (content: TicketActionFormValues) => {
 
 export const requireTargetTicketId = (content: TicketActionFormValues) => {
   if (!content.targetTicketId) {
-    throw new Error("MERGE action requires targetTicketId");
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.targetTicketRequired",
+      400,
+    );
   }
 
   return content.targetTicketId;
@@ -100,7 +111,11 @@ export const resolvePriority = (
   }
 
   if (!isPriority(value)) {
-    throw new Error(`Invalid priority: ${value}`);
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.invalidPriority",
+      400,
+      { value },
+    );
   }
 
   return value;
@@ -115,7 +130,11 @@ export const resolveRiskLevel = (
   }
 
   if (!isRiskLevel(value)) {
-    throw new Error(`Invalid risk level: ${value}`);
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.invalidRiskLevel",
+      400,
+      { value },
+    );
   }
 
   return value;

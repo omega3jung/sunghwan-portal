@@ -3,9 +3,13 @@
     "comment": "Comment",
     "note": "Note",
     "assign": "Assign",
+    "assignToMe": "Assign to Me",
     "reject": "Reject",
     "merge": "Merge",
     "adjust": "Adjust",
+    "adjustPlan": "Adjust Plan",
+    "reopenIssue": "Reopen Issue",
+    "resubmitRequest": "Resubmit Request",
     "searchCriteria": "Search criteria"
   },
   "chart": {
@@ -31,9 +35,6 @@
       }
     }
   },
-  "field": {
-    "dueBy": "Due by"
-  },
   "message": {
     "refineSearchCriteria": "Refine your search criteria",
     "lastComment": "Last comment",
@@ -54,7 +55,8 @@
   "detailAside": {
     "recipientsTitle": "Recipients",
     "unassigned": "Unassigned",
-    "ticketId": "Ticket ID"
+    "ticketId": "Ticket ID",
+    "currentUserBadge": "Me"
   },
   "historySheet": {
     "title": "Ticket History",
@@ -114,16 +116,11 @@
   "historyTimeline": {
     "description": "Timeline view for recent ticket activity.",
     "badge": {
-      "status": "Status",
       "assignment": "Assignment",
       "approval": "Approval",
-      "comment": "Comment",
-      "category": "Category",
-      "note": "Note",
       "trackTime": "Track Time",
       "planning": "Planning",
-      "system": "System",
-      "default": "History"
+      "system": "System"
     },
     "valueChanged": "{{from}} -> {{to}}"
   },
@@ -136,61 +133,41 @@
       "validationEmpty": "Please enter a comment before submitting."
     }
   },
-  "richEditor": {
-    "toolbar": {
-      "bold": "Bold",
-      "italic": "Italic",
-      "underline": "Underline",
-      "strike": "Strike",
-      "bulletList": "Bullet list",
-      "numberedList": "Numbered list",
-      "quote": "Quote",
-      "codeBlock": "Code block",
-      "link": "Link",
-      "image": "Image",
-      "table": "Table",
-      "undo": "Undo",
-      "redo": "Redo"
-    },
-    "prompt": {
-      "link": "Enter a URL",
-      "image": "Enter an image URL"
-    }
-  },
   "actionTool": {
     "currentUser": "Current user",
     "currentUserFallback": "You",
-    "launcherTitle": {
-      "comment": "Comment",
-      "note": "Note",
-      "assign": "Assign",
-      "adjust": "Adjust plan",
-      "merge": "Merge",
-      "reject": "Reject"
-    },
     "launcher": {
       "comment": "Post a public reply to the requester and watchers.",
       "note": "Leave an internal note that stays inside the team.",
       "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "Take ownership of this ticket right away with an automatic activity note.",
       "reject": "Record a rejection reason before closing the request.",
       "merge": "Merge this ticket into another ticket.",
-      "adjust": "Update priority, risk level, and due date settings."
+      "adjust": "Update priority, risk level, and due date settings.",
+      "reopen": "Reopen the ticket when the resolved result still needs more work.",
+      "resubmit": "Send this rejected request back for review."
     },
     "helper": {
       "comment": "Share a public update with everyone following this ticket.",
       "note": "Add an internal note for the service desk team.",
       "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "This action automatically records that you took ownership of the ticket.",
       "reject": "Capture why this request is being rejected.",
       "merge": "Choose the ticket to merge into and leave a short note.",
-      "adjust": "Review priority, risk level, and due date before applying changes."
+      "adjust": "Review priority, risk level, and due date before applying changes.",
+      "reopen": "Explain what still needs to be resolved before this ticket can stay closed.",
+      "resubmit": "Explain what changed before resubmitting this rejected request."
     },
     "submit": {
       "comment": "Post comment",
       "note": "Save note",
       "assign": "Save assignment",
+      "assignSelf": "Assign to Me",
       "reject": "Reject ticket",
       "merge": "Merge ticket",
-      "adjust": "Update plan"
+      "adjust": "Update plan",
+      "reopen": "Reopen Issue",
+      "resubmit": "Resubmit Request"
     },
     "list": {
       "title": "Activity",
@@ -210,12 +187,18 @@
         "comment": "Write a comment and keep the conversation moving",
         "note": "Share an internal note for this ticket",
         "assign": "Share assignment context for the next owner",
+        "assignSelf": "This activity note is generated automatically",
         "reject": "Describe why this ticket should be rejected",
         "merge": "Explain why these tickets should be merged",
-        "adjust": "Describe why these values need to be adjusted"
+        "adjust": "Describe why these values need to be adjusted",
+        "reopen": "Describe what still needs to be resolved",
+        "resubmit": "Describe what changed before resubmitting this ticket"
       },
       "targetTicketId": "Target ticket",
       "mergeTargetPlaceholder": "Enter the representative ticket id"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} has decided to take ownership of this ticket. {{time}}"
     },
     "validation": {
       "contentRequired": "Please enter a reason before submitting.",
@@ -229,6 +212,10 @@
     "title": "IT Service Desk",
     "description": "Search and browse service desk tickets."
   },
+  "reports": {
+    "title": "Service Desk Reports",
+    "description": "Legacy reports migration is queued for the next step."
+  },
   "ticketList": {
     "empty": "No tickets found",
     "requesterMeta": "{{name}} • {{time}}",
@@ -238,5 +225,78 @@
     "primaryFilters": "Primary filters",
     "additionalFilters": "Additional filters",
     "dateFilters": "Date filters"
+  },
+  "ticketFormContext": {
+    "missingProvider": "useTicketFormContext must be used inside provider."
+  },
+  "api": {
+    "common": {
+      "notFound": "Not found."
+    },
+    "approvalSteps": {
+      "fetchList": "Failed to fetch approval steps.",
+      "create": "Failed to create approval step.",
+      "fetch": "Failed to fetch approval step.",
+      "update": "Failed to update approval step.",
+      "delete": "Failed to delete approval step."
+    },
+    "assignmentRules": {
+      "fetchList": "Failed to fetch assignment rules.",
+      "create": "Failed to create assignment rule.",
+      "fetch": "Failed to fetch assignment rule.",
+      "update": "Failed to update assignment rule.",
+      "delete": "Failed to delete assignment rule."
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "Assignment recommendation requires categoryId and assigneeIds.",
+      "fetch": "Failed to fetch assignment recommendations."
+    },
+    "categories": {
+      "fetchList": "Failed to fetch categories.",
+      "create": "Failed to create category.",
+      "fetch": "Failed to fetch category.",
+      "update": "Failed to update category.",
+      "delete": "Failed to delete category."
+    },
+    "tickets": {
+      "fetchList": "Failed to fetch tickets.",
+      "create": "Failed to create ticket.",
+      "notFound": "Ticket not found.",
+      "fetch": "Failed to fetch ticket.",
+      "update": "Failed to update ticket.",
+      "delete": "Failed to delete ticket."
+    },
+    "ticketActions": {
+      "fetchList": "Failed to fetch ticket actions.",
+      "notFound": "Action not found.",
+      "fetch": "Failed to fetch ticket action.",
+      "remove": "Failed to remove ticket action."
+    },
+    "ticketHistories": {
+      "fetchList": "Failed to fetch ticket histories."
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "Merge action requires targetTicketId.",
+      "mergeSameTicket": "Cannot merge into the same ticket.",
+      "employeeUnavailable": "Unauthorized: employee identity is unavailable.",
+      "actionMismatch": "Action path and payload do not match.",
+      "execute": "Failed to execute ticket command.",
+      "localDemo": {
+        "createFailed": "Failed to create action.",
+        "ticketNotFound": "Ticket {{ticketId}} not found.",
+        "assigneeRequired": "ASSIGN action requires assigneeIds.",
+        "targetTicketRequired": "MERGE action requires targetTicketId.",
+        "nextStatusUnresolved": "Next status could not be resolved.",
+        "mergeTargetNotFound": "Merge target not found.",
+        "draftCannotBeMerged": "Draft tickets cannot be merged.",
+        "cannotMergeIntoDraft": "Cannot merge into a draft ticket.",
+        "ticketAlreadyMerged": "Ticket is already merged.",
+        "mergeTargetAlreadyMerged": "Merge target is already merged.",
+        "invalidMergeTarget": "Invalid merge target.",
+        "invalidPriority": "Invalid priority: {{value}}.",
+        "invalidRiskLevel": "Invalid risk level: {{value}}.",
+        "actionNotAllowed": "Action {{action}} is not allowed in status {{status}}."
+      }
+    }
   }
 }

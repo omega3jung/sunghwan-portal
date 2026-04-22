@@ -79,9 +79,9 @@ operation.
 The activity model is also designed to support workflow-oriented actions such
 as:
 
-- `reportResolved`: reopen a resolved ticket
-- `reviewRejected`: send a rejected ticket back to `Open`
-- `assign myself`: allow an eligible operator to take ownership quickly
+- `reopen`: reopen a resolved ticket
+- `resubmit`: send a rejected ticket back to `Open`
+- `assignSelf`: allow an eligible operator to take ownership quickly
 
 These actions are part of the improved activity design because they make
 re-entry and review loops explicit.
@@ -109,9 +109,9 @@ These actions:
 - `adjust`
 - `merge`
 - `reject`
-- `reportResolved`
-- `reviewRejected`
-- `assign myself`
+- `reopen`
+- `resubmit`
+- `assignSelf`
 
 These actions:
 
@@ -201,7 +201,7 @@ Each action type may include action-specific metadata.
 
 - `targetTicketId`
 
-#### `reportResolved` / `reviewRejected`
+#### `reopen` / `resubmit`
 
 - `reviewType`
 - `requestedState`
@@ -303,7 +303,7 @@ Visibility:
 - purpose: mark the ticket as not executable in its current form
 - restriction: content required
 
-### Report Resolved
+### Reopen
 
 - who: requester
 - when: `Resolved`
@@ -311,7 +311,7 @@ Visibility:
 - purpose: re-evaluation of resolved result
 - restriction: content required
 
-### Review Rejected
+### Resubmit
 
 - who: requester
 - when: `Rejected`
@@ -319,11 +319,11 @@ Visibility:
 - purpose: re-enter approval flow
 - restriction: content required
 
-### Assign Myself
+### Assign Self
 
 - who: eligible user based on category or job-field rule
 - when: `Open`, `Approved`, or `Working`
-- effect: assign self and possibly move the ticket into `Working`
+- effect: assignSelf and possibly move the ticket into `Working`
 - purpose: fast self-assignment
 - restriction: duplicate assignment must be prevented; content is auto-generated
 
@@ -359,8 +359,8 @@ Examples:
 
 - `assign` may move a ticket into `Working`
 - `reject` moves a ticket into `Rejected`
-- `reportResolved` may move a ticket into `Reopen`
-- `reviewRejected` may move a ticket back to `Open`
+- `reopen` may move a ticket into `Reopen`
+- `resubmit` may move a ticket back to `Open`
 - manager reassignment may reactivate a declined or rejected ticket
 
 This ensures that:
@@ -448,7 +448,7 @@ All activity forms follow a consistent pattern:
 - target ticket
 - reason
 
-#### Report Resolved / Review Rejected
+#### Reopen / Resubmit
 
 - review intent
 - reason
@@ -479,9 +479,9 @@ These may support edit or soft-delete under normal author-based rules.
 - `adjust`
 - `merge`
 - `reject`
-- `reportResolved`
-- `reviewRejected`
-- `assign myself`
+- `reopen`
+- `resubmit`
+- `assignSelf`
 
 These should not be edited or deleted in normal workflow because they represent
 operational decisions with downstream effects.

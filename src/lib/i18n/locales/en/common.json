@@ -42,16 +42,20 @@
     "department": "Department",
     "description": "Description",
     "details": "Details",
+    "dueBy": "Due by",
     "dueAt": "Due Date",
+    "duration": "Duration",
     "email": "Email",
     "emailBcc": "BCC",
     "emailCc": "CC",
     "emailTo": "To",
     "endDate": "End Date",
+    "endTime": "End time",
     "history": "History",
     "list": "List",
     "location": "Location",
     "name": "Name",
+    "note": "Note",
     "owner": "Owner",
     "password": "Password",
     "period": "Period",
@@ -60,6 +64,7 @@
     "requester": "Requester",
     "riskLevel": "Risk level",
     "startDate": "Start Date",
+    "startTime": "Start time",
     "status": "Status",
     "step": "Step",
     "subject": "Subject",
@@ -90,5 +95,26 @@
     "rowsPerPage": "Rows per page",
     "selected": "{{count}} selected",
     "total": "Total {{count}} items"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strike",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "quote": "Quote",
+      "codeBlock": "Code block",
+      "link": "Link",
+      "image": "Image",
+      "table": "Table",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "prompt": {
+      "link": "Enter a URL",
+      "image": "Enter an image URL"
+    }
   }
 }

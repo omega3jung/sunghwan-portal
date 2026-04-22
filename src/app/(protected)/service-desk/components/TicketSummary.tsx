@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
@@ -73,6 +74,14 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
             <li>
               <PriorityBadge priority={ticket.priority} />
             </li>
+            {ticket.assigned && (
+              <li>
+                <Badge variant={"destructive"} className="font-normal">
+                  Assigned
+                </Badge>
+              </li>
+            )}
+
             {isMergedChildTicket(ticket) ? (
               <li>
                 <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>

@@ -5,7 +5,8 @@ import { resolveClientAuth, resolveDemoAuth } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
 
 export type LoginResponse = AuthUser;
-type RawLoginResponse = Omit<AuthUser, "companyId"> & {
+type RawLoginResponse = Omit<AuthUser, "companyId" | "employeeId"> & {
+  employeeId?: number | string | null;
   companyId?: string | null;
   clientId?: string | null;
 };
@@ -54,10 +55,27 @@ export const loginApi = async ({
 };
 
 function normalizeAuthUser(user: RawLoginResponse): AuthUser {
-  const { companyId, clientId, ...rest } = user;
+  const { companyId, clientId, employeeId, ...rest } = user;
 
   return {
     ...rest,
+    employeeId: resolveEmployeeId(employeeId),
     companyId: companyId ?? clientId ?? "",
   };
+}
+
+function resolveEmployeeId(value: number | string | null | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
 }

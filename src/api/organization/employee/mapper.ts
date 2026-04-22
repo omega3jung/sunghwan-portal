@@ -10,6 +10,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
 // back-end data structures.
 export interface DbEmployee {
   employee_id: number;
+  employee_user_name: string;
   employee_name: LocalizedName;
   employee_phone: string;
   employee_email: string;
@@ -31,6 +32,7 @@ export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (
 ) => {
   return data.map((item) => ({
     id: item.employee_id.toString(),
+    displayName: item.employee_user_name,
     name: item.employee_name,
     phone: item.employee_phone,
     email: item.employee_email,
@@ -53,6 +55,7 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
 ) => {
   return data.map((item) => ({
     employee_id: parseInt(item.id),
+    employee_user_name: item.displayName,
     employee_name: item.name,
     employee_phone: item.phone,
     employee_email: item.email,
@@ -70,9 +73,7 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
   }));
 };
 
-export const mapEmployeeListPayload = createListPayloadMapper(
-  camelEmployeeMapper,
-);
-export const mapEmployeeItemPayload = createItemPayloadMapper(
-  camelEmployeeMapper,
-);
+export const mapEmployeeListPayload =
+  createListPayloadMapper(camelEmployeeMapper);
+export const mapEmployeeItemPayload =
+  createItemPayloadMapper(camelEmployeeMapper);

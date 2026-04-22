@@ -30,9 +30,10 @@ export async function getCompanyId(req: NextRequest) {
   return token ? resolveCompanyId(token) : null;
 }
 
+// UserId helpers resolve auth/account identity from JWT.
 export async function getOriginalUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.id;
+  return token?.id ?? null;
 }
 
 export async function getImpersonatedUserId(req: NextRequest) {
@@ -45,14 +46,30 @@ export async function getCurrentUserId(req: NextRequest) {
   return token?.impersonation?.impersonatedUserId ?? token?.id ?? null;
 }
 
+// EmployeeId helpers resolve employee domain identity from JWT.
+export async function getOriginalEmployeeId(
+  req: NextRequest,
+): Promise<number | null> {
+  const token = await getAuthToken(req);
+  return resolveEmployeeId(token?.employeeId);
+}
+
+export async function getCurrentEmployeeId(
+  req: NextRequest,
+): Promise<number | null> {
+  const token = await getAuthToken(req);
+  const impersonatedEmployeeId = (
+    token?.impersonation as { impersonatedEmployeeId?: unknown } | undefined
+  )?.impersonatedEmployeeId;
+
+  // Current impersonation metadata is user-id based.
+  // If employee metadata is not present, fall back to the original JWT employeeId.
+  return resolveEmployeeId(impersonatedEmployeeId ?? token?.employeeId);
+}
+
 export async function getUserRole(req: NextRequest): Promise<Role | null> {
   const token = await getAuthToken(req);
   return token?.role ?? null;
-}
-
-export async function isManagerRole(req: NextRequest): Promise<boolean> {
-  const token = await getAuthToken(req);
-  return token?.role === "ADMIN" || token?.role === "MANAGER";
 }
 
 export type AuthResult =
@@ -62,6 +79,7 @@ export type AuthResult =
 export function tokenToOriginalAuthUser(token: JWT): AuthUser {
   return {
     ...token,
+    employeeId: resolveEmployeeId(token.employeeId),
     email: token.email ?? "",
     companyId: resolveCompanyId(token),
   };
@@ -103,4 +121,20 @@ function resolveCompanyId(token: {
   clientId?: string | null;
 }) {
   return token.companyId ?? token.clientId ?? "";
+}
+
+function resolveEmployeeId(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
 }

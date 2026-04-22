@@ -10,20 +10,14 @@ export type TicketActionMode =
   | "comment"
   | "note"
   | "assign"
-  | "assignManager"
+  | "assignSelf"
   | "adjust"
-  | "adjustManager"
   | "merge"
-  | "mergeManager"
   | "reject"
-  | "rejectManager"
-  | "reportResolved"
-  | "reviewRejected"
-  | "assignMyself";
+  | "reopen"
+  | "resubmit";
 
 export type TicketActionUIState = "idle" | TicketActionMode;
-
-export type TicketActionFormMode = Exclude<TicketActionMode, "idle">;
 
 export interface TicketActionCommandInput {
   ticketId: string;

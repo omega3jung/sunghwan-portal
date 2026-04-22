@@ -15,6 +15,7 @@ import {
   internalAssignmentRuleSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/assignmentRules";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
   return proxyJson(request, {
     path: "/service-desk/assignment-rules",
     query: request.nextUrl.searchParams,
-    errorMessage: "Failed to fetch assignment rules",
+    errorMessage: tServiceDesk("api.assignmentRules.fetchList"),
     mapData: mapAssignmentRuleListPayload,
   });
 }
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/assignment-rules",
     body: toAssignmentRuleWritePayload(body),
-    errorMessage: "Failed to create assignment rule",
+    errorMessage: tServiceDesk("api.assignmentRules.create"),
     mapData: mapAssignmentRuleItemPayload,
   });
 }

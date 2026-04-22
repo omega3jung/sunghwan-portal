@@ -9,6 +9,7 @@ import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 import { stripHtml } from "@/shared/utils/comment";
 
+import { getTicketActionTypeLabelKey } from "../../mapper";
 import { TicketActionEmpty } from "./TicketActionEmpty";
 import { TicketActionItem } from "./TicketActionItem";
 import { TicketActionListHeader } from "./TicketActionListHeader";
@@ -65,7 +66,7 @@ export function TicketActionList({
       const owner = userMap.get(action.ownerId);
       const searchTarget = [
         action.actionNo,
-        t(`action.${action.actionType.toLowerCase()}`),
+        t(getTicketActionTypeLabelKey(action.actionType)),
         stripHtml(action.content || ""),
         owner?.label,
         owner?.displayName,

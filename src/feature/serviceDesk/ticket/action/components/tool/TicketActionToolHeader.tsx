@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { NS } from "@/lib/i18n";
 import { initials } from "@/shared/utils/string";
 
+import { getTicketActionModeLabelKey } from "../../mapper";
 import type { TicketActionMode } from "../../types";
 
 type TicketActionToolHeaderProps = {
   currentUserEmail: string;
   currentUserImage?: string;
   currentUserName: string;
-  mode: Exclude<TicketActionMode, "idle">;
+  mode: TicketActionMode;
 };
 
 export function TicketActionToolHeader({
@@ -43,7 +44,7 @@ export function TicketActionToolHeader({
         variant="secondary"
         className="w-fit rounded-md bg-primary/10 px-3 py-1 text-primary"
       >
-        {t(`action.${mode}`)}
+        {t(getTicketActionModeLabelKey(mode))}
       </Badge>
     </div>
   );

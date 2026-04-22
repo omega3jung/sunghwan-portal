@@ -1,7 +1,16 @@
-import type { ImpersonationInfo, SessionUser } from "@/domain/auth";
+import type {
+  AccessLevel,
+  DataScope,
+  ImpersonationInfo,
+  Role,
+  SessionUser,
+  UserScope,
+} from "@/domain/auth";
+
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
+    employeeId?: number | null;
     username: string;
     displayName: string;
     email: string;

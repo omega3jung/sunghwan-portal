@@ -15,6 +15,7 @@ import {
   internalCategorySettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 import { filterItemsByQuery } from "../../_helpers/filter";
 
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
   return proxyJson(request, {
     path: "/service-desk/categories",
     query: request.nextUrl.searchParams,
-    errorMessage: "Failed to fetch categories",
+    errorMessage: tServiceDesk("api.categories.fetchList"),
     mapData: mapCategoryListPayload,
   });
 }
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/categories",
     body: toCategoryWritePayload(body),
-    errorMessage: "Failed to create category",
+    errorMessage: tServiceDesk("api.categories.create"),
     mapData: mapCategoryItemPayload,
   });
 }

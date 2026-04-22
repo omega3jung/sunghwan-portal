@@ -23,6 +23,7 @@ import { formatHistoryMeta } from "./utils";
 
 type HistoryTimelineMapperTranslation = {
   t: TFunction;
+  tCommon: TFunction;
   tHistory: TFunction;
   tStatus: TFunction;
 };
@@ -30,20 +31,21 @@ type HistoryTimelineMapperTranslation = {
 export function resolveHistoryBadge(
   history: TicketHistory,
   t: TFunction,
+  tCommon: TFunction,
 ): string {
   switch (history.type) {
     case "STATUS":
-      return t("historyTimeline.badge.status");
+      return tCommon("field.status");
     case "CATEGORY":
-      return t("historyTimeline.badge.category");
+      return tCommon("field.category");
     case "ASSIGNMENT":
       return t("historyTimeline.badge.assignment");
     case "APPROVAL":
       return t("historyTimeline.badge.approval");
     case "COMMENT":
-      return t("historyTimeline.badge.comment");
+      return tCommon("field.comment");
     case "NOTE":
-      return t("historyTimeline.badge.note");
+      return tCommon("field.note");
     case "TRACK_TIME":
       return t("historyTimeline.badge.trackTime");
     case "PLANNING":
@@ -51,7 +53,7 @@ export function resolveHistoryBadge(
     case "SYSTEM":
       return t("historyTimeline.badge.system");
     default:
-      return t("historyTimeline.badge.default");
+      return tCommon("field.history");
   }
 }
 
@@ -264,14 +266,14 @@ export function resolveHistoryDescription(
 
 export function mapTicketHistoryToTimelineItem(
   history: TicketHistory,
-  { t, tHistory, tStatus }: HistoryTimelineMapperTranslation,
+  { t, tCommon, tHistory, tStatus }: HistoryTimelineMapperTranslation,
 ): TimelineItemData {
   return {
     id: `${history.ticketId}:${history.historyNo}`,
     title: getHistorySummary(history, tHistory, tStatus),
     description: resolveHistoryDescription(history, t),
     meta: formatHistoryMeta(history),
-    badge: resolveHistoryBadge(history, t),
+    badge: resolveHistoryBadge(history, t, tCommon),
     markerIcon: resolveHistoryIcon(history),
     palette: undefined,
   };

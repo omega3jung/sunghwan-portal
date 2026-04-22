@@ -18,12 +18,17 @@
 
   "number": {
     "invalid": "Must be a number.",
-    "invalidWithField": "{{field}} must be a number."
+    "invalidWithField": "{{field}} must be a number.",
+    "integer": "Must be an integer.",
+    "integerWithField": "{{field}} must be an integer.",
+    "positive": "Must be greater than 0.",
+    "positiveWithField": "{{field}} must be greater than 0."
   },
 
   "date": {
     "invalid": "Must be a valid date.",
-    "invalidWithField": "{{field}} must be a valid date."
+    "invalidWithField": "{{field}} must be a valid date.",
+    "afterWithField": "{{field}} must be after {{target}}."
   },
 
   "file": {

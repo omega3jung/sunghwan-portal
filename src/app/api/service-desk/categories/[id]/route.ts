@@ -15,6 +15,7 @@ import {
 } from "@/app/_mocks/domain/serviceDesk/categories";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
@@ -29,7 +30,10 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
       .find((item) => item.id === id);
 
     if (!category) {
-      return NextResponse.json({ message: "Not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: tServiceDesk("api.common.notFound") },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(category);
@@ -37,7 +41,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
   return proxyJson(request, {
     path: `/service-desk/categories/${id}`,
-    errorMessage: "Failed to fetch category",
+    errorMessage: tServiceDesk("api.categories.fetch"),
     mapData: mapCategoryItemPayload,
   });
 }
@@ -55,7 +59,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     method: "PUT",
     path: `/service-desk/categories/${id}`,
     body: toCategoryWritePayload({ ...body, id }),
-    errorMessage: "Failed to update category",
+    errorMessage: tServiceDesk("api.categories.update"),
     mapData: mapCategoryItemPayload,
   });
 }
@@ -71,6 +75,6 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/categories/${id}`,
-    errorMessage: "Failed to delete category",
+    errorMessage: tServiceDesk("api.categories.delete"),
   });
 }

@@ -1,5 +1,6 @@
 import { DbEmployee } from "@/api/organization/employee/mapper";
 
+import { internalDemoEmployee } from "./demoUser";
 import headOfficeEmployeeMock from "./headOffice.json";
 import itEmployeeMock from "./it.json";
 import logisticsEmployeeMock from "./logistics.json";
@@ -29,7 +30,7 @@ export function createEmployeesMock(): DbEmployee[] {
     } as DbEmployee;
   });
 
-  return employeemock;
+  return [...employeemock, ...internalDemoEmployee];
 }
 
 function randomNumber(num1: number, num2: number): number {

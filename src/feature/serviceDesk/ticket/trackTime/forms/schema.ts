@@ -1,16 +1,38 @@
 import { z } from "zod";
 
+import i18n, { NS } from "@/lib/i18n";
+
+const tCommonField = (field: string) => i18n.t(`field.${field}`, { ns: NS.common });
+const tValidation = (key: string, options?: Record<string, unknown>) =>
+  i18n.t(key, { ns: NS.validation, ...(options ?? {}) });
+
 const optionalNoteSchema = z
   .string()
   .trim()
-  .max(500, "Note must be less than 500 characters")
+  .max(
+    500,
+    tValidation("length.maxWithField", {
+      field: tCommonField("note"),
+      count: 500,
+    }),
+  )
   .optional()
   .transform((value) => value ?? "");
 
 export const ticketTrackRangeFormSchema = z
   .object({
-    startAt: z.string().min(1, "Start time is required"),
-    endAt: z.string().min(1, "End time is required"),
+    startAt: z.string().min(
+      1,
+      tValidation("required.withField", {
+        field: tCommonField("startTime"),
+      }),
+    ),
+    endAt: z.string().min(
+      1,
+      tValidation("required.withField", {
+        field: tCommonField("endTime"),
+      }),
+    ),
     note: optionalNoteSchema,
   })
   .superRefine((data, ctx) => {
@@ -21,7 +43,9 @@ export const ticketTrackRangeFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["startAt"],
-        message: "Start time is invalid",
+        message: tValidation("date.invalidWithField", {
+          field: tCommonField("startTime"),
+        }),
       });
     }
 
@@ -29,7 +53,9 @@ export const ticketTrackRangeFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["endAt"],
-        message: "End time is invalid",
+        message: tValidation("date.invalidWithField", {
+          field: tCommonField("endTime"),
+        }),
       });
     }
 
@@ -37,7 +63,10 @@ export const ticketTrackRangeFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["endAt"],
-        message: "End time must be after start time",
+        message: tValidation("date.afterWithField", {
+          field: tCommonField("endTime"),
+          target: tCommonField("startTime"),
+        }),
       });
     }
   });
@@ -45,9 +74,19 @@ export const ticketTrackRangeFormSchema = z
 export const ticketTrackDurationFormSchema = z.object({
   durationMinutes: z.coerce
     .number({
-      error: "Duration must be a number",
+      error: tValidation("number.invalidWithField", {
+        field: tCommonField("duration"),
+      }),
     })
-    .int("Duration must be an integer")
-    .positive("Duration must be greater than 0"),
+    .int(
+      tValidation("number.integerWithField", {
+        field: tCommonField("duration"),
+      }),
+    )
+    .positive(
+      tValidation("number.positiveWithField", {
+        field: tCommonField("duration"),
+      }),
+    ),
   note: optionalNoteSchema,
 });

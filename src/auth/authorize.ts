@@ -17,6 +17,7 @@ export const authorize = async (credentials?: {
 
     return {
       id: user.id,
+      employeeId: user.employeeId,
       username: user.username,
       displayName: user.displayName,
       email: user.email,

@@ -6,12 +6,12 @@ export type TicketActionType =
   | "COMMENT"
   | "NOTE"
   | "ASSIGN"
+  | "ASSIGN_SELF"
   | "REJECT"
   | "MERGE"
   | "ADJUST"
-  | "REPORT_RESOLVED"
-  | "REVIEW_REJECTED"
-  | "ASSIGN_MYSELF";
+  | "REOPEN"
+  | "RESUBMIT";
 
 export type ActionConstraint = {
   allowedStatus?: TicketStatus[];

@@ -15,6 +15,7 @@ import {
   internalApprovalStepSettingsMock,
 } from "@/app/_mocks/domain/serviceDesk/approvalSteps";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 
 import { filterItemsByQuery } from "../../_helpers/filter";
 
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
   return proxyJson(request, {
     path: "/service-desk/approval-steps",
     query: request.nextUrl.searchParams,
-    errorMessage: "Failed to fetch approval steps",
+    errorMessage: tServiceDesk("api.approvalSteps.fetchList"),
     mapData: mapApprovalSettingsListPayload,
   });
 }
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/approval-steps",
     body: toApprovalStepWritePayload(body),
-    errorMessage: "Failed to create approval step",
+    errorMessage: tServiceDesk("api.approvalSteps.create"),
     mapData: mapApprovalStepItemPayload,
   });
 }

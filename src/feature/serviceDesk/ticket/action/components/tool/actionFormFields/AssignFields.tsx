@@ -172,7 +172,10 @@ export function AssignFields({
       <Field className="col-span-2" data-invalid={Boolean(assigneeError)}>
         <FieldLabel>{t("field.assignee", { ns: NS.common })}</FieldLabel>
         <AvatarMultiComboBox
-          placeholder={t("detailPage.assignTo")}
+          placeholder={t("placeholder.select", {
+            ns: NS.common,
+            target: t("field.assignee", { ns: NS.common }),
+          })}
           options={users}
           value={assigneeIds}
           onSelect={onAssigneeAdd}

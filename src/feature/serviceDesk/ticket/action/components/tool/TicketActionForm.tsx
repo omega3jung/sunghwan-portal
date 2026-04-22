@@ -25,7 +25,7 @@ import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
 
 import type { TicketActionDraftFormValues } from "../../forms";
-import type { TicketActionFormMode } from "../../types";
+import type { TicketActionMode } from "../../types";
 import { AdjustFields } from "./actionFormFields/AdjustFields";
 import { AssignFields } from "./actionFormFields/AssignFields";
 import { MergeFields } from "./actionFormFields/MergeFields";
@@ -40,7 +40,7 @@ import {
 type TicketActionFormProps = {
   ticketId: string;
   originalCategoryId?: string;
-  mode: TicketActionFormMode;
+  mode: TicketActionMode;
   form: UseFormReturn<TicketActionDraftFormValues>;
   onEditorReady?: (editor: Editor | null) => void;
   categories?: MainCategory[];

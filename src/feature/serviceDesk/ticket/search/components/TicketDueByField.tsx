@@ -63,7 +63,7 @@ function TicketDueByFieldInput({
 }
 
 export function TicketDueByField({ control }: Props) {
-  const { t } = useTranslation(NS.serviceDesk);
+  const { t } = useTranslation(NS.common);
   const { t: tDomain } = useTranslation(NS.domain);
 
   const dueByOptions = useMemo(

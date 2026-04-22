@@ -9,6 +9,8 @@ import { cn } from "@/shared/utils";
 import { formatDateTime } from "@/shared/utils/comment";
 import { formatTimeDistanceFromNow } from "@/shared/utils/date";
 
+import { getTicketActionTypeLabelKey } from "../../mapper";
+
 type TicketActionMetaProps = {
   action: TicketAction;
   owner?: ImageValueLabel;
@@ -19,9 +21,12 @@ const ACTION_BADGE_CLASSNAME: Record<TicketAction["actionType"], string> = {
   COMMENT: "bg-slate-100 text-slate-700 hover:bg-slate-100",
   NOTE: "bg-amber-50 text-amber-700 hover:bg-amber-50",
   ASSIGN: "bg-sky-50 text-sky-700 hover:bg-sky-50",
+  ASSIGN_SELF: "bg-lime-50 text-lime-700 hover:bg-lime-50",
   REJECT: "bg-rose-50 text-rose-700 hover:bg-rose-50",
   MERGE: "bg-violet-50 text-violet-700 hover:bg-violet-50",
   ADJUST: "bg-emerald-50 text-emerald-700 hover:bg-emerald-50",
+  REOPEN: "bg-orange-50 text-orange-700 hover:bg-orange-50",
+  RESUBMIT: "bg-cyan-50 text-cyan-700 hover:bg-cyan-50",
 };
 
 export function TicketActionMeta({
@@ -42,7 +47,7 @@ export function TicketActionMeta({
             ACTION_BADGE_CLASSNAME[action.actionType],
           )}
         >
-          {t(`action.${action.actionType.toLowerCase()}`)}
+          {t(getTicketActionTypeLabelKey(action.actionType))}
         </Badge>
         <Badge
           variant="outline"

@@ -59,6 +59,9 @@ export const serviceDeskTicketActionApi = {
   assign: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "ASSIGN" }),
 
+  assignSelf: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "ASSIGN_SELF" }),
+
   reject: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "REJECT" }),
 
@@ -67,6 +70,12 @@ export const serviceDeskTicketActionApi = {
 
   adjust: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "ADJUST" }),
+
+  reopen: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "REOPEN" }),
+
+  resubmit: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "RESUBMIT" }),
 
   remove: async ({
     ticketId,

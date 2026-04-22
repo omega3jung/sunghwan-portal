@@ -27,8 +27,7 @@ export const useImpersonation = () => {
     currentUser,
     syncFromSession,
     reset,
-  } =
-    useImpersonationStore();
+  } = useImpersonationStore();
 
   /**
    * Starts impersonation for a target user and refreshes the session with the returned impersonation payload.
@@ -67,49 +66,27 @@ export const useImpersonation = () => {
       return;
     }
 
-    const originalUserId = session.data?.user.id ?? null;
     const impersonatedUserId =
       session.data?.impersonation?.impersonatedUserId ?? null;
 
-    if (!originalUserId) {
-      reset();
-      return;
-    }
-
+    // impersonating.
     if (impersonatedUserId) {
-      const originalUserPromise =
-        originalUser?.id === originalUserId
-          ? Promise.resolve(originalUser)
-          : userProfileApi.get(originalUserId);
+      // ✅ if same impersonatedUser, then do nothing.
+      if (impersonatedUser?.id === impersonatedUserId) return;
 
-      const impersonatedUserPromise =
-        impersonatedUser?.id === impersonatedUserId
-          ? Promise.resolve(impersonatedUser)
-          : userProfileApi.get(impersonatedUserId);
-
-      Promise.all([originalUserPromise, impersonatedUserPromise]).then(
-        ([resolvedOriginalUser, resolvedImpersonatedUser]) => {
-          syncFromSession({
-            originalUser: resolvedOriginalUser,
-            impersonatedUser: resolvedImpersonatedUser,
-          });
-        },
-      );
-    } else {
-      syncFromSession({
-        originalUser: current.user,
-        impersonatedUser: null,
+      // get impersonatedUser user.
+      userProfileApi.get(impersonatedUserId).then((impersonatedUserProfile) => {
+        syncFromSession({
+          originalUser: originalUser ?? current.user!,
+          impersonatedUser: impersonatedUserProfile,
+        });
       });
+    } else {
+      syncFromSession({ originalUser: current.user, impersonatedUser: null });
     }
-  }, [
-    current.user?.id,
-    impersonatedUser?.id,
-    originalUser?.id,
-    reset,
-    session.data?.impersonation?.impersonatedUserId,
-    session.data?.user.id,
-    syncFromSession,
-  ]);
+    // optimized to dependencies. Do not update this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current.user?.id, session.data?.impersonation?.impersonatedUserId]);
 
   return {
     originalUser,

@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { MainCategory } from "@/domain/serviceDesk";
+import i18n, { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import type { TicketFormValues } from "../forms";
@@ -18,7 +19,9 @@ export const useTicketFormContext = () => {
   const contextValue = useContext(TicketFormContext);
 
   if (!contextValue) {
-    throw new Error("useTicketFormContext must be used inside provider");
+    throw new Error(
+      i18n.t("ticketFormContext.missingProvider", { ns: NS.serviceDesk }),
+    );
   }
 
   return contextValue;

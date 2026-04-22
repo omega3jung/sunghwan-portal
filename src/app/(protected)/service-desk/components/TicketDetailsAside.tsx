@@ -6,9 +6,10 @@ import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TicketDetail } from "@/domain/serviceDesk";
+import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
-import { initials } from "@/shared/utils";
+import { cn, initials } from "@/shared/utils";
 
 import { RecipientGroup } from "./TicketMetaBadge";
 
@@ -25,6 +26,8 @@ export function TicketDetailsAside({
 }: TicketDetailsAsideProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
+  const { current } = useCurrentSession();
+  const currentUserEmail = current.user?.email?.trim().toLowerCase() ?? null;
 
   return (
     <div className="space-y-4">
@@ -51,6 +54,12 @@ export function TicketDetailsAside({
                 name={assignee.label}
                 subText={assignee.displayName}
                 image={assignee.image}
+                isCurrentUser={
+                  ticket.assigned &&
+                  !!currentUserEmail &&
+                  assignee.displayName?.trim().toLowerCase() ===
+                    currentUserEmail
+                }
               />
             ))}
           </div>
@@ -132,17 +141,38 @@ type PersonRowProps = {
   name: string;
   subText?: string;
   image?: string;
+  isCurrentUser?: boolean;
 };
 
-function PersonRow({ name, subText, image }: PersonRowProps) {
+function PersonRow({
+  name,
+  subText,
+  isCurrentUser = false,
+  image,
+}: PersonRowProps) {
+  const { t } = useTranslation(NS.serviceDesk);
+
   return (
-    <div className="flex items-center gap-3">
+    <div
+      className={cn(
+        "flex items-center gap-2 rounded-xl px-2 py-1.5",
+        isCurrentUser && "border border-primary/20 bg-primary/5",
+      )}
+    >
       <Avatar className="h-9 w-9">
         <AvatarImage src={image} />
         <AvatarFallback>{initials(name)}</AvatarFallback>
       </Avatar>
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium">{name}</p>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="truncate text-sm font-medium">{name}</p>
+          {isCurrentUser && (
+            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
+              {t("detailAside.currentUserBadge")}
+            </span>
+          )}
+        </div>
         <p className="truncate text-xs text-muted-foreground">
           {subText || "-"}
         </p>

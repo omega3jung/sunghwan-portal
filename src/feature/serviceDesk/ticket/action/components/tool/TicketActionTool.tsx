@@ -23,7 +23,7 @@ import {
   type TicketActionDraftFormValues,
 } from "../../forms";
 import { mapActionModeToActionType } from "../../mapper";
-import type { TicketActionMode } from "../../types";
+import type { TicketActionMode, TicketActionUIState } from "../../types";
 import { TicketActionForm } from "./TicketActionForm";
 import { TicketActionToolFooter } from "./TicketActionToolFooter";
 import { TicketActionToolHeader } from "./TicketActionToolHeader";
@@ -44,6 +44,39 @@ type TicketActionToolProps = {
   users?: ImageValueLabel[];
   categories?: MainCategory[];
 };
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+function buildAssignSelfContent({
+  actorName,
+  language,
+  t,
+}: {
+  actorName: string;
+  language: string;
+  t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+  const time = new Intl.DateTimeFormat(language, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date());
+
+  const message = t("actionTool.autoComment.assignSelf", {
+    name: actorName,
+    time,
+  });
+
+  return `<p>${escapeHtml(message)}</p>`;
+}
 
 function resolveFormErrorMessage(
   errors: FieldErrors<TicketActionDraftFormValues>,
@@ -79,7 +112,7 @@ export function TicketActionTool({
   users = [],
   categories = [],
 }: TicketActionToolProps) {
-  const { t } = useTranslation(NS.serviceDesk);
+  const { t, i18n } = useTranslation(NS.serviceDesk);
   const { current } = useCurrentSession();
   const mutationToast = useMutationToast();
   const { mutateAsync: createAction, isPending } = useTicketActionMutation();
@@ -88,7 +121,7 @@ export function TicketActionTool({
     defaultValues: ticketActionDraftFormDefaultValues,
   });
 
-  const [mode, setMode] = useState<TicketActionMode>("idle");
+  const [mode, setMode] = useState<TicketActionUIState>("idle");
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const currentUser = current.user;
@@ -120,7 +153,7 @@ export function TicketActionTool({
     actionForm.reset(ticketActionDraftFormDefaultValues);
   };
 
-  const openMode = (nextMode: Exclude<TicketActionMode, "idle">) => {
+  const openMode = (nextMode: TicketActionMode) => {
     actionForm.reset(
       createTicketActionDraftValues(
         mapActionModeToActionType(nextMode),
@@ -138,44 +171,77 @@ export function TicketActionTool({
   const helperText = mode === "idle" ? "" : t(`actionTool.helper.${mode}`);
   const submitLabel = mode === "idle" ? "" : t(`actionTool.submit.${mode}`);
 
+  const submitAction = async (values: TicketActionDraftFormValues) => {
+    if (!currentUser) {
+      return false;
+    }
+
+    if (
+      values.actionType === "ADJUST" &&
+      !hasTicketActionAdjustChanges(values, ticket)
+    ) {
+      actionForm.setError("priority", {
+        type: "validate",
+        message: ACTION_ADJUST_NO_CHANGES_KEY,
+      });
+      actionForm.setError("riskLevel", {
+        type: "validate",
+        message: ACTION_ADJUST_NO_CHANGES_KEY,
+      });
+      actionForm.setError("dueAt", {
+        type: "validate",
+        message: ACTION_ADJUST_NO_CHANGES_KEY,
+      });
+      return false;
+    }
+
+    const payload = buildTicketActionPayload({
+      userId: currentUser.id,
+      values,
+    });
+
+    const promise = createAction({
+      ticketId,
+      actionType: payload.actionType,
+      values: payload,
+    });
+
+    await mutationToast(promise, "create", "comment");
+    closeMode();
+    return true;
+  };
+
+  const handleAssignSelf = async () => {
+    if (!currentUser) {
+      return;
+    }
+
+    const values = createTicketActionDraftValues("ASSIGN_SELF", ticket);
+    values.content = buildAssignSelfContent({
+      actorName: currentUserName,
+      language: i18n.resolvedLanguage ?? i18n.language ?? "en",
+      t,
+    });
+
+    await submitAction(values);
+  };
+
+  const handleOpen = (nextMode: TicketActionMode) => {
+    if (nextMode === "assignSelf") {
+      void handleAssignSelf();
+      return;
+    }
+
+    openMode(nextMode);
+  };
+
   const handleSubmit = actionForm.handleSubmit(
     async (values) => {
-      if (!currentUser || mode === "idle") {
+      if (mode === "idle") {
         return;
       }
 
-      if (
-        values.actionType === "ADJUST" &&
-        !hasTicketActionAdjustChanges(values, ticket)
-      ) {
-        actionForm.setError("priority", {
-          type: "validate",
-          message: ACTION_ADJUST_NO_CHANGES_KEY,
-        });
-        actionForm.setError("riskLevel", {
-          type: "validate",
-          message: ACTION_ADJUST_NO_CHANGES_KEY,
-        });
-        actionForm.setError("dueAt", {
-          type: "validate",
-          message: ACTION_ADJUST_NO_CHANGES_KEY,
-        });
-        return;
-      }
-
-      const payload = buildTicketActionPayload({
-        userId: currentUser.id,
-        values,
-      });
-
-      const promise = createAction({
-        ticketId,
-        actionType: payload.actionType,
-        values: payload,
-      });
-
-      await mutationToast(promise, "create", "comment");
-      closeMode();
+      await submitAction(values);
     },
     (errors) => {
       if (errors.content) {
@@ -192,7 +258,8 @@ export function TicketActionTool({
     <section className="space-y-3">
       <TicketActionToolLauncher
         hidden={isOpen}
-        onOpen={openMode}
+        isPending={isPending}
+        onOpen={handleOpen}
         ticket={ticket}
       />
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { tServiceDesk } from "@/app/api/service-desk/messages";
 import { isLocale } from "@/shared/utils/language";
 
 import { resolveLocalAssignmentRecommendation } from "./localDemo";
@@ -48,8 +49,7 @@ export async function POST(request: NextRequest) {
   if (!input) {
     return NextResponse.json(
       {
-        message:
-          "Assignment recommendation requires categoryId and assigneeIds.",
+        message: tServiceDesk("api.assignmentRecommendations.invalidInput"),
       },
       { status: 400 },
     );
@@ -72,6 +72,6 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/assignment-rules/recommendations",
     body: input,
-    errorMessage: "Failed to fetch assignment recommendations",
+    errorMessage: tServiceDesk("api.assignmentRecommendations.fetch"),
   });
 }
