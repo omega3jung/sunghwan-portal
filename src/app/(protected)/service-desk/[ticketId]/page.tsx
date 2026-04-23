@@ -78,7 +78,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
       const name = tLocal(employee.name);
 
       return {
-        value: employee.id,
+        value: employee.userName,
         label: `${name.first} ${name.last}`.trim(),
         displayName: employee.email,
         image: employee.imageUrl,
@@ -140,6 +140,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   return (
     <div className="flex h-full min-h-0 flex-col p-2 pt-1">
       <TicketHeader
+        ticket={ticket}
         isDetailsAsideOpen={isDetailsAsideOpen}
         onToggleDetailsAside={setIsDetailsAsideOpen}
         onOpenHistorySheet={setIsHistorySheetOpen}

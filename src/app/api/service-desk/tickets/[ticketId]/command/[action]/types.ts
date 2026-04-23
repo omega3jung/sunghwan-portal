@@ -20,7 +20,7 @@ export type TicketActionExecutionMode =
 
 type LocalActionBaseContext = {
   ticketId: string;
-  employeeId: string;
+  employeeUserName: string;
   content: TicketActionFormValues;
 };
 

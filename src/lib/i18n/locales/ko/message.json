@@ -1,10 +1,5 @@
 {
   "common": {
-    "backToList": "티켓 목록으로 돌아가기",
-
-    "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
-    "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요",
-
     "create": {
       "title": "생성됨",
       "loading": "{{item}} 생성 중",

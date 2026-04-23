@@ -1,6 +1,7 @@
 import { VariantProps } from "class-variance-authority";
 import { DateRange } from "react-day-picker";
 
+import type { ButtonProps } from "@/components/ui/button";
 import { selectVariants } from "@/components/ui/select";
 import { DateRangePreset } from "@/shared/types";
 
@@ -34,6 +35,41 @@ export type SearchDateFilterOption<T extends string = string> = {
   value: T;
   label: string;
 };
+
+/**
+ * Shared single-value picker contract for date-like controls.
+ * DatePicker and DateTimePicker intentionally stay separate components,
+ * but they share the same ownership model for a single Date value.
+ */
+type BaseSingleDatePickerProps = {
+  value?: Date;
+  defaultValue?: Date;
+  onChange?: (value?: Date) => void;
+  minDate?: Date;
+  maxDate?: Date;
+};
+
+/**
+ * DatePicker remains date-only and keeps the existing button ergonomics.
+ */
+export type DatePickerProps = BaseSingleDatePickerProps &
+  Omit<ButtonProps, "value" | "defaultValue" | "onChange">;
+
+/**
+ * DateTimePicker minute options stay constrained to common 24-hour schedules.
+ */
+export type DateTimePickerMinuteStep = 1 | 5 | 10 | 15 | 30;
+
+/**
+ * DateTimePicker adds compact layout and time stepping while keeping
+ * the same single-Date ownership model as DatePicker.
+ */
+export type DateTimePickerProps = BaseSingleDatePickerProps &
+  Omit<ButtonProps, "value" | "defaultValue" | "onChange"> & {
+    compact?: boolean;
+    minuteStep?: DateTimePickerMinuteStep;
+    placeholder?: string;
+  };
 
 /**
  * Shared DateRangePicker props that apply regardless of how the period itself is owned.

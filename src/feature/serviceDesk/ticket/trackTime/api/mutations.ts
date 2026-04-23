@@ -50,6 +50,22 @@ export const useCreateTicketTrackTimeByRange = () => {
   });
 };
 
+export const useSubmitTicketTrackTime = () => {
+  const queryClient = useQueryClient();
+
+  // message will be handeled where call mutation by useMutationToast.
+  return useMutation({
+    mutationFn: serviceDeskTicketTrackTimeApi.submitManual,
+    onSuccess: (data, variables) => {
+      invalidateTicketTrackTimeQueries(
+        queryClient,
+        variables.ticketId,
+        String(data.trackTimeNo),
+      );
+    },
+  });
+};
+
 export const useUpdateTicketTrackTimeByRange = () => {
   const queryClient = useQueryClient();
 

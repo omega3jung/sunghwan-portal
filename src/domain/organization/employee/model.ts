@@ -11,11 +11,11 @@ export type LocalizedName = {
 } & Partial<Record<Exclude<Locale, "en">, DisplayName>>;
 
 export interface Employee {
-  id: string;
-  displayName: string;
+  id: number; // internal db pk
+  userName: string; // stable app identifier
 
   // basic info
-  name: LocalizedName;
+  name: LocalizedName; // localized display source
   phone: string;
   email: string;
   imageUrl?: string;

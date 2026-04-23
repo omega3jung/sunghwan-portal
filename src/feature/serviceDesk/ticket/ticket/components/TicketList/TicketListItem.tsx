@@ -13,8 +13,10 @@ import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
-import { initials } from "@/shared/utils";
+import { cn, initials } from "@/shared/utils";
 import { formatTimeDistanceFromNow } from "@/shared/utils/date";
+
+import { MetaBadge } from "../../../shared";
 
 interface TicketListItemProps {
   ticket: TicketSummary;
@@ -31,7 +33,9 @@ export const TicketListItem = ({
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
   const requester = users.find((user) => user.value === ticket.requesterId);
-  const requesterName = requester?.label ?? ticket.requesterId;
+  const requesterName =
+    requester?.label ||
+    t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
   const createdTime = formatTimeDistanceFromNow(
     ticket.createdAt,
     dateLocaleMap[language],
@@ -47,7 +51,10 @@ export const TicketListItem = ({
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer flex flex-col gap-3 border-b px-4 py-2 hover:bg-muted"
+      className={cn(
+        "cursor-pointer flex flex-col gap-3 border-b px-4 py-2 hover:bg-muted",
+        ticket.assigned && "border-l-primary border-l-4",
+      )}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
@@ -65,12 +72,7 @@ export const TicketListItem = ({
 
           {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
             <div className="flex flex-wrap items-center gap-2 text-xs">
-              <Badge
-                variant="secondary"
-                className="bg-amber-50/70 text-amber-600 font-medium"
-              >
-                {t("merge.badge")}
-              </Badge>
+              <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
               <Link
                 className="text-primary underline-offset-4 hover:underline"
                 href={mergedIntoTicketHref}
@@ -88,8 +90,8 @@ export const TicketListItem = ({
 
         <div className="flex gap-2">
           {ticket.assigned && (
-            <Badge variant={"destructive"} className="font-normal">
-              Assigned
+            <Badge className="bg-primary/10 text-primary border border-primary/20">
+              {t("detailAside.assignedBadge")}
             </Badge>
           )}
           <StatusBadge status={ticket.status} />

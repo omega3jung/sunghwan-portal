@@ -8,7 +8,7 @@ import { ArrayMapper } from "@/shared/types";
 // back-end data structures.
 export interface DbAssigneeGroup {
   job_field_id: number[]; // string number. can use parseInt.
-  employee_id: number[]; // string number. can use parseInt.
+  employee_id: string[];
 }
 
 export interface DbAssignmentRule {
@@ -24,7 +24,7 @@ export const camelAssignmentRuleMapper: ArrayMapper<
     categoryId: item.category_id.toString(),
     assignee: {
       jobFieldIds: item.assignee.job_field_id.map((id) => id.toString()),
-      employeeIds: item.assignee.employee_id.map((id) => id.toString()),
+      employeeIds: item.assignee.employee_id.map((id) => String(id)),
     },
   }));
 };
@@ -37,7 +37,7 @@ export const snakeAssignmentRuleMapper: ArrayMapper<
     category_id: parseInt(item.categoryId),
     assignee: {
       job_field_id: item.assignee.jobFieldIds.map((id) => parseInt(id)),
-      employee_id: item.assignee.employeeIds.map((id) => parseInt(id)),
+      employee_id: item.assignee.employeeIds,
     },
   }));
 };

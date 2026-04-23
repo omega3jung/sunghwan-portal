@@ -49,7 +49,7 @@ type DbApprovalAssigneeType =
     }
   | {
       type: "EMPLOYEE";
-      employee_id: number[]; // string number. can use parseInt.
+      employee_id: string[];
     };
 
 export const camelCategoryApprovalSettingMapper: ArrayMapper<
@@ -99,7 +99,7 @@ const camelAssigneeTypeMapper: Mapper<
     case "EMPLOYEE":
       return {
         type: data.type,
-        employeeIds: data.employee_id.map((emp) => emp.toString()),
+        employeeIds: data.employee_id.map((employeeId) => String(employeeId)),
       };
   }
 };
@@ -133,7 +133,7 @@ const snakeAssigneeTypeMapper: Mapper<
     case "EMPLOYEE":
       return {
         type: data.type,
-        employee_id: data.employeeIds.map((emp) => parseInt(emp)),
+        employee_id: data.employeeIds,
       };
   }
 };

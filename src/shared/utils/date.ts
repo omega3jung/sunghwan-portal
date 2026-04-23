@@ -62,9 +62,7 @@ export const formatCompactTimeDistanceFromNow = (
  * @param minutes - The total duration in minutes
  * @returns A compact duration label, or an empty string when the input is invalid
  */
-export const formatCompactDurationFromMinutes = (
-  minutes?: number | null,
-) => {
+export const formatCompactDurationFromMinutes = (minutes?: number | null) => {
   if (minutes == null || Number.isNaN(minutes)) {
     return "";
   }
@@ -105,3 +103,16 @@ export const formatISODate = (date?: string | number | Date) => {
 
   return formatISO(date, { representation: "date" });
 };
+
+export function parseFormDateTime(value?: string | null) {
+  if (!value) {
+    return undefined;
+  }
+
+  const parsedDate = new Date(value);
+  return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+}
+
+export function formatFormDateTime(date?: Date) {
+  return date ? date.toISOString() : "";
+}

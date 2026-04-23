@@ -38,7 +38,7 @@ export type ApprovalAssigneePayloadMap = {
   MANAGER: { level: 1 | 2 };
   DEPARTMENT: { departmentId: string }; // string number. can use parseInt.
   JOB_FIELD: { jobFieldId: string }; // string number. can use parseInt.
-  EMPLOYEE: { employeeIds: string[] }; // string number. can use parseInt.
+  EMPLOYEE: { employeeIds: string[] }; // employee userName identifiers
 };
 
 export type ApprovalAssigneeType = {

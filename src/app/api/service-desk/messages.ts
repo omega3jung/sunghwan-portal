@@ -3,7 +3,7 @@ import serviceDeskMessages from "@/lib/i18n/locales/en/serviceDesk.json";
 type ServiceDeskMessageOptions = Record<string, unknown>;
 
 function resolveMessage(key: string): string | undefined {
-  return key
+  const resolved = key
     .split(".")
     .reduce<unknown>((current, segment) => {
       if (!current || typeof current !== "object") {
@@ -12,6 +12,8 @@ function resolveMessage(key: string): string | undefined {
 
       return (current as Record<string, unknown>)[segment];
     }, serviceDeskMessages);
+
+  return typeof resolved === "string" ? resolved : undefined;
 }
 
 function interpolateMessage(

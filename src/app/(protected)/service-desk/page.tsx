@@ -92,7 +92,7 @@ export default function ServiceDeskPage() {
       const name = tLocal(employee.name);
 
       return {
-        value: employee.id,
+        value: employee.userName,
         label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,

@@ -6,12 +6,11 @@ import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TicketDetail } from "@/domain/serviceDesk";
+import { RecipientGroup } from "@/feature/serviceDesk/ticket";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 import { cn, initials } from "@/shared/utils";
-
-import { RecipientGroup } from "./TicketMetaBadge";
 
 type TicketDetailsAsideProps = {
   ticket: TicketDetail;
@@ -27,7 +26,10 @@ export function TicketDetailsAside({
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
   const { current } = useCurrentSession();
-  const currentUserEmail = current.user?.email?.trim().toLowerCase() ?? null;
+  const currentEmployeeUserName = current.user?.username ?? null;
+  const requesterName =
+    requester?.label ||
+    t("detailAside.requesterUnknown", { defaultValue: "Unknown requester" });
 
   return (
     <div className="space-y-4">
@@ -36,8 +38,8 @@ export function TicketDetailsAside({
         title={tCommon("field.requester")}
       >
         <PersonRow
-          name={requester?.label || ticket.requesterId}
-          subText={requester?.displayName || ticket.requesterId}
+          name={requesterName}
+          subText={requester?.displayName || "-"}
           image={requester?.image}
         />
       </InfoCard>
@@ -56,9 +58,8 @@ export function TicketDetailsAside({
                 image={assignee.image}
                 isCurrentUser={
                   ticket.assigned &&
-                  !!currentUserEmail &&
-                  assignee.displayName?.trim().toLowerCase() ===
-                    currentUserEmail
+                  !!currentEmployeeUserName &&
+                  assignee.value === currentEmployeeUserName
                 }
               />
             ))}

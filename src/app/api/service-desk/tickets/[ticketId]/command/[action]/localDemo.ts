@@ -46,19 +46,19 @@ import {
 
 type CreateTicketActionContext = Pick<
   LocalActionRuntimeContext,
-  "ticketId" | "employeeId" | "content" | "actionNo" | "createdAt"
+  "ticketId" | "employeeUserName" | "content" | "actionNo" | "createdAt"
 >;
 
-const employeeEmailById = new Map(
+const employeeEmailByUserName = new Map(
   createEmployeesMock().map((employee) => [
-    employee.employee_id.toString(),
+    employee.employee_user_name,
     employee.employee_email,
   ]),
 );
 
 const createTicketAction = ({
   ticketId,
-  employeeId,
+  employeeUserName,
   content,
   actionNo,
   createdAt,
@@ -68,7 +68,7 @@ const createTicketAction = ({
 
   action_type: content.actionType,
   content: content.content,
-  owner_id: employeeId,
+  owner_id: employeeUserName,
 
   created_at: createdAt,
   updated_at: null,
@@ -80,7 +80,7 @@ const createTicketAction = ({
 
 const buildHistoryBase = ({
   ticketId,
-  employeeId,
+  employeeUserName,
   actionNo,
   createdAt,
 }: LocalActionRuntimeContext): Pick<
@@ -89,7 +89,7 @@ const buildHistoryBase = ({
 > => ({
   ticket_id: ticketId,
   history_no: getMaxHistoryNo(ticketId),
-  actor_id: employeeId,
+  actor_id: employeeUserName,
   action_no: actionNo.toString(),
   created_at: createdAt,
 });
@@ -167,11 +167,11 @@ const mergeActionPatch = (
 
 const mergeAssigneeIds = (
   currentAssigneeIds: DbTicketDetail["assignee_id"],
-  employeeId: string,
+  employeeUserName: string,
 ) => {
-  return currentAssigneeIds.includes(employeeId)
+  return currentAssigneeIds.includes(employeeUserName)
     ? currentAssigneeIds
-    : [...currentAssigneeIds, employeeId];
+    : [...currentAssigneeIds, employeeUserName];
 };
 
 const mergeTicketToEmails = (
@@ -179,7 +179,7 @@ const mergeTicketToEmails = (
   assigneeIds: string[],
 ): DbTicketDetail["email"] => {
   const assigneeEmails = assigneeIds
-    .map((assigneeId) => employeeEmailById.get(assigneeId))
+    .map((assigneeId) => employeeEmailByUserName.get(assigneeId))
     .filter((email): email is string => Boolean(email));
 
   if (assigneeEmails.length === 0) {
@@ -306,7 +306,7 @@ const assignTicket: LocalActionHandler = (context) => {
     ticketPatch: {
       assignee_id: assigneeIds,
       email: mergeTicketToEmails(ticket, assigneeIds),
-      assigned: assigneeIds.includes(context.employeeId),
+      assigned: assigneeIds.includes(context.employeeUserName),
     },
   };
 };
@@ -315,8 +315,8 @@ const assignSelfTicket: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
   const assigneeIds =
     ticket.status === "Working"
-      ? mergeAssigneeIds(ticket.assignee_id, context.employeeId)
-      : [context.employeeId];
+      ? mergeAssigneeIds(ticket.assignee_id, context.employeeUserName)
+      : [context.employeeUserName];
 
   return {
     history: {
@@ -460,7 +460,7 @@ const executeLocalAction = ({
 
 export function localPost({
   ticketId,
-  employeeId,
+  employeeUserName,
   content,
   action,
   isAdmin = false,
@@ -471,14 +471,14 @@ export function localPost({
     const createdAt = new Date().toISOString();
     const ticketAction = createTicketAction({
       ticketId,
-      employeeId,
+      employeeUserName,
       content,
       actionNo,
       createdAt,
     });
     const { history: createdHistory, updatedTicket } = executeLocalAction({
       ticketId,
-      employeeId,
+      employeeUserName,
       content,
       actionNo,
       createdAt,

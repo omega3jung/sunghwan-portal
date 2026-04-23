@@ -10,7 +10,12 @@
     "adjustPlan": "Ajuster le plan",
     "reopenIssue": "Rouvrir l'incident",
     "resubmitRequest": "Renvoyer la demande",
-    "searchCriteria": "Critères de recherche"
+    "searchCriteria": "Critères de recherche",
+    "trackTime": {
+      "submit": "Enregistrer le temps suivi",
+      "submitWithStatus": "Enregistrer le temps et mettre à jour le statut",
+      "submitting": "Enregistrement..."
+    }
   },
   "chart": {
     "category": {
@@ -36,7 +41,29 @@
     }
   },
   "field": {
-    "dueBy": "Échéance"
+    "dueBy": "Échéance",
+    "trackTime": "Temps suivi",
+    "durationMinutes": "Durée",
+    "startAt": "Heure de début",
+    "endAt": "Heure de fin",
+    "status": "Statut",
+    "note": "Note"
+  },
+  "option": {
+    "status": {
+      "working": "En cours",
+      "pending": "En attente",
+      "resolved": "Résolu"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "Saisissez le temps suivi avant l'envoi.",
+      "positive": "Le temps suivi doit être supérieur à 0 minute.",
+      "invalidRange": "L'heure de fin doit être après l'heure de début.",
+      "statusRequiresTime": "Le statut ne peut changer que si le temps suivi cumulé plus cette saisie est supérieur à 0.",
+      "noteMaxLength": "La note doit contenir au maximum 500 caractères."
+    }
   },
   "message": {
     "refineSearchCriteria": "Affinez vos critères de recherche",
@@ -49,6 +76,12 @@
     "foundDraft": "Brouillon trouvé",
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé."
   },
+  "hoverMessage": {
+    "backToList": "Retour à la liste des tickets",
+    "trackTimeTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
+    "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
+    "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket"
+  },
   "step": {
     "issueDetails": "Détails du problème",
     "attachments": "Pièces jointes",
@@ -59,7 +92,8 @@
     "recipientsTitle": "Destinataires",
     "unassigned": "Non attribué",
     "ticketId": "ID du ticket",
-    "currentUserBadge": "Moi"
+    "currentUserBadge": "Moi",
+    "assignedBadge": "Attribué"
   },
   "historySheet": {
     "title": "Historique du ticket",
@@ -245,6 +279,34 @@
       "adjustNoChanges": "Modifiez la priorité, le niveau de risque ou l'échéance avant de mettre à jour."
     }
   },
+  "trackTimeTool": {
+    "title": "Temps suivi",
+    "tab": {
+      "duration": "Durée",
+      "range": "Plage"
+    },
+    "status": {
+      "keepCurrent": "Conserver le statut",
+      "currentSuffix": "(actuel)",
+      "description": "Le changement de statut est contrôlé par le temps suivi cumulé du ticket."
+    },
+    "note": {
+      "toggle": "Note facultative",
+      "description": "Restez concis. Maximum {{count}} caractères."
+    },
+    "summary": {
+      "current": "Cette saisie",
+      "totalAfterSubmit": "Total après envoi",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "ex. 30 min",
+      "note": "Ajoutez une courte note pour cette saisie de temps"
+    }
+  },
   "listPage": {
     "title": "Centre de Services IT",
     "description": "Recherchez et parcourez les tickets du centre de services."
@@ -311,6 +373,16 @@
     },
     "ticketHistories": {
       "fetchList": "Impossible de récupérer les historiques du ticket."
+    },
+    "ticketTrackTime": {
+      "fetchList": "Impossible de récupérer le temps suivi du ticket.",
+      "create": "Impossible d'enregistrer le temps suivi du ticket.",
+      "localDemo": {
+        "ticketMismatch": "Le ticketId de la charge utile ne correspond pas au ticketId de la route.",
+        "invalidStatus": "Statut invalide : {{value}}.",
+        "invalidTrackedMinutes": "Le temps suivi doit être supérieur à 0 minute.",
+        "statusRequiresTime": "Le statut ne peut pas changer tant que le temps suivi total n'est pas supérieur à 0."
+      }
     },
     "ticketCommand": {
       "mergeTargetRequired": "L'action de fusion nécessite targetTicketId.",

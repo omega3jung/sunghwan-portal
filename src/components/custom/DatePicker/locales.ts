@@ -3,7 +3,12 @@ import { Locale } from "@/shared/types";
 export const datePickerLocales: Record<Locale, Record<string, string>> = {
   en: {
     placeholder: "Select Date",
+    dateTimePlaceholder: "Select Date and Time",
     rangePlaceholder: "Select Date Range",
+    time: "Time",
+    hour: "Hour",
+    minute: "Minute",
+    now: "Now",
     today: "Today",
     thisWeek: "This Week",
     thisMonth: "This Month",
@@ -26,11 +31,17 @@ export const datePickerLocales: Record<Locale, Record<string, string>> = {
     lastYear: "Last Year",
     last2Year: "Last 2 Years",
     dateRange: "Date Range",
+    apply: "Apply",
   },
 
   es: {
     placeholder: "Seleccionar fecha",
+    dateTimePlaceholder: "Seleccionar fecha y hora",
     rangePlaceholder: "Seleccionar rango de fechas",
+    time: "Hora",
+    hour: "Hora",
+    minute: "Minuto",
+    now: "Ahora",
     today: "Hoy",
     thisWeek: "Esta semana",
     thisMonth: "Este mes",
@@ -53,11 +64,17 @@ export const datePickerLocales: Record<Locale, Record<string, string>> = {
     lastYear: "Último año",
     last2Year: "Últimos 2 años",
     dateRange: "Rango de fechas",
+    apply: "Aplicar",
   },
 
   fr: {
     placeholder: "Sélectionnez une date",
+    dateTimePlaceholder: "Sélectionnez la date et l'heure",
     rangePlaceholder: "Sélectionner une plage de dates",
+    time: "Heure",
+    hour: "Heure",
+    minute: "Minute",
+    now: "Maintenant",
     today: "Aujourd'hui",
     thisWeek: "Cette semaine",
     thisMonth: "Ce mois",
@@ -80,11 +97,17 @@ export const datePickerLocales: Record<Locale, Record<string, string>> = {
     lastYear: "L'année dernière",
     last2Year: "2 dernières années",
     dateRange: "Plage de dates",
+    apply: "Appliquer",
   },
 
   ko: {
     placeholder: "날짜를 선택해주세요",
+    dateTimePlaceholder: "날짜와 시간을 선택해주세요",
     rangePlaceholder: "기간을 선택해주세요",
+    time: "시간",
+    hour: "시",
+    minute: "분",
+    now: "현재",
     today: "오늘",
     thisWeek: "이번 주",
     thisMonth: "이번 달",
@@ -107,5 +130,6 @@ export const datePickerLocales: Record<Locale, Record<string, string>> = {
     lastYear: "지난 1년",
     last2Year: "지난 2년",
     dateRange: "기간 선택",
+    apply: "적용",
   },
 };

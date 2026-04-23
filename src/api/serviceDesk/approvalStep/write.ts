@@ -48,7 +48,7 @@ function toApprovalAssigneeWritePayload(input: ApprovalStep["stepAssignee"]) {
     case "EMPLOYEE":
       return {
         type: input.type,
-        employee_id: input.employeeIds.map(Number),
+        employee_id: input.employeeIds,
       };
   }
 }

@@ -84,7 +84,7 @@ const toRecommendedUser = (
   employee: Employee,
   language: Locale,
 ): ImageValueLabel => ({
-  value: employee.id,
+  value: employee.userName,
   label: getEmployeeLabel(employee, language),
   displayName: employee.email,
   image: employee.imageUrl,
@@ -127,13 +127,13 @@ const resolveAssignmentRuleWithCategoryFallback = (
 };
 
 const buildEmployeeMap = (employees: Employee[]) =>
-  new Map(employees.map((employee) => [employee.id, employee]));
+  new Map(employees.map((employee) => [employee.userName, employee]));
 
 const buildActiveEmployees = (employees: Employee[]) =>
   employees.filter((employee) => employee.active);
 
 const buildActiveEmployeeMap = (activeEmployees: Employee[]) =>
-  new Map(activeEmployees.map((employee) => [employee.id, employee]));
+  new Map(activeEmployees.map((employee) => [employee.userName, employee]));
 
 const collectRecommendedUsers = ({
   assignmentRule,
@@ -148,9 +148,10 @@ const collectRecommendedUsers = ({
   const seen = new Set<string>();
   const recommendedUsers: ImageValueLabel[] = [];
 
-  for (const employeeId of assignmentRule.assignee.employeeIds) {
+  for (const employeeUserName of assignmentRule.assignee.employeeIds) {
     const employee =
-      activeEmployeeMap.get(employeeId) ?? employeeMap.get(employeeId);
+      activeEmployeeMap.get(employeeUserName) ??
+      employeeMap.get(employeeUserName);
 
     pushUniqueUser(
       recommendedUsers,

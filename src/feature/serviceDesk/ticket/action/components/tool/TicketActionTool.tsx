@@ -126,8 +126,8 @@ export function TicketActionTool({
 
   const currentUser = current.user;
   const currentUserOption = useMemo(
-    () => users.find((user) => user.value === currentUser?.id),
-    [currentUser?.id, users],
+    () => users.find((user) => user.value === currentUser?.username),
+    [currentUser?.username, users],
   );
 
   const currentUserName =

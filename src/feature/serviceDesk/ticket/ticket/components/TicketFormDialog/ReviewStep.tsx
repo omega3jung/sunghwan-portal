@@ -13,7 +13,7 @@ import {
   useAttachments,
 } from "../../../shared/components/attachments";
 import { useTicketFormContext } from "../../context/TicketFormContext";
-import { TicketInfoFields } from "./TicketInfoFields";
+import { TicketInfoFields } from "./InfoFields";
 
 export const ReviewStep = () => {
   const { form } = useTicketFormContext();

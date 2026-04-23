@@ -4,6 +4,5 @@ export * from "./TicketDetailsAside";
 export * from "./TicketDetailSkeleton";
 export * from "./TicketHeader";
 export * from "./TicketHistorySheet";
-export * from "./TicketMetaBadge";
 export * from "./TicketRecentActivity";
 export * from "./TicketSummary";

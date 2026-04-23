@@ -31,8 +31,8 @@ export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (
   data,
 ) => {
   return data.map((item) => ({
-    id: item.employee_id.toString(),
-    displayName: item.employee_user_name,
+    id: item.employee_id,
+    userName: item.employee_user_name,
     name: item.employee_name,
     phone: item.employee_phone,
     email: item.employee_email,
@@ -54,8 +54,8 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
   data,
 ) => {
   return data.map((item) => ({
-    employee_id: parseInt(item.id),
-    employee_user_name: item.displayName,
+    employee_id: item.id,
+    employee_user_name: item.userName,
     employee_name: item.name,
     employee_phone: item.phone,
     employee_email: item.email,

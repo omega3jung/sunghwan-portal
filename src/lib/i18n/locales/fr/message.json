@@ -1,10 +1,5 @@
 {
   "common": {
-    "backToList": "Retour à la liste des tickets",
-
-    "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
-    "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket",
-
     "create": {
       "title": "Créé",
       "loading": "Création de {{item}}",

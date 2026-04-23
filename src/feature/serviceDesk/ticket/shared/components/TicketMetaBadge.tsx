@@ -11,7 +11,7 @@ const ticketMetaBadgeClassMap = {
   medium: "bg-amber-100 text-amber-700",
   low: "bg-sky-100 text-sky-700",
   neutral: "bg-muted text-foreground",
-  merge: "bg-amber-50/70 text-amber-600",
+  merge: "bg-violet-50 text-violet-700",
 } as const;
 
 export type MetaBadgeTone = keyof typeof ticketMetaBadgeClassMap;

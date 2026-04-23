@@ -15,7 +15,10 @@ import {
   initials,
 } from "@/shared/utils";
 
-import { MetaBadge, PriorityBadge } from "./TicketMetaBadge";
+import {
+  MetaBadge,
+  PriorityBadge,
+} from "../../../../feature/serviceDesk/ticket/shared/components/TicketMetaBadge";
 
 type TicketSummaryProps = {
   ticket: TicketDetail;
@@ -34,9 +37,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
         <aside className="space-y-3">
           <Avatar className="h-12 w-12">
             <AvatarImage src={requester?.image} />
-            <AvatarFallback>
-              {initials(requester?.label || ticket.requesterId)}
-            </AvatarFallback>
+            <AvatarFallback>{initials(requester?.label || "")}</AvatarFallback>
           </Avatar>
 
           <div className="h-12 w-12 rounded-full bg-cyan-50/70 hover:bg-cyan-100/70 flex flex-col items-center justify-center gap-0.5 whitespace-nowrap">
@@ -76,8 +77,8 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
             </li>
             {ticket.assigned && (
               <li>
-                <Badge variant={"destructive"} className="font-normal">
-                  Assigned
+                <Badge className="bg-red-700/80 font-normal">
+                  {t("detailAside.assignedBadge")}
                 </Badge>
               </li>
             )}

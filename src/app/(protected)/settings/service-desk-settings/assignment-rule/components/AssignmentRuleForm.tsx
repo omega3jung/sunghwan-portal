@@ -60,7 +60,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
       return employees.map((employee) => {
         const name = tLocal(employee.name);
         return {
-          value: employee.id,
+          value: employee.userName,
           label: `${name.first} ${name.last}`,
           displayName: employee.email,
           image: employee.imageUrl,

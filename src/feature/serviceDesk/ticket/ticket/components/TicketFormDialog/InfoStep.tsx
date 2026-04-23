@@ -11,7 +11,7 @@ import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
-import { TicketInfoFields } from "./TicketInfoFields";
+import { TicketInfoFields } from "./InfoFields";
 
 export const InfoStep = () => {
   const { form, categories } = useTicketFormContext();

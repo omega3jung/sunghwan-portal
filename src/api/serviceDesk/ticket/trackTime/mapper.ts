@@ -1,3 +1,7 @@
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/api/utils/payload";
 import { TicketTrackTime } from "@/domain/serviceDesk";
 import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
@@ -51,3 +55,10 @@ export const snakeTicketTrackTimeMapper: ArrayMapper<
     updated_at: undefinedToNull(item.updatedAt),
   }));
 };
+
+export const mapTicketTrackTimeListPayload = createListPayloadMapper(
+  camelTicketTrackTimeMapper,
+);
+export const mapTicketTrackTimePayload = createItemPayloadMapper(
+  camelTicketTrackTimeMapper,
+);

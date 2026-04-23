@@ -10,7 +10,12 @@
     "adjustPlan": "Ajustar plan",
     "reopenIssue": "Reabrir incidencia",
     "resubmitRequest": "Reenviar solicitud",
-    "searchCriteria": "Criterios de búsqueda"
+    "searchCriteria": "Criterios de búsqueda",
+    "trackTime": {
+      "submit": "Guardar tiempo registrado",
+      "submitWithStatus": "Guardar tiempo y actualizar estado",
+      "submitting": "Guardando..."
+    }
   },
   "chart": {
     "category": {
@@ -36,7 +41,29 @@
     }
   },
   "field": {
-    "dueBy": "Fecha límite"
+    "dueBy": "Fecha límite",
+    "trackTime": "Tiempo registrado",
+    "durationMinutes": "Duración",
+    "startAt": "Hora de inicio",
+    "endAt": "Hora de fin",
+    "status": "Estado",
+    "note": "Nota"
+  },
+  "option": {
+    "status": {
+      "working": "En curso",
+      "pending": "Pendiente",
+      "resolved": "Resuelto"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "Introduce el tiempo registrado antes de enviar.",
+      "positive": "El tiempo registrado debe ser mayor que 0 minutos.",
+      "invalidRange": "La hora de fin debe ser posterior a la hora de inicio.",
+      "statusRequiresTime": "El estado solo puede cambiar cuando el tiempo acumulado más esta entrada es mayor que 0.",
+      "noteMaxLength": "La nota debe tener 500 caracteres o menos."
+    }
   },
   "message": {
     "refineSearchCriteria": "Refina tus criterios de búsqueda",
@@ -49,6 +76,12 @@
     "foundDraft": "Borrador encontrado",
     "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará."
   },
+  "hoverMessage": {
+    "backToList": "Volver a la lista de tickets",
+    "trackTimeTool": "Vista de cronología para la actividad reciente del ticket.",
+    "openDetailAside": "Abra el panel lateral para ver los detalles del ticket",
+    "openHistoryDrawer": "Abra el panel lateral para ver el historial de este ticket"
+  },
   "step": {
     "issueDetails": "Detalles del problema",
     "attachments": "Archivos adjuntos",
@@ -59,7 +92,8 @@
     "recipientsTitle": "Destinatarios",
     "unassigned": "Sin asignar",
     "ticketId": "ID del ticket",
-    "currentUserBadge": "Yo"
+    "currentUserBadge": "Yo",
+    "assignedBadge": "Asignado"
   },
   "historySheet": {
     "title": "Historial del ticket",
@@ -117,7 +151,6 @@
     "into": "Fusionado en {{ticketId}}"
   },
   "historyTimeline": {
-    "description": "Vista de cronología para la actividad reciente del ticket.",
     "badge": {
       "status": "Estado",
       "assignment": "Asignación",
@@ -234,6 +267,35 @@
       "adjustNoChanges": "Cambia la prioridad, el nivel de riesgo o la fecha límite antes de actualizar."
     }
   },
+  "trackTimeTool": {
+    "title": "Tiempo registrado",
+    "description": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
+    "tab": {
+      "duration": "Duración",
+      "range": "Rango"
+    },
+    "status": {
+      "keepCurrent": "Mantener estado",
+      "currentSuffix": "(actual)",
+      "description": "El cambio de estado se valida con el tiempo registrado acumulado del ticket."
+    },
+    "note": {
+      "toggle": "Nota opcional",
+      "description": "Sé breve. Máximo {{count}} caracteres."
+    },
+    "summary": {
+      "current": "Esta entrada",
+      "totalAfterSubmit": "Total tras enviar",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "p. ej. 30 min",
+      "note": "Añade una nota breve para esta entrada de tiempo"
+    }
+  },
   "listPage": {
     "title": "Mesa de Servicio de TI",
     "description": "Busca y consulta tickets de la mesa de servicio."
@@ -300,6 +362,16 @@
     },
     "ticketHistories": {
       "fetchList": "No se pudieron obtener los historiales del ticket."
+    },
+    "ticketTrackTime": {
+      "fetchList": "No se pudo obtener el tiempo registrado del ticket.",
+      "create": "No se pudo guardar el tiempo registrado del ticket.",
+      "localDemo": {
+        "ticketMismatch": "El ticketId del payload no coincide con el ticketId de la ruta.",
+        "invalidStatus": "Estado no válido: {{value}}.",
+        "invalidTrackedMinutes": "El tiempo registrado debe ser mayor que 0 minutos.",
+        "statusRequiresTime": "El estado no puede cambiar hasta que el tiempo registrado total sea mayor que 0."
+      }
     },
     "ticketCommand": {
       "mergeTargetRequired": "La acción de fusión requiere targetTicketId.",

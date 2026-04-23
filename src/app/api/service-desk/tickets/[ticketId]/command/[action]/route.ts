@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { mapTicketActionPayload } from "@/api/serviceDesk/ticket/action";
 import {
-  getCurrentEmployeeId,
+  getCurrentEmployeeUserName,
   getUserRole,
   isInternalUser,
   isRemoteRequest,
@@ -68,9 +68,9 @@ export async function POST(
   }
 
   if (!isRemote) {
-    const employeeId = await getCurrentEmployeeId(request);
+    const employeeUserName = await getCurrentEmployeeUserName(request);
 
-    if (employeeId === null) {
+    if (employeeUserName === null) {
       return NextResponse.json(
         { message: tServiceDesk("api.ticketCommand.employeeUnavailable") },
         { status: 401 },
@@ -88,7 +88,7 @@ export async function POST(
 
     return localPost({
       ticketId,
-      employeeId: employeeId.toString(),
+      employeeUserName,
       action,
       isAdmin: role === "ADMIN",
       content,

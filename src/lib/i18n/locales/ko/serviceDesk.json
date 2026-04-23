@@ -10,7 +10,12 @@
     "adjustPlan": "계획 조정",
     "reopenIssue": "이슈 다시 열기",
     "resubmitRequest": "요청 다시 제출",
-    "searchCriteria": "검색 조건"
+    "searchCriteria": "검색 조건",
+    "trackTime": {
+      "submit": "추적 시간 저장",
+      "submitWithStatus": "시간 저장 및 상태 변경",
+      "submitting": "저장 중..."
+    }
   },
   "chart": {
     "category": {
@@ -36,7 +41,29 @@
     }
   },
   "field": {
-    "dueBy": "기한"
+    "dueBy": "기한",
+    "trackTime": "추적 시간",
+    "durationMinutes": "소요 시간",
+    "startAt": "시작 시간",
+    "endAt": "종료 시간",
+    "status": "상태",
+    "note": "메모"
+  },
+  "option": {
+    "status": {
+      "working": "진행 중",
+      "pending": "대기",
+      "resolved": "해결됨"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "제출하기 전에 추적 시간을 입력해 주세요.",
+      "positive": "추적 시간은 0분보다 커야 합니다.",
+      "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
+      "statusRequiresTime": "누적 추적 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
+      "noteMaxLength": "메모는 500자 이하여야 합니다."
+    }
   },
   "message": {
     "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
@@ -49,6 +76,12 @@
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
   },
+  "hoverMessage": {
+    "backToList": "티켓 목록으로 돌아가기",
+    "trackTimeTool": "최근 티켓 활동을 타임라인으로 보여줍니다.",
+    "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
+    "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
+  },
   "step": {
     "issueDetails": "문제 상세",
     "attachments": "첨부 파일",
@@ -59,7 +92,8 @@
     "recipientsTitle": "수신자",
     "unassigned": "미할당",
     "ticketId": "티켓 ID",
-    "currentUserBadge": "나"
+    "currentUserBadge": "나",
+    "assignedBadge": "할당됨"
   },
   "historySheet": {
     "title": "티켓 이력",
@@ -117,7 +151,6 @@
     "into": "{{ticketId}} 티켓으로 병합됨"
   },
   "historyTimeline": {
-    "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
     "badge": {
       "status": "상태",
       "assignment": "할당",
@@ -234,6 +267,35 @@
       "adjustNoChanges": "업데이트하기 전에 우선순위, 위험도 또는 기한을 변경하세요."
     }
   },
+  "trackTimeTool": {
+    "title": "추적 시간",
+    "description": "수동 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "tab": {
+      "duration": "소요 시간",
+      "range": "시간 범위"
+    },
+    "status": {
+      "keepCurrent": "현재 상태 유지",
+      "currentSuffix": "(현재)",
+      "description": "상태 변경은 티켓의 누적 추적 시간 기준으로 검증됩니다."
+    },
+    "note": {
+      "toggle": "선택 메모",
+      "description": "간단히 남겨 주세요. 최대 {{count}}자까지 입력할 수 있습니다."
+    },
+    "summary": {
+      "current": "이번 입력",
+      "totalAfterSubmit": "제출 후 누적",
+      "minutes_one": "{{count}}분",
+      "minutes_other": "{{count}}분"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "예: 30분",
+      "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
+    }
+  },
   "listPage": {
     "title": "IT 서비스 데스크",
     "description": "서비스 데스크 티켓을 검색하고 조회하세요."
@@ -300,6 +362,16 @@
     },
     "ticketHistories": {
       "fetchList": "티켓 이력을 불러오지 못했습니다."
+    },
+    "ticketTrackTime": {
+      "fetchList": "티켓 추적 시간을 불러오지 못했습니다.",
+      "create": "티켓 추적 시간을 저장하지 못했습니다.",
+      "localDemo": {
+        "ticketMismatch": "추적 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
+        "invalidStatus": "유효하지 않은 상태입니다: {{value}}.",
+        "invalidTrackedMinutes": "추적 시간은 0분보다 커야 합니다.",
+        "statusRequiresTime": "전체 추적 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
+      }
     },
     "ticketCommand": {
       "mergeTargetRequired": "병합 작업에는 targetTicketId가 필요합니다.",

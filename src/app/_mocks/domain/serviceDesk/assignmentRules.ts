@@ -18,7 +18,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: internalPortalSystemIssueCategoryMock.category_id,
     assignee: {
       job_field_id: [21, 22, 23],
-      employee_id: [32],
+      employee_id: ["32"],
     },
   },
   /* Account & Access */
@@ -34,7 +34,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: hardwareDeviceCategoryMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_id: [117],
+      employee_id: ["117"],
     },
   },
   /* Software & App */
@@ -74,7 +74,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: dataInfoManagementCategoryMock.category_id,
     assignee: {
       job_field_id: [23, 7, 4],
-      employee_id: [59, 60, 61, 123, 124],
+      employee_id: ["59", "60", "61", "123", "124"],
     },
   },
   /* Client Support */
@@ -82,7 +82,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientUserSupportCategoryMock.category_id,
     assignee: {
       job_field_id: [11, 12, 23],
-      employee_id: [15],
+      employee_id: ["15"],
     },
   },
   /* Other Inquiry */

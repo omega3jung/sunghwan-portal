@@ -23,7 +23,9 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     // Return mock department.
 
     const employeeData = camelEmployeeMapper(createEmployeesMock());
-    const targetEmployee = employeeData.find((employee) => employee.id === id);
+    const targetEmployee = employeeData.find(
+      (employee) => employee.id === Number(id),
+    );
 
     if (!targetEmployee) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });

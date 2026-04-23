@@ -4,6 +4,7 @@ import {
   TicketTrackDurationFormValues,
   TicketTrackRangeFormValues,
 } from "@/feature/serviceDesk/ticket/trackTime/forms";
+import type { TicketTrackTimeSubmitPayload } from "@/feature/serviceDesk/ticket/trackTime/types";
 import { OResponse } from "@/shared/types/api";
 
 type TicketTrackTimeResponse = OResponse<TicketTrackTime>;
@@ -43,6 +44,17 @@ export const serviceDeskTicketTrackTimeApi = {
     );
 
     return null;
+  },
+
+  submitManual: async (
+    payload: TicketTrackTimeSubmitPayload,
+  ): Promise<TicketTrackTime> => {
+    const res = await client.api.post<TicketTrackTime>(
+      `/api/service-desk/tickets/${payload.ticketId}/track-time`,
+      payload,
+    );
+
+    return res.data;
   },
 
   range: {

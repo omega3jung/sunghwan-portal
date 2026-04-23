@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
+import {
+  resolveClientProfile,
+  resolveInternalProfile,
+} from "@/app/_mocks/domain/user";
 import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
 
 export async function getAuthToken(req: NextRequest) {
@@ -46,25 +50,33 @@ export async function getCurrentUserId(req: NextRequest) {
   return token?.impersonation?.impersonatedUserId ?? token?.id ?? null;
 }
 
-// EmployeeId helpers resolve employee domain identity from JWT.
-export async function getOriginalEmployeeId(
+// Employee userName helpers resolve employee app identity from JWT/session.
+export async function getOriginalEmployeeUserName(
   req: NextRequest,
-): Promise<number | null> {
+): Promise<string | null> {
   const token = await getAuthToken(req);
-  return resolveEmployeeId(token?.employeeId);
+  return resolveEmployeeUserName(token?.username);
 }
 
-export async function getCurrentEmployeeId(
+export async function getCurrentEmployeeUserName(
   req: NextRequest,
-): Promise<number | null> {
+): Promise<string | null> {
   const token = await getAuthToken(req);
-  const impersonatedEmployeeId = (
-    token?.impersonation as { impersonatedEmployeeId?: unknown } | undefined
-  )?.impersonatedEmployeeId;
+  const impersonatedUserId = (
+    token?.impersonation as { impersonatedUserId?: unknown } | undefined
+  )?.impersonatedUserId;
 
-  // Current impersonation metadata is user-id based.
-  // If employee metadata is not present, fall back to the original JWT employeeId.
-  return resolveEmployeeId(impersonatedEmployeeId ?? token?.employeeId);
+  if (typeof impersonatedUserId === "string") {
+    const impersonatedProfile =
+      resolveClientProfile(impersonatedUserId) ??
+      resolveInternalProfile(impersonatedUserId);
+
+    if (impersonatedProfile?.username) {
+      return impersonatedProfile.username;
+    }
+  }
+
+  return resolveEmployeeUserName(token?.username);
 }
 
 export async function getUserRole(req: NextRequest): Promise<Role | null> {
@@ -121,6 +133,15 @@ function resolveCompanyId(token: {
   clientId?: string | null;
 }) {
   return token.companyId ?? token.clientId ?? "";
+}
+
+function resolveEmployeeUserName(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalizedValue = value.trim();
+  return normalizedValue.length > 0 ? normalizedValue : null;
 }
 
 function resolveEmployeeId(value: unknown): number | null {

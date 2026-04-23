@@ -10,7 +10,12 @@
     "adjustPlan": "Adjust Plan",
     "reopenIssue": "Reopen Issue",
     "resubmitRequest": "Resubmit Request",
-    "searchCriteria": "Search criteria"
+    "searchCriteria": "Search criteria",
+    "trackTime": {
+      "submit": "Save track time",
+      "submitWithStatus": "Save time and update status",
+      "submitting": "Saving..."
+    }
   },
   "chart": {
     "category": {
@@ -35,6 +40,30 @@
       }
     }
   },
+  "field": {
+    "trackTime": "Track time",
+    "durationMinutes": "Duration",
+    "startAt": "Start time",
+    "endAt": "End time",
+    "status": "Status",
+    "note": "Note"
+  },
+  "option": {
+    "status": {
+      "working": "Working",
+      "pending": "Pending",
+      "resolved": "Resolved"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "Enter track time before submitting.",
+      "positive": "Track time must be greater than 0 minutes.",
+      "invalidRange": "End time must be after start time.",
+      "statusRequiresTime": "Status can only change when accumulated track time plus this entry is greater than 0.",
+      "noteMaxLength": "Note must be 500 characters or less."
+    }
+  },
   "message": {
     "refineSearchCriteria": "Refine your search criteria",
     "lastComment": "Last comment",
@@ -46,6 +75,12 @@
     "foundDraft": "Found draft",
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
   },
+  "hoverMessage": {
+    "backToList": "Back to ticket list",
+    "trackTimeTool": "Record manual work time and optionally move the ticket status in the same action.",
+    "openDetailAside": "Open the aside to see ticket details",
+    "openHistoryDrawer": "Open the aside to see history of this ticket"
+  },
   "step": {
     "issueDetails": "Issue Details",
     "attachments": "Attachments",
@@ -56,7 +91,8 @@
     "recipientsTitle": "Recipients",
     "unassigned": "Unassigned",
     "ticketId": "Ticket ID",
-    "currentUserBadge": "Me"
+    "currentUserBadge": "Me",
+    "assignedBadge": "Assigned"
   },
   "historySheet": {
     "title": "Ticket History",
@@ -208,6 +244,34 @@
       "adjustNoChanges": "Change priority, risk level, or due date before updating."
     }
   },
+  "trackTimeTool": {
+    "title": "Track time",
+    "tab": {
+      "duration": "Duration",
+      "range": "Range"
+    },
+    "status": {
+      "keepCurrent": "Keep current status",
+      "currentSuffix": "(current)",
+      "description": "Changing status is guarded by the ticket's accumulated tracked time."
+    },
+    "note": {
+      "toggle": "Optional note",
+      "description": "Keep it short. Maximum {{count}} characters."
+    },
+    "summary": {
+      "current": "This entry",
+      "totalAfterSubmit": "Total after submit",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} mins"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "e.g. 30 min",
+      "note": "Add a short note for this time entry"
+    }
+  },
   "listPage": {
     "title": "IT Service Desk",
     "description": "Search and browse service desk tickets."
@@ -274,6 +338,16 @@
     },
     "ticketHistories": {
       "fetchList": "Failed to fetch ticket histories."
+    },
+    "ticketTrackTime": {
+      "fetchList": "Failed to fetch ticket track time.",
+      "create": "Failed to save ticket track time.",
+      "localDemo": {
+        "ticketMismatch": "Track time payload ticketId does not match the route ticketId.",
+        "invalidStatus": "Invalid status: {{value}}.",
+        "invalidTrackedMinutes": "Track time must be greater than 0 minutes.",
+        "statusRequiresTime": "Status cannot change until total tracked time is greater than 0."
+      }
     },
     "ticketCommand": {
       "mergeTargetRequired": "Merge action requires targetTicketId.",

@@ -2,10 +2,12 @@ import {
   addMonths,
   addWeeks,
   addYears,
+  endOfDay,
   endOfMonth,
   endOfWeek,
   endOfYear,
   format,
+  startOfDay,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -30,7 +32,7 @@ const DATE_RANGE_PRESET_SET = new Set<string>(DEFAULT_DATE_RANGE_PRESETS);
  * Utility consumers should not need to care about that distinction,
  * so this helper normalizes supported date-like inputs into real Date instances.
  */
-function toValidDate(value: unknown): Date | undefined {
+export function normalizeDateValue(value: unknown): Date | undefined {
   if (value instanceof Date) {
     return Number.isNaN(value.getTime()) ? undefined : value;
   }
@@ -53,8 +55,8 @@ export function normalizeDateRange(range?: DateRange): DateRange | undefined {
     return undefined;
   }
 
-  const from = toValidDate(range.from);
-  const to = toValidDate(range.to);
+  const from = normalizeDateValue(range.from);
+  const to = normalizeDateValue(range.to);
 
   if (!from && !to) {
     return undefined;
@@ -68,13 +70,27 @@ export function normalizeDateRange(range?: DateRange): DateRange | undefined {
  * Formatting returns an empty string instead of throwing so UI fallbacks can take over.
  */
 export function formatDateText(date?: Date | string | number) {
-  const resolvedDate = toValidDate(date);
+  const resolvedDate = normalizeDateValue(date);
 
   if (!resolvedDate) {
     return "";
   }
 
   return format(resolvedDate, DATE_FORMAT);
+}
+
+/**
+ * DateTimePicker renders a fixed 24-hour timestamp string in triggers and summaries.
+ * Keeping this formatter beside formatDateText makes the single-value picker family consistent.
+ */
+export function formatDateTimeText(date?: Date | string | number) {
+  const resolvedDate = normalizeDateValue(date);
+
+  if (!resolvedDate) {
+    return "";
+  }
+
+  return format(resolvedDate, `${DATE_FORMAT} HH:mm`);
 }
 
 /**
@@ -196,4 +212,25 @@ export function isSameDateRange(a?: DateRange, b?: DateRange): boolean {
   const bTo = normalizedB?.to?.getTime() ?? null;
 
   return aFrom === bFrom && aTo === bTo;
+}
+
+/**
+ * Calendar day disabling should work from whole-day availability, not exact timestamps.
+ * This lets DateTimePicker keep a partially available day selectable while time controls
+ * handle the finer-grained min/max restriction.
+ */
+export function isCalendarDateDisabled(
+  date: Date,
+  minDate?: Date,
+  maxDate?: Date,
+) {
+  if (minDate && endOfDay(date) < minDate) {
+    return true;
+  }
+
+  if (maxDate && startOfDay(date) > maxDate) {
+    return true;
+  }
+
+  return false;
 }

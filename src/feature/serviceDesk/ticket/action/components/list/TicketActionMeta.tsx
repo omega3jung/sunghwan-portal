@@ -35,11 +35,15 @@ export function TicketActionMeta({
   dateLocale,
 }: TicketActionMetaProps) {
   const { t } = useTranslation(NS.serviceDesk);
+  const ownerLabel =
+    owner?.label ||
+    t("actionTool.list.unknownOwner", { defaultValue: "Unknown employee" });
+  const ownerSubText = owner?.displayName || "-";
 
   return (
     <div className="min-w-0 space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="truncate font-medium">{owner?.label || action.ownerId}</p>
+        <p className="truncate font-medium">{ownerLabel}</p>
         <Badge
           variant="secondary"
           className={cn(
@@ -58,9 +62,7 @@ export function TicketActionMeta({
       </div>
 
       <div className="min-w-0 text-xs text-muted-foreground/75">
-        <p className="truncate leading-5">
-          {owner?.displayName || action.ownerId}
-        </p>
+        <p className="truncate leading-5">{ownerSubText}</p>
         <p className="leading-5">
           {formatTimeDistanceFromNow(action.createdAt, dateLocale) || "-"}
           {" | "}

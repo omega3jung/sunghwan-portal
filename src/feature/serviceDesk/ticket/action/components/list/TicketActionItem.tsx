@@ -34,6 +34,9 @@ export function TicketActionItem({
   const { t } = useTranslation(NS.serviceDesk);
   const files = action.files.filter((file) => file.active);
   const images = action.images.filter((image) => image.active);
+  const ownerLabel =
+    owner?.label ||
+    t("actionTool.list.unknownOwner", { defaultValue: "Unknown employee" });
 
   return (
     <Collapsible
@@ -44,7 +47,7 @@ export function TicketActionItem({
         <Avatar className="mt-0.5 h-10 w-10 ring-1 ring-border/40">
           <AvatarImage src={owner?.image} />
           <AvatarFallback className="bg-primary/10 text-primary">
-            {initials(owner?.label || action.ownerId)}
+            {initials(ownerLabel)}
           </AvatarFallback>
         </Avatar>
 

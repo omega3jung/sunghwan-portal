@@ -22,7 +22,7 @@ export function toAssignmentRuleWritePayload(
     category_id: Number(input.categoryId),
     assignee: {
       job_field_id: input.assignee.jobFieldIds.map(Number),
-      employee_id: input.assignee.employeeIds.map(Number),
+      employee_id: input.assignee.employeeIds,
     },
   };
 }

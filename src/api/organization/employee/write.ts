@@ -20,14 +20,15 @@ type DbEmployeeWriteInput = Omit<
   employee_end_date: DateInput | null;
 };
 
-export type CreateEmployeeInput = EmployeeWriteFields & { id?: string };
-export type UpdateEmployeeInput = EmployeeWriteFields & { id: string };
+export type CreateEmployeeInput = EmployeeWriteFields & { id?: number | string };
+export type UpdateEmployeeInput = EmployeeWriteFields & { id: number | string };
 
 export function toEmployeeWritePayload(
   input: CreateEmployeeInput | UpdateEmployeeInput,
 ): DbEmployeeWriteInput {
   return {
-    employee_id: idToNumber(input.id),
+    employee_id: resolveEmployeeId(input.id),
+    employee_user_name: input.userName,
     employee_name: input.name,
     employee_phone: input.phone,
     employee_email: input.email,
@@ -47,16 +48,28 @@ export function toEmployeeWritePayload(
 
 export function toEmployeeMockResource(
   input: CreateEmployeeInput | UpdateEmployeeInput,
-  id = createMockId(),
+  id: number | string = createMockId(),
 ): Employee {
   const { startDate, endDate, ...rest } = input;
 
   return {
     ...rest,
-    id,
+    id: resolveEmployeeId(id) ?? createMockId(),
     startDate: toDateValue(startDate),
     ...(endDate ? { endDate: toDateValue(endDate) } : {}),
   };
+}
+
+function resolveEmployeeId(value: number | string | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    return idToNumber(value);
+  }
+
+  return null;
 }
 
 function toDateValue(value: DateInput) {
@@ -64,5 +77,5 @@ function toDateValue(value: DateInput) {
 }
 
 function createMockId() {
-  return Date.now().toString();
+  return Date.now();
 }

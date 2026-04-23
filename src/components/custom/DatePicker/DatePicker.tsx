@@ -1,12 +1,11 @@
-// this component needs expanding
+"use client";
 
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import * as datefns from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -15,13 +14,12 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils";
 
-type DatePickerProps = {
-  value?: Date;
-  defaultValue?: Date;
-  onChange?: (date?: Date) => void;
-  minDate?: Date;
-  maxDate?: Date;
-} & Omit<ButtonProps, "value" | "onChange">;
+import type { DatePickerProps } from "./types";
+import {
+  formatDateText,
+  isCalendarDateDisabled,
+  normalizeDateValue,
+} from "./utils";
 
 export function DatePicker({
   value,
@@ -42,9 +40,13 @@ export function DatePicker({
     defaultProp: defaultValue,
     onChange,
   });
+  const normalizedDate = normalizeDateValue(date);
+  const normalizedDefaultValue = normalizeDateValue(defaultValue);
+  const normalizedMinDate = normalizeDateValue(minDate);
+  const normalizedMaxDate = normalizeDateValue(maxDate);
 
-  const handleSelect = (date: Date | undefined) => {
-    setDate(date);
+  const handleSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
     setOpen(false);
   };
 
@@ -57,29 +59,32 @@ export function DatePicker({
           size={size}
           className={cn(
             "w-full justify-between border-slate-150 bg-transparent px-3 font-normal text-basic hover:bg-transparent hover:text-basic [&>span]:truncate",
-            !date && "text-muted-foreground",
+            !normalizedDate && "text-muted-foreground",
             className,
           )}
         >
-          {date ? (
-            datefns.format(date, "PPP")
+          {normalizedDate ? (
+            <span>{formatDateText(normalizedDate)}</span>
           ) : (
-            <span>{t("datePicker.placeholder")}</span>
+            <span>{t("placeholder")}</span>
           )}
           <CalendarIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          defaultMonth={date}
+          selected={normalizedDate}
+          defaultMonth={normalizedDate ?? normalizedDefaultValue}
           onSelect={handleSelect}
-          disabled={(date) => {
-            if (minDate && date < minDate) return true;
-            if (maxDate && date > maxDate) return true;
-            return false;
-          }}
+          disabled={(calendarDate) =>
+            isCalendarDateDisabled(
+              calendarDate,
+              normalizedMinDate,
+              normalizedMaxDate,
+            )
+          }
         />
       </PopoverContent>
     </Popover>
