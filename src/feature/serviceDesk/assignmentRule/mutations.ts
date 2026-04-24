@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { serviceDeskAssignmentRuleApi } from "@/api/serviceDesk/assignmentRule";
+import { serviceDeskAssignmentRuleApi } from "@/feature/serviceDesk/assignmentRule";
 
 import { assignmentRuleQueryKeys } from "./queryKeys";
 

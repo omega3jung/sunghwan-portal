@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TicketDetail } from "@/domain/serviceDesk";
-import { RecipientGroup } from "@/feature/serviceDesk/ticket";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { RecipientGroup } from "@/feature/serviceDesk/shared";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 import { cn, initials } from "@/shared/utils";

@@ -1,8 +1,8 @@
-import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
+import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import {
   SERVICE_DESK_ASSIGNMENT_RULE_KEY,
   SERVICE_DESK_KEY,
-} from "@/feature/serviceDesk/keys";
+} from "@/feature/serviceDesk/shared/keys";
 
 import { ServiceDeskAssignmentRuleListParams } from "./types";
 

@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { mapAssignmentRuleItemPayload } from "@/api/serviceDesk/assignmentRule/mapper";
-import {
-  toAssignmentRuleWritePayload,
-  UpdateAssignmentRuleInput,
-} from "@/api/serviceDesk/assignmentRule/write";
 import {
   isInternalUser,
   isRemoteRequest,
@@ -13,13 +8,17 @@ import {
 } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import { mapAssignmentRuleItemPayload } from "@/feature/serviceDesk/assignmentRule/mapper";
 import { updateAssignmentRuleSchema } from "@/feature/serviceDesk/assignmentRule/request.schema";
-
+import {
+  toAssignmentRuleWritePayload,
+  UpdateAssignmentRuleInput,
+} from "@/feature/serviceDesk/assignmentRule/write";
 import {
   localDeleteAssignmentRule,
   localGetAssignmentRule,
   localUpdateAssignmentRule,
-} from "../localDemo";
+} from "@/server/serviceDesk/settings/assignmentRule/localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
@@ -64,7 +63,11 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.assignmentRules.localDemo.invalidPayload") },
+      {
+        message: tServiceDeskApi(
+          "api.assignmentRules.localDemo.invalidPayload",
+        ),
+      },
       { status: 400 },
     );
   }

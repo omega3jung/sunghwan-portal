@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { serviceDeskCategoryApi } from "@/api/serviceDesk/category";
+import { serviceDeskCategoryApi } from "@/feature/serviceDesk/category";
 import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
 import { DbParams } from "@/shared/types/api";
 

@@ -15,7 +15,7 @@ import type { TicketHistory } from "@/domain/serviceDesk";
 import {
   TicketHistoryTimelineContent,
   TicketHistoryTimelineHeader,
-} from "@/feature/serviceDesk/ticket/history";
+} from "@/feature/serviceDesk/ticketHistory";
 import { NS } from "@/lib/i18n";
 
 type TicketHistorySheetProps = {
@@ -44,9 +44,7 @@ export function TicketHistorySheet({
       >
         <SheetHeader className="sr-only">
           <SheetTitle>{t("historySheet.title")}</SheetTitle>
-          <SheetDescription>
-            {t("historySheet.description")}
-          </SheetDescription>
+          <SheetDescription>{t("historySheet.description")}</SheetDescription>
         </SheetHeader>
         <div className="flex h-full min-h-0 flex-col bg-background">
           <div className="border-b border-primary-muted px-4 py-3">

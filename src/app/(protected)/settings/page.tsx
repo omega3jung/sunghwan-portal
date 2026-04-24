@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createSettingsCardMock } from "@/app/_mocks/ui/navigation/settingsNavigation";
 import { Card } from "@/components/ui/card";
 import { NS } from "@/lib/i18n";
+import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "./constants";

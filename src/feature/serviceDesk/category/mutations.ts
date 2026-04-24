@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { serviceDeskCategoryApi } from "@/api/serviceDesk/category";
+import { serviceDeskCategoryApi } from "@/feature/serviceDesk/category";
 
 import { categoryQueryKeys } from "./queryKeys";
 

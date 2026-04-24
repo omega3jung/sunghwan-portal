@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Session } from "next-auth";
 
-import { userProfileApi } from "@/api/user";
+import { userProfileApi } from "@/feature/user/profile";
 
 export const useCurrentUserProfileQuery = (session: Session | null) => {
   const currentUserId = session?.impersonation

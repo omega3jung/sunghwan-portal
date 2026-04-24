@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  mapApprovalSettingsListPayload,
-  mapApprovalSettingsTreePayload,
-  mapApprovalStepItemPayload,
-} from "@/api/serviceDesk/approvalStep/mapper";
-import {
-  CreateApprovalStepInput,
-  toApprovalStepWritePayload,
-} from "@/api/serviceDesk/approvalStep/write";
-import {
   isInternalUser,
   isRemoteRequest,
   proxyJson,
@@ -17,16 +8,24 @@ import {
 } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
+  mapApprovalSettingsListPayload,
+  mapApprovalSettingsTreePayload,
+  mapApprovalStepItemPayload,
+} from "@/feature/serviceDesk/approvalStep/mapper";
+import {
   createApprovalStepSchema,
   saveApprovalStepTreeSchema,
 } from "@/feature/serviceDesk/approvalStep/request.schema";
 import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
-
+import {
+  CreateApprovalStepInput,
+  toApprovalStepWritePayload,
+} from "@/feature/serviceDesk/approvalStep/write";
 import {
   localCreateApprovalStep,
   localListApprovalSteps,
   localSaveApprovalStepTree,
-} from "./localDemo";
+} from "@/server/serviceDesk/settings/approvalStep/localDemo";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

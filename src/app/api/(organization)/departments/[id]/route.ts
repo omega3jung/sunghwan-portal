@@ -1,18 +1,18 @@
 // app/api/departments/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelDepartmentMapper,
   mapDepartmentItemPayload,
-} from "@/api/organization/department/mapper";
+} from "@/feature/organization/department/mapper";
 import {
   toDepartmentMockResource,
   toDepartmentWritePayload,
   UpdateDepartmentInput,
-} from "@/api/organization/department/write";
-import { departmentsMock } from "@/app/_mocks/domain/organization";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+} from "@/feature/organization/department/write";
+import { departmentsMock } from "@/mocks/domain/organization";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;

@@ -70,9 +70,6 @@
     "lastComment": "Último comentario",
     "ticketCreation": "Creación del ticket",
     "processingFlow": "Flujo de procesamiento",
-    "dragDrop": "Arrastra y suelta archivos aquí",
-    "uploadFile": "o haz clic para explorar",
-    "noAttaches": "No hay archivos adjuntos",
     "foundDraft": "Borrador encontrado",
     "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará."
   },

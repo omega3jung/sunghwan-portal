@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
+import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/recommendation.localDemo";
 import { isLocale } from "@/shared/utils/language";
-
-import { resolveLocalAssignmentRecommendation } from "./localDemo";
 
 const parseRecommendationInput = async (
   request: NextRequest,

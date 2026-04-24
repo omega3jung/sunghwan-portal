@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 
 import { DEFAULT_DOCUMENT_ID } from "../constants/documents";
 import type { DocumentGroup, DocumentResource } from "../types/documents";

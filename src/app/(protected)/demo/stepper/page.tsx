@@ -3,14 +3,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  connectorStyleData,
-  labelPositionData,
-  orientationData,
-  stepColorData,
-  stepperMock,
-  stepVariantData,
-} from "@/app/_mocks/ui/demo/stepper";
 import { Stepper } from "@/components/custom/Stepper";
 import {
   ConnectorStyle,
@@ -24,8 +16,16 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { useLanguageState } from "@/hooks/useLanguage";
+import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { NS } from "@/lib/i18n";
+import {
+  connectorStyleData,
+  labelPositionData,
+  orientationData,
+  stepColorData,
+  stepperMock,
+  stepVariantData,
+} from "@/mocks/ui/demo/stepper";
 import { cn } from "@/shared/utils";
 
 export default function AvatarMultiComboBoxPage() {

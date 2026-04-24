@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { mapCategoryItemPayload } from "@/api/serviceDesk/category/mapper";
-import {
-  toCategoryWritePayload,
-  UpdateCategoryInput,
-} from "@/api/serviceDesk/category/write";
 import {
   isInternalUser,
   isRemoteRequest,
@@ -13,13 +8,17 @@ import {
 } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import { mapCategoryItemPayload } from "@/feature/serviceDesk/category/mapper";
 import { updateCategorySchema } from "@/feature/serviceDesk/category/request.schema";
-
+import {
+  toCategoryWritePayload,
+  UpdateCategoryInput,
+} from "@/feature/serviceDesk/category/write";
 import {
   localGetCategory,
   localSoftDeleteCategory,
   localUpdateCategory,
-} from "../localDemo";
+} from "@/server/serviceDesk/settings/category/localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;

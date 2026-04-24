@@ -1,7 +1,7 @@
 import {
   SERVICE_DESK_CATEGORY_KEY,
   SERVICE_DESK_KEY,
-} from "@/feature/serviceDesk/keys";
+} from "@/feature/serviceDesk/shared/keys";
 import { DbParams } from "@/shared/types/api";
 
 export const categoryQueryKeys = {

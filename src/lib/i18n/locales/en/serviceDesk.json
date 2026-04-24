@@ -69,9 +69,6 @@
     "lastComment": "Last comment",
     "ticketCreation": "Ticket Creation",
     "processingFlow": "Processing Flow",
-    "dragDrop": "Drag and drop files here",
-    "uploadFile": "or click to browse",
-    "noAttaches": "No attaches",
     "foundDraft": "Found draft",
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
   },

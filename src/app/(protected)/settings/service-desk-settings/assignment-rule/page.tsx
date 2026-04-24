@@ -6,6 +6,10 @@ import { Globe, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import {
+  findTreeNodePath,
+  resolveTreeNodeIdByPath,
+} from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,16 +22,15 @@ import { Client } from "@/domain/serviceDesk";
 import {
   useSaveServiceDeskAssignmentRuleTree,
   useServiceDeskAssignmentRuleListQuery,
-  useServiceDeskCategoryListQuery,
-} from "@/feature/serviceDesk";
-import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+} from "@/feature/serviceDesk/assignmentRule";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
+import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
 import { useMutationToast } from "@/shared/utils";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
-import { findTreeNodePath, resolveTreeNodeIdByPath } from "../utils/tree";
 import { AssignmentRuleForm } from "./components/AssignmentRuleForm";
 import { AsgginmentRuleTree } from "./components/AssignmentRuleTree";
 import { useAssignmentRuleTree } from "./hooks/useAssignmentRuleTree";
@@ -139,13 +142,12 @@ export default function CategoryPage() {
 
       setBaselineSignatureByClient((previousState) => ({
         ...previousState,
-        [selectedClient]: createAssignmentRuleSettingsSignatureFromAssignmentRules(
-          {
+        [selectedClient]:
+          createAssignmentRuleSettingsSignatureFromAssignmentRules({
             categories,
             selectedClient,
             assignmentRules: savedAssignmentRules,
-          },
-        ),
+          }),
       }));
       setTree(nextTree);
       setSelectedId(resolveTreeNodeIdByPath(nextTree, selectedPath));

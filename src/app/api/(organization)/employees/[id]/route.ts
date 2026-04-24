@@ -1,18 +1,18 @@
 // app/api/employees/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelEmployeeMapper,
   mapEmployeeItemPayload,
-} from "@/api/organization/employee/mapper";
+} from "@/feature/organization/employee/mapper";
 import {
   toEmployeeMockResource,
   toEmployeeWritePayload,
   UpdateEmployeeInput,
-} from "@/api/organization/employee/write";
-import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+} from "@/feature/organization/employee/write";
+import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;

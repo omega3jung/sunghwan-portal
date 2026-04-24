@@ -2,7 +2,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { create } from "zustand";
 
-import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { useWindowDimensions } from "@/shared/hooks/useWindowDimensions";
 
 type LeftMenuState = {
   isOpen: boolean;

@@ -6,7 +6,7 @@ import React, { ReactElement, ReactNode, useMemo } from "react";
 import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useImpersonation } from "@/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
 import { cn } from "@/shared/utils";
 

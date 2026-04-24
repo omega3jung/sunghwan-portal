@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { timelineMock } from "@/app/_mocks/ui/demo/timeline";
 import {
   Timeline,
   type TimelineItemData,
@@ -20,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { timelineMock } from "@/mocks/ui/demo/timeline";
 import { cn } from "@/shared/utils";
 
 const markerIcons: LucideIcon[] = [

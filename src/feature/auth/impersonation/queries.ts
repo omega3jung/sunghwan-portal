@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { userImpersonationApi } from "@/api/auth";
-
+import { userImpersonationApi } from "./api";
 import { userImpersonationQueryKeys } from "./queryKeys";
 
 export const useStartUserImpersonation = () => {

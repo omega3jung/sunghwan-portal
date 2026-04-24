@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  camelTicketActionMapper,
-  mapTicketActionPayload,
-} from "@/api/serviceDesk/ticket/action";
-import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import {
+  camelTicketActionMapper,
+  mapTicketActionPayload,
+} from "@/feature/serviceDesk/ticketAction";
+import { internalActionsMocks } from "@/mocks/scenarios/serviceDesk/internalActionsMock";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;

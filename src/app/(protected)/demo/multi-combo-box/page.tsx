@@ -3,12 +3,6 @@
 import { useState } from "react";
 
 import {
-  buttonVariantData,
-  comboBoxVariantData,
-  multiComboBoxMocks,
-  treeMultiComboBoxMocks,
-} from "@/app/_mocks/ui/demo/multi-combo-box";
-import {
   type ButtonVariant,
   MultiComboBox,
   TreeMultiComboBox,
@@ -16,6 +10,12 @@ import {
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  buttonVariantData,
+  comboBoxVariantData,
+  multiComboBoxMocks,
+  treeMultiComboBoxMocks,
+} from "@/mocks/ui/demo/multi-combo-box";
 
 import { comboBoxVariant, indexVariant } from "./type";
 

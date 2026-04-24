@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { mapTicketActionPayload } from "@/api/serviceDesk/ticket/action";
 import {
   getCurrentEmployeeUserName,
   getUserRole,
@@ -10,10 +9,15 @@ import {
 } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
-import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
-
-import { localPost } from "./localDemo";
-import { ACTION_PATH_BY_TYPE, TicketActionApiType } from "./types";
+import {
+  mapTicketActionPayload,
+  TicketActionFormValues,
+} from "@/feature/serviceDesk/ticketAction";
+import { localPost } from "@/server/serviceDesk/ticket/command/localDemo";
+import {
+  ACTION_PATH_BY_TYPE,
+  type TicketActionApiType,
+} from "@/server/serviceDesk/ticket/command/types";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;

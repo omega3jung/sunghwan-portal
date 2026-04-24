@@ -6,6 +6,10 @@ import { Globe, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import {
+  findTreeNodePath,
+  resolveTreeNodeIdByPath,
+} from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,15 +22,14 @@ import type { Client } from "@/domain/serviceDesk";
 import {
   useSaveServiceDeskCategoryTree,
   useServiceDeskCategoryListQuery,
-} from "@/feature/serviceDesk";
-import { useCurrentPreference } from "@/hooks/useCurrentPreference";
+} from "@/feature/serviceDesk/category";
+import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
 import { useMutationToast } from "@/shared/utils";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
-import { findTreeNodePath, resolveTreeNodeIdByPath } from "../utils/tree";
 import { CategoryForm } from "./components/CategoryForm";
 import { CategoryTree } from "./components/CategoryTree";
 import { useCategoryTree } from "./hooks/useCategoryTree";

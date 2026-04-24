@@ -1,0 +1,122 @@
+﻿[
+  {
+    "job_field_id": 15,
+    "job_field_name": { "en": "IT Director" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 10,
+    "job_field_parent_id": 0,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 16,
+    "job_field_name": { "en": "IT Manager" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 10,
+    "job_field_parent_id": 15,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 17,
+    "job_field_name": { "en": "Infrastructure Manager" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 11,
+    "job_field_parent_id": 15,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 18,
+    "job_field_name": { "en": "Systems Engineer" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 11,
+    "job_field_parent_id": 17,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 19,
+    "job_field_name": { "en": "Network Administrator" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 11,
+    "job_field_parent_id": 18,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 20,
+    "job_field_name": { "en": "Development Manager" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 12,
+    "job_field_parent_id": 15,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 21,
+    "job_field_name": { "en": "Development Operations" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 12,
+    "job_field_parent_id": 20,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 22,
+    "job_field_name": { "en": "Frontend Engineer" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 12,
+    "job_field_parent_id": 20,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 23,
+    "job_field_name": { "en": "Backend Engineer" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 12,
+    "job_field_parent_id": 20,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 24,
+    "job_field_name": { "en": "IT Support Manager" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 13,
+    "job_field_parent_id": 15,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 25,
+    "job_field_name": { "en": "IT Support Specialist" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 13,
+    "job_field_parent_id": 24,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 26,
+    "job_field_name": { "en": "IT Technician" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 13,
+    "job_field_parent_id": 25,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 27,
+    "job_field_name": { "en": "IT Security Manager" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 14,
+    "job_field_parent_id": 15,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 28,
+    "job_field_name": { "en": "Security Analyst" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 14,
+    "job_field_parent_id": 27,
+    "job_field_active": true
+  },
+  {
+    "job_field_id": 29,
+    "job_field_name": { "en": "Security Engineer" },
+    "job_field_description": { "en": "" },
+    "job_field_department_id": 14,
+    "job_field_parent_id": 28,
+    "job_field_active": true
+  }
+]

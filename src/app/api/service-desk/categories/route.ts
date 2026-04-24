@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  mapCategoryItemPayload,
-  mapCategoryListPayload,
-  mapCategoryTreePayload,
-} from "@/api/serviceDesk/category/mapper";
-import {
-  CreateCategoryInput,
-  toCategoryWritePayload,
-} from "@/api/serviceDesk/category/write";
-import {
   isInternalUser,
   isRemoteRequest,
   proxyJson,
@@ -17,16 +8,24 @@ import {
 } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
+  mapCategoryItemPayload,
+  mapCategoryListPayload,
+  mapCategoryTreePayload,
+} from "@/feature/serviceDesk/category/mapper";
+import {
   createCategorySchema,
   saveCategoryTreeSchema,
 } from "@/feature/serviceDesk/category/request.schema";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
-
+import {
+  CreateCategoryInput,
+  toCategoryWritePayload,
+} from "@/feature/serviceDesk/category/write";
 import {
   localCreateCategory,
   localListCategories,
   localSaveCategoryTree,
-} from "./localDemo";
+} from "@/server/serviceDesk/settings/category/localDemo";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

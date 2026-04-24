@@ -1,7 +1,8 @@
 // src/feature/user/preference/repo.ts
 
-import { userPreferenceApi } from "@/api/user";
 import { Preference } from "@/domain/config";
+
+import { userPreferenceApi } from "./api";
 
 export const userPreferenceRepo = {
   async get(userId: string | null): Promise<Preference> {

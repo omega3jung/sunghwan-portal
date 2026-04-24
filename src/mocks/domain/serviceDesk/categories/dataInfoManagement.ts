@@ -1,0 +1,132 @@
+﻿import { DbCategory } from "@/feature/serviceDesk/category";
+
+const dataInfoManagementCategoryMock = {
+  category_id: 71,
+  category_name: {
+    en: "Data & Information Management",
+    es: "Gestión de Datos e Información",
+    fr: "Gestion des données et de l’information",
+    ko: "데이터 & 정보 관리",
+  },
+  category_description: {
+    en: "Requests related to data correction, access, reporting, and controlled data handling.",
+    es: "Solicitudes relacionadas con la corrección de datos, acceso, reportes y gestión controlada de información.",
+    fr: "Demandes liées à la correction des données, à l’accès, aux rapports et à la gestion contrôlée des informations.",
+    ko: "데이터와 정보 수정이나 특별한 접근이 필요한 경우 해결을 요청합니다.",
+  },
+  category_request_template: { en: "", es: "", fr: "", ko: "" },
+  category_index: 7,
+  category_active: true,
+  category_scope: "INTERNAL",
+  default_priority: "medium",
+  default_risk_level: "high",
+  default_sla_days: 3,
+  sub_category: [
+    {
+      category_id: 72,
+      category_name: {
+        en: "Data correction request",
+        es: "Solicitud de corrección de datos",
+        fr: "Demande de correction de données",
+        ko: "데이터 수정 요청",
+      },
+      category_description: {
+        en: "Request correction of inconsistent or incorrect data.",
+        es: "Solicite la corrección de datos inconsistentes o incorrectos.",
+        fr: "Demander la correction de données incorrectes ou incohérentes.",
+        ko: "데이터 불일치 문제에 대해 수정을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please include the data to be corrected and the expected changes.",
+        es: "Incluya los datos a corregir y los cambios esperados.",
+        fr: "Veuillez inclure les données à corriger et les modifications attendues.",
+        ko: "수정이 필요한 데이터 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 1,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: "medium",
+      default_sla_days: null,
+    },
+    {
+      category_id: 73,
+      category_name: {
+        en: "Data access request",
+        es: "Solicitud de acceso a datos",
+        fr: "Demande d’accès aux données",
+        ko: "데이터 확인 요청",
+      },
+      category_description: {
+        en: "Request access to restricted or specific data.",
+        es: "Solicite acceso a datos restringidos o específicos.",
+        fr: "Demander l’accès à des données restreintes ou spécifiques.",
+        ko: "확인이 필요한 데이터에 대해 해결을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please specify the data required and the purpose of access.",
+        es: "Especifique los datos requeridos y el propósito del acceso.",
+        fr: "Veuillez préciser les données demandées et l’objectif de l’accès.",
+        ko: "확인이 필요한 데이터 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 2,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: null,
+      default_sla_days: null,
+    },
+    {
+      category_id: 74,
+      category_name: {
+        en: "Report data issue",
+        es: "Problema de datos en reportes",
+        fr: "Problème de données de rapport",
+        ko: "리포트 데이터 문제",
+      },
+      category_description: {
+        en: "Report issues related to report or dashboard data.",
+        es: "Informe problemas relacionados con datos de reportes o paneles.",
+        fr: "Signaler des problèmes liés aux données des rapports ou tableaux de bord.",
+        ko: "리포트 데이터에 문제가 있는 경우 해결을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please include the report name and details of the issue.",
+        es: "Incluya el nombre del reporte y los detalles del problema.",
+        fr: "Veuillez inclure le nom du rapport et les détails du problème.",
+        ko: "문제가 발생한 리포트 데이터 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 3,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: "medium",
+      default_sla_days: null,
+    },
+    {
+      category_id: 75,
+      category_name: {
+        en: "Data export request",
+        es: "Solicitud de exportación de datos",
+        fr: "Demande d’exportation de données",
+        ko: "데이터 반출 요청",
+      },
+      category_description: {
+        en: "Request export of data beyond standard reports.",
+        es: "Solicite la exportación de datos fuera de los reportes estándar.",
+        fr: "Demander l’exportation de données au-delà des rapports standards.",
+        ko: "제공된 리포트 외 데이터가 필요한 특수한 리포트를 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please specify the data required and the export purpose.",
+        es: "Especifique los datos necesarios y el propósito de la exportación.",
+        fr: "Veuillez préciser les données requises et l’objectif de l’exportation.",
+        ko: "필요한 데이터 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 4,
+      category_active: true,
+      default_priority: null,
+      default_risk_level: null,
+      default_sla_days: null,
+    },
+  ],
+} satisfies DbCategory;
+
+export default dataInfoManagementCategoryMock;

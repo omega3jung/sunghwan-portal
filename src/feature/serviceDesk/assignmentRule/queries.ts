@@ -4,7 +4,7 @@ import {
   AssignmentRecommendationInput,
   serviceDeskAssignmentRecommendationApi,
   serviceDeskAssignmentRuleApi,
-} from "@/api/serviceDesk/assignmentRule";
+} from "@/feature/serviceDesk/assignmentRule";
 import { DYNAMIC_QUERY_OPTIONS, STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
 
 import { assignmentRuleQueryKeys } from "./queryKeys";

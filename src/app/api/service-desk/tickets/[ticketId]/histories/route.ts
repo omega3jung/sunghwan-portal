@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  camelTicketHistoryMapper,
-  mapTicketHistoryListPayload,
-} from "@/api/serviceDesk/ticket/history";
-import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import {
+  camelTicketHistoryMapper,
+  mapTicketHistoryListPayload,
+} from "@/feature/serviceDesk/ticketHistory";
+import { internalHistoriesMocks } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;

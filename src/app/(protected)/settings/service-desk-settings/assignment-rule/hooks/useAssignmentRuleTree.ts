@@ -2,15 +2,15 @@ import type { UniqueIdentifier } from "@dnd-kit/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { SupportedLanguage } from "@/domain/config";
-import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
-
-import type { TreeNodePath } from "../../utils/tree";
 import {
   findTreeNodeData,
   findTreeNodePath,
   resolveTreeNodeIdByPath,
-} from "../../utils/tree";
+  TreeNodePath,
+} from "@/components/custom/dnd/tree/utilities";
+import { SupportedLanguage } from "@/domain/config";
+import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
+
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";
 

@@ -1,7 +1,7 @@
 import {
   SERVICE_DESK_APPROVAL_STEP_KEY,
   SERVICE_DESK_KEY,
-} from "@/feature/serviceDesk/keys";
+} from "@/feature/serviceDesk/shared/keys";
 
 import { ServiceDeskApprovalStepListParams } from "./types";
 

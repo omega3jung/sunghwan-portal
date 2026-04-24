@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
-} from "@/api/serviceDesk/ticket/mapper";
+} from "@/feature/serviceDesk/ticket/api/mapper";
 import {
   toTicketMockDetail,
   toTicketMockSummaryResource,
-} from "@/api/serviceDesk/ticket/mock";
+} from "@/feature/serviceDesk/ticketAction/mock";
 import {
   CreateTicketInput,
   toTicketWritePayload,
-} from "@/api/serviceDesk/ticket/write";
-import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTicketsMock";
-import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+} from "@/feature/serviceDesk/ticketAction/write";
+import { clientTicketsMocks } from "@/mocks/scenarios/serviceDesk/clientTicketsMock";
+import { internalTicketsMocks } from "@/mocks/scenarios/serviceDesk/internalTicketsMock";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

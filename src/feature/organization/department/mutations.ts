@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { departmentApi } from "@/api/organization/department";
+import { departmentApi } from "@/feature/organization/department";
 
 import { departmentQueryKeys } from "./queryKeys";
 

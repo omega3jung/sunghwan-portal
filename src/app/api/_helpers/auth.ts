@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
+import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
 import {
   resolveClientProfile,
   resolveInternalProfile,
-} from "@/app/_mocks/domain/user";
-import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
+} from "@/mocks/domain/user";
 
 export async function getAuthToken(req: NextRequest) {
   return getToken({ req, secret: process.env.NEXTAUTH_SECRET });

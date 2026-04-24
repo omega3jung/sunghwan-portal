@@ -11,26 +11,26 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
-import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk";
-import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/keys";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
+import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import {
   CreateTicketDialog,
-  mapSearchCriteriaToDbParams,
   TicketList,
-  TicketSearchCriteria,
   useServiceDeskTicketListQuery,
 } from "@/feature/serviceDesk/ticket";
 import {
+  TicketSearchCriteria,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
   useTicketSearchCriteriaForm,
-} from "@/feature/serviceDesk/ticket/search";
-import { useCurrentPreference } from "@/hooks/useCurrentPreference";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { useSessionStorageState } from "@/hooks/useSessionStorageState";
+} from "@/feature/serviceDesk/ticketSearch";
+import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticketSearch/utils";
+import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
+import { useSessionStorageState } from "@/shared/hooks/useSessionStorageState";
 import type { ImageValueLabel } from "@/shared/types";
 
 const isPresent = <T,>(value: T | null | undefined): value is T =>

@@ -4,8 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
   buildTree,
+  findTreeNodeData,
+  findTreeNodePath,
   flattenTree,
   removeItem,
+  resolveTreeNodeIdByPath,
+  TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
 import { SupportedLanguage } from "@/domain/config";
 import {
@@ -13,12 +17,6 @@ import {
   ClientCategoryTree,
 } from "@/domain/serviceDesk";
 
-import type { TreeNodePath } from "../../utils/tree";
-import {
-  findTreeNodeData,
-  findTreeNodePath,
-  resolveTreeNodeIdByPath,
-} from "../../utils/tree";
 import {
   getDefaultApprovalData,
   MAX_APPROVAL_STEP_PER_CATEGORY,

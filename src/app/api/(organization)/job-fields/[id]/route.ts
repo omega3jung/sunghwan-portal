@@ -1,18 +1,18 @@
 // app/api/job-fields/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelJobFieldMapper,
   mapJobFieldItemPayload,
-} from "@/api/organization/jobField/mapper";
+} from "@/feature/organization/jobField/mapper";
 import {
   toJobFieldMockResource,
   toJobFieldWritePayload,
   UpdateJobFieldInput,
-} from "@/api/organization/jobField/write";
-import { jobFieldsMock } from "@/app/_mocks/domain/organization/jobFields";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+} from "@/feature/organization/jobField/write";
+import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;

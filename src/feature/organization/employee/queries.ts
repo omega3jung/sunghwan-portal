@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { employeeApi } from "@/api/organization/employee";
+import { employeeApi } from "@/feature/organization/employee";
 import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
 import { DbParams } from "@/shared/types/api";
 

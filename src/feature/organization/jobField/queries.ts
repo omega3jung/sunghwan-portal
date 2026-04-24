@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { jobFieldApi } from "@/api/organization/jobField";
+import { jobFieldApi } from "@/feature/organization/jobField";
 import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
 import { DbParams } from "@/shared/types/api";
 

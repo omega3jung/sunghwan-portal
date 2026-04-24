@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  camelTicketTrackTimeMapper,
-  DbTicketTrackTime,
-  mapTicketTrackTimeListPayload,
-  mapTicketTrackTimePayload,
-} from "@/api/serviceDesk/ticket/trackTime";
-import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
-import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
@@ -19,20 +12,24 @@ import {
   tServiceDeskApi,
 } from "@/app/api/service-desk/_shared/messages";
 import {
-  canChangeStatus,
-  getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticket/trackTime/components/TrackTimeTool/payload";
-import { TICKET_TRACK_TIME_STATUS_OPTIONS } from "@/feature/serviceDesk/ticket/trackTime/constants";
-import type {
+  camelTicketTrackTimeMapper,
+  DbTicketTrackTime,
+  mapTicketTrackTimeListPayload,
+  mapTicketTrackTimePayload,
+  TICKET_TRACK_TIME_STATUS_OPTIONS,
   TicketTrackTimeStatus,
   TicketTrackTimeSubmitPayload,
-} from "@/feature/serviceDesk/ticket/trackTime/types";
-
+} from "@/feature/serviceDesk/ticketTrackTime";
+import {
+  canChangeStatus,
+  getCurrentTrackedMinutes,
+} from "@/feature/serviceDesk/ticketTrackTime/components/TrackTimeTool/payload";
+import { internalHistoriesMocks } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,
   getTicketContext,
-} from "../command/[action]/utils";
+} from "@/server/serviceDesk/ticket/command/utils";
 
 const localTrackTimes: DbTicketTrackTime[] = [];
 

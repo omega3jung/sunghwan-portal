@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  mapApprovalStepItemPayload,
-} from "@/api/serviceDesk/approvalStep/mapper";
-import {
-  toApprovalStepWritePayload,
-  UpdateApprovalStepInput,
-} from "@/api/serviceDesk/approvalStep/write";
-import {
   isInternalUser,
   isRemoteRequest,
   proxyJson,
@@ -15,13 +8,19 @@ import {
 } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import {
+  mapApprovalStepItemPayload,
+} from "@/feature/serviceDesk/approvalStep/mapper";
 import { updateApprovalStepSchema } from "@/feature/serviceDesk/approvalStep/request.schema";
-
+import {
+  toApprovalStepWritePayload,
+  UpdateApprovalStepInput,
+} from "@/feature/serviceDesk/approvalStep/write";
 import {
   localGetApprovalStep,
   localSoftDeleteApprovalStep,
   localUpdateApprovalStep,
-} from "../localDemo";
+} from "@/server/serviceDesk/settings/approvalStep/localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;

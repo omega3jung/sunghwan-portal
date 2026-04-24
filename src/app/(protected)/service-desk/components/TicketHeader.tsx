@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import type { TicketDetail } from "@/domain/serviceDesk";
-import { TrackTimeTool } from "@/feature/serviceDesk/ticket/trackTime/components";
+import { TrackTimeTool } from "@/feature/serviceDesk/ticketTrackTime";
 import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils";
 

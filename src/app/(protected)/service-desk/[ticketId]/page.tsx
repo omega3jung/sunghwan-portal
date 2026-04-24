@@ -5,18 +5,18 @@ import { useTranslation } from "react-i18next";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
+import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
+import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket";
 import {
   TicketActionList,
   TicketActionTool,
-  TicketAttachmentList,
   useServiceDeskTicketActionListQuery,
-  useServiceDeskTicketHistoryListQuery,
-  useServiceDeskTicketQuery,
-} from "@/feature/serviceDesk/ticket";
-import { useCurrentPreference } from "@/hooks/useCurrentPreference";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+} from "@/feature/serviceDesk/ticketAction";
+import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory";
+import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";

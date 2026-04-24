@@ -1,7 +1,6 @@
 // app/api/user-profile/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { clientProfiles, demoProfiles } from "@/app/_mocks/domain/user";
 import {
   checkAdminOrSelf,
   isRemoteRequest,
@@ -9,6 +8,7 @@ import {
 } from "@/app/api/_helpers";
 import { UserIdRouteContext } from "@/app/api/_helpers/types";
 import { AppUser } from "@/domain/user";
+import { clientProfiles, demoProfiles } from "@/mocks/domain/user";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = context.params;

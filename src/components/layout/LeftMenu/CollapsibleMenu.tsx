@@ -1,7 +1,6 @@
 import { ChevronRight, Link } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { createMenuMock } from "@/app/_mocks/ui/navigation/leftMenu";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,7 +21,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useImpersonation } from "@/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
+import { createMenuMock } from "@/mocks/ui/navigation/leftMenu";
 
 import { filterMenuByAccessLevel } from "./menu.utils";
 

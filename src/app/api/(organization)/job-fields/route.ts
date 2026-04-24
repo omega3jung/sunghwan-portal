@@ -1,18 +1,18 @@
 // app/api/job-fields/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import {
   camelJobFieldMapper,
   mapJobFieldItemPayload,
   mapJobFieldListPayload,
-} from "@/api/organization/jobField/mapper";
+} from "@/feature/organization/jobField/mapper";
 import {
   CreateJobFieldInput,
   toJobFieldMockResource,
   toJobFieldWritePayload,
-} from "@/api/organization/jobField/write";
-import { jobFieldsMock } from "@/app/_mocks/domain/organization/jobFields";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+} from "@/feature/organization/jobField/write";
+import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

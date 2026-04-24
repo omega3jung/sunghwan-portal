@@ -2,7 +2,6 @@ import { Contact, User, UserCog, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { clientProfiles } from "@/app/_mocks/domain/user";
 import {
   DropdownMenuItem,
   DropdownMenuPortal,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import { clientProfiles } from "@/mocks/domain/user";
 
 type Props = {
   user: AppUser;

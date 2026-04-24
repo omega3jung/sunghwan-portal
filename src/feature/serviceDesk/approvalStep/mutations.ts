@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { serviceDeskApprovalStepApi } from "@/api/serviceDesk/approvalStep";
-
+import { serviceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
 
 export const useCreateServiceDeskApprovalStep = () => {

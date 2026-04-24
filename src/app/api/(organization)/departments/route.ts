@@ -1,18 +1,18 @@
 // app/api/departments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import {
   camelDepartmentMapper,
   mapDepartmentItemPayload,
   mapDepartmentListPayload,
-} from "@/api/organization/department/mapper";
+} from "@/feature/organization/department/mapper";
 import {
   CreateDepartmentInput,
   toDepartmentMockResource,
   toDepartmentWritePayload,
-} from "@/api/organization/department/write";
-import { departmentsMock } from "@/app/_mocks/domain/organization";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+} from "@/feature/organization/department/write";
+import { departmentsMock } from "@/mocks/domain/organization";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

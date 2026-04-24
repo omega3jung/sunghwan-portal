@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { useCurrentLanguage } from "@/hooks/useCurrentLanguage";
+import { useCurrentLanguage } from "@/feature/user/preference/hooks/useCurrentLanguage";
 import { Localized, LocalizedText } from "@/shared/types";
 import { Locale } from "@/shared/types";
 

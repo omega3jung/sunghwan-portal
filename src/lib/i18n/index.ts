@@ -3,11 +3,12 @@ import { initReactI18next } from "react-i18next";
 
 import { SUPPORTED_LANGUAGES } from "@/app/config/language";
 import { datePickerLocales } from "@/components/custom/DatePicker/locales";
+import { fileAttachmentLocales } from "@/components/custom/FileAttachment/locales";
+import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
 import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
 import { DEFAULT_LANGUAGE } from "@/domain/config";
-import { statusBadgeLocales } from "@/shared/ui/StatusBadge/locales";
 
 import { en } from "./locales/en";
 import { es } from "./locales/es";
@@ -70,6 +71,17 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
 // User Menu.
 SUPPORTED_LANGUAGES.forEach((lng) => {
   i18n.addResourceBundle(lng, "UserMenu", userMenuLocales[lng], true, false);
+});
+
+// File Attachment.
+SUPPORTED_LANGUAGES.forEach((lng) => {
+  i18n.addResourceBundle(
+    lng,
+    "FileAttachment",
+    fileAttachmentLocales[lng],
+    true,
+    false,
+  );
 });
 
 // Status Badge.

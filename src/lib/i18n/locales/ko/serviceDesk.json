@@ -70,9 +70,6 @@
     "lastComment": "마지막 댓글",
     "ticketCreation": "티켓 생성",
     "processingFlow": "처리 흐름",
-    "dragDrop": "여기에 파일을 끌어다 놓으세요",
-    "uploadFile": "또는 클릭해서 찾아보세요",
-    "noAttaches": "첨부 파일이 없습니다",
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
   },

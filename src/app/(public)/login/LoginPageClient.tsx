@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { adminAuth } from "@/app/_mocks/domain/user";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
 import { createDefaultPreference } from "@/domain/user/preference";
@@ -16,8 +15,9 @@ import {
   useUpdateUserPreference,
   useUserPreferenceQuery,
 } from "@/feature/user/preference";
-import { useLanguageState } from "@/hooks/useLanguage";
+import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { NS } from "@/lib/i18n";
+import { adminAuth } from "@/mocks/domain/user";
 import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/shared/utils";
 

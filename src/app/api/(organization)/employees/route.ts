@@ -1,18 +1,18 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import {
   camelEmployeeMapper,
   mapEmployeeItemPayload,
   mapEmployeeListPayload,
-} from "@/api/organization/employee/mapper";
+} from "@/feature/organization/employee/mapper";
 import {
   CreateEmployeeInput,
   toEmployeeMockResource,
   toEmployeeWritePayload,
-} from "@/api/organization/employee/write";
-import { createEmployeesMock } from "@/app/_mocks/domain/organization/employee";
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+} from "@/feature/organization/employee/write";
+import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

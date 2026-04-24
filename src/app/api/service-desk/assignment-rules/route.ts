@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  mapAssignmentRuleItemPayload,
-  mapAssignmentRuleListPayload,
-  mapAssignmentRuleTreePayload,
-} from "@/api/serviceDesk/assignmentRule/mapper";
-import {
-  CreateAssignmentRuleInput,
-  toAssignmentRuleWritePayload,
-} from "@/api/serviceDesk/assignmentRule/write";
-import {
   isInternalUser,
   isRemoteRequest,
   proxyJson,
@@ -17,16 +8,24 @@ import {
 } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
+  mapAssignmentRuleItemPayload,
+  mapAssignmentRuleListPayload,
+  mapAssignmentRuleTreePayload,
+} from "@/feature/serviceDesk/assignmentRule/mapper";
+import {
   createAssignmentRuleSchema,
   saveAssignmentRuleTreeSchema,
 } from "@/feature/serviceDesk/assignmentRule/request.schema";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
-
+import {
+  CreateAssignmentRuleInput,
+  toAssignmentRuleWritePayload,
+} from "@/feature/serviceDesk/assignmentRule/write";
 import {
   localCreateAssignmentRule,
   localListAssignmentRules,
   localSaveAssignmentRuleTree,
-} from "./localDemo";
+} from "@/server/serviceDesk/settings/assignmentRule/localDemo";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -63,7 +62,11 @@ export async function POST(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.assignmentRules.localDemo.invalidPayload") },
+      {
+        message: tServiceDeskApi(
+          "api.assignmentRules.localDemo.invalidPayload",
+        ),
+      },
       { status: 400 },
     );
   }
@@ -104,7 +107,11 @@ export async function PUT(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.assignmentRules.localDemo.invalidPayload") },
+      {
+        message: tServiceDeskApi(
+          "api.assignmentRules.localDemo.invalidPayload",
+        ),
+      },
       { status: 400 },
     );
   }

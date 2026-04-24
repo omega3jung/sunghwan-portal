@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { createMenuMock } from "@/app/_mocks/ui/navigation/leftMenu";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,
@@ -19,8 +18,9 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useImpersonation } from "@/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { ENVIRONMENT } from "@/lib/environment";
+import { createMenuMock } from "@/mocks/ui/navigation/leftMenu";
 
 import { filterMenuByAccessLevel } from "./menu.utils";
 

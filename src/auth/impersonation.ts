@@ -2,10 +2,10 @@
 
 import axios from "axios";
 
-import client from "@/api/client";
-import { resolveClientAuth } from "@/app/_mocks/domain/user";
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import client from "@/lib/api";
+import { resolveClientAuth } from "@/mocks/domain/user";
 
 export async function startImpersonation({
   originalUser,

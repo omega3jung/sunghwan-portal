@@ -79,7 +79,6 @@
     "updatedAt": "수정일",
     "ticket": "티켓",
     "riskLevel": "위험도",
-    "total": "총계",
     "list": "목록"
   },
   "pagination": {

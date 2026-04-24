@@ -70,9 +70,6 @@
     "lastComment": "Dernier commentaire",
     "ticketCreation": "Création du ticket",
     "processingFlow": "Flux de traitement",
-    "dragDrop": "Glissez-déposez les fichiers ici",
-    "uploadFile": "ou cliquez pour parcourir",
-    "noAttaches": "Aucune pièce jointe",
     "foundDraft": "Brouillon trouvé",
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé."
   },

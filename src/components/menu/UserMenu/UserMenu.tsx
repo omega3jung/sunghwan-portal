@@ -25,8 +25,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { useImpersonation } from "@/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { cn, initials } from "@/shared/utils";
 
 import { DemoImpersonation } from "./DemoImpersonation";

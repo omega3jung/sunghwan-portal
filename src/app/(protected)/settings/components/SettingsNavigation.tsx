@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createSettingsNavigationMock } from "@/app/_mocks/ui/navigation/settingsNavigation";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useUserPreferenceQuery } from "@/feature/user";
 import { NS } from "@/lib/i18n";
+import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";

@@ -2,13 +2,13 @@ import { Pickaxe, Timer } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
+import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { ImageValueLabel, ISODateString } from "@/shared/types";
-import { StatusBadge } from "@/shared/ui/StatusBadge";
 import {
   formatCompactDurationFromMinutes,
   formatCompactTimeDistanceFromNow,
@@ -18,7 +18,7 @@ import {
 import {
   MetaBadge,
   PriorityBadge,
-} from "../../../../feature/serviceDesk/ticket/shared/components/TicketMetaBadge";
+} from "../../../../feature/serviceDesk/shared/components/TicketMetaBadge";
 
 type TicketSummaryProps = {
   ticket: TicketDetail;

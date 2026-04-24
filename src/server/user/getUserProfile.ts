@@ -1,8 +1,8 @@
 // src/server/user/getUserProfile.ts
-import client from "@/api/client";
-import { clientProfiles, demoProfiles } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import client from "@/lib/api";
+import { clientProfiles, demoProfiles } from "@/mocks/domain/user";
 
 export async function getUserProfile(
   authUser: AuthUser,

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { Button } from "@/components/ui/button";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { withLeadingSlash } from "@/shared/utils";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";

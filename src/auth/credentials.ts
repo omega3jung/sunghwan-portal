@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import client from "@/api/client";
-import { resolveClientAuth, resolveDemoAuth } from "@/app/_mocks/domain/user";
 import { AuthUser } from "@/domain/auth";
+import client from "@/lib/api";
+import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
 
 export type LoginResponse = AuthUser;
 type RawLoginResponse = Omit<AuthUser, "companyId" | "employeeId"> & {
