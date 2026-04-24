@@ -1,8 +1,8 @@
 import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { ClientCategoryTree } from "@/domain/serviceDesk";
 
-import { MAX_SUB_CATEGORY_PER_CATEGORY } from "./constants";
-import { CategoryData, SubCategoryData } from "./types";
+import { MAX_SUB_CATEGORY_PER_CATEGORY } from "../constants";
+import { CategoryData, SubCategoryData } from "../types";
 
 export const mapCategoryData = (
   categories: ClientCategoryTree[],

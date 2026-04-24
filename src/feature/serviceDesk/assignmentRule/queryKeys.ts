@@ -1,15 +1,16 @@
+import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
 import {
   SERVICE_DESK_ASSIGNMENT_RULE_KEY,
   SERVICE_DESK_KEY,
 } from "@/feature/serviceDesk/keys";
-import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
-import { DbParams } from "@/shared/types/api";
+
+import { ServiceDeskAssignmentRuleListParams } from "./types";
 
 export const assignmentRuleQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_ASSIGNMENT_RULE_KEY] as const,
 
   lists: () => [...assignmentRuleQueryKeys.all, "list"] as const,
-  list: (params: DbParams) =>
+  list: (params?: ServiceDeskAssignmentRuleListParams) =>
     [...assignmentRuleQueryKeys.lists(), params] as const,
 
   details: () => [...assignmentRuleQueryKeys.all, "detail"] as const,

@@ -13,7 +13,7 @@ import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTic
 import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
     if (!ticket) {
       return NextResponse.json(
-        { message: tServiceDesk("api.tickets.notFound") },
+        { message: tServiceDeskApi("api.tickets.notFound") },
         { status: 404 },
       );
     }
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
   return proxyJson(request, {
     path: `/service-desk/tickets/${ticketId}`,
-    errorMessage: tServiceDesk("api.tickets.fetch"),
+    errorMessage: tServiceDeskApi("api.tickets.fetch"),
     mapData: mapTicketDetailPayload,
   });
 }
@@ -57,7 +57,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     method: "PUT",
     path: `/service-desk/tickets/${ticketId}`,
     body: toTicketWritePayload({ ...body, id: ticketId }),
-    errorMessage: tServiceDesk("api.tickets.update"),
+    errorMessage: tServiceDeskApi("api.tickets.update"),
     mapData: mapTicketDetailPayload,
   });
 }
@@ -76,6 +76,6 @@ export async function DELETE(
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/tickets/${ticketId}`,
-    errorMessage: tServiceDesk("api.tickets.delete"),
+    errorMessage: tServiceDeskApi("api.tickets.delete"),
   });
 }

@@ -6,15 +6,17 @@ import {
   serviceDeskAssignmentRuleApi,
 } from "@/api/serviceDesk/assignmentRule";
 import { DYNAMIC_QUERY_OPTIONS, STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
-import { DbParams } from "@/shared/types/api";
 
 import { assignmentRuleQueryKeys } from "./queryKeys";
+import { ServiceDeskAssignmentRuleListParams } from "./types";
 
-export const useServiceDeskAssignmentRuleListQuery = (params: DbParams) => {
+export const useServiceDeskAssignmentRuleListQuery = (
+  params?: ServiceDeskAssignmentRuleListParams,
+) => {
   return useQuery({
     queryKey: assignmentRuleQueryKeys.list(params),
     queryFn: () => serviceDeskAssignmentRuleApi.list(params),
-    enabled: !!params,
+    enabled: params !== undefined,
     ...STATIC_QUERY_OPTIONS,
   });
 };

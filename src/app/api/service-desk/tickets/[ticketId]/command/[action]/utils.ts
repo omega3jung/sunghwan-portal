@@ -3,7 +3,7 @@ import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTic
 import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalActionsMock";
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
-import { ServiceDeskApiError } from "@/app/api/service-desk/messages";
+import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { Priority, RiskLevel } from "@/domain/common";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
 

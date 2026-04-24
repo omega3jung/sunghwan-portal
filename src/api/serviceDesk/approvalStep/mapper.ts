@@ -23,6 +23,7 @@ export interface DbApprovalStep {
   approval_step_name: LocalizedText;
   approval_step_description: LocalizedText | null;
   approval_step_index: number;
+  approval_step_active?: boolean;
 
   category_id: number; // string number. can use parseInt.
   approval_step_assignee: DbApprovalAssigneeType;
@@ -74,15 +75,23 @@ export const camelApprovalStepMapper: ArrayMapper<
   DbApprovalStep,
   ApprovalStep
 > = (data) => {
-  return data.map((item) => ({
-    id: item.approval_step_id.toString(),
-    name: item.approval_step_name,
-    approval_step_description: item.approval_step_description,
-    index: item.approval_step_index,
-    categoryId: item.category_id.toString(),
-    stepAssignee: camelAssigneeTypeMapper(item.approval_step_assignee),
-    skipAccessLevel: nullToUndefined(item.skip_access_level),
-  }));
+  return data.flatMap((item) => {
+    if (!item || item.approval_step_active === false) {
+      return [];
+    }
+
+    return [
+      {
+        id: item.approval_step_id.toString(),
+        name: item.approval_step_name,
+        description: nullToUndefined(item.approval_step_description),
+        index: item.approval_step_index,
+        categoryId: item.category_id.toString(),
+        stepAssignee: camelAssigneeTypeMapper(item.approval_step_assignee),
+        skipAccessLevel: nullToUndefined(item.skip_access_level),
+      },
+    ];
+  });
 };
 
 const camelAssigneeTypeMapper: Mapper<
@@ -144,3 +153,11 @@ export const mapApprovalSettingsListPayload = createListPayloadMapper(
 export const mapApprovalStepItemPayload = createItemPayloadMapper(
   camelApprovalStepMapper,
 );
+
+export const mapApprovalSettingsTreePayload = (payload: unknown) => {
+  if (!Array.isArray(payload)) {
+    return payload;
+  }
+
+  return camelCategoryApprovalSettingMapper(payload as DbCategoryApprovalSettings[]);
+};

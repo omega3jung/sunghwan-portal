@@ -15,7 +15,7 @@ import {
 import { clientTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/clientTicketsMock";
 import { internalTicketsMocks } from "@/app/_mocks/scenarios/serviceDesk/internalTicketsMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   return proxyJson(request, {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
-    errorMessage: tServiceDesk("api.tickets.fetchList"),
+    errorMessage: tServiceDeskApi("api.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
 }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/tickets",
     body: toTicketWritePayload(body),
-    errorMessage: tServiceDesk("api.tickets.create"),
+    errorMessage: tServiceDeskApi("api.tickets.create"),
     mapData: mapTicketDetailPayload,
   });
 }

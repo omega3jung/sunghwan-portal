@@ -39,3 +39,17 @@ export const useDeleteServiceDeskApprovalStep = () => {
     },
   });
 };
+
+export const useSaveServiceDeskApprovalStepTree = () => {
+  const queryClient = useQueryClient();
+
+  // message will be handeled where call mutation by useMutationToast.
+  return useMutation({
+    mutationFn: serviceDeskApprovalStepApi.saveTree,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: approvalStepQueryKeys.all,
+      });
+    },
+  });
+};

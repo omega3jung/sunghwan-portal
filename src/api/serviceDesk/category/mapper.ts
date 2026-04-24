@@ -155,3 +155,11 @@ export const mapCategoryListPayload = createListPayloadMapper(
 );
 export const mapCategoryItemPayload =
   createItemPayloadMapper(camelCategoryMapper);
+
+export const mapCategoryTreePayload = (payload: unknown) => {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  return camelClientCategoryTreeMapper([payload as DbClientCategoryTree])[0] ?? null;
+};

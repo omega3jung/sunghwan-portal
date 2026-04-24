@@ -21,8 +21,14 @@ export type CategorySubCategoryWriteInput = Omit<SubCategory, "id"> & {
   id?: string;
 };
 
-export type CreateCategoryInput = CategoryWriteFields & { id?: string };
-export type UpdateCategoryInput = CategoryWriteFields & { id: string };
+export type CreateCategoryInput = CategoryWriteFields & {
+  id?: string;
+  clientId: string;
+};
+export type UpdateCategoryInput = CategoryWriteFields & {
+  id: string;
+  clientId?: string;
+};
 
 export function toCategoryWritePayload(
   input: CreateCategoryInput | UpdateCategoryInput,
@@ -48,10 +54,12 @@ export function toCategoryMockResource(
   input: CreateCategoryInput | UpdateCategoryInput,
   id = createMockId(),
 ): MainCategory {
+  const { clientId: _clientId, ...categoryInput } = input;
+
   return {
-    ...input,
+    ...categoryInput,
     id,
-    subCategories: input.subCategories.map((subCategory) => ({
+    subCategories: categoryInput.subCategories.map((subCategory) => ({
       ...subCategory,
       id: subCategory.id ?? createMockId(),
     })),

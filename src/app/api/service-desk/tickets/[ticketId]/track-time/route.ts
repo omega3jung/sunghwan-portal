@@ -16,17 +16,17 @@ import {
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
   ServiceDeskApiError,
-  tServiceDesk,
-} from "@/app/api/service-desk/messages";
+  tServiceDeskApi,
+} from "@/app/api/service-desk/_shared/messages";
+import {
+  canChangeStatus,
+  getCurrentTrackedMinutes,
+} from "@/feature/serviceDesk/ticket/trackTime/components/TrackTimeTool/payload";
 import { TICKET_TRACK_TIME_STATUS_OPTIONS } from "@/feature/serviceDesk/ticket/trackTime/constants";
 import type {
   TicketTrackTimeStatus,
   TicketTrackTimeSubmitPayload,
 } from "@/feature/serviceDesk/ticket/trackTime/types";
-import {
-  canChangeStatus,
-  getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticket/trackTime/tool/payload";
 
 import {
   createUpdatedTicket,
@@ -86,10 +86,7 @@ const validatePayload = (
   return trackedMinutes;
 };
 
-export async function GET(
-  request: NextRequest,
-  context: TicketIdRouteContext,
-) {
+export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
 
@@ -103,7 +100,7 @@ export async function GET(
 
   return proxyJson(request, {
     path: `/service-desk/tickets/${ticketId}/track-time`,
-    errorMessage: tServiceDesk("api.ticketTrackTime.fetchList"),
+    errorMessage: tServiceDeskApi("api.ticketTrackTime.fetchList"),
     mapData: mapTicketTrackTimeListPayload,
   });
 }
@@ -121,7 +118,7 @@ export async function POST(
       method: "POST",
       path: `/service-desk/tickets/${ticketId}/track-time`,
       body: payload,
-      errorMessage: tServiceDesk("api.ticketTrackTime.create"),
+      errorMessage: tServiceDeskApi("api.ticketTrackTime.create"),
       mapData: mapTicketTrackTimePayload,
     });
   }
@@ -131,7 +128,7 @@ export async function POST(
 
     if (employeeUserName === null) {
       return NextResponse.json(
-        { message: tServiceDesk("api.ticketCommand.employeeUnavailable") },
+        { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
         { status: 401 },
       );
     }
@@ -166,7 +163,7 @@ export async function POST(
       track_time_no: getNextTrackTimeNo(ticketId),
       assignee_id: employeeUserName,
       start_at: payload.startAt ?? createdAt,
-      end_at: payload.inputMode === "range" ? payload.endAt ?? null : null,
+      end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
       duration_minutes:
         payload.inputMode === "duration" ? trackedMinutes : null,
       note: payload.note?.trim() || null,
@@ -222,7 +219,7 @@ export async function POST(
         ? error.message
         : error instanceof Error
           ? error.message
-          : tServiceDesk("api.ticketTrackTime.create");
+          : tServiceDeskApi("api.ticketTrackTime.create");
     const status = error instanceof ServiceDeskApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });

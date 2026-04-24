@@ -1,49 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  camelCategoryApprovalSettingMapper,
   mapApprovalStepItemPayload,
 } from "@/api/serviceDesk/approvalStep/mapper";
 import {
-  toApprovalStepMockResource,
   toApprovalStepWritePayload,
   UpdateApprovalStepInput,
 } from "@/api/serviceDesk/approvalStep/write";
 import {
-  clientApprovalStepSettingsMock,
-  internalApprovalStepSettingsMock,
-} from "@/app/_mocks/domain/serviceDesk/approvalSteps";
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+  isInternalUser,
+  isRemoteRequest,
+  proxyJson,
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import { updateApprovalStepSchema } from "@/feature/serviceDesk/approvalStep/request.schema";
+
+import {
+  localGetApprovalStep,
+  localSoftDeleteApprovalStep,
+  localUpdateApprovalStep,
+} from "../localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const approvalStep = camelCategoryApprovalSettingMapper(
-      isInternal
-        ? internalApprovalStepSettingsMock
-        : clientApprovalStepSettingsMock,
-    )
-      .flatMap((category) => category.approvalSteps)
-      .find((item) => item.id === id);
+    try {
+      const isInternal = await isInternalUser(request);
+      const approvalStep = localGetApprovalStep({
+        isInternal,
+        id,
+      });
 
-    if (!approvalStep) {
-      return NextResponse.json(
-        { message: tServiceDesk("api.common.notFound") },
-        { status: 404 },
-      );
+      if (!approvalStep) {
+        return NextResponse.json(
+          { message: tServiceDeskApi("api.common.notFound") },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json(approvalStep);
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.approvalSteps.fetch"),
+      });
     }
-
-    return NextResponse.json(approvalStep);
   }
 
   return proxyJson(request, {
     path: `/service-desk/approval-steps/${id}`,
-    errorMessage: tServiceDesk("api.approvalSteps.fetch"),
+    errorMessage: tServiceDeskApi("api.approvalSteps.fetch"),
     mapData: mapApprovalStepItemPayload,
   });
 }
@@ -51,19 +60,45 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
-  const body = (await request.json()) as UpdateApprovalStepInput;
+  const parsedBody = updateApprovalStepSchema.safeParse(
+    (await request.json()) as UpdateApprovalStepInput,
+  );
+
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = parsedBody.data;
 
   if (!isRemote) {
-    return NextResponse.json(toApprovalStepMockResource(body, id), {
-      status: 200,
-    });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localUpdateApprovalStep({
+          isInternal,
+          id,
+          input: {
+            ...body,
+            id,
+          },
+        }),
+        { status: 200 },
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.approvalSteps.update"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "PUT",
     path: `/service-desk/approval-steps/${id}`,
     body: toApprovalStepWritePayload({ ...body, id }),
-    errorMessage: tServiceDesk("api.approvalSteps.update"),
+    errorMessage: tServiceDeskApi("api.approvalSteps.update"),
     mapData: mapApprovalStepItemPayload,
   });
 }
@@ -73,12 +108,22 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    return new NextResponse(null, { status: 204 });
+    try {
+      const isInternal = await isInternalUser(request);
+      return localSoftDeleteApprovalStep({
+        isInternal,
+        id,
+      });
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.approvalSteps.delete"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/approval-steps/${id}`,
-    errorMessage: tServiceDesk("api.approvalSteps.delete"),
+    errorMessage: tServiceDeskApi("api.approvalSteps.delete"),
   });
 }

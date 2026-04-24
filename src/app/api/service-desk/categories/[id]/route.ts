@@ -1,47 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { mapCategoryItemPayload } from "@/api/serviceDesk/category/mapper";
 import {
-  camelClientCategoryTreeMapper,
-  mapCategoryItemPayload,
-} from "@/api/serviceDesk/category/mapper";
-import {
-  toCategoryMockResource,
   toCategoryWritePayload,
   UpdateCategoryInput,
 } from "@/api/serviceDesk/category/write";
 import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/app/_mocks/domain/serviceDesk/categories";
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+  isInternalUser,
+  isRemoteRequest,
+  proxyJson,
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import { updateCategorySchema } from "@/feature/serviceDesk/category/request.schema";
+
+import {
+  localGetCategory,
+  localSoftDeleteCategory,
+  localUpdateCategory,
+} from "../localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const category = camelClientCategoryTreeMapper(
-      isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
-    )
-      .flatMap((client) => client.categories)
-      .find((item) => item.id === id);
+    try {
+      const isInternal = await isInternalUser(request);
+      const category = localGetCategory({
+        isInternal,
+        id,
+      });
 
-    if (!category) {
-      return NextResponse.json(
-        { message: tServiceDesk("api.common.notFound") },
-        { status: 404 },
-      );
+      if (!category) {
+        return NextResponse.json(
+          { message: tServiceDeskApi("api.common.notFound") },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json(category);
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.fetch"),
+      });
     }
-
-    return NextResponse.json(category);
   }
 
   return proxyJson(request, {
     path: `/service-desk/categories/${id}`,
-    errorMessage: tServiceDesk("api.categories.fetch"),
+    errorMessage: tServiceDeskApi("api.categories.fetch"),
     mapData: mapCategoryItemPayload,
   });
 }
@@ -49,17 +58,45 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
-  const body = (await request.json()) as UpdateCategoryInput;
+  const parsedBody = updateCategorySchema.safeParse(
+    (await request.json()) as UpdateCategoryInput,
+  );
+
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = parsedBody.data;
 
   if (!isRemote) {
-    return NextResponse.json(toCategoryMockResource(body, id), { status: 200 });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localUpdateCategory({
+          isInternal,
+          id,
+          input: {
+            ...body,
+            id,
+          },
+        }),
+        { status: 200 },
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.update"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "PUT",
     path: `/service-desk/categories/${id}`,
     body: toCategoryWritePayload({ ...body, id }),
-    errorMessage: tServiceDesk("api.categories.update"),
+    errorMessage: tServiceDeskApi("api.categories.update"),
     mapData: mapCategoryItemPayload,
   });
 }
@@ -69,12 +106,24 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    return new NextResponse(null, { status: 204 });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localSoftDeleteCategory({
+          isInternal,
+          id,
+        }),
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.delete"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/categories/${id}`,
-    errorMessage: tServiceDesk("api.categories.delete"),
+    errorMessage: tServiceDeskApi("api.categories.delete"),
   });
 }

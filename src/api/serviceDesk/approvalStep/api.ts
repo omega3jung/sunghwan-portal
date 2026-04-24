@@ -1,12 +1,22 @@
 import client from "@/api/client";
+import type {
+  CreateApprovalStepInput,
+  UpdateApprovalStepInput,
+} from "@/api/serviceDesk/approvalStep/write";
 import { ApprovalStep, CategoryApprovalSettings } from "@/domain/serviceDesk";
-import { DbParams, OResponse } from "@/shared/types/api";
+import type {
+  SaveServiceDeskApprovalStepTreePayload,
+  ServiceDeskApprovalStepListParams,
+} from "@/feature/serviceDesk/approvalStep/types";
+import { OResponse } from "@/shared/types/api";
 
 type ApprovalStepResponse = OResponse<CategoryApprovalSettings>;
 
 // feature-scoped API.
 export const serviceDeskApprovalStepApi = {
-  list: async (params?: DbParams): Promise<CategoryApprovalSettings[]> => {
+  list: async (
+    params?: ServiceDeskApprovalStepListParams,
+  ): Promise<CategoryApprovalSettings[]> => {
     if (!params) return [];
 
     const res = await client.api.get<ApprovalStepResponse>(
@@ -25,7 +35,7 @@ export const serviceDeskApprovalStepApi = {
     return res.data;
   },
 
-  create: async (data: ApprovalStep) => {
+  create: async (data: CreateApprovalStepInput) => {
     const res = await client.api.post<ApprovalStep>(
       `/api/service-desk/approval-steps`,
       data,
@@ -33,8 +43,8 @@ export const serviceDeskApprovalStepApi = {
     return res.data;
   },
 
-  update: async (data: ApprovalStep) => {
-    const res = await client.api.put(
+  update: async (data: UpdateApprovalStepInput) => {
+    const res = await client.api.put<ApprovalStep>(
       `/api/service-desk/approval-steps/${data.id}`,
       data,
     );
@@ -44,5 +54,16 @@ export const serviceDeskApprovalStepApi = {
   remove: async (id: string | number) => {
     await client.api.delete(`/api/service-desk/approval-steps/${id}`);
     return null;
+  },
+
+  saveTree: async (
+    payload: SaveServiceDeskApprovalStepTreePayload,
+  ): Promise<CategoryApprovalSettings[]> => {
+    const res = await client.api.put<CategoryApprovalSettings[]>(
+      `/api/service-desk/approval-steps`,
+      payload,
+    );
+
+    return res.data;
   },
 };

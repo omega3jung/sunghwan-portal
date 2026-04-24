@@ -7,7 +7,7 @@ import {
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
   return proxyJson(request, {
     path: `/service-desk/tickets/${ticketId}/history`,
-    errorMessage: tServiceDesk("api.ticketHistories.fetchList"),
+    errorMessage: tServiceDeskApi("api.ticketHistories.fetchList"),
     mapData: mapTicketHistoryListPayload,
   });
 }

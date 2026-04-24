@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import type { AssignmentRecommendationInput } from "@/api/serviceDesk/assignmentRule";
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import { isLocale } from "@/shared/utils/language";
 
 import { resolveLocalAssignmentRecommendation } from "./localDemo";
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   if (!input) {
     return NextResponse.json(
       {
-        message: tServiceDesk("api.assignmentRecommendations.invalidInput"),
+        message: tServiceDeskApi("api.assignmentRecommendations.invalidInput"),
       },
       { status: 400 },
     );
@@ -72,6 +72,6 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/assignment-rules/recommendations",
     body: input,
-    errorMessage: tServiceDesk("api.assignmentRecommendations.fetch"),
+    errorMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
   });
 }

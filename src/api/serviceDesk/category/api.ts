@@ -1,5 +1,10 @@
 import client from "@/api/client";
+import type {
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from "@/api/serviceDesk/category/write";
 import { ClientCategoryTree, MainCategory } from "@/domain/serviceDesk";
+import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 import { DbParams, OResponse } from "@/shared/types/api";
 
 type CategoryResponse = OResponse<ClientCategoryTree>;
@@ -25,7 +30,7 @@ export const serviceDeskCategoryApi = {
     return res.data;
   },
 
-  create: async (data: MainCategory) => {
+  create: async (data: CreateCategoryInput) => {
     const res = await client.api.post<MainCategory>(
       `/api/service-desk/categories`,
       data,
@@ -33,8 +38,8 @@ export const serviceDeskCategoryApi = {
     return res.data;
   },
 
-  update: async (data: MainCategory) => {
-    const res = await client.api.put(
+  update: async (data: UpdateCategoryInput) => {
+    const res = await client.api.put<MainCategory>(
       `/api/service-desk/categories/${data.id}`,
       data,
     );
@@ -44,5 +49,16 @@ export const serviceDeskCategoryApi = {
   remove: async (id: string | number) => {
     await client.api.delete(`/api/service-desk/categories/${id}`);
     return null;
+  },
+
+  saveTree: async (
+    payload: SaveServiceDeskCategoryTreePayload,
+  ): Promise<ClientCategoryTree> => {
+    const res = await client.api.put<ClientCategoryTree>(
+      `/api/service-desk/categories`,
+      payload,
+    );
+
+    return res.data;
   },
 };

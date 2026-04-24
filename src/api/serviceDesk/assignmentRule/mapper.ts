@@ -48,3 +48,11 @@ export const mapAssignmentRuleListPayload = createListPayloadMapper(
 export const mapAssignmentRuleItemPayload = createItemPayloadMapper(
   camelAssignmentRuleMapper,
 );
+
+export const mapAssignmentRuleTreePayload = (payload: unknown) => {
+  if (!Array.isArray(payload)) {
+    return payload;
+  }
+
+  return camelAssignmentRuleMapper(payload as DbAssignmentRule[]);
+};

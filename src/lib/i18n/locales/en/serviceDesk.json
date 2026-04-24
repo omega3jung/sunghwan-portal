@@ -302,14 +302,27 @@
       "create": "Failed to create approval step.",
       "fetch": "Failed to fetch approval step.",
       "update": "Failed to update approval step.",
-      "delete": "Failed to delete approval step."
+      "delete": "Failed to delete approval step.",
+      "save": "Failed to save approval step settings.",
+      "localDemo": {
+        "invalidPayload": "Invalid approval step settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "categoryNotFound": "Category {{categoryId}} was not found."
+      }
     },
     "assignmentRules": {
       "fetchList": "Failed to fetch assignment rules.",
       "create": "Failed to create assignment rule.",
       "fetch": "Failed to fetch assignment rule.",
       "update": "Failed to update assignment rule.",
-      "delete": "Failed to delete assignment rule."
+      "delete": "Failed to delete assignment rule.",
+      "save": "Failed to save assignment rule settings.",
+      "localDemo": {
+        "invalidPayload": "Invalid assignment rule settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "categoryNotFound": "Category {{categoryId}} was not found.",
+        "emptyAssignee": "Assignment rule requires at least one assignee."
+      }
     },
     "assignmentRecommendations": {
       "invalidInput": "Assignment recommendation requires categoryId and assigneeIds.",
@@ -320,7 +333,13 @@
       "create": "Failed to create category.",
       "fetch": "Failed to fetch category.",
       "update": "Failed to update category.",
-      "delete": "Failed to delete category."
+      "delete": "Failed to delete category.",
+      "save": "Failed to save category settings.",
+      "localDemo": {
+        "invalidPayload": "Invalid category settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "clientMismatch": "Category does not belong to client {{clientId}}."
+      }
     },
     "tickets": {
       "fetchList": "Failed to fetch tickets.",

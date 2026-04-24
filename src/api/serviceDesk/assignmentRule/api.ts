@@ -1,12 +1,22 @@
 import client from "@/api/client";
+import type {
+  CreateAssignmentRuleInput,
+  UpdateAssignmentRuleInput,
+} from "@/api/serviceDesk/assignmentRule/write";
 import { AssignmentRule } from "@/domain/serviceDesk";
-import { DbParams, OResponse } from "@/shared/types/api";
+import type {
+  SaveServiceDeskAssignmentRuleTreePayload,
+  ServiceDeskAssignmentRuleListParams,
+} from "@/feature/serviceDesk/assignmentRule/types";
+import { OResponse } from "@/shared/types/api";
 
 type AssignmentRuleResponse = OResponse<AssignmentRule>;
 
 // feature-scoped API.
 export const serviceDeskAssignmentRuleApi = {
-  list: async (params: DbParams): Promise<AssignmentRule[]> => {
+  list: async (
+    params?: ServiceDeskAssignmentRuleListParams,
+  ): Promise<AssignmentRule[]> => {
     if (!params) return [];
 
     const res = await client.api.get<AssignmentRuleResponse>(
@@ -25,7 +35,7 @@ export const serviceDeskAssignmentRuleApi = {
     return res.data;
   },
 
-  create: async (data: AssignmentRule) => {
+  create: async (data: CreateAssignmentRuleInput) => {
     const res = await client.api.post<AssignmentRule>(
       `/api/service-desk/assignment-rules`,
       data,
@@ -33,9 +43,10 @@ export const serviceDeskAssignmentRuleApi = {
     return res.data;
   },
 
-  update: async (data: AssignmentRule) => {
-    const res = await client.api.put(
-      `/api/service-desk/assignment-rules/${data.categoryId}`,
+  update: async (data: UpdateAssignmentRuleInput) => {
+    const id = data.id ?? data.categoryId;
+    const res = await client.api.put<AssignmentRule>(
+      `/api/service-desk/assignment-rules/${id}`,
       data,
     );
     return res.data;
@@ -44,5 +55,16 @@ export const serviceDeskAssignmentRuleApi = {
   remove: async (id: string | number) => {
     await client.api.delete(`/api/service-desk/assignment-rules/${id}`);
     return null;
+  },
+
+  saveTree: async (
+    payload: SaveServiceDeskAssignmentRuleTreePayload,
+  ): Promise<AssignmentRule[]> => {
+    const res = await client.api.put<AssignmentRule[]>(
+      `/api/service-desk/assignment-rules`,
+      payload,
+    );
+
+    return res.data;
   },
 };

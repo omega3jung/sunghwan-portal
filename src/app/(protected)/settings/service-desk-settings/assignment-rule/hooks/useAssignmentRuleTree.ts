@@ -1,12 +1,18 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { SupportedLanguage } from "@/domain/config";
 import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 
+import type { TreeNodePath } from "../../utils/tree";
+import {
+  findTreeNodeData,
+  findTreeNodePath,
+  resolveTreeNodeIdByPath,
+} from "../../utils/tree";
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
-import { assignmentRuleToTree, mapAssignmentRuleData } from "../util.mapper";
+import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";
 
 type UseAssignmentRuleTreeOptions = {
   selectedClient: string | null;
@@ -19,13 +25,20 @@ export function useAssignmentRuleTree({
   selectedClient,
   categories,
   assignmentRules,
-  language,
+  language: _language,
 }: UseAssignmentRuleTreeOptions) {
   const [tree, setTree] = useState<
     TreeNodes<AssignmentRuleData | SubAssignmentRuleData>
   >([]);
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
+  const [treeClientId, setTreeClientId] = useState<string | null>(null);
+  const previousClientRef = useRef<string | null>(null);
+  const selectedPathRef = useRef<TreeNodePath | null>(null);
+
+  useEffect(() => {
+    selectedPathRef.current = findTreeNodePath(tree, selectedId);
+  }, [selectedId, tree]);
 
   useEffect(() => {
     if (!categories || !selectedClient || !assignmentRules) return;
@@ -35,26 +48,32 @@ export function useAssignmentRuleTree({
       selectedClient,
       assignmentRules,
     );
+    const nextTree = assignmentRuleToTree(mapped);
 
-    setTree(assignmentRuleToTree(mapped));
-    setSelectedId(null); // reset selection when client changed.
+    setTree(nextTree);
+    setTreeClientId(selectedClient);
+    setSelectedId((previousSelectedId) => {
+      if (previousClientRef.current !== selectedClient) {
+        previousClientRef.current = selectedClient;
+        return null;
+      }
+
+      if (!previousSelectedId) {
+        return null;
+      }
+
+      const selectionPath = selectedPathRef.current;
+
+      if (!selectionPath?.length) {
+        return null;
+      }
+
+      return resolveTreeNodeIdByPath(nextTree, selectionPath);
+    });
   }, [assignmentRules, categories, selectedClient]);
 
   const selectedNode = useMemo(() => {
-    if (!selectedId) return null;
-
-    const findNode = (
-      nodes: TreeNodes<AssignmentRuleData | SubAssignmentRuleData>,
-    ): AssignmentRuleData | SubAssignmentRuleData | null => {
-      for (const node of nodes) {
-        if (node.id === selectedId) return node.data;
-        const found = findNode(node.children);
-        if (found) return found;
-      }
-      return null;
-    };
-
-    return findNode(tree);
+    return findTreeNodeData(tree, selectedId);
   }, [selectedId, tree]);
 
   return {
@@ -62,6 +81,7 @@ export function useAssignmentRuleTree({
     setTree,
     selectedId,
     setSelectedId,
+    treeClientId,
     selectedNode,
   };
 }

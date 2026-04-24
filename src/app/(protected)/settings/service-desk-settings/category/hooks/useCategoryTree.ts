@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
@@ -7,14 +7,20 @@ import {
   flattenTree,
   removeItem,
 } from "@/components/custom/dnd/tree/utilities";
-import { ClientCategoryTree } from "@/domain/serviceDesk";
+import type { ClientCategoryTree } from "@/domain/serviceDesk";
 
+import type { TreeNodePath } from "../../utils/tree";
+import {
+  findTreeNodeData,
+  findTreeNodePath,
+  resolveTreeNodeIdByPath,
+} from "../../utils/tree";
 import {
   getDefaultCategoryData,
   getDefaultSubCategoryData,
 } from "../constants";
 import { CategoryData, SubCategoryData } from "../types";
-import { categoryToTree, mapCategoryData } from "../util.mapper";
+import { categoryToTree, mapCategoryData } from "../utils/mapper";
 
 type UseCategoryTreeOptions = {
   selectedClient: string | null;
@@ -30,34 +36,55 @@ export function useCategoryTree({
   );
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
+  const [treeClientId, setTreeClientId] = useState<string | null>(null);
 
   const [newCategoryCount, setNewCategoryCount] = useState<number>(1);
   const [newSubCategoryCount, setNewSubCategoryCount] = useState<number>(1);
+  const previousClientRef = useRef<string | null>(null);
+  const selectedPathRef = useRef<TreeNodePath | null>(null);
+
+  useEffect(() => {
+    selectedPathRef.current = findTreeNodePath(tree, selectedId);
+  }, [selectedId, tree]);
 
   useEffect(() => {
     if (!categories || !selectedClient) return;
 
     const mapped = mapCategoryData(categories, selectedClient);
+    const nextTree = categoryToTree(mapped);
 
-    setTree(categoryToTree(mapped));
-    setSelectedId(null); // reset selection when client changed.
+    setTree(nextTree);
+    setTreeClientId(selectedClient);
+    setSelectedId((previousSelectedId) => {
+      if (previousClientRef.current !== selectedClient) {
+        previousClientRef.current = selectedClient;
+        return null;
+      }
+
+      if (!previousSelectedId) {
+        return null;
+      }
+
+      const matchingCategory = nextTree.find(
+        (node) => node.id === previousSelectedId,
+      );
+
+      if (matchingCategory) {
+        return previousSelectedId;
+      }
+
+      const selectionPath = selectedPathRef.current;
+
+      if (!selectionPath?.length) {
+        return null;
+      }
+
+      return resolveTreeNodeIdByPath(nextTree, selectionPath);
+    });
   }, [categories, selectedClient]);
 
   const selectedNode = useMemo(() => {
-    if (!selectedId) return null;
-
-    const findNode = (
-      nodes: TreeNodes<CategoryData | SubCategoryData>,
-    ): CategoryData | SubCategoryData | null => {
-      for (const node of nodes) {
-        if (node.id === selectedId) return node.data;
-        const found = findNode(node.children);
-        if (found) return found;
-      }
-      return null;
-    };
-
-    return findNode(tree);
+    return findTreeNodeData(tree, selectedId);
   }, [selectedId, tree]);
 
   const addCategory = () => {
@@ -117,6 +144,7 @@ export function useCategoryTree({
     setTree,
     selectedId,
     setSelectedId,
+    treeClientId,
     selectedNode,
     addCategory,
     removeCategory,

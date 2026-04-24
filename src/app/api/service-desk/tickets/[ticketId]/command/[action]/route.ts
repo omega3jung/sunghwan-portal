@@ -9,7 +9,7 @@ import {
   proxyJson,
 } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticket/action/forms";
 
 import { localPost } from "./localDemo";
@@ -33,14 +33,14 @@ const validateMergeRequest = (
 
   if (!targetTicketId) {
     return NextResponse.json(
-      { message: tServiceDesk("api.ticketCommand.mergeTargetRequired") },
+      { message: tServiceDeskApi("api.ticketCommand.mergeTargetRequired") },
       { status: 400 },
     );
   }
 
   if (targetTicketId === ticketId) {
     return NextResponse.json(
-      { message: tServiceDesk("api.ticketCommand.mergeSameTicket") },
+      { message: tServiceDeskApi("api.ticketCommand.mergeSameTicket") },
       { status: 400 },
     );
   }
@@ -72,7 +72,7 @@ export async function POST(
 
     if (employeeUserName === null) {
       return NextResponse.json(
-        { message: tServiceDesk("api.ticketCommand.employeeUnavailable") },
+        { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
         { status: 401 },
       );
     }
@@ -81,7 +81,7 @@ export async function POST(
 
     if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
       return NextResponse.json(
-        { message: tServiceDesk("api.ticketCommand.actionMismatch") },
+        { message: tServiceDeskApi("api.ticketCommand.actionMismatch") },
         { status: 400 },
       );
     }
@@ -100,7 +100,7 @@ export async function POST(
     method: "POST",
     path: `/service-desk/tickets/${ticketId}/command/${action}`,
     body: content,
-    errorMessage: tServiceDesk("api.ticketCommand.execute"),
+    errorMessage: tServiceDeskApi("api.ticketCommand.execute"),
     mapData: mapTicketActionPayload,
   });
 }

@@ -1,7 +1,7 @@
 import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 
-import { AssignmentRuleData, SubAssignmentRuleData } from "./types";
+import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 
 export const mapAssignmentRuleData = (
   categories: ClientCategoryTree[],

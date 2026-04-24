@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
@@ -8,65 +8,82 @@ import {
   removeItem,
 } from "@/components/custom/dnd/tree/utilities";
 import { SupportedLanguage } from "@/domain/config";
-import { CategoryApprovalSettings } from "@/domain/serviceDesk";
+import {
+  CategoryApprovalSettings,
+  ClientCategoryTree,
+} from "@/domain/serviceDesk";
 
+import type { TreeNodePath } from "../../utils/tree";
+import {
+  findTreeNodeData,
+  findTreeNodePath,
+  resolveTreeNodeIdByPath,
+} from "../../utils/tree";
 import {
   getDefaultApprovalData,
   MAX_APPROVAL_STEP_PER_CATEGORY,
 } from "../constants";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
-import { approvalStepToTree, mapApprovalData } from "../util.mapper";
+import { approvalStepToTree, mapApprovalData } from "../utils/mapper";
 
 type UseApprovalStepTreeOptions = {
+  selectedClient: string | null;
+  categories: ClientCategoryTree[] | undefined;
   approvalSteps: CategoryApprovalSettings[] | undefined;
   language: SupportedLanguage;
 };
 
 export function useApprovalStepTree({
+  selectedClient,
+  categories,
   approvalSteps,
-  language,
+  language: _language,
 }: UseApprovalStepTreeOptions) {
   const [tree, setTree] = useState<
     TreeNodes<CategoryApprovalStepData | ApprovalStepData>
   >([]);
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
+  const [treeClientId, setTreeClientId] = useState<string | null>(null);
 
   const [newStepCount, setNewStepCount] = useState(1);
+  const previousClientRef = useRef<string | null>(null);
+  const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
-    if (!approvalSteps) return;
+    selectedPathRef.current = findTreeNodePath(tree, selectedId);
+  }, [selectedId, tree]);
 
-    const mapped = mapApprovalData(approvalSteps);
-    setTree(approvalStepToTree(mapped));
-  }, [approvalSteps]);
+  useEffect(() => {
+    if (!categories || !selectedClient || !approvalSteps) return;
 
-  const extractCategoryId = (value: UniqueIdentifier | null) => {
-    if (!value) return null;
+    const mapped = mapApprovalData(categories, selectedClient, approvalSteps);
+    const nextTree = approvalStepToTree(mapped);
 
-    try {
-      return value.toString().split(":")[1];
-    } catch (e) {
-      return value;
-    }
-  };
+    setTree(nextTree);
+    setTreeClientId(selectedClient);
+    setSelectedId((previousSelectedId) => {
+      if (previousClientRef.current !== selectedClient) {
+        previousClientRef.current = selectedClient;
+        return null;
+      }
+
+      if (!previousSelectedId) {
+        return null;
+      }
+
+      const selectionPath = selectedPathRef.current;
+
+      if (!selectionPath?.length) {
+        return null;
+      }
+
+      return resolveTreeNodeIdByPath(nextTree, selectionPath);
+    });
+  }, [approvalSteps, categories, selectedClient]);
 
   const selectedNode = useMemo(() => {
-    if (!selectedId) return null;
-
-    const flattened = flattenTree(tree);
-    const found = flattened.find((n) => n.id === selectedId);
-
-    if (!found) return null;
-
-    if (found.data.nodeType === "approvalStep") {
-      return {
-        ...found.data,
-        categoryId: extractCategoryId(found.parentId),
-      } as ApprovalStepData;
-    }
-
-    return found.data;
+    return findTreeNodeData(tree, selectedId);
   }, [selectedId, tree]);
 
   // ✅ add
@@ -128,6 +145,7 @@ export function useApprovalStepTree({
     setTree,
     selectedId,
     setSelectedId,
+    treeClientId,
     selectedNode,
     addApprovalStep,
     removeApprovalStep,

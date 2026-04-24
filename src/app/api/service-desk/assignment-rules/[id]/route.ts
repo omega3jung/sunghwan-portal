@@ -1,47 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { mapAssignmentRuleItemPayload } from "@/api/serviceDesk/assignmentRule/mapper";
 import {
-  camelAssignmentRuleMapper,
-  mapAssignmentRuleItemPayload,
-} from "@/api/serviceDesk/assignmentRule/mapper";
-import {
-  toAssignmentRuleMockResource,
   toAssignmentRuleWritePayload,
   UpdateAssignmentRuleInput,
 } from "@/api/serviceDesk/assignmentRule/write";
 import {
-  clientAssignmentRuleSettingsMock,
-  internalAssignmentRuleSettingsMock,
-} from "@/app/_mocks/domain/serviceDesk/assignmentRules";
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+  isInternalUser,
+  isRemoteRequest,
+  proxyJson,
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import { updateAssignmentRuleSchema } from "@/feature/serviceDesk/assignmentRule/request.schema";
+
+import {
+  localDeleteAssignmentRule,
+  localGetAssignmentRule,
+  localUpdateAssignmentRule,
+} from "../localDemo";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const assignmentRule = camelAssignmentRuleMapper(
-      isInternal
-        ? internalAssignmentRuleSettingsMock
-        : clientAssignmentRuleSettingsMock,
-    ).find((item) => item.categoryId === id);
+    try {
+      const isInternal = await isInternalUser(request);
+      const assignmentRule = localGetAssignmentRule({
+        isInternal,
+        id,
+      });
 
-    if (!assignmentRule) {
-      return NextResponse.json(
-        { message: tServiceDesk("api.common.notFound") },
-        { status: 404 },
-      );
+      if (!assignmentRule) {
+        return NextResponse.json(
+          { message: tServiceDeskApi("api.common.notFound") },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json(assignmentRule);
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.assignmentRules.fetch"),
+      });
     }
-
-    return NextResponse.json(assignmentRule);
   }
 
   return proxyJson(request, {
     path: `/service-desk/assignment-rules/${id}`,
-    errorMessage: tServiceDesk("api.assignmentRules.fetch"),
+    errorMessage: tServiceDeskApi("api.assignmentRules.fetch"),
     mapData: mapAssignmentRuleItemPayload,
   });
 }
@@ -49,19 +58,44 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
-  const body = (await request.json()) as UpdateAssignmentRuleInput;
+  const parsedBody = updateAssignmentRuleSchema.safeParse(
+    (await request.json()) as UpdateAssignmentRuleInput,
+  );
+
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.assignmentRules.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = parsedBody.data;
 
   if (!isRemote) {
-    return NextResponse.json(toAssignmentRuleMockResource(body), {
-      status: 200,
-    });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localUpdateAssignmentRule({
+          isInternal,
+          id,
+          input: {
+            ...body,
+            id,
+          },
+        }),
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.assignmentRules.update"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "PUT",
     path: `/service-desk/assignment-rules/${id}`,
     body: toAssignmentRuleWritePayload(body),
-    errorMessage: tServiceDesk("api.assignmentRules.update"),
+    errorMessage: tServiceDeskApi("api.assignmentRules.update"),
     mapData: mapAssignmentRuleItemPayload,
   });
 }
@@ -71,12 +105,22 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    return new NextResponse(null, { status: 204 });
+    try {
+      const isInternal = await isInternalUser(request);
+      return localDeleteAssignmentRule({
+        isInternal,
+        id,
+      });
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.assignmentRules.delete"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "DELETE",
     path: `/service-desk/assignment-rules/${id}`,
-    errorMessage: tServiceDesk("api.assignmentRules.delete"),
+    errorMessage: tServiceDeskApi("api.assignmentRules.delete"),
   });
 }

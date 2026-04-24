@@ -187,7 +187,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                     {t("enum.riskLevel.label", { ns: "domain" })}
                   </FieldLabel>
                   <Select
-                    value={selectedNode?.defaultPriority}
+                    value={selectedNode?.defaultRiskLevel}
                     onValueChange={updateValue("defaultRiskLevel")}
                   >
                     <SelectTrigger>

@@ -11,8 +11,8 @@ import { internalActionsMocks } from "@/app/_mocks/scenarios/serviceDesk/interna
 import { internalHistoriesMocks } from "@/app/_mocks/scenarios/serviceDesk/internalHistoriesMock";
 import {
   ServiceDeskApiError,
-  tServiceDesk,
-} from "@/app/api/service-desk/messages";
+  tServiceDeskApi,
+} from "@/app/api/service-desk/_shared/messages";
 import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
 import { mapFileToAttach } from "@/feature/serviceDesk/ticket/shared/utils/mapFileToAttach";
 
@@ -504,7 +504,7 @@ export function localPost({
         ? error.message
         : error instanceof Error
           ? error.message
-          : tServiceDesk("api.ticketCommand.localDemo.createFailed");
+          : tServiceDeskApi("api.ticketCommand.localDemo.createFailed");
     const status = error instanceof ServiceDeskApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });

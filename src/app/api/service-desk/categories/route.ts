@@ -1,65 +1,137 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  camelClientCategoryTreeMapper,
   mapCategoryItemPayload,
   mapCategoryListPayload,
+  mapCategoryTreePayload,
 } from "@/api/serviceDesk/category/mapper";
 import {
   CreateCategoryInput,
-  toCategoryMockResource,
   toCategoryWritePayload,
 } from "@/api/serviceDesk/category/write";
 import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/app/_mocks/domain/serviceDesk/categories";
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { tServiceDesk } from "@/app/api/service-desk/messages";
+  isInternalUser,
+  isRemoteRequest,
+  proxyJson,
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import {
+  createCategorySchema,
+  saveCategoryTreeSchema,
+} from "@/feature/serviceDesk/category/request.schema";
+import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 
-import { filterItemsByQuery } from "../../_helpers/filter";
+import {
+  localCreateCategory,
+  localListCategories,
+  localSaveCategoryTree,
+} from "./localDemo";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
-  // demo mode
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const allItems = camelClientCategoryTreeMapper(
-      isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
-    );
-
-    const items = filterItemsByQuery(request.nextUrl.searchParams, allItems);
-
-    return NextResponse.json({
-      items,
-      total: items.length,
-    });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localListCategories({
+          isInternal,
+          searchParams: request.nextUrl.searchParams,
+        }),
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.fetchList"),
+      });
+    }
   }
 
-  // real backend
   return proxyJson(request, {
     path: "/service-desk/categories",
     query: request.nextUrl.searchParams,
-    errorMessage: tServiceDesk("api.categories.fetchList"),
+    errorMessage: tServiceDeskApi("api.categories.fetchList"),
     mapData: mapCategoryListPayload,
   });
 }
 
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
-  const body = (await request.json()) as CreateCategoryInput;
+  const parsedBody = createCategorySchema.safeParse(
+    (await request.json()) as CreateCategoryInput,
+  );
 
-  // demo mode
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = parsedBody.data;
+
   if (!isRemote) {
-    return NextResponse.json(toCategoryMockResource(body), { status: 201 });
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localCreateCategory({
+          isInternal,
+          input: body,
+        }),
+        { status: 201 },
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.create"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "POST",
     path: "/service-desk/categories",
     body: toCategoryWritePayload(body),
-    errorMessage: tServiceDesk("api.categories.create"),
+    errorMessage: tServiceDeskApi("api.categories.create"),
     mapData: mapCategoryItemPayload,
+  });
+}
+
+export async function PUT(request: NextRequest) {
+  const isRemote = await isRemoteRequest(request);
+  const parsedBody = saveCategoryTreeSchema.safeParse(
+    (await request.json()) as SaveServiceDeskCategoryTreePayload,
+  );
+
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = parsedBody.data;
+
+  if (!isRemote) {
+    try {
+      const isInternal = await isInternalUser(request);
+      return NextResponse.json(
+        localSaveCategoryTree({
+          isInternal,
+          payload: body,
+        }),
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.categories.save"),
+      });
+    }
+  }
+
+  return proxyJson(request, {
+    method: "PUT",
+    path: "/service-desk/categories",
+    body,
+    errorMessage: tServiceDeskApi("api.categories.save"),
+    mapData: mapCategoryTreePayload,
   });
 }
