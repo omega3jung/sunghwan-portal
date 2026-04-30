@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { DatePickerProps } from "./types";
 import {
@@ -30,6 +30,7 @@ export function DatePicker({
   className,
   variant = "outline",
   size = "lg",
+  modal = true,
   ...buttonProps
 }: DatePickerProps) {
   const { t } = useTranslation("DatePicker");
@@ -51,7 +52,7 @@ export function DatePicker({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger asChild>
         <Button
           {...buttonProps}

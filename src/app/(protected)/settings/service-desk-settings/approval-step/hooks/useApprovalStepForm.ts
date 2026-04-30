@@ -13,7 +13,7 @@ import {
 import { NS } from "@/lib/i18n";
 import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
-import { camelCase } from "@/shared/utils";
+import { camelCase } from "@/shared/utils/value";
 
 import { getDefaultAssigneePayload } from "../constants";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";

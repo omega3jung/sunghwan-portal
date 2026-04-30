@@ -60,6 +60,7 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
   ko: {
     draft: "임시",
     open: "열림",
+    reopen: "다시 열림",
     approved: "승인됨",
     declined: "반려됨",
     working: "처리 중",

@@ -14,8 +14,8 @@ import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
-import { cn, initials } from "@/shared/utils";
-import { formatTimeDistanceFromNow } from "@/shared/utils/date";
+import { formatTimeDistanceFromNow } from "@/shared/utils/format";
+import { cn, initials } from "@/shared/utils/presentation";
 
 interface TicketListItemProps {
   ticket: TicketSummary;
@@ -51,40 +51,42 @@ export const TicketListItem = ({
     <div
       onClick={onClick}
       className={cn(
-        "cursor-pointer flex flex-col gap-3 border-b px-4 py-2 hover:bg-muted",
+        "cursor-pointer flex flex-col gap-2 border-b px-4 py-1.5 hover:bg-muted",
         ticket.assigned && "border-l-primary border-l-4",
       )}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
+      <div className="flex items-start justify-between">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-primary">#{ticket.id}</span>
             <span className="truncate font-semibold">{ticket.subject}</span>
           </div>
 
-          <div className="text-xs text-muted-foreground">
-            {t("ticketList.requesterMeta", {
-              name: requesterName,
-              time: createdTime,
-            })}
-          </div>
-
-          {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
-              <Link
-                className="text-primary underline-offset-4 hover:underline"
-                href={mergedIntoTicketHref}
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-              >
-                {t("merge.into", {
-                  ticketId: ticket.mergedIntoTicketId,
-                })}
-              </Link>
+          <div className="flex items-center gap-14">
+            <div className="text-xs text-muted-foreground">
+              {t("ticketList.requesterMeta", {
+                name: requesterName,
+                time: createdTime,
+              })}
             </div>
-          ) : null}
+
+            {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+                <Link
+                  className="text-primary underline-offset-4 hover:underline"
+                  href={mergedIntoTicketHref}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  {t("merge.into", {
+                    ticketId: ticket.mergedIntoTicketId,
+                  })}
+                </Link>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex gap-2">

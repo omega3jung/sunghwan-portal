@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NS } from "@/lib/i18n";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 type TicketActionListHeaderProps = {
   count: number;

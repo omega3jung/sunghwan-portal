@@ -8,9 +8,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { RecipientGroup } from "@/feature/serviceDesk/shared";
+import { useCurrentPreference } from "@/feature/user";
 import { NS } from "@/lib/i18n";
+import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
-import { cn, initials } from "@/shared/utils";
+import { cn, initials } from "@/shared/utils/presentation";
 
 type TicketDetailsAsideProps = {
   ticket: TicketDetail;
@@ -26,6 +28,8 @@ export function TicketDetailsAside({
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
   const { current } = useCurrentSession();
+  const { current: userPreference } = useCurrentPreference();
+  const tLocal = useLocalizedValue(userPreference.language);
   const currentEmployeeUserName = current.user?.username ?? null;
   const requesterName =
     requester?.label ||
@@ -94,7 +98,10 @@ export function TicketDetailsAside({
         title={t("field.details", { ns: NS.common })}
       >
         <InfoLine label={t("detailAside.ticketId")} value={ticket.id} />
-        <InfoLine label={tCommon("field.category")} value={ticket.categoryId} />
+        <InfoLine
+          label={tCommon("field.category")}
+          value={tLocal(ticket.categoryName)}
+        />
         <InfoLine
           label={t("recentActivity.lastCommenter.label")}
           value={ticket.lastCommenterEmail}

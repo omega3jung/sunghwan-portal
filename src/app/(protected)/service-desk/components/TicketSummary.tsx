@@ -6,19 +6,15 @@ import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
+import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { ImageValueLabel, ISODateString } from "@/shared/types";
 import {
   formatCompactDurationFromMinutes,
   formatCompactTimeDistanceFromNow,
-  initials,
-} from "@/shared/utils";
-
-import {
-  MetaBadge,
-  PriorityBadge,
-} from "../../../../feature/serviceDesk/shared/components/TicketMetaBadge";
+} from "@/shared/utils/format";
+import { initials } from "@/shared/utils/presentation";
 
 type TicketSummaryProps = {
   ticket: TicketDetail;

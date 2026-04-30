@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 

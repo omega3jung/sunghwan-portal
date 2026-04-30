@@ -26,10 +26,10 @@ import {
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ImageValueLabel, ValueLabel } from "@/shared/types";
-import { camelCase } from "@/shared/utils";
+import { camelCase } from "@/shared/utils/value";
 
+import { MAX_EMAIL_COUNT } from "../../constants";
 import { useTicketFormContext } from "../../context/TicketFormContext";
-import { MAX_EMAIL_COUNT } from "../../core/constants";
 import type { TicketFormValues } from "../../forms";
 
 const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
@@ -47,6 +47,9 @@ type CategoryMeta = {
   };
   parentCategory?: {
     id: string;
+    defaultPriority?: string | null;
+    defaultRiskLevel?: string | null;
+    defaultSlaDays?: number;
   };
 };
 
@@ -142,12 +145,17 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     }
 
     const { selected, parentCategory } = resolveCategoryMeta(subCatId);
-    const slaDays = selected?.defaultSlaDays ?? 0;
+    const slaDays =
+      selected?.defaultSlaDays ?? parentCategory?.defaultSlaDays ?? 1;
+    const priority =
+      selected?.defaultPriority ?? parentCategory?.defaultPriority ?? null;
+    const riskLevel =
+      selected?.defaultRiskLevel ?? parentCategory?.defaultRiskLevel ?? null;
 
     form.setValue("mainCategory", parentCategory?.id);
     form.setValue("dueAt", addDays(endOfToday(), slaDays));
-    form.setValue("priority", selected?.defaultPriority ?? null);
-    form.setValue("riskLevel", selected?.defaultRiskLevel ?? null);
+    form.setValue("priority", priority);
+    form.setValue("riskLevel", riskLevel);
     setMindueAt(addDays(startOfToday(), slaDays));
   };
 

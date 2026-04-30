@@ -10,14 +10,11 @@ import type {
 } from "@/feature/serviceDesk/assignmentRule/write";
 import type { DbClientCategoryTree } from "@/feature/serviceDesk/category/mapper";
 import {
-  clientAssignmentRuleSettingsMock,
-  internalAssignmentRuleSettingsMock,
-} from "@/mocks/domain/serviceDesk/assignmentRules";
-import {
   clientCategorySettingsMock,
   internalCategorySettingsMock,
 } from "@/mocks/domain/serviceDesk/categories";
-import { createDualScopeLocalStore } from "@/server/serviceDesk/shared/localStore";
+
+import { getLocalDemoAssignmentRulesTree } from "../state";
 
 type AssignmentRuleStore = Record<string, DbAssignmentRule[]>;
 
@@ -49,22 +46,8 @@ const buildAssignmentRuleSeed = ({
   );
 };
 
-const assignmentRuleStore = createDualScopeLocalStore<AssignmentRuleStore>({
-  internalSeed: buildAssignmentRuleSeed({
-    categoryTrees: internalCategorySettingsMock,
-    templateRules: [
-      ...internalAssignmentRuleSettingsMock,
-      ...clientAssignmentRuleSettingsMock,
-    ],
-  }),
-  clientSeed: buildAssignmentRuleSeed({
-    categoryTrees: clientCategorySettingsMock,
-    templateRules: clientAssignmentRuleSettingsMock,
-  }),
-});
-
 const getAssignmentRuleStore = (isInternal: boolean) => {
-  return assignmentRuleStore.getStore(isInternal);
+  return buildAssignmentRuleSeed(getLocalDemoAssignmentRulesTree(isInternal));
 };
 
 const getCategoryTrees = (isInternal: boolean) => {

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { Stepper } from "@/components/custom/Stepper";
 import { NS } from "@/lib/i18n";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 type TicketFormDialogStepFlowProps = {
   currentStep: number;

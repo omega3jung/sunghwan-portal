@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { TreeMultiComboBoxBadgeList } from "./TreeMultiComboBoxBadgeList";
 import { TreeMultiComboBoxParentItem } from "./TreeMultiComboBoxParentItem";
@@ -59,6 +59,7 @@ const Component = (
     isLoading = false,
     disabled = false,
     readOnly = false,
+    modal = true,
     className,
     ...buttonProps
   }: TreeMultiComboBoxProps,
@@ -78,7 +79,10 @@ const Component = (
     [options, value],
   );
   const optionIndex = useMemo(() => createTreeOptionIndex(options), [options]);
-  const badgeOrderMap = useMemo(() => createTreeBadgeOrderMap(options), [options]);
+  const badgeOrderMap = useMemo(
+    () => createTreeBadgeOrderMap(options),
+    [options],
+  );
   const selectedItems = useMemo(
     () => getSelectedTreeItems(normalizedValue, options),
     [normalizedValue, options],
@@ -135,7 +139,7 @@ const Component = (
   };
 
   return (
-    <Popover>
+    <Popover modal={modal}>
       <PopoverTrigger asChild>
         <Button
           {...buttonProps}

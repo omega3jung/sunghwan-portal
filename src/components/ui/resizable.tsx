@@ -7,7 +7,7 @@ import {
   Separator as ResizableSeparator,
 } from "react-resizable-panels";
 
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 const ResizablePanelGroup = ({
   className,

@@ -24,12 +24,12 @@ import {
   canChangeStatus,
   getCurrentTrackedMinutes,
 } from "@/feature/serviceDesk/ticketTrackTime/components/TrackTimeTool/payload";
-import { internalHistoriesMocks } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,
   getTicketContext,
 } from "@/server/serviceDesk/ticket/command/utils";
+import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
 
 const localTrackTimes: DbTicketTrackTime[] = [];
 
@@ -177,9 +177,12 @@ export async function POST(
     );
 
     localTrackTimes.push(trackTime);
-    internalHistoriesMocks.push({
+
+    const histories = getLocalDemoHistories(isInternal);
+
+    histories.push({
       ticket_id: ticketId,
-      history_no: getMaxHistoryNo(ticketId),
+      history_no: getMaxHistoryNo(ticketId, isInternal),
       type: "TRACK_TIME",
       action: "UPDATED",
       actor_id: employeeUserName,
@@ -191,9 +194,9 @@ export async function POST(
     });
 
     if (nextStatus) {
-      internalHistoriesMocks.push({
+      histories.push({
         ticket_id: ticketId,
-        history_no: getMaxHistoryNo(ticketId),
+        history_no: getMaxHistoryNo(ticketId, isInternal),
         type: "STATUS",
         action: "UPDATED",
         actor_id: employeeUserName,

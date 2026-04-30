@@ -1,5 +1,5 @@
 import type { BadgeProps } from "@/components/ui/badge";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type {
   BadgeVariant,

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { TrackTimeTool } from "@/feature/serviceDesk/ticketTrackTime";
 import { NS } from "@/lib/i18n";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 type TicketHeaderProps = {
   ticket?: TicketDetail | null;

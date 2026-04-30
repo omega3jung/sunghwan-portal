@@ -62,7 +62,8 @@
       "invalidRange": "End time must be after start time.",
       "statusRequiresTime": "Status can only change when accumulated track time plus this entry is greater than 0.",
       "noteMaxLength": "Note must be 500 characters or less."
-    }
+    },
+    "invalidFieldItems": "Invalid fields : {item}"
   },
   "message": {
     "refineSearchCriteria": "Refine your search criteria",
@@ -70,7 +71,8 @@
     "ticketCreation": "Ticket Creation",
     "processingFlow": "Processing Flow",
     "foundDraft": "Found draft",
-    "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded."
+    "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded.",
+    "loadDraftExceptInvalid": "Loaded the draft except in cases where it is invalid."
   },
   "hoverMessage": {
     "backToList": "Back to ticket list",
@@ -344,7 +346,13 @@
       "notFound": "Ticket not found.",
       "fetch": "Failed to fetch ticket.",
       "update": "Failed to update ticket.",
-      "delete": "Failed to delete ticket."
+      "delete": "Failed to delete ticket.",
+      "localDemo": {
+        "invalidPayload": "Invalid ticket payload.",
+        "requesterRequired": "Requester is required.",
+        "categoryNotFound": "Category {{categoryId}} was not found.",
+        "updateNotAllowed": "Ticket cannot be updated in status {{status}}."
+      }
     },
     "ticketActions": {
       "fetchList": "Failed to fetch ticket actions.",
@@ -370,11 +378,13 @@
       "mergeSameTicket": "Cannot merge into the same ticket.",
       "employeeUnavailable": "Unauthorized: employee identity is unavailable.",
       "actionMismatch": "Action path and payload do not match.",
+      "startWork": "Failed to start ticket work.",
       "execute": "Failed to execute ticket command.",
       "localDemo": {
         "createFailed": "Failed to create action.",
         "ticketNotFound": "Ticket {{ticketId}} not found.",
         "assigneeRequired": "ASSIGN action requires assigneeIds.",
+        "assigneeForbidden": "Only an assigned user can start work on this ticket.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",
         "mergeTargetNotFound": "Merge target not found.",

@@ -1,6 +1,6 @@
 import { JobField } from "@/domain/organization";
 import { idToNumber } from "@/lib/api/utils/mapId";
-import { undefinedToNull } from "@/shared/utils/nullable";
+import { undefinedToNull } from "@/shared/utils/value";
 
 import { DbJobField } from "./mapper";
 

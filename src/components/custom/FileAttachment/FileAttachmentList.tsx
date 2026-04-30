@@ -2,7 +2,7 @@ import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { bytesToKB } from "@/shared/utils";
+import { bytesToKB } from "@/shared/utils/browser";
 
 type FileAttachmentListProps = {
   files: File[];

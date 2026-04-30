@@ -4,7 +4,7 @@ import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/recommendation.localDemo";
-import { isLocale } from "@/shared/utils/language";
+import { isLocale } from "@/shared/utils/i18n";
 
 const parseRecommendationInput = async (
   request: NextRequest,

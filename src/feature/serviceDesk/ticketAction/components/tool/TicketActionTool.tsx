@@ -9,8 +9,8 @@ import { useTranslation } from "react-i18next";
 import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
+import { useMutationToast } from "@/shared/client/toast";
 import type { ImageValueLabel } from "@/shared/types";
-import { useMutationToast } from "@/shared/utils";
 
 import { useTicketActionMutation } from "../../api";
 import {

@@ -26,7 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { resolveRichEditorPreset } from "./presets";
 import type {

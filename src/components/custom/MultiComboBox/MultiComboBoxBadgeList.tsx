@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { getBadgeClassName, resolveBadgeVariant } from "./styles";
 import type { BadgeVariant, MultiComboBoxItem, PaletteIndex } from "./types";
@@ -36,10 +36,7 @@ export function MultiComboBoxBadgeList({
             itemOrderMap?.get(item.value) ?? index,
             paletteStart,
             palettePick,
-            cn(
-              "font-medium",
-              readOnly ? undefined : "cursor-pointer",
-            ),
+            cn("font-medium", readOnly ? undefined : "cursor-pointer"),
           )}
           onClick={(event) => {
             if (readOnly) {

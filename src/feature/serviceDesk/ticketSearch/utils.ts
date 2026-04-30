@@ -1,38 +1,65 @@
-import type { RuleGroupTypeIC } from "react-querybuilder";
+import { DbParams } from "@/shared/types";
+import {
+  combineRuleGroups,
+  createArrayContainsAnyFilter,
+  createDateRangeFilter,
+  createEqualsAnyFilter,
+  createKeywordFilter,
+} from "@/shared/utils/routing";
 
-import type { TicketSearchCriteriaFormValues } from "@/feature/serviceDesk/ticketSearch/forms";
-import type { DbParams } from "@/shared/types/api";
-
-const createKeywordFilter = (keyword: string): RuleGroupTypeIC | undefined => {
-  const trimmed = keyword.trim();
-
-  if (!trimmed) {
-    return undefined;
-  }
-
-  return {
-    rules: [
-      {
-        field: "ticketNumber",
-        operator: "contains",
-        value: trimmed,
-      },
-      "or",
-      {
-        field: "subject",
-        operator: "contains",
-        value: trimmed,
-      },
-    ],
-  };
-};
+import { TicketSearchCriteriaFormValues } from "./forms";
 
 export const mapSearchCriteriaToDbParams = (
   values: TicketSearchCriteriaFormValues,
 ): DbParams => {
-  // TODO: refine mapping for period, dueBy, assignee/requester, status, category.
-  // TODO: align field names/operators with the final service desk ticket API contract.
+  const filter = combineRuleGroups([
+    createKeywordFilter({
+      fields: ["ticketNumber", "subject"],
+      keyword: values.keyword,
+    }),
+
+    createEqualsAnyFilter({
+      field: "categoryId",
+      values: values.category,
+    }),
+
+    createEqualsAnyFilter({
+      field: "status",
+      values: values.status,
+    }),
+
+    createEqualsAnyFilter({
+      field: "riskLevel",
+      values: values.riskLevel,
+    }),
+
+    createEqualsAnyFilter({
+      field: "priority",
+      values: values.priority,
+    }),
+
+    createArrayContainsAnyFilter({
+      field: "assigneeIds",
+      values: values.assignee,
+    }),
+
+    createEqualsAnyFilter({
+      field: "requesterId",
+      values: values.requester,
+    }),
+
+    createDateRangeFilter({
+      field: "createdAt",
+      dateRange: values.period.dateRange,
+    }),
+
+    createDateRangeFilter({
+      field: "dueAt",
+      dateRange: values.dueBy?.dateRange,
+    }),
+  ]);
+
   return {
-    filter: createKeywordFilter(values.keyword),
+    filter,
   };
 };

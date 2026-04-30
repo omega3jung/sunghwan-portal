@@ -2,7 +2,7 @@ import { Check, Minus } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { CommandItem } from "@/components/ui/command";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { TreeCheckState } from "./types";
 

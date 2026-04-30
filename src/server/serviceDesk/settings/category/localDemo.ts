@@ -14,25 +14,13 @@ import type {
   UpdateCategoryInput,
 } from "@/feature/serviceDesk/category/write";
 import { idToNumber } from "@/lib/api/utils/mapId";
-import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/mocks/domain/serviceDesk/categories";
-import { createDualScopeLocalStore } from "@/server/serviceDesk/shared/localStore";
 
-const categoryStore = createDualScopeLocalStore<DbClientCategoryTree[]>({
-  internalSeed: internalCategorySettingsMock,
-  clientSeed: clientCategorySettingsMock,
-});
-
-const getCategoryStore = (isInternal: boolean) => {
-  return categoryStore.getStore(isInternal);
-};
+import { getLocalDemoCategories } from "../state";
 
 export const getLocalCategoryTrees = (
   isInternal: boolean,
 ): ClientCategoryTree[] => {
-  return getCategoryStore(isInternal).map((client) =>
+  return getLocalDemoCategories(isInternal).map((client) =>
     normalizeClientTree(client),
   );
 };
@@ -205,7 +193,7 @@ export const localListCategories = ({
 }) => {
   const items = filterItemsByQuery(
     searchParams,
-    camelClientCategoryTreeMapper(getCategoryStore(isInternal)),
+    camelClientCategoryTreeMapper(getLocalDemoCategories(isInternal)),
   );
 
   return {
@@ -221,14 +209,14 @@ export const localGetCategory = ({
   isInternal: boolean;
   id: string;
 }) => {
-  const location = getCategoryLocation(getCategoryStore(isInternal), id);
+  const location = getCategoryLocation(getLocalDemoCategories(isInternal), id);
 
   if (!location) {
     return null;
   }
 
   return normalizeCategory(
-    getCategoryStore(isInternal)[location.clientIndex].category[
+    getLocalDemoCategories(isInternal)[location.clientIndex].category[
       location.categoryIndex
     ],
   );
@@ -241,7 +229,7 @@ export const localCreateCategory = ({
   isInternal: boolean;
   input: CreateCategoryInput;
 }) => {
-  const items = getCategoryStore(isInternal);
+  const items = getLocalDemoCategories(isInternal);
   const clientIndex = getClientIndexById(items, input.clientId);
 
   if (clientIndex === -1) {
@@ -276,7 +264,7 @@ export const localUpdateCategory = ({
   id: string;
   input: UpdateCategoryInput;
 }) => {
-  const items = getCategoryStore(isInternal);
+  const items = getLocalDemoCategories(isInternal);
   const location = getCategoryLocation(items, id);
 
   if (!location) {
@@ -318,7 +306,7 @@ export const localSaveCategoryTree = ({
   isInternal: boolean;
   payload: SaveServiceDeskCategoryTreePayload;
 }) => {
-  const items = getCategoryStore(isInternal);
+  const items = getLocalDemoCategories(isInternal);
   const clientIndex = getClientIndexById(items, payload.clientId);
 
   if (clientIndex === -1) {
@@ -376,7 +364,7 @@ export const localSoftDeleteCategory = ({
   isInternal: boolean;
   id: string;
 }) => {
-  const items = getCategoryStore(isInternal);
+  const items = getLocalDemoCategories(isInternal);
   const location = getCategoryLocation(items, id);
 
   if (!location) {

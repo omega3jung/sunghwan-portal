@@ -19,7 +19,7 @@ type Props = {
 
 type TicketDueByInputValue = {
   type: dueAt;
-  dateRange: DateRange | undefined;
+  dateRange?: DateRange;
 };
 
 const convertDueAtToDateRange = (value: dueAt): DateRange | undefined => {
@@ -62,30 +62,46 @@ function TicketDueByFieldInput({
   onChange,
   options,
 }: {
-  value: TicketDueByInputValue;
-  onChange: (value: TicketDueByInputValue) => void;
+  value?: TicketDueByInputValue;
+  onChange: (value?: TicketDueByInputValue) => void;
   options: ReturnType<typeof createTicketDueByOptions>;
 }) {
-  const nextTypeRef = useRef<dueAt>(value.type);
+  const safeValue: TicketDueByInputValue = value ?? {
+    type: "all",
+    dateRange: undefined,
+  };
+  const nextTypeRef = useRef<dueAt>(safeValue.type);
 
   useEffect(() => {
-    nextTypeRef.current = value.type;
-  }, [value.type]);
+    nextTypeRef.current = safeValue.type;
+  }, [safeValue.type]);
 
   return (
     <SearchDateFilter
-      value={value.type}
+      value={safeValue.type}
       onValueChange={(selected) => {
-        nextTypeRef.current = selected ?? value.type;
+        nextTypeRef.current = selected ?? safeValue.type;
+        if (nextTypeRef.current === "all") {
+          onChange(undefined);
+          return;
+        }
+
         onChange({
-          type: selected ?? value.type,
-          dateRange: value.dateRange,
+          type: selected ?? safeValue.type,
+          dateRange: safeValue.dateRange,
         });
       }}
-      range={value.dateRange}
+      range={safeValue.dateRange}
       onRangeChange={(selected) => {
+        const nextType = nextTypeRef.current ?? safeValue.type;
+
+        if (nextType === "all") {
+          onChange(undefined);
+          return;
+        }
+
         onChange({
-          type: nextTypeRef.current ?? value.type,
+          type: nextType,
           dateRange: selected,
         });
       }}
@@ -116,7 +132,7 @@ export function TicketDueByField({ control }: Props) {
         name="dueBy"
         render={({ field }) => (
           <TicketDueByFieldInput
-            value={field.value as TicketDueByInputValue}
+            value={field.value as TicketDueByInputValue | undefined}
             onChange={field.onChange}
             options={dueByOptions}
           />

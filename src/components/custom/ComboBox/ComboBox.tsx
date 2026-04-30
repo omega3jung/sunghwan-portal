@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { ComboBoxProps, Props } from "./type";
 import { comboBoxVariants } from "./variants";
@@ -37,6 +37,7 @@ const Component = (props: ComboBoxProps & Props, _: any) => {
     disabled = false,
     readOnly = false,
     hideCheck = false,
+    modal = true,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -70,7 +71,7 @@ const Component = (props: ComboBoxProps & Props, _: any) => {
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger asChild>
         <Button
           ref={buttonRef}

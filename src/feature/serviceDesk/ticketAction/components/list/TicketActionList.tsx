@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import type { TicketAction } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
-import { stripHtml } from "@/shared/utils/comment";
+import { htmlToPlainText } from "@/shared/utils/value";
 
 import { getTicketActionTypeLabelKey } from "../../mapper";
 import { TicketActionEmpty } from "./TicketActionEmpty";
@@ -67,7 +67,7 @@ export function TicketActionList({
       const searchTarget = [
         action.actionNo,
         t(getTicketActionTypeLabelKey(action.actionType)),
-        stripHtml(action.content || ""),
+        htmlToPlainText(action.content || ""),
         owner?.label,
         owner?.displayName,
       ]

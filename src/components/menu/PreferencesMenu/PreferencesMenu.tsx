@@ -21,7 +21,8 @@ import {
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { languageOptions } from "@/shared/constants/options/language";
 import { useWindowDimensions } from "@/shared/hooks/useWindowDimensions";
-import { applyColorTheme, cn, isLocale } from "@/shared/utils";
+import { isLocale } from "@/shared/utils/i18n";
+import { applyColorTheme, cn } from "@/shared/utils/presentation";
 
 const themeButtons = [
   { name: "default", primary: "0,0%,9%", muted: "0,0%,96.1%" },

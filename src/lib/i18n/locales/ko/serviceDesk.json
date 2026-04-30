@@ -63,7 +63,8 @@
       "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
       "statusRequiresTime": "누적 추적 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
       "noteMaxLength": "메모는 500자 이하여야 합니다."
-    }
+    },
+    "invalidFieldItems": "잘못된 필드: {item}"
   },
   "message": {
     "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
@@ -71,7 +72,8 @@
     "ticketCreation": "티켓 생성",
     "processingFlow": "처리 흐름",
     "foundDraft": "임시 저장된 내용이 있습니다",
-    "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다."
+    "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
+    "loadDraftExceptInvalid": "유효하지 않은 경우를 제외하고 초안을 불러왔습니다."
   },
   "hoverMessage": {
     "backToList": "티켓 목록으로 돌아가기",

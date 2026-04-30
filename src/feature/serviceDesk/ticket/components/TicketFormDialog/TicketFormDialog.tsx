@@ -10,7 +10,7 @@ import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import { TicketFormProvider } from "../../context/TicketFormContext";
-import { ticketStep } from "../../core/constants";
+import { ticketStep } from "../../utils/constants";
 import { useTicketFormDialog } from "../../hooks";
 import { AttachmentStep } from "./AttachmentStep";
 import { InfoStep } from "./InfoStep";

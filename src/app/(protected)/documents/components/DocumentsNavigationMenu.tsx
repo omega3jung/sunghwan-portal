@@ -6,7 +6,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/shared/utils/classnames";
+import { cn } from "@/shared/utils/presentation";
 
 import type { DocumentGroup } from "../types/documents";
 

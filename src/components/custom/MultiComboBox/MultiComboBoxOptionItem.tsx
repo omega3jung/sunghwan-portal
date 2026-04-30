@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 
 import { CommandItem } from "@/components/ui/command";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { MultiComboBoxItem } from "./types";
 

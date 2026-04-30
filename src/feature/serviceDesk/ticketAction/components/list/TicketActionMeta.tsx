@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import type { TicketAction } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
-import { cn } from "@/shared/utils";
-import { formatDateTime } from "@/shared/utils/comment";
-import { formatTimeDistanceFromNow } from "@/shared/utils/date";
+import {
+  formatDateTime,
+  formatTimeDistanceFromNow,
+} from "@/shared/utils/format";
+import { cn } from "@/shared/utils/presentation";
 
 import { getTicketActionTypeLabelKey } from "../../mapper";
 

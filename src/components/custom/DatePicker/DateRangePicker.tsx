@@ -29,7 +29,7 @@ import {
   DEFAULT_DATE_RANGE_PRESETS,
 } from "@/shared/constants/date";
 import { DateRangePreset } from "@/shared/types";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { DateRangePickerProps } from "./types";
 import {
@@ -63,6 +63,7 @@ const Component = (
     range,
     onRangeChange,
     showTextType = "text",
+    modal = true,
     options = DEFAULT_DATE_RANGE_PRESETS,
   } = props;
   const { t } = useTranslation("DatePicker");
@@ -160,7 +161,10 @@ const Component = (
       return range;
     }
 
-    return resolvePresetRange(period, presetSyncAnchorRef.current ?? new Date());
+    return resolvePresetRange(
+      period,
+      presetSyncAnchorRef.current ?? new Date(),
+    );
   }, [period, range]);
 
   // Build the range portion of the trigger.
@@ -288,7 +292,7 @@ const Component = (
   }, [syncRangeFromPreset]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverAnchor asChild>
         <div ref={ref} className="relative">
           {/* The Select controls only the preset choice, not the concrete range itself. */}

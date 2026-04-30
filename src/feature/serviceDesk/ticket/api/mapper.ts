@@ -1,96 +1,12 @@
-import { Priority, RiskLevel } from "@/domain/common";
-import {
-  Attach,
-  CategoryScope,
-  TicketDetail,
-  TicketResolutionReason,
-  TicketStatus,
-  TicketSummary,
-} from "@/domain/serviceDesk";
+import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
-import { ISODateString } from "@/shared/types/date";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
+import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-export interface DbTicketSummary {
-  id: string;
-  ticket_number: string;
-
-  created_at: ISODateString;
-  updated_at: ISODateString | null;
-
-  requester_id: string;
-
-  status: TicketStatus;
-  close_reason?: TicketResolutionReason | null;
-  priority: Priority;
-  risk_level: RiskLevel;
-  assignee_id: string[];
-  merged_into_ticket_id?: string | null;
-
-  last_comment_at: ISODateString | null;
-  last_commenter_email: string | null;
-  track_time_minutes: number;
-
-  due_at: ISODateString;
-
-  owner: boolean;
-  assigned: boolean;
-  active: boolean;
-
-  scope: CategoryScope;
-  category_name: string;
-  approval_step_name: string | null;
-
-  subject: string;
-  age: number;
-}
-
-export interface DbTicketDetail {
-  id: string;
-  ticket_number: string;
-
-  created_at: ISODateString;
-  updated_at: ISODateString | null;
-
-  requester_id: string;
-
-  status: TicketStatus;
-  close_reason?: TicketResolutionReason | null;
-  priority: Priority;
-  risk_level: RiskLevel;
-  assignee_id: string[];
-  merged_into_ticket_id?: string | null;
-
-  last_comment_at: ISODateString | null;
-  last_commenter_email: string | null;
-  track_time_minutes: number;
-
-  due_at: ISODateString;
-
-  owner: boolean;
-  assigned: boolean;
-  active: boolean;
-
-  scope: CategoryScope;
-  category_id: string;
-  approval_step_id: string | null;
-
-  subject: string;
-  content: string;
-
-  email: {
-    to: string[];
-    cc: string[];
-    bcc: string[];
-  };
-
-  files: Attach[];
-  images: Attach[];
-}
+import { DbTicketDetail, DbTicketSummary } from "./types";
 
 export const camelTicketSummaryMapper: ArrayMapper<
   DbTicketSummary,
@@ -148,6 +64,7 @@ export const camelTicketDetailMapper: ArrayMapper<
     active: item.active,
     scope: item.scope,
     categoryId: item.category_id,
+    categoryName: item.category_name,
     approvalStepId: nullToUndefined(item.approval_step_id),
     subject: item.subject,
     content: item.content,
@@ -213,6 +130,7 @@ export const snakeTicketDetailMapper: ArrayMapper<
     active: item.active,
     scope: item.scope,
     category_id: item.categoryId,
+    category_name: item.categoryName,
     approval_step_id: undefinedToNull(item.approvalStepId),
     subject: item.subject,
     content: item.content,

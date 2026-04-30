@@ -36,6 +36,10 @@
     "select": "Sélectionner {{target}}"
   },
   "sort": {
+    "sort": "Trier",
+    "sortBy": "Trier par",
+    "asc": "Ascendant",
+    "desc": "Descendant",
     "latest": "Trier par les plus récents",
     "oldest": "Trier par les plus anciens"
   },
@@ -78,6 +82,7 @@
     "type": "Type",
     "updatedAt": "Mis à jour le",
     "ticket": "Ticket",
+    "ticketNumber": "Numéro de billet.",
     "riskLevel": "Niveau de risque",
     "list": "Liste"
   },

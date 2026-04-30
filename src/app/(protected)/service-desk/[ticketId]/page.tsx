@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,7 +10,10 @@ import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSessio
 import { useEmployeeListQuery } from "@/feature/organization/employee";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
-import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket";
+import {
+  useAutoStartApprovedTicketOnView,
+  useServiceDeskTicketQuery,
+} from "@/feature/serviceDesk/ticket";
 import {
   TicketActionList,
   TicketActionTool,
@@ -21,7 +25,7 @@ import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import {
   TicketDetailsAside,
@@ -40,6 +44,7 @@ type Props = {
 };
 
 export default function ServiceDeskTicketDetailPage({ params }: Props) {
+  const router = useRouter();
   const [isDetailsAsideOpen, setIsDetailsAsideOpen] = useState(true);
   const [isHistorySheetOpen, setIsHistorySheetOpen] = useState(false);
   const { t } = useTranslation(NS.serviceDesk);
@@ -49,6 +54,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
+
+  useAutoStartApprovedTicketOnView({
+    ticket,
+  });
 
   const { data: ticketActions, isLoading: isTicketActionsLoading } =
     useServiceDeskTicketActionListQuery(params.ticketId);
@@ -136,6 +145,16 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const latestActionOwner = latestAction
     ? userMap.get(latestAction.ownerId)
     : undefined;
+
+  useEffect(() => {
+    if (!isTicketLoading && !ticket) {
+      router.replace("/service-desk");
+    }
+  }, [isTicketLoading, router, ticket]);
+
+  if (!isTicketLoading && !ticket) {
+    return null;
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col p-2 pt-1">

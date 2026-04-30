@@ -27,7 +27,7 @@ import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { cn, initials } from "@/shared/utils";
+import { cn, initials } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";

@@ -7,7 +7,7 @@ import {
   camelTicketActionMapper,
   mapTicketActionListPayload,
 } from "@/feature/serviceDesk/ticketAction";
-import { internalActionsMocks } from "@/mocks/scenarios/serviceDesk/internalActionsMock";
+import { getLocalDemoActions } from "@/server/serviceDesk/ticket/state";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -16,8 +16,8 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   if (!isRemote) {
     const isInternal = await isInternalUser(request);
 
-    const items = (isInternal ? internalActionsMocks : []).filter(
-      (item) => item.ticket_id === ticketId,
+    const items = getLocalDemoActions(isInternal).filter(
+      (item) => item.ticket_id === ticketId && item.active !== false,
     );
 
     return NextResponse.json({

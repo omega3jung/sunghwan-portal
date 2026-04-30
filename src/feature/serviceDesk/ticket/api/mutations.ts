@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api";
+import { ticketHistoryQueryKeys } from "@/feature/serviceDesk/ticketHistory";
 
 import type { TicketFormValues } from "../forms";
 import { ticketQueryKeys } from "./queryKeys";
@@ -37,6 +38,19 @@ export const useDeleteServiceDeskTicket = () => {
     mutationFn: serviceDeskTicketApi.remove,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+    },
+  });
+};
+
+export const useStartTicketWorkMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: serviceDeskTicketApi.startWork,
+    onSuccess: (_ticket, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ticketHistoryQueryKeys.list(variables.ticketId),
+      });
     },
   });
 };

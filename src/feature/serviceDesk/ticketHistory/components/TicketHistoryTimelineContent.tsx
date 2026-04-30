@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import type { TicketHistory } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { mapTicketHistoryToTimelineItem } from "../mapper";
 

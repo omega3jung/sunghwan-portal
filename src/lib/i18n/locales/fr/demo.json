@@ -3,8 +3,11 @@
     "hero": {
       "protectedBadge": "Accueil protégé",
       "enterpriseBadge": "Démo du portail d'entreprise",
-      "title": "Accueil de l'espace de travail pour les opérations de service, les références et la configuration de la plateforme.",
-      "description": "Cet accueil protégé est conçu comme le premier écran après la connexion. Il offre une vue d'ensemble stable du portail interne du projet de démonstration actuel, met en avant les principales zones de travail et rend l'action suivante évidente sans transformer la page en tableau de bord analytique lourd.",
+      "title": "Cette page est l’accueil de l’espace de travail pour les opérations de service, les documents de référence et les paramètres de la plateforme.",
+      "description": {
+        "local": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En Local Demo, vous pouvez vérifier les limites d’accès et les actions disponibles selon le Role (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "remote": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En mode Remote, vous pouvez vérifier des flux d’autorisation plus proches d’un fonctionnement réel en combinant le Role avec la relation de l’utilisateur à chaque ticket."
+      },
       "actions": {
         "openServiceDesk": "Ouvrir le Service Desk",
         "browseDocumentation": "Parcourir la documentation",
@@ -16,15 +19,25 @@
     },
     "about": {
       "title": "À propos de cet accueil",
-      "description": "Un écran d'entrée pratique pour le portail de portfolio actuel.",
+      "description": "Cette section explique le mode d’exécution actuel du portail portfolio et le périmètre principal de navigation.",
       "currentScope": {
         "title": "Périmètre actuel",
-        "description": "Flux de service desk, navigation protégée, surfaces de paramètres et documentation orientée implémentation."
+        "description": {
+          "local": "En Local Demo, vous pouvez explorer le flux Service Desk, les documents et les écrans de configuration, tandis que les contrôles d’autorisation sont simplifiés autour de règles basées sur le Role.",
+          "remote": "En mode Remote, le flux Service Desk, les documents et les écrans de configuration peuvent être connectés à de vraies API, tandis que le comportement des autorisations reflète à la fois le Role et les relations utilisateur."
+        }
       },
       "architectureNotes": {
-        "note1": "Les routes protégées sont présentées comme un portail interne plutôt que comme une page publique.",
-        "note2": "Le contenu d'accueil est structuré autour de la navigation rapide, du résumé opérationnel et de la priorité d'implémentation actuelle.",
-        "note3": "Tout le contenu repose sur des données fictives légères afin que la page puisse ensuite être connectée à de vraies API de tickets, de documents et d'approbations."
+        "local": {
+          "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
+          "note2": "En Local Demo, les menus et les actions disponibles changent selon les rôles ADMIN, MANAGER, LEADER, USER et GUEST.",
+          "note3": "Les autorisations basées sur les relations organisationnelles, les restrictions liées aux tickets et l’intégration avec les API distantes sont séparées afin d’être validées plus précisément en mode Remote."
+        },
+        "remote": {
+          "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
+          "note2": "En mode Remote, le périmètre d’accès est déterminé non seulement par le Role, mais aussi par des relations telles que demandeur, responsable assigné et approbateur.",
+          "note3": "Les données de ticket, document, approbation, assignation et configuration sont connectées via de vraies frontières API afin de fournir un flux plus proche d’un environnement opérationnel."
+        }
       }
     },
     "quickActions": {
@@ -125,6 +138,12 @@
         "description": "Connectez les cartes récapitulatives aux comptes de tickets, aux approbations et à l'activité récente des documents lorsque l'accueil protégé sera prêt à consommer de vraies données d'espace de travail."
       }
     }
+  },
+  "resetDemo": {
+    "title": "Réinitialiser la démo",
+    "message": "Réinitialiser les données de démonstration locales ?",
+    "description": "Réinitialiser les données de démonstration locales et restaurer les données simulées initiales.",
+    "resetting": "Réinitialisation"
   },
   "stepper": {
     "stepper": "Stepper",

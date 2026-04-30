@@ -19,7 +19,7 @@ import {
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
-import type { ImageValueLabel } from "@/shared/types";
+import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";
 import { createTicketCategoryOptions } from "./options";
@@ -71,6 +71,30 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
       ),
     [statusOptions],
   );
+
+  const priorityData = useMemo((): ValueLabel[] => {
+    if (!priorityOptions) return [];
+
+    return priorityOptions.map((priority) => {
+      return {
+        value: priority.value,
+        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+      };
+    });
+  }, [t]);
+
+  const riskLevelData = useMemo((): ValueLabel[] => {
+    if (!riskLevelOptions) return [];
+
+    return riskLevelOptions.map((riskLevel) => {
+      return {
+        value: riskLevel.value,
+        label: t(`enum.riskLevel.options.${riskLevel.value}`, {
+          ns: "domain",
+        }),
+      };
+    });
+  }, [t]);
 
   return (
     <FieldSet className="gap-10">
@@ -129,7 +153,6 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                       ns: NS.common,
                       target: tCommon("field.status"),
                     })}
-                    {...form.register("status")}
                   />
                 )}
               />
@@ -155,7 +178,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 id="ticket-search-select-priority"
                 badgeVariant="palette"
                 paletteStart={9}
-                options={priorityOptions}
+                options={priorityData}
                 value={field.value}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));
@@ -184,7 +207,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 id="ticket-search-select-risk"
                 badgeVariant="palette"
                 paletteStart={9}
-                options={riskLevelOptions}
+                options={riskLevelData}
                 value={field.value}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));

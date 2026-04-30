@@ -3,8 +3,11 @@
     "hero": {
       "protectedBadge": "Protected Home",
       "enterpriseBadge": "Enterprise portal demo",
-      "title": "Workspace home for service operations, references, and platform setup.",
-      "description": "This protected home is designed as the first screen after sign-in. It gives a stable internal-portal overview of the current demo project, highlights the main work areas, and makes the next action obvious without turning the page into a heavy analytics dashboard.",
+      "title": "This is a workspace home for service operations, reference documents, and platform settings.",
+      "description": {
+        "local": "This home is the entry point for navigating the main work areas of the Service Desk portfolio. In Local Demo, you can review access limits and available actions based on Role (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "remote": "This home is the entry point for navigating the main work areas of the Service Desk portfolio. In Remote mode, you can review permission flows closer to real service operations by combining Role with the user's relationship to each ticket."
+      },
       "actions": {
         "openServiceDesk": "Open Service Desk",
         "browseDocumentation": "Browse Documentation",
@@ -15,16 +18,26 @@
       "title": "Calendar"
     },
     "about": {
-      "title": "About This Home",
-      "description": "A practical entry screen for the current portfolio portal.",
+      "title": "About this home",
+      "description": "This section explains the current runtime mode of the portfolio portal and the main navigation scope.",
       "currentScope": {
         "title": "Current scope",
-        "description": "Service desk flows, protected navigation, settings surfaces, and implementation-oriented documentation."
+        "description": {
+          "local": "In Local Demo, you can explore the Service Desk flow, documents, and settings screens, while permission checks are simplified around Role-based rules.",
+          "remote": "In Remote mode, the Service Desk flow, documents, and settings screens can be connected to real APIs, while permission behavior reflects both Role and user relationships."
+        }
       },
       "architectureNotes": {
-        "note1": "Protected routes are framed as an internal portal rather than a public landing page.",
-        "note2": "Home content is structured around quick navigation, operational summary, and current implementation focus.",
-        "note3": "All content is lightweight mock data so the page can later be connected to real ticket, document, and approval APIs."
+        "local": {
+          "note1": "Protected routes are designed as internal portal screens after login, not as a public landing page.",
+          "note2": "In Local Demo, menus and available actions change according to ADMIN, MANAGER, LEADER, USER, and GUEST roles.",
+          "note3": "Organization-relationship permissions, ticket-relation restrictions, and remote API integration are separated so they can be validated more precisely in Remote mode."
+        },
+        "remote": {
+          "note1": "Protected routes are designed as internal portal screens after login, not as a public landing page.",
+          "note2": "In Remote mode, access scope is determined by considering not only Role, but also relationships such as requester, assignee, and approver.",
+          "note3": "Ticket, document, approval, assignment, and settings data are connected through real API boundaries to provide a flow closer to an operational environment."
+        }
       }
     },
     "quickActions": {
@@ -125,6 +138,12 @@
         "description": "Connect the summary cards to ticket counts, approvals, and recent document activity once the protected home is ready to consume real workspace data."
       }
     }
+  },
+  "resetDemo": {
+    "title": "Reset Demo",
+    "message": "Reset local demo data?",
+    "description": "Reset local demo data and restore the initial mock data.",
+    "resetting": "Resetting"
   },
   "stepper": {
     "stepper": "Stepper",

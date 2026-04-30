@@ -3,12 +3,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
+import { ResetDemoMenu } from "@/components/menu/ResetDemoMenu";
 import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
 import ShieldBadge from "./ShieldBadge";
@@ -195,8 +196,9 @@ export const NavigationBar = (props: Props) => {
 
       {!!actions && <div className="flex h-full items-center">{actions}</div>}
       <div className="flex items-center h-full py-2 gap-1">
+        <ResetDemoMenu />
         <Separator orientation="vertical" className="" />
-        <UserMenu></UserMenu>
+        <UserMenu />
       </div>
     </nav>
   );

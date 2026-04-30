@@ -47,6 +47,7 @@ type BaseSingleDatePickerProps = {
   onChange?: (value?: Date) => void;
   minDate?: Date;
   maxDate?: Date;
+  modal?: boolean;
 };
 
 /**
@@ -82,6 +83,7 @@ type DateRangePickerBaseProps = {
   options?: DateRangePreset[];
   variant?: SelectVariant;
   className?: string;
+  modal?: boolean;
 };
 
 /**
@@ -130,4 +132,5 @@ export type SearchDateFilterProps<T extends string = SearchPeriod> = {
   showTextType?: ShowTextType;
   variant?: SelectVariant;
   className?: string;
+  modal?: boolean;
 };

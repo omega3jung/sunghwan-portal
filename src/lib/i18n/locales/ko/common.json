@@ -36,6 +36,10 @@
     "select": "{{target}} 선택"
   },
   "sort": {
+    "sort": "정렬",
+    "sortBy": "정렬 기준",
+    "asc": "오름차순",
+    "desc": "내림차순",
     "latest": "최신순 정렬",
     "oldest": "오래된순 정렬"
   },
@@ -78,6 +82,7 @@
     "type": "유형",
     "updatedAt": "수정일",
     "ticket": "티켓",
+    "ticketNumber": "티켓 번호",
     "riskLevel": "위험도",
     "list": "목록"
   },

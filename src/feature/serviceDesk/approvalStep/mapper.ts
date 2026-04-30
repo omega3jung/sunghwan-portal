@@ -9,7 +9,7 @@ import {
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper, LocalizedText, Mapper } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
+import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 import { DbCategory } from "../category/mapper";
 

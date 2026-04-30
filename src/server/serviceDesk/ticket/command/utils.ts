@@ -2,10 +2,12 @@ import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { Priority, RiskLevel } from "@/domain/common";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticketAction";
-import { clientTicketsMocks } from "@/mocks/scenarios/serviceDesk/clientTicketsMock";
-import { internalActionsMocks } from "@/mocks/scenarios/serviceDesk/internalActionsMock";
-import { internalHistoriesMocks } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
-import { internalTicketsMocks } from "@/mocks/scenarios/serviceDesk/internalTicketsMock";
+
+import {
+  getLocalDemoActions,
+  getLocalDemoHistories,
+  getLocalDemoTickets,
+} from "../state";
 
 type TicketContext = {
   targetMock: DbTicketDetail[];
@@ -13,30 +15,27 @@ type TicketContext = {
   ticket: DbTicketDetail;
 };
 
-export const getMaxHistoryNo = (ticketId: string) => {
-  const items = internalHistoriesMocks
+export const getMaxHistoryNo = (ticketId: string, isInternal: boolean) => {
+  const items = getLocalDemoHistories(isInternal)
     .filter((item) => item.ticket_id === ticketId)
     .map((action) => action.history_no);
 
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
-export const getNextActionNo = (ticketId: string) => {
-  const items = internalActionsMocks
+export const getNextActionNo = (ticketId: string, isInternal: boolean) => {
+  const items = getLocalDemoActions(isInternal)
     .filter((item) => item.ticket_id === ticketId && item.active)
     .map((action) => action.action_no);
 
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
-export const getTargetTickets = (isInternal = false) =>
-  isInternal ? internalTicketsMocks : clientTicketsMocks;
-
 export const getTicketContext = (
   ticketId: string,
   isInternal = false,
 ): TicketContext => {
-  const targetMock = getTargetTickets(isInternal);
+  const targetMock = getLocalDemoTickets(isInternal);
   const index = targetMock.findIndex((item) => item.id === ticketId);
 
   if (index < 0) {

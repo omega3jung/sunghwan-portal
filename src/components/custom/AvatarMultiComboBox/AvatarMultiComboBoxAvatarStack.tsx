@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/shared/utils";
+import { cn, initials } from "@/shared/utils/presentation";
 
 import type { BadgeVariant } from "./types";
 import { badgeVariants } from "./variants";

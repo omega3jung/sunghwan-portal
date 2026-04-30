@@ -13,9 +13,12 @@ import {
 } from "@/feature/serviceDesk/ticketAction";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
-import { internalActionsMocks } from "@/mocks/scenarios/serviceDesk/internalActionsMock";
-import { internalHistoriesMocks } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
 
+import {
+  getLocalDemoActions,
+  getLocalDemoHistories,
+  getLocalDemoTickets,
+} from "../state";
 import {
   getLocalDemoNextStatus,
   isLocalDemoExecutionAllowed,
@@ -35,7 +38,6 @@ import {
   createUpdatedTicket,
   getMaxHistoryNo,
   getNextActionNo,
-  getTargetTickets,
   getTicketContext,
   requireAssigneeIds,
   requireTargetTicketId,
@@ -83,12 +85,13 @@ const buildHistoryBase = ({
   employeeUserName,
   actionNo,
   createdAt,
+  isInternal = false,
 }: LocalActionRuntimeContext): Pick<
   DbTicketHistory,
   "ticket_id" | "history_no" | "actor_id" | "action_no" | "created_at"
 > => ({
   ticket_id: ticketId,
-  history_no: getMaxHistoryNo(ticketId),
+  history_no: getMaxHistoryNo(ticketId, isInternal),
   actor_id: employeeUserName,
   action_no: actionNo.toString(),
   created_at: createdAt,
@@ -204,7 +207,7 @@ const validateMergeTarget = (
   targetTicketId: string,
 ) => {
   const sourceTicket = requireTicket(context);
-  const tickets = getTargetTickets(context.isInternal);
+  const tickets = getLocalDemoTickets(context.isInternal ?? false);
   const targetTicket = tickets.find((ticket) => ticket.id === targetTicketId);
 
   if (!targetTicket) {
@@ -467,7 +470,7 @@ export function localPost({
   isInternal = false,
 }: DbTicketActionLocalContext) {
   try {
-    const actionNo = getNextActionNo(ticketId);
+    const actionNo = getNextActionNo(ticketId, isInternal);
     const createdAt = new Date().toISOString();
     const ticketAction = createTicketAction({
       ticketId,
@@ -487,8 +490,11 @@ export function localPost({
       action,
     });
 
-    internalActionsMocks.push(ticketAction);
-    internalHistoriesMocks.push(createdHistory);
+    const actions = getLocalDemoActions(isInternal);
+    const histories = getLocalDemoHistories(isInternal);
+
+    actions.push(ticketAction);
+    histories.push(createdHistory);
 
     if (updatedTicket) {
       const { targetMock, index } = getTicketContext(ticketId, isInternal);

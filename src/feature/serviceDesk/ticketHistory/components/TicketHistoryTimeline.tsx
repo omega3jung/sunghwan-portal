@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { type TimelineOrder } from "@/components/custom/Timeline";
 import type { TicketHistory } from "@/domain/serviceDesk";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { TicketHistoryTimelineContent } from "./TicketHistoryTimelineContent";
 import { TicketHistoryTimelineHeader } from "./TicketHistoryTimelineHeader";

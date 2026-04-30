@@ -15,6 +15,7 @@ export const TICKET_PERIOD_OPTIONS: DateRangePreset[] = [
   "last_2week",
   "last_month",
   "last_2month",
+  "last_3month",
   "range",
 ];
 

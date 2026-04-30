@@ -18,12 +18,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { AvatarMultiComboBoxAvatarStack } from "./AvatarMultiComboBoxAvatarStack";
 import { AvatarMultiComboBoxOptionItem } from "./AvatarMultiComboBoxOptionItem";
 import type { Props } from "./types";
-import { createCommandFilter, EMPTY_OPTION_TEXT, splitOptionsBySelection } from "./utils";
+import {
+  createCommandFilter,
+  EMPTY_OPTION_TEXT,
+  splitOptionsBySelection,
+} from "./utils";
 import { comboBoxVariants } from "./variants";
 
 const Component = (
@@ -42,6 +46,7 @@ const Component = (
     readOnly = false,
     maxImages = 99,
     className,
+    modal = true,
     ...buttonProps
   }: Props,
   ref: ForwardedRef<HTMLButtonElement>,
@@ -64,14 +69,18 @@ const Component = (
 
   return (
     <div data-testid="avatarcombobox">
-      <Popover>
+      <Popover modal={modal}>
         <PopoverTrigger asChild>
           <Button
             {...buttonProps}
             ref={ref}
             variant="outline"
             role="combobox"
-            className={cn(comboBoxVariants({ variant, size }), "py-0.5", className)}
+            className={cn(
+              comboBoxVariants({ variant, size }),
+              "py-0.5",
+              className,
+            )}
             disabled={disabled || readOnly}
           >
             <AvatarMultiComboBoxAvatarStack

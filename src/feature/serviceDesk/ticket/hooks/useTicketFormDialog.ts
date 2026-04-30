@@ -1,3 +1,4 @@
+import { addDays, endOfDay, startOfToday } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -6,17 +7,18 @@ import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { useServiceDeskApprovalStepListQuery } from "@/feature/serviceDesk/approvalStep";
 import { NS } from "@/lib/i18n";
+import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
 import { DbParams } from "@/shared/types";
-import { useMutationToast } from "@/shared/utils";
 
+import { useCreateServiceDeskTicket, useUpdateServiceDeskTicket } from "../api";
+import { afterStepData, createStepData, ticketStep } from "../constants";
 import {
-  useCreateServiceDeskTicket,
-  useUpdateServiceDeskTicket,
-} from "../../ticket/api";
-import type { TicketFormValues } from "../../ticket/forms";
-import { ticketFormDefaultValues, useTicketForm } from "../../ticket/forms";
-import { afterStepData, createStepData, ticketStep } from "../core/constants";
+  ticketFormDefaultValues,
+  ticketFormSchema,
+  type TicketFormValues,
+  useTicketForm,
+} from "../forms";
 import { useTicketDraft } from "./useTicketDraft";
 
 const TICKET_DRAFT_TOAST_ID = "service-desk-ticket-draft";
@@ -214,14 +216,71 @@ export const useTicketFormDialog = ({
 
   const loadDraft = useCallback(
     (ticketDraft: TicketFormValues) => {
-      ticketForm.reset({
-        ...ticketDraft,
-        dueAt: new Date(ticketDraft.dueAt),
+      const draftRecord = ticketDraft as Record<string, unknown>;
+      const schemaShape = ticketFormSchema.shape;
+      const nextValues = ticketForm.getValues();
+      const invalidFields = new Set<string>();
+      const normalizedDraft = { ...draftRecord };
+
+      if (
+        normalizedDraft.dueAt === undefined &&
+        normalizedDraft.dueDate !== undefined
+      ) {
+        normalizedDraft.dueAt = normalizedDraft.dueDate;
+      }
+
+      Object.keys(normalizedDraft).forEach((fieldName) => {
+        if (!(fieldName in schemaShape) && fieldName !== "dueDate") {
+          invalidFields.add(fieldName);
+        }
       });
+
+      (Object.keys(schemaShape) as Array<keyof typeof schemaShape>).forEach(
+        (fieldName) => {
+          const rawValue = normalizedDraft[fieldName as string];
+
+          if (rawValue === undefined) {
+            return;
+          }
+
+          const normalizedValue =
+            fieldName === "dueAt"
+              ? new Date(rawValue as Date | string)
+              : rawValue;
+          const parsed = schemaShape[fieldName].safeParse(normalizedValue);
+
+          if (!parsed.success) {
+            invalidFields.add(String(fieldName));
+            return;
+          }
+
+          if (
+            fieldName === "dueAt" &&
+            endOfDay(parsed.data as Date) < addDays(startOfToday(), 1)
+          ) {
+            invalidFields.add(
+              normalizedDraft.dueDate !== undefined ? "dueDate" : "dueAt",
+            );
+            return;
+          }
+
+          (nextValues[fieldName as keyof TicketFormValues] as unknown) =
+            parsed.data;
+        },
+      );
+
+      ticketForm.reset(nextValues);
+
+      if (invalidFields.size > 0) {
+        toast(
+          `${t("message.loadDraftExceptInvalid")} : ${t("validation.invalidFieldItems", { item: Array.from(invalidFields).join(", ") })}`,
+        );
+      }
+
       toast.dismiss(TICKET_DRAFT_TOAST_ID);
       setShouldShowDraftToast(false);
     },
-    [ticketForm],
+    [t, ticketForm],
   );
 
   useEffect(() => {

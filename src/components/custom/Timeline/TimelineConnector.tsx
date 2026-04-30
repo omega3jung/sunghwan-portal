@@ -1,4 +1,4 @@
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { TimelinePaletteIndex } from "./types";
 import { getTimelineAccentClassName } from "./utils";

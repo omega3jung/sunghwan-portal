@@ -63,7 +63,8 @@
       "invalidRange": "La hora de fin debe ser posterior a la hora de inicio.",
       "statusRequiresTime": "El estado solo puede cambiar cuando el tiempo acumulado más esta entrada es mayor que 0.",
       "noteMaxLength": "La nota debe tener 500 caracteres o menos."
-    }
+    },
+    "invalidFieldItems": "Campos no válidos: {item}"
   },
   "message": {
     "refineSearchCriteria": "Refina tus criterios de búsqueda",
@@ -71,7 +72,8 @@
     "ticketCreation": "Creación del ticket",
     "processingFlow": "Flujo de procesamiento",
     "foundDraft": "Borrador encontrado",
-    "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará."
+    "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará.",
+    "loadDraftExceptInvalid": "Se cargó el borrador excepto en los casos en que no sea válido."
   },
   "hoverMessage": {
     "backToList": "Volver a la lista de tickets",

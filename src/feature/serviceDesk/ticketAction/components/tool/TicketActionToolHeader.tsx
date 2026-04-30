@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { NS } from "@/lib/i18n";
-import { initials } from "@/shared/utils/string";
+import { initials } from "@/shared/utils/presentation";
 
 import { getTicketActionModeLabelKey } from "../../mapper";
 import type { TicketActionMode } from "../../types";

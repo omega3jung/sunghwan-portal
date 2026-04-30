@@ -1,3 +1,5 @@
+"use client";
+
 import type { ChangeEvent } from "react";
 import { useRef } from "react";
 import type { FieldValues, UseFormReturn } from "react-hook-form";

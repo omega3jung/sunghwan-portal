@@ -3,7 +3,7 @@
 import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { statusLocaleKey } from "./locales";
 import { StatusBadgeProps, SystemStatus } from "./types";

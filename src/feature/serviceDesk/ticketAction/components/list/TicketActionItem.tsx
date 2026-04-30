@@ -13,7 +13,7 @@ import type { TicketAction } from "@/domain/serviceDesk";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
-import { initials } from "@/shared/utils/string";
+import { initials } from "@/shared/utils/presentation";
 
 import { TicketActionBody } from "./TicketActionBody";
 import { TicketActionMeta } from "./TicketActionMeta";

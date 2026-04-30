@@ -6,3 +6,4 @@ export * from "./mutations";
 export * from "./queries";
 export * from "./queryKeys";
 export * from "./repo";
+export * from "./types";

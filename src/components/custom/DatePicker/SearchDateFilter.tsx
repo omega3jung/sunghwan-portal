@@ -24,7 +24,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { SearchDateFilterProps } from "./types";
 import {
@@ -61,6 +61,7 @@ const Component = <T extends string>(
     resolveRange,
     showTextType = "text",
     rangeValue = "range" as T,
+    modal = true,
   }: SearchDateFilterProps<T>,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -81,7 +82,7 @@ const Component = <T extends string>(
    * Passing `undefined` directly can push the component into awkward controlled/uncontrolled edges,
    * so we fall back to the first available option only for Select's internal value handling.
    */
-  const safeValue = value ?? (options[0]?.value ?? "");
+  const safeValue = value ?? options[0]?.value ?? "";
   const normalizedRange = useMemo(() => normalizeDateRange(range), [range]);
 
   /**
@@ -126,7 +127,9 @@ const Component = <T extends string>(
       return normalizedRange;
     }
 
-    return resolvedValueRangeRef.current ?? normalizeDateRange(resolveRange?.(value));
+    return (
+      resolvedValueRangeRef.current ?? normalizeDateRange(resolveRange?.(value))
+    );
   }, [normalizedRange, rangeValue, resolveRange, value]);
 
   /**
@@ -195,7 +198,14 @@ const Component = <T extends string>(
       onRangeChange(nextRange);
       setOpen(false);
     },
-    [onRangeChange, onValueChange, openCalendar, rangeValue, resolveRange, value],
+    [
+      onRangeChange,
+      onValueChange,
+      openCalendar,
+      rangeValue,
+      resolveRange,
+      value,
+    ],
   );
 
   /**
@@ -286,7 +296,7 @@ const Component = <T extends string>(
   }, [syncRangeFromValue]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverAnchor asChild>
         <div ref={ref} className="relative">
           <Select

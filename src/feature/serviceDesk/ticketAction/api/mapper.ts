@@ -5,7 +5,7 @@ import {
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
+import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 export interface DbTicketAction {
   ticket_id: string;

@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { MultiComboBoxBadgeList } from "./MultiComboBoxBadgeList";
 import { MultiComboBoxOptionItem } from "./MultiComboBoxOptionItem";
@@ -46,6 +46,7 @@ const Component = (
     isLoading = false,
     disabled = false,
     readOnly = false,
+    modal = true,
     className,
     ...buttonProps
   }: ComboBoxProps,
@@ -81,7 +82,7 @@ const Component = (
   };
 
   return (
-    <Popover>
+    <Popover modal={modal}>
       <PopoverTrigger asChild>
         <Button
           {...buttonProps}

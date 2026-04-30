@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
 import {
@@ -132,6 +132,7 @@ export function DateTimePicker({
   placeholder,
   variant = "outline",
   size,
+  modal = true,
   ...buttonProps
 }: DateTimePickerProps) {
   const { t } = useTranslation("DatePicker");
@@ -281,7 +282,7 @@ export function DateTimePicker({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger asChild>
         <Button
           {...buttonProps}

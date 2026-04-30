@@ -63,7 +63,8 @@
       "invalidRange": "L'heure de fin doit être après l'heure de début.",
       "statusRequiresTime": "Le statut ne peut changer que si le temps suivi cumulé plus cette saisie est supérieur à 0.",
       "noteMaxLength": "La note doit contenir au maximum 500 caractères."
-    }
+    },
+    "invalidFieldItems": "Champs invalides : {item}"
   },
   "message": {
     "refineSearchCriteria": "Affinez vos critères de recherche",
@@ -71,7 +72,8 @@
     "ticketCreation": "Création du ticket",
     "processingFlow": "Flux de traitement",
     "foundDraft": "Brouillon trouvé",
-    "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé."
+    "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé.",
+    "loadDraftExceptInvalid": "Le brouillon a été chargé, sauf dans les cas où il était invalide."
   },
   "hoverMessage": {
     "backToList": "Retour à la liste des tickets",

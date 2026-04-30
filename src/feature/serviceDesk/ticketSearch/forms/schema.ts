@@ -18,8 +18,8 @@ export const ticketSearchCriteriaFormSchema = z.object({
     dateRange: z.object({
       from: z.date(),
       to: z.date(),
-    }),
-  }),
+    }).optional(),
+  }).optional(),
   priority: z.string().array(),
   keyword: z.string(),
 });

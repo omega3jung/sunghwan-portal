@@ -3,12 +3,14 @@ import {
   TicketStatus,
   TicketSummary,
 } from "@/domain/serviceDesk";
-import {
-  camelTicketDetailMapper,
-  DbTicketDetail,
-} from "@/feature/serviceDesk/ticket/api/mapper";
+import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api/mapper";
 
-import { CreateTicketInput, DateInput, UpdateTicketInput } from "./write";
+import { DbTicketDetail } from "../ticket/api";
+import {
+  CreateTicketInput,
+  DateInput,
+  UpdateTicketInput,
+} from "../ticket/write";
 
 export function toTicketMockSummaryResource(
   ticket: DbTicketDetail | TicketDetail,
@@ -35,7 +37,7 @@ export function toTicketMockSummaryResource(
     assigned: detail.assigned,
     active: detail.active,
     scope: detail.scope,
-    categoryName: detail.categoryId,
+    categoryName: detail.categoryName,
     approvalStepName: detail.approvalStepId,
     subject: detail.subject,
     age: calculateTicketAge(detail.createdAt),
@@ -78,6 +80,7 @@ export function toTicketMockDetail(
     active: true,
     scope: "PORTAL",
     categoryId: input.category ?? "",
+    categoryName: { en: "" },
     subject: input.subject,
     content: input.body,
     email: input.email,

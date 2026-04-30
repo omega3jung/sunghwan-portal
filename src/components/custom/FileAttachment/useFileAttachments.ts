@@ -9,7 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { bytesToMB } from "@/shared/utils";
+import { bytesToMB } from "@/shared/utils/browser";
 
 type FileValue = File[];
 

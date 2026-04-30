@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { DEFAULT_LANGUAGE } from "@/domain/config";
 import { Locale } from "@/shared/types";
-import { isLocale } from "@/shared/utils";
+import { isLocale } from "@/shared/utils/i18n";
 
 const resolveLocale = (value?: string): Locale => {
   return value && isLocale(value) ? value : DEFAULT_LANGUAGE;
@@ -57,7 +57,9 @@ export function useLanguageState() {
    */
   const changeLanguage = useCallback(
     (nextLanguage: Locale) => {
-      const currentLanguage = resolveLocale(i18n.resolvedLanguage ?? i18n.language);
+      const currentLanguage = resolveLocale(
+        i18n.resolvedLanguage ?? i18n.language,
+      );
 
       if (currentLanguage === nextLanguage) {
         setLanguage((language) =>

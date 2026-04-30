@@ -26,7 +26,7 @@ import {
   stepperMock,
   stepVariantData,
 } from "@/mocks/ui/demo/stepper";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 export default function AvatarMultiComboBoxPage() {
   const { t } = useTranslation(NS.demo);

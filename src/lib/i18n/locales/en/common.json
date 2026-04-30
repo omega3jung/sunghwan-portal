@@ -69,6 +69,7 @@
     "step": "Step",
     "subject": "Subject",
     "ticket": "Ticket",
+    "ticketNumber": "Ticket No.",
     "type": "Type",
     "updatedAt": "Updated At"
   },
@@ -85,6 +86,10 @@
     "select": "Select {{target}}"
   },
   "sort": {
+    "sort": "Sort",
+    "sortBy": "Sort by",
+    "asc": "Ascending",
+    "desc": "Descending",
     "latest": "Sort by latest",
     "oldest": "Sort by oldest"
   },

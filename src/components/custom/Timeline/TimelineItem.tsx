@@ -1,4 +1,4 @@
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { TimelineConnector } from "./TimelineConnector";
 import { TimelineMarker } from "./TimelineMarker";

@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/utils";
+import { useMutationToast } from "@/shared/client/toast";
 
 import { useSubmitTicketTrackTime } from "../../api";
 import {

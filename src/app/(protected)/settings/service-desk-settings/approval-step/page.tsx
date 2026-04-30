@@ -24,9 +24,9 @@ import {
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
+import { useMutationToast } from "@/shared/client/toast";
 import { languageOptions } from "@/shared/constants";
 import { DbParams, Locale } from "@/shared/types";
-import { useMutationToast } from "@/shared/utils";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
 import { ApprovalStepForm } from "./components/ApprovalStepForm";

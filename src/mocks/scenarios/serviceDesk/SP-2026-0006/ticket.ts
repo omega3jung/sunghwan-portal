@@ -1,6 +1,6 @@
-﻿import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+﻿import { TicketMockInput } from "../types";
 
-export const ticket: DbTicketDetail = {
+export const ticket: TicketMockInput = {
   id: "sunghwan-portal-2026-6",
   ticket_number: "SP-2026-0006",
   created_at: "2026-04-02T06:13:27Z",

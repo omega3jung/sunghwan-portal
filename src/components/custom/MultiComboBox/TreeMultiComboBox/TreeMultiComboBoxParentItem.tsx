@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { TreeMultiComboBoxChildItem } from "./TreeMultiComboBoxChildItem";
 import { TreeMultiComboBoxOptionItem } from "./TreeMultiComboBoxOptionItem";
@@ -39,43 +39,45 @@ export function TreeMultiComboBoxParentItem({
         checkState={parentState.checkState}
         disabled={parentState.disabled}
         depth={0}
-        rightAdornment={hasChildren ? (
-          <div className="ml-2 flex items-center gap-1 text-xs text-muted-foreground">
-            {parentState.totalChildCount > 0 && (
-              <span>
-                {parentState.selectedChildCount}/{parentState.totalChildCount}
-              </span>
-            )}
-            <button
-              type="button"
-              className={cn(
-                "inline-flex h-5 w-5 items-center justify-center rounded-sm hover:bg-accent hover:text-accent-foreground",
-                parentState.item.children.length === 0 &&
-                  "pointer-events-none opacity-40",
+        rightAdornment={
+          hasChildren ? (
+            <div className="ml-2 flex items-center gap-1 text-xs text-muted-foreground">
+              {parentState.totalChildCount > 0 && (
+                <span>
+                  {parentState.selectedChildCount}/{parentState.totalChildCount}
+                </span>
               )}
-              aria-label={
-                expanded
-                  ? `Collapse ${parentState.item.label}`
-                  : `Expand ${parentState.item.label}`
-              }
-              onMouseDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-              }}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onToggleExpand(parentState.item.value);
-              }}
-            >
-              {expanded ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-        ) : undefined}
+              <button
+                type="button"
+                className={cn(
+                  "inline-flex h-5 w-5 items-center justify-center rounded-sm hover:bg-accent hover:text-accent-foreground",
+                  parentState.item.children.length === 0 &&
+                    "pointer-events-none opacity-40",
+                )}
+                aria-label={
+                  expanded
+                    ? `Collapse ${parentState.item.label}`
+                    : `Expand ${parentState.item.label}`
+                }
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onToggleExpand(parentState.item.value);
+                }}
+              >
+                {expanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          ) : undefined
+        }
         onSelect={onToggleValue}
       />
 

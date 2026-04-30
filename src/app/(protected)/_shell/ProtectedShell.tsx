@@ -7,7 +7,7 @@ import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { Button } from "@/components/ui/button";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { withLeadingSlash } from "@/shared/utils";
+import { withLeadingSlash } from "@/shared/utils/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";

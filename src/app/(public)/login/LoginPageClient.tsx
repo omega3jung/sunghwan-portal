@@ -19,7 +19,7 @@ import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { NS } from "@/lib/i18n";
 import { adminAuth } from "@/mocks/domain/user";
 import { languageOptions } from "@/shared/constants/options/language";
-import { isLocale } from "@/shared/utils";
+import { isLocale } from "@/shared/utils/i18n";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";

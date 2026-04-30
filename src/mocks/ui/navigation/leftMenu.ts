@@ -11,6 +11,7 @@ import {
   Settings,
   Shapes,
   SquareStack,
+  Ticket,
   User,
   UserCog,
   UserRoundCog,
@@ -40,7 +41,7 @@ export function createMenuMock(t: TFunction): MenuItems {
           {
             title: t("serviceDesk", ns),
             path: "/service-desk",
-            icon: Puzzle,
+            icon: Ticket,
           },
         ],
       },

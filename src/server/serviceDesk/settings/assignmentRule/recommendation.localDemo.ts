@@ -11,15 +11,13 @@ import {
 import { camelClientCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 import {
-  clientAssignmentRuleSettingsMock,
-  internalAssignmentRuleSettingsMock,
-} from "@/mocks/domain/serviceDesk/assignmentRules";
-import {
   clientCategorySettingsMock,
   internalCategorySettingsMock,
 } from "@/mocks/domain/serviceDesk/categories";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 import { getLocalizedText } from "@/shared/utils/i18n";
+
+import { getLocalDemoAssignmentRules } from "../state";
 
 type LocalRecommendationContext = {
   input: AssignmentRecommendationInput;
@@ -40,13 +38,6 @@ const buildCategoryList = (isInternal: boolean) => {
 
   return trees.flatMap((tree) => tree.categories);
 };
-
-const buildAssignmentRules = (isInternal: boolean) =>
-  camelAssignmentRuleMapper(
-    isInternal
-      ? internalAssignmentRuleSettingsMock
-      : clientAssignmentRuleSettingsMock,
-  );
 
 const buildEmployees = () => camelEmployeeMapper(createEmployeesMock());
 
@@ -231,7 +222,7 @@ export const resolveLocalAssignmentRecommendation = ({
     language,
   );
   const assignmentRule = resolveAssignmentRuleWithCategoryFallback(
-    buildAssignmentRules(isInternal),
+    camelAssignmentRuleMapper(getLocalDemoAssignmentRules(isInternal)),
     categories,
     input.categoryId,
   );

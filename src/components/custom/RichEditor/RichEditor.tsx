@@ -10,7 +10,7 @@ import StarterKit from "@tiptap/starter-kit";
 import type { CSSProperties, MutableRefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { resolveRichEditorPreset } from "./presets";
 import { RichEditorToolbar } from "./RichEditorToolbar";

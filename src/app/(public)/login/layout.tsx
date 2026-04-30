@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/shared/utils/classnames";
-import { withBasePath } from "@/shared/utils/path";
+import { cn } from "@/shared/utils/presentation";
+import { withBasePath } from "@/shared/utils/routing";
 
 import { PublicThemeGuard } from "./PublicThemeGuard";
 

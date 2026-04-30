@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { NS } from "@/lib/i18n";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { TimelineItem } from "./TimelineItem";
 import type { TimelineProps } from "./types";

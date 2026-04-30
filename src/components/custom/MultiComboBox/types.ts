@@ -33,6 +33,7 @@ export type MultiComboBoxProps = {
   onRemove?: (value: string) => void;
   isLoading?: boolean;
   readOnly?: boolean;
+  modal?: boolean;
 };
 
 export interface ComboBoxProps

@@ -129,4 +129,5 @@ export interface TreeMultiComboBoxProps
   asChild?: boolean;
   variant?: ComboBoxVariant;
   size?: ComboBoxSize;
+  modal?: boolean;
 }

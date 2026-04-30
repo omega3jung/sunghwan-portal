@@ -18,16 +18,9 @@ import type {
 } from "@/feature/serviceDesk/approvalStep/write";
 import type { DbClientCategoryTree } from "@/feature/serviceDesk/category/mapper";
 import { idToNumber } from "@/lib/api/utils/mapId";
-import {
-  clientApprovalStepSettingsMock,
-  internalApprovalStepSettingsMock,
-} from "@/mocks/domain/serviceDesk/approvalSteps";
-import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/mocks/domain/serviceDesk/categories";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
-import { createDualScopeLocalStore } from "@/server/serviceDesk/shared/localStore";
+
+import { getLocalDemoApprovalStepsTree } from "../state";
 
 type LocalDbApprovalStep = DbApprovalStep & {
   approval_step_active?: boolean;
@@ -88,22 +81,10 @@ const buildApprovalStepSeed = ({
   );
 };
 
-const approvalStepStore = createDualScopeLocalStore<ApprovalStepStore>({
-  internalSeed: buildApprovalStepSeed({
-    categoryTrees: internalCategorySettingsMock,
-    templateCategories: [
-      ...internalApprovalStepSettingsMock,
-      ...clientApprovalStepSettingsMock,
-    ],
-  }),
-  clientSeed: buildApprovalStepSeed({
-    categoryTrees: clientCategorySettingsMock,
-    templateCategories: clientApprovalStepSettingsMock,
-  }),
-});
-
 const getApprovalStepStore = (isInternal: boolean) => {
-  const items = approvalStepStore.getStore(isInternal);
+  const items = buildApprovalStepSeed(
+    getLocalDemoApprovalStepsTree(isInternal),
+  );
   const categoryTrees = getLocalCategoryTrees(isInternal);
 
   for (const client of categoryTrees) {

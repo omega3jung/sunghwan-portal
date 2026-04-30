@@ -10,7 +10,7 @@ import {
 import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
-import { applyColorTheme } from "@/shared/utils";
+import { applyColorTheme } from "@/shared/utils/presentation";
 
 import { userPreferenceRepo } from "../repo";
 

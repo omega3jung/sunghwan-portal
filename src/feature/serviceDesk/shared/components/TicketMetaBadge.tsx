@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 const ticketMetaBadgeClassMap = {
   ticket: "bg-primary/10 text-primary",

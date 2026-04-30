@@ -1,4 +1,5 @@
 ﻿import {
+  DbCategory,
   DbClientCategoryTree,
   DbSubCategory,
 } from "@/feature/serviceDesk/category/mapper";
@@ -26,23 +27,25 @@ const mergeClientCustomCategory = (customSubCategory: DbSubCategory[]) => {
   };
 };
 
+export const internalCategoryMock: DbCategory[] = [
+  internalPortalSystemIssueCategoryMock,
+  accountAccessCategoryMock,
+  hardwareDeviceCategoryMock,
+  softwareApplicationCategoryMock,
+  networkConnectivityCategoryMock,
+  printingOfficeEquipmentCategoryMock,
+  hrSystemPayrollCategoryMock,
+  dataInfoManagementCategoryMock,
+  clientUserSupportCategoryMock,
+  otherInquiryCategoryMock,
+];
+
 export const internalCategorySettingsMock: DbClientCategoryTree[] = [
   {
     client_id: 1,
     client_name: "Internal Demo Corporation",
     client_color: "#345791",
-    category: [
-      internalPortalSystemIssueCategoryMock,
-      accountAccessCategoryMock,
-      hardwareDeviceCategoryMock,
-      softwareApplicationCategoryMock,
-      networkConnectivityCategoryMock,
-      printingOfficeEquipmentCategoryMock,
-      hrSystemPayrollCategoryMock,
-      dataInfoManagementCategoryMock,
-      clientUserSupportCategoryMock,
-      otherInquiryCategoryMock,
-    ],
+    category: internalCategoryMock,
   },
   {
     client_id: 11,

@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { X } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 const dialogOverlayStyleClasses = {
   dark: "bg-black/60",

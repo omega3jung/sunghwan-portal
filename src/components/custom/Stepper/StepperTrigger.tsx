@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { useStepperContext } from "./StepperContext";
 import { triggerIndexVariant, triggerVariant } from "./variants";

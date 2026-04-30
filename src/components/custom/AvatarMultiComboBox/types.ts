@@ -22,11 +22,13 @@ export type AvatarMultiComboBoxProps = {
 };
 
 export interface Props
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
+  extends
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
     AvatarMultiComboBoxProps {
   value: string[];
   asChild?: boolean;
   variant?: ComboBoxVariant;
   badgeVariant?: BadgeVariant;
   size?: ComboBoxSize;
+  modal?: boolean;
 }

@@ -5,7 +5,7 @@ import {
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper, LocalizedText } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/nullable";
+import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 // back-end data structures.
 export interface DbDepartment {

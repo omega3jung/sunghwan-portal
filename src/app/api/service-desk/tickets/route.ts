@@ -1,42 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
+  getCurrentEmployeeUserName,
+  isInternalUser,
+  isRemoteRequest,
+  proxyJson,
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
+import {
+  toCurrentUsernameProxyHeaders,
+  tServiceDeskApi,
+  withDerivedTicketOwnership,
+  withDerivedTicketOwnershipList,
+} from "@/app/api/service-desk/_shared";
+import {
+  createTicketSchema,
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
-} from "@/feature/serviceDesk/ticket/api/mapper";
-import {
-  toTicketMockDetail,
-  toTicketMockSummaryResource,
-} from "@/feature/serviceDesk/ticketAction/mock";
-import {
-  CreateTicketInput,
+  TicketWriteRequestInput,
+  toTicketWriteInput,
   toTicketWritePayload,
-} from "@/feature/serviceDesk/ticketAction/write";
-import { clientTicketsMocks } from "@/mocks/scenarios/serviceDesk/clientTicketsMock";
-import { internalTicketsMocks } from "@/mocks/scenarios/serviceDesk/internalTicketsMock";
+} from "@/feature/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
+import {
+  localCreateTicket,
+  localListTickets,
+} from "@/server/serviceDesk/ticket/localDemo";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
 
   // demo mode
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const items = (isInternal ? internalTicketsMocks : clientTicketsMocks).map(
-      toTicketMockSummaryResource,
-    );
+    try {
+      if (currentUserName === null) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
 
-    return NextResponse.json({
-      items,
-      total: items.length,
-    });
+      const isInternal = await isInternalUser(request);
+      const filtered = localListTickets({
+        isInternal,
+        searchParams: request.nextUrl.searchParams,
+      });
+
+      const items = withDerivedTicketOwnershipList(
+        filtered.items.map(toTicketMockSummaryResource),
+        currentUserName,
+      );
+
+      return NextResponse.json({
+        items,
+        total: filtered.total,
+      });
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.tickets.fetchList"),
+      });
+    }
   }
 
   // real backend
   return proxyJson(request, {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
+    headers: toCurrentUsernameProxyHeaders(currentUserName),
     errorMessage: tServiceDeskApi("api.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
@@ -44,15 +72,50 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
-  const body = (await request.json()) as CreateTicketInput;
+  const currentUserName = await getCurrentEmployeeUserName(request);
+  const parsedBody = createTicketSchema.safeParse(
+    (await request.json()) as TicketWriteRequestInput,
+  );
+
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { status: 400 },
+    );
+  }
+
+  const body = toTicketWriteInput(parsedBody.data);
 
   if (!isRemote) {
-    return NextResponse.json(toTicketMockDetail(body), { status: 201 });
+    try {
+      if (currentUserName === null) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
+
+      const isInternal = await isInternalUser(request);
+
+      return NextResponse.json(
+        withDerivedTicketOwnership(
+          localCreateTicket({
+            isInternal,
+            requesterId: currentUserName,
+            input: body,
+          }),
+          currentUserName,
+        ),
+        { status: 201 },
+      );
+    } catch (error) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: tServiceDeskApi("api.tickets.create"),
+      });
+    }
   }
 
   return proxyJson(request, {
     method: "POST",
     path: "/service-desk/tickets",
+    headers: toCurrentUsernameProxyHeaders(currentUserName),
     body: toTicketWritePayload(body),
     errorMessage: tServiceDeskApi("api.tickets.create"),
     mapData: mapTicketDetailPayload,

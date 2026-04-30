@@ -50,6 +50,13 @@
       "successfully": "Canceled successfully."
     },
 
+    "reset": {
+      "title": "Reset",
+      "success": "{{item}} has been reset.",
+      "successWithId": "{{item}} {{id}} has been reset.",
+      "successfully": "Reset successfully."
+    },
+
     "validation": {
       "title": "Validation",
       "errorTitle": "Validation Error"

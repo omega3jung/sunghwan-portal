@@ -1,3 +1,3 @@
-// src/feature/serviceDesk/ticket/shared/utils/index.ts
+// src/feature/serviceDesk/shared/utils/index.ts
 
 export * from "./mapFileToAttach";

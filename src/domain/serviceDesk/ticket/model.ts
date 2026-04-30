@@ -1,4 +1,5 @@
 import { Priority, RiskLevel } from "@/domain/common";
+import { LocalizedText } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../category";
@@ -47,7 +48,9 @@ interface TicketMetrics {
 interface TicketViewState {
   dueAt: ISODateString;
 
+  // Derived in the response for the current authenticated user.
   owner: boolean;
+  // Derived in the response for the current authenticated user.
   assigned: boolean;
   active: boolean;
 }
@@ -100,7 +103,7 @@ export interface TicketSummary
     TicketViewState,
     TicketScopeContext,
     TicketRelation {
-  categoryName: string;
+  categoryName: LocalizedText;
   approvalStepName?: string;
 
   subject: string;
@@ -119,4 +122,6 @@ export interface TicketDetail
     TicketViewState,
     TicketScopeContext,
     TicketContent,
-    TicketRelation {}
+    TicketRelation {
+  categoryName: LocalizedText;
+}

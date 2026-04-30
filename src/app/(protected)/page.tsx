@@ -26,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 
 type QuickAction = {
@@ -236,6 +237,8 @@ export default function ProtectedPage() {
   const { t } = useTranslation(NS.demo, {
     keyPrefix: "home",
   });
+  const { current } = useCurrentSession();
+  const homeModeKey = current.isDemoUser ? "local" : "remote";
 
   const quickActions: QuickAction[] = quickActionConfigs.map((action) => ({
     title: t(`quickActions.items.${action.id}.title`),
@@ -260,7 +263,7 @@ export default function ProtectedPage() {
   }));
 
   const architectureNotes = architectureNoteIds.map((noteId) =>
-    t(`about.architectureNotes.${noteId}`),
+    t(`about.architectureNotes.${homeModeKey}.${noteId}`),
   );
 
   return (
@@ -284,7 +287,7 @@ export default function ProtectedPage() {
                 {t("hero.title")}
               </CardTitle>
               <CardDescription className="text-base leading-7 text-muted-foreground">
-                {t("hero.description")}
+                {t(`hero.description.${homeModeKey}`)}
               </CardDescription>
             </div>
           </CardHeader>
@@ -344,7 +347,7 @@ export default function ProtectedPage() {
                 {t("about.currentScope.title")}
               </p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                {t("about.currentScope.description")}
+                {t(`about.currentScope.description.${homeModeKey}`)}
               </p>
             </div>
             <div className="space-y-3">

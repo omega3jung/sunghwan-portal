@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { NS } from "@/lib/i18n";
 import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { ENABLED_SETTINGS_ROUTES } from "./constants";
 import { SETTINGS_THEME } from "./constants/style";

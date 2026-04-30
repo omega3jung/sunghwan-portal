@@ -17,7 +17,7 @@ import {
 import { useUserPreferenceQuery } from "@/feature/user";
 import { NS } from "@/lib/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
-import { cn } from "@/shared/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 

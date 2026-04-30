@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { TicketAction, TicketHistory } from "@/domain/serviceDesk";
 import { getHistorySummary } from "@/feature/serviceDesk/ticketHistory";
 import { NS } from "@/lib/i18n";
-import { formatTimeDistanceFromNow } from "@/shared/utils/date";
+import { formatTimeDistanceFromNow } from "@/shared/utils/format";
 
 type TicketRecentActivityProps = {
   latestHistory: TicketHistory;
