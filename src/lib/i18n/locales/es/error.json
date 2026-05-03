@@ -1,33 +1,33 @@
 {
   "common": {
-    "failed": "Failed",
+    "failed": "Error",
     "load": {
-      "title": "Failed to load",
-      "message": "Failed to load {{item}}"
+      "title": "No se pudo cargar",
+      "message": "No se pudo cargar {{item}}"
     },
     "create": {
-      "title": "Failed to create",
-      "message": "Failed to create {{item}}"
+      "title": "No se pudo crear",
+      "message": "No se pudo crear {{item}}"
     },
     "update": {
-      "title": "Failed to update",
-      "message": "Failed to update {{item}}"
+      "title": "No se pudo actualizar",
+      "message": "No se pudo actualizar {{item}}"
     },
     "delete": {
-      "title": "Failed to delete",
-      "message": "Failed to delete {{item}}"
+      "title": "No se pudo eliminar",
+      "message": "No se pudo eliminar {{item}}"
     },
     "add": {
-      "title": "Failed to add",
-      "message": "Failed to add {{item}}"
+      "title": "No se pudo agregar",
+      "message": "No se pudo agregar {{item}}"
     },
     "save": {
-      "title": "Failed to save",
-      "message": "Failed to save {{item}}"
+      "title": "No se pudo guardar",
+      "message": "No se pudo guardar {{item}}"
     },
     "remove": {
-      "title": "Failed to remove",
-      "message": "Failed to remove {{item}}"
+      "title": "No se pudo quitar",
+      "message": "No se pudo quitar {{item}}"
     }
   },
   "unsupportedBrowser": {

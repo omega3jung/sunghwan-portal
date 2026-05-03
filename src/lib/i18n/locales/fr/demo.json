@@ -5,8 +5,8 @@
       "enterpriseBadge": "Démo du portail d'entreprise",
       "title": "Cette page est l’accueil de l’espace de travail pour les opérations de service, les documents de référence et les paramètres de la plateforme.",
       "description": {
-        "local": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En Local Demo, vous pouvez vérifier les limites d’accès et les actions disponibles selon le Role (ADMIN, MANAGER, LEADER, USER, GUEST).",
-        "remote": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En mode Remote, vous pouvez vérifier des flux d’autorisation plus proches d’un fonctionnement réel en combinant le Role avec la relation de l’utilisateur à chaque ticket."
+        "local": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En local demo, vous pouvez vérifier les limites d’accès et les actions disponibles selon le role (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "remote": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En mode remote, vous pouvez vérifier des flux d’autorisation plus proches d’un fonctionnement réel en combinant le role avec la relation de l’utilisateur à chaque ticket."
       },
       "actions": {
         "openServiceDesk": "Ouvrir le Service Desk",
@@ -23,19 +23,19 @@
       "currentScope": {
         "title": "Périmètre actuel",
         "description": {
-          "local": "En Local Demo, vous pouvez explorer le flux Service Desk, les documents et les écrans de configuration, tandis que les contrôles d’autorisation sont simplifiés autour de règles basées sur le Role.",
-          "remote": "En mode Remote, le flux Service Desk, les documents et les écrans de configuration peuvent être connectés à de vraies API, tandis que le comportement des autorisations reflète à la fois le Role et les relations utilisateur."
+          "local": "En local demo, vous pouvez explorer le flux Service Desk, les documents et les écrans de configuration, tandis que les contrôles d’autorisation sont simplifiés autour de règles basées sur le role.",
+          "remote": "En mode remote, le flux Service Desk, les documents et les écrans de configuration peuvent être connectés à de vraies API, tandis que le comportement des autorisations reflète à la fois le role et les relations utilisateur."
         }
       },
       "architectureNotes": {
         "local": {
           "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
-          "note2": "En Local Demo, les menus et les actions disponibles changent selon les rôles ADMIN, MANAGER, LEADER, USER et GUEST.",
-          "note3": "Les autorisations basées sur les relations organisationnelles, les restrictions liées aux tickets et l’intégration avec les API distantes sont séparées afin d’être validées plus précisément en mode Remote."
+          "note2": "En local demo, les menus et les actions disponibles changent selon les rôles ADMIN, MANAGER, LEADER, USER et GUEST.",
+          "note3": "Les autorisations basées sur les relations organisationnelles, les restrictions liées aux tickets et l’intégration avec les API distantes sont séparées afin d’être validées plus précisément en mode remote."
         },
         "remote": {
           "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
-          "note2": "En mode Remote, le périmètre d’accès est déterminé non seulement par le Role, mais aussi par des relations telles que demandeur, responsable assigné et approbateur.",
+          "note2": "En mode remote, le périmètre d’accès est déterminé non seulement par le role, mais aussi par des relations telles que demandeur, responsable assigné et approbateur.",
           "note3": "Les données de ticket, document, approbation, assignation et configuration sont connectées via de vraies frontières API afin de fournir un flux plus proche d’un environnement opérationnel."
         }
       }
@@ -147,11 +147,11 @@
   },
   "stepper": {
     "stepper": "Stepper",
-    "variants": "Variation",
+    "variants": "Variantes",
     "orientation": "Orientation",
-    "stepVariant": "Forme de l'étape",
+    "stepVariant": "Variante d'étape",
     "labelPosition": "Position de l'étiquette",
-    "stepColor": "Couleur",
+    "stepColor": "Couleur de l'étape",
     "showOrderLabel": "Afficher l'étiquette de l'étape",
     "startIndex": "Numéro de départ",
     "step": "Étape",

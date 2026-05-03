@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { MainCategory } from "@/domain/serviceDesk";
-import { useServiceDeskAssignmentRecommendationsQuery } from "@/feature/serviceDesk/assignmentRule";
+import { useServiceDeskAssignmentRecommendationsQuery } from "@/feature/serviceDesk/assignmentRule/client";
 import { useCurrentLanguage } from "@/feature/user/preference/hooks/useCurrentLanguage";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel, Localized, ValueLabel } from "@/shared/types";

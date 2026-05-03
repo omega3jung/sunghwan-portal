@@ -1,6 +1,6 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { Priority, RiskLevel } from "@/domain/common";
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticketAction";
 
 import {

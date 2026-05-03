@@ -1,3 +1,3 @@
-﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
+﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 export const clientHistoriesMock: DbTicketHistory[] = [];

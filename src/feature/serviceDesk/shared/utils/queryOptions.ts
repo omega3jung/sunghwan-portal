@@ -8,11 +8,10 @@ export function getServiceDeskQueryOptions(dataScope?: "LOCAL" | "REMOTE") {
   if (dataScope === "LOCAL") {
     return {
       ...DYNAMIC_QUERY_OPTIONS,
-      staleTime: LOCAL_DEMO_STALE_TIME,
       gcTime: LOCAL_DEMO_GC_TIME,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      refetchOnMount: false,
+      refetchOnMount: "always" as const,
     };
   }
 

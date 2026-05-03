@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
-import { ticketHistoryQueryKeys } from "../../ticketHistory";
+import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketTrackTimeApi } from "./api";
 import { ticketTrackTimeQueryKeys } from "./queryKeys";
 

@@ -64,7 +64,7 @@
       "statusRequiresTime": "El estado solo puede cambiar cuando el tiempo acumulado más esta entrada es mayor que 0.",
       "noteMaxLength": "La nota debe tener 500 caracteres o menos."
     },
-    "invalidFieldItems": "Campos no válidos: {item}"
+    "invalidFieldItems": "Campos no válidos: {{item}}"
   },
   "message": {
     "refineSearchCriteria": "Refina tus criterios de búsqueda",
@@ -73,11 +73,11 @@
     "processingFlow": "Flujo de procesamiento",
     "foundDraft": "Borrador encontrado",
     "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará.",
-    "loadDraftExceptInvalid": "Se cargó el borrador excepto en los casos en que no sea válido."
+    "loadDraftExceptInvalid": "Se cargó el borrador, excepto los campos no válidos."
   },
   "hoverMessage": {
     "backToList": "Volver a la lista de tickets",
-    "trackTimeTool": "Vista de cronología para la actividad reciente del ticket.",
+    "trackTimeTool": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
     "openDetailAside": "Abra el panel lateral para ver los detalles del ticket",
     "openHistoryDrawer": "Abra el panel lateral para ver el historial de este ticket"
   },
@@ -207,7 +207,7 @@
     },
     "helper": {
       "comment": "Comparte una actualización pública con todas las personas que siguen este ticket.",
-      "note": "Agrega una nota interna para el equipo de service desk.",
+      "note": "Agrega una nota interna para el equipo de Service Desk.",
       "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
       "assignSelf": "Esta acción registra automáticamente que asumiste la responsabilidad del ticket.",
       "reject": "Explica por qué se está rechazando esta solicitud.",
@@ -253,7 +253,7 @@
         "resubmit": "Describe qué cambió antes de volver a enviar este ticket"
       },
       "targetTicketId": "Ticket de destino",
-      "mergeTargetPlaceholder": "Ingresa el id del ticket principal"
+      "mergeTargetPlaceholder": "Ingresa el ID del ticket principal"
     },
     "autoComment": {
       "assignSelf": "{{name}} ha decidido hacerse cargo de este ticket. {{time}}"
@@ -262,7 +262,7 @@
       "contentRequired": "Introduce un motivo antes de enviarlo.",
       "contentMaxLength": "El motivo debe tener 2000 caracteres o menos.",
       "assigneeRequired": "Selecciona al menos una persona asignada.",
-      "targetTicketRequired": "Introduce el id del ticket de destino.",
+      "targetTicketRequired": "Introduce el ID del ticket de destino.",
       "adjustNoChanges": "Cambia la prioridad, el nivel de riesgo o la fecha límite antes de actualizar."
     }
   },

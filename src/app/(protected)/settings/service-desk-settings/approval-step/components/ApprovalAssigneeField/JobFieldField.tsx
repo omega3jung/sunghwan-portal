@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useJobFieldListQuery } from "@/feature/organization/jobField";
+import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";

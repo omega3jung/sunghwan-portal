@@ -15,12 +15,14 @@ import {
 } from "@/app/api/service-desk/_shared";
 import {
   createTicketSchema,
-  mapTicketDetailPayload,
-  mapTicketSummaryListPayload,
   TicketWriteRequestInput,
   toTicketWriteInput,
   toTicketWritePayload,
 } from "@/feature/serviceDesk/ticket";
+import {
+  mapTicketDetailPayload,
+  mapTicketSummaryListPayload,
+} from "@/feature/serviceDesk/ticket/api";
 import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
 import {
   localCreateTicket,

@@ -3,7 +3,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
-} from "@/feature/serviceDesk/ticket/core/constants";
+} from "@/feature/serviceDesk/ticket/constants";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
 

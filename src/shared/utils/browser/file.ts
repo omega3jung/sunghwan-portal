@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Creates a browser `File` object from plain text content.
  *

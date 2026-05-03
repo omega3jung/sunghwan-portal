@@ -29,14 +29,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { useEmployeeListQuery } from "@/feature/organization/employee";
-import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
+import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
 import {
   CreateTicketDialog,
   TicketList,
-  useServiceDeskTicketSearchQuery,
-} from "@/feature/serviceDesk/ticket";
+} from "@/feature/serviceDesk/ticket/components";
 import { TicketListPagination } from "@/feature/serviceDesk/ticket/components/TicketList/TicketListPagination";
 import {
   TicketSearchCriteria,
@@ -46,8 +46,8 @@ import {
 } from "@/feature/serviceDesk/ticketSearch";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
+import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
-import { useSessionStorageState } from "@/shared/hooks/useSessionStorageState";
 import type { ImageValueLabel } from "@/shared/types";
 
 const TICKET_PAGE_SIZE = 10;

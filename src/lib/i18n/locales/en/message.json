@@ -79,6 +79,6 @@
     "sent": "Enter {{code}} within {{minutes}} minutes.",
     "resent": "OTP has been resent.",
     "timeout": "Time expired",
-    "differentId": "Verified ID is different with current ID. Please verify OTP again."
+    "differentId": "The verified ID is different from the current ID. Please verify the OTP again."
   }
 }

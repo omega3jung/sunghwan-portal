@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 import { TicketDetail } from "@/domain/serviceDesk";
 
-import { useStartTicketWorkMutation } from "../api";
+import { useStartTicketWorkMutation } from "../api/mutations";
 
 type UseAutoStartApprovedTicketOnViewParams = {
   ticket: TicketDetail | null | undefined;

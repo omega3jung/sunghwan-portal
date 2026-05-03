@@ -1,7 +1,10 @@
+"use client";
+
 import { addDays, endOfToday, format, startOfToday } from "date-fns";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
@@ -24,8 +27,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
-import { ImageValueLabel, ValueLabel } from "@/shared/types";
+import { useLocalizedText } from "@/shared/hooks/useLocalizedValue";
+import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
 import { MAX_EMAIL_COUNT } from "../../constants";

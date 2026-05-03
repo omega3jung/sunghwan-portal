@@ -5,7 +5,7 @@ import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useEmployeeListQuery } from "@/feature/organization/employee";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";

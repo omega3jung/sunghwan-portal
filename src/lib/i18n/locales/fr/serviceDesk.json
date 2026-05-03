@@ -9,7 +9,7 @@
     "adjust": "Ajuster",
     "adjustPlan": "Ajuster le plan",
     "reopenIssue": "Rouvrir l'incident",
-    "resubmitRequest": "Renvoyer la demande",
+    "resubmitRequest": "Soumettre à nouveau la demande",
     "searchCriteria": "Critères de recherche",
     "trackTime": {
       "submit": "Enregistrer le temps suivi",
@@ -42,7 +42,7 @@
   },
   "field": {
     "dueBy": "Échéance",
-    "trackTime": "Temps suivi",
+    "trackTime": "Temps enregistré",
     "durationMinutes": "Durée",
     "startAt": "Heure de début",
     "endAt": "Heure de fin",
@@ -64,7 +64,7 @@
       "statusRequiresTime": "Le statut ne peut changer que si le temps suivi cumulé plus cette saisie est supérieur à 0.",
       "noteMaxLength": "La note doit contenir au maximum 500 caractères."
     },
-    "invalidFieldItems": "Champs invalides : {item}"
+    "invalidFieldItems": "Champs invalides : {{item}}"
   },
   "message": {
     "refineSearchCriteria": "Affinez vos critères de recherche",
@@ -136,7 +136,7 @@
       "NOTE_CREATED": "Note ajoutée",
       "COMMENT_UPDATED": "Commentaire mis à jour",
       "COMMENT_DELETED": "Commentaire supprimé",
-      "TRACK_TIME_UPDATED": "Temps suivi mis à jour",
+      "TRACK_TIME_UPDATED": "Temps enregistré mis à jour",
       "MERGED": "Fusionné dans {{target}}",
       "TICKET_REJECTED": "Ticket rejeté",
       "UPDATED": "Ticket mis à jour",
@@ -158,7 +158,7 @@
       "comment": "Commentaire",
       "category": "Catégorie",
       "note": "Note",
-      "trackTime": "Temps suivi",
+      "trackTime": "Temps enregistré",
       "planning": "Planification",
       "system": "Système",
       "default": "Historique"
@@ -219,7 +219,7 @@
     },
     "helper": {
       "comment": "Partagez une mise à jour publique avec toutes les personnes qui suivent ce ticket.",
-      "note": "Ajoutez une note interne pour l'équipe du service desk.",
+      "note": "Ajoutez une note interne pour l'équipe du Service Desk.",
       "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
       "assignSelf": "Cette action enregistre automatiquement que vous avez pris en charge le ticket.",
       "reject": "Expliquez pourquoi cette demande est rejetée.",
@@ -237,7 +237,7 @@
       "merge": "Fusionner le ticket",
       "adjust": "Mettre à jour le plan",
       "reopen": "Rouvrir l'incident",
-      "resubmit": "Renvoyer la demande"
+      "resubmit": "Soumettre à nouveau la demande"
     },
     "list": {
       "title": "Activité",
@@ -265,7 +265,7 @@
         "resubmit": "Décrivez ce qui a changé avant de renvoyer ce ticket"
       },
       "targetTicketId": "Ticket cible",
-      "mergeTargetPlaceholder": "Saisissez l'id du ticket principal"
+      "mergeTargetPlaceholder": "Saisissez l'ID du ticket principal"
     },
     "autoComment": {
       "assignSelf": "{{name}} a décidé de prendre en charge ce ticket. {{time}}"
@@ -274,12 +274,12 @@
       "contentRequired": "Saisissez un motif avant l'envoi.",
       "contentMaxLength": "Le motif doit contenir au maximum 2000 caractères.",
       "assigneeRequired": "Sélectionnez au moins une personne assignée.",
-      "targetTicketRequired": "Saisissez l'id du ticket cible.",
+      "targetTicketRequired": "Saisissez l'ID du ticket cible.",
       "adjustNoChanges": "Modifiez la priorité, le niveau de risque ou l'échéance avant de mettre à jour."
     }
   },
   "trackTimeTool": {
-    "title": "Temps suivi",
+    "title": "Temps enregistré",
     "tab": {
       "duration": "Durée",
       "range": "Plage"
@@ -307,11 +307,11 @@
     }
   },
   "listPage": {
-    "title": "Centre de Services IT",
+    "title": "IT Service Desk",
     "description": "Recherchez et parcourez les tickets du centre de services."
   },
   "reports": {
-    "title": "Rapports du service desk",
+    "title": "Rapports du Service Desk",
     "description": "La migration des anciens rapports est prévue pour l'étape suivante."
   },
   "ticketList": {

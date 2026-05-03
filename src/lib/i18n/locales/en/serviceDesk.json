@@ -3,7 +3,7 @@
     "comment": "Comment",
     "note": "Note",
     "assign": "Assign",
-    "assignToMe": "Assign to Me",
+    "assignToMe": "Assign to me",
     "reject": "Reject",
     "merge": "Merge",
     "adjust": "Adjust",
@@ -63,7 +63,7 @@
       "statusRequiresTime": "Status can only change when accumulated track time plus this entry is greater than 0.",
       "noteMaxLength": "Note must be 500 characters or less."
     },
-    "invalidFieldItems": "Invalid fields : {item}"
+    "invalidFieldItems": "Invalid fields: {{item}}"
   },
   "message": {
     "refineSearchCriteria": "Refine your search criteria",
@@ -78,7 +78,7 @@
     "backToList": "Back to ticket list",
     "trackTimeTool": "Record manual work time and optionally move the ticket status in the same action.",
     "openDetailAside": "Open the aside to see ticket details",
-    "openHistoryDrawer": "Open the aside to see history of this ticket"
+    "openHistoryDrawer": "Open the aside to view this ticket's history"
   },
   "step": {
     "issueDetails": "Issue Details",
@@ -153,7 +153,7 @@
     "badge": {
       "assignment": "Assignment",
       "approval": "Approval",
-      "trackTime": "Track Time",
+      "trackTime": "Track time",
       "planning": "Planning",
       "system": "System"
     },
@@ -230,7 +230,7 @@
         "resubmit": "Describe what changed before resubmitting this ticket"
       },
       "targetTicketId": "Target ticket",
-      "mergeTargetPlaceholder": "Enter the representative ticket id"
+      "mergeTargetPlaceholder": "Enter the representative ticket ID"
     },
     "autoComment": {
       "assignSelf": "{{name}} has decided to take ownership of this ticket. {{time}}"

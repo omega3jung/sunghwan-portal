@@ -8,11 +8,11 @@
     "merge": "병합",
     "adjust": "조정",
     "adjustPlan": "계획 조정",
-    "reopenIssue": "이슈 다시 열기",
-    "resubmitRequest": "요청 다시 제출",
+    "reopenIssue": "티켓 다시 열기",
+    "resubmitRequest": "요청 재제출",
     "searchCriteria": "검색 조건",
     "trackTime": {
-      "submit": "추적 시간 저장",
+      "submit": "작업 시간 저장",
       "submitWithStatus": "시간 저장 및 상태 변경",
       "submitting": "저장 중..."
     }
@@ -42,7 +42,7 @@
   },
   "field": {
     "dueBy": "기한",
-    "trackTime": "추적 시간",
+    "trackTime": "작업 시간",
     "durationMinutes": "소요 시간",
     "startAt": "시작 시간",
     "endAt": "종료 시간",
@@ -58,13 +58,13 @@
   },
   "validation": {
     "trackTime": {
-      "required": "제출하기 전에 추적 시간을 입력해 주세요.",
-      "positive": "추적 시간은 0분보다 커야 합니다.",
+      "required": "제출하기 전에 작업 시간을 입력해 주세요.",
+      "positive": "작업 시간은 0분보다 커야 합니다.",
       "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
-      "statusRequiresTime": "누적 추적 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
+      "statusRequiresTime": "누적 작업 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
       "noteMaxLength": "메모는 500자 이하여야 합니다."
     },
-    "invalidFieldItems": "잘못된 필드: {item}"
+    "invalidFieldItems": "잘못된 필드: {{item}}"
   },
   "message": {
     "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
@@ -73,11 +73,11 @@
     "processingFlow": "처리 흐름",
     "foundDraft": "임시 저장된 내용이 있습니다",
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
-    "loadDraftExceptInvalid": "유효하지 않은 경우를 제외하고 초안을 불러왔습니다."
+    "loadDraftExceptInvalid": "유효하지 않은 필드를 제외하고 임시 저장 내용을 불러왔습니다."
   },
   "hoverMessage": {
     "backToList": "티켓 목록으로 돌아가기",
-    "trackTimeTool": "최근 티켓 활동을 타임라인으로 보여줍니다.",
+    "trackTimeTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
     "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
   },
@@ -136,7 +136,7 @@
       "NOTE_CREATED": "메모가 추가됨",
       "COMMENT_UPDATED": "댓글이 수정됨",
       "COMMENT_DELETED": "댓글이 삭제됨",
-      "TRACK_TIME_UPDATED": "추적 시간이 업데이트됨",
+      "TRACK_TIME_UPDATED": "작업 시간이 업데이트됨",
       "MERGED": "{{target}} 티켓으로 병합됨",
       "TICKET_REJECTED": "티켓이 반려됨",
       "UPDATED": "티켓이 업데이트됨",
@@ -157,7 +157,7 @@
       "comment": "댓글",
       "category": "카테고리",
       "note": "메모",
-      "trackTime": "추적 시간",
+      "trackTime": "작업 시간",
       "planning": "계획",
       "system": "시스템",
       "default": "이력"
@@ -253,7 +253,7 @@
         "resubmit": "이 티켓을 다시 제출하기 전에 바뀐 내용을 설명하세요"
       },
       "targetTicketId": "대상 티켓",
-      "mergeTargetPlaceholder": "대표 티켓 id를 입력하세요"
+      "mergeTargetPlaceholder": "대표 티켓 ID를 입력하세요"
     },
     "autoComment": {
       "assignSelf": "{{name}}님이 이 티켓을 직접 담당하기로 했습니다. {{time}}"
@@ -262,12 +262,12 @@
       "contentRequired": "제출하기 전에 사유를 입력해 주세요.",
       "contentMaxLength": "사유는 2000자 이하여야 합니다.",
       "assigneeRequired": "최소 한 명의 담당자를 선택해 주세요.",
-      "targetTicketRequired": "대상 티켓 id를 입력해 주세요.",
+      "targetTicketRequired": "대상 티켓 ID를 입력해 주세요.",
       "adjustNoChanges": "업데이트하기 전에 우선순위, 위험도 또는 기한을 변경하세요."
     }
   },
   "trackTimeTool": {
-    "title": "추적 시간",
+    "title": "작업 시간",
     "description": "수동 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "tab": {
       "duration": "소요 시간",
@@ -276,10 +276,10 @@
     "status": {
       "keepCurrent": "현재 상태 유지",
       "currentSuffix": "(현재)",
-      "description": "상태 변경은 티켓의 누적 추적 시간 기준으로 검증됩니다."
+      "description": "상태 변경은 티켓의 누적 작업 시간 기준으로 검증됩니다."
     },
     "note": {
-      "toggle": "선택 메모",
+      "toggle": "메모",
       "description": "간단히 남겨 주세요. 최대 {{count}}자까지 입력할 수 있습니다."
     },
     "summary": {
@@ -363,13 +363,13 @@
       "fetchList": "티켓 이력을 불러오지 못했습니다."
     },
     "ticketTrackTime": {
-      "fetchList": "티켓 추적 시간을 불러오지 못했습니다.",
-      "create": "티켓 추적 시간을 저장하지 못했습니다.",
+      "fetchList": "티켓 작업 시간을 불러오지 못했습니다.",
+      "create": "티켓 작업 시간을 저장하지 못했습니다.",
       "localDemo": {
-        "ticketMismatch": "추적 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
+        "ticketMismatch": "작업 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
         "invalidStatus": "유효하지 않은 상태입니다: {{value}}.",
-        "invalidTrackedMinutes": "추적 시간은 0분보다 커야 합니다.",
-        "statusRequiresTime": "전체 추적 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
+        "invalidTrackedMinutes": "작업 시간은 0분보다 커야 합니다.",
+        "statusRequiresTime": "전체 작업 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
       }
     },
     "ticketCommand": {

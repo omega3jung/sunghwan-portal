@@ -1,3 +1,5 @@
+"use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { SERVICE_DESK_KEY } from "../keys";

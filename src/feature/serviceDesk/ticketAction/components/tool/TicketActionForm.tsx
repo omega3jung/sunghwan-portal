@@ -19,7 +19,7 @@ import type { MainCategory } from "@/domain/serviceDesk";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
-} from "@/feature/serviceDesk/ticket/core/constants";
+} from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";

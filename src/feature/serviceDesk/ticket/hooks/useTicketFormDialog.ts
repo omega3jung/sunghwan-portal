@@ -1,3 +1,5 @@
+"use client";
+
 import { addDays, endOfDay, startOfToday } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -5,20 +7,23 @@ import { toast } from "sonner";
 
 import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { useServiceDeskApprovalStepListQuery } from "@/feature/serviceDesk/approvalStep";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
 import { DbParams } from "@/shared/types";
 
-import { useCreateServiceDeskTicket, useUpdateServiceDeskTicket } from "../api";
+import { useServiceDeskApprovalStepListQuery } from "../../approvalStep/client";
+import {
+  useCreateServiceDeskTicket,
+  useUpdateServiceDeskTicket,
+} from "../api/mutations";
 import { afterStepData, createStepData, ticketStep } from "../constants";
 import {
   ticketFormDefaultValues,
   ticketFormSchema,
   type TicketFormValues,
-  useTicketForm,
 } from "../forms";
+import { useTicketForm } from "../forms/useTicketForm";
 import { useTicketDraft } from "./useTicketDraft";
 
 const TICKET_DRAFT_TOAST_ID = "service-desk-ticket-draft";

@@ -6,7 +6,7 @@ import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
   camelTicketActionMapper,
   mapTicketActionPayload,
-} from "@/feature/serviceDesk/ticketAction";
+} from "@/feature/serviceDesk/ticketAction/api";
 import { getLocalDemoActions } from "@/server/serviceDesk/ticket/state";
 
 type TicketActionRouteContext = RouteContext<{

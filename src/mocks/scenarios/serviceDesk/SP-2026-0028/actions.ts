@@ -1,4 +1,4 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction";
+import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
 
 import { ticket } from "./ticket";
 
@@ -40,7 +40,8 @@ export const actions: DbTicketAction[] = [
     action_no: 3,
 
     action_type: "COMMENT",
-    content: "Bien reçu, Amelia. Je vais maintenant passer ce ticket au statut 'Pending'.",
+    content:
+      "Bien reçu, Amelia. Je vais maintenant passer ce ticket au statut 'Pending'.",
     owner_id: "41",
 
     created_at: "2026-04-26T01:17:18Z",

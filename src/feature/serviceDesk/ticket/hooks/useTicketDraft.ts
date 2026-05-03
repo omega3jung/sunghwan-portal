@@ -1,13 +1,15 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { DeepPartial, UseFormReturn } from "react-hook-form";
 
 import {
   useCreateServiceDeskTicketDraft,
   useRemoveServiceDeskTicketDraft,
-  useServiceDeskTicketDraftQuery,
   useUpdateServiceDeskTicketDraft,
-} from "../../ticket/api";
+} from "../../ticket/api/mutations";
 import type { TicketFormValues } from "../../ticket/forms";
+import { useServiceDeskTicketDraftQuery } from "../api/queries";
 
 type UseTicketDraftOptions = {
   mode: "create" | "update" | "view";

@@ -213,7 +213,7 @@ Triggered by:
 
 Implementation-specific closure path:
 
-- [`Ticket Rules`](../../08-dev-strategy/ticket-rules.md) does not currently
+- [`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md) does not currently
   define the concrete trigger
 - requester confirmation or a system close policy may exist, but they are not
   treated as current implementation rules here
@@ -241,20 +241,20 @@ State Transition = Result of Action
 
 Examples:
 
-| Action                         | From                                | To         |
-| ------------------------------ | ----------------------------------- | ---------- |
-| submit ticket                  | `Draft`                             | `Open`     |
-| approve                        | `Open`                              | `Approved` |
-| update declined ticket         | `Declined`                          | `Open`     |
-| assign / assignSelf         | `Open` or `Approved`                | `Working`  |
-| pause or hold work             | `Working`                           | `Pending`  |
-| resume work                    | `Pending`                           | `Working`  |
-| reject                         | `Working` or `Pending`              | `Rejected` |
-| reopen                | `Resolved`                          | `Reopen`   |
-| resubmit               | `Rejected`                          | `Open`     |
-| manager reassign               | `Declined` or `Rejected`            | `Reopen`   |
-| merge                          | `Working`, `Pending`, or `Resolved` | `Closed`   |
-| manager merge                  | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
+| Action                 | From                                                    | To         |
+| ---------------------- | ------------------------------------------------------- | ---------- |
+| submit ticket          | `Draft`                                                 | `Open`     |
+| approve                | `Open`                                                  | `Approved` |
+| update declined ticket | `Declined`                                              | `Open`     |
+| assign / assignSelf    | `Open` or `Approved`                                    | `Working`  |
+| pause or hold work     | `Working`                                               | `Pending`  |
+| resume work            | `Pending`                                               | `Working`  |
+| reject                 | `Working` or `Pending`                                  | `Rejected` |
+| reopen                 | `Resolved`                                              | `Reopen`   |
+| resubmit               | `Rejected`                                              | `Open`     |
+| manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
+| merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
+| manager merge          | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
 
 There are no implicit status changes. Every transition must have a clear cause.
 

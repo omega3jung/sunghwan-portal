@@ -1,33 +1,33 @@
 {
   "common": {
-    "failed": "Failed",
+    "failed": "Échec",
     "load": {
-      "title": "Failed to load",
-      "message": "Failed to load {{item}}"
+      "title": "Échec du chargement",
+      "message": "Impossible de charger {{item}}"
     },
     "create": {
-      "title": "Failed to create",
-      "message": "Failed to create {{item}}"
+      "title": "Échec de la création",
+      "message": "Impossible de créer {{item}}"
     },
     "update": {
-      "title": "Failed to update",
-      "message": "Failed to update {{item}}"
+      "title": "Échec de la mise à jour",
+      "message": "Impossible de mettre à jour {{item}}"
     },
     "delete": {
-      "title": "Failed to delete",
-      "message": "Failed to delete {{item}}"
+      "title": "Échec de la suppression",
+      "message": "Impossible de supprimer {{item}}"
     },
     "add": {
-      "title": "Failed to add",
-      "message": "Failed to add {{item}}"
+      "title": "Échec de l'ajout",
+      "message": "Impossible d'ajouter {{item}}"
     },
     "save": {
-      "title": "Failed to save",
-      "message": "Failed to save {{item}}"
+      "title": "Échec de l'enregistrement",
+      "message": "Impossible d'enregistrer {{item}}"
     },
     "remove": {
-      "title": "Failed to remove",
-      "message": "Failed to remove {{item}}"
+      "title": "Échec du retrait",
+      "message": "Impossible de retirer {{item}}"
     }
   },
   "unsupportedBrowser": {

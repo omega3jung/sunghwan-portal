@@ -1,17 +1,17 @@
 import { Separator } from "@radix-ui/react-separator";
 import { useTranslation } from "react-i18next";
 
+import {
+  FileAttachmentList,
+  useFileAttachments,
+} from "@/components/custom/FileAttachment";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
-} from "@/feature/serviceDesk/ticket/core/constants";
+} from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 
-import {
-  FileAttachmentList,
-  useFileAttachments,
-} from "../../../../../components/custom/FileAttachment";
 import { useTicketFormContext } from "../../context/TicketFormContext";
 import { TicketInfoFields } from "./InfoFields";
 

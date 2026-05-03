@@ -15,7 +15,7 @@ import type { TicketHistory } from "@/domain/serviceDesk";
 import {
   TicketHistoryTimelineContent,
   TicketHistoryTimelineHeader,
-} from "@/feature/serviceDesk/ticketHistory";
+} from "@/feature/serviceDesk/ticketHistory/components";
 import { NS } from "@/lib/i18n";
 
 type TicketHistorySheetProps = {

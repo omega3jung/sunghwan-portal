@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 /**
@@ -35,7 +37,7 @@ function getWindowDimensions() {
  */
 export const useWindowDimensions = () => {
   const [windowDimensions, setWindowDimensions] = useState(() =>
-    getWindowDimensions()
+    getWindowDimensions(),
   );
 
   useEffect(() => {

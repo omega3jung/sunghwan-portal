@@ -9,10 +9,8 @@ import {
 } from "@/app/api/_helpers";
 import { RouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
-import {
-  mapTicketActionPayload,
-  TicketActionFormValues,
-} from "@/feature/serviceDesk/ticketAction";
+import { TicketActionFormValues } from "@/feature/serviceDesk/ticketAction";
+import { mapTicketActionPayload } from "@/feature/serviceDesk/ticketAction/api";
 import { localPost } from "@/server/serviceDesk/ticket/command/localDemo";
 import {
   ACTION_PATH_BY_TYPE,

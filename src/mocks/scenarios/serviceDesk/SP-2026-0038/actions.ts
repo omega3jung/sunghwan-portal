@@ -1,4 +1,4 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction";
+import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
 
 import { ticket } from "./ticket";
 
@@ -40,7 +40,8 @@ export const actions: DbTicketAction[] = [
     action_no: 3,
 
     action_type: "COMMENT",
-    content: "알겠습니다, Amelia. 이 ticket을 지금 'Pending' 상태로 변경하겠습니다.",
+    content:
+      "알겠습니다, Amelia. 이 ticket을 지금 'Pending' 상태로 변경하겠습니다.",
     owner_id: "41",
 
     created_at: "2026-04-26T01:17:18Z",

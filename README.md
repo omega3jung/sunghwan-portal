@@ -92,8 +92,11 @@ If you want the high-level design overview first, start here:
 
 1. [`docs/en/README.md`](./docs/en/README.md)
 2. [`docs/en/02-architecture/feature-based-structure.md`](./docs/en/02-architecture/feature-based-structure.md)
-3. [`docs/en/03-domain/ticket-system-design.md`](./docs/en/03-domain/ticket-system-design.md)
-4. [`docs/en/08-dev-strategy/development-approach.md`](./docs/en/08-dev-strategy/development-approach.md)
+3. [`docs/en/03-domain/ticket/ticket-system-overview.md`](./docs/en/03-domain/ticket/ticket-system-overview.md)
+4. [`docs/en/03-domain/ticket/ticket-model.md`](./docs/en/03-domain/ticket/ticket-model.md)
+5. [`docs/en/03-domain/ticket/ticket-lifecycle.md`](./docs/en/03-domain/ticket/ticket-lifecycle.md)
+6. [`docs/en/08-dev-strategy/development-approach.md`](./docs/en/08-dev-strategy/development-approach.md)
+7. [`docs/en/08-dev-strategy/ticket-operation-rules.md`](./docs/en/08-dev-strategy/ticket-operation-rules.md)
 
 ## Authentication and Session
 
@@ -170,6 +173,12 @@ It covers:
 
 This means the repository is useful not only as code, but also as a written record
 of how the system was shaped.
+
+Recommended documentation entry points:
+
+- [Service Desk Spec](./docs/spec/ticket-system.md)
+- [Ticket Activity](./docs/en/03-domain/ticket/ticket-activity.md)
+- [Ticket History](./docs/en/03-domain/ticket/ticket-history.md)
 
 ## Notes
 

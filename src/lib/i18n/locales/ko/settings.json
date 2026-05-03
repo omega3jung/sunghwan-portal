@@ -69,11 +69,11 @@
       }
     },
     "workflowSettings": {
-      "title": "작업순서 설정",
-      "description": "작업순서 단계 및 검증 규칙을 관리합니다.",
+      "title": "워크플로우 설정",
+      "description": "워크플로우 단계 및 검증 규칙을 관리합니다.",
       "steps": {
         "title": "단계",
-        "description": "디바이스 수리 프로세스에 포함된 작업순서 단계를 관리합니다."
+        "description": "디바이스 수리 프로세스에 포함된 워크플로우 단계를 관리합니다."
       },
       "validations": {
         "title": "검증",
@@ -82,14 +82,14 @@
     },
     "serviceDeskSettings": {
       "title": "IT 서비스 데스크 설정",
-      "description": "IT 서비스 데스크 티켓의 분류, 승인 단계 및 할당 규칙을 관리합니다.",
+      "description": "IT 서비스 데스크 티켓의 분류, 결재 단계 및 할당 규칙을 관리합니다.",
       "category": {
         "title": "카테고리",
         "description": "IT 서비스 데스크 티켓의 카테고리 및 하위 카테고리를 관리합니다."
       },
       "approvalSteps": {
-        "title": "승인 단계",
-        "description": "IT 서비스 데스크 티켓이 담당자에게 할당되기 전 필요한 승인 단계를 관리합니다."
+        "title": "결재 단계",
+        "description": "IT 서비스 데스크 티켓이 담당자에게 할당되기 전 필요한 결재 단계를 관리합니다."
       },
       "assignmentRules": {
         "title": "할당 규칙",

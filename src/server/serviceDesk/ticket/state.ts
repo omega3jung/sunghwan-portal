@@ -1,6 +1,6 @@
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket";
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction";
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
+import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
+import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 import { clientHistoriesMock } from "@/mocks/scenarios/serviceDesk/clientHistoriesMock";
 import { clientActionsMock } from "@/mocks/scenarios/serviceDesk/clientlActionsMock";
 import { clientTicketsMock } from "@/mocks/scenarios/serviceDesk/clientTicketsMock";
@@ -9,36 +9,58 @@ import { internalHistoriesMock } from "@/mocks/scenarios/serviceDesk/internalHis
 import { internalTicketsMock } from "@/mocks/scenarios/serviceDesk/internalTicketsMock";
 
 const clone = <T>(value: T): T => structuredClone(value);
+type LocalDemoTicketState = {
+  internalTickets: DbTicketDetail[];
+  internalActions: DbTicketAction[];
+  internalHistories: DbTicketHistory[];
+  clientTickets: DbTicketDetail[];
+  clientActions: DbTicketAction[];
+  clientHistories: DbTicketHistory[];
+};
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __SP_LOCAL_DEMO_TICKET_STATE__: LocalDemoTicketState | undefined;
+}
 
 /**
  * Initial mock data is treated as the immutable source snapshot.
  * Runtime state below may be mutated by local demo handlers.
  */
-let localDemoInternalTickets = clone<DbTicketDetail[]>(internalTicketsMock);
-let localDemoInternalActions = clone<DbTicketAction[]>(internalActionsMock);
-let localDemoInternalHistories = clone<DbTicketHistory[]>(
-  internalHistoriesMock,
-);
+function createLocalDemoTicketState(): LocalDemoTicketState {
+  return {
+    internalTickets: clone<DbTicketDetail[]>(internalTicketsMock),
+    internalActions: clone<DbTicketAction[]>(internalActionsMock),
+    internalHistories: clone<DbTicketHistory[]>(internalHistoriesMock),
+    clientTickets: clone<DbTicketDetail[]>(clientTicketsMock),
+    clientActions: clone<DbTicketAction[]>(clientActionsMock),
+    clientHistories: clone<DbTicketHistory[]>(clientHistoriesMock),
+  };
+}
 
-let localDemoClientTickets = clone<DbTicketDetail[]>(clientTicketsMock);
-let localDemoClientActions = clone<DbTicketAction[]>(clientActionsMock);
-let localDemoClientHistories = clone<DbTicketHistory[]>(clientHistoriesMock);
+// Local demo mutations must survive refetches and route handler module reloads.
+// globalThis gives us a process-level in-memory store without adding persistence.
+function getLocalDemoTicketState() {
+  if (!globalThis.__SP_LOCAL_DEMO_TICKET_STATE__) {
+    globalThis.__SP_LOCAL_DEMO_TICKET_STATE__ = createLocalDemoTicketState();
+  }
+
+  return globalThis.__SP_LOCAL_DEMO_TICKET_STATE__ as LocalDemoTicketState;
+}
 
 export function getLocalDemoTickets(isInternal: boolean) {
-  return isInternal ? localDemoInternalTickets : localDemoClientTickets;
+  const state = getLocalDemoTicketState();
+  return isInternal ? state.internalTickets : state.clientTickets;
 }
 export function getLocalDemoActions(isInternal: boolean) {
-  return isInternal ? localDemoInternalActions : localDemoClientActions;
+  const state = getLocalDemoTicketState();
+  return isInternal ? state.internalActions : state.clientActions;
 }
 export function getLocalDemoHistories(isInternal: boolean) {
-  return isInternal ? localDemoInternalHistories : localDemoClientHistories;
+  const state = getLocalDemoTicketState();
+  return isInternal ? state.internalHistories : state.clientHistories;
 }
 
 export function resetLocalDemoTicketState() {
-  localDemoInternalTickets = clone<DbTicketDetail[]>(internalTicketsMock);
-  localDemoInternalActions = clone<DbTicketAction[]>(internalActionsMock);
-  localDemoInternalHistories = clone<DbTicketHistory[]>(internalHistoriesMock);
-  localDemoClientTickets = clone<DbTicketDetail[]>(clientTicketsMock);
-  localDemoClientActions = clone<DbTicketAction[]>(clientActionsMock);
-  localDemoClientHistories = clone<DbTicketHistory[]>(clientHistoriesMock);
+  globalThis.__SP_LOCAL_DEMO_TICKET_STATE__ = createLocalDemoTicketState();
 }

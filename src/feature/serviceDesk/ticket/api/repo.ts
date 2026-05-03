@@ -1,6 +1,8 @@
+"use client";
+
 import { DataScope } from "@/domain/auth";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api";
+import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/api";
 
 import type { TicketFormValues } from "../forms";
 

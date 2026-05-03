@@ -22,7 +22,7 @@ import type { Client } from "@/domain/serviceDesk";
 import {
   useSaveServiceDeskCategoryTree,
   useServiceDeskCategoryListQuery,
-} from "@/feature/serviceDesk/category";
+} from "@/feature/serviceDesk/category/client";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";

@@ -25,7 +25,7 @@
       },
       "label": {
         "title": "Label",
-        "description": "Manage labels used throughout the device's repair process and shipping."
+        "description": "Manage labels used throughout device repair and shipping processes."
       }
     },
 
@@ -127,14 +127,14 @@
       "assigneeTypes": {
         "manager": "Manager",
         "department": "Department",
-        "jobField": "Job Title",
+        "jobField": "Job Field",
         "employee": "Employee"
       },
       "managerLevel": "Manager Level",
       "department": "Department",
       "departmentPlaceholder": "Select a department",
-      "jobField": "Job Title",
-      "jobFieldPlaceholder": "Select a job title",
+      "jobField": "Job Field",
+      "jobFieldPlaceholder": "Select a job field",
       "employee": "Employee",
       "employeePlaceholder": "Select an assignee",
       "skipAccessLevel": "Skippable Access Level"
@@ -142,10 +142,10 @@
     "assignmentRuleTab": {
       "name": "Category",
       "namePlaceholder": "Select a category",
-      "jobField": "Job Title",
-      "selectAssigneeJobField": "Select Assignee Job Title",
+      "jobField": "Job Field",
+      "selectAssigneeJobField": "Select assignee Job field",
       "employee": "Employee",
-      "selectAssignee": "Select Assignee"
+      "selectAssignee": "Select assignee"
     }
   }
 }

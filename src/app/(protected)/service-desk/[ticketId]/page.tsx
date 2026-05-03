@@ -7,19 +7,17 @@ import { useTranslation } from "react-i18next";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { useEmployeeListQuery } from "@/feature/organization/employee";
-import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
-import {
-  useAutoStartApprovedTicketOnView,
-  useServiceDeskTicketQuery,
-} from "@/feature/serviceDesk/ticket";
+import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api/client";
+import { useAutoStartApprovedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartApprovedTicketOnView";
+import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticketAction/api/client";
 import {
   TicketActionList,
   TicketActionTool,
-  useServiceDeskTicketActionListQuery,
-} from "@/feature/serviceDesk/ticketAction";
-import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory";
+} from "@/feature/serviceDesk/ticketAction/components";
+import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory/api/client";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";

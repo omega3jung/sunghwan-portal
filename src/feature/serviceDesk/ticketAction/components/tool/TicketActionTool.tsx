@@ -12,7 +12,7 @@ import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import type { ImageValueLabel } from "@/shared/types";
 
-import { useTicketActionMutation } from "../../api";
+import { useTicketActionMutation } from "../../api/client";
 import {
   ACTION_ADJUST_NO_CHANGES_KEY,
   buildTicketActionPayload,
@@ -32,9 +32,10 @@ import { TicketActionToolLauncher } from "./TicketActionToolLauncher";
 /**
  * TicketActionTool
  *
- * ??釉?
- * - action mode ?온?? * - form state orchestration
- * - actionType ??mutation ?怨뚭퍙 (?館??
+ * Hub component
+ * - action mode switching
+ * - form state orchestration
+ * - shared mutation flow by action type
  * - UI entry point
  */
 

@@ -82,7 +82,7 @@
     "type": "Type",
     "updatedAt": "Mis à jour le",
     "ticket": "Ticket",
-    "ticketNumber": "Numéro de billet.",
+    "ticketNumber": "N° de ticket",
     "riskLevel": "Niveau de risque",
     "list": "Liste"
   },

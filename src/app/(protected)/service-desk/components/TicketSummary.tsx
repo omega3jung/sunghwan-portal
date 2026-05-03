@@ -73,7 +73,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
             </li>
             {ticket.assigned && (
               <li>
-                <Badge className="bg-red-700/80 font-normal">
+                <Badge className="bg-primary/10 text-primary border border-primary/20">
                   {t("detailAside.assignedBadge")}
                 </Badge>
               </li>

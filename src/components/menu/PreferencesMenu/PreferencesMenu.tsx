@@ -17,10 +17,10 @@ import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
 import {
   useCreateUserPreference,
   useUpdateUserPreference,
-} from "@/feature/user/preference";
+} from "@/feature/user/preference/client";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
 import { languageOptions } from "@/shared/constants/options/language";
-import { useWindowDimensions } from "@/shared/hooks/useWindowDimensions";
 import { isLocale } from "@/shared/utils/i18n";
 import { applyColorTheme, cn } from "@/shared/utils/presentation";
 

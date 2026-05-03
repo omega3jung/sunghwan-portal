@@ -13,13 +13,13 @@ import {
   tServiceDeskApi,
   withDerivedTicketOwnership,
 } from "@/app/api/service-desk/_shared";
+import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api";
 import {
-  mapTicketDetailPayload,
   TicketWriteRequestInput,
   toTicketWriteInput,
   toTicketWritePayload,
   updateTicketSchema,
-} from "@/feature/serviceDesk/ticket";
+} from "@/feature/serviceDesk/ticket/write";
 import {
   localDeleteTicket,
   localGetTicket,

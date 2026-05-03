@@ -1,3 +1,5 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";

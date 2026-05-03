@@ -14,7 +14,7 @@ import {
   useCreateUserPreference,
   useUpdateUserPreference,
   useUserPreferenceQuery,
-} from "@/feature/user/preference";
+} from "@/feature/user/preference/client";
 import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { NS } from "@/lib/i18n";
 import { adminAuth } from "@/mocks/domain/user";

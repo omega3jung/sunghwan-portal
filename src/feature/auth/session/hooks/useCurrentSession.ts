@@ -1,8 +1,10 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { CurrentSession } from "@/domain/auth";
-import { useCurrentUserProfileQuery } from "@/feature/auth/hooks";
+import { useCurrentUserProfileQuery } from "@/feature/user/profile/client";
 import { SessionPatch, useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 

@@ -1,11 +1,11 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import {
   TICKET_ACTION_TYPE_TO_PATH,
   TicketActionFormValues,
   TicketActionPath,
 } from "@/feature/serviceDesk/ticketAction";
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 export const ACTION_PATH_BY_TYPE = TICKET_ACTION_TYPE_TO_PATH;
 

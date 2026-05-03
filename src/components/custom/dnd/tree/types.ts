@@ -9,8 +9,8 @@ import type { MutableRefObject } from "react";
  */
 
 /**
- * 최소 Tree Item 인터페이스
- * - 도메인과 무관
+ * Minimal tree item interface.
+ * - Domain-agnostic
  */
 export interface TreeNode<T = unknown> {
   id: UniqueIdentifier;
@@ -21,7 +21,7 @@ export interface TreeNode<T = unknown> {
 }
 
 /**
- * Tree 구조 전체
+ * Full tree structure.
  */
 export type TreeNodes<T = unknown> = TreeNode<T>[];
 
@@ -32,8 +32,8 @@ export type TreeNodes<T = unknown> = TreeNode<T>[];
  */
 
 /**
- * DnD / Table 렌더링용 Flattened Item
- * - parentId / depth / index는 UI & DnD 전용
+ * Flattened item for DnD and table rendering.
+ * - parentId / depth / index are UI and DnD-only fields
  */
 export interface FlattenedNode<T = unknown> extends TreeNode<T> {
   parentId: UniqueIdentifier | null;
@@ -45,7 +45,7 @@ export interface FlattenedNode<T = unknown> extends TreeNode<T> {
  * =========================
  * Sensor Context
  * =========================
- * drag 중 projection 계산을 위한 공유 컨텍스트
+ * Shared context for projection calculation during drag.
  */
 export type SensorContext = MutableRefObject<{
   items: FlattenedNode[];
@@ -59,9 +59,9 @@ export type SensorContext = MutableRefObject<{
  */
 
 /**
- * TreeNode에 도메인 데이터를 얹기 위한 유틸 타입
+ * Utility type for attaching domain data to TreeNode.
  *
- * 예:
+ * Example:
  * TreeNodeWithData<CategoryData>
  */
 export type TreeNodeWithData<T> = T & {
@@ -71,7 +71,7 @@ export type TreeNodeWithData<T> = T & {
 };
 
 /**
- * FlattenedNode + 도메인 데이터
+ * FlattenedNode + domain data.
  */
 export type FlattenedNodeWithData<T> = T & {
   id: UniqueIdentifier;

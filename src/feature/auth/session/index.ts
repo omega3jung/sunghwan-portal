@@ -1,6 +1,5 @@
 // src/feature/auth/session/index.ts
 
-export * from "./hooks/useAppUser";
-export * from "./hooks/useCurrentSession";
-export * from "./hooks/useDatabaseUser";
+// server-safe export only.
+
 export * from "./types";

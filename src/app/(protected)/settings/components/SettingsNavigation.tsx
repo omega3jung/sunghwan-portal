@@ -14,7 +14,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { useUserPreferenceQuery } from "@/feature/user";
+import { useUserPreferenceQuery } from "@/feature/user/preference/client";
 import { NS } from "@/lib/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";

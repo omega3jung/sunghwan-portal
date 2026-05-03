@@ -1,6 +1,8 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import {
   AssignmentRecommendationInput,
   serviceDeskAssignmentRecommendationApi,
@@ -21,7 +23,7 @@ export const useServiceDeskAssignmentRuleListQuery = (
   return useQuery({
     queryKey: assignmentRuleQueryKeys.list(params),
     queryFn: () => serviceDeskAssignmentRuleApi.list(params),
-    enabled: params !== undefined,
+    enabled: params !== undefined && !!dataScope,
     ...ticketQueryOptions,
   });
 };
@@ -33,7 +35,7 @@ export const useServiceDeskAssignmentRuleQuery = (id: string | number) => {
   return useQuery({
     queryKey: assignmentRuleQueryKeys.detail(id),
     queryFn: () => serviceDeskAssignmentRuleApi.get(id),
-    enabled: !!id,
+    enabled: !!id && !!dataScope,
     ...ticketQueryOptions,
   });
 };
@@ -49,7 +51,7 @@ export const useServiceDeskAssignmentRecommendationsQuery = (
   return useQuery({
     queryKey: assignmentRuleQueryKeys.recommendation(input),
     queryFn: () => serviceDeskAssignmentRecommendationApi.recommend(input),
-    enabled: enabled && Boolean(input.categoryId),
+    enabled: enabled && Boolean(input.categoryId) && !!dataScope,
     ...ticketQueryOptions,
   });
 };

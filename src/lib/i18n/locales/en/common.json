@@ -37,7 +37,7 @@
     "category": "Category",
     "comment": "Comment",
     "contact": "Contact",
-    "createdAt": "Created At",
+    "createdAt": "Created at",
     "date": "Date",
     "department": "Department",
     "description": "Description",
@@ -63,7 +63,7 @@
     "priority": "Priority",
     "requester": "Requester",
     "riskLevel": "Risk level",
-    "startDate": "Start Date",
+    "startDate": "Start date",
     "startTime": "Start time",
     "status": "Status",
     "step": "Step",
@@ -71,7 +71,7 @@
     "ticket": "Ticket",
     "ticketNumber": "Ticket No.",
     "type": "Type",
-    "updatedAt": "Updated At"
+    "updatedAt": "Updated at"
   },
   "pagination": {
     "first": "First",

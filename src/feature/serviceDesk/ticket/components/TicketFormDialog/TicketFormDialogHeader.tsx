@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { NS } from "@/lib/i18n";
 
-import { ticketStep } from "../../utils/constants";
+import { ticketStep } from "../../constants";
 
 type TicketFormDialogHeaderProps = {
   mode: "create" | "update" | "view";

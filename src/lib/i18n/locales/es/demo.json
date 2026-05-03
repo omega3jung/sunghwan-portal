@@ -5,8 +5,8 @@
       "enterpriseBadge": "Demostración del portal empresarial",
       "title": "Esta es la página de inicio del espacio de trabajo para operaciones de servicio, documentos de referencia y configuración de la plataforma.",
       "description": {
-        "local": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En Local Demo, puedes revisar los límites de acceso y las acciones disponibles según el Role (ADMIN, MANAGER, LEADER, USER, GUEST).",
-        "remote": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En el modo Remote, puedes revisar flujos de permisos más cercanos a una operación real combinando el Role con la relación del usuario con cada ticket."
+        "local": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En la demostración local, puedes revisar los límites de acceso y las acciones disponibles según el rol (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "remote": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En el modo remoto, puedes revisar flujos de permisos más cercanos a una operación real combinando el Role con la relación del usuario con cada ticket."
       },
       "actions": {
         "openServiceDesk": "Abrir Service Desk",
@@ -23,14 +23,14 @@
       "currentScope": {
         "title": "Alcance actual",
         "description": {
-          "local": "En Local Demo, puedes explorar el flujo de Service Desk, los documentos y las pantallas de configuración, mientras que las verificaciones de permisos se simplifican con reglas basadas en Role.",
+          "local": "En la demostración local, puedes explorar el flujo de Service Desk, los documentos y las pantallas de configuración, mientras que las verificaciones de permisos se simplifican con reglas basadas en Role.",
           "remote": "En modo Remote, el flujo de Service Desk, los documentos y las pantallas de configuración pueden conectarse a API reales, mientras que el comportamiento de permisos refleja tanto el Role como las relaciones del usuario."
         }
       },
       "architectureNotes": {
         "local": {
           "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
-          "note2": "En Local Demo, los menús y las acciones disponibles cambian según los roles ADMIN, MANAGER, LEADER, USER y GUEST.",
+          "note2": "En la demostración local, los menús y las acciones disponibles cambian según los roles ADMIN, MANAGER, LEADER, USER y GUEST.",
           "note3": "Los permisos basados en relaciones organizacionales, las restricciones basadas en la relación con el ticket y la integración con API remotas se separan para poder validarse con mayor precisión en modo Remote."
         },
         "remote": {
@@ -42,12 +42,12 @@
     },
     "quickActions": {
       "title": "Acciones rápidas",
-      "description": "Abra las principales áreas de trabajo que probablemente necesite justo después de iniciar sesión.",
+      "description": "Abre las principales áreas de trabajo que probablemente necesite justo después de iniciar sesión.",
       "openWorkspace": "Abrir espacio de trabajo",
       "items": {
         "serviceDesk": {
           "title": "Service Desk",
-          "description": "Explore tickets, revise el estado de la cola y continúe el trabajo actual.",
+          "description": "Explora tickets, revise el estado de la cola y continúe el trabajo actual.",
           "meta": "Espacio central"
         },
         "documentation": {
@@ -62,7 +62,7 @@
         },
         "serviceDeskSetup": {
           "title": "Configuración de Service Desk",
-          "description": "Revise categorías, pasos de aprobación y la estructura de reglas de asignación.",
+          "description": "Revisa categorías, pasos de aprobación y la estructura de reglas de asignación.",
           "meta": "Configuración de la plataforma"
         }
       }
@@ -104,7 +104,7 @@
           "title": "Flujo de autenticación y sesión",
           "description": "Experiencia de inicio de sesión, manejo de redirecciones y comportamiento del shell protegido.",
           "category": "Arquitectura",
-          "status": "Foco actual"
+          "status": "Enfoque actual"
         },
         "serviceDeskSettings": {
           "title": "Configuración de Service Desk",
@@ -146,12 +146,12 @@
     "resetting": "Restableciendo"
   },
   "stepper": {
-    "stepper": "Stepper",
-    "variants": "Variación",
+    "stepper": "Indicador de pasos",
+    "variants": "Variantes",
     "orientation": "Orientación",
-    "stepVariant": "Forma del paso",
+    "stepVariant": "Variante de paso",
     "labelPosition": "Posición de la etiqueta",
-    "stepColor": "Color",
+    "stepColor": "Color del paso",
     "showOrderLabel": "Mostrar etiqueta del paso",
     "startIndex": "Número inicial",
     "step": "Paso",

@@ -1,9 +1,11 @@
+"use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { TicketAction } from "@/domain/serviceDesk";
 
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
-import { ticketHistoryQueryKeys } from "../../ticketHistory";
+import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketActionApi } from "./api";
 import { ticketActionQueryKeys } from "./queryKeys";
 

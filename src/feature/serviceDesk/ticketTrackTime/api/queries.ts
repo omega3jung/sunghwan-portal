@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth";
+import { useCurrentSession } from "@/feature/auth/session/client";
 
 import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
 import { serviceDeskTicketTrackTimeApi } from "./api";
@@ -15,7 +15,7 @@ export const useServiceDeskTicketTrackTimeListQuery = (ticketId: string) => {
     queryKey: ticketTrackTimeQueryKeys.list(ticketId),
     queryFn: () => serviceDeskTicketTrackTimeApi.list(ticketId),
     placeholderData: keepPreviousData,
-    enabled: !!ticketId,
+    enabled: !!ticketId && !!dataScope,
     ...ticketQueryOptions,
   });
 };
@@ -31,7 +31,7 @@ export const useServiceDeskTicketTrackTimeQuery = (
   return useQuery({
     queryKey: ticketTrackTimeQueryKeys.detail(ticketId, trackTimeNo),
     queryFn: () => serviceDeskTicketTrackTimeApi.get(ticketId, trackTimeNo),
-    enabled: !!ticketId && !!trackTimeNo,
+    enabled: !!ticketId && !!trackTimeNo && !!dataScope,
     ...ticketQueryOptions,
   });
 };

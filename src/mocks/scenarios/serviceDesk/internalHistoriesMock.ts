@@ -1,4 +1,4 @@
-﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
+﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 import { TICKET_2026_1 } from "./SP-2026-0001";
 import { TICKET_2026_2 } from "./SP-2026-0002";

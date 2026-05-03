@@ -1,6 +1,8 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import { serviceDeskCategoryApi } from "@/feature/serviceDesk/category";
 import { DbParams } from "@/shared/types/api";
 
@@ -15,7 +17,7 @@ export const useServiceDeskCategoryListQuery = (params: DbParams) => {
   return useQuery({
     queryKey: categoryQueryKeys.list(params),
     queryFn: () => serviceDeskCategoryApi.list(params),
-    enabled: !!params,
+    enabled: !!params && !!dataScope,
     ...ticketQueryOptions,
   });
 };
@@ -28,7 +30,7 @@ export const useServiceDeskCategoryQuery = (id: string | number) => {
   return useQuery({
     queryKey: categoryQueryKeys.detail(id),
     queryFn: () => serviceDeskCategoryApi.get(id),
-    enabled: !!id,
+    enabled: !!id && !!dataScope,
     ...ticketQueryOptions,
   });
 };

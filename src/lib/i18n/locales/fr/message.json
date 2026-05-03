@@ -63,6 +63,6 @@
     "sent": "Saisissez {{code}} dans un délai de {{minutes}} minutes.",
     "resent": "Le code OTP a été renvoyé.",
     "timeout": "Le délai a expiré.",
-    "differentId": "L'identifiant vérifié est différent de l'identifiant actuel. Veuillez vérifier l'OTP à nouveau."
+    "differentId": "L'identifiant vérifié est différent de l'identifiant actuel. Veuillez vérifier à nouveau le code OTP."
   }
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -9,9 +11,9 @@ import { MainCategory } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
+import { ticketStep } from "../../constants";
 import { TicketFormProvider } from "../../context/TicketFormContext";
-import { ticketStep } from "../../utils/constants";
-import { useTicketFormDialog } from "../../hooks";
+import { useTicketFormDialog } from "../../hooks/useTicketFormDialog";
 import { AttachmentStep } from "./AttachmentStep";
 import { InfoStep } from "./InfoStep";
 import { ReviewStep } from "./ReviewStep";

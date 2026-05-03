@@ -6,12 +6,12 @@ import {
 } from "@/app/api/service-desk/_shared/messages";
 import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
 import { mapFileToAttach } from "@/feature/serviceDesk/shared/utils/mapFileToAttach";
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import {
   camelTicketActionMapper,
   DbTicketAction,
-} from "@/feature/serviceDesk/ticketAction";
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory";
+} from "@/feature/serviceDesk/ticketAction/api";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import {

@@ -1,9 +1,10 @@
+"use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api";
-import { ticketHistoryQueryKeys } from "@/feature/serviceDesk/ticketHistory";
-
+import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import type { TicketFormValues } from "../forms";
+import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
 import { serviceDeskTicketDraftRepo, useTicketDraftRepoContext } from "./repo";
 

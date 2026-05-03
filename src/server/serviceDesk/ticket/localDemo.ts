@@ -7,18 +7,18 @@ import {
   TicketDetail,
   TicketStatus,
 } from "@/domain/serviceDesk";
+import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api";
 import {
-  camelTicketDetailMapper,
+  DbTicketDetail,
+  TicketSearchRequest,
+  TicketSortField,
+} from "@/feature/serviceDesk/ticket/api/types";
+import {
   CreateTicketInput,
   TicketAttachmentInput,
   toTicketWritePayload,
   UpdateTicketInput,
-} from "@/feature/serviceDesk/ticket";
-import type {
-  TicketSearchRequest,
-  TicketSortField,
-} from "@/feature/serviceDesk/ticket/api";
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+} from "@/feature/serviceDesk/ticket/write";
 import { getLocalDemoCategories } from "@/server/serviceDesk/settings/state";
 import {
   applyRuleGroupFilter,

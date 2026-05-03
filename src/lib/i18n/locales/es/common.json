@@ -31,9 +31,9 @@
     "withItem": "Sin {{item}}"
   },
   "placeholder": {
-    "enter": "Ingrese {{target}}",
+    "enter": "Ingresa {{target}}",
     "search": "Buscar {{target}}",
-    "select": "Seleccione {{target}}"
+    "select": "Selecciona {{target}}"
   },
   "sort": {
     "sort": "Ordenar",
@@ -46,7 +46,7 @@
   "field": {
     "age": "Edad",
     "agent": "Agente",
-    "assignee": "Asignado a",
+    "assignee": "Responsable",
     "category": "Categoría",
     "comment": "Comentario",
     "contact": "Contacto",
@@ -82,7 +82,7 @@
     "type": "Tipo",
     "updatedAt": "Actualizado el",
     "ticket": "Ticket",
-    "ticketNumber": "Número de boleto.",
+    "ticketNumber": "Número de ticket",
     "riskLevel": "Nivel de riesgo",
     "list": "Lista"
   },

@@ -1,33 +1,33 @@
 {
   "common": {
-    "failed": "Failed",
+    "failed": "실패",
     "load": {
-      "title": "Failed to load",
-      "message": "Failed to load {{item}}"
+      "title": "불러오기 실패",
+      "message": "{{item}}을(를) 불러오지 못했습니다."
     },
     "create": {
-      "title": "Failed to create",
-      "message": "Failed to create {{item}}"
+      "title": "생성 실패",
+      "message": "{{item}}을(를) 생성하지 못했습니다."
     },
     "update": {
-      "title": "Failed to update",
-      "message": "Failed to update {{item}}"
+      "title": "수정 실패",
+      "message": "{{item}}을(를) 수정하지 못했습니다."
     },
     "delete": {
-      "title": "Failed to delete",
-      "message": "Failed to delete {{item}}"
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
     },
     "add": {
-      "title": "Failed to add",
-      "message": "Failed to add {{item}}"
+      "title": "추가 실패",
+      "message": "{{item}}을(를) 추가하지 못했습니다."
     },
     "save": {
-      "title": "Failed to save",
-      "message": "Failed to save {{item}}"
+      "title": "저장 실패",
+      "message": "{{item}}을(를) 저장하지 못했습니다."
     },
     "remove": {
-      "title": "Failed to remove",
-      "message": "Failed to remove {{item}}"
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
     }
   },
   "unsupportedBrowser": {
