@@ -13,6 +13,8 @@
 
 ## 개요
 
+**라이브 데모**: [sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
+
 이 프로젝트는 다음 요소를 중심으로 Service Desk 도메인을 구성합니다.
 
 - 카테고리 기반 티켓 워크플로우
