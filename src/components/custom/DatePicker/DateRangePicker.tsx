@@ -1,5 +1,6 @@
 "use client";
 
+import { endOfDay, startOfDay } from "date-fns";
 import type { ForwardedRef } from "react";
 import {
   forwardRef,
@@ -43,6 +44,17 @@ import {
 // The component uses this same rule for uncontrolled initialization and later sync.
 function hasRangeValue(range?: DateRange) {
   return Boolean(range?.from || range?.to);
+}
+
+function normalizeDayBoundaries(range?: DateRange): DateRange | undefined {
+  if (!range) {
+    return undefined;
+  }
+
+  return {
+    from: range.from ? startOfDay(range.from) : undefined,
+    to: range.to ? endOfDay(range.to) : undefined,
+  };
 }
 
 // DateRangePicker supports:
@@ -217,7 +229,9 @@ const Component = (
       preventSelectFocusRestoreRef.current = false;
       const anchorDate = new Date();
       presetSyncAnchorRef.current = anchorDate;
-      const nextRange = resolvePresetRange(nextPeriod, anchorDate);
+      const nextRange = normalizeDayBoundaries(
+        resolvePresetRange(nextPeriod, anchorDate),
+      );
       onRangeChange(nextRange);
       setOpen(false);
     },
@@ -232,9 +246,10 @@ const Component = (
         updatePeriod("range");
       }
 
-      onRangeChange(selectedRange);
+      const normalizedRange = normalizeDayBoundaries(selectedRange);
+      onRangeChange(normalizedRange);
 
-      if (selectedRange?.from && selectedRange?.to) {
+      if (normalizedRange?.from && normalizedRange?.to) {
         setOpen(false);
       }
     },
@@ -272,7 +287,9 @@ const Component = (
       return;
     }
 
-    const nextRange = resolvePresetRange(period, presetSyncAnchorRef.current);
+    const nextRange = normalizeDayBoundaries(
+      resolvePresetRange(period, presetSyncAnchorRef.current),
+    );
 
     // Avoid redundant parent updates when the effective range is already correct.
     if (!isSameDateRange(range, nextRange)) {

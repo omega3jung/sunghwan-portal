@@ -194,6 +194,9 @@ i18n 문서는 번역 파일이 어떻게 구성되는지,
 주요 문서:
 
 - [Development Approach](./08-dev-strategy/development-approach.md)
+- [Service Desk Evolution](./08-dev-strategy/service-desk-evolution.md)
+- [Service Desk Implementation Strategy](./08-dev-strategy/service-desk-implementation-strategy.md)
+- [Ticket Operation Rules](./08-dev-strategy/ticket-operation-rules.md)
 
 #### Decision Log
 
@@ -220,6 +223,10 @@ i18n 문서는 번역 파일이 어떻게 구성되는지,
 - [2026-02 Service Desk Settings](./08-dev-strategy/decision-log/2026-02-service-desk-settings.md)
 - [2026-03 Service Desk](./08-dev-strategy/decision-log/2026-03-service-desk.md)
 - [2026-03 Ticket Form Dialog](./08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md)
+- [2026-03 Ticket Session](./08-dev-strategy/decision-log/2026-03-ticket-session.md)
+- [2026-04 Entity Status Naming](./08-dev-strategy/decision-log/2026-04-entity-status-naming.md)
+- [2026-04 Ticket Action](./08-dev-strategy/decision-log/2026-04-ticket-action.md)
+- [2026-05 Barrel Export Boundary](./08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
 
 ---
 
@@ -257,6 +264,9 @@ i18n 문서는 번역 파일이 어떻게 구성되는지,
 16. [Ticket Form Design](./06-form-design/ticket-form.md)
 17. [Locale Structure](./07-i18n/locale-structure.md)
 18. [Development Approach](./08-dev-strategy/development-approach.md)
+19. [Service Desk Evolution](./08-dev-strategy/service-desk-evolution.md)
+20. [Service Desk Implementation Strategy](./08-dev-strategy/service-desk-implementation-strategy.md)
+21. [Ticket Operation Rules](./08-dev-strategy/ticket-operation-rules.md)
 
 ---
 

@@ -107,11 +107,10 @@ export function TicketActionForm({
         <FieldError>{errorMessage}</FieldError>
       </Field>
 
-      <Field>
+      <Field className={getFieldClassName(mode)}>
         <FileAttachment
           form={form}
           name="attachment"
-          className={getFieldClassName(mode)}
           maxCount={MAX_ATTACH_COUNT}
           maxSizeMB={MAX_ATTACH_SIZE}
         />

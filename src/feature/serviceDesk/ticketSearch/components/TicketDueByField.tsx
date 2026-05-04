@@ -1,4 +1,12 @@
-import { addMonths, addWeeks, endOfDay, endOfMonth, endOfWeek } from "date-fns";
+import {
+  addMonths,
+  addWeeks,
+  addYears,
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+} from "date-fns";
 import { useEffect, useMemo, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import type { Control } from "react-hook-form";
@@ -22,35 +30,42 @@ type TicketDueByInputValue = {
   dateRange?: DateRange;
 };
 
+const ALL_DUE_BY_VALUE: TicketDueByInputValue = {
+  type: "all",
+  dateRange: undefined,
+};
+
 const convertDueAtToDateRange = (value: dueAt): DateRange | undefined => {
   const now = new Date();
+  const from = startOfDay(now);
 
   switch (value) {
     case "today":
-      return { from: now, to: endOfDay(now) };
+      return { from, to: endOfDay(now) };
 
     case "this_week":
-      return { from: now, to: endOfWeek(now, { weekStartsOn: 1 }) };
+      return { from, to: endOfWeek(now, { weekStartsOn: 1 }) };
 
     case "this_2week":
       return {
-        from: now,
+        from,
         to: endOfWeek(addWeeks(now, 1), { weekStartsOn: 1 }),
       };
 
     case "this_month":
-      return { from: now, to: endOfMonth(now) };
+      return { from, to: endOfMonth(now) };
 
     case "within_week":
-      return { from: now, to: addWeeks(now, 1) };
+      return { from, to: endOfDay(addWeeks(now, 1)) };
 
     case "within_2week":
-      return { from: now, to: addWeeks(now, 2) };
+      return { from, to: endOfDay(addWeeks(now, 2)) };
 
     case "within_month":
-      return { from: now, to: new Date(addMonths(now, 1)) };
+      return { from, to: endOfDay(addMonths(now, 1)) };
 
     case "overdue":
+      return { from: startOfDay(addYears(now, -1)), to: endOfDay(now) };
     case "all":
     default:
       return undefined;
@@ -66,10 +81,7 @@ function TicketDueByFieldInput({
   onChange: (value?: TicketDueByInputValue) => void;
   options: ReturnType<typeof createTicketDueByOptions>;
 }) {
-  const safeValue: TicketDueByInputValue = value ?? {
-    type: "all",
-    dateRange: undefined,
-  };
+  const safeValue: TicketDueByInputValue = value ?? ALL_DUE_BY_VALUE;
   const nextTypeRef = useRef<dueAt>(safeValue.type);
 
   useEffect(() => {
@@ -82,7 +94,7 @@ function TicketDueByFieldInput({
       onValueChange={(selected) => {
         nextTypeRef.current = selected ?? safeValue.type;
         if (nextTypeRef.current === "all") {
-          onChange(undefined);
+          onChange(ALL_DUE_BY_VALUE);
           return;
         }
 
@@ -96,7 +108,7 @@ function TicketDueByFieldInput({
         const nextType = nextTypeRef.current ?? safeValue.type;
 
         if (nextType === "all") {
-          onChange(undefined);
+          onChange(ALL_DUE_BY_VALUE);
           return;
         }
 

@@ -35,7 +35,7 @@
     "options": {
       "today": "오늘",
       "thisWeek": "이번 주",
-      "this2Week": "최근 2주",
+      "this2Week": "다음 주",
       "thisMonth": "이번 달",
       "lastWeek": "지난 주",
       "last2Week": "최근 2주",
@@ -51,7 +51,7 @@
       "overDue": "기한 초과",
       "today": "오늘",
       "thisWeek": "이번 주",
-      "this2Week": "2주 이내",
+      "this2Week": "다음 주",
       "thisMonth": "이번 달",
       "withinWeek": "1주 이내",
       "within2Week": "2주 이내",
