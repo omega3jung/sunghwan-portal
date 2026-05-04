@@ -8,7 +8,7 @@ export const pretendard = localFont({
       style: "normal",
     },
     {
-      path: "./Pretendard-Extralight.woff2",
+      path: "./Pretendard-ExtraLight.woff2",
       weight: "200",
       style: "normal",
     },
