@@ -1,0 +1,399 @@
+{
+  "action": {
+    "comment": "댓글",
+    "note": "메모",
+    "assign": "할당",
+    "assignToMe": "나에게 할당",
+    "reject": "반려",
+    "merge": "병합",
+    "adjust": "조정",
+    "adjustPlan": "계획 조정",
+    "reopenIssue": "티켓 다시 열기",
+    "resubmitRequest": "요청 재제출",
+    "searchCriteria": "검색 조건",
+    "trackTime": {
+      "submit": "작업 시간 저장",
+      "submitWithStatus": "시간 저장 및 상태 변경",
+      "submitting": "저장 중..."
+    }
+  },
+  "chart": {
+    "category": {
+      "title": "카테고리별 티켓",
+      "label": "카테고리"
+    },
+    "department": {
+      "title": "요청 부서별 티켓",
+      "label": "부서"
+    },
+    "assignee": {
+      "title": "담당자별 티켓",
+      "label": "담당자"
+    },
+    "sla": {
+      "title": "SLA 성과",
+      "status": {
+        "withinSla": "SLA 준수",
+        "resolvedLate": "지연 해결",
+        "overdue": "기한 초과",
+        "inProgress": "진행 중"
+      }
+    }
+  },
+  "field": {
+    "dueBy": "기한",
+    "trackTime": "작업 시간",
+    "durationMinutes": "소요 시간",
+    "startAt": "시작 시간",
+    "endAt": "종료 시간",
+    "status": "상태",
+    "note": "메모"
+  },
+  "option": {
+    "status": {
+      "working": "진행 중",
+      "pending": "대기",
+      "resolved": "해결됨"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "제출하기 전에 작업 시간을 입력해 주세요.",
+      "positive": "작업 시간은 0분보다 커야 합니다.",
+      "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
+      "statusRequiresTime": "누적 작업 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
+      "noteMaxLength": "메모는 500자 이하여야 합니다."
+    },
+    "invalidFieldItems": "잘못된 필드: {{item}}"
+  },
+  "message": {
+    "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
+    "lastComment": "마지막 댓글",
+    "ticketCreation": "티켓 생성",
+    "processingFlow": "처리 흐름",
+    "foundDraft": "임시 저장된 내용이 있습니다",
+    "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
+    "loadDraftExceptInvalid": "유효하지 않은 필드를 제외하고 임시 저장 내용을 불러왔습니다."
+  },
+  "hoverMessage": {
+    "backToList": "티켓 목록으로 돌아가기",
+    "trackTimeTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
+    "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
+  },
+  "step": {
+    "issueDetails": "문제 상세",
+    "attachments": "첨부 파일",
+    "review": "검토 및 제출",
+    "assign": "할당"
+  },
+  "detailAside": {
+    "recipientsTitle": "수신자",
+    "unassigned": "미할당",
+    "ticketId": "티켓 ID",
+    "currentUserBadge": "나",
+    "assignedBadge": "할당됨"
+  },
+  "historySheet": {
+    "title": "티켓 이력",
+    "description": "티켓 이력 타임라인을 확인하세요."
+  },
+  "detailPage": {
+    "detailsTitle": "티켓 상세 정보",
+    "descriptionTitleHint": "핵심 요청 내용과 최신 활동을 한눈에 확인하세요.",
+    "replyTitle": "답글",
+    "replyTitleHint": "답글을 남기고, 내부 메모를 작성하고, 대화를 한 흐름에서 검토하세요.",
+    "notFound": "티켓을 찾을 수 없습니다."
+  },
+  "recentActivity": {
+    "title": "최근 활동",
+    "latestUpdate": {
+      "label": "최신 업데이트",
+      "empty": "아직 이력이 없습니다",
+      "fallbackMeta": "타임라인이 여기에 표시됩니다"
+    },
+    "conversation": {
+      "label": "대화",
+      "empty": "아직 댓글이 없습니다",
+      "latestPrefix": "최근",
+      "start": "아래에서 대화를 시작하세요",
+      "count_one": "댓글 {{count}}개",
+      "count_other": "댓글 {{count}}개"
+    },
+    "lastCommenter": {
+      "label": "마지막 댓글 작성자",
+      "emptyName": "아직 댓글 작성자가 없습니다",
+      "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
+    },
+    "history": {
+      "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
+      "STATUS_CHANGED_SIMPLE": "상태가 변경됨",
+      "ASSIGNEE_CHANGED": "담당자가 업데이트됨",
+      "APPROVAL_REQUESTED": "승인 요청됨",
+      "APPROVAL_APPROVED": "승인 완료됨",
+      "APPROVAL_DECLINED": "승인 반려됨",
+      "COMMENT_CREATED": "댓글이 추가됨",
+      "NOTE_CREATED": "메모가 추가됨",
+      "COMMENT_UPDATED": "댓글이 수정됨",
+      "COMMENT_DELETED": "댓글이 삭제됨",
+      "TRACK_TIME_UPDATED": "작업 시간이 업데이트됨",
+      "MERGED": "{{target}} 티켓으로 병합됨",
+      "TICKET_REJECTED": "티켓이 반려됨",
+      "UPDATED": "티켓이 업데이트됨",
+      "DELETED": "티켓이 삭제됨",
+      "CREATED": "티켓이 생성됨",
+      "DEFAULT": "이력이 업데이트됨"
+    }
+  },
+  "merge": {
+    "badge": "병합됨",
+    "into": "{{ticketId}} 티켓으로 병합됨"
+  },
+  "historyTimeline": {
+    "badge": {
+      "status": "상태",
+      "assignment": "할당",
+      "approval": "승인",
+      "comment": "댓글",
+      "category": "카테고리",
+      "note": "메모",
+      "trackTime": "작업 시간",
+      "planning": "계획",
+      "system": "시스템",
+      "default": "이력"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "이미지",
+      "files": "파일"
+    },
+    "editor": {
+      "validationEmpty": "제출하기 전에 댓글을 입력해 주세요."
+    },
+    "toolbar": {
+      "bold": "굵게",
+      "italic": "기울임꼴",
+      "bulletList": "글머리 기호 목록",
+      "numberedList": "번호 목록",
+      "quote": "인용",
+      "codeBlock": "코드 블록",
+      "undo": "실행 취소",
+      "redo": "다시 실행"
+    }
+  },
+  "actionTool": {
+    "currentUser": "현재 사용자",
+    "currentUserFallback": "나",
+    "launcherTitle": {
+      "comment": "댓글",
+      "note": "메모",
+      "assign": "할당",
+      "adjust": "계획 조정",
+      "merge": "병합",
+      "reject": "반려"
+    },
+    "launcher": {
+      "comment": "요청자와 참조자에게 공개 답글을 남기세요.",
+      "note": "팀 내부에만 남는 내부 메모를 작성하세요.",
+      "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
+      "assignSelf": "자동 활동 메모와 함께 이 티켓을 즉시 직접 담당하세요.",
+      "reject": "요청을 닫기 전에 반려 사유를 기록하세요.",
+      "merge": "이 티켓을 다른 티켓에 병합하세요.",
+      "adjust": "우선순위, 위험도, 기한 설정을 업데이트하세요.",
+      "reopen": "해결된 결과에 추가 작업이 필요할 때 티켓을 다시 여세요.",
+      "resubmit": "반려된 요청을 다시 검토받도록 재제출하세요."
+    },
+    "helper": {
+      "comment": "이 티켓을 지켜보는 모두에게 공개 업데이트를 공유하세요.",
+      "note": "서비스 데스크 팀을 위한 내부 메모를 남기세요.",
+      "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
+      "assignSelf": "이 작업은 티켓을 직접 담당했음을 자동으로 기록합니다.",
+      "reject": "이 요청을 왜 반려하는지 남기세요.",
+      "merge": "병합할 대상 티켓을 선택하고 짧은 메모를 남기세요.",
+      "adjust": "변경 적용 전에 우선순위, 위험도, 기한을 검토하세요.",
+      "reopen": "이 티켓을 닫힌 상태로 둘 수 없는 이유를 설명하세요.",
+      "resubmit": "반려된 요청을 재제출하기 전에 무엇이 바뀌었는지 설명하세요."
+    },
+    "submit": {
+      "comment": "댓글 등록",
+      "note": "메모 저장",
+      "assign": "할당 저장",
+      "assignSelf": "나에게 할당",
+      "reject": "티켓 반려",
+      "merge": "티켓 병합",
+      "adjust": "계획 업데이트",
+      "reopen": "이슈 다시 열기",
+      "resubmit": "요청 다시 제출"
+    },
+    "list": {
+      "title": "활동",
+      "titleHint": "티켓 액션을 검색하고, 정렬하고, 검토하세요.",
+      "empty": "아직 액션이 없습니다",
+      "noResult": "검색 조건과 일치하는 액션이 없습니다.",
+      "toggleDetails": "액션 상세 보기 전환",
+      "number": "액션 #{{number}}",
+      "edited": "수정됨",
+      "searchPlaceholder": "액션 검색",
+      "countLabel_one": "활동",
+      "countLabel_other": "활동"
+    },
+    "form": {
+      "editorLabel": "사유",
+      "editorPlaceholder": {
+        "comment": "댓글을 작성하고 대화를 이어가세요",
+        "note": "이 티켓에 대한 내부 메모를 남기세요",
+        "assign": "다음 담당자를 위한 할당 맥락을 남기세요",
+        "assignSelf": "이 활동 메모는 자동으로 생성됩니다",
+        "reject": "이 티켓을 반려해야 하는 이유를 설명하세요",
+        "merge": "이 티켓들을 병합해야 하는 이유를 설명하세요",
+        "adjust": "이 값들을 조정해야 하는 이유를 설명하세요",
+        "reopen": "아직 해결되지 않은 내용을 설명하세요",
+        "resubmit": "이 티켓을 다시 제출하기 전에 바뀐 내용을 설명하세요"
+      },
+      "targetTicketId": "대상 티켓",
+      "mergeTargetPlaceholder": "대표 티켓 ID를 입력하세요"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}}님이 이 티켓을 직접 담당하기로 했습니다. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "제출하기 전에 사유를 입력해 주세요.",
+      "contentMaxLength": "사유는 2000자 이하여야 합니다.",
+      "assigneeRequired": "최소 한 명의 담당자를 선택해 주세요.",
+      "targetTicketRequired": "대상 티켓 ID를 입력해 주세요.",
+      "adjustNoChanges": "업데이트하기 전에 우선순위, 위험도 또는 기한을 변경하세요."
+    }
+  },
+  "trackTimeTool": {
+    "title": "작업 시간",
+    "description": "수동 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "tab": {
+      "duration": "소요 시간",
+      "range": "시간 범위"
+    },
+    "status": {
+      "keepCurrent": "현재 상태 유지",
+      "currentSuffix": "(현재)",
+      "description": "상태 변경은 티켓의 누적 작업 시간 기준으로 검증됩니다."
+    },
+    "note": {
+      "toggle": "메모",
+      "description": "간단히 남겨 주세요. 최대 {{count}}자까지 입력할 수 있습니다."
+    },
+    "summary": {
+      "current": "이번 입력",
+      "totalAfterSubmit": "제출 후 누적",
+      "minutes_one": "{{count}}분",
+      "minutes_other": "{{count}}분"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "예: 30분",
+      "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
+    }
+  },
+  "listPage": {
+    "title": "IT 서비스 데스크",
+    "description": "서비스 데스크 티켓을 검색하고 조회하세요."
+  },
+  "reports": {
+    "title": "서비스 데스크 리포트",
+    "description": "기존 리포트 마이그레이션은 다음 단계로 예정되어 있습니다."
+  },
+  "ticketList": {
+    "empty": "티켓이 없습니다",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "기한 {{time}}"
+  },
+  "searchCriteria": {
+    "primaryFilters": "주요 필터",
+    "additionalFilters": "추가 필터",
+    "dateFilters": "날짜 필터"
+  },
+  "ticketFormContext": {
+    "missingProvider": "useTicketFormContext는 provider 내부에서 사용되어야 합니다."
+  },
+  "api": {
+    "common": {
+      "notFound": "찾을 수 없습니다."
+    },
+    "approvalSteps": {
+      "fetchList": "승인 단계를 불러오지 못했습니다.",
+      "create": "승인 단계를 생성하지 못했습니다.",
+      "fetch": "승인 단계를 불러오지 못했습니다.",
+      "update": "승인 단계를 수정하지 못했습니다.",
+      "delete": "승인 단계를 삭제하지 못했습니다."
+    },
+    "assignmentRules": {
+      "fetchList": "할당 규칙을 불러오지 못했습니다.",
+      "create": "할당 규칙을 생성하지 못했습니다.",
+      "fetch": "할당 규칙을 불러오지 못했습니다.",
+      "update": "할당 규칙을 수정하지 못했습니다.",
+      "delete": "할당 규칙을 삭제하지 못했습니다."
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeIds가 필요합니다.",
+      "fetch": "할당 추천을 불러오지 못했습니다."
+    },
+    "categories": {
+      "fetchList": "카테고리를 불러오지 못했습니다.",
+      "create": "카테고리를 생성하지 못했습니다.",
+      "fetch": "카테고리를 불러오지 못했습니다.",
+      "update": "카테고리를 수정하지 못했습니다.",
+      "delete": "카테고리를 삭제하지 못했습니다."
+    },
+    "tickets": {
+      "fetchList": "티켓을 불러오지 못했습니다.",
+      "create": "티켓을 생성하지 못했습니다.",
+      "notFound": "티켓을 찾을 수 없습니다.",
+      "fetch": "티켓을 불러오지 못했습니다.",
+      "update": "티켓을 수정하지 못했습니다.",
+      "delete": "티켓을 삭제하지 못했습니다."
+    },
+    "ticketActions": {
+      "fetchList": "티켓 액션을 불러오지 못했습니다.",
+      "notFound": "액션을 찾을 수 없습니다.",
+      "fetch": "티켓 액션을 불러오지 못했습니다.",
+      "remove": "티켓 액션을 삭제하지 못했습니다."
+    },
+    "ticketHistories": {
+      "fetchList": "티켓 이력을 불러오지 못했습니다."
+    },
+    "ticketTrackTime": {
+      "fetchList": "티켓 작업 시간을 불러오지 못했습니다.",
+      "create": "티켓 작업 시간을 저장하지 못했습니다.",
+      "localDemo": {
+        "ticketMismatch": "작업 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
+        "invalidStatus": "유효하지 않은 상태입니다: {{value}}.",
+        "invalidTrackedMinutes": "작업 시간은 0분보다 커야 합니다.",
+        "statusRequiresTime": "전체 작업 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
+      }
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "병합 작업에는 targetTicketId가 필요합니다.",
+      "mergeSameTicket": "같은 티켓으로는 병합할 수 없습니다.",
+      "employeeUnavailable": "인증되지 않음: 직원 식별 정보를 확인할 수 없습니다.",
+      "actionMismatch": "액션 경로와 payload가 일치하지 않습니다.",
+      "execute": "티켓 명령 실행에 실패했습니다.",
+      "localDemo": {
+        "createFailed": "액션 생성에 실패했습니다.",
+        "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
+        "assigneeRequired": "ASSIGN 작업에는 assigneeIds가 필요합니다.",
+        "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
+        "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
+        "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",
+        "draftCannotBeMerged": "임시 저장 티켓은 병합할 수 없습니다.",
+        "cannotMergeIntoDraft": "임시 저장 티켓으로는 병합할 수 없습니다.",
+        "ticketAlreadyMerged": "이미 병합된 티켓입니다.",
+        "mergeTargetAlreadyMerged": "병합 대상 티켓이 이미 병합되어 있습니다.",
+        "invalidMergeTarget": "유효하지 않은 병합 대상입니다.",
+        "invalidPriority": "유효하지 않은 우선순위입니다: {{value}}.",
+        "invalidRiskLevel": "유효하지 않은 위험도입니다: {{value}}.",
+        "actionNotAllowed": "{{status}} 상태에서는 {{action}} 작업을 수행할 수 없습니다."
+      }
+    }
+  }
+}

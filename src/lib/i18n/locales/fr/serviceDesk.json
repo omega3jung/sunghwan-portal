@@ -1,0 +1,410 @@
+{
+  "action": {
+    "comment": "Commentaire",
+    "note": "Note",
+    "assign": "Assigner",
+    "assignToMe": "M'assigner",
+    "reject": "Rejeter",
+    "merge": "Fusionner",
+    "adjust": "Ajuster",
+    "adjustPlan": "Ajuster le plan",
+    "reopenIssue": "Rouvrir l'incident",
+    "resubmitRequest": "Soumettre à nouveau la demande",
+    "searchCriteria": "Critères de recherche",
+    "trackTime": {
+      "submit": "Enregistrer le temps suivi",
+      "submitWithStatus": "Enregistrer le temps et mettre à jour le statut",
+      "submitting": "Enregistrement..."
+    }
+  },
+  "chart": {
+    "category": {
+      "title": "Tickets par catégorie",
+      "label": "Catégorie"
+    },
+    "department": {
+      "title": "Tickets par département demandeur",
+      "label": "Département"
+    },
+    "assignee": {
+      "title": "Tickets par responsable",
+      "label": "Responsable"
+    },
+    "sla": {
+      "title": "Performance du SLA",
+      "status": {
+        "withinSla": "Dans le SLA",
+        "resolvedLate": "Résolu en retard",
+        "overdue": "En retard",
+        "inProgress": "En cours"
+      }
+    }
+  },
+  "field": {
+    "dueBy": "Échéance",
+    "trackTime": "Temps enregistré",
+    "durationMinutes": "Durée",
+    "startAt": "Heure de début",
+    "endAt": "Heure de fin",
+    "status": "Statut",
+    "note": "Note"
+  },
+  "option": {
+    "status": {
+      "working": "En cours",
+      "pending": "En attente",
+      "resolved": "Résolu"
+    }
+  },
+  "validation": {
+    "trackTime": {
+      "required": "Saisissez le temps suivi avant l'envoi.",
+      "positive": "Le temps suivi doit être supérieur à 0 minute.",
+      "invalidRange": "L'heure de fin doit être après l'heure de début.",
+      "statusRequiresTime": "Le statut ne peut changer que si le temps suivi cumulé plus cette saisie est supérieur à 0.",
+      "noteMaxLength": "La note doit contenir au maximum 500 caractères."
+    },
+    "invalidFieldItems": "Champs invalides : {{item}}"
+  },
+  "message": {
+    "refineSearchCriteria": "Affinez vos critères de recherche",
+    "lastComment": "Dernier commentaire",
+    "ticketCreation": "Création du ticket",
+    "processingFlow": "Flux de traitement",
+    "foundDraft": "Brouillon trouvé",
+    "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé.",
+    "loadDraftExceptInvalid": "Le brouillon a été chargé, sauf dans les cas où il était invalide."
+  },
+  "hoverMessage": {
+    "backToList": "Retour à la liste des tickets",
+    "trackTimeTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
+    "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
+    "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket"
+  },
+  "step": {
+    "issueDetails": "Détails du problème",
+    "attachments": "Pièces jointes",
+    "review": "Vérifier et envoyer",
+    "assign": "Assigner"
+  },
+  "detailAside": {
+    "recipientsTitle": "Destinataires",
+    "unassigned": "Non attribué",
+    "ticketId": "ID du ticket",
+    "currentUserBadge": "Moi",
+    "assignedBadge": "Attribué"
+  },
+  "historySheet": {
+    "title": "Historique du ticket",
+    "description": "Consultez la chronologie de l'historique du ticket."
+  },
+  "detailPage": {
+    "detailsTitle": "Détails du ticket",
+    "descriptionTitleHint": "Détails essentiels de la demande et activité récente en un coup d'œil.",
+    "replyTitle": "Répondre",
+    "replyTitleHint": "Répondez, laissez une note interne et consultez la discussion dans un flux continu.",
+    "notFound": "Ticket introuvable."
+  },
+  "recentActivity": {
+    "title": "Activité récente",
+    "latestUpdate": {
+      "label": "Dernière mise à jour",
+      "empty": "Aucun historique pour le moment",
+      "fallbackMeta": "La chronologie apparaîtra ici"
+    },
+    "conversation": {
+      "label": "Conversation",
+      "empty": "Aucun commentaire pour le moment",
+      "latestPrefix": "Dernier",
+      "start": "Commencez la conversation ci-dessous",
+      "count_one": "{{count}} commentaire",
+      "count_other": "{{count}} commentaires"
+    },
+    "lastCommenter": {
+      "label": "Dernier commentateur",
+      "emptyName": "Aucun commentateur pour le moment",
+      "emptyEmail": "Les mises à jour apparaîtront au fil de l'avancement du ticket"
+    },
+    "history": {
+      "STATUS_CHANGED": "Le statut est passé de {{from}} à {{to}}",
+      "STATUS_CHANGED_SIMPLE": "Le statut a changé",
+      "ASSIGNEE_CHANGED": "Le responsable a été mis à jour",
+      "APPROVAL_REQUESTED": "Approbation demandée",
+      "APPROVAL_APPROVED": "Approbation approuvée",
+      "APPROVAL_DECLINED": "Approbation refusée",
+      "COMMENT_CREATED": "Commentaire ajouté",
+      "NOTE_CREATED": "Note ajoutée",
+      "COMMENT_UPDATED": "Commentaire mis à jour",
+      "COMMENT_DELETED": "Commentaire supprimé",
+      "TRACK_TIME_UPDATED": "Temps enregistré mis à jour",
+      "MERGED": "Fusionné dans {{target}}",
+      "TICKET_REJECTED": "Ticket rejeté",
+      "UPDATED": "Ticket mis à jour",
+      "DELETED": "Ticket supprimé",
+      "CREATED": "Ticket créé",
+      "DEFAULT": "Historique mis à jour"
+    }
+  },
+  "merge": {
+    "badge": "Fusionné",
+    "into": "Fusionné dans {{ticketId}}"
+  },
+  "historyTimeline": {
+    "description": "Vue chronologique de l'activité récente du ticket.",
+    "badge": {
+      "status": "Statut",
+      "assignment": "Attribution",
+      "approval": "Approbation",
+      "comment": "Commentaire",
+      "category": "Catégorie",
+      "note": "Note",
+      "trackTime": "Temps enregistré",
+      "planning": "Planification",
+      "system": "Système",
+      "default": "Historique"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "Images",
+      "files": "Fichiers"
+    },
+    "editor": {
+      "validationEmpty": "Veuillez saisir un commentaire avant l'envoi."
+    }
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Gras",
+      "italic": "Italique",
+      "underline": "Souligner",
+      "strike": "Barré",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée",
+      "quote": "Citation",
+      "codeBlock": "Bloc de code",
+      "link": "Lien",
+      "image": "Image",
+      "table": "Tableau",
+      "undo": "Annuler",
+      "redo": "Rétablir"
+    },
+    "prompt": {
+      "link": "Saisissez une URL",
+      "image": "Saisissez l'URL d'une image"
+    }
+  },
+  "actionTool": {
+    "currentUser": "Utilisateur actuel",
+    "currentUserFallback": "Vous",
+    "launcherTitle": {
+      "comment": "Commentaire",
+      "note": "Note",
+      "assign": "Assigner",
+      "adjust": "Ajuster le plan",
+      "merge": "Fusionner",
+      "reject": "Rejeter"
+    },
+    "launcher": {
+      "comment": "Publiez une réponse visible pour le demandeur et les personnes abonnées.",
+      "note": "Laissez une note interne qui reste dans l'équipe.",
+      "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
+      "assignSelf": "Prenez en charge ce ticket immédiatement avec une note d'activité automatique.",
+      "reject": "Consignez le motif du rejet avant de clôturer la demande.",
+      "merge": "Fusionnez ce ticket dans un autre ticket.",
+      "adjust": "Mettez à jour la priorité, le niveau de risque et l'échéance.",
+      "reopen": "Rouvrez le ticket lorsque le résultat résolu nécessite encore du travail.",
+      "resubmit": "Renvoyez cette demande rejetée pour révision."
+    },
+    "helper": {
+      "comment": "Partagez une mise à jour publique avec toutes les personnes qui suivent ce ticket.",
+      "note": "Ajoutez une note interne pour l'équipe du Service Desk.",
+      "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
+      "assignSelf": "Cette action enregistre automatiquement que vous avez pris en charge le ticket.",
+      "reject": "Expliquez pourquoi cette demande est rejetée.",
+      "merge": "Choisissez le ticket de destination et laissez une courte note.",
+      "adjust": "Vérifiez la priorité, le niveau de risque et l'échéance avant d'appliquer les changements.",
+      "reopen": "Expliquez ce qu'il reste à résoudre avant que ce ticket puisse rester fermé.",
+      "resubmit": "Expliquez ce qui a changé avant de renvoyer cette demande rejetée."
+    },
+    "submit": {
+      "comment": "Publier le commentaire",
+      "note": "Enregistrer la note",
+      "assign": "Enregistrer l'attribution",
+      "assignSelf": "M'assigner",
+      "reject": "Rejeter le ticket",
+      "merge": "Fusionner le ticket",
+      "adjust": "Mettre à jour le plan",
+      "reopen": "Rouvrir l'incident",
+      "resubmit": "Soumettre à nouveau la demande"
+    },
+    "list": {
+      "title": "Activité",
+      "titleHint": "Recherchez, triez et consultez les actions du ticket.",
+      "empty": "Aucune action pour le moment",
+      "noResult": "Aucune action ne correspond à votre recherche.",
+      "toggleDetails": "Afficher ou masquer les détails de l'action",
+      "number": "Action n°{{number}}",
+      "edited": "Modifié",
+      "searchPlaceholder": "Rechercher des actions",
+      "countLabel_one": "activité",
+      "countLabel_other": "activités"
+    },
+    "form": {
+      "editorLabel": "Motif",
+      "editorPlaceholder": {
+        "comment": "Rédigez un commentaire et faites avancer la conversation",
+        "note": "Partagez une note interne pour ce ticket",
+        "assign": "Partagez le contexte d'attribution pour la prochaine personne responsable",
+        "assignSelf": "Cette note d'activité est générée automatiquement",
+        "reject": "Décrivez pourquoi ce ticket doit être rejeté",
+        "merge": "Expliquez pourquoi ces tickets doivent être fusionnés",
+        "adjust": "Décrivez pourquoi ces valeurs doivent être ajustées",
+        "reopen": "Décrivez ce qui reste à résoudre",
+        "resubmit": "Décrivez ce qui a changé avant de renvoyer ce ticket"
+      },
+      "targetTicketId": "Ticket cible",
+      "mergeTargetPlaceholder": "Saisissez l'ID du ticket principal"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} a décidé de prendre en charge ce ticket. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "Saisissez un motif avant l'envoi.",
+      "contentMaxLength": "Le motif doit contenir au maximum 2000 caractères.",
+      "assigneeRequired": "Sélectionnez au moins une personne assignée.",
+      "targetTicketRequired": "Saisissez l'ID du ticket cible.",
+      "adjustNoChanges": "Modifiez la priorité, le niveau de risque ou l'échéance avant de mettre à jour."
+    }
+  },
+  "trackTimeTool": {
+    "title": "Temps enregistré",
+    "tab": {
+      "duration": "Durée",
+      "range": "Plage"
+    },
+    "status": {
+      "keepCurrent": "Conserver le statut",
+      "currentSuffix": "(actuel)",
+      "description": "Le changement de statut est contrôlé par le temps suivi cumulé du ticket."
+    },
+    "note": {
+      "toggle": "Note facultative",
+      "description": "Restez concis. Maximum {{count}} caractères."
+    },
+    "summary": {
+      "current": "Cette saisie",
+      "totalAfterSubmit": "Total après envoi",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
+  },
+  "placeholder": {
+    "trackTime": {
+      "durationMinutes": "ex. 30 min",
+      "note": "Ajoutez une courte note pour cette saisie de temps"
+    }
+  },
+  "listPage": {
+    "title": "IT Service Desk",
+    "description": "Recherchez et parcourez les tickets du centre de services."
+  },
+  "reports": {
+    "title": "Rapports du Service Desk",
+    "description": "La migration des anciens rapports est prévue pour l'étape suivante."
+  },
+  "ticketList": {
+    "empty": "Aucun ticket trouvé",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "Échéance {{time}}"
+  },
+  "searchCriteria": {
+    "primaryFilters": "Filtres principaux",
+    "additionalFilters": "Filtres supplémentaires",
+    "dateFilters": "Filtres de date"
+  },
+  "ticketFormContext": {
+    "missingProvider": "useTicketFormContext doit être utilisé à l'intérieur du provider."
+  },
+  "api": {
+    "common": {
+      "notFound": "Introuvable."
+    },
+    "approvalSteps": {
+      "fetchList": "Impossible de récupérer les étapes d'approbation.",
+      "create": "Impossible de créer l'étape d'approbation.",
+      "fetch": "Impossible de récupérer l'étape d'approbation.",
+      "update": "Impossible de mettre à jour l'étape d'approbation.",
+      "delete": "Impossible de supprimer l'étape d'approbation."
+    },
+    "assignmentRules": {
+      "fetchList": "Impossible de récupérer les règles d'attribution.",
+      "create": "Impossible de créer la règle d'attribution.",
+      "fetch": "Impossible de récupérer la règle d'attribution.",
+      "update": "Impossible de mettre à jour la règle d'attribution.",
+      "delete": "Impossible de supprimer la règle d'attribution."
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeIds.",
+      "fetch": "Impossible de récupérer les recommandations d'attribution."
+    },
+    "categories": {
+      "fetchList": "Impossible de récupérer les catégories.",
+      "create": "Impossible de créer la catégorie.",
+      "fetch": "Impossible de récupérer la catégorie.",
+      "update": "Impossible de mettre à jour la catégorie.",
+      "delete": "Impossible de supprimer la catégorie."
+    },
+    "tickets": {
+      "fetchList": "Impossible de récupérer les tickets.",
+      "create": "Impossible de créer le ticket.",
+      "notFound": "Ticket introuvable.",
+      "fetch": "Impossible de récupérer le ticket.",
+      "update": "Impossible de mettre à jour le ticket.",
+      "delete": "Impossible de supprimer le ticket."
+    },
+    "ticketActions": {
+      "fetchList": "Impossible de récupérer les actions du ticket.",
+      "notFound": "Action introuvable.",
+      "fetch": "Impossible de récupérer l'action du ticket.",
+      "remove": "Impossible de supprimer l'action du ticket."
+    },
+    "ticketHistories": {
+      "fetchList": "Impossible de récupérer les historiques du ticket."
+    },
+    "ticketTrackTime": {
+      "fetchList": "Impossible de récupérer le temps suivi du ticket.",
+      "create": "Impossible d'enregistrer le temps suivi du ticket.",
+      "localDemo": {
+        "ticketMismatch": "Le ticketId de la charge utile ne correspond pas au ticketId de la route.",
+        "invalidStatus": "Statut invalide : {{value}}.",
+        "invalidTrackedMinutes": "Le temps suivi doit être supérieur à 0 minute.",
+        "statusRequiresTime": "Le statut ne peut pas changer tant que le temps suivi total n'est pas supérieur à 0."
+      }
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "L'action de fusion nécessite targetTicketId.",
+      "mergeSameTicket": "Impossible de fusionner avec le même ticket.",
+      "employeeUnavailable": "Non autorisé : l'identité de l'employé est indisponible.",
+      "actionMismatch": "Le chemin de l'action et la charge utile ne correspondent pas.",
+      "execute": "Impossible d'exécuter la commande du ticket.",
+      "localDemo": {
+        "createFailed": "Impossible de créer l'action.",
+        "ticketNotFound": "Ticket {{ticketId}} introuvable.",
+        "assigneeRequired": "L'action ASSIGN nécessite assigneeIds.",
+        "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
+        "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
+        "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",
+        "draftCannotBeMerged": "Les tickets en brouillon ne peuvent pas être fusionnés.",
+        "cannotMergeIntoDraft": "Impossible de fusionner avec un ticket en brouillon.",
+        "ticketAlreadyMerged": "Le ticket est déjà fusionné.",
+        "mergeTargetAlreadyMerged": "Le ticket cible est déjà fusionné.",
+        "invalidMergeTarget": "Cible de fusion invalide.",
+        "invalidPriority": "Priorité invalide : {{value}}.",
+        "invalidRiskLevel": "Niveau de risque invalide : {{value}}.",
+        "actionNotAllowed": "L'action {{action}} n'est pas autorisée dans l'état {{status}}."
+      }
+    }
+  }
+}

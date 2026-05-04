@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
-import { withBasePath } from "@/utils";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils/presentation";
+import { withBasePath } from "@/shared/utils/routing";
+
+import { PublicThemeGuard } from "./PublicThemeGuard";
 
 type PublicLayoutProps = {
   children: ReactNode;
@@ -19,6 +21,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       )}
       style={{ backgroundImage: `url(${backgroundImageUrl})` }}
     >
+      <PublicThemeGuard />
       <div className="flex grow items-center justify-center">
         <div className="flex w-full max-w-2xl justify-center">
           <img src={logoImageUrl} alt="logo" />

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,6 +26,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { NS } from "@/lib/i18n";
 
 type QuickAction = {
   title: string;
@@ -48,102 +51,67 @@ type HighlightItem = {
   status: string;
 };
 
-const quickActions: QuickAction[] = [
+const quickActionConfigs = [
   {
-    title: "Service Desk",
-    description:
-      "Browse tickets, review queue status, and continue current work.",
+    id: "serviceDesk",
     href: "/service-desk",
     icon: Ticket,
-    meta: "Core workspace",
   },
   {
-    title: "Documentation",
-    description:
-      "Open working notes, design references, and implementation docs.",
+    id: "documentation",
     href: "/documents",
     icon: BookOpenText,
-    meta: "Knowledge hub",
   },
   {
-    title: "System Settings",
-    description: "Review portal configuration areas and operating preferences.",
+    id: "systemSettings",
     href: "/settings",
     icon: Settings2,
-    meta: "Administration",
   },
   {
-    title: "Service Desk Setup",
-    description:
-      "Inspect categories, approval steps, and assignment rule structure.",
+    id: "serviceDeskSetup",
     href: "/settings/service-desk-settings",
     icon: FolderKanban,
-    meta: "Platform setup",
   },
 ];
 
-const summaryMetrics: SummaryMetric[] = [
+const summaryMetricConfigs = [
   {
-    label: "Open Tickets",
+    id: "openTickets",
     value: "24",
-    description: "Issues currently in progress across support queues.",
   },
   {
-    label: "Pending Approvals",
+    id: "pendingApprovals",
     value: "5",
-    description: "Requests waiting for workflow or policy confirmation.",
   },
   {
-    label: "Working Items",
+    id: "workingItems",
     value: "8",
-    description:
-      "Active implementation and follow-up tasks in this demo scope.",
   },
   {
-    label: "Resolved This Week",
+    id: "resolvedThisWeek",
     value: "17",
-    description: "Completed tickets, fixes, and iteration outcomes.",
   },
 ];
 
-const highlightItems: HighlightItem[] = [
+const highlightItemConfigs = [
   {
-    title: "Ticket Workspace",
-    description:
-      "Main working area for search, filtering, and ticket follow-up.",
+    id: "ticketWorkspace",
     href: "/service-desk",
-    category: "Service Desk",
-    status: "Ready",
   },
   {
-    title: "Auth & Session Flow",
-    description:
-      "Login experience, redirect handling, and protected shell behavior.",
-    category: "Architecture",
-    status: "Current focus",
+    id: "authSessionFlow",
   },
   {
-    title: "Service Desk Settings",
-    description:
-      "Approval step, assignment rule, and category management surfaces.",
+    id: "serviceDeskSettings",
     href: "/settings/service-desk-settings",
-    category: "Administration",
-    status: "In review",
   },
   {
-    title: "Documents Hub",
-    description: "Reference area for docs, notes, and future decision records.",
+    id: "documentsHub",
     href: "/documents",
-    category: "Documentation",
-    status: "Planned growth",
   },
 ];
 
-const architectureNotes = [
-  "Protected routes are framed as an internal portal rather than a public landing page.",
-  "Home content is structured around quick navigation, operational summary, and current implementation focus.",
-  "All content is lightweight mock data so the page can later be connected to real ticket, document, and approval APIs.",
-];
+const architectureNoteIds = ["note1", "note2", "note3"] as const;
 
 function SectionHeader({
   title,
@@ -167,6 +135,10 @@ function QuickActionCard({
   icon: Icon,
   meta,
 }: QuickAction) {
+  const { t } = useTranslation(NS.demo, {
+    keyPrefix: "home",
+  });
+
   return (
     <Link href={href} className="block h-full">
       <Card className="h-full border-border/70 transition-colors hover:border-primary/40 hover:bg-accent/20">
@@ -188,7 +160,7 @@ function QuickActionCard({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center gap-2 text-sm font-medium text-primary">
-            Open workspace
+            {t("quickActions.openWorkspace")}
             <ArrowRight className="h-4 w-4" />
           </div>
         </CardContent>
@@ -220,6 +192,10 @@ function HighlightCard({
   category,
   status,
 }: HighlightItem) {
+  const { t } = useTranslation(NS.demo, {
+    keyPrefix: "home",
+  });
+
   const content = (
     <Card className="h-full border-border/70">
       <CardHeader className="pb-3">
@@ -237,7 +213,7 @@ function HighlightCard({
         <p className="text-sm leading-6 text-muted-foreground">{description}</p>
         {href ? (
           <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary">
-            View section
+            {t("highlights.viewSection")}
             <ArrowRight className="h-4 w-4" />
           </div>
         ) : null}
@@ -258,6 +234,37 @@ function HighlightCard({
 
 export default function ProtectedPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { t } = useTranslation(NS.demo, {
+    keyPrefix: "home",
+  });
+  const { current } = useCurrentSession();
+  const homeModeKey = current.isDemoUser ? "local" : "remote";
+
+  const quickActions: QuickAction[] = quickActionConfigs.map((action) => ({
+    title: t(`quickActions.items.${action.id}.title`),
+    description: t(`quickActions.items.${action.id}.description`),
+    href: action.href,
+    icon: action.icon,
+    meta: t(`quickActions.items.${action.id}.meta`),
+  }));
+
+  const summaryMetrics: SummaryMetric[] = summaryMetricConfigs.map((metric) => ({
+    label: t(`workSummary.items.${metric.id}.label`),
+    value: metric.value,
+    description: t(`workSummary.items.${metric.id}.description`),
+  }));
+
+  const highlightItems: HighlightItem[] = highlightItemConfigs.map((item) => ({
+    title: t(`highlights.items.${item.id}.title`),
+    description: t(`highlights.items.${item.id}.description`),
+    href: item.href,
+    category: t(`highlights.items.${item.id}.category`),
+    status: t(`highlights.items.${item.id}.status`),
+  }));
+
+  const architectureNotes = architectureNoteIds.map((noteId) =>
+    t(`about.architectureNotes.${homeModeKey}.${noteId}`),
+  );
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-[1440px] flex-col gap-6 p-4 md:p-6">
@@ -267,44 +274,39 @@ export default function ProtectedPage() {
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-primary">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Protected Home
+                {t("hero.protectedBadge")}
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                Enterprise portal demo
+                {t("hero.enterpriseBadge")}
               </span>
             </div>
 
             <div className="max-w-[720px] space-y-3">
               <CardTitle className="text-3xl font-semibold tracking-tight md:text-4xl">
-                Workspace home for service operations, references, and platform
-                setup.
+                {t("hero.title")}
               </CardTitle>
               <CardDescription className="text-base leading-7 text-muted-foreground">
-                This protected home is designed as the first screen after
-                sign-in. It gives a stable internal-portal overview of the
-                current demo project, highlights the main work areas, and makes
-                the next action obvious without turning the page into a heavy
-                analytics dashboard.
+                {t(`hero.description.${homeModeKey}`)}
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild>
               <Link href="/service-desk">
-                Open Service Desk
+                {t("hero.actions.openServiceDesk")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="/documents">
-                Browse Documentation
+                {t("hero.actions.browseDocumentation")}
                 <FileText className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="secondary">
               <Link href="/settings">
-                Review Settings
+                {t("hero.actions.reviewSettings")}
                 <Settings2 className="h-4 w-4" />
               </Link>
             </Button>
@@ -314,7 +316,7 @@ export default function ProtectedPage() {
         <div className="w-80">
           <div className="flex items-center gap-2 text-lg pb-2">
             <CalendarDays className="h-5 w-5 text-primary" />
-            Calendar
+            {t("calendar.title")}
           </div>
           <Card className="border-border/70">
             <CardContent className="p-4">
@@ -335,20 +337,17 @@ export default function ProtectedPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <LayoutDashboard className="h-5 w-5 text-primary" />
-              About This Home
+              {t("about.title")}
             </CardTitle>
-            <CardDescription>
-              A practical entry screen for the current portfolio portal.
-            </CardDescription>
+            <CardDescription>{t("about.description")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="rounded-xl border border-border/70 bg-muted/30 p-4">
               <p className="text-sm font-medium text-foreground">
-                Current scope
+                {t("about.currentScope.title")}
               </p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                Service desk flows, protected navigation, settings surfaces, and
-                implementation-oriented documentation.
+                {t(`about.currentScope.description.${homeModeKey}`)}
               </p>
             </div>
             <div className="space-y-3">
@@ -367,8 +366,8 @@ export default function ProtectedPage() {
 
       <section className="space-y-4">
         <SectionHeader
-          title="Quick Actions"
-          description="Open the main work areas you are most likely to need right after sign-in."
+          title={t("quickActions.title")}
+          description={t("quickActions.description")}
         />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {quickActions.map((action) => (
@@ -379,8 +378,8 @@ export default function ProtectedPage() {
 
       <section className="space-y-4">
         <SectionHeader
-          title="Work Summary"
-          description="Lightweight operational context for the demo portal home."
+          title={t("workSummary.title")}
+          description={t("workSummary.description")}
         />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryMetrics.map((metric) => (
@@ -392,8 +391,8 @@ export default function ProtectedPage() {
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
         <div className="space-y-4">
           <SectionHeader
-            title="Recent & Highlights"
-            description="Areas that best represent the current project direction and recent work context."
+            title={t("highlights.title")}
+            description={t("highlights.description")}
           />
           <div className="grid gap-4 lg:grid-cols-2">
             {highlightItems.map((item) => (
@@ -404,44 +403,32 @@ export default function ProtectedPage() {
 
         <div className="space-y-4">
           <SectionHeader
-            title="Current Focus"
-            description="A compact briefing panel for what this portal is emphasizing right now."
+            title={t("currentFocus.title")}
+            description={t("currentFocus.description")}
           />
           <Card className="border-border/70">
             <CardHeader>
-              <CardTitle className="text-lg">
-                Enterprise Portal Direction
-              </CardTitle>
-              <CardDescription>
-                The home screen is intentionally scoped as an internal workspace
-                entry point.
-              </CardDescription>
+              <CardTitle className="text-lg">{t("currentFocus.panelTitle")}</CardTitle>
+              <CardDescription>{t("currentFocus.panelDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">
                 <p className="text-sm font-medium text-foreground">
-                  Primary experience goals
+                  {t("currentFocus.primaryGoals.title")}
                 </p>
                 <ul className="mt-2 space-y-2 text-sm leading-6 text-muted-foreground">
-                  <li>Clear first-step navigation after authentication</li>
-                  <li>
-                    Balanced information density without dashboard overload
-                  </li>
-                  <li>
-                    Easy replacement of mock summary content with real data
-                    later
-                  </li>
+                  <li>{t("currentFocus.primaryGoals.items.goal1")}</li>
+                  <li>{t("currentFocus.primaryGoals.items.goal2")}</li>
+                  <li>{t("currentFocus.primaryGoals.items.goal3")}</li>
                 </ul>
               </div>
 
               <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
                 <p className="text-sm font-medium text-foreground">
-                  Suggested next integrations
+                  {t("currentFocus.nextIntegrations.title")}
                 </p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Connect the summary cards to ticket counts, approvals, and
-                  recent document activity once the protected home is ready to
-                  consume real workspace data.
+                  {t("currentFocus.nextIntegrations.description")}
                 </p>
               </div>
             </CardContent>

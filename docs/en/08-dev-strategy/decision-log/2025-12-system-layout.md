@@ -190,12 +190,12 @@ The layout dynamically adapts based on user context.
 
 - Sidebar menu changes per role
 - Permissions affect visible features
-- Impersonation changes the effective UI
+- Impersonation changes the current-user UI context
 
 #### Integration
 
 - Uses session + impersonation context
-- UI always reflects the effective user
+- UI always reflects the current user
 
 ---
 
@@ -205,7 +205,7 @@ The layout is designed to support impersonation.
 
 #### Behavior
 
-- UI reflects the effective user immediately
+- UI reflects the current user immediately
 - Sidebar and navigation update dynamically
 - Global indicator shows impersonation state
 

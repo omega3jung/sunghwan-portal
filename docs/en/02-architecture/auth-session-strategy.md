@@ -62,8 +62,8 @@ type AuthUser = {
   accessToken: string;
 
   dataScope: "LOCAL" | "REMOTE";
-  userScope: "INTERNAL" | "TENANT";
-  tenantId: string | null;
+  userScope: "INTERNAL" | "CLIENT";
+  clientId: string | null;
   permission: AccessLevel;
   role: Role;
 };
@@ -109,7 +109,7 @@ type AppUser = {
   image?: string;
 
   userScope: UserScope;
-  tenantId: string | null;
+  clientId: string | null;
 
   permission: AccessLevel;
   role: Role | null;
@@ -131,11 +131,11 @@ Compared to `AuthUser`, `AppUser` is:
 
 There are two different responsibilities:
 
-| Model | Responsibility |
-| ----- | -------------- |
-| `AuthUser` | Authentication and trusted identity |
-| `SessionUser` | Session-safe identity projection |
-| `AppUser` | UI and application behavior |
+| Model         | Responsibility                      |
+| ------------- | ----------------------------------- |
+| `AuthUser`    | Authentication and trusted identity |
+| `SessionUser` | Session-safe identity projection    |
+| `AppUser`     | UI and application behavior         |
 
 This separation avoids a common problem:
 
@@ -153,7 +153,7 @@ The project uses `CredentialsProvider`.
 
 `authorize()` resolves an `AuthUser` through:
 
-- LOCAL demo resolvers (`resolveDemoAuth`, `resolveTenantAuth`)
+- LOCAL demo resolvers (`resolveDemoAuth`, `resolveClientAuth`)
 - or REMOTE API login (`/auth/login`)
 
 ---
@@ -169,7 +169,7 @@ On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 - `accessToken`
 - `dataScope`
 - `userScope`
-- `tenantId`
+- `clientId`
 - `permission`
 - `role`
 
@@ -189,7 +189,7 @@ session.user = {
   email,
   dataScope,
   userScope,
-  tenantId,
+  clientId,
   permission,
   role,
 };
@@ -199,8 +199,8 @@ If impersonation is active, the callback also exposes:
 
 ```ts
 session.impersonation = {
-  actorId,
-  subjectId,
+  originalUserId,
+  impersonatedUserId,
   activatedAt,
 };
 ```
@@ -215,7 +215,7 @@ Instead, the application resolves `AppUser` separately.
 
 ### Server-Side Resolution
 
-`getAppUser()` performs this flow:
+`getCurrentAppUser()` performs this flow:
 
 ```txt
 getServerSession()
@@ -267,8 +267,8 @@ The frontend uses a layered access pattern:
 
 ```txt
 NextAuth session
--> fetch effective AppUser
--> sync into sessionStore
+-> fetch current AppUser
+-> sync into authSessionStore
 -> consume via useCurrentSession()
 ```
 
@@ -281,8 +281,8 @@ NextAuth session
 It combines:
 
 - NextAuth session state (`useSession`)
-- effective user profile query (`useMyProfileQuery`)
-- Zustand `sessionStore`
+- current user profile query (`useCurrentUserProfileQuery`)
+- Zustand `authSessionStore`
 - Zustand `impersonationStore`
 
 Its purpose is to give pages and components a stable UI-oriented session object:
@@ -305,9 +305,9 @@ This is the object the protected UI actually consumes.
 
 ---
 
-### `sessionStore`
+### `authSessionStore`
 
-`sessionStore` is a client-side runtime cache for `CurrentSession`.
+`authSessionStore` is a client-side runtime cache for `CurrentSession`.
 
 It is used to:
 
@@ -318,7 +318,7 @@ It is used to:
 
 Important limitation:
 
-> `sessionStore` is **not** the source of truth for authentication.
+> `authSessionStore` is **not** the source of truth for authentication.
 > It is a frontend runtime cache/facade.
 
 The trusted source remains the JWT-backed NextAuth auth flow.
@@ -352,10 +352,10 @@ The runtime flow is:
 ```txt
 User authenticated
 -> useSession() resolves
--> useMyProfileQuery() fetches effective AppUser
--> sessionStore.setSession({ user })
+-> useCurrentUserProfileQuery() fetches current AppUser
+-> authSessionStore.setSession({ user })
 -> ProtectedShell renders
--> AppUserBootstrap syncs actor into impersonation store
+-> AppUserBootstrap syncs originalUser into impersonation store
 ```
 
 This gives the protected app a stable layout-level user context before feature pages render.
@@ -372,8 +372,8 @@ The NextAuth session carries only minimal impersonation metadata:
 
 ```ts
 type ImpersonationInfo = {
-  actorId: string;
-  subjectId: string;
+  originalUserId: string;
+  impersonatedUserId: string;
   activatedAt: number;
 };
 ```
@@ -388,29 +388,29 @@ The client store expands that into a richer UI model:
 
 ```ts
 type ImpersonationState = {
-  actor: AppUser | null;
-  subject: AppUser | null;
-  effective: AppUser | null;
+  originalUser: AppUser | null;
+  impersonatedUser: AppUser | null;
+  currentUser: AppUser | null;
 };
 ```
 
 Meaning:
 
-- `actor`: the real logged-in user
-- `subject`: the impersonated user
-- `effective`: the user the UI should act as
+- `originalUser`: the real logged-in user
+- `impersonatedUser`: the impersonation target
+- `currentUser`: the user the UI and authz should act as
 
 ---
 
 ### Runtime Flow
 
 ```txt
-startImpersonation(subjectId)
+startImpersonation(impersonatedUserId)
 -> POST /api/auth/impersonation
 -> session.update({ impersonation })
--> useImpersonation() fetches subject profile
+-> useImpersonation() fetches impersonated user profile
 -> impersonationStore.syncFromSession()
--> effective user switches in UI
+-> currentUser switches in UI
 ```
 
 Stopping impersonation performs the reverse flow and clears session impersonation metadata.
@@ -422,7 +422,7 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 Based on the current implementation:
 
 - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `TENANT` user
+- the impersonation target must be a `CLIENT` user
 
 This rule lives in the auth layer, not in the UI.
 
@@ -486,7 +486,7 @@ Belongs here:
 
 - identity
 - access context
-- tenant scope
+- client scope
 - impersonation metadata
 
 Does not belong here:
@@ -539,7 +539,7 @@ That means:
 
 ### 3. Client Stores Are Runtime Helpers Only
 
-- `sessionStore` and `impersonationStore` improve runtime ergonomics
+- `authSessionStore` and `impersonationStore` improve runtime ergonomics
 - server validation must still use JWT/session-derived auth context
 
 ---

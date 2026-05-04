@@ -1,0 +1,39 @@
+{
+  "common": {
+    "failed": "Error",
+    "load": {
+      "title": "No se pudo cargar",
+      "message": "No se pudo cargar {{item}}"
+    },
+    "create": {
+      "title": "No se pudo crear",
+      "message": "No se pudo crear {{item}}"
+    },
+    "update": {
+      "title": "No se pudo actualizar",
+      "message": "No se pudo actualizar {{item}}"
+    },
+    "delete": {
+      "title": "No se pudo eliminar",
+      "message": "No se pudo eliminar {{item}}"
+    },
+    "add": {
+      "title": "No se pudo agregar",
+      "message": "No se pudo agregar {{item}}"
+    },
+    "save": {
+      "title": "No se pudo guardar",
+      "message": "No se pudo guardar {{item}}"
+    },
+    "remove": {
+      "title": "No se pudo quitar",
+      "message": "No se pudo quitar {{item}}"
+    }
+  },
+  "unsupportedBrowser": {
+    "title": "Navegador no compatible",
+    "description": "El navegador actual no es compatible.",
+    "browserRecommendation": "Para una experiencia óptima, por favor actualice a la última versión de Chrome, Firefox, Edge o Safari."
+  },
+  "ticket": {}
+}

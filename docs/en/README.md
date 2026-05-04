@@ -86,23 +86,31 @@ Key documents:
 
 ### 3. Domain Design
 
-The domain documents define how the Service Desk behaves as a system.
+The domain documents define how the Service Desk behaves as a workflow-oriented system.
 
 They cover:
 
-- Ticket lifecycle and ownership
-- Category hierarchy and configuration
-- Approval workflow and assignment rules
-- SLA logic and history model
+- ticket overview and system scope
+- ticket lifecycle and state transitions
+- ticket model and ownership
+- ticket activity and action-oriented interaction modeling
+- work session tracking
+- ticket history and audit trail
+- category-driven strategy for actions, approval, assignment, and SLA
 
 Key documents:
 
-- [Ticket System Design](./03-domain/ticket-system-design.md)
-- [Category Strategy](./03-domain/category-strategy.md)
-- [Approval System](./03-domain/approval-system.md)
-- [Assignment Policy](./03-domain/assignment-policy.md)
-- [SLA Strategy](./03-domain/sla-strategy.md)
-- [History Model](./03-domain/history-model.md)
+- [Ticket System Overview](./03-domain/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](./03-domain/ticket/ticket-lifecycle.md)
+- [Ticket Model](./03-domain/ticket/ticket-model.md)
+- [Ticket Activity Model](./03-domain/ticket/ticket-activity.md)
+- [Ticket Track Time](./03-domain/ticket/ticket-track-time.md)
+- [Ticket History](./03-domain/ticket/ticket-history.md)
+- [Action Strategy](./03-domain/ticket/strategy/action-strategy.md)
+- [Category Strategy](./03-domain/ticket/strategy/category-strategy.md)
+- [Approval System](./03-domain/ticket/strategy/approval-system.md)
+- [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
+- [SLA Strategy](./03-domain/ticket/strategy/sla-strategy.md)
 
 ---
 
@@ -180,9 +188,12 @@ They cover:
 - Practical decision-making
 - Decision logs for major design choices
 
-Key document:
+Key documents:
 
 - [Development Approach](./08-dev-strategy/development-approach.md)
+- [Service Desk Evolution](./08-dev-strategy/service-desk-evolution.md)
+- [Service Desk Implementation Strategy](./08-dev-strategy/service-desk-implementation-strategy.md)
+- [Ticket Operation Rules](./08-dev-strategy/ticket-operation-rules.md)
 
 #### Decision Log
 
@@ -206,6 +217,12 @@ Current decision log topics include:
 - [2026-01 Impersonation](./08-dev-strategy/decision-log/2026-01-impersonation.md)
 - [2026-01 Session User Boundary](./08-dev-strategy/decision-log/2026-01-session-user-boundary.md)
 - [2026-02 Service Desk Settings](./08-dev-strategy/decision-log/2026-02-service-desk-settings.md)
+- [2026-03 Service Desk](./08-dev-strategy/decision-log/2026-03-service-desk.md)
+- [2026-03 Ticket Form Dialog](./08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md)
+- [2026-03 Ticket Session](./08-dev-strategy/decision-log/2026-03-ticket-session.md)
+- [2026-04 Entity Status Naming](./08-dev-strategy/decision-log/2026-04-entity-status-naming.md)
+- [2026-04 Ticket Action](./08-dev-strategy/decision-log/2026-04-ticket-action.md)
+- [2026-05 Barrel Export Boundary](./08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
 
 ---
 
@@ -227,13 +244,25 @@ If you are new to the project, this order gives the clearest overview:
 
 1. [README Strategy](./01-project/readme-strategy.md)
 2. [Feature-Based Structure](./02-architecture/feature-based-structure.md)
-3. [Ticket System Design](./03-domain/ticket-system-design.md)
-4. [Approval System](./03-domain/approval-system.md)
-5. [Component Boundary](./04-ui-ux/component-boundary.md)
-6. [React Query Strategy](./05-data-fetching/react-query-strategy.md)
-7. [Ticket Form Design](./06-form-design/ticket-form.md)
-8. [Locale Structure](./07-i18n/locale-structure.md)
-9. [Development Approach](./08-dev-strategy/development-approach.md)
+3. [Ticket System Overview](./03-domain/ticket/ticket-system-overview.md)
+4. [Ticket Lifecycle](./03-domain/ticket/ticket-lifecycle.md)
+5. [Ticket Model](./03-domain/ticket/ticket-model.md)
+6. [Ticket Activity Model](./03-domain/ticket/ticket-activity.md)
+7. [Ticket History](./03-domain/ticket/ticket-history.md)
+8. [Action Strategy](./03-domain/ticket/strategy/action-strategy.md)
+9. [Category Strategy](./03-domain/ticket/strategy/category-strategy.md)
+10. [Approval System](./03-domain/ticket/strategy/approval-system.md)
+11. [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
+12. [SLA Strategy](./03-domain/ticket/strategy/sla-strategy.md)
+13. [Ticket Track Time](./03-domain/ticket/ticket-track-time.md)
+14. [Component Boundary](./04-ui-ux/component-boundary.md)
+15. [React Query Strategy](./05-data-fetching/react-query-strategy.md)
+16. [Ticket Form Design](./06-form-design/ticket-form.md)
+17. [Locale Structure](./07-i18n/locale-structure.md)
+18. [Development Approach](./08-dev-strategy/development-approach.md)
+19. [Service Desk Evolution](./08-dev-strategy/service-desk-evolution.md)
+20. [Service Desk Implementation Strategy](./08-dev-strategy/service-desk-implementation-strategy.md)
+21. [Ticket Operation Rules](./08-dev-strategy/ticket-operation-rules.md)
 
 ---
 

@@ -156,7 +156,7 @@ Impersonation을 **서버가 제어하는 세션 모델**로 옮긴다.
 ### Identity Concept
 
 - `originalUser`
-- `effectiveUser`
+- `currentUser`
 
 ---
 

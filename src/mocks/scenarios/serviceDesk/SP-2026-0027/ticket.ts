@@ -1,0 +1,35 @@
+import { TicketMockInput } from "../types";
+
+export const ticket: TicketMockInput = {
+  id: "sunghwan-portal-2026-27",
+  ticket_number: "SP-2026-0027",
+  created_at: "2026-04-24T01:13:27Z",
+  updated_at: "2026-04-24T01:18:10Z",
+  requester_id: "__demo_user__",
+  status: "Approved",
+  close_reason: null,
+  priority: "medium",
+  risk_level: "low",
+  assignee_id: ["__demo_admin__", "__demo_manager__"],
+  merged_into_ticket_id: null,
+  track_time_minutes: 0,
+  last_comment_at: null,
+  last_commenter_email: null,
+  due_at: "2026-04-30T18:00:00Z",
+  owner: false,
+  assigned: true,
+  active: true,
+  scope: "PORTAL",
+  category_id: "92",
+  approval_step_id: null,
+  subject: "Test de démarrage automatique d'un ticket approuvé",
+  content:
+    "Ce ticket est préparé pour tester le flux de mise à jour automatique du statut.<br>Lorsque l'utilisateur assigné ouvre la vue détaillée du ticket alors que son statut est 'Approved', le statut doit automatiquement passer à 'Working'.",
+  email: {
+    to: ["demoAdmin@sunghwan-portal.dev"],
+    cc: ["demoUser@sunghwan-portal.dev", "demoManager@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  files: [],
+  images: [],
+};

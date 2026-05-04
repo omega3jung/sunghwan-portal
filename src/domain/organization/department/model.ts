@@ -9,7 +9,7 @@ export interface Department {
   description?: LocalizedText;
 
   // organization
-  parentId: string | null;
+  parentId?: string;
 
   // system
   active: boolean;

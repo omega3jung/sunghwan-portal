@@ -17,13 +17,14 @@ export const authorize = async (credentials?: {
 
     return {
       id: user.id,
+      employeeId: user.employeeId,
       username: user.username,
       displayName: user.displayName,
       email: user.email,
       accessToken: user.accessToken,
       dataScope: user.dataScope,
       userScope: user.userScope,
-      tenantId: user.tenantId,
+      companyId: user.companyId,
       permission: user.permission,
       role: user.role,
     };

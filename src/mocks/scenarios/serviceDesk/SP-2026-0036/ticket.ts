@@ -1,0 +1,35 @@
+import { TicketMockInput } from "../types";
+
+export const ticket: TicketMockInput = {
+  id: "sunghwan-portal-2026-36",
+  ticket_number: "SP-2026-0036",
+  created_at: "2026-04-02T06:13:27Z",
+  updated_at: "2026-04-02T07:13:18Z",
+  requester_id: "53",
+  status: "Closed",
+  close_reason: "Merged",
+  priority: "high",
+  risk_level: "high",
+  assignee_id: ["41", "31"],
+  merged_into_ticket_id: "sunghwan-portal-2026-35",
+  track_time_minutes: 20,
+  last_comment_at: "2026-04-02T07:13:18Z",
+  last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
+  due_at: "2026-04-03T18:00:00Z",
+  owner: false,
+  assigned: false,
+  active: true,
+  scope: "PORTAL",
+  category_id: "5",
+  approval_step_id: null,
+  subject: "입고, 수리, QC 화면에서 로딩 상태가 계속됨",
+  content:
+    "입고, 수리, QC 담당자들이 로딩 스피너만 표시되는 상태에서 거래 처리를 계속 진행하지 못하고 있습니다.<br>이 문제는 특정 화면 하나가 아니라 포털의 여러 단계에서 발생하고 있습니다.",
+  email: {
+    to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
+    cc: ["olivia.johnson@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  files: [],
+  images: [],
+};

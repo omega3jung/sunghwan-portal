@@ -1,0 +1,35 @@
+import { TicketMockInput } from "../types";
+
+export const ticket: TicketMockInput = {
+  id: "sunghwan-portal-2026-25",
+  ticket_number: "SP-2026-0025",
+  created_at: "2026-04-02T06:03:14Z",
+  updated_at: "2026-04-02T07:21:42Z",
+  requester_id: "141",
+  status: "Resolved",
+  close_reason: null,
+  priority: "high",
+  risk_level: "high",
+  assignee_id: ["41", "31"],
+  merged_into_ticket_id: null,
+  track_time_minutes: 105,
+  last_comment_at: "2026-04-02T07:21:42Z",
+  last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
+  due_at: "2026-04-03T18:00:00Z",
+  owner: false,
+  assigned: false,
+  active: true,
+  scope: "PORTAL",
+  category_id: "5",
+  approval_step_id: null,
+  subject: "L’écran d’expédition sortante reste bloqué sur le chargement",
+  content:
+    "Lors du traitement des expéditions sortantes, l’écran d’exécution des expéditions continue d’afficher uniquement l’icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d’expédition sortante.",
+  email: {
+    to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
+    cc: ["Victor.Rivera@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  files: [],
+  images: [],
+};

@@ -1,10 +1,15 @@
 import axios from "axios";
 
-import client from "@/api/client";
-import { resolveDemoAuth, resolveTenantAuth } from "@/app/_mocks/user";
 import { AuthUser } from "@/domain/auth";
+import client from "@/lib/api";
+import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
 
 export type LoginResponse = AuthUser;
+type RawLoginResponse = Omit<AuthUser, "companyId" | "employeeId"> & {
+  employeeId?: number | string | null;
+  companyId?: string | null;
+  clientId?: string | null;
+};
 
 // process login.
 export const loginApi = async ({
@@ -20,25 +25,25 @@ export const loginApi = async ({
 
     if (demoAuth) {
       console.log(demoAuth.displayName);
-      return { ...demoAuth, dataScope: "LOCAL" };
+      return normalizeAuthUser({ ...demoAuth, dataScope: "LOCAL" });
     }
 
-    // tenant demo login
-    const tenantDemoAuth = resolveTenantAuth(username);
+    // client demo login
+    const clientDemoAuth = resolveClientAuth(username);
 
-    if (tenantDemoAuth) {
-      console.log(tenantDemoAuth.displayName);
-      return { ...tenantDemoAuth, dataScope: "LOCAL" };
+    if (clientDemoAuth) {
+      console.log(clientDemoAuth.displayName);
+      return normalizeAuthUser({ ...clientDemoAuth, dataScope: "LOCAL" });
     }
 
     console.log("real login");
 
     // real login
-    const res = await client.api.post<LoginResponse>("/auth/login", {
+    const res = await client.api.post<RawLoginResponse>("/auth/login", {
       username,
       password,
     });
-    return { ...res.data, dataScope: "REMOTE" };
+    return normalizeAuthUser({ ...res.data, dataScope: "REMOTE" });
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
@@ -48,3 +53,29 @@ export const loginApi = async ({
     throw error;
   }
 };
+
+function normalizeAuthUser(user: RawLoginResponse): AuthUser {
+  const { companyId, clientId, employeeId, ...rest } = user;
+
+  return {
+    ...rest,
+    employeeId: resolveEmployeeId(employeeId),
+    companyId: companyId ?? clientId ?? "",
+  };
+}
+
+function resolveEmployeeId(value: number | string | null | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
+}

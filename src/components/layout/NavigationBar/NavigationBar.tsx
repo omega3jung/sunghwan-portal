@@ -3,12 +3,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
+import { ResetDemoMenu } from "@/components/menu/ResetDemoMenu";
 import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useImpersonation } from "@/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useLeftMenuStore } from "@/lib/leftMenuStore";
-import { cn } from "@/utils";
+import { cn } from "@/shared/utils/presentation";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
 import ShieldBadge from "./ShieldBadge";
@@ -48,7 +49,7 @@ export const useBreadcrumbs = () => {
 
 export const NavigationBar = (props: Props) => {
   const { update, isOpen: isOpenStore } = useLeftMenuStore();
-  const { effective, isImpersonating } = useImpersonation();
+  const { currentUser, isImpersonating } = useImpersonation();
   const pathName = usePathname();
 
   // remove after once ojet gets deprecated
@@ -180,7 +181,7 @@ export const NavigationBar = (props: Props) => {
           badgeText={
             (userRoleBadge ?? !isImpersonating)
               ? "Owner"
-              : (effective?.displayName ?? "")
+              : (currentUser?.displayName ?? "")
           }
           shieldText={userRoleBadge}
           viewOnly={false}
@@ -195,8 +196,9 @@ export const NavigationBar = (props: Props) => {
 
       {!!actions && <div className="flex h-full items-center">{actions}</div>}
       <div className="flex items-center h-full py-2 gap-1">
+        <ResetDemoMenu />
         <Separator orientation="vertical" className="" />
-        <UserMenu></UserMenu>
+        <UserMenu />
       </div>
     </nav>
   );

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 
 import { DEMO_OTP_CODE, OTP_DURATION_SECONDS } from "../constants";
 import {
@@ -41,7 +42,7 @@ export const ResetPasswordForm = ({
   isLoading,
   onBack,
 }: ResetPasswordFormProps) => {
-  const { t } = useTranslation("login");
+  const { t } = useTranslation(NS.auth);
   const [step, setStep] = useState<ResetPasswordStep>("email");
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
 
@@ -70,10 +71,16 @@ export const ResetPasswordForm = ({
     setRemainingSeconds(OTP_DURATION_SECONDS);
     setStep("otp");
 
-    toast(isOtpStep ? t("otp.resent") : t("otp.sent"), {
-      //description: "Input OTP in email within 3 mins.",
-      description: "Input 123456 within 3 mins.",
-    });
+    toast(
+      isOtpStep ? t("resetPassword.otpResend") : t("resetPassword.otpSend"),
+      {
+        description: t("otp.sent", {
+          ns: NS.message,
+          code: DEMO_OTP_CODE,
+          minutes: 3,
+        }),
+      },
+    );
   };
 
   useEffect(() => {
@@ -98,10 +105,10 @@ export const ResetPasswordForm = ({
     <div className="flex w-full flex-col items-center justify-center gap-2">
       <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
-          {t("resetPasswordForm.title")}
+          {t("resetPassword.title")}
         </p>
         <p className="text-center text-md leading-5 text-primary">
-          {t("resetPasswordForm.message")}
+          {t("resetPassword.message")}
         </p>
       </div>
       <form
@@ -126,7 +133,7 @@ export const ResetPasswordForm = ({
               </Field>
               <Field>
                 <FieldLabel htmlFor="reset-input-email">
-                  {t("resetPasswordForm.email")}
+                  {t("resetPassword.email")}
                 </FieldLabel>
                 <Input
                   id="reset-input-email"
@@ -148,8 +155,8 @@ export const ResetPasswordForm = ({
                 onClick={handleSendOtp}
               >
                 {isOtpStep
-                  ? t("resetPasswordForm.otpResend")
-                  : t("resetPasswordForm.otpSend")}
+                  ? t("resetPassword.otpResend")
+                  : t("resetPassword.otpSend")}
                 {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
             </Field>
@@ -159,9 +166,7 @@ export const ResetPasswordForm = ({
             <FieldSet>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="reset-input-otp">
-                    {t("resetPasswordForm.otp")}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="reset-input-otp">OTP</FieldLabel>
                   <Input
                     id="reset-input-otp"
                     data-testid="reset-password-otp"
@@ -179,7 +184,7 @@ export const ResetPasswordForm = ({
                   disabled={isLoading}
                   data-testid="reset-password-submit"
                 >
-                  {t("submit")}
+                  {t("common.submit")}
                   {isLoading && (
                     <Loader2 className="ml-2 h-5 w-5 animate-spin" />
                   )}

@@ -1,0 +1,124 @@
+{
+  "action": {
+    "add": "Ajouter",
+    "back": "Retour",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "create": "Créer",
+    "delete": "Supprimer",
+    "download": "Télécharger",
+    "edit": "Modifier",
+    "filter": "Filtrer",
+    "load": "Charger",
+    "next": "Suivant",
+    "preview": "Aperçu",
+    "reset": "Réinitialiser",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "submit": "Soumettre",
+    "update": "Mettre à jour",
+    "upload": "Téléverser",
+    "withItem": "{{action}} {{item}}"
+  },
+  "boolean": {
+    "no": "Non",
+    "yes": "Oui"
+  },
+  "empty": {
+    "noResults": "Aucun résultat",
+    "withItem": "Aucun {{item}}"
+  },
+  "placeholder": {
+    "enter": "Saisir {{target}}",
+    "search": "Rechercher {{target}}",
+    "select": "Sélectionner {{target}}"
+  },
+  "sort": {
+    "sort": "Trier",
+    "sortBy": "Trier par",
+    "asc": "Ascendant",
+    "desc": "Descendant",
+    "latest": "Trier par les plus récents",
+    "oldest": "Trier par les plus anciens"
+  },
+  "field": {
+    "age": "Âge",
+    "agent": "Agent",
+    "assignee": "Assigné à",
+    "category": "Catégorie",
+    "comment": "Commentaire",
+    "contact": "Contact",
+    "createdAt": "Créé le",
+    "date": "Date",
+    "department": "Département",
+    "description": "Description",
+    "details": "Détails",
+    "dueBy": "Échéance",
+    "dueAt": "Date d'échéance",
+    "duration": "Durée",
+    "email": "E-mail",
+    "emailTo": "À",
+    "emailCc": "CC",
+    "emailBcc": "BCC",
+    "endDate": "Date de fin",
+    "endTime": "Heure de fin",
+    "history": "Historique",
+    "location": "Emplacement",
+    "name": "Nom",
+    "note": "Note",
+    "owner": "Propriétaire",
+    "password": "Mot de passe",
+    "period": "Période",
+    "phone": "Téléphone",
+    "priority": "Priorité",
+    "requester": "Demandeur",
+    "startDate": "Date de début",
+    "startTime": "Heure de début",
+    "status": "Statut",
+    "step": "Étape",
+    "subject": "Sujet",
+    "type": "Type",
+    "updatedAt": "Mis à jour le",
+    "ticket": "Ticket",
+    "ticketNumber": "N° de ticket",
+    "riskLevel": "Niveau de risque",
+    "list": "Liste"
+  },
+  "pagination": {
+    "first": "Premier",
+    "last": "Dernier",
+    "next": "Suivant",
+    "page": "Page {{page}}",
+    "previous": "Précédent"
+  },
+  "table": {
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "rowsPerPage": "Lignes par page",
+    "selected": "{{count}} sélectionnés",
+    "total": "{{count}} éléments au total"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Gras",
+      "italic": "Italique",
+      "underline": "Souligné",
+      "strike": "Barré",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée",
+      "quote": "Citation",
+      "codeBlock": "Bloc de code",
+      "link": "Lien",
+      "image": "Image",
+      "table": "Tableau",
+      "undo": "Annuler",
+      "redo": "Rétablir"
+    },
+    "prompt": {
+      "link": "Saisissez une URL",
+      "image": "Saisissez l'URL d'une image"
+    }
+  }
+}

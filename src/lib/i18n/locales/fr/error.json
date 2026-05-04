@@ -1,0 +1,39 @@
+{
+  "common": {
+    "failed": "Échec",
+    "load": {
+      "title": "Échec du chargement",
+      "message": "Impossible de charger {{item}}"
+    },
+    "create": {
+      "title": "Échec de la création",
+      "message": "Impossible de créer {{item}}"
+    },
+    "update": {
+      "title": "Échec de la mise à jour",
+      "message": "Impossible de mettre à jour {{item}}"
+    },
+    "delete": {
+      "title": "Échec de la suppression",
+      "message": "Impossible de supprimer {{item}}"
+    },
+    "add": {
+      "title": "Échec de l'ajout",
+      "message": "Impossible d'ajouter {{item}}"
+    },
+    "save": {
+      "title": "Échec de l'enregistrement",
+      "message": "Impossible d'enregistrer {{item}}"
+    },
+    "remove": {
+      "title": "Échec du retrait",
+      "message": "Impossible de retirer {{item}}"
+    }
+  },
+  "unsupportedBrowser": {
+    "title": "Navigateur non pris en charge",
+    "description": "Le navigateur actuel n'est pas pris en charge.",
+    "browserRecommendation": "Pour une expérience optimale, veuillez passer à la dernière version de Chrome, Firefox, Edge ou Safari."
+  },
+  "ticket": {}
+}

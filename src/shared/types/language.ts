@@ -1,5 +1,7 @@
 import { Locale } from "./locale";
 
-export type LocalizedText = {
-  en: string;
-} & Partial<Record<Exclude<Locale, "en">, string>>;
+export type Localized<T> = {
+  en: T;
+} & Partial<Record<Exclude<Locale, "en">, T>>;
+
+export type LocalizedText = Localized<string>;

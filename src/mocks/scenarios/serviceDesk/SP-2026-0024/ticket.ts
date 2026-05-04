@@ -1,0 +1,34 @@
+import { TicketMockInput } from "../types";
+
+export const ticket: TicketMockInput = {
+  id: "sunghwan-portal-2026-24",
+  ticket_number: "SP-2026-0024",
+  created_at: "2026-03-31T16:25:38Z",
+  updated_at: "2026-04-01T03:22:49Z",
+  requester_id: "52",
+  status: "Rejected",
+  priority: "medium",
+  risk_level: "medium",
+  assignee_id: ["41", "31"],
+  track_time_minutes: 95,
+  last_comment_at: "2026-04-01T03:22:49Z",
+  last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
+  due_at: "2026-04-04T18:00:00Z",
+  owner: false,
+  assigned: false,
+  active: true,
+  scope: "INTERNAL",
+  category_id: "72",
+  approval_step_id: null,
+  subject:
+    "Demande d'extension du droit de modification de Unit ID au personnel de réparation",
+  content:
+    "Pendant les opérations de réparation, les erreurs de saisie sur Unit ID se produisent fréquemment et les demandes de correction prennent trop de temps.<br>Actuellement, la modification de Unit ID est autorisée uniquement au niveau leader et au-dessus.<br>Veuillez également accorder le droit de modification de Unit ID aux Repair Technicians.",
+  email: {
+    to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
+    cc: ["liam.williams@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  files: [],
+  images: [],
+};

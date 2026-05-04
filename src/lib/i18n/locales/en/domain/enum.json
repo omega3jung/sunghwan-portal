@@ -1,0 +1,62 @@
+{
+  "accessLevel": {
+    "label": "Access Level",
+    "options": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "leader": "Leader",
+      "user": "User",
+      "guest": "Guest"
+    }
+  },
+
+  "priority": {
+    "label": "Priority",
+    "options": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+
+  "riskLevel": {
+    "label": "Risk Level",
+    "options": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+
+  "period": {
+    "label": "Period",
+    "options": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "this2Week": "This 2 Weeks",
+      "thisMonth": "This Month",
+      "lastWeek": "Last Week",
+      "last2Week": "Last 2 Weeks",
+      "lastMonth": "Last Month",
+      "custom": "Custom"
+    }
+  },
+
+  "dueAt": {
+    "label": "Due Date",
+    "options": {
+      "all": "All",
+      "overDue": "Overdue",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "this2Week": "This 2 Weeks",
+      "thisMonth": "This Month",
+      "withinWeek": "Within a Week",
+      "within2Week": "Within 2 Weeks",
+      "withinMonth": "Within a Month",
+      "custom": "Custom"
+    }
+  }
+}

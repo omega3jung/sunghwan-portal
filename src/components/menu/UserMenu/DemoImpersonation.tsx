@@ -2,7 +2,6 @@ import { Contact, User, UserCog, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { tenantProfiles } from "@/app/_mocks/user";
 import {
   DropdownMenuItem,
   DropdownMenuPortal,
@@ -12,10 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import { clientProfiles } from "@/mocks/domain/user";
 
 type Props = {
   user: AppUser;
-  onDemoImpersonate: (userId: string) => Promise<void>;
+  onDemoImpersonate: (impersonatedUserId: string) => Promise<void>;
 };
 
 export function DemoImpersonation(props: Props) {
@@ -23,8 +23,8 @@ export function DemoImpersonation(props: Props) {
 
   const { t } = useTranslation("UserMenu");
 
-  const impersonationUserProfiles = useMemo(() => {
-    return tenantProfiles.filter((profile) => profile.id !== user.id);
+  const impersonationCandidates = useMemo(() => {
+    return clientProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
   const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
@@ -52,7 +52,7 @@ export function DemoImpersonation(props: Props) {
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          {impersonationUserProfiles.map((profile) => {
+          {impersonationCandidates.map((profile) => {
             return (
               <DropdownMenuItem
                 key={`impersonate_${profile.displayName.replaceAll(" ", "_")}`}

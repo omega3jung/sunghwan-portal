@@ -1,0 +1,35 @@
+import { TicketMockInput } from "../types";
+
+export const ticket: TicketMockInput = {
+  id: "sunghwan-portal-2026-35",
+  ticket_number: "SP-2026-0035",
+  created_at: "2026-04-02T06:03:14Z",
+  updated_at: "2026-04-02T07:21:42Z",
+  requester_id: "141",
+  status: "Resolved",
+  close_reason: null,
+  priority: "high",
+  risk_level: "high",
+  assignee_id: ["41", "31"],
+  merged_into_ticket_id: null,
+  track_time_minutes: 105,
+  last_comment_at: "2026-04-02T07:21:42Z",
+  last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
+  due_at: "2026-04-03T18:00:00Z",
+  owner: false,
+  assigned: false,
+  active: true,
+  scope: "PORTAL",
+  category_id: "5",
+  approval_step_id: null,
+  subject: "출고 배송 화면이 로딩 상태에서 멈춤",
+  content:
+    "출고 배송을 처리하는 중 배송 실행 화면에 로딩 아이콘만 계속 표시되고 완료되지 않습니다.<br>물류팀 사용자가 출고 배송 트랜잭션을 완료할 수 없습니다.",
+  email: {
+    to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
+    cc: ["Victor.Rivera@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  files: [],
+  images: [],
+};

@@ -3,5 +3,5 @@ export type LoginCredentials = {
   password: string;
 } & Record<string, string>;
 
-export type UserScope = "INTERNAL" | "TENANT";
+export type UserScope = "INTERNAL" | "CLIENT";
 export type DataScope = "LOCAL" | "REMOTE";

@@ -1,3 +1,13 @@
+/**
+ * Exposes normalized runtime configuration values derived from public environment variables.
+ *
+ * Use for:
+ * - Reading deployment-specific base paths and API endpoints from shared modules
+ * - Accessing public asset and context settings without repeating environment variable lookups
+ *
+ * @param none - This configuration object does not accept any arguments
+ * @returns An immutable object containing base path, API endpoints, asset URLs, and runtime context values
+ */
 export const ENVIRONMENT = {
   BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
 

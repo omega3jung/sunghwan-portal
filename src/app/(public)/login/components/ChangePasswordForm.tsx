@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 
 import {
   changePasswordFormSchema,
@@ -29,7 +30,7 @@ export const ChangePasswordForm = ({
   onSubmit,
   onBack,
 }: ChangePasswordFormProps) => {
-  const { t } = useTranslation("login");
+  const { t } = useTranslation(NS.auth);
   const isChangeMode = mode === LoginView.ChangePassword;
 
   const form = useForm<ChangePasswordFormValues>({
@@ -56,13 +57,13 @@ export const ChangePasswordForm = ({
       <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
           {isChangeMode
-            ? t("changePasswordForm.change.title")
-            : t("changePasswordForm.reset.title")}
+            ? t("changePassword.change.title")
+            : t("changePassword.reset.title")}
         </p>
         <p className="text-center text-lg leading-5 text-primary">
           {isChangeMode
-            ? t("changePasswordForm.change.message")
-            : t("changePasswordForm.reset.message")}
+            ? t("changePassword.change.message")
+            : t("changePassword.reset.message")}
         </p>
       </div>
       <form
@@ -103,13 +104,13 @@ export const ChangePasswordForm = ({
 
               <Field>
                 <FieldLabel htmlFor="change-input-new-password">
-                  {t("changePasswordForm.newPassword")}
+                  {t("changePassword.newPassword")}
                 </FieldLabel>
                 <Input
                   id="change-input-new-password"
                   data-testid="change-new-password-password"
                   disabled={isLoading}
-                  placeholder={t("changePasswordForm.newPasswordPlaceholder")}
+                  placeholder={t("changePassword.newPasswordPlaceholder")}
                   type="password"
                   required
                   {...form.register("password")}
@@ -118,13 +119,13 @@ export const ChangePasswordForm = ({
 
               <Field>
                 <FieldLabel htmlFor="change-input-confirm-password">
-                  {t("changePasswordForm.confirmPassword")}
+                  {t("changePassword.confirmPassword")}
                 </FieldLabel>
                 <Input
                   id="change-input-confirm-password"
                   data-testid="change-confirm-password-password"
                   disabled={isLoading}
-                  placeholder={t("changePasswordForm.confirmPlaceholder")}
+                  placeholder={t("changePassword.confirmPlaceholder")}
                   type="password"
                   required
                   {...form.register("confirm")}

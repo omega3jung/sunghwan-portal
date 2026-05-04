@@ -66,34 +66,64 @@ export const documentGroups: DocumentGroup[] = [
     title: "Domain",
     items: [
       {
-        id: "ticket-system-design",
-        title: "Ticket System Design",
+        id: "ticket-system-overview",
+        title: "Ticket System Overview",
         description: "High-level Service Desk domain overview.",
-        relativePath: "03-domain/ticket-system-design.md",
+        relativePath: "03-domain/ticket/ticket-system-overview.md",
+      },
+      {
+        id: "ticket-lifecycle",
+        title: "Ticket Lifecycle",
+        description: "Lifecycle states and transition design.",
+        relativePath: "03-domain/ticket/ticket-lifecycle.md",
+      },
+      {
+        id: "ticket-model",
+        title: "Ticket Model",
+        description: "Core ticket model and ownership structure.",
+        relativePath: "03-domain/ticket/ticket-model.md",
+      },
+      {
+        id: "ticket-activity",
+        title: "Ticket Activity",
+        description: "Activity model for communication and operational actions.",
+        relativePath: "03-domain/ticket/ticket-activity.md",
+      },
+      {
+        id: "ticket-history",
+        title: "Ticket History",
+        description: "Auditability and history timeline strategy.",
+        relativePath: "03-domain/ticket/ticket-history.md",
+      },
+      {
+        id: "action-strategy",
+        title: "Action Strategy",
+        description: "Action-oriented interaction and metadata design strategy.",
+        relativePath: "03-domain/ticket/strategy/action-strategy.md",
       },
       {
         id: "category-strategy",
         title: "Category Strategy",
         description: "Category-driven workflow behavior across the system.",
-        relativePath: "03-domain/category-strategy.md",
+        relativePath: "03-domain/ticket/strategy/category-strategy.md",
       },
       {
         id: "approval-system",
         title: "Approval System",
         description: "Approval steps and conditional workflow design.",
-        relativePath: "03-domain/approval-system.md",
+        relativePath: "03-domain/ticket/strategy/approval-system.md",
       },
       {
         id: "assignment-policy",
         title: "Assignment Policy",
         description: "Assignment logic and workload direction.",
-        relativePath: "03-domain/assignment-policy.md",
+        relativePath: "03-domain/ticket/strategy/assignment-policy.md",
       },
       {
         id: "sla-strategy",
         title: "SLA Strategy",
         description: "SLA handling and operational timing rules.",
-        relativePath: "03-domain/sla-strategy.md",
+        relativePath: "03-domain/ticket/strategy/sla-strategy.md",
       },
     ],
   },
@@ -184,6 +214,28 @@ export const documentGroups: DocumentGroup[] = [
           "Practical implementation philosophy and migration-aware decisions.",
         relativePath: "08-dev-strategy/development-approach.md",
       },
+      {
+        id: "service-desk-evolution",
+        title: "Service Desk Evolution",
+        description:
+          "How Service Hub experience evolved into the Service Desk domain.",
+        relativePath: "08-dev-strategy/service-desk-evolution.md",
+      },
+      {
+        id: "service-desk-implementation-strategy",
+        title: "Service Desk Implementation Strategy",
+        description:
+          "Runtime, architecture, and implementation strategy for Service Desk.",
+        relativePath:
+          "08-dev-strategy/service-desk-implementation-strategy.md",
+      },
+      {
+        id: "ticket-operation-rules",
+        title: "Ticket Operation Rules",
+        description:
+          "Implementation-facing ticket operation rules and execution constraints.",
+        relativePath: "08-dev-strategy/ticket-operation-rules.md",
+      },
     ],
   },
   {
@@ -198,6 +250,18 @@ export const documentGroups: DocumentGroup[] = [
           "08-dev-strategy/decision-log/2025-12-auth-session-architecture.md",
       },
       {
+        id: "decision-impersonation-2025-12",
+        title: "2025-12 Impersonation",
+        description: "Impersonation strategy decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2025-12-impersonation.md",
+      },
+      {
+        id: "decision-naming-2025-12",
+        title: "2025-12 Naming",
+        description: "Naming decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2025-12-naming.md",
+      },
+      {
         id: "decision-system-layout",
         title: "2025-12 System Layout",
         description: "System layout decision log entry.",
@@ -210,11 +274,63 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "08-dev-strategy/decision-log/2026-01-category-design.md",
       },
       {
+        id: "decision-impersonation-2026-01",
+        title: "2026-01 Impersonation",
+        description: "Impersonation decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2026-01-impersonation.md",
+      },
+      {
+        id: "decision-session-user-boundary-2026-01",
+        title: "2026-01 Session User Boundary",
+        description: "Session user boundary decision log entry.",
+        relativePath:
+          "08-dev-strategy/decision-log/2026-01-session-user-boundary.md",
+      },
+      {
         id: "decision-service-desk-settings",
         title: "2026-02 Service Desk Settings",
         description: "Service Desk settings design log entry.",
         relativePath:
           "08-dev-strategy/decision-log/2026-02-service-desk-settings.md",
+      },
+      {
+        id: "decision-service-desk",
+        title: "2026-03 Service Desk",
+        description: "Service Desk implementation decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2026-03-service-desk.md",
+      },
+      {
+        id: "decision-ticket-form-dialog",
+        title: "2026-03 Ticket Form Dialog",
+        description: "Ticket form dialog decision log entry.",
+        relativePath:
+          "08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md",
+      },
+      {
+        id: "decision-ticket-session-2026-03",
+        title: "2026-03 Ticket Session",
+        description: "Ticket session behavior decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2026-03-ticket-session.md",
+      },
+      {
+        id: "decision-entity-status-naming",
+        title: "2026-04 Entity Status Naming",
+        description: "Entity naming decision log entry.",
+        relativePath:
+          "08-dev-strategy/decision-log/2026-04-entity-status-naming.md",
+      },
+      {
+        id: "decision-ticket-action",
+        title: "2026-04 Ticket Action Model Introduction",
+        description: "Ticket action model introduction decision log entry.",
+        relativePath: "08-dev-strategy/decision-log/2026-04-ticket-action.md",
+      },
+      {
+        id: "decision-barrel-export-boundary-2026-05",
+        title: "2026-05 Barrel Export Boundary",
+        description: "Barrel export boundary decision log entry.",
+        relativePath:
+          "08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md",
       },
     ],
   },

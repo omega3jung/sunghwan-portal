@@ -24,10 +24,11 @@ Prefer server state over client state whenever possible
 
 ## State Classification
 
-The system divides state into two main categories:
+The system divides state into three main categories:
 
 1. **Server State**
 2. **Client State**
+3. **UI Persistence State (Page Local Session)**
 
 ---
 
@@ -42,7 +43,7 @@ Data that originates from the backend and must stay in sync with it.
 - Ticket list
 - Ticket detail
 - Category data
-- User data
+- User profile data
 
 ---
 
@@ -101,7 +102,9 @@ State that exists only on the client and does not require backend synchronizatio
 
 ### Solution
 
-Managed using **Zustand**
+Managed using **Zustand** or local component state.
+
+Use Zustand only when the state must be shared across multiple components or feature boundaries.
 
 ---
 
@@ -123,6 +126,48 @@ const useDialogStore = create((set) => ({
   setOpen: (open) => set({ open }),
 }));
 ```
+
+---
+
+## 3. UI Persistence State (Page Local Session)
+
+### Definition
+
+State used to persist page-level UI behavior across reloads or navigation
+without involving backend synchronization.
+
+This is not server state, and it is not the same as global client state.
+
+It acts as a **page local session** that helps the UI restore user context.
+
+---
+
+### Examples
+
+- Ticket search criteria
+- Table column visibility
+- View mode (`grid` / `list`)
+- Expanded or collapsed sections
+- Filter panel state
+- Last-used page options
+
+---
+
+### Purpose
+
+- Restore meaningful UI context after reload
+- Reduce repetitive user actions
+- Preserve continuity within the same browsing workflow
+
+---
+
+### Solution
+
+Managed through a layered persistence approach:
+
+1. **URL** for navigation-related state
+2. **sessionStorage** for temporary page-local persistence
+3. **Database** for long-term user preferences when necessary
 
 ---
 
@@ -148,6 +193,14 @@ Do not use global state for local UI concerns
 
 ```id="rule-3"
 Keep state as close as possible to where it is used
+```
+
+---
+
+### Rule 4
+
+```id="rule-4"
+Persist page-level UI state separately from auth/runtime stores
 ```
 
 ---
@@ -232,11 +285,12 @@ const mutation = useMutation({
 
 ### Local vs Global
 
-| State Type         | Location          |
-| ------------------ | ----------------- |
-| Component-specific | useState          |
-| Feature-wide       | Zustand           |
-| App-wide           | Zustand (limited) |
+| State Type         | Location                            |
+| ------------------ | ----------------------------------- |
+| Component-specific | `useState`                          |
+| Feature-wide       | Zustand                             |
+| App-wide           | Zustand (limited)                   |
+| Page local session | Feature hook + `sessionStorage`/URL |
 
 ---
 
@@ -263,6 +317,7 @@ Form state is managed separately using **react-hook-form**.
 ### Rule
 
 - Form state should not be stored in Zustand
+- Persist form-related page context only when UX continuity requires it
 
 ---
 
@@ -281,8 +336,127 @@ Some state is stored in the URL.
 ### Principle
 
 ```id="url-state"
-If state affects navigation → store in URL
+If state affects navigation -> store in URL
 ```
+
+---
+
+## Page Local Session Strategy
+
+Page local session is the persistence layer for non-server, page-oriented UI behavior.
+
+### Storage Layers
+
+#### 1. URL (Primary)
+
+Used for navigation-related state.
+
+Examples:
+
+- Filters
+- Sorting
+- Pagination
+
+```txt
+/service-desk?status=open&assignee=me&page=2
+```
+
+---
+
+#### 2. sessionStorage (Secondary)
+
+Used for temporary UI persistence within the current browser tab.
+
+Examples:
+
+- Advanced filter state
+- Layout preferences
+- Last-used search criteria
+
+Characteristics:
+
+- Scoped to the browser tab
+- Cleared when the tab closes
+- Fast and simple
+
+---
+
+#### 3. Database (Optional)
+
+Used for long-term user preferences.
+
+Examples:
+
+- Saved filter presets
+- Dashboard layout settings
+
+Characteristics:
+
+- Persists across devices
+- Tied to the user account
+
+---
+
+### Implementation Pattern
+
+```txt
+page / component
+-> feature hook
+-> shared hook (useSessionStorageState)
+-> storage utility (sessionStorage)
+```
+
+---
+
+### Example
+
+```ts
+useSessionStorageState<T>();
+```
+
+```ts
+useTicketSearchCriteriaState();
+```
+
+```ts
+const { value, setValue, reset } = useTicketSearchCriteriaState();
+```
+
+---
+
+### Design Rules
+
+- Storage logic must not leak into UI components
+- Components should consume meaningful hooks, not storage APIs
+- Even if multiple systems use `sessionStorage`, they must remain logically separated
+
+| Purpose          | Owner                    |
+| ---------------- | ------------------------ |
+| Auth session     | `authSessionStore`       |
+| UI persistence   | `useSessionStorageState` |
+| Navigation state | URL                      |
+
+Prefer:
+
+```ts
+useTicketSearchCriteriaState();
+```
+
+Over:
+
+```ts
+readSessionStorage("some_key");
+```
+
+---
+
+### Resilience
+
+UI persistence must be fault-tolerant.
+
+- Fallback to default on parse error
+- Handle version mismatch
+- Allow migration when structure changes
 
 ---
 
@@ -310,25 +484,45 @@ Derive instead of store
 
 ### 1. Global State Overuse
 
-- ❌ Storing everything in Zustand
+- Avoid storing everything in Zustand
 
 ---
 
 ### 2. Server State Duplication
 
-- ❌ Copying API data into local state
+- Avoid copying API data into local state
 
 ---
 
 ### 3. Prop Drilling Abuse
 
-- ❌ Passing state unnecessarily through many layers
+- Avoid passing state unnecessarily through many layers
 
 ---
 
 ### 4. Uncontrolled Side Effects
 
-- ❌ Fetching data inside components without abstraction
+- Avoid fetching data inside components without abstraction
+
+---
+
+### 5. Mixing Auth and UI State
+
+- Avoid coupling page settings to `authSessionStore`
+
+Auth session and UI persistence must remain separate.
+
+---
+
+### 6. Direct Storage Access in Components
+
+- Avoid calling `readSessionStorage()` directly inside page components
+
+---
+
+### 7. Treating UI State as Server State
+
+- Avoid managing filters via React Query cache
 
 ---
 
@@ -340,6 +534,7 @@ Derive instead of store
 - Predictable data flow
 - Reduced bugs from state sync issues
 - Scalable architecture
+- Improved UI continuity across reloads
 
 ---
 
@@ -348,6 +543,7 @@ Derive instead of store
 - Requires understanding of multiple tools
 - Initial learning curve
 - Slightly more setup complexity
+- Persistence rules require discipline
 
 ---
 
@@ -355,22 +551,23 @@ Derive instead of store
 
 ### 1. Redux
 
-- ✔ Powerful and scalable
-- ❌ Too much boilerplate for this use case
+- Powerful and scalable
+- Too much boilerplate for this use case
 
 ---
 
 ### 2. Context API Only
 
-- ✔ Built-in
-- ❌ Poor performance for frequent updates
+- Built-in
+- Poor performance for frequent updates
 
 ---
 
 ### 3. Single State Store (All in Zustand)
 
-- ✔ Simpler mental model
-- ❌ Hard to sync with server data
+- Simpler mental model
+- Hard to sync with server data
+- Weak separation between runtime state and page local session
 
 ---
 
@@ -382,11 +579,19 @@ This strategy aligns with:
 - Single source of truth
 - Minimal global state
 - Performance optimization
+- UX continuity for page workflows
 
 ---
 
 ## Summary
 
-The state management strategy separates **server state and client state clearly**,
-leveraging React Query for backend synchronization and Zustand for local UI state,
-resulting in a scalable, maintainable, and production-ready architecture.
+The state management strategy separates **server state**, **client state**, and
+**UI persistence state (page local session)** clearly.
+
+It uses:
+
+- React Query for backend synchronization
+- Zustand or local state for client runtime state
+- URL and `sessionStorage` for page local session persistence
+
+This results in a scalable, maintainable, and production-ready architecture.

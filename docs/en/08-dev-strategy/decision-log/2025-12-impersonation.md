@@ -148,14 +148,14 @@ Move impersonation to a **server-controlled session model**.
 
 - Integrate impersonation with the NextAuth session
 - Introduce a dual identity model
-- Preserve both original user and effective user in session context
+- Preserve both original user and current user context in session-driven runtime state
 
 ---
 
 ### Identity Concept
 
 - `originalUser`
-- `effectiveUser`
+- `currentUser`
 
 ---
 

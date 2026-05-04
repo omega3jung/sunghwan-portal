@@ -53,11 +53,13 @@ Client -> MainCategory -> SubCategory
 
 ### Rules
 
-1. Client represents a tenant.
+1. Client represents a client.
 2. Each `MainCategory` must define default operational values:
+
 - `defaultPriority`
 - `defaultRiskLevel`
 - `defaultSlaDays`
+
 3. `SubCategory` values may override `MainCategory` defaults.
 
 ### Override Precedence
@@ -418,7 +420,7 @@ Due date calculation is category-based.
 ### Rule
 
 ```txt
-dueDate = createdDate + defaultSlaDays
+dueAt = createdDate + defaultSlaDays
 ```
 
 If the `SubCategory` defines its own SLA value, it overrides the `MainCategory` value.
@@ -432,13 +434,13 @@ A correction was identified in the `TicketProcessState` type.
 ### Incorrect
 
 ```ts
-priority: TicketPeriod
+priority: TicketPeriod;
 ```
 
 ### Correct
 
 ```ts
-priority: Priority
+priority: Priority;
 ```
 
 `TicketPeriod` represents time filters, not operational priority.
@@ -446,7 +448,7 @@ priority: Priority
 All implementations should use:
 
 ```ts
-priority: Priority
+priority: Priority;
 ```
 
 ---

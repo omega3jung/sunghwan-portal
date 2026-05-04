@@ -1,14 +1,16 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import {
+  checkAdminOrSelf,
+  isRemoteRequest,
+  proxyJson,
+} from "@/app/api/_helpers";
+import { UserIdRouteContext } from "@/app/api/_helpers/types";
 import { Preference } from "@/domain/config";
 import { createDefaultPreference } from "@/domain/user/preference";
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { userId: string } },
-) {
+export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
 
@@ -18,34 +20,16 @@ export async function GET(
     return NextResponse.json(createDefaultPreference());
   }
 
-  // real backend
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/user/${userId}/preference`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer TOKEN`,
-      },
-      cache: "no-store",
-      body: JSON.stringify(userId),
-    },
-  );
+  const authError = await getAdminOrSelfError(req, userId);
+  if (authError) return authError;
 
-  if (!res.ok) {
-    return NextResponse.json(
-      { message: "Failed to fetch user preference" },
-      { status: 500 },
-    );
-  }
-
-  const data = await res.json();
-  return NextResponse.json(data);
+  return proxyJson(req, {
+    path: `/user/${userId}/preference`,
+    errorMessage: "Failed to fetch user preference",
+  });
 }
 
-export async function POST(
-  req: NextRequest,
-  context: { params: { userId: string } },
-) {
+export async function POST(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
 
@@ -56,23 +40,18 @@ export async function POST(
     return NextResponse.json(body, { status: 201 }); // POST is 201.
   }
 
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/user/${userId}/preference`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
+  const authError = await getAdminOrSelfError(req, userId);
+  if (authError) return authError;
 
-  const data = await res.json();
-  return NextResponse.json(data);
+  return proxyJson(req, {
+    method: "POST",
+    path: `/user/${userId}/preference`,
+    body,
+    errorMessage: "Failed to create user preference",
+  });
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: { userId: string } },
-) {
+export async function PUT(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = context.params;
   const isRemote = await isRemoteRequest(req);
 
@@ -84,15 +63,26 @@ export async function PUT(
     return NextResponse.json(body, { status: 200 }); // PUT is 200. (or 204).
   }
 
-  const res = await fetch(
-    `${process.env.API_BASE_URL}/user/${userId}/preference`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
+  const authError = await getAdminOrSelfError(req, userId);
+  if (authError) return authError;
 
-  const data = await res.json();
-  return NextResponse.json(data);
+  return proxyJson(req, {
+    method: "PUT",
+    path: `/user/${userId}/preference`,
+    body,
+    errorMessage: "Failed to update user preference",
+  });
+}
+
+async function getAdminOrSelfError(req: NextRequest, userId: string) {
+  const auth = await checkAdminOrSelf(req, userId);
+
+  if (auth.ok) {
+    return null;
+  }
+
+  return NextResponse.json(
+    { message: auth.status === 401 ? "Unauthorized" : "Forbidden" },
+    { status: auth.status },
+  );
 }

@@ -1,13 +1,160 @@
 {
-  "Stepper": {
-    "stepper": "Stepper",
-    "variants": "Variación",
+  "home": {
+    "hero": {
+      "protectedBadge": "Inicio protegido",
+      "enterpriseBadge": "Demostración del portal empresarial",
+      "title": "Esta es la página de inicio del espacio de trabajo para operaciones de servicio, documentos de referencia y configuración de la plataforma.",
+      "description": {
+        "local": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En la demostración local, puedes revisar los límites de acceso y las acciones disponibles según el rol (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "remote": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En el modo remoto, puedes revisar flujos de permisos más cercanos a una operación real combinando el Role con la relación del usuario con cada ticket."
+      },
+      "actions": {
+        "openServiceDesk": "Abrir Service Desk",
+        "browseDocumentation": "Explorar documentación",
+        "reviewSettings": "Revisar configuración"
+      }
+    },
+    "calendar": {
+      "title": "Calendario"
+    },
+    "about": {
+      "title": "Acerca de esta página de inicio",
+      "description": "Esta sección explica el modo de ejecución actual del portal de portafolio y el alcance principal de navegación.",
+      "currentScope": {
+        "title": "Alcance actual",
+        "description": {
+          "local": "En la demostración local, puedes explorar el flujo de Service Desk, los documentos y las pantallas de configuración, mientras que las verificaciones de permisos se simplifican con reglas basadas en Role.",
+          "remote": "En modo Remote, el flujo de Service Desk, los documentos y las pantallas de configuración pueden conectarse a API reales, mientras que el comportamiento de permisos refleja tanto el Role como las relaciones del usuario."
+        }
+      },
+      "architectureNotes": {
+        "local": {
+          "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
+          "note2": "En la demostración local, los menús y las acciones disponibles cambian según los roles ADMIN, MANAGER, LEADER, USER y GUEST.",
+          "note3": "Los permisos basados en relaciones organizacionales, las restricciones basadas en la relación con el ticket y la integración con API remotas se separan para poder validarse con mayor precisión en modo Remote."
+        },
+        "remote": {
+          "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
+          "note2": "En modo Remote, el alcance de acceso se determina considerando no solo el Role, sino también relaciones como solicitante, responsable y aprobador.",
+          "note3": "Los datos de tickets, documentos, aprobaciones, asignaciones y configuración se conectan mediante límites reales de API para ofrecer un flujo más cercano a un entorno operativo."
+        }
+      }
+    },
+    "quickActions": {
+      "title": "Acciones rápidas",
+      "description": "Abre las principales áreas de trabajo que probablemente necesite justo después de iniciar sesión.",
+      "openWorkspace": "Abrir espacio de trabajo",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Explora tickets, revise el estado de la cola y continúe el trabajo actual.",
+          "meta": "Espacio central"
+        },
+        "documentation": {
+          "title": "Documentación",
+          "description": "Abra notas de trabajo, referencias de diseño y documentación de implementación.",
+          "meta": "Centro de conocimiento"
+        },
+        "systemSettings": {
+          "title": "Configuración del sistema",
+          "description": "Revise áreas de configuración del portal y preferencias operativas.",
+          "meta": "Administración"
+        },
+        "serviceDeskSetup": {
+          "title": "Configuración de Service Desk",
+          "description": "Revisa categorías, pasos de aprobación y la estructura de reglas de asignación.",
+          "meta": "Configuración de la plataforma"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Resumen de trabajo",
+      "description": "Contexto operativo ligero para la página de inicio del portal de demostración.",
+      "items": {
+        "openTickets": {
+          "label": "Tickets abiertos",
+          "description": "Incidencias actualmente en curso en las colas de soporte."
+        },
+        "pendingApprovals": {
+          "label": "Aprobaciones pendientes",
+          "description": "Solicitudes en espera de confirmación de flujo o política."
+        },
+        "workingItems": {
+          "label": "Elementos en curso",
+          "description": "Tareas activas de implementación y seguimiento dentro de este alcance de demostración."
+        },
+        "resolvedThisWeek": {
+          "label": "Resueltos esta semana",
+          "description": "Tickets, correcciones y resultados de iteración completados."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Recientes y destacados",
+      "description": "Áreas que mejor representan la dirección actual del proyecto y el contexto del trabajo reciente.",
+      "viewSection": "Ver sección",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Espacio de tickets",
+          "description": "Área principal de trabajo para búsqueda, filtrado y seguimiento de tickets.",
+          "category": "Service Desk",
+          "status": "Listo"
+        },
+        "authSessionFlow": {
+          "title": "Flujo de autenticación y sesión",
+          "description": "Experiencia de inicio de sesión, manejo de redirecciones y comportamiento del shell protegido.",
+          "category": "Arquitectura",
+          "status": "Enfoque actual"
+        },
+        "serviceDeskSettings": {
+          "title": "Configuración de Service Desk",
+          "description": "Superficies para pasos de aprobación, reglas de asignación y gestión de categorías.",
+          "category": "Administración",
+          "status": "En revisión"
+        },
+        "documentsHub": {
+          "title": "Centro de documentos",
+          "description": "Área de referencia para documentos, notas y futuros registros de decisiones.",
+          "category": "Documentación",
+          "status": "Crecimiento planificado"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Enfoque actual",
+      "description": "Un panel de resumen compacto sobre lo que este portal está enfatizando ahora mismo.",
+      "panelTitle": "Dirección del portal empresarial",
+      "panelDescription": "La pantalla de inicio está deliberadamente acotada como un punto de entrada al espacio de trabajo interno.",
+      "primaryGoals": {
+        "title": "Objetivos principales de experiencia",
+        "items": {
+          "goal1": "Navegación clara del primer paso después de la autenticación",
+          "goal2": "Densidad de información equilibrada sin sobrecargar el panel",
+          "goal3": "Sustitución sencilla del contenido resumido simulado por datos reales más adelante"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Próximas integraciones sugeridas",
+        "description": "Conecte las tarjetas de resumen con recuentos de tickets, aprobaciones y actividad reciente de documentos una vez que el inicio protegido esté listo para consumir datos reales del espacio de trabajo."
+      }
+    }
+  },
+  "resetDemo": {
+    "title": "Restablecer demostración",
+    "message": "¿Restablecer los datos de la demostración local?",
+    "description": "Restablecer los datos de la demostración local y restaurar los datos simulados iniciales.",
+    "resetting": "Restableciendo"
+  },
+  "stepper": {
+    "stepper": "Indicador de pasos",
+    "variants": "Variantes",
     "orientation": "Orientación",
-    "stepVariant": "Forma del paso",
+    "stepVariant": "Variante de paso",
     "labelPosition": "Posición de la etiqueta",
-    "stepColor": "Color",
+    "stepColor": "Color del paso",
     "showOrderLabel": "Mostrar etiqueta del paso",
     "startIndex": "Número inicial",
-    "step": "Paso"
+    "step": "Paso",
+    "disable": "Deshabilitar"
   }
 }

@@ -6,6 +6,7 @@ export type Orientation = "horizontal" | "vertical";
 export type StepVariant = "square" | "circle";
 export type StepColor = "primary" | "secondary";
 export type LabelPosition = "top" | "bottom" | "right" | "left";
+export type ConnectorStyle = "solid" | "dashed" | "dotted";
 
 type StepperContextValue = {
   currentStep: number;
@@ -14,6 +15,9 @@ type StepperContextValue = {
   stepVariant: StepVariant;
   labelPosition: LabelPosition;
   color: StepColor;
+  connectorStyle: ConnectorStyle;
+  leadingConnector: boolean;
+  disabled: boolean;
 };
 
 export const StepperContext = createContext<StepperContextValue | null>(null);

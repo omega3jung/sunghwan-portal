@@ -5,15 +5,16 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createSettingsCardMock } from "@/app/_mocks/pages/it-service-desk";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/utils";
+import { NS } from "@/lib/i18n";
+import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
+import { cn } from "@/shared/utils/presentation";
 
 import { ENABLED_SETTINGS_ROUTES } from "./constants";
 import { SETTINGS_THEME } from "./constants/style";
 
 export default function SettingsPage() {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const settingsCardItems = createSettingsCardMock(t);
 
   const router = useRouter();

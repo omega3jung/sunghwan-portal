@@ -5,7 +5,7 @@
   },
   "settingsNavigation": {
     "dataSetup": {
-      "title": "Configuración de Datos",
+      "title": "Configuración de datos",
       "description": "Gestiona los datos maestros fundamentales para las operaciones de reparación de dispositivos.",
       "carrier": {
         "title": "Operador",
@@ -28,9 +28,8 @@
         "description": "Gestiona las etiquetas utilizadas durante el proceso de reparación y envío del dispositivo."
       }
     },
-
     "accountSettings": {
-      "title": "Configuración de la Cuenta",
+      "title": "Configuración de la cuenta",
       "description": "Gestiona los elementos relacionados con la información básica de la cuenta.",
       "company": {
         "title": "Empresa",
@@ -41,7 +40,7 @@
         "description": "Gestiona los departamentos dentro de la empresa."
       },
       "jobFields": {
-        "title": "Áreas de Trabajo",
+        "title": "Áreas de trabajo",
         "description": "Gestiona las distintas áreas de trabajo y roles dentro de la organización."
       },
       "shifts": {
@@ -53,24 +52,24 @@
         "description": "Gestiona los usuarios y sus niveles de acceso."
       },
       "workspaces": {
-        "title": "Espacios de Trabajo",
+        "title": "Espacios de trabajo",
         "description": "Gestiona los diferentes espacios de trabajo para organizar proyectos y equipos."
       }
     },
     "accessControl": {
-      "title": "Control de Acceso",
+      "title": "Control de acceso",
       "description": "Gestiona los permisos de acceso para usuarios y grupos.",
       "userPermissions": {
-        "title": "Permisos de Usuario",
+        "title": "Permisos de usuario",
         "description": "Gestiona los permisos otorgados a los usuarios individuales."
       },
       "groupPermissions": {
-        "title": "Permisos de Grupo",
+        "title": "Permisos de grupo",
         "description": "Gestiona los permisos otorgados a los grupos."
       }
     },
     "workflowSettings": {
-      "title": "Configuración del Flujo de Trabajo",
+      "title": "Configuración del Flujo de trabajo",
       "description": "Gestiona los pasos del flujo de trabajo y las reglas de validación.",
       "steps": {
         "title": "Pasos",
@@ -81,24 +80,24 @@
         "description": "Gestiona las reglas de validación para garantizar la integridad de los datos durante el flujo de trabajo."
       }
     },
-    "itServiceDeskSettings": {
-      "title": "Configuración de la Mesa de Ayuda de TI",
-      "description": "Gestiona las categorías, los pasos de aprobación y las reglas de asignación de los tickets de la mesa de ayuda de TI.",
+    "serviceDeskSettings": {
+      "title": "Configuración de la Mesa de Servicio de TI",
+      "description": "Gestiona las categorías, los pasos de aprobación y las reglas de asignación de los tickets de la Mesa de Servicio de TI.",
       "category": {
         "title": "Categoría",
         "description": "Gestiona las categorías y subcategorías de los tickets de la mesa de ayuda de TI."
       },
       "approvalSteps": {
-        "title": "Pasos de Aprobación",
+        "title": "Pasos de aprobación",
         "description": "Gestiona los pasos de aprobación requeridos antes de que los tickets de la mesa de ayuda de TI se asignen a los responsables."
       },
       "assignmentRules": {
-        "title": "Reglas de Asignación",
+        "title": "Reglas de asignación",
         "description": "Gestiona las reglas de asignación para los tickets de la mesa de ayuda de TI."
       }
     }
   },
-  "itServiceDeskSettings": {
+  "serviceDeskSettings": {
     "general": {
       "category": "Categoría",
       "categoryList": "Lista de categorías",
@@ -112,9 +111,11 @@
       "saveChanges": "Guardar cambios"
     },
     "categoryTab": {
+      "scope": "Alcance",
       "name": "Nombre",
       "description": "Descripción",
-      "placeholder": "Marcador de posición",
+      "requestTemplate": "Plantilla de solicitud",
+      "resolutionDays": "Días de resolución",
       "active": "Activo",
       "addCategory": "Agregar categoría"
     },
@@ -141,7 +142,7 @@
       "name": "Nombre",
       "namePlaceholder": "Seleccionar una categoría",
       "jobField": "Puesto",
-      "selectAssigneJobField": "Seleccionar puesto del asignado",
+      "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado"
     }

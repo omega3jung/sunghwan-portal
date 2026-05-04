@@ -61,8 +61,8 @@ The system must:
 ### Dual Identity Concept
 
 ```txt id="identity-model"
-Current User (Effective User)
-Original User (Real User)
+Current User
+Original User
 ```
 
 ---
@@ -77,14 +77,14 @@ Original User (Real User)
 ### Impersonated User
 
 - The user being acted as
-- The effective identity used by the system during impersonation
+- The current identity used by the system during impersonation
 
 ---
 
 ### Example
 
 ```txt id="identity-example"
-Admin (original) -> impersonates -> Employee (effective)
+Admin (originalUser) -> impersonates -> Employee (currentUser)
 ```
 
 ---
@@ -99,9 +99,11 @@ Impersonation is handled at the **session level**.
 
 ```ts id="session-structure"
 session = {
-  user: effectiveUser,
-  originalUser: originalUser,
-  isImpersonating: boolean,
+  user: originalUser,
+  impersonation: {
+    originalUserId,
+    impersonatedUserId,
+  },
 };
 ```
 
@@ -109,9 +111,13 @@ session = {
 
 ### Behavior
 
-- `user` is used across the UI and API as the effective user
+- `session.user` stays as the original authenticated projection
+- `currentUser` is used across the UI and authorization flow
 - `originalUser` is used for audit and security checks
-- `isImpersonating` clearly indicates the current session mode
+- `isImpersonating` is derived from impersonation metadata in the client/runtime layer
+
+The earlier `actor / subject / effective` labels were renamed to
+`originalUser / impersonatedUser / currentUser` so the runtime meaning is obvious in both code and docs.
 
 ---
 
@@ -151,9 +157,9 @@ Admin selects user -> Start impersonation -> Session updated
 
 ### Behavior
 
-- Replace the effective user in session
-- Preserve the original user
-- Set `isImpersonating = true`
+- Preserve the original user projection in session
+- Resolve `currentUser` from the impersonated user while impersonation is active
+- Derive `isImpersonating = true` from impersonation metadata
 
 ---
 
@@ -189,14 +195,14 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 - Permissions must be evaluated carefully
 - The system must prevent privilege escalation
-- The original actor must remain known even when the effective user changes
+- The original user must remain known even when the current user changes
 
 ---
 
 ### Example
 
 - Admin impersonates a user and acts within that user context
-- The system still knows the original actor is the admin
+- The system still knows the original user is the admin
 
 ---
 
@@ -211,14 +217,14 @@ All actions must remain traceable.
 ### Stored Context
 
 - `originalUserId`
-- `effectiveUserId`
+- `currentUserId`
 
 ---
 
 ### Example
 
 ```txt id="audit-example"
-effectiveUser: employee123
+currentUser: employee123
 originalUser: admin456
 ```
 
@@ -258,7 +264,7 @@ When impersonation is active, the UI should:
 
 - API requests
 - UI rendering
-- Data access checks based on effective user context
+- Data access checks based on current user context
 
 ---
 

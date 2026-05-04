@@ -7,18 +7,19 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { adminAuth } from "@/app/_mocks";
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
 import { createDefaultPreference } from "@/domain/user/preference";
 import {
-  useFetchUserPreference,
-  usePostUserPreference,
-  usePutUserPreference,
-} from "@/feature/user/preference";
-import { useLanguageState } from "@/hooks/useLanguage";
+  useCreateUserPreference,
+  useUpdateUserPreference,
+  useUserPreferenceQuery,
+} from "@/feature/user/preference/client";
+import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
+import { NS } from "@/lib/i18n";
+import { adminAuth } from "@/mocks/domain/user";
 import { languageOptions } from "@/shared/constants/options/language";
-import { isLocale } from "@/utils";
+import { isLocale } from "@/shared/utils/i18n";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";
@@ -49,10 +50,10 @@ const footerLinkClassName = "py-0 text-base font-normal";
 export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   const router = useRouter();
   const { status } = useSession();
-  const { data: userPreference } = useFetchUserPreference(null);
-  const { mutate: createUserPreference } = usePostUserPreference();
-  const { mutate: updateUserPreference } = usePutUserPreference();
-  const { t } = useTranslation("login");
+  const { data: userPreference } = useUserPreferenceQuery(null);
+  const { mutate: createUserPreference } = useCreateUserPreference();
+  const { mutate: updateUserPreference } = useUpdateUserPreference();
+  const { t } = useTranslation(NS.auth);
   const { language, changeLanguage } = useLanguageState();
 
   const [hasSignedIn, setHasSignedIn] = useState(false);
@@ -65,10 +66,6 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
     passwordResetSession?.resetToken != null
       ? LoginView.ResetPassword
       : LoginView.ChangePassword;
-
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-  }, []);
 
   useEffect(() => {
     if (userPreference?.language && userPreference.language !== language) {
@@ -174,7 +171,11 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
 
   const handleVerifyOtp = async ({ username, otp }: VerifyOtpFormValues) => {
     if (otp !== DEMO_OTP_CODE) {
-      toast.error(t("otp.invalid"));
+      toast.error(
+        t("validation:format.invalidWithField", {
+          field: "OTP",
+        }),
+      );
       return;
     }
 
@@ -185,21 +186,19 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
     username,
   }: ChangePasswordFormValues) => {
     if (username !== passwordResetSession?.username) {
-      toast.error("Verified ID is different", {
-        description:
-          "Verified ID is different with current ID. Please verify OTP again.",
+      toast.error(t("common.validation.errorTitle", { ns: NS.message }), {
+        description: t("common.opt.differentId", { ns: NS.message }),
       });
       setPasswordResetSession(null);
       openResetPasswordView();
       return;
     }
 
-    toast.success("Updated", {
-      description: "Password has been updated.",
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
+    toast.success(t("common.update.title", { ns: NS.message }), {
+      description: t("common.update.success", {
+        ns: NS.message,
+        item: t("field.password", { ns: NS.common }),
+      }),
     });
 
     openLoginView();
@@ -254,7 +253,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
                 <Loader2 className="ml-2 h-5 w-5 animate-spin" />
               </>
             ) : (
-              t("loginForm.tryDemo")
+              t("login.tryDemo")
             )}
           </Button>
         </div>
@@ -285,13 +284,13 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
             className="py-0 text-base font-semibold uppercase"
             onClick={openResetPasswordView}
           >
-            {t("loginForm.canNotLogin")}
+            {t("login.canNotLogin")}
           </Button>
         </p>
 
         <p>
           <Button variant="link" className={footerLinkClassName}>
-            {t("loginForm.helpCenter")}
+            {t("login.helpCenter")}
           </Button>
           <span className="px-1" aria-hidden="true">
             &middot;
@@ -300,7 +299,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
             variant="link"
             className={`${footerLinkClassName} text-primary`}
           >
-            {t("loginForm.privacyAndTerms")}
+            {t("login.privacyAndTerms")}
           </Button>
         </p>
 

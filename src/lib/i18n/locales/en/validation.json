@@ -1,0 +1,33 @@
+{
+  "required": {
+    "default": "This field is required.",
+    "withField": "{{field}} is required."
+  },
+
+  "length": {
+    "min": "Must be at least {{count}} characters.",
+    "minWithField": "{{field}} must be at least {{count}} characters.",
+    "max": "Must be at most {{count}} characters.",
+    "maxWithField": "{{field}} must be at most {{count}} characters."
+  },
+
+  "format": {
+    "invalid": "Invalid format.",
+    "invalidWithField": "Invalid {{field}}."
+  },
+
+  "number": {
+    "invalid": "Must be a number.",
+    "invalidWithField": "{{field}} must be a number.",
+    "integer": "Must be an integer.",
+    "integerWithField": "{{field}} must be an integer.",
+    "positive": "Must be greater than 0.",
+    "positiveWithField": "{{field}} must be greater than 0."
+  },
+
+  "date": {
+    "invalid": "Must be a valid date.",
+    "invalidWithField": "{{field}} must be a valid date.",
+    "afterWithField": "{{field}} must be after {{target}}."
+  }
+}

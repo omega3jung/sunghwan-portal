@@ -1,5 +1,5 @@
 export interface ImpersonationInfo {
-  actorId: string;
-  subjectId: string;
+  originalUserId: string;
+  impersonatedUserId: string;
   activatedAt: number;
 }

@@ -61,7 +61,7 @@ Login
 -> Middleware validates JWT
 -> Session derived (NextAuth)
 -> Synced to Zustand
--> UI consumes effective user
+-> UI consumes currentUser
 ```
 
 ---
@@ -115,9 +115,11 @@ type AppSession = {
 
 ```ts
 session = {
-  user: effectiveUser,
-  originalUser: originalUser,
-  isImpersonating: boolean,
+  user: originalUser,
+  impersonation: {
+    originalUserId,
+    impersonatedUserId,
+  },
 };
 ```
 
@@ -125,7 +127,7 @@ session = {
 
 ### Concepts
 
-#### `effectiveUser`
+#### `currentUser`
 
 - Used by UI and API
 - Represents the current working identity
@@ -135,7 +137,7 @@ session = {
 - The actual authenticated user
 - Used for audit and traceability
 
-#### `isImpersonating`
+#### `isImpersonating` (Derived)
 
 - Indicates whether impersonation mode is active
 
@@ -157,9 +159,9 @@ This structure enables:
 
 ```ts
 type ImpersonationState = {
-  actor: AppUser | null; // original user
-  subject: AppUser | null; // impersonated user
-  effective: AppUser | null; // current UI user
+  originalUser: AppUser | null; // original user
+  impersonatedUser: AppUser | null; // impersonated user
+  currentUser: AppUser | null; // current UI user
 };
 ```
 
@@ -169,9 +171,9 @@ type ImpersonationState = {
 
 | Field | Meaning |
 | ----- | ------- |
-| actor | Original authenticated user |
-| subject | Impersonated user |
-| effective | Active user in UI |
+| originalUser | Original authenticated user |
+| impersonatedUser | Impersonated user |
+| currentUser | Active user in UI |
 
 ---
 
@@ -185,9 +187,9 @@ NextAuth Session -> Sync -> Zustand -> UI
 
 ### Integration Rules
 
-- `actor` is set after login
-- `subject` is set when impersonation starts
-- `effective` is always used by the UI
+- `originalUser` is set after login
+- `impersonatedUser` is set when impersonation starts
+- `currentUser` is always used by the UI
 
 ---
 
@@ -203,11 +205,11 @@ Zustand = runtime control layer
 ## 7. Impersonation Lifecycle
 
 ```txt
-Login -> setActor
--> Start Impersonation -> setSubject
--> effective user changes
+Login -> setOriginalUser
+-> Start Impersonation -> setImpersonatedUser
+-> currentUser changes
 -> UI re-renders
--> Stop Impersonation -> restore actor
+-> Stop Impersonation -> restore originalUser
 ```
 
 ---
@@ -238,7 +240,7 @@ Impersonation is explicitly reflected in the UI.
 
 ### Example
 
-- Sidebar menu changes based on the effective user
+- Sidebar menu changes based on the current user
 - Role-based rendering is applied instantly
 - Demo mode UI can expose state such as a LOCAL border indicator
 
