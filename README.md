@@ -1,312 +1,194 @@
 # sunghwan-portal
 
-Portfolio of Sunghwan Jung
+Portfolio project by Sunghwan Jung.
 
-🌐 **Languages**
+## Languages
 
 - [English](README.md)
-- [한국어](README.ko.md)
+- [Korean](README.ko.md)
 
-**Sunghwan Jung's Demo Portfolio Project**
-I'm developing a **Next.js 14-based front-end architecture template**
-focused on **authentication, session design, and real-world scalability**.
+This repository is a **Service Desk system prototype** built with **Next.js 14 App Router**.
+It is designed as a production-aligned frontend system rather than a simple UI showcase,
+with a strong focus on domain structure, operational workflows, and documented design decisions.
 
-> Beyond a simple UI demo,  
-> this project aims for a production-oriented structure that considers **authentication, authorization, sessions, and environment separation**.
+## Overview
 
----
+The project centers on a Service Desk domain with:
+
+- Category-driven ticket workflow
+- Approval and assignment logic
+- SLA-aware behavior
+- Audit/history tracking
+- Role-aware dashboard and settings UX
+- Authentication and impersonation strategy
+
+It also serves as a documentation-heavy portfolio project.
+The design intent, trade-offs, and implementation approach are documented in
+[`docs/en`](./docs/en/README.md).
+
+## Current Focus
+
+The repository reflects a shift from an earlier auth-template-style project into a more concrete
+Service Desk application.
+
+Today, the project is organized around:
+
+- Domain-first design instead of generic CRUD
+- Feature-based frontend architecture
+- NextAuth-based authentication with JWT session strategy
+- React Query for server-state management
+- Admin/configuration workflows such as Service Desk Settings
+- Decision logs that explain how the project evolved month by month
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Auth**: NextAuth v4 (Credentials Provider, JWT Strategy)
-- **State**: Zustand
-- **Data Fetching**: Axios + TanStack Query
-- **UI**: Tailwind CSS, shadcn/ui
-- **Icons**: lucide-react-
-- **State Management**: Zustand (client state)
-- **Data Fetching**: Axios + TanStack Query
+- Framework: `next@14`
+- Language: `typescript`
+- UI: `tailwindcss`, `shadcn/ui`, `radix-ui`, `lucide-react`
+- Auth: `next-auth@4` with Credentials provider and JWT session strategy
+- Data Fetching: `axios`, `@tanstack/react-query`
+- Forms: `react-hook-form`, `zod`
+- State: `zustand`
+- Charts / Tables / Editors: `recharts`, `@tanstack/react-table`, `@tiptap/react`
+- Storybook: `storybook@10`
+- Testing: `vitest`, `jest`, `@testing-library/*`, `playwright`
 
----
+## Project Structure
 
-## Project Goals
-
-- A reusable **front-end base template**
-- A clear separation of responsibilities for authentication/authorization logic
-- A structure with clear configuration for each environment
-- A structure that facilitates future DB/API expansion
-
----
-
-## What This Project Demonstrates
-
-This project focuses on architectural concerns often overlooked
-in front-end demo applications:
-
-- Authentication enforcement at the Edge layer
-- Clear separation between authentication, session, and UI concerns
-- Domain-driven session modeling for scalable UI consumption
-- Environment-aware configuration
-- Practical collaboration conventions (PRs, labels, ownership)
-
-The goal is not feature completeness, but structural clarity and extensibility.
-
----
-
-## Collaboration & Workflow
-
-Although this is a personal demo project, it is structured to reflect
-real-world team workflows.
-
-- Conventional branch prefixes (`feat/`, `fix/`, `refactor/`, `docs/`, `chore/`, `test/`)
-- PR title conventions enforced by documentation
-- Automatic PR labeling based on branch prefixes
-- CODEOWNERS defined to clarify review boundaries
-- Separate CONTRIBUTING guides (EN / KO)
-
-These conventions are intentionally minimal and designed to scale
-without adding unnecessary complexity.
-
----
-
-## Authentication & Session Architecture
-
-This project uses **NextAuth v4 with a JWT-based session strategy**,
-designed for use with the **Next.js 14 App Router** and Edge Middleware.
-
-The authentication layer is intentionally separated into
-**configuration**, **domain logic**, and **runtime enforcement**.
-
-### Authentication Flow
-
-This flow is designed to minimize runtime coupling
-while keeping authentication enforcement centralized.
-
-1. User accesses a protected route.
-2. Edge Middleware validates authentication using a JWT
-   (no database or server session lookup).
-3. If unauthenticated, the request is redirected to `/login`.
-4. On successful login:
-   - Credentials are validated via `authorize`
-   - JWT is issued and stored as an HTTP-only cookie
-5. JWT becomes the single source of truth for authentication.
-6. Client-side session is derived from the JWT for UI consumption.
-
----
-
-### Key Design Decisions
-
-- **JWT Strategy (No Database Session)**
-- Authentication is enforced at the **middleware level**
-- `getToken()` is used for Edge-safe authentication checks
-- `access_token` and permission data are stored inside the JWT
-- UI layouts remain authentication-agnostic
-- The structure is compatible with future OAuth or role-based authorization
-
-### Why JWT + Session Facade?
-
-This project intentionally separates authentication concerns into
-**three layers**, instead of relying solely on NextAuth defaults.
-
-- **JWT (source of truth)**  
-  Used for stateless authentication and edge-safe authorization checks.
-
-- **NextAuth Session (UI projection)**  
-  A client-friendly abstraction derived from JWT, optimized for React usage.
-
-- **Session Facade (useCurrentSession + Zustand)**  
-  A domain-specific session layer that:
-  - normalizes session shape for UI
-  - supports LOCAL / REMOTE data scopes
-  - isolates session logic from pages and components
-
----
-
-## Fetcher Architecture
-
-This project intentionally abstracts all HTTP communication
-behind a unified `fetcher` interface.
-
-The goal is to decouple **UI logic** from **infrastructure decisions**
-(such as axios vs fetch, internal vs external APIs, or DB access patterns),
-allowing future backend architecture changes without refactoring UI code.
-
----
-
-### Fetcher Responsibilities
-
-The `fetcher` layer is divided by responsibility, not by implementation:
-
-- **fetcher.api**
-  - Client → Internal API (BFF)
-  - Used by feature-level API modules
-  - Hides whether the backend is local, remote, or proxied
-
-- **fetcher.db**
-  - Server-only fetcher for DB or internal service access
-  - Used exclusively inside `app/api` route handlers
-  - Adapts UI-friendly filter state into DB-compatible query formats
-
-- **fetcher.portal**
-  - Integration layer for legacy or internal portals
-
-- **fetcher.files**
-  - File upload / download abstraction
-
----
-
-### DB Fetcher Responsibility
-
-`fetcher.db` is responsible for adapting **UI-oriented filter state**
-(e.g. `RuleGroupTypeIC`) into **DB-compatible query formats**
-such as SQL query strings.
-
-This responsibility is intentionally limited to
-**protected, internal tools** (e.g. admin or portal features).
-
-For public-facing APIs, filters should be sent as
-structured DTOs and parsed server-side to avoid exposing
-query implementation details.
-
----
-
-The HTTP client implementation behind `fetcher.db`
-(e.g. axios, fetch, or others) is intentionally abstracted.
-
-This allows backend developers to choose or change
-infrastructure decisions later without affecting
-feature-level or UI code.
-
----
-
-## Project Structure (Simplified)
+The project uses a layered structure under [`src`](./src):
 
 ```txt
-app/
- ├─ (public)/
- │   └─ login/
- ├─ (protected)/
- │   ├─ demo/
- │   ├─ it-service-desk/
- │   └─ layout.tsx
- ├─ api/
- │   └─ auth/
- │       └─ [...nextauth]/route.ts
-
-auth/
- ├─ authorize.ts      # Credential validation & user normalization
- ├─ credentials.ts    # Login API abstraction
- ├─ session.ts        # JWT ↔ Session projection logic
- └─ index.ts
-
-lib/
- ├─ environment.ts
- ├─ routes.ts
- └─ sessionStore.ts   # Client-side session cache (Zustand)
-
-services/
- ├─ fetcher.ts
- ├─ credentials.ts
- └─ sessionStore.ts
-
-types/
- ├─ next-auth.d.ts
- ├─ session.ts
- └─ user.ts
-
-middleware.ts
-auth.config.ts
+src/
+  app/         # Next.js routes, layouts, protected/public pages
+  auth/        # NextAuth integration, authorize/session logic
+  components/  # Shared and custom UI components
+  domain/      # Service Desk domain models and rules
+  feature/     # Feature-level screens and workflows
+  lib/         # App-wide configuration and infrastructure helpers
+  server/      # Server-specific logic
+  shared/      # Reusable shared utilities and UI
+  types/       # Cross-cutting TypeScript types
 ```
 
-```text
+Some important top-level paths:
 
-domain                # Purely business
-api                   # Server communication
-feature               # Screen-level functionality
-components            # Shared UI
-server                # Server-specific logic
+- [`src/app`](./src/app): route structure for demo, settings, and protected pages
+- [`src/feature`](./src/feature): feature-level Service Desk flows
+- [`src/auth.config.ts`](./src/auth.config.ts): NextAuth configuration
+- [`src/middleware.ts`](./src/middleware.ts): middleware-based route protection
+- [`docs/en`](./docs/en/README.md): design and decision documentation
 
-auth/hooks/lib/types  # System/application-specific
+## Service Desk Design Themes
 
-```
+The system design consistently emphasizes:
 
-- Authentication logic is grouped under the `auth/` domain
-- JWT is treated as the authentication source of truth
-- Client session is intentionally derived and reshaped for UI usage
-- Middleware relies solely on JWT for Edge compatibility
+- Ticket lifecycle as a structured workflow, not just records
+- Category and settings as domain configuration
+- Approval, assignment, and SLA as first-class behaviors
+- Clear UI boundaries between overview, analysis, and editing flows
+- Traceability through history and impersonation-aware session design
 
----
+If you want the high-level design overview first, start here:
 
-## Environment & Configuration
+1. [`docs/en/README.md`](./docs/en/README.md)
+2. [`docs/en/02-architecture/feature-based-structure.md`](./docs/en/02-architecture/feature-based-structure.md)
+3. [`docs/en/03-domain/ticket/ticket-system-overview.md`](./docs/en/03-domain/ticket/ticket-system-overview.md)
+4. [`docs/en/03-domain/ticket/ticket-model.md`](./docs/en/03-domain/ticket/ticket-model.md)
+5. [`docs/en/03-domain/ticket/ticket-lifecycle.md`](./docs/en/03-domain/ticket/ticket-lifecycle.md)
+6. [`docs/en/08-dev-strategy/development-approach.md`](./docs/en/08-dev-strategy/development-approach.md)
+7. [`docs/en/08-dev-strategy/ticket-operation-rules.md`](./docs/en/08-dev-strategy/ticket-operation-rules.md)
 
-- Environment variables are managed using env-cmd.
-- .env-cmdrc Example
+## Authentication and Session
 
-```json
-{
-  "sandbox": {
-    "NEXTAUTH_URL": "http://localhost:3000",
-    "NEXTAUTH_SECRET": "local-secret",
-    "NEXT_PUBLIC_CONTEXT": "development"
-  },
-  "production": {
-    "NEXTAUTH_URL": "https://example.vercel.app",
-    "NEXTAUTH_SECRET": "prod-secret",
-    "NEXT_PUBLIC_CONTEXT": "production"
-  }
-}
-```
+Authentication is currently based on **NextAuth v4** with:
 
----
+- Credentials provider
+- JWT session strategy
+- Middleware-assisted route protection
+- Session-oriented impersonation design documented in architecture and decision logs
 
-## Getting Started
+The project treats authentication and session not as isolated login concerns,
+but as part of overall system behavior, especially for protected routes,
+role-aware UI, and impersonation.
 
-This project includes a demo authentication flow.
-Some user data and permissions are mocked for demonstration purposes.
+Related docs:
 
-```npm
+- [`docs/en/02-architecture/auth-session-strategy.md`](./docs/en/02-architecture/auth-session-strategy.md)
+- [`docs/en/02-architecture/impersonation-strategy.md`](./docs/en/02-architecture/impersonation-strategy.md)
+- [`docs/en/08-dev-strategy/decision-log/2025-12-impersonation.md`](./docs/en/08-dev-strategy/decision-log/2025-12-impersonation.md)
+- [`docs/en/08-dev-strategy/decision-log/2026-01-impersonation.md`](./docs/en/08-dev-strategy/decision-log/2026-01-impersonation.md)
+
+## Local Development
+
+Install dependencies and start the app:
+
+```bash
 npm install
 npm run dev
 ```
 
-- Open the application in your browser at:
+Useful scripts:
+
+```bash
+npm run dev
+npm run dev:clean
+npm run build
+npm run start
+npm run lint
+npm run storybook
+npm run build-storybook
+```
+
+Default local URL:
 
 ```txt
 http://localhost:3000
 ```
 
-_Optional_:
+## Environment
 
-> Demo credentials and impersonation flows are documented in the codebase.
+The repository includes both [`.env.local`](./.env.local) and [`.env-cmdrc`](./.env-cmdrc).
 
----
+Current environment-related values include:
 
-## Internationalization (i18n)
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `NEXT_PUBLIC_BASE_PATH`
+- API endpoint variables for DB / portal / node services
+- `NEXT_PUBLIC_CONTEXT`
 
-This project supports multiple languages at the application level,
-enabling a global-ready UI without coupling language logic to pages.
+## Documentation
 
-- English
-- Spanish
-- French
-- Korean
+The design documentation in [`docs/en`](./docs/en/README.md) is one of the main deliverables of this project.
 
-Language preferences are managed at the system level and can be extended easily.
+It covers:
 
----
+- Architecture
+- Domain design
+- UI/UX patterns
+- Data fetching strategy
+- Form design
+- i18n structure
+- Development philosophy and decision logs
+
+This means the repository is useful not only as code, but also as a written record
+of how the system was shaped.
+
+Recommended documentation entry points:
+
+- [Service Desk Spec](./docs/spec/ticket-system.md)
+- [Ticket Activity](./docs/en/03-domain/ticket/ticket-activity.md)
+- [Ticket History](./docs/en/03-domain/ticket/ticket-history.md)
 
 ## Notes
 
-- This project is a demo project for portfolio purposes.
-- Some APIs are based on mock/demo APIs.
-- The authentication structure is designed for practical use and supports future expansion to OAuth providers, role-based authorization, and database-backed sessions.
-
----
+- This is a portfolio/demo project, but it is intentionally structured like a real application.
+- Some areas still contain mock data or partial implementation details.
+- The codebase is actively being modernized around Next.js 14, reusable UI patterns, and clearer domain boundaries.
 
 ## Author
 
-**Sunghwan Jung**
+**Sunghwan Jung**  
 Frontend Developer (React / Next.js)
 
 - GitHub: <https://github.com/omega3jung>

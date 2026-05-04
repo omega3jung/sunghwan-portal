@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/utils";
+import { cn, initials } from "@/shared/utils/presentation";
 
 export const UserAvatar = ({
   item,

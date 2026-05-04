@@ -1,0 +1,124 @@
+{
+  "action": {
+    "add": "추가",
+    "back": "뒤로",
+    "cancel": "취소",
+    "close": "닫기",
+    "confirm": "확인",
+    "create": "생성",
+    "delete": "삭제",
+    "download": "다운로드",
+    "edit": "수정",
+    "filter": "필터",
+    "load": "불러오기",
+    "next": "다음",
+    "preview": "미리보기",
+    "reset": "초기화",
+    "retry": "다시 시도",
+    "save": "저장",
+    "search": "검색",
+    "submit": "제출",
+    "update": "수정",
+    "upload": "업로드",
+    "withItem": "{{item}} {{action}}"
+  },
+  "boolean": {
+    "no": "아니요",
+    "yes": "예"
+  },
+  "empty": {
+    "noResults": "검색 결과가 없습니다",
+    "withItem": "{{item}} 없음"
+  },
+  "placeholder": {
+    "enter": "{{target}} 입력",
+    "search": "{{target}} 검색",
+    "select": "{{target}} 선택"
+  },
+  "sort": {
+    "sort": "정렬",
+    "sortBy": "정렬 기준",
+    "asc": "오름차순",
+    "desc": "내림차순",
+    "latest": "최신순 정렬",
+    "oldest": "오래된순 정렬"
+  },
+  "field": {
+    "age": "나이",
+    "agent": "에이전트",
+    "assignee": "담당자",
+    "category": "카테고리",
+    "comment": "코멘트",
+    "contact": "연락처",
+    "createdAt": "생성일",
+    "date": "날짜",
+    "department": "부서",
+    "description": "설명",
+    "details": "상세 내용",
+    "dueBy": "기한",
+    "dueAt": "완료 기한",
+    "duration": "소요 시간",
+    "email": "이메일",
+    "emailTo": "받는 사람",
+    "emailCc": "참조",
+    "emailBcc": "숨은 참조",
+    "endDate": "종료일",
+    "endTime": "종료 시간",
+    "history": "이력",
+    "location": "위치",
+    "name": "이름",
+    "note": "메모",
+    "owner": "소유자",
+    "password": "비밀번호",
+    "period": "기간",
+    "phone": "전화번호",
+    "priority": "우선순위",
+    "requester": "요청자",
+    "startDate": "시작일",
+    "startTime": "시작 시간",
+    "status": "상태",
+    "step": "단계",
+    "subject": "제목",
+    "type": "유형",
+    "updatedAt": "수정일",
+    "ticket": "티켓",
+    "ticketNumber": "티켓 번호",
+    "riskLevel": "위험도",
+    "list": "목록"
+  },
+  "pagination": {
+    "first": "처음",
+    "last": "마지막",
+    "next": "다음",
+    "page": "{{page}}페이지",
+    "previous": "이전"
+  },
+  "table": {
+    "loading": "로딩 중...",
+    "noData": "데이터가 없습니다",
+    "rowsPerPage": "페이지당 행 수",
+    "selected": "{{count}}개 선택됨",
+    "total": "총 {{count}}개 항목"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "굵게",
+      "italic": "기울임꼴",
+      "underline": "밑줄",
+      "strike": "취소선",
+      "bulletList": "글머리 기호 목록",
+      "numberedList": "번호 목록",
+      "quote": "인용",
+      "codeBlock": "코드 블록",
+      "link": "링크",
+      "image": "이미지",
+      "table": "표",
+      "undo": "실행 취소",
+      "redo": "다시 실행"
+    },
+    "prompt": {
+      "link": "URL을 입력하세요",
+      "image": "이미지 URL을 입력하세요"
+    }
+  }
+}

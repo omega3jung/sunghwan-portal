@@ -8,27 +8,46 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/i18n";
 
-import { verifyOTPFormSchema, VerifyOTPFormType } from "../types";
+import { DEMO_OTP_CODE, OTP_DURATION_SECONDS } from "../constants";
+import {
+  ResetPasswordStep,
+  verifyOtpFormSchema,
+  VerifyOtpFormValues,
+} from "../types";
 
-type Props = {
+type ResetPasswordFormProps = {
   isLoading: boolean;
-  onSubmit: (values: VerifyOTPFormType) => Promise<void>;
+  onSubmit: (values: VerifyOtpFormValues) => Promise<void>;
   onBack: VoidFunction;
 };
 
-type Step = "email" | "otp";
+const formatRemainingTime = (
+  remainingSeconds: number | null,
+  timeoutLabel: string,
+) => {
+  if (remainingSeconds === null || remainingSeconds <= 0) {
+    return timeoutLabel;
+  }
 
-export const ResetPasswordForm = (props: Props) => {
-  const { t } = useTranslation("login");
-  const { onSubmit, isLoading, onBack } = props;
+  const minutes = Math.floor(remainingSeconds / 60);
+  const seconds = remainingSeconds % 60;
 
-  const [step, setStep] = useState<Step>("email");
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
 
-  const [remainTime, setRemainTime] = useState<number | null>(null);
+export const ResetPasswordForm = ({
+  onSubmit,
+  isLoading,
+  onBack,
+}: ResetPasswordFormProps) => {
+  const { t } = useTranslation(NS.auth);
+  const [step, setStep] = useState<ResetPasswordStep>("email");
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
 
-  const form = useForm<VerifyOTPFormType>({
-    resolver: zodResolver(verifyOTPFormSchema),
+  const form = useForm<VerifyOtpFormValues>({
+    resolver: zodResolver(verifyOtpFormSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -36,67 +55,60 @@ export const ResetPasswordForm = (props: Props) => {
     },
   });
 
-  const onSendOTP = async () => {
+  const isOtpStep = step === "otp";
+  const otpPlaceholder = useMemo(
+    () => formatRemainingTime(remainingSeconds, "0:00"),
+    [remainingSeconds],
+  );
+
+  const handleSendOtp = async () => {
     const isValid = await form.trigger(["username", "email"]);
-    if (!isValid) return;
 
-    // set remain time as 3 mins.
-    setRemainTime(180);
-
-    // TODO : send OTP.
-
-    // check resend.
-    const isResend = step === "otp";
-
-    // mark as sent OTP request.
-    if (step === "email") {
-      setStep("otp");
+    if (!isValid) {
+      return;
     }
 
-    toast(isResend ? t("otp.resent") : t("otp.sent"), {
-      //description: "Input OTP in email within 3 mins.",
-      description: "Input 123456 within 3 mins.",
-    });
+    setRemainingSeconds(OTP_DURATION_SECONDS);
+    setStep("otp");
+
+    toast(
+      isOtpStep ? t("resetPassword.otpResend") : t("resetPassword.otpSend"),
+      {
+        description: t("otp.sent", {
+          ns: NS.message,
+          code: DEMO_OTP_CODE,
+          minutes: 3,
+        }),
+      },
+    );
   };
 
-  // display time limit.
-  const timeLimit = useMemo(() => {
-    if (remainTime === null || remainTime <= 0) {
-      return t("otp.timeout");
+  useEffect(() => {
+    if (remainingSeconds === null || remainingSeconds <= 0) {
+      return;
     }
 
-    const min = Math.floor(remainTime / 60);
-    const sec = remainTime % 60;
-
-    return `${min}:${sec.toString().padStart(2, "0")}`;
-  }, [remainTime, t]);
-
-  // update time limit.
-  useEffect(() => {
-    if (remainTime === null) return;
-    if (remainTime <= 0) return;
-
-    const timer = setInterval(() => {
-      setRemainTime((prev) => {
-        if (!prev || prev <= 1) {
-          clearInterval(timer);
+    const timer = window.setTimeout(() => {
+      setRemainingSeconds((current) => {
+        if (!current || current <= 1) {
           return 0;
         }
-        return prev - 1;
+
+        return current - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [remainTime]);
+    return () => window.clearTimeout(timer);
+  }, [remainingSeconds]);
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2">
       <div className="pb-2">
         <p className="mb-1 text-center text-4xl font-normal leading-[48px]">
-          {t("resetPasswordForm.title")}
+          {t("resetPassword.title")}
         </p>
         <p className="text-center text-md leading-5 text-primary">
-          {t("resetPasswordForm.message")}
+          {t("resetPassword.message")}
         </p>
       </div>
       <form
@@ -113,7 +125,7 @@ export const ResetPasswordForm = (props: Props) => {
                 <Input
                   id="reset-input-userid"
                   data-testid="reset-password-userid"
-                  disabled={isLoading || step === "otp"}
+                  disabled={isLoading || isOtpStep}
                   placeholder={t("common.usernamePlaceholder")}
                   required
                   {...form.register("username")}
@@ -121,13 +133,14 @@ export const ResetPasswordForm = (props: Props) => {
               </Field>
               <Field>
                 <FieldLabel htmlFor="reset-input-email">
-                  {t("resetPasswordForm.email")}
+                  {t("resetPassword.email")}
                 </FieldLabel>
                 <Input
                   id="reset-input-email"
                   data-testid="reset-password-email"
-                  disabled={isLoading || step === "otp"}
-                  placeholder={t("resetPasswordForm.emailPlaceholder")}
+                  disabled={isLoading || isOtpStep}
+                  placeholder={t("resetPassword.emailPlaceholder")}
+                  type="email"
                   required
                   {...form.register("email")}
                 />
@@ -135,45 +148,43 @@ export const ResetPasswordForm = (props: Props) => {
             </FieldGroup>
             <Field>
               <Button
-                className="h-12 rounded-lg text-base font-normal md:w-full"
+                className="h-12 text-base font-normal md:w-full"
                 type="button"
                 disabled={isLoading}
                 data-testid="send-otp"
-                onClick={onSendOTP}
+                onClick={handleSendOtp}
               >
-                {step === "otp"
-                  ? t("resetPasswordForm.otpResend")
-                  : t("resetPasswordForm.otpSend")}
+                {isOtpStep
+                  ? t("resetPassword.otpResend")
+                  : t("resetPassword.otpSend")}
                 {isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
             </Field>
           </FieldSet>
 
-          {step === "otp" && (
+          {isOtpStep && (
             <FieldSet>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="reset-input-otp">
-                    {t("resetPasswordForm.otp")}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="reset-input-otp">OTP</FieldLabel>
                   <Input
                     id="reset-input-otp"
                     data-testid="reset-password-otp"
                     {...form.register("otp")}
-                    placeholder={timeLimit}
-                    maxLength={6}
+                    placeholder={otpPlaceholder}
+                    maxLength={DEMO_OTP_CODE.length}
                   />
                 </Field>
               </FieldGroup>
 
               <Field>
                 <Button
-                  className="h-12 rounded-lg text-base font-normal md:w-full"
+                  className="h-12 text-base font-normal md:w-full"
                   type="submit"
                   disabled={isLoading}
                   data-testid="reset-password-submit"
                 >
-                  {t("submit")}
+                  {t("common.submit")}
                   {isLoading && (
                     <Loader2 className="ml-2 h-5 w-5 animate-spin" />
                   )}
@@ -185,9 +196,9 @@ export const ResetPasswordForm = (props: Props) => {
       </form>
 
       <Button
-        className="mt-6 h-12 rounded-lg text-base font-normal md:w-full"
+        className="mt-6 h-12 text-base font-normal md:w-full"
         type="button"
-        variant={"outline"}
+        variant="outline"
         disabled={isLoading}
         data-testid="reset-open"
         onClick={onBack}

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createSettingsNavigationMock } from "@/app/_mocks/pages/it-service-desk/settingsNavigation";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -15,16 +14,18 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { useFetchUserPreference } from "@/feature/user";
-import { cn } from "@/utils";
+import { useUserPreferenceQuery } from "@/feature/user/preference/client";
+import { NS } from "@/lib/i18n";
+import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
+import { cn } from "@/shared/utils/presentation";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 
 export function SettingsNavigation() {
-  const { data: userPreference } = useFetchUserPreference(null);
+  const { data: userPreference } = useUserPreferenceQuery(null);
   const lang = userPreference?.language ?? "en";
 
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation(NS.settings);
   const settingsNavigationItems = createSettingsNavigationMock(t);
 
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { SessionContextValue } from "next-auth/react";
 
 import { CurrentSession } from "@/domain/auth";
-import { SessionPatch } from "@/lib/sessionStore";
+import { SessionPatch } from "@/lib/authSessionStore";
 
 export type UseCurrentSessionResult = Omit<SessionContextValue, "update"> & {
   current: CurrentSession;

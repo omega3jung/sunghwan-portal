@@ -153,31 +153,36 @@ export const triggerIndexVariant = cva("group-hover:text-white", {
   ],
 });
 
-export const connectorVariant = cva("transition-colors", {
+export const connectorVariant = cva("shrink-0 transition-colors", {
   variants: {
     orientation: {
-      vertical: "w-px h-8",
-      horizontal: "flex-1 h-px mx-2",
+      vertical: "h-8 w-0 border-l",
+      horizontal: "mx-2 h-0 min-w-4 flex-1 border-t",
     },
     isCompleted: {
       true: "",
-      false: "bg-border",
+      false: "border-border",
     },
     color: {
       primary: "",
       secondary: "",
+    },
+    style: {
+      solid: "border-solid",
+      dashed: "border-dashed",
+      dotted: "border-dotted",
     },
   },
   compoundVariants: [
     {
       isCompleted: true,
       color: "primary",
-      className: "bg-primary",
+      className: "border-primary",
     },
     {
       isCompleted: true,
       color: "secondary",
-      className: "bg-secondary",
+      className: "border-secondary",
     },
   ],
 });

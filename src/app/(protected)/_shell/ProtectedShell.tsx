@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
 import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { Button } from "@/components/ui/button";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { withLeadingSlash } from "@/utils";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { withLeadingSlash } from "@/shared/utils/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
@@ -70,7 +70,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
             onClick={() =>
               window.open(
                 "https://github.com/omega3jung/sunghwan-portal",
-                "_blank"
+                "_blank",
               )
             }
           >

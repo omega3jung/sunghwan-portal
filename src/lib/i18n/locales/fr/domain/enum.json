@@ -1,0 +1,61 @@
+{
+  "accessLevel": {
+    "label": "Niveau d'accès",
+    "options": {
+      "admin": "Administrateur",
+      "manager": "Gestionnaire",
+      "leader": "Responsable",
+      "user": "Utilisateur",
+      "guest": "Invité"
+    }
+  },
+
+  "priority": {
+    "label": "Priorité",
+    "options": {
+      "urgent": "Urgent",
+      "high": "Haute",
+      "medium": "Moyenne",
+      "low": "Basse"
+    }
+  },
+  "riskLevel": {
+    "label": "Niveau de risque",
+    "options": {
+      "critical": "Critique",
+      "high": "Élevé",
+      "medium": "Moyen",
+      "low": "Faible"
+    }
+  },
+
+  "period": {
+    "label": "Période",
+    "options": {
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine",
+      "this2Week": "Ces 2 semaines",
+      "thisMonth": "Ce mois-ci",
+      "lastWeek": "Semaine dernière",
+      "last2Week": "2 dernières semaines",
+      "lastMonth": "Mois dernier",
+      "custom": "Personnalisé"
+    }
+  },
+
+  "dueAt": {
+    "label": "Date d'échéance",
+    "options": {
+      "all": "Tous",
+      "overDue": "En retard",
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine",
+      "this2Week": "Ces 2 semaines",
+      "thisMonth": "Ce mois-ci",
+      "withinWeek": "Sous une semaine",
+      "within2Week": "Sous 2 semaines",
+      "withinMonth": "Sous un mois",
+      "custom": "Personnalisé"
+    }
+  }
+}

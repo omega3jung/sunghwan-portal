@@ -17,6 +17,7 @@ export type ComboBoxProps = {
   onChange?: (value: string) => void;
   value?: string;
   defaultValue?: string;
+  modal?: boolean;
 };
 
 type PartialButtonProps = Omit<

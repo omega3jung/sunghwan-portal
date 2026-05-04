@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 
-import { avatarComboMock } from "@/app/_mocks/pages/demo/avatar-multi-combo-box";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
 import { Input } from "@/components/ui/input";
+import { avatarComboMock } from "@/mocks/ui/demo/avatar-multi-combo-box";
 
 export default function AvatarMultiComboBoxPage() {
   const [userValue, setUserValue] = useState<string[]>([]);
   const [maxCount, setMaxCount] = useState<number>(2);
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex">
-        <h4 className="p-2">Max Count</h4>
+    <div className="flex flex-col gap-10 p-4">
+      <div className="flex items-center gap-2">
+        <h4>Max Count</h4>
         <Input
           className="w-20"
           value={maxCount}
@@ -23,7 +23,7 @@ export default function AvatarMultiComboBoxPage() {
         />
       </div>
       <div>
-        <h4 className="p-2">Avatar Multi Combo Box</h4>
+        <h4 className="py-2">Avatar Multi Combo Box</h4>
 
         <AvatarMultiComboBox
           options={avatarComboMock}
@@ -42,10 +42,10 @@ export default function AvatarMultiComboBoxPage() {
           onRemove={(e) => {
             const currentValue = [...userValue];
 
-            const currentValueindex = currentValue.indexOf(e);
+            const currentValueIndex = currentValue.indexOf(e);
 
-            if (currentValueindex > -1) {
-              currentValue.splice(currentValueindex, 1);
+            if (currentValueIndex > -1) {
+              currentValue.splice(currentValueIndex, 1);
               setUserValue(currentValue);
             } else {
               return;

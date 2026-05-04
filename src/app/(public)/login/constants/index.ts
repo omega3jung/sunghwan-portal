@@ -1,3 +1,4 @@
 // src/app/(public)/login/constants/index.ts
 
-export * from "./error";
+export * from "./loginError";
+export * from "./otp";

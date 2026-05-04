@@ -1,0 +1,29 @@
+{
+  "required": {
+    "default": "이 필드는 필수입니다.",
+    "withField": "{{field}}은(는) 필수입니다."
+  },
+  "length": {
+    "min": "최소 {{count}}자 이상이어야 합니다.",
+    "minWithField": "{{field}}은(는) 최소 {{count}}자 이상이어야 합니다.",
+    "max": "최대 {{count}}자 이하여야 합니다.",
+    "maxWithField": "{{field}}은(는) 최대 {{count}}자 이하여야 합니다."
+  },
+  "format": {
+    "invalid": "형식이 올바르지 않습니다.",
+    "invalidWithField": "{{field}} 형식이 올바르지 않습니다."
+  },
+  "number": {
+    "invalid": "숫자여야 합니다.",
+    "invalidWithField": "{{field}}은(는) 숫자여야 합니다.",
+    "integer": "정수여야 합니다.",
+    "integerWithField": "{{field}}은(는) 정수여야 합니다.",
+    "positive": "0보다 커야 합니다.",
+    "positiveWithField": "{{field}}은(는) 0보다 커야 합니다."
+  },
+  "date": {
+    "invalid": "유효한 날짜여야 합니다.",
+    "invalidWithField": "{{field}}은(는) 유효한 날짜여야 합니다.",
+    "afterWithField": "{{field}}은(는) {{target}} 이후여야 합니다."
+  }
+}

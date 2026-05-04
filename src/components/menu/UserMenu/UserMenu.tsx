@@ -25,9 +25,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { useCurrentSession } from "@/hooks/useCurrentSession";
-import { useImpersonation } from "@/hooks/useImpersonation";
-import { cn, initials } from "@/utils";
+import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
+import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { cn, initials } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
@@ -35,8 +35,9 @@ import { DemoUserSwitch } from "./DemoUserSwitch";
 export function UserMenu() {
   const { current } = useCurrentSession();
   const {
-    actor,
-    subject,
+    originalUser,
+    impersonatedUser,
+    currentUser,
     isImpersonating,
     startImpersonation,
     stopImpersonation,
@@ -46,23 +47,25 @@ export function UserMenu() {
   const { t } = useTranslation("UserMenu");
 
   const isDemo = current.isDemoUser;
+  const visibleUser = currentUser ?? current.user;
+  const displayedOriginalUser = originalUser ?? visibleUser;
 
   const canDemoImpersonate = useMemo(() => {
     if (!isDemo) return false;
-    if (!actor || subject) return false;
-    if (actor.userScope === "TENANT") return false;
-    return actor.permission >= ACCESS_LEVEL.ADMIN;
-  }, [actor, isDemo, subject]);
+    if (!originalUser || impersonatedUser) return false;
+    if (originalUser.userScope === "CLIENT") return false;
+    return originalUser.permission >= ACCESS_LEVEL.ADMIN;
+  }, [impersonatedUser, isDemo, originalUser]);
 
   const canImpersonate = useMemo(() => {
     if (isDemo) return false;
-    if (!actor || subject) return false;
-    return actor?.canUseImpersonation === true;
-  }, [actor, isDemo, subject]);
+    if (!originalUser || impersonatedUser) return false;
+    return originalUser.canUseImpersonation === true;
+  }, [impersonatedUser, isDemo, originalUser]);
 
-  const hasSubject = useMemo<boolean>(
-    () => isImpersonating && !!subject,
-    [isImpersonating, subject],
+  const hasImpersonatedUser = useMemo<boolean>(
+    () => isImpersonating && !!impersonatedUser,
+    [impersonatedUser, isImpersonating],
   );
 
   const onUserSwitch = async (profile: AppUser) => {
@@ -114,27 +117,27 @@ export function UserMenu() {
   };
 
   const renderImpersonationAvatar = (
-    actor: AppUser | null,
-    subject: AppUser | null,
+    originalUser: AppUser | null,
+    impersonatedUser: AppUser | null,
   ) => {
-    if (!actor || !subject) return null;
+    if (!originalUser || !impersonatedUser) return null;
 
     return (
       <div className="relative w-14 h-10">
-        {/* actor */}
+        {/* original user */}
         <div className="absolute left-0 top-0">
-          {renderUserAvatar(actor, { muted: true })}
+          {renderUserAvatar(originalUser, { muted: true })}
         </div>
 
-        {/* subject */}
+        {/* impersonated user */}
         <div className="absolute left-4 top-0 z-10">
-          {renderUserAvatar(subject)}
+          {renderUserAvatar(impersonatedUser)}
         </div>
       </div>
     );
   };
 
-  if (!current.user) {
+  if (!visibleUser) {
     return <Skeleton className="w-10 h-10 rounded-full" />;
   }
 
@@ -142,21 +145,21 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="w-20">
-          {hasSubject
-            ? renderImpersonationAvatar(actor, subject)
-            : renderUserAvatar(actor)}
+          {hasImpersonatedUser
+            ? renderImpersonationAvatar(originalUser, impersonatedUser)
+            : renderUserAvatar(visibleUser)}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-2 mt-2 mr-1" align="start">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex gap-2">
-            {renderUserAvatar(actor, {
-              muted: hasSubject,
+            {renderUserAvatar(displayedOriginalUser, {
+              muted: hasImpersonatedUser,
             })}
             <div className="flex flex-col">
-              <span>{actor?.displayName}</span>
+              <span>{displayedOriginalUser?.displayName}</span>
               <span className="text-muted-foreground font-normal">
-                {actor?.email}
+                {displayedOriginalUser?.email}
               </span>
             </div>
           </DropdownMenuLabel>
@@ -178,7 +181,7 @@ export function UserMenu() {
           {isDemo && (
             <DropdownMenuGroup>
               <DemoUserSwitch
-                user={current.user}
+                user={visibleUser}
                 disabled={isImpersonating}
                 onDemoUserSwitch={onUserSwitch}
               />
@@ -192,14 +195,14 @@ export function UserMenu() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
-        {hasSubject && subject && (
+        {hasImpersonatedUser && impersonatedUser && (
           <DropdownMenuGroup>
             <DropdownMenuLabel className="flex gap-2">
-              {renderUserAvatar(subject)}
+              {renderUserAvatar(impersonatedUser)}
               <div className="flex flex-col">
-                <span>{subject.displayName}</span>
+                <span>{impersonatedUser.displayName}</span>
                 <span className="text-muted-foreground font-normal">
-                  {subject.email}
+                  {impersonatedUser.email}
                 </span>
               </div>
             </DropdownMenuLabel>
@@ -208,7 +211,7 @@ export function UserMenu() {
 
             {canDemoImpersonate && (
               <DemoImpersonation
-                user={current.user}
+                user={visibleUser}
                 onDemoImpersonate={startImpersonation}
               />
             )}
@@ -220,14 +223,14 @@ export function UserMenu() {
           </DropdownMenuGroup>
         )}
 
-        {!hasSubject && canDemoImpersonate && (
+        {!hasImpersonatedUser && canDemoImpersonate && (
           <DemoImpersonation
-            user={current.user}
+            user={visibleUser}
             onDemoImpersonate={startImpersonation}
           />
         )}
 
-        {!hasSubject && canImpersonate && (
+        {!hasImpersonatedUser && canImpersonate && (
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <UserRoundPlus />

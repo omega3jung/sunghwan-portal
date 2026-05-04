@@ -2,10 +2,12 @@
 
 import { Separator } from "@radix-ui/react-select";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { ReactNode } from "react";
 
+import { authOptions } from "@/auth.config";
 import { ACCESS_LEVEL } from "@/domain/auth";
-import { getEffectiveUser } from "@/server/user";
+import { getCurrentAppUser } from "@/server/auth/getCurrentAppUser";
 
 import { SettingsNavigation } from "./components";
 import { SettingsScopeProvider } from "./SettingsScopeProvider";
@@ -15,12 +17,14 @@ export default async function SettingsLayout({
 }: {
   children: ReactNode;
 }) {
-  const session = await getEffectiveUser();
+  const session = await getServerSession(authOptions);
+  const currentUser = await getCurrentAppUser();
 
   // check session one more.
-  if (!session) redirect("/login");
+  if (!session?.user || !currentUser) redirect("/login");
 
-  const { dataScope, userScope, permission } = session;
+  const { userScope, permission } = currentUser;
+  const { dataScope } = session.user;
 
   // forbidden only when access to settings itself is not possible.
   if (permission < ACCESS_LEVEL.ADMIN) {

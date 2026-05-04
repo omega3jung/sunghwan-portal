@@ -1,0 +1,124 @@
+{
+  "action": {
+    "add": "Add",
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "create": "Create",
+    "delete": "Delete",
+    "download": "Download",
+    "edit": "Edit",
+    "filter": "Filter",
+    "load": "Load",
+    "next": "Next",
+    "preview": "Preview",
+    "reset": "Reset",
+    "retry": "Retry",
+    "save": "Save",
+    "search": "Search",
+    "submit": "Submit",
+    "update": "Update",
+    "upload": "Upload",
+    "withItem": "{{action}} {{item}}"
+  },
+  "boolean": {
+    "no": "No",
+    "yes": "Yes"
+  },
+  "empty": {
+    "noResults": "No results",
+    "withItem": "No {{item}}"
+  },
+  "field": {
+    "age": "Age",
+    "agent": "Agent",
+    "assignee": "Assignee",
+    "category": "Category",
+    "comment": "Comment",
+    "contact": "Contact",
+    "createdAt": "Created at",
+    "date": "Date",
+    "department": "Department",
+    "description": "Description",
+    "details": "Details",
+    "dueBy": "Due by",
+    "dueAt": "Due Date",
+    "duration": "Duration",
+    "email": "Email",
+    "emailBcc": "BCC",
+    "emailCc": "CC",
+    "emailTo": "To",
+    "endDate": "End Date",
+    "endTime": "End time",
+    "history": "History",
+    "list": "List",
+    "location": "Location",
+    "name": "Name",
+    "note": "Note",
+    "owner": "Owner",
+    "password": "Password",
+    "period": "Period",
+    "phone": "Phone",
+    "priority": "Priority",
+    "requester": "Requester",
+    "riskLevel": "Risk level",
+    "startDate": "Start date",
+    "startTime": "Start time",
+    "status": "Status",
+    "step": "Step",
+    "subject": "Subject",
+    "ticket": "Ticket",
+    "ticketNumber": "Ticket No.",
+    "type": "Type",
+    "updatedAt": "Updated at"
+  },
+  "pagination": {
+    "first": "First",
+    "last": "Last",
+    "next": "Next",
+    "page": "Page {{page}}",
+    "previous": "Previous"
+  },
+  "placeholder": {
+    "enter": "Enter {{target}}",
+    "search": "Search {{target}}",
+    "select": "Select {{target}}"
+  },
+  "sort": {
+    "sort": "Sort",
+    "sortBy": "Sort by",
+    "asc": "Ascending",
+    "desc": "Descending",
+    "latest": "Sort by latest",
+    "oldest": "Sort by oldest"
+  },
+  "table": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "rowsPerPage": "Rows per page",
+    "selected": "{{count}} selected",
+    "total": "Total {{count}} items"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strike",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "quote": "Quote",
+      "codeBlock": "Code block",
+      "link": "Link",
+      "image": "Image",
+      "table": "Table",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "prompt": {
+      "link": "Enter a URL",
+      "image": "Enter an image URL"
+    }
+  }
+}

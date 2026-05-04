@@ -5,6 +5,7 @@ export interface CurrentSession {
   expires: string;
   isDemoUser: boolean;
   isSuperUser: boolean;
+  isClient: boolean;
   superUserActivated: Date | null;
 
   // Security-related information for public sessions.

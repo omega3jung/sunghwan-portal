@@ -1,15 +1,25 @@
 // src/lib/i18n/locales/en/index.ts
 
+import auth from "./auth.json";
+import common from "./common.json";
+import dashboard from "./dashboard.json";
 import demo from "./demo.json";
-import home from "./home.json";
-import login from "./login.json";
+import domain from "./domain";
+import error from "./error.json";
+import message from "./message.json";
+import serviceDesk from "./serviceDesk.json";
 import settings from "./settings.json";
-import unsupportedBrowser from "./unsupportedBrowser.json";
+import validation from "./validation.json";
 
 export const en = {
   demo,
-  login,
-  home,
+  auth,
+  dashboard,
   settings,
-  unsupportedBrowser,
+  error,
+  validation,
+  message,
+  domain,
+  common,
+  serviceDesk,
 };

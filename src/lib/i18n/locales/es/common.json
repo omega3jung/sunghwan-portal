@@ -1,0 +1,124 @@
+{
+  "action": {
+    "add": "Agregar",
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "edit": "Editar",
+    "filter": "Filtrar",
+    "load": "Cargar",
+    "next": "Siguiente",
+    "preview": "Vista previa",
+    "reset": "Restablecer",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "search": "Buscar",
+    "submit": "Enviar",
+    "update": "Actualizar",
+    "upload": "Subir",
+    "withItem": "{{action}} {{item}}"
+  },
+  "boolean": {
+    "no": "No",
+    "yes": "Sí"
+  },
+  "empty": {
+    "noResults": "Sin resultados",
+    "withItem": "Sin {{item}}"
+  },
+  "placeholder": {
+    "enter": "Ingresa {{target}}",
+    "search": "Buscar {{target}}",
+    "select": "Selecciona {{target}}"
+  },
+  "sort": {
+    "sort": "Ordenar",
+    "sortBy": "Ordenar por",
+    "asc": "Ascendente",
+    "desc": "Descendente",
+    "latest": "Ordenar por más recientes",
+    "oldest": "Ordenar por más antiguos"
+  },
+  "field": {
+    "age": "Edad",
+    "agent": "Agente",
+    "assignee": "Responsable",
+    "category": "Categoría",
+    "comment": "Comentario",
+    "contact": "Contacto",
+    "createdAt": "Creado el",
+    "date": "Fecha",
+    "department": "Departamento",
+    "description": "Descripción",
+    "details": "Detalles",
+    "dueBy": "Fecha límite",
+    "dueAt": "Fecha límite",
+    "duration": "Duración",
+    "email": "Correo electrónico",
+    "emailTo": "Para",
+    "emailCc": "CC",
+    "emailBcc": "BCC",
+    "endDate": "Fecha de finalización",
+    "endTime": "Hora de finalización",
+    "history": "Historial",
+    "location": "Ubicación",
+    "name": "Nombre",
+    "note": "Nota",
+    "owner": "Propietario",
+    "password": "Contraseña",
+    "period": "Período",
+    "phone": "Teléfono",
+    "priority": "Prioridad",
+    "requester": "Solicitante",
+    "startDate": "Fecha de inicio",
+    "startTime": "Hora de inicio",
+    "status": "Estado",
+    "step": "Paso",
+    "subject": "Asunto",
+    "type": "Tipo",
+    "updatedAt": "Actualizado el",
+    "ticket": "Ticket",
+    "ticketNumber": "Número de ticket",
+    "riskLevel": "Nivel de riesgo",
+    "list": "Lista"
+  },
+  "pagination": {
+    "first": "Primera",
+    "last": "Última",
+    "next": "Siguiente",
+    "page": "Página {{page}}",
+    "previous": "Anterior"
+  },
+  "table": {
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "rowsPerPage": "Filas por página",
+    "selected": "{{count}} seleccionados",
+    "total": "{{count}} elementos en total"
+  },
+  "richEditor": {
+    "toolbar": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "bulletList": "Lista con viñetas",
+      "numberedList": "Lista numerada",
+      "quote": "Cita",
+      "codeBlock": "Bloque de código",
+      "link": "Enlace",
+      "image": "Imagen",
+      "table": "Tabla",
+      "undo": "Deshacer",
+      "redo": "Rehacer"
+    },
+    "prompt": {
+      "link": "Introduce una URL",
+      "image": "Introduce la URL de una imagen"
+    }
+  }
+}

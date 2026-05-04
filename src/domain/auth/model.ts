@@ -6,6 +6,7 @@ import { DataScope, UserScope } from "./types";
 // properties are required info only.
 export interface AuthUser {
   id: string; // uuid
+  employeeId: number | null; // employee domain id
   username: string; // user account
   displayName: string; // user name
   email: string;
@@ -13,13 +14,14 @@ export interface AuthUser {
 
   dataScope: DataScope; // 🔐 server-trusted
   userScope: UserScope; // 🔐 server-trusted
-  tenantId: string | null; // 🔐 server-trusted
+  companyId: string; // 🔐 server-trusted
   permission: AccessLevel; // permission represents user's access level (not feature permissions)
   role: Role; // 🔐 server-trusted
 }
 
-// Impersonation User type.
-export type ActingUser = {
-  actor: AppUser; // The actual logged-in user
-  subject: AppUser | null; // The impersonated user (optional)
+// UI-facing impersonation identities.
+export type ImpersonationUsers = {
+  originalUser: AppUser;
+  impersonatedUser: AppUser | null;
+  currentUser: AppUser;
 };

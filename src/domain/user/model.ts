@@ -10,7 +10,7 @@ export interface AppUser {
   image?: string;
 
   userScope: UserScope;
-  tenantId: string | null;
+  companyId: string;
 
   permission: AccessLevel;
   role: Role | null;

@@ -9,7 +9,7 @@ export interface JobField {
 
   // organization
   departmentId: string;
-  parentId: string | null; // parent field id.
+  parentId?: string; // parent field id.
 
   // system
   active: boolean;
