@@ -13,6 +13,8 @@ with a strong focus on domain structure, operational workflows, and documented d
 
 ## Overview
 
+**Live Demo**: [sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
+
 The project centers on a Service Desk domain with:
 
 - Category-driven ticket workflow
