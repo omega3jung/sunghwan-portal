@@ -448,8 +448,8 @@ export default function ServiceDeskInsightsPage() {
   const chartCardMode = chartViewMode === "compact" ? "compact" : "full";
   const chartGridClassName =
     chartViewMode === "compact"
-      ? "grid gap-3 md:grid-cols-3 xl:grid-cols-5"
-      : "grid gap-3 md:grid-cols-2 xl:grid-cols-3";
+      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+      : "grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3";
   const totalTicketCount = tickets.length;
   const filteredTicketCount = filteredTickets.length;
   const chartBaseDescription = t("insights.currentInsightSummary", {
@@ -469,20 +469,20 @@ export default function ServiceDeskInsightsPage() {
       });
 
   return (
-    <main className="flex h-full min-h-0 flex-col gap-3 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
+    <main className="flex h-full min-h-0 flex-col gap-3 overflow-x-hidden p-3 sm:p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold">{t("insights.title")}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground sm:max-w-prose">
             {t("insights.description")}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>
-                {t(`viewOption.${scope}`)}
+              <Button className="min-w-28 flex-1 sm:flex-none">
+                <span className="truncate">{t(`viewOption.${scope}`)}</span>
                 <ChevronDown className="transition-transform" />
               </Button>
             </DropdownMenuTrigger>
@@ -506,8 +506,16 @@ export default function ServiceDeskInsightsPage() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <Button
+            className="h-9.5 shrink-0 px-2.5"
+            variant="softPrimary"
+            onClick={() => refetchTickets()}
+          >
+            <RefreshCw />
+          </Button>
+
           <DateRangePicker
-            className="w-72 h-9.5"
+            className="h-9.5 w-full min-w-0 sm:w-72"
             period={currentPeriodType}
             onPeriodChange={(selected) => {
               const nextType = selected ?? currentPeriodType;
@@ -536,20 +544,17 @@ export default function ServiceDeskInsightsPage() {
             options={TICKET_PERIOD_OPTIONS}
           />
 
-          <Button
-            className="p-2.5"
-            variant="softPrimary"
-            onClick={() => refetchTickets()}
-          >
-            <RefreshCw />
-          </Button>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="border-border">
+              <Button
+                variant="outline"
+                className="w-full min-w-0 justify-between border-border sm:w-auto sm:justify-center"
+              >
                 <BarChart3 className="h-4 w-4" />
-                {t("insights.chartView.label")}:{" "}
-                {t(`insights.chartView.${chartViewMode}`)}
+                <span className="truncate">
+                  {t("insights.chartView.label")}:{" "}
+                  {t(`insights.chartView.${chartViewMode}`)}
+                </span>
                 <ChevronDown className="transition-transform" />
               </Button>
             </DropdownMenuTrigger>
@@ -577,14 +582,16 @@ export default function ServiceDeskInsightsPage() {
         </div>
       </div>
 
-      <section className="sticky top-0 z-20 bg-background/95 pb-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>{chartBaseDescription}</span>
-          <span>{t("insights.chartSummaryDescription")}</span>
+      <section className="z-20 rounded-md bg-background/95 pb-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:sticky md:top-0 md:pb-3">
+        <div className="flex flex-wrap items-start justify-between gap-1.5 text-xs text-muted-foreground sm:gap-2">
+          <span className="min-w-0 break-words">{chartBaseDescription}</span>
+          <span className="min-w-0 break-words">
+            {t("insights.chartSummaryDescription")}
+          </span>
         </div>
 
         {!isChartHidden ? (
-          <section className={`mt-3 ${chartGridClassName}`}>
+          <section className={`mt-2 sm:mt-3 ${chartGridClassName}`}>
             <TicketChart
               title={t("insights.chart.statusTitle")}
               data={ticketChartData}
@@ -648,15 +655,21 @@ export default function ServiceDeskInsightsPage() {
 
       {chartFilter ? (
         <div className="flex flex-wrap items-center gap-2 rounded-md border bg-background px-3 py-2">
-          <div className="px-2 text-sm text-muted-foreground">
+          <div className="w-full px-0 text-sm text-muted-foreground sm:w-auto sm:px-2">
             {ticketCountDescription}
           </div>
-          <Separator orientation="vertical" className="mx-2" />
+          <Separator
+            orientation="vertical"
+            className="mx-1 hidden h-4 sm:mx-2 sm:block"
+          />
           <span className="text-sm text-muted-foreground">
             {t("insights.activeFilter")}
           </span>
-          <Badge variant="secondary" className="gap-1 rounded-full pr-1">
-            <span>
+          <Badge
+            variant="secondary"
+            className="max-w-full gap-1 rounded-full pr-1"
+          >
+            <span className="max-w-[220px] truncate sm:max-w-none">
               {filterFieldLabel}: {chartFilter.label}
             </span>
             <button
@@ -679,7 +692,7 @@ export default function ServiceDeskInsightsPage() {
         </div>
       ) : null}
 
-      <ScrollArea className="flex-1 rounded-md border bg-background">
+      <ScrollArea className="flex-1 overflow-hidden rounded-md border bg-background">
         {showFilteredEmpty ? (
           <div className="flex h-48 flex-col items-center justify-center gap-3 px-4 text-center">
             <p className="text-sm text-muted-foreground">

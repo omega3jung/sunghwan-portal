@@ -8,6 +8,7 @@ import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import { TicketListItem } from "./TicketListItem";
+import { TicketListMobileItem } from "./TicketListMobileItem";
 import { TicketListSkeleton } from "./TicketListSkeleton";
 
 interface TicketListProps {
@@ -37,15 +38,27 @@ export const TicketList = ({
     );
 
   return (
-    <div className="divide-y">
+    <div className="min-w-0 max-w-full divide-y overflow-x-hidden">
       {tickets.map((ticket) => (
-        <TicketListItem
-          key={ticket.id}
-          ticket={ticket}
-          users={users}
-          language={language}
-          onClick={() => onTicketSelected(ticket.id)}
-        />
+        <div key={ticket.id}>
+          <div className="hidden md:block">
+            <TicketListItem
+              ticket={ticket}
+              users={users}
+              language={language}
+              onClick={() => onTicketSelected(ticket.id)}
+            />
+          </div>
+
+          <div className="block md:hidden">
+            <TicketListMobileItem
+              ticket={ticket}
+              users={users}
+              language={language}
+              onClick={() => onTicketSelected(ticket.id)}
+            />
+          </div>
+        </div>
       ))}
     </div>
   );
