@@ -279,6 +279,35 @@
     "title": "Service Desk Reports",
     "description": "Legacy reports migration is queued for the next step."
   },
+  "insights": {
+    "title": "Service Desk Insights",
+    "description": "Analyze ticket status, assignee workload, requester departments, and SLA health.",
+    "chartSummary": "Chart Summary",
+    "chartSummaryDescription": "Click a chart item to filter the ticket list.",
+    "activeFilter": "Active filter",
+    "clearFilter": "Clear filter",
+    "clearAll": "Clear all",
+    "emptyFilteredTickets": "No tickets match this insight filter.",
+    "unknownDepartment": "Unknown department",
+    "chart": {
+      "statusTitle": "Tickets by Status"
+    },
+    "sla": {
+      "overdue": "Overdue",
+      "dueToday": "Due today",
+      "dueThisWeek": "Due this week",
+      "later": "Later"
+    },
+    "currentInsightSummary": "Charts are based on {{count}} tickets in the current insight range.",
+    "totalTicketCountSummary": "Total tickets: {{count}}",
+    "filteredTicketCountSummary": "Filtered tickets: {{filteredCount}} / {{totalCount}}",
+    "chartView": {
+      "label": "Chart",
+      "full": "Full",
+      "compact": "Compact",
+      "hidden": "Hidden"
+    }
+  },
   "ticketList": {
     "empty": "No tickets found",
     "requesterMeta": "{{name}} • {{time}}",
@@ -291,6 +320,12 @@
   },
   "ticketFormContext": {
     "missingProvider": "useTicketFormContext must be used inside provider."
+  },
+  "viewOption": {
+    "title": "View",
+    "portal": "Portal",
+    "internal": "Internal",
+    "insights": "Insights"
   },
   "api": {
     "common": {

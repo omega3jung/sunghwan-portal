@@ -14,6 +14,7 @@ import {
   Ticket,
   User,
   UserCog,
+  UserKey,
   UserRoundCog,
   UserStar,
 } from "lucide-react";
@@ -93,6 +94,12 @@ export function createMenuMock(t: TFunction): MenuItems {
             path: "/",
             icon: UserCog,
             minAccessLevel: ACCESS_LEVEL.MANAGER,
+          },
+          {
+            title: t("leaderPrivilegeMenu", ns),
+            path: "/",
+            icon: UserKey,
+            minAccessLevel: ACCESS_LEVEL.LEADER,
           },
           {
             title: t("userPrivilegeMenu", ns),

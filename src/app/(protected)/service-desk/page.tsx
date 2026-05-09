@@ -5,8 +5,11 @@
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
+  Building,
   CalendarCheck,
   CalendarDays,
+  ChartPie,
+  ChevronDown,
   FlagTriangleRight,
   RefreshCw,
   Ticket,
@@ -19,9 +22,9 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -57,13 +60,26 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 
 type SortOrder = "asc" | "desc";
 type SortOption = "ticketNumber" | "createdAt" | "dueAt" | "priority";
+type ViewOption = "portal" | "internal" | "insights";
 
-type SortOptionItem = {
-  value: SortOption;
+type OptionItem<T> = {
+  value: T;
   icon: JSX.Element;
 };
 
-const sortOptions: SortOptionItem[] = [
+const viewOption: OptionItem<ViewOption>[] = [
+  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
+  {
+    value: "internal",
+    icon: <Building className="h-4 w-4" />,
+  },
+  {
+    value: "insights",
+    icon: <ChartPie className="h-4 w-4" />,
+  },
+];
+
+const sortOptions: OptionItem<SortOption>[] = [
   {
     value: "ticketNumber",
     icon: <Ticket className="h-4 w-4" />,
@@ -81,6 +97,9 @@ const sortOptions: SortOptionItem[] = [
     icon: <FlagTriangleRight className="h-4 w-4" />,
   },
 ];
+
+const checkboxItemRightCheckClass =
+  "gap-2 pl-2 pr-8 [&>span]:left-auto [&>span]:right-2";
 
 export default function ServiceDeskPage() {
   const router = useRouter();
@@ -103,6 +122,7 @@ export default function ServiceDeskPage() {
   );
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<SortOrder>("desc");
+  const [scope, setScope] = useState<ViewOption>("internal");
   const [sort, setSort] = useState<SortOption>("ticketNumber");
 
   const {
@@ -187,6 +207,14 @@ export default function ServiceDeskPage() {
     setPage(1);
   };
 
+  const handlePageOptionChange = (nextSort: ViewOption) => {
+    if (nextSort === "insights") {
+      router.push(`/service-desk/insights`);
+    }
+    setScope(nextSort);
+    setPage(1);
+  };
+
   const handleSortChange = (nextSort: SortOption) => {
     setSort(nextSort);
     setPage(1);
@@ -213,31 +241,65 @@ export default function ServiceDeskPage() {
 
         <div className="flex items-center gap-2">
           <ButtonGroup>
+            {/* view option menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>
+                  {t(`viewOption.${scope}`)}
+                  <ChevronDown className="transition-transform" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
+                  {viewOption.map((option) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={option.value}
+                        className={checkboxItemRightCheckClass}
+                        checked={option.value === scope}
+                        onClick={() => handlePageOptionChange(option.value)}
+                      >
+                        {option.icon}
+                        {t(`viewOption.${option.value}`)}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* sort option menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
                   {t(`sort.sort`, { ns: NS.common })}
+                  <ChevronDown className="transition-transform" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40" align="start">
+              <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>
                     {t(`sort.sortBy`, { ns: NS.common })}
                   </DropdownMenuLabel>
                   {sortOptions.map((option) => {
                     return (
-                      <DropdownMenuItem
+                      <DropdownMenuCheckboxItem
                         key={option.value}
+                        className={checkboxItemRightCheckClass}
+                        checked={option.value === sort}
                         onClick={() => handleSortChange(option.value)}
                       >
                         {option.icon}
                         {t(`field.${option.value}`, { ns: NS.common })}
-                      </DropdownMenuItem>
+                      </DropdownMenuCheckboxItem>
                     );
                   })}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* order option menu */}
             <Button
               title={t(`sort.${order}`, { ns: NS.common })}
               variant="outline"
@@ -250,6 +312,8 @@ export default function ServiceDeskPage() {
               )}
             </Button>
           </ButtonGroup>
+
+          {/* refrech ticket button */}
           <Button
             className="p-2.5"
             variant="softPrimary"
@@ -257,6 +321,8 @@ export default function ServiceDeskPage() {
           >
             <RefreshCw />
           </Button>
+
+          {/* search criteria toggle */}
           <TicketSearchCriteria
             form={form}
             categories={categories}
@@ -264,6 +330,7 @@ export default function ServiceDeskPage() {
             onSubmit={handleSearchSubmit}
           />
 
+          {/* open create form */}
           <CreateTicketDialog
             categories={categories}
             users={users}
