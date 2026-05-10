@@ -22,7 +22,7 @@ import { formatFormDateTime, parseFormDateTime } from "@/shared/utils/format";
 import { cn } from "@/shared/utils/presentation";
 
 const TRACK_TIME_FIELD_GRID_CLASS_NAME =
-  "grid grid-cols-[110px_minmax(0,1fr)] items-start gap-x-2 gap-y-1";
+  "grid grid-cols-1 gap-y-1 sm:grid-cols-[110px_minmax(0,1fr)] sm:items-start sm:gap-x-2";
 
 type CompactFieldRowProps = {
   htmlFor?: string;
@@ -90,7 +90,7 @@ export function CompactFieldRow({
         htmlFor={htmlFor}
         title={labelTitle}
         className={cn(
-          "pt-2 text-sm font-medium leading-snug text-foreground data-[invalid=true]:text-destructive",
+          "text-sm font-medium leading-snug text-foreground data-[invalid=true]:text-destructive sm:pt-2",
           labelClassName,
         )}
         data-invalid={Boolean(error)}
@@ -104,7 +104,7 @@ export function CompactFieldRow({
         <div
           id={errorId}
           role="alert"
-          className="col-start-2 text-sm text-destructive"
+          className="text-sm text-destructive sm:col-start-2"
         >
           {error}
         </div>

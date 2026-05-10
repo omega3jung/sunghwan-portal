@@ -87,7 +87,7 @@ export function TicketActionList({
   }, [activeActions, deferredQuery, sortOrder, t, userMap]);
 
   return (
-    <section className="space-y-4">
+    <section className="min-w-0 space-y-4">
       <TicketActionListHeader
         count={activeActions.length}
         query={query}
@@ -106,7 +106,7 @@ export function TicketActionList({
       ) : visibleActions.length === 0 ? (
         <TicketActionEmpty type="no-result" />
       ) : (
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           {visibleActions.map((action, index) => (
             <TicketActionItem
               key={`${action.ticketId}-${action.actionNo}-${isDesktop === null ? "initial" : isDesktop ? "desktop" : "mobile"}`}
