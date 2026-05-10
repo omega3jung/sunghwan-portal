@@ -119,12 +119,12 @@ type InfoCardProps = {
 
 function InfoCard({ icon, title, children }: InfoCardProps) {
   return (
-    <section className="rounded-xl border bg-background">
+    <section className="min-w-0 overflow-hidden rounded-xl border bg-background">
       <div className="flex items-center gap-2 border-b px-4 py-3">
         <span className="text-muted-foreground">{icon}</span>
         <h2 className="font-semibold">{title}</h2>
       </div>
-      <div className="space-y-3 px-4 py-4">{children}</div>
+      <div className="min-w-0 space-y-3 px-4 py-4">{children}</div>
     </section>
   );
 }
@@ -163,7 +163,7 @@ function PersonRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-xl px-2 py-1.5",
+        "flex min-w-0 items-start gap-2 rounded-xl px-2 py-1.5",
         isCurrentUser && "border border-primary/20 bg-primary/5",
       )}
     >
@@ -173,15 +173,15 @@ function PersonRow({
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-medium">{name}</p>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <p className="break-words text-sm font-medium">{name}</p>
           {isCurrentUser && (
-            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
+            <span className="shrink-0 rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
               {t("detailAside.currentUserBadge")}
             </span>
           )}
         </div>
-        <p className="truncate text-xs text-muted-foreground">
+        <p className="break-all text-xs text-muted-foreground">
           {subText || "-"}
         </p>
       </div>

@@ -41,7 +41,7 @@ export function TicketActionItem({
   return (
     <Collapsible
       defaultOpen={defaultOpen}
-      className="rounded-lg border border-border/40 bg-background transition-colors hover:bg-muted/20"
+      className="min-w-0 rounded-lg border border-border/40 bg-background transition-colors hover:bg-muted/20"
     >
       <div className="flex gap-3 p-4">
         <Avatar className="mt-0.5 h-10 w-10 ring-1 ring-border/40">

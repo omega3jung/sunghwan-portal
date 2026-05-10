@@ -5,8 +5,11 @@
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
+  Building,
   CalendarCheck,
   CalendarDays,
+  ChartPie,
+  ChevronDown,
   FlagTriangleRight,
   RefreshCw,
   Ticket,
@@ -19,9 +22,9 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -57,13 +60,26 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 
 type SortOrder = "asc" | "desc";
 type SortOption = "ticketNumber" | "createdAt" | "dueAt" | "priority";
+type ViewOption = "portal" | "internal" | "insights";
 
-type SortOptionItem = {
-  value: SortOption;
+type OptionItem<T> = {
+  value: T;
   icon: JSX.Element;
 };
 
-const sortOptions: SortOptionItem[] = [
+const viewOption: OptionItem<ViewOption>[] = [
+  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
+  {
+    value: "internal",
+    icon: <Building className="h-4 w-4" />,
+  },
+  {
+    value: "insights",
+    icon: <ChartPie className="h-4 w-4" />,
+  },
+];
+
+const sortOptions: OptionItem<SortOption>[] = [
   {
     value: "ticketNumber",
     icon: <Ticket className="h-4 w-4" />,
@@ -81,6 +97,9 @@ const sortOptions: SortOptionItem[] = [
     icon: <FlagTriangleRight className="h-4 w-4" />,
   },
 ];
+
+const checkboxItemRightCheckClass =
+  "gap-2 pl-2 pr-8 [&>span]:left-auto [&>span]:right-2";
 
 export default function ServiceDeskPage() {
   const router = useRouter();
@@ -103,6 +122,7 @@ export default function ServiceDeskPage() {
   );
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<SortOrder>("desc");
+  const [scope, setScope] = useState<ViewOption>("internal");
   const [sort, setSort] = useState<SortOption>("ticketNumber");
 
   const {
@@ -187,6 +207,14 @@ export default function ServiceDeskPage() {
     setPage(1);
   };
 
+  const handlePageOptionChange = (nextSort: ViewOption) => {
+    if (nextSort === "insights") {
+      router.push(`/service-desk/insights`);
+    }
+    setScope(nextSort);
+    setPage(1);
+  };
+
   const handleSortChange = (nextSort: SortOption) => {
     setSort(nextSort);
     setPage(1);
@@ -202,85 +230,148 @@ export default function ServiceDeskPage() {
   };
 
   return (
-    <main className="flex h-full min-h-0 flex-col gap-2 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
+    <main className="flex h-full min-h-0 max-w-full flex-col gap-2 overflow-x-hidden p-3 sm:p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold">{t("listPage.title")}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground lg:max-w-prose">
             {t("listPage.description")}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <ButtonGroup>
+        <div className="w-full lg:w-auto">
+          <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
+            {/* row 1: view selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {t(`sort.sort`, { ns: NS.common })}
+                <Button className="w-full min-w-0 justify-end">
+                  <span className="truncate">{t(`viewOption.${scope}`)}</span>
+                  <ChevronDown className="transition-transform" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40" align="start">
+              <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel>
-                    {t(`sort.sortBy`, { ns: NS.common })}
-                  </DropdownMenuLabel>
-                  {sortOptions.map((option) => {
+                  <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
+                  {viewOption.map((option) => {
                     return (
-                      <DropdownMenuItem
+                      <DropdownMenuCheckboxItem
                         key={option.value}
-                        onClick={() => handleSortChange(option.value)}
+                        className={checkboxItemRightCheckClass}
+                        checked={option.value === scope}
+                        onClick={() => handlePageOptionChange(option.value)}
                       >
                         {option.icon}
-                        {t(`field.${option.value}`, { ns: NS.common })}
-                      </DropdownMenuItem>
+                        {t(`viewOption.${option.value}`)}
+                      </DropdownMenuCheckboxItem>
                     );
                   })}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              title={t(`sort.${order}`, { ns: NS.common })}
-              variant="outline"
-              onClick={handleOrderChange}
-            >
-              {order === "desc" ? (
-                <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
-              )}
-            </Button>
-          </ButtonGroup>
-          <Button
-            className="p-2.5"
-            variant="softPrimary"
-            onClick={() => refetchTickets()}
-          >
-            <RefreshCw />
-          </Button>
-          <TicketSearchCriteria
-            form={form}
-            categories={categories}
-            users={users}
-            onSubmit={handleSearchSubmit}
-          />
 
-          <CreateTicketDialog
-            categories={categories}
-            users={users}
-            language={userPreference.language as SupportedLanguage}
-            trigger={
-              <Button type="button">
-                {tCommon("action.withItem", {
-                  action: tCommon("action.create"),
-                  item: tCommon("field.ticket"),
-                })}
+            {/* row 1: sort + order */}
+            <ButtonGroup className="w-full">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="min-w-0 flex-1 justify-end lg:flex-none"
+                  >
+                    <span className="truncate">
+                      {t(`sort.sort`, { ns: NS.common })}
+                    </span>
+                    <ChevronDown className="transition-transform" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>
+                      {t(`sort.sortBy`, { ns: NS.common })}
+                    </DropdownMenuLabel>
+                    {sortOptions.map((option) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={option.value}
+                          className={checkboxItemRightCheckClass}
+                          checked={option.value === sort}
+                          onClick={() => handleSortChange(option.value)}
+                        >
+                          {option.icon}
+                          {t(`field.${option.value}`, { ns: NS.common })}
+                        </DropdownMenuCheckboxItem>
+                      );
+                    })}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button
+                title={t(`sort.${order}`, { ns: NS.common })}
+                variant="outline"
+                className="w-10 shrink-0 px-0"
+                onClick={handleOrderChange}
+              >
+                {order === "desc" ? (
+                  <ArrowUpNarrowWide className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
+                )}
               </Button>
-            }
-          />
+            </ButtonGroup>
+
+            {/* row 2: refresh */}
+            <Button
+              className="h-9 w-full min-w-[2.5rem] gap-1.5 px-2.5 lg:w-auto"
+              variant="softPrimary"
+              onClick={() => refetchTickets()}
+            >
+              <RefreshCw />
+              <span className="truncate lg:hidden">
+                {tCommon("action.refresh", { defaultValue: "Refresh" })}
+              </span>
+            </Button>
+
+            {/* row 2: search criteria */}
+            <TicketSearchCriteria
+              trigger={
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-center border-border/70 shadow-sm hover:bg-muted/40"
+                >
+                  {t("action.searchCriteria")}
+                </Button>
+              }
+              form={form}
+              categories={categories}
+              users={users}
+              onSubmit={handleSearchSubmit}
+            />
+
+            {/* row 3: create ticket */}
+            <CreateTicketDialog
+              categories={categories}
+              users={users}
+              language={userPreference.language as SupportedLanguage}
+              trigger={
+                <Button
+                  type="button"
+                  className="col-span-2 w-full lg:col-span-1 lg:w-auto"
+                >
+                  <span className="truncate">
+                    {tCommon("action.withItem", {
+                      action: tCommon("action.create"),
+                      item: tCommon("field.ticket"),
+                    })}
+                  </span>
+                </Button>
+              }
+            />
+          </div>
         </div>
       </div>
 
-      <ScrollArea className="flex-1 rounded-md border bg-background">
+      <ScrollArea className="flex-1 min-w-0 max-w-full overflow-hidden rounded-md border bg-background">
         <TicketList
           tickets={tickets}
           onTicketSelected={handleTicketSelected}
@@ -295,6 +386,7 @@ export default function ServiceDeskPage() {
         pageSize={TICKET_PAGE_SIZE}
         totalCount={totalCount}
         onPageChange={setPage}
+        className="gap-2 px-0 py-1 sm:px-1 sm:py-2"
         disabled={isTicketListLoading}
       />
     </main>

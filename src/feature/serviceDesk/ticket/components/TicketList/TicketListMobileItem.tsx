@@ -24,7 +24,7 @@ interface TicketListItemProps {
   onClick: () => void;
 }
 
-export const TicketListItem = ({
+export const TicketListMobileItem = ({
   ticket,
   users,
   language,
@@ -51,43 +51,30 @@ export const TicketListItem = ({
     <div
       onClick={onClick}
       className={cn(
-        "cursor-pointer flex flex-col gap-2 border-b px-4 py-1.5 hover:bg-muted",
+        "cursor-pointer flex flex-col gap-1 overflow-hidden border-b px-2.5 py-1.5 hover:bg-muted",
         ticket.assigned && "border-l-primary border-l-4",
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-primary">#{ticket.id}</span>
-            <span className="truncate font-semibold">{ticket.subject}</span>
-          </div>
+      <div className="space-y-0.5 flex flex-col items-start">
+        <div className="text-xs font-bold text-primary">#{ticket.id}</div>
+        <div className="min-w-0 break-words text-sm font-semibold leading-5 line-clamp-2">
+          {ticket.subject}
+        </div>
+      </div>
 
-          <div className="flex items-center gap-14">
-            <div className="text-xs text-muted-foreground">
-              {t("ticketList.requesterMeta", {
-                name: requesterName,
-                time: createdTime,
-              })}
-            </div>
-
-            {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
-                <Link
-                  className="text-primary underline-offset-4 hover:underline"
-                  href={mergedIntoTicketHref}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  {t("merge.into", { ticketId: ticket.mergedIntoTicketId })}
-                </Link>
-              </div>
-            ) : null}
-          </div>
+      <div className="flex items-center justify-between gap-0.5">
+        <div className="text-xs text-muted-foreground">
+          {t("ticketList.requesterMeta", {
+            name: requesterName,
+            time: createdTime,
+          })}
         </div>
 
         <div className="flex gap-2">
+          {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
+            <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+          ) : null}
+
           {ticket.assigned && (
             <Badge className="bg-primary/10 text-primary border border-primary/20">
               {t("detailAside.assignedBadge")}
@@ -97,27 +84,38 @@ export const TicketListItem = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={requester?.image} />
-            <AvatarFallback>{initials(requesterName)}</AvatarFallback>
-          </Avatar>
+      <div className="flex gap-2 items-end justify-between">
+        <div className="flex flex-col">
+          {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
+            <Link
+              className="text-xs text-primary underline-offset-4 hover:underline"
+              href={mergedIntoTicketHref}
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+            >
+              {`${t("merge.badge")} : ${ticket.mergedIntoTicketId}`}
+            </Link>
+          ) : null}
 
-          <span className="text-xs text-muted-foreground">
-            {t("ticketList.dueMeta", { time: dueTime })}
-          </span>
-        </div>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={requester?.image} />
+              <AvatarFallback>{initials(requesterName)}</AvatarFallback>
+            </Avatar>
 
-        <div className="flex items-center gap-2">
-          <AvatarMultiComboBox
-            variant="ghost"
-            value={ticket.assigneeIds}
-            options={users}
-            maxImages={5}
-            readOnly={true}
-          />
+            <span className="text-xs text-muted-foreground">
+              {t("ticketList.dueMeta", { time: dueTime })}
+            </span>
+          </div>
         </div>
+        <AvatarMultiComboBox
+          variant="ghost"
+          value={ticket.assigneeIds}
+          options={users}
+          maxImages={5}
+          readOnly={true}
+        />
       </div>
     </div>
   );

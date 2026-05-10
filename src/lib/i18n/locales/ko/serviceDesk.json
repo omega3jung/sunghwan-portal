@@ -303,6 +303,35 @@
     "title": "서비스 데스크 리포트",
     "description": "기존 리포트 마이그레이션은 다음 단계로 예정되어 있습니다."
   },
+  "insights": {
+    "title": "서비스 데스크 인사이트",
+    "description": "티켓 상태, 담당자, 요청 부서, SLA 현황을 기준으로 운영 흐름을 분석합니다.",
+    "chartSummary": "차트 요약",
+    "chartSummaryDescription": "차트 항목을 클릭하면 아래 티켓 목록이 필터링됩니다.",
+    "activeFilter": "적용된 필터",
+    "clearFilter": "필터 해제",
+    "clearAll": "전체 해제",
+    "emptyFilteredTickets": "선택한 인사이트 필터와 일치하는 티켓이 없습니다.",
+    "unknownDepartment": "알 수 없는 부서",
+    "chart": {
+      "statusTitle": "상태별 티켓"
+    },
+    "sla": {
+      "overdue": "기한 초과",
+      "dueToday": "오늘 마감",
+      "dueThisWeek": "이번 주 마감",
+      "later": "이후 마감"
+    },
+    "currentInsightSummary": "차트는 현재 인사이트 조건에 맞는 {{count}}건을 기준으로 표시됩니다.",
+    "totalTicketCountSummary": "전체 티켓: {{count}}건",
+    "filteredTicketCountSummary": "필터된 티켓: {{filteredCount}} / {{totalCount}}건",
+    "chartView": {
+      "label": "차트",
+      "full": "전체",
+      "compact": "간략",
+      "hidden": "숨김"
+    }
+  },
   "ticketList": {
     "empty": "티켓이 없습니다",
     "requesterMeta": "{{name}} • {{time}}",
@@ -315,6 +344,12 @@
   },
   "ticketFormContext": {
     "missingProvider": "useTicketFormContext는 provider 내부에서 사용되어야 합니다."
+  },
+  "viewOption": {
+    "title": "보기",
+    "portal": "포털",
+    "internal": "내부",
+    "insights": "인사이트"
   },
   "api": {
     "common": {

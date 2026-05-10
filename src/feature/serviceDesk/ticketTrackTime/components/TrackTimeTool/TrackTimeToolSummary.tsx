@@ -15,14 +15,14 @@ export function TrackTimeToolSummary({
 }: TrackTimeToolSummaryProps) {
   return (
     <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
-      <div className="flex justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-1">
         <span>{currentLabel}</span>
         <strong className="text-foreground">
           {formatMinutes(currentTrackedMinutes)}
         </strong>
       </div>
 
-      <div className="mt-1 flex justify-between">
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-1">
         <span>{totalLabel}</span>
         <strong className="text-foreground">
           {formatMinutes(totalTrackedMinutes)}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { NS } from "@/lib/i18n";
+import { cn } from "@/shared/utils/presentation/classnames";
 
 import { ticketStep } from "../../constants";
 
@@ -23,26 +24,26 @@ export const TicketFormDialogFooter = ({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <DialogFooter className="px-4 py-3 md:px-6 md:py-4">
-      {currentStep === ticketStep.info ? (
-        <div className="w-40"></div>
-      ) : (
-        <Button
-          variant="outline"
-          type="button"
-          className="w-48 gap-2"
-          onClick={onBack}
-        >
-          <>
-            <StepBack />
-            {t("action.back", { ns: NS.common })}
-          </>
-        </Button>
-      )}
+    <DialogFooter className="grid grid-cols-2 items-stretch gap-2 px-4 py-3 md:px-6 md:py-4 md:flex">
+      <Button
+        variant="outline"
+        type="button"
+        className={cn(
+          "w-full gap-2 whitespace-normal sm:w-48",
+          currentStep === ticketStep.info && "md:hidden",
+        )}
+        onClick={onBack}
+        disabled={currentStep === ticketStep.info}
+      >
+        <>
+          <StepBack />
+          {t("action.back", { ns: NS.common })}
+        </>
+      </Button>
 
       <Button
         type="button"
-        className="w-48 gap-2"
+        className="w-full gap-2 whitespace-normal sm:w-48"
         onClick={onNext}
         disabled={!canMoveNext}
       >

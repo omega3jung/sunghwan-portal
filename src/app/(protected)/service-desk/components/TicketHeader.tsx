@@ -27,11 +27,11 @@ export function TicketHeader({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <header className="flex items-center justify-between pb-2 pr-4 text-foreground">
+    <header className="flex flex-wrap items-center justify-between gap-2 pb-2 pr-1 text-foreground sm:pr-4">
       <Button
         type="button"
         variant="ghost"
-        className="rounded-xl pl-1"
+        className="max-w-full rounded-xl pl-1 pr-2"
         title={t("hoverMessage.backToList")}
         onClick={() => {
           router.push("/service-desk/");
@@ -41,7 +41,7 @@ export function TicketHeader({
         {t("field.list", { ns: NS.common })}
       </Button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
         <TrackTimeTool ticket={ticket}>
           <Button
             type="button"

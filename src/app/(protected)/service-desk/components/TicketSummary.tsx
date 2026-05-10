@@ -28,22 +28,22 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
     : null;
 
   return (
-    <section className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-      <div className="flex min-w-0 gap-4">
-        <aside className="space-y-3">
+    <section className="flex min-w-0 max-w-full flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row">
+        <aside className="flex shrink-0 gap-2 sm:flex-col sm:space-y-3 sm:gap-0">
           <Avatar className="h-12 w-12">
             <AvatarImage src={requester?.image} />
             <AvatarFallback>{initials(requester?.label || "")}</AvatarFallback>
           </Avatar>
 
-          <div className="h-12 w-12 rounded-full bg-cyan-50/70 hover:bg-cyan-100/70 flex flex-col items-center justify-center gap-0.5 whitespace-nowrap">
+          <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full bg-cyan-50/70 whitespace-nowrap hover:bg-cyan-100/70">
             <Timer className="text-cyan-600" />
             <p className="text-[11px] font-medium text-cyan-700">
               {formatCompactTimeDistanceFromNow(ticket.createdAt) || "-"}
             </p>
           </div>
 
-          <div className="h-12 w-12 rounded-full bg-amber-50/70 hover:bg-amber-100/70 flex flex-col items-center justify-center gap-0.5 whitespace-nowrap">
+          <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full bg-amber-50/70 whitespace-nowrap hover:bg-amber-100/70">
             <Pickaxe className="text-amber-600" />
             <p className="text-[11px] font-medium text-amber-700">
               {formatCompactDurationFromMinutes(ticket.trackTimeMinutes) || "-"}
@@ -52,11 +52,11 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
         </aside>
 
         <section className="min-w-0 space-y-3">
-          <h1 className="text-2xl font-semibold leading-tight tracking-[-0.01em]">
+          <h1 className="max-w-full break-words text-xl font-semibold leading-tight tracking-[-0.01em] sm:text-2xl">
             {ticket.subject}
           </h1>
 
-          <ul className="flex flex-wrap items-center gap-2">
+          <ul className="flex min-w-0 flex-wrap items-center gap-2">
             <li>
               <MetaBadge tone="ticket">{ticket.ticketNumber}</MetaBadge>
             </li>
@@ -87,7 +87,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
           </ul>
 
           {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="break-words text-sm text-muted-foreground">
               <Link
                 className="text-primary underline-offset-4 hover:underline"
                 href={mergedIntoTicketHref}
@@ -101,9 +101,9 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
         </section>
       </div>
 
-      <dl className="grid grid-cols-2 gap-x-5 gap-y-3 rounded-lg border border-border/50 p-3 text-sm lg:min-w-[290px]">
+      <dl className="grid min-w-0 max-w-full grid-cols-2 gap-x-5 gap-y-3 rounded-lg border border-border/50 p-3 text-sm lg:min-w-[290px]">
         <DateStack
-          label={t("common.created.title", { ns: NS.message })}
+          label={t("common.create.title", { ns: NS.message })}
           value={ticket.createdAt}
         />
         <DateStack
@@ -111,7 +111,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
           value={ticket.dueAt}
         />
         <DateStack
-          label={t("common.updated.title", { ns: NS.message })}
+          label={t("common.update.title", { ns: NS.message })}
           value={ticket.updatedAt}
         />
         <DateStack
@@ -132,15 +132,19 @@ export function DateStack({ label, value }: DateStackProps) {
   const parts = formatDateStack(value);
 
   return (
-    <div className="space-y-0.5" key={label}>
+    <div className="min-w-0 space-y-0.5" key={label}>
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
         {label}
       </p>
 
       {parts ? (
         <div className="leading-tight">
-          <p className="text-sm font-medium text-foreground">{parts.date}</p>
-          <p className="text-sm text-muted-foreground">{parts.time}</p>
+          <p className="break-words text-sm font-medium text-foreground">
+            {parts.date}
+          </p>
+          <p className="break-words text-sm text-muted-foreground">
+            {parts.time}
+          </p>
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">-</p>

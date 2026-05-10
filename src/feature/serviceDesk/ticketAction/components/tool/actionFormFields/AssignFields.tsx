@@ -169,7 +169,10 @@ export function AssignFields({
 
   return (
     <>
-      <Field className="col-span-2" data-invalid={Boolean(assigneeError)}>
+      <Field
+        className="col-span-full md:col-span-2"
+        data-invalid={Boolean(assigneeError)}
+      >
         <FieldLabel>{t("field.assignee", { ns: NS.common })}</FieldLabel>
         <AvatarMultiComboBox
           placeholder={t("placeholder.select", {

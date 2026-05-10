@@ -132,11 +132,12 @@ export function TicketActionToolLauncher({
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-2 md:gap-3 xl:grid-cols-3">
       {actions.map((action) => (
         <LauncherButton
           key={action}
           action={action}
+          isPrimary={action === "comment"}
           disabled={isPending}
           onClick={() => onOpen(action)}
         />
@@ -147,10 +148,12 @@ export function TicketActionToolLauncher({
 
 function LauncherButton({
   action,
+  isPrimary = false,
   disabled = false,
   onClick,
 }: {
   action: TicketActionMode;
+  isPrimary?: boolean;
   disabled?: boolean;
   onClick: () => void;
 }) {
@@ -162,14 +165,20 @@ function LauncherButton({
       variant="ghost"
       onClick={onClick}
       disabled={disabled}
-      className="h-28 items-start justify-start gap-3 rounded-lg border border-border/50 p-4 text-left transition-colors hover:bg-muted/30"
+      className={[
+        "min-w-0 items-start justify-start gap-3 rounded-lg border border-border/50 p-3 text-left whitespace-normal transition-colors hover:bg-muted/30",
+        "h-auto min-h-24 sm:min-h-28 sm:p-4",
+        isPrimary ? "col-span-2 md:col-span-1" : "",
+      ].join(" ")}
     >
-      <div className="rounded-md bg-primary/10 p-2 text-primary">
+      <div className="shrink-0 rounded-md bg-primary/10 p-2 text-primary">
         {actionIcons[action]}
       </div>
-      <div className="space-y-1">
-        <p className="font-medium">{t(getTicketActionModeLabelKey(action))}</p>
-        <p className="text-sm text-muted-foreground text-wrap">
+      <div className="min-w-0 space-y-1">
+        <p className="break-words font-medium leading-5">
+          {t(getTicketActionModeLabelKey(action))}
+        </p>
+        <p className="break-words text-sm text-muted-foreground">
           {t(`actionTool.launcher.${action}`)}
         </p>
       </div>

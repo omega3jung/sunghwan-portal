@@ -5,3 +5,5 @@ export * from "./CategoryChart";
 export * from "./DepartmentChart";
 export * from "./SlaChart";
 export * from "./TicketChart";
+export * from "./types";
+export * from "./utils";

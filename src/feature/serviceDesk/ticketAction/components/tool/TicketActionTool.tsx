@@ -265,7 +265,7 @@ export function TicketActionTool({
       />
 
       {isOpen ? (
-        <div className="space-y-4 rounded-lg border border-border/50 p-4">
+        <div className="min-w-0 max-w-full space-y-4 overflow-hidden rounded-lg border border-border/50 p-4">
           <TicketActionToolHeader
             currentUserEmail={currentUserEmail}
             currentUserImage={currentUserImage}

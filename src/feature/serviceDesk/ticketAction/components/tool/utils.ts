@@ -25,9 +25,9 @@ export const EDITOR_PLACEHOLDER_KEY: Record<TicketActionMode, string> = {
 export function getFieldGroupClassName(mode: TicketActionMode) {
   switch (mode) {
     case "assign":
-      return "grid grid-cols-3";
+      return "grid grid-cols-1 gap-3 md:grid-cols-3";
     case "adjust":
-      return "grid grid-cols-4";
+      return "grid grid-cols-1 gap-3 md:grid-cols-4";
     default:
       return undefined;
   }
@@ -36,9 +36,9 @@ export function getFieldGroupClassName(mode: TicketActionMode) {
 export function getFieldClassName(mode: TicketActionMode) {
   switch (mode) {
     case "assign":
-      return "col-span-3";
+      return "col-span-full md:col-span-3";
     case "adjust":
-      return "col-span-4";
+      return "col-span-full md:col-span-4";
     default:
       return undefined;
   }

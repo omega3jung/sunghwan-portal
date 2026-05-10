@@ -7,8 +7,8 @@ import { ResetDemoMenu } from "@/components/menu/ResetDemoMenu";
 import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useSidebar } from "@/components/ui/sidebar";
 import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
-import { useLeftMenuStore } from "@/lib/leftMenuStore";
 import { cn } from "@/shared/utils/presentation";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
@@ -48,7 +48,7 @@ export const useBreadcrumbs = () => {
 };
 
 export const NavigationBar = (props: Props) => {
-  const { update, isOpen: isOpenStore } = useLeftMenuStore();
+  const { open, setOpenMobile, setOpen, isMobile } = useSidebar();
   const { currentUser, isImpersonating } = useImpersonation();
   const pathName = usePathname();
 
@@ -89,7 +89,12 @@ export const NavigationBar = (props: Props) => {
   }, [pathName, componentTitle]);
 
   const changeStoreIsOpen = () => {
-    update(true);
+    if (isMobile) {
+      setOpenMobile(true);
+      return;
+    }
+
+    setOpen(true);
   };
 
   const setLinkbarData = () => {
@@ -163,7 +168,7 @@ export const NavigationBar = (props: Props) => {
         <Menu />
       </Button>
 
-      {!isOpenStore && !pathName.startsWith("/reports") && (
+      {!open && (
         <Button
           variant="ghost"
           onClick={changeStoreIsOpen}

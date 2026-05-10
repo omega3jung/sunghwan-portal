@@ -40,7 +40,7 @@ export function TicketHistorySheet({
         side="right"
         size="md"
         padding="none"
-        className="gap-0 sm:w-[380px]"
+        className="gap-0 w-full sm:w-[380px]"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>{t("historySheet.title")}</SheetTitle>

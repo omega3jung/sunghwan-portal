@@ -85,17 +85,17 @@ function ActivityPreview({
   meta?: string;
 }) {
   return (
-    <article className="rounded-lg bg-muted/40 px-3 py-3">
+    <article className="min-w-0 rounded-lg bg-muted/40 px-3 py-3">
       <header className="flex items-start gap-2">
         <MessageSquareText className="mt-0.5 h-4 w-4 text-muted-foreground" />
         <div className="min-w-0 space-y-1">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground/80">
             {label}
           </p>
-          <p className="text-sm font-medium leading-5 text-foreground/90">
+          <p className="break-words text-sm font-medium leading-5 text-foreground/90">
             {value}
           </p>
-          <p className="text-xs leading-5 text-muted-foreground/75">
+          <p className="break-words text-xs leading-5 text-muted-foreground/75">
             {meta || "-"}
           </p>
         </div>

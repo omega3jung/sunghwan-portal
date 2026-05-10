@@ -39,9 +39,9 @@ export function ResetDemoMenu() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button className="mx-5 bg-orange-400/80 hover:bg-orange-400">
+        <Button className="p-2.5 md:mr-5 bg-orange-400/80 hover:bg-orange-400">
           <RefreshCcwDot />
-          {t("resetDemo.title")}
+          <p className="hidden md:block">{t("resetDemo.title")}</p>
         </Button>
       </PopoverTrigger>
 
