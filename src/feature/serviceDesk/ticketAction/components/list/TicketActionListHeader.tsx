@@ -58,7 +58,7 @@ export function TicketActionListHeader({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row">
         <ActionSearchBar
           placeholder={t("actionTool.list.searchPlaceholder")}
           value={query}
@@ -80,7 +80,7 @@ function ActionSearchBar({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="relative w-full sm:w-72">
+    <div className="relative min-w-0 w-full sm:w-72">
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
@@ -105,7 +105,7 @@ function ActionSortButton({
     <Button
       type="button"
       variant="outline"
-      className="shrink-0 justify-between gap-2"
+      className="w-full justify-between gap-2 whitespace-normal sm:w-auto"
       onClick={onClick}
     >
       {sortOrder === "desc" ? (

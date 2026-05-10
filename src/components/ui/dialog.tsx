@@ -66,14 +66,15 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 // Non-modal dialogs may still show a visual overlay,
 // but it must never block background interaction.
-const DialogVisualOverlay = ({
-  className,
-  overlayStyle,
-}: {
-  className?: string;
-  overlayStyle?: DialogOverlayStyle;
-}) => (
+const DialogVisualOverlay = React.forwardRef<
+  HTMLDivElement,
+  {
+    className?: string;
+    overlayStyle?: DialogOverlayStyle;
+  }
+>(({ className, overlayStyle }, ref) => (
   <div
+    ref={ref}
     aria-hidden="true"
     data-state="open"
     className={cn(
@@ -82,7 +83,8 @@ const DialogVisualOverlay = ({
       className,
     )}
   />
-);
+));
+DialogVisualOverlay.displayName = "DialogVisualOverlay";
 
 type DialogContentProps = React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content

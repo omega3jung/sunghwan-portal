@@ -303,6 +303,35 @@
     "title": "Informes de la mesa de servicio",
     "description": "La migración de los informes heredados está prevista para el siguiente paso."
   },
+  "insights": {
+    "title": "Service Desk Insights",
+    "description": "Analiza el estado de los tickets, la carga de responsables, los departamentos solicitantes y la salud del SLA.",
+    "chartSummary": "Resumen de gráficos",
+    "chartSummaryDescription": "Haz clic en un elemento del gráfico para filtrar la lista de tickets.",
+    "activeFilter": "Filtro activo",
+    "clearFilter": "Limpiar filtro",
+    "clearAll": "Limpiar todo",
+    "emptyFilteredTickets": "Ningún ticket coincide con este filtro de insight.",
+    "unknownDepartment": "Departamento desconocido",
+    "chart": {
+      "statusTitle": "Tickets por estado"
+    },
+    "sla": {
+      "overdue": "Vencido",
+      "dueToday": "Vence hoy",
+      "dueThisWeek": "Vence esta semana",
+      "later": "Más adelante"
+    },
+    "currentInsightSummary": "Los graficos se basan en {{count}} tickets del rango de insight actual.",
+    "totalTicketCountSummary": "Total de tickets: {{count}}",
+    "filteredTicketCountSummary": "Tickets filtrados: {{filteredCount}} / {{totalCount}}",
+    "chartView": {
+      "label": "Grafico",
+      "full": "Completo",
+      "compact": "Compacto",
+      "hidden": "Oculto"
+    }
+  },
   "ticketList": {
     "empty": "No se encontraron tickets",
     "requesterMeta": "{{name}} • {{time}}",
@@ -315,6 +344,12 @@
   },
   "ticketFormContext": {
     "missingProvider": "useTicketFormContext debe usarse dentro del provider."
+  },
+  "viewOption": {
+    "title": "Vista",
+    "portal": "Portal",
+    "internal": "Interno",
+    "insights": "Análisis"
   },
   "api": {
     "common": {

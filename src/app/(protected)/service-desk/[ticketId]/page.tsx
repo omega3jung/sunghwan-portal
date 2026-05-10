@@ -1,9 +1,11 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
@@ -155,7 +157,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col p-2 pt-1">
+    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-2 pt-1">
       <TicketHeader
         ticket={ticket}
         isDetailsAsideOpen={isDetailsAsideOpen}
@@ -172,14 +174,14 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
       <div className="h-1 rounded bg-primary-muted" />
 
-      <div className="flex min-h-0 flex-1 pt-4">
+      <div className="flex min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden pt-4">
         <main className="min-w-0 flex-1">
           <ScrollArea className="h-full w-full">
-            <div className="mx-auto max-w-[1040px] p-2 pb-10">
+            <div className="mx-auto w-full min-w-0 max-w-[1040px] p-2 pb-10">
               {isTicketLoading ? (
                 <TicketDetailSkeleton />
               ) : ticket ? (
-                <article className="space-y-9">
+                <article className="min-w-0 space-y-5 xl:space-y-9">
                   <TicketSummary ticket={ticket} requester={requester} />
 
                   <TicketRecentActivity
@@ -205,12 +207,14 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                       {t("field.description", { ns: NS.common })}
                     </h2>
 
-                    <div
-                      className="prose prose-sm max-w-none break-words text-foreground prose-p:my-3 prose-p:leading-7 prose-a:text-primary prose-img:rounded-lg"
-                      dangerouslySetInnerHTML={{
-                        __html: ticket.content || "<p>-</p>",
-                      }}
-                    />
+                    <div className="max-w-full overflow-x-auto">
+                      <div
+                        className="prose prose-sm min-w-0 max-w-none break-words text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-7 prose-pre:max-w-full prose-pre:overflow-x-auto"
+                        dangerouslySetInnerHTML={{
+                          __html: ticket.content || "<p>-</p>",
+                        }}
+                      />
+                    </div>
                     <TicketAttachmentList
                       files={ticket.files}
                       images={ticket.images}
@@ -218,22 +222,37 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                   </section>
 
                   {/* ticket details */}
-                  <section className="space-y-4 border-t border-border/50 pt-7 xl:hidden">
-                    <h2 className="text-base font-semibold tracking-[-0.01em]">
+                  <section className="space-y-4 border-t border-border/50 xl:hidden xl:pt-7">
+                    <h2 className="hidden text-base font-semibold tracking-[-0.01em] sm:block">
                       {t("detailPage.detailsTitle")}
                     </h2>
-
-                    <div className="rounded-xl border border-border/40 bg-background/60 p-1">
-                      <TicketDetailsAside
-                        assignees={assignees}
-                        requester={requester}
-                        ticket={ticket}
+                    <Button
+                      variant={"ghost"}
+                      className="w-full justify-between text-base"
+                      onClick={() => setIsDetailsAsideOpen(!isDetailsAsideOpen)}
+                    >
+                      {t("detailPage.detailsTitle")}
+                      <ChevronDown
+                        className={cn(
+                          "transition-transform",
+                          isDetailsAsideOpen && "-rotate-90",
+                        )}
                       />
-                    </div>
+                    </Button>
+
+                    {isDetailsAsideOpen && (
+                      <div className="rounded-xl border border-border/40 bg-background/60 p-1">
+                        <TicketDetailsAside
+                          assignees={assignees}
+                          requester={requester}
+                          ticket={ticket}
+                        />
+                      </div>
+                    )}
                   </section>
 
                   {/* reply comment */}
-                  <section className="space-y-3 border-t border-border/50 pt-7">
+                  <section className="space-y-3 border-t border-border/50 pt-7 xl:pt-7">
                     <h2
                       className="text-base font-semibold tracking-[-0.01em]"
                       title={t("detailPage.replyTitleHint")}

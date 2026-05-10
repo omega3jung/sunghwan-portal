@@ -26,22 +26,28 @@ export function TicketActionToolFooter({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <div className="text-sm text-muted-foreground/75">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div className="break-words text-sm text-muted-foreground/75">
         {errorMessage || helperText}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center">
         <Button
           type="button"
           variant="ghost"
+          className="w-full whitespace-normal sm:w-auto"
           onClick={onCancel}
           disabled={isPending}
         >
           <X className="h-4 w-4" />
           {t("action.cancel", { ns: NS.common })}
         </Button>
-        <Button type="button" onClick={onSubmit} disabled={disabled}>
+        <Button
+          type="button"
+          className="w-full whitespace-normal sm:w-auto"
+          onClick={onSubmit}
+          disabled={disabled}
+        >
           <SendHorizontal className="h-4 w-4" />
           {submitLabel}
         </Button>

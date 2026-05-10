@@ -84,7 +84,14 @@ export function RichEditor({
         ),
       },
     },
-    onUpdate: ({ editor: currentEditor }) => {
+    onUpdate: ({ editor: currentEditor, transaction }) => {
+      // Ignore non-document-change transactions emitted during editor
+      // initialization/placeholder refresh. This prevents empty init values
+      // from overwriting existing controlled form values.
+      if (!transaction.docChanged) {
+        return;
+      }
+
       onChange?.(getEditorHTML(currentEditor));
     },
   });

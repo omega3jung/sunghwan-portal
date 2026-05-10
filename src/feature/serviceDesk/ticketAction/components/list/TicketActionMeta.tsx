@@ -45,7 +45,7 @@ export function TicketActionMeta({
   return (
     <div className="min-w-0 space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="truncate font-medium">{ownerLabel}</p>
+        <p className="min-w-0 break-words font-medium">{ownerLabel}</p>
         <Badge
           variant="secondary"
           className={cn(
@@ -63,9 +63,9 @@ export function TicketActionMeta({
         </Badge>
       </div>
 
-      <div className="min-w-0 text-xs text-muted-foreground/75">
-        <p className="truncate leading-5">{ownerSubText}</p>
-        <p className="leading-5">
+      <div className="min-w-0 break-words text-xs text-muted-foreground/75">
+        <p className="break-words leading-5">{ownerSubText}</p>
+        <p className="break-words leading-5">
           {formatTimeDistanceFromNow(action.createdAt, dateLocale) || "-"}
           {" | "}
           {formatDateTime(action.createdAt)}

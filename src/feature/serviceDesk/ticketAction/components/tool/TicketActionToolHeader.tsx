@@ -24,8 +24,8 @@ export function TicketActionToolHeader({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex items-center gap-3">
+    <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
         <Avatar className="h-10 w-10 ring-1 ring-border/40">
           <AvatarImage src={currentUserImage} />
           <AvatarFallback className="bg-primary/10 text-primary">
@@ -42,7 +42,7 @@ export function TicketActionToolHeader({
 
       <Badge
         variant="secondary"
-        className="w-fit rounded-md bg-primary/10 px-3 py-1 text-primary"
+        className="w-full max-w-full rounded-md bg-primary/10 px-3 py-1 text-left text-primary sm:w-fit"
       >
         {t(getTicketActionModeLabelKey(mode))}
       </Badge>

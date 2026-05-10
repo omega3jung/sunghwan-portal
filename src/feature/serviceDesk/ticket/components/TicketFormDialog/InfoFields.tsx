@@ -163,10 +163,10 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
   };
 
   return (
-    <FieldGroup>
+    <FieldGroup className="min-w-0">
       <Collapsible>
-        <div className="flex items-end gap-4">
-          <Field className="col-span-3 gap-1">
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:gap-4">
+          <Field className="min-w-0 gap-1 md:flex-1">
             <FieldLabel htmlFor="ticket-info-select-category">
               {t("field.category", { ns: "common" })}
             </FieldLabel>
@@ -218,7 +218,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
             )}
           </Field>
 
-          <Field className="w-80 gap-1">
+          <Field className="min-w-0 gap-1 md:w-72 md:shrink-0 lg:w-80">
             <FieldLabel htmlFor="ticket-info-input-due-date">
               {t("field.dueAt", { ns: "common" })}
             </FieldLabel>
@@ -246,7 +246,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
             <Button
               variant="ghost"
               size="sm"
-              className="group h-9 w-20 justify-start transition-none hover:bg-accent hover:text-accent-foreground"
+              className="group h-9 w-full justify-between transition-none hover:bg-accent hover:text-accent-foreground md:w-auto md:justify-start"
             >
               {t("field.email", { ns: "common" })}
               <ChevronRight className="transition-transform group-data-[state=open]:rotate-90" />
@@ -254,8 +254,8 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
           </CollapsibleTrigger>
         </div>
 
-        <CollapsibleContent className="pt-2">
-          <Field>
+        <CollapsibleContent className="min-w-0 pt-2">
+          <Field className="min-w-0">
             {EMAIL_FIELDS.map((fieldName) => (
               <EmailField
                 key={fieldName}
@@ -295,7 +295,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
 };
 
 const ReadOnlyValue = ({ children }: { children: string }) => (
-  <div className="flex min-h-9 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm">
+  <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm break-words">
     {children}
   </div>
 );

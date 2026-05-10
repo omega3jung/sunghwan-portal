@@ -101,7 +101,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
         </Select>
       </Field>
 
-      <Field className="col-span-2" data-invalid={Boolean(adjustError)}>
+      <Field className="col-span-full md:col-span-2" data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.dueAt", { ns: NS.common })}</FieldLabel>
         <DatePicker
           id="ticket-action-input-due-date"

@@ -90,21 +90,22 @@ export const TicketListPagination = ({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-between gap-3 px-1 py-2 text-sm text-muted-foreground md:flex-row",
+        "flex items-center justify-between gap-1 px-1 py-2 text-sm text-muted-foreground sm:items-center sm:gap-3",
         className,
       )}
     >
-      <div>
+      <div className="min-w-20 text-center sm:text-left">
         {startItem}-{endItem} / {totalCount}
       </div>
 
-      <Pagination className="mx-0 w-auto">
-        <PaginationContent>
+      <Pagination className="mx-0 w-full sm:w-auto">
+        <PaginationContent className="flex-wrap justify-center">
           <PaginationItem>
             <PaginationPrevious
               href="#"
               aria-disabled={disabled || currentPage === 1}
               className={cn(
+                "h-8 gap-1 px-1 [&>span]:hidden sm:h-9 sm:px-2.5 sm:[&>span]:inline",
                 (disabled || currentPage === 1) &&
                   "pointer-events-none opacity-50",
               )}
@@ -147,6 +148,7 @@ export const TicketListPagination = ({
               href="#"
               aria-disabled={disabled || currentPage === totalPages}
               className={cn(
+                "h-8 gap-1 px-1 [&>span]:hidden sm:h-9 sm:px-2.5 sm:[&>span]:inline",
                 (disabled || currentPage === totalPages) &&
                   "pointer-events-none opacity-50",
               )}

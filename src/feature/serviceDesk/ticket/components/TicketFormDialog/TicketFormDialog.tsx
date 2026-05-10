@@ -63,20 +63,14 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
         )}
       </DialogTrigger>
       <DialogContent
-        className="grid h-full w-full max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[800px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
+        className="grid h-full min-h-0 min-w-0 w-full max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[800px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
         onInteractOutside={(event) => event.preventDefault()}
         onPointerDownOutside={(event) => event.preventDefault()}
         onFocusOutside={(event) => event.preventDefault()}
         overlayStyle="dark"
       >
-        <TicketFormDialogHeader
-          mode={mode}
-          currentStep={currentStep}
-          canMoveNext={canMoveNext}
-          onBack={moveToBack}
-          onNext={moveToNext}
-        />
-        <form className="flex min-h-0 flex-col px-4 py-3 md:px-6 md:py-4">
+        <TicketFormDialogHeader mode={mode} />
+        <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
           <TicketFormProvider value={{ form: ticketForm, categories, users }}>
             {mode !== "view" && (
               <TicketFormDialogStepFlow
@@ -87,7 +81,7 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
               />
             )}
 
-            <ScrollArea className="min-h-0 flex-1 pr-2 md:pr-3">
+            <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
               {
                 /* select department and cateogry */
                 currentStep === ticketStep.info && <InfoStep />
