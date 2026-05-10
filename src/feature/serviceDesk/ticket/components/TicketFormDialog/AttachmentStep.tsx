@@ -11,8 +11,8 @@ export const AttachmentStep = () => {
   const { form } = useTicketFormContext();
 
   return (
-    <FieldGroup>
-      <Field>
+    <FieldGroup className="min-w-0">
+      <Field className="min-w-0">
         <FileAttachment
           form={form}
           name="attachment"

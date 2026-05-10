@@ -40,12 +40,12 @@ export const InfoStep = () => {
     <>
       <TicketInfoFields mode="edit" />
 
-      <Field className="pt-4 gap-1">
+      <Field className="min-w-0 gap-1 pt-4">
         <FieldLabel htmlFor="info-step-input-description">
           {t("field.description", { ns: "common" })}
         </FieldLabel>
 
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <RichEditor
             id="info-step-input-description"
             value={bodyValue}

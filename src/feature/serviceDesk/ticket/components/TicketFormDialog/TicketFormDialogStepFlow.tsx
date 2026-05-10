@@ -36,21 +36,22 @@ export const TicketFormDialogStepFlow = ({
 
   return (
     <div
-      className="grid shrink-0"
+      className="hidden min-w-0 shrink-0 gap-2 md:grid"
       style={{
         gridTemplateColumns: `repeat(${stepGridLayout.totalStepCount}, minmax(0, 1fr))`,
       }}
     >
-      <span
+      <div
+        className="min-w-0"
         style={{
           gridColumn: `span ${stepGridLayout.createStepCount} / span ${stepGridLayout.createStepCount}`,
         }}
       >
-        <h3 className="text-center text-xs font-semibold text-muted-foreground tracking-wide uppercase">
+        <h3 className="text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t("message.ticketCreation")}
         </h3>
         <Stepper
-          className={cn("pt-3 pb-8 px-8 rounded-md border mb-4")}
+          className={cn("mb-4 rounded-md border px-4 pb-8 pt-3 lg:px-8")}
           currentStep={currentStep}
           onStepChange={onStepChange}
           orientation="horizontal"
@@ -61,24 +62,27 @@ export const TicketFormDialogStepFlow = ({
           {createSteps.map((step, idx) => (
             <Stepper.Item key={idx} index={idx} total={createSteps.length}>
               <Stepper.Trigger index={idx}>
-                <Stepper.Label>{step.label}</Stepper.Label>
+                <Stepper.Label className="max-w-[84px] truncate text-center">
+                  {step.label}
+                </Stepper.Label>
               </Stepper.Trigger>
             </Stepper.Item>
           ))}
         </Stepper>
-      </span>
+      </div>
 
-      <span
+      <div
+        className="min-w-0"
         style={{
           gridColumn: `span ${stepGridLayout.afterStepCount} / span ${stepGridLayout.afterStepCount}`,
         }}
       >
-        <h3 className="text-center text-xs font-semibold text-muted-foreground tracking-wide uppercase">
+        <h3 className="text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t("message.processingFlow")}
         </h3>
         <Stepper
           className={cn(
-            "pt-3 pb-8 pl-1 pr-8 rounded-md border border-l-0 border-dotted mb-4",
+            "mb-4 rounded-md border border-l-0 border-dotted pb-8 pl-1 pr-4 pt-3 lg:pr-8",
           )}
           orientation="horizontal"
           stepVariant="circle"
@@ -91,12 +95,14 @@ export const TicketFormDialogStepFlow = ({
           {afterSteps.map((step, idx) => (
             <Stepper.Item key={idx} index={idx} total={afterSteps.length}>
               <Stepper.Trigger index={idx + 3}>
-                <Stepper.Label>{step.label}</Stepper.Label>
+                <Stepper.Label className="max-w-[84px] truncate text-center">
+                  {step.label}
+                </Stepper.Label>
               </Stepper.Trigger>
             </Stepper.Item>
           ))}
         </Stepper>
-      </span>
+      </div>
     </div>
   );
 };

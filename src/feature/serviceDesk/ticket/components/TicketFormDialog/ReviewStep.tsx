@@ -30,16 +30,18 @@ export const ReviewStep = () => {
     <>
       <TicketInfoFields mode="view" />
 
-      <Field className="pt-4 gap-1">
+      <Field className="min-w-0 gap-1 pt-4">
         <FieldLabel htmlFor="review-step-body-preview">
           {t("field.description", { ns: "common" })}
         </FieldLabel>
 
-        <div
-          id="review-step-body-preview"
-          className="prose prose-sm min-h-52 max-w-none break-words rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-p:my-3 prose-p:leading-6 prose-a:text-primary prose-img:rounded-lg"
-          dangerouslySetInnerHTML={{ __html: bodyValue || "<p>-</p>" }}
-        />
+        <div className="max-w-full overflow-x-auto">
+          <div
+            id="review-step-body-preview"
+            className="prose prose-sm min-h-52 min-w-0 max-w-none break-words rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
+            dangerouslySetInnerHTML={{ __html: bodyValue || "<p>-</p>" }}
+          />
+        </div>
       </Field>
 
       <Field>

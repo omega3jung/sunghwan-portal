@@ -54,7 +54,7 @@ export const TicketSearchCriteria = (props: FilterProps) => {
         )}
       </SheetTrigger>
 
-      <SheetContent size="md" className="border-l p-0 shadow-2xl">
+      <SheetContent size="md" className="w-full border-l p-0 shadow-2xl">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex h-full flex-col"
