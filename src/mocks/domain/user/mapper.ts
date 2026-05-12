@@ -17,7 +17,7 @@ export const toAuth = (
 export const toProfile = (
   data: AppUser & Pick<AuthUser, "employeeId"> & { accessToken: string },
 ): AppUser => {
-  const { accessToken, employeeId, ...profile } = data;
+  const { ...profile } = data;
   return profile;
 };
 

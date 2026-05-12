@@ -3,7 +3,7 @@ import axios from "axios";
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
 import { verifyAuthAccountCredentials } from "@/server/data/auth/accounts";
-import { getActiveEmployeeById } from "@/server/data/user";
+import { getActiveEmployeeById } from "@/server/data/users";
 import { toEnglishDisplayName } from "@/server/shared/user/displayName";
 
 export type LoginResponse = AuthUser;

@@ -1,27 +1,45 @@
-import { createClient } from "@supabase/supabase-js";
+import { Pool, QueryResultRow } from "pg";
 
 // portal/service-desk API only after login.
 // portal_api DB connection use.
-type SupabaseEnvKey = "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_SECRET_KEY";
-
-function getRequiredEnv(key: SupabaseEnvKey): string {
+function getRequiredEnv(key: "PORTAL_DATABASE_URL"): string {
   const value = process.env[key];
 
   if (!value) {
-    throw new Error(`[supabase] Missing required environment variable: ${key}`);
+    throw new Error(`[database] Missing required environment variable: ${key}`);
   }
 
   return value;
 }
 
-export function createSupabasePortalClient() {
-  const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const supabaseSecretKey = getRequiredEnv("SUPABASE_SECRET_KEY");
+let portalPool: Pool | null = null;
 
-  return createClient(supabaseUrl, supabaseSecretKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  });
+export function getPortalApiPool(): Pool {
+  if (!portalPool) {
+    portalPool = new Pool({
+      connectionString: getRequiredEnv("PORTAL_DATABASE_URL"),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeoutMillis: 5000,
+      idleTimeoutMillis: 10000,
+      query_timeout: 10000,
+    });
+  }
+
+  return portalPool;
+}
+
+export async function queryPortalApi<T extends QueryResultRow = QueryResultRow>(
+  text: string,
+  params: unknown[] = [],
+): Promise<T[]> {
+  const pool = getPortalApiPool();
+
+  try {
+    const result = await pool.query<T>(text, params);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
 }

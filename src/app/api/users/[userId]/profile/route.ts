@@ -8,6 +8,7 @@ import {
 } from "@/app/api/_helpers";
 import { UserIdRouteContext } from "@/app/api/_helpers/types";
 import { AppUser } from "@/domain/user";
+import { portalApiJson } from "@/lib/api/portalApiJson";
 import { clientProfiles, demoProfiles } from "@/mocks/domain/user";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
@@ -30,11 +31,16 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
     return NextResponse.json(targetProfile);
   }
 
+  if (!userId?.trim()) {
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
+  }
+
   const authError = await getAdminOrSelfError(req, userId);
   if (authError) return authError;
 
-  return proxyJson(req, {
-    path: `/user/${userId}/profile`,
+  return portalApiJson(req, {
+    method: "GET",
+    path: `/users/${userId}/profile`,
     errorMessage: "Failed to fetch user profile",
   });
 }
@@ -55,7 +61,7 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
 
   return proxyJson(req, {
     method: "POST",
-    path: `/user/${userId}/profile`,
+    path: `/users/${userId}/profile`,
     body,
     errorMessage: "Failed to create user profile",
   });
@@ -78,7 +84,7 @@ export async function PUT(req: NextRequest, context: UserIdRouteContext) {
 
   return proxyJson(req, {
     method: "PUT",
-    path: `/user/${userId}/profile`,
+    path: `/users/${userId}/profile`,
     body,
     errorMessage: "Failed to update user profile",
   });

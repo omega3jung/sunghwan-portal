@@ -3,7 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 // login authorization only.
 // Supabase secret key use.
 
-type SupabaseEnvKey = "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_SECRET_KEY";
+type SupabaseEnvKey =
+  | "NEXT_PUBLIC_SUPABASE_URL"
+  | "SUPABASE_AUTH_ADMIN_SECRET_KEY";
 
 function getRequiredEnv(key: SupabaseEnvKey): string {
   const value = process.env[key];
@@ -17,7 +19,7 @@ function getRequiredEnv(key: SupabaseEnvKey): string {
 
 export function createSupabaseAuthClient() {
   const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const supabaseSecretKey = getRequiredEnv("SUPABASE_SECRET_KEY");
+  const supabaseSecretKey = getRequiredEnv("SUPABASE_AUTH_ADMIN_SECRET_KEY");
 
   return createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
