@@ -59,6 +59,9 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   const [hasSignedIn, setHasSignedIn] = useState(false);
   const [isLoginSubmitting, setIsLoginSubmitting] = useState(false);
   const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
+  const [loginErrorMessage, setLoginErrorMessage] = useState<string | null>(
+    null,
+  );
   const [view, setView] = useState<LoginView>(LoginView.Login);
   const [passwordResetSession, setPasswordResetSession] =
     useState<PasswordResetSession | null>(null);
@@ -80,11 +83,13 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   }, [hasSignedIn, redirectHref, router, status]);
 
   const openLoginView = () => {
+    setLoginErrorMessage(null);
     setPasswordResetSession(null);
     setView(LoginView.Login);
   };
 
   const openResetPasswordView = () => {
+    setLoginErrorMessage(null);
     setPasswordResetSession(null);
     setView(LoginView.ResetPassword);
   };
@@ -121,6 +126,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
       return;
     }
 
+    setLoginErrorMessage("Invalid username or password.");
     showToastBySeverity(severity, t(textKey));
   };
 
@@ -129,6 +135,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
     mode: "login" | "demo",
   ) => {
     if (mode === "login") {
+      setLoginErrorMessage(null);
       setIsLoginSubmitting(true);
     } else {
       setIsDemoSubmitting(true);
@@ -138,6 +145,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
       const result = await signIn("credentials", {
         username: values.username,
         password: values.password,
+        mode,
         redirect: false,
       });
 
@@ -159,6 +167,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   };
 
   const handleLoginSubmit = async (values: LoginFormValues) => {
+    setLoginErrorMessage(null);
     await authenticate(values, "login");
   };
 
@@ -239,13 +248,16 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
           <LoginForm
             onSubmit={handleLoginSubmit}
             isLoading={isLoginSubmitting}
+            errorMessage={loginErrorMessage}
+            onInputChange={() => setLoginErrorMessage(null)}
           />
           <Button
             className="mt-6 h-12 w-full rounded-lg text-base font-normal"
             type="button"
             variant="secondary"
-            data-testid="forgot-open"
+            data-testid="try-demo-login"
             onClick={handleDemoLogin}
+            disabled={isDemoSubmitting || isLoginSubmitting}
           >
             {isDemoSubmitting ? (
               <>
