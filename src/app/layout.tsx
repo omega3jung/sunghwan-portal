@@ -2,6 +2,7 @@
 
 import "@/styles/globals.css";
 
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <RootProviders>
           {/* <SessionInitializer /> ❌ */}
           {children}
+          <Analytics />
         </RootProviders>
         <Toaster richColors />
       </body>
