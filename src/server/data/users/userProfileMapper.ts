@@ -1,3 +1,5 @@
+import { displayNameMapper } from "@/shared/utils/i18n/displayName";
+
 import { UserProfileAuthContext, UserProfileDto } from "./userProfileDto";
 import { UserProfileRow } from "./userProfileRow";
 
@@ -6,9 +8,9 @@ export function toUserProfileDto(
   authContext: UserProfileAuthContext,
 ): UserProfileDto {
   return {
-    id: String(row.id),
+    id: row.id,
     username: row.username,
-    displayName: row.display_name,
+    displayName: displayNameMapper(row.display_name),
     email: row.email,
     userScope: authContext.userScope,
     companyId: authContext.companyId,

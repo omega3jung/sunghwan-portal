@@ -1,5 +1,6 @@
 ﻿import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 import {
   clientAdminEmployee,
@@ -9,14 +10,14 @@ import {
   clientUserEmployee,
 } from "../organization/employee/demoUser";
 import { CLIENT_DEMO_USER_IDS } from "./data.ids";
-import { displayNameMapper, toAuth, toProfile } from "./mapper";
+import { toAuth, toProfile } from "./mapper";
 import { DemoAuthProfileSeed } from "./types";
 
 export const clientAdminData = {
   id: CLIENT_DEMO_USER_IDS.ADMIN.ID,
   employeeId: clientAdminEmployee.employee_id,
   username: clientAdminEmployee.employee_user_name,
-  displayName: displayNameMapper(clientAdminEmployee.employee_name.en),
+  displayName: displayNameMapper(clientAdminEmployee.employee_name),
   email: clientAdminEmployee.employee_email,
   accessToken: CLIENT_DEMO_USER_IDS.ADMIN.TOKEN,
   userScope: "CLIENT",
@@ -34,7 +35,7 @@ export const clientManagerData = {
   id: CLIENT_DEMO_USER_IDS.MANAGER.ID,
   employeeId: clientManagerEmployee.employee_id,
   username: clientManagerEmployee.employee_user_name,
-  displayName: displayNameMapper(clientManagerEmployee.employee_name.en),
+  displayName: displayNameMapper(clientManagerEmployee.employee_name),
   email: clientManagerEmployee.employee_email,
   accessToken: CLIENT_DEMO_USER_IDS.MANAGER.TOKEN,
   userScope: "CLIENT",
@@ -52,7 +53,7 @@ export const clientLeaderData = {
   id: CLIENT_DEMO_USER_IDS.LEADER.ID,
   employeeId: clientLeaderEmployee.employee_id,
   username: clientLeaderEmployee.employee_user_name,
-  displayName: displayNameMapper(clientLeaderEmployee.employee_name.en),
+  displayName: displayNameMapper(clientLeaderEmployee.employee_name),
   email: clientLeaderEmployee.employee_email,
   accessToken: CLIENT_DEMO_USER_IDS.LEADER.TOKEN,
   userScope: "CLIENT",
@@ -70,7 +71,7 @@ export const clientUserData = {
   id: CLIENT_DEMO_USER_IDS.USER.ID,
   employeeId: clientUserEmployee.employee_id,
   username: clientUserEmployee.employee_user_name,
-  displayName: displayNameMapper(clientUserEmployee.employee_name.en),
+  displayName: displayNameMapper(clientUserEmployee.employee_name),
   email: clientUserEmployee.employee_email,
   accessToken: CLIENT_DEMO_USER_IDS.USER.TOKEN,
   userScope: "CLIENT",
@@ -88,7 +89,7 @@ export const clientGuestData = {
   id: CLIENT_DEMO_USER_IDS.GUEST.ID,
   employeeId: clientGuestEmployee.employee_id,
   username: clientGuestEmployee.employee_user_name,
-  displayName: displayNameMapper(clientGuestEmployee.employee_name.en),
+  displayName: displayNameMapper(clientGuestEmployee.employee_name),
   email: clientGuestEmployee.employee_email,
   accessToken: CLIENT_DEMO_USER_IDS.GUEST.TOKEN,
   userScope: "CLIENT",

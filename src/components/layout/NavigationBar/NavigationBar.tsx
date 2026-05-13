@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
 import { LinkBarItem, LinksBar } from "./LinksBar";
@@ -52,6 +53,7 @@ export const NavigationBar = (props: Props) => {
   const { open, setOpenMobile, setOpen, isMobile } = useSidebar();
   const { currentUser, isImpersonating } = useImpersonation();
   const { data: currentSession } = useCurrentSession();
+  const tLocal = useLocalizedText();
   const isLocal = currentSession?.user.dataScope === "LOCAL";
   const pathName = usePathname();
 
@@ -189,7 +191,7 @@ export const NavigationBar = (props: Props) => {
           badgeText={
             (userRoleBadge ?? !isImpersonating)
               ? "Owner"
-              : (currentUser?.displayName ?? "")
+              : (currentUser ? tLocal(currentUser.displayName) : "")
           }
           shieldText={userRoleBadge}
           viewOnly={false}

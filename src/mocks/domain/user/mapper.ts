@@ -1,5 +1,4 @@
 ﻿import { AuthUser } from "@/domain/auth";
-import { DisplayName } from "@/domain/organization";
 import { AppUser } from "@/domain/user";
 
 export const toAuth = (
@@ -19,9 +18,4 @@ export const toProfile = (
 ): AppUser => {
   const { ...profile } = data;
   return profile;
-};
-
-export const displayNameMapper = (name: DisplayName) => {
-  const { first, middle, last } = name;
-  return [first, middle, last].filter(Boolean).join(" ");
 };

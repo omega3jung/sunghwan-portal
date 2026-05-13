@@ -1,3 +1,5 @@
+import { LocalizedText } from "@/shared/types";
+
 import { AppUser } from "../user/model";
 import { AccessLevel, Role } from "./constants";
 import { DataScope, UserScope } from "./types";
@@ -8,7 +10,7 @@ export interface AuthUser {
   id: string; // uuid
   employeeId: number | null; // employee domain id
   username: string; // user account
-  displayName: string; // user name
+  displayName: LocalizedText; // user name
   email: string;
   accessToken: string;
 

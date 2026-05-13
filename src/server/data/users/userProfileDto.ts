@@ -1,10 +1,10 @@
 import { AccessLevel, Role, UserScope } from "@/domain/auth";
-import { LocalizedName } from "@/domain/organization";
+import { LocalizedText } from "@/shared/types";
 
 export interface UserProfileDto {
   id: string;
   username: string;
-  displayName: LocalizedName;
+  displayName: LocalizedText;
   email: string | null;
   userScope: UserScope;
   companyId: string;

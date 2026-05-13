@@ -14,6 +14,7 @@ import {
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { clientProfiles, internalProfiles } from "@/mocks/domain/user";
+import { getLocalizedText } from "@/shared/utils/i18n";
 
 type Props = {
   user: AppUser;
@@ -53,6 +54,9 @@ export function DemoUserSwitch(props: Props) {
     }
   };
 
+  const getDisplayNameKey = (displayName: AppUser["displayName"]) =>
+    (getLocalizedText(displayName, "en") ?? "").replaceAll(" ", "");
+
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger disabled={disabled}>
@@ -63,26 +67,28 @@ export function DemoUserSwitch(props: Props) {
         <DropdownMenuSubContent>
           <DropdownMenuLabel>{t("internalUserSwitchLabel")}</DropdownMenuLabel>
           {switchDemoUserProfiles.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(profile.displayName);
             return (
               <DropdownMenuItem
-                key={`switch_${profile.displayName.replaceAll(" ", "_")}`}
+                key={`switch_${profile.id}`}
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`loginAs${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}
           <DropdownMenuSeparator />
           <DropdownMenuLabel>{t("clientUserSwitchLabel")}</DropdownMenuLabel>
           {switchClientUserProfiles.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(profile.displayName);
             return (
               <DropdownMenuItem
-                key={`switch_${profile.displayName.replaceAll(" ", "_")}`}
+                key={`switch_${profile.id}`}
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`loginAs${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}

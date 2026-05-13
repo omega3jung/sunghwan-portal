@@ -4,7 +4,7 @@ import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
 import { verifyAuthAccountCredentials } from "@/server/data/auth/accounts";
 import { getActiveEmployeeById } from "@/server/data/users";
-import { toEnglishDisplayName } from "@/server/shared/user/displayName";
+import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 export type LoginResponse = AuthUser;
 type RawLoginResponse = Omit<AuthUser, "companyId" | "employeeId"> & {
@@ -64,7 +64,7 @@ export const loginApi = async ({
       id: String(verifiedAccount.authAccountId),
       employeeId: employee.employeeId,
       username: verifiedAccount.username,
-      displayName: toEnglishDisplayName(employee.name) || employee.username,
+      displayName: displayNameMapper(employee.name),
       email: employee.email,
       accessToken: buildDemoSafeAccessToken(
         verifiedAccount.authAccountId,

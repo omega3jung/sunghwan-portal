@@ -12,6 +12,7 @@ import {
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { clientProfiles } from "@/mocks/domain/user";
+import { getLocalizedText } from "@/shared/utils/i18n";
 
 type Props = {
   user: AppUser;
@@ -45,6 +46,10 @@ export function DemoImpersonation(props: Props) {
         return <Contact />;
     }
   };
+
+  const getDisplayNameKey = (displayName: AppUser["displayName"]) =>
+    (getLocalizedText(displayName, "en") ?? "").replaceAll(" ", "");
+
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
@@ -53,13 +58,14 @@ export function DemoImpersonation(props: Props) {
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           {impersonationCandidates.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(profile.displayName);
             return (
               <DropdownMenuItem
-                key={`impersonate_${profile.displayName.replaceAll(" ", "_")}`}
+                key={`impersonate_${profile.id}`}
                 onClick={() => onDemoImpersonate(profile.id)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`impersonationAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`impersonationAs${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}

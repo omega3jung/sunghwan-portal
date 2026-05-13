@@ -1,3 +1,5 @@
+import { LocalizedText } from "@/shared/types";
+
 import { AccessLevel, Role } from "../auth/constants";
 import { UserScope } from "../auth/types";
 
@@ -5,7 +7,7 @@ import { UserScope } from "../auth/types";
 export interface AppUser {
   id: string;
   username: string; // user account
-  displayName: string; // user name
+  displayName: LocalizedText; // user name
   email: string | null;
   image?: string;
 

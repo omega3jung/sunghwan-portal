@@ -10,6 +10,7 @@ import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
+import { useLocalizedText } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
 
 import { useTicketActionMutation } from "../../api/client";
@@ -114,6 +115,7 @@ export function TicketActionTool({
   categories = [],
 }: TicketActionToolProps) {
   const { t, i18n } = useTranslation(NS.serviceDesk);
+  const tLocal = useLocalizedText();
   const { current } = useCurrentSession();
   const mutationToast = useMutationToast();
   const { mutateAsync: createAction, isPending } = useTicketActionMutation();
@@ -133,7 +135,7 @@ export function TicketActionTool({
 
   const currentUserName =
     currentUserOption?.label ||
-    currentUser?.displayName ||
+    (currentUser ? tLocal(currentUser.displayName) : "") ||
     t("actionTool.currentUserFallback");
   const currentUserEmail =
     currentUserOption?.displayName || currentUser?.email || "";

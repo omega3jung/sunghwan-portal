@@ -27,6 +27,7 @@ import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useLocalizedText } from "@/shared/hooks";
 import { cn, initials } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
@@ -45,6 +46,7 @@ export function UserMenu() {
   const signingRef = useRef(false);
 
   const { t } = useTranslation("UserMenu");
+  const tLocal = useLocalizedText();
 
   const isDemo = current.isDemoUser;
   const visibleUser = currentUser ?? current.user;
@@ -100,17 +102,18 @@ export function UserMenu() {
     if (!user) return null;
 
     const { size = 10, muted } = options ?? {};
+    const localizedDisplayName = tLocal(user.displayName);
 
     return (
       <Avatar className={cn(`h-${size} w-${size}`)}>
-        <AvatarImage src={user.image} alt={user.displayName} />
+        <AvatarImage src={user.image} alt={localizedDisplayName} />
         <AvatarFallback
           className={cn(
             muted ? "bg-muted-foreground" : "bg-foreground",
             "text-background",
           )}
         >
-          {initials(user.displayName)}
+          {initials(localizedDisplayName)}
         </AvatarFallback>
       </Avatar>
     );
@@ -157,7 +160,11 @@ export function UserMenu() {
               muted: hasImpersonatedUser,
             })}
             <div className="flex flex-col">
-              <span>{displayedOriginalUser?.displayName}</span>
+              <span>
+                {displayedOriginalUser
+                  ? tLocal(displayedOriginalUser.displayName)
+                  : ""}
+              </span>
               <span className="text-muted-foreground font-normal">
                 {displayedOriginalUser?.email}
               </span>
@@ -200,7 +207,7 @@ export function UserMenu() {
             <DropdownMenuLabel className="flex gap-2">
               {renderUserAvatar(impersonatedUser)}
               <div className="flex flex-col">
-                <span>{impersonatedUser.displayName}</span>
+                <span>{tLocal(impersonatedUser.displayName)}</span>
                 <span className="text-muted-foreground font-normal">
                   {impersonatedUser.email}
                 </span>
