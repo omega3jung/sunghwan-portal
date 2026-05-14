@@ -3,16 +3,16 @@ import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 import { UserProfileRow } from "./userProfileRow";
 
 const FIND_USER_PROFILE_BY_ID_QUERY = `
-select auth_account_id as id,
-       employee.employee_id,
-       employee_user_name as username,
-       employee_name as display_name,
-       employee_email as email,
-       employee_company_id as company_id
+select aa_id,
+       e_id,
+       e_user_name,
+       ename,
+       e_email,
+       e_cid
   from auth_account
   join employee
-    on auth_account.employee_id = employee.employee_id
-   and auth_account_id = $1;
+    on aa_eid = e_id
+   and aa_id = $1;
 `;
 
 export async function findUserProfileById(

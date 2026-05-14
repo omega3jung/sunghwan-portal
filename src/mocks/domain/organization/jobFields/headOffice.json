@@ -1,114 +1,114 @@
 ﻿[
   {
-    "job_field_id": 1,
-    "job_field_name": { "en": "Head of Corporate Affairs" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 1,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 1,
+    "jf_name": { "en": "Head of Corporate Affairs" },
+    "jf_description": { "en": "" },
+    "jf_did": 1,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 2,
-    "job_field_name": { "en": "HR Director" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 2,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 2,
+    "jf_name": { "en": "HR Director" },
+    "jf_description": { "en": "" },
+    "jf_did": 2,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 3,
-    "job_field_name": { "en": "HR Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 2,
-    "job_field_parent_id": 2,
-    "job_field_active": true
+    "jf_id": 3,
+    "jf_name": { "en": "HR Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 2,
+    "jf_parent_id": 2,
+    "jf_active": true
   },
   {
-    "job_field_id": 4,
-    "job_field_name": { "en": "HR Officer" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 2,
-    "job_field_parent_id": 3,
-    "job_field_active": true
+    "jf_id": 4,
+    "jf_name": { "en": "HR Officer" },
+    "jf_description": { "en": "" },
+    "jf_did": 2,
+    "jf_parent_id": 3,
+    "jf_active": true
   },
   {
-    "job_field_id": 5,
-    "job_field_name": { "en": "Finance Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 3,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 5,
+    "jf_name": { "en": "Finance Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 3,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 6,
-    "job_field_name": { "en": "Financial Controller" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 3,
-    "job_field_parent_id": 5,
-    "job_field_active": true
+    "jf_id": 6,
+    "jf_name": { "en": "Financial Controller" },
+    "jf_description": { "en": "" },
+    "jf_did": 3,
+    "jf_parent_id": 5,
+    "jf_active": true
   },
   {
-    "job_field_id": 7,
-    "job_field_name": { "en": "Finance Officer" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 3,
-    "job_field_parent_id": 6,
-    "job_field_active": true
+    "jf_id": 7,
+    "jf_name": { "en": "Finance Officer" },
+    "jf_description": { "en": "" },
+    "jf_did": 3,
+    "jf_parent_id": 6,
+    "jf_active": true
   },
   {
-    "job_field_id": 8,
-    "job_field_name": { "en": "Sales Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 4,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 8,
+    "jf_name": { "en": "Sales Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 4,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 9,
-    "job_field_name": { "en": "Account Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 4,
-    "job_field_parent_id": 8,
-    "job_field_active": true
+    "jf_id": 9,
+    "jf_name": { "en": "Account Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 4,
+    "jf_parent_id": 8,
+    "jf_active": true
   },
   {
-    "job_field_id": 10,
-    "job_field_name": { "en": "Sales Representative" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 4,
-    "job_field_parent_id": 9,
-    "job_field_active": true
+    "jf_id": 10,
+    "jf_name": { "en": "Sales Representative" },
+    "jf_description": { "en": "" },
+    "jf_did": 4,
+    "jf_parent_id": 9,
+    "jf_active": true
   },
   {
-    "job_field_id": 11,
-    "job_field_name": { "en": "Customer Support Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 5,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 11,
+    "jf_name": { "en": "Customer Support Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 5,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 12,
-    "job_field_name": { "en": "Support Specialist" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 5,
-    "job_field_parent_id": 11,
-    "job_field_active": true
+    "jf_id": 12,
+    "jf_name": { "en": "Support Specialist" },
+    "jf_description": { "en": "" },
+    "jf_did": 5,
+    "jf_parent_id": 11,
+    "jf_active": true
   },
   {
-    "job_field_id": 13,
-    "job_field_name": { "en": "Security Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 9,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 13,
+    "jf_name": { "en": "Security Manager" },
+    "jf_description": { "en": "" },
+    "jf_did": 9,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 14,
-    "job_field_name": { "en": "Security Officer" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 9,
-    "job_field_parent_id": 13,
-    "job_field_active": true
+    "jf_id": 14,
+    "jf_name": { "en": "Security Officer" },
+    "jf_description": { "en": "" },
+    "jf_did": 9,
+    "jf_parent_id": 13,
+    "jf_active": true
   }
 ]

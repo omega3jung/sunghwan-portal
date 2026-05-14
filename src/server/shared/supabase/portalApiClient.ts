@@ -1,6 +1,6 @@
 import { Pool, QueryResultRow } from "pg";
 
-// portal/service-desk API only after login.
+// portal API only after login.
 // portal_api DB connection use.
 function getRequiredEnv(key: "PORTAL_DATABASE_URL"): string {
   const value = process.env[key];

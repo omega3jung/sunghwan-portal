@@ -1,48 +1,41 @@
-import { createSupabaseAuthClient } from "@/server/shared/supabase/authAdminClient";
+import { queryAuthApi } from "@/server/shared/supabase/authApiClient";
 
-import { DbAuthAccountRow } from "./authAccountRow";
+import { DbAuthLoginUserRow } from "./authAccountRow";
 
-const AUTH_ACCOUNT_TABLE_NAME = "auth_account" as const;
+const FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY = `
+  select
+    aa_id,
+    aa_username,
+    aa_password_hash,
+    aa_role,
+    aa_permission,
+    aa_user_scope,
+    aa_last_login_at,
 
-const AUTH_ACCOUNT_SELECT_COLUMNS = [
-  "auth_account_id",
-  "employee_id",
-  "account_username",
-  "password_hash",
-  "role",
-  "permission",
-  "user_scope",
-  "account_active",
-  "last_login_at",
-  "created_at",
-  "updated_at",
-].join(", ");
+    e_id,
+    e_name,
+    e_email,
+    e_cid
+  from public.auth_login_user_view
+  where aa_username = $1
+    and aa_active = true
+  limit 1
+`;
 
-export async function findActiveAuthAccountByUsername(
+export async function findActiveAuthLoginUserByUsername(
   username: string,
-): Promise<DbAuthAccountRow | null> {
-  const supabase = createSupabaseAuthClient();
-
-  let lastMissingTableError: Error | null = null;
-
-  const { data, error } = await supabase
-    .from(AUTH_ACCOUNT_TABLE_NAME)
-    .select(AUTH_ACCOUNT_SELECT_COLUMNS)
-    .eq("account_username", username)
-    .eq("account_active", true)
-    .maybeSingle();
-
-  if (!error) {
-    return (data as DbAuthAccountRow | null) ?? null;
-  }
-
-  lastMissingTableError = new Error(error.message);
-
-  if (lastMissingTableError) {
+): Promise<DbAuthLoginUserRow | null> {
+  try {
+    const rows = await queryAuthApi<DbAuthLoginUserRow>(
+      FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY,
+      [username],
+    );
+    return rows[0] ?? null;
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown database error";
     throw new Error(
-      `Failed to fetch active auth account by username: ${lastMissingTableError.message}`,
+      `Failed to fetch active auth account by username: ${message}`,
     );
   }
-
-  return null;
 }

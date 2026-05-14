@@ -13,11 +13,11 @@ type EmployeeWriteFields = Omit<Employee, "id" | "startDate" | "endDate"> & {
 
 type DbEmployeeWriteInput = Omit<
   DbEmployee,
-  "employee_id" | "employee_start_date" | "employee_end_date"
+  "e_id" | "e_start_date" | "e_end_date"
 > & {
-  employee_id?: number | null;
-  employee_start_date: DateInput;
-  employee_end_date: DateInput | null;
+  e_id?: number | null;
+  e_start_date: DateInput;
+  e_end_date: DateInput | null;
 };
 
 export type CreateEmployeeInput = EmployeeWriteFields & {
@@ -29,22 +29,22 @@ export function toEmployeeWritePayload(
   input: CreateEmployeeInput | UpdateEmployeeInput,
 ): DbEmployeeWriteInput {
   return {
-    employee_id: resolveEmployeeId(input.id),
-    employee_user_name: input.userName,
-    employee_name: input.name,
-    employee_phone: input.phone,
-    employee_email: input.email,
-    employee_image_url: undefinedToNull(input.imageUrl),
-    employee_department_id: Number(input.departmentId),
-    employee_job_field_id: Number(input.jobFieldId),
-    employee_company_id: Number(input.companyId),
-    employee_start_date: input.startDate,
-    employee_end_date: undefinedToNull(input.endDate),
-    employee_shift_id: idToNumber(input.shiftId),
-    employee_active: input.active,
-    employee_engineer_id: idToNumber(input.engineerId),
-    employee_rf_tag_id: undefinedToNull(input.rfTagId),
-    employee_hour_rate: undefinedToNull(input.hourRate),
+    e_id: resolveEmployeeId(input.id),
+    e_user_name: input.userName,
+    e_name: input.name,
+    e_phone: input.phone,
+    e_email: input.email,
+    e_image_url: undefinedToNull(input.imageUrl),
+    e_did: Number(input.departmentId),
+    e_jfid: Number(input.jobFieldId),
+    e_cid: Number(input.companyId),
+    e_start_date: input.startDate,
+    e_end_date: undefinedToNull(input.endDate),
+    e_wsid: idToNumber(input.shiftId),
+    e_active: input.active,
+    e_engineer_id: idToNumber(input.engineerId),
+    e_rf_tag_id: undefinedToNull(input.rfTagId),
+    e_hour_rate: undefinedToNull(input.hourRate),
   };
 }
 

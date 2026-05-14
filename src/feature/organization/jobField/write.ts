@@ -9,8 +9,8 @@ type JobFieldWriteFields = Pick<
   "name" | "description" | "departmentId" | "parentId" | "active"
 >;
 
-type DbJobFieldWriteInput = Omit<DbJobField, "job_field_id"> & {
-  job_field_id?: number | null;
+type DbJobFieldWriteInput = Omit<DbJobField, "jf_id"> & {
+  jf_id?: number | null;
 };
 
 export type CreateJobFieldInput = JobFieldWriteFields & { id?: string };
@@ -20,12 +20,12 @@ export function toJobFieldWritePayload(
   input: CreateJobFieldInput | UpdateJobFieldInput,
 ): DbJobFieldWriteInput {
   return {
-    job_field_id: idToNumber(input.id),
-    job_field_name: input.name,
-    job_field_description: undefinedToNull(input.description),
-    job_field_department_id: Number(input.departmentId),
-    job_field_parent_id: idToNumber(input.parentId),
-    job_field_active: input.active,
+    jf_id: idToNumber(input.id),
+    jf_name: input.name,
+    jf_description: undefinedToNull(input.description),
+    jf_did: Number(input.departmentId),
+    jf_parent_id: idToNumber(input.parentId),
+    jf_active: input.active,
   };
 }
 

@@ -1,17 +1,20 @@
 import { AuthAccountResponseDto } from "./authAccountDto";
-import { DbAuthAccountRow } from "./authAccountRow";
+import { DbAuthLoginUserRow } from "./authAccountRow";
 
 export function toAuthAccountResponseDto(
-  row: DbAuthAccountRow,
+  row: DbAuthLoginUserRow,
 ): AuthAccountResponseDto {
   return {
-    authAccountId: row.auth_account_id,
-    employeeId: row.employee_id,
-    username: row.account_username,
-    role: row.role,
-    permission: row.permission,
-    userScope: row.user_scope,
-    active: row.account_active,
-    lastLoginAt: row.last_login_at,
+    authAccountId: row.aa_id,
+    username: row.aa_username,
+    role: row.aa_role,
+    permission: row.aa_permission,
+    userScope: row.aa_user_scope,
+    active: row.aa_active,
+    lastLoginAt: row.aa_last_login_at,
+    employeeId: row.e_id,
+    employeeName: row.e_name,
+    employeeEmail: row.e_email,
+    companyId: row.e_cid,
   };
 }

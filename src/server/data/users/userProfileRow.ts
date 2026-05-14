@@ -1,10 +1,10 @@
 import { LocalizedName } from "@/domain/organization";
 
 export type UserProfileRow = {
-  id: string;
-  employee_id: number;
-  username: string;
-  display_name: LocalizedName;
-  email: string | null;
-  company_id: number;
+  aa_id: string;
+  e_id: number;
+  e_user_name: string;
+  ename: LocalizedName;
+  e_email: string | null;
+  e_cid: number;
 };

@@ -2,8 +2,7 @@ import axios from "axios";
 
 import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
 import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
-import { verifyAuthAccountCredentials } from "@/server/data/auth/accounts";
-import { getActiveEmployeeById } from "@/server/data/users";
+import { verifyLoginCredentials } from "@/server/data/auth/accounts";
 import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 export type LoginResponse = AuthUser;
@@ -45,36 +44,27 @@ export const loginApi = async ({
     }
 
     // real login
-    const verifiedAccount = await verifyAuthAccountCredentials(
-      username,
-      password,
-    );
+    const verifiedUser = await verifyLoginCredentials(username, password);
 
-    if (!verifiedAccount || verifiedAccount.userScope !== "INTERNAL") {
-      throw new Error("INVALID_CREDENTIALS");
-    }
-
-    const employee = await getActiveEmployeeById(verifiedAccount.employeeId);
-
-    if (!employee) {
+    if (!verifiedUser || verifiedUser.userScope !== "INTERNAL") {
       throw new Error("INVALID_CREDENTIALS");
     }
 
     return {
-      id: String(verifiedAccount.authAccountId),
-      employeeId: employee.employeeId,
-      username: verifiedAccount.username,
-      displayName: displayNameMapper(employee.name),
-      email: employee.email,
+      id: verifiedUser.authAccountId,
+      employeeId: verifiedUser.employeeId,
+      username: verifiedUser.username,
+      displayName: displayNameMapper(verifiedUser.employeeName),
+      email: verifiedUser.employeeEmail,
       accessToken: buildDemoSafeAccessToken(
-        verifiedAccount.authAccountId,
-        employee.employeeId,
+        verifiedUser.authAccountId,
+        verifiedUser.employeeId,
       ),
       dataScope: "REMOTE",
-      userScope: verifiedAccount.userScope,
-      companyId: String(employee.companyId),
-      permission: ACCESS_LEVEL[verifiedAccount.permission],
-      role: verifiedAccount.role,
+      userScope: verifiedUser.userScope,
+      companyId: String(verifiedUser.companyId),
+      permission: ACCESS_LEVEL[verifiedUser.permission],
+      role: verifiedUser.role,
     };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -112,6 +102,6 @@ function resolveEmployeeId(value: number | string | null | undefined) {
   return null;
 }
 
-function buildDemoSafeAccessToken(authAccountId: number, employeeId: number) {
+function buildDemoSafeAccessToken(authAccountId: string, employeeId: number) {
   return `auth-${authAccountId}-employee-${employeeId}`;
 }

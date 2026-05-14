@@ -9,24 +9,24 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 // back-end data structures.
 export interface DbJobField {
-  job_field_id: number;
-  job_field_name: LocalizedText;
-  job_field_description: LocalizedText | null;
-  job_field_department_id: number;
-  job_field_parent_id: number | null;
-  job_field_active: boolean;
+  jf_id: number;
+  jf_name: LocalizedText;
+  jf_description: LocalizedText | null;
+  jf_did: number;
+  jf_parent_id: number | null;
+  jf_active: boolean;
 }
 
 export const camelJobFieldMapper: ArrayMapper<DbJobField, JobField> = (
   data,
 ) => {
   return data.map((item) => ({
-    id: item.job_field_id.toString(),
-    name: item.job_field_name,
-    description: nullToUndefined(item.job_field_description),
-    departmentId: item.job_field_department_id.toString(),
-    parentId: numberToId(item.job_field_parent_id),
-    active: item.job_field_active,
+    id: item.jf_id.toString(),
+    name: item.jf_name,
+    description: nullToUndefined(item.jf_description),
+    departmentId: item.jf_did.toString(),
+    parentId: numberToId(item.jf_parent_id),
+    active: item.jf_active,
   }));
 };
 
@@ -34,12 +34,12 @@ export const snakeJobFieldMapper: ArrayMapper<JobField, DbJobField> = (
   data,
 ) => {
   return data.map((item) => ({
-    job_field_id: parseInt(item.id),
-    job_field_name: item.name,
-    job_field_description: undefinedToNull(item.description),
-    job_field_department_id: parseInt(item.departmentId),
-    job_field_parent_id: idToNumber(item.parentId),
-    job_field_active: item.active,
+    jf_id: parseInt(item.id),
+    jf_name: item.name,
+    jf_description: undefinedToNull(item.description),
+    jf_did: parseInt(item.departmentId),
+    jf_parent_id: idToNumber(item.parentId),
+    jf_active: item.active,
   }));
 };
 

@@ -1,692 +1,692 @@
 ﻿[
   {
-    "employee_id": 121,
-    "employee_user_name": "121",
-    "employee_name": {
+    "e_id": 121,
+    "e_user_name": "121",
+    "e_name": {
       "en": {
         "first": "Marcus",
         "middle": "",
         "last": "Hill"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Marcus.Hill@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 70,
-    "employee_job_field_id": 71,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Marcus.Hill@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 70,
+    "e_jfid": 71,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 122,
-    "employee_user_name": "122",
-    "employee_name": {
+    "e_id": 122,
+    "e_user_name": "122",
+    "e_name": {
       "en": {
         "first": "Hailey",
         "middle": "",
         "last": "Adams"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Hailey.Adams@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 70,
-    "employee_job_field_id": 72,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Hailey.Adams@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 70,
+    "e_jfid": 72,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 123,
-    "employee_user_name": "123",
-    "employee_name": {
+    "e_id": 123,
+    "e_user_name": "123",
+    "e_name": {
       "en": {
         "first": "Tyler",
         "middle": "",
         "last": "Baker"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Tyler.Baker@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 73,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Tyler.Baker@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 73,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 124,
-    "employee_user_name": "124",
-    "employee_name": {
+    "e_id": 124,
+    "e_user_name": "124",
+    "e_name": {
       "en": {
         "first": "Savannah",
         "middle": "",
         "last": "Nelson"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Savannah.Nelson@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 74,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Savannah.Nelson@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 74,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 125,
-    "employee_user_name": "125",
-    "employee_name": {
+    "e_id": 125,
+    "e_user_name": "125",
+    "e_name": {
       "en": {
         "first": "Jordan",
         "middle": "",
         "last": "Carter"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Jordan.Carter@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 75,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Jordan.Carter@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 75,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 126,
-    "employee_user_name": "126",
-    "employee_name": {
+    "e_id": 126,
+    "e_user_name": "126",
+    "e_name": {
       "en": {
         "first": "Skylar",
         "middle": "",
         "last": "Mitchell"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Skylar.Mitchell@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 75,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Skylar.Mitchell@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 75,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 127,
-    "employee_user_name": "127",
-    "employee_name": {
+    "e_id": 127,
+    "e_user_name": "127",
+    "e_name": {
       "en": {
         "first": "Brandon",
         "middle": "",
         "last": "Turner"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Brandon.Turner@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 75,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Brandon.Turner@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 75,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 128,
-    "employee_user_name": "128",
-    "employee_name": {
+    "e_id": 128,
+    "e_user_name": "128",
+    "e_name": {
       "en": {
         "first": "Alyssa",
         "middle": "",
         "last": "Phillips"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Alyssa.Phillips@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 76,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Alyssa.Phillips@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 76,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 129,
-    "employee_user_name": "129",
-    "employee_name": {
+    "e_id": 129,
+    "e_user_name": "129",
+    "e_name": {
       "en": {
         "first": "Derek",
         "middle": "",
         "last": "Campbell"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Derek.Campbell@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": false,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Derek.Campbell@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 130,
-    "employee_user_name": "130",
-    "employee_name": {
+    "e_id": 130,
+    "e_user_name": "130",
+    "e_name": {
       "en": {
         "first": "Morgan",
         "middle": "",
         "last": "Parker"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Morgan.Parker@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Morgan.Parker@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 131,
-    "employee_user_name": "131",
-    "employee_name": {
+    "e_id": 131,
+    "e_user_name": "131",
+    "e_name": {
       "en": {
         "first": "Zachary",
         "middle": "",
         "last": "Evans"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Zachary.Evans@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Zachary.Evans@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 132,
-    "employee_user_name": "132",
-    "employee_name": {
+    "e_id": 132,
+    "e_user_name": "132",
+    "e_name": {
       "en": {
         "first": "Kylie",
         "middle": "",
         "last": "Edwards"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Kylie.Edwards@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Kylie.Edwards@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 133,
-    "employee_user_name": "133",
-    "employee_name": {
+    "e_id": 133,
+    "e_user_name": "133",
+    "e_name": {
       "en": {
         "first": "Austin",
         "middle": "",
         "last": "Collins"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Austin.Collins@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Austin.Collins@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 134,
-    "employee_user_name": "134",
-    "employee_name": {
+    "e_id": 134,
+    "e_user_name": "134",
+    "e_name": {
       "en": {
         "first": "Brooke",
         "middle": "",
         "last": "Stewart"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Brooke.Stewart@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": false,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Brooke.Stewart@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 135,
-    "employee_user_name": "135",
-    "employee_name": {
+    "e_id": 135,
+    "e_user_name": "135",
+    "e_name": {
       "en": {
         "first": "Preston",
         "middle": "",
         "last": "Morris"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Preston.Morris@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 78,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Preston.Morris@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 78,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 136,
-    "employee_user_name": "136",
-    "employee_name": {
+    "e_id": 136,
+    "e_user_name": "136",
+    "e_name": {
       "en": {
         "first": "Faith",
         "middle": "",
         "last": "Rogers"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Faith.Rogers@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Faith.Rogers@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 137,
-    "employee_user_name": "137",
-    "employee_name": {
+    "e_id": 137,
+    "e_user_name": "137",
+    "e_name": {
       "en": {
         "first": "Trevor",
         "middle": "",
         "last": "Reed"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Trevor.Reed@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": false,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Trevor.Reed@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 138,
-    "employee_user_name": "138",
-    "employee_name": {
+    "e_id": 138,
+    "e_user_name": "138",
+    "e_name": {
       "en": {
         "first": "Madeline",
         "middle": "",
         "last": "Cook"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Madeline.Cook@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Madeline.Cook@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 139,
-    "employee_user_name": "139",
-    "employee_name": {
+    "e_id": 139,
+    "e_user_name": "139",
+    "e_name": {
       "en": {
         "first": "Colton",
         "middle": "",
         "last": "Morgan"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Colton.Morgan@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 11,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Colton.Morgan@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 11,
+    "e_end_date": null
   },
   {
-    "employee_id": 140,
-    "employee_user_name": "140",
-    "employee_name": {
+    "e_id": 140,
+    "e_user_name": "140",
+    "e_name": {
       "en": {
         "first": "Paige",
         "middle": "",
         "last": "Bell"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Paige.Bell@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": false,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Paige.Bell@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 141,
-    "employee_user_name": "141",
-    "employee_name": {
+    "e_id": 141,
+    "e_user_name": "141",
+    "e_name": {
       "en": {
         "first": "Grant",
         "middle": "",
         "last": "Murphy"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Grant.Murphy@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": false,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Grant.Murphy@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 142,
-    "employee_user_name": "142",
-    "employee_name": {
+    "e_id": 142,
+    "e_user_name": "142",
+    "e_name": {
       "en": {
         "first": "Jade",
         "middle": "",
         "last": "Bailey"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Jade.Bailey@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 75,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Jade.Bailey@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 75,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 143,
-    "employee_user_name": "143",
-    "employee_name": {
+    "e_id": 143,
+    "e_user_name": "143",
+    "e_name": {
       "en": {
         "first": "Victor",
         "middle": "",
         "last": "Rivera"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Victor.Rivera@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 75,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Victor.Rivera@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 75,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 144,
-    "employee_user_name": "144",
-    "employee_name": {
+    "e_id": 144,
+    "e_user_name": "144",
+    "e_name": {
       "en": {
         "first": "Sienna",
         "middle": "",
         "last": "Cooper"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Sienna.Cooper@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Sienna.Cooper@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 145,
-    "employee_user_name": "145",
-    "employee_name": {
+    "e_id": 145,
+    "e_user_name": "145",
+    "e_name": {
       "en": {
         "first": "Travis",
         "middle": "",
         "last": "Richardson"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Travis.Richardson@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Travis.Richardson@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 146,
-    "employee_user_name": "146",
-    "employee_name": {
+    "e_id": 146,
+    "e_user_name": "146",
+    "e_name": {
       "en": {
         "first": "Lila",
         "middle": "",
         "last": "Ward"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Lila.Ward@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 72,
-    "employee_job_field_id": 77,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Lila.Ward@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 72,
+    "e_jfid": 77,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 147,
-    "employee_user_name": "147",
-    "employee_name": {
+    "e_id": 147,
+    "e_user_name": "147",
+    "e_name": {
       "en": {
         "first": "Dawson",
         "middle": "",
         "last": "Cox"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Dawson.Cox@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Dawson.Cox@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 148,
-    "employee_user_name": "148",
-    "employee_name": {
+    "e_id": 148,
+    "e_user_name": "148",
+    "e_name": {
       "en": {
         "first": "Nora",
         "middle": "",
         "last": "Howard"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Nora.Howard@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 71,
-    "employee_job_field_id": 74,
-    "employee_company_id": 1,
-    "employee_shift_id": 1,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": null,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Nora.Howard@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 71,
+    "e_jfid": 74,
+    "e_cid": 1,
+    "e_wsid": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   },
   {
-    "employee_id": 149,
-    "employee_user_name": "149",
-    "employee_name": {
+    "e_id": 149,
+    "e_user_name": "149",
+    "e_name": {
       "en": {
         "first": "Chase",
         "middle": "",
         "last": "Ward"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Chase.Ward@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Chase.Ward@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   },
   {
-    "employee_id": 150,
-    "employee_user_name": "150",
-    "employee_name": {
+    "e_id": 150,
+    "e_user_name": "150",
+    "e_name": {
       "en": {
         "first": "Autumn",
         "middle": "",
         "last": "Brooks"
       }
     },
-    "employee_phone": "",
-    "employee_email": "Autumn.Brooks@sunghwan-portal.dev",
-    "employee_image_url": null,
-    "employee_department_id": 73,
-    "employee_job_field_id": 79,
-    "employee_company_id": 1,
-    "employee_shift_id": 2,
-    "employee_active": true,
-    "employee_engineer_id": null,
-    "employee_rf_tag_id": null,
-    "employee_hour_rate": 10,
-    "employee_end_date": null
+    "e_phone": "",
+    "e_email": "Autumn.Brooks@sunghwan-portal.dev",
+    "e_image_url": null,
+    "e_did": 73,
+    "e_jfid": 79,
+    "e_cid": 1,
+    "e_wsid": 2,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": 10,
+    "e_end_date": null
   }
 ]
