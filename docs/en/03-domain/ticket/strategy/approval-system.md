@@ -12,6 +12,11 @@ It ensures:
 - Organizational validation
 - Reduced operational risk
 
+Scope note:
+
+- LOCAL demo keeps approval behavior intentionally simplified for portfolio realism.
+- Full organization-aware approval pipeline is treated as a REMOTE expansion path.
+
 ---
 
 ## Core Concept

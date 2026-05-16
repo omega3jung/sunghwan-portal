@@ -81,7 +81,7 @@ Rules doc = current executable behavior
 ### 2. Ticket Action Rules
 
 - 커뮤니케이션 및 운영 action에 대한 규칙
-- reject, merge, `reopen`, `resubmit` 같은 lifecycle 영향 동작
+- reject, merge, `requestReview`, `reopen`, `resubmit` 같은 lifecycle 영향 동작
 
 ---
 
@@ -129,7 +129,7 @@ Rules doc = current executable behavior
 - purpose: ticket 운영과 커뮤니케이션 지원
 - restriction:
   - `comment`, `note`만 수정 또는 삭제할 수 있다
-  - `assign`, `adjust`, `merge`, `reject`, `reopen`, `resubmit` 같은 운영 action은 immutable이다
+  - `assign`, `adjust`, `merge`, `reject`, `requestReview`, `reopen`, `resubmit` 같은 운영 action은 immutable이다
   - 모든 action은 content가 필수다
   - `Closed`에서는 어떤 action도 수정 또는 삭제할 수 없다
   - delete는 `active = false`를 사용하는 soft delete다
@@ -296,6 +296,17 @@ planning data에 영향을 줄 수 있습니다.
   - content 필수
 
 ---
+### Request Review
+
+- who: requester
+- when: status = `Resolved`
+- effect:
+  - status -> `Reopen`
+- purpose: 해결 이후 추가 리뷰 또는 재작업을 요청한다
+- restriction:
+  - content 필수
+
+---
 
 ### Resubmit
 
@@ -309,7 +320,7 @@ planning data에 영향을 줄 수 있습니다.
 
 ---
 
-### Assign Self
+### Assign Myself (`assignSelf`)
 
 - who: category assignee 또는 job-field rule에 맞는 사용자
 - when: status in `Open`, `Approved`, `Working`

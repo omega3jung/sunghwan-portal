@@ -145,7 +145,7 @@ This matters because real operational work includes:
 - rework after resolution
 - rejected requests
 - duplicated or merged tickets
-- auto-close after review windows
+- review requests and explicit reopen flows
 
 The improved Service Desk model defines ticket status as a controlled workflow state.
 
@@ -339,11 +339,11 @@ Important action concepts include:
 - `comment` for shared communication
 - `note` for internal communication
 - `assign` for ownership changes
-- `assign to me` as a user-friendly label for self-assignment
+- `assign myself` as a user-friendly label for self-assignment
 - `adjust` / `Adjust Plan` for changing priority, risk level, SLA, or due date
 - `merge` for duplicate or related ticket consolidation
 - `reject` for operational rejection
-- `reopen` for returning to active processing
+- `request review` / `reopen` for returning to active processing
 - `resubmit` for requester revision after rejection or decline
 
 ### 12.1 Merge Semantics
@@ -593,6 +593,7 @@ Related references:
 - `docs/en/03-domain/ticket/ticket-activity.md`
 - `docs/en/03-domain/ticket/ticket-history.md`
 - `docs/en/03-domain/ticket/ticket-track-time.md`
+- `docs/en/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`
 
 ---
 

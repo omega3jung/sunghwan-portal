@@ -81,7 +81,7 @@ The current rule set is organized into two areas:
 ### 2. Ticket Action Rules
 
 - rules for communication and operational actions
-- lifecycle-affecting behavior such as reject, merge, `reopen`, and `resubmit`
+- lifecycle-affecting behavior such as reject, merge, `requestReview`, `reopen`, and `resubmit`
 
 ---
 
@@ -129,7 +129,7 @@ action-specific rules apply.
 - purpose: support ticket operation and communication
 - restriction:
   - only `comment` and `note` can be edited or deleted
-  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `reopen`, and `resubmit` are immutable
+  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `requestReview`, `reopen`, and `resubmit` are immutable
   - content is required for all actions
   - no action can be edited or deleted in `Closed`
   - delete is soft delete via `active = false`
@@ -244,7 +244,7 @@ state, ownership, or planning data.
   - self merge is forbidden
   - merged child merge is forbidden
   - target must be active
-  - target must be in the same tenant and scope
+  - target must be in the same client and scope
 
 ---
 
@@ -257,7 +257,7 @@ state, ownership, or planning data.
 - purpose: manager-level ticket consolidation
 - restriction:
   - merge on `Closed` is allowed only as an exceptional case
-  - tenant and scope must remain aligned
+  - client and scope must remain aligned
 
 ---
 
@@ -297,6 +297,18 @@ state, ownership, or planning data.
 
 ---
 
+### Request Review
+
+- who: requester
+- when: status = `Resolved`
+- effect:
+  - status -> `Reopen`
+- purpose: request additional review or rework after resolution
+- restriction:
+  - content required
+
+---
+
 ### Resubmit
 
 - who: requester
@@ -309,7 +321,7 @@ state, ownership, or planning data.
 
 ---
 
-### Assign Self
+### Assign Myself (`assignSelf`)
 
 - who: category assignee or a user matching the job-field rule
 - when: status in `Open`, `Approved`, `Working`

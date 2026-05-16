@@ -232,6 +232,7 @@ Fields must be predictable, reusable, and typed
 
 - 추가적인 API와 상태 처리가 필요하다
 - MVP 단계에서는 핵심 기능이 아니다
+- 데모 범위에서는 production-grade attachment persistence 보장을 보류한다
 
 ---
 
@@ -254,7 +255,12 @@ Fields must be predictable, reusable, and typed
 ### 프로세스
 
 ```txt id="submission"
-Validate -> Transform -> Mutate -> Close Dialog -> Refetch List
+티켓 생성은 개별 작업으로 다이얼로그 내에서 구현됩니다.
+티켓 상세 정보는 페이지 수준의 기본 워크플로(`/service-desk/[ticketId]`)로 유지됩니다.
+이력/작업 패널과 같은 보조 상호 작용은 드로어 스타일의 상호 작용을 사용해야 합니다.
+
+검증 -> 변환 -> 변경 -> 다이얼로그 닫기 -> 목록 다시 가져오기
+(Validate -> Transform -> Mutate -> Close Dialog -> Refetch List)
 ```
 
 ---

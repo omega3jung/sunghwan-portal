@@ -73,6 +73,8 @@ They cover:
 - Routing strategy in Next.js App Router
 - State management boundaries
 - Authentication, session, and impersonation design
+- LOCAL/REMOTE runtime separation through route handlers
+- Database, connection and role design
 
 Key documents:
 
@@ -81,6 +83,7 @@ Key documents:
 - [State Management](./02-architecture/state-management.md)
 - [Auth & Session Strategy](./02-architecture/auth-session-strategy.md)
 - [Impersonation Strategy](./02-architecture/impersonation-strategy.md)
+- [Database Strategy](./02-architecture/database-strategy.md)
 
 ---
 
@@ -96,6 +99,7 @@ They cover:
 - ticket activity and action-oriented interaction modeling
 - work session tracking
 - ticket history and audit trail
+- executable operation rules aligned with current behavior
 - category-driven strategy for actions, approval, assignment, and SLA
 
 Key documents:

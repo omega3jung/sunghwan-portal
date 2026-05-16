@@ -225,6 +225,7 @@ Users may not complete the form in one session.
 
 - Not implemented yet
 - Deferred to avoid premature complexity
+- Production-grade attachment persistence guarantees are deferred in demo scope
 
 ---
 
@@ -237,7 +238,7 @@ Users may not complete the form in one session.
 
 ## Dialog Integration
 
-The ticket form is implemented inside a dialog.
+Ticket creation is implemented inside a dialog as an atomic action.
 
 ---
 
@@ -246,6 +247,9 @@ The ticket form is implemented inside a dialog.
 - Controlled open state
 - Close after successful submission
 - Trigger can be customized
+
+Ticket detail remains a page-level primary workflow (`/service-desk/[ticketId]`).
+Secondary interactions such as history/action panels should use drawer-style interaction.
 
 ---
 

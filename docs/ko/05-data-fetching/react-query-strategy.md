@@ -60,6 +60,7 @@ Server state should be managed declaratively and cached intelligently
 - 카테고리 목록
 - 부서 목록
 - 직무 분야 목록
+- 참조 설정(reference settings)
 
 ---
 
@@ -93,7 +94,11 @@ refetchOnWindowFocus: false;
 
 - 티켓 목록
 - 티켓 상세
-- 대시보드 데이터
+- 임시 저장
+- 티켓 액션
+- 작업 기록(histories)
+- 작업 시간
+- 로컬 데모 가변 상태
 
 ---
 
@@ -111,6 +116,9 @@ refetchOnWindowFocus: true;
 - 항상 최신 데이터를 가져온다
 - UI가 최신 상태를 반영하도록 보장한다
 - 실시간에 가까운 동작을 지원한다
+
+로컬 데모 모드에서는 동적 쿼리가 서버 측 메모리 변경 사항을 반영할 수 있습니다.
+따라서 클라이언트 캐시 재설정만으로는 충분하지 않다고 가정하는 대신, 캐시 무효화/재설정은 서버 재설정 동작(`/api/demo/service-desk/reset`)과 연계되어야 합니다.
 
 ---
 

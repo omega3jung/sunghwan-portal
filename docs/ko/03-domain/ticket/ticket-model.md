@@ -68,9 +68,6 @@ export interface Ticket {
   lastCommenterEmail?: string;
 
   approvalStepId?: string;
-
-  owner: boolean;
-  assigned: boolean;
   active: boolean;
 
   files: Attach[];
@@ -177,14 +174,14 @@ UI에서 최근 activity를 노출할 수 있게 도와줍니다.
 Ticket은 파생된 ownership flag도 제공합니다.
 
 ```ts
-type Ownership = {
-  owner: boolean;
-  assigned: boolean;
-};
+type Ownership = {};
 ```
 
 - `owner`: 현재 사용자가 requester인지 여부
 - `assigned`: 현재 사용자가 assignee인지 여부
+
+이 값들은 파생된 소유권 값이며, 고정된 티켓 필드가 아닙니다.
+로컬 모드에서는 경로/로컬 핸들러에서 계산할 수 있으며, 원격 모드에서는 인증된 사용자 컨텍스트를 사용하여 서버에서 확인할 수 있습니다.
 
 이 flag는 다음에 유용합니다.
 

@@ -18,7 +18,7 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { ENVIRONMENT } from "@/lib/environment";
 import { createMenuMock } from "@/mocks/ui/navigation/leftMenu";
 
@@ -31,7 +31,10 @@ export function LeftMenu() {
   const menuItems = createMenuMock(t);
 
   const filteredMenu = {
-    content: filterMenuByAccessLevel(menuItems.content, currentUser?.permission),
+    content: filterMenuByAccessLevel(
+      menuItems.content,
+      currentUser?.permission,
+    ),
     footer: filterMenuByAccessLevel(menuItems.footer, currentUser?.permission),
   };
 

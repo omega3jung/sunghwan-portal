@@ -318,8 +318,8 @@ type CurrentSession = {
 
 중요한 제한:
 
-> `authSessionStore`는 인증의 source of truth가 아니다.
-> 이것은 프론트엔드 런타임 cache/facade다.
+> 또한 server/session 기반 impersonation 제어를 대체하지 않는다.
+
 
 신뢰 가능한 기준 소스는 여전히 JWT 기반 NextAuth auth flow다.
 
@@ -422,7 +422,7 @@ impersonation을 종료하면 반대 흐름을 수행하며 session의 impersona
 현재 구현 기준 규칙은 다음과 같다.
 
 - `INTERNAL` 사용자이면서 최소 `ADMIN` 권한 이상인 경우만 impersonation을 시작할 수 있다
-- impersonation 대상은 `CLIENT` 사용자여야 한다
+- impersonation 대상은 `TENANT` 사용자여야 한다
 
 이 규칙은 UI가 아니라 auth layer에 위치한다.
 

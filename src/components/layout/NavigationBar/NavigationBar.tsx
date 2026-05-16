@@ -8,7 +8,7 @@ import { UserMenu } from "@/components/menu/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
-import { useImpersonation } from "@/feature/auth/impersonation/hooks/useImpersonation";
+import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
@@ -191,7 +191,9 @@ export const NavigationBar = (props: Props) => {
           badgeText={
             (userRoleBadge ?? !isImpersonating)
               ? "Owner"
-              : (currentUser ? tLocal(currentUser.displayName) : "")
+              : currentUser
+                ? tLocal(currentUser.displayName)
+                : ""
           }
           shieldText={userRoleBadge}
           viewOnly={false}

@@ -16,6 +16,9 @@ It determines:
 The goal is to achieve **consistent, scalable, and maintainable operations**
 through a category-driven architecture.
 
+In the current project, category/settings behavior is treated as domain
+foundation, while full enterprise policy resolution remains a REMOTE extension path.
+
 ---
 
 ## Core Concept

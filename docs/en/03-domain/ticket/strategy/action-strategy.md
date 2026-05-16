@@ -115,11 +115,11 @@ Explicit action types improve readability, validation, and auditability.
 
 ---
 
-### 3. Reason Is Optional but Encouraged
+### 3. Reason Content Is Required
 
-- Reason adds decision context
-- Reason is required for critical actions such as rejection
-- Reason may remain optional for lightweight actions
+- Reason content is required for all actions
+- Communication and operational actions share this rule
+- Auto-generated actions still store concrete content
 
 ---
 
@@ -263,8 +263,10 @@ This ensures:
 
 All actions should be preserved as append-oriented operational records.
 
-- no destructive deletion in normal workflow
-- actions remain available for review and debugging
+- only `comment` and `note` are editable/deletable under author rules
+- operational actions are immutable
+- in `Closed`, no action can be edited or deleted
+- delete is soft-delete (`active = false`) for mutable communication items
 
 ---
 
@@ -295,7 +297,7 @@ The system is designed to support future actions without structural redesign.
 
 - `resolve`
 - `close`
-- `reopen`
+- `requestReview` / `reopen`
 - `escalate`
 - `reassign`
 - approval-related actions

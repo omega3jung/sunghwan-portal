@@ -11,6 +11,7 @@ It aims to:
 - Enable debugging and issue reproduction
 - Maintain strict security boundaries
 - Preserve auditability of actions
+- Keep impersonation server/session-aware rather than client-only overrides
 
 ---
 
@@ -196,6 +197,7 @@ Impersonation must not elevate privileges beyond what the original user is allow
 - Permissions must be evaluated carefully
 - The system must prevent privilege escalation
 - The original user must remain known even when the current user changes
+- The authorization rule is enforced in the auth layer, not in UI components
 
 ---
 
@@ -203,6 +205,11 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 - Admin impersonates a user and acts within that user context
 - The system still knows the original user is the admin
+
+### Current Authorization Boundary
+
+- Only `INTERNAL` users with at least `ADMIN` access can start impersonation
+- The impersonation target must be a `TENANT` user
 
 ---
 

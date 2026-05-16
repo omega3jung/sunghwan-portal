@@ -320,6 +320,7 @@ Important limitation:
 
 > `authSessionStore` is **not** the source of truth for authentication.
 > It is a frontend runtime cache/facade.
+> It does not replace server/session-driven impersonation control.
 
 The trusted source remains the JWT-backed NextAuth auth flow.
 
@@ -422,7 +423,7 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 Based on the current implementation:
 
 - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `CLIENT` user
+- the impersonation target must be a `TENANT` user
 
 This rule lives in the auth layer, not in the UI.
 
