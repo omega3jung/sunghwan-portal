@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { PortalApiJsonOptions } from "./types";
 import { handleUserPortalApi } from "./users/usersPortalApiHandler";
+import { normalizePath } from "./utils";
 
 export async function dispatchPortalApi(
   request: NextRequest,
@@ -14,8 +15,4 @@ export async function dispatchPortalApi(
   }
 
   return NextResponse.json({ message: "Not found" }, { status: 404 });
-}
-
-function normalizePath(path: string): string {
-  return path.startsWith("/") ? path : `/${path}`;
 }

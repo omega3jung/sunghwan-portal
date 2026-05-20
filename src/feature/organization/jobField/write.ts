@@ -23,7 +23,7 @@ export function toJobFieldWritePayload(
     jf_id: idToNumber(input.id),
     jf_name: input.name,
     jf_description: undefinedToNull(input.description),
-    jf_did: Number(input.departmentId),
+    jf_department_id: Number(input.departmentId),
     jf_parent_id: idToNumber(input.parentId),
     jf_active: input.active,
   };

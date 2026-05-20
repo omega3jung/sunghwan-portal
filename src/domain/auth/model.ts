@@ -16,7 +16,7 @@ export interface AuthUser {
 
   dataScope: DataScope; // 🔐 server-trusted
   userScope: UserScope; // 🔐 server-trusted
-  companyId: string; // 🔐 server-trusted
+  companyId: number; // 🔐 server-trusted
   permission: AccessLevel; // permission represents user's access level (not feature permissions)
   role: Role; // 🔐 server-trusted
 }

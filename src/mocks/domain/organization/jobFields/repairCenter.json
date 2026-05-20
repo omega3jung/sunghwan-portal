@@ -3,7 +3,7 @@
     "jf_id": 30,
     "jf_name": { "en": "Repair Center Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 20,
+    "jf_department_id": 20,
     "jf_parent_id": 0,
     "jf_active": true
   },
@@ -11,7 +11,7 @@
     "jf_id": 31,
     "jf_name": { "en": "Operations Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 20,
+    "jf_department_id": 20,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -19,7 +19,7 @@
     "jf_id": 32,
     "jf_name": { "en": "Triage Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 21,
+    "jf_department_id": 21,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -27,7 +27,7 @@
     "jf_id": 33,
     "jf_name": { "en": "Triage Lead" },
     "jf_description": { "en": "" },
-    "jf_did": 21,
+    "jf_department_id": 21,
     "jf_parent_id": 32,
     "jf_active": true
   },
@@ -35,7 +35,7 @@
     "jf_id": 34,
     "jf_name": { "en": "Triage Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 21,
+    "jf_department_id": 21,
     "jf_parent_id": 33,
     "jf_active": true
   },
@@ -43,7 +43,7 @@
     "jf_id": 35,
     "jf_name": { "en": "Repair Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 22,
+    "jf_department_id": 22,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -51,7 +51,7 @@
     "jf_id": 36,
     "jf_name": { "en": "Repair Lead" },
     "jf_description": { "en": "" },
-    "jf_did": 22,
+    "jf_department_id": 22,
     "jf_parent_id": 35,
     "jf_active": true
   },
@@ -59,7 +59,7 @@
     "jf_id": 37,
     "jf_name": { "en": "Repair Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 22,
+    "jf_department_id": 22,
     "jf_parent_id": 36,
     "jf_active": true
   },
@@ -67,7 +67,7 @@
     "jf_id": 52,
     "jf_name": { "en": "Google Repair Lead" },
     "jf_description": { "en": "" },
-    "jf_did": 31,
+    "jf_department_id": 31,
     "jf_parent_id": 35,
     "jf_active": true
   },
@@ -75,7 +75,7 @@
     "jf_id": 53,
     "jf_name": { "en": "Senior Repair Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 31,
+    "jf_department_id": 31,
     "jf_parent_id": 52,
     "jf_active": true
   },
@@ -83,7 +83,7 @@
     "jf_id": 54,
     "jf_name": { "en": "Samsung Repair Lead" },
     "jf_description": { "en": "" },
-    "jf_did": 32,
+    "jf_department_id": 32,
     "jf_parent_id": 35,
     "jf_active": true
   },
@@ -91,7 +91,7 @@
     "jf_id": 55,
     "jf_name": { "en": "Senior Repair Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 32,
+    "jf_department_id": 32,
     "jf_parent_id": 54,
     "jf_active": true
   },
@@ -99,7 +99,7 @@
     "jf_id": 56,
     "jf_name": { "en": "Non-phone Repair Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 33,
+    "jf_department_id": 33,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -107,7 +107,7 @@
     "jf_id": 57,
     "jf_name": { "en": "Non-phone Specialist" },
     "jf_description": { "en": "" },
-    "jf_did": 33,
+    "jf_department_id": 33,
     "jf_parent_id": 56,
     "jf_active": true
   },
@@ -115,7 +115,7 @@
     "jf_id": 58,
     "jf_name": { "en": "Non-phone Repair Supervisor" },
     "jf_description": { "en": "Home device Supervisor" },
-    "jf_did": 34,
+    "jf_department_id": 34,
     "jf_parent_id": 56,
     "jf_active": true
   },
@@ -123,7 +123,7 @@
     "jf_id": 59,
     "jf_name": { "en": "Non-phone Technician" },
     "jf_description": { "en": "Home device technician" },
-    "jf_did": 34,
+    "jf_department_id": 34,
     "jf_parent_id": 58,
     "jf_active": true
   },
@@ -131,7 +131,7 @@
     "jf_id": 60,
     "jf_name": { "en": "Non-phone Repair Supervisor" },
     "jf_description": { "en": "Wearables device Supervisor" },
-    "jf_did": 35,
+    "jf_department_id": 35,
     "jf_parent_id": 56,
     "jf_active": true
   },
@@ -139,7 +139,7 @@
     "jf_id": 61,
     "jf_name": { "en": "Non-phone Technician" },
     "jf_description": { "en": "Wearables device technician" },
-    "jf_did": 35,
+    "jf_department_id": 35,
     "jf_parent_id": 60,
     "jf_active": true
   },
@@ -147,7 +147,7 @@
     "jf_id": 62,
     "jf_name": { "en": "Non-phone Repair Supervisor" },
     "jf_description": { "en": "Accessories device Supervisor" },
-    "jf_did": 36,
+    "jf_department_id": 36,
     "jf_parent_id": 56,
     "jf_active": true
   },
@@ -155,7 +155,7 @@
     "jf_id": 63,
     "jf_name": { "en": "Non-phone Technician" },
     "jf_description": { "en": "Accessories device technician" },
-    "jf_did": 36,
+    "jf_department_id": 36,
     "jf_parent_id": 62,
     "jf_active": true
   },
@@ -163,7 +163,7 @@
     "jf_id": 38,
     "jf_name": { "en": "QC Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 23,
+    "jf_department_id": 23,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -171,7 +171,7 @@
     "jf_id": 39,
     "jf_name": { "en": "QC Supervisor" },
     "jf_description": { "en": "" },
-    "jf_did": 23,
+    "jf_department_id": 23,
     "jf_parent_id": 38,
     "jf_active": true
   },
@@ -179,7 +179,7 @@
     "jf_id": 40,
     "jf_name": { "en": "QA Inspector" },
     "jf_description": { "en": "" },
-    "jf_did": 23,
+    "jf_department_id": 23,
     "jf_parent_id": 39,
     "jf_active": true
   },
@@ -187,7 +187,7 @@
     "jf_id": 41,
     "jf_name": { "en": "Harvest Supervisor" },
     "jf_description": { "en": "" },
-    "jf_did": 24,
+    "jf_department_id": 24,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -195,7 +195,7 @@
     "jf_id": 42,
     "jf_name": { "en": "Disassembly Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 24,
+    "jf_department_id": 24,
     "jf_parent_id": 41,
     "jf_active": true
   },
@@ -203,7 +203,7 @@
     "jf_id": 43,
     "jf_name": { "en": "Polishing Supervisor" },
     "jf_description": { "en": "" },
-    "jf_did": 25,
+    "jf_department_id": 25,
     "jf_parent_id": 30,
     "jf_active": false
   },
@@ -211,7 +211,7 @@
     "jf_id": 44,
     "jf_name": { "en": "Polishing Operator" },
     "jf_description": { "en": "" },
-    "jf_did": 25,
+    "jf_department_id": 25,
     "jf_parent_id": 43,
     "jf_active": false
   },
@@ -219,7 +219,7 @@
     "jf_id": 45,
     "jf_name": { "en": "Packaging Supervisor" },
     "jf_description": { "en": "" },
-    "jf_did": 26,
+    "jf_department_id": 26,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -227,7 +227,7 @@
     "jf_id": 46,
     "jf_name": { "en": "Packaging Operator" },
     "jf_description": { "en": "" },
-    "jf_did": 26,
+    "jf_department_id": 26,
     "jf_parent_id": 45,
     "jf_active": true
   },
@@ -235,7 +235,7 @@
     "jf_id": 47,
     "jf_name": { "en": "Inventory Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 27,
+    "jf_department_id": 27,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -243,7 +243,7 @@
     "jf_id": 48,
     "jf_name": { "en": "Inventory Specialist" },
     "jf_description": { "en": "" },
-    "jf_did": 27,
+    "jf_department_id": 27,
     "jf_parent_id": 47,
     "jf_active": true
   },
@@ -251,7 +251,7 @@
     "jf_id": 49,
     "jf_name": { "en": "Inventory Clerk" },
     "jf_description": { "en": "" },
-    "jf_did": 27,
+    "jf_department_id": 27,
     "jf_parent_id": 48,
     "jf_active": true
   },
@@ -259,7 +259,7 @@
     "jf_id": 50,
     "jf_name": { "en": "Equipment Maintenance Lead" },
     "jf_description": { "en": "" },
-    "jf_did": 28,
+    "jf_department_id": 28,
     "jf_parent_id": 30,
     "jf_active": true
   },
@@ -267,7 +267,7 @@
     "jf_id": 51,
     "jf_name": { "en": "Diagnostic Specialist" },
     "jf_description": { "en": "" },
-    "jf_did": 28,
+    "jf_department_id": 28,
     "jf_parent_id": 50,
     "jf_active": true
   }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 
-import { tokenToOriginalAuthUser } from "@/app/api/_helpers";
+import { isAdmin, tokenToOriginalAuthUser } from "@/app/api/_helpers";
 import { startImpersonation, stopImpersonation } from "@/auth/impersonation";
 
 export async function POST(req: NextRequest) {
@@ -11,17 +11,20 @@ export async function POST(req: NextRequest) {
   if (!token?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  if (!isAdmin(token)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const originalUser = tokenToOriginalAuthUser(token);
   const schema = z.object({
-    impersonatedUserId: z.uuid(),
+    impersonatedUsername: z.string().trim().min(1),
   });
 
-  const { impersonatedUserId } = schema.parse(await req.json());
+  const { impersonatedUsername } = schema.parse(await req.json());
 
   const impersonation = await startImpersonation({
     originalUser,
-    impersonatedUserId,
+    impersonatedUsername,
   });
 
   return NextResponse.json({
@@ -29,7 +32,16 @@ export async function POST(req: NextRequest) {
   });
 }
 
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
+  const token = await getToken({ req });
+
+  if (!token?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!isAdmin(token)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const impersonation = await stopImpersonation();
 
   // NextAuth session update trigger

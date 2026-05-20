@@ -100,9 +100,15 @@ impersonation은 **세션 레벨**에서 처리됩니다.
 session = {
   user: originalUser,
   impersonation: {
-    originalUserId,
-    impersonatedUserId,
-  },
+    originalUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    impersonatedUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    activatedAt,
 };
 ```
 
@@ -218,8 +224,9 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Stored Context
 
-- `originalUserId`
-- `currentUserId`
+- `originalUser.username` (심사/보안 키)
+- `impersonatedUser.username` (활성된 사용자 컨텍스트 키)
+- `originalUser.id` and `impersonatedUser.id` (인증/계정 식별자)
 
 ---
 

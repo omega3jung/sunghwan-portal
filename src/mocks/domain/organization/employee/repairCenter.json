@@ -1,7 +1,7 @@
-﻿[
+[
   {
     "e_id": 51,
-    "e_user_name": "51",
+    "e_username": "james_smith",
     "e_name": {
       "en": {
         "first": "James",
@@ -12,10 +12,10 @@
     "e_phone": "",
     "e_email": "james.smith@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 20,
-    "e_jfid": 30,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 20,
+    "e_job_field_id": 30,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -24,7 +24,7 @@
   },
   {
     "e_id": 52,
-    "e_user_name": "52",
+    "e_username": "olivia_johnson",
     "e_name": {
       "en": {
         "first": "Olivia",
@@ -35,10 +35,10 @@
     "e_phone": "",
     "e_email": "olivia.johnson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 20,
-    "e_jfid": 31,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 20,
+    "e_job_field_id": 31,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -47,7 +47,7 @@
   },
   {
     "e_id": 53,
-    "e_user_name": "53",
+    "e_username": "liam_williams",
     "e_name": {
       "en": {
         "first": "Liam",
@@ -58,10 +58,10 @@
     "e_phone": "",
     "e_email": "liam.williams@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 32,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 32,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -70,7 +70,7 @@
   },
   {
     "e_id": 54,
-    "e_user_name": "54",
+    "e_username": "emma_brown",
     "e_name": {
       "en": {
         "first": "Emma",
@@ -81,10 +81,10 @@
     "e_phone": "",
     "e_email": "emma.brown@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 33,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 33,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -93,7 +93,7 @@
   },
   {
     "e_id": 55,
-    "e_user_name": "55",
+    "e_username": "noah_jones",
     "e_name": {
       "en": {
         "first": "Noah",
@@ -104,10 +104,10 @@
     "e_phone": "",
     "e_email": "noah.jones@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 33,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 33,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -116,7 +116,7 @@
   },
   {
     "e_id": 56,
-    "e_user_name": "56",
+    "e_username": "ava_garcia",
     "e_name": {
       "en": {
         "first": "Ava",
@@ -127,10 +127,10 @@
     "e_phone": "",
     "e_email": "ava.garcia@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 34,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 34,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -139,7 +139,7 @@
   },
   {
     "e_id": 57,
-    "e_user_name": "57",
+    "e_username": "william_miller",
     "e_name": {
       "en": {
         "first": "William",
@@ -150,10 +150,10 @@
     "e_phone": "",
     "e_email": "william.miller@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 34,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 34,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -162,7 +162,7 @@
   },
   {
     "e_id": 58,
-    "e_user_name": "58",
+    "e_username": "sophia_davis",
     "e_name": {
       "en": {
         "first": "Sophia",
@@ -173,10 +173,10 @@
     "e_phone": "",
     "e_email": "sophia.davis@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 21,
-    "e_jfid": 34,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 21,
+    "e_job_field_id": 34,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -185,7 +185,7 @@
   },
   {
     "e_id": 59,
-    "e_user_name": "59",
+    "e_username": "benjamin_rodriguez",
     "e_name": {
       "en": {
         "first": "Benjamin",
@@ -196,10 +196,10 @@
     "e_phone": "",
     "e_email": "benjamin.rodriguez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 35,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 35,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -208,7 +208,7 @@
   },
   {
     "e_id": 60,
-    "e_user_name": "60",
+    "e_username": "isabella_martinez",
     "e_name": {
       "en": {
         "first": "Isabella",
@@ -219,10 +219,10 @@
     "e_phone": "",
     "e_email": "isabella.martinez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 36,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 36,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -231,7 +231,7 @@
   },
   {
     "e_id": 61,
-    "e_user_name": "61",
+    "e_username": "lucas_hernandez",
     "e_name": {
       "en": {
         "first": "Lucas",
@@ -242,10 +242,10 @@
     "e_phone": "",
     "e_email": "lucas.hernandez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 36,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 36,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -254,7 +254,7 @@
   },
   {
     "e_id": 62,
-    "e_user_name": "62",
+    "e_username": "mia_lopez",
     "e_name": {
       "en": {
         "first": "Mia",
@@ -265,10 +265,10 @@
     "e_phone": "",
     "e_email": "mia.lopez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -277,7 +277,7 @@
   },
   {
     "e_id": 63,
-    "e_user_name": "63",
+    "e_username": "henry_gonzalez",
     "e_name": {
       "en": {
         "first": "Henry",
@@ -288,10 +288,10 @@
     "e_phone": "",
     "e_email": "henry.gonzalez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -300,7 +300,7 @@
   },
   {
     "e_id": 64,
-    "e_user_name": "64",
+    "e_username": "charlotte_wilson",
     "e_name": {
       "en": {
         "first": "Charlotte",
@@ -311,10 +311,10 @@
     "e_phone": "",
     "e_email": "charlotte.wilson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -323,7 +323,7 @@
   },
   {
     "e_id": 65,
-    "e_user_name": "65",
+    "e_username": "alexander_anderson",
     "e_name": {
       "en": {
         "first": "Alexander",
@@ -334,10 +334,10 @@
     "e_phone": "",
     "e_email": "alexander.anderson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -346,7 +346,7 @@
   },
   {
     "e_id": 66,
-    "e_user_name": "66",
+    "e_username": "amelia_thomas",
     "e_name": {
       "en": {
         "first": "Amelia",
@@ -357,10 +357,10 @@
     "e_phone": "",
     "e_email": "amelia.thomas@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -369,7 +369,7 @@
   },
   {
     "e_id": 67,
-    "e_user_name": "67",
+    "e_username": "michael_taylor",
     "e_name": {
       "en": {
         "first": "Michael",
@@ -380,10 +380,10 @@
     "e_phone": "",
     "e_email": "michael.taylor@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 22,
-    "e_jfid": 37,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 22,
+    "e_job_field_id": 37,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -392,7 +392,7 @@
   },
   {
     "e_id": 68,
-    "e_user_name": "68",
+    "e_username": "harper_moore",
     "e_name": {
       "en": {
         "first": "Harper",
@@ -403,10 +403,10 @@
     "e_phone": "",
     "e_email": "harper.moore@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 52,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 52,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -415,7 +415,7 @@
   },
   {
     "e_id": 69,
-    "e_user_name": "69",
+    "e_username": "daniel_jackson",
     "e_name": {
       "en": {
         "first": "Daniel",
@@ -426,10 +426,10 @@
     "e_phone": "",
     "e_email": "daniel.jackson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -438,7 +438,7 @@
   },
   {
     "e_id": 70,
-    "e_user_name": "70",
+    "e_username": "evelyn_martin",
     "e_name": {
       "en": {
         "first": "Evelyn",
@@ -449,10 +449,10 @@
     "e_phone": "",
     "e_email": "evelyn.martin@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -461,7 +461,7 @@
   },
   {
     "e_id": 71,
-    "e_user_name": "71",
+    "e_username": "matthew_lee",
     "e_name": {
       "en": {
         "first": "Matthew",
@@ -472,10 +472,10 @@
     "e_phone": "",
     "e_email": "matthew.lee@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -484,7 +484,7 @@
   },
   {
     "e_id": 72,
-    "e_user_name": "72",
+    "e_username": "abigail_perez",
     "e_name": {
       "en": {
         "first": "Abigail",
@@ -495,10 +495,10 @@
     "e_phone": "",
     "e_email": "abigail.perez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -507,7 +507,7 @@
   },
   {
     "e_id": 73,
-    "e_user_name": "73",
+    "e_username": "joseph_thompson",
     "e_name": {
       "en": {
         "first": "Joseph",
@@ -518,10 +518,10 @@
     "e_phone": "",
     "e_email": "joseph.thompson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -530,7 +530,7 @@
   },
   {
     "e_id": 74,
-    "e_user_name": "74",
+    "e_username": "emily_white",
     "e_name": {
       "en": {
         "first": "Emily",
@@ -541,10 +541,10 @@
     "e_phone": "",
     "e_email": "emily.white@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 31,
-    "e_jfid": 53,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 31,
+    "e_job_field_id": 53,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -553,7 +553,7 @@
   },
   {
     "e_id": 75,
-    "e_user_name": "75",
+    "e_username": "david_harris",
     "e_name": {
       "en": {
         "first": "David",
@@ -564,10 +564,10 @@
     "e_phone": "",
     "e_email": "david.harris@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 54,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 54,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -576,7 +576,7 @@
   },
   {
     "e_id": 76,
-    "e_user_name": "76",
+    "e_username": "ella_sanchez",
     "e_name": {
       "en": {
         "first": "Ella",
@@ -587,10 +587,10 @@
     "e_phone": "",
     "e_email": "ella.sanchez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -599,7 +599,7 @@
   },
   {
     "e_id": 77,
-    "e_user_name": "77",
+    "e_username": "samuel_clark",
     "e_name": {
       "en": {
         "first": "Samuel",
@@ -610,10 +610,10 @@
     "e_phone": "",
     "e_email": "samuel.clark@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -622,7 +622,7 @@
   },
   {
     "e_id": 78,
-    "e_user_name": "78",
+    "e_username": "avery_ramirez",
     "e_name": {
       "en": {
         "first": "Avery",
@@ -633,10 +633,10 @@
     "e_phone": "",
     "e_email": "avery.ramirez@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -645,7 +645,7 @@
   },
   {
     "e_id": 79,
-    "e_user_name": "79",
+    "e_username": "logan_lewis",
     "e_name": {
       "en": {
         "first": "Logan",
@@ -656,10 +656,10 @@
     "e_phone": "",
     "e_email": "logan.lewis@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -668,7 +668,7 @@
   },
   {
     "e_id": 80,
-    "e_user_name": "80",
+    "e_username": "sofia_robinson",
     "e_name": {
       "en": {
         "first": "Sofia",
@@ -679,10 +679,10 @@
     "e_phone": "",
     "e_email": "sofia.robinson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -691,7 +691,7 @@
   },
   {
     "e_id": 81,
-    "e_user_name": "81",
+    "e_username": "sebastian_walker",
     "e_name": {
       "en": {
         "first": "Sebastian",
@@ -702,10 +702,10 @@
     "e_phone": "",
     "e_email": "sebastian.walker@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 32,
-    "e_jfid": 55,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 32,
+    "e_job_field_id": 55,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -714,7 +714,7 @@
   },
   {
     "e_id": 82,
-    "e_user_name": "82",
+    "e_username": "aria_young",
     "e_name": {
       "en": {
         "first": "Aria",
@@ -725,10 +725,10 @@
     "e_phone": "",
     "e_email": "aria.young@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 33,
-    "e_jfid": 56,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 33,
+    "e_job_field_id": 56,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -737,7 +737,7 @@
   },
   {
     "e_id": 83,
-    "e_user_name": "83",
+    "e_username": "jack_allen",
     "e_name": {
       "en": {
         "first": "Jack",
@@ -748,10 +748,10 @@
     "e_phone": "",
     "e_email": "jack.allen@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 33,
-    "e_jfid": 57,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 33,
+    "e_job_field_id": 57,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -760,7 +760,7 @@
   },
   {
     "e_id": 84,
-    "e_user_name": "84",
+    "e_username": "scarlett_king",
     "e_name": {
       "en": {
         "first": "Scarlett",
@@ -771,10 +771,10 @@
     "e_phone": "",
     "e_email": "scarlett.king@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 34,
-    "e_jfid": 58,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 34,
+    "e_job_field_id": 58,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -783,7 +783,7 @@
   },
   {
     "e_id": 85,
-    "e_user_name": "85",
+    "e_username": "owen_wright",
     "e_name": {
       "en": {
         "first": "Owen",
@@ -794,10 +794,10 @@
     "e_phone": "",
     "e_email": "owen.wright@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 34,
-    "e_jfid": 59,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 34,
+    "e_job_field_id": 59,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -806,7 +806,7 @@
   },
   {
     "e_id": 86,
-    "e_user_name": "86",
+    "e_username": "grace_scott",
     "e_name": {
       "en": {
         "first": "Grace",
@@ -817,10 +817,10 @@
     "e_phone": "",
     "e_email": "grace.scott@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 34,
-    "e_jfid": 59,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 34,
+    "e_job_field_id": 59,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -829,7 +829,7 @@
   },
   {
     "e_id": 87,
-    "e_user_name": "87",
+    "e_username": "theodore_green",
     "e_name": {
       "en": {
         "first": "Theodore",
@@ -840,10 +840,10 @@
     "e_phone": "",
     "e_email": "theodore.green@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 34,
-    "e_jfid": 59,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 34,
+    "e_job_field_id": 59,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -852,7 +852,7 @@
   },
   {
     "e_id": 88,
-    "e_user_name": "88",
+    "e_username": "chloe_baker",
     "e_name": {
       "en": {
         "first": "Chloe",
@@ -863,10 +863,10 @@
     "e_phone": "",
     "e_email": "chloe.baker@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 35,
-    "e_jfid": 60,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 35,
+    "e_job_field_id": 60,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -875,7 +875,7 @@
   },
   {
     "e_id": 89,
-    "e_user_name": "89",
+    "e_username": "julian_adams",
     "e_name": {
       "en": {
         "first": "Julian",
@@ -886,10 +886,10 @@
     "e_phone": "",
     "e_email": "julian.adams@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 35,
-    "e_jfid": 61,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 35,
+    "e_job_field_id": 61,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -898,7 +898,7 @@
   },
   {
     "e_id": 90,
-    "e_user_name": "90",
+    "e_username": "victoria_nelson",
     "e_name": {
       "en": {
         "first": "Victoria",
@@ -909,10 +909,10 @@
     "e_phone": "",
     "e_email": "victoria.nelson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 35,
-    "e_jfid": 61,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 35,
+    "e_job_field_id": 61,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -921,7 +921,7 @@
   },
   {
     "e_id": 91,
-    "e_user_name": "91",
+    "e_username": "ethan_carter",
     "e_name": {
       "en": {
         "first": "Ethan",
@@ -932,10 +932,10 @@
     "e_phone": "",
     "e_email": "Ethan.Carter@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 36,
-    "e_jfid": 62,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 36,
+    "e_job_field_id": 62,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -944,7 +944,7 @@
   },
   {
     "e_id": 92,
-    "e_user_name": "92",
+    "e_username": "madison_reed",
     "e_name": {
       "en": {
         "first": "Madison",
@@ -955,10 +955,10 @@
     "e_phone": "",
     "e_email": "Madison.Reed@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 36,
-    "e_jfid": 63,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 36,
+    "e_job_field_id": 63,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -967,7 +967,7 @@
   },
   {
     "e_id": 93,
-    "e_user_name": "93",
+    "e_username": "caleb_morgan",
     "e_name": {
       "en": {
         "first": "Caleb",
@@ -978,10 +978,10 @@
     "e_phone": "",
     "e_email": "Caleb.Morgan@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 36,
-    "e_jfid": 63,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 36,
+    "e_job_field_id": 63,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -990,7 +990,7 @@
   },
   {
     "e_id": 94,
-    "e_user_name": "94",
+    "e_username": "lily_bell",
     "e_name": {
       "en": {
         "first": "Lily",
@@ -1001,10 +1001,10 @@
     "e_phone": "",
     "e_email": "Lily.Bell@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 38,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 38,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1013,7 +1013,7 @@
   },
   {
     "e_id": 95,
-    "e_user_name": "95",
+    "e_username": "nathan_bailey",
     "e_name": {
       "en": {
         "first": "Nathan",
@@ -1024,10 +1024,10 @@
     "e_phone": "",
     "e_email": "Nathan.Bailey@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 39,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 39,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1036,7 +1036,7 @@
   },
   {
     "e_id": 96,
-    "e_user_name": "96",
+    "e_username": "zoe_cooper",
     "e_name": {
       "en": {
         "first": "Zoe",
@@ -1047,10 +1047,10 @@
     "e_phone": "",
     "e_email": "Zoe.Cooper@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 39,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 39,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1059,7 +1059,7 @@
   },
   {
     "e_id": 97,
-    "e_user_name": "97",
+    "e_username": "aaron_richardson",
     "e_name": {
       "en": {
         "first": "Aaron",
@@ -1070,10 +1070,10 @@
     "e_phone": "",
     "e_email": "Aaron.Richardson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 40,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 40,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1082,7 +1082,7 @@
   },
   {
     "e_id": 98,
-    "e_user_name": "98",
+    "e_username": "hannah_cox",
     "e_name": {
       "en": {
         "first": "Hannah",
@@ -1093,10 +1093,10 @@
     "e_phone": "",
     "e_email": "Hannah.Cox@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 40,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 40,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1105,7 +1105,7 @@
   },
   {
     "e_id": 99,
-    "e_user_name": "99",
+    "e_username": "isaac_ward",
     "e_name": {
       "en": {
         "first": "Isaac",
@@ -1116,10 +1116,10 @@
     "e_phone": "",
     "e_email": "Isaac.Ward@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 40,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 40,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1128,7 +1128,7 @@
   },
   {
     "e_id": 100,
-    "e_user_name": "100",
+    "e_username": "natalie_torres",
     "e_name": {
       "en": {
         "first": "Natalie",
@@ -1139,10 +1139,10 @@
     "e_phone": "",
     "e_email": "Natalie.Torres@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 40,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 40,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1151,7 +1151,7 @@
   },
   {
     "e_id": 101,
-    "e_user_name": "101",
+    "e_username": "leah_gray",
     "e_name": {
       "en": {
         "first": "Leah",
@@ -1162,10 +1162,10 @@
     "e_phone": "",
     "e_email": "Leah.Gray@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 23,
-    "e_jfid": 40,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 23,
+    "e_job_field_id": 40,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1174,7 +1174,7 @@
   },
   {
     "e_id": 102,
-    "e_user_name": "102",
+    "e_username": "adrian_ramsey",
     "e_name": {
       "en": {
         "first": "Adrian",
@@ -1185,10 +1185,10 @@
     "e_phone": "",
     "e_email": "Adrian.Ramsey@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 41,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 41,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1197,7 +1197,7 @@
   },
   {
     "e_id": 103,
-    "e_user_name": "103",
+    "e_username": "stella_barnes",
     "e_name": {
       "en": {
         "first": "Stella",
@@ -1208,10 +1208,10 @@
     "e_phone": "",
     "e_email": "Stella.Barnes@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 42,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 42,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1220,7 +1220,7 @@
   },
   {
     "e_id": 104,
-    "e_user_name": "104",
+    "e_username": "jason_hughes",
     "e_name": {
       "en": {
         "first": "Jason",
@@ -1231,10 +1231,10 @@
     "e_phone": "",
     "e_email": "Jason.Hughes@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 42,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 42,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1243,7 +1243,7 @@
   },
   {
     "e_id": 105,
-    "e_user_name": "105",
+    "e_username": "claire_price",
     "e_name": {
       "en": {
         "first": "Claire",
@@ -1254,10 +1254,10 @@
     "e_phone": "",
     "e_email": "Claire.Price@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 42,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 42,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1266,7 +1266,7 @@
   },
   {
     "e_id": 106,
-    "e_user_name": "106",
+    "e_username": "miles_bennett",
     "e_name": {
       "en": {
         "first": "Miles",
@@ -1277,10 +1277,10 @@
     "e_phone": "",
     "e_email": "Miles.Bennett@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 42,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 42,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1289,7 +1289,7 @@
   },
   {
     "e_id": 107,
-    "e_user_name": "107",
+    "e_username": "ruby_wood",
     "e_name": {
       "en": {
         "first": "Ruby",
@@ -1300,10 +1300,10 @@
     "e_phone": "",
     "e_email": "Ruby.Wood@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 24,
-    "e_jfid": 42,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 24,
+    "e_job_field_id": 42,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1312,7 +1312,7 @@
   },
   {
     "e_id": 108,
-    "e_user_name": "108",
+    "e_username": "dominic_coleman",
     "e_name": {
       "en": {
         "first": "Dominic",
@@ -1323,10 +1323,10 @@
     "e_phone": "",
     "e_email": "Dominic.Coleman@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 26,
-    "e_jfid": 45,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 26,
+    "e_job_field_id": 45,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1335,7 +1335,7 @@
   },
   {
     "e_id": 109,
-    "e_user_name": "109",
+    "e_username": "sadie_foster",
     "e_name": {
       "en": {
         "first": "Sadie",
@@ -1346,10 +1346,10 @@
     "e_phone": "",
     "e_email": "Sadie.Foster@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 26,
-    "e_jfid": 46,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 26,
+    "e_job_field_id": 46,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1358,7 +1358,7 @@
   },
   {
     "e_id": 110,
-    "e_user_name": "110",
+    "e_username": "blake_simmons",
     "e_name": {
       "en": {
         "first": "Blake",
@@ -1369,10 +1369,10 @@
     "e_phone": "",
     "e_email": "Blake.Simmons@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 26,
-    "e_jfid": 46,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 26,
+    "e_job_field_id": 46,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1381,7 +1381,7 @@
   },
   {
     "e_id": 111,
-    "e_user_name": "111",
+    "e_username": "elena_patterson",
     "e_name": {
       "en": {
         "first": "Elena",
@@ -1392,10 +1392,10 @@
     "e_phone": "",
     "e_email": "Elena.Patterson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 26,
-    "e_jfid": 46,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 26,
+    "e_job_field_id": 46,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1404,7 +1404,7 @@
   },
   {
     "e_id": 112,
-    "e_user_name": "112",
+    "e_username": "tristan_russell",
     "e_name": {
       "en": {
         "first": "Tristan",
@@ -1415,10 +1415,10 @@
     "e_phone": "",
     "e_email": "Tristan.Russell@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 27,
-    "e_jfid": 47,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 27,
+    "e_job_field_id": 47,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1427,7 +1427,7 @@
   },
   {
     "e_id": 113,
-    "e_user_name": "113",
+    "e_username": "maya_griffin",
     "e_name": {
       "en": {
         "first": "Maya",
@@ -1438,10 +1438,10 @@
     "e_phone": "",
     "e_email": "Maya.Griffin@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 27,
-    "e_jfid": 48,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 27,
+    "e_job_field_id": 48,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1450,7 +1450,7 @@
   },
   {
     "e_id": 114,
-    "e_user_name": "114",
+    "e_username": "victor_diaz",
     "e_name": {
       "en": {
         "first": "Victor",
@@ -1461,10 +1461,10 @@
     "e_phone": "",
     "e_email": "Victor.Diaz@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 27,
-    "e_jfid": 49,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 27,
+    "e_job_field_id": 49,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1473,7 +1473,7 @@
   },
   {
     "e_id": 115,
-    "e_user_name": "115",
+    "e_username": "penelope_hayes",
     "e_name": {
       "en": {
         "first": "Penelope",
@@ -1484,10 +1484,10 @@
     "e_phone": "",
     "e_email": "Penelope.Hayes@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 27,
-    "e_jfid": 49,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 27,
+    "e_job_field_id": 49,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1496,7 +1496,7 @@
   },
   {
     "e_id": 116,
-    "e_user_name": "116",
+    "e_username": "colin_myers",
     "e_name": {
       "en": {
         "first": "Colin",
@@ -1507,10 +1507,10 @@
     "e_phone": "",
     "e_email": "Colin.Myers@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 27,
-    "e_jfid": 49,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 27,
+    "e_job_field_id": 49,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1519,7 +1519,7 @@
   },
   {
     "e_id": 117,
-    "e_user_name": "117",
+    "e_username": "vivian_long",
     "e_name": {
       "en": {
         "first": "Vivian",
@@ -1530,10 +1530,10 @@
     "e_phone": "",
     "e_email": "Vivian.Long@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 28,
-    "e_jfid": 50,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 28,
+    "e_job_field_id": 50,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1542,7 +1542,7 @@
   },
   {
     "e_id": 118,
-    "e_user_name": "118",
+    "e_username": "jasper_powell",
     "e_name": {
       "en": {
         "first": "Jasper",
@@ -1553,10 +1553,10 @@
     "e_phone": "",
     "e_email": "Jasper.Powell@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 28,
-    "e_jfid": 51,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 28,
+    "e_job_field_id": 51,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1565,7 +1565,7 @@
   },
   {
     "e_id": 119,
-    "e_user_name": "119",
+    "e_username": "naomi_jenkins",
     "e_name": {
       "en": {
         "first": "Naomi",
@@ -1576,10 +1576,10 @@
     "e_phone": "",
     "e_email": "Naomi.Jenkins@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 28,
-    "e_jfid": 51,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 28,
+    "e_job_field_id": 51,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,
@@ -1588,7 +1588,7 @@
   },
   {
     "e_id": 120,
-    "e_user_name": "120",
+    "e_username": "connor_peterson",
     "e_name": {
       "en": {
         "first": "Connor",
@@ -1599,10 +1599,10 @@
     "e_phone": "",
     "e_email": "Connor.Peterson@sunghwan-portal.dev",
     "e_image_url": null,
-    "e_did": 28,
-    "e_jfid": 51,
-    "e_cid": 1,
-    "e_wsid": 1,
+    "e_department_id": 28,
+    "e_job_field_id": 51,
+    "e_company_id": 1,
+    "e_work_shift_id": 1,
     "e_active": true,
     "e_engineer_id": null,
     "e_rf_tag_id": null,

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import { PortalPreference } from "@/domain/config";
 import { createDefaultPreference } from "@/domain/user/preference";
 import {
   useCreateUserPreference,
@@ -16,6 +17,7 @@ import {
   useUserPreferenceQuery,
 } from "@/feature/user/preference/client";
 import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
+import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
 import { NS } from "@/lib/i18n";
 import { adminAuth } from "@/mocks/domain/user";
 import { languageOptions } from "@/shared/constants/options/language";
@@ -50,7 +52,10 @@ const footerLinkClassName = "py-0 text-base font-normal";
 export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   const router = useRouter();
   const { status } = useSession();
-  const { data: userPreference } = useUserPreferenceQuery(null);
+  const { data: userPreference } = useUserPreferenceQuery<PortalPreference>({
+    isRemote: false,
+    preferenceKey: preferenceKeys.home.preference,
+  });
   const { mutate: createUserPreference } = useCreateUserPreference();
   const { mutate: updateUserPreference } = useUpdateUserPreference();
   const { t } = useTranslation(NS.auth);
@@ -71,10 +76,11 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
       : LoginView.ChangePassword;
 
   useEffect(() => {
-    if (userPreference?.language && userPreference.language !== language) {
-      changeLanguage(userPreference.language);
+    const lang = userPreference?.preferenceMeta?.language;
+    if (lang && lang !== language) {
+      changeLanguage(lang);
     }
-  }, [changeLanguage, language, userPreference?.language]);
+  }, [changeLanguage, language, userPreference?.preferenceMeta]);
 
   useEffect(() => {
     if (hasSignedIn && status === "authenticated") {
@@ -226,11 +232,23 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
     };
 
     if (userPreference) {
-      updateUserPreference({ userId: null, data: payload });
+      updateUserPreference({
+        isRemote: false,
+        data: {
+          preferenceKey: preferenceKeys.home.preference,
+          preferenceMeta: payload,
+        },
+      });
       return;
     }
 
-    createUserPreference({ userId: null, data: payload });
+    createUserPreference({
+      isRemote: false,
+      data: {
+        preferenceKey: preferenceKeys.home.preference,
+        preferenceMeta: payload,
+      },
+    });
   };
 
   if (status === "loading") {

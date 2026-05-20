@@ -18,7 +18,7 @@ export const allJobFieldsMock: DbJobField[] = [
     jf_id: 0,
     jf_name: { en: "Company" },
     jf_description: { en: "" },
-    jf_did: 0,
+    jf_department_id: 0,
     jf_parent_id: null,
     jf_active: true,
   },

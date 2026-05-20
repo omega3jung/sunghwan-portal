@@ -13,7 +13,6 @@ export type AuthAccountUserScope = "INTERNAL" | "EXTERNAL" | "SYSTEM";
 
 export interface DbAuthLoginUserRow {
   aa_id: string;
-  aa_username: string;
   aa_password_hash: string;
   aa_role: AuthAccountRole;
   aa_permission: AuthAccountPermission;
@@ -24,7 +23,8 @@ export interface DbAuthLoginUserRow {
   aa_updated_at: string;
 
   e_id: number;
+  e_username: string;
   e_name: LocalizedName;
   e_email: string;
-  e_cid: number;
+  e_company_id: number;
 }

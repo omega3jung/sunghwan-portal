@@ -3,11 +3,16 @@
 import { Preference } from "@/domain/config";
 
 import { userPreferenceApi } from "./api";
+import { GetPreferenceInput, SavePreferenceInput } from "./types";
 
 export const userPreferenceRepo = {
-  async get(userId: string | null): Promise<Preference> {
+  async get<T>({
+    userId = null,
+    isRemote,
+    preferenceKey,
+  }: GetPreferenceInput): Promise<Preference<T> | null> {
     // local demo.
-    if (!userId) {
+    if (!isRemote) {
       const raw = localStorage.getItem("sunghwan_portal_user_preference");
 
       // Return preference from local storage if exists.
@@ -16,12 +21,15 @@ export const userPreferenceRepo = {
       throw new Error("User preference not found (demo)");
     }
 
-    return userPreferenceApi.get(userId);
+    // remote.
+    return userId
+      ? userPreferenceApi.get(userId, preferenceKey)
+      : userPreferenceApi.me.get(preferenceKey);
   },
 
-  async create({ userId, data }: { userId: string | null; data: Preference }) {
+  async create<T>({ userId = null, isRemote, data }: SavePreferenceInput<T>) {
     // local demo.
-    if (!userId) {
+    if (!isRemote) {
       localStorage.setItem(
         "sunghwan_portal_user_preference",
         JSON.stringify(data),
@@ -29,14 +37,17 @@ export const userPreferenceRepo = {
       return;
     }
 
-    const result = await userPreferenceApi.create(userId, data);
+    // remote.
+    const result = userId
+      ? await userPreferenceApi.create(userId, data)
+      : userPreferenceApi.me.create(data);
 
     return result;
   },
 
-  async update({ userId, data }: { userId: string | null; data: Preference }) {
+  async update<T>({ userId = null, isRemote, data }: SavePreferenceInput<T>) {
     // local demo.
-    if (!userId) {
+    if (!isRemote) {
       localStorage.setItem(
         "sunghwan_portal_user_preference",
         JSON.stringify(data),
@@ -44,7 +55,10 @@ export const userPreferenceRepo = {
       return;
     }
 
-    const result = await userPreferenceApi.update(userId, data);
+    // remote.
+    const result = userId
+      ? await userPreferenceApi.update(userId, data)
+      : userPreferenceApi.me.update(data);
 
     return result;
   },

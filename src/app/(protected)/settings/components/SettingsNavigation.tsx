@@ -14,7 +14,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { useUserPreferenceQuery } from "@/feature/user/preference/client";
 import { NS } from "@/lib/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
@@ -22,9 +21,6 @@ import { cn } from "@/shared/utils/presentation";
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 
 export function SettingsNavigation() {
-  const { data: userPreference } = useUserPreferenceQuery(null);
-  const lang = userPreference?.language ?? "en";
-
   const { t } = useTranslation(NS.settings);
   const settingsNavigationItems = createSettingsNavigationMock(t);
 
@@ -71,7 +67,6 @@ export function SettingsNavigation() {
                       {item.title}
                     </p>
                     <p
-                      data-lang={lang}
                       className={cn(
                         "text-muted-foreground text-sm leading-snug text-wrap",
                       )}

@@ -28,7 +28,7 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
 
       token.dataScope = user.dataScope;
       token.userScope = user.userScope;
-      token.companyId = resolveCompanyId(user);
+      token.companyId = user.companyId;
       token.permission = user.permission;
       token.role = user.role;
     }
@@ -69,7 +69,7 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
       email: token.email,
       dataScope: token.dataScope,
       userScope: token.userScope,
-      companyId: resolveCompanyId(token),
+      companyId: token.companyId,
       permission: token.permission,
       role: token.role,
     };
@@ -91,11 +91,4 @@ function isAuthUser(user: unknown): user is AuthUser {
     "accessToken" in user &&
     "userScope" in user
   );
-}
-
-function resolveCompanyId(user: {
-  companyId?: string;
-  clientId?: string | null;
-}) {
-  return user.companyId ?? user.clientId ?? "";
 }

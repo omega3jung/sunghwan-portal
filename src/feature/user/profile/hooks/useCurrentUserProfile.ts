@@ -4,20 +4,20 @@ import { Session } from "next-auth";
 import { userProfileApi } from "@/feature/user/profile";
 
 export const useCurrentUserProfileQuery = (session: Session | null) => {
-  const currentUserId = session?.impersonation
-    ? session.impersonation.impersonatedUserId
+  const currentUserKey = session?.impersonation
+    ? session.impersonation.impersonatedUser.username
     : session?.user.id;
 
   return useQuery({
-    queryKey: ["user-profile", currentUserId],
+    queryKey: ["user-profile", currentUserKey],
     queryFn: () => {
-      if (!currentUserId) throw new Error("No user id");
+      if (!currentUserKey) throw new Error("No user identifier");
 
       return session?.impersonation
-        ? userProfileApi.get(currentUserId)
+        ? userProfileApi.get(currentUserKey)
         : userProfileApi.me();
     },
-    enabled: !!currentUserId,
+    enabled: !!currentUserKey,
     staleTime: 1000 * 60,
   });
 };

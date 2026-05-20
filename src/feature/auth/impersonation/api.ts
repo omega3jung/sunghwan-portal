@@ -1,14 +1,13 @@
 // src/feature/user/impersonation/api.ts
+import { ImpersonationInfo } from "@/domain/auth";
 import client from "@/lib/api";
 
 export const userImpersonationApi = {
-  start: async (impersonatedUserId: string) => {
+  start: async (impersonatedUsername: string) => {
     const res = await client.api.post<{
-      originalUserId: string;
-      impersonatedUserId: string;
-      activatedAt: number;
+      impersonation: ImpersonationInfo;
     }>("/api/auth/impersonation", {
-      impersonatedUserId,
+      impersonatedUsername,
     });
 
     return res.data;

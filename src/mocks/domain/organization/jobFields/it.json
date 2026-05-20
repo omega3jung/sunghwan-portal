@@ -3,7 +3,7 @@
     "jf_id": 15,
     "jf_name": { "en": "IT Director" },
     "jf_description": { "en": "" },
-    "jf_did": 10,
+    "jf_department_id": 10,
     "jf_parent_id": 0,
     "jf_active": true
   },
@@ -11,7 +11,7 @@
     "jf_id": 16,
     "jf_name": { "en": "IT Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 10,
+    "jf_department_id": 10,
     "jf_parent_id": 15,
     "jf_active": true
   },
@@ -19,7 +19,7 @@
     "jf_id": 17,
     "jf_name": { "en": "Infrastructure Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 11,
+    "jf_department_id": 11,
     "jf_parent_id": 15,
     "jf_active": true
   },
@@ -27,7 +27,7 @@
     "jf_id": 18,
     "jf_name": { "en": "Systems Engineer" },
     "jf_description": { "en": "" },
-    "jf_did": 11,
+    "jf_department_id": 11,
     "jf_parent_id": 17,
     "jf_active": true
   },
@@ -35,7 +35,7 @@
     "jf_id": 19,
     "jf_name": { "en": "Network Administrator" },
     "jf_description": { "en": "" },
-    "jf_did": 11,
+    "jf_department_id": 11,
     "jf_parent_id": 18,
     "jf_active": true
   },
@@ -43,7 +43,7 @@
     "jf_id": 20,
     "jf_name": { "en": "Development Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 12,
+    "jf_department_id": 12,
     "jf_parent_id": 15,
     "jf_active": true
   },
@@ -51,7 +51,7 @@
     "jf_id": 21,
     "jf_name": { "en": "Development Operations" },
     "jf_description": { "en": "" },
-    "jf_did": 12,
+    "jf_department_id": 12,
     "jf_parent_id": 20,
     "jf_active": true
   },
@@ -59,7 +59,7 @@
     "jf_id": 22,
     "jf_name": { "en": "Frontend Engineer" },
     "jf_description": { "en": "" },
-    "jf_did": 12,
+    "jf_department_id": 12,
     "jf_parent_id": 20,
     "jf_active": true
   },
@@ -67,7 +67,7 @@
     "jf_id": 23,
     "jf_name": { "en": "Backend Engineer" },
     "jf_description": { "en": "" },
-    "jf_did": 12,
+    "jf_department_id": 12,
     "jf_parent_id": 20,
     "jf_active": true
   },
@@ -75,7 +75,7 @@
     "jf_id": 24,
     "jf_name": { "en": "IT Support Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 13,
+    "jf_department_id": 13,
     "jf_parent_id": 15,
     "jf_active": true
   },
@@ -83,7 +83,7 @@
     "jf_id": 25,
     "jf_name": { "en": "IT Support Specialist" },
     "jf_description": { "en": "" },
-    "jf_did": 13,
+    "jf_department_id": 13,
     "jf_parent_id": 24,
     "jf_active": true
   },
@@ -91,7 +91,7 @@
     "jf_id": 26,
     "jf_name": { "en": "IT Technician" },
     "jf_description": { "en": "" },
-    "jf_did": 13,
+    "jf_department_id": 13,
     "jf_parent_id": 25,
     "jf_active": true
   },
@@ -99,7 +99,7 @@
     "jf_id": 27,
     "jf_name": { "en": "IT Security Manager" },
     "jf_description": { "en": "" },
-    "jf_did": 14,
+    "jf_department_id": 14,
     "jf_parent_id": 15,
     "jf_active": true
   },
@@ -107,7 +107,7 @@
     "jf_id": 28,
     "jf_name": { "en": "Security Analyst" },
     "jf_description": { "en": "" },
-    "jf_did": 14,
+    "jf_department_id": 14,
     "jf_parent_id": 27,
     "jf_active": true
   },
@@ -115,7 +115,7 @@
     "jf_id": 29,
     "jf_name": { "en": "Security Engineer" },
     "jf_description": { "en": "" },
-    "jf_did": 14,
+    "jf_department_id": 14,
     "jf_parent_id": 28,
     "jf_active": true
   }

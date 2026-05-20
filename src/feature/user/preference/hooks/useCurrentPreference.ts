@@ -4,7 +4,12 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
-import { ColorTheme, ScreenMode } from "@/domain/config";
+import {
+  ColorTheme,
+  PortalPreference,
+  Preference,
+  ScreenMode,
+} from "@/domain/config";
 import {
   createDefaultPreference,
   UseCurrentPreferenceResult,
@@ -14,7 +19,66 @@ import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
 import { applyColorTheme } from "@/shared/utils/presentation";
 
+import { preferenceKeys } from "../preferenceKeys";
 import { userPreferenceRepo } from "../repo";
+
+const portalPreferenceSyncInFlight = new Map<
+  string,
+  Promise<Preference<PortalPreference> | null | undefined>
+>();
+
+const getPortalPreferenceSyncKey = ({
+  userId,
+  dataScope,
+  preferenceKey,
+}: {
+  userId: string;
+  dataScope: string;
+  preferenceKey: string;
+}) => `${dataScope}:${userId}:${preferenceKey}`;
+
+const getOrCreatePortalPreference = ({
+  syncKey,
+  isRemote,
+  preferenceKey,
+  defaultPreference,
+}: {
+  syncKey: string;
+  isRemote: boolean;
+  preferenceKey: string;
+  defaultPreference: PortalPreference;
+}) => {
+  const inFlight = portalPreferenceSyncInFlight.get(syncKey);
+
+  if (inFlight) {
+    return inFlight;
+  }
+
+  const task = (async () => {
+    const preference = await userPreferenceRepo.get<PortalPreference>({
+      isRemote,
+      preferenceKey,
+    });
+
+    if (preference) {
+      return preference;
+    }
+
+    return userPreferenceRepo.create<PortalPreference>({
+      isRemote,
+      data: {
+        preferenceKey,
+        preferenceMeta: defaultPreference,
+      },
+    });
+  })().finally(() => {
+    portalPreferenceSyncInFlight.delete(syncKey);
+  });
+
+  portalPreferenceSyncInFlight.set(syncKey, task);
+
+  return task;
+};
 
 /**
  * Combines session, preference store, theme state, and language state into a single preference facade for the UI.
@@ -126,20 +190,46 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // set session when sign in.
+  // set session when sign in.// set preference when sign in.
   useEffect(() => {
     if (session.status !== "authenticated") return;
-    if (!session.data?.user) return;
 
-    const remoteId =
-      session.data?.user.dataScope === "LOCAL" ? null : session.data?.user.id;
+    const user = session.data?.user;
+    if (!user) return;
 
-    userPreferenceRepo.get(remoteId).then((preference) => {
-      store.setPreference(preference);
+    let active = true;
+
+    const preferenceKey = preferenceKeys.home.preference;
+    const isRemote = user.dataScope === "REMOTE";
+
+    const syncKey = getPortalPreferenceSyncKey({
+      userId: user.id,
+      dataScope: user.dataScope,
+      preferenceKey,
     });
 
+    const syncPreference = async () => {
+      const preference = await getOrCreatePortalPreference({
+        syncKey,
+        isRemote,
+        preferenceKey,
+        defaultPreference: current,
+      });
+
+      if (!active) return;
+      if (!preference) return;
+
+      store.setPreference(preference.preferenceMeta);
+    };
+
+    syncPreference();
+
+    return () => {
+      active = false;
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status, session.data?.user]);
+  }, [session.status, session.data?.user?.id, session.data?.user?.dataScope]);
 
   // color theme
   useEffect(() => {

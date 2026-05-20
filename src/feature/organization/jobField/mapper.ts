@@ -12,7 +12,7 @@ export interface DbJobField {
   jf_id: number;
   jf_name: LocalizedText;
   jf_description: LocalizedText | null;
-  jf_did: number;
+  jf_department_id: number;
   jf_parent_id: number | null;
   jf_active: boolean;
 }
@@ -24,7 +24,7 @@ export const camelJobFieldMapper: ArrayMapper<DbJobField, JobField> = (
     id: item.jf_id.toString(),
     name: item.jf_name,
     description: nullToUndefined(item.jf_description),
-    departmentId: item.jf_did.toString(),
+    departmentId: item.jf_department_id.toString(),
     parentId: numberToId(item.jf_parent_id),
     active: item.jf_active,
   }));
@@ -37,7 +37,7 @@ export const snakeJobFieldMapper: ArrayMapper<JobField, DbJobField> = (
     jf_id: parseInt(item.id),
     jf_name: item.name,
     jf_description: undefinedToNull(item.description),
-    jf_did: parseInt(item.departmentId),
+    jf_department_id: parseInt(item.departmentId),
     jf_parent_id: idToNumber(item.parentId),
     jf_active: item.active,
   }));

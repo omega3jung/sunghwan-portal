@@ -6,7 +6,7 @@ export function toAuthAccountResponseDto(
 ): AuthAccountResponseDto {
   return {
     authAccountId: row.aa_id,
-    username: row.aa_username,
+    username: row.e_username,
     role: row.aa_role,
     permission: row.aa_permission,
     userScope: row.aa_user_scope,
@@ -15,6 +15,6 @@ export function toAuthAccountResponseDto(
     employeeId: row.e_id,
     employeeName: row.e_name,
     employeeEmail: row.e_email,
-    companyId: row.e_cid,
+    companyId: row.e_company_id,
   };
 }

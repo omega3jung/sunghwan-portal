@@ -15,7 +15,9 @@ export type PortalApiQueryValue =
   | null
   | undefined;
 
-export type PortalApiQuery = URLSearchParams | Record<string, PortalApiQueryValue>;
+export type PortalApiQuery =
+  | URLSearchParams
+  | Record<string, PortalApiQueryValue>;
 
 export type PortalApiJsonOptions = {
   path: string;

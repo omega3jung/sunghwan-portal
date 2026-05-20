@@ -12,7 +12,7 @@ export interface AppUser {
   image?: string;
 
   userScope: UserScope;
-  companyId: string;
+  companyId: number;
 
   permission: AccessLevel;
   role: Role | null;

@@ -2,9 +2,9 @@ import { LocalizedName } from "@/domain/organization";
 
 export type UserProfileRow = {
   aa_id: string;
-  e_id: number;
-  e_user_name: string;
-  ename: LocalizedName;
+  aa_username: string;
+  e_username: string;
+  e_name: LocalizedName;
   e_email: string | null;
-  e_cid: number;
+  e_company_id: number;
 };

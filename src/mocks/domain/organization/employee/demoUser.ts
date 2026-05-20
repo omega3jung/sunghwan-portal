@@ -2,7 +2,7 @@
 
 export const adminEmployee: DbEmployee = {
   e_id: -1,
-  e_user_name: "__demo_admin__",
+  e_username: "__demo_admin__",
   e_name: {
     en: {
       first: "Demo",
@@ -13,10 +13,10 @@ export const adminEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoAdmin@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 1,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 1,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -27,7 +27,7 @@ export const adminEmployee: DbEmployee = {
 
 export const managerEmployee: DbEmployee = {
   e_id: -2,
-  e_user_name: "__demo_manager__",
+  e_username: "__demo_manager__",
   e_name: {
     en: {
       first: "Demo",
@@ -38,10 +38,10 @@ export const managerEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoManager@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 1,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 1,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -52,7 +52,7 @@ export const managerEmployee: DbEmployee = {
 
 export const leaderEmployee: DbEmployee = {
   e_id: -3,
-  e_user_name: "__demo_leader__",
+  e_username: "__demo_leader__",
   e_name: {
     en: {
       first: "Demo",
@@ -63,10 +63,10 @@ export const leaderEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoLeader@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 1,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 1,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -77,7 +77,7 @@ export const leaderEmployee: DbEmployee = {
 
 export const userEmployee: DbEmployee = {
   e_id: -4,
-  e_user_name: "__demo_user__",
+  e_username: "__demo_user__",
   e_name: {
     en: {
       first: "Demo",
@@ -88,10 +88,10 @@ export const userEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoUser@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 1,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 1,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -102,7 +102,7 @@ export const userEmployee: DbEmployee = {
 
 export const guestEmployee: DbEmployee = {
   e_id: -5,
-  e_user_name: "__demo_guest__",
+  e_username: "__demo_guest__",
   e_name: {
     en: {
       first: "Demo",
@@ -113,10 +113,10 @@ export const guestEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoGuest@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 1,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 1,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -127,7 +127,7 @@ export const guestEmployee: DbEmployee = {
 
 export const clientAdminEmployee: DbEmployee = {
   e_id: -11,
-  e_user_name: "__demo_client_admin__",
+  e_username: "__demo_client_admin__",
   e_name: {
     en: {
       first: "Client",
@@ -138,10 +138,10 @@ export const clientAdminEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoClientAdmin@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 11,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 11,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -152,7 +152,7 @@ export const clientAdminEmployee: DbEmployee = {
 
 export const clientManagerEmployee: DbEmployee = {
   e_id: -12,
-  e_user_name: "__demo_client_manager__",
+  e_username: "__demo_client_manager__",
   e_name: {
     en: {
       first: "Client",
@@ -163,10 +163,10 @@ export const clientManagerEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoClientManager@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 11,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 11,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -177,7 +177,7 @@ export const clientManagerEmployee: DbEmployee = {
 
 export const clientLeaderEmployee: DbEmployee = {
   e_id: -13,
-  e_user_name: "__demo_client_leader__",
+  e_username: "__demo_client_leader__",
   e_name: {
     en: {
       first: "Client",
@@ -188,10 +188,10 @@ export const clientLeaderEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoClientLeader@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 11,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 11,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -202,7 +202,7 @@ export const clientLeaderEmployee: DbEmployee = {
 
 export const clientUserEmployee: DbEmployee = {
   e_id: -14,
-  e_user_name: "__demo_client_user__",
+  e_username: "__demo_client_user__",
   e_name: {
     en: {
       first: "Client",
@@ -213,10 +213,10 @@ export const clientUserEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoClientUser@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 11,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 11,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,
@@ -227,7 +227,7 @@ export const clientUserEmployee: DbEmployee = {
 
 export const clientGuestEmployee: DbEmployee = {
   e_id: -15,
-  e_user_name: "__demo_client_guest__",
+  e_username: "__demo_client_guest__",
   e_name: {
     en: {
       first: "Client",
@@ -238,10 +238,10 @@ export const clientGuestEmployee: DbEmployee = {
   e_phone: "",
   e_email: "demoClientGuest@sunghwan-portal.dev",
   e_image_url: null,
-  e_did: 1,
-  e_jfid: 1,
-  e_cid: 11,
-  e_wsid: 1,
+  e_department_id: 1,
+  e_job_field_id: 1,
+  e_company_id: 11,
+  e_work_shift_id: 1,
   e_active: true,
   e_engineer_id: null,
   e_rf_tag_id: null,

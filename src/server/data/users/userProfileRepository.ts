@@ -4,24 +4,21 @@ import { UserProfileRow } from "./userProfileRow";
 
 const FIND_USER_PROFILE_BY_ID_QUERY = `
 select aa_id,
-       e_id,
-       e_user_name,
-       ename,
+       aa_username,
+       e_username,
+       e_name,
        e_email,
-       e_cid
-  from auth_account
-  join employee
-    on aa_eid = e_id
-   and aa_id = $1;
+       e_company_id
+  from auth_login_user_view
+ where e_username = $1;
 `;
 
-export async function findUserProfileById(
+export async function findUserProfileByUsername(
   userId: string,
 ): Promise<UserProfileRow | null> {
   const rows = await queryPortalApi<UserProfileRow>(
     FIND_USER_PROFILE_BY_ID_QUERY,
     [userId],
   );
-
   return rows[0] ?? null;
 }

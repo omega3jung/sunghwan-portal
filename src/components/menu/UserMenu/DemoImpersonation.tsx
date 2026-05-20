@@ -16,7 +16,7 @@ import { getLocalizedText } from "@/shared/utils/i18n";
 
 type Props = {
   user: AppUser;
-  onDemoImpersonate: (impersonatedUserId: string) => Promise<void>;
+  onDemoImpersonate: (impersonatedUsername: string) => Promise<void>;
 };
 
 export function DemoImpersonation(props: Props) {
@@ -25,8 +25,8 @@ export function DemoImpersonation(props: Props) {
   const { t } = useTranslation("UserMenu");
 
   const impersonationCandidates = useMemo(() => {
-    return clientProfiles.filter((profile) => profile.id !== user.id);
-  }, [user.id]);
+    return clientProfiles.filter((profile) => profile.username !== user.username);
+  }, [user.username]);
 
   const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
     switch (accessLevel) {
@@ -61,8 +61,8 @@ export function DemoImpersonation(props: Props) {
             const profileDisplayNameKey = getDisplayNameKey(profile.displayName);
             return (
               <DropdownMenuItem
-                key={`impersonate_${profile.id}`}
-                onClick={() => onDemoImpersonate(profile.id)}
+                key={`impersonate_${profile.username}`}
+                onClick={() => onDemoImpersonate(profile.username)}
               >
                 {getPermissionIcon(profile.permission)}
                 {t(`impersonationAs${profileDisplayNameKey}`)}

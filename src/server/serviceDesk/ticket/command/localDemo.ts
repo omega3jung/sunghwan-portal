@@ -53,7 +53,7 @@ type CreateTicketActionContext = Pick<
 
 const employeeEmailByUserName = new Map(
   createEmployeesMock().map((employee) => [
-    employee.e_user_name,
+    employee.e_username,
     employee.e_email,
   ]),
 );

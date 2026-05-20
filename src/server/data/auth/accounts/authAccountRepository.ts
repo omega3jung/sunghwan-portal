@@ -5,18 +5,17 @@ import { DbAuthLoginUserRow } from "./authAccountRow";
 const FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY = `
   select
     aa_id,
-    aa_username,
     aa_password_hash,
     aa_role,
     aa_permission,
     aa_user_scope,
     aa_last_login_at,
 
-    e_id,
+    e_username,
     e_name,
     e_email,
-    e_cid
-  from public.auth_login_user_view
+    e_company_id
+  from auth_login_user_view
   where aa_username = $1
     and aa_active = true
   limit 1

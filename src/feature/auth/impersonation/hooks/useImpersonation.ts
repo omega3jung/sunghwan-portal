@@ -37,11 +37,11 @@ export const useImpersonation = () => {
    * - Entering impersonation mode from an admin control flow
    * - Switching the current session context to another user
    *
-   * @param impersonatedUserId - The id of the user to impersonate
+   * @param impersonatedUsername - The username of the user to impersonate
    * @returns A promise that resolves after the impersonation request and session update complete
    */
-  const startImpersonation = async (impersonatedUserId: string) => {
-    const impersonation = await userImpersonationApi.start(impersonatedUserId);
+  const startImpersonation = async (impersonatedUsername: string) => {
+    const impersonation = await userImpersonationApi.start(impersonatedUsername);
     await session.update(impersonation);
   };
 
@@ -67,16 +67,18 @@ export const useImpersonation = () => {
       return;
     }
 
-    const impersonatedUserId =
-      session.data?.impersonation?.impersonatedUserId ?? null;
+    const impersonatedUsername =
+      session.data?.impersonation?.impersonatedUser.username ?? null;
 
     // impersonating.
-    if (impersonatedUserId) {
+    if (impersonatedUsername) {
       // ??if same impersonatedUser, then do nothing.
-      if (impersonatedUser?.id === impersonatedUserId) return;
+      if (impersonatedUser?.username === impersonatedUsername) return;
 
       // get impersonatedUser user.
-      userProfileApi.get(impersonatedUserId).then((impersonatedUserProfile) => {
+      userProfileApi
+        .get(impersonatedUsername)
+        .then((impersonatedUserProfile) => {
         syncFromSession({
           originalUser: originalUser ?? current.user!,
           impersonatedUser: impersonatedUserProfile,
@@ -87,13 +89,13 @@ export const useImpersonation = () => {
     }
     // optimized to dependencies. Do not update this.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.user?.id, session.data?.impersonation?.impersonatedUserId]);
+  }, [current.user?.username, session.data?.impersonation?.impersonatedUser.username]);
 
   return {
     originalUser,
     impersonatedUser,
     currentUser,
-    isImpersonating: !!session.data?.impersonation?.impersonatedUserId,
+    isImpersonating: !!session.data?.impersonation?.impersonatedUser.username,
     startImpersonation,
     stopImpersonation,
   };

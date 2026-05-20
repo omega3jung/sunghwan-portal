@@ -2,6 +2,7 @@ import { Locale } from "@/shared/types";
 
 export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   en: {
+    preferences: "Preferences",
     colorTheme: "Color theme",
     theme: "Mode",
     light: "Light",
@@ -11,6 +12,7 @@ export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   },
 
   es: {
+    preferences: "Preferencias",
     colorTheme: "Tema de color",
     theme: "Modo",
     light: "Claro",
@@ -20,6 +22,7 @@ export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   },
 
   fr: {
+    preferences: "Préférences",
     colorTheme: "Thème de couleur",
     theme: "Mode",
     light: "Clair",
@@ -29,6 +32,7 @@ export const preferencesMenuLocales: Record<Locale, Record<string, string>> = {
   },
 
   ko: {
+    preferences: "환경 설정",
     colorTheme: "색상 테마",
     theme: "모드",
     light: "라이트",

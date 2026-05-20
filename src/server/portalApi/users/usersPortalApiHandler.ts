@@ -2,58 +2,147 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 import { AccessLevel, Role, UserScope } from "@/domain/auth";
-import { getUserProfileDtoById } from "@/server/data/users";
+import {
+  createUserPreferenceByKey,
+  getUserPreferenceByKey,
+  getUserProfileDtoByUsername,
+  updateUserPreferenceByKey,
+} from "@/server/data/users";
 import { PortalApiJsonOptions } from "@/server/portalApi/types";
 
-const USER_PROFILE_PATH_PATTERN = /^\/users\/([^/]+)\/profile$/;
+import {
+  getPortalApiQueryValue,
+  normalizePath,
+  parsePreferenceKey,
+  resolveAccessLevel,
+  resolveRole,
+} from "../utils";
 
+const USER_PROFILE_PATH_PATTERN = /^\/users\/([^/]+)\/profile$/;
+const USER_PREFERENCE_PATH_PATTERN = /^\/users\/([^/]+)\/preference$/;
 export async function handleUserPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,
 ) {
-  const path = normalizePath(options.path);
-  const match = USER_PROFILE_PATH_PATTERN.exec(path);
+  const apiPath = normalizePath(options.path);
+  const profileMatch = USER_PROFILE_PATH_PATTERN.exec(apiPath);
+  const preferenceMatch = USER_PREFERENCE_PATH_PATTERN.exec(apiPath);
 
-  if (!match) {
+  if (!profileMatch && !preferenceMatch) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
-  const userId = decodeURIComponent(match[1] ?? "");
   const method = options.method ?? "GET";
 
-  if (method === "POST" || method === "PUT") {
-    return NextResponse.json({ message: "Not implemented" }, { status: 501 });
-  }
-
-  if (method !== "GET") {
-    return NextResponse.json({ message: "Not found" }, { status: 404 });
-  }
-
-  const authContext = await resolveUserProfileAuthContext(request);
-
-  if (!authContext) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const profile = await getUserProfileDtoById(userId, authContext);
+    // api/users/[userId]/preference.
+    if (preferenceMatch) {
+      // REST api GET.
+      if (method === "GET") {
+        const username = decodeURIComponent(preferenceMatch[1] ?? "");
+        const preferenceKey = getPortalApiQueryValue(
+          request,
+          options,
+          "preferenceKey",
+        );
 
-    console.error(profile);
-    if (!profile) {
-      return NextResponse.json({ message: "Not found" }, { status: 404 });
+        if (!preferenceKey) {
+          return NextResponse.json(
+            { message: "path and preferenceKey are required." },
+            { status: 400 },
+          );
+        }
+
+        const preference = await getUserPreferenceByKey({
+          username,
+          preferenceKey,
+        });
+
+        return NextResponse.json({
+          data: preference?.preferenceMeta ?? null,
+        });
+      }
+
+      // REST api POST or PUT.
+      if (method === "POST" || method === "PUT") {
+        const username = decodeURIComponent(preferenceMatch[1] ?? "");
+        const body =
+          options.body && typeof options.body === "object"
+            ? (options.body as Record<string, unknown>)
+            : null;
+        const preferenceKey =
+          typeof body?.preferenceKey === "string"
+            ? body.preferenceKey
+            : getPortalApiQueryValue(request, options, "preferenceKey");
+        const preferenceMeta =
+          body && "preferenceMeta" in body
+            ? body.preferenceMeta
+            : getPortalApiQueryValue(request, options, "preferenceMeta");
+
+        if (!preferenceKey) {
+          return NextResponse.json(
+            { message: "path and preferenceKey are required." },
+            { status: 400 },
+          );
+        }
+
+        const { moduleKey, preferenceType } = parsePreferenceKey(preferenceKey);
+
+        const preference =
+          method === "POST"
+            ? await createUserPreferenceByKey({
+                username,
+                moduleKey,
+                preferenceType,
+                preferenceMeta,
+              })
+            : await updateUserPreferenceByKey({
+                username,
+                moduleKey,
+                preferenceType,
+                preferenceMeta,
+              });
+
+        return NextResponse.json({
+          data: preference?.preferenceMeta ?? null,
+        });
+      }
     }
 
-    return NextResponse.json(profile);
+    // api/users/[userId]/profile.
+    if (profileMatch) {
+      if (method === "GET") {
+        const username = decodeURIComponent(profileMatch[1] ?? "");
+
+        const authContext = await resolveUserProfileAuthContext(request);
+
+        if (!authContext) {
+          return NextResponse.json(
+            { message: "Unauthorized" },
+            { status: 401 },
+          );
+        }
+
+        const profile = await getUserProfileDtoByUsername(
+          username,
+          authContext,
+        );
+
+        if (!profile) {
+          return NextResponse.json({ message: "Not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ data: profile });
+      }
+    }
+
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
   } catch {
     return NextResponse.json(
       { message: options.errorMessage },
       { status: 500 },
     );
   }
-}
-
-function normalizePath(path: string): string {
-  return path.startsWith("/") ? path : `/${path}`;
 }
 
 async function resolveUserProfileAuthContext(request: NextRequest): Promise<{
@@ -95,26 +184,4 @@ async function resolveUserProfileAuthContext(request: NextRequest): Promise<{
     permission,
     role,
   };
-}
-
-function resolveRole(value: unknown): Role | null {
-  if (
-    value === "ADMIN" ||
-    value === "MANAGER" ||
-    value === "LEADER" ||
-    value === "USER" ||
-    value === "GUEST"
-  ) {
-    return value;
-  }
-
-  return null;
-}
-
-function resolveAccessLevel(value: unknown): AccessLevel | null {
-  if (value === 9 || value === 7 || value === 5 || value === 3 || value === 1) {
-    return value;
-  }
-
-  return null;
 }

@@ -110,12 +110,14 @@ export function LeftMenu() {
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem key={"Preferences"}>
-          <PreferencesMenu>
-            <SidebarMenuButton>
-              <Settings2 />
-              {t("preferences")}
-            </SidebarMenuButton>
-          </PreferencesMenu>
+          <PreferencesMenu
+            trigger={({ label }) => (
+              <SidebarMenuButton>
+                <Settings2 />
+                <span>{label}</span>
+              </SidebarMenuButton>
+            )}
+          />
         </SidebarMenuItem>
       </SidebarFooter>
     </Sidebar>

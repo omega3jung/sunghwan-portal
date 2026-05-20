@@ -1,12 +1,12 @@
 import { UserProfileAuthContext, UserProfileDto } from "./userProfileDto";
 import { toUserProfileDto } from "./userProfileMapper";
-import { findUserProfileById } from "./userProfileRepository";
+import { findUserProfileByUsername } from "./userProfileRepository";
 
-export async function getUserProfileDtoById(
-  userId: string,
+export async function getUserProfileDtoByUsername(
+  username: string,
   authContext: UserProfileAuthContext,
 ): Promise<UserProfileDto | null> {
-  const row = await findUserProfileById(userId);
+  const row = await findUserProfileByUsername(username);
 
   if (!row) {
     return null;

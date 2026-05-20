@@ -102,8 +102,15 @@ Impersonation is handled at the **session level**.
 session = {
   user: originalUser,
   impersonation: {
-    originalUserId,
-    impersonatedUserId,
+    originalUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    impersonatedUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    activatedAt,
   },
 };
 ```
@@ -223,8 +230,9 @@ All actions must remain traceable.
 
 ### Stored Context
 
-- `originalUserId`
-- `currentUserId`
+- `originalUser.username` (audit/security key)
+- `impersonatedUser.username` (effective user context key)
+- `originalUser.id` and `impersonatedUser.id` (authentication/account identity ids)
 
 ---
 

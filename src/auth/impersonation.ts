@@ -2,18 +2,18 @@
 
 import axios from "axios";
 
-import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
+import { ACCESS_LEVEL, AuthUser, ImpersonationInfo } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import client from "@/lib/api";
 import { resolveClientAuth } from "@/mocks/domain/user";
 
 export async function startImpersonation({
   originalUser,
-  impersonatedUserId,
+  impersonatedUsername,
 }: {
   originalUser: AuthUser;
-  impersonatedUserId: string;
-}) {
+  impersonatedUsername: string;
+}): Promise<ImpersonationInfo> {
   // 1. check permission.
   if (
     originalUser.userScope !== "INTERNAL" ||
@@ -26,7 +26,7 @@ export async function startImpersonation({
     // 2-a. client demo impersonation.
     if (originalUser.dataScope === "LOCAL") {
       // 3-a. search impersonated user.
-      const clientDemoAuth = resolveClientAuth(impersonatedUserId);
+      const clientDemoAuth = resolveClientAuth(impersonatedUsername);
 
       if (!clientDemoAuth) {
         throw new Error("IMPERSONATED_USER_NOT_FOUND");
@@ -38,20 +38,24 @@ export async function startImpersonation({
       }
 
       // 5-a. allow impersonation
-      console.log(clientDemoAuth.displayName);
       return {
-        originalUserId: originalUser.id,
-        impersonatedUserId: clientDemoAuth.id,
+        originalUser: {
+          id: originalUser.id,
+          username: originalUser.username,
+        },
+        impersonatedUser: {
+          id: clientDemoAuth.id,
+          username: clientDemoAuth.username,
+        },
         activatedAt: Date.now(),
       };
     }
 
     // 2-b. real impersonation.
-    console.log("real impersonation");
 
     // 3-b. search impersonated user.
     const res = await client.api.get<AppUser>(
-      `/users/${impersonatedUserId}/profile`,
+      `/users/${impersonatedUsername}/profile`,
     );
 
     if (!res.data) {
@@ -65,8 +69,14 @@ export async function startImpersonation({
 
     // 5-b. allow impersonation
     return {
-      originalUserId: originalUser.id,
-      impersonatedUserId,
+      originalUser: {
+        id: originalUser.id,
+        username: originalUser.username,
+      },
+      impersonatedUser: {
+        id: res.data.id,
+        username: res.data.username,
+      },
       activatedAt: Date.now(),
     };
   } catch (error) {

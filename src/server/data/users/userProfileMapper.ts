@@ -9,8 +9,8 @@ export function toUserProfileDto(
 ): UserProfileDto {
   return {
     id: row.aa_id,
-    username: row.e_user_name,
-    displayName: displayNameMapper(row.ename),
+    username: row.e_username,
+    displayName: displayNameMapper(row.e_name),
     email: row.e_email,
     userScope: authContext.userScope,
     companyId: authContext.companyId,
