@@ -86,20 +86,20 @@ export async function handleUserPortalApi(
           );
         }
 
-        const { moduleKey, preferenceType } = parsePreferenceKey(preferenceKey);
+        const moduleKey = parsePreferenceKey(preferenceKey);
 
         const preference =
           method === "POST"
             ? await createUserPreferenceByKey({
                 username,
                 moduleKey,
-                preferenceType,
+                preferenceKey,
                 preferenceMeta,
               })
             : await updateUserPreferenceByKey({
                 username,
                 moduleKey,
-                preferenceType,
+                preferenceKey,
                 preferenceMeta,
               });
 

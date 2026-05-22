@@ -2,7 +2,8 @@
 import { AppUser } from "@/domain/user";
 
 export const toAuth = (
-  data: AppUser & Pick<AuthUser, "employeeId"> & { accessToken: string },
+  data: AppUser &
+    Pick<AuthUser, "role" | "employeeId"> & { accessToken: string },
 ): Omit<AuthUser, "dataScope"> => {
   const { accessToken, email, role, ...rest } = data;
 

@@ -1,7 +1,13 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
-import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
+import {
+  ACCESS_LEVEL,
+  AccessLevel,
+  AuthUser,
+  Role,
+  UserScope,
+} from "@/domain/auth";
 
 export async function getAuthToken(req: NextRequest) {
   return getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -14,20 +20,24 @@ export async function getAccessToken(req: NextRequest) {
 
 export async function isRemoteRequest(req: NextRequest) {
   const token = await getAuthToken(req);
-
   return token?.dataScope === "REMOTE";
 }
 
 export async function isInternalUser(req: NextRequest) {
   const token = await getAuthToken(req);
-
   return token?.userScope === "INTERNAL";
 }
 
-export async function getCompanyId(req: NextRequest) {
+export async function getUserAccessLevel(
+  req: NextRequest,
+): Promise<AccessLevel> {
   const token = await getAuthToken(req);
+  return token ? token.permission : 0;
+}
 
-  return token ? token.companyId : null;
+export async function getUserRole(req: NextRequest): Promise<Role> {
+  const token = await getAuthToken(req);
+  return token?.role ?? "NONE";
 }
 
 // UserId helpers resolve auth/account identity from JWT.
@@ -74,11 +84,6 @@ export async function getCurrentEmployeeUserName(
   }
 
   return resolveEmployeeUserName(token?.username);
-}
-
-export async function getUserRole(req: NextRequest): Promise<Role | null> {
-  const token = await getAuthToken(req);
-  return token?.role ?? null;
 }
 
 export type AuthResult =

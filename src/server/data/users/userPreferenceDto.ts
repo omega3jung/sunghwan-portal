@@ -11,6 +11,6 @@ export interface GetUserPreferenceByKeyParams {
 export interface SaveUserPreferenceByKeyInput {
   username: string;
   moduleKey: string;
-  preferenceType: string;
+  preferenceKey: string;
   preferenceMeta: unknown;
 }

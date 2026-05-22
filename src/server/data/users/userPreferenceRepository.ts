@@ -64,10 +64,10 @@ export async function findUserPreferenceByKey(
 export async function insertUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceRow | null> {
-  const { username, moduleKey, preferenceType, preferenceMeta } = params;
+  const { username, moduleKey, preferenceKey, preferenceMeta } = params;
   const rows = await queryPortalApi<UserPreferenceRow>(
     CREATE_USER_PREFERENCE_BY_KEY_QUERY,
-    [username, moduleKey, preferenceType, JSON.stringify(preferenceMeta)],
+    [username, moduleKey, preferenceKey, JSON.stringify(preferenceMeta)],
   );
 
   return rows[0] ?? null;
@@ -76,10 +76,10 @@ export async function insertUserPreferenceByKey(
 export async function patchUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceRow | null> {
-  const { username, moduleKey, preferenceType, preferenceMeta } = params;
+  const { username, moduleKey, preferenceKey, preferenceMeta } = params;
   const rows = await queryPortalApi<UserPreferenceRow>(
     UPDATE_USER_PREFERENCE_BY_KEY_QUERY,
-    [username, moduleKey, preferenceType, JSON.stringify(preferenceMeta)],
+    [username, moduleKey, preferenceKey, JSON.stringify(preferenceMeta)],
   );
 
   return rows[0] ?? null;

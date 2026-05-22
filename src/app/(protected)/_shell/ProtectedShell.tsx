@@ -3,10 +3,10 @@
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
 
-import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { Button } from "@/components/ui/button";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { LeftMenu } from "@/feature/navigation/leftMenu";
 import { withLeadingSlash } from "@/shared/utils/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";

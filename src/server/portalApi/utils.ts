@@ -70,8 +70,5 @@ export function parsePreferenceKey(preferenceKey: string) {
     throw new Error(`Invalid preference key: ${preferenceKey}`);
   }
 
-  return {
-    moduleKey: preferenceKey.slice(0, lastDotIndex),
-    preferenceType: preferenceKey.slice(lastDotIndex + 1),
-  };
+  return preferenceKey.slice(0, lastDotIndex);
 }

@@ -2,6 +2,6 @@
 import { AppUser } from "@/domain/user";
 
 export type DemoAuthProfileSeed = AppUser &
-  Pick<AuthUser, "employeeId"> & {
+  Pick<AuthUser, "role" | "employeeId"> & {
     accessToken: string;
   };

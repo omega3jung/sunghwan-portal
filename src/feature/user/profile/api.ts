@@ -28,7 +28,9 @@ export const userProfileApi = {
   },
 
   me: async () => {
-    const res = await client.api.get<AppUser>("/api/users/me/profile");
-    return res.data;
+    const res = await client.api.get<ApiResponse<AppUser>>(
+      "/api/users/me/profile",
+    );
+    return res.data.data;
   },
 };

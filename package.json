@@ -11,6 +11,10 @@
     "build-storybook": "storybook build",
     "dev:clean": "taskkill /F /IM node.exe 2>nul || exit 0 && rmdir /s /q .next && npm run dev"
   },
+  "engines": {
+    "node": ">=20 <23",
+    "npm": "10.x"
+  },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@dnd-kit/core": "^6.3.1",
