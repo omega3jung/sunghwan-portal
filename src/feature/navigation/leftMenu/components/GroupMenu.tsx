@@ -23,10 +23,11 @@ import { useLocalizedText } from "@/shared/hooks";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";
+import { LeftMenuSkeleton } from "./MenuSkeleton";
 
 export function LeftMenu() {
   const tLocal = useLocalizedText();
-  const { data: menuItems } = useLeftMenuQuery();
+  const { data: menuItems, isLoading } = useLeftMenuQuery();
 
   const content = useMemo(() => menuItems?.content ?? [], [menuItems]);
   const footer = useMemo(() => menuItems?.footer ?? [], [menuItems]);
@@ -35,16 +36,14 @@ export function LeftMenu() {
     const title = tLocal(item.title);
 
     return (
-      <SidebarMenu key={item.id}>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip={title}>
-            <Link href={item.path}>
-              <item.icon />
-              <span>{title}</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+      <SidebarMenuItem key={item.id}>
+        <SidebarMenuButton asChild tooltip={title}>
+          <Link href={item.path}>
+            <item.icon />
+            <span>{title}</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
     );
   };
 
@@ -58,10 +57,13 @@ export function LeftMenu() {
     return (
       <SidebarGroup key={item.id}>
         <SidebarGroupLabel className="flex items-center gap-2">
-          <item.icon />
+          <item.icon className="size-4" />
           <span>{tLocal(item.title)}</span>
         </SidebarGroupLabel>
-        <SidebarGroupContent>{children.map(renderMenuItem)}</SidebarGroupContent>
+
+        <SidebarGroupContent>
+          <SidebarMenu>{children.map(renderMenuItem)}</SidebarMenu>
+        </SidebarGroupContent>
       </SidebarGroup>
     );
   };
@@ -74,43 +76,59 @@ export function LeftMenu() {
     return renderPageItem(item);
   };
 
+  if (isLoading) {
+    return <LeftMenuSkeleton />;
+  }
+
   return (
     <Sidebar collapsible="icon" className="group">
       <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
         <SidebarTrigger />
+
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt="Portal Logo"
-          className="block dark:hidden
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          className="block dark:hidden group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
           width={120}
           height={32}
           priority
         />
+
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
           alt="Portal Logo"
-          className="hidden dark:block
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          className="hidden dark:block group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
           width={120}
           height={32}
           priority
         />
       </SidebarHeader>
+
       <SidebarSeparator className="mx-0" />
+
       <SidebarContent>{content.map(renderMenuItem)}</SidebarContent>
+
       <SidebarFooter>
-        {footer.map(renderMenuItem)}
-        <SidebarMenuItem key={"Preferences"}>
-          <PreferencesMenu
-            trigger={({ label }) => (
-              <SidebarMenuButton>
-                <Settings2 />
-                <span>{label}</span>
-              </SidebarMenuButton>
-            )}
-          />
-        </SidebarMenuItem>
+        <SidebarMenu>
+          {footer.map((item) => {
+            if (item.type === "GROUP") {
+              return null;
+            }
+
+            return renderPageItem(item);
+          })}
+
+          <SidebarMenuItem key="Preferences">
+            <PreferencesMenu
+              trigger={({ label }) => (
+                <SidebarMenuButton>
+                  <Settings2 />
+                  <span>{label}</span>
+                </SidebarMenuButton>
+              )}
+            />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

@@ -1,6 +1,7 @@
 import { ChevronRight, Settings2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
@@ -15,12 +16,14 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ENVIRONMENT } from "@/lib/environment";
@@ -28,20 +31,39 @@ import { useLocalizedText } from "@/shared/hooks";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";
+import { LeftMenuSkeleton } from "./MenuSkeleton";
 
 export function LeftMenu() {
+  const pathname = usePathname();
   const tLocal = useLocalizedText();
-  const { data: menuItems } = useLeftMenuQuery();
+  const { data: menuItems, isLoading } = useLeftMenuQuery();
 
   const content = useMemo(() => menuItems?.content ?? [], [menuItems]);
   const footer = useMemo(() => menuItems?.footer ?? [], [menuItems]);
 
-  const renderPageItem = (item: MenuItem) => {
+  const isActivePath = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
+
+  const isItemActive = (item: MenuItem): boolean => {
+    if (item.type === "PAGE") {
+      return isActivePath(item.path);
+    }
+
+    return item.children?.some(isItemActive) ?? false;
+  };
+
+  const renderRootPageItem = (item: MenuItem) => {
     const title = tLocal(item.title);
 
     return (
       <SidebarMenuItem key={item.id}>
-        <SidebarMenuButton asChild tooltip={title}>
+        <SidebarMenuButton
+          asChild
+          tooltip={title}
+          isActive={isActivePath(item.path)}
+        >
           <Link href={item.path}>
             <item.icon />
             <span>{title}</span>
@@ -51,7 +73,24 @@ export function LeftMenu() {
     );
   };
 
-  const renderGroupItem = (item: MenuItem) => {
+  const renderSubPageItem = (item: MenuItem) => {
+    return (
+      <SidebarMenuSubItem key={item.id}>
+        <SidebarMenuSubButton
+          asChild
+          isActive={isActivePath(item.path)}
+          className="ml-0.5"
+        >
+          <Link href={item.path}>
+            <item.icon />
+            <span>{tLocal(item.title)}</span>
+          </Link>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  };
+
+  const renderSubGroupItem = (item: MenuItem) => {
     const children = item.children ?? [];
 
     if (children.length === 0) {
@@ -59,32 +98,85 @@ export function LeftMenu() {
     }
 
     return (
-      <SidebarMenuItem key={item.id}>
-        <Collapsible className="group/collapsible">
+      <SidebarMenuSubItem key={item.id}>
+        <Collapsible
+          defaultOpen={true}
+          //defaultOpen={isItemActive(item)}
+          className="group/sub-collapsible"
+        >
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton tooltip={tLocal(item.title)}>
+            <SidebarMenuSubButton className="w-full ml-0.5">
               <item.icon />
               <span>{tLocal(item.title)}</span>
-            </SidebarMenuButton>
+              <ChevronRight className="ml-auto size-3.5 transition-transform group-data-[state=open]/sub-collapsible:rotate-90" />
+            </SidebarMenuSubButton>
           </CollapsibleTrigger>
-          <SidebarMenuBadge>
-            <ChevronRight className="h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
-          </SidebarMenuBadge>
+
           <CollapsibleContent>
-            <SidebarMenu className="pl-2">{children.map(renderMenuItem)}</SidebarMenu>
+            <SidebarMenuSub className="mr-0 border-l border-sidebar-border px-0 py-1">
+              {children.map(renderSubMenuItem)}
+            </SidebarMenuSub>
           </CollapsibleContent>
         </Collapsible>
-      </SidebarMenuItem>
+      </SidebarMenuSubItem>
     );
   };
 
-  const renderMenuItem = (item: MenuItem) => {
+  const renderSubMenuItem = (item: MenuItem) => {
     if (item.type === "GROUP") {
-      return renderGroupItem(item);
+      return renderSubGroupItem(item);
     }
 
-    return renderPageItem(item);
+    return renderSubPageItem(item);
   };
+
+  const renderRootGroupItem = (item: MenuItem) => {
+    const children = item.children ?? [];
+    const title = tLocal(item.title);
+
+    if (children.length === 0) return null;
+
+    return (
+      <Collapsible
+        key={item.id}
+        defaultOpen={true}
+        //defaultOpen={isItemActive(item)}
+        className="group/collapsible"
+      >
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton
+              tooltip={title}
+              isActive={isItemActive(item)}
+              className="w-full"
+            >
+              <item.icon />
+              <span>{title}</span>
+              <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+
+          <CollapsibleContent>
+            <SidebarMenuSub className="mr-0 border-l border-sidebar-border p-0 py-1">
+              {children.map(renderSubMenuItem)}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </SidebarMenuItem>
+      </Collapsible>
+    );
+  };
+
+  const renderRootMenuItem = (item: MenuItem) => {
+    if (item.type === "GROUP") {
+      return renderRootGroupItem(item);
+    }
+
+    return renderRootPageItem(item);
+  };
+
+  if (isLoading) {
+    return <LeftMenuSkeleton />;
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -93,8 +185,7 @@ export function LeftMenu() {
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt="Portal Logo"
-          className="block dark:hidden
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          className="block dark:hidden group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
           width={120}
           height={32}
           priority
@@ -102,25 +193,28 @@ export function LeftMenu() {
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
           alt="Portal Logo"
-          className="hidden dark:block
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
+          className="hidden dark:block group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
           width={120}
           height={32}
           priority
         />
       </SidebarHeader>
+
+      <SidebarSeparator className="mx-0" />
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Portfolio Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>{content.map(renderMenuItem)}</SidebarMenu>
+            <SidebarMenu>{content.map(renderRootMenuItem)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
-          {footer.map(renderMenuItem)}
-          <SidebarMenuItem key={"Preferences"}>
+          {footer.map(renderRootMenuItem)}
+
+          <SidebarMenuItem key="Preferences">
             <PreferencesMenu
               trigger={({ label }) => (
                 <SidebarMenuButton>
