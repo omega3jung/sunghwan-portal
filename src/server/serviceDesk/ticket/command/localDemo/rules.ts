@@ -1,6 +1,6 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 
-import type { TicketActionApiType, TicketActionExecutionMode } from "./types";
+import type { TicketActionApiType, TicketActionExecutionMode } from "../types";
 
 const ALL_LIVE_TICKET_STATUSES: readonly TicketStatus[] = [
   "Open",

@@ -3,12 +3,12 @@ import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { toTicketMockDetailResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
-import { getLocalDemoHistories } from "../state";
+import { getLocalDemoHistories } from "../../state";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,
   getTicketContext,
-} from "./utils";
+} from "../utils";
 
 type StartTicketWorkLocalContext = {
   ticketId: string;

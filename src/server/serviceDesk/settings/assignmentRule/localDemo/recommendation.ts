@@ -17,7 +17,7 @@ import {
 import type { ImageValueLabel, Locale } from "@/shared/types";
 import { getLocalizedText } from "@/shared/utils/i18n";
 
-import { getLocalDemoAssignmentRules } from "../state";
+import { getLocalDemoAssignmentRules } from "../../state";
 
 type LocalRecommendationContext = {
   input: AssignmentRecommendationInput;

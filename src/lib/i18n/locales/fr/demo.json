@@ -2,16 +2,16 @@
   "home": {
     "hero": {
       "protectedBadge": "Accueil protégé",
-      "enterpriseBadge": "Démo du portail d'entreprise",
-      "title": "Cette page est l’accueil de l’espace de travail pour les opérations de service, les documents de référence et les paramètres de la plateforme.",
+      "enterpriseBadge": "Démo de portail d’entreprise",
+      "title": "Il s’agit de l’accueil d’un espace de travail pour les opérations de service, les documents de référence et les paramètres de la plateforme.",
       "description": {
-        "local": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En local demo, vous pouvez vérifier les limites d’accès et les actions disponibles selon le role (ADMIN, MANAGER, LEADER, USER, GUEST).",
-        "remote": "Cette page est le point d’entrée pour accéder aux principaux espaces de travail du portfolio Service Desk. En mode remote, vous pouvez vérifier des flux d’autorisation plus proches d’un fonctionnement réel en combinant le role avec la relation de l’utilisateur à chaque ticket."
+        "local": "Dans la démo locale, le comportement des permissions est simplifié : ADMIN dispose d’un accès étendu, tandis que les actions des utilisateurs non-ADMIN sur les tickets dépendent de leur relation avec chaque ticket.",
+        "remote": "Cet accueil est le point d’entrée vers les principales zones de travail du portfolio Service Desk. En mode distant, vous pouvez examiner des flux de permissions plus proches d’opérations réelles en combinant le rôle avec la relation de l’utilisateur à chaque ticket."
       },
       "actions": {
         "openServiceDesk": "Ouvrir le Service Desk",
         "browseDocumentation": "Parcourir la documentation",
-        "reviewSettings": "Vérifier les paramètres"
+        "reviewSettings": "Revoir les paramètres"
       }
     },
     "calendar": {
@@ -23,98 +23,98 @@
       "currentScope": {
         "title": "Périmètre actuel",
         "description": {
-          "local": "En local demo, vous pouvez explorer le flux Service Desk, les documents et les écrans de configuration, tandis que les contrôles d’autorisation sont simplifiés autour de règles basées sur le role.",
-          "remote": "En mode remote, le flux Service Desk, les documents et les écrans de configuration peuvent être connectés à de vraies API, tandis que le comportement des autorisations reflète à la fois le role et les relations utilisateur."
+          "local": "Dans la démo locale, le Service Desk et les paramètres utilisent des flux fondés sur des données simulées, tandis que les documents restent disponibles comme écrans de référence. Les vérifications de permissions sont simplifiées : ADMIN dispose d’un accès étendu, et les actions non-ADMIN sur les tickets dépendent des relations avec les tickets.",
+          "remote": "En mode distant, le flux Service Desk, les documents et les écrans de paramètres peuvent être connectés à de vraies API, tandis que le comportement des permissions reflète à la fois le rôle et les relations de l’utilisateur."
         }
       },
       "architectureNotes": {
         "local": {
-          "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
-          "note2": "En local demo, les menus et les actions disponibles changent selon les rôles ADMIN, MANAGER, LEADER, USER et GUEST.",
-          "note3": "Les autorisations basées sur les relations organisationnelles, les restrictions liées aux tickets et l’intégration avec les API distantes sont séparées afin d’être validées plus précisément en mode remote."
+          "note1": "Les routes protégées sont conçues comme des écrans internes du portail après connexion, et non comme une page d’accueil publique.",
+          "note2": "Dans la démo locale, les permissions sont volontairement simplifiées : ADMIN dispose d’un accès étendu, et les actions non-ADMIN exigent une relation avec le ticket, par exemple demandeur, assigné ou autre participant pertinent.",
+          "note3": "La séparation d’exécution est orchestrée par les route handlers (gestionnaire LOCAL ou proxy REMOTE), afin que l’interface conserve un workflow cohérent dans les deux modes."
         },
         "remote": {
-          "note1": "Les routes protégées sont conçues comme des écrans de portail interne après connexion, et non comme une page d’accueil publique.",
-          "note2": "En mode remote, le périmètre d’accès est déterminé non seulement par le role, mais aussi par des relations telles que demandeur, responsable assigné et approbateur.",
-          "note3": "Les données de ticket, document, approbation, assignation et configuration sont connectées via de vraies frontières API afin de fournir un flux plus proche d’un environnement opérationnel."
+          "note1": "Les routes protégées sont conçues comme des écrans internes du portail après connexion, et non comme une page d’accueil publique.",
+          "note2": "En mode distant, le périmètre d’accès est déterminé non seulement par le rôle, mais aussi par des relations telles que demandeur, assigné et approbateur.",
+          "note3": "Les données de tickets, documents, approbations, assignations et paramètres sont connectées via de véritables frontières d’API afin de fournir un flux plus proche d’un environnement opérationnel."
         }
       }
     },
     "quickActions": {
       "title": "Actions rapides",
-      "description": "Ouvrez les principales zones de travail dont vous avez le plus besoin juste après la connexion.",
-      "openWorkspace": "Ouvrir l'espace de travail",
+      "description": "Ouvrez les principales zones de travail dont vous aurez probablement besoin juste après la connexion.",
+      "openWorkspace": "Ouvrir l’espace de travail",
       "items": {
         "serviceDesk": {
           "title": "Service Desk",
-          "description": "Parcourez les tickets, consultez l'état de la file et poursuivez le travail en cours.",
-          "meta": "Espace principal"
+          "description": "Parcourir les tickets, consulter l’état de la file et poursuivre le travail en cours.",
+          "meta": "Espace de travail principal"
         },
         "documentation": {
           "title": "Documentation",
-          "description": "Ouvrez les notes de travail, les références de conception et la documentation d'implémentation.",
+          "description": "Ouvrir les notes de travail, les références de conception et la documentation d’implémentation.",
           "meta": "Centre de connaissances"
         },
         "systemSettings": {
           "title": "Paramètres système",
-          "description": "Consultez les zones de configuration du portail et les préférences de fonctionnement.",
+          "description": "Revoir les zones de configuration du portail et les paramètres d’exploitation du service.",
           "meta": "Administration"
         },
         "serviceDeskSetup": {
           "title": "Configuration du Service Desk",
-          "description": "Examinez les catégories, les étapes d'approbation et la structure des règles d'affectation.",
+          "description": "Examiner les catégories, les étapes d’approbation, les règles d’assignation et la configuration liée aux SLA.",
           "meta": "Configuration de la plateforme"
         }
       }
     },
     "workSummary": {
       "title": "Résumé du travail",
-      "description": "Contexte opérationnel léger pour la page d'accueil du portail de démonstration.",
+      "description": "Contexte opérationnel léger pour l’accueil du portail de démonstration.",
       "items": {
         "openTickets": {
           "label": "Tickets ouverts",
-          "description": "Incidents actuellement en cours dans les files de support."
+          "description": "Problèmes actuellement en cours dans les files de support."
         },
         "pendingApprovals": {
           "label": "Approbations en attente",
-          "description": "Demandes en attente de confirmation de workflow ou de politique."
+          "description": "Demandes en attente d’une confirmation de workflow ou de politique."
         },
         "workingItems": {
           "label": "Éléments en cours",
-          "description": "Tâches actives d'implémentation et de suivi dans ce périmètre de démonstration."
+          "description": "Tâches actives d’implémentation et de suivi dans le périmètre de cette démo."
         },
         "resolvedThisWeek": {
           "label": "Résolus cette semaine",
-          "description": "Tickets, corrections et résultats d'itération terminés."
+          "description": "Tickets, corrections et résultats d’itération terminés."
         }
       }
     },
     "highlights": {
       "title": "Récents et points forts",
-      "description": "Zones qui représentent le mieux la direction actuelle du projet et le contexte de travail récent.",
+      "description": "Zones qui représentent le mieux l’orientation actuelle du projet et le contexte de travail récent.",
       "viewSection": "Voir la section",
       "items": {
         "ticketWorkspace": {
-          "title": "Espace ticket",
-          "description": "Zone principale de travail pour la recherche, le filtrage et le suivi des tickets.",
+          "title": "Espace de tickets",
+          "description": "Zone de travail principale pour la recherche, le filtrage et le suivi des tickets.",
           "category": "Service Desk",
           "status": "Prêt"
         },
         "authSessionFlow": {
-          "title": "Flux d'authentification et de session",
-          "description": "Expérience de connexion, gestion des redirections et comportement du shell protégé.",
+          "title": "Flux d’authentification et de session",
+          "description": "Expérience de connexion, gestion des redirections, séparation AuthUser/SessionUser/AppUser et impersonation consciente de la session.",
           "category": "Architecture",
           "status": "Priorité actuelle"
         },
         "serviceDeskSettings": {
           "title": "Paramètres du Service Desk",
-          "description": "Surfaces de gestion des étapes d'approbation, des règles d'affectation et des catégories.",
+          "description": "Surfaces de gestion des étapes d’approbation, des règles d’assignation et des catégories.",
           "category": "Administration",
           "status": "En révision"
         },
         "documentsHub": {
           "title": "Espace documents",
-          "description": "Espace de référence pour les documents, les notes et les futurs relevés de décision.",
+          "description": "Zone de référence pour les documents, les notes et les futurs journaux de décision.",
           "category": "Documentation",
           "status": "Croissance prévue"
         }
@@ -122,38 +122,38 @@
     },
     "currentFocus": {
       "title": "Priorité actuelle",
-      "description": "Un panneau de briefing compact sur ce que ce portail met en avant en ce moment.",
-      "panelTitle": "Orientation du portail d'entreprise",
-      "panelDescription": "L'écran d'accueil est volontairement cadré comme un point d'entrée vers l'espace de travail interne.",
+      "description": "Un panneau de briefing compact sur ce que ce portail met en avant actuellement.",
+      "panelTitle": "Orientation du portail d’entreprise",
+      "panelDescription": "L’écran d’accueil est volontairement cadré comme un point d’entrée vers l’espace de travail interne.",
       "primaryGoals": {
-        "title": "Objectifs principaux de l'expérience",
+        "title": "Objectifs principaux de l’expérience",
         "items": {
-          "goal1": "Navigation claire de la première étape après l'authentification",
-          "goal2": "Densité d'information équilibrée sans surcharge de tableau de bord",
-          "goal3": "Remplacement facile du contenu récapitulatif fictif par de vraies données plus tard"
+          "goal1": "Navigation claire vers la première étape après l’authentification",
+          "goal2": "Garder l’interface indépendante du mode d’exécution en gérant la séparation LOCAL et REMOTE dans les route handlers",
+          "goal3": "Préparer le remplacement du contenu récapitulatif simulé par des données d’espace de travail alimentées par API/base de données lors des prochaines étapes"
         }
       },
       "nextIntegrations": {
         "title": "Prochaines intégrations suggérées",
-        "description": "Connectez les cartes récapitulatives aux comptes de tickets, aux approbations et à l'activité récente des documents lorsque l'accueil protégé sera prêt à consommer de vraies données d'espace de travail."
+        "description": "Connecter les cartes de résumé aux nombres de tickets, aux approbations et à l’activité récente des documents lorsque l’accueil protégé sera prêt à consommer de vraies données d’espace de travail."
       }
     }
   },
   "resetDemo": {
     "title": "Réinitialiser la démo",
-    "message": "Réinitialiser les données de démonstration locales ?",
-    "description": "Réinitialiser les données de démonstration locales et restaurer les données simulées initiales.",
+    "message": "Réinitialiser les données de la démo locale ?",
+    "description": "Réinitialiser les données de la démo locale et restaurer les données simulées initiales.",
     "resetting": "Réinitialisation"
   },
   "stepper": {
-    "stepper": "Stepper",
+    "stepper": "Indicateur d’étapes",
     "variants": "Variantes",
     "orientation": "Orientation",
-    "stepVariant": "Variante d'étape",
-    "labelPosition": "Position de l'étiquette",
-    "stepColor": "Couleur de l'étape",
-    "showOrderLabel": "Afficher l'étiquette de l'étape",
-    "startIndex": "Numéro de départ",
+    "stepVariant": "Variante d’étape",
+    "labelPosition": "Position du libellé",
+    "stepColor": "Couleur de l’étape",
+    "showOrderLabel": "Afficher le libellé d’ordre",
+    "startIndex": "Index de départ",
     "step": "Étape",
     "disable": "Désactiver"
   }

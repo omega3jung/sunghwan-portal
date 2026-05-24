@@ -16,7 +16,7 @@ import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api/mapper"
 import {
   startTicketWorkLocal,
   toLocalStartWorkResponse,
-} from "@/server/serviceDesk/ticket/command/localStartWork";
+} from "@/server/serviceDesk/ticket/command/localDemo";
 
 export async function POST(
   request: NextRequest,

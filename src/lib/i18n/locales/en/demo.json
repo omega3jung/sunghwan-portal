@@ -5,7 +5,7 @@
       "enterpriseBadge": "Enterprise portal demo",
       "title": "This is a workspace home for service operations, reference documents, and platform settings.",
       "description": {
-        "local": "This home is the entry point for navigating the main work areas of the Service Desk portfolio. In Local Demo, you can review access limits and available actions based on Role (ADMIN, MANAGER, LEADER, USER, GUEST).",
+        "local": "In Local Demo, permission behavior is simplified: ADMIN has broad access, while non-ADMIN ticket actions depend on the user's relationship to each ticket.",
         "remote": "This home is the entry point for navigating the main work areas of the Service Desk portfolio. In Remote mode, you can review permission flows closer to real service operations by combining Role with the user's relationship to each ticket."
       },
       "actions": {
@@ -23,15 +23,15 @@
       "currentScope": {
         "title": "Current scope",
         "description": {
-          "local": "In Local Demo, you can explore the Service Desk flow, documents, and settings screens, while permission checks are simplified around Role-based rules.",
+          "local": "In Local Demo, Service Desk and settings use mock-backed flows, while documents remain available as reference screens. Permission checks are simplified: ADMIN has broad access, and non-ADMIN ticket actions depend on ticket relationships.",
           "remote": "In Remote mode, the Service Desk flow, documents, and settings screens can be connected to real APIs, while permission behavior reflects both Role and user relationships."
         }
       },
       "architectureNotes": {
         "local": {
           "note1": "Protected routes are designed as internal portal screens after login, not as a public landing page.",
-          "note2": "In Local Demo, menus and available actions change according to ADMIN, MANAGER, LEADER, USER, and GUEST roles.",
-          "note3": "Organization-relationship permissions, ticket-relation restrictions, and remote API integration are separated so they can be validated more precisely in Remote mode."
+          "note2": "In Local Demo, permissions are intentionally simplified: ADMIN has broad access, and non-ADMIN actions require a ticket relationship such as requester, assignee, or another relevant participant.",
+          "note3": "Runtime branching is orchestrated through route handlers (LOCAL handler vs REMOTE proxy), so the UI can keep a consistent workflow across modes."
         },
         "remote": {
           "note1": "Protected routes are designed as internal portal screens after login, not as a public landing page.",
@@ -57,12 +57,12 @@
         },
         "systemSettings": {
           "title": "System Settings",
-          "description": "Review portal configuration areas and operating preferences.",
+          "description": "Review portal configuration areas and service operation settings.",
           "meta": "Administration"
         },
         "serviceDeskSetup": {
           "title": "Service Desk Setup",
-          "description": "Inspect categories, approval steps, and assignment rule structure.",
+          "description": "Inspect categories, approval steps, assignment rules, and SLA-related setup.",
           "meta": "Platform setup"
         }
       }
@@ -102,7 +102,7 @@
         },
         "authSessionFlow": {
           "title": "Auth & Session Flow",
-          "description": "Login experience, redirect handling, and protected shell behavior.",
+          "description": "Login experience, redirect handling, and the AuthUser/SessionUser/AppUser separation with session-aware impersonation.",
           "category": "Architecture",
           "status": "Current focus"
         },
@@ -129,8 +129,8 @@
         "title": "Primary experience goals",
         "items": {
           "goal1": "Clear first-step navigation after authentication",
-          "goal2": "Balanced information density without dashboard overload",
-          "goal3": "Easy replacement of mock summary content with real data later"
+          "goal2": "Keep the UI runtime-agnostic by handling LOCAL and REMOTE branching in route handlers",
+          "goal3": "Prepare to replace mock summary content with API/database-backed workspace data in later stages"
         }
       },
       "nextIntegrations": {
