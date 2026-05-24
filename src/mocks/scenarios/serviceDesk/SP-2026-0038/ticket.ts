@@ -1,16 +1,16 @@
-﻿import { TicketMockInput } from "../types";
+import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
   id: "sunghwan-portal-2026-38",
   ticket_number: "SP-2026-0038",
   created_at: "2026-04-25T07:13:53Z",
   updated_at: "2026-04-26T01:18:10Z",
-  requester_id: "117",
+  requester_id: "vivian_long",
   status: "Pending",
   close_reason: null,
   priority: "medium",
   risk_level: "low",
-  assignee_id: ["3", "4", "41"],
+  assignee_id: ["matthew_williams", "amelia_brown", "evan_seo"],
   merged_into_ticket_id: null,
   track_time_minutes: 0,
   last_comment_at: null,
