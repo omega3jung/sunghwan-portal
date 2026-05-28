@@ -1,10 +1,10 @@
-import { EmployeeResponseDto } from "./employeeDto";
-import { DbEmployeeRow } from "./employeeRow";
+import { EmployeeResponseDto } from "./employeesDto";
+import { DbEmployeeRow } from "./employeesRow";
 
 export function toEmployeeResponseDto(row: DbEmployeeRow): EmployeeResponseDto {
   return {
     employeeId: row.e_id,
-    username: row.e_username,
+    userName: row.e_username,
     name: row.e_name,
     phone: row.e_phone,
     email: row.e_email,
@@ -20,4 +20,10 @@ export function toEmployeeResponseDto(row: DbEmployeeRow): EmployeeResponseDto {
     rfTagId: row.e_rf_tag_id,
     hourRate: row.e_hour_rate,
   };
+}
+
+export function toEmployeesResponseDto(
+  rows: DbEmployeeRow[],
+): EmployeeResponseDto[] {
+  return rows.map(toEmployeeResponseDto);
 }

@@ -179,7 +179,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
 
   const handleDemoLogin = async () => {
     await authenticate(
-      { username: adminAuth.id, password: adminAuth.id },
+      { username: adminAuth.username, password: adminAuth.username },
       "demo",
     );
   };

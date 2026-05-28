@@ -20,9 +20,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/presentation";
 
-import { AvatarMultiComboBoxAvatarStack } from "./AvatarMultiComboBoxAvatarStack";
-import { AvatarMultiComboBoxOptionItem } from "./AvatarMultiComboBoxOptionItem";
-import type { Props } from "./types";
+import { AvatarComboBoxOptionItem } from "./AvatarComboBoxOptionItem";
+import { AvatarStack } from "./AvatarStack";
+import type { AvatarMultiProps } from "./types";
 import {
   createCommandFilter,
   EMPTY_OPTION_TEXT,
@@ -48,7 +48,7 @@ const Component = (
     className,
     modal = true,
     ...buttonProps
-  }: Props,
+  }: AvatarMultiProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) => {
   const { selectedOptions, unselectedOptions } = useMemo(
@@ -83,7 +83,7 @@ const Component = (
             )}
             disabled={disabled || readOnly}
           >
-            <AvatarMultiComboBoxAvatarStack
+            <AvatarStack
               selected={selectedOptions}
               placeholder={placeholder}
               placeholderClassName={placeholderClassName}
@@ -107,7 +107,7 @@ const Component = (
               {selectedOptions.length > 0 && (
                 <CommandGroup>
                   {selectedOptions.map((user) => (
-                    <AvatarMultiComboBoxOptionItem
+                    <AvatarComboBoxOptionItem
                       key={`selected-${user.value}`}
                       user={user}
                       badgeVariant={badgeVariant}
@@ -122,7 +122,7 @@ const Component = (
                   {selectedOptions.length > 0 && <Separator />}
                   <CommandGroup data-testid="unselected-list">
                     {unselectedOptions.map((user, index) => (
-                      <AvatarMultiComboBoxOptionItem
+                      <AvatarComboBoxOptionItem
                         key={`unselected-${user.value}`}
                         user={user}
                         badgeVariant={badgeVariant}
@@ -141,8 +141,9 @@ const Component = (
   );
 };
 
-export const AvatarMultiComboBox = forwardRef<HTMLButtonElement, Props>(
-  Component,
-);
+export const AvatarMultiComboBox = forwardRef<
+  HTMLButtonElement,
+  AvatarMultiProps
+>(Component);
 
 AvatarMultiComboBox.displayName = "AvatarMultiComboBox";

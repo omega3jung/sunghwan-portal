@@ -106,7 +106,6 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   };
 
   const handleSavePreferences = (payload: Preference<PortalPreference>) => {
-    console.log(isRemote);
     updateUserPreference({ isRemote, data: payload });
   };
 

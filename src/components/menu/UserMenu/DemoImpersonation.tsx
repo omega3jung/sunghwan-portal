@@ -1,4 +1,3 @@
-import { Contact, User, UserCog, UserStar } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,10 +8,10 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { clientProfiles } from "@/mocks/domain/user";
-import { getLocalizedText } from "@/shared/utils/i18n";
+import { clientAuths } from "@/mocks/domain/user";
+
+import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
 type Props = {
   user: AppUser;
@@ -25,30 +24,8 @@ export function DemoImpersonation(props: Props) {
   const { t } = useTranslation("UserMenu");
 
   const impersonationCandidates = useMemo(() => {
-    return clientProfiles.filter((profile) => profile.username !== user.username);
+    return clientAuths.filter((profile) => profile.username !== user.username);
   }, [user.username]);
-
-  const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
-    switch (accessLevel) {
-      case "ADMIN":
-      case ACCESS_LEVEL.ADMIN:
-        return <UserStar />;
-
-      case "MANAGER":
-      case ACCESS_LEVEL.MANAGER:
-        return <UserCog />;
-
-      case "USER":
-      case ACCESS_LEVEL.USER:
-        return <User />;
-
-      default:
-        return <Contact />;
-    }
-  };
-
-  const getDisplayNameKey = (displayName: AppUser["displayName"]) =>
-    (getLocalizedText(displayName, "en") ?? "").replaceAll(" ", "");
 
   return (
     <DropdownMenuSub>
@@ -58,7 +35,9 @@ export function DemoImpersonation(props: Props) {
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           {impersonationCandidates.map((profile) => {
-            const profileDisplayNameKey = getDisplayNameKey(profile.displayName);
+            const profileDisplayNameKey = getDisplayNameKey(
+              profile.displayName,
+            );
             return (
               <DropdownMenuItem
                 key={`impersonate_${profile.username}`}

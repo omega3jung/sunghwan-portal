@@ -3,10 +3,58 @@ import { create } from "zustand";
 import { ColorTheme, PortalPreference, ScreenMode } from "@/domain/config";
 import { createDefaultPreference } from "@/domain/user/preference";
 import { Locale } from "@/shared/types";
+import { isLocale } from "@/shared/utils/i18n";
 
 const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_preference",
 } as const;
+
+const SCREEN_MODES = ["light", "dark", "system"] as const;
+const COLOR_THEMES = [
+  "default",
+  "emerald",
+  "ruby",
+  "sapphire",
+  "topaz",
+] as const;
+
+const isScreenMode = (value: unknown): value is ScreenMode => {
+  return typeof value === "string" && SCREEN_MODES.includes(value as ScreenMode);
+};
+
+const isColorTheme = (value: unknown): value is ColorTheme => {
+  return (
+    typeof value === "string" && COLOR_THEMES.includes(value as ColorTheme)
+  );
+};
+
+const isPortalPreferenceRecord = (
+  value: unknown,
+): value is Partial<PortalPreference> => {
+  return typeof value === "object" && value !== null;
+};
+
+const normalizePortalPreference = (
+  value: unknown,
+  fallback: PortalPreference,
+): PortalPreference => {
+  if (!isPortalPreferenceRecord(value)) return fallback;
+
+  const record = value as Record<string, unknown>;
+
+  return {
+    screenMode: isScreenMode(record.screenMode)
+      ? record.screenMode
+      : fallback.screenMode,
+    colorTheme: isColorTheme(record.colorTheme)
+      ? record.colorTheme
+      : fallback.colorTheme,
+    language:
+      typeof record.language === "string" && isLocale(record.language)
+        ? record.language
+        : fallback.language,
+  };
+};
 
 /*
  * Minimum state stored in the session
@@ -64,8 +112,8 @@ export const usePreferenceStore = create<
       const raw = sessionStorage.getItem(STORAGE_KEYS.SESSION);
       if (!raw) return;
 
-      const parsed = JSON.parse(raw) as PortalPreference;
-      set(parsed);
+      const parsed = JSON.parse(raw) as unknown;
+      set(normalizePortalPreference(parsed, createDefaultPreference()));
     } catch {
       set(createDefaultPreference());
     }
@@ -82,12 +130,8 @@ export const usePreferenceStore = create<
    * @returns Nothing; the function writes the merged preference state to storage and the store
    */
   setPreference: (patch) => {
-    const prev = get();
-
-    const next: PortalPreference = {
-      ...prev,
-      ...patch,
-    };
+    const prev = normalizePortalPreference(get(), createDefaultPreference());
+    const next = normalizePortalPreference(patch, prev);
 
     sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(next));
     set(next);

@@ -15,7 +15,6 @@ import { DemoAuthProfileSeed } from "./types";
 
 export const adminData = {
   id: INTERNAL_DEMO_USER_IDS.ADMIN.ID,
-  employeeId: adminEmployee.e_id,
   username: INTERNAL_DEMO_USER_IDS.ADMIN.USER_NAME,
   displayName: displayNameMapper(adminEmployee.e_name),
   email: adminEmployee.e_email,
@@ -33,7 +32,6 @@ export const adminProfile = toProfile(adminData);
 
 export const managerData = {
   id: INTERNAL_DEMO_USER_IDS.MANAGER.ID,
-  employeeId: managerEmployee.e_id,
   username: INTERNAL_DEMO_USER_IDS.MANAGER.USER_NAME,
   displayName: displayNameMapper(managerEmployee.e_name),
   email: managerEmployee.e_email,
@@ -51,7 +49,6 @@ export const managerProfile = toProfile(managerData);
 
 export const leaderData = {
   id: INTERNAL_DEMO_USER_IDS.LEADER.ID,
-  employeeId: leaderEmployee.e_id,
   username: INTERNAL_DEMO_USER_IDS.LEADER.USER_NAME,
   displayName: displayNameMapper(leaderEmployee.e_name),
   email: leaderEmployee.e_email,
@@ -69,7 +66,6 @@ export const leaderProfile = toProfile(leaderData);
 
 export const userData = {
   id: INTERNAL_DEMO_USER_IDS.USER.ID,
-  employeeId: userEmployee.e_id,
   username: INTERNAL_DEMO_USER_IDS.USER.USER_NAME,
   displayName: displayNameMapper(userEmployee.e_name),
   email: userEmployee.e_email,
@@ -87,7 +83,6 @@ export const userProfile = toProfile(userData);
 
 export const guestData = {
   id: INTERNAL_DEMO_USER_IDS.GUEST.ID,
-  employeeId: guestEmployee.e_id,
   username: INTERNAL_DEMO_USER_IDS.GUEST.USER_NAME,
   displayName: displayNameMapper(guestEmployee.e_name),
   email: guestEmployee.e_email,
@@ -103,7 +98,7 @@ export const guestData = {
 export const guestAuth = toAuth(guestData);
 export const guestProfile = toProfile(guestData);
 
-export const internalAuths: Omit<AuthUser, "dataScope">[] = [
+export const internalAuths: AuthUser[] = [
   adminAuth,
   managerAuth,
   leaderAuth,

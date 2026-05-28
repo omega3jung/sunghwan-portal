@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { handleEmployeesPortalApi } from "./employees/employeesPortalApiHandler";
 import { handleNavigationPortalApi } from "./navigation/navigationPortalApiHandler";
 import { PortalApiJsonOptions } from "./types";
 import { handleUserPortalApi } from "./users/usersPortalApiHandler";
@@ -11,12 +12,16 @@ export async function dispatchPortalApi(
 ) {
   const path = normalizePath(options.path);
 
-  if (path.startsWith("/users/")) {
-    return handleUserPortalApi(request, { ...options, path });
+  if (path.startsWith("/employees")) {
+    return handleEmployeesPortalApi(request, { ...options, path });
   }
 
   if (path.startsWith("/navigation/")) {
     return handleNavigationPortalApi(request, { ...options, path });
+  }
+
+  if (path.startsWith("/users/")) {
+    return handleUserPortalApi(request, { ...options, path });
   }
 
   return NextResponse.json({ message: "Not found" }, { status: 404 });

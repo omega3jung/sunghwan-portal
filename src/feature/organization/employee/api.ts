@@ -1,17 +1,19 @@
 import { Employee } from "@/domain/organization";
 import client from "@/lib/api";
-import { DbParams, OResponse } from "@/shared/types/api";
-
-type EmployeeResponse = OResponse<Employee>;
+import { ApiResponse } from "@/shared/types";
+import { DbParams } from "@/shared/types/api";
 
 export const employeeApi = {
   list: async (params: DbParams): Promise<Employee[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<EmployeeResponse>("/api/employees", {
-      params,
-    });
-    return res.data.items;
+    const res = await client.api.get<ApiResponse<Employee[]>>(
+      "/api/employees",
+      {
+        params,
+      },
+    );
+    return res.data.data;
   },
 
   get: async (id: string | number): Promise<Employee | null> => {

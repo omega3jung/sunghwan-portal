@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json(targetProfile);
+    return NextResponse.json({ data: targetProfile });
   }
 
   if (!userId?.trim()) {

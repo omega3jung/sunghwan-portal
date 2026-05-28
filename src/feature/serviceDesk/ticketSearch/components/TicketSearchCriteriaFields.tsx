@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import {
   MultiComboBox,
   TreeMultiComboBox,

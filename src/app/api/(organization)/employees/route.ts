@@ -1,7 +1,7 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_helpers";
 import {
   camelEmployeeMapper,
   mapEmployeeItemPayload,
@@ -14,6 +14,8 @@ import {
 } from "@/feature/organization/employee/write";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
+import { portalApiJson } from "../../_helpers/portalApiJson";
+
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
@@ -23,15 +25,12 @@ export async function GET(request: NextRequest) {
 
     const employeeData = camelEmployeeMapper(createEmployeesMock());
 
-    return NextResponse.json({
-      items: employeeData,
-      total: employeeData.length,
-    });
+    return NextResponse.json({ data: employeeData });
   }
 
   // real backend
-  return proxyJson(request, {
-    path: "/employee",
+  return portalApiJson(request, {
+    path: "/employees",
     query: request.nextUrl.searchParams,
     errorMessage: "Failed to fetch employees",
     mapData: mapEmployeeListPayload,
@@ -48,9 +47,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(toEmployeeMockResource(body), { status: 201 });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
-    path: "/employee",
+    path: "/employees",
     body: toEmployeeWritePayload(body),
     errorMessage: "Failed to create employee",
     mapData: mapEmployeeItemPayload,

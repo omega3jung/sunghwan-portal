@@ -20,7 +20,6 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
      */
     if (user && isAuthUser(user)) {
       token.id = user.id; // original user id (stable across impersonation)
-      token.employeeId = user.employeeId;
       token.username = user.username;
       token.displayName = user.displayName;
       token.email = user.email;
@@ -61,7 +60,6 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
   session: async ({ session, token }: { session: Session; token: JWT }) => {
     // `session.user` remains the original authenticated projection.
     // The current UI user is resolved separately from impersonation metadata.
-    // `employeeId` stays JWT-only server context and is intentionally excluded here.
     session.user = {
       id: token.id,
       username: token.username,

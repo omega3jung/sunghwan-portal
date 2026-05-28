@@ -6,7 +6,7 @@ import { userProfileApi } from "@/feature/user/profile";
 export const useCurrentUserProfileQuery = (session: Session | null) => {
   const currentUserKey = session?.impersonation
     ? session.impersonation.impersonatedUser.username
-    : session?.user.id;
+    : session?.user.username;
 
   return useQuery({
     queryKey: ["user-profile", currentUserKey],

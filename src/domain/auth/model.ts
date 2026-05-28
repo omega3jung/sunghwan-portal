@@ -8,7 +8,6 @@ import { DataScope, UserScope } from "./types";
 // properties are required info only.
 export interface AuthUser {
   id: string; // uuid
-  employeeId: number | null; // employee domain id
   username: string; // user account
   displayName: LocalizedText; // user name
   email: string;

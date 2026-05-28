@@ -11,7 +11,6 @@ import type { LocalizedText } from "@/shared/types";
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    employeeId?: number | null;
     username: string;
     displayName: LocalizedText;
     email: string;

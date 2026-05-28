@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json(targetProfile);
+    return NextResponse.json({ data: targetProfile });
   }
 
   return portalApiJson(req, {

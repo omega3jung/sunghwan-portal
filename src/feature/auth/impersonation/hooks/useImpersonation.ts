@@ -41,8 +41,9 @@ export const useImpersonation = () => {
    * @returns A promise that resolves after the impersonation request and session update complete
    */
   const startImpersonation = async (impersonatedUsername: string) => {
-    const impersonation = await userImpersonationApi.start(impersonatedUsername);
-    await session.update(impersonation);
+    const impersonation =
+      await userImpersonationApi.start(impersonatedUsername);
+    await session.update({ impersonation });
   };
 
   /**
@@ -79,17 +80,20 @@ export const useImpersonation = () => {
       userProfileApi
         .get(impersonatedUsername)
         .then((impersonatedUserProfile) => {
-        syncFromSession({
-          originalUser: originalUser ?? current.user!,
-          impersonatedUser: impersonatedUserProfile,
+          syncFromSession({
+            originalUser: originalUser ?? current.user!,
+            impersonatedUser: impersonatedUserProfile,
+          });
         });
-      });
     } else {
       syncFromSession({ originalUser: current.user, impersonatedUser: null });
     }
     // optimized to dependencies. Do not update this.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.user?.username, session.data?.impersonation?.impersonatedUser.username]);
+  }, [
+    current.user?.username,
+    session.data?.impersonation?.impersonatedUser.username,
+  ]);
 
   return {
     originalUser,

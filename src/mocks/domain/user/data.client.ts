@@ -15,7 +15,6 @@ import { DemoAuthProfileSeed } from "./types";
 
 export const clientAdminData = {
   id: CLIENT_DEMO_USER_IDS.ADMIN.ID,
-  employeeId: clientAdminEmployee.e_id,
   username: CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME,
   displayName: displayNameMapper(clientAdminEmployee.e_name),
   email: clientAdminEmployee.e_email,
@@ -33,7 +32,6 @@ export const clientAdminProfile = toProfile(clientAdminData);
 
 export const clientManagerData = {
   id: CLIENT_DEMO_USER_IDS.MANAGER.ID,
-  employeeId: clientManagerEmployee.e_id,
   username: CLIENT_DEMO_USER_IDS.MANAGER.USER_NAME,
   displayName: displayNameMapper(clientManagerEmployee.e_name),
   email: clientManagerEmployee.e_email,
@@ -51,7 +49,6 @@ export const clientManagerProfile = toProfile(clientManagerData);
 
 export const clientLeaderData = {
   id: CLIENT_DEMO_USER_IDS.LEADER.ID,
-  employeeId: clientLeaderEmployee.e_id,
   username: CLIENT_DEMO_USER_IDS.LEADER.USER_NAME,
   displayName: displayNameMapper(clientLeaderEmployee.e_name),
   email: clientLeaderEmployee.e_email,
@@ -69,7 +66,6 @@ export const clientLeaderProfile = toProfile(clientLeaderData);
 
 export const clientUserData = {
   id: CLIENT_DEMO_USER_IDS.USER.ID,
-  employeeId: clientUserEmployee.e_id,
   username: CLIENT_DEMO_USER_IDS.USER.USER_NAME,
   displayName: displayNameMapper(clientUserEmployee.e_name),
   email: clientUserEmployee.e_email,
@@ -87,7 +83,6 @@ export const clientUserProfile = toProfile(clientUserData);
 
 export const clientGuestData = {
   id: CLIENT_DEMO_USER_IDS.GUEST.ID,
-  employeeId: clientGuestEmployee.e_id,
   username: CLIENT_DEMO_USER_IDS.GUEST.USER_NAME,
   displayName: displayNameMapper(clientGuestEmployee.e_name),
   email: clientGuestEmployee.e_email,
@@ -103,7 +98,7 @@ export const clientGuestData = {
 export const clientGuestAuth = toAuth(clientGuestData);
 export const clientGuestProfile = toProfile(clientGuestData);
 
-export const clientAuths: Omit<AuthUser, "dataScope">[] = [
+export const clientAuths: AuthUser[] = [
   clientAdminAuth,
   clientManagerAuth,
   clientLeaderAuth,

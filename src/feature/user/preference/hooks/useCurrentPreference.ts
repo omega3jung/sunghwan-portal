@@ -32,6 +32,11 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * - screenMode
    */
   const store = usePreferenceStore();
+  const current = {
+    language: store.language,
+    colorTheme: store.colorTheme,
+    screenMode: store.screenMode,
+  };
 
   const status = session.status === "loading" ? "loading" : "ready";
 
@@ -98,7 +103,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
 
   return {
     status,
-    current: store,
+    current,
     setLanguage,
     setColorTheme,
     setScreenMode,

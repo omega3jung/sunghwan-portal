@@ -2,7 +2,7 @@ import { LocalizedName } from "@/domain/organization";
 
 export interface EmployeeResponseDto {
   employeeId: number;
-  username: string;
+  userName: string;
   name: LocalizedName;
   phone: string;
   email: string;

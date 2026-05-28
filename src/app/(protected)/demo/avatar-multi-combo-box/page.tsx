@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import {
+  AvatarComboBox,
+  AvatarMultiComboBox,
+} from "@/components/custom/AvatarComboBox";
 import { Input } from "@/components/ui/input";
 import { avatarComboMock } from "@/mocks/ui/demo/avatar-multi-combo-box";
 
 export default function AvatarMultiComboBoxPage() {
-  const [userValue, setUserValue] = useState<string[]>([]);
+  const [userValue, setUserValue] = useState<string | null>(null);
+  const [usersValue, setUsersValue] = useState<string[]>([]);
   const [maxCount, setMaxCount] = useState<number>(2);
 
   return (
@@ -23,30 +27,41 @@ export default function AvatarMultiComboBoxPage() {
         />
       </div>
       <div>
+        <h4 className="py-2">Avatar Combo Box</h4>
+
+        <AvatarComboBox
+          options={avatarComboMock}
+          value={userValue}
+          placeholder="Select User"
+          onChange={setUserValue}
+          clearable
+        />
+      </div>
+      <div>
         <h4 className="py-2">Avatar Multi Combo Box</h4>
 
         <AvatarMultiComboBox
           options={avatarComboMock}
-          value={userValue}
+          value={usersValue}
           maxImages={maxCount}
           placeholder="Select Users"
           onSelect={(e) => {
             if (e) {
-              const currentValue = [...userValue];
+              const currentValue = [...usersValue];
 
               currentValue.push(e);
 
-              setUserValue(currentValue);
+              setUsersValue(currentValue);
             }
           }}
           onRemove={(e) => {
-            const currentValue = [...userValue];
+            const currentValue = [...usersValue];
 
             const currentValueIndex = currentValue.indexOf(e);
 
             if (currentValueIndex > -1) {
               currentValue.splice(currentValueIndex, 1);
-              setUserValue(currentValue);
+              setUsersValue(currentValue);
             } else {
               return;
             }

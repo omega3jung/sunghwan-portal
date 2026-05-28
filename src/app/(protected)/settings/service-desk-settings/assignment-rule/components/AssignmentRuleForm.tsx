@@ -3,7 +3,7 @@
 import { forwardRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";

@@ -5,7 +5,7 @@ import { cn, initials } from "@/shared/utils/presentation";
 import type { BadgeVariant } from "./types";
 import { badgeVariants } from "./variants";
 
-type AvatarMultiComboBoxAvatarStackProps = {
+type AvatarStackProps = {
   selected: ImageValueLabel[];
   placeholder?: string;
   placeholderClassName?: string;
@@ -13,13 +13,13 @@ type AvatarMultiComboBoxAvatarStackProps = {
   maxImages: number;
 };
 
-export function AvatarMultiComboBoxAvatarStack({
+export function AvatarStack({
   selected,
   placeholder,
   placeholderClassName,
   badgeVariant,
   maxImages,
-}: AvatarMultiComboBoxAvatarStackProps) {
+}: AvatarStackProps) {
   if (!selected.length) {
     return (
       <div

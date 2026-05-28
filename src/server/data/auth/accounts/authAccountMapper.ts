@@ -1,20 +1,23 @@
-import { AuthAccountResponseDto } from "./authAccountDto";
+import { displayNameMapper } from "@/shared/utils/i18n/displayName";
+
+import { AuthUserDto } from "./authAccountDto";
 import { DbAuthLoginUserRow } from "./authAccountRow";
 
-export function toAuthAccountResponseDto(
-  row: DbAuthLoginUserRow,
-): AuthAccountResponseDto {
+export function toAuthUser(row: DbAuthLoginUserRow): AuthUserDto {
   return {
-    authAccountId: row.aa_id,
+    id: row.aa_id,
     username: row.e_username,
     role: row.aa_role,
-    permission: row.aa_permission,
+    permission: row.aa_access_level,
     userScope: row.aa_user_scope,
-    active: row.aa_active,
-    lastLoginAt: row.aa_last_login_at,
-    employeeId: row.e_id,
-    employeeName: row.e_name,
-    employeeEmail: row.e_email,
+    displayName: displayNameMapper(row.e_name),
+    email: row.e_email,
     companyId: row.e_company_id,
+    dataScope: "REMOTE",
+    accessToken: buildSessionAccessToken(row.aa_id),
   };
+}
+
+function buildSessionAccessToken(authAccountId: string) {
+  return `auth-${authAccountId}`;
 }

@@ -1,7 +1,7 @@
 import { AlertTriangle, Plus, UserPlus } from "lucide-react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

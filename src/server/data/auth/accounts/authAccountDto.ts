@@ -1,17 +1,22 @@
-import { LocalizedName } from "@/domain/organization";
+import { LocalizedText } from "@/shared/types";
 
-import { AuthAccountRole, AuthAccountUserScope } from "./authAccountRow";
+import {
+  AuthAccountDataScope,
+  AuthAccountPermission,
+  AuthAccountRole,
+  AuthAccountUserScope,
+} from "./authAccountRow";
 
-export interface AuthAccountResponseDto {
-  authAccountId: string;
+export interface AuthUserDto {
+  id: string;
   username: string;
-  role: AuthAccountRole;
-  permission: AuthAccountRole;
+  displayName: LocalizedText;
+  email: string;
+  accessToken: string;
+
+  dataScope: AuthAccountDataScope;
   userScope: AuthAccountUserScope;
-  active: boolean;
-  lastLoginAt: string | null;
-  employeeId: number;
-  employeeName: LocalizedName;
-  employeeEmail: string;
   companyId: number;
+  permission: AuthAccountPermission;
+  role: AuthAccountRole;
 }

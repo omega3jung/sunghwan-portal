@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";

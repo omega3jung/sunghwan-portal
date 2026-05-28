@@ -7,7 +7,7 @@ import {
   UserRoundPlus,
 } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -32,6 +32,7 @@ import { cn, initials } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
+import { UserImpersonation } from "./UserImpersonation";
 
 export function UserMenu() {
   const { current } = useCurrentSession();
@@ -43,7 +44,9 @@ export function UserMenu() {
     startImpersonation,
     stopImpersonation,
   } = useImpersonation();
+
   const signingRef = useRef(false);
+  const shouldOpenImpersonationDialogRef = useRef(false);
 
   const { t } = useTranslation("UserMenu");
   const tLocal = useLocalizedText();
@@ -70,6 +73,15 @@ export function UserMenu() {
     [impersonatedUser, isImpersonating],
   );
 
+  const [openUserMenu, setOpenUserMenu] = useState(false);
+  const [openImpersonationDialog, setOpenImpersonationDialog] =
+    useState<boolean>(false);
+
+  const handleOpenImpersonationDialog = () => {
+    shouldOpenImpersonationDialogRef.current = true;
+    setOpenUserMenu(false);
+  };
+
   const onUserSwitch = async (profile: AppUser) => {
     // loggin in.
     if (signingRef.current) return;
@@ -77,8 +89,8 @@ export function UserMenu() {
 
     try {
       const result = await signIn("credentials", {
-        username: profile.id,
-        password: profile.id,
+        username: profile.username,
+        password: profile.username,
         redirect: false,
       });
 
@@ -88,7 +100,7 @@ export function UserMenu() {
       }
 
       signingRef.current = false;
-    } catch (error) {
+    } catch {
       toast(t("errors.title"), {
         description: "login switch error",
       });
@@ -145,107 +157,137 @@ export function UserMenu() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="w-20">
-          {hasImpersonatedUser
-            ? renderImpersonationAvatar(originalUser, impersonatedUser)
-            : renderUserAvatar(visibleUser)}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-2 mt-2 mr-1" align="start">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className="flex gap-2">
-            {renderUserAvatar(displayedOriginalUser, {
-              muted: hasImpersonatedUser,
-            })}
-            <div className="flex flex-col">
-              <span>
-                {displayedOriginalUser
-                  ? tLocal(displayedOriginalUser.displayName)
-                  : ""}
-              </span>
-              <span className="text-muted-foreground font-normal">
-                {displayedOriginalUser?.email}
-              </span>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <UserRound />
-              {t("myProfile")}
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Bell />
-              {t("myActivities")}
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Bell />
-              {t("notifications")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          {isDemo && (
-            <DropdownMenuGroup>
-              <DemoUserSwitch
-                user={visibleUser}
-                disabled={isImpersonating}
-                onDemoUserSwitch={onUserSwitch}
-              />
-              <DropdownMenuSeparator />
-            </DropdownMenuGroup>
-          )}
-          <DropdownMenuItem onClick={() => signOut()}>
-            <LogOut />
-            {t("logOut")}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+    <>
+      <DropdownMenu open={openUserMenu} onOpenChange={setOpenUserMenu}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="w-20">
+            {hasImpersonatedUser
+              ? renderImpersonationAvatar(originalUser, impersonatedUser)
+              : renderUserAvatar(visibleUser)}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="p-2 mt-2 mr-1"
+          align="start"
+          onCloseAutoFocus={(event) => {
+            if (!shouldOpenImpersonationDialogRef.current) return;
 
-        {hasImpersonatedUser && impersonatedUser && (
+            event.preventDefault();
+
+            window.setTimeout(() => {
+              setOpenImpersonationDialog(true);
+              shouldOpenImpersonationDialogRef.current = false;
+            }, 0);
+          }}
+        >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="flex gap-2">
-              {renderUserAvatar(impersonatedUser)}
+              {renderUserAvatar(displayedOriginalUser, {
+                muted: hasImpersonatedUser,
+              })}
               <div className="flex flex-col">
-                <span>{tLocal(impersonatedUser.displayName)}</span>
+                <span>
+                  {displayedOriginalUser
+                    ? tLocal(displayedOriginalUser.displayName)
+                    : ""}
+                </span>
                 <span className="text-muted-foreground font-normal">
-                  {impersonatedUser.email}
+                  {displayedOriginalUser?.email}
                 </span>
               </div>
             </DropdownMenuLabel>
-
             <DropdownMenuSeparator />
-
-            {canDemoImpersonate && (
-              <DemoImpersonation
-                user={visibleUser}
-                onDemoImpersonate={startImpersonation}
-              />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <UserRound />
+                {t("myProfile")}
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Bell />
+                {t("myActivities")}
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Bell />
+                {t("notifications")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            {isDemo && (
+              <DropdownMenuGroup>
+                <DemoUserSwitch
+                  user={visibleUser}
+                  disabled={isImpersonating}
+                  onDemoUserSwitch={onUserSwitch}
+                />
+                <DropdownMenuSeparator />
+              </DropdownMenuGroup>
             )}
-
-            <DropdownMenuItem onClick={stopImpersonation}>
-              <UserRoundMinus />
-              {t("stopImpersonation")}
+            <DropdownMenuItem onClick={() => signOut()}>
+              <LogOut />
+              {t("logOut")}
             </DropdownMenuItem>
           </DropdownMenuGroup>
-        )}
+          <DropdownMenuSeparator />
 
-        {!hasImpersonatedUser && canDemoImpersonate && (
-          <DemoImpersonation
-            user={visibleUser}
-            onDemoImpersonate={startImpersonation}
-          />
-        )}
+          {hasImpersonatedUser && impersonatedUser && (
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="flex gap-2">
+                {renderUserAvatar(impersonatedUser)}
+                <div className="flex flex-col">
+                  <span>{tLocal(impersonatedUser.displayName)}</span>
+                  <span className="text-muted-foreground font-normal">
+                    {impersonatedUser.email}
+                  </span>
+                </div>
+              </DropdownMenuLabel>
 
-        {!hasImpersonatedUser && canImpersonate && (
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <UserRoundPlus />
-              {t("startImpersonation")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <DropdownMenuSeparator />
+
+              {canDemoImpersonate && (
+                <DemoImpersonation
+                  user={visibleUser}
+                  onDemoImpersonate={startImpersonation}
+                />
+              )}
+
+              <DropdownMenuItem onClick={stopImpersonation}>
+                <UserRoundMinus />
+                {t("stopImpersonation")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          )}
+
+          {!hasImpersonatedUser && canImpersonate && (
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault();
+                  handleOpenImpersonationDialog();
+                }}
+              >
+                <UserRoundPlus />
+                {t("impersonation")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          )}
+
+          {!hasImpersonatedUser && canDemoImpersonate && (
+            <DemoImpersonation
+              user={visibleUser}
+              onDemoImpersonate={startImpersonation}
+            />
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <UserImpersonation
+        username={displayedOriginalUser?.username ?? visibleUser.username}
+        onUserImpersonate={async (candidate: string) => {
+          await startImpersonation(candidate);
+          setOpenImpersonationDialog(false);
+        }}
+        open={openImpersonationDialog}
+        onOpenChange={setOpenImpersonationDialog}
+      />
+    </>
   );
 }

@@ -12,8 +12,30 @@ import { userPreferenceRepo } from "../repo";
 
 const portalPreferenceSyncInFlight = new Map<
   string,
-  Promise<Preference<PortalPreference> | null | undefined>
+  Promise<PortalPreference | null | undefined>
 >();
+
+const isPortalPreferenceEnvelope = (
+  value: unknown,
+): value is Preference<PortalPreference> => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "preferenceMeta" in value &&
+    typeof (value as { preferenceMeta?: unknown }).preferenceMeta === "object" &&
+    (value as { preferenceMeta?: unknown }).preferenceMeta !== null
+  );
+};
+
+const resolvePortalPreferenceMeta = (
+  value: Preference<PortalPreference> | PortalPreference | null | undefined,
+): PortalPreference | null => {
+  if (!value) return null;
+
+  return isPortalPreferenceEnvelope(value)
+    ? value.preferenceMeta
+    : (value as PortalPreference);
+};
 
 const getPortalPreferenceSyncKey = ({
   userId,
@@ -46,15 +68,18 @@ const getOrCreatePortalPreference = ({
       preferenceKey,
     });
 
-    if (preference) return preference;
+    const existingPreferenceMeta = resolvePortalPreferenceMeta(preference);
+    if (existingPreferenceMeta) return existingPreferenceMeta;
 
-    return userPreferenceRepo.create<PortalPreference>({
+    const createdPreference = await userPreferenceRepo.create<PortalPreference>({
       isRemote,
       data: {
         preferenceKey,
         preferenceMeta: defaultPreference,
       },
     });
+
+    return resolvePortalPreferenceMeta(createdPreference) ?? defaultPreference;
   })().finally(() => {
     portalPreferenceSyncInFlight.delete(syncKey);
   });
@@ -91,7 +116,7 @@ export function usePreferenceRemoteSync() {
 
     const syncPreference = async () => {
       try {
-        const preference = await getOrCreatePortalPreference({
+        const preferenceMeta = await getOrCreatePortalPreference({
           syncKey,
           isRemote,
           preferenceKey,
@@ -99,9 +124,9 @@ export function usePreferenceRemoteSync() {
         });
 
         if (!active) return;
-        if (!preference) return;
+        if (!preferenceMeta) return;
 
-        setPreference(preference.preferenceMeta);
+        setPreference(preferenceMeta);
       } catch (error) {
         console.error(
           "[PreferenceRemoteSync] Failed to sync preference",

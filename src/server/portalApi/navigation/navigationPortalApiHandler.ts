@@ -14,29 +14,32 @@ export async function handleNavigationPortalApi(
   const path = normalizePath(options.path);
   const leftMenuMatch = LEFT_MENU_PATH_PATTERN.exec(path);
 
-  if (!leftMenuMatch) {
-    return NextResponse.json({ message: "Not found" }, { status: 404 });
-  }
-
-  if ((options.method ?? "GET") !== "GET") {
-    return NextResponse.json({ message: "Not found" }, { status: 404 });
-  }
-
-  const rawAccessLevel = decodeURIComponent(leftMenuMatch[1] ?? "");
-  const parsedAccessLevel = Number(rawAccessLevel);
-  const userAccessLevel = resolveAccessLevel(parsedAccessLevel);
-
-  if (userAccessLevel === null) {
-    return NextResponse.json(
-      { message: "Invalid access level" },
-      { status: 400 },
-    );
-  }
+  const method = options.method ?? "GET";
 
   try {
-    const leftMenu = await getLeftMenuByAccessLevel(userAccessLevel);
+    // api/navigation/left-menu.
 
-    return NextResponse.json({ data: leftMenu });
+    if (leftMenuMatch) {
+      // REST api GET.
+      if (method === "GET") {
+        const rawAccessLevel = decodeURIComponent(leftMenuMatch[1] ?? "");
+        const parsedAccessLevel = Number(rawAccessLevel);
+        const userAccessLevel = resolveAccessLevel(parsedAccessLevel);
+
+        if (userAccessLevel === null) {
+          return NextResponse.json(
+            { message: "Invalid access level" },
+            { status: 400 },
+          );
+        }
+
+        const leftMenu = await getLeftMenuByAccessLevel(userAccessLevel);
+
+        return NextResponse.json({ data: leftMenu });
+      }
+    }
+    // path not found.
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
   } catch {
     return NextResponse.json(
       { message: options.errorMessage },

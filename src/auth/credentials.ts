@@ -1,9 +1,8 @@
 import axios from "axios";
 
-import { ACCESS_LEVEL, AuthUser } from "@/domain/auth";
+import { authApiJson } from "@/app/api/_helpers/authApiJson";
+import { AuthUser } from "@/domain/auth";
 import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
-import { verifyLoginCredentials } from "@/server/data/auth/accounts";
-import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 export type LoginResponse = AuthUser;
 
@@ -37,28 +36,28 @@ export const loginApi = async ({
     }
 
     // real login
-    const verifiedUser = await verifyLoginCredentials(username, password);
+    const response = await authApiJson({
+      method: "POST",
+      path: "/auth/login",
+      body: { username, password },
+      errorMessage: "Failed to verify login credentials",
+    });
+
+    if (!response.ok) {
+      throw new Error("INVALID_CREDENTIALS");
+    }
+
+    const payload = (await response.json()) as {
+      data?: AuthUser | null;
+    };
+
+    const verifiedUser = payload.data ?? null;
 
     if (!verifiedUser || verifiedUser.userScope !== "INTERNAL") {
       throw new Error("INVALID_CREDENTIALS");
     }
 
-    return {
-      id: verifiedUser.authAccountId,
-      employeeId: verifiedUser.employeeId,
-      username: verifiedUser.username,
-      displayName: displayNameMapper(verifiedUser.employeeName),
-      email: verifiedUser.employeeEmail,
-      accessToken: buildDemoSafeAccessToken(
-        verifiedUser.authAccountId,
-        verifiedUser.employeeId,
-      ),
-      dataScope: "REMOTE",
-      userScope: verifiedUser.userScope,
-      companyId: verifiedUser.companyId,
-      permission: ACCESS_LEVEL[verifiedUser.permission],
-      role: verifiedUser.role,
-    };
+    return verifiedUser;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
@@ -68,7 +67,3 @@ export const loginApi = async ({
     throw error;
   }
 };
-
-function buildDemoSafeAccessToken(authAccountId: string, employeeId: number) {
-  return `auth-${authAccountId}-employee-${employeeId}`;
-}

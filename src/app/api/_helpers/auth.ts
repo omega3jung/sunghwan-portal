@@ -124,7 +124,6 @@ export async function checkAdmin(req: NextRequest): Promise<AuthResult> {
 export function tokenToOriginalAuthUser(token: JWT): AuthUser {
   return {
     ...token,
-    employeeId: resolveEmployeeId(token.employeeId),
     email: token.email ?? "",
   };
 }
@@ -147,7 +146,7 @@ export async function checkAdminOrSelf(
 type ImpersonationPolicy = Record<UserScope, readonly UserScope[]>;
 
 const IMPERSONATION_POLICY: ImpersonationPolicy = {
-  INTERNAL: ["CLIENT"], // from INTERNAL to [].
+  INTERNAL: ["INTERNAL", "CLIENT"], // from INTERNAL to [].
   CLIENT: [], // from CLIENT to [].
 } as const;
 
@@ -167,20 +166,4 @@ function resolveEmployeeUserName(value: unknown): string | null {
 
   const normalizedValue = value.trim();
   return normalizedValue.length > 0 ? normalizedValue : null;
-}
-
-function resolveEmployeeId(value: unknown): number | null {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value);
-
-    if (Number.isFinite(parsed)) {
-      return parsed;
-    }
-  }
-
-  return null;
 }

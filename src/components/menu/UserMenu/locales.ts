@@ -33,6 +33,8 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     leaderDemo: "Leader Demo",
     userDemo: "User Demo",
     guestDemo: "Guest Demo",
+    loading: "Loading...",
+    selectUser: "Select User",
   },
   es: {
     myProfile: "Mi perfil",
@@ -66,6 +68,8 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     leaderDemo: "Demostración de líder",
     userDemo: "Demostración de usuario",
     guestDemo: "Demostración de invitado",
+    loading: "Cargando...",
+    selectUser: "Seleccionar usuario",
   },
   fr: {
     myProfile: "Mon profil",
@@ -99,6 +103,8 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     leaderDemo: "Démo chef d'équipe",
     userDemo: "Démo utilisateur",
     guestDemo: "Démo invité",
+    loading: "Chargement…",
+    selectUser: "Sélectionnez un utilisateur",
   },
   ko: {
     myProfile: "내 프로필",
@@ -132,5 +138,7 @@ export const userMenuLocales: Record<Locale, Record<string, string>> = {
     leaderDemo: "리더 데모",
     userDemo: "사용자 데모",
     guestDemo: "게스트 데모",
+    loading: "불러오는 중...",
+    selectUser: "사용자 선택",
   },
 };

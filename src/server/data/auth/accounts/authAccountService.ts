@@ -1,13 +1,16 @@
 import { comparePasswordHash } from "@/server/shared/security/password";
 
-import { AuthAccountResponseDto } from "./authAccountDto";
-import { toAuthAccountResponseDto } from "./authAccountMapper";
-import { findActiveAuthLoginUserByUsername } from "./authAccountRepository";
+import { AuthUserDto } from "./authAccountDto";
+import { toAuthUser } from "./authAccountMapper";
+import {
+  findActiveAuthLoginUserByUsername,
+  updateAuthAccountLastLoginAt,
+} from "./authAccountRepository";
 
 export async function verifyLoginCredentials(
   username: string,
   password: string,
-): Promise<AuthAccountResponseDto | null> {
+): Promise<AuthUserDto | null> {
   const account = await findActiveAuthLoginUserByUsername(username);
 
   if (!account) {
@@ -23,5 +26,19 @@ export async function verifyLoginCredentials(
     return null;
   }
 
-  return toAuthAccountResponseDto(account);
+  await updateAuthAccountLastLoginAt(account.aa_id);
+
+  return toAuthUser(account);
+}
+
+export async function getImpersonationTargetAuthUser(
+  username: string,
+): Promise<AuthUserDto | null> {
+  const account = await findActiveAuthLoginUserByUsername(username);
+
+  if (!account) {
+    return null;
+  }
+
+  return toAuthUser(account);
 }
