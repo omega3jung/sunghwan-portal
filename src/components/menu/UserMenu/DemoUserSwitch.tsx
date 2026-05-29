@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AppUser } from "@/domain/user";
 import { clientProfiles, internalProfiles } from "@/mocks/domain/user";
+import { cn } from "@/shared/utils/presentation";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
@@ -37,13 +38,18 @@ export function DemoUserSwitch(props: Props) {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger disabled={disabled}>
+      <DropdownMenuSubTrigger
+        disabled={disabled}
+        className={cn(
+          disabled && "cursor-not-allowed text-muted-foreground opacity-50",
+        )}
+      >
         <UsersRound />
         {t("demoUserSwitch")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuLabel>{t("internalUserSwitchLabel")}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
           {switchDemoUserProfiles.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
@@ -54,12 +60,12 @@ export function DemoUserSwitch(props: Props) {
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profileDisplayNameKey}`)}
+                {t(`login${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("clientUserSwitchLabel")}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
           {switchClientUserProfiles.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
@@ -70,7 +76,7 @@ export function DemoUserSwitch(props: Props) {
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profileDisplayNameKey}`)}
+                {t(`login${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}

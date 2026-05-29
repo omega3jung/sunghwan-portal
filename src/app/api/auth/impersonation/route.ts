@@ -125,7 +125,7 @@ function validateAuth(
     );
   }
 
-  if (targetUser.permission >= originalUser.permission) {
+  if (targetUser.permission > originalUser.permission) {
     return NextResponse.json(
       { error: "CANNOT_IMPERSONATE_EQUAL_OR_HIGHER_PERMISSION" },
       { status: 403 },

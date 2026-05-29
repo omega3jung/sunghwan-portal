@@ -57,16 +57,16 @@ export function UserMenu() {
 
   const canDemoImpersonate = useMemo(() => {
     if (!isDemo) return false;
-    if (!originalUser || impersonatedUser) return false;
+    if (!originalUser) return false;
     if (originalUser.userScope === "CLIENT") return false;
     return originalUser.permission >= ACCESS_LEVEL.ADMIN;
-  }, [impersonatedUser, isDemo, originalUser]);
+  }, [isDemo, originalUser]);
 
   const canImpersonate = useMemo(() => {
     if (isDemo) return false;
-    if (!originalUser || impersonatedUser) return false;
+    if (!originalUser) return false;
     return originalUser.canUseImpersonation === true;
-  }, [impersonatedUser, isDemo, originalUser]);
+  }, [isDemo, originalUser]);
 
   const hasImpersonatedUser = useMemo<boolean>(
     () => isImpersonating && !!impersonatedUser,
@@ -82,15 +82,32 @@ export function UserMenu() {
     setOpenUserMenu(false);
   };
 
-  const onUserSwitch = async (profile: AppUser) => {
+  const onDemoUserSwitch = (profile: AppUser) => {
+    return onUserSwitch({
+      username: profile.username,
+      password: profile.username,
+      mode: "demo",
+    });
+  };
+
+  const onUserSwitch = async ({
+    username,
+    password,
+    mode = "login",
+  }: {
+    username: string;
+    password: string;
+    mode?: "login" | "demo";
+  }) => {
     // loggin in.
     if (signingRef.current) return;
     signingRef.current = true;
 
     try {
       const result = await signIn("credentials", {
-        username: profile.username,
-        password: profile.username,
+        username: username,
+        password: password,
+        mode,
         redirect: false,
       });
 
@@ -216,12 +233,15 @@ export function UserMenu() {
                 <DemoUserSwitch
                   user={visibleUser}
                   disabled={isImpersonating}
-                  onDemoUserSwitch={onUserSwitch}
+                  onDemoUserSwitch={onDemoUserSwitch}
                 />
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
             )}
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem
+              className="text-red-600/80 focus:text-red-500 data-[highlighted]:text-red-500"
+              onClick={() => signOut()}
+            >
               <LogOut />
               {t("logOut")}
             </DropdownMenuItem>
@@ -242,9 +262,26 @@ export function UserMenu() {
 
               <DropdownMenuSeparator />
 
+              {/* remote impersonation */}
+              {canImpersonate && (
+                <DropdownMenuItem
+                  onSelect={(event) => {
+                    event.preventDefault();
+                    handleOpenImpersonationDialog();
+                  }}
+                >
+                  <UserRoundPlus />
+                  {!impersonatedUser
+                    ? t("startImpersonation")
+                    : t("switchImpersonation")}
+                </DropdownMenuItem>
+              )}
+
+              {/* demo impersonation */}
               {canDemoImpersonate && (
                 <DemoImpersonation
-                  user={visibleUser}
+                  user={displayedOriginalUser ?? visibleUser}
+                  impersonatedUser={impersonatedUser}
                   onDemoImpersonate={startImpersonation}
                 />
               )}
@@ -270,9 +307,11 @@ export function UserMenu() {
             </DropdownMenuGroup>
           )}
 
+          {/* demo impersonation */}
           {!hasImpersonatedUser && canDemoImpersonate && (
             <DemoImpersonation
-              user={visibleUser}
+              user={displayedOriginalUser ?? visibleUser}
+              impersonatedUser={impersonatedUser}
               onDemoImpersonate={startImpersonation}
             />
           )}
@@ -281,9 +320,12 @@ export function UserMenu() {
 
       <UserImpersonation
         username={displayedOriginalUser?.username ?? visibleUser.username}
+        excludeUsernames={[
+          displayedOriginalUser?.username ?? "",
+          impersonatedUser?.username ?? "",
+        ]}
         onUserImpersonate={async (candidate: string) => {
           await startImpersonation(candidate);
-          setOpenImpersonationDialog(false);
         }}
         open={openImpersonationDialog}
         onOpenChange={setOpenImpersonationDialog}

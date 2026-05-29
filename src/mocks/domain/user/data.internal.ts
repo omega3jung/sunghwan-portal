@@ -55,7 +55,7 @@ export const leaderData = {
   accessToken: INTERNAL_DEMO_USER_IDS.MANAGER.TOKEN,
   userScope: "INTERNAL",
   companyId: leaderEmployee.e_company_id,
-  permission: 7,
+  permission: 5,
   role: "MANAGER",
   canUseSuperUser: null,
   canUseImpersonation: null,

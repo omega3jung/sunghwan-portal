@@ -49,7 +49,6 @@ export async function dispatchAuthApi(options: AuthApiJsonOptions) {
           body.username ?? "",
           body.password ?? "",
         );
-        console.log(verifiedUser);
 
         if (!verifiedUser) {
           return NextResponse.json(

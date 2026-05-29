@@ -17,21 +17,38 @@ import { useCurrentPreference } from "@/feature/user/preference/client";
 import { useLocalizedValue } from "@/shared/hooks";
 
 type Props = {
-  username: string;
+  username?: string;
+  excludeUsernames?: string[];
   onUserImpersonate: (impersonatedUsername: string) => Promise<void>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
 export function UserImpersonation(props: Props) {
-  const { username, onUserImpersonate, open, onOpenChange } = props;
+  const {
+    username,
+    excludeUsernames = [],
+    onUserImpersonate,
+    open,
+    onOpenChange,
+  } = props;
 
   const { t } = useTranslation("UserMenu");
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
 
   const [candidate, setCandidate] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: employees, isFetching } = useEmployeeListQuery({});
+  const excludedUserSet = useMemo(
+    () =>
+      new Set(
+        [username, ...excludeUsernames].filter(
+          (value): value is string => !!value,
+        ).map((value) => normalizeUsername(value)),
+      ),
+    [excludeUsernames, username],
+  );
 
   const impersonationCandidates = useMemo(() => {
     if (!employees) {
@@ -39,7 +56,10 @@ export function UserImpersonation(props: Props) {
     }
 
     return employees
-      .filter((employee) => employee.userName !== username)
+      .filter(
+        (employee) =>
+          !excludedUserSet.has(normalizeUsername(employee.userName)),
+      )
       .map((employee) => {
         const name = tLocal(employee.name);
 
@@ -50,7 +70,7 @@ export function UserImpersonation(props: Props) {
           image: employee.imageUrl,
         };
       });
-  }, [employees, tLocal, username]);
+  }, [employees, excludedUserSet, tLocal]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
@@ -71,17 +91,28 @@ export function UserImpersonation(props: Props) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              setCandidate(null);
+              onOpenChange(false);
+            }}
           >
             {t("action.cancel", { ns: "common" })}
           </Button>
 
           <Button
             type="button"
-            disabled={!candidate}
-            onClick={() => {
-              if (candidate) {
-                onUserImpersonate(candidate);
+            disabled={!candidate || isSubmitting}
+            onClick={async () => {
+              if (!candidate || isSubmitting) return;
+
+              setIsSubmitting(true);
+
+              try {
+                await onUserImpersonate(candidate);
+                setCandidate(null);
+                onOpenChange(false);
+              } finally {
+                setIsSubmitting(false);
               }
             }}
           >
@@ -91,4 +122,8 @@ export function UserImpersonation(props: Props) {
       </DialogContent>
     </Dialog>
   );
+}
+
+function normalizeUsername(username: string): string {
+  return username.trim().toLowerCase();
 }

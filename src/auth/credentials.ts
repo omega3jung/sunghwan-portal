@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { authApiJson } from "@/app/api/_helpers/authApiJson";
 import { AuthUser } from "@/domain/auth";
-import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
+import { resolveDemoAuth } from "@/mocks/domain/user";
 
 export type LoginResponse = AuthUser;
 
@@ -22,14 +22,7 @@ export const loginApi = async ({
       const demoAuth = resolveDemoAuth(username);
 
       if (demoAuth) {
-        return { ...demoAuth, dataScope: "LOCAL" };
-      }
-
-      // client demo login
-      const clientDemoAuth = resolveClientAuth(username);
-
-      if (clientDemoAuth) {
-        return { ...clientDemoAuth, dataScope: "LOCAL" };
+        return demoAuth;
       }
 
       throw new Error("INVALID_CREDENTIALS");

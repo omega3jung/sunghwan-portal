@@ -55,7 +55,7 @@ export const clientLeaderData = {
   accessToken: CLIENT_DEMO_USER_IDS.LEADER.TOKEN,
   userScope: "CLIENT",
   companyId: clientLeaderEmployee.e_company_id,
-  permission: 7,
+  permission: 5,
   role: "LEADER",
   canUseSuperUser: null,
   canUseImpersonation: null,

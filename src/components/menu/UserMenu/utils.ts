@@ -1,4 +1,5 @@
 import {
+  CircleSlash,
   Contact,
   type LucideIcon,
   User,
@@ -18,7 +19,7 @@ const permissionIconByAccessLevel: Record<AccessLevel, LucideIcon> = {
   [ACCESS_LEVEL.LEADER]: UserKey,
   [ACCESS_LEVEL.USER]: User,
   [ACCESS_LEVEL.GUEST]: Contact,
-  [ACCESS_LEVEL.NONE]: Contact,
+  [ACCESS_LEVEL.NONE]: CircleSlash,
 };
 
 const resolveAccessLevel = (permission: AccessLevel | Role): AccessLevel => {

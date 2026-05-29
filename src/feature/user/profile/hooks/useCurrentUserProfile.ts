@@ -2,22 +2,28 @@ import { useQuery } from "@tanstack/react-query";
 import { Session } from "next-auth";
 
 import { userProfileApi } from "@/feature/user/profile";
+import { userProfileQueryKeys } from "@/feature/user/profile/queryKeys";
 
 export const useCurrentUserProfileQuery = (session: Session | null) => {
-  const currentUserKey = session?.impersonation
-    ? session.impersonation.impersonatedUser.username
-    : session?.user.username;
+  const impersonatedUsername =
+    session?.impersonation?.impersonatedUser.username ?? null;
+  const sessionUsername = session?.user.username ?? null;
+  const effectiveUsername = impersonatedUsername ?? sessionUsername;
+  const isImpersonating = !!impersonatedUsername;
 
   return useQuery({
-    queryKey: ["user-profile", currentUserKey],
+    queryKey: userProfileQueryKeys.detail(effectiveUsername),
     queryFn: () => {
-      if (!currentUserKey) throw new Error("No user identifier");
+      if (!effectiveUsername) throw new Error("No user identifier");
 
-      return session?.impersonation
-        ? userProfileApi.get(currentUserKey)
+      return isImpersonating
+        ? userProfileApi.get(effectiveUsername)
         : userProfileApi.me();
     },
-    enabled: !!currentUserKey,
-    staleTime: 1000 * 60,
+    enabled: !!effectiveUsername,
+    staleTime: 30_000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
