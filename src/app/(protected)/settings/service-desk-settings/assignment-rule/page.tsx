@@ -39,7 +39,6 @@ import {
   buildAssignmentRuleTreeSavePayload,
   createAssignmentRuleSettingsSignatureFromAssignmentRules,
   createAssignmentRuleSettingsSignatureFromTree,
-  isAssignmentRuleMainCategoryTreeValid,
 } from "./utils/tree";
 
 export default function CategoryPage() {
@@ -99,7 +98,11 @@ export default function CategoryPage() {
     return createAssignmentRuleSettingsSignatureFromTree(tree);
   }, [tree]);
   const isTreeValid = useMemo(() => {
-    return isAssignmentRuleMainCategoryTreeValid(tree);
+    return tree.every((item) => {
+      const data = item.data;
+
+      return data.jobFieldIds.length > 0 || data.employeeIds.length > 0;
+    });
   }, [tree]);
 
   const isDirty =

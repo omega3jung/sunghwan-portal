@@ -98,7 +98,18 @@ export const AsgginmentRuleTree = ({
 
                     <span className="truncate">{tLocal(data.name)}</span>
                   </div>
-                  <span className="grid grid-cols-2 gap-2">
+                  <span className="grid grid-cols-3 gap-2">
+                    {item.depth === 0 &&
+                    data.jobFieldIds.length === 0 &&
+                    data.employeeIds.length === 0 ? (
+                      <Badge variant="destructive">
+                        {t(
+                          "serviceDeskSettings.approvalStepTab.saveUnavailable",
+                        )}
+                      </Badge>
+                    ) : (
+                      <span />
+                    )}
                     {data.jobFieldIds.length > 0 ? (
                       <Badge className="rounded-full w-fit" variant="secondary">
                         {data.jobFieldIds.length > 0 &&

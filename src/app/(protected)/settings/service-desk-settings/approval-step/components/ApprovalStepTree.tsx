@@ -1,4 +1,4 @@
-import { UniqueIdentifier } from "@dnd-kit/core";
+﻿import { UniqueIdentifier } from "@dnd-kit/core";
 import { ChevronRight, Plus, X } from "lucide-react";
 import { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,7 @@ import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
+import { isApprovalStepAssigneeValid } from "../utils/tree";
 
 type Props = {
   tree: TreeNodes<CategoryApprovalStepData | ApprovalStepData>;
@@ -42,8 +43,23 @@ export const ApprovalStepTree = ({
   language,
   isLoading,
 }: Props) => {
-  const { t } = useTranslation(NS.domain);
+  const { t: tDomain } = useTranslation(NS.domain);
   const tLocal = useLocalizedText(language);
+
+  const getRiskBadgeClassName = (riskLevel: string) => {
+    switch (riskLevel) {
+      case "low":
+        return "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-50";
+      case "medium":
+        return "border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-50";
+      case "high":
+        return "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-50";
+      case "critical":
+        return "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700 hover:bg-fuchsia-50";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div
@@ -60,6 +76,8 @@ export const ApprovalStepTree = ({
           renderItem={(item, { onCollapse }) => {
             const data = item.data;
             const isSub = data.nodeType === "approvalStep";
+            const isInvalidApprovalStep =
+              isSub && !isApprovalStepAssigneeValid(data as ApprovalStepData);
             const limit = item.maximum;
 
             return (
@@ -111,21 +129,16 @@ export const ApprovalStepTree = ({
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {!isSub &&
-                        !isSub &&
                         limit != null &&
                         item.children.length < limit && (
                           <>
                             <Badge
-                              variant={
-                                data.defaultRiskLevel === "critical" ||
-                                data.defaultRiskLevel === "high"
-                                  ? "destructive"
-                                  : data.defaultRiskLevel === "low"
-                                    ? "outline"
-                                    : "default"
-                              }
+                              variant="outline"
+                              className={getRiskBadgeClassName(
+                                data.defaultRiskLevel,
+                              )}
                             >
-                              {`${t("enum.riskLevel.label")} ${t(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
+                              {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
                             </Badge>
                             <Button
                               variant="ghost"
@@ -140,15 +153,26 @@ export const ApprovalStepTree = ({
                           </>
                         )}
                       {isSub && (
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          size="icon_xs"
-                          disabled={isLoading}
-                          onClick={() => removeApprovalStep(data.id)}
-                        >
-                          <X />
-                        </Button>
+                        <>
+                          {isInvalidApprovalStep && (
+                            <Badge variant="destructive">
+                              {tDomain(
+                                "serviceDeskSettings.approvalStepTab.saveUnavailable",
+                                { ns: NS.settings },
+                              )}
+                            </Badge>
+                          )}
+                          <span className="w-4"></span>
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            size="icon_xs"
+                            disabled={isLoading}
+                            onClick={() => removeApprovalStep(data.id)}
+                          >
+                            <X />
+                          </Button>
+                        </>
                       )}
                       {isSub && <DragHandle {...dragHandleProps} />}
                     </div>

@@ -137,7 +137,8 @@
       "jobFieldPlaceholder": "Select a job field",
       "employee": "Employee",
       "employeePlaceholder": "Select an assignee",
-      "skipAccessLevel": "Skippable Access Level"
+      "skipAccessLevel": "Skippable Access Level",
+      "saveUnavailable": "Cannot Save"
     },
     "assignmentRuleTab": {
       "name": "Category",

@@ -122,9 +122,13 @@ export function TicketActionToolLauncher({
           return false;
         }
 
+        if (action === "merge" && ticket.mergedIntoTicketId) {
+          return false;
+        }
+
         return true;
       }),
-    [ticket.assigned, ticket.status],
+    [ticket.assigned, ticket.mergedIntoTicketId, ticket.status],
   );
 
   if (hidden) {

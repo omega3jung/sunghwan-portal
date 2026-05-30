@@ -78,12 +78,14 @@ export const useMutationToast = () => {
       success: {
         message: tMessage(`common.${type}.title`),
         description: tMessage(`common.${type}.success`, { item }),
+        closeButton: true,
         position: "top-right",
       },
 
       error: {
         message: tError(`common.${type}.title`),
         description: tError(`common.${type}.message`, { item }),
+        closeButton: true,
       },
     });
   };

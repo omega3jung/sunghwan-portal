@@ -136,7 +136,8 @@
       "jobFieldPlaceholder": "Seleccionar puesto",
       "employee": "Empleado",
       "employeePlaceholder": "Seleccionar asignado",
-      "skipAccessLevel": "Nivel de acceso omitible"
+      "skipAccessLevel": "Nivel de acceso omitible",
+      "saveUnavailable": "No se puede guardar"
     },
     "assignmentRuleTab": {
       "name": "Nombre",
