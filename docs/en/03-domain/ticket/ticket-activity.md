@@ -80,6 +80,7 @@ The activity model is also designed to support workflow-oriented actions such
 as:
 
 - `reopen`: reopen a resolved ticket
+- `requestReview`: request review/rework after resolution
 - `resubmit`: send a rejected ticket back to `Open`
 - `assignSelf`: allow an eligible operator to take ownership quickly
 
@@ -110,6 +111,7 @@ These actions:
 - `merge`
 - `reject`
 - `reopen`
+- `requestReview`
 - `resubmit`
 - `assignSelf`
 
@@ -303,7 +305,7 @@ Visibility:
 - purpose: mark the ticket as not executable in its current form
 - restriction: content required
 
-### Reopen
+### Request Review / Reopen
 
 - who: requester
 - when: `Resolved`
@@ -480,11 +482,15 @@ These may support edit or soft-delete under normal author-based rules.
 - `merge`
 - `reject`
 - `reopen`
+- `requestReview`
 - `resubmit`
 - `assignSelf`
 
 These should not be edited or deleted in normal workflow because they represent
 operational decisions with downstream effects.
+
+No activity can be edited or deleted when the ticket is `Closed`.
+Delete behavior for mutable communication actions is soft-delete via `active = false`.
 
 ---
 

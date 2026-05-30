@@ -1,74 +1,74 @@
 ﻿[
   {
-    "job_field_id": 71,
-    "job_field_name": { "en": "Logistics Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 70,
-    "job_field_parent_id": 0,
-    "job_field_active": true
+    "jf_id": 71,
+    "jf_name": { "en": "Logistics Manager" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 70,
+    "jf_parent_id": 0,
+    "jf_active": true
   },
   {
-    "job_field_id": 72,
-    "job_field_name": { "en": "Logistics Coordinator" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 70,
-    "job_field_parent_id": 71,
-    "job_field_active": true
+    "jf_id": 72,
+    "jf_name": { "en": "Logistics Coordinator" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 70,
+    "jf_parent_id": 71,
+    "jf_active": true
   },
   {
-    "job_field_id": 73,
-    "job_field_name": { "en": "Warehouse Manager" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 71,
-    "job_field_parent_id": 71,
-    "job_field_active": true
+    "jf_id": 73,
+    "jf_name": { "en": "Warehouse Manager" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 71,
+    "jf_parent_id": 71,
+    "jf_active": true
   },
   {
-    "job_field_id": 74,
-    "job_field_name": { "en": "Warehouse Supervisor" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 71,
-    "job_field_parent_id": 73,
-    "job_field_active": true
+    "jf_id": 74,
+    "jf_name": { "en": "Warehouse Supervisor" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 71,
+    "jf_parent_id": 73,
+    "jf_active": true
   },
   {
-    "job_field_id": 75,
-    "job_field_name": { "en": "Warehouse Operator" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 71,
-    "job_field_parent_id": 74,
-    "job_field_active": true
+    "jf_id": 75,
+    "jf_name": { "en": "Warehouse Operator" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 71,
+    "jf_parent_id": 74,
+    "jf_active": true
   },
   {
-    "job_field_id": 76,
-    "job_field_name": { "en": "Inbound Supervisor" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 72,
-    "job_field_parent_id": 71,
-    "job_field_active": true
+    "jf_id": 76,
+    "jf_name": { "en": "Inbound Supervisor" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 72,
+    "jf_parent_id": 71,
+    "jf_active": true
   },
   {
-    "job_field_id": 77,
-    "job_field_name": { "en": "Receiving Clerk" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 72,
-    "job_field_parent_id": 76,
-    "job_field_active": true
+    "jf_id": 77,
+    "jf_name": { "en": "Receiving Clerk" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 72,
+    "jf_parent_id": 76,
+    "jf_active": true
   },
   {
-    "job_field_id": 78,
-    "job_field_name": { "en": "Outbound Supervisor" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 73,
-    "job_field_parent_id": 71,
-    "job_field_active": true
+    "jf_id": 78,
+    "jf_name": { "en": "Outbound Supervisor" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 73,
+    "jf_parent_id": 71,
+    "jf_active": true
   },
   {
-    "job_field_id": 79,
-    "job_field_name": { "en": "Shipping Coordinator" },
-    "job_field_description": { "en": "" },
-    "job_field_department_id": 73,
-    "job_field_parent_id": 78,
-    "job_field_active": true
+    "jf_id": 79,
+    "jf_name": { "en": "Shipping Coordinator" },
+    "jf_description": { "en": "" },
+    "jf_department_id": 73,
+    "jf_parent_id": 78,
+    "jf_active": true
   }
 ]

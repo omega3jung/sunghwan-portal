@@ -18,6 +18,9 @@
 
 ---
 
+현재 프로젝트에서 category/settings는 도메인 기반으로 취급한다.
+전체 기업 정책 resolution은 REMOTE 확장 경로로 둔다.
+
 ## 핵심 개념
 
 카테고리는 **계층형 트리 구조**로 구성된다.
@@ -34,7 +37,7 @@ Client -> MainCategory -> SubCategory
 
 ### 1. Client
 
-- 테넌트(조직 또는 고객)를 나타낸다.
+- CLIENT(조직 또는 고객)를 나타낸다.
 - 서로 다른 클라이언트 간 완전한 분리를 보장한다.
 
 ---

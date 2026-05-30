@@ -93,7 +93,7 @@ src/
 
 1. [`docs/ko/README.md`](./docs/ko/README.md)
 2. [`docs/ko/02-architecture/feature-based-structure.md`](./docs/ko/02-architecture/feature-based-structure.md)
-3. [`docs/ko/03-domain/ticket-system-design.md`](./docs/ko/03-domain/ticket-system-design.md)
+3. [`docs/ko/03-domain/ticket/ticket-system-overview.md`](./docs/ko/03-domain/ticket/ticket-system-overview.md)
 4. [`docs/ko/08-dev-strategy/development-approach.md`](./docs/ko/08-dev-strategy/development-approach.md)
 
 ## 인증과 세션

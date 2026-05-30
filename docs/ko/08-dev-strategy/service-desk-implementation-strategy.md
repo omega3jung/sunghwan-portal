@@ -1,4 +1,4 @@
-﻿# Service Desk 구현 전략
+# Service Desk 구현 전략
 
 이 문서는 현재 포트폴리오 프로젝트에서 재설계된 서비스 데스크 영역을 구축하기 위해 추가된 **새로운 구현** 전략에 중점을 둡니다.
 
@@ -245,6 +245,12 @@ effective user = user currently being represented
 이렇게 하면 UI/API 계층은 effective user로 동작하면서도 감사/책임 추적을 위해 original actor를 보존할 수 있습니다.
 
 Service Desk에서 지원 담당자가 특정 사용자 관점 동작을 재현/점검해야 하므로 중요합니다.
+
+현재 권한 경계:
+
+- 최소 관리자(ADMIN) 권한을 가진 내부 사용자(INTERNAL)만 가장을 시작할 수 있습니다.
+- 가장 대상은 클라이언트(CLIENT) 사용자여야 합니다.
+- 이 규칙은 UI 구성 요소가 아닌 인증 계층에서 적용됩니다.
 
 ### 5.3 파생 소유권
 

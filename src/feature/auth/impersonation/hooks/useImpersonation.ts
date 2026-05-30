@@ -4,9 +4,10 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
+import { SessionUser } from "@/domain/auth";
+import { AppUser } from "@/domain/user";
 import { userImpersonationApi } from "@/feature/auth/impersonation/api";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { userProfileApi } from "@/feature/user/profile";
+import { useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 
 /**
@@ -20,15 +21,10 @@ import { useImpersonationStore } from "@/lib/impersonationStore";
  * @returns An impersonation facade containing originalUser, impersonatedUser, currentUser state, and control actions
  */
 export const useImpersonation = () => {
-  const { current } = useCurrentSession();
   const session = useSession();
-  const {
-    originalUser,
-    impersonatedUser,
-    currentUser,
-    syncFromSession,
-    reset,
-  } = useImpersonationStore();
+  const sessionUser = useAuthSessionStore((state) => state.user);
+  const { originalUser, impersonatedUser, currentUser, syncFromSession } =
+    useImpersonationStore();
 
   /**
    * Starts impersonation for a target user and refreshes the session with the returned impersonation payload.
@@ -37,12 +33,13 @@ export const useImpersonation = () => {
    * - Entering impersonation mode from an admin control flow
    * - Switching the current session context to another user
    *
-   * @param impersonatedUserId - The id of the user to impersonate
+   * @param impersonatedUsername - The username of the user to impersonate
    * @returns A promise that resolves after the impersonation request and session update complete
    */
-  const startImpersonation = async (impersonatedUserId: string) => {
-    const impersonation = await userImpersonationApi.start(impersonatedUserId);
-    await session.update(impersonation);
+  const startImpersonation = async (impersonatedUsername: string) => {
+    const impersonation =
+      await userImpersonationApi.start(impersonatedUsername);
+    await session.update({ impersonation });
   };
 
   /**
@@ -62,39 +59,89 @@ export const useImpersonation = () => {
 
   // Store synchronization when session changed.
   useEffect(() => {
-    if (!current?.user) {
-      reset();
+    if (!sessionUser) {
       return;
     }
 
-    const impersonatedUserId =
-      session.data?.impersonation?.impersonatedUserId ?? null;
+    const impersonatedUsername =
+      session.data?.impersonation?.impersonatedUser.username ?? null;
+    const originalUsername = session.data?.impersonation?.originalUser.username;
+    const sessionAuthUser = session.data?.user ?? null;
 
-    // impersonating.
-    if (impersonatedUserId) {
-      // ??if same impersonatedUser, then do nothing.
-      if (impersonatedUser?.id === impersonatedUserId) return;
+    if (impersonatedUsername) {
+      // Wait until the session-facing user has switched to the impersonated profile.
+      if (sessionUser.username !== impersonatedUsername) return;
 
-      // get impersonatedUser user.
-      userProfileApi.get(impersonatedUserId).then((impersonatedUserProfile) => {
-        syncFromSession({
-          originalUser: originalUser ?? current.user!,
-          impersonatedUser: impersonatedUserProfile,
-        });
+      const fallbackOriginalUser =
+        originalUsername && sessionAuthUser?.username === originalUsername
+          ? toAppUserFromSessionUser(sessionAuthUser)
+          : null;
+
+      const resolvedOriginalUser =
+        originalUser?.username === originalUsername
+          ? originalUser
+          : fallbackOriginalUser;
+
+      if (!resolvedOriginalUser) return;
+
+      if (
+        impersonatedUser?.username === sessionUser.username &&
+        originalUser?.username === resolvedOriginalUser.username &&
+        currentUser?.username === sessionUser.username
+      ) {
+        return;
+      }
+
+      syncFromSession({
+        originalUser: resolvedOriginalUser,
+        impersonatedUser: sessionUser,
       });
     } else {
-      syncFromSession({ originalUser: current.user, impersonatedUser: null });
+      // During stop impersonation, wait until the session user snaps back to original.
+      if (originalUser && sessionUser.username !== originalUser.username) {
+        return;
+      }
+
+      if (
+        !impersonatedUser &&
+        originalUser?.username === sessionUser.username &&
+        currentUser?.username === sessionUser.username
+      ) {
+        return;
+      }
+
+      syncFromSession({ originalUser: sessionUser, impersonatedUser: null });
     }
     // optimized to dependencies. Do not update this.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.user?.id, session.data?.impersonation?.impersonatedUserId]);
+  }, [
+    originalUser?.username,
+    sessionUser?.username,
+    session.data?.impersonation?.originalUser.username,
+    session.data?.impersonation?.impersonatedUser.username,
+    syncFromSession,
+  ]);
 
   return {
     originalUser,
     impersonatedUser,
     currentUser,
-    isImpersonating: !!session.data?.impersonation?.impersonatedUserId,
+    isImpersonating: !!session.data?.impersonation?.impersonatedUser.username,
     startImpersonation,
     stopImpersonation,
   };
 };
+
+function toAppUserFromSessionUser(user: SessionUser): AppUser {
+  return {
+    id: user.id,
+    username: user.username,
+    displayName: user.displayName,
+    email: user.email,
+    userScope: user.userScope,
+    companyId: user.companyId,
+    permission: user.permission,
+    canUseSuperUser: user.role === "ADMIN",
+    canUseImpersonation: user.role === "ADMIN",
+  };
+}

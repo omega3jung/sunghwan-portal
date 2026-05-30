@@ -5,7 +5,6 @@ import { SUPPORTED_LANGUAGES } from "@/app/config/language";
 import { datePickerLocales } from "@/components/custom/DatePicker/locales";
 import { fileAttachmentLocales } from "@/components/custom/FileAttachment/locales";
 import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
-import { leftMenuLocales } from "@/components/layout/LeftMenu/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
 import { DEFAULT_LANGUAGE } from "@/domain/config";
@@ -50,11 +49,6 @@ SUPPORTED_LANGUAGES.forEach((lng) => {
     true,
     false,
   );
-});
-
-// Left Menu.
-SUPPORTED_LANGUAGES.forEach((lng) => {
-  i18n.addResourceBundle(lng, "LeftMenu", leftMenuLocales[lng], true, false);
 });
 
 // Preferences Menu.

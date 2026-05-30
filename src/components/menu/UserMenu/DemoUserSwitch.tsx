@@ -1,4 +1,4 @@
-import { Contact, User, UserCog, UsersRound, UserStar } from "lucide-react";
+import { UsersRound } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,9 +11,11 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { clientProfiles, internalProfiles } from "@/mocks/domain/user";
+import { cn } from "@/shared/utils/presentation";
+
+import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
 type Props = {
   user: AppUser;
@@ -34,55 +36,47 @@ export function DemoUserSwitch(props: Props) {
     return clientProfiles.filter((profile) => profile.id !== user.id);
   }, [user.id]);
 
-  const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
-    switch (accessLevel) {
-      case "ADMIN":
-      case ACCESS_LEVEL.ADMIN:
-        return <UserStar />;
-
-      case "MANAGER":
-      case ACCESS_LEVEL.MANAGER:
-        return <UserCog />;
-
-      case "USER":
-      case ACCESS_LEVEL.USER:
-        return <User />;
-
-      default:
-        return <Contact />;
-    }
-  };
-
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger disabled={disabled}>
+      <DropdownMenuSubTrigger
+        disabled={disabled}
+        className={cn(
+          disabled && "cursor-not-allowed text-muted-foreground opacity-50",
+        )}
+      >
         <UsersRound />
         {t("demoUserSwitch")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuLabel>{t("internalUserSwitchLabel")}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
           {switchDemoUserProfiles.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(
+              profile.displayName,
+            );
             return (
               <DropdownMenuItem
-                key={`switch_${profile.displayName.replaceAll(" ", "_")}`}
+                key={`switch_${profile.id}`}
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`login${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("clientUserSwitchLabel")}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
           {switchClientUserProfiles.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(
+              profile.displayName,
+            );
             return (
               <DropdownMenuItem
-                key={`switch_${profile.displayName.replaceAll(" ", "_")}`}
+                key={`switch_${profile.id}`}
                 onClick={() => onDemoUserSwitch(profile)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`loginAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`login${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}

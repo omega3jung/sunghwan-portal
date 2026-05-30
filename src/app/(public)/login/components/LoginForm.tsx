@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,18 @@ import { NS } from "@/lib/i18n";
 import { loginFormSchema, LoginFormValues } from "../types";
 
 type LoginFormProps = {
+  errorMessage?: string | null;
   isLoading: boolean;
+  onInputChange?: () => void;
   onSubmit: (values: LoginFormValues) => Promise<void>;
 };
 
-export const LoginForm = ({ isLoading, onSubmit }: LoginFormProps) => {
+export const LoginForm = ({
+  errorMessage,
+  isLoading,
+  onInputChange,
+  onSubmit,
+}: LoginFormProps) => {
   const { t } = useTranslation(NS.auth);
 
   const form = useForm<LoginFormValues>({
@@ -45,28 +52,50 @@ export const LoginForm = ({ isLoading, onSubmit }: LoginFormProps) => {
                 <FieldLabel htmlFor="login-input-username">
                   {t("common.username")}
                 </FieldLabel>
-                <Input
-                  id="login-input-username"
-                  data-testid="login-username"
-                  disabled={isLoading}
-                  className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
-                  placeholder={t("common.usernamePlaceholder")}
-                  required
-                  {...form.register("username")}
+                <Controller
+                  name="username"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Input
+                      id="login-input-username"
+                      data-testid="login-username"
+                      disabled={isLoading}
+                      className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
+                      placeholder={t("common.usernamePlaceholder")}
+                      required
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(event) => {
+                        field.onChange(event);
+                        onInputChange?.();
+                      }}
+                    />
+                  )}
                 />
               </Field>
               <Field>
                 <FieldLabel htmlFor="login-input-password">
                   {t("common.password")}
                 </FieldLabel>
-                <Input
-                  id="login-input-password"
-                  disabled={isLoading}
-                  className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
-                  placeholder={t("common.passwordPlaceholder")}
-                  type="password"
-                  required
-                  {...form.register("password")}
+                <Controller
+                  name="password"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Input
+                      id="login-input-password"
+                      disabled={isLoading}
+                      className="h-12 w-full rounded-lg border border-primary bg-portal-accent placeholder:text-white"
+                      placeholder={t("common.passwordPlaceholder")}
+                      type="password"
+                      required
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(event) => {
+                        field.onChange(event);
+                        onInputChange?.();
+                      }}
+                    />
+                  )}
                 />
               </Field>
             </FieldGroup>
@@ -88,6 +117,9 @@ export const LoginForm = ({ isLoading, onSubmit }: LoginFormProps) => {
               )}
             </Button>
           </Field>
+          {errorMessage ? (
+            <p className="text-center text-sm text-red-300">{errorMessage}</p>
+          ) : null}
         </FieldGroup>
       </form>
     </div>

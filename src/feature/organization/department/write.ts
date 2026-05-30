@@ -9,8 +9,8 @@ type DepartmentWriteFields = Pick<
   "name" | "code" | "description" | "parentId" | "active"
 >;
 
-type DbDepartmentWriteInput = Omit<DbDepartment, "department_id"> & {
-  department_id?: number | null;
+type DbDepartmentWriteInput = Omit<DbDepartment, "d_id"> & {
+  d_id?: number | null;
 };
 
 export type CreateDepartmentInput = DepartmentWriteFields & { id?: string };
@@ -20,12 +20,12 @@ export function toDepartmentWritePayload(
   input: CreateDepartmentInput | UpdateDepartmentInput,
 ): DbDepartmentWriteInput {
   return {
-    department_id: idToNumber(input.id),
-    department_name: input.name,
-    department_code: undefinedToNull(input.code),
-    department_description: undefinedToNull(input.description),
-    department_parent_id: idToNumber(input.parentId),
-    department_active: input.active,
+    d_id: idToNumber(input.id),
+    d_name: input.name,
+    d_code: undefinedToNull(input.code),
+    d_description: undefinedToNull(input.description),
+    d_parent_id: idToNumber(input.parentId),
+    d_active: input.active,
   };
 }
 

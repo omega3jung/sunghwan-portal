@@ -1,5 +1,6 @@
 ﻿import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
+import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 import {
   adminEmployee,
@@ -9,18 +10,17 @@ import {
   userEmployee,
 } from "../organization/employee/demoUser";
 import { INTERNAL_DEMO_USER_IDS } from "./data.ids";
-import { displayNameMapper, toAuth, toProfile } from "./mapper";
+import { toAuth, toProfile } from "./mapper";
 import { DemoAuthProfileSeed } from "./types";
 
 export const adminData = {
   id: INTERNAL_DEMO_USER_IDS.ADMIN.ID,
-  employeeId: adminEmployee.employee_id,
-  username: adminEmployee.employee_user_name,
-  displayName: displayNameMapper(adminEmployee.employee_name.en),
-  email: adminEmployee.employee_email,
+  username: INTERNAL_DEMO_USER_IDS.ADMIN.USER_NAME,
+  displayName: displayNameMapper(adminEmployee.e_name),
+  email: adminEmployee.e_email,
   accessToken: INTERNAL_DEMO_USER_IDS.ADMIN.TOKEN,
   userScope: "INTERNAL",
-  companyId: adminEmployee.employee_company_id.toString(),
+  companyId: adminEmployee.e_company_id,
   permission: 9,
   role: "ADMIN",
   canUseSuperUser: null,
@@ -32,13 +32,12 @@ export const adminProfile = toProfile(adminData);
 
 export const managerData = {
   id: INTERNAL_DEMO_USER_IDS.MANAGER.ID,
-  employeeId: managerEmployee.employee_id,
-  username: managerEmployee.employee_user_name,
-  displayName: displayNameMapper(managerEmployee.employee_name.en),
-  email: managerEmployee.employee_email,
+  username: INTERNAL_DEMO_USER_IDS.MANAGER.USER_NAME,
+  displayName: displayNameMapper(managerEmployee.e_name),
+  email: managerEmployee.e_email,
   accessToken: INTERNAL_DEMO_USER_IDS.MANAGER.TOKEN,
   userScope: "INTERNAL",
-  companyId: managerEmployee.employee_company_id.toString(),
+  companyId: managerEmployee.e_company_id,
   permission: 7,
   role: "MANAGER",
   canUseSuperUser: null,
@@ -50,14 +49,13 @@ export const managerProfile = toProfile(managerData);
 
 export const leaderData = {
   id: INTERNAL_DEMO_USER_IDS.LEADER.ID,
-  employeeId: leaderEmployee.employee_id,
-  username: leaderEmployee.employee_user_name,
-  displayName: displayNameMapper(leaderEmployee.employee_name.en),
-  email: leaderEmployee.employee_email,
+  username: INTERNAL_DEMO_USER_IDS.LEADER.USER_NAME,
+  displayName: displayNameMapper(leaderEmployee.e_name),
+  email: leaderEmployee.e_email,
   accessToken: INTERNAL_DEMO_USER_IDS.MANAGER.TOKEN,
   userScope: "INTERNAL",
-  companyId: leaderEmployee.employee_company_id.toString(),
-  permission: 7,
+  companyId: leaderEmployee.e_company_id,
+  permission: 5,
   role: "MANAGER",
   canUseSuperUser: null,
   canUseImpersonation: null,
@@ -68,13 +66,12 @@ export const leaderProfile = toProfile(leaderData);
 
 export const userData = {
   id: INTERNAL_DEMO_USER_IDS.USER.ID,
-  employeeId: userEmployee.employee_id,
-  username: userEmployee.employee_user_name,
-  displayName: displayNameMapper(userEmployee.employee_name.en),
-  email: userEmployee.employee_email,
+  username: INTERNAL_DEMO_USER_IDS.USER.USER_NAME,
+  displayName: displayNameMapper(userEmployee.e_name),
+  email: userEmployee.e_email,
   accessToken: INTERNAL_DEMO_USER_IDS.USER.TOKEN,
   userScope: "INTERNAL",
-  companyId: userEmployee.employee_company_id.toString(),
+  companyId: userEmployee.e_company_id,
   permission: 3,
   role: "USER",
   canUseSuperUser: null,
@@ -86,13 +83,12 @@ export const userProfile = toProfile(userData);
 
 export const guestData = {
   id: INTERNAL_DEMO_USER_IDS.GUEST.ID,
-  employeeId: guestEmployee.employee_id,
-  username: guestEmployee.employee_user_name,
-  displayName: displayNameMapper(guestEmployee.employee_name.en),
-  email: guestEmployee.employee_email,
+  username: INTERNAL_DEMO_USER_IDS.GUEST.USER_NAME,
+  displayName: displayNameMapper(guestEmployee.e_name),
+  email: guestEmployee.e_email,
   accessToken: INTERNAL_DEMO_USER_IDS.GUEST.TOKEN,
   userScope: "INTERNAL",
-  companyId: guestEmployee.employee_company_id.toString(),
+  companyId: guestEmployee.e_company_id,
   permission: 1,
   role: "GUEST",
   canUseSuperUser: null,
@@ -102,7 +98,7 @@ export const guestData = {
 export const guestAuth = toAuth(guestData);
 export const guestProfile = toProfile(guestData);
 
-export const internalAuths: Omit<AuthUser, "dataScope">[] = [
+export const internalAuths: AuthUser[] = [
   adminAuth,
   managerAuth,
   leaderAuth,

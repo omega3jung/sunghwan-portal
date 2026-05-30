@@ -246,6 +246,12 @@ This allows the UI and API layer to act using the effective user while preservin
 
 This matters for Service Desk systems because support staff often need to reproduce or inspect user-specific behavior.
 
+Current authorization boundary:
+
+- only `INTERNAL` users with at least `ADMIN` access can start impersonation
+- impersonation target must be a `TENANT` user
+- the rule is enforced in the auth layer, not in UI components
+
 ### 5.3 Derived Ownership
 
 Ticket ownership is calculated from the current session and ticket data rather than stored as a fixed field.

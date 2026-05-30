@@ -35,7 +35,7 @@ export const initials = (name: string, maxLength = 2) => {
       .filter(Boolean)
       .join("")
       .slice(0, maxLength);
-  } catch (e) {
+  } catch {
     return name[0].slice(0, maxLength);
   }
 };

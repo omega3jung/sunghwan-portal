@@ -11,6 +11,7 @@ It aims to:
 - Support both page-based and overlay-based UI patterns
 - Maintain predictable navigation behavior
 - Enable deep linking for all critical views
+- Keep UI independent from LOCAL/REMOTE runtime branching
 
 ---
 
@@ -171,6 +172,22 @@ All critical states are accessible via URL.
 - Prevents predictable ID access
 - Improves security
 - Avoids collision issues in distributed systems
+
+---
+
+## Route Handler Orchestration
+
+Next.js route handlers are used as orchestration boundaries:
+
+```txt
+route.ts
+-> authenticate / check session
+-> decide LOCAL or REMOTE
+-> call local handler or remote proxy
+```
+
+This keeps runtime branching out of UI components and keeps the remote path
+extension-ready.
 
 ---
 

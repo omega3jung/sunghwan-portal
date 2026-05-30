@@ -5,8 +5,8 @@
       "enterpriseBadge": "Demostración del portal empresarial",
       "title": "Esta es la página de inicio del espacio de trabajo para operaciones de servicio, documentos de referencia y configuración de la plataforma.",
       "description": {
-        "local": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En la demostración local, puedes revisar los límites de acceso y las acciones disponibles según el rol (ADMIN, MANAGER, LEADER, USER, GUEST).",
-        "remote": "Esta página es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En el modo remoto, puedes revisar flujos de permisos más cercanos a una operación real combinando el Role con la relación del usuario con cada ticket."
+        "local": "En la demostración local, el comportamiento de permisos se simplifica: ADMIN tiene acceso amplio, mientras que las acciones de tickets para usuarios que no son ADMIN dependen de la relación del usuario con cada ticket.",
+        "remote": "Esta página de inicio es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En modo remoto, puedes revisar flujos de permisos más cercanos a operaciones reales de servicio combinando el rol con la relación del usuario con cada ticket."
       },
       "actions": {
         "openServiceDesk": "Abrir Service Desk",
@@ -23,46 +23,46 @@
       "currentScope": {
         "title": "Alcance actual",
         "description": {
-          "local": "En la demostración local, puedes explorar el flujo de Service Desk, los documentos y las pantallas de configuración, mientras que las verificaciones de permisos se simplifican con reglas basadas en Role.",
-          "remote": "En modo Remote, el flujo de Service Desk, los documentos y las pantallas de configuración pueden conectarse a API reales, mientras que el comportamiento de permisos refleja tanto el Role como las relaciones del usuario."
+          "local": "En la demostración local, Service Desk y la configuración usan flujos basados en mocks, mientras que los documentos permanecen disponibles como pantallas de referencia. Los permisos se simplifican: ADMIN tiene acceso amplio y las acciones de tickets para usuarios que no son ADMIN dependen de relaciones con el ticket.",
+          "remote": "En modo remoto, el flujo de Service Desk, los documentos y las pantallas de configuración pueden conectarse a API reales, mientras que el comportamiento de permisos refleja tanto el rol como las relaciones del usuario."
         }
       },
       "architectureNotes": {
         "local": {
           "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
-          "note2": "En la demostración local, los menús y las acciones disponibles cambian según los roles ADMIN, MANAGER, LEADER, USER y GUEST.",
-          "note3": "Los permisos basados en relaciones organizacionales, las restricciones basadas en la relación con el ticket y la integración con API remotas se separan para poder validarse con mayor precisión en modo Remote."
+          "note2": "En la demostración local, los permisos se simplifican intencionalmente: ADMIN tiene acceso amplio y las acciones de usuarios que no son ADMIN requieren una relación con el ticket, como solicitante, responsable asignado u otro participante relevante.",
+          "note3": "La bifurcación de runtime se orquesta mediante route handlers (LOCAL handler vs REMOTE proxy), para que la UI pueda mantener un flujo consistente entre modos."
         },
         "remote": {
           "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
-          "note2": "En modo Remote, el alcance de acceso se determina considerando no solo el Role, sino también relaciones como solicitante, responsable y aprobador.",
+          "note2": "En modo remoto, el alcance de acceso se determina considerando no solo el rol, sino también relaciones como solicitante, responsable asignado y aprobador.",
           "note3": "Los datos de tickets, documentos, aprobaciones, asignaciones y configuración se conectan mediante límites reales de API para ofrecer un flujo más cercano a un entorno operativo."
         }
       }
     },
     "quickActions": {
       "title": "Acciones rápidas",
-      "description": "Abre las principales áreas de trabajo que probablemente necesite justo después de iniciar sesión.",
+      "description": "Abre las principales áreas de trabajo que probablemente necesites justo después de iniciar sesión.",
       "openWorkspace": "Abrir espacio de trabajo",
       "items": {
         "serviceDesk": {
           "title": "Service Desk",
-          "description": "Explora tickets, revise el estado de la cola y continúe el trabajo actual.",
+          "description": "Explora tickets, revisa el estado de la cola y continúa el trabajo actual.",
           "meta": "Espacio central"
         },
         "documentation": {
           "title": "Documentación",
-          "description": "Abra notas de trabajo, referencias de diseño y documentación de implementación.",
+          "description": "Abre notas de trabajo, referencias de diseño y documentación de implementación.",
           "meta": "Centro de conocimiento"
         },
         "systemSettings": {
           "title": "Configuración del sistema",
-          "description": "Revise áreas de configuración del portal y preferencias operativas.",
+          "description": "Revisa áreas de configuración del portal y ajustes operativos del servicio.",
           "meta": "Administración"
         },
         "serviceDeskSetup": {
           "title": "Configuración de Service Desk",
-          "description": "Revisa categorías, pasos de aprobación y la estructura de reglas de asignación.",
+          "description": "Revisa categorías, pasos de aprobación, reglas de asignación y configuración relacionada con SLA.",
           "meta": "Configuración de la plataforma"
         }
       }
@@ -102,7 +102,7 @@
         },
         "authSessionFlow": {
           "title": "Flujo de autenticación y sesión",
-          "description": "Experiencia de inicio de sesión, manejo de redirecciones y comportamiento del shell protegido.",
+          "description": "Experiencia de inicio de sesión, manejo de redirecciones y separación de AuthUser/SessionUser/AppUser con impersonation consciente de la sesión.",
           "category": "Arquitectura",
           "status": "Enfoque actual"
         },
@@ -129,8 +129,8 @@
         "title": "Objetivos principales de experiencia",
         "items": {
           "goal1": "Navegación clara del primer paso después de la autenticación",
-          "goal2": "Densidad de información equilibrada sin sobrecargar el panel",
-          "goal3": "Sustitución sencilla del contenido resumido simulado por datos reales más adelante"
+          "goal2": "Mantener la UI independiente del runtime gestionando la bifurcación LOCAL y REMOTE en los route handlers",
+          "goal3": "Preparar el reemplazo del contenido resumido basado en mocks por datos del espacio de trabajo respaldados por API/base de datos en etapas posteriores"
         }
       },
       "nextIntegrations": {

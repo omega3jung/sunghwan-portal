@@ -9,24 +9,24 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 // back-end data structures.
 export interface DbDepartment {
-  department_id: number;
-  department_name: LocalizedText;
-  department_code: string | null; // HR, IT, QC.
-  department_description: LocalizedText | null;
-  department_parent_id: number | null;
-  department_active: boolean;
+  d_id: number;
+  d_name: LocalizedText;
+  d_code: string | null; // HR, IT, QC.
+  d_description: LocalizedText | null;
+  d_parent_id: number | null;
+  d_active: boolean;
 }
 
 export const camelDepartmentMapper: ArrayMapper<DbDepartment, Department> = (
   data,
 ) => {
   return data.map((item) => ({
-    id: item.department_id.toString(),
-    name: item.department_name,
-    code: nullToUndefined(item.department_code),
-    description: nullToUndefined(item.department_description),
-    parentId: numberToId(item.department_parent_id),
-    active: item.department_active,
+    id: item.d_id.toString(),
+    name: item.d_name,
+    code: nullToUndefined(item.d_code),
+    description: nullToUndefined(item.d_description),
+    parentId: numberToId(item.d_parent_id),
+    active: item.d_active,
   }));
 };
 
@@ -34,12 +34,12 @@ export const snakeDepartmentMapper: ArrayMapper<Department, DbDepartment> = (
   data,
 ) => {
   return data.map((item) => ({
-    department_id: parseInt(item.id),
-    department_name: item.name,
-    department_code: undefinedToNull(item.code),
-    department_description: undefinedToNull(item.description),
-    department_parent_id: idToNumber(item.parentId),
-    department_active: item.active,
+    d_id: parseInt(item.id),
+    d_name: item.name,
+    d_code: undefinedToNull(item.code),
+    d_description: undefinedToNull(item.description),
+    d_parent_id: idToNumber(item.parentId),
+    d_active: item.active,
   }));
 };
 

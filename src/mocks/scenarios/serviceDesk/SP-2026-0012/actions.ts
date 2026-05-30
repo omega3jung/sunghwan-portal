@@ -10,7 +10,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Hola, Isabella. ¿Podrías darnos más detalles sobre qué información debe incluirse?",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-27T08:20:00Z",
     updated_at: null,
@@ -26,7 +26,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Debe incluir el ID de recepción, la fecha de recepción, IMEI, SKU, ID del empleado, estado y ubicación actual.",
-    owner_id: "53",
+    owner_id: "liam_williams",
 
     created_at: "2026-03-27T08:41:12Z",
     updated_at: null,
@@ -42,7 +42,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Aquí está el informe. Si necesitan ayuda, por favor avísennos. Gracias.",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-27T09:15:11Z",
     updated_at: null,

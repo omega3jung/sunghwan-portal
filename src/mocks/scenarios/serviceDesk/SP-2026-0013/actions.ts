@@ -10,7 +10,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Hola, Liam.<br>Ten en cuenta que esta solicitud puede tardar hasta 3 días según el SLA.<br>Tenemos que revisar la configuración de la impresora y validar la salida de la etiqueta.",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-27T01:23:18Z",
     updated_at: null,
@@ -25,7 +25,7 @@ export const actions: DbTicketAction[] = [
 
     action_type: "COMMENT",
     content: "Entendido. Avísame cuando hayas terminado.",
-    owner_id: "53",
+    owner_id: "liam_williams",
 
     created_at: "2026-03-27T01:40:42Z",
     updated_at: null,
@@ -41,7 +41,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Hola, Mason Kwon. ¿Podrías configurar una impresora para el equipo de reparaciones y comprobar que imprima correctamente?<br>Ya terminé de configurar este código de barras en el sistema y verifiqué que se imprime a través del archivo PDF.",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-30T01:12:20Z",
     updated_at: null,
@@ -57,7 +57,7 @@ export const actions: DbTicketAction[] = [
     action_type: "NOTE",
     content:
       "Hola.<br><br>El código de barras en sí es correcto, pero el ancho de la etiqueta es demasiado pequeño,<br>lo que provoca que el lado derecho se corte durante la impresión.<br><br>He pedido etiquetas más anchas y actualizaré cuando las reciba.",
-    owner_id: "43",
+    owner_id: "mason_kwon",
 
     created_at: "2026-03-30T01:48:10Z",
     updated_at: null,

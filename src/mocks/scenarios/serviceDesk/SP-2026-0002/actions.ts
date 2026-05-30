@@ -1,4 +1,4 @@
-﻿import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
 
 import { ticket } from "./ticket";
 
@@ -10,7 +10,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Hi, isabella. Could you give an details what info should be include?",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-27T08:20:00Z",
     updated_at: null,
@@ -26,7 +26,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "It should have receive ID, receive date, IMEI, SKU, employee ID, status and current location.",
-    owner_id: "53",
+    owner_id: "liam_williams",
 
     created_at: "2026-03-27T08:41:12Z",
     updated_at: null,
@@ -42,7 +42,7 @@ export const actions: DbTicketAction[] = [
     action_type: "COMMENT",
     content:
       "Here's the report. If you need any help, please let us know. Thank you.",
-    owner_id: "41",
+    owner_id: "evan_seo",
 
     created_at: "2026-03-27T09:15:11Z",
     updated_at: null,

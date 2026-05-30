@@ -44,6 +44,7 @@ Prefer server state over client state whenever possible
 - 티켓 상세 정보
 - 카테고리 데이터
 - 사용자 프로필 데이터
+- 로컬 데모에서 변경 가능한 티켓/설정 상태 (서버 측 메모리 내 모듈)
 
 ---
 
@@ -232,10 +233,19 @@ staleTime: Infinity;
 #### Dynamic Data
 
 - 자주 갱신되는 데이터(예: 티켓 목록)
+- LOCAL runtime의 mutable demo 데이터 경로를 포함한다.
 
 ```ts id="dynamic-query"
 refetchOnWindowFocus: true;
 staleTime: 0;
+```
+
+LOCAL demo 모드에서는 mutation이 server-side in-memory state를 변경할 수 있으므로,
+React Query cache reset만으로는 상태를 완전히 되돌릴 수 없다.
+demo reset은 아래 endpoint를 통해 orchestration되어야 한다.
+
+```txt
+/api/demo/service-desk/reset
 ```
 
 ---
@@ -285,11 +295,11 @@ const mutation = useMutation({
 
 ### Local vs Global
 
-| State Type | Location |
-| --- | --- |
-| 컴포넌트 전용 상태 | `useState` |
-| 기능 범위 상태 | Zustand |
-| 앱 전역 상태 | Zustand (제한적으로) |
+| State Type         | Location                            |
+| ------------------ | ----------------------------------- |
+| 컴포넌트 전용 상태 | `useState`                          |
+| 기능 범위 상태     | Zustand                             |
+| 앱 전역 상태       | Zustand (제한적으로)                |
 | Page local session | Feature hook + `sessionStorage`/URL |
 
 ---
@@ -430,11 +440,11 @@ const { value, setValue, reset } = useTicketSearchCriteriaState();
 - 컴포넌트는 storage API가 아니라 의미 있는 훅을 소비해야 한다.
 - 여러 시스템이 `sessionStorage`를 사용하더라도 논리적으로 분리되어야 한다.
 
-| Purpose | Owner |
-| --- | --- |
-| Auth session | `authSessionStore` |
-| UI persistence | `useSessionStorageState` |
-| Navigation state | URL |
+| Purpose          | Owner                    |
+| ---------------- | ------------------------ |
+| Auth session     | `authSessionStore`       |
+| UI persistence   | `useSessionStorageState` |
+| Navigation state | URL                      |
 
 Prefer:
 

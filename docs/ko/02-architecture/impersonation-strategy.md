@@ -100,9 +100,15 @@ impersonation은 **세션 레벨**에서 처리됩니다.
 session = {
   user: originalUser,
   impersonation: {
-    originalUserId,
-    impersonatedUserId,
-  },
+    originalUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    impersonatedUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    activatedAt,
 };
 ```
 
@@ -193,6 +199,7 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 - 권한 검증은 신중하게 수행되어야 함
 - 시스템은 privilege escalation을 방지해야 함
 - current user가 바뀌더라도 original user는 항상 식별 가능해야 함
+- 권한 부여 규칙은 UI 구성 요소가 아닌 인증 계층에서 적용됩니다.
 
 ---
 
@@ -204,7 +211,10 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ---
 
-## Audit Strategy
+### Current Authorization Boundary
+
+- 관리자 권한 이상을 가진 내부 사용자만 가장을 시작할 수 있습니다.
+- 가장 대상은 테넌트 사용자여야 합니다.
 
 ### Requirement
 
@@ -214,8 +224,9 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Stored Context
 
-- `originalUserId`
-- `currentUserId`
+- `originalUser.username` (심사/보안 키)
+- `impersonatedUser.username` (활성된 사용자 컨텍스트 키)
+- `originalUser.id` and `impersonatedUser.id` (인증/계정 식별자)
 
 ---
 

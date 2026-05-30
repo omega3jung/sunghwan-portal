@@ -1,49 +1,56 @@
 import axios from "axios";
 
+import { authApiJson } from "@/app/api/_helpers/authApiJson";
 import { AuthUser } from "@/domain/auth";
-import client from "@/lib/api";
-import { resolveClientAuth, resolveDemoAuth } from "@/mocks/domain/user";
+import { resolveDemoAuth } from "@/mocks/domain/user";
 
 export type LoginResponse = AuthUser;
-type RawLoginResponse = Omit<AuthUser, "companyId" | "employeeId"> & {
-  employeeId?: number | string | null;
-  companyId?: string | null;
-  clientId?: string | null;
-};
 
 // process login.
 export const loginApi = async ({
   username,
   password,
+  mode = "login",
 }: {
   username: string;
   password: string;
+  mode?: "login" | "demo";
 }): Promise<LoginResponse> => {
   try {
-    // demo login
-    const demoAuth = resolveDemoAuth(username);
+    if (mode === "demo") {
+      // demo login
+      const demoAuth = resolveDemoAuth(username);
 
-    if (demoAuth) {
-      console.log(demoAuth.displayName);
-      return normalizeAuthUser({ ...demoAuth, dataScope: "LOCAL" });
+      if (demoAuth) {
+        return demoAuth;
+      }
+
+      throw new Error("INVALID_CREDENTIALS");
     }
-
-    // client demo login
-    const clientDemoAuth = resolveClientAuth(username);
-
-    if (clientDemoAuth) {
-      console.log(clientDemoAuth.displayName);
-      return normalizeAuthUser({ ...clientDemoAuth, dataScope: "LOCAL" });
-    }
-
-    console.log("real login");
 
     // real login
-    const res = await client.api.post<RawLoginResponse>("/auth/login", {
-      username,
-      password,
+    const response = await authApiJson({
+      method: "POST",
+      path: "/auth/login",
+      body: { username, password },
+      errorMessage: "Failed to verify login credentials",
     });
-    return normalizeAuthUser({ ...res.data, dataScope: "REMOTE" });
+
+    if (!response.ok) {
+      throw new Error("INVALID_CREDENTIALS");
+    }
+
+    const payload = (await response.json()) as {
+      data?: AuthUser | null;
+    };
+
+    const verifiedUser = payload.data ?? null;
+
+    if (!verifiedUser || verifiedUser.userScope !== "INTERNAL") {
+      throw new Error("INVALID_CREDENTIALS");
+    }
+
+    return verifiedUser;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
@@ -53,29 +60,3 @@ export const loginApi = async ({
     throw error;
   }
 };
-
-function normalizeAuthUser(user: RawLoginResponse): AuthUser {
-  const { companyId, clientId, employeeId, ...rest } = user;
-
-  return {
-    ...rest,
-    employeeId: resolveEmployeeId(employeeId),
-    companyId: companyId ?? clientId ?? "",
-  };
-}
-
-function resolveEmployeeId(value: number | string | null | undefined) {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value);
-
-    if (Number.isFinite(parsed)) {
-      return parsed;
-    }
-  }
-
-  return null;
-}

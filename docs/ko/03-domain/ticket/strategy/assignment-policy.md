@@ -15,6 +15,11 @@
 
 ---
 
+Scope note:
+- LOCAL demo는 단순화된 role-aware/relationship 기반 권한 규칙을 사용한다.
+- 조직/부서/job-field 기반 full rule resolution은 REMOTE 확장 경로다.
+
+
 ## 핵심 개념
 
 할당은 기본적으로 **카테고리 중심(category-driven)** 으로 결정된다.

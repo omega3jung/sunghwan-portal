@@ -17,7 +17,6 @@ export const authorize = async (credentials?: {
 
     return {
       id: user.id,
-      employeeId: user.employeeId,
       username: user.username,
       displayName: user.displayName,
       email: user.email,
@@ -28,7 +27,7 @@ export const authorize = async (credentials?: {
       permission: user.permission,
       role: user.role,
     };
-  } catch (error) {
+  } catch {
     // ❗ CredentialsProvider does not allow throwing errors.
     return null;
   }

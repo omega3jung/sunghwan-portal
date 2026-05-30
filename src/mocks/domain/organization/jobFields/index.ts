@@ -15,12 +15,12 @@ export const jobFieldsMock: DbJobField[] = [
 export const allJobFieldsMock: DbJobField[] = [
   /*  Company  */
   {
-    job_field_id: 0,
-    job_field_name: { en: "Company" },
-    job_field_description: { en: "" },
-    job_field_department_id: 0,
-    job_field_parent_id: null,
-    job_field_active: true,
+    jf_id: 0,
+    jf_name: { en: "Company" },
+    jf_description: { en: "" },
+    jf_department_id: 0,
+    jf_parent_id: null,
+    jf_active: true,
   },
   ...jobFieldsMock,
 ];

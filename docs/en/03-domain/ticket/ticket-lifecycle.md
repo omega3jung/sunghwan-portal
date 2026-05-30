@@ -250,7 +250,7 @@ Examples:
 | pause or hold work     | `Working`                                               | `Pending`  |
 | resume work            | `Pending`                                               | `Working`  |
 | reject                 | `Working` or `Pending`                                  | `Rejected` |
-| reopen                 | `Resolved`                                              | `Reopen`   |
+| requestReview / reopen | `Resolved`                                              | `Reopen`   |
 | resubmit               | `Rejected`                                              | `Open`     |
 | manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
 | merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
@@ -336,7 +336,7 @@ The current implementation rules define merge-driven closure explicitly.
 
 Other closure policies, such as requester confirmation or auto-close review
 windows, may be added later, but they are not currently defined in
-[`Ticket Rules`](../../08-dev-strategy/ticket-rules.md).
+[`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md).
 
 ---
 

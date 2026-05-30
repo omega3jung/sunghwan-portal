@@ -1,4 +1,4 @@
-﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 import { ticket } from "./ticket";
 
@@ -10,7 +10,7 @@ export const histories: DbTicketHistory[] = [
     type: "TICKET",
     action: "CREATED",
 
-    actor_id: "53",
+    actor_id: "liam_williams",
     action_no: null,
 
     created_at: "2026-04-02T06:13:27Z",
@@ -37,7 +37,7 @@ export const histories: DbTicketHistory[] = [
     type: "STATUS",
     action: "UPDATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: null,
 
     from_value: "Open",
@@ -52,7 +52,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: "1",
 
     created_at: "2026-04-02T06:22:11Z",
@@ -64,7 +64,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "53",
+    actor_id: "liam_williams",
     action_no: "2",
 
     created_at: "2026-04-02T06:25:44Z",
@@ -76,7 +76,7 @@ export const histories: DbTicketHistory[] = [
     type: "TRACK_TIME",
     action: "UPDATED",
 
-    actor_id: "31",
+    actor_id: "daniel_kim",
     action_no: null,
 
     created_at: "2026-04-02T07:09:20Z",
@@ -88,7 +88,7 @@ export const histories: DbTicketHistory[] = [
     type: "TICKET",
     action: "TICKET_MERGED",
 
-    actor_id: "31",
+    actor_id: "daniel_kim",
     action_no: null,
 
     metadata: {
@@ -107,7 +107,7 @@ export const histories: DbTicketHistory[] = [
     type: "STATUS",
     action: "UPDATED",
 
-    actor_id: "31",
+    actor_id: "daniel_kim",
     action_no: null,
 
     from_value: "Working",
@@ -128,7 +128,7 @@ export const histories: DbTicketHistory[] = [
     type: "TICKET",
     action: "TICKET_MERGED",
 
-    actor_id: "31",
+    actor_id: "daniel_kim",
     action_no: "3",
 
     created_at: "2026-04-02T07:13:18Z",

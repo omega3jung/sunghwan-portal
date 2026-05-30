@@ -73,17 +73,11 @@ Each feature encapsulates:
 
 ```bash id="feature-structure"
 src/
-  app/
-    service-desk/
-      page.tsx
-
-  feature/
-    serviceDesk/
-      components/
-      api/
-      hooks/
-      types/
-      utils/
+  app/        # routing layer
+  domain/     # domain models and rules
+  feature/    # feature workflows and UI
+  server/     # server-side local/demo logic
+  shared/     # reusable utilities and components
 ```
 
 ---
@@ -136,6 +130,7 @@ feature/serviceDesk/
 
 - API calls and mutations
 - Encapsulates backend interaction
+- Split into server-safe helpers and client-only wrappers when needed
 
 ```ts id="api-example"
 export const serviceDeskTicketApi = {
@@ -248,6 +243,40 @@ Prefer server state over client state whenever possible
 
 - Prevent tight coupling
 - Maintain independence of features
+
+---
+
+## Barrel Export Policy
+
+Barrel files are treated as explicit public contracts.
+
+Rule:
+
+```txt
+Barrel file != dumping ground
+```
+
+Service Desk direction:
+
+```txt
+feature/serviceDesk/ticket/index.ts
+-> constants, mapper, mock, types
+
+feature/serviceDesk/ticket/components/index.ts
+-> UI components
+
+feature/serviceDesk/ticket/api/index.ts
+-> server-safe API helpers
+
+feature/serviceDesk/ticket/api/client.ts
+-> client-only API exports
+```
+
+Client-only shared utilities should be separated under boundaries such as:
+
+```txt
+src/shared/client/
+```
 
 ---
 

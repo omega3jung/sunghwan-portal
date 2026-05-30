@@ -12,6 +12,11 @@ It ensures:
 - Reduced coordination overhead
 - Scalable workload distribution
 
+Scope note:
+
+- LOCAL demo uses simplified role-aware permission checks and relation-based access.
+- Full organizational/department/job-field resolution is the REMOTE extension path.
+
 ---
 
 ## Core Concept

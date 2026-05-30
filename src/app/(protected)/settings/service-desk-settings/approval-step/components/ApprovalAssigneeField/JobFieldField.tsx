@@ -50,7 +50,7 @@ export function JobFieldField({ stepAssignee, onChange, language }: Props) {
     }
 
     return jobFieldGroup;
-  }, [jobFields, language]);
+  }, [jobFields, tLocal]);
 
   return (
     <Field className="col-span-2">

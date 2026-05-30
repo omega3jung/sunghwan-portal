@@ -1,4 +1,4 @@
-# Action Strategy
+﻿# Action Strategy
 
 ## 목표
 
@@ -114,11 +114,11 @@ Activity = Communication + Operation
 
 ---
 
-### 3. Reason Is Optional but Encouraged
+### 3. Reason Content Is Required
 
-- Reason은 의사결정 컨텍스트를 더해줍니다.
-- rejection 같은 중요한 action에는 reason이 필요합니다.
-- 가벼운 action에서는 optional로 둘 수 있습니다.
+- 모든 티켓 액션에는 이유 설명이 필수입니다.
+- 커뮤니케이션 및 운영 조치 모두 이 규칙을 따릅니다.
+- 자동 생성된 티켓 액션에도 구체적인 설명이 저장됩니다.
 
 ---
 
@@ -206,7 +206,9 @@ metadata: { field: "priority", value: "high" }
 #### Good
 
 ```ts
-metadata: { priority: "high" }
+metadata: {
+  priority: "high";
+}
 ```
 
 ---
@@ -260,10 +262,10 @@ communication = action
 
 ### 1. Full Activity Log
 
-모든 action은 append-oriented 운영 기록으로 보존되어야 합니다.
-
-- 일반 workflow에서 파괴적 삭제 없음
-- review와 debugging을 위해 action을 계속 조회 가능
+- only `comment` and `note` are editable/deletable under author rules
+- operational actions are immutable
+- in `Closed`, no action can be edited or deleted
+- delete is soft-delete (`active = false`) for mutable communication items
 
 ---
 
@@ -294,7 +296,7 @@ Reason content는 의사결정을 설명해 주며 특히 다음에서 중요합
 
 - `resolve`
 - `close`
-- `reopen`
+- `requestReview` / `reopen`
 - `escalate`
 - `reassign`
 - approval-related actions
