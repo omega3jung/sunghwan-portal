@@ -46,7 +46,7 @@ export function DemoImpersonation(props: Props) {
 
   const impersonationClientCandidates = useMemo<AuthUser[]>(() => {
     return clientAuths.filter((auth) => filterUser(auth.username));
-  }, []);
+  }, [filterUser]);
 
   return (
     <DropdownMenuSub>

@@ -2,7 +2,10 @@ import { ChevronRight, Settings2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { useSession } from "next-auth/react";
+import { MouseEvent, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
@@ -33,8 +36,26 @@ import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";
 import { LeftMenuSkeleton } from "./MenuSkeleton";
 
+function isRemoteAllowedPath(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/demo") ||
+    pathname.startsWith("/documents")
+  );
+}
+
+// TODO: Remove this temporary guard after REMOTE pages are database-backed.
+function shouldBlockRemoteNavigation(
+  dataScope: string | undefined,
+  pathname: string,
+) {
+  return dataScope === "REMOTE" && !isRemoteAllowedPath(pathname);
+}
+
 export function LeftMenu() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const { t } = useTranslation();
   const tLocal = useLocalizedText();
   const { data: menuItems, isLoading } = useLeftMenuQuery();
 
@@ -54,6 +75,21 @@ export function LeftMenu() {
     return item.children?.some(isItemActive) ?? false;
   };
 
+  const handleMenuLinkClick =
+    (targetPath: string) => (event: MouseEvent<HTMLAnchorElement>) => {
+      const dataScope = session?.user?.dataScope;
+      if (!shouldBlockRemoteNavigation(dataScope, targetPath)) return;
+
+      event.preventDefault();
+      toast.error(t("remoteRouteGuard.limited.title", { ns: "message" }), {
+        description: t("remoteRouteGuard.limited.description", {
+          ns: "message",
+        }),
+        id: `remote-route-guard:${targetPath}`,
+        position: "top-center",
+      });
+    };
+
   const renderRootPageItem = (item: MenuItem) => {
     const title = tLocal(item.title);
 
@@ -64,7 +100,7 @@ export function LeftMenu() {
           tooltip={title}
           isActive={isActivePath(item.path)}
         >
-          <Link href={item.path}>
+          <Link href={item.path} onClick={handleMenuLinkClick(item.path)}>
             <item.icon />
             <span>{title}</span>
           </Link>
@@ -81,7 +117,7 @@ export function LeftMenu() {
           isActive={isActivePath(item.path)}
           className="ml-0.5"
         >
-          <Link href={item.path}>
+          <Link href={item.path} onClick={handleMenuLinkClick(item.path)}>
             <item.icon />
             <span>{tLocal(item.title)}</span>
           </Link>

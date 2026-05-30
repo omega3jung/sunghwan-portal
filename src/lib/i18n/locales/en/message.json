@@ -8,7 +8,6 @@
       "successfully": "Created successfully.",
       "age": "Created {{date}} ago."
     },
-
     "save": {
       "title": "Saved",
       "loading": "Saving {{item}}",
@@ -16,7 +15,6 @@
       "successWithId": "{{item}} {{id}} saved.",
       "successfully": "Saved successfully."
     },
-
     "update": {
       "title": "Updated",
       "loading": "Updating {{item}}",
@@ -24,7 +22,6 @@
       "successWithId": "{{item}} {{id}} updated.",
       "successfully": "Updated successfully."
     },
-
     "delete": {
       "title": "Deleted",
       "loading": "Deleting {{item}}",
@@ -32,7 +29,6 @@
       "successWithId": "{{item}} {{id}} deleted.",
       "successfully": "Deleted successfully."
     },
-
     "confirm": {
       "title": "Confirm",
       "create": "Are you sure you want to create this?",
@@ -42,43 +38,43 @@
       "updateChanges": "Are you sure you want to apply these changes?",
       "delete": "Are you sure you want to delete this item?"
     },
-
     "cancel": {
       "title": "Canceled",
       "success": "{{item}} canceled.",
       "successWithId": "{{item}} {{id}} canceled.",
       "successfully": "Canceled successfully."
     },
-
     "reset": {
       "title": "Reset",
       "success": "{{item}} has been reset.",
       "successWithId": "{{item}} {{id}} has been reset.",
       "successfully": "Reset successfully."
     },
-
     "validation": {
       "title": "Validation",
       "errorTitle": "Validation Error"
     }
   },
-
   "reply": {
     "title": "Reply submitted",
     "success": "Reply submitted successfully.",
     "successWithId": "Reply submitted for {{id}}."
   },
-
   "user": {
     "create": {
       "success": "User created successfully."
     }
   },
-
   "otp": {
     "sent": "Enter {{code}} within {{minutes}} minutes.",
     "resent": "OTP has been resent.",
     "timeout": "Time expired",
     "differentId": "The verified ID is different from the current ID. Please verify the OTP again."
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "Remote demo is limited",
+      "description": "Database-backed pages are still being connected. Please use the Home, Demo or Documents pages for now."
+    }
   }
 }

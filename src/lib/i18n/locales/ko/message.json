@@ -64,5 +64,11 @@
     "resent": "OTP가 다시 전송되었습니다.",
     "timeout": "시간이 만료되었습니다.",
     "differentId": "인증된 ID가 현재 ID와 다릅니다. OTP를 다시 인증해 주세요."
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "원격 데모 접근이 제한됩니다",
+      "description": "데이터베이스 기반 페이지는 아직 연결 중입니다. 현재는 Home, Demo 또는 Documents 페이지를 이용해 주세요."
+    }
   }
 }

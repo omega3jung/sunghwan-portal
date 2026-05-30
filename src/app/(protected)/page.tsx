@@ -248,11 +248,13 @@ export default function ProtectedPage() {
     meta: t(`quickActions.items.${action.id}.meta`),
   }));
 
-  const summaryMetrics: SummaryMetric[] = summaryMetricConfigs.map((metric) => ({
-    label: t(`workSummary.items.${metric.id}.label`),
-    value: metric.value,
-    description: t(`workSummary.items.${metric.id}.description`),
-  }));
+  const summaryMetrics: SummaryMetric[] = summaryMetricConfigs.map(
+    (metric) => ({
+      label: t(`workSummary.items.${metric.id}.label`),
+      value: metric.value,
+      description: t(`workSummary.items.${metric.id}.description`),
+    }),
+  );
 
   const highlightItems: HighlightItem[] = highlightItemConfigs.map((item) => ({
     title: t(`highlights.items.${item.id}.title`),
@@ -291,26 +293,45 @@ export default function ProtectedPage() {
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button asChild>
-              <Link href="/service-desk">
+          {current.isDemoUser ? (
+            <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
+              <Button asChild>
+                <Link href="/service-desk">
+                  {t("hero.actions.openServiceDesk")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/documents">
+                  {t("hero.actions.browseDocumentation")}
+                  <FileText className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link href="/settings">
+                  {t("hero.actions.reviewSettings")}
+                  <Settings2 className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          ) : (
+            <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
+              <Button disabled>
                 {t("hero.actions.openServiceDesk")}
                 <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/documents">
-                {t("hero.actions.browseDocumentation")}
-                <FileText className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link href="/settings">
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/documents">
+                  {t("hero.actions.browseDocumentation")}
+                  <FileText className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="secondary" disabled>
                 {t("hero.actions.reviewSettings")}
                 <Settings2 className="h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
+              </Button>
+            </CardContent>
+          )}
         </Card>
 
         <div className="w-80">
@@ -408,8 +429,12 @@ export default function ProtectedPage() {
           />
           <Card className="border-border/70">
             <CardHeader>
-              <CardTitle className="text-lg">{t("currentFocus.panelTitle")}</CardTitle>
-              <CardDescription>{t("currentFocus.panelDescription")}</CardDescription>
+              <CardTitle className="text-lg">
+                {t("currentFocus.panelTitle")}
+              </CardTitle>
+              <CardDescription>
+                {t("currentFocus.panelDescription")}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">

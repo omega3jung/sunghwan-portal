@@ -11,6 +11,7 @@ import { withLeadingSlash } from "@/shared/utils/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
+import { RemoteRouteGuard } from "../_providers/RemoteRouteGuard";
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
@@ -45,6 +46,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
     <AppUserBootstrap user={session.current?.user}>
       {/* All user preferences are automatically applied */}
       <PreferenceBootstrap />
+      <RemoteRouteGuard />
 
       {/* Demo Overlay */}
       {isDemoUser && <DemoOverlay />}
