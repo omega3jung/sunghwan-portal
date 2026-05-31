@@ -28,7 +28,7 @@ export const isString = (data: any) => {
 export const isJson = (obj: any) => {
   try {
     JSON.parse(obj);
-  } catch (e) {
+  } catch {
     return false;
   }
 

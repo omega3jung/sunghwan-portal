@@ -1,6 +1,6 @@
 {
   "name": "sunghwan-portal",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "dev:clean": "taskkill /F /IM node.exe 2>nul || exit 0 && rmdir /s /q .next && npm run dev"
+  },
+  "engines": {
+    "node": ">=20 <23",
+    "npm": "10.x"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -44,6 +48,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/supabase-js": "^2.105.3",
     "@tanstack/react-query": "^5.90.11",
     "@tanstack/react-table": "^8.21.3",
     "@tiptap/extension-image": "^3.22.0",
@@ -54,7 +59,9 @@
     "@tiptap/react": "^3.22.0",
     "@tiptap/starter-kit": "^3.22.0",
     "@vercel/analytics": "^2.0.1",
+    "@types/bcryptjs": "^2.4.6",
     "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -66,6 +73,7 @@
     "next": "^14.2.35",
     "next-auth": "^4.24.13",
     "next-themes": "^0.4.6",
+    "pg": "^8.20.0",
     "radix-ui": "^1.4.3",
     "react": "^18",
     "react-day-picker": "^9.14.0",
@@ -96,12 +104,13 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitest/browser-playwright": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.33",
+    "eslint-config-next": "^14.2.35",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-storybook": "^10.1.4",

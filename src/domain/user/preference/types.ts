@@ -1,10 +1,10 @@
-import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
+import { ColorTheme, PortalPreference, ScreenMode } from "@/domain/config";
 import { PreferencePatch } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
 
 export type UseCurrentPreferenceResult = {
   status: "loading" | "ready";
-  current: Preference;
+  current: PortalPreference;
 
   setLanguage: (language: Locale) => void;
   setColorTheme: (theme: ColorTheme) => void;

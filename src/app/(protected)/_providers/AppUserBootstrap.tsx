@@ -15,7 +15,9 @@ export function AppUserBootstrap({ user, children }: Props) {
   const impersonatedUser = useImpersonationStore(
     (state) => state.impersonatedUser,
   );
-  const originalUserId = useImpersonationStore((state) => state.originalUser?.id);
+  const originalUsername = useImpersonationStore(
+    (state) => state.originalUser?.username,
+  );
   const syncFromSession = useImpersonationStore((state) => state.syncFromSession);
 
   useEffect(() => {
@@ -24,13 +26,13 @@ export function AppUserBootstrap({ user, children }: Props) {
     // Do not overwrite the original user while impersonation is active.
     if (impersonatedUser) return;
 
-    if (originalUserId === user.id) return;
+    if (originalUsername === user.username) return;
 
     syncFromSession({
       originalUser: user,
       impersonatedUser: null,
     });
-  }, [impersonatedUser, originalUserId, syncFromSession, user]);
+  }, [impersonatedUser, originalUsername, syncFromSession, user]);
 
   return <>{children}</>;
 }

@@ -15,12 +15,12 @@ export const departmentsMock: DbDepartment[] = [
 export const allDepartmentsMock: DbDepartment[] = [
   /*  Company  */
   {
-    department_id: 0,
-    department_name: { en: "Company" },
-    department_code: "C",
-    department_description: { en: "Company" },
-    department_parent_id: null,
-    department_active: true,
+    d_id: 0,
+    d_name: { en: "Company" },
+    d_code: "C",
+    d_description: { en: "Company" },
+    d_parent_id: null,
+    d_active: true,
   },
   ...departmentsMock,
 ];

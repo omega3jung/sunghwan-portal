@@ -114,6 +114,7 @@ work = collection of sessions
 - assignment changes
 - operational adjustments
 - merge 및 rejection 결정
+- 해결 이후 review/reopen 요청
 
 관련 문서:
 

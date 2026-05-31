@@ -1,4 +1,4 @@
-﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 import { ticket } from "./ticket";
 
@@ -10,7 +10,7 @@ export const histories: DbTicketHistory[] = [
     type: "TICKET",
     action: "CREATED",
 
-    actor_id: "117",
+    actor_id: "vivian_long",
     action_no: null,
 
     created_at: "2026-04-25T07:13:53Z",
@@ -34,7 +34,7 @@ export const histories: DbTicketHistory[] = [
     type: "APPROVAL",
     action: "APPROVAL_APPROVED",
 
-    actor_id: "52",
+    actor_id: "olivia_johnson",
     action_no: null,
 
     created_at: "2026-04-25T07:29:25Z",
@@ -91,7 +91,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: "1",
 
     created_at: "2026-04-25T13:15:53Z",
@@ -103,7 +103,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "53",
+    actor_id: "liam_williams",
     action_no: "2",
 
     created_at: "2026-04-26T00:01:58Z",
@@ -115,7 +115,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "4",
+    actor_id: "amelia_brown",
     action_no: "3",
 
     created_at: "2026-04-26T01:17:18Z",
@@ -127,7 +127,7 @@ export const histories: DbTicketHistory[] = [
     type: "STATUS",
     action: "UPDATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: null,
 
     from_value: "Working",

@@ -1,5 +1,10 @@
+interface UserInfo {
+  id: string;
+  username: string;
+}
+
 export interface ImpersonationInfo {
-  originalUserId: string;
-  impersonatedUserId: string;
+  originalUser: UserInfo;
+  impersonatedUser: UserInfo;
   activatedAt: number;
 }

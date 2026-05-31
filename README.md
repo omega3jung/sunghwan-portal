@@ -38,6 +38,7 @@ Today, the project is organized around:
 - Domain-first design instead of generic CRUD
 - Feature-based frontend architecture
 - NextAuth-based authentication with JWT session strategy
+- LOCAL/REMOTE runtime separation through route-handler orchestration
 - React Query for server-state management
 - Admin/configuration workflows such as Service Desk Settings
 - Decision logs that explain how the project evolved month by month
@@ -87,6 +88,7 @@ The system design consistently emphasizes:
 - Ticket lifecycle as a structured workflow, not just records
 - Category and settings as domain configuration
 - Approval, assignment, and SLA as first-class behaviors
+- Activity (interaction) and History (immutable audit events) as separate models
 - Clear UI boundaries between overview, analysis, and editing flows
 - Traceability through history and impersonation-aware session design
 
@@ -112,6 +114,12 @@ Authentication is currently based on **NextAuth v4** with:
 The project treats authentication and session not as isolated login concerns,
 but as part of overall system behavior, especially for protected routes,
 role-aware UI, and impersonation.
+
+Current boundary:
+
+- `AuthUser`: authentication identity (JWT truth)
+- `SessionUser`: session-safe projection without `accessToken`
+- `AppUser`: application-facing user model resolved via server/API and synced into runtime stores
 
 Related docs:
 

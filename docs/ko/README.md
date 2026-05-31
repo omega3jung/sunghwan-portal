@@ -72,15 +72,19 @@
 - Feature 기반 프로젝트 구조
 - Next.js App Router 라우팅 전략
 - 상태 관리 경계
-- 인증, 세션, impersonation 설계
+- 인증, 세션, 가장 설계
+- 데이터베이스, 연결 및 권한 설계
 
 주요 문서:
 
-- [Feature-Based Structure](./02-architecture/feature-based-structure.md)
-- [Routing Strategy](./02-architecture/routing-strategy.md)
-- [State Management](./02-architecture/state-management.md)
-- [Auth & Session Strategy](./02-architecture/auth-session-strategy.md)
-- [Impersonation Strategy](./02-architecture/impersonation-strategy.md)
+- [Feature 기반 구조](./02-architecture/feature-based-structure.md)
+- [라우팅 전략](./02-architecture/routing-strategy.md)
+- [상태 관리](./02-architecture/state-management.md)
+- [인증 & 세션 전략](./02-architecture/auth-session-strategy.md)
+- [사용자 가장 전략](./02-architecture/impersonation-strategy.md)
+- [데이터베이스 전략](./02-architecture/database-strategy.md)
+
+- route handler 기반 LOCAL/REMOTE 런타임 분기 경계
 
 ---
 
@@ -111,6 +115,8 @@
 - [Approval System](./03-domain/ticket/strategy/approval-system.md)
 - [Assignment Policy](./03-domain/ticket/strategy/assignment-policy.md)
 - [SLA Strategy](./03-domain/ticket/strategy/sla-strategy.md)
+
+- 현재 실행 규칙 기준 operation rules 문서
 
 ---
 

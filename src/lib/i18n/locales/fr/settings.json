@@ -136,7 +136,8 @@
       "jobFieldPlaceholder": "Sélectionner un poste",
       "employee": "Employé",
       "employeePlaceholder": "Sélectionner un responsable",
-      "skipAccessLevel": "Niveau d’accès pouvant être ignoré"
+      "skipAccessLevel": "Niveau d’accès pouvant être ignoré",
+      "saveUnavailable": "Enregistrement impossible"
     },
     "assignmentRuleTab": {
       "name": "Nom",

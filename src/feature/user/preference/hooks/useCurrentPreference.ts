@@ -1,20 +1,11 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
-import { useEffect } from "react";
 
 import { ColorTheme, ScreenMode } from "@/domain/config";
-import {
-  createDefaultPreference,
-  UseCurrentPreferenceResult,
-} from "@/domain/user/preference";
-import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
+import { UseCurrentPreferenceResult } from "@/domain/user/preference";
 import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
 import { Locale } from "@/shared/types";
-import { applyColorTheme } from "@/shared/utils/presentation";
-
-import { userPreferenceRepo } from "../repo";
 
 /**
  * Combines session, preference store, theme state, and language state into a single preference facade for the UI.
@@ -41,22 +32,14 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * - screenMode
    */
   const store = usePreferenceStore();
-
-  const { setTheme } = useTheme();
-  const { language, changeLanguage } = useLanguageState();
-
-  /*
-   * From here on, authenticated is guaranteed at the type level.
-   *
-   * Processing session data for direct use in the UI.
-   *
-   * Principles:
-   * - Eliminate calculation logic from page/component.
-   * - Only update this hook when the session data structure changes.
-   */
-  const current = store ?? createDefaultPreference();
+  const current = {
+    language: store.language,
+    colorTheme: store.colorTheme,
+    screenMode: store.screenMode,
+  };
 
   const status = session.status === "loading" ? "loading" : "ready";
+
   /**
    * Updates the preference store and optionally refreshes the server-backed session first.
    *
@@ -72,6 +55,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     if (force) {
       await session.update();
     }
+
     store.setPreference(patch);
   };
 
@@ -86,8 +70,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * @returns Nothing; the function triggers preference and i18n updates
    */
   const setLanguage = (language: Locale) => {
-    updatePreference({ language });
-    changeLanguage(language);
+    store.setPreference({ language });
   };
 
   /**
@@ -101,8 +84,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * @returns Nothing; the function updates preference state and the document theme
    */
   const setColorTheme = (colorTheme: ColorTheme) => {
-    updatePreference({ colorTheme });
-    applyColorTheme(colorTheme);
+    store.setPreference({ colorTheme });
   };
 
   /**
@@ -116,56 +98,8 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
    * @returns Nothing; the function updates preference state and the active theme mode
    */
   const setScreenMode = (screenMode: ScreenMode) => {
-    updatePreference({ screenMode });
-    setTheme(screenMode);
+    store.setPreference({ screenMode });
   };
-
-  // hydrate once on mount (restore sessionStorage -> store)
-  useEffect(() => {
-    store.hydratePreference();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // set session when sign in.
-  useEffect(() => {
-    if (session.status !== "authenticated") return;
-    if (!session.data?.user) return;
-
-    const remoteId =
-      session.data?.user.dataScope === "LOCAL" ? null : session.data?.user.id;
-
-    userPreferenceRepo.get(remoteId).then((preference) => {
-      store.setPreference(preference);
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status, session.data?.user]);
-
-  // color theme
-  useEffect(() => {
-    if (!store.colorTheme) return;
-    applyColorTheme(store.colorTheme);
-  }, [store.colorTheme]);
-
-  // screen mode (light / dark)
-  useEffect(() => {
-    if (!store.screenMode) return;
-    setTheme(store.screenMode);
-  }, [setTheme, store.screenMode]);
-
-  // language
-  useEffect(() => {
-    if (!store.language || store.language === language) return;
-    changeLanguage(store.language);
-  }, [changeLanguage, language, store.language]);
-
-  // clear session and impersonation when sign out.
-  useEffect(() => {
-    if (session.status === "unauthenticated") {
-      store.clearPreference();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status]);
 
   return {
     status,

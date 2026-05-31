@@ -70,8 +70,6 @@ export interface Ticket {
 
   approvalStepId?: string;
 
-  owner: boolean;
-  assigned: boolean;
   active: boolean;
 
   files: Attach[];
@@ -187,6 +185,10 @@ type Ownership = {
 
 - `owner`: current user is the requester
 - `assigned`: current user is an assignee
+
+These are **derived ownership values**, not fixed persisted ticket fields.
+In LOCAL mode they can be calculated in route/local handlers, and in REMOTE
+mode they can be resolved by the server using authenticated user context.
 
 These flags are useful for:
 

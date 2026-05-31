@@ -3,14 +3,16 @@
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
 
-import { LeftMenu } from "@/components/layout/LeftMenu";
 import { NavigationBar } from "@/components/layout/NavigationBar";
+import { RouteLoadingProvider } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { LeftMenu } from "@/feature/navigation/leftMenu";
 import { withLeadingSlash } from "@/shared/utils/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
+import { RemoteRouteGuard } from "../_providers/RemoteRouteGuard";
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
@@ -43,41 +45,44 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
   return (
     // UI root container (absolute overlays are positioned relative to this)
     <AppUserBootstrap user={session.current?.user}>
-      {/* All user preferences are automatically applied */}
-      <PreferenceBootstrap />
+      <RouteLoadingProvider>
+        {/* All user preferences are automatically applied */}
+        <PreferenceBootstrap />
+        <RemoteRouteGuard />
 
-      {/* Demo Overlay */}
-      {isDemoUser && <DemoOverlay />}
+        {/* Demo Overlay */}
+        {isDemoUser && <DemoOverlay />}
 
-      {/* Left Menu */}
-      <LeftMenu></LeftMenu>
+        {/* Left Menu */}
+        <LeftMenu></LeftMenu>
 
-      {/* Right Main Screen */}
-      <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
-        {/* Top Navigation */}
-        <NavigationBar className="h-[57px]" />
+        {/* Right Main Screen */}
+        <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
+          {/* Top Navigation */}
+          <NavigationBar className="h-[57px]" />
 
-        {/* Page Content */}
-        <main className="overflow-auto p-2 min-h-0 bg-background">
-          {children}
-        </main>
+          {/* Page Content */}
+          <main className="overflow-auto p-2 min-h-0 bg-background">
+            {children}
+          </main>
 
-        {/* Footer */}
-        <footer className="h-10 px-4 py-2 border-t flex items-center">
-          <Button
-            variant="link"
-            className=" text-sm text-muted-foreground p-0 hover:underline"
-            onClick={() =>
-              window.open(
-                "https://github.com/omega3jung/sunghwan-portal",
-                "_blank",
-              )
-            }
-          >
-            © 2025 Sunghwan Jung.
-          </Button>
-        </footer>
-      </div>
+          {/* Footer */}
+          <footer className="h-10 px-4 py-2 border-t flex items-center">
+            <Button
+              variant="link"
+              className=" text-sm text-muted-foreground p-0 hover:underline"
+              onClick={() =>
+                window.open(
+                  "https://github.com/omega3jung/sunghwan-portal",
+                  "_blank",
+                )
+              }
+            >
+              © 2025 Sunghwan Jung.
+            </Button>
+          </footer>
+        </div>
+      </RouteLoadingProvider>
     </AppUserBootstrap>
   );
 }

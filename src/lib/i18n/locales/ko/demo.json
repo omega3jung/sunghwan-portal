@@ -3,13 +3,13 @@
     "hero": {
       "protectedBadge": "보호된 홈",
       "enterpriseBadge": "엔터프라이즈 포털 데모",
-      "title": "서비스 운영, 참고 자료, 플랫폼 설정을 위한 워크스페이스 홈입니다.",
+      "title": "서비스 운영, 참고 문서, 플랫폼 설정을 위한 워크스페이스 홈입니다.",
       "description": {
-        "local": "이 홈은 Service Desk 포트폴리오의 주요 작업 영역으로 이동하기 위한 진입 화면입니다. 현재 Local Demo에서는 Role(ADMIN, MANAGER, LEADER, USER, GUEST) 기반의 접근 제한과 작업 권한을 확인할 수 있습니다.",
-        "remote": "이 홈은 Service Desk 포트폴리오의 주요 작업 영역으로 이동하기 위한 진입 화면입니다. Remote 환경에서는 Role과 티켓에 대한 사용자 관계를 함께 반영하여 실제 서비스 운영에 가까운 권한 흐름을 확인할 수 있습니다."
+        "local": "Local Demo에서는 권한 동작이 단순화됩니다. ADMIN은 넓은 접근 권한을 가지며, non-ADMIN의 티켓 작업 권한은 각 티켓과의 관계에 따라 결정됩니다.",
+        "remote": "이 홈은 Service Desk 포트폴리오의 주요 작업 영역으로 이동하기 위한 진입 화면입니다. Remote 모드에서는 Role과 각 티켓에 대한 사용자 관계를 함께 반영하여 실제 서비스 운영에 가까운 권한 흐름을 확인할 수 있습니다."
       },
       "actions": {
-        "openServiceDesk": "서비스 데스크 열기",
+        "openServiceDesk": "Service Desk 열기",
         "browseDocumentation": "문서 둘러보기",
         "reviewSettings": "설정 검토"
       }
@@ -19,35 +19,35 @@
     },
     "about": {
       "title": "이 홈에 대하여",
-      "description": "현재 포트폴리오 포털의 실행 모드와 주요 탐색 범위를 설명합니다.",
+      "description": "이 섹션은 현재 포트폴리오 포털의 실행 모드와 주요 탐색 범위를 설명합니다.",
       "currentScope": {
         "title": "현재 범위",
         "description": {
-          "local": "Local Demo에서는 Service Desk 흐름, 문서, 설정 화면을 탐색할 수 있으며, 권한 검증은 Role 기반으로 단순화되어 있습니다.",
-          "remote": "Remote 환경에서는 Service Desk 흐름, 문서, 설정 화면을 실제 API와 연결하고, Role과 사용자 관계를 함께 반영한 권한 흐름을 확인할 수 있습니다."
+          "local": "Local Demo에서는 Service Desk와 설정 화면이 mock 기반 흐름으로 동작하며, 문서는 참고 화면으로 제공됩니다. 권한 검증은 ADMIN의 넓은 접근 권한과 non-ADMIN의 티켓 관계 기반 작업 권한을 중심으로 단순화되어 있습니다.",
+          "remote": "Remote 모드에서는 Service Desk 흐름, 문서, 설정 화면을 실제 API와 연결할 수 있으며, 권한 동작은 Role과 사용자 관계를 함께 반영합니다."
         }
       },
       "architectureNotes": {
         "local": {
-          "note1": "보호된 라우트는 공개 랜딩 페이지가 아니라 로그인 후 접근하는 내부 포털 화면으로 구성되어 있습니다.",
-          "note2": "Local Demo에서는 ADMIN, MANAGER, LEADER, USER, GUEST 역할에 따라 메뉴와 작업 가능 범위가 달라집니다.",
-          "note3": "조직 관계 기반 권한, 티켓 연관성 기반 제한, 원격 API 연동은 Remote 환경에서 더 정교하게 검증할 수 있도록 분리되어 있습니다."
+          "note1": "보호된 라우트는 공개 랜딩 페이지가 아니라 로그인 후 접근하는 내부 포털 화면으로 설계되어 있습니다.",
+          "note2": "Local Demo의 권한은 의도적으로 단순화되어 있습니다. ADMIN은 넓은 접근 권한을 가지며, non-ADMIN의 작업은 요청자, 담당자 또는 그 밖의 관련 참여자처럼 티켓과의 관계가 필요합니다.",
+          "note3": "LOCAL handler와 REMOTE proxy의 실행 분기는 route handler 경계에서 오케스트레이션되므로, UI는 모드가 달라도 일관된 워크플로를 유지할 수 있습니다."
         },
         "remote": {
-          "note1": "보호된 라우트는 공개 랜딩 페이지가 아니라 로그인 후 접근하는 내부 포털 화면으로 구성되어 있습니다.",
-          "note2": "Remote 환경에서는 Role뿐 아니라 요청자, 담당자, 승인자 등 사용자와 데이터의 관계를 함께 반영해 접근 범위를 판단합니다.",
-          "note3": "티켓, 문서, 승인, 할당, 설정 데이터는 실제 API 경계를 기준으로 연결되어 운영 환경에 가까운 흐름을 확인할 수 있습니다."
+          "note1": "보호된 라우트는 공개 랜딩 페이지가 아니라 로그인 후 접근하는 내부 포털 화면으로 설계되어 있습니다.",
+          "note2": "Remote 모드에서는 Role뿐 아니라 요청자, 담당자, 승인자와 같은 관계까지 고려하여 접근 범위를 결정합니다.",
+          "note3": "티켓, 문서, 승인, 할당, 설정 데이터는 실제 API 경계를 통해 연결되어 운영 환경에 더 가까운 흐름을 제공합니다."
         }
       }
     },
     "quickActions": {
       "title": "빠른 작업",
-      "description": "로그인 직후 가장 자주 필요할 주요 작업 영역을 바로 열 수 있습니다.",
+      "description": "로그인 직후 가장 필요할 가능성이 높은 주요 작업 영역을 바로 열 수 있습니다.",
       "openWorkspace": "워크스페이스 열기",
       "items": {
         "serviceDesk": {
-          "title": "서비스 데스크",
-          "description": "티켓을 조회하고, 큐 상태를 확인하고, 현재 작업을 이어갑니다.",
+          "title": "Service Desk",
+          "description": "티켓을 조회하고, 큐 상태를 확인하며, 현재 작업을 이어갑니다.",
           "meta": "핵심 워크스페이스"
         },
         "documentation": {
@@ -57,12 +57,12 @@
         },
         "systemSettings": {
           "title": "시스템 설정",
-          "description": "포털 설정 영역과 운영 환경설정을 검토합니다.",
+          "description": "포털 구성 영역과 서비스 운영 설정을 검토합니다.",
           "meta": "관리"
         },
         "serviceDeskSetup": {
-          "title": "서비스 데스크 설정",
-          "description": "카테고리, 승인 단계, 할당 규칙 구조를 점검합니다.",
+          "title": "Service Desk 설정",
+          "description": "카테고리, 승인 단계, 할당 규칙, SLA 관련 설정을 점검합니다.",
           "meta": "플랫폼 설정"
         }
       }
@@ -77,11 +77,11 @@
         },
         "pendingApprovals": {
           "label": "승인 대기",
-          "description": "워크플로우 또는 정책 확인을 기다리는 요청입니다."
+          "description": "워크플로 또는 정책 확인을 기다리는 요청입니다."
         },
         "workingItems": {
           "label": "진행 중 항목",
-          "description": "이 데모 범위에서 활발히 진행 중인 구현 및 후속 작업입니다."
+          "description": "이 데모 범위에서 진행 중인 구현 및 후속 작업입니다."
         },
         "resolvedThisWeek": {
           "label": "이번 주 해결",
@@ -97,17 +97,17 @@
         "ticketWorkspace": {
           "title": "티켓 워크스페이스",
           "description": "검색, 필터링, 티켓 후속 처리를 위한 주요 작업 영역입니다.",
-          "category": "서비스 데스크",
+          "category": "Service Desk",
           "status": "준비됨"
         },
         "authSessionFlow": {
           "title": "인증 및 세션 흐름",
-          "description": "로그인 경험, 리다이렉트 처리, 보호된 셸 동작을 다룹니다.",
+          "description": "로그인 경험, 리다이렉트 처리, AuthUser/SessionUser/AppUser 분리와 세션 기반 impersonation을 다룹니다.",
           "category": "아키텍처",
           "status": "현재 초점"
         },
         "serviceDeskSettings": {
-          "title": "서비스 데스크 설정",
+          "title": "Service Desk 설정",
           "description": "승인 단계, 할당 규칙, 카테고리 관리 화면입니다.",
           "category": "관리",
           "status": "검토 중"
@@ -122,39 +122,45 @@
     },
     "currentFocus": {
       "title": "현재 초점",
-      "description": "이 포털이 지금 무엇을 강조하는지 보여주는 간결한 브리핑 패널입니다.",
+      "description": "이 포털이 지금 강조하는 내용을 보여주는 간결한 브리핑 패널입니다.",
       "panelTitle": "엔터프라이즈 포털 방향성",
       "panelDescription": "홈 화면은 의도적으로 내부 워크스페이스 진입점으로 범위를 잡고 있습니다.",
       "primaryGoals": {
         "title": "주요 경험 목표",
         "items": {
           "goal1": "인증 후 첫 단계로 이동하기 쉬운 명확한 내비게이션",
-          "goal2": "대시보드 과밀 없이 균형 잡힌 정보 밀도",
-          "goal3": "나중에 목업 요약 콘텐츠를 실제 데이터로 쉽게 교체할 수 있는 구조"
+          "goal2": "LOCAL과 REMOTE 분기를 route handler에서 처리해 UI가 실행 모드에 종속되지 않도록 유지",
+          "goal3": "요약 콘텐츠를 이후 단계에서 API/DB 기반 워크스페이스 데이터로 교체할 수 있도록 준비"
         }
       },
       "nextIntegrations": {
         "title": "다음 통합 제안",
-        "description": "보호된 홈이 실제 워크스페이스 데이터를 사용할 준비가 되면 요약 카드를 티켓 수, 승인, 최근 문서 활동과 연결하세요."
+        "description": "보호된 홈이 실제 워크스페이스 데이터를 사용할 준비가 되면 요약 카드를 티켓 수, 승인, 최근 문서 활동과 연결합니다."
       }
     }
   },
   "resetDemo": {
     "title": "데모 초기화",
     "message": "로컬 데모 데이터를 초기화하시겠습니까?",
-    "description": "로컬 데모 데이터를 초기화하고 초기 모의 데이터를 복원합니다.",
+    "description": "로컬 데모 데이터를 초기화하고 초기 mock 데이터를 복원합니다.",
     "resetting": "초기화 중"
   },
   "stepper": {
-    "stepper": "단계 선택",
-    "variants": "바리에이션",
+    "stepper": "스테퍼",
+    "variants": "변형",
     "orientation": "방향",
-    "stepVariant": "단계 모양",
+    "stepVariant": "단계 변형",
     "labelPosition": "라벨 위치",
-    "stepColor": "색상",
+    "stepColor": "단계 색상",
     "showOrderLabel": "단계 라벨 표시",
     "startIndex": "시작 번호",
     "step": "단계",
     "disable": "비활성화"
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "원격 데모 접근이 제한됩니다",
+      "description": "데이터베이스 기반 페이지는 아직 연결 중입니다. 현재는 Home, Demo 또는 Documents 페이지를 이용해 주세요."
+    }
   }
 }

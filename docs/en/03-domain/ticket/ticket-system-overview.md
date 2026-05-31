@@ -115,6 +115,7 @@ This allows the system to represent:
 - assignment changes
 - operational adjustments
 - merge and rejection decisions
+- review/reopen requests after resolution
 
 Related documents:
 

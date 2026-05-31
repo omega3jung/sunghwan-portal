@@ -16,17 +16,17 @@ export function createEmployeesMock(): DbEmployee[] {
     const startDday = randomNumber(1000, 1);
 
     // currently working.
-    if (employee.employee_active) {
+    if (employee.e_active) {
       return {
         ...employee,
-        employee_start_date: getBeforeDate(startDday),
+        e_start_date: getBeforeDate(startDday),
       } as DbEmployee;
     }
     const endDday = randomNumber(startDday, 1);
     return {
       ...employee,
-      employee_start_date: getBeforeDate(startDday),
-      employee_end_date: getBeforeDate(endDday),
+      e_start_date: getBeforeDate(startDday),
+      e_end_date: getBeforeDate(endDday),
     } as DbEmployee;
   });
 

@@ -1,4 +1,4 @@
-﻿# Service Desk 진화
+# Service Desk 진화
 
 이 문서는 기존 서비스 허브/IT 헬프 데스크 환경을 현재 서비스 데스크 영역으로 발전시키는 과정에서 이루어진 **설계 개선 사항**에 중점을 둡니다.
 
@@ -339,11 +339,11 @@ Service Desk 액션 집합은 운영 언어에 맞게 정제되었습니다.
 - 공유 커뮤니케이션용 `comment`
 - 내부 커뮤니케이션용 `note`
 - 소유권 변경용 `assign`
-- 셀프 할당 라벨인 `assign to me`
+- 셀프 할당 라벨인 `assign myself`
 - 우선순위/위험도/SLA/기한 변경용 `adjust` / `Adjust Plan`
 - 중복/연관 티켓 통합용 `merge`
 - 운영 반려용 `reject`
-- 활성 처리 복귀용 `reopen`
+- 활성 처리 복귀용 `request review` / `reopen`
 - 반려/거절 후 재제출용 `resubmit`
 
 ### 12.1 병합 의미
@@ -593,6 +593,7 @@ Service Desk 재설계는 리뷰어, 향후 유지보수자, 면접관에게 도
 - `docs/ko/03-domain/ticket/ticket-activity.md`
 - `docs/ko/03-domain/ticket/ticket-history.md`
 - `docs/ko/03-domain/ticket/ticket-track-time.md`
+- `docs/ko/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`
 
 ---
 

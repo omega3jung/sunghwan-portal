@@ -1,65 +1,91 @@
-import { Contact, User, UserCog, UserStar } from "lucide-react";
-import { useMemo } from "react";
+import { ShieldUser } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
+import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { clientProfiles } from "@/mocks/domain/user";
+import { clientAuths, internalAuths } from "@/mocks/domain/user";
+
+import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
 type Props = {
   user: AppUser;
-  onDemoImpersonate: (impersonatedUserId: string) => Promise<void>;
+  impersonatedUser: AppUser | null;
+  onDemoImpersonate: (impersonatedUsername: string) => Promise<void>;
 };
 
 export function DemoImpersonation(props: Props) {
-  const { user, onDemoImpersonate } = props;
+  const { user, onDemoImpersonate, impersonatedUser } = props;
 
   const { t } = useTranslation("UserMenu");
 
-  const impersonationCandidates = useMemo(() => {
-    return clientProfiles.filter((profile) => profile.id !== user.id);
-  }, [user.id]);
+  const filterUser = useCallback(
+    (username: string): boolean => {
+      if (!impersonatedUser) {
+        return username !== user.username;
+      }
+      return (
+        username !== user.username && username !== impersonatedUser.username
+      );
+    },
+    [impersonatedUser, user.username],
+  );
 
-  const getPermissionIcon = (accessLevel: AccessLevel | Role) => {
-    switch (accessLevel) {
-      case "ADMIN":
-      case ACCESS_LEVEL.ADMIN:
-        return <UserStar />;
+  const impersonationDemoCandidates = useMemo<AuthUser[]>(() => {
+    return internalAuths.filter((auth) => filterUser(auth.username));
+  }, [filterUser]);
 
-      case "MANAGER":
-      case ACCESS_LEVEL.MANAGER:
-        return <UserCog />;
+  const impersonationClientCandidates = useMemo<AuthUser[]>(() => {
+    return clientAuths.filter((auth) => filterUser(auth.username));
+  }, [filterUser]);
 
-      case "USER":
-      case ACCESS_LEVEL.USER:
-        return <User />;
-
-      default:
-        return <Contact />;
-    }
-  };
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
-        {t("demoUserImpersonation")}
+        <ShieldUser />
+        {!impersonatedUser
+          ? t("demoUserImpersonation")
+          : t("switchImpersonation")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          {impersonationCandidates.map((profile) => {
+          <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
+          {impersonationDemoCandidates.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(
+              profile.displayName,
+            );
             return (
               <DropdownMenuItem
-                key={`impersonate_${profile.displayName.replaceAll(" ", "_")}`}
-                onClick={() => onDemoImpersonate(profile.id)}
+                key={`impersonate_${profile.username}`}
+                onClick={() => onDemoImpersonate(profile.username)}
               >
                 {getPermissionIcon(profile.permission)}
-                {t(`impersonationAs${profile.displayName.replaceAll(" ", "")}`)}
+                {t(`impersonation${profileDisplayNameKey}`)}
+              </DropdownMenuItem>
+            );
+          })}
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
+          {impersonationClientCandidates.map((profile) => {
+            const profileDisplayNameKey = getDisplayNameKey(
+              profile.displayName,
+            );
+            return (
+              <DropdownMenuItem
+                key={`impersonate_${profile.username}`}
+                onClick={() => onDemoImpersonate(profile.username)}
+              >
+                {getPermissionIcon(profile.permission)}
+                {t(`impersonation${profileDisplayNameKey}`)}
               </DropdownMenuItem>
             );
           })}

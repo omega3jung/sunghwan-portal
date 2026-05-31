@@ -79,6 +79,8 @@ export const SummaryChartCard = ({
   const yAxisWidth = isCompact ? 90 : 110;
   const donutInnerRadius = isCompact ? 38 : 48;
   const donutOuterRadius = isCompact ? 62 : 78;
+  const chartData = data.filter((item) => item.count > 0);
+  const hasChartData = chartData.length > 0;
 
   return (
     <Card className={minCardHeightClass}>
@@ -88,7 +90,7 @@ export const SummaryChartCard = ({
       <CardContent className={chartContentHeightClass}>
         {isLoading ? <SummaryChartSkeleton /> : null}
 
-        {!isLoading && !data.length ? (
+        {!isLoading && !hasChartData ? (
           <div
             className={cn(
               "flex items-center justify-center text-sm text-muted-foreground",
@@ -99,13 +101,13 @@ export const SummaryChartCard = ({
           </div>
         ) : null}
 
-        {!isLoading && data.length && chartType === "bar" ? (
+        {!isLoading && hasChartData && chartType === "bar" ? (
           <ChartContainer
             config={chartConfig}
             className={cn("w-full", chartContainerHeightClass)}
           >
             <BarChart
-              data={data}
+              data={chartData}
               layout="vertical"
               margin={barMargin}
               barCategoryGap={isCompact ? 4 : 8}
@@ -147,7 +149,7 @@ export const SummaryChartCard = ({
                   position="right"
                   className="fill-foreground text-[11px]"
                 />
-                {data.map((item) => {
+                {chartData.map((item) => {
                   const selected = activeValue === item.value;
 
                   return (
@@ -156,7 +158,9 @@ export const SummaryChartCard = ({
                       cursor={onSelect ? "pointer" : "default"}
                       fill={selected ? ACTIVE_COLOR : DEFAULT_COLOR}
                       fillOpacity={selected ? 1 : 0.7}
-                      className={cn(onSelect && "transition-opacity hover:opacity-90")}
+                      className={cn(
+                        onSelect && "transition-opacity hover:opacity-90",
+                      )}
                       onClick={() => {
                         onSelect?.(item);
                       }}
@@ -168,7 +172,7 @@ export const SummaryChartCard = ({
           </ChartContainer>
         ) : null}
 
-        {!isLoading && data.length && chartType === "donut" ? (
+        {!isLoading && hasChartData && chartType === "donut" ? (
           <ChartContainer
             config={chartConfig}
             className={cn("w-full", chartContainerHeightClass)}
@@ -195,7 +199,7 @@ export const SummaryChartCard = ({
                 }
               />
               <Pie
-                data={data}
+                data={chartData}
                 dataKey="count"
                 nameKey="label"
                 cx="50%"
@@ -203,8 +207,11 @@ export const SummaryChartCard = ({
                 innerRadius={donutInnerRadius}
                 outerRadius={donutOuterRadius}
                 paddingAngle={2}
+                label={({ name, payload }) =>
+                  String(payload?.label ?? name ?? "")
+                }
               >
-                {data.map((item, index) => {
+                {chartData.map((item, index) => {
                   const selected = activeValue === item.value;
 
                   return (
@@ -215,7 +222,9 @@ export const SummaryChartCard = ({
                       fillOpacity={selected ? 1 : 0.7}
                       stroke={selected ? ACTIVE_COLOR : "transparent"}
                       strokeWidth={selected ? 2 : 1}
-                      className={cn(onSelect && "transition-opacity hover:opacity-90")}
+                      className={cn(
+                        onSelect && "transition-opacity hover:opacity-90",
+                      )}
                       onClick={() => {
                         onSelect?.(item);
                       }}

@@ -2,12 +2,12 @@
 
 import { addDays, endOfToday, format, startOfToday } from "date-fns";
 import { ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { DatePicker } from "@/components/custom/DatePicker";
 import { Button } from "@/components/ui/button";
 import {
@@ -86,21 +86,24 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     [categories, tLocal],
   );
 
-  const resolveCategoryMeta = (subCatId?: string): CategoryMeta => {
-    const subCategories = categories.flatMap(
-      (category) => category.subCategories,
-    );
+  const resolveCategoryMeta = useCallback(
+    (subCatId?: string): CategoryMeta => {
+      const subCategories = categories.flatMap(
+        (category) => category.subCategories,
+      );
 
-    const selected = subCategories.find((subCat) => subCat.id === subCatId);
-    const parentCategory = categories.find((category) =>
-      category.subCategories.some((subCat) => subCat.id === subCatId),
-    );
+      const selected = subCategories.find((subCat) => subCat.id === subCatId);
+      const parentCategory = categories.find((category) =>
+        category.subCategories.some((subCat) => subCat.id === subCatId),
+      );
 
-    return {
-      selected,
-      parentCategory,
-    };
-  };
+      return {
+        selected,
+        parentCategory,
+      };
+    },
+    [categories],
+  );
 
   const categoryDisplayValue = useMemo(() => {
     if (!subCategoryValue) {
@@ -120,7 +123,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
       subCategoryValue;
 
     return parentLabel ? `${parentLabel} / ${selectedLabel}` : selectedLabel;
-  }, [categories, categoryData, subCategoryValue, tLocal]);
+  }, [categories, categoryData, resolveCategoryMeta, subCategoryValue, tLocal]);
 
   const dueAtDisplayValue = dueAtValue ? format(dueAtValue, "PPP") : "-";
 
@@ -135,7 +138,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     setMindueAt((prev) =>
       prev.getTime() === nextMindueAt.getTime() ? prev : nextMindueAt,
     );
-  }, [categories, isViewMode, subCategoryValue]);
+  }, [categories, isViewMode, resolveCategoryMeta, subCategoryValue]);
 
   const handleCategoryChange = (
     subCatId: string,

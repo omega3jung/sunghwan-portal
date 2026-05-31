@@ -1,4 +1,4 @@
-﻿import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
 import { ticket } from "./ticket";
 
@@ -10,7 +10,7 @@ export const histories: DbTicketHistory[] = [
     type: "TICKET",
     action: "CREATED",
 
-    actor_id: "53",
+    actor_id: "liam_williams",
     action_no: null,
 
     created_at: "2026-03-27T01:14:33Z",
@@ -34,7 +34,7 @@ export const histories: DbTicketHistory[] = [
     type: "APPROVAL",
     action: "APPROVAL_APPROVED",
 
-    actor_id: "52",
+    actor_id: "olivia_johnson",
     action_no: null,
 
     created_at: "2026-03-27T01:20:05Z",
@@ -61,7 +61,7 @@ export const histories: DbTicketHistory[] = [
     type: "STATUS",
     action: "UPDATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: null,
 
     from_value: "Open",
@@ -76,7 +76,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: "1",
 
     created_at: "2026-03-27T01:23:18Z",
@@ -88,7 +88,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "53",
+    actor_id: "liam_williams",
     action_no: "2",
 
     created_at: "2026-03-27T01:40:42Z",
@@ -100,7 +100,7 @@ export const histories: DbTicketHistory[] = [
     type: "COMMENT",
     action: "CREATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: "3",
 
     created_at: "2026-03-30T01:12:20Z",
@@ -112,7 +112,7 @@ export const histories: DbTicketHistory[] = [
     type: "ASSIGNMENT",
     action: "UPDATED",
 
-    actor_id: "41",
+    actor_id: "evan_seo",
     action_no: null,
 
     from_value: "41",
@@ -127,7 +127,7 @@ export const histories: DbTicketHistory[] = [
     type: "NOTE",
     action: "CREATED",
 
-    actor_id: "43",
+    actor_id: "mason_kwon",
     action_no: "4",
 
     created_at: "2026-03-30T01:48:10Z",
@@ -139,7 +139,7 @@ export const histories: DbTicketHistory[] = [
     type: "TRACK_TIME",
     action: "UPDATED",
 
-    actor_id: "43",
+    actor_id: "mason_kwon",
     action_no: null,
 
     created_at: "2026-03-30T02:02:00Z",

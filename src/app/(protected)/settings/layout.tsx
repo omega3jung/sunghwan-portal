@@ -7,7 +7,6 @@ import { ReactNode } from "react";
 
 import { authOptions } from "@/auth.config";
 import { ACCESS_LEVEL } from "@/domain/auth";
-import { getCurrentAppUser } from "@/server/auth/getCurrentAppUser";
 
 import { SettingsNavigation } from "./components";
 import { SettingsScopeProvider } from "./SettingsScopeProvider";
@@ -18,13 +17,11 @@ export default async function SettingsLayout({
   children: ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  const currentUser = await getCurrentAppUser();
 
   // check session one more.
-  if (!session?.user || !currentUser) redirect("/login");
+  if (!session?.user) redirect("/login");
 
-  const { userScope, permission } = currentUser;
-  const { dataScope } = session.user;
+  const { dataScope, userScope, permission } = session.user;
 
   // forbidden only when access to settings itself is not possible.
   if (permission < ACCESS_LEVEL.ADMIN) {

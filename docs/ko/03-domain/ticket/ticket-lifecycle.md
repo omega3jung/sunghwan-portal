@@ -239,20 +239,20 @@ State Transition = Result of Action
 
 예시:
 
-| Action                | From                                | To         |
-| --------------------- | ----------------------------------- | ---------- |
-| submit ticket         | `Draft`                             | `Open`     |
-| approve               | `Open`                              | `Approved` |
-| update declined ticket| `Declined`                          | `Open`     |
-| assign / assignSelf   | `Open` or `Approved`                | `Working`  |
-| pause or hold work    | `Working`                           | `Pending`  |
-| resume work           | `Pending`                           | `Working`  |
-| reject                | `Working` or `Pending`              | `Rejected` |
-| reopen                | `Resolved`                          | `Reopen`   |
-| resubmit              | `Rejected`                          | `Open`     |
-| manager reassign      | `Declined` or `Rejected`            | `Reopen`   |
-| merge                 | `Working`, `Pending`, or `Resolved` | `Closed`   |
-| manager merge         | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
+| Action                 | From                                                    | To         |
+| ---------------------- | ------------------------------------------------------- | ---------- |
+| submit ticket          | `Draft`                                                 | `Open`     |
+| approve                | `Open`                                                  | `Approved` |
+| update declined ticket | `Declined`                                              | `Open`     |
+| assign / assignSelf    | `Open` or `Approved`                                    | `Working`  |
+| pause or hold work     | `Working`                                               | `Pending`  |
+| resume work            | `Pending`                                               | `Working`  |
+| reject                 | `Working` or `Pending`                                  | `Rejected` |
+| requestReview / reopen | `Resolved`                                              | `Reopen`   |
+| resubmit               | `Rejected`                                              | `Open`     |
+| manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
+| merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
+| manager merge          | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
 
 암묵적인 상태 변경은 없습니다. 모든 transition에는 명확한 원인이 있어야
 합니다.

@@ -12,88 +12,100 @@ import {
 
 const clone = <T>(value: T): T => structuredClone(value);
 
-let localDemoInternalCategories = clone<DbClientCategoryTree[]>(
-  internalCategorySettingsMock,
-);
-let localDemoInternalApprovalSteps = clone<DbCategoryApprovalSettings[]>(
-  internalApprovalStepSettingsMock,
-);
-let localDemoInternalAssignmentRules = clone<DbAssignmentRule[]>(
-  internalAssignmentRuleSettingsMock,
-);
+type LocalDemoSettingsState = {
+  internalCategories: DbClientCategoryTree[];
+  internalApprovalSteps: DbCategoryApprovalSettings[];
+  internalAssignmentRules: DbAssignmentRule[];
+  clientCategories: DbClientCategoryTree[];
+  clientApprovalSteps: DbCategoryApprovalSettings[];
+  clientAssignmentRules: DbAssignmentRule[];
+};
 
-let localDemoClientCategories = clone<DbClientCategoryTree[]>(
-  clientCategorySettingsMock,
-);
-let localDemoClientApprovalSteps = clone<DbCategoryApprovalSettings[]>(
-  clientApprovalStepSettingsMock,
-);
-let localDemoClientAssignmentRules = clone<DbAssignmentRule[]>(
-  clientAssignmentRuleSettingsMock,
-);
+declare global {
+  // eslint-disable-next-line no-var
+  var __SP_LOCAL_DEMO_SETTINGS_STATE__: LocalDemoSettingsState | undefined;
+}
+
+/**
+ * Initial mock data is treated as the immutable source snapshot.
+ * Runtime state below may be mutated by local demo handlers.
+ */
+function createLocalDemoSettingsState(): LocalDemoSettingsState {
+  return {
+    internalCategories: clone<DbClientCategoryTree[]>(internalCategorySettingsMock),
+    internalApprovalSteps: clone<DbCategoryApprovalSettings[]>(
+      internalApprovalStepSettingsMock,
+    ),
+    internalAssignmentRules: clone<DbAssignmentRule[]>(
+      internalAssignmentRuleSettingsMock,
+    ),
+    clientCategories: clone<DbClientCategoryTree[]>(clientCategorySettingsMock),
+    clientApprovalSteps: clone<DbCategoryApprovalSettings[]>(
+      clientApprovalStepSettingsMock,
+    ),
+    clientAssignmentRules: clone<DbAssignmentRule[]>(clientAssignmentRuleSettingsMock),
+  };
+}
+
+// Local demo mutations must survive refetches and route handler module reloads.
+// globalThis gives us a process-level in-memory store without adding persistence.
+function getLocalDemoSettingsState() {
+  if (!globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__) {
+    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ = createLocalDemoSettingsState();
+  }
+
+  return globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
+}
 
 export function getLocalDemoCategories(isInternal: boolean) {
-  return isInternal ? localDemoInternalCategories : localDemoClientCategories;
+  const state = getLocalDemoSettingsState();
+  return isInternal ? state.internalCategories : state.clientCategories;
 }
 
 export function getLocalDemoApprovalStepsTree(isInternal: boolean) {
+  const state = getLocalDemoSettingsState();
   return isInternal
     ? {
-        categoryTrees: localDemoInternalCategories,
+        categoryTrees: state.internalCategories,
         templateCategories: [
-          ...localDemoInternalApprovalSteps,
-          ...localDemoClientApprovalSteps,
+          ...state.internalApprovalSteps,
+          ...state.clientApprovalSteps,
         ],
       }
     : {
-        categoryTrees: localDemoClientCategories,
-        templateCategories: localDemoClientApprovalSteps,
+        categoryTrees: state.clientCategories,
+        templateCategories: state.clientApprovalSteps,
       };
 }
 export function getLocalDemoApprovalSteps(isInternal: boolean) {
+  const state = getLocalDemoSettingsState();
   return isInternal
-    ? localDemoInternalApprovalSteps
-    : localDemoClientApprovalSteps;
+    ? state.internalApprovalSteps
+    : state.clientApprovalSteps;
 }
 
 export function getLocalDemoAssignmentRulesTree(isInternal: boolean) {
+  const state = getLocalDemoSettingsState();
   return isInternal
     ? {
-        categoryTrees: localDemoInternalCategories,
+        categoryTrees: state.internalCategories,
         templateRules: [
-          ...localDemoInternalAssignmentRules,
-          ...localDemoClientAssignmentRules,
+          ...state.internalAssignmentRules,
+          ...state.clientAssignmentRules,
         ],
       }
     : {
-        categoryTrees: localDemoClientCategories,
-        templateRules: localDemoClientAssignmentRules,
+        categoryTrees: state.clientCategories,
+        templateRules: state.clientAssignmentRules,
       };
 }
 export function getLocalDemoAssignmentRules(isInternal: boolean) {
+  const state = getLocalDemoSettingsState();
   return isInternal
-    ? localDemoInternalAssignmentRules
-    : localDemoClientAssignmentRules;
+    ? state.internalAssignmentRules
+    : state.clientAssignmentRules;
 }
 
 export function resetLocalDemoSettingsState() {
-  localDemoInternalCategories = clone<DbClientCategoryTree[]>(
-    internalCategorySettingsMock,
-  );
-  localDemoInternalApprovalSteps = clone<DbCategoryApprovalSettings[]>(
-    internalApprovalStepSettingsMock,
-  );
-  localDemoInternalAssignmentRules = clone<DbAssignmentRule[]>(
-    internalAssignmentRuleSettingsMock,
-  );
-
-  localDemoClientCategories = clone<DbClientCategoryTree[]>(
-    clientCategorySettingsMock,
-  );
-  localDemoClientApprovalSteps = clone<DbCategoryApprovalSettings[]>(
-    clientApprovalStepSettingsMock,
-  );
-  localDemoClientAssignmentRules = clone<DbAssignmentRule[]>(
-    clientAssignmentRuleSettingsMock,
-  );
+  globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ = createLocalDemoSettingsState();
 }

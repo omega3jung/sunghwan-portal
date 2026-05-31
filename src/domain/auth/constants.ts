@@ -4,8 +4,8 @@ export const ACCESS_LEVEL = {
   LEADER: 5,
   USER: 3,
   GUEST: 1,
+  NONE: 0, // no permission
   // 8, 6, 4, 2 reserved.
-  // 0 = no permission.
 } as const;
 
 export type Role = keyof typeof ACCESS_LEVEL;

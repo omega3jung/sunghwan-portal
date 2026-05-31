@@ -45,7 +45,7 @@ export const useTicketFormDialog = ({
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(ticketStep.info);
 
-  const ticketForm = useTicketForm(currentSession?.user);
+  const ticketForm = useTicketForm(currentSession?.user, language);
   const {
     formState: { isDirty },
   } = ticketForm;
@@ -83,13 +83,16 @@ export const useTicketFormDialog = ({
       requester: {
         id: currentSession?.user.username ?? "",
         email: currentSession?.user.email ?? "",
-        name: currentSession?.user.displayName ?? "",
+        name: currentSession?.user.displayName
+          ? tLocal(currentSession.user.displayName)
+          : "",
       },
     }),
     [
       currentSession?.user.displayName,
       currentSession?.user.email,
       currentSession?.user.username,
+      tLocal,
     ],
   );
 

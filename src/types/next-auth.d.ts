@@ -6,19 +6,19 @@ import type {
   SessionUser,
   UserScope,
 } from "@/domain/auth";
+import type { LocalizedText } from "@/shared/types";
 
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    employeeId?: number | null;
     username: string;
-    displayName: string;
+    displayName: LocalizedText;
     email: string;
     accessToken: string;
 
     dataScope: DataScope;
     userScope: UserScope;
-    companyId: string;
+    companyId: number;
     permission: AccessLevel;
     role: Role;
 

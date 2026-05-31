@@ -1,11 +1,13 @@
 import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
-import { ACCESS_LEVEL, AuthUser, Role, UserScope } from "@/domain/auth";
 import {
-  resolveClientProfile,
-  resolveInternalProfile,
-} from "@/mocks/domain/user";
+  ACCESS_LEVEL,
+  AccessLevel,
+  AuthUser,
+  Role,
+  UserScope,
+} from "@/domain/auth";
 
 export async function getAuthToken(req: NextRequest) {
   return getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -18,20 +20,24 @@ export async function getAccessToken(req: NextRequest) {
 
 export async function isRemoteRequest(req: NextRequest) {
   const token = await getAuthToken(req);
-
   return token?.dataScope === "REMOTE";
 }
 
 export async function isInternalUser(req: NextRequest) {
   const token = await getAuthToken(req);
-
   return token?.userScope === "INTERNAL";
 }
 
-export async function getCompanyId(req: NextRequest) {
+export async function getUserAccessLevel(
+  req: NextRequest,
+): Promise<AccessLevel> {
   const token = await getAuthToken(req);
+  return token ? token.permission : 0;
+}
 
-  return token ? resolveCompanyId(token) : null;
+export async function getUserRole(req: NextRequest): Promise<Role> {
+  const token = await getAuthToken(req);
+  return token?.role ?? "NONE";
 }
 
 // UserId helpers resolve auth/account identity from JWT.
@@ -42,12 +48,19 @@ export async function getOriginalUserId(req: NextRequest) {
 
 export async function getImpersonatedUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.impersonation?.impersonatedUserId ?? null;
+  return token?.impersonation?.impersonatedUser.id ?? null;
 }
 
 export async function getCurrentUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.impersonation?.impersonatedUserId ?? token?.id ?? null;
+  return token?.impersonation?.impersonatedUser.id ?? token?.id ?? null;
+}
+
+export async function getCurrentUserName(req: NextRequest) {
+  const token = await getAuthToken(req);
+  return (
+    token?.impersonation?.impersonatedUser.username ?? token?.username ?? null
+  );
 }
 
 // Employee userName helpers resolve employee app identity from JWT/session.
@@ -62,38 +75,56 @@ export async function getCurrentEmployeeUserName(
   req: NextRequest,
 ): Promise<string | null> {
   const token = await getAuthToken(req);
-  const impersonatedUserId = (
-    token?.impersonation as { impersonatedUserId?: unknown } | undefined
-  )?.impersonatedUserId;
+  const impersonatedUserName = resolveEmployeeUserName(
+    token?.impersonation?.impersonatedUser.username,
+  );
 
-  if (typeof impersonatedUserId === "string") {
-    const impersonatedProfile =
-      resolveClientProfile(impersonatedUserId) ??
-      resolveInternalProfile(impersonatedUserId);
-
-    if (impersonatedProfile?.username) {
-      return impersonatedProfile.username;
-    }
+  if (impersonatedUserName) {
+    return impersonatedUserName;
   }
 
   return resolveEmployeeUserName(token?.username);
-}
-
-export async function getUserRole(req: NextRequest): Promise<Role | null> {
-  const token = await getAuthToken(req);
-  return token?.role ?? null;
 }
 
 export type AuthResult =
   | { ok: true; token: JWT }
   | { ok: false; status: 401 | 403 };
 
+type AdminCheckUser =
+  | {
+      role?: Role | null;
+      permission?: number | null;
+    }
+  | null
+  | undefined;
+
+export function isAdmin(user: AdminCheckUser): boolean {
+  if (!user) {
+    return false;
+  }
+
+  if (user.role) {
+    return user.role === "ADMIN";
+  }
+
+  return (
+    typeof user.permission === "number" && user.permission >= ACCESS_LEVEL.ADMIN
+  );
+}
+
+export async function checkAdmin(req: NextRequest): Promise<AuthResult> {
+  const token = await getAuthToken(req);
+
+  if (!token) return { ok: false, status: 401 };
+  if (!isAdmin(token)) return { ok: false, status: 403 };
+
+  return { ok: true, token };
+}
+
 export function tokenToOriginalAuthUser(token: JWT): AuthUser {
   return {
     ...token,
-    employeeId: resolveEmployeeId(token.employeeId),
     email: token.email ?? "",
-    companyId: resolveCompanyId(token),
   };
 }
 
@@ -105,7 +136,7 @@ export async function checkAdminOrSelf(
 
   if (!token) return { ok: false, status: 401 };
 
-  if (token.id !== targetUserId && token.permission < ACCESS_LEVEL.ADMIN) {
+  if (token.id !== targetUserId && !isAdmin(token)) {
     return { ok: false, status: 403 };
   }
 
@@ -115,7 +146,7 @@ export async function checkAdminOrSelf(
 type ImpersonationPolicy = Record<UserScope, readonly UserScope[]>;
 
 const IMPERSONATION_POLICY: ImpersonationPolicy = {
-  INTERNAL: ["CLIENT"], // from INTERNAL to [].
+  INTERNAL: ["INTERNAL", "CLIENT"], // from INTERNAL to [].
   CLIENT: [], // from CLIENT to [].
 } as const;
 
@@ -128,13 +159,6 @@ export function canImpersonate(
   );
 }
 
-function resolveCompanyId(token: {
-  companyId?: string;
-  clientId?: string | null;
-}) {
-  return token.companyId ?? token.clientId ?? "";
-}
-
 function resolveEmployeeUserName(value: unknown): string | null {
   if (typeof value !== "string") {
     return null;
@@ -142,20 +166,4 @@ function resolveEmployeeUserName(value: unknown): string | null {
 
   const normalizedValue = value.trim();
   return normalizedValue.length > 0 ? normalizedValue : null;
-}
-
-function resolveEmployeeId(value: unknown): number | null {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value);
-
-    if (Number.isFinite(parsed)) {
-      return parsed;
-    }
-  }
-
-  return null;
 }

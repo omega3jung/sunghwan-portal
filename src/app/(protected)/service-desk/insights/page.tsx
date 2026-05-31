@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/custom/DatePicker";
 import { getStatusOptions } from "@/components/custom/StatusBadge/options";
+import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -199,6 +200,7 @@ const isTicketMatchedByChartFilter = ({
 
 export default function ServiceDeskInsightsPage() {
   const router = useRouter();
+  const { startRouteLoadingForHref } = useRouteLoading();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
 
@@ -385,16 +387,22 @@ export default function ServiceDeskInsightsPage() {
 
   const handlePageOptionChange = (nextScope: ViewOption) => {
     if (nextScope === "internal") {
-      router.push("/service-desk");
+      const href = "/service-desk";
+      startRouteLoadingForHref(href);
+      router.push(href);
       return;
     }
 
-    router.push("/service-desk/insights");
+    const href = "/service-desk/insights";
+    startRouteLoadingForHref(href);
+    router.push(href);
     setScope(nextScope);
   };
 
   const handleTicketSelected = (ticketId: string) => {
-    router.push(`/service-desk/${ticketId}`);
+    const href = `/service-desk/${ticketId}`;
+    startRouteLoadingForHref(href);
+    router.push(href);
   };
 
   const updateCriteriaPeriod = (next: {

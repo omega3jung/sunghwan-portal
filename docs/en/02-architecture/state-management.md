@@ -44,6 +44,7 @@ Data that originates from the backend and must stay in sync with it.
 - Ticket detail
 - Category data
 - User profile data
+- Local demo mutable ticket/settings state (server-side in-memory modules)
 
 ---
 
@@ -232,10 +233,19 @@ staleTime: Infinity;
 #### Dynamic Data
 
 - Frequently updated (e.g., ticket list)
+- Includes mutable demo data paths in LOCAL runtime
 
 ```ts id="dynamic-query"
 refetchOnWindowFocus: true;
 staleTime: 0;
+```
+
+In LOCAL demo mode, React Query cache reset alone is not enough because
+mutations can change server-side in-memory state. Demo reset should be
+orchestrated through the reset endpoint:
+
+```txt
+/api/demo/service-desk/reset
 ```
 
 ---

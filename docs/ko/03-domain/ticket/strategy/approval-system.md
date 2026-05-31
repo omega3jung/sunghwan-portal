@@ -14,6 +14,11 @@
 
 ---
 
+Scope note:
+- LOCAL demo는 포트폴리오 데모 현실성에 맞춰 승인 동작을 단순화한다.
+- 조직 전체 규칙을 반영한 full approval pipeline은 REMOTE 확장 경로다.
+
+
 ## 핵심 개념
 
 승인은 **카테고리 중심(category-driven)** 으로 동작하며,

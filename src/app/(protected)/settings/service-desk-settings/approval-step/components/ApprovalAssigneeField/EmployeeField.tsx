@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AvatarMultiComboBox } from "@/components/custom/AvatarMultiComboBox";
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { SupportedLanguage } from "@/domain/config";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";

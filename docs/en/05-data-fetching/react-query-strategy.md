@@ -60,6 +60,7 @@ Data that rarely changes.
 - Category list
 - Department list
 - Job field list
+- Reference settings
 
 ---
 
@@ -93,7 +94,11 @@ Data that changes frequently and must stay up-to-date.
 
 - Ticket list
 - Ticket detail
-- Dashboard data
+- Draft
+- Actions
+- Histories
+- Track time
+- Local demo mutable state
 
 ---
 
@@ -111,6 +116,10 @@ refetchOnWindowFocus: true;
 - Always fetch fresh data
 - Ensure UI reflects latest state
 - Support real-time-like behavior
+
+In LOCAL demo mode, dynamic queries may reflect server-side in-memory mutations.
+Therefore cache invalidation/reset must be coordinated with server reset behavior
+(`/api/demo/service-desk/reset`) instead of assuming client cache reset alone is sufficient.
 
 ---
 

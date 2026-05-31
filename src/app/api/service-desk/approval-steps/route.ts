@@ -62,7 +62,9 @@ export async function POST(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload") },
+      {
+        message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload"),
+      },
       { status: 400 },
     );
   }
@@ -103,7 +105,9 @@ export async function PUT(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload") },
+      {
+        message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload"),
+      },
       { status: 400 },
     );
   }

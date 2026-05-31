@@ -1,7 +1,7 @@
 // app/api/employees/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { checkAdmin, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelEmployeeMapper,
@@ -15,6 +15,9 @@ import {
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
+  const authError = await getAdminError(request);
+  if (authError) return authError;
+
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
@@ -42,6 +45,9 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 }
 
 export async function PUT(request: NextRequest, context: IdRouteContext) {
+  const authError = await getAdminError(request);
+  if (authError) return authError;
+
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
@@ -62,6 +68,9 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 }
 
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
+  const authError = await getAdminError(request);
+  if (authError) return authError;
+
   const { id } = context.params;
   const isRemote = await isRemoteRequest(request);
 
@@ -75,4 +84,17 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     path: `/employee/${id}`,
     errorMessage: "Failed to delete employee",
   });
+}
+
+async function getAdminError(req: NextRequest) {
+  const auth = await checkAdmin(req);
+
+  if (auth.ok) {
+    return null;
+  }
+
+  return NextResponse.json(
+    { message: auth.status === 401 ? "Unauthorized" : "Forbidden" },
+    { status: auth.status },
+  );
 }

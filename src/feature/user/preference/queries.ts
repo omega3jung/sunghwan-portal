@@ -3,10 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { userPreferenceQueryKeys } from "./queryKeys";
 import { userPreferenceRepo } from "./repo";
+import { GetPreferenceInput } from "./types";
 
-export const useUserPreferenceQuery = (userId: string | null) => {
+export const useUserPreferenceQuery = <T>(params: GetPreferenceInput) => {
   return useQuery({
-    queryKey: userPreferenceQueryKeys.detail(userId),
-    queryFn: () => userPreferenceRepo.get(userId),
+    queryKey: userPreferenceQueryKeys.detail(params),
+    queryFn: () => userPreferenceRepo.get<T>(params),
   });
 };

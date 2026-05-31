@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Globe } from "lucide-react";
+import { Check, Globe, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,12 +13,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ColorTheme, Preference, ScreenMode } from "@/domain/config";
 import {
-  useCreateUserPreference,
-  useUpdateUserPreference,
-} from "@/feature/user/preference/client";
+  ColorTheme,
+  PortalPreference,
+  Preference,
+  ScreenMode,
+} from "@/domain/config";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { useUpdateUserPreference } from "@/feature/user/preference/client";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
 import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
 import { languageOptions } from "@/shared/constants/options/language";
 import { isLocale } from "@/shared/utils/i18n";
@@ -33,11 +37,13 @@ const themeButtons = [
 ] as { name: ColorTheme; primary: string; muted: string }[];
 
 type PreferencesMenuProps = {
-  children: React.ReactElement; // Popover trigger.
+  trigger?: (props: { label: string }) => React.ReactElement; // Popover trigger.
 };
 
-export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
+export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
+  const { data: currentSession } = useCurrentSession();
+  const isRemote = currentSession?.user.dataScope === "REMOTE";
 
   const [open, setOpen] = useState(false);
 
@@ -47,7 +53,6 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setColorTheme,
     setScreenMode,
   } = useCurrentPreference();
-  const { mutate: createUserPreference } = useCreateUserPreference();
   const { mutate: updateUserPreference } = useUpdateUserPreference();
 
   const { t } = useTranslation("PreferencesMenu");
@@ -62,8 +67,11 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setScreenMode(newTheme);
 
     handleSavePreferences({
-      ...userPreference,
-      screenMode: newTheme,
+      preferenceKey: preferenceKeys.home.preference,
+      preferenceMeta: {
+        ...userPreference,
+        screenMode: newTheme,
+      },
     });
   };
 
@@ -74,8 +82,11 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setColorTheme(newColor);
 
     handleSavePreferences({
-      ...userPreference,
-      colorTheme: newColor,
+      preferenceKey: preferenceKeys.home.preference,
+      preferenceMeta: {
+        ...userPreference,
+        colorTheme: newColor,
+      },
     });
   };
 
@@ -86,22 +97,35 @@ export const PreferencesMenu = ({ children }: PreferencesMenuProps) => {
     setLanguage(newLang);
 
     handleSavePreferences({
-      ...userPreference,
-      language: newLang,
+      preferenceKey: preferenceKeys.home.preference,
+      preferenceMeta: {
+        ...userPreference,
+        language: newLang,
+      },
     });
   };
 
-  const handleSavePreferences = (payload: Preference) => {
-    if (!userPreference) {
-      createUserPreference({ userId: null, data: payload });
-    } else {
-      updateUserPreference({ userId: null, data: payload });
-    }
+  const handleSavePreferences = (payload: Preference<PortalPreference>) => {
+    updateUserPreference({ isRemote, data: payload });
   };
+
+  const label = t("preferences");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverTrigger asChild>
+        {trigger ? (
+          trigger({ label })
+        ) : (
+          <Button
+            className="h-8 w-full justify-start px-2 font-normal"
+            variant="ghost"
+          >
+            <Settings2 />
+            <span>{label}</span>
+          </Button>
+        )}
+      </PopoverTrigger>
       <PopoverContent className="h-full w-80 p-6">
         <div id="PreferenceMenu" className="flex flex-col gap-2">
           <div className="font-semibold">{t("colorTheme")}</div>

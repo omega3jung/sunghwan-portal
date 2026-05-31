@@ -56,6 +56,7 @@ The current stack is:
 ```ts
 type AuthUser = {
   id: string;
+  employeeId: strung | number;
   username: string;
   displayName: string;
   email: string;
@@ -163,6 +164,7 @@ The project uses `CredentialsProvider`.
 On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 
 - `id`
+- `employeeId`
 - `username`
 - `displayName`
 - `email`
@@ -199,8 +201,14 @@ If impersonation is active, the callback also exposes:
 
 ```ts
 session.impersonation = {
-  originalUserId,
-  impersonatedUserId,
+  originalUser: {
+    id,
+    username,
+  },
+  impersonatedUser: {
+    id,
+    username,
+  },
   activatedAt,
 };
 ```
@@ -240,7 +248,7 @@ This keeps authentication stable while allowing the application user model to gr
 The UI accesses user profile data through:
 
 ```txt
-GET /api/users/me
+GET /api/users/me/profile
 GET /api/users/[userId]/profile
 ```
 
@@ -320,6 +328,7 @@ Important limitation:
 
 > `authSessionStore` is **not** the source of truth for authentication.
 > It is a frontend runtime cache/facade.
+> It does not replace server/session-driven impersonation control.
 
 The trusted source remains the JWT-backed NextAuth auth flow.
 
@@ -371,9 +380,14 @@ Impersonation is supported as part of the auth/session architecture.
 The NextAuth session carries only minimal impersonation metadata:
 
 ```ts
+type UserInfo = {
+  id: string; // authentication/account identity id
+  username: string; // internal unique key
+};
+
 type ImpersonationInfo = {
-  originalUserId: string;
-  impersonatedUserId: string;
+  originalUser: UserInfo;
+  impersonatedUser: UserInfo;
   activatedAt: number;
 };
 ```
@@ -405,7 +419,7 @@ Meaning:
 ### Runtime Flow
 
 ```txt
-startImpersonation(impersonatedUserId)
+startImpersonation(impersonatedUsername)
 -> POST /api/auth/impersonation
 -> session.update({ impersonation })
 -> useImpersonation() fetches impersonated user profile
@@ -422,7 +436,7 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 Based on the current implementation:
 
 - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `CLIENT` user
+- the impersonation target must be a `TENANT` user
 
 This rule lives in the auth layer, not in the UI.
 

@@ -1,7 +1,7 @@
-import { Preference } from "@/domain/config";
+import { PortalPreference } from "@/domain/config";
 import { detectBrowserLanguage } from "@/lib/i18n/detectLanguage";
 
-export function createDefaultPreference(): Preference {
+export function createDefaultPreference(): PortalPreference {
   return {
     screenMode: "system",
     colorTheme: "default",

@@ -1,9 +1,17 @@
 "use client";
 
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import {
+  usePreferenceCleanup,
+  usePreferenceHydration,
+  usePreferencePresentationSync,
+  usePreferenceRemoteSync,
+} from "@/feature/user/preference/bootstrap";
 
 export function PreferenceBootstrap() {
-  const {} = useCurrentPreference();
+  usePreferenceHydration();
+  usePreferenceRemoteSync();
+  usePreferencePresentationSync();
+  usePreferenceCleanup();
 
   return null;
 }

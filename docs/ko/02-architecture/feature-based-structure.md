@@ -72,17 +72,11 @@ feature = 독립적인 비즈니스 로직 단위
 
 ```bash id="feature-structure"
 src/
-  app/
-    service-desk/
-      page.tsx
-
-  feature/
-    serviceDesk/
-      components/
-      api/
-      hooks/
-      types/
-      utils/
+  app/        # 라우팅 계층
+  domain/     # 도메인 모델 및 규칙
+  feature/    # 기능 워크플로 및 UI
+  server/     # 서버 측 로컬/데모 로직
+  shared/     # 재사용 가능한 유틸리티 및 컴포넌트
 ```
 
 ---
@@ -133,6 +127,7 @@ feature/serviceDesk/
 
 ### api/
 
+- 필요에 따라 서버에서 안전하게 사용할 수 있는 헬퍼 함수와 클라이언트 전용 래퍼 함수로 분리합니다.
 - API 호출과 mutation 로직
 - 백엔드 연동 세부 사항 캡슐화
 
@@ -246,6 +241,40 @@ export const useFetchTickets = () => {
 
 - 강한 결합 방지
 - feature 독립성 유지
+
+---
+
+## Barrel Export Policy
+
+Barrel 파일은 명시적인 public contract로 취급한다.
+
+규칙:
+
+```txt
+Barrel file != dumping ground
+```
+
+Service Desk 방향:
+
+```txt
+feature/serviceDesk/ticket/index.ts
+-> constants, mapper, mock, types
+
+feature/serviceDesk/ticket/components/index.ts
+-> UI components
+
+feature/serviceDesk/ticket/api/index.ts
+-> server-safe API helpers
+
+feature/serviceDesk/ticket/api/client.ts
+-> client-only API exports
+```
+
+Client-only shared utilities는 다음과 같은 경계로 분리한다.
+
+```txt
+src/shared/client/
+```
 
 ---
 

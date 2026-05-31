@@ -11,6 +11,7 @@ It aims to:
 - Enable debugging and issue reproduction
 - Maintain strict security boundaries
 - Preserve auditability of actions
+- Keep impersonation server/session-aware rather than client-only overrides
 
 ---
 
@@ -101,8 +102,15 @@ Impersonation is handled at the **session level**.
 session = {
   user: originalUser,
   impersonation: {
-    originalUserId,
-    impersonatedUserId,
+    originalUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    impersonatedUser: {
+      id, // authentication/account identity id
+      username, // internal unique key
+    },
+    activatedAt,
   },
 };
 ```
@@ -196,6 +204,7 @@ Impersonation must not elevate privileges beyond what the original user is allow
 - Permissions must be evaluated carefully
 - The system must prevent privilege escalation
 - The original user must remain known even when the current user changes
+- The authorization rule is enforced in the auth layer, not in UI components
 
 ---
 
@@ -203,6 +212,11 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 - Admin impersonates a user and acts within that user context
 - The system still knows the original user is the admin
+
+### Current Authorization Boundary
+
+- Only `INTERNAL` users with at least `ADMIN` access can start impersonation
+- The impersonation target must be a `TENANT` user
 
 ---
 
@@ -216,8 +230,9 @@ All actions must remain traceable.
 
 ### Stored Context
 
-- `originalUserId`
-- `currentUserId`
+- `originalUser.username` (audit/security key)
+- `impersonatedUser.username` (effective user context key)
+- `originalUser.id` and `impersonatedUser.id` (authentication/account identity ids)
 
 ---
 
