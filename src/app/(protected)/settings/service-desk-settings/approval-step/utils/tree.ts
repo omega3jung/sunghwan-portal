@@ -124,6 +124,37 @@ export const createApprovalStepSettingsSignatureFromTree = (
   return JSON.stringify(normalizeCategoriesForComparison(payload.categories));
 };
 
+export const isApprovalStepAssigneeValid = (approvalStep: ApprovalStepData) => {
+  switch (approvalStep.stepAssignee.type) {
+    case "MANAGER":
+      return (
+        approvalStep.stepAssignee.level === 1 ||
+        approvalStep.stepAssignee.level === 2
+      );
+    case "DEPARTMENT":
+      return approvalStep.stepAssignee.departmentId.trim().length > 0;
+    case "JOB_FIELD":
+      return approvalStep.stepAssignee.jobFieldId.trim().length > 0;
+    case "EMPLOYEE":
+      return (
+        approvalStep.stepAssignee.employeeIds.length > 0 &&
+        approvalStep.stepAssignee.employeeIds.every(
+          (employeeId) => employeeId.trim().length > 0,
+        )
+      );
+  }
+};
+
+export const isApprovalStepTreeValid = (tree: ApprovalStepTree) => {
+  return tree.every((categoryNode) =>
+    categoryNode.children.every((approvalNode) => {
+      const approvalData = approvalNode.data as ApprovalStepData;
+
+      return isApprovalStepAssigneeValid(approvalData);
+    }),
+  );
+};
+
 export const createApprovalStepSettingsSignatureFromApprovalSettings = (
   categories: CategoryApprovalSettings[],
 ) => {

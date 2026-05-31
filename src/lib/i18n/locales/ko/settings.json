@@ -136,7 +136,8 @@
       "jobFieldPlaceholder": "직무 선택",
       "employee": "직원",
       "employeePlaceholder": "담당자 선택",
-      "skipAccessLevel": "건너뛸 수 있는 접근 레벨"
+      "skipAccessLevel": "건너뛸 수 있는 접근 레벨",
+      "saveUnavailable": "저장 불가"
     },
     "assignmentRuleTab": {
       "name": "이름",

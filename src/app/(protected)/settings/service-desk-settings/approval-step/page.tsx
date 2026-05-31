@@ -38,6 +38,7 @@ import {
   buildApprovalStepTreeSavePayload,
   createApprovalStepSettingsSignatureFromApprovalSettings,
   createApprovalStepSettingsSignatureFromTree,
+  isApprovalStepTreeValid,
 } from "./utils/tree";
 
 export default function ApprovalStepPage() {
@@ -97,6 +98,9 @@ export default function ApprovalStepPage() {
   const currentSignature = useMemo(() => {
     return createApprovalStepSettingsSignatureFromTree(tree);
   }, [tree]);
+  const isTreeValid = useMemo(() => {
+    return isApprovalStepTreeValid(tree);
+  }, [tree]);
 
   const isDirty =
     Boolean(selectedClient) && baselineSignature !== currentSignature;
@@ -104,6 +108,7 @@ export default function ApprovalStepPage() {
     Boolean(selectedClient) &&
     treeClientId === selectedClient &&
     isDirty &&
+    isTreeValid &&
     !isSaving;
 
   const onSaveChange = async () => {
@@ -111,6 +116,7 @@ export default function ApprovalStepPage() {
       !selectedClient ||
       treeClientId !== selectedClient ||
       !isDirty ||
+      !isTreeValid ||
       !categories
     ) {
       return;

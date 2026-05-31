@@ -46,12 +46,6 @@ export function MergeFields({ ticketId, form, t }: MergeFieldsProps) {
             operator: "!=",
             value: "Draft",
           },
-          "and",
-          {
-            field: "merged_into_ticket_id",
-            operator: "=",
-            value: null,
-          },
         ],
       },
     }),

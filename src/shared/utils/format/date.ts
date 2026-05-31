@@ -26,7 +26,7 @@ export const formatTimeDistanceFromNow = (
 
   const date = typeof timeStamp === "string" ? new Date(timeStamp) : timeStamp;
 
-  return formatDistance(new Date(), date, { locale, addSuffix: true });
+  return formatDistance(date, new Date(), { locale, addSuffix: true });
 };
 
 /**
