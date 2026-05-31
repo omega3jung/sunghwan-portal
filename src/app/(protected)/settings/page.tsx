@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Card } from "@/components/ui/card";
 import { NS } from "@/lib/i18n";
 import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
@@ -18,6 +19,7 @@ export default function SettingsPage() {
   const settingsCardItems = createSettingsCardMock(t);
 
   const router = useRouter();
+  const { startRouteLoadingForHref } = useRouteLoading();
 
   const handleNavigate = (path: string) => {
     if (!ENABLED_SETTINGS_ROUTES.has(path)) {
@@ -29,6 +31,7 @@ export default function SettingsPage() {
       return;
     }
 
+    startRouteLoadingForHref(path);
     router.push(path);
   };
 

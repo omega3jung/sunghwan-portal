@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { TrackTimeTool } from "@/feature/serviceDesk/ticketTrackTime";
@@ -23,6 +24,7 @@ export function TicketHeader({
   onOpenHistorySheet,
 }: TicketHeaderProps) {
   const router = useRouter();
+  const { startRouteLoadingForHref } = useRouteLoading();
 
   const { t } = useTranslation(NS.serviceDesk);
 
@@ -34,7 +36,9 @@ export function TicketHeader({
         className="max-w-full rounded-xl pl-1 pr-2"
         title={t("hoverMessage.backToList")}
         onClick={() => {
-          router.push("/service-desk/");
+          const href = "/service-desk";
+          startRouteLoadingForHref(href);
+          router.push(href);
         }}
       >
         <ChevronLeft className="p-0" />

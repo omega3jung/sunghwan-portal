@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -25,6 +26,7 @@ export function SettingsNavigation() {
   const settingsNavigationItems = createSettingsNavigationMock(t);
 
   const router = useRouter();
+  const { startRouteLoadingForHref } = useRouteLoading();
 
   const handleNavigate = (path: string) => {
     if (!ENABLED_SETTINGS_ROUTES.has(path)) {
@@ -36,6 +38,7 @@ export function SettingsNavigation() {
       return;
     }
 
+    startRouteLoadingForHref(path);
     router.push(path);
   };
 

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -103,6 +104,7 @@ const checkboxItemRightCheckClass =
 
 export default function ServiceDeskPage() {
   const router = useRouter();
+  const { startRouteLoadingForHref } = useRouteLoading();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
   const { current: userPreference } = useCurrentPreference();
@@ -209,7 +211,9 @@ export default function ServiceDeskPage() {
 
   const handlePageOptionChange = (nextSort: ViewOption) => {
     if (nextSort === "insights") {
-      router.push(`/service-desk/insights`);
+      const href = "/service-desk/insights";
+      startRouteLoadingForHref(href);
+      router.push(href);
     }
     setScope(nextSort);
     setPage(1);
@@ -226,7 +230,9 @@ export default function ServiceDeskPage() {
   };
 
   const handleTicketSelected = (ticketId: string) => {
-    router.push(`/service-desk/${ticketId}`);
+    const href = `/service-desk/${ticketId}`;
+    startRouteLoadingForHref(href);
+    router.push(href);
   };
 
   return (
