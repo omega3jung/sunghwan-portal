@@ -25,7 +25,7 @@ export const approvalAssigneeSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("EMPLOYEE"),
-    employeeIds: z.array(z.string().min(1)),
+    employeeUsernames: z.array(z.string().min(1)),
   }),
 ]);
 

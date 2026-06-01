@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 
 import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
@@ -16,7 +16,7 @@ const parseRecommendationInput = async (
     return null;
   }
 
-  if (!Array.isArray(payload.assigneeIds)) {
+  if (!Array.isArray(payload.assigneeUsernames)) {
     return null;
   }
 
@@ -26,7 +26,7 @@ const parseRecommendationInput = async (
     return null;
   }
 
-  const assigneeIds = payload.assigneeIds
+  const assigneeUsernames = payload.assigneeUsernames
     .filter((value): value is string => typeof value === "string")
     .map((value) => value.trim())
     .filter(Boolean);
@@ -37,7 +37,7 @@ const parseRecommendationInput = async (
 
   return {
     categoryId,
-    assigneeIds,
+    assigneeUsernames,
     ...(language ? { language } : {}),
   };
 };

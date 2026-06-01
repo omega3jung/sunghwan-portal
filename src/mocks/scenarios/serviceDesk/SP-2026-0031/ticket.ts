@@ -10,7 +10,7 @@ export const ticket: TicketMockInput = {
   priority: "medium",
   risk_level: "medium",
   assignee_id: ["evan_seo"],
-  track_time_minutes: 60,
+  work_minutes: 60,
   last_comment_at: "2026-03-27T15:02:13Z",
   last_commenter_email: "liam.williams@sunghwan-portal.dev",
   due_at: "2026-04-02T18:00:00Z",
@@ -20,9 +20,9 @@ export const ticket: TicketMockInput = {
   scope: "INTERNAL",
   category_id: "72",
   approval_step_id: null,
-  subject: "입고된 디바이스 ID 수정 요청",
+  subject: "?�고???�바?�스 ID ?�정 ?�청",
   content:
-    "안녕하세요. 입고된 B4 디바이스 ID 중 하나가 잘못된 것을 확인했습니다.<br>디바이스 ID를 84321565에서 84321585로 수정해 주세요.",
+    "?�녕?�세?? ?�고??B4 ?�바?�스 ID �??�나가 ?�못??것을 ?�인?�습?�다.<br>?�바?�스 ID�?84321565?�서 84321585�??�정??주세??",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "liam.williams@sunghwan-portal.dev"],
     cc: [

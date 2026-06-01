@@ -3,35 +3,35 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useCurrentSession } from "@/feature/auth/session/client";
 
 import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
-import { serviceDeskTicketTrackTimeApi } from "./api";
-import { ticketTrackTimeQueryKeys } from "./queryKeys";
+import { serviceDeskTicketWorkSessionApi } from "./api";
+import { ticketWorkSessionQueryKeys } from "./queryKeys";
 
-export const useServiceDeskTicketTrackTimeListQuery = (ticketId: string) => {
+export const useServiceDeskTicketWorkSessionListQuery = (ticketId: string) => {
   const { data: currentSession } = useCurrentSession();
   const dataScope = currentSession?.user.dataScope;
   const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
 
   return useQuery({
-    queryKey: ticketTrackTimeQueryKeys.list(ticketId),
-    queryFn: () => serviceDeskTicketTrackTimeApi.list(ticketId),
+    queryKey: ticketWorkSessionQueryKeys.list(ticketId),
+    queryFn: () => serviceDeskTicketWorkSessionApi.list(ticketId),
     placeholderData: keepPreviousData,
     enabled: !!ticketId && !!dataScope,
     ...ticketQueryOptions,
   });
 };
 
-export const useServiceDeskTicketTrackTimeQuery = (
+export const useServiceDeskTicketWorkSessionQuery = (
   ticketId: string,
-  trackTimeNo: string,
+  workSessionNo: string,
 ) => {
   const { data: currentSession } = useCurrentSession();
   const dataScope = currentSession?.user.dataScope;
   const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
 
   return useQuery({
-    queryKey: ticketTrackTimeQueryKeys.detail(ticketId, trackTimeNo),
-    queryFn: () => serviceDeskTicketTrackTimeApi.get(ticketId, trackTimeNo),
-    enabled: !!ticketId && !!trackTimeNo && !!dataScope,
+    queryKey: ticketWorkSessionQueryKeys.detail(ticketId, workSessionNo),
+    queryFn: () => serviceDeskTicketWorkSessionApi.get(ticketId, workSessionNo),
+    enabled: !!ticketId && !!workSessionNo && !!dataScope,
     ...ticketQueryOptions,
   });
 };

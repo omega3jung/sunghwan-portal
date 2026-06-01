@@ -16,7 +16,7 @@ interface TicketBase {
   createdAt: ISODateString;
   updatedAt?: ISODateString;
 
-  requesterId: string;
+  requesterUsername: string;
 }
 
 /**
@@ -27,7 +27,7 @@ interface TicketWorkflowState {
   status: TicketStatus;
   priority: Priority;
   riskLevel: RiskLevel;
-  assigneeIds: string[];
+  assigneeUsernames: string[];
   closeReason?: TicketResolutionReason;
 }
 
@@ -36,7 +36,7 @@ interface TicketWorkflowState {
  * These values are useful for domain-level summary/detail reads.
  */
 interface TicketMetrics {
-  trackTimeMinutes: number;
+  workMinutes: number;
 
   lastCommentAt?: ISODateString;
   lastCommenterEmail?: string;

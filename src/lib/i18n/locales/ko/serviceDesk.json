@@ -1,4 +1,4 @@
-{
+﻿{
   "action": {
     "comment": "댓글",
     "note": "메모",
@@ -11,7 +11,7 @@
     "reopenIssue": "티켓 다시 열기",
     "resubmitRequest": "요청 재제출",
     "searchCriteria": "검색 조건",
-    "trackTime": {
+    "workSession": {
       "submit": "작업 시간 저장",
       "submitWithStatus": "시간 저장 및 상태 변경",
       "submitting": "저장 중..."
@@ -42,7 +42,7 @@
   },
   "field": {
     "dueBy": "기한",
-    "trackTime": "작업 시간",
+    "workSession": "작업 시간",
     "durationMinutes": "소요 시간",
     "startAt": "시작 시간",
     "endAt": "종료 시간",
@@ -57,7 +57,7 @@
     }
   },
   "validation": {
-    "trackTime": {
+    "workSession": {
       "required": "제출하기 전에 작업 시간을 입력해 주세요.",
       "positive": "작업 시간은 0분보다 커야 합니다.",
       "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
@@ -77,7 +77,7 @@
   },
   "hoverMessage": {
     "backToList": "티켓 목록으로 돌아가기",
-    "trackTimeTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "workSessionTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
     "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
   },
@@ -136,7 +136,7 @@
       "NOTE_CREATED": "메모가 추가됨",
       "COMMENT_UPDATED": "댓글이 수정됨",
       "COMMENT_DELETED": "댓글이 삭제됨",
-      "TRACK_TIME_UPDATED": "작업 시간이 업데이트됨",
+      "WORK_SESSION_UPDATED": "작업 시간이 업데이트됨",
       "MERGED": "{{target}} 티켓으로 병합됨",
       "TICKET_REJECTED": "티켓이 반려됨",
       "UPDATED": "티켓이 업데이트됨",
@@ -157,7 +157,7 @@
       "comment": "댓글",
       "category": "카테고리",
       "note": "메모",
-      "trackTime": "작업 시간",
+      "workSession": "작업 시간",
       "planning": "계획",
       "system": "시스템",
       "default": "이력"
@@ -266,7 +266,7 @@
       "adjustNoChanges": "업데이트하기 전에 우선순위, 위험도 또는 기한을 변경하세요."
     }
   },
-  "trackTimeTool": {
+  "workSessionTool": {
     "title": "작업 시간",
     "description": "수동 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "tab": {
@@ -290,7 +290,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "예: 30분",
       "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
     }
@@ -370,7 +370,7 @@
       "delete": "할당 규칙을 삭제하지 못했습니다."
     },
     "assignmentRecommendations": {
-      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeIds가 필요합니다.",
+      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeUsernames가 필요합니다.",
       "fetch": "할당 추천을 불러오지 못했습니다."
     },
     "categories": {
@@ -397,7 +397,7 @@
     "ticketHistories": {
       "fetchList": "티켓 이력을 불러오지 못했습니다."
     },
-    "ticketTrackTime": {
+    "ticketWorkSession": {
       "fetchList": "티켓 작업 시간을 불러오지 못했습니다.",
       "create": "티켓 작업 시간을 저장하지 못했습니다.",
       "localDemo": {
@@ -416,7 +416,7 @@
       "localDemo": {
         "createFailed": "액션 생성에 실패했습니다.",
         "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
-        "assigneeRequired": "ASSIGN 작업에는 assigneeIds가 필요합니다.",
+        "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
         "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
         "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
         "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",

@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRule } from "@/domain/serviceDesk";
 import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/mapper";
 import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule/mapper";
@@ -152,7 +152,7 @@ export const buildDbAssignmentRule = ({
     category_id: Number(categoryId),
     assignee: {
       job_field_id: normalizeJobFieldIds(assignee.jobFieldIds),
-      employee_id: normalizeAssigneeIds(assignee.employeeIds),
+      employee_username: normalizeAssigneeIds(assignee.assigneeUsernames),
     },
   };
 };

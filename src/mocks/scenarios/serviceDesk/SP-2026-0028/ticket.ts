@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "low",
   assignee_id: ["matthew_williams", "amelia_brown", "evan_seo"],
   merged_into_ticket_id: null,
-  track_time_minutes: 0,
+  work_minutes: 0,
   last_comment_at: null,
   last_commenter_email: null,
   due_at: "2026-05-01T18:00:00Z",
@@ -25,7 +25,7 @@ export const ticket: TicketMockInput = {
   subject:
     "Veuillez refléter le travail effectué le 24 dans le journal de travail",
   content:
-    "Bonjour. Le 24, après le départ de tous les employés à 17 h 00, l’équipe des installations a effectué un remplacement du câblage électrique.<br>Pour cette raison, nous n’avons pas pu enregistrer notre départ.<br>Veuillez mettre à jour l’heure de départ et les heures travaillées pour trois employés.<br><br>Jasper.Powell@sunghwan-portal.dev<br>Naomi.Jenkins@sunghwan-portal.dev<br>Connor.Peterson@sunghwan-portal.dev<br><br>Heure de fin du travail : 21 h 00.",
+    "Bonjour. Le 24, après le départ de tous les employés à 17 h 00, l?�équipe des installations a effectué un remplacement du câblage électrique.<br>Pour cette raison, nous n?�avons pas pu enregistrer notre départ.<br>Veuillez mettre à jour l?�heure de départ et les heures travaillées pour trois employés.<br><br>Jasper.Powell@sunghwan-portal.dev<br>Naomi.Jenkins@sunghwan-portal.dev<br>Connor.Peterson@sunghwan-portal.dev<br><br>Heure de fin du travail : 21 h 00.",
   email: {
     to: [
       "Matthew.Williams@sunghwan-portal.dev",

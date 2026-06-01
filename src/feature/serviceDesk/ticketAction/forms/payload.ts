@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   TicketActionDraftFormValues,
   TicketActionPayloadValues,
 } from "./types";
@@ -60,7 +60,7 @@ export function buildTicketActionPayload({
     case "ASSIGN":
       return {
         ...basePayload,
-        assigneeIds: values.assigneeIds,
+        assigneeUsernames: values.assigneeUsernames,
         categoryId: normalizeOptionalString(values.categoryId),
       };
 

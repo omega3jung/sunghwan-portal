@@ -50,7 +50,7 @@ type DbApprovalAssigneeType =
     }
   | {
       type: "EMPLOYEE";
-      employee_id: string[];
+      employee_username: string[];
     };
 
 export const camelCategoryApprovalSettingMapper: ArrayMapper<
@@ -108,7 +108,9 @@ const camelAssigneeTypeMapper: Mapper<
     case "EMPLOYEE":
       return {
         type: data.type,
-        employeeIds: data.employee_id.map((employeeId) => String(employeeId)),
+        employeeUsernames: data.employee_username.map((employeeUsername) =>
+          String(employeeUsername),
+        ),
       };
   }
 };
@@ -142,7 +144,7 @@ const snakeAssigneeTypeMapper: Mapper<
     case "EMPLOYEE":
       return {
         type: data.type,
-        employee_id: data.employeeIds,
+        employee_username: data.employeeUsernames,
       };
   }
 };

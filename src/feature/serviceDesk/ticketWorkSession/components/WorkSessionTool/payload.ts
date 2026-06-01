@@ -1,24 +1,24 @@
 import type {
-  TicketTrackTimeInputMode,
-  TicketTrackTimeStatus,
-  TicketTrackTimeSubmitPayload,
+  TicketWorkSessionInputMode,
+  TicketWorkSessionStatus,
+  TicketWorkSessionSubmitPayload,
 } from "../../types";
 
 const MS_PER_MINUTE = 60 * 1000;
 
-type TrackTimeDurationLike = {
+type WorkSessionDurationLike = {
   durationMinutes?: unknown;
 };
 
-type TrackTimeRangeLike = {
+type WorkSessionRangeLike = {
   startAt?: string | null;
   endAt?: string | null;
 };
 
 type GetCurrentTrackedMinutesParams = {
-  inputMode: TicketTrackTimeInputMode;
-  durationValues?: TrackTimeDurationLike;
-  rangeValues?: TrackTimeRangeLike;
+  inputMode: TicketWorkSessionInputMode;
+  durationValues?: WorkSessionDurationLike;
+  rangeValues?: WorkSessionRangeLike;
 };
 
 type CanChangeStatusParams = {
@@ -28,10 +28,10 @@ type CanChangeStatusParams = {
 
 type GetSubmitPayloadParams = {
   ticketId: string;
-  inputMode: TicketTrackTimeInputMode;
-  durationValues?: TrackTimeDurationLike;
-  rangeValues?: TrackTimeRangeLike;
-  nextStatus?: TicketTrackTimeStatus;
+  inputMode: TicketWorkSessionInputMode;
+  durationValues?: WorkSessionDurationLike;
+  rangeValues?: WorkSessionRangeLike;
+  nextStatus?: TicketWorkSessionStatus;
   note?: string;
 };
 
@@ -50,7 +50,7 @@ const normalizeNote = (note?: string) => {
   return trimmedNote ? trimmedNote : undefined;
 };
 
-export function getTrackedMinutesFromDuration(values?: TrackTimeDurationLike) {
+export function getTrackedMinutesFromDuration(values?: WorkSessionDurationLike) {
   const durationMinutes = Number(values?.durationMinutes);
 
   if (!Number.isFinite(durationMinutes) || !Number.isInteger(durationMinutes)) {
@@ -60,7 +60,7 @@ export function getTrackedMinutesFromDuration(values?: TrackTimeDurationLike) {
   return durationMinutes > 0 ? durationMinutes : 0;
 }
 
-export function getTrackedMinutesFromRange(values?: TrackTimeRangeLike) {
+export function getTrackedMinutesFromRange(values?: WorkSessionRangeLike) {
   const start = parseTime(values?.startAt);
   const end = parseTime(values?.endAt);
 
@@ -88,14 +88,14 @@ export function canChangeStatus({
   return previousTrackedMinutes + currentTrackedMinutes > 0;
 }
 
-export function getTrackTimeSubmitPayload({
+export function getWorkSessionSubmitPayload({
   ticketId,
   inputMode,
   durationValues,
   rangeValues,
   nextStatus,
   note,
-}: GetSubmitPayloadParams): TicketTrackTimeSubmitPayload {
+}: GetSubmitPayloadParams): TicketWorkSessionSubmitPayload {
   const trackedMinutes = getCurrentTrackedMinutes({
     inputMode,
     durationValues,

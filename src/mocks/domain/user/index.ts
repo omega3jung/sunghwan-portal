@@ -10,10 +10,10 @@ export * from "./resolver";
 export const demoAuths = [...internalAuths, ...clientAuths];
 export const demoProfiles = [...internalProfiles, ...clientProfiles];
 
-export function resolveDemoAuth(userName: string) {
-  return demoAuths.find((u) => u.username === userName) ?? null;
+export function resolveDemoAuth(username: string) {
+  return demoAuths.find((u) => u.username === username) ?? null;
 }
 
-export function resolveDemoProfile(userName: string) {
-  return demoProfiles.find((u) => u.username === userName) ?? null;
+export function resolveDemoProfile(username: string) {
+  return demoProfiles.find((u) => u.username === username) ?? null;
 }

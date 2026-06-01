@@ -30,7 +30,7 @@ const toDbApprovalAssignee = (approvalStep: ApprovalStep["stepAssignee"]) => {
     case "EMPLOYEE":
       return {
         type: approvalStep.type,
-        employee_id: approvalStep.employeeIds,
+        employee_username: approvalStep.employeeUsernames,
       } as const;
   }
 };

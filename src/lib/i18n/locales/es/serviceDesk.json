@@ -1,4 +1,4 @@
-{
+﻿{
   "action": {
     "comment": "Comentario",
     "note": "Nota",
@@ -11,7 +11,7 @@
     "reopenIssue": "Reabrir incidencia",
     "resubmitRequest": "Reenviar solicitud",
     "searchCriteria": "Criterios de búsqueda",
-    "trackTime": {
+    "workSession": {
       "submit": "Guardar tiempo registrado",
       "submitWithStatus": "Guardar tiempo y actualizar estado",
       "submitting": "Guardando..."
@@ -42,7 +42,7 @@
   },
   "field": {
     "dueBy": "Fecha límite",
-    "trackTime": "Tiempo registrado",
+    "workSession": "Tiempo registrado",
     "durationMinutes": "Duración",
     "startAt": "Hora de inicio",
     "endAt": "Hora de fin",
@@ -57,7 +57,7 @@
     }
   },
   "validation": {
-    "trackTime": {
+    "workSession": {
       "required": "Introduce el tiempo registrado antes de enviar.",
       "positive": "El tiempo registrado debe ser mayor que 0 minutos.",
       "invalidRange": "La hora de fin debe ser posterior a la hora de inicio.",
@@ -77,7 +77,7 @@
   },
   "hoverMessage": {
     "backToList": "Volver a la lista de tickets",
-    "trackTimeTool": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
+    "workSessionTool": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
     "openDetailAside": "Abra el panel lateral para ver los detalles del ticket",
     "openHistoryDrawer": "Abra el panel lateral para ver el historial de este ticket"
   },
@@ -136,7 +136,7 @@
       "NOTE_CREATED": "Nota agregada",
       "COMMENT_UPDATED": "Comentario actualizado",
       "COMMENT_DELETED": "Comentario eliminado",
-      "TRACK_TIME_UPDATED": "Tiempo registrado actualizado",
+      "WORK_SESSION_UPDATED": "Tiempo registrado actualizado",
       "MERGED": "Fusionado en {{target}}",
       "TICKET_REJECTED": "Ticket rechazado",
       "UPDATED": "Ticket actualizado",
@@ -157,7 +157,7 @@
       "comment": "Comentario",
       "category": "Categoría",
       "note": "Nota",
-      "trackTime": "Tiempo registrado",
+      "workSession": "Tiempo registrado",
       "planning": "Planificación",
       "system": "Sistema",
       "default": "Historial"
@@ -266,7 +266,7 @@
       "adjustNoChanges": "Cambia la prioridad, el nivel de riesgo o la fecha límite antes de actualizar."
     }
   },
-  "trackTimeTool": {
+  "workSessionTool": {
     "title": "Tiempo registrado",
     "description": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
     "tab": {
@@ -290,7 +290,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "p. ej. 30 min",
       "note": "Añade una nota breve para esta entrada de tiempo"
     }
@@ -334,7 +334,7 @@
   },
   "ticketList": {
     "empty": "No se encontraron tickets",
-    "requesterMeta": "{{name}} • {{time}}",
+    "requesterMeta": "{{name}} ??{{time}}",
     "dueMeta": "Vence {{time}}"
   },
   "searchCriteria": {
@@ -370,7 +370,7 @@
       "delete": "No se pudo eliminar la regla de asignación."
     },
     "assignmentRecommendations": {
-      "invalidInput": "La recomendación de asignación requiere categoryId y assigneeIds.",
+      "invalidInput": "La recomendación de asignación requiere categoryId y assigneeUsernames.",
       "fetch": "No se pudieron obtener las recomendaciones de asignación."
     },
     "categories": {
@@ -397,7 +397,7 @@
     "ticketHistories": {
       "fetchList": "No se pudieron obtener los historiales del ticket."
     },
-    "ticketTrackTime": {
+    "ticketWorkSession": {
       "fetchList": "No se pudo obtener el tiempo registrado del ticket.",
       "create": "No se pudo guardar el tiempo registrado del ticket.",
       "localDemo": {
@@ -416,7 +416,7 @@
       "localDemo": {
         "createFailed": "No se pudo crear la acción.",
         "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
-        "assigneeRequired": "La acción ASSIGN requiere assigneeIds.",
+        "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
         "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
         "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
         "mergeTargetNotFound": "No se encontró el ticket de destino para la fusión.",

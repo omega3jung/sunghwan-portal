@@ -70,7 +70,7 @@ A specific user is assigned directly.
 ```ts
 assignmentRule = {
   type: "EMPLOYEE",
-  employeeId: "user_123",
+  employeeUsername: "user_123",
 };
 ```
 
@@ -98,7 +98,7 @@ The system resolves assignees dynamically based on rule type.
 ```ts
 switch (assignmentRule.type) {
   case "EMPLOYEE":
-    return employeeId;
+    return employeeUsername;
 
   case "DEPARTMENT":
     return findAvailableUserInDepartment(departmentId);

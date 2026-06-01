@@ -12,14 +12,14 @@ import {
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 
-import { TrackTimeToolContent } from "./TrackTimeToolContent";
+import { WorkSessionToolContent } from "./WorkSessionToolContent";
 
-export type TrackTimeToolProps = {
+export type WorkSessionToolProps = {
   children: ReactElement;
-  ticket?: Pick<TicketDetail, "id" | "status" | "trackTimeMinutes"> | null;
+  ticket?: Pick<TicketDetail, "id" | "status" | "workMinutes"> | null;
 };
 
-export function TrackTimeTool({ children, ticket }: TrackTimeToolProps) {
+export function WorkSessionTool({ children, ticket }: WorkSessionToolProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const [open, setOpen] = useState(false);
   const [contentKey, setContentKey] = useState(0);
@@ -55,11 +55,11 @@ export function TrackTimeTool({ children, ticket }: TrackTimeToolProps) {
       <PopoverContent align="end" className="w-80 p-0">
         <div className="border-b border-primary-muted px-4 py-3">
           <h2 className="text-sm font-semibold text-primary">
-            {t("trackTimeTool.title")}
+            {t("workSessionTool.title")}
           </h2>
         </div>
 
-        <TrackTimeToolContent
+        <WorkSessionToolContent
           key={contentKey}
           ticket={ticket}
           onClose={closeTool}

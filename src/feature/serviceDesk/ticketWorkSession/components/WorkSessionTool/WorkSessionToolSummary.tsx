@@ -1,4 +1,4 @@
-type TrackTimeToolSummaryProps = {
+type WorkSessionToolSummaryProps = {
   currentLabel: string;
   totalLabel: string;
   currentTrackedMinutes: number;
@@ -6,13 +6,13 @@ type TrackTimeToolSummaryProps = {
   formatMinutes: (count: number) => string;
 };
 
-export function TrackTimeToolSummary({
+export function WorkSessionToolSummary({
   currentLabel,
   totalLabel,
   currentTrackedMinutes,
   totalTrackedMinutes,
   formatMinutes,
-}: TrackTimeToolSummaryProps) {
+}: WorkSessionToolSummaryProps) {
   return (
     <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
       <div className="flex flex-wrap items-center justify-between gap-1">

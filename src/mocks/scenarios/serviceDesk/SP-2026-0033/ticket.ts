@@ -10,7 +10,7 @@ export const ticket: TicketMockInput = {
   priority: "medium",
   risk_level: "low",
   assignee_id: ["evan_seo", "mason_kwon"],
-  track_time_minutes: 80,
+  work_minutes: 80,
   last_comment_at: "2026-03-30T01:48:10Z",
   last_commenter_email: "Mason.Kwon@sunghwan-portal.dev",
   due_at: "2026-03-30T18:00:00Z",
@@ -20,9 +20,9 @@ export const ticket: TicketMockInput = {
   scope: "INTERNAL",
   category_id: "53",
   approval_step_id: null,
-  subject: "바코드 설정 요청",
+  subject: "바코???�정 ?�청",
   content:
-    "안녕하세요. 고객사로부터 샘플 바코드를 받았습니다.<br>설정해 주실 수 있을까요?",
+    "?�녕?�세?? 고객?�로부???�플 바코?��? 받았?�니??<br>?�정??주실 ???�을까요?",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "liam.williams@sunghwan-portal.dev"],
     cc: ["Mason.Kwon@sunghwan-portal.dev"],

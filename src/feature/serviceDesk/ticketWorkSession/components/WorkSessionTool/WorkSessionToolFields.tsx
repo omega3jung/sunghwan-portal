@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatFormDateTime, parseFormDateTime } from "@/shared/utils/format";
 import { cn } from "@/shared/utils/presentation";
 
-const TRACK_TIME_FIELD_GRID_CLASS_NAME =
+const WORK_SESSION_FIELD_GRID_CLASS_NAME =
   "grid grid-cols-1 gap-y-1 sm:grid-cols-[110px_minmax(0,1fr)] sm:items-start sm:gap-x-2";
 
 type CompactFieldRowProps = {
@@ -35,7 +35,7 @@ type CompactFieldRowProps = {
   contentClassName?: string;
 };
 
-type TrackTimeDurationFieldProps = {
+type WorkSessionDurationFieldProps = {
   value: unknown;
   onChange: (value: string) => void;
   error?: string;
@@ -43,7 +43,7 @@ type TrackTimeDurationFieldProps = {
   placeholder: string;
 };
 
-type TrackTimeDateTimeFieldProps = {
+type WorkSessionDateTimeFieldProps = {
   id: string;
   label: string;
   value?: string | null;
@@ -51,7 +51,7 @@ type TrackTimeDateTimeFieldProps = {
   error?: string;
 };
 
-type TrackTimeStatusFieldProps = {
+type WorkSessionStatusFieldProps = {
   value?: string;
   onValueChange: (value: string) => void;
   options: readonly string[];
@@ -61,7 +61,7 @@ type TrackTimeStatusFieldProps = {
   error?: string;
 };
 
-type TrackTimeNoteFieldProps = {
+type WorkSessionNoteFieldProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   value: string;
@@ -85,7 +85,7 @@ export function CompactFieldRow({
   const errorId = error && htmlFor ? `${htmlFor}-error` : undefined;
 
   return (
-    <div className={cn(TRACK_TIME_FIELD_GRID_CLASS_NAME, className)}>
+    <div className={cn(WORK_SESSION_FIELD_GRID_CLASS_NAME, className)}>
       <label
         htmlFor={htmlFor}
         title={labelTitle}
@@ -113,13 +113,13 @@ export function CompactFieldRow({
   );
 }
 
-export function TrackTimeDurationField({
+export function WorkSessionDurationField({
   value,
   onChange,
   error,
   label,
   placeholder,
-}: TrackTimeDurationFieldProps) {
+}: WorkSessionDurationFieldProps) {
   return (
     <CompactFieldRow
       htmlFor="ticket-track-duration-minutes"
@@ -146,13 +146,13 @@ export function TrackTimeDurationField({
   );
 }
 
-export function TrackTimeDateTimeField({
+export function WorkSessionDateTimeField({
   id,
   label,
   value,
   onChange,
   error,
-}: TrackTimeDateTimeFieldProps) {
+}: WorkSessionDateTimeFieldProps) {
   return (
     <CompactFieldRow htmlFor={id} label={label} error={error}>
       <DateTimePicker
@@ -168,7 +168,7 @@ export function TrackTimeDateTimeField({
   );
 }
 
-export function TrackTimeStatusField({
+export function WorkSessionStatusField({
   value,
   onValueChange,
   options,
@@ -176,7 +176,7 @@ export function TrackTimeStatusField({
   label,
   labelTitle,
   error,
-}: TrackTimeStatusFieldProps) {
+}: WorkSessionStatusFieldProps) {
   return (
     <CompactFieldRow
       htmlFor="ticket-track-status"
@@ -205,7 +205,7 @@ export function TrackTimeStatusField({
   );
 }
 
-export function TrackTimeNoteField({
+export function WorkSessionNoteField({
   open,
   onOpenChange,
   value,
@@ -214,7 +214,7 @@ export function TrackTimeNoteField({
   toggleLabel,
   error,
   describedBy,
-}: TrackTimeNoteFieldProps) {
+}: WorkSessionNoteFieldProps) {
   return (
     <Collapsible
       open={open}

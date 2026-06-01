@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/trackTime/api/index.ts
+// src/feature/serviceDesk/ticket/workSession/api/index.ts
 
 export * from "./api";
 export * from "./mapper";

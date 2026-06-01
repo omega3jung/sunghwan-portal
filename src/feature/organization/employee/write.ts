@@ -1,4 +1,4 @@
-import { Employee } from "@/domain/organization";
+﻿import { Employee } from "@/domain/organization";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
@@ -30,7 +30,7 @@ export function toEmployeeWritePayload(
 ): DbEmployeeWriteInput {
   return {
     e_id: resolveEmployeeId(input.id),
-    e_username: input.userName,
+    e_username: input.username,
     e_name: input.name,
     e_phone: input.phone,
     e_email: input.email,

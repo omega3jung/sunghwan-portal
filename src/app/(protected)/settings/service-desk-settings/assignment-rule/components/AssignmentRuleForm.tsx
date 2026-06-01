@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { forwardRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -60,7 +60,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
       return employees.map((employee) => {
         const name = tLocal(employee.name);
         return {
-          value: employee.userName,
+          value: employee.username,
           label: `${name.first} ${name.last}`,
           displayName: employee.email,
           image: employee.imageUrl,
@@ -143,7 +143,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
                   badgeVariant={"primary"}
                   options={employeeData}
-                  value={selectedNode?.employeeIds || []}
+                  value={selectedNode?.assigneeUsernames || []}
                   maxImages={MAX_EMPLOYEE_PER_CATEGORY}
                   placeholder={t(
                     "serviceDeskSettings.assignmentRuleTab.selectAssignee",
@@ -151,19 +151,19 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   disabled={!selectedNode}
                   onSelect={(selected) => {
                     if (selected) {
-                      assigneeChange("employeeIds")([
-                        ...(selectedNode?.employeeIds || []),
+                      assigneeChange("assigneeUsernames")([
+                        ...(selectedNode?.assigneeUsernames || []),
                         selected,
                       ]);
                     }
                   }}
                   onRemove={(selected) => {
-                    const currentValue = selectedNode?.employeeIds || [];
+                    const currentValue = selectedNode?.assigneeUsernames || [];
                     const currentValueIndex = currentValue.indexOf(selected);
 
                     if (currentValueIndex > -1) {
                       currentValue.splice(currentValueIndex, 1);
-                      assigneeChange("employeeIds")([...currentValue]);
+                      assigneeChange("assigneeUsernames")([...currentValue]);
                     } else {
                       return;
                     }

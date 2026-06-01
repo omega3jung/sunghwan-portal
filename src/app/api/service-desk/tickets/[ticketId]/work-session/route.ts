@@ -12,18 +12,18 @@ import {
   tServiceDeskApi,
 } from "@/app/api/service-desk/_shared/messages";
 import {
-  camelTicketTrackTimeMapper,
-  DbTicketTrackTime,
-  mapTicketTrackTimeListPayload,
-  mapTicketTrackTimePayload,
-  TICKET_TRACK_TIME_STATUS_OPTIONS,
-  TicketTrackTimeStatus,
-  TicketTrackTimeSubmitPayload,
-} from "@/feature/serviceDesk/ticketTrackTime";
+  camelTicketWorkSessionMapper,
+  DbTicketWorkSession,
+  mapTicketWorkSessionListPayload,
+  mapTicketWorkSessionPayload,
+  TICKET_WORK_SESSION_STATUS_OPTIONS,
+  TicketWorkSessionStatus,
+  TicketWorkSessionSubmitPayload,
+} from "@/feature/serviceDesk/ticketWorkSession";
 import {
   canChangeStatus,
   getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticketTrackTime/components/TrackTimeTool/payload";
+} from "@/feature/serviceDesk/ticketWorkSession/components/WorkSessionTool/payload";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,
@@ -31,20 +31,24 @@ import {
 } from "@/server/serviceDesk/ticket/command/utils";
 import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
 
-const localTrackTimes: DbTicketTrackTime[] = [];
+const localWorkSessions: DbTicketWorkSession[] = [];
 
-const isTrackTimeStatus = (value: unknown): value is TicketTrackTimeStatus =>
-  TICKET_TRACK_TIME_STATUS_OPTIONS.includes(value as TicketTrackTimeStatus);
+const isWorkSessionStatus = (
+  value: unknown,
+): value is TicketWorkSessionStatus =>
+  TICKET_WORK_SESSION_STATUS_OPTIONS.includes(value as TicketWorkSessionStatus);
 
-const getNextTrackTimeNo = (ticketId: string) => {
-  const items = localTrackTimes
+const getNextWorkSessionNo = (ticketId: string) => {
+  const items = localWorkSessions
     .filter((item) => item.ticket_id === ticketId)
-    .map((item) => item.track_time_no);
+    .map((item) => item.work_session_no);
 
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
-const resolveServerTrackedMinutes = (payload: TicketTrackTimeSubmitPayload) => {
+const resolveServerTrackedMinutes = (
+  payload: TicketWorkSessionSubmitPayload,
+) => {
   return getCurrentTrackedMinutes({
     inputMode: payload.inputMode,
     durationValues: { durationMinutes: payload.durationMinutes },
@@ -54,18 +58,18 @@ const resolveServerTrackedMinutes = (payload: TicketTrackTimeSubmitPayload) => {
 
 const validatePayload = (
   ticketId: string,
-  payload: TicketTrackTimeSubmitPayload,
+  payload: TicketWorkSessionSubmitPayload,
 ) => {
   if (payload.ticketId !== ticketId) {
     throw new ServiceDeskApiError(
-      "api.ticketTrackTime.localDemo.ticketMismatch",
+      "api.ticketWorkSession.localDemo.ticketMismatch",
       400,
     );
   }
 
-  if (payload.nextStatus && !isTrackTimeStatus(payload.nextStatus)) {
+  if (payload.nextStatus && !isWorkSessionStatus(payload.nextStatus)) {
     throw new ServiceDeskApiError(
-      "api.ticketTrackTime.localDemo.invalidStatus",
+      "api.ticketWorkSession.localDemo.invalidStatus",
       400,
       { value: payload.nextStatus },
     );
@@ -75,7 +79,7 @@ const validatePayload = (
 
   if (trackedMinutes <= 0) {
     throw new ServiceDeskApiError(
-      "api.ticketTrackTime.localDemo.invalidTrackedMinutes",
+      "api.ticketWorkSession.localDemo.invalidTrackedMinutes",
       400,
     );
   }
@@ -88,17 +92,19 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const items = localTrackTimes.filter((item) => item.ticket_id === ticketId);
+    const items = localWorkSessions.filter(
+      (item) => item.ticket_id === ticketId,
+    );
 
     return NextResponse.json({
-      items: camelTicketTrackTimeMapper(items),
+      items: camelTicketWorkSessionMapper(items),
     });
   }
 
   return proxyJson(request, {
-    path: `/service-desk/tickets/${ticketId}/track-time`,
-    errorMessage: tServiceDeskApi("api.ticketTrackTime.fetchList"),
-    mapData: mapTicketTrackTimeListPayload,
+    path: `/service-desk/tickets/${ticketId}/work-session`,
+    errorMessage: tServiceDeskApi("api.ticketWorkSession.fetchList"),
+    mapData: mapTicketWorkSessionListPayload,
   });
 }
 
@@ -108,15 +114,15 @@ export async function POST(
 ) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
-  const payload = (await request.json()) as TicketTrackTimeSubmitPayload;
+  const payload = (await request.json()) as TicketWorkSessionSubmitPayload;
 
   if (isRemote) {
     return proxyJson(request, {
       method: "POST",
-      path: `/service-desk/tickets/${ticketId}/track-time`,
+      path: `/service-desk/tickets/${ticketId}/work-session`,
       body: payload,
-      errorMessage: tServiceDeskApi("api.ticketTrackTime.create"),
-      mapData: mapTicketTrackTimePayload,
+      errorMessage: tServiceDeskApi("api.ticketWorkSession.create"),
+      mapData: mapTicketWorkSessionPayload,
     });
   }
 
@@ -144,20 +150,20 @@ export async function POST(
     if (
       nextStatus &&
       !canChangeStatus({
-        previousTrackedMinutes: ticket.track_time_minutes,
+        previousTrackedMinutes: ticket.work_minutes,
         currentTrackedMinutes: trackedMinutes,
       })
     ) {
       throw new ServiceDeskApiError(
-        "api.ticketTrackTime.localDemo.statusRequiresTime",
+        "api.ticketWorkSession.localDemo.statusRequiresTime",
         400,
       );
     }
 
     const createdAt = new Date().toISOString();
-    const trackTime: DbTicketTrackTime = {
+    const workSession: DbTicketWorkSession = {
       ticket_id: ticketId,
-      track_time_no: getNextTrackTimeNo(ticketId),
+      work_session_no: getNextWorkSessionNo(ticketId),
       assignee_id: employeeUserName,
       start_at: payload.startAt ?? createdAt,
       end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
@@ -170,25 +176,25 @@ export async function POST(
     const updatedTicket = createUpdatedTicket(
       ticket,
       {
-        track_time_minutes: ticket.track_time_minutes + trackedMinutes,
+        work_minutes: ticket.work_minutes + trackedMinutes,
         ...(nextStatus ? { status: nextStatus } : {}),
       },
       createdAt,
     );
 
-    localTrackTimes.push(trackTime);
+    localWorkSessions.push(workSession);
 
     const histories = getLocalDemoHistories(isInternal);
 
     histories.push({
       ticket_id: ticketId,
       history_no: getMaxHistoryNo(ticketId, isInternal),
-      type: "TRACK_TIME",
+      type: "WORK_SESSION",
       action: "UPDATED",
       actor_id: employeeUserName,
       action_no: null,
-      from_value: ticket.track_time_minutes,
-      to_value: updatedTicket.track_time_minutes,
+      from_value: ticket.work_minutes,
+      to_value: updatedTicket.work_minutes,
       metadata: payload,
       created_at: createdAt,
     });
@@ -210,7 +216,7 @@ export async function POST(
 
     targetMock.splice(index, 1, updatedTicket);
 
-    return NextResponse.json(camelTicketTrackTimeMapper([trackTime])[0], {
+    return NextResponse.json(camelTicketWorkSessionMapper([workSession])[0], {
       status: 201,
     });
   } catch (error) {
@@ -219,7 +225,7 @@ export async function POST(
         ? error.message
         : error instanceof Error
           ? error.message
-          : tServiceDeskApi("api.ticketTrackTime.create");
+          : tServiceDeskApi("api.ticketWorkSession.create");
     const status = error instanceof ServiceDeskApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });

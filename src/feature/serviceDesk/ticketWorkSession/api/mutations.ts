@@ -2,21 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
-import { serviceDeskTicketTrackTimeApi } from "./api";
-import { ticketTrackTimeQueryKeys } from "./queryKeys";
+import { serviceDeskTicketWorkSessionApi } from "./api";
+import { ticketWorkSessionQueryKeys } from "./queryKeys";
 
-const invalidateTicketTrackTimeQueries = (
+const invalidateTicketWorkSessionQueries = (
   queryClient: ReturnType<typeof useQueryClient>,
   ticketId: string,
-  trackTimeNo?: string,
+  workSessionNo?: string,
 ) => {
   queryClient.invalidateQueries({
-    queryKey: ticketTrackTimeQueryKeys.list(ticketId),
+    queryKey: ticketWorkSessionQueryKeys.list(ticketId),
   });
 
-  if (trackTimeNo) {
+  if (workSessionNo) {
     queryClient.invalidateQueries({
-      queryKey: ticketTrackTimeQueryKeys.detail(ticketId, trackTimeNo),
+      queryKey: ticketWorkSessionQueryKeys.detail(ticketId, workSessionNo),
     });
   }
 
@@ -33,151 +33,151 @@ const invalidateTicketTrackTimeQueries = (
   });
 };
 
-export const useCreateTicketTrackTimeByRange = () => {
+export const useCreateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.range.create,
+    mutationFn: serviceDeskTicketWorkSessionApi.range.create,
     onSuccess: (data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });
 };
 
-export const useSubmitTicketTrackTime = () => {
+export const useSubmitTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.submitManual,
+    mutationFn: serviceDeskTicketWorkSessionApi.submitManual,
     onSuccess: (data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });
 };
 
-export const useUpdateTicketTrackTimeByRange = () => {
+export const useUpdateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.range.update,
+    mutationFn: serviceDeskTicketWorkSessionApi.range.update,
     onSuccess: (_data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        variables.trackTimeNo,
+        variables.workSessionNo,
       );
     },
   });
 };
 
-export const useCreateTicketTrackTimeByDuration = () => {
+export const useCreateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.duration.create,
+    mutationFn: serviceDeskTicketWorkSessionApi.duration.create,
     onSuccess: (data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });
 };
 
-export const useUpdateTicketTrackTimeByDuration = () => {
+export const useUpdateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.duration.update,
+    mutationFn: serviceDeskTicketWorkSessionApi.duration.update,
     onSuccess: (_data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        variables.trackTimeNo,
+        variables.workSessionNo,
       );
     },
   });
 };
 
-export const useDeleteTicketTrackTime = () => {
+export const useDeleteTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: ({
       ticketId,
-      trackTimeNo,
+      workSessionNo,
     }: {
       ticketId: string;
-      trackTimeNo: string;
-    }) => serviceDeskTicketTrackTimeApi.remove(ticketId, trackTimeNo),
+      workSessionNo: string;
+    }) => serviceDeskTicketWorkSessionApi.remove(ticketId, workSessionNo),
     onSuccess: (_data, variables) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         variables.ticketId,
-        variables.trackTimeNo,
+        variables.workSessionNo,
       );
     },
   });
 };
 
-export const useStartTicketTrackTimer = () => {
+export const useStartTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.timer.start,
+    mutationFn: serviceDeskTicketWorkSessionApi.timer.start,
     onSuccess: (data, ticketId) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });
 };
 
-export const useFinishTicketTrackTimer = () => {
+export const useFinishTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.timer.finish,
+    mutationFn: serviceDeskTicketWorkSessionApi.timer.finish,
     onSuccess: (data, ticketId) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });
 };
 
-export const useSwitchTicketTrackTimer = () => {
+export const useSwitchTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
   // message will be handeled where call mutation by useMutationToast.
   return useMutation({
-    mutationFn: serviceDeskTicketTrackTimeApi.timer.switch,
+    mutationFn: serviceDeskTicketWorkSessionApi.timer.switch,
     onSuccess: (data, ticketId) => {
-      invalidateTicketTrackTimeQueries(
+      invalidateTicketWorkSessionQueries(
         queryClient,
         ticketId,
-        String(data.trackTimeNo),
+        String(data.workSessionNo),
       );
     },
   });

@@ -3,14 +3,14 @@ import {
   TicketTrackRangeFormInput,
 } from "./types";
 
-export const ticketTrackTimeRangeFormDefaultValues: TicketTrackRangeFormInput =
+export const ticketWorkSessionRangeFormDefaultValues: TicketTrackRangeFormInput =
   {
     startAt: "",
     endAt: "",
     note: "",
   };
 
-export const ticketTrackTimeDurationFormDefaultValues: TicketTrackDurationFormInput =
+export const ticketWorkSessionDurationFormDefaultValues: TicketTrackDurationFormInput =
   {
     durationMinutes: undefined,
     note: "",

@@ -51,7 +51,7 @@ const normalizeApprovalAssignee = (
     case "EMPLOYEE":
       return {
         ...value,
-        employeeIds: value.employeeIds.slice().sort(),
+        employeeUsernames: value.employeeUsernames.slice().sort(),
       };
     default:
       return value;
@@ -137,9 +137,9 @@ export const isApprovalStepAssigneeValid = (approvalStep: ApprovalStepData) => {
       return approvalStep.stepAssignee.jobFieldId.trim().length > 0;
     case "EMPLOYEE":
       return (
-        approvalStep.stepAssignee.employeeIds.length > 0 &&
-        approvalStep.stepAssignee.employeeIds.every(
-          (employeeId) => employeeId.trim().length > 0,
+        approvalStep.stepAssignee.employeeUsernames.length > 0 &&
+        approvalStep.stepAssignee.employeeUsernames.every(
+          (employeeUsername) => employeeUsername.trim().length > 0,
         )
       );
   }

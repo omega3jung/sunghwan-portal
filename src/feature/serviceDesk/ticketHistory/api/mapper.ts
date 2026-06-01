@@ -1,4 +1,4 @@
-import {
+﻿import {
   HistoryType,
   TicketHistory,
   TicketHistoryAction,
@@ -36,7 +36,7 @@ export const camelTicketHistoryMapper: ArrayMapper<
     historyNo: item.history_no,
     type: item.type,
     action: item.action,
-    actorId: item.actor_id,
+    actorUsername: item.actor_id,
     actionNo: item.action_no,
     fromValue: item.from_value,
     toValue: item.to_value,
@@ -54,7 +54,7 @@ export const snakeTicketHistoryMapper: ArrayMapper<
     history_no: item.historyNo,
     type: item.type,
     action: item.action,
-    actor_id: item.actorId,
+    actor_id: item.actorUsername,
     action_no: item.actionNo,
     from_value: item.fromValue,
     to_value: item.toValue,

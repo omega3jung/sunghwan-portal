@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import {
@@ -20,11 +20,11 @@ import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
 export const localCreateTicket = ({
   isInternal,
-  requesterId,
+  requesterUsername,
   input,
 }: {
   isInternal: boolean;
-  requesterId: string | null;
+  requesterUsername: string | null;
   input: CreateTicketInput;
 }) => {
   const targetMock = getLocalDemoTickets(isInternal);
@@ -35,7 +35,7 @@ export const localCreateTicket = ({
   }
 
   const resolvedRequesterId = normalizeRequesterId(
-    requesterId ?? payload.requester.id,
+    requesterUsername ?? payload.requester.id,
   );
 
   if (!resolvedRequesterId) {
@@ -54,7 +54,7 @@ export const localCreateTicket = ({
     isInternal,
     categoryId: category.id,
     parentCategoryId: category.parentId,
-    requesterId: resolvedRequesterId,
+    requesterUsername: resolvedRequesterId,
   });
 
   const now = new Date().toISOString();
@@ -77,9 +77,9 @@ export const localCreateTicket = ({
       payload.riskLevel,
       category.defaultRiskLevel ?? "medium",
     ),
-    assignee_id: routing.assigneeIds,
+    assignee_id: routing.assigneeUsernames,
     merged_into_ticket_id: null,
-    track_time_minutes: 0,
+    work_minutes: 0,
     last_comment_at: null,
     last_commenter_email: null,
     due_at: payload.dueAt,

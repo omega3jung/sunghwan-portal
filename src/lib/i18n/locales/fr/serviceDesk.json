@@ -1,4 +1,4 @@
-{
+﻿{
   "action": {
     "comment": "Commentaire",
     "note": "Note",
@@ -11,7 +11,7 @@
     "reopenIssue": "Rouvrir l'incident",
     "resubmitRequest": "Soumettre à nouveau la demande",
     "searchCriteria": "Critères de recherche",
-    "trackTime": {
+    "workSession": {
       "submit": "Enregistrer le temps suivi",
       "submitWithStatus": "Enregistrer le temps et mettre à jour le statut",
       "submitting": "Enregistrement..."
@@ -42,7 +42,7 @@
   },
   "field": {
     "dueBy": "Échéance",
-    "trackTime": "Temps enregistré",
+    "workSession": "Temps enregistré",
     "durationMinutes": "Durée",
     "startAt": "Heure de début",
     "endAt": "Heure de fin",
@@ -57,7 +57,7 @@
     }
   },
   "validation": {
-    "trackTime": {
+    "workSession": {
       "required": "Saisissez le temps suivi avant l'envoi.",
       "positive": "Le temps suivi doit être supérieur à 0 minute.",
       "invalidRange": "L'heure de fin doit être après l'heure de début.",
@@ -77,7 +77,7 @@
   },
   "hoverMessage": {
     "backToList": "Retour à la liste des tickets",
-    "trackTimeTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
+    "workSessionTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
     "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
     "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket"
   },
@@ -136,7 +136,7 @@
       "NOTE_CREATED": "Note ajoutée",
       "COMMENT_UPDATED": "Commentaire mis à jour",
       "COMMENT_DELETED": "Commentaire supprimé",
-      "TRACK_TIME_UPDATED": "Temps enregistré mis à jour",
+      "WORK_SESSION_UPDATED": "Temps enregistré mis à jour",
       "MERGED": "Fusionné dans {{target}}",
       "TICKET_REJECTED": "Ticket rejeté",
       "UPDATED": "Ticket mis à jour",
@@ -158,7 +158,7 @@
       "comment": "Commentaire",
       "category": "Catégorie",
       "note": "Note",
-      "trackTime": "Temps enregistré",
+      "workSession": "Temps enregistré",
       "planning": "Planification",
       "system": "Système",
       "default": "Historique"
@@ -278,7 +278,7 @@
       "adjustNoChanges": "Modifiez la priorité, le niveau de risque ou l'échéance avant de mettre à jour."
     }
   },
-  "trackTimeTool": {
+  "workSessionTool": {
     "title": "Temps enregistré",
     "tab": {
       "duration": "Durée",
@@ -301,7 +301,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "ex. 30 min",
       "note": "Ajoutez une courte note pour cette saisie de temps"
     }
@@ -345,7 +345,7 @@
   },
   "ticketList": {
     "empty": "Aucun ticket trouvé",
-    "requesterMeta": "{{name}} • {{time}}",
+    "requesterMeta": "{{name}} ??{{time}}",
     "dueMeta": "Échéance {{time}}"
   },
   "searchCriteria": {
@@ -381,7 +381,7 @@
       "delete": "Impossible de supprimer la règle d'attribution."
     },
     "assignmentRecommendations": {
-      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeIds.",
+      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeUsernames.",
       "fetch": "Impossible de récupérer les recommandations d'attribution."
     },
     "categories": {
@@ -408,7 +408,7 @@
     "ticketHistories": {
       "fetchList": "Impossible de récupérer les historiques du ticket."
     },
-    "ticketTrackTime": {
+    "ticketWorkSession": {
       "fetchList": "Impossible de récupérer le temps suivi du ticket.",
       "create": "Impossible d'enregistrer le temps suivi du ticket.",
       "localDemo": {
@@ -427,7 +427,7 @@
       "localDemo": {
         "createFailed": "Impossible de créer l'action.",
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
-        "assigneeRequired": "L'action ASSIGN nécessite assigneeIds.",
+        "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
         "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",

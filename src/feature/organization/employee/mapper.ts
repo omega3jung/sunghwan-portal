@@ -1,4 +1,4 @@
-import { Employee, LocalizedName } from "@/domain/organization";
+﻿import { Employee, LocalizedName } from "@/domain/organization";
 import { idToNumber, numberToId } from "@/lib/api/utils/mapId";
 import {
   createItemPayloadMapper,
@@ -32,7 +32,7 @@ export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (
 ) => {
   return data.map((item) => ({
     id: item.e_id,
-    userName: item.e_username,
+    username: item.e_username,
     name: item.e_name,
     phone: item.e_phone,
     email: item.e_email,
@@ -55,7 +55,7 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
 ) => {
   return data.map((item) => ({
     e_id: item.id,
-    e_username: item.userName,
+    e_username: item.username,
     e_name: item.name,
     e_phone: item.phone,
     e_email: item.email,

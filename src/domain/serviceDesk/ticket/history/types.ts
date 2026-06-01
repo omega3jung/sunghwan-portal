@@ -13,7 +13,7 @@ export type HistoryType =
   | "APPROVAL"
   | "COMMENT"
   | "NOTE"
-  | "TRACK_TIME"
+  | "WORK_SESSION"
   | "PLANNING"
   | "SYSTEM";
 

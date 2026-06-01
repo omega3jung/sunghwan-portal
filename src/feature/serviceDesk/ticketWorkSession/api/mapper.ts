@@ -1,4 +1,4 @@
-import { TicketTrackTime } from "@/domain/serviceDesk";
+﻿import { TicketWorkSession } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
@@ -7,9 +7,9 @@ import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-export interface DbTicketTrackTime {
+export interface DbTicketWorkSession {
   ticket_id: string;
-  track_time_no: number;
+  work_session_no: number;
   assignee_id: string;
 
   start_at: ISODateString;
@@ -22,14 +22,14 @@ export interface DbTicketTrackTime {
   updated_at: ISODateString | null;
 }
 
-export const camelTicketTrackTimeMapper: ArrayMapper<
-  DbTicketTrackTime,
-  TicketTrackTime
+export const camelTicketWorkSessionMapper: ArrayMapper<
+  DbTicketWorkSession,
+  TicketWorkSession
 > = (data) => {
   return data.map((item) => ({
     ticketId: item.ticket_id,
-    trackTimeNo: item.track_time_no,
-    assigneeId: item.assignee_id,
+    workSessionNo: item.work_session_no,
+    assigneeUsername: item.assignee_id,
     startAt: item.start_at,
     endAt: item.end_at,
     durationMinutes: item.duration_minutes,
@@ -39,14 +39,14 @@ export const camelTicketTrackTimeMapper: ArrayMapper<
   }));
 };
 
-export const snakeTicketTrackTimeMapper: ArrayMapper<
-  TicketTrackTime,
-  DbTicketTrackTime
+export const snakeTicketWorkSessionMapper: ArrayMapper<
+  TicketWorkSession,
+  DbTicketWorkSession
 > = (data) => {
   return data.map((item) => ({
     ticket_id: item.ticketId,
-    track_time_no: item.trackTimeNo,
-    assignee_id: item.assigneeId,
+    work_session_no: item.workSessionNo,
+    assignee_id: item.assigneeUsername,
     start_at: item.startAt,
     end_at: item.endAt,
     duration_minutes: item.durationMinutes,
@@ -56,9 +56,9 @@ export const snakeTicketTrackTimeMapper: ArrayMapper<
   }));
 };
 
-export const mapTicketTrackTimeListPayload = createListPayloadMapper(
-  camelTicketTrackTimeMapper,
+export const mapTicketWorkSessionListPayload = createListPayloadMapper(
+  camelTicketWorkSessionMapper,
 );
-export const mapTicketTrackTimePayload = createItemPayloadMapper(
-  camelTicketTrackTimeMapper,
+export const mapTicketWorkSessionPayload = createItemPayloadMapper(
+  camelTicketWorkSessionMapper,
 );

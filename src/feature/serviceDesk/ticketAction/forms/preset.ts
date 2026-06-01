@@ -1,4 +1,4 @@
-import type { TicketDetail } from "@/domain/serviceDesk";
+﻿import type { TicketDetail } from "@/domain/serviceDesk";
 
 import { ticketActionDraftFormDefaultValues } from "./defaultValues";
 import type { TicketActionDraftFormValues } from "./types";
@@ -15,7 +15,7 @@ export function createTicketActionDraftValues(
   if (actionType === "ASSIGN") {
     return {
       ...baseValues,
-      assigneeIds: ticket?.assigneeIds ?? [],
+      assigneeUsernames: ticket?.assigneeUsernames ?? [],
       categoryId: ticket?.categoryId ?? "",
     };
   }

@@ -1,11 +1,11 @@
-import client from "@/lib/api";
+﻿import client from "@/lib/api";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 
 export type AssignmentRecommendationSource = "employee" | "jobField" | "mixed";
 
 export type AssignmentRecommendationInput = {
   categoryId: string;
-  assigneeIds: string[];
+  assigneeUsernames: string[];
   language?: Locale;
 };
 

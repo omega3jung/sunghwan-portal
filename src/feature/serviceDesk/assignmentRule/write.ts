@@ -1,4 +1,4 @@
-import { AssignmentRule } from "@/domain/serviceDesk";
+﻿import { AssignmentRule } from "@/domain/serviceDesk";
 
 import { DbAssignmentRule } from "./mapper";
 
@@ -6,7 +6,7 @@ export type AssignmentRuleWriteFields = {
   categoryId: string;
   assignee: {
     jobFieldIds: string[];
-    employeeIds: string[];
+    assigneeUsernames: string[];
   };
 };
 
@@ -22,7 +22,7 @@ export function toAssignmentRuleWritePayload(
     category_id: Number(input.categoryId),
     assignee: {
       job_field_id: input.assignee.jobFieldIds.map(Number),
-      employee_id: input.assignee.employeeIds,
+      employee_username: input.assignee.assigneeUsernames,
     },
   };
 }
@@ -34,7 +34,7 @@ export function toAssignmentRuleMockResource(
     categoryId: input.categoryId,
     assignee: {
       jobFieldIds: input.assignee.jobFieldIds,
-      employeeIds: input.assignee.employeeIds,
+      assigneeUsernames: input.assignee.assigneeUsernames,
     },
   };
 }

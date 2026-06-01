@@ -16,9 +16,9 @@
 ---
 
 Scope note:
+
 - LOCAL demo는 단순화된 role-aware/relationship 기반 권한 규칙을 사용한다.
 - 조직/부서/job-field 기반 full rule resolution은 REMOTE 확장 경로다.
-
 
 ## 핵심 개념
 
@@ -71,7 +71,7 @@ assignmentRule = {
 ```ts
 assignmentRule = {
   type: "EMPLOYEE",
-  employeeId: "user_123",
+  employeeUsername: "user_123",
 };
 ```
 
@@ -99,7 +99,7 @@ assignmentRule = {
 ```ts
 switch (assignmentRule.type) {
   case "EMPLOYEE":
-    return employeeId;
+    return employeeUsername;
 
   case "DEPARTMENT":
     return findAvailableUserInDepartment(departmentId);

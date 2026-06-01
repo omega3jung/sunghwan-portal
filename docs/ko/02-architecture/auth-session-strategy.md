@@ -56,7 +56,6 @@ Zustand = frontend runtime cache and facade
 ```ts
 type AuthUser = {
   id: string;
-  employeeId: string | number;
   username: string;
   displayName: string;
   email: string;
@@ -164,7 +163,6 @@ type AppUser = {
 sign-in 시 `jwt` callback은 다음 신뢰 가능한 auth field를 token에 저장한다.
 
 - `id`
-- `employeeId`
 - `username`
 - `displayName`
 - `email`

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
         withDerivedTicketOwnership(
           localCreateTicket({
             isInternal,
-            requesterId: currentUserName,
+            requesterUsername: currentUserName,
             input: body,
           }),
           currentUserName,

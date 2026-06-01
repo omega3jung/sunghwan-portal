@@ -18,7 +18,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: internalPortalSystemIssueCategoryMock.category_id,
     assignee: {
       job_field_id: [21, 22, 23],
-      employee_id: ["32"],
+      employee_username: ["32"],
     },
   },
   /* Account & Access */
@@ -26,7 +26,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: accountAccessCategoryMock.category_id,
     assignee: {
       job_field_id: [27, 28, 25],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Hardware & Device */
@@ -34,7 +34,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: hardwareDeviceCategoryMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_id: ["117"],
+      employee_username: ["117"],
     },
   },
   /* Software & App */
@@ -42,7 +42,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: softwareApplicationCategoryMock.category_id,
     assignee: {
       job_field_id: [20, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Network */
@@ -50,7 +50,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: networkConnectivityCategoryMock.category_id,
     assignee: {
       job_field_id: [17, 19, 18],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Printing */
@@ -58,7 +58,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: printingOfficeEquipmentCategoryMock.category_id,
     assignee: {
       job_field_id: [25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* HR Systems */
@@ -66,7 +66,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: hrSystemPayrollCategoryMock.category_id,
     assignee: {
       job_field_id: [3, 4, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Data Management */
@@ -74,7 +74,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: dataInfoManagementCategoryMock.category_id,
     assignee: {
       job_field_id: [23, 7, 4],
-      employee_id: ["59", "60", "61", "123", "124"],
+      employee_username: ["59", "60", "61", "123", "124"],
     },
   },
   /* Client Support */
@@ -82,7 +82,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientUserSupportCategoryMock.category_id,
     assignee: {
       job_field_id: [11, 12, 23],
-      employee_id: ["15"],
+      employee_username: ["15"],
     },
   },
   /* Other Inquiry */
@@ -90,7 +90,7 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: otherInquiryCategoryMock.category_id,
     assignee: {
       job_field_id: [25],
-      employee_id: [],
+      employee_username: [],
     },
   },
 ];
@@ -101,7 +101,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientPortalSystemIssueCategoryMock.category_id,
     assignee: {
       job_field_id: [21, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Account & Access */
@@ -109,7 +109,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: accountAccessCategoryMock.category_id,
     assignee: {
       job_field_id: [27, 28, 25],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Hardware & Device */
@@ -117,7 +117,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: hardwareDeviceCategoryMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Software & App */
@@ -125,7 +125,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: softwareApplicationCategoryMock.category_id,
     assignee: {
       job_field_id: [20, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Network */
@@ -133,7 +133,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: networkConnectivityCategoryMock.category_id,
     assignee: {
       job_field_id: [17, 19, 18],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Printing */
@@ -141,7 +141,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: printingOfficeEquipmentCategoryMock.category_id,
     assignee: {
       job_field_id: [25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* HR Systems */
@@ -149,7 +149,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: hrSystemPayrollCategoryMock.category_id,
     assignee: {
       job_field_id: [3, 4, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
 ];

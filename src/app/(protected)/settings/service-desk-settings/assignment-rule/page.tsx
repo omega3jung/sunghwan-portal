@@ -1,4 +1,4 @@
-// src/app/(protected)/settings/service-desk-settings/category/page.tsx
+﻿// src/app/(protected)/settings/service-desk-settings/category/page.tsx
 
 "use client";
 
@@ -101,7 +101,7 @@ export default function CategoryPage() {
     return tree.every((item) => {
       const data = item.data;
 
-      return data.jobFieldIds.length > 0 || data.employeeIds.length > 0;
+      return data.jobFieldIds.length > 0 || data.assigneeUsernames.length > 0;
     });
   }, [tree]);
 

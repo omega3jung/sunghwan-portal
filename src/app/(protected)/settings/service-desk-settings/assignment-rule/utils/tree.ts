@@ -1,4 +1,4 @@
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+﻿import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import type { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 import type {
   AssignmentRuleTreeSyncCategoryInput,
@@ -19,24 +19,24 @@ const normalizeIdList = (value: string[]) => {
 const normalizeAssignee = (assignmentRule: {
   assignee: {
     jobFieldIds: string[];
-    employeeIds: string[];
+    assigneeUsernames: string[];
   };
 }) => {
   return {
     jobFieldIds: normalizeIdList(assignmentRule.assignee.jobFieldIds),
-    employeeIds: normalizeIdList(assignmentRule.assignee.employeeIds),
+    assigneeUsernames: normalizeIdList(assignmentRule.assignee.assigneeUsernames),
   };
 };
 
 export const hasAssignmentRuleAssignee = (assignmentRule: {
   assignee: {
     jobFieldIds: string[];
-    employeeIds: string[];
+    assigneeUsernames: string[];
   };
 }) => {
   return (
     assignmentRule.assignee.jobFieldIds.length > 0 ||
-    assignmentRule.assignee.employeeIds.length > 0
+    assignmentRule.assignee.assigneeUsernames.length > 0
   );
 };
 
@@ -140,13 +140,13 @@ export const createAssignmentRuleSettingsSignatureFromAssignmentRules = ({
     id: category.id,
     assignee: {
       jobFieldIds: category.jobFieldIds,
-      employeeIds: category.employeeIds,
+      assigneeUsernames: category.assigneeUsernames,
     },
     subCategories: category.subCategories.map((subCategory) => ({
       id: subCategory.id,
       assignee: {
         jobFieldIds: subCategory.jobFieldIds,
-        employeeIds: subCategory.employeeIds,
+        assigneeUsernames: subCategory.assigneeUsernames,
       },
     })),
   }));

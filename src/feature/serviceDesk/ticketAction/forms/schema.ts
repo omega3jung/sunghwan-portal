@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 const ACTION_VALIDATION_KEY = {
   contentRequired: "actionTool.validation.contentRequired",
@@ -37,7 +37,7 @@ export const ticketActionDraftFormSchema = z
     actionType: ticketActionTypeSchema,
     content: actionContentSchema,
     attachment: z.file().array(),
-    assigneeIds: z.string().array(),
+    assigneeUsernames: z.string().array(),
     categoryId: z.string(),
     targetTicketId: z.string(),
     priority: z.string(),
@@ -45,10 +45,10 @@ export const ticketActionDraftFormSchema = z
     dueAt: z.date().optional(),
   })
   .superRefine((values, context) => {
-    if (values.actionType === "ASSIGN" && values.assigneeIds.length < 1) {
+    if (values.actionType === "ASSIGN" && values.assigneeUsernames.length < 1) {
       context.addIssue({
         code: "custom",
-        path: ["assigneeIds"],
+        path: ["assigneeUsernames"],
         message: ACTION_VALIDATION_KEY.assigneeRequired,
       });
     }
@@ -71,7 +71,7 @@ export const ticketActionPayloadSchema = z.object({
   content: actionContentSchema,
   files: z.array(actionAttachmentSchema),
   images: z.array(actionAttachmentSchema),
-  assigneeIds: z.string().array().optional(),
+  assigneeUsernames: z.string().array().optional(),
   categoryId: z.string().optional(),
   targetTicketId: z.string().optional(),
   priority: z.string().optional(),

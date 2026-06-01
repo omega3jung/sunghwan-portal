@@ -1,4 +1,4 @@
-import { TreeNodes } from "@/components/custom/dnd/tree/types";
+﻿import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
@@ -25,7 +25,7 @@ export const mapAssignmentRuleData = (
     return {
       ...cat,
       jobFieldIds: catAssRule?.jobFieldIds || [],
-      employeeIds: catAssRule?.employeeIds || [],
+      assigneeUsernames: catAssRule?.assigneeUsernames || [],
       subCategories: cat.subCategories?.map((sub) => {
         const subCatAssRule = assignmentRules.find(
           (assignmentRule) => assignmentRule.categoryId === sub.id,
@@ -33,7 +33,7 @@ export const mapAssignmentRuleData = (
         return {
           ...sub,
           jobFieldIds: subCatAssRule?.jobFieldIds || [],
-          employeeIds: subCatAssRule?.employeeIds || [],
+          assigneeUsernames: subCatAssRule?.assigneeUsernames || [],
         };
       }),
     };

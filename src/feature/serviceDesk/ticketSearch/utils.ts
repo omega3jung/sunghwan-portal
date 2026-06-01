@@ -1,4 +1,4 @@
-import { DbParams } from "@/shared/types";
+﻿import { DbParams } from "@/shared/types";
 import {
   combineRuleGroups,
   createArrayContainsAnyFilter,
@@ -39,12 +39,12 @@ export const mapSearchCriteriaToDbParams = (
     }),
 
     createArrayContainsAnyFilter({
-      field: "assigneeIds",
+      field: "assigneeUsernames",
       values: values.assignee,
     }),
 
     createEqualsAnyFilter({
-      field: "requesterId",
+      field: "requesterUsername",
       values: values.requester,
     }),
 

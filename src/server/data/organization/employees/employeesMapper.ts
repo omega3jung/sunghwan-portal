@@ -1,10 +1,10 @@
-import { EmployeeResponseDto } from "./employeesDto";
+﻿import { EmployeeResponseDto } from "./employeesDto";
 import { DbEmployeeRow } from "./employeesRow";
 
 export function toEmployeeResponseDto(row: DbEmployeeRow): EmployeeResponseDto {
   return {
     employeeId: row.e_id,
-    userName: row.e_username,
+    username: row.e_username,
     name: row.e_name,
     phone: row.e_phone,
     email: row.e_email,

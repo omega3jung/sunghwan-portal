@@ -53,7 +53,7 @@ function toApprovalAssigneeWritePayload(input: ApprovalStep["stepAssignee"]) {
     case "EMPLOYEE":
       return {
         type: input.type,
-        employee_id: input.employeeIds,
+        employee_username: input.employeeUsernames,
       };
   }
 }

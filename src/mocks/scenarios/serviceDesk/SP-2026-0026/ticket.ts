@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "high",
   assignee_id: ["evan_seo", "daniel_kim"],
   merged_into_ticket_id: "sunghwan-portal-2026-25",
-  track_time_minutes: 20,
+  work_minutes: 20,
   last_comment_at: "2026-04-02T07:13:18Z",
   last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
   due_at: "2026-04-03T18:00:00Z",
@@ -25,7 +25,7 @@ export const ticket: TicketMockInput = {
   subject:
     "Les écrans de réception, de réparation et de contrôle qualité restent bloqués sur le chargement",
   content:
-    "Les utilisateurs de la réception, de la réparation et du contrôle qualité ne voient que l’indicateur de chargement et ne peuvent pas poursuivre les transactions.<br>Le problème apparaît à plusieurs étapes du portail, pas seulement sur un seul écran.",
+    "Les utilisateurs de la réception, de la réparation et du contrôle qualité ne voient que l?�indicateur de chargement et ne peuvent pas poursuivre les transactions.<br>Le problème apparaît à plusieurs étapes du portail, pas seulement sur un seul écran.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
     cc: ["olivia.johnson@sunghwan-portal.dev"],
