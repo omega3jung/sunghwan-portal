@@ -14,7 +14,7 @@ import {
 import { SupportedLanguage } from "@/domain/config";
 import {
   CategoryApprovalSettings,
-  ClientCategoryTree,
+  TenantCategoryTree,
 } from "@/domain/serviceDesk";
 
 import {
@@ -25,14 +25,14 @@ import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 import { approvalStepToTree, mapApprovalData } from "../utils/mapper";
 
 type UseApprovalStepTreeOptions = {
-  selectedClient: string | null;
-  categories: ClientCategoryTree[] | undefined;
+  selectedTenant: string | null;
+  categories: TenantCategoryTree[] | undefined;
   approvalSteps: CategoryApprovalSettings[] | undefined;
   language: SupportedLanguage;
 };
 
 export function useApprovalStepTree({
-  selectedClient,
+  selectedTenant,
   categories,
   approvalSteps,
   language: _language,
@@ -42,10 +42,10 @@ export function useApprovalStepTree({
   >([]);
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeClientId, setTreeClientId] = useState<string | null>(null);
+  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
 
   const [newStepCount, setNewStepCount] = useState(1);
-  const previousClientRef = useRef<string | null>(null);
+  const previousTenantRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -53,16 +53,16 @@ export function useApprovalStepTree({
   }, [selectedId, tree]);
 
   useEffect(() => {
-    if (!categories || !selectedClient || !approvalSteps) return;
+    if (!categories || !selectedTenant || !approvalSteps) return;
 
-    const mapped = mapApprovalData(categories, selectedClient, approvalSteps);
+    const mapped = mapApprovalData(categories, selectedTenant, approvalSteps);
     const nextTree = approvalStepToTree(mapped);
 
     setTree(nextTree);
-    setTreeClientId(selectedClient);
+    setTreeTenantId(selectedTenant);
     setSelectedId((previousSelectedId) => {
-      if (previousClientRef.current !== selectedClient) {
-        previousClientRef.current = selectedClient;
+      if (previousTenantRef.current !== selectedTenant) {
+        previousTenantRef.current = selectedTenant;
         return null;
       }
 
@@ -78,7 +78,7 @@ export function useApprovalStepTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [approvalSteps, categories, selectedClient]);
+  }, [approvalSteps, categories, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
@@ -143,7 +143,7 @@ export function useApprovalStepTree({
     setTree,
     selectedId,
     setSelectedId,
-    treeClientId,
+    treeTenantId,
     selectedNode,
     addApprovalStep,
     removeApprovalStep,

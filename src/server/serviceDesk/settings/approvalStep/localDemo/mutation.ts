@@ -10,7 +10,7 @@ import {
   getApprovalStepLocation,
   getApprovalStepStore,
   getCategoryLocationById,
-  getClientCategoriesOrThrow,
+  getTenantCategoriesOrThrow,
   normalizeApprovalStep,
   normalizeCategoryApprovalSettings,
   sortApprovalSteps,
@@ -35,7 +35,7 @@ export const localCreateApprovalStep = ({
     );
   }
 
-  const categories = items[categoryLocation.clientId];
+  const categories = items[categoryLocation.tenantId];
   const assignId = createApprovalStepIdAssigner(items);
   const nextApprovalStep = buildApprovalStepFromInput({
     input,
@@ -83,7 +83,7 @@ export const localUpdateApprovalStep = ({
 
   const assignId = createApprovalStepIdAssigner(items);
   const previousApprovalStep =
-    items[approvalStepLocation.clientId][approvalStepLocation.categoryIndex]
+    items[approvalStepLocation.tenantId][approvalStepLocation.categoryIndex]
       .approval_step[approvalStepLocation.approvalStepIndex];
   const nextApprovalStep = buildApprovalStepFromInput({
     input: {
@@ -94,16 +94,16 @@ export const localUpdateApprovalStep = ({
     previousApprovalStep,
   });
 
-  items[approvalStepLocation.clientId][
+  items[approvalStepLocation.tenantId][
     approvalStepLocation.categoryIndex
   ].approval_step.splice(approvalStepLocation.approvalStepIndex, 1);
-  items[targetCategoryLocation.clientId][
+  items[targetCategoryLocation.tenantId][
     targetCategoryLocation.categoryIndex
   ].approval_step.push(nextApprovalStep);
-  items[targetCategoryLocation.clientId][
+  items[targetCategoryLocation.tenantId][
     targetCategoryLocation.categoryIndex
   ].approval_step = sortApprovalSteps(
-    items[targetCategoryLocation.clientId][targetCategoryLocation.categoryIndex]
+    items[targetCategoryLocation.tenantId][targetCategoryLocation.categoryIndex]
       .approval_step,
   );
 
@@ -118,7 +118,7 @@ export const localSaveApprovalStepTree = ({
   payload: SaveServiceDeskApprovalStepTreePayload;
 }) => {
   const items = getApprovalStepStore(isInternal);
-  const categories = getClientCategoriesOrThrow(items, payload.clientId);
+  const categories = getTenantCategoriesOrThrow(items, payload.tenantId);
   const previousCategoryMap = new Map(
     categories.map((category) => [String(category.category_id), category]),
   );
@@ -193,9 +193,9 @@ export const localSaveApprovalStepTree = ({
     (category) => !submittedCategoryIds.has(String(category.category_id)),
   );
 
-  items[payload.clientId] = [...synchronizedCategories, ...preservedCategories];
+  items[payload.tenantId] = [...synchronizedCategories, ...preservedCategories];
 
-  return normalizeCategoryApprovalSettings(items[payload.clientId]);
+  return normalizeCategoryApprovalSettings(items[payload.tenantId]);
 };
 
 export const localSoftDeleteApprovalStep = ({
@@ -213,7 +213,7 @@ export const localSoftDeleteApprovalStep = ({
   }
 
   const previousApprovalStep =
-    items[location.clientId][location.categoryIndex].approval_step[
+    items[location.tenantId][location.categoryIndex].approval_step[
       location.approvalStepIndex
     ];
   const nextApprovalStep = {
@@ -221,7 +221,7 @@ export const localSoftDeleteApprovalStep = ({
     approval_step_active: false,
   };
 
-  items[location.clientId][location.categoryIndex].approval_step.splice(
+  items[location.tenantId][location.categoryIndex].approval_step.splice(
     location.approvalStepIndex,
     1,
     nextApprovalStep,

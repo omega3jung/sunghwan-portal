@@ -1,4 +1,4 @@
-import { ClientCategoryTree, MainCategory } from "@/domain/serviceDesk";
+import { MainCategory, TenantCategoryTree } from "@/domain/serviceDesk";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 import type {
   CreateCategoryInput,
@@ -7,11 +7,11 @@ import type {
 import client from "@/lib/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 
-type CategoryResponse = OResponse<ClientCategoryTree>;
+type CategoryResponse = OResponse<TenantCategoryTree>;
 
 // feature-scoped API.
 export const serviceDeskCategoryApi = {
-  list: async (params: DbParams): Promise<ClientCategoryTree[]> => {
+  list: async (params: DbParams): Promise<TenantCategoryTree[]> => {
     if (!params) return [];
 
     const res = await client.api.get<CategoryResponse>(
@@ -53,8 +53,8 @@ export const serviceDeskCategoryApi = {
 
   saveTree: async (
     payload: SaveServiceDeskCategoryTreePayload,
-  ): Promise<ClientCategoryTree> => {
-    const res = await client.api.put<ClientCategoryTree>(
+  ): Promise<TenantCategoryTree> => {
+    const res = await client.api.put<TenantCategoryTree>(
       `/api/service-desk/categories`,
       payload,
     );

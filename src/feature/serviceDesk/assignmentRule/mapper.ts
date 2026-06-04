@@ -5,16 +5,7 @@ import {
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
 
-// back-end data structures.
-export interface DbAssigneeGroup {
-  job_field_id: number[]; // string number. can use parseInt.
-  employee_username: string[];
-}
-
-export interface DbAssignmentRule {
-  category_id: number; // string number. can use parseInt.
-  assignee: DbAssigneeGroup;
-}
+import { DbAssignmentRule } from "./types";
 
 export const camelAssignmentRuleMapper: ArrayMapper<
   DbAssignmentRule,

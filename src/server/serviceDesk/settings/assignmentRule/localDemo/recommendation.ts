@@ -8,7 +8,7 @@ import {
   type AssignmentRecommendationSource,
   EMPTY_ASSIGNMENT_RECOMMENDATION,
 } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import { camelClientCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
+import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 import {
   clientCategorySettingsMock,
@@ -32,7 +32,7 @@ type RecommendationCollectionContext = {
 };
 
 const buildCategoryList = (isInternal: boolean) => {
-  const trees = camelClientCategoryTreeMapper(
+  const trees = camelTenantCategoryTreeMapper(
     isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
   );
 

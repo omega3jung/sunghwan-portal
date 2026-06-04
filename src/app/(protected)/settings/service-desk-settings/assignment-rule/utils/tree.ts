@@ -1,5 +1,5 @@
 ﻿import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import type { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
+import type { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
 import type {
   AssignmentRuleTreeSyncCategoryInput,
   SaveServiceDeskAssignmentRuleTreePayload,
@@ -24,7 +24,9 @@ const normalizeAssignee = (assignmentRule: {
 }) => {
   return {
     jobFieldIds: normalizeIdList(assignmentRule.assignee.jobFieldIds),
-    assigneeUsernames: normalizeIdList(assignmentRule.assignee.assigneeUsernames),
+    assigneeUsernames: normalizeIdList(
+      assignmentRule.assignee.assigneeUsernames,
+    ),
   };
 };
 
@@ -41,14 +43,14 @@ export const hasAssignmentRuleAssignee = (assignmentRule: {
 };
 
 export const buildAssignmentRuleTreeSavePayload = ({
-  clientId,
+  tenantId,
   tree,
 }: {
-  clientId: string;
+  tenantId: string;
   tree: AssignmentRuleTree;
 }): SaveServiceDeskAssignmentRuleTreePayload => {
   return {
-    clientId,
+    tenantId,
     categories: tree.map((categoryNode) => {
       const categoryData = categoryNode.data as AssignmentRuleData;
 
@@ -85,7 +87,7 @@ export const createAssignmentRuleSettingsSignatureFromTree = (
   tree: AssignmentRuleTree,
 ) => {
   const payload = buildAssignmentRuleTreeSavePayload({
-    clientId: "comparison",
+    tenantId: "comparison",
     tree,
   });
 
@@ -120,20 +122,20 @@ export const isAssignmentRuleMainCategoryTreeValid = (
 
 export const createAssignmentRuleSettingsSignatureFromAssignmentRules = ({
   categories,
-  selectedClient,
+  selectedTenant,
   assignmentRules,
 }: {
-  categories: ClientCategoryTree[] | undefined;
-  selectedClient: string | null;
+  categories: TenantCategoryTree[] | undefined;
+  selectedTenant: string | null;
   assignmentRules: AssignmentRule[] | undefined;
 }) => {
-  if (!categories || !selectedClient) {
+  if (!categories || !selectedTenant) {
     return JSON.stringify([]);
   }
 
   const mappedCategories = mapAssignmentRuleData(
     categories,
-    selectedClient,
+    selectedTenant,
     assignmentRules ?? [],
   );
   const normalizedCategories = mappedCategories.map((category) => ({

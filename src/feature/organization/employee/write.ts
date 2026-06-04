@@ -2,7 +2,7 @@
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
-import { DbEmployee } from "./mapper";
+import { DbEmployee } from "./types";
 
 type DateInput = Date | string;
 

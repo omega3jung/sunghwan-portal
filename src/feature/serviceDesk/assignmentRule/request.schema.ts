@@ -6,12 +6,12 @@ export const assignmentRuleAssigneeSchema = z.object({
 });
 
 export const assigneeGroupSchema = assignmentRuleAssigneeSchema.refine(
-    (value) => value.jobFieldIds.length > 0 || value.assigneeUsernames.length > 0,
-    {
-      message:
-        "Assignment rule requires at least one job field or employee assignee.",
-    },
-  );
+  (value) => value.jobFieldIds.length > 0 || value.assigneeUsernames.length > 0,
+  {
+    message:
+      "Assignment rule requires at least one job field or employee assignee.",
+  },
+);
 
 export const assignmentRuleNodeSchema = z.object({
   id: z.string().optional(),
@@ -28,7 +28,7 @@ export const updateAssignmentRuleSchema = assignmentRuleNodeSchema.extend({
 });
 
 export const saveAssignmentRuleTreeSchema = z.object({
-  clientId: z.string().min(1),
+  tenantId: z.string().min(1),
   categories: z.array(
     z.object({
       id: z.string().min(1),

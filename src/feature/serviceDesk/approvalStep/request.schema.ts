@@ -59,7 +59,7 @@ export const updateApprovalStepSchema = approvalStepSchema.extend({
 });
 
 export const saveApprovalStepTreeSchema = z.object({
-  clientId: z.string().min(1),
+  tenantId: z.string().min(1),
   categories: z.array(
     z.object({
       id: z.string().min(1),

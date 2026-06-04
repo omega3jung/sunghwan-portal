@@ -1,5 +1,8 @@
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import type { ApprovalStep, CategoryApprovalSettings } from "@/domain/serviceDesk";
+import type {
+  ApprovalStep,
+  CategoryApprovalSettings,
+} from "@/domain/serviceDesk";
 import type {
   ApprovalStepTreeSyncInput,
   CategoryApprovalStepTreeSyncInput,
@@ -59,33 +62,37 @@ const normalizeApprovalAssignee = (
 };
 
 export const buildApprovalStepTreeSavePayload = ({
-  clientId,
+  tenantId,
   tree,
 }: {
-  clientId: string;
+  tenantId: string;
   tree: ApprovalStepTree;
 }): SaveServiceDeskApprovalStepTreePayload => {
   return {
-    clientId,
+    tenantId,
     categories: tree.map((categoryNode) => {
       const categoryData = categoryNode.data as CategoryApprovalStepData;
 
       return {
         id: categoryData.categoryId,
-        approvalSteps: categoryNode.children.map((approvalNode, approvalIndex) => {
-          const approvalData = approvalNode.data as ApprovalStepData;
+        approvalSteps: categoryNode.children.map(
+          (approvalNode, approvalIndex) => {
+            const approvalData = approvalNode.data as ApprovalStepData;
 
-          return {
-            id: normalizeApprovalStepId(approvalData.id),
-            name: normalizeLocalizedText(approvalData.name),
-            description: normalizeOptionalLocalizedText(
-              approvalData.description,
-            ),
-            index: approvalIndex + 1,
-            stepAssignee: normalizeApprovalAssignee(approvalData.stepAssignee),
-            skipAccessLevel: approvalData.skipAccessLevel,
-          };
-        }),
+            return {
+              id: normalizeApprovalStepId(approvalData.id),
+              name: normalizeLocalizedText(approvalData.name),
+              description: normalizeOptionalLocalizedText(
+                approvalData.description,
+              ),
+              index: approvalIndex + 1,
+              stepAssignee: normalizeApprovalAssignee(
+                approvalData.stepAssignee,
+              ),
+              skipAccessLevel: approvalData.skipAccessLevel,
+            };
+          },
+        ),
       };
     }),
   };
@@ -117,7 +124,7 @@ export const createApprovalStepSettingsSignatureFromTree = (
   tree: ApprovalStepTree,
 ) => {
   const payload = buildApprovalStepTreeSavePayload({
-    clientId: "comparison",
+    tenantId: "comparison",
     tree,
   });
 

@@ -4,18 +4,10 @@ import {
   createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
-import { ArrayMapper, LocalizedText } from "@/shared/types";
+import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-// back-end data structures.
-export interface DbDepartment {
-  d_id: number;
-  d_name: LocalizedText;
-  d_code: string | null; // HR, IT, QC.
-  d_description: LocalizedText | null;
-  d_parent_id: number | null;
-  d_active: boolean;
-}
+import { DbDepartment } from "./types";
 
 export const camelDepartmentMapper: ArrayMapper<DbDepartment, Department> = (
   data,

@@ -1,6 +1,6 @@
 import { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
 import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule";
-import { DbClientCategoryTree } from "@/feature/serviceDesk/category";
+import { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
 import {
   clientApprovalStepSettingsMock,
   clientAssignmentRuleSettingsMock,
@@ -13,10 +13,10 @@ import {
 const clone = <T>(value: T): T => structuredClone(value);
 
 type LocalDemoSettingsState = {
-  internalCategories: DbClientCategoryTree[];
+  internalCategories: DbTenantCategoryTree[];
   internalApprovalSteps: DbCategoryApprovalSettings[];
   internalAssignmentRules: DbAssignmentRule[];
-  clientCategories: DbClientCategoryTree[];
+  clientCategories: DbTenantCategoryTree[];
   clientApprovalSteps: DbCategoryApprovalSettings[];
   clientAssignmentRules: DbAssignmentRule[];
 };
@@ -32,18 +32,22 @@ declare global {
  */
 function createLocalDemoSettingsState(): LocalDemoSettingsState {
   return {
-    internalCategories: clone<DbClientCategoryTree[]>(internalCategorySettingsMock),
+    internalCategories: clone<DbTenantCategoryTree[]>(
+      internalCategorySettingsMock,
+    ),
     internalApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       internalApprovalStepSettingsMock,
     ),
     internalAssignmentRules: clone<DbAssignmentRule[]>(
       internalAssignmentRuleSettingsMock,
     ),
-    clientCategories: clone<DbClientCategoryTree[]>(clientCategorySettingsMock),
+    clientCategories: clone<DbTenantCategoryTree[]>(clientCategorySettingsMock),
     clientApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       clientApprovalStepSettingsMock,
     ),
-    clientAssignmentRules: clone<DbAssignmentRule[]>(clientAssignmentRuleSettingsMock),
+    clientAssignmentRules: clone<DbAssignmentRule[]>(
+      clientAssignmentRuleSettingsMock,
+    ),
   };
 }
 
@@ -51,7 +55,8 @@ function createLocalDemoSettingsState(): LocalDemoSettingsState {
 // globalThis gives us a process-level in-memory store without adding persistence.
 function getLocalDemoSettingsState() {
   if (!globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__) {
-    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ = createLocalDemoSettingsState();
+    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ =
+      createLocalDemoSettingsState();
   }
 
   return globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
@@ -79,9 +84,7 @@ export function getLocalDemoApprovalStepsTree(isInternal: boolean) {
 }
 export function getLocalDemoApprovalSteps(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
-  return isInternal
-    ? state.internalApprovalSteps
-    : state.clientApprovalSteps;
+  return isInternal ? state.internalApprovalSteps : state.clientApprovalSteps;
 }
 
 export function getLocalDemoAssignmentRulesTree(isInternal: boolean) {

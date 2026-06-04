@@ -1,5 +1,5 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
-import type { DbCategory } from "@/feature/serviceDesk/category/mapper";
+import type { DbCategory } from "@/feature/serviceDesk/category";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 import type {
   CreateCategoryInput,
@@ -10,9 +10,9 @@ import { getLocalDemoCategories } from "../../state";
 import {
   createCategoryIdAssigner,
   getCategoryLocation,
-  getClientIndexById,
+  getTenantIndexById,
   normalizeCategory,
-  normalizeClientTree,
+  normalizeTenantTree,
   sortCategories,
 } from "./categoryUtils";
 import { buildSynchronizedCategory } from "./treeSync";
@@ -25,13 +25,13 @@ export const localCreateCategory = ({
   input: CreateCategoryInput;
 }) => {
   const items = getLocalDemoCategories(isInternal);
-  const clientIndex = getClientIndexById(items, input.clientId);
+  const tenantIndex = getTenantIndexById(items, input.tenantId);
 
-  if (clientIndex === -1) {
+  if (tenantIndex === -1) {
     throw new ServiceDeskApiError(
-      "api.categories.localDemo.clientNotFound",
+      "api.categories.localDemo.tenantNotFound",
       404,
-      { clientId: input.clientId },
+      { tenantId: input.tenantId },
     );
   }
 
@@ -44,8 +44,8 @@ export const localCreateCategory = ({
     assignId,
   });
 
-  items[clientIndex].category.push(nextCategory);
-  items[clientIndex].category = sortCategories(items[clientIndex].category);
+  items[tenantIndex].category.push(nextCategory);
+  items[tenantIndex].category = sortCategories(items[tenantIndex].category);
 
   return normalizeCategory(nextCategory);
 };
@@ -66,14 +66,14 @@ export const localUpdateCategory = ({
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 
-  const targetClient = items[location.clientIndex];
+  const targetTenant = items[location.tenantIndex];
 
-  if (input.clientId && input.clientId !== String(targetClient.client_id)) {
+  if (input.tenantId && input.tenantId !== String(targetTenant.tenant_id)) {
     throw new ServiceDeskApiError(
-      "api.categories.localDemo.clientMismatch",
+      "api.categories.localDemo.tenantMismatch",
       400,
       {
-        clientId: input.clientId,
+        tenantId: input.tenantId,
       },
     );
   }
@@ -84,12 +84,12 @@ export const localUpdateCategory = ({
       ...input,
       id,
     },
-    previousCategory: targetClient.category[location.categoryIndex],
+    previousCategory: targetTenant.category[location.categoryIndex],
     assignId,
   });
 
-  targetClient.category.splice(location.categoryIndex, 1, nextCategory);
-  targetClient.category = sortCategories(targetClient.category);
+  targetTenant.category.splice(location.categoryIndex, 1, nextCategory);
+  targetTenant.category = sortCategories(targetTenant.category);
 
   return normalizeCategory(nextCategory);
 };
@@ -102,19 +102,19 @@ export const localSaveCategoryTree = ({
   payload: SaveServiceDeskCategoryTreePayload;
 }) => {
   const items = getLocalDemoCategories(isInternal);
-  const clientIndex = getClientIndexById(items, payload.clientId);
+  const tenantIndex = getTenantIndexById(items, payload.tenantId);
 
-  if (clientIndex === -1) {
+  if (tenantIndex === -1) {
     throw new ServiceDeskApiError(
-      "api.categories.localDemo.clientNotFound",
+      "api.categories.localDemo.tenantNotFound",
       404,
-      { clientId: payload.clientId },
+      { tenantId: payload.tenantId },
     );
   }
 
-  const targetClient = items[clientIndex];
+  const targetTenant = items[tenantIndex];
   const previousCategoryMap = new Map(
-    targetClient.category.map((category) => [
+    targetTenant.category.map((category) => [
       String(category.category_id),
       category,
     ]),
@@ -136,7 +136,7 @@ export const localSaveCategoryTree = ({
   const submittedIds = new Set(
     synchronizedCategories.map((category) => String(category.category_id)),
   );
-  const preservedCategories = targetClient.category
+  const preservedCategories = targetTenant.category
     .filter((category) => !submittedIds.has(String(category.category_id)))
     .sort((left, right) => left.category_index - right.category_index)
     .map((category, categoryIndex) => ({
@@ -144,12 +144,12 @@ export const localSaveCategoryTree = ({
       category_index: synchronizedCategories.length + categoryIndex + 1,
     }));
 
-  targetClient.category = sortCategories([
+  targetTenant.category = sortCategories([
     ...synchronizedCategories,
     ...preservedCategories,
   ]);
 
-  return normalizeClientTree(targetClient);
+  return normalizeTenantTree(targetTenant);
 };
 
 export const localSoftDeleteCategory = ({
@@ -167,7 +167,7 @@ export const localSoftDeleteCategory = ({
   }
 
   const targetCategory =
-    items[location.clientIndex].category[location.categoryIndex];
+    items[location.tenantIndex].category[location.categoryIndex];
   const nextCategory: DbCategory = {
     ...targetCategory,
     category_active: false,
@@ -177,7 +177,7 @@ export const localSoftDeleteCategory = ({
     })),
   };
 
-  items[location.clientIndex].category.splice(
+  items[location.tenantIndex].category.splice(
     location.categoryIndex,
     1,
     nextCategory,

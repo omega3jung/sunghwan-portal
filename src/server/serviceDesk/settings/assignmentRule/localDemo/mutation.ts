@@ -7,10 +7,10 @@ import type {
 
 import {
   buildDbAssignmentRule,
-  findCategoryClientId,
+  findCategoryTenantId,
   getAssignmentRuleStore,
-  getClientRulesOrThrow,
   getRuleIndexByCategoryId,
+  getTenantRulesOrThrow,
   normalizeAssignmentRule,
   normalizeAssignmentRules,
 } from "./ruleUtils";
@@ -24,9 +24,9 @@ export const localCreateAssignmentRule = ({
   input: CreateAssignmentRuleInput;
 }) => {
   const items = getAssignmentRuleStore(isInternal);
-  const clientId = findCategoryClientId(items, isInternal, input.categoryId);
+  const tenantId = findCategoryTenantId(items, isInternal, input.categoryId);
 
-  if (!clientId) {
+  if (!tenantId) {
     throw new ServiceDeskApiError(
       "api.assignmentRules.localDemo.categoryNotFound",
       404,
@@ -34,7 +34,7 @@ export const localCreateAssignmentRule = ({
     );
   }
 
-  const rules = getClientRulesOrThrow(items, clientId);
+  const rules = getTenantRulesOrThrow(items, tenantId);
   const nextRule = buildDbAssignmentRule({
     categoryId: input.categoryId,
     assignee: input.assignee,
@@ -60,19 +60,19 @@ export const localUpdateAssignmentRule = ({
   input: UpdateAssignmentRuleInput;
 }) => {
   const items = getAssignmentRuleStore(isInternal);
-  const clientId = findCategoryClientId(items, isInternal, id);
+  const tenantId = findCategoryTenantId(items, isInternal, id);
 
-  if (!clientId) {
+  if (!tenantId) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 
-  const targetClientId = findCategoryClientId(
+  const targetTenantId = findCategoryTenantId(
     items,
     isInternal,
     input.categoryId,
   );
 
-  if (!targetClientId) {
+  if (!targetTenantId) {
     throw new ServiceDeskApiError(
       "api.assignmentRules.localDemo.categoryNotFound",
       404,
@@ -80,14 +80,14 @@ export const localUpdateAssignmentRule = ({
     );
   }
 
-  const currentRules = getClientRulesOrThrow(items, clientId);
+  const currentRules = getTenantRulesOrThrow(items, tenantId);
   const currentRuleIndex = getRuleIndexByCategoryId(currentRules, id);
 
   if (currentRuleIndex >= 0) {
     currentRules.splice(currentRuleIndex, 1);
   }
 
-  const targetRules = getClientRulesOrThrow(items, targetClientId);
+  const targetRules = getTenantRulesOrThrow(items, targetTenantId);
   const nextRule = buildDbAssignmentRule({
     categoryId: input.categoryId,
     assignee: input.assignee,
@@ -114,18 +114,18 @@ export const localSaveAssignmentRuleTree = ({
   payload: SaveServiceDeskAssignmentRuleTreePayload;
 }) => {
   const items = getAssignmentRuleStore(isInternal);
-  const clientId = payload.clientId;
+  const tenantId = payload.tenantId;
 
-  getClientRulesOrThrow(items, clientId);
+  getTenantRulesOrThrow(items, tenantId);
 
-  items[clientId] = flattenAssignmentRuleTree(payload).map((node) =>
+  items[tenantId] = flattenAssignmentRuleTree(payload).map((node) =>
     buildDbAssignmentRule({
       categoryId: node.categoryId,
       assignee: node.assignee,
     }),
   );
 
-  return normalizeAssignmentRules(items[clientId]);
+  return normalizeAssignmentRules(items[tenantId]);
 };
 
 export const localDeleteAssignmentRule = ({

@@ -1,0 +1,36 @@
+"use tenant";
+
+import { useQuery } from "@tanstack/react-query";
+
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { DbParams } from "@/shared/types/api";
+
+import { getServiceDeskQueryOptions } from "../shared/utils/queryOptions";
+import { serviceDeskTenantApi } from "./api";
+import { tenantQueryKeys } from "./queryKeys";
+
+export const useServiceDeskTenantListQuery = (params: DbParams) => {
+  const { data: currentSession } = useCurrentSession();
+  const dataScope = currentSession?.user.dataScope;
+  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+
+  return useQuery({
+    queryKey: tenantQueryKeys.list(params),
+    queryFn: () => serviceDeskTenantApi.list(params),
+    enabled: !!params && !!dataScope,
+    ...ticketQueryOptions,
+  });
+};
+
+export const useServiceDeskTenantQuery = (id: string | number) => {
+  const { data: currentSession } = useCurrentSession();
+  const dataScope = currentSession?.user.dataScope;
+  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+
+  return useQuery({
+    queryKey: tenantQueryKeys.detail(id),
+    queryFn: () => serviceDeskTenantApi.get(id),
+    enabled: !!id && !!dataScope,
+    ...ticketQueryOptions,
+  });
+};

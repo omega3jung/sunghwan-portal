@@ -2,11 +2,11 @@ import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 
 import {
   getAssignmentRuleStore,
-  getClientRulesOrThrow,
   getRuleIndexByCategoryId,
+  getTenantRulesOrThrow,
   normalizeAssignmentRule,
   normalizeAssignmentRules,
-  resolveClientId,
+  resolveTenantId,
 } from "./ruleUtils";
 
 export const localListAssignmentRules = ({
@@ -17,8 +17,8 @@ export const localListAssignmentRules = ({
   searchParams: URLSearchParams;
 }) => {
   const items = getAssignmentRuleStore(isInternal);
-  const clientId = resolveClientId(items, searchParams.get("clientId"));
-  const rules = clientId ? getClientRulesOrThrow(items, clientId) : [];
+  const tenantId = resolveTenantId(items, searchParams.get("tenantId"));
+  const rules = tenantId ? getTenantRulesOrThrow(items, tenantId) : [];
   const normalizedItems = normalizeAssignmentRules(rules);
   const filteredItems = filterItemsByQuery(searchParams, normalizedItems);
 

@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Client } from "@/domain/serviceDesk";
+import type { Tenant } from "@/domain/serviceDesk";
 import {
   useSaveServiceDeskApprovalStepTree,
   useServiceDeskApprovalStepListQuery,
@@ -26,6 +26,7 @@ import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrent
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { languageOptions } from "@/shared/constants";
+import { useLocalizedValue } from "@/shared/hooks";
 import { DbParams, Locale } from "@/shared/types";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
@@ -44,13 +45,14 @@ import {
 export default function ApprovalStepPage() {
   const { isInternal } = useSettingsScope();
   const { t } = useTranslation(NS.settings);
+  const tLocal = useLocalizedValue();
   const mutationToast = useMutationToast();
 
   const { current: userPreference } = useCurrentPreference();
   const [language, setLanguage] = useState<Locale>(userPreference.language);
-  const [selectedClient, setSelectedClient] = useState<string | null>(null);
-  const [clientData, setClientData] = useState<Client[]>([]);
-  const [baselineSignatureByClient, setBaselineSignatureByClient] = useState<
+  const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
+  const [tenantData, setTenantData] = useState<Tenant[]>([]);
+  const [baselineSignatureByTenant, setBaselineSignatureByTenant] = useState<
     Record<string, string>
   >({});
 
@@ -59,8 +61,8 @@ export default function ApprovalStepPage() {
     useServiceDeskCategoryListQuery(categoryParams);
 
   const approvalStepParams = useMemo(
-    () => (selectedClient ? { clientId: selectedClient } : undefined),
-    [selectedClient],
+    () => (selectedTenant ? { tenantId: selectedTenant } : undefined),
+    [selectedTenant],
   );
 
   const { data: approvalSteps, isLoading: isApprovalStepsLoading } =
@@ -74,11 +76,11 @@ export default function ApprovalStepPage() {
     selectedNode,
     selectedId,
     setSelectedId,
-    treeClientId,
+    treeTenantId,
     addApprovalStep,
     removeApprovalStep,
   } = useApprovalStepTree({
-    selectedClient,
+    selectedTenant,
     categories,
     approvalSteps,
     language,
@@ -91,9 +93,9 @@ export default function ApprovalStepPage() {
   }, [approvalSteps]);
 
   const baselineSignature =
-    selectedClient === null
+    selectedTenant === null
       ? queryBaselineSignature
-      : (baselineSignatureByClient[selectedClient] ?? queryBaselineSignature);
+      : (baselineSignatureByTenant[selectedTenant] ?? queryBaselineSignature);
 
   const currentSignature = useMemo(() => {
     return createApprovalStepSettingsSignatureFromTree(tree);
@@ -103,18 +105,18 @@ export default function ApprovalStepPage() {
   }, [tree]);
 
   const isDirty =
-    Boolean(selectedClient) && baselineSignature !== currentSignature;
+    Boolean(selectedTenant) && baselineSignature !== currentSignature;
   const canSave =
-    Boolean(selectedClient) &&
-    treeClientId === selectedClient &&
+    Boolean(selectedTenant) &&
+    treeTenantId === selectedTenant &&
     isDirty &&
     isTreeValid &&
     !isSaving;
 
   const onSaveChange = async () => {
     if (
-      !selectedClient ||
-      treeClientId !== selectedClient ||
+      !selectedTenant ||
+      treeTenantId !== selectedTenant ||
       !isDirty ||
       !isTreeValid ||
       !categories
@@ -124,7 +126,7 @@ export default function ApprovalStepPage() {
 
     const selectedPath = findTreeNodePath(tree, selectedId);
     const payload = buildApprovalStepTreeSavePayload({
-      clientId: selectedClient,
+      tenantId: selectedTenant,
       tree,
     });
 
@@ -137,12 +139,12 @@ export default function ApprovalStepPage() {
       );
       const savedApprovalSettings = await savePromise;
       const nextTree = approvalStepToTree(
-        mapApprovalData(categories, selectedClient, savedApprovalSettings),
+        mapApprovalData(categories, selectedTenant, savedApprovalSettings),
       );
 
-      setBaselineSignatureByClient((previousState) => ({
+      setBaselineSignatureByTenant((previousState) => ({
         ...previousState,
-        [selectedClient]:
+        [selectedTenant]:
           createApprovalStepSettingsSignatureFromApprovalSettings(
             savedApprovalSettings,
           ),
@@ -157,46 +159,40 @@ export default function ApprovalStepPage() {
   useEffect(() => {
     if (!categories?.length) return;
 
-    const firstClient = categories[0]?.id ?? null;
+    const firstTenant = categories[0]?.id ?? null;
 
-    setClientData(
-      categories.map((client) => ({
-        id: client.id,
-        name: client.name,
-        color: client.color,
-      })),
-    );
+    setTenantData(categories);
 
-    setSelectedClient((previousSelectedClient) => {
+    setSelectedTenant((previousSelectedTenant) => {
       if (
-        previousSelectedClient &&
-        categories.some((client) => client.id === previousSelectedClient)
+        previousSelectedTenant &&
+        categories.some((tenant) => tenant.id === previousSelectedTenant)
       ) {
-        return previousSelectedClient;
+        return previousSelectedTenant;
       }
 
-      return firstClient;
+      return firstTenant;
     });
   }, [categories]);
 
   useEffect(() => {
-    if (!selectedClient) {
+    if (!selectedTenant) {
       return;
     }
 
-    setBaselineSignatureByClient((previousState) => {
-      if (previousState[selectedClient] === queryBaselineSignature) {
+    setBaselineSignatureByTenant((previousState) => {
+      if (previousState[selectedTenant] === queryBaselineSignature) {
         return previousState;
       }
 
       return {
         ...previousState,
-        [selectedClient]: queryBaselineSignature,
+        [selectedTenant]: queryBaselineSignature,
       };
     });
-  }, [queryBaselineSignature, selectedClient]);
+  }, [queryBaselineSignature, selectedTenant]);
 
-  if (isCategoriesLoading || (selectedClient && isApprovalStepsLoading)) {
+  if (isCategoriesLoading || (selectedTenant && isApprovalStepsLoading)) {
     return (
       <div className="flex h-40 items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin" />
@@ -210,29 +206,29 @@ export default function ApprovalStepPage() {
         <div className="flex items-end gap-4">
           {isInternal && (
             <div className="flex min-w-60 flex-col gap-2">
-              <span>{t("serviceDeskSettings.general.client")}</span>
+              <span>{t("serviceDeskSettings.general.tenant")}</span>
               <Select
-                value={selectedClient ?? ""}
-                onValueChange={setSelectedClient}
+                value={selectedTenant ?? ""}
+                onValueChange={setSelectedTenant}
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={t("serviceDeskSettings.general.client")}
+                    placeholder={t("serviceDeskSettings.general.tenant")}
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {clientData.map((client) => (
+                  {tenantData.map((tenant) => (
                     <SelectItem
-                      key={`select_item_${client.id}`}
-                      value={client.id}
+                      key={`select_item_${tenant.id}`}
+                      value={tenant.id}
                     >
                       <div className="flex items-center gap-2">
                         <span
                           className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: client.color }}
-                          title={client.color}
+                          style={{ backgroundColor: tenant.color }}
+                          title={tenant.color}
                         ></span>
-                        {client.name}
+                        {tLocal(tenant.name)}
                       </div>
                     </SelectItem>
                   ))}

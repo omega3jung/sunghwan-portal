@@ -1,6 +1,6 @@
 ﻿import { AssignmentRule } from "@/domain/serviceDesk";
 
-import { DbAssignmentRule } from "./mapper";
+import { DbAssignmentRule } from "./types";
 
 export type AssignmentRuleWriteFields = {
   categoryId: string;

@@ -2,7 +2,7 @@ import { ApprovalStep } from "@/domain/serviceDesk";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
-import { DbApprovalStep } from "./mapper";
+import { DbApprovalStep } from "./types";
 
 type ApprovalStepWriteFields = Pick<
   ApprovalStep,

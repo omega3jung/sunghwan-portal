@@ -1,19 +1,19 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
-import type { ClientCategoryTree } from "@/domain/serviceDesk";
-import { camelClientCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
+import type { TenantCategoryTree } from "@/domain/serviceDesk";
+import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 
 import { getLocalDemoCategories } from "../../state";
 import {
   getCategoryLocation,
   normalizeCategory,
-  normalizeClientTree,
+  normalizeTenantTree,
 } from "./categoryUtils";
 
 export const getLocalCategoryTrees = (
   isInternal: boolean,
-): ClientCategoryTree[] => {
-  return getLocalDemoCategories(isInternal).map((client) =>
-    normalizeClientTree(client),
+): TenantCategoryTree[] => {
+  return getLocalDemoCategories(isInternal).map((tenant) =>
+    normalizeTenantTree(tenant),
   );
 };
 
@@ -26,7 +26,7 @@ export const localListCategories = ({
 }) => {
   const items = filterItemsByQuery(
     searchParams,
-    camelClientCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+    camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
   );
 
   return {
@@ -49,7 +49,7 @@ export const localGetCategory = ({
   }
 
   return normalizeCategory(
-    getLocalDemoCategories(isInternal)[location.clientIndex].category[
+    getLocalDemoCategories(isInternal)[location.tenantIndex].category[
       location.categoryIndex
     ],
   );

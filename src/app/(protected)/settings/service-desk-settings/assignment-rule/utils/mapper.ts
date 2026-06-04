@@ -1,18 +1,18 @@
 ﻿import { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
+import { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 
 export const mapAssignmentRuleData = (
-  categories: ClientCategoryTree[],
-  clientId: string,
+  categories: TenantCategoryTree[],
+  tenantId: string,
   assignmentRules: AssignmentRule[],
 ): AssignmentRuleData[] => {
   if (!categories?.length) {
     return [];
   }
 
-  const current = categories.find((category) => category.id === clientId);
+  const current = categories.find((category) => category.id === tenantId);
 
   if (!current) {
     return [];

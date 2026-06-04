@@ -1,4 +1,4 @@
-﻿import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/mapper";
+﻿import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/types";
 
 import accountAccessCategoryMock from "./categories/accountAccess";
 import clientPortalSystemIssueCategoryMock from "./categories/clientPortalSystemIssue";

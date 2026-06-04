@@ -1,4 +1,3 @@
-import { AccessLevel } from "@/domain/auth";
 import {
   ApprovalAssigneeType,
   ApprovalStep,
@@ -8,50 +7,14 @@ import {
   createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
-import { ArrayMapper, LocalizedText, Mapper } from "@/shared/types";
+import { ArrayMapper, Mapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-import { DbCategory } from "../category/mapper";
-
-// back-end data structures.
-export type DbCategoryApprovalSettings = Omit<DbCategory, "sub_category"> & {
-  approval_step: DbApprovalStep[];
-};
-
-export interface DbApprovalStep {
-  approval_step_id: number; // string number. can use parseInt.
-  approval_step_name: LocalizedText;
-  approval_step_description: LocalizedText | null;
-  approval_step_index: number;
-  approval_step_active?: boolean;
-
-  category_id: number; // string number. can use parseInt.
-  approval_step_assignee: DbApprovalAssigneeType;
-
-  /**
-   * If requester's access level is greater than or equal to this value,
-   * this approval step will be skipped.
-   */
-  skip_access_level: AccessLevel | null;
-}
-
-type DbApprovalAssigneeType =
-  | {
-      type: "MANAGER";
-      level: 1 | 2;
-    }
-  | {
-      type: "DEPARTMENT";
-      department_id: number; // string number. can use parseInt.
-    }
-  | {
-      type: "JOB_FIELD";
-      field_id: number; // string number. can use parseInt.
-    }
-  | {
-      type: "EMPLOYEE";
-      employee_username: string[];
-    };
+import {
+  DbApprovalAssigneeType,
+  DbApprovalStep,
+  DbCategoryApprovalSettings,
+} from "./types";
 
 export const camelCategoryApprovalSettingMapper: ArrayMapper<
   DbCategoryApprovalSettings,

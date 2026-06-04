@@ -39,7 +39,7 @@ export const subCategorySchema = z.object({
 
 export const categorySchema = z.object({
   id: z.string().optional(),
-  clientId: z.string().min(1).optional(),
+  tenantId: z.string().min(1).optional(),
   name: localizedTextSchema,
   description: optionalLocalizedTextSchema.optional(),
   requestTemplate: optionalLocalizedTextSchema.optional(),
@@ -53,11 +53,11 @@ export const categorySchema = z.object({
 });
 
 export const createCategorySchema = categorySchema.extend({
-  clientId: z.string().min(1),
+  tenantId: z.string().min(1),
 });
 
 export const updateCategorySchema = z.object({
-  clientId: z.string().min(1).optional(),
+  tenantId: z.string().min(1).optional(),
   name: localizedTextSchema,
   description: optionalLocalizedTextSchema.optional(),
   requestTemplate: optionalLocalizedTextSchema.optional(),
@@ -71,6 +71,6 @@ export const updateCategorySchema = z.object({
 });
 
 export const saveCategoryTreeSchema = z.object({
-  clientId: z.string().min(1),
-  categories: z.array(categorySchema.omit({ clientId: true })),
+  tenantId: z.string().min(1),
+  categories: z.array(categorySchema.omit({ tenantId: true })),
 });

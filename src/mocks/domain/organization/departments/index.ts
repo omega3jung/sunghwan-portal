@@ -1,5 +1,6 @@
-﻿import { DbDepartment } from "@/feature/organization/department/mapper";
+﻿import { DbDepartment } from "@/feature/organization/department";
 
+import { internalCompanyMock } from "../companies";
 import headOfficeDepartmentMock from "./headOffice.json";
 import itDepartmentMock from "./it.json";
 import logisticsDepartmentMock from "./logistics.json";
@@ -16,9 +17,9 @@ export const allDepartmentsMock: DbDepartment[] = [
   /*  Company  */
   {
     d_id: 0,
-    d_name: { en: "Company" },
+    d_name: internalCompanyMock.company_name,
     d_code: "C",
-    d_description: { en: "Company" },
+    d_description: internalCompanyMock.company_name,
     d_parent_id: null,
     d_active: true,
   },

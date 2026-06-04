@@ -1,9 +1,10 @@
 ﻿import {
   DbCategory,
-  DbClientCategoryTree,
   DbSubCategory,
-} from "@/feature/serviceDesk/category/mapper";
+  DbTenantCategoryTree,
+} from "@/feature/serviceDesk/category/";
 
+import { clientTenantsMock, internalTenantMock } from "../tenants";
 import accountAccessCategoryMock from "./accountAccess";
 import clientCustomIssueSubCategoryMock from "./clientCustomIssue";
 import clientPortalSystemIssueCategoryMock from "./clientPortalSystemIssue";
@@ -40,32 +41,24 @@ export const internalCategoryMock: DbCategory[] = [
   otherInquiryCategoryMock,
 ];
 
-export const internalCategorySettingsMock: DbClientCategoryTree[] = [
+export const internalCategorySettingsMock: DbTenantCategoryTree[] = [
   {
-    client_id: 1,
-    client_name: "Internal Demo Corporation",
-    client_color: "#345791",
+    ...internalTenantMock,
     category: internalCategoryMock,
   },
   {
-    client_id: 11,
-    client_name: "Client Demo Corporation",
-    client_color: "#B22222",
+    ...clientTenantsMock[0],
     category: [clientPortalSystemIssueCategoryMock],
   },
   {
-    client_id: 12,
-    client_name: "Client Demo Industry",
-    client_color: "#006400",
+    ...clientTenantsMock[1],
     category: [mergeClientCustomCategory(clientCustomIssueSubCategoryMock)],
   },
 ];
 
-export const clientCategorySettingsMock: DbClientCategoryTree[] = [
+export const clientCategorySettingsMock: DbTenantCategoryTree[] = [
   {
-    client_id: 11,
-    client_name: "Client Demo Corporation",
-    client_color: "#B22222",
+    ...clientTenantsMock[0],
     category: [
       clientPortalSystemIssueCategoryMock,
       accountAccessCategoryMock,

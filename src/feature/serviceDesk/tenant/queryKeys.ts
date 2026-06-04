@@ -1,0 +1,15 @@
+import {
+  SERVICE_DESK_CATEGORY_KEY,
+  SERVICE_DESK_KEY,
+} from "@/feature/serviceDesk/shared/keys";
+import { DbParams } from "@/shared/types/api";
+
+export const tenantQueryKeys = {
+  all: [SERVICE_DESK_KEY, SERVICE_DESK_CATEGORY_KEY] as const,
+
+  lists: () => [...tenantQueryKeys.all, "list"] as const,
+  list: (params: DbParams) => [...tenantQueryKeys.lists(), params] as const,
+
+  details: () => [...tenantQueryKeys.all, "detail"] as const,
+  detail: (id: string | number) => [...tenantQueryKeys.details(), id] as const,
+};

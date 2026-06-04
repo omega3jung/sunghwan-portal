@@ -1,0 +1,13 @@
+{
+  "company_id": 1,
+  "company_name": {
+    "en": "Internal Demo Corporation",
+    "es": "Corporación de demostración interna",
+    "fr": "Société de démonstration interne",
+    "ko": "내부 데모 법인"
+  },
+  "company_code": "IC",
+  "company_created_at": "20251201T21:35:39Z",
+  "company_updated_at": "20251201T21:35:39Z",
+  "company_active": true
+}

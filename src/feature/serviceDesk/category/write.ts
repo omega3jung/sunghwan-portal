@@ -2,7 +2,7 @@ import { MainCategory, SubCategory } from "@/domain/serviceDesk";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
-import { DbCategory, DbSubCategory } from "./mapper";
+import { DbCategory, DbSubCategory } from "./types";
 
 type CategoryWriteFields = Omit<MainCategory, "id" | "subCategories"> & {
   subCategories: CategorySubCategoryWriteInput[];
@@ -23,11 +23,11 @@ export type CategorySubCategoryWriteInput = Omit<SubCategory, "id"> & {
 
 export type CreateCategoryInput = CategoryWriteFields & {
   id?: string;
-  clientId: string;
+  tenantId: string;
 };
 export type UpdateCategoryInput = CategoryWriteFields & {
   id: string;
-  clientId?: string;
+  tenantId?: string;
 };
 
 export function toCategoryWritePayload(
@@ -54,7 +54,7 @@ export function toCategoryMockResource(
   input: CreateCategoryInput | UpdateCategoryInput,
   id = createMockId(),
 ): MainCategory {
-  const { clientId: _clientId, ...categoryInput } = input;
+  const { tenantId: _tenantId, ...categoryInput } = input;
 
   return {
     ...categoryInput,
