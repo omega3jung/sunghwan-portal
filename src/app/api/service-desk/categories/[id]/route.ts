@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getAuthToken,
   isInternalUser,
   isRemoteRequest,
   proxyJson,
@@ -22,11 +23,12 @@ import {
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const { id } = context.params;
-  const isRemote = await isRemoteRequest(request);
+  const token = await getAuthToken(request);
+  const isRemote = token?.dataScope === "REMOTE";
+  const isInternal = token?.userScope === "INTERNAL";
 
   if (!isRemote) {
     try {
-      const isInternal = await isInternalUser(request);
       const category = localGetCategory({
         isInternal,
         id,
@@ -47,8 +49,21 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     }
   }
 
+  const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+
+  if (!proxyQuery.has("isInternal")) {
+    proxyQuery.set("isInternal", String(isInternal));
+  }
+
+  const defaultTenantId = resolveDefaultTenantId(token);
+
+  if (!proxyQuery.has("tenantId") && !isInternal && defaultTenantId) {
+    proxyQuery.set("tenantId", defaultTenantId);
+  }
+
   return proxyJson(request, {
     path: `/service-desk/categories/${id}`,
+    query: proxyQuery,
     errorMessage: tServiceDeskApi("api.categories.fetch"),
     mapData: mapCategoryItemPayload,
   });
@@ -125,4 +140,12 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     path: `/service-desk/categories/${id}`,
     errorMessage: tServiceDeskApi("api.categories.delete"),
   });
+}
+
+function resolveDefaultTenantId(token: Awaited<ReturnType<typeof getAuthToken>>) {
+  if (typeof token?.companyId === "number") {
+    return String(token.companyId);
+  }
+
+  return null;
 }

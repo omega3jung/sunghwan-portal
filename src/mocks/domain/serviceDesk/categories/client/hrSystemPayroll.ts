@@ -1,7 +1,7 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const hrSystemPayrollCategoryMock = {
-  category_id: 61,
+export const clientHrSystemPayrollMock = {
+  category_id: 161,
   category_name: {
     en: "HR Systems & Payroll",
     es: "Sistemas de RR. HH. y Nómina",
@@ -23,7 +23,7 @@ const hrSystemPayrollCategoryMock = {
   default_sla_days: 2,
   sub_category: [
     {
-      category_id: 62,
+      category_id: 162,
       category_name: {
         en: "Work log / attendance issue",
         es: "Problema de registro laboral / asistencia",
@@ -49,7 +49,7 @@ const hrSystemPayrollCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 63,
+      category_id: 163,
       category_name: {
         en: "Payroll issue",
         es: "Problema de nómina",
@@ -75,7 +75,7 @@ const hrSystemPayrollCategoryMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 64,
+      category_id: 164,
       category_name: {
         en: "Leave / vacation system issue",
         es: "Problema del sistema de permisos / vacaciones",
@@ -101,7 +101,7 @@ const hrSystemPayrollCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 65,
+      category_id: 165,
       category_name: {
         en: "Employee profile correction",
         es: "Corrección de perfil de empleado",
@@ -128,5 +128,3 @@ const hrSystemPayrollCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default hrSystemPayrollCategoryMock;

@@ -20,7 +20,7 @@
       "fr": "Démonstration client dans le secteur d'activité",
       "ko": "클라이언트 데모 산업"
     },
-    "company_code": "#DCI",
+    "company_code": "DCI",
     "company_created_at": "20251203T21:14:52Z",
     "company_updated_at": "20251203T21:14:52Z",
     "company_active": true

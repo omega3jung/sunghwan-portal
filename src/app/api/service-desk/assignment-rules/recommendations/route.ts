@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo/recommendation";
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/assignment-rules/recommendations",
     body: input,

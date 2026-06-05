@@ -4,8 +4,8 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
   ServiceDeskApiError,
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
     });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/work-session`,
     errorMessage: tServiceDeskApi("api.ticketWorkSession.fetchList"),
     mapData: mapTicketWorkSessionListPayload,
@@ -117,7 +117,7 @@ export async function POST(
   const payload = (await request.json()) as TicketWorkSessionSubmitPayload;
 
   if (isRemote) {
-    return proxyJson(request, {
+    return portalApiJson(request, {
       method: "POST",
       path: `/service-desk/tickets/${ticketId}/work-session`,
       body: payload,

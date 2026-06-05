@@ -1,6 +1,6 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const dataInfoManagementCategoryMock = {
+export const internalDataInfoManagementMock = {
   category_id: 71,
   category_name: {
     en: "Data & Information Management",
@@ -128,5 +128,3 @@ const dataInfoManagementCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default dataInfoManagementCategoryMock;

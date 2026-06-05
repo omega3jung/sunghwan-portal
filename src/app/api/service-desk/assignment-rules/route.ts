@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getAuthToken,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
@@ -27,12 +27,15 @@ import {
   localSaveAssignmentRuleTree,
 } from "@/server/serviceDesk/settings/assignmentRule/localDemo";
 
+import { portalApiJson } from "../../_helpers/portalApiJson";
+
 export async function GET(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
+  const token = await getAuthToken(request);
+  const isRemote = token?.dataScope === "REMOTE";
+  const isInternal = token?.userScope === "INTERNAL";
 
   if (!isRemote) {
     try {
-      const isInternal = await isInternalUser(request);
       return NextResponse.json(
         localListAssignmentRules({
           isInternal,
@@ -46,9 +49,21 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return proxyJson(request, {
+  const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+
+  if (!proxyQuery.has("isInternal")) {
+    proxyQuery.set("isInternal", String(isInternal));
+  }
+
+  const defaultTenantId = resolveDefaultTenantId(token);
+
+  if (!proxyQuery.has("tenantId") && !isInternal && defaultTenantId) {
+    proxyQuery.set("tenantId", defaultTenantId);
+  }
+
+  return portalApiJson(request, {
     path: "/service-desk/assignment-rules",
-    query: request.nextUrl.searchParams,
+    query: proxyQuery,
     errorMessage: tServiceDeskApi("api.assignmentRules.fetchList"),
     mapData: mapAssignmentRuleListPayload,
   });
@@ -90,7 +105,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/assignment-rules",
     body: toAssignmentRuleWritePayload(body),
@@ -134,11 +149,21 @@ export async function PUT(request: NextRequest) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PUT",
     path: "/service-desk/assignment-rules",
     body,
     errorMessage: tServiceDeskApi("api.assignmentRules.save"),
     mapData: mapAssignmentRuleTreePayload,
   });
+}
+
+function resolveDefaultTenantId(
+  token: Awaited<ReturnType<typeof getAuthToken>>,
+) {
+  if (typeof token?.companyId === "number") {
+    return String(token.companyId);
+  }
+
+  return null;
 }

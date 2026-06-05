@@ -1,7 +1,7 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const hardwareDeviceCategoryMock = {
-  category_id: 21,
+export const clientHardwareDeviceMock = {
+  category_id: 121,
   category_name: {
     en: "Hardware & Device",
     es: "Hardware y Dispositivos",
@@ -23,7 +23,7 @@ const hardwareDeviceCategoryMock = {
   default_sla_days: 3,
   sub_category: [
     {
-      category_id: 22,
+      category_id: 122,
       category_name: {
         en: "New device request (PC / Laptop / Mobile)",
         es: "Solicitud de nuevo dispositivo (PC / Portátil / Móvil)",
@@ -49,7 +49,7 @@ const hardwareDeviceCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 23,
+      category_id: 123,
       category_name: {
         en: "Peripheral issue (monitor / mouse / keyboard)",
         es: "Problema de periféricos (monitor / ratón / teclado)",
@@ -75,7 +75,7 @@ const hardwareDeviceCategoryMock = {
       default_sla_days: 2,
     },
     {
-      category_id: 24,
+      category_id: 124,
       category_name: {
         en: "Device replacement",
         es: "Reemplazo de dispositivo",
@@ -101,7 +101,7 @@ const hardwareDeviceCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 25,
+      category_id: 125,
       category_name: {
         en: "Device relocation",
         es: "Reubicación de dispositivo",
@@ -127,7 +127,7 @@ const hardwareDeviceCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 26,
+      category_id: 126,
       category_name: {
         en: "Device setup / imaging",
         es: "Configuración / Imagen del dispositivo",
@@ -153,7 +153,7 @@ const hardwareDeviceCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 27,
+      category_id: 127,
       category_name: {
         en: "Asset inventory update",
         es: "Actualización del inventario de activos",
@@ -180,5 +180,3 @@ const hardwareDeviceCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default hardwareDeviceCategoryMock;

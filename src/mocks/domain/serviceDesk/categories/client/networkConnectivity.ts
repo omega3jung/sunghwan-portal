@@ -1,7 +1,7 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const networkConnectivityCategoryMock = {
-  category_id: 41,
+export const clientNetworkConnectivityMock = {
+  category_id: 141,
   category_name: {
     en: "Network & Connectivity",
     es: "Red y Conectividad",
@@ -23,7 +23,7 @@ const networkConnectivityCategoryMock = {
   default_sla_days: 1,
   sub_category: [
     {
-      category_id: 42,
+      category_id: 142,
       category_name: {
         en: "Internet connectivity issue",
         es: "Problema de conectividad a Internet",
@@ -49,7 +49,7 @@ const networkConnectivityCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 43,
+      category_id: 143,
       category_name: {
         en: "VPN issue",
         es: "Problema de VPN",
@@ -75,7 +75,7 @@ const networkConnectivityCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 44,
+      category_id: 144,
       category_name: {
         en: "Wi-Fi issue",
         es: "Problema de Wi-Fi",
@@ -101,7 +101,7 @@ const networkConnectivityCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 45,
+      category_id: 145,
       category_name: {
         en: "Network performance issue",
         es: "Problema de rendimiento de red",
@@ -127,7 +127,7 @@ const networkConnectivityCategoryMock = {
       default_sla_days: 2,
     },
     {
-      category_id: 46,
+      category_id: 146,
       category_name: {
         en: "Firewall / IP request",
         es: "Solicitud de firewall / IP",
@@ -154,5 +154,3 @@ const networkConnectivityCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default networkConnectivityCategoryMock;

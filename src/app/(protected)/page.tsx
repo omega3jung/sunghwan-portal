@@ -293,45 +293,26 @@ export default function ProtectedPage() {
               </CardDescription>
             </div>
           </CardHeader>
-          {current.isDemoUser ? (
-            <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button asChild>
-                <Link href="/service-desk">
-                  {t("hero.actions.openServiceDesk")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/documents">
-                  {t("hero.actions.browseDocumentation")}
-                  <FileText className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="secondary">
-                <Link href="/settings">
-                  {t("hero.actions.reviewSettings")}
-                  <Settings2 className="h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          ) : (
-            <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button disabled>
+          <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button asChild>
+              <Link href="/service-desk">
                 {t("hero.actions.openServiceDesk")}
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/documents">
-                  {t("hero.actions.browseDocumentation")}
-                  <FileText className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="secondary" disabled>
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/documents">
+                {t("hero.actions.browseDocumentation")}
+                <FileText className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/settings">
                 {t("hero.actions.reviewSettings")}
                 <Settings2 className="h-4 w-4" />
-              </Button>
-            </CardContent>
-          )}
+              </Link>
+            </Button>
+          </CardContent>
         </Card>
 
         <div className="w-80">

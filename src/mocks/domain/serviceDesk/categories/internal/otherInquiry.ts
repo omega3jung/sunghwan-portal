@@ -1,6 +1,6 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const otherInquiryCategoryMock = {
+export const internalOtherInquiryMock = {
   category_id: 91,
   category_name: {
     en: "Other / General Inquiry",
@@ -102,5 +102,3 @@ const otherInquiryCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default otherInquiryCategoryMock;

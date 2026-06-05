@@ -4,7 +4,6 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
 import {
@@ -28,6 +27,8 @@ import {
   localCreateTicket,
   localListTickets,
 } from "@/server/serviceDesk/ticket/localDemo";
+
+import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
   }
 
   // real backend
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/tickets",
     headers: toCurrentUsernameProxyHeaders(currentUserName),

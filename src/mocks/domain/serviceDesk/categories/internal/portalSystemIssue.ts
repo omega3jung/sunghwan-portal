@@ -1,6 +1,6 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const internalPortalSystemIssueCategoryMock = {
+export const internalPortalSystemIssueMock = {
   category_id: 1,
   category_name: {
     en: "Portal / System Issues",
@@ -154,5 +154,3 @@ const internalPortalSystemIssueCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default internalPortalSystemIssueCategoryMock;

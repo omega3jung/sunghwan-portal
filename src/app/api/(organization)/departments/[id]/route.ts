@@ -1,7 +1,8 @@
 // app/api/departments/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelDepartmentMapper,
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     return NextResponse.json(targetDepartment);
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/department/${id}`,
     errorMessage: "Failed to fetch department",
     mapData: mapDepartmentItemPayload,
@@ -60,7 +61,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PUT",
     path: `/department/${id}`,
     body: toDepartmentWritePayload({ ...body, id }),
@@ -81,7 +82,7 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     return new NextResponse(null, { status: 204 }); // DELETE is 204.
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "DELETE",
     path: `/department/${id}`,
     errorMessage: "Failed to delete department",

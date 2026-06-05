@@ -1,6 +1,6 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const clientUserSupportCategoryMock = {
+export const internalClientUserSupportMock = {
   category_id: 81,
   category_name: {
     en: "Client / External User Support",
@@ -128,5 +128,3 @@ const clientUserSupportCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default clientUserSupportCategoryMock;

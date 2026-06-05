@@ -1,7 +1,7 @@
 ﻿import { DbCategory } from "@/feature/serviceDesk/category";
 
-const printingOfficeEquipmentCategoryMock = {
-  category_id: 51,
+export const clientPrintingOfficeEquipmentMock = {
+  category_id: 151,
   category_name: {
     en: "Printing & Office Equipment",
     es: "Impresión y Equipos de Oficina",
@@ -23,7 +23,7 @@ const printingOfficeEquipmentCategoryMock = {
   default_sla_days: 2,
   sub_category: [
     {
-      category_id: 52,
+      category_id: 152,
       category_name: {
         en: "Printing & Office Equipment",
         es: "Impresión y Equipos de Oficina",
@@ -49,7 +49,7 @@ const printingOfficeEquipmentCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 53,
+      category_id: 153,
       category_name: {
         en: "Label printer issue",
         es: "Problema de impresora de etiquetas",
@@ -75,7 +75,7 @@ const printingOfficeEquipmentCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 54,
+      category_id: 154,
       category_name: {
         en: "Scanner issue",
         es: "Problema de escáner",
@@ -101,7 +101,7 @@ const printingOfficeEquipmentCategoryMock = {
       default_sla_days: null,
     },
     {
-      category_id: 55,
+      category_id: 155,
       category_name: {
         en: "Toner / supply request",
         es: "Solicitud de tóner / suministros",
@@ -128,5 +128,3 @@ const printingOfficeEquipmentCategoryMock = {
     },
   ],
 } satisfies DbCategory;
-
-export default printingOfficeEquipmentCategoryMock;
