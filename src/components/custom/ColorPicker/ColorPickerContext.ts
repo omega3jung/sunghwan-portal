@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import { resolveCssHexColor } from "@/shared/utils/presentation";
+import { resolveCssColorValue } from "@/shared/utils/presentation";
 
 const FALLBACK_DEFAULT_COLOR = "#171717";
 export const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
@@ -21,7 +21,15 @@ export type ColorPickerContextValue = {
 export const isValidHexColor = (value: string) => HEX_COLOR_REGEX.test(value);
 
 export function resolveThemePrimaryColor() {
-  return resolveCssHexColor("--primary", FALLBACK_DEFAULT_COLOR);
+  if (typeof window === "undefined") {
+    return FALLBACK_DEFAULT_COLOR;
+  }
+
+  const primaryColorValue = getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary")
+    .trim();
+
+  return resolveCssColorValue(primaryColorValue, FALLBACK_DEFAULT_COLOR);
 }
 
 export const DEFAULT_COLOR =

@@ -382,6 +382,20 @@
         "clientMismatch": "Category does not belong to client {{clientId}}."
       }
     },
+    "tenants": {
+      "fetchList": "Failed to fetch tenants.",
+      "create": "Failed to create tenant.",
+      "fetch": "Failed to fetch tenant.",
+      "update": "Failed to update tenant.",
+      "delete": "Failed to delete tenant.",
+      "save": "Failed to save tenant settings.",
+      "remoteNotImplemented": "REMOTE tenant settings mutations are not implemented yet.",
+      "localDemo": {
+        "invalidPayload": "Invalid tenant settings payload.",
+        "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
+        "companyMismatch": "Tenant does not belong to company {{companyId}}."
+      }
+    },
     "tickets": {
       "fetchList": "Failed to fetch tickets.",
       "create": "Failed to create ticket.",

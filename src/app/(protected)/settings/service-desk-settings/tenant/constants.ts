@@ -1,4 +1,6 @@
-export const DEFAULT_TENANT_COLOR = "#2563eb";
+import { DEFAULT_COLOR } from "@/components/custom/ColorPicker";
+
+export const DEFAULT_TENANT_COLOR = DEFAULT_COLOR;
 
 export const TENANT_LOCALES = [
   {

@@ -2,6 +2,8 @@ import { Tenant } from "@/domain/serviceDesk";
 import client from "@/lib/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 
+import { CreateTenantInput, UpdateTenantInput } from "./write";
+
 type TenantResponse = OResponse<Tenant>;
 
 // feature-scoped API.
@@ -22,12 +24,12 @@ export const serviceDeskTenantApi = {
     return res.data;
   },
 
-  create: async (data: Tenant) => {
+  create: async (data: CreateTenantInput) => {
     const res = await client.api.post<Tenant>(`/api/service-desk/tenants`, data);
     return res.data;
   },
 
-  update: async (data: Tenant) => {
+  update: async (data: UpdateTenantInput) => {
     const res = await client.api.put<Tenant>(`/api/service-desk/tenants/${data.id}`, data);
     return res.data;
   },

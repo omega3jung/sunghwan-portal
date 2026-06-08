@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 
-import { ColorPicker } from "@/components/custom/ColorPicker";
+import { ColorPicker, DEFAULT_COLOR } from "@/components/custom/ColorPicker";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-
-const DEFAULT_COLOR = "#2563eb";
 
 export default function ColorPickerPage() {
   const [color, setColor] = useState(DEFAULT_COLOR);

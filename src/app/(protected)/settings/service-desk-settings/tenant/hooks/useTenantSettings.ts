@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Company } from "@/domain/organization";
 import { Tenant } from "@/domain/serviceDesk";
+import {
+  useCreateServiceDeskTenant,
+  useDeleteServiceDeskTenant,
+  useUpdateServiceDeskTenant,
+} from "@/feature/serviceDesk/tenant/client";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 
@@ -13,6 +18,7 @@ import {
   buildInitialTenantSettings,
   cloneTenantSettingItems,
   createTenantFromCompany,
+  createTenantSettingItem,
   createTenantSignature,
 } from "../utils/mapper";
 
@@ -20,6 +26,19 @@ function toggleSelection(id: string, selectedIds: string[]) {
   return selectedIds.includes(id)
     ? selectedIds.filter((selectedId) => selectedId !== id)
     : [...selectedIds, id];
+}
+
+function hasTenantSettingsChanged(
+  currentTenant: TenantSettingItem,
+  baselineTenant: TenantSettingItem,
+) {
+  return (
+    currentTenant.companyId !== baselineTenant.companyId ||
+    currentTenant.color !== baselineTenant.color ||
+    currentTenant.active !== baselineTenant.active ||
+    createTenantSignature([currentTenant]) !==
+      createTenantSignature([baselineTenant])
+  );
 }
 
 type UseTenantSettingsOptions = {
@@ -33,6 +52,9 @@ export function useTenantSettings({
 }: UseTenantSettingsOptions) {
   const { t } = useTranslation(NS.settings);
   const mutationToast = useMutationToast();
+  const { mutateAsync: createTenant } = useCreateServiceDeskTenant();
+  const { mutateAsync: updateTenant } = useUpdateServiceDeskTenant();
+  const { mutateAsync: deleteTenant } = useDeleteServiceDeskTenant();
 
   const initialTenants = useMemo(() => {
     return buildInitialTenantSettings(companies, sourceTenants);
@@ -48,6 +70,7 @@ export function useTenantSettings({
   const [focusedTenantId, setFocusedTenantId] = useState<string | null>(null);
   const [savedSignature, setSavedSignature] = useState(initialSignature);
   const [isSaving, setIsSaving] = useState(false);
+  const lastInitialSignatureRef = useRef(initialSignature);
 
   const currentSignature = useMemo(
     () => createTenantSignature(tenants),
@@ -73,13 +96,26 @@ export function useTenantSettings({
 
   const canSave = currentSignature !== savedSignature && !isSaving;
   const canReset =
-    currentSignature !== initialSignature ||
+    currentSignature !== savedSignature ||
     selectedCompanyIds.length > 0 ||
     selectedTenantIds.length > 0 ||
     focusedTenantId !== null;
 
   useEffect(() => {
-    if (currentSignature !== savedSignature) {
+    const previousInitialSignature = lastInitialSignatureRef.current;
+    const matchesLatestQuery = currentSignature === initialSignature;
+    const isPristineFromPreviousQuery =
+      currentSignature === savedSignature &&
+      savedSignature === previousInitialSignature;
+
+    lastInitialSignatureRef.current = initialSignature;
+
+    if (matchesLatestQuery) {
+      setSavedSignature(initialSignature);
+      return;
+    }
+
+    if (!isPristineFromPreviousQuery) {
       return;
     }
 
@@ -216,14 +252,121 @@ export function useTenantSettings({
 
     try {
       const nextTenants = cloneTenantSettingItems(tenants);
-      const savePromise = Promise.resolve(nextTenants);
+      const baselineTenantsById = new Map(
+        initialTenants.map((tenant) => [tenant.id, tenant]),
+      );
+      const sourceTenantsById = new Map(
+        sourceTenants.map((tenant) => [tenant.id, tenant]),
+      );
+      const sourceTenantsByCompanyId = new Map(
+        sourceTenants.map((tenant) => [tenant.companyId, tenant]),
+      );
+      const companyById = new Map(companies.map((company) => [company.id, company]));
+      const createdTenants = nextTenants.filter(
+        (tenant) => !sourceTenantsById.has(tenant.id),
+      );
+      const updatedTenants = nextTenants.filter((tenant) => {
+        const baselineTenant = baselineTenantsById.get(tenant.id);
+
+        if (!baselineTenant || !sourceTenantsById.has(tenant.id)) {
+          return false;
+        }
+
+        return hasTenantSettingsChanged(tenant, baselineTenant);
+      });
+      const removedTenants = initialTenants.filter(
+        (tenant) =>
+          !tenant.isPortalOwner &&
+          !nextTenants.some((nextTenant) => nextTenant.id === tenant.id),
+      );
+      const savePromise = (async () => {
+        const persistedTenantsByCompanyId = new Map(sourceTenantsByCompanyId);
+
+        for (const tenant of createdTenants) {
+          const savedTenant = await createTenant({
+            companyId: tenant.companyId,
+            name: tenant.name,
+            color: tenant.color,
+            active: tenant.active,
+          });
+
+          persistedTenantsByCompanyId.set(savedTenant.companyId, savedTenant);
+        }
+
+        for (const tenant of updatedTenants) {
+          const savedTenant = await updateTenant({
+            id: tenant.id,
+            companyId: tenant.companyId,
+            name: tenant.name,
+            color: tenant.color,
+            active: tenant.active,
+          });
+
+          persistedTenantsByCompanyId.set(savedTenant.companyId, savedTenant);
+        }
+
+        for (const tenant of removedTenants) {
+          await deleteTenant(tenant.id);
+          persistedTenantsByCompanyId.delete(tenant.companyId);
+        }
+
+        const persistedTenantItems = nextTenants.flatMap((tenant) => {
+          const persistedTenant = persistedTenantsByCompanyId.get(
+            tenant.companyId,
+          );
+          const nextTenant =
+            persistedTenant &&
+            createTenantSettingItem(
+              persistedTenant,
+              companyById.get(tenant.companyId),
+            );
+
+          return nextTenant ? [nextTenant] : [];
+        });
+        const nextSignature = createTenantSignature(persistedTenantItems);
+        const idByPreviousId = new Map(
+          nextTenants.map((tenant) => [
+            tenant.id,
+            persistedTenantsByCompanyId.get(tenant.companyId)?.id ?? tenant.id,
+          ]),
+        );
+
+        setTenants(persistedTenantItems);
+        setSelectedTenantIds((currentIds) =>
+          Array.from(
+            new Set(
+              currentIds
+                .map((tenantId) => idByPreviousId.get(tenantId) ?? tenantId)
+                .filter((tenantId) =>
+                  persistedTenantItems.some((tenant) => tenant.id === tenantId),
+                ),
+            ),
+          ),
+        );
+        setFocusedTenantId((currentId) => {
+          if (!currentId) {
+            return null;
+          }
+
+          const nextTenantId = idByPreviousId.get(currentId) ?? currentId;
+
+          return persistedTenantItems.some((tenant) => tenant.id === nextTenantId)
+            ? nextTenantId
+            : null;
+        });
+        setSavedSignature(nextSignature);
+
+        return persistedTenantItems;
+      })();
+
       void mutationToast(
         savePromise,
         "save",
         t("serviceDeskSettings.general.tenant"),
       );
       await savePromise;
-      setSavedSignature(createTenantSignature(nextTenants));
+    } catch {
+      // Toast is handled by useMutationToast.
     } finally {
       setIsSaving(false);
     }
@@ -231,6 +374,7 @@ export function useTenantSettings({
 
   const handleReset = () => {
     setTenants(cloneTenantSettingItems(initialTenants));
+    setSavedSignature(initialSignature);
     setSelectedCompanyIds([]);
     setSelectedTenantIds([]);
     setFocusedTenantId(null);

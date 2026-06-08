@@ -19,6 +19,7 @@ export const camelTenantMapper: ArrayMapper<DbTenant, Tenant> = (data) => {
         companyId: item.tenant_company_id.toString(),
         name: item.tenant_name,
         color: item.tenant_color,
+        active: item.tenant_active ?? true,
       },
     ];
   });
@@ -30,6 +31,7 @@ export const snakeTenantMapper: ArrayMapper<Tenant, DbTenant> = (data) => {
     tenant_company_id: parseInt(item.companyId),
     tenant_name: item.name,
     tenant_color: item.color,
+    tenant_active: item.active,
   }));
 };
 

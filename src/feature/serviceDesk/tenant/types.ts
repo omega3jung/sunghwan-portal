@@ -6,4 +6,5 @@ export type DbTenant = {
   tenant_company_id: number;
   tenant_name: LocalizedText;
   tenant_color: string;
+  tenant_active?: boolean;
 };

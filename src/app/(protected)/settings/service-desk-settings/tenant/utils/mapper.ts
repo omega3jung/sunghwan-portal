@@ -51,6 +51,25 @@ export function createTenantSignature(items: TenantSettingItem[]) {
   );
 }
 
+export function createTenantSettingItem(
+  tenant: Tenant,
+  company?: CompanySettingItem,
+): TenantSettingItem | null {
+  if (!company || tenant.active === false) {
+    return null;
+  }
+
+  return {
+    id: tenant.id,
+    companyId: tenant.companyId,
+    name: normalizeLocalizedText(tenant.name),
+    code: company.code,
+    color: tenant.color || DEFAULT_TENANT_COLOR,
+    active: tenant.active,
+    isPortalOwner: company.isPortalOwner,
+  };
+}
+
 export function buildInitialTenantSettings(
   companies: CompanySettingItem[],
   sourceTenants: Tenant[],
@@ -62,20 +81,14 @@ export function buildInitialTenantSettings(
   const mappedTenants: TenantSettingItem[] = [];
 
   sourceTenants.forEach((tenant) => {
-    const company = companyById.get(tenant.companyId);
-    if (!company) {
-      return;
-    }
+    const nextTenant = createTenantSettingItem(
+      tenant,
+      companyById.get(tenant.companyId),
+    );
 
-    mappedTenants.push({
-      id: tenant.id,
-      companyId: tenant.companyId,
-      name: normalizeLocalizedText(tenant.name),
-      code: company.code,
-      color: tenant.color || DEFAULT_TENANT_COLOR,
-      active: company.active,
-      isPortalOwner: company.isPortalOwner,
-    });
+    if (nextTenant) {
+      mappedTenants.push(nextTenant);
+    }
   });
 
   if (mappedTenants.length > 0) {

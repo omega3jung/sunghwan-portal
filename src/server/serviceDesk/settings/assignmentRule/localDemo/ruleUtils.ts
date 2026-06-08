@@ -3,10 +3,7 @@ import type { AssignmentRule } from "@/domain/serviceDesk";
 import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule";
 import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule";
 import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
-import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/mocks/domain/serviceDesk/categories";
+import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 
 import { getLocalDemoAssignmentRulesTree } from "../../state";
 
@@ -45,7 +42,7 @@ export const getAssignmentRuleStore = (isInternal: boolean) => {
 };
 
 const getCategoryTrees = (isInternal: boolean) => {
-  return isInternal ? internalCategorySettingsMock : clientCategorySettingsMock;
+  return getLocalCategoryTrees(isInternal);
 };
 
 const normalizeAssigneeIds = (value: string[]) => {
@@ -122,15 +119,15 @@ export const findCategoryTenantId = (
 
   for (const [tenantId] of Object.entries(items)) {
     const categoryTree = getCategoryTrees(isInternal).find(
-      (tenant) => String(tenant.tenant_id) === tenantId,
+      (tenant) => tenant.id === tenantId,
     );
 
     if (
-      categoryTree?.category.some(
+      categoryTree?.categories.some(
         (category) =>
-          String(category.category_id) === categoryId ||
-          category.sub_category.some(
-            (subCategory) => String(subCategory.category_id) === categoryId,
+          category.id === categoryId ||
+          category.subCategories.some(
+            (subCategory) => subCategory.id === categoryId,
           ),
       )
     ) {

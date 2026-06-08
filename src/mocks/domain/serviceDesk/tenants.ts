@@ -31,6 +31,7 @@ const createClientTenantMock = (): DbTenant[] => {
       tenant_company_id: company.company_id,
       tenant_name: company.company_name,
       tenant_color: clientTenantColors[colorCount % (idx + 1)],
+      tenant_active: true,
     };
   });
 };
@@ -40,6 +41,7 @@ export const internalTenantMock: DbTenant = {
   tenant_company_id: internalCompanyMock.company_id,
   tenant_name: internalCompanyMock.company_name,
   tenant_color: "#345791", // blue
+  tenant_active: true,
 };
 
 export const clientTenantsMock: DbTenant[] = createClientTenantMock();

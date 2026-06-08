@@ -6,7 +6,6 @@ import { cn } from "@/shared/utils/presentation";
 
 import {
   ColorPickerContext,
-  DEFAULT_COLOR,
   isValidHexColor,
   resolveThemePrimaryColor,
 } from "./ColorPickerContext";
@@ -33,7 +32,9 @@ const Root = ({
   className,
   children,
 }: ColorPickerProps) => {
-  const [themeDefaultColor, setThemeDefaultColor] = useState(DEFAULT_COLOR);
+  const [themeDefaultColor, setThemeDefaultColor] = useState(() =>
+    resolveThemePrimaryColor(),
+  );
   const resolvedDefaultValue = useMemo(() => {
     return defaultValue && isValidHexColor(defaultValue)
       ? defaultValue

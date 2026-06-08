@@ -12,7 +12,7 @@ export const useCreateServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.create,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.all });
+      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
     },
   });
 };
@@ -24,7 +24,7 @@ export const useUpdateServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.update,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.all });
+      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
     },
   });
 };
@@ -36,7 +36,7 @@ export const useDeleteServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.remove,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.all });
+      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
     },
   });
 };
@@ -49,7 +49,7 @@ export const useSaveServiceDeskTenantList = () => {
     mutationFn: serviceDeskTenantApi.saveList,
     onSuccess: async () => {
       await queryTenant.invalidateQueries({
-        queryKey: tenantQueryKeys.all,
+        queryKey: tenantQueryKeys.lists(),
       });
     },
   });

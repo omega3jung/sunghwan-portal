@@ -6,4 +6,5 @@ export type Tenant = {
   companyId: string;
   name: LocalizedText;
   color: string;
+  active: boolean;
 };

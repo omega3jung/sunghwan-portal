@@ -30,6 +30,7 @@ export const camelTenantCategoryTreeMapper: ArrayMapper<
         companyId: item.tenant_company_id.toString(),
         name: item.tenant_name,
         color: item.tenant_color,
+        active: item.tenant_active ?? true,
         categories: camelCategoryMapper(item.category ?? []),
       },
     ];
