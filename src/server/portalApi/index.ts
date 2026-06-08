@@ -18,7 +18,11 @@ export async function dispatchPortalApi(
     return handleEmployeesPortalApi(request, { ...options, path });
   }
 
-  if (path.startsWith("/department") || path.startsWith("/job-field")) {
+  if (
+    path.startsWith("/company") ||
+    path.startsWith("/department") ||
+    path.startsWith("/job-field")
+  ) {
     return handleOrganizationPortalApi(request, { ...options, path });
   }
 
@@ -27,7 +31,6 @@ export async function dispatchPortalApi(
   }
 
   if (path.startsWith("/service-desk/")) {
-    console.log(path);
     return handleServiceDeskPortalApi(request, { ...options, path });
   }
 

@@ -2,8 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { serviceDeskTenantApi } from "@/feature/serviceDesk/tenant";
-
+import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
 
 export const useCreateServiceDeskTenant = () => {

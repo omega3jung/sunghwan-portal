@@ -1,4 +1,3 @@
-import { ISODateString } from "@/shared/types";
 import { LocalizedText } from "@/shared/types/language";
 
 export interface DbCompany {
@@ -8,8 +7,9 @@ export interface DbCompany {
   company_name: LocalizedText;
   company_code?: string;
 
+  // ownership
+  company_portal_owner: boolean;
+
   // system
-  company_created_at: ISODateString;
-  company_updated_at: ISODateString;
   company_active: boolean;
 }

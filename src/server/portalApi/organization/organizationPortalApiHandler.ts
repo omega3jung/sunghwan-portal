@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getActiveCompanies } from "@/server/data/organization/company";
 import { getActiveDepartments } from "@/server/data/organization/department";
 import { getActiveJobFields } from "@/server/data/organization/jobField";
 
 import { PortalApiJsonOptions } from "../types";
 import { normalizePath } from "../utils";
 
+const COMPANIES_PATH_PATTERN = /^\/company$/;
 const DEPARTMENTS_PATH_PATTERN = /^\/department$/;
 const JOB_FIELDS_PATH_PATTERN = /^\/job-field$/;
 
@@ -14,6 +16,7 @@ export async function handleOrganizationPortalApi(
   options: PortalApiJsonOptions,
 ) {
   const path = normalizePath(options.path);
+  const companiesMatch = COMPANIES_PATH_PATTERN.exec(path);
   const departmentsMatch = DEPARTMENTS_PATH_PATTERN.exec(path);
   const jobFieldsMatch = JOB_FIELDS_PATH_PATTERN.exec(path);
   const method = options.method ?? "GET";
@@ -21,6 +24,15 @@ export async function handleOrganizationPortalApi(
   try {
     if (method !== "GET") {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
+    }
+
+    if (companiesMatch) {
+      const items = await getActiveCompanies();
+
+      return NextResponse.json({
+        items,
+        total: items.length,
+      });
     }
 
     if (departmentsMatch) {

@@ -47,7 +47,14 @@
     "startAt": "Heure de début",
     "endAt": "Heure de fin",
     "status": "Statut",
-    "note": "Note"
+    "note": "Note",
+    "noCode": "Aucun code"
+  },
+  "tenant": {
+    "portalOwner": "Propriétaire du portail"
+  },
+  "status": {
+    "active": "Actif"
   },
   "option": {
     "status": {

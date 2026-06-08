@@ -1,4 +1,4 @@
-﻿import { DbTenant } from "@/feature/serviceDesk/tenant";
+import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
 
 import {
   clientCompaniesMock,
@@ -17,15 +17,20 @@ const clientTenantColors = [
   "#F3F3F3", // gray
 ];
 
+const tenantCompanyIds = [11, 12];
+
 const createClientTenantMock = (): DbTenant[] => {
   const colorCount = clientTenantColors.length;
+  const clientTenants = clientCompaniesMock.filter((company) =>
+    tenantCompanyIds.includes(company.company_id),
+  );
 
-  return clientCompaniesMock.map((company, idx) => {
+  return clientTenants.map((company, idx) => {
     return {
       tenant_id: company.company_id,
       tenant_company_id: company.company_id,
       tenant_name: company.company_name,
-      tenant_color: clientTenantColors[colorCount % idx],
+      tenant_color: clientTenantColors[colorCount % (idx + 1)],
     };
   });
 };

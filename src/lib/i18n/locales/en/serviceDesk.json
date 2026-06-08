@@ -46,7 +46,14 @@
     "startAt": "Start time",
     "endAt": "End time",
     "status": "Status",
-    "note": "Note"
+    "note": "Note",
+    "noCode": "No code"
+  },
+  "tenant": {
+    "portalOwner": "Portal owner"
+  },
+  "status": {
+    "active": "Active"
   },
   "option": {
     "status": {

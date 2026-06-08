@@ -9,48 +9,36 @@ export const serviceDeskTenantApi = {
   list: async (params: DbParams): Promise<Tenant[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<TenantResponse>(
-      `/api/service-desk/categories`,
-      { params },
-    );
+    const res = await client.api.get<TenantResponse>(`/api/service-desk/tenants`, {
+      params,
+    });
 
     return res.data.items;
   },
   get: async (id: string | number): Promise<Tenant | null> => {
     if (!id) return null;
 
-    const res = await client.api.get<Tenant>(
-      `/api/service-desk/categories/${id}`,
-    );
+    const res = await client.api.get<Tenant>(`/api/service-desk/tenants/${id}`);
     return res.data;
   },
 
   create: async (data: Tenant) => {
-    const res = await client.api.post<Tenant>(
-      `/api/service-desk/categories`,
-      data,
-    );
+    const res = await client.api.post<Tenant>(`/api/service-desk/tenants`, data);
     return res.data;
   },
 
   update: async (data: Tenant) => {
-    const res = await client.api.put<Tenant>(
-      `/api/service-desk/categories/${data.id}`,
-      data,
-    );
+    const res = await client.api.put<Tenant>(`/api/service-desk/tenants/${data.id}`, data);
     return res.data;
   },
 
   remove: async (id: string | number) => {
-    await client.api.delete(`/api/service-desk/categories/${id}`);
+    await client.api.delete(`/api/service-desk/tenants/${id}`);
     return null;
   },
 
   saveList: async (payload: Tenant[]): Promise<Tenant[]> => {
-    const res = await client.api.put<Tenant[]>(
-      `/api/service-desk/categories`,
-      payload,
-    );
+    const res = await client.api.put<Tenant[]>(`/api/service-desk/tenants`, payload);
 
     return res.data;
   },

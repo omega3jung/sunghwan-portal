@@ -12,7 +12,7 @@ import {
   toDepartmentMockResource,
   toDepartmentWritePayload,
 } from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization";
+import { departmentsMock } from "@/mocks/domain/organization/departments";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 

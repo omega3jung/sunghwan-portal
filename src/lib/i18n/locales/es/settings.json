@@ -107,6 +107,7 @@
       "assignmentRuleList": "Lista de reglas de asignación",
       "client": "Cliente",
       "clientList": "Lista de clientes",
+      "tenant": "Tenant",
       "noResults": "Sin resultados",
       "saveChanges": "Guardar cambios"
     },
@@ -146,6 +147,40 @@
       "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado"
+    },
+    "tenant": {
+      "description": "Administra los tenants de demostración local y sus asignaciones de empresa.",
+      "companyList": {
+        "title": "Lista de empresas",
+        "description": "Empresas activas que aún no están asignadas a un tenant.",
+        "empty": "No hay empresas disponibles"
+      },
+      "tenantList": {
+        "title": "Lista de tenants",
+        "description": "Selecciona tenants para editarlos o devolverlos a empresas.",
+        "empty": "No hay tenants",
+        "portalOwnerHint": "Los tenants propietarios del portal se pueden editar, pero no se pueden devolver a la lista de empresas.",
+        "infoAriaLabel": "Restricción del tenant propietario del portal"
+      },
+      "actions": {
+        "addToTenants": "Agregar a tenants",
+        "moveToCompanies": "Mover a empresas"
+      },
+      "settingInfo": {
+        "title": "Información de configuración del tenant",
+        "description": "Actualiza los nombres y el color del tenant seleccionado.",
+        "empty": "Selecciona un tenant para editar su configuración.",
+        "nameTitle": "Nombre del tenant",
+        "nameDescription": "Los cambios se reflejan de inmediato en la lista de tenants.",
+        "colorTitle": "Color del tenant"
+      },
+      "field": {
+        "english": "Inglés",
+        "spanish": "Español",
+        "french": "Francés",
+        "korean": "Coreano",
+        "tenantNamePlaceholder": "Nombre del tenant en {{language}}"
+      }
     }
   }
 }

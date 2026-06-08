@@ -16,12 +16,15 @@ import {
   getCategorySettingsResponseByTenantId,
   getCategoryTreeByTenantId,
 } from "@/server/data/serviceDesk/category";
+import { getActiveTenantById, getActiveTenants } from "@/server/data/serviceDesk/tenant";
 import { isBoolean } from "@/shared/utils/value";
 
 import { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";
 
 const CATEGORY_LIST_PATH_PATTERN = /^\/service-desk\/categories$/;
+const TENANT_LIST_PATH_PATTERN = /^\/service-desk\/tenants$/;
+const TENANT_DETAIL_PATH_PATTERN = /^\/service-desk\/tenants\/([^/]+)$/;
 const CATEGORY_TREE_PATH_PATTERN =
   /^\/service-desk\/categories\/tenant\/([^/]+)$/;
 const CATEGORY_DETAIL_PATH_PATTERN = /^\/service-desk\/categories\/([^/]+)$/;
@@ -44,6 +47,8 @@ export async function handleServiceDeskPortalApi(
 ) {
   const path = normalizePath(options.path);
   const categoryListMatch = CATEGORY_LIST_PATH_PATTERN.exec(path);
+  const tenantListMatch = TENANT_LIST_PATH_PATTERN.exec(path);
+  const tenantDetailMatch = TENANT_DETAIL_PATH_PATTERN.exec(path);
   const categoryTreeMatch = CATEGORY_TREE_PATH_PATTERN.exec(path);
   const categoryDetailMatch = CATEGORY_DETAIL_PATH_PATTERN.exec(path);
   const assignmentRulesListMatch =
@@ -61,6 +66,26 @@ export async function handleServiceDeskPortalApi(
   try {
     if (method !== "GET") {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
+    }
+
+    if (tenantListMatch) {
+      const items = await getActiveTenants();
+
+      return NextResponse.json({
+        items,
+        total: items.length,
+      });
+    }
+
+    if (tenantDetailMatch) {
+      const tenantId = decodeURIComponent(tenantDetailMatch[1] ?? "");
+      const tenant = await getActiveTenantById(tenantId);
+
+      if (!tenant) {
+        return NextResponse.json({ message: "Not found" }, { status: 404 });
+      }
+
+      return NextResponse.json(tenant);
     }
 
     if (categoryListMatch) {

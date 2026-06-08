@@ -4,9 +4,9 @@ import {
   getAuthToken,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import { mapCategoryItemPayload } from "@/feature/serviceDesk/category/mapper";
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     proxyQuery.set("tenantId", defaultTenantId);
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/service-desk/categories/${id}`,
     query: proxyQuery,
     errorMessage: tServiceDeskApi("api.categories.fetch"),
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PUT",
     path: `/service-desk/categories/${id}`,
     body: toCategoryWritePayload({ ...body, id }),
@@ -135,14 +135,16 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "DELETE",
     path: `/service-desk/categories/${id}`,
     errorMessage: tServiceDeskApi("api.categories.delete"),
   });
 }
 
-function resolveDefaultTenantId(token: Awaited<ReturnType<typeof getAuthToken>>) {
+function resolveDefaultTenantId(
+  token: Awaited<ReturnType<typeof getAuthToken>>,
+) {
   if (typeof token?.companyId === "number") {
     return String(token.companyId);
   }

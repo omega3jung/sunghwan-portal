@@ -1,5 +1,8 @@
 import { Tenant } from "@/domain/serviceDesk";
-import { createItemPayloadMapper } from "@/lib/api/utils/payload";
+import {
+  createItemPayloadMapper,
+  createListPayloadMapper,
+} from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
 
 import { DbTenant } from "./types";
@@ -30,4 +33,5 @@ export const snakeTenantMapper: ArrayMapper<Tenant, DbTenant> = (data) => {
   }));
 };
 
+export const mapTenantListPayload = createListPayloadMapper(camelTenantMapper);
 export const mapTenantItemPayload = createItemPayloadMapper(camelTenantMapper);

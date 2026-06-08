@@ -47,7 +47,14 @@
     "startAt": "시작 시간",
     "endAt": "종료 시간",
     "status": "상태",
-    "note": "메모"
+    "note": "메모",
+    "noCode": "코드 없음"
+  },
+  "tenant": {
+    "portalOwner": "포털 소유자"
+  },
+  "status": {
+    "active": "활성"
   },
   "option": {
     "status": {

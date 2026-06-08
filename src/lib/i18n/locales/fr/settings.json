@@ -107,6 +107,7 @@
       "assignmentRuleList": "Liste des règles d’attribution",
       "client": "Client",
       "clientList": "Liste des clients",
+      "tenant": "Tenant",
       "noResults": "Aucun résultat",
       "saveChanges": "Enregistrer les modifications"
     },
@@ -146,6 +147,40 @@
       "selectAssigneeJobField": "Sélectionner le poste du responsable",
       "employee": "Employé",
       "selectAssignee": "Sélectionner un responsable"
+    },
+    "tenant": {
+      "description": "Gérez les tenants de démonstration locale et leurs affectations d’entreprise.",
+      "companyList": {
+        "title": "Liste des entreprises",
+        "description": "Entreprises actives qui ne sont pas encore attribuées à un tenant.",
+        "empty": "Aucune entreprise disponible"
+      },
+      "tenantList": {
+        "title": "Liste des tenants",
+        "description": "Sélectionnez des tenants à modifier ou à renvoyer vers les entreprises.",
+        "empty": "Aucun tenant",
+        "portalOwnerHint": "Les tenants propriétaires du portail peuvent être modifiés, mais ne peuvent pas être renvoyés vers la liste des entreprises.",
+        "infoAriaLabel": "Restriction du tenant propriétaire du portail"
+      },
+      "actions": {
+        "addToTenants": "Ajouter aux tenants",
+        "moveToCompanies": "Déplacer vers les entreprises"
+      },
+      "settingInfo": {
+        "title": "Informations de configuration du tenant",
+        "description": "Mettez à jour les noms et la couleur du tenant sélectionné.",
+        "empty": "Sélectionnez un tenant pour modifier ses paramètres.",
+        "nameTitle": "Nom du tenant",
+        "nameDescription": "Les changements se reflètent immédiatement dans la liste des tenants.",
+        "colorTitle": "Couleur du tenant"
+      },
+      "field": {
+        "english": "Anglais",
+        "spanish": "Espagnol",
+        "french": "Français",
+        "korean": "Coréen",
+        "tenantNamePlaceholder": "Nom du tenant en {{language}}"
+      }
     }
   }
 }

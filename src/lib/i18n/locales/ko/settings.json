@@ -107,6 +107,7 @@
       "assignmentRuleList": "할당 규칙 목록",
       "client": "고객사",
       "clientList": "고객사 목록",
+      "tenant": "테넌트",
       "noResults": "결과 없음",
       "saveChanges": "변경 사항 저장"
     },
@@ -146,6 +147,40 @@
       "selectAssigneeJobField": "담당 직무 선택",
       "employee": "직원",
       "selectAssignee": "담당자 선택"
+    },
+    "tenant": {
+      "description": "로컬 데모 테넌트와 회사 할당을 관리합니다.",
+      "companyList": {
+        "title": "회사 목록",
+        "description": "아직 테넌트에 할당되지 않은 활성 회사를 보여줍니다.",
+        "empty": "사용 가능한 회사가 없습니다"
+      },
+      "tenantList": {
+        "title": "테넌트 목록",
+        "description": "편집하거나 회사 목록으로 되돌릴 테넌트를 선택합니다.",
+        "empty": "테넌트가 없습니다",
+        "portalOwnerHint": "포털 소유자 테넌트는 편집할 수 있지만 회사 목록으로 되돌릴 수는 없습니다.",
+        "infoAriaLabel": "포털 소유자 테넌트 제한 안내"
+      },
+      "actions": {
+        "addToTenants": "테넌트로 추가",
+        "moveToCompanies": "회사 목록으로 이동"
+      },
+      "settingInfo": {
+        "title": "테넌트 설정 정보",
+        "description": "선택한 테넌트의 이름과 색상을 수정합니다.",
+        "empty": "설정을 편집할 테넌트를 선택하세요.",
+        "nameTitle": "테넌트 이름",
+        "nameDescription": "변경 사항은 테넌트 목록에 즉시 반영됩니다.",
+        "colorTitle": "테넌트 색상"
+      },
+      "field": {
+        "english": "영어",
+        "spanish": "스페인어",
+        "french": "프랑스어",
+        "korean": "한국어",
+        "tenantNamePlaceholder": "{{language}} 테넌트 이름"
+      }
     }
   }
 }

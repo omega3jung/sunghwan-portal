@@ -13,7 +13,7 @@ import {
   toDepartmentWritePayload,
   UpdateDepartmentInput,
 } from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization";
+import { departmentsMock } from "@/mocks/domain/organization/departments";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);

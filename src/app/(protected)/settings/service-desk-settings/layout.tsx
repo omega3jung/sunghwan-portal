@@ -1,7 +1,7 @@
 // app/(protected)/settings/service-desk-settings/layout.tsx
 "use client";
 
-import { Bot, Tags, Workflow } from "lucide-react";
+import { Bot, Building2, Tags, Workflow } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,16 @@ export default function ServiceDeskSettingsLayout({
     <main className="settings-main">
       <Tabs value={currentTab}>
         <TabsList className="w-full justify-start">
+          <TabsTrigger value="tenant" asChild>
+            <Link
+              href="/settings/service-desk-settings/tenant"
+              className="min-w-20 gap-2 flex items-center"
+            >
+              <Building2 />
+              {t("serviceDeskSettings.general.tenant")}
+            </Link>
+          </TabsTrigger>
+
           <TabsTrigger value="category" asChild>
             <Link
               href="/settings/service-desk-settings/category"
@@ -42,7 +52,6 @@ export default function ServiceDeskSettingsLayout({
               {t("serviceDeskSettings.general.approvalStep")}
             </Link>
           </TabsTrigger>
-
           <TabsTrigger value="assignment-rule" asChild>
             <Link
               href="/settings/service-desk-settings/assignment-rule"

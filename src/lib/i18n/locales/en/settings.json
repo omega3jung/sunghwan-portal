@@ -108,6 +108,7 @@
       "assignmentRuleList": "Assignment Rules",
       "client": "Client",
       "clientList": "Client List",
+      "tenant": "Tenant",
       "noResults": "No results found",
       "saveChanges": "Save Changes"
     },
@@ -147,6 +148,40 @@
       "selectAssigneeJobField": "Select assignee Job field",
       "employee": "Employee",
       "selectAssignee": "Select assignee"
+    },
+    "tenant": {
+      "description": "Manage local demo tenants and their company assignments.",
+      "companyList": {
+        "title": "Company List",
+        "description": "Active companies that are not assigned to a tenant yet.",
+        "empty": "No available companies"
+      },
+      "tenantList": {
+        "title": "Tenant List",
+        "description": "Select tenants to edit or move them back to companies.",
+        "empty": "No tenants",
+        "portalOwnerHint": "Portal owner tenants can be edited, but cannot be moved back to the company list.",
+        "infoAriaLabel": "Portal owner tenant restriction"
+      },
+      "actions": {
+        "addToTenants": "Add to tenants",
+        "moveToCompanies": "Move to companies"
+      },
+      "settingInfo": {
+        "title": "Tenant Setting Info",
+        "description": "Update names and color for the selected tenant.",
+        "empty": "Select a tenant to edit settings.",
+        "nameTitle": "Tenant Name",
+        "nameDescription": "Changes are reflected in the tenant list immediately.",
+        "colorTitle": "Tenant Color"
+      },
+      "field": {
+        "english": "English",
+        "spanish": "Spanish",
+        "french": "French",
+        "korean": "Korean",
+        "tenantNamePlaceholder": "{{language}} tenant name"
+      }
     }
   }
 }

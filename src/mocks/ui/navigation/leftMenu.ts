@@ -2,8 +2,8 @@ import { DbMenuItem } from "@/feature/navigation/leftMenu/types";
 
 export const leftMenuJsonMock: DbMenuItem[] = [
   {
-    id: -13,
-    parentId: -8,
+    id: -16,
+    parentId: -11,
     title: {
       en: "Guest Privilege Menu",
       es: "Menú de privilegios de invitado",
@@ -18,8 +18,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 1,
   },
   {
-    id: -12,
-    parentId: -8,
+    id: -15,
+    parentId: -11,
     title: {
       en: "User Privilege Menu",
       es: "Menú de privilegios de usuario",
@@ -34,8 +34,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 3,
   },
   {
-    id: -11,
-    parentId: -8,
+    id: -14,
+    parentId: -11,
     title: {
       en: "Leader Privilege Menu",
       es: "Menú de privilegios de líder",
@@ -50,8 +50,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 5,
   },
   {
-    id: -10,
-    parentId: -8,
+    id: -13,
+    parentId: -11,
     title: {
       en: "Manager Privilege Menu",
       es: "Menú de privilegios de gerente",
@@ -66,8 +66,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 7,
   },
   {
-    id: -9,
-    parentId: -8,
+    id: -12,
+    parentId: -11,
     title: {
       en: "Admin Privilege Menu",
       es: "Menú de privilegios de administrador",
@@ -82,7 +82,7 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 9,
   },
   {
-    id: -8,
+    id: -11,
     parentId: 0,
     title: {
       en: "Permission Based Rendering Menu",
@@ -96,6 +96,22 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     area: "CONTENT",
     order: 40,
     minAccessLevel: 1,
+  },
+  {
+    id: -8,
+    parentId: -2,
+    title: {
+      en: "Color picker",
+      es: "Selector de color",
+      fr: "Sélecteur de couleurs",
+      ko: "색상 선택",
+    },
+    path: "/demo/color-picker",
+    icon: "Palette",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 60,
+    minAccessLevel: 9,
   },
   {
     id: -7,

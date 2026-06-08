@@ -1,2 +1,2 @@
-﻿// src/mock/organization/index.ts
+// src/mock/organization/index.ts
 export * from "./departments";
