@@ -8,7 +8,9 @@ import {
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
   createTenantSchema,
+  mapTenantItemPayload,
   mapTenantListPayload,
+  toTenantWritePayload,
 } from "@/feature/serviceDesk/tenant";
 import { localCreateTenant, localListTenants } from "@/server/serviceDesk/settings/tenant/localDemo";
 
@@ -51,14 +53,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const body = parsedBody.data;
+
   if (!isRemote) {
     try {
       return NextResponse.json(
         localCreateTenant({
           input: {
-            ...parsedBody.data,
-            active: parsedBody.data.active ?? true,
-            color: parsedBody.data.color ?? "",
+            ...body,
+            active: body.active ?? true,
+            color: body.color ?? "",
           },
         }),
         { status: 201 },
@@ -70,10 +74,17 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json(
-    { message: tServiceDeskApi("api.tenants.remoteNotImplemented") },
-    { status: 501 },
-  );
+  return portalApiJson(request, {
+    method: "POST",
+    path: "/service-desk/tenants",
+    body: toTenantWritePayload({
+      ...body,
+      active: body.active ?? true,
+      color: body.color ?? "",
+    }),
+    errorMessage: tServiceDeskApi("api.tenants.create"),
+    mapData: mapTenantItemPayload,
+  });
 }
 
 export async function PUT(request: NextRequest) {

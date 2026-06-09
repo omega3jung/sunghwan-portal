@@ -1,5 +1,15 @@
-import { CategoryDto, SubCategoryDto } from "./categoryDto";
-import { CategoryRow } from "./categoryRow";
+import {
+  CategoryDto,
+  CategorySubCategoryInputDto,
+  CreateCategoryInputDto,
+  SubCategoryDto,
+  UpdateCategoryInputDto,
+} from "./categoryDto";
+import {
+  CategoryRow,
+  CreateCategoryRowInput,
+  UpdateCategoryRowInput,
+} from "./categoryRow";
 
 type ParentCategoryRow = CategoryRow & {
   cat_parent_id: null;
@@ -82,4 +92,79 @@ export function mapCategoryRowsToDtos(rows: CategoryRow[]): CategoryDto[] {
   }
 
   return Array.from(categoryMap.values());
+}
+
+export function mapCreateCategoryInputDtoToRowInput(
+  input: CreateCategoryInputDto,
+): CreateCategoryRowInput {
+  return {
+    cat_tenant_id: Number(input.category_tenant_id),
+    cat_parent_id: null,
+    cat_scope: input.category_scope,
+    cat_name: input.category_name,
+    cat_description: input.category_description,
+    cat_request_template: input.category_request_template,
+    cat_index: input.category_index,
+    cat_active: input.category_active,
+    cat_default_priority: input.default_priority,
+    cat_default_risk_level: input.default_risk_level,
+    cat_default_sla_days: input.default_sla_days,
+  };
+}
+
+export function mapUpdateCategoryInputDtoToRowInput(
+  input: UpdateCategoryInputDto,
+): UpdateCategoryRowInput {
+  return {
+    cat_parent_id: null,
+    cat_scope: input.category_scope,
+    cat_name: input.category_name,
+    cat_description: input.category_description,
+    cat_request_template: input.category_request_template,
+    cat_index: input.category_index,
+    cat_active: input.category_active,
+    cat_default_priority: input.default_priority,
+    cat_default_risk_level: input.default_risk_level,
+    cat_default_sla_days: input.default_sla_days,
+  };
+}
+
+export function mapCategorySubCategoryInputDtoToCreateRowInput(
+  tenantId: string | number,
+  parentCategoryId: string | number,
+  input: CategorySubCategoryInputDto,
+  parentActive: boolean,
+): CreateCategoryRowInput {
+  return {
+    cat_tenant_id: Number(tenantId),
+    cat_parent_id: Number(parentCategoryId),
+    cat_scope: null,
+    cat_name: input.category_name,
+    cat_description: input.category_description,
+    cat_request_template: input.category_request_template,
+    cat_index: input.category_index,
+    cat_active: parentActive ? input.category_active : false,
+    cat_default_priority: input.default_priority ?? null,
+    cat_default_risk_level: input.default_risk_level ?? null,
+    cat_default_sla_days: input.default_sla_days ?? null,
+  };
+}
+
+export function mapCategorySubCategoryInputDtoToUpdateRowInput(
+  parentCategoryId: string | number,
+  input: CategorySubCategoryInputDto,
+  parentActive: boolean,
+): UpdateCategoryRowInput {
+  return {
+    cat_parent_id: Number(parentCategoryId),
+    cat_scope: null,
+    cat_name: input.category_name,
+    cat_description: input.category_description,
+    cat_request_template: input.category_request_template,
+    cat_index: input.category_index,
+    cat_active: parentActive ? input.category_active : false,
+    cat_default_priority: input.default_priority ?? null,
+    cat_default_risk_level: input.default_risk_level ?? null,
+    cat_default_sla_days: input.default_sla_days ?? null,
+  };
 }

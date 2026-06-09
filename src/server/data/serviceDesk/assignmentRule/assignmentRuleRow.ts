@@ -3,6 +3,14 @@ export type AssignmentRuleRow = {
   ar_category_id: number;
   ar_assignee: unknown;
   ar_active: boolean;
-  ar_created_at: string;
-  ar_updated_at: string;
+};
+
+export type CreateAssignmentRuleRowInput = {
+  ar_category_id: number;
+  ar_assignee: unknown;
+};
+
+export type UpdateAssignmentRuleRowInput = {
+  ar_category_id: number;
+  ar_assignee: unknown;
 };

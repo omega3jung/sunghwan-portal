@@ -1,13 +1,26 @@
+import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+
+import { findCategoryRowsByTenantIdAndCategoryId } from "../category";
 import { getCategoryTreeByTenantId } from "../category/categoryService";
 import { getActiveTenantById, getActiveTenants } from "../tenant";
 import {
   ApprovalStepDto,
   CategoryApprovalSettingsDto,
+  CreateApprovalStepInputDto,
+  UpdateApprovalStepInputDto,
 } from "./approvalStepDto";
-import { mapApprovalStepRowsToDtos } from "./approvalStepMapper";
 import {
+  mapApprovalStepRowsToDtos,
+  mapApprovalStepRowToDto,
+  mapCreateApprovalStepInputDtoToRowInput,
+  mapUpdateApprovalStepInputDtoToRowInput,
+} from "./approvalStepMapper";
+import {
+  createApprovalStepRow,
+  deactivateApprovalStepRowById,
   findApprovalStepRowsByTenantId,
   findApprovalStepRowsByTenantIdAndApprovalStepId,
+  updateApprovalStepRowById,
 } from "./approvalStepRepository";
 
 export async function getApprovalStepsByTenantId(
@@ -95,6 +108,66 @@ export async function getApprovalStepById({
   return null;
 }
 
+export async function createApprovalStep(
+  input: CreateApprovalStepInputDto,
+): Promise<ApprovalStepDto> {
+  await assertActiveTenantExists(input.tenant_id);
+  await assertActiveMainCategoryExistsInTenant(input.tenant_id, input.category_id);
+
+  const row = await createApprovalStepRow(
+    mapCreateApprovalStepInputDtoToRowInput(input),
+  );
+
+  if (!row) {
+    throw new Error("Failed to create approval step.");
+  }
+
+  return mapApprovalStepRowToDto(row);
+}
+
+export async function updateApprovalStepById(
+  tenantId: string | number,
+  approvalStepId: string | number,
+  input: UpdateApprovalStepInputDto,
+): Promise<ApprovalStepDto> {
+  const currentRows = await findApprovalStepRowsByTenantIdAndApprovalStepId(
+    tenantId,
+    approvalStepId,
+  );
+  const currentRow = currentRows[0] ?? null;
+
+  if (!currentRow || currentRow.aps_active === false) {
+    throw new ServiceDeskApiError("api.common.notFound", 404);
+  }
+
+  await assertActiveMainCategoryExistsInTenant(tenantId, input.category_id);
+
+  const row = await updateApprovalStepRowById(
+    tenantId,
+    approvalStepId,
+    mapUpdateApprovalStepInputDtoToRowInput(input),
+  );
+
+  if (!row) {
+    throw new ServiceDeskApiError("api.common.notFound", 404);
+  }
+
+  return mapApprovalStepRowToDto(row);
+}
+
+export async function deactivateApprovalStepById(
+  tenantId: string | number,
+  approvalStepId: string | number,
+): Promise<ApprovalStepDto> {
+  const row = await deactivateApprovalStepRowById(tenantId, approvalStepId);
+
+  if (!row) {
+    throw new ServiceDeskApiError("api.common.notFound", 404);
+  }
+
+  return mapApprovalStepRowToDto(row);
+}
+
 async function resolveTargetTenantId({
   tenantId,
   isInternal: _isInternal,
@@ -147,4 +220,34 @@ function hasTenantId(value?: string | number | null): value is string | number {
   }
 
   return String(value).trim().length > 0;
+}
+
+async function assertActiveTenantExists(tenantId: string | number) {
+  const tenant = await getActiveTenantById(tenantId);
+
+  if (!tenant) {
+    throw new ServiceDeskApiError("api.common.notFound", 404);
+  }
+
+  return tenant;
+}
+
+async function assertActiveMainCategoryExistsInTenant(
+  tenantId: string | number,
+  categoryId: string | number,
+) {
+  const rows = await findCategoryRowsByTenantIdAndCategoryId(tenantId, categoryId);
+  const targetRow = rows.find(
+    (row) =>
+      Number(row.cat_id) === Number(categoryId) &&
+      row.cat_parent_id === null,
+  );
+
+  if (!targetRow || targetRow.cat_active === false) {
+    throw new ServiceDeskApiError(
+      "api.approvalSteps.localDemo.categoryNotFound",
+      404,
+      { categoryId },
+    );
+  }
 }

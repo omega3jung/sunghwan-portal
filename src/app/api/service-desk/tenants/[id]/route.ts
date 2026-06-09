@@ -10,6 +10,7 @@ import { IdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
   mapTenantItemPayload,
+  toTenantWritePayload,
   updateTenantSchema,
 } from "@/feature/serviceDesk/tenant";
 import {
@@ -61,16 +62,18 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     );
   }
 
+  const body = parsedBody.data;
+
   if (!isRemote) {
     try {
       return NextResponse.json(
         localUpdateTenant({
           id,
           input: {
-            ...parsedBody.data,
+            ...body,
             id,
-            active: parsedBody.data.active ?? true,
-            color: parsedBody.data.color ?? "",
+            active: body.active ?? true,
+            color: body.color ?? "",
           },
         }),
       );
@@ -81,10 +84,18 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     }
   }
 
-  return NextResponse.json(
-    { message: tServiceDeskApi("api.tenants.remoteNotImplemented") },
-    { status: 501 },
-  );
+  return portalApiJson(request, {
+    method: "PUT",
+    path: `/service-desk/tenants/${id}`,
+    body: toTenantWritePayload({
+      ...body,
+      id,
+      active: body.active ?? true,
+      color: body.color ?? "",
+    }),
+    errorMessage: tServiceDeskApi("api.tenants.update"),
+    mapData: mapTenantItemPayload,
+  });
 }
 
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
@@ -105,8 +116,9 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     }
   }
 
-  return NextResponse.json(
-    { message: tServiceDeskApi("api.tenants.remoteNotImplemented") },
-    { status: 501 },
-  );
+  return portalApiJson(request, {
+    method: "DELETE",
+    path: `/service-desk/tenants/${id}`,
+    errorMessage: tServiceDeskApi("api.tenants.delete"),
+  });
 }

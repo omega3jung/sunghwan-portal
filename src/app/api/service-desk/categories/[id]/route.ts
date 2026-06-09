@@ -109,6 +109,11 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
   return portalApiJson(request, {
     method: "PUT",
     path: `/service-desk/categories/${id}`,
+    query: body.tenantId
+      ? {
+          tenantId: body.tenantId,
+        }
+      : undefined,
     body: toCategoryWritePayload({ ...body, id }),
     errorMessage: tServiceDeskApi("api.categories.update"),
     mapData: mapCategoryItemPayload,

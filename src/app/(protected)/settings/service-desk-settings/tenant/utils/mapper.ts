@@ -5,13 +5,12 @@ import { LocalizedText } from "@/shared/types";
 import { DEFAULT_TENANT_COLOR } from "../constants";
 import {
   CompanySettingItem,
-  TenantLocalizedText,
   TenantSettingItem,
 } from "../types";
 
 export function normalizeLocalizedText(
   value: LocalizedText,
-): TenantLocalizedText {
+): LocalizedText {
   const fallback = value.en ?? "";
 
   return {

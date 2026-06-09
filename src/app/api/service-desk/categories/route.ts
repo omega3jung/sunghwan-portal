@@ -104,6 +104,9 @@ export async function POST(request: NextRequest) {
   return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/categories",
+    query: {
+      tenantId: body.tenantId,
+    },
     body: toCategoryWritePayload(body),
     errorMessage: tServiceDeskApi("api.categories.create"),
     mapData: mapCategoryItemPayload,

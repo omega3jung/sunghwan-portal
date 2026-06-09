@@ -1,5 +1,14 @@
-import { AssigneeGroupDto, AssignmentRuleDto } from "./assignmentRuleDto";
-import { AssignmentRuleRow } from "./assignmentRuleRow";
+import {
+  AssigneeGroupDto,
+  AssignmentRuleDto,
+  CreateAssignmentRuleInputDto,
+  UpdateAssignmentRuleInputDto,
+} from "./assignmentRuleDto";
+import {
+  AssignmentRuleRow,
+  CreateAssignmentRuleRowInput,
+  UpdateAssignmentRuleRowInput,
+} from "./assignmentRuleRow";
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -53,6 +62,8 @@ export function mapAssignmentRuleRowToDto(
   row: AssignmentRuleRow,
 ): AssignmentRuleDto {
   return {
+    assignment_rule_id: Number(row.ar_id),
+    assignment_rule_active: row.ar_active,
     category_id: Number(row.ar_category_id),
     assignee: mapAssigneeGroupToDto(row.ar_assignee),
   };
@@ -62,4 +73,29 @@ export function mapAssignmentRuleRowsToDtos(
   rows: AssignmentRuleRow[],
 ): AssignmentRuleDto[] {
   return rows.map(mapAssignmentRuleRowToDto);
+}
+
+export function mapCreateAssignmentRuleInputDtoToRowInput(
+  input: CreateAssignmentRuleInputDto,
+): CreateAssignmentRuleRowInput {
+  return {
+    ar_category_id: Number(input.category_id),
+    ar_assignee: normalizeAssigneeGroupDto(input.assignee),
+  };
+}
+
+export function mapUpdateAssignmentRuleInputDtoToRowInput(
+  input: UpdateAssignmentRuleInputDto,
+): UpdateAssignmentRuleRowInput {
+  return {
+    ar_category_id: Number(input.category_id),
+    ar_assignee: normalizeAssigneeGroupDto(input.assignee),
+  };
+}
+
+function normalizeAssigneeGroupDto(input: AssigneeGroupDto): AssigneeGroupDto {
+  return {
+    job_field_id: input.job_field_id.map(Number),
+    employee_username: input.employee_username.map(String),
+  };
 }

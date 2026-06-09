@@ -1,5 +1,14 @@
-import { ApprovalAssigneeTypeDto, ApprovalStepDto } from "./approvalStepDto";
-import { ApprovalStepRow } from "./approvalStepRow";
+import {
+  ApprovalAssigneeTypeDto,
+  ApprovalStepDto,
+  CreateApprovalStepInputDto,
+  UpdateApprovalStepInputDto,
+} from "./approvalStepDto";
+import {
+  ApprovalStepRow,
+  CreateApprovalStepRowInput,
+  UpdateApprovalStepRowInput,
+} from "./approvalStepRow";
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -88,4 +97,61 @@ export function mapApprovalStepRowsToDtos(
   rows: ApprovalStepRow[],
 ): ApprovalStepDto[] {
   return rows.map(mapApprovalStepRowToDto);
+}
+
+export function mapCreateApprovalStepInputDtoToRowInput(
+  input: CreateApprovalStepInputDto,
+): CreateApprovalStepRowInput {
+  return {
+    aps_category_id: Number(input.category_id),
+    aps_name: input.approval_step_name,
+    aps_description: input.approval_step_description,
+    aps_index: input.approval_step_index,
+    aps_assignee: normalizeApprovalAssigneeTypeDto(
+      input.approval_step_assignee,
+    ),
+    aps_skip_access_level: input.skip_access_level,
+  };
+}
+
+export function mapUpdateApprovalStepInputDtoToRowInput(
+  input: UpdateApprovalStepInputDto,
+): UpdateApprovalStepRowInput {
+  return {
+    aps_category_id: Number(input.category_id),
+    aps_name: input.approval_step_name,
+    aps_description: input.approval_step_description,
+    aps_index: input.approval_step_index,
+    aps_assignee: normalizeApprovalAssigneeTypeDto(
+      input.approval_step_assignee,
+    ),
+    aps_skip_access_level: input.skip_access_level,
+  };
+}
+
+function normalizeApprovalAssigneeTypeDto(
+  value: ApprovalAssigneeTypeDto,
+): ApprovalAssigneeTypeDto {
+  switch (value.type) {
+    case "MANAGER":
+      return {
+        type: value.type,
+        level: value.level,
+      };
+    case "DEPARTMENT":
+      return {
+        type: value.type,
+        department_id: Number(value.department_id),
+      };
+    case "JOB_FIELD":
+      return {
+        type: value.type,
+        field_id: Number(value.field_id),
+      };
+    case "EMPLOYEE":
+      return {
+        type: value.type,
+        employee_username: value.employee_username.map(String),
+      };
+  }
 }

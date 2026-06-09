@@ -6,6 +6,16 @@ export type TenantRow = {
   tn_name: LocalizedText;
   tn_color: string;
   tn_active: boolean;
-  tn_created_at: string;
-  tn_updated_at: string;
+};
+
+export type CreateTenantRowInput = {
+  tn_company_id: number;
+  tn_name: LocalizedText;
+  tn_color: string;
+  tn_active: boolean;
+};
+
+export type UpdateTenantRowInput = {
+  tn_name: LocalizedText;
+  tn_color: string;
 };
