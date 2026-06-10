@@ -15,9 +15,7 @@ import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/lo
 
 import { getLocalDemoApprovalStepsTree } from "../../state";
 
-export type LocalDbApprovalStep = DbApprovalStep & {
-  approval_step_active?: boolean;
-};
+export type LocalDbApprovalStep = DbApprovalStep;
 
 export type LocalDbCategoryApprovalSettings = Omit<
   DbCategoryApprovalSettings,
@@ -31,13 +29,6 @@ export type ApprovalStepStore = Record<
   LocalDbCategoryApprovalSettings[]
 >;
 
-const toActiveApprovalStep = (
-  approvalStep: DbApprovalStep,
-): LocalDbApprovalStep => ({
-  ...approvalStep,
-  approval_step_active: approvalStep.approval_step_active ?? true,
-});
-
 const buildApprovalStepSeed = ({
   categoryTrees,
   templateCategories,
@@ -48,7 +39,7 @@ const buildApprovalStepSeed = ({
   const templateMap = new Map(
     templateCategories.map((category) => [
       String(category.category_id),
-      category.approval_step.map(toActiveApprovalStep),
+      category.approval_step,
     ]),
   );
 

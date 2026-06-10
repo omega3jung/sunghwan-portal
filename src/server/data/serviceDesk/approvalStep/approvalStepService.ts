@@ -17,7 +17,7 @@ import {
 } from "./approvalStepMapper";
 import {
   createApprovalStepRow,
-  deactivateApprovalStepRowById,
+  deleteApprovalStepRowById,
   findApprovalStepRowsByTenantId,
   findApprovalStepRowsByTenantIdAndApprovalStepId,
   updateApprovalStepRowById,
@@ -96,13 +96,7 @@ export async function getApprovalStepById({
       continue;
     }
 
-    const approvalStep = mapApprovalStepRowsToDtos(rows)[0] ?? null;
-
-    if (!approvalStep || approvalStep.approval_step_active === false) {
-      return null;
-    }
-
-    return approvalStep;
+    return mapApprovalStepRowsToDtos(rows)[0] ?? null;
   }
 
   return null;
@@ -136,7 +130,7 @@ export async function updateApprovalStepById(
   );
   const currentRow = currentRows[0] ?? null;
 
-  if (!currentRow || currentRow.aps_active === false) {
+  if (!currentRow) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 
@@ -155,11 +149,11 @@ export async function updateApprovalStepById(
   return mapApprovalStepRowToDto(row);
 }
 
-export async function deactivateApprovalStepById(
+export async function deleteApprovalStepById(
   tenantId: string | number,
   approvalStepId: string | number,
 ): Promise<ApprovalStepDto> {
-  const row = await deactivateApprovalStepRowById(tenantId, approvalStepId);
+  const row = await deleteApprovalStepRowById(tenantId, approvalStepId);
 
   if (!row) {
     throw new ServiceDeskApiError("api.common.notFound", 404);

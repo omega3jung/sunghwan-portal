@@ -56,7 +56,7 @@ export default function ApprovalStepPage() {
     Record<string, string>
   >({});
 
-  const categoryParams: DbParams = {};
+  const categoryParams: DbParams = { active: true };
   const { data: categories, isLoading: isCategoriesLoading } =
     useServiceDeskCategoryListQuery(categoryParams);
 
@@ -106,12 +106,30 @@ export default function ApprovalStepPage() {
 
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
+  const canReset =
+    Boolean(selectedTenant) &&
+    treeTenantId === selectedTenant &&
+    (isDirty || selectedId !== null) &&
+    !isSaving;
   const canSave =
     Boolean(selectedTenant) &&
     treeTenantId === selectedTenant &&
     isDirty &&
     isTreeValid &&
     !isSaving;
+
+  const handleReset = () => {
+    if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
+      return;
+    }
+
+    const nextTree = approvalStepToTree(
+      mapApprovalData(categories, selectedTenant, approvalSteps ?? []),
+    );
+
+    setTree(nextTree);
+    setSelectedId(null);
+  };
 
   const onSaveChange = async () => {
     if (
@@ -261,21 +279,32 @@ export default function ApprovalStepPage() {
             </Select>
           </div>
         </div>
-        <Button
-          size="sm"
-          type="button"
-          disabled={!canSave}
-          onClick={() => void onSaveChange()}
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t("serviceDeskSettings.general.saveChanges")}
-            </>
-          ) : (
-            t("serviceDeskSettings.general.saveChanges")
-          )}
-        </Button>
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!canReset}
+            onClick={handleReset}
+          >
+            {t("action.reset", { ns: NS.common })}
+          </Button>
+          <Button
+            size="sm"
+            type="button"
+            disabled={!canSave}
+            onClick={() => void onSaveChange()}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t("serviceDeskSettings.general.saveChanges")}
+              </>
+            ) : (
+              t("serviceDeskSettings.general.saveChanges")
+            )}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-5 gap-2">

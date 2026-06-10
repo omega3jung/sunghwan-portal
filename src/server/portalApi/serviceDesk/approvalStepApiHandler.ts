@@ -11,7 +11,7 @@ import type {
 } from "@/server/data/serviceDesk/approvalStep";
 import {
   createApprovalStep,
-  deactivateApprovalStepById,
+  deleteApprovalStepById,
   getApprovalSettingsResponseByTenantId,
   getApprovalStepById,
   getApprovalStepsByTenantId,
@@ -186,7 +186,7 @@ export async function handleApprovalStepPortalApi(
       context,
       approvalStepId,
     );
-    await deactivateApprovalStepById(tenantId, approvalStepId);
+    await deleteApprovalStepById(tenantId, approvalStepId);
 
     return new NextResponse(null, { status: 204 });
   }
@@ -206,7 +206,23 @@ async function saveApprovalStepTree(
   const currentApprovalStepIds = new Set(
     currentApprovalSteps.map((approvalStep) => approvalStep.approval_step_id),
   );
-  const submittedApprovalStepIds = new Set<number>();
+  const submittedExistingApprovalStepIds = new Set(
+    payload.categories.flatMap((category) =>
+      category.approvalSteps
+        .map((approvalStep) => parseOptionalId(approvalStep.id))
+        .filter((approvalStepId): approvalStepId is number => approvalStepId !== null),
+    ),
+  );
+  const deletedApprovalStepIds = new Set<number>();
+
+  for (const approvalStep of currentApprovalSteps) {
+    if (submittedExistingApprovalStepIds.has(approvalStep.approval_step_id)) {
+      continue;
+    }
+
+    await deleteApprovalStepById(tenantId, approvalStep.approval_step_id);
+    deletedApprovalStepIds.add(approvalStep.approval_step_id);
+  }
 
   for (const category of payload.categories) {
     const categoryId = Number(category.id);
@@ -216,18 +232,18 @@ async function saveApprovalStepTree(
 
       if (
         approvalStepId !== null &&
-        currentApprovalStepIds.has(approvalStepId)
+        currentApprovalStepIds.has(approvalStepId) &&
+        !deletedApprovalStepIds.has(approvalStepId)
       ) {
         await updateApprovalStepById(
           tenantId,
           approvalStepId,
           mapApprovalTreeStepToUpdateInput(categoryId, approvalStep, index + 1),
         );
-        submittedApprovalStepIds.add(approvalStepId);
         continue;
       }
 
-      const createdApprovalStep = await createApprovalStep(
+      await createApprovalStep(
         mapApprovalTreeStepToCreateInput(
           tenantId,
           categoryId,
@@ -235,19 +251,7 @@ async function saveApprovalStepTree(
           index + 1,
         ),
       );
-      submittedApprovalStepIds.add(createdApprovalStep.approval_step_id);
     }
-  }
-
-  for (const approvalStep of currentApprovalSteps) {
-    if (
-      approvalStep.approval_step_active === false ||
-      submittedApprovalStepIds.has(approvalStep.approval_step_id)
-    ) {
-      continue;
-    }
-
-    await deactivateApprovalStepById(tenantId, approvalStep.approval_step_id);
   }
 
   return getCategoryApprovalSettingsByTenantId(tenantId);

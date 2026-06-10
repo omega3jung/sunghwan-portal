@@ -9,7 +9,6 @@ export type ApprovalStepRow = {
   aps_index: number;
   aps_assignee: unknown;
   aps_skip_access_level: AccessLevel | null;
-  aps_active: boolean;
 };
 
 export type CreateApprovalStepRowInput = {

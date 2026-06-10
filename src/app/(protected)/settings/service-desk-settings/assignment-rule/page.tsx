@@ -57,7 +57,7 @@ export default function CategoryPage() {
     Record<string, string>
   >({});
 
-  const params: DbParams = {};
+  const params: DbParams = { active: true };
   const { data: categories, isLoading: isCategoriesLoading } =
     useServiceDeskCategoryListQuery(params);
   const assignmentRuleParams = useMemo(
@@ -109,12 +109,30 @@ export default function CategoryPage() {
 
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
+  const canReset =
+    Boolean(selectedTenant) &&
+    treeTenantId === selectedTenant &&
+    (isDirty || selectedId !== null) &&
+    !isSaving;
   const canSave =
     Boolean(selectedTenant) &&
     treeTenantId === selectedTenant &&
     isDirty &&
     isTreeValid &&
     !isSaving;
+
+  const handleReset = () => {
+    if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
+      return;
+    }
+
+    const nextTree = assignmentRuleToTree(
+      mapAssignmentRuleData(categories, selectedTenant, assignmentRules ?? []),
+    );
+
+    setTree(nextTree);
+    setSelectedId(null);
+  };
 
   const onSaveChange = async () => {
     if (
@@ -283,7 +301,16 @@ export default function CategoryPage() {
 
       {/* Assignment details */}
       <div className="col-span-2 p-2">
-        <div className="flex justify-end pb-2">
+        <div className="flex justify-end pb-2 gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!canReset}
+            onClick={handleReset}
+          >
+            {t("action.reset", { ns: NS.common })}
+          </Button>
           <Button
             className=""
             type="button"

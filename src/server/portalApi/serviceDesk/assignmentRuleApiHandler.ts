@@ -14,7 +14,7 @@ import type {
 } from "@/server/data/serviceDesk/assignmentRule";
 import {
   createAssignmentRule,
-  deactivateAssignmentRuleById,
+  deleteAssignmentRuleById,
   getAssignmentRuleByCategoryId,
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
@@ -191,7 +191,7 @@ export async function handleAssignmentRulePortalApi(
   if (context.method === "DELETE") {
     const { tenantId, assignmentRule } =
       await resolveAssignmentRuleTargetByCategoryId(context, categoryId);
-    await deactivateAssignmentRuleById(
+    await deleteAssignmentRuleById(
       tenantId,
       assignmentRule.assignment_rule_id,
     );
@@ -243,7 +243,7 @@ async function saveAssignmentRuleTree(
 
   for (const assignmentRule of currentAssignmentRules) {
     if (!submittedCategoryIds.has(assignmentRule.category_id)) {
-      await deactivateAssignmentRuleById(
+      await deleteAssignmentRuleById(
         tenantId,
         assignmentRule.assignment_rule_id,
       );

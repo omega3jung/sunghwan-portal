@@ -17,7 +17,7 @@ import {
 } from "@/feature/serviceDesk/approvalStep/write";
 import {
   localGetApprovalStep,
-  localSoftDeleteApprovalStep,
+  localDeleteApprovalStep,
   localUpdateApprovalStep,
 } from "@/server/serviceDesk/settings/approvalStep/localDemo";
 
@@ -124,7 +124,7 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     try {
       const isInternal = await isInternalUser(request);
-      return localSoftDeleteApprovalStep({
+      return localDeleteApprovalStep({
         isInternal,
         id,
       });

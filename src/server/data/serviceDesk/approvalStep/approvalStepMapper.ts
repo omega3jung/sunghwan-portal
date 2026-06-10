@@ -86,7 +86,6 @@ export function mapApprovalStepRowToDto(row: ApprovalStepRow): ApprovalStepDto {
     approval_step_name: row.aps_name,
     approval_step_description: row.aps_description,
     approval_step_index: row.aps_index,
-    approval_step_active: row.aps_active,
     category_id: Number(row.aps_category_id),
     approval_step_assignee: mapApprovalAssigneeToDto(row.aps_assignee),
     skip_access_level: row.aps_skip_access_level,

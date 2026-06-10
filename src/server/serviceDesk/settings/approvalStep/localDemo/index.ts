@@ -2,8 +2,8 @@
 
 export {
   localCreateApprovalStep,
+  localDeleteApprovalStep,
   localSaveApprovalStepTree,
-  localSoftDeleteApprovalStep,
   localUpdateApprovalStep,
 } from "./mutation";
 export { localGetApprovalStep, localListApprovalSteps } from "./query";

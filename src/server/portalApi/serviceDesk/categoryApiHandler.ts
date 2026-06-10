@@ -10,6 +10,7 @@ import {
   CategoryDto,
   CategorySubCategoryInputDto,
   CreateCategoryInputDto,
+  CategorySettingsResponseDto,
   UpdateCategoryInputDto,
 } from "@/server/data/serviceDesk/category";
 import {
@@ -69,10 +70,21 @@ export async function handleCategoryPortalApi(
             "isInternal",
           ),
         ) ?? true;
-      const items = await getCategorySettingsResponseByTenantId({
-        tenantId,
-        isInternal,
-      });
+      const active =
+        parseBooleanQueryValue(
+          getPortalApiQueryValue(
+            context.request,
+            context.options,
+            "active",
+          ),
+        ) ?? null;
+      const items = filterCategorySettingsByActive(
+        await getCategorySettingsResponseByTenantId({
+          tenantId,
+          isInternal,
+        }),
+        active,
+      );
 
       return NextResponse.json({
         items,
@@ -158,6 +170,27 @@ export async function handleCategoryPortalApi(
   }
 
   return createNotFoundResponse();
+}
+
+function filterCategorySettingsByActive(
+  items: CategorySettingsResponseDto[],
+  active: boolean | null,
+) {
+  if (active === null) {
+    return items;
+  }
+
+  return items.map((tenant) => ({
+    ...tenant,
+    category: tenant.category
+      .filter((category) => category.category_active === active)
+      .map((category) => ({
+        ...category,
+        sub_category: category.sub_category.filter(
+          (subCategory) => subCategory.category_active === active,
+        ),
+      })),
+  }));
 }
 
 async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {

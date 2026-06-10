@@ -63,7 +63,6 @@ export function mapAssignmentRuleRowToDto(
 ): AssignmentRuleDto {
   return {
     assignment_rule_id: Number(row.ar_id),
-    assignment_rule_active: row.ar_active,
     category_id: Number(row.ar_category_id),
     assignee: mapAssigneeGroupToDto(row.ar_assignee),
   };

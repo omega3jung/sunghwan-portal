@@ -146,7 +146,6 @@ function resolveCategoryApprovalSteps({
   }
 
   return targetCategory.approval_step
-    .filter((approvalStep) => approvalStep.approval_step_active !== false)
     .slice()
     .sort(
       (left, right) => left.approval_step_index - right.approval_step_index,

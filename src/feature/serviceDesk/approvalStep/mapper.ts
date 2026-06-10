@@ -38,23 +38,15 @@ export const camelApprovalStepMapper: ArrayMapper<
   DbApprovalStep,
   ApprovalStep
 > = (data) => {
-  return data.flatMap((item) => {
-    if (!item || item.approval_step_active === false) {
-      return [];
-    }
-
-    return [
-      {
-        id: item.approval_step_id.toString(),
-        name: item.approval_step_name,
-        description: nullToUndefined(item.approval_step_description),
-        index: item.approval_step_index,
-        categoryId: item.category_id.toString(),
-        stepAssignee: camelAssigneeTypeMapper(item.approval_step_assignee),
-        skipAccessLevel: nullToUndefined(item.skip_access_level),
-      },
-    ];
-  });
+  return data.map((item) => ({
+    id: item.approval_step_id.toString(),
+    name: item.approval_step_name,
+    description: nullToUndefined(item.approval_step_description),
+    index: item.approval_step_index,
+    categoryId: item.category_id.toString(),
+    stepAssignee: camelAssigneeTypeMapper(item.approval_step_assignee),
+    skipAccessLevel: nullToUndefined(item.skip_access_level),
+  }));
 };
 
 const camelAssigneeTypeMapper: Mapper<

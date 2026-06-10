@@ -26,7 +26,10 @@ export const localListCategories = ({
 }) => {
   const items = filterItemsByQuery(
     searchParams,
-    camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+    filterTenantCategoryTreesByActive(
+      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      parseOptionalBoolean(searchParams.get("active")),
+    ),
   );
 
   return {
@@ -34,6 +37,43 @@ export const localListCategories = ({
     total: items.length,
   };
 };
+
+function parseOptionalBoolean(value: string | null): boolean | null {
+  if (value === null) {
+    return null;
+  }
+
+  if (value === "true") {
+    return true;
+  }
+
+  if (value === "false") {
+    return false;
+  }
+
+  return null;
+}
+
+function filterTenantCategoryTreesByActive(
+  items: TenantCategoryTree[],
+  active: boolean | null,
+) {
+  if (active === null) {
+    return items;
+  }
+
+  return items.map((tenant) => ({
+    ...tenant,
+    categories: tenant.categories
+      .filter((category) => category.active === active)
+      .map((category) => ({
+        ...category,
+        subCategories: category.subCategories.filter(
+          (subCategory) => subCategory.active === active,
+        ),
+      })),
+  }));
+}
 
 export const localGetCategory = ({
   isInternal,

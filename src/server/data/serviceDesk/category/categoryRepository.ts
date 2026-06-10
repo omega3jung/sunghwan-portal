@@ -93,7 +93,6 @@ set
 where
   cat_tenant_id = $1
   and cat_id = $2
-  and cat_active = true
 returning
 ${ACTIVE_CATEGORY_COLUMNS};
 `;
@@ -106,7 +105,6 @@ set
 where
   cat_tenant_id = $1
   and cat_id = $2
-  and cat_active = true
 returning
 ${ACTIVE_CATEGORY_COLUMNS};
 `;

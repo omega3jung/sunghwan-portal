@@ -15,7 +15,7 @@ import {
 } from "./assignmentRuleMapper";
 import {
   createAssignmentRuleRow,
-  deactivateAssignmentRuleRowById,
+  deleteAssignmentRuleRowById,
   findAssignmentRuleRowByTenantIdAndAssignmentRuleId,
   findAssignmentRuleRowsByTenantId,
   findAssignmentRuleRowsByTenantIdAndCategoryId,
@@ -27,7 +27,7 @@ export async function getAssignmentRulesByTenantId(
 ): Promise<AssignmentRuleDto[]> {
   const rows = await findAssignmentRuleRowsByTenantId(tenantId);
 
-  return mapAssignmentRuleRowsToDtos(rows.filter((row) => row.ar_active));
+  return mapAssignmentRuleRowsToDtos(rows);
 }
 
 export type GetAssignmentRulesResponseParams = {
@@ -73,7 +73,7 @@ export async function getAssignmentRuleByCategoryId({
       continue;
     }
 
-    return mapAssignmentRuleRowsToDtos(rows.filter((row) => row.ar_active))[0] ?? null;
+    return mapAssignmentRuleRowsToDtos(rows)[0] ?? null;
   }
 
   return null;
@@ -92,9 +92,9 @@ export async function createAssignmentRule(
     input.category_id,
   );
 
-  if (duplicateRules.some((row) => row.ar_active)) {
+  if (duplicateRules.length > 0) {
     throw createStatusError(
-      `Active assignment rule already exists for category ${input.category_id}.`,
+      `Assignment rule already exists for category ${input.category_id}.`,
       409,
     );
   }
@@ -120,7 +120,7 @@ export async function updateAssignmentRuleById(
     assignmentRuleId,
   );
 
-  if (!currentRow || currentRow.ar_active === false) {
+  if (!currentRow) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 
@@ -133,13 +133,12 @@ export async function updateAssignmentRuleById(
     input.category_id,
   );
   const hasDuplicateRule = duplicateRules.some(
-    (row) =>
-      row.ar_active && Number(row.ar_id) !== Number(currentRow.ar_id),
+    (row) => Number(row.ar_id) !== Number(currentRow.ar_id),
   );
 
   if (hasDuplicateRule) {
     throw createStatusError(
-      `Active assignment rule already exists for category ${input.category_id}.`,
+      `Assignment rule already exists for category ${input.category_id}.`,
       409,
     );
   }
@@ -157,11 +156,11 @@ export async function updateAssignmentRuleById(
   return mapAssignmentRuleRowToDto(row);
 }
 
-export async function deactivateAssignmentRuleById(
+export async function deleteAssignmentRuleById(
   tenantId: string | number,
   assignmentRuleId: string | number,
 ): Promise<AssignmentRuleDto> {
-  const row = await deactivateAssignmentRuleRowById(tenantId, assignmentRuleId);
+  const row = await deleteAssignmentRuleRowById(tenantId, assignmentRuleId);
 
   if (!row) {
     throw new ServiceDeskApiError("api.common.notFound", 404);

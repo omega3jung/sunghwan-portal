@@ -153,35 +153,10 @@ export const localSaveApprovalStepTree = ({
               : undefined,
           }),
       );
-      const submittedIds = new Set(
-        nextApprovalSteps.map((approvalStep) =>
-          String(approvalStep.approval_step_id),
-        ),
-      );
-      const deactivatedApprovalSteps = previousCategory.approval_step
-        .filter(
-          (approvalStep) =>
-            !submittedIds.has(String(approvalStep.approval_step_id)) &&
-            approvalStep.approval_step_active !== false,
-        )
-        .map((approvalStep) => ({
-          ...approvalStep,
-          approval_step_active: false,
-        }));
-      const preservedInactiveApprovalSteps =
-        previousCategory.approval_step.filter(
-          (approvalStep) =>
-            !submittedIds.has(String(approvalStep.approval_step_id)) &&
-            approvalStep.approval_step_active === false,
-        );
 
       return {
         ...previousCategory,
-        approval_step: [
-          ...nextApprovalSteps,
-          ...deactivatedApprovalSteps,
-          ...preservedInactiveApprovalSteps,
-        ],
+        approval_step: nextApprovalSteps,
       };
     },
   );
@@ -198,7 +173,7 @@ export const localSaveApprovalStepTree = ({
   return normalizeCategoryApprovalSettings(items[payload.tenantId]);
 };
 
-export const localSoftDeleteApprovalStep = ({
+export const localDeleteApprovalStep = ({
   isInternal,
   id,
 }: {
@@ -212,19 +187,9 @@ export const localSoftDeleteApprovalStep = ({
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 
-  const previousApprovalStep =
-    items[location.tenantId][location.categoryIndex].approval_step[
-      location.approvalStepIndex
-    ];
-  const nextApprovalStep = {
-    ...previousApprovalStep,
-    approval_step_active: false,
-  };
-
   items[location.tenantId][location.categoryIndex].approval_step.splice(
     location.approvalStepIndex,
     1,
-    nextApprovalStep,
   );
 
   return new Response(null, { status: 204 });

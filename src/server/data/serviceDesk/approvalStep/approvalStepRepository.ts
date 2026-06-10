@@ -13,8 +13,7 @@ const ACTIVE_APPROVAL_STEP_COLUMNS = `
   aps_description,
   aps_index,
   aps_assignee,
-  aps_skip_access_level,
-  aps_active
+  aps_skip_access_level
 `;
 
 const FIND_APPROVAL_STEP_ROWS_BY_TENANT_ID_QUERY = `
@@ -79,22 +78,17 @@ where
   cat.cat_id = aps.aps_category_id
   and cat.cat_tenant_id = $1
   and aps.aps_id = $2
-  and aps.aps_active = true
 returning
 ${ACTIVE_APPROVAL_STEP_COLUMNS};
 `;
 
-const DEACTIVATE_APPROVAL_STEP_ROW_BY_ID_QUERY = `
-update service_desk.approval_step aps
-set
-  aps_active = false,
-  aps_updated_at = now()
-from service_desk.category cat
+const DELETE_APPROVAL_STEP_ROW_BY_ID_QUERY = `
+delete from service_desk.approval_step aps
+using service_desk.category cat
 where
   cat.cat_id = aps.aps_category_id
   and cat.cat_tenant_id = $1
   and aps.aps_id = $2
-  and aps.aps_active = true
 returning
 ${ACTIVE_APPROVAL_STEP_COLUMNS};
 `;
@@ -158,12 +152,12 @@ export async function updateApprovalStepRowById(
   return rows[0] ?? null;
 }
 
-export async function deactivateApprovalStepRowById(
+export async function deleteApprovalStepRowById(
   tenantId: string | number,
   approvalStepId: string | number,
 ): Promise<ApprovalStepRow | null> {
   const rows = await queryPortalApi<ApprovalStepRow>(
-    DEACTIVATE_APPROVAL_STEP_ROW_BY_ID_QUERY,
+    DELETE_APPROVAL_STEP_ROW_BY_ID_QUERY,
     [Number(tenantId), Number(approvalStepId)],
   );
 

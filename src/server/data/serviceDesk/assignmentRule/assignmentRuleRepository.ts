@@ -9,8 +9,7 @@ import {
 const ACTIVE_ASSIGNMENT_RULE_COLUMNS = `
   ar_id,
   ar_category_id,
-  ar_assignee,
-  ar_active
+  ar_assignee
 `;
 
 const FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_QUERY = `
@@ -20,7 +19,6 @@ from service_desk.assignment_rule ar
 join service_desk.category cat
   on cat.cat_id = ar.ar_category_id
 where cat.cat_tenant_id = $1
-  and ar.ar_active = true
 order by
   cat.cat_index,
   cat.cat_id,
@@ -35,7 +33,6 @@ join service_desk.category cat
   on cat.cat_id = ar.ar_category_id
 where cat.cat_tenant_id = $1
   and ar.ar_category_id = $2
-  and ar.ar_active = true
 order by
   ar.ar_id;
 `;
@@ -76,22 +73,17 @@ where
   cat.cat_id = ar.ar_category_id
   and cat.cat_tenant_id = $1
   and ar.ar_id = $2
-  and ar.ar_active = true
 returning
 ${ACTIVE_ASSIGNMENT_RULE_COLUMNS};
 `;
 
-const DEACTIVATE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY = `
-update service_desk.assignment_rule ar
-set
-  ar_active = false,
-  ar_updated_at = now()
-from service_desk.category cat
+const DELETE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY = `
+delete from service_desk.assignment_rule ar
+using service_desk.category cat
 where
   cat.cat_id = ar.ar_category_id
   and cat.cat_tenant_id = $1
   and ar.ar_id = $2
-  and ar.ar_active = true
 returning
 ${ACTIVE_ASSIGNMENT_RULE_COLUMNS};
 `;
@@ -156,12 +148,12 @@ export async function updateAssignmentRuleRowById(
   return rows[0] ?? null;
 }
 
-export async function deactivateAssignmentRuleRowById(
+export async function deleteAssignmentRuleRowById(
   tenantId: string | number,
   assignmentRuleId: string | number,
 ): Promise<AssignmentRuleRow | null> {
   const rows = await queryPortalApi<AssignmentRuleRow>(
-    DEACTIVATE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY,
+    DELETE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY,
     [Number(tenantId), Number(assignmentRuleId)],
   );
 

@@ -18,7 +18,6 @@ export interface DbApprovalStep {
   approval_step_name: LocalizedText;
   approval_step_description: LocalizedText | null;
   approval_step_index: number;
-  approval_step_active?: boolean;
 
   category_id: number; // string number. can use parseInt.
   approval_step_assignee: DbApprovalAssigneeType;

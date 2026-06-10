@@ -49,9 +49,5 @@ export const localGetApprovalStep = ({
       location.approvalStepIndex
     ];
 
-  if (approvalStep.approval_step_active === false) {
-    return null;
-  }
-
   return normalizeApprovalStep(approvalStep);
 };
