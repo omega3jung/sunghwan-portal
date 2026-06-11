@@ -21,9 +21,6 @@ const compareTenantTrees = (
 const matchesTenant = (tenant: DbTenant, value: string) =>
   String(tenant.tenant_id) === value;
 
-const matchesTenantCompany = (tenant: DbTenant, companyId: string) =>
-  String(tenant.tenant_company_id) === companyId;
-
 const toTenantTree = (tenant: DbTenant): DbTenantCategoryTree => ({
   tenant_id: tenant.tenant_id,
   tenant_company_id: tenant.tenant_company_id,
@@ -87,13 +84,6 @@ export const normalizeTenant = (tenant: DbTenant): Tenant => {
 
 export const findTenantIndexById = (items: DbTenant[], id: string) => {
   return items.findIndex((tenant) => matchesTenant(tenant, id));
-};
-
-export const findTenantIndexByCompanyId = (
-  items: DbTenant[],
-  companyId: string,
-) => {
-  return items.findIndex((tenant) => matchesTenantCompany(tenant, companyId));
 };
 
 export const createTenantIdAssigner = (items: DbTenant[]) => {

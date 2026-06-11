@@ -1,11 +1,9 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
+import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
 import type {
-  DbApprovalStep,
-  SaveServiceDeskApprovalStepTreePayload,
-} from "@/feature/serviceDesk/approvalStep/types";
-import type {
+  ApprovalStepDto,
   CreateApprovalStepInputDto,
   UpdateApprovalStepInputDto,
 } from "@/server/data/serviceDesk/approvalStep";
@@ -13,17 +11,11 @@ import {
   createApprovalStep,
   deleteApprovalStepById,
   getApprovalSettingsResponseByTenantId,
-  getApprovalStepById,
-  getApprovalStepsByTenantId,
   getCategoryApprovalSettingsByTenantId,
   updateApprovalStepById,
 } from "@/server/data/serviceDesk/approvalStep";
 
 import { getPortalApiQueryValue } from "../utils";
-import {
-  resolveTenantIdByApprovalStepId,
-  resolveTenantIdByCategoryId,
-} from "./serviceDeskPortalApiResolvers";
 import {
   createNotFoundResponse,
   parseBooleanQueryValue,
@@ -35,14 +27,14 @@ import {
 type ApprovalTreeCategoryItem =
   SaveServiceDeskApprovalStepTreePayload["categories"][number];
 type ApprovalTreeStepItem = ApprovalTreeCategoryItem["approvalSteps"][number];
+type SubmittedApprovalStepPlan = {
+  approvalStep: ApprovalTreeStepItem;
+  approvalStepId: number | null;
+  approvalStepIndex: number;
+  categoryId: number;
+};
 
 const APPROVAL_SETTINGS_LIST_PATH_PATTERN = /^\/service-desk\/approval-steps$/;
-const APPROVAL_SETTINGS_PATH_PATTERN =
-  /^\/service-desk\/approval-steps\/tenant\/([^/]+)$/;
-const APPROVAL_STEPS_PATH_PATTERN =
-  /^\/service-desk\/approval-steps\/tenant\/([^/]+)\/steps$/;
-const APPROVAL_STEP_DETAIL_PATH_PATTERN =
-  /^\/service-desk\/approval-steps\/([^/]+)$/;
 
 export async function handleApprovalStepPortalApi(
   context: ServiceDeskPortalApiContext,
@@ -50,20 +42,8 @@ export async function handleApprovalStepPortalApi(
   const approvalSettingsListMatch = APPROVAL_SETTINGS_LIST_PATH_PATTERN.exec(
     context.path,
   );
-  const approvalSettingsMatch = APPROVAL_SETTINGS_PATH_PATTERN.exec(
-    context.path,
-  );
-  const approvalStepsMatch = APPROVAL_STEPS_PATH_PATTERN.exec(context.path);
-  const approvalStepDetailMatch = APPROVAL_STEP_DETAIL_PATH_PATTERN.exec(
-    context.path,
-  );
 
-  if (
-    !approvalSettingsListMatch &&
-    !approvalSettingsMatch &&
-    !approvalStepsMatch &&
-    !approvalStepDetailMatch
-  ) {
+  if (!approvalSettingsListMatch) {
     return createNotFoundResponse();
   }
 
@@ -93,19 +73,6 @@ export async function handleApprovalStepPortalApi(
       });
     }
 
-    if (context.method === "POST") {
-      const body = requireBody<DbApprovalStep>(context.options);
-      const tenantId = await resolveTenantIdByCategoryId(
-        context,
-        body.category_id,
-      );
-      const approvalStep = await createApprovalStep(
-        mapApprovalStepBodyToCreateInput(tenantId, body),
-      );
-
-      return NextResponse.json(approvalStep, { status: 201 });
-    }
-
     if (context.method === "PUT") {
       const body = requireBody<SaveServiceDeskApprovalStepTreePayload>(
         context.options,
@@ -116,79 +83,6 @@ export async function handleApprovalStepPortalApi(
     }
 
     return createNotFoundResponse();
-  }
-
-  if (approvalStepsMatch) {
-    if (context.method !== "GET") {
-      return createNotFoundResponse();
-    }
-
-    const tenantId = decodeURIComponent(approvalStepsMatch[1] ?? "");
-    const approvalSteps = await getApprovalStepsByTenantId(tenantId);
-
-    return NextResponse.json({ data: approvalSteps });
-  }
-
-  if (approvalSettingsMatch) {
-    if (context.method !== "GET") {
-      return createNotFoundResponse();
-    }
-
-    const tenantId = decodeURIComponent(approvalSettingsMatch[1] ?? "");
-    const approvalSettings =
-      await getCategoryApprovalSettingsByTenantId(tenantId);
-
-    return NextResponse.json({ data: approvalSettings });
-  }
-
-  const approvalStepId = decodeURIComponent(approvalStepDetailMatch?.[1] ?? "");
-
-  if (context.method === "GET") {
-    const tenantId = getPortalApiQueryValue(
-      context.request,
-      context.options,
-      "tenantId",
-    );
-    const isInternal =
-      parseBooleanQueryValue(
-        getPortalApiQueryValue(context.request, context.options, "isInternal"),
-      ) ?? true;
-    const approvalStep = await getApprovalStepById({
-      approvalStepId,
-      tenantId,
-      isInternal,
-    });
-
-    if (!approvalStep) {
-      return createNotFoundResponse();
-    }
-
-    return NextResponse.json(approvalStep);
-  }
-
-  if (context.method === "PUT") {
-    const body = requireBody<DbApprovalStep>(context.options);
-    const tenantId = await resolveTenantIdByApprovalStepId(
-      context,
-      approvalStepId,
-    );
-    const approvalStep = await updateApprovalStepById(
-      tenantId,
-      approvalStepId,
-      mapApprovalStepBodyToUpdateInput(body),
-    );
-
-    return NextResponse.json(approvalStep);
-  }
-
-  if (context.method === "DELETE") {
-    const tenantId = await resolveTenantIdByApprovalStepId(
-      context,
-      approvalStepId,
-    );
-    await deleteApprovalStepById(tenantId, approvalStepId);
-
-    return new NextResponse(null, { status: 204 });
   }
 
   return createNotFoundResponse();
@@ -203,17 +97,28 @@ async function saveApprovalStepTree(
   const currentApprovalSteps = currentApprovalSettings.flatMap(
     (category) => category.approval_step,
   );
-  const currentApprovalStepIds = new Set(
-    currentApprovalSteps.map((approvalStep) => approvalStep.approval_step_id),
+  const currentApprovalStepsById = new Map(
+    currentApprovalSteps.map((approvalStep) => [
+      approvalStep.approval_step_id,
+      approvalStep,
+    ]),
   );
-  const submittedExistingApprovalStepIds = new Set(
+  const submittedApprovalStepPlans: SubmittedApprovalStepPlan[] =
     payload.categories.flatMap((category) =>
-      category.approvalSteps
-        .map((approvalStep) => parseOptionalId(approvalStep.id))
-        .filter((approvalStepId): approvalStepId is number => approvalStepId !== null),
+      category.approvalSteps.map((approvalStep, index) => ({
+        approvalStep,
+        approvalStepId: parseOptionalId(approvalStep.id),
+        approvalStepIndex: index + 1,
+        categoryId: Number(category.id),
+      })),
+    );
+  const submittedExistingApprovalStepIds = new Set(
+    submittedApprovalStepPlans.flatMap((plan) =>
+      plan.approvalStepId !== null && currentApprovalStepsById.has(plan.approvalStepId)
+        ? [plan.approvalStepId]
+        : [],
     ),
   );
-  const deletedApprovalStepIds = new Set<number>();
 
   for (const approvalStep of currentApprovalSteps) {
     if (submittedExistingApprovalStepIds.has(approvalStep.approval_step_id)) {
@@ -221,68 +126,92 @@ async function saveApprovalStepTree(
     }
 
     await deleteApprovalStepById(tenantId, approvalStep.approval_step_id);
-    deletedApprovalStepIds.add(approvalStep.approval_step_id);
   }
 
-  for (const category of payload.categories) {
-    const categoryId = Number(category.id);
+  await moveRetainedApprovalStepsToTemporaryIndexes(
+    tenantId,
+    currentApprovalSteps,
+    submittedExistingApprovalStepIds,
+  );
 
-    for (const [index, approvalStep] of category.approvalSteps.entries()) {
-      const approvalStepId = parseOptionalId(approvalStep.id);
-
-      if (
-        approvalStepId !== null &&
-        currentApprovalStepIds.has(approvalStepId) &&
-        !deletedApprovalStepIds.has(approvalStepId)
-      ) {
-        await updateApprovalStepById(
-          tenantId,
-          approvalStepId,
-          mapApprovalTreeStepToUpdateInput(categoryId, approvalStep, index + 1),
-        );
-        continue;
-      }
-
-      await createApprovalStep(
-        mapApprovalTreeStepToCreateInput(
-          tenantId,
-          categoryId,
-          approvalStep,
-          index + 1,
-        ),
-      );
+  for (const plan of submittedApprovalStepPlans) {
+    if (
+      plan.approvalStepId === null ||
+      !currentApprovalStepsById.has(plan.approvalStepId)
+    ) {
+      continue;
     }
+
+    await updateApprovalStepById(
+      tenantId,
+      plan.approvalStepId,
+      mapApprovalTreeStepToUpdateInput(
+        plan.categoryId,
+        plan.approvalStep,
+        plan.approvalStepIndex,
+      ),
+    );
+  }
+
+  for (const plan of submittedApprovalStepPlans) {
+    if (
+      plan.approvalStepId !== null &&
+      currentApprovalStepsById.has(plan.approvalStepId)
+    ) {
+      continue;
+    }
+
+    await createApprovalStep(
+      mapApprovalTreeStepToCreateInput(
+        tenantId,
+        plan.categoryId,
+        plan.approvalStep,
+        plan.approvalStepIndex,
+      ),
+    );
   }
 
   return getCategoryApprovalSettingsByTenantId(tenantId);
 }
 
-function mapApprovalStepBodyToCreateInput(
+async function moveRetainedApprovalStepsToTemporaryIndexes(
   tenantId: number,
-  body: DbApprovalStep,
-): CreateApprovalStepInputDto {
-  return {
-    tenant_id: tenantId,
-    category_id: Number(body.category_id),
-    approval_step_name: body.approval_step_name,
-    approval_step_description: body.approval_step_description,
-    approval_step_index: body.approval_step_index,
-    approval_step_assignee: body.approval_step_assignee,
-    skip_access_level: body.skip_access_level,
-  };
-}
+  currentApprovalSteps: ApprovalStepDto[],
+  retainedApprovalStepIds: Set<number>,
+) {
+  const retainedApprovalStepsByCategoryId = new Map<number, ApprovalStepDto[]>();
 
-function mapApprovalStepBodyToUpdateInput(
-  body: DbApprovalStep,
-): UpdateApprovalStepInputDto {
-  return {
-    category_id: Number(body.category_id),
-    approval_step_name: body.approval_step_name,
-    approval_step_description: body.approval_step_description,
-    approval_step_index: body.approval_step_index,
-    approval_step_assignee: body.approval_step_assignee,
-    skip_access_level: body.skip_access_level,
-  };
+  for (const approvalStep of currentApprovalSteps) {
+    if (!retainedApprovalStepIds.has(approvalStep.approval_step_id)) {
+      continue;
+    }
+
+    const items =
+      retainedApprovalStepsByCategoryId.get(approvalStep.category_id) ?? [];
+    items.push(approvalStep);
+    retainedApprovalStepsByCategoryId.set(approvalStep.category_id, items);
+  }
+
+  for (const [categoryId, approvalSteps] of retainedApprovalStepsByCategoryId) {
+    const currentMaxIndex = getCurrentMaxApprovalStepIndex(
+      currentApprovalSteps,
+      categoryId,
+    );
+
+    for (const approvalStep of approvalSteps) {
+      await updateApprovalStepById(
+        tenantId,
+        approvalStep.approval_step_id,
+        mapApprovalStepDtoToUpdateInput(
+          approvalStep,
+          toTemporaryApprovalStepIndex(
+            approvalStep.approval_step_index,
+            currentMaxIndex,
+          ),
+        ),
+      );
+    }
+  }
 }
 
 function mapApprovalTreeStepToCreateInput(
@@ -315,6 +244,39 @@ function mapApprovalTreeStepToUpdateInput(
     approval_step_assignee: mapApprovalTreeAssignee(approvalStep.stepAssignee),
     skip_access_level: approvalStep.skipAccessLevel ?? null,
   };
+}
+
+function mapApprovalStepDtoToUpdateInput(
+  approvalStep: ApprovalStepDto,
+  approvalStepIndex: number,
+): UpdateApprovalStepInputDto {
+  return {
+    category_id: approvalStep.category_id,
+    approval_step_name: approvalStep.approval_step_name,
+    approval_step_description: approvalStep.approval_step_description,
+    approval_step_index: approvalStepIndex,
+    approval_step_assignee: approvalStep.approval_step_assignee,
+    skip_access_level: approvalStep.skip_access_level,
+  };
+}
+
+function getCurrentMaxApprovalStepIndex(
+  approvalSteps: ApprovalStepDto[],
+  categoryId: number,
+) {
+  return Math.max(
+    0,
+    ...approvalSteps
+      .filter((approvalStep) => approvalStep.category_id === categoryId)
+      .map((approvalStep) => approvalStep.approval_step_index),
+  );
+}
+
+function toTemporaryApprovalStepIndex(
+  index: number,
+  currentMaxIndex: number,
+) {
+  return currentMaxIndex + index;
 }
 
 function mapApprovalTreeAssignee(

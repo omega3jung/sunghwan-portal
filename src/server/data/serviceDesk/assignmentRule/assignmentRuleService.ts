@@ -1,6 +1,6 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 
-import { findCategoryRowsByTenantIdAndCategoryId } from "../category";
+import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
 import { getActiveTenantById, getActiveTenants } from "../tenant";
 import {
   AssignmentRuleDto,
@@ -45,38 +45,6 @@ export async function getAssignmentRulesResponseByTenantId({
   });
 
   return getAssignmentRulesByTenantId(targetTenantId);
-}
-
-export type GetAssignmentRuleDetailParams = {
-  categoryId: string | number;
-  tenantId?: string | number | null;
-  isInternal: boolean;
-};
-
-export async function getAssignmentRuleByCategoryId({
-  categoryId,
-  tenantId,
-  isInternal,
-}: GetAssignmentRuleDetailParams): Promise<AssignmentRuleDto | null> {
-  const targetTenantIds = await resolveDetailTargetTenantIds({
-    tenantId,
-    isInternal,
-  });
-
-  for (const targetTenantId of targetTenantIds) {
-    const rows = await findAssignmentRuleRowsByTenantIdAndCategoryId(
-      targetTenantId,
-      categoryId,
-    );
-
-    if (!rows.length) {
-      continue;
-    }
-
-    return mapAssignmentRuleRowsToDtos(rows)[0] ?? null;
-  }
-
-  return null;
 }
 
 export async function createAssignmentRule(
@@ -190,29 +158,6 @@ async function resolveTargetTenantId({
   }
 
   return tenant.tenant_id;
-}
-
-async function resolveDetailTargetTenantIds({
-  tenantId,
-  isInternal,
-}: GetAssignmentRulesResponseParams): Promise<number[]> {
-  if (hasTenantId(tenantId)) {
-    const tenant = await getActiveTenantById(tenantId);
-
-    if (!tenant) {
-      throw new Error(`Active tenant not found: ${tenantId}`);
-    }
-
-    return [tenant.tenant_id];
-  }
-
-  const tenants = await getActiveTenants();
-
-  if (isInternal) {
-    return tenants.map((tenant) => tenant.tenant_id);
-  }
-
-  return tenants.slice(0, 1).map((tenant) => tenant.tenant_id);
 }
 
 function hasTenantId(value?: string | number | null): value is string | number {

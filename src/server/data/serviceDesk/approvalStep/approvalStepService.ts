@@ -1,6 +1,6 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 
-import { findCategoryRowsByTenantIdAndCategoryId } from "../category";
+import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
 import { getCategoryTreeByTenantId } from "../category/categoryService";
 import { getActiveTenantById, getActiveTenants } from "../tenant";
 import {
@@ -68,38 +68,6 @@ export async function getApprovalSettingsResponseByTenantId({
   });
 
   return getCategoryApprovalSettingsByTenantId(targetTenantId);
-}
-
-export type GetApprovalStepDetailParams = {
-  approvalStepId: string | number;
-  tenantId?: string | number | null;
-  isInternal: boolean;
-};
-
-export async function getApprovalStepById({
-  approvalStepId,
-  tenantId,
-  isInternal,
-}: GetApprovalStepDetailParams): Promise<ApprovalStepDto | null> {
-  const targetTenantIds = await resolveDetailTargetTenantIds({
-    tenantId,
-    isInternal,
-  });
-
-  for (const targetTenantId of targetTenantIds) {
-    const rows = await findApprovalStepRowsByTenantIdAndApprovalStepId(
-      targetTenantId,
-      approvalStepId,
-    );
-
-    if (!rows.length) {
-      continue;
-    }
-
-    return mapApprovalStepRowsToDtos(rows)[0] ?? null;
-  }
-
-  return null;
 }
 
 export async function createApprovalStep(
@@ -183,29 +151,6 @@ async function resolveTargetTenantId({
   }
 
   return tenant.tenant_id;
-}
-
-async function resolveDetailTargetTenantIds({
-  tenantId,
-  isInternal,
-}: GetApprovalSettingsResponseParams): Promise<number[]> {
-  if (hasTenantId(tenantId)) {
-    const tenant = await getActiveTenantById(tenantId);
-
-    if (!tenant) {
-      throw new Error(`Active tenant not found: ${tenantId}`);
-    }
-
-    return [tenant.tenant_id];
-  }
-
-  const tenants = await getActiveTenants();
-
-  if (isInternal) {
-    return tenants.map((tenant) => tenant.tenant_id);
-  }
-
-  return tenants.slice(0, 1).map((tenant) => tenant.tenant_id);
 }
 
 function hasTenantId(value?: string | number | null): value is string | number {

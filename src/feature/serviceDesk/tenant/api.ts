@@ -17,13 +17,6 @@ export const serviceDeskTenantApi = {
 
     return res.data.items;
   },
-  get: async (id: string | number): Promise<Tenant | null> => {
-    if (!id) return null;
-
-    const res = await client.api.get<Tenant>(`/api/service-desk/tenants/${id}`);
-    return res.data;
-  },
-
   create: async (data: CreateTenantInput) => {
     const res = await client.api.post<Tenant>(`/api/service-desk/tenants`, data);
     return res.data;
@@ -37,11 +30,5 @@ export const serviceDeskTenantApi = {
   remove: async (id: string | number) => {
     await client.api.delete(`/api/service-desk/tenants/${id}`);
     return null;
-  },
-
-  saveList: async (payload: Tenant[]): Promise<Tenant[]> => {
-    const res = await client.api.put<Tenant[]>(`/api/service-desk/tenants`, payload);
-
-    return res.data;
   },
 };

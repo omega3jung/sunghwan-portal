@@ -2,21 +2,15 @@ import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
-import type {
-  DbCategory,
-  SaveServiceDeskCategoryTreePayload,
-} from "@/feature/serviceDesk/category/types";
+import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 import {
   CategoryDto,
-  CategorySubCategoryInputDto,
-  CreateCategoryInputDto,
   CategorySettingsResponseDto,
+  CreateCategoryInputDto,
   UpdateCategoryInputDto,
 } from "@/server/data/serviceDesk/category";
 import {
   createCategory,
-  deactivateCategoryById,
-  getCategoryById,
   getCategorySettingsResponseByTenantId,
   getCategoryTreeByTenantId,
   updateCategoryById,
@@ -24,14 +18,9 @@ import {
 
 import { getPortalApiQueryValue } from "../utils";
 import {
-  resolveCreateCategoryTenantId,
-  resolveTenantIdByCategoryId,
-} from "./serviceDeskPortalApiResolvers";
-import {
   createNotFoundResponse,
   parseBooleanQueryValue,
   parseOptionalId,
-  parseOptionalNumber,
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiShared";
@@ -40,18 +29,13 @@ type CategoryTreeItem =
   SaveServiceDeskCategoryTreePayload["categories"][number];
 
 const CATEGORY_LIST_PATH_PATTERN = /^\/service-desk\/categories$/;
-const CATEGORY_TREE_PATH_PATTERN =
-  /^\/service-desk\/categories\/tenant\/([^/]+)$/;
-const CATEGORY_DETAIL_PATH_PATTERN = /^\/service-desk\/categories\/([^/]+)$/;
 
 export async function handleCategoryPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
   const categoryListMatch = CATEGORY_LIST_PATH_PATTERN.exec(context.path);
-  const categoryTreeMatch = CATEGORY_TREE_PATH_PATTERN.exec(context.path);
-  const categoryDetailMatch = CATEGORY_DETAIL_PATH_PATTERN.exec(context.path);
 
-  if (!categoryListMatch && !categoryTreeMatch && !categoryDetailMatch) {
+  if (!categoryListMatch) {
     return createNotFoundResponse();
   }
 
@@ -92,16 +76,6 @@ export async function handleCategoryPortalApi(
       });
     }
 
-    if (context.method === "POST") {
-      const tenantId = await resolveCreateCategoryTenantId(context);
-      const body = requireBody<DbCategory>(context.options);
-      const category = await createCategory(
-        mapCategoryBodyToCreateInput(tenantId, body),
-      );
-
-      return NextResponse.json(category, { status: 201 });
-    }
-
     if (context.method === "PUT") {
       const body = requireBody<SaveServiceDeskCategoryTreePayload>(
         context.options,
@@ -112,61 +86,6 @@ export async function handleCategoryPortalApi(
     }
 
     return createNotFoundResponse();
-  }
-
-  if (categoryTreeMatch) {
-    if (context.method !== "GET") {
-      return createNotFoundResponse();
-    }
-
-    const tenantId = decodeURIComponent(categoryTreeMatch[1] ?? "");
-    const categories = await getCategoryTreeByTenantId(tenantId);
-
-    return NextResponse.json({ data: categories });
-  }
-
-  const categoryId = decodeURIComponent(categoryDetailMatch?.[1] ?? "");
-
-  if (context.method === "GET") {
-    const tenantId = getPortalApiQueryValue(
-      context.request,
-      context.options,
-      "tenantId",
-    );
-    const isInternal =
-      parseBooleanQueryValue(
-        getPortalApiQueryValue(context.request, context.options, "isInternal"),
-      ) ?? true;
-    const category = await getCategoryById({
-      categoryId,
-      tenantId,
-      isInternal,
-    });
-
-    if (!category) {
-      return createNotFoundResponse();
-    }
-
-    return NextResponse.json(category);
-  }
-
-  if (context.method === "PUT") {
-    const body = requireBody<DbCategory>(context.options);
-    const tenantId = await resolveTenantIdByCategoryId(context, categoryId);
-    const category = await updateCategoryById(
-      tenantId,
-      categoryId,
-      mapCategoryBodyToUpdateInput(body),
-    );
-
-    return NextResponse.json(category);
-  }
-
-  if (context.method === "DELETE") {
-    const tenantId = await resolveTenantIdByCategoryId(context, categoryId);
-    const category = await deactivateCategoryById(tenantId, categoryId);
-
-    return NextResponse.json(category);
   }
 
   return createNotFoundResponse();
@@ -247,58 +166,6 @@ async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {
   }
 
   return tenantCategoryTree;
-}
-
-function mapCategoryBodyToCreateInput(
-  tenantId: number,
-  body: DbCategory,
-): CreateCategoryInputDto {
-  return {
-    category_tenant_id: tenantId,
-    category_name: body.category_name,
-    category_description: body.category_description,
-    category_request_template: body.category_request_template,
-    category_scope: body.category_scope,
-    category_index: body.category_index,
-    category_active: body.category_active,
-    default_priority: body.default_priority,
-    default_risk_level: body.default_risk_level,
-    default_sla_days: body.default_sla_days,
-    sub_category: body.sub_category.map(mapCategorySubCategoryBodyToInput),
-  };
-}
-
-function mapCategoryBodyToUpdateInput(
-  body: DbCategory,
-): UpdateCategoryInputDto {
-  return {
-    category_name: body.category_name,
-    category_description: body.category_description,
-    category_request_template: body.category_request_template,
-    category_scope: body.category_scope,
-    category_index: body.category_index,
-    category_active: body.category_active,
-    default_priority: body.default_priority,
-    default_risk_level: body.default_risk_level,
-    default_sla_days: body.default_sla_days,
-    sub_category: body.sub_category.map(mapCategorySubCategoryBodyToInput),
-  };
-}
-
-function mapCategorySubCategoryBodyToInput(
-  subCategory: DbCategory["sub_category"][number],
-): CategorySubCategoryInputDto {
-  return {
-    category_id: parseOptionalNumber(subCategory.category_id) ?? undefined,
-    category_name: subCategory.category_name,
-    category_description: subCategory.category_description,
-    category_request_template: subCategory.category_request_template,
-    category_index: subCategory.category_index,
-    category_active: subCategory.category_active,
-    default_priority: subCategory.default_priority,
-    default_risk_level: subCategory.default_risk_level,
-    default_sla_days: subCategory.default_sla_days,
-  };
 }
 
 function mapCategoryTreeItemToCreateInput(

@@ -1,10 +1,8 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 
 import {
-  getApprovalStepLocation,
   getApprovalStepStore,
   getTenantCategoriesOrThrow,
-  normalizeApprovalStep,
   normalizeCategoryApprovalSettings,
   resolveTenantId,
 } from "./approvalStepUtils";
@@ -28,26 +26,4 @@ export const localListApprovalSteps = ({
     items: filteredItems,
     total: filteredItems.length,
   };
-};
-
-export const localGetApprovalStep = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const items = getApprovalStepStore(isInternal);
-  const location = getApprovalStepLocation(items, id);
-
-  if (!location) {
-    return null;
-  }
-
-  const approvalStep =
-    items[location.tenantId][location.categoryIndex].approval_step[
-      location.approvalStepIndex
-    ];
-
-  return normalizeApprovalStep(approvalStep);
 };

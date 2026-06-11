@@ -16,7 +16,6 @@ import {
 } from "./categoryMapper";
 import {
   createCategoryRow,
-  deactivateCategoryRowById,
   findCategoryRowsByTenantId,
   findCategoryRowsByTenantIdAndCategoryId,
   updateCategoryRowById,
@@ -57,51 +56,6 @@ export async function getCategorySettingsResponseByTenantId({
   );
 }
 
-export type GetCategoryDetailParams = {
-  categoryId: string | number;
-  tenantId?: string | number | null;
-  isInternal: boolean;
-};
-
-export async function getCategoryById({
-  categoryId,
-  tenantId,
-  isInternal,
-}: GetCategoryDetailParams): Promise<CategoryDto | null> {
-  const targetTenants = await resolveDetailTargetTenants({
-    tenantId,
-    isInternal,
-  });
-
-  for (const tenant of targetTenants) {
-    const rows = await findCategoryRowsByTenantIdAndCategoryId(
-      tenant.tenant_id,
-      categoryId,
-    );
-
-    if (!rows.length) {
-      continue;
-    }
-
-    const hasMainCategory = rows.some(
-      (row) =>
-        Number(row.cat_id) === Number(categoryId) && row.cat_parent_id === null,
-    );
-
-    if (!hasMainCategory) {
-      continue;
-    }
-
-    return (
-      mapCategoryRowsToDtos(rows).find(
-        (category) => category.category_id === Number(categoryId),
-      ) ?? null
-    );
-  }
-
-  return null;
-}
-
 export async function createCategory(
   input: CreateCategoryInputDto,
 ): Promise<CategoryDto> {
@@ -130,7 +84,7 @@ export async function updateCategoryById(
   input: UpdateCategoryInputDto,
 ): Promise<CategoryDto> {
   const { parentRow: currentParentRow, childRows: currentChildRows } =
-    await getActiveCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
+    await getCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
 
   const parentRow = await updateCategoryRowById(
     tenantId,
@@ -153,71 +107,7 @@ export async function updateCategoryById(
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
 }
 
-export async function deactivateCategoryById(
-  tenantId: string | number,
-  categoryId: string | number,
-): Promise<CategoryDto> {
-  const { childRows } = await getActiveCategoryTreeRowsByTenantIdAndCategoryId(
-    tenantId,
-    categoryId,
-  );
-
-  const parentRow = await deactivateCategoryRowById(tenantId, categoryId);
-
-  if (!parentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  const nextChildRows: CategoryRow[] = [];
-
-  for (const childRow of childRows) {
-    if (childRow.cat_active === false) {
-      nextChildRows.push(childRow);
-      continue;
-    }
-
-    const deactivatedChildRow = await deactivateCategoryRowById(
-      tenantId,
-      childRow.cat_id,
-    );
-
-    if (!deactivatedChildRow) {
-      throw new ServiceDeskApiError("api.common.notFound", 404);
-    }
-
-    nextChildRows.push(deactivatedChildRow);
-  }
-
-  return mapCategoryTreeRowsToDto(
-    [parentRow, ...nextChildRows],
-    parentRow.cat_id,
-  );
-}
-
 async function resolveTargetTenants({
-  tenantId,
-  isInternal,
-}: GetCategorySettingsResponseParams): Promise<TenantDto[]> {
-  if (hasTenantId(tenantId)) {
-    const tenant = await getActiveTenantById(tenantId);
-
-    if (!tenant) {
-      throw new Error(`Active tenant not found: ${tenantId}`);
-    }
-
-    return [tenant];
-  }
-
-  const tenants = await getActiveTenants();
-
-  if (isInternal) {
-    return tenants;
-  }
-
-  return tenants.slice(0, 1);
-}
-
-async function resolveDetailTargetTenants({
   tenantId,
   isInternal,
 }: GetCategorySettingsResponseParams): Promise<TenantDto[]> {
@@ -258,7 +148,7 @@ async function assertActiveTenantExists(tenantId: string | number) {
   return tenant;
 }
 
-async function getActiveCategoryTreeRowsByTenantIdAndCategoryId(
+async function getCategoryTreeRowsByTenantIdAndCategoryId(
   tenantId: string | number,
   categoryId: string | number,
 ) {
@@ -268,7 +158,8 @@ async function getActiveCategoryTreeRowsByTenantIdAndCategoryId(
       Number(row.cat_id) === Number(categoryId) && row.cat_parent_id === null,
   );
 
-  if (!parentRow || parentRow.cat_active === false) {
+  // Tree save must be able to resubmit inactive categories as well.
+  if (!parentRow) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 

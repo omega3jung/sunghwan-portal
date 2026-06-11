@@ -1,98 +1,14 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
-import type { DbCategory } from "@/feature/serviceDesk/category";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
-import type {
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "@/feature/serviceDesk/category/write";
 
 import { getLocalDemoCategories } from "../../state";
 import {
   createCategoryIdAssigner,
-  getCategoryLocation,
   getTenantIndexById,
-  normalizeCategory,
   normalizeTenantTree,
   sortCategories,
 } from "./categoryUtils";
 import { buildSynchronizedCategory } from "./treeSync";
-
-export const localCreateCategory = ({
-  isInternal,
-  input,
-}: {
-  isInternal: boolean;
-  input: CreateCategoryInput;
-}) => {
-  const items = getLocalDemoCategories(isInternal);
-  const tenantIndex = getTenantIndexById(items, input.tenantId);
-
-  if (tenantIndex === -1) {
-    throw new ServiceDeskApiError(
-      "api.categories.localDemo.tenantNotFound",
-      404,
-      { tenantId: input.tenantId },
-    );
-  }
-
-  const assignId = createCategoryIdAssigner(items);
-  const nextCategory = buildSynchronizedCategory({
-    category: {
-      ...input,
-      id: undefined,
-    },
-    assignId,
-  });
-
-  items[tenantIndex].category.push(nextCategory);
-  items[tenantIndex].category = sortCategories(items[tenantIndex].category);
-
-  return normalizeCategory(nextCategory);
-};
-
-export const localUpdateCategory = ({
-  isInternal,
-  id,
-  input,
-}: {
-  isInternal: boolean;
-  id: string;
-  input: UpdateCategoryInput;
-}) => {
-  const items = getLocalDemoCategories(isInternal);
-  const location = getCategoryLocation(items, id);
-
-  if (!location) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  const targetTenant = items[location.tenantIndex];
-
-  if (input.tenantId && input.tenantId !== String(targetTenant.tenant_id)) {
-    throw new ServiceDeskApiError(
-      "api.categories.localDemo.tenantMismatch",
-      400,
-      {
-        tenantId: input.tenantId,
-      },
-    );
-  }
-
-  const assignId = createCategoryIdAssigner(items);
-  const nextCategory = buildSynchronizedCategory({
-    category: {
-      ...input,
-      id,
-    },
-    previousCategory: targetTenant.category[location.categoryIndex],
-    assignId,
-  });
-
-  targetTenant.category.splice(location.categoryIndex, 1, nextCategory);
-  targetTenant.category = sortCategories(targetTenant.category);
-
-  return normalizeCategory(nextCategory);
-};
 
 export const localSaveCategoryTree = ({
   isInternal,
@@ -150,38 +66,4 @@ export const localSaveCategoryTree = ({
   ]);
 
   return normalizeTenantTree(targetTenant);
-};
-
-export const localSoftDeleteCategory = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const items = getLocalDemoCategories(isInternal);
-  const location = getCategoryLocation(items, id);
-
-  if (!location) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  const targetCategory =
-    items[location.tenantIndex].category[location.categoryIndex];
-  const nextCategory: DbCategory = {
-    ...targetCategory,
-    category_active: false,
-    sub_category: targetCategory.sub_category.map((subCategory) => ({
-      ...subCategory,
-      category_active: false,
-    })),
-  };
-
-  items[location.tenantIndex].category.splice(
-    location.categoryIndex,
-    1,
-    nextCategory,
-  );
-
-  return normalizeCategory(nextCategory);
 };

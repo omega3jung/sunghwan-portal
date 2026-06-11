@@ -3,19 +3,13 @@ import { NextResponse } from "next/server";
 
 import { getAuthToken } from "@/app/api/_helpers";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import type {
-  DbAssignmentRule,
-  SaveServiceDeskAssignmentRuleTreePayload,
-} from "@/feature/serviceDesk/assignmentRule/types";
+import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
 import type {
   AssignmentRuleDto,
-  CreateAssignmentRuleInputDto,
-  UpdateAssignmentRuleInputDto,
 } from "@/server/data/serviceDesk/assignmentRule";
 import {
   createAssignmentRule,
   deleteAssignmentRuleById,
-  getAssignmentRuleByCategoryId,
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
   updateAssignmentRuleById,
@@ -23,10 +17,6 @@ import {
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo";
 
 import { getPortalApiQueryValue } from "../utils";
-import {
-  resolveAssignmentRuleTargetByCategoryId,
-  resolveTenantIdByCategoryId,
-} from "./serviceDeskPortalApiResolvers";
 import {
   createNotFoundResponse,
   parseBooleanQueryValue,
@@ -44,10 +34,6 @@ type AssignmentTreeNode = {
 const ASSIGNMENT_RULE_RECOMMENDATIONS_PATH_PATTERN =
   /^\/service-desk\/assignment-rules\/recommendations$/;
 const ASSIGNMENT_RULES_LIST_PATH_PATTERN = /^\/service-desk\/assignment-rules$/;
-const ASSIGNMENT_RULES_PATH_PATTERN =
-  /^\/service-desk\/assignment-rules\/tenant\/([^/]+)$/;
-const ASSIGNMENT_RULE_DETAIL_PATH_PATTERN =
-  /^\/service-desk\/assignment-rules\/([^/]+)$/;
 
 export async function handleAssignmentRulePortalApi(
   context: ServiceDeskPortalApiContext,
@@ -57,17 +43,8 @@ export async function handleAssignmentRulePortalApi(
   const assignmentRulesListMatch = ASSIGNMENT_RULES_LIST_PATH_PATTERN.exec(
     context.path,
   );
-  const assignmentRulesMatch = ASSIGNMENT_RULES_PATH_PATTERN.exec(context.path);
-  const assignmentRuleDetailMatch = ASSIGNMENT_RULE_DETAIL_PATH_PATTERN.exec(
-    context.path,
-  );
 
-  if (
-    !assignmentRuleRecommendationsMatch &&
-    !assignmentRulesListMatch &&
-    !assignmentRulesMatch &&
-    !assignmentRuleDetailMatch
-  ) {
+  if (!assignmentRuleRecommendationsMatch && !assignmentRulesListMatch) {
     return createNotFoundResponse();
   }
 
@@ -97,19 +74,6 @@ export async function handleAssignmentRulePortalApi(
       });
     }
 
-    if (context.method === "POST") {
-      const body = requireBody<DbAssignmentRule>(context.options);
-      const tenantId = await resolveTenantIdByCategoryId(
-        context,
-        body.category_id,
-      );
-      const assignmentRule = await createAssignmentRule(
-        mapAssignmentRuleBodyToCreateInput(tenantId, body),
-      );
-
-      return NextResponse.json(assignmentRule, { status: 201 });
-    }
-
     if (context.method === "PUT") {
       const body = requireBody<SaveServiceDeskAssignmentRuleTreePayload>(
         context.options,
@@ -137,66 +101,6 @@ export async function handleAssignmentRulePortalApi(
         isInternal,
       }),
     );
-  }
-
-  if (assignmentRulesMatch) {
-    if (context.method !== "GET") {
-      return createNotFoundResponse();
-    }
-
-    const tenantId = decodeURIComponent(assignmentRulesMatch[1] ?? "");
-    const assignmentRules = await getAssignmentRulesByTenantId(tenantId);
-
-    return NextResponse.json({ data: assignmentRules });
-  }
-
-  const categoryId = decodeURIComponent(assignmentRuleDetailMatch?.[1] ?? "");
-
-  if (context.method === "GET") {
-    const tenantId = getPortalApiQueryValue(
-      context.request,
-      context.options,
-      "tenantId",
-    );
-    const isInternal =
-      parseBooleanQueryValue(
-        getPortalApiQueryValue(context.request, context.options, "isInternal"),
-      ) ?? true;
-    const assignmentRule = await getAssignmentRuleByCategoryId({
-      categoryId,
-      tenantId,
-      isInternal,
-    });
-
-    if (!assignmentRule) {
-      return createNotFoundResponse();
-    }
-
-    return NextResponse.json(assignmentRule);
-  }
-
-  if (context.method === "PUT") {
-    const body = requireBody<DbAssignmentRule>(context.options);
-    const { tenantId, assignmentRule } =
-      await resolveAssignmentRuleTargetByCategoryId(context, categoryId);
-    const updatedAssignmentRule = await updateAssignmentRuleById(
-      tenantId,
-      assignmentRule.assignment_rule_id,
-      mapAssignmentRuleBodyToUpdateInput(body),
-    );
-
-    return NextResponse.json(updatedAssignmentRule);
-  }
-
-  if (context.method === "DELETE") {
-    const { tenantId, assignmentRule } =
-      await resolveAssignmentRuleTargetByCategoryId(context, categoryId);
-    await deleteAssignmentRuleById(
-      tenantId,
-      assignmentRule.assignment_rule_id,
-    );
-
-    return new NextResponse(null, { status: 204 });
   }
 
   return createNotFoundResponse();
@@ -251,32 +155,6 @@ async function saveAssignmentRuleTree(
   }
 
   return getAssignmentRulesByTenantId(tenantId);
-}
-
-function mapAssignmentRuleBodyToCreateInput(
-  tenantId: number,
-  body: DbAssignmentRule,
-): CreateAssignmentRuleInputDto {
-  return {
-    tenant_id: tenantId,
-    category_id: Number(body.category_id),
-    assignee: {
-      job_field_id: body.assignee.job_field_id.map(Number),
-      employee_username: body.assignee.employee_username.map(String),
-    },
-  };
-}
-
-function mapAssignmentRuleBodyToUpdateInput(
-  body: DbAssignmentRule,
-): UpdateAssignmentRuleInputDto {
-  return {
-    category_id: Number(body.category_id),
-    assignee: {
-      job_field_id: body.assignee.job_field_id.map(Number),
-      employee_username: body.assignee.employee_username.map(String),
-    },
-  };
 }
 
 function flattenAssignmentRuleTreePayload(

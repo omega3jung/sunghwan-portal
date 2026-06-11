@@ -9,7 +9,4 @@ export const tenantQueryKeys = {
 
   lists: () => [...tenantQueryKeys.all, "list"] as const,
   list: (params: DbParams) => [...tenantQueryKeys.lists(), params] as const,
-
-  details: () => [...tenantQueryKeys.all, "detail"] as const,
-  detail: (id: string | number) => [...tenantQueryKeys.details(), id] as const,
 };

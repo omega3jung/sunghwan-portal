@@ -97,18 +97,6 @@ returning
 ${ACTIVE_CATEGORY_COLUMNS};
 `;
 
-const DEACTIVATE_CATEGORY_ROW_BY_ID_QUERY = `
-update service_desk.category
-set
-  cat_active = false,
-  cat_updated_at = now()
-where
-  cat_tenant_id = $1
-  and cat_id = $2
-returning
-${ACTIVE_CATEGORY_COLUMNS};
-`;
-
 export async function findCategoryRowsByTenantId(
   tenantId: string | number,
 ): Promise<CategoryRow[]> {
@@ -168,18 +156,6 @@ export async function updateCategoryRowById(
       input.cat_default_risk_level,
       input.cat_default_sla_days,
     ],
-  );
-
-  return rows[0] ?? null;
-}
-
-export async function deactivateCategoryRowById(
-  tenantId: string | number,
-  categoryId: string | number,
-): Promise<CategoryRow | null> {
-  const rows = await queryPortalApi<CategoryRow>(
-    DEACTIVATE_CATEGORY_ROW_BY_ID_QUERY,
-    [Number(tenantId), Number(categoryId)],
   );
 
   return rows[0] ?? null;

@@ -1,6 +1,5 @@
 ﻿import { AssignmentRule } from "@/domain/serviceDesk";
 import {
-  createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
@@ -22,23 +21,7 @@ export const camelAssignmentRuleMapper: ArrayMapper<
   }));
 };
 
-export const snakeAssignmentRuleMapper: ArrayMapper<
-  AssignmentRule,
-  DbAssignmentRule
-> = (data) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.categoryId),
-    assignee: {
-      job_field_id: item.assignee.jobFieldIds.map((id) => parseInt(id)),
-      employee_username: item.assignee.assigneeUsernames,
-    },
-  }));
-};
-
 export const mapAssignmentRuleListPayload = createListPayloadMapper(
-  camelAssignmentRuleMapper,
-);
-export const mapAssignmentRuleItemPayload = createItemPayloadMapper(
   camelAssignmentRuleMapper,
 );
 

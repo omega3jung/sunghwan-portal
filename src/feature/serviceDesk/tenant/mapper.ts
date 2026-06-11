@@ -25,15 +25,5 @@ export const camelTenantMapper: ArrayMapper<DbTenant, Tenant> = (data) => {
   });
 };
 
-export const snakeTenantMapper: ArrayMapper<Tenant, DbTenant> = (data) => {
-  return data.map((item) => ({
-    tenant_id: parseInt(item.id),
-    tenant_company_id: parseInt(item.companyId),
-    tenant_name: item.name,
-    tenant_color: item.color,
-    tenant_active: item.active,
-  }));
-};
-
 export const mapTenantListPayload = createListPayloadMapper(camelTenantMapper);
 export const mapTenantItemPayload = createItemPayloadMapper(camelTenantMapper);

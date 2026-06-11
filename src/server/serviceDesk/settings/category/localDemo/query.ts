@@ -3,11 +3,7 @@ import type { TenantCategoryTree } from "@/domain/serviceDesk";
 import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 
 import { getLocalDemoCategories } from "../../state";
-import {
-  getCategoryLocation,
-  normalizeCategory,
-  normalizeTenantTree,
-} from "./categoryUtils";
+import { normalizeTenantTree } from "./categoryUtils";
 
 export const getLocalCategoryTrees = (
   isInternal: boolean,
@@ -74,23 +70,3 @@ function filterTenantCategoryTreesByActive(
       })),
   }));
 }
-
-export const localGetCategory = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const location = getCategoryLocation(getLocalDemoCategories(isInternal), id);
-
-  if (!location) {
-    return null;
-  }
-
-  return normalizeCategory(
-    getLocalDemoCategories(isInternal)[location.tenantIndex].category[
-      location.categoryIndex
-    ],
-  );
-};

@@ -1,7 +1,7 @@
 ﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRule } from "@/domain/serviceDesk";
 import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule";
-import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule";
+import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule/mapper";
 import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 

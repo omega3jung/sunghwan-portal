@@ -2,7 +2,7 @@ import z from "zod";
 
 import type { LocalizedText } from "@/shared/types";
 
-export const localizedTextSchema = z
+const localizedTextSchema = z
   .object({
     en: z.string(),
   })
@@ -25,7 +25,7 @@ const optionalLocalizedTextSchema = z
     };
   });
 
-export const subCategorySchema = z.object({
+const subCategorySchema = z.object({
   id: z.string().optional(),
   name: localizedTextSchema,
   description: optionalLocalizedTextSchema.optional(),
@@ -37,26 +37,8 @@ export const subCategorySchema = z.object({
   defaultSlaDays: z.number().int().nonnegative().optional(),
 });
 
-export const categorySchema = z.object({
+const categorySchema = z.object({
   id: z.string().optional(),
-  tenantId: z.string().min(1).optional(),
-  name: localizedTextSchema,
-  description: optionalLocalizedTextSchema.optional(),
-  requestTemplate: optionalLocalizedTextSchema.optional(),
-  scope: z.enum(["PORTAL", "INTERNAL"]),
-  index: z.number().int().nonnegative(),
-  active: z.boolean(),
-  defaultPriority: z.enum(["urgent", "high", "medium", "low"]),
-  defaultRiskLevel: z.enum(["critical", "high", "medium", "low"]),
-  defaultSlaDays: z.number().int().nonnegative(),
-  subCategories: z.array(subCategorySchema),
-});
-
-export const createCategorySchema = categorySchema.extend({
-  tenantId: z.string().min(1),
-});
-
-export const updateCategorySchema = z.object({
   tenantId: z.string().min(1).optional(),
   name: localizedTextSchema,
   description: optionalLocalizedTextSchema.optional(),

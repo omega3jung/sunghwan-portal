@@ -8,21 +8,12 @@ import {
 } from "@/app/api/_helpers";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
-  mapCategoryItemPayload,
   mapCategoryListPayload,
   mapCategoryTreePayload,
 } from "@/feature/serviceDesk/category/mapper";
-import {
-  createCategorySchema,
-  saveCategoryTreeSchema,
-} from "@/feature/serviceDesk/category/request.schema";
+import { saveCategoryTreeSchema } from "@/feature/serviceDesk/category/request.schema";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 import {
-  CreateCategoryInput,
-  toCategoryWritePayload,
-} from "@/feature/serviceDesk/category/write";
-import {
-  localCreateCategory,
   localListCategories,
   localSaveCategoryTree,
 } from "@/server/serviceDesk/settings/category/localDemo";
@@ -66,50 +57,6 @@ export async function GET(request: NextRequest) {
     query: proxyQuery,
     errorMessage: tServiceDeskApi("api.categories.fetchList"),
     mapData: mapCategoryListPayload,
-  });
-}
-
-export async function POST(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-  const parsedBody = createCategorySchema.safeParse(
-    (await request.json()) as CreateCategoryInput,
-  );
-
-  if (!parsedBody.success) {
-    return NextResponse.json(
-      { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
-      { status: 400 },
-    );
-  }
-
-  const body = parsedBody.data;
-
-  if (!isRemote) {
-    try {
-      const isInternal = await isInternalUser(request);
-      return NextResponse.json(
-        localCreateCategory({
-          isInternal,
-          input: body,
-        }),
-        { status: 201 },
-      );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.categories.create"),
-      });
-    }
-  }
-
-  return portalApiJson(request, {
-    method: "POST",
-    path: "/service-desk/categories",
-    query: {
-      tenantId: body.tenantId,
-    },
-    body: toCategoryWritePayload(body),
-    errorMessage: tServiceDeskApi("api.categories.create"),
-    mapData: mapCategoryItemPayload,
   });
 }
 

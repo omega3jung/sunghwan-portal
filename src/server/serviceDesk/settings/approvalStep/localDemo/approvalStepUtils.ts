@@ -9,7 +9,7 @@ import {
   camelApprovalStepMapper,
   camelCategoryApprovalSettingMapper,
 } from "@/feature/serviceDesk/approvalStep/mapper";
-import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category/mapper";
+import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 

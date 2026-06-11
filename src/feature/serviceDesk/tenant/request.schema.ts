@@ -1,12 +1,12 @@
 import z from "zod";
 
-export const localizedTextSchema = z
+const localizedTextSchema = z
   .object({
     en: z.string(),
   })
   .catchall(z.string());
 
-export const tenantSchema = z.object({
+const tenantSchema = z.object({
   id: z.string().optional(),
   companyId: z.string().min(1),
   name: localizedTextSchema,
@@ -20,8 +20,4 @@ export const createTenantSchema = tenantSchema.omit({
 
 export const updateTenantSchema = tenantSchema.omit({
   id: true,
-});
-
-export const saveTenantListSchema = z.object({
-  tenants: z.array(tenantSchema),
 });

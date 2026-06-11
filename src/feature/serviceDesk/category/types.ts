@@ -2,6 +2,8 @@ import { Priority, RiskLevel } from "@/domain/common";
 import { CategoryScope, MainCategory, SubCategory } from "@/domain/serviceDesk";
 import { LocalizedText } from "@/shared/types";
 
+import type { DbTenant } from "../tenant/types";
+
 // back-end data structures.
 export interface DbCategoryBase {
   category_id: number; // string number. can use parseInt.
@@ -27,6 +29,8 @@ export interface DbCategory extends DbCategoryBase {
   default_sla_days: number; // required to category.
   sub_category: DbSubCategory[];
 }
+
+export type DbTenantCategoryTree = DbTenant & { category: DbCategory[] };
 
 export type CategoryTreeSyncSubCategoryInput = Omit<SubCategory, "id"> & {
   id?: string;

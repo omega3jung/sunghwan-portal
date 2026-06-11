@@ -4,11 +4,10 @@ import {
   CategoryApprovalSettings,
 } from "@/domain/serviceDesk";
 import {
-  createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper, Mapper } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
+import { nullToUndefined } from "@/shared/utils/value";
 
 import {
   DbApprovalAssigneeType,
@@ -70,45 +69,8 @@ const camelAssigneeTypeMapper: Mapper<
   }
 };
 
-export const snakeApprovalStepMapper: ArrayMapper<
-  ApprovalStep,
-  DbApprovalStep
-> = (data) => {
-  return data.map((item) => ({
-    approval_step_id: parseInt(item.id),
-    approval_step_name: item.name,
-    approval_step_description: undefinedToNull(item.description),
-    approval_step_index: item.index,
-    category_id: parseInt(item.categoryId),
-    approval_step_assignee: snakeAssigneeTypeMapper(item.stepAssignee),
-    skip_access_level: undefinedToNull(item.skipAccessLevel),
-  }));
-};
-
-const snakeAssigneeTypeMapper: Mapper<
-  ApprovalAssigneeType,
-  DbApprovalAssigneeType
-> = (data) => {
-  switch (data.type) {
-    case "MANAGER":
-      return { type: data.type, level: data.level };
-    case "DEPARTMENT":
-      return { type: data.type, department_id: parseInt(data.departmentId) };
-    case "JOB_FIELD":
-      return { type: data.type, field_id: parseInt(data.jobFieldId) };
-    case "EMPLOYEE":
-      return {
-        type: data.type,
-        employee_username: data.employeeUsernames,
-      };
-  }
-};
-
 export const mapApprovalSettingsListPayload = createListPayloadMapper(
   camelCategoryApprovalSettingMapper,
-);
-export const mapApprovalStepItemPayload = createItemPayloadMapper(
-  camelApprovalStepMapper,
 );
 
 export const mapApprovalSettingsTreePayload = (payload: unknown) => {

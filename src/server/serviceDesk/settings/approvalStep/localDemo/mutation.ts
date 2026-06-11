@@ -1,114 +1,12 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
-import type {
-  CreateApprovalStepInput,
-  UpdateApprovalStepInput,
-} from "@/feature/serviceDesk/approvalStep/write";
 
 import {
   createApprovalStepIdAssigner,
-  getApprovalStepLocation,
   getApprovalStepStore,
-  getCategoryLocationById,
   getTenantCategoriesOrThrow,
-  normalizeApprovalStep,
   normalizeCategoryApprovalSettings,
-  sortApprovalSteps,
 } from "./approvalStepUtils";
 import { buildApprovalStepFromInput, createFallbackCategory } from "./treeSync";
-
-export const localCreateApprovalStep = ({
-  isInternal,
-  input,
-}: {
-  isInternal: boolean;
-  input: CreateApprovalStepInput;
-}) => {
-  const items = getApprovalStepStore(isInternal);
-  const categoryLocation = getCategoryLocationById(items, input.categoryId);
-
-  if (!categoryLocation) {
-    throw new ServiceDeskApiError(
-      "api.approvalSteps.localDemo.categoryNotFound",
-      404,
-      { categoryId: input.categoryId },
-    );
-  }
-
-  const categories = items[categoryLocation.tenantId];
-  const assignId = createApprovalStepIdAssigner(items);
-  const nextApprovalStep = buildApprovalStepFromInput({
-    input,
-    assignId,
-  });
-
-  categories[categoryLocation.categoryIndex].approval_step.push(
-    nextApprovalStep,
-  );
-  categories[categoryLocation.categoryIndex].approval_step = sortApprovalSteps(
-    categories[categoryLocation.categoryIndex].approval_step,
-  );
-
-  return normalizeApprovalStep(nextApprovalStep);
-};
-
-export const localUpdateApprovalStep = ({
-  isInternal,
-  id,
-  input,
-}: {
-  isInternal: boolean;
-  id: string;
-  input: UpdateApprovalStepInput;
-}) => {
-  const items = getApprovalStepStore(isInternal);
-  const approvalStepLocation = getApprovalStepLocation(items, id);
-
-  if (!approvalStepLocation) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  const targetCategoryLocation = getCategoryLocationById(
-    items,
-    input.categoryId,
-  );
-
-  if (!targetCategoryLocation) {
-    throw new ServiceDeskApiError(
-      "api.approvalSteps.localDemo.categoryNotFound",
-      404,
-      { categoryId: input.categoryId },
-    );
-  }
-
-  const assignId = createApprovalStepIdAssigner(items);
-  const previousApprovalStep =
-    items[approvalStepLocation.tenantId][approvalStepLocation.categoryIndex]
-      .approval_step[approvalStepLocation.approvalStepIndex];
-  const nextApprovalStep = buildApprovalStepFromInput({
-    input: {
-      ...input,
-      id,
-    },
-    assignId,
-    previousApprovalStep,
-  });
-
-  items[approvalStepLocation.tenantId][
-    approvalStepLocation.categoryIndex
-  ].approval_step.splice(approvalStepLocation.approvalStepIndex, 1);
-  items[targetCategoryLocation.tenantId][
-    targetCategoryLocation.categoryIndex
-  ].approval_step.push(nextApprovalStep);
-  items[targetCategoryLocation.tenantId][
-    targetCategoryLocation.categoryIndex
-  ].approval_step = sortApprovalSteps(
-    items[targetCategoryLocation.tenantId][targetCategoryLocation.categoryIndex]
-      .approval_step,
-  );
-
-  return normalizeApprovalStep(nextApprovalStep);
-};
 
 export const localSaveApprovalStepTree = ({
   isInternal,
@@ -171,26 +69,4 @@ export const localSaveApprovalStepTree = ({
   items[payload.tenantId] = [...synchronizedCategories, ...preservedCategories];
 
   return normalizeCategoryApprovalSettings(items[payload.tenantId]);
-};
-
-export const localDeleteApprovalStep = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const items = getApprovalStepStore(isInternal);
-  const location = getApprovalStepLocation(items, id);
-
-  if (!location) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  items[location.tenantId][location.categoryIndex].approval_step.splice(
-    location.approvalStepIndex,
-    1,
-  );
-
-  return new Response(null, { status: 204 });
 };

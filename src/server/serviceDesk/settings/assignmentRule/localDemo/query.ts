@@ -2,9 +2,7 @@ import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 
 import {
   getAssignmentRuleStore,
-  getRuleIndexByCategoryId,
   getTenantRulesOrThrow,
-  normalizeAssignmentRule,
   normalizeAssignmentRules,
   resolveTenantId,
 } from "./ruleUtils";
@@ -26,26 +24,4 @@ export const localListAssignmentRules = ({
     items: filteredItems,
     total: filteredItems.length,
   };
-};
-
-export const localGetAssignmentRule = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const items = getAssignmentRuleStore(isInternal);
-
-  for (const rules of Object.values(items)) {
-    const ruleIndex = getRuleIndexByCategoryId(rules, id);
-
-    if (ruleIndex < 0) {
-      continue;
-    }
-
-    return normalizeAssignmentRule(rules[ruleIndex]);
-  }
-
-  return null;
 };

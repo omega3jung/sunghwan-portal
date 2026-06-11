@@ -21,16 +21,3 @@ export const useServiceDeskTenantListQuery = (params: DbParams) => {
     ...ticketQueryOptions,
   });
 };
-
-export const useServiceDeskTenantQuery = (id: string | number) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
-
-  return useQuery({
-    queryKey: tenantQueryKeys.detail(id),
-    queryFn: () => serviceDeskTenantApi.get(id),
-    enabled: !!id && !!dataScope,
-    ...ticketQueryOptions,
-  });
-};

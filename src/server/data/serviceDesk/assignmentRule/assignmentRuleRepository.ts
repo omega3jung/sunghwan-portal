@@ -6,7 +6,7 @@ import {
   UpdateAssignmentRuleRowInput,
 } from "./assignmentRuleRow";
 
-const ACTIVE_ASSIGNMENT_RULE_COLUMNS = `
+const ASSIGNMENT_RULE_COLUMNS = `
   ar_id,
   ar_category_id,
   ar_assignee
@@ -14,7 +14,7 @@ const ACTIVE_ASSIGNMENT_RULE_COLUMNS = `
 
 const FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_QUERY = `
 select
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS}
+${ASSIGNMENT_RULE_COLUMNS}
 from service_desk.assignment_rule ar
 join service_desk.category cat
   on cat.cat_id = ar.ar_category_id
@@ -27,7 +27,7 @@ order by
 
 const FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_AND_CATEGORY_ID_QUERY = `
 select
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS}
+${ASSIGNMENT_RULE_COLUMNS}
 from service_desk.assignment_rule ar
 join service_desk.category cat
   on cat.cat_id = ar.ar_category_id
@@ -39,7 +39,7 @@ order by
 
 const FIND_ASSIGNMENT_RULE_ROW_BY_TENANT_ID_AND_ASSIGNMENT_RULE_ID_QUERY = `
 select
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS}
+${ASSIGNMENT_RULE_COLUMNS}
 from service_desk.assignment_rule ar
 join service_desk.category cat
   on cat.cat_id = ar.ar_category_id
@@ -59,7 +59,7 @@ values (
   $2::jsonb
 )
 returning
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS};
+${ASSIGNMENT_RULE_COLUMNS};
 `;
 
 const UPDATE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY = `
@@ -74,7 +74,7 @@ where
   and cat.cat_tenant_id = $1
   and ar.ar_id = $2
 returning
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS};
+${ASSIGNMENT_RULE_COLUMNS};
 `;
 
 const DELETE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY = `
@@ -85,7 +85,7 @@ where
   and cat.cat_tenant_id = $1
   and ar.ar_id = $2
 returning
-${ACTIVE_ASSIGNMENT_RULE_COLUMNS};
+${ASSIGNMENT_RULE_COLUMNS};
 `;
 
 export async function findAssignmentRuleRowsByTenantId(

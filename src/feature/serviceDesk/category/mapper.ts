@@ -4,16 +4,12 @@ import {
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
 import {
-  createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
+import { nullToUndefined } from "@/shared/utils/value";
 
-import { DbTenant } from "../tenant";
-import { DbCategory, DbSubCategory } from "./types";
-
-export type DbTenantCategoryTree = DbTenant & { category: DbCategory[] };
+import type { DbCategory, DbSubCategory, DbTenantCategoryTree } from "./types";
 
 export const camelTenantCategoryTreeMapper: ArrayMapper<
   DbTenantCategoryTree,
@@ -87,45 +83,9 @@ const camelSubCategoryMapper: ArrayMapper<DbSubCategory, SubCategory> = (
   });
 };
 
-export const snakeCategoryMapper: ArrayMapper<MainCategory, DbCategory> = (
-  data,
-) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_scope: item.scope,
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: item.defaultPriority,
-    default_risk_level: item.defaultRiskLevel,
-    default_sla_days: item.defaultSlaDays,
-    sub_category: snakeSubCategoryMapper(item.subCategories),
-  }));
-};
-
-const snakeSubCategoryMapper: ArrayMapper<SubCategory, DbSubCategory> = (
-  data,
-) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: undefinedToNull(item.defaultPriority),
-    default_risk_level: undefinedToNull(item.defaultRiskLevel),
-    default_sla_days: undefinedToNull(item.defaultSlaDays),
-  }));
-};
-
 export const mapCategoryListPayload = createListPayloadMapper(
   camelTenantCategoryTreeMapper,
 );
-export const mapCategoryItemPayload =
-  createItemPayloadMapper(camelCategoryMapper);
 
 export const mapCategoryTreePayload = (payload: unknown) => {
   if (!payload || typeof payload !== "object") {

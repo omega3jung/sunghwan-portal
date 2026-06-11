@@ -40,17 +40,3 @@ export const useDeleteServiceDeskTenant = () => {
     },
   });
 };
-
-export const useSaveServiceDeskTenantList = () => {
-  const queryTenant = useQueryClient();
-
-  // message will be handeled where call mutation by useMutationToast.
-  return useMutation({
-    mutationFn: serviceDeskTenantApi.saveList,
-    onSuccess: async () => {
-      await queryTenant.invalidateQueries({
-        queryKey: tenantQueryKeys.lists(),
-      });
-    },
-  });
-};

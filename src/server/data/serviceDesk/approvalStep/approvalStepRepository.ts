@@ -6,7 +6,7 @@ import {
   UpdateApprovalStepRowInput,
 } from "./approvalStepRow";
 
-const ACTIVE_APPROVAL_STEP_COLUMNS = `
+const APPROVAL_STEP_COLUMNS = `
   aps_id,
   aps_category_id,
   aps_name,
@@ -18,7 +18,7 @@ const ACTIVE_APPROVAL_STEP_COLUMNS = `
 
 const FIND_APPROVAL_STEP_ROWS_BY_TENANT_ID_QUERY = `
 select
-${ACTIVE_APPROVAL_STEP_COLUMNS}
+${APPROVAL_STEP_COLUMNS}
 from service_desk.approval_step aps
 join service_desk.category cat
   on cat.cat_id = aps.aps_category_id
@@ -32,7 +32,7 @@ order by
 
 const FIND_APPROVAL_STEP_ROWS_BY_TENANT_ID_AND_APPROVAL_STEP_ID_QUERY = `
 select
-${ACTIVE_APPROVAL_STEP_COLUMNS}
+${APPROVAL_STEP_COLUMNS}
 from service_desk.approval_step aps
 join service_desk.category cat
   on cat.cat_id = aps.aps_category_id
@@ -60,7 +60,7 @@ values (
   $6
 )
 returning
-${ACTIVE_APPROVAL_STEP_COLUMNS};
+${APPROVAL_STEP_COLUMNS};
 `;
 
 const UPDATE_APPROVAL_STEP_ROW_BY_ID_QUERY = `
@@ -79,7 +79,7 @@ where
   and cat.cat_tenant_id = $1
   and aps.aps_id = $2
 returning
-${ACTIVE_APPROVAL_STEP_COLUMNS};
+${APPROVAL_STEP_COLUMNS};
 `;
 
 const DELETE_APPROVAL_STEP_ROW_BY_ID_QUERY = `
@@ -90,7 +90,7 @@ where
   and cat.cat_tenant_id = $1
   and aps.aps_id = $2
 returning
-${ACTIVE_APPROVAL_STEP_COLUMNS};
+${APPROVAL_STEP_COLUMNS};
 `;
 
 export async function findApprovalStepRowsByTenantId(
