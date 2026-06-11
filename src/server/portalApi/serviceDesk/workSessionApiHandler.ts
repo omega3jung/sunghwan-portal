@@ -3,7 +3,7 @@ import type { NextResponse } from "next/server";
 import {
   createNotFoundResponse,
   ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+} from "./serviceDeskPortalApiUtils";
 
 export async function handleWorkSessionPortalApi(
   _context: ServiceDeskPortalApiContext,

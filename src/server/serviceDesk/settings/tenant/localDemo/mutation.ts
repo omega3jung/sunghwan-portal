@@ -34,39 +34,17 @@ export const localCreateTenant = ({
   input: CreateTenantInput;
 }) => {
   const items = getLocalDemoTenants();
-  const activeTenantIndex = items.findIndex(
+  const duplicateTenantIndex = items.findIndex(
     (tenant) =>
-      String(tenant.tenant_company_id) === input.companyId &&
-      tenant.tenant_active !== false,
+      String(tenant.tenant_company_id) === input.companyId,
   );
 
-  if (activeTenantIndex >= 0) {
+  if (duplicateTenantIndex >= 0) {
     throw new ServiceDeskApiError(
       "api.tenants.localDemo.companyAlreadyAssigned",
       409,
       { companyId: input.companyId },
     );
-  }
-
-  const inactiveTenantIndex = items.findIndex(
-    (tenant) =>
-      String(tenant.tenant_company_id) === input.companyId &&
-      tenant.tenant_active === false,
-  );
-
-  if (inactiveTenantIndex >= 0) {
-    const nextTenant: DbTenant = {
-      ...items[inactiveTenantIndex],
-      tenant_name: input.name,
-      tenant_color: input.color,
-      tenant_active: input.active ?? true,
-    };
-
-    items.splice(inactiveTenantIndex, 1, nextTenant);
-    sortTenants(items);
-    syncTenantAcrossSettings(nextTenant);
-
-    return normalizeTenant(nextTenant);
   }
 
   const assignId = createTenantIdAssigner(items);
@@ -93,7 +71,7 @@ export const localUpdateTenant = ({
   const items = getLocalDemoTenants();
   const tenantIndex = findTenantIndexById(items, id);
 
-  if (tenantIndex < 0 || items[tenantIndex].tenant_active === false) {
+  if (tenantIndex < 0) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
   }
 

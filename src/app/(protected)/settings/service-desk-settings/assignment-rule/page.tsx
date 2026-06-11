@@ -295,7 +295,6 @@ export default function CategoryPage() {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           language={language}
-          isLoading={isAssignmentRulesLoading || isSaving}
         />
       </div>
 

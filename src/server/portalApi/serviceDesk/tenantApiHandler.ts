@@ -5,8 +5,8 @@ import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
 import {
   createTenant,
   deactivateTenantById,
-  getActiveTenantById,
-  getActiveTenants,
+  getTenantById,
+  getTenants,
   updateTenantById,
 } from "@/server/data/serviceDesk/tenant";
 
@@ -14,7 +14,7 @@ import {
   createNotFoundResponse,
   requireBody,
   ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+} from "./serviceDeskPortalApiUtils";
 
 const TENANT_LIST_PATH_PATTERN = /^\/service-desk\/tenants$/;
 const TENANT_DETAIL_PATH_PATTERN = /^\/service-desk\/tenants\/([^/]+)$/;
@@ -31,7 +31,7 @@ export async function handleTenantPortalApi(
 
   if (tenantListMatch) {
     if (context.method === "GET") {
-      const items = await getActiveTenants();
+      const items = await getTenants();
 
       return NextResponse.json({
         items,
@@ -52,7 +52,7 @@ export async function handleTenantPortalApi(
   const tenantId = decodeURIComponent(tenantDetailMatch?.[1] ?? "");
 
   if (context.method === "GET") {
-    const tenant = await getActiveTenantById(tenantId);
+    const tenant = await getTenantById(tenantId);
 
     if (!tenant) {
       return createNotFoundResponse();

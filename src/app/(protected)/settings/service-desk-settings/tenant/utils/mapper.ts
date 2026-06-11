@@ -115,14 +115,15 @@ export function buildInitialTenantSettings(
 
 export function createTenantFromCompany(
   company: Company,
+  existingTenant?: Tenant,
 ): TenantSettingItem {
   return {
-    id: company.id,
+    id: existingTenant?.id ?? company.id,
     companyId: company.id,
-    name: normalizeLocalizedText(company.name),
+    name: normalizeLocalizedText(existingTenant?.name ?? company.name),
     code: company.code,
-    color: DEFAULT_TENANT_COLOR,
-    active: company.active,
+    color: existingTenant?.color ?? DEFAULT_TENANT_COLOR,
+    active: true,
     isPortalOwner: company.isPortalOwner,
   };
 }

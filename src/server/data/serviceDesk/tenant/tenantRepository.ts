@@ -6,7 +6,7 @@ import {
   UpdateTenantRowInput,
 } from "./tenantRow";
 
-const ACTIVE_TENANT_COLUMNS = `
+const TENANT_COLUMNS = `
   tn_id,
   tn_company_id,
   tn_name,
@@ -14,9 +14,23 @@ const ACTIVE_TENANT_COLUMNS = `
   tn_active
 `;
 
+const FIND_TENANT_ROW_BY_ID_QUERY = `
+select
+${TENANT_COLUMNS}
+from service_desk.tenant
+where tn_id = $1;
+`;
+
+const FIND_TENANT_ROWS_QUERY = `
+select
+${TENANT_COLUMNS}
+from service_desk.tenant
+order by tn_id;
+`;
+
 const FIND_ACTIVE_TENANT_ROW_BY_ID_QUERY = `
 select
-${ACTIVE_TENANT_COLUMNS}
+${TENANT_COLUMNS}
 from service_desk.tenant
 where tn_id = $1
   and tn_active = true;
@@ -24,7 +38,7 @@ where tn_id = $1
 
 const FIND_ACTIVE_TENANT_ROWS_QUERY = `
 select
-${ACTIVE_TENANT_COLUMNS}
+${TENANT_COLUMNS}
 from service_desk.tenant
 where tn_active = true
 order by tn_id;
@@ -44,7 +58,7 @@ values (
   $4
 )
 returning
-${ACTIVE_TENANT_COLUMNS};
+${TENANT_COLUMNS};
 `;
 
 const UPDATE_TENANT_ROW_BY_ID_QUERY = `
@@ -52,12 +66,12 @@ update service_desk.tenant
 set
   tn_name = $2::jsonb,
   tn_color = $3,
+  tn_active = $4,
   tn_updated_at = now()
 where
   tn_id = $1
-  and tn_active = true
 returning
-${ACTIVE_TENANT_COLUMNS};
+${TENANT_COLUMNS};
 `;
 
 const DEACTIVATE_TENANT_ROW_BY_ID_QUERY = `
@@ -69,8 +83,22 @@ where
   tn_id = $1
   and tn_active = true
 returning
-${ACTIVE_TENANT_COLUMNS};
+${TENANT_COLUMNS};
 `;
+
+export async function findTenantRowById(
+  tenantId: string | number,
+): Promise<TenantRow | null> {
+  const rows = await queryPortalApi<TenantRow>(FIND_TENANT_ROW_BY_ID_QUERY, [
+    Number(tenantId),
+  ]);
+
+  return rows[0] ?? null;
+}
+
+export async function findTenantRows(): Promise<TenantRow[]> {
+  return queryPortalApi<TenantRow>(FIND_TENANT_ROWS_QUERY);
+}
 
 export async function findActiveTenantRowById(
   tenantId: string | number,
@@ -108,6 +136,7 @@ export async function updateTenantRowById(
     Number(tenantId),
     JSON.stringify(input.tn_name),
     input.tn_color,
+    input.tn_active,
   ]);
 
   return rows[0] ?? null;

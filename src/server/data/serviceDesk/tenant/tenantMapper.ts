@@ -40,5 +40,6 @@ export function mapUpdateTenantInputDtoToRowInput(
   return {
     tn_name: input.tenant_name,
     tn_color: input.tenant_color,
+    tn_active: input.tenant_active ?? true,
   };
 }

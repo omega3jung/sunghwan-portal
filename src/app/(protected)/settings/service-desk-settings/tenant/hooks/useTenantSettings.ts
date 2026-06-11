@@ -76,6 +76,13 @@ export function useTenantSettings({
     () => createTenantSignature(tenants),
     [tenants],
   );
+  const restorableSourceTenantsByCompanyId = useMemo(
+    () =>
+      new Map(
+        sourceTenants.map((tenant) => [tenant.companyId, tenant]),
+      ),
+    [sourceTenants],
+  );
   const tenantCompanyIds = useMemo(
     () => new Set(tenants.map((tenant) => tenant.companyId)),
     [tenants],
@@ -173,18 +180,21 @@ export function useTenantSettings({
       return;
     }
 
-    const nextTenants = [
-      ...tenants,
-      ...companiesToAdd.map((company) => createTenantFromCompany(company)),
-    ];
+    const addedTenants = companiesToAdd.map((company) =>
+      createTenantFromCompany(
+        company,
+        restorableSourceTenantsByCompanyId.get(company.id),
+      ),
+    );
+    const nextTenants = [...tenants, ...addedTenants];
 
     setTenants(nextTenants);
     setSelectedTenantIds(
-      companiesToAdd
-        .filter((company) => !company.isPortalOwner)
-        .map((company) => company.id),
+      addedTenants
+        .filter((tenant) => !tenant.isPortalOwner)
+        .map((tenant) => tenant.id),
     );
-    setFocusedTenantId(companiesToAdd[0]?.id ?? null);
+    setFocusedTenantId(addedTenants[0]?.id ?? null);
     setSelectedCompanyIds([]);
   };
 
@@ -266,10 +276,15 @@ export function useTenantSettings({
         (tenant) => !sourceTenantsById.has(tenant.id),
       );
       const updatedTenants = nextTenants.filter((tenant) => {
+        const sourceTenant = sourceTenantsById.get(tenant.id);
         const baselineTenant = baselineTenantsById.get(tenant.id);
 
-        if (!baselineTenant || !sourceTenantsById.has(tenant.id)) {
+        if (!sourceTenant) {
           return false;
+        }
+
+        if (!baselineTenant) {
+          return sourceTenant.active === false;
         }
 
         return hasTenantSettingsChanged(tenant, baselineTenant);

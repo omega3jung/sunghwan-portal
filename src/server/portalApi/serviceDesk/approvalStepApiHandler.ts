@@ -22,7 +22,7 @@ import {
   parseOptionalId,
   requireBody,
   ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+} from "./serviceDeskPortalApiUtils";
 
 type ApprovalTreeCategoryItem =
   SaveServiceDeskApprovalStepTreePayload["categories"][number];
@@ -114,7 +114,8 @@ async function saveApprovalStepTree(
     );
   const submittedExistingApprovalStepIds = new Set(
     submittedApprovalStepPlans.flatMap((plan) =>
-      plan.approvalStepId !== null && currentApprovalStepsById.has(plan.approvalStepId)
+      plan.approvalStepId !== null &&
+      currentApprovalStepsById.has(plan.approvalStepId)
         ? [plan.approvalStepId]
         : [],
     ),
@@ -179,7 +180,10 @@ async function moveRetainedApprovalStepsToTemporaryIndexes(
   currentApprovalSteps: ApprovalStepDto[],
   retainedApprovalStepIds: Set<number>,
 ) {
-  const retainedApprovalStepsByCategoryId = new Map<number, ApprovalStepDto[]>();
+  const retainedApprovalStepsByCategoryId = new Map<
+    number,
+    ApprovalStepDto[]
+  >();
 
   for (const approvalStep of currentApprovalSteps) {
     if (!retainedApprovalStepIds.has(approvalStep.approval_step_id)) {
@@ -272,10 +276,7 @@ function getCurrentMaxApprovalStepIndex(
   );
 }
 
-function toTemporaryApprovalStepIndex(
-  index: number,
-  currentMaxIndex: number,
-) {
+function toTemporaryApprovalStepIndex(index: number, currentMaxIndex: number) {
   return currentMaxIndex + index;
 }
 

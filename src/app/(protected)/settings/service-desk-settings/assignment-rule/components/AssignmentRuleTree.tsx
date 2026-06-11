@@ -26,7 +26,6 @@ type Props = {
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;
   language: SupportedLanguage;
-  isLoading: boolean;
 };
 
 export const AsgginmentRuleTree = ({
@@ -35,7 +34,6 @@ export const AsgginmentRuleTree = ({
   selectedId,
   setSelectedId,
   language,
-  isLoading,
 }: Props) => {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);

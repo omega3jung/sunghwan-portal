@@ -86,16 +86,3 @@ export async function POST(request: NextRequest) {
     mapData: mapTenantItemPayload,
   });
 }
-
-export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-
-  return NextResponse.json(
-    {
-      message: isRemote
-        ? tServiceDeskApi("api.tenants.remoteNotImplemented")
-        : "Bulk tenant save is not implemented for LOCAL tenant settings. Use item-level mutations instead.",
-    },
-    { status: 501 },
-  );
-}

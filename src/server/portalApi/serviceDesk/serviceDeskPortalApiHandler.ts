@@ -1,16 +1,16 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 import { toApiErrorResponse } from "@/app/api/_helpers";
 
-import { PortalApiJsonOptions } from "../types";
+import type { PortalApiJsonOptions } from "../types";
 import { normalizePath } from "../utils";
 import { handleApprovalStepPortalApi } from "./approvalStepApiHandler";
 import { handleAssignmentRulePortalApi } from "./assignmentRuleApiHandler";
 import { handleCategoryPortalApi } from "./categoryApiHandler";
 import {
   createNotFoundResponse,
-  ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+  type ServiceDeskPortalApiContext,
+} from "./serviceDeskPortalApiUtils";
 import { handleTenantPortalApi } from "./tenantApiHandler";
 import { handleTicketActionPortalApi } from "./ticketActionApiHandler";
 import { handleTicketPortalApi } from "./ticketApiHandler";

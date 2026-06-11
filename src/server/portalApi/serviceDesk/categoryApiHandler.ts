@@ -23,7 +23,7 @@ import {
   parseOptionalId,
   requireBody,
   ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+} from "./serviceDeskPortalApiUtils";
 
 type CategoryTreeItem =
   SaveServiceDeskCategoryTreePayload["categories"][number];
@@ -56,11 +56,7 @@ export async function handleCategoryPortalApi(
         ) ?? true;
       const active =
         parseBooleanQueryValue(
-          getPortalApiQueryValue(
-            context.request,
-            context.options,
-            "active",
-          ),
+          getPortalApiQueryValue(context.request, context.options, "active"),
         ) ?? null;
       const items = filterCategorySettingsByActive(
         await getCategorySettingsResponseByTenantId({

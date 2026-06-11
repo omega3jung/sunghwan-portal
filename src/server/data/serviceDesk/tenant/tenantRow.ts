@@ -18,4 +18,5 @@ export type CreateTenantRowInput = {
 export type UpdateTenantRowInput = {
   tn_name: LocalizedText;
   tn_color: string;
+  tn_active: boolean;
 };

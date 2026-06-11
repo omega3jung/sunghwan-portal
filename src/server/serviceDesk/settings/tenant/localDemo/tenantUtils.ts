@@ -71,9 +71,8 @@ const upsertTenantTree = ({
   sortTenantTreeStore(items);
 };
 
-export const listActiveTenants = (items = getLocalDemoTenants()) => {
+export const listTenants = (items = getLocalDemoTenants()) => {
   return items
-    .filter((tenant) => tenant.tenant_active !== false)
     .slice()
     .sort(compareTenants);
 };

@@ -4,9 +4,7 @@ import { NextResponse } from "next/server";
 import { getAuthToken } from "@/app/api/_helpers";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule/recommendation";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
-import type {
-  AssignmentRuleDto,
-} from "@/server/data/serviceDesk/assignmentRule";
+import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule";
 import {
   createAssignmentRule,
   deleteAssignmentRuleById,
@@ -22,7 +20,7 @@ import {
   parseBooleanQueryValue,
   requireBody,
   ServiceDeskPortalApiContext,
-} from "./serviceDeskPortalApiShared";
+} from "./serviceDeskPortalApiUtils";
 
 type AssignmentTreeCategoryItem =
   SaveServiceDeskAssignmentRuleTreePayload["categories"][number];

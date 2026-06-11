@@ -1,7 +1,7 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 
 import { getLocalDemoTenants } from "../../state";
-import { listActiveTenants, normalizeTenant } from "./tenantUtils";
+import { listTenants, normalizeTenant } from "./tenantUtils";
 
 export const localListTenants = ({
   searchParams,
@@ -10,7 +10,7 @@ export const localListTenants = ({
 }) => {
   const items = filterItemsByQuery(
     searchParams,
-    listActiveTenants(getLocalDemoTenants()).map(normalizeTenant),
+    listTenants(getLocalDemoTenants()).map(normalizeTenant),
   );
 
   return {
@@ -20,7 +20,7 @@ export const localListTenants = ({
 };
 
 export const localGetTenant = ({ id }: { id: string }) => {
-  const targetTenant = listActiveTenants(getLocalDemoTenants()).find(
+  const targetTenant = listTenants(getLocalDemoTenants()).find(
     (tenant) => String(tenant.tenant_id) === id,
   );
 

@@ -16,8 +16,28 @@ import {
   deactivateTenantRowById,
   findActiveTenantRowById,
   findActiveTenantRows,
+  findTenantRowById,
+  findTenantRows,
   updateTenantRowById,
 } from "./tenantRepository";
+
+export async function getTenantById(
+  tenantId: string | number,
+): Promise<TenantDto | null> {
+  const row = await findTenantRowById(tenantId);
+
+  if (!row) {
+    return null;
+  }
+
+  return mapTenantRowToDto(row);
+}
+
+export async function getTenants(): Promise<TenantDto[]> {
+  const rows = await findTenantRows();
+
+  return mapTenantRowsToDtos(rows);
+}
 
 export async function getActiveTenantById(
   tenantId: string | number,
@@ -40,8 +60,8 @@ export async function getActiveTenants(): Promise<TenantDto[]> {
 export async function createTenant(
   input: CreateTenantInputDto,
 ): Promise<TenantDto> {
-  const activeRows = await findActiveTenantRows();
-  const duplicateTenant = activeRows.find(
+  const rows = await findTenantRows();
+  const duplicateTenant = rows.find(
     (row) => Number(row.tn_company_id) === Number(input.tenant_company_id),
   );
 
@@ -66,7 +86,7 @@ export async function updateTenantById(
   tenantId: string | number,
   input: UpdateTenantInputDto,
 ): Promise<TenantDto> {
-  const currentRow = await findActiveTenantRowById(tenantId);
+  const currentRow = await findTenantRowById(tenantId);
 
   if (!currentRow) {
     throw new ServiceDeskApiError("api.common.notFound", 404);
