@@ -11,9 +11,11 @@ import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/clie
 import { NS } from "@/lib/i18n";
 import { DbParams } from "@/shared/types";
 
+import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
 import { CompanyList } from "./components/CompanyList";
 import { TenantList } from "./components/TenantList";
 import { TenantSettingInfo } from "./components/TenantSettingInfo";
+import { TenantTransferControls } from "./components/TenantTransferControls";
 import { useTenantSettings } from "./hooks/useTenantSettings";
 
 export default function TenantPage() {
@@ -67,71 +69,40 @@ export default function TenantPage() {
 
   return (
     <div className="flex flex-col gap-4 p-2">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-lg font-semibold">
-            {t("serviceDeskSettings.general.tenant")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("serviceDeskSettings.tenant.description")}
-          </p>
-        </div>
+      <ServiceDeskSettingsPageHeader
+        title={t("serviceDeskSettings.common.tenant")}
+        description={t(
+          "settingsNavigation.serviceDeskSettings.tenant.description",
+        )}
+        isResetDisabled={
+          !tenantSettings.pageHeader.canReset ||
+          tenantSettings.pageHeader.isSaving
+        }
+        onReset={tenantSettings.pageHeader.onReset}
+        isSaveDisabled={!tenantSettings.pageHeader.canSave}
+        onSave={() => void tenantSettings.pageHeader.onSave()}
+        isSaving={tenantSettings.pageHeader.isSaving}
+      />
 
-        <div className="flex gap-2 self-start sm:self-auto">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            disabled={!tenantSettings.canReset || tenantSettings.isSaving}
-            onClick={tenantSettings.handleReset}
-          >
-            {tCommon("action.reset", { defaultValue: "Reset" })}
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            disabled={!tenantSettings.canSave}
-            onClick={() => void tenantSettings.handleSave()}
-          >
-            {tenantSettings.isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("serviceDeskSettings.general.saveChanges")}
-              </>
-            ) : (
-              t("serviceDeskSettings.general.saveChanges")
-            )}
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div
+        className="grid grid-cols-1 gap-y-6 pt-4 lg:grid-cols-[minmax(0,_30%)_28px_1.5rem_minmax(0,_30%)_1.5rem_minmax(0,_1fr)] lg:gap-x-0"
+        style={{ "--settings-offset": "18rem" } as React.CSSProperties}
+      >
         <CompanyList
-          companies={tenantSettings.availableCompanies}
-          selectedCompanyIds={tenantSettings.selectedCompanyIds}
-          disabled={tenantSettings.isSaving}
-          onSelectCompany={tenantSettings.handleCompanySelect}
+          className="lg:col-start-1"
+          {...tenantSettings.companyList}
         />
 
-        <TenantList
-          tenants={tenantSettings.tenants}
-          selectedTenantIds={tenantSettings.selectedTenantIds}
-          focusedTenantId={tenantSettings.focusedTenantId}
-          selectedCompanyCount={tenantSettings.selectedCompanyIds.length}
-          removableSelectedTenantIds={
-            tenantSettings.removableSelectedTenantIds
-          }
-          disabled={tenantSettings.isSaving}
-          onAddTenants={tenantSettings.handleAddTenants}
-          onRemoveTenants={tenantSettings.handleRemoveTenants}
-          onSelectTenant={tenantSettings.handleTenantSelect}
+        <TenantTransferControls
+          className="lg:col-start-2 pl-3"
+          {...tenantSettings.transferControls}
         />
+
+        <TenantList className="lg:col-start-4" {...tenantSettings.tenantList} />
 
         <TenantSettingInfo
-          tenant={tenantSettings.focusedTenant}
-          disabled={tenantSettings.isSaving}
-          onTenantNameChange={tenantSettings.handleTenantNameChange}
-          onTenantColorChange={tenantSettings.handleTenantColorChange}
+          className="lg:col-start-6"
+          {...tenantSettings.settingInfo}
         />
       </div>
     </div>

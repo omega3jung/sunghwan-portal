@@ -21,7 +21,12 @@ export const ApprovalStepperPanel = ({
     language,
   });
 
-  if (!selectedNode || selectedNode.nodeType !== "approvalStep") return null;
+  // displat empty box.
+  if (!selectedNode || selectedNode.nodeType !== "approvalStep") {
+    return (
+      <div className="h-full rounded-lg border border-dashed p-7 text-sm text-muted-foreground"></div>
+    );
+  }
 
   return (
     <div className="pt-2 px-2">

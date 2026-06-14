@@ -12,8 +12,9 @@ import {
 } from "@/feature/serviceDesk/tenant/client";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
+import { Locale } from "@/shared/types";
 
-import { TenantLocaleKey, TenantSettingItem } from "../types";
+import { TenantSettingItem } from "../types";
 import {
   buildInitialTenantSettings,
   cloneTenantSettingItems,
@@ -77,10 +78,7 @@ export function useTenantSettings({
     [tenants],
   );
   const restorableSourceTenantsByCompanyId = useMemo(
-    () =>
-      new Map(
-        sourceTenants.map((tenant) => [tenant.companyId, tenant]),
-      ),
+    () => new Map(sourceTenants.map((tenant) => [tenant.companyId, tenant])),
     [sourceTenants],
   );
   const tenantCompanyIds = useMemo(
@@ -101,12 +99,10 @@ export function useTenantSettings({
     });
   }, [selectedTenantIds, tenants]);
 
-  const canSave = currentSignature !== savedSignature && !isSaving;
-  const canReset =
-    currentSignature !== savedSignature ||
-    selectedCompanyIds.length > 0 ||
-    selectedTenantIds.length > 0 ||
-    focusedTenantId !== null;
+  // logics.
+  const hasUnsavedChanges = currentSignature !== savedSignature;
+  const canSave = hasUnsavedChanges && !isSaving;
+  const canReset = hasUnsavedChanges || focusedTenantId !== null;
 
   useEffect(() => {
     const previousInitialSignature = lastInitialSignatureRef.current;
@@ -131,7 +127,9 @@ export function useTenantSettings({
   }, [currentSignature, initialSignature, initialTenants, savedSignature]);
 
   useEffect(() => {
-    const availableCompanyIds = new Set(availableCompanies.map((company) => company.id));
+    const availableCompanyIds = new Set(
+      availableCompanies.map((company) => company.id),
+    );
 
     setSelectedCompanyIds((currentIds) =>
       currentIds.filter((companyId) => availableCompanyIds.has(companyId)),
@@ -222,7 +220,7 @@ export function useTenantSettings({
 
   const handleTenantNameChange = (
     tenantId: string,
-    locale: TenantLocaleKey,
+    locale: Locale,
     value: string,
   ) => {
     setTenants((currentTenants) =>
@@ -271,7 +269,9 @@ export function useTenantSettings({
       const sourceTenantsByCompanyId = new Map(
         sourceTenants.map((tenant) => [tenant.companyId, tenant]),
       );
-      const companyById = new Map(companies.map((company) => [company.id, company]));
+      const companyById = new Map(
+        companies.map((company) => [company.id, company]),
+      );
       const createdTenants = nextTenants.filter(
         (tenant) => !sourceTenantsById.has(tenant.id),
       );
@@ -365,7 +365,9 @@ export function useTenantSettings({
 
           const nextTenantId = idByPreviousId.get(currentId) ?? currentId;
 
-          return persistedTenantItems.some((tenant) => tenant.id === nextTenantId)
+          return persistedTenantItems.some(
+            (tenant) => tenant.id === nextTenantId,
+          )
             ? nextTenantId
             : null;
         });
@@ -377,7 +379,7 @@ export function useTenantSettings({
       void mutationToast(
         savePromise,
         "save",
-        t("serviceDeskSettings.general.tenant"),
+        t("serviceDeskSettings.common.tenant"),
       );
       await savePromise;
     } catch {
@@ -396,24 +398,37 @@ export function useTenantSettings({
   };
 
   return {
-    companies,
-    tenants,
-    availableCompanies,
-    focusedTenant,
-    selectedCompanyIds,
-    selectedTenantIds,
-    focusedTenantId,
-    removableSelectedTenantIds,
-    canSave,
-    canReset,
-    isSaving,
-    handleCompanySelect,
-    handleTenantSelect,
-    handleAddTenants,
-    handleRemoveTenants,
-    handleTenantNameChange,
-    handleTenantColorChange,
-    handleSave,
-    handleReset,
+    pageHeader: {
+      canSave,
+      canReset,
+      isSaving,
+      onSave: handleSave,
+      onReset: handleReset,
+    },
+    companyList: {
+      companies: availableCompanies,
+      selectedCompanyIds,
+      disabled: isSaving,
+      onSelectCompany: handleCompanySelect,
+    },
+    transferControls: {
+      canAddTenants: selectedCompanyIds.length > 0 && !isSaving,
+      canRemoveTenants: removableSelectedTenantIds.length > 0 && !isSaving,
+      disabled: isSaving,
+      onAddTenants: handleAddTenants,
+      onRemoveTenants: handleRemoveTenants,
+    },
+    tenantList: {
+      tenants,
+      selectedTenantIds,
+      focusedTenantId,
+      onSelectTenant: handleTenantSelect,
+    },
+    settingInfo: {
+      tenant: focusedTenant,
+      disabled: isSaving,
+      onTenantNameChange: handleTenantNameChange,
+      onTenantColorChange: handleTenantColorChange,
+    },
   };
 }

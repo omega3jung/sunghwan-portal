@@ -11,7 +11,6 @@ import {
   ApprovalAssigneeTypeValue,
 } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
-import { languageOptions } from "@/shared/constants";
 import { Locale } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
@@ -96,7 +95,6 @@ export const useApprovalStepForm = ({
   return {
     languageTab,
     setLanguageTab,
-    languageOptions,
     approvalTypeValueLabels,
     updateTranslation,
     assigneeTypeValueChange,

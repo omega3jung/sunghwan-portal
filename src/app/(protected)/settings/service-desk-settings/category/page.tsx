@@ -26,11 +26,13 @@ import {
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
-import { languageOptions } from "@/shared/constants";
+import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
 import { DbParams, Locale } from "@/shared/types";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
+import { SETTINGS_OFFSET_STYLE } from "../../style";
+import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
 import { CategoryForm } from "./components/CategoryForm";
 import { CategoryTree } from "./components/CategoryTree";
 import { useCategoryTree } from "./hooks/useCategoryTree";
@@ -49,6 +51,7 @@ export default function CategoryPage() {
 
   const { current: userPreference } = useCurrentPreference();
   const [language, setLanguage] = useState<Locale>(userPreference.language);
+  const localLocales = getLanguageOptions(t);
 
   const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
   const [tenantData, setTenantData] = useState<Tenant[]>([]);
@@ -81,11 +84,13 @@ export default function CategoryPage() {
     );
   }, [categories, selectedTenant]);
 
+  // logics.
   const queryBaselineSignature = useMemo(() => {
     return createCategorySettingsSignatureFromCategories(
       selectedTenantCategories,
     );
   }, [selectedTenantCategories]);
+
   const baselineSignature =
     selectedTenant === null
       ? queryBaselineSignature
@@ -97,16 +102,11 @@ export default function CategoryPage() {
 
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
-  const canReset =
-    Boolean(selectedTenant) &&
-    treeTenantId === selectedTenant &&
-    (isDirty || selectedId !== null) &&
-    !isSaving;
-  const canSave =
-    Boolean(selectedTenant) &&
-    treeTenantId === selectedTenant &&
-    isDirty &&
-    !isSaving;
+  const isTreeReadyForSelectedTenant =
+    Boolean(selectedTenant) && treeTenantId === selectedTenant;
+  const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
+  const canReset = hasUnsavedChanges && !isSaving;
+  const canSave = hasUnsavedChanges && !isSaving;
 
   const handleReset = () => {
     if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
@@ -137,7 +137,7 @@ export default function CategoryPage() {
       void mutationToast(
         savePromise,
         "save",
-        t("serviceDeskSettings.general.categoryList"),
+        t("serviceDeskSettings.common.categoryList"),
       );
       const savedTenant = await savePromise;
 
@@ -204,125 +204,114 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="grid grid-cols-5 gap-2">
-      {/* Category Tree */}
-      <div
-        className="col-span-3 flex flex-col gap-2 p-2 pr-10"
-        style={{ "--settings-offset": "18rem" } as React.CSSProperties}
-      >
-        {isInternal && (
-          <div className="flex flex-col gap-2 pt-2 pb-6">
-            <span>{t("serviceDeskSettings.general.tenant")}</span>
-            <Select
-              value={selectedTenant ?? ""}
-              onValueChange={setSelectedTenant}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={t("serviceDeskSettings.general.tenant")}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {tenantData.map((tenant) => (
-                  <SelectItem
-                    key={`select_item_${tenant.id}`}
-                    value={tenant.id}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: tenant.color }}
-                        title={tenant.color}
-                      ></span>
-                      {tLocal(tenant.name)}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-nowrap">
-              {t("serviceDeskSettings.general.categoryList")}
-            </span>
-            <Select
-              value={language}
-              onValueChange={(value) => setLanguage(value as Locale)}
-            >
-              <SelectTrigger className="border-none">
-                <Globe className="w-4 mr-1" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {languageOptions.map((language) => (
-                  <SelectItem
-                    key={`select_item_${language.value}`}
-                    value={language.value}
-                  >
-                    {language.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            variant="outline"
-            type="button"
-            size="sm"
-            disabled={isLoading || isSaving}
-            onClick={addCategory}
-          >
-            {t("serviceDeskSettings.categoryTab.addCategory")}
-          </Button>
-        </div>
-        <CategoryTree
-          tree={tree}
-          setTree={setTree}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          addSubCategory={addSubCategory}
-          removeCategory={removeCategory}
-          language={language}
-          isLoading={isLoading || isSaving}
+    <div className="flex flex-col gap-4">
+      <div className="px-2 pt-2">
+        <ServiceDeskSettingsPageHeader
+          title={t("serviceDeskSettings.common.category")}
+          description={t(
+            "settingsNavigation.serviceDeskSettings.category.description",
+          )}
+          isResetDisabled={!canReset}
+          onReset={handleReset}
+          isSaveDisabled={!canSave}
+          onSave={() => void onSaveChange()}
+          isSaving={isSaving}
         />
       </div>
 
-      {/* Category details */}
-      <div className="col-span-2 p-2">
-        <div className="flex justify-end pb-2 gap-2 ">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            disabled={!canReset}
-            onClick={handleReset}
-          >
-            {t("action.reset", { ns: NS.common })}
-          </Button>
-          <Button
-            className=""
-            type="button"
-            size="sm"
-            disabled={!canSave}
-            onClick={() => void onSaveChange()}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("serviceDeskSettings.general.saveChanges")}
-              </>
-            ) : (
-              t("serviceDeskSettings.general.saveChanges")
-            )}
-          </Button>
+      <div className="grid grid-cols-5 gap-2">
+        {/* Category Tree */}
+        <div
+          className="col-span-3 flex flex-col gap-2 p-2 pr-10"
+          style={SETTINGS_OFFSET_STYLE}
+        >
+          {isInternal && (
+            <div className="flex flex-col gap-2 pb-6">
+              <span>{t("serviceDeskSettings.common.tenant")}</span>
+              <Select
+                value={selectedTenant ?? ""}
+                onValueChange={setSelectedTenant}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={t("serviceDeskSettings.common.tenant")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {tenantData.map((tenant) => (
+                    <SelectItem
+                      key={`select_item_${tenant.id}`}
+                      value={tenant.id}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: tenant.color }}
+                          title={tenant.color}
+                        ></span>
+                        {tLocal(tenant.name)}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-nowrap">
+                {t("serviceDeskSettings.common.categoryList")}
+              </span>
+              <Select
+                value={language}
+                onValueChange={(value) => setLanguage(value as Locale)}
+              >
+                <SelectTrigger className="border-none">
+                  <Globe className="w-4 mr-1" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {localLocales.map((locale) => (
+                    <SelectItem
+                      key={`select_item_${locale.value}`}
+                      value={locale.value}
+                    >
+                      {locale.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              variant="outline"
+              type="button"
+              size="sm"
+              disabled={isLoading || isSaving}
+              onClick={addCategory}
+            >
+              {t("serviceDeskSettings.categoryTab.addCategory")}
+            </Button>
+          </div>
+          <CategoryTree
+            tree={tree}
+            setTree={setTree}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            addSubCategory={addSubCategory}
+            removeCategory={removeCategory}
+            language={language}
+            isLoading={isLoading || isSaving}
+          />
         </div>
-        <CategoryForm
-          selectedNode={selectedNode}
-          language={language}
-          setTree={setTree}
-        />
+
+        {/* Category details */}
+        <div className="col-span-2 p-2 pt-10">
+          <CategoryForm
+            selectedNode={selectedNode}
+            language={language}
+            setTree={setTree}
+          />
+        </div>
       </div>
     </div>
   );

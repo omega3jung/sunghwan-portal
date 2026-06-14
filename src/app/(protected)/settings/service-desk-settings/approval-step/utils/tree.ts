@@ -2,6 +2,7 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import type {
   ApprovalStep,
   CategoryApprovalSettings,
+  TenantCategoryTree,
 } from "@/domain/serviceDesk";
 import type {
   ApprovalStepTreeSyncInput,
@@ -11,6 +12,7 @@ import type {
 import type { LocalizedText } from "@/shared/types";
 
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
+import { mapApprovalData } from "./mapper";
 
 type ApprovalStepTree = TreeNodes<CategoryApprovalStepData | ApprovalStepData>;
 
@@ -102,12 +104,12 @@ const normalizeApprovalStepsForComparison = (
   approvalSteps: ApprovalStepTreeSyncInput[] | ApprovalStep[],
 ) => {
   return approvalSteps.map((approvalStep, approvalIndex) => ({
-    ...approvalStep,
     id: normalizeApprovalStepId(approvalStep.id),
     name: normalizeLocalizedText(approvalStep.name),
     description: normalizeOptionalLocalizedText(approvalStep.description),
     index: approvalIndex + 1,
     stepAssignee: normalizeApprovalAssignee(approvalStep.stepAssignee),
+    skipAccessLevel: approvalStep.skipAccessLevel,
   }));
 };
 
@@ -162,18 +164,28 @@ export const isApprovalStepTreeValid = (tree: ApprovalStepTree) => {
   );
 };
 
-export const createApprovalStepSettingsSignatureFromApprovalSettings = (
-  categories: CategoryApprovalSettings[],
-) => {
-  const normalizedCategories = categories
-    .slice()
-    .sort((left, right) => left.index - right.index)
-    .map((category) => ({
-      ...category,
-      approvalSteps: category.approvalSteps
-        .slice()
-        .sort((left, right) => left.index - right.index),
-    }));
+export const createApprovalStepSettingsSignatureFromApprovalSettings = ({
+  categories,
+  selectedTenant,
+  approvalSteps,
+}: {
+  categories: TenantCategoryTree[] | undefined;
+  selectedTenant: string | null;
+  approvalSteps: CategoryApprovalSettings[] | undefined;
+}) => {
+  if (!categories || !selectedTenant) {
+    return JSON.stringify([]);
+  }
+
+  const mappedCategories = mapApprovalData(
+    categories,
+    selectedTenant,
+    approvalSteps ?? [],
+  );
+  const normalizedCategories = mappedCategories.map((category) => ({
+    id: category.categoryId,
+    approvalSteps: category.approvalSteps,
+  }));
 
   return JSON.stringify(normalizeCategoriesForComparison(normalizedCategories));
 };

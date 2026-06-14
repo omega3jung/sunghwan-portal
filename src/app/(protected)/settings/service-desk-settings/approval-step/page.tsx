@@ -8,7 +8,6 @@ import {
   findTreeNodePath,
   resolveTreeNodeIdByPath,
 } from "@/components/custom/dnd/tree/utilities";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -25,11 +24,12 @@ import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
-import { languageOptions } from "@/shared/constants";
+import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
 import { DbParams, Locale } from "@/shared/types";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
+import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
 import { ApprovalStepForm } from "./components/ApprovalStepForm";
 import { ApprovalStepperPanel } from "./components/ApprovalStepperPanel";
 import { ApprovalStepTree } from "./components/ApprovalStepTree";
@@ -50,6 +50,8 @@ export default function ApprovalStepPage() {
 
   const { current: userPreference } = useCurrentPreference();
   const [language, setLanguage] = useState<Locale>(userPreference.language);
+  const localLocales = getLanguageOptions(t);
+
   const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
   const [tenantData, setTenantData] = useState<Tenant[]>([]);
   const [baselineSignatureByTenant, setBaselineSignatureByTenant] = useState<
@@ -86,11 +88,14 @@ export default function ApprovalStepPage() {
     language,
   });
 
+  // logics.
   const queryBaselineSignature = useMemo(() => {
-    return createApprovalStepSettingsSignatureFromApprovalSettings(
-      approvalSteps ?? [],
-    );
-  }, [approvalSteps]);
+    return createApprovalStepSettingsSignatureFromApprovalSettings({
+      categories,
+      selectedTenant,
+      approvalSteps,
+    });
+  }, [approvalSteps, categories, selectedTenant]);
 
   const baselineSignature =
     selectedTenant === null
@@ -103,20 +108,14 @@ export default function ApprovalStepPage() {
   const isTreeValid = useMemo(() => {
     return isApprovalStepTreeValid(tree);
   }, [tree]);
-
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
-  const canReset =
-    Boolean(selectedTenant) &&
-    treeTenantId === selectedTenant &&
-    (isDirty || selectedId !== null) &&
-    !isSaving;
-  const canSave =
-    Boolean(selectedTenant) &&
-    treeTenantId === selectedTenant &&
-    isDirty &&
-    isTreeValid &&
-    !isSaving;
+  const isTreeReadyForSelectedTenant =
+    Boolean(selectedTenant) && treeTenantId === selectedTenant;
+  const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
+
+  const canReset = hasUnsavedChanges && !isSaving;
+  const canSave = hasUnsavedChanges && isTreeValid && !isSaving;
 
   const handleReset = () => {
     if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
@@ -126,7 +125,13 @@ export default function ApprovalStepPage() {
     const nextTree = approvalStepToTree(
       mapApprovalData(categories, selectedTenant, approvalSteps ?? []),
     );
+    const nextBaselineSignature =
+      createApprovalStepSettingsSignatureFromTree(nextTree);
 
+    setBaselineSignatureByTenant((previousState) => ({
+      ...previousState,
+      [selectedTenant]: nextBaselineSignature,
+    }));
     setTree(nextTree);
     setSelectedId(null);
   };
@@ -153,7 +158,7 @@ export default function ApprovalStepPage() {
       void mutationToast(
         savePromise,
         "save",
-        t("serviceDeskSettings.general.approvalStep"),
+        t("serviceDeskSettings.common.approvalStep"),
       );
       const savedApprovalSettings = await savePromise;
       const nextTree = approvalStepToTree(
@@ -162,10 +167,11 @@ export default function ApprovalStepPage() {
 
       setBaselineSignatureByTenant((previousState) => ({
         ...previousState,
-        [selectedTenant]:
-          createApprovalStepSettingsSignatureFromApprovalSettings(
-            savedApprovalSettings,
-          ),
+        [selectedTenant]: createApprovalStepSettingsSignatureFromApprovalSettings({
+          categories,
+          selectedTenant,
+          approvalSteps: savedApprovalSettings,
+        }),
       }));
       setTree(nextTree);
       setSelectedId(resolveTreeNodeIdByPath(nextTree, selectedPath));
@@ -219,91 +225,77 @@ export default function ApprovalStepPage() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-end p-2">
-        <div className="flex items-end gap-4">
-          {isInternal && (
-            <div className="flex min-w-60 flex-col gap-2">
-              <span>{t("serviceDeskSettings.general.tenant")}</span>
-              <Select
-                value={selectedTenant ?? ""}
-                onValueChange={setSelectedTenant}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t("serviceDeskSettings.general.tenant")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {tenantData.map((tenant) => (
-                    <SelectItem
-                      key={`select_item_${tenant.id}`}
-                      value={tenant.id}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: tenant.color }}
-                          title={tenant.color}
-                        ></span>
-                        {tLocal(tenant.name)}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+    <div className="flex flex-col gap-4">
+      <div className="px-2 pt-2">
+        <ServiceDeskSettingsPageHeader
+          title={t("serviceDeskSettings.common.approvalStep")}
+          description={t(
+            "settingsNavigation.serviceDeskSettings.approvalSteps.description",
           )}
-          <div className="flex items-center gap-2">
-            <span className="text-nowrap">
-              {t("serviceDeskSettings.general.categoryList")}
-            </span>
+          isResetDisabled={!canReset}
+          onReset={handleReset}
+          isSaveDisabled={!canSave}
+          onSave={() => void onSaveChange()}
+          isSaving={isSaving}
+        />
+      </div>
+
+      <div className="flex flex-wrap items-end gap-4 px-2">
+        {isInternal && (
+          <div className="flex min-w-60 flex-col gap-2">
+            <span>{t("serviceDeskSettings.common.tenant")}</span>
             <Select
-              value={language}
-              onValueChange={(value) => setLanguage(value as Locale)}
+              value={selectedTenant ?? ""}
+              onValueChange={setSelectedTenant}
             >
-              <SelectTrigger className="border-none">
-                <Globe className="w-4 mr-1" />
-                <SelectValue />
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={t("serviceDeskSettings.common.tenant")}
+                />
               </SelectTrigger>
               <SelectContent>
-                {languageOptions.map((language) => (
+                {tenantData.map((tenant) => (
                   <SelectItem
-                    key={`select_item_${language.value}`}
-                    value={language.value}
+                    key={`select_item_${tenant.id}`}
+                    value={tenant.id}
                   >
-                    {language.label}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-3 w-3 rounded-full"
+                        style={{ backgroundColor: tenant.color }}
+                        title={tenant.color}
+                      ></span>
+                      {tLocal(tenant.name)}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            disabled={!canReset}
-            onClick={handleReset}
+        )}
+        <div className="flex items-center gap-2">
+          <span className="text-nowrap">
+            {t("serviceDeskSettings.common.categoryList")}
+          </span>
+          <Select
+            value={language}
+            onValueChange={(value) => setLanguage(value as Locale)}
           >
-            {t("action.reset", { ns: NS.common })}
-          </Button>
-          <Button
-            size="sm"
-            type="button"
-            disabled={!canSave}
-            onClick={() => void onSaveChange()}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("serviceDeskSettings.general.saveChanges")}
-              </>
-            ) : (
-              t("serviceDeskSettings.general.saveChanges")
-            )}
-          </Button>
+            <SelectTrigger className="border-none">
+              <Globe className="w-4 mr-1" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {localLocales.map((locale) => (
+                <SelectItem
+                  key={`select_item_${locale.value}`}
+                  value={locale.value}
+                >
+                  {locale.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

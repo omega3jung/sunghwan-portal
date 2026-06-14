@@ -29,7 +29,7 @@ export default function ServiceDeskSettingsLayout({
               className="min-w-20 gap-2 flex items-center"
             >
               <Building2 />
-              {t("serviceDeskSettings.general.tenant")}
+              {t("serviceDeskSettings.common.tenant")}
             </Link>
           </TabsTrigger>
 
@@ -39,7 +39,7 @@ export default function ServiceDeskSettingsLayout({
               className="min-w-20 gap-2 flex items-center"
             >
               <Tags />
-              {t("serviceDeskSettings.general.category")}
+              {t("serviceDeskSettings.common.category")}
             </Link>
           </TabsTrigger>
 
@@ -49,7 +49,7 @@ export default function ServiceDeskSettingsLayout({
               className="min-w-20 gap-2 flex items-center"
             >
               <Workflow />
-              {t("serviceDeskSettings.general.approvalStep")}
+              {t("serviceDeskSettings.common.approvalStep")}
             </Link>
           </TabsTrigger>
           <TabsTrigger value="assignment-rule" asChild>
@@ -58,7 +58,7 @@ export default function ServiceDeskSettingsLayout({
               className="min-w-20 gap-2 flex items-center"
             >
               <Bot />
-              {t("serviceDeskSettings.general.assignmentRule")}
+              {t("serviceDeskSettings.common.assignmentRule")}
             </Link>
           </TabsTrigger>
         </TabsList>

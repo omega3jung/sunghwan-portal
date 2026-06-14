@@ -1,4 +1,10 @@
 {
+  "language": {
+    "english": "영어",
+    "spanish": "스페인어",
+    "french": "프랑스어",
+    "korean": "한국어"
+  },
   "disabledRouteMessage": {
     "title": "이 데모에서는 구현되지 않음",
     "description": "이 페이지는 설정 구조를 보여주기 위해 존재합니다."
@@ -82,23 +88,27 @@
     },
     "serviceDeskSettings": {
       "title": "IT 서비스 데스크 설정",
-      "description": "IT 서비스 데스크 티켓의 분류, 결재 단계 및 할당 규칙을 관리합니다.",
+      "description": "IT 서비스 데스크의 운영 대상, 카테고리, 결재 단계 및 할당 규칙을 관리합니다.",
+      "tenant": {
+        "title": "테넌트",
+        "description": "IT 서비스 데스크를 사용할 회사를 관리합니다."
+      },
       "category": {
         "title": "카테고리",
-        "description": "IT 서비스 데스크 티켓의 카테고리 및 하위 카테고리를 관리합니다."
+        "description": "티켓의 카테고리와 하위 카테고리, 기본 운영 규칙을 관리합니다."
       },
       "approvalSteps": {
         "title": "결재 단계",
-        "description": "IT 서비스 데스크 티켓이 담당자에게 할당되기 전 필요한 결재 단계를 관리합니다."
+        "description": "티켓이 처리되기 전 필요한 결재 흐름을 관리합니다."
       },
       "assignmentRules": {
         "title": "할당 규칙",
-        "description": "IT 서비스 데스크 티켓의 할당 규칙을 관리합니다."
+        "description": "티켓이 담당자 또는 담당 조직에 배정되는 규칙을 관리합니다."
       }
     }
   },
   "serviceDeskSettings": {
-    "general": {
+    "common": {
       "category": "카테고리",
       "categoryList": "카테고리 목록",
       "approvalStep": "결재 단계",
@@ -118,7 +128,8 @@
       "requestTemplate": "요청 템플릿",
       "resolutionDays": "처리 기간",
       "active": "사용 여부",
-      "addCategory": "카테고리 추가"
+      "addCategory": "카테고리 추가",
+      "empty": "설정을 편집할 카테고리를 선택하세요."
     },
     "approvalStepTab": {
       "name": "이름",
@@ -138,7 +149,8 @@
       "employee": "직원",
       "employeePlaceholder": "담당자 선택",
       "skipAccessLevel": "건너뛸 수 있는 접근 레벨",
-      "saveUnavailable": "저장 불가"
+      "saveUnavailable": "저장 불가",
+      "empty": "설정을 편집할 결재 단계를 선택하세요."
     },
     "assignmentRuleTab": {
       "name": "이름",
@@ -146,10 +158,10 @@
       "jobField": "직무",
       "selectAssigneeJobField": "담당 직무 선택",
       "employee": "직원",
-      "selectAssignee": "담당자 선택"
+      "selectAssignee": "담당자 선택",
+      "empty": "설정을 편집할 할당 규칙을 선택하세요."
     },
     "tenant": {
-      "description": "로컬 데모 테넌트와 회사 할당을 관리합니다.",
       "companyList": {
         "title": "회사 목록",
         "description": "아직 테넌트에 할당되지 않은 활성 회사를 보여줍니다.",
@@ -172,13 +184,7 @@
         "empty": "설정을 편집할 테넌트를 선택하세요.",
         "nameTitle": "테넌트 이름",
         "nameDescription": "변경 사항은 테넌트 목록에 즉시 반영됩니다.",
-        "colorTitle": "테넌트 색상"
-      },
-      "field": {
-        "english": "영어",
-        "spanish": "스페인어",
-        "french": "프랑스어",
-        "korean": "한국어",
+        "colorTitle": "테넌트 색상",
         "tenantNamePlaceholder": "{{language}} 테넌트 이름"
       }
     }

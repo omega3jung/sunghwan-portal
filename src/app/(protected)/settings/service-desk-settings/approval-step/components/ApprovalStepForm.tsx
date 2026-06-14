@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { SupportedLanguage } from "@/domain/config";
 import { NS } from "@/lib/i18n";
-import { accessLevelOptions } from "@/shared/constants";
+import { accessLevelOptions, getLanguageOptions } from "@/shared/constants";
 import { ValueLabel } from "@/shared/types";
 
 import { useApprovalStepForm } from "../hooks/useApprovalStepForm";
@@ -35,11 +35,11 @@ type Props = {
 export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
     const { t } = useTranslation(NS.settings);
+    const localLocales = getLanguageOptions(t);
 
     const {
       languageTab,
       setLanguageTab,
-      languageOptions,
       approvalTypeValueLabels,
       updateTranslation,
       assigneeTypeValueChange,
@@ -64,7 +64,14 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
       });
     }, [t]);
 
-    if (!selectedNode || selectedNode.nodeType !== "approvalStep") return null;
+    // displat empty box.
+    if (!selectedNode || selectedNode.nodeType !== "approvalStep") {
+      return (
+        <div className="col-span-2 h-full rounded-lg border border-dashed p-7 text-sm text-muted-foreground">
+          {t("serviceDeskSettings.approvalStepTab.empty")}
+        </div>
+      );
+    }
 
     return (
       <div ref={ref} className="col-span-2 py-2">
@@ -73,13 +80,13 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
           onValueChange={(value) => setLanguageTab(value as any)}
         >
           <TabsList className="w-full justify-start">
-            {languageOptions.map((lang) => (
+            {localLocales.map((locale) => (
               <TabsTrigger
-                key={lang.value}
-                value={lang.value}
+                key={locale.value}
+                value={locale.value}
                 className="min-w-20 gap-2 data-[state=inactive]:border-none"
               >
-                {lang.label}
+                {locale.label}
               </TabsTrigger>
             ))}
           </TabsList>

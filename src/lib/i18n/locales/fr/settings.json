@@ -1,4 +1,10 @@
 {
+  "language": {
+    "english": "Anglais",
+    "spanish": "Espagnol",
+    "french": "Français",
+    "korean": "Coréen"
+  },
   "disabledRouteMessage": {
     "title": "Non implémenté dans cette démo",
     "description": "Cette page sert à illustrer l'architecture des paramètres."
@@ -81,24 +87,28 @@
       }
     },
     "serviceDeskSettings": {
-      "title": "Paramètres du support informatique",
-      "description": "Gère les catégories, les étapes d’approbation et les règles d’attribution des tickets du support informatique.",
+      "title": "Paramètres du service desk IT",
+      "description": "Gérez le périmètre opérationnel, les catégories, les étapes d’approbation et les règles d’affectation du service desk IT.",
+      "tenant": {
+        "title": "Tenant",
+        "description": "Gérez les entreprises autorisées à utiliser le service desk IT."
+      },
       "category": {
         "title": "Catégorie",
-        "description": "Gère les catégories et sous-catégories des tickets du support informatique."
+        "description": "Gérez les catégories, les sous-catégories et les règles opérationnelles par défaut des tickets."
       },
       "approvalSteps": {
-        "title": "Étapes d’Approbation",
-        "description": "Gère les étapes d’approbation requises avant que les tickets du support informatique ne soient attribués aux responsables."
+        "title": "Étapes d’approbation",
+        "description": "Gérez le flux d’approbation requis avant le traitement des tickets."
       },
       "assignmentRules": {
-        "title": "Règles d’Attribution",
-        "description": "Gère les règles d’attribution des tickets du support informatique."
+        "title": "Règles d’affectation",
+        "description": "Gérez les règles d’affectation des tickets aux utilisateurs ou organisations responsables."
       }
     }
   },
   "serviceDeskSettings": {
-    "general": {
+    "common": {
       "category": "Catégorie",
       "categoryList": "Liste des catégories",
       "approvalStep": "Étape d'approbation",
@@ -118,7 +128,8 @@
       "requestTemplate": "Modèle de demande",
       "resolutionDays": "Jours de résolution",
       "active": "Actif",
-      "addCategory": "Ajouter une catégorie"
+      "addCategory": "Ajouter une catégorie",
+      "empty": "Sélectionnez un catégorie pour modifier ses paramètres."
     },
     "approvalStepTab": {
       "name": "Nom",
@@ -138,7 +149,8 @@
       "employee": "Employé",
       "employeePlaceholder": "Sélectionner un responsable",
       "skipAccessLevel": "Niveau d’accès pouvant être ignoré",
-      "saveUnavailable": "Enregistrement impossible"
+      "saveUnavailable": "Enregistrement impossible",
+      "empty": "Sélectionnez un étape d'approbation pour modifier ses paramètres."
     },
     "assignmentRuleTab": {
       "name": "Nom",
@@ -146,10 +158,10 @@
       "jobField": "Poste",
       "selectAssigneeJobField": "Sélectionner le poste du responsable",
       "employee": "Employé",
-      "selectAssignee": "Sélectionner un responsable"
+      "selectAssignee": "Sélectionner un responsable",
+      "empty": "Sélectionnez un règle d’attribution pour modifier ses paramètres."
     },
     "tenant": {
-      "description": "Gérez les tenants de démonstration locale et leurs affectations d’entreprise.",
       "companyList": {
         "title": "Liste des entreprises",
         "description": "Entreprises actives qui ne sont pas encore attribuées à un tenant.",
@@ -172,13 +184,7 @@
         "empty": "Sélectionnez un tenant pour modifier ses paramètres.",
         "nameTitle": "Nom du tenant",
         "nameDescription": "Les changements se reflètent immédiatement dans la liste des tenants.",
-        "colorTitle": "Couleur du tenant"
-      },
-      "field": {
-        "english": "Anglais",
-        "spanish": "Espagnol",
-        "french": "Français",
-        "korean": "Coréen",
+        "colorTitle": "Couleur du tenant",
         "tenantNamePlaceholder": "Nom du tenant en {{language}}"
       }
     }
