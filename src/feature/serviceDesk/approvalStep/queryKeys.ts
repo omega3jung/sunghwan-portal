@@ -11,8 +11,4 @@ export const approvalStepQueryKeys = {
   lists: () => [...approvalStepQueryKeys.all, "list"] as const,
   list: (params?: ServiceDeskApprovalStepListParams) =>
     [...approvalStepQueryKeys.lists(), params] as const,
-
-  details: () => [...approvalStepQueryKeys.all, "detail"] as const,
-  detail: (id: string | number) =>
-    [...approvalStepQueryKeys.details(), id] as const,
 };

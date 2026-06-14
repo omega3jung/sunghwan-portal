@@ -326,9 +326,11 @@ export default function ProtectedPage() {
                   <FileText className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="secondary" disabled>
-                {t("hero.actions.reviewSettings")}
-                <Settings2 className="h-4 w-4" />
+              <Button asChild variant="secondary">
+                <Link href="/settings">
+                  {t("hero.actions.reviewSettings")}
+                  <Settings2 className="h-4 w-4" />
+                </Link>
               </Button>
             </CardContent>
           )}

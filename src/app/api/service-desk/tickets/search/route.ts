@@ -4,9 +4,9 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import {
   toCurrentUsernameProxyHeaders,
   tServiceDeskApi,
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/tickets/search",
     headers: toCurrentUsernameProxyHeaders(currentUserName),

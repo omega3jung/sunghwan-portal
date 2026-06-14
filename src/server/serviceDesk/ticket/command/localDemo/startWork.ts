@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { toTicketMockDetailResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
@@ -60,8 +60,8 @@ export function toLocalStartWorkResponse(
 
   return {
     ...detail,
-    owner: detail.requesterId === currentUserName,
-    assigned: detail.assigneeIds.includes(currentUserName),
+    owner: detail.requesterUsername === currentUserName,
+    assigned: detail.assigneeUsernames.includes(currentUserName),
   };
 }
 
@@ -75,7 +75,7 @@ function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {
     403,
     {
       ticketId: ticket.id,
-      userName: employeeUserName,
+      username: employeeUserName,
     },
   );
 }

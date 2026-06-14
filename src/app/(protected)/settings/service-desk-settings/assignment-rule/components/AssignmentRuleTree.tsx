@@ -1,4 +1,4 @@
-import { UniqueIdentifier } from "@dnd-kit/core";
+﻿import { UniqueIdentifier } from "@dnd-kit/core";
 import { ChevronRight } from "lucide-react";
 import { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,6 @@ type Props = {
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;
   language: SupportedLanguage;
-  isLoading: boolean;
 };
 
 export const AsgginmentRuleTree = ({
@@ -35,7 +34,6 @@ export const AsgginmentRuleTree = ({
   selectedId,
   setSelectedId,
   language,
-  isLoading,
 }: Props) => {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
@@ -101,7 +99,7 @@ export const AsgginmentRuleTree = ({
                   <span className="grid grid-cols-3 gap-2">
                     {item.depth === 0 &&
                     data.jobFieldIds.length === 0 &&
-                    data.employeeIds.length === 0 ? (
+                    data.assigneeUsernames.length === 0 ? (
                       <Badge variant="destructive">
                         {t(
                           "serviceDeskSettings.approvalStepTab.saveUnavailable",
@@ -118,10 +116,10 @@ export const AsgginmentRuleTree = ({
                     ) : (
                       <span />
                     )}
-                    {data.employeeIds.length > 0 ? (
+                    {data.assigneeUsernames.length > 0 ? (
                       <Badge className="rounded-full">
-                        {data.employeeIds.length > 0 &&
-                          `${data.employeeIds.length} ${t("serviceDeskSettings.assignmentRuleTab.employee")}`}
+                        {data.assigneeUsernames.length > 0 &&
+                          `${data.assigneeUsernames.length} ${t("serviceDeskSettings.assignmentRuleTab.employee")}`}
                       </Badge>
                     ) : (
                       <span />

@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import { getToken, JWT } from "next-auth/jwt";
 
 import {
@@ -63,7 +63,7 @@ export async function getCurrentUserName(req: NextRequest) {
   );
 }
 
-// Employee userName helpers resolve employee app identity from JWT/session.
+// Employee username helpers resolve employee app identity from JWT/session.
 export async function getOriginalEmployeeUserName(
   req: NextRequest,
 ): Promise<string | null> {

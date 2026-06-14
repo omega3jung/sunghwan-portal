@@ -1,4 +1,4 @@
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
+﻿import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
 
 const employeeEmailByUserName = new Map(
@@ -10,10 +10,10 @@ const employeeEmailByUserName = new Map(
 
 export const mergeTicketToEmails = (
   ticket: DbTicketDetail,
-  assigneeIds: string[],
+  assigneeUsernames: string[],
 ): DbTicketDetail["email"] => {
-  const assigneeEmails = assigneeIds
-    .map((assigneeId) => employeeEmailByUserName.get(assigneeId))
+  const assigneeEmails = assigneeUsernames
+    .map((assigneeUsername) => employeeEmailByUserName.get(assigneeUsername))
     .filter((email): email is string => Boolean(email));
 
   if (assigneeEmails.length === 0) {

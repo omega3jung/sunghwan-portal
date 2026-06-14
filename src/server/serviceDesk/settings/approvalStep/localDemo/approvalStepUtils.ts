@@ -2,20 +2,20 @@ import { createIncrementalIdAssigner } from "@/app/api/_helpers";
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { CategoryApprovalSettings } from "@/domain/serviceDesk";
 import {
-  camelApprovalStepMapper,
-  camelCategoryApprovalSettingMapper,
   type DbApprovalStep,
   type DbCategoryApprovalSettings,
+} from "@/feature/serviceDesk/approvalStep";
+import {
+  camelApprovalStepMapper,
+  camelCategoryApprovalSettingMapper,
 } from "@/feature/serviceDesk/approvalStep/mapper";
-import type { DbClientCategoryTree } from "@/feature/serviceDesk/category/mapper";
+import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 
 import { getLocalDemoApprovalStepsTree } from "../../state";
 
-export type LocalDbApprovalStep = DbApprovalStep & {
-  approval_step_active?: boolean;
-};
+export type LocalDbApprovalStep = DbApprovalStep;
 
 export type LocalDbCategoryApprovalSettings = Omit<
   DbCategoryApprovalSettings,
@@ -29,31 +29,24 @@ export type ApprovalStepStore = Record<
   LocalDbCategoryApprovalSettings[]
 >;
 
-const toActiveApprovalStep = (
-  approvalStep: DbApprovalStep,
-): LocalDbApprovalStep => ({
-  ...approvalStep,
-  approval_step_active: approvalStep.approval_step_active ?? true,
-});
-
 const buildApprovalStepSeed = ({
   categoryTrees,
   templateCategories,
 }: {
-  categoryTrees: DbClientCategoryTree[];
+  categoryTrees: DbTenantCategoryTree[];
   templateCategories: DbCategoryApprovalSettings[];
 }): ApprovalStepStore => {
   const templateMap = new Map(
     templateCategories.map((category) => [
       String(category.category_id),
-      category.approval_step.map(toActiveApprovalStep),
+      category.approval_step,
     ]),
   );
 
   return Object.fromEntries(
-    categoryTrees.map((client) => [
-      String(client.client_id),
-      client.category.map((category) => ({
+    categoryTrees.map((tenant) => [
+      String(tenant.tenant_id),
+      tenant.category.map((category) => ({
         category_id: category.category_id,
         category_name: category.category_name,
         category_description: category.category_description,
@@ -81,15 +74,15 @@ export const getApprovalStepStore = (isInternal: boolean) => {
   );
   const categoryTrees = getLocalCategoryTrees(isInternal);
 
-  for (const client of categoryTrees) {
-    const previousCategories = items[client.id] ?? [];
+  for (const tenant of categoryTrees) {
+    const previousCategories = items[tenant.id] ?? [];
     const previousCategoryMap = new Map(
       previousCategories.map((category) => [
         String(category.category_id),
         category,
       ]),
     );
-    const synchronizedCategories = client.categories.map((category) => ({
+    const synchronizedCategories = tenant.categories.map((category) => ({
       category_id: Number(category.id),
       category_name: category.name,
       category_description: category.description ?? null,
@@ -109,7 +102,7 @@ export const getApprovalStepStore = (isInternal: boolean) => {
       (category) => !knownCategoryIds.has(String(category.category_id)),
     );
 
-    items[client.id] = [...synchronizedCategories, ...preservedCategories].sort(
+    items[tenant.id] = [...synchronizedCategories, ...preservedCategories].sort(
       (left, right) => left.category_index - right.category_index,
     );
   }
@@ -143,28 +136,28 @@ export const normalizeApprovalStep = (approvalStep: LocalDbApprovalStep) => {
   return camelApprovalStepMapper([approvalStep])[0] ?? null;
 };
 
-export const resolveClientId = (
+export const resolveTenantId = (
   items: ApprovalStepStore,
-  requestedClientId: string | null,
+  requestedTenantId: string | null,
 ) => {
-  if (requestedClientId && items[requestedClientId]) {
-    return requestedClientId;
+  if (requestedTenantId && items[requestedTenantId]) {
+    return requestedTenantId;
   }
 
   return Object.keys(items)[0] ?? null;
 };
 
-export const getClientCategoriesOrThrow = (
+export const getTenantCategoriesOrThrow = (
   items: ApprovalStepStore,
-  clientId: string,
+  tenantId: string,
 ) => {
-  const categories = items[clientId];
+  const categories = items[tenantId];
 
   if (!categories) {
     throw new ServiceDeskApiError(
-      "api.approvalSteps.localDemo.clientNotFound",
+      "api.approvalSteps.localDemo.tenantNotFound",
       404,
-      { clientId },
+      { tenantId },
     );
   }
 
@@ -201,14 +194,14 @@ export const getCategoryLocationById = (
   items: ApprovalStepStore,
   categoryId: string,
 ) => {
-  for (const [clientId, categories] of Object.entries(items)) {
+  for (const [tenantId, categories] of Object.entries(items)) {
     const categoryIndex = categories.findIndex(
       (category) => String(category.category_id) === categoryId,
     );
 
     if (categoryIndex >= 0) {
       return {
-        clientId,
+        tenantId,
         categoryIndex,
       };
     }
@@ -221,7 +214,7 @@ export const getApprovalStepLocation = (
   items: ApprovalStepStore,
   id: string,
 ) => {
-  for (const [clientId, categories] of Object.entries(items)) {
+  for (const [tenantId, categories] of Object.entries(items)) {
     for (
       let categoryIndex = 0;
       categoryIndex < categories.length;
@@ -235,7 +228,7 @@ export const getApprovalStepLocation = (
 
       if (approvalStepIndex >= 0) {
         return {
-          clientId,
+          tenantId,
           categoryIndex,
           approvalStepIndex,
         };

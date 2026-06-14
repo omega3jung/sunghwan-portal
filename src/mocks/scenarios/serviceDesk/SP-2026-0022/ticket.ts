@@ -10,7 +10,7 @@ export const ticket: TicketMockInput = {
   priority: "medium",
   risk_level: "high",
   assignee_id: ["evan_seo"],
-  track_time_minutes: 30,
+  work_minutes: 30,
   last_comment_at: "2026-03-27T09:15:11Z",
   last_commenter_email: "Evan.Seo@sunghwan-portal.dev",
   due_at: "2026-03-31T18:00:00Z",
@@ -22,7 +22,7 @@ export const ticket: TicketMockInput = {
   approval_step_id: null,
   subject: "Demande de rapport de réception pour SKU-12345",
   content:
-    "Bonjour, nous avons demandé au client le rapport de réception de tous les appareils SKU-12345 afin de vérifier que les informations sont correctes.<br>Veuillez l’envoyer dès que possible.",
+    "Bonjour, nous avons demandé au client le rapport de réception de tous les appareils SKU-12345 afin de vérifier que les informations sont correctes.<br>Veuillez l?�envoyer dès que possible.",
   email: {
     to: [
       "isabella.martinez@sunghwan-portal.dev",

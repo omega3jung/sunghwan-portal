@@ -58,13 +58,13 @@ export function UserImpersonation(props: Props) {
     return employees
       .filter(
         (employee) =>
-          !excludedUserSet.has(normalizeUsername(employee.userName)),
+          !excludedUserSet.has(normalizeUsername(employee.username)),
       )
       .map((employee) => {
         const name = tLocal(employee.name);
 
         return {
-          value: employee.userName,
+          value: employee.username,
           label: `${name.first} ${name.last}`.trim(),
           displayName: employee.email,
           image: employee.imageUrl,

@@ -1,6 +1,7 @@
 import { RuleGroupTypeIC } from "react-querybuilder";
 
 export type DbParams = {
+  active?: boolean;
   filter?: RuleGroupTypeIC;
   page?: number;
   size?: number;

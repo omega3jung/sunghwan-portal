@@ -175,7 +175,7 @@ const isTicketMatchedByChartFilter = ({
     case "category":
       return getCategoryLabel(ticket) === filter.value;
     case "department": {
-      const requester = requesterByUserName.get(ticket.requesterId);
+      const requester = requesterByUserName.get(ticket.requesterUsername);
       const departmentId = requester?.departmentId;
       const hasDepartment = departmentId
         ? departmentsById.has(departmentId)
@@ -188,9 +188,9 @@ const isTicketMatchedByChartFilter = ({
     }
     case "assignee":
       if (isUnassignedAssigneeValue(filter.value)) {
-        return ticket.assigneeIds.length === 0;
+        return ticket.assigneeUsernames.length === 0;
       }
-      return ticket.assigneeIds.includes(filter.value);
+      return ticket.assigneeUsernames.includes(filter.value);
     case "sla":
       return getSlaBucket(ticket.dueAt) === filter.value;
     default:
@@ -255,7 +255,7 @@ export default function ServiceDeskInsightsPage() {
       const name = tLocal(employee.name);
 
       return {
-        value: employee.userName,
+        value: employee.username,
         label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,
@@ -274,7 +274,7 @@ export default function ServiceDeskInsightsPage() {
 
   const requesterByUserName = useMemo(() => {
     return new Map(
-      (employees ?? []).map((employee) => [employee.userName, employee]),
+      (employees ?? []).map((employee) => [employee.username, employee]),
     );
   }, [employees]);
 

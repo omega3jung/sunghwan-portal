@@ -203,7 +203,7 @@ Approval assigned to specific employees.
 #### Payload
 
 ```txt
-employeeIds[]
+employeeUsernames[]
 ```
 
 ---

@@ -1,4 +1,4 @@
-import { endOfDay, endOfWeek, isBefore, isValid, startOfDay } from "date-fns";
+﻿import { endOfDay, endOfWeek, isBefore, isValid, startOfDay } from "date-fns";
 
 import { Department } from "@/domain/organization";
 import { TicketSummary } from "@/domain/serviceDesk";
@@ -79,7 +79,7 @@ export const buildDepartmentSummary = (
 ): ChartSummaryItem[] => {
   return toSummaryItems(
     tickets.map((ticket) => {
-      const requester = requesterById.get(ticket.requesterId);
+      const requester = requesterById.get(ticket.requesterUsername);
       const department = requester
         ? departmentsById.get(requester.departmentId)
         : undefined;
@@ -109,7 +109,7 @@ export const buildAssigneeSummary = (
   const values: Array<{ value: string; label: string }> = [];
 
   tickets.forEach((ticket) => {
-    if (!ticket.assigneeIds.length) {
+    if (!ticket.assigneeUsernames.length) {
       values.push({
         value: UNASSIGNED_VALUE,
         label: unassignedLabel,
@@ -117,12 +117,12 @@ export const buildAssigneeSummary = (
       return;
     }
 
-    ticket.assigneeIds.forEach((assigneeId) => {
-      const assignee = usersById.get(assigneeId);
+    ticket.assigneeUsernames.forEach((assigneeUsername) => {
+      const assignee = usersById.get(assigneeUsername);
 
       values.push({
-        value: assigneeId,
-        label: assignee?.label ?? assigneeId,
+        value: assigneeUsername,
+        label: assignee?.label ?? assigneeUsername,
       });
     });
   });

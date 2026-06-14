@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -87,7 +87,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
       const name = tLocal(employee.name);
 
       return {
-        value: employee.userName,
+        value: employee.username,
         label: `${name.first} ${name.last}`.trim(),
         displayName: employee.email,
         image: employee.imageUrl,
@@ -101,14 +101,14 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   );
 
   const requester = useMemo(
-    () => users.find((user) => user.value === ticket?.requesterId),
-    [ticket?.requesterId, users],
+    () => users.find((user) => user.value === ticket?.requesterUsername),
+    [ticket?.requesterUsername, users],
   );
 
   const assignees = useMemo(
     () =>
-      users.filter((user) => ticket?.assigneeIds.includes(user.value) ?? false),
-    [ticket?.assigneeIds, users],
+      users.filter((user) => ticket?.assigneeUsernames.includes(user.value) ?? false),
+    [ticket?.assigneeUsernames, users],
   );
 
   const dateLocale = useMemo(
@@ -143,7 +143,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   }, [ticketHistories]);
 
   const latestActionOwner = latestAction
-    ? userMap.get(latestAction.ownerId)
+    ? userMap.get(latestAction.ownerUsername)
     : undefined;
 
   useEffect(() => {

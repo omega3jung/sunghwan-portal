@@ -1,8 +1,8 @@
-import { LocalizedName } from "@/domain/organization";
+﻿import { LocalizedName } from "@/domain/organization";
 
 export interface EmployeeResponseDto {
   employeeId: number;
-  userName: string;
+  username: string;
   name: LocalizedName;
   phone: string;
   email: string;

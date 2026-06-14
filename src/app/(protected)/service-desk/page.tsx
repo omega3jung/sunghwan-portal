@@ -1,4 +1,4 @@
-// src/app/(protected)/service-desk/page.tsx
+﻿// src/app/(protected)/service-desk/page.tsx
 
 "use client";
 
@@ -175,7 +175,7 @@ export default function ServiceDeskPage() {
       const name = tLocal(employee.name);
 
       return {
-        value: employee.userName,
+        value: employee.username,
         label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,

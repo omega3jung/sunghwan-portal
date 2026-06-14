@@ -23,16 +23,3 @@ export const useServiceDeskApprovalStepListQuery = (
     ...ticketQueryOptions,
   });
 };
-
-export const useServiceDeskApprovalStepQuery = (id: string | number) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
-
-  return useQuery({
-    queryKey: approvalStepQueryKeys.detail(id),
-    queryFn: () => serviceDeskApprovalStepApi.get(id),
-    enabled: !!id && !!dataScope,
-    ...ticketQueryOptions,
-  });
-};

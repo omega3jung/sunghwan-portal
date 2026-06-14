@@ -1,4 +1,10 @@
 {
+  "language": {
+    "english": "Inglés",
+    "spanish": "Español",
+    "french": "Francés",
+    "korean": "Coreano"
+  },
   "disabledRouteMessage": {
     "title": "No implementado en esta demostración",
     "description": "Esta página existe para demostrar la arquitectura de la configuración."
@@ -81,24 +87,28 @@
       }
     },
     "serviceDeskSettings": {
-      "title": "Configuración de la Mesa de Servicio de TI",
-      "description": "Gestiona las categorías, los pasos de aprobación y las reglas de asignación de los tickets de la Mesa de Servicio de TI.",
+      "title": "Configuración de la mesa de servicio de TI",
+      "description": "Gestiona el alcance operativo, las categorías, los pasos de aprobación y las reglas de asignación de la mesa de servicio de TI.",
+      "tenant": {
+        "title": "Tenant",
+        "description": "Gestiona las empresas que pueden utilizar la mesa de servicio de TI."
+      },
       "category": {
         "title": "Categoría",
-        "description": "Gestiona las categorías y subcategorías de los tickets de la mesa de ayuda de TI."
+        "description": "Gestiona las categorías, subcategorías y reglas operativas predeterminadas de los tickets."
       },
       "approvalSteps": {
         "title": "Pasos de aprobación",
-        "description": "Gestiona los pasos de aprobación requeridos antes de que los tickets de la mesa de ayuda de TI se asignen a los responsables."
+        "description": "Gestiona el flujo de aprobación necesario antes de procesar los tickets."
       },
       "assignmentRules": {
         "title": "Reglas de asignación",
-        "description": "Gestiona las reglas de asignación para los tickets de la mesa de ayuda de TI."
+        "description": "Gestiona las reglas para asignar tickets a usuarios u organizaciones responsables."
       }
     }
   },
   "serviceDeskSettings": {
-    "general": {
+    "common": {
       "category": "Categoría",
       "categoryList": "Lista de categorías",
       "approvalStep": "Paso de aprobación",
@@ -107,6 +117,7 @@
       "assignmentRuleList": "Lista de reglas de asignación",
       "client": "Cliente",
       "clientList": "Lista de clientes",
+      "tenant": "Tenant",
       "noResults": "Sin resultados",
       "saveChanges": "Guardar cambios"
     },
@@ -117,7 +128,8 @@
       "requestTemplate": "Plantilla de solicitud",
       "resolutionDays": "Días de resolución",
       "active": "Activo",
-      "addCategory": "Agregar categoría"
+      "addCategory": "Agregar categoría",
+      "empty": "Selecciona un categoría para editar su configuración."
     },
     "approvalStepTab": {
       "name": "Nombre",
@@ -137,15 +149,42 @@
       "employee": "Empleado",
       "employeePlaceholder": "Seleccionar asignado",
       "skipAccessLevel": "Nivel de acceso omitible",
-      "saveUnavailable": "No se puede guardar"
+      "saveUnavailable": "No se puede guardar",
+      "empty": "Selecciona un paso de aprobación para editar su configuración."
     },
     "assignmentRuleTab": {
-      "name": "Nombre",
-      "namePlaceholder": "Seleccionar una categoría",
       "jobField": "Puesto",
       "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
-      "selectAssignee": "Seleccionar asignado"
+      "selectAssignee": "Seleccionar asignado",
+      "empty": "Selecciona un regla de asignación para editar su configuración."
+    },
+    "tenant": {
+      "companyList": {
+        "title": "Lista de empresas",
+        "description": "Empresas activas que aún no están asignadas a un tenant.",
+        "empty": "No hay empresas disponibles"
+      },
+      "tenantList": {
+        "title": "Lista de tenants",
+        "description": "Selecciona tenants para editarlos o devolverlos a empresas.",
+        "empty": "No hay tenants",
+        "portalOwnerHint": "Los tenants propietarios del portal se pueden editar, pero no se pueden devolver a la lista de empresas.",
+        "infoAriaLabel": "Restricción del tenant propietario del portal"
+      },
+      "actions": {
+        "addToTenants": "Agregar a tenants",
+        "moveToCompanies": "Mover a empresas"
+      },
+      "settingInfo": {
+        "title": "Información de configuración del tenant",
+        "description": "Actualiza los nombres y el color del tenant seleccionado.",
+        "empty": "Selecciona un tenant para editar su configuración.",
+        "nameTitle": "Nombre del tenant",
+        "nameDescription": "Los cambios se reflejan de inmediato en la lista de tenants.",
+        "colorTitle": "Color del tenant",
+        "tenantNamePlaceholder": "Nombre del tenant en {{language}}"
+      }
     }
   }
 }

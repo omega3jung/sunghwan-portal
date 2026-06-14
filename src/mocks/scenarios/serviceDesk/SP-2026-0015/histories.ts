@@ -85,7 +85,7 @@ export const histories: DbTicketHistory[] = [
     ticket_id: ticket.id,
     history_no: 7,
 
-    type: "TRACK_TIME",
+    type: "WORK_SESSION",
     action: "UPDATED",
 
     actor_id: "daniel_kim",

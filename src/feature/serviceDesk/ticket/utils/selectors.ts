@@ -1,12 +1,12 @@
-import type { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
+﻿import type { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 
 type TicketLike = Pick<
   TicketDetail | TicketSummary,
-  "status" | "assigneeIds" | "mergedIntoTicketId"
+  "status" | "assigneeUsernames" | "mergedIntoTicketId"
 >;
 
 export function selectTicketAssigneeIds(ticket: TicketLike) {
-  return ticket.assigneeIds;
+  return ticket.assigneeUsernames;
 }
 
 export function selectTicketIsMerged(ticket: TicketLike) {

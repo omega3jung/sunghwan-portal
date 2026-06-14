@@ -1,96 +1,106 @@
-﻿import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/mapper";
+﻿import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/types";
 
-import accountAccessCategoryMock from "./categories/accountAccess";
-import clientPortalSystemIssueCategoryMock from "./categories/clientPortalSystemIssue";
-import clientUserSupportCategoryMock from "./categories/clientUserSupport";
-import dataInfoManagementCategoryMock from "./categories/dataInfoManagement";
-import hardwareDeviceCategoryMock from "./categories/hardwareDevice";
-import hrSystemPayrollCategoryMock from "./categories/hrSystemPayroll";
-import internalPortalSystemIssueCategoryMock from "./categories/internalPortalSystemIssue";
-import networkConnectivityCategoryMock from "./categories/networkConnectivity";
-import otherInquiryCategoryMock from "./categories/otherInquiry";
-import printingOfficeEquipmentCategoryMock from "./categories/printingOfficeEquipment";
-import softwareApplicationCategoryMock from "./categories/softwareApplication";
+import {
+  client1PortalSystemIssueMock,
+  clientAccountAccessMock,
+  clientHardwareDeviceMock,
+  clientHrSystemPayrollMock,
+  clientNetworkConnectivityMock,
+  clientPrintingOfficeEquipmentMock,
+  clientSoftwareApplicationMock,
+} from "./categories/client";
+import {
+  internalAccountAccessMock,
+  internalClientUserSupportMock,
+  internalDataInfoManagementMock,
+  internalHardwareDeviceMock,
+  internalHrSystemPayrollMock,
+  internalNetworkConnectivityMock,
+  internalOtherInquiryMock,
+  internalPortalSystemIssueMock,
+  internalPrintingOfficeEquipmentMock,
+  internalSoftwareApplicationMock,
+} from "./categories/internal";
 
 export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
   /* Portal / System */
   {
-    category_id: internalPortalSystemIssueCategoryMock.category_id,
+    category_id: internalPortalSystemIssueMock.category_id,
     assignee: {
       job_field_id: [21, 22, 23],
-      employee_id: ["32"],
+      employee_username: ["32"],
     },
   },
   /* Account & Access */
   {
-    category_id: accountAccessCategoryMock.category_id,
+    category_id: internalAccountAccessMock.category_id,
     assignee: {
       job_field_id: [27, 28, 25],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Hardware & Device */
   {
-    category_id: hardwareDeviceCategoryMock.category_id,
+    category_id: internalHardwareDeviceMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_id: ["117"],
+      employee_username: ["117"],
     },
   },
   /* Software & App */
   {
-    category_id: softwareApplicationCategoryMock.category_id,
+    category_id: internalSoftwareApplicationMock.category_id,
     assignee: {
       job_field_id: [20, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Network */
   {
-    category_id: networkConnectivityCategoryMock.category_id,
+    category_id: internalNetworkConnectivityMock.category_id,
     assignee: {
       job_field_id: [17, 19, 18],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Printing */
   {
-    category_id: printingOfficeEquipmentCategoryMock.category_id,
+    category_id: internalPrintingOfficeEquipmentMock.category_id,
     assignee: {
       job_field_id: [25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* HR Systems */
   {
-    category_id: hrSystemPayrollCategoryMock.category_id,
+    category_id: internalHrSystemPayrollMock.category_id,
     assignee: {
       job_field_id: [3, 4, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Data Management */
   {
-    category_id: dataInfoManagementCategoryMock.category_id,
+    category_id: internalDataInfoManagementMock.category_id,
     assignee: {
       job_field_id: [23, 7, 4],
-      employee_id: ["59", "60", "61", "123", "124"],
+      employee_username: ["59", "60", "61", "123", "124"],
     },
   },
   /* Client Support */
   {
-    category_id: clientUserSupportCategoryMock.category_id,
+    category_id: internalClientUserSupportMock.category_id,
     assignee: {
       job_field_id: [11, 12, 23],
-      employee_id: ["15"],
+      employee_username: ["15"],
     },
   },
   /* Other Inquiry */
   {
-    category_id: otherInquiryCategoryMock.category_id,
+    category_id: internalOtherInquiryMock.category_id,
     assignee: {
       job_field_id: [25],
-      employee_id: [],
+      employee_username: [],
     },
   },
 ];
@@ -98,58 +108,58 @@ export const internalAssignmentRuleSettingsMock: DbAssignmentRule[] = [
 export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
   /* Portal / System */
   {
-    category_id: clientPortalSystemIssueCategoryMock.category_id,
+    category_id: client1PortalSystemIssueMock.category_id,
     assignee: {
       job_field_id: [21, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Account & Access */
   {
-    category_id: accountAccessCategoryMock.category_id,
+    category_id: clientAccountAccessMock.category_id,
     assignee: {
       job_field_id: [27, 28, 25],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Hardware & Device */
   {
-    category_id: hardwareDeviceCategoryMock.category_id,
+    category_id: clientHardwareDeviceMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Software & App */
   {
-    category_id: softwareApplicationCategoryMock.category_id,
+    category_id: clientSoftwareApplicationMock.category_id,
     assignee: {
       job_field_id: [20, 22, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Network */
   {
-    category_id: networkConnectivityCategoryMock.category_id,
+    category_id: clientNetworkConnectivityMock.category_id,
     assignee: {
       job_field_id: [17, 19, 18],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* Printing */
   {
-    category_id: printingOfficeEquipmentCategoryMock.category_id,
+    category_id: clientPrintingOfficeEquipmentMock.category_id,
     assignee: {
       job_field_id: [25, 26],
-      employee_id: [],
+      employee_username: [],
     },
   },
   /* HR Systems */
   {
-    category_id: hrSystemPayrollCategoryMock.category_id,
+    category_id: clientHrSystemPayrollMock.category_id,
     assignee: {
       job_field_id: [3, 4, 23],
-      employee_id: [],
+      employee_username: [],
     },
   },
 ];

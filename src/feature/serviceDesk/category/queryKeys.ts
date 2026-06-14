@@ -9,8 +9,4 @@ export const categoryQueryKeys = {
 
   lists: () => [...categoryQueryKeys.all, "list"] as const,
   list: (params: DbParams) => [...categoryQueryKeys.lists(), params] as const,
-
-  details: () => [...categoryQueryKeys.all, "detail"] as const,
-  detail: (id: string | number) =>
-    [...categoryQueryKeys.details(), id] as const,
 };

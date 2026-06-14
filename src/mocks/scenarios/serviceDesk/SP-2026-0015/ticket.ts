@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "high",
   assignee_id: ["evan_seo", "daniel_kim"],
   merged_into_ticket_id: null,
-  track_time_minutes: 105,
+  work_minutes: 105,
   last_comment_at: "2026-04-02T07:21:42Z",
   last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
   due_at: "2026-04-03T18:00:00Z",

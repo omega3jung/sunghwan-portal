@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { handleEmployeesPortalApi } from "./employees/employeesPortalApiHandler";
 import { handleNavigationPortalApi } from "./navigation/navigationPortalApiHandler";
+import { handleOrganizationPortalApi } from "./organization/organizationPortalApiHandler";
+import { handleServiceDeskPortalApi } from "./serviceDesk/serviceDeskPortalApiHandler";
 import { PortalApiJsonOptions } from "./types";
 import { handleUserPortalApi } from "./users/usersPortalApiHandler";
 import { normalizePath } from "./utils";
@@ -16,8 +18,20 @@ export async function dispatchPortalApi(
     return handleEmployeesPortalApi(request, { ...options, path });
   }
 
+  if (
+    path.startsWith("/company") ||
+    path.startsWith("/department") ||
+    path.startsWith("/job-field")
+  ) {
+    return handleOrganizationPortalApi(request, { ...options, path });
+  }
+
   if (path.startsWith("/navigation/")) {
     return handleNavigationPortalApi(request, { ...options, path });
+  }
+
+  if (path.startsWith("/service-desk/")) {
+    return handleServiceDeskPortalApi(request, { ...options, path });
   }
 
   if (path.startsWith("/users/")) {

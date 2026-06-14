@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
     });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/history`,
     errorMessage: tServiceDeskApi("api.ticketHistories.fetchList"),
     mapData: mapTicketHistoryListPayload,

@@ -30,7 +30,7 @@ const toDbApprovalAssignee = (approvalStep: ApprovalStep["stepAssignee"]) => {
     case "EMPLOYEE":
       return {
         type: approvalStep.type,
-        employee_id: approvalStep.employeeIds,
+        employee_username: approvalStep.employeeUsernames,
       } as const;
   }
 };
@@ -55,7 +55,6 @@ export const buildApprovalStepFromInput = ({
     approval_step_name: input.name,
     approval_step_description: input.description ?? null,
     approval_step_index: input.index,
-    approval_step_active: true,
     category_id: Number(
       "categoryId" in input
         ? input.categoryId

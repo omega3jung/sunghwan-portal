@@ -1,4 +1,4 @@
-﻿import { DbEmployee } from "@/feature/organization/employee/mapper";
+﻿import { DbEmployee } from "@/feature/organization/employee";
 
 import { internalDemoEmployee } from "./demoUser";
 import headOfficeEmployeeMock from "./headOffice.json";

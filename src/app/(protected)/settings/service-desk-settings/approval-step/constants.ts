@@ -39,6 +39,6 @@ export const getDefaultAssigneePayload = (
     case "JOB_FIELD":
       return { type, jobFieldId: "" };
     case "EMPLOYEE":
-      return { type, employeeIds: [] };
+      return { type, employeeUsernames: [] };
   }
 };

@@ -40,7 +40,7 @@ export async function queryPortalApi<T extends QueryResultRow = QueryResultRow>(
     const result = await pool.query<T>(text, params);
     return result.rows;
   } catch (error) {
-    //console.log(error);
+    console.log(error);
     throw error;
   }
 }

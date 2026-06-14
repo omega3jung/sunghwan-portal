@@ -1,9 +1,9 @@
-import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import {
   SERVICE_DESK_ASSIGNMENT_RULE_KEY,
   SERVICE_DESK_KEY,
 } from "@/feature/serviceDesk/shared/keys";
 
+import type { AssignmentRecommendationInput } from "./recommendation";
 import { ServiceDeskAssignmentRuleListParams } from "./types";
 
 export const assignmentRuleQueryKeys = {
@@ -12,10 +12,6 @@ export const assignmentRuleQueryKeys = {
   lists: () => [...assignmentRuleQueryKeys.all, "list"] as const,
   list: (params?: ServiceDeskAssignmentRuleListParams) =>
     [...assignmentRuleQueryKeys.lists(), params] as const,
-
-  details: () => [...assignmentRuleQueryKeys.all, "detail"] as const,
-  detail: (id: string | number) =>
-    [...assignmentRuleQueryKeys.details(), id] as const,
 
   recommendations: () =>
     [...assignmentRuleQueryKeys.all, "recommendations"] as const,

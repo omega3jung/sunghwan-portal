@@ -1,4 +1,4 @@
-import { TicketMockInput } from "../types";
+﻿import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
   id: "sunghwan-portal-2026-36",
@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "high",
   assignee_id: ["evan_seo", "daniel_kim"],
   merged_into_ticket_id: "sunghwan-portal-2026-35",
-  track_time_minutes: 20,
+  work_minutes: 20,
   last_comment_at: "2026-04-02T07:13:18Z",
   last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
   due_at: "2026-04-03T18:00:00Z",

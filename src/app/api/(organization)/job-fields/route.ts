@@ -1,7 +1,7 @@
 // app/api/job-fields/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_helpers";
 import {
   camelJobFieldMapper,
   mapJobFieldItemPayload,
@@ -13,6 +13,8 @@ import {
   toJobFieldWritePayload,
 } from "@/feature/organization/jobField/write";
 import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
+
+import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
   }
 
   // real backend
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: "/job-field",
     query: request.nextUrl.searchParams,
     errorMessage: "Failed to fetch job fields",
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(toJobFieldMockResource(body), { status: 201 });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/job-field",
     body: toJobFieldWritePayload(body),

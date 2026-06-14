@@ -22,6 +22,7 @@ import {
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
 import { NS } from "@/lib/i18n";
+import { getLanguageOptions } from "@/shared/constants";
 import { Locale, ValueLabel } from "@/shared/types";
 
 import { scopeData } from "../constants";
@@ -39,20 +40,16 @@ type Props = {
 export const CategoryForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
     const { t } = useTranslation(NS.settings);
+    const localLocales = getLanguageOptions(t);
     const isCategoryNode = !!selectedNode && "subCategories" in selectedNode;
     const isScopeEnabled = isCategoryNode && selectedNode.isCreated;
 
-    const {
-      languageTab,
-      setLanguageTab,
-      languageOptions,
-      updateTranslation,
-      updateValue,
-    } = useCategoryForm({
-      selectedNode,
-      language,
-      setTree,
-    });
+    const { languageTab, setLanguageTab, updateTranslation, updateValue } =
+      useCategoryForm({
+        selectedNode,
+        language,
+        setTree,
+      });
 
     const priorityData = useMemo((): ValueLabel[] => {
       if (!priorityOptions) return [];
@@ -78,6 +75,15 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
       });
     }, [t]);
 
+    // displat empty box.
+    if (!selectedNode) {
+      return (
+        <div className="h-full rounded-lg border border-dashed p-7 text-sm text-muted-foreground">
+          {t("serviceDeskSettings.categoryTab.empty")}
+        </div>
+      );
+    }
+
     return (
       <div ref={ref}>
         <Tabs
@@ -85,13 +91,13 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
           onValueChange={(value) => setLanguageTab(value as Locale)}
         >
           <TabsList className="w-full justify-start">
-            {languageOptions.map((lang) => (
+            {localLocales.map((locale) => (
               <TabsTrigger
-                key={lang.value}
-                value={lang.value}
+                key={locale.value}
+                value={locale.value}
                 className="min-w-20 gap-2 data-[state=inactive]:border-none"
               >
-                {lang.label}
+                {locale.label}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -106,9 +112,8 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 <Input
                   id="category-input-name"
                   data-testid="category-name"
-                  disabled={!selectedNode}
                   className="!disabled:border-primary"
-                  value={selectedNode?.name[languageTab] ?? ""}
+                  value={selectedNode.name[languageTab] ?? ""}
                   onChange={(e) => updateTranslation("name")(e.target.value)}
                 />
               </Field>
@@ -118,9 +123,8 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 </FieldLabel>
                 <Textarea
                   id="category-textarea-description"
-                  disabled={!selectedNode}
                   className="!disabled:border-primary"
-                  value={selectedNode?.description?.[languageTab] ?? ""}
+                  value={selectedNode.description?.[languageTab] ?? ""}
                   onChange={(e) =>
                     updateTranslation("description")(e.target.value)
                   }
@@ -132,9 +136,8 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 </FieldLabel>
                 <Textarea
                   id="category-textarea-request-template"
-                  disabled={!selectedNode}
                   className="!disabled:border-primary"
-                  value={selectedNode?.requestTemplate?.[languageTab] ?? ""}
+                  value={selectedNode.requestTemplate?.[languageTab] ?? ""}
                   onChange={(e) =>
                     updateTranslation("requestTemplate")(e.target.value)
                   }
@@ -167,7 +170,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                     {t("enum.priority.label", { ns: "domain" })}
                   </FieldLabel>
                   <Select
-                    value={selectedNode?.defaultPriority}
+                    value={selectedNode.defaultPriority}
                     onValueChange={updateValue("defaultPriority")}
                   >
                     <SelectTrigger>
@@ -187,7 +190,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                     {t("enum.riskLevel.label", { ns: "domain" })}
                   </FieldLabel>
                   <Select
-                    value={selectedNode?.defaultRiskLevel}
+                    value={selectedNode.defaultRiskLevel}
                     onValueChange={updateValue("defaultRiskLevel")}
                   >
                     <SelectTrigger>
@@ -211,9 +214,8 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   </FieldLabel>
                   <Input
                     id="category-input-resolution-days"
-                    disabled={!selectedNode}
                     className="w-20"
-                    value={selectedNode?.defaultSlaDays}
+                    value={selectedNode.defaultSlaDays}
                     onChange={(e) => {
                       updateValue("defaultSlaDays")(parseInt(e.target.value));
                     }}
@@ -229,9 +231,8 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 <span>
                   <Switch
                     id="category-switch-active"
-                    disabled={!selectedNode}
                     className="!disabled:color-primary"
-                    checked={selectedNode?.active ?? false}
+                    checked={selectedNode.active ?? false}
                     onCheckedChange={updateValue("active")}
                   />
                 </span>

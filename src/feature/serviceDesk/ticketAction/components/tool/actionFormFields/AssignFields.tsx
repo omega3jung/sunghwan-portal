@@ -1,4 +1,4 @@
-import { AlertTriangle, Plus, UserPlus } from "lucide-react";
+﻿import { AlertTriangle, Plus, UserPlus } from "lucide-react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
@@ -61,13 +61,13 @@ export function AssignFields({
     })),
   }));
 
-  const assigneeIds =
-    useWatch({ control: form.control, name: "assigneeIds" }) ?? [];
+  const assigneeUsernames =
+    useWatch({ control: form.control, name: "assigneeUsernames" }) ?? [];
   const categoryId = useWatch({ control: form.control, name: "categoryId" });
   const language = useCurrentLanguage();
   const assigneeError =
-    typeof form.formState.errors.assigneeIds?.message === "string"
-      ? t(form.formState.errors.assigneeIds.message)
+    typeof form.formState.errors.assigneeUsernames?.message === "string"
+      ? t(form.formState.errors.assigneeUsernames.message)
       : "";
   const categoryChanged =
     Boolean(categoryId) &&
@@ -76,7 +76,7 @@ export function AssignFields({
   const { data: recommendation } = useServiceDeskAssignmentRecommendationsQuery(
     {
       categoryId: categoryId ?? "",
-      assigneeIds,
+      assigneeUsernames,
       language,
     },
     categoryChanged,
@@ -88,18 +88,18 @@ export function AssignFields({
     .join(", ");
 
   const onAssigneeAdd = (value: string) => {
-    if (assigneeIds.includes(value)) {
+    if (assigneeUsernames.includes(value)) {
       return;
     }
 
-    setActionFieldValue(form, "assigneeIds", [...assigneeIds, value]);
+    setActionFieldValue(form, "assigneeUsernames", [...assigneeUsernames, value]);
   };
 
   const onAssigneeRemove = (value: string) => {
     setActionFieldValue(
       form,
-      "assigneeIds",
-      assigneeIds.filter((assigneeId) => assigneeId !== value),
+      "assigneeUsernames",
+      assigneeUsernames.filter((assigneeUsername) => assigneeUsername !== value),
     );
   };
 
@@ -109,19 +109,19 @@ export function AssignFields({
 
   const onRecommendedAssigneesAdd = () => {
     const nextAssigneeIds = [
-      ...assigneeIds,
+      ...assigneeUsernames,
       ...recommendedUsers.map((user) => user.value),
     ].filter((value, index, array) => array.indexOf(value) === index);
 
-    setActionFieldValue(form, "assigneeIds", nextAssigneeIds);
+    setActionFieldValue(form, "assigneeUsernames", nextAssigneeIds);
   };
 
   const onRecommendedAssigneeAdd = (value: string) => {
-    if (assigneeIds.includes(value)) {
+    if (assigneeUsernames.includes(value)) {
       return;
     }
 
-    setActionFieldValue(form, "assigneeIds", [...assigneeIds, value]);
+    setActionFieldValue(form, "assigneeUsernames", [...assigneeUsernames, value]);
   };
 
   const recommendationReason = (() => {
@@ -180,7 +180,7 @@ export function AssignFields({
             target: t("field.assignee", { ns: NS.common }),
           })}
           options={users}
-          value={assigneeIds}
+          value={assigneeUsernames}
           onSelect={onAssigneeAdd}
           onRemove={onAssigneeRemove}
         />

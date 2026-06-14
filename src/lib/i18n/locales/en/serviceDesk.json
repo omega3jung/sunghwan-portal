@@ -1,4 +1,4 @@
-{
+﻿{
   "action": {
     "comment": "Comment",
     "note": "Note",
@@ -11,8 +11,8 @@
     "reopenIssue": "Reopen Issue",
     "resubmitRequest": "Resubmit Request",
     "searchCriteria": "Search criteria",
-    "trackTime": {
-      "submit": "Save track time",
+    "workSession": {
+      "submit": "Save work session",
       "submitWithStatus": "Save time and update status",
       "submitting": "Saving..."
     }
@@ -41,12 +41,19 @@
     }
   },
   "field": {
-    "trackTime": "Track time",
+    "workSession": "Work session",
     "durationMinutes": "Duration",
     "startAt": "Start time",
     "endAt": "End time",
     "status": "Status",
-    "note": "Note"
+    "note": "Note",
+    "noCode": "No code"
+  },
+  "tenant": {
+    "portalOwner": "Portal owner"
+  },
+  "status": {
+    "active": "Active"
   },
   "option": {
     "status": {
@@ -56,11 +63,11 @@
     }
   },
   "validation": {
-    "trackTime": {
-      "required": "Enter track time before submitting.",
-      "positive": "Track time must be greater than 0 minutes.",
+    "workSession": {
+      "required": "Enter work session before submitting.",
+      "positive": "Work session must be greater than 0 minutes.",
       "invalidRange": "End time must be after start time.",
-      "statusRequiresTime": "Status can only change when accumulated track time plus this entry is greater than 0.",
+      "statusRequiresTime": "Status can only change when accumulated work session plus this entry is greater than 0.",
       "noteMaxLength": "Note must be 500 characters or less."
     },
     "invalidFieldItems": "Invalid fields: {{item}}"
@@ -76,7 +83,7 @@
   },
   "hoverMessage": {
     "backToList": "Back to ticket list",
-    "trackTimeTool": "Record manual work time and optionally move the ticket status in the same action.",
+    "workSessionTool": "Record manual work time and optionally move the ticket status in the same action.",
     "openDetailAside": "Open the aside to see ticket details",
     "openHistoryDrawer": "Open the aside to view this ticket's history"
   },
@@ -135,7 +142,7 @@
       "NOTE_CREATED": "Note added",
       "COMMENT_UPDATED": "Comment updated",
       "COMMENT_DELETED": "Comment deleted",
-      "TRACK_TIME_UPDATED": "Tracked time updated",
+      "WORK_SESSION_UPDATED": "Work session updated",
       "MERGED": "Merged into {{target}}",
       "TICKET_REJECTED": "Ticket rejected",
       "UPDATED": "Ticket updated",
@@ -153,7 +160,7 @@
     "badge": {
       "assignment": "Assignment",
       "approval": "Approval",
-      "trackTime": "Track time",
+      "workSession": "Work session",
       "planning": "Planning",
       "system": "System"
     },
@@ -243,8 +250,8 @@
       "adjustNoChanges": "Change priority, risk level, or due date before updating."
     }
   },
-  "trackTimeTool": {
-    "title": "Track time",
+  "workSessionTool": {
+    "title": "Work session",
     "tab": {
       "duration": "Duration",
       "range": "Range"
@@ -252,7 +259,7 @@
     "status": {
       "keepCurrent": "Keep current status",
       "currentSuffix": "(current)",
-      "description": "Changing status is guarded by the ticket's accumulated tracked time."
+      "description": "Changing status is guarded by the ticket's accumulated work session."
     },
     "note": {
       "toggle": "Optional note",
@@ -266,7 +273,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "e.g. 30 min",
       "note": "Add a short note for this time entry"
     }
@@ -310,7 +317,7 @@
   },
   "ticketList": {
     "empty": "No tickets found",
-    "requesterMeta": "{{name}} • {{time}}",
+    "requesterMeta": "{{name}} ??{{time}}",
     "dueMeta": "Due {{time}}"
   },
   "searchCriteria": {
@@ -359,7 +366,7 @@
       }
     },
     "assignmentRecommendations": {
-      "invalidInput": "Assignment recommendation requires categoryId and assigneeIds.",
+      "invalidInput": "Assignment recommendation requires categoryId and assigneeUsernames.",
       "fetch": "Failed to fetch assignment recommendations."
     },
     "categories": {
@@ -373,6 +380,20 @@
         "invalidPayload": "Invalid category settings payload.",
         "clientNotFound": "Client {{clientId}} was not found.",
         "clientMismatch": "Category does not belong to client {{clientId}}."
+      }
+    },
+    "tenants": {
+      "fetchList": "Failed to fetch tenants.",
+      "create": "Failed to create tenant.",
+      "fetch": "Failed to fetch tenant.",
+      "update": "Failed to update tenant.",
+      "delete": "Failed to delete tenant.",
+      "save": "Failed to save tenant settings.",
+      "remoteNotImplemented": "REMOTE tenant settings mutations are not implemented yet.",
+      "localDemo": {
+        "invalidPayload": "Invalid tenant settings payload.",
+        "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
+        "companyMismatch": "Tenant does not belong to company {{companyId}}."
       }
     },
     "tickets": {
@@ -398,14 +419,14 @@
     "ticketHistories": {
       "fetchList": "Failed to fetch ticket histories."
     },
-    "ticketTrackTime": {
-      "fetchList": "Failed to fetch ticket track time.",
-      "create": "Failed to save ticket track time.",
+    "ticketWorkSession": {
+      "fetchList": "Failed to fetch ticket work session.",
+      "create": "Failed to save ticket work session.",
       "localDemo": {
-        "ticketMismatch": "Track time payload ticketId does not match the route ticketId.",
+        "ticketMismatch": "Work session payload ticketId does not match the route ticketId.",
         "invalidStatus": "Invalid status: {{value}}.",
-        "invalidTrackedMinutes": "Track time must be greater than 0 minutes.",
-        "statusRequiresTime": "Status cannot change until total tracked time is greater than 0."
+        "invalidTrackedMinutes": "Work session must be greater than 0 minutes.",
+        "statusRequiresTime": "Status cannot change until total work session is greater than 0."
       }
     },
     "ticketCommand": {
@@ -418,7 +439,7 @@
       "localDemo": {
         "createFailed": "Failed to create action.",
         "ticketNotFound": "Ticket {{ticketId}} not found.",
-        "assigneeRequired": "ASSIGN action requires assigneeIds.",
+        "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",

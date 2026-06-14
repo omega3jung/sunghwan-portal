@@ -46,7 +46,7 @@ export interface DbTicketSummary {
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
-  track_time_minutes: number;
+  work_minutes: number;
 
   due_at: ISODateString;
 
@@ -82,7 +82,7 @@ export interface DbTicketDetail {
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
-  track_time_minutes: number;
+  work_minutes: number;
 
   due_at: ISODateString;
 

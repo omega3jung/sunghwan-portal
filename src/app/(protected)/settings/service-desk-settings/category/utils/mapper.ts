@@ -1,18 +1,18 @@
 import { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { ClientCategoryTree } from "@/domain/serviceDesk";
+import { TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { MAX_SUB_CATEGORY_PER_CATEGORY } from "../constants";
 import { CategoryData, SubCategoryData } from "../types";
 
 export const mapCategoryData = (
-  categories: ClientCategoryTree[],
-  clientId: string,
+  categories: TenantCategoryTree[],
+  tenantId: string,
 ): CategoryData[] => {
   if (!categories?.length) {
     return [];
   }
 
-  const current = categories.find((category) => category.id === clientId);
+  const current = categories.find((category) => category.id === tenantId);
 
   if (!current) {
     return [];

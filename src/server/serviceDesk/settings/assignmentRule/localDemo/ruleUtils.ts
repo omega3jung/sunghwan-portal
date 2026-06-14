@@ -1,12 +1,9 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRule } from "@/domain/serviceDesk";
-import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/mapper";
+import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule";
 import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule/mapper";
-import type { DbClientCategoryTree } from "@/feature/serviceDesk/category/mapper";
-import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/mocks/domain/serviceDesk/categories";
+import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
+import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 
 import { getLocalDemoAssignmentRulesTree } from "../../state";
 
@@ -16,7 +13,7 @@ const buildAssignmentRuleSeed = ({
   categoryTrees,
   templateRules,
 }: {
-  categoryTrees: DbClientCategoryTree[];
+  categoryTrees: DbTenantCategoryTree[];
   templateRules: DbAssignmentRule[];
 }): AssignmentRuleStore => {
   const templateMap = new Map(
@@ -24,13 +21,13 @@ const buildAssignmentRuleSeed = ({
   );
 
   return Object.fromEntries(
-    categoryTrees.map((client) => [
-      String(client.client_id),
+    categoryTrees.map((tenant) => [
+      String(tenant.tenant_id),
       [
-        ...client.category.map((category) =>
+        ...tenant.category.map((category) =>
           templateMap.get(String(category.category_id)),
         ),
-        ...client.category.flatMap((category) =>
+        ...tenant.category.flatMap((category) =>
           category.sub_category.map((subCategory) =>
             templateMap.get(String(subCategory.category_id)),
           ),
@@ -45,7 +42,7 @@ export const getAssignmentRuleStore = (isInternal: boolean) => {
 };
 
 const getCategoryTrees = (isInternal: boolean) => {
-  return isInternal ? internalCategorySettingsMock : clientCategorySettingsMock;
+  return getLocalCategoryTrees(isInternal);
 };
 
 const normalizeAssigneeIds = (value: string[]) => {
@@ -74,28 +71,28 @@ export const normalizeAssignmentRules = (
   );
 };
 
-export const resolveClientId = (
+export const resolveTenantId = (
   items: AssignmentRuleStore,
-  requestedClientId: string | null,
+  requestedTenantId: string | null,
 ) => {
-  if (requestedClientId && items[requestedClientId]) {
-    return requestedClientId;
+  if (requestedTenantId && items[requestedTenantId]) {
+    return requestedTenantId;
   }
 
   return Object.keys(items)[0] ?? null;
 };
 
-export const getClientRulesOrThrow = (
+export const getTenantRulesOrThrow = (
   items: AssignmentRuleStore,
-  clientId: string,
+  tenantId: string,
 ) => {
-  const rules = items[clientId];
+  const rules = items[tenantId];
 
   if (!rules) {
     throw new ServiceDeskApiError(
-      "api.assignmentRules.localDemo.clientNotFound",
+      "api.assignmentRules.localDemo.tenantNotFound",
       404,
-      { clientId },
+      { tenantId },
     );
   }
 
@@ -109,32 +106,32 @@ export const getRuleIndexByCategoryId = (
   return rules.findIndex((rule) => String(rule.category_id) === categoryId);
 };
 
-export const findCategoryClientId = (
+export const findCategoryTenantId = (
   items: AssignmentRuleStore,
   isInternal: boolean,
   categoryId: string,
 ) => {
-  for (const [clientId, rules] of Object.entries(items)) {
+  for (const [tenantId, rules] of Object.entries(items)) {
     if (getRuleIndexByCategoryId(rules, categoryId) >= 0) {
-      return clientId;
+      return tenantId;
     }
   }
 
-  for (const [clientId] of Object.entries(items)) {
+  for (const [tenantId] of Object.entries(items)) {
     const categoryTree = getCategoryTrees(isInternal).find(
-      (client) => String(client.client_id) === clientId,
+      (tenant) => tenant.id === tenantId,
     );
 
     if (
-      categoryTree?.category.some(
+      categoryTree?.categories.some(
         (category) =>
-          String(category.category_id) === categoryId ||
-          category.sub_category.some(
-            (subCategory) => String(subCategory.category_id) === categoryId,
+          category.id === categoryId ||
+          category.subCategories.some(
+            (subCategory) => subCategory.id === categoryId,
           ),
       )
     ) {
-      return clientId;
+      return tenantId;
     }
   }
 
@@ -152,7 +149,7 @@ export const buildDbAssignmentRule = ({
     category_id: Number(categoryId),
     assignee: {
       job_field_id: normalizeJobFieldIds(assignee.jobFieldIds),
-      employee_id: normalizeAssigneeIds(assignee.employeeIds),
+      employee_username: normalizeAssigneeIds(assignee.assigneeUsernames),
     },
   };
 };

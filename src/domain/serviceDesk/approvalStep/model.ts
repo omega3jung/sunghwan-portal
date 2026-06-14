@@ -1,4 +1,4 @@
-import { AccessLevel } from "@/domain/auth";
+﻿import { AccessLevel } from "@/domain/auth";
 import { LocalizedText } from "@/shared/types";
 
 import { MainCategory } from "../category/model";
@@ -38,7 +38,7 @@ export type ApprovalAssigneePayloadMap = {
   MANAGER: { level: 1 | 2 };
   DEPARTMENT: { departmentId: string }; // string number. can use parseInt.
   JOB_FIELD: { jobFieldId: string }; // string number. can use parseInt.
-  EMPLOYEE: { employeeIds: string[] }; // employee userName identifiers
+  EMPLOYEE: { employeeUsernames: string[] }; // employee username identifiers
 };
 
 export type ApprovalAssigneeType = {

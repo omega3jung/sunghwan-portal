@@ -15,6 +15,7 @@ import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
+import { SETTINGS_OFFSET_STYLE } from "../../../style";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 import { isApprovalStepAssigneeValid } from "../utils/tree";
 
@@ -64,9 +65,9 @@ export const ApprovalStepTree = ({
   return (
     <div
       className="col-span-2 flex flex-col gap-2 p-2 pr-10"
-      style={{ "--settings-offset": "18rem" } as React.CSSProperties}
+      style={SETTINGS_OFFSET_STYLE}
     >
-      <ScrollArea className="h-full w-full border-y md:h-[calc(100vh-var(--settings-offset))]">
+      <ScrollArea className="h-full w-full md:h-[calc(100vh-var(--settings-offset)-70px)]">
         <SortableTree
           items={tree}
           onChange={(nextTree) => {

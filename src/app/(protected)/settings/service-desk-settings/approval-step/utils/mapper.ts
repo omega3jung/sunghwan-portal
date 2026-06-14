@@ -1,24 +1,24 @@
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import type {
   CategoryApprovalSettings,
-  ClientCategoryTree,
+  TenantCategoryTree,
 } from "@/domain/serviceDesk";
 
 import { MAX_APPROVAL_STEP_PER_CATEGORY } from "../constants";
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
 
 export function mapApprovalData(
-  categories: ClientCategoryTree[],
-  clientId: string,
+  categories: TenantCategoryTree[],
+  tenantId: string,
   approvalStepData: CategoryApprovalSettings[],
 ): CategoryApprovalStepData[] {
   if (!categories.length) {
     return [];
   }
 
-  const currentClient = categories.find((category) => category.id === clientId);
+  const currentTenant = categories.find((category) => category.id === tenantId);
 
-  if (!currentClient) {
+  if (!currentTenant) {
     return [];
   }
 
@@ -26,7 +26,7 @@ export function mapApprovalData(
     approvalStepData.map((category) => [category.id, category.approvalSteps]),
   );
 
-  return currentClient.categories
+  return currentTenant.categories
     .slice()
     .sort((left, right) => left.index - right.index)
     .map((category) => ({

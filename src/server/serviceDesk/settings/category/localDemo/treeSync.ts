@@ -1,4 +1,4 @@
-import type { DbCategory } from "@/feature/serviceDesk/category/mapper";
+import type { DbCategory } from "@/feature/serviceDesk/category";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
 
 const synchronizeSubCategories = ({

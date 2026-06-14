@@ -1,5 +1,9 @@
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import type { ApprovalStep, CategoryApprovalSettings } from "@/domain/serviceDesk";
+import type {
+  ApprovalStep,
+  CategoryApprovalSettings,
+  TenantCategoryTree,
+} from "@/domain/serviceDesk";
 import type {
   ApprovalStepTreeSyncInput,
   CategoryApprovalStepTreeSyncInput,
@@ -8,6 +12,7 @@ import type {
 import type { LocalizedText } from "@/shared/types";
 
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
+import { mapApprovalData } from "./mapper";
 
 type ApprovalStepTree = TreeNodes<CategoryApprovalStepData | ApprovalStepData>;
 
@@ -51,7 +56,7 @@ const normalizeApprovalAssignee = (
     case "EMPLOYEE":
       return {
         ...value,
-        employeeIds: value.employeeIds.slice().sort(),
+        employeeUsernames: value.employeeUsernames.slice().sort(),
       };
     default:
       return value;
@@ -59,33 +64,37 @@ const normalizeApprovalAssignee = (
 };
 
 export const buildApprovalStepTreeSavePayload = ({
-  clientId,
+  tenantId,
   tree,
 }: {
-  clientId: string;
+  tenantId: string;
   tree: ApprovalStepTree;
 }): SaveServiceDeskApprovalStepTreePayload => {
   return {
-    clientId,
+    tenantId,
     categories: tree.map((categoryNode) => {
       const categoryData = categoryNode.data as CategoryApprovalStepData;
 
       return {
         id: categoryData.categoryId,
-        approvalSteps: categoryNode.children.map((approvalNode, approvalIndex) => {
-          const approvalData = approvalNode.data as ApprovalStepData;
+        approvalSteps: categoryNode.children.map(
+          (approvalNode, approvalIndex) => {
+            const approvalData = approvalNode.data as ApprovalStepData;
 
-          return {
-            id: normalizeApprovalStepId(approvalData.id),
-            name: normalizeLocalizedText(approvalData.name),
-            description: normalizeOptionalLocalizedText(
-              approvalData.description,
-            ),
-            index: approvalIndex + 1,
-            stepAssignee: normalizeApprovalAssignee(approvalData.stepAssignee),
-            skipAccessLevel: approvalData.skipAccessLevel,
-          };
-        }),
+            return {
+              id: normalizeApprovalStepId(approvalData.id),
+              name: normalizeLocalizedText(approvalData.name),
+              description: normalizeOptionalLocalizedText(
+                approvalData.description,
+              ),
+              index: approvalIndex + 1,
+              stepAssignee: normalizeApprovalAssignee(
+                approvalData.stepAssignee,
+              ),
+              skipAccessLevel: approvalData.skipAccessLevel,
+            };
+          },
+        ),
       };
     }),
   };
@@ -95,12 +104,12 @@ const normalizeApprovalStepsForComparison = (
   approvalSteps: ApprovalStepTreeSyncInput[] | ApprovalStep[],
 ) => {
   return approvalSteps.map((approvalStep, approvalIndex) => ({
-    ...approvalStep,
     id: normalizeApprovalStepId(approvalStep.id),
     name: normalizeLocalizedText(approvalStep.name),
     description: normalizeOptionalLocalizedText(approvalStep.description),
     index: approvalIndex + 1,
     stepAssignee: normalizeApprovalAssignee(approvalStep.stepAssignee),
+    skipAccessLevel: approvalStep.skipAccessLevel,
   }));
 };
 
@@ -117,7 +126,7 @@ export const createApprovalStepSettingsSignatureFromTree = (
   tree: ApprovalStepTree,
 ) => {
   const payload = buildApprovalStepTreeSavePayload({
-    clientId: "comparison",
+    tenantId: "comparison",
     tree,
   });
 
@@ -137,9 +146,9 @@ export const isApprovalStepAssigneeValid = (approvalStep: ApprovalStepData) => {
       return approvalStep.stepAssignee.jobFieldId.trim().length > 0;
     case "EMPLOYEE":
       return (
-        approvalStep.stepAssignee.employeeIds.length > 0 &&
-        approvalStep.stepAssignee.employeeIds.every(
-          (employeeId) => employeeId.trim().length > 0,
+        approvalStep.stepAssignee.employeeUsernames.length > 0 &&
+        approvalStep.stepAssignee.employeeUsernames.every(
+          (employeeUsername) => employeeUsername.trim().length > 0,
         )
       );
   }
@@ -155,18 +164,28 @@ export const isApprovalStepTreeValid = (tree: ApprovalStepTree) => {
   );
 };
 
-export const createApprovalStepSettingsSignatureFromApprovalSettings = (
-  categories: CategoryApprovalSettings[],
-) => {
-  const normalizedCategories = categories
-    .slice()
-    .sort((left, right) => left.index - right.index)
-    .map((category) => ({
-      ...category,
-      approvalSteps: category.approvalSteps
-        .slice()
-        .sort((left, right) => left.index - right.index),
-    }));
+export const createApprovalStepSettingsSignatureFromApprovalSettings = ({
+  categories,
+  selectedTenant,
+  approvalSteps,
+}: {
+  categories: TenantCategoryTree[] | undefined;
+  selectedTenant: string | null;
+  approvalSteps: CategoryApprovalSettings[] | undefined;
+}) => {
+  if (!categories || !selectedTenant) {
+    return JSON.stringify([]);
+  }
+
+  const mappedCategories = mapApprovalData(
+    categories,
+    selectedTenant,
+    approvalSteps ?? [],
+  );
+  const normalizedCategories = mappedCategories.map((category) => ({
+    id: category.categoryId,
+    approvalSteps: category.approvalSteps,
+  }));
 
   return JSON.stringify(normalizeCategoriesForComparison(normalizedCategories));
 };

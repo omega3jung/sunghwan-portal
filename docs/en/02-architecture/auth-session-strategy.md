@@ -56,7 +56,6 @@ The current stack is:
 ```ts
 type AuthUser = {
   id: string;
-  employeeId: strung | number;
   username: string;
   displayName: string;
   email: string;
@@ -164,7 +163,6 @@ The project uses `CredentialsProvider`.
 On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 
 - `id`
-- `employeeId`
 - `username`
 - `displayName`
 - `email`

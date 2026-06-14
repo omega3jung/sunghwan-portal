@@ -11,7 +11,7 @@ import {
   resolveTreeNodeIdByPath,
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import type { ClientCategoryTree } from "@/domain/serviceDesk";
+import type { TenantCategoryTree } from "@/domain/serviceDesk";
 
 import {
   getDefaultCategoryData,
@@ -21,12 +21,12 @@ import { CategoryData, SubCategoryData } from "../types";
 import { categoryToTree, mapCategoryData } from "../utils/mapper";
 
 type UseCategoryTreeOptions = {
-  selectedClient: string | null;
-  categories: ClientCategoryTree[] | undefined;
+  selectedTenant: string | null;
+  categories: TenantCategoryTree[] | undefined;
 };
 
 export function useCategoryTree({
-  selectedClient,
+  selectedTenant,
   categories,
 }: UseCategoryTreeOptions) {
   const [tree, setTree] = useState<TreeNodes<CategoryData | SubCategoryData>>(
@@ -34,11 +34,11 @@ export function useCategoryTree({
   );
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeClientId, setTreeClientId] = useState<string | null>(null);
+  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
 
   const [newCategoryCount, setNewCategoryCount] = useState<number>(1);
   const [newSubCategoryCount, setNewSubCategoryCount] = useState<number>(1);
-  const previousClientRef = useRef<string | null>(null);
+  const previousTenantRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -46,16 +46,16 @@ export function useCategoryTree({
   }, [selectedId, tree]);
 
   useEffect(() => {
-    if (!categories || !selectedClient) return;
+    if (!categories || !selectedTenant) return;
 
-    const mapped = mapCategoryData(categories, selectedClient);
+    const mapped = mapCategoryData(categories, selectedTenant);
     const nextTree = categoryToTree(mapped);
 
     setTree(nextTree);
-    setTreeClientId(selectedClient);
+    setTreeTenantId(selectedTenant);
     setSelectedId((previousSelectedId) => {
-      if (previousClientRef.current !== selectedClient) {
-        previousClientRef.current = selectedClient;
+      if (previousTenantRef.current !== selectedTenant) {
+        previousTenantRef.current = selectedTenant;
         return null;
       }
 
@@ -79,7 +79,7 @@ export function useCategoryTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [categories, selectedClient]);
+  }, [categories, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
@@ -142,7 +142,7 @@ export function useCategoryTree({
     setTree,
     selectedId,
     setSelectedId,
-    treeClientId,
+    treeTenantId,
     selectedNode,
     addCategory,
     removeCategory,

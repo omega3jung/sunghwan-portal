@@ -1,4 +1,10 @@
 {
+  "language": {
+    "english": "English",
+    "spanish": "Spanish",
+    "french": "French",
+    "korean": "Korean"
+  },
   "disabledRouteMessage": {
     "title": "Not implemented in this demo",
     "description": "This page exists to demonstrate the settings architecture."
@@ -83,23 +89,27 @@
     },
     "serviceDeskSettings": {
       "title": "IT Service Desk Settings",
-      "description": "Manage categories, approval steps, and assignment rules for IT service desk tickets.",
+      "description": "Manage the operating scope, categories, approval steps, and assignment rules of the IT Service Desk.",
+      "tenant": {
+        "title": "Tenant",
+        "description": "Manage the companies that can use the IT Service Desk."
+      },
       "category": {
         "title": "Category",
-        "description": "Manage categories and sub-categories for IT service desk tickets."
+        "description": "Manage ticket categories, subcategories, and default operating rules."
       },
       "approvalSteps": {
         "title": "Approval Steps",
-        "description": "Manage approval steps required before IT service desk tickets are routed to assignees."
+        "description": "Manage the approval flow required before tickets are processed."
       },
       "assignmentRules": {
         "title": "Assignment Rules",
-        "description": "Manage assignment rules for IT service desk tickets."
+        "description": "Manage the rules for assigning tickets to responsible users or organizations."
       }
     }
   },
   "serviceDeskSettings": {
-    "general": {
+    "common": {
       "category": "Category",
       "categoryList": "Category List",
       "approvalStep": "Approval Step",
@@ -108,6 +118,7 @@
       "assignmentRuleList": "Assignment Rules",
       "client": "Client",
       "clientList": "Client List",
+      "tenant": "Tenant",
       "noResults": "No results found",
       "saveChanges": "Save Changes"
     },
@@ -118,7 +129,8 @@
       "requestTemplate": "Request Template",
       "resolutionDays": "Resolution Days",
       "active": "Active",
-      "addCategory": "Add Category"
+      "addCategory": "Add Category",
+      "empty": "Select a category to edit settings."
     },
     "approvalStepTab": {
       "name": "Name",
@@ -138,15 +150,42 @@
       "employee": "Employee",
       "employeePlaceholder": "Select an assignee",
       "skipAccessLevel": "Skippable Access Level",
-      "saveUnavailable": "Cannot Save"
+      "saveUnavailable": "Cannot Save",
+      "empty": "Select a approval step to edit settings."
     },
     "assignmentRuleTab": {
-      "name": "Category",
-      "namePlaceholder": "Select a category",
       "jobField": "Job Field",
       "selectAssigneeJobField": "Select assignee Job field",
       "employee": "Employee",
-      "selectAssignee": "Select assignee"
+      "selectAssignee": "Select assignee",
+      "empty": "Select a assignment rule to edit settings."
+    },
+    "tenant": {
+      "companyList": {
+        "title": "Company List",
+        "description": "Active companies that are not assigned to a tenant yet.",
+        "empty": "No available companies"
+      },
+      "tenantList": {
+        "title": "Tenant List",
+        "description": "Select tenants to edit or move them back to companies.",
+        "empty": "No tenants",
+        "portalOwnerHint": "Portal owner tenants can be edited, but cannot be moved back to the company list.",
+        "infoAriaLabel": "Portal owner tenant restriction"
+      },
+      "actions": {
+        "addToTenants": "Add to tenants",
+        "moveToCompanies": "Move to companies"
+      },
+      "settingInfo": {
+        "title": "Tenant Setting Info",
+        "description": "Update names and color for the selected tenant.",
+        "empty": "Select a tenant to edit settings.",
+        "nameTitle": "Tenant Name",
+        "nameDescription": "Changes are reflected in the tenant list immediately.",
+        "colorTitle": "Tenant Color",
+        "tenantNamePlaceholder": "{{language}} tenant name"
+      }
     }
   }
 }

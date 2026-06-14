@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { Priority, RiskLevel } from "@/domain/common";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticketAction";
@@ -68,14 +68,14 @@ export const toHistoryMetadata = (
 ): Record<string, unknown> => ({ ...content });
 
 export const requireAssigneeIds = (content: TicketActionFormValues) => {
-  if (!content.assigneeIds) {
+  if (!content.assigneeUsernames) {
     throw new ServiceDeskApiError(
       "api.ticketCommand.localDemo.assigneeRequired",
       400,
     );
   }
 
-  return content.assigneeIds;
+  return content.assigneeUsernames;
 };
 
 export const requireTargetTicketId = (content: TicketActionFormValues) => {

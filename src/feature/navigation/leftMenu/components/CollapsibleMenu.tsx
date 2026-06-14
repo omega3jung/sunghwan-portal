@@ -40,6 +40,7 @@ function isRemoteAllowedPath(pathname: string) {
   return (
     pathname === "/" ||
     pathname.startsWith("/demo") ||
+    pathname.startsWith("/settings") ||
     pathname.startsWith("/documents")
   );
 }

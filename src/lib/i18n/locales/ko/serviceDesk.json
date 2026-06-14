@@ -11,7 +11,7 @@
     "reopenIssue": "티켓 다시 열기",
     "resubmitRequest": "요청 재제출",
     "searchCriteria": "검색 조건",
-    "trackTime": {
+    "workSession": {
       "submit": "작업 시간 저장",
       "submitWithStatus": "시간 저장 및 상태 변경",
       "submitting": "저장 중..."
@@ -41,13 +41,19 @@
     }
   },
   "field": {
-    "dueBy": "기한",
-    "trackTime": "작업 시간",
+    "workSession": "작업 시간",
     "durationMinutes": "소요 시간",
     "startAt": "시작 시간",
     "endAt": "종료 시간",
     "status": "상태",
-    "note": "메모"
+    "note": "메모",
+    "noCode": "코드 없음"
+  },
+  "tenant": {
+    "portalOwner": "포털 소유자"
+  },
+  "status": {
+    "active": "활성"
   },
   "option": {
     "status": {
@@ -57,7 +63,7 @@
     }
   },
   "validation": {
-    "trackTime": {
+    "workSession": {
       "required": "제출하기 전에 작업 시간을 입력해 주세요.",
       "positive": "작업 시간은 0분보다 커야 합니다.",
       "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
@@ -77,7 +83,7 @@
   },
   "hoverMessage": {
     "backToList": "티켓 목록으로 돌아가기",
-    "trackTimeTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "workSessionTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
     "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
   },
@@ -136,7 +142,7 @@
       "NOTE_CREATED": "메모가 추가됨",
       "COMMENT_UPDATED": "댓글이 수정됨",
       "COMMENT_DELETED": "댓글이 삭제됨",
-      "TRACK_TIME_UPDATED": "작업 시간이 업데이트됨",
+      "WORK_SESSION_UPDATED": "작업 시간이 업데이트됨",
       "MERGED": "{{target}} 티켓으로 병합됨",
       "TICKET_REJECTED": "티켓이 반려됨",
       "UPDATED": "티켓이 업데이트됨",
@@ -150,17 +156,13 @@
     "into": "{{ticketId}} 티켓으로 병합됨"
   },
   "historyTimeline": {
+    "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
     "badge": {
-      "status": "상태",
       "assignment": "할당",
       "approval": "승인",
-      "comment": "댓글",
-      "category": "카테고리",
-      "note": "메모",
-      "trackTime": "작업 시간",
+      "workSession": "작업 시간",
       "planning": "계획",
-      "system": "시스템",
-      "default": "이력"
+      "system": "시스템"
     },
     "valueChanged": "{{from}} -> {{to}}"
   },
@@ -171,29 +173,11 @@
     },
     "editor": {
       "validationEmpty": "제출하기 전에 댓글을 입력해 주세요."
-    },
-    "toolbar": {
-      "bold": "굵게",
-      "italic": "기울임꼴",
-      "bulletList": "글머리 기호 목록",
-      "numberedList": "번호 목록",
-      "quote": "인용",
-      "codeBlock": "코드 블록",
-      "undo": "실행 취소",
-      "redo": "다시 실행"
     }
   },
   "actionTool": {
     "currentUser": "현재 사용자",
     "currentUserFallback": "나",
-    "launcherTitle": {
-      "comment": "댓글",
-      "note": "메모",
-      "assign": "할당",
-      "adjust": "계획 조정",
-      "merge": "병합",
-      "reject": "반려"
-    },
     "launcher": {
       "comment": "요청자와 참조자에게 공개 답글을 남기세요.",
       "note": "팀 내부에만 남는 내부 메모를 작성하세요.",
@@ -266,9 +250,8 @@
       "adjustNoChanges": "업데이트하기 전에 우선순위, 위험도 또는 기한을 변경하세요."
     }
   },
-  "trackTimeTool": {
+  "workSessionTool": {
     "title": "작업 시간",
-    "description": "수동 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
     "tab": {
       "duration": "소요 시간",
       "range": "시간 범위"
@@ -290,7 +273,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "예: 30분",
       "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
     }
@@ -360,17 +343,30 @@
       "create": "승인 단계를 생성하지 못했습니다.",
       "fetch": "승인 단계를 불러오지 못했습니다.",
       "update": "승인 단계를 수정하지 못했습니다.",
-      "delete": "승인 단계를 삭제하지 못했습니다."
+      "delete": "승인 단계를 삭제하지 못했습니다.",
+      "save": "승인 단계 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "승인 단계 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다."
+      }
     },
     "assignmentRules": {
       "fetchList": "할당 규칙을 불러오지 못했습니다.",
       "create": "할당 규칙을 생성하지 못했습니다.",
       "fetch": "할당 규칙을 불러오지 못했습니다.",
       "update": "할당 규칙을 수정하지 못했습니다.",
-      "delete": "할당 규칙을 삭제하지 못했습니다."
+      "delete": "할당 규칙을 삭제하지 못했습니다.",
+      "save": "할당 규칙 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "할당 규칙 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
+        "emptyAssignee": "할당 규칙에는 최소 한 명의 담당자가 필요합니다."
+      }
     },
     "assignmentRecommendations": {
-      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeIds가 필요합니다.",
+      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeUsernames가 필요합니다.",
       "fetch": "할당 추천을 불러오지 못했습니다."
     },
     "categories": {
@@ -378,7 +374,27 @@
       "create": "카테고리를 생성하지 못했습니다.",
       "fetch": "카테고리를 불러오지 못했습니다.",
       "update": "카테고리를 수정하지 못했습니다.",
-      "delete": "카테고리를 삭제하지 못했습니다."
+      "delete": "카테고리를 삭제하지 못했습니다.",
+      "save": "카테고리 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "카테고리 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "clientMismatch": "카테고리가 클라이언트 {{clientId}}에 속하지 않습니다."
+      }
+    },
+    "tenants": {
+      "fetchList": "테넌트를 불러오지 못했습니다.",
+      "create": "테넌트를 생성하지 못했습니다.",
+      "fetch": "테넌트를 불러오지 못했습니다.",
+      "update": "테넌트를 수정하지 못했습니다.",
+      "delete": "테넌트를 삭제하지 못했습니다.",
+      "save": "테넌트 설정을 저장하지 못했습니다.",
+      "remoteNotImplemented": "REMOTE 테넌트 설정 변경은 아직 구현되지 않았습니다.",
+      "localDemo": {
+        "invalidPayload": "테넌트 설정 payload가 올바르지 않습니다.",
+        "companyAlreadyAssigned": "회사 {{companyId}}는 이미 활성 테넌트에 할당되어 있습니다.",
+        "companyMismatch": "테넌트가 회사 {{companyId}}에 속하지 않습니다."
+      }
     },
     "tickets": {
       "fetchList": "티켓을 불러오지 못했습니다.",
@@ -386,7 +402,13 @@
       "notFound": "티켓을 찾을 수 없습니다.",
       "fetch": "티켓을 불러오지 못했습니다.",
       "update": "티켓을 수정하지 못했습니다.",
-      "delete": "티켓을 삭제하지 못했습니다."
+      "delete": "티켓을 삭제하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "티켓 payload가 올바르지 않습니다.",
+        "requesterRequired": "요청자는 필수입니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
+        "updateNotAllowed": "상태가 {{status}}인 티켓은 수정할 수 없습니다."
+      }
     },
     "ticketActions": {
       "fetchList": "티켓 액션을 불러오지 못했습니다.",
@@ -397,7 +419,7 @@
     "ticketHistories": {
       "fetchList": "티켓 이력을 불러오지 못했습니다."
     },
-    "ticketTrackTime": {
+    "ticketWorkSession": {
       "fetchList": "티켓 작업 시간을 불러오지 못했습니다.",
       "create": "티켓 작업 시간을 저장하지 못했습니다.",
       "localDemo": {
@@ -412,11 +434,13 @@
       "mergeSameTicket": "같은 티켓으로는 병합할 수 없습니다.",
       "employeeUnavailable": "인증되지 않음: 직원 식별 정보를 확인할 수 없습니다.",
       "actionMismatch": "액션 경로와 payload가 일치하지 않습니다.",
+      "startWork": "티켓 작업을 시작하지 못했습니다.",
       "execute": "티켓 명령 실행에 실패했습니다.",
       "localDemo": {
         "createFailed": "액션 생성에 실패했습니다.",
         "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
-        "assigneeRequired": "ASSIGN 작업에는 assigneeIds가 필요합니다.",
+        "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
+        "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
         "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
         "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
         "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",

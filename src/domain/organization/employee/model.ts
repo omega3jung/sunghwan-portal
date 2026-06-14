@@ -12,7 +12,7 @@ export type LocalizedName = {
 
 export interface Employee {
   id: number; // internal db pk
-  userName: string; // stable app identifier
+  username: string; // stable app identifier
 
   // basic info
   name: LocalizedName; // localized display source

@@ -25,14 +25,14 @@ const normalizeOptionalLocalizedText = (value?: LocalizedText) => {
 };
 
 export const buildCategoryTreeSavePayload = ({
-  clientId,
+  tenantId,
   tree,
 }: {
-  clientId: string;
+  tenantId: string;
   tree: CategoryTree;
 }): SaveServiceDeskCategoryTreePayload => {
   return {
-    clientId,
+    tenantId,
     categories: tree.map((categoryNode, categoryIndex) => {
       const { isCreated: _categoryIsCreated, ...categoryData } =
         categoryNode.data as CategoryData;
@@ -91,7 +91,7 @@ const normalizeCategoriesForComparison = (
 
 export const createCategorySettingsSignatureFromTree = (tree: CategoryTree) => {
   const payload = buildCategoryTreeSavePayload({
-    clientId: "comparison",
+    tenantId: "comparison",
     tree,
   });
 

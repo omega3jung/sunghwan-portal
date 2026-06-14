@@ -1,4 +1,4 @@
-
+﻿
 import {
   LocalActionHandler,
   LocalActionSpec,
@@ -19,27 +19,27 @@ import { mergeAssigneeIds } from "./ticketPatch";
 
 const assignTicket: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
-  const assigneeIds = requireAssigneeIds(context.content);
+  const assigneeUsernames = requireAssigneeIds(context.content);
 
   return {
     history: {
       type: "ASSIGNMENT",
       action: "UPDATED",
       from_value: ticket.assignee_id,
-      to_value: assigneeIds,
+      to_value: assigneeUsernames,
       metadata: toHistoryMetadata(context.content),
     },
     ticketPatch: {
-      assignee_id: assigneeIds,
-      email: mergeTicketToEmails(ticket, assigneeIds),
-      assigned: assigneeIds.includes(context.employeeUserName),
+      assignee_id: assigneeUsernames,
+      email: mergeTicketToEmails(ticket, assigneeUsernames),
+      assigned: assigneeUsernames.includes(context.employeeUserName),
     },
   };
 };
 
 const assignSelfTicket: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
-  const assigneeIds =
+  const assigneeUsernames =
     ticket.status === "Working"
       ? mergeAssigneeIds(ticket.assignee_id, context.employeeUserName)
       : [context.employeeUserName];
@@ -49,12 +49,12 @@ const assignSelfTicket: LocalActionHandler = (context) => {
       type: "ASSIGNMENT",
       action: "UPDATED",
       from_value: ticket.assignee_id,
-      to_value: assigneeIds,
+      to_value: assigneeUsernames,
       metadata: toHistoryMetadata(context.content),
     },
     ticketPatch: {
-      assignee_id: assigneeIds,
-      email: mergeTicketToEmails(ticket, assigneeIds),
+      assignee_id: assigneeUsernames,
+      email: mergeTicketToEmails(ticket, assigneeUsernames),
       assigned: true,
     },
   };

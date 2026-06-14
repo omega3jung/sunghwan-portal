@@ -11,7 +11,7 @@
     "reopenIssue": "Rouvrir l'incident",
     "resubmitRequest": "Soumettre à nouveau la demande",
     "searchCriteria": "Critères de recherche",
-    "trackTime": {
+    "workSession": {
       "submit": "Enregistrer le temps suivi",
       "submitWithStatus": "Enregistrer le temps et mettre à jour le statut",
       "submitting": "Enregistrement..."
@@ -41,13 +41,19 @@
     }
   },
   "field": {
-    "dueBy": "Échéance",
-    "trackTime": "Temps enregistré",
+    "workSession": "Temps enregistré",
     "durationMinutes": "Durée",
     "startAt": "Heure de début",
     "endAt": "Heure de fin",
     "status": "Statut",
-    "note": "Note"
+    "note": "Note",
+    "noCode": "Aucun code"
+  },
+  "tenant": {
+    "portalOwner": "Propriétaire du portail"
+  },
+  "status": {
+    "active": "Actif"
   },
   "option": {
     "status": {
@@ -57,7 +63,7 @@
     }
   },
   "validation": {
-    "trackTime": {
+    "workSession": {
       "required": "Saisissez le temps suivi avant l'envoi.",
       "positive": "Le temps suivi doit être supérieur à 0 minute.",
       "invalidRange": "L'heure de fin doit être après l'heure de début.",
@@ -77,7 +83,7 @@
   },
   "hoverMessage": {
     "backToList": "Retour à la liste des tickets",
-    "trackTimeTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
+    "workSessionTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
     "openDetailAside": "Ouvrir le panneau latéral pour voir les détails du ticket",
     "openHistoryDrawer": "Ouvrir le panneau latéral pour voir l'historique de ce ticket"
   },
@@ -136,7 +142,7 @@
       "NOTE_CREATED": "Note ajoutée",
       "COMMENT_UPDATED": "Commentaire mis à jour",
       "COMMENT_DELETED": "Commentaire supprimé",
-      "TRACK_TIME_UPDATED": "Temps enregistré mis à jour",
+      "WORK_SESSION_UPDATED": "Temps enregistré mis à jour",
       "MERGED": "Fusionné dans {{target}}",
       "TICKET_REJECTED": "Ticket rejeté",
       "UPDATED": "Ticket mis à jour",
@@ -152,16 +158,11 @@
   "historyTimeline": {
     "description": "Vue chronologique de l'activité récente du ticket.",
     "badge": {
-      "status": "Statut",
       "assignment": "Attribution",
       "approval": "Approbation",
-      "comment": "Commentaire",
-      "category": "Catégorie",
-      "note": "Note",
-      "trackTime": "Temps enregistré",
+      "workSession": "Temps enregistré",
       "planning": "Planification",
-      "system": "Système",
-      "default": "Historique"
+      "system": "Système"
     },
     "valueChanged": "{{from}} -> {{to}}"
   },
@@ -174,38 +175,9 @@
       "validationEmpty": "Veuillez saisir un commentaire avant l'envoi."
     }
   },
-  "richEditor": {
-    "toolbar": {
-      "bold": "Gras",
-      "italic": "Italique",
-      "underline": "Souligner",
-      "strike": "Barré",
-      "bulletList": "Liste à puces",
-      "numberedList": "Liste numérotée",
-      "quote": "Citation",
-      "codeBlock": "Bloc de code",
-      "link": "Lien",
-      "image": "Image",
-      "table": "Tableau",
-      "undo": "Annuler",
-      "redo": "Rétablir"
-    },
-    "prompt": {
-      "link": "Saisissez une URL",
-      "image": "Saisissez l'URL d'une image"
-    }
-  },
   "actionTool": {
     "currentUser": "Utilisateur actuel",
     "currentUserFallback": "Vous",
-    "launcherTitle": {
-      "comment": "Commentaire",
-      "note": "Note",
-      "assign": "Assigner",
-      "adjust": "Ajuster le plan",
-      "merge": "Fusionner",
-      "reject": "Rejeter"
-    },
     "launcher": {
       "comment": "Publiez une réponse visible pour le demandeur et les personnes abonnées.",
       "note": "Laissez une note interne qui reste dans l'équipe.",
@@ -278,7 +250,7 @@
       "adjustNoChanges": "Modifiez la priorité, le niveau de risque ou l'échéance avant de mettre à jour."
     }
   },
-  "trackTimeTool": {
+  "workSessionTool": {
     "title": "Temps enregistré",
     "tab": {
       "duration": "Durée",
@@ -301,7 +273,7 @@
     }
   },
   "placeholder": {
-    "trackTime": {
+    "workSession": {
       "durationMinutes": "ex. 30 min",
       "note": "Ajoutez une courte note pour cette saisie de temps"
     }
@@ -345,7 +317,7 @@
   },
   "ticketList": {
     "empty": "Aucun ticket trouvé",
-    "requesterMeta": "{{name}} • {{time}}",
+    "requesterMeta": "{{name}} ??{{time}}",
     "dueMeta": "Échéance {{time}}"
   },
   "searchCriteria": {
@@ -371,17 +343,30 @@
       "create": "Impossible de créer l'étape d'approbation.",
       "fetch": "Impossible de récupérer l'étape d'approbation.",
       "update": "Impossible de mettre à jour l'étape d'approbation.",
-      "delete": "Impossible de supprimer l'étape d'approbation."
+      "delete": "Impossible de supprimer l'étape d'approbation.",
+      "save": "Impossible d'enregistrer les paramètres des étapes d'approbation.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres d'étapes d'approbation invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable."
+      }
     },
     "assignmentRules": {
       "fetchList": "Impossible de récupérer les règles d'attribution.",
       "create": "Impossible de créer la règle d'attribution.",
       "fetch": "Impossible de récupérer la règle d'attribution.",
       "update": "Impossible de mettre à jour la règle d'attribution.",
-      "delete": "Impossible de supprimer la règle d'attribution."
+      "delete": "Impossible de supprimer la règle d'attribution.",
+      "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "emptyAssignee": "La règle d'attribution nécessite au moins une personne assignée."
+      }
     },
     "assignmentRecommendations": {
-      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeIds.",
+      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeUsernames.",
       "fetch": "Impossible de récupérer les recommandations d'attribution."
     },
     "categories": {
@@ -389,7 +374,27 @@
       "create": "Impossible de créer la catégorie.",
       "fetch": "Impossible de récupérer la catégorie.",
       "update": "Impossible de mettre à jour la catégorie.",
-      "delete": "Impossible de supprimer la catégorie."
+      "delete": "Impossible de supprimer la catégorie.",
+      "save": "Impossible d'enregistrer les paramètres de catégorie.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}."
+      }
+    },
+    "tenants": {
+      "fetchList": "Impossible de récupérer les tenants.",
+      "create": "Impossible de créer le tenant.",
+      "fetch": "Impossible de récupérer le tenant.",
+      "update": "Impossible de mettre à jour le tenant.",
+      "delete": "Impossible de supprimer le tenant.",
+      "save": "Impossible d'enregistrer les paramètres du tenant.",
+      "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres du tenant invalide.",
+        "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",
+        "companyMismatch": "Le tenant n'appartient pas à l'entreprise {{companyId}}."
+      }
     },
     "tickets": {
       "fetchList": "Impossible de récupérer les tickets.",
@@ -397,7 +402,13 @@
       "notFound": "Ticket introuvable.",
       "fetch": "Impossible de récupérer le ticket.",
       "update": "Impossible de mettre à jour le ticket.",
-      "delete": "Impossible de supprimer le ticket."
+      "delete": "Impossible de supprimer le ticket.",
+      "localDemo": {
+        "invalidPayload": "Charge utile du ticket invalide.",
+        "requesterRequired": "Le demandeur est obligatoire.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "updateNotAllowed": "Le ticket ne peut pas être mis à jour avec le statut {{status}}."
+      }
     },
     "ticketActions": {
       "fetchList": "Impossible de récupérer les actions du ticket.",
@@ -408,7 +419,7 @@
     "ticketHistories": {
       "fetchList": "Impossible de récupérer les historiques du ticket."
     },
-    "ticketTrackTime": {
+    "ticketWorkSession": {
       "fetchList": "Impossible de récupérer le temps suivi du ticket.",
       "create": "Impossible d'enregistrer le temps suivi du ticket.",
       "localDemo": {
@@ -423,11 +434,13 @@
       "mergeSameTicket": "Impossible de fusionner avec le même ticket.",
       "employeeUnavailable": "Non autorisé : l'identité de l'employé est indisponible.",
       "actionMismatch": "Le chemin de l'action et la charge utile ne correspondent pas.",
+      "startWork": "Impossible de démarrer le travail sur le ticket.",
       "execute": "Impossible d'exécuter la commande du ticket.",
       "localDemo": {
         "createFailed": "Impossible de créer l'action.",
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
-        "assigneeRequired": "L'action ASSIGN nécessite assigneeIds.",
+        "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
+        "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
         "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",

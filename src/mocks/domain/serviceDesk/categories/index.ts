@@ -1,79 +1,71 @@
 ﻿import {
   DbCategory,
-  DbClientCategoryTree,
-  DbSubCategory,
-} from "@/feature/serviceDesk/category/mapper";
+  DbTenantCategoryTree,
+} from "@/feature/serviceDesk/category/";
 
-import accountAccessCategoryMock from "./accountAccess";
-import clientCustomIssueSubCategoryMock from "./clientCustomIssue";
-import clientPortalSystemIssueCategoryMock from "./clientPortalSystemIssue";
-import clientUserSupportCategoryMock from "./clientUserSupport";
-import dataInfoManagementCategoryMock from "./dataInfoManagement";
-import hardwareDeviceCategoryMock from "./hardwareDevice";
-import hrSystemPayrollCategoryMock from "./hrSystemPayroll";
-import internalPortalSystemIssueCategoryMock from "./internalPortalSystemIssue";
-import networkConnectivityCategoryMock from "./networkConnectivity";
-import otherInquiryCategoryMock from "./otherInquiry";
-import printingOfficeEquipmentCategoryMock from "./printingOfficeEquipment";
-import softwareApplicationCategoryMock from "./softwareApplication";
-
-const mergeClientCustomCategory = (customSubCategory: DbSubCategory[]) => {
-  return {
-    ...clientPortalSystemIssueCategoryMock,
-    sub_category: [
-      ...clientPortalSystemIssueCategoryMock.sub_category,
-      ...customSubCategory,
-    ],
-  };
-};
+import { clientTenantsMock, internalTenantMock } from "../tenants";
+import {
+  client1PortalSystemIssueMock,
+  client2PortalSystemIssueMock,
+  clientAccountAccessMock,
+  clientHardwareDeviceMock,
+  clientHrSystemPayrollMock,
+  clientNetworkConnectivityMock,
+  clientPrintingOfficeEquipmentMock,
+  clientSoftwareApplicationMock,
+} from "./client";
+import {
+  internalAccountAccessMock,
+  internalClientUserSupportMock,
+  internalDataInfoManagementMock,
+  internalHardwareDeviceMock,
+  internalHrSystemPayrollMock,
+  internalNetworkConnectivityMock,
+  internalOtherInquiryMock,
+  internalPortalSystemIssueMock,
+  internalPrintingOfficeEquipmentMock,
+  internalSoftwareApplicationMock,
+} from "./internal";
 
 export const internalCategoryMock: DbCategory[] = [
-  internalPortalSystemIssueCategoryMock,
-  accountAccessCategoryMock,
-  hardwareDeviceCategoryMock,
-  softwareApplicationCategoryMock,
-  networkConnectivityCategoryMock,
-  printingOfficeEquipmentCategoryMock,
-  hrSystemPayrollCategoryMock,
-  dataInfoManagementCategoryMock,
-  clientUserSupportCategoryMock,
-  otherInquiryCategoryMock,
+  internalPortalSystemIssueMock,
+  internalAccountAccessMock,
+  internalHardwareDeviceMock,
+  internalSoftwareApplicationMock,
+  internalNetworkConnectivityMock,
+  internalPrintingOfficeEquipmentMock,
+  internalHrSystemPayrollMock,
+  internalDataInfoManagementMock,
+  internalClientUserSupportMock,
+  internalOtherInquiryMock,
 ];
 
-export const internalCategorySettingsMock: DbClientCategoryTree[] = [
+export const internalCategorySettingsMock: DbTenantCategoryTree[] = [
   {
-    client_id: 1,
-    client_name: "Internal Demo Corporation",
-    client_color: "#345791",
+    ...internalTenantMock,
     category: internalCategoryMock,
   },
   {
-    client_id: 11,
-    client_name: "Client Demo Corporation",
-    client_color: "#B22222",
-    category: [clientPortalSystemIssueCategoryMock],
+    ...clientTenantsMock[0],
+    category: [client1PortalSystemIssueMock],
   },
   {
-    client_id: 12,
-    client_name: "Client Demo Industry",
-    client_color: "#006400",
-    category: [mergeClientCustomCategory(clientCustomIssueSubCategoryMock)],
+    ...clientTenantsMock[1],
+    category: [client2PortalSystemIssueMock],
   },
 ];
 
-export const clientCategorySettingsMock: DbClientCategoryTree[] = [
+export const clientCategorySettingsMock: DbTenantCategoryTree[] = [
   {
-    client_id: 11,
-    client_name: "Client Demo Corporation",
-    client_color: "#B22222",
+    ...clientTenantsMock[0],
     category: [
-      clientPortalSystemIssueCategoryMock,
-      accountAccessCategoryMock,
-      hardwareDeviceCategoryMock,
-      softwareApplicationCategoryMock,
-      networkConnectivityCategoryMock,
-      printingOfficeEquipmentCategoryMock,
-      hrSystemPayrollCategoryMock,
+      client1PortalSystemIssueMock,
+      clientAccountAccessMock,
+      clientHardwareDeviceMock,
+      clientSoftwareApplicationMock,
+      clientNetworkConnectivityMock,
+      clientPrintingOfficeEquipmentMock,
+      clientHrSystemPayrollMock,
     ],
   },
 ];

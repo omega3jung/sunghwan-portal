@@ -1,4 +1,4 @@
-import { ACCESS_LEVEL, AccessLevel } from "@/domain/auth";
+﻿import { ACCESS_LEVEL, AccessLevel } from "@/domain/auth";
 import { TicketStatus } from "@/domain/serviceDesk";
 import { DbEmployee } from "@/feature/organization/employee";
 import { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
@@ -22,7 +22,7 @@ const CLIENT_COMPANY_ID = 11;
 type CreateTicketRouting = {
   status: TicketStatus;
   approvalStepId: string | null;
-  assigneeIds: string[];
+  assigneeUsernames: string[];
 };
 
 type RoutingCategoryReference = {
@@ -34,17 +34,17 @@ export function resolveCreateTicketRouting({
   isInternal,
   categoryId,
   parentCategoryId,
-  requesterId,
+  requesterUsername,
 }: {
   isInternal: boolean;
   categoryId: string;
   parentCategoryId: string;
-  requesterId: string;
+  requesterUsername: string;
 }): CreateTicketRouting {
   const employees = createEmployeesMock();
   const requesterAccessLevel = resolveRequesterAccessLevel({
     isInternal,
-    requesterId,
+    requesterUsername,
     employees,
   });
   const categoryReference: RoutingCategoryReference = {
@@ -61,27 +61,27 @@ export function resolveCreateTicketRouting({
   });
 
   if (nextApprovalStep) {
-    const assigneeIds = resolveApprovalStepAssignees({
+    const assigneeUsernames = resolveApprovalStepAssignees({
       approvalStep: nextApprovalStep,
       isInternal,
-      requesterId,
+      requesterUsername,
       employees,
     });
 
     return {
       status: CREATE_TICKET_APPROVAL_PENDING_STATUS,
       approvalStepId: String(nextApprovalStep.approval_step_id),
-      assigneeIds,
+      assigneeUsernames,
     };
   }
 
   return {
     status: "Open",
     approvalStepId: null,
-    assigneeIds: resolveAssignmentAssignees({
+    assigneeUsernames: resolveAssignmentAssignees({
       isInternal,
       categoryReference,
-      requesterId,
+      requesterUsername,
       employees,
     }),
   };
@@ -89,22 +89,22 @@ export function resolveCreateTicketRouting({
 
 function resolveRequesterAccessLevel({
   isInternal,
-  requesterId,
+  requesterUsername,
   employees,
 }: {
   isInternal: boolean;
-  requesterId: string;
+  requesterUsername: string;
   employees: DbEmployee[];
 }): AccessLevel {
   const directAuth = isInternal
-    ? resolveInternalAuth(requesterId)
-    : resolveClientAuth(requesterId);
+    ? resolveInternalAuth(requesterUsername)
+    : resolveClientAuth(requesterUsername);
 
   if (directAuth) {
     return directAuth.permission;
   }
 
-  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterId);
+  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterUsername);
 
   if (!requesterEmployee) {
     return DEFAULT_REQUESTER_ACCESS_LEVEL;
@@ -146,7 +146,6 @@ function resolveCategoryApprovalSteps({
   }
 
   return targetCategory.approval_step
-    .filter((approvalStep) => approvalStep.approval_step_active !== false)
     .slice()
     .sort(
       (left, right) => left.approval_step_index - right.approval_step_index,
@@ -174,17 +173,17 @@ function resolveNextApprovalStep({
 function resolveApprovalStepAssignees({
   approvalStep,
   isInternal,
-  requesterId,
+  requesterUsername,
   employees,
 }: {
   approvalStep: DbCategoryApprovalSettings["approval_step"][number];
   isInternal: boolean;
-  requesterId: string;
+  requesterUsername: string;
   employees: DbEmployee[];
 }) {
   const scopedEmployees = resolveScopedEmployees({
     isInternal,
-    requesterId,
+    requesterUsername,
     employees,
   });
   const assignee = approvalStep.approval_step_assignee;
@@ -192,8 +191,8 @@ function resolveApprovalStepAssignees({
   switch (assignee.type) {
     case "EMPLOYEE":
       return normalizeAssigneeIds(
-        assignee.employee_id.map((employeeId) =>
-          resolveEmployeeIdentifier(scopedEmployees, String(employeeId)),
+        assignee.employee_username.map((employeeUsername) =>
+          resolveEmployeeIdentifier(scopedEmployees, String(employeeUsername)),
         ),
       );
     case "JOB_FIELD":
@@ -233,12 +232,12 @@ function resolveApprovalStepAssignees({
 function resolveAssignmentAssignees({
   isInternal,
   categoryReference,
-  requesterId,
+  requesterUsername,
   employees,
 }: {
   isInternal: boolean;
   categoryReference: RoutingCategoryReference;
-  requesterId: string;
+  requesterUsername: string;
   employees: DbEmployee[];
 }) {
   const assignmentRule = findByCategoryIdWithParentFallback(
@@ -252,12 +251,12 @@ function resolveAssignmentAssignees({
 
   const scopedEmployees = resolveScopedEmployees({
     isInternal,
-    requesterId,
+    requesterUsername,
     employees,
   });
-  const directAssignees = assignmentRule.assignee.employee_id.map(
-    (employeeId) =>
-      resolveEmployeeIdentifier(scopedEmployees, String(employeeId)),
+  const directAssignees = assignmentRule.assignee.employee_username.map(
+    (employeeUsername) =>
+      resolveEmployeeIdentifier(scopedEmployees, String(employeeUsername)),
   );
   const jobFieldAssignees = assignmentRule.assignee.job_field_id.flatMap(
     (jobFieldId) =>
@@ -269,16 +268,16 @@ function resolveAssignmentAssignees({
   return normalizeAssigneeIds([...directAssignees, ...jobFieldAssignees]);
 }
 
-function normalizeAssigneeIds(assigneeIds: Array<string | null | undefined>) {
+function normalizeAssigneeIds(assigneeUsernames: Array<string | null | undefined>) {
   const normalized: string[] = [];
   const seen = new Set<string>();
 
-  for (const assigneeId of assigneeIds) {
-    if (typeof assigneeId !== "string") {
+  for (const assigneeUsername of assigneeUsernames) {
+    if (typeof assigneeUsername !== "string") {
       continue;
     }
 
-    const normalizedAssigneeId = assigneeId.trim();
+    const normalizedAssigneeId = assigneeUsername.trim();
 
     if (!normalizedAssigneeId || seen.has(normalizedAssigneeId)) {
       continue;
@@ -338,14 +337,14 @@ function resolveEmployeeIdentifier(
 
 function resolveScopedEmployees({
   isInternal,
-  requesterId,
+  requesterUsername,
   employees,
 }: {
   isInternal: boolean;
-  requesterId: string;
+  requesterUsername: string;
   employees: DbEmployee[];
 }) {
-  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterId);
+  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterUsername);
   const companyId =
     requesterEmployee?.e_company_id ??
     (isInternal ? INTERNAL_COMPANY_ID : CLIENT_COMPANY_ID);
