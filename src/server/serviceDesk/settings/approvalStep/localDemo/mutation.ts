@@ -1,4 +1,5 @@
 import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+import { replaceLocalDemoApprovalStepCategories } from "@/server/serviceDesk/settings/state";
 
 import {
   createApprovalStepIdAssigner,
@@ -67,6 +68,11 @@ export const localSaveApprovalStepTree = ({
   );
 
   items[payload.tenantId] = [...synchronizedCategories, ...preservedCategories];
+  replaceLocalDemoApprovalStepCategories({
+    tenantId: payload.tenantId,
+    categoryIds: categories.map((category) => category.category_id),
+    categories: items[payload.tenantId],
+  });
 
   return normalizeCategoryApprovalSettings(items[payload.tenantId]);
 };

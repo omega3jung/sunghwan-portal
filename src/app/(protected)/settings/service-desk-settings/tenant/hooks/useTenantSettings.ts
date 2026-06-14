@@ -102,7 +102,7 @@ export function useTenantSettings({
   // logics.
   const hasUnsavedChanges = currentSignature !== savedSignature;
   const canSave = hasUnsavedChanges && !isSaving;
-  const canReset = hasUnsavedChanges || focusedTenantId !== null;
+  const canReset = hasUnsavedChanges;
 
   useEffect(() => {
     const previousInitialSignature = lastInitialSignatureRef.current;
@@ -194,6 +194,7 @@ export function useTenantSettings({
     );
     setFocusedTenantId(addedTenants[0]?.id ?? null);
     setSelectedCompanyIds([]);
+    setSelectedTenantIds([]);
   };
 
   const handleRemoveTenants = () => {
@@ -216,6 +217,8 @@ export function useTenantSettings({
         ? null
         : currentId,
     );
+    setSelectedCompanyIds([]);
+    setSelectedTenantIds([]);
   };
 
   const handleTenantNameChange = (

@@ -27,7 +27,6 @@ ${ACTIVE_CATEGORY_COLUMNS}
 from service_desk.category
 where cat_tenant_id = $1
 order by
-  coalesce(cat_parent_id, cat_id),
   cat_parent_id nulls first,
   cat_index,
   cat_id;

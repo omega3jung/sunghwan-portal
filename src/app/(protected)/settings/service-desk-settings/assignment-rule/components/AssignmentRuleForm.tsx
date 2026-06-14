@@ -102,16 +102,13 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="category-input-name">
-                  {t("serviceDeskSettings.categoryTab.name")}
+                  {t("serviceDeskSettings.common.category")}
                 </FieldLabel>
                 <Input
                   id="category-input-name"
                   data-testid="category-name"
                   className="!disabled:border-primary"
                   value={selectedNode.name[languageTab] ?? ""}
-                  placeholder={t(
-                    "serviceDeskSettings.assignmentRuleTab.namePlaceholder",
-                  )}
                   readOnly
                 />
               </Field>

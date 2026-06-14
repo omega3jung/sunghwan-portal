@@ -153,8 +153,6 @@
       "empty": "Sélectionnez un étape d'approbation pour modifier ses paramètres."
     },
     "assignmentRuleTab": {
-      "name": "Nom",
-      "namePlaceholder": "Sélectionner une catégorie",
       "jobField": "Poste",
       "selectAssigneeJobField": "Sélectionner le poste du responsable",
       "employee": "Employé",

@@ -154,8 +154,6 @@
       "empty": "Select a approval step to edit settings."
     },
     "assignmentRuleTab": {
-      "name": "Category",
-      "namePlaceholder": "Select a category",
       "jobField": "Job Field",
       "selectAssigneeJobField": "Select assignee Job field",
       "employee": "Employee",

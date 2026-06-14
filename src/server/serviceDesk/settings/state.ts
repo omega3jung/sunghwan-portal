@@ -27,6 +27,10 @@ type LocalDemoSettingsState = {
   clientAssignmentRules: DbAssignmentRule[];
 };
 
+type CategoryScopedItem = {
+  category_id: number;
+};
+
 declare global {
   // eslint-disable-next-line no-var
   var __SP_LOCAL_DEMO_SETTINGS_STATE__: LocalDemoSettingsState | undefined;
@@ -134,6 +138,76 @@ export function getLocalDemoAssignmentRules(isInternal: boolean) {
   return isInternal
     ? state.internalAssignmentRules
     : state.clientAssignmentRules;
+}
+
+function replaceCategoryScopedItems<T extends CategoryScopedItem>({
+  items,
+  categoryIds,
+  nextItems,
+}: {
+  items: T[];
+  categoryIds: Iterable<string | number>;
+  nextItems: T[];
+}) {
+  const categoryIdSet = new Set(
+    Array.from(categoryIds, (categoryId) => String(categoryId)),
+  );
+
+  for (let index = items.length - 1; index >= 0; index -= 1) {
+    if (categoryIdSet.has(String(items[index].category_id))) {
+      items.splice(index, 1);
+    }
+  }
+
+  items.push(...nextItems.map((item) => clone(item)));
+}
+
+function isInternalTenant(state: LocalDemoSettingsState, tenantId: string) {
+  const internalTenantId = state.internalCategories[0]?.tenant_id;
+
+  return String(internalTenantId) === tenantId;
+}
+
+export function replaceLocalDemoApprovalStepCategories({
+  tenantId,
+  categoryIds,
+  categories,
+}: {
+  tenantId: string;
+  categoryIds: Iterable<string | number>;
+  categories: DbCategoryApprovalSettings[];
+}) {
+  const state = getLocalDemoSettingsState();
+  const items = isInternalTenant(state, tenantId)
+    ? state.internalApprovalSteps
+    : state.clientApprovalSteps;
+
+  replaceCategoryScopedItems({
+    items,
+    categoryIds,
+    nextItems: categories,
+  });
+}
+
+export function replaceLocalDemoAssignmentRules({
+  tenantId,
+  categoryIds,
+  assignmentRules,
+}: {
+  tenantId: string;
+  categoryIds: Iterable<string | number>;
+  assignmentRules: DbAssignmentRule[];
+}) {
+  const state = getLocalDemoSettingsState();
+  const items = isInternalTenant(state, tenantId)
+    ? state.internalAssignmentRules
+    : state.clientAssignmentRules;
+
+  replaceCategoryScopedItems({
+    items,
+    categoryIds,
+    nextItems: assignmentRules,
+  });
 }
 
 export function resetLocalDemoSettingsState() {

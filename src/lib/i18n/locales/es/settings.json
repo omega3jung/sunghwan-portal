@@ -153,8 +153,6 @@
       "empty": "Selecciona un paso de aprobación para editar su configuración."
     },
     "assignmentRuleTab": {
-      "name": "Nombre",
-      "namePlaceholder": "Seleccionar una categoría",
       "jobField": "Puesto",
       "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
