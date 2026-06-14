@@ -1,5 +1,5 @@
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import type { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
+﻿import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import type { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
 import type {
   AssignmentRuleTreeSyncCategoryInput,
   SaveServiceDeskAssignmentRuleTreePayload,
@@ -19,36 +19,38 @@ const normalizeIdList = (value: string[]) => {
 const normalizeAssignee = (assignmentRule: {
   assignee: {
     jobFieldIds: string[];
-    employeeIds: string[];
+    assigneeUsernames: string[];
   };
 }) => {
   return {
     jobFieldIds: normalizeIdList(assignmentRule.assignee.jobFieldIds),
-    employeeIds: normalizeIdList(assignmentRule.assignee.employeeIds),
+    assigneeUsernames: normalizeIdList(
+      assignmentRule.assignee.assigneeUsernames,
+    ),
   };
 };
 
 export const hasAssignmentRuleAssignee = (assignmentRule: {
   assignee: {
     jobFieldIds: string[];
-    employeeIds: string[];
+    assigneeUsernames: string[];
   };
 }) => {
   return (
     assignmentRule.assignee.jobFieldIds.length > 0 ||
-    assignmentRule.assignee.employeeIds.length > 0
+    assignmentRule.assignee.assigneeUsernames.length > 0
   );
 };
 
 export const buildAssignmentRuleTreeSavePayload = ({
-  clientId,
+  tenantId,
   tree,
 }: {
-  clientId: string;
+  tenantId: string;
   tree: AssignmentRuleTree;
 }): SaveServiceDeskAssignmentRuleTreePayload => {
   return {
-    clientId,
+    tenantId,
     categories: tree.map((categoryNode) => {
       const categoryData = categoryNode.data as AssignmentRuleData;
 
@@ -85,7 +87,7 @@ export const createAssignmentRuleSettingsSignatureFromTree = (
   tree: AssignmentRuleTree,
 ) => {
   const payload = buildAssignmentRuleTreeSavePayload({
-    clientId: "comparison",
+    tenantId: "comparison",
     tree,
   });
 
@@ -120,33 +122,33 @@ export const isAssignmentRuleMainCategoryTreeValid = (
 
 export const createAssignmentRuleSettingsSignatureFromAssignmentRules = ({
   categories,
-  selectedClient,
+  selectedTenant,
   assignmentRules,
 }: {
-  categories: ClientCategoryTree[] | undefined;
-  selectedClient: string | null;
+  categories: TenantCategoryTree[] | undefined;
+  selectedTenant: string | null;
   assignmentRules: AssignmentRule[] | undefined;
 }) => {
-  if (!categories || !selectedClient) {
+  if (!categories || !selectedTenant) {
     return JSON.stringify([]);
   }
 
   const mappedCategories = mapAssignmentRuleData(
     categories,
-    selectedClient,
+    selectedTenant,
     assignmentRules ?? [],
   );
   const normalizedCategories = mappedCategories.map((category) => ({
     id: category.id,
     assignee: {
       jobFieldIds: category.jobFieldIds,
-      employeeIds: category.employeeIds,
+      assigneeUsernames: category.assigneeUsernames,
     },
     subCategories: category.subCategories.map((subCategory) => ({
       id: subCategory.id,
       assignee: {
         jobFieldIds: subCategory.jobFieldIds,
-        employeeIds: subCategory.employeeIds,
+        assigneeUsernames: subCategory.assigneeUsernames,
       },
     })),
   }));

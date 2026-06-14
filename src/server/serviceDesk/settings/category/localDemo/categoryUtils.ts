@@ -1,10 +1,12 @@
 import { createIncrementalIdAssigner } from "@/app/api/_helpers";
-import type { ClientCategoryTree } from "@/domain/serviceDesk";
+import type { TenantCategoryTree } from "@/domain/serviceDesk";
+import {
+  type DbCategory,
+  type DbTenantCategoryTree,
+} from "@/feature/serviceDesk/category";
 import {
   camelCategoryMapper,
-  camelClientCategoryTreeMapper,
-  type DbCategory,
-  type DbClientCategoryTree,
+  camelTenantCategoryTreeMapper,
 } from "@/feature/serviceDesk/category/mapper";
 import { idToNumber } from "@/lib/api/utils/mapId";
 
@@ -20,16 +22,16 @@ export const sortCategories = (categories: DbCategory[]) => {
     }));
 };
 
-const collectCategoryIds = (items: DbClientCategoryTree[]) => {
-  return items.flatMap((client) => [
-    ...client.category.map((category) => category.category_id),
-    ...client.category.flatMap((category) =>
+const collectCategoryIds = (items: DbTenantCategoryTree[]) => {
+  return items.flatMap((tenant) => [
+    ...tenant.category.map((category) => category.category_id),
+    ...tenant.category.flatMap((category) =>
       category.sub_category.map((subCategory) => subCategory.category_id),
     ),
   ]);
 };
 
-export const createCategoryIdAssigner = (items: DbClientCategoryTree[]) => {
+export const createCategoryIdAssigner = (items: DbTenantCategoryTree[]) => {
   const assignNextId = createIncrementalIdAssigner(collectCategoryIds(items));
 
   return (value?: string) => {
@@ -43,25 +45,25 @@ export const createCategoryIdAssigner = (items: DbClientCategoryTree[]) => {
   };
 };
 
-export const getClientIndexById = (
-  items: DbClientCategoryTree[],
-  clientId: string,
+export const getTenantIndexById = (
+  items: DbTenantCategoryTree[],
+  tenantId: string,
 ) => {
-  return items.findIndex((client) => String(client.client_id) === clientId);
+  return items.findIndex((tenant) => String(tenant.tenant_id) === tenantId);
 };
 
 export const getCategoryLocation = (
-  items: DbClientCategoryTree[],
+  items: DbTenantCategoryTree[],
   id: string,
 ) => {
-  for (let clientIndex = 0; clientIndex < items.length; clientIndex += 1) {
-    const categoryIndex = items[clientIndex].category.findIndex(
+  for (let tenantIndex = 0; tenantIndex < items.length; tenantIndex += 1) {
+    const categoryIndex = items[tenantIndex].category.findIndex(
       (category) => String(category.category_id) === id,
     );
 
     if (categoryIndex >= 0) {
       return {
-        clientIndex,
+        tenantIndex,
         categoryIndex,
       };
     }
@@ -70,13 +72,13 @@ export const getCategoryLocation = (
   return null;
 };
 
-export const normalizeClientTree = (
-  client: DbClientCategoryTree,
-): ClientCategoryTree => {
-  return camelClientCategoryTreeMapper([
+export const normalizeTenantTree = (
+  tenant: DbTenantCategoryTree,
+): TenantCategoryTree => {
+  return camelTenantCategoryTreeMapper([
     {
-      ...client,
-      category: sortCategories(client.category),
+      ...tenant,
+      category: sortCategories(tenant.category),
     },
   ])[0];
 };

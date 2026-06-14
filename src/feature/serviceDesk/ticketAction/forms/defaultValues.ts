@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   TicketActionDraftFormValues,
   TicketActionPayloadValues,
 } from "./types";
@@ -7,7 +7,7 @@ export const ticketActionDraftFormDefaultValues: TicketActionDraftFormValues = {
   actionType: "COMMENT",
   content: "",
   attachment: [],
-  assigneeIds: [],
+  assigneeUsernames: [],
   categoryId: "",
   targetTicketId: "",
   priority: "",

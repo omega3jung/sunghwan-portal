@@ -10,7 +10,7 @@ export const ticket: TicketMockInput = {
   priority: "medium",
   risk_level: "low",
   assignee_id: ["evan_seo", "mason_kwon"],
-  track_time_minutes: 80,
+  work_minutes: 80,
   last_comment_at: "2026-03-30T01:48:10Z",
   last_commenter_email: "Mason.Kwon@sunghwan-portal.dev",
   due_at: "2026-03-30T18:00:00Z",

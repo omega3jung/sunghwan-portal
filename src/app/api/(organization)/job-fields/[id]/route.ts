@@ -1,7 +1,8 @@
 // app/api/job-fields/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
   camelJobFieldMapper,
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
     return NextResponse.json(targetDepartment);
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/job-field/${id}`,
     errorMessage: "Failed to fetch job field",
     mapData: mapJobFieldItemPayload,
@@ -58,7 +59,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
     return NextResponse.json(toJobFieldMockResource(body, id), { status: 200 });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PUT",
     path: `/job-field/${id}`,
     body: toJobFieldWritePayload({ ...body, id }),
@@ -79,7 +80,7 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     return new NextResponse(null, { status: 204 }); // DELETE is 204.
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "DELETE",
     path: `/job-field/${id}`,
     errorMessage: "Failed to delete job field",

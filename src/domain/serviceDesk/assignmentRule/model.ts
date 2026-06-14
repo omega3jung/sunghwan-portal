@@ -1,6 +1,6 @@
 export interface AssigneeGroup {
   jobFieldIds: string[];
-  employeeIds: string[];
+  assigneeUsernames: string[];
 }
 
 export interface AssignmentRule {

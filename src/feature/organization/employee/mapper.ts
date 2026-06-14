@@ -1,4 +1,4 @@
-import { Employee, LocalizedName } from "@/domain/organization";
+﻿import { Employee } from "@/domain/organization";
 import { idToNumber, numberToId } from "@/lib/api/utils/mapId";
 import {
   createItemPayloadMapper,
@@ -7,32 +7,14 @@ import {
 import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-// back-end data structures.
-export interface DbEmployee {
-  e_id: number;
-  e_username: string;
-  e_name: LocalizedName;
-  e_phone: string;
-  e_email: string;
-  e_image_url: string | null;
-  e_department_id: number;
-  e_job_field_id: number;
-  e_company_id: number;
-  e_start_date: Date;
-  e_end_date: Date | null;
-  e_work_shift_id: number | null;
-  e_active: boolean;
-  e_engineer_id: number | null;
-  e_rf_tag_id: string | null;
-  e_hour_rate: number | null;
-}
+import { DbEmployee } from "./types";
 
 export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (
   data,
 ) => {
   return data.map((item) => ({
     id: item.e_id,
-    userName: item.e_username,
+    username: item.e_username,
     name: item.e_name,
     phone: item.e_phone,
     email: item.e_email,
@@ -55,7 +37,7 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (
 ) => {
   return data.map((item) => ({
     e_id: item.id,
-    e_username: item.userName,
+    e_username: item.username,
     e_name: item.name,
     e_phone: item.phone,
     e_email: item.email,

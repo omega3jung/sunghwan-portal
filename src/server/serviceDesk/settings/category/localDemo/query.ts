@@ -1,19 +1,15 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
-import type { ClientCategoryTree } from "@/domain/serviceDesk";
-import { camelClientCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
+import type { TenantCategoryTree } from "@/domain/serviceDesk";
+import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 
 import { getLocalDemoCategories } from "../../state";
-import {
-  getCategoryLocation,
-  normalizeCategory,
-  normalizeClientTree,
-} from "./categoryUtils";
+import { normalizeTenantTree } from "./categoryUtils";
 
 export const getLocalCategoryTrees = (
   isInternal: boolean,
-): ClientCategoryTree[] => {
-  return getLocalDemoCategories(isInternal).map((client) =>
-    normalizeClientTree(client),
+): TenantCategoryTree[] => {
+  return getLocalDemoCategories(isInternal).map((tenant) =>
+    normalizeTenantTree(tenant),
   );
 };
 
@@ -26,7 +22,10 @@ export const localListCategories = ({
 }) => {
   const items = filterItemsByQuery(
     searchParams,
-    camelClientCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+    filterTenantCategoryTreesByActive(
+      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      parseOptionalBoolean(searchParams.get("active")),
+    ),
   );
 
   return {
@@ -35,22 +34,39 @@ export const localListCategories = ({
   };
 };
 
-export const localGetCategory = ({
-  isInternal,
-  id,
-}: {
-  isInternal: boolean;
-  id: string;
-}) => {
-  const location = getCategoryLocation(getLocalDemoCategories(isInternal), id);
-
-  if (!location) {
+function parseOptionalBoolean(value: string | null): boolean | null {
+  if (value === null) {
     return null;
   }
 
-  return normalizeCategory(
-    getLocalDemoCategories(isInternal)[location.clientIndex].category[
-      location.categoryIndex
-    ],
-  );
-};
+  if (value === "true") {
+    return true;
+  }
+
+  if (value === "false") {
+    return false;
+  }
+
+  return null;
+}
+
+function filterTenantCategoryTreesByActive(
+  items: TenantCategoryTree[],
+  active: boolean | null,
+) {
+  if (active === null) {
+    return items;
+  }
+
+  return items.map((tenant) => ({
+    ...tenant,
+    categories: tenant.categories
+      .filter((category) => category.active === active)
+      .map((category) => ({
+        ...category,
+        subCategories: category.subCategories.filter(
+          (subCategory) => subCategory.active === active,
+        ),
+      })),
+  }));
+}

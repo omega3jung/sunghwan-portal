@@ -1,4 +1,4 @@
-import type { Employee } from "@/domain/organization";
+﻿import type { Employee } from "@/domain/organization";
 import type { AssignmentRule, MainCategory } from "@/domain/serviceDesk";
 import { camelEmployeeMapper } from "@/feature/organization/employee";
 import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule/mapper";
@@ -8,12 +8,8 @@ import {
   type AssignmentRecommendationSource,
   EMPTY_ASSIGNMENT_RECOMMENDATION,
 } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import { camelClientCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
 import { createEmployeesMock } from "@/mocks/domain/organization/employee";
-import {
-  clientCategorySettingsMock,
-  internalCategorySettingsMock,
-} from "@/mocks/domain/serviceDesk/categories";
+import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 import { getLocalizedText } from "@/shared/utils/i18n";
 
@@ -26,17 +22,13 @@ type LocalRecommendationContext = {
 
 type RecommendationCollectionContext = {
   assignmentRule: AssignmentRule;
-  assigneeIds: string[];
+  assigneeUsernames: string[];
   employees: Employee[];
   language: Locale;
 };
 
 const buildCategoryList = (isInternal: boolean) => {
-  const trees = camelClientCategoryTreeMapper(
-    isInternal ? internalCategorySettingsMock : clientCategorySettingsMock,
-  );
-
-  return trees.flatMap((tree) => tree.categories);
+  return getLocalCategoryTrees(isInternal).flatMap((tree) => tree.categories);
 };
 
 const buildEmployees = () => camelEmployeeMapper(createEmployeesMock());
@@ -92,7 +84,7 @@ const toRecommendedUser = (
   employee: Employee,
   language: Locale,
 ): ImageValueLabel => ({
-  value: employee.userName,
+  value: employee.username,
   label: getEmployeeLabel(employee, language),
   displayName: employee.email,
   image: employee.imageUrl,
@@ -135,28 +127,28 @@ const resolveAssignmentRuleWithCategoryFallback = (
 };
 
 const buildEmployeeMap = (employees: Employee[]) =>
-  new Map(employees.map((employee) => [employee.userName, employee]));
+  new Map(employees.map((employee) => [employee.username, employee]));
 
 const buildActiveEmployees = (employees: Employee[]) =>
   employees.filter((employee) => employee.active);
 
 const buildActiveEmployeeMap = (activeEmployees: Employee[]) =>
-  new Map(activeEmployees.map((employee) => [employee.userName, employee]));
+  new Map(activeEmployees.map((employee) => [employee.username, employee]));
 
 const collectRecommendedUsers = ({
   assignmentRule,
-  assigneeIds,
+  assigneeUsernames,
   employees,
   language,
 }: RecommendationCollectionContext) => {
   const employeeMap = buildEmployeeMap(employees);
   const activeEmployees = buildActiveEmployees(employees);
   const activeEmployeeMap = buildActiveEmployeeMap(activeEmployees);
-  const excludedIds = new Set(assigneeIds);
+  const excludedIds = new Set(assigneeUsernames);
   const seen = new Set<string>();
   const recommendedUsers: ImageValueLabel[] = [];
 
-  for (const employeeUserName of assignmentRule.assignee.employeeIds) {
+  for (const employeeUserName of assignmentRule.assignee.assigneeUsernames) {
     const employee =
       activeEmployeeMap.get(employeeUserName) ??
       employeeMap.get(employeeUserName);
@@ -191,7 +183,7 @@ const resolveRecommendationSource = (
   assignmentRule: AssignmentRule,
 ): AssignmentRecommendationSource | null => {
   const hasDirectRecommendation =
-    assignmentRule.assignee.employeeIds.length > 0;
+    assignmentRule.assignee.assigneeUsernames.length > 0;
   const hasJobFieldRecommendation =
     assignmentRule.assignee.jobFieldIds.length > 0;
 
@@ -233,7 +225,7 @@ export const resolveLocalAssignmentRecommendation = ({
 
   const recommendedUsers = collectRecommendedUsers({
     assignmentRule,
-    assigneeIds: input.assigneeIds,
+    assigneeUsernames: input.assigneeUsernames,
     employees: buildEmployees(),
     language,
   });

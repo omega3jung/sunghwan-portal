@@ -4,13 +4,13 @@ import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
 
 const accessLevelValues = Object.values(ACCESS_LEVEL) as AccessLevel[];
 
-export const localizedTextSchema = z
+const localizedTextSchema = z
   .object({
     en: z.string(),
   })
   .catchall(z.string());
 
-export const approvalAssigneeSchema = z.discriminatedUnion("type", [
+const approvalAssigneeSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("MANAGER"),
     level: z.union([z.literal(1), z.literal(2)]),
@@ -25,11 +25,11 @@ export const approvalAssigneeSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("EMPLOYEE"),
-    employeeIds: z.array(z.string().min(1)),
+    employeeUsernames: z.array(z.string().min(1)),
   }),
 ]);
 
-export const skipAccessLevelSchema = z
+const skipAccessLevelSchema = z
   .number()
   .int()
   .refine(
@@ -40,7 +40,7 @@ export const skipAccessLevelSchema = z
     },
   );
 
-export const approvalStepSchema = z.object({
+const approvalStepSchema = z.object({
   id: z.string().optional(),
   name: localizedTextSchema,
   description: localizedTextSchema.optional(),
@@ -50,16 +50,8 @@ export const approvalStepSchema = z.object({
   skipAccessLevel: skipAccessLevelSchema.optional(),
 });
 
-export const createApprovalStepSchema = approvalStepSchema.extend({
-  categoryId: z.string().min(1),
-});
-
-export const updateApprovalStepSchema = approvalStepSchema.extend({
-  categoryId: z.string().min(1),
-});
-
 export const saveApprovalStepTreeSchema = z.object({
-  clientId: z.string().min(1),
+  tenantId: z.string().min(1),
   categories: z.array(
     z.object({
       id: z.string().min(1),

@@ -44,6 +44,12 @@
       "successWithId": "{{item}} {{id}} annulé.",
       "successfully": "Annulé avec succès."
     },
+    "reset": {
+      "title": "Réinitialisé",
+      "success": "{{item}} a été réinitialisé.",
+      "successWithId": "{{item}} {{id}} a été réinitialisé.",
+      "successfully": "Réinitialisé avec succès."
+    },
     "validation": {
       "title": "Validation",
       "errorTitle": "Erreur de validation"
@@ -64,5 +70,11 @@
     "resent": "Le code OTP a été renvoyé.",
     "timeout": "Le délai a expiré.",
     "differentId": "L'identifiant vérifié est différent de l'identifiant actuel. Veuillez vérifier à nouveau le code OTP."
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "La démo distante est limitée",
+      "description": "Les pages reliées à la base de données sont encore en cours de connexion. Utilisez pour l'instant les pages Home, Demo ou Documents."
+    }
   }
 }

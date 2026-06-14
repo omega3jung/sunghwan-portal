@@ -5,8 +5,8 @@ import {
   getUserRole,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { RouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import { TicketActionFormValues } from "@/feature/serviceDesk/ticketAction";
@@ -98,7 +98,7 @@ export async function POST(
     });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: `/service-desk/tickets/${ticketId}/command/${action}`,
     body: content,

@@ -1,4 +1,4 @@
-// TicketListItem.tsx
+﻿// TicketListItem.tsx
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -31,7 +31,7 @@ export const TicketListItem = ({
   onClick,
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
-  const requester = users.find((user) => user.value === ticket.requesterId);
+  const requester = users.find((user) => user.value === ticket.requesterUsername);
   const requesterName =
     requester?.label ||
     t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
@@ -112,7 +112,7 @@ export const TicketListItem = ({
         <div className="flex items-center gap-2">
           <AvatarMultiComboBox
             variant="ghost"
-            value={ticket.assigneeIds}
+            value={ticket.assigneeUsernames}
             options={users}
             maxImages={5}
             readOnly={true}

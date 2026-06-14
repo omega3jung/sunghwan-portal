@@ -2,7 +2,7 @@ import { JobField } from "@/domain/organization";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
-import { DbJobField } from "./mapper";
+import { DbJobField } from "./types";
 
 type JobFieldWriteFields = Pick<
   JobField,

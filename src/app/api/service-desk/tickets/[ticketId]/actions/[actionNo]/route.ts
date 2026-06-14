@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { RouteContext } from "@/app/api/_helpers/types";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
@@ -40,7 +41,7 @@ export async function GET(
     return NextResponse.json(camelTicketActionMapper([item])[0]);
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
     errorMessage: tServiceDeskApi("api.ticketActions.fetch"),
     mapData: mapTicketActionPayload,
@@ -67,7 +68,7 @@ export async function PATCH(
     );
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PATCH",
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
     body,

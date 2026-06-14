@@ -156,5 +156,11 @@
     "startIndex": "Número inicial",
     "step": "Paso",
     "disable": "Deshabilitar"
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "La demostración remota es limitada",
+      "description": "Las páginas con base de datos aún se están conectando. Por ahora, usa las páginas Home, Demo y Documents."
+    }
   }
 }

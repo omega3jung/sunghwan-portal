@@ -19,7 +19,7 @@ export interface TicketHistory {
   type: HistoryType;
   action: TicketHistoryAction;
 
-  actorId: string | null;
+  actorUsername: string | null;
   actionNo: string | null;
 
   fromValue?: unknown;

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
@@ -33,7 +33,7 @@ export function EmployeeField({
     return employees.map((employee) => {
       const name = tLocal(employee.name);
       return {
-        value: employee.userName,
+        value: employee.username,
         label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,
@@ -52,7 +52,7 @@ export function EmployeeField({
         variant={"ghost"}
         badgeVariant={"primary"}
         options={employeeData}
-        value={stepAssignee.employeeIds}
+        value={stepAssignee.employeeUsernames}
         maxImages={MAX_ASSIGNEE_PER_APPROVAL}
         placeholder={t(
           "serviceDeskSettings.approvalStepTab.employeePlaceholder",
@@ -62,11 +62,11 @@ export function EmployeeField({
             const current = stepAssignee;
             if (current.type !== "EMPLOYEE") return;
 
-            const currentValue = [...current.employeeIds];
+            const currentValue = [...current.employeeUsernames];
             currentValue.push(e);
             onChange({
               type: "EMPLOYEE",
-              employeeIds: currentValue,
+              employeeUsernames: currentValue,
             });
           }
         }}
@@ -74,14 +74,14 @@ export function EmployeeField({
           const current = stepAssignee;
           if (current.type !== "EMPLOYEE") return;
 
-          const currentValue = [...current.employeeIds];
+          const currentValue = [...current.employeeUsernames];
           const currentValueIndex = currentValue.indexOf(e);
 
           if (currentValueIndex > -1) {
             currentValue.splice(currentValueIndex, 1);
             onChange({
               type: "EMPLOYEE",
-              employeeIds: currentValue,
+              employeeUsernames: currentValue,
             });
           } else {
             return;

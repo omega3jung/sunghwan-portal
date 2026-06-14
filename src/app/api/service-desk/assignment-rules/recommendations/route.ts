@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo/recommendation";
@@ -16,7 +17,7 @@ const parseRecommendationInput = async (
     return null;
   }
 
-  if (!Array.isArray(payload.assigneeIds)) {
+  if (!Array.isArray(payload.assigneeUsernames)) {
     return null;
   }
 
@@ -26,7 +27,7 @@ const parseRecommendationInput = async (
     return null;
   }
 
-  const assigneeIds = payload.assigneeIds
+  const assigneeUsernames = payload.assigneeUsernames
     .filter((value): value is string => typeof value === "string")
     .map((value) => value.trim())
     .filter(Boolean);
@@ -37,7 +38,7 @@ const parseRecommendationInput = async (
 
   return {
     categoryId,
-    assigneeIds,
+    assigneeUsernames,
     ...(language ? { language } : {}),
   };
 };
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/service-desk/assignment-rules/recommendations",
     body: input,

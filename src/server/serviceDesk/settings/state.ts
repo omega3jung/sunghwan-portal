@@ -1,6 +1,7 @@
 import { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
 import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule";
-import { DbClientCategoryTree } from "@/feature/serviceDesk/category";
+import { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
+import { DbTenant } from "@/feature/serviceDesk/tenant";
 import {
   clientApprovalStepSettingsMock,
   clientAssignmentRuleSettingsMock,
@@ -9,16 +10,25 @@ import {
   internalAssignmentRuleSettingsMock,
   internalCategorySettingsMock,
 } from "@/mocks";
+import {
+  clientTenantsMock,
+  internalTenantMock,
+} from "@/mocks/domain/serviceDesk/tenants";
 
 const clone = <T>(value: T): T => structuredClone(value);
 
 type LocalDemoSettingsState = {
-  internalCategories: DbClientCategoryTree[];
+  tenants: DbTenant[];
+  internalCategories: DbTenantCategoryTree[];
   internalApprovalSteps: DbCategoryApprovalSettings[];
   internalAssignmentRules: DbAssignmentRule[];
-  clientCategories: DbClientCategoryTree[];
+  clientCategories: DbTenantCategoryTree[];
   clientApprovalSteps: DbCategoryApprovalSettings[];
   clientAssignmentRules: DbAssignmentRule[];
+};
+
+type CategoryScopedItem = {
+  category_id: number;
 };
 
 declare global {
@@ -32,18 +42,23 @@ declare global {
  */
 function createLocalDemoSettingsState(): LocalDemoSettingsState {
   return {
-    internalCategories: clone<DbClientCategoryTree[]>(internalCategorySettingsMock),
+    tenants: clone<DbTenant[]>([internalTenantMock, ...clientTenantsMock]),
+    internalCategories: clone<DbTenantCategoryTree[]>(
+      internalCategorySettingsMock,
+    ),
     internalApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       internalApprovalStepSettingsMock,
     ),
     internalAssignmentRules: clone<DbAssignmentRule[]>(
       internalAssignmentRuleSettingsMock,
     ),
-    clientCategories: clone<DbClientCategoryTree[]>(clientCategorySettingsMock),
+    clientCategories: clone<DbTenantCategoryTree[]>(clientCategorySettingsMock),
     clientApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       clientApprovalStepSettingsMock,
     ),
-    clientAssignmentRules: clone<DbAssignmentRule[]>(clientAssignmentRuleSettingsMock),
+    clientAssignmentRules: clone<DbAssignmentRule[]>(
+      clientAssignmentRuleSettingsMock,
+    ),
   };
 }
 
@@ -51,51 +66,70 @@ function createLocalDemoSettingsState(): LocalDemoSettingsState {
 // globalThis gives us a process-level in-memory store without adding persistence.
 function getLocalDemoSettingsState() {
   if (!globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__) {
-    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ = createLocalDemoSettingsState();
+    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ =
+      createLocalDemoSettingsState();
   }
 
   return globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
 }
 
-export function getLocalDemoCategories(isInternal: boolean) {
+export function getLocalDemoTenants() {
+  return getLocalDemoSettingsState().tenants;
+}
+
+export function getMutableLocalDemoCategories(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal ? state.internalCategories : state.clientCategories;
+}
+
+export function getLocalDemoCategories(isInternal: boolean) {
+  const state = getLocalDemoSettingsState();
+  const activeTenantIds = new Set(
+    state.tenants
+      .filter((tenant) => tenant.tenant_active !== false)
+      .map((tenant) => String(tenant.tenant_id)),
+  );
+  const scopedCategories = isInternal
+    ? state.internalCategories
+    : state.clientCategories;
+
+  return scopedCategories.filter((tenant) =>
+    activeTenantIds.has(String(tenant.tenant_id)),
+  );
 }
 
 export function getLocalDemoApprovalStepsTree(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal
     ? {
-        categoryTrees: state.internalCategories,
+        categoryTrees: getLocalDemoCategories(true),
         templateCategories: [
           ...state.internalApprovalSteps,
           ...state.clientApprovalSteps,
         ],
       }
     : {
-        categoryTrees: state.clientCategories,
+        categoryTrees: getLocalDemoCategories(false),
         templateCategories: state.clientApprovalSteps,
       };
 }
 export function getLocalDemoApprovalSteps(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
-  return isInternal
-    ? state.internalApprovalSteps
-    : state.clientApprovalSteps;
+  return isInternal ? state.internalApprovalSteps : state.clientApprovalSteps;
 }
 
 export function getLocalDemoAssignmentRulesTree(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal
     ? {
-        categoryTrees: state.internalCategories,
+        categoryTrees: getLocalDemoCategories(true),
         templateRules: [
           ...state.internalAssignmentRules,
           ...state.clientAssignmentRules,
         ],
       }
     : {
-        categoryTrees: state.clientCategories,
+        categoryTrees: getLocalDemoCategories(false),
         templateRules: state.clientAssignmentRules,
       };
 }
@@ -104,6 +138,76 @@ export function getLocalDemoAssignmentRules(isInternal: boolean) {
   return isInternal
     ? state.internalAssignmentRules
     : state.clientAssignmentRules;
+}
+
+function replaceCategoryScopedItems<T extends CategoryScopedItem>({
+  items,
+  categoryIds,
+  nextItems,
+}: {
+  items: T[];
+  categoryIds: Iterable<string | number>;
+  nextItems: T[];
+}) {
+  const categoryIdSet = new Set(
+    Array.from(categoryIds, (categoryId) => String(categoryId)),
+  );
+
+  for (let index = items.length - 1; index >= 0; index -= 1) {
+    if (categoryIdSet.has(String(items[index].category_id))) {
+      items.splice(index, 1);
+    }
+  }
+
+  items.push(...nextItems.map((item) => clone(item)));
+}
+
+function isInternalTenant(state: LocalDemoSettingsState, tenantId: string) {
+  const internalTenantId = state.internalCategories[0]?.tenant_id;
+
+  return String(internalTenantId) === tenantId;
+}
+
+export function replaceLocalDemoApprovalStepCategories({
+  tenantId,
+  categoryIds,
+  categories,
+}: {
+  tenantId: string;
+  categoryIds: Iterable<string | number>;
+  categories: DbCategoryApprovalSettings[];
+}) {
+  const state = getLocalDemoSettingsState();
+  const items = isInternalTenant(state, tenantId)
+    ? state.internalApprovalSteps
+    : state.clientApprovalSteps;
+
+  replaceCategoryScopedItems({
+    items,
+    categoryIds,
+    nextItems: categories,
+  });
+}
+
+export function replaceLocalDemoAssignmentRules({
+  tenantId,
+  categoryIds,
+  assignmentRules,
+}: {
+  tenantId: string;
+  categoryIds: Iterable<string | number>;
+  assignmentRules: DbAssignmentRule[];
+}) {
+  const state = getLocalDemoSettingsState();
+  const items = isInternalTenant(state, tenantId)
+    ? state.internalAssignmentRules
+    : state.clientAssignmentRules;
+
+  replaceCategoryScopedItems({
+    items,
+    categoryIds,
+    nextItems: assignmentRules,
+  });
 }
 
 export function resetLocalDemoSettingsState() {

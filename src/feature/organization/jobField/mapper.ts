@@ -4,18 +4,10 @@ import {
   createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
-import { ArrayMapper, LocalizedText } from "@/shared/types";
+import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
-// back-end data structures.
-export interface DbJobField {
-  jf_id: number;
-  jf_name: LocalizedText;
-  jf_description: LocalizedText | null;
-  jf_department_id: number;
-  jf_parent_id: number | null;
-  jf_active: boolean;
-}
+import { DbJobField } from "./types";
 
 export const camelJobFieldMapper: ArrayMapper<DbJobField, JobField> = (
   data,

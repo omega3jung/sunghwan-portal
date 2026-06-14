@@ -1,7 +1,7 @@
 // app/api/departments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest, proxyJson } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_helpers";
 import {
   camelDepartmentMapper,
   mapDepartmentItemPayload,
@@ -12,7 +12,9 @@ import {
   toDepartmentMockResource,
   toDepartmentWritePayload,
 } from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization";
+import { departmentsMock } from "@/mocks/domain/organization/departments";
+
+import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
   }
 
   // real backend
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: "/department",
     query: request.nextUrl.searchParams,
     errorMessage: "Failed to fetch departments",
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(toDepartmentMockResource(body), { status: 201 });
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: "/department",
     body: toDepartmentWritePayload(body),

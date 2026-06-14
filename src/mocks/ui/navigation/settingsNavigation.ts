@@ -221,6 +221,14 @@ export function createSettingsNavigationMock(
       ),
       items: [
         {
+          title: t("settingsNavigation.serviceDeskSettings.tenant.title", ns),
+          path: "/settings/service-desk-settings/tenant",
+          description: t(
+            "settingsNavigation.serviceDeskSettings.tenant.description",
+            ns,
+          ),
+        },
+        {
           title: t("settingsNavigation.serviceDeskSettings.category.title", ns),
           path: "/settings/service-desk-settings/category",
           description: t(

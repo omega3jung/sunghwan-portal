@@ -44,6 +44,12 @@
       "successWithId": "{{item}} {{id}}이(가) 취소되었습니다.",
       "successfully": "성공적으로 취소되었습니다."
     },
+    "reset": {
+      "title": "초기화됨",
+      "success": "{{item}}이(가) 초기화되었습니다.",
+      "successWithId": "{{item}} {{id}}이(가) 초기화되었습니다.",
+      "successfully": "성공적으로 초기화되었습니다."
+    },
     "validation": {
       "title": "유효성 검사",
       "errorTitle": "유효성 검사 오류"

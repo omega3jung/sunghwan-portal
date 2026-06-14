@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "high",
   assignee_id: ["evan_seo", "daniel_kim"],
   merged_into_ticket_id: null,
-  track_time_minutes: 105,
+  work_minutes: 105,
   last_comment_at: "2026-04-02T07:21:42Z",
   last_commenter_email: "Daniel.Kim@sunghwan-portal.dev",
   due_at: "2026-04-03T18:00:00Z",
@@ -22,9 +22,9 @@ export const ticket: TicketMockInput = {
   scope: "PORTAL",
   category_id: "5",
   approval_step_id: null,
-  subject: "L’écran d’expédition sortante reste bloqué sur le chargement",
+  subject: "L?�écran d?�expédition sortante reste bloqué sur le chargement",
   content:
-    "Lors du traitement des expéditions sortantes, l’écran d’exécution des expéditions continue d’afficher uniquement l’icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d’expédition sortante.",
+    "Lors du traitement des expéditions sortantes, l?�écran d?�exécution des expéditions continue d?�afficher uniquement l?�icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d?�expédition sortante.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
     cc: ["Victor.Rivera@sunghwan-portal.dev"],

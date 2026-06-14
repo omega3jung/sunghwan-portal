@@ -19,6 +19,7 @@ export function RemoteRouteGuard() {
     if (
       pathname === "/" ||
       pathname.startsWith("/demo") ||
+      pathname.startsWith("/settings") ||
       pathname.startsWith("/documents")
     )
       return;

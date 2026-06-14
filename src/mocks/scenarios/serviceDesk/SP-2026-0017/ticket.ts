@@ -12,7 +12,7 @@ export const ticket: TicketMockInput = {
   risk_level: "low",
   assignee_id: ["__demo_admin__", "__demo_manager__"],
   merged_into_ticket_id: null,
-  track_time_minutes: 0,
+  work_minutes: 0,
   last_comment_at: null,
   last_commenter_email: null,
   due_at: "2026-04-30T18:00:00Z",

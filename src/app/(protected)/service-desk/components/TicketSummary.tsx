@@ -46,7 +46,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
           <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full bg-amber-50/70 whitespace-nowrap hover:bg-amber-100/70">
             <Pickaxe className="text-amber-600" />
             <p className="text-[11px] font-medium text-amber-700">
-              {formatCompactDurationFromMinutes(ticket.trackTimeMinutes) || "-"}
+              {formatCompactDurationFromMinutes(ticket.workMinutes) || "-"}
             </p>
           </div>
         </aside>

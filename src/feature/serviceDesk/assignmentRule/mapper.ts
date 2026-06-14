@@ -1,20 +1,10 @@
-import { AssignmentRule } from "@/domain/serviceDesk";
+﻿import { AssignmentRule } from "@/domain/serviceDesk";
 import {
-  createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
 
-// back-end data structures.
-export interface DbAssigneeGroup {
-  job_field_id: number[]; // string number. can use parseInt.
-  employee_id: string[];
-}
-
-export interface DbAssignmentRule {
-  category_id: number; // string number. can use parseInt.
-  assignee: DbAssigneeGroup;
-}
+import { DbAssignmentRule } from "./types";
 
 export const camelAssignmentRuleMapper: ArrayMapper<
   DbAssignmentRule,
@@ -24,28 +14,14 @@ export const camelAssignmentRuleMapper: ArrayMapper<
     categoryId: item.category_id.toString(),
     assignee: {
       jobFieldIds: item.assignee.job_field_id.map((id) => id.toString()),
-      employeeIds: item.assignee.employee_id.map((id) => String(id)),
-    },
-  }));
-};
-
-export const snakeAssignmentRuleMapper: ArrayMapper<
-  AssignmentRule,
-  DbAssignmentRule
-> = (data) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.categoryId),
-    assignee: {
-      job_field_id: item.assignee.jobFieldIds.map((id) => parseInt(id)),
-      employee_id: item.assignee.employeeIds,
+      assigneeUsernames: item.assignee.employee_username.map((id) =>
+        String(id),
+      ),
     },
   }));
 };
 
 export const mapAssignmentRuleListPayload = createListPayloadMapper(
-  camelAssignmentRuleMapper,
-);
-export const mapAssignmentRuleItemPayload = createItemPayloadMapper(
   camelAssignmentRuleMapper,
 );
 

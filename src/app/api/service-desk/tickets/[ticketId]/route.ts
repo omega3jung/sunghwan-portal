@@ -4,9 +4,9 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
   toCurrentUsernameProxyHeaders,
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
     );
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     errorMessage: tServiceDeskApi("api.tickets.fetch"),
@@ -104,7 +104,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "PUT",
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
@@ -142,7 +142,7 @@ export async function DELETE(
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "DELETE",
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),

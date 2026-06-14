@@ -4,8 +4,8 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-  proxyJson,
 } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
   ServiceDeskApiError,
@@ -58,7 +58,7 @@ export async function POST(
     }
   }
 
-  return proxyJson(request, {
+  return portalApiJson(request, {
     method: "POST",
     path: `/service-desk/tickets/${ticketId}/command/start-work`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),

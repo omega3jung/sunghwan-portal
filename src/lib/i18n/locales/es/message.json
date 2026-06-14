@@ -44,6 +44,12 @@
       "successWithId": "{{item}} {{id}} cancelado.",
       "successfully": "Cancelado correctamente."
     },
+    "reset": {
+      "title": "Restablecido",
+      "success": "{{item}} se ha restablecido.",
+      "successWithId": "{{item}} {{id}} se ha restablecido.",
+      "successfully": "Restablecido correctamente."
+    },
     "validation": {
       "title": "Validación",
       "errorTitle": "Error de validación"
@@ -64,5 +70,11 @@
     "resent": "El OTP ha sido reenviado.",
     "timeout": "El tiempo ha expirado.",
     "differentId": "El ID verificado es diferente del ID actual. Verifique el OTP nuevamente."
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "La demostración remota es limitada",
+      "description": "Las páginas con base de datos aún se están conectando. Por ahora, usa las páginas Home, Demo o Documents."
+    }
   }
 }

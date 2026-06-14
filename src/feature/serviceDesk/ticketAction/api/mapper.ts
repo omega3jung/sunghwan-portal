@@ -1,4 +1,4 @@
-import { Attach, TicketAction, TicketActionType } from "@/domain/serviceDesk";
+﻿import { Attach, TicketAction, TicketActionType } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
@@ -32,7 +32,7 @@ export const camelTicketActionMapper: ArrayMapper<
     actionNo: item.action_no,
     actionType: item.action_type,
     content: item.content,
-    ownerId: item.owner_id,
+    ownerUsername: item.owner_id,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
     active: item.active,
@@ -50,7 +50,7 @@ export const snakeTicketActionMapper: ArrayMapper<
     action_no: item.actionNo,
     action_type: item.actionType,
     content: item.content,
-    owner_id: item.ownerId,
+    owner_id: item.ownerUsername,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
     active: item.active,

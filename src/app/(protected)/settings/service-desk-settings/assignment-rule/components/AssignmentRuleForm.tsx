@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { forwardRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,6 +13,7 @@ import { SupportedLanguage } from "@/domain/config";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
 import { NS } from "@/lib/i18n";
+import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel, Locale, ValueLabel } from "@/shared/types";
 
@@ -32,8 +33,9 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
   ({ selectedNode, language, setTree }, ref) => {
     const { t } = useTranslation(NS.settings);
     const tLocal = useLocalizedValue(language);
+    const localLocales = getLanguageOptions(t);
 
-    const { languageTab, setLanguageTab, languageOptions, assigneeChange } =
+    const { languageTab, setLanguageTab, assigneeChange } =
       useAssignmentRuleForm({
         selectedNode,
         language,
@@ -60,13 +62,22 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
       return employees.map((employee) => {
         const name = tLocal(employee.name);
         return {
-          value: employee.userName,
+          value: employee.username,
           label: `${name.first} ${name.last}`,
           displayName: employee.email,
           image: employee.imageUrl,
         };
       });
     }, [employees, tLocal]);
+
+    // displat empty box.
+    if (!selectedNode) {
+      return (
+        <div className="h-full rounded-lg border border-dashed p-7 text-sm text-muted-foreground">
+          {t("serviceDeskSettings.assignmentRuleTab.empty")}
+        </div>
+      );
+    }
 
     return (
       <div ref={ref}>
@@ -75,13 +86,13 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
           onValueChange={(value) => setLanguageTab(value as Locale)}
         >
           <TabsList className="w-full justify-start">
-            {languageOptions.map((lang) => (
+            {localLocales.map((locale) => (
               <TabsTrigger
-                key={lang.value}
-                value={lang.value}
+                key={locale.value}
+                value={locale.value}
                 className="min-w-20 gap-2 data-[state=inactive]:border-none"
               >
-                {lang.label}
+                {locale.label}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -91,17 +102,13 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="category-input-name">
-                  {t("serviceDeskSettings.categoryTab.name")}
+                  {t("serviceDeskSettings.common.category")}
                 </FieldLabel>
                 <Input
                   id="category-input-name"
                   data-testid="category-name"
-                  disabled={!selectedNode}
                   className="!disabled:border-primary"
-                  value={selectedNode?.name[languageTab] ?? ""}
-                  placeholder={t(
-                    "serviceDeskSettings.assignmentRuleTab.namePlaceholder",
-                  )}
+                  value={selectedNode.name[languageTab] ?? ""}
                   readOnly
                 />
               </Field>
@@ -114,19 +121,18 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   variant="default"
                   badgeVariant="secondary"
                   options={jobFieldData}
-                  value={selectedNode?.jobFieldIds || []}
-                  disabled={!selectedNode}
+                  value={selectedNode.jobFieldIds || []}
                   placeholder={t(
                     "serviceDeskSettings.assignmentRuleTab.selectAssigneeJobField",
                   )}
                   onSelect={(selected: string) => {
                     assigneeChange("jobFieldIds")([
-                      ...(selectedNode?.jobFieldIds || []),
+                      ...(selectedNode.jobFieldIds || []),
                       selected,
                     ]);
                   }}
                   onRemove={(selected: string) => {
-                    const newChoice = selectedNode?.jobFieldIds?.filter(
+                    const newChoice = selectedNode.jobFieldIds?.filter(
                       (value) => value !== selected,
                     );
 
@@ -143,27 +149,26 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
                   badgeVariant={"primary"}
                   options={employeeData}
-                  value={selectedNode?.employeeIds || []}
+                  value={selectedNode.assigneeUsernames || []}
                   maxImages={MAX_EMPLOYEE_PER_CATEGORY}
                   placeholder={t(
                     "serviceDeskSettings.assignmentRuleTab.selectAssignee",
                   )}
-                  disabled={!selectedNode}
                   onSelect={(selected) => {
                     if (selected) {
-                      assigneeChange("employeeIds")([
-                        ...(selectedNode?.employeeIds || []),
+                      assigneeChange("assigneeUsernames")([
+                        ...(selectedNode.assigneeUsernames || []),
                         selected,
                       ]);
                     }
                   }}
                   onRemove={(selected) => {
-                    const currentValue = selectedNode?.employeeIds || [];
+                    const currentValue = selectedNode.assigneeUsernames || [];
                     const currentValueIndex = currentValue.indexOf(selected);
 
                     if (currentValueIndex > -1) {
                       currentValue.splice(currentValueIndex, 1);
-                      assigneeChange("employeeIds")([...currentValue]);
+                      assigneeChange("assigneeUsernames")([...currentValue]);
                     } else {
                       return;
                     }

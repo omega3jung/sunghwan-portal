@@ -2,7 +2,7 @@ import { Department } from "@/domain/organization";
 import { idToNumber } from "@/lib/api/utils/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
-import { DbDepartment } from "./mapper";
+import { DbDepartment } from "./types";
 
 type DepartmentWriteFields = Pick<
   Department,

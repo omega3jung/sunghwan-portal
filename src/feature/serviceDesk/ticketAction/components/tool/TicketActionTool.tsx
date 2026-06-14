@@ -85,7 +85,7 @@ function resolveFormErrorMessage(
 ) {
   const errorFieldNames: Array<keyof TicketActionDraftFormValues> = [
     "content",
-    "assigneeIds",
+    "assigneeUsernames",
     "targetTicketId",
     "priority",
     "riskLevel",

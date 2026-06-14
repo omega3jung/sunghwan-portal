@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { Locale } from "date-fns";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -63,7 +63,7 @@ export function TicketActionList({
         return true;
       }
 
-      const owner = userMap.get(action.ownerId);
+      const owner = userMap.get(action.ownerUsername);
       const searchTarget = [
         action.actionNo,
         t(getTicketActionTypeLabelKey(action.actionType)),
@@ -111,7 +111,7 @@ export function TicketActionList({
             <TicketActionItem
               key={`${action.ticketId}-${action.actionNo}-${isDesktop === null ? "initial" : isDesktop ? "desktop" : "mobile"}`}
               action={action}
-              owner={userMap.get(action.ownerId)}
+              owner={userMap.get(action.ownerUsername)}
               dateLocale={dateLocale}
               defaultOpen={isDesktop ? true : index === 0}
             />

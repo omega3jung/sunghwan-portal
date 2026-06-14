@@ -1,12 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common/types";
 import { LocalizedText } from "@/shared/types";
 
-// client data structure.
-export type Client = {
-  id: string;
-  name: string;
-  color: string;
-};
+import { Tenant } from "../tenant";
 
 export type CategoryScope = "PORTAL" | "INTERNAL";
 
@@ -36,4 +31,4 @@ export interface MainCategory extends CategoryBase {
 }
 
 // client-category tree.
-export type ClientCategoryTree = Client & { categories: MainCategory[] };
+export type TenantCategoryTree = Tenant & { categories: MainCategory[] };

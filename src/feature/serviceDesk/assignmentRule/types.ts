@@ -1,8 +1,19 @@
 import type { AssigneeGroup } from "@/domain/serviceDesk";
 import type { DbParams } from "@/shared/types/api";
 
+// back-end data structures.
+export interface DbAssigneeGroup {
+  job_field_id: number[]; // string number. can use parseInt.
+  employee_username: string[];
+}
+
+export interface DbAssignmentRule {
+  category_id: number; // string number. can use parseInt.
+  assignee: DbAssigneeGroup;
+}
+
 export type ServiceDeskAssignmentRuleListParams = DbParams & {
-  clientId?: string;
+  tenantId?: string;
 };
 
 export type AssignmentRuleTreeSyncSubCategoryInput = {
@@ -17,6 +28,6 @@ export type AssignmentRuleTreeSyncCategoryInput = {
 };
 
 export type SaveServiceDeskAssignmentRuleTreePayload = {
-  clientId: string;
+  tenantId: string;
   categories: AssignmentRuleTreeSyncCategoryInput[];
 };

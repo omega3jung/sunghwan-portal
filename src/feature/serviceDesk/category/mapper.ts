@@ -1,54 +1,19 @@
-import { Priority, RiskLevel } from "@/domain/common";
 import {
-  CategoryScope,
-  ClientCategoryTree,
   MainCategory,
   SubCategory,
+  TenantCategoryTree,
 } from "@/domain/serviceDesk";
 import {
-  createItemPayloadMapper,
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
-import { ArrayMapper, LocalizedText } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
+import { ArrayMapper } from "@/shared/types";
+import { nullToUndefined } from "@/shared/utils/value";
 
-// back-end data structures.
-export type DbClient = {
-  client_id: number;
-  client_name: string;
-  client_color: string;
-};
+import type { DbCategory, DbSubCategory, DbTenantCategoryTree } from "./types";
 
-export interface DbCategoryBase {
-  category_id: number; // string number. can use parseInt.
-  category_name: LocalizedText;
-  category_description: LocalizedText | null;
-  category_request_template: LocalizedText | null;
-  category_index: number;
-  category_active: boolean;
-}
-
-// leaf category.
-export interface DbSubCategory extends DbCategoryBase {
-  default_priority?: Priority | null; // optional to sub category.
-  default_risk_level?: RiskLevel | null; // optional to sub category.
-  default_sla_days?: number | null; // optional to sub category.
-}
-
-// parent category.
-export interface DbCategory extends DbCategoryBase {
-  category_scope: CategoryScope;
-  default_priority: Priority; // required to category.
-  default_risk_level: RiskLevel; // required to category.
-  default_sla_days: number; // required to category.
-  sub_category: DbSubCategory[];
-}
-
-export type DbClientCategoryTree = DbClient & { category: DbCategory[] };
-
-export const camelClientCategoryTreeMapper: ArrayMapper<
-  DbClientCategoryTree,
-  ClientCategoryTree
+export const camelTenantCategoryTreeMapper: ArrayMapper<
+  DbTenantCategoryTree,
+  TenantCategoryTree
 > = (data) => {
   return data.flatMap((item) => {
     if (!item) {
@@ -57,9 +22,11 @@ export const camelClientCategoryTreeMapper: ArrayMapper<
 
     return [
       {
-        id: item.client_id.toString(),
-        name: item.client_name,
-        color: item.client_color,
+        id: item.tenant_id.toString(),
+        companyId: item.tenant_company_id.toString(),
+        name: item.tenant_name,
+        color: item.tenant_color,
+        active: item.tenant_active ?? true,
         categories: camelCategoryMapper(item.category ?? []),
       },
     ];
@@ -116,45 +83,9 @@ const camelSubCategoryMapper: ArrayMapper<DbSubCategory, SubCategory> = (
   });
 };
 
-export const snakeCategoryMapper: ArrayMapper<MainCategory, DbCategory> = (
-  data,
-) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_scope: item.scope,
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: item.defaultPriority,
-    default_risk_level: item.defaultRiskLevel,
-    default_sla_days: item.defaultSlaDays,
-    sub_category: snakeSubCategoryMapper(item.subCategories),
-  }));
-};
-
-const snakeSubCategoryMapper: ArrayMapper<SubCategory, DbSubCategory> = (
-  data,
-) => {
-  return data.map((item) => ({
-    category_id: parseInt(item.id),
-    category_name: item.name,
-    category_description: undefinedToNull(item.description),
-    category_request_template: undefinedToNull(item.requestTemplate),
-    category_index: item.index,
-    category_active: item.active,
-    default_priority: undefinedToNull(item.defaultPriority),
-    default_risk_level: undefinedToNull(item.defaultRiskLevel),
-    default_sla_days: undefinedToNull(item.defaultSlaDays),
-  }));
-};
-
 export const mapCategoryListPayload = createListPayloadMapper(
-  camelClientCategoryTreeMapper,
+  camelTenantCategoryTreeMapper,
 );
-export const mapCategoryItemPayload =
-  createItemPayloadMapper(camelCategoryMapper);
 
 export const mapCategoryTreePayload = (payload: unknown) => {
   if (!payload || typeof payload !== "object") {
@@ -162,6 +93,6 @@ export const mapCategoryTreePayload = (payload: unknown) => {
   }
 
   return (
-    camelClientCategoryTreeMapper([payload as DbClientCategoryTree])[0] ?? null
+    camelTenantCategoryTreeMapper([payload as DbTenantCategoryTree])[0] ?? null
   );
 };

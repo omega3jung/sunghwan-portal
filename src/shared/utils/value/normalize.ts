@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Replaces `undefined` values with `null` for a selected set of object keys.
  *
  * Use for:
@@ -10,8 +10,8 @@
  * @returns A copied object where the specified keys never remain `undefined`
  *
  * @example
- * normalizeNullable({ title: "A", assigneeId: undefined }, ["assigneeId"] as const);
- * // { title: "A", assigneeId: null }
+ * normalizeNullable({ title: "A", assigneeUsername: undefined }, ["assigneeUsername"] as const);
+ * // { title: "A", assigneeUsername: null }
  */
 export function normalizeNullable<
   T extends object,

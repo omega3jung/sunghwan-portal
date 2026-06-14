@@ -9,20 +9,20 @@ import {
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
 import { SupportedLanguage } from "@/domain/config";
-import { AssignmentRule, ClientCategoryTree } from "@/domain/serviceDesk";
+import { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";
 
 type UseAssignmentRuleTreeOptions = {
-  selectedClient: string | null;
-  categories: ClientCategoryTree[] | undefined;
+  selectedTenant: string | null;
+  categories: TenantCategoryTree[] | undefined;
   assignmentRules: AssignmentRule[] | undefined;
   language: SupportedLanguage;
 };
 
 export function useAssignmentRuleTree({
-  selectedClient,
+  selectedTenant,
   categories,
   assignmentRules,
   language: _language,
@@ -32,8 +32,8 @@ export function useAssignmentRuleTree({
   >([]);
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeClientId, setTreeClientId] = useState<string | null>(null);
-  const previousClientRef = useRef<string | null>(null);
+  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
+  const previousTenantRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -41,20 +41,20 @@ export function useAssignmentRuleTree({
   }, [selectedId, tree]);
 
   useEffect(() => {
-    if (!categories || !selectedClient || !assignmentRules) return;
+    if (!categories || !selectedTenant || !assignmentRules) return;
 
     const mapped = mapAssignmentRuleData(
       categories,
-      selectedClient,
+      selectedTenant,
       assignmentRules,
     );
     const nextTree = assignmentRuleToTree(mapped);
 
     setTree(nextTree);
-    setTreeClientId(selectedClient);
+    setTreeTenantId(selectedTenant);
     setSelectedId((previousSelectedId) => {
-      if (previousClientRef.current !== selectedClient) {
-        previousClientRef.current = selectedClient;
+      if (previousTenantRef.current !== selectedTenant) {
+        previousTenantRef.current = selectedTenant;
         return null;
       }
 
@@ -70,7 +70,7 @@ export function useAssignmentRuleTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [assignmentRules, categories, selectedClient]);
+  }, [assignmentRules, categories, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
@@ -81,7 +81,7 @@ export function useAssignmentRuleTree({
     setTree,
     selectedId,
     setSelectedId,
-    treeClientId,
+    treeTenantId,
     selectedNode,
   };
 }

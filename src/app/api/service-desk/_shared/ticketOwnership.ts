@@ -1,8 +1,8 @@
-import { TicketDetail } from "@/domain/serviceDesk";
+﻿import { TicketDetail } from "@/domain/serviceDesk";
 
 type TicketOwnershipResource = Pick<
   TicketDetail,
-  "requesterId" | "assigneeIds" | "owner" | "assigned"
+  "requesterUsername" | "assigneeUsernames" | "owner" | "assigned"
 >;
 
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
@@ -16,10 +16,10 @@ export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
   return {
     ...ticket,
     owner:
-      normalizedUserName !== null && ticket.requesterId === normalizedUserName,
+      normalizedUserName !== null && ticket.requesterUsername === normalizedUserName,
     assigned:
       normalizedUserName !== null &&
-      ticket.assigneeIds.includes(normalizedUserName),
+      ticket.assigneeUsernames.includes(normalizedUserName),
   };
 }
 

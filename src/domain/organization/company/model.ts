@@ -1,4 +1,3 @@
-import { ISODateString } from "@/shared/types";
 import { LocalizedText } from "@/shared/types/language";
 
 export interface Company {
@@ -8,8 +7,9 @@ export interface Company {
   name: LocalizedText;
   code?: string;
 
+  // ownership
+  isPortalOwner: boolean;
+
   // system
-  createdAt: ISODateString;
-  updatedAt: ISODateString;
   active: boolean;
 }

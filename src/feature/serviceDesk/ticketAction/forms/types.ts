@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 import {
   ticketActionDraftFormSchema,
@@ -28,7 +28,7 @@ export type TicketNoteDraftValues = TicketActionDraftBase & {
 
 export type TicketAssignDraftValues = TicketActionDraftBase & {
   actionType: "ASSIGN";
-  assigneeIds: string[];
+  assigneeUsernames: string[];
   categoryId: string;
 };
 

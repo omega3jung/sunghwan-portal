@@ -1,0 +1,242 @@
+[
+  {
+    "company_id": 1,
+    "company_name": {
+      "en": "Internal Demo Corporation",
+      "es": "Corporación de demostración interna",
+      "fr": "Société de démonstration interne",
+      "ko": "내부 데모 법인"
+    },
+    "company_code": "IC",
+    "company_active": true,
+    "company_portal_owner": true
+  },
+  {
+    "company_id": 2,
+    "company_name": {
+      "en": "Client Demo Logistics",
+      "es": "Demostración de logística para clientes",
+      "fr": "Démonstration client logistique",
+      "ko": "클라이언트 데모 물류"
+    },
+    "company_code": "DCL",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 3,
+    "company_name": {
+      "en": "Client Demo Healthcare",
+      "es": "Demostración de atención médica para clientes",
+      "fr": "Démonstration client santé",
+      "ko": "클라이언트 데모 헬스케어"
+    },
+    "company_code": "DCH",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 4,
+    "company_name": {
+      "en": "Client Demo Finance",
+      "es": "Demostración financiera para clientes",
+      "fr": "Démonstration client finance",
+      "ko": "클라이언트 데모 금융"
+    },
+    "company_code": "DCF",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 5,
+    "company_name": {
+      "en": "Client Demo Retail",
+      "es": "Demostración minorista para clientes",
+      "fr": "Démonstration client commerce de détail",
+      "ko": "클라이언트 데모 리테일"
+    },
+    "company_code": "DCR",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 6,
+    "company_name": {
+      "en": "Client Demo Manufacturing",
+      "es": "Demostración de fabricación para clientes",
+      "fr": "Démonstration client fabrication",
+      "ko": "클라이언트 데모 제조"
+    },
+    "company_code": "DCM",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 7,
+    "company_name": {
+      "en": "Client Demo Telecom",
+      "es": "Demostración de telecomunicaciones para clientes",
+      "fr": "Démonstration client télécoms",
+      "ko": "클라이언트 데모 통신"
+    },
+    "company_code": "DCT",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 8,
+    "company_name": {
+      "en": "Client Demo Construction",
+      "es": "Demostración de construcción para clientes",
+      "fr": "Démonstration client construction",
+      "ko": "클라이언트 데모 건설"
+    },
+    "company_code": "DCC2",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 9,
+    "company_name": {
+      "en": "Client Demo Research",
+      "es": "Demostración de investigación para clientes",
+      "fr": "Démonstration client recherche",
+      "ko": "클라이언트 데모 연구"
+    },
+    "company_code": "DCR2",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 10,
+    "company_name": {
+      "en": "Client Demo Security",
+      "es": "Demostración de seguridad para clientes",
+      "fr": "Démonstration client sécurité",
+      "ko": "클라이언트 데모 보안"
+    },
+    "company_code": "DCS",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 11,
+    "company_name": {
+      "en": "Client Demo Corporation",
+      "es": "Corporación de demostración de clientes",
+      "fr": "Client Demo Corporation",
+      "ko": "클라이언트 데모 법인"
+    },
+    "company_code": "DCC",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 12,
+    "company_name": {
+      "en": "Client Demo Industry",
+      "es": "Demostración para clientes de la industria",
+      "fr": "Démonstration client dans le secteur d'activité",
+      "ko": "클라이언트 데모 산업"
+    },
+    "company_code": "DCI",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 13,
+    "company_name": {
+      "en": "Client Demo Energy",
+      "es": "Demostración energética para clientes",
+      "fr": "Démonstration client énergie",
+      "ko": "클라이언트 데모 에너지"
+    },
+    "company_code": "DCE",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 14,
+    "company_name": {
+      "en": "Client Demo Education",
+      "es": "Demostración educativa para clientes",
+      "fr": "Démonstration client éducation",
+      "ko": "클라이언트 데모 교육"
+    },
+    "company_code": "DCD",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 15,
+    "company_name": {
+      "en": "Client Demo Public Sector",
+      "es": "Demostración del sector público para clientes",
+      "fr": "Démonstration client secteur public",
+      "ko": "클라이언트 데모 공공"
+    },
+    "company_code": "DCP",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 16,
+    "company_name": {
+      "en": "Client Demo Media",
+      "es": "Demostración de medios para clientes",
+      "fr": "Démonstration client médias",
+      "ko": "클라이언트 데모 미디어"
+    },
+    "company_code": "DCM2",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 17,
+    "company_name": {
+      "en": "Client Demo Automotive",
+      "es": "Demostración automotriz para clientes",
+      "fr": "Démonstration client automobile",
+      "ko": "클라이언트 데모 자동차"
+    },
+    "company_code": "DCA",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 18,
+    "company_name": {
+      "en": "Client Demo Insurance",
+      "es": "Demostración de seguros para clientes",
+      "fr": "Démonstration client assurance",
+      "ko": "클라이언트 데모 보험"
+    },
+    "company_code": "DCI2",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 19,
+    "company_name": {
+      "en": "Client Demo Hospitality",
+      "es": "Demostración hotelera para clientes",
+      "fr": "Démonstration client hôtellerie",
+      "ko": "클라이언트 데모 호스피탈리티"
+    },
+    "company_code": "DCH2",
+    "company_active": true,
+    "company_portal_owner": false
+  },
+  {
+    "company_id": 20,
+    "company_name": {
+      "en": "Client Demo Food Service",
+      "es": "Demostración de servicios alimentarios para clientes",
+      "fr": "Démonstration client restauration",
+      "ko": "클라이언트 데모 푸드 서비스"
+    },
+    "company_code": "DCF2",
+    "company_active": true,
+    "company_portal_owner": false
+  }
+]
