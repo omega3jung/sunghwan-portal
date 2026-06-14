@@ -1,4 +1,4 @@
-﻿{
+{
   "action": {
     "comment": "Comentario",
     "note": "Nota",
@@ -41,7 +41,6 @@
     }
   },
   "field": {
-    "dueBy": "Fecha límite",
     "workSession": "Tiempo registrado",
     "durationMinutes": "Duración",
     "startAt": "Hora de inicio",
@@ -157,17 +156,13 @@
     "into": "Fusionado en {{ticketId}}"
   },
   "historyTimeline": {
+    "description": "Vista cronológica de la actividad reciente del ticket.",
     "badge": {
-      "status": "Estado",
       "assignment": "Asignación",
       "approval": "Aprobación",
-      "comment": "Comentario",
-      "category": "Categoría",
-      "note": "Nota",
       "workSession": "Tiempo registrado",
       "planning": "Planificación",
-      "system": "Sistema",
-      "default": "Historial"
+      "system": "Sistema"
     },
     "valueChanged": "{{from}} -> {{to}}"
   },
@@ -178,29 +173,11 @@
     },
     "editor": {
       "validationEmpty": "Ingresa un comentario antes de enviarlo."
-    },
-    "toolbar": {
-      "bold": "Negrita",
-      "italic": "Cursiva",
-      "bulletList": "Lista con viñetas",
-      "numberedList": "Lista numerada",
-      "quote": "Cita",
-      "codeBlock": "Bloque de código",
-      "undo": "Deshacer",
-      "redo": "Rehacer"
     }
   },
   "actionTool": {
     "currentUser": "Usuario actual",
     "currentUserFallback": "Tú",
-    "launcherTitle": {
-      "comment": "Comentario",
-      "note": "Nota",
-      "assign": "Asignar",
-      "adjust": "Ajustar plan",
-      "merge": "Fusionar",
-      "reject": "Rechazar"
-    },
     "launcher": {
       "comment": "Publica una respuesta visible para el solicitante y las personas observadoras.",
       "note": "Deja una nota interna que permanezca dentro del equipo.",
@@ -275,7 +252,6 @@
   },
   "workSessionTool": {
     "title": "Tiempo registrado",
-    "description": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
     "tab": {
       "duration": "Duración",
       "range": "Rango"
@@ -367,14 +343,27 @@
       "create": "No se pudo crear el paso de aprobación.",
       "fetch": "No se pudo obtener el paso de aprobación.",
       "update": "No se pudo actualizar el paso de aprobación.",
-      "delete": "No se pudo eliminar el paso de aprobación."
+      "delete": "No se pudo eliminar el paso de aprobación.",
+      "save": "No se pudo guardar la configuración de los pasos de aprobación.",
+      "localDemo": {
+        "invalidPayload": "Carga útil de configuración de pasos de aprobación no válida.",
+        "clientNotFound": "No se encontró el cliente {{clientId}}.",
+        "categoryNotFound": "No se encontró la categoría {{categoryId}}."
+      }
     },
     "assignmentRules": {
       "fetchList": "No se pudieron obtener las reglas de asignación.",
       "create": "No se pudo crear la regla de asignación.",
       "fetch": "No se pudo obtener la regla de asignación.",
       "update": "No se pudo actualizar la regla de asignación.",
-      "delete": "No se pudo eliminar la regla de asignación."
+      "delete": "No se pudo eliminar la regla de asignación.",
+      "save": "No se pudo guardar la configuración de las reglas de asignación.",
+      "localDemo": {
+        "invalidPayload": "Carga útil de configuración de reglas de asignación no válida.",
+        "clientNotFound": "No se encontró el cliente {{clientId}}.",
+        "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
+        "emptyAssignee": "La regla de asignación requiere al menos una persona asignada."
+      }
     },
     "assignmentRecommendations": {
       "invalidInput": "La recomendación de asignación requiere categoryId y assigneeUsernames.",
@@ -385,7 +374,27 @@
       "create": "No se pudo crear la categoría.",
       "fetch": "No se pudo obtener la categoría.",
       "update": "No se pudo actualizar la categoría.",
-      "delete": "No se pudo eliminar la categoría."
+      "delete": "No se pudo eliminar la categoría.",
+      "save": "No se pudo guardar la configuración de categorías.",
+      "localDemo": {
+        "invalidPayload": "Carga útil de configuración de categorías no válida.",
+        "clientNotFound": "No se encontró el cliente {{clientId}}.",
+        "clientMismatch": "La categoría no pertenece al cliente {{clientId}}."
+      }
+    },
+    "tenants": {
+      "fetchList": "No se pudieron obtener los tenants.",
+      "create": "No se pudo crear el tenant.",
+      "fetch": "No se pudo obtener el tenant.",
+      "update": "No se pudo actualizar el tenant.",
+      "delete": "No se pudo eliminar el tenant.",
+      "save": "No se pudo guardar la configuración del tenant.",
+      "remoteNotImplemented": "Las mutaciones de configuración de tenants REMOTE aún no están implementadas.",
+      "localDemo": {
+        "invalidPayload": "Carga útil de configuración de tenants no válida.",
+        "companyAlreadyAssigned": "La empresa {{companyId}} ya está asignada a un tenant activo.",
+        "companyMismatch": "El tenant no pertenece a la empresa {{companyId}}."
+      }
     },
     "tickets": {
       "fetchList": "No se pudieron obtener los tickets.",
@@ -393,7 +402,13 @@
       "notFound": "Ticket no encontrado.",
       "fetch": "No se pudo obtener el ticket.",
       "update": "No se pudo actualizar el ticket.",
-      "delete": "No se pudo eliminar el ticket."
+      "delete": "No se pudo eliminar el ticket.",
+      "localDemo": {
+        "invalidPayload": "Carga útil de ticket no válida.",
+        "requesterRequired": "Se requiere un solicitante.",
+        "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
+        "updateNotAllowed": "No se puede actualizar el ticket en el estado {{status}}."
+      }
     },
     "ticketActions": {
       "fetchList": "No se pudieron obtener las acciones del ticket.",
@@ -419,11 +434,13 @@
       "mergeSameTicket": "No se puede fusionar con el mismo ticket.",
       "employeeUnavailable": "No autorizado: la identidad del empleado no está disponible.",
       "actionMismatch": "La ruta de la acción y la carga útil no coinciden.",
+      "startWork": "No se pudo iniciar el trabajo del ticket.",
       "execute": "No se pudo ejecutar el comando del ticket.",
       "localDemo": {
         "createFailed": "No se pudo crear la acción.",
         "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
         "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
+        "assigneeForbidden": "Solo una persona asignada puede iniciar el trabajo en este ticket.",
         "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
         "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
         "mergeTargetNotFound": "No se encontró el ticket de destino para la fusión.",

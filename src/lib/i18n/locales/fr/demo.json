@@ -156,5 +156,11 @@
     "startIndex": "Index de départ",
     "step": "Étape",
     "disable": "Désactiver"
+  },
+  "remoteRouteGuard": {
+    "limited": {
+      "title": "La démo distante est limitée",
+      "description": "Les pages reliées à la base de données sont encore en cours de connexion. Utilisez pour l'instant les pages Home, Demo et Documents."
+    }
   }
 }

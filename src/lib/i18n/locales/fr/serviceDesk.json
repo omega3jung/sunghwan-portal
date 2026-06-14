@@ -1,4 +1,4 @@
-﻿{
+{
   "action": {
     "comment": "Commentaire",
     "note": "Note",
@@ -41,7 +41,6 @@
     }
   },
   "field": {
-    "dueBy": "Échéance",
     "workSession": "Temps enregistré",
     "durationMinutes": "Durée",
     "startAt": "Heure de début",
@@ -159,16 +158,11 @@
   "historyTimeline": {
     "description": "Vue chronologique de l'activité récente du ticket.",
     "badge": {
-      "status": "Statut",
       "assignment": "Attribution",
       "approval": "Approbation",
-      "comment": "Commentaire",
-      "category": "Catégorie",
-      "note": "Note",
       "workSession": "Temps enregistré",
       "planning": "Planification",
-      "system": "Système",
-      "default": "Historique"
+      "system": "Système"
     },
     "valueChanged": "{{from}} -> {{to}}"
   },
@@ -181,38 +175,9 @@
       "validationEmpty": "Veuillez saisir un commentaire avant l'envoi."
     }
   },
-  "richEditor": {
-    "toolbar": {
-      "bold": "Gras",
-      "italic": "Italique",
-      "underline": "Souligner",
-      "strike": "Barré",
-      "bulletList": "Liste à puces",
-      "numberedList": "Liste numérotée",
-      "quote": "Citation",
-      "codeBlock": "Bloc de code",
-      "link": "Lien",
-      "image": "Image",
-      "table": "Tableau",
-      "undo": "Annuler",
-      "redo": "Rétablir"
-    },
-    "prompt": {
-      "link": "Saisissez une URL",
-      "image": "Saisissez l'URL d'une image"
-    }
-  },
   "actionTool": {
     "currentUser": "Utilisateur actuel",
     "currentUserFallback": "Vous",
-    "launcherTitle": {
-      "comment": "Commentaire",
-      "note": "Note",
-      "assign": "Assigner",
-      "adjust": "Ajuster le plan",
-      "merge": "Fusionner",
-      "reject": "Rejeter"
-    },
     "launcher": {
       "comment": "Publiez une réponse visible pour le demandeur et les personnes abonnées.",
       "note": "Laissez une note interne qui reste dans l'équipe.",
@@ -378,14 +343,27 @@
       "create": "Impossible de créer l'étape d'approbation.",
       "fetch": "Impossible de récupérer l'étape d'approbation.",
       "update": "Impossible de mettre à jour l'étape d'approbation.",
-      "delete": "Impossible de supprimer l'étape d'approbation."
+      "delete": "Impossible de supprimer l'étape d'approbation.",
+      "save": "Impossible d'enregistrer les paramètres des étapes d'approbation.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres d'étapes d'approbation invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable."
+      }
     },
     "assignmentRules": {
       "fetchList": "Impossible de récupérer les règles d'attribution.",
       "create": "Impossible de créer la règle d'attribution.",
       "fetch": "Impossible de récupérer la règle d'attribution.",
       "update": "Impossible de mettre à jour la règle d'attribution.",
-      "delete": "Impossible de supprimer la règle d'attribution."
+      "delete": "Impossible de supprimer la règle d'attribution.",
+      "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "emptyAssignee": "La règle d'attribution nécessite au moins une personne assignée."
+      }
     },
     "assignmentRecommendations": {
       "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeUsernames.",
@@ -396,7 +374,27 @@
       "create": "Impossible de créer la catégorie.",
       "fetch": "Impossible de récupérer la catégorie.",
       "update": "Impossible de mettre à jour la catégorie.",
-      "delete": "Impossible de supprimer la catégorie."
+      "delete": "Impossible de supprimer la catégorie.",
+      "save": "Impossible d'enregistrer les paramètres de catégorie.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}."
+      }
+    },
+    "tenants": {
+      "fetchList": "Impossible de récupérer les tenants.",
+      "create": "Impossible de créer le tenant.",
+      "fetch": "Impossible de récupérer le tenant.",
+      "update": "Impossible de mettre à jour le tenant.",
+      "delete": "Impossible de supprimer le tenant.",
+      "save": "Impossible d'enregistrer les paramètres du tenant.",
+      "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres du tenant invalide.",
+        "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",
+        "companyMismatch": "Le tenant n'appartient pas à l'entreprise {{companyId}}."
+      }
     },
     "tickets": {
       "fetchList": "Impossible de récupérer les tickets.",
@@ -404,7 +402,13 @@
       "notFound": "Ticket introuvable.",
       "fetch": "Impossible de récupérer le ticket.",
       "update": "Impossible de mettre à jour le ticket.",
-      "delete": "Impossible de supprimer le ticket."
+      "delete": "Impossible de supprimer le ticket.",
+      "localDemo": {
+        "invalidPayload": "Charge utile du ticket invalide.",
+        "requesterRequired": "Le demandeur est obligatoire.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "updateNotAllowed": "Le ticket ne peut pas être mis à jour avec le statut {{status}}."
+      }
     },
     "ticketActions": {
       "fetchList": "Impossible de récupérer les actions du ticket.",
@@ -430,11 +434,13 @@
       "mergeSameTicket": "Impossible de fusionner avec le même ticket.",
       "employeeUnavailable": "Non autorisé : l'identité de l'employé est indisponible.",
       "actionMismatch": "Le chemin de l'action et la charge utile ne correspondent pas.",
+      "startWork": "Impossible de démarrer le travail sur le ticket.",
       "execute": "Impossible d'exécuter la commande du ticket.",
       "localDemo": {
         "createFailed": "Impossible de créer l'action.",
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
         "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
+        "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
         "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",
