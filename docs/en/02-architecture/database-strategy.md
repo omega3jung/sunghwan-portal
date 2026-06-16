@@ -373,6 +373,31 @@ The mapper is responsible for:
 
 ---
 
+### Service Desk Settings DTO Boundary
+
+Service Desk settings follow the same Row / Mapper / DTO boundary.
+
+Settings domains include:
+
+```txt
+Tenant
+Category
+Approval Step
+Assignment Rule
+```
+
+The settings data flow should remain:
+
+```txt
+Database Row -> Mapper -> DTO
+```
+
+For REMOTE behavior, DTOs hide PostgreSQL row shape and database naming.
+For LOCAL behavior, DTOs hide mock-backed server state shape. The UI should
+consume the same application-facing settings DTOs regardless of runtime.
+
+---
+
 ### 4. Repository
 
 A repository owns SQL execution.

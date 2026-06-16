@@ -23,11 +23,13 @@ Scope note:
 
 Assignment is primarily **category-driven**.
 
-```id="r9h3zc"
+```txt id="r9h3zc"
 Ticket → Category → Assignment Rule → Assignee
 ```
 
 The category acts as the **source of truth** for determining responsibility.
+The category itself is tenant-scoped, so assignment rules are resolved inside
+the selected tenant's Service Desk configuration.
 
 ---
 
@@ -51,6 +53,8 @@ The system supports multiple assignment strategies.
 ### 1. Auto Assignment (Default)
 
 Tickets are automatically assigned based on category configuration.
+That configuration is tenant-scoped, even when the simplified flow is written as
+`Ticket -> Category -> Assignment Rule -> Assignee`.
 
 #### Example
 

@@ -24,13 +24,16 @@ Scope note:
 승인은 **카테고리 중심(category-driven)** 으로 동작하며,
 **순차 파이프라인(sequential pipeline)** 으로 실행된다.
 
-각 카테고리는 자신만의 승인 워크플로를 정의할 수 있다.
+각 tenant-scoped category는 자신만의 승인 워크플로를 정의할 수 있다.
 
 ```txt
-Category -> approvalSteps[]
+Tenant-scoped Category -> approvalSteps[]
 ```
 
 각 단계는 `index` 값을 기준으로 순서대로 처리된다.
+
+approval step은 category configuration에 속하며, 해당 category tree를 소유한
+tenant boundary 안에서 해석된다.
 
 ---
 

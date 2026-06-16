@@ -122,6 +122,27 @@ refetchOnWindowFocus: true;
 
 ---
 
+## Service Desk Settings 상태
+
+Service Desk settings data도 server state이다.
+
+여기에는 다음이 포함된다.
+
+- tenant settings
+- category tree/configuration
+- approval steps
+- assignment rules
+
+이 값들은 React Query로 관리해야 하며 Zustand에 중복 저장하지 않아야 한다.
+Zustand는 UI/runtime state에는 사용할 수 있지만, settings data의 source of truth가
+되어서는 안 된다.
+
+LOCAL demo mutation은 server-side local state를 업데이트한 뒤 영향을 받는 settings
+query를 정확하게 invalidate해야 한다. client cache만 업데이트하는 것으로는 충분하지
+않다. 이후 API call도 동일한 local demo state를 관찰해야 하기 때문이다.
+
+---
+
 ## Query Key 전략
 
 ### 규칙

@@ -111,6 +111,10 @@ Related document: [Ticket Lifecycle](./ticket-lifecycle.md)
 
 - `categoryId`: links the ticket to category configuration
 
+A ticket references a category. The category belongs to a tenant, and that
+tenant provides the Service Desk configuration boundary for category-driven
+behavior.
+
 Category determines:
 
 - assignment
@@ -120,6 +124,10 @@ Category determines:
 
 The ticket therefore depends on category configuration rather than embedding
 those business rules directly.
+
+The current ticket model does not need to expose `tenantId` directly unless the
+implementation adds it to the ticket contract. Tenant scope is resolved through
+the referenced category configuration.
 
 Related document: [Category Strategy](./strategy/category-strategy.md)
 
@@ -235,7 +243,7 @@ The ticket itself does not contain the full set of business rules.
 Instead:
 
 ```txt
-Ticket -> Category -> Behavior
+Ticket -> Category -> Tenant-scoped Behavior
 ```
 
 This keeps the model cleaner and the behavior more configurable.
@@ -278,7 +286,7 @@ The ticket interacts with multiple domain models:
 
 ```txt
 Ticket
-  -> Category
+  -> Category (tenant-scoped)
   -> Approval
   -> Assignment
   -> SLA

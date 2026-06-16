@@ -2,6 +2,7 @@ export const NS = {
   auth: "auth",
   common: "common",
   domain: "domain",
+  documents: "documents",
   dashboard: "dashboard",
   demo: "demo",
   error: "error",

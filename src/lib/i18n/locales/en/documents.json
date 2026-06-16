@@ -1,0 +1,258 @@
+{
+  "page": {
+    "title": "Docs Hub",
+    "description": "Use the navigation menu to switch between major markdown documents."
+  },
+  "group": {
+    "project": {
+      "title": "Project"
+    },
+    "architecture": {
+      "title": "Architecture"
+    },
+    "domain": {
+      "title": "Domain"
+    },
+    "uiUx": {
+      "title": "UI/UX"
+    },
+    "dataFetching": {
+      "title": "Data Fetching"
+    },
+    "formDesign": {
+      "title": "Form Design"
+    },
+    "i18n": {
+      "title": "i18n"
+    },
+    "devStrategy": {
+      "title": "Dev Strategy"
+    },
+    "decisionLog": {
+      "title": "Decision Log"
+    }
+  },
+  "section": {
+    "decisionLog": {
+      "2025-12": {
+        "title": "2025-12"
+      },
+      "2026-01": {
+        "title": "2026-01"
+      },
+      "2026-02": {
+        "title": "2026-02"
+      },
+      "2026-03": {
+        "title": "2026-03"
+      },
+      "2026-04": {
+        "title": "2026-04"
+      },
+      "2026-05": {
+        "title": "2026-05"
+      },
+      "2026-06": {
+        "title": "2026-06"
+      }
+    }
+  },
+  "item": {
+    "readme": {
+      "title": "README",
+      "description": "Landing document for the Service Desk documentation set."
+    },
+    "readmeStrategy": {
+      "title": "README Strategy",
+      "description": "How the repository introduces itself and routes readers into deeper docs."
+    },
+    "featureBasedStructure": {
+      "title": "Feature-Based Structure",
+      "description": "Project slice boundaries and folder ownership strategy."
+    },
+    "routingStrategy": {
+      "title": "Routing Strategy",
+      "description": "Route design and App Router boundaries."
+    },
+    "stateManagement": {
+      "title": "State Management",
+      "description": "Client state responsibilities and persistence boundaries."
+    },
+    "authSessionStrategy": {
+      "title": "Auth & Session Strategy",
+      "description": "Authentication, session, and protected route design."
+    },
+    "impersonationStrategy": {
+      "title": "Impersonation Strategy",
+      "description": "Admin impersonation flow and related system boundaries."
+    },
+    "databaseStrategy": {
+      "title": "Database Strategy",
+      "description": "Database access model, roles, and DTO boundary strategy."
+    },
+    "ticketSystemOverview": {
+      "title": "Ticket System Overview",
+      "description": "High-level Service Desk domain overview."
+    },
+    "ticketLifecycle": {
+      "title": "Ticket Lifecycle",
+      "description": "Lifecycle states and transition design."
+    },
+    "ticketModel": {
+      "title": "Ticket Model",
+      "description": "Core ticket model and ownership structure."
+    },
+    "ticketActivity": {
+      "title": "Ticket Activity",
+      "description": "Activity model for communication and operational actions."
+    },
+    "ticketHistory": {
+      "title": "Ticket History",
+      "description": "Auditability and history timeline strategy."
+    },
+    "ticketTrackTime": {
+      "title": "Ticket Track Time",
+      "description": "Session-based work tracking and time recording model."
+    },
+    "actionStrategy": {
+      "title": "Action Strategy",
+      "description": "Action-oriented interaction and metadata design strategy."
+    },
+    "categoryStrategy": {
+      "title": "Category Strategy",
+      "description": "Category-driven workflow behavior across the system."
+    },
+    "approvalSystem": {
+      "title": "Approval System",
+      "description": "Approval steps and conditional workflow design."
+    },
+    "assignmentPolicy": {
+      "title": "Assignment Policy",
+      "description": "Assignment logic and workload direction."
+    },
+    "slaStrategy": {
+      "title": "SLA Strategy",
+      "description": "SLA handling and operational timing rules."
+    },
+    "componentBoundary": {
+      "title": "Component Boundary",
+      "description": "UI responsibility split across layout and feature layers."
+    },
+    "dialogPattern": {
+      "title": "Dialog Pattern",
+      "description": "Dialog usage and interaction pattern guidance."
+    },
+    "formPattern": {
+      "title": "Form Pattern",
+      "description": "Form interaction and responsibility design."
+    },
+    "dashboardAndInsight": {
+      "title": "Dashboard and Insight",
+      "description": "How operational surfaces differ from analytical insight views."
+    },
+    "reactQueryStrategy": {
+      "title": "React Query Strategy",
+      "description": "Data fetching, caching, and client boundary guidance."
+    },
+    "ticketForm": {
+      "title": "Ticket Form",
+      "description": "Form flow, category-driven behavior, and submission design."
+    },
+    "localeStructure": {
+      "title": "Locale Structure",
+      "description": "Namespace structure and translation responsibility boundaries."
+    },
+    "validationMessages": {
+      "title": "Validation Messages",
+      "description": "Validation wording strategy and translation separation."
+    },
+    "developmentApproach": {
+      "title": "Development Approach",
+      "description": "Practical implementation philosophy and migration-aware decisions."
+    },
+    "serviceDeskEvolution": {
+      "title": "Service Desk Evolution",
+      "description": "How Service Hub experience evolved into the Service Desk domain."
+    },
+    "serviceDeskImplementationStrategy": {
+      "title": "Service Desk Implementation Strategy",
+      "description": "Runtime, architecture, and implementation strategy for Service Desk."
+    },
+    "ticketOperationRules": {
+      "title": "Ticket Operation Rules",
+      "description": "Implementation-facing ticket operation rules and execution constraints."
+    },
+    "decisionAuthSessionArchitecture": {
+      "title": "2025-12 Auth Session Architecture",
+      "description": "Session architecture decision log entry."
+    },
+    "decisionImpersonation202512": {
+      "title": "2025-12 Impersonation",
+      "description": "Impersonation strategy decision log entry."
+    },
+    "decisionNaming202512": {
+      "title": "2025-12 Naming",
+      "description": "Naming decision log entry."
+    },
+    "decisionSystemLayout": {
+      "title": "2025-12 System Layout",
+      "description": "System layout decision log entry."
+    },
+    "decisionCategoryDesign": {
+      "title": "2026-01 Category Design",
+      "description": "Category design decision log entry."
+    },
+    "decisionImpersonation202601": {
+      "title": "2026-01 Impersonation",
+      "description": "Impersonation decision log entry."
+    },
+    "decisionSessionUserBoundary202601": {
+      "title": "2026-01 Session User Boundary",
+      "description": "Session user boundary decision log entry."
+    },
+    "decisionServiceDeskSettings": {
+      "title": "2026-02 Service Desk Settings",
+      "description": "Service Desk settings design log entry."
+    },
+    "decisionServiceDesk": {
+      "title": "2026-03 Service Desk",
+      "description": "Service Desk implementation decision log entry."
+    },
+    "decisionTicketFormDialog": {
+      "title": "2026-03 Ticket Form Dialog",
+      "description": "Ticket form dialog decision log entry."
+    },
+    "decisionTicketSession202603": {
+      "title": "2026-03 Ticket Session",
+      "description": "Ticket session behavior decision log entry."
+    },
+    "decisionEntityStatusNaming": {
+      "title": "2026-04 Entity Status Naming",
+      "description": "Entity naming decision log entry."
+    },
+    "decisionTicketAction": {
+      "title": "2026-04 Ticket Action Model Introduction",
+      "description": "Ticket action model introduction decision log entry."
+    },
+    "decisionBarrelExportBoundary202605": {
+      "title": "2026-05 Barrel Export Boundary",
+      "description": "Barrel export boundary decision log entry."
+    },
+    "decisionDatabaseRoleAndAccessStrategy202605": {
+      "title": "2026-05 Database Role and Access Strategy",
+      "description": "Database role and access strategy decision log entry."
+    },
+    "decisionServiceDeskDocumentationAlignment202605": {
+      "title": "2026-05 Service Desk Documentation Alignment",
+      "description": "Service Desk documentation alignment decision log entry."
+    },
+    "decisionServiceDeskTenantDesign202606": {
+      "title": "2026-06 Service Desk Tenant Design",
+      "description": "Tenant design decision log entry for Service Desk settings."
+    },
+    "decisionServiceDeskSettingsDtoApiBoundary202606": {
+      "title": "2026-06 Service Desk Settings DTO/API Boundary",
+      "description": "Settings DTO/API boundary decision log entry for Service Desk."
+    }
+  }
+}

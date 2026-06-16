@@ -1,0 +1,258 @@
+{
+  "page": {
+    "title": "문서 허브",
+    "description": "탐색 메뉴에서 주요 마크다운 문서를 전환해서 볼 수 있습니다."
+  },
+  "group": {
+    "project": {
+      "title": "프로젝트"
+    },
+    "architecture": {
+      "title": "아키텍처"
+    },
+    "domain": {
+      "title": "도메인"
+    },
+    "uiUx": {
+      "title": "UI/UX"
+    },
+    "dataFetching": {
+      "title": "데이터 패칭"
+    },
+    "formDesign": {
+      "title": "폼 설계"
+    },
+    "i18n": {
+      "title": "i18n"
+    },
+    "devStrategy": {
+      "title": "개발 전략"
+    },
+    "decisionLog": {
+      "title": "결정 기록"
+    }
+  },
+  "section": {
+    "decisionLog": {
+      "2025-12": {
+        "title": "2025-12"
+      },
+      "2026-01": {
+        "title": "2026-01"
+      },
+      "2026-02": {
+        "title": "2026-02"
+      },
+      "2026-03": {
+        "title": "2026-03"
+      },
+      "2026-04": {
+        "title": "2026-04"
+      },
+      "2026-05": {
+        "title": "2026-05"
+      },
+      "2026-06": {
+        "title": "2026-06"
+      }
+    }
+  },
+  "item": {
+    "readme": {
+      "title": "README",
+      "description": "Service Desk 문서 모음의 시작 문서입니다."
+    },
+    "readmeStrategy": {
+      "title": "README 전략",
+      "description": "저장소를 소개하고 독자를 심화 문서로 안내하는 방식을 설명합니다."
+    },
+    "featureBasedStructure": {
+      "title": "기능 기반 구조",
+      "description": "프로젝트 슬라이스 경계와 폴더 소유권 전략을 설명합니다."
+    },
+    "routingStrategy": {
+      "title": "라우팅 전략",
+      "description": "라우트 설계와 App Router 경계를 설명합니다."
+    },
+    "stateManagement": {
+      "title": "상태 관리",
+      "description": "클라이언트 상태 책임과 영속성 경계를 설명합니다."
+    },
+    "authSessionStrategy": {
+      "title": "인증 및 세션 전략",
+      "description": "인증, 세션, 보호 라우트 설계를 설명합니다."
+    },
+    "impersonationStrategy": {
+      "title": "가장 전략",
+      "description": "관리자 가장 흐름과 관련 시스템 경계를 설명합니다."
+    },
+    "databaseStrategy": {
+      "title": "데이터베이스 전략",
+      "description": "데이터베이스 접근 모델, 역할, DTO 경계 전략을 설명합니다."
+    },
+    "ticketSystemOverview": {
+      "title": "티켓 시스템 개요",
+      "description": "Service Desk 도메인의 상위 수준 개요입니다."
+    },
+    "ticketLifecycle": {
+      "title": "티켓 생명주기",
+      "description": "생명주기 상태와 전환 설계를 설명합니다."
+    },
+    "ticketModel": {
+      "title": "티켓 모델",
+      "description": "핵심 티켓 모델과 소유 구조를 설명합니다."
+    },
+    "ticketActivity": {
+      "title": "티켓 활동",
+      "description": "커뮤니케이션과 운영 액션을 위한 활동 모델을 설명합니다."
+    },
+    "ticketHistory": {
+      "title": "티켓 이력",
+      "description": "감사 가능성과 이력 타임라인 전략을 설명합니다."
+    },
+    "ticketTrackTime": {
+      "title": "티켓 작업 시간 추적",
+      "description": "세션 기반 작업 추적과 시간 기록 모델을 설명합니다."
+    },
+    "actionStrategy": {
+      "title": "액션 전략",
+      "description": "액션 중심 상호작용과 메타데이터 설계 전략을 설명합니다."
+    },
+    "categoryStrategy": {
+      "title": "카테고리 전략",
+      "description": "시스템 전반의 카테고리 기반 워크플로 동작을 설명합니다."
+    },
+    "approvalSystem": {
+      "title": "승인 시스템",
+      "description": "승인 단계와 조건부 워크플로 설계를 설명합니다."
+    },
+    "assignmentPolicy": {
+      "title": "배정 정책",
+      "description": "배정 로직과 업무 방향성을 설명합니다."
+    },
+    "slaStrategy": {
+      "title": "SLA 전략",
+      "description": "SLA 처리와 운영 시간 규칙을 설명합니다."
+    },
+    "componentBoundary": {
+      "title": "컴포넌트 경계",
+      "description": "레이아웃 계층과 기능 계층 사이의 UI 책임 분리를 설명합니다."
+    },
+    "dialogPattern": {
+      "title": "다이얼로그 패턴",
+      "description": "다이얼로그 사용 방식과 상호작용 패턴 지침을 설명합니다."
+    },
+    "formPattern": {
+      "title": "폼 패턴",
+      "description": "폼 상호작용과 책임 설계를 설명합니다."
+    },
+    "dashboardAndInsight": {
+      "title": "대시보드와 인사이트",
+      "description": "운영 화면과 분석 인사이트 뷰가 어떻게 다른지 설명합니다."
+    },
+    "reactQueryStrategy": {
+      "title": "React Query 전략",
+      "description": "데이터 패칭, 캐싱, 클라이언트 경계 지침을 설명합니다."
+    },
+    "ticketForm": {
+      "title": "티켓 폼",
+      "description": "폼 흐름, 카테고리 기반 동작, 제출 설계를 설명합니다."
+    },
+    "localeStructure": {
+      "title": "Locale 구조",
+      "description": "네임스페이스 구조와 번역 책임 경계를 설명합니다."
+    },
+    "validationMessages": {
+      "title": "검증 메시지",
+      "description": "검증 문구 전략과 번역 분리를 설명합니다."
+    },
+    "developmentApproach": {
+      "title": "개발 접근 방식",
+      "description": "실용적인 구현 철학과 마이그레이션을 고려한 결정을 설명합니다."
+    },
+    "serviceDeskEvolution": {
+      "title": "Service Desk 진화",
+      "description": "Service Hub 경험이 Service Desk 도메인으로 진화한 과정을 설명합니다."
+    },
+    "serviceDeskImplementationStrategy": {
+      "title": "Service Desk 구현 전략",
+      "description": "Service Desk의 런타임, 아키텍처, 구현 전략을 설명합니다."
+    },
+    "ticketOperationRules": {
+      "title": "티켓 운영 규칙",
+      "description": "구현 관점의 티켓 운영 규칙과 실행 제약을 설명합니다."
+    },
+    "decisionAuthSessionArchitecture": {
+      "title": "2025-12 인증 세션 아키텍처",
+      "description": "세션 아키텍처 결정 기록입니다."
+    },
+    "decisionImpersonation202512": {
+      "title": "2025-12 가장",
+      "description": "가장 전략 결정 기록입니다."
+    },
+    "decisionNaming202512": {
+      "title": "2025-12 네이밍",
+      "description": "네이밍 결정 기록입니다."
+    },
+    "decisionSystemLayout": {
+      "title": "2025-12 시스템 레이아웃",
+      "description": "시스템 레이아웃 결정 기록입니다."
+    },
+    "decisionCategoryDesign": {
+      "title": "2026-01 카테고리 설계",
+      "description": "카테고리 설계 결정 기록입니다."
+    },
+    "decisionImpersonation202601": {
+      "title": "2026-01 가장",
+      "description": "가장 결정 기록입니다."
+    },
+    "decisionSessionUserBoundary202601": {
+      "title": "2026-01 세션 사용자 경계",
+      "description": "세션 사용자 경계 결정 기록입니다."
+    },
+    "decisionServiceDeskSettings": {
+      "title": "2026-02 Service Desk 설정",
+      "description": "Service Desk 설정 설계 결정 기록입니다."
+    },
+    "decisionServiceDesk": {
+      "title": "2026-03 Service Desk",
+      "description": "Service Desk 구현 결정 기록입니다."
+    },
+    "decisionTicketFormDialog": {
+      "title": "2026-03 티켓 폼 다이얼로그",
+      "description": "티켓 폼 다이얼로그 결정 기록입니다."
+    },
+    "decisionTicketSession202603": {
+      "title": "2026-03 티켓 세션",
+      "description": "티켓 세션 동작 결정 기록입니다."
+    },
+    "decisionEntityStatusNaming": {
+      "title": "2026-04 엔티티 상태 네이밍",
+      "description": "엔티티 네이밍 결정 기록입니다."
+    },
+    "decisionTicketAction": {
+      "title": "2026-04 티켓 액션 모델 도입",
+      "description": "티켓 액션 모델 도입 결정 기록입니다."
+    },
+    "decisionBarrelExportBoundary202605": {
+      "title": "2026-05 배럴 export 경계",
+      "description": "배럴 export 경계 결정 기록입니다."
+    },
+    "decisionDatabaseRoleAndAccessStrategy202605": {
+      "title": "2026-05 데이터베이스 역할 및 접근 전략",
+      "description": "데이터베이스 역할 및 접근 전략 결정 기록입니다."
+    },
+    "decisionServiceDeskDocumentationAlignment202605": {
+      "title": "2026-05 Service Desk 문서 정렬",
+      "description": "Service Desk 문서 정렬 결정 기록입니다."
+    },
+    "decisionServiceDeskTenantDesign202606": {
+      "title": "2026-06 Service Desk 테넌트 설계",
+      "description": "Service Desk 설정을 위한 테넌트 설계 결정 기록입니다."
+    },
+    "decisionServiceDeskSettingsDtoApiBoundary202606": {
+      "title": "2026-06 Service Desk 설정 DTO/API 경계",
+      "description": "Service Desk 설정 DTO/API 경계 결정 기록입니다."
+    }
+  }
+}

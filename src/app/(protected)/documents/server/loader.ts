@@ -1,14 +1,17 @@
 import { readFile } from "fs/promises";
 import path from "path";
 
-import { documentGroups } from "../constants/documents";
+import {
+  documentGroups,
+  getDocumentGroupItems,
+} from "../constants/documents";
 import type { DocumentResource } from "../types/documents";
 
 // Server-side loading is isolated here so page.tsx can stay focused on route
 // composition instead of filesystem details.
 const documentItemsByPath = new Map(
   documentGroups
-    .flatMap((group) => group.items)
+    .flatMap((group) => getDocumentGroupItems(group))
     .map((item) => [item.relativePath, item]),
 );
 
@@ -39,8 +42,8 @@ const readLocalizedDocument = async (
 
     return {
       id: item.id,
-      title: item.title,
-      description: item.description,
+      titleKey: item.titleKey,
+      descriptionKey: item.descriptionKey,
       relativePath,
       hasKorean: true,
       content: {
@@ -53,8 +56,8 @@ const readLocalizedDocument = async (
     // does not exist, the docs hub deliberately serves the English source.
     return {
       id: item.id,
-      title: item.title,
-      description: item.description,
+      titleKey: item.titleKey,
+      descriptionKey: item.descriptionKey,
       relativePath,
       hasKorean: false,
       content: {
@@ -71,7 +74,7 @@ export const loadDocumentsById = async () => {
   const uniqueRelativePaths = Array.from(
     new Set(
       documentGroups.flatMap((group) =>
-        group.items.map((item) => item.relativePath),
+        getDocumentGroupItems(group).map((item) => item.relativePath),
       ),
     ),
   );
