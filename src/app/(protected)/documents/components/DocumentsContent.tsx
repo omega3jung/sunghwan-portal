@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   Card,
@@ -10,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { NS } from "@/lib/i18n";
 
 import { DEFAULT_DOCUMENT_ID } from "../constants/documents";
 import type { DocumentGroup, DocumentResource } from "../types/documents";
@@ -27,6 +29,7 @@ export function DocumentsContent({
   documentGroups,
   documentsById,
 }: DocumentsContentProps) {
+  const { t } = useTranslation(NS.documents);
   const { current: userPreference } = useCurrentPreference();
   const [selectedDocumentId, setSelectedDocumentId] =
     useState(DEFAULT_DOCUMENT_ID);
@@ -52,9 +55,9 @@ export function DocumentsContent({
   return (
     <main className="min-h-full p-4">
       <span>
-        <h1 className="font-semibold tracking-tight">Docs Hub</h1>
+        <h1 className="font-semibold tracking-tight">{t("page.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          Use the navigation menu to switch between major markdown documents.
+          {t("page.description")}
         </p>
       </span>
 
@@ -68,9 +71,9 @@ export function DocumentsContent({
 
       <Card className="border-border/70">
         <CardHeader>
-          <CardTitle>{selectedDocument.title}</CardTitle>
+          <CardTitle>{t(selectedDocument.titleKey)}</CardTitle>
           <CardDescription className="flex flex-col gap-1">
-            <span>{selectedDocument.description}</span>
+            <span>{t(selectedDocument.descriptionKey)}</span>
             <span className="font-mono text-xs text-muted-foreground/90">
               {renderedPath}
             </span>

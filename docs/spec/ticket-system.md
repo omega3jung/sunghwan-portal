@@ -1,466 +1,384 @@
-# Ticket System Project Guidelines
+# Ticket System Specification
 
-This document defines the architectural and data model rules for the Ticket System.
-These rules represent design decisions finalized during the February design discussions
-and should be treated as authoritative guidance for development.
+## Languages
 
----
+- [English](./ticket-system.md)
+- [Korean](./ticket-system.ko.md)
 
-## 0. Service Desk Workflow Rules
+## Goal
 
-### 1. Ticket Lifecycle
+This specification summarizes the current Service Desk ticket system.
 
-```txt
-create
--> approval (optional)
--> assigned
--> working (when assignee reads ticket)
--> resolved
--> closed
-```
+The ticket system is workflow-driven, not CRUD-driven. A ticket is a workflow
+entity that moves through approval, assignment, SLA, activity, history, and work
+session behavior.
 
-### 2. Assignment
+This file is a high-level specification and documentation hub. Detailed rules,
+implementation notes, and decision history live in the linked documents.
 
-- Tickets are auto-assigned based on category.
+## Current Scope
 
-### 3. Approval
+The current project covers:
 
-- Some categories require approval steps:
-- Upper manager check (duplicate prevention)
-- IT / HR manager validation
+- ticket list, detail, create, and update flows
+- tenant-scoped category configuration
+- category-driven approval, assignment, SLA, priority, risk, and request template behavior
+- action-based activity and timeline behavior
+- immutable history and audit records
+- session-based work tracking direction
+- LOCAL demo behavior with safe server-side mock state
+- REMOTE/Supabase-aligned DTO/API boundaries for settings and reference data
 
-### 4. Edit Permission
+The project is production-aligned, not production-complete. It intentionally
+keeps some infrastructure-heavy areas deferred while still modeling realistic
+Service Desk workflows.
 
-- Ticket can be edited until the assignee reads it.
-- After status becomes `working`, ticket info is locked.
+## Core Domain Model
 
-### 5. UI Behavior
-
-- If ticket is locked, `InfoStep` is hidden.
-- Only `ReviewStep` is shown.
-
----
-
-## 1. Category Structure
-
-Tickets are categorized using a hierarchical category tree.
-
-### Structure
+The current Service Desk model separates configuration from ticket execution.
 
 ```txt
-Client -> MainCategory -> SubCategory
+Tenant
+  -> Category
+  -> Approval
+  -> Assignment
+  -> SLA
+
+Ticket
+  -> Activity / Action
+  -> Track Time
+  -> History
 ```
 
-### Rules
+`Ticket` is not only a database record. It is the current state of a controlled
+workflow, while related models explain how that state was configured, changed,
+and audited.
 
-1. Client represents a client.
-2. Each `MainCategory` must define default operational values:
+## Tenant and Category Configuration
 
-- `defaultPriority`
-- `defaultRiskLevel`
-- `defaultSlaDays`
-
-3. `SubCategory` values may override `MainCategory` defaults.
-
-### Override Precedence
+The current configuration model is:
 
 ```txt
-SubCategory > MainCategory
+Company = organization/reference entity
+Tenant = Service Desk configuration boundary
+Category = tenant-scoped behavior configuration
 ```
 
-If a `SubCategory` does not define a value, the value from the `MainCategory` is used.
-
----
-
-## 2. Category ID Rules
-
-All category IDs are stored as string representations of numbers.
-
-### Example
+Category hierarchy:
 
 ```txt
-"2", "203"
+Tenant -> Main Category -> Sub Category
 ```
 
-These values may be parsed using `parseInt` when numeric operations are required.
+A tenant owns the Service Desk configuration scope. Categories belong to a
+tenant and drive ticket behavior.
 
----
+- Main Category provides defaults.
+- Sub Category refines or overrides those defaults.
+- Approval, assignment, SLA, priority, risk, and request templates are
+  interpreted within tenant scope.
+- Ticket-level overrides are allowed only when they are explicit, visible, and
+  traceable.
 
-## 3. Category Active Policy
+See:
 
-Categories are never deleted.
+- [Category Strategy](../en/03-domain/ticket/strategy/category-strategy.md)
+- [2026-06 Service Desk Tenant Design](../en/08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
 
-If a category becomes unavailable for new tickets:
+## Ticket Lifecycle and Status
+
+The lifecycle models both the happy path and operational branches.
+
+Current status vocabulary includes:
 
 ```txt
-active = false
+Draft
+Open
+Approved
+Declined
+Working
+Pending
+Rejected
+Reopen
+Resolved
+Closed
 ```
 
-### Behavior
-
-- Cannot be selected for new ticket creation
-- Existing tickets referencing the category remain valid for history and reporting
-
----
-
-## 4. Ticket Assignment Policy
-
-Ticket assignment is primarily category-based auto assignment.
-
-Category configuration determines:
-
-- Default priority
-- Default risk level
-- SLA
-- Approval requirements
-- Responsible teams
-
-Some categories include approval workflows for additional validation.
-
-Approval workflows exist for two main purposes:
-
-1. Issue validity check
-2. Duplicate / policy validation
-
-### Examples
-
-- IT manager verification
-- HR manager verification
-- Upper manager approval
-
----
-
-## 5. Approval System Design
-
-Approval settings are configured per category.
-
-### Structure
+The main success path is:
 
 ```txt
-Category -> approvalSteps[]
+Draft -> Open -> Approved -> Working -> Resolved -> Closed
 ```
 
-Each step executes sequentially using the step index.
+Real workflows may skip approval, pause in `Pending`, become `Rejected`, return
+through `Reopen`, or close through merge handling. This spec does not define
+every transition; executable transition rules are kept in the rules document.
 
-`approvalSteps` are processed in ascending order based on:
+See:
+
+- [Ticket Lifecycle](../en/03-domain/ticket/ticket-lifecycle.md)
+- [Ticket Operation Rules](../en/08-dev-strategy/ticket-operation-rules.md)
+
+## Action / Activity Model
+
+The system is action-oriented, not comment-only.
 
 ```txt
-index
+Activity = Action + Context + Reason + Execution Rules
 ```
 
----
+Communication and operational changes share one activity model.
 
-## 6. Approval Assignee Types
+Current or documented action types include:
 
-Approval steps support the following assignee types:
+- `comment`
+- `note`
+- `assign`
+- `adjust`
+- `merge`
+- `reject`
+- `requestReview`
+- `reopen`
+- `resubmit`
+- `assignSelf`
+
+Communication actions may be mutable under author-based rules. Operational
+actions represent decisions and are normally immutable.
+
+See:
+
+- [Ticket Activity Model](../en/03-domain/ticket/ticket-activity.md)
+- [Action Strategy](../en/03-domain/ticket/strategy/action-strategy.md)
+- [2026-04 Ticket Action](../en/08-dev-strategy/decision-log/2026-04-ticket-action.md)
+
+## History and Audit Model
+
+Activity and history have different responsibilities.
 
 ```txt
-MANAGER
-DEPARTMENT
-JOB_FIELD
-EMPLOYEE
+Activity = user-facing meaningful interaction
+History = immutable event/audit record
 ```
 
-### MANAGER
+History records are generated from meaningful changes and should not be updated
+or deleted in normal workflow operations. Corrections should be represented as
+new events.
 
-Manager of the requester.
+See:
 
-#### Payload
+- [Ticket History](../en/03-domain/ticket/ticket-history.md)
+
+## Approval Strategy
+
+Approval is category-driven and sequential.
 
 ```txt
-level: 1 | 2
+Tenant-scoped Category -> approvalSteps[]
 ```
 
-#### Meaning
+Approval steps belong to category configuration and are interpreted within the
+tenant boundary. Approval may be skipped based on requester authority when the
+category configuration defines a skip threshold.
 
-- `1` = Direct manager
-- `2` = Upper manager
+See:
 
-### DEPARTMENT
+- [Approval System](../en/03-domain/ticket/strategy/approval-system.md)
 
-Approval assigned to a specific department.
+## Assignment Strategy
 
-#### Payload
+Assignment is resolved from tenant-scoped category configuration.
 
 ```txt
-departmentId
+Ticket -> Category -> Assignment Rule -> Assignee
 ```
 
-### JOB_FIELD
+Assignment rules determine routing, assignees, or fallback behavior. Reassignment
+is allowed only through explicit actions and must remain visible in activity and
+history.
 
-Approval assigned by job specialization.
+See:
 
-#### Payload
+- [Assignment Policy](../en/03-domain/ticket/strategy/assignment-policy.md)
+
+## SLA Strategy
+
+SLA behavior is category/risk/priority-aware.
+
+Category configuration may seed default risk, priority, and SLA values. The SLA
+matrix remains the resolution model for due dates and service expectations.
+
+SLA breach handling, escalation automation, business calendars, and holiday
+engines remain production extension points unless implemented explicitly.
+
+See:
+
+- [SLA Strategy](../en/03-domain/ticket/strategy/sla-strategy.md)
+
+## Work Session / Track Time
+
+Work time is modeled as sessions, not as a single source-of-truth accumulated
+field.
 
 ```txt
-jobFieldId
+Work = collection of sessions
 ```
 
-### EMPLOYEE
+The track-time model supports:
 
-Approval assigned to specific employees.
+- start
+- finish
+- switch
+- manual time entry as a separate mode
+- derived aggregate duration
 
-#### Payload
+This better reflects interruption, resumption, and task switching in real
+operations.
+
+See:
+
+- [Ticket Track Time](../en/03-domain/ticket/ticket-track-time.md)
+- [2026-03 Ticket Session](../en/08-dev-strategy/decision-log/2026-03-ticket-session.md)
+
+## Ownership and Permission Context
+
+Ownership is derived, not stored as a fixed persisted state.
+
+Typical ownership context includes:
+
+- requester relationship
+- assignee relationship
+- current session user
+- original/effective user during impersonation
+
+Requester, assignee, permission, and current user context affect which actions
+are visible and executable.
+
+Authentication identity, session-safe user projection, and `AppUser` remain
+separate. Impersonation is session-aware and preserves original and current user
+context for auditability.
+
+See:
+
+- [Auth & Session Strategy](../en/02-architecture/auth-session-strategy.md)
+- [Impersonation Strategy](../en/02-architecture/impersonation-strategy.md)
+
+## Attachments
+
+Tickets support file and image attachment concepts.
+
+Attachment behavior is intentionally conservative in the current portfolio
+scope. Local/demo behavior may use controlled or prepared attachment references.
+Production-grade upload, storage, scanning, access control, and cleanup policies
+are deferred unless implemented explicitly.
+
+## LOCAL / REMOTE Runtime Boundary
+
+The Service Desk supports two runtime paths:
 
 ```txt
-employeeUsernames[]
+LOCAL  = mock-backed demo behavior
+REMOTE = Supabase PostgreSQL / API-backed behavior
 ```
 
----
-
-## 7. Approval Skip Policy
-
-Approval steps can be skipped depending on requester access level.
-
-### Rule
-
-If:
+The intended request flow is:
 
 ```txt
-requester.accessLevel >= skipAccessLevel
+UI
+-> feature API client
+-> Next.js Route Handler
+-> LOCAL handler or REMOTE DTO/service
 ```
 
-Then the approval step is automatically skipped.
+The UI should not branch on LOCAL/REMOTE internals. Runtime-specific behavior
+belongs behind route handlers, server handlers, local state modules, services,
+repositories, and DTO mappers.
 
-### Purpose
+See:
 
-- Prevent unnecessary approvals for high-level users
-- Reduce workflow friction for managers or administrators
+- [Service Desk Implementation Strategy](../en/08-dev-strategy/service-desk-implementation-strategy.md)
+- [React Query Strategy](../en/05-data-fetching/react-query-strategy.md)
 
----
+## DTO / API Boundary
 
-## 8. Ticket Status Workflow
-
-Tickets follow the lifecycle below.
+REMOTE data access should follow:
 
 ```txt
-Pre -> Open -> Approved / Declined -> Working -> Pending -> Resolved -> Closed
+Database Row -> Mapper -> DTO
 ```
 
-### Status Definitions
+DTOs hide database row shape and provide application-facing contracts. LOCAL and
+REMOTE paths should return compatible DTOs so UI code does not depend on mock
+shape versus database shape.
 
-#### Pre
+Service Desk settings domains include:
 
-Ticket created but approval not started.
+- Tenant
+- Category
+- Approval Step
+- Assignment Rule
 
-#### Open
+Route handlers should remain orchestration boundaries. Speculative CRUD routes
+should not be kept unless they support an actual workflow and have clear
+LOCAL/REMOTE behavior.
 
-Approval process is ongoing.
+See:
 
-#### Approved
+- [Database Strategy](../en/02-architecture/database-strategy.md)
+- [2026-06 Service Desk Settings DTO/API Boundary](../en/08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
 
-All approval steps completed successfully.
+## Deferred Scope
 
-#### Declined
+Deferred or future expansion areas include:
 
-Approval process rejected the request.
+- full remote persistence for every Service Desk workflow
+- production-grade file upload, storage, and security
+- complete enterprise authorization and rule engine
+- real-time updates
+- full notification delivery
+- full SLA calendar and holiday engine
+- full audit/compliance infrastructure
 
-#### Working
+These are not promised by this spec. They are intentionally separated from the
+current production-aligned portfolio scope.
 
-Assigned staff is actively working on the ticket.
+## Related Documents
 
-#### Pending
+### Overview
 
-Waiting for requester response or information.
+- [Service Desk Documentation Index](../en/README.md)
+- [Ticket System Overview](../en/03-domain/ticket/ticket-system-overview.md)
+- [Ticket Model](../en/03-domain/ticket/ticket-model.md)
 
-#### Resolved
+### Domain
 
-Work is completed and awaiting requester confirmation.
+- [Ticket Lifecycle](../en/03-domain/ticket/ticket-lifecycle.md)
+- [Ticket Activity Model](../en/03-domain/ticket/ticket-activity.md)
+- [Ticket History](../en/03-domain/ticket/ticket-history.md)
+- [Ticket Track Time](../en/03-domain/ticket/ticket-track-time.md)
 
-#### Closed
+### Strategy
 
-Ticket lifecycle is finished.
+- [Category Strategy](../en/03-domain/ticket/strategy/category-strategy.md)
+- [Approval System](../en/03-domain/ticket/strategy/approval-system.md)
+- [Assignment Policy](../en/03-domain/ticket/strategy/assignment-policy.md)
+- [SLA Strategy](../en/03-domain/ticket/strategy/sla-strategy.md)
+- [Action Strategy](../en/03-domain/ticket/strategy/action-strategy.md)
+- [Ticket Operation Rules](../en/08-dev-strategy/ticket-operation-rules.md)
+- [Service Desk Implementation Strategy](../en/08-dev-strategy/service-desk-implementation-strategy.md)
 
----
+### Architecture
 
-## 9. Ticket Ownership Rules
+- [Database Strategy](../en/02-architecture/database-strategy.md)
+- [Auth & Session Strategy](../en/02-architecture/auth-session-strategy.md)
+- [Impersonation Strategy](../en/02-architecture/impersonation-strategy.md)
 
-Tickets expose the following flags:
+### Data Fetching
 
-```txt
-owner
-assigned
-```
+- [React Query Strategy](../en/05-data-fetching/react-query-strategy.md)
 
-### owner
+### Decision Logs
 
-The currently logged-in user is the requester.
-
-### assigned
-
-The currently logged-in user is an assignee of the ticket.
-
----
-
-## 10. Ticket Deletion Policy
-
-Tickets are never permanently deleted.
-
-Instead:
-
-```txt
-active = false
-```
-
-is used for soft deletion.
-
-### Purpose
-
-- Preserve audit history
-- Maintain reporting integrity
-- Maintain workflow traceability
-
----
-
-## 11. Attachments
-
-### Attachment Types
-
-```txt
-file
-image
-```
-
-### Attachment Structure
-
-```txt
-index
-type
-name
-url
-active
-```
-
-Inactive attachments remain stored but hidden from the UI.
-
----
-
-## 12. Time Tracking
-
-Ticket working time is recorded per assignee.
-
-### Structure
-
-```txt
-TrackTime
-```
-
-### Fields
-
-```txt
-ticketId
-assignee
-time
-```
-
-This enables workload measurement and SLA tracking.
-
----
-
-## 13. Ticket History
-
-All workflow changes are recorded in the `History` model.
-
-History entries may include:
-
-```txt
-approvalStep
-type
-user
-date
-note
-active
-```
-
-### Purpose
-
-- Approval traceability
-- Status change tracking
-- Audit history
-
----
-
-## 14. Priority and Risk Level
-
-### Priority Levels
-
-```txt
-urgent
-high
-medium
-low
-```
-
-### Numeric Weights
-
-```txt
-urgent = 4
-high = 3
-medium = 2
-low = 1
-```
-
-### Risk Levels
-
-```txt
-critical
-high
-medium
-low
-```
-
-These values are used for sorting and operational prioritization.
-
----
-
-## 15. SLA Calculation
-
-Due date calculation is category-based.
-
-### Rule
-
-```txt
-dueAt = createdDate + defaultSlaDays
-```
-
-If the `SubCategory` defines its own SLA value, it overrides the `MainCategory` value.
-
----
-
-## 16. Important Type Correction
-
-A correction was identified in the `TicketProcessState` type.
-
-### Incorrect
-
-```ts
-priority: TicketPeriod;
-```
-
-### Correct
-
-```ts
-priority: Priority;
-```
-
-`TicketPeriod` represents time filters, not operational priority.
-
-All implementations should use:
-
-```ts
-priority: Priority;
-```
-
----
-
-## 17. Design Principles
-
-The ticket system follows these core principles:
-
-1. Category-driven workflow
-2. Configurable approval pipelines
-3. No destructive deletes
-4. Complete audit trail
-5. SLA-based operational tracking
-
-These principles must remain consistent across frontend and backend implementations.
+- [2026-03 Ticket Session](../en/08-dev-strategy/decision-log/2026-03-ticket-session.md)
+- [2026-04 Ticket Action](../en/08-dev-strategy/decision-log/2026-04-ticket-action.md)
+- [2026-06 Service Desk Tenant Design](../en/08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
+- [2026-06 Service Desk Settings DTO/API Boundary](../en/08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)

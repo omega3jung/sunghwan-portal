@@ -373,6 +373,31 @@ Mapper 책임:
 
 ---
 
+### Service Desk Settings DTO 경계
+
+Service Desk settings도 같은 Row / Mapper / DTO 경계를 따른다.
+
+settings domain에는 다음이 포함된다.
+
+```txt
+Tenant
+Category
+Approval Step
+Assignment Rule
+```
+
+settings data flow는 다음 구조를 유지해야 한다.
+
+```txt
+Database Row -> Mapper -> DTO
+```
+
+REMOTE behavior에서는 DTO가 PostgreSQL row shape와 database naming을 숨긴다.
+LOCAL behavior에서는 DTO가 mock-backed server state shape를 숨긴다. UI는 runtime과
+관계없이 동일한 application-facing settings DTO를 소비해야 한다.
+
+---
+
 ### 4. Repository
 
 Repository는 SQL 실행을 소유한다.

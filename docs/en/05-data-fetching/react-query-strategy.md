@@ -123,6 +123,27 @@ Therefore cache invalidation/reset must be coordinated with server reset behavio
 
 ---
 
+## Service Desk Settings State
+
+Service Desk settings data is still server state.
+
+This includes:
+
+- tenant settings
+- category tree/configuration
+- approval steps
+- assignment rules
+
+These values should be managed with React Query and should not be duplicated
+into Zustand. Zustand can still hold UI/runtime state, but it should not become
+the source of truth for settings data.
+
+LOCAL demo mutations must update server-side local state and then invalidate the
+affected settings queries precisely. Updating only the client cache is not
+enough because later API calls must observe the same local demo state.
+
+---
+
 ## Query Key Strategy
 
 ### Rule

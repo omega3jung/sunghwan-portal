@@ -1,11 +1,15 @@
+"use client";
+
+import { useTranslation } from "react-i18next";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DocumentGroup } from "../types/documents";
@@ -23,47 +27,51 @@ export function DocumentsNavigationMenu({
   selectedDocumentId,
   onSelectDocument,
 }: DocumentsNavigationMenuProps) {
-  return (
-    <div className="flex flex-wrap items-start gap-2 py-3">
-      {documentGroups.map((group) => (
-        <NavigationMenu
-          key={group.id}
-          className="max-w-max flex-none justify-start"
-        >
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>{group.title}</NavigationMenuTrigger>
-              <NavigationMenuContent className="md:w-[520px]">
-                <div className="grid gap-2 p-3 md:grid-cols-2">
-                  {group.items.map((item) => {
-                    const isActive = item.id === selectedDocumentId;
+  const { t } = useTranslation(NS.documents);
 
-                    return (
-                      <NavigationMenuLink asChild key={item.id}>
+  return (
+    <NavigationMenu className="max-w-full justify-start gap-2 py-3">
+      <NavigationMenuList className="flex flex-wrap gap-1">
+        {documentGroups.map((group) => (
+          <NavigationMenuItem key={group.id}>
+            <NavigationMenuTrigger className="h-9 px-3 text-sm">
+              {t(group.titleKey)}
+            </NavigationMenuTrigger>
+
+            <NavigationMenuContent>
+              <div className="w-[520px] max-w-[calc(100vw-2rem)] p-2">
+                <div className="max-h-[60vh] overflow-y-auto pr-1">
+                  <div className="grid gap-1 md:grid-cols-2">
+                    {group.items.map((item) => {
+                      const isActive = item.id === selectedDocumentId;
+
+                      return (
                         <button
+                          key={item.id}
                           type="button"
                           onClick={() => onSelectDocument(item.id)}
                           className={cn(
-                            "flex h-full w-full flex-col rounded-lg border border-border/70 bg-background px-3 py-3 text-left transition-colors hover:border-primary/30 hover:bg-accent/20",
-                            isActive && "border-primary/40 bg-primary/5",
+                            "rounded-md px-3 py-2 text-left transition-colors",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            isActive && "bg-primary/10 text-primary",
                           )}
                         >
-                          <span className="text-sm font-medium text-foreground">
-                            {item.title}
+                          <span className="block text-sm font-medium">
+                            {t(item.titleKey)}
                           </span>
-                          <span className="mt-1 text-sm leading-6 text-muted-foreground">
-                            {item.description}
+                          <span className="mt-0.5 line-clamp-2 block text-xs leading-5 text-muted-foreground">
+                            {t(item.descriptionKey)}
                           </span>
                         </button>
-                      </NavigationMenuLink>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      ))}
-    </div>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        ))}
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }

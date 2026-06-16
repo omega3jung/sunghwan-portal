@@ -29,6 +29,8 @@ Ticket -> Category -> Assignment Rule -> Assignee
 ```
 
 카테고리는 책임 대상을 결정하는 **단일 기준(source of truth)** 으로 동작한다.
+category 자체는 tenant-scoped이므로 assignment rule은 선택된 tenant의
+Service Desk configuration 안에서 해석된다.
 
 ---
 
@@ -52,6 +54,8 @@ Ticket Created
 ### 1. 자동 할당 (기본)
 
 티켓은 카테고리 설정에 따라 자동으로 할당된다.
+이 설정은 tenant-scoped이며, 단순화된 흐름을
+`Ticket -> Category -> Assignment Rule -> Assignee`로 표현하더라도 동일하다.
 
 #### 예시
 

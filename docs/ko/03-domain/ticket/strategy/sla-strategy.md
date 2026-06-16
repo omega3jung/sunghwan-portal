@@ -25,6 +25,10 @@ SLA = f(Risk Level, Priority)
 
 이 방식은 서로 다른 비즈니스 맥락에 적응할 수 있는 유연하고 확장 가능한 모델을 만든다.
 
+Service Desk settings에서 기본 risk, priority, SLA 값은 tenant-scoped category
+configuration에서 seed될 수 있다. SLA matrix 개념은 해석 모델로 유지하고,
+category configuration은 ticket의 기본 입력값을 제공한다.
+
 ---
 
 ## SLA 구성 요소
@@ -72,6 +76,7 @@ SLA는 티켓 생성 시점에 할당된다.
 
 ```txt
 Ticket Created
+-> Apply tenant-scoped category defaults
 -> Determine Risk Level
 -> Determine Priority
 -> Lookup SLA Matrix

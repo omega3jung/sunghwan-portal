@@ -1,0 +1,233 @@
+{
+  "page": {
+    "title": "Centre de documentation",
+    "description": "Utilisez le menu de navigation pour passer d'un document Markdown majeur a l'autre."
+  },
+  "group": {
+    "project": {
+      "title": "Projet"
+    },
+    "architecture": {
+      "title": "Architecture"
+    },
+    "domain": {
+      "title": "Domaine"
+    },
+    "uiUx": {
+      "title": "UI/UX"
+    },
+    "dataFetching": {
+      "title": "Recuperation des donnees"
+    },
+    "formDesign": {
+      "title": "Conception des formulaires"
+    },
+    "i18n": {
+      "title": "i18n"
+    },
+    "devStrategy": {
+      "title": "Strategie de developpement"
+    },
+    "decisionLog": {
+      "title": "Journal des decisions"
+    }
+  },
+  "item": {
+    "readme": {
+      "title": "README",
+      "description": "Document d'accueil de l'ensemble documentaire Service Desk."
+    },
+    "readmeStrategy": {
+      "title": "Strategie README",
+      "description": "Comment le depot se presente et oriente les lecteurs vers des documents plus detailles."
+    },
+    "featureBasedStructure": {
+      "title": "Structure par fonctionnalite",
+      "description": "Limites des segments du projet et strategie de propriete des dossiers."
+    },
+    "routingStrategy": {
+      "title": "Strategie de routage",
+      "description": "Conception des routes et limites de l'App Router."
+    },
+    "stateManagement": {
+      "title": "Gestion d'etat",
+      "description": "Responsabilites de l'etat client et limites de persistance."
+    },
+    "authSessionStrategy": {
+      "title": "Strategie d'authentification et de session",
+      "description": "Conception de l'authentification, des sessions et des routes protegees."
+    },
+    "impersonationStrategy": {
+      "title": "Strategie d'usurpation",
+      "description": "Flux d'usurpation admin et limites systeme associees."
+    },
+    "databaseStrategy": {
+      "title": "Strategie de base de donnees",
+      "description": "Modele d'acces aux donnees, roles et strategie de limites DTO."
+    },
+    "ticketSystemOverview": {
+      "title": "Vue d'ensemble du systeme de tickets",
+      "description": "Vue d'ensemble haut niveau du domaine Service Desk."
+    },
+    "ticketLifecycle": {
+      "title": "Cycle de vie du ticket",
+      "description": "Etats du cycle de vie et conception des transitions."
+    },
+    "ticketModel": {
+      "title": "Modele de ticket",
+      "description": "Modele central du ticket et structure de propriete."
+    },
+    "ticketActivity": {
+      "title": "Activite du ticket",
+      "description": "Modele d'activite pour les communications et les actions operationnelles."
+    },
+    "ticketHistory": {
+      "title": "Historique du ticket",
+      "description": "Strategie d'auditabilite et de chronologie d'historique."
+    },
+    "ticketTrackTime": {
+      "title": "Suivi du temps du ticket",
+      "description": "Modele de suivi du travail par session et d'enregistrement du temps."
+    },
+    "actionStrategy": {
+      "title": "Strategie d'actions",
+      "description": "Strategie d'interaction orientee actions et conception des metadonnees."
+    },
+    "categoryStrategy": {
+      "title": "Strategie de categories",
+      "description": "Comportement des workflows pilotes par categories dans tout le systeme."
+    },
+    "approvalSystem": {
+      "title": "Systeme d'approbation",
+      "description": "Etapes d'approbation et conception des workflows conditionnels."
+    },
+    "assignmentPolicy": {
+      "title": "Politique d'affectation",
+      "description": "Logique d'affectation et orientation de la charge de travail."
+    },
+    "slaStrategy": {
+      "title": "Strategie SLA",
+      "description": "Gestion des SLA et regles de calendrier operationnel."
+    },
+    "componentBoundary": {
+      "title": "Limite des composants",
+      "description": "Separation des responsabilites UI entre couches de layout et de fonctionnalite."
+    },
+    "dialogPattern": {
+      "title": "Patron de dialogue",
+      "description": "Guide d'utilisation des dialogues et des patrons d'interaction."
+    },
+    "formPattern": {
+      "title": "Patron de formulaire",
+      "description": "Conception de l'interaction et des responsabilites des formulaires."
+    },
+    "dashboardAndInsight": {
+      "title": "Tableau de bord et insights",
+      "description": "En quoi les surfaces operationnelles different des vues analytiques."
+    },
+    "reactQueryStrategy": {
+      "title": "Strategie React Query",
+      "description": "Guide de recuperation des donnees, de cache et de limites client."
+    },
+    "ticketForm": {
+      "title": "Formulaire de ticket",
+      "description": "Flux du formulaire, comportement pilote par categorie et conception de la soumission."
+    },
+    "localeStructure": {
+      "title": "Structure des locales",
+      "description": "Structure des namespaces et limites de responsabilite de traduction."
+    },
+    "validationMessages": {
+      "title": "Messages de validation",
+      "description": "Strategie de formulation des validations et separation des traductions."
+    },
+    "developmentApproach": {
+      "title": "Approche de developpement",
+      "description": "Philosophie pratique d'implementation et decisions tenant compte des migrations."
+    },
+    "serviceDeskEvolution": {
+      "title": "Evolution de Service Desk",
+      "description": "Comment l'experience Service Hub a evolue vers le domaine Service Desk."
+    },
+    "serviceDeskImplementationStrategy": {
+      "title": "Strategie d'implementation de Service Desk",
+      "description": "Strategie de runtime, d'architecture et d'implementation pour Service Desk."
+    },
+    "ticketOperationRules": {
+      "title": "Regles d'exploitation des tickets",
+      "description": "Regles d'exploitation des tickets orientees implementation et contraintes d'execution."
+    },
+    "decisionAuthSessionArchitecture": {
+      "title": "2025-12 Architecture de session d'authentification",
+      "description": "Entree du journal des decisions sur l'architecture de session."
+    },
+    "decisionImpersonation202512": {
+      "title": "2025-12 Usurpation",
+      "description": "Entree du journal des decisions sur la strategie d'usurpation."
+    },
+    "decisionNaming202512": {
+      "title": "2025-12 Nommage",
+      "description": "Entree du journal des decisions sur le nommage."
+    },
+    "decisionSystemLayout": {
+      "title": "2025-12 Layout systeme",
+      "description": "Entree du journal des decisions sur le layout systeme."
+    },
+    "decisionCategoryDesign": {
+      "title": "2026-01 Conception des categories",
+      "description": "Entree du journal des decisions sur la conception des categories."
+    },
+    "decisionImpersonation202601": {
+      "title": "2026-01 Usurpation",
+      "description": "Entree du journal des decisions sur l'usurpation."
+    },
+    "decisionSessionUserBoundary202601": {
+      "title": "2026-01 Limite utilisateur de session",
+      "description": "Entree du journal des decisions sur la limite utilisateur de session."
+    },
+    "decisionServiceDeskSettings": {
+      "title": "2026-02 Parametres Service Desk",
+      "description": "Entree du journal des decisions sur la conception des parametres Service Desk."
+    },
+    "decisionServiceDesk": {
+      "title": "2026-03 Service Desk",
+      "description": "Entree du journal des decisions sur l'implementation de Service Desk."
+    },
+    "decisionTicketFormDialog": {
+      "title": "2026-03 Dialogue du formulaire de ticket",
+      "description": "Entree du journal des decisions sur le dialogue du formulaire de ticket."
+    },
+    "decisionTicketSession202603": {
+      "title": "2026-03 Session de ticket",
+      "description": "Entree du journal des decisions sur le comportement de session de ticket."
+    },
+    "decisionEntityStatusNaming": {
+      "title": "2026-04 Nommage des statuts d'entite",
+      "description": "Entree du journal des decisions sur le nommage des entites."
+    },
+    "decisionTicketAction": {
+      "title": "2026-04 Introduction du modele d'action de ticket",
+      "description": "Entree du journal des decisions sur l'introduction du modele d'action de ticket."
+    },
+    "decisionBarrelExportBoundary202605": {
+      "title": "2026-05 Limite d'export barrel",
+      "description": "Entree du journal des decisions sur la limite d'export barrel."
+    },
+    "decisionDatabaseRoleAndAccessStrategy202605": {
+      "title": "2026-05 Strategie de roles et d'acces base de donnees",
+      "description": "Entree du journal des decisions sur les roles et l'acces base de donnees."
+    },
+    "decisionServiceDeskDocumentationAlignment202605": {
+      "title": "2026-05 Alignement de la documentation Service Desk",
+      "description": "Entree du journal des decisions sur l'alignement de la documentation Service Desk."
+    },
+    "decisionServiceDeskTenantDesign202606": {
+      "title": "2026-06 Conception des tenants Service Desk",
+      "description": "Entree du journal des decisions sur la conception des tenants pour les parametres Service Desk."
+    },
+    "decisionServiceDeskSettingsDtoApiBoundary202606": {
+      "title": "2026-06 Limite DTO/API des parametres Service Desk",
+      "description": "Entree du journal des decisions sur la limite DTO/API des parametres Service Desk."
+    }
+  }
+}

@@ -60,6 +60,10 @@ It defines:
 - SLA policies
 - workflow structure
 
+Service Desk behavior is tenant-scoped through category and settings
+configuration. A tenant provides the configuration boundary, and categories
+inside that tenant determine the operational behavior for tickets.
+
 ### 2. Approval as a First-Class Workflow
 
 Approval is treated as a core part of the lifecycle.
@@ -129,11 +133,12 @@ Related documents:
 The ticket system is composed of multiple domain components:
 
 ```txt
-Ticket
+Tenant
   -> Category
   -> Approval
   -> Assignment
   -> SLA
+Ticket
   -> Activity
   -> Track Time
   -> History
@@ -141,6 +146,10 @@ Ticket
 
 Each component is responsible for a specific concern, which keeps the system
 modular and maintainable.
+
+The configuration side is tenant-scoped. The ticket side references the
+selected category and then follows the approval, assignment, and SLA behavior
+defined by that category configuration.
 
 ---
 
@@ -156,6 +165,7 @@ The actual flow depends on category configuration.
 
 - some tickets skip approval
 - some require multiple approval steps
+- the selected category is interpreted within the tenant configuration boundary
 
 Related document: [Ticket Lifecycle](./ticket-lifecycle.md)
 

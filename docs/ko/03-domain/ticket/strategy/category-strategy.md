@@ -26,26 +26,39 @@
 카테고리는 **계층형 트리 구조**로 구성된다.
 
 ```txt
-Client -> MainCategory -> SubCategory
+Tenant -> Main Category -> Sub Category
 ```
 
 각 계층은 티켓 동작을 정의하는 데 서로 다른 역할을 가진다.
+
+도메인 경계는 다음과 같다.
+
+```txt
+Company = organization/reference data
+Tenant = Service Desk configuration boundary
+Category = tenant-scoped behavior configuration
+```
+
+`Company`는 조직/reference data로 남는다. `Tenant`는 Service Desk configuration의
+root boundary이며, category는 해당 tenant scope 안에서 해석된다.
 
 ---
 
 ## 카테고리 계층 구조
 
-### 1. Client
+### 1. Tenant
 
-- CLIENT(조직 또는 고객)를 나타낸다.
-- 서로 다른 클라이언트 간 완전한 분리를 보장한다.
+- Service Desk configuration boundary를 나타낸다.
+- 하나의 operational scope에 대한 category tree를 소유한다.
+- category behavior를 더 넓은 company reference data와 분리한다.
 
 ---
 
-### 2. MainCategory
+### 2. Main Category
 
 - **기본 운영 규칙**을 정의한다.
 - 기본 설정 계층으로 동작한다.
+- priority, risk, SLA, approval, assignment에 대한 tenant-scoped default를 제공한다.
 
 ```ts
 type MainCategory = {
@@ -59,9 +72,9 @@ type MainCategory = {
 
 ---
 
-### 3. SubCategory
+### 3. Sub Category
 
-- MainCategory 설정을 보완하거나 재정의한다.
+- Main Category 설정을 보완하거나 재정의한다.
 - 더 구체적인 업무 케이스를 표현한다.
 
 ```ts
@@ -78,12 +91,12 @@ type SubCategory = {
 
 ## 오버라이드 전략
 
-SubCategory 값은 MainCategory 기본값보다 우선한다.
+Sub Category 값은 Main Category 기본값보다 우선한다.
 
 ### 규칙
 
 ```txt
-SubCategory > MainCategory
+Sub Category > Main Category
 ```
 
 ### 해석 로직
@@ -144,7 +157,7 @@ active = false
 
 ## 카테고리 기반 할당
 
-티켓 할당은 기본적으로 카테고리 설정에 의해 결정된다.
+티켓 할당은 기본적으로 tenant-scoped category configuration에 의해 결정된다.
 
 ### 카테고리가 정의하는 책임
 
@@ -162,7 +175,7 @@ Ticket created -> Category selected -> Assignment resolved
 
 ## 카테고리 기반 SLA
 
-SLA는 카테고리 설정에 따라 계산된다.
+SLA는 tenant-scoped category configuration에 따라 계산된다.
 
 ### 규칙
 
@@ -172,14 +185,14 @@ dueAt = createdDate + SLA
 
 ### 해석 방식
 
-- SubCategory SLA가 MainCategory SLA를 덮어쓴다.
-- 정의되지 않은 경우 MainCategory 값을 사용한다.
+- Sub Category SLA가 Main Category SLA를 덮어쓴다.
+- 정의되지 않은 경우 Main Category 값을 사용한다.
 
 ---
 
 ## 카테고리 기반 승인
 
-승인 워크플로는 카테고리별로 정의된다.
+승인 워크플로는 tenant-scoped category별로 정의된다.
 
 ```txt
 Category -> approvalSteps[]
@@ -224,17 +237,17 @@ Category -> approvalSteps[]
 
 ## 예외 상황
 
-### 1. SubCategory 누락
+### 1. Sub Category 누락
 
-- MainCategory만 선택된 경우:
-  - MainCategory 기본값을 사용한다.
+- Main Category만 선택된 경우:
+  - Main Category 기본값을 사용한다.
 
 ---
 
 ### 2. 부분 오버라이드
 
-- SubCategory가 일부 값만 정의한 경우:
-  - 나머지 값은 MainCategory에서 상속한다.
+- Sub Category가 일부 값만 정의한 경우:
+  - 나머지 값은 Main Category에서 상속한다.
 
 ---
 
@@ -303,4 +316,5 @@ Category -> approvalSteps[]
 카테고리 시스템은 **전체 티켓 워크플로의 기반** 역할을 한다.
 
 이를 통해 모든 티켓에 대해 확장 가능하고, 일관되며, 구성 가능한
-동작을 제공하면서도 계층형 오버라이드를 통해 유연성을 유지할 수 있다.
+동작을 제공한다. Tenant는 Service Desk configuration boundary를 제공하고,
+Main Category와 Sub Category는 tenant-scoped default와 override를 제공한다.

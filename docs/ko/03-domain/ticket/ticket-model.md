@@ -109,6 +109,9 @@ export interface Ticket {
 
 - `categoryId`: 티켓을 category configuration과 연결합니다.
 
+티켓은 category를 참조합니다. category는 tenant에 속하며, 해당 tenant는
+category-driven behavior를 위한 Service Desk configuration boundary를 제공합니다.
+
 Category는 다음을 결정합니다.
 
 - assignment
@@ -118,6 +121,10 @@ Category는 다음을 결정합니다.
 
 따라서 ticket은 이러한 business rule을 직접 내장하지 않고,
 category configuration에 의존합니다.
+
+현재 ticket model은 구현 contract에 `tenantId`가 추가되지 않는 한 이를 직접
+노출할 필요가 없습니다. tenant scope는 참조된 category configuration을 통해
+해석됩니다.
 
 관련 문서: [Category Strategy](./strategy/category-strategy.md)
 
@@ -228,7 +235,7 @@ attachments는 ticket context의 일부로 남습니다.
 대신:
 
 ```txt
-Ticket -> Category -> Behavior
+Ticket -> Category -> Tenant-scoped Behavior
 ```
 
 이 구조는 모델을 더 깔끔하게 만들고, 동작을 더 잘 설정 가능하게 만듭니다.
@@ -271,7 +278,7 @@ Ticket은 여러 도메인 모델과 상호작용합니다.
 
 ```txt
 Ticket
-  -> Category
+  -> Category (tenant-scoped)
   -> Approval
   -> Assignment
   -> SLA

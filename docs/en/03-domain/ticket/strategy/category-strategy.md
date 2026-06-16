@@ -25,27 +25,40 @@ foundation, while full enterprise policy resolution remains a REMOTE extension p
 
 Categories are structured as a **hierarchical tree**:
 
-```
-Client → MainCategory → SubCategory
+```txt
+Tenant -> Main Category -> Sub Category
 ```
 
 Each level plays a specific role in defining ticket behavior.
+
+The domain boundary is:
+
+```txt
+Company = organization/reference data
+Tenant = Service Desk configuration boundary
+Category = tenant-scoped behavior configuration
+```
+
+`Company` remains reference data. `Tenant` is the root boundary for Service Desk
+configuration, and categories are interpreted inside that tenant scope.
 
 ---
 
 ## Category Hierarchy
 
-### 1. Client
+### 1. Tenant
 
-- Represents a client (organization or customer)
-- Ensures full isolation between different clients
+- Represents the Service Desk configuration boundary
+- Owns the category tree for an operational scope
+- Keeps category behavior separate from broader company reference data
 
 ---
 
-### 2. MainCategory
+### 2. Main Category
 
 - Defines **default operational rules**
 - Acts as the base configuration layer
+- Provides tenant-scoped defaults for priority, risk, SLA, approval, and assignment
 
 ```ts
 type MainCategory = {
@@ -59,9 +72,9 @@ type MainCategory = {
 
 ---
 
-### 3. SubCategory
+### 3. Sub Category
 
-- Refines or overrides MainCategory settings
+- Refines or overrides Main Category settings
 - Represents more specific business cases
 
 ```ts
@@ -78,12 +91,12 @@ type SubCategory = {
 
 ## Override Strategy
 
-SubCategory values take precedence over MainCategory defaults.
+Sub Category values take precedence over Main Category defaults.
 
 ### Rule
 
-```
-SubCategory > MainCategory
+```txt
+Sub Category > Main Category
 ```
 
 ### Resolution Logic
@@ -144,7 +157,7 @@ active = false
 
 ## Category-Driven Assignment
 
-Ticket assignment is primarily determined by category configuration.
+Ticket assignment is primarily determined by tenant-scoped category configuration.
 
 ### Responsibilities Defined by Category
 
@@ -154,7 +167,7 @@ Ticket assignment is primarily determined by category configuration.
 
 ### Flow
 
-```
+```txt
 Ticket created → Category selected → Assignment resolved
 ```
 
@@ -162,26 +175,26 @@ Ticket created → Category selected → Assignment resolved
 
 ## Category-Driven SLA
 
-SLA is calculated based on category configuration.
+SLA is calculated based on tenant-scoped category configuration.
 
 ### Rule
 
-```
+```txt
 dueAt = createdDate + SLA
 ```
 
 ### Resolution
 
-- SubCategory SLA overrides MainCategory SLA
-- If not defined, fallback to MainCategory
+- Sub Category SLA overrides Main Category SLA
+- If not defined, fallback to Main Category
 
 ---
 
 ## Category-Driven Approval
 
-Approval workflows are defined per category.
+Approval workflows are defined per tenant-scoped category.
 
-```
+```txt
 Category → approvalSteps[]
 ```
 
@@ -224,24 +237,24 @@ When a category is selected:
 
 ## Edge Cases
 
-### 1. Missing SubCategory
+### 1. Missing Sub Category
 
-- If only MainCategory is selected:
-  → use MainCategory defaults
+- If only Main Category is selected:
+  → use Main Category defaults
 
 ---
 
 ### 2. Partial Overrides
 
-- If SubCategory defines only 일부 값:
-  → 나머지는 MainCategory에서 상속
+- If Sub Category defines only some values:
+  → inherit the remaining values from Main Category
 
 ---
 
 ### 3. Category Deactivation
 
-- 이미 사용된 category가 inactive 되는 경우:
-  → 기존 ticket은 그대로 유지
+- If a category already used by tickets becomes inactive:
+  → existing tickets remain valid
 
 ---
 
@@ -301,5 +314,6 @@ This strategy aligns with core system principles:
 ## Summary
 
 The category system serves as the **foundation of the entire ticketing workflow**,
-enabling scalable, consistent, and configurable behavior across all tickets
-while maintaining flexibility through hierarchical overrides.
+enabling scalable, consistent, and configurable behavior across all tickets.
+Tenant provides the Service Desk configuration boundary, while Main Category and
+Sub Category provide tenant-scoped defaults and overrides.

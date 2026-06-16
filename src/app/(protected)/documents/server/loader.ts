@@ -39,8 +39,8 @@ const readLocalizedDocument = async (
 
     return {
       id: item.id,
-      title: item.title,
-      description: item.description,
+      titleKey: item.titleKey,
+      descriptionKey: item.descriptionKey,
       relativePath,
       hasKorean: true,
       content: {
@@ -53,8 +53,8 @@ const readLocalizedDocument = async (
     // does not exist, the docs hub deliberately serves the English source.
     return {
       id: item.id,
-      title: item.title,
-      description: item.description,
+      titleKey: item.titleKey,
+      descriptionKey: item.descriptionKey,
       relativePath,
       hasKorean: false,
       content: {

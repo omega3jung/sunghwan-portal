@@ -188,6 +188,19 @@ route.ts
 
 이렇게 하면 런타임이 UI 컴포넌트에서 분기되는 것을 방지하고 원격 경로 확장을 위한 준비 상태를 유지할 수 있습니다.
 
+Service Desk Settings API도 같은 route handler 책임을 사용합니다. Route handler는
+session과 runtime context를 해석한 뒤 settings/domain handler로 위임해야 합니다.
+
+```txt
+Route Handler
+-> resolve session/runtime
+-> delegate to settings/domain handler
+-> LOCAL handler or REMOTE service
+```
+
+이렇게 하면 settings-specific mapping, mutation rule, DTO construction이 route file에
+쌓이는 것을 방지할 수 있습니다.
+
 ---
 
 ## Navigation Flow
