@@ -24,6 +24,11 @@ SLA = f(Risk Level, Priority)
 
 This creates a flexible and scalable model that adapts to different business contexts.
 
+In Service Desk settings, default risk, priority, and SLA values may be seeded
+from tenant-scoped category configuration. The SLA matrix concept remains the
+resolution model, while category configuration supplies the default inputs for a
+ticket.
+
 ---
 
 ## SLA Dimensions
@@ -71,6 +76,7 @@ SLA is assigned at ticket creation.
 
 ```id="flow-sla"
 Ticket Created
+→ Apply tenant-scoped category defaults
 → Determine Risk Level
 → Determine Priority
 → Lookup SLA Matrix

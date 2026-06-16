@@ -189,6 +189,20 @@ route.ts
 This keeps runtime branching out of UI components and keeps the remote path
 extension-ready.
 
+Service Desk Settings APIs use the same route-handler responsibility. Route
+handlers should resolve session and runtime context, then delegate to a
+settings/domain handler:
+
+```txt
+Route Handler
+-> resolve session/runtime
+-> delegate to settings/domain handler
+-> LOCAL handler or REMOTE service
+```
+
+This keeps settings-specific mapping, mutation rules, and DTO construction out
+of route files.
+
 ---
 
 ## Navigation Flow

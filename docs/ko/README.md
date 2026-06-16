@@ -8,7 +8,7 @@
 이 프로젝트는 단순한 UI 데모가 아니라, 다음 요소를 중심에 둔
 **도메인 중심이며 실제 운영 환경을 고려한 시스템**으로 문서화되어 있습니다.
 
-- 카테고리 기반 티켓 워크플로
+- tenant-scoped category 기반 티켓 워크플로
 - 승인 및 할당 로직
 - SLA 기반 운영
 - 감사 가능성과 이력 관리
@@ -100,7 +100,7 @@
 - 티켓 활동과 액션 중심 상호작용 모델링
 - 작업 세션 추적
 - 티켓 이력과 감사 추적
-- 액션, 승인, 할당, SLA를 위한 카테고리 기반 전략
+- 액션, 승인, 할당, SLA를 위한 tenant-scoped category 기반 전략
 
 주요 문서:
 
@@ -233,6 +233,8 @@ i18n 문서는 번역 파일이 어떻게 구성되는지,
 - [2026-04 Entity Status Naming](./08-dev-strategy/decision-log/2026-04-entity-status-naming.md)
 - [2026-04 Ticket Action](./08-dev-strategy/decision-log/2026-04-ticket-action.md)
 - [2026-05 Barrel Export Boundary](./08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
+- [2026-06 Service Desk Tenant Design](./08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
+- [2026-06 Service Desk Settings DTO/API Boundary](./08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
 
 ---
 

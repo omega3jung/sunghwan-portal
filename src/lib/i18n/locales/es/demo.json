@@ -160,7 +160,7 @@
   "remoteRouteGuard": {
     "limited": {
       "title": "La demostración remota es limitada",
-      "description": "Las páginas con base de datos aún se están conectando. Por ahora, usa las páginas Home, Demo y Documents."
+      "description": "El modo remoto actualmente admite las páginas Home, Demo, Settings y Documents. Las páginas de Service Desk aún se están conectando."
     }
   }
 }

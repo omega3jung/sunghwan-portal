@@ -2,21 +2,28 @@
 // rendering can stay aligned without redefining the document contract.
 export type DocumentItem = {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   relativePath: string;
+};
+
+export type DocumentSection = {
+  id: string;
+  titleKey: string;
+  items: DocumentItem[];
 };
 
 export type DocumentGroup = {
   id: string;
-  title: string;
-  items: DocumentItem[];
+  titleKey: string;
+  items?: DocumentItem[];
+  sections?: DocumentSection[];
 };
 
 export type DocumentResource = {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   relativePath: string;
   hasKorean: boolean;
   content: {

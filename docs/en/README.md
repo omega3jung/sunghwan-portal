@@ -8,7 +8,7 @@ This documentation explains the design, architecture, and implementation thinkin
 The project is documented not as a simple UI demo, but as a **domain-driven, production-aligned system**
 with attention to:
 
-- Category-driven ticket workflow
+- Tenant-scoped category-driven ticket workflow
 - Approval and assignment logic
 - SLA-based operations
 - Auditability and history
@@ -100,7 +100,7 @@ They cover:
 - work session tracking
 - ticket history and audit trail
 - executable operation rules aligned with current behavior
-- category-driven strategy for actions, approval, assignment, and SLA
+- tenant-scoped category-driven strategy for actions, approval, assignment, and SLA
 
 Key documents:
 
@@ -227,6 +227,8 @@ Current decision log topics include:
 - [2026-04 Entity Status Naming](./08-dev-strategy/decision-log/2026-04-entity-status-naming.md)
 - [2026-04 Ticket Action](./08-dev-strategy/decision-log/2026-04-ticket-action.md)
 - [2026-05 Barrel Export Boundary](./08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
+- [2026-06 Service Desk Tenant Design](./08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
+- [2026-06 Service Desk Settings DTO/API Boundary](./08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
 
 ---
 

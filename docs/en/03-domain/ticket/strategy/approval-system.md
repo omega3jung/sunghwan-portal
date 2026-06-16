@@ -23,13 +23,16 @@ Scope note:
 
 Approval is **category-driven** and executed as a **sequential pipeline**.
 
-Each category can define its own approval workflow:
+Each tenant-scoped category can define its own approval workflow:
 
-```
-Category → approvalSteps[]
+```txt
+Tenant-scoped Category → approvalSteps[]
 ```
 
 Each step is processed in order based on its `index`.
+
+Approval steps belong to category configuration and are interpreted within the
+tenant boundary that owns that category tree.
 
 ---
 

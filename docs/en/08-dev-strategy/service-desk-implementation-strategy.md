@@ -468,6 +468,31 @@ Local demo logic belongs in server-side local modules, not in UI components.
 
 This keeps the future remote API path open without redesigning the frontend.
 
+### 7.5 Service Desk Settings DTO/API Boundary
+
+The June settings implementation aligned Service Desk settings around an
+explicit tenant and DTO/API boundary.
+
+Key direction:
+
+```txt
+Tenant = Service Desk configuration boundary
+Category = tenant-scoped behavior configuration
+```
+
+Service Desk settings APIs should keep the same application-facing contract in
+LOCAL and REMOTE modes. The UI should consume DTOs and should not care whether
+settings data came from server-side local mock state or PostgreSQL-backed
+repositories.
+
+Implementation guidance:
+
+- keep route handlers thin
+- delegate settings behavior to domain handlers
+- keep row / mapper / DTO boundaries for REMOTE data access
+- keep LOCAL settings mutations in server-side local state modules
+- remove speculative CRUD routes unless they support a real UI workflow
+
 ---
 
 ## 8. Architecture and Boundary Strategy
@@ -630,6 +655,7 @@ The most important implementation decisions are:
 - move advanced search and filtering responsibility to the server boundary
 - segment React Query behavior by data mutability
 - keep route handlers as orchestration boundaries
+- align Service Desk settings through tenant-scoped DTO/API contracts
 - use feature-based structure and safe barrel exports
 - separate client-only shared utilities from server-safe utilities
 - treat i18n and documentation as maintainability features

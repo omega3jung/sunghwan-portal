@@ -60,6 +60,10 @@ Category는 단순 분류가 아닙니다.
 - SLA policies
 - workflow structure
 
+Service Desk behavior는 category와 settings configuration을 통해 tenant-scoped로
+해석됩니다. Tenant는 configuration boundary를 제공하고, 그 tenant 안의
+category가 ticket의 운영 동작을 결정합니다.
+
 ### 2. Approval as a First-Class Workflow
 
 Approval은 lifecycle의 핵심 부분으로 다뤄집니다.
@@ -128,11 +132,12 @@ work = collection of sessions
 Ticket system은 여러 도메인 컴포넌트로 구성됩니다.
 
 ```txt
-Ticket
+Tenant
   -> Category
   -> Approval
   -> Assignment
   -> SLA
+Ticket
   -> Activity
   -> Track Time
   -> History
@@ -140,6 +145,10 @@ Ticket
 
 각 컴포넌트는 특정 관심사를 맡기 때문에,
 시스템은 모듈식이며 유지보수 가능하게 유지됩니다.
+
+configuration side는 tenant-scoped입니다. ticket side는 선택된 category를
+참조하고, 해당 category configuration이 정의한 approval, assignment, SLA
+동작을 따릅니다.
 
 ---
 
@@ -155,6 +164,7 @@ Draft -> Open -> Approval -> Working -> Resolved -> Closed
 
 - 어떤 티켓은 approval을 건너뜁니다.
 - 어떤 티켓은 여러 approval step을 필요로 합니다.
+- 선택된 category는 tenant configuration boundary 안에서 해석됩니다.
 
 관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
 
