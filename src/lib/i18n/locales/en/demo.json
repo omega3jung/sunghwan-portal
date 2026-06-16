@@ -160,7 +160,7 @@
   "remoteRouteGuard": {
     "limited": {
       "title": "Remote demo is limited",
-      "description": "Database-backed pages are still being connected. Please use the Home, Demo and Documents pages for now."
+      "description": "Remote mode currently supports Home, Demo, Settings, and Documents. Service Desk pages are still being connected."
     }
   }
 }

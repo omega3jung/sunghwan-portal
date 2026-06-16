@@ -7,10 +7,17 @@ export type DocumentItem = {
   relativePath: string;
 };
 
-export type DocumentGroup = {
+export type DocumentSection = {
   id: string;
   titleKey: string;
   items: DocumentItem[];
+};
+
+export type DocumentGroup = {
+  id: string;
+  titleKey: string;
+  items?: DocumentItem[];
+  sections?: DocumentSection[];
 };
 
 export type DocumentResource = {

@@ -4,6 +4,9 @@ import type { DocumentGroup } from "../types/documents";
 // all share the same source of truth for the docs hub structure.
 export const DEFAULT_DOCUMENT_ID = "readme";
 
+export const getDocumentGroupItems = (group: DocumentGroup) =>
+  group.sections?.flatMap((section) => section.items) ?? group.items ?? [];
+
 export const documentGroups: DocumentGroup[] = [
   {
     id: "project",
@@ -243,127 +246,178 @@ export const documentGroups: DocumentGroup[] = [
   {
     id: "decision-log",
     titleKey: "group.decisionLog.title",
-    items: [
+    sections: [
       {
-        id: "decision-auth-session-architecture",
-        titleKey: "item.decisionAuthSessionArchitecture.title",
-        descriptionKey: "item.decisionAuthSessionArchitecture.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2025-12-auth-session-architecture.md",
+        id: "2025-12",
+        titleKey: "section.decisionLog.2025-12.title",
+        items: [
+          {
+            id: "decision-auth-session-architecture",
+            titleKey: "item.decisionAuthSessionArchitecture.title",
+            descriptionKey: "item.decisionAuthSessionArchitecture.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2025-12-auth-session-architecture.md",
+          },
+          {
+            id: "decision-impersonation-2025-12",
+            titleKey: "item.decisionImpersonation202512.title",
+            descriptionKey: "item.decisionImpersonation202512.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2025-12-impersonation.md",
+          },
+          {
+            id: "decision-naming-2025-12",
+            titleKey: "item.decisionNaming202512.title",
+            descriptionKey: "item.decisionNaming202512.description",
+            relativePath: "08-dev-strategy/decision-log/2025-12-naming.md",
+          },
+          {
+            id: "decision-system-layout",
+            titleKey: "item.decisionSystemLayout.title",
+            descriptionKey: "item.decisionSystemLayout.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2025-12-system-layout.md",
+          },
+        ],
       },
       {
-        id: "decision-impersonation-2025-12",
-        titleKey: "item.decisionImpersonation202512.title",
-        descriptionKey: "item.decisionImpersonation202512.description",
-        relativePath: "08-dev-strategy/decision-log/2025-12-impersonation.md",
+        id: "2026-01",
+        titleKey: "section.decisionLog.2026-01.title",
+        items: [
+          {
+            id: "decision-category-design",
+            titleKey: "item.decisionCategoryDesign.title",
+            descriptionKey: "item.decisionCategoryDesign.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-01-category-design.md",
+          },
+          {
+            id: "decision-impersonation-2026-01",
+            titleKey: "item.decisionImpersonation202601.title",
+            descriptionKey: "item.decisionImpersonation202601.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-01-impersonation.md",
+          },
+          {
+            id: "decision-session-user-boundary-2026-01",
+            titleKey: "item.decisionSessionUserBoundary202601.title",
+            descriptionKey: "item.decisionSessionUserBoundary202601.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-01-session-user-boundary.md",
+          },
+        ],
       },
       {
-        id: "decision-naming-2025-12",
-        titleKey: "item.decisionNaming202512.title",
-        descriptionKey: "item.decisionNaming202512.description",
-        relativePath: "08-dev-strategy/decision-log/2025-12-naming.md",
+        id: "2026-02",
+        titleKey: "section.decisionLog.2026-02.title",
+        items: [
+          {
+            id: "decision-service-desk-settings",
+            titleKey: "item.decisionServiceDeskSettings.title",
+            descriptionKey: "item.decisionServiceDeskSettings.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-02-service-desk-settings.md",
+          },
+        ],
       },
       {
-        id: "decision-system-layout",
-        titleKey: "item.decisionSystemLayout.title",
-        descriptionKey: "item.decisionSystemLayout.description",
-        relativePath: "08-dev-strategy/decision-log/2025-12-system-layout.md",
+        id: "2026-03",
+        titleKey: "section.decisionLog.2026-03.title",
+        items: [
+          {
+            id: "decision-service-desk",
+            titleKey: "item.decisionServiceDesk.title",
+            descriptionKey: "item.decisionServiceDesk.description",
+            relativePath: "08-dev-strategy/decision-log/2026-03-service-desk.md",
+          },
+          {
+            id: "decision-ticket-form-dialog",
+            titleKey: "item.decisionTicketFormDialog.title",
+            descriptionKey: "item.decisionTicketFormDialog.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md",
+          },
+          {
+            id: "decision-ticket-session-2026-03",
+            titleKey: "item.decisionTicketSession202603.title",
+            descriptionKey: "item.decisionTicketSession202603.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-03-ticket-session.md",
+          },
+        ],
       },
       {
-        id: "decision-category-design",
-        titleKey: "item.decisionCategoryDesign.title",
-        descriptionKey: "item.decisionCategoryDesign.description",
-        relativePath: "08-dev-strategy/decision-log/2026-01-category-design.md",
+        id: "2026-04",
+        titleKey: "section.decisionLog.2026-04.title",
+        items: [
+          {
+            id: "decision-entity-status-naming",
+            titleKey: "item.decisionEntityStatusNaming.title",
+            descriptionKey: "item.decisionEntityStatusNaming.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-04-entity-status-naming.md",
+          },
+          {
+            id: "decision-ticket-action",
+            titleKey: "item.decisionTicketAction.title",
+            descriptionKey: "item.decisionTicketAction.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-04-ticket-action.md",
+          },
+        ],
       },
       {
-        id: "decision-impersonation-2026-01",
-        titleKey: "item.decisionImpersonation202601.title",
-        descriptionKey: "item.decisionImpersonation202601.description",
-        relativePath: "08-dev-strategy/decision-log/2026-01-impersonation.md",
+        id: "2026-05",
+        titleKey: "section.decisionLog.2026-05.title",
+        items: [
+          {
+            id: "decision-barrel-export-boundary-2026-05",
+            titleKey: "item.decisionBarrelExportBoundary202605.title",
+            descriptionKey: "item.decisionBarrelExportBoundary202605.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md",
+          },
+          {
+            id: "decision-database-role-and-access-strategy-2026-05",
+            titleKey: "item.decisionDatabaseRoleAndAccessStrategy202605.title",
+            descriptionKey:
+              "item.decisionDatabaseRoleAndAccessStrategy202605.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.md",
+          },
+          {
+            id: "decision-service-desk-documentation-alignment-2026-05",
+            titleKey:
+              "item.decisionServiceDeskDocumentationAlignment202605.title",
+            descriptionKey:
+              "item.decisionServiceDeskDocumentationAlignment202605.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md",
+          },
+        ],
       },
       {
-        id: "decision-session-user-boundary-2026-01",
-        titleKey: "item.decisionSessionUserBoundary202601.title",
-        descriptionKey: "item.decisionSessionUserBoundary202601.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-01-session-user-boundary.md",
-      },
-      {
-        id: "decision-service-desk-settings",
-        titleKey: "item.decisionServiceDeskSettings.title",
-        descriptionKey: "item.decisionServiceDeskSettings.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-02-service-desk-settings.md",
-      },
-      {
-        id: "decision-service-desk",
-        titleKey: "item.decisionServiceDesk.title",
-        descriptionKey: "item.decisionServiceDesk.description",
-        relativePath: "08-dev-strategy/decision-log/2026-03-service-desk.md",
-      },
-      {
-        id: "decision-ticket-form-dialog",
-        titleKey: "item.decisionTicketFormDialog.title",
-        descriptionKey: "item.decisionTicketFormDialog.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md",
-      },
-      {
-        id: "decision-ticket-session-2026-03",
-        titleKey: "item.decisionTicketSession202603.title",
-        descriptionKey: "item.decisionTicketSession202603.description",
-        relativePath: "08-dev-strategy/decision-log/2026-03-ticket-session.md",
-      },
-      {
-        id: "decision-entity-status-naming",
-        titleKey: "item.decisionEntityStatusNaming.title",
-        descriptionKey: "item.decisionEntityStatusNaming.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-04-entity-status-naming.md",
-      },
-      {
-        id: "decision-ticket-action",
-        titleKey: "item.decisionTicketAction.title",
-        descriptionKey: "item.decisionTicketAction.description",
-        relativePath: "08-dev-strategy/decision-log/2026-04-ticket-action.md",
-      },
-      {
-        id: "decision-barrel-export-boundary-2026-05",
-        titleKey: "item.decisionBarrelExportBoundary202605.title",
-        descriptionKey: "item.decisionBarrelExportBoundary202605.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md",
-      },
-      {
-        id: "decision-database-role-and-access-strategy-2026-05",
-        titleKey: "item.decisionDatabaseRoleAndAccessStrategy202605.title",
-        descriptionKey:
-          "item.decisionDatabaseRoleAndAccessStrategy202605.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.md",
-      },
-      {
-        id: "decision-service-desk-documentation-alignment-2026-05",
-        titleKey: "item.decisionServiceDeskDocumentationAlignment202605.title",
-        descriptionKey:
-          "item.decisionServiceDeskDocumentationAlignment202605.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md",
-      },
-      {
-        id: "decision-service-desk-tenant-design-2026-06",
-        titleKey: "item.decisionServiceDeskTenantDesign202606.title",
-        descriptionKey: "item.decisionServiceDeskTenantDesign202606.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md",
-      },
-      {
-        id: "decision-service-desk-settings-dto-api-boundary-2026-06",
-        titleKey: "item.decisionServiceDeskSettingsDtoApiBoundary202606.title",
-        descriptionKey:
-          "item.decisionServiceDeskSettingsDtoApiBoundary202606.description",
-        relativePath:
-          "08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md",
+        id: "2026-06",
+        titleKey: "section.decisionLog.2026-06.title",
+        items: [
+          {
+            id: "decision-service-desk-tenant-design-2026-06",
+            titleKey: "item.decisionServiceDeskTenantDesign202606.title",
+            descriptionKey:
+              "item.decisionServiceDeskTenantDesign202606.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md",
+          },
+          {
+            id: "decision-service-desk-settings-dto-api-boundary-2026-06",
+            titleKey:
+              "item.decisionServiceDeskSettingsDtoApiBoundary202606.title",
+            descriptionKey:
+              "item.decisionServiceDeskSettingsDtoApiBoundary202606.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md",
+          },
+        ],
       },
     ],
   },

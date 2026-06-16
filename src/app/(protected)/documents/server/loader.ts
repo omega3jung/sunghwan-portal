@@ -1,14 +1,17 @@
 import { readFile } from "fs/promises";
 import path from "path";
 
-import { documentGroups } from "../constants/documents";
+import {
+  documentGroups,
+  getDocumentGroupItems,
+} from "../constants/documents";
 import type { DocumentResource } from "../types/documents";
 
 // Server-side loading is isolated here so page.tsx can stay focused on route
 // composition instead of filesystem details.
 const documentItemsByPath = new Map(
   documentGroups
-    .flatMap((group) => group.items)
+    .flatMap((group) => getDocumentGroupItems(group))
     .map((item) => [item.relativePath, item]),
 );
 
@@ -71,7 +74,7 @@ export const loadDocumentsById = async () => {
   const uniqueRelativePaths = Array.from(
     new Set(
       documentGroups.flatMap((group) =>
-        group.items.map((item) => item.relativePath),
+        getDocumentGroupItems(group).map((item) => item.relativePath),
       ),
     ),
   );
