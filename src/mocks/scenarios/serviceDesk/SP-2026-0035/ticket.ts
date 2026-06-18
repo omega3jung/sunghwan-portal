@@ -22,9 +22,9 @@ export const ticket: TicketMockInput = {
   scope: "PORTAL",
   category_id: "5",
   approval_step_id: null,
-  subject: "출고 배송 ?�면??로딩 ?�태?�서 멈춤",
+  subject: "출고 배송 화면이 로딩 상태에서 멈춤",
   content:
-    "출고 배송??처리?�는 �?배송 ?�행 ?�면??로딩 ?�이콘만 계속 ?�시?�고 ?�료?��? ?�습?�다.<br>물류?� ?�용?��? 출고 배송 ?�랜??��???�료?????�습?�다.",
+    "출고 배송을 처리하는 중 배송 실행 화면에 로딩 아이콘만 계속 표시되고 완료되지 않습니다.<br>물류팀 사용자가 출고 배송 트랜잭션을 완료할 수 없습니다.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
     cc: ["Victor.Rivera@sunghwan-portal.dev"],
