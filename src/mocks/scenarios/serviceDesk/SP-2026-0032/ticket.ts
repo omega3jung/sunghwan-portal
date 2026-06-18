@@ -20,9 +20,9 @@ export const ticket: TicketMockInput = {
   scope: "INTERNAL",
   category_id: "75",
   approval_step_id: null,
-  subject: "SKU-12345 ?�고 보고???�청",
+  subject: "SKU-12345 입고 보고서 요청",
   content:
-    "?�녕?�세?? SKU-12345 기기 ?�체???�보가 ?�확?��? ?�인?�기 ?�해 고객?�게 ?�고 보고?��? ?�청?�습?�다.<br>가?�한 ??빨리 ?�달??주세??",
+    "안녕하세요. SKU-12345 기기 전체의 정보가 정확한지 확인하기 위해 고객에게 입고 보고서를 요청했습니다.<br>가능한 한 빨리 전달해 주세요.",
   email: {
     to: [
       "isabella.martinez@sunghwan-portal.dev",

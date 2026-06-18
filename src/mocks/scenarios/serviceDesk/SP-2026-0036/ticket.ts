@@ -1,4 +1,4 @@
-﻿import { TicketMockInput } from "../types";
+import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
   id: "sunghwan-portal-2026-36",
