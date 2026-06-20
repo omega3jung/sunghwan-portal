@@ -30,6 +30,10 @@
     "noResults": "검색 결과가 없습니다",
     "withItem": "{{item}} 없음"
   },
+  "overlay": {
+    "demo": "데모",
+    "impersonation": "사용자 가장 중"
+  },
   "placeholder": {
     "enter": "{{target}} 입력",
     "search": "{{target}} 검색",

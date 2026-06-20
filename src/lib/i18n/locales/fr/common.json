@@ -30,6 +30,10 @@
     "noResults": "Aucun résultat",
     "withItem": "Aucun {{item}}"
   },
+  "overlay": {
+    "demo": "Démo",
+    "impersonation": "Usurpation en cours"
+  },
   "placeholder": {
     "enter": "Saisir {{target}}",
     "search": "Rechercher {{target}}",
