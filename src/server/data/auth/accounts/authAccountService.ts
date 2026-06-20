@@ -3,7 +3,8 @@ import { comparePasswordHash } from "@/server/shared/security/password";
 import { AuthUserDto } from "./authAccountDto";
 import { toAuthUser } from "./authAccountMapper";
 import {
-  findActiveAuthLoginUserByUsername,
+  findImpersonationTarget,
+  findLoginAuthUser,
   updateAuthAccountLastLoginAt,
 } from "./authAccountRepository";
 
@@ -11,7 +12,7 @@ export async function verifyLoginCredentials(
   username: string,
   password: string,
 ): Promise<AuthUserDto | null> {
-  const account = await findActiveAuthLoginUserByUsername(username);
+  const account = await findLoginAuthUser(username);
 
   if (!account) {
     return null;
@@ -34,7 +35,7 @@ export async function verifyLoginCredentials(
 export async function getImpersonationTargetAuthUser(
   username: string,
 ): Promise<AuthUserDto | null> {
-  const account = await findActiveAuthLoginUserByUsername(username);
+  const account = await findImpersonationTarget(username);
 
   if (!account) {
     return null;

@@ -1,8 +1,8 @@
 import { queryAuthApi } from "@/server/shared/supabase/authApiClient";
 
-import { DbAuthLoginUserRow } from "./authAccountRow";
+import { DbAuthLoginUserRow, DbAuthUserProjectionRow } from "./authAccountRow";
 
-const FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY = `
+const FIND_LOGIN_AUTH_USER_QUERY = `
   select
     aa_id,
     aa_password_hash,
@@ -20,21 +20,56 @@ const FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY = `
   limit 1
 `;
 
-export async function findActiveAuthLoginUserByUsername(
-  username: string,
+export async function findLoginAuthUser(
+  loginUsername: string,
 ): Promise<DbAuthLoginUserRow | null> {
   try {
     const rows = await queryAuthApi<DbAuthLoginUserRow>(
-      FIND_ACTIVE_AUTH_ACCOUNT_BY_USERNAME_QUERY,
-      [username],
+      FIND_LOGIN_AUTH_USER_QUERY,
+      [loginUsername],
     );
+
     return rows[0] ?? null;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown database error";
-    throw new Error(
-      `Failed to fetch active auth account by username: ${message}`,
+
+    throw new Error(`Failed to fetch login auth user: ${message}`);
+  }
+}
+
+const FIND_IMPERSONATION_TARGET_QUERY = `
+  select
+    aa_id,
+    aa_role,
+    aa_access_level,
+    aa_user_scope,
+    aa_last_login_at,
+
+    e_username,
+    e_name,
+    e_email,
+    e_company_id
+  from auth_login_user_view
+  where e_username = $1
+  limit 1
+`;
+
+export async function findImpersonationTarget(
+  employeeUsername: string,
+): Promise<DbAuthUserProjectionRow | null> {
+  try {
+    const rows = await queryAuthApi<DbAuthUserProjectionRow>(
+      FIND_IMPERSONATION_TARGET_QUERY,
+      [employeeUsername],
     );
+
+    return rows[0] ?? null;
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown database error";
+
+    throw new Error(`Failed to fetch impersonation target: ${message}`);
   }
 }
 

@@ -17,9 +17,8 @@ export type AuthAccountPermission = (typeof ACCESS_LEVEL)[AuthAccountRole];
 export type AuthAccountDataScope = "LOCAL" | "REMOTE";
 export type AuthAccountUserScope = "INTERNAL" | "CLIENT";
 
-export interface DbAuthLoginUserRow {
+export interface DbAuthUserProjectionRow {
   aa_id: string;
-  aa_password_hash: string;
   aa_role: AuthAccountRole;
   aa_access_level: AuthAccountPermission;
   aa_user_scope: AuthAccountUserScope;
@@ -29,4 +28,8 @@ export interface DbAuthLoginUserRow {
   e_name: LocalizedName;
   e_email: string;
   e_company_id: number;
+}
+
+export interface DbAuthLoginUserRow extends DbAuthUserProjectionRow {
+  aa_password_hash: string;
 }
