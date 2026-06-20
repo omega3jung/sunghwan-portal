@@ -1,9 +1,9 @@
 import { displayNameMapper } from "@/shared/utils/i18n/displayName";
 
 import { AuthUserDto } from "./authAccountDto";
-import { DbAuthLoginUserRow } from "./authAccountRow";
+import { DbAuthUserProjectionRow } from "./authAccountRow";
 
-export function toAuthUser(row: DbAuthLoginUserRow): AuthUserDto {
+export function toAuthUser(row: DbAuthUserProjectionRow): AuthUserDto {
   return {
     id: row.aa_id,
     username: row.e_username,

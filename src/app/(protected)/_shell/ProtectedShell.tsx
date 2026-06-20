@@ -13,6 +13,7 @@ import { withLeadingSlash } from "@/shared/utils/routing";
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
 import { RemoteRouteGuard } from "../_providers/RemoteRouteGuard";
+import { SessionStatusOverlay } from "./SessionStatusOverlay";
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
@@ -40,7 +41,8 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const isDemoUser = session.current?.isDemoUser;
+  const isDemoUser = session.current.isDemoUser;
+  const isImpersonating = !!session.data?.impersonation?.impersonatedUser;
 
   return (
     // UI root container (absolute overlays are positioned relative to this)
@@ -50,8 +52,10 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
         <PreferenceBootstrap />
         <RemoteRouteGuard />
 
-        {/* Demo Overlay */}
-        {isDemoUser && <DemoOverlay />}
+        <SessionStatusOverlay
+          isDemoUser={isDemoUser}
+          isImpersonating={isImpersonating}
+        />
 
         {/* Left Menu */}
         <LeftMenu></LeftMenu>
@@ -86,12 +90,3 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
     </AppUserBootstrap>
   );
 }
-
-const DemoOverlay = () => (
-  <>
-    <div className="absolute inset-0 border-2 border-orange-400 z-50 pointer-events-none" />
-    <div className="absolute bottom-2 right-4 text-xl font-bold text-orange-400 z-50 pointer-events-none">
-      Demo
-    </div>
-  </>
-);

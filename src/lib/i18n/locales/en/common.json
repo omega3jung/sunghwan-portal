@@ -30,6 +30,10 @@
     "noResults": "No results",
     "withItem": "No {{item}}"
   },
+  "overlay": {
+    "demo": "Demo",
+    "impersonation": "Impersonating"
+  },
   "field": {
     "age": "Age",
     "agent": "Agent",
