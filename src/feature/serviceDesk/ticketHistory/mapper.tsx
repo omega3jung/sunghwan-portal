@@ -46,8 +46,6 @@ export function resolveHistoryBadge(
       return tCommon("field.comment");
     case "NOTE":
       return tCommon("field.note");
-    case "WORK_SESSION":
-      return t("historyTimeline.badge.workSession");
     case "PLANNING":
       return t("historyTimeline.badge.planning");
     case "SYSTEM":
@@ -98,10 +96,6 @@ export function getHistorySummary(
 
   if (history.type === "NOTE" && history.action === "CREATED") {
     return t("history.NOTE_CREATED");
-  }
-
-  if (history.type === "WORK_SESSION" && history.action === "UPDATED") {
-    return t("history.WORK_SESSION_UPDATED");
   }
 
   switch (history.action) {
@@ -168,10 +162,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
     return <RefreshCcw className="h-3 w-3" />;
   }
 
-  if (history.type === "WORK_SESSION" && history.action === "UPDATED") {
-    return <RefreshCcw className="h-3 w-3" />;
-  }
-
   switch (history.action) {
     case "CREATED":
       return <CircleDot className="h-3 w-3" />;
@@ -203,7 +193,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
       return <UserPlus className="h-3 w-3" />;
     case "CATEGORY":
       return <Pencil className="h-3 w-3" />;
-    case "WORK_SESSION":
     case "PLANNING":
       return <Clock3 className="h-3 w-3" />;
     case "SYSTEM":

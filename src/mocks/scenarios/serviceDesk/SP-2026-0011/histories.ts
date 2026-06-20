@@ -109,18 +109,6 @@ export const histories: DbTicketHistory[] = [
     ticket_id: ticket.id,
     history_no: 9,
 
-    type: "WORK_SESSION",
-    action: "UPDATED",
-
-    actor_id: "evan_seo",
-    action_no: null,
-
-    created_at: "2026-05-27T14:38:25Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 10,
-
     type: "COMMENT",
     action: "CREATED",
 

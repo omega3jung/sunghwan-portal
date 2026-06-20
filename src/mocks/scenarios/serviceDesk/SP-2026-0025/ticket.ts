@@ -1,7 +1,7 @@
 import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
-  id: "sunghwan-portal-2026-25",
+  id: "4eafbeeb-aabf-40af-8914-fd6013c0b19c",
   ticket_number: "SP-2026-0025",
   created_at: "2026-06-02T06:03:14Z",
   updated_at: "2026-06-02T07:21:42Z",
@@ -22,9 +22,9 @@ export const ticket: TicketMockInput = {
   scope: "PORTAL",
   category_id: "5",
   approval_step_id: null,
-  subject: "L?�écran d?�expédition sortante reste bloqué sur le chargement",
+  subject: "L'écran d'expédition sortante reste bloqué sur le chargement",
   content:
-    "Lors du traitement des expéditions sortantes, l?�écran d?�exécution des expéditions continue d?�afficher uniquement l?�icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d?�expédition sortante.",
+    "Lors du traitement des expéditions sortantes, l'écran d'exécution des expéditions continue d'afficher uniquement l'icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d'expédition sortante.",
   email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
     cc: ["Victor.Rivera@sunghwan-portal.dev"],

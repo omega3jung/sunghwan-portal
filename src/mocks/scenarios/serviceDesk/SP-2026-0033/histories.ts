@@ -132,16 +132,4 @@ export const histories: DbTicketHistory[] = [
 
     created_at: "2026-05-30T01:48:10Z",
   },
-  {
-    ticket_id: ticket.id,
-    history_no: 11,
-
-    type: "WORK_SESSION",
-    action: "UPDATED",
-
-    actor_id: "mason_kwon",
-    action_no: null,
-
-    created_at: "2026-05-30T02:02:00Z",
-  },
 ];

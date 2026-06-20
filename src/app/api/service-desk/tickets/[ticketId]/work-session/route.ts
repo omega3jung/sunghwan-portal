@@ -184,22 +184,9 @@ export async function POST(
 
     localWorkSessions.push(workSession);
 
-    const histories = getLocalDemoHistories(isInternal);
-
-    histories.push({
-      ticket_id: ticketId,
-      history_no: getMaxHistoryNo(ticketId, isInternal),
-      type: "WORK_SESSION",
-      action: "UPDATED",
-      actor_id: employeeUserName,
-      action_no: null,
-      from_value: ticket.work_minutes,
-      to_value: updatedTicket.work_minutes,
-      metadata: payload,
-      created_at: createdAt,
-    });
-
     if (nextStatus) {
+      const histories = getLocalDemoHistories(isInternal);
+
       histories.push({
         ticket_id: ticketId,
         history_no: getMaxHistoryNo(ticketId, isInternal),

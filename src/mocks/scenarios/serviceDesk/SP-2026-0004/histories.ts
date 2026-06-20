@@ -100,18 +100,6 @@ export const histories: DbTicketHistory[] = [
     ticket_id: ticket.id,
     history_no: 8,
 
-    type: "WORK_SESSION",
-    action: "UPDATED",
-
-    actor_id: "daniel_kim",
-    action_no: null,
-
-    created_at: "2026-06-01T02:10:44Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 9,
-
     type: "TICKET",
     action: "TICKET_REJECTED",
 
@@ -131,7 +119,7 @@ export const histories: DbTicketHistory[] = [
   },
   {
     ticket_id: ticket.id,
-    history_no: 10,
+    history_no: 9,
 
     type: "COMMENT",
     action: "CREATED",
