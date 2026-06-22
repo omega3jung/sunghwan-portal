@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/hooks/useNavigationBarCurrentLabel";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
@@ -54,6 +55,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
+
+  useNavigationBarCurrentLabel(
+    ticket?.id === params.ticketId ? ticket.ticketNumber : null,
+  );
 
   useAutoStartApprovedTicketOnView({
     ticket,

@@ -1,20 +1,11 @@
 import { LucideProps } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { Fragment, ReactElement, ReactNode } from "react";
+import React, { Fragment, ReactNode } from "react";
 
 import { cn } from "@/shared/utils/presentation";
 
-export type LinkBarItem = {
-  text: ReactNode;
-  value?: string;
-  route: string;
-  selected?: boolean;
-  icon?: ReactElement<LucideProps>;
-  isDisable?: boolean;
-  isLinkable?: boolean;
-  onClick?: (index: number, name?: string | ReactNode) => void;
-};
+import { LinkBarItem } from "../types";
 
 type Props = {
   items: LinkBarItem[];

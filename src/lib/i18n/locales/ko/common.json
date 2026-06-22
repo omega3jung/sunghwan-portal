@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "home": "홈"
+  },
   "action": {
     "add": "추가",
     "back": "뒤로",

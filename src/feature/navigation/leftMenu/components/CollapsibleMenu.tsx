@@ -25,6 +25,7 @@ import {
   SidebarMenuSubItem,
   SidebarSeparator,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ENVIRONMENT } from "@/lib/environment";
 import { useLocalizedText } from "@/shared/hooks";
@@ -36,6 +37,7 @@ import { LeftMenuSkeleton } from "./MenuSkeleton";
 export function LeftMenu() {
   const pathname = usePathname();
   const tLocal = useLocalizedText();
+  const { isMobile } = useSidebar();
   const { data: menuItems, isLoading } = useLeftMenuQuery();
 
   const content = useMemo(() => menuItems?.content ?? [], [menuItems]);
@@ -181,7 +183,7 @@ export function LeftMenu() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
-        <SidebarTrigger />
+        {!isMobile && <SidebarTrigger />}
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt="Portal Logo"

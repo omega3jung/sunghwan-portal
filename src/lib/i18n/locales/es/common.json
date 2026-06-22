@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "home": "Inicio"
+  },
   "action": {
     "add": "Agregar",
     "back": "Volver",
