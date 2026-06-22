@@ -97,7 +97,10 @@ export function TicketDetailsAside({
         icon={<Info className="h-4 w-4" />}
         title={t("field.details", { ns: NS.common })}
       >
-        <InfoLine label={t("detailAside.ticketId")} value={ticket.id} />
+        <InfoLine
+          label={t("detailAside.ticketNo")}
+          value={ticket.ticketNumber}
+        />
         <InfoLine
           label={tCommon("field.category")}
           value={tLocal(ticket.categoryName)}

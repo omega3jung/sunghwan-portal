@@ -1,39 +1,40 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Hello, Liam.<br>I couldn't find 84321565 in the system. Could you check the device ID is correct?<br> Thank you.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-27T09:15:00Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T09:15:00Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "84321565 is correct. Please check the screenshot.<br><img src='/_mocks/scenarios/serviceDesk/ticket-2026-1/comment-2_image-1.png' />",
-    owner_id: "liam_williams",
+    tka_owner_username: "liam_williams",
 
-    created_at: "2026-05-27T12:55:58Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T12:55:58Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [
+    tka_files: [],
+    tka_images: [
       {
         index: 1,
         type: "image",
@@ -44,34 +45,36 @@ export const actions: DbTicketAction[] = [
     ],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "It was ' 84321565'. There is blank before 84321565.<br> I updated the device ID to 84321585.<br> Thanks and regards.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-27T14:36:47Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T14:36:47Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 4,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
 
-    action_type: "COMMENT",
-    content: "Thank you!!",
-    owner_id: "liam_williams",
+    tka_action_type: "COMMENT",
+    tka_content: "Thank you!!",
+    tka_owner_username: "liam_williams",
 
-    created_at: "2026-05-27T15:02:13Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T15:02:13Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
 ];

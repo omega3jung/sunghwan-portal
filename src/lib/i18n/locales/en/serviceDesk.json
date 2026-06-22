@@ -96,7 +96,7 @@
   "detailAside": {
     "recipientsTitle": "Recipients",
     "unassigned": "Unassigned",
-    "ticketId": "Ticket ID",
+    "ticketNo": "Ticket No",
     "currentUserBadge": "Me",
     "assignedBadge": "Assigned"
   },

@@ -66,7 +66,7 @@ export function toLocalStartWorkResponse(
 }
 
 function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {
-  if (ticket.assignee_id.includes(employeeUserName)) {
+  if (ticket.assignee_usernames.includes(employeeUserName)) {
     return;
   }
 
@@ -92,7 +92,7 @@ function createStatusUpdatedHistory(
     history_no: getMaxHistoryNo(ticket.id, isInternal),
     type: "STATUS",
     action: "UPDATED",
-    actor_id: employeeUserName,
+    actor_username: employeeUserName,
     action_no: null,
     from_value: ticket.status,
     to_value: nextStatus,

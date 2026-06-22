@@ -1,124 +1,131 @@
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
-
+import { TICKET_HISTORY_MOCK_DEFAULTS, TicketHistoryMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const histories: DbTicketHistory[] = [
+export const histories: TicketHistoryMockInput[] = [
   {
-    ticket_id: ticket.id,
-    history_no: 1,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 1,
 
-    type: "TICKET",
-    action: "CREATED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "CREATED",
 
-    actor_id: "liam_williams",
-    action_no: null,
+    tkh_actor_username: "liam_williams",
+    tkh_action_no: null,
 
-    created_at: "2026-06-02T06:13:27Z",
+    tkh_created_at: "2026-06-02T06:13:27Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 2,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 2,
 
-    type: "ASSIGNMENT",
-    action: "UPDATED",
+    tkh_history_type: "ASSIGNMENT",
+    tkh_history_action: "UPDATED",
 
-    actor_id: null,
-    action_no: null,
+    tkh_actor_username: null,
+    tkh_action_no: null,
 
-    from_value: null,
-    to_value: "41,31",
+    tkh_from_value: null,
+    tkh_to_value: "41,31",
 
-    created_at: "2026-06-02T06:18:09Z",
+    tkh_created_at: "2026-06-02T06:18:09Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 3,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 3,
 
-    type: "STATUS",
-    action: "UPDATED",
+    tkh_history_type: "STATUS",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "evan_seo",
-    action_no: null,
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: null,
 
-    from_value: "Open",
-    to_value: "Working",
+    tkh_from_value: "Open",
+    tkh_to_value: "Working",
 
-    created_at: "2026-06-02T06:20:03Z",
+    tkh_created_at: "2026-06-02T06:20:03Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 4,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 4,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "evan_seo",
-    action_no: "1",
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: "1",
 
-    created_at: "2026-06-02T06:22:11Z",
+    tkh_created_at: "2026-06-02T06:22:11Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 5,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 5,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "liam_williams",
-    action_no: "2",
+    tkh_actor_username: "liam_williams",
+    tkh_action_no: "2",
 
-    created_at: "2026-06-02T06:25:44Z",
+    tkh_created_at: "2026-06-02T06:25:44Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 6,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 6,
 
-    type: "TICKET",
-    action: "TICKET_MERGED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "TICKET_MERGED",
 
-    actor_id: "daniel_kim",
-    action_no: null,
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: null,
 
-    metadata: {
-      sourceTicketId: ticket.id,
+    tkh_metadata: {
+      sourceTicketId: ticket.tk_id,
       targetTicketId: "sunghwan-portal-2026-5",
       reason:
         "Duplicate of the same portal performance incident already tracked in SP-2026-0005",
     },
 
-    created_at: "2026-06-02T07:12:34Z",
+    tkh_created_at: "2026-06-02T07:12:34Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 7,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 7,
 
-    type: "STATUS",
-    action: "UPDATED",
+    tkh_history_type: "STATUS",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "daniel_kim",
-    action_no: null,
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: null,
 
-    from_value: "Working",
-    to_value: "Closed",
+    tkh_from_value: "Working",
+    tkh_to_value: "Closed",
 
-    metadata: {
+    tkh_metadata: {
       reason:
         "Duplicate of the same portal performance incident already tracked in SP-2026-0005",
       note: "Closed as merged child ticket",
     },
 
-    created_at: "2026-06-02T07:12:52Z",
+    tkh_created_at: "2026-06-02T07:12:52Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 8,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 8,
 
-    type: "TICKET",
-    action: "TICKET_MERGED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "TICKET_MERGED",
 
-    actor_id: "daniel_kim",
-    action_no: "3",
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: "3",
 
-    created_at: "2026-06-02T07:13:18Z",
+    tkh_created_at: "2026-06-02T07:13:18Z",
   },
 ];

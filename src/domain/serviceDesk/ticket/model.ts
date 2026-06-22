@@ -40,6 +40,9 @@ interface TicketMetrics {
 
   lastCommentAt?: ISODateString;
   lastCommenterEmail?: string;
+  lastUserActivityAt?: ISODateString;
+  lastUserActivityEmail?: string;
+  closedAt?: ISODateString;
 }
 
 /**
@@ -61,6 +64,7 @@ interface TicketViewState {
  */
 interface TicketScopeContext {
   scope: CategoryScope;
+  categoryParentId?: string;
 }
 
 /**
@@ -89,6 +93,7 @@ interface TicketContent {
  */
 interface TicketRelation {
   mergedIntoTicketId?: string | null;
+  mergedIntoTicketNo?: string | null;
 }
 
 /**
@@ -104,6 +109,8 @@ export interface TicketSummary
     TicketScopeContext,
     TicketRelation {
   categoryName: LocalizedText;
+  categoryId?: string;
+  approvalStepId?: string;
   approvalStepName?: string;
 
   subject: string;

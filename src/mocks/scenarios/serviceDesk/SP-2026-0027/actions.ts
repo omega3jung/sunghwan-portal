@@ -1,3 +1,3 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import { TicketActionMockInput } from "../types";
 
-export const actions: DbTicketAction[] = [];
+export const actions: TicketActionMockInput[] = [];

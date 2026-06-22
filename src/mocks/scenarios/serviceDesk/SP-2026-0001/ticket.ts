@@ -1,29 +1,36 @@
 import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
-  id: "6b4f118e-16ef-4ab9-94f5-2e00b4c09d7b",
-  ticket_number: "SP-2026-0001",
-  created_at: "2026-05-26T22:44:33Z",
-  updated_at: "2026-05-27T14:38:25Z",
-  requester_id: "liam_williams",
-  status: "Resolved",
-  priority: "medium",
-  risk_level: "medium",
-  assignee_id: ["evan_seo"],
-  work_minutes: 60,
-  last_comment_at: "2026-05-27T15:02:13Z",
-  last_commenter_email: "liam.williams@sunghwan-portal.dev",
-  due_at: "2026-06-02T18:00:00Z",
-  owner: false,
-  assigned: false,
-  active: true,
-  scope: "INTERNAL",
-  category_id: "72",
-  approval_step_id: null,
-  subject: "Request to correct a received device ID",
-  content:
+  tk_id: "6b4f118e-16ef-4ab9-94f5-2e00b4c09d7b",
+  tk_ticket_no: "SP-2026-0001",
+  tk_created_at: "2026-05-26T22:44:33Z",
+  tk_updated_at: "2026-05-27T14:38:25Z",
+  tk_requester_username: "liam_williams",
+  tk_status: "Resolved",
+  tk_priority: "medium",
+  tk_risk_level: "medium",
+  tk_assignee_usernames: ["evan_seo"],
+  tk_work_minutes: 60,
+  tka_last_comment_at: "2026-05-27T15:02:13Z",
+  tka_last_comment_email: "liam.williams@sunghwan-portal.dev",
+
+  tka_last_user_activity_at: "2026-05-27T15:02:13Z",
+  tka_last_user_activity_email: "liam.williams@sunghwan-portal.dev",
+  tk_due_at: "2026-06-02T18:00:00Z",
+  tk_active: true,
+  cat_scope: "INTERNAL",
+  cat_id: "72",
+  cat_name: {
+    en: "Data correction request",
+    es: "Solicitud de corrección de datos",
+    fr: "Demande de correction de données",
+    ko: "데이터 수정 요청",
+  },
+  tk_approval_step_id: null,
+  tk_subject: "Request to correct a received device ID",
+  tk_content:
     "Hi, we found that one of the received B4 device IDs is incorrect.<br>Please update the device ID from 84321565 to 84321585.",
-  email: {
+  tk_email: {
     to: ["Evan.Seo@sunghwan-portal.dev", "liam.williams@sunghwan-portal.dev"],
     cc: [
       "olivia.johnson@sunghwan-portal.dev",
@@ -31,6 +38,6 @@ export const ticket: TicketMockInput = {
     ],
     bcc: [],
   },
-  files: [],
-  images: [],
+  tk_files: [],
+  tk_images: [],
 };

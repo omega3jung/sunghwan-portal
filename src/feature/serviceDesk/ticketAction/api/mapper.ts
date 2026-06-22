@@ -13,7 +13,7 @@ export interface DbTicketAction {
 
   action_type: TicketActionType;
   content: string;
-  owner_id: string;
+  owner_username: string;
 
   created_at: ISODateString;
   updated_at: ISODateString | null;
@@ -32,7 +32,7 @@ export const camelTicketActionMapper: ArrayMapper<
     actionNo: item.action_no,
     actionType: item.action_type,
     content: item.content,
-    ownerUsername: item.owner_id,
+    ownerUsername: item.owner_username,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
     active: item.active,
@@ -50,7 +50,7 @@ export const snakeTicketActionMapper: ArrayMapper<
     action_no: item.actionNo,
     action_type: item.actionType,
     content: item.content,
-    owner_id: item.ownerUsername,
+    owner_username: item.ownerUsername,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
     active: item.active,

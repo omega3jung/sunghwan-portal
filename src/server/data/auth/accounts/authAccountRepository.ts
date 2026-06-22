@@ -15,7 +15,7 @@ const FIND_LOGIN_AUTH_USER_QUERY = `
     e_name,
     e_email,
     e_company_id
-  from auth_login_user_view
+  from vw_auth_login_user
   where aa_username = $1
   limit 1
 `;
@@ -50,7 +50,7 @@ const FIND_IMPERSONATION_TARGET_QUERY = `
     e_name,
     e_email,
     e_company_id
-  from auth_login_user_view
+  from vw_auth_login_user
   where e_username = $1
   limit 1
 `;

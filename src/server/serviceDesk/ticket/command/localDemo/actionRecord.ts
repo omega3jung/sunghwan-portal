@@ -20,7 +20,7 @@ export const createTicketAction = ({
 
   action_type: content.actionType,
   content: content.content,
-  owner_id: employeeUserName,
+  owner_username: employeeUserName,
 
   created_at: createdAt,
   updated_at: null,

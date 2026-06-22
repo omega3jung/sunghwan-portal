@@ -10,7 +10,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 export interface DbTicketWorkSession {
   ticket_id: string;
   work_session_no: number;
-  assignee_id: string;
+  assignee_username: string;
 
   start_at: ISODateString;
   end_at: ISODateString | null;
@@ -29,7 +29,7 @@ export const camelTicketWorkSessionMapper: ArrayMapper<
   return data.map((item) => ({
     ticketId: item.ticket_id,
     workSessionNo: item.work_session_no,
-    assigneeUsername: item.assignee_id,
+    assigneeUsername: item.assignee_username,
     startAt: item.start_at,
     endAt: item.end_at,
     durationMinutes: item.duration_minutes,
@@ -46,7 +46,7 @@ export const snakeTicketWorkSessionMapper: ArrayMapper<
   return data.map((item) => ({
     ticket_id: item.ticketId,
     work_session_no: item.workSessionNo,
-    assignee_id: item.assigneeUsername,
+    assignee_username: item.assigneeUsername,
     start_at: item.startAt,
     end_at: item.endAt,
     duration_minutes: item.durationMinutes,

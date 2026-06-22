@@ -16,11 +16,15 @@ const buildHistoryBase = ({
   isInternal = false,
 }: LocalActionRuntimeContext): Pick<
   DbTicketHistory,
-  "ticket_id" | "history_no" | "actor_id" | "action_no" | "created_at"
+  | "ticket_id"
+  | "history_no"
+  | "actor_username"
+  | "action_no"
+  | "created_at"
 > => ({
   ticket_id: ticketId,
   history_no: getMaxHistoryNo(ticketId, isInternal),
-  actor_id: employeeUserName,
+  actor_username: employeeUserName,
   action_no: actionNo.toString(),
   created_at: createdAt,
 });

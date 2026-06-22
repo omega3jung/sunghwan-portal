@@ -4,6 +4,9 @@
  * ex) ticket created = "TICKET", "CREATED"
  * ex) comment updated = "COMMENT", "UPDATED"
  * ex) approval declined = "APPROVAL", "APPROVAL_DECLINED"
+ * ex) ticket resolved = "TICKET", "UPDATED", from_value = "Working", to_value = "Resolved"
+ * ex) system closed = "SYSTEM", "UPDATED", to_value = "Closed"
+ * ex) ticket reopened = "TICKET", "UPDATED", from_value = "Resolved", to_value = "Reopened"
  */
 export type HistoryType =
   | "TICKET"
@@ -23,4 +26,5 @@ export type TicketHistoryAction =
   | "TICKET_REJECTED"
   | "TICKET_MERGED"
   | "APPROVAL_REQUESTED"
-  | "APPROVAL_APPROVED";
+  | "APPROVAL_APPROVED"
+  | "APPROVAL_DECLINED";

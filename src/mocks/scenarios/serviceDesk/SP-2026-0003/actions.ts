@@ -1,70 +1,73 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Hello, Liam.<br>Please note that this request may take up to 3 days based on the SLA.<br>We need to check the printer setup and validate the label output.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-27T01:23:18Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T01:23:18Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
 
-    action_type: "COMMENT",
-    content: "Got it. Just let me know after you finished",
-    owner_id: "liam_williams",
+    tka_action_type: "COMMENT",
+    tka_content: "Got it. Just let me know after you finished",
+    tka_owner_username: "liam_williams",
 
-    created_at: "2026-05-27T01:40:42Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T01:40:42Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Hello. Mason Kwon, Could you set a printer to repair team and check it printing correctly?<br>I finished set this barcode up to system and checked it's printing out through PDF file.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-30T01:12:20Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-30T01:12:20Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 4,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
 
-    action_type: "NOTE",
-    content:
+    tka_action_type: "NOTE",
+    tka_content:
       "Hello.<br><br>The barcode itself is correct, but the label width is too small,<br>causing the right side to be cut off during printing.<br><br>I have ordered wider labels and will update once received.",
-    owner_id: "mason_kwon",
+    tka_owner_username: "mason_kwon",
 
-    created_at: "2026-05-30T01:48:10Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-30T01:48:10Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [
+    tka_files: [],
+    tka_images: [
       {
         index: 1,
         type: "image",

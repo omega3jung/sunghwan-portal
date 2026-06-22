@@ -35,17 +35,21 @@ export interface DbTicketSummary {
   created_at: ISODateString;
   updated_at: ISODateString | null;
 
-  requester_id: string;
+  requester_username: string;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
-  assignee_id: string[];
+  assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
+  merged_into_ticket_no?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
+  last_user_activity_at: ISODateString | null;
+  last_user_activity_email: string | null;
+  closed_at?: ISODateString | null;
   work_minutes: number;
 
   due_at: ISODateString;
@@ -57,8 +61,11 @@ export interface DbTicketSummary {
   active: boolean;
 
   scope: CategoryScope;
+  category_id?: string;
   category_name: LocalizedText;
-  approval_step_name: string | null;
+  category_parent_id?: string | null;
+  approval_step_id?: string | null;
+  approval_step_name?: string | null;
 
   subject: string;
   age: number;
@@ -71,17 +78,21 @@ export interface DbTicketDetail {
   created_at: ISODateString;
   updated_at: ISODateString | null;
 
-  requester_id: string;
+  requester_username: string;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
-  assignee_id: string[];
+  assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
+  merged_into_ticket_no?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
+  last_user_activity_at: ISODateString | null;
+  last_user_activity_email: string | null;
+  closed_at?: ISODateString | null;
   work_minutes: number;
 
   due_at: ISODateString;
@@ -95,6 +106,7 @@ export interface DbTicketDetail {
   scope: CategoryScope;
   category_id: string;
   category_name: LocalizedText;
+  category_parent_id?: string | null;
   approval_step_id: string | null;
 
   subject: string;

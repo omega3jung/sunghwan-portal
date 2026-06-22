@@ -96,7 +96,7 @@
   "detailAside": {
     "recipientsTitle": "수신자",
     "unassigned": "미할당",
-    "ticketId": "티켓 ID",
+    "ticketNo": "티켓 번호",
     "currentUserBadge": "나",
     "assignedBadge": "할당됨"
   },

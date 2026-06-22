@@ -164,7 +164,7 @@ export async function POST(
     const workSession: DbTicketWorkSession = {
       ticket_id: ticketId,
       work_session_no: getNextWorkSessionNo(ticketId),
-      assignee_id: employeeUserName,
+      assignee_username: employeeUserName,
       start_at: payload.startAt ?? createdAt,
       end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
       duration_minutes:
@@ -192,7 +192,7 @@ export async function POST(
         history_no: getMaxHistoryNo(ticketId, isInternal),
         type: "STATUS",
         action: "UPDATED",
-        actor_id: employeeUserName,
+        actor_username: employeeUserName,
         action_no: null,
         from_value: ticket.status,
         to_value: nextStatus,

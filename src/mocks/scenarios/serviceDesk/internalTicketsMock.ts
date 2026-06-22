@@ -1,5 +1,4 @@
 ﻿import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
-import { internalCategoryMock } from "@/mocks/domain/serviceDesk/categories";
 
 import { TICKET_2026_1 } from "./SP-2026-0001";
 import { TICKET_2026_2 } from "./SP-2026-0002";
@@ -34,48 +33,6 @@ import { TICKET_2026_36 } from "./SP-2026-0036";
 import { TICKET_2026_37 } from "./SP-2026-0037";
 import { TICKET_2026_38 } from "./SP-2026-0038";
 import { TicketMockInput } from "./types";
-
-type CategorySnapshot = Pick<DbTicketDetail, "category_id" | "category_name">;
-
-const serviceDeskCategoryMocks = internalCategoryMock;
-
-const resolveServiceDeskCategorySnapshot = (
-  categoryId: string,
-): CategorySnapshot => {
-  const targetCategoryId = Number(categoryId);
-
-  for (const category of serviceDeskCategoryMocks) {
-    if (category.category_id === targetCategoryId) {
-      return {
-        category_id: category.category_id.toString(),
-        category_name: category.category_name,
-      };
-    }
-
-    const subCategory = category.sub_category.find(
-      (item) => item.category_id === targetCategoryId,
-    );
-
-    if (subCategory) {
-      return {
-        category_id: subCategory.category_id.toString(),
-        category_name: subCategory.category_name,
-      };
-    }
-  }
-
-  throw new Error(`Service Desk category not found: ${categoryId}`);
-};
-
-const createTicketMock = (ticket: TicketMockInput): DbTicketDetail => {
-  const category = resolveServiceDeskCategorySnapshot(ticket.category_id);
-
-  return {
-    ...ticket,
-    category_id: category.category_id,
-    category_name: category.category_name,
-  };
-};
 
 const internalTicketMockInputs: TicketMockInput[] = [
   TICKET_2026_1.ticket,
@@ -112,5 +69,37 @@ const internalTicketMockInputs: TicketMockInput[] = [
   TICKET_2026_38.ticket,
 ];
 
+const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => ({
+  id: ticket.tk_id,
+  ticket_number: ticket.tk_ticket_no,
+  created_at: ticket.tk_created_at,
+  updated_at: ticket.tk_updated_at,
+  requester_username: ticket.tk_requester_username,
+  status: ticket.tk_status,
+  close_reason: ticket.tk_close_reason,
+  priority: ticket.tk_priority,
+  risk_level: ticket.tk_risk_level,
+  assignee_usernames: ticket.tk_assignee_usernames,
+  merged_into_ticket_id: ticket.tk_merged_into_ticket_id,
+  last_comment_at: ticket.tka_last_comment_at,
+  last_commenter_email: ticket.tka_last_comment_email,
+  last_user_activity_at: ticket.tka_last_user_activity_at,
+  last_user_activity_email: ticket.tka_last_user_activity_email,
+  work_minutes: ticket.tk_work_minutes,
+  due_at: ticket.tk_due_at,
+  owner: false,
+  assigned: false,
+  active: ticket.tk_active,
+  scope: ticket.cat_scope,
+  category_id: ticket.cat_id,
+  category_name: ticket.cat_name,
+  approval_step_id: ticket.tk_approval_step_id,
+  subject: ticket.tk_subject,
+  content: ticket.tk_content,
+  email: ticket.tk_email,
+  files: ticket.tk_files,
+  images: ticket.tk_images,
+});
+
 export const internalTicketsMock: DbTicketDetail[] =
-  internalTicketMockInputs.map(createTicketMock);
+  internalTicketMockInputs.map(toDbTicketDetail);

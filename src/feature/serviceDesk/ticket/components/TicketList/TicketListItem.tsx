@@ -31,7 +31,9 @@ export const TicketListItem = ({
   onClick,
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
-  const requester = users.find((user) => user.value === ticket.requesterUsername);
+  const requester = users.find(
+    (user) => user.value === ticket.requesterUsername,
+  );
   const requesterName =
     requester?.label ||
     t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
@@ -58,7 +60,9 @@ export const TicketListItem = ({
       <div className="flex items-start justify-between">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-primary">#{ticket.id}</span>
+            <span className="text-sm font-bold text-primary">
+              #{ticket.ticketNumber}
+            </span>
             <span className="truncate font-semibold">{ticket.subject}</span>
           </div>
 
