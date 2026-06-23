@@ -5,10 +5,8 @@
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
-  Building,
   CalendarCheck,
   CalendarDays,
-  ChartPie,
   ChevronDown,
   FlagTriangleRight,
   RefreshCw,
@@ -61,24 +59,11 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 
 type SortOrder = "asc" | "desc";
 type SortOption = "ticketNumber" | "createdAt" | "dueAt" | "priority";
-type ViewOption = "portal" | "internal" | "insights";
 
 type OptionItem<T> = {
   value: T;
   icon: JSX.Element;
 };
-
-const viewOption: OptionItem<ViewOption>[] = [
-  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
-  {
-    value: "internal",
-    icon: <Building className="h-4 w-4" />,
-  },
-  {
-    value: "insights",
-    icon: <ChartPie className="h-4 w-4" />,
-  },
-];
 
 const sortOptions: OptionItem<SortOption>[] = [
   {
@@ -124,7 +109,6 @@ export default function ServiceDeskPage() {
   );
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<SortOrder>("desc");
-  const [scope, setScope] = useState<ViewOption>("internal");
   const [sort, setSort] = useState<SortOption>("ticketNumber");
 
   const {
@@ -209,16 +193,6 @@ export default function ServiceDeskPage() {
     setPage(1);
   };
 
-  const handlePageOptionChange = (nextSort: ViewOption) => {
-    if (nextSort === "insights") {
-      const href = "/service-desk/insights";
-      startRouteLoadingForHref(href);
-      router.push(href);
-    }
-    setScope(nextSort);
-    setPage(1);
-  };
-
   const handleSortChange = (nextSort: SortOption) => {
     setSort(nextSort);
     setPage(1);
@@ -247,35 +221,7 @@ export default function ServiceDeskPage() {
 
         <div className="w-full lg:w-auto">
           <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
-            {/* row 1: view selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full min-w-0 justify-end">
-                  <span className="truncate">{t(`viewOption.${scope}`)}</span>
-                  <ChevronDown className="transition-transform" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
-                  {viewOption.map((option) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={option.value}
-                        className={checkboxItemRightCheckClass}
-                        checked={option.value === scope}
-                        onClick={() => handlePageOptionChange(option.value)}
-                      >
-                        {option.icon}
-                        {t(`viewOption.${option.value}`)}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* row 1: sort + order */}
+            {/* sort + order */}
             <ButtonGroup className="w-full">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -325,7 +271,7 @@ export default function ServiceDeskPage() {
               </Button>
             </ButtonGroup>
 
-            {/* row 2: refresh */}
+            {/* refresh */}
             <Button
               className="h-9 w-full min-w-[2.5rem] gap-1.5 px-2.5 lg:w-auto"
               variant="softPrimary"
@@ -337,7 +283,7 @@ export default function ServiceDeskPage() {
               </span>
             </Button>
 
-            {/* row 2: search criteria */}
+            {/* search criteria */}
             <TicketSearchCriteria
               trigger={
                 <Button
@@ -354,7 +300,7 @@ export default function ServiceDeskPage() {
               onSubmit={handleSearchSubmit}
             />
 
-            {/* row 3: create ticket */}
+            {/* create ticket */}
             <CreateTicketDialog
               categories={categories}
               users={users}

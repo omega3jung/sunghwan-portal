@@ -328,12 +328,6 @@
   "ticketFormContext": {
     "missingProvider": "useTicketFormContext must be used inside provider."
   },
-  "viewOption": {
-    "title": "View",
-    "portal": "Portal",
-    "internal": "Internal",
-    "insights": "Insights"
-  },
   "api": {
     "common": {
       "notFound": "Not found."

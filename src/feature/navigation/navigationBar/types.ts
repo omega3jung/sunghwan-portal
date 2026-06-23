@@ -16,6 +16,14 @@ export type NavigationBreadcrumbItem = {
   label: ReactNode;
   href?: string;
   icon?: ReactElement<LucideProps>;
+  dropdownItems?: NavigationBreadcrumbDropdownItem[];
+};
+
+export type NavigationBreadcrumbDropdownItem = {
+  id: number;
+  label: ReactNode;
+  href: string;
+  disabled?: boolean;
 };
 
 export type NavigationBarProps = {

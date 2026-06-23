@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { useLeftMenuQuery } from "@/feature/navigation/leftMenu/api/queries";
 import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { useNavigationBarContext } from "../context/NavigationBarContext";
+import { useNavigationBreadcrumbs } from "../hooks/useNavigationBreadcrumbs";
 import type { NavigationBarProps } from "../types";
 import { buildBreadcrumbItems } from "../utils/buildBreadcrumbItems";
 import { AppBreadcrumb } from "./AppBreadcrumb";
@@ -23,6 +25,7 @@ import { LinksBar } from "./LinksBar";
 export function NavigationBar(props: NavigationBarProps) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar();
   const { data: currentSession } = useCurrentSession();
+  const { data: leftMenu, isSuccess: isLeftMenuSuccess } = useLeftMenuQuery();
   const { t } = useTranslation(NS.common);
   const { currentLabel, pathname: currentLabelPathname } =
     useNavigationBarContext();
@@ -41,21 +44,14 @@ export function NavigationBar(props: NavigationBarProps) {
     [homeLabel, pathname, props.breadcrumbs, props.title],
   );
 
-  const visibleBreadcrumbItems = useMemo(() => {
-    if (
-      currentLabel == null ||
-      currentLabelPathname !== pathname ||
-      breadcrumbItems.length === 0
-    ) {
-      return breadcrumbItems;
-    }
-
-    return breadcrumbItems.map((item, index) =>
-      index === breadcrumbItems.length - 1
-        ? { ...item, label: currentLabel }
-        : item,
-    );
-  }, [breadcrumbItems, currentLabel, currentLabelPathname, pathname]);
+  const visibleBreadcrumbItems = useNavigationBreadcrumbs({
+    currentLabel,
+    currentLabelPathname,
+    enabled: props.breadcrumbs === undefined && isLeftMenuSuccess,
+    fallbackItems: breadcrumbItems,
+    leftMenu,
+    pathname,
+  });
 
   const openSidebar = () => {
     if (isMobile) {

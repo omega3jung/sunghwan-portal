@@ -328,12 +328,6 @@
   "ticketFormContext": {
     "missingProvider": "useTicketFormContext는 provider 내부에서 사용되어야 합니다."
   },
-  "viewOption": {
-    "title": "보기",
-    "portal": "포털",
-    "internal": "내부",
-    "insights": "인사이트"
-  },
   "api": {
     "common": {
       "notFound": "찾을 수 없습니다."

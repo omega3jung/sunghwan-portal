@@ -2,8 +2,6 @@
 
 import {
   BarChart3,
-  Building,
-  ChartPie,
   ChevronDown,
   EyeOff,
   LayoutGrid,
@@ -73,7 +71,6 @@ const INSIGHTS_SORT = "ticketNumber";
 const INSIGHTS_ORDER = "desc";
 const DEFAULT_INSIGHTS_PERIOD: DateRangePreset = "last_3month";
 
-type ViewOption = "portal" | "internal" | "insights";
 type ChartViewMode = "full" | "compact" | "hidden";
 type CriteriaPeriodRange =
   TicketSearchCriteriaFormValues["period"]["dateRange"];
@@ -83,16 +80,6 @@ type OptionItem<T> = {
   icon: JSX.Element;
 };
 
-const viewOption: OptionItem<ViewOption>[] = [
-  {
-    value: "internal",
-    icon: <Building className="h-4 w-4" />,
-  },
-  {
-    value: "insights",
-    icon: <ChartPie className="h-4 w-4" />,
-  },
-];
 const chartViewOption: OptionItem<ChartViewMode>[] = [
   {
     value: "full",
@@ -216,7 +203,6 @@ export default function ServiceDeskInsightsPage() {
   const [criteria, setCriteria] = useState<TicketSearchCriteriaFormValues>(
     ticketSearchCriteriaFormDefaultValues,
   );
-  const [scope, setScope] = useState<ViewOption>("insights");
   const [chartFilter, setChartFilter] = useState<ChartFilter>(null);
   const [chartViewMode, setChartViewMode] = useState<ChartViewMode>("full");
   const [pickerRange, setPickerRange] = useState<DateRange | undefined>(
@@ -385,20 +371,6 @@ export default function ServiceDeskInsightsPage() {
     }
   }, [criteria.period.dateRange, currentPeriodType]);
 
-  const handlePageOptionChange = (nextScope: ViewOption) => {
-    if (nextScope === "internal") {
-      const href = "/service-desk";
-      startRouteLoadingForHref(href);
-      router.push(href);
-      return;
-    }
-
-    const href = "/service-desk/insights";
-    startRouteLoadingForHref(href);
-    router.push(href);
-    setScope(nextScope);
-  };
-
   const handleTicketSelected = (ticketId: string) => {
     const href = `/service-desk/${ticketId}`;
     startRouteLoadingForHref(href);
@@ -487,33 +459,6 @@ export default function ServiceDeskInsightsPage() {
         </div>
 
         <div className="flex w-full flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="min-w-28 flex-1 sm:flex-none">
-                <span className="truncate">{t(`viewOption.${scope}`)}</span>
-                <ChevronDown className="transition-transform" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-40">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
-                {viewOption.map((option) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={option.value}
-                      className={checkboxItemRightCheckClass}
-                      checked={option.value === scope}
-                      onClick={() => handlePageOptionChange(option.value)}
-                    >
-                      {option.icon}
-                      {t(`viewOption.${option.value}`)}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <Button
             className="h-9.5 shrink-0 px-2.5"
             variant="softPrimary"

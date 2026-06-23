@@ -12,6 +12,7 @@ import {
 import { cn } from "@/shared/utils/presentation";
 
 import type { NavigationBreadcrumbItem } from "../types";
+import { BreadcrumbDropdown } from "./BreadcrumbDropdown";
 
 type AppBreadcrumbProps = {
   items: NavigationBreadcrumbItem[];
@@ -43,7 +44,7 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
                   "truncate",
                   isCurrentPage
                     ? "font-semibold text-foreground"
-                    : "font-medium text-muted-foreground",
+                    : "font-medium text-muted-foreground group-hover:text-foreground",
                 )}
               >
                 {item.label}
@@ -54,7 +55,13 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
           return (
             <Fragment key={index}>
               <BreadcrumbItem className="min-w-0">
-                {isCurrentPage ? (
+                {!!item.dropdownItems?.length ? (
+                  <BreadcrumbDropdown
+                    isCurrentPage={isCurrentPage}
+                    items={item.dropdownItems}
+                    label={content}
+                  />
+                ) : isCurrentPage ? (
                   <BreadcrumbPage className="flex min-w-0 items-center gap-1.5">
                     {content}
                   </BreadcrumbPage>
@@ -66,7 +73,7 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
                   <BreadcrumbLink asChild>
                     <Link
                       href={item.href}
-                      className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-foreground"
+                      className="group flex min-w-0 items-center gap-1.5 transition-colors hover:text-foreground"
                     >
                       {content}
                     </Link>
