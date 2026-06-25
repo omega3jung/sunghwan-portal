@@ -1,4 +1,4 @@
-﻿import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
+import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,

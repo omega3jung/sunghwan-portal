@@ -14,7 +14,6 @@ import { DbParams, type SortDirection } from "@/shared/types";
 import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
 import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
-import { serviceDeskTicketDraftRepo, useTicketDraftRepoContext } from "./repo";
 
 export const useServiceDeskTicketListQuery = (params: DbParams) => {
   const { data: currentSession } = useCurrentSession();
@@ -83,22 +82,6 @@ export const useServiceDeskTicketQuery = (id: string | number) => {
     queryKey: ticketQueryKeys.detail(id),
     queryFn: () => serviceDeskTicketApi.get(String(id)),
     enabled: !!id && !!dataScope,
-    ...ticketQueryOptions,
-  });
-};
-
-export const useServiceDeskTicketDraftQuery = () => {
-  const context = useTicketDraftRepoContext();
-
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
-
-  return useQuery({
-    queryKey: ticketQueryKeys.draft(context),
-    queryFn: () => serviceDeskTicketDraftRepo.get(context),
-    enabled: context.isReady,
     ...ticketQueryOptions,
   });
 };

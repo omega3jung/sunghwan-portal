@@ -1,4 +1,3 @@
-import { DataScope } from "@/domain/auth";
 import {
   SERVICE_DESK_KEY,
   SERVICE_DESK_TICKET_KEY,
@@ -19,13 +18,4 @@ export const ticketQueryKeys = {
 
   details: () => [...ticketQueryKeys.all, "detail"] as const,
   detail: (id: string | number) => [...ticketQueryKeys.details(), id] as const,
-
-  drafts: () => [...ticketQueryKeys.all, "draft"] as const,
-  draft: ({
-    userId,
-    dataScope,
-  }: {
-    userId: string | null;
-    dataScope: DataScope;
-  }) => [...ticketQueryKeys.drafts(), dataScope, userId] as const,
 };

@@ -35,11 +35,9 @@ import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
-import {
-  CreateTicketDialog,
-  TicketList,
-} from "@/feature/serviceDesk/ticket/components";
+import { TicketList } from "@/feature/serviceDesk/ticket/components";
 import { TicketListPagination } from "@/feature/serviceDesk/ticket/components/TicketList/TicketListPagination";
+import { CreateTicketDialog } from "@/feature/serviceDesk/ticketDraft/client";
 import {
   TicketSearchCriteria,
   ticketSearchCriteriaFormDefaultValues,

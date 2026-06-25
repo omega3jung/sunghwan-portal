@@ -20,7 +20,7 @@ export const InfoStep = () => {
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
   const bodyValue = form.watch("body");
-  const subCategoryValue = form.watch("subCategory");
+  const categoryValue = form.watch("category");
   const toolbarLabels = useMemo(() => getRichEditorLabels(t), [t]);
 
   const requestTemplate = useMemo(() => {
@@ -28,13 +28,13 @@ export const InfoStep = () => {
       (category) => category.subCategories,
     );
     const selected = subCategories.find(
-      (subCat) => subCat.id === subCategoryValue,
+      (subCat) => subCat.id === categoryValue,
     );
 
     return selected?.requestTemplate !== undefined
       ? tLocal(selected.requestTemplate)
       : "";
-  }, [categories, subCategoryValue, tLocal]);
+  }, [categories, categoryValue, tLocal]);
 
   return (
     <>

@@ -26,14 +26,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/constants";
+import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks/useLocalizedValue";
 import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
-import { MAX_EMAIL_COUNT } from "../../constants";
 import { useTicketFormContext } from "../../context/TicketFormContext";
-import type { TicketFormValues } from "../../forms";
 
 const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
 type EmailFieldName = (typeof EMAIL_FIELDS)[number];
@@ -64,7 +64,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
   const [mindueAt, setMindueAt] = useState<Date>(new Date());
 
   const isViewMode = mode === "view";
-  const subCategoryValue = form.watch("subCategory");
+  const categoryValue = form.watch("category");
   const dueAtValue = form.watch("dueAt");
   const subjectValue = form.watch("subject");
 
@@ -106,11 +106,11 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
   );
 
   const categoryDisplayValue = useMemo(() => {
-    if (!subCategoryValue) {
+    if (!categoryValue) {
       return "-";
     }
 
-    const { parentCategory } = resolveCategoryMeta(subCategoryValue);
+    const { parentCategory } = resolveCategoryMeta(categoryValue);
     const matchedParent = categories.find(
       (category) => category.id === parentCategory?.id,
     );
@@ -119,11 +119,10 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     const selectedLabel =
       categoryData
         .flatMap((group) => group.subCategories)
-        .find((sub) => sub.value === subCategoryValue)?.label ??
-      subCategoryValue;
+        .find((sub) => sub.value === categoryValue)?.label ?? categoryValue;
 
     return parentLabel ? `${parentLabel} / ${selectedLabel}` : selectedLabel;
-  }, [categories, categoryData, resolveCategoryMeta, subCategoryValue, tLocal]);
+  }, [categories, categoryData, categoryValue, resolveCategoryMeta, tLocal]);
 
   const dueAtDisplayValue = dueAtValue ? format(dueAtValue, "PPP") : "-";
 
@@ -132,13 +131,13 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
       return;
     }
 
-    const { selected } = resolveCategoryMeta(subCategoryValue);
+    const { selected } = resolveCategoryMeta(categoryValue);
     const nextMindueAt = addDays(startOfToday(), selected?.defaultSlaDays ?? 0);
 
     setMindueAt((prev) =>
       prev.getTime() === nextMindueAt.getTime() ? prev : nextMindueAt,
     );
-  }, [categories, isViewMode, resolveCategoryMeta, subCategoryValue]);
+  }, [categories, categoryValue, isViewMode, resolveCategoryMeta]);
 
   const handleCategoryChange = (
     subCatId: string,
@@ -158,7 +157,6 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
     const riskLevel =
       selected?.defaultRiskLevel ?? parentCategory?.defaultRiskLevel ?? null;
 
-    form.setValue("mainCategory", parentCategory?.id);
     form.setValue("dueAt", addDays(endOfToday(), slaDays));
     form.setValue("priority", priority);
     form.setValue("riskLevel", riskLevel);
@@ -179,7 +177,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
             ) : (
               <Controller
                 control={form.control}
-                name="subCategory"
+                name="category"
                 render={({ field }) => (
                   <Select
                     value={field.value ?? undefined}

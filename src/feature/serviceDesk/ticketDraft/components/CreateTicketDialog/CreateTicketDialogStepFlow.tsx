@@ -7,19 +7,19 @@ import { Stepper } from "@/components/custom/Stepper";
 import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation";
 
-type TicketFormDialogStepFlowProps = {
+type CreateTicketDialogStepFlowProps = {
   currentStep: number;
   onStepChange: (step: number) => void;
   createSteps: { label: string }[];
   afterSteps: { label: string }[];
 };
 
-export const TicketFormDialogStepFlow = ({
+export const CreateTicketDialogStepFlow = ({
   currentStep,
   onStepChange,
   createSteps,
   afterSteps,
-}: TicketFormDialogStepFlowProps) => {
+}: CreateTicketDialogStepFlowProps) => {
   const { t } = useTranslation(NS.serviceDesk);
 
   const stepGridLayout = useMemo(() => {

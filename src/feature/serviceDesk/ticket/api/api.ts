@@ -7,6 +7,12 @@ import { DbParams, OResponse } from "@/shared/types/api";
 import { TicketSearchRequest } from "./types";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;
+type TicketSearchQuery = {
+  filter?: string;
+  sort?: string;
+  page: number;
+  pageSize: number;
+};
 
 // feature-scoped API.
 export const serviceDeskTicketApi = {
@@ -23,9 +29,12 @@ export const serviceDeskTicketApi = {
   search: async (
     request: TicketSearchRequest,
   ): Promise<PaginatedSearchResponse<TicketSummary>> => {
-    const res = await client.api.post<PaginatedSearchResponse<TicketSummary>>(
+    const res = await client.api.get<
+      PaginatedSearchResponse<TicketSummary>,
+      TicketSearchQuery
+    >(
       "/api/service-desk/tickets/search",
-      request,
+      { params: toTicketSearchQuery(request) },
     );
 
     return res.data;
@@ -73,38 +82,13 @@ export const serviceDeskTicketApi = {
     await client.api.delete(`/api/service-desk/tickets/${id}`);
     return null;
   },
-
-  draft: {
-    get: async (userId?: string | null): Promise<TicketFormValues | null> => {
-      if (!userId) return null;
-
-      const res = await client.api.get<TicketFormValues>(
-        `/api/service-desk/tickets/draft`,
-        { params: { userId } },
-      );
-      return res.data;
-    },
-
-    create: async (data: TicketFormValues): Promise<TicketFormValues> => {
-      const res = await client.api.post<TicketFormValues>(
-        `/api/service-desk/tickets/draft`,
-        data,
-      );
-      return res.data;
-    },
-
-    update: async (data: TicketFormValues): Promise<TicketFormValues> => {
-      const res = await client.api.put<TicketFormValues>(
-        `/api/service-desk/tickets/draft/`,
-        data,
-      );
-      return res.data;
-    },
-
-    // real delete draft data in db.
-    remove: async (): Promise<null> => {
-      await client.api.delete(`/api/service-desk/tickets/draft/`);
-      return null;
-    },
-  },
 };
+
+function toTicketSearchQuery(request: TicketSearchRequest): TicketSearchQuery {
+  return {
+    ...(request.filter ? { filter: JSON.stringify(request.filter) } : {}),
+    ...(request.sort ? { sort: JSON.stringify(request.sort) } : {}),
+    page: request.page,
+    pageSize: request.pageSize,
+  };
+}

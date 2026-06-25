@@ -3,17 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { DeepPartial, UseFormReturn } from "react-hook-form";
 
+import type { TicketDraftFormPayload } from "../api/mapper";
 import {
   useCreateServiceDeskTicketDraft,
-  useRemoveServiceDeskTicketDraft,
+  useDiscardServiceDeskTicketDraft,
   useUpdateServiceDeskTicketDraft,
-} from "../../ticket/api/mutations";
-import type { TicketFormValues } from "../../ticket/forms";
+} from "../api/mutations";
 import { useServiceDeskTicketDraftQuery } from "../api/queries";
 
 type UseTicketDraftOptions = {
   mode: "create" | "update" | "view";
-  form: UseFormReturn<TicketFormValues>;
+  form: UseFormReturn<TicketDraftFormPayload>;
 };
 
 export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
@@ -25,15 +25,18 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
 
   const { mutateAsync: createDraft } = useCreateServiceDeskTicketDraft();
   const { mutateAsync: updateDraft } = useUpdateServiceDeskTicketDraft();
-  const { mutateAsync: deleteDraft } = useRemoveServiceDeskTicketDraft();
+  const { mutateAsync: discardDraft } = useDiscardServiceDeskTicketDraft();
 
-  const hasRequiredTicketContent = (values: DeepPartial<TicketFormValues>) =>
-    values.subject?.length || values.body?.length || values.subCategory;
+  const hasRequiredTicketContent = (
+    values: DeepPartial<TicketDraftFormPayload>,
+  ) => values.subject?.length || values.body?.length || values.category;
 
-  const hasTicketContent = (values: DeepPartial<TicketFormValues>) =>
+  const hasTicketContent = (values: DeepPartial<TicketDraftFormPayload>) =>
     hasRequiredTicketContent(values) || values.attachment?.length;
 
-  const toDraftPayload = (values: TicketFormValues): TicketFormValues => ({
+  const toDraftPayload = (
+    values: TicketDraftFormPayload,
+  ): TicketDraftFormPayload => ({
     ...values,
     attachment: [],
   });
@@ -61,7 +64,7 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
       return updateDraft(
         toDraftPayload({
           id: draftId,
-          ...(rest as Omit<TicketFormValues, "id">),
+          ...(rest as Omit<TicketDraftFormPayload, "id">),
         }),
       );
     } finally {
@@ -77,7 +80,7 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
 
   const removeDraft = async () => {
     if (!ticketDraft && !draftId) return;
-    await deleteDraft();
+    await discardDraft(ticketDraft?.id ?? draftId);
     setDraftId(null);
   };
 

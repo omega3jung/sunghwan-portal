@@ -55,8 +55,7 @@ const ticketDueAtSchema = z.union([z.date(), z.string()]).refine((value) => {
 });
 
 const ticketWriteRequestSchema = z.object({
-  mainCategory: z.string().optional(),
-  subCategory: z.string().optional(),
+  category: z.string().optional(),
   subject: z.string(),
   body: z.string(),
   dueAt: ticketDueAtSchema,
@@ -68,18 +67,18 @@ const ticketWriteRequestSchema = z.object({
 });
 
 export const createTicketSchema = ticketWriteRequestSchema.refine(
-  (value) => Boolean(value.subCategory ?? value.mainCategory),
+  (value) => Boolean(value.category),
   {
     message: "Category is required.",
-    path: ["subCategory"],
+    path: ["category"],
   },
 );
 
 export const updateTicketSchema = ticketWriteRequestSchema.refine(
-  (value) => Boolean(value.subCategory ?? value.mainCategory),
+  (value) => Boolean(value.category),
   {
     message: "Category is required.",
-    path: ["subCategory"],
+    path: ["category"],
   },
 );
 
@@ -106,7 +105,7 @@ export type DbTicketWriteInput = {
   subject: string;
   body: string;
   dueAt: string;
-  priority: string | null;
+  priority: Priority | null;
   riskLevel?: RiskLevel | null;
   email: TicketEmailInput;
   requester: TicketRequesterInput;
@@ -134,7 +133,7 @@ export function toTicketWriteInput(
   }));
 
   const normalized = {
-    category: input.subCategory ?? input.mainCategory,
+    category: input.category,
     subject: input.subject,
     body: input.body,
     dueAt: input.dueAt,

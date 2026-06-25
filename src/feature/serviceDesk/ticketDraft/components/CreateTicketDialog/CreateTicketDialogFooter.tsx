@@ -3,24 +3,23 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
+import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation/classnames";
 
-import { ticketStep } from "../../constants";
-
-type TicketFormDialogFooterProps = {
+type CreateTicketDialogFooterProps = {
   currentStep: number;
   canMoveNext: boolean;
   onBack: () => void;
   onNext: () => void;
 };
 
-export const TicketFormDialogFooter = ({
+export const CreateTicketDialogFooter = ({
   currentStep,
   canMoveNext,
   onBack,
   onNext,
-}: TicketFormDialogFooterProps) => {
+}: CreateTicketDialogFooterProps) => {
   const { t } = useTranslation(NS.serviceDesk);
 
   return (

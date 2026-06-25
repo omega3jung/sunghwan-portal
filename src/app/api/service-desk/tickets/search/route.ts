@@ -17,10 +17,27 @@ import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/ma
 import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { localSearchTickets } from "@/server/serviceDesk/ticket/localDemo";
 
-export async function POST(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-  const currentUserName = await getCurrentEmployeeUserName(request);
+type TicketSearchQuery = {
+  filter?: string;
+  sort?: string;
+  page: number;
+  pageSize: number;
+};
 
+export async function GET(request: NextRequest) {
+  const searchRequest = parseTicketSearchQuery(request.nextUrl.searchParams);
+
+  if (!searchRequest) {
+    return NextResponse.json(
+      { message: "Invalid search query" },
+      { status: 400 },
+    );
+  }
+
+  return handleTicketSearch(request, searchRequest, "GET");
+}
+
+export async function POST(request: NextRequest) {
   let body: TicketSearchRequest;
 
   try {
@@ -31,6 +48,17 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
+  return handleTicketSearch(request, body, "POST");
+}
+
+async function handleTicketSearch(
+  request: NextRequest,
+  body: TicketSearchRequest,
+  method: "GET" | "POST",
+) {
+  const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
 
   if (!isRemote) {
     try {
@@ -64,11 +92,62 @@ export async function POST(request: NextRequest) {
   }
 
   return portalApiJson(request, {
-    method: "POST",
+    method,
     path: "/service-desk/tickets/search",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    body,
+    ...(method === "GET"
+      ? { query: toTicketSearchQuery(body) }
+      : { body }),
     errorMessage: tServiceDeskApi("api.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
+}
+
+function parseTicketSearchQuery(
+  searchParams: URLSearchParams,
+): TicketSearchRequest | null {
+  try {
+    return {
+      filter: parseJsonQueryValue<TicketSearchRequest["filter"]>(
+        searchParams.get("filter"),
+      ),
+      sort: parseJsonQueryValue<TicketSearchRequest["sort"]>(
+        searchParams.get("sort"),
+      ),
+      page: parseNumberQueryValue(searchParams.get("page")) ?? 1,
+      pageSize:
+        parseNumberQueryValue(searchParams.get("pageSize")) ??
+        parseNumberQueryValue(searchParams.get("size")) ??
+        10,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function toTicketSearchQuery(request: TicketSearchRequest): TicketSearchQuery {
+  return {
+    ...(request.filter ? { filter: JSON.stringify(request.filter) } : {}),
+    ...(request.sort ? { sort: JSON.stringify(request.sort) } : {}),
+    page: request.page,
+    pageSize: request.pageSize,
+  };
+}
+
+function parseJsonQueryValue<T>(value: string | null): T | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  return JSON.parse(value) as T;
+}
+
+function parseNumberQueryValue(value: string | null): number | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const parsedValue = Number(value);
+
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
 }

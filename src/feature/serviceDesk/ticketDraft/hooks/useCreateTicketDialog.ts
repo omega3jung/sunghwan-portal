@@ -6,37 +6,41 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { SupportedLanguage } from "@/domain/config";
+import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import {
+  useCreateServiceDeskTicket,
+} from "@/feature/serviceDesk/ticket/api/client";
+import {
+  afterStepData,
+  createStepData,
+  ticketStep,
+} from "@/feature/serviceDesk/ticket/constants";
+import {
+  ticketFormDefaultValues,
+  ticketFormSchema,
+  type TicketFormValues,
+} from "@/feature/serviceDesk/ticket/forms";
+import { useTicketForm } from "@/feature/serviceDesk/ticket/forms/client";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
 import { DbParams } from "@/shared/types";
 
 import { useServiceDeskApprovalStepListQuery } from "../../approvalStep/client";
-import {
-  useCreateServiceDeskTicket,
-  useUpdateServiceDeskTicket,
-} from "../api/mutations";
-import { afterStepData, createStepData, ticketStep } from "../constants";
-import {
-  ticketFormDefaultValues,
-  ticketFormSchema,
-  type TicketFormValues,
-} from "../forms";
-import { useTicketForm } from "../forms/useTicketForm";
 import { useTicketDraft } from "./useTicketDraft";
 
 const TICKET_DRAFT_TOAST_ID = "service-desk-ticket-draft";
 
-type UseTicketFormDialogParams = {
-  mode: "create" | "update" | "view";
+type UseCreateTicketDialogParams = {
   language: SupportedLanguage;
+  categories: MainCategory[];
 };
 
-export const useTicketFormDialog = ({
-  mode,
+export const useCreateTicketDialog = ({
   language,
-}: UseTicketFormDialogParams) => {
+  categories,
+}: UseCreateTicketDialogParams) => {
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
   const { data: currentSession } = useCurrentSession();
@@ -50,9 +54,18 @@ export const useTicketFormDialog = ({
     formState: { isDirty },
   } = ticketForm;
 
-  const selectedCategoryId = ticketForm.watch("mainCategory");
-  const params = useMemo<DbParams | undefined>(() => {
+  const selectedCategoryId = ticketForm.watch("category");
+  const selectedParentCategoryId = useMemo(() => {
     if (!selectedCategoryId) {
+      return undefined;
+    }
+
+    return categories.find((category) =>
+      category.subCategories.some((child) => child.id === selectedCategoryId),
+    )?.id;
+  }, [categories, selectedCategoryId]);
+  const params = useMemo<DbParams | undefined>(() => {
+    if (!selectedParentCategoryId) {
       return undefined;
     }
 
@@ -62,18 +75,17 @@ export const useTicketFormDialog = ({
           {
             field: "id",
             operator: "=",
-            value: selectedCategoryId,
+            value: selectedParentCategoryId,
           },
         ],
       },
     };
-  }, [selectedCategoryId]);
+  }, [selectedParentCategoryId]);
 
   const { data: approvalSettings } =
     useServiceDeskApprovalStepListQuery(params);
   const { mutateAsync: createTicketAsync } = useCreateServiceDeskTicket();
-  const { mutateAsync: updateTicketAsync } = useUpdateServiceDeskTicket();
-  const ticketDraftState = useTicketDraft({ mode, form: ticketForm });
+  const ticketDraftState = useTicketDraft({ mode: "create", form: ticketForm });
   const mutationToast = useMutationToast();
 
   const createInitialTicketFormValues = useCallback(
@@ -118,33 +130,16 @@ export const useTicketFormDialog = ({
 
   const onSubmit = useCallback(
     async (data: TicketFormValues) => {
-      if (mode === "create") {
-        mutationToast(
-          createTicketAsync(data),
-          "save",
-          t("field.ticket", { ns: NS.common }),
-        );
-      }
-
-      if (mode === "update") {
-        mutationToast(
-          updateTicketAsync(data),
-          "update",
-          t("field.ticket", { ns: NS.common }),
-        );
-      }
+      mutationToast(
+        createTicketAsync(data),
+        "save",
+        t("field.ticket", { ns: NS.common }),
+      );
 
       await ticketDraftState.removeDraft();
       setOpen(false);
     },
-    [
-      createTicketAsync,
-      mode,
-      mutationToast,
-      t,
-      ticketDraftState,
-      updateTicketAsync,
-    ],
+    [createTicketAsync, mutationToast, t, ticketDraftState],
   );
 
   const handleClose = useCallback(async () => {
@@ -170,9 +165,9 @@ export const useTicketFormDialog = ({
   const onOpen = useCallback(async () => {
     ticketForm.reset(createInitialTicketFormValues());
     setShouldShowDraftToast(true);
-    setCurrentStep(mode === "view" ? ticketStep.review : ticketStep.info);
+    setCurrentStep(ticketStep.info);
     setOpen(true);
-  }, [createInitialTicketFormValues, mode, ticketForm]);
+  }, [createInitialTicketFormValues, ticketForm]);
 
   const handleOpenChange = useCallback(
     async (value: boolean) => {
@@ -217,7 +212,7 @@ export const useTicketFormDialog = ({
   }, [currentStep, onSubmit, ticketForm]);
 
   const hasRequiredTicketContent = (values: TicketFormValues) =>
-    values.subject?.length && values.body?.length && values.subCategory;
+    values.subject?.length && values.body?.length && values.category;
   const canMoveNext =
     currentStep !== ticketStep.info ||
     !!hasRequiredTicketContent(ticketForm.getValues());
@@ -296,7 +291,6 @@ export const useTicketFormDialog = ({
 
     if (
       !open ||
-      mode !== "create" ||
       !ticketDraft ||
       !shouldShowDraftToast ||
       isDirty
@@ -323,7 +317,6 @@ export const useTicketFormDialog = ({
   }, [
     isDirty,
     loadDraft,
-    mode,
     open,
     shouldShowDraftToast,
     t,

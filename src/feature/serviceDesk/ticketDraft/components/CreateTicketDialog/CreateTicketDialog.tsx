@@ -8,29 +8,28 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { MainCategory } from "@/domain/serviceDesk";
+import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
-import { ticketStep } from "../../constants";
 import { TicketFormProvider } from "../../context/TicketFormContext";
-import { useTicketFormDialog } from "../../hooks/useTicketFormDialog";
+import { useCreateTicketDialog } from "../../hooks/useCreateTicketDialog";
 import { AttachmentStep } from "./AttachmentStep";
+import { CreateTicketDialogFooter } from "./CreateTicketDialogFooter";
+import { CreateTicketDialogHeader } from "./CreateTicketDialogHeader";
+import { CreateTicketDialogStepFlow } from "./CreateTicketDialogStepFlow";
 import { InfoStep } from "./InfoStep";
 import { ReviewStep } from "./ReviewStep";
-import { TicketFormDialogFooter } from "./TicketFormDialogFooter";
-import { TicketFormDialogHeader } from "./TicketFormDialogHeader";
-import { TicketFormDialogStepFlow } from "./TicketFormDialogStepFlow";
 
-type TicketFormDialogProps = {
-  mode?: "create" | "update" | "view";
+type CreateTicketDialogProps = {
   categories: MainCategory[];
   users: ImageValueLabel[];
   language: SupportedLanguage;
   trigger?: React.ReactNode;
 };
 
-export const TicketFormDialog = (props: TicketFormDialogProps) => {
-  const { mode = "create", categories, users, language } = props;
+export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
+  const { categories, users, language } = props;
   const { t } = useTranslation(NS.serviceDesk);
   const {
     open,
@@ -43,9 +42,9 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
     afterSteps,
     moveToBack,
     moveToNext,
-  } = useTicketFormDialog({
-    mode,
+  } = useCreateTicketDialog({
     language,
+    categories,
   });
 
   return (
@@ -69,17 +68,15 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
         onFocusOutside={(event) => event.preventDefault()}
         overlayStyle="dark"
       >
-        <TicketFormDialogHeader mode={mode} />
+        <CreateTicketDialogHeader />
         <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
           <TicketFormProvider value={{ form: ticketForm, categories, users }}>
-            {mode !== "view" && (
-              <TicketFormDialogStepFlow
-                currentStep={currentStep}
-                onStepChange={setCurrentStep}
-                createSteps={createSteps}
-                afterSteps={afterSteps}
-              />
-            )}
+            <CreateTicketDialogStepFlow
+              currentStep={currentStep}
+              onStepChange={setCurrentStep}
+              createSteps={createSteps}
+              afterSteps={afterSteps}
+            />
 
             <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
               {
@@ -100,7 +97,7 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
             </ScrollArea>
           </TicketFormProvider>
         </form>
-        <TicketFormDialogFooter
+        <CreateTicketDialogFooter
           currentStep={currentStep}
           canMoveNext={canMoveNext}
           onBack={moveToBack}
@@ -110,5 +107,3 @@ export const TicketFormDialog = (props: TicketFormDialogProps) => {
     </Dialog>
   );
 };
-
-export const CreateTicketDialog = TicketFormDialog;

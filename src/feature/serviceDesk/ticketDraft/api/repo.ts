@@ -2,9 +2,9 @@
 
 import { DataScope } from "@/domain/auth";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/api";
 
-import type { TicketFormValues } from "../forms";
+import { serviceDeskTicketDraftApi } from "./api";
+import type { TicketDraftFormPayload } from "./mapper";
 
 export type TicketDraftRepoContext = {
   userId: string | null;
@@ -14,7 +14,7 @@ export type TicketDraftRepoContext = {
 
 type LocalTicketDraft = {
   ownerUserId: string | null;
-  form: TicketFormValues;
+  form: TicketDraftFormPayload;
 };
 
 const TICKET_DRAFT_STORAGE_KEY = "sunghwan_portal_ticket_draft";
@@ -33,13 +33,12 @@ export const serviceDeskTicketDraftRepo = {
   async get({
     userId,
     dataScope,
-  }: TicketDraftRepoContext): Promise<TicketFormValues | null> {
-    // local demo.
+  }: TicketDraftRepoContext): Promise<TicketDraftFormPayload | null> {
     if (dataScope === "LOCAL") {
       return ticketDraftLocalStore.get(userId);
     }
 
-    return serviceDeskTicketApi.draft.get(userId);
+    return serviceDeskTicketDraftApi.get();
   },
 
   async create({
@@ -47,14 +46,13 @@ export const serviceDeskTicketDraftRepo = {
     dataScope,
     data,
   }: TicketDraftRepoContext & {
-    data: TicketFormValues;
+    data: TicketDraftFormPayload;
   }) {
-    // local demo.
     if (dataScope === "LOCAL") {
       return ticketDraftLocalStore.set(userId, data);
     }
 
-    return serviceDeskTicketApi.draft.create(data);
+    return serviceDeskTicketDraftApi.create(data);
   },
 
   async update({
@@ -62,36 +60,42 @@ export const serviceDeskTicketDraftRepo = {
     dataScope,
     data,
   }: TicketDraftRepoContext & {
-    data: TicketFormValues;
+    data: TicketDraftFormPayload;
   }) {
-    // local demo.
     if (dataScope === "LOCAL") {
       return ticketDraftLocalStore.set(userId, data);
     }
 
-    return serviceDeskTicketApi.draft.update(data);
+    return serviceDeskTicketDraftApi.update(data);
   },
 
-  async remove({ dataScope }: { dataScope: DataScope }) {
-    // local demo.
+  async discard({
+    dataScope,
+    ticketId,
+  }: {
+    dataScope: DataScope;
+    ticketId?: string | null;
+  }) {
     if (dataScope === "LOCAL") {
       ticketDraftLocalStore.remove();
       return;
     }
 
-    return serviceDeskTicketApi.draft.remove();
+    if (!ticketId) {
+      return;
+    }
+
+    return serviceDeskTicketDraftApi.discard(ticketId);
   },
 };
 
 const ticketDraftLocalStore = {
-  get(userId: string | null): TicketFormValues | null {
+  get(userId: string | null): TicketDraftFormPayload | null {
     const raw = localStorage.getItem(TICKET_DRAFT_STORAGE_KEY);
     const draft = raw ? (JSON.parse(raw) as LocalTicketDraft) : null;
 
     if (!draft) return null;
 
-    // remove other user's draft to keep 1 user - 1 draft policy
-    // with single local draft storage.
     if (draft.ownerUserId !== userId) {
       localStorage.removeItem(TICKET_DRAFT_STORAGE_KEY);
       return null;
@@ -100,7 +104,7 @@ const ticketDraftLocalStore = {
     return draft.form;
   },
 
-  set(userId: string | null, data: TicketFormValues) {
+  set(userId: string | null, data: TicketDraftFormPayload) {
     const draft: LocalTicketDraft = {
       ownerUserId: userId,
       form: data,

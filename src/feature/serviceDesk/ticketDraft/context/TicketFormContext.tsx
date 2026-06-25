@@ -4,10 +4,9 @@ import { createContext, useContext } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { MainCategory } from "@/domain/serviceDesk";
+import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import i18n, { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
-
-import type { TicketFormValues } from "../forms";
 
 type TicketFormContextValue = {
   form: UseFormReturn<TicketFormValues>;

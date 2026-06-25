@@ -1,3 +1,5 @@
+import type { RuleGroupTypeIC } from "react-querybuilder";
+
 import { Priority, RiskLevel } from "@/domain/common";
 import {
   Attach,
@@ -5,7 +7,7 @@ import {
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
-import { ISODateString, LocalizedText } from "@/shared/types";
+import { ISODateString, LocalizedText, SortDirection } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "./ticketRow";
 
@@ -52,4 +54,29 @@ export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
   email: ServiceDeskTicketEmail;
   files: Attach[];
   images: Attach[];
+};
+
+export type TicketSearchSortFieldDto =
+  | "ticketNumber"
+  | "createdAt"
+  | "dueAt"
+  | "priority";
+
+export type TicketSearchSortDto = {
+  field: TicketSearchSortFieldDto;
+  direction: SortDirection;
+};
+
+export type TicketSearchRequestDto = {
+  filter?: RuleGroupTypeIC;
+  sort?: TicketSearchSortDto;
+  page?: number;
+  pageSize?: number;
+};
+
+export type TicketSearchResponseDto = {
+  items: TicketListItemDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 };
