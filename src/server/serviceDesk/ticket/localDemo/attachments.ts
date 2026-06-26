@@ -1,7 +1,12 @@
 import { Attach } from "@/domain/serviceDesk";
-import { TicketAttachmentInput } from "@/feature/serviceDesk/ticket/write";
 
-export function splitAttachments(attachment: TicketAttachmentInput[]) {
+type LegacyTicketAttachmentInput = {
+  name?: string;
+  type?: string;
+  url?: string;
+};
+
+export function splitAttachments(attachment: LegacyTicketAttachmentInput[]) {
   const normalized = attachment.map((item, index) => ({
     name: item.name?.trim() || `attachment-${index + 1}`,
     url: item.url ?? "",

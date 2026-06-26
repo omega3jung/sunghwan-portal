@@ -1,7 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import {
-  Attach,
   CategoryScope,
+  TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
@@ -118,6 +118,6 @@ export interface DbTicketDetail {
     bcc: string[];
   };
 
-  files: Attach[];
-  images: Attach[];
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
 }

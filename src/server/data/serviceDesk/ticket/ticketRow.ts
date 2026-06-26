@@ -1,7 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import {
-  Attach,
   CategoryScope,
+  TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
@@ -48,6 +48,28 @@ export type ServiceDeskTicketViewRow = {
   tk_subject: string;
   tk_content: string;
   tk_email: ServiceDeskTicketEmail;
-  tk_files: Attach[];
-  tk_images: Attach[];
+  tk_files: TicketAttachmentMetadata[];
+  tk_images: TicketAttachmentMetadata[];
 };
+
+export type TicketMutateRowInput = {
+  tk_tenant_id: number | null;
+  tk_category_id: number;
+  tk_approval_step_id: number | null;
+  tk_subject: string;
+  tk_content: string;
+  tk_due_at: ISODateString;
+  tk_priority: Priority;
+  tk_risk_level: RiskLevel;
+  tk_email: ServiceDeskTicketEmail;
+  tk_files: TicketAttachmentMetadata[];
+  tk_images: TicketAttachmentMetadata[];
+};
+
+export type CreateTicketRowInput = TicketMutateRowInput & {
+  tk_ticket_no: string;
+  tk_requester_username: string;
+  tk_status: TicketStatus;
+};
+
+export type UpdateTicketRowInput = TicketMutateRowInput;

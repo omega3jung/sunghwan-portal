@@ -1,5 +1,10 @@
 import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
+import {
+  PrepareTicketAttachmentsInput,
+  PrepareTicketAttachmentsResponse,
+  toTicketMutateRequestPayloadFromFormValues,
+} from "@/feature/serviceDesk/ticket/write";
 import client from "@/lib/api";
 import { PaginatedSearchResponse } from "@/server/shared/types/api";
 import { DbParams, OResponse } from "@/shared/types/api";
@@ -49,18 +54,45 @@ export const serviceDeskTicketApi = {
     return res.data;
   },
 
+  prepareAttachments: async ({
+    body,
+    files,
+  }: PrepareTicketAttachmentsInput): Promise<PrepareTicketAttachmentsResponse> => {
+    const formData = new FormData();
+
+    formData.append("body", body);
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    const res = await client.api.post<PrepareTicketAttachmentsResponse>(
+      `/api/service-desk/tickets/attachments/prepare`,
+      formData,
+    );
+
+    return res.data;
+  },
+
   create: async (data: TicketFormValues): Promise<TicketDetail> => {
+    const prepared = await serviceDeskTicketApi.prepareAttachments({
+      body: data.body,
+      files: data.attachment,
+    });
     const res = await client.api.post<TicketDetail>(
       `/api/service-desk/tickets`,
-      data,
+      toTicketMutateRequestPayloadFromFormValues(data, prepared),
     );
     return res.data;
   },
 
   update: async (data: TicketFormValues): Promise<TicketDetail> => {
+    const prepared = await serviceDeskTicketApi.prepareAttachments({
+      body: data.body,
+      files: data.attachment,
+    });
     const res = await client.api.put<TicketDetail>(
       `/api/service-desk/tickets/${data.id}`,
-      data,
+      toTicketMutateRequestPayloadFromFormValues(data, prepared),
     );
     return res.data;
   },

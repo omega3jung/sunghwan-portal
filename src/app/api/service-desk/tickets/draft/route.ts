@@ -10,11 +10,11 @@ import {
   toCurrentUsernameProxyHeaders,
   tServiceDeskApi,
 } from "@/app/api/service-desk/_shared";
+import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
 import {
   ticketDraftFormSchema,
   type TicketDraftFormValues,
-} from "@/feature/serviceDesk/ticket/forms";
-import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
+} from "@/feature/serviceDesk/ticketDraft/forms";
 
 export async function GET(request: NextRequest) {
   const currentUserName = await getCurrentEmployeeUserName(request);

@@ -12,6 +12,10 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { cn } from "@/shared/utils/presentation";
 
+import {
+  getSupportedClipboardImageFiles,
+  insertImageFilesAsBase64,
+} from "./imageFiles";
 import { resolveRichEditorPreset } from "./presets";
 import { RichEditorToolbar } from "./RichEditorToolbar";
 import type {
@@ -71,6 +75,7 @@ export function RichEditor({
     () => createEditorExtensions(placeholderRef, resolvedPreset),
     [resolvedPreset],
   );
+  const editorRef = useRef<Editor | null>(null);
   const editor = useEditor({
     immediatelyRender: false,
     editable: !(disabled || readOnly),
@@ -82,6 +87,28 @@ export function RichEditor({
           DEFAULT_EDITOR_CONTENT_CLASS_NAME,
           contentClassName,
         ),
+      },
+      handlePaste: (_view, event) => {
+        const currentEditor = editorRef.current;
+
+        if (!currentEditor?.isEditable || !currentEditor.schema.nodes.image) {
+          return false;
+        }
+
+        const imageFiles = getSupportedClipboardImageFiles(event.clipboardData);
+
+        if (imageFiles.length === 0) {
+          return false;
+        }
+
+        event.preventDefault();
+        void insertImageFilesAsBase64(currentEditor, imageFiles).catch(
+          (error) => {
+            console.error("Failed to paste image into rich editor.", error);
+          },
+        );
+
+        return true;
       },
     },
     onUpdate: ({ editor: currentEditor, transaction }) => {
@@ -95,6 +122,8 @@ export function RichEditor({
       onChange?.(getEditorHTML(currentEditor));
     },
   });
+
+  editorRef.current = editor;
 
   useEffect(() => {
     placeholderRef.current = placeholder;
@@ -194,7 +223,13 @@ function createEditorExtensions(
           }),
         ]
       : []),
-    ...(enabledToolbarItems.has("image") ? [Image] : []),
+    ...(enabledToolbarItems.has("image")
+      ? [
+          Image.configure({
+            allowBase64: true,
+          }),
+        ]
+      : []),
     ...(enabledToolbarItems.has("table") ? [TableKit] : []),
     Placeholder.configure({
       placeholder: () => placeholderRef.current,

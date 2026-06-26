@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 import { Priority, RiskLevel } from "@/domain/common";
+import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
+
+import type { TicketFormValues } from "./forms";
 
 export type DateInput = Date | string;
 
@@ -16,18 +19,30 @@ export type TicketRequesterInput = {
   name: string;
 };
 
-export type TicketAttachmentInput = {
-  name?: string;
-  type?: string;
-  size?: number;
-  url?: string;
-};
+export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
+
+export type TicketAttachmentInput = TicketAttachmentMetadataDto;
 
 type TicketRequestAttachmentInput = {
-  name?: string;
-  type?: string;
-  size?: number;
-  url?: string;
+  originalName: string;
+  replacedName: string;
+  extension: string;
+  size: number;
+  type: string;
+  demoUrl: string;
+  replaced: true;
+  reason: "SECURITY_DEMO_REPLACEMENT";
+};
+
+export type PrepareTicketAttachmentsInput = {
+  body: string;
+  files: File[];
+};
+
+export type PrepareTicketAttachmentsResponse = {
+  body: string;
+  files: TicketAttachmentMetadataDto[];
+  images: TicketAttachmentMetadataDto[];
 };
 
 const ticketEmailSchema = z.object({
@@ -43,10 +58,14 @@ const ticketRequesterSchema = z.object({
 });
 
 const ticketAttachmentSchema = z.object({
-  name: z.string().optional(),
-  type: z.string().optional(),
-  size: z.number().optional(),
-  url: z.string().optional(),
+  originalName: z.string().trim().min(1),
+  replacedName: z.string().trim().min(1),
+  extension: z.string().trim().min(1),
+  size: z.number().int().nonnegative(),
+  type: z.string().trim().min(1),
+  demoUrl: z.string().regex(/^\/files\/demo-[a-z0-9-]+\.[a-z0-9]+$/i),
+  replaced: z.literal(true),
+  reason: z.literal("SECURITY_DEMO_REPLACEMENT"),
 });
 
 const ticketDueAtSchema = z.union([z.date(), z.string()]).refine((value) => {
@@ -66,8 +85,25 @@ const ticketWriteRequestSchema = z.object({
   attachment: z.array(ticketAttachmentSchema).default([]),
 });
 
+export const ticketMutateRequestPayloadSchema = z.object({
+  tenantId: z.number().int().positive().nullable().optional(),
+  categoryId: z.number().int().positive(),
+  approvalStepId: z.number().int().positive().nullable().optional(),
+  subject: z.string().trim().min(1).max(200),
+  body: z.string().trim().min(1),
+  dueAt: z.string().datetime(),
+  priority: z.enum(["urgent", "high", "medium", "low"]).nullable(),
+  riskLevel: z
+    .enum(["critical", "high", "medium", "low"])
+    .nullable()
+    .optional(),
+  email: ticketEmailSchema,
+  files: z.array(ticketAttachmentSchema).default([]),
+  images: z.array(ticketAttachmentSchema).default([]),
+});
+
 export const createTicketSchema = ticketWriteRequestSchema.refine(
-  (value) => Boolean(value.category),
+  (value) => isRequiredNumberId(value.category),
   {
     message: "Category is required.",
     path: ["category"],
@@ -75,7 +111,7 @@ export const createTicketSchema = ticketWriteRequestSchema.refine(
 );
 
 export const updateTicketSchema = ticketWriteRequestSchema.refine(
-  (value) => Boolean(value.category),
+  (value) => isRequiredNumberId(value.category),
   {
     message: "Category is required.",
     path: ["category"],
@@ -112,6 +148,20 @@ export type DbTicketWriteInput = {
   attachment: TicketAttachmentInput[];
 };
 
+export type TicketMutateRequestPayload = {
+  tenantId?: number | null;
+  categoryId: number;
+  approvalStepId?: number | null;
+  subject: string;
+  body: string;
+  dueAt: string;
+  priority: Priority | null;
+  riskLevel?: RiskLevel | null;
+  email: TicketEmailInput;
+  files: TicketAttachmentMetadataDto[];
+  images: TicketAttachmentMetadataDto[];
+};
+
 export function toTicketWriteInput(
   input: TicketWriteRequestInput,
 ): CreateTicketInput;
@@ -126,10 +176,14 @@ export function toTicketWriteInput(
   const normalizedAttachment = (
     input.attachment as TicketRequestAttachmentInput[]
   ).map((attachment) => ({
-    name: attachment.name,
-    type: attachment.type,
+    originalName: attachment.originalName,
+    replacedName: attachment.replacedName,
+    extension: attachment.extension,
     size: attachment.size,
-    url: attachment.url,
+    type: attachment.type,
+    demoUrl: attachment.demoUrl,
+    replaced: true as const,
+    reason: attachment.reason,
   }));
 
   const normalized = {
@@ -169,6 +223,74 @@ export function toTicketWritePayload(
     requester: input.requester,
     attachment: input.attachment,
   };
+}
+
+export function toTicketMutateRequestPayload(
+  input: CreateTicketInput | UpdateTicketInput,
+  prepared?: PrepareTicketAttachmentsResponse,
+): TicketMutateRequestPayload {
+  const files = prepared?.files ?? normalizeAttachmentMetadataList(input.attachment);
+  const images = prepared?.images ?? [];
+
+  return {
+    categoryId: normalizeRequiredNumberId(input.category),
+    subject: input.subject,
+    body: prepared?.body ?? input.body,
+    dueAt: toIsoString(input.dueAt),
+    priority: normalizePriority(input.priority),
+    riskLevel: normalizeRiskLevel(input.riskLevel),
+    email: input.email,
+    files,
+    images,
+  };
+}
+
+export function toTicketMutateRequestPayloadFromFormValues(
+  input: TicketFormValues,
+  prepared: PrepareTicketAttachmentsResponse,
+): TicketMutateRequestPayload {
+  return {
+    categoryId: normalizeRequiredNumberId(input.category),
+    subject: input.subject,
+    body: prepared.body,
+    dueAt: toIsoString(input.dueAt),
+    priority: normalizePriority(input.priority),
+    riskLevel: normalizeRiskLevel(input.riskLevel),
+    email: input.email,
+    files: prepared.files,
+    images: prepared.images,
+  };
+}
+
+function normalizeAttachmentMetadataList(
+  attachment: TicketAttachmentInput[],
+): TicketAttachmentMetadataDto[] {
+  return attachment.map((item) => ({
+    originalName: item.originalName.trim(),
+    replacedName: item.replacedName.trim(),
+    extension: item.extension.trim().toLowerCase(),
+    size: item.size,
+    type: item.type.trim(),
+    demoUrl: item.demoUrl.trim(),
+    replaced: true,
+    reason: "SECURITY_DEMO_REPLACEMENT",
+  }));
+}
+
+function normalizeRequiredNumberId(value: string | null | undefined): number {
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+    throw new Error("Invalid ticket category id.");
+  }
+
+  return parsedValue;
+}
+
+function isRequiredNumberId(value: string | null | undefined): boolean {
+  const parsedValue = Number(value);
+
+  return Number.isInteger(parsedValue) && parsedValue > 0;
 }
 
 function normalizePriority(priority: string | null): Priority | null {

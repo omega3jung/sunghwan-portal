@@ -2,7 +2,11 @@ import { normalizePagination } from "@/server/shared/query";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";
-import { ServiceDeskTicketViewRow } from "./ticketRow";
+import {
+  CreateTicketRowInput,
+  ServiceDeskTicketViewRow,
+  UpdateTicketRowInput,
+} from "./ticketRow";
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
@@ -55,6 +59,63 @@ where tk_active = true
 limit 1;
 `;
 
+const CREATE_TICKET_ROW_QUERY = `
+insert into service_desk.ticket (
+  tk_ticket_no,
+  tk_tenant_id,
+  tk_category_id,
+  tk_approval_step_id,
+  tk_requester_username,
+  tk_email,
+  tk_subject,
+  tk_content,
+  tk_files,
+  tk_images,
+  tk_status,
+  tk_priority,
+  tk_risk_level,
+  tk_due_at
+)
+values (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6::jsonb,
+  $7,
+  $8,
+  $9::jsonb,
+  $10::jsonb,
+  $11,
+  $12,
+  $13,
+  $14
+)
+returning tk_id;
+`;
+
+const UPDATE_TICKET_ROW_BY_ID_QUERY = `
+update service_desk.ticket
+set
+  tk_tenant_id = $2,
+  tk_category_id = $3,
+  tk_approval_step_id = $4,
+  tk_email = $5::jsonb,
+  tk_subject = $6,
+  tk_content = $7,
+  tk_files = $8::jsonb,
+  tk_images = $9::jsonb,
+  tk_priority = $10,
+  tk_risk_level = $11,
+  tk_due_at = $12,
+  tk_updated_at = now()
+where tk_id = $1
+  and tk_active = true
+  and tk_status != 'Draft'
+returning tk_id;
+`;
+
 const FIND_ACTIVE_TICKET_VIEW_ROWS_BY_SEARCH_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
@@ -85,6 +146,56 @@ export async function findActiveTicketViewRowById(
   );
 
   return rows[0] ?? null;
+}
+
+export async function createTicketRow(
+  input: CreateTicketRowInput,
+): Promise<ServiceDeskTicketViewRow | null> {
+  const rows = await queryPortalApi<{ tk_id: string }>(CREATE_TICKET_ROW_QUERY, [
+    input.tk_ticket_no,
+    input.tk_tenant_id,
+    input.tk_category_id,
+    input.tk_approval_step_id,
+    input.tk_requester_username,
+    JSON.stringify(input.tk_email),
+    input.tk_subject,
+    input.tk_content,
+    JSON.stringify(input.tk_files),
+    JSON.stringify(input.tk_images),
+    input.tk_status,
+    input.tk_priority,
+    input.tk_risk_level,
+    input.tk_due_at,
+  ]);
+  const ticketId = rows[0]?.tk_id;
+
+  return ticketId ? findActiveTicketViewRowById(ticketId) : null;
+}
+
+export async function updateTicketRowById(
+  ticketId: string,
+  input: UpdateTicketRowInput,
+): Promise<ServiceDeskTicketViewRow | null> {
+  const rows = await queryPortalApi<{ tk_id: string }>(
+    UPDATE_TICKET_ROW_BY_ID_QUERY,
+    [
+      ticketId,
+      input.tk_tenant_id,
+      input.tk_category_id,
+      input.tk_approval_step_id,
+      JSON.stringify(input.tk_email),
+      input.tk_subject,
+      input.tk_content,
+      JSON.stringify(input.tk_files),
+      JSON.stringify(input.tk_images),
+      input.tk_priority,
+      input.tk_risk_level,
+      input.tk_due_at,
+    ],
+  );
+  const updatedTicketId = rows[0]?.tk_id;
+
+  return updatedTicketId ? findActiveTicketViewRowById(updatedTicketId) : null;
 }
 
 export async function findActiveTicketViewRowsBySearch(

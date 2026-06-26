@@ -1,4 +1,5 @@
-﻿import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+﻿import { Attach, TicketAttachmentMetadata } from "@/domain/serviceDesk";
+import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
 
 import { TICKET_2026_1 } from "./SP-2026-0001";
 import { TICKET_2026_2 } from "./SP-2026-0002";
@@ -97,9 +98,36 @@ const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => ({
   subject: ticket.tk_subject,
   content: ticket.tk_content,
   email: ticket.tk_email,
-  files: ticket.tk_files,
-  images: ticket.tk_images,
+  files: ticket.tk_files.map(toTicketAttachmentMetadata),
+  images: ticket.tk_images.map(toTicketAttachmentMetadata),
 });
 
 export const internalTicketsMock: DbTicketDetail[] =
   internalTicketMockInputs.map(toDbTicketDetail);
+
+function toTicketAttachmentMetadata(
+  attachment: Attach,
+): TicketAttachmentMetadata {
+  const demoUrl = normalizeDemoUrl(attachment);
+
+  return {
+    originalName: attachment.name,
+    replacedName: demoUrl.split("/").pop() ?? "demo-file",
+    extension: demoUrl.split(".").pop() ?? "txt",
+    size: 0,
+    type: attachment.type === "image" ? "image/png" : "application/octet-stream",
+    demoUrl,
+    replaced: true,
+    reason: "SECURITY_DEMO_REPLACEMENT",
+  };
+}
+
+function normalizeDemoUrl(attachment: Attach) {
+  if (/^\/files\/demo-[a-z0-9-]+\.[a-z0-9]+$/i.test(attachment.url)) {
+    return attachment.url;
+  }
+
+  return attachment.type === "image"
+    ? "/files/demo-png.png"
+    : "/files/demo-txt.txt";
+}

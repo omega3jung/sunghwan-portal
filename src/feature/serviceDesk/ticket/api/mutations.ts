@@ -53,3 +53,9 @@ export const useStartTicketWorkMutation = () => {
     },
   });
 };
+
+export const usePrepareTicketAttachmentsMutation = () => {
+  return useMutation({
+    mutationFn: serviceDeskTicketApi.prepareAttachments,
+  });
+};

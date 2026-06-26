@@ -15,10 +15,8 @@ import {
 } from "@/app/api/service-desk/_shared";
 import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api";
 import {
-  TicketWriteRequestInput,
-  toTicketWriteInput,
-  toTicketWritePayload,
-  updateTicketSchema,
+  type TicketMutateRequestPayload,
+  ticketMutateRequestPayloadSchema,
 } from "@/feature/serviceDesk/ticket/write";
 import {
   localDeleteTicket,
@@ -63,8 +61,8 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
-  const parsedBody = updateTicketSchema.safeParse(
-    (await request.json()) as TicketWriteRequestInput,
+  const parsedBody = ticketMutateRequestPayloadSchema.safeParse(
+    (await request.json()) as TicketMutateRequestPayload,
   );
 
   if (!parsedBody.success) {
@@ -74,7 +72,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     );
   }
 
-  const body = toTicketWriteInput(parsedBody.data, ticketId);
+  const body = parsedBody.data;
 
   if (!isRemote) {
     try {
@@ -108,7 +106,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     method: "PUT",
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    body: toTicketWritePayload(body),
+    body,
     errorMessage: tServiceDeskApi("api.tickets.update"),
     mapData: mapTicketDetailPayload,
   });

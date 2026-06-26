@@ -3,7 +3,7 @@ import { LocalizedText } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../category";
-import { Attach } from "../types";
+import { TicketAttachmentMetadata } from "../types";
 import { TicketResolutionReason, TicketStatus } from "../types/enums";
 
 /**
@@ -84,8 +84,8 @@ interface TicketContent {
     bcc: string[];
   };
 
-  files: Attach[];
-  images: Attach[];
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
 }
 
 /**

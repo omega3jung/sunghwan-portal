@@ -1,8 +1,6 @@
 import type { Priority, RiskLevel } from "@/domain/common";
-import type {
-  TicketDraftFormValues,
-  TicketFormValues,
-} from "@/feature/serviceDesk/ticket/forms";
+import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
+import type { TicketDraftFormValues } from "@/feature/serviceDesk/ticketDraft/forms";
 import type {
   TicketDraftAttachmentInputDto,
   TicketDraftWriteDto,

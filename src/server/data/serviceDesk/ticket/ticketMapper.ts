@@ -1,5 +1,30 @@
-import { TicketDetailDto, TicketListItemDto } from "./ticketDto";
-import { ServiceDeskTicketViewRow } from "./ticketRow";
+import { Priority, RiskLevel } from "@/domain/common";
+import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
+import { ISODateString } from "@/shared/types";
+
+import {
+  TicketCreateRequestDto,
+  TicketDetailDto,
+  TicketListItemDto,
+  TicketMutateRequestDto,
+  TicketUpdateRequestDto,
+} from "./ticketDto";
+import {
+  CreateTicketRowInput,
+  ServiceDeskTicketEmail,
+  ServiceDeskTicketViewRow,
+  TicketMutateRowInput,
+  UpdateTicketRowInput,
+} from "./ticketRow";
+
+const DEFAULT_PRIORITY: Priority = "medium";
+const DEFAULT_RISK_LEVEL: RiskLevel = "medium";
+
+const EMPTY_EMAIL: ServiceDeskTicketEmail = {
+  to: [],
+  cc: [],
+  bcc: [],
+};
 
 export function toTicketListItemDto(
   row: ServiceDeskTicketViewRow,
@@ -21,6 +46,46 @@ export function toTicketDetailDto(
     email: row.tk_email,
     files: row.tk_files ?? [],
     images: row.tk_images ?? [],
+  };
+}
+
+export function mapTicketCreateRequestDtoToRowInput(
+  input: TicketCreateRequestDto,
+  options: {
+    ticketNo: string;
+    requesterUsername: string;
+    status?: TicketStatus;
+  },
+): CreateTicketRowInput {
+  return {
+    ...mapTicketMutateRequestDtoToRowInput(input),
+    tk_ticket_no: options.ticketNo,
+    tk_requester_username: options.requesterUsername,
+    tk_status: options.status ?? "Open",
+  };
+}
+
+export function mapTicketUpdateRequestDtoToRowInput(
+  input: TicketUpdateRequestDto,
+): UpdateTicketRowInput {
+  return mapTicketMutateRequestDtoToRowInput(input);
+}
+
+export function mapTicketMutateRequestDtoToRowInput(
+  input: TicketMutateRequestDto,
+): TicketMutateRowInput {
+  return {
+    tk_tenant_id: input.tenantId ?? null,
+    tk_category_id: input.categoryId,
+    tk_approval_step_id: input.approvalStepId ?? null,
+    tk_subject: input.subject.trim(),
+    tk_content: input.body.trim(),
+    tk_due_at: toIsoDateString(input.dueAt),
+    tk_priority: input.priority ?? DEFAULT_PRIORITY,
+    tk_risk_level: input.riskLevel ?? DEFAULT_RISK_LEVEL,
+    tk_email: normalizeTicketEmail(input.email),
+    tk_files: normalizeTicketAttachmentMetadata(input.files),
+    tk_images: normalizeTicketAttachmentMetadata(input.images),
   };
 }
 
@@ -103,6 +168,83 @@ export function normalizePostgresStringArray(value: unknown): string[] {
     .split(",")
     .map((item) => item.trim().replace(/^"|"$/g, ""))
     .filter(Boolean);
+}
+
+export function normalizeTicketEmail(
+  value: ServiceDeskTicketEmail | null | undefined,
+): ServiceDeskTicketEmail {
+  if (!value) {
+    return EMPTY_EMAIL;
+  }
+
+  return {
+    to: normalizeStringArray(value.to),
+    cc: normalizeStringArray(value.cc),
+    bcc: normalizeStringArray(value.bcc),
+  };
+}
+
+function normalizeTicketAttachmentMetadata(
+  value: TicketAttachmentMetadata[] | null | undefined,
+): TicketAttachmentMetadata[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  // Attachment policy: DB writes store JSON-safe demo metadata only.
+  // Raw File/binary uploads and Supabase Storage integration are intentionally out of scope.
+  return value
+    .filter(isTicketAttachmentMetadata)
+    .map((item) => ({
+      originalName: item.originalName.trim(),
+      replacedName: item.replacedName.trim(),
+      extension: item.extension.trim().toLowerCase(),
+      size: item.size,
+      type: item.type.trim(),
+      demoUrl: item.demoUrl.trim(),
+      replaced: true,
+      reason: "SECURITY_DEMO_REPLACEMENT",
+    }));
+}
+
+function isTicketAttachmentMetadata(
+  value: TicketAttachmentMetadata | null | undefined,
+): value is TicketAttachmentMetadata {
+  if (!value) {
+    return false;
+  }
+
+  return (
+    typeof value.originalName === "string" &&
+    value.originalName.trim().length > 0 &&
+    typeof value.replacedName === "string" &&
+    value.replacedName.trim().length > 0 &&
+    typeof value.extension === "string" &&
+    value.extension.trim().length > 0 &&
+    Number.isFinite(value.size) &&
+    value.size >= 0 &&
+    typeof value.type === "string" &&
+    value.type.trim().length > 0 &&
+    typeof value.demoUrl === "string" &&
+    /^\/files\/demo-[a-z0-9-]+\.[a-z0-9]+$/i.test(value.demoUrl.trim()) &&
+    value.replaced === true &&
+    value.reason === "SECURITY_DEMO_REPLACEMENT"
+  );
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function toIsoDateString(value: Date | string): ISODateString {
+  return (value instanceof Date ? value : new Date(value)).toISOString();
 }
 
 function calculateTicketAge(createdAt: string) {

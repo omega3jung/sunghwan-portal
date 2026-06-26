@@ -1,13 +1,9 @@
 ﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
-import {
-  CreateTicketInput,
-  toTicketWritePayload,
-} from "@/feature/serviceDesk/ticket/write";
+import type { TicketMutateRequestPayload } from "@/feature/serviceDesk/ticket/write";
 
 import { getLocalDemoTickets } from "../state";
-import { splitAttachments } from "./attachments";
 import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import {
@@ -25,18 +21,10 @@ export const localCreateTicket = ({
 }: {
   isInternal: boolean;
   requesterUsername: string | null;
-  input: CreateTicketInput;
+  input: TicketMutateRequestPayload;
 }) => {
   const targetMock = getLocalDemoTickets(isInternal);
-  const payload = toTicketWritePayload(input);
-
-  if (!payload.category) {
-    throw new ServiceDeskApiError("api.tickets.localDemo.invalidPayload", 400);
-  }
-
-  const resolvedRequesterId = normalizeRequesterId(
-    requesterUsername ?? payload.requester.id,
-  );
+  const resolvedRequesterId = normalizeRequesterId(requesterUsername);
 
   if (!resolvedRequesterId) {
     throw new ServiceDeskApiError(
@@ -47,7 +35,7 @@ export const localCreateTicket = ({
 
   const category = resolveCategorySnapshot({
     isInternal,
-    categoryId: payload.category,
+    categoryId: String(input.categoryId),
   });
 
   const routing = resolveCreateTicketRouting({
@@ -60,7 +48,6 @@ export const localCreateTicket = ({
   const now = new Date().toISOString();
   const year = resolveTicketYear(targetMock, now);
   const nextSequence = resolveNextTicketSequence(targetMock, year);
-  const attachments = splitAttachments(payload.attachment);
   const nextTicket: DbTicketDetail = {
     id: createTicketId(year, nextSequence),
     ticket_number: createTicketNumber(year, nextSequence),
@@ -70,11 +57,11 @@ export const localCreateTicket = ({
     status: routing.status,
     close_reason: null,
     priority: resolvePriorityValue(
-      payload.priority,
+      input.priority,
       category.defaultPriority ?? "medium",
     ),
     risk_level: resolveRiskLevelValue(
-      payload.riskLevel,
+      input.riskLevel,
       category.defaultRiskLevel ?? "medium",
     ),
     assignee_usernames: routing.assigneeUsernames,
@@ -84,7 +71,7 @@ export const localCreateTicket = ({
     last_commenter_email: null,
     last_user_activity_at: null,
     last_user_activity_email: null,
-    due_at: payload.dueAt,
+    due_at: input.dueAt,
     owner: false,
     assigned: false,
     active: true,
@@ -92,11 +79,11 @@ export const localCreateTicket = ({
     category_id: category.id,
     category_name: category.name,
     approval_step_id: routing.approvalStepId,
-    subject: payload.subject,
-    content: payload.body,
-    email: payload.email,
-    files: attachments.files,
-    images: attachments.images,
+    subject: input.subject,
+    content: input.body,
+    email: input.email,
+    files: input.files,
+    images: input.images,
   };
 
   targetMock.unshift(nextTicket);

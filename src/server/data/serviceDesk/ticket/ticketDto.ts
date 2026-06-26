@@ -1,15 +1,80 @@
 import type { RuleGroupTypeIC } from "react-querybuilder";
+import { z } from "zod";
 
 import { Priority, RiskLevel } from "@/domain/common";
 import {
-  Attach,
   CategoryScope,
+  TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
 import { ISODateString, LocalizedText, SortDirection } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "./ticketRow";
+
+export const ticketPrioritySchema = z.enum([
+  "urgent",
+  "high",
+  "medium",
+  "low",
+]);
+
+export const ticketRiskLevelSchema = z.enum([
+  "critical",
+  "high",
+  "medium",
+  "low",
+]);
+
+export const ticketEmailSchema = z
+  .object({
+    to: z.array(z.string()).default([]),
+    cc: z.array(z.string()).default([]),
+    bcc: z.array(z.string()).default([]),
+  })
+  .default({
+    to: [],
+    cc: [],
+    bcc: [],
+  });
+
+export const ticketAttachmentMetadataSchema = z.object({
+  originalName: z.string().trim().min(1).max(200),
+  replacedName: z.string().trim().min(1),
+  extension: z.string().trim().min(1),
+  size: z.number().int().nonnegative(),
+  type: z.string().trim().min(1),
+  demoUrl: z.string().regex(/^\/files\/demo-[a-z0-9-]+\.[a-z0-9]+$/i),
+  replaced: z.literal(true),
+  reason: z.literal("SECURITY_DEMO_REPLACEMENT"),
+});
+
+export const ticketMutateRequestSchema = z.object({
+  tenantId: z.coerce.number().int().positive().nullable().optional(),
+  categoryId: z.coerce.number().int().positive(),
+  approvalStepId: z.coerce.number().int().positive().nullable().optional(),
+  subject: z.string().trim().min(1).max(200),
+  body: z.string().trim().min(1),
+  dueAt: z.coerce.date(),
+  priority: ticketPrioritySchema.nullable().optional(),
+  riskLevel: ticketRiskLevelSchema.nullable().optional(),
+  email: ticketEmailSchema,
+  files: z.array(ticketAttachmentMetadataSchema).default([]),
+  images: z.array(ticketAttachmentMetadataSchema).default([]),
+});
+
+export const ticketCreateRequestSchema = ticketMutateRequestSchema;
+export const ticketUpdateRequestSchema = ticketMutateRequestSchema;
+
+export type TicketEmailDto = ServiceDeskTicketEmail;
+export type TicketPriority = Priority;
+export type TicketRiskLevel = RiskLevel;
+export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
+export type TicketFileDto = TicketAttachmentMetadataDto;
+export type TicketImageDto = TicketAttachmentMetadataDto;
+export type TicketMutateRequestDto = z.infer<typeof ticketMutateRequestSchema>;
+export type TicketCreateRequestDto = z.infer<typeof ticketCreateRequestSchema>;
+export type TicketUpdateRequestDto = z.infer<typeof ticketUpdateRequestSchema>;
 
 export type TicketListItemDto = {
   id: string;
@@ -52,8 +117,8 @@ export type TicketListItemDto = {
 export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
   content: string;
   email: ServiceDeskTicketEmail;
-  files: Attach[];
-  images: Attach[];
+  files: TicketAttachmentMetadataDto[];
+  images: TicketAttachmentMetadataDto[];
 };
 
 export type TicketSearchSortFieldDto =
