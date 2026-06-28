@@ -49,6 +49,10 @@ import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
+import {
+  combineRuleGroups,
+  createFieldFilter,
+} from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
 
@@ -126,15 +130,16 @@ export default function ServiceDeskPage() {
   const totalCount = ticketSearchResult?.totalCount ?? 0;
 
   const { data: categoryTrees } = useServiceDeskCategoryListQuery({
-    filter: {
-      rules: [
-        {
-          field: "id",
-          operator: "=",
-          value: currentSession?.user.companyId,
-        },
-      ],
-    },
+    filter: combineRuleGroups([
+      createFieldFilter({
+        field: "active",
+        value: true,
+      }),
+      createFieldFilter({
+        field: "id",
+        value: currentSession?.user.companyId,
+      }),
+    ]),
   });
   const { data: employees } = useEmployeeListQuery({});
 

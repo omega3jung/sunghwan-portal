@@ -2,9 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
-
-import { getServiceDeskQueryOptions } from "../shared/utils/queryOptions";
+import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
 import { ServiceDeskApprovalStepListParams } from "./types";
@@ -12,14 +10,12 @@ import { ServiceDeskApprovalStepListParams } from "./types";
 export const useServiceDeskApprovalStepListQuery = (
   params?: ServiceDeskApprovalStepListParams,
 ) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: approvalStepQueryKeys.list(params),
     queryFn: () => serviceDeskApprovalStepApi.list(params),
     enabled: params !== undefined && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };

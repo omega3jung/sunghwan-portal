@@ -4,6 +4,7 @@ import {
   createArrayContainsAnyFilter,
   createDateRangeFilter,
   createEqualsAnyFilter,
+  createFieldFilter,
   createKeywordFilter,
 } from "@/shared/utils/routing";
 
@@ -13,6 +14,11 @@ export const mapSearchCriteriaToDbParams = (
   values: TicketSearchCriteriaFormValues,
 ): DbParams => {
   const filter = combineRuleGroups([
+    createFieldFilter({
+      field: "active",
+      value: true,
+    }),
+
     createKeywordFilter({
       fields: ["ticketNumber", "subject"],
       keyword: values.keyword,

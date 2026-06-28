@@ -8,25 +8,20 @@ import {
 import client from "@/lib/api";
 import { PaginatedSearchResponse } from "@/server/shared/types/api";
 import { DbParams, OResponse } from "@/shared/types/api";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
 import { TicketSearchRequest } from "./types";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;
-type TicketSearchQuery = {
-  filter?: string;
-  sort?: string;
-  page: number;
-  pageSize: number;
-};
 
 // feature-scoped API.
 export const serviceDeskTicketApi = {
   list: async (params: DbParams): Promise<TicketSummary[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<TicketSummaryResponse>(
+    const res = await client.api.get<TicketSummaryResponse, URLSearchParams>(
       "/api/service-desk/tickets",
-      { params },
+      { params: buildDbSearchParams(params) },
     );
     return res.data.items;
   },
@@ -36,11 +31,10 @@ export const serviceDeskTicketApi = {
   ): Promise<PaginatedSearchResponse<TicketSummary>> => {
     const res = await client.api.get<
       PaginatedSearchResponse<TicketSummary>,
-      TicketSearchQuery
-    >(
-      "/api/service-desk/tickets/search",
-      { params: toTicketSearchQuery(request) },
-    );
+      URLSearchParams
+    >("/api/service-desk/tickets/search", {
+      params: buildDbSearchParams(request),
+    });
 
     return res.data;
   },
@@ -115,12 +109,3 @@ export const serviceDeskTicketApi = {
     return null;
   },
 };
-
-function toTicketSearchQuery(request: TicketSearchRequest): TicketSearchQuery {
-  return {
-    ...(request.filter ? { filter: JSON.stringify(request.filter) } : {}),
-    ...(request.sort ? { sort: JSON.stringify(request.sort) } : {}),
-    page: request.page,
-    pageSize: request.pageSize,
-  };
-}

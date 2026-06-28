@@ -5,28 +5,24 @@ import {
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
-import type { SortDirection } from "@/shared/types";
 import { LocalizedText } from "@/shared/types";
-import type { DbParams } from "@/shared/types/api";
+import type { DbParams, DbSort } from "@/shared/types/api";
 import { ISODateString } from "@/shared/types/date";
 
 export type TicketSortField =
   | "ticketNumber"
   | "createdAt"
+  | "updatedAt"
   | "dueAt"
-  | "priority";
+  | "priority"
+  | "status";
 
-export type TicketSearchSort = {
-  field: TicketSortField;
-  direction: SortDirection;
-};
+export type TicketSearchSort = DbSort<TicketSortField>;
 
-export type TicketSearchRequest = {
-  filter: DbParams["filter"];
-  sort?: TicketSearchSort;
-  page: number;
-  pageSize: number;
-};
+export type TicketSearchRequest = Required<
+  Pick<DbParams<TicketSortField>, "page" | "pageSize">
+> &
+  Pick<DbParams<TicketSortField>, "filter" | "sort">;
 
 export interface DbTicketSummary {
   id: string;

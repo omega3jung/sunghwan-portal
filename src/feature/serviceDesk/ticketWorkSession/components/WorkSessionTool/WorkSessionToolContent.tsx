@@ -13,7 +13,7 @@ import type { TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 
-import { useSubmitTicketWorkSession } from "../../api";
+import { useSubmitTicketWorkSession } from "../../api/client";
 import {
   TICKET_WORK_SESSION_NOTE_MAX_LENGTH,
   TICKET_WORK_SESSION_STATUS_OPTIONS,
@@ -35,7 +35,7 @@ import {
   canChangeStatus,
   getCurrentTrackedMinutes,
   getWorkSessionSubmitPayload,
-} from "./payload";
+} from "../../utils/payload";
 import {
   WorkSessionDateTimeField,
   WorkSessionDurationField,

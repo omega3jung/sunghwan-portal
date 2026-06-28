@@ -1,6 +1,10 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 import type { TenantCategoryTree } from "@/domain/serviceDesk";
 import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
+import {
+  getBooleanRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { getLocalDemoCategories } from "../../state";
 import { normalizeTenantTree } from "./categoryUtils";
@@ -20,11 +24,15 @@ export const localListCategories = ({
   isInternal: boolean;
   searchParams: URLSearchParams;
 }) => {
+  const filter = parseRuleGroupFilter(searchParams.get("filter"));
+  const active =
+    parseOptionalBoolean(searchParams.get("active")) ??
+    getBooleanRuleGroupValue(filter, "active");
   const items = filterItemsByQuery(
     searchParams,
     filterTenantCategoryTreesByActive(
       camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
-      parseOptionalBoolean(searchParams.get("active")),
+      active,
     ),
   );
 

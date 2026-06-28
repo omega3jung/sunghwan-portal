@@ -27,6 +27,7 @@ import { useMutationToast } from "@/shared/client/toast";
 import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
 import { DbParams, Locale } from "@/shared/types";
+import { createFieldFilter } from "@/shared/utils/routing";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
@@ -58,7 +59,9 @@ export default function ApprovalStepPage() {
     Record<string, string>
   >({});
 
-  const categoryParams: DbParams = { active: true };
+  const categoryParams: DbParams = {
+    filter: createFieldFilter({ field: "active", value: true }),
+  };
   const { data: categories, isLoading: isCategoriesLoading } =
     useServiceDeskCategoryListQuery(categoryParams);
 

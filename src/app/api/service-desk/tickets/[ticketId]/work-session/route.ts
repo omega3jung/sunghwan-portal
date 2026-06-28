@@ -13,17 +13,21 @@ import {
 } from "@/app/api/service-desk/_shared/messages";
 import {
   camelTicketWorkSessionMapper,
-  DbTicketWorkSession,
+  type DbTicketWorkSession,
   mapTicketWorkSessionListPayload,
   mapTicketWorkSessionPayload,
+} from "@/feature/serviceDesk/ticketWorkSession/api";
+import {
   TICKET_WORK_SESSION_STATUS_OPTIONS,
+} from "@/feature/serviceDesk/ticketWorkSession/constants";
+import type {
   TicketWorkSessionStatus,
   TicketWorkSessionSubmitPayload,
-} from "@/feature/serviceDesk/ticketWorkSession";
+} from "@/feature/serviceDesk/ticketWorkSession/types";
 import {
   canChangeStatus,
   getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticketWorkSession/components/WorkSessionTool/payload";
+} from "@/feature/serviceDesk/ticketWorkSession/utils";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,

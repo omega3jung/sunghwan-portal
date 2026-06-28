@@ -29,6 +29,7 @@ import { useMutationToast } from "@/shared/client/toast";
 import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
 import { DbParams, Locale } from "@/shared/types";
+import { createFieldFilter } from "@/shared/utils/routing";
 
 import { useSettingsScope } from "../../SettingsScopeProvider";
 import { SETTINGS_OFFSET_STYLE } from "../../style";
@@ -59,7 +60,9 @@ export default function CategoryPage() {
     Record<string, string>
   >({});
 
-  const params: DbParams = { active: true };
+  const params: DbParams = {
+    filter: createFieldFilter({ field: "active", value: true }),
+  };
   const { data: categories, isLoading: isCategoriesLoading } =
     useServiceDeskCategoryListQuery(params);
   const assignmentRuleParams = useMemo(

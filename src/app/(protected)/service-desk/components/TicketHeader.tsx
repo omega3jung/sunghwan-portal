@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronLeft, Clock3, PanelLeft, Pickaxe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
@@ -6,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import type { TicketDetail } from "@/domain/serviceDesk";
-import { WorkSessionTool } from "@/feature/serviceDesk/ticketWorkSession";
+import { WorkSessionTool } from "@/feature/serviceDesk/ticketWorkSession/client";
 import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation";
 

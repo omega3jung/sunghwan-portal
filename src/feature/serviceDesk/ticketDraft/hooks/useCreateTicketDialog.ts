@@ -26,6 +26,7 @@ import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
 import { DbParams } from "@/shared/types";
+import { createFieldFilter } from "@/shared/utils/routing";
 
 import { useServiceDeskApprovalStepListQuery } from "../../approvalStep/client";
 import { useTicketDraft } from "./useTicketDraft";
@@ -70,15 +71,10 @@ export const useCreateTicketDialog = ({
     }
 
     return {
-      filter: {
-        rules: [
-          {
-            field: "id",
-            operator: "=",
-            value: selectedParentCategoryId,
-          },
-        ],
-      },
+      filter: createFieldFilter({
+        field: "id",
+        value: selectedParentCategoryId,
+      }),
     };
   }, [selectedParentCategoryId]);
 

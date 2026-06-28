@@ -9,4 +9,3 @@ export * from "./locale";
 export * from "./mapper";
 export * from "./mutationAction";
 export * from "./options";
-export * from "./sort";

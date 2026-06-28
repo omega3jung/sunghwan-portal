@@ -1,3 +1,5 @@
+import { applyRuleGroupFilter } from "@/server/shared/query";
+
 import { FilterRule } from "./types";
 
 export function getFilterRules(searchParams: URLSearchParams): FilterRule[] {
@@ -78,6 +80,12 @@ export function filterItemsByQuery<T extends object>(
   searchParams: URLSearchParams,
   items: T[],
 ): T[] {
+  const ruleGroupFilter = searchParams.get("filter");
+
+  if (ruleGroupFilter) {
+    return applyRuleGroupFilter(items, ruleGroupFilter);
+  }
+
   const rules = getFilterRules(searchParams);
 
   return items.filter((item) => {

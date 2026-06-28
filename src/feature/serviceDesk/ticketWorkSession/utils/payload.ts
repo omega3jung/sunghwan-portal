@@ -2,7 +2,7 @@ import type {
   TicketWorkSessionInputMode,
   TicketWorkSessionStatus,
   TicketWorkSessionSubmitPayload,
-} from "../../types";
+} from "../types";
 
 const MS_PER_MINUTE = 60 * 1000;
 

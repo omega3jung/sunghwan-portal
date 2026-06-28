@@ -124,8 +124,10 @@ export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
 export type TicketSearchSortFieldDto =
   | "ticketNumber"
   | "createdAt"
+  | "updatedAt"
   | "dueAt"
-  | "priority";
+  | "priority"
+  | "status";
 
 export type TicketSearchSortDto = {
   field: TicketSearchSortFieldDto;

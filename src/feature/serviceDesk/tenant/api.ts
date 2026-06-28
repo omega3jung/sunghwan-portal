@@ -1,6 +1,7 @@
 import { Tenant } from "@/domain/serviceDesk";
 import client from "@/lib/api";
 import { DbParams, OResponse } from "@/shared/types/api";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
 import { CreateTenantInput, UpdateTenantInput } from "./write";
 
@@ -11,9 +12,12 @@ export const serviceDeskTenantApi = {
   list: async (params: DbParams): Promise<Tenant[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<TenantResponse>(`/api/service-desk/tenants`, {
-      params,
-    });
+    const res = await client.api.get<TenantResponse, URLSearchParams>(
+      `/api/service-desk/tenants`,
+      {
+        params: buildDbSearchParams(params),
+      },
+    );
 
     return res.data.items;
   },

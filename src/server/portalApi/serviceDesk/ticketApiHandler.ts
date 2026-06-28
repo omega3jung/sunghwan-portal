@@ -29,6 +29,18 @@ const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
 const TICKET_DETAIL_PATH_PATTERN = /^\/service-desk\/tickets\/([^/]+)$/;
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
+const TICKET_SORT_FIELDS = new Set<TicketSearchSortDto["field"]>([
+  "ticketNumber",
+  "createdAt",
+  "updatedAt",
+  "dueAt",
+  "priority",
+  "status",
+]);
+const SORT_DIRECTIONS = new Set<TicketSearchSortDto["direction"]>([
+  "asc",
+  "desc",
+]);
 
 export async function handleTicketPortalApi(
   context: ServiceDeskPortalApiContext,
@@ -145,17 +157,86 @@ function getTicketSearchRequest(
     filter: parseJsonQueryValue<TicketSearchRequestDto["filter"]>(
       getPortalApiQueryValue(context.request, context.options, "filter"),
     ),
-    sort: parseJsonQueryValue<TicketSearchSortDto>(
-      getPortalApiQueryValue(context.request, context.options, "sort"),
-    ),
+    sort: parseTicketSearchSort(context),
     page: parseNumberQueryValue(
       getPortalApiQueryValue(context.request, context.options, "page"),
     ),
     pageSize: parseNumberQueryValue(
-      getPortalApiQueryValue(context.request, context.options, "pageSize") ??
-        getPortalApiQueryValue(context.request, context.options, "size"),
+      getPortalApiQueryValue(context.request, context.options, "pageSize"),
     ),
   };
+}
+
+function parseTicketSearchSort(
+  context: ServiceDeskPortalApiContext,
+): TicketSearchSortDto | undefined {
+  const field = getPortalApiQueryValue(
+    context.request,
+    context.options,
+    "sortField",
+  );
+  const direction = getPortalApiQueryValue(
+    context.request,
+    context.options,
+    "sortDirection",
+  );
+
+  if (field || direction) {
+    return normalizeTicketSearchSort({ field, direction });
+  }
+
+  const legacySort = getPortalApiQueryValue(
+    context.request,
+    context.options,
+    "sort",
+  );
+
+  if (!legacySort) {
+    return undefined;
+  }
+
+  return normalizeTicketSearchSort(parseJsonQueryValue<unknown>(legacySort));
+}
+
+function normalizeTicketSearchSort(
+  value: unknown,
+): TicketSearchSortDto | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  if (typeof value !== "object") {
+    throw createStatusError("Invalid search query.", 400);
+  }
+
+  const sort = value as Partial<TicketSearchSortDto>;
+
+  if (!isTicketSortField(sort.field) || !isSortDirection(sort.direction)) {
+    throw createStatusError("Invalid search query.", 400);
+  }
+
+  return {
+    field: sort.field,
+    direction: sort.direction,
+  };
+}
+
+function isTicketSortField(
+  value: unknown,
+): value is TicketSearchSortDto["field"] {
+  return (
+    typeof value === "string" &&
+    TICKET_SORT_FIELDS.has(value as TicketSearchSortDto["field"])
+  );
+}
+
+function isSortDirection(
+  value: unknown,
+): value is TicketSearchSortDto["direction"] {
+  return (
+    typeof value === "string" &&
+    SORT_DIRECTIONS.has(value as TicketSearchSortDto["direction"])
+  );
 }
 
 function parseJsonQueryValue<T>(value: string | null): T | undefined {

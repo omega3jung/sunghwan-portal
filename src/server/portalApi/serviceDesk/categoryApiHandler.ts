@@ -15,6 +15,10 @@ import {
   getCategoryTreeByTenantId,
   updateCategoryById,
 } from "@/server/data/serviceDesk/category";
+import {
+  getBooleanRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { getPortalApiQueryValue } from "../utils";
 import {
@@ -57,7 +61,13 @@ export async function handleCategoryPortalApi(
       const active =
         parseBooleanQueryValue(
           getPortalApiQueryValue(context.request, context.options, "active"),
-        ) ?? null;
+        ) ??
+        getBooleanRuleGroupValue(
+          parseRuleGroupFilter(
+            getPortalApiQueryValue(context.request, context.options, "filter"),
+          ),
+          "active",
+        );
       const items = filterCategorySettingsByActive(
         await getCategorySettingsResponseByTenantId({
           tenantId,

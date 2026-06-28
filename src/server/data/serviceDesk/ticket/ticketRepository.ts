@@ -8,6 +8,8 @@ import {
   UpdateTicketRowInput,
 } from "./ticketRow";
 
+type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
+
 const TICKET_VIEW_COLUMNS = `
   tk_id,
   tk_ticket_no,
@@ -121,7 +123,7 @@ select
 ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket
 where __WHERE_CLAUSE__
-order by tk_ticket_no desc, tk_created_at desc
+order by __ORDER_BY_CLAUSE__
 limit __LIMIT_PARAM__ offset __OFFSET_PARAM__;
 `;
 
@@ -203,6 +205,7 @@ export async function findActiveTicketViewRowsBySearch(
 ) {
   const pagination = normalizePagination(request);
   const where = buildTicketSearchWhereClause(request.filter);
+  const orderByClause = resolveTicketOrderBy(request.sort);
   const limitParam = `$${where.values.length + 1}`;
   const offsetParam = `$${where.values.length + 2}`;
   const offset = (pagination.page - 1) * pagination.pageSize;
@@ -212,6 +215,7 @@ export async function findActiveTicketViewRowsBySearch(
       "__WHERE_CLAUSE__",
       where.clause,
     )
+      .replace("__ORDER_BY_CLAUSE__", orderByClause)
       .replace("__LIMIT_PARAM__", limitParam)
       .replace("__OFFSET_PARAM__", offsetParam),
     [...where.values, pagination.pageSize, offset],
@@ -268,6 +272,7 @@ type TicketSearchField = {
 };
 
 const TICKET_SEARCH_FIELDS: Record<string, TicketSearchField> = {
+  active: { expression: "tk_active" },
   ticketNumber: { expression: "tk_ticket_no" },
   subject: { expression: "tk_subject" },
   categoryId: { expression: "cat_id::text" },
@@ -279,6 +284,29 @@ const TICKET_SEARCH_FIELDS: Record<string, TicketSearchField> = {
   createdAt: { expression: "tk_created_at" },
   dueAt: { expression: "tk_due_at" },
 };
+
+const DEFAULT_TICKET_ORDER_BY = "tk_ticket_no desc, tk_created_at desc";
+
+const TICKET_SORT_FIELD_MAP: Record<TicketSortField, string> = {
+  ticketNumber: "tk_ticket_no",
+  createdAt: "tk_created_at",
+  updatedAt: "tk_updated_at",
+  dueAt: "tk_due_at",
+  priority:
+    "case tk_priority when 'low' then 1 when 'medium' then 2 when 'high' then 3 when 'urgent' then 4 else 0 end",
+  status: "tk_status",
+};
+
+function resolveTicketOrderBy(sort: TicketSearchRequestDto["sort"]) {
+  if (!sort) {
+    return DEFAULT_TICKET_ORDER_BY;
+  }
+
+  const expression = TICKET_SORT_FIELD_MAP[sort.field];
+  const direction = sort.direction === "asc" ? "asc" : "desc";
+
+  return `${expression} ${direction}, tk_ticket_no desc`;
+}
 
 function buildTicketSearchWhereClause(filter: unknown): {
   clause: string;

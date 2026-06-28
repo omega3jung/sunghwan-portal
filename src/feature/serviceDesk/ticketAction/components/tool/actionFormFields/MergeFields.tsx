@@ -13,6 +13,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/api/client";
 import { NS } from "@/lib/i18n";
 import { DbParams } from "@/shared/types/api";
+import {
+  combineRuleGroups,
+  createFieldFilter,
+} from "@/shared/utils/routing";
 
 import { TicketActionDraftFormValues } from "../../../forms";
 import { setActionFieldValue, type Translate } from "../utils";
@@ -39,15 +43,17 @@ export function MergeFields({ ticketId, form, t }: MergeFieldsProps) {
 
   const params = useMemo<DbParams>(
     () => ({
-      filter: {
-        rules: [
-          {
-            field: "status",
-            operator: "!=",
-            value: "Draft",
-          },
-        ],
-      },
+      filter: combineRuleGroups([
+        createFieldFilter({
+          field: "active",
+          value: true,
+        }),
+        createFieldFilter({
+          field: "status",
+          operator: "!=",
+          value: "Draft",
+        }),
+      ]),
     }),
     [],
   );

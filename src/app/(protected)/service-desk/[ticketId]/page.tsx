@@ -27,6 +27,10 @@ import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
+import {
+  combineRuleGroups,
+  createFieldFilter,
+} from "@/shared/utils/routing";
 
 import {
   TicketDetailsAside,
@@ -70,15 +74,16 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
     useServiceDeskTicketHistoryListQuery(params.ticketId);
   const { data: categoryTrees } = useServiceDeskCategoryListQuery({
-    filter: {
-      rules: [
-        {
-          field: "id",
-          operator: "=",
-          value: currentSession?.user.companyId,
-        },
-      ],
-    },
+    filter: combineRuleGroups([
+      createFieldFilter({
+        field: "active",
+        value: true,
+      }),
+      createFieldFilter({
+        field: "id",
+        value: currentSession?.user.companyId,
+      }),
+    ]),
   });
 
   const { data: employees } = useEmployeeListQuery({});

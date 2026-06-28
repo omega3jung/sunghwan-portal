@@ -2,22 +2,19 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
 import { DbParams } from "@/shared/types/api";
 
-import { getServiceDeskQueryOptions } from "../shared/utils/queryOptions";
+import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskCategoryApi } from "./api";
 import { categoryQueryKeys } from "./queryKeys";
 
 export const useServiceDeskCategoryListQuery = (params: DbParams) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: categoryQueryKeys.list(params),
     queryFn: () => serviceDeskCategoryApi.list(params),
     enabled: !!params && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };

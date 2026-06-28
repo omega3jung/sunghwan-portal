@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { RuleGroupTypeIC } from "react-querybuilder";
 
 import {
   getCurrentEmployeeUserName,
@@ -12,17 +13,29 @@ import {
   tServiceDeskApi,
   withDerivedTicketOwnershipList,
 } from "@/app/api/service-desk/_shared";
-import type { TicketSearchRequest } from "@/feature/serviceDesk/ticket/api";
+import type {
+  TicketSearchRequest,
+  TicketSearchSort,
+  TicketSortField,
+} from "@/feature/serviceDesk/ticket/api";
 import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/mapper";
 import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { localSearchTickets } from "@/server/serviceDesk/ticket/localDemo";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
-type TicketSearchQuery = {
-  filter?: string;
-  sort?: string;
-  page: number;
-  pageSize: number;
-};
+const TICKET_SORT_FIELDS = new Set<TicketSortField>([
+  "ticketNumber",
+  "createdAt",
+  "updatedAt",
+  "dueAt",
+  "priority",
+  "status",
+]);
+
+const SORT_DIRECTIONS = new Set<TicketSearchSort["direction"]>([
+  "asc",
+  "desc",
+]);
 
 export async function GET(request: NextRequest) {
   const searchRequest = parseTicketSearchQuery(request.nextUrl.searchParams);
@@ -41,7 +54,9 @@ export async function POST(request: NextRequest) {
   let body: TicketSearchRequest;
 
   try {
-    body = (await request.json()) as TicketSearchRequest;
+    body = normalizeTicketSearchRequest(
+      (await request.json()) as TicketSearchRequest,
+    );
   } catch {
     return NextResponse.json(
       { message: "Invalid request body" },
@@ -96,7 +111,7 @@ async function handleTicketSearch(
     path: "/service-desk/tickets/search",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     ...(method === "GET"
-      ? { query: toTicketSearchQuery(body) }
+      ? { query: buildDbSearchParams(body) }
       : { body }),
     errorMessage: tServiceDeskApi("api.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
@@ -107,39 +122,107 @@ function parseTicketSearchQuery(
   searchParams: URLSearchParams,
 ): TicketSearchRequest | null {
   try {
-    return {
-      filter: parseJsonQueryValue<TicketSearchRequest["filter"]>(
-        searchParams.get("filter"),
-      ),
-      sort: parseJsonQueryValue<TicketSearchRequest["sort"]>(
-        searchParams.get("sort"),
-      ),
+    return normalizeTicketSearchRequest({
+      filter: parseFilterQueryValue(searchParams.get("filter")),
+      sort: parseSortQueryValue(searchParams),
       page: parseNumberQueryValue(searchParams.get("page")) ?? 1,
       pageSize:
-        parseNumberQueryValue(searchParams.get("pageSize")) ??
-        parseNumberQueryValue(searchParams.get("size")) ??
-        10,
-    };
+        parseNumberQueryValue(searchParams.get("pageSize")) ?? 10,
+    });
   } catch {
     return null;
   }
 }
 
-function toTicketSearchQuery(request: TicketSearchRequest): TicketSearchQuery {
+function normalizeTicketSearchRequest(
+  request: TicketSearchRequest,
+): TicketSearchRequest {
   return {
-    ...(request.filter ? { filter: JSON.stringify(request.filter) } : {}),
-    ...(request.sort ? { sort: JSON.stringify(request.sort) } : {}),
+    filter: normalizeFilterValue(request.filter),
+    sort: normalizeSortValue(request.sort),
     page: request.page,
     pageSize: request.pageSize,
   };
 }
 
-function parseJsonQueryValue<T>(value: string | null): T | undefined {
+function parseFilterQueryValue(value: string | null): RuleGroupTypeIC | undefined {
   if (!value) {
     return undefined;
   }
 
-  return JSON.parse(value) as T;
+  return JSON.parse(value) as RuleGroupTypeIC;
+}
+
+function parseSortQueryValue(
+  searchParams: URLSearchParams,
+): TicketSearchSort | undefined {
+  const field = searchParams.get("sortField");
+  const direction = searchParams.get("sortDirection");
+
+  if (field || direction) {
+    return normalizeSortValue({ field, direction });
+  }
+
+  const legacySort = searchParams.get("sort");
+
+  if (!legacySort) {
+    return undefined;
+  }
+
+  return normalizeSortValue(JSON.parse(legacySort));
+}
+
+function normalizeFilterValue(value: unknown): RuleGroupTypeIC | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    return parseFilterQueryValue(value);
+  }
+
+  return value as RuleGroupTypeIC;
+}
+
+function normalizeSortValue(value: unknown): TicketSearchSort | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    return normalizeSortValue(JSON.parse(value));
+  }
+
+  if (typeof value !== "object") {
+    throw new Error("Invalid sort value");
+  }
+
+  const sort = value as Partial<TicketSearchSort>;
+
+  if (!isTicketSortField(sort.field) || !isSortDirection(sort.direction)) {
+    throw new Error("Invalid sort value");
+  }
+
+  return {
+    field: sort.field,
+    direction: sort.direction,
+  };
+}
+
+function isTicketSortField(value: unknown): value is TicketSortField {
+  return (
+    typeof value === "string" &&
+    TICKET_SORT_FIELDS.has(value as TicketSortField)
+  );
+}
+
+function isSortDirection(
+  value: unknown,
+): value is TicketSearchSort["direction"] {
+  return (
+    typeof value === "string" &&
+    SORT_DIRECTIONS.has(value as TicketSearchSort["direction"])
+  );
 }
 
 function parseNumberQueryValue(value: string | null): number | undefined {
