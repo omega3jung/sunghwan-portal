@@ -12,7 +12,7 @@ export const actions: DbTicketAction[] = [
       "Hola, Isabella. ¿Podrías darnos más detalles sobre qué información debe incluirse?",
     owner_id: "evan_seo",
 
-    created_at: "2026-03-27T08:20:00Z",
+    created_at: "2026-05-27T08:20:00Z",
     updated_at: null,
     active: true,
 
@@ -28,7 +28,7 @@ export const actions: DbTicketAction[] = [
       "Debe incluir el ID de recepción, la fecha de recepción, IMEI, SKU, ID del empleado, estado y ubicación actual.",
     owner_id: "liam_williams",
 
-    created_at: "2026-03-27T08:41:12Z",
+    created_at: "2026-05-27T08:41:12Z",
     updated_at: null,
     active: true,
 
@@ -44,7 +44,7 @@ export const actions: DbTicketAction[] = [
       "Aquí está el informe. Si necesitan ayuda, por favor avísennos. Gracias.",
     owner_id: "evan_seo",
 
-    created_at: "2026-03-27T09:15:11Z",
+    created_at: "2026-05-27T09:15:11Z",
     updated_at: null,
     active: true,
 
