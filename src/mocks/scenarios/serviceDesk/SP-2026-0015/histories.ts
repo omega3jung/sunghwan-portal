@@ -13,7 +13,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "grant_murphy",
     action_no: null,
 
-    created_at: "2026-04-02T06:03:14Z",
+    created_at: "2026-06-02T06:03:14Z",
   },
   {
     ticket_id: ticket.id,
@@ -28,7 +28,7 @@ export const histories: DbTicketHistory[] = [
     from_value: null,
     to_value: "41,31",
 
-    created_at: "2026-04-02T06:06:20Z",
+    created_at: "2026-06-02T06:06:20Z",
   },
   {
     ticket_id: ticket.id,
@@ -43,7 +43,7 @@ export const histories: DbTicketHistory[] = [
     from_value: "Open",
     to_value: "Working",
 
-    created_at: "2026-04-02T06:10:27Z",
+    created_at: "2026-06-02T06:10:27Z",
   },
   {
     ticket_id: ticket.id,
@@ -55,7 +55,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "evan_seo",
     action_no: "1",
 
-    created_at: "2026-04-02T06:15:48Z",
+    created_at: "2026-06-02T06:15:48Z",
   },
   {
     ticket_id: ticket.id,
@@ -67,7 +67,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "grant_murphy",
     action_no: "2",
 
-    created_at: "2026-04-02T06:19:36Z",
+    created_at: "2026-06-02T06:19:36Z",
   },
   {
     ticket_id: ticket.id,
@@ -79,7 +79,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "daniel_kim",
     action_no: "3",
 
-    created_at: "2026-04-02T06:52:08Z",
+    created_at: "2026-06-02T06:52:08Z",
   },
   {
     ticket_id: ticket.id,
@@ -91,7 +91,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "daniel_kim",
     action_no: null,
 
-    created_at: "2026-04-02T07:05:12Z",
+    created_at: "2026-06-02T07:05:12Z",
   },
   {
     ticket_id: ticket.id,
@@ -110,7 +110,7 @@ export const histories: DbTicketHistory[] = [
       reason: "DB lock released and blocked transactions recovered",
     },
 
-    created_at: "2026-04-02T07:20:31Z",
+    created_at: "2026-06-02T07:20:31Z",
   },
   {
     ticket_id: ticket.id,
@@ -122,6 +122,6 @@ export const histories: DbTicketHistory[] = [
     actor_id: "daniel_kim",
     action_no: "4",
 
-    created_at: "2026-04-02T07:21:42Z",
+    created_at: "2026-06-02T07:21:42Z",
   },
 ];
