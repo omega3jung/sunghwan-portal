@@ -13,7 +13,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "liam_williams",
     action_no: null,
 
-    created_at: "2026-04-02T06:13:27Z",
+    created_at: "2026-06-02T06:13:27Z",
   },
   {
     ticket_id: ticket.id,
@@ -28,7 +28,7 @@ export const histories: DbTicketHistory[] = [
     from_value: null,
     to_value: "41,31",
 
-    created_at: "2026-04-02T06:18:09Z",
+    created_at: "2026-06-02T06:18:09Z",
   },
   {
     ticket_id: ticket.id,
@@ -43,7 +43,7 @@ export const histories: DbTicketHistory[] = [
     from_value: "Open",
     to_value: "Working",
 
-    created_at: "2026-04-02T06:20:03Z",
+    created_at: "2026-06-02T06:20:03Z",
   },
   {
     ticket_id: ticket.id,
@@ -55,7 +55,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "evan_seo",
     action_no: "1",
 
-    created_at: "2026-04-02T06:22:11Z",
+    created_at: "2026-06-02T06:22:11Z",
   },
   {
     ticket_id: ticket.id,
@@ -67,7 +67,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "liam_williams",
     action_no: "2",
 
-    created_at: "2026-04-02T06:25:44Z",
+    created_at: "2026-06-02T06:25:44Z",
   },
   {
     ticket_id: ticket.id,
@@ -79,7 +79,7 @@ export const histories: DbTicketHistory[] = [
     actor_id: "daniel_kim",
     action_no: null,
 
-    created_at: "2026-04-02T07:09:20Z",
+    created_at: "2026-06-02T07:09:20Z",
   },
   {
     ticket_id: ticket.id,
@@ -98,7 +98,7 @@ export const histories: DbTicketHistory[] = [
         "Duplicate of the same portal performance incident already tracked in SP-2026-0005",
     },
 
-    created_at: "2026-04-02T07:12:34Z",
+    created_at: "2026-06-02T07:12:34Z",
   },
   {
     ticket_id: ticket.id,
@@ -119,7 +119,7 @@ export const histories: DbTicketHistory[] = [
       note: "Closed as merged child ticket",
     },
 
-    created_at: "2026-04-02T07:12:52Z",
+    created_at: "2026-06-02T07:12:52Z",
   },
   {
     ticket_id: ticket.id,
@@ -131,6 +131,6 @@ export const histories: DbTicketHistory[] = [
     actor_id: "daniel_kim",
     action_no: "3",
 
-    created_at: "2026-04-02T07:13:18Z",
+    created_at: "2026-06-02T07:13:18Z",
   },
 ];

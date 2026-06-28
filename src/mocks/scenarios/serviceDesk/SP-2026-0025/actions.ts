@@ -12,7 +12,7 @@ export const actions: DbTicketAction[] = [
       "Bonjour, Grant.<br>Nous vérifions actuellement le flux de transaction.<br>Veuillez confirmer si cela affecte un seul utilisateur ou toute l’équipe logistique.",
     owner_id: "evan_seo",
 
-    created_at: "2026-04-02T06:15:48Z",
+    created_at: "2026-06-02T06:15:48Z",
     updated_at: null,
     active: true,
 
@@ -28,7 +28,7 @@ export const actions: DbTicketAction[] = [
       "Cela affecte toute l’équipe d’expédition sortante.<br>Plusieurs utilisateurs ont essayé et tous restent bloqués avec l’indicateur de chargement.",
     owner_id: "grant_murphy",
 
-    created_at: "2026-04-02T06:19:36Z",
+    created_at: "2026-06-02T06:19:36Z",
     updated_at: null,
     active: true,
 
@@ -44,7 +44,7 @@ export const actions: DbTicketAction[] = [
       "La cause racine a été identifiée.<br>Un verrou de base de données sur le flux de transaction d’expédition empêche les requêtes de se terminer.<br>Je libère la session bloquée et je vérifie que les transactions en attente reprennent normalement.",
     owner_id: "daniel_kim",
 
-    created_at: "2026-04-02T06:52:08Z",
+    created_at: "2026-06-02T06:52:08Z",
     updated_at: null,
     active: true,
 
@@ -61,7 +61,7 @@ export const actions: DbTicketAction[] = [
       "Mise à jour : le verrou de base de données a été résolu et l’expédition sortante est de nouveau traitée normalement.<br>Veuillez actualiser la page et réessayer la transaction.<br>Aucune correction de données supplémentaire n’est requise de notre côté.",
     owner_id: "daniel_kim",
 
-    created_at: "2026-04-02T07:21:42Z",
+    created_at: "2026-06-02T07:21:42Z",
     updated_at: null,
     active: true,
 
