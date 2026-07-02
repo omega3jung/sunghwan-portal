@@ -33,6 +33,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
   const { t } = useTranslation(NS.serviceDesk);
   const {
     open,
+    isRemoteMode,
     handleOpenChange,
     ticketForm,
     currentStep,
@@ -70,7 +71,9 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
       >
         <CreateTicketDialogHeader />
         <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
-          <TicketFormProvider value={{ form: ticketForm, categories, users }}>
+          <TicketFormProvider
+            value={{ form: ticketForm, categories, users, isRemoteMode }}
+          >
             <CreateTicketDialogStepFlow
               currentStep={currentStep}
               onStepChange={setCurrentStep}

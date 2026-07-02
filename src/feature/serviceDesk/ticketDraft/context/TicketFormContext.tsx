@@ -12,6 +12,7 @@ type TicketFormContextValue = {
   form: UseFormReturn<TicketFormValues>;
   categories: MainCategory[];
   users: ImageValueLabel[];
+  isRemoteMode: boolean;
 };
 
 const TicketFormContext = createContext<TicketFormContextValue | null>(null);

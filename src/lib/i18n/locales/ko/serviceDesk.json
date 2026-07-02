@@ -81,6 +81,12 @@
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
     "loadDraftExceptInvalid": "유효하지 않은 필드를 제외하고 임시 저장 내용을 불러왔습니다."
   },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 이미지가 데모 이미지로 대체됩니다.",
+      "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 파일이 데모 파일로 대체됩니다."
+    }
+  },
   "hoverMessage": {
     "backToList": "티켓 목록으로 돌아가기",
     "workSessionTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",

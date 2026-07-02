@@ -45,6 +45,7 @@ export const useCreateTicketDialog = ({
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
   const { data: currentSession } = useCurrentSession();
+  const isRemoteMode = currentSession?.user.dataScope === "REMOTE";
 
   const [open, setOpen] = useState(false);
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
@@ -141,9 +142,9 @@ export const useCreateTicketDialog = ({
   const handleClose = useCallback(async () => {
     toast.dismiss(TICKET_DRAFT_TOAST_ID);
     setShouldShowDraftToast(false);
+    setOpen(false);
 
     if (!isDirty) {
-      setOpen(false);
       return;
     }
 
@@ -151,11 +152,12 @@ export const useCreateTicketDialog = ({
 
     if (draft) {
       toast.success(
-        t("save.success", { ns: NS.message, item: t("field.draft") }),
+        t("common.save.success", {
+          ns: NS.message,
+          item: t("field.draft", { ns: NS.common }),
+        }),
       );
     }
-
-    setOpen(false);
   }, [isDirty, t, ticketDraftState]);
 
   const onOpen = useCallback(async () => {
@@ -328,6 +330,7 @@ export const useCreateTicketDialog = ({
 
   return {
     open,
+    isRemoteMode,
     handleOpenChange,
     ticketForm,
     currentStep,

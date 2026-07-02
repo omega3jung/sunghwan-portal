@@ -61,6 +61,7 @@
     "date": "Date",
     "department": "Département",
     "description": "Description",
+    "draft": "Brouillon",
     "details": "Détails",
     "dueBy": "Échéance",
     "dueAt": "Date d'échéance",

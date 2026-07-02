@@ -81,6 +81,12 @@
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded.",
     "loadDraftExceptInvalid": "Loaded the draft except in cases where it is invalid."
   },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    }
+  },
   "hoverMessage": {
     "backToList": "Back to ticket list",
     "workSessionTool": "Record manual work time and optionally move the ticket status in the same action.",

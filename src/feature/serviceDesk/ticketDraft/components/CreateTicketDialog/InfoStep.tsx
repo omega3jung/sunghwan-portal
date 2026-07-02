@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -14,14 +15,18 @@ import { useLocalizedText } from "@/shared/hooks";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
 import { TicketInfoFields } from "./InfoFields";
+import { RemoteAttachmentNotice } from "./RemoteAttachmentNotice";
+
+const IMAGE_TAG_PATTERN = /<img\b/i;
 
 export const InfoStep = () => {
   const { form, categories } = useTicketFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
-  const bodyValue = form.watch("body");
-  const categoryValue = form.watch("category");
+  const bodyValue = useWatch({ control: form.control, name: "body" });
+  const categoryValue = useWatch({ control: form.control, name: "category" });
   const toolbarLabels = useMemo(() => getRichEditorLabels(t), [t]);
+  const hasAttachedImage = IMAGE_TAG_PATTERN.test(bodyValue ?? "");
 
   const requestTemplate = useMemo(() => {
     const subCategories = categories.flatMap(
@@ -66,6 +71,10 @@ export const InfoStep = () => {
             }}
             toolbarLabels={toolbarLabels}
           />
+
+          <RemoteAttachmentNotice isVisible={hasAttachedImage}>
+            {t("ticketDraft.notice.remoteImagesReplaced")}
+          </RemoteAttachmentNotice>
         </div>
       </Field>
     </>

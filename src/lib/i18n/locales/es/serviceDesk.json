@@ -81,6 +81,12 @@
     "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará.",
     "loadDraftExceptInvalid": "Se cargó el borrador, excepto los campos no válidos."
   },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "En el modo remoto, las imágenes adjuntas se reemplazan por imágenes de demostración por motivos de seguridad.",
+      "remoteFilesReplaced": "En el modo remoto, los archivos adjuntos se reemplazan por archivos de demostración por motivos de seguridad."
+    }
+  },
   "hoverMessage": {
     "backToList": "Volver a la lista de tickets",
     "workSessionTool": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",

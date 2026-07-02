@@ -81,6 +81,12 @@
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé.",
     "loadDraftExceptInvalid": "Le brouillon a été chargé, sauf dans les cas où il était invalide."
   },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    }
+  },
   "hoverMessage": {
     "backToList": "Retour à la liste des tickets",
     "workSessionTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
