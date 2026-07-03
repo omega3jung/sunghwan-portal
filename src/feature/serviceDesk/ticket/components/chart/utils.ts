@@ -2,6 +2,7 @@
 
 import { Department } from "@/domain/organization";
 import { TicketSummary } from "@/domain/serviceDesk";
+import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import { ImageValueLabel } from "@/shared/types";
 
 import { ChartSummaryItem, SlaBucketValue } from "./types";
@@ -109,7 +110,9 @@ export const buildAssigneeSummary = (
   const values: Array<{ value: string; label: string }> = [];
 
   tickets.forEach((ticket) => {
-    if (!ticket.assigneeUsernames.length) {
+    const assigneeUsernames = selectTicketAssigneeIds(ticket);
+
+    if (!assigneeUsernames.length) {
       values.push({
         value: UNASSIGNED_VALUE,
         label: unassignedLabel,
@@ -117,7 +120,7 @@ export const buildAssigneeSummary = (
       return;
     }
 
-    ticket.assigneeUsernames.forEach((assigneeUsername) => {
+    assigneeUsernames.forEach((assigneeUsername) => {
       const assignee = usersById.get(assigneeUsername);
 
       values.push({

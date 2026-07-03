@@ -1,5 +1,9 @@
 import { Priority, RiskLevel } from "@/domain/common";
-import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
+import {
+  TicketAssignmentPhase,
+  TicketAttachmentMetadata,
+  TicketStatus,
+} from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
 import {
@@ -93,9 +97,7 @@ function toTicketCommonDto(
   row: ServiceDeskTicketViewRow,
   currentUserName: string | null,
 ) {
-  const assigneeUsernames = normalizePostgresStringArray(
-    row.tk_assignee_usernames,
-  );
+  const assignment = mapTicketAssignment(row, currentUserName);
 
   return {
     id: row.tk_id,
@@ -106,7 +108,7 @@ function toTicketCommonDto(
     status: row.tk_status,
     priority: row.tk_priority,
     risk_level: row.tk_risk_level,
-    assignee_usernames: assigneeUsernames,
+    ...assignment,
     work_minutes: row.tk_work_minutes,
     last_comment_at: row.tka_last_comment_at,
     last_commenter_email: row.tka_last_comment_email,
@@ -119,8 +121,6 @@ function toTicketCommonDto(
     due_at: row.tk_due_at,
     owner:
       currentUserName !== null && currentUserName === row.tk_requester_username,
-    assigned:
-      currentUserName !== null && assigneeUsernames.includes(currentUserName),
     active: true,
     scope: row.cat_scope,
     category_id: String(row.cat_id),
@@ -130,6 +130,31 @@ function toTicketCommonDto(
     approval_step_id:
       row.tk_approval_step_id === null ? null : String(row.tk_approval_step_id),
     subject: row.tk_subject,
+  };
+}
+
+function mapTicketAssignment(
+  row: ServiceDeskTicketViewRow,
+  currentUserName: string | null,
+) {
+  const assigneeUsernames = normalizePostgresStringArray(
+    row.tk_assignee_usernames,
+  );
+  const isApprovalPhase = row.tk_approval_step_id !== null;
+  const assignmentPhase: TicketAssignmentPhase = isApprovalPhase
+    ? "APPROVAL"
+    : "WORK";
+  const isAssigned =
+    currentUserName !== null && assigneeUsernames.includes(currentUserName);
+
+  return {
+    assignment_phase: assignmentPhase,
+    approval_assignee_usernames: isApprovalPhase ? assigneeUsernames : [],
+    work_assignee_usernames: isApprovalPhase ? [] : assigneeUsernames,
+    assigned_approver: isApprovalPhase ? isAssigned : false,
+    assigned_worker: isApprovalPhase ? false : isAssigned,
+    assignee_usernames: assigneeUsernames,
+    assigned: isAssigned,
   };
 }
 

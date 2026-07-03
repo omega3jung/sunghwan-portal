@@ -127,16 +127,27 @@ export const useCreateTicketDialog = ({
 
   const onSubmit = useCallback(
     async (data: TicketFormValues) => {
+      const createPromise = createTicketAsync(data);
+
       mutationToast(
-        createTicketAsync(data),
+        createPromise,
         "save",
         t("field.ticket", { ns: NS.common }),
       );
 
-      await ticketDraftState.removeDraft();
+      try {
+        await createPromise;
+      } catch {
+        return;
+      }
+
+      if (!isRemoteMode) {
+        await ticketDraftState.removeDraft();
+      }
+
       setOpen(false);
     },
-    [createTicketAsync, mutationToast, t, ticketDraftState],
+    [createTicketAsync, isRemoteMode, mutationToast, t, ticketDraftState],
   );
 
   const handleClose = useCallback(async () => {

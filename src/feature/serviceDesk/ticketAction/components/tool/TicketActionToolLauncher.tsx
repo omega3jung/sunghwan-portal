@@ -31,6 +31,16 @@ const ALL_TOOL_ACTIONS: TicketActionMode[] = [
   "resubmit",
 ];
 
+const WORK_PHASE_ACTIONS = new Set<TicketActionMode>([
+  "assign",
+  "assignSelf",
+  "adjust",
+  "merge",
+  "reject",
+  "reopen",
+  "resubmit",
+]);
+
 const VISIBLE_STATUSES_BY_ACTION: Record<
   TicketActionMode,
   readonly TicketStatus[]
@@ -118,7 +128,14 @@ export function TicketActionToolLauncher({
           return false;
         }
 
-        if (action === "assignSelf" && ticket.assigned) {
+        if (
+          WORK_PHASE_ACTIONS.has(action) &&
+          ticket.assignmentPhase !== "WORK"
+        ) {
+          return false;
+        }
+
+        if (action === "assignSelf" && ticket.assignedWorker) {
           return false;
         }
 
@@ -128,7 +145,12 @@ export function TicketActionToolLauncher({
 
         return true;
       }),
-    [ticket.assigned, ticket.mergedIntoTicketId, ticket.status],
+    [
+      ticket.assignedWorker,
+      ticket.assignmentPhase,
+      ticket.mergedIntoTicketId,
+      ticket.status,
+    ],
   );
 
   if (hidden) {

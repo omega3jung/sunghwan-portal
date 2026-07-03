@@ -61,11 +61,27 @@ export function toLocalStartWorkResponse(
   return {
     ...detail,
     owner: detail.requesterUsername === currentUserName,
-    assigned: detail.assigneeUsernames.includes(currentUserName),
+    assignedApprover:
+      detail.assignmentPhase === "APPROVAL" &&
+      detail.approvalAssigneeUsernames.includes(currentUserName),
+    assignedWorker:
+      detail.assignmentPhase === "WORK" &&
+      detail.workAssigneeUsernames.includes(currentUserName),
   };
 }
 
 function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {
+  if (ticket.approval_step_id !== null) {
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.assigneeForbidden",
+      403,
+      {
+        ticketId: ticket.id,
+        username: employeeUserName,
+      },
+    );
+  }
+
   if (ticket.assignee_usernames.includes(employeeUserName)) {
     return;
   }

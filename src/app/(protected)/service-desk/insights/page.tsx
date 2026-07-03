@@ -53,6 +53,7 @@ import {
   SlaChart,
   TicketChart,
 } from "@/feature/serviceDesk/ticket/components/chart";
+import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import {
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
@@ -174,10 +175,12 @@ const isTicketMatchedByChartFilter = ({
       );
     }
     case "assignee":
+      const assigneeUsernames = selectTicketAssigneeIds(ticket);
+
       if (isUnassignedAssigneeValue(filter.value)) {
-        return ticket.assigneeUsernames.length === 0;
+        return assigneeUsernames.length === 0;
       }
-      return ticket.assigneeUsernames.includes(filter.value);
+      return assigneeUsernames.includes(filter.value);
     case "sla":
       return getSlaBucket(ticket.dueAt) === filter.value;
     default:

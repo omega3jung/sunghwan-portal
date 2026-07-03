@@ -1,6 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import {
   CategoryScope,
+  TicketAssignmentPhase,
   TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
@@ -37,6 +38,13 @@ export interface DbTicketSummary {
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
+
+  assignment_phase?: TicketAssignmentPhase;
+  approval_assignee_usernames?: string[];
+  work_assignee_usernames?: string[];
+  assigned_approver?: boolean;
+  assigned_worker?: boolean;
+
   assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
   merged_into_ticket_no?: string | null;
@@ -80,6 +88,13 @@ export interface DbTicketDetail {
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
+
+  assignment_phase?: TicketAssignmentPhase;
+  approval_assignee_usernames?: string[];
+  work_assignee_usernames?: string[];
+  assigned_approver?: boolean;
+  assigned_worker?: boolean;
+
   assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
   merged_into_ticket_no?: string | null;

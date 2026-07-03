@@ -10,6 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { SupportedLanguage } from "@/domain/config";
 import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
 import { MetaBadge } from "@/feature/serviceDesk/shared";
+import {
+  selectTicketAssigneeIds,
+  selectTicketIsAssigned,
+} from "@/feature/serviceDesk/ticket/utils";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
@@ -46,13 +50,15 @@ export const TicketListMobileItem = ({
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
+  const assigneeUsernames = selectTicketAssigneeIds(ticket);
+  const isAssigned = selectTicketIsAssigned(ticket);
 
   return (
     <div
       onClick={onClick}
       className={cn(
         "cursor-pointer flex flex-col gap-1 overflow-hidden border-b px-2.5 py-1.5 hover:bg-muted",
-        ticket.assigned && "border-l-primary border-l-4",
+        isAssigned && "border-l-primary border-l-4",
       )}
     >
       <div className="space-y-0.5 flex flex-col items-start">
@@ -75,7 +81,7 @@ export const TicketListMobileItem = ({
             <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
           ) : null}
 
-          {ticket.assigned && (
+          {isAssigned && (
             <Badge className="bg-primary/10 text-primary border border-primary/20">
               {t("detailAside.assignedBadge")}
             </Badge>
@@ -111,7 +117,7 @@ export const TicketListMobileItem = ({
         </div>
         <AvatarMultiComboBox
           variant="ghost"
-          value={ticket.assigneeUsernames}
+          value={assigneeUsernames}
           options={users}
           maxImages={5}
           readOnly={true}

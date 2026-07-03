@@ -16,9 +16,15 @@ export const serviceDeskApprovalStepApi = {
   ): Promise<CategoryApprovalSettings[]> => {
     if (!params) return [];
 
+    const searchParams = buildDbSearchParams(params);
+
+    if (params.tenantId) {
+      searchParams.set("tenantId", params.tenantId);
+    }
+
     const res = await client.api.get<ApprovalStepResponse, URLSearchParams>(
       `/api/service-desk/approval-steps`,
-      { params: buildDbSearchParams(params) },
+      { params: searchParams },
     );
     return res.data.items;
   },

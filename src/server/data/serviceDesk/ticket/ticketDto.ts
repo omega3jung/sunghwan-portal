@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Priority, RiskLevel } from "@/domain/common";
 import {
   CategoryScope,
+  TicketAssignmentPhase,
   TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
@@ -50,6 +51,7 @@ export const ticketAttachmentMetadataSchema = z.object({
 });
 
 export const ticketMutateRequestSchema = z.object({
+  id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.coerce.number().int().positive().nullable().optional(),
   categoryId: z.coerce.number().int().positive(),
   approvalStepId: z.coerce.number().int().positive().nullable().optional(),
@@ -86,6 +88,13 @@ export type TicketListItemDto = {
   status: TicketStatus;
   priority: Priority;
   risk_level: RiskLevel;
+
+  assignment_phase: TicketAssignmentPhase;
+  approval_assignee_usernames: string[];
+  work_assignee_usernames: string[];
+  assigned_approver: boolean;
+  assigned_worker: boolean;
+
   assignee_usernames: string[];
 
   work_minutes: number;

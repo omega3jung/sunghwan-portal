@@ -28,10 +28,14 @@ export const localListCategories = ({
   const active =
     parseOptionalBoolean(searchParams.get("active")) ??
     getBooleanRuleGroupValue(filter, "active");
+  const tenantId = searchParams.get("tenantId");
   const items = filterItemsByQuery(
     searchParams,
     filterTenantCategoryTreesByActive(
-      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      filterTenantCategoryTreesByTenantId(
+        camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+        tenantId,
+      ),
       active,
     ),
   );
@@ -41,6 +45,17 @@ export const localListCategories = ({
     total: items.length,
   };
 };
+
+function filterTenantCategoryTreesByTenantId(
+  items: TenantCategoryTree[],
+  tenantId: string | null,
+) {
+  if (!tenantId) {
+    return items;
+  }
+
+  return items.filter((tenant) => tenant.id === tenantId);
+}
 
 function parseOptionalBoolean(value: string | null): boolean | null {
   if (value === null) {

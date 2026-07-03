@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
 import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared";
+import { selectTicketIsAssigned } from "@/feature/serviceDesk/ticket/utils";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { ImageValueLabel, ISODateString } from "@/shared/types";
@@ -26,6 +27,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
+  const isAssigned = selectTicketIsAssigned(ticket);
 
   return (
     <section className="flex min-w-0 max-w-full flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -71,7 +73,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
             <li>
               <PriorityBadge priority={ticket.priority} />
             </li>
-            {ticket.assigned && (
+            {isAssigned && (
               <li>
                 <Badge className="bg-primary/10 text-primary border border-primary/20">
                   {t("detailAside.assignedBadge")}

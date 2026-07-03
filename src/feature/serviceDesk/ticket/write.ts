@@ -74,6 +74,7 @@ const ticketDueAtSchema = z.union([z.date(), z.string()]).refine((value) => {
 });
 
 const ticketWriteRequestSchema = z.object({
+  id: z.string().nullable().optional(),
   category: z.string().optional(),
   subject: z.string(),
   body: z.string(),
@@ -86,6 +87,7 @@ const ticketWriteRequestSchema = z.object({
 });
 
 export const ticketMutateRequestPayloadSchema = z.object({
+  id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.number().int().positive().nullable().optional(),
   categoryId: z.number().int().positive(),
   approvalStepId: z.number().int().positive().nullable().optional(),
@@ -149,6 +151,7 @@ export type DbTicketWriteInput = {
 };
 
 export type TicketMutateRequestPayload = {
+  id?: string | null;
   tenantId?: number | null;
   categoryId: number;
   approvalStepId?: number | null;
@@ -233,6 +236,7 @@ export function toTicketMutateRequestPayload(
   const images = prepared?.images ?? [];
 
   return {
+    ...(input.id ? { id: input.id } : {}),
     categoryId: normalizeRequiredNumberId(input.category),
     subject: input.subject,
     body: prepared?.body ?? input.body,
@@ -250,6 +254,7 @@ export function toTicketMutateRequestPayloadFromFormValues(
   prepared: PrepareTicketAttachmentsResponse,
 ): TicketMutateRequestPayload {
   return {
+    ...(input.id ? { id: input.id } : {}),
     categoryId: normalizeRequiredNumberId(input.category),
     subject: input.subject,
     body: prepared.body,

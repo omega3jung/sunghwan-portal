@@ -2,13 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { DbParams } from "@/shared/types/api";
-
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
+import type { ServiceDeskTenantListParams } from "./types";
 
-export const useServiceDeskTenantListQuery = (params: DbParams) => {
+export const useServiceDeskTenantListQuery = (
+  params: ServiceDeskTenantListParams,
+) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({

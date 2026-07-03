@@ -1,3 +1,5 @@
+import type { QueryResultRow } from "pg";
+
 import { normalizePagination } from "@/server/shared/query";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
@@ -9,6 +11,16 @@ import {
 } from "./ticketRow";
 
 type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
+
+export type TicketQueryExecutor = <T extends QueryResultRow = QueryResultRow>(
+  text: string,
+  params?: unknown[],
+) => Promise<T[]>;
+
+export type TicketRepositoryOptions = {
+  // Allows service flows to execute multiple repository calls in one transaction.
+  query?: TicketQueryExecutor;
+};
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
@@ -61,6 +73,16 @@ where tk_active = true
 limit 1;
 `;
 
+const FIND_NEXT_TICKET_NUMBER_QUERY = `
+select
+  'SP-' || $1::text || '-' || lpad((coalesce(max(sequence_no), 0) + 1)::text, 4, '0') as ticket_no
+from (
+  select ((regexp_match(tk_ticket_no, '^SP-' || $1::text || '-([0-9]+)$'))[1])::int as sequence_no
+  from service_desk.ticket
+  where tk_ticket_no ~ ('^SP-' || $1::text || '-[0-9]+$')
+) matched_ticket_no;
+`;
+
 const CREATE_TICKET_ROW_QUERY = `
 insert into service_desk.ticket (
   tk_ticket_no,
@@ -94,6 +116,78 @@ values (
   $13,
   $14
 )
+returning tk_id;
+`;
+
+const FIND_ACTIVE_DRAFT_TICKET_ID_BY_REQUESTER_QUERY = `
+select tk_id
+from service_desk.ticket
+where tk_requester_username = $1
+  and tk_status = 'Draft'
+  and tk_active = true
+order by coalesce(tk_updated_at, tk_created_at) desc, tk_created_at desc
+limit 1
+for update;
+`;
+
+const SUBMIT_DRAFT_TICKET_ROW_BY_ID_QUERY = `
+update service_desk.ticket
+set
+  tk_ticket_no = $2,
+  tk_tenant_id = $3,
+  tk_category_id = $4,
+  tk_approval_step_id = null,
+  tk_requester_username = $5,
+  tk_assignee_usernames = array[]::text[],
+  tk_email = $6::jsonb,
+  tk_subject = $7,
+  tk_content = $8,
+  tk_files = $9::jsonb,
+  tk_images = $10::jsonb,
+  tk_status = 'Open',
+  tk_priority = $11,
+  tk_risk_level = $12,
+  tk_due_at = $13,
+  tk_active = true,
+  tk_updated_at = now()
+where tk_id = $1
+  and tk_status = 'Draft'
+  and tk_requester_username = $5
+  and tk_active = true
+returning tk_id;
+`;
+
+const FIND_NEXT_APPROVAL_STEP_ID_QUERY = `
+select service_desk.get_next_approval_step(
+  $1::varchar,
+  $2::bigint,
+  $3::bigint
+) as next_approval_step_id;
+`;
+
+const FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY = `
+select service_desk.get_approval_step_assignee_usernames(
+  $1::bigint,
+  $2::varchar
+) as assignee_usernames;
+`;
+
+const FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY = `
+select service_desk.get_category_assignment_usernames(
+  $1::bigint,
+  $2::varchar
+) as assignee_usernames;
+`;
+
+const UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY = `
+update service_desk.ticket
+set
+  tk_approval_step_id = $2,
+  tk_assignee_usernames = $3::text[],
+  tk_status = 'Open',
+  tk_updated_at = now()
+where tk_id = $1
+  and tk_active = true
 returning tk_id;
 `;
 
@@ -141,8 +235,10 @@ export async function findActiveTicketViewRows() {
 
 export async function findActiveTicketViewRowById(
   ticketId: string,
+  options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
-  const rows = await queryPortalApi<ServiceDeskTicketViewRow>(
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<ServiceDeskTicketViewRow>(
     FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY,
     [ticketId],
   );
@@ -152,8 +248,10 @@ export async function findActiveTicketViewRowById(
 
 export async function createTicketRow(
   input: CreateTicketRowInput,
+  options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
-  const rows = await queryPortalApi<{ tk_id: string }>(CREATE_TICKET_ROW_QUERY, [
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(CREATE_TICKET_ROW_QUERY, [
     input.tk_ticket_no,
     input.tk_tenant_id,
     input.tk_category_id,
@@ -171,14 +269,145 @@ export async function createTicketRow(
   ]);
   const ticketId = rows[0]?.tk_id;
 
-  return ticketId ? findActiveTicketViewRowById(ticketId) : null;
+  return ticketId ? findActiveTicketViewRowById(ticketId, options) : null;
+}
+
+export async function findNextTicketNumber(
+  year: number,
+  options: TicketRepositoryOptions = {},
+): Promise<string> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ ticket_no: string }>(FIND_NEXT_TICKET_NUMBER_QUERY, [
+    year,
+  ]);
+
+  return rows[0]?.ticket_no ?? `SP-${year}-0001`;
+}
+
+export async function findActiveDraftTicketIdByRequesterUsername(
+  requesterUsername: string,
+  options: TicketRepositoryOptions = {},
+): Promise<string | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(
+    FIND_ACTIVE_DRAFT_TICKET_ID_BY_REQUESTER_QUERY,
+    [requesterUsername],
+  );
+
+  return rows[0]?.tk_id ?? null;
+}
+
+export async function submitDraftTicketRowById(
+  ticketId: string,
+  input: CreateTicketRowInput,
+  options: TicketRepositoryOptions = {},
+): Promise<ServiceDeskTicketViewRow | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(
+    SUBMIT_DRAFT_TICKET_ROW_BY_ID_QUERY,
+    [
+      ticketId,
+      input.tk_ticket_no,
+      input.tk_tenant_id,
+      input.tk_category_id,
+      input.tk_requester_username,
+      JSON.stringify(input.tk_email),
+      input.tk_subject,
+      input.tk_content,
+      JSON.stringify(input.tk_files),
+      JSON.stringify(input.tk_images),
+      input.tk_priority,
+      input.tk_risk_level,
+      input.tk_due_at,
+    ],
+  );
+  const submittedTicketId = rows[0]?.tk_id;
+
+  return submittedTicketId
+    ? findActiveTicketViewRowById(submittedTicketId, options)
+    : null;
+}
+
+export async function findNextApprovalStepId(
+  params: {
+    requesterUsername: string;
+    categoryId: number | string;
+    currentApprovalStepId?: number | string | null;
+  },
+  options: TicketRepositoryOptions = {},
+): Promise<number | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ next_approval_step_id: number | string | null }>(
+    FIND_NEXT_APPROVAL_STEP_ID_QUERY,
+    [
+      params.requesterUsername,
+      params.categoryId,
+      params.currentApprovalStepId ?? null,
+    ],
+  );
+
+  return normalizeNumberResult(rows[0]?.next_approval_step_id);
+}
+
+export async function findApprovalStepAssigneeUsernames(
+  params: {
+    approvalStepId: number | string;
+    requesterUsername: string;
+  },
+  options: TicketRepositoryOptions = {},
+): Promise<string[]> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ assignee_usernames: unknown }>(
+    FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY,
+    [params.approvalStepId, params.requesterUsername],
+  );
+
+  return normalizeTextArray(rows[0]?.assignee_usernames);
+}
+
+export async function findCategoryAssignmentUsernames(
+  params: {
+    categoryId: number | string;
+    requesterUsername: string;
+  },
+  options: TicketRepositoryOptions = {},
+): Promise<string[]> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ assignee_usernames: unknown }>(
+    FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY,
+    [params.categoryId, params.requesterUsername],
+  );
+
+  return normalizeTextArray(rows[0]?.assignee_usernames);
+}
+
+export async function updateTicketInitialRoutingById(
+  ticketId: string,
+  input: {
+    approvalStepId: number | string | null;
+    assigneeUsernames: string[];
+  },
+  options: TicketRepositoryOptions = {},
+): Promise<ServiceDeskTicketViewRow | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(
+    UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY,
+    [ticketId, input.approvalStepId, input.assigneeUsernames],
+  );
+  const updatedTicketId = rows[0]?.tk_id;
+
+  return updatedTicketId
+    ? findActiveTicketViewRowById(updatedTicketId, options)
+    : null;
 }
 
 export async function updateTicketRowById(
   ticketId: string,
   input: UpdateTicketRowInput,
+  options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
-  const rows = await queryPortalApi<{ tk_id: string }>(
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(
     UPDATE_TICKET_ROW_BY_ID_QUERY,
     [
       ticketId,
@@ -197,7 +426,9 @@ export async function updateTicketRowById(
   );
   const updatedTicketId = rows[0]?.tk_id;
 
-  return updatedTicketId ? findActiveTicketViewRowById(updatedTicketId) : null;
+  return updatedTicketId
+    ? findActiveTicketViewRowById(updatedTicketId, options)
+    : null;
 }
 
 export async function findActiveTicketViewRowsBySearch(
@@ -474,4 +705,51 @@ function normalizeArraySqlValue(value: unknown): string[] {
   }
 
   return [String(value)];
+}
+
+function normalizeNumberResult(value: unknown): number | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const parsedValue = Number(value);
+
+  return Number.isFinite(parsedValue) ? parsedValue : null;
+}
+
+function normalizeTextArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  const normalizedValue = value.trim();
+
+  if (!normalizedValue) {
+    return [];
+  }
+
+  if (normalizedValue.startsWith("[") && normalizedValue.endsWith("]")) {
+    try {
+      return normalizeTextArray(JSON.parse(normalizedValue) as unknown);
+    } catch {
+      return [];
+    }
+  }
+
+  const arrayBody =
+    normalizedValue.startsWith("{") && normalizedValue.endsWith("}")
+      ? normalizedValue.slice(1, -1)
+      : normalizedValue;
+
+  return arrayBody
+    .split(",")
+    .map((item) => item.trim().replace(/^"|"$/g, ""))
+    .filter(Boolean);
 }

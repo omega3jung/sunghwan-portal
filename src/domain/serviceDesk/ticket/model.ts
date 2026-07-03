@@ -27,8 +27,22 @@ interface TicketWorkflowState {
   status: TicketStatus;
   priority: Priority;
   riskLevel: RiskLevel;
-  assigneeUsernames: string[];
   closeReason?: TicketResolutionReason;
+}
+
+export type TicketAssignmentPhase = "APPROVAL" | "WORK";
+
+/**
+ * Ticket assignment state.
+ * The persisted assignee column stores the current responsible users, whose
+ * meaning depends on whether the ticket is in approval or work phase.
+ */
+export interface TicketAssignmentState {
+  assignmentPhase: TicketAssignmentPhase;
+  approvalAssigneeUsernames: string[];
+  workAssigneeUsernames: string[];
+  assignedApprover: boolean;
+  assignedWorker: boolean;
 }
 
 /**
@@ -53,8 +67,6 @@ interface TicketViewState {
 
   // Derived in the response for the current authenticated user.
   owner: boolean;
-  // Derived in the response for the current authenticated user.
-  assigned: boolean;
   active: boolean;
 }
 
@@ -73,7 +85,7 @@ interface TicketScopeContext {
  */
 interface TicketContent {
   categoryId: string;
-  approvalStepId?: string;
+  approvalStepId: string | null;
 
   subject: string;
   content: string;
@@ -104,13 +116,14 @@ export interface TicketSummary
   extends
     TicketBase,
     TicketWorkflowState,
+    TicketAssignmentState,
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,
     TicketRelation {
   categoryName: LocalizedText;
   categoryId?: string;
-  approvalStepId?: string;
+  approvalStepId: string | null;
   approvalStepName?: string;
 
   subject: string;
@@ -125,6 +138,7 @@ export interface TicketDetail
   extends
     TicketBase,
     TicketWorkflowState,
+    TicketAssignmentState,
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,

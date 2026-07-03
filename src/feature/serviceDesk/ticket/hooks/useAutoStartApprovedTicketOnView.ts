@@ -24,7 +24,8 @@ export function useAutoStartApprovedTicketOnView({
     const shouldAutoStart =
       ticket?.active === true &&
       ticket.status === "Approved" &&
-      ticket.assigned === true;
+      ticket.assignmentPhase === "WORK" &&
+      ticket.assignedWorker === true;
 
     if (!ticket?.id) {
       return;
@@ -52,7 +53,8 @@ export function useAutoStartApprovedTicketOnView({
     isPending,
     mutate,
     ticket?.active,
-    ticket?.assigned,
+    ticket?.assignedWorker,
+    ticket?.assignmentPhase,
     ticket?.id,
     ticket?.status,
   ]);

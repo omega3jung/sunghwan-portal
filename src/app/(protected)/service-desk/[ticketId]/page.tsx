@@ -15,6 +15,7 @@ import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
 import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api/client";
 import { useAutoStartApprovedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartApprovedTicketOnView";
+import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticketAction/api/client";
 import {
   TicketActionList,
@@ -117,8 +118,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
   const assignees = useMemo(
     () =>
-      users.filter((user) => ticket?.assigneeUsernames.includes(user.value) ?? false),
-    [ticket?.assigneeUsernames, users],
+      users.filter((user) =>
+        ticket ? selectTicketAssigneeIds(ticket).includes(user.value) : false,
+      ),
+    [ticket, users],
   );
 
   const dateLocale = useMemo(

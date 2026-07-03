@@ -2,19 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { DbParams } from "@/shared/types/api";
-
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskCategoryApi } from "./api";
 import { categoryQueryKeys } from "./queryKeys";
+import type { ServiceDeskCategoryListParams } from "./types";
 
-export const useServiceDeskCategoryListQuery = (params: DbParams) => {
+export const useServiceDeskCategoryListQuery = (
+  params?: ServiceDeskCategoryListParams,
+) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: categoryQueryKeys.list(params),
     queryFn: () => serviceDeskCategoryApi.list(params),
-    enabled: !!params && !!dataScope,
+    enabled: params !== undefined && !!dataScope,
     ...queryOptions,
   });
 };

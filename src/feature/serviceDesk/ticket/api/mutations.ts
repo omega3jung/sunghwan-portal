@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { ticketDraftQueryKeys } from "../../ticketDraft/api";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
@@ -14,6 +15,7 @@ export const useCreateServiceDeskTicket = () => {
     mutationFn: serviceDeskTicketApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ticketDraftQueryKeys.all });
     },
   });
 };

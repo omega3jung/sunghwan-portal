@@ -59,6 +59,10 @@ export async function createHistoryOfTicketSubmit(
     actorUsername: string;
     fromStatus?: string | null;
     toStatus?: string;
+    ticketNumber?: string;
+    categoryId?: number | null;
+    source?: string;
+    submittedFromExplicitDraft?: boolean;
   },
   options?: TicketHistoryServiceOptions,
 ): Promise<TicketHistoryDto> {
@@ -66,12 +70,19 @@ export async function createHistoryOfTicketSubmit(
     {
       ticketId: params.ticketId,
       actionNo: null,
-      historyType: "STATUS",
+      historyType: "TICKET",
       historyAction: "SUBMITTED",
       actorUsername: params.actorUsername,
       fromValue: params.fromStatus ? { status: params.fromStatus } : null,
-      toValue: { status: params.toStatus ?? "Open" },
-      metadata: null,
+      toValue: compactJsonObject({
+        status: params.toStatus ?? "Open",
+        ticketNumber: params.ticketNumber,
+        categoryId: params.categoryId,
+      }),
+      metadata: compactJsonObject({
+        source: params.source,
+        submittedFromExplicitDraft: params.submittedFromExplicitDraft,
+      }),
     },
     options,
   );

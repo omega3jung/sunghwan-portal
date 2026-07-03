@@ -1,4 +1,4 @@
-import { QueryResultRow } from "pg";
+import type { QueryResultRow } from "pg";
 
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
@@ -14,7 +14,7 @@ export type TicketHistoryQueryExecutor = <
 ) => Promise<T[]>;
 
 export type TicketHistoryRepositoryOptions = {
-  // TODO: Replace this adapter point with the shared portal transaction helper once it exists.
+  // Allows service flows to execute multiple repository calls in one transaction.
   query?: TicketHistoryQueryExecutor;
 };
 
@@ -65,7 +65,7 @@ export async function createTicketHistoryRow(
     input.actorUsername ?? null,
     toJsonbParam(input.fromValue),
     toJsonbParam(input.toValue),
-    toJsonbParam(input.metadata),
+    toMetadataJsonbParam(input.metadata),
   ]);
 
   return rows[0] ?? null;
@@ -75,4 +75,10 @@ function toJsonbParam(
   value: TicketHistoryJsonValue | null | undefined,
 ): string | null {
   return value === undefined || value === null ? null : JSON.stringify(value);
+}
+
+function toMetadataJsonbParam(
+  value: TicketHistoryJsonValue | null | undefined,
+): string {
+  return JSON.stringify(value ?? {});
 }

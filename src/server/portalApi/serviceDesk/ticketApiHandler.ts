@@ -1,9 +1,11 @@
 import { NextResponse, type NextResponse as NextResponseType } from "next/server";
 
 import {
+  createTicket,
   getTicketDetail,
   getTicketListItems,
   searchTicketListItems,
+  type TicketCreateRequestDto,
   type TicketSearchRequestDto,
   type TicketSearchSortDto,
 } from "@/server/data/serviceDesk/ticket";
@@ -65,17 +67,32 @@ export async function handleTicketPortalApi(
     );
   }
 
-  if (context.method !== "GET") {
-    return createNotFoundResponse();
-  }
-
   if (TICKET_LIST_PATH_PATTERN.test(context.path)) {
+    if (context.method === "POST") {
+      const ticket = await createTicket(
+        requireBody<TicketCreateRequestDto>(context.options),
+        {
+          requesterUsername: currentUserName,
+        },
+      );
+
+      return NextResponse.json(ticket, { status: 201 });
+    }
+
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
     const items = await getTicketListItems(currentUserName);
 
     return NextResponse.json({
       items,
       total: items.length,
     });
+  }
+
+  if (context.method !== "GET") {
+    return createNotFoundResponse();
   }
 
   if (TICKET_SEARCH_PATH_PATTERN.test(context.path)) {
