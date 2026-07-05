@@ -4,10 +4,12 @@ import {
   createTicket,
   getTicketDetail,
   getTicketListItems,
+  requesterUpdateTicketRequestSchema,
   searchTicketListItems,
   type TicketCreateRequestDto,
   type TicketSearchRequestDto,
   type TicketSearchSortDto,
+  updateRequesterTicket,
 } from "@/server/data/serviceDesk/ticket";
 import { getTicketActionsByTicketId } from "@/server/data/serviceDesk/ticketAction";
 import {
@@ -100,11 +102,11 @@ export async function handleTicketPortalApi(
     });
   }
 
-  if (context.method !== "GET") {
-    return createNotFoundResponse();
-  }
-
   if (TICKET_SEARCH_PATH_PATTERN.test(context.path)) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
     const result = await searchTicketListItems(
       getTicketSearchRequest(context),
       currentUserName,
@@ -116,6 +118,10 @@ export async function handleTicketPortalApi(
   const actionListMatch = TICKET_ACTION_LIST_PATH_PATTERN.exec(context.path);
 
   if (actionListMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
     const items = await getTicketActionsByTicketId(
       decodePathSegment(actionListMatch[1]),
     );
@@ -126,6 +132,10 @@ export async function handleTicketPortalApi(
   const historyListMatch = TICKET_HISTORY_LIST_PATH_PATTERN.exec(context.path);
 
   if (historyListMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
     const items = await getTicketHistoriesByTicketId(
       decodePathSegment(historyListMatch[1]),
     );
@@ -138,6 +148,10 @@ export async function handleTicketPortalApi(
   );
 
   if (workSessionListMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
     const items = await getWorkSessionsByTicketId(
       decodePathSegment(workSessionListMatch[1]),
     );
@@ -149,9 +163,32 @@ export async function handleTicketPortalApi(
 
   if (detailMatch) {
     const ticketId = decodePathSegment(detailMatch[1]);
-    const ticket = await getTicketDetail(ticketId, currentUserName);
 
-    return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
+    if (context.method === "GET") {
+      const ticket = await getTicketDetail(ticketId, currentUserName);
+
+      return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
+    }
+
+    if (context.method === "PUT") {
+      const parsedBody = requesterUpdateTicketRequestSchema.safeParse(
+        requireBody(context.options),
+      );
+
+      if (!parsedBody.success) {
+        throw createStatusError("Invalid request body.", 400);
+      }
+
+      const ticket = await updateRequesterTicket(
+        ticketId,
+        parsedBody.data,
+        currentUserName,
+      );
+
+      return NextResponse.json(ticket);
+    }
+
+    return createNotFoundResponse();
   }
 
   return createNotFoundResponse();

@@ -45,6 +45,16 @@ export type PrepareTicketAttachmentsResponse = {
   images: TicketAttachmentMetadataDto[];
 };
 
+export type RequesterUpdateTicketPayload = {
+  categoryId: string;
+  subject: string;
+  content: string;
+  dueAt: string;
+  email: TicketEmailInput;
+  files: TicketAttachmentMetadataDto[];
+  images: TicketAttachmentMetadataDto[];
+};
+
 const ticketEmailSchema = z.object({
   to: z.array(z.string()),
   cc: z.array(z.string()),

@@ -3,6 +3,7 @@ import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import {
   PrepareTicketAttachmentsInput,
   PrepareTicketAttachmentsResponse,
+  RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
 import client from "@/lib/api";
@@ -87,6 +88,20 @@ export const serviceDeskTicketApi = {
     const res = await client.api.put<TicketDetail>(
       `/api/service-desk/tickets/${data.id}`,
       toTicketMutateRequestPayloadFromFormValues(data, prepared),
+    );
+    return res.data;
+  },
+
+  updateRequester: async ({
+    ticketId,
+    data,
+  }: {
+    ticketId: string;
+    data: RequesterUpdateTicketPayload;
+  }): Promise<TicketDetail> => {
+    const res = await client.api.put<TicketDetail>(
+      `/api/service-desk/tickets/${ticketId}`,
+      data,
     );
     return res.data;
   },

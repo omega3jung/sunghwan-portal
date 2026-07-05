@@ -11,6 +11,11 @@ export function mapTicketHistoryDisplayMetadata(
 
   const metadata: TicketHistoryDisplayMetadata = {};
 
+  const source = toNonEmptyString(raw.source);
+  if (source) {
+    metadata.source = source;
+  }
+
   const reason = toNonEmptyString(raw.reason);
   if (reason) {
     metadata.reason = reason;
@@ -36,8 +41,16 @@ export function mapTicketHistoryDisplayMetadata(
     metadata.changedFields = changedFields;
   }
 
+  if (typeof raw.routingSensitiveChanged === "boolean") {
+    metadata.routingSensitiveChanged = raw.routingSensitiveChanged;
+  }
+
   if (typeof raw.routingReset === "boolean") {
     metadata.routingReset = raw.routingReset;
+  }
+
+  if (typeof raw.preservedRouting === "boolean") {
+    metadata.preservedRouting = raw.preservedRouting;
   }
 
   const previousApprovalStepId = toNullableString(raw.previousApprovalStepId);
@@ -48,6 +61,16 @@ export function mapTicketHistoryDisplayMetadata(
   const nextApprovalStepId = toNullableString(raw.nextApprovalStepId);
   if (nextApprovalStepId !== undefined) {
     metadata.nextApprovalStepId = nextApprovalStepId;
+  }
+
+  const previousAssigneeUsernames = toStringArray(raw.previousAssigneeUsernames);
+  if (previousAssigneeUsernames) {
+    metadata.previousAssigneeUsernames = previousAssigneeUsernames;
+  }
+
+  const nextAssigneeUsernames = toStringArray(raw.nextAssigneeUsernames);
+  if (nextAssigneeUsernames) {
+    metadata.nextAssigneeUsernames = nextAssigneeUsernames;
   }
 
   const assigneeUsernames = toStringArray(raw.assigneeUsernames);

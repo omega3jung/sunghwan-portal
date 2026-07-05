@@ -81,10 +81,57 @@
     "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
     "loadDraftExceptInvalid": "유효하지 않은 필드를 제외하고 임시 저장 내용을 불러왔습니다."
   },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "카테고리 선택",
+      "back": "뒤로",
+      "empty": "선택 가능한 카테고리가 없습니다."
+    }
+  },
   "ticketDraft": {
     "notice": {
       "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 이미지가 데모 이미지로 대체됩니다.",
       "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 파일이 데모 파일로 대체됩니다."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "티켓 수정",
+    "title": "티켓 수정",
+    "description": "요청자가 수정할 수 있는 티켓 항목을 변경합니다.",
+    "loadingTicket": "티켓을 불러오는 중...",
+    "notice": {
+      "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부 이미지가 데모 이미지로 대체됩니다.",
+      "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부 파일이 데모 파일로 대체됩니다."
+    },
+    "category": {
+      "placeholder": "카테고리 선택",
+      "back": "뒤로",
+      "empty": "선택 가능한 카테고리가 없습니다."
+    },
+    "step": {
+      "info": "문제 상세",
+      "attachment": "첨부 파일",
+      "review": "검토"
+    },
+    "routing": {
+      "preserve": "기한 또는 수신자만 변경하면 현재 승인 및 담당자 배정을 유지합니다.",
+      "reset": "카테고리, 제목, 설명 또는 첨부가 변경되면 승인 및 담당자 배정을 다시 계산합니다."
+    },
+    "field": {
+      "existingFiles": "기존 파일",
+      "existingImages": "기존 이미지",
+      "newAttachments": "새 첨부"
+    },
+    "empty": {
+      "existingAttachments": "기존 첨부가 없습니다.",
+      "newAttachments": "새 첨부가 없습니다."
+    },
+    "action": {
+      "submit": "티켓 수정",
+      "submitting": "수정 중..."
+    },
+    "error": {
+      "load": "최신 티켓 상세 정보를 불러오지 못했습니다."
     }
   },
   "hoverMessage": {
@@ -407,6 +454,7 @@
         "invalidPayload": "티켓 payload가 올바르지 않습니다.",
         "requesterRequired": "요청자는 필수입니다.",
         "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
+        "updateForbidden": "요청자만 이 티켓을 수정할 수 있습니다.",
         "updateNotAllowed": "상태가 {{status}}인 티켓은 수정할 수 없습니다."
       }
     },

@@ -15,7 +15,7 @@ import {
 } from "@/server/serviceDesk/settings/state";
 
 const DEFAULT_REQUESTER_ACCESS_LEVEL = ACCESS_LEVEL.USER;
-const CREATE_TICKET_APPROVAL_PENDING_STATUS: TicketStatus = "Pending";
+const CREATE_TICKET_OPEN_STATUS: TicketStatus = "Open";
 const INTERNAL_COMPANY_ID = 1;
 const CLIENT_COMPANY_ID = 11;
 
@@ -69,7 +69,7 @@ export function resolveCreateTicketRouting({
     });
 
     return {
-      status: CREATE_TICKET_APPROVAL_PENDING_STATUS,
+      status: CREATE_TICKET_OPEN_STATUS,
       approvalStepId: String(nextApprovalStep.approval_step_id),
       assigneeUsernames,
     };

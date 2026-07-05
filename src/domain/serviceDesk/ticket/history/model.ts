@@ -3,14 +3,19 @@ import { ISODateString } from "@/shared/types/date";
 import { HistoryType, TicketHistoryAction } from "./types";
 
 export type TicketHistoryDisplayMetadata = {
+  source?: string;
   reason?: string;
   note?: string;
   targetTicketId?: string;
   targetTicketNumber?: string;
   changedFields?: string[];
+  routingSensitiveChanged?: boolean;
   routingReset?: boolean;
+  preservedRouting?: boolean;
   previousApprovalStepId?: string | null;
   nextApprovalStepId?: string | null;
+  previousAssigneeUsernames?: string[];
+  nextAssigneeUsernames?: string[];
   assigneeUsernames?: string[];
 };
 

@@ -32,6 +32,23 @@ export const useUpdateServiceDeskTicket = () => {
   });
 };
 
+export const useRequesterUpdateServiceDeskTicket = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: serviceDeskTicketApi.updateRequester,
+    onSuccess: (_ticket, variables) => {
+      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: ticketQueryKeys.detail(variables.ticketId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ticketHistoryQueryKeys.list(variables.ticketId),
+      });
+    },
+  });
+};
+
 export const useDeleteServiceDeskTicket = () => {
   const queryClient = useQueryClient();
   // message will be handeled where call mutation by useMutationToast.

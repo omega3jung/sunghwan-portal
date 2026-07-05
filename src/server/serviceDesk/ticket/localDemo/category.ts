@@ -24,7 +24,7 @@ export function resolveCategorySnapshot({
 
   for (const client of getLocalDemoCategories(isInternal)) {
     for (const category of client.category) {
-      if (String(category.category_id) === normalizedId) {
+      if (String(category.category_id) === normalizedId && category.category_active) {
         return {
           id: String(category.category_id),
           parentId: String(category.category_id),
@@ -39,7 +39,7 @@ export function resolveCategorySnapshot({
         (item) => String(item.category_id) === normalizedId,
       );
 
-      if (subCategory) {
+      if (subCategory && category.category_active && subCategory.category_active) {
         return {
           id: String(subCategory.category_id),
           parentId: String(category.category_id),

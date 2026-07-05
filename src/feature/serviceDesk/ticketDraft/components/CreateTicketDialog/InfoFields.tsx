@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { DatePicker } from "@/components/custom/DatePicker";
+import { HierarchicalSelect } from "@/components/custom/HierarchicalSelect";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -17,20 +18,16 @@ import {
 } from "@/components/ui/collapsible";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/constants";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
+import {
+  formatTicketCategoryPath,
+  mapTicketCategoriesToHierarchicalItems,
+  resolveTicketCategoryMeta,
+} from "@/feature/serviceDesk/ticket/utils/categorySelection";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks/useLocalizedValue";
-import type { ImageValueLabel, ValueLabel } from "@/shared/types";
+import type { ImageValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
 import { useTicketFormContext } from "../../context/TicketFormContext";
@@ -40,20 +37,6 @@ type EmailFieldName = (typeof EMAIL_FIELDS)[number];
 
 type TicketInfoFieldsProps = {
   mode?: "edit" | "view";
-};
-
-type CategoryMeta = {
-  selected?: {
-    defaultPriority?: string | null;
-    defaultRiskLevel?: string | null;
-    defaultSlaDays?: number;
-  };
-  parentCategory?: {
-    id: string;
-    defaultPriority?: string | null;
-    defaultRiskLevel?: string | null;
-    defaultSlaDays?: number;
-  };
 };
 
 export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
@@ -68,40 +51,9 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
   const dueAtValue = form.watch("dueAt");
   const subjectValue = form.watch("subject");
 
-  const categoryData = useMemo(
-    (): Array<{
-      category: ValueLabel;
-      subCategories: ValueLabel[];
-    }> =>
-      categories.map((category) => ({
-        category: {
-          value: category.id,
-          label: tLocal(category.name),
-        },
-        subCategories: category.subCategories.map((sub) => ({
-          value: sub.id,
-          label: tLocal(sub.name),
-        })),
-      })),
-    [categories, tLocal],
-  );
-
   const resolveCategoryMeta = useCallback(
-    (subCatId?: string): CategoryMeta => {
-      const subCategories = categories.flatMap(
-        (category) => category.subCategories,
-      );
-
-      const selected = subCategories.find((subCat) => subCat.id === subCatId);
-      const parentCategory = categories.find((category) =>
-        category.subCategories.some((subCat) => subCat.id === subCatId),
-      );
-
-      return {
-        selected,
-        parentCategory,
-      };
-    },
+    (categoryId?: string | null) =>
+      resolveTicketCategoryMeta(categories, categoryId),
     [categories],
   );
 
@@ -110,29 +62,29 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
       return "-";
     }
 
-    const { parentCategory } = resolveCategoryMeta(categoryValue);
-    const matchedParent = categories.find(
-      (category) => category.id === parentCategory?.id,
+    return formatTicketCategoryPath(
+      resolveCategoryMeta(categoryValue),
+      tLocal,
+      categoryValue,
     );
-
-    const parentLabel = matchedParent ? tLocal(matchedParent.name) : null;
-    const selectedLabel =
-      categoryData
-        .flatMap((group) => group.subCategories)
-        .find((sub) => sub.value === categoryValue)?.label ?? categoryValue;
-
-    return parentLabel ? `${parentLabel} / ${selectedLabel}` : selectedLabel;
-  }, [categories, categoryData, categoryValue, resolveCategoryMeta, tLocal]);
+  }, [categoryValue, resolveCategoryMeta, tLocal]);
 
   const dueAtDisplayValue = dueAtValue ? format(dueAtValue, "PPP") : "-";
+
+  const items = useMemo(
+    () => mapTicketCategoriesToHierarchicalItems(categories, tLocal),
+    [categories, tLocal],
+  );
 
   useEffect(() => {
     if (isViewMode) {
       return;
     }
 
-    const { selected } = resolveCategoryMeta(categoryValue);
-    const nextMindueAt = addDays(startOfToday(), selected?.defaultSlaDays ?? 0);
+    const { selected, parentCategory } = resolveCategoryMeta(categoryValue);
+    const slaDays =
+      selected?.defaultSlaDays ?? parentCategory?.defaultSlaDays ?? 0;
+    const nextMindueAt = addDays(startOfToday(), slaDays);
 
     setMindueAt((prev) =>
       prev.getTime() === nextMindueAt.getTime() ? prev : nextMindueAt,
@@ -179,41 +131,21 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
                 control={form.control}
                 name="category"
                 render={({ field }) => (
-                  <Select
-                    value={field.value ?? undefined}
-                    onValueChange={(subCat) =>
-                      handleCategoryChange(subCat, field.onChange)
+                  <HierarchicalSelect
+                    id="ticket-info-select-category"
+                    value={field.value ?? null}
+                    items={items}
+                    placeholder={t("ticketCreate.category.placeholder")}
+                    backLabel={t("ticketCreate.category.back")}
+                    emptyText={t("ticketCreate.category.empty")}
+                    selectableStrategy="parent-without-children"
+                    onValueChange={(categoryId) =>
+                      handleCategoryChange(categoryId, field.onChange)
                     }
-                  >
-                    <SelectTrigger id="ticket-info-select-category">
-                      <SelectValue
-                        placeholder={t("placeholder.select", {
-                          target: t("field.category", { ns: NS.common }),
-                          ns: NS.common,
-                        })}
-                      />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {categoryData.map((group) => (
-                        <SelectGroup key={group.category.value}>
-                          <SelectLabel className="bg-muted/50 text-xs rounded">
-                            {group.category.label}
-                          </SelectLabel>
-
-                          {group.subCategories.map((sub) => (
-                            <SelectItem
-                              key={sub.value}
-                              value={sub.value}
-                              className="text-xs ml-2"
-                            >
-                              {sub.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    getDisplayLabel={(_, path) =>
+                      path.map((item) => item.label).join(" / ")
+                    }
+                  />
                 )}
               />
             )}

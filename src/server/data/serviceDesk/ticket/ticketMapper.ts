@@ -209,7 +209,7 @@ export function normalizeTicketEmail(
   };
 }
 
-function normalizeTicketAttachmentMetadata(
+export function normalizeTicketAttachmentMetadata(
   value: TicketAttachmentMetadata[] | null | undefined,
 ): TicketAttachmentMetadata[] {
   if (!Array.isArray(value)) {

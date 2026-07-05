@@ -10,6 +10,7 @@ import {
 } from "@/components/custom/RichEditor";
 import { getRichEditorLabels } from "@/components/custom/RichEditor/labels";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { getTicketCategoryRequestTemplate } from "@/feature/serviceDesk/ticket/utils/categorySelection";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 
@@ -29,16 +30,11 @@ export const InfoStep = () => {
   const hasAttachedImage = IMAGE_TAG_PATTERN.test(bodyValue ?? "");
 
   const requestTemplate = useMemo(() => {
-    const subCategories = categories.flatMap(
-      (category) => category.subCategories,
+    return getTicketCategoryRequestTemplate(
+      categories,
+      categoryValue,
+      tLocal,
     );
-    const selected = subCategories.find(
-      (subCat) => subCat.id === categoryValue,
-    );
-
-    return selected?.requestTemplate !== undefined
-      ? tLocal(selected.requestTemplate)
-      : "";
   }, [categories, categoryValue, tLocal]);
 
   return (

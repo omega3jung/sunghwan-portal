@@ -4,3 +4,4 @@
 // client export only.
 
 export * from "./TicketList/TicketList";
+export * from "./UpdateTicketDialog/UpdateTicketDialog";

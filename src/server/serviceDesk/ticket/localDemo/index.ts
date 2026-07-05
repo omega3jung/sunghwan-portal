@@ -4,5 +4,6 @@ export { localCreateTicket } from "./create";
 export { localDeleteTicket } from "./delete";
 export { localGetTicket } from "./get";
 export { localListTickets } from "./list";
+export { localRequesterUpdateTicket } from "./requesterUpdate";
 export { localSearchTickets } from "./search";
 export { localUpdateTicket } from "./update";

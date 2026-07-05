@@ -81,10 +81,57 @@
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé.",
     "loadDraftExceptInvalid": "Le brouillon a été chargé, sauf dans les cas où il était invalide."
   },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    }
+  },
   "ticketDraft": {
     "notice": {
       "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
       "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "Mettre à jour le ticket",
+    "title": "Mettre à jour le ticket",
+    "description": "Mettre à jour les champs modifiables par le demandeur.",
+    "loadingTicket": "Chargement du ticket...",
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    },
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    },
+    "step": {
+      "info": "Détails du problème",
+      "attachment": "Pièces jointes",
+      "review": "Vérification"
+    },
+    "routing": {
+      "preserve": "Les changements limités à l'échéance ou aux destinataires conservent l'approbation et l'assignation actuelles.",
+      "reset": "Les changements de catégorie, d'objet, de description ou de pièces jointes recalculent l'approbation et l'assignation."
+    },
+    "field": {
+      "existingFiles": "Fichiers existants",
+      "existingImages": "Images existantes",
+      "newAttachments": "Nouvelles pièces jointes"
+    },
+    "empty": {
+      "existingAttachments": "Aucune pièce jointe existante.",
+      "newAttachments": "Aucune nouvelle pièce jointe."
+    },
+    "action": {
+      "submit": "Mettre à jour",
+      "submitting": "Mise à jour..."
+    },
+    "error": {
+      "load": "Impossible de charger les derniers détails du ticket."
     }
   },
   "hoverMessage": {
@@ -407,6 +454,7 @@
         "invalidPayload": "Charge utile du ticket invalide.",
         "requesterRequired": "Le demandeur est obligatoire.",
         "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "updateForbidden": "Seul le demandeur peut mettre à jour ce ticket.",
         "updateNotAllowed": "Le ticket ne peut pas être mis à jour avec le statut {{status}}."
       }
     },

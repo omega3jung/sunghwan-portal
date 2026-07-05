@@ -81,10 +81,57 @@
     "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará.",
     "loadDraftExceptInvalid": "Se cargó el borrador, excepto los campos no válidos."
   },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Seleccionar categoría",
+      "back": "Volver",
+      "empty": "No hay categorías seleccionables."
+    }
+  },
   "ticketDraft": {
     "notice": {
       "remoteImagesReplaced": "En el modo remoto, las imágenes adjuntas se reemplazan por imágenes de demostración por motivos de seguridad.",
       "remoteFilesReplaced": "En el modo remoto, los archivos adjuntos se reemplazan por archivos de demostración por motivos de seguridad."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "Actualizar ticket",
+    "title": "Actualizar ticket",
+    "description": "Actualizar los campos editables por el solicitante.",
+    "loadingTicket": "Cargando ticket...",
+    "notice": {
+      "remoteImagesReplaced": "En el modo remoto, las imágenes adjuntas se reemplazan por imágenes de demostración por motivos de seguridad.",
+      "remoteFilesReplaced": "En el modo remoto, los archivos adjuntos se reemplazan por archivos de demostración por motivos de seguridad."
+    },
+    "category": {
+      "placeholder": "Seleccionar categoría",
+      "back": "Volver",
+      "empty": "No hay categorías seleccionables."
+    },
+    "step": {
+      "info": "Detalles del problema",
+      "attachment": "Archivos adjuntos",
+      "review": "Revisión"
+    },
+    "routing": {
+      "preserve": "Los cambios solo en vencimiento o destinatarios conservan la aprobación y la asignación actuales.",
+      "reset": "Los cambios de categoría, asunto, descripción o adjuntos recalculan la aprobación y la asignación."
+    },
+    "field": {
+      "existingFiles": "Archivos existentes",
+      "existingImages": "Imágenes existentes",
+      "newAttachments": "Nuevos adjuntos"
+    },
+    "empty": {
+      "existingAttachments": "No hay adjuntos existentes.",
+      "newAttachments": "No hay adjuntos nuevos."
+    },
+    "action": {
+      "submit": "Actualizar ticket",
+      "submitting": "Actualizando..."
+    },
+    "error": {
+      "load": "No se pudieron cargar los últimos detalles del ticket."
     }
   },
   "hoverMessage": {
@@ -407,6 +454,7 @@
         "invalidPayload": "Carga útil de ticket no válida.",
         "requesterRequired": "Se requiere un solicitante.",
         "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
+        "updateForbidden": "Solo el solicitante puede actualizar este ticket.",
         "updateNotAllowed": "No se puede actualizar el ticket en el estado {{status}}."
       }
     },

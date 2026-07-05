@@ -22,6 +22,7 @@ import {
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
 import { useTicketForm } from "@/feature/serviceDesk/ticket/forms/client";
+import { getTicketCategoryParentId } from "@/feature/serviceDesk/ticket/utils/categorySelection";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
@@ -62,9 +63,7 @@ export const useCreateTicketDialog = ({
       return undefined;
     }
 
-    return categories.find((category) =>
-      category.subCategories.some((child) => child.id === selectedCategoryId),
-    )?.id;
+    return getTicketCategoryParentId(categories, selectedCategoryId);
   }, [categories, selectedCategoryId]);
   const params = useMemo<DbParams | undefined>(() => {
     if (!selectedParentCategoryId) {

@@ -28,10 +28,7 @@ import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
-import {
-  combineRuleGroups,
-  createFieldFilter,
-} from "@/shared/utils/routing";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 import {
   TicketDetailsAside,
@@ -100,6 +97,23 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
       return {
         value: employee.username,
         label: `${name.first} ${name.last}`.trim(),
+        displayName: employee.email,
+        image: employee.imageUrl,
+      };
+    });
+  }, [employees, tLocal]);
+
+  const emails = useMemo<ImageValueLabel[]>(() => {
+    if (!employees) {
+      return [];
+    }
+
+    return employees.map((employee) => {
+      const name = tLocal(employee.name);
+
+      return {
+        value: employee.email,
+        label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,
       };
@@ -175,6 +189,9 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-2 pt-1">
       <TicketHeader
         ticket={ticket}
+        categories={categories}
+        users={emails}
+        language={userPreference.language as SupportedLanguage}
         isDetailsAsideOpen={isDetailsAsideOpen}
         onToggleDetailsAside={setIsDetailsAsideOpen}
         onOpenHistorySheet={setIsHistorySheetOpen}

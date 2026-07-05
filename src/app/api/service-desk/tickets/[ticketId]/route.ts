@@ -14,14 +14,11 @@ import {
   withDerivedTicketOwnership,
 } from "@/app/api/service-desk/_shared";
 import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api";
-import {
-  type TicketMutateRequestPayload,
-  ticketMutateRequestPayloadSchema,
-} from "@/feature/serviceDesk/ticket/write";
+import { requesterUpdateTicketRequestSchema } from "@/server/data/serviceDesk/ticket";
 import {
   localDeleteTicket,
   localGetTicket,
-  localUpdateTicket,
+  localRequesterUpdateTicket,
 } from "@/server/serviceDesk/ticket/localDemo";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -61,8 +58,8 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
-  const parsedBody = ticketMutateRequestPayloadSchema.safeParse(
-    (await request.json()) as TicketMutateRequestPayload,
+  const parsedBody = requesterUpdateTicketRequestSchema.safeParse(
+    await request.json(),
   );
 
   if (!parsedBody.success) {
@@ -84,9 +81,10 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
 
       return NextResponse.json(
         withDerivedTicketOwnership(
-          localUpdateTicket({
+          localRequesterUpdateTicket({
             isInternal,
             ticketId,
+            requesterUsername: currentUserName,
             input: body,
           }),
           currentUserName,
