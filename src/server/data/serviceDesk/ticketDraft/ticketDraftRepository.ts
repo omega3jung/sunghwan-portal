@@ -29,6 +29,7 @@ ${TICKET_DRAFT_COLUMNS}
 from service_desk.ticket
 where tk_status = 'Draft'
   and tk_requester_username = $1
+  and tk_active = true
 limit 1;
 `;
 
@@ -95,14 +96,13 @@ ${TICKET_DRAFT_COLUMNS};
 `;
 
 const DISCARD_TICKET_DRAFT_ROW_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_active = false,
-  tk_updated_at = now()
+select tk_id
+from service_desk.ticket
 where tk_id = $1
   and tk_requester_username = $2
   and tk_status = 'Draft'
-returning tk_id;
+  and tk_active = true
+limit 1;
 `;
 
 export async function findTicketDraftRowByRequesterUsername(

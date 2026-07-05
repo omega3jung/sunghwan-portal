@@ -9,6 +9,7 @@ import {
   type TicketSearchRequestDto,
   type TicketSearchSortDto,
 } from "@/server/data/serviceDesk/ticket";
+import { getTicketActionsByTicketId } from "@/server/data/serviceDesk/ticketAction";
 import {
   createTicketDraft,
   discardTicketDraft,
@@ -16,6 +17,8 @@ import {
   type TicketDraftWriteDto,
   updateTicketDraft,
 } from "@/server/data/serviceDesk/ticketDraft";
+import { getTicketHistoriesByTicketId } from "@/server/data/serviceDesk/ticketHistory";
+import { getWorkSessionsByTicketId } from "@/server/data/serviceDesk/workSession";
 import { getPortalApiQueryValue } from "@/server/portalApi/utils";
 
 import {
@@ -29,6 +32,12 @@ const TICKET_SEARCH_PATH_PATTERN = /^\/service-desk\/tickets\/search$/;
 const TICKET_DRAFT_PATH_PATTERN = /^\/service-desk\/tickets\/draft$/;
 const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
+const TICKET_ACTION_LIST_PATH_PATTERN =
+  /^\/service-desk\/tickets\/([^/]+)\/actions$/;
+const TICKET_HISTORY_LIST_PATH_PATTERN =
+  /^\/service-desk\/tickets\/([^/]+)\/(?:histories|history)$/;
+const TICKET_WORK_SESSION_LIST_PATH_PATTERN =
+  /^\/service-desk\/tickets\/([^/]+)\/(?:work-session|work-sessions|track-time)$/;
 const TICKET_DETAIL_PATH_PATTERN = /^\/service-desk\/tickets\/([^/]+)$/;
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
 const TICKET_SORT_FIELDS = new Set<TicketSearchSortDto["field"]>([
@@ -104,16 +113,59 @@ export async function handleTicketPortalApi(
     return NextResponse.json(result);
   }
 
+  const actionListMatch = TICKET_ACTION_LIST_PATH_PATTERN.exec(context.path);
+
+  if (actionListMatch) {
+    const items = await getTicketActionsByTicketId(
+      decodePathSegment(actionListMatch[1]),
+    );
+
+    return createListResponse(items);
+  }
+
+  const historyListMatch = TICKET_HISTORY_LIST_PATH_PATTERN.exec(context.path);
+
+  if (historyListMatch) {
+    const items = await getTicketHistoriesByTicketId(
+      decodePathSegment(historyListMatch[1]),
+    );
+
+    return createListResponse(items);
+  }
+
+  const workSessionListMatch = TICKET_WORK_SESSION_LIST_PATH_PATTERN.exec(
+    context.path,
+  );
+
+  if (workSessionListMatch) {
+    const items = await getWorkSessionsByTicketId(
+      decodePathSegment(workSessionListMatch[1]),
+    );
+
+    return createListResponse(items);
+  }
+
   const detailMatch = TICKET_DETAIL_PATH_PATTERN.exec(context.path);
 
   if (detailMatch) {
-    const ticketId = decodeURIComponent(detailMatch[1] ?? "");
+    const ticketId = decodePathSegment(detailMatch[1]);
     const ticket = await getTicketDetail(ticketId, currentUserName);
 
     return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
   }
 
   return createNotFoundResponse();
+}
+
+function createListResponse<T>(items: T[]) {
+  return NextResponse.json({
+    items,
+    total: items.length,
+  });
+}
+
+function decodePathSegment(value: string | undefined) {
+  return decodeURIComponent(value ?? "");
 }
 
 async function handleTicketDraftPortalApi(

@@ -10,6 +10,8 @@ import {
 import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
+import { mapTicketHistoryDisplayMetadata } from "../utils";
+
 export interface DbTicketHistory {
   ticket_id: string;
   history_no: number;
@@ -22,7 +24,7 @@ export interface DbTicketHistory {
 
   from_value?: unknown;
   to_value?: unknown;
-  metadata?: Record<string, unknown>;
+  metadata?: unknown;
 
   created_at: ISODateString;
 }
@@ -40,7 +42,7 @@ export const camelTicketHistoryMapper: ArrayMapper<
     actionNo: item.action_no,
     fromValue: item.from_value,
     toValue: item.to_value,
-    metadata: item.metadata,
+    metadata: mapTicketHistoryDisplayMetadata(item.metadata),
     createdAt: item.created_at,
   }));
 };

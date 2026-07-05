@@ -10,7 +10,7 @@ export type TicketHistoryRow = {
   tkh_from_value: unknown | null;
   tkh_to_value: unknown | null;
   tkh_metadata: unknown | null;
-  tkh_created_at: ISODateString;
+  tkh_created_at: ISODateString | Date;
 };
 
 export type TicketHistoryCreatedRow = {

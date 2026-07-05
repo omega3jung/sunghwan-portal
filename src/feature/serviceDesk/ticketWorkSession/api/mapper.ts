@@ -12,7 +12,7 @@ export interface DbTicketWorkSession {
   work_session_no: number;
   assignee_username: string;
 
-  start_at: ISODateString;
+  start_at: ISODateString | null;
   end_at: ISODateString | null;
 
   duration_minutes: number | null;

@@ -4,7 +4,6 @@ import {
   createHistoryOfApprovalRequested,
   createHistoryOfAssignmentChange,
   createHistoryOfTicketCreate,
-  createHistoryOfTicketSubmit,
 } from "../ticketHistory";
 import {
   TicketCreateRequestDto,
@@ -53,11 +52,6 @@ type InitialTicketRoutingResult =
       approvalStepId: null;
       assigneeUsernames: string[];
     };
-
-type DraftSubmitHistorySource = {
-  source: "DRAFT" | "EXISTING_DRAFT_REUSED";
-  submittedFromExplicitDraft: boolean;
-};
 
 export async function getTicketListItems(
   currentUserName: string | null,
@@ -111,14 +105,6 @@ export async function createTicket(
       options.requesterUsername,
       repositoryOptions,
     ));
-  const draftSubmitHistorySource: DraftSubmitHistorySource | null = input.id
-    ? { source: "DRAFT", submittedFromExplicitDraft: true }
-    : existingDraftTicketId
-      ? {
-          source: "EXISTING_DRAFT_REUSED",
-          submittedFromExplicitDraft: false,
-        }
-      : null;
   const row = existingDraftTicketId
     ? await submitDraftTicketRowById(
         existingDraftTicketId,
@@ -136,31 +122,16 @@ export async function createTicket(
     );
   }
 
-  if (draftSubmitHistorySource) {
-    await createHistoryOfTicketSubmit(
-      {
-        ticketId: row.tk_id,
-        actorUsername: options.requesterUsername,
-        fromStatus: "Draft",
-        toStatus: row.tk_status,
-        ticketNumber: row.tk_ticket_no,
-        categoryId: row.cat_id,
-        ...draftSubmitHistorySource,
-      },
-      repositoryOptions,
-    );
-  } else {
-    await createHistoryOfTicketCreate(
-      {
-        ticketId: row.tk_id,
-        actorUsername: options.requesterUsername,
-        ticketNumber: row.tk_ticket_no,
-        categoryId: row.cat_id,
-        status: row.tk_status,
-      },
-      repositoryOptions,
-    );
-  }
+  await createHistoryOfTicketCreate(
+    {
+      ticketId: row.tk_id,
+      actorUsername: options.requesterUsername,
+      ticketNumber: row.tk_ticket_no,
+      categoryId: row.cat_id,
+      status: row.tk_status,
+    },
+    repositoryOptions,
+  );
 
   const routing = await resolveInitialTicketRouting(
     {

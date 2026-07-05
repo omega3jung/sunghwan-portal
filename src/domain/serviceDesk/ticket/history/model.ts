@@ -2,6 +2,18 @@ import { ISODateString } from "@/shared/types/date";
 
 import { HistoryType, TicketHistoryAction } from "./types";
 
+export type TicketHistoryDisplayMetadata = {
+  reason?: string;
+  note?: string;
+  targetTicketId?: string;
+  targetTicketNumber?: string;
+  changedFields?: string[];
+  routingReset?: boolean;
+  previousApprovalStepId?: string | null;
+  nextApprovalStepId?: string | null;
+  assigneeUsernames?: string[];
+};
+
 /**
  * Ticket history domain model.
  *
@@ -24,7 +36,7 @@ export interface TicketHistory {
 
   fromValue?: unknown;
   toValue?: unknown;
-  metadata?: Record<string, unknown>;
+  metadata: TicketHistoryDisplayMetadata | null;
 
   createdAt: ISODateString;
 }

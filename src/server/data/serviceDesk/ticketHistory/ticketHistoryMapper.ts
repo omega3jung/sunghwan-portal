@@ -1,3 +1,6 @@
+import { mapTicketHistoryDisplayMetadata } from "@/domain/serviceDesk";
+import type { ISODateString } from "@/shared/types";
+
 import { TicketHistoryDto } from "./ticketHistoryDto";
 import { TicketHistoryRow } from "./ticketHistoryRow";
 import {
@@ -9,17 +12,21 @@ import {
 export function mapTicketHistoryRowToDto(
   row: TicketHistoryRow,
 ): TicketHistoryDto {
+  const fromValue = normalizeTicketHistoryJsonValue(row.tkh_from_value);
+  const toValue = normalizeTicketHistoryJsonValue(row.tkh_to_value);
+
   return {
-    ticketId: row.tkh_ticket_id,
-    historyNo: row.tkh_history_no,
-    actionNo: row.tkh_action_no,
-    historyType: row.tkh_history_type as TicketHistoryType,
-    historyAction: row.tkh_history_action as TicketHistoryAction,
-    actorUsername: row.tkh_actor_username,
-    fromValue: normalizeTicketHistoryJsonValue(row.tkh_from_value),
-    toValue: normalizeTicketHistoryJsonValue(row.tkh_to_value),
-    metadata: normalizeTicketHistoryJsonValue(row.tkh_metadata),
-    createdAt: row.tkh_created_at,
+    ticket_id: row.tkh_ticket_id,
+    history_no: row.tkh_history_no,
+    type: row.tkh_history_type as TicketHistoryType,
+    action: row.tkh_history_action as TicketHistoryAction,
+    actor_username: row.tkh_actor_username,
+    action_no:
+      row.tkh_action_no === null ? null : String(row.tkh_action_no),
+    ...(fromValue !== null ? { from_value: fromValue } : {}),
+    ...(toValue !== null ? { to_value: toValue } : {}),
+    metadata: mapTicketHistoryDisplayMetadata(row.tkh_metadata),
+    created_at: toIsoDateString(row.tkh_created_at),
   };
 }
 
@@ -61,4 +68,8 @@ function isTicketHistoryJsonValue(
   return Object.values(value as Record<string, unknown>).every(
     isTicketHistoryJsonValue,
   );
+}
+
+function toIsoDateString(value: ISODateString | Date): ISODateString {
+  return (value instanceof Date ? value.toISOString() : value) as ISODateString;
 }

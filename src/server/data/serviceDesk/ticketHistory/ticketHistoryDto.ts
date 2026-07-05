@@ -1,3 +1,4 @@
+import type { TicketHistoryDisplayMetadata } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
 import {
@@ -7,16 +8,16 @@ import {
 } from "./ticketHistoryTypes";
 
 export type TicketHistoryDto = {
-  ticketId: string;
-  historyNo: number;
-  actionNo: number | null;
-  historyType: TicketHistoryType;
-  historyAction: TicketHistoryAction;
-  actorUsername: string | null;
-  fromValue: TicketHistoryJsonValue | null;
-  toValue: TicketHistoryJsonValue | null;
-  metadata: TicketHistoryJsonValue | null;
-  createdAt: ISODateString;
+  ticket_id: string;
+  history_no: number;
+  type: TicketHistoryType;
+  action: TicketHistoryAction;
+  actor_username: string | null;
+  action_no: string | null;
+  from_value?: TicketHistoryJsonValue;
+  to_value?: TicketHistoryJsonValue;
+  metadata: TicketHistoryDisplayMetadata | null;
+  created_at: ISODateString;
 };
 
 export type CreateTicketHistoryInput = {

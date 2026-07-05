@@ -13,7 +13,7 @@ export interface DbTicketAction {
 
   action_type: TicketActionType;
   content: string;
-  owner_username: string;
+  owner_username: string | null;
 
   created_at: ISODateString;
   updated_at: ISODateString | null;

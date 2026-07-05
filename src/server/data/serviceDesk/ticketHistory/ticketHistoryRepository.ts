@@ -52,6 +52,34 @@ returning
   tkh_created_at;
 `;
 
+const FIND_TICKET_HISTORY_ROWS_BY_TICKET_ID_QUERY = `
+select
+  tkh_ticket_id,
+  tkh_history_no,
+  tkh_action_no,
+  tkh_history_type,
+  tkh_history_action,
+  tkh_actor_username,
+  tkh_from_value,
+  tkh_to_value,
+  tkh_metadata,
+  tkh_created_at
+from service_desk.ticket_history
+where tkh_ticket_id = $1
+order by tkh_history_no asc;
+`;
+
+export async function findTicketHistoryRowsByTicketId(
+  ticketId: string,
+  options: TicketHistoryRepositoryOptions = {},
+): Promise<TicketHistoryRow[]> {
+  const query = options.query ?? queryPortalApi;
+
+  return query<TicketHistoryRow>(FIND_TICKET_HISTORY_ROWS_BY_TICKET_ID_QUERY, [
+    ticketId,
+  ]);
+}
+
 export async function createTicketHistoryRow(
   input: CreateTicketHistoryInput,
   options: TicketHistoryRepositoryOptions = {},

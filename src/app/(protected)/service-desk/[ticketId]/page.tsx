@@ -156,7 +156,9 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   }, [ticketHistories]);
 
   const latestActionOwner = latestAction
-    ? userMap.get(latestAction.ownerUsername)
+    ? latestAction.ownerUsername
+      ? userMap.get(latestAction.ownerUsername)
+      : undefined
     : undefined;
 
   useEffect(() => {

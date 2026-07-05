@@ -17,7 +17,10 @@ import {
 import { statusLocaleKey } from "@/components/custom/StatusBadge/locales";
 import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import type { TimelineItemData } from "@/components/custom/Timeline";
-import type { TicketHistory } from "@/domain/serviceDesk";
+import type {
+  TicketHistory,
+  TicketHistoryDisplayMetadata,
+} from "@/domain/serviceDesk";
 
 import { formatHistoryMeta } from "./utils";
 
@@ -61,7 +64,7 @@ export function getHistorySummary(
     action: string;
     fromValue?: unknown;
     toValue?: unknown;
-    metadata?: Record<string, unknown>;
+    metadata?: TicketHistoryDisplayMetadata | null;
   },
   t: TFunction,
   tStatus: TFunction,
@@ -208,16 +211,10 @@ export function resolveHistoryIcon(history: TicketHistory) {
   }
 }
 
-function resolveMergeTargetLabel(metadata?: Record<string, unknown>): string {
-  if (
-    metadata &&
-    "targetTicketId" in metadata &&
-    typeof metadata.targetTicketId === "string"
-  ) {
-    return metadata.targetTicketId;
-  }
-
-  return "-";
+function resolveMergeTargetLabel(
+  metadata?: TicketHistoryDisplayMetadata | null,
+): string {
+  return metadata?.targetTicketNumber ?? metadata?.targetTicketId ?? "-";
 }
 
 export function resolveHistoryDescription(
@@ -235,22 +232,7 @@ export function resolveHistoryDescription(
     });
   }
 
-  if (history.metadata && typeof history.metadata === "object") {
-    const reason =
-      "reason" in history.metadata &&
-      typeof history.metadata.reason === "string"
-        ? history.metadata.reason
-        : undefined;
-
-    const note =
-      "note" in history.metadata && typeof history.metadata.note === "string"
-        ? history.metadata.note
-        : undefined;
-
-    return reason ?? note;
-  }
-
-  return undefined;
+  return history.metadata?.reason ?? history.metadata?.note;
 }
 
 export function mapTicketHistoryToTimelineItem(

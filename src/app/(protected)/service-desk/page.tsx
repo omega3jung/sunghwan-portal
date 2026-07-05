@@ -49,10 +49,7 @@ import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
-import {
-  combineRuleGroups,
-  createFieldFilter,
-} from "@/shared/utils/routing";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
 
@@ -163,6 +160,23 @@ export default function ServiceDeskPage() {
 
       return {
         value: employee.username,
+        label: `${name.first} ${name.last}`,
+        displayName: employee.email,
+        image: employee.imageUrl,
+      };
+    });
+  }, [employees, tLocal]);
+
+  const emails = useMemo<ImageValueLabel[]>(() => {
+    if (!employees) {
+      return [];
+    }
+
+    return employees.map((employee) => {
+      const name = tLocal(employee.name);
+
+      return {
+        value: employee.email,
         label: `${name.first} ${name.last}`,
         displayName: employee.email,
         image: employee.imageUrl,
@@ -306,7 +320,7 @@ export default function ServiceDeskPage() {
             {/* create ticket */}
             <CreateTicketDialog
               categories={categories}
-              users={users}
+              users={emails}
               language={userPreference.language as SupportedLanguage}
               trigger={
                 <Button

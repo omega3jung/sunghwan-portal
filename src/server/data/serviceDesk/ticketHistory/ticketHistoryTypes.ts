@@ -13,26 +13,11 @@ export type TicketHistoryAction =
   | "CREATED"
   | "UPDATED"
   | "DELETED"
-  | "DRAFT_CREATED"
-  | "DRAFT_UPDATED"
-  | "SUBMITTED"
-  | "STATUS_CHANGED"
-  | "CATEGORY_CHANGED"
-  | "ASSIGNED"
-  | "REASSIGNED"
+  | "TICKET_REJECTED"
+  | "TICKET_MERGED"
   | "APPROVAL_REQUESTED"
   | "APPROVAL_APPROVED"
-  | "APPROVAL_DECLINED"
-  | "COMMENT_CREATED"
-  | "NOTE_CREATED"
-  | "ADJUSTED"
-  | "MERGED"
-  | "REJECTED"
-  | "REOPENED"
-  | "RESUBMITTED"
-  | "SYSTEM_UPDATED"
-  | "TICKET_REJECTED"
-  | "TICKET_MERGED";
+  | "APPROVAL_DECLINED";
 
 export type TicketHistoryJsonValue =
   | string

@@ -149,6 +149,7 @@ set
   tk_risk_level = $12,
   tk_due_at = $13,
   tk_active = true,
+  tk_created_at = now(),
   tk_updated_at = now()
 where tk_id = $1
   and tk_status = 'Draft'
@@ -159,8 +160,8 @@ returning tk_id;
 
 const FIND_NEXT_APPROVAL_STEP_ID_QUERY = `
 select service_desk.get_next_approval_step(
-  $1::varchar,
   $2::bigint,
+  $1::varchar,
   $3::bigint
 ) as next_approval_step_id;
 `;

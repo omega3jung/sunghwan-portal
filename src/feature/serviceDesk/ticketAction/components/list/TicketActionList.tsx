@@ -63,7 +63,9 @@ export function TicketActionList({
         return true;
       }
 
-      const owner = userMap.get(action.ownerUsername);
+      const owner = action.ownerUsername
+        ? userMap.get(action.ownerUsername)
+        : undefined;
       const searchTarget = [
         action.actionNo,
         t(getTicketActionTypeLabelKey(action.actionType)),
@@ -111,7 +113,11 @@ export function TicketActionList({
             <TicketActionItem
               key={`${action.ticketId}-${action.actionNo}-${isDesktop === null ? "initial" : isDesktop ? "desktop" : "mobile"}`}
               action={action}
-              owner={userMap.get(action.ownerUsername)}
+              owner={
+                action.ownerUsername
+                  ? userMap.get(action.ownerUsername)
+                  : undefined
+              }
               dateLocale={dateLocale}
               defaultOpen={isDesktop ? true : index === 0}
             />
