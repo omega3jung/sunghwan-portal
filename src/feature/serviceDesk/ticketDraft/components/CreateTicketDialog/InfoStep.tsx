@@ -14,14 +14,14 @@ import { getTicketCategoryRequestTemplate } from "@/feature/serviceDesk/ticket/u
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 
-import { useTicketFormContext } from "../../context/TicketFormContext";
+import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { TicketInfoFields } from "./InfoFields";
 import { RemoteAttachmentNotice } from "./RemoteAttachmentNotice";
 
 const IMAGE_TAG_PATTERN = /<img\b/i;
 
 export const InfoStep = () => {
-  const { form, categories } = useTicketFormContext();
+  const { form, categories } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
   const bodyValue = useWatch({ control: form.control, name: "body" });

@@ -3,15 +3,13 @@
 import { format } from "date-fns";
 import { FileText, ImageIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
-import type { SupportedLanguage } from "@/domain/config";
 import type {
-  MainCategory,
   TicketAttachmentMetadata,
+  TicketDetail,
 } from "@/domain/serviceDesk";
 import {
   MAX_ATTACH_COUNT,
@@ -26,21 +24,12 @@ import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { bytesToKB } from "@/shared/utils/browser";
 
-type ReviewStepProps = {
-  form: UseFormReturn<TicketFormValues>;
-  categories: MainCategory[];
-  language: SupportedLanguage;
-  existingFiles: TicketAttachmentMetadata[];
-  existingImages: TicketAttachmentMetadata[];
-};
+import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
+import { RoutingRecalculationNotice } from "./RemoteNotices";
 
-export function ReviewStep({
-  form,
-  categories,
-  language,
-  existingFiles,
-  existingImages,
-}: ReviewStepProps) {
+export function ReviewStep() {
+  const { form, ticket, categories, language, existingFiles, existingImages } =
+    useTicketUpdateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
   const values = form.watch();
@@ -54,9 +43,23 @@ export function ReviewStep({
     1024 /
     1024
   ).toFixed(2);
+  const shouldShowRoutingRecalculationNotice =
+    !!ticket &&
+    hasRoutingSensitiveChanges({
+      ticket,
+      values,
+      existingFiles,
+      existingImages,
+    });
 
   return (
     <FieldGroup className="min-w-0">
+      <RoutingRecalculationNotice
+        isVisible={shouldShowRoutingRecalculationNotice}
+      >
+        {t("ticketUpdate.routing.reset")}
+      </RoutingRecalculationNotice>
+
       <Field className="min-w-0 gap-1">
         <FieldLabel>{t("field.category", { ns: NS.common })}</FieldLabel>
         <ReadOnlyValue>{categoryDisplayValue}</ReadOnlyValue>
@@ -130,6 +133,65 @@ export function ReviewStep({
       </Field>
     </FieldGroup>
   );
+}
+
+function hasRoutingSensitiveChanges({
+  ticket,
+  values,
+  existingFiles,
+  existingImages,
+}: {
+  ticket: TicketDetail;
+  values: TicketFormValues;
+  existingFiles: TicketAttachmentMetadata[];
+  existingImages: TicketAttachmentMetadata[];
+}) {
+  if ((values.category ?? "") !== ticket.categoryId) {
+    return true;
+  }
+
+  if (values.subject.trim() !== ticket.subject) {
+    return true;
+  }
+
+  if (values.body.trim() !== ticket.content) {
+    return true;
+  }
+
+  if (values.attachment.length > 0) {
+    return true;
+  }
+
+  return (
+    !hasSameAttachments(existingFiles, ticket.files) ||
+    !hasSameAttachments(existingImages, ticket.images)
+  );
+}
+
+function hasSameAttachments(
+  current: TicketAttachmentMetadata[],
+  original: TicketAttachmentMetadata[],
+) {
+  return (
+    JSON.stringify(getAttachmentComparisonKeys(current)) ===
+    JSON.stringify(getAttachmentComparisonKeys(original))
+  );
+}
+
+function getAttachmentComparisonKeys(items: TicketAttachmentMetadata[]) {
+  return items
+    .map((item) =>
+      [
+        item.replacedName,
+        item.originalName,
+        item.extension,
+        String(item.size),
+        item.type,
+        item.demoUrl,
+        item.reason,
+      ].join("|"),
+    )
+    .sort();
 }
 
 function formatEmailSummary(

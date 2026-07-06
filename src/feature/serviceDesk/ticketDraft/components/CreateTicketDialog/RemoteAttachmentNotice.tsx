@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { useTicketFormContext } from "../../context/TicketFormContext";
+import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 
 type RemoteAttachmentNoticeProps = {
   children: ReactNode;
@@ -13,7 +13,7 @@ export const RemoteAttachmentNotice = ({
   children,
   isVisible,
 }: RemoteAttachmentNoticeProps) => {
-  const { isRemoteMode } = useTicketFormContext();
+  const { isRemoteMode } = useTicketCreateFormContext();
 
   if (!isRemoteMode || !isVisible) {
     return null;

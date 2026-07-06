@@ -1,8 +1,9 @@
 "use client";
 
+import { addDays, endOfDay, endOfToday, startOfToday } from "date-fns";
 import { ChevronRight } from "lucide-react";
-import { useMemo } from "react";
-import type { Control, UseFormReturn } from "react-hook-form";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -17,36 +18,28 @@ import {
 } from "@/components/ui/collapsible";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { SupportedLanguage } from "@/domain/config";
-import type { MainCategory } from "@/domain/serviceDesk";
 import { MAX_EMAIL_COUNT } from "@/feature/serviceDesk/ticket/constants";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import {
   mapTicketCategoriesToHierarchicalItems,
+  resolveTicketCategoryMeta,
 } from "@/feature/serviceDesk/ticket/utils/categorySelection";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
+import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
+
 const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
 type EmailFieldName = (typeof EMAIL_FIELDS)[number];
 
-type UpdateTicketInfoFieldsProps = {
-  form: UseFormReturn<TicketFormValues>;
-  categories: MainCategory[];
-  users: ImageValueLabel[];
-  language: SupportedLanguage;
-};
-
-export function UpdateTicketInfoFields({
-  form,
-  categories,
-  users,
-  language,
-}: UpdateTicketInfoFieldsProps) {
+export function UpdateTicketInfoFields() {
+  const { form, categories, users, language } = useTicketUpdateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
+  const [minDueAt, setMinDueAt] = useState<Date>(new Date());
+  const categoryValue = form.watch("category");
   const categoryError = form.formState.errors.category?.message;
   const subjectError = form.formState.errors.subject?.message;
   const dueAtError = form.formState.errors.dueAt?.message;
@@ -54,6 +47,60 @@ export function UpdateTicketInfoFields({
     () => mapTicketCategoriesToHierarchicalItems(categories, tLocal),
     [categories, tLocal],
   );
+  const resolveCategoryMeta = useCallback(
+    (categoryId?: string | null) =>
+      resolveTicketCategoryMeta(categories, categoryId),
+    [categories],
+  );
+
+  useEffect(() => {
+    const { selected, parentCategory } = resolveCategoryMeta(categoryValue);
+    const slaDays =
+      selected?.defaultSlaDays ?? parentCategory?.defaultSlaDays ?? 0;
+    const nextMinDueAt = addDays(startOfToday(), slaDays);
+
+    setMinDueAt((prev) =>
+      prev.getTime() === nextMinDueAt.getTime() ? prev : nextMinDueAt,
+    );
+  }, [categoryValue, resolveCategoryMeta]);
+
+  const handleCategoryChange = (
+    categoryId: string,
+    onChange: (value: string) => void,
+  ) => {
+    onChange(categoryId);
+
+    const { selected, parentCategory } = resolveCategoryMeta(categoryId);
+    const slaDays =
+      selected?.defaultSlaDays ?? parentCategory?.defaultSlaDays ?? 1;
+    const priority =
+      selected?.defaultPriority ?? parentCategory?.defaultPriority ?? null;
+    const riskLevel =
+      selected?.defaultRiskLevel ?? parentCategory?.defaultRiskLevel ?? null;
+    const nextMinDueAt = addDays(startOfToday(), slaDays);
+    const nextDueAt = addDays(endOfToday(), slaDays);
+    const currentDueAt = form.getValues("dueAt");
+
+    form.setValue("priority", priority, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    form.setValue("riskLevel", riskLevel, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    setMinDueAt(nextMinDueAt);
+
+    if (endOfDay(currentDueAt).getTime() >= nextMinDueAt.getTime()) {
+      return;
+    }
+
+    form.setValue("dueAt", nextDueAt, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  };
 
   return (
     <FieldGroup className="min-w-0">
@@ -79,7 +126,9 @@ export function UpdateTicketInfoFields({
                   backLabel={t("ticketUpdate.category.back")}
                   emptyText={t("ticketUpdate.category.empty")}
                   selectableStrategy="parent-without-children"
-                  onValueChange={field.onChange}
+                  onValueChange={(categoryId) =>
+                    handleCategoryChange(categoryId, field.onChange)
+                  }
                   getDisplayLabel={(_, path) =>
                     path.map((item) => item.label).join(" / ")
                   }
@@ -106,6 +155,7 @@ export function UpdateTicketInfoFields({
                   className="h-9"
                   value={field.value}
                   onChange={(date) => field.onChange(date ?? field.value)}
+                  minDate={minDueAt}
                 />
               )}
             />

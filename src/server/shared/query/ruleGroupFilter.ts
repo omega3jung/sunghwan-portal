@@ -46,6 +46,31 @@ export function getBooleanRuleGroupValue(
   return findBooleanRuleValue(normalizedFilter as FilterNode, field);
 }
 
+export function getStringRuleGroupValue(
+  filter: unknown,
+  field: string,
+): string | null {
+  const value = findRuleGroupValue(filter, field);
+
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const normalizedValue = String(value).trim();
+
+  return normalizedValue.length > 0 ? normalizedValue : null;
+}
+
+function findRuleGroupValue(filter: unknown, field: string): unknown {
+  const normalizedFilter = normalizeFilterInput(filter);
+
+  if (!normalizedFilter || typeof normalizedFilter !== "object") {
+    return null;
+  }
+
+  return findRuleValue(normalizedFilter as FilterNode, field);
+}
+
 function normalizeFilterInput(filter: unknown): unknown {
   if (typeof filter !== "string") {
     return filter;
@@ -156,6 +181,30 @@ function findBooleanRuleValue(
   }
 
   return null;
+}
+
+function findRuleValue(node: FilterNode, field: string): unknown {
+  if (!node || typeof node === "string") {
+    return null;
+  }
+
+  if (isFilterGroup(node)) {
+    for (const rule of node.rules ?? []) {
+      const value = findRuleValue(rule, field);
+
+      if (value !== null && value !== undefined) {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
+  if (node.field !== field || node.operator !== "=") {
+    return null;
+  }
+
+  return node.value;
 }
 
 function matchesFilterLeaf<T extends object>(

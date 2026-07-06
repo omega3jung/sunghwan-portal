@@ -115,7 +115,7 @@
     },
     "routing": {
       "preserve": "Los cambios solo en vencimiento o destinatarios conservan la aprobación y la asignación actuales.",
-      "reset": "Los cambios de categoría, asunto, descripción o adjuntos recalculan la aprobación y la asignación."
+      "reset": "Cambiar detalles de la solicitud distintos de la fecha límite o el correo recalcula los pasos de aprobación y la asignación de responsables."
     },
     "field": {
       "existingFiles": "Archivos existentes",
@@ -378,8 +378,11 @@
     "additionalFilters": "Filtros adicionales",
     "dateFilters": "Filtros de fecha"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext debe usarse dentro del provider."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext debe usarse dentro del provider."
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext debe usarse dentro del provider."
   },
   "api": {
     "common": {

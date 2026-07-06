@@ -115,7 +115,7 @@
     },
     "routing": {
       "preserve": "기한 또는 수신자만 변경하면 현재 승인 및 담당자 배정을 유지합니다.",
-      "reset": "카테고리, 제목, 설명 또는 첨부가 변경되면 승인 및 담당자 배정을 다시 계산합니다."
+      "reset": "기한 또는 이메일 외의 요청 내용을 수정하면 결재 단계와 담당자 할당이 다시 계산됩니다."
     },
     "field": {
       "existingFiles": "기존 파일",
@@ -378,8 +378,11 @@
     "additionalFilters": "추가 필터",
     "dateFilters": "날짜 필터"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext는 provider 내부에서 사용되어야 합니다."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext는 provider 내부에서 사용되어야 합니다."
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext는 provider 내부에서 사용되어야 합니다."
   },
   "api": {
     "common": {

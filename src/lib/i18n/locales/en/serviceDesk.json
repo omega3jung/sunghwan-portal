@@ -115,7 +115,7 @@
     },
     "routing": {
       "preserve": "Due date and recipient-only changes preserve the current approval and assignment.",
-      "reset": "Category, subject, description, or attachment changes recalculate approval and assignment."
+      "reset": "Changing request details other than due date or email recalculates approval steps and assignee assignment."
     },
     "field": {
       "existingFiles": "Existing files",
@@ -378,8 +378,11 @@
     "additionalFilters": "Additional filters",
     "dateFilters": "Date filters"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext must be used inside provider."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext must be used inside provider."
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext must be used inside provider."
   },
   "api": {
     "common": {

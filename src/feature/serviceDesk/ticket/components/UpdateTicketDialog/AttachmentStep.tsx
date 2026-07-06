@@ -2,7 +2,7 @@
 
 import { FileText, ImageIcon, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
-import { type UseFormReturn, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { FileAttachment } from "@/components/custom/FileAttachment";
@@ -14,27 +14,20 @@ import {
   MAX_ATTACH_SIZE,
   TICKET_ATTACHMENT_ACCEPT,
 } from "@/feature/serviceDesk/ticket/constants";
-import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import { NS } from "@/lib/i18n";
 import { bytesToKB } from "@/shared/utils/browser";
 
-type AttachmentStepProps = {
-  form: UseFormReturn<TicketFormValues>;
-  existingFiles: TicketAttachmentMetadata[];
-  existingImages: TicketAttachmentMetadata[];
-  isRemoteMode: boolean;
-  onRemoveExistingFile: (index: number) => void;
-  onRemoveExistingImage: (index: number) => void;
-};
+import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
+import { RemoteAttachmentNotice } from "./RemoteNotices";
 
-export function AttachmentStep({
-  form,
-  existingFiles,
-  existingImages,
-  isRemoteMode,
-  onRemoveExistingFile,
-  onRemoveExistingImage,
-}: AttachmentStepProps) {
+export function AttachmentStep() {
+  const {
+    form,
+    existingFiles,
+    existingImages,
+    onRemoveExistingFile,
+    onRemoveExistingImage,
+  } = useTicketUpdateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const newAttachments =
     useWatch({ control: form.control, name: "attachment" }) ?? [];
@@ -65,11 +58,9 @@ export function AttachmentStep({
           maxSizeMB={MAX_ATTACH_SIZE}
           accept={TICKET_ATTACHMENT_ACCEPT}
         />
-        <UpdateRemoteAttachmentNotice
-          isVisible={isRemoteMode && newAttachments.length > 0}
-        >
+        <RemoteAttachmentNotice isVisible={newAttachments.length > 0}>
           {t("ticketUpdate.notice.remoteFilesReplaced")}
-        </UpdateRemoteAttachmentNotice>
+        </RemoteAttachmentNotice>
       </Field>
     </FieldGroup>
   );
@@ -139,25 +130,5 @@ function ExistingAttachmentSection({
         </div>
       )}
     </Field>
-  );
-}
-
-type UpdateRemoteAttachmentNoticeProps = {
-  isVisible: boolean;
-  children: ReactNode;
-};
-
-function UpdateRemoteAttachmentNotice({
-  isVisible,
-  children,
-}: UpdateRemoteAttachmentNoticeProps) {
-  if (!isVisible) {
-    return null;
-  }
-
-  return (
-    <div className="rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-sm leading-5 text-orange-800 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-200">
-      {children}
-    </div>
   );
 }

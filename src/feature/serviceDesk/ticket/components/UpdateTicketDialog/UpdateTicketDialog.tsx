@@ -8,13 +8,12 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
+import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 
-import {
-  UPDATE_TICKET_REVIEW_STEP,
-  useUpdateTicketDialog,
-} from "../../hooks/useUpdateTicketDialog";
+import { TicketUpdateFormProvider } from "../../context/TicketUpdateFormContext";
+import { useUpdateTicketDialog } from "../../hooks/useUpdateTicketDialog";
 import { AttachmentStep } from "./AttachmentStep";
 import { InfoStep } from "./InfoStep";
 import { ReviewStep } from "./ReviewStep";
@@ -73,55 +72,47 @@ export function UpdateTicketDialog({
         <UpdateTicketDialogHeader />
 
         <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
-          <UpdateTicketDialogStepFlow
-            currentStep={currentStep}
-            steps={updateSteps}
-            onStepChange={handleStepChange}
-          />
+          <TicketUpdateFormProvider
+            value={{
+              form: ticketForm,
+              ticket,
+              categories,
+              users,
+              language,
+              isRemoteMode,
+              existingFiles,
+              existingImages,
+              onRemoveExistingFile: removeExistingFile,
+              onRemoveExistingImage: removeExistingImage,
+            }}
+          >
+            <UpdateTicketDialogStepFlow
+              currentStep={currentStep}
+              steps={updateSteps}
+              onStepChange={handleStepChange}
+            />
 
-          <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
-            {isLoadingTicket ? (
-              <div className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t("ticketUpdate.loadingTicket")}
-              </div>
-            ) : loadError ? (
-              <div className="rounded-md border border-destructive/40 px-3 py-2 text-sm text-destructive">
-                {loadError}
-              </div>
-            ) : ticket ? (
-              <>
-                {currentStep === 0 ? (
-                  <InfoStep
-                    form={ticketForm}
-                    categories={categories}
-                    users={users}
-                    language={language}
-                    isRemoteMode={isRemoteMode}
-                  />
-                ) : null}
-                {currentStep === 1 ? (
-                  <AttachmentStep
-                    form={ticketForm}
-                    existingFiles={existingFiles}
-                    existingImages={existingImages}
-                    isRemoteMode={isRemoteMode}
-                    onRemoveExistingFile={removeExistingFile}
-                    onRemoveExistingImage={removeExistingImage}
-                  />
-                ) : null}
-                {currentStep === UPDATE_TICKET_REVIEW_STEP ? (
-                  <ReviewStep
-                    form={ticketForm}
-                    categories={categories}
-                    language={language}
-                    existingFiles={existingFiles}
-                    existingImages={existingImages}
-                  />
-                ) : null}
-              </>
-            ) : null}
-          </ScrollArea>
+            <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
+              {isLoadingTicket ? (
+                <div className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t("ticketUpdate.loadingTicket")}
+                </div>
+              ) : loadError ? (
+                <div className="rounded-md border border-destructive/40 px-3 py-2 text-sm text-destructive">
+                  {loadError}
+                </div>
+              ) : ticket ? (
+                <>
+                  {currentStep === ticketStep.info ? <InfoStep /> : null}
+                  {currentStep === ticketStep.attachment ? (
+                    <AttachmentStep />
+                  ) : null}
+                  {currentStep === ticketStep.review ? <ReviewStep /> : null}
+                </>
+              ) : null}
+            </ScrollArea>
+          </TicketUpdateFormProvider>
         </form>
 
         <UpdateTicketDialogFooter

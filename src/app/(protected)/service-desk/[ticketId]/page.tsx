@@ -78,7 +78,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
         value: true,
       }),
       createFieldFilter({
-        field: "id",
+        field: "tenant_company_id",
         value: currentSession?.user.companyId,
       }),
     ]),

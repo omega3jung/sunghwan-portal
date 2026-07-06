@@ -12,7 +12,7 @@ import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
-import { TicketFormProvider } from "../../context/TicketFormContext";
+import { TicketCreateFormProvider } from "../../context/TicketCreateFormContext";
 import { useCreateTicketDialog } from "../../hooks/useCreateTicketDialog";
 import { AttachmentStep } from "./AttachmentStep";
 import { CreateTicketDialogFooter } from "./CreateTicketDialogFooter";
@@ -71,7 +71,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
       >
         <CreateTicketDialogHeader />
         <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
-          <TicketFormProvider
+          <TicketCreateFormProvider
             value={{ form: ticketForm, categories, users, isRemoteMode }}
           >
             <CreateTicketDialogStepFlow
@@ -98,7 +98,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
                 )
               }
             </ScrollArea>
-          </TicketFormProvider>
+          </TicketCreateFormProvider>
         </form>
         <CreateTicketDialogFooter
           currentStep={currentStep}

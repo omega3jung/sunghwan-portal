@@ -12,11 +12,11 @@ import {
 } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 
-import { useTicketFormContext } from "../../context/TicketFormContext";
+import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { RemoteAttachmentNotice } from "./RemoteAttachmentNotice";
 
 export const AttachmentStep = () => {
-  const { form } = useTicketFormContext();
+  const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const attachments = useWatch({ control: form.control, name: "attachment" });
   const hasAttachedFiles = (attachments?.length ?? 0) > 0;

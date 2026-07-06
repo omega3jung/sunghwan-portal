@@ -12,11 +12,11 @@ import {
 } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/i18n";
 
-import { useTicketFormContext } from "../../context/TicketFormContext";
+import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { TicketInfoFields } from "./InfoFields";
 
 export const ReviewStep = () => {
-  const { form } = useTicketFormContext();
+  const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const bodyValue = form.watch("body");
   const { files, totalFileSizeMB } = useFileAttachments({

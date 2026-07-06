@@ -115,7 +115,7 @@
     },
     "routing": {
       "preserve": "Les changements limités à l'échéance ou aux destinataires conservent l'approbation et l'assignation actuelles.",
-      "reset": "Les changements de catégorie, d'objet, de description ou de pièces jointes recalculent l'approbation et l'assignation."
+      "reset": "Modifier les détails de la demande autres que l'échéance ou l'e-mail recalcule les étapes d'approbation et l'affectation du responsable."
     },
     "field": {
       "existingFiles": "Fichiers existants",
@@ -378,8 +378,11 @@
     "additionalFilters": "Filtres supplémentaires",
     "dateFilters": "Filtres de date"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext doit être utilisé à l'intérieur du provider."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext doit être utilisé à l'intérieur du provider."
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext doit être utilisé à l'intérieur du provider."
   },
   "api": {
     "common": {

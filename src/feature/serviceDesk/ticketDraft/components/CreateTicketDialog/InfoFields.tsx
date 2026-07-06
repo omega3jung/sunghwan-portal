@@ -30,7 +30,7 @@ import { useLocalizedText } from "@/shared/hooks/useLocalizedValue";
 import type { ImageValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 
-import { useTicketFormContext } from "../../context/TicketFormContext";
+import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 
 const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
 type EmailFieldName = (typeof EMAIL_FIELDS)[number];
@@ -40,7 +40,7 @@ type TicketInfoFieldsProps = {
 };
 
 export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
-  const { form, categories, users } = useTicketFormContext();
+  const { form, categories, users } = useTicketCreateFormContext();
 
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();

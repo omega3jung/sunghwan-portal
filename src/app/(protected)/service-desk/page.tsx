@@ -133,7 +133,7 @@ export default function ServiceDeskPage() {
         value: true,
       }),
       createFieldFilter({
-        field: "id",
+        field: "tenant_company_id",
         value: currentSession?.user.companyId,
       }),
     ]),

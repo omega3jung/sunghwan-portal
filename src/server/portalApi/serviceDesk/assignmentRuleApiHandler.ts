@@ -8,11 +8,12 @@ import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule
 import {
   createAssignmentRule,
   deleteAssignmentRuleById,
+  getAssignmentRecommendationResponse,
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
   updateAssignmentRuleById,
 } from "@/server/data/serviceDesk/assignmentRule";
-import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo";
+import { isSameNumberArray, isSameStringArray } from "@/shared/utils/value";
 
 import { getPortalApiQueryValue } from "../utils";
 import {
@@ -89,16 +90,20 @@ export async function handleAssignmentRulePortalApi(
       return createNotFoundResponse();
     }
 
-    const body = requireBody<AssignmentRecommendationInput>(context.options);
+    const input = requireBody<AssignmentRecommendationInput>(context.options);
     const token = await getAuthToken(context.request);
     const isInternal = token?.userScope === "INTERNAL";
+    const tenantId =
+      !isInternal && typeof token?.companyId === "number"
+        ? token.companyId
+        : null;
+    const body = await getAssignmentRecommendationResponse({
+      input,
+      tenantId,
+      isInternal,
+    });
 
-    return NextResponse.json(
-      resolveLocalAssignmentRecommendation({
-        input: body,
-        isInternal,
-      }),
-    );
+    return NextResponse.json(body);
   }
 
   return createNotFoundResponse();
@@ -108,6 +113,11 @@ async function saveAssignmentRuleTree(
   payload: SaveServiceDeskAssignmentRuleTreePayload,
 ) {
   const tenantId = Number(payload.tenantId);
+
+  if (!Number.isFinite(tenantId)) {
+    throw new Error("Invalid tenantId");
+  }
+
   const currentAssignmentRules = await getAssignmentRulesByTenantId(tenantId);
   const currentAssignmentRulesByCategoryId = new Map(
     currentAssignmentRules.map((assignmentRule) => [
@@ -115,44 +125,113 @@ async function saveAssignmentRuleTree(
       assignmentRule,
     ]),
   );
-  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload);
-  const submittedCategoryIds = new Set<number>();
 
-  for (const assignmentRule of nextAssignmentRules) {
-    submittedCategoryIds.add(assignmentRule.category_id);
-    const currentAssignmentRule = currentAssignmentRulesByCategoryId.get(
+  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload);
+  const nextAssignmentRulesByCategoryId = new Map(
+    nextAssignmentRules.map((assignmentRule) => [
       assignmentRule.category_id,
+      assignmentRule,
+    ]),
+  );
+
+  const createTasks: Array<() => Promise<unknown>> = [];
+  const updateTasks: Array<() => Promise<unknown>> = [];
+  const deleteTasks: Array<() => Promise<unknown>> = [];
+
+  for (const nextAssignmentRule of nextAssignmentRules) {
+    const currentAssignmentRule = currentAssignmentRulesByCategoryId.get(
+      nextAssignmentRule.category_id,
     );
 
-    if (currentAssignmentRule) {
-      await updateAssignmentRuleById(
-        tenantId,
-        currentAssignmentRule.assignment_rule_id,
-        {
-          category_id: assignmentRule.category_id,
-          assignee: assignmentRule.assignee,
-        },
+    if (!currentAssignmentRule) {
+      createTasks.push(() =>
+        createAssignmentRule({
+          tenant_id: tenantId,
+          category_id: nextAssignmentRule.category_id,
+          assignee: nextAssignmentRule.assignee,
+        }),
       );
       continue;
     }
 
-    await createAssignmentRule({
-      tenant_id: tenantId,
-      category_id: assignmentRule.category_id,
-      assignee: assignmentRule.assignee,
-    });
+    if (
+      isSameAssignmentRuleAssignee(
+        currentAssignmentRule.assignee,
+        nextAssignmentRule.assignee,
+      )
+    ) {
+      continue;
+    }
+
+    updateTasks.push(() =>
+      updateAssignmentRuleById(
+        tenantId,
+        currentAssignmentRule.assignment_rule_id,
+        {
+          category_id: nextAssignmentRule.category_id,
+          assignee: nextAssignmentRule.assignee,
+        },
+      ),
+    );
   }
 
-  for (const assignmentRule of currentAssignmentRules) {
-    if (!submittedCategoryIds.has(assignmentRule.category_id)) {
-      await deleteAssignmentRuleById(
-        tenantId,
-        assignmentRule.assignment_rule_id,
+  for (const currentAssignmentRule of currentAssignmentRules) {
+    if (
+      !nextAssignmentRulesByCategoryId.has(currentAssignmentRule.category_id)
+    ) {
+      deleteTasks.push(() =>
+        deleteAssignmentRuleById(
+          tenantId,
+          currentAssignmentRule.assignment_rule_id,
+        ),
       );
     }
   }
 
+  await runWithConcurrencyLimit(
+    [...updateTasks, ...createTasks, ...deleteTasks],
+    8,
+  );
+
   return getAssignmentRulesByTenantId(tenantId);
+}
+
+async function runWithConcurrencyLimit<T>(
+  tasks: Array<() => Promise<T>>,
+  limit: number,
+): Promise<T[]> {
+  const results: T[] = [];
+  const executing = new Set<Promise<void>>();
+
+  for (const task of tasks) {
+    const promise = task().then((result) => {
+      results.push(result);
+    });
+
+    executing.add(promise);
+
+    promise.finally(() => {
+      executing.delete(promise);
+    });
+
+    if (executing.size >= limit) {
+      await Promise.race(executing);
+    }
+  }
+
+  await Promise.all(executing);
+
+  return results;
+}
+
+function isSameAssignmentRuleAssignee(
+  current: AssignmentRuleDto["assignee"],
+  next: AssignmentRuleDto["assignee"],
+): boolean {
+  return (
+    isSameNumberArray(current.job_field_id, next.job_field_id) &&
+    isSameStringArray(current.employee_username, next.employee_username)
+  );
 }
 
 function flattenAssignmentRuleTreePayload(

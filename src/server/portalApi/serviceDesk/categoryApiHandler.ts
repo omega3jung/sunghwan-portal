@@ -17,6 +17,7 @@ import {
 } from "@/server/data/serviceDesk/category";
 import {
   getBooleanRuleGroupValue,
+  getStringRuleGroupValue,
   parseRuleGroupFilter,
 } from "@/server/shared/query";
 
@@ -50,6 +51,12 @@ export async function handleCategoryPortalApi(
         context.options,
         "tenantId",
       );
+      const filter = parseRuleGroupFilter(
+        getPortalApiQueryValue(context.request, context.options, "filter"),
+      );
+      const companyId =
+        getPortalApiQueryValue(context.request, context.options, "companyId") ??
+        getStringRuleGroupValue(filter, "tenant_company_id");
       const isInternal =
         parseBooleanQueryValue(
           getPortalApiQueryValue(
@@ -62,15 +69,11 @@ export async function handleCategoryPortalApi(
         parseBooleanQueryValue(
           getPortalApiQueryValue(context.request, context.options, "active"),
         ) ??
-        getBooleanRuleGroupValue(
-          parseRuleGroupFilter(
-            getPortalApiQueryValue(context.request, context.options, "filter"),
-          ),
-          "active",
-        );
+        getBooleanRuleGroupValue(filter, "active");
       const items = filterCategorySettingsByActive(
         await getCategorySettingsResponseByTenantId({
           tenantId,
+          companyId,
           isInternal,
         }),
         active,

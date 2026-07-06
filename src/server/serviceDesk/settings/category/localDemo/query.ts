@@ -9,6 +9,11 @@ import {
 import { getLocalDemoCategories } from "../../state";
 import { normalizeTenantTree } from "./categoryUtils";
 
+type FilterableTenantCategoryTree = TenantCategoryTree & {
+  tenant_company_id: string;
+  tenant_id: string;
+};
+
 export const getLocalCategoryTrees = (
   isInternal: boolean,
 ): TenantCategoryTree[] => {
@@ -29,16 +34,17 @@ export const localListCategories = ({
     parseOptionalBoolean(searchParams.get("active")) ??
     getBooleanRuleGroupValue(filter, "active");
   const tenantId = searchParams.get("tenantId");
+  const tenantCategoryTrees = filterTenantCategoryTreesByActive(
+    filterTenantCategoryTreesByTenantId(
+      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      tenantId,
+    ),
+    active,
+  );
   const items = filterItemsByQuery(
     searchParams,
-    filterTenantCategoryTreesByActive(
-      filterTenantCategoryTreesByTenantId(
-        camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
-        tenantId,
-      ),
-      active,
-    ),
-  );
+    addTenantCategoryTreeFilterAliases(tenantCategoryTrees),
+  ).map(removeTenantCategoryTreeFilterAliases);
 
   return {
     items,
@@ -55,6 +61,24 @@ function filterTenantCategoryTreesByTenantId(
   }
 
   return items.filter((tenant) => tenant.id === tenantId);
+}
+
+function addTenantCategoryTreeFilterAliases(
+  items: TenantCategoryTree[],
+): FilterableTenantCategoryTree[] {
+  return items.map((tenant) => ({
+    ...tenant,
+    tenant_company_id: tenant.companyId,
+    tenant_id: tenant.id,
+  }));
+}
+
+function removeTenantCategoryTreeFilterAliases({
+  tenant_company_id: _tenantCompanyId,
+  tenant_id: _tenantId,
+  ...tenant
+}: FilterableTenantCategoryTree): TenantCategoryTree {
+  return tenant;
 }
 
 function parseOptionalBoolean(value: string | null): boolean | null {
