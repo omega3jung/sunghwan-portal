@@ -2,22 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
-import { DbParams } from "@/shared/types/api";
-
-import { getServiceDeskQueryOptions } from "../shared/utils/queryOptions";
+import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
+import type { ServiceDeskTenantListParams } from "./types";
 
-export const useServiceDeskTenantListQuery = (params: DbParams) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+export const useServiceDeskTenantListQuery = (
+  params: ServiceDeskTenantListParams,
+) => {
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: tenantQueryKeys.list(params),
     queryFn: () => serviceDeskTenantApi.list(params),
     enabled: !!params && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };

@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/hooks/useNavigationBarCurrentLabel";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
 import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { useAutoStartApprovedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartApprovedTicketOnView";
+import { useAutoStartAssignedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartAssignedTicketOnView";
+import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticketAction/api/client";
 import {
   TicketActionList,
@@ -26,6 +28,7 @@ import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 import {
   TicketDetailsAside,
@@ -55,7 +58,11 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const { data: ticket, isLoading: isTicketLoading } =
     useServiceDeskTicketQuery(params.ticketId);
 
-  useAutoStartApprovedTicketOnView({
+  useNavigationBarCurrentLabel(
+    ticket?.id === params.ticketId ? ticket.ticketNumber : null,
+  );
+
+  useAutoStartAssignedTicketOnView({
     ticket,
   });
 
@@ -65,15 +72,16 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
     useServiceDeskTicketHistoryListQuery(params.ticketId);
   const { data: categoryTrees } = useServiceDeskCategoryListQuery({
-    filter: {
-      rules: [
-        {
-          field: "id",
-          operator: "=",
-          value: currentSession?.user.companyId,
-        },
-      ],
-    },
+    filter: combineRuleGroups([
+      createFieldFilter({
+        field: "active",
+        value: true,
+      }),
+      createFieldFilter({
+        field: "tenant_company_id",
+        value: currentSession?.user.companyId,
+      }),
+    ]),
   });
 
   const { data: employees } = useEmployeeListQuery({});
@@ -95,6 +103,23 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     });
   }, [employees, tLocal]);
 
+  const emails = useMemo<ImageValueLabel[]>(() => {
+    if (!employees) {
+      return [];
+    }
+
+    return employees.map((employee) => {
+      const name = tLocal(employee.name);
+
+      return {
+        value: employee.email,
+        label: `${name.first} ${name.last}`,
+        displayName: employee.email,
+        image: employee.imageUrl,
+      };
+    });
+  }, [employees, tLocal]);
+
   const userMap = useMemo(
     () => new Map(users.map((user) => [user.value, user])),
     [users],
@@ -107,8 +132,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
 
   const assignees = useMemo(
     () =>
-      users.filter((user) => ticket?.assigneeUsernames.includes(user.value) ?? false),
-    [ticket?.assigneeUsernames, users],
+      users.filter((user) =>
+        ticket ? selectTicketAssigneeIds(ticket).includes(user.value) : false,
+      ),
+    [ticket, users],
   );
 
   const dateLocale = useMemo(
@@ -143,7 +170,9 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   }, [ticketHistories]);
 
   const latestActionOwner = latestAction
-    ? userMap.get(latestAction.ownerUsername)
+    ? latestAction.ownerUsername
+      ? userMap.get(latestAction.ownerUsername)
+      : undefined
     : undefined;
 
   useEffect(() => {
@@ -160,6 +189,9 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-2 pt-1">
       <TicketHeader
         ticket={ticket}
+        categories={categories}
+        users={emails}
+        language={userPreference.language as SupportedLanguage}
         isDetailsAsideOpen={isDetailsAsideOpen}
         onToggleDetailsAside={setIsDetailsAsideOpen}
         onOpenHistorySheet={setIsHistorySheetOpen}

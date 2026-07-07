@@ -32,8 +32,9 @@ import { TICKET_2026_35 } from "./SP-2026-0035";
 import { TICKET_2026_36 } from "./SP-2026-0036";
 import { TICKET_2026_37 } from "./SP-2026-0037";
 import { TICKET_2026_38 } from "./SP-2026-0038";
+import { TicketActionMockInput } from "./types";
 
-export const internalActionsMock: DbTicketAction[] = [
+const internalActionMockInputs: TicketActionMockInput[] = [
   ...TICKET_2026_1.actions,
   ...TICKET_2026_2.actions,
   ...TICKET_2026_3.actions,
@@ -67,3 +68,19 @@ export const internalActionsMock: DbTicketAction[] = [
   ...TICKET_2026_37.actions,
   ...TICKET_2026_38.actions,
 ];
+
+const toDbTicketAction = (action: TicketActionMockInput): DbTicketAction => ({
+  ticket_id: action.tka_ticket_id,
+  action_no: action.tka_action_no,
+  action_type: action.tka_action_type,
+  content: action.tka_content,
+  owner_username: action.tka_owner_username,
+  created_at: action.tka_created_at,
+  updated_at: action.tka_updated_at,
+  active: action.tka_active,
+  files: action.tka_files,
+  images: action.tka_images,
+});
+
+export const internalActionsMock: DbTicketAction[] =
+  internalActionMockInputs.map(toDbTicketAction);

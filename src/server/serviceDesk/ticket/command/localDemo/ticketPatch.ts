@@ -25,7 +25,7 @@ export const mergeActionPatch = (
 };
 
 export const mergeAssigneeIds = (
-  currentAssigneeIds: DbTicketDetail["assignee_id"],
+  currentAssigneeIds: DbTicketDetail["assignee_usernames"],
   employeeUserName: string,
 ) => {
   return currentAssigneeIds.includes(employeeUserName)

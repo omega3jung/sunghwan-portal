@@ -13,10 +13,8 @@ import {
   withDerivedTicketOwnershipList,
 } from "@/app/api/service-desk/_shared";
 import {
-  createTicketSchema,
-  TicketWriteRequestInput,
-  toTicketWriteInput,
-  toTicketWritePayload,
+  type TicketMutateRequestPayload,
+  ticketMutateRequestPayloadSchema,
 } from "@/feature/serviceDesk/ticket";
 import {
   mapTicketDetailPayload,
@@ -76,8 +74,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
-  const parsedBody = createTicketSchema.safeParse(
-    (await request.json()) as TicketWriteRequestInput,
+  const parsedBody = ticketMutateRequestPayloadSchema.safeParse(
+    (await request.json()) as TicketMutateRequestPayload,
   );
 
   if (!parsedBody.success) {
@@ -87,7 +85,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const body = toTicketWriteInput(parsedBody.data);
+  const body = parsedBody.data;
 
   if (!isRemote) {
     try {
@@ -119,7 +117,7 @@ export async function POST(request: NextRequest) {
     method: "POST",
     path: "/service-desk/tickets",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    body: toTicketWritePayload(body),
+    body,
     errorMessage: tServiceDeskApi("api.tickets.create"),
     mapData: mapTicketDetailPayload,
   });

@@ -98,6 +98,22 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 1,
   },
   {
+    id: -9,
+    parentId: -2,
+    title: {
+      en: "Hierarchical select",
+      es: "Selección jerárquica",
+      fr: "Sélection hiérarchique",
+      ko: "계층형 선택",
+    },
+    path: "/demo/hierarchical-select",
+    icon: "ListCollapse",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 70,
+    minAccessLevel: 9,
+  },
+  {
     id: -8,
     parentId: -2,
     title: {

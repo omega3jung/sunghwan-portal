@@ -2,7 +2,6 @@
 
 "use client";
 
-import { Globe, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,27 +11,19 @@ import {
 } from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Tenant } from "@/domain/serviceDesk";
-import {
   useSaveServiceDeskCategoryTree,
   useServiceDeskCategoryListQuery,
 } from "@/feature/serviceDesk/category/client";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
-import { getLanguageOptions } from "@/shared/constants";
-import { useLocalizedValue } from "@/shared/hooks";
-import { DbParams, Locale } from "@/shared/types";
 
-import { useSettingsScope } from "../../SettingsScopeProvider";
 import { SETTINGS_OFFSET_STYLE } from "../../style";
+import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
+import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
+import { ServiceDeskTenantSelect } from "../components/ServiceDeskTenantSelect";
+import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
+import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
 import { CategoryForm } from "./components/CategoryForm";
 import { CategoryTree } from "./components/CategoryTree";
 import { useCategoryTree } from "./hooks/useCategoryTree";
@@ -44,24 +35,23 @@ import {
 } from "./utils/tree";
 
 export default function CategoryPage() {
-  const { isInternal } = useSettingsScope();
   const { t } = useTranslation(NS.settings);
-  const tLocal = useLocalizedValue();
   const mutationToast = useMutationToast();
+  const { selectedTenant, isTenantSelectionLoading } =
+    useServiceDeskSettingsTenant();
 
-  const { current: userPreference } = useCurrentPreference();
-  const [language, setLanguage] = useState<Locale>(userPreference.language);
-  const localLocales = getLanguageOptions(t);
+  const { language, setLanguage } = useServiceDeskSettingsLanguage();
 
-  const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
-  const [tenantData, setTenantData] = useState<Tenant[]>([]);
   const [baselineSignatureByTenant, setBaselineSignatureByTenant] = useState<
     Record<string, string>
   >({});
 
-  const params: DbParams = {};
-  const { data: categories, isLoading } =
-    useServiceDeskCategoryListQuery(params);
+  const categoryParams = useMemo(
+    () => (selectedTenant ? { tenantId: selectedTenant } : undefined),
+    [selectedTenant],
+  );
+  const { data: categories, isLoading: isCategoriesLoading } =
+    useServiceDeskCategoryListQuery(categoryParams);
   const { mutateAsync: saveCategoryTree, isPending: isSaving } =
     useSaveServiceDeskCategoryTree();
 
@@ -107,6 +97,8 @@ export default function CategoryPage() {
   const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
   const canReset = hasUnsavedChanges && !isSaving;
   const canSave = hasUnsavedChanges && !isSaving;
+  const isLoading =
+    isTenantSelectionLoading || (Boolean(selectedTenant) && isCategoriesLoading);
 
   const handleReset = () => {
     if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
@@ -158,26 +150,6 @@ export default function CategoryPage() {
     }
   };
 
-  // trigered when categories loaded.
-  useEffect(() => {
-    if (!categories?.length) return;
-
-    const firstTenant = categories[0]?.id ?? null;
-
-    setTenantData(categories);
-
-    setSelectedTenant((previousSelectedTenant) => {
-      if (
-        previousSelectedTenant &&
-        categories.some((tenant) => tenant.id === previousSelectedTenant)
-      ) {
-        return previousSelectedTenant;
-      }
-
-      return firstTenant;
-    });
-  }, [categories]);
-
   useEffect(() => {
     if (!selectedTenant) {
       return;
@@ -196,11 +168,7 @@ export default function CategoryPage() {
   }, [queryBaselineSignature, selectedTenant]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-40 w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    );
+    return <ServiceDeskSettingsLoading />;
   }
 
   return (
@@ -225,68 +193,17 @@ export default function CategoryPage() {
           className="col-span-3 flex flex-col gap-2 p-2 pr-10"
           style={SETTINGS_OFFSET_STYLE}
         >
-          {isInternal && (
-            <div className="flex flex-col gap-2 pb-6">
-              <span>{t("serviceDeskSettings.common.tenant")}</span>
-              <Select
-                value={selectedTenant ?? ""}
-                onValueChange={setSelectedTenant}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t("serviceDeskSettings.common.tenant")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {tenantData.map((tenant) => (
-                    <SelectItem
-                      key={`select_item_${tenant.id}`}
-                      value={tenant.id}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: tenant.color }}
-                          title={tenant.color}
-                        ></span>
-                        {tLocal(tenant.name)}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <ServiceDeskTenantSelect className="pb-6" />
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-nowrap">
-                {t("serviceDeskSettings.common.categoryList")}
-              </span>
-              <Select
-                value={language}
-                onValueChange={(value) => setLanguage(value as Locale)}
-              >
-                <SelectTrigger className="border-none">
-                  <Globe className="w-4 mr-1" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {localLocales.map((locale) => (
-                    <SelectItem
-                      key={`select_item_${locale.value}`}
-                      value={locale.value}
-                    >
-                      {locale.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <ServiceDeskSettingsLanguageSelect
+              language={language}
+              onLanguageChange={setLanguage}
+            />
             <Button
               variant="outline"
               type="button"
               size="sm"
-              disabled={isLoading || isSaving}
+              disabled={!selectedTenant || isLoading || isSaving}
               onClick={addCategory}
             >
               {t("serviceDeskSettings.categoryTab.addCategory")}

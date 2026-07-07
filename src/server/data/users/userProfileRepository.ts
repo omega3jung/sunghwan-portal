@@ -9,7 +9,7 @@ select aa_id,
        e_name,
        e_email,
        e_company_id
-  from auth_login_user_view
+  from vw_auth_login_user
  where e_username = $1;
 `;
 

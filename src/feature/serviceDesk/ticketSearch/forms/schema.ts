@@ -1,8 +1,14 @@
 import * as z from "zod";
 
+import type { TicketStatusFilterValue } from "../statusFilter";
+
+const ticketStatusFilterValueSchema = z.custom<TicketStatusFilterValue>(
+  (value) => typeof value === "string",
+);
+
 export const ticketSearchCriteriaFormSchema = z.object({
   category: z.string().array(),
-  status: z.string().array(),
+  status: ticketStatusFilterValueSchema.array(),
   riskLevel: z.string().array(),
   assignee: z.string().array(),
   requester: z.string().array(),

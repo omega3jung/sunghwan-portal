@@ -2,6 +2,7 @@ import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api";
 
 import { getLocalDemoTickets } from "../state";
+import { withAssigneeFilterField } from "./ticketAssignment";
 
 export const localListTickets = ({
   isInternal,
@@ -21,7 +22,7 @@ export const localListTickets = ({
   );
   const items = filterItemsByQuery(
     searchParams,
-    camelTicketDetailMapper(activeTickets),
+    camelTicketDetailMapper(activeTickets).map(withAssigneeFilterField),
   );
 
   return {

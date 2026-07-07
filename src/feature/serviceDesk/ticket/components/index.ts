@@ -3,5 +3,5 @@
 "use client";
 // client export only.
 
-export * from "./TicketFormDialog/TicketFormDialog";
 export * from "./TicketList/TicketList";
+export * from "./UpdateTicketDialog/UpdateTicketDialog";

@@ -238,7 +238,7 @@ state, ownership, or planning data.
 - effect:
   - source ticket -> `Closed`
   - `closeReason = Merged`
-  - set `mergedIntoTicketId`
+  - set `mergedIntoTicketId` and `mergedIntoTicketNo`
 - purpose: consolidate duplicate or related tickets
 - restriction:
   - self merge is forbidden

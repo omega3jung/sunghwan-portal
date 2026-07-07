@@ -14,6 +14,7 @@ import {
 import {
   createTenantRow,
   deactivateTenantRowById,
+  findActiveTenantRowByCompanyId,
   findActiveTenantRowById,
   findActiveTenantRows,
   findTenantRowById,
@@ -43,6 +44,18 @@ export async function getActiveTenantById(
   tenantId: string | number,
 ): Promise<TenantDto | null> {
   const row = await findActiveTenantRowById(tenantId);
+
+  if (!row) {
+    return null;
+  }
+
+  return mapTenantRowToDto(row);
+}
+
+export async function getActiveTenantByCompanyId(
+  companyId: string | number,
+): Promise<TenantDto | null> {
+  const row = await findActiveTenantRowByCompanyId(companyId);
 
   if (!row) {
     return null;

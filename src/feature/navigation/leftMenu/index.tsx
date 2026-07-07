@@ -1,4 +1,3 @@
-// src/components/layout/LeftMenu/index.tsx
+// src/feature/navigation/leftMenu/index.tsx
 
 export { LeftMenu } from "./components/CollapsibleMenu";
-export { leftMenuLocales } from "./locales";

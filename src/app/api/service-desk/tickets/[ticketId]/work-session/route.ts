@@ -9,21 +9,26 @@ import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
   ServiceDeskApiError,
+  toCurrentUsernameProxyHeaders,
   tServiceDeskApi,
-} from "@/app/api/service-desk/_shared/messages";
+} from "@/app/api/service-desk/_shared";
 import {
   camelTicketWorkSessionMapper,
-  DbTicketWorkSession,
+  type DbTicketWorkSession,
   mapTicketWorkSessionListPayload,
   mapTicketWorkSessionPayload,
+} from "@/feature/serviceDesk/ticketWorkSession/api";
+import {
   TICKET_WORK_SESSION_STATUS_OPTIONS,
+} from "@/feature/serviceDesk/ticketWorkSession/constants";
+import type {
   TicketWorkSessionStatus,
   TicketWorkSessionSubmitPayload,
-} from "@/feature/serviceDesk/ticketWorkSession";
+} from "@/feature/serviceDesk/ticketWorkSession/types";
 import {
   canChangeStatus,
   getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticketWorkSession/components/WorkSessionTool/payload";
+} from "@/feature/serviceDesk/ticketWorkSession/utils";
 import {
   createUpdatedTicket,
   getMaxHistoryNo,
@@ -90,6 +95,11 @@ const validatePayload = (
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
+
+  if (currentUserName === null) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   if (!isRemote) {
     const items = localWorkSessions.filter(
@@ -98,11 +108,13 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
 
     return NextResponse.json({
       items: camelTicketWorkSessionMapper(items),
+      total: items.length,
     });
   }
 
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/work-session`,
+    headers: toCurrentUsernameProxyHeaders(currentUserName),
     errorMessage: tServiceDeskApi("api.ticketWorkSession.fetchList"),
     mapData: mapTicketWorkSessionListPayload,
   });
@@ -114,12 +126,14 @@ export async function POST(
 ) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
   const payload = (await request.json()) as TicketWorkSessionSubmitPayload;
 
   if (isRemote) {
     return portalApiJson(request, {
       method: "POST",
       path: `/service-desk/tickets/${ticketId}/work-session`,
+      headers: toCurrentUsernameProxyHeaders(currentUserName),
       body: payload,
       errorMessage: tServiceDeskApi("api.ticketWorkSession.create"),
       mapData: mapTicketWorkSessionPayload,
@@ -127,9 +141,7 @@ export async function POST(
   }
 
   try {
-    const employeeUserName = await getCurrentEmployeeUserName(request);
-
-    if (employeeUserName === null) {
+    if (currentUserName === null) {
       return NextResponse.json(
         { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
         { status: 401 },
@@ -164,7 +176,7 @@ export async function POST(
     const workSession: DbTicketWorkSession = {
       ticket_id: ticketId,
       work_session_no: getNextWorkSessionNo(ticketId),
-      assignee_id: employeeUserName,
+      assignee_username: currentUserName,
       start_at: payload.startAt ?? createdAt,
       end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
       duration_minutes:
@@ -184,28 +196,15 @@ export async function POST(
 
     localWorkSessions.push(workSession);
 
-    const histories = getLocalDemoHistories(isInternal);
-
-    histories.push({
-      ticket_id: ticketId,
-      history_no: getMaxHistoryNo(ticketId, isInternal),
-      type: "WORK_SESSION",
-      action: "UPDATED",
-      actor_id: employeeUserName,
-      action_no: null,
-      from_value: ticket.work_minutes,
-      to_value: updatedTicket.work_minutes,
-      metadata: payload,
-      created_at: createdAt,
-    });
-
     if (nextStatus) {
+      const histories = getLocalDemoHistories(isInternal);
+
       histories.push({
         ticket_id: ticketId,
         history_no: getMaxHistoryNo(ticketId, isInternal),
         type: "STATUS",
         action: "UPDATED",
-        actor_id: employeeUserName,
+        actor_username: currentUserName,
         action_no: null,
         from_value: ticket.status,
         to_value: nextStatus,

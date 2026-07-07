@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/client";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
 import { useLocalizedText } from "@/shared/hooks";
@@ -47,6 +48,14 @@ type TicketActionToolProps = {
   categories?: MainCategory[];
 };
 
+const REMOTE_MODE_ENABLED_ACTIONS = new Set<TicketActionMode>([
+  "approve",
+  "decline",
+  "cancel",
+]);
+const REMOTE_MODE_DISABLED_TITLE =
+  "Remote mode에서 ticket action 동작은 현재 구현중입니다.";
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -54,6 +63,10 @@ const escapeHtml = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
+
+const isApprovalActionType = (
+  actionType: TicketActionDraftFormValues["actionType"],
+) => actionType === "APPROVE" || actionType === "DECLINE";
 
 function buildAssignSelfContent({
   actorName,
@@ -116,7 +129,7 @@ export function TicketActionTool({
 }: TicketActionToolProps) {
   const { t, i18n } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
-  const { current } = useCurrentSession();
+  const { current, data: sessionData } = useCurrentSession();
   const mutationToast = useMutationToast();
   const { mutateAsync: createAction, isPending } = useTicketActionMutation();
   const actionForm = useForm<TicketActionDraftFormValues>({
@@ -128,6 +141,7 @@ export function TicketActionTool({
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const currentUser = current.user;
+  const isRemoteMode = sessionData?.user.dataScope === "REMOTE";
   const currentUserOption = useMemo(
     () => users.find((user) => user.value === currentUser?.username),
     [currentUser?.username, users],
@@ -198,16 +212,25 @@ export function TicketActionTool({
       return false;
     }
 
-    const payload = buildTicketActionPayload({
-      userId: currentUser.id,
-      values,
-    });
+    const promise = (async () => {
+      const prepared = isApprovalActionType(values.actionType)
+        ? undefined
+        : await serviceDeskTicketApi.prepareAttachments({
+            body: values.content,
+            files: values.attachment,
+          });
+      const payload = buildTicketActionPayload({
+        userId: currentUser.id,
+        values,
+        prepared,
+      });
 
-    const promise = createAction({
-      ticketId,
-      actionType: payload.actionType,
-      values: payload,
-    });
+      return createAction({
+        ticketId,
+        actionType: payload.actionType,
+        values: payload,
+      });
+    })();
 
     await mutationToast(promise, "create", "comment");
     closeMode();
@@ -231,6 +254,11 @@ export function TicketActionTool({
 
   const handleOpen = (nextMode: TicketActionMode) => {
     if (nextMode === "assignSelf") {
+      if (isRemoteMode) {
+        openMode(nextMode);
+        return;
+      }
+
       void handleAssignSelf();
       return;
     }
@@ -253,7 +281,14 @@ export function TicketActionTool({
     },
   );
 
-  const disableSubmit = isPending || !editor;
+  const isRemoteModeActionDisabled =
+    isRemoteMode &&
+    mode !== "idle" &&
+    !REMOTE_MODE_ENABLED_ACTIONS.has(mode);
+  const disableSubmit = isPending || !editor || isRemoteModeActionDisabled;
+  const submitDisabledTitle = isRemoteModeActionDisabled
+    ? REMOTE_MODE_DISABLED_TITLE
+    : undefined;
 
   if (!ticket) return null;
 
@@ -278,6 +313,7 @@ export function TicketActionTool({
           <TicketActionForm
             ticketId={ticketId}
             originalCategoryId={ticket?.categoryId}
+            isRemoteMode={isRemoteMode}
             mode={mode}
             form={actionForm}
             onEditorReady={setEditor}
@@ -290,6 +326,7 @@ export function TicketActionTool({
             errorMessage={errorMessage}
             helperText={helperText}
             isPending={isPending}
+            submitDisabledTitle={submitDisabledTitle}
             submitLabel={submitLabel}
             onCancel={closeMode}
             onSubmit={handleSubmit}

@@ -39,7 +39,11 @@ export type LocalActionRuntimeContext = LocalActionMutationContext & {
 
 export type LocalActionHistory = Omit<
   DbTicketHistory,
-  "ticket_id" | "history_no" | "actor_id" | "action_no" | "created_at"
+  | "ticket_id"
+  | "history_no"
+  | "actor_username"
+  | "action_no"
+  | "created_at"
 >;
 
 export type LocalActionEffect = {

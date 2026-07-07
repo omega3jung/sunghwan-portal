@@ -4,12 +4,15 @@
     "note": "Note",
     "assign": "Assigner",
     "assignToMe": "M'assigner",
+    "approve": "Approuver",
+    "decline": "Refuser",
     "reject": "Rejeter",
     "merge": "Fusionner",
     "adjust": "Ajuster",
     "adjustPlan": "Ajuster le plan",
     "reopenIssue": "Rouvrir l'incident",
     "resubmitRequest": "Soumettre à nouveau la demande",
+    "cancelTicket": "Annuler le ticket",
     "searchCriteria": "Critères de recherche",
     "workSession": {
       "submit": "Enregistrer le temps suivi",
@@ -81,6 +84,59 @@
     "loadDraft": "Voulez-vous charger le brouillon ? Sinon, le brouillon précédent sera supprimé.",
     "loadDraftExceptInvalid": "Le brouillon a été chargé, sauf dans les cas où il était invalide."
   },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    }
+  },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "Mettre à jour le ticket",
+    "title": "Mettre à jour le ticket",
+    "description": "Mettre à jour les champs modifiables par le demandeur.",
+    "loadingTicket": "Chargement du ticket...",
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    },
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    },
+    "step": {
+      "info": "Détails du problème",
+      "attachment": "Pièces jointes",
+      "review": "Vérification"
+    },
+    "routing": {
+      "preserve": "Les changements limités à l'échéance ou aux destinataires conservent l'approbation et l'assignation actuelles.",
+      "reset": "Modifier les détails de la demande autres que l'échéance ou l'e-mail recalcule les étapes d'approbation et l'affectation du responsable."
+    },
+    "field": {
+      "existingFiles": "Fichiers existants",
+      "existingImages": "Images existantes",
+      "newAttachments": "Nouvelles pièces jointes"
+    },
+    "empty": {
+      "existingAttachments": "Aucune pièce jointe existante.",
+      "newAttachments": "Aucune nouvelle pièce jointe."
+    },
+    "action": {
+      "submit": "Mettre à jour",
+      "submitting": "Mise à jour..."
+    },
+    "error": {
+      "load": "Impossible de charger les derniers détails du ticket."
+    }
+  },
   "hoverMessage": {
     "backToList": "Retour à la liste des tickets",
     "workSessionTool": "Enregistrez le temps de travail manuel et modifiez éventuellement le statut du ticket dans la même action.",
@@ -96,7 +152,7 @@
   "detailAside": {
     "recipientsTitle": "Destinataires",
     "unassigned": "Non attribué",
-    "ticketId": "ID du ticket",
+    "ticketNo": "Numéro du ticket",
     "currentUserBadge": "Moi",
     "assignedBadge": "Attribué"
   },
@@ -107,7 +163,7 @@
   "detailPage": {
     "detailsTitle": "Détails du ticket",
     "descriptionTitleHint": "Détails essentiels de la demande et activité récente en un coup d'œil.",
-    "replyTitle": "Répondre",
+    "replyTitle": "Outils",
     "replyTitleHint": "Répondez, laissez une note interne et consultez la discussion dans un flux continu.",
     "notFound": "Ticket introuvable."
   },
@@ -145,6 +201,7 @@
       "WORK_SESSION_UPDATED": "Temps enregistré mis à jour",
       "MERGED": "Fusionné dans {{target}}",
       "TICKET_REJECTED": "Ticket rejeté",
+      "TICKET_CANCELED": "Ticket annulé",
       "UPDATED": "Ticket mis à jour",
       "DELETED": "Ticket supprimé",
       "CREATED": "Ticket créé",
@@ -179,6 +236,8 @@
     "currentUser": "Utilisateur actuel",
     "currentUserFallback": "Vous",
     "launcher": {
+      "approve": "Approuvez cette étape et faites passer le ticket à l'étape suivante.",
+      "decline": "Refusez cette demande d'approbation et consignez le motif.",
       "comment": "Publiez une réponse visible pour le demandeur et les personnes abonnées.",
       "note": "Laissez une note interne qui reste dans l'équipe.",
       "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
@@ -187,9 +246,12 @@
       "merge": "Fusionnez ce ticket dans un autre ticket.",
       "adjust": "Mettez à jour la priorité, le niveau de risque et l'échéance.",
       "reopen": "Rouvrez le ticket lorsque le résultat résolu nécessite encore du travail.",
-      "resubmit": "Renvoyez cette demande rejetée pour révision."
+      "resubmit": "Renvoyez cette demande rejetée pour révision.",
+      "cancel": "Annulez cette demande avant le début du travail."
     },
     "helper": {
+      "approve": "Ajoutez une note d'approbation avant de transmettre le ticket.",
+      "decline": "Expliquez pourquoi cette demande d'approbation est refusée.",
       "comment": "Partagez une mise à jour publique avec toutes les personnes qui suivent ce ticket.",
       "note": "Ajoutez une note interne pour l'équipe du Service Desk.",
       "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
@@ -198,9 +260,12 @@
       "merge": "Choisissez le ticket de destination et laissez une courte note.",
       "adjust": "Vérifiez la priorité, le niveau de risque et l'échéance avant d'appliquer les changements.",
       "reopen": "Expliquez ce qu'il reste à résoudre avant que ce ticket puisse rester fermé.",
-      "resubmit": "Expliquez ce qui a changé avant de renvoyer cette demande rejetée."
+      "resubmit": "Expliquez ce qui a changé avant de renvoyer cette demande rejetée.",
+      "cancel": "Expliquez pourquoi cette demande doit être annulée."
     },
     "submit": {
+      "approve": "Approuver",
+      "decline": "Refuser",
       "comment": "Publier le commentaire",
       "note": "Enregistrer la note",
       "assign": "Enregistrer l'attribution",
@@ -209,7 +274,8 @@
       "merge": "Fusionner le ticket",
       "adjust": "Mettre à jour le plan",
       "reopen": "Rouvrir l'incident",
-      "resubmit": "Soumettre à nouveau la demande"
+      "resubmit": "Soumettre à nouveau la demande",
+      "cancel": "Annuler le ticket"
     },
     "list": {
       "title": "Activité",
@@ -225,7 +291,11 @@
     },
     "form": {
       "editorLabel": "Motif",
+      "approvalNoteLabel": "Note d'approbation",
+      "declineReasonLabel": "Motif du refus",
       "editorPlaceholder": {
+        "approve": "Ajoutez une note pour cette approbation",
+        "decline": "Décrivez pourquoi cette approbation doit être refusée",
         "comment": "Rédigez un commentaire et faites avancer la conversation",
         "note": "Partagez une note interne pour ce ticket",
         "assign": "Partagez le contexte d'attribution pour la prochaine personne responsable",
@@ -234,7 +304,8 @@
         "merge": "Expliquez pourquoi ces tickets doivent être fusionnés",
         "adjust": "Décrivez pourquoi ces valeurs doivent être ajustées",
         "reopen": "Décrivez ce qui reste à résoudre",
-        "resubmit": "Décrivez ce qui a changé avant de renvoyer ce ticket"
+        "resubmit": "Décrivez ce qui a changé avant de renvoyer ce ticket",
+        "cancel": "Décrivez pourquoi ce ticket doit être annulé"
       },
       "targetTicketId": "Ticket cible",
       "mergeTargetPlaceholder": "Saisissez l'ID du ticket principal"
@@ -325,14 +396,11 @@
     "additionalFilters": "Filtres supplémentaires",
     "dateFilters": "Filtres de date"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext doit être utilisé à l'intérieur du provider."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext doit être utilisé à l'intérieur du provider."
   },
-  "viewOption": {
-    "title": "Vue",
-    "portal": "Portail",
-    "internal": "Interne",
-    "insights": "Analyses"
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext doit être utilisé à l'intérieur du provider."
   },
   "api": {
     "common": {
@@ -407,6 +475,7 @@
         "invalidPayload": "Charge utile du ticket invalide.",
         "requesterRequired": "Le demandeur est obligatoire.",
         "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "updateForbidden": "Seul le demandeur peut mettre à jour ce ticket.",
         "updateNotAllowed": "Le ticket ne peut pas être mis à jour avec le statut {{status}}."
       }
     },
@@ -441,6 +510,8 @@
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
         "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
         "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
+        "approvalForbidden": "Seule la personne approbatrice assignée peut approuver ou refuser ce ticket.",
+        "cancelForbidden": "Seule la personne demandeuse peut annuler ce ticket avant le début du travail.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
         "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",

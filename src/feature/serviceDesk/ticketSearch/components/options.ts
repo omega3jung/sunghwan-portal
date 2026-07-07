@@ -1,8 +1,14 @@
 import type { SearchDateFilterOption } from "@/components/custom/DatePicker";
 import type { TreeMultiComboBoxOption } from "@/components/custom/MultiComboBox";
+import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
+import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import type { dueAt } from "@/domain/common";
 import type { MainCategory } from "@/domain/serviceDesk";
-import type { DateRangePreset } from "@/shared/types";
+import {
+  OPEN_TICKET_STATUS_FILTER_VALUE,
+  OPEN_TICKET_STATUS_FILTER_VALUES,
+} from "@/feature/serviceDesk/ticketSearch/statusFilter";
+import type { DateRangePreset, Locale, ValueLabel } from "@/shared/types";
 
 type CategoryLabelResolver = (name: MainCategory["name"]) => string;
 type Translate = (key: string) => string;
@@ -31,6 +37,37 @@ export const createTicketCategoryOptions = (
       label: getLabel(subCategory.name),
     })),
   }));
+};
+
+export const createTicketStatusFilterOptions = (
+  statusOptions: ValueLabel<SystemStatus>[],
+  locale: Locale,
+): TreeMultiComboBoxOption[] => {
+  const statusLabelMap = new Map(
+    statusOptions.map((option) => [option.value, option.label]),
+  );
+  const localizedLabels = statusBadgeLocales[locale] ?? statusBadgeLocales.en;
+  const fallbackLabels = statusBadgeLocales.en;
+  const openLabel =
+    localizedLabels.open ??
+    fallbackLabels.open ??
+    OPEN_TICKET_STATUS_FILTER_VALUE;
+
+  return [
+    {
+      value: OPEN_TICKET_STATUS_FILTER_VALUE,
+      label: openLabel,
+      children: OPEN_TICKET_STATUS_FILTER_VALUES.map((status) => ({
+        value: status,
+        label: statusLabelMap.get(status) ?? status,
+      })),
+    },
+    ...(["Resolved", "Closed"] as const).map((status) => ({
+      value: status,
+      label: statusLabelMap.get(status) ?? status,
+      children: [],
+    })),
+  ];
 };
 
 export const createTicketDueByOptions = (

@@ -46,12 +46,6 @@ export async function GET(request: NextRequest) {
     proxyQuery.set("isInternal", String(isInternal));
   }
 
-  const defaultTenantId = resolveDefaultTenantId(token);
-
-  if (!proxyQuery.has("tenantId") && !isInternal && defaultTenantId) {
-    proxyQuery.set("tenantId", defaultTenantId);
-  }
-
   return portalApiJson(request, {
     path: "/service-desk/categories",
     query: proxyQuery,
@@ -98,14 +92,4 @@ export async function PUT(request: NextRequest) {
     errorMessage: tServiceDeskApi("api.categories.save"),
     mapData: mapCategoryTreePayload,
   });
-}
-
-function resolveDefaultTenantId(
-  token: Awaited<ReturnType<typeof getAuthToken>>,
-) {
-  if (typeof token?.companyId === "number") {
-    return String(token.companyId);
-  }
-
-  return null;
 }

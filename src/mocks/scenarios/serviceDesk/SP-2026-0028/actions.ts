@@ -1,54 +1,72 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson a approuvé",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-06-25T07:29:25Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
+    tka_action_type: "COMMENT",
+    tka_content:
       "Bonjour Amelia et Matthew.<br>Puis-je mettre à jour leurs journaux de travail afin qu’ils voient l’heure correcte ?",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-06-25T13:15:53Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-25T13:15:53Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Attendez, Evan. Nous vérifions le type de travail. Il pourrait s’agir d’un travail supplémentaire, et non d’heures supplémentaires.",
-    owner_id: "amelia_brown",
+    tka_owner_username: "amelia_brown",
 
-    created_at: "2026-06-26T00:01:58Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-26T00:01:58Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Bien reçu, Amelia. Je vais maintenant passer ce ticket au statut 'Pending'.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-06-26T01:17:18Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-26T01:17:18Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
 ];

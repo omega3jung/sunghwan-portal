@@ -201,7 +201,8 @@ Each action type may include action-specific metadata.
 
 #### `merge`
 
-- `targetTicketId`
+- `mergedIntoTicketId`
+- `mergedIntoTicketNo`
 
 #### `reopen` / `resubmit`
 

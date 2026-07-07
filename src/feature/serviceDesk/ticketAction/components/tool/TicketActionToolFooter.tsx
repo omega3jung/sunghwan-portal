@@ -9,6 +9,7 @@ type TicketActionToolFooterProps = {
   errorMessage: string;
   helperText: string;
   isPending: boolean;
+  submitDisabledTitle?: string;
   submitLabel: string;
   onCancel: () => void;
   onSubmit: () => void;
@@ -19,6 +20,7 @@ export function TicketActionToolFooter({
   errorMessage,
   helperText,
   isPending,
+  submitDisabledTitle,
   submitLabel,
   onCancel,
   onSubmit,
@@ -42,15 +44,18 @@ export function TicketActionToolFooter({
           <X className="h-4 w-4" />
           {t("action.cancel", { ns: NS.common })}
         </Button>
-        <Button
-          type="button"
-          className="w-full whitespace-normal sm:w-auto"
-          onClick={onSubmit}
-          disabled={disabled}
-        >
-          <SendHorizontal className="h-4 w-4" />
-          {submitLabel}
-        </Button>
+        <span className="w-full sm:w-auto" title={submitDisabledTitle}>
+          <Button
+            type="button"
+            className="w-full whitespace-normal sm:w-auto"
+            onClick={onSubmit}
+            disabled={disabled}
+            title={submitDisabledTitle}
+          >
+            <SendHorizontal className="h-4 w-4" />
+            {submitLabel}
+          </Button>
+        </span>
       </div>
     </div>
   );

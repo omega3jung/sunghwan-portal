@@ -10,6 +10,7 @@ import { PaginatedSearchResponse } from "@/server/shared/types/api";
 
 import { getLocalDemoTickets } from "../state";
 import { sortTickets } from "./sort";
+import { withAssigneeFilterField } from "./ticketAssignment";
 
 export function localSearchTickets({
   isInternal,
@@ -27,7 +28,9 @@ export function localSearchTickets({
   const activeTickets = getLocalDemoTickets(isInternal).filter(
     (ticket) => ticket.active !== false,
   );
-  const tickets = camelTicketDetailMapper(activeTickets);
+  const tickets = camelTicketDetailMapper(activeTickets).map(
+    withAssigneeFilterField,
+  );
 
   const filtered = applyRuleGroupFilter(tickets, request.filter);
   const sorted = sortTickets(filtered, request.sort);

@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "home": "홈"
+  },
   "action": {
     "add": "추가",
     "back": "뒤로",
@@ -58,6 +61,7 @@
     "date": "날짜",
     "department": "부서",
     "description": "설명",
+    "draft": "임시 저장본",
     "details": "상세 내용",
     "dueBy": "기한",
     "dueAt": "완료 기한",

@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "home": "Inicio"
+  },
   "action": {
     "add": "Agregar",
     "back": "Volver",
@@ -58,6 +61,7 @@
     "date": "Fecha",
     "department": "Departamento",
     "description": "Descripción",
+    "draft": "Borrador",
     "details": "Detalles",
     "dueBy": "Fecha límite",
     "dueAt": "Fecha límite",

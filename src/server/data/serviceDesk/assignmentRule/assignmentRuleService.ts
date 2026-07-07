@@ -1,8 +1,17 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import type { EmployeeResponseDto } from "@/server/data/organization/employees";
+import { getEmployees } from "@/server/data/organization/employees";
+import type { ImageValueLabel, Locale } from "@/shared/types";
+import { getLocalizedText } from "@/shared/utils/i18n";
 
+import type { CategoryDto } from "../category/categoryDto";
 import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
+import { getCategoryTreeByTenantId } from "../category/categoryService";
 import { getActiveTenantById, getActiveTenants } from "../tenant";
 import {
+  AssignmentRecommendationInputDto,
+  AssignmentRecommendationResultDto,
+  AssignmentRecommendationSourceDto,
   AssignmentRuleDto,
   CreateAssignmentRuleInputDto,
   UpdateAssignmentRuleInputDto,
@@ -35,6 +44,12 @@ export type GetAssignmentRulesResponseParams = {
   isInternal: boolean;
 };
 
+export type GetAssignmentRecommendationResponseParams = {
+  input: AssignmentRecommendationInputDto;
+  tenantId?: string | number | null;
+  isInternal: boolean;
+};
+
 export async function getAssignmentRulesResponseByTenantId({
   tenantId,
   isInternal,
@@ -45,6 +60,51 @@ export async function getAssignmentRulesResponseByTenantId({
   });
 
   return getAssignmentRulesByTenantId(targetTenantId);
+}
+
+export async function getAssignmentRecommendationResponse({
+  input,
+  tenantId,
+  isInternal,
+}: GetAssignmentRecommendationResponseParams): Promise<AssignmentRecommendationResultDto> {
+  const targetTenantId = await resolveTargetTenantId({
+    tenantId,
+    isInternal,
+  });
+  const language = input.language ?? "en";
+  const [categories, rules, activeEmployees, inactiveEmployees] =
+    await Promise.all([
+      getCategoryTreeByTenantId(targetTenantId),
+      getAssignmentRulesByTenantId(targetTenantId),
+      getEmployees(true),
+      getEmployees(false),
+    ]);
+  const selectedCategoryLabel = getCategoryLabel(
+    categories,
+    input.categoryId,
+    language,
+  );
+  const assignmentRule = resolveAssignmentRuleWithCategoryFallback(
+    rules,
+    categories,
+    input.categoryId,
+  );
+
+  if (!assignmentRule) {
+    return createEmptyRecommendation(selectedCategoryLabel);
+  }
+
+  return {
+    recommendedUsers: collectRecommendedUsers({
+      assignmentRule,
+      assigneeUsernames: input.assigneeUsernames,
+      activeEmployees,
+      employees: [...activeEmployees, ...inactiveEmployees],
+      language,
+    }),
+    source: resolveRecommendationSource(assignmentRule),
+    selectedCategoryLabel,
+  };
 }
 
 export async function createAssignmentRule(
@@ -168,6 +228,182 @@ function hasTenantId(value?: string | number | null): value is string | number {
   return String(value).trim().length > 0;
 }
 
+function createEmptyRecommendation(
+  selectedCategoryLabel = "",
+): AssignmentRecommendationResultDto {
+  return {
+    recommendedUsers: [],
+    source: null,
+    selectedCategoryLabel,
+  };
+}
+
+function getCategoryLabel(
+  categories: CategoryDto[],
+  categoryId: string,
+  language: Locale,
+) {
+  for (const category of categories) {
+    for (const subCategory of category.sub_category) {
+      if (String(subCategory.category_id) === categoryId) {
+        return getLocalizedText(subCategory.category_name, language) ?? "";
+      }
+    }
+  }
+
+  return "";
+}
+
+function findMainCategoryIdByCategoryId(
+  categories: CategoryDto[],
+  categoryId: string,
+) {
+  for (const category of categories) {
+    const subCategory = category.sub_category.find(
+      (item) => String(item.category_id) === categoryId,
+    );
+
+    if (subCategory) {
+      return category.category_id;
+    }
+  }
+
+  return null;
+}
+
+function resolveAssignmentRuleWithCategoryFallback(
+  rules: AssignmentRuleDto[],
+  categories: CategoryDto[],
+  categoryId: string,
+) {
+  const exactAssignmentRule = rules.find(
+    (rule) => String(rule.category_id) === categoryId,
+  );
+
+  if (exactAssignmentRule) {
+    return exactAssignmentRule;
+  }
+
+  const mainCategoryId = findMainCategoryIdByCategoryId(categories, categoryId);
+
+  if (mainCategoryId === null) {
+    return undefined;
+  }
+
+  return rules.find((rule) => rule.category_id === mainCategoryId);
+}
+
+function collectRecommendedUsers({
+  assignmentRule,
+  assigneeUsernames,
+  activeEmployees,
+  employees,
+  language,
+}: {
+  assignmentRule: AssignmentRuleDto;
+  assigneeUsernames: string[];
+  activeEmployees: EmployeeResponseDto[];
+  employees: EmployeeResponseDto[];
+  language: Locale;
+}) {
+  const employeeMap = new Map(
+    employees.map((employee) => [employee.username, employee]),
+  );
+  const activeEmployeeMap = new Map(
+    activeEmployees.map((employee) => [employee.username, employee]),
+  );
+  const excludedIds = new Set(assigneeUsernames);
+  const seen = new Set<string>();
+  const recommendedUsers: ImageValueLabel[] = [];
+
+  for (const employeeUserName of assignmentRule.assignee.employee_username) {
+    const employee =
+      activeEmployeeMap.get(employeeUserName) ??
+      employeeMap.get(employeeUserName);
+
+    pushUniqueUser(
+      recommendedUsers,
+      seen,
+      excludedIds,
+      employee ? toRecommendedUser(employee, language) : undefined,
+    );
+  }
+
+  for (const jobFieldId of assignmentRule.assignee.job_field_id) {
+    for (const activeEmployee of activeEmployees) {
+      if (activeEmployee.jobFieldId !== jobFieldId) {
+        continue;
+      }
+
+      pushUniqueUser(
+        recommendedUsers,
+        seen,
+        excludedIds,
+        toRecommendedUser(activeEmployee, language),
+      );
+    }
+  }
+
+  return recommendedUsers;
+}
+
+function pushUniqueUser(
+  items: ImageValueLabel[],
+  seen: Set<string>,
+  excludedIds: Set<string>,
+  user: ImageValueLabel | undefined,
+) {
+  if (!user || seen.has(user.value) || excludedIds.has(user.value)) {
+    return;
+  }
+
+  seen.add(user.value);
+  items.push(user);
+}
+
+function toRecommendedUser(
+  employee: EmployeeResponseDto,
+  language: Locale,
+): ImageValueLabel {
+  return {
+    value: employee.username,
+    label: getEmployeeLabel(employee, language),
+    displayName: employee.email,
+    image: employee.imageUrl ?? undefined,
+  };
+}
+
+function getEmployeeLabel(employee: EmployeeResponseDto, language: Locale) {
+  const localizedName = employee.name[language] ?? employee.name.en;
+
+  return [localizedName.first, localizedName.middle, localizedName.last]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function resolveRecommendationSource(
+  assignmentRule: AssignmentRuleDto,
+): AssignmentRecommendationSourceDto | null {
+  const hasDirectRecommendation =
+    assignmentRule.assignee.employee_username.length > 0;
+  const hasJobFieldRecommendation =
+    assignmentRule.assignee.job_field_id.length > 0;
+
+  if (hasDirectRecommendation && hasJobFieldRecommendation) {
+    return "mixed";
+  }
+
+  if (hasDirectRecommendation) {
+    return "employee";
+  }
+
+  if (hasJobFieldRecommendation) {
+    return "jobField";
+  }
+
+  return null;
+}
+
 async function assertActiveTenantExists(tenantId: string | number) {
   const tenant = await getActiveTenantById(tenantId);
 
@@ -185,8 +421,13 @@ async function assertActiveCategoryExistsInTenant(
     messageKey: string;
   },
 ): Promise<void> {
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(tenantId, categoryId);
-  const targetRow = rows.find((row) => Number(row.cat_id) === Number(categoryId));
+  const rows = await findCategoryRowsByTenantIdAndCategoryId(
+    tenantId,
+    categoryId,
+  );
+  const targetRow = rows.find(
+    (row) => Number(row.cat_id) === Number(categoryId),
+  );
 
   if (!targetRow || targetRow.cat_active === false) {
     throw new ServiceDeskApiError(options.messageKey, 404, { categoryId });

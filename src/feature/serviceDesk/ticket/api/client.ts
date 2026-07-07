@@ -6,4 +6,3 @@
 export * from "./api"; // frontend HTTP wrapper included.
 export * from "./mutations";
 export * from "./queries";
-export * from "./repo";

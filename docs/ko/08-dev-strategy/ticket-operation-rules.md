@@ -238,7 +238,7 @@ planning data에 영향을 줄 수 있습니다.
 - effect:
   - source ticket -> `Closed`
   - `closeReason = Merged`
-  - `mergedIntoTicketId` 설정
+  - `mergedIntoTicketId`과 `mergedIntoTicketNo` 설정
 - purpose: 중복 또는 관련 티켓을 통합한다
 - restriction:
   - self merge는 금지된다
@@ -296,6 +296,7 @@ planning data에 영향을 줄 수 있습니다.
   - content 필수
 
 ---
+
 ### Request Review
 
 - who: requester

@@ -36,6 +36,16 @@ where tn_id = $1
   and tn_active = true;
 `;
 
+const FIND_ACTIVE_TENANT_ROW_BY_COMPANY_ID_QUERY = `
+select
+${TENANT_COLUMNS}
+from service_desk.tenant
+where tn_company_id = $1
+  and tn_active = true
+order by tn_id
+limit 1;
+`;
+
 const FIND_ACTIVE_TENANT_ROWS_QUERY = `
 select
 ${TENANT_COLUMNS}
@@ -106,6 +116,17 @@ export async function findActiveTenantRowById(
   const rows = await queryPortalApi<TenantRow>(
     FIND_ACTIVE_TENANT_ROW_BY_ID_QUERY,
     [Number(tenantId)],
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function findActiveTenantRowByCompanyId(
+  companyId: string | number,
+): Promise<TenantRow | null> {
+  const rows = await queryPortalApi<TenantRow>(
+    FIND_ACTIVE_TENANT_ROW_BY_COMPANY_ID_QUERY,
+    [Number(companyId)],
   );
 
   return rows[0] ?? null;

@@ -1,9 +1,18 @@
 import { filterItemsByQuery } from "@/app/api/_helpers/filter";
 import type { TenantCategoryTree } from "@/domain/serviceDesk";
 import { camelTenantCategoryTreeMapper } from "@/feature/serviceDesk/category/mapper";
+import {
+  getBooleanRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { getLocalDemoCategories } from "../../state";
 import { normalizeTenantTree } from "./categoryUtils";
+
+type FilterableTenantCategoryTree = TenantCategoryTree & {
+  tenant_company_id: string;
+  tenant_id: string;
+};
 
 export const getLocalCategoryTrees = (
   isInternal: boolean,
@@ -20,19 +29,57 @@ export const localListCategories = ({
   isInternal: boolean;
   searchParams: URLSearchParams;
 }) => {
+  const filter = parseRuleGroupFilter(searchParams.get("filter"));
+  const active =
+    parseOptionalBoolean(searchParams.get("active")) ??
+    getBooleanRuleGroupValue(filter, "active");
+  const tenantId = searchParams.get("tenantId");
+  const tenantCategoryTrees = filterTenantCategoryTreesByActive(
+    filterTenantCategoryTreesByTenantId(
+      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      tenantId,
+    ),
+    active,
+  );
   const items = filterItemsByQuery(
     searchParams,
-    filterTenantCategoryTreesByActive(
-      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
-      parseOptionalBoolean(searchParams.get("active")),
-    ),
-  );
+    addTenantCategoryTreeFilterAliases(tenantCategoryTrees),
+  ).map(removeTenantCategoryTreeFilterAliases);
 
   return {
     items,
     total: items.length,
   };
 };
+
+function filterTenantCategoryTreesByTenantId(
+  items: TenantCategoryTree[],
+  tenantId: string | null,
+) {
+  if (!tenantId) {
+    return items;
+  }
+
+  return items.filter((tenant) => tenant.id === tenantId);
+}
+
+function addTenantCategoryTreeFilterAliases(
+  items: TenantCategoryTree[],
+): FilterableTenantCategoryTree[] {
+  return items.map((tenant) => ({
+    ...tenant,
+    tenant_company_id: tenant.companyId,
+    tenant_id: tenant.id,
+  }));
+}
+
+function removeTenantCategoryTreeFilterAliases({
+  tenant_company_id: _tenantCompanyId,
+  tenant_id: _tenantId,
+  ...tenant
+}: FilterableTenantCategoryTree): TenantCategoryTree {
+  return tenant;
+}
 
 function parseOptionalBoolean(value: string | null): boolean | null {
   if (value === null) {

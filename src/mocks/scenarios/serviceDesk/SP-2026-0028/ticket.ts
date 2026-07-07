@@ -1,32 +1,37 @@
 import { TicketMockInput } from "../types";
 
 export const ticket: TicketMockInput = {
-  id: "sunghwan-portal-2026-28",
-  ticket_number: "SP-2026-0028",
-  created_at: "2026-06-25T07:13:53Z",
-  updated_at: "2026-06-26T01:18:10Z",
-  requester_id: "vivian_long",
-  status: "Pending",
-  close_reason: null,
-  priority: "medium",
-  risk_level: "low",
-  assignee_id: ["matthew_williams", "amelia_brown", "evan_seo"],
-  merged_into_ticket_id: null,
-  work_minutes: 0,
-  last_comment_at: null,
-  last_commenter_email: null,
-  due_at: "2026-07-01T18:00:00Z",
-  owner: false,
-  assigned: true,
-  active: true,
-  scope: "PORTAL",
-  category_id: "62",
-  approval_step_id: null,
-  subject:
+  tk_id: "2bba911c-893c-42f6-bce7-908c34035fd7",
+  tk_ticket_no: "SP-2026-0028",
+  tk_created_at: "2026-06-25T07:13:53Z",
+  tk_updated_at: "2026-06-26T01:18:10Z",
+  tk_requester_username: "vivian_long",
+  tk_status: "Pending",
+  tk_priority: "medium",
+  tk_risk_level: "low",
+  tk_assignee_usernames: ["matthew_williams", "amelia_brown", "evan_seo"],
+  tk_work_minutes: 0,
+  tka_last_comment_at: null,
+  tka_last_comment_email: null,
+
+  tka_last_user_activity_at: "2026-06-26T01:17:18Z",
+  tka_last_user_activity_email: "Amelia.Brown@sunghwan-portal.dev",
+  tk_due_at: "2026-07-01T18:00:00Z",
+  tk_active: true,
+  cat_scope: "PORTAL",
+  cat_id: "62",
+  cat_name: {
+    en: "Work log / attendance issue",
+    es: "Problema de registro laboral / asistencia",
+    fr: "Problème de pointage / présence",
+    ko: "근무 일지 / 출근 문제",
+  },
+  tk_approval_step_id: null,
+  tk_subject:
     "Veuillez refléter le travail effectué le 24 dans le journal de travail",
-  content:
+  tk_content:
     "Bonjour. Le 24, après le départ de tous les employés à 17 h 00, l?�équipe des installations a effectué un remplacement du câblage électrique.<br>Pour cette raison, nous n?�avons pas pu enregistrer notre départ.<br>Veuillez mettre à jour l?�heure de départ et les heures travaillées pour trois employés.<br><br>Jasper.Powell@sunghwan-portal.dev<br>Naomi.Jenkins@sunghwan-portal.dev<br>Connor.Peterson@sunghwan-portal.dev<br><br>Heure de fin du travail : 21 h 00.",
-  email: {
+  tk_email: {
     to: [
       "Matthew.Williams@sunghwan-portal.dev",
       "Amelia.Brown@sunghwan-portal.dev",
@@ -39,6 +44,6 @@ export const ticket: TicketMockInput = {
     ],
     bcc: [],
   },
-  files: [],
-  images: [],
+  tk_files: [],
+  tk_images: [],
 };

@@ -18,11 +18,75 @@ export function applyRuleGroupFilter<T extends object>(
   items: T[],
   filter: unknown,
 ): T[] {
-  if (!filter || typeof filter !== "object") {
+  const normalizedFilter = normalizeFilterInput(filter);
+
+  if (!normalizedFilter || typeof normalizedFilter !== "object") {
     return items;
   }
 
-  return items.filter((item) => evaluateFilterNode(item, filter as FilterNode));
+  return items.filter((item) =>
+    evaluateFilterNode(item, normalizedFilter as FilterNode),
+  );
+}
+
+export function parseRuleGroupFilter(value: unknown): unknown {
+  return normalizeFilterInput(value);
+}
+
+export function getBooleanRuleGroupValue(
+  filter: unknown,
+  field: string,
+): boolean | null {
+  const normalizedFilter = normalizeFilterInput(filter);
+
+  if (!normalizedFilter || typeof normalizedFilter !== "object") {
+    return null;
+  }
+
+  return findBooleanRuleValue(normalizedFilter as FilterNode, field);
+}
+
+export function getStringRuleGroupValue(
+  filter: unknown,
+  field: string,
+): string | null {
+  const value = findRuleGroupValue(filter, field);
+
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const normalizedValue = String(value).trim();
+
+  return normalizedValue.length > 0 ? normalizedValue : null;
+}
+
+function findRuleGroupValue(filter: unknown, field: string): unknown {
+  const normalizedFilter = normalizeFilterInput(filter);
+
+  if (!normalizedFilter || typeof normalizedFilter !== "object") {
+    return null;
+  }
+
+  return findRuleValue(normalizedFilter as FilterNode, field);
+}
+
+function normalizeFilterInput(filter: unknown): unknown {
+  if (typeof filter !== "string") {
+    return filter;
+  }
+
+  const trimmedFilter = filter.trim();
+
+  if (!trimmedFilter) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(trimmedFilter) as unknown;
+  } catch {
+    return undefined;
+  }
 }
 
 function evaluateFilterNode<T extends object>(
@@ -78,6 +142,69 @@ function evaluateFilterGroup<T extends object>(
 
 function isFilterGroup(node: FilterGroup | FilterLeaf): node is FilterGroup {
   return Array.isArray((node as FilterGroup).rules);
+}
+
+function findBooleanRuleValue(
+  node: FilterNode,
+  field: string,
+): boolean | null {
+  if (!node || typeof node === "string") {
+    return null;
+  }
+
+  if (isFilterGroup(node)) {
+    for (const rule of node.rules ?? []) {
+      const value = findBooleanRuleValue(rule, field);
+
+      if (value !== null) {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
+  if (node.field !== field || node.operator !== "=") {
+    return null;
+  }
+
+  if (typeof node.value === "boolean") {
+    return node.value;
+  }
+
+  if (node.value === "true") {
+    return true;
+  }
+
+  if (node.value === "false") {
+    return false;
+  }
+
+  return null;
+}
+
+function findRuleValue(node: FilterNode, field: string): unknown {
+  if (!node || typeof node === "string") {
+    return null;
+  }
+
+  if (isFilterGroup(node)) {
+    for (const rule of node.rules ?? []) {
+      const value = findRuleValue(rule, field);
+
+      if (value !== null && value !== undefined) {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
+  if (node.field !== field || node.operator !== "=") {
+    return null;
+  }
+
+  return node.value;
 }
 
 function matchesFilterLeaf<T extends object>(

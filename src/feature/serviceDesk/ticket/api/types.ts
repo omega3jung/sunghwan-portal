@@ -1,32 +1,29 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import {
-  Attach,
   CategoryScope,
+  TicketAssignmentPhase,
+  TicketAttachmentMetadata,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
-import type { SortDirection } from "@/shared/types";
 import { LocalizedText } from "@/shared/types";
-import type { DbParams } from "@/shared/types/api";
+import type { DbParams, DbSort } from "@/shared/types/api";
 import { ISODateString } from "@/shared/types/date";
 
 export type TicketSortField =
   | "ticketNumber"
   | "createdAt"
+  | "updatedAt"
   | "dueAt"
-  | "priority";
+  | "priority"
+  | "status";
 
-export type TicketSearchSort = {
-  field: TicketSortField;
-  direction: SortDirection;
-};
+export type TicketSearchSort = DbSort<TicketSortField>;
 
-export type TicketSearchRequest = {
-  filter: DbParams["filter"];
-  sort?: TicketSearchSort;
-  page: number;
-  pageSize: number;
-};
+export type TicketSearchRequest = Required<
+  Pick<DbParams<TicketSortField>, "page" | "pageSize">
+> &
+  Pick<DbParams<TicketSortField>, "filter" | "sort">;
 
 export interface DbTicketSummary {
   id: string;
@@ -35,17 +32,28 @@ export interface DbTicketSummary {
   created_at: ISODateString;
   updated_at: ISODateString | null;
 
-  requester_id: string;
+  requester_username: string;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
-  assignee_id: string[];
+
+  assignment_phase?: TicketAssignmentPhase;
+  approval_assignee_usernames?: string[];
+  work_assignee_usernames?: string[];
+  assigned_approver?: boolean;
+  assigned_worker?: boolean;
+
+  assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
+  merged_into_ticket_no?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
+  last_user_activity_at: ISODateString | null;
+  last_user_activity_email: string | null;
+  closed_at?: ISODateString | null;
   work_minutes: number;
 
   due_at: ISODateString;
@@ -57,8 +65,11 @@ export interface DbTicketSummary {
   active: boolean;
 
   scope: CategoryScope;
+  category_id?: string;
   category_name: LocalizedText;
-  approval_step_name: string | null;
+  category_parent_id?: string | null;
+  approval_step_id?: string | null;
+  approval_step_name?: string | null;
 
   subject: string;
   age: number;
@@ -71,17 +82,28 @@ export interface DbTicketDetail {
   created_at: ISODateString;
   updated_at: ISODateString | null;
 
-  requester_id: string;
+  requester_username: string;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
   priority: Priority;
   risk_level: RiskLevel;
-  assignee_id: string[];
+
+  assignment_phase?: TicketAssignmentPhase;
+  approval_assignee_usernames?: string[];
+  work_assignee_usernames?: string[];
+  assigned_approver?: boolean;
+  assigned_worker?: boolean;
+
+  assignee_usernames: string[];
   merged_into_ticket_id?: string | null;
+  merged_into_ticket_no?: string | null;
 
   last_comment_at: ISODateString | null;
   last_commenter_email: string | null;
+  last_user_activity_at: ISODateString | null;
+  last_user_activity_email: string | null;
+  closed_at?: ISODateString | null;
   work_minutes: number;
 
   due_at: ISODateString;
@@ -95,6 +117,7 @@ export interface DbTicketDetail {
   scope: CategoryScope;
   category_id: string;
   category_name: LocalizedText;
+  category_parent_id?: string | null;
   approval_step_id: string | null;
 
   subject: string;
@@ -106,6 +129,6 @@ export interface DbTicketDetail {
     bcc: string[];
   };
 
-  files: Attach[];
-  images: Attach[];
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
 }

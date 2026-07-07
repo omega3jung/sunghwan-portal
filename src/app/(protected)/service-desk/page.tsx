@@ -5,10 +5,8 @@
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
-  Building,
   CalendarCheck,
   CalendarDays,
-  ChartPie,
   ChevronDown,
   FlagTriangleRight,
   RefreshCw,
@@ -37,12 +35,11 @@ import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
-import {
-  CreateTicketDialog,
-  TicketList,
-} from "@/feature/serviceDesk/ticket/components";
+import { TicketList } from "@/feature/serviceDesk/ticket/components";
 import { TicketListPagination } from "@/feature/serviceDesk/ticket/components/TicketList/TicketListPagination";
+import { CreateTicketDialog } from "@/feature/serviceDesk/ticketDraft/client";
 import {
+  normalizeTicketSearchCriteriaFormValues,
   TicketSearchCriteria,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
@@ -53,6 +50,7 @@ import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
 
@@ -61,24 +59,11 @@ const isPresent = <T,>(value: T | null | undefined): value is T =>
 
 type SortOrder = "asc" | "desc";
 type SortOption = "ticketNumber" | "createdAt" | "dueAt" | "priority";
-type ViewOption = "portal" | "internal" | "insights";
 
 type OptionItem<T> = {
   value: T;
   icon: JSX.Element;
 };
-
-const viewOption: OptionItem<ViewOption>[] = [
-  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
-  {
-    value: "internal",
-    icon: <Building className="h-4 w-4" />,
-  },
-  {
-    value: "insights",
-    icon: <ChartPie className="h-4 w-4" />,
-  },
-];
 
 const sortOptions: OptionItem<SortOption>[] = [
   {
@@ -124,7 +109,6 @@ export default function ServiceDeskPage() {
   );
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<SortOrder>("desc");
-  const [scope, setScope] = useState<ViewOption>("internal");
   const [sort, setSort] = useState<SortOption>("ticketNumber");
 
   const {
@@ -144,15 +128,16 @@ export default function ServiceDeskPage() {
   const totalCount = ticketSearchResult?.totalCount ?? 0;
 
   const { data: categoryTrees } = useServiceDeskCategoryListQuery({
-    filter: {
-      rules: [
-        {
-          field: "id",
-          operator: "=",
-          value: currentSession?.user.companyId,
-        },
-      ],
-    },
+    filter: combineRuleGroups([
+      createFieldFilter({
+        field: "active",
+        value: true,
+      }),
+      createFieldFilter({
+        field: "tenant_company_id",
+        value: currentSession?.user.companyId,
+      }),
+    ]),
   });
   const { data: employees } = useEmployeeListQuery({});
 
@@ -183,6 +168,23 @@ export default function ServiceDeskPage() {
     });
   }, [employees, tLocal]);
 
+  const emails = useMemo<ImageValueLabel[]>(() => {
+    if (!employees) {
+      return [];
+    }
+
+    return employees.map((employee) => {
+      const name = tLocal(employee.name);
+
+      return {
+        value: employee.email,
+        label: `${name.first} ${name.last}`,
+        displayName: employee.email,
+        image: employee.imageUrl,
+      };
+    });
+  }, [employees, tLocal]);
+
   // Page overflow correction.
   useEffect(() => {
     const totalPages = Math.ceil(totalCount / TICKET_PAGE_SIZE);
@@ -198,24 +200,20 @@ export default function ServiceDeskPage() {
       return;
     }
 
-    form.reset(searchCriteriaState.value);
-    setCriteria(searchCriteriaState.value);
+    const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
+      searchCriteriaState.value,
+    );
+
+    form.reset(restoredCriteria);
+    setCriteria(restoredCriteria);
     setPage(1);
   }, [form, searchCriteriaState.hydrated, searchCriteriaState.value]);
 
   const handleSearchSubmit = async (values: TicketSearchCriteriaFormValues) => {
-    searchCriteriaState.setValue(values);
-    setCriteria(values);
-    setPage(1);
-  };
+    const nextCriteria = normalizeTicketSearchCriteriaFormValues(values);
 
-  const handlePageOptionChange = (nextSort: ViewOption) => {
-    if (nextSort === "insights") {
-      const href = "/service-desk/insights";
-      startRouteLoadingForHref(href);
-      router.push(href);
-    }
-    setScope(nextSort);
+    searchCriteriaState.setValue(nextCriteria);
+    setCriteria(nextCriteria);
     setPage(1);
   };
 
@@ -247,35 +245,7 @@ export default function ServiceDeskPage() {
 
         <div className="w-full lg:w-auto">
           <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
-            {/* row 1: view selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full min-w-0 justify-end">
-                  <span className="truncate">{t(`viewOption.${scope}`)}</span>
-                  <ChevronDown className="transition-transform" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
-                  {viewOption.map((option) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={option.value}
-                        className={checkboxItemRightCheckClass}
-                        checked={option.value === scope}
-                        onClick={() => handlePageOptionChange(option.value)}
-                      >
-                        {option.icon}
-                        {t(`viewOption.${option.value}`)}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* row 1: sort + order */}
+            {/* sort + order */}
             <ButtonGroup className="w-full">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -325,7 +295,7 @@ export default function ServiceDeskPage() {
               </Button>
             </ButtonGroup>
 
-            {/* row 2: refresh */}
+            {/* refresh */}
             <Button
               className="h-9 w-full min-w-[2.5rem] gap-1.5 px-2.5 lg:w-auto"
               variant="softPrimary"
@@ -337,7 +307,7 @@ export default function ServiceDeskPage() {
               </span>
             </Button>
 
-            {/* row 2: search criteria */}
+            {/* search criteria */}
             <TicketSearchCriteria
               trigger={
                 <Button
@@ -354,10 +324,10 @@ export default function ServiceDeskPage() {
               onSubmit={handleSearchSubmit}
             />
 
-            {/* row 3: create ticket */}
+            {/* create ticket */}
             <CreateTicketDialog
               categories={categories}
-              users={users}
+              users={emails}
               language={userPreference.language as SupportedLanguage}
               trigger={
                 <Button

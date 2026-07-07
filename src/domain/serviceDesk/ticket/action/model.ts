@@ -15,7 +15,7 @@ export interface TicketAction {
 
   actionType: TicketActionType;
   content: string;
-  ownerUsername: string;
+  ownerUsername: string | null;
 
   createdAt: ISODateString;
   updatedAt?: ISODateString;

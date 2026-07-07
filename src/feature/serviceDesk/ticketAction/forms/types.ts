@@ -18,6 +18,14 @@ type TicketActionDraftBase = Pick<
   "content" | "attachment"
 >;
 
+export type TicketApproveDraftValues = TicketActionDraftBase & {
+  actionType: "APPROVE";
+};
+
+export type TicketDeclineDraftValues = TicketActionDraftBase & {
+  actionType: "DECLINE";
+};
+
 export type TicketCommentDraftValues = TicketActionDraftBase & {
   actionType: "COMMENT";
 };
@@ -58,6 +66,10 @@ export type TicketReopenDraftValues = TicketActionDraftBase & {
 
 export type TicketResubmitDraftValues = TicketActionDraftBase & {
   actionType: "RESUBMIT";
+};
+
+export type TicketCancelDraftValues = TicketActionDraftBase & {
+  actionType: "CANCEL";
 };
 
 export interface TicketActionInput {

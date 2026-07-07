@@ -1,19 +1,30 @@
 import { Tenant } from "@/domain/serviceDesk";
 import client from "@/lib/api";
-import { DbParams, OResponse } from "@/shared/types/api";
+import { OResponse } from "@/shared/types/api";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
+import type { ServiceDeskTenantListParams } from "./types";
 import { CreateTenantInput, UpdateTenantInput } from "./write";
 
 type TenantResponse = OResponse<Tenant>;
 
 // feature-scoped API.
 export const serviceDeskTenantApi = {
-  list: async (params: DbParams): Promise<Tenant[]> => {
+  list: async (params: ServiceDeskTenantListParams): Promise<Tenant[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<TenantResponse>(`/api/service-desk/tenants`, {
-      params,
-    });
+    const searchParams = buildDbSearchParams(params);
+
+    if (params.active !== undefined) {
+      searchParams.set("active", String(params.active));
+    }
+
+    const res = await client.api.get<TenantResponse, URLSearchParams>(
+      `/api/service-desk/tenants`,
+      {
+        params: searchParams,
+      },
+    );
 
     return res.data.items;
   },

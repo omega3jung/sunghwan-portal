@@ -1,54 +1,56 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Hola, Liam.<br>Estamos revisando este problema con el equipo de backend ahora.<br>Confirma qué pasos del proceso están bloqueados para el equipo de reparación.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-06-02T06:22:11Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-02T06:22:11Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Recepción, reparación y control de calidad están todos bloqueados.<br>Todas las pantallas afectadas siguen mostrando solo el icono de carga y los usuarios no pueden continuar.",
-    owner_id: "liam_williams",
+    tka_owner_username: "liam_williams",
 
-    created_at: "2026-06-02T06:25:44Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-02T06:25:44Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "MERGE",
-    content:
+    tka_action_type: "MERGE",
+    tka_content:
       "Este ticket se ha fusionado con SP-2026-0015 porque es el mismo incidente causado por el mismo bloqueo de la base de datos.<br>El seguimiento y la comunicación posteriores continuarán en el ticket representativo.",
-    owner_id: "daniel_kim",
+    tka_owner_username: "daniel_kim",
 
-    created_at: "2026-06-02T07:13:18Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-02T07:13:18Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
 ];

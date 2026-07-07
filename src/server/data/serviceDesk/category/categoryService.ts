@@ -1,6 +1,11 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 
-import { getActiveTenantById, getActiveTenants, TenantDto } from "../tenant";
+import {
+  getActiveTenantByCompanyId,
+  getActiveTenantById,
+  getActiveTenants,
+  TenantDto,
+} from "../tenant";
 import {
   CategoryDto,
   CategorySubCategoryInputDto,
@@ -28,6 +33,7 @@ export type CategorySettingsResponseDto = TenantDto & {
 
 export type GetCategorySettingsResponseParams = {
   tenantId?: string | number | null;
+  companyId?: string | number | null;
   isInternal: boolean;
 };
 
@@ -41,10 +47,12 @@ export async function getCategoryTreeByTenantId(
 
 export async function getCategorySettingsResponseByTenantId({
   tenantId,
+  companyId,
   isInternal,
 }: GetCategorySettingsResponseParams): Promise<CategorySettingsResponseDto[]> {
   const targetTenants = await resolveTargetTenants({
     tenantId,
+    companyId,
     isInternal,
   });
 
@@ -109,6 +117,7 @@ export async function updateCategoryById(
 
 async function resolveTargetTenants({
   tenantId,
+  companyId,
   isInternal,
 }: GetCategorySettingsResponseParams): Promise<TenantDto[]> {
   if (hasTenantId(tenantId)) {
@@ -116,6 +125,16 @@ async function resolveTargetTenants({
 
     if (!tenant) {
       throw new Error(`Active tenant not found: ${tenantId}`);
+    }
+
+    return [tenant];
+  }
+
+  if (hasTenantId(companyId)) {
+    const tenant = await getActiveTenantByCompanyId(companyId);
+
+    if (!tenant) {
+      throw new Error(`Active tenant not found for company: ${companyId}`);
     }
 
     return [tenant];

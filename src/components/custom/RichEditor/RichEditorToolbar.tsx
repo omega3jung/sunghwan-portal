@@ -28,6 +28,11 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/shared/utils/presentation";
 
+import {
+  insertImageFilesAsBase64,
+  isSupportedRichEditorImageFile,
+  RICH_EDITOR_IMAGE_FILE_ACCEPT,
+} from "./imageFiles";
 import { resolveRichEditorPreset } from "./presets";
 import type {
   RichEditorPreset,
@@ -64,7 +69,6 @@ const DEFAULT_LABELS: Record<RichEditorToolbarItemKey, string> = {
 };
 
 const DEFAULT_LINK_PROMPT = "Enter a URL";
-const DEFAULT_IMAGE_PROMPT = "Enter an image URL";
 
 export function RichEditorToolbar({
   className,
@@ -257,7 +261,7 @@ function createToolbarItem(key: RichEditorToolbarItemKey) {
             return;
           }
 
-          runDefaultImageAction(editor, labels);
+          runDefaultImageAction(editor);
         },
       };
     case "table":
@@ -328,21 +332,24 @@ function runDefaultLinkAction(
 
 function runDefaultImageAction(
   editor: Editor,
-  labels?: RichEditorToolbarLabels,
 ) {
-  const value = window.prompt(labels?.imagePrompt || DEFAULT_IMAGE_PROMPT, "");
+  const input = document.createElement("input");
 
-  if (value === null) {
-    return;
-  }
+  input.type = "file";
+  input.accept = RICH_EDITOR_IMAGE_FILE_ACCEPT;
+  input.multiple = false;
+  input.onchange = () => {
+    const file = input.files?.[0];
 
-  const src = value.trim();
+    if (!file || !isSupportedRichEditorImageFile(file)) {
+      return;
+    }
 
-  if (!src) {
-    return;
-  }
-
-  editor.chain().focus().setImage({ src }).run();
+    void insertImageFilesAsBase64(editor, [file]).catch((error) => {
+      console.error("Failed to insert image into rich editor.", error);
+    });
+  };
+  input.click();
 }
 
 function runDefaultTableAction(editor: Editor) {

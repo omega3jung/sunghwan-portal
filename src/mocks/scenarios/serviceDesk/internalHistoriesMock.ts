@@ -32,8 +32,9 @@ import { TICKET_2026_35 } from "./SP-2026-0035";
 import { TICKET_2026_36 } from "./SP-2026-0036";
 import { TICKET_2026_37 } from "./SP-2026-0037";
 import { TICKET_2026_38 } from "./SP-2026-0038";
+import { TicketHistoryMockInput } from "./types";
 
-export const internalHistoriesMock: DbTicketHistory[] = [
+const internalHistoryMockInputs: TicketHistoryMockInput[] = [
   ...TICKET_2026_1.histories,
   ...TICKET_2026_2.histories,
   ...TICKET_2026_3.histories,
@@ -67,3 +68,21 @@ export const internalHistoriesMock: DbTicketHistory[] = [
   ...TICKET_2026_37.histories,
   ...TICKET_2026_38.histories,
 ];
+
+const toDbTicketHistory = (
+  history: TicketHistoryMockInput,
+): DbTicketHistory => ({
+  ticket_id: history.tkh_ticket_id,
+  history_no: history.tkh_history_no,
+  type: history.tkh_history_type,
+  action: history.tkh_history_action,
+  actor_username: history.tkh_actor_username,
+  action_no: history.tkh_action_no,
+  from_value: history.tkh_from_value,
+  to_value: history.tkh_to_value,
+  metadata: history.tkh_metadata,
+  created_at: history.tkh_created_at,
+});
+
+export const internalHistoriesMock: DbTicketHistory[] =
+  internalHistoryMockInputs.map(toDbTicketHistory);

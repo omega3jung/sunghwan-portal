@@ -1,5 +1,7 @@
 import type { RuleGroupTypeIC, RuleType } from "react-querybuilder";
 
+import type { DbParams } from "@/shared/types/api";
+
 type DateRangeValue = {
   from?: Date | string | null;
   to?: Date | string | null;
@@ -16,6 +18,31 @@ export const createRuleGroup = (
 
   return { rules };
 };
+
+export function buildDbSearchParams<TSortField extends string>(
+  params: DbParams<TSortField>,
+): URLSearchParams {
+  const searchParams = new URLSearchParams();
+
+  if (params.filter) {
+    searchParams.set("filter", JSON.stringify(params.filter));
+  }
+
+  if (params.sort) {
+    searchParams.set("sortField", params.sort.field);
+    searchParams.set("sortDirection", params.sort.direction);
+  }
+
+  if (params.page != null) {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (params.pageSize != null) {
+    searchParams.set("pageSize", String(params.pageSize));
+  }
+
+  return searchParams;
+}
 
 export const joinRuleGroups = (
   ruleGroups: RuleGroupTypeIC[],
@@ -65,6 +92,30 @@ const createSingleRuleGroup = (rule: RuleType): RuleGroupTypeIC => {
   return {
     rules: [rule] as RuleGroupTypeIC["rules"],
   };
+};
+
+export const createFieldFilter = ({
+  field,
+  operator = "=",
+  value,
+}: {
+  field: string;
+  operator?: RuleType["operator"];
+  value: unknown;
+}): RuleGroupTypeIC | undefined => {
+  if (
+    value === null ||
+    value === undefined ||
+    (typeof value === "string" && value.trim().length === 0)
+  ) {
+    return undefined;
+  }
+
+  return createSingleRuleGroup({
+    field,
+    operator,
+    value,
+  });
 };
 
 export const createKeywordFilter = ({

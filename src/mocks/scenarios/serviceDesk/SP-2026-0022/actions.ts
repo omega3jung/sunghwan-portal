@@ -1,54 +1,72 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson a approuvé",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-05-27T08:07:18Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
+    tka_action_type: "COMMENT",
+    tka_content:
       "Bonjour, Isabella. Pourrais-tu préciser quelles informations doivent être incluses ?",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-27T08:20:00Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T08:20:00Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Il doit inclure l’ID de réception, la date de réception, l’IMEI, le SKU, l’ID de l’employé, le statut et l’emplacement actuel.",
-    owner_id: "liam_williams",
+    tka_owner_username: "liam_williams",
 
-    created_at: "2026-05-27T08:41:12Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T08:41:12Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Voici le rapport. Si vous avez besoin d’aide, faites-le-nous savoir. Merci.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-27T09:15:11Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-27T09:15:11Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [
+    tka_files: [
       {
         index: 1,
         type: "file",
@@ -57,6 +75,6 @@ export const actions: DbTicketAction[] = [
         active: true,
       },
     ],
-    images: [],
+    tka_images: [],
   },
 ];

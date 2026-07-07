@@ -1,10 +1,17 @@
 import { RuleGroupTypeIC } from "react-querybuilder";
 
-export type DbParams = {
-  active?: boolean;
+export type SortDirection = "asc" | "desc";
+
+export type DbSort<TField extends string = string> = {
+  field: TField;
+  direction: SortDirection;
+};
+
+export type DbParams<TSortField extends string = string> = {
   filter?: RuleGroupTypeIC;
+  sort?: DbSort<TSortField>;
   page?: number;
-  size?: number;
+  pageSize?: number;
 };
 
 export type ApiResponse<T> = {
