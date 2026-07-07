@@ -48,6 +48,14 @@ type TicketActionToolProps = {
   categories?: MainCategory[];
 };
 
+const REMOTE_MODE_ENABLED_ACTIONS = new Set<TicketActionMode>([
+  "approve",
+  "decline",
+  "cancel",
+]);
+const REMOTE_MODE_DISABLED_TITLE =
+  "Remote mode에서 ticket action 동작은 현재 구현중입니다.";
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -246,6 +254,11 @@ export function TicketActionTool({
 
   const handleOpen = (nextMode: TicketActionMode) => {
     if (nextMode === "assignSelf") {
+      if (isRemoteMode) {
+        openMode(nextMode);
+        return;
+      }
+
       void handleAssignSelf();
       return;
     }
@@ -268,7 +281,14 @@ export function TicketActionTool({
     },
   );
 
-  const disableSubmit = isPending || !editor;
+  const isRemoteModeActionDisabled =
+    isRemoteMode &&
+    mode !== "idle" &&
+    !REMOTE_MODE_ENABLED_ACTIONS.has(mode);
+  const disableSubmit = isPending || !editor || isRemoteModeActionDisabled;
+  const submitDisabledTitle = isRemoteModeActionDisabled
+    ? REMOTE_MODE_DISABLED_TITLE
+    : undefined;
 
   if (!ticket) return null;
 
@@ -306,6 +326,7 @@ export function TicketActionTool({
             errorMessage={errorMessage}
             helperText={helperText}
             isPending={isPending}
+            submitDisabledTitle={submitDisabledTitle}
             submitLabel={submitLabel}
             onCancel={closeMode}
             onSubmit={handleSubmit}

@@ -2,6 +2,7 @@
 
 import { addDays, endOfDay, startOfToday } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -57,7 +58,10 @@ export const useCreateTicketDialog = ({
     formState: { isDirty },
   } = ticketForm;
 
-  const selectedCategoryId = ticketForm.watch("category");
+  const [selectedCategoryId, subjectValue, bodyValue] = useWatch({
+    control: ticketForm.control,
+    name: ["category", "subject", "body"],
+  });
   const selectedParentCategoryId = useMemo(() => {
     if (!selectedCategoryId) {
       return undefined;
@@ -219,11 +223,12 @@ export const useCreateTicketDialog = ({
     }
   }, [currentStep, onSubmit, ticketForm]);
 
-  const hasRequiredTicketContent = (values: TicketFormValues) =>
-    values.subject?.length && values.body?.length && values.category;
+  const hasRequiredTicketContent =
+    !!selectedCategoryId &&
+    subjectValue.trim().length > 0 &&
+    bodyValue.trim().length > 0;
   const canMoveNext =
-    currentStep !== ticketStep.info ||
-    !!hasRequiredTicketContent(ticketForm.getValues());
+    currentStep !== ticketStep.info || hasRequiredTicketContent;
 
   const loadDraft = useCallback(
     (ticketDraft: TicketFormValues) => {
