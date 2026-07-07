@@ -2,14 +2,14 @@ import { TicketSearchPeriod } from "@/domain/common";
 
 export type TicketStatus =
   | "Draft" // creating ticket.
-  | "Open"
-  | "Approved"
+  | "Approval" // created. waiting for approval.
   | "Declined"
+  | "Assigned" // 1-created without approval. 2-approved.
   | "Working"
   | "Pending"
   | "Rejected"
   | "Resolved"
-  | "Reopen"
+  | "Reopened"
   | "Closed";
 
 export type TicketPeriod = Exclude<TicketSearchPeriod, "today">;

@@ -15,7 +15,8 @@ import {
 } from "@/server/serviceDesk/settings/state";
 
 const DEFAULT_REQUESTER_ACCESS_LEVEL = ACCESS_LEVEL.USER;
-const CREATE_TICKET_OPEN_STATUS: TicketStatus = "Open";
+const CREATE_TICKET_APPROVAL_STATUS: TicketStatus = "Approval";
+const CREATE_TICKET_ASSIGNED_STATUS: TicketStatus = "Assigned";
 const INTERNAL_COMPANY_ID = 1;
 const CLIENT_COMPANY_ID = 11;
 
@@ -69,14 +70,74 @@ export function resolveCreateTicketRouting({
     });
 
     return {
-      status: CREATE_TICKET_OPEN_STATUS,
+      status: CREATE_TICKET_APPROVAL_STATUS,
       approvalStepId: String(nextApprovalStep.approval_step_id),
       assigneeUsernames,
     };
   }
 
   return {
-    status: "Open",
+    status: CREATE_TICKET_ASSIGNED_STATUS,
+    approvalStepId: null,
+    assigneeUsernames: resolveAssignmentAssignees({
+      isInternal,
+      categoryReference,
+      requesterUsername,
+      employees,
+    }),
+  };
+}
+
+export function resolveApprovedTicketRouting({
+  isInternal,
+  categoryId,
+  parentCategoryId,
+  requesterUsername,
+  currentApprovalStepId,
+}: {
+  isInternal: boolean;
+  categoryId: string;
+  parentCategoryId: string;
+  requesterUsername: string;
+  currentApprovalStepId: string;
+}): CreateTicketRouting {
+  const employees = createEmployeesMock();
+  const requesterAccessLevel = resolveRequesterAccessLevel({
+    isInternal,
+    requesterUsername,
+    employees,
+  });
+  const categoryReference: RoutingCategoryReference = {
+    categoryId,
+    parentCategoryId,
+  };
+  const approvalSteps = resolveCategoryApprovalSteps({
+    isInternal,
+    categoryReference,
+  });
+  const nextApprovalStep = resolveNextApprovalStep({
+    approvalSteps,
+    requesterAccessLevel,
+    currentApprovalStepId,
+  });
+
+  if (nextApprovalStep) {
+    const assigneeUsernames = resolveApprovalStepAssignees({
+      approvalStep: nextApprovalStep,
+      isInternal,
+      requesterUsername,
+      employees,
+    });
+
+    return {
+      status: CREATE_TICKET_APPROVAL_STATUS,
+      approvalStepId: String(nextApprovalStep.approval_step_id),
+      assigneeUsernames,
+    };
+  }
+
+  return {
+    status: CREATE_TICKET_ASSIGNED_STATUS,
     approvalStepId: null,
     assigneeUsernames: resolveAssignmentAssignees({
       isInternal,
@@ -104,7 +165,10 @@ function resolveRequesterAccessLevel({
     return directAuth.permission;
   }
 
-  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterUsername);
+  const requesterEmployee = resolveEmployeeByIdentifier(
+    employees,
+    requesterUsername,
+  );
 
   if (!requesterEmployee) {
     return DEFAULT_REQUESTER_ACCESS_LEVEL;
@@ -155,12 +219,26 @@ function resolveCategoryApprovalSteps({
 function resolveNextApprovalStep({
   approvalSteps,
   requesterAccessLevel,
+  currentApprovalStepId = null,
 }: {
   approvalSteps: DbCategoryApprovalSettings["approval_step"];
   requesterAccessLevel: AccessLevel;
+  currentApprovalStepId?: string | number | null;
 }) {
+  const currentApprovalStep = approvalSteps.find(
+    (approvalStep) =>
+      String(approvalStep.approval_step_id) ===
+      String(currentApprovalStepId ?? ""),
+  );
+  const currentApprovalStepIndex =
+    currentApprovalStep?.approval_step_index ?? -1;
+
   return (
     approvalSteps.find((approvalStep) => {
+      if (approvalStep.approval_step_index <= currentApprovalStepIndex) {
+        return false;
+      }
+
       if (approvalStep.skip_access_level === null) {
         return true;
       }
@@ -268,7 +346,9 @@ function resolveAssignmentAssignees({
   return normalizeAssigneeIds([...directAssignees, ...jobFieldAssignees]);
 }
 
-function normalizeAssigneeIds(assigneeUsernames: Array<string | null | undefined>) {
+function normalizeAssigneeIds(
+  assigneeUsernames: Array<string | null | undefined>,
+) {
   const normalized: string[] = [];
   const seen = new Set<string>();
 
@@ -344,7 +424,10 @@ function resolveScopedEmployees({
   requesterUsername: string;
   employees: DbEmployee[];
 }) {
-  const requesterEmployee = resolveEmployeeByIdentifier(employees, requesterUsername);
+  const requesterEmployee = resolveEmployeeByIdentifier(
+    employees,
+    requesterUsername,
+  );
   const companyId =
     requesterEmployee?.e_company_id ??
     (isInternal ? INTERNAL_COMPANY_ID : CLIENT_COMPANY_ID);

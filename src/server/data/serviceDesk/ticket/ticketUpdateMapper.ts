@@ -13,6 +13,7 @@ export function mapRequesterUpdateTicketRequestDtoToRowInput(
     RequesterUpdateTicketRowInput,
     | "tk_priority"
     | "tk_risk_level"
+    | "tk_status"
     | "tk_approval_step_id"
     | "tk_assignee_usernames"
   >,

@@ -8,6 +8,8 @@ const ACTION_VALIDATION_KEY = {
 } as const;
 
 export const ticketActionTypeSchema = z.enum([
+  "APPROVE",
+  "DECLINE",
   "COMMENT",
   "NOTE",
   "ASSIGN",

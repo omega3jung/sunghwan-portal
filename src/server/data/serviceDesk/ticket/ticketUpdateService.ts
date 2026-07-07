@@ -1,5 +1,5 @@
 import type { Priority, RiskLevel } from "@/domain/common";
-import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
+import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
@@ -25,10 +25,12 @@ import {
 
 type RequesterUpdateRoutingResult =
   | {
+      status: TicketStatus;
       approvalStepId: number;
       assigneeUsernames: string[];
     }
   | {
+      status: TicketStatus;
       approvalStepId: null;
       assigneeUsernames: string[];
     };
@@ -36,9 +38,15 @@ type RequesterUpdateRoutingResult =
 type RequesterUpdateRoutingState = {
   tk_priority: Priority;
   tk_risk_level: RiskLevel;
+  tk_status: TicketStatus;
   tk_approval_step_id: number | string | null;
   tk_assignee_usernames: string[];
 };
+
+const REQUESTER_EDITABLE_TICKET_STATUSES: readonly TicketStatus[] = [
+  "Approval",
+  "Assigned",
+];
 
 export async function updateRequesterTicket(
   ticketId: string,
@@ -69,7 +77,7 @@ export async function updateRequesterTicket(
     throw createStatusError("Ticket can only be updated by its requester.", 403);
   }
 
-  if (currentRow.tk_status !== "Open") {
+  if (!REQUESTER_EDITABLE_TICKET_STATUSES.includes(currentRow.tk_status)) {
     throw createStatusError(
       `Ticket cannot be updated in status ${currentRow.tk_status}.`,
       409,
@@ -88,6 +96,7 @@ export async function updateRequesterTicket(
   const preservedRoutingState: RequesterUpdateRoutingState = {
     tk_priority: currentRow.tk_priority,
     tk_risk_level: currentRow.tk_risk_level,
+    tk_status: currentRow.tk_status,
     tk_approval_step_id: currentRow.tk_approval_step_id,
     tk_assignee_usernames: normalizePostgresStringArray(
       currentRow.tk_assignee_usernames,
@@ -305,6 +314,7 @@ async function resolveRequesterUpdateRoutingState(
     tk_risk_level: params.shouldDeriveCategoryDefaults
       ? params.categoryRiskLevel ?? params.currentRiskLevel
       : params.currentRiskLevel,
+    tk_status: routing.status,
     tk_approval_step_id: routing.approvalStepId,
     tk_assignee_usernames: routing.assigneeUsernames,
   };
@@ -340,6 +350,7 @@ async function resolveInitialRequesterUpdateRouting(
     }
 
     return {
+      status: "Approval",
       approvalStepId: nextApprovalStepId,
       assigneeUsernames,
     };
@@ -358,6 +369,7 @@ async function resolveInitialRequesterUpdateRouting(
   }
 
   return {
+    status: "Assigned",
     approvalStepId: null,
     assigneeUsernames,
   };

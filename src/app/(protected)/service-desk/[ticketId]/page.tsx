@@ -14,7 +14,7 @@ import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
 import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { useAutoStartApprovedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartApprovedTicketOnView";
+import { useAutoStartAssignedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartAssignedTicketOnView";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticketAction/api/client";
 import {
@@ -62,7 +62,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     ticket?.id === params.ticketId ? ticket.ticketNumber : null,
   );
 
-  useAutoStartApprovedTicketOnView({
+  useAutoStartAssignedTicketOnView({
     ticket,
   });
 

@@ -1,4 +1,7 @@
-import { NextResponse, type NextResponse as NextResponseType } from "next/server";
+import {
+  NextResponse,
+  type NextResponse as NextResponseType,
+} from "next/server";
 
 import {
   createTicket,
@@ -11,7 +14,12 @@ import {
   type TicketSearchSortDto,
   updateRequesterTicket,
 } from "@/server/data/serviceDesk/ticket";
-import { getTicketActionsByTicketId } from "@/server/data/serviceDesk/ticketAction";
+import {
+  type ApprovalTicketActionRequestDto,
+  executeTicketApprovalAction,
+  getTicketActionsByTicketId,
+  isTicketApprovalActionPath,
+} from "@/server/data/serviceDesk/ticketAction";
 import {
   createTicketDraft,
   discardTicketDraft,
@@ -36,6 +44,8 @@ const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
 const TICKET_ACTION_LIST_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/actions$/;
+const TICKET_COMMAND_PATH_PATTERN =
+  /^\/service-desk\/tickets\/([^/]+)\/command\/([^/]+)$/;
 const TICKET_HISTORY_LIST_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/(?:histories|history)$/;
 const TICKET_WORK_SESSION_LIST_PATH_PATTERN =
@@ -127,6 +137,29 @@ export async function handleTicketPortalApi(
     );
 
     return createListResponse(items);
+  }
+
+  const commandMatch = TICKET_COMMAND_PATH_PATTERN.exec(context.path);
+
+  if (commandMatch) {
+    if (context.method !== "POST") {
+      return createNotFoundResponse();
+    }
+
+    const action = decodePathSegment(commandMatch[2]);
+
+    if (!isTicketApprovalActionPath(action)) {
+      return createNotFoundResponse();
+    }
+
+    const actionDto = await executeTicketApprovalAction({
+      ticketId: decodePathSegment(commandMatch[1]),
+      action,
+      currentUserName,
+      payload: requireBody<ApprovalTicketActionRequestDto>(context.options),
+    });
+
+    return NextResponse.json(actionDto, { status: 201 });
   }
 
   const historyListMatch = TICKET_HISTORY_LIST_PATH_PATTERN.exec(context.path);
@@ -250,7 +283,9 @@ async function handleTicketDraftDetailPortalApi(
 }
 
 function getCurrentUserName(context: ServiceDeskPortalApiContext) {
-  const value = new Headers(context.options.headers).get(CURRENT_USERNAME_HEADER);
+  const value = new Headers(context.options.headers).get(
+    CURRENT_USERNAME_HEADER,
+  );
   const normalizedValue = value?.trim();
 
   return normalizedValue ? normalizedValue : null;

@@ -6,7 +6,7 @@ export const ticket: TicketMockInput = {
   tk_created_at: "2026-06-24T01:13:27Z",
   tk_updated_at: "2026-06-24T01:18:10Z",
   tk_requester_username: "__demo_user__",
-  tk_status: "Approved",
+  tk_status: "Assigned",
   tk_close_reason: null,
   tk_priority: "medium",
   tk_risk_level: "low",
@@ -31,7 +31,7 @@ export const ticket: TicketMockInput = {
   tk_approval_step_id: null,
   tk_subject: "Prueba de inicio automático de ticket aprobado",
   tk_content:
-    "Este ticket está preparado para probar el flujo de actualización automática del estado.<br>Cuando el usuario asignado abre la vista de detalle del ticket mientras el estado del ticket es 'Approved', el estado debería cambiar automáticamente a 'Working'.",
+    "Este ticket está preparado para probar el flujo de actualización automática del estado.<br>Cuando el usuario asignado abre la vista de detalle del ticket mientras el estado del ticket es 'Assigned', el estado debería cambiar automáticamente a 'Working'.",
   tk_email: {
     to: ["demoAdmin@sunghwan-portal.dev"],
     cc: ["demoUser@sunghwan-portal.dev", "demoManager@sunghwan-portal.dev"],

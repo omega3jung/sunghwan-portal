@@ -7,6 +7,22 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson님이 승인했습니다",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-05-27T08:07:18Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
     tka_action_type: "COMMENT",
     tka_content:
       "안녕하세요, Isabella. 어떤 정보가 포함되어야 하는지 자세히 알려주실 수 있을까요?",
@@ -22,7 +38,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 2,
+    tka_action_no: 3,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -39,7 +55,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 3,
+    tka_action_no: 4,
 
     tka_action_type: "COMMENT",
     tka_content:

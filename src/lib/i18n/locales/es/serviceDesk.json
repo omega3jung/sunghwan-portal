@@ -4,6 +4,8 @@
     "note": "Nota",
     "assign": "Asignar",
     "assignToMe": "Asignarme",
+    "approve": "Aprobar",
+    "decline": "Declinar",
     "reject": "Rechazar",
     "merge": "Fusionar",
     "adjust": "Ajustar",
@@ -160,7 +162,7 @@
   "detailPage": {
     "detailsTitle": "Detalles del ticket",
     "descriptionTitleHint": "Detalles principales de la solicitud y la actividad más reciente de un vistazo.",
-    "replyTitle": "Responder",
+    "replyTitle": "Herramientas",
     "replyTitleHint": "Responde, deja una nota interna y revisa la conversación en un flujo continuo.",
     "notFound": "No se encontró el ticket."
   },
@@ -232,6 +234,8 @@
     "currentUser": "Usuario actual",
     "currentUserFallback": "Tú",
     "launcher": {
+      "approve": "Aprueba este paso y envía el ticket a la siguiente etapa.",
+      "decline": "Declina esta solicitud de aprobación y registra el motivo.",
       "comment": "Publica una respuesta visible para el solicitante y las personas observadoras.",
       "note": "Deja una nota interna que permanezca dentro del equipo.",
       "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
@@ -243,6 +247,8 @@
       "resubmit": "Vuelve a enviar esta solicitud rechazada para su revisión."
     },
     "helper": {
+      "approve": "Deja una nota de aprobación antes de enviar el ticket a la siguiente etapa.",
+      "decline": "Explica por qué se está declinando esta solicitud de aprobación.",
       "comment": "Comparte una actualización pública con todas las personas que siguen este ticket.",
       "note": "Agrega una nota interna para el equipo de Service Desk.",
       "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
@@ -254,6 +260,8 @@
       "resubmit": "Explica qué cambió antes de volver a enviar esta solicitud rechazada."
     },
     "submit": {
+      "approve": "Aprobar",
+      "decline": "Declinar",
       "comment": "Publicar comentario",
       "note": "Guardar nota",
       "assign": "Guardar asignación",
@@ -278,7 +286,11 @@
     },
     "form": {
       "editorLabel": "Motivo",
+      "approvalNoteLabel": "Nota de aprobación",
+      "declineReasonLabel": "Motivo de declinación",
       "editorPlaceholder": {
+        "approve": "Deja una nota para esta aprobación",
+        "decline": "Describe por qué debe declinarse esta aprobación",
         "comment": "Escribe un comentario y mantén la conversación en marcha",
         "note": "Comparte una nota interna para este ticket",
         "assign": "Comparte el contexto de asignación para la siguiente persona responsable",
@@ -492,6 +504,7 @@
         "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
         "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
         "assigneeForbidden": "Solo una persona asignada puede iniciar el trabajo en este ticket.",
+        "approvalForbidden": "Solo la persona aprobadora asignada puede aprobar o declinar este ticket.",
         "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
         "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
         "mergeTargetNotFound": "No se encontró el ticket de destino para la fusión.",

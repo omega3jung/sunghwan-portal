@@ -23,6 +23,7 @@ import {
 
 const DEFAULT_PRIORITY: Priority = "medium";
 const DEFAULT_RISK_LEVEL: RiskLevel = "medium";
+const DEFAULT_CREATE_TICKET_STATUS: TicketStatus = "Assigned";
 
 const EMPTY_EMAIL: ServiceDeskTicketEmail = {
   to: [],
@@ -65,7 +66,7 @@ export function mapTicketCreateRequestDtoToRowInput(
     ...mapTicketMutateRequestDtoToRowInput(input),
     tk_ticket_no: options.ticketNo,
     tk_requester_username: options.requesterUsername,
-    tk_status: options.status ?? "Open",
+    tk_status: options.status ?? DEFAULT_CREATE_TICKET_STATUS,
   };
 }
 
@@ -105,7 +106,7 @@ function toTicketCommonDto(
     created_at: row.tk_created_at,
     updated_at: row.tk_updated_at,
     requester_username: row.tk_requester_username,
-    status: row.tk_status,
+    status: normalizeTicketStatus(row),
     priority: row.tk_priority,
     risk_level: row.tk_risk_level,
     ...assignment,
@@ -156,6 +157,24 @@ function mapTicketAssignment(
     assignee_usernames: assigneeUsernames,
     assigned: isAssigned,
   };
+}
+
+function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {
+  const status = row.tk_status as string;
+
+  if (status === "Open") {
+    return row.tk_approval_step_id === null ? "Assigned" : "Approval";
+  }
+
+  if (status === "Approved") {
+    return "Assigned";
+  }
+
+  if (status === "Reopen") {
+    return "Reopened";
+  }
+
+  return row.tk_status;
 }
 
 export function normalizePostgresStringArray(value: unknown): string[] {

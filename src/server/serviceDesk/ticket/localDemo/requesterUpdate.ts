@@ -10,6 +10,9 @@ import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
+const REQUESTER_EDITABLE_TICKET_STATUSES: readonly DbTicketDetail["status"][] =
+  ["Approval", "Assigned"];
+
 export const localRequesterUpdateTicket = ({
   isInternal,
   ticketId,
@@ -41,7 +44,7 @@ export const localRequesterUpdateTicket = ({
     );
   }
 
-  if (ticket.status !== "Open") {
+  if (!REQUESTER_EDITABLE_TICKET_STATUSES.includes(ticket.status)) {
     throw new ServiceDeskApiError(
       "api.tickets.localDemo.updateNotAllowed",
       409,
@@ -61,6 +64,7 @@ export const localRequesterUpdateTicket = ({
     category,
     approvalStepId: ticket.approval_step_id,
     assigneeUsernames: ticket.assignee_usernames,
+    status: ticket.status,
     priority: ticket.priority,
     riskLevel: ticket.risk_level,
   });
@@ -83,6 +87,7 @@ export const localRequesterUpdateTicket = ({
     category,
     approvalStepId: routing?.approvalStepId ?? ticket.approval_step_id,
     assigneeUsernames: routing?.assigneeUsernames ?? ticket.assignee_usernames,
+    status: routing?.status ?? ticket.status,
     priority: categoryChanged
       ? resolvePriorityValue(category.defaultPriority, ticket.priority)
       : ticket.priority,
@@ -113,6 +118,7 @@ function createUpdatedTicket({
   category,
   approvalStepId,
   assigneeUsernames,
+  status,
   priority,
   riskLevel,
 }: {
@@ -121,16 +127,22 @@ function createUpdatedTicket({
   category: ReturnType<typeof resolveCategorySnapshot>;
   approvalStepId: string | null;
   assigneeUsernames: string[];
+  status: DbTicketDetail["status"];
   priority: DbTicketDetail["priority"];
   riskLevel: DbTicketDetail["risk_level"];
 }): DbTicketDetail {
+  const isApprovalPhase = approvalStepId !== null;
+
   return {
     ...ticket,
-    status: "Open",
+    status,
     close_reason: ticket.close_reason ?? null,
     priority,
     risk_level: riskLevel,
     assignee_usernames: assigneeUsernames,
+    assignment_phase: isApprovalPhase ? "APPROVAL" : "WORK",
+    approval_assignee_usernames: isApprovalPhase ? assigneeUsernames : [],
+    work_assignee_usernames: isApprovalPhase ? [] : assigneeUsernames,
     scope: category.scope,
     category_id: category.id,
     category_name: category.name,

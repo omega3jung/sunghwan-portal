@@ -7,6 +7,22 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson approved",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-06-25T07:29:25Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
     tka_action_type: "COMMENT",
     tka_content:
       "Hello, Amelia and Matthew.<br>Can I updated there work log so they can see correct time?",
@@ -22,7 +38,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 2,
+    tka_action_no: 3,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -39,7 +55,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 3,
+    tka_action_no: 4,
 
     tka_action_type: "COMMENT",
     tka_content: "Got it Amelia. Let me set this ticket as 'Pending' now.",

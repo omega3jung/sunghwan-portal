@@ -1,14 +1,6 @@
-export type SystemStatus =
-  | "Draft"
-  | "Open"
-  | "Reopen"
-  | "Approved"
-  | "Declined"
-  | "Working"
-  | "Pending"
-  | "Resolved"
-  | "Rejected"
-  | "Closed";
+import type { TicketStatus } from "@/domain/serviceDesk";
+
+export type SystemStatus = TicketStatus;
 
 export interface StatusBadgeProps {
   status?: SystemStatus;

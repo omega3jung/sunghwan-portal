@@ -7,6 +7,22 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson aprobó",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-05-27T01:20:05Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
     tka_action_type: "COMMENT",
     tka_content:
       "Hola, Liam.<br>Ten en cuenta que esta solicitud puede tardar hasta 3 días según el SLA.<br>Tenemos que revisar la configuración de la impresora y validar la salida de la etiqueta.",
@@ -22,7 +38,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 2,
+    tka_action_no: 3,
 
     tka_action_type: "COMMENT",
     tka_content: "Entendido. Avísame cuando hayas terminado.",
@@ -38,7 +54,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 3,
+    tka_action_no: 4,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -55,7 +71,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 4,
+    tka_action_no: 5,
 
     tka_action_type: "NOTE",
     tka_content:

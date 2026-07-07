@@ -55,6 +55,7 @@ import {
 } from "@/feature/serviceDesk/ticket/components/chart";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import {
+  normalizeTicketSearchCriteriaFormValues,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
 } from "@/feature/serviceDesk/ticketSearch";
@@ -360,8 +361,12 @@ export default function ServiceDeskInsightsPage() {
       return;
     }
 
-    setCriteria(searchCriteriaState.value);
-    setPickerRange(searchCriteriaState.value.period.dateRange);
+    const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
+      searchCriteriaState.value,
+    );
+
+    setCriteria(restoredCriteria);
+    setPickerRange(restoredCriteria.period.dateRange);
   }, [searchCriteriaState.hydrated, searchCriteriaState.value]);
 
   useEffect(() => {

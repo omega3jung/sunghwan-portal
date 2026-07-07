@@ -7,6 +7,22 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson님이 승인했습니다",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-05-27T08:48:37Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
     tka_action_type: "COMMENT",
     tka_content:
       "안녕하세요, Liam.<br>시스템에서 84321565를 찾을 수 없습니다. 디바이스 ID가 올바른지 확인해 주시겠어요?<br> 감사합니다.",
@@ -22,7 +38,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 2,
+    tka_action_no: 3,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -47,7 +63,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 3,
+    tka_action_no: 4,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -64,7 +80,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 4,
+    tka_action_no: 5,
 
     tka_action_type: "COMMENT",
     tka_content: "감사합니다!!",

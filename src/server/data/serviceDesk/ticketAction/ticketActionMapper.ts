@@ -12,6 +12,7 @@ export function mapTicketActionRowToDto(
     action_no: row.tka_action_no,
     action_type: row.tka_action_type as TicketActionType,
     content: row.tka_content ?? "",
+    metadata: normalizeMetadata(row.tka_metadata),
     owner_username: row.tka_owner_username,
     created_at: toIsoDateString(row.tka_created_at),
     updated_at: toNullableIsoDateString(row.tka_updated_at),
@@ -23,6 +24,12 @@ export function mapTicketActionRowToDto(
 
 function normalizeJsonArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
+}
+
+function normalizeMetadata(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 function toNullableIsoDateString(

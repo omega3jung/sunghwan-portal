@@ -7,6 +7,22 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson aprobó",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-05-27T08:48:37Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
     tka_action_type: "COMMENT",
     tka_content:
       "Hola, Liam.<br>No pude encontrar 84321565 en el sistema. ¿Podrías verificar si el ID del dispositivo es correcto?<br> Gracias.",
@@ -22,7 +38,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 2,
+    tka_action_no: 3,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -47,7 +63,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 3,
+    tka_action_no: 4,
 
     tka_action_type: "COMMENT",
     tka_content:
@@ -64,7 +80,7 @@ export const actions: TicketActionMockInput[] = [
   {
     ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
-    tka_action_no: 4,
+    tka_action_no: 5,
 
     tka_action_type: "COMMENT",
     tka_content: "¡¡Gracias!!",

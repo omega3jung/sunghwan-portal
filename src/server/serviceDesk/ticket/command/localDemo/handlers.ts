@@ -1,4 +1,8 @@
-﻿import {
+﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import type { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
+import { resolveApprovedTicketRouting } from "@/server/serviceDesk/ticket/localDemo/createRouting";
+
+import {
   LocalActionHandler,
   LocalActionSpec,
   TicketActionApiType,
@@ -15,6 +19,134 @@ import { createMessageHistory, createStatusHistory } from "./history";
 import { validateMergeTarget } from "./merge";
 import { requireNextStatus, requireTicket } from "./ticketContext";
 import { mergeAssigneeIds } from "./ticketPatch";
+
+type ApprovedTicketRouting = ReturnType<typeof resolveApprovedTicketRouting>;
+
+const normalizeApprovalStepId = (approvalStepId: string | null) => {
+  if (approvalStepId === null) {
+    return null;
+  }
+
+  const numericApprovalStepId = Number(approvalStepId);
+
+  return Number.isFinite(numericApprovalStepId)
+    ? numericApprovalStepId
+    : approvalStepId;
+};
+
+const requireApprovalStepId = (ticket: DbTicketDetail) => {
+  if (ticket.approval_step_id !== null) {
+    return ticket.approval_step_id;
+  }
+
+  throw new ServiceDeskApiError(
+    "api.ticketCommand.localDemo.approvalForbidden",
+    403,
+    { ticketId: ticket.id },
+  );
+};
+
+const requireApprovalTicket = (
+  context: Parameters<LocalActionHandler>[0],
+): DbTicketDetail => {
+  const ticket = requireTicket(context);
+  const isApprovalPhase =
+    ticket.assignment_phase === "APPROVAL" || ticket.approval_step_id !== null;
+
+  if (
+    ticket.active &&
+    ticket.status === "Approval" &&
+    isApprovalPhase &&
+    ticket.approval_step_id !== null &&
+    ticket.assignee_usernames.includes(context.employeeUserName)
+  ) {
+    return ticket;
+  }
+
+  throw new ServiceDeskApiError(
+    "api.ticketCommand.localDemo.approvalForbidden",
+    403,
+    {
+      ticketId: ticket.id,
+      username: context.employeeUserName,
+    },
+  );
+};
+
+const buildApprovalRoutingPatch = (
+  routing: ApprovedTicketRouting,
+  employeeUserName: string,
+): Partial<DbTicketDetail> => {
+  const isApprovalPhase = routing.approvalStepId !== null;
+  const assigned = routing.assigneeUsernames.includes(employeeUserName);
+
+  return {
+    status: routing.status,
+    approval_step_id: routing.approvalStepId,
+    assignment_phase: isApprovalPhase ? "APPROVAL" : "WORK",
+    approval_assignee_usernames: isApprovalPhase
+      ? routing.assigneeUsernames
+      : [],
+    work_assignee_usernames: isApprovalPhase ? [] : routing.assigneeUsernames,
+    assignee_usernames: routing.assigneeUsernames,
+    assigned_approver: isApprovalPhase ? assigned : false,
+    assigned_worker: isApprovalPhase ? false : assigned,
+    assigned,
+  };
+};
+
+const approveTicket: LocalActionHandler = (context) => {
+  const ticket = requireApprovalTicket(context);
+  const currentApprovalStepId = requireApprovalStepId(ticket);
+  const routing = resolveApprovedTicketRouting({
+    isInternal: context.isInternal ?? false,
+    categoryId: ticket.category_id,
+    parentCategoryId: ticket.category_parent_id ?? ticket.category_id,
+    requesterUsername: ticket.requester_username,
+    currentApprovalStepId,
+  });
+
+  return {
+    history: {
+      type: "APPROVAL",
+      action: "APPROVAL_APPROVED",
+      from_value: {
+        approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
+      },
+      to_value: {
+        nextApprovalStepId: normalizeApprovalStepId(routing.approvalStepId),
+      },
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        note: context.content.content.trim(),
+      },
+    },
+    ticketPatch: buildApprovalRoutingPatch(routing, context.employeeUserName),
+  };
+};
+
+const declineTicket: LocalActionHandler = (context) => {
+  const ticket = requireApprovalTicket(context);
+  const nextStatus = requireNextStatus(context);
+
+  return {
+    history: {
+      type: "APPROVAL",
+      action: "APPROVAL_DECLINED",
+      from_value: {
+        approvalStepId: normalizeApprovalStepId(requireApprovalStepId(ticket)),
+      },
+      to_value: null,
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        reason: context.content.content.trim(),
+      },
+    },
+    ticketPatch: {
+      status: nextStatus,
+    },
+  };
+};
 
 const assignTicket: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
@@ -127,6 +259,8 @@ const adjustTicket: LocalActionHandler = (context) => {
 };
 
 export const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
+  approve: { handler: approveTicket, needsTicket: true },
+  decline: { handler: declineTicket, needsTicket: true },
   comment: { handler: createMessageHistory("COMMENT") },
   note: { handler: createMessageHistory("NOTE") },
   assign: { handler: assignTicket, needsTicket: true },

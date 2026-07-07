@@ -45,7 +45,10 @@ export function TicketHeader({
 
   const { t } = useTranslation(NS.serviceDesk);
   const canRequesterUpdateTicket =
-    !!ticket && ticket.owner && ticket.active && ticket.status === "Open";
+    !!ticket &&
+    ticket.owner &&
+    ticket.active &&
+    (ticket.status === "Approval" || ticket.status === "Assigned");
 
   return (
     <header className="flex flex-wrap items-center justify-between gap-2 pb-2 pr-1 text-foreground sm:pr-4">

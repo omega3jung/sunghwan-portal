@@ -6,13 +6,13 @@ import { TicketDetail } from "@/domain/serviceDesk";
 
 import { useStartTicketWorkMutation } from "../api/mutations";
 
-type UseAutoStartApprovedTicketOnViewParams = {
+type UseAutoStartAssignedTicketOnViewParams = {
   ticket: TicketDetail | null | undefined;
 };
 
-export function useAutoStartApprovedTicketOnView({
+export function useAutoStartAssignedTicketOnView({
   ticket,
-}: UseAutoStartApprovedTicketOnViewParams) {
+}: UseAutoStartAssignedTicketOnViewParams) {
   const executedRef = useRef(false);
   const { mutate, isPending } = useStartTicketWorkMutation();
 
@@ -23,7 +23,7 @@ export function useAutoStartApprovedTicketOnView({
   useEffect(() => {
     const shouldAutoStart =
       ticket?.active === true &&
-      ticket.status === "Approved" &&
+      ticket.status === "Assigned" &&
       ticket.assignmentPhase === "WORK" &&
       ticket.assignedWorker === true;
 

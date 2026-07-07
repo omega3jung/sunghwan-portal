@@ -9,10 +9,23 @@ import {
 } from "@/shared/utils/routing";
 
 import { TicketSearchCriteriaFormValues } from "./forms";
+import {
+  expandTicketStatusFilters,
+  normalizeTicketStatusFilterValues,
+} from "./statusFilter";
+
+export const normalizeTicketSearchCriteriaFormValues = (
+  values: TicketSearchCriteriaFormValues,
+): TicketSearchCriteriaFormValues => ({
+  ...values,
+  status: normalizeTicketStatusFilterValues(values.status),
+});
 
 export const mapSearchCriteriaToDbParams = (
   values: TicketSearchCriteriaFormValues,
 ): DbParams => {
+  const statusValues = expandTicketStatusFilters(values.status);
+
   const filter = combineRuleGroups([
     createFieldFilter({
       field: "active",
@@ -31,7 +44,7 @@ export const mapSearchCriteriaToDbParams = (
 
     createEqualsAnyFilter({
       field: "status",
-      values: values.status,
+      values: statusValues,
     }),
 
     createEqualsAnyFilter({

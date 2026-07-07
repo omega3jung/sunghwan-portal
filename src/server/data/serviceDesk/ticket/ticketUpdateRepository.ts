@@ -89,10 +89,11 @@ set
   tk_risk_level = $10,
   tk_approval_step_id = $11,
   tk_assignee_usernames = $12::text[],
+  tk_status = $13,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
-  and tk_status = 'Open'
+  and tk_status in ('Approval', 'Assigned')
 returning tk_id;
 `;
 
@@ -143,6 +144,7 @@ export async function updateRequesterTicketRowById(
       input.tk_risk_level,
       input.tk_approval_step_id,
       input.tk_assignee_usernames,
+      input.tk_status,
     ],
   );
   const updatedTicketId = rows[0]?.tk_id;

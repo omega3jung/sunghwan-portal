@@ -25,7 +25,7 @@ export function startTicketWorkLocal({
 
   validateAssignee(ticket, employeeUserName);
 
-  if (ticket.status !== "Approved") {
+  if (ticket.status !== "Assigned") {
     return ticket;
   }
 

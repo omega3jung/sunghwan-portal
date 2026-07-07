@@ -37,7 +37,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "APPROVAL_APPROVED",
 
     tkh_actor_username: "olivia_johnson",
-    tkh_action_no: null,
+    tkh_action_no: "1",
 
     tkh_created_at: "2026-05-27T01:20:05Z",
   },
@@ -68,7 +68,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: "evan_seo",
     tkh_action_no: null,
 
-    tkh_from_value: "Open",
+    tkh_from_value: "Assigned",
     tkh_to_value: "Working",
 
     tkh_created_at: "2026-05-27T01:21:10Z",
@@ -82,7 +82,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "evan_seo",
-    tkh_action_no: "1",
+    tkh_action_no: "2",
 
     tkh_created_at: "2026-05-27T01:23:18Z",
   },
@@ -95,7 +95,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "liam_williams",
-    tkh_action_no: "2",
+    tkh_action_no: "3",
 
     tkh_created_at: "2026-05-27T01:40:42Z",
   },
@@ -108,7 +108,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "evan_seo",
-    tkh_action_no: "3",
+    tkh_action_no: "4",
 
     tkh_created_at: "2026-05-30T01:12:20Z",
   },
@@ -137,7 +137,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "mason_kwon",
-    tkh_action_no: "4",
+    tkh_action_no: "5",
 
     tkh_created_at: "2026-05-30T01:48:10Z",
   },

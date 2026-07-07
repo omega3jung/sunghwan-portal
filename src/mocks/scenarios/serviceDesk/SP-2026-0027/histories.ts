@@ -37,7 +37,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "APPROVAL_APPROVED",
 
     tkh_actor_username: "__demo_leader__",
-    tkh_action_no: null,
+    tkh_action_no: "1",
 
     tkh_created_at: "2026-06-24T01:18:09Z",
   },

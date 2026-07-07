@@ -4,6 +4,8 @@
     "note": "Note",
     "assign": "Assigner",
     "assignToMe": "M'assigner",
+    "approve": "Approuver",
+    "decline": "Refuser",
     "reject": "Rejeter",
     "merge": "Fusionner",
     "adjust": "Ajuster",
@@ -160,7 +162,7 @@
   "detailPage": {
     "detailsTitle": "Détails du ticket",
     "descriptionTitleHint": "Détails essentiels de la demande et activité récente en un coup d'œil.",
-    "replyTitle": "Répondre",
+    "replyTitle": "Outils",
     "replyTitleHint": "Répondez, laissez une note interne et consultez la discussion dans un flux continu.",
     "notFound": "Ticket introuvable."
   },
@@ -232,6 +234,8 @@
     "currentUser": "Utilisateur actuel",
     "currentUserFallback": "Vous",
     "launcher": {
+      "approve": "Approuvez cette étape et faites passer le ticket à l'étape suivante.",
+      "decline": "Refusez cette demande d'approbation et consignez le motif.",
       "comment": "Publiez une réponse visible pour le demandeur et les personnes abonnées.",
       "note": "Laissez une note interne qui reste dans l'équipe.",
       "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
@@ -243,6 +247,8 @@
       "resubmit": "Renvoyez cette demande rejetée pour révision."
     },
     "helper": {
+      "approve": "Ajoutez une note d'approbation avant de transmettre le ticket.",
+      "decline": "Expliquez pourquoi cette demande d'approbation est refusée.",
       "comment": "Partagez une mise à jour publique avec toutes les personnes qui suivent ce ticket.",
       "note": "Ajoutez une note interne pour l'équipe du Service Desk.",
       "assign": "Mettez à jour les responsables ou déplacez le ticket vers une autre catégorie.",
@@ -254,6 +260,8 @@
       "resubmit": "Expliquez ce qui a changé avant de renvoyer cette demande rejetée."
     },
     "submit": {
+      "approve": "Approuver",
+      "decline": "Refuser",
       "comment": "Publier le commentaire",
       "note": "Enregistrer la note",
       "assign": "Enregistrer l'attribution",
@@ -278,7 +286,11 @@
     },
     "form": {
       "editorLabel": "Motif",
+      "approvalNoteLabel": "Note d'approbation",
+      "declineReasonLabel": "Motif du refus",
       "editorPlaceholder": {
+        "approve": "Ajoutez une note pour cette approbation",
+        "decline": "Décrivez pourquoi cette approbation doit être refusée",
         "comment": "Rédigez un commentaire et faites avancer la conversation",
         "note": "Partagez une note interne pour ce ticket",
         "assign": "Partagez le contexte d'attribution pour la prochaine personne responsable",
@@ -492,6 +504,7 @@
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
         "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
         "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
+        "approvalForbidden": "Seule la personne approbatrice assignée peut approuver ou refuser ce ticket.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
         "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",

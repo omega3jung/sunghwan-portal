@@ -7,6 +7,8 @@ import { ticketActionPayloadSchema } from "./forms/schema";
 export type TicketActionFormValues = z.infer<typeof ticketActionPayloadSchema>;
 
 export type TicketActionMode =
+  | "approve"
+  | "decline"
   | "comment"
   | "note"
   | "assign"

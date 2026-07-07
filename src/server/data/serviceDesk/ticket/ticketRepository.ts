@@ -136,7 +136,7 @@ set
   tk_ticket_no = $2,
   tk_tenant_id = $3,
   tk_category_id = $4,
-  tk_approval_step_id = null,
+  tk_approval_step_id = $15,
   tk_requester_username = $5,
   tk_assignee_usernames = array[]::text[],
   tk_email = $6::jsonb,
@@ -144,7 +144,7 @@ set
   tk_content = $8,
   tk_files = $9::jsonb,
   tk_images = $10::jsonb,
-  tk_status = 'Open',
+  tk_status = $14,
   tk_priority = $11,
   tk_risk_level = $12,
   tk_due_at = $13,
@@ -185,10 +185,25 @@ update service_desk.ticket
 set
   tk_approval_step_id = $2,
   tk_assignee_usernames = $3::text[],
-  tk_status = 'Open',
+  tk_status = $4,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
+returning tk_id;
+`;
+
+const UPDATE_TICKET_APPROVAL_ROUTING_BY_ID_QUERY = `
+update service_desk.ticket
+set
+  tk_approval_step_id = $2,
+  tk_assignee_usernames = $3::text[],
+  tk_status = $4,
+  tk_updated_at = now()
+where tk_id = $1
+  and tk_active = true
+  and tk_status = 'Approval'
+  and tk_approval_step_id = $5::bigint
+  and $6 = any(tk_assignee_usernames)
 returning tk_id;
 `;
 
@@ -278,9 +293,10 @@ export async function findNextTicketNumber(
   options: TicketRepositoryOptions = {},
 ): Promise<string> {
   const query = options.query ?? queryPortalApi;
-  const rows = await query<{ ticket_no: string }>(FIND_NEXT_TICKET_NUMBER_QUERY, [
-    year,
-  ]);
+  const rows = await query<{ ticket_no: string }>(
+    FIND_NEXT_TICKET_NUMBER_QUERY,
+    [year],
+  );
 
   return rows[0]?.ticket_no ?? `SP-${year}-0001`;
 }
@@ -320,6 +336,8 @@ export async function submitDraftTicketRowById(
       input.tk_priority,
       input.tk_risk_level,
       input.tk_due_at,
+      input.tk_status,
+      input.tk_approval_step_id,
     ],
   );
   const submittedTicketId = rows[0]?.tk_id;
@@ -387,13 +405,44 @@ export async function updateTicketInitialRoutingById(
   input: {
     approvalStepId: number | string | null;
     assigneeUsernames: string[];
+    status: ServiceDeskTicketViewRow["tk_status"];
   },
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ tk_id: string }>(
     UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY,
-    [ticketId, input.approvalStepId, input.assigneeUsernames],
+    [ticketId, input.approvalStepId, input.assigneeUsernames, input.status],
+  );
+  const updatedTicketId = rows[0]?.tk_id;
+
+  return updatedTicketId
+    ? findActiveTicketViewRowById(updatedTicketId, options)
+    : null;
+}
+
+export async function updateTicketApprovalRoutingById(
+  ticketId: string,
+  input: {
+    approvalStepId: number | string | null;
+    assigneeUsernames: string[];
+    status: ServiceDeskTicketViewRow["tk_status"];
+    currentApprovalStepId: number | string;
+    currentApproverUsername: string;
+  },
+  options: TicketRepositoryOptions = {},
+): Promise<ServiceDeskTicketViewRow | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ tk_id: string }>(
+    UPDATE_TICKET_APPROVAL_ROUTING_BY_ID_QUERY,
+    [
+      ticketId,
+      input.approvalStepId,
+      input.assigneeUsernames,
+      input.status,
+      input.currentApprovalStepId,
+      input.currentApproverUsername,
+    ],
   );
   const updatedTicketId = rows[0]?.tk_id;
 
@@ -408,23 +457,20 @@ export async function updateTicketRowById(
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_ROW_BY_ID_QUERY,
-    [
-      ticketId,
-      input.tk_tenant_id,
-      input.tk_category_id,
-      input.tk_approval_step_id,
-      JSON.stringify(input.tk_email),
-      input.tk_subject,
-      input.tk_content,
-      JSON.stringify(input.tk_files),
-      JSON.stringify(input.tk_images),
-      input.tk_priority,
-      input.tk_risk_level,
-      input.tk_due_at,
-    ],
-  );
+  const rows = await query<{ tk_id: string }>(UPDATE_TICKET_ROW_BY_ID_QUERY, [
+    ticketId,
+    input.tk_tenant_id,
+    input.tk_category_id,
+    input.tk_approval_step_id,
+    JSON.stringify(input.tk_email),
+    input.tk_subject,
+    input.tk_content,
+    JSON.stringify(input.tk_files),
+    JSON.stringify(input.tk_images),
+    input.tk_priority,
+    input.tk_risk_level,
+    input.tk_due_at,
+  ]);
   const updatedTicketId = rows[0]?.tk_id;
 
   return updatedTicketId
@@ -472,14 +518,7 @@ export async function findActiveTicketViewRowsBySearch(
 type TicketFilterConnector = "and" | "or";
 
 type TicketFilterOperator =
-  | "="
-  | "!="
-  | "contains"
-  | "in"
-  | ">"
-  | ">="
-  | "<"
-  | "<=";
+  "=" | "!=" | "contains" | "in" | ">" | ">=" | "<" | "<=";
 
 type TicketFilterLeaf = {
   field?: string;

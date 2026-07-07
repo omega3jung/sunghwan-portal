@@ -69,7 +69,7 @@ export function toTicketMockDetail(
   id = createMockId(),
 ): TicketDetail {
   const now = new Date().toISOString();
-  const status: TicketStatus = "Open";
+  const status: TicketStatus = "Assigned";
 
   return {
     id,

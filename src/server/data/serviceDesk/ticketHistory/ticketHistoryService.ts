@@ -1,7 +1,4 @@
-import {
-  CreateTicketHistoryInput,
-  TicketHistoryDto,
-} from "./ticketHistoryDto";
+import { CreateTicketHistoryInput, TicketHistoryDto } from "./ticketHistoryDto";
 import { mapTicketHistoryRowToDto } from "./ticketHistoryMapper";
 import {
   createTicketHistoryRow,
@@ -159,7 +156,7 @@ export async function createHistoryOfApprovalDeclined(
       ticketId: params.ticketId,
       actionNo: params.actionNo ?? null,
       historyType: "APPROVAL",
-      historyAction: "TICKET_REJECTED",
+      historyAction: "APPROVAL_DECLINED",
       actorUsername: params.actorUsername,
       fromValue: { approvalStepId: params.approvalStepId },
       toValue: null,
@@ -183,8 +180,7 @@ export async function createHistoryOfAssignmentChange(
   options?: TicketHistoryServiceOptions,
 ): Promise<TicketHistoryDto> {
   const fromAssigneeUsernames = params.fromAssigneeUsernames ?? [];
-  const event =
-    fromAssigneeUsernames.length > 0 ? "REASSIGNED" : "ASSIGNED";
+  const event = fromAssigneeUsernames.length > 0 ? "REASSIGNED" : "ASSIGNED";
 
   return createTicketHistory(
     {

@@ -4,14 +4,15 @@ import { statusBadgeLocales, statusLocaleKey } from "./locales";
 import { SystemStatus } from "./types";
 
 const statusOptionValues = [
-  "Open",
-  "Reopen",
-  "Approved",
+  "Draft",
+  "Approval",
   "Declined",
+  "Assigned",
   "Working",
   "Pending",
   "Rejected",
   "Resolved",
+  "Reopened",
   "Closed",
 ] as const satisfies readonly SystemStatus[];
 

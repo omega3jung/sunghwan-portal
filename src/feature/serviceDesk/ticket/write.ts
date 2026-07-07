@@ -103,7 +103,7 @@ export const ticketMutateRequestPayloadSchema = z.object({
   approvalStepId: z.number().int().positive().nullable().optional(),
   subject: z.string().trim().min(1).max(200),
   body: z.string().trim().min(1),
-  dueAt: z.string().datetime(),
+  dueAt: z.iso.datetime(),
   priority: z.enum(["urgent", "high", "medium", "low"]).nullable(),
   riskLevel: z
     .enum(["critical", "high", "medium", "low"])

@@ -1,3 +1,4 @@
+import type { TicketStatus } from "@/domain/serviceDesk";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import {
@@ -92,12 +93,23 @@ export async function createTicket(
       new Date().getUTCFullYear(),
       repositoryOptions,
     ));
-  const rowInput = {
-    ...mapTicketCreateRequestDtoToRowInput(input, {
-      ticketNo,
+  const baseRowInput = mapTicketCreateRequestDtoToRowInput(input, {
+    ticketNo,
+    requesterUsername: options.requesterUsername,
+  });
+  const routing = await resolveInitialTicketRouting(
+    {
       requesterUsername: options.requesterUsername,
-    }),
-    tk_approval_step_id: null,
+      categoryId: baseRowInput.tk_category_id,
+    },
+    repositoryOptions,
+  );
+  const routedStatus: TicketStatus =
+    routing.phase === "APPROVAL" ? "Approval" : "Assigned";
+  const rowInput = {
+    ...baseRowInput,
+    tk_approval_step_id: routing.approvalStepId,
+    tk_status: routedStatus,
   };
   const existingDraftTicketId =
     input.id ??
@@ -133,19 +145,12 @@ export async function createTicket(
     repositoryOptions,
   );
 
-  const routing = await resolveInitialTicketRouting(
-    {
-      requesterUsername: options.requesterUsername,
-      categoryId: row.cat_id,
-    },
-    repositoryOptions,
-  );
-
   const routedRow = await updateTicketInitialRoutingById(
     row.tk_id,
     {
       approvalStepId: routing.approvalStepId,
       assigneeUsernames: routing.assigneeUsernames,
+      status: routing.phase === "APPROVAL" ? "Approval" : "Assigned",
     },
     repositoryOptions,
   );

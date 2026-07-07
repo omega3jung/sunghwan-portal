@@ -3,4 +3,4 @@
 "use client";
 // client export only.
 
-export * from "./useAutoStartApprovedTicketOnView";
+export * from "./useAutoStartAssignedTicketOnView";

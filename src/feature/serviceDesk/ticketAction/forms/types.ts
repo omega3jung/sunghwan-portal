@@ -18,6 +18,14 @@ type TicketActionDraftBase = Pick<
   "content" | "attachment"
 >;
 
+export type TicketApproveDraftValues = TicketActionDraftBase & {
+  actionType: "APPROVE";
+};
+
+export type TicketDeclineDraftValues = TicketActionDraftBase & {
+  actionType: "DECLINE";
+};
+
 export type TicketCommentDraftValues = TicketActionDraftBase & {
   actionType: "COMMENT";
 };

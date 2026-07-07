@@ -6,6 +6,24 @@ import { TICKET_ACTION_TYPE_TO_PATH } from "../constants";
 import { TicketActionCommandInput, TicketActionDeleteInput } from "../types";
 
 type TicketActionResponse = OResponse<TicketAction>;
+type ApprovalTicketActionRequest = {
+  content: string;
+};
+
+function toTicketActionRequestBody({
+  actionType,
+  values,
+}: Pick<TicketActionCommandInput, "actionType" | "values">):
+  | TicketActionCommandInput["values"]
+  | ApprovalTicketActionRequest {
+  if (actionType === "APPROVE" || actionType === "DECLINE") {
+    return {
+      content: values.content,
+    };
+  }
+
+  return values;
+}
 
 async function executeAction({
   ticketId,
@@ -13,10 +31,11 @@ async function executeAction({
   values,
 }: TicketActionCommandInput): Promise<TicketAction> {
   const actionPath = TICKET_ACTION_TYPE_TO_PATH[actionType];
+  const body = toTicketActionRequestBody({ actionType, values });
 
   const res = await client.api.post<TicketAction>(
     `/api/service-desk/tickets/${ticketId}/command/${actionPath}`,
-    values,
+    body,
   );
 
   return res.data;
@@ -53,6 +72,12 @@ export const serviceDeskTicketActionApi = {
 
   note: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "NOTE" }),
+
+  approve: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "APPROVE" }),
+
+  decline: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "DECLINE" }),
 
   assign: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "ASSIGN" }),

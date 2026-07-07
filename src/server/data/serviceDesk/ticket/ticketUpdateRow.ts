@@ -1,5 +1,5 @@
 import type { Priority, RiskLevel } from "@/domain/common";
-import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
+import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
 import type { ServiceDeskTicketEmail } from "./ticketRow";
@@ -14,6 +14,7 @@ export type RequesterUpdateTicketRowInput = {
   tk_images: TicketAttachmentMetadata[];
   tk_priority: Priority;
   tk_risk_level: RiskLevel;
+  tk_status: TicketStatus;
   tk_approval_step_id: number | string | null;
   tk_assignee_usernames: string[];
 };

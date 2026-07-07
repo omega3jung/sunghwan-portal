@@ -9,7 +9,6 @@ import {
   type TreeMultiComboBoxOption,
 } from "@/components/custom/MultiComboBox";
 import { getStatusOptions } from "@/components/custom/StatusBadge/options";
-import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import type { MainCategory } from "@/domain/serviceDesk";
 import {
@@ -22,7 +21,10 @@ import { useLocalizedText } from "@/shared/hooks";
 import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";
-import { createTicketCategoryOptions } from "./options";
+import {
+  createTicketCategoryOptions,
+  createTicketStatusFilterOptions,
+} from "./options";
 import { TicketDueByField } from "./TicketDueByField";
 import { TicketPeriodField } from "./TicketPeriodField";
 import { appendUnique, removeValue } from "./utils";
@@ -33,43 +35,24 @@ type Props = {
   users: ImageValueLabel[];
 };
 
-const statusBadgeOrderByValue: Record<SystemStatus, number> = {
-  Draft: 7,
-  Open: 5,
-  Reopen: 4,
-  Approved: 1,
-  Declined: 3,
-  Working: 4,
-  Pending: 6,
-  Resolved: 2,
-  Rejected: 3,
-  Closed: 0,
-};
-
 export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedText(userPreference.language);
 
-  const statusOptions = useMemo(
-    () => getStatusOptions(userPreference.language),
+  const statusOptions = useMemo<TreeMultiComboBoxOption[]>(
+    () =>
+      createTicketStatusFilterOptions(
+        getStatusOptions(userPreference.language),
+        userPreference.language,
+      ),
     [userPreference.language],
   );
 
   const categoryOptions = useMemo<TreeMultiComboBoxOption[]>(
     () => createTicketCategoryOptions(categories, tLocal),
     [categories, tLocal],
-  );
-  const statusBadgeOrderMap = useMemo(
-    () =>
-      new Map(
-        statusOptions.map((option, index) => [
-          option.value,
-          statusBadgeOrderByValue[option.value] ?? index,
-        ]),
-      ),
-    [statusOptions],
   );
 
   const priorityData = useMemo((): ValueLabel[] => {
@@ -136,19 +119,13 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
                 control={form.control}
                 name="status"
                 render={({ field }) => (
-                  <MultiComboBox
+                  <TreeMultiComboBox
                     id="ticket-search-select-status"
                     badgeVariant="palette"
-                    badgeOrderMap={statusBadgeOrderMap}
                     paletteStart={10}
                     options={statusOptions}
                     value={field.value}
-                    onSelect={(selected) => {
-                      field.onChange(appendUnique(field.value, selected));
-                    }}
-                    onRemove={(selected) => {
-                      field.onChange(removeValue(field.value, selected));
-                    }}
+                    onChange={field.onChange}
                     placeholder={t("placeholder.select", {
                       ns: NS.common,
                       target: tCommon("field.status"),

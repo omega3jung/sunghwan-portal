@@ -6,7 +6,7 @@ export const ticket: TicketMockInput = {
   tk_created_at: "2026-06-24T01:13:27Z",
   tk_updated_at: "2026-06-24T01:18:10Z",
   tk_requester_username: "__demo_user__",
-  tk_status: "Approved",
+  tk_status: "Assigned",
   tk_close_reason: null,
   tk_priority: "medium",
   tk_risk_level: "low",
@@ -31,7 +31,7 @@ export const ticket: TicketMockInput = {
   tk_approval_step_id: null,
   tk_subject: "승인된 티켓 자동 작업 시작 테스트",
   tk_content:
-    "이 티켓은 상태 자동 변경 흐름을 테스트하기 위해 준비되었습니다.<br>담당자가 티켓 상태가 'Approved'인 상태에서 티켓 상세 화면을 열면 상태가 자동으로 'Working'으로 변경되어야 합니다.",
+    "이 티켓은 상태 자동 변경 흐름을 테스트하기 위해 준비되었습니다.<br>담당자가 티켓 상태가 'Assigned'인 상태에서 티켓 상세 화면을 열면 상태가 자동으로 'Working'으로 변경되어야 합니다.",
   tk_email: {
     to: ["demoAdmin@sunghwan-portal.dev"],
     cc: ["demoUser@sunghwan-portal.dev", "demoManager@sunghwan-portal.dev"],

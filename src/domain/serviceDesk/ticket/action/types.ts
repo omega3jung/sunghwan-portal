@@ -3,6 +3,8 @@ import { Role } from "@/domain/auth";
 import { TicketStatus } from "../../types";
 
 export type TicketActionType =
+  | "APPROVE"
+  | "DECLINE"
   | "COMMENT"
   | "NOTE"
   | "ASSIGN"

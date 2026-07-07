@@ -11,6 +11,8 @@ export type Translate = (
 ) => string;
 
 export const EDITOR_PLACEHOLDER_KEY: Record<TicketActionMode, string> = {
+  approve: "actionTool.form.editorPlaceholder.approve",
+  decline: "actionTool.form.editorPlaceholder.decline",
   comment: "actionTool.form.editorPlaceholder.comment",
   note: "actionTool.form.editorPlaceholder.note",
   assign: "actionTool.form.editorPlaceholder.assign",
@@ -46,6 +48,10 @@ export function getFieldClassName(mode: TicketActionMode) {
 
 export function getFieldLabel(mode: TicketActionMode, t: Translate) {
   switch (mode) {
+    case "approve":
+      return t("actionTool.form.approvalNoteLabel");
+    case "decline":
+      return t("actionTool.form.declineReasonLabel");
     case "comment":
       return t("field.comment", { ns: NS.common });
     case "note":
@@ -60,6 +66,8 @@ export function isControlledEditorMode(mode: TicketActionMode) {
     mode === "assign" ||
     mode === "adjust" ||
     mode === "merge" ||
+    mode === "approve" ||
+    mode === "decline" ||
     mode === "reject"
   );
 }

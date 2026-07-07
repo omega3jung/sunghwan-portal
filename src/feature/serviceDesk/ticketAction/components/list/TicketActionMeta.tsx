@@ -20,6 +20,8 @@ type TicketActionMetaProps = {
 };
 
 const ACTION_BADGE_CLASSNAME: Record<TicketAction["actionType"], string> = {
+  APPROVE: "bg-emerald-50 text-emerald-700 hover:bg-emerald-50",
+  DECLINE: "bg-rose-50 text-rose-700 hover:bg-rose-50",
   COMMENT: "bg-slate-100 text-slate-700 hover:bg-slate-100",
   NOTE: "bg-amber-50 text-amber-700 hover:bg-amber-50",
   ASSIGN: "bg-sky-50 text-sky-700 hover:bg-sky-50",

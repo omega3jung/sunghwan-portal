@@ -16,7 +16,7 @@ export const requesterUpdateTicketRequestSchema = z
     categoryId: requesterUpdateCategoryIdSchema,
     subject: z.string().trim().min(1).max(200),
     content: z.string().trim().min(1),
-    dueAt: z.string().datetime(),
+    dueAt: z.iso.datetime(),
     email: ticketEmailSchema,
     files: z.array(ticketAttachmentMetadataSchema).default([]),
     images: z.array(ticketAttachmentMetadataSchema).default([]),

@@ -6,6 +6,7 @@ export type TicketActionRow = {
   tka_action_no: number;
   tka_action_type: TicketActionType | string;
   tka_content: string | null;
+  tka_metadata: unknown | null;
   tka_files: unknown | null;
   tka_images: unknown | null;
   tka_owner_username: string | null;

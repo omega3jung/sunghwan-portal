@@ -4,6 +4,8 @@
     "note": "Note",
     "assign": "Assign",
     "assignToMe": "Assign to me",
+    "approve": "Approve",
+    "decline": "Decline",
     "reject": "Reject",
     "merge": "Merge",
     "adjust": "Adjust",
@@ -160,7 +162,7 @@
   "detailPage": {
     "detailsTitle": "Ticket Details",
     "descriptionTitleHint": "Core request details and the latest at-a-glance activity.",
-    "replyTitle": "Reply",
+    "replyTitle": "Tools",
     "replyTitleHint": "Reply, leave an internal note, and review discussion in one continuous workflow.",
     "notFound": "Ticket not found."
   },
@@ -232,6 +234,8 @@
     "currentUser": "Current user",
     "currentUserFallback": "You",
     "launcher": {
+      "approve": "Approve this step and move the ticket to the next stage.",
+      "decline": "Decline this approval request and record the reason.",
       "comment": "Post a public reply to the requester and watchers.",
       "note": "Leave an internal note that stays inside the team.",
       "assign": "Update assignees or move the ticket into another category.",
@@ -243,6 +247,8 @@
       "resubmit": "Send this rejected request back for review."
     },
     "helper": {
+      "approve": "Leave an approval note before sending the ticket onward.",
+      "decline": "Explain why this approval request is being declined.",
       "comment": "Share a public update with everyone following this ticket.",
       "note": "Add an internal note for the service desk team.",
       "assign": "Update assignees or move the ticket into another category.",
@@ -254,6 +260,8 @@
       "resubmit": "Explain what changed before resubmitting this rejected request."
     },
     "submit": {
+      "approve": "Approve",
+      "decline": "Decline",
       "comment": "Post comment",
       "note": "Save note",
       "assign": "Save assignment",
@@ -278,7 +286,11 @@
     },
     "form": {
       "editorLabel": "Reason",
+      "approvalNoteLabel": "Approval note",
+      "declineReasonLabel": "Decline reason",
       "editorPlaceholder": {
+        "approve": "Leave a note for this approval",
+        "decline": "Describe why this approval should be declined",
         "comment": "Write a comment and keep the conversation moving",
         "note": "Share an internal note for this ticket",
         "assign": "Share assignment context for the next owner",
@@ -492,6 +504,7 @@
         "ticketNotFound": "Ticket {{ticketId}} not found.",
         "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
+        "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",
         "mergeTargetNotFound": "Merge target not found.",

@@ -4,6 +4,8 @@
     "note": "메모",
     "assign": "할당",
     "assignToMe": "나에게 할당",
+    "approve": "승인",
+    "decline": "승인 반려",
     "reject": "반려",
     "merge": "병합",
     "adjust": "조정",
@@ -160,7 +162,7 @@
   "detailPage": {
     "detailsTitle": "티켓 상세 정보",
     "descriptionTitleHint": "핵심 요청 내용과 최신 활동을 한눈에 확인하세요.",
-    "replyTitle": "답글",
+    "replyTitle": "도구",
     "replyTitleHint": "답글을 남기고, 내부 메모를 작성하고, 대화를 한 흐름에서 검토하세요.",
     "notFound": "티켓을 찾을 수 없습니다."
   },
@@ -232,6 +234,8 @@
     "currentUser": "현재 사용자",
     "currentUserFallback": "나",
     "launcher": {
+      "approve": "이 승인 단계를 승인하고 티켓을 다음 단계로 넘기세요.",
+      "decline": "승인 요청을 반려하고 사유를 기록하세요.",
       "comment": "요청자와 참조자에게 공개 답글을 남기세요.",
       "note": "팀 내부에만 남는 내부 메모를 작성하세요.",
       "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
@@ -243,6 +247,8 @@
       "resubmit": "반려된 요청을 다시 검토받도록 재제출하세요."
     },
     "helper": {
+      "approve": "승인 메모를 남기고 다음 승인자 또는 작업 담당자에게 넘깁니다.",
+      "decline": "승인 반려 사유를 남기면 티켓이 Declined 상태가 됩니다.",
       "comment": "이 티켓을 지켜보는 모두에게 공개 업데이트를 공유하세요.",
       "note": "서비스 데스크 팀을 위한 내부 메모를 남기세요.",
       "assign": "담당자를 변경하거나 티켓을 다른 카테고리로 이동하세요.",
@@ -254,6 +260,8 @@
       "resubmit": "반려된 요청을 재제출하기 전에 무엇이 바뀌었는지 설명하세요."
     },
     "submit": {
+      "approve": "승인",
+      "decline": "승인 반려",
       "comment": "댓글 등록",
       "note": "메모 저장",
       "assign": "할당 저장",
@@ -278,7 +286,11 @@
     },
     "form": {
       "editorLabel": "사유",
+      "approvalNoteLabel": "승인 메모",
+      "declineReasonLabel": "반려 사유",
       "editorPlaceholder": {
+        "approve": "승인 메모를 남기세요",
+        "decline": "승인 반려 사유를 설명하세요",
         "comment": "댓글을 작성하고 대화를 이어가세요",
         "note": "이 티켓에 대한 내부 메모를 남기세요",
         "assign": "다음 담당자를 위한 할당 맥락을 남기세요",
@@ -492,6 +504,7 @@
         "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
         "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
         "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
+        "approvalForbidden": "할당된 승인자만 이 티켓을 승인하거나 반려할 수 있습니다.",
         "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
         "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
         "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",

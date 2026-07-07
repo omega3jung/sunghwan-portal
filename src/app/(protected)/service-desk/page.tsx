@@ -39,6 +39,7 @@ import { TicketList } from "@/feature/serviceDesk/ticket/components";
 import { TicketListPagination } from "@/feature/serviceDesk/ticket/components/TicketList/TicketListPagination";
 import { CreateTicketDialog } from "@/feature/serviceDesk/ticketDraft/client";
 import {
+  normalizeTicketSearchCriteriaFormValues,
   TicketSearchCriteria,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
@@ -199,14 +200,20 @@ export default function ServiceDeskPage() {
       return;
     }
 
-    form.reset(searchCriteriaState.value);
-    setCriteria(searchCriteriaState.value);
+    const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
+      searchCriteriaState.value,
+    );
+
+    form.reset(restoredCriteria);
+    setCriteria(restoredCriteria);
     setPage(1);
   }, [form, searchCriteriaState.hydrated, searchCriteriaState.value]);
 
   const handleSearchSubmit = async (values: TicketSearchCriteriaFormValues) => {
-    searchCriteriaState.setValue(values);
-    setCriteria(values);
+    const nextCriteria = normalizeTicketSearchCriteriaFormValues(values);
+
+    searchCriteriaState.setValue(nextCriteria);
+    setCriteria(nextCriteria);
     setPage(1);
   };
 

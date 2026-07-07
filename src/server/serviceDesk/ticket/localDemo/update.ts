@@ -6,9 +6,15 @@ import type { TicketMutateRequestPayload } from "@/feature/serviceDesk/ticket/wr
 
 import { getLocalDemoTickets } from "../state";
 import { resolveCategorySnapshot } from "./category";
+import { resolveCreateTicketRouting } from "./createRouting";
 import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
-const EDITABLE_TICKET_STATUSES: TicketStatus[] = ["Draft", "Open", "Declined"];
+const EDITABLE_TICKET_STATUSES: TicketStatus[] = [
+  "Draft",
+  "Approval",
+  "Assigned",
+  "Declined",
+];
 
 export const localUpdateTicket = ({
   isInternal,
@@ -43,9 +49,22 @@ export const localUpdateTicket = ({
     categoryId: String(input.categoryId),
   });
   const resetDeclinedFlow = ticket.status === "Declined";
+  const resetRouting = resetDeclinedFlow
+    ? resolveCreateTicketRouting({
+        isInternal,
+        categoryId: category.id,
+        parentCategoryId: category.parentId,
+        requesterUsername: ticket.requester_username,
+      })
+    : null;
+  const nextApprovalStepId =
+    resetRouting?.approvalStepId ?? ticket.approval_step_id;
+  const nextAssigneeUsernames =
+    resetRouting?.assigneeUsernames ?? ticket.assignee_usernames;
+  const isApprovalPhase = nextApprovalStepId !== null;
   const updatedTicket: DbTicketDetail = {
     ...ticket,
-    status: resetDeclinedFlow ? "Open" : ticket.status,
+    status: resetRouting?.status ?? ticket.status,
     close_reason: resetDeclinedFlow ? null : (ticket.close_reason ?? null),
     priority: resolvePriorityValue(input.priority, ticket.priority),
     risk_level:
@@ -56,7 +75,11 @@ export const localUpdateTicket = ({
     scope: category.scope,
     category_id: category.id,
     category_name: category.name,
-    approval_step_id: resetDeclinedFlow ? null : ticket.approval_step_id,
+    approval_step_id: nextApprovalStepId,
+    assignment_phase: isApprovalPhase ? "APPROVAL" : "WORK",
+    approval_assignee_usernames: isApprovalPhase ? nextAssigneeUsernames : [],
+    work_assignee_usernames: isApprovalPhase ? [] : nextAssigneeUsernames,
+    assignee_usernames: nextAssigneeUsernames,
     subject: input.subject,
     content: input.body,
     email: input.email,
