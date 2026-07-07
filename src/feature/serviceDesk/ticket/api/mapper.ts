@@ -1,4 +1,9 @@
-﻿import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
+import {
+  TicketAssignmentPhase,
+  TicketAssignmentState,
+  TicketDetail,
+  TicketSummary,
+} from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
@@ -17,22 +22,28 @@ export const camelTicketSummaryMapper: ArrayMapper<
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
-    requesterUsername: item.requester_id,
+    requesterUsername: item.requester_username,
     status: item.status,
     closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
     riskLevel: item.risk_level,
-    assigneeUsernames: item.assignee_id,
+    ...mapTicketAssignment(item),
     mergedIntoTicketId: item.merged_into_ticket_id,
+    mergedIntoTicketNo: item.merged_into_ticket_no,
     lastCommentAt: nullToUndefined(item.last_comment_at),
     lastCommenterEmail: nullToUndefined(item.last_commenter_email),
+    lastUserActivityAt: nullToUndefined(item.last_user_activity_at),
+    lastUserActivityEmail: nullToUndefined(item.last_user_activity_email),
+    closedAt: nullToUndefined(item.closed_at),
     workMinutes: item.work_minutes,
     dueAt: item.due_at,
     owner: item.owner,
-    assigned: item.assigned,
     active: item.active,
     scope: item.scope,
+    categoryId: item.category_id,
     categoryName: item.category_name,
+    categoryParentId: nullToUndefined(item.category_parent_id),
+    approvalStepId: item.approval_step_id ?? null,
     approvalStepName: nullToUndefined(item.approval_step_name),
     subject: item.subject,
     age: item.age,
@@ -48,24 +59,28 @@ export const camelTicketDetailMapper: ArrayMapper<
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
-    requesterUsername: item.requester_id,
+    requesterUsername: item.requester_username,
     status: item.status,
     closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
     riskLevel: item.risk_level,
-    assigneeUsernames: item.assignee_id,
+    ...mapTicketAssignment(item),
     mergedIntoTicketId: item.merged_into_ticket_id,
+    mergedIntoTicketNo: item.merged_into_ticket_no,
     lastCommentAt: nullToUndefined(item.last_comment_at),
     lastCommenterEmail: nullToUndefined(item.last_commenter_email),
+    lastUserActivityAt: nullToUndefined(item.last_user_activity_at),
+    lastUserActivityEmail: nullToUndefined(item.last_user_activity_email),
+    closedAt: nullToUndefined(item.closed_at),
     workMinutes: item.work_minutes,
     dueAt: item.due_at,
     owner: item.owner,
-    assigned: item.assigned,
     active: item.active,
     scope: item.scope,
     categoryId: item.category_id,
     categoryName: item.category_name,
-    approvalStepId: nullToUndefined(item.approval_step_id),
+    categoryParentId: nullToUndefined(item.category_parent_id),
+    approvalStepId: item.approval_step_id ?? null,
     subject: item.subject,
     content: item.content,
     email: item.email,
@@ -83,22 +98,34 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
-    requester_id: item.requesterUsername,
+    requester_username: item.requesterUsername,
     status: item.status,
     close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
     risk_level: item.riskLevel,
-    assignee_id: item.assigneeUsernames,
+    assignment_phase: item.assignmentPhase,
+    approval_assignee_usernames: item.approvalAssigneeUsernames,
+    work_assignee_usernames: item.workAssigneeUsernames,
+    assigned_approver: item.assignedApprover,
+    assigned_worker: item.assignedWorker,
+    assignee_usernames: selectCurrentResponsibleUsernames(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
+    merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
     last_commenter_email: undefinedToNull(item.lastCommenterEmail),
+    last_user_activity_at: undefinedToNull(item.lastUserActivityAt),
+    last_user_activity_email: undefinedToNull(item.lastUserActivityEmail),
+    closed_at: undefinedToNull(item.closedAt),
     work_minutes: item.workMinutes,
     due_at: item.dueAt,
     owner: item.owner,
-    assigned: item.assigned,
+    assigned: item.assignedApprover || item.assignedWorker,
     active: item.active,
     scope: item.scope,
+    category_id: item.categoryId,
     category_name: item.categoryName,
+    category_parent_id: undefinedToNull(item.categoryParentId),
+    approval_step_id: item.approvalStepId,
     approval_step_name: undefinedToNull(item.approvalStepName),
     subject: item.subject,
     age: item.age,
@@ -114,24 +141,34 @@ export const snakeTicketDetailMapper: ArrayMapper<
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
-    requester_id: item.requesterUsername,
+    requester_username: item.requesterUsername,
     status: item.status,
     close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
     risk_level: item.riskLevel,
-    assignee_id: item.assigneeUsernames,
+    assignment_phase: item.assignmentPhase,
+    approval_assignee_usernames: item.approvalAssigneeUsernames,
+    work_assignee_usernames: item.workAssigneeUsernames,
+    assigned_approver: item.assignedApprover,
+    assigned_worker: item.assignedWorker,
+    assignee_usernames: selectCurrentResponsibleUsernames(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
+    merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
     last_commenter_email: undefinedToNull(item.lastCommenterEmail),
+    last_user_activity_at: undefinedToNull(item.lastUserActivityAt),
+    last_user_activity_email: undefinedToNull(item.lastUserActivityEmail),
+    closed_at: undefinedToNull(item.closedAt),
     work_minutes: item.workMinutes,
     due_at: item.dueAt,
     owner: item.owner,
-    assigned: item.assigned,
+    assigned: item.assignedApprover || item.assignedWorker,
     active: item.active,
     scope: item.scope,
     category_id: item.categoryId,
     category_name: item.categoryName,
-    approval_step_id: undefinedToNull(item.approvalStepId),
+    category_parent_id: undefinedToNull(item.categoryParentId),
+    approval_step_id: item.approvalStepId,
     subject: item.subject,
     content: item.content,
     email: item.email,
@@ -139,6 +176,74 @@ export const snakeTicketDetailMapper: ArrayMapper<
     images: item.images,
   }));
 };
+
+type DbTicketAssignmentSource = Pick<
+  DbTicketSummary,
+  | "approval_step_id"
+  | "assignment_phase"
+  | "approval_assignee_usernames"
+  | "work_assignee_usernames"
+  | "assigned_approver"
+  | "assigned_worker"
+  | "assignee_usernames"
+  | "assigned"
+>;
+
+function mapTicketAssignment(
+  item: DbTicketAssignmentSource,
+): TicketAssignmentState {
+  const assignmentPhase = resolveAssignmentPhase(item);
+  const legacyAssigneeUsernames = normalizeStringArray(item.assignee_usernames);
+  const approvalAssigneeUsernames = normalizeStringArray(
+    item.approval_assignee_usernames ??
+      (assignmentPhase === "APPROVAL" ? legacyAssigneeUsernames : []),
+  );
+  const workAssigneeUsernames = normalizeStringArray(
+    item.work_assignee_usernames ??
+      (assignmentPhase === "WORK" ? legacyAssigneeUsernames : []),
+  );
+
+  return {
+    assignmentPhase,
+    approvalAssigneeUsernames,
+    workAssigneeUsernames,
+    assignedApprover:
+      item.assigned_approver ??
+      (assignmentPhase === "APPROVAL" ? item.assigned : false),
+    assignedWorker:
+      item.assigned_worker ??
+      (assignmentPhase === "WORK" ? item.assigned : false),
+  };
+}
+
+function resolveAssignmentPhase(
+  item: Pick<DbTicketAssignmentSource, "approval_step_id" | "assignment_phase">,
+): TicketAssignmentPhase {
+  if (item.assignment_phase === "APPROVAL" || item.assignment_phase === "WORK") {
+    return item.assignment_phase;
+  }
+
+  return item.approval_step_id == null ? "WORK" : "APPROVAL";
+}
+
+function selectCurrentResponsibleUsernames(
+  item: TicketAssignmentState,
+): string[] {
+  return item.assignmentPhase === "APPROVAL"
+    ? item.approvalAssigneeUsernames
+    : item.workAssigneeUsernames;
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 export const mapTicketSummaryListPayload = createListPayloadMapper(
   camelTicketSummaryMapper,

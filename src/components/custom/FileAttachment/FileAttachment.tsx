@@ -71,6 +71,7 @@ export const FileAttachment = <
           onSelect={handleSelect}
           onDrop={addFiles}
           inputRef={inputRef}
+          accept={accept}
         />
       )}
 

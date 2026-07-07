@@ -2,22 +2,19 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
+import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/hooks/useServiceDeskQueryOptions";
 
-import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
 import { serviceDeskTicketHistoryApi } from "./api";
 import { ticketHistoryQueryKeys } from "./queryKeys";
 
 export const useServiceDeskTicketHistoryListQuery = (ticketId: string) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: ticketHistoryQueryKeys.list(ticketId),
     queryFn: () => serviceDeskTicketHistoryApi.list(ticketId),
     placeholderData: keepPreviousData,
     enabled: !!ticketId && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };

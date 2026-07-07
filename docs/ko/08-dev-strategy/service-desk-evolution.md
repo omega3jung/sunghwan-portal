@@ -356,6 +356,7 @@ Service Desk 액션 집합은 운영 언어에 맞게 정제되었습니다.
 source ticket -> Closed
 closeReason   -> Merged
 mergedIntoTicketId -> target ticket id
+mergedIntoTicketNo -> target ticket number
 ```
 
 이 방식은 상태 일관성을 지키면서 티켓 간 관계를 표현합니다.

@@ -10,6 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { SupportedLanguage } from "@/domain/config";
 import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
 import { MetaBadge } from "@/feature/serviceDesk/shared";
+import {
+  selectTicketAssigneeIds,
+  selectTicketIsAssigned,
+} from "@/feature/serviceDesk/ticket/utils";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
@@ -31,7 +35,9 @@ export const TicketListItem = ({
   onClick,
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
-  const requester = users.find((user) => user.value === ticket.requesterUsername);
+  const requester = users.find(
+    (user) => user.value === ticket.requesterUsername,
+  );
   const requesterName =
     requester?.label ||
     t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
@@ -46,19 +52,23 @@ export const TicketListItem = ({
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
+  const assigneeUsernames = selectTicketAssigneeIds(ticket);
+  const isAssigned = selectTicketIsAssigned(ticket);
 
   return (
     <div
       onClick={onClick}
       className={cn(
         "cursor-pointer flex flex-col gap-2 border-b px-4 py-1.5 hover:bg-muted",
-        ticket.assigned && "border-l-primary border-l-4",
+        isAssigned && "border-l-primary border-l-4",
       )}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-primary">#{ticket.id}</span>
+            <span className="text-sm font-bold text-primary">
+              #{ticket.ticketNumber}
+            </span>
             <span className="truncate font-semibold">{ticket.subject}</span>
           </div>
 
@@ -80,7 +90,7 @@ export const TicketListItem = ({
                     event.stopPropagation();
                   }}
                 >
-                  {t("merge.into", { ticketId: ticket.mergedIntoTicketId })}
+                  {t("merge.into", { ticketId: ticket.mergedIntoTicketNo })}
                 </Link>
               </div>
             ) : null}
@@ -88,7 +98,7 @@ export const TicketListItem = ({
         </div>
 
         <div className="flex gap-2">
-          {ticket.assigned && (
+          {isAssigned && (
             <Badge className="bg-primary/10 text-primary border border-primary/20">
               {t("detailAside.assignedBadge")}
             </Badge>
@@ -112,7 +122,7 @@ export const TicketListItem = ({
         <div className="flex items-center gap-2">
           <AvatarMultiComboBox
             variant="ghost"
-            value={ticket.assigneeUsernames}
+            value={assigneeUsernames}
             options={users}
             maxImages={5}
             readOnly={true}

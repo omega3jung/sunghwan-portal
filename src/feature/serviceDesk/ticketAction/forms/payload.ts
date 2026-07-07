@@ -1,4 +1,6 @@
-﻿import type {
+﻿import type { PrepareTicketAttachmentsResponse } from "@/feature/serviceDesk/ticket/write";
+
+import type {
   TicketActionDraftFormValues,
   TicketActionPayloadValues,
 } from "./types";
@@ -6,6 +8,7 @@
 type BuildTicketActionPayloadParams = {
   userId: string;
   values: TicketActionDraftFormValues;
+  prepared?: PrepareTicketAttachmentsResponse;
 };
 
 type ActionAttachmentPayload = TicketActionPayloadValues["files"][number];
@@ -21,6 +24,15 @@ const mapAttachmentFile = (file: File): ActionAttachmentPayload => ({
   id: `${file.name}-${file.size}-${file.lastModified}`,
   name: file.name,
   size: file.size,
+});
+
+const mapPreparedAttachment = (
+  attachment: PrepareTicketAttachmentsResponse["files"][number],
+): ActionAttachmentPayload => ({
+  id: `${attachment.replacedName}-${attachment.size}`,
+  name: attachment.originalName,
+  size: attachment.size,
+  url: attachment.demoUrl,
 });
 
 const splitActionAttachments = (attachment: File[]) => {
@@ -43,20 +55,43 @@ const splitActionAttachments = (attachment: File[]) => {
   );
 };
 
+const resolveActionAttachments = (
+  values: TicketActionDraftFormValues,
+  prepared?: PrepareTicketAttachmentsResponse,
+) => {
+  if (prepared) {
+    return {
+      files: prepared.files.map(mapPreparedAttachment),
+      images: prepared.images.map(mapPreparedAttachment),
+    };
+  }
+
+  return splitActionAttachments(values.attachment);
+};
+
 export function buildTicketActionPayload({
   userId,
   values,
+  prepared,
 }: BuildTicketActionPayloadParams): TicketActionPayloadValues {
-  const { files, images } = splitActionAttachments(values.attachment);
+  const { files, images } = resolveActionAttachments(values, prepared);
   const basePayload: TicketActionPayloadValues = {
     id: userId,
     actionType: values.actionType,
-    content: values.content.trim(),
+    content: (prepared?.body ?? values.content).trim(),
     files,
     images,
   };
 
   switch (values.actionType) {
+    case "APPROVE":
+    case "DECLINE":
+      return {
+        ...basePayload,
+        files: [],
+        images: [],
+      };
+
     case "ASSIGN":
       return {
         ...basePayload,

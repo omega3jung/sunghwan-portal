@@ -356,6 +356,7 @@ Instead:
 source ticket -> Closed
 closeReason   -> Merged
 mergedIntoTicketId -> target ticket id
+mergedIntoTicketNo -> target ticket number
 ```
 
 This preserves status consistency while still representing the relationship between tickets.

@@ -17,7 +17,10 @@ import {
 import { statusLocaleKey } from "@/components/custom/StatusBadge/locales";
 import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import type { TimelineItemData } from "@/components/custom/Timeline";
-import type { TicketHistory } from "@/domain/serviceDesk";
+import type {
+  TicketHistory,
+  TicketHistoryDisplayMetadata,
+} from "@/domain/serviceDesk";
 
 import { formatHistoryMeta } from "./utils";
 
@@ -46,8 +49,6 @@ export function resolveHistoryBadge(
       return tCommon("field.comment");
     case "NOTE":
       return tCommon("field.note");
-    case "WORK_SESSION":
-      return t("historyTimeline.badge.workSession");
     case "PLANNING":
       return t("historyTimeline.badge.planning");
     case "SYSTEM":
@@ -63,7 +64,7 @@ export function getHistorySummary(
     action: string;
     fromValue?: unknown;
     toValue?: unknown;
-    metadata?: Record<string, unknown>;
+    metadata?: TicketHistoryDisplayMetadata | null;
   },
   t: TFunction,
   tStatus: TFunction,
@@ -100,10 +101,6 @@ export function getHistorySummary(
     return t("history.NOTE_CREATED");
   }
 
-  if (history.type === "WORK_SESSION" && history.action === "UPDATED") {
-    return t("history.WORK_SESSION_UPDATED");
-  }
-
   switch (history.action) {
     case "DELETED":
       return t("history.DELETED");
@@ -130,6 +127,8 @@ export function getHistorySummary(
       });
     case "TICKET_REJECTED":
       return t("history.TICKET_REJECTED");
+    case "TICKET_CANCELED":
+      return t("history.TICKET_CANCELED");
     case "UPDATED":
       return t("history.UPDATED");
     case "CREATED":
@@ -144,6 +143,23 @@ function isSystemStatus(value: unknown): value is SystemStatus {
 }
 
 function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
+  if (
+    value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    "status" in value
+  ) {
+    const status = (value as { status?: unknown }).status;
+
+    if (isSystemStatus(status)) {
+      return tStatus(statusLocaleKey[status]);
+    }
+
+    if (typeof status === "string") {
+      return status;
+    }
+  }
+
   if (isSystemStatus(value)) {
     return tStatus(statusLocaleKey[value]);
   }
@@ -168,10 +184,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
     return <RefreshCcw className="h-3 w-3" />;
   }
 
-  if (history.type === "WORK_SESSION" && history.action === "UPDATED") {
-    return <RefreshCcw className="h-3 w-3" />;
-  }
-
   switch (history.action) {
     case "CREATED":
       return <CircleDot className="h-3 w-3" />;
@@ -183,6 +195,9 @@ export function resolveHistoryIcon(history: TicketHistory) {
       return <GitMerge className="h-3 w-3" />;
 
     case "TICKET_REJECTED":
+      return <X className="h-3 w-3" />;
+
+    case "TICKET_CANCELED":
       return <X className="h-3 w-3" />;
 
     case "DELETED":
@@ -203,7 +218,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
       return <UserPlus className="h-3 w-3" />;
     case "CATEGORY":
       return <Pencil className="h-3 w-3" />;
-    case "WORK_SESSION":
     case "PLANNING":
       return <Clock3 className="h-3 w-3" />;
     case "SYSTEM":
@@ -219,16 +233,14 @@ export function resolveHistoryIcon(history: TicketHistory) {
   }
 }
 
-function resolveMergeTargetLabel(metadata?: Record<string, unknown>): string {
-  if (
-    metadata &&
-    "targetTicketId" in metadata &&
-    typeof metadata.targetTicketId === "string"
-  ) {
-    return metadata.targetTicketId;
-  }
-
-  return "-";
+function resolveMergeTargetLabel(
+  metadata?: TicketHistoryDisplayMetadata | null,
+): string {
+  return (
+    metadata?.mergedIntoTicketNo ??
+    metadata?.mergedIntoTicketId ??
+    "-"
+  );
 }
 
 export function resolveHistoryDescription(
@@ -246,22 +258,7 @@ export function resolveHistoryDescription(
     });
   }
 
-  if (history.metadata && typeof history.metadata === "object") {
-    const reason =
-      "reason" in history.metadata &&
-      typeof history.metadata.reason === "string"
-        ? history.metadata.reason
-        : undefined;
-
-    const note =
-      "note" in history.metadata && typeof history.metadata.note === "string"
-        ? history.metadata.note
-        : undefined;
-
-    return reason ?? note;
-  }
-
-  return undefined;
+  return history.metadata?.reason ?? history.metadata?.note;
 }
 
 export function mapTicketHistoryToTimelineItem(

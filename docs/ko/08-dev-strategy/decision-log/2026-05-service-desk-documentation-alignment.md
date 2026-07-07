@@ -182,6 +182,7 @@ assigned = ticket.assigneeIds.includes(currentUser.username)
 source ticket -> Closed
 closeReason = Merged
 mergedIntoTicketId = target ticket id
+mergedIntoTicketNo = target ticket number
 ```
 
 - 별도의 `Merged` status는 사용하지 않음.

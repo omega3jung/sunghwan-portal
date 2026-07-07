@@ -1,11 +1,11 @@
-// app/(public)/login/layout.tsx
+import type { ReactNode } from "react";
 
-import { ReactNode } from "react";
+import { PublicProviders } from "./_providers";
 
-import I18nProvider from "@/components/layout/I18nProvider/I18nProvider";
+type Props = {
+  children: ReactNode;
+};
 
-export default function PublicLayout({ children }: { children: ReactNode }) {
-  return (
-    <I18nProvider namespaces={["common", "login"]}>{children}</I18nProvider>
-  );
+export default function PublicLayout({ children }: Props) {
+  return <PublicProviders>{children}</PublicProviders>;
 }

@@ -1,4 +1,6 @@
 export const TICKET_ACTION_PATHS = [
+  "approve",
+  "decline",
   "comment",
   "note",
   "assign",
@@ -8,11 +10,14 @@ export const TICKET_ACTION_PATHS = [
   "adjust",
   "reopen",
   "resubmit",
+  "cancel",
 ] as const;
 
 export type TicketActionPath = (typeof TICKET_ACTION_PATHS)[number];
 
 export const TICKET_ACTION_TYPE_TO_PATH = {
+  APPROVE: "approve",
+  DECLINE: "decline",
   COMMENT: "comment",
   NOTE: "note",
   ASSIGN: "assign",
@@ -22,9 +27,12 @@ export const TICKET_ACTION_TYPE_TO_PATH = {
   ADJUST: "adjust",
   REOPEN: "reopen",
   RESUBMIT: "resubmit",
+  CANCEL: "cancel",
 } as const;
 
 export const TICKET_ACTION_PATH_TO_TYPE = {
+  approve: "APPROVE",
+  decline: "DECLINE",
   comment: "COMMENT",
   note: "NOTE",
   assign: "ASSIGN",
@@ -34,9 +42,12 @@ export const TICKET_ACTION_PATH_TO_TYPE = {
   adjust: "ADJUST",
   reopen: "REOPEN",
   resubmit: "RESUBMIT",
+  cancel: "CANCEL",
 } as const;
 
 export const TICKET_ACTION_FORM_MODES = [
+  "approve",
+  "decline",
   "comment",
   "note",
   "assign",
@@ -46,4 +57,5 @@ export const TICKET_ACTION_FORM_MODES = [
   "reject",
   "reopen",
   "resubmit",
+  "cancel",
 ] as const;

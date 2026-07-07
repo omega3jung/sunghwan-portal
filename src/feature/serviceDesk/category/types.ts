@@ -1,6 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { CategoryScope, MainCategory, SubCategory } from "@/domain/serviceDesk";
 import { LocalizedText } from "@/shared/types";
+import type { DbParams } from "@/shared/types/api";
 
 import type { DbTenant } from "../tenant/types";
 
@@ -31,6 +32,11 @@ export interface DbCategory extends DbCategoryBase {
 }
 
 export type DbTenantCategoryTree = DbTenant & { category: DbCategory[] };
+
+export type ServiceDeskCategoryListParams = DbParams & {
+  tenantId?: string;
+  active?: boolean;
+};
 
 export type CategoryTreeSyncSubCategoryInput = Omit<SubCategory, "id"> & {
   id?: string;

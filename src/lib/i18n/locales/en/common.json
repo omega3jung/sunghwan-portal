@@ -1,4 +1,7 @@
 {
+  "navigation": {
+    "home": "Home"
+  },
   "action": {
     "add": "Add",
     "back": "Back",
@@ -45,6 +48,7 @@
     "date": "Date",
     "department": "Department",
     "description": "Description",
+    "draft": "Draft",
     "details": "Details",
     "dueBy": "Due by",
     "dueAt": "Due Date",

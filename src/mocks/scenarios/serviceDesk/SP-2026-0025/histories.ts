@@ -1,127 +1,122 @@
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
-
+import { TICKET_HISTORY_MOCK_DEFAULTS, TicketHistoryMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const histories: DbTicketHistory[] = [
+export const histories: TicketHistoryMockInput[] = [
   {
-    ticket_id: ticket.id,
-    history_no: 1,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 1,
 
-    type: "TICKET",
-    action: "CREATED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "CREATED",
 
-    actor_id: "grant_murphy",
-    action_no: null,
+    tkh_actor_username: "grant_murphy",
+    tkh_action_no: null,
 
-    created_at: "2026-06-02T06:03:14Z",
+    tkh_created_at: "2026-06-02T06:03:14Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 2,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 2,
 
-    type: "ASSIGNMENT",
-    action: "UPDATED",
+    tkh_history_type: "ASSIGNMENT",
+    tkh_history_action: "UPDATED",
 
-    actor_id: null,
-    action_no: null,
+    tkh_actor_username: null,
+    tkh_action_no: null,
 
-    from_value: null,
-    to_value: "41,31",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
 
-    created_at: "2026-06-02T06:06:20Z",
+    tkh_created_at: "2026-06-02T06:06:20Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 3,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 3,
 
-    type: "STATUS",
-    action: "UPDATED",
+    tkh_history_type: "STATUS",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "evan_seo",
-    action_no: null,
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: null,
 
-    from_value: "Open",
-    to_value: "Working",
+    tkh_from_value: { status: "Assigned" },
+    tkh_to_value: { status: "Working" },
 
-    created_at: "2026-06-02T06:10:27Z",
+    tkh_created_at: "2026-06-02T06:10:27Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 4,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 4,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "evan_seo",
-    action_no: "1",
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: 1,
 
-    created_at: "2026-06-02T06:15:48Z",
+    tkh_created_at: "2026-06-02T06:15:48Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 5,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 5,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "grant_murphy",
-    action_no: "2",
+    tkh_actor_username: "grant_murphy",
+    tkh_action_no: 2,
 
-    created_at: "2026-06-02T06:19:36Z",
+    tkh_created_at: "2026-06-02T06:19:36Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 6,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 6,
 
-    type: "NOTE",
-    action: "CREATED",
+    tkh_history_type: "NOTE",
+    tkh_history_action: "CREATED",
 
-    actor_id: "daniel_kim",
-    action_no: "3",
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: 3,
 
-    created_at: "2026-06-02T06:52:08Z",
+    tkh_created_at: "2026-06-02T06:52:08Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 7,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 7,
 
-    type: "WORK_SESSION",
-    action: "UPDATED",
+    tkh_history_type: "STATUS",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "daniel_kim",
-    action_no: null,
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: null,
 
-    created_at: "2026-06-02T07:05:12Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 8,
+    tkh_from_value: { status: "Working" },
+    tkh_to_value: { status: "Resolved" },
 
-    type: "STATUS",
-    action: "UPDATED",
-
-    actor_id: "daniel_kim",
-    action_no: null,
-
-    from_value: "Working",
-    to_value: "Resolved",
-
-    metadata: {
+    tkh_metadata: {
       reason: "DB lock released and blocked transactions recovered",
     },
 
-    created_at: "2026-06-02T07:20:31Z",
+    tkh_created_at: "2026-06-02T07:20:31Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 9,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 8,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "daniel_kim",
-    action_no: "4",
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: 4,
 
-    created_at: "2026-06-02T07:21:42Z",
+    tkh_created_at: "2026-06-02T07:21:42Z",
   },
 ];

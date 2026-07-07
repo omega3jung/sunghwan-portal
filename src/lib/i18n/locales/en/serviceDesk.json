@@ -4,12 +4,15 @@
     "note": "Note",
     "assign": "Assign",
     "assignToMe": "Assign to me",
+    "approve": "Approve",
+    "decline": "Decline",
     "reject": "Reject",
     "merge": "Merge",
     "adjust": "Adjust",
     "adjustPlan": "Adjust Plan",
     "reopenIssue": "Reopen Issue",
     "resubmitRequest": "Resubmit Request",
+    "cancelTicket": "Cancel ticket",
     "searchCriteria": "Search criteria",
     "workSession": {
       "submit": "Save work session",
@@ -81,6 +84,59 @@
     "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded.",
     "loadDraftExceptInvalid": "Loaded the draft except in cases where it is invalid."
   },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Select category",
+      "back": "Back",
+      "empty": "No selectable categories."
+    }
+  },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "Update ticket",
+    "title": "Update ticket",
+    "description": "Update requester-editable ticket fields.",
+    "loadingTicket": "Loading ticket...",
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    },
+    "category": {
+      "placeholder": "Select category",
+      "back": "Back",
+      "empty": "No selectable categories."
+    },
+    "step": {
+      "info": "Issue Details",
+      "attachment": "Attachments",
+      "review": "Review"
+    },
+    "routing": {
+      "preserve": "Due date and recipient-only changes preserve the current approval and assignment.",
+      "reset": "Changing request details other than due date or email recalculates approval steps and assignee assignment."
+    },
+    "field": {
+      "existingFiles": "Existing files",
+      "existingImages": "Existing images",
+      "newAttachments": "New attachments"
+    },
+    "empty": {
+      "existingAttachments": "No existing attachments.",
+      "newAttachments": "No new attachments."
+    },
+    "action": {
+      "submit": "Update ticket",
+      "submitting": "Updating..."
+    },
+    "error": {
+      "load": "Failed to load the latest ticket details."
+    }
+  },
   "hoverMessage": {
     "backToList": "Back to ticket list",
     "workSessionTool": "Record manual work time and optionally move the ticket status in the same action.",
@@ -96,7 +152,7 @@
   "detailAside": {
     "recipientsTitle": "Recipients",
     "unassigned": "Unassigned",
-    "ticketId": "Ticket ID",
+    "ticketNo": "Ticket No",
     "currentUserBadge": "Me",
     "assignedBadge": "Assigned"
   },
@@ -107,7 +163,7 @@
   "detailPage": {
     "detailsTitle": "Ticket Details",
     "descriptionTitleHint": "Core request details and the latest at-a-glance activity.",
-    "replyTitle": "Reply",
+    "replyTitle": "Tools",
     "replyTitleHint": "Reply, leave an internal note, and review discussion in one continuous workflow.",
     "notFound": "Ticket not found."
   },
@@ -145,6 +201,7 @@
       "WORK_SESSION_UPDATED": "Work session updated",
       "MERGED": "Merged into {{target}}",
       "TICKET_REJECTED": "Ticket rejected",
+      "TICKET_CANCELED": "Ticket canceled",
       "UPDATED": "Ticket updated",
       "DELETED": "Ticket deleted",
       "CREATED": "Ticket created",
@@ -179,6 +236,8 @@
     "currentUser": "Current user",
     "currentUserFallback": "You",
     "launcher": {
+      "approve": "Approve this step and move the ticket to the next stage.",
+      "decline": "Decline this approval request and record the reason.",
       "comment": "Post a public reply to the requester and watchers.",
       "note": "Leave an internal note that stays inside the team.",
       "assign": "Update assignees or move the ticket into another category.",
@@ -187,9 +246,12 @@
       "merge": "Merge this ticket into another ticket.",
       "adjust": "Update priority, risk level, and due date settings.",
       "reopen": "Reopen the ticket when the resolved result still needs more work.",
-      "resubmit": "Send this rejected request back for review."
+      "resubmit": "Send this rejected request back for review.",
+      "cancel": "Cancel this request before work starts."
     },
     "helper": {
+      "approve": "Leave an approval note before sending the ticket onward.",
+      "decline": "Explain why this approval request is being declined.",
       "comment": "Share a public update with everyone following this ticket.",
       "note": "Add an internal note for the service desk team.",
       "assign": "Update assignees or move the ticket into another category.",
@@ -198,9 +260,12 @@
       "merge": "Choose the ticket to merge into and leave a short note.",
       "adjust": "Review priority, risk level, and due date before applying changes.",
       "reopen": "Explain what still needs to be resolved before this ticket can stay closed.",
-      "resubmit": "Explain what changed before resubmitting this rejected request."
+      "resubmit": "Explain what changed before resubmitting this rejected request.",
+      "cancel": "Explain why this request should be canceled."
     },
     "submit": {
+      "approve": "Approve",
+      "decline": "Decline",
       "comment": "Post comment",
       "note": "Save note",
       "assign": "Save assignment",
@@ -209,7 +274,8 @@
       "merge": "Merge ticket",
       "adjust": "Update plan",
       "reopen": "Reopen Issue",
-      "resubmit": "Resubmit Request"
+      "resubmit": "Resubmit Request",
+      "cancel": "Cancel ticket"
     },
     "list": {
       "title": "Activity",
@@ -225,7 +291,11 @@
     },
     "form": {
       "editorLabel": "Reason",
+      "approvalNoteLabel": "Approval note",
+      "declineReasonLabel": "Decline reason",
       "editorPlaceholder": {
+        "approve": "Leave a note for this approval",
+        "decline": "Describe why this approval should be declined",
         "comment": "Write a comment and keep the conversation moving",
         "note": "Share an internal note for this ticket",
         "assign": "Share assignment context for the next owner",
@@ -234,7 +304,8 @@
         "merge": "Explain why these tickets should be merged",
         "adjust": "Describe why these values need to be adjusted",
         "reopen": "Describe what still needs to be resolved",
-        "resubmit": "Describe what changed before resubmitting this ticket"
+        "resubmit": "Describe what changed before resubmitting this ticket",
+        "cancel": "Describe why this ticket should be canceled"
       },
       "targetTicketId": "Target ticket",
       "mergeTargetPlaceholder": "Enter the representative ticket ID"
@@ -325,14 +396,11 @@
     "additionalFilters": "Additional filters",
     "dateFilters": "Date filters"
   },
-  "ticketFormContext": {
-    "missingProvider": "useTicketFormContext must be used inside provider."
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext must be used inside provider."
   },
-  "viewOption": {
-    "title": "View",
-    "portal": "Portal",
-    "internal": "Internal",
-    "insights": "Insights"
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext must be used inside provider."
   },
   "api": {
     "common": {
@@ -407,6 +475,7 @@
         "invalidPayload": "Invalid ticket payload.",
         "requesterRequired": "Requester is required.",
         "categoryNotFound": "Category {{categoryId}} was not found.",
+        "updateForbidden": "Only the requester can update this ticket.",
         "updateNotAllowed": "Ticket cannot be updated in status {{status}}."
       }
     },
@@ -441,6 +510,8 @@
         "ticketNotFound": "Ticket {{ticketId}} not found.",
         "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
+        "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
+        "cancelForbidden": "Only the requester can cancel this ticket before work starts.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",
         "mergeTargetNotFound": "Merge target not found.",

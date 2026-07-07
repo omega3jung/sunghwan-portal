@@ -25,7 +25,7 @@ export function startTicketWorkLocal({
 
   validateAssignee(ticket, employeeUserName);
 
-  if (ticket.status !== "Approved") {
+  if (ticket.status !== "Assigned") {
     return ticket;
   }
 
@@ -61,12 +61,28 @@ export function toLocalStartWorkResponse(
   return {
     ...detail,
     owner: detail.requesterUsername === currentUserName,
-    assigned: detail.assigneeUsernames.includes(currentUserName),
+    assignedApprover:
+      detail.assignmentPhase === "APPROVAL" &&
+      detail.approvalAssigneeUsernames.includes(currentUserName),
+    assignedWorker:
+      detail.assignmentPhase === "WORK" &&
+      detail.workAssigneeUsernames.includes(currentUserName),
   };
 }
 
 function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {
-  if (ticket.assignee_id.includes(employeeUserName)) {
+  if (ticket.approval_step_id !== null) {
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.assigneeForbidden",
+      403,
+      {
+        ticketId: ticket.id,
+        username: employeeUserName,
+      },
+    );
+  }
+
+  if (ticket.assignee_usernames.includes(employeeUserName)) {
     return;
   }
 
@@ -92,7 +108,7 @@ function createStatusUpdatedHistory(
     history_no: getMaxHistoryNo(ticket.id, isInternal),
     type: "STATUS",
     action: "UPDATED",
-    actor_id: employeeUserName,
+    actor_username: employeeUserName,
     action_no: null,
     from_value: ticket.status,
     to_value: nextStatus,

@@ -10,14 +10,14 @@ import { StatusBadgeProps, SystemStatus } from "./types";
 
 export const statusClassMap: Record<SystemStatus, string> = {
   Draft: "bg-muted text-muted-foreground",
-  Open: "bg-blue-100 text-blue-600",
-  Reopen: "bg-indigo-100 text-indigo-600",
-  Approved: "bg-blue-50 text-blue-500",
+  Approval: "bg-amber-100 text-amber-700",
   Declined: "bg-red-100 text-red-500",
+  Assigned: "bg-blue-50 text-blue-600",
   Working: "bg-orange-100 text-orange-500",
   Pending: "bg-gray-100 text-gray-600",
   Resolved: "bg-emerald-100 text-emerald-600",
   Rejected: "bg-red-200 text-red-700",
+  Reopened: "bg-indigo-100 text-indigo-600",
   Closed: "bg-cyan-100 text-cyan-600",
 };
 

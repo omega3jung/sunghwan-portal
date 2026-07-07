@@ -2,10 +2,9 @@ import type { TicketActionType } from "@/domain/serviceDesk";
 
 import type { TicketActionMode } from "./types";
 
-export const ACTION_TYPE_BY_MODE: Record<
-  TicketActionMode,
-  TicketActionType
-> = {
+export const ACTION_TYPE_BY_MODE: Record<TicketActionMode, TicketActionType> = {
+  approve: "APPROVE",
+  decline: "DECLINE",
   comment: "COMMENT",
   note: "NOTE",
   assign: "ASSIGN",
@@ -15,9 +14,12 @@ export const ACTION_TYPE_BY_MODE: Record<
   adjust: "ADJUST",
   reopen: "REOPEN",
   resubmit: "RESUBMIT",
+  cancel: "CANCEL",
 };
 
 export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
+  APPROVE: "action.approve",
+  DECLINE: "action.decline",
   COMMENT: "action.comment",
   NOTE: "action.note",
   ASSIGN: "action.assign",
@@ -27,9 +29,12 @@ export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
   ADJUST: "action.adjustPlan",
   REOPEN: "action.reopenIssue",
   RESUBMIT: "action.resubmitRequest",
+  CANCEL: "action.cancelTicket",
 };
 
 export const ACTION_LABEL_KEY_BY_MODE: Record<TicketActionMode, string> = {
+  approve: "action.approve",
+  decline: "action.decline",
   comment: "action.comment",
   note: "action.note",
   assign: "action.assign",
@@ -39,6 +44,7 @@ export const ACTION_LABEL_KEY_BY_MODE: Record<TicketActionMode, string> = {
   adjust: "action.adjustPlan",
   reopen: "action.reopenIssue",
   resubmit: "action.resubmitRequest",
+  cancel: "action.cancelTicket",
 };
 
 export function mapActionModeToActionType(mode: TicketActionMode) {

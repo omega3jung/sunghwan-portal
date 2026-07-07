@@ -12,7 +12,7 @@ export interface TicketWorkSession {
 
   assigneeUsername: string;
 
-  startAt: ISODateString;
+  startAt: ISODateString | null;
   endAt: ISODateString | null;
 
   durationMinutes: number | null;

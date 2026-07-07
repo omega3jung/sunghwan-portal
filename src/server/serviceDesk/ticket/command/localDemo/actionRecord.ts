@@ -8,6 +8,10 @@ export type CreateTicketActionContext = Pick<
   "ticketId" | "employeeUserName" | "content" | "actionNo" | "createdAt"
 >;
 
+const isAttachmentlessAction = (
+  actionType: CreateTicketActionContext["content"]["actionType"],
+) => actionType === "APPROVE" || actionType === "DECLINE";
+
 export const createTicketAction = ({
   ticketId,
   employeeUserName,
@@ -20,12 +24,16 @@ export const createTicketAction = ({
 
   action_type: content.actionType,
   content: content.content,
-  owner_id: employeeUserName,
+  owner_username: employeeUserName,
 
   created_at: createdAt,
   updated_at: null,
   active: true,
 
-  files: mapFileToAttach(content.files, "file"),
-  images: mapFileToAttach(content.images, "image"),
+  files: isAttachmentlessAction(content.actionType)
+    ? []
+    : mapFileToAttach(content.files, "file"),
+  images: isAttachmentlessAction(content.actionType)
+    ? []
+    : mapFileToAttach(content.images, "image"),
 });

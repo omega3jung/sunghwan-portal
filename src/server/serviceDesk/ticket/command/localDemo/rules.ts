@@ -3,14 +3,14 @@ import type { TicketStatus } from "@/domain/serviceDesk";
 import type { TicketActionApiType, TicketActionExecutionMode } from "../types";
 
 const ALL_LIVE_TICKET_STATUSES: readonly TicketStatus[] = [
-  "Open",
-  "Approved",
+  "Approval",
   "Declined",
+  "Assigned",
   "Working",
   "Pending",
   "Rejected",
   "Resolved",
-  "Reopen",
+  "Reopened",
 ];
 
 const MANAGER_ACTION_MODE_BY_PATH: Partial<
@@ -28,31 +28,32 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
 > = {
   comment: ALL_LIVE_TICKET_STATUSES,
   note: ALL_LIVE_TICKET_STATUSES,
-  assign: ["Open", "Approved", "Working", "Reopen"],
+  approve: ["Approval"],
+  decline: ["Approval"],
+  assign: ["Assigned", "Working", "Reopened"],
   assignManager: [
-    "Open",
-    "Approved",
+    "Approval",
     "Declined",
+    "Assigned",
     "Working",
     "Rejected",
-    "Reopen",
+    "Reopened",
   ],
-  adjust: ["Open", "Approved", "Working", "Pending", "Rejected", "Reopen"],
+  adjust: ["Assigned", "Working", "Pending", "Rejected", "Reopened"],
   adjustManager: [
-    "Open",
-    "Approved",
+    "Approval",
     "Declined",
+    "Assigned",
     "Working",
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopen",
+    "Reopened",
     "Closed",
   ],
   merge: ["Working", "Pending", "Resolved"],
   mergeManager: [
-    "Open",
-    "Approved",
+    "Assigned",
     "Working",
     "Pending",
     "Rejected",
@@ -60,10 +61,11 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
     "Closed",
   ],
   reject: ["Working", "Pending"],
-  rejectManager: ["Open", "Approved", "Working", "Pending"],
+  rejectManager: ["Assigned", "Working", "Pending"],
   reopen: ["Resolved"],
   resubmit: ["Rejected"],
-  assignSelf: ["Open", "Approved", "Working"],
+  assignSelf: ["Assigned", "Working"],
+  cancel: ["Approval", "Assigned"],
 };
 
 export function resolveLocalDemoExecutionMode(
@@ -89,11 +91,13 @@ export function getLocalDemoNextStatus(
   currentStatus: TicketStatus,
 ): TicketStatus | undefined {
   switch (actionMode) {
+    case "decline":
+      return currentStatus === "Approval" ? "Declined" : undefined;
     case "assign":
       return currentStatus === "Working" ? undefined : "Working";
     case "assignManager":
       if (currentStatus === "Declined" || currentStatus === "Rejected") {
-        return "Reopen";
+        return "Reopened";
       }
 
       return currentStatus === "Working" ? undefined : "Working";
@@ -104,11 +108,13 @@ export function getLocalDemoNextStatus(
     case "mergeManager":
       return currentStatus === "Closed" ? undefined : "Closed";
     case "reopen":
-      return currentStatus === "Resolved" ? "Reopen" : undefined;
+      return currentStatus === "Resolved" ? "Reopened" : undefined;
     case "resubmit":
-      return currentStatus === "Rejected" ? "Open" : undefined;
+      return currentStatus === "Rejected" ? "Assigned" : undefined;
     case "assignSelf":
       return currentStatus === "Working" ? undefined : "Working";
+    case "cancel":
+      return "Closed";
     default:
       return undefined;
   }

@@ -34,6 +34,14 @@ export function TicketDetailsAside({
   const requesterName =
     requester?.label ||
     t("detailAside.requesterUnknown", { defaultValue: "Unknown requester" });
+  const assigneeTitle =
+    ticket.assignmentPhase === "APPROVAL"
+      ? t("detailAside.approvalAssignee", { defaultValue: "Approval assignee" })
+      : tCommon("field.assignee");
+  const isCurrentUserAssigned =
+    ticket.assignmentPhase === "APPROVAL"
+      ? ticket.assignedApprover
+      : ticket.assignedWorker;
 
   return (
     <div className="space-y-4">
@@ -50,7 +58,7 @@ export function TicketDetailsAside({
 
       <InfoCard
         icon={<UserRoundKey className="h-4 w-4" />}
-        title={tCommon("field.assignee")}
+        title={assigneeTitle}
       >
         {assignees.length > 0 ? (
           <div className="space-y-3">
@@ -61,7 +69,7 @@ export function TicketDetailsAside({
                 subText={assignee.displayName}
                 image={assignee.image}
                 isCurrentUser={
-                  ticket.assigned &&
+                  isCurrentUserAssigned &&
                   !!currentEmployeeUserName &&
                   assignee.value === currentEmployeeUserName
                 }
@@ -97,7 +105,10 @@ export function TicketDetailsAside({
         icon={<Info className="h-4 w-4" />}
         title={t("field.details", { ns: NS.common })}
       >
-        <InfoLine label={t("detailAside.ticketId")} value={ticket.id} />
+        <InfoLine
+          label={t("detailAside.ticketNo")}
+          value={ticket.ticketNumber}
+        />
         <InfoLine
           label={tCommon("field.category")}
           value={tLocal(ticket.categoryName)}

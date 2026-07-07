@@ -1,10 +1,12 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 
 const ACTIVE_TICKET_STATUSES: TicketStatus[] = [
-  "Open",
+  "Approval",
+  "Assigned",
   "Working",
   "Pending",
   "Resolved",
+  "Reopened",
 ];
 
 export function isClosedTicketStatus(status: TicketStatus) {
@@ -16,5 +18,7 @@ export function isActiveTicketStatus(status: TicketStatus) {
 }
 
 export function isEditableTicketStatus(status: TicketStatus) {
-  return ["Draft", "Open", "Working", "Pending"].includes(status);
+  return ["Draft", "Approval", "Assigned", "Working", "Pending"].includes(
+    status,
+  );
 }

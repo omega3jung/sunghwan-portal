@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
+import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/hooks/useServiceDeskQueryOptions";
 import {
   type TicketSearchRequest,
   type TicketSortField,
@@ -11,22 +11,18 @@ import type { TicketSearchCriteriaFormValues } from "@/feature/serviceDesk/ticke
 import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticketSearch/utils";
 import { DbParams, type SortDirection } from "@/shared/types";
 
-import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
 import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
-import { serviceDeskTicketDraftRepo, useTicketDraftRepoContext } from "./repo";
 
 export const useServiceDeskTicketListQuery = (params: DbParams) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: ticketQueryKeys.list(params),
     queryFn: () => serviceDeskTicketApi.list(params),
     placeholderData: keepPreviousData,
     enabled: !!params && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };
 
@@ -51,54 +47,29 @@ export const useServiceDeskTicketSearchQuery = ({
 
   const request: TicketSearchRequest = {
     filter: dbParams.filter,
-    sort: {
-      field: sort,
-      direction: order,
-    },
+    sort: { field: sort, direction: order },
     page,
     pageSize,
   };
 
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: ticketQueryKeys.search(request),
     queryFn: () => serviceDeskTicketApi.search(request),
     placeholderData: keepPreviousData,
     enabled: enabled && !!dataScope,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };
 
 export const useServiceDeskTicketQuery = (id: string | number) => {
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
     queryKey: ticketQueryKeys.detail(id),
     queryFn: () => serviceDeskTicketApi.get(String(id)),
     enabled: !!id && !!dataScope,
-    ...ticketQueryOptions,
-  });
-};
-
-export const useServiceDeskTicketDraftQuery = () => {
-  const context = useTicketDraftRepoContext();
-
-  const { data: currentSession } = useCurrentSession();
-  const dataScope = currentSession?.user.dataScope;
-
-  const ticketQueryOptions = getServiceDeskQueryOptions(dataScope);
-
-  return useQuery({
-    queryKey: ticketQueryKeys.draft(context),
-    queryFn: () => serviceDeskTicketDraftRepo.get(context),
-    enabled: context.isReady,
-    ...ticketQueryOptions,
+    ...queryOptions,
   });
 };

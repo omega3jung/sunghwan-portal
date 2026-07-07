@@ -1,7 +1,7 @@
 import { addDays, endOfDay, startOfToday } from "date-fns";
 import { z } from "zod";
 
-export const ticketDueAtSchema = z
+const ticketDueAtSchema = z
   .date()
   .refine((value) => endOfDay(value) >= addDays(startOfToday(), 1), {
     message: "Due date cannot be earlier than today.",
@@ -9,8 +9,7 @@ export const ticketDueAtSchema = z
 
 export const ticketFormSchema = z.object({
   id: z.string().nullable(),
-  mainCategory: z.string().optional(),
-  subCategory: z.string().optional(),
+  category: z.string().optional(),
   subject: z.string().max(200),
   body: z.string(),
   dueAt: ticketDueAtSchema,

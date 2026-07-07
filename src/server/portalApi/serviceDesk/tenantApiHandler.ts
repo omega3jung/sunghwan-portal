@@ -9,9 +9,15 @@ import {
   getTenants,
   updateTenantById,
 } from "@/server/data/serviceDesk/tenant";
+import {
+  getBooleanRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
+import { getPortalApiQueryValue } from "../utils";
 import {
   createNotFoundResponse,
+  parseBooleanQueryValue,
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
@@ -31,7 +37,17 @@ export async function handleTenantPortalApi(
 
   if (tenantListMatch) {
     if (context.method === "GET") {
-      const items = await getTenants();
+      const active =
+        parseBooleanQueryValue(
+          getPortalApiQueryValue(context.request, context.options, "active"),
+        ) ??
+        getBooleanRuleGroupValue(
+          parseRuleGroupFilter(
+            getPortalApiQueryValue(context.request, context.options, "filter"),
+          ),
+          "active",
+        );
+      const items = filterTenantsByActive(await getTenants(), active);
 
       return NextResponse.json({
         items,
@@ -78,6 +94,14 @@ export async function handleTenantPortalApi(
   }
 
   return createNotFoundResponse();
+}
+
+function filterTenantsByActive(items: DbTenant[], active: boolean | null) {
+  if (active === null) {
+    return items;
+  }
+
+  return items.filter((tenant) => (tenant.tenant_active ?? true) === active);
 }
 
 function mapTenantBodyToCreateInput(body: DbTenant) {

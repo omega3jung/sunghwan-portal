@@ -1,70 +1,73 @@
-import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
-
+import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const actions: DbTicketAction[] = [
+export const actions: TicketActionMockInput[] = [
   {
-    ticket_id: ticket.id,
-    action_no: 1,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Hello, Olivia.<br>Thank you for submitting this request directly. Since it was raised by a repair team manager, no additional approval step is needed.<br>We are reviewing the access impact with the IT team because Unit ID is used as a core identifier across downstream records.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-31T17:02:41Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-31T17:02:41Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 2,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
 
-    action_type: "ASSIGN",
-    content:
+    tka_action_type: "ASSIGN",
+    tka_content:
       "Hi, Daniel.<br>Could you assist this ticket?<br>They want to grant edit permission to Repair Technician, employee group.",
-    owner_id: "evan_seo",
+    tka_owner_username: "evan_seo",
 
-    created_at: "2026-05-31T17:06:18Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-05-31T17:06:18Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 3,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "COMMENT",
+    tka_content:
       "Reviewed from IT governance perspective.<br>Unit ID is a critical identifier and should remain restricted to controlled roles.<br>Expanding edit permission to general repair users would increase the risk of data inconsistency and make audit tracing difficult when corrections are made later.",
-    owner_id: "daniel_kim",
+    tka_owner_username: "daniel_kim",
 
-    created_at: "2026-06-01T01:26:17Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-01T01:26:17Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
   {
-    ticket_id: ticket.id,
-    action_no: 4,
+    ...TICKET_ACTION_MOCK_DEFAULTS,
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
 
-    action_type: "COMMENT",
-    content:
+    tka_action_type: "REJECT",
+    tka_content:
       "Hello, Olivia.<br>After review, I am rejecting this request.<br><br>Reason:<br>Unit ID modification is restricted to maintain data integrity and auditability.<br><br>Recommendation:<br>Please escalate correction requests through team leader for validation.",
-    owner_id: "daniel_kim",
+    tka_owner_username: "daniel_kim",
 
-    created_at: "2026-06-01T03:22:49Z",
-    updated_at: null,
-    active: true,
+    tka_created_at: "2026-06-01T03:22:49Z",
+    tka_updated_at: null,
+    tka_active: true,
 
-    files: [],
-    images: [],
+    tka_files: [],
+    tka_images: [],
   },
 ];

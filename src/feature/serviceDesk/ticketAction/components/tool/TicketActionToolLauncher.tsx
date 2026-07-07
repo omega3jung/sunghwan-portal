@@ -1,4 +1,5 @@
 import {
+  CheckCircle2,
   GitMerge,
   MessageCircleCheck,
   MessageCircleReply,
@@ -20,6 +21,8 @@ import { getTicketActionModeLabelKey } from "../../mapper";
 import type { TicketActionMode } from "../../types";
 
 const ALL_TOOL_ACTIONS: TicketActionMode[] = [
+  "approve",
+  "decline",
   "comment",
   "note",
   "assign",
@@ -29,61 +32,69 @@ const ALL_TOOL_ACTIONS: TicketActionMode[] = [
   "reject",
   "reopen",
   "resubmit",
+  "cancel",
 ];
+
+const WORK_PHASE_ACTIONS = new Set<TicketActionMode>([
+  "assign",
+  "assignSelf",
+  "adjust",
+  "merge",
+  "reject",
+  "reopen",
+  "resubmit",
+]);
+
+const APPROVAL_ACTIONS = new Set<TicketActionMode>(["approve", "decline"]);
 
 const VISIBLE_STATUSES_BY_ACTION: Record<
   TicketActionMode,
   readonly TicketStatus[]
 > = {
+  approve: ["Approval"],
+  decline: ["Approval"],
   comment: [
     "Draft",
-    "Open",
-    "Approved",
+    "Approval",
     "Declined",
+    "Assigned",
     "Working",
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopen",
+    "Reopened",
     "Closed",
   ],
   note: [
     "Draft",
-    "Open",
-    "Approved",
+    "Approval",
     "Declined",
+    "Assigned",
     "Working",
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopen",
+    "Reopened",
     "Closed",
   ],
-  assign: ["Open", "Approved", "Declined", "Working", "Rejected", "Reopen"],
-  assignSelf: ["Open", "Approved", "Working"],
+  assign: ["Assigned", "Declined", "Working", "Rejected", "Reopened"],
+  assignSelf: ["Assigned", "Working"],
   adjust: [
-    "Open",
-    "Approved",
+    "Approval",
     "Declined",
+    "Assigned",
     "Working",
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopen",
+    "Reopened",
     "Closed",
   ],
-  merge: [
-    "Open",
-    "Approved",
-    "Working",
-    "Pending",
-    "Rejected",
-    "Resolved",
-    "Closed",
-  ],
-  reject: ["Open", "Approved", "Working", "Pending"],
+  merge: ["Assigned", "Working", "Pending", "Rejected", "Resolved", "Closed"],
+  reject: ["Assigned", "Working", "Pending"],
   reopen: ["Resolved"],
   resubmit: ["Rejected"],
+  cancel: ["Approval", "Assigned"],
 };
 
 type TicketActionToolLauncherProps = {
@@ -94,6 +105,8 @@ type TicketActionToolLauncherProps = {
 };
 
 const actionIcons: Record<TicketActionMode, ReactNode> = {
+  approve: <CheckCircle2 className="h-4 w-4" />,
+  decline: <XCircle className="h-4 w-4" />,
   comment: <MessageSquarePlus className="h-4 w-4" />,
   note: <StickyNote className="h-4 w-4" />,
   assign: <UserRoundPlus className="h-4 w-4" />,
@@ -103,6 +116,7 @@ const actionIcons: Record<TicketActionMode, ReactNode> = {
   reject: <XCircle className="h-4 w-4" />,
   reopen: <MessageCircleWarning className="h-4 w-4" />,
   resubmit: <MessageCircleReply className="h-4 w-4" />,
+  cancel: <XCircle className="h-4 w-4" />,
 };
 
 export function TicketActionToolLauncher({
@@ -118,7 +132,23 @@ export function TicketActionToolLauncher({
           return false;
         }
 
-        if (action === "assignSelf" && ticket.assigned) {
+        if (
+          APPROVAL_ACTIONS.has(action) &&
+          (!ticket.active ||
+            ticket.assignmentPhase !== "APPROVAL" ||
+            !ticket.assignedApprover)
+        ) {
+          return false;
+        }
+
+        if (
+          WORK_PHASE_ACTIONS.has(action) &&
+          ticket.assignmentPhase !== "WORK"
+        ) {
+          return false;
+        }
+
+        if (action === "assignSelf" && ticket.assignedWorker) {
           return false;
         }
 
@@ -126,9 +156,21 @@ export function TicketActionToolLauncher({
           return false;
         }
 
+        if (action === "cancel" && !ticket.owner) {
+          return false;
+        }
+
         return true;
       }),
-    [ticket.assigned, ticket.mergedIntoTicketId, ticket.status],
+    [
+      ticket.active,
+      ticket.assignedApprover,
+      ticket.assignedWorker,
+      ticket.assignmentPhase,
+      ticket.mergedIntoTicketId,
+      ticket.owner,
+      ticket.status,
+    ],
   );
 
   if (hidden) {

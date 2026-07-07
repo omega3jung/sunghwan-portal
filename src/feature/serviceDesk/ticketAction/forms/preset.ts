@@ -15,7 +15,7 @@ export function createTicketActionDraftValues(
   if (actionType === "ASSIGN") {
     return {
       ...baseValues,
-      assigneeUsernames: ticket?.assigneeUsernames ?? [],
+      assigneeUsernames: ticket?.workAssigneeUsernames ?? [],
       categoryId: ticket?.categoryId ?? "",
     };
   }

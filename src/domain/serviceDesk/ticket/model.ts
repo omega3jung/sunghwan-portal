@@ -3,7 +3,7 @@ import { LocalizedText } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../category";
-import { Attach } from "../types";
+import { TicketAttachmentMetadata } from "../types";
 import { TicketResolutionReason, TicketStatus } from "../types/enums";
 
 /**
@@ -27,8 +27,22 @@ interface TicketWorkflowState {
   status: TicketStatus;
   priority: Priority;
   riskLevel: RiskLevel;
-  assigneeUsernames: string[];
   closeReason?: TicketResolutionReason;
+}
+
+export type TicketAssignmentPhase = "APPROVAL" | "WORK";
+
+/**
+ * Ticket assignment state.
+ * The persisted assignee column stores the current responsible users, whose
+ * meaning depends on whether the ticket is in approval or work phase.
+ */
+export interface TicketAssignmentState {
+  assignmentPhase: TicketAssignmentPhase;
+  approvalAssigneeUsernames: string[];
+  workAssigneeUsernames: string[];
+  assignedApprover: boolean;
+  assignedWorker: boolean;
 }
 
 /**
@@ -40,6 +54,9 @@ interface TicketMetrics {
 
   lastCommentAt?: ISODateString;
   lastCommenterEmail?: string;
+  lastUserActivityAt?: ISODateString;
+  lastUserActivityEmail?: string;
+  closedAt?: ISODateString;
 }
 
 /**
@@ -50,8 +67,6 @@ interface TicketViewState {
 
   // Derived in the response for the current authenticated user.
   owner: boolean;
-  // Derived in the response for the current authenticated user.
-  assigned: boolean;
   active: boolean;
 }
 
@@ -61,6 +76,7 @@ interface TicketViewState {
  */
 interface TicketScopeContext {
   scope: CategoryScope;
+  categoryParentId?: string;
 }
 
 /**
@@ -69,7 +85,7 @@ interface TicketScopeContext {
  */
 interface TicketContent {
   categoryId: string;
-  approvalStepId?: string;
+  approvalStepId: string | null;
 
   subject: string;
   content: string;
@@ -80,8 +96,8 @@ interface TicketContent {
     bcc: string[];
   };
 
-  files: Attach[];
-  images: Attach[];
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
 }
 
 /**
@@ -89,6 +105,7 @@ interface TicketContent {
  */
 interface TicketRelation {
   mergedIntoTicketId?: string | null;
+  mergedIntoTicketNo?: string | null;
 }
 
 /**
@@ -99,11 +116,14 @@ export interface TicketSummary
   extends
     TicketBase,
     TicketWorkflowState,
+    TicketAssignmentState,
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,
     TicketRelation {
   categoryName: LocalizedText;
+  categoryId?: string;
+  approvalStepId: string | null;
   approvalStepName?: string;
 
   subject: string;
@@ -118,6 +138,7 @@ export interface TicketDetail
   extends
     TicketBase,
     TicketWorkflowState,
+    TicketAssignmentState,
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,

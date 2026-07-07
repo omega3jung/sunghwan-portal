@@ -39,11 +39,17 @@ function compareTicket(
     case "createdAt":
       return compareDate(left.createdAt, right.createdAt);
 
+    case "updatedAt":
+      return compareDate(left.updatedAt ?? "", right.updatedAt ?? "");
+
     case "dueAt":
       return compareDate(left.dueAt, right.dueAt);
 
     case "priority":
       return comparePriority(left.priority, right.priority);
+
+    case "status":
+      return left.status.localeCompare(right.status);
 
     default:
       return 0;
@@ -61,7 +67,11 @@ function getTicketNumber(ticketNumber: string): number {
 }
 
 function compareDate(left: string, right: string): number {
-  return new Date(left).getTime() - new Date(right).getTime();
+  const leftTime = new Date(left).getTime();
+  const rightTime = new Date(right).getTime();
+
+  return (Number.isFinite(leftTime) ? leftTime : 0) -
+    (Number.isFinite(rightTime) ? rightTime : 0);
 }
 
 function comparePriority(left: string, right: string): number {

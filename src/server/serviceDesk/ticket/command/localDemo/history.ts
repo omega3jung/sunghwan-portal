@@ -16,12 +16,16 @@ const buildHistoryBase = ({
   isInternal = false,
 }: LocalActionRuntimeContext): Pick<
   DbTicketHistory,
-  "ticket_id" | "history_no" | "actor_id" | "action_no" | "created_at"
+  | "ticket_id"
+  | "history_no"
+  | "actor_username"
+  | "action_no"
+  | "created_at"
 > => ({
   ticket_id: ticketId,
   history_no: getMaxHistoryNo(ticketId, isInternal),
-  actor_id: employeeUserName,
-  action_no: actionNo.toString(),
+  actor_username: employeeUserName,
+  action_no: actionNo,
   created_at: createdAt,
 });
 
@@ -41,8 +45,8 @@ export const createStatusHistory: LocalActionHandler = (context) => {
     history: {
       type: "STATUS",
       action: "UPDATED",
-      from_value: ticket.status,
-      to_value: nextStatus,
+      from_value: { status: ticket.status },
+      to_value: { status: nextStatus },
       metadata: toHistoryMetadata(context.content),
     },
   };

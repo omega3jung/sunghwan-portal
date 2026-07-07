@@ -199,7 +199,8 @@ type TicketActivity = {
 
 #### `merge`
 
-- `targetTicketId`
+- `mergedIntoTicketId`
+- `mergedIntoTicketNo`
 
 #### `reopen` / `resubmit`
 

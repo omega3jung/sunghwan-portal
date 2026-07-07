@@ -61,6 +61,10 @@ export const useFileAttachments = <
     }
 
     return accept.some((type) => {
+      if (type.startsWith(".")) {
+        return file.name.toLowerCase().endsWith(type.toLowerCase());
+      }
+
       if (type.endsWith("/*")) {
         const baseType = type.split("/")[0];
         return file.type.startsWith(baseType);

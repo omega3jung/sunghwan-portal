@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NS } from "@/lib/i18n";
 
+import { ServiceDeskSettingsTenantProvider } from "./ServiceDeskSettingsTenantProvider";
+
 export default function ServiceDeskSettingsLayout({
   children,
 }: {
@@ -65,7 +67,9 @@ export default function ServiceDeskSettingsLayout({
       </Tabs>
 
       {/* 👇 rendering tab page.tsx */}
-      {children}
+      <ServiceDeskSettingsTenantProvider>
+        {children}
+      </ServiceDeskSettingsTenantProvider>
     </main>
   );
 }

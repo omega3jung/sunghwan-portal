@@ -14,16 +14,11 @@ import {
   withDerivedTicketOwnership,
 } from "@/app/api/service-desk/_shared";
 import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api";
-import {
-  TicketWriteRequestInput,
-  toTicketWriteInput,
-  toTicketWritePayload,
-  updateTicketSchema,
-} from "@/feature/serviceDesk/ticket/write";
+import { requesterUpdateTicketRequestSchema } from "@/server/data/serviceDesk/ticket";
 import {
   localDeleteTicket,
   localGetTicket,
-  localUpdateTicket,
+  localRequesterUpdateTicket,
 } from "@/server/serviceDesk/ticket/localDemo";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -63,8 +58,8 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
-  const parsedBody = updateTicketSchema.safeParse(
-    (await request.json()) as TicketWriteRequestInput,
+  const parsedBody = requesterUpdateTicketRequestSchema.safeParse(
+    await request.json(),
   );
 
   if (!parsedBody.success) {
@@ -74,7 +69,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     );
   }
 
-  const body = toTicketWriteInput(parsedBody.data, ticketId);
+  const body = parsedBody.data;
 
   if (!isRemote) {
     try {
@@ -86,9 +81,10 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
 
       return NextResponse.json(
         withDerivedTicketOwnership(
-          localUpdateTicket({
+          localRequesterUpdateTicket({
             isInternal,
             ticketId,
+            requesterUsername: currentUserName,
             input: body,
           }),
           currentUserName,
@@ -108,7 +104,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     method: "PUT",
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    body: toTicketWritePayload(body),
+    body,
     errorMessage: tServiceDeskApi("api.tickets.update"),
     mapData: mapTicketDetailPayload,
   });

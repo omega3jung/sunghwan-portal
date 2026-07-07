@@ -74,7 +74,10 @@ export async function createApprovalStep(
   input: CreateApprovalStepInputDto,
 ): Promise<ApprovalStepDto> {
   await assertActiveTenantExists(input.tenant_id);
-  await assertActiveMainCategoryExistsInTenant(input.tenant_id, input.category_id);
+  await assertActiveMainCategoryExistsInTenant(
+    input.tenant_id,
+    input.category_id,
+  );
 
   const row = await createApprovalStepRow(
     mapCreateApprovalStepInputDtoToRowInput(input),
@@ -175,11 +178,13 @@ async function assertActiveMainCategoryExistsInTenant(
   tenantId: string | number,
   categoryId: string | number,
 ) {
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(tenantId, categoryId);
+  const rows = await findCategoryRowsByTenantIdAndCategoryId(
+    tenantId,
+    categoryId,
+  );
   const targetRow = rows.find(
     (row) =>
-      Number(row.cat_id) === Number(categoryId) &&
-      row.cat_parent_id === null,
+      Number(row.cat_id) === Number(categoryId) && row.cat_parent_id === null,
   );
 
   if (!targetRow || targetRow.cat_active === false) {

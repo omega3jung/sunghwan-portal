@@ -12,6 +12,7 @@ type FileAttachmentDropzoneProps = {
   onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
   onDrop: (files: FileList) => void;
   inputRef: RefObject<HTMLInputElement>;
+  accept?: string[];
 };
 
 export const FileAttachmentDropzone = ({
@@ -20,6 +21,7 @@ export const FileAttachmentDropzone = ({
   onSelect,
   onDrop,
   inputRef,
+  accept,
 }: FileAttachmentDropzoneProps) => {
   const { t } = useTranslation("FileAttachment");
 
@@ -62,6 +64,7 @@ export const FileAttachmentDropzone = ({
         ref={inputRef}
         type="file"
         multiple
+        accept={accept?.join(",")}
         className="hidden"
         onChange={onSelect}
       />

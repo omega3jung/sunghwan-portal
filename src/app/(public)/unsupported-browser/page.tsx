@@ -3,8 +3,12 @@
 
 import { useTranslation } from "react-i18next";
 
+import { NS } from "@/lib/i18n";
+
 export default function UnsupportedBrowserPage() {
-  const { t } = useTranslation("unsupportedBrowser");
+  const { t } = useTranslation(NS.error, {
+    keyPrefix: "unsupportedBrowser",
+  });
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-gray-50">

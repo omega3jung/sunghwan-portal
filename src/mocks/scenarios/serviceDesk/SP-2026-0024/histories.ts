@@ -1,144 +1,130 @@
-import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
-
+import { TICKET_HISTORY_MOCK_DEFAULTS, TicketHistoryMockInput } from "../types";
 import { ticket } from "./ticket";
 
-export const histories: DbTicketHistory[] = [
+export const histories: TicketHistoryMockInput[] = [
   {
-    ticket_id: ticket.id,
-    history_no: 1,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 1,
 
-    type: "TICKET",
-    action: "CREATED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "CREATED",
 
-    actor_id: "olivia_johnson",
-    action_no: null,
+    tkh_actor_username: "olivia_johnson",
+    tkh_action_no: null,
 
-    created_at: "2026-05-31T16:25:38Z",
+    tkh_created_at: "2026-05-31T16:25:38Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 2,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 2,
 
-    type: "ASSIGNMENT",
-    action: "UPDATED",
+    tkh_history_type: "ASSIGNMENT",
+    tkh_history_action: "UPDATED",
 
-    actor_id: null,
-    action_no: null,
+    tkh_actor_username: null,
+    tkh_action_no: null,
 
-    from_value: null,
-    to_value: "41",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["evan_seo"] },
 
-    created_at: "2026-05-31T16:31:12Z",
+    tkh_created_at: "2026-05-31T16:31:12Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 3,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 3,
 
-    type: "STATUS",
-    action: "UPDATED",
+    tkh_history_type: "STATUS",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "evan_seo",
-    action_no: null,
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: null,
 
-    from_value: "Open",
-    to_value: "Working",
+    tkh_from_value: { status: "Assigned" },
+    tkh_to_value: { status: "Working" },
 
-    created_at: "2026-05-31T16:44:05Z",
+    tkh_created_at: "2026-05-31T16:44:05Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 4,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 4,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "evan_seo",
-    action_no: "1",
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: 1,
 
-    created_at: "2026-05-31T17:02:41Z",
+    tkh_created_at: "2026-05-31T17:02:41Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 5,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 5,
 
-    type: "ASSIGNMENT",
-    action: "UPDATED",
+    tkh_history_type: "ASSIGNMENT",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "evan_seo",
-    action_no: "2",
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: 2,
 
-    created_at: "2026-05-31T17:06:18Z",
+    tkh_created_at: "2026-05-31T17:06:18Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 6,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 6,
 
-    type: "ASSIGNMENT",
-    action: "UPDATED",
+    tkh_history_type: "ASSIGNMENT",
+    tkh_history_action: "UPDATED",
 
-    actor_id: "evan_seo",
-    action_no: null,
+    tkh_actor_username: "evan_seo",
+    tkh_action_no: null,
 
-    from_value: "41",
-    to_value: "41,31",
+    tkh_from_value: { assigneeUsernames: ["evan_seo"] },
+    tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
 
-    created_at: "2026-06-01T00:48:22Z",
+    tkh_created_at: "2026-06-01T00:48:22Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 7,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 7,
 
-    type: "COMMENT",
-    action: "CREATED",
+    tkh_history_type: "COMMENT",
+    tkh_history_action: "CREATED",
 
-    actor_id: "daniel_kim",
-    action_no: "3",
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: 3,
 
-    created_at: "2026-06-01T01:26:17Z",
+    tkh_created_at: "2026-06-01T01:26:17Z",
   },
   {
-    ticket_id: ticket.id,
-    history_no: 8,
+    ...TICKET_HISTORY_MOCK_DEFAULTS,
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 8,
 
-    type: "WORK_SESSION",
-    action: "UPDATED",
+    tkh_history_type: "TICKET",
+    tkh_history_action: "TICKET_REJECTED",
 
-    actor_id: "daniel_kim",
-    action_no: null,
+    tkh_actor_username: "daniel_kim",
+    tkh_action_no: 4,
 
-    created_at: "2026-06-01T02:10:44Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 9,
+    tkh_from_value: { status: "Working" },
+    tkh_to_value: {
+      status: "Rejected",
+      closeReason: "Rejected",
+    },
 
-    type: "TICKET",
-    action: "TICKET_REJECTED",
-
-    actor_id: "daniel_kim",
-    action_no: null,
-
-    from_value: "Working",
-    to_value: "Rejected",
-
-    metadata: {
+    tkh_metadata: {
       reason:
         "Unit ID modification is restricted to maintain data integrity and auditability",
       note: "Please escalate correction requests through team leader for validation",
     },
 
-    created_at: "2026-06-01T03:18:06Z",
-  },
-  {
-    ticket_id: ticket.id,
-    history_no: 10,
-
-    type: "COMMENT",
-    action: "CREATED",
-
-    actor_id: "daniel_kim",
-    action_no: "4",
-
-    created_at: "2026-06-01T03:22:49Z",
+    tkh_created_at: "2026-06-01T03:22:49Z",
   },
 ];
