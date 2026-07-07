@@ -90,7 +90,7 @@ export const TicketListItem = ({
                     event.stopPropagation();
                   }}
                 >
-                  {t("merge.into", { ticketId: ticket.mergedIntoTicketId })}
+                  {t("merge.into", { ticketId: ticket.mergedIntoTicketNo })}
                 </Link>
               </div>
             ) : null}

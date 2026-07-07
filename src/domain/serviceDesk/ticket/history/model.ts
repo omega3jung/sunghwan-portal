@@ -6,8 +6,9 @@ export type TicketHistoryDisplayMetadata = {
   source?: string;
   reason?: string;
   note?: string;
-  targetTicketId?: string;
-  targetTicketNumber?: string;
+  mergedIntoTicketId?: string;
+  mergedIntoTicketNo?: string;
+  previousStatus?: string;
   changedFields?: string[];
   routingSensitiveChanged?: boolean;
   routingReset?: boolean;
@@ -27,7 +28,7 @@ export type TicketHistoryDisplayMetadata = {
  *
  * actionNo:
  * - null   => ticket-level history
- * - string => action-level history
+ * - number => action-level history
  */
 export interface TicketHistory {
   ticketId: string;
@@ -37,7 +38,7 @@ export interface TicketHistory {
   action: TicketHistoryAction;
 
   actorUsername: string | null;
-  actionNo: string | null;
+  actionNo: number | null;
 
   fromValue?: unknown;
   toValue?: unknown;

@@ -76,6 +76,8 @@ export type TicketActionMockInput = {
   tka_images: Attach[];
 };
 
+export type TicketHistoryMockValue = Record<string, unknown> | null;
+
 export type TicketHistoryMockInput = {
   tkh_ticket_id: string;
   tkh_history_no: number;
@@ -84,10 +86,10 @@ export type TicketHistoryMockInput = {
   tkh_history_action: TicketHistoryAction;
 
   tkh_actor_username: string | null;
-  tkh_action_no: string | null;
+  tkh_action_no: number | null;
 
-  tkh_from_value: unknown | null;
-  tkh_to_value: unknown | null;
+  tkh_from_value: TicketHistoryMockValue;
+  tkh_to_value: TicketHistoryMockValue;
   tkh_metadata: Record<string, unknown>;
 
   tkh_created_at: ISODateString;

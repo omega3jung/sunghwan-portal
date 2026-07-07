@@ -13,7 +13,8 @@ export type TicketActionType =
   | "MERGE"
   | "ADJUST"
   | "REOPEN"
-  | "RESUBMIT";
+  | "RESUBMIT"
+  | "CANCEL";
 
 export type ActionConstraint = {
   allowedStatus?: TicketStatus[];

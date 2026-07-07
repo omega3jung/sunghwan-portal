@@ -12,6 +12,7 @@
     "adjustPlan": "Adjust Plan",
     "reopenIssue": "Reopen Issue",
     "resubmitRequest": "Resubmit Request",
+    "cancelTicket": "Cancel ticket",
     "searchCriteria": "Search criteria",
     "workSession": {
       "submit": "Save work session",
@@ -200,6 +201,7 @@
       "WORK_SESSION_UPDATED": "Work session updated",
       "MERGED": "Merged into {{target}}",
       "TICKET_REJECTED": "Ticket rejected",
+      "TICKET_CANCELED": "Ticket canceled",
       "UPDATED": "Ticket updated",
       "DELETED": "Ticket deleted",
       "CREATED": "Ticket created",
@@ -244,7 +246,8 @@
       "merge": "Merge this ticket into another ticket.",
       "adjust": "Update priority, risk level, and due date settings.",
       "reopen": "Reopen the ticket when the resolved result still needs more work.",
-      "resubmit": "Send this rejected request back for review."
+      "resubmit": "Send this rejected request back for review.",
+      "cancel": "Cancel this request before work starts."
     },
     "helper": {
       "approve": "Leave an approval note before sending the ticket onward.",
@@ -257,7 +260,8 @@
       "merge": "Choose the ticket to merge into and leave a short note.",
       "adjust": "Review priority, risk level, and due date before applying changes.",
       "reopen": "Explain what still needs to be resolved before this ticket can stay closed.",
-      "resubmit": "Explain what changed before resubmitting this rejected request."
+      "resubmit": "Explain what changed before resubmitting this rejected request.",
+      "cancel": "Explain why this request should be canceled."
     },
     "submit": {
       "approve": "Approve",
@@ -270,7 +274,8 @@
       "merge": "Merge ticket",
       "adjust": "Update plan",
       "reopen": "Reopen Issue",
-      "resubmit": "Resubmit Request"
+      "resubmit": "Resubmit Request",
+      "cancel": "Cancel ticket"
     },
     "list": {
       "title": "Activity",
@@ -299,7 +304,8 @@
         "merge": "Explain why these tickets should be merged",
         "adjust": "Describe why these values need to be adjusted",
         "reopen": "Describe what still needs to be resolved",
-        "resubmit": "Describe what changed before resubmitting this ticket"
+        "resubmit": "Describe what changed before resubmitting this ticket",
+        "cancel": "Describe why this ticket should be canceled"
       },
       "targetTicketId": "Target ticket",
       "mergeTargetPlaceholder": "Enter the representative ticket ID"
@@ -505,6 +511,7 @@
         "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
         "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
+        "cancelForbidden": "Only the requester can cancel this ticket before work starts.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",
         "mergeTargetNotFound": "Merge target not found.",

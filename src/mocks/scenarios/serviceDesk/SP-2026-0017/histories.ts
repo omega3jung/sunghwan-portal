@@ -37,7 +37,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "APPROVAL_APPROVED",
 
     tkh_actor_username: "__demo_leader__",
-    tkh_action_no: "1",
+    tkh_action_no: 1,
 
     tkh_created_at: "2026-06-24T01:18:09Z",
   },
@@ -52,8 +52,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "__demo_manager__",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["__demo_manager__"] },
 
     tkh_created_at: "2026-06-24T01:18:10Z",
   },
@@ -68,8 +68,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "__demo_admin__",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["__demo_admin__"] },
 
     tkh_created_at: "2026-06-24T01:18:10Z",
   },

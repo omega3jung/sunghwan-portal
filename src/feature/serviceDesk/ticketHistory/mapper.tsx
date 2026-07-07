@@ -127,6 +127,8 @@ export function getHistorySummary(
       });
     case "TICKET_REJECTED":
       return t("history.TICKET_REJECTED");
+    case "TICKET_CANCELED":
+      return t("history.TICKET_CANCELED");
     case "UPDATED":
       return t("history.UPDATED");
     case "CREATED":
@@ -141,6 +143,23 @@ function isSystemStatus(value: unknown): value is SystemStatus {
 }
 
 function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
+  if (
+    value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    "status" in value
+  ) {
+    const status = (value as { status?: unknown }).status;
+
+    if (isSystemStatus(status)) {
+      return tStatus(statusLocaleKey[status]);
+    }
+
+    if (typeof status === "string") {
+      return status;
+    }
+  }
+
   if (isSystemStatus(value)) {
     return tStatus(statusLocaleKey[value]);
   }
@@ -176,6 +195,9 @@ export function resolveHistoryIcon(history: TicketHistory) {
       return <GitMerge className="h-3 w-3" />;
 
     case "TICKET_REJECTED":
+      return <X className="h-3 w-3" />;
+
+    case "TICKET_CANCELED":
       return <X className="h-3 w-3" />;
 
     case "DELETED":
@@ -214,7 +236,11 @@ export function resolveHistoryIcon(history: TicketHistory) {
 function resolveMergeTargetLabel(
   metadata?: TicketHistoryDisplayMetadata | null,
 ): string {
-  return metadata?.targetTicketNumber ?? metadata?.targetTicketId ?? "-";
+  return (
+    metadata?.mergedIntoTicketNo ??
+    metadata?.mergedIntoTicketId ??
+    "-"
+  );
 }
 
 export function resolveHistoryDescription(

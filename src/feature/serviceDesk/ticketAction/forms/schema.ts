@@ -19,6 +19,7 @@ export const ticketActionTypeSchema = z.enum([
   "ADJUST",
   "REOPEN",
   "RESUBMIT",
+  "CANCEL",
 ]);
 
 const actionContentSchema = z

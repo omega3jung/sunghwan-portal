@@ -15,6 +15,7 @@ export type TicketHistoryAction =
   | "DELETED"
   | "TICKET_REJECTED"
   | "TICKET_MERGED"
+  | "TICKET_CANCELED"
   | "APPROVAL_REQUESTED"
   | "APPROVAL_APPROVED"
   | "APPROVAL_DECLINED";

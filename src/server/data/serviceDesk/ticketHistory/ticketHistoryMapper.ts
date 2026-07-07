@@ -21,8 +21,7 @@ export function mapTicketHistoryRowToDto(
     type: row.tkh_history_type as TicketHistoryType,
     action: row.tkh_history_action as TicketHistoryAction,
     actor_username: row.tkh_actor_username,
-    action_no:
-      row.tkh_action_no === null ? null : String(row.tkh_action_no),
+    action_no: row.tkh_action_no,
     ...(fromValue !== null ? { from_value: fromValue } : {}),
     ...(toValue !== null ? { to_value: toValue } : {}),
     metadata: mapTicketHistoryDisplayMetadata(row.tkh_metadata),

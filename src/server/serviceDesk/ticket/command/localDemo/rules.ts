@@ -65,6 +65,7 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
   reopen: ["Resolved"],
   resubmit: ["Rejected"],
   assignSelf: ["Assigned", "Working"],
+  cancel: ["Approval", "Assigned"],
 };
 
 export function resolveLocalDemoExecutionMode(
@@ -112,6 +113,8 @@ export function getLocalDemoNextStatus(
       return currentStatus === "Rejected" ? "Assigned" : undefined;
     case "assignSelf":
       return currentStatus === "Working" ? undefined : "Working";
+    case "cancel":
+      return "Closed";
     default:
       return undefined;
   }

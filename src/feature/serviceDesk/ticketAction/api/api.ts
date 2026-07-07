@@ -100,6 +100,9 @@ export const serviceDeskTicketActionApi = {
   resubmit: (input: Omit<TicketActionCommandInput, "actionType">) =>
     executeAction({ ...input, actionType: "RESUBMIT" }),
 
+  cancel: (input: Omit<TicketActionCommandInput, "actionType">) =>
+    executeAction({ ...input, actionType: "CANCEL" }),
+
   remove: async ({
     ticketId,
     actionNo,

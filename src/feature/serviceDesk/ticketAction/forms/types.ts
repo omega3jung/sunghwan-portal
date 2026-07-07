@@ -68,6 +68,10 @@ export type TicketResubmitDraftValues = TicketActionDraftBase & {
   actionType: "RESUBMIT";
 };
 
+export type TicketCancelDraftValues = TicketActionDraftBase & {
+  actionType: "CANCEL";
+};
+
 export interface TicketActionInput {
   ticketId: string;
   actionNo?: string;

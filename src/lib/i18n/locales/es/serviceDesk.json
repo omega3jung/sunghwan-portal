@@ -12,6 +12,7 @@
     "adjustPlan": "Ajustar plan",
     "reopenIssue": "Reabrir incidencia",
     "resubmitRequest": "Reenviar solicitud",
+    "cancelTicket": "Cancelar ticket",
     "searchCriteria": "Criterios de búsqueda",
     "workSession": {
       "submit": "Guardar tiempo registrado",
@@ -200,6 +201,7 @@
       "WORK_SESSION_UPDATED": "Tiempo registrado actualizado",
       "MERGED": "Fusionado en {{target}}",
       "TICKET_REJECTED": "Ticket rechazado",
+      "TICKET_CANCELED": "Ticket cancelado",
       "UPDATED": "Ticket actualizado",
       "DELETED": "Ticket eliminado",
       "CREATED": "Ticket creado",
@@ -244,7 +246,8 @@
       "merge": "Fusiona este ticket con otro ticket.",
       "adjust": "Actualiza la prioridad, el nivel de riesgo y la fecha límite.",
       "reopen": "Reabre el ticket cuando el resultado resuelto aún requiere más trabajo.",
-      "resubmit": "Vuelve a enviar esta solicitud rechazada para su revisión."
+      "resubmit": "Vuelve a enviar esta solicitud rechazada para su revisión.",
+      "cancel": "Cancela esta solicitud antes de que comience el trabajo."
     },
     "helper": {
       "approve": "Deja una nota de aprobación antes de enviar el ticket a la siguiente etapa.",
@@ -257,7 +260,8 @@
       "merge": "Elige el ticket con el que se fusionará y deja una nota breve.",
       "adjust": "Revisa la prioridad, el nivel de riesgo y la fecha límite antes de aplicar los cambios.",
       "reopen": "Explica qué queda por resolver antes de que este ticket pueda permanecer cerrado.",
-      "resubmit": "Explica qué cambió antes de volver a enviar esta solicitud rechazada."
+      "resubmit": "Explica qué cambió antes de volver a enviar esta solicitud rechazada.",
+      "cancel": "Explica por qué se debe cancelar esta solicitud."
     },
     "submit": {
       "approve": "Aprobar",
@@ -270,7 +274,8 @@
       "merge": "Fusionar ticket",
       "adjust": "Actualizar plan",
       "reopen": "Reabrir incidencia",
-      "resubmit": "Reenviar solicitud"
+      "resubmit": "Reenviar solicitud",
+      "cancel": "Cancelar ticket"
     },
     "list": {
       "title": "Actividad",
@@ -299,7 +304,8 @@
         "merge": "Explica por qué estos tickets deben fusionarse",
         "adjust": "Describe por qué estos valores deben ajustarse",
         "reopen": "Describe qué sigue pendiente de resolver",
-        "resubmit": "Describe qué cambió antes de volver a enviar este ticket"
+        "resubmit": "Describe qué cambió antes de volver a enviar este ticket",
+        "cancel": "Describe por qué se debe cancelar este ticket"
       },
       "targetTicketId": "Ticket de destino",
       "mergeTargetPlaceholder": "Ingresa el ID del ticket principal"
@@ -505,6 +511,7 @@
         "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
         "assigneeForbidden": "Solo una persona asignada puede iniciar el trabajo en este ticket.",
         "approvalForbidden": "Solo la persona aprobadora asignada puede aprobar o declinar este ticket.",
+        "cancelForbidden": "Solo la persona solicitante puede cancelar este ticket antes de que comience el trabajo.",
         "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
         "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
         "mergeTargetNotFound": "No se encontró el ticket de destino para la fusión.",

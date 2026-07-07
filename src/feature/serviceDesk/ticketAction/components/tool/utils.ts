@@ -22,6 +22,7 @@ export const EDITOR_PLACEHOLDER_KEY: Record<TicketActionMode, string> = {
   reject: "actionTool.form.editorPlaceholder.reject",
   reopen: "actionTool.form.editorPlaceholder.reopen",
   resubmit: "actionTool.form.editorPlaceholder.resubmit",
+  cancel: "actionTool.form.editorPlaceholder.cancel",
 };
 
 export function getFieldGroupClassName(mode: TicketActionMode) {

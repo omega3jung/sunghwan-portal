@@ -66,6 +66,7 @@ export const localCreateTicket = ({
     ),
     assignee_usernames: routing.assigneeUsernames,
     merged_into_ticket_id: null,
+    merged_into_ticket_no: null,
     work_minutes: 0,
     last_comment_at: null,
     last_commenter_email: null,

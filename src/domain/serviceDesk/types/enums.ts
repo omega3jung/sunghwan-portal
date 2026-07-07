@@ -24,4 +24,5 @@ export type TicketResolutionReason =
   | "Completed"
   | "Merged"
   | "Rejected"
+  | "Declined"
   | "Canceled";

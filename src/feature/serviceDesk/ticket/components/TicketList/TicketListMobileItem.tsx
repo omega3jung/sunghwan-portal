@@ -35,7 +35,9 @@ export const TicketListMobileItem = ({
   onClick,
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
-  const requester = users.find((user) => user.value === ticket.requesterUsername);
+  const requester = users.find(
+    (user) => user.value === ticket.requesterUsername,
+  );
   const requesterName =
     requester?.label ||
     t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
@@ -100,7 +102,7 @@ export const TicketListMobileItem = ({
                 event.stopPropagation();
               }}
             >
-              {`${t("merge.badge")} : ${ticket.mergedIntoTicketId}`}
+              {`${t("merge.badge")} : ${ticket.mergedIntoTicketNo}`}
             </Link>
           ) : null}
 

@@ -62,7 +62,7 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
     draft: "임시",
     open: "열림",
     approval: "승인 대기",
-    declined: "반려됨",
+    declined: "승인 반려",
     assigned: "배정됨",
     working: "처리 중",
     pending: "대기 중",

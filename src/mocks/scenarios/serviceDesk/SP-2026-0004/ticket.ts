@@ -7,6 +7,7 @@ export const ticket: TicketMockInput = {
   tk_updated_at: "2026-06-01T03:22:49Z",
   tk_requester_username: "olivia_johnson",
   tk_status: "Rejected",
+  tk_close_reason: "Rejected",
   tk_priority: "medium",
   tk_risk_level: "medium",
   tk_assignee_usernames: ["evan_seo", "daniel_kim"],

@@ -174,6 +174,8 @@ export async function executeTicketApprovalAction({
         currentUserName,
         actionNo: actionDto.action_no,
         reason: content,
+        fromStatus: ticket.tk_status,
+        toStatus: "Declined",
         query,
       });
     }
@@ -241,6 +243,8 @@ async function declineTicket({
   currentUserName,
   actionNo,
   reason,
+  fromStatus,
+  toStatus,
   query,
 }: {
   ticket: ServiceDeskTicketViewRow;
@@ -248,6 +252,8 @@ async function declineTicket({
   currentUserName: string;
   actionNo: number;
   reason: string;
+  fromStatus: TicketStatus;
+  toStatus: TicketStatus;
   query: TicketQueryExecutor;
 }) {
   const currentApprovalStepId = requireCurrentApprovalStepId(ticket);
@@ -278,6 +284,8 @@ async function declineTicket({
       actionNo,
       actorUsername: currentUserName,
       approvalStepId: currentApprovalStepId,
+      fromStatus,
+      toStatus,
       reason,
     },
     { query },

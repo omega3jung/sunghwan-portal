@@ -82,6 +82,7 @@ const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => ({
   risk_level: ticket.tk_risk_level,
   assignee_usernames: ticket.tk_assignee_usernames,
   merged_into_ticket_id: ticket.tk_merged_into_ticket_id,
+  merged_into_ticket_no: ticket.tk_merged_into_ticket_no,
   last_comment_at: ticket.tka_last_comment_at,
   last_commenter_email: ticket.tka_last_comment_email,
   last_user_activity_at: ticket.tka_last_user_activity_at,

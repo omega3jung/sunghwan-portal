@@ -32,6 +32,7 @@ const ALL_TOOL_ACTIONS: TicketActionMode[] = [
   "reject",
   "reopen",
   "resubmit",
+  "cancel",
 ];
 
 const WORK_PHASE_ACTIONS = new Set<TicketActionMode>([
@@ -93,6 +94,7 @@ const VISIBLE_STATUSES_BY_ACTION: Record<
   reject: ["Assigned", "Working", "Pending"],
   reopen: ["Resolved"],
   resubmit: ["Rejected"],
+  cancel: ["Approval", "Assigned"],
 };
 
 type TicketActionToolLauncherProps = {
@@ -114,6 +116,7 @@ const actionIcons: Record<TicketActionMode, ReactNode> = {
   reject: <XCircle className="h-4 w-4" />,
   reopen: <MessageCircleWarning className="h-4 w-4" />,
   resubmit: <MessageCircleReply className="h-4 w-4" />,
+  cancel: <XCircle className="h-4 w-4" />,
 };
 
 export function TicketActionToolLauncher({
@@ -153,6 +156,10 @@ export function TicketActionToolLauncher({
           return false;
         }
 
+        if (action === "cancel" && !ticket.owner) {
+          return false;
+        }
+
         return true;
       }),
     [
@@ -161,6 +168,7 @@ export function TicketActionToolLauncher({
       ticket.assignedWorker,
       ticket.assignmentPhase,
       ticket.mergedIntoTicketId,
+      ticket.owner,
       ticket.status,
     ],
   );

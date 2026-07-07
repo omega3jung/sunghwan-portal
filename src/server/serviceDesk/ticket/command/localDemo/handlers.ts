@@ -128,15 +128,21 @@ const approveTicket: LocalActionHandler = (context) => {
 const declineTicket: LocalActionHandler = (context) => {
   const ticket = requireApprovalTicket(context);
   const nextStatus = requireNextStatus(context);
+  const currentApprovalStepId = requireApprovalStepId(ticket);
 
   return {
     history: {
       type: "APPROVAL",
       action: "APPROVAL_DECLINED",
       from_value: {
-        approvalStepId: normalizeApprovalStepId(requireApprovalStepId(ticket)),
+        approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
+        status: ticket.status,
       },
-      to_value: null,
+      to_value: {
+        approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
+        status: nextStatus,
+        closeReason: "Declined",
+      },
       metadata: {
         ...toHistoryMetadata(context.content),
         reason: context.content.content.trim(),
@@ -156,8 +162,8 @@ const assignTicket: LocalActionHandler = (context) => {
     history: {
       type: "ASSIGNMENT",
       action: "UPDATED",
-      from_value: ticket.assignee_usernames,
-      to_value: assigneeUsernames,
+      from_value: { assigneeUsernames: ticket.assignee_usernames },
+      to_value: { assigneeUsernames },
       metadata: toHistoryMetadata(context.content),
     },
     ticketPatch: {
@@ -179,8 +185,8 @@ const assignSelfTicket: LocalActionHandler = (context) => {
     history: {
       type: "ASSIGNMENT",
       action: "UPDATED",
-      from_value: ticket.assignee_usernames,
-      to_value: assigneeUsernames,
+      from_value: { assigneeUsernames: ticket.assignee_usernames },
+      to_value: { assigneeUsernames },
       metadata: toHistoryMetadata(context.content),
     },
     ticketPatch: {
@@ -199,28 +205,84 @@ const rejectTicket: LocalActionHandler = (context) => {
     history: {
       type: "TICKET",
       action: "TICKET_REJECTED",
-      from_value: ticket.status,
-      to_value: nextStatus,
-      metadata: toHistoryMetadata(context.content),
+      from_value: { status: ticket.status },
+      to_value: {
+        status: nextStatus,
+        closeReason: "Rejected",
+      },
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        reason: context.content.content.trim(),
+      },
     },
   };
 };
 
 const mergeTicket: LocalActionHandler = (context) => {
   const targetTicketId = requireTargetTicketId(context.content);
-  const { sourceTicket } = validateMergeTarget(context, targetTicketId);
+  const { sourceTicket, targetTicket } = validateMergeTarget(
+    context,
+    targetTicketId,
+  );
 
   return {
     history: {
       type: "TICKET",
       action: "TICKET_MERGED",
-      from_value: sourceTicket.merged_into_ticket_id ?? null,
-      to_value: targetTicketId,
-      metadata: toHistoryMetadata(context.content),
+      from_value: { status: sourceTicket.status },
+      to_value: {
+        status: "Closed",
+        closeReason: "Merged",
+      },
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        mergedIntoTicketId: targetTicketId,
+        mergedIntoTicketNo: targetTicket.ticket_number,
+        reason: context.content.content.trim(),
+        note: "Closed as merged child ticket",
+      },
     },
     ticketPatch: {
       close_reason: "Merged",
       merged_into_ticket_id: targetTicketId,
+      merged_into_ticket_no: targetTicket.ticket_number,
+    },
+  };
+};
+
+const cancelTicket: LocalActionHandler = (context) => {
+  const ticket = requireTicket(context);
+  const nextStatus = requireNextStatus(context);
+
+  if (ticket.requester_username !== context.employeeUserName) {
+    throw new ServiceDeskApiError(
+      "api.ticketCommand.localDemo.cancelForbidden",
+      403,
+      {
+        ticketId: ticket.id,
+        username: context.employeeUserName,
+      },
+    );
+  }
+
+  return {
+    history: {
+      type: "TICKET",
+      action: "TICKET_CANCELED",
+      from_value: { status: ticket.status },
+      to_value: {
+        status: nextStatus,
+        closeReason: "Canceled",
+      },
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        reason: context.content.content.trim(),
+        note: "Canceled by requester before work started",
+        previousStatus: ticket.status,
+      },
+    },
+    ticketPatch: {
+      close_reason: "Canceled",
     },
   };
 };
@@ -270,4 +332,5 @@ export const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
   adjust: { handler: adjustTicket, needsTicket: true },
   reopen: { handler: createStatusHistory, needsTicket: true },
   resubmit: { handler: createStatusHistory, needsTicket: true },
+  cancel: { handler: cancelTicket, needsTicket: true },
 };

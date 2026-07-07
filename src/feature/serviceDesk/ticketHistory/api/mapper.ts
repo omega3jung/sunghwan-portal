@@ -20,7 +20,7 @@ export interface DbTicketHistory {
   action: TicketHistoryAction;
 
   actor_username: string | null;
-  action_no: string | null;
+  action_no: number | null;
 
   from_value?: unknown;
   to_value?: unknown;

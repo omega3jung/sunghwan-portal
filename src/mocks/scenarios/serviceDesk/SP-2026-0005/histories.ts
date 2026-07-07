@@ -26,8 +26,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "41,31",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
 
     tkh_created_at: "2026-06-02T06:06:20Z",
   },
@@ -42,8 +42,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: "evan_seo",
     tkh_action_no: null,
 
-    tkh_from_value: "Assigned",
-    tkh_to_value: "Working",
+    tkh_from_value: { status: "Assigned" },
+    tkh_to_value: { status: "Working" },
 
     tkh_created_at: "2026-06-02T06:10:27Z",
   },
@@ -56,7 +56,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "evan_seo",
-    tkh_action_no: "1",
+    tkh_action_no: 1,
 
     tkh_created_at: "2026-06-02T06:15:48Z",
   },
@@ -69,7 +69,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "grant_murphy",
-    tkh_action_no: "2",
+    tkh_action_no: 2,
 
     tkh_created_at: "2026-06-02T06:19:36Z",
   },
@@ -82,7 +82,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "daniel_kim",
-    tkh_action_no: "3",
+    tkh_action_no: 3,
 
     tkh_created_at: "2026-06-02T06:52:08Z",
   },
@@ -97,8 +97,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: "daniel_kim",
     tkh_action_no: null,
 
-    tkh_from_value: "Working",
-    tkh_to_value: "Resolved",
+    tkh_from_value: { status: "Working" },
+    tkh_to_value: { status: "Resolved" },
 
     tkh_metadata: {
       reason: "DB lock released and blocked transactions recovered",
@@ -115,7 +115,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "daniel_kim",
-    tkh_action_no: "4",
+    tkh_action_no: 4,
 
     tkh_created_at: "2026-06-02T07:21:42Z",
   },

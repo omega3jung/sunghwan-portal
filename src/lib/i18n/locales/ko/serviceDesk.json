@@ -12,6 +12,7 @@
     "adjustPlan": "계획 조정",
     "reopenIssue": "티켓 다시 열기",
     "resubmitRequest": "요청 재제출",
+    "cancelTicket": "티켓 취소",
     "searchCriteria": "검색 조건",
     "workSession": {
       "submit": "작업 시간 저장",
@@ -200,6 +201,7 @@
       "WORK_SESSION_UPDATED": "작업 시간이 업데이트됨",
       "MERGED": "{{target}} 티켓으로 병합됨",
       "TICKET_REJECTED": "티켓이 반려됨",
+      "TICKET_CANCELED": "티켓 취소",
       "UPDATED": "티켓이 업데이트됨",
       "DELETED": "티켓이 삭제됨",
       "CREATED": "티켓이 생성됨",
@@ -244,7 +246,8 @@
       "merge": "이 티켓을 다른 티켓에 병합하세요.",
       "adjust": "우선순위, 위험도, 기한 설정을 업데이트하세요.",
       "reopen": "해결된 결과에 추가 작업이 필요할 때 티켓을 다시 여세요.",
-      "resubmit": "반려된 요청을 다시 검토받도록 재제출하세요."
+      "resubmit": "반려된 요청을 다시 검토받도록 재제출하세요.",
+      "cancel": "작업이 시작되기 전에 이 요청을 취소하세요."
     },
     "helper": {
       "approve": "승인 메모를 남기고 다음 승인자 또는 작업 담당자에게 넘깁니다.",
@@ -257,7 +260,8 @@
       "merge": "병합할 대상 티켓을 선택하고 짧은 메모를 남기세요.",
       "adjust": "변경 적용 전에 우선순위, 위험도, 기한을 검토하세요.",
       "reopen": "이 티켓을 닫힌 상태로 둘 수 없는 이유를 설명하세요.",
-      "resubmit": "반려된 요청을 재제출하기 전에 무엇이 바뀌었는지 설명하세요."
+      "resubmit": "반려된 요청을 재제출하기 전에 무엇이 바뀌었는지 설명하세요.",
+      "cancel": "이 요청을 취소해야 하는 이유를 설명하세요."
     },
     "submit": {
       "approve": "승인",
@@ -270,7 +274,8 @@
       "merge": "티켓 병합",
       "adjust": "계획 업데이트",
       "reopen": "이슈 다시 열기",
-      "resubmit": "요청 다시 제출"
+      "resubmit": "요청 다시 제출",
+      "cancel": "티켓 취소"
     },
     "list": {
       "title": "활동",
@@ -299,7 +304,8 @@
         "merge": "이 티켓들을 병합해야 하는 이유를 설명하세요",
         "adjust": "이 값들을 조정해야 하는 이유를 설명하세요",
         "reopen": "아직 해결되지 않은 내용을 설명하세요",
-        "resubmit": "이 티켓을 다시 제출하기 전에 바뀐 내용을 설명하세요"
+        "resubmit": "이 티켓을 다시 제출하기 전에 바뀐 내용을 설명하세요",
+        "cancel": "이 티켓을 취소해야 하는 이유를 설명하세요"
       },
       "targetTicketId": "대상 티켓",
       "mergeTargetPlaceholder": "대표 티켓 ID를 입력하세요"
@@ -505,6 +511,7 @@
         "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
         "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
         "approvalForbidden": "할당된 승인자만 이 티켓을 승인하거나 반려할 수 있습니다.",
+        "cancelForbidden": "작업이 시작되기 전에는 요청자만 이 티켓을 취소할 수 있습니다.",
         "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
         "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
         "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",

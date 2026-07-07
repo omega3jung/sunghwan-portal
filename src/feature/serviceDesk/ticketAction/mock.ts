@@ -87,6 +87,7 @@ export function toTicketMockDetail(
     assignedApprover: false,
     assignedWorker: false,
     mergedIntoTicketId: null,
+    mergedIntoTicketNo: null,
     workMinutes: 0,
     dueAt: toIsoString(input.dueAt),
     owner: true,

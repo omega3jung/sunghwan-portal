@@ -31,6 +31,7 @@ const ACTION_BADGE_CLASSNAME: Record<TicketAction["actionType"], string> = {
   ADJUST: "bg-emerald-50 text-emerald-700 hover:bg-emerald-50",
   REOPEN: "bg-orange-50 text-orange-700 hover:bg-orange-50",
   RESUBMIT: "bg-cyan-50 text-cyan-700 hover:bg-cyan-50",
+  CANCEL: "bg-zinc-100 text-zinc-700 hover:bg-zinc-100",
 };
 
 export function TicketActionMeta({

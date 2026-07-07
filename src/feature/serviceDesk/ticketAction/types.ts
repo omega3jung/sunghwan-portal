@@ -17,7 +17,8 @@ export type TicketActionMode =
   | "merge"
   | "reject"
   | "reopen"
-  | "resubmit";
+  | "resubmit"
+  | "cancel";
 
 export type TicketActionUIState = "idle" | TicketActionMode;
 

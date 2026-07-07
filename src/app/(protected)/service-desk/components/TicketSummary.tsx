@@ -95,7 +95,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
                 href={mergedIntoTicketHref}
               >
                 {t("merge.into", {
-                  ticketId: ticket.mergedIntoTicketId,
+                  ticketId: ticket.mergedIntoTicketNo,
                 })}
               </Link>
             </p>

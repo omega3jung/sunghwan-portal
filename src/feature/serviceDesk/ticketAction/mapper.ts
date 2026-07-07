@@ -14,6 +14,7 @@ export const ACTION_TYPE_BY_MODE: Record<TicketActionMode, TicketActionType> = {
   adjust: "ADJUST",
   reopen: "REOPEN",
   resubmit: "RESUBMIT",
+  cancel: "CANCEL",
 };
 
 export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
@@ -28,6 +29,7 @@ export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
   ADJUST: "action.adjustPlan",
   REOPEN: "action.reopenIssue",
   RESUBMIT: "action.resubmitRequest",
+  CANCEL: "action.cancelTicket",
 };
 
 export const ACTION_LABEL_KEY_BY_MODE: Record<TicketActionMode, string> = {
@@ -42,6 +44,7 @@ export const ACTION_LABEL_KEY_BY_MODE: Record<TicketActionMode, string> = {
   adjust: "action.adjustPlan",
   reopen: "action.reopenIssue",
   resubmit: "action.resubmitRequest",
+  cancel: "action.cancelTicket",
 };
 
 export function mapActionModeToActionType(mode: TicketActionMode) {

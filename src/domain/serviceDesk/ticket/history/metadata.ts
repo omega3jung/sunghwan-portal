@@ -26,14 +26,19 @@ export function mapTicketHistoryDisplayMetadata(
     metadata.note = note;
   }
 
-  const targetTicketId = toNonEmptyString(raw.targetTicketId);
-  if (targetTicketId) {
-    metadata.targetTicketId = targetTicketId;
+  const mergedIntoTicketId = toNonEmptyString(raw.mergedIntoTicketId);
+  if (mergedIntoTicketId) {
+    metadata.mergedIntoTicketId = mergedIntoTicketId;
   }
 
-  const targetTicketNumber = toNonEmptyString(raw.targetTicketNumber);
-  if (targetTicketNumber) {
-    metadata.targetTicketNumber = targetTicketNumber;
+  const mergedIntoTicketNo = toNonEmptyString(raw.mergedIntoTicketNo);
+  if (mergedIntoTicketNo) {
+    metadata.mergedIntoTicketNo = mergedIntoTicketNo;
+  }
+
+  const previousStatus = toNonEmptyString(raw.previousStatus);
+  if (previousStatus) {
+    metadata.previousStatus = previousStatus;
   }
 
   const changedFields = toStringArray(raw.changedFields);

@@ -147,6 +147,8 @@ export async function createHistoryOfApprovalDeclined(
     actionNo?: number | null;
     actorUsername: string;
     approvalStepId: number;
+    fromStatus: string;
+    toStatus: string;
     reason?: string;
   },
   options?: TicketHistoryServiceOptions,
@@ -158,8 +160,15 @@ export async function createHistoryOfApprovalDeclined(
       historyType: "APPROVAL",
       historyAction: "APPROVAL_DECLINED",
       actorUsername: params.actorUsername,
-      fromValue: { approvalStepId: params.approvalStepId },
-      toValue: null,
+      fromValue: {
+        approvalStepId: params.approvalStepId,
+        status: params.fromStatus,
+      },
+      toValue: {
+        approvalStepId: params.approvalStepId,
+        status: params.toStatus,
+        closeReason: "Declined",
+      },
       metadata: compactJsonObject({
         event: "APPROVAL_DECLINED",
         reason: params.reason,

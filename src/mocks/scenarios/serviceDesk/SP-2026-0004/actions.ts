@@ -58,7 +58,7 @@ export const actions: TicketActionMockInput[] = [
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 4,
 
-    tka_action_type: "COMMENT",
+    tka_action_type: "REJECT",
     tka_content:
       "Hello, Olivia.<br>After review, I am rejecting this request.<br><br>Reason:<br>Unit ID modification is restricted to maintain data integrity and auditability.<br><br>Recommendation:<br>Please escalate correction requests through team leader for validation.",
     tka_owner_username: "daniel_kim",

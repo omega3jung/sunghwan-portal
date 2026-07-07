@@ -37,7 +37,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "APPROVAL_APPROVED",
 
     tkh_actor_username: "olivia_johnson",
-    tkh_action_no: "1",
+    tkh_action_no: 1,
 
     tkh_created_at: "2026-06-25T07:29:25Z",
   },
@@ -52,8 +52,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "3",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["matthew_williams"] },
 
     tkh_created_at: "2026-06-25T07:29:30Z",
   },
@@ -68,8 +68,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "4",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["amelia_brown"] },
 
     tkh_created_at: "2026-06-25T07:29:30Z",
   },
@@ -84,8 +84,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: null,
     tkh_action_no: null,
 
-    tkh_from_value: null,
-    tkh_to_value: "41",
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: { assigneeUsernames: ["evan_seo"] },
 
     tkh_created_at: "2026-06-25T07:29:30Z",
   },
@@ -98,7 +98,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "evan_seo",
-    tkh_action_no: "2",
+    tkh_action_no: 2,
 
     tkh_created_at: "2026-06-25T13:15:53Z",
   },
@@ -111,7 +111,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "liam_williams",
-    tkh_action_no: "3",
+    tkh_action_no: 3,
 
     tkh_created_at: "2026-06-26T00:01:58Z",
   },
@@ -124,7 +124,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_history_action: "CREATED",
 
     tkh_actor_username: "amelia_brown",
-    tkh_action_no: "4",
+    tkh_action_no: 4,
 
     tkh_created_at: "2026-06-26T01:17:18Z",
   },
@@ -139,8 +139,8 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_actor_username: "evan_seo",
     tkh_action_no: null,
 
-    tkh_from_value: "Working",
-    tkh_to_value: "Pending",
+    tkh_from_value: { status: "Working" },
+    tkh_to_value: { status: "Pending" },
 
     tkh_created_at: "2026-05-27T14:37:05Z",
   },

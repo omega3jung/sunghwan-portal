@@ -13,7 +13,7 @@ export type TicketHistoryDto = {
   type: TicketHistoryType;
   action: TicketHistoryAction;
   actor_username: string | null;
-  action_no: string | null;
+  action_no: number | null;
   from_value?: TicketHistoryJsonValue;
   to_value?: TicketHistoryJsonValue;
   metadata: TicketHistoryDisplayMetadata | null;
