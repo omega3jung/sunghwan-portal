@@ -188,9 +188,10 @@
       "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
     },
     "history": {
-      "STATUS_CHANGED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
-      "STATUS_CHANGED_SIMPLE": "상태가 변경됨",
-      "ASSIGNEE_CHANGED": "담당자가 업데이트됨",
+      "STATUS_UPDATED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
+      "STATUS_UPDATED_SIMPLE": "상태가 변경됨",
+      "ASSIGNMENT_RESOLVED": "담당자가 업데이트됨",
+      "TICKET_SUBMITTED": "Ticket submitted",
       "APPROVAL_REQUESTED": "승인 요청됨",
       "APPROVAL_APPROVED": "승인 완료됨",
       "APPROVAL_DECLINED": "승인 반려됨",
@@ -202,10 +203,20 @@
       "MERGED": "{{target}} 티켓으로 병합됨",
       "TICKET_REJECTED": "티켓이 반려됨",
       "TICKET_CANCELED": "티켓 취소",
-      "UPDATED": "티켓이 업데이트됨",
-      "DELETED": "티켓이 삭제됨",
-      "CREATED": "티켓이 생성됨",
-      "DEFAULT": "이력이 업데이트됨"
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "이력이 업데이트됨",
+      "TICKET_UPDATED": "티켓이 수정됨",
+      "CATEGORY_UPDATED": "카테고리가 변경됨",
+      "ASSIGNMENT_UPDATED": "담당자가 변경됨",
+      "NOTE_UPDATED": "노트가 수정됨",
+      "NOTE_DELETED": "노트가 삭제됨",
+      "PLANNING_UPDATED": "계획 정보가 변경됨",
+      "WORK_SESSION_STARTED": "작업 세션이 시작됨",
+      "WORK_SESSION_STOPPED": "작업 세션이 중지됨",
+      "WORK_SESSION_DELETED": "작업 세션이 삭제됨"
     }
   },
   "merge": {

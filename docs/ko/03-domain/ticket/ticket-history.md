@@ -136,12 +136,14 @@ type History = {
 
 ```ts
 type HistoryType =
+  | "TICKET"
   | "STATUS"
-  | "FIELD"
+  | "CATEGORY"
   | "ASSIGNMENT"
-  | "SLA"
   | "APPROVAL"
-  | "SYSTEM";
+  | "COMMENT"
+  | "NOTE"
+  | "PLANNING";
 ```
 
 ---

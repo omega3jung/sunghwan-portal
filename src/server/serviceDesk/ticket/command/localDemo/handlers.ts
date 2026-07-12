@@ -109,7 +109,7 @@ const approveTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "APPROVAL",
-      action: "APPROVAL_APPROVED",
+      event: "APPROVAL_APPROVED",
       from_value: {
         approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
       },
@@ -118,6 +118,8 @@ const approveTicket: LocalActionHandler = (context) => {
       },
       metadata: {
         ...toHistoryMetadata(context.content),
+        previousApprovalStepId: normalizeApprovalStepId(currentApprovalStepId),
+        nextApprovalStepId: normalizeApprovalStepId(routing.approvalStepId),
         note: context.content.content.trim(),
       },
     },
@@ -133,7 +135,7 @@ const declineTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "APPROVAL",
-      action: "APPROVAL_DECLINED",
+      event: "APPROVAL_DECLINED",
       from_value: {
         approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
         status: ticket.status,
@@ -141,11 +143,12 @@ const declineTicket: LocalActionHandler = (context) => {
       to_value: {
         approvalStepId: normalizeApprovalStepId(currentApprovalStepId),
         status: nextStatus,
-        closeReason: "Declined",
+        closeReason: "Rejected",
       },
       metadata: {
         ...toHistoryMetadata(context.content),
         reason: context.content.content.trim(),
+        closeReason: "Rejected",
       },
     },
     ticketPatch: {
@@ -161,10 +164,14 @@ const assignTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "ASSIGNMENT",
-      action: "UPDATED",
+      event: "ASSIGNMENT_UPDATED",
       from_value: { assigneeUsernames: ticket.assignee_usernames },
       to_value: { assigneeUsernames },
-      metadata: toHistoryMetadata(context.content),
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        previousAssigneeUsernames: ticket.assignee_usernames,
+        nextAssigneeUsernames: assigneeUsernames,
+      },
     },
     ticketPatch: {
       assignee_usernames: assigneeUsernames,
@@ -184,10 +191,14 @@ const assignSelfTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "ASSIGNMENT",
-      action: "UPDATED",
+      event: "ASSIGNMENT_UPDATED",
       from_value: { assigneeUsernames: ticket.assignee_usernames },
       to_value: { assigneeUsernames },
-      metadata: toHistoryMetadata(context.content),
+      metadata: {
+        ...toHistoryMetadata(context.content),
+        previousAssigneeUsernames: ticket.assignee_usernames,
+        nextAssigneeUsernames: assigneeUsernames,
+      },
     },
     ticketPatch: {
       assignee_usernames: assigneeUsernames,
@@ -203,8 +214,8 @@ const rejectTicket: LocalActionHandler = (context) => {
 
   return {
     history: {
-      type: "TICKET",
-      action: "TICKET_REJECTED",
+      type: "STATUS",
+      event: "TICKET_REJECTED",
       from_value: { status: ticket.status },
       to_value: {
         status: nextStatus,
@@ -213,6 +224,7 @@ const rejectTicket: LocalActionHandler = (context) => {
       metadata: {
         ...toHistoryMetadata(context.content),
         reason: context.content.content.trim(),
+        closeReason: "Rejected",
       },
     },
   };
@@ -228,18 +240,23 @@ const mergeTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "TICKET",
-      action: "TICKET_MERGED",
-      from_value: { status: sourceTicket.status },
+      event: "TICKET_MERGED",
+      from_value: {
+        status: sourceTicket.status,
+        mergedIntoTicketId: null,
+      },
       to_value: {
         status: "Closed",
         closeReason: "Merged",
+        mergedIntoTicketId: targetTicketId,
+        mergedIntoTicketNo: targetTicket.ticket_number,
       },
       metadata: {
         ...toHistoryMetadata(context.content),
+        closeReason: "Merged",
         mergedIntoTicketId: targetTicketId,
         mergedIntoTicketNo: targetTicket.ticket_number,
         reason: context.content.content.trim(),
-        note: "Closed as merged child ticket",
       },
     },
     ticketPatch: {
@@ -268,7 +285,7 @@ const cancelTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "TICKET",
-      action: "TICKET_CANCELED",
+      event: "TICKET_CANCELED",
       from_value: { status: ticket.status },
       to_value: {
         status: nextStatus,
@@ -277,8 +294,7 @@ const cancelTicket: LocalActionHandler = (context) => {
       metadata: {
         ...toHistoryMetadata(context.content),
         reason: context.content.content.trim(),
-        note: "Canceled by requester before work started",
-        previousStatus: ticket.status,
+        closeReason: "Canceled",
       },
     },
     ticketPatch: {
@@ -299,7 +315,7 @@ const adjustTicket: LocalActionHandler = (context) => {
   return {
     history: {
       type: "PLANNING",
-      action: "UPDATED",
+      event: "PLANNING_UPDATED",
       from_value: {
         priority: ticket.priority,
         risk_level: ticket.risk_level,

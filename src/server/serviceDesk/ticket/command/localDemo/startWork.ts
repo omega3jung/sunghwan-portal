@@ -107,14 +107,13 @@ function createStatusUpdatedHistory(
     ticket_id: ticket.id,
     history_no: getMaxHistoryNo(ticket.id, isInternal),
     type: "STATUS",
-    action: "UPDATED",
+    event: "STATUS_UPDATED",
+    source: "SYSTEM_AUTO",
     actor_username: employeeUserName,
     action_no: null,
     from_value: ticket.status,
     to_value: nextStatus,
-    metadata: {
-      source: "auto-start-on-view",
-    },
+    metadata: {},
     created_at: createdAt,
   };
 }

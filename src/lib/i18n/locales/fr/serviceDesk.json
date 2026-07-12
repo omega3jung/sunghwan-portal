@@ -188,9 +188,10 @@
       "emptyEmail": "Les mises à jour apparaîtront au fil de l'avancement du ticket"
     },
     "history": {
-      "STATUS_CHANGED": "Le statut est passé de {{from}} à {{to}}",
-      "STATUS_CHANGED_SIMPLE": "Le statut a changé",
-      "ASSIGNEE_CHANGED": "Le responsable a été mis à jour",
+      "STATUS_UPDATED": "Le statut est passé de {{from}} à {{to}}",
+      "STATUS_UPDATED_SIMPLE": "Le statut a changé",
+      "ASSIGNMENT_RESOLVED": "Le responsable a été mis à jour",
+      "TICKET_SUBMITTED": "Ticket submitted",
       "APPROVAL_REQUESTED": "Approbation demandée",
       "APPROVAL_APPROVED": "Approbation approuvée",
       "APPROVAL_DECLINED": "Approbation refusée",
@@ -202,10 +203,20 @@
       "MERGED": "Fusionné dans {{target}}",
       "TICKET_REJECTED": "Ticket rejeté",
       "TICKET_CANCELED": "Ticket annulé",
-      "UPDATED": "Ticket mis à jour",
-      "DELETED": "Ticket supprimé",
-      "CREATED": "Ticket créé",
-      "DEFAULT": "Historique mis à jour"
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "Historique mis à jour",
+      "TICKET_UPDATED": "Ticket mis a jour",
+      "CATEGORY_UPDATED": "Categorie mise a jour",
+      "ASSIGNMENT_UPDATED": "Assignation mise a jour",
+      "NOTE_UPDATED": "Note mise a jour",
+      "NOTE_DELETED": "Note supprimee",
+      "PLANNING_UPDATED": "Planification mise a jour",
+      "WORK_SESSION_STARTED": "Session de travail demarree",
+      "WORK_SESSION_STOPPED": "Session de travail arretee",
+      "WORK_SESSION_DELETED": "Session de travail supprimee"
     }
   },
   "merge": {

@@ -65,7 +65,9 @@ export const createUpdatedTicket = (
 
 export const toHistoryMetadata = (
   content: TicketActionFormValues,
-): Record<string, unknown> => ({ ...content });
+): Record<string, unknown> => ({
+  ...content,
+});
 
 export const requireAssigneeIds = (content: TicketActionFormValues) => {
   if (!content.assigneeUsernames) {

@@ -3,7 +3,7 @@ import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClie
 
 import {
   createHistoryOfApprovalRequested,
-  createHistoryOfAssignmentChange,
+  createHistoryOfAssignmentResolvedByRule,
   createHistoryOfTicketCreate,
 } from "../ticketHistory";
 import {
@@ -170,7 +170,7 @@ export async function createTicket(
       repositoryOptions,
     );
   } else {
-    await createHistoryOfAssignmentChange(
+    await createHistoryOfAssignmentResolvedByRule(
       {
         ticketId: row.tk_id,
         actorUsername: options.requesterUsername,

@@ -1,14 +1,15 @@
-import { Priority, RiskLevel } from "@/domain/common";
-import {
+import type { Priority, RiskLevel } from "@/domain/common";
+import type {
   Attach,
   CategoryScope,
   HistoryType,
   TicketActionType,
-  TicketHistoryAction,
+  TicketHistoryEvent,
+  TicketHistorySource,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
-import { ISODateString, LocalizedText } from "@/shared/types";
+import type { ISODateString, LocalizedText } from "@/shared/types";
 
 export type TicketMockInput = {
   tk_id: string;
@@ -83,7 +84,8 @@ export type TicketHistoryMockInput = {
   tkh_history_no: number;
 
   tkh_history_type: HistoryType;
-  tkh_history_action: TicketHistoryAction;
+  tkh_event: TicketHistoryEvent;
+  tkh_source: TicketHistorySource;
 
   tkh_actor_username: string | null;
   tkh_action_no: number | null;
@@ -94,21 +96,3 @@ export type TicketHistoryMockInput = {
 
   tkh_created_at: ISODateString;
 };
-
-export const TICKET_ACTION_MOCK_DEFAULTS = {
-  tka_metadata: {},
-  tka_files: [],
-  tka_images: [],
-} satisfies Pick<
-  TicketActionMockInput,
-  "tka_metadata" | "tka_files" | "tka_images"
->;
-
-export const TICKET_HISTORY_MOCK_DEFAULTS = {
-  tkh_from_value: null,
-  tkh_to_value: null,
-  tkh_metadata: {},
-} satisfies Pick<
-  TicketHistoryMockInput,
-  "tkh_from_value" | "tkh_to_value" | "tkh_metadata"
->;

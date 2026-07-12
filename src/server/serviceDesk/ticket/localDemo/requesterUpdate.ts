@@ -222,7 +222,8 @@ function createUpdateHistory({
     ticket_id: ticket.id,
     history_no: nextHistoryNo,
     type: "TICKET",
-    action: "UPDATED",
+    event: routingSensitiveChanged ? "ROUTING_RESET" : "ROUTING_PRESERVED",
+    source: "ROUTING_RULE",
     actor_username: actorUsername,
     action_no: null,
     from_value: buildHistoryValue(ticket, changedFields),
@@ -286,7 +287,6 @@ function buildHistoryMetadata({
   nextAssigneeUsernames: string[];
 }) {
   const metadata: Record<string, unknown> = {
-    source: "updateDialog",
     changedFields,
     routingSensitiveChanged,
     routingReset: routingSensitiveChanged,

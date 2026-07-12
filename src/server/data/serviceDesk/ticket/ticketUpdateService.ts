@@ -153,7 +153,8 @@ export async function updateRequesterTicket(
       ticketId,
       actionNo: null,
       historyType: "TICKET",
-      historyAction: "UPDATED",
+      source: "ROUTING_RULE",
+      event: routingSensitiveChanged ? "ROUTING_RESET" : "ROUTING_PRESERVED",
       actorUsername: currentUserName,
       fromValue: changeSet.fromValue,
       toValue: changeSet.toValue,
@@ -391,7 +392,6 @@ function buildRequesterUpdateHistoryMetadata({
   nextAssigneeUsernames: string[];
 }): TicketHistoryJsonValue {
   const metadata: Record<string, TicketHistoryJsonValue> = {
-    source: "updateDialog",
     changedFields,
     routingSensitiveChanged,
     routingReset: routingSensitiveChanged,

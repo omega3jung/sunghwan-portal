@@ -18,12 +18,14 @@ const buildHistoryBase = ({
   DbTicketHistory,
   | "ticket_id"
   | "history_no"
+  | "source"
   | "actor_username"
   | "action_no"
   | "created_at"
 > => ({
   ticket_id: ticketId,
   history_no: getMaxHistoryNo(ticketId, isInternal),
+  source: "USER_ACTION",
   actor_username: employeeUserName,
   action_no: actionNo,
   created_at: createdAt,
@@ -44,7 +46,7 @@ export const createStatusHistory: LocalActionHandler = (context) => {
   return {
     history: {
       type: "STATUS",
-      action: "UPDATED",
+      event: "STATUS_UPDATED",
       from_value: { status: ticket.status },
       to_value: { status: nextStatus },
       metadata: toHistoryMetadata(context.content),
@@ -59,7 +61,7 @@ export const createMessageHistory =
   ({ content }) => ({
     history: {
       type,
-      action: "CREATED",
+      event: type === "COMMENT" ? "COMMENT_CREATED" : "NOTE_CREATED",
       metadata: toHistoryMetadata(content),
     },
   });

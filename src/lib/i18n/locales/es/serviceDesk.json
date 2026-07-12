@@ -188,9 +188,10 @@
       "emptyEmail": "Las actualizaciones aparecerán a medida que avance el ticket"
     },
     "history": {
-      "STATUS_CHANGED": "El estado cambió de {{from}} a {{to}}",
-      "STATUS_CHANGED_SIMPLE": "El estado cambió",
-      "ASSIGNEE_CHANGED": "El responsable se actualizó",
+      "STATUS_UPDATED": "El estado cambió de {{from}} a {{to}}",
+      "STATUS_UPDATED_SIMPLE": "El estado cambió",
+      "ASSIGNMENT_RESOLVED": "El responsable se actualizó",
+      "TICKET_SUBMITTED": "Ticket submitted",
       "APPROVAL_REQUESTED": "Aprobación solicitada",
       "APPROVAL_APPROVED": "Aprobación aprobada",
       "APPROVAL_DECLINED": "Aprobación rechazada",
@@ -202,10 +203,20 @@
       "MERGED": "Fusionado en {{target}}",
       "TICKET_REJECTED": "Ticket rechazado",
       "TICKET_CANCELED": "Ticket cancelado",
-      "UPDATED": "Ticket actualizado",
-      "DELETED": "Ticket eliminado",
-      "CREATED": "Ticket creado",
-      "DEFAULT": "Historial actualizado"
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "Historial actualizado",
+      "TICKET_UPDATED": "Ticket actualizado",
+      "CATEGORY_UPDATED": "Categoria actualizada",
+      "ASSIGNMENT_UPDATED": "Asignacion actualizada",
+      "NOTE_UPDATED": "Nota actualizada",
+      "NOTE_DELETED": "Nota eliminada",
+      "PLANNING_UPDATED": "Planificacion actualizada",
+      "WORK_SESSION_STARTED": "Sesion de trabajo iniciada",
+      "WORK_SESSION_STOPPED": "Sesion de trabajo detenida",
+      "WORK_SESSION_DELETED": "Sesion de trabajo eliminada"
     }
   },
   "merge": {

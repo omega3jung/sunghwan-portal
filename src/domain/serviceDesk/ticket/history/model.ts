@@ -1,20 +1,37 @@
 import { ISODateString } from "@/shared/types/date";
 
-import { HistoryType, TicketHistoryAction } from "./types";
+import {
+  HistoryType,
+  TicketCloseReason,
+  TicketHistoryEvent,
+  TicketHistorySource,
+} from "./types";
 
 export type TicketHistoryDisplayMetadata = {
-  source?: string;
+  source?: TicketHistorySource;
+  event?: TicketHistoryEvent;
+
   reason?: string;
   note?: string;
+
+  closeReason?: TicketCloseReason;
+  resolvedGraceDays?: number;
+
   mergedIntoTicketId?: string;
   mergedIntoTicketNo?: string;
+
   previousStatus?: string;
+  nextStatus?: string;
+
   changedFields?: string[];
+
   routingSensitiveChanged?: boolean;
   routingReset?: boolean;
   preservedRouting?: boolean;
+
   previousApprovalStepId?: string | null;
   nextApprovalStepId?: string | null;
+
   previousAssigneeUsernames?: string[];
   nextAssigneeUsernames?: string[];
   assigneeUsernames?: string[];
@@ -35,7 +52,8 @@ export interface TicketHistory {
   historyNo: number;
 
   type: HistoryType;
-  action: TicketHistoryAction;
+  source: TicketHistorySource;
+  event: TicketHistoryEvent;
 
   actorUsername: string | null;
   actionNo: number | null;

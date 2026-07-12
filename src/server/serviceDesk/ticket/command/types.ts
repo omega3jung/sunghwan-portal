@@ -41,6 +41,7 @@ export type LocalActionHistory = Omit<
   DbTicketHistory,
   | "ticket_id"
   | "history_no"
+  | "source"
   | "actor_username"
   | "action_no"
   | "created_at"
