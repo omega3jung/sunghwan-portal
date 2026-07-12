@@ -81,7 +81,7 @@ Rules doc = current executable behavior
 ### 2. Ticket Action Rules
 
 - 커뮤니케이션 및 운영 action에 대한 규칙
-- reject, merge, `requestReview`, `reopen`, `resubmit` 같은 lifecycle 영향 동작
+- reject, merge, `reopen`, `resubmit`, `cancel` 같은 lifecycle 영향 동작
 
 ---
 
@@ -90,11 +90,11 @@ Rules doc = current executable behavior
 ### Update Ticket
 
 - who: requester
-- when: status in `Draft`, `Open`
+- when: status = `Draft`
 - effect: ticket field 수정
-- purpose: 초기 요청을 다듬거나 완성한다
+- purpose: 제출 전 요청을 다듬거나 완성한다
 - restriction:
-  - `Approved` 이후에는 수정할 수 없다
+  - ticket update는 `resubmit` command와 다르다
   - 변경은 history에 기록되어야 한다
 
 ---
@@ -105,8 +105,9 @@ Rules doc = current executable behavior
 - when: status = `Declined`
 - effect:
   - ticket field 수정
-  - status -> `Open`
-  - approval flow가 처음부터 다시 시작된다
+  - ticket 생성과 동일한 routing으로 다시 제출한다
+  - approval이 필요하면 status -> `Approval`
+  - approval이 필요 없으면 status -> `Assigned`
 - purpose: 거절된 요청을 수정하고 다시 제출한다
 - restriction:
   - approval progress는 reset되어야 한다
@@ -122,14 +123,14 @@ Rules doc = current executable behavior
 ### 공통 규칙
 
 - who: ticket view permission이 있는 모든 사용자
-- when: status != `Closed`
+- when: action별 status rule이 허용하는 경우
 - effect:
   - action 생성
   - history 기록
 - purpose: ticket 운영과 커뮤니케이션 지원
 - restriction:
   - `comment`, `note`만 수정 또는 삭제할 수 있다
-  - `assign`, `adjust`, `merge`, `reject`, `requestReview`, `reopen`, `resubmit` 같은 운영 action은 immutable이다
+  - `assign`, `adjust`, `merge`, `reject`, `reopen`, `resubmit`, `cancel` 같은 운영 action은 immutable이다
   - 모든 action은 content가 필수다
   - `Closed`에서는 어떤 action도 수정 또는 삭제할 수 없다
   - delete는 `active = false`를 사용하는 soft delete다
@@ -141,28 +142,28 @@ Rules doc = current executable behavior
 ### Comment
 
 - who: ticket 접근 권한이 있는 모든 사용자
-- when: status != `Closed`
+- when: `Draft`를 제외한 모든 상태, `Closed` 포함
 - effect:
   - comment 생성
   - 이메일 알림 발송
 - purpose: 외부 또는 공유 커뮤니케이션
 - restriction:
   - content 필수
-  - 작성자만 수정 또는 삭제할 수 있다
+  - ticket이 `Closed`가 아닐 때 작성자만 수정 또는 삭제할 수 있다
 
 ---
 
 ### Note
 
 - who: ticket 접근 권한이 있는 모든 사용자
-- when: status != `Closed`
+- when: `Draft`, `Closed`를 제외한 모든 상태
 - effect:
   - note 생성
   - 이메일 알림 없음
 - purpose: 내부 커뮤니케이션
 - restriction:
   - content 필수
-  - 작성자만 수정 또는 삭제할 수 있다
+  - ticket이 `Closed`가 아닐 때 작성자만 수정 또는 삭제할 수 있다
 
 ### Visibility
 
@@ -178,26 +179,29 @@ planning data에 영향을 줄 수 있습니다.
 
 ### Assign (Standard)
 
-- who: assignee
-- when: status = `Working`
+- who: 현재 work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - assignee 갱신
-  - 이메일 알림 발송
+  - work assignee 갱신
+  - `Pending` -> `Working`
+  - `Assigned`, `Working`은 현재 status 유지
 - purpose: 진행 중인 작업을 위임하거나 재할당한다
 - restriction:
   - content 필수
 
 ---
 
-### Assign (IT Manager)
+### Assign (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Declined`, `Working`, `Pending`, `Rejected`
+- who: Admin
+- when:
+  - approval assign: status = `Approval`
+  - work assign: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - assignee 갱신
-  - status in `Declined`, `Rejected` -> status = `Reopen`
-  - 이메일 알림 발송
-- purpose: manager 주도의 재할당 또는 재활성화
+  - approval assign은 현재 approval step을 유지하고 approver만 변경한다
+  - work assign은 assignee를 갱신한다
+  - `Pending` -> `Working`
+- purpose: admin 주도의 approval/work assignment 조정
 - restriction:
   - content 필수
 
@@ -205,8 +209,8 @@ planning data에 영향을 줄 수 있습니다.
 
 ### Adjust (Standard)
 
-- who: assignee
-- when: status = `Working`
+- who: 현재 work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
   - `priority` 갱신
   - `riskLevel` 갱신
@@ -214,31 +218,37 @@ planning data에 영향을 줄 수 있습니다.
 - purpose: 진행 중인 작업의 실행 계획을 조정한다
 - restriction:
   - content 필수
+  - 변경 필드가 없는 no-op adjust는 거절된다
 
 ---
 
-### Adjust (IT Manager)
+### Adjust (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`, `Rejected`
+- who: Admin
+- when:
+  - status in `Assigned`, `Working`, `Pending`
+  - status in `Resolved`, `Closed`에서는 correction만 허용
 - effect:
   - `priority` 갱신
   - `riskLevel` 갱신
-  - `dueDate` 갱신
-- purpose: manager 주도의 계획 조정
+  - `Resolved`, `Closed` 전까지만 `dueDate` 갱신
+- purpose: admin 주도의 계획 조정 또는 correction
 - restriction:
   - content 필수
+  - resolved/closed correction에서는 due date를 변경할 수 없다
+  - 변경 필드가 없는 no-op adjust는 거절된다
 
 ---
 
 ### Merge (Standard)
 
-- who: assignee
-- when: status in `Working`, `Pending`, `Resolved`
+- who: 현재 work assignee
+- when: status in `Assigned`, `Working`, `Pending`, `Resolved`
 - effect:
   - source ticket -> `Closed`
   - `closeReason = Merged`
   - `mergedIntoTicketId`과 `mergedIntoTicketNo` 설정
+  - 가능한 경우 running work session을 종료한다
 - purpose: 중복 또는 관련 티켓을 통합한다
 - restriction:
   - self merge는 금지된다
@@ -248,38 +258,27 @@ planning data에 영향을 줄 수 있습니다.
 
 ---
 
-### Merge (IT Manager)
+### Merge (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`, `Rejected`, `Resolved`, `Closed`
+- who: Admin
+- when: `Draft`를 제외한 모든 상태, `Closed` 포함
 - effect:
   - merge 처리 수행
-- purpose: manager 수준의 ticket 통합
+  - 가능한 경우 running work session을 종료한다
+- purpose: admin 수준의 ticket 통합
 - restriction:
-  - `Closed`에서의 merge는 예외 케이스로만 허용된다
   - tenant와 scope는 계속 일치해야 한다
 
 ---
 
-### Reject (Standard)
+### Reject
 
-- who: assignee
-- when: status in `Working`, `Pending`
+- who: 현재 work assignee 또는 Admin
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
   - status -> `Rejected`
+  - 가능한 경우 running work session을 종료한다
 - purpose: 더 이상 진행할 수 없는 작업을 종료 처리한다
-- restriction:
-  - content 필수
-
----
-
-### Reject (IT Manager)
-
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`
-- effect:
-  - status -> `Rejected`
-- purpose: manager 수준의 반려 처리
 - restriction:
   - content 필수
 
@@ -287,35 +286,27 @@ planning data에 영향을 줄 수 있습니다.
 
 ### Reopen
 
-- who: requester
+- who: requester 또는 Admin
 - when: status = `Resolved`
 - effect:
-  - status -> `Reopen`
+  - status -> `Working`
+  - history event = `TICKET_REOPENED`
 - purpose: 해결 결과의 재검토를 요청한다
 - restriction:
   - content 필수
-
----
-
-### Request Review
-
-- who: requester
-- when: status = `Resolved`
-- effect:
-  - status -> `Reopen`
-- purpose: 해결 이후 추가 리뷰 또는 재작업을 요청한다
-- restriction:
-  - content 필수
+  - 기존 work assignee가 있어야 한다
 
 ---
 
 ### Resubmit
 
 - who: requester
-- when: status = `Rejected`
+- when: status in `Declined`, `Rejected`
 - effect:
-  - status -> `Open`
-- purpose: 반려된 요청을 수정해 다시 제출한다
+  - 초기 approval/assignment routing을 다시 실행한다
+  - approval이 필요하면 status -> `Approval`
+  - approval이 필요 없으면 status -> `Assigned`
+- purpose: declined/rejected 요청을 수정해 다시 제출한다
 - restriction:
   - content 필수
 
@@ -323,19 +314,61 @@ planning data에 영향을 줄 수 있습니다.
 
 ### Assign Myself (`assignSelf`)
 
-- who: category assignee 또는 job-field rule에 맞는 사용자
-- when: status in `Open`, `Approved`, `Working`
+- who: 현재 work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - status in `Open`, `Approved`인 경우:
-    - `assigneeIds = [me]`
-    - status -> `Working`
-  - status = `Working`인 경우:
-    - `me`를 `assigneeIds`에 추가
-    - 기존 assignee에게 알림
+  - 현재 assignee 목록을 actor 1명으로 교체한다
+  - status는 변경하지 않는다
 - purpose: 빠른 self-assignment
 - restriction:
-  - 중복 assignee 삽입은 방지되어야 한다
+  - 현재 assignee가 2명 이상이어야 한다
+  - actor가 이미 현재 work assignee에 포함되어 있어야 한다
   - content는 자동 생성된다
+
+---
+
+### Cancel
+
+- who: requester
+- when: status in `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, `Rejected`
+- effect:
+  - status -> `Closed`
+  - `closeReason = Canceled`
+  - 가능한 경우 running work session을 종료한다
+- purpose: 완료 전 requester 주도의 철회
+- restriction:
+  - content 필수
+
+---
+
+### Work Session Control
+
+- who: 현재 work assignee
+- when:
+  - start work: `Assigned` -> `Working`
+  - track work: `Working` -> `Pending` 또는 `Resolved`
+  - resume/finish work: `Pending` -> `Working` 또는 `Resolved`
+- effect:
+  - tracked minutes를 기록한다
+  - 명시적인 work-session command에서만 status를 변경한다
+- restriction:
+  - ticket detail read는 status를 변경하지 않는다
+  - work를 `Resolved`로 끝내면 가능한 경우 running session을 종료한다
+
+---
+
+### Resolved Auto Close
+
+- who: system
+- when: latest resolved history가 7일 이상 지난 경우
+- effect:
+  - `Resolved` -> `Closed`
+  - `closeReason = Completed`
+  - history event = `RESOLUTION_CLOSE`
+  - history source = `SYSTEM_AUTO`
+- restriction:
+  - 기준 시각은 `updatedAt`이 아니라 resolved history time이다
+  - 가능한 경우 running work session을 종료한다
 
 ---
 

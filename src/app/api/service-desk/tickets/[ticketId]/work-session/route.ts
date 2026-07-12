@@ -63,6 +63,7 @@ const resolveServerTrackedMinutes = (
 
 const validatePayload = (
   ticketId: string,
+  ticketStatus: string,
   payload: TicketWorkSessionSubmitPayload,
 ) => {
   if (payload.ticketId !== ticketId) {
@@ -80,6 +81,41 @@ const validatePayload = (
     );
   }
 
+  if (
+    payload.nextStatus &&
+    payload.nextStatus !== ticketStatus &&
+    !isAllowedWorkStatusTransition(ticketStatus, payload.nextStatus)
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+      409,
+      { from: ticketStatus, to: payload.nextStatus },
+    );
+  }
+
+  if (
+    (ticketStatus === "Assigned" || ticketStatus === "Pending") &&
+    (!payload.nextStatus || payload.nextStatus === ticketStatus)
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.statusTransitionRequired",
+      409,
+      { status: ticketStatus },
+    );
+  }
+
+  if (
+    ticketStatus !== "Assigned" &&
+    ticketStatus !== "Working" &&
+    ticketStatus !== "Pending"
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+      409,
+      { from: ticketStatus },
+    );
+  }
+
   const trackedMinutes = resolveServerTrackedMinutes(payload);
 
   if (trackedMinutes <= 0) {
@@ -90,6 +126,43 @@ const validatePayload = (
   }
 
   return trackedMinutes;
+};
+
+const isAllowedWorkStatusTransition = (
+  currentStatus: string,
+  nextStatus: TicketWorkSessionStatus,
+) => {
+  if (currentStatus === "Assigned") {
+    return nextStatus === "Working";
+  }
+
+  if (currentStatus === "Working") {
+    return nextStatus === "Pending" || nextStatus === "Resolved";
+  }
+
+  if (currentStatus === "Pending") {
+    return nextStatus === "Working" || nextStatus === "Resolved";
+  }
+
+  return false;
+};
+
+const assertCurrentWorkAssignee = (
+  ticket: ReturnType<typeof getTicketContext>["ticket"],
+  currentUserName: string,
+) => {
+  if (
+    ticket.approval_step_id === null &&
+    ticket.assignee_usernames.includes(currentUserName)
+  ) {
+    return;
+  }
+
+  throw new ServiceDeskApiError(
+    "api.ticketWorkSession.localDemo.assigneeForbidden",
+    403,
+    { ticketId: ticket.id, username: currentUserName },
+  );
 };
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -153,7 +226,9 @@ export async function POST(
       ticketId,
       isInternal,
     );
-    const trackedMinutes = validatePayload(ticketId, payload);
+    assertCurrentWorkAssignee(ticket, currentUserName);
+
+    const trackedMinutes = validatePayload(ticketId, ticket.status, payload);
     const nextStatus =
       payload.nextStatus && payload.nextStatus !== ticket.status
         ? payload.nextStatus
@@ -207,9 +282,13 @@ export async function POST(
         source: "USER_ACTION",
         actor_username: currentUserName,
         action_no: null,
-        from_value: ticket.status,
-        to_value: nextStatus,
-        metadata: payload,
+        from_value: { status: ticket.status },
+        to_value: { status: nextStatus },
+        metadata: {
+          ...payload,
+          previousStatus: ticket.status,
+          nextStatus,
+        },
         created_at: createdAt,
       });
     }

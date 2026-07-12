@@ -6,6 +6,7 @@ import { TicketAction } from "@/domain/serviceDesk";
 
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
+import { ticketWorkSessionQueryKeys } from "../../ticketWorkSession/api";
 import { serviceDeskTicketActionApi } from "./api";
 import { ticketActionQueryKeys } from "./queryKeys";
 
@@ -35,6 +36,10 @@ const invalidateTicketActionQueries = (
 
   queryClient.invalidateQueries({
     queryKey: ticketQueryKeys.lists(),
+  });
+
+  queryClient.invalidateQueries({
+    queryKey: ticketWorkSessionQueryKeys.list(ticketId),
   });
 };
 

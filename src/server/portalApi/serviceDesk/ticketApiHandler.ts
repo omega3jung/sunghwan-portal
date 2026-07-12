@@ -4,11 +4,13 @@ import {
 } from "next/server";
 
 import {
+  closeExpiredResolvedTickets,
   createTicket,
   getTicketDetail,
   getTicketListItems,
   requesterUpdateTicketRequestSchema,
   searchTicketListItems,
+  startTicketWork,
   type TicketCreateRequestDto,
   type TicketSearchRequestDto,
   type TicketSearchSortDto,
@@ -16,9 +18,13 @@ import {
 } from "@/server/data/serviceDesk/ticket";
 import {
   type ApprovalTicketActionRequestDto,
+  executeTicketAction,
   executeTicketApprovalAction,
   getTicketActionsByTicketId,
   isTicketApprovalActionPath,
+  isTicketGeneralActionPath,
+  softDeleteTicketAction,
+  type TicketActionRequestDto,
 } from "@/server/data/serviceDesk/ticketAction";
 import {
   createTicketDraft,
@@ -28,7 +34,10 @@ import {
   updateTicketDraft,
 } from "@/server/data/serviceDesk/ticketDraft";
 import { getTicketHistoriesByTicketId } from "@/server/data/serviceDesk/ticketHistory";
-import { getWorkSessionsByTicketId } from "@/server/data/serviceDesk/workSession";
+import {
+  createWorkSession,
+  getWorkSessionsByTicketId,
+} from "@/server/data/serviceDesk/workSession";
 import { getPortalApiQueryValue } from "@/server/portalApi/utils";
 
 import {
@@ -40,18 +49,24 @@ import {
 const TICKET_LIST_PATH_PATTERN = /^\/service-desk\/tickets$/;
 const TICKET_SEARCH_PATH_PATTERN = /^\/service-desk\/tickets\/search$/;
 const TICKET_DRAFT_PATH_PATTERN = /^\/service-desk\/tickets\/draft$/;
+const TICKET_AUTO_CLOSE_PATH_PATTERN =
+  /^\/service-desk\/tickets\/cron\/close-expired-resolved$/;
 const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
 const TICKET_ACTION_LIST_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/actions$/;
+const TICKET_ACTION_DETAIL_PATH_PATTERN =
+  /^\/service-desk\/tickets\/([^/]+)\/actions\/([^/]+)$/;
 const TICKET_COMMAND_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/command\/([^/]+)$/;
 const TICKET_HISTORY_LIST_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/(?:histories|history)$/;
 const TICKET_WORK_SESSION_LIST_PATH_PATTERN =
   /^\/service-desk\/tickets\/([^/]+)\/(?:work-session|work-sessions|track-time)$/;
+const TICKET_START_WORK_COMMAND = "start-work";
 const TICKET_DETAIL_PATH_PATTERN = /^\/service-desk\/tickets\/([^/]+)$/;
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
+const CURRENT_USER_ROLE_HEADER = "X-Current-User-Role";
 const TICKET_SORT_FIELDS = new Set<TicketSearchSortDto["field"]>([
   "ticketNumber",
   "createdAt",
@@ -68,7 +83,16 @@ const SORT_DIRECTIONS = new Set<TicketSearchSortDto["direction"]>([
 export async function handleTicketPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
+  if (TICKET_AUTO_CLOSE_PATH_PATTERN.test(context.path)) {
+    if (context.method !== "POST") {
+      return createNotFoundResponse();
+    }
+
+    return NextResponse.json(await closeExpiredResolvedTickets());
+  }
+
   const currentUserName = getCurrentUserName(context);
+  const currentUserRole = getCurrentUserRole(context);
 
   if (currentUserName === null) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -139,6 +163,36 @@ export async function handleTicketPortalApi(
     return createListResponse(items);
   }
 
+  const actionDetailMatch = TICKET_ACTION_DETAIL_PATH_PATTERN.exec(
+    context.path,
+  );
+
+  if (actionDetailMatch) {
+    if (context.method !== "PATCH") {
+      return createNotFoundResponse();
+    }
+
+    const actionNo = Number(decodePathSegment(actionDetailMatch[2]));
+
+    if (!Number.isInteger(actionNo) || actionNo < 1) {
+      throw createStatusError("Invalid action number.", 400);
+    }
+
+    const body = requireBody<{ active?: boolean }>(context.options);
+
+    if (body.active !== false) {
+      throw createStatusError("Invalid request body.", 400);
+    }
+
+    const actionDto = await softDeleteTicketAction({
+      ticketId: decodePathSegment(actionDetailMatch[1]),
+      actionNo,
+      currentUserName,
+    });
+
+    return NextResponse.json(actionDto);
+  }
+
   const commandMatch = TICKET_COMMAND_PATH_PATTERN.exec(context.path);
 
   if (commandMatch) {
@@ -147,16 +201,40 @@ export async function handleTicketPortalApi(
     }
 
     const action = decodePathSegment(commandMatch[2]);
+    const ticketId = decodePathSegment(commandMatch[1]);
 
-    if (!isTicketApprovalActionPath(action)) {
+    if (action === TICKET_START_WORK_COMMAND) {
+      const ticket = await startTicketWork(ticketId, currentUserName);
+
+      return NextResponse.json(ticket);
+    }
+
+    if (isTicketApprovalActionPath(action)) {
+      const actionDto = await executeTicketApprovalAction({
+        ticketId,
+        action,
+        currentUserName,
+        isAdmin: currentUserRole === "ADMIN",
+        payload: requireBody<ApprovalTicketActionRequestDto>(context.options),
+      });
+
+      return NextResponse.json(actionDto, { status: 201 });
+    }
+
+    if (!isTicketGeneralActionPath(action)) {
       return createNotFoundResponse();
     }
 
-    const actionDto = await executeTicketApprovalAction({
-      ticketId: decodePathSegment(commandMatch[1]),
+    if (currentUserRole === null) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const actionDto = await executeTicketAction({
+      ticketId,
       action,
       currentUserName,
-      payload: requireBody<ApprovalTicketActionRequestDto>(context.options),
+      payload: requireBody<TicketActionRequestDto>(context.options),
+      isAdmin: currentUserRole === "ADMIN",
     });
 
     return NextResponse.json(actionDto, { status: 201 });
@@ -181,15 +259,27 @@ export async function handleTicketPortalApi(
   );
 
   if (workSessionListMatch) {
-    if (context.method !== "GET") {
-      return createNotFoundResponse();
+    const ticketId = decodePathSegment(workSessionListMatch[1]);
+
+    if (context.method === "GET") {
+      const items = await getWorkSessionsByTicketId(ticketId);
+
+      return createListResponse(items);
     }
 
-    const items = await getWorkSessionsByTicketId(
-      decodePathSegment(workSessionListMatch[1]),
-    );
+    if (context.method === "POST") {
+      const item = await createWorkSession({
+        ...requireBody<Parameters<typeof createWorkSession>[0]>(
+          context.options,
+        ),
+        ticketId,
+        currentUserName,
+      });
 
-    return createListResponse(items);
+      return NextResponse.json(item, { status: 201 });
+    }
+
+    return createNotFoundResponse();
   }
 
   const detailMatch = TICKET_DETAIL_PATH_PATTERN.exec(context.path);
@@ -285,6 +375,15 @@ async function handleTicketDraftDetailPortalApi(
 function getCurrentUserName(context: ServiceDeskPortalApiContext) {
   const value = new Headers(context.options.headers).get(
     CURRENT_USERNAME_HEADER,
+  );
+  const normalizedValue = value?.trim();
+
+  return normalizedValue ? normalizedValue : null;
+}
+
+function getCurrentUserRole(context: ServiceDeskPortalApiContext) {
+  const value = new Headers(context.options.headers).get(
+    CURRENT_USER_ROLE_HEADER,
   );
   const normalizedValue = value?.trim();
 

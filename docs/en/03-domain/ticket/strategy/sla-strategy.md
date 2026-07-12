@@ -269,7 +269,7 @@ SLA influences assignment behavior.
 
 ---
 
-### 3. Reopened Tickets
+### 3. Rework After Resolution
 
 Options:
 

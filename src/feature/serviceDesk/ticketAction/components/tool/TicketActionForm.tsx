@@ -18,6 +18,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import type { MainCategory } from "@/domain/serviceDesk";
+import type { TicketAssignmentPhase } from "@/domain/serviceDesk";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
@@ -51,6 +52,7 @@ const approvalActionRichEditorPreset: RichEditorPreset = {
 type TicketActionFormProps = {
   ticketId: string;
   originalCategoryId?: string;
+  assignmentPhase?: TicketAssignmentPhase;
   isRemoteMode?: boolean;
   mode: TicketActionMode;
   form: UseFormReturn<TicketActionDraftFormValues>;
@@ -62,6 +64,7 @@ type TicketActionFormProps = {
 export function TicketActionForm({
   ticketId,
   originalCategoryId,
+  assignmentPhase = "WORK",
   isRemoteMode = false,
   mode,
   form,
@@ -93,6 +96,7 @@ export function TicketActionForm({
         <AssignFields
           form={form}
           originalCategoryId={originalCategoryId}
+          assignmentPhase={assignmentPhase}
           categories={categories}
           users={users}
           t={t}

@@ -40,14 +40,14 @@ tenant boundary 안에서 해석된다.
 ## 승인 흐름
 
 ```txt
-Pre -> Open -> Approved / Declined -> Working
+Draft -> Approval -> Assigned / Declined -> Working
 ```
 
 ### 상태 정의
 
-- **Pre**: 티켓이 생성되었지만 승인이 아직 시작되지 않은 상태
-- **Open**: 승인 프로세스가 진행 중인 상태
-- **Approved**: 모든 승인 단계가 성공적으로 완료된 상태
+- **Draft**: 제출 전 티켓을 준비하는 상태
+- **Approval**: 승인 프로세스가 진행 중인 상태
+- **Assigned**: 모든 승인 단계가 완료되고 work assignee가 확정된 상태
 - **Declined**: 어느 한 단계에서든 승인이 거절된 상태
 
 ---
@@ -141,8 +141,8 @@ payload: {
 ### 3. 완료
 
 - 모든 단계가 승인되면:
-  - 티켓 상태가 `Approved` 가 된다.
-  - 티켓은 할당 단계로 이동한다.
+  - 티켓 상태가 `Assigned` 가 된다.
+  - 티켓은 work assignment 단계로 이동한다.
 
 ---
 
@@ -188,7 +188,7 @@ approvalSteps = [
 
 1. 직속 관리자가 승인한다.
 2. IT 부서가 검토한다.
-3. 티켓 상태가 `Approved` 가 된다.
+3. 티켓 상태가 `Assigned` 가 된다.
 
 ---
 

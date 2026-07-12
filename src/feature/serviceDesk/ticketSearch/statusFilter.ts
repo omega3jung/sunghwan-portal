@@ -13,7 +13,6 @@ export const OPEN_TICKET_STATUS_FILTER_VALUES = [
   "Working",
   "Pending",
   "Rejected",
-  "Reopened",
 ] as const satisfies readonly TicketStatus[];
 
 export const TICKET_STATUS_FILTER_VALUES = [
@@ -42,7 +41,7 @@ export const normalizeTicketStatusFilterValues = (
     }
 
     if (value === "Reopen") {
-      return "Reopened";
+      return "Working";
     }
 
     return ticketStatusSet.has(value) ? (value as TicketStatus) : [];

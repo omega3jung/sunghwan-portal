@@ -12,6 +12,7 @@ type TicketOwnershipResource = Pick<
 >;
 
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
+const CURRENT_USER_ROLE_HEADER = "X-Current-User-Role";
 
 export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
   ticket: T,
@@ -44,6 +45,7 @@ export function withDerivedTicketOwnershipList<
 
 export function toCurrentUsernameProxyHeaders(
   currentUserName: string | null,
+  currentUserRole?: string | null,
 ): HeadersInit | undefined {
   const normalizedUserName = normalizeCurrentUserName(currentUserName);
 
@@ -53,6 +55,7 @@ export function toCurrentUsernameProxyHeaders(
 
   return {
     [CURRENT_USERNAME_HEADER]: normalizedUserName,
+    ...(currentUserRole ? { [CURRENT_USER_ROLE_HEADER]: currentUserRole } : {}),
   };
 }
 

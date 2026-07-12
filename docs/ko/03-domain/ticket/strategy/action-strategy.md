@@ -296,7 +296,7 @@ Reason content는 의사결정을 설명해 주며 특히 다음에서 중요합
 
 - `resolve`
 - `close`
-- `requestReview` / `reopen`
+- additional review or escalation actions
 - `escalate`
 - `reassign`
 - approval-related actions

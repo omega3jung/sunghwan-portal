@@ -170,7 +170,7 @@ type HistoryType =
 
 ```txt
 Priority: Medium -> High
-Status: Open -> Working
+Status: Assigned -> Working
 ```
 
 이 경우 두 개의 분리된 history record가 생성됩니다.

@@ -121,7 +121,7 @@ Assignment occurs after approval (if required).
 ### Rules
 
 - If approval exists:
-  → assign after `Approved`
+  → assign when approval resolves to `Assigned`
 - If no approval:
   → assign immediately after creation
 

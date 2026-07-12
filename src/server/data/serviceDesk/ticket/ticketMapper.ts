@@ -171,7 +171,7 @@ function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {
   }
 
   if (status === "Reopen") {
-    return "Reopened";
+    return "Working";
   }
 
   return row.tk_status;

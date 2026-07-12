@@ -297,7 +297,7 @@ The system is designed to support future actions without structural redesign.
 
 - `resolve`
 - `close`
-- `requestReview` / `reopen`
+- additional review or escalation actions
 - `escalate`
 - `reassign`
 - approval-related actions

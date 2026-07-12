@@ -36,13 +36,8 @@ const ALL_TOOL_ACTIONS: TicketActionMode[] = [
 ];
 
 const WORK_PHASE_ACTIONS = new Set<TicketActionMode>([
-  "assign",
   "assignSelf",
-  "adjust",
-  "merge",
   "reject",
-  "reopen",
-  "resubmit",
 ]);
 
 const APPROVAL_ACTIONS = new Set<TicketActionMode>(["approve", "decline"]);
@@ -62,7 +57,6 @@ const VISIBLE_STATUSES_BY_ACTION: Record<
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopened",
     "Closed",
   ],
   note: [
@@ -74,12 +68,18 @@ const VISIBLE_STATUSES_BY_ACTION: Record<
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopened",
+  ],
+  assign: ["Approval", "Assigned", "Working", "Pending"],
+  assignSelf: ["Assigned", "Working", "Pending"],
+  adjust: [
+    "Approval",
+    "Assigned",
+    "Working",
+    "Pending",
+    "Resolved",
     "Closed",
   ],
-  assign: ["Assigned", "Declined", "Working", "Rejected", "Reopened"],
-  assignSelf: ["Assigned", "Working"],
-  adjust: [
+  merge: [
     "Approval",
     "Declined",
     "Assigned",
@@ -87,19 +87,18 @@ const VISIBLE_STATUSES_BY_ACTION: Record<
     "Pending",
     "Rejected",
     "Resolved",
-    "Reopened",
     "Closed",
   ],
-  merge: ["Assigned", "Working", "Pending", "Rejected", "Resolved", "Closed"],
   reject: ["Assigned", "Working", "Pending"],
   reopen: ["Resolved"],
-  resubmit: ["Rejected"],
-  cancel: ["Approval", "Assigned"],
+  resubmit: ["Declined", "Rejected"],
+  cancel: ["Approval", "Declined", "Assigned", "Working", "Pending", "Rejected"],
 };
 
 type TicketActionToolLauncherProps = {
   hidden: boolean;
   isPending?: boolean;
+  isAdmin?: boolean;
   onOpen: (mode: TicketActionMode) => void;
   ticket: TicketDetail;
 };
@@ -121,6 +120,7 @@ const actionIcons: Record<TicketActionMode, ReactNode> = {
 
 export function TicketActionToolLauncher({
   hidden,
+  isAdmin = false,
   isPending = false,
   onOpen,
   ticket,
@@ -136,23 +136,58 @@ export function TicketActionToolLauncher({
           APPROVAL_ACTIONS.has(action) &&
           (!ticket.active ||
             ticket.assignmentPhase !== "APPROVAL" ||
-            !ticket.assignedApprover)
+            (!ticket.assignedApprover && !isAdmin))
         ) {
           return false;
         }
 
         if (
           WORK_PHASE_ACTIONS.has(action) &&
-          ticket.assignmentPhase !== "WORK"
+          (ticket.assignmentPhase !== "WORK" || !ticket.assignedWorker)
         ) {
           return false;
         }
 
-        if (action === "assignSelf" && ticket.assignedWorker) {
+        if (
+          action === "assignSelf" &&
+          (!ticket.assignedWorker || ticket.workAssigneeUsernames.length < 2)
+        ) {
           return false;
         }
 
-        if (action === "merge" && ticket.mergedIntoTicketId) {
+        if (action === "assign") {
+          if (ticket.status === "Approval") {
+            return isAdmin;
+          }
+
+          return ticket.assignmentPhase === "WORK" && (ticket.assignedWorker || isAdmin);
+        }
+
+        if (action === "adjust") {
+          if (ticket.status === "Resolved" || ticket.status === "Closed") {
+            return isAdmin;
+          }
+
+          if (ticket.status === "Approval") {
+            return isAdmin;
+          }
+
+          return ticket.assignmentPhase === "WORK" && (ticket.assignedWorker || isAdmin);
+        }
+
+        if (action === "merge") {
+          return (
+            !ticket.mergedIntoTicketId &&
+            (isAdmin ||
+              (ticket.assignmentPhase === "WORK" && ticket.assignedWorker))
+          );
+        }
+
+        if (action === "reopen") {
+          return ticket.owner || isAdmin;
+        }
+
+        if (action === "resubmit" && !ticket.owner) {
           return false;
         }
 
@@ -170,6 +205,8 @@ export function TicketActionToolLauncher({
       ticket.mergedIntoTicketId,
       ticket.owner,
       ticket.status,
+      ticket.workAssigneeUsernames.length,
+      isAdmin,
     ],
   );
 

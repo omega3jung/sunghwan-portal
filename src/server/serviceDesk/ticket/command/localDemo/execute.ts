@@ -33,7 +33,7 @@ export const executeLocalAction = ({
   if (ticket && !isLocalDemoExecutionAllowed(actionMode, ticket.status)) {
     throw new ServiceDeskApiError(
       "api.ticketCommand.localDemo.actionNotAllowed",
-      400,
+      409,
       {
         action: actionMode,
         status: ticket.status,
@@ -47,8 +47,20 @@ export const executeLocalAction = ({
     effect.ticketPatch,
   );
 
+  const histories = Array.isArray(effect.history)
+    ? effect.history
+    : [effect.history];
+
   return {
-    history: buildHistory(runtimeContext, effect.history),
+    histories: histories.map((history, index) =>
+      buildHistory(
+        {
+          ...runtimeContext,
+          historyNoOffset: index,
+        },
+        history,
+      ),
+    ),
     updatedTicket:
       ticket && ticketPatch
         ? createUpdatedTicket(ticket, ticketPatch, context.createdAt)

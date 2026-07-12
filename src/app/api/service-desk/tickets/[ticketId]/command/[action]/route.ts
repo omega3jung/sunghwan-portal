@@ -151,7 +151,7 @@ export async function POST(
   return portalApiJson(request, {
     method: "POST",
     path: `/service-desk/tickets/${ticketId}/command/${action}`,
-    headers: toCurrentUsernameProxyHeaders(employeeUserName),
+    headers: toCurrentUsernameProxyHeaders(employeeUserName, role),
     body: toRemoteCommandBody(action, content),
     errorMessage: tServiceDeskApi("api.ticketCommand.execute"),
     mapData: mapTicketActionPayload,

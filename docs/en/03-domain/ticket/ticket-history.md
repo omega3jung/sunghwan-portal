@@ -170,7 +170,7 @@ Each change is recorded as an individual event.
 
 ```txt
 Priority: Medium -> High
-Status: Open -> Working
+Status: Assigned -> Working
 ```
 
 This creates two separate history records.

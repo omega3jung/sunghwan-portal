@@ -38,19 +38,20 @@ approval requirement, 티켓 생성 이후 수행된 운영 action에 따라 달
 상위 수준에서 라이프사이클은 다음과 같이 요약할 수 있습니다.
 
 ```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
+Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
 ```
 
 이것이 주요 성공 경로입니다. 실제로는 라이프사이클이 다음과 같은 대체
 분기도 지원합니다.
 
 ```txt
-Draft -> Open -> Working -> Resolved -> Closed
-Open -> Declined -> Open
+Draft -> Assigned -> Working -> Resolved -> Closed
+Approval -> Declined -> Approval or Assigned
+Assigned -> Working
 Working <-> Pending
-Working / Pending -> Rejected -> Open or Reopen
-Resolved -> Reopen -> Working -> Resolved -> Closed
-Working / Pending / Resolved -> Closed (merge path)
+Assigned / Working / Pending -> Rejected -> Approval or Assigned
+Resolved -> Working -> Resolved -> Closed
+Assigned / Working / Pending / Resolved -> Closed (merge path)
 ```
 
 따라서 라이프사이클은 단순한 완료뿐 아니라, 반려, 일시 중지, 해결 후
@@ -67,23 +68,24 @@ Working / Pending / Resolved -> Closed (merge path)
 - assignee에게 활성 작업으로 보이지 않음
 - 제출 전 미완성 요청을 준비하는 데 사용됨
 
-### Open
+### Approval
 
-- 티켓이 제출되어 활성 workflow에 진입한 상태
-- approval, assignment, requester/manager 후속 조치를 기다리는 상태
-- 생성 후의 초기 운영 상태
-
-### Approved
-
-- approval flow가 성공적으로 완료된 상태
-- 티켓이 실행 대상으로 승인된 상태
-- 활성 작업으로 이동할 준비가 된 상태
+- 티켓이 제출되어 approval decision을 기다리는 상태
+- 현재 approver가 approval step의 책임을 가진다
+- 승인되면 다음 approval step으로 이동하거나 work assignment가 확정된다
 
 ### Declined
 
 - approval이 거절된 상태
 - 티켓이 실행 대상으로 받아들여지지 않은 상태
 - requester가 요청을 수정해서 다시 제출할 수 있음
+
+### Assigned
+
+- approval이 완료되었거나 필요 없는 상태
+- work assignee가 정해진 상태
+- 아직 작업은 시작되지 않았음
+- 명시적인 start-work command가 `Working`으로 이동시킨다
 
 ### Working
 
@@ -99,21 +101,15 @@ Working / Pending / Resolved -> Closed (merge path)
 
 ### Rejected
 
-- assignee 또는 manager 검토 후 운영적으로 반려된 상태
+- work assignee 또는 Admin 검토 후 운영적으로 반려된 상태
 - 현재 형태로는 요청을 진행할 수 없음을 의미함
-- requester 또는 manager가 나중에 다시 활성화할 수 있음
-
-### Reopen
-
-- 해결되었거나 반려된 뒤 명시적으로 다시 활성화된 상태
-- 재작업 또는 재처리를 위해 lifecycle에 다시 진입했음을 의미함
-- 재작업을 명확히 추적하기 위해 `Open`과 분리됨
+- requester가 수정 후 초기 routing으로 다시 제출할 수 있음
 
 ### Resolved
 
 - 작업이 완료되고 해결책이 제공된 상태
 - 후속 종료 결정 또는 requester 검토를 기다리는 상태
-- 재작업이 요청되면 다시 active processing으로 돌아갈 수 있음
+- `reopen` action이 수행되면 `Working`으로 돌아갈 수 있음
 
 ### Closed
 
@@ -122,7 +118,7 @@ Working / Pending / Resolved -> Closed (merge path)
 - 일반적으로 추가 action은 허용되지 않음
 - update는 허용되지 않음
 - 예외적인 administrative operation은 여전히 가능할 수 있음
-- 예외적인 경우 manager-level merge가 허용될 수 있음
+- 예외적인 경우 Admin merge가 허용될 수 있음
 
 ---
 
@@ -130,100 +126,98 @@ Working / Pending / Resolved -> Closed (merge path)
 
 라이프사이클은 명시적인 transition에 의해 구동됩니다.
 
-### 1. Draft -> Open
+### 1. Draft -> Approval
 
 Trigger:
 
-- 사용자 제출
+- approval이 필요한 사용자 제출
 
-### 2. Open -> Approved
+### 2. Draft -> Assigned
 
 Trigger:
 
-- 필요한 모든 approval step 완료
+- approval이 필요 없는 사용자 제출
 
-### 3. Open -> Declined
+### 3. Approval -> Approval
+
+Trigger:
+
+- 마지막이 아닌 approval step 승인
+
+### 4. Approval -> Assigned
+
+Trigger:
+
+- 마지막 approval step 승인 및 assignment resolution
+
+### 5. Approval -> Declined
 
 Trigger:
 
 - approval rejection
 
-### 4. Open -> Working
-
-조건:
-
-- approval이 필요 없거나, assignment를 통해 즉시 active work가 시작되는 경우
-
-### 5. Approved -> Working
+### 6. Declined -> Approval / Assigned
 
 Trigger:
 
-- assignment 및 작업 시작
+- requester resubmission through initial routing
 
-### 6. Declined -> Open
+### 7. Assigned -> Working
 
 Trigger:
 
-- requester 수정 후 재제출
+- 현재 work assignee의 명시적인 start-work command
 
-### 7. Working -> Pending
+### 8. Working -> Pending
 
 Trigger:
 
 - dependency, interruption, workflow hold로 인한 일시 중지
 
-### 8. Pending -> Working
+### 9. Pending -> Working
 
 Trigger:
 
 - 작업 재개
 
-### 9. Working -> Resolved
+### 10. Working / Pending -> Resolved
 
 Trigger:
 
-- assignee가 작업을 완료함
+- work assignee가 work-session control을 통해 작업을 완료함
 
-### 10. Working / Pending -> Rejected
-
-Trigger:
-
-- assignee 또는 manager에 의한 운영 반려
-
-### 11. Rejected -> Open
+### 11. Assigned / Working / Pending -> Rejected
 
 Trigger:
 
-- requester 검토 및 재제출
+- work assignee 또는 Admin에 의한 운영 반려
 
-### 12. Rejected -> Reopen
-
-Trigger:
-
-- manager 주도의 재할당 또는 처리를 위한 명시적 재활성화
-
-### 13. Resolved -> Reopen
+### 12. Rejected -> Approval / Assigned
 
 Trigger:
 
-- requester 검토 요청 또는 재작업 요청
+- requester resubmission through initial routing
+
+### 13. Resolved -> Working
+
+Trigger:
+
+- requester 또는 Admin의 `reopen` action
 
 ### 14. Resolved -> Closed
 
-구현별 closure path:
+Trigger:
 
-- [`Ticket Operation Rules`](../../08-dev-strategy/ticket-operation-rules.md)는
-  현재 구체적인 trigger를 정의하지 않는다
-- requester confirmation이나 system close policy가 존재할 수는 있지만,
-  여기서는 현재 구현 rule로 간주하지 않는다
+- resolved history가 7일 이상 지난 system auto-close
 
-### 15. Working / Pending / Resolved -> Closed
+### 15. Assigned / Working / Pending / Resolved -> Closed
 
-예외 케이스:
+Closing actions:
 
-- assignee merge는 `Working`, `Pending`, `Resolved`에서 source ticket을 닫는다
-- manager merge는 예외적으로 `Open`, `Approved`, `Rejected`, 심지어
-  `Closed`에서도 source ticket을 닫을 수 있다
+- requester cancel은 `Approval`, `Declined`, `Assigned`, `Working`,
+  `Pending`, `Rejected`에서 닫을 수 있다
+- work assignee merge는 `Assigned`, `Working`, `Pending`, `Resolved`에서 source ticket을 닫는다
+- Admin merge는 `Closed`를 포함한 모든 non-`Draft` 상태에서 source ticket을 닫을 수 있다
 - merged ticket은 `closeReason = Merged`를 사용한다
 
 ---
@@ -239,20 +233,24 @@ State Transition = Result of Action
 
 예시:
 
-| Action                 | From                                                    | To         |
-| ---------------------- | ------------------------------------------------------- | ---------- |
-| submit ticket          | `Draft`                                                 | `Open`     |
-| approve                | `Open`                                                  | `Approved` |
-| update declined ticket | `Declined`                                              | `Open`     |
-| assign / assignSelf    | `Open` or `Approved`                                    | `Working`  |
-| pause or hold work     | `Working`                                               | `Pending`  |
-| resume work            | `Pending`                                               | `Working`  |
-| reject                 | `Working` or `Pending`                                  | `Rejected` |
-| requestReview / reopen | `Resolved`                                              | `Reopen`   |
-| resubmit               | `Rejected`                                              | `Open`     |
-| manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
-| merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
-| manager merge          | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
+| Action        | From                                                                   | To                       |
+| ------------- | ---------------------------------------------------------------------- | ------------------------ |
+| submit ticket | `Draft`                                                                | `Approval` or `Assigned` |
+| approve       | `Approval`                                                             | `Approval` or `Assigned` |
+| decline       | `Approval`                                                             | `Declined`               |
+| resubmit      | `Declined` or `Rejected`                                               | `Approval` or `Assigned` |
+| start work    | `Assigned`                                                             | `Working`                |
+| assign        | `Pending`                                                              | `Working`                |
+| assignSelf    | `Assigned`, `Working`, or `Pending`                                    | unchanged                |
+| pause work    | `Working`                                                              | `Pending`                |
+| resume work   | `Pending`                                                              | `Working`                |
+| resolve work  | `Working` or `Pending`                                                 | `Resolved`               |
+| reject        | `Assigned`, `Working`, or `Pending`                                    | `Rejected`               |
+| reopen        | `Resolved`                                                             | `Working`                |
+| merge         | `Assigned`, `Working`, `Pending`, or `Resolved`                        | `Closed`                 |
+| cancel        | `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, or `Rejected` | `Closed`                 |
+| auto close    | `Resolved`                                                             | `Closed`                 |
+| admin merge   | any non-`Draft` status                                                 | `Closed`                 |
 
 암묵적인 상태 변경은 없습니다. 모든 transition에는 명확한 원인이 있어야
 합니다.
@@ -271,11 +269,11 @@ Category -> determines -> Workflow
 
 예시:
 
-- 단순 요청: `Draft -> Open -> Working -> Resolved -> Closed`
-- approval 필요: `Draft -> Open -> Approved -> Working -> Resolved -> Closed`
-- approval 거절: `Draft -> Open -> Declined -> Open -> Approved -> Working`
+- 단순 요청: `Draft -> Assigned -> Working -> Resolved -> Closed`
+- approval 필요: `Draft -> Approval -> Assigned -> Working -> Resolved -> Closed`
+- approval 거절: `Draft -> Approval -> Declined -> Approval -> Assigned -> Working`
 - 작업 차단: `Working -> Pending -> Working -> Resolved -> Closed`
-- 재작업 흐름: `Working -> Resolved -> Reopen -> Working -> Resolved -> Closed`
+- 재작업 흐름: `Working -> Resolved -> Working -> Resolved -> Closed`
 
 이렇게 하면 라이프사이클은 유연해지지만 임의적이지는 않게 됩니다.
 
@@ -301,7 +299,7 @@ Category -> determines -> Workflow
 예시:
 
 - `Draft -> Working`
-- `Open -> Resolved`
+- `Approval -> Resolved`
 - 유효한 closing action 없는 `Pending -> Closed`
 - 예외 개입 없는 `Closed -> Working`
 - 문서화된 admin-level 예외를 제외한 `Closed -> any normal action`
@@ -310,33 +308,29 @@ Category -> determines -> Workflow
 
 각 상태는 명확한 책임을 반영해야 합니다.
 
-- `Open`: approval, assignment, 후속 조치를 기다리는 상태
-- `Approved`: 실행 준비 완료
+- `Approval`: approval을 기다리는 상태
+- `Assigned`: 작업 시작 준비 완료
 - `Working`: assignee가 책임지는 상태
 - `Pending`: 일시 중지된 상태
 - `Resolved`: 종료 또는 검토를 기다리는 상태
 - `Rejected`: 현재 형태로는 실행 불가
 - `Declined`: 승인되지 않음
-- `Reopen`: 이전 완료 또는 반려 이후의 재처리
 
 ### 4. Reopen 전략
 
-라이프사이클은 `Reopen`을 `Open`과 명시적으로 분리합니다.
+현재 라이프사이클은 별도의 `Reopen` status를 사용하지 않습니다.
 
 이는 다음을 가능하게 합니다.
 
-- 재작업 빈도를 KPI로 추적할 수 있다
-- 신규 유입과 재처리를 구분할 수 있다
-- 티켓이 이미 진행된 이후에도 운영상 명확성을 유지할 수 있다
+- 재작업은 `Resolved`에서 `Working`으로 직접 돌아간다
+- 재작업 여부는 `TICKET_REOPENED` history event로 추적한다
+- status enum은 실행 가능한 상태 중심으로 유지된다
 
 ### 5. Closure 정책
 
-현재 구현 rule은 merge 기반 closure를 명시적으로 정의합니다.
-
-requester confirmation이나 auto-close review window 같은 다른 closure 정책은
-나중에 추가될 수 있지만, 현재
-[`Ticket Operation Rules`](../../08-dev-strategy/ticket-operation-rules.md)에는
-정의되어 있지 않습니다.
+현재 구현 rule은 merge, cancel, resolved auto-close를 명시적으로 정의합니다.
+resolved auto-close는 `updatedAt`이 아니라 resolved history timestamp와
+7일 grace window를 기준으로 합니다.
 
 ---
 
@@ -370,8 +364,8 @@ Activity = explicit operation that triggers change
 
 - `assign`은 ticket을 `Working`으로 이동시킬 수 있다
 - `reject`는 ticket을 `Rejected`로 이동시킬 수 있다
-- `reopen`은 ticket을 `Reopen`으로 이동시킬 수 있다
-- `resubmit`은 ticket을 `Open`으로 이동시킬 수 있다
+- `reopen`은 ticket을 `Resolved`에서 `Working`으로 이동시킬 수 있다
+- `resubmit`은 ticket을 `Approval` 또는 `Assigned`로 이동시킬 수 있다
 
 이 구분은 operational action의 표현력을 유지하면서도 lifecycle을 엄격하게
 관리할 수 있게 합니다.
@@ -393,7 +387,7 @@ Activity = explicit operation that triggers change
 ### Approval
 
 - approval outcome과 관련된 transition을 통제한다
-- ticket이 `Approved`가 될지 `Declined`가 될지 결정한다
+- ticket이 `Approval`에 남을지, `Assigned`가 될지, `Declined`가 될지 결정한다
 
 관련 문서: [승인 시스템](./strategy/approval-system.md)
 
@@ -470,7 +464,7 @@ Activity = explicit operation that triggers change
 
 ### 4. 운영 명확성
 
-`Declined`, `Rejected`, `Pending`, `Reopen` 같은 상태는 ownership, 의미,
+`Declined`, `Rejected`, `Pending`, `Resolved` 같은 상태는 ownership, 의미,
 reporting value가 서로 다르므로 분리해서 유지합니다.
 
 ---

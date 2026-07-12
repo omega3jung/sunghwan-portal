@@ -39,14 +39,14 @@ tenant boundary that owns that category tree.
 ## Approval Flow
 
 ```
-Pre → Open → Approved / Declined → Working
+Draft → Approval → Assigned / Declined → Working
 ```
 
 ### Status Definitions
 
-- **Pre**: Ticket created, approval not started
-- **Open**: Approval process is in progress
-- **Approved**: All approval steps completed successfully
+- **Draft**: Ticket is being prepared before submission
+- **Approval**: Approval process is in progress
+- **Assigned**: Approval is complete and work assignees are resolved
 - **Declined**: Approval rejected at any step
 
 ---
@@ -140,8 +140,8 @@ payload: {
 ### 3. Completion
 
 - When all steps are approved:
-  → Ticket status becomes `Approved`
-  → Ticket moves to assignment phase
+  → Ticket status becomes `Assigned`
+  → Ticket moves to work assignment phase
 
 ---
 
@@ -187,7 +187,7 @@ approvalSteps = [
 
 1. Direct manager approves
 2. IT department validates
-3. Ticket becomes `Approved`
+3. Ticket becomes `Assigned`
 
 ---
 

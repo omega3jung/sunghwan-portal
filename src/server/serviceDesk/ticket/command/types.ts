@@ -33,6 +33,7 @@ export type LocalActionRuntimeContext = LocalActionMutationContext & {
   action: TicketActionApiType;
   isAdmin?: boolean;
   isInternal?: boolean;
+  historyNoOffset?: number;
   ticket?: DbTicketDetail;
   nextStatus?: TicketStatus;
 };
@@ -45,15 +46,17 @@ export type LocalActionHistory = Omit<
   | "actor_username"
   | "action_no"
   | "created_at"
->;
+> & {
+  source?: DbTicketHistory["source"];
+};
 
 export type LocalActionEffect = {
-  history: LocalActionHistory;
+  history: LocalActionHistory | LocalActionHistory[];
   ticketPatch?: Partial<DbTicketDetail>;
 };
 
 export type ExecutedLocalAction = {
-  history: DbTicketHistory;
+  histories: DbTicketHistory[];
   updatedTicket?: DbTicketDetail;
 };
 

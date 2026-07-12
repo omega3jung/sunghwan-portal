@@ -81,7 +81,7 @@ The current rule set is organized into two areas:
 ### 2. Ticket Action Rules
 
 - rules for communication and operational actions
-- lifecycle-affecting behavior such as reject, merge, `requestReview`, `reopen`, and `resubmit`
+- lifecycle-affecting behavior such as reject, merge, `reopen`, `resubmit`, and `cancel`
 
 ---
 
@@ -90,11 +90,11 @@ The current rule set is organized into two areas:
 ### Update Ticket
 
 - who: requester
-- when: status in `Draft`, `Open`
+- when: status = `Draft`
 - effect: update ticket fields
-- purpose: refine or complete an early request
+- purpose: refine or complete a request before submission
 - restriction:
-  - updates are not allowed after `Approved`
+  - ticket update is not the same command as `resubmit`
   - changes must be recorded in history
 
 ---
@@ -105,8 +105,9 @@ The current rule set is organized into two areas:
 - when: status = `Declined`
 - effect:
   - update ticket fields
-  - status -> `Open`
-  - approval flow re-enters from the beginning
+  - submit again through the same routing used by ticket creation
+  - status -> `Approval` when approval is required
+  - status -> `Assigned` when approval is not required
 - purpose: revise a declined request and resubmit it
 - restriction:
   - approval progress must be reset
@@ -122,14 +123,14 @@ action-specific rules apply.
 ### Common Rule
 
 - who: any user with ticket view permission
-- when: status != `Closed`
+- when: action-specific status rule allows it
 - effect:
   - create action
   - record history
 - purpose: support ticket operation and communication
 - restriction:
   - only `comment` and `note` can be edited or deleted
-  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `requestReview`, `reopen`, and `resubmit` are immutable
+  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `reopen`, `resubmit`, and `cancel` are immutable
   - content is required for all actions
   - no action can be edited or deleted in `Closed`
   - delete is soft delete via `active = false`
@@ -141,21 +142,21 @@ action-specific rules apply.
 ### Comment
 
 - who: any user with ticket access
-- when: status != `Closed`
+- when: any non-`Draft` status, including `Closed`
 - effect:
   - create comment
   - send email notification
 - purpose: external or shared communication
 - restriction:
   - content required
-  - only the author can edit or delete it
+  - only the author can edit or delete it while the ticket is not `Closed`
 
 ---
 
 ### Note
 
 - who: any user with ticket access
-- when: status != `Closed`
+- when: any non-`Draft`, non-`Closed` status
 - effect:
   - create note
   - no email notification
@@ -178,10 +179,12 @@ state, ownership, or planning data.
 
 ### Assign (Standard)
 
-- who: assignee
-- when: status = `Working`
+- who: current work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - update assignee
+  - update work assignee
+  - `Pending` -> `Working`
+  - `Assigned` and `Working` keep their current status
   - send email notification
 - purpose: delegate or reassign active work
 - restriction:
@@ -189,13 +192,16 @@ state, ownership, or planning data.
 
 ---
 
-### Assign (IT Manager)
+### Assign (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Declined`, `Working`, `Pending`, `Rejected`
+- who: Admin
+- when:
+  - approval assignment: status = `Approval`
+  - work assignment: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - update assignee
-  - if status in `Declined`, `Rejected` -> status = `Reopen`
+  - approval assignment keeps the current approval step and changes approvers
+  - work assignment updates assignees
+  - `Pending` -> `Working`
   - send email notification
 - purpose: manager-driven reassignment or reactivation
 - restriction:
@@ -205,8 +211,8 @@ state, ownership, or planning data.
 
 ### Adjust (Standard)
 
-- who: assignee
-- when: status = `Working`
+- who: current work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
   - update `priority`
   - update `riskLevel`
@@ -217,24 +223,28 @@ state, ownership, or planning data.
 
 ---
 
-### Adjust (IT Manager)
+### Adjust (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`, `Rejected`
+- who: Admin
+- when:
+  - status in `Assigned`, `Working`, `Pending`
+  - status in `Resolved`, `Closed` for correction only
 - effect:
   - update `priority`
   - update `riskLevel`
-  - update `dueDate`
-- purpose: manager-driven planning adjustment
+  - update `dueDate` only before `Resolved`/`Closed`
+- purpose: admin-driven planning adjustment or correction
 - restriction:
   - content required
+  - resolved/closed correction cannot change due date
+  - no-op adjustment is rejected
 
 ---
 
 ### Merge (Standard)
 
-- who: assignee
-- when: status in `Working`, `Pending`, `Resolved`
+- who: current work assignee
+- when: status in `Assigned`, `Working`, `Pending`, `Resolved`
 - effect:
   - source ticket -> `Closed`
   - `closeReason = Merged`
@@ -248,10 +258,10 @@ state, ownership, or planning data.
 
 ---
 
-### Merge (IT Manager)
+### Merge (Admin)
 
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`, `Rejected`, `Resolved`, `Closed`
+- who: Admin
+- when: any non-`Draft` status, including `Closed`
 - effect:
   - execute merge handling
 - purpose: manager-level ticket consolidation
@@ -261,61 +271,40 @@ state, ownership, or planning data.
 
 ---
 
-### Reject (Standard)
+### Reject
 
-- who: assignee
-- when: status in `Working`, `Pending`
+- who: current work assignee or Admin
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
   - status -> `Rejected`
+  - running work session is finished where possible
 - purpose: close out work that cannot proceed
 - restriction:
   - content required
 
----
-
-### Reject (IT Manager)
-
-- who: IT + (`Manager` | `Admin`)
-- when: status in `Open`, `Approved`, `Working`, `Pending`
-- effect:
-  - status -> `Rejected`
-- purpose: manager-level rejection handling
-- restriction:
-  - content required
-
----
-
 ### Reopen
 
-- who: requester
+- who: requester or Admin
 - when: status = `Resolved`
 - effect:
-  - status -> `Reopen`
+  - status -> `Working`
+  - history event = `TICKET_REOPENED`
 - purpose: request re-evaluation of a resolved result
 - restriction:
   - content required
-
----
-
-### Request Review
-
-- who: requester
-- when: status = `Resolved`
-- effect:
-  - status -> `Reopen`
-- purpose: request additional review or rework after resolution
-- restriction:
-  - content required
+  - ticket must have an existing work assignee
 
 ---
 
 ### Resubmit
 
 - who: requester
-- when: status = `Rejected`
+- when: status in `Declined`, `Rejected`
 - effect:
-  - status -> `Open`
-- purpose: revise and resubmit a rejected request
+  - rerun initial approval and assignment routing
+  - status -> `Approval` when approval is required
+  - status -> `Assigned` when approval is not required
+- purpose: revise and resubmit a declined or rejected request
 - restriction:
   - content required
 
@@ -323,19 +312,61 @@ state, ownership, or planning data.
 
 ### Assign Myself (`assignSelf`)
 
-- who: category assignee or a user matching the job-field rule
-- when: status in `Open`, `Approved`, `Working`
+- who: current work assignee
+- when: status in `Assigned`, `Working`, `Pending`
 - effect:
-  - if status in `Open`, `Approved`:
-    - `assigneeIds = [me]`
-    - status -> `Working`
-  - if status = `Working`:
-    - add `me` to `assigneeIds`
-    - notify existing assignee
+  - current assignees are replaced by the actor only
+  - status is unchanged
 - purpose: fast self-assignment
 - restriction:
-  - duplicate assignee insertion must be prevented
+  - current assignee list must contain at least two users
+  - actor must already be one of the current work assignees
   - content is auto-generated
+
+---
+
+### Cancel
+
+- who: requester
+- when: status in `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, `Rejected`
+- effect:
+  - status -> `Closed`
+  - `closeReason = Canceled`
+  - running work session is finished where possible
+- purpose: requester-driven withdrawal before completion
+- restriction:
+  - content required
+
+---
+
+### Work Session Control
+
+- who: current work assignee
+- when:
+  - start work: `Assigned` -> `Working`
+  - track work: `Working` -> `Pending` or `Resolved`
+  - resume/finish work: `Pending` -> `Working` or `Resolved`
+- effect:
+  - records tracked minutes
+  - changes status only through explicit work-session command
+- restriction:
+  - ticket detail read must not mutate status
+  - resolving work finishes the running session where possible
+
+---
+
+### Resolved Auto Close
+
+- who: system
+- when: latest resolved history is at least 7 days old
+- effect:
+  - `Resolved` -> `Closed`
+  - `closeReason = Completed`
+  - history event = `RESOLUTION_CLOSE`
+  - history source = `SYSTEM_AUTO`
+- restriction:
+  - cutoff is based on resolved history time, not `updatedAt`
+  - running work session is finished where possible
 
 ---
 

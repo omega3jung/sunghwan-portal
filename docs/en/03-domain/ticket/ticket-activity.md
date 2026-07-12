@@ -80,9 +80,8 @@ The activity model is also designed to support workflow-oriented actions such
 as:
 
 - `reopen`: reopen a resolved ticket
-- `requestReview`: request review/rework after resolution
-- `resubmit`: send a rejected ticket back to `Open`
-- `assignSelf`: allow an eligible operator to take ownership quickly
+- `resubmit`: rerun initial routing after a declined or rejected ticket
+- `assignSelf`: allow a current work assignee to claim multi-assignee work
 
 These actions are part of the improved activity design because they make
 re-entry and review loops explicit.
@@ -111,7 +110,6 @@ These actions:
 - `merge`
 - `reject`
 - `reopen`
-- `requestReview`
 - `resubmit`
 - `assignSelf`
 
@@ -256,18 +254,18 @@ type ActionConstraint = {
 ### Comment
 
 - who: any user with ticket access
-- when: all states except `Closed`
+- when: any non-`Draft` state, including `Closed`
 - effect: create comment and send notification
 - purpose: external or shared communication
-- restriction: content required; editable only by the author
+- restriction: content required; editable only by the author while not `Closed`
 
 ### Note
 
 - who: any user with ticket access
-- when: all states except `Closed`
+- when: any non-`Draft`, non-`Closed` state
 - effect: create internal note
 - purpose: internal-only communication
-- restriction: content required; editable only by the author
+- restriction: content required; editable only by the author while not `Closed`
 
 Visibility:
 
@@ -276,59 +274,59 @@ Visibility:
 
 ### Assign
 
-- who: assignee in `Working`, or manager/admin in broader operational states
-- when: depends on role and current status
-- effect: update assignee and possibly reactivate work
+- who: current work assignee, or Admin
+- when: `Assigned`, `Working`, or `Pending`; Admin can also assign approvers in `Approval`
+- effect: update assignee; `Pending` moves to `Working`
 - purpose: ownership transfer, routing, or resumed handling
 - restriction: content required for operational clarity
 
 ### Adjust
 
-- who: assignee or manager/admin
-- when: allowed only in valid operational states
+- who: current work assignee, or Admin
+- when: `Assigned`, `Working`, or `Pending`; Admin correction is allowed in `Resolved` and `Closed`
 - effect: update priority, risk level, or due date
 - purpose: adjust execution planning
-- restriction: content required
+- restriction: content required; resolved/closed correction cannot change due date
 
 ### Merge
 
-- who: assignee or manager/admin
-- when: valid working or review states, with broader exception handling for managers
+- who: current work assignee, or Admin
+- when: assignee in `Assigned`, `Working`, `Pending`, or `Resolved`; Admin in any non-`Draft` state
 - effect: merge into target ticket and close the source
 - purpose: consolidate duplicate or related tickets
 - restriction: self-merge forbidden, merged child forbidden, target must be valid
 
 ### Reject
 
-- who: assignee or manager/admin
-- when: limited states depending on role
+- who: current work assignee, or Admin
+- when: `Assigned`, `Working`, or `Pending`
 - effect: ticket becomes `Rejected`
 - purpose: mark the ticket as not executable in its current form
 - restriction: content required
 
-### Request Review / Reopen
+### Reopen
 
-- who: requester
+- who: requester or Admin
 - when: `Resolved`
-- effect: `Reopen`
+- effect: `Working` with `TICKET_REOPENED` history
 - purpose: re-evaluation of resolved result
-- restriction: content required
+- restriction: content required; an existing work assignee is required
 
 ### Resubmit
 
 - who: requester
-- when: `Rejected`
-- effect: `Open`
-- purpose: re-enter approval flow
+- when: `Declined` or `Rejected`
+- effect: rerun initial routing to `Approval` or `Assigned`
+- purpose: re-enter approval or assignment flow
 - restriction: content required
 
 ### Assign Self
 
-- who: eligible user based on category or job-field rule
-- when: `Open`, `Approved`, or `Working`
-- effect: assignSelf and possibly move the ticket into `Working`
+- who: current work assignee
+- when: `Assigned`, `Working`, or `Pending`
+- effect: replace the current work assignee list with the actor only; status is unchanged
 - purpose: fast self-assignment
-- restriction: duplicate assignment must be prevented; content is auto-generated
+- restriction: current assignee list must contain at least two users; content is auto-generated
 
 ---
 
@@ -362,9 +360,9 @@ Examples:
 
 - `assign` may move a ticket into `Working`
 - `reject` moves a ticket into `Rejected`
-- `reopen` may move a ticket into `Reopen`
-- `resubmit` may move a ticket back to `Open`
-- manager reassignment may reactivate a declined or rejected ticket
+- `reopen` may move a ticket from `Resolved` to `Working`
+- `resubmit` may move a ticket into `Approval` or `Assigned`
+- Admin assignment may resume `Pending` work
 
 This ensures that:
 
@@ -483,7 +481,6 @@ These may support edit or soft-delete under normal author-based rules.
 - `merge`
 - `reject`
 - `reopen`
-- `requestReview`
 - `resubmit`
 - `assignSelf`
 

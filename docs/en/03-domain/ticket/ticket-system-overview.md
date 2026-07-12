@@ -158,7 +158,7 @@ defined by that category configuration.
 A ticket progresses through a structured lifecycle:
 
 ```txt
-Draft -> Open -> Approval -> Working -> Resolved -> Closed
+Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
 ```
 
 The actual flow depends on category configuration.

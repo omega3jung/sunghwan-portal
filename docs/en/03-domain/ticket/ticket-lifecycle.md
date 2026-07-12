@@ -39,19 +39,20 @@ ticket is created.
 At a high level, the lifecycle can be summarized as:
 
 ```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
+Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
 ```
 
 This is the main success path. In practice, the lifecycle also supports
 alternative branches:
 
 ```txt
-Draft -> Open -> Working -> Resolved -> Closed
-Open -> Declined -> Open
+Draft -> Assigned -> Working -> Resolved -> Closed
+Approval -> Declined -> Approval or Assigned
+Assigned -> Working
 Working <-> Pending
-Working / Pending -> Rejected -> Open or Reopen
-Resolved -> Reopen -> Working -> Resolved -> Closed
-Working / Pending / Resolved -> Closed (merge path)
+Assigned / Working / Pending -> Rejected -> Approval or Assigned
+Resolved -> Working -> Resolved -> Closed
+Assigned / Working / Pending / Resolved -> Closed (merge path)
 ```
 
 The lifecycle therefore models not only completion, but also rejection,
@@ -68,23 +69,24 @@ temporary pause, and post-resolution reprocessing.
 - not visible as active work for assignees
 - used to prepare incomplete requests before submission
 
-### Open
+### Approval
 
-- ticket is submitted and enters the active workflow
-- waiting for approval, assignment, or requester/manager follow-up
-- initial operational state after creation
-
-### Approved
-
-- approval flow is completed successfully
-- ticket is accepted for execution
-- ready to move into active work
+- ticket is submitted and waiting for an approval decision
+- current approvers own the approval step
+- approval approval either advances to the next approval step or resolves work assignment
 
 ### Declined
 
 - approval was rejected
 - ticket is not accepted for execution
 - requester may revise the request and resubmit it
+
+### Assigned
+
+- approval is complete or not required
+- work assignees are selected
+- work has not started yet
+- explicit start-work command moves the ticket to `Working`
 
 ### Working
 
@@ -100,21 +102,15 @@ temporary pause, and post-resolution reprocessing.
 
 ### Rejected
 
-- ticket is operationally rejected after review by the assignee or manager
+- ticket is operationally rejected after review by a work assignee or Admin
 - indicates that the request cannot proceed in its current form
-- requester or manager may later reactivate the ticket
-
-### Reopen
-
-- ticket is explicitly reactivated after being resolved or rejected
-- represents re-entry into the lifecycle for rework or reprocessing
-- separated from `Open` so rework can be tracked clearly
+- requester may revise and resubmit it through initial routing
 
 ### Resolved
 
 - work is completed and a solution is provided
 - waiting for a follow-up closure decision or requester review
-- may still return to active processing if rework is requested
+- may return to `Working` through the `reopen` action
 
 ### Closed
 
@@ -123,7 +119,7 @@ temporary pause, and post-resolution reprocessing.
 - no further actions are normally allowed
 - no updates are permitted
 - exceptional administrative operations may still apply
-- manager-level merge may still be allowed in exceptional cases
+- Admin merge may still be allowed in exceptional cases
 
 ---
 
@@ -131,101 +127,100 @@ temporary pause, and post-resolution reprocessing.
 
 The lifecycle is driven by explicit transitions.
 
-### 1. Draft -> Open
+### 1. Draft -> Approval
 
 Triggered by:
 
-- user submission
+- user submission when approval is required
 
-### 2. Open -> Approved
+### 2. Draft -> Assigned
 
 Triggered by:
 
-- completion of all required approval steps
+- user submission when approval is not required
 
-### 3. Open -> Declined
+### 3. Approval -> Approval
+
+Triggered by:
+
+- approval of a non-final approval step
+
+### 4. Approval -> Assigned
+
+Triggered by:
+
+- approval of the final approval step and assignment resolution
+
+### 5. Approval -> Declined
 
 Triggered by:
 
 - approval rejection
 
-### 4. Open -> Working
-
-Condition:
-
-- no approval is required, or active work starts immediately through assignment
-
-### 5. Approved -> Working
+### 6. Declined -> Approval / Assigned
 
 Triggered by:
 
-- assignment and start of execution
+- requester resubmission through initial routing
 
-### 6. Declined -> Open
+### 7. Assigned -> Working
 
 Triggered by:
 
-- requester update and resubmission
+- explicit start-work command by a current work assignee
 
-### 7. Working -> Pending
+### 8. Working -> Pending
 
 Triggered by:
 
 - temporary pause caused by dependency, interruption, or workflow hold
 
-### 8. Pending -> Working
+### 9. Pending -> Working
 
 Triggered by:
 
 - resumed work
 
-### 9. Working -> Resolved
+### 10. Working / Pending -> Resolved
 
 Triggered by:
 
-- assignee completes the work
+- work assignee completes the work through work-session control
 
-### 10. Working / Pending -> Rejected
-
-Triggered by:
-
-- operational rejection by assignee or manager
-
-### 11. Rejected -> Open
+### 11. Assigned / Working / Pending -> Rejected
 
 Triggered by:
 
-- requester review and resubmission
+- operational rejection by work assignee or Admin
 
-### 12. Rejected -> Reopen
-
-Triggered by:
-
-- manager-driven reassignment or explicit reactivation for processing
-
-### 13. Resolved -> Reopen
+### 12. Rejected -> Approval / Assigned
 
 Triggered by:
 
-- requester review request or rework request
+- requester resubmission through initial routing
+
+### 13. Resolved -> Working
+
+Triggered by:
+
+- `reopen` action by requester or Admin
 
 ### 14. Resolved -> Closed
 
-Implementation-specific closure path:
+Triggered by:
 
-- [`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md) does not currently
-  define the concrete trigger
-- requester confirmation or a system close policy may exist, but they are not
-  treated as current implementation rules here
+- system auto-close after the resolved history is at least 7 days old
 
-### 15. Working / Pending / Resolved -> Closed
+### 15. Assigned / Working / Pending / Resolved -> Closed
 
-Exceptional case:
+Closing actions:
 
-- assignee merge closes the source ticket from `Working`, `Pending`, or
+- requester cancel closes from `Approval`, `Declined`, `Assigned`, `Working`,
+  `Pending`, or `Rejected`
+- work assignee merge closes the source ticket from `Assigned`, `Working`, `Pending`, or
   `Resolved`
-- manager merge may also close the source ticket from `Open`, `Approved`,
-  `Rejected`, or even `Closed` in exceptional cases
+- Admin merge may close the source ticket from any non-`Draft` status, including
+  `Closed`
 - merged tickets use `closeReason = Merged`
 
 ---
@@ -243,18 +238,22 @@ Examples:
 
 | Action                 | From                                                    | To         |
 | ---------------------- | ------------------------------------------------------- | ---------- |
-| submit ticket          | `Draft`                                                 | `Open`     |
-| approve                | `Open`                                                  | `Approved` |
-| update declined ticket | `Declined`                                              | `Open`     |
-| assign / assignSelf    | `Open` or `Approved`                                    | `Working`  |
+| submit ticket          | `Draft`                                                 | `Approval` or `Assigned` |
+| approve                | `Approval`                                              | `Approval` or `Assigned` |
+| decline                | `Approval`                                              | `Declined` |
+| resubmit               | `Declined` or `Rejected`                                | `Approval` or `Assigned` |
+| start work             | `Assigned`                                              | `Working`  |
+| assign                 | `Pending`                                               | `Working`  |
+| assign / assignSelf    | `Assigned` or `Working`                                 | unchanged  |
 | pause or hold work     | `Working`                                               | `Pending`  |
 | resume work            | `Pending`                                               | `Working`  |
-| reject                 | `Working` or `Pending`                                  | `Rejected` |
-| requestReview / reopen | `Resolved`                                              | `Reopen`   |
-| resubmit               | `Rejected`                                              | `Open`     |
-| manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
-| merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
-| manager merge          | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
+| resolve work           | `Working` or `Pending`                                  | `Resolved` |
+| reject                 | `Assigned`, `Working`, or `Pending`                     | `Rejected` |
+| reopen                 | `Resolved`                                              | `Working`  |
+| merge                  | `Assigned`, `Working`, `Pending`, or `Resolved`         | `Closed`   |
+| cancel                 | `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, or `Rejected` | `Closed` |
+| auto close             | `Resolved`                                              | `Closed`   |
+| admin merge            | any non-`Draft` status                                  | `Closed`   |
 
 There are no implicit status changes. Every transition must have a clear cause.
 
@@ -272,11 +271,11 @@ Category -> determines -> Workflow
 
 Examples:
 
-- simple request: `Draft -> Open -> Working -> Resolved -> Closed`
-- approval required: `Draft -> Open -> Approved -> Working -> Resolved -> Closed`
-- approval rejected: `Draft -> Open -> Declined -> Open -> Approved -> Working`
+- simple request: `Draft -> Assigned -> Working -> Resolved -> Closed`
+- approval required: `Draft -> Approval -> Assigned -> Working -> Resolved -> Closed`
+- approval rejected: `Draft -> Approval -> Declined -> Approval -> Assigned -> Working`
 - blocked work: `Working -> Pending -> Working -> Resolved -> Closed`
-- rework flow: `Working -> Resolved -> Reopen -> Working -> Resolved -> Closed`
+- rework flow: `Working -> Resolved -> Working -> Resolved -> Closed`
 
 This makes the lifecycle flexible without making it arbitrary.
 
@@ -302,7 +301,7 @@ Invalid transitions are not allowed.
 Examples:
 
 - `Draft -> Working`
-- `Open -> Resolved`
+- `Approval -> Resolved`
 - `Pending -> Closed` without a valid closing action
 - `Closed -> Working` without exceptional intervention
 - `Closed -> any normal action` except for documented admin-level exceptions
@@ -311,32 +310,29 @@ Examples:
 
 Each state must reflect a clear responsibility.
 
-- `Open`: waiting for approval, assignment, or follow-up
-- `Approved`: ready for execution
+- `Approval`: waiting for approval
+- `Assigned`: ready for work to start
 - `Working`: owned by assignee
 - `Pending`: temporarily paused
 - `Resolved`: waiting for closure or review
 - `Rejected`: not executable in current form
 - `Declined`: not approved
-- `Reopen`: reprocessing after prior completion or rejection
 
 ### 4. Reopen Strategy
 
-The lifecycle explicitly separates `Reopen` from `Open`.
+The current lifecycle does not use a separate `Reopen` status.
 
 This allows:
 
-- tracking rework frequency as a KPI
-- distinguishing new intake from reprocessing
-- preserving operational clarity after a ticket has already progressed
+- rework to return directly from `Resolved` to `Working`
+- rework tracking through the `TICKET_REOPENED` history event
+- the status enum to stay focused on executable states
 
 ### 5. Closure Policy
 
-The current implementation rules define merge-driven closure explicitly.
-
-Other closure policies, such as requester confirmation or auto-close review
-windows, may be added later, but they are not currently defined in
-[`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md).
+The current implementation rules define merge, cancel, and resolved auto-close
+explicitly. Resolved auto-close uses the resolved history timestamp plus a
+7-day grace window, not `updatedAt`.
 
 ---
 
@@ -370,8 +366,8 @@ Examples:
 
 - `assign` may move a ticket into `Working`
 - `reject` may move a ticket into `Rejected`
-- `reopen` may move a ticket into `Reopen`
-- `resubmit` may move a ticket into `Open`
+- `reopen` may move a ticket from `Resolved` to `Working`
+- `resubmit` may move a ticket into `Approval` or `Assigned`
 
 This distinction keeps the lifecycle strict while allowing operational actions
 to remain expressive.
@@ -393,7 +389,7 @@ Related document: [Category Strategy](./strategy/category-strategy.md)
 ### Approval
 
 - controls transitions related to approval outcome
-- determines whether a ticket becomes `Approved` or `Declined`
+- determines whether a ticket stays in `Approval`, becomes `Assigned`, or becomes `Declined`
 
 Related document: [Approval System](./strategy/approval-system.md)
 
@@ -469,7 +465,7 @@ All transitions are recorded, ensuring auditability and debuggability.
 
 ### 4. Operational Clarity
 
-States such as `Declined`, `Rejected`, `Pending`, and `Reopen` are kept
+States such as `Declined`, `Rejected`, `Pending`, and `Resolved` are kept
 separate because they carry different ownership, meaning, and reporting value.
 
 ---

@@ -122,7 +122,7 @@ switch (assignmentRule.type) {
 ### 규칙
 
 - 승인 절차가 있는 경우:
-  - `Approved` 이후에 할당한다.
+  - approval이 `Assigned`로 resolved될 때 할당한다.
 - 승인이 필요 없는 경우:
   - 생성 직후 즉시 할당한다.
 

@@ -27,6 +27,7 @@ export type TicketHistorySource =
 export type TicketHistoryEvent =
   | "TICKET_SUBMITTED"
   | "TICKET_UPDATED"
+  | "TICKET_REOPENED"
   | "TICKET_REJECTED"
   | "TICKET_MERGED"
   | "TICKET_CANCELED"

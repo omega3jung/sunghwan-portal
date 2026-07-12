@@ -13,10 +13,14 @@ export function createTicketActionDraftValues(
   };
 
   if (actionType === "ASSIGN") {
+    const isApprovalPhase = ticket?.assignmentPhase === "APPROVAL";
+
     return {
       ...baseValues,
-      assigneeUsernames: ticket?.workAssigneeUsernames ?? [],
-      categoryId: ticket?.categoryId ?? "",
+      assigneeUsernames: isApprovalPhase
+        ? (ticket?.approvalAssigneeUsernames ?? [])
+        : (ticket?.workAssigneeUsernames ?? []),
+      categoryId: isApprovalPhase ? "" : (ticket?.categoryId ?? ""),
     };
   }
 

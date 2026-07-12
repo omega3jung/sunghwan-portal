@@ -16,6 +16,7 @@ const TICKET_HISTORY_SOURCES = new Set<TicketHistorySource>([
 const TICKET_HISTORY_EVENTS = new Set<TicketHistoryEvent>([
   "TICKET_SUBMITTED",
   "TICKET_UPDATED",
+  "TICKET_REOPENED",
   "TICKET_REJECTED",
   "TICKET_MERGED",
   "TICKET_CANCELED",
@@ -137,7 +138,9 @@ export function mapTicketHistoryDisplayMetadata(
     metadata.nextApprovalStepId = nextApprovalStepId;
   }
 
-  const previousAssigneeUsernames = toStringArray(raw.previousAssigneeUsernames);
+  const previousAssigneeUsernames = toStringArray(
+    raw.previousAssigneeUsernames,
+  );
   if (previousAssigneeUsernames) {
     metadata.previousAssigneeUsernames = previousAssigneeUsernames;
   }
@@ -169,7 +172,9 @@ function toNonEmptyString(value: unknown): string | undefined {
     : undefined;
 }
 
-function toTicketHistorySource(value: unknown): TicketHistorySource | undefined {
+function toTicketHistorySource(
+  value: unknown,
+): TicketHistorySource | undefined {
   const source = toNonEmptyString(value);
 
   return source && TICKET_HISTORY_SOURCES.has(source as TicketHistorySource)
@@ -188,7 +193,8 @@ function toTicketHistoryEvent(value: unknown): TicketHistoryEvent | undefined {
 function toTicketCloseReason(value: unknown): TicketCloseReason | undefined {
   const closeReason = toNonEmptyString(value);
 
-  return closeReason && TICKET_CLOSE_REASONS.has(closeReason as TicketCloseReason)
+  return closeReason &&
+    TICKET_CLOSE_REASONS.has(closeReason as TicketCloseReason)
     ? (closeReason as TicketCloseReason)
     : undefined;
 }
