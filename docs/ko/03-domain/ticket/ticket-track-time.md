@@ -1,290 +1,189 @@
-# 티켓 작업 시간 추적
+# 티켓 Track Time
 
-## 목적
+## 목표
 
-티켓 작업 시간 추적 모델은 티켓에서 수행된 작업을 어떻게 기록할지 정의한다.
+Ticket Track Time은 현재 Work Session model을 정의한다.
 
-이 모델의 목표는 다음과 같다.
-
-- 실제 작업 형태를 정확하게 표현한다.
-- 작업 중단과 작업 전환을 지원한다.
-- 분석과 리포팅을 위한 신뢰할 수 있는 데이터를 제공한다.
-- 빠르고 직관적인 사용자 상호작용을 가능하게 한다.
+Work tracking은 Ticket Action과 분리된다. Work-time evidence를 기록하고 선택적으로
+ticket을 work status 사이에서 이동시킬 수 있다.
 
 ---
 
-## 문제 정의
+## 현재 Route Surface
 
-전통적인 시간 추적 시스템은 종종 집계된 값만 저장한다.
-
-```txt
-ticket.workTime = 180 minutes
+```txt id="work-session-routes"
+GET  /api/service-desk/tickets/:ticketId/work-session
+POST /api/service-desk/tickets/:ticketId/work-session
 ```
 
-하지만 이 방식은 실제 작업 흐름을 제대로 표현하지 못한다.
+현재 route surface는 다음을 포함하지 않는다.
 
-- 작업은 자주 중단된다.
-- 사용자는 여러 티켓 사이를 전환한다.
-- 작업은 나중에 다시 이어질 수 있다.
-- 병렬 작업이 흔하게 발생한다.
+- work-session detail route
+- update route
+- delete route
+- timer start route
+- timer finish route
+- timer switch route
 
-그 결과:
-
-- 시간 추적이 부정확해지고
-- 사용자 행동이 제대로 반영되지 않으며
-- 감사 가능성이 제한된다.
+일부 feature-client helper는 여전히 이러한 future/detail route를 참조하지만, 현재 API
+route file은 list/create만 노출한다.
 
 ---
 
-## 핵심 원칙
+## Work Session DTO
 
-```txt
-Work is a collection of sessions, not a single accumulated value.
+```ts id="work-session-dto"
+type WorkSessionDto = {
+  ticket_id: string;
+  work_session_no: number;
+  assignee_username: string;
+  start_at: ISODateString | null;
+  end_at: ISODateString | null;
+  duration_minutes: number | null;
+  note: string | null;
+  created_at: ISODateString;
+  updated_at: ISODateString | null;
+};
 ```
 
-작업 시간 모델은 하나의 파생 총합 값이 아니라,
-실제 작업을 명시적인 세션 레코드로 다룬다.
+Domain/UI mapping은 같은 concept을 camelCase로 노출한다.
 
 ---
 
-## 작업 세션 모델
+## Submit Payload
 
-각 작업 세션은 `TicketTrackTime` 항목으로 표현된다.
-
-### 모델
-
-```ts
-export interface TicketTrackTime {
+```ts id="work-session-submit-payload"
+type TicketWorkSessionSubmitPayload = {
   ticketId: string;
-  trackTimeNo: string;
-
-  assigneeId: string;
-
-  startAt: ISODateString;
-  endAt: ISODateString | null;
-
-  durationMinutes: number | null;
-
+  inputMode: "duration" | "range";
+  durationMinutes?: number;
+  startAt?: string;
+  endAt?: string;
+  trackedMinutes: number;
+  nextStatus?: "Working" | "Pending" | "Resolved";
   note?: string;
-
-  createdAt: ISODateString;
-  updatedAt: ISODateString;
-}
+};
 ```
 
-### 핵심 특성
+`trackedMinutes`는 positive여야 한다. Range와 duration mode는 server-side에서
+normalize된다.
 
-#### 1. 세션 기반 추적
+---
 
-- 각 항목은 하나의 연속적인 작업 세션을 나타낸다.
-- 하나의 티켓에 여러 세션이 존재할 수 있다.
+## Actor Rule
 
-예시:
+Current work assignee만 work session을 만들 수 있다.
 
-```txt
-09:00 - 10:00 -> session 1
-15:00 - 17:00 -> session 2
+Approval-phase ticket은 eligible하지 않다. 해당 current assignee는 worker가 아니라
+approver이기 때문이다.
+
+---
+
+## Start Work Command Boundary
+
+Start Work는 Work Session row가 아니라 별도 ticket command다. 명시적 start-work
+command는 `Assigned -> Working`으로 이동시키고 `STATUS_UPDATED` history를 기록한다.
+Work-session submission은 work-time evidence를 기록하며 지원되는 work-status
+transition도 적용할 수 있다.
+
+---
+
+## Status Effects
+
+Work-session creation은 ticket status를 업데이트할 수 있다.
+
+허용 transition:
+
+```txt id="work-session-status-transitions"
+Assigned -> Working
+Working -> Pending
+Working -> Resolved
+Pending -> Working
+Pending -> Resolved
 ```
 
-#### 2. 실행 중 세션
+규칙:
 
-- `endAt === null` 이면 현재 세션이 진행 중이라는 뜻이다.
-- 이는 활성 작업 상태를 나타낸다.
-- 현재 작업 컨텍스트를 계산하는 데 사용된다.
-
-#### 3. 집계 시간
-
-- 총 작업 시간은 완료된 세션들의 합으로 계산된다.
-- `durationMinutes` 는 세션 완료 시 계산된다.
-- 집계 값은 원본 데이터가 아니라 파생 값이다.
+- `Assigned`는 `Working`으로의 transition이 필요하다.
+- `Pending`은 `Working` 또는 `Resolved`로의 transition이 필요하다.
+- `Working`은 추가 시간을 기록할 때 `Working`으로 남을 수 있다.
+- GET은 status를 변경하지 않는다.
+- timer stop은 ticket을 암묵적으로 resolve하지 않는다.
 
 ---
 
-## 타이머 기반 액션
+## Work Minutes Aggregate
 
-시스템은 효율적인 시간 추적을 위해 빠른 액션을 제공한다.
+Work session을 만들면 `trackedMinutes`가 ticket aggregate `workMinutes`에 추가된다.
 
-### Start
-
-```txt
-POST /tickets/:ticketId/track-time/start
-```
-
-- 새 세션을 생성한다.
-- `startAt = server time`
-- `endAt = null`
-
-### Finish
-
-```txt
-POST /tickets/:ticketId/track-time/finish
-```
-
-- 현재 실행 중인 세션을 종료한다.
-- `endAt = server time`
-- `durationMinutes` 를 계산한다.
-
-### Switch
-
-```txt
-POST /tickets/:ticketId/track-time/switch
-```
-
-- 실행 중인 세션이 있으면 먼저 종료한다.
-- 다른 티켓에 대한 새 세션을 시작한다.
-- 반드시 원자적으로 처리되어야 한다.
+Aggregate는 ticket list/detail display에 유용하다. 개별 work-session row가 evidence로
+남는다.
 
 ---
 
-## 왜 Switch가 필요한가?
+## History
 
-`switch` 가 없다면 사용자는 다음을 각각 수동으로 해야 한다.
+Work-session creation이 ticket status를 변경하면 `STATUS_UPDATED` history를 만든다.
 
-- 현재 작업 종료
-- 새 작업 시작
+History union은 work-session-specific event를 포함하지만, list/create work session의
+현재 route behavior는 아니다.
 
-이 경우 다음 문제가 생긴다.
-
-- 불일치한 시간 추적
-- 누락된 액션
-- 나쁜 사용자 경험
-
-`switch` 는 다음을 보장한다.
-
-```txt
-finish + start = single atomic action
-```
+System 또는 ticket command는 reject, merge, cancel, resolve, auto-close 시 running
+session을 종료할 수 있다.
 
 ---
 
-## 수동 입력 방식
+## Due Date Separation
 
-타이머 액션 외에도 시스템은 수동 입력을 지원한다.
+Ticket due date는 planning/SLA field다. Work Session field가 아니다.
 
-### Time Range
+Work session은 실제 work evidence를 기록한다.
 
-- `startAt`
-- `endAt`
-
-### Duration
-
-- `durationMinutes`
-
-### 설계 결정
-
-타이머 입력과 수동 입력은 의도적으로 분리되어 있다.
-
-이유:
-
-- 사용자 의도가 서로 다르다.
-- 검증 로직이 단순해진다.
-- 충돌하는 입력을 피할 수 있다.
+- 누가 작업했는가
+- 언제 또는 얼마나 오래 작업했는가
+- note
+- 제공된 경우 resulting work status transition
 
 ---
 
-## 제약 조건
+## Active Session Invariant
 
-### 단일 활성 세션
+현재 REMOTE create/list implementation은 submitted work session을 기록한다. Ticket별
+running session을 종료하는 repository support는 포함하지만, full timer route surface를
+노출하거나 문서화된 global "one active timer per user" route contract를 enforce하지
+않는다.
 
-하나의 `(ticketId, assigneeId)` 조합에는 최대 하나의 활성 세션만 허용된다.
-
-이유:
-
-- 중복 작업 세션을 방지한다.
-- 종료 액션의 모호성을 줄인다.
-- 결정 가능한 동작을 보장한다.
-
-### 서버 제어 시간
-
-모든 타임스탬프는 서버에서 생성된다.
-
-- 조작을 방지한다.
-- 일관성을 보장한다.
+Timer-style invariant를 current implemented behavior로 설명하면 안 된다.
 
 ---
 
-## 작업 컨텍스트 연계
+## Auto Close Relationship
 
-작업 시간 정보는 현재 작업 컨텍스트를 계산하는 데 사용된다.
+Resolved auto-close는 work-session timer operation이 아니다.
 
-### 파생 상태
+System command다.
 
-- 현재 작업 중인 티켓
-- 실행 중인 세션
-- 현재 사용자 작업 부하
-
-### 예시
-
-```txt
-if endAt is null -> user is working on this ticket
-```
+- current 7-day grace window보다 오래된 resolved-history timestamp를 가진 resolved
+  ticket을 찾는다.
+- `Closed`로 이동한다.
+- close reason `Completed`를 설정한다.
+- 지원되는 경우 running work session을 종료한다.
+- `SYSTEM_AUTO` source와 `actionNo = null`로 `RESOLUTION_CLOSE` history를 만든다.
 
 ---
 
-## UI 동작
+## 관련 문서
 
-작업 시간 정보는 UI 동작에 직접적인 영향을 준다.
-
-### 사용자가 이 티켓에서 작업 중인 경우
-
-- `Finish` 를 표시한다.
-
-### 사용자가 다른 티켓에서 작업 중인 경우
-
-- `Finish current and start` 를 표시한다.
-
-### 사용자가 현재 작업 중이 아닌 경우
-
-- `Start` 를 표시한다.
-
----
-
-## 다른 도메인과의 관계
-
-### Ticket
-
-- 작업 시간은 특정 티켓에 속한다.
-
-관련 문서: [Ticket Model](./ticket-model.md)
-
----
-
-### Assignment
-
-- 담당자만 작업 시간을 기록할 수 있다.
-
-관련 문서: [Assignment Policy](./strategy/assignment-policy.md)
-
----
-
-### Ticket History
-
-- 시작, 종료, 전환 액션은 기록된다.
-- 작업 시간 추적은 이력을 통해 감사 가능하게 유지된다.
-
-관련 문서: [Ticket History](./ticket-history.md)
-
----
-
-## 설계 트레이드오프
-
-### 장점
-
-- 실제 작업을 정확하게 표현한다.
-- 작업 중단과 전환을 지원한다.
-- 고급 UX를 가능하게 한다.
-
-### 단점
-
-- 집계형 추적보다 더 복잡하다.
-- 추가 제약이 필요하다.
-- 서버 측 처리를 신중하게 설계해야 한다.
+- [Ticket Lifecycle](./ticket-lifecycle.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- [Ticket History](./ticket-history.md)
+- [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
 ## 요약
 
-작업 시간 모델은 작업을 하나의 누적 값이 아닌 세션들의 집합으로 표현한다.
-
-이 모델은 실제 업무 흐름을 지원하고, 빠른 사용자 상호작용을 가능하게 하며,
-작업 컨텍스트 및 UI 동작과 직접 연결되는 현실적인 서비스 데스크 구현의 핵심 요소이다.
+Work Session은 현재 work-time evidence model이다. List/create, duration/range input,
+tracked-minute aggregation, explicit work-status transition을 지원한다. Ticket Action과
+분리되어 있으며 hidden GET-side-effect나 timer-stop resolution mechanism으로 설명하면
+안 된다.

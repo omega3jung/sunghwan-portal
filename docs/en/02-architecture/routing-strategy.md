@@ -2,376 +2,237 @@
 
 ## Goal
 
-The routing strategy is designed to provide a **clear, scalable, and UI-consistent navigation structure**
-using the Next.js 14 App Router.
+The routing strategy keeps primary workflows addressable while keeping runtime
+branching behind API route handlers.
 
-It aims to:
+The current Service Desk design uses:
 
-- Reflect domain structure in URLs
-- Support both page-based and overlay-based UI patterns
-- Maintain predictable navigation behavior
-- Enable deep linking for all critical views
-- Keep UI independent from LOCAL/REMOTE runtime branching
-
----
-
-## Core Concept
-
-Routing is designed around **resource-based URLs** combined with
-**UI-driven rendering strategies (page vs overlay)**.
-
-```id="routing-concept"
-Route = Resource + UI Representation
-```
+- page routes for primary ticket workflows
+- dialogs for atomic actions and short forms
+- route handlers for LOCAL/REMOTE orchestration
+- resource-oriented API paths for ticket commands, history, draft, settings,
+  attachment preparation, and work sessions
 
 ---
 
-## Base Route Structure
+## Page Routes
 
-```bash id="base-routes"
+```txt id="service-desk-page-routes"
 /service-desk
 /service-desk/[ticketId]
 ```
 
----
+### `/service-desk`
 
-## Route Responsibilities
+The list/search entry point.
 
-### 1. `/service-desk`
+Responsibilities:
 
-- Displays ticket list
-- Supports filtering and searching
-- Entry point for ticket operations
+- display searchable ticket lists
+- open create-ticket workflow
+- navigate to ticket detail
+- preserve useful list/filter state
 
----
+### `/service-desk/[ticketId]`
 
-### 2. `/service-desk/[ticketId]`
+The ticket detail page.
 
-- Displays ticket detail view
-- Supports editing and reviewing ticket
-- Acts as the **single source of truth for ticket detail**
+Responsibilities:
 
----
+- display current ticket DTO
+- show phase-aware approval/work assignment
+- expose available actions
+- show history and work evidence
+- open update/action dialogs where allowed
 
-## Why Page-Based Detail Instead of Modal Routing?
-
-### Decision
-
-Ticket detail is implemented as a **full page**, not a modal route.
-
----
-
-### Reasoning
-
-#### 1. Complexity Control
-
-- Nested modals (drawer over drawer) increase UI complexity
-- Difficult to manage state and navigation
+Ticket detail is a page-level workflow, not a modal route.
 
 ---
 
-#### 2. Clear Navigation
+## Page, Drawer, Dialog Policy
 
-- Each ticket has its own URL
-- Supports direct access and bookmarking
-
----
-
-#### 3. Consistent UX
-
-- Detail view is treated as a primary workflow, not a temporary overlay
-
----
-
-## UI Strategy: Page vs Drawer
-
-### Principle
-
-```id="ui-principle"
-Use Drawer for transient interactions
-Use Page for primary workflows
+```txt id="interaction-policy"
+Page   -> primary workflow
+Drawer -> secondary reading or side panel
+Dialog -> atomic action or short form
 ```
 
----
+Examples:
 
-### Drawer Usage
+| UI Surface | Use |
+| --- | --- |
+| page | ticket list and ticket detail |
+| dialog | create ticket, requester update, action command forms |
+| drawer/panel | history or secondary inspection where implemented |
 
-Used for:
-
-- Quick actions
-- Secondary interactions
-- Non-critical workflows
-
----
-
-### Page Usage
-
-Used for:
-
-- Core workflows (ticket detail)
-- Complex forms
-- Long-lived interactions
+Complex ticket detail should not be hidden inside a nested modal stack.
 
 ---
 
-## Detail View Strategy
+## API Route Handler Boundary
 
-### Route
+Route handlers decide HTTP and runtime orchestration.
 
-```bash id="detail-route"
-/service-desk/[ticketId]
-```
-
----
-
-### UI Behavior
-
-- Main content displays ticket information
-- Drawer is used for **sub-actions only**
-
----
-
-### Example
-
-- Ticket detail page (main)
-  - Comment drawer
-  - History drawer
-
----
-
-## Deep Linking
-
-All critical states are accessible via URL.
-
-### Benefits
-
-- Direct navigation to specific tickets
-- Shareable links
-- Better debugging and support
-
----
-
-## Dynamic Routing
-
-### Pattern
-
-```bash id="dynamic-route"
-/service-desk/[ticketId]
-```
-
----
-
-### ID Strategy
-
-- Uses **UUID (recommended)** instead of incremental IDs
-
----
-
-### Rationale
-
-- Prevents predictable ID access
-- Improves security
-- Avoids collision issues in distributed systems
-
----
-
-## Route Handler Orchestration
-
-Next.js route handlers are used as orchestration boundaries:
-
-```txt
+```txt id="route-handler-flow"
 route.ts
--> authenticate / check session
--> decide LOCAL or REMOTE
--> call local handler or remote proxy
-```
-
-This keeps runtime branching out of UI components and keeps the remote path
-extension-ready.
-
-Service Desk Settings APIs use the same route-handler responsibility. Route
-handlers should resolve session and runtime context, then delegate to a
-settings/domain handler:
-
-```txt
-Route Handler
+-> parse request
 -> resolve session/runtime
--> delegate to settings/domain handler
--> LOCAL handler or REMOTE service
+-> delegate to LOCAL handler or REMOTE service
+-> return DTO response
 ```
 
-This keeps settings-specific mapping, mutation rules, and DTO construction out
-of route files.
+They should not own domain rules or row mapping.
 
 ---
 
-## Navigation Flow
+## Current Service Desk API Surface
 
-### Example Flow
+Important current API route groups:
 
-```id="nav-flow"
-List → Click Ticket → Navigate to /[ticketId]
-→ Perform actions → Return to list
+```txt id="service-desk-api-surface"
+/api/service-desk/tickets
+/api/service-desk/tickets/search
+/api/service-desk/tickets/draft
+/api/service-desk/tickets/draft/[ticketId]
+/api/service-desk/tickets/[ticketId]
+/api/service-desk/tickets/[ticketId]/actions
+/api/service-desk/tickets/[ticketId]/actions/[actionNo]
+/api/service-desk/tickets/[ticketId]/command/start-work
+/api/service-desk/tickets/[ticketId]/command/[action]
+/api/service-desk/tickets/[ticketId]/histories
+/api/service-desk/tickets/[ticketId]/work-session
+/api/service-desk/tickets/attachments/prepare
+/api/service-desk/tickets/cron/close-expired-resolved
+/api/service-desk/tenants
+/api/service-desk/tenants/[id]
+/api/service-desk/categories
+/api/service-desk/approval-steps
+/api/service-desk/assignment-rules
+/api/service-desk/assignment-rules/recommendations
 ```
+
+Documentation should not describe additional work-session update/delete/timer
+routes as completed until route handlers exist.
 
 ---
 
-### Back Navigation
+## Command Routes
 
-- Uses browser history
-- Preserves filter/search state (via query params or state)
+Ticket operational behavior is exposed through command-style paths.
+
+```txt id="ticket-command-paths"
+/api/service-desk/tickets/[ticketId]/command/start-work
+/api/service-desk/tickets/[ticketId]/command/[action]
+```
+
+The dynamic action segment uses lower/camel command names such as:
+
+```txt id="ticket-action-paths"
+approve
+decline
+comment
+note
+assign
+assignSelf
+adjust
+reject
+merge
+reopen
+resubmit
+cancel
+```
+
+The command route delegates to action rules and execution services.
+
+---
+
+## Draft Routes
+
+Draft routes support the create-ticket workflow.
+
+```txt id="draft-routes"
+/api/service-desk/tickets/draft
+/api/service-desk/tickets/draft/[ticketId]
+```
+
+REMOTE draft behavior is server-owned. The create dialog should use these APIs
+instead of treating draft as only a component-local state.
+
+---
+
+## Attachment Prepare Route
+
+Attachment preparation is a separate route:
+
+```txt id="attachment-prepare-route"
+POST /api/service-desk/tickets/attachments/prepare
+```
+
+Ticket create, update, and supported action flows call this route before
+submitting ticket command payloads with prepared metadata.
+
+---
+
+## Work Session Route
+
+The current implemented route surface is:
+
+```txt id="work-session-route"
+GET  /api/service-desk/tickets/[ticketId]/work-session
+POST /api/service-desk/tickets/[ticketId]/work-session
+```
+
+This supports listing and creating work-session records. Additional route
+surfaces should be documented only when implemented.
 
 ---
 
 ## Query Parameters
 
-Used for:
+Use query parameters for list/search state where it improves shareability and
+navigation.
 
-- Filters
-- Sorting
-- Pagination
+Examples:
+
+- filters
+- sorting
+- pagination
+- view tabs
+
+Search itself may still be submitted to a dedicated search endpoint when the
+criteria are too rich for simple query-string-only handling.
 
 ---
 
-### Example
+## LOCAL and REMOTE Runtime
 
-```id="query-example"
-/service-desk?status=open&assignee=me&page=2
+Page routes and feature components should not branch deeply on storage details.
+
+```txt id="routing-runtime"
+page/component
+-> feature hook/client
+-> API route handler
+-> LOCAL or REMOTE implementation
 ```
 
----
-
-## State Preservation Strategy
-
-### Options
-
-1. URL-based state (preferred)
-2. Client state (fallback)
+This keeps routing stable as persistence evolves.
 
 ---
 
-### Principle
+## Related Documents
 
-```id="state-routing"
-If state affects navigation → store in URL
-```
-
----
-
-## Parallel Routes (Optional Future)
-
-Next.js App Router supports parallel routes.
-
-### Potential Use Cases
-
-- Split view (list + detail)
-- Dashboard panels
-
----
-
-### Current Decision
-
-- Not used to avoid complexity
-- May be introduced later if needed
-
----
-
-## Error Handling
-
-### Route-Level Errors
-
-- 404: Ticket not found
-- 403: Access denied
-
----
-
-### Strategy
-
-- Use Next.js error boundaries
-- Provide user-friendly fallback UI
-
----
-
-## Loading Strategy
-
-### Route-Level Loading
-
-- Skeleton UI for page transitions
-
----
-
-### Data-Level Loading
-
-- Managed via React Query
-
----
-
-## SEO Consideration
-
-Although not primary focus:
-
-- Resource-based URLs improve clarity
-- Enables potential indexing if needed
-
----
-
-## Trade-offs
-
-### Pros
-
-- Clear and predictable navigation
-- Strong alignment with domain model
-- Supports deep linking
-- Reduced UI complexity
-
----
-
-### Cons
-
-- Full page navigation may feel heavier than modals
-- Requires state preservation handling
-- Slightly more routing setup
-
----
-
-## Alternatives Considered
-
-### 1. Modal-Based Routing
-
-- ✔ Fast interaction
-- ❌ Poor deep linking
-- ❌ Complex nested UI
-
----
-
-### 2. Drawer-Only Detail View
-
-- ✔ Lightweight UI
-- ❌ Hard to scale
-- ❌ Not suitable for complex workflows
-
----
-
-### 3. Parallel Routes for Detail
-
-- ✔ Advanced layout possibilities
-- ❌ Increased complexity
-- ❌ Harder to maintain
-
----
-
-## Design Principles Alignment
-
-This routing strategy aligns with:
-
-- Domain-driven design
-- Clear separation of concerns
-- Predictable navigation
-- Scalable UI architecture
+- [`database-strategy.md`](database-strategy.md)
+- [`../03-domain/ticket/ticket-system-overview.md`](../03-domain/ticket/ticket-system-overview.md)
+- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
+- [`../04-ui-ux/dialog-pattern.md`](../04-ui-ux/dialog-pattern.md)
+- [`../06-form-design/ticket-form.md`](../06-form-design/ticket-form.md)
+- [`../08-dev-strategy/service-desk-implementation-strategy.md`](../08-dev-strategy/service-desk-implementation-strategy.md)
 
 ---
 
 ## Summary
 
-The routing strategy combines **resource-based URLs with UI-driven rendering decisions**,
-ensuring that navigation remains clear, scalable, and aligned with the system's core workflows.
+The current routing strategy uses stable page routes for Service Desk list and
+detail, dialogs for focused ticket commands, and API route handlers as the
+LOCAL/REMOTE orchestration boundary. The documented API surface should match the
+route files that actually exist.

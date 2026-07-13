@@ -1,334 +1,196 @@
-﻿# Action Strategy
+# Action Strategy
 
 ## 목표
 
-이 문서는 ticket action system 뒤에 있는 설계 전략을 정의합니다.
+이 문서는 현재 Ticket Action command execution strategy를 정의한다.
 
-목표는 커뮤니케이션과 운영 변경을 모두 포함하는 의미 있는 ticket interaction을
-구조적이고, 확장 가능하며, 감사 친화적인 방식으로 표현하는 것입니다.
+Ticket Action은 generic CRUD가 아니다. Status, permission, input, ticket effect,
+history를 validate하는 server-controlled command pipeline이다.
 
 ---
 
-## 핵심 개념
+## 현재 Action Union
 
-이 시스템은 action을 단순 텍스트가 아니라 명시적인 도메인 동작으로 모델링합니다.
-
-```txt
-Action = Intent + Effect + Context
+```txt id="ticket-action-union"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
 ```
 
-즉, 각 action은 다음을 표현해야 합니다.
+Route path는 다음을 사용한다.
 
-- 무엇이 일어났는가
-- 왜 일어났는가
-- 그 결과 무엇이 바뀌었는가
-
----
-
-## 설계 원칙
-
-### 1. Behavior Over Text
-
-- 시스템은 단순 메시지가 아니라 behavior를 표현해야 합니다.
-- 실제 workflow를 다루기에는 comments만으로 충분하지 않습니다.
-- 모든 의미 있는 작업은 first-class entity로 모델링되어야 합니다.
-
----
-
-### 2. Separation of Intent and Effect
-
-각 action은 다음을 명시적으로 분리합니다.
-
-- intent: 이유 또는 설명
-- effect: 실제 구조화된 변경
-
-```txt
-Intent -> rich text reason
-Effect -> priority, assignee, due date 같은 metadata
+```txt id="ticket-action-route-paths"
+approve
+decline
+comment
+note
+assign
+assignSelf
+adjust
+reject
+merge
+reopen
+resubmit
+cancel
 ```
 
----
+명시적 start-work command는 Ticket Action union member가 아니라 별도 command route로
+구현된다.
 
-### 3. Unified Activity Model
-
-모든 상호작용은 하나의 activity model로 표현됩니다.
-
-```txt
-Activity = Communication + Operation
-```
-
-이를 통해 다음 사이의 분절을 피할 수 있습니다.
-
-- comments
-- system logs
-- 수동 운영 변경
-
----
-
-### 4. Traceability First
-
-모든 action은 다음 질문에 답할 수 있어야 합니다.
-
-- 누가 했는가
-- 언제 일어났는가
-- 무엇이 바뀌었는가
-- 왜 그렇게 했는가
-
----
-
-## Action 설계 전략
-
-### 1. Action Types as Domain Events
-
-각 action은 의미 있는 domain-level event를 나타냅니다.
-
-### Examples
-
-- `assign`: 소유권 또는 라우팅 변경
-- `adjust`: priority, risk, due date 수정
-- `merge`: 구조적인 ticket 변경
-- `reject`: 명시적인 이유를 동반한 workflow 결정
-
----
-
-### 2. Action Types Must Be Explicit
-
-의미를 텍스트 안에 숨기지 않습니다.
-
-#### Bad
-
-```txt
-"Assigning this to John"
-```
-
-#### Good
-
-```ts
-{
-  type: "assign",
-  assigneeIds: ["john"],
-}
-```
-
-명시적인 action type은 가독성, validation, auditability를 향상시킵니다.
-
----
-
-### 3. Reason Content Is Required
-
-- 모든 티켓 액션에는 이유 설명이 필수입니다.
-- 커뮤니케이션 및 운영 조치 모두 이 규칙을 따릅니다.
-- 자동 생성된 티켓 액션에도 구체적인 설명이 저장됩니다.
-
----
-
-## UI 전략
-
-### 1. Consistent Form Pattern
-
-모든 action form은 통일된 구조를 따릅니다.
-
-```txt
-[ Action-specific fields ]
-[ Reason editor ]
+```txt id="start-work-command-route"
+POST /api/service-desk/tickets/:ticketId/command/start-work
 ```
 
 ---
 
-### 2. Shared Reason Component
+## Command Pipeline
 
-- rich text editor는 여러 action type에서 공유됩니다.
-- 중복이 줄어듭니다.
-- UX가 일관되게 유지됩니다.
-
----
-
-### 3. Field Responsibility Separation
-
-- action-specific field는 구조화된 데이터 입력을 담당합니다.
-- reason editor는 컨텍스트 설명을 담당합니다.
-
----
-
-### 4. Timeline-First Design
-
-UI는 통합 timeline을 중심으로 구성됩니다.
-
-각 action은:
-
-- timeline item으로 렌더링됩니다.
-- 구조화된 metadata를 보여줍니다.
-- optional reason content를 포함합니다.
-
-이를 통해 사용자는 무엇이 바뀌었는지와 왜 바뀌었는지를 함께 이해할 수 있습니다.
-
----
-
-## Metadata 전략
-
-### 1. Action-Specific Metadata
-
-각 action type은 자신만의 metadata contract를 정의합니다.
-
-### Examples
-
-#### `assign`
-
-- assignee
-- category
-
-#### `adjust`
-
-- priority
-- risk level
-- due date
-
-#### `merge`
-
-- target ticket
-
-#### `reject`
-
-- 별도 metadata 없이 reason content 중심으로 표현될 수 있음
-
----
-
-### 2. Avoid Generic Key-Value Abuse
-
-명확한 도메인 구조가 있을 때는 모호한 metadata 구조에 기대지 않습니다.
-
-#### Bad
-
-```ts
-metadata: { field: "priority", value: "high" }
+```txt id="ticket-action-pipeline"
+POST /api/service-desk/tickets/:ticketId/command/:action
+-> authenticate current employee
+-> resolve user role
+-> normalize payload
+-> validate action/status/permission
+-> insert action row
+-> apply ticket effect
+-> create history rows
+-> return action DTO
 ```
 
-#### Good
+Approval command는 같은 command route를 사용하지만 더 엄격한 payload를 validate한다.
+Content only이며 file이나 inline image는 허용하지 않는다.
 
-```ts
-metadata: {
-  priority: "high";
-}
+---
+
+## Permission and Status Guards
+
+각 action은 status guard와 ownership rule을 가진다.
+
+예:
+
+- approver 또는 Admin은 `Approval`에서 `APPROVE`/`DECLINE`할 수 있다.
+- current work assignee 또는 Admin은 status가 허용하는 곳에서 `ASSIGN`, `ADJUST`,
+  `REJECT`, `MERGE`할 수 있다.
+- requester는 status가 허용하는 곳에서 `RESUBMIT`, `REOPEN`, `CANCEL`할 수 있다.
+- Admin은 일부 assignment, adjustment, merge, rejection path를 override할 수 있다.
+
+상세 matrix는 [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)에
+있다.
+
+---
+
+## Transaction Boundary
+
+REMOTE command execution은 action row, ticket mutation, history row를 하나의 use
+case로 묶는다.
+
+Operational action result가 부분 commit되면 안 되기 때문에 중요하다.
+
+```txt id="action-transaction"
+action row
++ ticket mutation
++ history rows
+= one command result
 ```
 
----
-
-### 3. Strong Typing per Action
-
-각 action type은 명확히 정의된 shape를 가져야 합니다.
-
-이는 다음을 향상시킵니다.
-
-- type safety
-- readability
-- maintainability
+LOCAL command execution은 demo-safe mutable state로 같은 contract를 mirror한다.
 
 ---
 
-## Communication 전략
+## Action-Specific Inputs
 
-### 1. `comment` vs `note`
+Common input:
 
-#### `comment`
+- `content`
+- 지원되는 non-approval action의 optional prepared files/images
 
-- 공개 커뮤니케이션
-- notification을 유발할 수 있음
+Action-specific input:
 
-#### `note`
+- `ASSIGN`: `assigneeUsernames`
+- `ADJUST`: `priority`, `riskLevel`, `dueAt`
+- `MERGE`: `targetTicketId`
+- `APPROVE`/`DECLINE`: content only
 
-- 내부 커뮤니케이션
-- 외부 notification 없음
-- 팀 또는 운영 컨텍스트 내부에서만 보임
+모든 action은 content가 필요하다. 단, UI가 `ASSIGN_SELF`용 content를 생성할 수 있다.
 
 ---
 
-### 2. Communication Is Still an Action
+## Mutability Policy
 
-커뮤니케이션조차도 의도적인 behavior로 취급합니다.
+### Communication Actions
 
-```txt
-communication = action
+`COMMENT`와 `NOTE`는 user-facing communication entry다.
+
+기존 comment는 ticket이 `Closed`된 뒤에도 계속 표시된다. Existing row visibility는
+closure 이후 새 row를 만들 수 있는 권한과 다르다. 새 communication row는 closed-ticket
+operation rule을 따른다.
+
+현재 route behavior는 ticket이 `Draft` 또는 `Closed`가 아닐 때 original writer의 soft
+delete를 지원한다.
+
+### Operational Actions
+
+Operational action은 immutable하다.
+
+예:
+
+- `ASSIGN`
+- `ADJUST`
+- `REJECT`
+- `MERGE`
+- `REOPEN`
+- `RESUBMIT`
+- `CANCEL`
+- approval actions
+
+Operational decision을 수정해야 하면 새 corrective command를 만든다.
+
+---
+
+## Action Without Ticket Mutation
+
+`COMMENT`와 `NOTE`는 status 변경 없이 action row와 history를 insert한다.
+
+Start-work command는 Ticket Action row를 insert하지 않고 ticket status를 변경한다:
+`Assigned -> Working`, `STATUS_UPDATED` history.
+
+일부 system operation은 action row 없이 history를 만들 수 있다. 예를 들어 resolved
+auto-close는 `SYSTEM_AUTO` source와 `actionNo = null`로 `RESOLUTION_CLOSE`를 만든다.
+
+---
+
+## Notification Boundary
+
+Action command는 notification이 trigger될 지점을 제공할 수 있지만, persisted ticket
+field를 파생 notification recipient로 오염시키면 안 된다.
+
+특히 assignment command는 resolved assignee email을 `tk_email`에 덧붙이면 안 된다.
+Assignee email은 notification-send time에 resolve해야 한다.
+
+Production notification delivery는 명시적으로 구현되기 전까지 deferred다.
+
+---
+
+## LOCAL and REMOTE Parity
+
+두 runtime path는 같은 action command surface와 DTO shape를 노출해야 한다.
+
+```txt id="action-runtime"
+LOCAL command handler
+REMOTE portal API/service
+-> TicketActionDto
 ```
 
-이를 통해 다음이 보장됩니다.
-
-- timeline의 일관성
-- 통합 렌더링 로직
-- ticket domain 전체에서 하나의 상호작용 모델 유지
-
----
-
-## Audit 전략
-
-### 1. Full Activity Log
-
-- only `comment` and `note` are editable/deletable under author rules
-- operational actions are immutable
-- in `Closed`, no action can be edited or deleted
-- delete is soft-delete (`active = false`) for mutable communication items
-
----
-
-### 2. Explicit Actor Tracking
-
-각 action은 다음을 기록합니다.
-
-- `createdBy`
-- `createdAt`
-
----
-
-### 3. Reason as Audit Context
-
-Reason content는 의사결정을 설명해 주며 특히 다음에서 중요합니다.
-
-- debugging
-- review
-- compliance-sensitive workflow
-
----
-
-## Extensibility 전략
-
-이 시스템은 구조를 다시 설계하지 않고도 미래 action을 지원하도록 설계되었습니다.
-
-### Potential Extensions
-
-- `resolve`
-- `close`
-- additional review or escalation actions
-- `escalate`
-- `reassign`
-- approval-related actions
-
-### Rule for Adding New Actions
-
-새 action은 다음 조건을 만족해야 합니다.
-
-- 의미 있는 domain event를 표현한다.
-- 자신의 metadata shape를 정의한다.
-- timeline에 통합된다.
-- 같은 form pattern을 따른다.
-
----
-
-## Trade-offs
-
-### Pros
-
-- 더 강한 도메인 명확성
-- 구조화된 workflow 지원 향상
-- 감사 가능성 향상
-- 더 일관된 UI
-- 확장 가능한 action 아키텍처
-
----
-
-### Cons
-
-- 모델링 복잡도 증가
-- 리팩터링 비용 증가
-- 개발자 입장에서 초기 학습 비용 증가
+Storage implementation의 차이는 route handler 뒤에 남아야 한다.
 
 ---
 
@@ -336,21 +198,13 @@ Reason content는 의사결정을 설명해 주며 특히 다음에서 중요합
 
 - [Ticket Activity Model](../ticket-activity.md)
 - [Ticket History](../ticket-history.md)
-- [Ticket Model](../ticket-model.md)
+- [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)
+- [Ticket Lifecycle](../ticket-lifecycle.md)
 
 ---
 
 ## 요약
 
-Action strategy는 시스템을 다음과 같이 전환합니다.
-
-```txt
-Comment-driven system -> Action-driven system
-```
-
-이 변화는 다음을 가능하게 합니다.
-
-- 구조화된 workflow
-- 더 명확한 intent 표현
-- 더 강한 audit trail
-- 더 일관된 UI 아키텍처
+Ticket Action은 Service Desk operation의 command layer다. Status와 actor rule을
+validate하고, action record를 만들며, ticket effect를 적용하고 immutable history를
+만든다. Communication timeline entry와 event/audit history를 분리한다.

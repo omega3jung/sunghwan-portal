@@ -1,482 +1,266 @@
-# 티켓 라이프사이클
+# 티켓 Lifecycle
 
 ## 목표
 
-티켓 라이프사이클은 티켓이 생성부터 완료까지 어떻게 진행되는지를
-정의합니다. 여기에는 승인, 실행, 일시 중지, 반려, 재작업, 최종 종료가
-포함됩니다.
+Ticket lifecycle은 현재 persisted status와 티켓을 이동시키는 explicit command를
+정의한다.
 
-이 라이프사이클은 다음을 보장합니다.
-
-- 모든 티켓이 예측 가능한 workflow를 따른다
-- 각 단계의 책임이 명확히 정의된다
-- 전이는 명시적이고, 통제 가능하며, 추적 가능하다
-- 라이프사이클이 happy path만이 아니라 실제 운영 시나리오를 반영한다
+이 문서는 status와 transition reference다. Operation-specific permission detail은
+[Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)에 문서화되어
+있다.
 
 ---
 
-## 핵심 개념
+## Persisted Statuses
 
-```txt
-A ticket is a controlled, stateful workflow driven by actions, approvals, and system rules.
+```txt id="ticket-statuses"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-티켓은 다음에 따라 정의된 상태를 이동합니다.
+`Open`, `Approved`, `Reopen`은 persisted status가 아니다.
 
-- 사용자 action
-- approval decision
-- assignment 및 execution progress
-- 명시적으로 정의된 운영 rule
-
-모든 티켓이 모든 단계를 거치는 것은 아닙니다. 실제 경로는 category 설정,
-approval requirement, 티켓 생성 이후 수행된 운영 action에 따라 달라집니다.
+- `Open`은 frontend grouping/search concept으로만 사용할 수 있다.
+- Approval completion은 `APPROVAL_APPROVED` history로 기록된다.
+- Reopen은 action이다. 현재 결과는 `Resolved -> Working`이다.
 
 ---
 
-## 라이프사이클 흐름
+## Main Flow
 
-상위 수준에서 라이프사이클은 다음과 같이 요약할 수 있습니다.
-
-```txt
-Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
+```txt id="main-lifecycle-flow"
+Draft
+-> Approval | Assigned
+-> Working
+<-> Pending
+-> Resolved
+-> Closed
 ```
 
-이것이 주요 성공 경로입니다. 실제로는 라이프사이클이 다음과 같은 대체
-분기도 지원합니다.
-
-```txt
-Draft -> Assigned -> Working -> Resolved -> Closed
-Approval -> Declined -> Approval or Assigned
-Assigned -> Working
-Working <-> Pending
-Assigned / Working / Pending -> Rejected -> Approval or Assigned
-Resolved -> Working -> Resolved -> Closed
-Assigned / Working / Pending / Resolved -> Closed (merge path)
-```
-
-따라서 라이프사이클은 단순한 완료뿐 아니라, 반려, 일시 중지, 해결 후
-재처리까지 함께 모델링합니다.
+Approval, rejection, resubmission, merge, cancel, auto-close는 이 main flow 주변에
+controlled branch를 추가한다.
 
 ---
 
-## 상태 정의
+## State Definitions
 
 ### Draft
 
-- 제출 전의 임시 상태
-- requester만 수정 가능
-- assignee에게 활성 작업으로 보이지 않음
-- 제출 전 미완성 요청을 준비하는 데 사용됨
+- requester가 티켓을 준비 중이다.
+- REMOTE draft는 `status = Draft`인 일반 ticket row다.
+- operational ticket list나 insight view에 포함되지 않는다.
+- final submit은 같은 row를 재사용하고 `Approval` 또는 `Assigned`로 route한다.
 
 ### Approval
 
-- 티켓이 제출되어 approval decision을 기다리는 상태
-- 현재 approver가 approval step의 책임을 가진다
-- 승인되면 다음 approval step으로 이동하거나 work assignment가 확정된다
+- 제출된 티켓이 approval을 기다린다.
+- `approvalStepId != null`
+- `assigneeUsernames`는 current approver를 의미한다.
+- approve는 다음 approval step으로 진행하거나 work assignment로 이동할 수 있다.
+- decline은 `Declined`로 이동한다.
 
 ### Declined
 
-- approval이 거절된 상태
-- 티켓이 실행 대상으로 받아들여지지 않은 상태
-- requester가 요청을 수정해서 다시 제출할 수 있음
+- approval이 거절되었다.
+- approval routing은 종료된다.
+- `approvalStepId = null`
+- `assigneeUsernames = []`
+- requester는 initial routing으로 resubmit할 수 있다.
 
 ### Assigned
 
-- approval이 완료되었거나 필요 없는 상태
-- work assignee가 정해진 상태
-- 아직 작업은 시작되지 않았음
-- 명시적인 start-work command가 `Working`으로 이동시킨다
+- work assignee가 resolve되었다.
+- work는 아직 시작되지 않았다.
+- `approvalStepId = null`
+- `assigneeUsernames`는 current worker를 의미한다.
+- explicit `start-work` command가 `Working`으로 이동시킨다.
+- work-session submission도 지원되는 work-status transition을 적용할 수 있다.
 
 ### Working
 
-- 티켓이 할당되어 처리 중인 상태
-- assignee가 실행 책임을 가진 상태
-- track time을 통해 작업 세션을 기록할 수 있음
+- 티켓이 active work 상태다.
+- current work assignee가 execution을 소유한다.
+- work session은 tracked minutes를 추가할 수 있다.
+- work-session control은 `Pending` 또는 `Resolved`로 이동할 수 있다.
 
 ### Pending
 
-- 작업이 일시 중지된 상태
-- 외부 의존성, 대기 조건, 작업 중단 등으로 자주 발생함
-- 티켓은 여전히 active지만 현재 진행 중은 아님
+- work가 일시 중단되었거나 대기 중이다.
+- current work assignee가 계속 티켓을 소유한다.
+- assignment는 이를 `Working`으로 재활성화할 수 있다.
+- work-session control은 `Working` 또는 `Resolved`로 이동할 수 있다.
 
 ### Rejected
 
-- work assignee 또는 Admin 검토 후 운영적으로 반려된 상태
-- 현재 형태로는 요청을 진행할 수 없음을 의미함
-- requester가 수정 후 초기 routing으로 다시 제출할 수 있음
+- work assignee 또는 Admin이 execution을 reject했다.
+- requester는 initial routing으로 resubmit할 수 있다.
+- 지원되는 경우 running work session이 종료된다.
 
 ### Resolved
 
-- 작업이 완료되고 해결책이 제공된 상태
-- 후속 종료 결정 또는 requester 검토를 기다리는 상태
-- `reopen` action이 수행되면 `Working`으로 돌아갈 수 있음
+- work result가 완료되었다.
+- requester 또는 Admin은 `Working`으로 reopen할 수 있다.
+- system auto-close는 resolved-history grace window 이후 `Closed`로 이동할 수 있다.
 
 ### Closed
 
-- Closed 상태는 read-only이다.
-- 일반 작업이 완료되어 라이프사이클이 종료된 상태
-- 일반적으로 추가 action은 허용되지 않음
-- update는 허용되지 않음
-- 예외적인 administrative operation은 여전히 가능할 수 있음
-- 예외적인 경우 Admin merge가 허용될 수 있음
+- normal workflow의 terminal state다.
+- merge, cancel, auto-close가 이 상태를 만든다.
+- 문서화된 Admin exception을 제외하고 normal operational action은 차단된다.
 
 ---
 
-## 상태 전이
+## Transition Reference
 
-라이프사이클은 명시적인 transition에 의해 구동됩니다.
-
-### 1. Draft -> Approval
-
-Trigger:
-
-- approval이 필요한 사용자 제출
-
-### 2. Draft -> Assigned
-
-Trigger:
-
-- approval이 필요 없는 사용자 제출
-
-### 3. Approval -> Approval
-
-Trigger:
-
-- 마지막이 아닌 approval step 승인
-
-### 4. Approval -> Assigned
-
-Trigger:
-
-- 마지막 approval step 승인 및 assignment resolution
-
-### 5. Approval -> Declined
-
-Trigger:
-
-- approval rejection
-
-### 6. Declined -> Approval / Assigned
-
-Trigger:
-
-- requester resubmission through initial routing
-
-### 7. Assigned -> Working
-
-Trigger:
-
-- 현재 work assignee의 명시적인 start-work command
-
-### 8. Working -> Pending
-
-Trigger:
-
-- dependency, interruption, workflow hold로 인한 일시 중지
-
-### 9. Pending -> Working
-
-Trigger:
-
-- 작업 재개
-
-### 10. Working / Pending -> Resolved
-
-Trigger:
-
-- work assignee가 work-session control을 통해 작업을 완료함
-
-### 11. Assigned / Working / Pending -> Rejected
-
-Trigger:
-
-- work assignee 또는 Admin에 의한 운영 반려
-
-### 12. Rejected -> Approval / Assigned
-
-Trigger:
-
-- requester resubmission through initial routing
-
-### 13. Resolved -> Working
-
-Trigger:
-
-- requester 또는 Admin의 `reopen` action
-
-### 14. Resolved -> Closed
-
-Trigger:
-
-- resolved history가 7일 이상 지난 system auto-close
-
-### 15. Assigned / Working / Pending / Resolved -> Closed
-
-Closing actions:
-
-- requester cancel은 `Approval`, `Declined`, `Assigned`, `Working`,
-  `Pending`, `Rejected`에서 닫을 수 있다
-- work assignee merge는 `Assigned`, `Working`, `Pending`, `Resolved`에서 source ticket을 닫는다
-- Admin merge는 `Closed`를 포함한 모든 non-`Draft` 상태에서 source ticket을 닫을 수 있다
-- merged ticket은 `closeReason = Merged`를 사용한다
+| From | To | Trigger | Primary History |
+| --- | --- | --- | --- |
+| `Draft` | `Approval` | approval step이 있는 final submit | `TICKET_SUBMITTED`, `APPROVAL_REQUESTED` |
+| `Draft` | `Assigned` | approval step이 없는 final submit | `TICKET_SUBMITTED`, `ASSIGNMENT_RESOLVED` |
+| `Approval` | `Approval` | non-final step approve | `APPROVAL_APPROVED`, `APPROVAL_REQUESTED` |
+| `Approval` | `Assigned` | final step approve | `APPROVAL_APPROVED`, `ASSIGNMENT_RESOLVED` |
+| `Approval` | `Declined` | decline | `APPROVAL_DECLINED` |
+| `Declined` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
+| `Assigned` | `Working` | start-work command; work-session submission may also transition | `STATUS_UPDATED` |
+| `Working` | `Pending` | next status가 있는 work session | `STATUS_UPDATED` |
+| `Pending` | `Working` | next status가 있는 work session 또는 Pending에서 assign | `STATUS_UPDATED` or `ASSIGNMENT_UPDATED` |
+| `Working`/`Pending` | `Resolved` | next status가 있는 work session | `STATUS_UPDATED` |
+| `Assigned`/`Working`/`Pending` | `Rejected` | reject action | `TICKET_REJECTED` |
+| `Rejected` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
+| `Resolved` | `Working` | reopen action | `TICKET_REOPENED` |
+| `Approval`/`Declined`/`Assigned`/`Working`/`Pending`/`Rejected` | `Closed` | requester cancel | `TICKET_CANCELED` |
+| active work statuses or Admin-allowed statuses | `Closed` | merge source ticket | `TICKET_MERGED` |
+| `Resolved` | `Closed` | system auto-close | `RESOLUTION_CLOSE` |
 
 ---
 
-## Action-Driven Lifecycle
+## Routing Rules
 
-라이프사이클은 시스템 설정만으로 통제되지 않습니다. 명시적인 action에
-의해서도 함께 구동됩니다.
+Initial submit과 resubmit은 같은 routing shape를 사용한다.
 
-```txt
-State Transition = Result of Action
+```txt id="initial-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
 ```
 
-예시:
+Final approval은 먼저 next approval step을 resolve한다. 다음 step이 없으면 assignment
+rule이 work assignee를 resolve하고 티켓은 `Assigned`로 이동한다.
 
-| Action        | From                                                                   | To                       |
-| ------------- | ---------------------------------------------------------------------- | ------------------------ |
-| submit ticket | `Draft`                                                                | `Approval` or `Assigned` |
-| approve       | `Approval`                                                             | `Approval` or `Assigned` |
-| decline       | `Approval`                                                             | `Declined`               |
-| resubmit      | `Declined` or `Rejected`                                               | `Approval` or `Assigned` |
-| start work    | `Assigned`                                                             | `Working`                |
-| assign        | `Pending`                                                              | `Working`                |
-| assignSelf    | `Assigned`, `Working`, or `Pending`                                    | unchanged                |
-| pause work    | `Working`                                                              | `Pending`                |
-| resume work   | `Pending`                                                              | `Working`                |
-| resolve work  | `Working` or `Pending`                                                 | `Resolved`               |
-| reject        | `Assigned`, `Working`, or `Pending`                                    | `Rejected`               |
-| reopen        | `Resolved`                                                             | `Working`                |
-| merge         | `Assigned`, `Working`, `Pending`, or `Resolved`                        | `Closed`                 |
-| cancel        | `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, or `Rejected` | `Closed`                 |
-| auto close    | `Resolved`                                                             | `Closed`                 |
-| admin merge   | any non-`Draft` status                                                 | `Closed`                 |
+Decline은 approval routing을 종료한다.
 
-암묵적인 상태 변경은 없습니다. 모든 transition에는 명확한 원인이 있어야
-합니다.
-
----
-
-## 조건부 Workflow
-
-라이프사이클은 모든 티켓에 대해 고정되어 있지 않습니다.
-
-이는 category 설정에 따라 달라집니다.
-
-```txt
-Category -> determines -> Workflow
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
 ```
 
-예시:
+---
 
-- 단순 요청: `Draft -> Assigned -> Working -> Resolved -> Closed`
-- approval 필요: `Draft -> Approval -> Assigned -> Working -> Resolved -> Closed`
-- approval 거절: `Draft -> Approval -> Declined -> Approval -> Assigned -> Working`
-- 작업 차단: `Working -> Pending -> Working -> Resolved -> Closed`
-- 재작업 흐름: `Working -> Resolved -> Working -> Resolved -> Closed`
+## Requester Update
 
-이렇게 하면 라이프사이클은 유연해지지만 임의적이지는 않게 됩니다.
+Requester update는 현재 ticket requester에 대해 `Approval`과 `Assigned`에서 허용된다.
+
+Routing-neutral change는 status, approval step, assignee를 유지한다.
+
+- due date
+- email recipients
+
+Routing-sensitive change는 routing을 처음부터 다시 실행한다.
+
+- category
+- subject
+- content
+- files
+- images
+
+History는 결과를 `ROUTING_PRESERVED` 또는 `ROUTING_RESET`으로 기록한다.
+
+Category가 변경되면 default priority, default risk level, minimum due date를 새
+category 기준으로 다시 평가한다. 다음 due date는 현재 due date와 새 category
+minimum 중 더 늦은 값이므로, category 변경으로 due date를 더 이른 날짜로 당기지
+않는다.
 
 ---
 
-## 전이 규칙
+## Work Session and Status
 
-### 1. 통제된 전이
+Start Work와 Work Session은 책임이 다르다. Start-work command는 ticket workflow
+execution을 시작하며 `Assigned -> Working`으로 이동한다. Work Session은 Ticket
+Action이 아니며 work-time evidence를 기록하고 지원되는 work-status transition을
+적용할 수 있다.
 
-상태 전이는 임의적이지 않습니다.
+현재 work-session status transition:
 
-반드시 다음을 따라야 합니다.
-
-- approval result
-- assignment 및 work ownership
-- 명시적인 사용자 action
-- 현재 구현에 정의된 명시적인 rule
-
-### 2. 직접 점프 금지
-
-잘못된 transition은 허용되지 않습니다.
-
-예시:
-
-- `Draft -> Working`
-- `Approval -> Resolved`
-- 유효한 closing action 없는 `Pending -> Closed`
-- 예외 개입 없는 `Closed -> Working`
-- 문서화된 admin-level 예외를 제외한 `Closed -> any normal action`
-
-### 3. 상태 일관성
-
-각 상태는 명확한 책임을 반영해야 합니다.
-
-- `Approval`: approval을 기다리는 상태
-- `Assigned`: 작업 시작 준비 완료
-- `Working`: assignee가 책임지는 상태
-- `Pending`: 일시 중지된 상태
-- `Resolved`: 종료 또는 검토를 기다리는 상태
-- `Rejected`: 현재 형태로는 실행 불가
-- `Declined`: 승인되지 않음
-
-### 4. Reopen 전략
-
-현재 라이프사이클은 별도의 `Reopen` status를 사용하지 않습니다.
-
-이는 다음을 가능하게 합니다.
-
-- 재작업은 `Resolved`에서 `Working`으로 직접 돌아간다
-- 재작업 여부는 `TICKET_REOPENED` history event로 추적한다
-- status enum은 실행 가능한 상태 중심으로 유지된다
-
-### 5. Closure 정책
-
-현재 구현 rule은 merge, cancel, resolved auto-close를 명시적으로 정의합니다.
-resolved auto-close는 `updatedAt`이 아니라 resolved history timestamp와
-7일 grace window를 기준으로 합니다.
-
----
-
-## Lifecycle vs Status
-
-lifecycle은 전체 process를 설명하고, status는 현재 상태의 snapshot을
-나타냅니다.
-
-```txt
-Lifecycle = process
-Status = snapshot
+```txt id="work-session-status"
+Assigned -> Working
+Working -> Pending | Resolved
+Pending -> Working | Resolved
 ```
 
-이 구분은 중요합니다. ticket domain은 현재 상태만 저장하는 것이 아니라,
-티켓이 어떻게 그 상태에 도달했는지와 다음에 어떤 transition이 유효한지도
-함께 모델링하기 때문입니다.
+Timer stop은 현재 route surface의 별도 route가 아니며 티켓을 암묵적으로 resolve하지
+않는다. GET request는 work를 시작하거나 status를 변경하면 안 된다.
 
 ---
 
-## Lifecycle vs Activity
+## Auto Close
 
-lifecycle은 state machine을 정의하고, activity는 변경을 일으키는 trigger
-또는 operation을 나타냅니다.
+Resolved auto-close는 system operation이다.
 
-```txt
-Lifecycle = allowed states and transitions
-Activity = explicit operation that triggers change
-```
+- source: `SYSTEM_AUTO`
+- event: `RESOLUTION_CLOSE`
+- from: `Resolved`
+- to: `Closed`
+- close reason: `Completed`
+- grace window: 7 days
+- action link: `actionNo = null`
+- 지원되는 경우 running work session을 종료한다.
 
-예시:
-
-- `assign`은 ticket을 `Working`으로 이동시킬 수 있다
-- `reject`는 ticket을 `Rejected`로 이동시킬 수 있다
-- `reopen`은 ticket을 `Resolved`에서 `Working`으로 이동시킬 수 있다
-- `resubmit`은 ticket을 `Approval` 또는 `Assigned`로 이동시킬 수 있다
-
-이 구분은 operational action의 표현력을 유지하면서도 lifecycle을 엄격하게
-관리할 수 있게 합니다.
+구현은 generic `updatedAt` rule이 아니라 resolved-history timing을 사용한다.
 
 ---
 
-## 다른 도메인과의 관계
+## Forbidden Shortcuts
 
-### Category
+현재 lifecycle은 implicit 또는 hidden transition을 금지한다.
 
-- approval 필요 여부를 정의한다
-- assignment rule을 정의한다
-- 어떤 workflow path가 적용되는지 결정한다
+예:
 
-관련 문서: [카테고리 전략](./strategy/category-strategy.md)
-
----
-
-### Approval
-
-- approval outcome과 관련된 transition을 통제한다
-- ticket이 `Approval`에 남을지, `Assigned`가 될지, `Declined`가 될지 결정한다
-
-관련 문서: [승인 시스템](./strategy/approval-system.md)
+- ticket detail을 읽는 것만으로 work를 시작하면 안 된다.
+- `Draft`는 바로 `Working`으로 점프하면 안 된다.
+- approval completion은 `Approved` status를 만들면 안 된다.
+- reopen은 `Reopen` status를 만들면 안 된다.
+- work-session GET은 status를 변경하면 안 된다.
+- attachment preparation만으로 history를 만들면 안 된다.
 
 ---
 
-### Assignment
+## 관련 문서
 
-- `Working` 상태에서 누가 ticket을 처리하는지 결정한다
-- 재할당 및 재활성화 흐름을 지원한다
-- intake state의 ticket을 active execution으로 이동시킬 수 있다
-
-관련 문서: [할당 정책](./strategy/assignment-policy.md)
-
----
-
-### SLA
-
-- 긴급도와 기한에 영향을 준다
-- `Pending` 동안 일시 정지될 수 있다
-- escalation 및 closure monitoring에 영향을 줄 수 있다
-
-관련 문서: [SLA 전략](./strategy/sla-strategy.md)
-
----
-
-### Ticket Activity
-
-- 많은 transition을 유도하는 명시적인 사용자 액션을 제공한다
-- 왜 transition이 발생했는지 설명한다
-
-관련 문서: [티켓 활동 모델](./ticket-activity.md)
-
----
-
-### Ticket Track Time
-
-- `Working` 동안 작업 세션을 기록한다
-- `Pending`으로 들어가거나 빠져나오는 transition을 설명하는 데 도움이 될 수 있다
-
-관련 문서: [티켓 작업 시간 추적](./ticket-track-time.md)
-
----
-
-### Ticket History
-
-- 모든 상태 전이를 기록한다
-- lifecycle 변경을 감사 가능하고 명시적으로 만든다
-
-상태 변경은 절대 암묵적이지 않습니다. 모두 workflow event로 기록됩니다.
-
-관련 문서: [티켓 이력](./ticket-history.md)
-
----
-
-## 설계 고려사항
-
-### 1. Category를 통한 유연성
-
-라이프사이클은 ticket type별로 하드코딩되는 대신 의도적으로 설정 가능하게
-설계되어 있습니다.
-
-### 2. 실제 운영 흐름과의 정렬
-
-라이프사이클은 실제 운영 흐름을 반영합니다.
-
-- 실행 전 validation
-- 작업 진행 중 pause와 resume
-- 반려와 수정 loop
-- 완료 확인과 재작업 처리
-
-### 3. Traceability
-
-모든 transition은 기록되므로 auditability와 debuggability를 보장합니다.
-
-### 4. 운영 명확성
-
-`Declined`, `Rejected`, `Pending`, `Resolved` 같은 상태는 ownership, 의미,
-reporting value가 서로 다르므로 분리해서 유지합니다.
+- [Ticket System Overview](./ticket-system-overview.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- [Approval System](./strategy/approval-system.md)
+- [Assignment Policy](./strategy/assignment-policy.md)
+- [Ticket Track Time](./ticket-track-time.md)
+- [Ticket History](./ticket-history.md)
 
 ---
 
 ## 요약
 
-티켓 라이프사이클은 다음을 보장합니다.
-
-- 티켓이 통제된 workflow를 따라 이동한다
-- 각 단계의 책임이 명확하다
-- 반려, 일시 중지, 재작업이 명시적으로 모델링된다
-- transition이 예측 가능하고, 감사 가능하며, 운영적으로 의미 있게 유지된다
-
-이 라이프사이클은 신뢰할 수 있고 확장 가능한 service desk 시스템을
-구축하기 위한 핵심 기반입니다.
+현재 lifecycle은 precise하고 action-driven이다. Persisted status name은 현재 책임을
+나타낸다. Approval/work ownership은 `approvalStepId`와 `assigneeUsernames`에서
+파생되며, 모든 status transition은 explicit command, workflow rule, 또는 system
+operation에서 나와야 한다.

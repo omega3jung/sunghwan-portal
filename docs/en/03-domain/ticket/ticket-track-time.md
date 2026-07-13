@@ -2,293 +2,191 @@
 
 ## Goal
 
-The ticket track time model defines how work performed on a ticket is recorded.
+Ticket Track Time defines the current Work Session model.
 
-It aims to:
-
-- accurately represent real work behavior
-- support interruption and task switching
-- provide reliable data for analysis and reporting
-- enable fast and intuitive user interactions
+Work tracking is separate from Ticket Action. It records work-time evidence and
+can optionally move a ticket through work statuses.
 
 ---
 
-## Problem Statement
+## Current Route Surface
 
-Traditional time tracking often stores only aggregated values:
-
-```txt
-ticket.workTime = 180 minutes
+```txt id="work-session-routes"
+GET  /api/service-desk/tickets/:ticketId/work-session
+POST /api/service-desk/tickets/:ticketId/work-session
 ```
 
-This approach fails to represent real-world behavior because:
+The current route surface does not include:
 
-- work is often interrupted
-- users switch between multiple tickets
-- tasks are resumed later
-- parallel work is common
+- work-session detail route
+- update route
+- delete route
+- timer start route
+- timer finish route
+- timer switch route
 
-As a result:
-
-- time tracking becomes inaccurate
-- user behavior is not reflected
-- auditability is limited
+Some feature-client helpers still reference those future/detail routes, but the
+current API route files expose list/create only.
 
 ---
 
-## Core Principle
+## Work Session DTO
 
-```txt
-Work is a collection of sessions, not a single accumulated value.
+```ts id="work-session-dto"
+type WorkSessionDto = {
+  ticket_id: string;
+  work_session_no: number;
+  assignee_username: string;
+  start_at: ISODateString | null;
+  end_at: ISODateString | null;
+  duration_minutes: number | null;
+  note: string | null;
+  created_at: ISODateString;
+  updated_at: ISODateString | null;
+};
 ```
 
-The track-time model treats real work as explicit session records rather than a
-single derived total.
+Domain/UI mapping exposes the same concept in camelCase.
 
 ---
 
-## Work Session Model
+## Submit Payload
 
-Each work session is represented as a `TicketTrackTime` entry.
-
-### Model
-
-```ts
-export interface TicketTrackTime {
+```ts id="work-session-submit-payload"
+type TicketWorkSessionSubmitPayload = {
   ticketId: string;
-  trackTimeNo: string;
-
-  assigneeId: string;
-
-  startAt: ISODateString;
-  endAt: ISODateString | null;
-
-  durationMinutes: number | null;
-
+  inputMode: "duration" | "range";
+  durationMinutes?: number;
+  startAt?: string;
+  endAt?: string;
+  trackedMinutes: number;
+  nextStatus?: "Working" | "Pending" | "Resolved";
   note?: string;
-
-  createdAt: ISODateString;
-  updatedAt: ISODateString;
-}
+};
 ```
 
-### Key Characteristics
+`trackedMinutes` must be positive. Range and duration modes are normalized
+server-side.
 
-#### 1. Session-Based Tracking
+---
 
-- each entry represents a single continuous work session
-- multiple sessions per ticket are allowed
+## Actor Rule
 
-Example:
+Only a current work assignee can create a work session.
 
-```txt
-09:00 - 10:00 -> session 1
-15:00 - 17:00 -> session 2
+Approval-phase tickets are not eligible because their current assignees are
+approvers, not workers.
+
+---
+
+## Start Work Command Boundary
+
+Start Work is a separate ticket command, not a Work Session row. The explicit
+start-work command moves `Assigned -> Working` and records `STATUS_UPDATED`
+history. Work-session submission records work-time evidence and may also apply
+the supported work-status transitions.
+
+---
+
+## Status Effects
+
+Work-session creation can update ticket status.
+
+Allowed transitions:
+
+```txt id="work-session-status-transitions"
+Assigned -> Working
+Working -> Pending
+Working -> Resolved
+Pending -> Working
+Pending -> Resolved
 ```
 
-#### 2. Running Session
+Rules:
 
-- `endAt === null` means the session is currently running
-- this indicates active work
-- this is used to determine current work context
-
-#### 3. Aggregated Time
-
-- total work time is the sum of completed sessions
-- `durationMinutes` is calculated on completion
-- aggregation is derived, not stored as the source of truth
+- `Assigned` requires a transition to `Working`
+- `Pending` requires a transition to `Working` or `Resolved`
+- `Working` may stay `Working` when recording additional time
+- GET never mutates status
+- timer stop does not implicitly resolve a ticket
 
 ---
 
-## Timer-Based Actions
+## Work Minutes Aggregate
 
-The system provides quick actions for efficient time tracking.
+Creating a work session adds `trackedMinutes` to the ticket aggregate
+`workMinutes`.
 
-### Start
-
-```txt
-POST /tickets/:ticketId/track-time/start
-```
-
-- creates a new session
-- `startAt = server time`
-- `endAt = null`
-
-### Finish
-
-```txt
-POST /tickets/:ticketId/track-time/finish
-```
-
-- completes the current running session
-- `endAt = server time`
-- `durationMinutes` is calculated
-
-### Switch
-
-```txt
-POST /tickets/:ticketId/track-time/switch
-```
-
-- finishes the current running session if one exists
-- starts a new session for another ticket
-- must be executed atomically
+The aggregate is useful for ticket list/detail display. Individual work-session
+rows remain the evidence.
 
 ---
 
-## Why Switch Exists
+## History
 
-Without `switch`, users must:
+When work-session creation changes ticket status, it creates `STATUS_UPDATED`
+history.
 
-- manually finish current work
-- manually start new work
+The history union contains work-session-specific events, but those are not the
+current route behavior for list/create work sessions.
 
-This leads to:
-
-- inconsistent tracking
-- missed actions
-- poor user experience
-
-`switch` ensures:
-
-```txt
-finish + start = single atomic action
-```
+System or ticket commands may finish running sessions when rejecting, merging,
+canceling, resolving, or auto-closing tickets.
 
 ---
 
-## Manual Input Modes
+## Due Date Separation
 
-In addition to timer actions, the system supports manual input.
+Ticket due date is a planning/SLA field. It is not a Work Session field.
 
-### Time Range
+Work sessions record actual work evidence:
 
-- `startAt`
-- `endAt`
-
-### Duration
-
-- `durationMinutes`
-
-### Design Decision
-
-Timer input and manual input are intentionally separated.
-
-Reason:
-
-- different user intentions
-- simpler validation
-- avoidance of conflicting inputs
+- who worked
+- when or for how long
+- note
+- resulting work status transition when provided
 
 ---
 
-## Constraints
+## Active Session Invariant
 
-### Single Active Session
+The current REMOTE create/list implementation records submitted work sessions.
+It includes repository support for finishing running sessions by ticket, but it
+does not expose a full timer route surface or enforce a documented global
+"one active timer per user" route contract.
 
-At most one active session per `(ticketId, assigneeId)` is allowed.
-
-Reason:
-
-- prevents overlapping work sessions
-- avoids ambiguity in finish actions
-- ensures deterministic behavior
-
-### Server-Controlled Time
-
-All timestamps are generated on the server.
-
-- prevents manipulation
-- ensures consistency
+Do not describe timer-style invariants as current implemented behavior.
 
 ---
 
-## Work Context Integration
+## Auto Close Relationship
 
-Track time is used to derive the current work context.
+Resolved auto-close is not a work-session timer operation.
 
-### Derived State
+It is a system command:
 
-- current working ticket
-- running session
-- active user workload
-
-### Example
-
-```txt
-if endAt is null -> user is working on this ticket
-```
+- finds resolved tickets whose resolved-history timestamp is older than the
+  current 7-day grace window
+- moves them to `Closed`
+- sets close reason `Completed`
+- finishes running work sessions where supported
+- creates `RESOLUTION_CLOSE` history with source `SYSTEM_AUTO` and
+  `actionNo = null`
 
 ---
 
-## UI Behavior
+## Related Documents
 
-Track time directly influences UI behavior.
-
-### When the User Is Working on This Ticket
-
-- show `Finish`
-
-### When the User Is Working on Another Ticket
-
-- show `Finish current and start`
-
-### When the User Is Not Working
-
-- show `Start`
-
----
-
-## Relationship with Other Domains
-
-### Ticket
-
-- track time belongs to a ticket
-
-Related document: [Ticket Model](./ticket-model.md)
-
----
-
-### Assignment
-
-- only assignees can track time
-
-Related document: [Assignment Policy](./strategy/assignment-policy.md)
-
----
-
-### Ticket History
-
-- start, finish, and switch actions are recorded
-- time tracking remains auditable through history
-
-Related document: [Ticket History](./ticket-history.md)
-
----
-
-## Design Trade-Offs
-
-### Pros
-
-- accurate representation of real work
-- supports interruptions and switching
-- enables advanced UX
-
-### Cons
-
-- more complex than aggregated tracking
-- requires additional constraints
-- needs careful server-side handling
+- [Ticket Lifecycle](./ticket-lifecycle.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- [Ticket History](./ticket-history.md)
+- [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
 ## Summary
 
-The track time model:
-
-- represents work as sessions
-- supports real-world workflows
-- enables fast user interactions
-- integrates with work context and UI behavior
-
-It is a key component for building a realistic and operationally useful service desk system.
+Work Session is the current work-time evidence model. It supports list/create,
+duration/range input, tracked-minute aggregation, and explicit work-status
+transitions. It is separate from Ticket Action and must not be described as a
+hidden GET-side-effect or timer-stop resolution mechanism.

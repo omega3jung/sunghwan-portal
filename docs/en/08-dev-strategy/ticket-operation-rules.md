@@ -1,455 +1,507 @@
-# Ticket Rules
+# Ticket Operation Rules
 
 ## Goal
 
-The ticket rules document defines the **current implementation-oriented rules**
-for ticket updates, action execution, and state-affecting operations.
+This document is the implementation-facing rule matrix for Service Desk ticket
+operations.
 
-It exists to make sure that:
+It captures who can execute an operation, when it is allowed, what input it
+accepts, what ticket state it changes, and which history event is produced.
 
-- business rules are expressed in a form that can be implemented directly
-- permissions, status guards, and side effects remain explicit
-- domain documents and UI behavior stay aligned with current execution rules
-- future changes can be reviewed against a clear source of truth
+Conceptual status meaning is documented in
+[Ticket Lifecycle](../03-domain/ticket/ticket-lifecycle.md).
 
 ---
 
-## Core Principle
+## Current Operation Surface
 
-```id="ticket-rules-principle"
-Every ticket operation must have an explicit actor, valid state, predictable effect, and clear restriction.
+### Ticket Routes
+
+```txt id="ticket-routes"
+GET    /api/service-desk/tickets
+POST   /api/service-desk/tickets
+GET    /api/service-desk/tickets/search
+GET    /api/service-desk/tickets/:ticketId
+PUT    /api/service-desk/tickets/:ticketId
+DELETE /api/service-desk/tickets/:ticketId
+```
+
+### Draft Routes
+
+```txt id="draft-routes"
+GET    /api/service-desk/tickets/draft
+POST   /api/service-desk/tickets/draft
+PUT    /api/service-desk/tickets/draft/:ticketId
+DELETE /api/service-desk/tickets/draft/:ticketId
+```
+
+### Command Routes
+
+```txt id="command-routes"
+POST /api/service-desk/tickets/:ticketId/command/start-work
+POST /api/service-desk/tickets/:ticketId/command/:action
+```
+
+`:action` is one of:
+
+```txt id="command-actions"
+approve
+decline
+comment
+note
+assign
+assignSelf
+adjust
+reject
+merge
+reopen
+resubmit
+cancel
+```
+
+### Subresource Routes
+
+```txt id="subresource-routes"
+GET   /api/service-desk/tickets/:ticketId/actions
+GET   /api/service-desk/tickets/:ticketId/actions/:actionNo
+PATCH /api/service-desk/tickets/:ticketId/actions/:actionNo
+
+GET   /api/service-desk/tickets/:ticketId/histories
+
+GET   /api/service-desk/tickets/:ticketId/work-session
+POST  /api/service-desk/tickets/:ticketId/work-session
 ```
 
 ---
 
-## Purpose in the Documentation Set
+## Common Command Pipeline
 
-This document is intentionally different from higher-level domain documents such
-as the lifecycle or activity model.
-
-### Domain Documents
-
-- explain conceptual structure
-- describe the meaning of states and actions
-- clarify why the model exists
-
-### This Rules Document
-
-- defines what is currently allowed
-- captures implementation-facing constraints
-- serves as the current source of truth for execution behavior
-
-In short:
-
-```txt
-Domain doc = conceptual model
-Rules doc = current executable behavior
+```txt id="ticket-command-pipeline"
+command request
+-> authenticate
+-> authorize
+-> validate current status
+-> validate payload
+-> create action row when applicable
+-> mutate ticket when applicable
+-> create history rows
+-> return DTO
 ```
 
----
-
-## Rule Format
-
-Each rule is described using a consistent implementation-oriented structure.
-
-### Rule Fields
-
-- `who`: who can perform the operation
-- `when`: in which states the operation is allowed
-- `effect`: what changes happen as a result
-- `purpose`: why the operation exists
-- `restriction`: additional constraints or guardrails
-
-This format is designed to map cleanly to:
-
-- permission checks
-- status validation
-- command handlers
-- audit and history generation
+Operational action creation, ticket mutation, and history creation must be
+treated as one use case. REMOTE uses server-side services and transactions.
+LOCAL uses demo-safe local handlers with the same DTO direction.
 
 ---
 
-## Rule Areas
-
-The current rule set is organized into two areas:
-
-### 1. Ticket Update Rules
-
-- rules for changing the ticket itself
-- requester-driven revision behavior
-
-### 2. Ticket Action Rules
-
-- rules for communication and operational actions
-- lifecycle-affecting behavior such as reject, merge, `reopen`, `resubmit`, and `cancel`
-
----
-
-## Ticket Update Rules
-
-### Update Ticket
+## Requester Update
 
 - who: requester
-- when: status = `Draft`
-- effect: update ticket fields
-- purpose: refine or complete a request before submission
-- restriction:
-  - ticket update is not the same command as `resubmit`
-  - changes must be recorded in history
+- allowed status: `Approval`, `Assigned`
+- input: category, subject, content, due date, email, prepared files/images
+- validation:
+  - requester owns the ticket
+  - category is active and available
+  - attachment metadata is already prepared
+  - normalized previous/next values are compared
+- ticket effect:
+  - routing-neutral changes preserve status, approval step, assignees
+  - routing-sensitive changes rerun routing from the first approval step
+  - category changes can rederive priority and risk from category defaults
+  - category changes re-evaluate the minimum due date from the new category SLA
+    default and keep the later of current due date and new minimum
+- action persistence: no ticket action row
+- history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
+- notification boundary: not a separate notification source in the current docs
+- query invalidation: ticket detail, ticket list/search, history
+
+Routing-neutral fields:
+
+- due date
+- email recipients
+
+Routing-sensitive fields:
+
+- category
+- subject
+- content
+- files
+- images
 
 ---
 
-### Update Declined Ticket
+## Submit Ticket
 
 - who: requester
-- when: status = `Declined`
-- effect:
-  - update ticket fields
-  - submit again through the same routing used by ticket creation
-  - status -> `Approval` when approval is required
-  - status -> `Assigned` when approval is not required
-- purpose: revise a declined request and resubmit it
-- restriction:
-  - approval progress must be reset
-  - changes must be recorded in history
+- allowed status:
+  - new create with no draft
+  - existing `Draft`
+- input: ticket form values with prepared body/files/images
+- validation:
+  - category is valid
+  - attachment metadata is prepared
+  - approval or assignment can resolve at least one assignee
+- ticket effect:
+  - if next approval step exists: `Approval`
+  - otherwise: `Assigned`
+  - existing draft row is reused when present
+- action persistence: no ticket action row
+- history event:
+  - `TICKET_SUBMITTED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: draft, ticket list/search/detail, history
 
 ---
 
-## Action Execution Strategy
-
-All ticket actions are governed by shared execution rules before
-action-specific rules apply.
-
-### Common Rule
-
-- who: any user with ticket view permission
-- when: action-specific status rule allows it
-- effect:
-  - create action
-  - record history
-- purpose: support ticket operation and communication
-- restriction:
-  - only `comment` and `note` can be edited or deleted
-  - operational actions such as `assign`, `adjust`, `merge`, `reject`, `reopen`, `resubmit`, and `cancel` are immutable
-  - content is required for all actions
-  - no action can be edited or deleted in `Closed`
-  - delete is soft delete via `active = false`
-
----
-
-## Communication Actions
-
-### Comment
-
-- who: any user with ticket access
-- when: any non-`Draft` status, including `Closed`
-- effect:
-  - create comment
-  - send email notification
-- purpose: external or shared communication
-- restriction:
-  - content required
-  - only the author can edit or delete it while the ticket is not `Closed`
-
----
-
-### Note
-
-- who: any user with ticket access
-- when: any non-`Draft`, non-`Closed` status
-- effect:
-  - create note
-  - no email notification
-- purpose: internal communication
-- restriction:
-  - content required
-  - only the author can edit or delete it
-
-### Visibility
-
-- `private`: visible only to the author
-- `shared`: visible to internal operators and the author
-
----
-
-## Operational Actions
-
-Operational actions are immutable in normal workflow and may affect ticket
-state, ownership, or planning data.
-
-### Assign (Standard)
+## Start Work
 
 - who: current work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - update work assignee
-  - `Pending` -> `Working`
-  - `Assigned` and `Working` keep their current status
-  - send email notification
-- purpose: delegate or reassign active work
-- restriction:
-  - content required
+- allowed status: `Assigned`
+- input: no body
+- validation:
+  - `approvalStepId = null`
+  - actor is in current work assignees
+- ticket effect: `Assigned -> Working`
+- action persistence: no ticket action row
+- history event: `STATUS_UPDATED`
+- query invalidation: ticket detail/list/search, history
+
+GET/read requests must not start work.
 
 ---
 
-### Assign (Admin)
+## Comment
 
-- who: Admin
-- when:
-  - approval assignment: status = `Approval`
-  - work assignment: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - approval assignment keeps the current approval step and changes approvers
-  - work assignment updates assignees
-  - `Pending` -> `Working`
-  - send email notification
-- purpose: manager-driven reassignment or reactivation
-- restriction:
+- who: user with ticket access
+- allowed status: all live non-`Draft`, non-`Closed` statuses
+- input: content, prepared action attachments where supported
+- validation:
   - content required
+  - action path and payload type match
+  - attachment payload cannot contain `blob:` or `data:` URLs
+- ticket effect: none
+- action persistence: `COMMENT`
+- history event: `COMMENT_CREATED`
+- notification boundary: shared communication can notify outside the command
+  boundary
+- query invalidation: action list, history, ticket recent activity
+
+Soft delete:
+
+- who: action writer
+- disallowed status: `Draft`, `Closed`
+- action type: `COMMENT` only
+- history event: `COMMENT_DELETED`
+
+The current route surface does not expose a comment update route, although the
+history union reserves `COMMENT_UPDATED`.
+
+Comments created before closure remain visible after `Closed`. This is timeline
+visibility, not permission to create new comments on closed tickets.
 
 ---
 
-### Adjust (Standard)
+## Note
+
+- who: user with ticket access
+- allowed status: all live non-`Draft`, non-`Closed` statuses
+- input: content, prepared action attachments where supported
+- validation: content required
+- ticket effect: none
+- action persistence: `NOTE`
+- history event: `NOTE_CREATED`
+- notification boundary: internal note, no external notification by default
+- query invalidation: action list, history, ticket recent activity
+
+Soft delete:
+
+- who: action writer
+- disallowed status: `Draft`, `Closed`
+- action type: `NOTE` only
+- history event: `NOTE_DELETED`
+
+The current route surface does not expose a note update route, although the
+history union reserves `NOTE_UPDATED`.
+
+---
+
+## Approve
+
+- who: current approver, or Admin
+- allowed status: `Approval`
+- input: content only; approval actions reject files and inline images
+- validation:
+  - `approvalStepId != null`
+  - actor is current approver unless Admin
+  - content required
+- ticket effect:
+  - next approval step exists: stay `Approval`, move to next approvers
+  - no next approval step: move to `Assigned`, resolve workers
+- action persistence: `APPROVE`
+- history event:
+  - `APPROVAL_APPROVED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Decline
+
+- who: current approver, or Admin
+- allowed status: `Approval`
+- input: content only; approval actions reject files and inline images
+- validation:
+  - `approvalStepId != null`
+  - actor is current approver unless Admin
+  - content required
+- ticket effect:
+  - `Approval -> Declined`
+  - `approvalStepId = null`
+  - `assigneeUsernames = []`
+- action persistence: `DECLINE`
+- history event: `APPROVAL_DECLINED`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Assign
+
+- who:
+  - current work assignee for work assignment
+  - Admin for approval or work assignment override
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`
+  - Admin approval override: `Approval`
+- input: content, assignee usernames
+- validation:
+  - content required
+  - assignee list required
+  - non-Admin actor must be a current work assignee
+- ticket effect:
+  - replace current assignee usernames
+  - `Pending -> Working`
+  - `Assigned`, `Working`, and `Approval` keep status unless mode resolves a
+    status change
+- action persistence: `ASSIGN`
+- history event: `ASSIGNMENT_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
+
+Derived assignee emails must not be written into persisted `tk_email`.
+
+---
+
+## Assign Self
 
 - who: current work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - update `priority`
-  - update `riskLevel`
-  - update `dueDate`
-- purpose: adjust the execution plan during active work
-- restriction:
-  - content required
+- allowed status: `Assigned`, `Working`, `Pending`
+- input: auto-generated content
+- validation:
+  - actor is already one of current workers
+  - current work assignee list has at least two users
+- ticket effect:
+  - replace current assignees with actor only
+  - status unchanged
+- action persistence: `ASSIGN_SELF`
+- history event: `ASSIGNMENT_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-### Adjust (Admin)
+## Adjust
 
-- who: Admin
-- when:
-  - status in `Assigned`, `Working`, `Pending`
-  - status in `Resolved`, `Closed` for correction only
-- effect:
-  - update `priority`
-  - update `riskLevel`
-  - update `dueDate` only before `Resolved`/`Closed`
-- purpose: admin-driven planning adjustment or correction
-- restriction:
+- who:
+  - current work assignee
+  - Admin
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`
+  - Admin correction: `Approval`, `Assigned`, `Working`, `Pending`,
+    `Resolved`, `Closed`
+- input: content, priority, risk level, due date
+- validation:
   - content required
-  - resolved/closed correction cannot change due date
-  - no-op adjustment is rejected
+  - at least one planning field must change
+  - resolved/closed Admin correction cannot change due date
+- ticket effect:
+  - update priority, risk, and due date where allowed
+- action persistence: `ADJUST`
+- history event: `PLANNING_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-### Merge (Standard)
+## Reject
 
-- who: current work assignee
-- when: status in `Assigned`, `Working`, `Pending`, `Resolved`
-- effect:
+- who: current work assignee, or Admin
+- allowed status: `Assigned`, `Working`, `Pending`
+- input: content
+- validation:
+  - content required
+  - actor is work assignee unless Admin
+- ticket effect:
+  - status -> `Rejected`
+  - running work sessions are finished where supported
+- action persistence: `REJECT`
+- history event: `TICKET_REJECTED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
+
+---
+
+## Resubmit
+
+- who: requester
+- allowed status: `Declined`, `Rejected`
+- input: content
+- validation:
+  - actor is requester
+  - initial routing can resolve approval or workers
+- ticket effect:
+  - rerun initial routing
+  - next approval step: `Approval`
+  - no approval step: `Assigned`
+- action persistence: `RESUBMIT`
+- history event:
+  - `TICKET_SUBMITTED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Reopen
+
+- who: requester, or Admin
+- allowed status: `Resolved`
+- input: content
+- validation:
+  - content required
+  - existing work assignee is required
+- ticket effect:
+  - `Resolved -> Working`
+  - assignees are preserved
+- action persistence: `REOPEN`
+- history type: `STATUS`
+- history source: `USER_ACTION`
+- history event: `TICKET_REOPENED`
+- history from/to: `{ status: "Resolved" } -> { status: "Working" }`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Merge
+
+- who:
+  - current work assignee for standard merge
+  - Admin for override
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`, `Resolved`
+  - Admin override: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
+    `Rejected`, `Resolved`, `Closed`
+- input: content, target ticket id
+- validation:
+  - target ticket is required
+  - self-merge is forbidden
+  - draft source or target is forbidden
+  - already merged source or target is forbidden
+  - domain merge rule accepts the source/target status pair
+- ticket effect:
   - source ticket -> `Closed`
   - `closeReason = Merged`
-  - set `mergedIntoTicketId` and `mergedIntoTicketNo`
-- purpose: consolidate duplicate or related tickets
-- restriction:
-  - self merge is forbidden
-  - merged child merge is forbidden
-  - target must be active
-  - target must be in the same client and scope
+  - set merged target id/number
+  - running work sessions are finished where supported
+- action persistence: `MERGE`
+- history event: `TICKET_MERGED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---
 
-### Merge (Admin)
-
-- who: Admin
-- when: any non-`Draft` status, including `Closed`
-- effect:
-  - execute merge handling
-- purpose: manager-level ticket consolidation
-- restriction:
-  - merge on `Closed` is allowed only as an exceptional case
-  - client and scope must remain aligned
-
----
-
-### Reject
-
-- who: current work assignee or Admin
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - status -> `Rejected`
-  - running work session is finished where possible
-- purpose: close out work that cannot proceed
-- restriction:
-  - content required
-
-### Reopen
-
-- who: requester or Admin
-- when: status = `Resolved`
-- effect:
-  - status -> `Working`
-  - history event = `TICKET_REOPENED`
-- purpose: request re-evaluation of a resolved result
-- restriction:
-  - content required
-  - ticket must have an existing work assignee
-
----
-
-### Resubmit
+## Cancel
 
 - who: requester
-- when: status in `Declined`, `Rejected`
-- effect:
-  - rerun initial approval and assignment routing
-  - status -> `Approval` when approval is required
-  - status -> `Assigned` when approval is not required
-- purpose: revise and resubmit a declined or rejected request
-- restriction:
+- allowed status: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
+  `Rejected`
+- input: content
+- validation:
+  - actor is requester
   - content required
-
----
-
-### Assign Myself (`assignSelf`)
-
-- who: current work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - current assignees are replaced by the actor only
-  - status is unchanged
-- purpose: fast self-assignment
-- restriction:
-  - current assignee list must contain at least two users
-  - actor must already be one of the current work assignees
-  - content is auto-generated
-
----
-
-### Cancel
-
-- who: requester
-- when: status in `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, `Rejected`
-- effect:
+- ticket effect:
   - status -> `Closed`
   - `closeReason = Canceled`
-  - running work session is finished where possible
-- purpose: requester-driven withdrawal before completion
-- restriction:
-  - content required
+  - running work sessions are finished where supported
+- action persistence: `CANCEL`
+- history event: `TICKET_CANCELED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---
 
-### Work Session Control
+## Work Session Submit
+
+The explicit start-work command route can move `Assigned -> Working` without
+creating a work-session row. Work-session submission records work-time evidence
+and may apply the supported status transitions below.
 
 - who: current work assignee
-- when:
-  - start work: `Assigned` -> `Working`
-  - track work: `Working` -> `Pending` or `Resolved`
-  - resume/finish work: `Pending` -> `Working` or `Resolved`
-- effect:
-  - records tracked minutes
-  - changes status only through explicit work-session command
-- restriction:
-  - ticket detail read must not mutate status
-  - resolving work finishes the running session where possible
+- allowed status: `Assigned`, `Working`, `Pending`
+- input:
+  - `inputMode = duration | range`
+  - tracked minutes
+  - optional `nextStatus = Working | Pending | Resolved`
+  - note
+- validation:
+  - actor is current work assignee
+  - tracked minutes are positive
+  - `Assigned` and `Pending` require an explicit status transition
+  - allowed transitions:
+    - `Assigned -> Working`
+    - `Working -> Pending | Resolved`
+    - `Pending -> Working | Resolved`
+- ticket effect:
+  - add tracked minutes to ticket aggregate
+  - update status when `nextStatus` changes
+  - resolving finishes running sessions where supported
+- action persistence: no ticket action row
+- history event: `STATUS_UPDATED` when status changes
+- query invalidation: ticket detail/list/search, work-session list, history
+
+Current route surface supports list/create. Feature-client methods for
+work-session detail, update, delete, and timer start/finish/switch exist but do
+not currently have matching route files.
 
 ---
 
-### Resolved Auto Close
+## Resolved Auto Close
 
 - who: system
-- when: latest resolved history is at least 7 days old
-- effect:
-  - `Resolved` -> `Closed`
+- allowed status: `Resolved`
+- input: cron/system request
+- validation:
+  - resolved-history grace window has elapsed
+  - the grace window is measured from the latest history entry that resolved the
+    ticket, not from generic ticket `updatedAt`
+  - current grace value is 7 days
+- ticket effect:
+  - `Resolved -> Closed`
   - `closeReason = Completed`
-  - history event = `RESOLUTION_CLOSE`
-  - history source = `SYSTEM_AUTO`
-- restriction:
-  - cutoff is based on resolved history time, not `updatedAt`
-  - running work session is finished where possible
-
----
-
-## Implementation Notes
-
-These rules are meant to be stable enough for implementation, but they are not
-the same thing as long-term conceptual design.
-
-### Practical Implications
-
-- when this document changes, command handlers and validation logic should be reviewed
-- lifecycle and activity documents should stay consistent with this file
-- speculative behavior should remain outside this file until it becomes a real rule
-
----
-
-## Trade-offs
-
-### Pros
-
-- makes current behavior explicit
-- improves consistency between frontend, API, and documentation
-- reduces ambiguity in permission and status handling
-- supports implementation review and regression checking
-
----
-
-### Cons
-
-- requires regular maintenance as rules evolve
-- can diverge from conceptual documents if updates are not coordinated
-- may feel verbose compared with a purely narrative domain document
-
----
-
-## Alternatives Considered
-
-### 1. Keep Rules Embedded Only in Domain Docs
-
-- easier to read at first
-- harder to use as an implementation source of truth
-
----
-
-### 2. Keep Rules Only in Code
-
-- avoids duplicate documentation
-- makes policy review harder for design and product discussions
-
----
-
-### 3. Write Rules as Loose Notes
-
-- faster initially
-- too ambiguous for consistent execution behavior
-
----
-
-## Design Principles Alignment
-
-This document aligns with:
-
-- explicit business rule modeling
-- implementation-oriented documentation
-- audit-friendly workflow design
-- separation between conceptual design and executable constraints
+  - running work sessions are finished where supported
+- action persistence: no ticket action row
+- history event: `RESOLUTION_CLOSE`
+- history source: `SYSTEM_AUTO`
+- history action link: `actionNo = null`
+- query invalidation: system side effect, not user-triggered UI mutation
 
 ---
 
 ## Related Documents
 
-- [Development Approach](./development-approach.md)
+- [Ticket System Overview](../03-domain/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](../03-domain/ticket/ticket-lifecycle.md)
 - [Ticket Activity Model](../03-domain/ticket/ticket-activity.md)
+- [Action Strategy](../03-domain/ticket/strategy/action-strategy.md)
 - [Ticket History](../03-domain/ticket/ticket-history.md)
+- [Ticket Track Time](../03-domain/ticket/ticket-track-time.md)
 
 ---
 
 ## Summary
 
-The ticket rules document defines the **current implementation source of truth**
-for ticket update behavior and ticket action execution.
-
-It translates business intent into explicit operational rules so that
-permissions, status transitions, side effects, and restrictions remain
-predictable, reviewable, and implementable.
+Ticket operations are command-driven. Every operation has an actor, status
+guard, payload contract, ticket effect, action persistence rule, and history
+event. Hidden status mutation is not allowed.

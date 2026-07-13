@@ -1,305 +1,237 @@
-# 승인 시스템
+# Approval System
 
-## 목적
+## 목표
 
-승인 시스템은 실행 전에 추가 검증이 필요한 티켓에 대해
-**구성 가능하고 확장 가능한 검증 파이프라인**을 제공하기 위해 설계되었다.
+이 문서는 Service Desk ticket의 현재 approval routing model을 정의한다.
 
-이 시스템은 다음을 보장한다.
+Approval은 category-driven, sequential이며 현재 ticket routing field로 표현된다.
 
-- 정책 준수
-- 중복 요청 방지
-- 조직 차원의 검증
-- 운영 리스크 감소
-
----
-
-Scope note:
-- LOCAL demo는 포트폴리오 데모 현실성에 맞춰 승인 동작을 단순화한다.
-- 조직 전체 규칙을 반영한 full approval pipeline은 REMOTE 확장 경로다.
-
-
-## 핵심 개념
-
-승인은 **카테고리 중심(category-driven)** 으로 동작하며,
-**순차 파이프라인(sequential pipeline)** 으로 실행된다.
-
-각 tenant-scoped category는 자신만의 승인 워크플로를 정의할 수 있다.
-
-```txt
-Tenant-scoped Category -> approvalSteps[]
+```txt id="approval-routing-fields"
+tk_approval_step_id
+tk_assignee_usernames
 ```
 
-각 단계는 `index` 값을 기준으로 순서대로 처리된다.
+---
 
-approval step은 category configuration에 속하며, 해당 category tree를 소유한
-tenant boundary 안에서 해석된다.
+## 현재 Approval Status
+
+Approval은 persisted ticket status `Approval`을 사용한다.
+
+Persisted `Approved` status는 없다. Approval completion은 history event
+`APPROVAL_APPROVED`로 기록된다. Final approval 이후 ticket은 work assignment를
+resolve하고 `Assigned`로 이동한다.
 
 ---
 
-## 승인 흐름
+## Approval Phase
 
-```txt
-Draft -> Approval -> Assigned / Declined -> Working
+Ticket은 다음 상태일 때 approval phase다.
+
+```txt id="approval-phase"
+approvalStepId != null
+assignmentPhase = APPROVAL
+assigneeUsernames = current approvers
 ```
 
-### 상태 정의
+Application DTO는 이를 다음으로 project한다.
 
-- **Draft**: 제출 전 티켓을 준비하는 상태
-- **Approval**: 승인 프로세스가 진행 중인 상태
-- **Assigned**: 모든 승인 단계가 완료되고 work assignee가 확정된 상태
-- **Declined**: 어느 한 단계에서든 승인이 거절된 상태
+- `assignmentPhase = "APPROVAL"`
+- `approvalAssigneeUsernames`
+- `assignedApprover`
+
+이 값들은 projection이다. 별도의 persisted routing source가 아니다.
 
 ---
 
-## 데이터 구조
+## Approval Step Settings
 
-### ApprovalSteps
+Approval step은 main category 아래에 설정된다.
 
-```ts
+Approval resolution은 항상 선택된 subcategory의 parent/main category를 사용한다.
+선택된 subcategory는 ticket classification으로 남지만 별도의 approval pipeline을
+정의하지 않는다.
+
+```ts id="approval-step-shape"
 type ApprovalStep = {
+  id: string;
+  name: LocalizedText;
+  description?: LocalizedText;
   index: number;
-  assigneeType: "MANAGER" | "DEPARTMENT" | "JOB_FIELD" | "EMPLOYEE";
-  payload: Record<string, unknown>;
-  skipAccessLevel?: number;
+  categoryId: string;
+  stepAssignee: ApprovalAssigneeType;
+  skipAccessLevel?: AccessLevel;
 };
 ```
 
----
+Assignee type:
 
-## 승인 담당자 유형
-
-각 승인 단계는 승인 담당자를 동적으로 결정한다.
-
-### 1. MANAGER
-
-요청자의 관리자에게 승인이 할당된다.
-
-```ts
-payload: {
-  level: 1 | 2;
-}
+```txt id="approval-assignee-types"
+MANAGER
+DEPARTMENT
+JOB_FIELD
+EMPLOYEE
 ```
 
-- `1`: 직속 관리자
-- `2`: 상위 관리자
+REMOTE DTO는 `approval_step_assignee`와 `skip_access_level`을 사용한다. LOCAL과
+REMOTE settings는 같은 application-facing behavior로 resolve되어야 한다.
+
+관련 문서: [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
-### 2. DEPARTMENT
+## Initial Approval Routing
 
-특정 부서에 승인이 할당된다.
+Ticket submit과 resubmit은 모두 첫 applicable approval step부터 routing을 시작한다.
 
-```ts
-payload: {
-  departmentId: string;
-}
+```txt id="initial-approval-routing"
+selected category
+-> parent/main category approval steps
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+```
+
+Approval assignee를 resolve할 수 없으면 unowned approval ticket을 만들지 않고 command가
+실패한다.
+
+---
+
+## Approve
+
+Approve는 ticket action command다.
+
+- action type: `APPROVE`
+- allowed status: `Approval`
+- actor: current approver 또는 Admin
+- payload: content only
+- file과 inline image를 거부한다.
+- action row가 insert된다.
+- history는 `APPROVAL_APPROVED`를 기록한다.
+
+Approve 이후:
+
+```txt id="approve-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = next approvers
+-> history = APPROVAL_REQUESTED
+
+no next approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+-> history = ASSIGNMENT_RESOLVED
 ```
 
 ---
 
-### 3. JOB_FIELD
+## Decline
 
-직무 전문 분야를 기준으로 승인이 할당된다.
+Decline은 ticket action command다.
 
-```ts
-payload: {
-  jobFieldId: string;
-}
+- action type: `DECLINE`
+- allowed status: `Approval`
+- actor: current approver 또는 Admin
+- payload: content only
+- file과 inline image를 거부한다.
+- action row가 insert된다.
+- history는 `APPROVAL_DECLINED`를 기록한다.
+
+Decline은 approval routing을 종료한다.
+
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
+```
+
+Requester는 나중에 initial routing으로 resubmit할 수 있다.
+
+---
+
+## Skip Rule
+
+`skipAccessLevel`은 requester access level이 설정 threshold를 만족할 때 approval
+step을 skip할 수 있게 한다.
+
+Skip behavior는 approval routing/resolution에 속한다. 모든 approval이 skip되면
+assignment rule이 work owner를 resolve하고 ticket은 `Assigned`로 이동한다.
+
+---
+
+## History
+
+Approval 관련 event:
+
+```txt id="approval-history-events"
+APPROVAL_REQUESTED
+APPROVAL_APPROVED
+APPROVAL_DECLINED
+ASSIGNMENT_RESOLVED
+```
+
+Approve action은 둘 이상의 history record를 만들 수 있다.
+
+```txt id="approval-history-flow"
+APPROVAL_APPROVED
+-> APPROVAL_REQUESTED
+or
+APPROVAL_APPROVED
+-> ASSIGNMENT_RESOLVED
 ```
 
 ---
 
-### 4. EMPLOYEE
+## Requester Update와의 관계
 
-특정 개인에게 승인이 할당된다.
+Requester update는 routing-sensitive field가 실제로 바뀔 때 approval routing을 reset할
+수 있다.
 
-```ts
-payload: {
-  employeeIds: string[];
-}
-```
+- category
+- subject
+- content
+- files
+- images
 
----
-
-## 실행 규칙
-
-### 1. 순차 처리
-
-- 각 단계는 `index` 오름차순으로 실행된다.
-- 현재 단계가 승인된 후에만 다음 단계가 시작된다.
+Routing reset은 approval resolution을 처음부터 시작하고 `ROUTING_RESET`을 기록한다.
+Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
 
 ---
 
-### 2. 조기 종료
+## Deferred Scope
 
-- 어느 한 단계라도 **declined** 되면 전체 승인 프로세스가 중단된다.
-- 티켓 상태는 `Declined` 가 된다.
+현재 approval model은 다음을 구현하지 않는다.
 
----
+- parallel approval voting
+- quorum approval
+- delegation calendars
+- approval SLA timers
+- approval notification delivery guarantees
 
-### 3. 완료
-
-- 모든 단계가 승인되면:
-  - 티켓 상태가 `Assigned` 가 된다.
-  - 티켓은 work assignment 단계로 이동한다.
-
----
-
-## 스킵 정책
-
-요청자의 권한 수준에 따라 일부 승인 단계를 자동으로 건너뛸 수 있다.
-
-### 규칙
-
-```txt
-if requester.accessLevel >= skipAccessLevel
--> skip this step
-```
-
-### 목적
-
-- 높은 권한을 가진 사용자에 대한 불필요한 승인을 줄인다.
-- 워크플로 효율을 높인다.
-- 긴급 상황에서 병목을 방지한다.
+이는 future production extension이다.
 
 ---
 
-## 예시 시나리오
+## 관련 문서
 
-### 사례: 관리자 승인이 필요한 IT 요청
-
-```ts
-approvalSteps = [
-  {
-    index: 1,
-    assigneeType: "MANAGER",
-    payload: { level: 1 },
-  },
-  {
-    index: 2,
-    assigneeType: "DEPARTMENT",
-    payload: { departmentId: "IT" },
-  },
-];
-```
-
-### 흐름
-
-1. 직속 관리자가 승인한다.
-2. IT 부서가 검토한다.
-3. 티켓 상태가 `Assigned` 가 된다.
-
----
-
-## UI 고려사항
-
-- 승인 단계는 **진행 타임라인(progress timeline)** 으로 보여야 한다.
-- 각 단계에는 다음 정보가 표시되어야 한다.
-  - 담당자
-  - 상태 (`pending` / `approved` / `declined`)
-  - 시간
-- 스킵된 단계는 **"skipped"** 로 명확히 표시되어야 한다.
-
----
-
-## 감사 및 이력
-
-모든 승인 활동은 History 모델에 기록되어야 한다.
-
-### 기록 데이터
-
-- `approvalStep` 인덱스
-- 승인 담당자
-- 액션 (`approved` / `declined` / `skipped`)
-- 시간
-- 메모(선택)
-
-### 목적
-
-- 전체 추적 가능성 확보
-- 컴플라이언스 및 감사 대응
-- 워크플로 문제 디버깅
-
----
-
-## 예외 상황
-
-### 1. 담당자 해석 실패
-
-- 담당자를 결정할 수 없는 경우:
-  - 대체 처리(fallback) 또는 시스템 알림이 필요하다.
-
----
-
-### 2. 병렬 승인 (지원하지 않음)
-
-- 현재 설계는 순차 승인만 지원한다.
-- 단순성을 위해 병렬 승인은 의도적으로 제외하였다.
-
----
-
-### 3. 승인 중 조직 변경
-
-- 승인 진행 중 조직 구조가 변경된 경우:
-  - 승인은 현재 시점의 조직 상태를 기준으로 해석되어야 한다.
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 높은 수준의 유연성과 구성 가능성
-- 복잡한 조직 구조 지원
-- 명확한 감사 추적
-
-### 단점
-
-- 설정 복잡도가 증가한다.
-- 순차 흐름은 지연을 유발할 수 있다.
-- 정확한 조직 데이터가 필요하다.
-
----
-
-## 대안 검토
-
-### 1. 승인 시스템 없음
-
-- 구현은 더 단순하다.
-- 엔터프라이즈 워크플로에는 적합하지 않다.
-
----
-
-### 2. 하드코딩된 승인 로직
-
-- 초기 구현은 더 쉽다.
-- 확장성과 유지보수성이 떨어진다.
-
----
-
-### 3. 병렬 승인
-
-- 처리 속도는 더 빠를 수 있다.
-- 결과 해석과 흐름 제어가 더 복잡해진다.
-
----
-
-## 설계 원칙과의 정렬
-
-이 시스템은 다음 핵심 원칙을 따른다.
-
-- 카테고리 중심 워크플로
-- 구성 가능한 파이프라인
-- 전체 감사 추적
-- 비파괴적 운영
+- [Ticket Lifecycle](../ticket-lifecycle.md)
+- [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)
+- [Assignment Policy](./assignment-policy.md)
+- [Ticket History](../ticket-history.md)
+- [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
 ## 요약
 
-승인 시스템은 조직 요구사항에 맞게 조정될 수 있는
-**유연하고, 감사 가능하며, 확장 가능한 검증 메커니즘**을 제공한다.
-
-이를 통해 시스템은 일관성과 통제력을 유지하면서도
-현실적인 운영 요구를 수용할 수 있다.
+Approval은 sequential category-driven routing phase다. Current approver는 work
+routing에 사용되는 같은 current assignee field에 저장되며, `approvalStepId`가
+approval phase와 work phase를 구분한다. Final approval은 `Approved` status를 만들지
+않고 worker를 resolve한 뒤 ticket을 `Assigned`로 이동한다.

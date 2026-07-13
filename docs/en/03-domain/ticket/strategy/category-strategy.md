@@ -2,318 +2,302 @@
 
 ## Goal
 
-The category system is designed to act as the **central configuration layer**
-that drives ticket behavior across the entire system.
+Category is the main behavior configuration for Service Desk tickets.
 
-It determines:
+It influences:
 
-- Ticket assignment
-- Priority and risk level
-- SLA (Service Level Agreement)
-- Approval requirements
-- Responsible teams
+- request classification
+- default priority
+- default risk level
+- default SLA days / due date seed
+- approval-step resolution
+- assignment-rule resolution
+- requester update routing policy
 
-The goal is to achieve **consistent, scalable, and maintainable operations**
-through a category-driven architecture.
-
-In the current project, category/settings behavior is treated as domain
-foundation, while full enterprise policy resolution remains a REMOTE extension path.
+The current category model is tenant-scoped and aligned with Service Desk
+Settings.
 
 ---
 
 ## Core Concept
 
-Categories are structured as a **hierarchical tree**:
-
-```txt
-Tenant -> Main Category -> Sub Category
+```txt id="category-core"
+Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
-Each level plays a specific role in defining ticket behavior.
-
-The domain boundary is:
-
-```txt
-Company = organization/reference data
-Tenant = Service Desk configuration boundary
-Category = tenant-scoped behavior configuration
-```
-
-`Company` remains reference data. `Tenant` is the root boundary for Service Desk
-configuration, and categories are interpreted inside that tenant scope.
+`Company` remains organization reference data. `Tenant` is the Service Desk
+configuration boundary. Categories belong to a tenant.
 
 ---
 
-## Category Hierarchy
+## Current Domain Shape
 
-### 1. Tenant
+```ts id="category-domain-shape"
+type CategoryScope = "PORTAL" | "INTERNAL";
 
-- Represents the Service Desk configuration boundary
-- Owns the category tree for an operational scope
-- Keeps category behavior separate from broader company reference data
-
----
-
-### 2. Main Category
-
-- Defines **default operational rules**
-- Acts as the base configuration layer
-- Provides tenant-scoped defaults for priority, risk, SLA, approval, and assignment
-
-```ts
-type MainCategory = {
+type CategoryBase = {
   id: string;
+  name: LocalizedText;
+  description?: LocalizedText;
+  requestTemplate?: LocalizedText;
+  index: number;
+  active: boolean;
+};
+
+type MainCategory = CategoryBase & {
+  scope: CategoryScope;
   defaultPriority: Priority;
   defaultRiskLevel: RiskLevel;
   defaultSlaDays: number;
-  active: boolean;
+  subCategories: SubCategory[];
+};
+
+type SubCategory = CategoryBase & {
+  defaultPriority?: Priority;
+  defaultRiskLevel?: RiskLevel;
+  defaultSlaDays?: number;
 };
 ```
 
----
-
-### 3. Sub Category
-
-- Refines or overrides Main Category settings
-- Represents more specific business cases
-
-```ts
-type SubCategory = {
-  id: string;
-  overridePriority?: Priority;
-  overrideRiskLevel?: RiskLevel;
-  overrideSlaDays?: number;
-  active: boolean;
-};
-```
+Older terms such as `Client -> Main Category -> Sub Category` are not the
+current model. The current boundary is tenant-scoped.
 
 ---
 
-## Override Strategy
+## Hierarchy
 
-Sub Category values take precedence over Main Category defaults.
+### Tenant
 
-### Rule
+The tenant owns the category tree for a Service Desk configuration scope.
 
-```txt
-Sub Category > Main Category
-```
+### Main Category
 
-### Resolution Logic
+Main categories provide required defaults:
 
-```ts
-priority = sub.overridePriority ?? main.defaultPriority;
-riskLevel = sub.overrideRiskLevel ?? main.defaultRiskLevel;
-sla = sub.overrideSlaDays ?? main.defaultSlaDays;
-```
+- scope
+- priority
+- risk level
+- SLA days
+- active state
+- display order
 
-### Purpose
+### Sub Category
 
-- Enable fine-grained control without duplicating configurations
-- Maintain consistency while allowing flexibility
+Subcategories refine a main category. They may override default priority, risk
+level, or SLA days. If a subcategory does not provide a value, the main category
+value remains the fallback.
 
 ---
 
-## Category ID Policy
+## Scope
 
-All category IDs are stored as **string representations of numbers**.
+Main categories use this scope union:
 
-### Example
-
-```
-"12", "203"
+```ts id="category-scope"
+type CategoryScope = "PORTAL" | "INTERNAL";
 ```
 
-### Rationale
+| Scope | Meaning |
+| --- | --- |
+| `PORTAL` | category can be offered for portal requester workflows |
+| `INTERNAL` | category is intended for internal Service Desk operation |
 
-- Compatible with database constraints
-- Allows safe parsing when numeric operations are needed
-- Prevents unintended type inconsistencies across systems
+Subcategories inherit the main category scope for visibility and routing
+purposes.
+
+---
+
+## Default Resolution
+
+Category defaults resolve from the selected subcategory to its parent main
+category.
+
+```txt id="category-default-resolution"
+Sub Category default
+-> Main Category default
+```
+
+For example:
+
+```ts id="category-default-example"
+priority = sub.defaultPriority ?? main.defaultPriority;
+riskLevel = sub.defaultRiskLevel ?? main.defaultRiskLevel;
+slaDays = sub.defaultSlaDays ?? main.defaultSlaDays;
+```
+
+Ticket-level values may be present in the form or action payload, but the server
+validates the final workflow effect.
 
 ---
 
 ## Active Policy
 
-Categories are **never deleted**.
+Categories are deactivated instead of destructively removed from historical use.
 
-Instead:
-
-```
+```txt id="category-active-policy"
 active = false
 ```
 
-### Behavior
+Behavior:
 
-- Cannot be selected for new tickets
-- Existing tickets remain valid
-
-### Purpose
-
-- Preserve historical integrity
-- Maintain reporting consistency
-- Avoid broken references
+- inactive categories should not be selectable for new requester workflows
+- existing tickets that reference inactive categories remain readable
+- history is not rewritten when category settings change
 
 ---
 
-## Category-Driven Assignment
+## Category and Ticket Creation
 
-Ticket assignment is primarily determined by tenant-scoped category configuration.
+On ticket creation, category selection participates in:
 
-### Responsibilities Defined by Category
+- priority and risk defaulting
+- due date seeding from category SLA days where the UI applies it
+- approval-step lookup
+- work assignment lookup
 
-- Responsible team
-- Default assignee (optional)
-- Workflow ownership
+The ticket service remains authoritative for final workflow status:
 
-### Flow
+- `Approval` when approval is required
+- `Assigned` when work assignment is resolved directly
 
-```txt
-Ticket created → Category selected → Assignment resolved
+---
+
+## Category and Approval
+
+Approval steps are configured against the parent/main category. A selected
+subcategory classifies the ticket, but the approval pipeline is resolved from
+that subcategory's parent/main category.
+
+```txt id="category-approval-flow"
+Ticket submitted
+-> selected category
+-> resolve parent/main category
+-> approval steps on main category resolved in order
+-> current approval assignees stored on ticket
+-> ticket enters Approval when needed
 ```
 
+Approval configuration affects future resolution. It does not silently change
+tickets that are already in progress.
+
 ---
 
-## Category-Driven SLA
+## Category and Assignment
 
-SLA is calculated based on tenant-scoped category configuration.
+Assignment rules allow a subcategory override. If the selected subcategory has
+no assignment rule, resolution falls back to the parent/main category rule.
 
-### Rule
-
-```txt
-dueAt = createdDate + SLA
+```txt id="category-assignment-flow"
+Ticket ready for work
+-> selected category
+-> selected subcategory assignment rule, when present
+-> otherwise parent/main category assignment rule
+-> current work assignees stored on ticket
+-> ticket enters Assigned
 ```
 
-### Resolution
-
-- Sub Category SLA overrides Main Category SLA
-- If not defined, fallback to Main Category
+The current assignment rule model is group-based and uses job-field IDs and
+employee usernames. It does not use a separate `ruleType` field.
 
 ---
 
-## Category-Driven Approval
+## Category and Requester Update
 
-Approval workflows are defined per tenant-scoped category.
+Requester updates are allowed only before active work starts:
 
-```txt
-Category → approvalSteps[]
+```txt id="category-update-statuses"
+Approval
+Assigned
 ```
 
-### Behavior
+Category changes are routing-sensitive.
 
-- Some categories require approval
-- Others may skip approval entirely
+When a requester changes category, the ticket update service should:
 
-### Purpose
+- revalidate category selection
+- rederive priority and risk defaults where applicable
+- re-evaluate the minimum due date from the new category default SLA days
+- re-evaluate approval or assignment routing
+- record `ROUTING_RESET`
 
-- Align workflow complexity with business needs
-- Avoid unnecessary approvals
+The next due date should be the later of the current due date and the new
+category minimum due date. Category change must not pull the due date earlier.
 
----
-
-## UI Considerations
-
-### Category Selection
-
-- Hierarchical selector (Main → Sub)
-- Only active categories should be selectable
+If category does not change and only routing-neutral fields change, routing can
+be preserved and `ROUTING_PRESERVED` is recorded.
 
 ---
 
-### Default Value Application
+## UI Responsibilities
 
-When a category is selected:
+The UI should:
 
-- Priority, risk level, SLA are auto-populated
-- Users may override if allowed
+- display the tenant-scoped category tree
+- show only selectable active categories for new workflows
+- preserve inactive category display for existing tickets
+- apply useful defaults for priority, risk, and due date
+- warn users when a requester update can reset routing
 
----
+The UI should not:
 
-### Disabled Categories
-
-- Inactive categories should not appear in selection
-- Existing tickets must still display their category
-
----
-
-## Edge Cases
-
-### 1. Missing Sub Category
-
-- If only Main Category is selected:
-  → use Main Category defaults
+- invent final routing output
+- hide category changes as ordinary field edits
+- treat category settings as local-only client state
 
 ---
 
-### 2. Partial Overrides
+## Settings Change Policy
 
-- If Sub Category defines only some values:
-  → inherit the remaining values from Main Category
+Category settings define future behavior.
 
----
+| Change | Effect |
+| --- | --- |
+| main/subcategory name changed | future display uses new label; existing history remains recorded |
+| defaults changed | future tickets and future routing evaluations use updated defaults |
+| category deactivated | new selection should stop; existing tickets remain readable |
+| approval/assignment settings changed | future resolution uses updated settings |
 
-### 3. Category Deactivation
-
-- If a category already used by tickets becomes inactive:
-  → existing tickets remain valid
-
----
-
-## Trade-offs
-
-### Pros
-
-- Centralized configuration
-- High consistency across tickets
-- Flexible override mechanism
-- Scalable for large organizations
+Existing ticket state and history should change only through explicit ticket
+commands.
 
 ---
 
-### Cons
+## Deferred Scope
 
-- Increased complexity in category design
-- Misconfiguration can impact multiple workflows
-- Requires governance and management
+The current category strategy does not claim:
 
----
-
-## Alternatives Considered
-
-### 1. Flat Category Structure
-
-- Simpler implementation
-- ❌ Cannot support complex business rules
+- settings version publishing
+- scheduled category changes
+- full historical category snapshot rendering
+- per-tenant category governance workflow
+- advanced assignment load balancing
+- tenant-level SLA calendars
 
 ---
 
-### 2. Hardcoded Ticket Rules
+## Related Documents
 
-- Easier to implement initially
-- ❌ Not scalable or maintainable
-
----
-
-### 3. Fully Dynamic Per-Ticket Configuration
-
-- Maximum flexibility
-- ❌ Inconsistent behavior and high user burden
-
----
-
-## Design Principles Alignment
-
-This strategy aligns with core system principles:
-
-- Category-driven workflow
-- Configurable behavior
-- No destructive deletes
-- Consistent operational rules
+- [`../../service-desk-settings.md`](../../service-desk-settings.md)
+- [`approval-system.md`](approval-system.md)
+- [`assignment-policy.md`](assignment-policy.md)
+- [`sla-strategy.md`](sla-strategy.md)
+- [`../ticket-lifecycle.md`](../ticket-lifecycle.md)
+- [`../ticket-history.md`](../ticket-history.md)
+- [`../../../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md`](../../../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 
 ## Summary
 
-The category system serves as the **foundation of the entire ticketing workflow**,
-enabling scalable, consistent, and configurable behavior across all tickets.
-Tenant provides the Service Desk configuration boundary, while Main Category and
-Sub Category provide tenant-scoped defaults and overrides.
+The current category model is tenant-scoped:
+
+```txt
+Tenant -> Main Category -> Sub Category
+```
+
+Main categories provide required defaults and `PORTAL`/`INTERNAL` scope.
+Subcategories refine those defaults. Approval resolves from the parent/main
+category; assignment uses subcategory override with parent/main fallback.
+Category changes are routing-sensitive ticket updates, while settings changes
+affect future workflow resolution rather than silently rewriting existing
+tickets.

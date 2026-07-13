@@ -1,364 +1,305 @@
-# Ticket History
+# 티켓 History
 
 ## 목표
 
-Ticket history 모델은 티켓의 라이프사이클 전반에서 발생하는
-모든 의미 있는 변경과 이벤트를 추적하도록 설계되었습니다.
+Ticket History는 ticket workflow change에 대한 immutable audit event를 기록한다.
 
-이를 통해 다음을 보장합니다.
+이 문서는 다음 질문에 답한다.
 
-- 액션의 전체 추적 가능성
-- 사용자 책임 추적
-- 컴플라이언스를 위한 감사 가능성
-- 운영의 투명성
+- 무엇이 일어났는가
+- 왜 일어났는가
+- 누가 시작했는가
+- 무엇이 바뀌었는가
+- 어떤 ticket action 또는 system rule이 만들었는가
 
 ---
 
 ## 핵심 개념
 
-모든 중요한 티켓 변경은 history event를 생성합니다.
-
-```txt
-Action -> Event -> Stored History Record
+```txt id="ticket-history-core"
+Action is user-facing timeline intent.
+History is immutable event evidence.
 ```
 
-이 시스템은 상태 중심이 아니라, 추적 관점에서는 event-driven 방식입니다.
-History는 항상 activity 실행의 결과로 생성되며,
-이를 통해 모든 변경이 추적 가능하고 불변으로 유지됩니다.
+Action은 하나의 history record, 여러 history record, 또는 status change 없는 결과를
+만들 수 있다. System operation은 ticket action row 없이 history를 만들 수 있다.
 
 ---
 
-## Ticket Activity와의 관계
+## 현재 History Shape
 
-Ticket history와 ticket activity는 서로 관련되어 있지만 목적은 다릅니다.
-
-### Ticket Activity
-
-- 사용자에게 보이는 커뮤니케이션과 운영 액션을 표현합니다.
-- 의도, 메시지, 구조화된 액션 컨텍스트를 저장합니다.
-- 통합된 ticket timeline을 구성합니다.
-
-### Ticket History
-
-- 티켓 변경으로부터 생성된 불변 event trace를 기록합니다.
-- before/after 값과 감사 가능성을 강조합니다.
-- 실제로 무엇이 발생했는지에 대한 더 낮은 수준의 운영 기록을 보존합니다.
-
-### 실무적 구분
-
-```txt
-Activity = 의미 있는 상호작용 또는 운영 액션
-History = 변경에 의해 생성된 불변 이벤트 기록
-```
-
-이 구분 덕분에 UI 수준에서는 도메인을 풍부하게 표현하면서도,
-감사와 디버깅 관점에서는 정밀함을 유지할 수 있습니다.
-
----
-
-## 무엇을 추적하는가
-
-시스템은 모든 핵심 티켓 변경을 기록합니다.
-
-### 1. 상태 변경
-
-- created
-- approved
-- assigned
-- working
-- pending
-- resolved
-- closed
-
-### 2. 필드 변경
-
-- priority
-- risk level
-- category
-- assignee
-- description, 필요한 경우
-
-### 3. 할당 이벤트
-
-- assigned
-- reassigned
-- unassigned
-
-### 4. SLA 이벤트
-
-- SLA started
-- SLA paused
-- SLA resumed
-- SLA breached
-
-### 5. 승인 이벤트
-
-- approval requested
-- approved
-- rejected
-
-### 6. 시스템 이벤트
-
-- auto-assignment triggered
-- escalation triggered
-- fallback assignment applied
-
----
-
-## History Record 구조
-
-각 history entry는 일관된 구조를 따릅니다.
-
-```ts
-type History = {
-  id: string;
+```ts id="ticket-history-shape"
+type TicketHistory = {
   ticketId: string;
-
+  historyNo: number;
   type: HistoryType;
-  action: string;
-
-  actorId: string | null; // system action인 경우 null
-
-  fromValue?: unknown;
-  toValue?: unknown;
-
-  metadata?: Record<string, unknown>;
-
-  createdAt: Date;
+  source: TicketHistorySource;
+  event: TicketHistoryEvent;
+  actorUsername: string | null;
+  actionNo: number | null;
+  fromValue?: TicketHistoryJsonValue;
+  toValue?: TicketHistoryJsonValue;
+  metadata: TicketHistoryDisplayMetadata | null;
+  createdAt: ISODateString;
 };
 ```
 
+`event`는 authoritative event field다. `metadata.event`를 primary event source로
+사용하면 안 된다.
+
 ---
 
-## History Types
+## Type
 
-### Example Enum
+`type`은 영향을 받은 domain area를 식별한다.
 
-```ts
-type HistoryType =
-  | "TICKET"
-  | "STATUS"
-  | "CATEGORY"
-  | "ASSIGNMENT"
-  | "APPROVAL"
-  | "COMMENT"
-  | "NOTE"
-  | "PLANNING";
+```txt id="history-types"
+TICKET
+STATUS
+CATEGORY
+ASSIGNMENT
+APPROVAL
+COMMENT
+NOTE
+PLANNING
 ```
 
----
-
-## Actor Model
-
-각 history record는 누가 해당 액션을 수행했는지 식별합니다.
-
-### Actor Types
-
-- user
-- requester
-- system
+`SYSTEM` history type은 없다. System automation은 `source` field로 표현한다.
 
 ---
 
-## 이벤트 세분화 수준
+## Source
 
-### Fine-Grained Tracking
+`source`는 history가 왜 또는 어떤 rule에 의해 만들어졌는지를 식별한다.
 
-각 변경은 개별 이벤트로 기록됩니다.
-
-#### Example
-
-```txt
-Priority: Medium -> High
-Status: Assigned -> Working
+```txt id="history-sources"
+USER_ACTION
+SYSTEM_AUTO
+ROUTING_RULE
+APPROVAL_RULE
+ASSIGNMENT_RULE
 ```
 
-이 경우 두 개의 분리된 history record가 생성됩니다.
+예:
 
-### Trade-Off
-
-| Approach     | Pros               | Cons            |
-| ------------ | ------------------ | --------------- |
-| Fine-grained | 정확하고 감사 가능 | 레코드 수 증가  |
-| Aggregated   | 저장량 감소        | 추적이 더 어려움 |
-
----
-
-## Read Model vs Write Model
-
-### Write Model
-
-- 이벤트 저장에 최적화됩니다.
-- append-only 구조를 가집니다.
-
-### Read Model
-
-- timeline 표시를 위해 최적화됩니다.
-- UI 가독성을 위해 entry를 집계하거나 포맷할 수 있습니다.
+- `USER_ACTION`: approve, assign, reject, comment 같은 user command
+- `SYSTEM_AUTO`: resolved auto-close 같은 cron/system operation
+- `ROUTING_RULE`: requester update routing preservation/reset
+- `APPROVAL_RULE`: approval step resolution
+- `ASSIGNMENT_RULE`: work assignment resolution
 
 ---
 
-## 불변성
+## Event
 
-History record는 immutable합니다.
+현재 event union:
 
-### Rules
-
-- 업데이트할 수 없습니다.
-- 일반 운영에서 삭제할 수 없습니다.
-- 수정 사항은 새로운 이벤트로 기록합니다.
-
----
-
-## 정렬과 일관성
-
-History는 시간 순서대로 정렬되어야 합니다.
-
-### Considerations
-
-- server timestamp를 사용합니다.
-- client-side ordering에 의존하지 않습니다.
-- 동시 업데이트를 신중히 처리합니다.
-
----
-
-## UI 표현
-
-### Timeline View
-
-- 시간순 이벤트 목록
-- 최신순 또는 전환 가능한 정렬 방식
-
-### Example
-
-```txt
-[10:32] John에게 할당됨
-[10:30] 상태가 Working으로 변경됨
-[10:20] Ticket 생성됨
+```txt id="history-events"
+TICKET_SUBMITTED
+TICKET_UPDATED
+TICKET_REOPENED
+TICKET_REJECTED
+TICKET_MERGED
+TICKET_CANCELED
+CATEGORY_UPDATED
+STATUS_UPDATED
+RESOLUTION_CLOSE
+APPROVAL_REQUESTED
+APPROVAL_APPROVED
+APPROVAL_DECLINED
+ASSIGNMENT_RESOLVED
+ASSIGNMENT_UPDATED
+COMMENT_CREATED
+COMMENT_UPDATED
+COMMENT_DELETED
+NOTE_CREATED
+NOTE_UPDATED
+NOTE_DELETED
+PLANNING_UPDATED
+WORK_SESSION_STARTED
+WORK_SESSION_STOPPED
+WORK_SESSION_UPDATED
+WORK_SESSION_DELETED
+ROUTING_RESET
+ROUTING_PRESERVED
 ```
 
-### Key UX Elements
+실제 union name을 사용한다. `ASSIGNMENT_CHANGED` 같은 alias를 만들면 안 된다.
 
-- 명확한 액션 설명
-- 보이는 actor
-- timestamp
-- 중요한 변경에 대한 강조
+일부 event는 현재 route surface가 union 일부만 사용하더라도 model에 예약되어 있다.
+예를 들어 comment/note soft delete는 현재 route가 있지만 comment/note update route는
+없다.
 
 ---
 
-## Metadata 사용
+## Actor
 
-단순한 before/after 값만으로 부족할 때 metadata가 추가 컨텍스트를 제공합니다.
+`actorUsername`은 operation을 시작한 사용자다.
 
-### Example
+- user command는 current employee username을 사용한다.
+- system automation은 `null`을 사용한다.
+- history는 여전히 `actionNo`를 통해 ticket action과 연결될 수 있다.
 
-```ts
-metadata: {
-  reason: "Manual reassignment",
-  previousAssignee: "user_1",
+---
+
+## Action Link
+
+`actionNo`는 event가 action row에 의해 만들어진 경우 history record를 ticket action에
+연결한다.
+
+예:
+
+- comment action -> `COMMENT_CREATED`
+- approve action -> `APPROVAL_APPROVED`, 이후 `APPROVAL_REQUESTED` 또는
+  `ASSIGNMENT_RESOLVED`
+- resubmit action -> `TICKET_SUBMITTED`, 이후 routing history
+
+`RESOLUTION_CLOSE` 같은 system event는 `actionNo = null`이다.
+
+---
+
+## From and To Values
+
+`fromValue`와 `toValue`는 structured JSON value다.
+
+안정적으로 표시할 수 있는 before/after change를 설명해야 한다.
+
+예:
+
+```json id="history-from-to-example"
+{
+  "fromValue": { "status": "Resolved" },
+  "toValue": { "status": "Working" }
 }
 ```
 
----
-
-## System vs User Actions
-
-시스템이 생성한 이벤트는 사용자 액션과 구분 가능해야 합니다.
-
-### Examples
-
-- "Auto-assigned by system"
-- "Escalated due to SLA breach"
+Attachment 비교는 raw file data, blob URL, base64 payload가 아니라 count와 name
+같은 summary를 저장해야 한다.
 
 ---
 
-## 성능 고려사항
+## Metadata
 
-### Challenges
+`metadata`는 보조 display/audit context다.
 
-- 많은 양의 history record
-- 빈번한 쓰기 작업
+포함할 수 있는 값:
 
-### Solutions
+- changed fields
+- previous/next status
+- previous/next approval step
+- previous/next assignee usernames
+- close reason
+- resolved grace days
+- action-specific display context
 
-- `ticketId`와 `createdAt` 기준 index query
-- UI pagination
-- 필요 시 오래된 record 아카이빙
+Persistence metadata와 client-visible display metadata는 분리되어야 한다. Client DTO는
+allowlist된 display metadata만 노출해야 한다.
 
 ---
 
-## 다른 도메인과의 통합
+## Event Creation Examples
 
-### SLA
+### Ticket Submit
 
-- SLA 라이프사이클 이벤트를 기록합니다.
-
-### Assignment
-
-- 소유권 변경을 추적합니다.
+```txt id="history-ticket-submit"
+TICKET_SUBMITTED
+-> APPROVAL_REQUESTED or ASSIGNMENT_RESOLVED
+```
 
 ### Approval
 
-- 승인 결정을 기록합니다.
+```txt id="history-approval"
+APPROVAL_APPROVED
+-> APPROVAL_REQUESTED when another step exists
+-> ASSIGNMENT_RESOLVED when final approval completes
+```
 
-### Track Time
+### Requester Update
 
-- 시작, 종료, 전환, 수동 보정을 기록합니다.
+```txt id="history-requester-update"
+ROUTING_PRESERVED
+or
+ROUTING_RESET
+```
+
+### Reopen
+
+```txt id="history-reopen"
+type = STATUS
+source = USER_ACTION
+event = TICKET_REOPENED
+fromValue = { status: "Resolved" }
+toValue = { status: "Working" }
+```
+
+`TICKET_REOPENED`는 이 status transition의 authoritative event다.
+
+### Auto Close
+
+```txt id="history-auto-close"
+type = STATUS
+source = SYSTEM_AUTO
+event = RESOLUTION_CLOSE
+actionNo = null
+fromValue = { status: "Resolved" }
+toValue = { status: "Closed", closeReason: "Completed" }
+metadata.resolvedGraceDays = 7
+```
+
+Resolved auto-close는 generic ticket `updatedAt` rule이 아니라 resolved-history
+timestamp와 현재 7-day grace period를 기준으로 한다.
 
 ---
 
-## Edge Cases
+## History and Ticket Actions
 
-### 1. Rapid Consecutive Updates
+Ticket Action과 Ticket History는 의도적으로 분리되어 있다.
 
-- 여러 이벤트가 몇 밀리초 안에 연속 발생할 수 있습니다.
-- 그래도 정렬은 결정적으로 유지되어야 합니다.
+| Area | Purpose |
+| --- | --- |
+| Action | user-facing timeline command or communication |
+| History | immutable event/audit record |
 
-### 2. Bulk Updates
-
-- 하나의 액션이 여러 필드를 동시에 바꿀 수 있습니다.
-- 시스템은 이를 분리할지 집계할지 결정해야 합니다.
-
-### 3. System Failures
-
-- 부분적인 history write는 허용되지 않습니다.
-- 가능하다면 transactional handling이 바람직합니다.
-
-### 4. Sensitive Data Changes
-
-- 민감한 값은 그대로 저장하면 안 됩니다.
-- masking이나 omission이 필요할 수 있습니다.
+Operational action은 immutable하다. Communication action은 현재 `COMMENT`와 `NOTE`에
+대해 soft delete를 지원하며, `COMMENT_DELETED` 또는 `NOTE_DELETED`를 만든다.
 
 ---
 
-## 왜 Full Event Sourcing이 아닌가?
+## History and Work Sessions
 
-이 시스템은 hybrid 접근을 채택합니다.
+현재 work-session create는 ticket status를 변경할 때 `STATUS_UPDATED`를 만들 수
+있다.
 
-- 상태 기반 메인 모델
-- 이벤트 기반 history tracking
+History union은 work-session-specific event를 포함하지만, 현재 route surface는 별도
+timer start/stop/switch route를 노출하지 않는다. 현재 설계에서 timer stop이 ticket을
+resolve한다고 설명하면 안 된다.
 
-### Reason
+---
 
-- 구현이 더 단순합니다.
-- 감사 기능으로 충분합니다.
-- 성능 균형이 더 좋습니다.
+## Forbidden Patterns
+
+현재 history를 다음처럼 모델링하면 안 된다.
+
+- authoritative event로서의 `tkh_history_action`
+- authoritative event로서의 `metadata.event`
+- history type으로서의 `SYSTEM`
+- JSON으로 표현할 수 있는데도 unstructured before/after string 사용
+- history metadata에 raw file/blob/base64 data 저장
 
 ---
 
 ## 관련 문서
 
-- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket System Overview](./ticket-system-overview.md)
 - [Ticket Lifecycle](./ticket-lifecycle.md)
-- [Ticket Track Time](./ticket-track-time.md)
+- [Ticket Activity Model](./ticket-activity.md)
 - [Action Strategy](./strategy/action-strategy.md)
-- [Approval System](./strategy/approval-system.md)
-- [Assignment Policy](./strategy/assignment-policy.md)
-- [SLA Strategy](./strategy/sla-strategy.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
 
 ---
 
 ## 요약
 
-Ticket history 모델은 중요한 티켓 이벤트에 대한 포괄적이고, 불변이며,
-구조화된 기록을 제공하여 운영, 디버깅, 리뷰 관점에서 워크플로를 설명 가능하게 만듭니다.
+Ticket History는 `type`, `source`, `event`로 구성된 immutable event model이다.
+Ticket command, routing decision, system automation, work progress의 audit trail을
+보존하면서 ticket action이나 client metadata에 과부하를 주지 않는다.

@@ -2,473 +2,239 @@
 
 ## Goal
 
-The data fetching strategy is designed to **efficiently manage server state**,
-ensuring consistency, performance, and scalability across the application.
+React Query manages Service Desk server state.
 
-It aims to:
-
-- Provide a single source of truth for server data
-- Reduce unnecessary network requests
-- Improve user experience with caching and background updates
-- Enable predictable data synchronization
+The strategy is to keep fetched data out of global UI stores, use deterministic
+query keys, and invalidate the smallest useful query family after mutations.
 
 ---
 
 ## Core Principle
 
-```id="rq-core"
-Server state should be managed declaratively and cached intelligently
+```txt id="react-query-core"
+Server state belongs to React Query.
+UI state belongs to component state or small UI stores.
 ```
 
----
-
-## Why React Query?
-
-The system uses **@tanstack/react-query v5** for server state management.
-
----
-
-### Key Benefits
-
-- Automatic caching
-- Background refetching
-- Request deduplication
-- Built-in loading and error states
-- Query invalidation support
+Service Desk settings, tickets, drafts, actions, histories, and work sessions
+are server state.
 
 ---
 
 ## Query Classification
 
-All queries are categorized into two types:
+### Reference or Settings-Like Queries
 
-1. **Static Queries**
-2. **Dynamic Queries**
+These change less frequently but are still server state:
 
----
-
-## 1. Static Queries
-
-### Definition
-
-Data that rarely changes.
-
----
-
-### Examples
-
-- Category list
-- Department list
-- Job field list
-- Reference settings
-
----
-
-### Strategy
-
-```ts id="static-query"
-staleTime: Infinity;
-gcTime: Infinity;
-refetchOnWindowFocus: false;
-```
-
----
-
-### Rationale
-
-- Avoid unnecessary refetch
-- Maximize cache reuse
-- Improve performance
-
----
-
-## 2. Dynamic Queries
-
-### Definition
-
-Data that changes frequently and must stay up-to-date.
-
----
-
-### Examples
-
-- Ticket list
-- Ticket detail
-- Draft
-- Actions
-- Histories
-- Track time
-- Local demo mutable state
-
----
-
-### Strategy
-
-```ts id="dynamic-query"
-staleTime: 0;
-refetchOnWindowFocus: true;
-```
-
----
-
-### Rationale
-
-- Always fetch fresh data
-- Ensure UI reflects latest state
-- Support real-time-like behavior
-
-In LOCAL demo mode, dynamic queries may reflect server-side in-memory mutations.
-Therefore cache invalidation/reset must be coordinated with server reset behavior
-(`/api/demo/service-desk/reset`) instead of assuming client cache reset alone is sufficient.
-
----
-
-## Service Desk Settings State
-
-Service Desk settings data is still server state.
-
-This includes:
-
-- tenant settings
-- category tree/configuration
+- tenants
+- categories
 - approval steps
 - assignment rules
+- organization reference lists used by settings
 
-These values should be managed with React Query and should not be duplicated
-into Zustand. Zustand can still hold UI/runtime state, but it should not become
-the source of truth for settings data.
+They may use longer stale times where the feature allows it, but they should
+still be invalidated after settings mutations.
 
-LOCAL demo mutations must update server-side local state and then invalidate the
-affected settings queries precisely. Updating only the client cache is not
-enough because later API calls must observe the same local demo state.
+### Workflow Queries
+
+These can change after user actions:
+
+- ticket search/list
+- ticket detail
+- active draft
+- ticket actions
+- ticket histories
+- work sessions
+
+They should be invalidated after workflow mutations that can affect them.
 
 ---
 
-## Query Key Strategy
+## Current Service Desk Query Families
 
-### Rule
+Current query key families include:
 
-```id="query-key-rule"
-Query keys must be deterministic and structured
+```txt id="service-desk-query-families"
+ticket list/search
+ticket detail
+ticket draft by dataScope/userId
+ticket actions list/detail
+ticket histories
+ticket work sessions
+settings tenants
+settings categories
+settings approval steps
+settings assignment rules
 ```
 
+The exact key builder lives in feature/domain code. Documentation should
+describe the family and ownership, not invent unrelated key names.
+
 ---
 
-### Examples
+## Mutation Invalidation
 
-```ts id="query-keys"
-["tickets", params][("ticket", id)]["categories"];
+Invalidate the affected server state after a mutation.
+
+Examples:
+
+| Mutation | Invalidate |
+| --- | --- |
+| create ticket / submit draft | ticket list/search, ticket detail when known, active draft |
+| save/discard draft | active draft |
+| requester update | ticket detail, ticket list/search, histories |
+| ticket action command | ticket detail, actions, histories, list/search where status can change |
+| work-session create | work sessions, ticket detail, histories, list/search when status changes |
+| settings mutation | affected settings family and workflows that depend on refetched settings |
+
+Avoid global invalidation unless the operation truly changes broad application
+state.
+
+---
+
+## Draft Query Policy
+
+REMOTE draft is server state. LOCAL draft uses a simplified demo-safe
+implementation behind the feature API boundary; React Query cache or browser
+recovery is not the durable ticket persistence boundary.
+
+The create dialog should load the active draft through the draft query family.
+After final submit or discard, invalidate or remove the active draft query.
+
+Attachment input is not a durable draft state. Raw `File` objects should not be
+stored in React Query.
+
+---
+
+## Ticket Action Query Policy
+
+Actions are workflow records.
+
+Use action queries for:
+
+- action list on a ticket
+- action detail where a route exposes it
+- soft-delete state for comment/note entries
+
+Operational action execution should invalidate both action and history queries
+because successful commands produce history events.
+
+---
+
+## History Query Policy
+
+History is append-oriented server state.
+
+After a successful command, invalidate ticket history for the ticket. Do not
+optimistically invent history events in the UI unless the event contract is
+fully controlled.
+
+The server is the authority for:
+
+- `type`
+- `source`
+- `event`
+- previous/current values
+- actor/timestamp
+
+---
+
+## Work Session Query Policy
+
+The current work-session route supports list and create:
+
+```txt id="work-session-route"
+GET  /api/service-desk/tickets/[ticketId]/work-session
+POST /api/service-desk/tickets/[ticketId]/work-session
 ```
 
+After work-session creation, invalidate:
+
+- work-session list
+- ticket detail
+- ticket history
+- ticket list/search if the submitted next status changes list results
+
+Feature-client helpers for detail/update/delete/timer flows should not be
+documented as completed API behavior until matching routes exist.
+
 ---
 
-### Benefits
+## Settings Query Policy
 
-- Precise cache control
-- Targeted invalidation
-- Avoid cache collision
+Settings data must not be duplicated into Zustand as a second source of truth.
+
+React Query owns:
+
+- tenant lists and active tenant projections
+- category trees
+- approval-step settings
+- assignment-rule settings
+
+Local component state may own:
+
+- selected tab
+- focused tenant
+- temporary form input
+- expanded tree nodes
+- language selector state
 
 ---
 
-## Query Co-location
+## LOCAL and REMOTE Runtime
 
-### Rule
+The same feature UI should work against LOCAL or REMOTE data where both are
+implemented.
 
-```id="co-location"
-Queries should be defined within feature modules
+```txt id="query-runtime"
+feature hook
+-> feature API client
+-> route handler
+-> LOCAL handler or REMOTE service
 ```
 
----
-
-### Structure
-
-```bash id="query-location"
-feature/serviceDesk/api/
-feature/serviceDesk/hooks/
-```
-
----
-
-### Benefit
-
-- Encapsulated domain logic
-- Improved maintainability
-
----
-
-## Mutation Strategy
-
-Mutations are handled using `useMutation`.
-
----
-
-### Principles
-
-- Trigger side effects (create/update/delete)
-- Invalidate or update related queries
-
----
-
-### Example
-
-```ts id="mutation"
-const mutation = useMutation({
-  mutationFn: createTicket,
-  onSuccess: () => {
-    queryClient.invalidateQueries(["tickets"]);
-  },
-});
-```
-
----
-
-## Invalidation Strategy
-
-### Rule
-
-```id="invalidate-rule"
-Invalidate only what is necessary
-```
-
----
-
-### Examples
-
-- Create ticket → invalidate `["tickets"]`
-- Update ticket → invalidate `["ticket", id]` and list
-
----
-
-### Avoid
-
-- ❌ Invalidating all queries globally
-
----
-
-## Optimistic Updates (Optional)
-
-Used for improving perceived performance.
-
----
-
-### Example
-
-```ts id="optimistic"
-onMutate: async (newData) => {
-  await queryClient.cancelQueries(["tickets"]);
-  queryClient.setQueryData(["tickets"], (old) => [...old, newData]);
-};
-```
-
----
-
-### Trade-off
-
-| Pros                | Cons                  |
-| ------------------- | --------------------- |
-| Instant UI feedback | Complexity            |
-| Better UX           | Risk of inconsistency |
-
----
-
-## Pagination Strategy
-
-### Approach
-
-- Server-side pagination
-- Query key includes pagination params
-
----
-
-### Example
-
-```ts id="pagination"
-["tickets", { page, pageSize }];
-```
-
----
-
-### Option
-
-```ts id="keep-prev"
-keepPreviousData: true;
-```
-
----
-
-### Benefit
-
-- Smooth pagination UX
-- Prevents UI flicker
-
----
-
-## Refetch Strategy
-
-### When to Refetch
-
-- Window focus (dynamic queries)
-- After mutation
-- Manual refresh
-
----
-
-### When NOT to Refetch
-
-- Static data
-- Non-critical background data
-
----
-
-## Error Handling
-
-### Strategy
-
-- Query-level error handling
-- Global error boundary (optional)
-
----
-
-### UX
-
-- Show fallback UI
-- Provide retry option
-
----
-
-## Loading Strategy
-
-### Types
-
-1. Initial loading
-2. Background refetching
-
----
-
-### UX Pattern
-
-- Skeleton for initial load
-- Subtle indicator for background updates
-
----
-
-## Cache Lifecycle
-
-### Key Concepts
-
-- `staleTime`: freshness duration
-- `gcTime`: cache retention duration
-
----
-
-### Strategy
-
-| Query Type | staleTime | gcTime   |
-| ---------- | --------- | -------- |
-| Static     | Infinity  | Infinity |
-| Dynamic    | 0         | Default  |
-
----
-
-## Data Synchronization
-
-### Principle
-
-```id="sync-principle"
-Do not manually sync server state into local state
-```
-
----
-
-### Reason
-
-- Avoid duplication
-- Prevent inconsistency
+React Query keys should include runtime-relevant scope where the implementation
+requires it. Draft keys, for example, are scoped by data scope and user.
 
 ---
 
 ## Anti-Patterns Avoided
 
-### 1. Storing API data in Zustand
+### API Data in Zustand
 
-- ❌ Breaks single source of truth
+Do not copy ticket detail, settings, drafts, or histories into Zustand as a
+parallel source of truth.
 
----
+### Raw Files in Cache
 
-### 2. Over-fetching
+Do not store browser `File` objects in React Query.
 
-- ❌ Fetching same data multiple times
+### Fake History
 
----
+Do not create UI-only history rows for commands that have not succeeded on the
+server.
 
-### 3. Global Invalidations
+### Overbroad Invalidations
 
-- ❌ Performance degradation
-
----
-
-### 4. Imperative Data Fetching
-
-- ❌ Hard to maintain
+Do not invalidate every query after every Service Desk mutation.
 
 ---
 
-## Trade-offs
+## Related Documents
 
-### Pros
-
-- Efficient data fetching
-- Strong caching strategy
-- Improved UX
-- Scalable architecture
-
----
-
-### Cons
-
-- Requires understanding of cache behavior
-- More configuration needed
-- Debugging can be complex
-
----
-
-## Alternatives Considered
-
-### 1. Manual Fetching (useEffect)
-
-- ✔ Simple
-- ❌ No caching
-- ❌ Hard to scale
-
----
-
-### 2. SWR
-
-- ✔ Lightweight
-- ❌ Less control over complex cases
-
----
-
-### 3. Redux for Server State
-
-- ✔ Centralized
-- ❌ Not optimized for async caching
-
----
-
-## Design Principles Alignment
-
-This strategy aligns with:
-
-- Server state separation
-- Performance optimization
-- Predictable data flow
-- Scalable architecture
+- [`../03-domain/service-desk-settings.md`](../03-domain/service-desk-settings.md)
+- [`../03-domain/ticket/ticket-model.md`](../03-domain/ticket/ticket-model.md)
+- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
+- [`../03-domain/ticket/ticket-track-time.md`](../03-domain/ticket/ticket-track-time.md)
+- [`../06-form-design/ticket-form.md`](../06-form-design/ticket-form.md)
+- [`../08-dev-strategy/service-desk-implementation-strategy.md`](../08-dev-strategy/service-desk-implementation-strategy.md)
 
 ---
 
 ## Summary
 
-The React Query strategy provides a **robust and scalable approach to server state management**,
-leveraging intelligent caching, precise invalidation, and query classification
-to ensure both performance and consistency.
+React Query is the Service Desk server-state owner. The current strategy uses
+structured query families for tickets, drafts, actions, histories, work
+sessions, and tenant-scoped settings; targeted invalidation after workflow
+mutations; and clear separation from local UI state.

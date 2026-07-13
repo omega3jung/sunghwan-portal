@@ -2,405 +2,253 @@
 
 ## Goal
 
-The form pattern is designed to provide a **scalable, type-safe, and user-friendly form system**
-for handling complex data input in a consistent manner.
+Forms provide type-safe, isolated input handling for Service Desk workflows.
 
-It aims to:
+The current pattern is:
 
-- Ensure type safety with TypeScript
-- Improve user experience with validation and step-based input
-- Reduce boilerplate through reusable patterns
-- Maintain clear separation between form logic and UI
+- React Hook Form owns unsaved form input.
+- Zod owns schema validation.
+- React Query owns server state.
+- feature mutations own submission.
+- server services own workflow effects.
 
 ---
 
 ## Core Principle
 
-```id="form-principle"
-Form state should be isolated, controlled, and type-safe
+```txt id="form-core"
+Form state is local input state.
+Workflow state is server state.
 ```
+
+The form should not become a workflow engine.
 
 ---
 
 ## Form Library
 
-Forms are managed using **react-hook-form**.
+Forms use `react-hook-form`.
+
+Benefits:
+
+- strong TypeScript integration
+- efficient field updates
+- schema resolver support
+- clear reset and submit behavior
+- compatibility with multi-step forms
 
 ---
 
-## Why react-hook-form?
+## Validation
 
-- Minimal re-renders (performance)
-- Strong TypeScript support
-- Built-in validation integration
-- Flexible control over form state
-- Works well with uncontrolled inputs
+Validation uses schema-based rules such as Zod.
+
+Ticket form examples:
+
+- subject length limit
+- required category
+- required body/content where the workflow needs it
+- due date later than today
+- attachment field typed as browser `File[]` before preparation
+
+Client validation improves feedback. Server validation remains authoritative.
 
 ---
 
-## Form Structure
+## Multi-Step Form Policy
 
-### Basic Structure
+Use multi-step forms for complex workflows where progressive disclosure improves
+completion.
 
-```tsx id="form-structure"
-const form = useForm<FormValues>();
+Current ticket form steps:
 
-<Form {...form}>
-  <form onSubmit={form.handleSubmit(onSubmit)}>
-    <FormField name="title" />
-  </form>
-</Form>;
+```txt id="current-ticket-form-steps"
+issueDetails
+attachments
+review
 ```
 
+Implementation policy:
+
+- one React Hook Form instance spans all steps
+- step state is local component/hook state
+- step navigation validates the current step
+- final submit validates the full payload
+
 ---
 
-## Type Safety
+## Create vs Update
 
-### Rule
+Create and update can share field components, but they should not hide their
+workflow differences.
 
-```id="type-rule"
-All forms must define a TypeScript schema
+### Create
+
+Create flow includes:
+
+- active draft load
+- save-on-close draft behavior
+- attachment preparation
+- submit new or existing draft ticket
+- post-submit draft cleanup
+
+### Update
+
+Requester update flow includes:
+
+- latest ticket detail load on open
+- existing attachment preservation
+- new attachment preparation
+- merge of existing and prepared metadata
+- requester update mutation
+- routing reset or preservation based on changed fields
+
+---
+
+## Attachment Fields
+
+Raw browser `File` objects belong only to the open form.
+
+```txt id="form-attachment-boundary"
+React Hook Form File[]
+-> Attachment Prepare API
+-> prepared metadata
+-> ticket command payload
 ```
 
+Do not store raw files in:
+
+- React Query
+- Zustand
+- ticket DTOs
+- draft DTOs
+- database rows
+
 ---
 
-### Example
+## Draft Forms
 
-```ts id="form-type"
-type TicketForm = {
-  title: string;
-  description: string;
-  priority: "low" | "medium" | "high";
-};
+Draft is not the same as unsaved component state.
+
+In REMOTE mode, create-ticket draft is server state loaded through the draft API
+and React Query. The form hydrates from the active draft and can save form values
+back to the draft workflow.
+
+Drafts do not guarantee attachment recovery.
+
+---
+
+## Field Component Policy
+
+Reusable field components should handle UI consistency, not business workflow.
+
+Good field responsibilities:
+
+- label
+- validation message
+- input binding
+- disabled/loading state
+- localized display
+
+Avoid putting approval routing, assignment rules, or history construction inside
+field components.
+
+---
+
+## Submission Policy
+
+Forms submit through feature mutations.
+
+```txt id="form-submit-policy"
+form validation
+-> optional preparation step
+-> mutation
+-> server workflow
+-> targeted query invalidation
 ```
 
----
-
-## Validation Strategy
-
-Validation is handled using schema-based validation (e.g., Zod).
+For ticket create/update, attachment preparation is part of the submission
+pipeline before the ticket mutation.
 
 ---
 
-### Example
+## Reset Policy
 
-```ts id="validation-example"
-const schema = z.object({
-  title: z.string().min(1),
-});
-```
+Reset form state:
 
----
+- after successful submit
+- when the dialog closes and no draft behavior should preserve input
+- when fresh ticket detail is loaded into an update dialog
 
-### Benefits
-
-- Centralized validation logic
-- Consistent error messages
-- Type inference support
-
----
-
-## Multi-Step Form Pattern
-
-Used for complex input flows (e.g., TicketFormDialog).
-
----
-
-### Structure
-
-```tsx id="multi-step"
-Step 1 → Step 2 → Step 3 → Submit
-```
-
----
-
-### Characteristics
-
-- Step-by-step input
-- Partial validation per step
-- Final validation on submit
-
----
-
-### State Handling
-
-- Single form instance across all steps
-- Step index managed separately
-
----
-
-## Field Structure
-
-### Rule
-
-```id="field-rule"
-Each field should be self-contained and reusable
-```
-
----
-
-### Pattern
-
-```tsx id="field-pattern"
-<FormField
-  control={form.control}
-  name="title"
-  render={({ field }) => <Input {...field} />}
-/>
-```
-
----
-
-## useWatch Strategy
-
-Used for observing field values dynamically.
-
----
-
-### Example
-
-```ts id="usewatch-example"
-const files = useWatch({
-  control: form.control,
-  name: "attachments",
-});
-```
-
----
-
-### Note
-
-- Avoid incorrect defaultValue typing
-- Prefer explicit casting when necessary
-
----
-
-## Default Value Strategy
-
-### Rule
-
-```id="default-value"
-Avoid incorrect defaultValue types
-```
-
----
-
-### Problem
-
-- Type mismatch in generic forms
-
----
-
-### Solution
-
-- Remove defaultValue when not required
-- Use type assertion carefully
-
----
-
-## Controlled vs Uncontrolled Inputs
-
-### Strategy
-
-- Prefer uncontrolled inputs (react-hook-form default)
-- Use controlled inputs only when necessary
-
----
-
-## Submission Flow
-
-### Pattern
-
-```tsx id="submit-flow"
-form.handleSubmit(onSubmit);
-```
-
----
-
-### Behavior
-
-- Validate form
-- Execute mutation
-- Handle success/failure
-
----
-
-## Integration with API
-
-### Rule
-
-```id="api-rule"
-Form submission should trigger mutation, not direct API calls
-```
-
----
-
-### Example
-
-```ts id="mutation-flow"
-const mutation = useMutation(createTicket);
-
-const onSubmit = (data) => {
-  mutation.mutate(data);
-};
-```
+Do not reset server state by manually editing React Query data unless the
+mutation contract explicitly supports optimistic updates.
 
 ---
 
 ## Error Handling
 
-### Strategy
+Use:
 
-- Field-level errors (validation)
-- Form-level errors (API)
+- inline field messages for validation
+- form-level messages or toast for API errors
+- disabled controls while mutation is pending
+- server error messages where available
 
----
-
-### Example
-
-- Validation → inline message
-- API error → toast or alert
+Routing reset, attachment rejection, and permission failures should be visible
+as workflow feedback rather than swallowed by generic validation.
 
 ---
 
-## Reset Strategy
+## State Ownership
 
-### Use Cases
-
-- After successful submission
-- When dialog closes
-
----
-
-### Example
-
-```ts id="reset-example"
-form.reset();
-```
-
----
-
-## UX Considerations
-
-### 1. Inline Validation
-
-- Show errors near fields
-
----
-
-### 2. Disable Submit
-
-- Prevent submission when invalid
-
----
-
-### 3. Loading State
-
-- Disable inputs during submission
-
----
-
-### 4. Step Navigation
-
-- Prevent moving forward if invalid
-
----
-
-## Reusability Strategy
-
-### Shared Fields
-
-- Extract common fields (Input, Select, etc.)
-
----
-
-### Feature-Specific Fields
-
-- Keep domain-specific logic inside feature
+| State | Owner |
+| --- | --- |
+| field input while editing | React Hook Form |
+| current form step | local component/hook state |
+| active draft | React Query/API |
+| ticket detail | React Query/API |
+| settings/category options | React Query/API |
+| raw files | React Hook Form while open |
+| prepared attachment metadata | API payload and persisted ticket data |
+| global UI chrome | UI store where needed |
 
 ---
 
 ## Anti-Patterns Avoided
 
-### 1. Storing Form State in Global Store
+### Server Data in Form State Forever
 
-- ❌ Breaks isolation
+Forms may hydrate from server data, but server state remains owned by React
+Query.
 
----
+### Workflow Rules in Field Components
 
-### 2. Mixing UI and Validation Logic
+Fields should not decide approval, assignment, status, or history.
 
-- ❌ Hard to maintain
+### Generic Stepper Too Early
 
----
+Keep step logic close to the workflow until multiple workflows genuinely share
+the same structure.
 
-### 3. Duplicated Validation Rules
+### Silent Routing Changes
 
-- ❌ Inconsistent behavior
-
----
-
-### 4. Overusing Controlled Inputs
-
-- ❌ Performance degradation
+Requester updates that reset routing should be executed through the server
+workflow and recorded in history.
 
 ---
 
-## Trade-offs
+## Related Documents
 
-### Pros
-
-- Strong type safety
-- High performance
-- Scalable form structure
-- Clear separation of concerns
-
----
-
-### Cons
-
-- Learning curve for react-hook-form
-- Slight complexity in generic typing
-- Requires discipline in structure
-
----
-
-## Alternatives Considered
-
-### 1. useState-based Forms
-
-- ✔ Simple
-- ❌ Hard to scale
-
----
-
-### 2. Formik
-
-- ✔ Popular
-- ❌ More re-renders
-
----
-
-### 3. Fully Controlled Forms
-
-- ✔ Explicit state
-- ❌ Performance cost
-
----
-
-## Design Principles Alignment
-
-This pattern aligns with:
-
-- Type safety
-- Performance optimization
-- Separation of concerns
-- Reusable UI components
+- [`dialog-pattern.md`](dialog-pattern.md)
+- [`../06-form-design/ticket-form.md`](../06-form-design/ticket-form.md)
+- [`../06-form-design/ticket-attachment.md`](../06-form-design/ticket-attachment.md)
+- [`../05-data-fetching/react-query-strategy.md`](../05-data-fetching/react-query-strategy.md)
 
 ---
 
 ## Summary
 
-The form pattern provides a **type-safe, performant, and scalable approach**
-to handling complex user input, leveraging react-hook-form and schema validation
-to ensure consistency and maintainability across the system.
+The current form pattern keeps user input local, server data in React Query, and
+workflow effects in server commands. This lets ticket create, requester update,
+draft, and attachment preparation share form discipline without collapsing into
+one oversized abstraction.

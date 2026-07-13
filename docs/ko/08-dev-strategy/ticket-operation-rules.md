@@ -1,457 +1,506 @@
-# 티켓 규칙
+# 티켓 Operation Rules
 
 ## 목표
 
-티켓 규칙 문서는 티켓 수정, action 실행, 상태에 영향을 주는 작업에 대한
-**현재 구현 지향 규칙**을 정의합니다.
+이 문서는 Service Desk ticket operation을 위한 implementation-facing rule matrix다.
 
-이 문서는 다음을 보장하기 위해 존재합니다.
+누가 operation을 실행할 수 있는지, 언제 허용되는지, 어떤 input을 받는지, 어떤
+ticket state를 변경하는지, 어떤 history event가 만들어지는지를 기록한다.
 
-- business rule이 직접 구현 가능한 형태로 표현된다
-- permission, status guard, side effect가 명시적으로 유지된다
-- domain 문서와 UI 동작이 현재 실행 규칙과 일치한다
-- 향후 변경을 명확한 source of truth 기준으로 검토할 수 있다
+개념적 status 의미는 [Ticket Lifecycle](../03-domain/ticket/ticket-lifecycle.md)에
+문서화되어 있다.
 
 ---
 
-## 핵심 원칙
+## 현재 Operation Surface
 
-```id="ticket-rules-principle"
-Every ticket operation must have an explicit actor, valid state, predictable effect, and clear restriction.
+### Ticket Routes
+
+```txt id="ticket-routes"
+GET    /api/service-desk/tickets
+POST   /api/service-desk/tickets
+GET    /api/service-desk/tickets/search
+GET    /api/service-desk/tickets/:ticketId
+PUT    /api/service-desk/tickets/:ticketId
+DELETE /api/service-desk/tickets/:ticketId
+```
+
+### Draft Routes
+
+```txt id="draft-routes"
+GET    /api/service-desk/tickets/draft
+POST   /api/service-desk/tickets/draft
+PUT    /api/service-desk/tickets/draft/:ticketId
+DELETE /api/service-desk/tickets/draft/:ticketId
+```
+
+### Command Routes
+
+```txt id="command-routes"
+POST /api/service-desk/tickets/:ticketId/command/start-work
+POST /api/service-desk/tickets/:ticketId/command/:action
+```
+
+`:action`은 다음 중 하나다.
+
+```txt id="command-actions"
+approve
+decline
+comment
+note
+assign
+assignSelf
+adjust
+reject
+merge
+reopen
+resubmit
+cancel
+```
+
+### Subresource Routes
+
+```txt id="subresource-routes"
+GET   /api/service-desk/tickets/:ticketId/actions
+GET   /api/service-desk/tickets/:ticketId/actions/:actionNo
+PATCH /api/service-desk/tickets/:ticketId/actions/:actionNo
+
+GET   /api/service-desk/tickets/:ticketId/histories
+
+GET   /api/service-desk/tickets/:ticketId/work-session
+POST  /api/service-desk/tickets/:ticketId/work-session
 ```
 
 ---
 
-## 문서 세트 안에서의 목적
+## 공통 Command Pipeline
 
-이 문서는 lifecycle이나 activity model 같은 상위 도메인 문서와 의도적으로
-다르게 구성되어 있습니다.
-
-### Domain Documents
-
-- 개념적 구조를 설명한다
-- 상태와 action의 의미를 설명한다
-- 왜 이 모델이 존재하는지 명확히 한다
-
-### This Rules Document
-
-- 현재 무엇이 허용되는지 정의한다
-- 구현 관점의 제약을 담는다
-- 실행 동작의 현재 source of truth 역할을 한다
-
-요약하면 다음과 같습니다.
-
-```txt
-Domain doc = conceptual model
-Rules doc = current executable behavior
+```txt id="ticket-command-pipeline"
+command request
+-> authenticate
+-> authorize
+-> validate current status
+-> validate payload
+-> create action row when applicable
+-> mutate ticket when applicable
+-> create history rows
+-> return DTO
 ```
 
----
-
-## Rule 형식
-
-각 rule은 일관된 구현 지향 구조를 사용해 설명됩니다.
-
-### Rule 필드
-
-- `who`: 누가 작업을 수행할 수 있는가
-- `when`: 어떤 상태에서 작업이 허용되는가
-- `effect`: 결과로 어떤 변경이 일어나는가
-- `purpose`: 왜 이 작업이 존재하는가
-- `restriction`: 추가 제약이나 guardrail은 무엇인가
-
-이 형식은 다음과 자연스럽게 매핑되도록 설계되었습니다.
-
-- permission check
-- status validation
-- command handler
-- audit 및 history 생성
+Operational action 생성, ticket mutation, history 생성은 하나의 use case로
+취급해야 한다. REMOTE는 server-side service와 transaction을 사용한다. LOCAL은 같은
+DTO 방향을 유지하는 demo-safe local handler를 사용한다.
 
 ---
 
-## Rule 영역
-
-현재 rule set은 두 영역으로 구성됩니다.
-
-### 1. Ticket Update Rules
-
-- 티켓 자체를 변경하는 규칙
-- requester 주도 수정 동작
-
-### 2. Ticket Action Rules
-
-- 커뮤니케이션 및 운영 action에 대한 규칙
-- reject, merge, `reopen`, `resubmit`, `cancel` 같은 lifecycle 영향 동작
-
----
-
-## Ticket Update Rules
-
-### Update Ticket
+## Requester Update
 
 - who: requester
-- when: status = `Draft`
-- effect: ticket field 수정
-- purpose: 제출 전 요청을 다듬거나 완성한다
-- restriction:
-  - ticket update는 `resubmit` command와 다르다
-  - 변경은 history에 기록되어야 한다
+- allowed status: `Approval`, `Assigned`
+- input: category, subject, content, due date, email, prepared files/images
+- validation:
+  - requester가 ticket을 소유한다.
+  - category가 active이고 available하다.
+  - attachment metadata는 이미 prepare되어 있다.
+  - normalized previous/next value를 비교한다.
+- ticket effect:
+  - routing-neutral change는 status, approval step, assignee를 유지한다.
+  - routing-sensitive change는 첫 approval step부터 routing을 다시 실행한다.
+  - category change는 category default에서 priority와 risk를 다시 파생할 수 있다.
+  - category change는 새 category SLA default에서 minimum due date를 다시 평가하고
+    current due date와 새 minimum 중 더 늦은 값을 유지한다.
+- action persistence: ticket action row 없음
+- history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
+- notification boundary: 현재 문서에서는 별도 notification source가 아니다.
+- query invalidation: ticket detail, ticket list/search, history
+
+Routing-neutral fields:
+
+- due date
+- email recipients
+
+Routing-sensitive fields:
+
+- category
+- subject
+- content
+- files
+- images
 
 ---
 
-### Update Declined Ticket
+## Submit Ticket
 
 - who: requester
-- when: status = `Declined`
-- effect:
-  - ticket field 수정
-  - ticket 생성과 동일한 routing으로 다시 제출한다
-  - approval이 필요하면 status -> `Approval`
-  - approval이 필요 없으면 status -> `Assigned`
-- purpose: 거절된 요청을 수정하고 다시 제출한다
-- restriction:
-  - approval progress는 reset되어야 한다
-  - 변경은 history에 기록되어야 한다
+- allowed status:
+  - draft 없는 신규 create
+  - 기존 `Draft`
+- input: prepared body/files/images가 포함된 ticket form value
+- validation:
+  - category가 valid하다.
+  - attachment metadata가 prepare되어 있다.
+  - approval 또는 assignment가 최소 한 명의 assignee를 resolve할 수 있다.
+- ticket effect:
+  - next approval step이 있으면 `Approval`
+  - 없으면 `Assigned`
+  - 기존 draft row가 있으면 재사용한다.
+- action persistence: ticket action row 없음
+- history event:
+  - `TICKET_SUBMITTED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: draft, ticket list/search/detail, history
 
 ---
 
-## Action 실행 전략
+## Start Work
 
-모든 ticket action은 action-specific rule이 적용되기 전에 공통 실행 규칙의
-적용을 받습니다.
+- who: current work assignee
+- allowed status: `Assigned`
+- input: body 없음
+- validation:
+  - `approvalStepId = null`
+  - actor가 current work assignees에 포함된다.
+- ticket effect: `Assigned -> Working`
+- action persistence: ticket action row 없음
+- history event: `STATUS_UPDATED`
+- query invalidation: ticket detail/list/search, history
 
-### 공통 규칙
-
-- who: ticket view permission이 있는 모든 사용자
-- when: action별 status rule이 허용하는 경우
-- effect:
-  - action 생성
-  - history 기록
-- purpose: ticket 운영과 커뮤니케이션 지원
-- restriction:
-  - `comment`, `note`만 수정 또는 삭제할 수 있다
-  - `assign`, `adjust`, `merge`, `reject`, `reopen`, `resubmit`, `cancel` 같은 운영 action은 immutable이다
-  - 모든 action은 content가 필수다
-  - `Closed`에서는 어떤 action도 수정 또는 삭제할 수 없다
-  - delete는 `active = false`를 사용하는 soft delete다
+GET/read request는 work를 시작하면 안 된다.
 
 ---
 
-## 커뮤니케이션 액션
+## Comment
 
-### Comment
-
-- who: ticket 접근 권한이 있는 모든 사용자
-- when: `Draft`를 제외한 모든 상태, `Closed` 포함
-- effect:
-  - comment 생성
-  - 이메일 알림 발송
-- purpose: 외부 또는 공유 커뮤니케이션
-- restriction:
+- who: ticket 접근 권한이 있는 user
+- allowed status: 모든 live non-`Draft`, non-`Closed` status
+- input: content, 지원되는 경우 prepared action attachment
+- validation:
   - content 필수
-  - ticket이 `Closed`가 아닐 때 작성자만 수정 또는 삭제할 수 있다
+  - action path와 payload type이 일치해야 한다.
+  - attachment payload는 `blob:` 또는 `data:` URL을 포함할 수 없다.
+- ticket effect: 없음
+- action persistence: `COMMENT`
+- history event: `COMMENT_CREATED`
+- notification boundary: shared communication은 command boundary 밖에서 알림을
+  보낼 수 있다.
+- query invalidation: action list, history, ticket recent activity
+
+Soft delete:
+
+- who: action writer
+- disallowed status: `Draft`, `Closed`
+- action type: `COMMENT` only
+- history event: `COMMENT_DELETED`
+
+현재 route surface는 comment update route를 노출하지 않지만 history union은
+`COMMENT_UPDATED`를 예약한다.
+
+Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시된다. 이는 timeline
+visibility이지 closed ticket에 새 comment를 만들 수 있다는 권한이 아니다.
 
 ---
 
-### Note
+## Note
 
-- who: ticket 접근 권한이 있는 모든 사용자
-- when: `Draft`, `Closed`를 제외한 모든 상태
-- effect:
-  - note 생성
-  - 이메일 알림 없음
-- purpose: 내부 커뮤니케이션
-- restriction:
+- who: ticket 접근 권한이 있는 user
+- allowed status: 모든 live non-`Draft`, non-`Closed` status
+- input: content, 지원되는 경우 prepared action attachment
+- validation: content 필수
+- ticket effect: 없음
+- action persistence: `NOTE`
+- history event: `NOTE_CREATED`
+- notification boundary: internal note이며 기본적으로 external notification 없음
+- query invalidation: action list, history, ticket recent activity
+
+Soft delete:
+
+- who: action writer
+- disallowed status: `Draft`, `Closed`
+- action type: `NOTE` only
+- history event: `NOTE_DELETED`
+
+현재 route surface는 note update route를 노출하지 않지만 history union은
+`NOTE_UPDATED`를 예약한다.
+
+---
+
+## Approve
+
+- who: current approver 또는 Admin
+- allowed status: `Approval`
+- input: content only; approval action은 file과 inline image를 거부한다.
+- validation:
+  - `approvalStepId != null`
+  - Admin이 아니면 actor가 current approver다.
   - content 필수
-  - ticket이 `Closed`가 아닐 때 작성자만 수정 또는 삭제할 수 있다
-
-### Visibility
-
-- `private`: 작성자만 볼 수 있다
-- `shared`: 내부 운영자와 작성자만 볼 수 있다
+- ticket effect:
+  - next approval step이 있으면 `Approval` 유지, 다음 approver로 이동
+  - next approval step이 없으면 `Assigned`로 이동하고 worker resolve
+- action persistence: `APPROVE`
+- history event:
+  - `APPROVAL_APPROVED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-## 운영 액션
+## Decline
 
-운영 action은 일반 workflow에서는 immutable이며, ticket state, ownership,
-planning data에 영향을 줄 수 있습니다.
-
-### Assign (Standard)
-
-- who: 현재 work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - work assignee 갱신
-  - `Pending` -> `Working`
-  - `Assigned`, `Working`은 현재 status 유지
-- purpose: 진행 중인 작업을 위임하거나 재할당한다
-- restriction:
+- who: current approver 또는 Admin
+- allowed status: `Approval`
+- input: content only; approval action은 file과 inline image를 거부한다.
+- validation:
+  - `approvalStepId != null`
+  - Admin이 아니면 actor가 current approver다.
   - content 필수
+- ticket effect:
+  - `Approval -> Declined`
+  - `approvalStepId = null`
+  - `assigneeUsernames = []`
+- action persistence: `DECLINE`
+- history event: `APPROVAL_DECLINED`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-### Assign (Admin)
+## Assign
 
-- who: Admin
-- when:
-  - approval assign: status = `Approval`
-  - work assign: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - approval assign은 현재 approval step을 유지하고 approver만 변경한다
-  - work assign은 assignee를 갱신한다
-  - `Pending` -> `Working`
-- purpose: admin 주도의 approval/work assignment 조정
-- restriction:
+- who:
+  - work assignment의 current work assignee
+  - approval 또는 work assignment override의 Admin
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`
+  - Admin approval override: `Approval`
+- input: content, assignee usernames
+- validation:
   - content 필수
+  - assignee list 필수
+  - non-Admin actor는 current work assignee여야 한다.
+- ticket effect:
+  - current assignee usernames 교체
+  - `Pending -> Working`
+  - mode가 status change를 resolve하지 않는 한 `Assigned`, `Working`, `Approval`은
+    status 유지
+- action persistence: `ASSIGN`
+- history event: `ASSIGNMENT_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
+
+파생된 assignee email은 persisted `tk_email`에 쓰면 안 된다.
 
 ---
 
-### Adjust (Standard)
+## Assign Self
 
-- who: 현재 work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - `priority` 갱신
-  - `riskLevel` 갱신
-  - `dueDate` 갱신
-- purpose: 진행 중인 작업의 실행 계획을 조정한다
-- restriction:
+- who: current work assignee
+- allowed status: `Assigned`, `Working`, `Pending`
+- input: auto-generated content
+- validation:
+  - actor가 이미 current worker 중 하나다.
+  - current work assignee list가 최소 두 명이다.
+- ticket effect:
+  - current assignee를 actor 한 명으로 교체
+  - status unchanged
+- action persistence: `ASSIGN_SELF`
+- history event: `ASSIGNMENT_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Adjust
+
+- who:
+  - current work assignee
+  - Admin
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`
+  - Admin correction: `Approval`, `Assigned`, `Working`, `Pending`,
+    `Resolved`, `Closed`
+- input: content, priority, risk level, due date
+- validation:
   - content 필수
-  - 변경 필드가 없는 no-op adjust는 거절된다
+  - 최소 하나의 planning field가 변경되어야 한다.
+  - resolved/closed Admin correction은 due date를 변경할 수 없다.
+- ticket effect:
+  - 허용되는 경우 priority, risk, due date 갱신
+- action persistence: `ADJUST`
+- history event: `PLANNING_UPDATED`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-### Adjust (Admin)
+## Reject
 
-- who: Admin
-- when:
-  - status in `Assigned`, `Working`, `Pending`
-  - status in `Resolved`, `Closed`에서는 correction만 허용
-- effect:
-  - `priority` 갱신
-  - `riskLevel` 갱신
-  - `Resolved`, `Closed` 전까지만 `dueDate` 갱신
-- purpose: admin 주도의 계획 조정 또는 correction
-- restriction:
+- who: current work assignee 또는 Admin
+- allowed status: `Assigned`, `Working`, `Pending`
+- input: content
+- validation:
   - content 필수
-  - resolved/closed correction에서는 due date를 변경할 수 없다
-  - 변경 필드가 없는 no-op adjust는 거절된다
-
----
-
-### Merge (Standard)
-
-- who: 현재 work assignee
-- when: status in `Assigned`, `Working`, `Pending`, `Resolved`
-- effect:
-  - source ticket -> `Closed`
-  - `closeReason = Merged`
-  - `mergedIntoTicketId`과 `mergedIntoTicketNo` 설정
-  - 가능한 경우 running work session을 종료한다
-- purpose: 중복 또는 관련 티켓을 통합한다
-- restriction:
-  - self merge는 금지된다
-  - merged child merge는 금지된다
-  - target은 active 상태여야 한다
-  - target은 같은 tenant와 scope 안에 있어야 한다
-
----
-
-### Merge (Admin)
-
-- who: Admin
-- when: `Draft`를 제외한 모든 상태, `Closed` 포함
-- effect:
-  - merge 처리 수행
-  - 가능한 경우 running work session을 종료한다
-- purpose: admin 수준의 ticket 통합
-- restriction:
-  - tenant와 scope는 계속 일치해야 한다
-
----
-
-### Reject
-
-- who: 현재 work assignee 또는 Admin
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
+  - Admin이 아니면 actor가 work assignee다.
+- ticket effect:
   - status -> `Rejected`
-  - 가능한 경우 running work session을 종료한다
-- purpose: 더 이상 진행할 수 없는 작업을 종료 처리한다
-- restriction:
-  - content 필수
+  - 지원되는 경우 running work session 종료
+- action persistence: `REJECT`
+- history event: `TICKET_REJECTED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---
 
-### Reopen
+## Resubmit
+
+- who: requester
+- allowed status: `Declined`, `Rejected`
+- input: content
+- validation:
+  - actor가 requester다.
+  - initial routing이 approval 또는 worker를 resolve할 수 있다.
+- ticket effect:
+  - initial routing 재실행
+  - next approval step: `Approval`
+  - approval step 없음: `Assigned`
+- action persistence: `RESUBMIT`
+- history event:
+  - `TICKET_SUBMITTED`
+  - `APPROVAL_REQUESTED` or `ASSIGNMENT_RESOLVED`
+- query invalidation: ticket detail/list/search, actions, history
+
+---
+
+## Reopen
 
 - who: requester 또는 Admin
-- when: status = `Resolved`
-- effect:
-  - status -> `Working`
-  - history event = `TICKET_REOPENED`
-- purpose: 해결 결과의 재검토를 요청한다
-- restriction:
+- allowed status: `Resolved`
+- input: content
+- validation:
   - content 필수
-  - 기존 work assignee가 있어야 한다
+  - existing work assignee 필수
+- ticket effect:
+  - `Resolved -> Working`
+  - assignees preserved
+- action persistence: `REOPEN`
+- history type: `STATUS`
+- history source: `USER_ACTION`
+- history event: `TICKET_REOPENED`
+- history from/to: `{ status: "Resolved" } -> { status: "Working" }`
+- query invalidation: ticket detail/list/search, actions, history
 
 ---
 
-### Resubmit
+## Merge
+
+- who:
+  - standard merge의 current work assignee
+  - override의 Admin
+- allowed status:
+  - standard: `Assigned`, `Working`, `Pending`, `Resolved`
+  - Admin override: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
+    `Rejected`, `Resolved`, `Closed`
+- input: content, target ticket id
+- validation:
+  - target ticket 필수
+  - self-merge 금지
+  - draft source 또는 target 금지
+  - 이미 merged된 source 또는 target 금지
+  - domain merge rule이 source/target status pair를 허용해야 한다.
+- ticket effect:
+  - source ticket -> `Closed`
+  - `closeReason = Merged`
+  - merged target id/number 설정
+  - 지원되는 경우 running work session 종료
+- action persistence: `MERGE`
+- history event: `TICKET_MERGED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
+
+---
+
+## Cancel
 
 - who: requester
-- when: status in `Declined`, `Rejected`
-- effect:
-  - 초기 approval/assignment routing을 다시 실행한다
-  - approval이 필요하면 status -> `Approval`
-  - approval이 필요 없으면 status -> `Assigned`
-- purpose: declined/rejected 요청을 수정해 다시 제출한다
-- restriction:
+- allowed status: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
+  `Rejected`
+- input: content
+- validation:
+  - actor가 requester다.
   - content 필수
-
----
-
-### Assign Myself (`assignSelf`)
-
-- who: 현재 work assignee
-- when: status in `Assigned`, `Working`, `Pending`
-- effect:
-  - 현재 assignee 목록을 actor 1명으로 교체한다
-  - status는 변경하지 않는다
-- purpose: 빠른 self-assignment
-- restriction:
-  - 현재 assignee가 2명 이상이어야 한다
-  - actor가 이미 현재 work assignee에 포함되어 있어야 한다
-  - content는 자동 생성된다
-
----
-
-### Cancel
-
-- who: requester
-- when: status in `Approval`, `Declined`, `Assigned`, `Working`, `Pending`, `Rejected`
-- effect:
+- ticket effect:
   - status -> `Closed`
   - `closeReason = Canceled`
-  - 가능한 경우 running work session을 종료한다
-- purpose: 완료 전 requester 주도의 철회
-- restriction:
-  - content 필수
+  - 지원되는 경우 running work session 종료
+- action persistence: `CANCEL`
+- history event: `TICKET_CANCELED`
+- query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---
 
-### Work Session Control
+## Work Session Submit
 
-- who: 현재 work assignee
-- when:
-  - start work: `Assigned` -> `Working`
-  - track work: `Working` -> `Pending` 또는 `Resolved`
-  - resume/finish work: `Pending` -> `Working` 또는 `Resolved`
-- effect:
-  - tracked minutes를 기록한다
-  - 명시적인 work-session command에서만 status를 변경한다
-- restriction:
-  - ticket detail read는 status를 변경하지 않는다
-  - work를 `Resolved`로 끝내면 가능한 경우 running session을 종료한다
+명시적 start-work command route는 work-session row를 만들지 않고
+`Assigned -> Working`으로 이동할 수 있다. Work-session submission은 work-time
+evidence를 기록하고 아래 지원 status transition을 적용할 수 있다.
+
+- who: current work assignee
+- allowed status: `Assigned`, `Working`, `Pending`
+- input:
+  - `inputMode = duration | range`
+  - tracked minutes
+  - optional `nextStatus = Working | Pending | Resolved`
+  - note
+- validation:
+  - actor가 current work assignee다.
+  - tracked minutes는 positive여야 한다.
+  - `Assigned`와 `Pending`에는 explicit status transition이 필요하다.
+  - allowed transitions:
+    - `Assigned -> Working`
+    - `Working -> Pending | Resolved`
+    - `Pending -> Working | Resolved`
+- ticket effect:
+  - ticket aggregate에 tracked minutes 추가
+  - `nextStatus`가 바뀌면 status 갱신
+  - resolving은 지원되는 경우 running session을 종료한다.
+- action persistence: ticket action row 없음
+- history event: status가 바뀌면 `STATUS_UPDATED`
+- query invalidation: ticket detail/list/search, work-session list, history
+
+현재 route surface는 list/create를 지원한다. Work-session detail, update, delete,
+timer start/finish/switch용 feature-client method는 존재하지만 대응 route file은
+현재 없다.
 
 ---
 
-### Resolved Auto Close
+## Resolved Auto Close
 
 - who: system
-- when: latest resolved history가 7일 이상 지난 경우
-- effect:
-  - `Resolved` -> `Closed`
+- allowed status: `Resolved`
+- input: cron/system request
+- validation:
+  - resolved-history grace window가 지났다.
+  - grace window는 generic ticket `updatedAt`이 아니라 티켓을 resolved로 만든 최신
+    history entry를 기준으로 측정한다.
+  - 현재 grace 값은 7일이다.
+- ticket effect:
+  - `Resolved -> Closed`
   - `closeReason = Completed`
-  - history event = `RESOLUTION_CLOSE`
-  - history source = `SYSTEM_AUTO`
-- restriction:
-  - 기준 시각은 `updatedAt`이 아니라 resolved history time이다
-  - 가능한 경우 running work session을 종료한다
-
----
-
-## 구현 메모
-
-이 규칙들은 구현에 충분히 안정적이어야 하지만, 장기적인 개념 설계와
-동일한 것은 아닙니다.
-
-### 실무적 함의
-
-- 이 문서가 바뀌면 command handler와 validation logic을 함께 검토해야 한다
-- lifecycle 및 activity 문서는 이 파일과 일관되게 유지되어야 한다
-- 추정성 동작은 실제 rule이 되기 전까지 이 파일 밖에 두어야 한다
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 현재 동작을 명시적으로 만든다
-- frontend, API, documentation 사이의 일관성을 높인다
-- permission과 status handling의 모호성을 줄인다
-- 구현 검토와 regression checking을 지원한다
-
----
-
-### 단점
-
-- rule이 바뀔수록 꾸준한 유지보수가 필요하다
-- 업데이트가 함께 이루어지지 않으면 개념 문서와 어긋날 수 있다
-- 서술형 도메인 문서에 비해 장황하게 느껴질 수 있다
-
----
-
-## 고려했던 대안
-
-### 1. Rule을 Domain Doc 안에만 포함하기
-
-- 처음에는 읽기 쉽다
-- 구현용 source of truth로 사용하기는 더 어렵다
-
----
-
-### 2. Rule을 Code 안에만 두기
-
-- 중복 문서를 줄일 수 있다
-- 설계 및 제품 논의에서 정책 검토가 더 어려워진다
-
----
-
-### 3. Rule을 느슨한 메모 형태로 작성하기
-
-- 초기 작성은 빠르다
-- 일관된 실행 동작을 정의하기에는 너무 모호하다
-
----
-
-## 설계 원칙과의 정렬
-
-이 문서는 다음과 정렬됩니다.
-
-- 명시적인 business rule modeling
-- 구현 지향 문서화
-- audit-friendly workflow 설계
-- 개념 설계와 실행 가능한 constraint의 분리
+  - 지원되는 경우 running work session 종료
+- action persistence: ticket action row 없음
+- history event: `RESOLUTION_CLOSE`
+- history source: `SYSTEM_AUTO`
+- history action link: `actionNo = null`
+- query invalidation: user-triggered UI mutation이 아닌 system side effect
 
 ---
 
 ## 관련 문서
 
-- [개발 접근 방식](./development-approach.md)
-- [티켓 라이프사이클](../03-domain/ticket/ticket-lifecycle.md)
-- [티켓 활동 모델](../03-domain/ticket/ticket-activity.md)
-- [티켓 이력](../03-domain/ticket/ticket-history.md)
+- [Ticket System Overview](../03-domain/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../03-domain/ticket/ticket-lifecycle.md)
+- [Ticket Activity Model](../03-domain/ticket/ticket-activity.md)
+- [Action Strategy](../03-domain/ticket/strategy/action-strategy.md)
+- [Ticket History](../03-domain/ticket/ticket-history.md)
+- [Ticket Track Time](../03-domain/ticket/ticket-track-time.md)
 
 ---
 
 ## 요약
 
-티켓 규칙 문서는 ticket update 동작과 ticket action 실행에 대한
-**현재 구현 source of truth**를 정의합니다.
-
-이 문서는 business intent를 명시적인 운영 규칙으로 번역하여,
-permission, status transition, side effect, restriction이 예측 가능하고,
-검토 가능하며, 구현 가능하도록 유지합니다.
+Ticket operation은 command-driven이다. 모든 operation은 actor, status guard,
+payload contract, ticket effect, action persistence rule, history event를 가진다.
+숨은 status mutation은 허용되지 않는다.

@@ -1,292 +1,359 @@
-# Ticket System Overview
+# 티켓 시스템 Overview
 
 ## 목표
 
-Ticket system은 요청, 승인, 실행 workflow를 구조적이고 추적 가능한 방식으로
-관리하도록 설계되었습니다.
+이 문서는 Service Desk ticket system의 high-level current design overview다.
 
-단순한 CRUD 기반 시스템과 달리, 다음에 초점을 둡니다.
-
-- 일관된 workflow 실행
-- 명확한 소유권과 책임
-- 액션 중심의 커뮤니케이션과 운영
-- 모든 액션의 완전한 감사 가능성
-- 현실적인 작업 추적
-- 사용자 중심 우선순위화
-
-목표는 단순히 데이터를 저장하고 표시하는 것이 아니라,
-실제 운영 프로세스를 반영하는 것입니다.
+안정된 model을 요약하고 canonical detail 문서로 연결한다. 모든 operation rule을
+반복하지 않는다. 시스템의 형태를 이해한 뒤 실행 세부사항은 링크된 문서를 따른다.
 
 ---
 
-## 왜 단순 CRUD 시스템이 아닌가?
+## 현재 Ticket System
 
-많은 티켓 시스템은 기본적으로 다음 흐름을 따릅니다.
-
-```txt
-Create -> Update -> Resolve -> Close
+```txt id="ticket-system-current"
+Tenant-scoped settings
+-> category-driven ticket intake
+-> approval or work routing
+-> command-based ticket actions
+-> event-based history
+-> work-session evidence
 ```
 
-하지만 실제 환경에서는 이 접근만으로 부족해집니다.
-
-- 요청 유형마다 다른 workflow가 필요합니다.
-- 실행 전에 승인이 필요할 수 있습니다.
-- 책임이 명확하게 할당되어야 합니다.
-- SLA를 강제해야 합니다.
-- 작업은 자주 중단되었다가 다시 이어집니다.
-
-그 결과 CRUD 기반 시스템은 다음 문제를 낳습니다.
-
-- 일관되지 않은 동작
-- 불명확한 책임
-- 실제 작업에 대한 낮은 가시성
-
-이를 해결하기 위해, 시스템은 티켓을 workflow-driven entity로 모델링합니다.
+Service Desk ticket domain은 workflow-oriented다. Ticket은 generic CRUD row가 아니다.
+Current state, current ownership, configuration context, actions, history,
+attachments, work-session records를 가진다.
 
 ---
 
-## 핵심 원칙
+## Persisted Status Model
 
-시스템은 다음 원칙 위에 구축됩니다.
+현재 `TicketStatus` union:
 
-### 1. Category-Driven Behavior
-
-Category는 단순 분류가 아닙니다.
-
-다음을 정의합니다.
-
-- assignment rules
-- approval requirements
-- SLA policies
-- workflow structure
-
-Service Desk behavior는 category와 settings configuration을 통해 tenant-scoped로
-해석됩니다. Tenant는 configuration boundary를 제공하고, 그 tenant 안의
-category가 ticket의 운영 동작을 결정합니다.
-
-### 2. Approval as a First-Class Workflow
-
-Approval은 lifecycle의 핵심 부분으로 다뤄집니다.
-
-- category별로 설정 가능
-- 구조화된 pipeline으로 실행
-- 완전한 추적 가능성 보장
-
-### 3. Session-Based Work Tracking
-
-작업은 하나의 누적 값으로 저장되지 않습니다.
-
-```txt
-work = collection of sessions
+```txt id="ticket-status-union"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-이를 통해 다음이 가능해집니다.
+`Open`, `Approved`, `Reopen`은 persisted status가 아니다.
 
-- interruption
-- resumption
-- task switching
+- `Open`은 UI grouping/search concept으로만 사용할 수 있다.
+- Approval completion은 `APPROVAL_APPROVED` history로 기록된다.
+- Reopen은 현재 `Resolved`를 `Working`으로 되돌리는 action이다.
 
-### 4. Work Context-Driven Prioritization
-
-티켓은 평평한 목록으로만 표시되지 않습니다.
-
-시스템은 work context를 도출하여 다음을 우선순위화합니다.
-
-- currently active work
-- assigned tickets
-- actionable tickets
-- contextual tickets
-
-### 5. Full Auditability
-
-모든 중요한 액션은 기록됩니다.
-
-이를 통해 다음을 보장합니다.
-
-- traceability
-- accountability
-- explainability
-
-### 6. Action-Oriented Interaction Model
-
-의미 있는 ticket interaction은 단순 comment가 아니라 activity로 모델링됩니다.
-
-이를 통해 시스템은 다음을 표현할 수 있습니다.
-
-- public communication
-- internal notes
-- assignment changes
-- operational adjustments
-- merge 및 rejection 결정
-- 해결 이후 review/reopen 요청
-
-관련 문서:
-
-- [Ticket Activity Model](./ticket-activity.md)
-- [Action Strategy](./strategy/action-strategy.md)
-
----
-
-## 시스템 구조
-
-Ticket system은 여러 도메인 컴포넌트로 구성됩니다.
-
-```txt
-Tenant
-  -> Category
-  -> Approval
-  -> Assignment
-  -> SLA
-Ticket
-  -> Activity
-  -> Track Time
-  -> History
-```
-
-각 컴포넌트는 특정 관심사를 맡기 때문에,
-시스템은 모듈식이며 유지보수 가능하게 유지됩니다.
-
-configuration side는 tenant-scoped입니다. ticket side는 선택된 category를
-참조하고, 해당 category configuration이 정의한 approval, assignment, SLA
-동작을 따릅니다.
-
----
-
-## Ticket Lifecycle
-
-티켓은 구조화된 라이프사이클을 따라 진행됩니다.
-
-```txt
-Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
-```
-
-실제 흐름은 category configuration에 따라 달라집니다.
-
-- 어떤 티켓은 approval을 건너뜁니다.
-- 어떤 티켓은 여러 approval step을 필요로 합니다.
-- 선택된 category는 tenant configuration boundary 안에서 해석됩니다.
+Detail read는 status를 변경하면 안 된다. Work start는 explicit command다.
 
 관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
 
 ---
 
-## Work Session Model
+## Draft
 
-티켓에서 수행된 작업은 session 단위로 추적됩니다.
+REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장된다.
 
-```txt
-start -> work -> finish
-```
+현재 draft rule:
 
-하나의 티켓에 여러 session이 허용됩니다.
+- requester당 active draft는 하나다.
+- draft는 별도 draft table이 아니라 ticket table을 사용한다.
+- draft save/update는 draft API를 사용한다.
+- final submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 이동시킨다.
+- operational list와 insight는 draft ticket을 제외한다.
+- LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용하며
+  REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다.
 
-Example:
-
-```txt
-09:00 - 10:00
-15:00 - 17:00
-```
-
-이 방식은 하나의 집계 시간 값보다 실제 작업 행태를 더 정확하게 반영합니다.
-
-관련 문서: [Ticket Track Time](./ticket-track-time.md)
+관련 문서: [Ticket Form Design](../../06-form-design/ticket-form.md)
 
 ---
 
-## Activity와 History 모델
+## Approval and Work Routing
 
-시스템은 사용자에게 보이는 activity와 불변 history를 구분합니다.
+현재 routing source of truth:
 
-### Activity
-
-- 의미 있는 커뮤니케이션과 운영 액션을 표현합니다.
-- reason content와 structured metadata를 함께 저장합니다.
-- 통합 timeline 경험을 구성합니다.
-
-### History
-
-- 티켓 변경으로부터 생성된 불변 event trace를 기록합니다.
-- 감사와 before/after 변경 가시성을 지원합니다.
-- activity model을 대체하는 것이 아니라 보완합니다.
-
-```txt
-Activity = 의미 있는 상호작용
-History = 불변 이벤트 기록
+```txt id="routing-source-of-truth"
+tk_approval_step_id
+tk_assignee_usernames
 ```
+
+해석:
+
+```txt id="routing-phase"
+tk_approval_step_id != null
+-> assignmentPhase = APPROVAL
+-> tk_assignee_usernames = current approvers
+
+tk_approval_step_id == null
+-> assignmentPhase = WORK
+-> tk_assignee_usernames = current workers
+```
+
+DTO는 UI 편의를 위해 projection field를 노출한다.
+
+- `assignmentPhase`
+- `approvalAssigneeUsernames`
+- `workAssigneeUsernames`
+- `assignedApprover`
+- `assignedWorker`
+
+이 값들은 mapper/service projection이며 별도 database source of truth가 아니다.
+
+관련 문서:
+
+- [Approval System](./strategy/approval-system.md)
+- [Assignment Policy](./strategy/assignment-policy.md)
+
+---
+
+## Initial Routing
+
+Ticket submission은 선택된 category와 requester에서 routing을 resolve한다.
+
+```txt id="initial-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+```
+
+Final approval은 다음 approval step으로 이동하거나 work assignment를 resolve하고
+ticket을 `Assigned`로 이동시킨다.
+
+Decline은 approval routing을 종료한다.
+
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
+```
+
+---
+
+## Requester Update Routing
+
+Requester update는 현재 구현에서 requester-owned ticket이 `Approval` 또는 `Assigned`
+상태일 때만 허용된다.
+
+Routing-neutral fields:
+
+- due date
+- email recipients
+
+Routing-sensitive fields:
+
+- category
+- subject
+- content
+- files
+- images
+
+실제 normalized value change만 routing behavior를 trigger한다. Routing-neutral field만
+변경되면 status, approval step, assignee를 유지하고 history는 `ROUTING_PRESERVED`를
+기록한다.
+
+Routing-sensitive value가 변경되면 routing을 처음부터 다시 계산하고 history는
+`ROUTING_RESET`을 기록한다.
+
+Category가 변경되면 priority, risk, minimum due date를 새 category default에서 다시
+평가한다. 다음 due date는 현재 due date와 새 category minimum 중 더 늦은 값이며,
+category change는 due date를 더 이른 날짜로 당기면 안 된다.
+
+관련 문서:
+
+- [Ticket Lifecycle](./ticket-lifecycle.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+
+---
+
+## Attachment Boundary
+
+Ticket attachment input은 ticket command가 metadata를 쓰기 전에 prepare된다.
+
+```txt id="attachment-flow"
+File[] / inline image
+-> Attachment Prepare API
+-> prepared body, files, images
+-> ticket command payload
+-> tk_content, tk_files, tk_images
+```
+
+현재 LOCAL/REMOTE behavior는 controlled demo replacement를 사용한다. Production object
+storage를 제공하지 않는다.
+
+Raw `File`, binary data, base64 data URL, blob URL, local file path는 ticket row, DTO,
+action metadata, history metadata에 persist하면 안 된다.
+
+관련 문서: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+
+---
+
+## Ticket Action Command Model
+
+Ticket action은 server-controlled command다.
+
+```txt id="ticket-action-command"
+Action command
+-> authenticate
+-> authorize
+-> validate status
+-> validate input
+-> insert action when applicable
+-> mutate ticket when applicable
+-> create history
+```
+
+현재 action type:
+
+```txt id="ticket-action-types"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
+```
+
+Communication action은 timeline entry를 만든다. Operational action은 status,
+assignee, planning field, merge state, close reason을 변경할 수 있다. Operational
+action은 normal workflow에서 immutable하다.
+
+Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시된다. 이 visibility는
+closure 이후 새 comment creation이 허용된다는 뜻이 아니다.
 
 관련 문서:
 
 - [Ticket Activity Model](./ticket-activity.md)
-- [Ticket History](./ticket-history.md)
 - [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
-## Work Context
+## Event-Based History
 
-시스템은 각 사용자에 대해 현재 work context를 도출합니다.
+History는 immutable event/audit data다.
 
-이를 통해 다음이 가능해집니다.
-
-- 우선순위가 반영된 ticket list
-- context-aware UI action
-- cognitive load 감소
-
-Example:
-
-```txt
-working on a ticket -> Finish 표시
-working on another ticket -> Switch 표시
+```txt id="history-shape"
+type   -> changed domain area
+source -> why or which rule produced it
+event  -> what happened
+actor  -> who initiated it
+from/to value -> structured JSON change
+metadata -> supplemental display/audit context
 ```
+
+`event`는 authoritative하다. `metadata.event`는 event source of truth가 아니다.
+`SYSTEM_AUTO`는 history source이지 history type이 아니다.
+
+하나의 action은 여러 history record를 만들 수 있다. 일부 system operation은 ticket
+action row 없이 history를 만들 수 있다.
+
+관련 문서: [Ticket History](./ticket-history.md)
+
+---
+
+## Work Session
+
+Work Session은 실제 work-time evidence를 기록한다. Ticket Action과 분리된다.
+
+현재 route surface:
+
+```txt id="work-session-routes"
+GET  /api/service-desk/tickets/:ticketId/work-session
+POST /api/service-desk/tickets/:ticketId/work-session
+```
+
+현재 behavior:
+
+- current work assignee만 work를 track할 수 있다.
+- `Assigned`는 `Working`으로의 transition이 필요하다.
+- `Working`은 `Pending` 또는 `Resolved`로 이동할 수 있다.
+- `Pending`은 `Working` 또는 `Resolved`로 이동할 수 있다.
+- tracked minutes는 ticket work total로 aggregate된다.
+- GET은 status를 변경하지 않는다.
+- timer-style start/finish/switch route는 현재 route surface에 포함되지 않는다.
 
 관련 문서: [Ticket Track Time](./ticket-track-time.md)
 
 ---
 
-## 설계 철학
+## Settings Relationship
 
-이 시스템은 다음을 우선합니다.
+Service Desk settings는 ticket workflow가 사용하는 behavior configuration을 제공한다.
 
-- flexibility보다 predictability
-- hardcoding보다 configuration
-- 파괴적인 단순성보다 traceability
-- UI 편의보다 운영 현실성
+```txt id="settings-relationship"
+Company
+-> Service Desk Tenant
+   -> Category
+      -> Approval Step
+      -> Assignment Rule
+```
 
-이 선택들은 시스템이 다음 특성을 갖도록 합니다.
+Tenant는 configuration scope다. Category는 central behavior configuration이다.
+Approval Step은 main-category approval routing을 제어한다. Assignment Rule은
+subcategory override와 parent/main fallback으로 work ownership을 resolve한다.
 
-- 복잡도와 함께 확장 가능
-- 일관성 유지
-- 이해하고 추론하기 쉬움
+관련 문서: [Service Desk Settings](../service-desk-settings.md)
 
 ---
 
-## 관련 문서
+## Runtime Boundary
 
-- [Ticket Model](./ticket-model.md)
-- [Ticket Activity Model](./ticket-activity.md)
-- [Ticket Lifecycle](./ticket-lifecycle.md)
-- [Ticket Track Time](./ticket-track-time.md)
-- [Ticket History](./ticket-history.md)
-- [Action Strategy](./strategy/action-strategy.md)
-- [Category Strategy](./strategy/category-strategy.md)
-- [Approval System](./strategy/approval-system.md)
-- [Assignment Policy](./strategy/assignment-policy.md)
-- [SLA Strategy](./strategy/sla-strategy.md)
+UI는 feature API client를 사용한다. Route handler는 LOCAL 또는 REMOTE behavior를
+선택한다.
+
+```txt id="runtime-boundary"
+UI
+-> feature API client
+-> Next.js Route Handler
+-> LOCAL handler or REMOTE portal API/service
+-> DTO
+```
+
+REMOTE는 server-only data access, row/mapper/DTO boundary, repository service,
+workflow change에 atomicity가 필요할 때 transaction을 사용한다.
+
+LOCAL은 safe portfolio demo behavior를 제공하고, 지원되는 workflow에서는 DTO contract를
+REMOTE와 맞춰 유지해야 한다.
+
+---
+
+## Document Map
+
+- Status and transitions: [Ticket Lifecycle](./ticket-lifecycle.md)
+- Current executable rules: [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- Ticket entity and DTO boundary: [Ticket Model](./ticket-model.md)
+- Action timeline: [Ticket Activity Model](./ticket-activity.md)
+- Command execution: [Action Strategy](./strategy/action-strategy.md)
+- Immutable audit model: [Ticket History](./ticket-history.md)
+- Approval rules: [Approval System](./strategy/approval-system.md)
+- Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
+- Work sessions: [Ticket Track Time](./ticket-track-time.md)
+- Form workflow: [Ticket Form Design](../../06-form-design/ticket-form.md)
+- Attachment boundary: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+- Settings structure: [Service Desk Settings](../service-desk-settings.md)
 
 ---
 
 ## 요약
 
-이 ticket system은 workflow 중심이면서 사용자 중심적인 시스템으로 설계되었습니다.
+현재 Service Desk ticket system은 precise persisted statuses, phase-aware routing,
+REMOTE draft rows, attachment preparation, command-based actions, event-based
+history, work-session evidence, tenant-scoped settings를 중심으로 구성된다.
 
-핵심 특성은 다음과 같습니다.
-
-- category-driven behavior
-- approval-aware flow
-- action-oriented communication and operations
-- session-based work tracking
-- 분리된 activity/history model
-- context-aware prioritization
-- full auditability
-
-이는 현실적이고 확장 가능한 service desk system을 구축하기 위한 기반을 제공합니다.
+설계 목표는 workflow behavior를 명시적이고 감사 가능하게 유지하며, 오래된
+`Open`/`Approved` lifecycle terminology가 아니라 현재 구현과 정렬하는 것이다.
