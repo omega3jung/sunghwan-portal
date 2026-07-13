@@ -1,3 +1,4 @@
+import type { TicketHistoryEvent } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
 export type TicketHistoryRow = {
@@ -5,7 +6,8 @@ export type TicketHistoryRow = {
   tkh_history_no: number;
   tkh_action_no: number | null;
   tkh_history_type: string;
-  tkh_history_action: string;
+  tkh_event: TicketHistoryEvent;
+  tkh_source: string;
   tkh_actor_username: string | null;
   tkh_from_value: unknown | null;
   tkh_to_value: unknown | null;

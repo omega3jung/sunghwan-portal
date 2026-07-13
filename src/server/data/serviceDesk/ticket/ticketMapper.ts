@@ -5,6 +5,7 @@ import {
   TicketStatus,
 } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 import {
   TicketCreateRequestDto,
@@ -31,6 +32,11 @@ const EMPTY_EMAIL: ServiceDeskTicketEmail = {
   bcc: [],
 };
 
+export type TicketDetailProjectionContext = {
+  currentUserName: string | null;
+  hasBeenWorker: boolean;
+};
+
 export function toTicketListItemDto(
   row: ServiceDeskTicketViewRow,
   currentUserName: string | null,
@@ -43,10 +49,11 @@ export function toTicketListItemDto(
 
 export function toTicketDetailDto(
   row: ServiceDeskTicketViewRow,
-  currentUserName: string | null,
+  context: TicketDetailProjectionContext,
 ): TicketDetailDto {
   return {
-    ...toTicketCommonDto(row, currentUserName),
+    ...toTicketCommonDto(row, context.currentUserName),
+    has_been_worker: context.hasBeenWorker,
     content: row.tk_content,
     email: row.tk_email,
     files: row.tk_files ?? [],
@@ -110,7 +117,7 @@ function toTicketCommonDto(
     priority: row.tk_priority,
     risk_level: row.tk_risk_level,
     ...assignment,
-    work_minutes: row.tk_work_minutes,
+    work_minutes: normalizeNonNegativeInteger(row.tk_work_minutes),
     last_comment_at: row.tka_last_comment_at,
     last_commenter_email: row.tka_last_comment_email,
     last_user_activity_at: row.tka_last_user_activity_at,
@@ -171,7 +178,7 @@ function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {
   }
 
   if (status === "Reopen") {
-    return "Reopened";
+    return "Working";
   }
 
   return row.tk_status;

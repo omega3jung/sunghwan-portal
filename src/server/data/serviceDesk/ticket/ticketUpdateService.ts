@@ -13,6 +13,7 @@ import {
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
   findNextApprovalStepId,
+  hasTicketWorkAssignmentHistory,
 } from "./ticketRepository";
 import { RequesterUpdateTicketRequestDto } from "./ticketUpdateDto";
 import { mapRequesterUpdateTicketRequestDtoToRowInput } from "./ticketUpdateMapper";
@@ -153,7 +154,8 @@ export async function updateRequesterTicket(
       ticketId,
       actionNo: null,
       historyType: "TICKET",
-      historyAction: "UPDATED",
+      source: "ROUTING_RULE",
+      event: routingSensitiveChanged ? "ROUTING_RESET" : "ROUTING_PRESERVED",
       actorUsername: currentUserName,
       fromValue: changeSet.fromValue,
       toValue: changeSet.toValue,
@@ -169,7 +171,16 @@ export async function updateRequesterTicket(
     options,
   );
 
-  return toTicketDetailDto(updatedRow, currentUserName);
+  const hasBeenWorker = await hasTicketWorkAssignmentHistory(
+    updatedRow.tk_id,
+    currentUserName,
+    options,
+  );
+
+  return toTicketDetailDto(updatedRow, {
+    currentUserName,
+    hasBeenWorker,
+  });
 }
 
 type RequesterUpdateChangeSet = {
@@ -391,7 +402,6 @@ function buildRequesterUpdateHistoryMetadata({
   nextAssigneeUsernames: string[];
 }): TicketHistoryJsonValue {
   const metadata: Record<string, TicketHistoryJsonValue> = {
-    source: "updateDialog",
     changedFields,
     routingSensitiveChanged,
     routingReset: routingSensitiveChanged,

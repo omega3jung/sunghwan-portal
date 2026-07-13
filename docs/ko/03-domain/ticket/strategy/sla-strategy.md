@@ -1,356 +1,200 @@
-# SLA 전략
+# SLA Strategy
 
-## 목적
+## 목표
 
-SLA(Service Level Agreement) 시스템은 티켓 처리에 대한
-**시간 기반 기대치(time-based expectations)** 를 정의하고,
-서비스 품질을 측정 가능하고, 강제 가능하며, 지속적으로 모니터링할 수 있도록 한다.
+SLA strategy는 future automation을 과장하지 않고 현재 Service Desk ticket의
+time-expectation model을 설명한다.
 
-이 시스템은 다음을 목표로 한다.
+현재 구현에서 SLA는 주로 다음으로 표현된다.
 
-- 응답 시간과 해결 시간을 보장한다.
-- 중요한 이슈를 효과적으로 우선 처리한다.
-- 측정 가능한 성과 지표를 제공한다.
-- 선제적 에스컬레이션을 가능하게 한다.
+- category default SLA days
+- form due date default와 validation
+- ticket `dueAt`
+- planning context로 사용하는 priority/risk value
+- ticket action을 통한 manual/operator adjustment
+
+Full SLA breach, pause, escalation, calendar, notification engine은 future scope다.
 
 ---
 
-## 핵심 개념
+## 핵심 원칙
 
-SLA는 **위험도(risk level)** 와 **우선순위(priority)** 의 조합으로 결정된다.
-
-```txt
-SLA = f(Risk Level, Priority)
+```txt id="sla-core"
+Current SLA = configured expectation + ticket due date.
+Full SLA automation is deferred.
 ```
 
-이 방식은 서로 다른 비즈니스 맥락에 적응할 수 있는 유연하고 확장 가능한 모델을 만든다.
-
-Service Desk settings에서 기본 risk, priority, SLA 값은 tenant-scoped category
-configuration에서 seed될 수 있다. SLA matrix 개념은 해석 모델로 유지하고,
-category configuration은 ticket의 기본 입력값을 제공한다.
+구현이 해당 service를 추가하기 전까지 breach detection, escalation, working calendar
+calculation을 completed behavior처럼 설명하면 안 된다.
 
 ---
 
-## SLA 구성 요소
+## 현재 Input
 
-각 SLA는 여러 개의 시간 제약으로 구성된다.
+현재 Service Desk model은 다음 SLA-related input을 가진다.
 
-### 1. 응답 시간
-
-티켓 생성 시점부터 첫 번째 의미 있는 응답까지의 시간
-
----
-
-### 2. 해결 시간
-
-티켓 생성 시점부터 처리 완료까지의 시간
-
----
-
-### 3. 에스컬레이션 시간 (선택)
-
-에스컬레이션이 발생하기 전까지의 시간 임계값
-
----
-
-## SLA 매트릭스
-
-SLA 값은 매트릭스를 이용해 설정된다.
-
-### 예시 (4 x 4)
-
-| Risk \ Priority | Low | Medium | High | Urgent |
-| --------------- | --- | ------ | ---- | ------ |
-| Low             | 48h | 24h    | 12h  | 6h     |
-| Medium          | 24h | 12h    | 6h   | 3h     |
-| High            | 12h | 6h     | 3h   | 1h     |
-| Critical        | 6h  | 3h     | 1h   | 30m    |
-
----
-
-## SLA 할당
-
-SLA는 티켓 생성 시점에 할당된다.
-
-### 흐름
-
-```txt
-Ticket Created
--> Apply tenant-scoped category defaults
--> Determine Risk Level
--> Determine Priority
--> Lookup SLA Matrix
--> Assign SLA
-```
-
----
-
-## SLA 생명주기
-
-SLA는 티켓 생명주기를 따라 함께 진행된다.
-
-### 상태
-
-- **Active**: 시간이 계산 중인 상태
-- **Paused**: 일시적으로 멈춘 상태
-- **Breached**: SLA를 초과한 상태
-- **Completed**: SLA 내에서 해결된 상태
-
----
-
-## SLA 시계 동작
-
-### 시작
-
-- 티켓 생성 시점에 시작된다.
-
----
-
-### 일시 정지 조건
-
-다음 상황에서는 SLA가 일시 정지된다.
-
-- 요청자 응답 대기 중
-- 티켓이 `Pending` 상태인 경우
-- 외부 의존성이 존재하는 경우
-
----
-
-### 재개
-
-- 티켓이 다시 활성 작업 상태로 돌아오면 SLA도 재개된다.
-
----
-
-## 에스컬레이션 전략
-
-에스컬레이션은 SLA 위반을 선제적으로 처리하기 위해 필요하다.
-
-### 유형
-
-#### 1. 시간 기반 에스컬레이션
-
-SLA 임계값이 가까워지거나 초과되었을 때 발생한다.
-
----
-
-#### 2. 계층 기반 에스컬레이션
-
-다음 상위 단계로 에스컬레이션할 수 있다.
-
-- 팀 리드
-- 매니저
-- 상위 지원 조직
-
----
-
-### 예시
-
-```ts
-if (remainingTime < threshold) {
-  notify(manager);
-}
-```
-
----
-
-## SLA 위반 처리
-
-SLA가 초과되었을 때 수행할 수 있는 동작은 다음과 같다.
-
-### 액션
-
-- `Breached` 상태로 표시
-- 알림 또는 통지 발생
-- 위반 이벤트 기록
-- 리포팅 지표에 반영
-
----
-
-## SLA 가시성
-
-SLA는 사용자에게 투명하게 보여야 한다.
-
-### UI 요소
-
-- 남은 시간
-- 마감 시간
-- 위반 표시기(예: 빨간 상태)
-- 에스컬레이션 경고
-
----
-
-## SLA 계산 전략
-
-### 정적 계산
-
-- 생성 시점에 한 번 SLA를 결정한다.
-- 단순하고 예측 가능하다.
-
----
-
-### 동적 계산 (선택)
-
-다음 값이 바뀌면 SLA를 다시 계산할 수 있다.
-
-- 우선순위 변경
-- 위험도 변경
-
----
-
-### 트레이드오프
-
-| 방식 | 장점 | 단점 |
+| Input | Source | Current Use |
 | --- | --- | --- |
-| 정적 | 단순하고 안정적 | 유연성이 떨어진다 |
-| 동적 | 변화에 적응 가능 | 더 복잡하고 추적이 어렵다 |
+| `defaultSlaDays` | main/subcategory settings | due date expectation seed 또는 guide |
+| `priority` | category default, form, or adjust action | planning and display context |
+| `riskLevel` | category default, form, or adjust action | planning and display context |
+| `dueAt` | form/update/action payload | persisted ticket deadline |
+
+Category default는 tenant-scoped다. Subcategory default가 있으면 main category
+default를 override한다.
 
 ---
 
-## 시간 계산 모델
+## Category Default Resolution
 
-SLA는 단순 경과 시간이 아니라 **실제 업무 시간(effective working time)** 기준으로 계산될 수 있다.
-
-### 고려사항
-
-- 업무 시간
-- 휴일
-- 시간대
-
----
-
-### 예시
-
-```ts
-calculateWorkingTime(start, end, {
-  businessHours: "09:00-18:00",
-  holidays: [...]
-});
+```txt id="sla-category-resolution"
+selected subcategory defaultSlaDays
+-> fallback main category defaultSlaDays
+-> due date expectation
 ```
 
----
+Requester가 category를 선택할 때 UI는 category default를 적용할 수 있다.
 
-## 지표 및 리포팅
-
-SLA는 측정 가능한 KPI를 제공한다.
-
-### 주요 지표
-
-- SLA 준수율
-- 평균 응답 시간
-- 평균 해결 시간
-- 위반 건수
-- 에스컬레이션 건수
+Server는 여전히 submitted ticket payload를 validate하고 final workflow transition을
+소유한다.
 
 ---
 
-## 할당과의 연계
+## Due Date Behavior
 
-SLA는 할당 동작에도 영향을 준다.
+Ticket form은 `dueAt`이 오늘보다 이후인지 validate한다.
 
-### 예시
+Requester update는 ticket이 다음 상태일 때 due date를 변경할 수 있다.
 
-- 긴급 티켓은 더 숙련된 인력에게 할당
-- SLA 위반 임박 티켓은 큐에서 우선 처리
+```txt id="sla-update-statuses"
+Approval
+Assigned
+```
 
----
+현재 requester update policy에서 due date는 routing-neutral이다.
 
-## 예외 상황
+- due date와 email recipients만 바뀌면 routing을 preserve한다.
+- category, subject, content, files, images가 바뀌면 routing을 reset한다.
 
-### 1. 우선순위 변경
+Due date가 routing-sensitive field와 함께 변경되면 routing result는 routing-sensitive
+update를 따른다.
 
-- SLA를 다시 계산해야 할 수 있다.
+Routing-sensitive field가 category일 때 requester update는 새 category default SLA
+days에서 minimum due date도 다시 평가한다.
 
----
+```txt id="category-update-min-due-date"
+newCategoryMinimumDueAt = today + new category default SLA days
+nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
+```
 
-### 2. 장기 `Pending` 상태
-
-- SLA가 무기한 정지될 수 있다.
-- 악용 가능성이 있으므로 모니터링이 필요하다.
-
----
-
-### 3. 재오픈된 티켓
-
-가능한 선택지는 다음과 같다.
-
-- SLA를 초기화한다.
-- 기존 SLA를 이어서 사용한다.
+이 규칙은 더 늦은 current due date를 유지하고, 더 이른 due date는 새 minimum으로
+되돌리며, category change 때문에 due date를 더 이른 날짜로 당기지 않는다.
 
 ---
 
-### 4. SLA 설정 누락
+## Adjust Action
 
-- 대체 SLA가 필요하다.
+Planning value는 현재 action rule이 허용하는 곳에서 Ticket Action command model을 통해
+변경될 수 있다.
 
----
+`ADJUST`는 action rule implementation에 따라 priority, risk level, due date 같은
+planning-oriented field를 업데이트할 수 있다.
 
-## 대체 전략
-
-SLA를 결정할 수 없는 경우 다음과 같은 전략을 사용할 수 있다.
-
-- 기본 SLA 적용
-- 티켓 생성 차단(선택)
-- 설정 오류 로그 기록
+이 변경은 조용한 field mutation이 아니라 event-based history로 기록되어야 한다.
 
 ---
 
-## 트레이드오프
+## Work Session과의 관계
 
-### 장점
+Work session은 operational work evidence를 기록한다. 현재 full SLA clock을 구현하지
+않는다.
 
-- 서비스 품질을 강제할 수 있다.
-- 성과 측정을 가능하게 한다.
-- 에스컬레이션 자동화를 지원한다.
+Work session은 future SLA reporting이 다음 질문에 답하는 데 도움을 줄 수 있다.
 
----
+- work는 언제 시작되었는가?
+- 얼마나 많은 work가 기록되었는가?
+- 기록된 work 이후 ticket이 resolved 되었는가?
 
-### 단점
-
-- 정확한 설정이 필요하다.
-- 시간 계산이 복잡할 수 있다.
-- 예외 상황이 시스템 복잡도를 높인다.
+현재 SLA 문서는 이를 completed SLA timer engine이 아니라 future reporting evidence로
+취급해야 한다.
 
 ---
 
-## 대안 검토
+## Auto Close와의 관계
 
-### 1. 고정 SLA
+현재 구현은 resolved ticket에 대해 grace period 이후 automatic close behavior를
+포함한다.
 
-- 모든 티켓에 동일한 SLA를 적용한다.
-- 우선순위 구분이 어렵다.
+이는 SLA breach handling과 같지 않다.
 
----
+```txt id="auto-close-boundary"
+Resolved ticket grace period close
+!= SLA breach/escalation engine
+```
 
-### 2. 우선순위만 반영하는 SLA
-
-- 우선순위만으로 SLA를 결정한다.
-- 비즈니스 영향도를 충분히 반영하지 못한다.
-
----
-
-### 3. SLA 없음
-
-- 성과를 측정할 수 없다.
-- 책임 추적이 어려워진다.
+Auto close는 resolved-history timestamp와 현재 7-day grace period를 사용한다. Ticket을
+`Closed`로 이동하고 close reason `Completed`를 설정하며, 지원되는 경우 running work
+session을 종료하고 `RESOLUTION_CLOSE`를 `SYSTEM_AUTO`, `actionNo = null`로 기록한다.
 
 ---
 
-## 설계 원칙과의 정렬
+## Deferred SLA Engine
 
-이 전략은 다음과 정렬된다.
+Future production SLA engine은 다음을 추가할 수 있다.
 
-- 측정 가능한 서비스 품질
-- 구성 가능한 시스템 설계
-- 운영 투명성
-- 확장 가능한 아키텍처
+- response-time targets
+- resolution-time targets
+- business-hour calendars
+- holiday calendars
+- `Pending`의 pause/resume rules
+- breach detection
+- escalation thresholds
+- notification delivery
+- SLA compliance reporting
+- per-tenant SLA policies
+
+이 항목들은 현재 due date behavior에 암시하지 말고 explicit service, data field,
+history event를 통해 도입해야 한다.
+
+---
+
+## 피하는 Anti-Patterns
+
+### Matrix Engine이 존재한다고 주장하기
+
+Priority/risk matrix는 유용한 future design tool이지만, 현재 구현을 complete matrix
+engine을 실행하는 것으로 설명하면 안 된다.
+
+### Pending을 구현된 SLA Pause로 취급하기
+
+`Pending`은 workflow status다. 현재 fully implemented SLA pause clock이 아니다.
+
+### Due Date Change 숨기기
+
+Due date change는 operational planning change이며 traceable해야 한다.
+
+### Auto Close와 SLA Breach 섞기
+
+Resolved-ticket auto close는 lifecycle cleanup rule이지 service-level breach rule이
+아니다.
+
+---
+
+## 관련 문서
+
+- [`category-strategy.md`](category-strategy.md)
+- [`action-strategy.md`](action-strategy.md)
+- [`../ticket-track-time.md`](../ticket-track-time.md)
+- [`../ticket-history.md`](../ticket-history.md)
+- [`../../../06-form-design/ticket-form.md`](../../../06-form-design/ticket-form.md)
 
 ---
 
 ## 요약
 
-SLA 시스템은 서비스 기대치를 관리하기 위한
-**구조화되고 측정 가능한 프레임워크**를 제공한다.
+현재 SLA model은 의도적으로 작고 구현과 정렬되어 있다. Category settings는 default
+SLA days를 제공하고, form과 action은 due date 및 planning field를 관리하며, history는
+의미 있는 변경을 기록한다.
 
-이를 통해 시스템은 선제적 에스컬레이션을 가능하게 하고,
-전체 서비스 품질을 일관되게 유지할 수 있다.
+Full SLA clocking, breach, escalation, calendars, notifications는 future production
+scope로 남는다.

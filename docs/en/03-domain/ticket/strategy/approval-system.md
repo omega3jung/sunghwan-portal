@@ -2,301 +2,241 @@
 
 ## Goal
 
-The approval system is designed to provide a **configurable and scalable validation pipeline**
-for tickets that require additional verification before execution.
+This document defines the current approval routing model for Service Desk
+tickets.
 
-It ensures:
+Approval is category-driven, sequential, and represented through the current
+ticket routing fields:
 
-- Policy compliance
-- Duplicate prevention
-- Organizational validation
-- Reduced operational risk
-
-Scope note:
-
-- LOCAL demo keeps approval behavior intentionally simplified for portfolio realism.
-- Full organization-aware approval pipeline is treated as a REMOTE expansion path.
+```txt id="approval-routing-fields"
+tk_approval_step_id
+tk_assignee_usernames
+```
 
 ---
 
-## Core Concept
+## Current Approval Status
 
-Approval is **category-driven** and executed as a **sequential pipeline**.
+Approval uses the persisted ticket status `Approval`.
 
-Each tenant-scoped category can define its own approval workflow:
-
-```txt
-Tenant-scoped Category → approvalSteps[]
-```
-
-Each step is processed in order based on its `index`.
-
-Approval steps belong to category configuration and are interpreted within the
-tenant boundary that owns that category tree.
+There is no persisted `Approved` status. Approval completion is recorded as the
+history event `APPROVAL_APPROVED`. After final approval, the ticket resolves
+work assignment and moves to `Assigned`.
 
 ---
 
-## Approval Flow
+## Approval Phase
 
+A ticket is in approval phase when:
+
+```txt id="approval-phase"
+approvalStepId != null
+assignmentPhase = APPROVAL
+assigneeUsernames = current approvers
 ```
-Pre → Open → Approved / Declined → Working
-```
 
-### Status Definitions
+Application DTOs project this into:
 
-- **Pre**: Ticket created, approval not started
-- **Open**: Approval process is in progress
-- **Approved**: All approval steps completed successfully
-- **Declined**: Approval rejected at any step
+- `assignmentPhase = "APPROVAL"`
+- `approvalAssigneeUsernames`
+- `assignedApprover`
+
+These are projections. They are not separate persisted routing sources.
 
 ---
 
-## Data Structure
+## Approval Step Settings
 
-### ApprovalSteps
+Approval steps are configured under a main category.
 
-```ts
+Approval resolution always uses the selected subcategory's parent/main
+category. The selected subcategory remains ticket classification, but it does
+not define a separate approval pipeline.
+
+```ts id="approval-step-shape"
 type ApprovalStep = {
+  id: string;
+  name: LocalizedText;
+  description?: LocalizedText;
   index: number;
-  assigneeType: "MANAGER" | "DEPARTMENT" | "JOB_FIELD" | "EMPLOYEE";
-  payload: Record<string, unknown>;
-  skipAccessLevel?: number;
+  categoryId: string;
+  stepAssignee: ApprovalAssigneeType;
+  skipAccessLevel?: AccessLevel;
 };
 ```
 
----
+Assignee types:
 
-## Assignee Types
-
-Each approval step dynamically determines its approver.
-
-### 1. MANAGER
-
-Approval assigned to the requester's manager.
-
-```ts
-payload: {
-  level: 1 | 2;
-}
+```txt id="approval-assignee-types"
+MANAGER
+DEPARTMENT
+JOB_FIELD
+EMPLOYEE
 ```
 
-- `1`: Direct manager
-- `2`: Upper manager
+REMOTE DTOs use `approval_step_assignee` and `skip_access_level`. LOCAL and
+REMOTE settings must resolve to the same application-facing behavior.
+
+Related document: [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
-### 2. DEPARTMENT
+## Initial Approval Routing
 
-Approval assigned to a specific department.
+Ticket submit and resubmit both start routing from the first applicable
+approval step.
 
-```ts
-payload: {
-  departmentId: string;
-}
+```txt id="initial-approval-routing"
+selected category
+-> parent/main category approval steps
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+```
+
+When approval assignees cannot be resolved, the command fails rather than
+creating an unowned approval ticket.
+
+---
+
+## Approve
+
+Approve is a ticket action command.
+
+- action type: `APPROVE`
+- allowed status: `Approval`
+- actor: current approver, or Admin
+- payload: content only
+- rejects files and inline images
+- action row is inserted
+- history records `APPROVAL_APPROVED`
+
+After approve:
+
+```txt id="approve-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = next approvers
+-> history = APPROVAL_REQUESTED
+
+no next approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+-> history = ASSIGNMENT_RESOLVED
 ```
 
 ---
 
-### 3. JOB_FIELD
+## Decline
 
-Approval based on job specialization.
+Decline is a ticket action command.
 
-```ts
-payload: {
-  jobFieldId: string;
-}
+- action type: `DECLINE`
+- allowed status: `Approval`
+- actor: current approver, or Admin
+- payload: content only
+- rejects files and inline images
+- action row is inserted
+- history records `APPROVAL_DECLINED`
+
+Decline terminates approval routing:
+
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
+```
+
+The requester may later resubmit through initial routing.
+
+---
+
+## Skip Rule
+
+`skipAccessLevel` allows an approval step to be skipped when the requester's
+access level satisfies the configured threshold.
+
+Skip behavior belongs to approval routing/resolution. If all approval is
+skipped, assignment rules resolve work owners and the ticket moves to
+`Assigned`.
+
+---
+
+## History
+
+Approval-related events:
+
+```txt id="approval-history-events"
+APPROVAL_REQUESTED
+APPROVAL_APPROVED
+APPROVAL_DECLINED
+ASSIGNMENT_RESOLVED
+```
+
+An approve action can create more than one history record:
+
+```txt id="approval-history-flow"
+APPROVAL_APPROVED
+-> APPROVAL_REQUESTED
+or
+APPROVAL_APPROVED
+-> ASSIGNMENT_RESOLVED
 ```
 
 ---
 
-### 4. EMPLOYEE
+## Relationship With Requester Update
 
-Approval assigned to specific individuals.
+Requester update can reset approval routing when routing-sensitive fields
+actually change:
 
-```ts
-payload: {
-  employeeIds: string[];
-}
-```
+- category
+- subject
+- content
+- files
+- images
 
----
-
-## Execution Rules
-
-### 1. Sequential Processing
-
-- Steps are executed in ascending order of `index`
-- Next step starts only after the current step is approved
+Routing reset starts approval resolution from the beginning and records
+`ROUTING_RESET`. Routing-neutral changes record `ROUTING_PRESERVED`.
 
 ---
 
-### 2. Early Termination
+## Deferred Scope
 
-- If any step is **declined**, the entire approval process stops
-- Ticket status becomes `Declined`
+The current approval model does not implement:
 
----
+- parallel approval voting
+- quorum approval
+- delegation calendars
+- approval SLA timers
+- approval notification delivery guarantees
 
-### 3. Completion
-
-- When all steps are approved:
-  → Ticket status becomes `Approved`
-  → Ticket moves to assignment phase
-
----
-
-## Skip Policy
-
-Approval steps can be automatically skipped based on requester authority.
-
-### Rule
-
-```
-if requester.accessLevel >= skipAccessLevel
-→ skip this step
-```
-
-### Purpose
-
-- Reduce unnecessary approvals for high-level users
-- Improve workflow efficiency
-- Prevent bottlenecks in urgent cases
+These are future production extensions.
 
 ---
 
-## Example Scenario
+## Related Documents
 
-### Case: IT Request with Manager Approval
-
-```ts
-approvalSteps = [
-  {
-    index: 1,
-    assigneeType: "MANAGER",
-    payload: { level: 1 },
-  },
-  {
-    index: 2,
-    assigneeType: "DEPARTMENT",
-    payload: { departmentId: "IT" },
-  },
-];
-```
-
-### Flow
-
-1. Direct manager approves
-2. IT department validates
-3. Ticket becomes `Approved`
-
----
-
-## UI Considerations
-
-- Approval steps should be visible as a **progress timeline**
-- Each step must display:
-  - assignee
-  - status (pending / approved / declined)
-  - timestamp
-
-- Skipped steps should be explicitly marked as **"skipped"**
-
----
-
-## Audit & History
-
-All approval activities must be recorded in the History model.
-
-### Recorded Data
-
-- approvalStep index
-- assignee
-- action (approved / declined / skipped)
-- timestamp
-- note (optional)
-
-### Purpose
-
-- Full traceability
-- Compliance and auditing
-- Debugging workflow issues
-
----
-
-## Edge Cases
-
-### 1. Missing Assignee
-
-- If assignee cannot be resolved:
-  → fallback or system alert required
-
----
-
-### 2. Parallel Approval (Not Supported)
-
-- Current design only supports sequential approval
-- Parallel approval intentionally excluded for simplicity
-
----
-
-### 3. Dynamic Organization Changes
-
-- If org structure changes during approval:
-  → approval should resolve based on current state
-
----
-
-## Trade-offs
-
-### Pros
-
-- Highly flexible and configurable
-- Supports complex organizational structures
-- Clear audit trail
-
-### Cons
-
-- Increased complexity in configuration
-- Sequential flow may introduce latency
-- Requires accurate org data
-
----
-
-## Alternatives Considered
-
-### 1. No Approval System
-
-- Simpler implementation
-- ❌ Not suitable for enterprise workflows
-
----
-
-### 2. Hardcoded Approval Logic
-
-- Easier to implement
-- ❌ Not scalable or maintainable
-
----
-
-### 3. Parallel Approval
-
-- Faster processing
-- ❌ Increased complexity and ambiguity in results
-
----
-
-## Design Principles Alignment
-
-This system follows core project principles:
-
-- Category-driven workflow
-- Configurable pipelines
-- Full audit trail
-- Non-destructive operations
+- [Ticket Lifecycle](../ticket-lifecycle.md)
+- [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)
+- [Assignment Policy](./assignment-policy.md)
+- [Ticket History](../ticket-history.md)
+- [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
 ## Summary
 
-The approval system provides a **flexible, auditable, and scalable validation mechanism**
-that adapts to organizational requirements while maintaining consistency and control.
+Approval is a sequential category-driven routing phase. Current approvers are
+stored in the same current assignee field used by work routing, with
+`approvalStepId` distinguishing approval phase from work phase. Final approval
+does not create an `Approved` status; it resolves workers and moves the ticket
+to `Assigned`.

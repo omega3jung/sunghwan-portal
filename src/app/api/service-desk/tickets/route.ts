@@ -24,6 +24,7 @@ import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/
 import {
   localCreateTicket,
   localListTickets,
+  withLocalTicketWorkerHistory,
 } from "@/server/serviceDesk/ticket/localDemo";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
@@ -95,15 +96,17 @@ export async function POST(request: NextRequest) {
 
       const isInternal = await isInternalUser(request);
 
+      const ticket = withDerivedTicketOwnership(
+        localCreateTicket({
+          isInternal,
+          requesterUsername: currentUserName,
+          input: body,
+        }),
+        currentUserName,
+      );
+
       return NextResponse.json(
-        withDerivedTicketOwnership(
-          localCreateTicket({
-            isInternal,
-            requesterUsername: currentUserName,
-            input: body,
-          }),
-          currentUserName,
-        ),
+        withLocalTicketWorkerHistory(ticket, { isInternal, currentUserName }),
         { status: 201 },
       );
     } catch (error) {

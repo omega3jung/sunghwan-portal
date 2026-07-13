@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/i18n";
 import { useMutationToast } from "@/shared/client/toast";
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 import { useSubmitTicketWorkSession } from "../../api/client";
 import {
@@ -46,7 +47,10 @@ import { WorkSessionToolSummary } from "./WorkSessionToolSummary";
 
 type WorkSessionToolContentProps = {
   onClose: () => void;
-  ticket?: Pick<TicketDetail, "id" | "status" | "workMinutes"> | null;
+  ticket?: Pick<
+    TicketDetail,
+    "id" | "status" | "workMinutes" | "isCurrentWorker"
+  > | null;
 };
 
 const translateError = (
@@ -96,7 +100,9 @@ export function WorkSessionToolContent({
   const durationMinutes = durationForm.watch("durationMinutes");
   const startAt = rangeForm.watch("startAt");
   const endAt = rangeForm.watch("endAt");
-  const previousTrackedMinutes = ticket?.workMinutes ?? 0;
+  const previousTrackedMinutes = normalizeNonNegativeInteger(
+    ticket?.workMinutes,
+  );
 
   const noteErrorKey =
     note.length > TICKET_WORK_SESSION_NOTE_MAX_LENGTH
@@ -107,8 +113,9 @@ export function WorkSessionToolContent({
     setSubmitErrorKey("");
   }, [activeTab, durationMinutes, endAt, selectedStatus, startAt]);
 
+  const canChangeWorkStatus = ticket?.isCurrentWorker === true;
   const nextStatus =
-    selectedStatus && selectedStatus !== ticket?.status
+    canChangeWorkStatus && selectedStatus && selectedStatus !== ticket?.status
       ? selectedStatus
       : undefined;
 
@@ -221,8 +228,9 @@ export function WorkSessionToolContent({
       nextStatus,
       note,
     });
+    const submittedTrackedMinutes = payload.durationMinutes ?? 0;
 
-    if (payload.trackedMinutes <= 0) {
+    if (submittedTrackedMinutes <= 0) {
       setActiveFormPositiveError();
       return;
     }
@@ -231,7 +239,7 @@ export function WorkSessionToolContent({
       payload.nextStatus &&
       !canChangeStatus({
         previousTrackedMinutes,
-        currentTrackedMinutes: payload.trackedMinutes,
+        currentTrackedMinutes: submittedTrackedMinutes,
       })
     ) {
       setSubmitErrorKey("validation.workSession.statusRequiresTime");
@@ -320,22 +328,24 @@ export function WorkSessionToolContent({
 
       <Separator />
 
-      <WorkSessionStatusField
-        value={statusSelectValue}
-        onValueChange={(value) =>
-          setSelectedStatus(isWorkSessionStatus(value) ? value : null)
-        }
-        options={statusOptions}
-        getOptionLabel={getStatusLabel}
-        label={
-          <span className="flex items-center gap-1">
-            {t("field.status")}
-            <InfoIcon className="h-4 w-4 text-muted-foreground" />
-          </span>
-        }
-        labelTitle={t("workSessionTool.status.description")}
-        error={statusError}
-      />
+      {canChangeWorkStatus ? (
+        <WorkSessionStatusField
+          value={statusSelectValue}
+          onValueChange={(value) =>
+            setSelectedStatus(isWorkSessionStatus(value) ? value : null)
+          }
+          options={statusOptions}
+          getOptionLabel={getStatusLabel}
+          label={
+            <span className="flex items-center gap-1">
+              {t("field.status")}
+              <InfoIcon className="h-4 w-4 text-muted-foreground" />
+            </span>
+          }
+          labelTitle={t("workSessionTool.status.description")}
+          error={statusError}
+        />
+      ) : null}
 
       <WorkSessionNoteField
         open={noteOpen}

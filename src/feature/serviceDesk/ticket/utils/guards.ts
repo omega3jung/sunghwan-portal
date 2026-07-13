@@ -6,7 +6,6 @@ const ACTIVE_TICKET_STATUSES: TicketStatus[] = [
   "Working",
   "Pending",
   "Resolved",
-  "Reopened",
 ];
 
 export function isClosedTicketStatus(status: TicketStatus) {

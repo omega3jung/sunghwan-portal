@@ -34,7 +34,9 @@ import {
   getMaxHistoryNo,
   getTicketContext,
 } from "@/server/serviceDesk/ticket/command/utils";
+import { hasLocalTicketWorkAssignmentHistory } from "@/server/serviceDesk/ticket/localDemo/workerHistory";
 import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 const localWorkSessions: DbTicketWorkSession[] = [];
 
@@ -63,7 +65,11 @@ const resolveServerTrackedMinutes = (
 
 const validatePayload = (
   ticketId: string,
+  ticketStatus: string,
   payload: TicketWorkSessionSubmitPayload,
+  options: {
+    isCurrentWorkAssignee: boolean;
+  },
 ) => {
   if (payload.ticketId !== ticketId) {
     throw new ServiceDeskApiError(
@@ -80,6 +86,49 @@ const validatePayload = (
     );
   }
 
+  if (
+    payload.nextStatus &&
+    payload.nextStatus !== ticketStatus &&
+    !isAllowedWorkStatusTransition(ticketStatus, payload.nextStatus)
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+      409,
+      { from: ticketStatus, to: payload.nextStatus },
+    );
+  }
+
+  if (payload.nextStatus && !options.isCurrentWorkAssignee) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.assigneeForbidden",
+      403,
+    );
+  }
+
+  if (
+    options.isCurrentWorkAssignee &&
+    (ticketStatus === "Assigned" || ticketStatus === "Pending") &&
+    (!payload.nextStatus || payload.nextStatus === ticketStatus)
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.statusTransitionRequired",
+      409,
+      { status: ticketStatus },
+    );
+  }
+
+  if (
+    ticketStatus !== "Assigned" &&
+    ticketStatus !== "Working" &&
+    ticketStatus !== "Pending"
+  ) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+      409,
+      { from: ticketStatus },
+    );
+  }
+
   const trackedMinutes = resolveServerTrackedMinutes(payload);
 
   if (trackedMinutes <= 0) {
@@ -90,6 +139,52 @@ const validatePayload = (
   }
 
   return trackedMinutes;
+};
+
+const isAllowedWorkStatusTransition = (
+  currentStatus: string,
+  nextStatus: TicketWorkSessionStatus,
+) => {
+  if (currentStatus === "Assigned") {
+    return nextStatus === "Working";
+  }
+
+  if (currentStatus === "Working") {
+    return nextStatus === "Pending" || nextStatus === "Resolved";
+  }
+
+  if (currentStatus === "Pending") {
+    return nextStatus === "Working" || nextStatus === "Resolved";
+  }
+
+  return false;
+};
+
+const resolveWorkSessionAuthorization = (
+  ticket: ReturnType<typeof getTicketContext>["ticket"],
+  currentUserName: string,
+  isInternal: boolean,
+) => {
+  const isCurrentWorkAssignee =
+    ticket.approval_step_id === null &&
+    ticket.assignee_usernames.includes(currentUserName);
+  const hasBeenWorker =
+    isCurrentWorkAssignee ||
+    hasLocalTicketWorkAssignmentHistory({
+      isInternal,
+      ticketId: ticket.id,
+      username: currentUserName,
+    });
+
+  if (!hasBeenWorker) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.assigneeForbidden",
+      403,
+      { ticketId: ticket.id, username: currentUserName },
+    );
+  }
+
+  return { isCurrentWorkAssignee };
 };
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -153,7 +248,21 @@ export async function POST(
       ticketId,
       isInternal,
     );
-    const trackedMinutes = validatePayload(ticketId, payload);
+    const authorization = resolveWorkSessionAuthorization(
+      ticket,
+      currentUserName,
+      isInternal,
+    );
+
+    const trackedMinutes = validatePayload(
+      ticketId,
+      ticket.status,
+      payload,
+      authorization,
+    );
+    const previousTrackedMinutes = normalizeNonNegativeInteger(
+      ticket.work_minutes,
+    );
     const nextStatus =
       payload.nextStatus && payload.nextStatus !== ticket.status
         ? payload.nextStatus
@@ -162,7 +271,7 @@ export async function POST(
     if (
       nextStatus &&
       !canChangeStatus({
-        previousTrackedMinutes: ticket.work_minutes,
+        previousTrackedMinutes,
         currentTrackedMinutes: trackedMinutes,
       })
     ) {
@@ -178,9 +287,8 @@ export async function POST(
       work_session_no: getNextWorkSessionNo(ticketId),
       assignee_username: currentUserName,
       start_at: payload.startAt ?? createdAt,
-      end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
-      duration_minutes:
-        payload.inputMode === "duration" ? trackedMinutes : null,
+      end_at: payload.endAt ?? null,
+      duration_minutes: trackedMinutes,
       note: payload.note?.trim() || null,
       created_at: createdAt,
       updated_at: null,
@@ -188,7 +296,7 @@ export async function POST(
     const updatedTicket = createUpdatedTicket(
       ticket,
       {
-        work_minutes: ticket.work_minutes + trackedMinutes,
+        work_minutes: previousTrackedMinutes + trackedMinutes,
         ...(nextStatus ? { status: nextStatus } : {}),
       },
       createdAt,
@@ -203,12 +311,17 @@ export async function POST(
         ticket_id: ticketId,
         history_no: getMaxHistoryNo(ticketId, isInternal),
         type: "STATUS",
-        action: "UPDATED",
+        event: "STATUS_UPDATED",
+        source: "USER_ACTION",
         actor_username: currentUserName,
         action_no: null,
-        from_value: ticket.status,
-        to_value: nextStatus,
-        metadata: payload,
+        from_value: { status: ticket.status },
+        to_value: { status: nextStatus },
+        metadata: {
+          ...payload,
+          previousStatus: ticket.status,
+          nextStatus,
+        },
         created_at: createdAt,
       });
     }

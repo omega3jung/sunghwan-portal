@@ -2,333 +2,199 @@
 
 ## Goal
 
-This document defines the design strategy behind the ticket action system.
+This document defines the current Ticket Action command execution strategy.
 
-The goal is to provide a structured, scalable, and audit-friendly way to
-represent meaningful ticket interactions, including both communication and
-operational changes.
+Ticket Action is not generic CRUD. It is a server-controlled command pipeline
+that validates status, permissions, input, ticket effects, and history.
 
 ---
 
-## Core Concept
+## Current Action Union
 
-The system models actions as explicit domain behavior rather than plain text.
-
-```txt
-Action = Intent + Effect + Context
+```txt id="ticket-action-union"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
 ```
 
-This means each action should express:
+Route paths use:
 
-- what happened
-- why it happened
-- what changed as a result
-
----
-
-## Design Principles
-
-### 1. Behavior Over Text
-
-- The system should represent behavior, not just messages
-- Comments alone are insufficient for real workflows
-- Every meaningful operation should be modeled as a first-class entity
-
----
-
-### 2. Separation of Intent and Effect
-
-Each action explicitly separates:
-
-- intent: the reason or explanation
-- effect: the actual structured change
-
-```txt
-Intent -> rich text reason
-Effect -> metadata such as priority, assignee, or due date
+```txt id="ticket-action-route-paths"
+approve
+decline
+comment
+note
+assign
+assignSelf
+adjust
+reject
+merge
+reopen
+resubmit
+cancel
 ```
 
----
+The explicit start-work command is implemented as a separate command route, not
+as a Ticket Action union member:
 
-### 3. Unified Activity Model
-
-All interactions are represented through a single activity model:
-
-```txt
-Activity = Communication + Operation
-```
-
-This avoids fragmentation between:
-
-- comments
-- system logs
-- manual operational changes
-
----
-
-### 4. Traceability First
-
-Every action should answer:
-
-- who did it
-- when it happened
-- what changed
-- why it was done
-
----
-
-## Action Design Strategy
-
-### 1. Action Types as Domain Events
-
-Each action represents a meaningful domain-level event.
-
-### Examples
-
-- `assign`: ownership or routing change
-- `adjust`: priority, risk, or due date update
-- `merge`: structural ticket change
-- `reject`: workflow decision with explicit reason
-
----
-
-### 2. Action Types Must Be Explicit
-
-Avoid hiding meaning inside text.
-
-#### Bad
-
-```txt
-"Assigning this to John"
-```
-
-#### Good
-
-```ts
-{
-  type: "assign",
-  assigneeIds: ["john"],
-}
-```
-
-Explicit action types improve readability, validation, and auditability.
-
----
-
-### 3. Reason Content Is Required
-
-- Reason content is required for all actions
-- Communication and operational actions share this rule
-- Auto-generated actions still store concrete content
-
----
-
-## UI Strategy
-
-### 1. Consistent Form Pattern
-
-All action forms follow a unified structure:
-
-```txt
-[ Action-specific fields ]
-[ Reason editor ]
+```txt id="start-work-command-route"
+POST /api/service-desk/tickets/:ticketId/command/start-work
 ```
 
 ---
 
-### 2. Shared Reason Component
+## Command Pipeline
 
-- The rich text editor is shared across action types
-- Duplication is reduced
-- UX remains consistent
-
----
-
-### 3. Field Responsibility Separation
-
-- action-specific fields handle structured data input
-- the reason editor handles contextual explanation
-
----
-
-### 4. Timeline-First Design
-
-The UI is built around a unified timeline.
-
-Each action:
-
-- renders as a timeline item
-- shows structured metadata
-- includes optional reason content
-
-This helps users understand both what changed and why.
-
----
-
-## Metadata Strategy
-
-### 1. Action-Specific Metadata
-
-Each action type defines its own metadata contract.
-
-### Examples
-
-#### `assign`
-
-- assignee
-- category
-
-#### `adjust`
-
-- priority
-- risk level
-- due date
-
-#### `merge`
-
-- target ticket
-
-#### `reject`
-
-- may rely mainly on reason content, with little or no extra metadata
-
----
-
-### 2. Avoid Generic Key-Value Abuse
-
-Do not rely on vague metadata structures when a clear domain shape exists.
-
-#### Bad
-
-```ts
-metadata: { field: "priority", value: "high" }
+```txt id="ticket-action-pipeline"
+POST /api/service-desk/tickets/:ticketId/command/:action
+-> authenticate current employee
+-> resolve user role
+-> normalize payload
+-> validate action/status/permission
+-> insert action row
+-> apply ticket effect
+-> create history rows
+-> return action DTO
 ```
 
-#### Good
+Approval commands use the same command route but validate a stricter payload:
+content only, no files or inline images.
 
-```ts
-metadata: { priority: "high" }
+---
+
+## Permission and Status Guards
+
+Each action has a status guard and ownership rule.
+
+Examples:
+
+- approver or Admin can `APPROVE`/`DECLINE` in `Approval`
+- current work assignee or Admin can `ASSIGN`, `ADJUST`, `REJECT`, `MERGE`
+  where status allows
+- requester can `RESUBMIT`, `REOPEN`, or `CANCEL` where status allows
+- Admin can override selected assignment, adjustment, merge, and rejection
+  paths
+
+The detailed matrix is in
+[Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md).
+
+---
+
+## Transaction Boundary
+
+REMOTE command execution groups the action row, ticket mutation, and history
+rows as one use case.
+
+This matters because operational action results must not partially commit:
+
+```txt id="action-transaction"
+action row
++ ticket mutation
++ history rows
+= one command result
 ```
 
----
-
-### 3. Strong Typing per Action
-
-Each action type should have a clearly defined shape.
-
-This improves:
-
-- type safety
-- readability
-- maintainability
+LOCAL command execution mirrors the same contract with demo-safe mutable state.
 
 ---
 
-## Communication Strategy
+## Action-Specific Inputs
 
-### 1. `comment` vs `note`
+Common input:
 
-#### `comment`
+- `content`
+- optional prepared files/images for supported non-approval actions
 
-- public communication
-- may trigger notifications
+Action-specific input:
 
-#### `note`
+- `ASSIGN`: `assigneeUsernames`
+- `ADJUST`: `priority`, `riskLevel`, `dueAt`
+- `MERGE`: `targetTicketId`
+- `APPROVE`/`DECLINE`: content only
 
-- internal communication
-- no external notification
-- private to the team or operational context
+Every action requires content, except the UI may generate content for
+`ASSIGN_SELF`.
 
 ---
 
-### 2. Communication Is Still an Action
+## Mutability Policy
 
-Even communication is treated as intentional behavior.
+### Communication Actions
 
-```txt
-communication = action
+`COMMENT` and `NOTE` are user-facing communication entries.
+
+Existing comments remain visible after a ticket is `Closed`. Visibility of an
+existing row is different from permission to create a new row after closure.
+New communication rows are governed by the closed-ticket operation rules.
+
+Current route behavior supports soft delete by the original writer when the
+ticket is not `Draft` or `Closed`.
+
+### Operational Actions
+
+Operational actions are immutable.
+
+Examples:
+
+- `ASSIGN`
+- `ADJUST`
+- `REJECT`
+- `MERGE`
+- `REOPEN`
+- `RESUBMIT`
+- `CANCEL`
+- approval actions
+
+If an operational decision needs correction, create a new corrective command.
+
+---
+
+## Action Without Ticket Mutation
+
+`COMMENT` and `NOTE` insert action rows and history without changing status.
+
+The start-work command changes ticket status without inserting a Ticket Action
+row: `Assigned -> Working`, with `STATUS_UPDATED` history.
+
+Some system operations can create history without any action row. For example,
+resolved auto-close creates `RESOLUTION_CLOSE` with source `SYSTEM_AUTO` and
+`actionNo = null`.
+
+---
+
+## Notification Boundary
+
+Action commands may provide the point where notification should be triggered,
+but persisted ticket fields must not be polluted with derived notification
+recipients.
+
+In particular, assignment commands must not append resolved assignee emails to
+`tk_email`. Assignee emails should be resolved at notification-send time.
+
+Production notification delivery is deferred unless explicitly implemented.
+
+---
+
+## LOCAL and REMOTE Parity
+
+Both runtime paths should expose the same action command surface and DTO shape.
+
+```txt id="action-runtime"
+LOCAL command handler
+REMOTE portal API/service
+-> TicketActionDto
 ```
 
-This ensures:
-
-- consistency in the timeline
-- unified rendering logic
-- a single interaction model across the ticket domain
-
----
-
-## Audit Strategy
-
-### 1. Full Activity Log
-
-All actions should be preserved as append-oriented operational records.
-
-- only `comment` and `note` are editable/deletable under author rules
-- operational actions are immutable
-- in `Closed`, no action can be edited or deleted
-- delete is soft-delete (`active = false`) for mutable communication items
-
----
-
-### 2. Explicit Actor Tracking
-
-Each action records:
-
-- `createdBy`
-- `createdAt`
-
----
-
-### 3. Reason as Audit Context
-
-Reason content helps explain decisions and is especially important for:
-
-- debugging
-- review
-- compliance-sensitive workflows
-
----
-
-## Extensibility Strategy
-
-The system is designed to support future actions without structural redesign.
-
-### Potential Extensions
-
-- `resolve`
-- `close`
-- `requestReview` / `reopen`
-- `escalate`
-- `reassign`
-- approval-related actions
-
-### Rule for Adding New Actions
-
-A new action should:
-
-- represent a meaningful domain event
-- define its own metadata shape
-- integrate into the timeline
-- follow the same form pattern
-
----
-
-## Trade-offs
-
-### Pros
-
-- strong domain alignment
-- improved auditability
-- better UI consistency
-- scalable action architecture
-
----
-
-### Cons
-
-- increased modeling complexity
-- larger refactoring cost
-- higher initial learning curve for developers
+Differences in storage implementation should remain behind the route handler.
 
 ---
 
@@ -336,21 +202,14 @@ A new action should:
 
 - [Ticket Activity Model](../ticket-activity.md)
 - [Ticket History](../ticket-history.md)
-- [Ticket Model](../ticket-model.md)
+- [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)
+- [Ticket Lifecycle](../ticket-lifecycle.md)
 
 ---
 
 ## Summary
 
-The action strategy transforms the system from:
-
-```txt
-Comment-driven system -> Action-driven system
-```
-
-This shift enables:
-
-- structured workflows
-- clearer intent representation
-- stronger audit trails
-- more consistent UI architecture
+Ticket Action is the command layer for Service Desk operations. It validates
+status and actor rules, creates action records, applies ticket effects, and
+creates immutable history. It keeps communication timeline entries separate
+from event/audit history.

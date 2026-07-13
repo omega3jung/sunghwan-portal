@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 
   return portalApiJson(req, {
     method: "GET",
-    path: `/users/${userId}/profile`,
+    path: `/users/${encodeURIComponent(userId)}/profile`,
     errorMessage: "Failed to fetch user profile",
   });
 }
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
 
   return portalApiJson(req, {
     method: "POST",
-    path: `/users/${userId}/profile`,
+    path: `/users/${encodeURIComponent(userId)}/profile`,
     body,
     errorMessage: "Failed to create user profile",
   });
@@ -83,7 +83,7 @@ export async function PUT(req: NextRequest, context: UserIdRouteContext) {
 
   return portalApiJson(req, {
     method: "PUT",
-    path: `/users/${userId}/profile`,
+    path: `/users/${encodeURIComponent(userId)}/profile`,
     body,
     errorMessage: "Failed to update user profile",
   });

@@ -54,6 +54,9 @@
       },
       "2026-06": {
         "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
       }
     }
   },
@@ -114,6 +117,10 @@
       "title": "티켓 작업 시간 추적",
       "description": "세션 기반 작업 추적과 시간 기록 모델을 설명합니다."
     },
+    "serviceDeskSettings": {
+      "title": "서비스 데스크 설정",
+      "description": "티켓 생성, 승인, 배정, 표시 동작을 제어하는 설정 모델을 설명합니다."
+    },
     "actionStrategy": {
       "title": "액션 전략",
       "description": "액션 중심 상호작용과 메타데이터 설계 전략을 설명합니다."
@@ -157,6 +164,10 @@
     "ticketForm": {
       "title": "티켓 폼",
       "description": "폼 흐름, 카테고리 기반 동작, 제출 설계를 설명합니다."
+    },
+    "ticketAttachment": {
+      "title": "티켓 첨부 설계",
+      "description": "파일, rich-text 이미지, 메타데이터, 향후 저장소 연동을 위한 첨부 처리 방식을 설명합니다."
     },
     "localeStructure": {
       "title": "Locale 구조",
@@ -253,6 +264,22 @@
     "decisionServiceDeskSettingsDtoApiBoundary202606": {
       "title": "2026-06 Service Desk 설정 DTO/API 경계",
       "description": "Service Desk 설정 DTO/API 경계 결정 기록입니다."
+    },
+    "decisionTicketAttachmentBoundary202606": {
+      "title": "2026-06 티켓 첨부파일 경계",
+      "description": "티켓 첨부파일 경계 결정 기록입니다."
+    },
+    "decisionTicketFormAndDraftWorkflow202606": {
+      "title": "2026-06 티켓 Form 및 Draft Workflow",
+      "description": "티켓 Form 및 Draft Workflow 결정 기록입니다."
+    },
+    "decisionTicketActionAndHistoryExecution202607": {
+      "title": "2026-07 티켓 Action 및 History 실행",
+      "description": "티켓 Action 및 History 실행 결정 기록입니다."
+    },
+    "decisionTicketRoutingAndUpdatePolicy202607": {
+      "title": "2026-07 티켓 Routing 및 Update 정책",
+      "description": "티켓 Routing 및 Update 정책 결정 기록입니다."
     }
   }
 }

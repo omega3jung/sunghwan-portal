@@ -25,7 +25,7 @@ export function useAutoStartAssignedTicketOnView({
       ticket?.active === true &&
       ticket.status === "Assigned" &&
       ticket.assignmentPhase === "WORK" &&
-      ticket.assignedWorker === true;
+      ticket.isCurrentWorker === true;
 
     if (!ticket?.id) {
       return;
@@ -53,7 +53,7 @@ export function useAutoStartAssignedTicketOnView({
     isPending,
     mutate,
     ticket?.active,
-    ticket?.assignedWorker,
+    ticket?.isCurrentWorker,
     ticket?.assignmentPhase,
     ticket?.id,
     ticket?.status,

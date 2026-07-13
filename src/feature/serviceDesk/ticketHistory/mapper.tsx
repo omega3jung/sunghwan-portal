@@ -51,8 +51,6 @@ export function resolveHistoryBadge(
       return tCommon("field.note");
     case "PLANNING":
       return t("historyTimeline.badge.planning");
-    case "SYSTEM":
-      return t("historyTimeline.badge.system");
     default:
       return tCommon("field.history");
   }
@@ -61,7 +59,7 @@ export function resolveHistoryBadge(
 export function getHistorySummary(
   history: {
     type?: string;
-    action: string;
+    event: TicketHistory["event"];
     fromValue?: unknown;
     toValue?: unknown;
     metadata?: TicketHistoryDisplayMetadata | null;
@@ -69,51 +67,38 @@ export function getHistorySummary(
   t: TFunction,
   tStatus: TFunction,
 ) {
-  if (history.type === "STATUS" && history.action === "UPDATED") {
-    if (history.fromValue && history.toValue) {
-      return t("history.STATUS_CHANGED", {
-        from: resolveHistoryStatusLabel(history.fromValue, tStatus),
-        to: resolveHistoryStatusLabel(history.toValue, tStatus),
-      });
-    }
-
-    return t("history.STATUS_CHANGED_SIMPLE");
+  const eventSummary = getHistoryEventSummary(history, t, tStatus);
+  if (eventSummary) {
+    return eventSummary;
   }
 
-  if (history.type === "ASSIGNMENT" && history.action === "UPDATED") {
-    return t("history.ASSIGNEE_CHANGED");
-  }
+  return t("history.DEFAULT");
+}
 
-  if (history.type === "COMMENT") {
-    switch (history.action) {
-      case "CREATED":
-        return t("history.COMMENT_CREATED");
-      case "UPDATED":
-        return t("history.COMMENT_UPDATED");
-      case "DELETED":
-        return t("history.COMMENT_DELETED");
-      default:
-        break;
-    }
-  }
-
-  if (history.type === "NOTE" && history.action === "CREATED") {
-    return t("history.NOTE_CREATED");
-  }
-
-  switch (history.action) {
-    case "DELETED":
-      return t("history.DELETED");
-    case "STATUS_CHANGED":
-      if (history.fromValue && history.toValue) {
-        return t("history.STATUS_CHANGED", {
-          from: resolveHistoryStatusLabel(history.fromValue, tStatus),
-          to: resolveHistoryStatusLabel(history.toValue, tStatus),
-        });
-      }
-      return t("history.STATUS_CHANGED_SIMPLE");
-    case "ASSIGNEE_CHANGED":
-      return t("history.ASSIGNEE_CHANGED");
+function getHistoryEventSummary(
+  history: {
+    event: TicketHistory["event"];
+    fromValue?: unknown;
+    toValue?: unknown;
+    metadata?: TicketHistoryDisplayMetadata | null;
+  },
+  t: TFunction,
+  tStatus: TFunction,
+) {
+  switch (history.event) {
+    case "TICKET_SUBMITTED":
+      return t("history.TICKET_SUBMITTED");
+    case "TICKET_UPDATED":
+      return t("history.TICKET_UPDATED");
+    case "CATEGORY_UPDATED":
+      return t("history.CATEGORY_UPDATED");
+    case "STATUS_UPDATED":
+      return history.fromValue && history.toValue
+        ? t("history.STATUS_UPDATED", {
+            from: resolveHistoryStatusLabel(history.fromValue, tStatus),
+            to: resolveHistoryStatusLabel(history.toValue, tStatus),
+          })
+        : t("history.STATUS_UPDATED_SIMPLE");
     case "APPROVAL_REQUESTED":
       return t("history.APPROVAL_REQUESTED");
     case "APPROVAL_APPROVED":
@@ -121,7 +106,6 @@ export function getHistorySummary(
     case "APPROVAL_DECLINED":
       return t("history.APPROVAL_DECLINED");
     case "TICKET_MERGED":
-    case "MERGED":
       return t("history.MERGED", {
         target: resolveMergeTargetLabel(history.metadata),
       });
@@ -129,12 +113,45 @@ export function getHistorySummary(
       return t("history.TICKET_REJECTED");
     case "TICKET_CANCELED":
       return t("history.TICKET_CANCELED");
-    case "UPDATED":
-      return t("history.UPDATED");
-    case "CREATED":
-      return t("history.CREATED");
+    case "RESOLUTION_CLOSE":
+      return history.fromValue && history.toValue
+        ? t("history.RESOLUTION_CLOSE", {
+            from: resolveHistoryStatusLabel(history.fromValue, tStatus),
+            to: resolveHistoryStatusLabel(history.toValue, tStatus),
+          })
+        : t("history.RESOLUTION_CLOSE_SIMPLE");
+    case "ASSIGNMENT_RESOLVED":
+      return t("history.ASSIGNMENT_RESOLVED");
+    case "ASSIGNMENT_UPDATED":
+      return t("history.ASSIGNMENT_UPDATED");
+    case "COMMENT_CREATED":
+      return t("history.COMMENT_CREATED");
+    case "COMMENT_UPDATED":
+      return t("history.COMMENT_UPDATED");
+    case "COMMENT_DELETED":
+      return t("history.COMMENT_DELETED");
+    case "NOTE_CREATED":
+      return t("history.NOTE_CREATED");
+    case "NOTE_UPDATED":
+      return t("history.NOTE_UPDATED");
+    case "NOTE_DELETED":
+      return t("history.NOTE_DELETED");
+    case "PLANNING_UPDATED":
+      return t("history.PLANNING_UPDATED");
+    case "WORK_SESSION_STARTED":
+      return t("history.WORK_SESSION_STARTED");
+    case "WORK_SESSION_STOPPED":
+      return t("history.WORK_SESSION_STOPPED");
+    case "WORK_SESSION_UPDATED":
+      return t("history.WORK_SESSION_UPDATED");
+    case "WORK_SESSION_DELETED":
+      return t("history.WORK_SESSION_DELETED");
+    case "ROUTING_RESET":
+      return t("history.ROUTING_RESET");
+    case "ROUTING_PRESERVED":
+      return t("history.ROUTING_PRESERVED");
     default:
-      return t("history.DEFAULT");
+      return undefined;
   }
 }
 
@@ -168,47 +185,41 @@ function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
 }
 
 export function resolveHistoryIcon(history: TicketHistory) {
-  if (history.type === "COMMENT" && history.action === "CREATED") {
-    return <MessageSquare className="h-3 w-3" />;
+  if (history.source === "SYSTEM_AUTO") {
+    return <Bot className="h-3 w-3" />;
   }
 
-  if (history.type === "NOTE" && history.action === "CREATED") {
-    return <StickyNote className="h-3 w-3" />;
-  }
-
-  if (history.type === "STATUS" && history.action === "UPDATED") {
-    return <RefreshCcw className="h-3 w-3" />;
-  }
-
-  if (history.type === "ASSIGNMENT" && history.action === "UPDATED") {
-    return <RefreshCcw className="h-3 w-3" />;
-  }
-
-  switch (history.action) {
-    case "CREATED":
-      return <CircleDot className="h-3 w-3" />;
-
-    case "UPDATED":
-      return <RefreshCcw className="h-3 w-3" />;
-
+  switch (history.event) {
     case "TICKET_MERGED":
       return <GitMerge className="h-3 w-3" />;
-
     case "TICKET_REJECTED":
-      return <X className="h-3 w-3" />;
-
     case "TICKET_CANCELED":
+    case "APPROVAL_DECLINED":
       return <X className="h-3 w-3" />;
-
-    case "DELETED":
-      return <Trash2 className="h-3 w-3" />;
-
     case "APPROVAL_REQUESTED":
       return <Clock3 className="h-3 w-3" />;
-
     case "APPROVAL_APPROVED":
       return <Check className="h-3 w-3" />;
-
+    case "STATUS_UPDATED":
+    case "ASSIGNMENT_UPDATED":
+    case "TICKET_UPDATED":
+    case "CATEGORY_UPDATED":
+    case "ROUTING_RESET":
+    case "ROUTING_PRESERVED":
+      return <RefreshCcw className="h-3 w-3" />;
+    case "COMMENT_CREATED":
+      return <MessageSquare className="h-3 w-3" />;
+    case "NOTE_CREATED":
+      return <StickyNote className="h-3 w-3" />;
+    case "COMMENT_DELETED":
+    case "NOTE_DELETED":
+    case "WORK_SESSION_DELETED":
+      return <Trash2 className="h-3 w-3" />;
+    case "PLANNING_UPDATED":
+    case "WORK_SESSION_STARTED":
+    case "WORK_SESSION_STOPPED":
+    case "WORK_SESSION_UPDATED":
+      return <Clock3 className="h-3 w-3" />;
     default:
       break;
   }
@@ -220,8 +231,6 @@ export function resolveHistoryIcon(history: TicketHistory) {
       return <Pencil className="h-3 w-3" />;
     case "PLANNING":
       return <Clock3 className="h-3 w-3" />;
-    case "SYSTEM":
-      return <Bot className="h-3 w-3" />;
     case "COMMENT":
       return <MessageSquare className="h-3 w-3" />;
     case "NOTE":

@@ -1,7 +1,8 @@
 ﻿import {
   HistoryType,
   TicketHistory,
-  TicketHistoryAction,
+  TicketHistoryEvent,
+  TicketHistorySource,
 } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
@@ -17,7 +18,8 @@ export interface DbTicketHistory {
   history_no: number;
 
   type: HistoryType;
-  action: TicketHistoryAction;
+  event: TicketHistoryEvent;
+  source: TicketHistorySource;
 
   actor_username: string | null;
   action_no: number | null;
@@ -37,12 +39,17 @@ export const camelTicketHistoryMapper: ArrayMapper<
     ticketId: item.ticket_id,
     historyNo: item.history_no,
     type: item.type,
-    action: item.action,
+    event: item.event,
+    source: item.source,
     actorUsername: item.actor_username,
     actionNo: item.action_no,
     fromValue: item.from_value,
     toValue: item.to_value,
-    metadata: mapTicketHistoryDisplayMetadata(item.metadata),
+    metadata: mapTicketHistoryDisplayMetadata({
+      ...asRecord(item.metadata),
+      source: item.source,
+      event: item.event,
+    }),
     createdAt: item.created_at,
   }));
 };
@@ -55,7 +62,8 @@ export const snakeTicketHistoryMapper: ArrayMapper<
     ticket_id: item.ticketId,
     history_no: item.historyNo,
     type: item.type,
-    action: item.action,
+    event: item.event,
+    source: item.source,
     actor_username: item.actorUsername,
     action_no: item.actionNo,
     from_value: item.fromValue,
@@ -71,3 +79,11 @@ export const mapTicketHistoryListPayload = createListPayloadMapper(
 export const mapTicketHistoryPayload = createItemPayloadMapper(
   camelTicketHistoryMapper,
 );
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}

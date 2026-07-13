@@ -43,7 +43,7 @@ export async function POST(
       });
 
       return NextResponse.json(
-        toLocalStartWorkResponse(updatedTicket, currentUserName),
+        toLocalStartWorkResponse(updatedTicket, currentUserName, isInternal),
       );
     } catch (error) {
       const message =

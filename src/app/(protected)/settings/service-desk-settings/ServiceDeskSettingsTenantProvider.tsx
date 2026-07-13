@@ -7,7 +7,7 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
 import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
 
-import { useSettingsScope } from "../SettingsScopeProvider";
+import { useSettingsScope } from "../_providers";
 
 type ServiceDeskSettingsTenantContextValue = {
   tenantData: Tenant[];

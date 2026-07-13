@@ -28,3 +28,19 @@ export const sanitizeNumber = (value: string): number => {
 
   return isNaN(result) ? 0 : result;
 };
+
+/**
+ * Converts unknown numeric input into a non-negative integer.
+ *
+ * @param value - The raw value to normalize
+ * @returns The parsed non-negative integer, or `0` for invalid, decimal, or negative values
+ */
+export const normalizeNonNegativeInteger = (value: unknown): number => {
+  const parsedValue = Number(value);
+
+  if (!Number.isFinite(parsedValue) || !Number.isInteger(parsedValue)) {
+    return 0;
+  }
+
+  return parsedValue > 0 ? parsedValue : 0;
+};

@@ -3,6 +3,7 @@ import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { toTicketMockDetailResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
+import { withLocalTicketWorkerHistory } from "../../localDemo/workerHistory";
 import { getLocalDemoHistories } from "../../state";
 import {
   createUpdatedTicket,
@@ -55,19 +56,23 @@ export function startTicketWorkLocal({
 export function toLocalStartWorkResponse(
   ticket: DbTicketDetail,
   currentUserName: string,
+  isInternal = false,
 ) {
   const detail = toTicketMockDetailResource(ticket);
 
-  return {
-    ...detail,
-    owner: detail.requesterUsername === currentUserName,
-    assignedApprover:
-      detail.assignmentPhase === "APPROVAL" &&
-      detail.approvalAssigneeUsernames.includes(currentUserName),
-    assignedWorker:
-      detail.assignmentPhase === "WORK" &&
-      detail.workAssigneeUsernames.includes(currentUserName),
-  };
+  return withLocalTicketWorkerHistory(
+    {
+      ...detail,
+      owner: detail.requesterUsername === currentUserName,
+      isCurrentApprover:
+        detail.assignmentPhase === "APPROVAL" &&
+        detail.approvalAssigneeUsernames.includes(currentUserName),
+      isCurrentWorker:
+        detail.assignmentPhase === "WORK" &&
+        detail.workAssigneeUsernames.includes(currentUserName),
+    },
+    { isInternal, currentUserName },
+  );
 }
 
 function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {
@@ -107,13 +112,15 @@ function createStatusUpdatedHistory(
     ticket_id: ticket.id,
     history_no: getMaxHistoryNo(ticket.id, isInternal),
     type: "STATUS",
-    action: "UPDATED",
+    event: "STATUS_UPDATED",
+    source: "USER_ACTION",
     actor_username: employeeUserName,
     action_no: null,
-    from_value: ticket.status,
-    to_value: nextStatus,
+    from_value: { status: ticket.status },
+    to_value: { status: nextStatus },
     metadata: {
-      source: "auto-start-on-view",
+      previousStatus: ticket.status,
+      nextStatus,
     },
     created_at: createdAt,
   };

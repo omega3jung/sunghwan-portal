@@ -1,9 +1,8 @@
-import { TICKET_ACTION_MOCK_DEFAULTS, TicketActionMockInput } from "../types";
+import { TicketActionMockInput } from "../types";
 import { ticket } from "./ticket";
 
 export const actions: TicketActionMockInput[] = [
   {
-    ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 1,
 
@@ -15,11 +14,11 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
 
+    tka_metadata: {},
     tka_files: [],
     tka_images: [],
   },
   {
-    ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 2,
 
@@ -32,11 +31,11 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
 
+    tka_metadata: {},
     tka_files: [],
     tka_images: [],
   },
   {
-    ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 3,
 
@@ -48,11 +47,11 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
 
+    tka_metadata: {},
     tka_files: [],
     tka_images: [],
   },
   {
-    ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 4,
 
@@ -65,11 +64,11 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
 
+    tka_metadata: {},
     tka_files: [],
     tka_images: [],
   },
   {
-    ...TICKET_ACTION_MOCK_DEFAULTS,
     tka_ticket_id: ticket.tk_id,
     tka_action_no: 5,
 
@@ -82,6 +81,7 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
 
+    tka_metadata: {},
     tka_files: [],
     tka_images: [
       {

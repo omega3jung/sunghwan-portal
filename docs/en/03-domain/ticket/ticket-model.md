@@ -2,363 +2,310 @@
 
 ## Goal
 
-The ticket model defines the core domain structure of a ticket as a workflow
-entity in the Service Desk system.
+This document defines the current ticket entity, DTO projection, and data
+boundary responsibilities.
 
-It aims to:
-
-- represent a ticket as a structured, stateful entity
-- support workflow-driven operations instead of simple CRUD
-- maintain consistency across API, UI, and domain logic
-- provide a clear contract for data handling and rendering
+It is not a conceptual sketch. Field names and model responsibilities are
+aligned with the current domain types, DTOs, and mapper behavior.
 
 ---
 
 ## Core Concept
 
-```txt
-A ticket is not just data; it is a workflow entity with state, ownership, and context.
+```txt id="ticket-model-core"
+Ticket row = current workflow state
+Ticket DTO = application-facing projection
+History = immutable record of how state changed
 ```
 
-A ticket represents:
-
-- a request
-- an issue
-- a task
-
-that moves through a defined lifecycle and is processed by assigned users.
-
-Unlike a simple data model, a ticket:
-
-- evolves over time
-- interacts with multiple domain systems
-- maintains history and auditability
+The ticket row stores current state. Related subresources store actions,
+history, and work-session evidence.
 
 ---
 
-## Domain Shape
+## Persisted Status
 
-The ticket model exposes the current state required by the workflow,
-operational UI, and related systems.
+Current status union:
 
-```ts
-export interface Ticket {
+```txt id="ticket-status-union"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
+```
+
+`Open`, `Approved`, and `Reopen` are not persisted statuses. The ticket mapper
+contains compatibility normalization for older row values:
+
+- `Open` maps to `Approval` or `Assigned` depending on approval step
+- `Approved` maps to `Assigned`
+- `Reopen` maps to `Working`
+
+New design documents must not describe those old values as current statuses.
+
+---
+
+## Domain Interfaces
+
+The current domain read models are `TicketSummary` and `TicketDetail`.
+
+### Shared Core
+
+```ts id="ticket-core-fields"
+type TicketBase = {
   id: string;
   ticketNumber: string;
-
   createdAt: ISODateString;
-  updatedAt: ISODateString;
+  updatedAt?: ISODateString;
+  requesterUsername: string;
+};
 
-  requesterId: string;
-
+type TicketWorkflowState = {
   status: TicketStatus;
   priority: Priority;
-
-  categoryId: string;
-
-  subject: string;
-  body: string;
-
-  dueAt: ISODateString;
-
-  assigneeIds: string[];
-
-  trackTimeMinutes: number;
-
-  lastCommentAt?: ISODateString;
-  lastCommenterEmail?: string;
-
-  approvalStepId?: string;
-
-  active: boolean;
-
-  files: Attach[];
-  images: Attach[];
-}
+  riskLevel: RiskLevel;
+  closeReason?: TicketResolutionReason;
+};
 ```
 
----
+### Assignment Projection
 
-## Core Model Areas
+```ts id="ticket-assignment-projection"
+type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
-### Identity
+type TicketAssignmentState = {
+  assignmentPhase: TicketAssignmentPhase;
+  approvalAssigneeUsernames: string[];
+  workAssigneeUsernames: string[];
+  assignedApprover: boolean;
+  assignedWorker: boolean;
+};
+```
 
-- `id`: unique identifier
-- `ticketNumber`: human-readable reference
+The persisted source of truth is still:
 
-### Timestamps
+```txt id="assignment-source"
+tk_approval_step_id
+tk_assignee_usernames
+```
 
-- `createdAt`: when the ticket was created
-- `updatedAt`: last modification time
+The phase-aware fields are DTO/domain projections for UI clarity.
 
-### Request Context
+### Metrics and View State
 
-- `requesterId`: user who created the ticket
-- `subject`: short summary of the request
-- `body`: detailed description
+```ts id="ticket-metric-fields"
+type TicketMetrics = {
+  workMinutes: number;
+  lastCommentAt?: ISODateString;
+  lastCommenterEmail?: string;
+  lastUserActivityAt?: ISODateString;
+  lastUserActivityEmail?: string;
+  closedAt?: ISODateString;
+};
 
-### Status and Workflow
+type TicketViewState = {
+  dueAt: ISODateString;
+  owner: boolean;
+  active: boolean;
+};
+```
 
-- `status`: current workflow state
-- `priority`: urgency level
-- `approvalStepId`: current approval context when applicable
+`owner`, `assignedApprover`, and `assignedWorker` are derived for the current
+authenticated user. They are not global persisted flags.
 
-Related document: [Ticket Lifecycle](./ticket-lifecycle.md)
+### Detail Content
 
----
+```ts id="ticket-detail-content"
+type TicketContent = {
+  categoryId: string;
+  approvalStepId: string | null;
+  subject: string;
+  content: string;
+  email: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  };
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
+};
+```
 
-### Category
-
-- `categoryId`: links the ticket to category configuration
-
-A ticket references a category. The category belongs to a tenant, and that
-tenant provides the Service Desk configuration boundary for category-driven
-behavior.
-
-Category determines:
-
-- assignment
-- SLA behavior
-- approval requirement
-- workflow behavior
-
-The ticket therefore depends on category configuration rather than embedding
-those business rules directly.
-
-The current ticket model does not need to expose `tenantId` directly unless the
-implementation adds it to the ticket contract. Tenant scope is resolved through
-the referenced category configuration.
-
-Related document: [Category Strategy](./strategy/category-strategy.md)
-
----
-
-### Assignment
-
-- `assigneeIds`: current responsible users
-
-Assignment is part of the core model because it directly affects execution,
-ownership, and operational visibility.
-
-Related document: [Assignment Policy](./strategy/assignment-policy.md)
-
----
-
-### SLA
-
-- `dueAt`: calculated deadline based on SLA rules
-
-This allows urgency and timing expectations to remain visible at the ticket
-level.
-
-Related document: [SLA Strategy](./strategy/sla-strategy.md)
+Ticket detail includes full content, email, files, and images. Ticket summary is
+optimized for list/search and does not include full content or attachment
+payloads.
 
 ---
 
-### Work Tracking
+## Database and DTO Boundary
 
-- `trackTimeMinutes`: aggregated working time
+The REMOTE read path is:
 
-Actual work sessions are managed separately in the track-time model.
+```txt id="ticket-read-boundary"
+service_desk view/row
+-> mapper
+-> TicketListItemDto or TicketDetailDto
+-> feature API mapper
+-> domain model
+```
+
+Database rows use `tk_*`, `cat_*`, and other database-shaped fields. UI code
+must not consume raw row columns directly.
+
+### DTO Assignment Fields
+
+Ticket DTOs expose:
+
+- `assignment_phase`
+- `approval_assignee_usernames`
+- `work_assignee_usernames`
+- `assigned_approver`
+- `assigned_worker`
+- `assignee_usernames`
+
+`assignee_usernames` is the raw current assignee projection. The phase-specific
+arrays clarify whether those users are approvers or workers.
+
+---
+
+## Draft Identity
+
+REMOTE draft uses the ticket table.
+
+Rules:
+
+- `status = Draft`
+- one active draft per requester
+- draft is fetched by requester username
+- submit reuses the draft row and changes it to `Approval` or `Assigned`
+- draft rows are excluded from operational ticket lists
+
+LOCAL draft uses a simplified demo-safe implementation behind the feature API
+boundary. It is not persistence-equivalent to the REMOTE PostgreSQL draft model.
+
+---
+
+## Email Ownership
+
+`email` on the ticket is requester-provided notification configuration.
+
+Derived assignee emails must not be appended into the persisted `tk_email`
+field. Notification delivery should resolve assignee emails at send time.
+
+---
+
+## Attachment Metadata
+
+Ticket attachment fields store prepared metadata only.
+
+```ts id="ticket-attachment-metadata"
+type TicketAttachmentMetadata = {
+  originalName: string;
+  replacedName: string;
+  extension: string;
+  size: number;
+  type: string;
+  demoUrl: string;
+  replaced: true;
+  reason: "SECURITY_DEMO_REPLACEMENT";
+};
+```
+
+Ticket persistence uses:
+
+```txt id="ticket-attachment-columns"
+tk_content -> prepared body
+tk_files   -> TicketAttachmentMetadata[]
+tk_images  -> TicketAttachmentMetadata[]
+```
+
+Raw `File`, binary data, base64 data URLs, blob URLs, and local paths are not
+part of the ticket row or DTO.
+
+Related document: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+
+---
+
+## Related Subresources
+
+### Ticket Action
+
+Ticket actions are command-created timeline entries. They are not the same as
+history. Some actions mutate ticket state and create multiple history records.
+
+Related document: [Ticket Activity Model](./ticket-activity.md)
+
+### Ticket History
+
+History is immutable event/audit data with type, source, event, actor, JSON
+from/to values, and display metadata.
+
+Related document: [Ticket History](./ticket-history.md)
+
+### Work Session
+
+Work Session records actual tracked work. The ticket exposes aggregated
+`workMinutes`, while individual sessions remain a separate subresource.
 
 Related document: [Ticket Track Time](./ticket-track-time.md)
 
 ---
 
-### Activity Metadata
+## List vs Detail
 
-- `lastCommentAt`: last interaction timestamp
-- `lastCommenterEmail`: last actor for quick UI rendering
+### List Item
 
-These fields help the UI surface recent activity without loading the entire
-history immediately.
+List/search DTOs include:
 
-Related documents:
+- identity and status
+- assignment projection
+- priority, risk, due date
+- category display data
+- owner/assigned flags
+- work minutes and recent activity timestamps
+- close/merge fields
+- age
 
-- [Ticket Activity Model](./ticket-activity.md)
-- [Ticket History](./ticket-history.md)
+### Detail
 
----
+Detail DTO adds:
 
-### Ownership Flags
-
-The ticket also exposes derived ownership flags.
-
-```ts
-type Ownership = {
-  owner: boolean;
-  assigned: boolean;
-};
-```
-
-- `owner`: current user is the requester
-- `assigned`: current user is an assignee
-
-These are **derived ownership values**, not fixed persisted ticket fields.
-In LOCAL mode they can be calculated in route/local handlers, and in REMOTE
-mode they can be resolved by the server using authenticated user context.
-
-These flags are useful for:
-
-- permission handling
-- UI conditional rendering
+- full content
+- email configuration
+- prepared files
+- prepared images
 
 ---
 
-### Attachments
+## Write Model
 
-- `files`: general attachments
-- `images`: image-specific attachments
+Create/update request payloads use:
 
-Attachments remain part of the ticket context even though their behavior may be
-handled by supporting systems.
+- category id
+- subject/body
+- due date
+- priority/risk
+- email
+- prepared files/images
+- optional existing draft id
 
----
+Writes validate attachment metadata and normalize rows before persistence.
 
-### Active State
-
-- `active`: soft-delete flag
-
-Tickets are not physically deleted in normal workflow operations. The model
-preserves them for history, reporting, and reference integrity.
-
-Related document: [Ticket History](./ticket-history.md)
-
----
-
-## Domain Characteristics
-
-### 1. Workflow-Oriented
-
-A ticket is not static data.
-
-- it changes state over time
-- it triggers domain events
-- it interacts with multiple subsystems
-
-### 2. Category-Driven Behavior
-
-The ticket itself does not contain the full set of business rules.
-
-Instead:
-
-```txt
-Ticket -> Category -> Tenant-scoped Behavior
-```
-
-This keeps the model cleaner and the behavior more configurable.
-
-### 3. Immutable History Outside the Ticket
-
-The ticket does not store its own history internally.
-
-Instead:
-
-- all changes are recorded in `TicketHistory`
-- the ticket represents the current state only
-
-### 4. Activity as a Related Interaction Model
-
-Ticket represents the current state of the system,
-while Activity and History represent how the system evolves.
-
-Instead:
-
-- meaningful interactions are represented in `TicketActivity`
-- structured communication and operational actions share a unified model
-- recent activity metadata is surfaced on the ticket read model for fast UI access
-
-### 5. Session-Based Work Tracking
-
-Work is not represented as a single source-of-truth number.
-
-Instead:
-
-- work is a collection of sessions
-- `trackTimeMinutes` is derived or aggregated
-- detailed tracking is handled in a separate model
-
----
-
-## Relationships
-
-The ticket interacts with multiple domain models:
-
-```txt
-Ticket
-  -> Category (tenant-scoped)
-  -> Approval
-  -> Assignment
-  -> SLA
-  -> TicketActivity
-  -> TicketHistory
-  -> TicketTrackTime
-  -> Attachment
-```
-
-This relationship structure is one reason the ticket model should remain clear
-and explicit.
-
-Related strategy document: [Action Strategy](./strategy/action-strategy.md)
-
----
-
-## Read Model vs Write Model
-
-### Write Model
-
-- optimized for updates
-- contains normalized fields
-- used by API and backend logic
-
-### Read Model
-
-- optimized for UI
-- may include derived fields such as:
-  - `owner`
-  - `assigned`
-  - aggregated time
-  - display-oriented metadata
-
----
-
-## Derived State
-
-Some values should be derived instead of blindly persisted.
-
-```ts
-const isOwner = ticket.requesterId === currentUser.id;
-```
-
-Prefer deriving state when possible, especially for user-specific context.
-
----
-
-## Design Trade-Offs
-
-### Pros
-
-- clear and predictable structure
-- supports complex workflows
-- scales with domain complexity
-- separates concerns effectively
-
-### Cons
-
-- more complex than basic CRUD models
-- requires understanding of related systems
-- has a higher initial design cost
+Requester update has separate routing-sensitive behavior. See
+[Ticket Lifecycle](./ticket-lifecycle.md) and
+[Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md).
 
 ---
 
 ## Summary
 
-The ticket model is the central domain entity of the Service Desk system.
-
-It is designed to:
-
-- represent workflow state
-- integrate with category-driven configuration
-- connect cleanly with activity and history models
-- support auditability and SLA tracking
-- remain clean by delegating detailed behavior to related systems
+The current ticket model separates current row state from derived DTO
+projection and immutable history. Routing phase, owner flags, assignee flags,
+work minutes, and recent activity are read-model conveniences. The persisted
+workflow source remains precise: status, approval step, assignees, category,
+content, planning fields, and prepared attachment metadata.

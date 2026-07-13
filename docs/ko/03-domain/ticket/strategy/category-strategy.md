@@ -1,320 +1,298 @@
-# 카테고리 전략
+# Category Strategy
 
-## 목적
+## 목표
 
-카테고리 시스템은 전체 티켓 시스템의 동작을 결정하는
-**중앙 설정 계층(central configuration layer)** 으로 설계되었다.
+Category는 Service Desk ticket의 주요 behavior configuration이다.
 
-이 시스템은 다음을 결정한다.
+Category는 다음에 영향을 준다.
 
-- 티켓 할당
-- 우선순위와 위험도
-- SLA (Service Level Agreement)
-- 승인 필요 여부
-- 담당 팀
+- request classification
+- default priority
+- default risk level
+- default SLA days / due date seed
+- approval-step resolution
+- assignment-rule resolution
+- requester update routing policy
 
-목표는 카테고리 중심 아키텍처를 통해
-**일관되고, 확장 가능하며, 유지보수 가능한 운영 체계**를 만드는 것이다.
+현재 category model은 tenant-scoped이며 Service Desk Settings와 정렬되어 있다.
 
 ---
-
-현재 프로젝트에서 category/settings는 도메인 기반으로 취급한다.
-전체 기업 정책 resolution은 REMOTE 확장 경로로 둔다.
 
 ## 핵심 개념
 
-카테고리는 **계층형 트리 구조**로 구성된다.
-
-```txt
-Tenant -> Main Category -> Sub Category
+```txt id="category-core"
+Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
-각 계층은 티켓 동작을 정의하는 데 서로 다른 역할을 가진다.
-
-도메인 경계는 다음과 같다.
-
-```txt
-Company = organization/reference data
-Tenant = Service Desk configuration boundary
-Category = tenant-scoped behavior configuration
-```
-
-`Company`는 조직/reference data로 남는다. `Tenant`는 Service Desk configuration의
-root boundary이며, category는 해당 tenant scope 안에서 해석된다.
+`Company`는 organization reference data로 남는다. `Tenant`는 Service Desk
+configuration boundary다. Category는 tenant에 속한다.
 
 ---
 
-## 카테고리 계층 구조
+## 현재 Domain Shape
 
-### 1. Tenant
+```ts id="category-domain-shape"
+type CategoryScope = "PORTAL" | "INTERNAL";
 
-- Service Desk configuration boundary를 나타낸다.
-- 하나의 operational scope에 대한 category tree를 소유한다.
-- category behavior를 더 넓은 company reference data와 분리한다.
-
----
-
-### 2. Main Category
-
-- **기본 운영 규칙**을 정의한다.
-- 기본 설정 계층으로 동작한다.
-- priority, risk, SLA, approval, assignment에 대한 tenant-scoped default를 제공한다.
-
-```ts
-type MainCategory = {
+type CategoryBase = {
   id: string;
+  name: LocalizedText;
+  description?: LocalizedText;
+  requestTemplate?: LocalizedText;
+  index: number;
+  active: boolean;
+};
+
+type MainCategory = CategoryBase & {
+  scope: CategoryScope;
   defaultPriority: Priority;
   defaultRiskLevel: RiskLevel;
   defaultSlaDays: number;
-  active: boolean;
+  subCategories: SubCategory[];
+};
+
+type SubCategory = CategoryBase & {
+  defaultPriority?: Priority;
+  defaultRiskLevel?: RiskLevel;
+  defaultSlaDays?: number;
 };
 ```
 
----
-
-### 3. Sub Category
-
-- Main Category 설정을 보완하거나 재정의한다.
-- 더 구체적인 업무 케이스를 표현한다.
-
-```ts
-type SubCategory = {
-  id: string;
-  overridePriority?: Priority;
-  overrideRiskLevel?: RiskLevel;
-  overrideSlaDays?: number;
-  active: boolean;
-};
-```
+`Client -> Main Category -> Sub Category` 같은 오래된 용어는 현재 model이 아니다.
+현재 boundary는 tenant-scoped다.
 
 ---
 
-## 오버라이드 전략
+## Hierarchy
 
-Sub Category 값은 Main Category 기본값보다 우선한다.
+### Tenant
 
-### 규칙
+Tenant는 Service Desk configuration scope의 category tree를 소유한다.
 
-```txt
-Sub Category > Main Category
-```
+### Main Category
 
-### 해석 로직
+Main category는 필수 default를 제공한다.
 
-```ts
-priority = sub.overridePriority ?? main.defaultPriority;
-riskLevel = sub.overrideRiskLevel ?? main.defaultRiskLevel;
-sla = sub.overrideSlaDays ?? main.defaultSlaDays;
-```
+- scope
+- priority
+- risk level
+- SLA days
+- active state
+- display order
 
-### 목적
+### Sub Category
 
-- 설정을 중복하지 않고 세밀한 제어를 가능하게 한다.
-- 유연성을 유지하면서도 일관성을 확보한다.
-
----
-
-## 카테고리 ID 정책
-
-모든 카테고리 ID는 **숫자를 문자열로 표현한 값**으로 저장한다.
-
-### 예시
-
-```txt
-"12", "203"
-```
-
-### 이유
-
-- 데이터베이스 제약과 호환된다.
-- 숫자 연산이 필요할 때 안전하게 파싱할 수 있다.
-- 시스템 간 의도치 않은 타입 불일치를 줄일 수 있다.
+Subcategory는 main category를 refine한다. Default priority, risk level, SLA days를
+override할 수 있다. Subcategory가 값을 제공하지 않으면 main category 값이 fallback으로
+남는다.
 
 ---
 
-## 활성 상태 정책
+## Scope
 
-카테고리는 **삭제하지 않는다**.
+Main category는 다음 scope union을 사용한다.
 
-대신:
+```ts id="category-scope"
+type CategoryScope = "PORTAL" | "INTERNAL";
+```
 
-```txt
+| Scope | Meaning |
+| --- | --- |
+| `PORTAL` | portal requester workflow에 제공할 수 있는 category |
+| `INTERNAL` | internal Service Desk operation용 category |
+
+Subcategory는 visibility와 routing 목적에서 main category scope를 상속한다.
+
+---
+
+## Default Resolution
+
+Category default는 선택된 subcategory에서 parent main category로 resolve된다.
+
+```txt id="category-default-resolution"
+Sub Category default
+-> Main Category default
+```
+
+예:
+
+```ts id="category-default-example"
+priority = sub.defaultPriority ?? main.defaultPriority;
+riskLevel = sub.defaultRiskLevel ?? main.defaultRiskLevel;
+slaDays = sub.defaultSlaDays ?? main.defaultSlaDays;
+```
+
+Ticket-level value는 form이나 action payload에 있을 수 있지만, server가 최종 workflow
+effect를 validate한다.
+
+---
+
+## Active Policy
+
+Category는 historical use에서 파괴적으로 제거하는 대신 deactivate한다.
+
+```txt id="category-active-policy"
 active = false
 ```
 
-### 동작
+동작:
 
-- 새로운 티켓에는 선택할 수 없다.
-- 기존 티켓에서는 여전히 유효하다.
-
-### 목적
-
-- 이력 무결성을 보존한다.
-- 리포팅 일관성을 유지한다.
-- 참조 깨짐을 방지한다.
+- inactive category는 새 requester workflow에서 선택할 수 없어야 한다.
+- inactive category를 참조하는 기존 ticket은 계속 읽을 수 있다.
+- category settings가 바뀌어도 history는 다시 쓰지 않는다.
 
 ---
 
-## 카테고리 기반 할당
+## Category and Ticket Creation
 
-티켓 할당은 기본적으로 tenant-scoped category configuration에 의해 결정된다.
+Ticket creation에서 category selection은 다음에 참여한다.
 
-### 카테고리가 정의하는 책임
+- priority/risk defaulting
+- UI가 적용하는 경우 category SLA days 기반 due date seeding
+- approval-step lookup
+- work assignment lookup
 
-- 담당 팀
-- 기본 담당자(선택)
-- 워크플로 소유권
+Ticket service는 최종 workflow status의 authority로 남는다.
 
-### 흐름
+- approval이 필요하면 `Approval`
+- work assignment가 바로 resolve되면 `Assigned`
 
-```txt
-Ticket created -> Category selected -> Assignment resolved
+---
+
+## Category and Approval
+
+Approval step은 parent/main category에 설정된다. 선택된 subcategory는 ticket을
+classify하지만 approval pipeline은 해당 subcategory의 parent/main category에서
+resolve된다.
+
+```txt id="category-approval-flow"
+Ticket submitted
+-> selected category
+-> resolve parent/main category
+-> approval steps on main category resolved in order
+-> current approval assignees stored on ticket
+-> ticket enters Approval when needed
 ```
 
+Approval configuration은 future resolution에 영향을 준다. 이미 진행 중인 ticket을
+조용히 변경하지 않는다.
+
 ---
 
-## 카테고리 기반 SLA
+## Category and Assignment
 
-SLA는 tenant-scoped category configuration에 따라 계산된다.
+Assignment rule은 subcategory override를 허용한다. 선택된 subcategory에 assignment
+rule이 없으면 parent/main category rule로 fallback한다.
 
-### 규칙
-
-```txt
-dueAt = createdDate + SLA
+```txt id="category-assignment-flow"
+Ticket ready for work
+-> selected category
+-> selected subcategory assignment rule, when present
+-> otherwise parent/main category assignment rule
+-> current work assignees stored on ticket
+-> ticket enters Assigned
 ```
 
-### 해석 방식
-
-- Sub Category SLA가 Main Category SLA를 덮어쓴다.
-- 정의되지 않은 경우 Main Category 값을 사용한다.
+현재 assignment rule model은 group-based이며 job-field ID와 employee username을
+사용한다. 별도의 `ruleType` field를 사용하지 않는다.
 
 ---
 
-## 카테고리 기반 승인
+## Category and Requester Update
 
-승인 워크플로는 tenant-scoped category별로 정의된다.
+Requester update는 active work가 시작되기 전만 허용된다.
 
-```txt
-Category -> approvalSteps[]
+```txt id="category-update-statuses"
+Approval
+Assigned
 ```
 
-### 동작
+Category change는 routing-sensitive다.
 
-- 어떤 카테고리는 승인이 필요하다.
-- 어떤 카테고리는 승인 단계를 완전히 생략할 수 있다.
+Requester가 category를 변경하면 ticket update service는 다음을 수행해야 한다.
 
-### 목적
+- category selection 재검증
+- 필요한 경우 priority/risk default 재파생
+- 새 category default SLA days에서 minimum due date 재평가
+- approval 또는 assignment routing 재평가
+- `ROUTING_RESET` 기록
 
-- 비즈니스 요구에 맞게 워크플로 복잡도를 조정한다.
-- 불필요한 승인을 피한다.
+다음 due date는 current due date와 새 category minimum due date 중 더 늦은 값이어야
+한다. Category change는 due date를 더 이른 날짜로 당기면 안 된다.
 
----
-
-## UI 고려사항
-
-### 카테고리 선택
-
-- 계층형 선택기(Main -> Sub)를 사용한다.
-- 활성 상태인 카테고리만 선택 가능해야 한다.
+Category가 바뀌지 않고 routing-neutral field만 바뀌면 routing은 preserve될 수 있고
+`ROUTING_PRESERVED`가 기록된다.
 
 ---
 
-### 기본값 적용
+## UI Responsibilities
 
-카테고리가 선택되면:
+UI는 다음을 해야 한다.
 
-- 우선순위, 위험도, SLA가 자동으로 채워진다.
-- 허용되는 경우 사용자가 직접 수정할 수 있다.
+- tenant-scoped category tree 표시
+- 새 workflow에는 selectable active category만 표시
+- 기존 ticket에는 inactive category display 보존
+- priority, risk, due date에 유용한 default 적용
+- requester update가 routing을 reset할 수 있음을 사용자에게 경고
 
----
+UI는 다음을 하면 안 된다.
 
-### 비활성 카테고리
-
-- 비활성 카테고리는 선택 목록에 노출되지 않아야 한다.
-- 기존 티켓에서는 해당 카테고리가 계속 표시되어야 한다.
-
----
-
-## 예외 상황
-
-### 1. Sub Category 누락
-
-- Main Category만 선택된 경우:
-  - Main Category 기본값을 사용한다.
+- final routing output을 만들어내기
+- category change를 ordinary field edit처럼 숨기기
+- category settings를 local-only client state로 취급하기
 
 ---
 
-### 2. 부분 오버라이드
+## Settings Change Policy
 
-- Sub Category가 일부 값만 정의한 경우:
-  - 나머지 값은 Main Category에서 상속한다.
+Category settings는 future behavior를 정의한다.
 
----
+| Change | Effect |
+| --- | --- |
+| main/subcategory name changed | future display는 새 label 사용; existing history는 기록된 상태 유지 |
+| defaults changed | future ticket과 future routing evaluation은 updated default 사용 |
+| category deactivated | new selection은 중단; existing ticket은 계속 readable |
+| approval/assignment settings changed | future resolution은 updated setting 사용 |
 
-### 3. 카테고리 비활성화
-
-- 이미 사용 중인 카테고리가 비활성화된 경우:
-  - 기존 티켓은 그대로 유지되어야 한다.
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 설정이 중앙화된다.
-- 티켓 간 높은 일관성을 유지할 수 있다.
-- 유연한 오버라이드 메커니즘을 제공한다.
-- 대규모 조직에도 확장 가능하다.
+Existing ticket state와 history는 explicit ticket command를 통해서만 변경되어야 한다.
 
 ---
 
-### 단점
+## Deferred Scope
 
-- 카테고리 설계 복잡도가 증가한다.
-- 잘못된 설정이 여러 워크플로에 영향을 줄 수 있다.
-- 운영 정책과 관리 체계가 필요하다.
+현재 category strategy는 다음을 current behavior로 주장하지 않는다.
 
----
-
-## 대안 검토
-
-### 1. 평면 카테고리 구조
-
-- 구현은 단순하다.
-- 복잡한 비즈니스 규칙을 지원하기 어렵다.
+- settings version publishing
+- scheduled category changes
+- full historical category snapshot rendering
+- per-tenant category governance workflow
+- advanced assignment load balancing
+- tenant-level SLA calendars
 
 ---
 
-### 2. 하드코딩된 티켓 규칙
+## 관련 문서
 
-- 초기 구현은 쉽다.
-- 확장성과 유지보수성이 떨어진다.
-
----
-
-### 3. 티켓별 완전 동적 설정
-
-- 최대한의 유연성을 제공한다.
-- 동작이 일관되지 않게 되고 사용자 부담이 커진다.
-
----
-
-## 설계 원칙과의 정렬
-
-이 전략은 다음 시스템 원칙과 정렬된다.
-
-- 카테고리 중심 워크플로
-- 구성 가능한 동작
-- 비파괴적 삭제 정책
-- 일관된 운영 규칙
+- [`../../service-desk-settings.md`](../../service-desk-settings.md)
+- [`approval-system.md`](approval-system.md)
+- [`assignment-policy.md`](assignment-policy.md)
+- [`sla-strategy.md`](sla-strategy.md)
+- [`../ticket-lifecycle.md`](../ticket-lifecycle.md)
+- [`../ticket-history.md`](../ticket-history.md)
+- [`../../../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md`](../../../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 
 ## 요약
 
-카테고리 시스템은 **전체 티켓 워크플로의 기반** 역할을 한다.
+현재 category model은 tenant-scoped다.
 
-이를 통해 모든 티켓에 대해 확장 가능하고, 일관되며, 구성 가능한
-동작을 제공한다. Tenant는 Service Desk configuration boundary를 제공하고,
-Main Category와 Sub Category는 tenant-scoped default와 override를 제공한다.
+```txt
+Tenant -> Main Category -> Sub Category
+```
+
+Main category는 required default와 `PORTAL`/`INTERNAL` scope를 제공한다.
+Subcategory는 해당 default를 refine한다. Approval은 parent/main category에서
+resolve되고, assignment는 subcategory override와 parent/main fallback을 사용한다.
+Category change는 routing-sensitive ticket update이며, settings change는 existing
+ticket을 조용히 다시 쓰지 않고 future workflow resolution에 영향을 준다.

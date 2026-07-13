@@ -9,7 +9,6 @@ export type TicketStatus =
   | "Pending"
   | "Rejected"
   | "Resolved"
-  | "Reopened"
   | "Closed";
 
 export type TicketPeriod = Exclude<TicketSearchPeriod, "today">;

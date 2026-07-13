@@ -2,433 +2,341 @@
 
 ## Goal
 
-The ticket form is designed to handle **complex, structured user input**
-in a scalable and user-friendly way.
+Ticket forms collect the information needed to create or requester-update a
+Service Desk ticket while keeping workflow decisions on the server boundary.
 
-It aims to:
+The current design is aligned with the implemented form flow:
 
-- Simplify ticket creation for users
-- Support complex domain logic (category, SLA, priority, etc.)
-- Provide a guided input experience
-- Maintain strong type safety and validation
+- `CreateTicketDialog` handles new ticket submission and draft recovery.
+- `UpdateTicketDialog` handles requester-owned updates before work starts.
+- React Hook Form owns unsaved input while the dialog is open.
+- the Attachment Prepare API converts browser files and inline images into
+  prepared metadata before ticket persistence.
+- the ticket service decides approval, assignment, and routing effects.
 
 ---
 
-## Core Concept
+## Core Principle
 
-```id="ticket-form-concept"
-Complex input should be guided, not overwhelming
+```txt id="ticket-form-core"
+The form collects intent.
+The server executes ticket workflow.
 ```
 
+The form may derive helpful defaults and validate input, but it does not decide
+final approval routing, work assignment, or history semantics.
+
 ---
 
-## Form Type Strategy
+## Current Form Surfaces
 
-The ticket form supports multiple modes:
+### Create Ticket
 
-```ts id="form-type"
-type Mode = "create" | "update" | "view";
+`CreateTicketDialog` is the requester-facing creation workflow.
+
+It supports:
+
+- multi-step input
+- category, subject, content, due date, priority, risk, email, and attachment
+  fields
+- draft loading and save-on-close behavior
+- attachment preparation before final create
+- final ticket creation through the ticket mutation API
+
+### Update Ticket
+
+`UpdateTicketDialog` is the requester-owned update workflow.
+
+It supports:
+
+- loading the latest ticket detail when the dialog opens
+- preserving existing prepared `files` and `images`
+- preparing only newly selected files and inline images
+- merging existing and newly prepared attachment metadata
+- submitting a requester update through the ticket update API
+
+### Ticket Detail
+
+Ticket detail is a page-level workflow, not part of the form dialog.
+
+```txt id="ticket-detail-route"
+/service-desk/[ticketId]
 ```
 
----
-
-### Rationale
-
-- `create` → new ticket submission
-- `update` → editing existing ticket
-- `view` → read-only display
+Detail pages may open action dialogs, history panels, or update dialogs, but the
+detail view itself remains the primary ticket workflow surface.
 
 ---
 
-### Decision
+## Step Design
 
-Even though create and update share fields:
+The create and update flows use the current step identifiers:
 
-- They are **logically separated**
-- Different API behavior (POST vs PUT)
-- Different UX expectations
-
----
-
-## Multi-Step Form Design
-
-### Why Multi-Step?
-
-Ticket creation involves:
-
-- Category selection
-- Contextual fields
-- Detailed description
-- Attachments
-
-👉 A single form would be overwhelming.
-
----
-
-### Structure
-
-```txt id="steps"
-Step 1 → Category Selection
-Step 2 → Basic Information
-Step 3 → Details & Attachments
-Step 4 → Review & Submit
+```txt id="ticket-form-steps"
+issueDetails
+attachments
+review
 ```
 
----
+The UI labels may be localized, but the step responsibilities are stable:
 
-### Benefits
+| Step | Responsibility |
+| --- | --- |
+| `issueDetails` | category, subject, body, due date, priority, risk, email |
+| `attachments` | selected files and rich-text image input |
+| `review` | final review before mutation |
 
-- Reduces cognitive load
-- Guides users through input
-- Enables contextual validation
-
----
-
-## Step Navigation Strategy
-
-- Controlled navigation (next / previous)
-- Prevent moving forward if invalid
-- Final submission only at last step
+The current step set does not use a separate category-only step or a generic
+global stepper abstraction.
 
 ---
 
-### State Handling
+## Schema and Validation
 
-- Single `react-hook-form` instance
-- Separate `step` state
+The form schema is implemented with Zod and React Hook Form.
 
----
+Current ticket form fields include:
 
-## Category-Driven Form
-
-### Core Idea
-
-```id="category-driven"
-Form behavior depends on selected category
+```ts id="ticket-form-fields"
+type TicketFormValues = {
+  id?: string;
+  category: string;
+  subject: string;
+  body: string;
+  dueAt: Date;
+  priority: Priority;
+  riskLevel: RiskLevel;
+  email: string[];
+  requester: string;
+  attachment: File[];
+};
 ```
 
----
+Important validation rules:
 
-### Effects
+- `subject` is limited to 200 characters.
+- `dueAt` must be later than today.
+- `attachment` remains browser `File[]` until preparation.
+- final ticket mutation validates prepared attachment metadata again.
 
-- Default priority
-- Default risk level
-- SLA calculation
-- Available subcategories
-
----
-
-### Strategy
-
-- Category is selected early (Step 1)
-- Subsequent steps adapt based on category
+Step validation is used for navigation. Full validation is used before the
+mutation.
 
 ---
 
-## SLA / Priority / Risk Integration
+## Category Defaults
 
-### Background
+Category selection can seed or update:
 
-The system uses:
+- priority
+- risk level
+- due date defaults based on category SLA days
 
-- Risk Level (low → critical)
-- Priority (low → urgent)
-- SLA (calculated per combination)
+The form may display and apply these defaults for usability. The server remains
+the source of truth for category validity and routing behavior.
 
----
-
-### Form Behavior
-
-- Default values applied from category
-- User can override if allowed
-- SLA is calculated dynamically
+When a requester update changes category, the update service re-evaluates
+routing-sensitive fields and records the correct routing history event.
 
 ---
 
-### Benefit
+## Attachment Preparation
 
-- Aligns user input with business rules
-- Reduces incorrect configurations
+Browser file input is transient.
 
----
-
-## Field Design Strategy
-
-### Rule
-
-```id="field-design"
-Fields must be predictable, reusable, and typed
+```txt id="ticket-form-attachment-flow"
+form body and File[]
+-> POST /api/service-desk/tickets/attachments/prepare
+-> prepared body, files, images
+-> ticket create or update payload
 ```
 
----
+The create and update forms must not send raw `File` objects to the ticket write
+service. They send only prepared body content and prepared attachment metadata.
 
-### Field Types
-
-- Text input (title, description)
-- Select (category, priority)
-- Date (due date)
-- File upload (attachments)
+See [`ticket-attachment.md`](ticket-attachment.md) for the attachment boundary.
 
 ---
 
-## Attachment Handling
+## Draft Workflow
 
-### Strategy
+The current draft model supports both LOCAL and REMOTE behavior.
 
-- Managed via `useWatch`
-- Stored as `File[]`
+### LOCAL Draft
 
----
+LOCAL draft uses a simplified demo-safe implementation behind the feature API
+boundary. It is not persistence-equivalent to the REMOTE PostgreSQL draft model.
+The current LOCAL implementation may use limited client-side recovery for demo
+convenience, but it is not the durable state boundary.
 
-### Implementation Note
+### REMOTE Draft
 
-- Avoid incorrect `defaultValue` typing
-- Use explicit casting when necessary
+REMOTE draft behavior stores an active draft through the ticket draft route and
+server DTO boundary. The current REMOTE design treats a draft as a ticket row in
+`Draft` status, with one active draft per requester.
 
----
-
-## Validation Strategy
-
-### Approach
-
-- Schema-based validation (Zod)
-- Step-level validation + final validation
-
----
-
-### Example
-
-- Step 1 → category required
-- Step 2 → title required
-- Step 3 → optional fields
-- Final → full validation
-
----
-
-## Draft Strategy (Considered)
-
-### Problem
-
-Users may not complete the form in one session.
-
----
-
-### Options Considered
-
-1. Local draft (client storage)
-2. Server draft (temporary ticket)
-3. No draft support
-
----
-
-### Current Decision
-
-- Not implemented yet
-- Deferred to avoid premature complexity
-- Production-grade attachment persistence guarantees are deferred in demo scope
-
----
-
-### Rationale
-
-- Requires additional API and state handling
-- Not critical for MVP
-
----
-
-## Dialog Integration
-
-Ticket creation is implemented inside a dialog as an atomic action.
-
----
-
-### Pattern
-
-- Controlled open state
-- Close after successful submission
-- Trigger can be customized
-
-Ticket detail remains a page-level primary workflow (`/service-desk/[ticketId]`).
-Secondary interactions such as history/action panels should use drawer-style interaction.
-
----
-
-## Submission Flow
-
-### Process
-
-```txt id="submission"
-Validate → Transform → Mutate → Close Dialog → Refetch List
+```txt id="remote-draft-flow"
+open create dialog
+-> load active draft
+-> user edits form
+-> close while dirty
+-> save draft
+-> reopen and recover draft values
+-> final submit reuses the draft ticket row
 ```
 
----
+Draft save is form-data oriented. It does not guarantee attachment recovery:
 
-### Implementation
-
-- Uses React Query mutation
-- Invalidates ticket list on success
-
----
-
-## Error Handling
-
-### Types
-
-1. Validation errors (field-level)
-2. API errors (form-level)
+- browser `File` objects are not restorable after reload
+- draft save intentionally clears transient attachment input
+- final submit prepares the current attachment input
+- production object storage remains future scope
 
 ---
 
-### UX
+## Create Submission
 
-- Inline messages for validation
-- Toast for API errors
+Current create submission flow:
 
----
-
-## Reset Strategy
-
-### When
-
-- After successful submission
-- When dialog closes
-
----
-
-### Implementation
-
-```ts id="reset"
-form.reset();
+```txt id="create-submission-flow"
+validate form
+-> prepare attachments
+-> map form values to ticket mutate payload
+-> create or submit existing draft
+-> server resolves approval or work assignment
+-> invalidate ticket and draft queries
 ```
 
----
+The server decides whether the submitted ticket enters:
 
-## Reusability Strategy
+- `Approval`, when an approval step is required
+- `Assigned`, when work assignment is resolved directly
 
-### Shared Logic
-
-- Form structure
-- Validation schema
-- Field components
+Ticket creation records event-based history such as `TICKET_SUBMITTED`,
+`APPROVAL_REQUESTED`, or `ASSIGNMENT_RESOLVED`.
 
 ---
 
-### Feature-Specific Logic
+## Requester Update Submission
 
-- Category rules
-- SLA calculation
-- Ticket-specific fields
+Requester update is allowed only while the ticket is still before active work:
 
----
+```txt id="requester-update-statuses"
+Approval
+Assigned
+```
 
-## Stepper Abstraction (Considered)
+The requester must own the ticket.
 
-### Idea
+Update flow:
 
-Create a reusable stepper dialog component.
+```txt id="requester-update-flow"
+load latest ticket detail
+-> keep existing prepared attachments
+-> prepare new body/files/images
+-> merge prepared metadata
+-> submit requester update
+-> server decides routing reset or preservation
+```
 
----
+Routing-sensitive fields:
 
-### Decision
+- category
+- subject
+- content/body
+- files
+- images
 
-- Not implemented yet
+Routing-neutral fields:
 
----
+- due date
+- email recipients
 
-### Rationale
+If routing-sensitive content changes, the server records `ROUTING_RESET` and
+re-evaluates approval or assignment. If only routing-neutral fields change, it
+records `ROUTING_PRESERVED`.
 
-- Content structure varies per feature
-- Would require excessive props
-- Considered premature abstraction
-
----
-
-## UX Considerations
-
-### 1. Progressive Disclosure
-
-- Show only necessary inputs per step
-
----
-
-### 2. Clear Feedback
-
-- Validation messages
-- Step progress indicator
-
----
-
-### 3. Minimal Friction
-
-- Defaults applied automatically
-- Reduced manual input
+When category changes, category defaults also re-evaluate priority, risk, and
+the minimum due date. The due date remains unchanged when the current value is
+later than the new category minimum; otherwise it moves back to that minimum.
 
 ---
 
-### 4. Consistency
+## State Ownership
 
-- Same structure across create/update
+| State | Owner |
+| --- | --- |
+| unsaved field input | React Hook Form |
+| current dialog step | component state |
+| persisted ticket data | React Query |
+| active draft data | React Query through draft API |
+| raw browser files | React Hook Form while dialog is open |
+| prepared attachment metadata | ticket API payload and persisted ticket data |
+
+Zustand should not be used as the source of truth for form input, drafts, or
+attachment metadata.
+
+---
+
+## Reset and Close Policy
+
+On successful create or update:
+
+- close the dialog
+- reset form state
+- invalidate affected ticket queries
+- clear or remove the submitted draft where appropriate
+
+On create-dialog close with dirty input:
+
+- save draft when draft behavior is enabled
+- warn or preserve unsaved intent according to current dialog behavior
+- do not promise attachment recovery
 
 ---
 
 ## Anti-Patterns Avoided
 
-### 1. Single Large Form
+### Generic `TicketFormDialog`
 
-- ❌ Overwhelming UX
+The current implementation does not rely on one generic create/update/view
+`TicketFormDialog`. Create and update share field concepts but keep different
+workflow hooks because draft, submit, reset, and routing behavior differ.
 
----
+### Raw File Persistence
 
-### 2. Over-Abstraction
+Raw browser files must not be stored in ticket rows, React Query cache, draft
+DTOs, or global state.
 
-- ❌ Generic stepper too early
+### Client-Side Routing Decisions
 
----
+The client can show warnings and defaults, but it must not be the authority for
+approval reset, assignment resolution, or routing history.
 
-### 3. Duplicate Forms
+### Silent Requester Updates
 
-- ❌ Separate create/update implementations
-
----
-
-### 4. Business Logic in UI
-
-- ❌ SLA calculation inside components
-
----
-
-## Trade-offs
-
-### Pros
-
-- Guided user experience
-- Strong alignment with domain logic
-- Scalable form structure
-- High type safety
+Requester updates that affect routing-sensitive fields must be traceable through
+history events.
 
 ---
 
-### Cons
+## Related Documents
 
-- More complex implementation
-- Step management overhead
-- Requires careful validation design
-
----
-
-## Design Principles Alignment
-
-This design aligns with:
-
-- User-centered design
-- Domain-driven design
-- Progressive disclosure
-- Separation of concerns
+- [`ticket-attachment.md`](ticket-attachment.md)
+- [`../03-domain/ticket/ticket-model.md`](../03-domain/ticket/ticket-model.md)
+- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
+- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
+- [`../08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md`](../08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md)
+- [`../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md`](../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 
 ## Summary
 
-The ticket form is designed as a **guided, multi-step input system**,
-leveraging category-driven logic and strong validation to ensure
-a balance between usability and business rule enforcement.
+Ticket forms are workflow entry points, not workflow authorities.
+
+The current design uses `CreateTicketDialog` and `UpdateTicketDialog`, a
+three-step form flow, REMOTE draft recovery through ticket draft APIs,
+attachment preparation before persistence, and server-owned requester update
+routing. This keeps the UI usable while preserving the ticket service as the
+source of truth for approval, assignment, status, and history.

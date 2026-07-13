@@ -1,19 +1,25 @@
-import { CreateTicketHistoryInput, TicketHistoryDto } from "./ticketHistoryDto";
+import type { CreateTicketHistoryInput, TicketHistoryDto } from "./ticketHistoryDto";
 import { mapTicketHistoryRowToDto } from "./ticketHistoryMapper";
+import { omitMetadataIdentityFromJsonValue } from "./ticketHistoryMetadata";
 import {
   createTicketHistoryRow,
   findTicketHistoryRowsByTicketId,
-  TicketHistoryRepositoryOptions,
+  type TicketHistoryRepositoryOptions,
 } from "./ticketHistoryRepository";
-import { TicketHistoryJsonValue } from "./ticketHistoryTypes";
 
-type TicketHistoryServiceOptions = TicketHistoryRepositoryOptions;
+export type TicketHistoryServiceOptions = TicketHistoryRepositoryOptions;
 
 export async function createTicketHistory(
   input: CreateTicketHistoryInput,
   options?: TicketHistoryServiceOptions,
 ): Promise<TicketHistoryDto> {
-  const row = await createTicketHistoryRow(input, options);
+  const row = await createTicketHistoryRow(
+    {
+      ...input,
+      metadata: omitMetadataIdentityFromJsonValue(input.metadata),
+    },
+    options,
+  );
 
   if (!row) {
     throw createStatusError("Unable to create ticket history.", 409);
@@ -29,192 +35,6 @@ export async function getTicketHistoriesByTicketId(
   const rows = await findTicketHistoryRowsByTicketId(ticketId, options);
 
   return rows.map(mapTicketHistoryRowToDto);
-}
-
-export async function createHistoryOfTicketCreate(
-  params: {
-    ticketId: string;
-    actorUsername: string;
-    ticketNumber?: string;
-    categoryId?: number | null;
-    status?: string;
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: null,
-      historyType: "TICKET",
-      historyAction: "CREATED",
-      actorUsername: params.actorUsername,
-      fromValue: null,
-      toValue: compactJsonObject({
-        ticketNumber: params.ticketNumber,
-        categoryId: params.categoryId,
-        status: params.status,
-      }),
-      metadata: null,
-    },
-    options,
-  );
-}
-
-export async function createHistoryOfStatusChange(
-  params: {
-    ticketId: string;
-    actorUsername: string | null;
-    fromStatus: string;
-    toStatus: string;
-    reason?: string;
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: null,
-      historyType: "STATUS",
-      historyAction: "UPDATED",
-      actorUsername: params.actorUsername,
-      fromValue: { status: params.fromStatus },
-      toValue: { status: params.toStatus },
-      metadata: compactJsonObject({
-        event: "STATUS_CHANGED",
-        reason: params.reason,
-      }),
-    },
-    options,
-  );
-}
-
-export async function createHistoryOfApprovalRequested(
-  params: {
-    ticketId: string;
-    actionNo?: number | null;
-    actorUsername: string | null;
-    approvalStepId: number;
-    assigneeUsernames?: string[] | null;
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: params.actionNo ?? null,
-      historyType: "APPROVAL",
-      historyAction: "APPROVAL_REQUESTED",
-      actorUsername: params.actorUsername,
-      fromValue: null,
-      toValue: compactJsonObject({
-        approvalStepId: params.approvalStepId,
-        assigneeUsernames: params.assigneeUsernames ?? null,
-      }),
-      metadata: null,
-    },
-    options,
-  );
-}
-
-export async function createHistoryOfApprovalApproved(
-  params: {
-    ticketId: string;
-    actionNo?: number | null;
-    actorUsername: string;
-    approvalStepId: number;
-    nextApprovalStepId?: number | null;
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: params.actionNo ?? null,
-      historyType: "APPROVAL",
-      historyAction: "APPROVAL_APPROVED",
-      actorUsername: params.actorUsername,
-      fromValue: { approvalStepId: params.approvalStepId },
-      toValue: { nextApprovalStepId: params.nextApprovalStepId ?? null },
-      metadata: null,
-    },
-    options,
-  );
-}
-
-export async function createHistoryOfApprovalDeclined(
-  params: {
-    ticketId: string;
-    actionNo?: number | null;
-    actorUsername: string;
-    approvalStepId: number;
-    fromStatus: string;
-    toStatus: string;
-    reason?: string;
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: params.actionNo ?? null,
-      historyType: "APPROVAL",
-      historyAction: "APPROVAL_DECLINED",
-      actorUsername: params.actorUsername,
-      fromValue: {
-        approvalStepId: params.approvalStepId,
-        status: params.fromStatus,
-      },
-      toValue: {
-        approvalStepId: params.approvalStepId,
-        status: params.toStatus,
-        closeReason: "Declined",
-      },
-      metadata: compactJsonObject({
-        event: "APPROVAL_DECLINED",
-        reason: params.reason,
-      }),
-    },
-    options,
-  );
-}
-
-export async function createHistoryOfAssignmentChange(
-  params: {
-    ticketId: string;
-    actionNo?: number | null;
-    actorUsername: string | null;
-    fromAssigneeUsernames?: string[] | null;
-    toAssigneeUsernames: string[];
-  },
-  options?: TicketHistoryServiceOptions,
-): Promise<TicketHistoryDto> {
-  const fromAssigneeUsernames = params.fromAssigneeUsernames ?? [];
-  const event = fromAssigneeUsernames.length > 0 ? "REASSIGNED" : "ASSIGNED";
-
-  return createTicketHistory(
-    {
-      ticketId: params.ticketId,
-      actionNo: params.actionNo ?? null,
-      historyType: "ASSIGNMENT",
-      historyAction: "UPDATED",
-      actorUsername: params.actorUsername,
-      fromValue: { assigneeUsernames: fromAssigneeUsernames },
-      toValue: { assigneeUsernames: params.toAssigneeUsernames },
-      metadata: { event },
-    },
-    options,
-  );
-}
-
-function compactJsonObject(
-  value: Record<string, TicketHistoryJsonValue | undefined>,
-): TicketHistoryJsonValue | null {
-  const entries = Object.entries(value).filter(
-    (entry): entry is [string, TicketHistoryJsonValue] =>
-      entry[1] !== undefined && entry[1] !== null,
-  );
-
-  return entries.length > 0 ? Object.fromEntries(entries) : null;
 }
 
 function createStatusError(message: string, status: number) {

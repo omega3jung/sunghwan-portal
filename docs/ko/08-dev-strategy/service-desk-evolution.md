@@ -1,605 +1,373 @@
 # Service Desk 진화
 
-이 문서는 기존 서비스 허브/IT 헬프 데스크 환경을 현재 서비스 데스크 영역으로 발전시키는 과정에서 이루어진 **설계 개선 사항**에 중점을 둡니다.
+## 목표
 
-## 1. 목적
+이 문서는 이전 Service Hub / IT Help Desk 경험이 `sunghwan-portal`의 현재
+Service Desk 도메인으로 어떻게 정제되었는지 설명한다.
 
-이 문서는 이전 **Service Hub / IT Help Desk** 경험이 `sunghwan-portal`의 현재 **Service Desk** 도메인으로 어떻게 정제되었는지 설명합니다.
-
-목표는 이전 직장 시스템을 그대로 재현하는 것이 아닙니다. 대신, 해당 아이디어를 포트폴리오에 적합한 Service Desk 모듈로 재구성하는 과정에서 이루어진 개념적/도메인 수준의 개선에 초점을 둡니다.
-
-이 문서의 초점:
-
-- 도메인 정체성이 어떻게 바뀌었는가
-- 티켓 처리가 어떻게 워크플로 관리로 진화했는가
-- 운영 동작이 어떻게 더 명시적으로 바뀌었는가
-- 커뮤니케이션, 이력, 할당, 승인, SLA, 작업 추적이 어떻게 더 명확해졌는가
-- 이전 경험에서 어떤 설계 교훈을 얻었는가
-
-로컬 데모 상태, 런타임 분리, 라우팅, React Query, i18n, 프로젝트 아키텍처 같은 구현 중심 주제는 별도의 구현 전략 문서에서 다룹니다.
+이 문서는 설계 진화를 다룬다. 구현 경계는
+[`service-desk-implementation-strategy.md`](service-desk-implementation-strategy.md)에서
+다루고, 당시의 의사결정 맥락은 decision log에 보존한다.
 
 ---
 
-## 2. 권장 문서 위치
+## 역사적 맥락
 
-권장 경로:
+이전 실무 시스템은 다음을 처리하는 IT Help Desk 스타일 모듈을 포함했다.
 
-```txt
-docs/ko/08-dev-strategy/service-desk-evolution.md
-```
+- 사용자 요청 접수
+- 담당자 할당
+- 상태 추적
+- 요청자와의 커뮤니케이션
+- 운영 진행 상황 확인
 
-이 문서의 용도:
+현재 프로젝트는 그 시스템을 복제하지 않는다. 실제 운영 교훈을 추출하고, 더 명확한
+Service Desk 도메인으로 재설계한다.
 
-- Service Hub에서 Service Desk로의 개념/도메인 진화
-- 이름 변경 또는 운영 동작 정제
-- 워크플로 및 모델링 개선
-
-구현 중심 주제는 다음 문서에서 다룹니다.
-
-```txt
-docs/ko/08-dev-strategy/service-desk-implementation-strategy.md
+```txt id="evolution-flow"
+previous workplace experience
+-> operational lessons
+-> clearer domain boundaries
+-> production-aligned portfolio design
 ```
 
 ---
 
-## 3. 역사적 맥락
+## 정체성 전환
 
-이전 직장 시스템은 IT Help Desk 스타일 모듈을 포함한 내부 포털/ERP 환경이었습니다. 사용자 요청 접수, 담당자 할당, 이슈 상태 추적, 내부 사용자와 IT 팀 간 커뮤니케이션 같은 실무 운영 요구를 지원했습니다.
+이름을 Service Hub에서 Service Desk로 바꾼 이유는 현재 모듈이 넓은 포털 기능이
+아니라 집중된 workflow domain이기 때문이다.
 
-이 경험은 몇 가지 중요한 교훈을 제공했습니다.
+현재 Service Desk가 의미하는 것:
 
-- 사용자는 이슈를 간단하고 안정적으로 제출할 수 있어야 한다
-- IT 담당자는 소유권과 할당 상태를 명확히 확인할 수 있어야 한다
-- 관리자는 운영 요약과 진행 상황을 파악할 수 있어야 한다
-- 상태 변경은 유지보수 시에도 이해 가능해야 한다
-- 커뮤니케이션 이력은 의사결정 이유를 설명할 수 있어야 한다
-- 티켓은 실제 업무 중 처리되므로 UI 사용성이 중요하다
-
-하지만 현재 프로젝트의 목적은 다릅니다.
-
-목표는 원래 시스템을 복제하는 것이 아니라, 그 뒤에 있는 운영 문제를 추출하고 더 명확하고 명시적인 Service Desk 도메인으로 재설계하는 것입니다.
-
-```txt
-이전 실무 경험
--> 실제 운영 문제 추출
--> 더 명확한 도메인 경계로 재설계
--> 프로덕션 정렬 포트폴리오 시스템으로 문서화
-```
+- request intake
+- ticket lifecycle
+- approval routing
+- work assignment
+- action commands
+- communication
+- event-based history
+- work sessions
+- settings-driven behavior
 
 ---
 
-## 4. 정체성 전환: Service Hub에서 Service Desk로
+## Request Record에서 Workflow Entity로
 
-현재 모듈은 더 이상 광범위한 내부 포털 기능이 아니기 때문에 이름을 **Service Hub**에서 **Service Desk**로 변경했습니다.
+이전 모델은 상태 업데이트가 있는 request record에 가까웠다.
 
-`Service Hub`는 서로 관련 없는 다양한 서비스를 담는 넓은 플랫폼으로 인식될 수 있습니다.
+현재 모델은 ticket을 controlled state를 가진 workflow entity로 다룬다.
 
-`Service Desk`는 다음과 같은 집중된 운영 도메인을 더 명확히 전달합니다.
-
-- 요청 접수
-- 티켓 워크플로
-- 할당
-- 승인
-- SLA
-- 작업 추적
-- 커뮤니케이션
-- 운영 이력
-
-이 이름 변경은 단순한 표현 변경이 아닙니다. 시스템 경계를 분명히 합니다.
-
-현재 모듈은 포털 화면이 아니라 워크플로 중심의 Service Desk 도메인입니다.
-
----
-
-## 5. 핵심 도메인 진화
-
-주요 개선은 다음과 같이 요약할 수 있습니다.
-
-```txt
-단순 요청 처리
--> 워크플로 지향 Service Desk 시스템
+```txt id="current-ticket-statuses"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-재설계된 Service Desk의 핵심:
+일반 happy path:
 
-- 티켓 라이프사이클 무결성
-- 카테고리 기반 동작
-- 통제된 운영 오버라이드
-- 텍스트 업데이트 중심이 아닌 명시적 액션
-- 커뮤니케이션 분리
-- Activity와 History 분리
-- 추적 가능한 도메인 이벤트
-- 운영 근거로서의 작업 추적
-- 동작을 정의하는 설정 구조
-
----
-
-## 6. 요청 레코드에서 워크플로 엔티티로
-
-이전 시스템 방향은 상태 업데이트가 있는 요청 레코드 중심으로 볼 수 있습니다.
-
-기본 추적에는 유용하지만 Service Desk 도메인에는 충분하지 않습니다. 실제 티켓은 의미 있는 운영 상태를 거치며 이동합니다.
-
-개선된 모델은 티켓을 **워크플로 엔티티**로 다룹니다.
-
-일반적인 라이프사이클 예시:
-
-```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
+```txt id="happy-paths"
+Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
+Draft -> Assigned -> Working -> Resolved -> Closed
 ```
 
-비정상(예외) 흐름도 지원합니다.
+주요 non-happy path:
 
-```txt
-Open -> Declined -> Open
+```txt id="non-happy-paths"
+Approval -> Declined
+Assigned / Working / Pending -> Rejected
 Working -> Pending -> Working
-Working / Pending -> Rejected
-Rejected -> Open or Reopen
-Resolved -> Reopen -> Working
+Resolved -> Working
+Assigned / Working / Pending / Resolved -> Closed
 ```
 
-이는 실제 운영 업무에 다음이 포함되기 때문입니다.
-
-- 승인 거절
-- 임시 중단
-- 해결 이후 재작업
-- 반려 요청
-- 중복/병합 티켓
-- 검토 기간 이후 자동 종료
-
-개선된 Service Desk 모델은 티켓 상태를 통제된 워크플로 상태로 정의합니다.
-
-각 의미 있는 전이는 유효한 원인을 가져야 합니다.
-
-```txt
-Action -> State Transition -> History
-```
-
-이로써 시스템을 더 쉽게 이해하고, 테스트하고, 리뷰에서 설명할 수 있습니다.
+`Open`, `Approved`, `Reopen`은 오래된 역사적 문서나 row normalization 맥락에
+나올 수 있지만 현재 ticket status가 아니다.
 
 ---
 
-## 7. 카테고리 기반 동작
+## Text Update에서 Command로
 
-이전 운영 경험은 요청 유형이 처리 방식에 큰 영향을 준다는 점을 보여줬습니다.
+이전 방식은 comment와 status edit에 많이 의존했다.
 
-개선된 시스템은 카테고리를 동작의 중심 드라이버로 사용합니다.
+현재 설계는 명시적인 Ticket Action command를 사용한다.
 
-```txt
-Ticket -> Category -> Behavior
+```txt id="ticket-actions"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
 ```
 
-카테고리가 영향을 주는 항목:
+흐름:
 
-- 기본 우선순위
-- 기본 위험도
-- SLA
-- 승인 요구 사항
-- 할당 규칙
-- 담당 팀
-
-카테고리 구조는 계층 모델을 따릅니다.
-
-```txt
-Client -> Main Category -> Sub Category
+```txt id="action-effect-history"
+Action intent
+-> server rule execution
+-> status/routing/data effect
+-> event-based history
 ```
 
-기본 동작 해석 우선순위:
-
-```txt
-Sub Category > Main Category
-```
-
-티켓 단위 오버라이드를 허용하면 전체 우선순위는 다음과 같습니다.
-
-```txt
-Ticket override > Sub Category > Main Category
-```
-
-이전 방식에 흩어져 있던 숨은 운영 가정을 명시적 설정으로 이동한 것이 핵심 개선입니다.
-
-Service Desk는 UI 컴포넌트나 임시 핸들러에 분기를 하드코딩하지 않고도 다양한 요청 유형을 지원할 수 있습니다.
+Comment는 communication이다. Assignment, rejection, merge, reopen, planning
+adjustment는 rule을 가진 command이다.
 
 ---
 
-## 8. 통제된 오버라이드
+## Comment와 Note 분리
 
-실제 운영에는 항상 예외가 존재합니다.
+Communication은 두 개념으로 분리되었다.
 
-예시:
+| Type | 목적 |
+| --- | --- |
+| `COMMENT` | requester-visible 또는 shared communication |
+| `NOTE` | internal operational note |
 
-- 우선순위를 상향해야 하는 경우
-- 카테고리 기본값보다 위험도가 높은 경우
-- 기한을 변경해야 하는 경우
-- 업무량 때문에 담당자를 바꿔야 하는 경우
-- 검토 후 SLA 조정이 필요한 경우
-
-엄격한 카테고리 중심 시스템은 예측 가능하지만 경직되고, 완전 동적 시스템은 유연하지만 감사가 어렵습니다.
-
-개선된 모델은 통제된 하이브리드 접근을 사용합니다.
-
-```txt
-Category = 기본 동작
-Ticket action = 통제된 오버라이드
-```
-
-오버라이드는 다음 조건을 만족해야 합니다.
-
-- 명시적이어야 함
-- 관련 사용자에게 보여야 함
-- 이력에 기록되어야 함
-- 유효한 액션을 통해 수행되어야 함
-- 권한/상태 규칙을 만족해야 함
-- 필요 시 사유를 설명해야 함
-
-이는 운영 유연성과 추적 가능성의 균형을 만듭니다.
-
-시스템은 예외를 조용한 필드 변경으로 숨기지 않고 처리할 수 있습니다.
+이 분리는 내부 팀 맥락과 요청자 대상 커뮤니케이션을 섞지 않게 한다.
 
 ---
 
-## 9. 코멘트 중심에서 액션 중심으로
+## Activity와 History 분리
 
-가장 큰 도메인 개선 중 하나는 코멘트 중심 모델에서 액션 중심 모델로 전환한 점입니다.
-
-코멘트 전용 모델은 초기에는 편리하지만 워크플로가 커질수록 약해집니다.
-
-코멘트 전용 모델의 문제:
-
-- 할당 변경이 텍스트에 묻힘
-- 우선순위 변경이 강한 타입으로 표현되지 않음
-- 반려 사유가 일반 메시지와 섞임
-- 병합 결정 감사가 어려움
-- 상태 변경의 의미를 설명하기 어려움
-- UI가 일반 텍스트에서 의미를 추론해야 함
-
-개선된 모델은 모든 의미 있는 상호작용을 액션으로 다룹니다.
-
-```txt
-Activity = Action + Context + Reason + Execution Rules
+```txt id="activity-history"
+Activity/Action = 누군가 무엇을 왜 하려 했는가
+History = 실제로 무엇이 바뀌었는가에 대한 immutable event record
 ```
 
-예시:
+History는 event-based이며 다음을 기록한다.
 
-```txt
-comment  -> 공개 커뮤니케이션
-note     -> 내부 커뮤니케이션
-assign   -> 소유권 변경
-adjust   -> 우선순위 / 위험도 / 기한 변경
-merge    -> 중복 또는 연관 티켓 통합
-reject   -> 운영 반려
-reopen   -> 활성 처리로 복귀
-resubmit -> 반려/거절 후 요청자 재제출
-```
+- type
+- source
+- event
+- previous/current values
+- actor
+- timestamp
 
-시스템은 의도와 효과를 분리합니다.
-
-```txt
-Intent = 사유 또는 설명
-Effect = 구조화된 메타데이터와 상태 변경
-```
-
-이로 인해 티켓 타임라인이 더 명확해지고 감사 신뢰성이 높아집니다.
+이는 timeline을 단순 comment list나 free-form `metadata.event`에 의존하지 않게 한다.
 
 ---
 
-## 10. Comment와 Note 분리
+## Tenant-Scoped Settings
 
-커뮤니케이션 모델은 `comment`와 `note`를 분리하여 정제되었습니다.
+Settings는 admin CRUD에서 behavior-defining configuration으로 진화했다.
 
-| Type      | Purpose                | Visibility            | Notification   |
-| --------- | ---------------------- | --------------------- | -------------- |
-| `comment` | 공개/공유 커뮤니케이션 | 관련 사용자에게 표시  | 알림 가능      |
-| `note`    | 내부 운영 커뮤니케이션 | 내부 팀 또는 작성자만 | 외부 알림 없음 |
+현재 settings scope:
 
-이 구분은 외부 커뮤니케이션과 내부 팀 맥락을 분리해 이전 모델을 개선합니다.
-
-요청자 대상 코멘트와 내부 운영 노트는 목적이 다릅니다.
-
-이를 통해 민감한 내부 논의 노출 없이, 내부 맥락을 티켓 타임라인에 유지할 수 있습니다.
-
----
-
-## 11. Activity와 History 분리
-
-개선된 시스템은 **Activity**와 **History**를 분리합니다.
-
-```txt
-Activity = 의미 있는 사용자/운영 상호작용
-History  = 변경으로 생성되는 불변 이벤트 기록
+```txt id="settings-scope"
+Tenant
+-> Category
+-> Approval Step
+-> Assignment Rule
 ```
 
-Activity가 답하는 질문:
+중요 변화:
 
-- 사용자가 무엇을 하려 했는가?
-- 왜 그렇게 했는가?
-- 어떤 액션 타입이 실행되었는가?
-- 어떤 맥락이 제공되었는가?
-
-History가 답하는 질문:
-
-- 어떤 필드가 바뀌었는가?
-- 이전 값은 무엇인가?
-- 새 값은 무엇인가?
-- 누가 변경을 유발했는가?
-- 언제 발생했는가?
-
-이는 타임라인이 지나치게 기술적이거나 지나치게 모호해지는 것을 방지합니다.
-
-UI는 의미 있는 활동을 보여주고, 시스템은 정밀한 감사 기록을 유지할 수 있습니다.
+- `Tenant`는 Service Desk configuration boundary이다.
+- Category scope는 `"PORTAL"` 또는 `"INTERNAL"`이다.
+- Approval step은 ordered, category-based이다.
+- Assignment rule은 job field와 employee username 기반 group model이다.
+- Settings 변경은 미래 behavior에 영향을 주며 과거 history를 rewrite하지 않는다.
 
 ---
 
-## 12. 확장된 액션 분류
+## Category-Driven Behavior
 
-Service Desk 액션 집합은 운영 언어에 맞게 정제되었습니다.
+Category는 주요 behavior driver이다.
 
-핵심 액션 개념:
-
-- 공유 커뮤니케이션용 `comment`
-- 내부 커뮤니케이션용 `note`
-- 소유권 변경용 `assign`
-- 셀프 할당 라벨인 `assign myself`
-- 우선순위/위험도/SLA/기한 변경용 `adjust` / `Adjust Plan`
-- 중복/연관 티켓 통합용 `merge`
-- 운영 반려용 `reject`
-- 활성 처리 복귀용 `request review` / `reopen`
-- 반려/거절 후 재제출용 `resubmit`
-
-### 12.1 병합 의미
-
-개선된 병합 동작은 별도의 `Merged` 상태를 도입하지 않습니다.
-
-대신:
-
-```txt
-source ticket -> Closed
-closeReason   -> Merged
-mergedIntoTicketId -> target ticket id
-mergedIntoTicketNo -> target ticket number
+```txt id="category-behavior"
+Tenant-scoped category
+-> defaults
+-> approval resolution
+-> work assignment resolution
+-> requester update routing policy
 ```
 
-이 방식은 상태 일관성을 지키면서 티켓 간 관계를 표현합니다.
+Category는 default priority, risk level, SLA days를 제공할 수 있고 approval/assignment
+settings의 anchor 역할을 한다.
 
-액션 시스템은 모든 것을 상태 필드나 자유 텍스트 코멘트에 억지로 넣지 않고 실제 서비스 데스크 운영을 모델링합니다.
+Requester category change는 routing-sensitive이며 routing reset을 유발할 수 있다.
 
 ---
 
-## 13. 규칙 정형화
+## Approval과 Work Routing
 
-시스템은 티켓 규칙을 구현 친화적이면서 도메인 관점에서 읽기 쉬운 형식으로 정의합니다.
+Routing은 phase-aware가 되었다.
 
-```txt
-who
-when
-effect
-purpose
-restriction
+```ts id="assignment-phase"
+type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
-이 형식은 비즈니스 동작을 구현 가능한 규칙으로 연결하기 때문에 유용합니다.
+Ticket DTO는 다음 projection을 노출할 수 있다.
 
-예시:
+- approval assignees
+- work assignees
+- assigned approver
+- assigned worker
 
-```txt
-Action: Adjust Plan
-who: assignee or manager/admin
-when: valid operational states
-effect: update priority, risk level, SLA, or due date
-purpose: adjust execution planning
-restriction: reason required; history must be recorded
+모든 assignee를 같은 ownership으로 취급하지 않는 것이 핵심 개선이다.
+
+---
+
+## Requester Update Policy
+
+요청자는 active work 전 단계에서 제한적으로 수정할 수 있다.
+
+허용 status:
+
+```txt id="requester-update-statuses"
+Approval
+Assigned
 ```
 
-이는 모호한 정책 설명보다 개선된 방식입니다.
+Routing-sensitive fields:
 
-규칙은 더 이상 개념에만 머물지 않고 다음을 안내합니다.
+- category
+- subject
+- content
+- files
+- images
 
-- 권한 검사
-- 상태 가드
-- 액션 노출 조건
-- 이력 생성
-- UI 동작
-- 향후 API 검증
+Routing-neutral fields:
 
-핵심은 도메인 정책이 구현과 리뷰 모두에서 더 쉬워진다는 점입니다.
+- due date
+- email recipients
 
----
-
-## 14. 운영 기능 진화
-
-Service Desk 재설계는 기본 상태 추적을 넘어 운영 동작의 의미 자체를 개선했습니다.
-
-가장 중요한 개선:
-
-- 작업 시간을 세션 단위로 표현
-- 상태 변경을 작업 근거와 연결
-- 설정을 동작 정의 구성으로 취급
+서버는 `ROUTING_RESET` 또는 `ROUTING_PRESERVED`를 기록한다.
 
 ---
 
-## 15. 작업 세션 기반 Track Time
+## Draft와 Attachment Boundary
 
-개선된 시스템은 작업 시간을 단일 누적 숫자로 취급하지 않습니다.
+Create workflow는 one-shot form에서 draft-aware workflow로 발전했다.
 
-대신:
+REMOTE draft는 requester당 하나의 active draft를 가진 `Draft` ticket row로 구현된다.
 
-```txt
-Work = collection of sessions
+Attachment는 prepare boundary로 발전했다.
+
+```txt id="attachment-boundary"
+browser file input
+-> prepare API
+-> prepared metadata
+-> ticket command
 ```
 
-각 작업 세션은 다음을 가질 수 있습니다.
+현재 demo는 metadata와 controlled demo URL을 persist할 수 있지만 production object
+storage를 제공한다고 주장하지 않는다.
 
-- 시작 시각
-- 종료 시각
-- 소요 시간
-- 담당자
-- 노트
+---
 
-타이머 액션과 수동 시간 입력은 개념적으로 분리합니다.
+## Work Session
+
+Work tracking은 단일 누적 시간에서 work session으로 발전했다.
+
+현재 work session이 기록하는 것:
+
+- ticket ID
+- worker
+- start/end 또는 duration input
+- tracked minutes
+- note
+- optional next status
+
+현재 route surface는 list/create 중심이다. Timer/update/delete API는 matching route
+handler가 생길 때까지 extension point이다.
+
+---
+
+## SLA 진화
+
+현재 SLA는 신중하게 범위를 제한한다.
+
+현재 구현:
+
+- category `defaultSlaDays`
+- due date expectation
+- priority/risk planning context
+- 허용되는 action command를 통한 adjustment
+
+Full SLA breach detection, pause/resume clock, business calendar, notification,
+escalation은 future production scope이다.
+
+---
+
+## 핵심 교훈
+
+### 운영 의도 보존
+
+새 설계는 이전 시스템의 실제 운영 문제를 유지하면서 도메인을 더 명확하게 만든다.
+
+### Workflow를 Text에 숨기지 않기
+
+Assignment, rejection, merge, planning change는 comment가 아니라 command로 표현한다.
+
+### Settings는 Behavior를 정의
+
+Tenant, category, approval, assignment settings는 future ticket execution을 형성한다.
+
+### History는 Change를 설명
+
+History는 무엇이, 왜, 누가, 언제 바꿨는지 설명해야 한다.
+
+### Current Docs와 Decision Logs의 역할 분리
+
+Current design docs는 최신 구현 정렬 모델을 설명한다. Decision logs는 특정 시점의
+맥락과 이유를 보존한다.
+
+---
+
+## 결과
+
+현재 Service Desk module이 보여주는 것:
+
+- controlled ticket lifecycle
+- REMOTE draft workflow
+- attachment preparation boundary
+- tenant-scoped settings
+- approval/work routing separation
+- command-based actions
+- event-based history
+- requester update routing policy
+- work-session evidence
+- realistic deferred production scope
+
+요약:
 
 ```txt
-start
-finish
-switch
-manual range
-manual duration
+request tracking screen
+-> workflow-oriented Service Desk domain
+-> implementation-aligned, traceable portfolio system
 ```
 
-이는 실제 운영 업무를 더 잘 반영합니다.
+---
 
-실무에서는 일시 중지, 재개, 티켓 전환, 사후 수동 입력이 발생합니다.
+## 관련 문서
 
-세션 기반 모델은 단일 누적값보다 작업 이력을 더 설명 가능하게 만듭니다.
+- [`service-desk-implementation-strategy.md`](service-desk-implementation-strategy.md)
+- [`ticket-operation-rules.md`](ticket-operation-rules.md)
+- [`../03-domain/service-desk-settings.md`](../03-domain/service-desk-settings.md)
+- [`../03-domain/ticket/ticket-system-overview.md`](../03-domain/ticket/ticket-system-overview.md)
+- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
+- [`../03-domain/ticket/ticket-activity.md`](../03-domain/ticket/ticket-activity.md)
+- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
+- [`../03-domain/ticket/ticket-track-time.md`](../03-domain/ticket/ticket-track-time.md)
 
 ---
 
-## 16. 작업 근거에 연결된 상태 전이
+## 요약
 
-활성 작업과 관련된 상태 전이는 장식적이면 안 됩니다.
-
-`Working`, `Pending`, `Resolved` 같은 상태로 이동할 때는 의미 있는 작업 맥락이 연결되어야 합니다.
-
-예를 들어, 해결 처리된 티켓은 다음 질문에 답할 수 있어야 합니다.
-
-```txt
-Was actual work recorded before this ticket was marked resolved?
-```
-
-이것이 상태 변경의 의미를 강화합니다.
-
-상태 값은 단순 라벨이 아니라 운영 진행 상황을 나타냅니다.
-
-상태 전이를 작업 근거와 연결하면 Service Desk의 워크플로 신뢰성이 높아집니다.
-
----
-
-## 17. 도메인 기반 설정
-
-설정 모듈은 단순 관리자 CRUD에서 도메인 구성으로 개선되었습니다.
-
-Service Desk 설정 항목:
-
-- 카테고리
-- 승인 단계
-- 할당 규칙
-- 부서
-- 직무 필드
-
-이들은 단순 편집 목록이 아니라 시스템 동작을 형성합니다.
-
-관계는 다음과 같이 요약할 수 있습니다.
-
-```txt
-Settings define how tickets behave.
-Tickets execute that behavior.
-History records what happened.
-```
-
-이는 중요한 도메인 개선입니다.
-
-설정은 보조 관리자 화면이 아니라 워크플로 동작의 기반입니다.
-
----
-
-## 18. 핵심 설계 교훈
-
-### 18.1 실제 운영 의도 보존
-
-이전 Service Hub 경험에는 실제 운영 교훈이 포함되어 있었습니다.
-
-새로운 Service Desk는 구조를 개선하면서 그 의도를 보존합니다.
-
-### 18.2 워크플로를 텍스트에 숨기지 않기
-
-운영 의사결정은 명시적으로 모델링되어야 합니다.
-
-할당, 반려, 병합, 계획 조정은 단순 `comment` 텍스트로는 충분하지 않습니다.
-
-의미 있는 워크플로 의사결정은 액션으로 표현되어야 합니다.
-
-### 18.3 구성은 동작을 형성해야 함
-
-설정은 단순 데이터 관리 화면이 아닙니다.
-
-티켓이 어떻게 동작할지 정의합니다.
-
-카테고리, 할당, 승인, SLA 규칙은 숨은 조건이 아니라 도메인 구성으로 드러나야 합니다.
-
-### 18.4 이력은 변경을 설명해야 함
-
-워크플로 시스템은 현재 상태만으로 충분하지 않습니다.
-
-다음을 이해할 수 있어야 합니다.
-
-- 무엇이 바뀌었는가
-- 왜 바뀌었는가
-- 누가 바꿨는가
-- 언제 바뀌었는가
-- 어떤 액션이 원인이었는가
-
-이 때문에 Activity와 History를 분리합니다.
-
-### 18.5 도메인 설계는 리뷰 가능해야 함
-
-포트폴리오 시스템은 동작만 하는 것으로 충분하지 않습니다. 설명 가능해야 합니다.
-
-Service Desk 재설계는 리뷰어, 향후 유지보수자, 면접관에게 도메인을 더 쉽게 설명할 수 있게 만듭니다.
-
----
-
-## 19. 진화 결과
-
-현재 Service Desk 모듈은 과거 IT Help Desk 화면을 단순히 재작성한 버전이 아닙니다.
-
-다음 역량을 보여주는 개선된 도메인 모델입니다.
-
-- 실무적 마이그레이션 사고
-- 워크플로 중심 티켓 모델링
-- 카테고리 기반 동작
-- 통제된 운영 오버라이드
-- 액션 중심 Activity
-- Comment와 Note 분리
-- Activity와 History 분리
-- 세션 기반 작업 추적
-- 작업 근거와 연결된 상태 전이
-- 동작을 정의하는 설정 구조
-- 유지보수 가능한 도메인 문서화
-
-진화는 다음과 같이 요약할 수 있습니다.
-
-```txt
-이전 직장 Service Hub 경험
--> 운영 문제 추출
--> 더 명확한 Service Desk 도메인으로 재설계
--> 프로덕션 정렬 포트폴리오 시스템으로 문서화
-```
-
-가장 중요한 개선은 이전 시스템을 단순 복제하지 않았다는 점입니다.
-
-실무 경험을 입력으로 사용하고, 더 명확한 도메인 경계와 더 강한 워크플로 의미 체계, 더 설명 가능한 운영 동작으로 재구성했습니다.
-
----
-
-## 20. 권장 교차 참조
-
-이 문서는 다음에서 링크할 수 있습니다.
-
-- `docs/ko/README.md` (Development Strategy 섹션)
-
-관련 참조:
-
-- `docs/ko/08-dev-strategy/service-desk-implementation-strategy.md`
-- `docs/ko/03-domain/ticket/ticket-system-overview.md`
-- `docs/ko/03-domain/ticket/ticket-lifecycle.md`
-- `docs/ko/03-domain/ticket/ticket-activity.md`
-- `docs/ko/03-domain/ticket/ticket-history.md`
-- `docs/ko/03-domain/ticket/ticket-track-time.md`
-- `docs/ko/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`
-
----
-
-## 21. README 요약 제안
-
-### Service Desk 진화
-
-이 문서는 이전 Service Hub / IT Help Desk의 실제 운영 경험이 어떻게 더 명확한 Service Desk 도메인으로 재설계되었는지 설명합니다. 워크플로 라이프사이클 무결성, 액션 중심 Activity, 카테고리 기반 동작, 통제된 오버라이드, Activity/History 분리 같은 개념적 개선에 초점을 둡니다.
+Service Desk는 기본 request tracking에서 workflow-centered domain으로 진화했다.
+현재 모델은 lifecycle, routing, command, history, settings, draft, attachment,
+work evidence를 명시하고, future production infrastructure와 현재 구현을 분리한다.

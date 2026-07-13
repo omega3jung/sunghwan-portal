@@ -3,9 +3,12 @@ import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClie
 
 import {
   createHistoryOfApprovalRequested,
-  createHistoryOfAssignmentChange,
+  createHistoryOfAssignmentResolvedByRule,
+  createHistoryOfStatusChange,
+  createHistoryOfSystemResolutionClose,
   createHistoryOfTicketCreate,
 } from "../ticketHistory";
+import { finishRunningWorkSessionsByTicketId } from "../workSession";
 import {
   TicketCreateRequestDto,
   TicketDetailDto,
@@ -21,6 +24,7 @@ import {
   toTicketListItemDto,
 } from "./ticketMapper";
 import {
+  closeResolvedTicketById,
   createTicketRow,
   findActiveDraftTicketIdByRequesterUsername,
   findActiveTicketViewRowById,
@@ -28,8 +32,11 @@ import {
   findActiveTicketViewRowsBySearch,
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
+  findExpiredResolvedTicketViewRows,
   findNextApprovalStepId,
   findNextTicketNumber,
+  hasTicketWorkAssignmentHistory,
+  startAssignedTicketWorkById,
   submitDraftTicketRowById,
   type TicketRepositoryOptions,
   updateTicketInitialRoutingById,
@@ -41,6 +48,8 @@ export type CreateTicketOptions = {
   requesterUsername: string;
   query?: TicketRepositoryOptions["query"];
 };
+
+const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
 
 type InitialTicketRoutingResult =
   | {
@@ -68,7 +77,111 @@ export async function getTicketDetail(
 ): Promise<TicketDetailDto | null> {
   const row = await findActiveTicketViewRowById(ticketId);
 
-  return row ? toTicketDetailDto(row, currentUserName) : null;
+  return row ? projectTicketDetail(row, currentUserName) : null;
+}
+
+export async function startTicketWork(
+  ticketId: string,
+  currentUserName: string,
+): Promise<TicketDetailDto> {
+  return withPortalApiTransaction(async (query) => {
+    const ticket = await findActiveTicketViewRowById(ticketId, { query });
+
+    if (!ticket) {
+      throw createStatusError("Ticket not found.", 404);
+    }
+
+    if (ticket.tk_status !== "Assigned") {
+      return projectTicketDetail(ticket, currentUserName, { query });
+    }
+
+    if (
+      ticket.tk_approval_step_id !== null ||
+      !normalizeAssigneeUsernames(ticket.tk_assignee_usernames).includes(
+        currentUserName,
+      )
+    ) {
+      throw createStatusError("Only a current work assignee can start work.", 403);
+    }
+
+    const updatedTicket = await startAssignedTicketWorkById(
+      ticketId,
+      { assigneeUsername: currentUserName },
+      { query },
+    );
+
+    if (!updatedTicket) {
+      throw createStatusError("Ticket work could not be started.", 409);
+    }
+
+    await createHistoryOfStatusChange(
+      {
+        ticketId,
+        actionNo: null,
+        actorUsername: currentUserName,
+        fromStatus: ticket.tk_status,
+        toStatus: "Working",
+        metadata: {
+          previousStatus: ticket.tk_status,
+          nextStatus: "Working",
+        },
+      },
+      { query },
+    );
+
+    return projectTicketDetail(updatedTicket, currentUserName, { query });
+  });
+}
+
+export async function closeExpiredResolvedTickets(
+  now: Date = new Date(),
+): Promise<{ closedCount: number; ticketIds: string[] }> {
+  const nowIso = now.toISOString();
+
+  return withPortalApiTransaction(async (query) => {
+    const repositoryOptions: TicketRepositoryOptions = { query };
+    const expiredTickets = await findExpiredResolvedTicketViewRows(
+      {
+        now: nowIso,
+        graceDays: RESOLVED_AUTO_CLOSE_GRACE_DAYS,
+      },
+      repositoryOptions,
+    );
+    const ticketIds: string[] = [];
+
+    for (const ticket of expiredTickets) {
+      const closedTicket = await closeResolvedTicketById(
+        ticket.tk_id,
+        repositoryOptions,
+      );
+
+      if (!closedTicket) {
+        continue;
+      }
+
+      await finishRunningWorkSessionsByTicketId(
+        ticket.tk_id,
+        nowIso,
+        repositoryOptions,
+      );
+
+      await createHistoryOfSystemResolutionClose(
+        {
+          ticketId: ticket.tk_id,
+          fromStatus: "Resolved",
+          resolvedGraceDays: RESOLVED_AUTO_CLOSE_GRACE_DAYS,
+        },
+        repositoryOptions,
+      );
+
+      ticketIds.push(ticket.tk_id);
+    }
+
+    return {
+      closedCount: ticketIds.length,
+      ticketIds,
+    };
+  });
 }
 
 export async function createTicket(
@@ -170,7 +283,7 @@ export async function createTicket(
       repositoryOptions,
     );
   } else {
-    await createHistoryOfAssignmentChange(
+    await createHistoryOfAssignmentResolvedByRule(
       {
         ticketId: row.tk_id,
         actorUsername: options.requesterUsername,
@@ -181,7 +294,11 @@ export async function createTicket(
     );
   }
 
-  return toTicketDetailDto(routedRow, options.requesterUsername);
+  return projectTicketDetail(
+    routedRow,
+    options.requesterUsername,
+    repositoryOptions,
+  );
 }
 
 export async function updateTicket(
@@ -198,7 +315,7 @@ export async function updateTicket(
     throw createStatusError("Ticket not found.", 404);
   }
 
-  return toTicketDetailDto(row, currentUserName);
+  return projectTicketDetail(row, currentUserName);
 }
 
 export async function searchTicketListItems(
@@ -219,6 +336,21 @@ function createStatusError(message: string, status: number) {
   const error = new Error(message) as Error & { status: number };
   error.status = status;
   return error;
+}
+
+async function projectTicketDetail(
+  row: Parameters<typeof toTicketDetailDto>[0],
+  currentUserName: string | null,
+  options: TicketRepositoryOptions = {},
+): Promise<TicketDetailDto> {
+  const hasBeenWorker = currentUserName
+    ? await hasTicketWorkAssignmentHistory(row.tk_id, currentUserName, options)
+    : false;
+
+  return toTicketDetailDto(row, {
+    currentUserName,
+    hasBeenWorker,
+  });
 }
 
 async function resolveInitialTicketRouting(
@@ -274,4 +406,12 @@ async function resolveInitialTicketRouting(
     approvalStepId: null,
     assigneeUsernames,
   };
+}
+
+function normalizeAssigneeUsernames(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is string => typeof item === "string" && item.length > 0,
+      )
+    : [];
 }

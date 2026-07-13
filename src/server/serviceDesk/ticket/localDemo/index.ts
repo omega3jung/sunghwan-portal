@@ -7,3 +7,4 @@ export { localListTickets } from "./list";
 export { localRequesterUpdateTicket } from "./requesterUpdate";
 export { localSearchTickets } from "./search";
 export { localUpdateTicket } from "./update";
+export { withLocalTicketWorkerHistory } from "./workerHistory";

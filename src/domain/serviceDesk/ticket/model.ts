@@ -37,12 +37,20 @@ export type TicketAssignmentPhase = "APPROVAL" | "WORK";
  * The persisted assignee column stores the current responsible users, whose
  * meaning depends on whether the ticket is in approval or work phase.
  */
-export interface TicketAssignmentState {
+export interface TicketCurrentAssignmentState {
   assignmentPhase: TicketAssignmentPhase;
   approvalAssigneeUsernames: string[];
   workAssigneeUsernames: string[];
-  assignedApprover: boolean;
-  assignedWorker: boolean;
+  isCurrentApprover: boolean;
+  isCurrentWorker: boolean;
+}
+
+/**
+ * Whether the current user has been assigned as a work assignee
+ * at any point, including the current assignment.
+ */
+export interface TicketAssignmentState extends TicketCurrentAssignmentState {
+  hasBeenWorker: boolean;
 }
 
 /**
@@ -116,7 +124,7 @@ export interface TicketSummary
   extends
     TicketBase,
     TicketWorkflowState,
-    TicketAssignmentState,
+    TicketCurrentAssignmentState,
     TicketMetrics,
     TicketViewState,
     TicketScopeContext,

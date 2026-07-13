@@ -30,7 +30,7 @@ export function localPost({
       actionNo,
       createdAt,
     });
-    const { history: createdHistory, updatedTicket } = executeLocalAction({
+    const { histories: createdHistories, updatedTicket } = executeLocalAction({
       ticketId,
       employeeUserName,
       content,
@@ -45,7 +45,7 @@ export function localPost({
     const histories = getLocalDemoHistories(isInternal);
 
     actions.push(ticketAction);
-    histories.push(createdHistory);
+    histories.push(...createdHistories);
 
     if (updatedTicket) {
       const { targetMock, index } = getTicketContext(ticketId, isInternal);

@@ -2,294 +2,365 @@
 
 ## Goal
 
-The ticket system is designed to manage requests, approvals, and execution
-workflows in a structured and traceable way.
+This document is the high-level current design overview for the Service Desk
+ticket system.
 
-Unlike simple CRUD-based systems, it focuses on:
-
-- consistent workflow execution
-- clear ownership and responsibility
-- action-oriented communication and operations
-- full auditability of actions
-- realistic work tracking
-- user-centric prioritization
-
-The goal is to reflect real operational processes, not just store and display
-data.
+It summarizes the stable model and links to the canonical detail documents.
+It does not repeat every operation rule. Use this document to understand the
+shape of the system, then follow the links for execution details.
 
 ---
 
-## Why Not a Simple CRUD System?
+## Current Ticket System
 
-Many ticket systems follow a basic flow:
-
-```txt
-Create -> Update -> Resolve -> Close
+```txt id="ticket-system-current"
+Tenant-scoped settings
+-> category-driven ticket intake
+-> approval or work routing
+-> command-based ticket actions
+-> event-based history
+-> work-session evidence
 ```
 
-This approach becomes insufficient in real environments because:
-
-- different request types require different workflows
-- approval may be required before execution
-- responsibility must be clearly assigned
-- SLA must be enforced
-- work is often interrupted and resumed
-
-As a result, a CRUD-based system leads to:
-
-- inconsistent behavior
-- unclear responsibility
-- poor visibility of actual work
-
-To solve this, the system models tickets as workflow-driven entities.
+The Service Desk ticket domain is workflow-oriented. A ticket is not a generic
+CRUD row. It has current state, current ownership, configuration context,
+actions, history, attachments, and work-session records.
 
 ---
 
-## Core Principles
+## Persisted Status Model
 
-The system is built on the following principles.
+The current `TicketStatus` union is:
 
-### 1. Category-Driven Behavior
-
-Category is not just classification.
-
-It defines:
-
-- assignment rules
-- approval requirements
-- SLA policies
-- workflow structure
-
-Service Desk behavior is tenant-scoped through category and settings
-configuration. A tenant provides the configuration boundary, and categories
-inside that tenant determine the operational behavior for tickets.
-
-### 2. Approval as a First-Class Workflow
-
-Approval is treated as a core part of the lifecycle.
-
-- configurable per category
-- executed as a structured pipeline
-- fully traceable
-
-### 3. Session-Based Work Tracking
-
-Work is not stored as a single accumulated value.
-
-```txt
-work = collection of sessions
+```txt id="ticket-status-union"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-This allows:
+`Open`, `Approved`, and `Reopen` are not persisted statuses.
 
-- interruption
-- resumption
-- task switching
+- `Open` may be used only as a UI grouping/search concept.
+- Approval completion is recorded as `APPROVAL_APPROVED` history.
+- Reopen is an action that currently moves `Resolved` back to `Working`.
 
-### 4. Work Context-Driven Prioritization
-
-Tickets are not displayed as a flat list.
-
-The system derives a work context to prioritize:
-
-- currently active work
-- assigned tickets
-- actionable tickets
-- contextual tickets
-
-### 5. Full Auditability
-
-All important actions are recorded.
-
-This ensures:
-
-- traceability
-- accountability
-- explainability
-
-### 6. Action-Oriented Interaction Model
-
-Meaningful ticket interactions are modeled as activities rather than plain
-comments alone.
-
-This allows the system to represent:
-
-- public communication
-- internal notes
-- assignment changes
-- operational adjustments
-- merge and rejection decisions
-- review/reopen requests after resolution
-
-Related documents:
-
-- [Ticket Activity Model](./ticket-activity.md)
-- [Action Strategy](./strategy/action-strategy.md)
-
----
-
-## System Structure
-
-The ticket system is composed of multiple domain components:
-
-```txt
-Tenant
-  -> Category
-  -> Approval
-  -> Assignment
-  -> SLA
-Ticket
-  -> Activity
-  -> Track Time
-  -> History
-```
-
-Each component is responsible for a specific concern, which keeps the system
-modular and maintainable.
-
-The configuration side is tenant-scoped. The ticket side references the
-selected category and then follows the approval, assignment, and SLA behavior
-defined by that category configuration.
-
----
-
-## Ticket Lifecycle
-
-A ticket progresses through a structured lifecycle:
-
-```txt
-Draft -> Open -> Approval -> Working -> Resolved -> Closed
-```
-
-The actual flow depends on category configuration.
-
-- some tickets skip approval
-- some require multiple approval steps
-- the selected category is interpreted within the tenant configuration boundary
+Detail reads must not change status. Starting work is an explicit command.
 
 Related document: [Ticket Lifecycle](./ticket-lifecycle.md)
 
 ---
 
-## Work Session Model
+## Draft
 
-Work performed on a ticket is tracked as sessions:
+REMOTE draft is stored as a normal ticket row with `status = "Draft"`.
 
-```txt
-start -> work -> finish
-```
+Current draft rules:
 
-Multiple sessions per ticket are allowed.
+- one active draft per requester
+- draft uses the ticket table, not a separate draft table
+- draft save/update uses the draft API
+- final submit reuses the draft row and moves it to `Approval` or `Assigned`
+- operational lists and insights exclude draft tickets
+- LOCAL draft uses a simplified demo-safe implementation behind the feature API
+  boundary and is not persistence-equivalent to the REMOTE PostgreSQL draft model
 
-Example:
-
-```txt
-09:00 - 10:00
-15:00 - 17:00
-```
-
-This reflects real-world work behavior more accurately than a single aggregated
-time value.
-
-Related document: [Ticket Track Time](./ticket-track-time.md)
+Related document: [Ticket Form Design](../../06-form-design/ticket-form.md)
 
 ---
 
-## Activity and History Model
+## Approval and Work Routing
 
-The system distinguishes between user-facing activity and immutable history.
+Current routing source of truth:
 
-### Activity
-
-- represents meaningful communication and operational actions
-- stores reason content together with structured metadata
-- powers the unified timeline experience
-
-### History
-
-- records immutable event traces generated by ticket changes
-- supports auditing and before/after change visibility
-- complements the activity model rather than replacing it
-
-```txt
-Activity = meaningful interaction
-History = immutable event record
+```txt id="routing-source-of-truth"
+tk_approval_step_id
+tk_assignee_usernames
 ```
+
+Interpretation:
+
+```txt id="routing-phase"
+tk_approval_step_id != null
+-> assignmentPhase = APPROVAL
+-> tk_assignee_usernames = current approvers
+
+tk_approval_step_id == null
+-> assignmentPhase = WORK
+-> tk_assignee_usernames = current workers
+```
+
+DTOs expose projection fields for UI convenience:
+
+- `assignmentPhase`
+- `approvalAssigneeUsernames`
+- `workAssigneeUsernames`
+- `assignedApprover`
+- `assignedWorker`
+
+These are mapper/service projections, not separate database sources of truth.
+
+Related documents:
+
+- [Approval System](./strategy/approval-system.md)
+- [Assignment Policy](./strategy/assignment-policy.md)
+
+---
+
+## Initial Routing
+
+Ticket submission resolves routing from the selected category and requester.
+
+```txt id="initial-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+```
+
+Final approval either moves to the next approval step or resolves work
+assignment and moves the ticket to `Assigned`.
+
+Decline terminates approval routing:
+
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
+```
+
+---
+
+## Requester Update Routing
+
+Requester update is allowed only in the current implementation for requester
+owned tickets in `Approval` or `Assigned`.
+
+Routing-neutral fields:
+
+- due date
+- email recipients
+
+Routing-sensitive fields:
+
+- category
+- subject
+- content
+- files
+- images
+
+Only actual normalized value changes trigger routing behavior. If only
+routing-neutral fields change, status, approval step, and assignees are
+preserved and history records `ROUTING_PRESERVED`.
+
+If routing-sensitive values change, routing is recalculated from the beginning
+and history records `ROUTING_RESET`.
+
+When the category changes, priority, risk, and the minimum due date are
+re-evaluated from the new category defaults. The next due date is the later of
+the current due date and the new category minimum; category change must not pull
+the due date earlier.
+
+Related documents:
+
+- [Ticket Lifecycle](./ticket-lifecycle.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+
+---
+
+## Attachment Boundary
+
+Ticket attachment input is prepared before ticket commands write metadata.
+
+```txt id="attachment-flow"
+File[] / inline image
+-> Attachment Prepare API
+-> prepared body, files, images
+-> ticket command payload
+-> tk_content, tk_files, tk_images
+```
+
+The current LOCAL and REMOTE behavior uses controlled demo replacement. It does
+not provide production object storage.
+
+Raw `File`, binary data, base64 data URLs, blob URLs, and local file paths must
+not be persisted in ticket rows, DTOs, action metadata, or history metadata.
+
+Related document: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+
+---
+
+## Ticket Action Command Model
+
+Ticket actions are server-controlled commands.
+
+```txt id="ticket-action-command"
+Action command
+-> authenticate
+-> authorize
+-> validate status
+-> validate input
+-> insert action when applicable
+-> mutate ticket when applicable
+-> create history
+```
+
+Current action types:
+
+```txt id="ticket-action-types"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
+```
+
+Communication actions create timeline entries. Operational actions may mutate
+status, assignees, planning fields, merge state, or close reason. Operational
+actions are immutable in normal workflow.
+
+Comments created before closure remain visible after `Closed`; that visibility
+does not imply new comment creation is allowed after closure.
 
 Related documents:
 
 - [Ticket Activity Model](./ticket-activity.md)
-- [Ticket History](./ticket-history.md)
 - [Action Strategy](./strategy/action-strategy.md)
 
 ---
 
-## Work Context
+## Event-Based History
 
-The system derives a current work context for each user.
+History is immutable event/audit data.
 
-This enables:
-
-- prioritized ticket lists
-- context-aware UI actions
-- reduced cognitive load
-
-Example:
-
-```txt
-working on a ticket -> show Finish
-working on another ticket -> show Switch
+```txt id="history-shape"
+type   -> changed domain area
+source -> why or which rule produced it
+event  -> what happened
+actor  -> who initiated it
+from/to value -> structured JSON change
+metadata -> supplemental display/audit context
 ```
+
+`event` is authoritative. `metadata.event` is not the event source of truth.
+`SYSTEM_AUTO` is a history source, not a history type.
+
+One action can produce multiple history records. Some system operations can
+produce history without a ticket action row.
+
+Related document: [Ticket History](./ticket-history.md)
+
+---
+
+## Work Session
+
+Work Session records actual work-time evidence. It is separate from Ticket
+Action.
+
+Current route surface:
+
+```txt id="work-session-routes"
+GET  /api/service-desk/tickets/:ticketId/work-session
+POST /api/service-desk/tickets/:ticketId/work-session
+```
+
+Current behavior:
+
+- only current work assignees can track work
+- `Assigned` requires transition to `Working`
+- `Working` can move to `Pending` or `Resolved`
+- `Pending` can move to `Working` or `Resolved`
+- tracked minutes aggregate into the ticket work total
+- GET does not mutate status
+- timer-style start/finish/switch routes are not part of the current route surface
 
 Related document: [Ticket Track Time](./ticket-track-time.md)
 
 ---
 
-## Design Philosophy
+## Settings Relationship
 
-The system prioritizes:
+Service Desk settings provide the behavior configuration used by ticket
+workflows.
 
-- predictability over flexibility
-- configuration over hardcoding
-- traceability over destructive simplicity
-- operational realism over UI convenience
+```txt id="settings-relationship"
+Company
+-> Service Desk Tenant
+   -> Category
+      -> Approval Step
+      -> Assignment Rule
+```
 
-These choices ensure that the system:
+Tenant is the configuration scope. Category is the central behavior
+configuration. Approval Step controls main-category approval routing.
+Assignment Rule resolves work ownership with subcategory override and
+parent/main fallback.
 
-- scales with complexity
-- remains consistent
-- is easy to reason about
+Related document: [Service Desk Settings](../service-desk-settings.md)
 
 ---
 
-## Related Documents
+## Runtime Boundary
 
-- [Ticket Model](./ticket-model.md)
-- [Ticket Activity Model](./ticket-activity.md)
-- [Ticket Lifecycle](./ticket-lifecycle.md)
-- [Ticket Track Time](./ticket-track-time.md)
-- [Ticket History](./ticket-history.md)
-- [Action Strategy](./strategy/action-strategy.md)
-- [Category Strategy](./strategy/category-strategy.md)
-- [Approval System](./strategy/approval-system.md)
-- [Assignment Policy](./strategy/assignment-policy.md)
-- [SLA Strategy](./strategy/sla-strategy.md)
+The UI uses feature API clients. Route handlers select LOCAL or REMOTE behavior.
+
+```txt id="runtime-boundary"
+UI
+-> feature API client
+-> Next.js Route Handler
+-> LOCAL handler or REMOTE portal API/service
+-> DTO
+```
+
+REMOTE uses server-only data access, row/mapper/DTO boundaries, repository
+services, and transactions where workflow changes need atomicity.
+
+LOCAL provides safe portfolio demo behavior and must keep DTO contracts aligned
+with REMOTE where a workflow is supported.
+
+---
+
+## Document Map
+
+- Status and transitions: [Ticket Lifecycle](./ticket-lifecycle.md)
+- Current executable rules: [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- Ticket entity and DTO boundary: [Ticket Model](./ticket-model.md)
+- Action timeline: [Ticket Activity Model](./ticket-activity.md)
+- Command execution: [Action Strategy](./strategy/action-strategy.md)
+- Immutable audit model: [Ticket History](./ticket-history.md)
+- Approval rules: [Approval System](./strategy/approval-system.md)
+- Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
+- Work sessions: [Ticket Track Time](./ticket-track-time.md)
+- Form workflow: [Ticket Form Design](../../06-form-design/ticket-form.md)
+- Attachment boundary: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+- Settings structure: [Service Desk Settings](../service-desk-settings.md)
 
 ---
 
 ## Summary
 
-This ticket system is designed as a workflow-oriented, user-centric system.
+The current Service Desk ticket system is built around precise persisted
+statuses, phase-aware routing, REMOTE draft rows, attachment preparation,
+command-based actions, event-based history, work-session evidence, and
+tenant-scoped settings.
 
-Its key characteristics are:
-
-- category-driven behavior
-- approval-aware flow
-- action-oriented communication and operations
-- session-based work tracking
-- distinct activity and history models
-- context-aware prioritization
-- full auditability
-
-It provides a foundation for building a realistic and scalable service desk
-system.
+The design goal is to keep workflow behavior explicit, auditable, and aligned
+with the current implementation rather than with older `Open`/`Approved`
+lifecycle terminology.

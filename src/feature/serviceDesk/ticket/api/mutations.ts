@@ -67,6 +67,12 @@ export const useStartTicketWorkMutation = () => {
     mutationFn: serviceDeskTicketApi.startWork,
     onSuccess: (_ticket, variables) => {
       queryClient.invalidateQueries({
+        queryKey: ticketQueryKeys.detail(variables.ticketId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ticketQueryKeys.lists(),
+      });
+      queryClient.invalidateQueries({
         queryKey: ticketHistoryQueryKeys.list(variables.ticketId),
       });
     },

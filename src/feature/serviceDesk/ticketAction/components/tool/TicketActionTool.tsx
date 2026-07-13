@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { type FieldErrors, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { ACCESS_LEVEL } from "@/domain/auth";
 import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/client";
@@ -47,14 +48,6 @@ type TicketActionToolProps = {
   users?: ImageValueLabel[];
   categories?: MainCategory[];
 };
-
-const REMOTE_MODE_ENABLED_ACTIONS = new Set<TicketActionMode>([
-  "approve",
-  "decline",
-  "cancel",
-]);
-const REMOTE_MODE_DISABLED_TITLE =
-  "Remote mode에서 ticket action 동작은 현재 구현중입니다.";
 
 const escapeHtml = (value: string) =>
   value
@@ -141,6 +134,7 @@ export function TicketActionTool({
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const currentUser = current.user;
+  const isAdmin = (currentUser?.permission ?? 0) >= ACCESS_LEVEL.ADMIN;
   const isRemoteMode = sessionData?.user.dataScope === "REMOTE";
   const currentUserOption = useMemo(
     () => users.find((user) => user.value === currentUser?.username),
@@ -254,11 +248,6 @@ export function TicketActionTool({
 
   const handleOpen = (nextMode: TicketActionMode) => {
     if (nextMode === "assignSelf") {
-      if (isRemoteMode) {
-        openMode(nextMode);
-        return;
-      }
-
       void handleAssignSelf();
       return;
     }
@@ -281,14 +270,7 @@ export function TicketActionTool({
     },
   );
 
-  const isRemoteModeActionDisabled =
-    isRemoteMode &&
-    mode !== "idle" &&
-    !REMOTE_MODE_ENABLED_ACTIONS.has(mode);
-  const disableSubmit = isPending || !editor || isRemoteModeActionDisabled;
-  const submitDisabledTitle = isRemoteModeActionDisabled
-    ? REMOTE_MODE_DISABLED_TITLE
-    : undefined;
+  const disableSubmit = isPending || !editor;
 
   if (!ticket) return null;
 
@@ -297,6 +279,7 @@ export function TicketActionTool({
       <TicketActionToolLauncher
         hidden={isOpen}
         isPending={isPending}
+        isAdmin={isAdmin}
         onOpen={handleOpen}
         ticket={ticket}
       />
@@ -313,6 +296,7 @@ export function TicketActionTool({
           <TicketActionForm
             ticketId={ticketId}
             originalCategoryId={ticket?.categoryId}
+            assignmentPhase={ticket?.assignmentPhase}
             isRemoteMode={isRemoteMode}
             mode={mode}
             form={actionForm}
@@ -326,7 +310,6 @@ export function TicketActionTool({
             errorMessage={errorMessage}
             helperText={helperText}
             isPending={isPending}
-            submitDisabledTitle={submitDisabledTitle}
             submitLabel={submitLabel}
             onCancel={closeMode}
             onSubmit={handleSubmit}
