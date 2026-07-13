@@ -25,6 +25,7 @@ export type CreateTicketActionRowInput = {
   actionNo: number;
   actionType: TicketActionType;
   content: string;
+  metadata?: TicketActionMetadataDto;
   ownerUsername: string;
   files: Attach[];
   images: Attach[];
@@ -67,15 +68,27 @@ from service_desk.ticket_action
 where tka_ticket_id = $1;
 `;
 
+const FIND_ACTIVE_TICKET_ACTION_ROW_BY_TICKET_ID_AND_NO_QUERY = `
+select
+${TICKET_ACTION_ROW_COLUMNS}
+from service_desk.ticket_action
+where tka_active = true
+  and tka_ticket_id = $1
+  and tka_action_no = $2
+limit 1;
+`;
+
 const CREATE_TICKET_ACTION_ROW_QUERY = `
 insert into service_desk.ticket_action (
   tka_ticket_id,
   tka_action_no,
   tka_action_type,
   tka_content,
+  tka_metadata,
   tka_files,
   tka_images,
-  tka_owner_username
+  tka_owner_username,
+  tka_active
 )
 values (
   $1,
@@ -84,8 +97,22 @@ values (
   $4,
   $5::jsonb,
   $6::jsonb,
-  $7
+  $7::jsonb,
+  $8,
+  true
 )
+returning
+${TICKET_ACTION_ROW_COLUMNS};
+`;
+
+const SOFT_DELETE_TICKET_ACTION_ROW_QUERY = `
+update service_desk.ticket_action
+set
+  tka_active = false,
+  tka_updated_at = now()
+where tka_ticket_id = $1
+  and tka_action_no = $2
+  and tka_active = true
 returning
 ${TICKET_ACTION_ROW_COLUMNS};
 `;
@@ -140,6 +167,20 @@ export async function findNextTicketActionNo(
   return Number(rows[0]?.action_no ?? 1);
 }
 
+export async function findActiveTicketActionRowByTicketIdAndNo(
+  ticketId: string,
+  actionNo: number,
+  options: TicketActionRepositoryOptions = {},
+): Promise<TicketActionRow | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<TicketActionRow>(
+    FIND_ACTIVE_TICKET_ACTION_ROW_BY_TICKET_ID_AND_NO_QUERY,
+    [ticketId, actionNo],
+  );
+
+  return rows[0] ?? null;
+}
+
 export async function createTicketActionRow(
   input: CreateTicketActionRowInput,
   options: TicketActionRepositoryOptions = {},
@@ -150,6 +191,7 @@ export async function createTicketActionRow(
     input.actionNo,
     input.actionType,
     input.content,
+    JSON.stringify(input.metadata ?? {}),
     JSON.stringify(input.files),
     JSON.stringify(input.images),
     input.ownerUsername,
@@ -173,6 +215,20 @@ export async function createApprovalTicketActionRow(
       input.ownerUsername,
     ],
   );
+
+  return rows[0] ?? null;
+}
+
+export async function softDeleteTicketActionRow(
+  ticketId: string,
+  actionNo: number,
+  options: TicketActionRepositoryOptions = {},
+): Promise<TicketActionRow | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<TicketActionRow>(SOFT_DELETE_TICKET_ACTION_ROW_QUERY, [
+    ticketId,
+    actionNo,
+  ]);
 
   return rows[0] ?? null;
 }

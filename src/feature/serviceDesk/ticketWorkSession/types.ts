@@ -14,7 +14,6 @@ export type TicketWorkSessionSubmitPayload = {
   durationMinutes?: number;
   startAt?: string;
   endAt?: string;
-  trackedMinutes: number;
   nextStatus?: TicketWorkSessionStatus;
   note?: string;
 };

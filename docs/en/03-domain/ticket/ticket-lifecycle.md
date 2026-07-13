@@ -2,60 +2,50 @@
 
 ## Goal
 
-The ticket lifecycle defines how a ticket progresses from creation to
-completion, including approval, execution, pause, rejection, rework, and final
-closure.
+The ticket lifecycle defines the current persisted statuses and the explicit
+commands that move a ticket between them.
 
-It ensures that:
-
-- every ticket follows a predictable workflow
-- responsibilities are clearly defined at each stage
-- transitions are explicit, controlled, and traceable
-- the lifecycle reflects real operational scenarios rather than only the happy path
+This document is the status and transition reference. Operation-specific
+permission details are documented in
+[Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md).
 
 ---
 
-## Core Concept
+## Persisted Statuses
 
-```txt
-A ticket is a controlled, stateful workflow driven by actions, approvals, and system rules.
+```txt id="ticket-statuses"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-A ticket moves through defined states based on:
+`Open`, `Approved`, and `Reopen` are not persisted statuses.
 
-- user actions
-- approval decisions
-- assignment and execution progress
-- explicitly defined operational rules
-
-Not all tickets pass through every stage. The actual path depends on category
-configuration, approval requirements, and operational actions taken after the
-ticket is created.
+- `Open` may be used only as a frontend grouping/search concept.
+- Approval completion is recorded as `APPROVAL_APPROVED` history.
+- Reopen is an action. Its current result is `Resolved -> Working`.
 
 ---
 
-## Lifecycle Flow
+## Main Flow
 
-At a high level, the lifecycle can be summarized as:
-
-```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
+```txt id="main-lifecycle-flow"
+Draft
+-> Approval | Assigned
+-> Working
+<-> Pending
+-> Resolved
+-> Closed
 ```
 
-This is the main success path. In practice, the lifecycle also supports
-alternative branches:
-
-```txt
-Draft -> Open -> Working -> Resolved -> Closed
-Open -> Declined -> Open
-Working <-> Pending
-Working / Pending -> Rejected -> Open or Reopen
-Resolved -> Reopen -> Working -> Resolved -> Closed
-Working / Pending / Resolved -> Closed (merge path)
-```
-
-The lifecycle therefore models not only completion, but also rejection,
-temporary pause, and post-resolution reprocessing.
+Approval, rejection, resubmission, merge, cancel, and auto-close add controlled
+branches around this main flow.
 
 ---
 
@@ -63,425 +53,217 @@ temporary pause, and post-resolution reprocessing.
 
 ### Draft
 
-- temporary state before submission
-- editable by requester only
-- not visible as active work for assignees
-- used to prepare incomplete requests before submission
+- requester is preparing a ticket
+- REMOTE draft is a normal ticket row with `status = Draft`
+- not part of operational ticket lists or insight views
+- final submit reuses the same row and routes it to `Approval` or `Assigned`
 
-### Open
+### Approval
 
-- ticket is submitted and enters the active workflow
-- waiting for approval, assignment, or requester/manager follow-up
-- initial operational state after creation
-
-### Approved
-
-- approval flow is completed successfully
-- ticket is accepted for execution
-- ready to move into active work
+- submitted ticket is waiting for approval
+- `approvalStepId != null`
+- `assigneeUsernames` means current approvers
+- approve can advance to another approval step or move to work assignment
+- decline moves to `Declined`
 
 ### Declined
 
 - approval was rejected
-- ticket is not accepted for execution
-- requester may revise the request and resubmit it
+- approval routing is terminated
+- `approvalStepId = null`
+- `assigneeUsernames = []`
+- requester may resubmit through initial routing
+
+### Assigned
+
+- work assignees have been resolved
+- work has not started
+- `approvalStepId = null`
+- `assigneeUsernames` means current workers
+- explicit `start-work` command moves to `Working`
+- work-session submission may also apply supported work-status transitions
 
 ### Working
 
-- ticket is assigned and being processed
-- assignees are responsible for execution
-- work sessions may be recorded through track time
+- ticket is in active work
+- current work assignees own execution
+- work sessions can add tracked minutes
+- work-session control can move to `Pending` or `Resolved`
 
 ### Pending
 
-- work is temporarily paused
-- commonly caused by an external dependency, waiting condition, or work interruption
-- ticket remains active but is not currently progressing
+- work is paused or waiting
+- current work assignees still own the ticket
+- assignment can reactivate it to `Working`
+- work-session control can move to `Working` or `Resolved`
 
 ### Rejected
 
-- ticket is operationally rejected after review by the assignee or manager
-- indicates that the request cannot proceed in its current form
-- requester or manager may later reactivate the ticket
-
-### Reopen
-
-- ticket is explicitly reactivated after being resolved or rejected
-- represents re-entry into the lifecycle for rework or reprocessing
-- separated from `Open` so rework can be tracked clearly
+- work assignee or Admin rejected execution
+- requester may resubmit through initial routing
+- running work sessions are finished where supported
 
 ### Resolved
 
-- work is completed and a solution is provided
-- waiting for a follow-up closure decision or requester review
-- may still return to active processing if rework is requested
+- work result is complete
+- requester or Admin can reopen to `Working`
+- system auto-close can move it to `Closed` after the resolved-history grace
+  window
 
 ### Closed
 
-- Closed state is read-only.
-- normal work is complete and the lifecycle is finished
-- no further actions are normally allowed
-- no updates are permitted
-- exceptional administrative operations may still apply
-- manager-level merge may still be allowed in exceptional cases
+- terminal state for normal workflow
+- merge, cancel, or auto-close produces this state
+- normal operational actions are blocked, except documented Admin exceptions
 
 ---
 
-## State Transitions
+## Transition Reference
 
-The lifecycle is driven by explicit transitions.
-
-### 1. Draft -> Open
-
-Triggered by:
-
-- user submission
-
-### 2. Open -> Approved
-
-Triggered by:
-
-- completion of all required approval steps
-
-### 3. Open -> Declined
-
-Triggered by:
-
-- approval rejection
-
-### 4. Open -> Working
-
-Condition:
-
-- no approval is required, or active work starts immediately through assignment
-
-### 5. Approved -> Working
-
-Triggered by:
-
-- assignment and start of execution
-
-### 6. Declined -> Open
-
-Triggered by:
-
-- requester update and resubmission
-
-### 7. Working -> Pending
-
-Triggered by:
-
-- temporary pause caused by dependency, interruption, or workflow hold
-
-### 8. Pending -> Working
-
-Triggered by:
-
-- resumed work
-
-### 9. Working -> Resolved
-
-Triggered by:
-
-- assignee completes the work
-
-### 10. Working / Pending -> Rejected
-
-Triggered by:
-
-- operational rejection by assignee or manager
-
-### 11. Rejected -> Open
-
-Triggered by:
-
-- requester review and resubmission
-
-### 12. Rejected -> Reopen
-
-Triggered by:
-
-- manager-driven reassignment or explicit reactivation for processing
-
-### 13. Resolved -> Reopen
-
-Triggered by:
-
-- requester review request or rework request
-
-### 14. Resolved -> Closed
-
-Implementation-specific closure path:
-
-- [`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md) does not currently
-  define the concrete trigger
-- requester confirmation or a system close policy may exist, but they are not
-  treated as current implementation rules here
-
-### 15. Working / Pending / Resolved -> Closed
-
-Exceptional case:
-
-- assignee merge closes the source ticket from `Working`, `Pending`, or
-  `Resolved`
-- manager merge may also close the source ticket from `Open`, `Approved`,
-  `Rejected`, or even `Closed` in exceptional cases
-- merged tickets use `closeReason = Merged`
+| From | To | Trigger | Primary History |
+| --- | --- | --- | --- |
+| `Draft` | `Approval` | final submit with approval step | `TICKET_SUBMITTED`, `APPROVAL_REQUESTED` |
+| `Draft` | `Assigned` | final submit without approval step | `TICKET_SUBMITTED`, `ASSIGNMENT_RESOLVED` |
+| `Approval` | `Approval` | approve non-final step | `APPROVAL_APPROVED`, `APPROVAL_REQUESTED` |
+| `Approval` | `Assigned` | approve final step | `APPROVAL_APPROVED`, `ASSIGNMENT_RESOLVED` |
+| `Approval` | `Declined` | decline | `APPROVAL_DECLINED` |
+| `Declined` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
+| `Assigned` | `Working` | start-work command; work-session submission may also transition | `STATUS_UPDATED` |
+| `Working` | `Pending` | work session with next status | `STATUS_UPDATED` |
+| `Pending` | `Working` | work session with next status, or assign from Pending | `STATUS_UPDATED` or `ASSIGNMENT_UPDATED` |
+| `Working`/`Pending` | `Resolved` | work session with next status | `STATUS_UPDATED` |
+| `Assigned`/`Working`/`Pending` | `Rejected` | reject action | `TICKET_REJECTED` |
+| `Rejected` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
+| `Resolved` | `Working` | reopen action | `TICKET_REOPENED` |
+| `Approval`/`Declined`/`Assigned`/`Working`/`Pending`/`Rejected` | `Closed` | requester cancel | `TICKET_CANCELED` |
+| active work statuses or Admin-allowed statuses | `Closed` | merge source ticket | `TICKET_MERGED` |
+| `Resolved` | `Closed` | system auto-close | `RESOLUTION_CLOSE` |
 
 ---
 
-## Action-Driven Lifecycle
+## Routing Rules
 
-The lifecycle is not only controlled by system configuration. It is also driven
-by explicit actions.
+Initial submit and resubmit use the same routing shape.
 
-```txt
-State Transition = Result of Action
+```txt id="initial-routing"
+next approval step exists
+-> status = Approval
+-> approvalStepId = next step
+-> assigneeUsernames = approvers
+
+no approval step
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
 ```
+
+Final approval resolves the next approval step first. If there is no next step,
+assignment rules resolve work assignees and the ticket moves to `Assigned`.
+
+Decline ends approval routing:
+
+```txt id="decline-routing"
+status = Declined
+approvalStepId = null
+assigneeUsernames = []
+```
+
+---
+
+## Requester Update
+
+Requester update is currently allowed in `Approval` and `Assigned` for the
+ticket requester.
+
+Routing-neutral changes preserve status, approval step, and assignees.
+
+- due date
+- email recipients
+
+Routing-sensitive changes rerun routing from the beginning.
+
+- category
+- subject
+- content
+- files
+- images
+
+History records the result as `ROUTING_PRESERVED` or `ROUTING_RESET`.
+
+When category changes, default priority, default risk level, and the minimum due
+date are re-evaluated from the new category. The next due date is the later of
+the current due date and the new category minimum, so category change never
+pulls the due date earlier.
+
+---
+
+## Work Session and Status
+
+Start Work and Work Session have separate responsibilities. The start-work
+command starts ticket workflow execution by moving `Assigned -> Working`. Work
+Session is not a Ticket Action; it records work-time evidence and may apply a
+supported work-status transition.
+
+Current work-session status transitions:
+
+```txt id="work-session-status"
+Assigned -> Working
+Working -> Pending | Resolved
+Pending -> Working | Resolved
+```
+
+Timer stop is not a separate route in the current route surface and does not
+implicitly resolve a ticket. GET requests never start work or mutate status.
+
+---
+
+## Auto Close
+
+Resolved auto-close is a system operation.
+
+- source: `SYSTEM_AUTO`
+- event: `RESOLUTION_CLOSE`
+- from: `Resolved`
+- to: `Closed`
+- close reason: `Completed`
+- grace window: 7 days
+- action link: `actionNo = null`
+- running work sessions are finished where supported
+
+The implementation uses resolved-history timing rather than a generic
+`updatedAt` rule.
+
+---
+
+## Forbidden Shortcuts
+
+The current lifecycle forbids implicit or hidden transitions.
 
 Examples:
 
-| Action                 | From                                                    | To         |
-| ---------------------- | ------------------------------------------------------- | ---------- |
-| submit ticket          | `Draft`                                                 | `Open`     |
-| approve                | `Open`                                                  | `Approved` |
-| update declined ticket | `Declined`                                              | `Open`     |
-| assign / assignSelf    | `Open` or `Approved`                                    | `Working`  |
-| pause or hold work     | `Working`                                               | `Pending`  |
-| resume work            | `Pending`                                               | `Working`  |
-| reject                 | `Working` or `Pending`                                  | `Rejected` |
-| requestReview / reopen | `Resolved`                                              | `Reopen`   |
-| resubmit               | `Rejected`                                              | `Open`     |
-| manager reassign       | `Declined` or `Rejected`                                | `Reopen`   |
-| merge                  | `Working`, `Pending`, or `Resolved`                     | `Closed`   |
-| manager merge          | `Open`, `Approved`, `Rejected`, `Resolved`, or `Closed` | `Closed`   |
-
-There are no implicit status changes. Every transition must have a clear cause.
+- reading ticket detail must not start work
+- `Draft` must not jump directly to `Working`
+- approval completion must not create an `Approved` status
+- reopen must not create a `Reopen` status
+- work-session GET must not mutate status
+- attachment preparation alone must not create history
 
 ---
 
-## Conditional Workflow
-
-The lifecycle is not fixed for every ticket.
-
-It depends on category configuration:
-
-```txt
-Category -> determines -> Workflow
-```
-
-Examples:
-
-- simple request: `Draft -> Open -> Working -> Resolved -> Closed`
-- approval required: `Draft -> Open -> Approved -> Working -> Resolved -> Closed`
-- approval rejected: `Draft -> Open -> Declined -> Open -> Approved -> Working`
-- blocked work: `Working -> Pending -> Working -> Resolved -> Closed`
-- rework flow: `Working -> Resolved -> Reopen -> Working -> Resolved -> Closed`
-
-This makes the lifecycle flexible without making it arbitrary.
-
----
-
-## Transition Rules
-
-### 1. Controlled Transitions
-
-State transitions are not arbitrary.
-
-They must follow:
-
-- approval results
-- assignment and work ownership
-- explicit user actions
-- explicit rules defined by the current implementation
-
-### 2. No Direct Jumping
-
-Invalid transitions are not allowed.
-
-Examples:
-
-- `Draft -> Working`
-- `Open -> Resolved`
-- `Pending -> Closed` without a valid closing action
-- `Closed -> Working` without exceptional intervention
-- `Closed -> any normal action` except for documented admin-level exceptions
-
-### 3. State Integrity
-
-Each state must reflect a clear responsibility.
-
-- `Open`: waiting for approval, assignment, or follow-up
-- `Approved`: ready for execution
-- `Working`: owned by assignee
-- `Pending`: temporarily paused
-- `Resolved`: waiting for closure or review
-- `Rejected`: not executable in current form
-- `Declined`: not approved
-- `Reopen`: reprocessing after prior completion or rejection
-
-### 4. Reopen Strategy
-
-The lifecycle explicitly separates `Reopen` from `Open`.
-
-This allows:
-
-- tracking rework frequency as a KPI
-- distinguishing new intake from reprocessing
-- preserving operational clarity after a ticket has already progressed
-
-### 5. Closure Policy
-
-The current implementation rules define merge-driven closure explicitly.
-
-Other closure policies, such as requester confirmation or auto-close review
-windows, may be added later, but they are not currently defined in
-[`Ticket Rules`](../../08-dev-strategy/ticket-operation-rules.md).
-
----
-
-## Lifecycle vs Status
-
-The lifecycle describes the overall process, while status represents the
-current state.
-
-```txt
-Lifecycle = process
-Status = snapshot
-```
-
-This distinction matters because the ticket domain is not only storing the
-current state. It is also modeling how the ticket arrived there and what
-transitions are valid next.
-
----
-
-## Lifecycle vs Activity
-
-The lifecycle defines the state machine, while activity represents the trigger
-or operation that causes change.
-
-```txt
-Lifecycle = allowed states and transitions
-Activity = explicit operation that triggers change
-```
-
-Examples:
-
-- `assign` may move a ticket into `Working`
-- `reject` may move a ticket into `Rejected`
-- `reopen` may move a ticket into `Reopen`
-- `resubmit` may move a ticket into `Open`
-
-This distinction keeps the lifecycle strict while allowing operational actions
-to remain expressive.
-
----
-
-## Relationship with Other Domains
-
-### Category
-
-- defines whether approval is required
-- defines assignment rules
-- determines which workflow path applies
-
-Related document: [Category Strategy](./strategy/category-strategy.md)
-
----
-
-### Approval
-
-- controls transitions related to approval outcome
-- determines whether a ticket becomes `Approved` or `Declined`
-
-Related document: [Approval System](./strategy/approval-system.md)
-
----
-
-### Assignment
-
-- determines who handles the ticket in `Working`
-- supports reassignment and reactivation flows
-- can move a ticket from an intake state into active execution
-
-Related document: [Assignment Policy](./strategy/assignment-policy.md)
-
----
-
-### SLA
-
-- influences urgency and deadlines
-- may pause during `Pending`
-- may affect escalation and closure monitoring
-
-Related document: [SLA Strategy](./strategy/sla-strategy.md)
-
----
-
-### Ticket Activity
-
-- provides the explicit user-facing actions that drive many transitions
-- explains why a transition happened
-
-Related document: [Ticket Activity Model](./ticket-activity.md)
-
----
-
-### Ticket Track Time
-
-- records work sessions during `Working`
-- can help explain transitions into or out of `Pending`
-
-Related document: [Ticket Track Time](./ticket-track-time.md)
-
----
-
-### Ticket History
-
-- records all state transitions
-- makes lifecycle changes auditable and explicit
-
-State changes are never implicit. They are recorded as workflow events.
-
-Related document: [Ticket History](./ticket-history.md)
-
----
-
-## Design Considerations
-
-### 1. Flexibility via Category
-
-The lifecycle is intentionally configurable, not hardcoded per ticket type.
-
-### 2. Real-World Alignment
-
-The lifecycle reflects actual operational flow:
-
-- validation before execution
-- pause and resume during ongoing work
-- rejection and revision loops
-- completion confirmation and rework handling
-
-### 3. Traceability
-
-All transitions are recorded, ensuring auditability and debuggability.
-
-### 4. Operational Clarity
-
-States such as `Declined`, `Rejected`, `Pending`, and `Reopen` are kept
-separate because they carry different ownership, meaning, and reporting value.
+## Related Documents
+
+- [Ticket System Overview](./ticket-system-overview.md)
+- [Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)
+- [Approval System](./strategy/approval-system.md)
+- [Assignment Policy](./strategy/assignment-policy.md)
+- [Ticket Track Time](./ticket-track-time.md)
+- [Ticket History](./ticket-history.md)
 
 ---
 
 ## Summary
 
-The ticket lifecycle ensures that:
-
-- tickets move through a controlled workflow
-- responsibilities are clear at every stage
-- rejections, pauses, and rework are modeled explicitly
-- transitions remain predictable, auditable, and operationally meaningful
-
-It is a core foundation for building a reliable and scalable service desk
-system.
+The current lifecycle is precise and action-driven. Persisted status names
+represent current responsibility. Approval/work ownership is derived from
+`approvalStepId` and `assigneeUsernames`, and every status transition must come
+from an explicit command, workflow rule, or system operation.

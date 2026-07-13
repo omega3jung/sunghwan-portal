@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-import { AccessLevel, Role, UserScope } from "@/domain/auth";
 import {
   createUserPreferenceByKey,
   getUserPreferenceByKey,
@@ -14,8 +13,6 @@ import {
   getPortalApiQueryValue,
   normalizePath,
   parsePreferenceKey,
-  resolveAccessLevel,
-  resolveRole,
 } from "../utils";
 
 const USER_PROFILE_PATH_PATTERN = /^\/users\/([^/]+)\/profile$/;
@@ -114,19 +111,20 @@ export async function handleUserPortalApi(
       if (method === "GET") {
         const username = decodeURIComponent(profileMatch[1] ?? "");
 
-        const authContext = await resolveUserProfileAuthContext(request);
+        if (!username.trim()) {
+          return NextResponse.json({ message: "Not found" }, { status: 404 });
+        }
 
-        if (!authContext) {
+        const isAuthenticated = await hasUserProfileRequestAuth(request);
+
+        if (!isAuthenticated) {
           return NextResponse.json(
             { message: "Unauthorized" },
             { status: 401 },
           );
         }
 
-        const profile = await getUserProfileDtoByUsername(
-          username,
-          authContext,
-        );
+        const profile = await getUserProfileDtoByUsername(username);
 
         if (!profile) {
           return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -145,43 +143,13 @@ export async function handleUserPortalApi(
   }
 }
 
-async function resolveUserProfileAuthContext(request: NextRequest): Promise<{
-  userScope: UserScope;
-  companyId: string;
-  permission: AccessLevel;
-  role: Role | null;
-} | null> {
+async function hasUserProfileRequestAuth(
+  request: NextRequest,
+): Promise<boolean> {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!token) {
-    return null;
-  }
-
-  if (token.userScope !== "INTERNAL" && token.userScope !== "CLIENT") {
-    return null;
-  }
-
-  const permission = resolveAccessLevel(token.permission);
-
-  if (permission === null) {
-    return null;
-  }
-
-  const role = resolveRole(token.role);
-  const companyId =
-    typeof token.companyId === "string"
-      ? token.companyId
-      : typeof token.clientId === "string"
-        ? token.clientId
-        : "";
-
-  return {
-    userScope: token.userScope,
-    companyId,
-    permission,
-    role,
-  };
+  return !!token;
 }

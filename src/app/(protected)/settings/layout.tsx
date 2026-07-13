@@ -8,8 +8,8 @@ import { ReactNode } from "react";
 import { authOptions } from "@/auth.config";
 import { ACCESS_LEVEL } from "@/domain/auth";
 
+import { SettingsAccessGuard, SettingsScopeProvider } from "./_providers";
 import { SettingsNavigation } from "./components";
-import { SettingsScopeProvider } from "./SettingsScopeProvider";
 
 export default async function SettingsLayout({
   children,
@@ -29,14 +29,16 @@ export default async function SettingsLayout({
   }
 
   return (
-    <SettingsScopeProvider
-      dataScope={dataScope}
-      userScope={userScope}
-      permission={permission}
-    >
-      <SettingsNavigation />
-      <Separator className="my-2 h-1 rounded bg-border" />
-      {children}
-    </SettingsScopeProvider>
+    <SettingsAccessGuard>
+      <SettingsScopeProvider
+        dataScope={dataScope}
+        userScope={userScope}
+        permission={permission}
+      >
+        <SettingsNavigation />
+        <Separator className="my-2 h-1 rounded bg-border" />
+        {children}
+      </SettingsScopeProvider>
+    </SettingsAccessGuard>
   );
 }

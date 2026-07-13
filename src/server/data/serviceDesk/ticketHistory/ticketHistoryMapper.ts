@@ -4,8 +4,9 @@ import type { ISODateString } from "@/shared/types";
 import { TicketHistoryDto } from "./ticketHistoryDto";
 import { TicketHistoryRow } from "./ticketHistoryRow";
 import {
-  TicketHistoryAction,
+  TicketHistoryEvent,
   TicketHistoryJsonValue,
+  TicketHistorySource,
   TicketHistoryType,
 } from "./ticketHistoryTypes";
 
@@ -19,12 +20,17 @@ export function mapTicketHistoryRowToDto(
     ticket_id: row.tkh_ticket_id,
     history_no: row.tkh_history_no,
     type: row.tkh_history_type as TicketHistoryType,
-    action: row.tkh_history_action as TicketHistoryAction,
+    source: row.tkh_source as TicketHistorySource,
+    event: row.tkh_event as TicketHistoryEvent,
     actor_username: row.tkh_actor_username,
     action_no: row.tkh_action_no,
     ...(fromValue !== null ? { from_value: fromValue } : {}),
     ...(toValue !== null ? { to_value: toValue } : {}),
-    metadata: mapTicketHistoryDisplayMetadata(row.tkh_metadata),
+    metadata: mapTicketHistoryDisplayMetadata({
+      ...asRecord(row.tkh_metadata),
+      source: row.tkh_source,
+      event: row.tkh_event,
+    }),
     created_at: toIsoDateString(row.tkh_created_at),
   };
 }
@@ -71,4 +77,12 @@ function isTicketHistoryJsonValue(
 
 function toIsoDateString(value: ISODateString | Date): ISODateString {
   return (value instanceof Date ? value.toISOString() : value) as ISODateString;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }

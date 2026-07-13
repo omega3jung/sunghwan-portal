@@ -1,6 +1,4 @@
-// src/server/data/user/index.ts
+// src/server/data/users/index.ts
 
-export * from "./userPreferenceDto";
-export * from "./userPreferenceService";
-export * from "./userProfileDto";
-export * from "./userProfileService";
+export * from "./userDto";
+export * from "./userService";

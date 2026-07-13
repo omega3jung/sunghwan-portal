@@ -1,3 +1,8 @@
+import type {
+  TicketHistoryEvent as DomainTicketHistoryEvent,
+  TicketHistorySource as DomainTicketHistorySource,
+} from "@/domain/serviceDesk";
+
 export type TicketHistoryType =
   | "TICKET"
   | "STATUS"
@@ -6,19 +11,11 @@ export type TicketHistoryType =
   | "APPROVAL"
   | "COMMENT"
   | "NOTE"
-  | "PLANNING"
-  | "SYSTEM";
+  | "PLANNING";
 
-export type TicketHistoryAction =
-  | "CREATED"
-  | "UPDATED"
-  | "DELETED"
-  | "TICKET_REJECTED"
-  | "TICKET_MERGED"
-  | "TICKET_CANCELED"
-  | "APPROVAL_REQUESTED"
-  | "APPROVAL_APPROVED"
-  | "APPROVAL_DECLINED";
+export type TicketHistorySource = DomainTicketHistorySource;
+
+export type TicketHistoryEvent = DomainTicketHistoryEvent;
 
 export type TicketHistoryJsonValue =
   | string

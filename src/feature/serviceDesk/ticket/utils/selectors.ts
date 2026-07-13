@@ -6,8 +6,8 @@ type TicketLike = Pick<
   | "assignmentPhase"
   | "approvalAssigneeUsernames"
   | "workAssigneeUsernames"
-  | "assignedApprover"
-  | "assignedWorker"
+  | "isCurrentApprover"
+  | "isCurrentWorker"
   | "mergedIntoTicketId"
 >;
 
@@ -18,7 +18,7 @@ export function selectTicketAssigneeIds(ticket: TicketLike) {
 }
 
 export function selectTicketIsAssigned(ticket: TicketLike) {
-  return ticket.assignedApprover || ticket.assignedWorker;
+  return ticket.isCurrentApprover || ticket.isCurrentWorker;
 }
 
 export function selectTicketIsMerged(ticket: TicketLike) {

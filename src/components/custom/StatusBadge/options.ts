@@ -12,7 +12,6 @@ const statusOptionValues = [
   "Pending",
   "Rejected",
   "Resolved",
-  "Reopened",
   "Closed",
 ] as const satisfies readonly SystemStatus[];
 

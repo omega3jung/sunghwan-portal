@@ -1,605 +1,384 @@
 # Service Desk Evolution
 
-This document focuses on the **design improvements** made while evolving the previous Service Hub / IT Help Desk experience into the current Service Desk domain.
+## Goal
 
-## 1. Purpose
+This document explains how the previous Service Hub / IT Help Desk experience
+was refined into the current Service Desk domain in `sunghwan-portal`.
 
-This document explains how the previous **Service Hub / IT Help Desk** experience was refined into the current **Service Desk** domain in `sunghwan-portal`.
-
-The goal is not to reproduce the previous workplace system directly. Instead, this document focuses on the conceptual and domain-level improvements made while rebuilding the idea as a portfolio-ready Service Desk module.
-
-This document focuses on:
-
-- how the domain identity changed
-- how ticket handling evolved into workflow management
-- how operational behavior became more explicit
-- how communication, history, assignment, approval, SLA, and work tracking became clearer
-- what design lessons were learned from the previous experience
-
-Implementation-specific topics such as local demo state, runtime separation, routing, React Query, i18n, and project architecture are intentionally handled in a separate implementation strategy document.
+It describes the design evolution, not every implementation detail. Current
+implementation boundaries are documented in
+[`service-desk-implementation-strategy.md`](service-desk-implementation-strategy.md).
+Historical point-in-time decisions are preserved in the decision logs.
 
 ---
 
-## 2. Recommended Documentation Location
+## Historical Context
 
-Recommended path:
+The previous workplace system included an IT Help Desk-style module for:
 
-```txt
-docs/en/08-dev-strategy/service-desk-evolution.md
-```
+- receiving user requests
+- assigning responsible staff
+- tracking status
+- communicating with requesters
+- reviewing operational progress
 
-Use this document for:
+The current project does not clone that system. It extracts the operational
+lessons and redesigns them into a clearer, portfolio-ready Service Desk domain.
 
-- conceptual/domain evolution from Service Hub to Service Desk
-- renamed or refined operational behavior
-- workflow and modeling improvements
-
-Implementation-specific topics should be handled in:
-
-```txt
-docs/en/08-dev-strategy/service-desk-implementation-strategy.md
+```txt id="evolution-flow"
+previous workplace experience
+-> operational lessons
+-> clearer domain boundaries
+-> production-aligned portfolio design
 ```
 
 ---
 
-## 3. Historical Context
+## Identity Shift
 
-The previous workplace system was an internal portal / ERP environment that included an IT Help Desk-style module. It supported practical operational needs such as receiving user requests, assigning responsible staff, tracking issue status, and helping internal users communicate with the IT team.
+The name changed from Service Hub to Service Desk because the current module is
+a focused workflow domain, not a broad internal portal bucket.
 
-That experience provided several important lessons:
-
-- users need a simple and reliable way to submit issues
-- IT staff need clear ownership and assignment visibility
-- managers need operational summaries and progress tracking
-- status changes need to remain understandable during maintenance
-- communication history should help explain why decisions were made
-- UI usability matters because tickets are handled during real work
-
-However, the current project has a different purpose.
-
-The goal is not to clone the original system. The goal is to extract the operational problems behind it and redesign them as a clearer, more explicit Service Desk domain.
-
-```txt
-Previous workplace experience
--> extract real operational problems
--> redesign with clearer domain boundaries
--> document as a production-aligned portfolio system
-```
-
----
-
-## 4. Identity Shift: From Service Hub to Service Desk
-
-The name changed from **Service Hub** to **Service Desk** because the current module is no longer a broad internal portal feature.
-
-`Service Hub` suggests a wide platform that can contain many unrelated services.
-
-`Service Desk` more clearly communicates a focused operational domain:
+Service Desk now means:
 
 - request intake
-- ticket workflow
-- assignment
-- approval
-- SLA
-- work tracking
+- ticket lifecycle
+- approval routing
+- work assignment
+- action commands
 - communication
-- operational history
-
-This naming change is more than cosmetic. It clarifies the system boundary.
-
-The current module is not just a portal screen. It is a workflow-centered Service Desk domain.
+- event-based history
+- work sessions
+- settings-driven behavior
 
 ---
 
-## 5. Core Domain Evolution
+## From Request Records to Workflow Entities
 
-The major improvement can be summarized as:
+The earlier model can be understood as request records with status updates.
 
-```txt
-Simple request handling
--> workflow-oriented Service Desk system
+The current model treats a ticket as a workflow entity with controlled states:
+
+```txt id="current-ticket-statuses"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-The redesigned Service Desk focuses on:
+Typical happy paths:
 
-- ticket lifecycle integrity
-- category-driven behavior
-- controlled operational overrides
-- explicit actions instead of text-only updates
-- communication separation
-- activity and history separation
-- traceable domain events
-- work tracking as operational evidence
-- settings as behavior-defining configuration
-
----
-
-## 6. From Request Records to Workflow Entities
-
-The previous system direction can be understood as request records with status updates.
-
-That is useful for basic tracking, but it is not enough for a Service Desk domain. Real tickets move through meaningful operational states.
-
-The improved model treats a ticket as a **workflow entity**.
-
-A typical lifecycle can be represented as:
-
-```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
+```txt id="happy-paths"
+Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
+Draft -> Assigned -> Working -> Resolved -> Closed
 ```
 
-The improved lifecycle also supports non-happy paths:
+Important non-happy paths:
 
-```txt
-Open -> Declined -> Open
+```txt id="non-happy-paths"
+Approval -> Declined
+Assigned / Working / Pending -> Rejected
 Working -> Pending -> Working
-Working / Pending -> Rejected
-Rejected -> Open or Reopen
-Resolved -> Reopen -> Working
+Resolved -> Working
+Assigned / Working / Pending / Resolved -> Closed
 ```
 
-This matters because real operational work includes:
-
-- approval rejection
-- temporary pauses
-- rework after resolution
-- rejected requests
-- duplicated or merged tickets
-- review requests and explicit reopen flows
-
-The improved Service Desk model defines ticket status as a controlled workflow state.
-
-Each meaningful transition should have a valid cause:
-
-```txt
-Action -> State Transition -> History
-```
-
-This makes the system easier to reason about, easier to test, and easier to explain during review.
+Legacy names such as `Open`, `Approved`, and `Reopen` may appear in older
+historical notes or row normalization code, but they are not current ticket
+statuses.
 
 ---
 
-## 7. Category-Driven Behavior
+## From Text Updates to Commands
 
-The previous operational experience showed that request type strongly affects how work should be handled.
+The previous style relied heavily on comments and status edits.
 
-The improved system makes category a central behavior driver:
+The current design uses explicit Ticket Action commands:
 
-```txt
-Ticket -> Category -> Behavior
+```txt id="ticket-actions"
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
 ```
 
-Category can influence:
+This makes intent and effect clearer:
 
-- default priority
-- default risk level
-- SLA
-- approval requirements
-- assignment rule
-- responsible team
-
-The category structure follows a hierarchical model:
-
-```txt
-Client -> Main Category -> Sub Category
+```txt id="action-effect-history"
+Action intent
+-> server rule execution
+-> status/routing/data effect
+-> event-based history
 ```
 
-The default behavior resolution order is:
-
-```txt
-Sub Category > Main Category
-```
-
-When ticket-level overrides are allowed, the complete resolution order becomes:
-
-```txt
-Ticket override > Sub Category > Main Category
-```
-
-This improves the previous approach by moving hidden or scattered operational assumptions into explicit configuration.
-
-The Service Desk can support different request types without hardcoding every branch into UI components or one-off handlers.
+A comment is communication. Assignment, rejection, merge, reopen, and planning
+adjustment are commands with rules.
 
 ---
 
-## 8. Controlled Overrides
+## Comment and Note Separation
 
-Real operations always have exceptions.
+Communication evolved into two distinct concepts.
 
-For example:
+| Type | Purpose |
+| --- | --- |
+| `COMMENT` | requester-visible or shared communication |
+| `NOTE` | internal operational note |
 
-- priority may need to be raised
-- risk level may be higher than the category default
-- due date may need to change
-- assignee may need to change because of workload
-- SLA may need to be adjusted after review
-
-A strictly category-driven system is predictable but too rigid. A fully dynamic system is flexible but difficult to audit.
-
-The improved model uses a controlled hybrid approach:
-
-```txt
-Category = default behavior
-Ticket action = controlled override
-```
-
-Overrides should be:
-
-- explicit
-- visible to relevant users
-- recorded in history
-- performed through a valid action
-- supported by permission and status rules
-- explained with a reason when needed
-
-This balances operational flexibility with traceability.
-
-The system can handle real exceptions without hiding them as silent field updates.
+This avoids mixing internal team context with requester-facing communication.
 
 ---
 
-## 9. From Comments to Actions
+## Activity and History Separation
 
-One of the largest domain improvements was moving from a comment-centered model to an action-driven model.
+The design separates action/activity from history.
 
-A comment-only model is convenient at first, but it becomes weak as the workflow grows.
-
-Problems with comment-only behavior include:
-
-- assignment changes are hidden in text
-- priority changes are not strongly typed
-- rejection reasons are mixed with normal messages
-- merge decisions are difficult to audit
-- status changes become hard to explain
-- UI must infer meaning from plain text
-
-The improved model treats every meaningful interaction as an action:
-
-```txt
-Activity = Action + Context + Reason + Execution Rules
+```txt id="activity-history"
+Activity/Action = what someone tried to do and why
+History = immutable event record of what changed
 ```
 
-Examples:
+History is now event-based and records:
 
-```txt
-comment  -> public communication
-note     -> internal communication
-assign   -> ownership change
-adjust   -> priority / risk / due date change
-merge    -> duplicate or related ticket consolidation
-reject   -> operational rejection
-reopen   -> return to active processing
-resubmit -> requester revision after rejection or decline
-```
+- type
+- source
+- event
+- previous/current values
+- actor
+- timestamp
 
-The system separates intent from effect:
-
-```txt
-Intent = reason or explanation
-Effect = structured metadata and state change
-```
-
-This makes the ticket timeline clearer and makes audit behavior more reliable.
+This is more precise than treating a timeline as plain comments or relying on a
+free-form `metadata.event`.
 
 ---
 
-## 10. Comment and Note Separation
+## Tenant-Scoped Settings
 
-The communication model was refined by separating `comment` and `note`.
+Settings evolved from admin CRUD into behavior-defining configuration.
 
-| Type      | Purpose                            | Visibility                | Notification             |
-| --------- | ---------------------------------- | ------------------------- | ------------------------ |
-| `comment` | public or shared communication     | visible to relevant users | may notify               |
-| `note`    | internal operational communication | internal team or author   | no external notification |
+Current settings scope:
 
-This distinction improves the previous communication model by separating external communication from internal team context.
+```txt id="settings-scope"
+Tenant
+-> Category
+-> Approval Step
+-> Assignment Rule
+```
 
-A requester-facing comment and an internal operational note have different purposes.
+Important changes:
 
-This avoids exposing sensitive team discussion to requesters while still keeping internal context inside the ticket timeline.
+- `Tenant` is the Service Desk configuration boundary.
+- category scope is `"PORTAL"` or `"INTERNAL"`.
+- approval steps are ordered and category-based.
+- assignment rules are group-based through job fields and employee usernames.
+- settings changes affect future behavior, not past history.
 
 ---
 
-## 11. Activity and History Separation
+## Category-Driven Behavior
 
-The improved system separates **Activity** and **History**.
+Category is the primary behavior driver.
 
-```txt
-Activity = meaningful user or operational interaction
-History  = immutable event record generated by a change
+```txt id="category-behavior"
+Tenant-scoped category
+-> defaults
+-> approval resolution
+-> work assignment resolution
+-> requester update routing policy
 ```
 
-Activity answers:
+Categories can provide default priority, risk level, and SLA days. They also
+anchor approval and assignment settings.
 
-- what did the user try to do?
-- why did they do it?
-- what action type was executed?
-- what context was provided?
-
-History answers:
-
-- what field changed?
-- what was the previous value?
-- what is the new value?
-- who caused the change?
-- when did it happen?
-
-This prevents the timeline from becoming either too technical or too vague.
-
-The UI can show meaningful activity, while the system can still maintain precise audit records.
+Requester category changes are routing-sensitive and can trigger routing reset.
 
 ---
 
-## 12. Expanded Action Taxonomy
+## Approval and Work Routing
 
-The Service Desk action set was refined to better match operational language.
+Routing became phase-aware.
 
-Important action concepts include:
-
-- `comment` for shared communication
-- `note` for internal communication
-- `assign` for ownership changes
-- `assign myself` as a user-friendly label for self-assignment
-- `adjust` / `Adjust Plan` for changing priority, risk level, SLA, or due date
-- `merge` for duplicate or related ticket consolidation
-- `reject` for operational rejection
-- `request review` / `reopen` for returning to active processing
-- `resubmit` for requester revision after rejection or decline
-
-### 12.1 Merge Semantics
-
-The improved merge behavior avoids introducing a separate `Merged` status.
-
-Instead:
-
-```txt
-source ticket -> Closed
-closeReason   -> Merged
-mergedIntoTicketId -> target ticket id
-mergedIntoTicketNo -> target ticket number
+```ts id="assignment-phase"
+type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
-This preserves status consistency while still representing the relationship between tickets.
+The ticket DTO can expose:
 
-The action system now models real service desk operations instead of forcing everything into status fields or free-form comments.
+- approval assignees
+- work assignees
+- assigned approver projection
+- assigned worker projection
+
+This avoids treating every assignee as the same kind of ownership.
 
 ---
 
-## 13. Rule Formalization
+## Requester Update Policy
 
-The system now defines ticket rules using an implementation-oriented but domain-readable format:
+The newer design gives requesters limited update ability before active work.
 
-```txt
-who
-when
-effect
-purpose
-restriction
+Requester update is allowed in:
+
+```txt id="requester-update-statuses"
+Approval
+Assigned
 ```
 
-This format is useful because it connects business behavior to implementable rules.
+Routing-sensitive fields:
 
-Example:
+- category
+- subject
+- content
+- files
+- images
 
-```txt
-Action: Adjust Plan
-who: assignee or manager/admin
-when: valid operational states
-effect: update priority, risk level, SLA, or due date
-purpose: adjust execution planning
-restriction: reason required; history must be recorded
-```
+Routing-neutral fields:
 
-This is an improvement over vague policy descriptions.
+- due date
+- email recipients
 
-Rules are no longer only conceptual. They can guide:
-
-- permission checks
-- status guards
-- action availability
-- history generation
-- UI behavior
-- future API validation
-
-The key improvement is that domain policy becomes easier to implement and easier to review.
+The server records either `ROUTING_RESET` or `ROUTING_PRESERVED`.
 
 ---
 
-## 14. Behavioral Capability Evolution
+## Draft and Attachment Boundary
 
-The Service Desk redesign also improved the meaning of operational behavior beyond basic ticket status.
+The create workflow evolved from a one-shot form into a draft-aware workflow.
 
-The most important behavioral improvements are:
+REMOTE draft is implemented as a ticket row in `Draft` status with one active
+draft per requester.
 
-- work time is represented as sessions
-- status changes are tied to work evidence
-- settings are treated as behavior-defining configuration
+Attachment handling evolved into a preparation boundary:
+
+```txt id="attachment-boundary"
+browser file input
+-> prepare API
+-> prepared metadata
+-> ticket command
+```
+
+This keeps the current demo honest: it can persist metadata and controlled demo
+URLs without claiming production object storage.
 
 ---
 
-## 15. Track Time as Work Sessions
+## Work Sessions
 
-The improved system does not treat work time as a single accumulated number.
+Work tracking evolved from a single accumulated time field into work sessions.
 
-Instead:
+Current work-session design records:
 
-```txt
-Work = collection of sessions
-```
-
-Each work session can have:
-
-- start time
-- end time
-- duration
-- assignee
+- ticket ID
+- worker
+- start/end or duration input
+- tracked minutes
 - note
+- optional next status
 
-Timer actions and manual time input are conceptually separated:
-
-```txt
-start
-finish
-switch
-manual range
-manual duration
-```
-
-This better reflects real operational work.
-
-People pause, resume, switch tickets, and sometimes enter time manually after the fact.
-
-The session-based model makes work history more explainable than a single aggregate value.
+The implemented route surface currently supports list and create. Additional
+timer/update/delete APIs are future extension points until matching route
+handlers exist.
 
 ---
 
-## 16. Status Transitions Tied to Work Evidence
+## SLA Evolution
 
-Status transitions related to active work should not be decorative.
+The design now treats SLA carefully.
 
-Moving to states such as `Working`, `Pending`, or `Resolved` should be connected to meaningful work context.
+Current implementation uses:
 
-For example, a ticket marked as resolved should be able to answer:
+- category `defaultSlaDays`
+- due date expectations
+- priority and risk planning context
+- adjustment through action commands where allowed
 
-```txt
-Was actual work recorded before this ticket was marked resolved?
-```
-
-This improves the meaning of status changes.
-
-A status value is not only a label. It represents operational progress.
-
-Connecting status transitions with work evidence makes the Service Desk more reliable as a workflow system.
+Full SLA breach detection, pause/resume clocks, business calendars,
+notifications, and escalation are future production scope.
 
 ---
 
-## 17. Settings as Domain Foundation
+## Key Lessons
 
-The settings module was improved from simple admin CRUD into domain configuration.
+### Preserve Operational Intent
 
-Service Desk settings include:
+The new design keeps the real operational problems from the previous system
+while making the domain more explicit.
 
-- categories
-- approval steps
-- assignment rules
-- departments
-- job fields
+### Do Not Hide Workflow in Text
 
-These are not just editable lists. They shape system behavior.
+Comments are not enough for assignment, rejection, merge, or planning changes.
+Meaningful operations should be commands.
 
-The improved relationship can be summarized as:
+### Settings Define Behavior
 
-```txt
-Settings define how tickets behave.
-Tickets execute that behavior.
-History records what happened.
-```
+Tenant, category, approval, and assignment settings shape future ticket
+execution.
 
-This is an important domain improvement.
+### History Explains Change
 
-Settings are not treated as secondary admin screens. They are the foundation for workflow behavior.
+History should answer what changed, why, who caused it, and when it happened.
 
----
+### Current Docs and Decision Logs Have Different Jobs
 
-## 18. Key Lessons Learned
-
-### 18.1 Preserve Real Operational Intent
-
-The previous Service Hub experience contained real operational lessons.
-
-The new Service Desk preserves that intent while improving the structure and making the domain more explicit.
-
-### 18.2 Do Not Hide Workflow in Text
-
-Operational decisions should be modeled explicitly.
-
-A plain `comment` is not enough for assignment, rejection, merge, or plan adjustment.
-
-Meaningful workflow decisions should be represented as actions.
-
-### 18.3 Configuration Should Shape Behavior
-
-Settings are not only data management screens.
-
-They define how tickets behave.
-
-Category, assignment, approval, and SLA rules should be visible as domain configuration, not scattered across hidden conditions.
-
-### 18.4 History Should Explain Change
-
-A workflow system needs more than current state.
-
-It should be possible to understand:
-
-- what changed
-- why it changed
-- who changed it
-- when it changed
-- which action caused it
-
-This is why activity and history are separated.
-
-### 18.5 Domain Design Should Stay Reviewable
-
-A portfolio system should not only work. It should also be explainable.
-
-The Service Desk redesign makes the domain easier to explain to reviewers, future maintainers, and interviewers.
+Current design documents describe the implementation-aligned model. Decision
+logs preserve the context and reasoning of choices made at a point in time.
 
 ---
 
-## 19. Evolution Outcome
+## Outcome
 
-The current Service Desk module is no longer just a rewritten version of a previous IT Help Desk screen.
+The current Service Desk module demonstrates:
 
-It is an improved domain model that demonstrates:
-
-- practical migration thinking
-- workflow-oriented ticket modeling
-- category-driven behavior
-- controlled operational overrides
-- action-driven activity
-- comment and note separation
-- activity and history separation
-- session-based work tracking
-- status changes tied to work evidence
-- settings as behavior-defining configuration
-- maintainable domain documentation
+- controlled ticket lifecycle
+- REMOTE draft workflow
+- attachment preparation boundary
+- tenant-scoped settings
+- approval/work routing separation
+- command-based actions
+- event-based history
+- requester update routing policy
+- work-session evidence
+- realistic deferred production scope
 
 The evolution can be summarized as:
 
 ```txt
-Previous workplace Service Hub experience
--> extracted operational problems
--> redesigned into a clearer Service Desk domain
--> documented as a production-aligned portfolio system
+request tracking screen
+-> workflow-oriented Service Desk domain
+-> implementation-aligned, traceable portfolio system
 ```
 
-The most important improvement is that the project does not simply copy a previous system.
+---
 
-It uses previous real-world experience as input, then rebuilds the concept with clearer domain boundaries, stronger workflow semantics, and more explainable operational behavior.
+## Related Documents
+
+- [`service-desk-implementation-strategy.md`](service-desk-implementation-strategy.md)
+- [`ticket-operation-rules.md`](ticket-operation-rules.md)
+- [`../03-domain/service-desk-settings.md`](../03-domain/service-desk-settings.md)
+- [`../03-domain/ticket/ticket-system-overview.md`](../03-domain/ticket/ticket-system-overview.md)
+- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
+- [`../03-domain/ticket/ticket-activity.md`](../03-domain/ticket/ticket-activity.md)
+- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
+- [`../03-domain/ticket/ticket-track-time.md`](../03-domain/ticket/ticket-track-time.md)
 
 ---
 
-## 20. Suggested Cross References
+## Summary
 
-This document can be linked from:
-
-- `docs/en/README.md` (Development Strategy section)
-
-Related references:
-
-- `docs/en/08-dev-strategy/service-desk-implementation-strategy.md`
-- `docs/en/03-domain/ticket/ticket-system-overview.md`
-- `docs/en/03-domain/ticket/ticket-lifecycle.md`
-- `docs/en/03-domain/ticket/ticket-activity.md`
-- `docs/en/03-domain/ticket/ticket-history.md`
-- `docs/en/03-domain/ticket/ticket-track-time.md`
-- `docs/en/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`
-
----
-
-## 21. Suggested README Summary
-
-### Service Desk Evolution
-
-This document explains how real operational experience from a previous Service Hub / IT Help Desk module was redesigned into a clearer Service Desk domain. It focuses on conceptual improvements such as workflow lifecycle integrity, action-driven activity, category-based behavior, controlled overrides, and activity/history separation.
+Service Desk evolved from basic request tracking into a workflow-centered
+domain. The current model makes lifecycle, routing, commands, history, settings,
+drafts, attachments, and work evidence explicit while keeping future production
+infrastructure separate from implemented behavior.

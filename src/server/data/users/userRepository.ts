@@ -3,8 +3,8 @@ import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 import {
   GetUserPreferenceByKeyParams,
   SaveUserPreferenceByKeyInput,
-} from "./userPreferenceDto";
-import { UserPreferenceRow } from "./userPreferenceRow";
+} from "./userDto";
+import { UserPreferenceRow, UserProfileRow } from "./userRow";
 
 const FIND_USER_PREFERENCE_BY_PATH_QUERY = `
 select ump_preference_key,
@@ -49,6 +49,20 @@ returning
   ump.ump_preference_meta;
 `;
 
+const FIND_USER_PROFILE_BY_USERNAME_QUERY = `
+select aa_id,
+       aa_username,
+       aa_role,
+       aa_access_level,
+       aa_user_scope,
+       e_username,
+       e_name,
+       e_email,
+       e_company_id
+  from vw_auth_login_user
+ where e_username = $1;
+`;
+
 export async function findUserPreferenceByKey(
   params: GetUserPreferenceByKeyParams,
 ): Promise<UserPreferenceRow | null> {
@@ -80,6 +94,17 @@ export async function patchUserPreferenceByKey(
   const rows = await queryPortalApi<UserPreferenceRow>(
     UPDATE_USER_PREFERENCE_BY_KEY_QUERY,
     [username, moduleKey, preferenceKey, JSON.stringify(preferenceMeta)],
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function findUserProfileByUsername(
+  username: string,
+): Promise<UserProfileRow | null> {
+  const rows = await queryPortalApi<UserProfileRow>(
+    FIND_USER_PROFILE_BY_USERNAME_QUERY,
+    [username],
   );
 
   return rows[0] ?? null;

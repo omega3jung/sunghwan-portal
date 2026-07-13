@@ -16,7 +16,10 @@ import { WorkSessionToolContent } from "./WorkSessionToolContent";
 
 export type WorkSessionToolProps = {
   children: ReactElement;
-  ticket?: Pick<TicketDetail, "id" | "status" | "workMinutes"> | null;
+  ticket?: Pick<
+    TicketDetail,
+    "id" | "status" | "workMinutes" | "isCurrentWorker"
+  > | null;
 };
 
 export function WorkSessionTool({ children, ticket }: WorkSessionToolProps) {

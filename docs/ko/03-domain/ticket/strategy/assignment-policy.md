@@ -1,325 +1,184 @@
-# 할당 정책
+# Assignment Policy
 
-## 목적
+## 목표
 
-할당 시스템은 사전에 정의된 규칙에 따라 티켓을 적절한 담당자에게
-**자동으로 라우팅** 하도록 설계되었으며,
-수동 개입을 줄이고 운영 효율을 높이는 것을 목표로 한다.
+이 문서는 현재 work ownership이 어떻게 resolve되고 변경되는지 정의한다.
 
-이 시스템은 다음을 보장한다.
-
-- 빠른 초기 대응
-- 명확한 소유권
-- 협업 조정 비용 감소
-- 확장 가능한 업무 분배
+Assignment는 generic owner field가 아니다. `approvalStepId`에 따라 의미가 달라지는
+phase-aware routing state다.
 
 ---
 
-Scope note:
+## Source of Truth
 
-- LOCAL demo는 단순화된 role-aware/relationship 기반 권한 규칙을 사용한다.
-- 조직/부서/job-field 기반 full rule resolution은 REMOTE 확장 경로다.
-
-## 핵심 개념
-
-할당은 기본적으로 **카테고리 중심(category-driven)** 으로 결정된다.
-
-```txt
-Ticket -> Category -> Assignment Rule -> Assignee
+```txt id="assignment-source"
+tk_approval_step_id
+tk_assignee_usernames
 ```
 
-카테고리는 책임 대상을 결정하는 **단일 기준(source of truth)** 으로 동작한다.
-category 자체는 tenant-scoped이므로 assignment rule은 선택된 tenant의
-Service Desk configuration 안에서 해석된다.
+`approvalStepId == null`이면 티켓은 work phase이며 `assigneeUsernames`는 current
+worker를 의미한다.
+
+DTO projection:
+
+- `assignmentPhase = "WORK"`
+- `workAssigneeUsernames`
+- `assignedWorker`
 
 ---
 
-## 할당 흐름
+## Assignment Rule Settings
 
-```txt
-Ticket Created
--> Category Selected
--> (Optional) Approval Completed
--> Assignment Resolved
--> Assigned
--> Working
-```
+Assignment rule은 category settings 아래에 설정된다.
 
----
+Work assignment resolution은 먼저 선택된 subcategory를 확인한다. Subcategory
+assignment rule이 없으면 parent/main category rule로 fallback한다.
 
-## 할당 유형
+```ts id="assignment-rule-shape"
+type AssigneeGroup = {
+  jobFieldIds: string[];
+  assigneeUsernames: string[];
+};
 
-시스템은 여러 가지 할당 전략을 지원한다.
-
-### 1. 자동 할당 (기본)
-
-티켓은 카테고리 설정에 따라 자동으로 할당된다.
-이 설정은 tenant-scoped이며, 단순화된 흐름을
-`Ticket -> Category -> Assignment Rule -> Assignee`로 표현하더라도 동일하다.
-
-#### 예시
-
-```ts
-assignmentRule = {
-  type: "DEPARTMENT",
-  departmentId: "IT_SUPPORT",
+type AssignmentRule = {
+  categoryId: string;
+  assignee: AssigneeGroup;
 };
 ```
 
+현재 model은 group-based다. 별도의 `ruleType` field를 사용하지 않는다.
+
+관련 문서: [Service Desk Settings](../../service-desk-settings.md)
+
 ---
 
-### 2. 직접 할당
+## Initial Work Assignment
 
-특정 사용자를 직접 지정하여 할당한다.
+Ticket이 approval을 필요로 하지 않거나 final approval이 완료되면 work assignee를
+resolve한다.
 
-```ts
-assignmentRule = {
-  type: "EMPLOYEE",
-  employeeUsername: "user_123",
-};
+```txt id="initial-work-assignment"
+no approval step
+or final approval complete
+-> resolve selected subcategory assignment rule if present
+-> otherwise resolve parent/main category assignment rule
+-> status = Assigned
+-> approvalStepId = null
+-> assigneeUsernames = workers
+-> history = ASSIGNMENT_RESOLVED
 ```
 
+Assignment가 최소 한 명의 worker를 resolve할 수 없으면 unowned work를 만들지 않고
+ticket creation 또는 routing이 실패한다.
+
 ---
 
-### 3. 역할 기반 할당
+## Assigned vs Working
 
-직무 역할이나 전문 분야에 따라 할당한다.
+`Assigned`와 `Working`은 다른 상태다.
 
-```ts
-assignmentRule = {
-  type: "JOB_FIELD",
-  jobFieldId: "NETWORK_ENGINEER",
-};
+- `Assigned`: worker는 정해졌지만 work는 아직 시작되지 않았다.
+- `Working`: current worker가 명시적으로 work를 시작했거나 기록했다.
+
+`Assigned -> Working`은 explicit start-work command를 통해 일어날 수 있다.
+Work-session submission도 지원되는 work-status transition을 적용할 수 있지만, Work
+Session은 별도의 work-evidence model로 남는다. GET/detail read는 work를 시작하면
+안 된다.
+
+---
+
+## Assign Action
+
+`ASSIGN`은 current assignee를 변경한다.
+
+Standard work assignment:
+
+- actor: current work assignee
+- status: `Assigned`, `Working`, `Pending`
+- effect: work assignee 교체
+- `Pending -> Working`
+- history: `ASSIGNMENT_UPDATED`
+
+Admin override:
+
+- actor: Admin
+- approval assignment: status `Approval`
+- work assignment: `Assigned`, `Working`, `Pending`
+- effect: current approver 또는 worker 교체
+- history: `ASSIGNMENT_UPDATED`
+
+Assignee notification은 persisted `tk_email` field 밖에서 email을 resolve해야 한다.
+파생된 assignee email은 requester email configuration에 저장하지 않는다.
+
+---
+
+## Assign Self
+
+`ASSIGN_SELF`는 current worker가 multi-assignee work를 claim하게 한다.
+
+규칙:
+
+- actor는 이미 current work assignee여야 한다.
+- current work assignee list는 최소 두 명을 포함해야 한다.
+- 결과는 `[actor]`다.
+- status는 변경되지 않는다.
+- history: `ASSIGNMENT_UPDATED`
+
+---
+
+## Resubmission and Reassignment
+
+`Declined` 또는 `Rejected` 이후 requester `RESUBMIT`은 initial routing을 다시 실행한다.
+
+Settings change는 기존 ticket을 retroactively rewrite하지 않는다. 기존 ticket은 ticket
+command가 변경하기 전까지 current assignee를 유지한다.
+
+---
+
+## History
+
+Assignment event:
+
+```txt id="assignment-history-events"
+ASSIGNMENT_RESOLVED
+ASSIGNMENT_UPDATED
 ```
 
----
+`ASSIGNMENT_CHANGED`가 아니라 `ASSIGNMENT_UPDATED`를 사용한다.
 
-## 할당 해석
-
-시스템은 규칙 유형에 따라 담당자를 동적으로 결정한다.
-
-### 해석 로직
-
-```ts
-switch (assignmentRule.type) {
-  case "EMPLOYEE":
-    return employeeUsername;
-
-  case "DEPARTMENT":
-    return findAvailableUserInDepartment(departmentId);
-
-  case "JOB_FIELD":
-    return findQualifiedUser(jobFieldId);
-}
-```
+`ASSIGNMENT_RESOLVED`는 routing/assignment rule이 만든다.
+`ASSIGNMENT_UPDATED`는 user/Admin assignment command가 만든다.
 
 ---
 
-## 할당 시점
+## Deferred Scope
 
-할당은 승인 필요 여부에 따라 다른 시점에 이루어진다.
+다음을 현재 behavior로 설명하지 않는다.
 
-### 규칙
+- round-robin assignment
+- least-loaded assignment
+- calendar-aware assignment
+- capacity balancing
+- settings mutation 이후 automatic reassignment
+- notification delivery guarantees
 
-- 승인 절차가 있는 경우:
-  - `Approved` 이후에 할당한다.
-- 승인이 필요 없는 경우:
-  - 생성 직후 즉시 할당한다.
-
----
-
-## 재할당 정책
-
-특정 조건에서는 티켓을 재할당할 수 있다.
-
-### 허용되는 경우
-
-- 업무량 균형 조정
-- 잘못된 초기 할당
-- 에스컬레이션 상황
-
-### 제한 사항
-
-- 재할당은 History에 기록되어야 한다.
-- 소유권은 항상 명확해야 한다.
+이는 future extension이다.
 
 ---
 
-## Working 상태에서의 할당
-
-티켓이 `Working` 상태에 들어간 뒤에도 재할당은 가능하다.
-
-### 요구사항
-
-- 명시적으로 실행되어야 한다.
-- 로그로 남아야 한다.
-- UI는 변경 내용을 즉시 반영해야 한다.
-
----
-
-## 대체 전략
-
-할당 대상을 결정할 수 없는 경우 다음과 같은 대체 전략을 사용할 수 있다.
-
-### 옵션
-
-1. 기본 대체 사용자에게 할당
-2. 팀 큐에 할당
-3. 시스템 알림 발생
-
-### 예시
-
-```ts
-if (!assignee) {
-  assignTo("DEFAULT_SUPPORT_QUEUE");
-}
-```
-
----
-
-## 업무 분배 전략
-
-편중된 업무 분배를 방지하기 위해 할당 단계에 분배 로직을 포함할 수 있다.
-
-### 전략 예시
-
-- 라운드 로빈
-- 가장 적게 배정된 사용자
-- 스킬 기반 선택
-
-### 예시
-
-```ts
-findAvailableUserInDepartment(departmentId, {
-  strategy: "least_loaded",
-});
-```
-
----
-
-## 수동 오버라이드
-
-충분한 권한을 가진 사용자는 자동 할당 결과를 수동으로 변경할 수 있다.
-
-### 사용 사례
-
-- 긴급 처리
-- 특수한 케이스
-- VIP 요청
-
----
-
-## UI 고려사항
-
-### 할당 가시성
-
-- 담당자는 명확하게 표시되어야 한다.
-- 할당 이력은 조회할 수 있어야 한다.
-
----
-
-### 할당 액션
-
-- 할당
-- 재할당
-- 할당 해제(선택)
-
----
-
-### 피드백
-
-- 사용자는 할당 변경 사항을 실시간으로 확인할 수 있어야 한다.
-
----
-
-## 예외 상황
-
-### 1. 사용 가능한 담당자 없음
-
-- 모든 사용자가 부재 중이거나 필터링된 경우:
-  - 대체 전략이 필요하다.
-
----
-
-### 2. 적격 담당자가 여러 명인 경우
-
-- 시스템은 분배 전략을 적용해야 한다.
-
----
-
-### 3. 잘못된 카테고리 설정
-
-- 할당 규칙이 누락된 경우:
-  - 시스템 대체 처리 또는 검증 에러가 필요하다.
-
----
-
-### 4. 재할당 충돌
-
-- 여러 번의 재할당 시도가 동시에 발생한 경우:
-  - 마지막 쓰기 우선(last-write wins) 또는 락 기반 제어가 필요하다.
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 수작업 부담을 줄인다.
-- 일관된 라우팅을 보장한다.
-- 조직 규모가 커져도 확장 가능하다.
-- 자동화를 지원한다.
-
----
-
-### 단점
-
-- 정확한 설정이 필요하다.
-- 담당자 결정 로직이 복잡해질 수 있다.
-- 규칙이 잘못되면 잘못된 할당이 발생할 수 있다.
-
----
-
-## 대안 검토
-
-### 1. 수동 할당만 사용하는 방식
-
-- 구현은 단순하다.
-- 운영 부담이 크다.
-- 응답 속도가 느려질 수 있다.
-
----
-
-### 2. 선점자 할당 방식
-
-- 먼저 티켓을 가져간 사람이 담당자가 된다.
-- 업무 분배가 예측 불가능해진다.
-
----
-
-### 3. 카테고리별 고정 담당자 방식
-
-- 항상 같은 사용자에게 할당한다.
-- 확장성이 떨어진다.
-- 병목을 유발할 수 있다.
-
----
-
-## 설계 원칙과의 정렬
-
-이 정책은 다음 시스템 원칙과 정렬된다.
-
-- 카테고리 중심 워크플로
-- 구성 가능한 동작
-- 운영 효율성
-- 명확한 소유권
+## 관련 문서
+
+- [Ticket Lifecycle](../ticket-lifecycle.md)
+- [Ticket Operation Rules](../../../08-dev-strategy/ticket-operation-rules.md)
+- [Approval System](./approval-system.md)
+- [Ticket History](../ticket-history.md)
+- [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
 ## 요약
 
-할당 시스템은 **유연하고 자동화된 라우팅 메커니즘**을 제공하여,
-적절한 시점에 적절한 사람에게 티켓이 전달되도록 한다.
-
-이를 통해 시스템은 확장성, 일관성, 운영 명확성을 유지하면서도
-실질적인 업무 흐름을 지원할 수 있다.
+Assignment는 category-driven current work ownership이다. Database는 하나의 current
+assignee array를 저장하고, `approvalStepId`가 그 array가 approver를 의미하는지
+worker를 의미하는지 결정한다. Assignment rule은 future work ownership을 resolve하고,
+ticket action은 current ownership을 갱신한다.

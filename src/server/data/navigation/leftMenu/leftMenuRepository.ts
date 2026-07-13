@@ -1,9 +1,8 @@
-import { AccessLevel } from "@/domain/auth";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { LeftMenuRow } from "./leftMenuRow";
 
-const FIND_LEFT_MENU_ROWS_BY_ACCESS_LEVEL_QUERY = `
+const FIND_LEFT_MENU_ROWS_BY_USERNAME_QUERY = `
 select *
   from (
     select
@@ -23,7 +22,7 @@ select *
       and pm_menu_visible = true
       and mp_subject_type = 'ROLE'
   ) menu
-where min_access_level <= $1
+where min_access_level <= (select aa_access_level from vw_auth_login_user where e_username = $1)
 order by 
   pm_menu_area,
   coalesce(pm_parent_id, 0),
@@ -31,11 +30,10 @@ order by
   pm_id;
 `;
 
-export async function findLeftMenuRowsByAccessLevel(
-  userAccessLevel: AccessLevel,
+export async function findLeftMenuRowsByUsername(
+  username: string,
 ): Promise<LeftMenuRow[]> {
-  return queryPortalApi<LeftMenuRow>(
-    FIND_LEFT_MENU_ROWS_BY_ACCESS_LEVEL_QUERY,
-    [userAccessLevel],
-  );
+  return queryPortalApi<LeftMenuRow>(FIND_LEFT_MENU_ROWS_BY_USERNAME_QUERY, [
+    username,
+  ]);
 }

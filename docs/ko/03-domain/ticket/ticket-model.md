@@ -1,355 +1,310 @@
-# Ticket Model
+# 티켓 모델
 
 ## 목표
 
-Ticket model은 Service Desk 시스템에서 workflow entity로서 티켓의
-핵심 도메인 구조를 정의합니다.
+이 문서는 현재 티켓 엔티티, DTO projection, 데이터 boundary 책임을 정의한다.
 
-이 모델의 목표는 다음과 같습니다.
-
-- 티켓을 구조화되고 상태를 가진 entity로 표현한다.
-- 단순 CRUD가 아니라 workflow 중심의 운영을 지원한다.
-- API, UI, 도메인 로직 전반에서 일관성을 유지한다.
-- 데이터 처리와 렌더링을 위한 명확한 계약을 제공한다.
+개념 스케치가 아니다. 필드 이름과 모델 책임은 현재 domain type, DTO, mapper
+동작과 맞춰져 있다.
 
 ---
 
 ## 핵심 개념
 
-```txt
-티켓은 단순한 데이터가 아니라, 상태와 소유권, 컨텍스트를 가진 workflow entity다.
+```txt id="ticket-model-core"
+Ticket row = 현재 workflow state
+Ticket DTO = application-facing projection
+History = state가 어떻게 바뀌었는지에 대한 immutable record
 ```
 
-티켓은 다음 중 하나를 나타냅니다.
-
-- request
-- issue
-- task
-
-이들은 정의된 라이프사이클을 따라 이동하며, 할당된 사용자에 의해 처리됩니다.
-
-단순한 데이터 모델과 달리 티켓은:
-
-- 시간에 따라 변화합니다.
-- 여러 도메인 시스템과 상호작용합니다.
-- 이력과 감사 가능성을 유지합니다.
+티켓 row는 현재 상태를 저장한다. 관련 subresource는 action, history,
+work-session evidence를 저장한다.
 
 ---
 
-## 도메인 구조
+## 저장 상태
 
-Ticket model은 workflow, 운영 UI, 관련 시스템에 필요한 현재 상태를 제공합니다.
+현재 status union:
 
-```ts
-export interface Ticket {
+```txt id="ticket-status-union"
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
+```
+
+`Open`, `Approved`, `Reopen`은 persisted status가 아니다. Ticket mapper는 오래된
+row 값을 위한 compatibility normalization을 포함한다.
+
+- `Open`은 approval step 여부에 따라 `Approval` 또는 `Assigned`로 매핑된다.
+- `Approved`는 `Assigned`로 매핑된다.
+- `Reopen`은 `Working`으로 매핑된다.
+
+새 설계 문서는 이러한 오래된 값을 현재 status처럼 설명하면 안 된다.
+
+---
+
+## 도메인 인터페이스
+
+현재 domain read model은 `TicketSummary`와 `TicketDetail`이다.
+
+### Shared Core
+
+```ts id="ticket-core-fields"
+type TicketBase = {
   id: string;
   ticketNumber: string;
-
   createdAt: ISODateString;
-  updatedAt: ISODateString;
+  updatedAt?: ISODateString;
+  requesterUsername: string;
+};
 
-  requesterId: string;
-
+type TicketWorkflowState = {
   status: TicketStatus;
   priority: Priority;
-
-  categoryId: string;
-
-  subject: string;
-  body: string;
-
-  dueAt: ISODateString;
-
-  assigneeIds: string[];
-
-  trackTimeMinutes: number;
-
-  lastCommentAt?: ISODateString;
-  lastCommenterEmail?: string;
-
-  approvalStepId?: string;
-  active: boolean;
-
-  files: Attach[];
-  images: Attach[];
-}
+  riskLevel: RiskLevel;
+  closeReason?: TicketResolutionReason;
+};
 ```
 
----
+### Assignment Projection
 
-## 핵심 모델 영역
+```ts id="ticket-assignment-projection"
+type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
-### Identity
+type TicketAssignmentState = {
+  assignmentPhase: TicketAssignmentPhase;
+  approvalAssigneeUsernames: string[];
+  workAssigneeUsernames: string[];
+  assignedApprover: boolean;
+  assignedWorker: boolean;
+};
+```
 
-- `id`: 고유 식별자
-- `ticketNumber`: 사람이 읽을 수 있는 참조 번호
+Persisted source of truth은 여전히 다음 필드다.
 
-### Timestamps
+```txt id="assignment-source"
+tk_approval_step_id
+tk_assignee_usernames
+```
 
-- `createdAt`: 티켓 생성 시각
-- `updatedAt`: 마지막 수정 시각
+Phase-aware field는 UI 명확성을 위한 DTO/domain projection이다.
 
-### Request Context
+### Metrics and View State
 
-- `requesterId`: 티켓을 생성한 사용자
-- `subject`: 요청의 짧은 요약
-- `body`: 상세 설명
+```ts id="ticket-metric-fields"
+type TicketMetrics = {
+  workMinutes: number;
+  lastCommentAt?: ISODateString;
+  lastCommenterEmail?: string;
+  lastUserActivityAt?: ISODateString;
+  lastUserActivityEmail?: string;
+  closedAt?: ISODateString;
+};
 
-### Status and Workflow
+type TicketViewState = {
+  dueAt: ISODateString;
+  owner: boolean;
+  active: boolean;
+};
+```
 
-- `status`: 현재 workflow 상태
-- `priority`: 긴급도
-- `approvalStepId`: 해당되는 경우 현재 승인 컨텍스트
+`owner`, `assignedApprover`, `assignedWorker`는 현재 인증된 사용자를 기준으로
+파생된다. 전역 persisted flag가 아니다.
 
-관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
+### Detail Content
 
----
+```ts id="ticket-detail-content"
+type TicketContent = {
+  categoryId: string;
+  approvalStepId: string | null;
+  subject: string;
+  content: string;
+  email: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  };
+  files: TicketAttachmentMetadata[];
+  images: TicketAttachmentMetadata[];
+};
+```
 
-### Category
-
-- `categoryId`: 티켓을 category configuration과 연결합니다.
-
-티켓은 category를 참조합니다. category는 tenant에 속하며, 해당 tenant는
-category-driven behavior를 위한 Service Desk configuration boundary를 제공합니다.
-
-Category는 다음을 결정합니다.
-
-- assignment
-- SLA behavior
-- approval requirement
-- workflow behavior
-
-따라서 ticket은 이러한 business rule을 직접 내장하지 않고,
-category configuration에 의존합니다.
-
-현재 ticket model은 구현 contract에 `tenantId`가 추가되지 않는 한 이를 직접
-노출할 필요가 없습니다. tenant scope는 참조된 category configuration을 통해
-해석됩니다.
-
-관련 문서: [Category Strategy](./strategy/category-strategy.md)
-
----
-
-### Assignment
-
-- `assigneeIds`: 현재 책임 사용자 목록
-
-Assignment는 실행, 소유권, 운영 가시성에 직접 영향을 주므로
-핵심 모델의 일부입니다.
-
-관련 문서: [Assignment Policy](./strategy/assignment-policy.md)
-
----
-
-### SLA
-
-- `dueAt`: SLA rule에 따라 계산된 마감 시각
-
-이를 통해 긴급도와 시간 기대치를 ticket 수준에서 드러낼 수 있습니다.
-
-관련 문서: [SLA Strategy](./strategy/sla-strategy.md)
+Ticket detail은 전체 content, email, files, images를 포함한다. Ticket summary는
+list/search에 최적화되어 있으며 전체 content나 attachment payload를 포함하지
+않는다.
 
 ---
 
-### Work Tracking
+## Database and DTO Boundary
 
-- `trackTimeMinutes`: 집계된 작업 시간
+REMOTE read path는 다음과 같다.
 
-실제 작업 세션은 track-time model에서 별도로 관리됩니다.
+```txt id="ticket-read-boundary"
+service_desk view/row
+-> mapper
+-> TicketListItemDto or TicketDetailDto
+-> feature API mapper
+-> domain model
+```
+
+Database row는 `tk_*`, `cat_*` 등 database-shaped field를 사용한다. UI code는 raw
+row column을 직접 소비하면 안 된다.
+
+### DTO Assignment Fields
+
+Ticket DTO는 다음 필드를 노출한다.
+
+- `assignment_phase`
+- `approval_assignee_usernames`
+- `work_assignee_usernames`
+- `assigned_approver`
+- `assigned_worker`
+- `assignee_usernames`
+
+`assignee_usernames`는 raw current assignee projection이다. Phase-specific array는
+해당 사용자가 approver인지 worker인지 명확히 한다.
+
+---
+
+## Draft Identity
+
+REMOTE draft는 ticket table을 사용한다.
+
+규칙:
+
+- `status = Draft`
+- requester당 active draft는 하나다.
+- draft는 requester username으로 조회된다.
+- submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 변경한다.
+- draft row는 operational ticket list에서 제외된다.
+
+LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용한다.
+REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다.
+
+---
+
+## Email Ownership
+
+티켓의 `email`은 requester가 제공한 notification configuration이다.
+
+파생된 assignee email을 persisted `tk_email` 필드에 덧붙이면 안 된다.
+Notification delivery는 전송 시점에 assignee email을 resolve해야 한다.
+
+---
+
+## Attachment Metadata
+
+Ticket attachment field는 prepared metadata만 저장한다.
+
+```ts id="ticket-attachment-metadata"
+type TicketAttachmentMetadata = {
+  originalName: string;
+  replacedName: string;
+  extension: string;
+  size: number;
+  type: string;
+  demoUrl: string;
+  replaced: true;
+  reason: "SECURITY_DEMO_REPLACEMENT";
+};
+```
+
+Ticket persistence는 다음을 사용한다.
+
+```txt id="ticket-attachment-columns"
+tk_content -> prepared body
+tk_files   -> TicketAttachmentMetadata[]
+tk_images  -> TicketAttachmentMetadata[]
+```
+
+Raw `File`, binary data, base64 data URL, blob URL, local path는 ticket row나
+DTO의 일부가 아니다.
+
+관련 문서: [Ticket Attachment Design](../../06-form-design/ticket-attachment.md)
+
+---
+
+## 관련 Subresource
+
+### Ticket Action
+
+Ticket action은 command로 생성되는 timeline entry다. History와 같지 않다. 일부
+action은 ticket state를 변경하고 여러 history record를 만든다.
+
+관련 문서: [Ticket Activity Model](./ticket-activity.md)
+
+### Ticket History
+
+History는 type, source, event, actor, JSON from/to value, display metadata를 가진
+immutable event/audit data다.
+
+관련 문서: [Ticket History](./ticket-history.md)
+
+### Work Session
+
+Work Session은 실제 tracked work를 기록한다. 티켓은 aggregate `workMinutes`를
+노출하지만, 개별 session은 별도 subresource로 남는다.
 
 관련 문서: [Ticket Track Time](./ticket-track-time.md)
 
 ---
 
-### Activity Metadata
+## List vs Detail
 
-- `lastCommentAt`: 마지막 상호작용 시각
-- `lastCommenterEmail`: 빠른 UI 렌더링을 위한 마지막 actor
+### List Item
 
-이 필드들은 전체 history를 즉시 로드하지 않아도,
-UI에서 최근 activity를 노출할 수 있게 도와줍니다.
+List/search DTO는 다음을 포함한다.
 
-관련 문서:
+- identity와 status
+- assignment projection
+- priority, risk, due date
+- category display data
+- owner/assigned flag
+- work minutes와 recent activity timestamp
+- close/merge field
+- age
 
-- [Ticket Activity Model](./ticket-activity.md)
-- [Ticket History](./ticket-history.md)
+### Detail
 
----
+Detail DTO는 다음을 추가한다.
 
-### Ownership Flags
-
-Ticket은 파생된 ownership flag도 제공합니다.
-
-```ts
-type Ownership = {};
-```
-
-- `owner`: 현재 사용자가 requester인지 여부
-- `assigned`: 현재 사용자가 assignee인지 여부
-
-이 값들은 파생된 소유권 값이며, 고정된 티켓 필드가 아닙니다.
-로컬 모드에서는 경로/로컬 핸들러에서 계산할 수 있으며, 원격 모드에서는 인증된 사용자 컨텍스트를 사용하여 서버에서 확인할 수 있습니다.
-
-이 flag는 다음에 유용합니다.
-
-- permission 처리
-- UI 조건부 렌더링
+- full content
+- email configuration
+- prepared files
+- prepared images
 
 ---
 
-### Attachments
+## Write Model
 
-- `files`: 일반 첨부파일
-- `images`: 이미지 첨부파일
+Create/update request payload는 다음을 사용한다.
 
-첨부파일 동작은 보조 시스템이 처리하더라도,
-attachments는 ticket context의 일부로 남습니다.
+- category id
+- subject/body
+- due date
+- priority/risk
+- email
+- prepared files/images
+- optional existing draft id
 
----
+Write는 attachment metadata를 validate하고 persistence 전에 row를 normalize한다.
 
-### Active State
-
-- `active`: soft-delete flag
-
-일반적인 workflow 운영에서 ticket은 물리적으로 삭제되지 않습니다.
-이 모델은 history, reporting, reference integrity를 위해 티켓을 보존합니다.
-
-관련 문서: [Ticket History](./ticket-history.md)
-
----
-
-## 도메인 특성
-
-### 1. Workflow-Oriented
-
-티켓은 정적인 데이터가 아닙니다.
-
-- 시간에 따라 상태가 바뀝니다.
-- domain event를 발생시킵니다.
-- 여러 subsystem과 상호작용합니다.
-
-### 2. Category-Driven Behavior
-
-티켓 자체가 전체 business rule 집합을 담고 있지는 않습니다.
-
-대신:
-
-```txt
-Ticket -> Category -> Tenant-scoped Behavior
-```
-
-이 구조는 모델을 더 깔끔하게 만들고, 동작을 더 잘 설정 가능하게 만듭니다.
-
-### 3. 티켓 외부의 불변 이력
-
-티켓은 자기 자신의 history를 내부에 저장하지 않습니다.
-
-대신:
-
-- 모든 변경은 `TicketHistory`에 기록됩니다.
-- ticket은 현재 상태만 표현합니다.
-
-### 4. 관련 상호작용 모델로서의 Activity
-
-Ticket은 시스템의 현재 상태를 표현하고,
-Activity와 History는 시스템이 어떻게 변화하는지를 표현합니다.
-
-대신:
-
-- 의미 있는 상호작용은 `TicketActivity`로 표현됩니다.
-- 구조화된 커뮤니케이션과 운영 액션은 통합 모델을 공유합니다.
-- 최근 activity metadata는 빠른 UI 접근을 위해 ticket read model에 노출됩니다.
-
-### 5. Session-Based Work Tracking
-
-작업은 하나의 단일 숫자 source-of-truth로 표현되지 않습니다.
-
-대신:
-
-- 작업은 여러 session의 집합입니다.
-- `trackTimeMinutes`는 파생되거나 집계됩니다.
-- 상세 추적은 별도 모델에서 처리됩니다.
-
----
-
-## 관계
-
-Ticket은 여러 도메인 모델과 상호작용합니다.
-
-```txt
-Ticket
-  -> Category (tenant-scoped)
-  -> Approval
-  -> Assignment
-  -> SLA
-  -> TicketActivity
-  -> TicketHistory
-  -> TicketTrackTime
-  -> Attachment
-```
-
-이 관계 구조는 ticket model이 명확하고 명시적으로 유지되어야 하는 이유 중 하나입니다.
-
-관련 전략 문서: [Action Strategy](./strategy/action-strategy.md)
-
----
-
-## Read Model vs Write Model
-
-### Write Model
-
-- 업데이트에 최적화됩니다.
-- 정규화된 필드를 포함합니다.
-- API와 backend logic에서 사용됩니다.
-
-### Read Model
-
-- UI에 최적화됩니다.
-- 다음과 같은 파생 필드를 포함할 수 있습니다.
-  - `owner`
-  - `assigned`
-  - 집계된 시간
-  - display 중심 metadata
-
----
-
-## Derived State
-
-일부 값은 무조건 저장하기보다 파생해야 합니다.
-
-```ts
-const isOwner = ticket.requesterId === currentUser.id;
-```
-
-특히 사용자별 컨텍스트는 가능하면 파생 상태로 처리하는 것이 좋습니다.
-
----
-
-## 설계 트레이드오프
-
-### Pros
-
-- 명확하고 예측 가능한 구조
-- 복잡한 workflow 지원
-- 도메인 복잡도에 따라 확장 가능
-- 관심사 분리가 효과적
-
-### Cons
-
-- 기본 CRUD 모델보다 복잡함
-- 관련 시스템에 대한 이해가 필요함
-- 초기 설계 비용이 더 큼
+Requester update에는 별도의 routing-sensitive behavior가 있다.
+[Ticket Lifecycle](./ticket-lifecycle.md)과
+[Ticket Operation Rules](../../08-dev-strategy/ticket-operation-rules.md)를 참고한다.
 
 ---
 
 ## 요약
 
-Ticket model은 Service Desk 시스템의 중심 도메인 entity입니다.
-
-이 모델은 다음을 목표로 설계되었습니다.
-
-- workflow 상태를 표현한다.
-- category-driven configuration과 통합된다.
-- activity/history model과 자연스럽게 연결된다.
-- 감사 가능성과 SLA 추적을 지원한다.
-- 세부 동작을 관련 시스템에 위임하여 모델 자체는 깔끔하게 유지한다.
+현재 ticket model은 current row state, derived DTO projection, immutable history를
+분리한다. Routing phase, owner flag, assignee flag, work minutes, recent activity는
+read-model 편의 값이다. Persisted workflow source는 status, approval step,
+assignees, category, content, planning fields, prepared attachment metadata로
+명확하게 유지된다.

@@ -11,8 +11,7 @@
 
 `sunghwan-portal`은 **Next.js 14 App Router**로 구축한 **Service Desk 시스템 프로토타입**입니다.
 
-이 프로젝트는 단순한 UI 쇼케이스가 아니라, 실제 운영 환경을 고려한 production-aligned 프론트엔드 포트폴리오 프로젝트로 설계되었습니다.
-현실적인 Service Desk workflow, 도메인 구조, 역할 인식형 UX, 인증/세션 경계, 문서화된 설계 의사결정에 초점을 둡니다.
+이 프로젝트는 단순한 UI 쇼케이스가 아니라 production-aligned 프론트엔드 포트폴리오 프로젝트입니다. 현실적인 Service Desk workflow, domain boundary, role-aware UX, authentication/session boundary, server-state ownership, 구현과 정렬된 설계 문서화에 초점을 둡니다.
 
 핵심 아이디어는 다음과 같습니다.
 
@@ -21,22 +20,24 @@ Service Desk is not a CRUD board.
 It is a workflow-driven operational system.
 ```
 
-이 프로젝트는 티켓을 request intake, approval, assignment, work, resolution, history, audit 흐름을 거치는 workflow entity로 모델링합니다.
+Ticket은 draft, approval, work assignment, execution, resolution, immutable history, work-session evidence를 거치는 workflow entity로 모델링됩니다.
 
 ## 라이브 데모
 
 **Live Demo**: [sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
 
-이 프로젝트는 다음 요소를 중심으로 Service Desk 도메인을 구성합니다.
+이 프로젝트는 다음 Service Desk 도메인 요소를 중심으로 구성됩니다.
 
-- category-driven ticket workflow
-- approval 및 assignment logic
-- SLA-aware behavior
-- audit/history tracking
-- role-aware dashboard 및 settings UX
-- authentication 및 impersonation strategy
+- tenant-scoped Service Desk settings
+- category-driven ticket intake, defaults, approval, assignment, SLA
+- `status = Draft`인 ticket row로 저장되는 REMOTE draft
+- controlled demo replacement를 사용하는 attachment preparation
+- command-based ticket actions
+- event-based immutable history
+- work-session create/list와 tracked-minute aggregation
+- role-aware dashboard, ticket, settings UX
+- LOCAL demo behavior와 REMOTE PostgreSQL/DTO boundary
 
-또한 이 프로젝트는 문서 비중이 높은 포트폴리오 프로젝트입니다.
 설계 의도, trade-off, 구현 접근 방식은 [`docs/ko`](./docs/ko/README.md)에 정리되어 있습니다.
 
 ## 프로젝트 목적
@@ -45,143 +46,223 @@ It is a workflow-driven operational system.
 
 중점적으로 보여주고자 하는 역량은 다음과 같습니다.
 
-- 실제 비즈니스 workflow 이해
+- 실제 운영 workflow 이해
 - legacy-style IT Help Desk 아이디어를 더 명확한 Service Desk 도메인으로 재설계
 - 유지보수 가능한 feature/domain boundary 중심의 프론트엔드 프로젝트 구조화
 - UI, server state, client state, authentication, server-only data access 분리
-- 아키텍처 판단과 trade-off를 명확하게 문서화
+- workflow command, history, work evidence를 명시적으로 모델링
+- architecture 판단과 trade-off를 명확하게 문서화
 
 이 프로젝트는 내부 Service Hub / IT Help Desk 환경에서 얻은 실제 운영 경험을 바탕으로 하며, 이를 포트폴리오에 적합한 Service Desk prototype으로 재설계했습니다.
 
-## 현재 초점
+## 현재 범위
 
-이 프로젝트는 초기 authentication/template 성격의 애플리케이션에서 구체적인 Service Desk 시스템으로 발전했습니다.
+현재 프로젝트가 다루는 범위는 다음과 같습니다.
 
-현재 초점은 다음과 같습니다.
+- ticket list, search, detail, create, requester update, command execution
+- 일반 ticket row로 저장되는 REMOTE draft persistence
+- category, approval step, assignment rule을 위한 tenant-scoped settings
+- category-driven priority, risk, due date, approval, work assignment
+- draft/create/update/action command 전에 수행되는 attachment preparation
+- action-oriented ticket commands
+- event-based immutable ticket history
+- work-session list/create와 tracked-minute aggregation
+- LOCAL demo behavior와 REMOTE PostgreSQL/DTO service boundary
+- 프로젝트 산출물로서의 documentation과 decision log
 
-- workflow-driven ticket lifecycle
-- tenant-scoped Service Desk configuration
-- category-driven approval, assignment, SLA, priority, risk behavior
-- action-oriented activity model
-- immutable ticket history 및 auditability
-- session-based work tracking 방향
-- role-aware 및 permission-aware UI
-- LOCAL demo behavior와 REMOTE/Supabase integration path
-- Service Desk settings를 위한 DTO/API boundary
-- 프로젝트 산출물로서의 documentation 및 decision log
+이 프로젝트는 production-aligned이지만 production-complete는 아닙니다. Production object storage, notification delivery, full SLA engine, real-time updates, complete timer routes, compliance-grade audit infrastructure는 명시적으로 구현되기 전까지 deferred scope입니다.
 
 ## 핵심 Service Desk 모델
 
-현재 Service Desk 모델은 다음 개념을 중심으로 구성됩니다.
-
 ```txt
-Tenant
-  -> Category
-  -> Approval
-  -> Assignment
-  -> SLA
+Company
+-> Service Desk Tenant
+   -> Category
+      -> Approval Step
+      -> Assignment Rule
 
 Ticket
-  -> Activity / Action
-  -> Track Time
-  -> History
+-> Action
+-> History
+-> Work Session
+-> Attachment metadata
 ```
 
-### Tenant와 Category
+Tenant는 configuration scope입니다. Category는 중심 behavior configuration입니다.
 
-현재 configuration model은 다음과 같습니다.
+Approval과 assignment는 의도적으로 서로 다른 resolution rule을 사용합니다.
+
+- Approval step은 선택된 subcategory의 parent/main category에서 resolve됩니다.
+- Assignment rule은 선택된 subcategory를 먼저 확인하고, subcategory rule이 없을 때만 parent/main category로 fallback합니다.
+
+## Ticket Workflow
+
+현재 persisted status union은 다음과 같습니다.
 
 ```txt
-Company = organization/reference entity
-Tenant = Service Desk configuration boundary
-Category = tenant-scoped behavior configuration
+Draft
+Approval
+Declined
+Assigned
+Working
+Pending
+Rejected
+Resolved
+Closed
 ```
 
-Category는 단순 label이 아닙니다.
-다음과 같은 핵심 ticket behavior를 결정합니다.
+중요 규칙:
 
-- approval requirements
-- assignment rules
-- default priority
-- default risk level
-- SLA defaults
-- request template behavior
+- `Open`은 persisted status가 아닙니다.
+- `Approved`는 persisted status가 아닙니다.
+- `Reopen`은 persisted status가 아닙니다.
+- Approval completion은 `APPROVAL_APPROVED` history로 기록됩니다.
+- Reopen은 ticket action이며 현재 결과는 `Resolved -> Working`입니다.
+- GET/read request는 ticket status를 변경하면 안 됩니다.
 
-Category hierarchy는 다음과 같습니다.
+Main flow:
 
 ```txt
-Tenant -> Main Category -> Sub Category
+Draft
+-> Approval | Assigned
+-> Working
+<-> Pending
+-> Resolved
+-> Closed
 ```
 
-### Ticket Workflow
+상태 변경은 hidden field update가 아니라 explicit command, workflow rule, system operation에 의해 발생해야 합니다.
 
-티켓은 단순 database record가 아니라 workflow entity로 취급됩니다.
+## Draft와 Attachment Boundary
 
-lifecycle은 다음과 같은 정상/비정상 흐름을 포함합니다.
+REMOTE draft는 browser-only state가 아니며 별도 draft table도 아닙니다.
 
 ```txt
-Draft -> Open -> Approved -> Working -> Resolved -> Closed
-
-Open -> Declined -> Open
-Working <-> Pending
-Working / Pending -> Rejected
-Resolved -> Reopen -> Working
+ticket row
++ status = Draft
 ```
 
-상태 변경은 숨겨진 field update가 아니라 명시적인 action과 rule에 의해 발생해야 합니다.
+규칙:
 
-### Activity와 History
+- requester당 active draft는 하나입니다.
+- draft save/update는 draft API를 사용합니다.
+- final submit은 같은 row를 재사용합니다.
+- submit은 initial approval/work routing을 수행합니다.
+- operational ticket list는 draft를 제외합니다.
+- LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현이며 REMOTE
+  PostgreSQL draft와 persistence-equivalent하지 않습니다.
 
-프로젝트는 사용자에게 보이는 activity와 immutable history를 분리합니다.
+Attachment input은 ticket command가 metadata를 쓰기 전에 prepare됩니다.
 
 ```txt
-Activity = meaningful user/operational interaction
-History = immutable audit/event record
+File[] / inline image
+-> Attachment Prepare API
+-> prepared body, files, images
+-> Draft / Create / Update / Action command where applicable
+-> metadata persistence
 ```
 
-activity/action type 예시는 다음과 같습니다.
+현재 구현은 controlled demo replacement를 사용합니다. Production object storage를 제공하지 않습니다. Raw `File`, binary data, base64 data URL, blob URL, local path는 ticket row, DTO, action metadata, history metadata에 persist하면 안 됩니다.
 
-- comment
-- note
-- assign
-- adjust
-- merge
-- reject
-- request review
-- reopen
-- resubmit
+## Actions, History, Work Sessions
 
-이 구조는 timeline을 더 이해하기 쉽게 만들고, 운영 변경을 추적 가능하게 유지합니다.
+Ticket Action은 server-controlled command model입니다.
+
+```txt
+Action command
+-> authenticate
+-> authorize
+-> validate current status
+-> validate action input
+-> insert action when applicable
+-> mutate ticket when applicable
+-> create history
+```
+
+현재 action union:
+
+```txt
+APPROVE
+DECLINE
+COMMENT
+NOTE
+ASSIGN
+ASSIGN_SELF
+REJECT
+MERGE
+ADJUST
+REOPEN
+RESUBMIT
+CANCEL
+```
+
+명시적 start-work command는 Ticket Action union과 분리됩니다.
+
+```txt
+POST /api/service-desk/tickets/:ticketId/command/start-work
+```
+
+이 command는 `Assigned -> Working`으로 이동시키고 `STATUS_UPDATED` history를 만들며 Ticket Action row를 insert하지 않습니다.
+
+History는 event-based immutable model입니다.
+
+```txt
+type   -> affected domain area
+source -> why or which rule produced it
+event  -> what happened
+actor  -> who initiated it
+from/to value -> structured JSON before/after
+metadata -> supplemental display/audit context
+```
+
+`event`가 authoritative field입니다. `SYSTEM_AUTO`는 source이지 history type이 아닙니다.
+
+Resolved auto-close는 구현된 system operation입니다.
+
+```txt
+Resolved history timestamp
++ 7-day grace period
+-> Closed
+-> closeReason = Completed
+-> finish running work sessions where applicable
+-> RESOLUTION_CLOSE history
+-> source = SYSTEM_AUTO
+-> actionNo = null
+```
+
+Work Session은 Ticket Action과 분리됩니다. 현재 route surface는 list/create, tracked-minute aggregation, 지원되는 work-status transition을 지원합니다. Timer-style start/finish/switch route는 현재 route surface에 포함되지 않습니다.
 
 ## 주요 기능
 
 ### Service Desk
 
-- 티켓 목록, 검색, 필터, 정렬, 페이지네이션
+- Ticket list, search, filter, sort, pagination
 - primary workflow로서의 ticket detail page
-- 구조화된 form flow를 가진 ticket creation dialog
-- status, priority, assignee, SLA, history 표시
+- ticket creation 및 requester update flow
+- draft API를 통한 REMOTE draft row recovery
+- ticket command 전 attachment preparation
+- status, priority, risk, assignee, due date, history, work evidence 표시
 - action-oriented ticket interaction
-- merge/reject/reopen/review 중심 workflow 방향
+- reopen, resubmit, reject, merge, cancel, adjust, assign, comment, note command
 - 모바일을 지원하는 핵심 Service Desk view
 
 ### Service Desk Settings
 
 - Tenant settings
-- Category configuration
-- Approval step configuration
-- Assignment rule configuration
-- Company / department / job field reference data integration 방향
+- Main/subcategory configuration
+- Main-category approval step configuration
+- Subcategory assignment override와 parent/main fallback
+- Company, department, job field, employee reference integration
 - API/DTO contract를 통한 LOCAL 및 REMOTE behavior 정렬
 
-### Dashboard와 Insights
+### Dashboard and Insights
 
 - 빠른 운영 개요를 위한 Dashboard
 - 분석/리포팅 view로서의 Insights
 - Service Desk 상태를 요약하는 chart 기반 view
 - status/category/assignee/requester-department/SLA 중심 가시성
 
-### Authentication과 Session
+### Authentication and Session
 
 - NextAuth v4 Credentials Provider
 - JWT session strategy
@@ -197,7 +278,7 @@ activity/action type 예시는 다음과 같습니다.
 - Language: `typescript`, `react@18`
 - UI: `tailwindcss`, `shadcn/ui`, `radix-ui`, `lucide-react`
 - Authentication: `next-auth@4`, Credentials Provider, JWT session strategy
-- Database / Backend Direction: `supabase` PostgreSQL
+- Database / Backend Direction: server-only access와 Supabase 관련 infrastructure를 통한 PostgreSQL
 - Data Fetching: `@tanstack/react-query`, `axios`
 - Form: `react-hook-form`, `zod`
 - Client State: `zustand`
@@ -207,7 +288,7 @@ activity/action type 예시는 다음과 같습니다.
 
 ## 아키텍처 개요
 
-프로젝트는 layered, feature-based 구조를 사용합니다.
+프로젝트는 layered, feature-based structure를 사용합니다.
 
 ```txt
 src/
@@ -222,24 +303,35 @@ src/
   types/       # cross-cutting TypeScript types
 ```
 
-일반적인 runtime flow는 다음과 같습니다.
+Runtime flow:
 
 ```txt
 UI
 -> feature API client
 -> Next.js Route Handler
--> LOCAL handler or REMOTE/Supabase DTO service
+-> LOCAL handler or REMOTE portal API/service
+-> DTO
 ```
 
-UI는 요청이 local demo state로 처리되는지 remote persistence로 처리되는지 알 필요가 없어야 합니다.
-
-## 런타임 전략
-
-프로젝트는 LOCAL과 REMOTE behavior를 구분합니다.
+REMOTE data flow:
 
 ```txt
-LOCAL  = mock-backed, safe portfolio demo behavior
-REMOTE = Supabase PostgreSQL / API-backed behavior
+DB Row
+-> Mapper
+-> DTO
+-> Service
+-> Route Handler
+-> Feature API client
+-> UI
+```
+
+UI code는 Supabase나 database row에 직접 접근하면 안 됩니다.
+
+## Runtime Strategy
+
+```txt
+LOCAL  = API route 뒤의 safe portfolio demo behavior
+REMOTE = DTO boundary 뒤의 PostgreSQL / portal API-service behavior
 ```
 
 ### LOCAL
@@ -249,104 +341,84 @@ LOCAL mode는 포트폴리오 리뷰를 위해 설계되었습니다.
 다음을 제공합니다.
 
 - 안전한 demo interaction
-- mock-backed data
-- server-side mutable local state
+- mock/demo-backed data
+- server-side mutable demo state
 - reset 가능한 demo behavior
 - production infrastructure 없이도 현실적인 API flow
 
 ### REMOTE
 
-REMOTE mode는 Supabase/PostgreSQL 기반 경로입니다.
+REMOTE mode는 PostgreSQL-backed path입니다.
 
 다음을 중심으로 설계됩니다.
 
 - server-only database access
 - separated database roles
-- Row / Mapper / DTO boundary
+- row / mapper / DTO boundary
 - route handler orchestration
+- workflow mutation을 위한 transaction boundary
 - future backend extraction readiness
 
-프로젝트는 Supabase를 단순 client-side BaaS shortcut이 아니라 PostgreSQL persistence로 취급합니다.
-
-## Data 및 API Boundary
-
-database/API 방향은 다음 구조를 따릅니다.
-
-```txt
-Database Row -> Mapper -> DTO
-```
-
-Service Desk settings data는 DTO/API boundary를 사용하여 UI가 database schema detail에 의존하지 않도록 합니다.
-
-Settings domain에는 다음이 포함됩니다.
-
-- Tenant
-- Category
-- Approval Step
-- Assignment Rule
-
-Route handler는 orchestration boundary로 취급됩니다.
-request/session/runtime context를 해석한 뒤 domain logic을 server-side handler 또는 service로 위임해야 합니다.
-
-실제 workflow를 지원하지 않는 speculative CRUD route는 피합니다.
+프로젝트는 Supabase 관련 infrastructure를 client-side shortcut이 아니라 PostgreSQL persistence로 취급합니다.
 
 ## 상태 관리
 
-Server state는 React Query로 관리합니다.
+Server state는 React Query가 소유합니다.
 
-예시는 다음과 같습니다.
+예:
 
-- ticket list
-- ticket detail
-- tenant/category/settings data
-- reference data
-- history/activity data
-- mutable LOCAL demo server state responses
+- ticket list/search/detail
+- active draft
+- ticket actions and history
+- work-session list
+- tenant/category/approval-step/assignment-rule settings
+- organization reference data
 
 Client state는 제한적으로 유지합니다.
 
-예시는 다음과 같습니다.
+예:
 
 - dialog open state
-- temporary UI state
-- runtime facade state
-- local interaction state
+- current form step
+- transient form input
+- temporary UI interaction state
 
 프로젝트는 server data를 Zustand에 중복 저장하는 것을 피합니다.
 
 ## 문서
 
-문서는 이 프로젝트의 주요 산출물 중 하나입니다.
+문서는 이 프로젝트의 주요 산출물 중 하나입니다. 무엇을 만들었는지만이 아니라 왜 그렇게 설계했는지도 설명합니다.
 
-문서는 무엇을 만들었는지뿐 아니라 왜 그렇게 설계했는지도 설명합니다.
-
-추천 진입점은 다음과 같습니다.
+추천 진입점:
 
 1. [Ticket System Specification](./docs/spec/ticket-system.ko.md)
 2. [Service Desk System Documentation](./docs/ko/README.md)
-3. [Feature-Based Structure](./docs/ko/02-architecture/feature-based-structure.md)
-4. [Database Strategy](./docs/ko/02-architecture/database-strategy.md)
-5. [Auth & Session Strategy](./docs/ko/02-architecture/auth-session-strategy.md)
-6. [Ticket System Overview](./docs/ko/03-domain/ticket/ticket-system-overview.md)
-7. [Ticket Lifecycle](./docs/ko/03-domain/ticket/ticket-lifecycle.md)
-8. [Ticket Activity Model](./docs/ko/03-domain/ticket/ticket-activity.md)
-9. [Ticket History](./docs/ko/03-domain/ticket/ticket-history.md)
-10. [Service Desk Implementation Strategy](./docs/ko/08-dev-strategy/service-desk-implementation-strategy.md)
-11. [Ticket Operation Rules](./docs/ko/08-dev-strategy/ticket-operation-rules.md)
+3. [Ticket System Overview](./docs/ko/03-domain/ticket/ticket-system-overview.md)
+4. [Ticket Lifecycle](./docs/ko/03-domain/ticket/ticket-lifecycle.md)
+5. [Ticket Model](./docs/ko/03-domain/ticket/ticket-model.md)
+6. [Ticket Activity Model](./docs/ko/03-domain/ticket/ticket-activity.md)
+7. [Ticket History](./docs/ko/03-domain/ticket/ticket-history.md)
+8. [Ticket Track Time](./docs/ko/03-domain/ticket/ticket-track-time.md)
+9. [Ticket Form Design](./docs/ko/06-form-design/ticket-form.md)
+10. [Ticket Attachment Design](./docs/ko/06-form-design/ticket-attachment.md)
+11. [Service Desk Settings](./docs/ko/03-domain/service-desk-settings.md)
+12. [Service Desk Implementation Strategy](./docs/ko/08-dev-strategy/service-desk-implementation-strategy.md)
+13. [Ticket Operation Rules](./docs/ko/08-dev-strategy/ticket-operation-rules.md)
 
 ## 주요 Decision Log
 
-decision log는 개발 중 내려진 중요한 아키텍처 및 도메인 의사결정을 기록합니다.
+Decision log는 개발 중 내려진 중요한 architecture 및 domain decision을 기록합니다. 과거 선택의 이유를 보존하는 문서이며, 현재 설계 문서처럼 다시 쓰지 않습니다.
 
-최근 중요한 log는 다음과 같습니다.
+최근 중요한 log:
 
 - [Service Desk Documentation Alignment](./docs/ko/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md)
 - [Database Role and Access Strategy](./docs/ko/08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.md)
-- [Barrel Export Boundary Policy](./docs/ko/08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
 - [Service Desk Tenant Design](./docs/ko/08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
 - [Service Desk Settings DTO/API Boundary](./docs/ko/08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
-
-이 문서들은 실제 구현 압력 속에서 시스템이 어떻게 진화했는지 설명합니다.
+- [Ticket Form and Draft Workflow](./docs/ko/08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md)
+- [Ticket Attachment Boundary](./docs/ko/08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md)
+- [Ticket Routing and Update Policy](./docs/ko/08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
+- [Ticket Action and History Execution](./docs/ko/08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md)
 
 ## 로컬 개발
 
@@ -384,7 +456,7 @@ npm run build-storybook
 
 프로젝트는 authentication, runtime context, API/database behavior를 위해 환경 변수를 사용합니다.
 
-일반적으로 사용하는 환경 값은 다음과 같습니다.
+일반적으로 사용하는 환경 값:
 
 - `NEXTAUTH_URL`
 - `NEXTAUTH_SECRET`
@@ -392,25 +464,25 @@ npm run build-storybook
 - `NEXT_PUBLIC_CONTEXT`
 - server-side access를 위한 database/API connection variables
 
-secret과 database credential은 server-only로 유지해야 합니다.
+Secret과 database credential은 server-only로 유지해야 합니다.
 
 ## 프로젝트 상태
 
-이 프로젝트는 포트폴리오/데모 프로젝트이지만, 실제 애플리케이션처럼 구조화하는 것을 목표로 합니다.
+이 프로젝트는 포트폴리오/데모 프로젝트이지만 실제 애플리케이션처럼 구조화하는 것을 목표로 합니다.
 
-현재 구현에는 동작하는 LOCAL demo와 단계적으로 정렬 중인 REMOTE/Supabase integration이 포함됩니다.
+현재 구현에는 동작하는 LOCAL demo와 단계적으로 정렬 중인 REMOTE PostgreSQL/DTO integration이 포함됩니다.
 
-일부 production-grade 영역은 의도적으로 deferred되어 있습니다.
+의도적으로 deferred된 production-grade 영역:
 
-- 모든 Service Desk workflow에 대한 full remote persistence
-- production-grade file upload/storage/security
+- production object storage, file scanning, signed download URL
 - real notification delivery
-- real-time WebSocket updates
-- full enterprise rule engine
-- complete SLA calendar/holiday engine
-- full compliance-grade audit infrastructure
+- full SLA calendar, pause/resume clock, breach, escalation engine
+- real-time updates
+- complete work-session update/delete/timer route surface
+- compliance-grade audit infrastructure
+- advanced assignment load balancing
 
-이 항목들은 무시된 문제가 아니라 future expansion point로 다룹니다.
+이 항목들은 무시된 문제가 아니라 future expansion point입니다.
 
 ## 이 프로젝트가 보여주는 것
 
@@ -429,7 +501,7 @@ secret과 database credential은 server-only로 유지해야 합니다.
 
 ## 작성자
 
-**정성환**  
+**정성환**
 Frontend Developer (React / Next.js)
 
 - GitHub: https://github.com/omega3jung

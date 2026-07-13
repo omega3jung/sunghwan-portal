@@ -19,6 +19,7 @@ import {
   localDeleteTicket,
   localGetTicket,
   localRequesterUpdateTicket,
+  withLocalTicketWorkerHistory,
 } from "@/server/serviceDesk/ticket/localDemo";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -42,7 +43,10 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
     }
 
     return NextResponse.json(
-      withDerivedTicketOwnership(ticket, currentUserName),
+      withLocalTicketWorkerHistory(
+        withDerivedTicketOwnership(ticket, currentUserName),
+        { isInternal, currentUserName },
+      ),
     );
   }
 
@@ -79,16 +83,18 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
 
       const isInternal = await isInternalUser(request);
 
+      const ticket = withDerivedTicketOwnership(
+        localRequesterUpdateTicket({
+          isInternal,
+          ticketId,
+          requesterUsername: currentUserName,
+          input: body,
+        }),
+        currentUserName,
+      );
+
       return NextResponse.json(
-        withDerivedTicketOwnership(
-          localRequesterUpdateTicket({
-            isInternal,
-            ticketId,
-            requesterUsername: currentUserName,
-            input: body,
-          }),
-          currentUserName,
-        ),
+        withLocalTicketWorkerHistory(ticket, { isInternal, currentUserName }),
         {
           status: 200,
         },

@@ -11,7 +11,6 @@ export const statusLocaleKey: Record<SystemStatus, string> = {
   Pending: "pending",
   Resolved: "resolved",
   Rejected: "rejected",
-  Reopened: "reopened",
   Closed: "closed",
 };
 
@@ -26,7 +25,6 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
     pending: "Pending",
     rejected: "Rejected",
     resolved: "Resolved",
-    reopened: "Reopened",
     closed: "Closed",
   },
 
@@ -40,7 +38,6 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
     pending: "Pendiente",
     rejected: "Rechazado",
     resolved: "Resuelto",
-    reopened: "Reabierto",
     closed: "Cerrado",
   },
 
@@ -54,7 +51,6 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
     pending: "En attente",
     rejected: "Rejete",
     resolved: "Resolue",
-    reopened: "Rouverte",
     closed: "Ferme",
   },
 
@@ -68,7 +64,6 @@ export const statusBadgeLocales: Record<Locale, Record<string, string>> = {
     pending: "대기 중",
     rejected: "반려됨",
     resolved: "해결됨",
-    reopened: "재처리",
     closed: "종료됨",
   },
 };

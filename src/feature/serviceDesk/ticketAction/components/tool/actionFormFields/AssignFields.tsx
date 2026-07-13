@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { MainCategory } from "@/domain/serviceDesk";
+import type { MainCategory, TicketAssignmentPhase } from "@/domain/serviceDesk";
 import { useServiceDeskAssignmentRecommendationsQuery } from "@/feature/serviceDesk/assignmentRule/client";
 import { useCurrentLanguage } from "@/feature/user/preference/hooks/useCurrentLanguage";
 import { NS } from "@/lib/i18n";
@@ -33,6 +33,7 @@ type Localize = <T>(value: Localized<T>) => T;
 type AssignFieldsProps = {
   form: UseFormReturn<TicketActionDraftFormValues>;
   originalCategoryId?: string;
+  assignmentPhase?: TicketAssignmentPhase;
   categories?: MainCategory[];
   users?: ImageValueLabel[];
   t: Translate;
@@ -42,6 +43,7 @@ type AssignFieldsProps = {
 export function AssignFields({
   form,
   originalCategoryId,
+  assignmentPhase = "WORK",
   categories = [],
   users = [],
   t,
@@ -70,6 +72,7 @@ export function AssignFields({
       ? t(form.formState.errors.assigneeUsernames.message)
       : "";
   const categoryChanged =
+    assignmentPhase === "WORK" &&
     Boolean(categoryId) &&
     Boolean(originalCategoryId) &&
     categoryId !== originalCategoryId;
@@ -173,7 +176,11 @@ export function AssignFields({
         className="col-span-full md:col-span-2"
         data-invalid={Boolean(assigneeError)}
       >
-        <FieldLabel>{t("field.assignee", { ns: NS.common })}</FieldLabel>
+        <FieldLabel>
+          {assignmentPhase === "APPROVAL"
+            ? t("field.approver", { defaultValue: "Approver" })
+            : t("field.assignee", { ns: NS.common })}
+        </FieldLabel>
         <AvatarMultiComboBox
           placeholder={t("placeholder.select", {
             ns: NS.common,
@@ -265,39 +272,41 @@ export function AssignFields({
         <FieldError>{assigneeError}</FieldError>
       </Field>
 
-      <Field>
-        <FieldLabel>{t("field.category", { ns: NS.common })}</FieldLabel>
-        <Select value={categoryId} onValueChange={onCategoryChange}>
-          <SelectTrigger id="ticket-info-select-category">
-            <SelectValue
-              placeholder={t("placeholder.select", {
-                target: t("field.category", { ns: NS.common }),
-                ns: NS.common,
-              })}
-            />
-          </SelectTrigger>
+      {assignmentPhase === "WORK" ? (
+        <Field>
+          <FieldLabel>{t("field.category", { ns: NS.common })}</FieldLabel>
+          <Select value={categoryId} onValueChange={onCategoryChange}>
+            <SelectTrigger id="ticket-info-select-category">
+              <SelectValue
+                placeholder={t("placeholder.select", {
+                  target: t("field.category", { ns: NS.common }),
+                  ns: NS.common,
+                })}
+              />
+            </SelectTrigger>
 
-          <SelectContent>
-            {categoryData.map((group) => (
-              <SelectGroup key={group.category.value}>
-                <SelectLabel className="rounded bg-muted/50 text-xs">
-                  {group.category.label}
-                </SelectLabel>
+            <SelectContent>
+              {categoryData.map((group) => (
+                <SelectGroup key={group.category.value}>
+                  <SelectLabel className="rounded bg-muted/50 text-xs">
+                    {group.category.label}
+                  </SelectLabel>
 
-                {group.subCategories.map((subCategory) => (
-                  <SelectItem
-                    key={subCategory.value}
-                    value={subCategory.value}
-                    className="ml-2 text-xs"
-                  >
-                    {subCategory.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
+                  {group.subCategories.map((subCategory) => (
+                    <SelectItem
+                      key={subCategory.value}
+                      value={subCategory.value}
+                      className="ml-2 text-xs"
+                    >
+                      {subCategory.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      ) : null}
     </>
   );
 }

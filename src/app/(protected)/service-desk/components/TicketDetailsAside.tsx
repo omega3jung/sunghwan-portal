@@ -40,8 +40,8 @@ export function TicketDetailsAside({
       : tCommon("field.assignee");
   const isCurrentUserAssigned =
     ticket.assignmentPhase === "APPROVAL"
-      ? ticket.assignedApprover
-      : ticket.assignedWorker;
+      ? ticket.isCurrentApprover
+      : ticket.isCurrentWorker;
 
   return (
     <div className="space-y-4">

@@ -2,338 +2,233 @@
 
 ## Goal
 
-The dialog pattern is designed to provide a **consistent and scalable interaction model**
-for handling user inputs and actions in a controlled UI environment.
+Dialogs are used for focused, temporary interactions. They should not replace
+page-level Service Desk workflows.
 
-It aims to:
+The current Service Desk UI uses dialogs for:
 
-- Standardize dialog usage across the system
-- Separate transient interactions from primary workflows
-- Improve user experience consistency
-- Reduce UI complexity
+- ticket creation
+- requester-owned ticket update
+- ticket action command forms
+- confirmations where needed
+
+Ticket detail remains a page.
 
 ---
 
 ## Core Principle
 
-```txt
-Use dialog for transient interactions, not primary workflows
+```txt id="dialog-core"
+Use dialogs for focused actions.
+Use pages for primary workflows.
 ```
 
 ---
 
-## Dialog vs Page
-
-### Rule
+## Page vs Dialog
 
 | Use Dialog | Use Page |
-| ---------- | -------- |
-| Quick actions | Core workflows |
-| Short forms | Complex forms |
-| Temporary interactions | Long-lived interactions |
+| --- | --- |
+| short form | long-lived workflow |
+| command execution | ticket detail |
+| confirmation | list/search workflow |
+| temporary interaction | shareable resource view |
+
+Examples:
+
+- create ticket -> dialog
+- requester update -> dialog
+- approve/reject/comment/note/assign action -> dialog/tool surface
+- ticket detail -> page
 
 ---
 
-### Example
+## Current Ticket Dialogs
 
-- Create ticket -> Dialog
-- Edit ticket (complex) -> Page
-- View ticket detail -> Page
+### Create Ticket Dialog
 
----
+`CreateTicketDialog` owns the new ticket workflow.
 
-## Dialog Types
+Responsibilities:
 
-### 1. Form Dialog
+- manage the create form steps
+- load active draft where available
+- save draft on close when dirty
+- prepare attachments before submit
+- call the create-ticket mutation
+- reset and close after success
 
-Used for creating or editing data.
+### Update Ticket Dialog
 
-#### Example
+`UpdateTicketDialog` owns requester-owned update before active work starts.
 
-- Ticket creation
-- Quick edit
+Responsibilities:
 
----
+- load latest ticket detail when opened
+- preserve existing prepared attachments
+- prepare newly added files/images
+- submit requester update
+- surface routing reset/preservation impact
 
-### 2. Confirmation Dialog
+### Action Dialogs
 
-Used for destructive or critical actions.
+Ticket action dialogs are command inputs, not generic edit forms.
 
-#### Example
+Examples:
 
-- Delete ticket
-- Close ticket
+- approve
+- decline
+- comment
+- note
+- assign
+- adjust
+- reject
+- merge
+- reopen
+- resubmit
+- cancel
 
----
-
-### 3. Informational Dialog
-
-Used to display non-editable content.
-
----
-
-## TicketFormDialog Pattern
-
-The system uses a **step-based dialog pattern** for ticket creation.
-
----
-
-### Structure
-
-```tsx
-<Dialog>
-  <DialogTrigger />
-  <DialogContent>
-    <Header />
-    <StepContent />
-    <Footer />
-  </DialogContent>
-</Dialog>
-```
+Each action should follow the server-provided action rule and should only expose
+fields the command accepts.
 
 ---
 
-### Characteristics
+## No Generic `TicketFormDialog`
 
-- Multi-step flow
-- Controlled navigation (`next` / `prev`)
-- Final submission at the last step
+The current implementation should not be described as a single generic
+`TicketFormDialog`.
+
+Create and update share form fields, but they have different workflow behavior:
+
+- create has draft loading/save/submit behavior
+- update loads latest ticket detail on open
+- update merges existing and newly prepared attachments
+- update can reset or preserve routing
+
+Separate hooks/components keep those differences visible.
 
 ---
 
-## State Management
+## Controlled Open State
 
-### Controlled State
+Dialog open state should be controlled by the owning component.
 
-Dialog open state is **controlled externally**.
-
-```tsx
+```tsx id="dialog-open-state"
 const [open, setOpen] = useState(false);
 ```
 
----
+This allows:
 
-### Why Controlled?
-
-- Allows closing after mutation
-- Enables programmatic control
-- Improves integration with business logic
-
----
-
-## Trigger Strategy
-
-### Rule
-
-```txt
-DialogTrigger should be optional and replaceable
-```
+- closing after mutation success
+- resetting form state on close
+- saving draft on create close
+- loading detail data when update opens
 
 ---
 
-### Pattern
+## Trigger Policy
 
-- Accept `trigger` as a prop
-- Fallback to a default button
+Dialog triggers may be provided by the caller.
 
----
-
-### Example
-
-```tsx
-<Dialog trigger={trigger ?? <DefaultButton />} />
-```
+This keeps list rows, toolbar buttons, and detail-page commands from duplicating
+dialog internals.
 
 ---
 
-## Closing Strategy
+## Data Loading Policy
 
-### Methods
+Dialogs should fetch only when the dialog itself owns the entry point.
 
-1. User interaction (close button)
-2. Outside click
-3. Programmatic close after success
+Examples:
 
----
-
-### Recommended
-
-```tsx
-onSuccess: () => setOpen(false);
-```
+- `CreateTicketDialog` may load active draft on open.
+- `UpdateTicketDialog` loads latest ticket detail on open to avoid stale edits.
+- action dialogs should rely on ticket detail/action availability already
+  resolved by the page unless they need action-specific data.
 
 ---
 
-## Stepper Pattern
+## Attachment Policy
 
-### When to Use
+Dialogs that accept attachments keep raw `File` input local to the open form.
 
-- Complex forms
-- Multiple dependent inputs
+Before submitting a ticket create, requester update, or supported action, the
+dialog calls the Attachment Prepare API and sends prepared metadata to the
+workflow command.
 
----
-
-### Current Decision
-
-- Implemented only in `TicketFormDialog`
-- Not abstracted globally yet
+Raw files must not be stored in global state or React Query.
 
 ---
 
-### Reason
+## Close Policy
 
-- Avoid premature abstraction
-- Keep flexibility for future changes
+On success:
 
----
+- close the dialog
+- reset local form state
+- invalidate related React Query data
 
-## Data Flow
+On create cancel/close with dirty input:
 
-### Rule
+- save draft when the draft workflow is enabled
+- do not promise attachment recovery
 
-```txt
-Dialog should not fetch data unless necessary
-```
+On update/action cancel:
 
----
-
-### Preferred
-
-- Pass required data via props
-- Fetch only when the dialog itself is the entry point
+- discard unsaved local form state unless the specific workflow defines a draft
+  behavior
 
 ---
 
-## Validation Strategy
+## Accessibility and UX
 
-- Use `react-hook-form` inside the dialog
-- Validate per step or on submit
+Dialogs should preserve:
 
----
+- focus entry and return behavior
+- keyboard navigation
+- clear submit/cancel actions
+- loading and disabled states during mutation
+- scroll handling for long content
+- localized validation messages
 
-## UX Considerations
-
-### 1. Focus Management
-
-- Focus should move into the dialog on open
-- Focus should return to the trigger on close
-
----
-
-### 2. Scroll Handling
-
-- Use a scroll area for long content
-
----
-
-### 3. Escape Handling
-
-- `ESC` closes the dialog unless restricted
-
----
-
-### 4. Accessibility
-
-- Proper ARIA roles
-- Keyboard navigation support
-
----
-
-## Performance Considerations
-
-### Lazy Rendering
-
-- Render dialog content only when open
-
----
-
-### Avoid Heavy Initialization
-
-- Delay expensive logic until the dialog opens
+Action dialogs should avoid showing unsupported fields for the selected command.
 
 ---
 
 ## Anti-Patterns Avoided
 
-### 1. Nested Dialogs
+### Detail in a Dialog
 
-- Dialog inside dialog
+Ticket detail is too important and shareable to be a nested modal workflow.
 
----
+### Nested Dialog Stacks
 
-### 2. Dialog for Primary Workflow
+Avoid dialog-on-dialog flows for ticket actions. Prefer returning to the detail
+page or using a single focused surface.
 
-- Complex page-like workflows inside dialog
+### Hidden Workflow Mutation
 
----
+Dialogs should call explicit mutations/commands. They should not mutate ticket
+workflow state indirectly through field editing.
 
-### 3. Uncontrolled Dialog State
+### Generic Dialog Abstraction Too Early
 
-- No reliable control over open and close behavior
-
----
-
-### 4. Data Fetching in Deep UI
-
-- API calls inside dialog children
+Do not force create, update, and action commands into one abstraction when their
+workflow rules differ.
 
 ---
 
-## Trade-offs
+## Related Documents
 
-### Pros
-
-- Consistent interaction pattern
-- Better UX for quick actions
-- Reduced navigation overhead
-
----
-
-### Cons
-
-- Limited space for complex UI
-- Requires state management
-- Can become complex if overused
-
----
-
-## Alternatives Considered
-
-### 1. Page-Based Only
-
-- Pro: simple routing
-- Con: slower interaction for quick actions
-
----
-
-### 2. Drawer-Based Only
-
-- Pro: flexible layout
-- Con: harder to standardize behavior
-
----
-
-### 3. Global Dialog Manager
-
-- Pro: centralized control
-- Con: increased complexity
-- Con: harder to debug
-
----
-
-## Design Principles Alignment
-
-This pattern aligns with:
-
-- Separation of concerns
-- UX consistency
-- Controlled state management
-- Scalable UI architecture
+- [`form-pattern.md`](form-pattern.md)
+- [`../02-architecture/routing-strategy.md`](../02-architecture/routing-strategy.md)
+- [`../06-form-design/ticket-form.md`](../06-form-design/ticket-form.md)
+- [`../06-form-design/ticket-attachment.md`](../06-form-design/ticket-attachment.md)
 
 ---
 
 ## Summary
 
-The dialog pattern provides a **structured and consistent approach**
-for handling transient interactions, ensuring that dialogs remain lightweight,
-predictable, and aligned with the overall system architecture.
+Dialogs are focused workflow surfaces. The current Service Desk implementation
+uses separate create, update, and action dialog flows while keeping ticket detail
+as a page-level resource.

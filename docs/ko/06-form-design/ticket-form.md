@@ -2,435 +2,280 @@
 
 ## 목표
 
-티켓 폼은 **복잡하고 구조화된 사용자 입력**을
-확장 가능하고 사용자 친화적인 방식으로 처리하도록 설계된다.
+티켓 폼은 Service Desk 티켓 생성과 요청자 수정을 위한 입력을 수집한다.
+워크플로 결정은 폼이 아니라 서버 경계에서 수행한다.
 
-이 폼의 목적은 다음과 같다.
+현재 구현 기준:
 
-- 사용자의 티켓 생성을 단순화한다
-- 복잡한 도메인 로직(카테고리, SLA, 우선순위 등)을 지원한다
-- 안내형 입력 경험을 제공한다
-- 강력한 타입 안전성과 검증을 유지한다
+- `CreateTicketDialog`는 신규 티켓 제출과 draft 복구를 담당한다.
+- `UpdateTicketDialog`는 작업 시작 전 요청자 수정을 담당한다.
+- React Hook Form은 다이얼로그가 열려 있는 동안의 미저장 입력을 소유한다.
+- Attachment Prepare API가 브라우저 파일과 본문 이미지를 준비된 metadata로 변환한다.
+- 티켓 서비스가 승인, 할당, 라우팅, 이력을 결정한다.
 
 ---
 
-## 핵심 개념
+## 핵심 원칙
 
-```id="ticket-form-concept"
-Complex input should be guided, not overwhelming
+```txt id="ticket-form-core"
+폼은 의도를 수집한다.
+티켓 워크플로는 서버가 실행한다.
+```
+
+폼은 기본값을 보여주고 입력을 검증할 수 있지만 최종 승인 라우팅,
+작업 할당, 이력 의미를 결정하지 않는다.
+
+---
+
+## 현재 폼 표면
+
+### 티켓 생성
+
+`CreateTicketDialog`는 요청자용 생성 워크플로다.
+
+지원 항목:
+
+- 다단계 입력
+- 카테고리, 제목, 본문, 기한, 우선순위, 위험도, 이메일, 첨부 입력
+- draft 로드와 닫기 시 저장
+- 최종 생성 전 첨부 준비
+- ticket create mutation 실행
+
+### 티켓 수정
+
+`UpdateTicketDialog`는 요청자 소유 티켓의 수정 워크플로다.
+
+지원 항목:
+
+- 열릴 때 최신 티켓 상세 로드
+- 기존 준비된 `files`와 `images` 유지
+- 새로 선택한 파일과 본문 이미지 준비
+- 기존 첨부 metadata와 신규 준비 metadata 병합
+- requester update API 호출
+
+### 티켓 상세
+
+티켓 상세는 폼 다이얼로그가 아니라 페이지 수준 워크플로다.
+
+```txt id="ticket-detail-route"
+/service-desk/[ticketId]
 ```
 
 ---
 
-## 폼 타입 전략
+## 단계 설계
 
-티켓 폼은 여러 모드를 지원한다.
+현재 단계 식별자는 다음과 같다.
 
-```ts id="form-type"
-type Mode = "create" | "update" | "view";
+```txt id="ticket-form-steps"
+issueDetails
+attachments
+review
 ```
 
----
+| 단계 | 책임 |
+| --- | --- |
+| `issueDetails` | 카테고리, 제목, 본문, 기한, 우선순위, 위험도, 이메일 |
+| `attachments` | 선택 파일과 rich-text 이미지 입력 |
+| `review` | 최종 제출 전 검토 |
 
-### 근거
-
-- `create` -> 새 티켓 제출
-- `update` -> 기존 티켓 수정
-- `view` -> 읽기 전용 표시
-
----
-
-### 결정
-
-`create`와 `update`가 필드를 공유하더라도:
-
-- 두 모드는 **논리적으로 분리된다**
-- API 동작이 다르다 (`POST` vs `PUT`)
-- UX 기대치도 다르다
+현재 구현은 별도 category-only 단계나 전역 generic stepper를 사용하지 않는다.
 
 ---
 
-## 다단계 폼 설계
+## 스키마와 검증
 
-### 왜 다단계인가?
+폼은 Zod와 React Hook Form으로 검증한다.
 
-티켓 생성에는 다음이 포함된다.
+주요 필드:
 
-- 카테고리 선택
-- 맥락 기반 필드
-- 상세 설명
-- 첨부파일
-
-단일 폼으로 구성하면 사용자에게 부담이 될 수 있다.
-
----
-
-### 구조
-
-```txt id="steps"
-Step 1 -> Category Selection
-Step 2 -> Basic Information
-Step 3 -> Details & Attachments
-Step 4 -> Review & Submit
+```ts id="ticket-form-fields"
+type TicketFormValues = {
+  id?: string;
+  category: string;
+  subject: string;
+  body: string;
+  dueAt: Date;
+  priority: Priority;
+  riskLevel: RiskLevel;
+  email: string[];
+  requester: string;
+  attachment: File[];
+};
 ```
 
----
+주요 규칙:
 
-### 장점
-
-- 인지 부하를 줄인다
-- 사용자를 입력 흐름에 따라 안내한다
-- 맥락 기반 검증을 가능하게 한다
-
----
-
-## 단계 이동 전략
-
-- 제어된 이동 (`next` / `previous`)
-- 유효하지 않으면 다음 단계로 이동하지 못하게 한다
-- 최종 제출은 마지막 단계에서만 가능하다
+- `subject`는 200자 제한이다.
+- `dueAt`은 오늘 이후여야 한다.
+- `attachment`는 prepare 전까지 브라우저 `File[]`이다.
+- 최종 ticket mutation은 준비된 첨부 metadata를 다시 검증한다.
 
 ---
 
-### 상태 처리
+## 카테고리 기본값
 
-- 단일 `react-hook-form` 인스턴스를 사용한다
-- `step` 상태는 별도로 관리한다
+카테고리 선택은 다음 기본값을 seed할 수 있다.
+
+- priority
+- risk level
+- category SLA days 기반 due date
+
+UI는 사용성을 위해 기본값을 적용할 수 있다. 서버는 카테고리 유효성과
+라우팅 동작의 최종 기준이다.
 
 ---
 
-## 카테고리 주도 폼
+## 첨부 준비
 
-### 핵심 아이디어
+브라우저 파일 입력은 임시 상태다.
 
-```id="category-driven"
-Form behavior depends on selected category
+```txt id="ticket-form-attachment-flow"
+form body and File[]
+-> POST /api/service-desk/tickets/attachments/prepare
+-> prepared body, files, images
+-> ticket create/update payload
 ```
 
----
+티켓 쓰기 명령에는 raw `File`이 아니라 준비된 본문과 첨부 metadata만 전달한다.
 
-### 영향 범위
-
-- 기본 우선순위
-- 기본 위험 수준
-- SLA 계산
-- 사용 가능한 하위 카테고리
+자세한 내용은 [`ticket-attachment.md`](ticket-attachment.md)를 참고한다.
 
 ---
 
-### 전략
+## Draft 워크플로
 
-- 카테고리는 초기에 선택한다 (`Step 1`)
-- 이후 단계는 선택된 카테고리에 따라 동적으로 달라진다
+현재 draft model은 LOCAL과 REMOTE behavior를 모두 지원한다.
 
----
+### LOCAL Draft
 
-## SLA / Priority / Risk 연계
+LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용한다.
+REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다. 현재 LOCAL
+구현은 demo convenience를 위해 제한적인 client-side recovery를 사용할 수 있지만,
+그 recovery가 durable state boundary는 아니다.
 
-### 배경
+### REMOTE Draft
 
-시스템은 다음 요소를 사용한다.
+REMOTE draft는 `Draft` 상태의 티켓 row이며, 요청자당 하나의 active draft를
+가진다.
 
-- Risk Level (`low` -> `critical`)
-- Priority (`low` -> `urgent`)
-- SLA (조합에 따라 계산)
-
----
-
-### 폼 동작
-
-- 기본값은 카테고리로부터 적용된다
-- 허용된다면 사용자가 직접 덮어쓸 수 있다
-- SLA는 동적으로 계산된다
-
----
-
-### 장점
-
-- 사용자 입력을 비즈니스 규칙과 정렬할 수 있다
-- 잘못된 설정을 줄일 수 있다
-
----
-
-## 필드 설계 전략
-
-### 규칙
-
-```id="field-design"
-Fields must be predictable, reusable, and typed
+```txt id="remote-draft-flow"
+create dialog open
+-> active draft load
+-> edit form
+-> close while dirty
+-> save draft
+-> reopen and recover values
+-> final submit reuses draft ticket row
 ```
 
----
+Draft는 폼 데이터 중심 복구다. 첨부 복구를 보장하지 않는다.
 
-### 필드 유형
-
-- 텍스트 입력 (`title`, `description`)
-- 선택 (`category`, `priority`)
-- 날짜 (`due date`)
-- 파일 업로드 (`attachments`)
+- 브라우저 `File` 객체는 reload 이후 복구할 수 없다.
+- draft save는 transient attachment input을 비운다.
+- 최종 제출 시 현재 첨부 입력을 prepare한다.
+- production object storage는 미래 범위다.
 
 ---
 
-## 첨부파일 처리
+## 생성 제출
 
-### 전략
-
-- `useWatch`로 관리한다
-- `File[]` 형태로 저장한다
-
----
-
-### 구현 메모
-
-- 잘못된 `defaultValue` 타입 지정을 피해야 한다
-- 필요하면 명시적 캐스팅을 사용한다
-
----
-
-## 검증 전략
-
-### 접근 방식
-
-- 스키마 기반 검증 (`Zod`)
-- 단계별 검증 + 최종 검증
-
----
-
-### 예시
-
-- Step 1 -> 카테고리 필수
-- Step 2 -> 제목 필수
-- Step 3 -> 선택 입력 중심
-- Final -> 전체 검증
-
----
-
-## 임시저장 전략 (검토됨)
-
-### 문제
-
-사용자가 한 번의 세션 안에서 폼을 끝내지 못할 수 있다.
-
----
-
-### 고려한 옵션
-
-1. 로컬 임시저장 (클라이언트 저장소)
-2. 서버 임시저장 (임시 티켓)
-3. 임시저장 미지원
-
----
-
-### 현재 결정
-
-- 아직 구현하지 않았다
-- 성급한 복잡도 증가를 피하기 위해 보류했다
-
----
-
-### 근거
-
-- 추가적인 API와 상태 처리가 필요하다
-- MVP 단계에서는 핵심 기능이 아니다
-- 데모 범위에서는 production-grade attachment persistence 보장을 보류한다
-
----
-
-## 다이얼로그 연계
-
-티켓 폼은 다이얼로그 내부에 구현된다.
-
----
-
-### 패턴
-
-- 제어형 open 상태
-- 성공적으로 제출한 뒤 닫기
-- 트리거는 커스터마이즈 가능
-
----
-
-## 제출 흐름
-
-### 프로세스
-
-```txt id="submission"
-티켓 생성은 개별 작업으로 다이얼로그 내에서 구현됩니다.
-티켓 상세 정보는 페이지 수준의 기본 워크플로(`/service-desk/[ticketId]`)로 유지됩니다.
-이력/작업 패널과 같은 보조 상호 작용은 드로어 스타일의 상호 작용을 사용해야 합니다.
-
-검증 -> 변환 -> 변경 -> 다이얼로그 닫기 -> 목록 다시 가져오기
-(Validate -> Transform -> Mutate -> Close Dialog -> Refetch List)
+```txt id="create-submission-flow"
+validate form
+-> prepare attachments
+-> map to ticket payload
+-> create or submit existing draft
+-> server resolves approval/work assignment
+-> invalidate ticket and draft queries
 ```
 
----
+서버는 제출된 티켓을 다음 중 하나로 이동시킨다.
 
-### 구현
+- 승인 단계가 필요하면 `Approval`
+- 바로 작업 할당되면 `Assigned`
 
-- React Query mutation을 사용한다
-- 성공 시 티켓 목록을 invalidate한다
-
----
-
-## 오류 처리
-
-### 유형
-
-1. 검증 오류 (필드 수준)
-2. API 오류 (폼 수준)
+생성은 `TICKET_SUBMITTED`, `APPROVAL_REQUESTED`,
+`ASSIGNMENT_RESOLVED` 같은 event-based history를 기록한다.
 
 ---
 
-### UX
+## 요청자 수정 제출
 
-- 검증은 인라인 메시지로 표시한다
-- API 오류는 toast로 표시한다
+요청자 수정은 작업 시작 전 상태에서만 허용된다.
 
----
-
-## 초기화 전략
-
-### 언제
-
-- 성공적으로 제출한 뒤
-- 다이얼로그가 닫힐 때
-
----
-
-### 구현
-
-```ts id="reset"
-form.reset();
+```txt id="requester-update-statuses"
+Approval
+Assigned
 ```
 
----
+요청자는 티켓 소유자여야 한다.
 
-## 재사용성 전략
+Routing-sensitive fields:
 
-### 공통 로직
+- category
+- subject
+- content/body
+- files
+- images
 
-- 폼 구조
-- 검증 스키마
-- 필드 컴포넌트
+Routing-neutral fields:
 
----
+- due date
+- email recipients
 
-### 기능 전용 로직
+라우팅 민감 필드가 바뀌면 서버는 `ROUTING_RESET`을 기록하고 승인/할당을
+재평가한다. 라우팅 중립 필드만 바뀌면 `ROUTING_PRESERVED`를 기록한다.
 
-- 카테고리 규칙
-- SLA 계산
-- 티켓 전용 필드
-
----
-
-## Stepper 추상화 (검토됨)
-
-### 아이디어
-
-재사용 가능한 stepper dialog 컴포넌트를 만든다.
+Category가 변경되면 category default도 priority, risk, minimum due date를 다시
+평가한다. 현재 due date가 새 category minimum보다 늦으면 그대로 유지하고, 더
+이르면 해당 minimum까지 되돌린다.
 
 ---
 
-### 결정
+## 상태 소유권
 
-- 아직 구현하지 않았다
+| 상태 | 소유자 |
+| --- | --- |
+| 미저장 필드 입력 | React Hook Form |
+| 현재 폼 단계 | component state |
+| persisted ticket data | React Query |
+| active draft data | React Query와 draft API |
+| raw browser files | 열린 폼의 React Hook Form |
+| prepared attachment metadata | API payload와 persisted ticket data |
 
----
-
-### 근거
-
-- feature마다 콘텐츠 구조가 다르다
-- 과도한 props가 필요해질 수 있다
-- 시기상조의 추상화라고 판단했다
-
----
-
-## UX 고려사항
-
-### 1. 점진적 공개
-
-- 각 단계에서 필요한 입력만 보여준다
+Zustand는 form input, draft, attachment metadata의 source of truth가 아니다.
 
 ---
 
-### 2. 명확한 피드백
+## 안티패턴
 
-- 검증 메시지
-- 단계 진행 표시기
+### Generic `TicketFormDialog`
 
----
+현재 구현은 하나의 generic `TicketFormDialog`에 create/update/view를 모두 넣지
+않는다. 생성과 수정은 필드를 공유해도 draft, submit, reset, routing 동작이 다르다.
 
-### 3. 최소한의 마찰
+### Raw File Persistence
 
-- 기본값은 자동 적용한다
-- 수동 입력을 줄인다
+Raw browser file은 ticket row, React Query cache, draft DTO, global state에 저장하지 않는다.
 
----
+### Client-Side Routing Decision
 
-### 4. 일관성
-
-- `create`와 `update` 전반에 동일한 구조를 유지한다
+클라이언트는 경고와 기본값을 표시할 수 있지만 승인 reset, assignment resolution,
+routing history의 권위자는 서버다.
 
 ---
 
-## 피하려는 안티패턴
+## 관련 문서
 
-### 1. 하나의 거대한 폼
-
-- 사용자 경험이 과도하게 부담스러워진다
-
----
-
-### 2. 과도한 추상화
-
-- 너무 이른 시점의 범용 stepper 추상화
-
----
-
-### 3. 중복된 폼 구현
-
-- `create`와 `update`를 완전히 별도로 구현하는 방식
-
----
-
-### 4. UI 내부의 비즈니스 로직
-
-- 컴포넌트 내부에서 SLA를 계산하는 방식
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 안내형 사용자 경험
-- 도메인 로직과의 강한 정렬
-- 확장 가능한 폼 구조
-- 높은 타입 안전성
-
----
-
-### 단점
-
-- 구현이 더 복잡하다
-- 단계 관리 오버헤드가 있다
-- 검증 설계를 신중하게 해야 한다
-
----
-
-## 설계 원칙과의 정렬
-
-이 설계는 다음 원칙과 정렬된다.
-
-- 사용자 중심 설계
-- 도메인 주도 설계
-- 점진적 공개
-- 관심사 분리
+- [`ticket-attachment.md`](ticket-attachment.md)
+- [`../03-domain/ticket/ticket-model.md`](../03-domain/ticket/ticket-model.md)
+- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
+- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
 
 ---
 
 ## 요약
 
-티켓 폼은 **안내형 다단계 입력 시스템**으로 설계되며,
-카테고리 주도 로직과 강력한 검증을 활용해
-사용성과 비즈니스 규칙 강제 사이의 균형을 맞춘다.
+티켓 폼은 워크플로 권위자가 아니라 워크플로 진입점이다. 현재 설계는
+`CreateTicketDialog`, `UpdateTicketDialog`, REMOTE draft, attachment preparation,
+server-owned requester update routing을 기준으로 정렬된다.
