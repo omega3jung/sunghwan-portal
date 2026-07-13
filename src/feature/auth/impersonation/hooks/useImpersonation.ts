@@ -1,12 +1,15 @@
 // hooks/useImpersonation.ts
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 import { SessionUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { userImpersonationApi } from "@/feature/auth/impersonation/api";
+import { leftMenuQueryKeys } from "@/feature/navigation/leftMenu/api/queryKeys";
+import { userProfileQueryKeys } from "@/feature/user/profile/queryKeys";
 import { useAuthSessionStore } from "@/lib/authSessionStore";
 import { useImpersonationStore } from "@/lib/impersonationStore";
 
@@ -22,9 +25,16 @@ import { useImpersonationStore } from "@/lib/impersonationStore";
  */
 export const useImpersonation = () => {
   const session = useSession();
+  const queryClient = useQueryClient();
   const sessionUser = useAuthSessionStore((state) => state.user);
   const { originalUser, impersonatedUser, currentUser, syncFromSession } =
     useImpersonationStore();
+
+  const invalidateImpersonationDependentQueries = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: leftMenuQueryKeys.all }),
+      queryClient.invalidateQueries({ queryKey: userProfileQueryKeys.all }),
+    ]);
 
   /**
    * Starts impersonation for a target user and refreshes the session with the returned impersonation payload.
@@ -40,6 +50,7 @@ export const useImpersonation = () => {
     const impersonation =
       await userImpersonationApi.start(impersonatedUsername);
     await session.update({ impersonation });
+    await invalidateImpersonationDependentQueries();
   };
 
   /**
@@ -55,6 +66,7 @@ export const useImpersonation = () => {
   const stopImpersonation = async () => {
     await userImpersonationApi.stop();
     await session.update({ impersonation: null });
+    await invalidateImpersonationDependentQueries();
   };
 
   // Store synchronization when session changed.

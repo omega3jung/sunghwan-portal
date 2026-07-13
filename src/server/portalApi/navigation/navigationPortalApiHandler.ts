@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getLeftMenuByAccessLevel } from "@/server/data/navigation/leftMenu";
+import { getLeftMenuByUsername } from "@/server/data/navigation/leftMenu";
 
 import { PortalApiJsonOptions } from "../types";
-import { normalizePath, resolveAccessLevel } from "../utils";
+import { normalizePath } from "../utils";
 
 const LEFT_MENU_PATH_PATTERN = /^\/navigation\/left-menu\/([^/]+)$/;
 
@@ -22,18 +22,16 @@ export async function handleNavigationPortalApi(
     if (leftMenuMatch) {
       // REST api GET.
       if (method === "GET") {
-        const rawAccessLevel = decodeURIComponent(leftMenuMatch[1] ?? "");
-        const parsedAccessLevel = Number(rawAccessLevel);
-        const userAccessLevel = resolveAccessLevel(parsedAccessLevel);
+        const username = decodeURIComponent(leftMenuMatch[1] ?? "");
 
-        if (userAccessLevel === null) {
+        if (!username.trim()) {
           return NextResponse.json(
-            { message: "Invalid access level" },
+            { message: "Invalid username" },
             { status: 400 },
           );
         }
 
-        const leftMenu = await getLeftMenuByAccessLevel(userAccessLevel);
+        const leftMenu = await getLeftMenuByUsername(username);
 
         return NextResponse.json({ data: leftMenu });
       }

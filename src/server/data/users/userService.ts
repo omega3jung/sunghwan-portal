@@ -2,13 +2,15 @@ import {
   GetUserPreferenceByKeyParams,
   SaveUserPreferenceByKeyInput,
   UserPreferenceDto,
-} from "./userPreferenceDto";
-import { toUserPreferenceDto } from "./userPreferenceMapper";
+  UserProfileDto,
+} from "./userDto";
+import { toUserPreferenceDto, toUserProfileDto } from "./userMapper";
 import {
   findUserPreferenceByKey,
+  findUserProfileByUsername,
   insertUserPreferenceByKey,
   patchUserPreferenceByKey,
-} from "./userPreferenceRepository";
+} from "./userRepository";
 
 export async function getUserPreferenceByKey(
   params: GetUserPreferenceByKeyParams,
@@ -44,4 +46,16 @@ export async function updateUserPreferenceByKey(
   }
 
   return toUserPreferenceDto(row);
+}
+
+export async function getUserProfileDtoByUsername(
+  username: string,
+): Promise<UserProfileDto | null> {
+  const row = await findUserProfileByUsername(username);
+
+  if (!row) {
+    return null;
+  }
+
+  return toUserProfileDto(row);
 }

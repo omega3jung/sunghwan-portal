@@ -13,7 +13,7 @@ import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
-import { useSettingsScope } from "../../SettingsScopeProvider";
+import { useSettingsScope } from "../../_providers";
 import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
 
 export function ServiceDeskTenantSelect({

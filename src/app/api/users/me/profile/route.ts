@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 
   return portalApiJson(req, {
     method: "GET",
-    path: `/users/${currentUserName}/profile`,
+    path: `/users/${encodeURIComponent(currentUserName)}/profile`,
     errorMessage: "Failed to fetch current user profile",
   });
 }
