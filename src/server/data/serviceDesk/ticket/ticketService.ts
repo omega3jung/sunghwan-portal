@@ -35,6 +35,7 @@ import {
   findExpiredResolvedTicketViewRows,
   findNextApprovalStepId,
   findNextTicketNumber,
+  hasTicketWorkAssignmentHistory,
   startAssignedTicketWorkById,
   submitDraftTicketRowById,
   type TicketRepositoryOptions,
@@ -76,7 +77,7 @@ export async function getTicketDetail(
 ): Promise<TicketDetailDto | null> {
   const row = await findActiveTicketViewRowById(ticketId);
 
-  return row ? toTicketDetailDto(row, currentUserName) : null;
+  return row ? projectTicketDetail(row, currentUserName) : null;
 }
 
 export async function startTicketWork(
@@ -91,7 +92,7 @@ export async function startTicketWork(
     }
 
     if (ticket.tk_status !== "Assigned") {
-      return toTicketDetailDto(ticket, currentUserName);
+      return projectTicketDetail(ticket, currentUserName, { query });
     }
 
     if (
@@ -128,7 +129,7 @@ export async function startTicketWork(
       { query },
     );
 
-    return toTicketDetailDto(updatedTicket, currentUserName);
+    return projectTicketDetail(updatedTicket, currentUserName, { query });
   });
 }
 
@@ -293,7 +294,11 @@ export async function createTicket(
     );
   }
 
-  return toTicketDetailDto(routedRow, options.requesterUsername);
+  return projectTicketDetail(
+    routedRow,
+    options.requesterUsername,
+    repositoryOptions,
+  );
 }
 
 export async function updateTicket(
@@ -310,7 +315,7 @@ export async function updateTicket(
     throw createStatusError("Ticket not found.", 404);
   }
 
-  return toTicketDetailDto(row, currentUserName);
+  return projectTicketDetail(row, currentUserName);
 }
 
 export async function searchTicketListItems(
@@ -331,6 +336,21 @@ function createStatusError(message: string, status: number) {
   const error = new Error(message) as Error & { status: number };
   error.status = status;
   return error;
+}
+
+async function projectTicketDetail(
+  row: Parameters<typeof toTicketDetailDto>[0],
+  currentUserName: string | null,
+  options: TicketRepositoryOptions = {},
+): Promise<TicketDetailDto> {
+  const hasBeenWorker = currentUserName
+    ? await hasTicketWorkAssignmentHistory(row.tk_id, currentUserName, options)
+    : false;
+
+  return toTicketDetailDto(row, {
+    currentUserName,
+    hasBeenWorker,
+  });
 }
 
 async function resolveInitialTicketRouting(

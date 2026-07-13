@@ -7,8 +7,8 @@ type TicketOwnershipResource = Pick<
   | "approvalAssigneeUsernames"
   | "workAssigneeUsernames"
   | "owner"
-  | "assignedApprover"
-  | "assignedWorker"
+  | "isCurrentApprover"
+  | "isCurrentWorker"
 >;
 
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
@@ -24,11 +24,11 @@ export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
     ...ticket,
     owner:
       normalizedUserName !== null && ticket.requesterUsername === normalizedUserName,
-    assignedApprover:
+    isCurrentApprover:
       normalizedUserName !== null &&
       ticket.assignmentPhase === "APPROVAL" &&
       ticket.approvalAssigneeUsernames.includes(normalizedUserName),
-    assignedWorker:
+    isCurrentWorker:
       normalizedUserName !== null &&
       ticket.assignmentPhase === "WORK" &&
       ticket.workAssigneeUsernames.includes(normalizedUserName),

@@ -350,6 +350,7 @@
     "summary": {
       "current": "이번 입력",
       "totalAfterSubmit": "제출 후 누적",
+      "minutes": "{{count}}분",
       "minutes_one": "{{count}}분",
       "minutes_other": "{{count}}분"
     }

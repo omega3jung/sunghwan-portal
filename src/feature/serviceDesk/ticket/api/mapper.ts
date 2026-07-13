@@ -1,6 +1,7 @@
 import {
   TicketAssignmentPhase,
   TicketAssignmentState,
+  TicketCurrentAssignmentState,
   TicketDetail,
   TicketSummary,
 } from "@/domain/serviceDesk";
@@ -9,7 +10,11 @@ import {
   createListPayloadMapper,
 } from "@/lib/api/utils/payload";
 import { ArrayMapper } from "@/shared/types";
-import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
+import {
+  normalizeNonNegativeInteger,
+  nullToUndefined,
+  undefinedToNull,
+} from "@/shared/utils/value";
 
 import { DbTicketDetail, DbTicketSummary } from "./types";
 
@@ -27,7 +32,7 @@ export const camelTicketSummaryMapper: ArrayMapper<
     closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
     riskLevel: item.risk_level,
-    ...mapTicketAssignment(item),
+    ...mapTicketCurrentAssignment(item),
     mergedIntoTicketId: item.merged_into_ticket_id,
     mergedIntoTicketNo: item.merged_into_ticket_no,
     lastCommentAt: nullToUndefined(item.last_comment_at),
@@ -35,7 +40,7 @@ export const camelTicketSummaryMapper: ArrayMapper<
     lastUserActivityAt: nullToUndefined(item.last_user_activity_at),
     lastUserActivityEmail: nullToUndefined(item.last_user_activity_email),
     closedAt: nullToUndefined(item.closed_at),
-    workMinutes: item.work_minutes,
+    workMinutes: normalizeNonNegativeInteger(item.work_minutes),
     dueAt: item.due_at,
     owner: item.owner,
     active: item.active,
@@ -72,7 +77,7 @@ export const camelTicketDetailMapper: ArrayMapper<
     lastUserActivityAt: nullToUndefined(item.last_user_activity_at),
     lastUserActivityEmail: nullToUndefined(item.last_user_activity_email),
     closedAt: nullToUndefined(item.closed_at),
-    workMinutes: item.work_minutes,
+    workMinutes: normalizeNonNegativeInteger(item.work_minutes),
     dueAt: item.due_at,
     owner: item.owner,
     active: item.active,
@@ -106,8 +111,8 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     assignment_phase: item.assignmentPhase,
     approval_assignee_usernames: item.approvalAssigneeUsernames,
     work_assignee_usernames: item.workAssigneeUsernames,
-    assigned_approver: item.assignedApprover,
-    assigned_worker: item.assignedWorker,
+    assigned_approver: item.isCurrentApprover,
+    assigned_worker: item.isCurrentWorker,
     assignee_usernames: selectCurrentResponsibleUsernames(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
@@ -119,7 +124,7 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     work_minutes: item.workMinutes,
     due_at: item.dueAt,
     owner: item.owner,
-    assigned: item.assignedApprover || item.assignedWorker,
+    assigned: item.isCurrentApprover || item.isCurrentWorker,
     active: item.active,
     scope: item.scope,
     category_id: item.categoryId,
@@ -149,8 +154,9 @@ export const snakeTicketDetailMapper: ArrayMapper<
     assignment_phase: item.assignmentPhase,
     approval_assignee_usernames: item.approvalAssigneeUsernames,
     work_assignee_usernames: item.workAssigneeUsernames,
-    assigned_approver: item.assignedApprover,
-    assigned_worker: item.assignedWorker,
+    assigned_approver: item.isCurrentApprover,
+    assigned_worker: item.isCurrentWorker,
+    has_been_worker: item.hasBeenWorker,
     assignee_usernames: selectCurrentResponsibleUsernames(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
@@ -162,7 +168,7 @@ export const snakeTicketDetailMapper: ArrayMapper<
     work_minutes: item.workMinutes,
     due_at: item.dueAt,
     owner: item.owner,
-    assigned: item.assignedApprover || item.assignedWorker,
+    assigned: item.isCurrentApprover || item.isCurrentWorker,
     active: item.active,
     scope: item.scope,
     category_id: item.categoryId,
@@ -190,8 +196,17 @@ type DbTicketAssignmentSource = Pick<
 >;
 
 function mapTicketAssignment(
-  item: DbTicketAssignmentSource,
+  item: DbTicketAssignmentSource & Pick<DbTicketDetail, "has_been_worker">,
 ): TicketAssignmentState {
+  return {
+    ...mapTicketCurrentAssignment(item),
+    hasBeenWorker: item.has_been_worker === true,
+  };
+}
+
+function mapTicketCurrentAssignment(
+  item: DbTicketAssignmentSource,
+): TicketCurrentAssignmentState {
   const assignmentPhase = resolveAssignmentPhase(item);
   const legacyAssigneeUsernames = normalizeStringArray(item.assignee_usernames);
   const approvalAssigneeUsernames = normalizeStringArray(
@@ -207,10 +222,10 @@ function mapTicketAssignment(
     assignmentPhase,
     approvalAssigneeUsernames,
     workAssigneeUsernames,
-    assignedApprover:
+    isCurrentApprover:
       item.assigned_approver ??
       (assignmentPhase === "APPROVAL" ? item.assigned : false),
-    assignedWorker:
+    isCurrentWorker:
       item.assigned_worker ??
       (assignmentPhase === "WORK" ? item.assigned : false),
   };
@@ -227,7 +242,7 @@ function resolveAssignmentPhase(
 }
 
 function selectCurrentResponsibleUsernames(
-  item: TicketAssignmentState,
+  item: TicketCurrentAssignmentState,
 ): string[] {
   return item.assignmentPhase === "APPROVAL"
     ? item.approvalAssigneeUsernames

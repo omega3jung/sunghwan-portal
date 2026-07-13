@@ -68,20 +68,21 @@ export function TicketHeader({
       </Button>
 
       <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
-        <WorkSessionTool ticket={ticket}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="hidden h-8 w-8 rounded-md xl:inline-flex"
-            title={t("hoverMessage.workSessionTool")}
-            disabled={!ticket}
-          >
-            <Pickaxe
-              className={cn("h-4 w-4 transition-transform text-amber-700")}
-            />
-          </Button>
-        </WorkSessionTool>
+        {ticket?.hasBeenWorker ? (
+          <WorkSessionTool ticket={ticket}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="hidden h-8 w-8 rounded-md xl:inline-flex"
+              title={t("hoverMessage.workSessionTool")}
+            >
+              <Pickaxe
+                className={cn("h-4 w-4 transition-transform text-amber-700")}
+              />
+            </Button>
+          </WorkSessionTool>
+        ) : null}
         <Button
           type="button"
           variant="ghost"

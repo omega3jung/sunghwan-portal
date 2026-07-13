@@ -99,6 +99,9 @@ const ALL_LIVE_TICKET_STATUSES: readonly TicketStatus[] = [
   "Resolved",
   "Closed",
 ];
+const COMMENTABLE_TICKET_STATUSES = ALL_LIVE_TICKET_STATUSES.filter(
+  (status) => status !== "Closed",
+);
 const ADMIN_OVERRIDE_ACTION_MODE_BY_PATH: Partial<
   Record<TicketGeneralActionPath, TicketActionExecutionMode>
 > = {
@@ -111,8 +114,8 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
   TicketActionExecutionMode,
   readonly TicketStatus[]
 > = {
-  comment: ALL_LIVE_TICKET_STATUSES,
-  note: ALL_LIVE_TICKET_STATUSES.filter((status) => status !== "Closed"),
+  comment: COMMENTABLE_TICKET_STATUSES,
+  note: COMMENTABLE_TICKET_STATUSES,
   assign: ["Assigned", "Working", "Pending"],
   assignAdminOverride: ["Approval", "Assigned", "Working", "Pending"],
   assignSelf: ["Assigned", "Working", "Pending"],

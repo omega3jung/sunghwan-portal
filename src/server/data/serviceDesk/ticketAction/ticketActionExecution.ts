@@ -513,10 +513,6 @@ async function executeMergeTicketAction({
 
   const updatedTicket = await updateTicketMergeStateById(
     ticketId,
-    {
-      mergedIntoTicketId: payload.targetTicketId,
-      mergedIntoTicketNo: targetTicket.tk_ticket_no,
-    },
     { query },
   );
 
@@ -716,11 +712,7 @@ async function executeCancelTicketAction({
   assertRequesterActionAllowed(ticket, currentUserName);
 
   const status = requireNextTicketStatus(actionMode, ticket.tk_status);
-  const updatedTicket = await updateTicketCloseStateById(
-    ticketId,
-    { closeReason: "Canceled" },
-    { query },
-  );
+  const updatedTicket = await updateTicketCloseStateById(ticketId, { query });
 
   assertTicketUpdated(
     updatedTicket,

@@ -350,6 +350,7 @@
     "summary": {
       "current": "Esta entrada",
       "totalAfterSubmit": "Total tras enviar",
+      "minutes": "{{count}} min",
       "minutes_one": "{{count}} min",
       "minutes_other": "{{count}} min"
     }

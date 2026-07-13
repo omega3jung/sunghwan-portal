@@ -189,6 +189,13 @@ select service_desk.get_category_assignment_usernames(
 ) as assignee_usernames;
 `;
 
+const HAS_TICKET_WORK_ASSIGNMENT_HISTORY_QUERY = `
+select service_desk.has_ticket_work_assignment_history(
+  $1::text,
+  $2::text
+) as has_been_worker;
+`;
+
 const UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY = `
 update service_desk.ticket
 set
@@ -286,27 +293,25 @@ where tk_id = $1
 returning tk_id;
 `;
 
+// Work minutes are derived from service_desk.work_session in vw_ticket.
 const UPDATE_TICKET_WORK_PROGRESS_BY_ID_QUERY = `
 update service_desk.ticket
 set
-  tk_work_minutes = coalesce(tk_work_minutes, 0) + $2::int,
-  tk_status = $3,
+  tk_status = $2,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
   and tk_status != 'Draft'
   and tk_approval_step_id is null
-  and $4 = any(tk_assignee_usernames)
+  and $3 = any(tk_assignee_usernames)
 returning tk_id;
 `;
 
+// Close reason and merge target fields are derived from ticket_history in vw_ticket.
 const UPDATE_TICKET_MERGE_STATE_BY_ID_QUERY = `
 update service_desk.ticket
 set
   tk_status = 'Closed',
-  tk_close_reason = 'Merged',
-  tk_merged_into_ticket_id = $2,
-  tk_merged_into_ticket_no = $3,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
@@ -318,7 +323,6 @@ const UPDATE_TICKET_CLOSE_STATE_BY_ID_QUERY = `
 update service_desk.ticket
 set
   tk_status = 'Closed',
-  tk_close_reason = $2,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
@@ -348,7 +352,6 @@ const CLOSE_RESOLVED_TICKET_BY_ID_QUERY = `
 update service_desk.ticket
 set
   tk_status = 'Closed',
-  tk_close_reason = 'Completed',
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
@@ -541,6 +544,20 @@ export async function findCategoryAssignmentUsernames(
   return normalizeTextArray(rows[0]?.assignee_usernames);
 }
 
+export async function hasTicketWorkAssignmentHistory(
+  ticketId: string,
+  username: string,
+  options: TicketRepositoryOptions = {},
+): Promise<boolean> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ has_been_worker: boolean | null }>(
+    HAS_TICKET_WORK_ASSIGNMENT_HISTORY_QUERY,
+    [ticketId, username],
+  );
+
+  return rows[0]?.has_been_worker === true;
+}
+
 export async function updateTicketInitialRoutingById(
   ticketId: string,
   input: {
@@ -703,7 +720,6 @@ export async function startAssignedTicketWorkById(
 export async function updateTicketWorkProgressById(
   ticketId: string,
   input: {
-    trackedMinutes: number;
     status: ServiceDeskTicketViewRow["tk_status"];
     assigneeUsername: string;
   },
@@ -712,7 +728,7 @@ export async function updateTicketWorkProgressById(
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ tk_id: string }>(
     UPDATE_TICKET_WORK_PROGRESS_BY_ID_QUERY,
-    [ticketId, input.trackedMinutes, input.status, input.assigneeUsername],
+    [ticketId, input.status, input.assigneeUsername],
   );
   const updatedTicketId = rows[0]?.tk_id;
 
@@ -723,16 +739,12 @@ export async function updateTicketWorkProgressById(
 
 export async function updateTicketMergeStateById(
   ticketId: string,
-  input: {
-    mergedIntoTicketId: string;
-    mergedIntoTicketNo: string;
-  },
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ tk_id: string }>(
     UPDATE_TICKET_MERGE_STATE_BY_ID_QUERY,
-    [ticketId, input.mergedIntoTicketId, input.mergedIntoTicketNo],
+    [ticketId],
   );
   const updatedTicketId = rows[0]?.tk_id;
 
@@ -743,15 +755,12 @@ export async function updateTicketMergeStateById(
 
 export async function updateTicketCloseStateById(
   ticketId: string,
-  input: {
-    closeReason: NonNullable<ServiceDeskTicketViewRow["tk_close_reason"]>;
-  },
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ tk_id: string }>(
     UPDATE_TICKET_CLOSE_STATE_BY_ID_QUERY,
-    [ticketId, input.closeReason],
+    [ticketId],
   );
   const updatedTicketId = rows[0]?.tk_id;
 

@@ -12,6 +12,9 @@ const ALL_NON_DRAFT_TICKET_STATUSES: readonly TicketStatus[] = [
   "Resolved",
   "Closed",
 ];
+const COMMENTABLE_TICKET_STATUSES = ALL_NON_DRAFT_TICKET_STATUSES.filter(
+  (status) => status !== "Closed",
+);
 
 const MANAGER_ACTION_MODE_BY_PATH: Partial<
   Record<TicketActionApiType, TicketActionExecutionMode>
@@ -26,8 +29,8 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
   TicketActionExecutionMode,
   readonly TicketStatus[]
 > = {
-  comment: ALL_NON_DRAFT_TICKET_STATUSES,
-  note: ALL_NON_DRAFT_TICKET_STATUSES.filter((status) => status !== "Closed"),
+  comment: COMMENTABLE_TICKET_STATUSES,
+  note: COMMENTABLE_TICKET_STATUSES,
   approve: ["Approval"],
   decline: ["Approval"],
   assign: ["Assigned", "Working", "Pending"],

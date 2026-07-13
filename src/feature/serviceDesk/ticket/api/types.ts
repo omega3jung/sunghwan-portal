@@ -94,6 +94,7 @@ export interface DbTicketDetail {
   work_assignee_usernames?: string[];
   assigned_approver?: boolean;
   assigned_worker?: boolean;
+  has_been_worker?: boolean;
 
   assignee_usernames: string[];
   merged_into_ticket_id?: string | null;

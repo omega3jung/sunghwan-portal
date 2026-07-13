@@ -3,6 +3,7 @@ import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
 import { toTicketMockDetailResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
 
+import { withLocalTicketWorkerHistory } from "../../localDemo/workerHistory";
 import { getLocalDemoHistories } from "../../state";
 import {
   createUpdatedTicket,
@@ -55,19 +56,23 @@ export function startTicketWorkLocal({
 export function toLocalStartWorkResponse(
   ticket: DbTicketDetail,
   currentUserName: string,
+  isInternal = false,
 ) {
   const detail = toTicketMockDetailResource(ticket);
 
-  return {
-    ...detail,
-    owner: detail.requesterUsername === currentUserName,
-    assignedApprover:
-      detail.assignmentPhase === "APPROVAL" &&
-      detail.approvalAssigneeUsernames.includes(currentUserName),
-    assignedWorker:
-      detail.assignmentPhase === "WORK" &&
-      detail.workAssigneeUsernames.includes(currentUserName),
-  };
+  return withLocalTicketWorkerHistory(
+    {
+      ...detail,
+      owner: detail.requesterUsername === currentUserName,
+      isCurrentApprover:
+        detail.assignmentPhase === "APPROVAL" &&
+        detail.approvalAssigneeUsernames.includes(currentUserName),
+      isCurrentWorker:
+        detail.assignmentPhase === "WORK" &&
+        detail.workAssigneeUsernames.includes(currentUserName),
+    },
+    { isInternal, currentUserName },
+  );
 }
 
 function validateAssignee(ticket: DbTicketDetail, employeeUserName: string) {

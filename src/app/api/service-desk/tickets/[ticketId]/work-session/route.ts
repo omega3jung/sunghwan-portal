@@ -34,7 +34,9 @@ import {
   getMaxHistoryNo,
   getTicketContext,
 } from "@/server/serviceDesk/ticket/command/utils";
+import { hasLocalTicketWorkAssignmentHistory } from "@/server/serviceDesk/ticket/localDemo/workerHistory";
 import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 const localWorkSessions: DbTicketWorkSession[] = [];
 
@@ -65,6 +67,9 @@ const validatePayload = (
   ticketId: string,
   ticketStatus: string,
   payload: TicketWorkSessionSubmitPayload,
+  options: {
+    isCurrentWorkAssignee: boolean;
+  },
 ) => {
   if (payload.ticketId !== ticketId) {
     throw new ServiceDeskApiError(
@@ -93,7 +98,15 @@ const validatePayload = (
     );
   }
 
+  if (payload.nextStatus && !options.isCurrentWorkAssignee) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.assigneeForbidden",
+      403,
+    );
+  }
+
   if (
+    options.isCurrentWorkAssignee &&
     (ticketStatus === "Assigned" || ticketStatus === "Pending") &&
     (!payload.nextStatus || payload.nextStatus === ticketStatus)
   ) {
@@ -147,22 +160,31 @@ const isAllowedWorkStatusTransition = (
   return false;
 };
 
-const assertCurrentWorkAssignee = (
+const resolveWorkSessionAuthorization = (
   ticket: ReturnType<typeof getTicketContext>["ticket"],
   currentUserName: string,
+  isInternal: boolean,
 ) => {
-  if (
+  const isCurrentWorkAssignee =
     ticket.approval_step_id === null &&
-    ticket.assignee_usernames.includes(currentUserName)
-  ) {
-    return;
+    ticket.assignee_usernames.includes(currentUserName);
+  const hasBeenWorker =
+    isCurrentWorkAssignee ||
+    hasLocalTicketWorkAssignmentHistory({
+      isInternal,
+      ticketId: ticket.id,
+      username: currentUserName,
+    });
+
+  if (!hasBeenWorker) {
+    throw new ServiceDeskApiError(
+      "api.ticketWorkSession.localDemo.assigneeForbidden",
+      403,
+      { ticketId: ticket.id, username: currentUserName },
+    );
   }
 
-  throw new ServiceDeskApiError(
-    "api.ticketWorkSession.localDemo.assigneeForbidden",
-    403,
-    { ticketId: ticket.id, username: currentUserName },
-  );
+  return { isCurrentWorkAssignee };
 };
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -226,9 +248,21 @@ export async function POST(
       ticketId,
       isInternal,
     );
-    assertCurrentWorkAssignee(ticket, currentUserName);
+    const authorization = resolveWorkSessionAuthorization(
+      ticket,
+      currentUserName,
+      isInternal,
+    );
 
-    const trackedMinutes = validatePayload(ticketId, ticket.status, payload);
+    const trackedMinutes = validatePayload(
+      ticketId,
+      ticket.status,
+      payload,
+      authorization,
+    );
+    const previousTrackedMinutes = normalizeNonNegativeInteger(
+      ticket.work_minutes,
+    );
     const nextStatus =
       payload.nextStatus && payload.nextStatus !== ticket.status
         ? payload.nextStatus
@@ -237,7 +271,7 @@ export async function POST(
     if (
       nextStatus &&
       !canChangeStatus({
-        previousTrackedMinutes: ticket.work_minutes,
+        previousTrackedMinutes,
         currentTrackedMinutes: trackedMinutes,
       })
     ) {
@@ -253,9 +287,8 @@ export async function POST(
       work_session_no: getNextWorkSessionNo(ticketId),
       assignee_username: currentUserName,
       start_at: payload.startAt ?? createdAt,
-      end_at: payload.inputMode === "range" ? (payload.endAt ?? null) : null,
-      duration_minutes:
-        payload.inputMode === "duration" ? trackedMinutes : null,
+      end_at: payload.endAt ?? null,
+      duration_minutes: trackedMinutes,
       note: payload.note?.trim() || null,
       created_at: createdAt,
       updated_at: null,
@@ -263,7 +296,7 @@ export async function POST(
     const updatedTicket = createUpdatedTicket(
       ticket,
       {
-        work_minutes: ticket.work_minutes + trackedMinutes,
+        work_minutes: previousTrackedMinutes + trackedMinutes,
         ...(nextStatus ? { status: nextStatus } : {}),
       },
       createdAt,

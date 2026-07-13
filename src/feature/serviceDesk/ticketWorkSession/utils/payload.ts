@@ -1,3 +1,5 @@
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
+
 import type {
   TicketWorkSessionInputMode,
   TicketWorkSessionStatus,
@@ -50,15 +52,15 @@ const normalizeNote = (note?: string) => {
   return trimmedNote ? trimmedNote : undefined;
 };
 
-export function getTrackedMinutesFromDuration(values?: WorkSessionDurationLike) {
-  const durationMinutes = Number(values?.durationMinutes);
+const getDurationTimeRange = (durationMinutes: number) => {
+  const endAt = new Date();
+  const startAt = new Date(endAt.getTime() - durationMinutes * MS_PER_MINUTE);
 
-  if (!Number.isFinite(durationMinutes) || !Number.isInteger(durationMinutes)) {
-    return 0;
-  }
-
-  return durationMinutes > 0 ? durationMinutes : 0;
-}
+  return {
+    startAt: startAt.toISOString(),
+    endAt: endAt.toISOString(),
+  };
+};
 
 export function getTrackedMinutesFromRange(values?: WorkSessionRangeLike) {
   const start = parseTime(values?.startAt);
@@ -77,7 +79,7 @@ export function getCurrentTrackedMinutes({
   rangeValues,
 }: GetCurrentTrackedMinutesParams) {
   return inputMode === "duration"
-    ? getTrackedMinutesFromDuration(durationValues)
+    ? normalizeNonNegativeInteger(durationValues?.durationMinutes)
     : getTrackedMinutesFromRange(rangeValues);
 }
 
@@ -85,7 +87,11 @@ export function canChangeStatus({
   previousTrackedMinutes,
   currentTrackedMinutes,
 }: CanChangeStatusParams) {
-  return previousTrackedMinutes + currentTrackedMinutes > 0;
+  return (
+    normalizeNonNegativeInteger(previousTrackedMinutes) +
+      normalizeNonNegativeInteger(currentTrackedMinutes) >
+    0
+  );
 }
 
 export function getWorkSessionSubmitPayload({
@@ -96,32 +102,35 @@ export function getWorkSessionSubmitPayload({
   nextStatus,
   note,
 }: GetSubmitPayloadParams): TicketWorkSessionSubmitPayload {
-  const trackedMinutes = getCurrentTrackedMinutes({
-    inputMode,
-    durationValues,
-    rangeValues,
-  });
   const payloadBase = {
     ticketId,
     inputMode,
-    trackedMinutes,
     nextStatus,
     note: normalizeNote(note),
   };
 
   if (inputMode === "duration") {
+    const durationMinutes = normalizeNonNegativeInteger(
+      durationValues?.durationMinutes,
+    );
+
     return {
       ...payloadBase,
-      durationMinutes: getTrackedMinutesFromDuration(durationValues),
+      durationMinutes,
+      ...getDurationTimeRange(durationMinutes),
     };
   }
 
   if (!rangeValues?.startAt || !rangeValues.endAt) {
-    return payloadBase;
+    return {
+      ...payloadBase,
+      durationMinutes: getTrackedMinutesFromRange(rangeValues),
+    };
   }
 
   return {
     ...payloadBase,
+    durationMinutes: getTrackedMinutesFromRange(rangeValues),
     startAt: toIsoString(rangeValues.startAt),
     endAt: toIsoString(rangeValues.endAt),
   };

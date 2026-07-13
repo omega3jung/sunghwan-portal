@@ -13,6 +13,7 @@ import {
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
   findNextApprovalStepId,
+  hasTicketWorkAssignmentHistory,
 } from "./ticketRepository";
 import { RequesterUpdateTicketRequestDto } from "./ticketUpdateDto";
 import { mapRequesterUpdateTicketRequestDtoToRowInput } from "./ticketUpdateMapper";
@@ -170,7 +171,16 @@ export async function updateRequesterTicket(
     options,
   );
 
-  return toTicketDetailDto(updatedRow, currentUserName);
+  const hasBeenWorker = await hasTicketWorkAssignmentHistory(
+    updatedRow.tk_id,
+    currentUserName,
+    options,
+  );
+
+  return toTicketDetailDto(updatedRow, {
+    currentUserName,
+    hasBeenWorker,
+  });
 }
 
 type RequesterUpdateChangeSet = {

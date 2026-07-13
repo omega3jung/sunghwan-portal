@@ -350,6 +350,7 @@
     "summary": {
       "current": "This entry",
       "totalAfterSubmit": "Total after submit",
+      "minutes": "{{count}} mins",
       "minutes_one": "{{count}} min",
       "minutes_other": "{{count}} mins"
     }

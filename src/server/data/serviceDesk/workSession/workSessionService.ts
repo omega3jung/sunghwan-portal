@@ -1,8 +1,10 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
+import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 import {
   findActiveTicketViewRowById,
+  hasTicketWorkAssignmentHistory,
   updateTicketWorkProgressById,
 } from "../ticket/ticketRepository";
 import { createHistoryOfStatusChange } from "../ticketHistory";
@@ -23,11 +25,12 @@ type WorkSessionCreateInput = {
   durationMinutes?: number;
   startAt?: string;
   endAt?: string;
-  trackedMinutes: number;
   nextStatus?: WorkSessionStatus;
   note?: string;
   currentUserName: string;
 };
+
+const MS_PER_MINUTE = 60 * 1000;
 
 export async function getWorkSessionsByTicketId(
   ticketId: string,
@@ -63,16 +66,30 @@ export async function createWorkSession(
       throw createStatusError("Ticket not found.", 404);
     }
 
-    if (
-      ticket.tk_approval_step_id !== null ||
-      !normalizeAssigneeUsernames(ticket.tk_assignee_usernames).includes(
+    const currentAssigneeUsernames = normalizeAssigneeUsernames(
+      ticket.tk_assignee_usernames,
+    );
+    const isCurrentWorkAssignee =
+      ticket.tk_approval_step_id === null &&
+      currentAssigneeUsernames.includes(input.currentUserName);
+    const hasBeenWorker =
+      isCurrentWorkAssignee ||
+      (await hasTicketWorkAssignmentHistory(
+        input.ticketId,
         input.currentUserName,
-      )
-    ) {
-      throw createStatusError("Only a current work assignee can track work.", 403);
+        repositoryOptions,
+      ));
+
+    if (!hasBeenWorker) {
+      throw createStatusError(
+        "Only a current or previous work assignee can track work.",
+        403,
+      );
     }
 
-    if (!Number.isInteger(input.trackedMinutes) || input.trackedMinutes <= 0) {
+    const trackedMinutes = resolveTrackedMinutes(input);
+
+    if (trackedMinutes <= 0) {
       throw createStatusError("Tracked minutes must be positive.", 400);
     }
 
@@ -81,7 +98,15 @@ export async function createWorkSession(
         ? input.nextStatus
         : undefined;
 
+    if (nextStatus && !isCurrentWorkAssignee) {
+      throw createStatusError(
+        "Only a current work assignee can change status.",
+        403,
+      );
+    }
+
     if (
+      isCurrentWorkAssignee &&
       (ticket.tk_status === "Assigned" || ticket.tk_status === "Pending") &&
       !nextStatus
     ) {
@@ -99,29 +124,31 @@ export async function createWorkSession(
       throw createStatusError("Invalid work status transition.", 409);
     }
 
-    const status = nextStatus ?? ticket.tk_status;
-    const updatedTicket = await updateTicketWorkProgressById(
-      input.ticketId,
-      {
-        trackedMinutes: input.trackedMinutes,
-        status,
-        assigneeUsername: input.currentUserName,
-      },
-      { query },
-    );
+    if (nextStatus) {
+      const updatedTicket = await updateTicketWorkProgressById(
+        input.ticketId,
+        {
+          status: nextStatus,
+          assigneeUsername: input.currentUserName,
+        },
+        { query },
+      );
 
-    if (!updatedTicket) {
-      throw createStatusError("Ticket work progress could not be updated.", 409);
+      if (!updatedTicket) {
+        throw createStatusError(
+          "Ticket work progress could not be updated.",
+          409,
+        );
+      }
     }
 
     const row = await createWorkSessionRow(
       {
         ticketId: input.ticketId,
         assigneeUsername: input.currentUserName,
-        startAt: input.inputMode === "range" ? (input.startAt ?? null) : null,
-        endAt: input.inputMode === "range" ? (input.endAt ?? null) : null,
-        durationMinutes:
-          input.inputMode === "duration" ? input.trackedMinutes : null,
+        startAt: input.startAt ?? null,
+        endAt: input.endAt ?? null,
+        durationMinutes: trackedMinutes,
         note: input.note?.trim() || null,
       },
       repositoryOptions,
@@ -142,7 +169,7 @@ export async function createWorkSession(
           metadata: {
             previousStatus: ticket.tk_status,
             nextStatus,
-            trackedMinutes: input.trackedMinutes,
+            trackedMinutes,
           },
         },
         { query },
@@ -159,6 +186,21 @@ export async function createWorkSession(
 
     return mapWorkSessionRowToDto(row);
   });
+}
+
+function resolveTrackedMinutes(input: WorkSessionCreateInput) {
+  if (input.inputMode === "range") {
+    const start = input.startAt ? new Date(input.startAt).getTime() : Number.NaN;
+    const end = input.endAt ? new Date(input.endAt).getTime() : Number.NaN;
+
+    if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+      return Math.floor((end - start) / MS_PER_MINUTE);
+    }
+
+    return 0;
+  }
+
+  return normalizeNonNegativeInteger(input.durationMinutes);
 }
 
 function isAllowedWorkStatusTransition(

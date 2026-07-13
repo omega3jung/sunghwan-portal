@@ -350,6 +350,7 @@
     "summary": {
       "current": "Cette saisie",
       "totalAfterSubmit": "Total après envoi",
+      "minutes": "{{count}} min",
       "minutes_one": "{{count}} min",
       "minutes_other": "{{count}} min"
     }

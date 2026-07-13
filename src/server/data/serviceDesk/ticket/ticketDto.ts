@@ -124,6 +124,7 @@ export type TicketListItemDto = {
 };
 
 export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
+  has_been_worker: boolean;
   content: string;
   email: ServiceDeskTicketEmail;
   files: TicketAttachmentMetadataDto[];

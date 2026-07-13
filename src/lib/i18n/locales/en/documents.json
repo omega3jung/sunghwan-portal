@@ -54,6 +54,9 @@
       },
       "2026-06": {
         "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
       }
     }
   },
@@ -114,6 +117,10 @@
       "title": "Ticket Track Time",
       "description": "Session-based work tracking and time recording model."
     },
+    "serviceDeskSettings": {
+      "title": "Service Desk Settings",
+      "description": "Configuration model for ticket creation, approval, assignment, and display behavior."
+    },
     "actionStrategy": {
       "title": "Action Strategy",
       "description": "Action-oriented interaction and metadata design strategy."
@@ -157,6 +164,10 @@
     "ticketForm": {
       "title": "Ticket Form",
       "description": "Form flow, category-driven behavior, and submission design."
+    },
+    "ticketAttachment": {
+      "title": "Ticket Attachment Design",
+      "description": "Attachment handling for files, rich-text images, metadata, and future storage integration."
     },
     "localeStructure": {
       "title": "Locale Structure",
@@ -253,6 +264,22 @@
     "decisionServiceDeskSettingsDtoApiBoundary202606": {
       "title": "2026-06 Service Desk Settings DTO/API Boundary",
       "description": "Settings DTO/API boundary decision log entry for Service Desk."
+    },
+    "decisionTicketAttachmentBoundary202606": {
+      "title": "2026-06 Ticket Attachment Boundary",
+      "description": "Ticket attachment boundary decision log entry."
+    },
+    "decisionTicketFormAndDraftWorkflow202606": {
+      "title": "2026-06 Ticket Form and Draft Workflow",
+      "description": "Ticket form and draft workflow decision log entry."
+    },
+    "decisionTicketActionAndHistoryExecution202607": {
+      "title": "2026-07 Ticket Action and History Execution",
+      "description": "Ticket action and history execution decision log entry."
+    },
+    "decisionTicketRoutingAndUpdatePolicy202607": {
+      "title": "2026-07 Ticket Routing and Update Policy",
+      "description": "Ticket routing and update policy decision log entry."
     }
   }
 }

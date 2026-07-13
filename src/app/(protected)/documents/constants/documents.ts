@@ -109,6 +109,12 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "03-domain/ticket/ticket-track-time.md",
       },
       {
+        id: "service-desk-settings",
+        titleKey: "item.serviceDeskSettings.title",
+        descriptionKey: "item.serviceDeskSettings.description",
+        relativePath: "03-domain/service-desk-settings.md",
+      },
+      {
         id: "action-strategy",
         titleKey: "item.actionStrategy.title",
         descriptionKey: "item.actionStrategy.description",
@@ -191,6 +197,12 @@ export const documentGroups: DocumentGroup[] = [
         titleKey: "item.ticketForm.title",
         descriptionKey: "item.ticketForm.description",
         relativePath: "06-form-design/ticket-form.md",
+      },
+      {
+        id: "ticket-attachment",
+        titleKey: "item.ticketAttachment.title",
+        descriptionKey: "item.ticketAttachment.description",
+        relativePath: "06-form-design/ticket-attachment.md",
       },
     ],
   },
@@ -416,6 +428,45 @@ export const documentGroups: DocumentGroup[] = [
               "item.decisionServiceDeskSettingsDtoApiBoundary202606.description",
             relativePath:
               "08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md",
+          },
+          {
+            id: "decision-ticket-attachment-boundary-2026-06",
+            titleKey: "item.decisionTicketAttachmentBoundary202606.title",
+            descriptionKey:
+              "item.decisionTicketAttachmentBoundary202606.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md",
+          },
+          {
+            id: "decision-ticket-form-and-draft-workflow-2026-06",
+            titleKey: "item.decisionTicketFormAndDraftWorkflow202606.title",
+            descriptionKey:
+              "item.decisionTicketFormAndDraftWorkflow202606.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md",
+          },
+        ],
+      },
+      {
+        id: "2026-07",
+        titleKey: "section.decisionLog.2026-07.title",
+        items: [
+          {
+            id: "decision-ticket-action-and-history-execution-2026-07",
+            titleKey:
+              "item.decisionTicketActionAndHistoryExecution202607.title",
+            descriptionKey:
+              "item.decisionTicketActionAndHistoryExecution202607.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md",
+          },
+          {
+            id: "decision-ticket-routing-and-update-policy-2026-07",
+            titleKey: "item.decisionTicketRoutingAndUpdatePolicy202607.title",
+            descriptionKey:
+              "item.decisionTicketRoutingAndUpdatePolicy202607.description",
+            relativePath:
+              "08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md",
           },
         ],
       },
