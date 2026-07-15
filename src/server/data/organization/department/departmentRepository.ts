@@ -8,6 +8,7 @@ select
   d_name,
   d_code,
   d_description,
+  d_company_id,
   d_parent_id,
   d_active
 from department

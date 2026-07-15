@@ -6,7 +6,7 @@ import { DbDepartment } from "./types";
 
 type DepartmentWriteFields = Pick<
   Department,
-  "name" | "code" | "description" | "parentId" | "active"
+  "name" | "code" | "description" | "companyId" | "parentId" | "active"
 >;
 
 type DbDepartmentWriteInput = Omit<DbDepartment, "d_id"> & {
@@ -24,6 +24,7 @@ export function toDepartmentWritePayload(
     d_name: input.name,
     d_code: undefinedToNull(input.code),
     d_description: undefinedToNull(input.description),
+    d_company_id: Number(input.companyId),
     d_parent_id: idToNumber(input.parentId),
     d_active: input.active,
   };

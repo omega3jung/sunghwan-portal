@@ -1,10 +1,11 @@
 ﻿import { DbJobField } from "@/feature/organization/jobField";
 
 import { internalCompanyMock } from "../companies";
-import headOfficeJobFieldMock from "./headOffice.json";
-import itJobFielMock from "./it.json";
-import logisticsJobFielMock from "./logistics.json";
-import repairCenterJobFielMock from "./repairCenter.json";
+import { clientJobFieldMock } from "./demoJobField";
+import headOfficeJobFieldMock from "./portalOwner/headOffice.json";
+import itJobFielMock from "./portalOwner/it.json";
+import logisticsJobFielMock from "./portalOwner/logistics.json";
+import repairCenterJobFielMock from "./portalOwner/repairCenter.json";
 
 export const jobFieldsMock: DbJobField[] = [
   ...headOfficeJobFieldMock,
@@ -20,8 +21,10 @@ export const allJobFieldsMock: DbJobField[] = [
     jf_name: internalCompanyMock.company_name,
     jf_description: internalCompanyMock.company_name,
     jf_department_id: 0,
+    jf_company_id: 1,
     jf_parent_id: null,
     jf_active: true,
   },
   ...jobFieldsMock,
+  ...clientJobFieldMock,
 ];

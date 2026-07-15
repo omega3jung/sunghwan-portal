@@ -9,6 +9,7 @@ export interface Department {
   description?: LocalizedText;
 
   // organization
+  companyId: string;
   parentId?: string;
 
   // system

@@ -1,41 +1,53 @@
-﻿[
+[
   {
     "d_id": 70,
-    "d_name": { "en": "Logistics" },
+    "d_name": {
+      "en": "Logistics"
+    },
     "d_code": "LO",
     "d_description": {
       "en": "Management of inbound and outbound device shipments"
     },
+    "d_company_id": 1,
     "d_parent_id": 0,
     "d_active": true
   },
   {
     "d_id": 71,
-    "d_name": { "en": "Warehouse" },
+    "d_name": {
+      "en": "Warehouse"
+    },
     "d_code": "WAH",
     "d_description": {
       "en": "Storage and inventory management of packaged devices"
     },
+    "d_company_id": 1,
     "d_parent_id": 70,
     "d_active": true
   },
   {
     "d_id": 72,
-    "d_name": { "en": "Inbound Dock" },
+    "d_name": {
+      "en": "Inbound Dock"
+    },
     "d_code": "IND",
     "d_description": {
       "en": "Inbound shipment receiving and processing"
     },
+    "d_company_id": 1,
     "d_parent_id": 70,
     "d_active": true
   },
   {
     "d_id": 73,
-    "d_name": { "en": "Outbound Dock" },
+    "d_name": {
+      "en": "Outbound Dock"
+    },
     "d_code": "OTD",
     "d_description": {
       "en": "Outbound shipment preparation and dispatch"
     },
+    "d_company_id": 1,
     "d_parent_id": 70,
     "d_active": true
   }

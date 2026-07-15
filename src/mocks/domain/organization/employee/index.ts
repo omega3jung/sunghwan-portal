@@ -1,10 +1,18 @@
 ﻿import { DbEmployee } from "@/feature/organization/employee";
 
+import { clientEmployeeMock } from "./demoEmployee";
 import { internalDemoEmployee } from "./demoUser";
-import headOfficeEmployeeMock from "./headOffice.json";
-import itEmployeeMock from "./it.json";
-import logisticsEmployeeMock from "./logistics.json";
-import repairCenterEmployeeMock from "./repairCenter.json";
+import headOfficeEmployeeMock from "./portalOwner/headOffice.json";
+import itEmployeeMock from "./portalOwner/it.json";
+import logisticsEmployeeMock from "./portalOwner/logistics.json";
+import repairCenterEmployeeMock from "./portalOwner/repairCenter.json";
+
+export const employeesMock: DbEmployee[] = createEmployeesMock();
+
+export const allDepartmentsMock: DbEmployee[] = [
+  ...employeesMock,
+  ...clientEmployeeMock,
+];
 
 export function createEmployeesMock(): DbEmployee[] {
   const employeemock = [

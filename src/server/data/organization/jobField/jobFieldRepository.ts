@@ -8,6 +8,7 @@ select
   jf_name,
   jf_description,
   jf_department_id,
+  jf_company_id,
   jf_parent_id,
   jf_active
 from job_field

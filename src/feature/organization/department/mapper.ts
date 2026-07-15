@@ -17,6 +17,7 @@ export const camelDepartmentMapper: ArrayMapper<DbDepartment, Department> = (
     name: item.d_name,
     code: nullToUndefined(item.d_code),
     description: nullToUndefined(item.d_description),
+    companyId: item.d_company_id.toString(),
     parentId: numberToId(item.d_parent_id),
     active: item.d_active,
   }));
@@ -30,6 +31,7 @@ export const snakeDepartmentMapper: ArrayMapper<Department, DbDepartment> = (
     d_name: item.name,
     d_code: undefinedToNull(item.code),
     d_description: undefinedToNull(item.description),
+    d_company_id: parseInt(item.companyId),
     d_parent_id: idToNumber(item.parentId),
     d_active: item.active,
   }));
