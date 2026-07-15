@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { NS } from "@/lib/application/i18n";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
-import { NS } from "@/lib/i18n";
 
 const SETTINGS_ACCESS_TOAST_ID = "settings-access-guard:forbidden";
 const SETTINGS_AUTH_TOAST_ID = "settings-access-guard:unauthenticated";

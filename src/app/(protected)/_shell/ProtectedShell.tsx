@@ -5,11 +5,13 @@ import { redirect } from "next/navigation";
 
 import { RouteLoadingProvider } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { LeftMenu } from "@/feature/navigation/leftMenu";
-import { NavigationBar } from "@/feature/navigation/navigationBar";
-import { NavigationBarProvider } from "@/feature/navigation/navigationBar/context/NavigationBarContext";
-import { withLeadingSlash } from "@/lib/application/routing";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { LeftMenu } from "@/feature/navigation/leftMenu/client";
+import {
+  NavigationBar,
+  NavigationBarProvider,
+} from "@/feature/navigation/navigationBar/client";
+import { withLeadingSlash } from "@/lib/config/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";

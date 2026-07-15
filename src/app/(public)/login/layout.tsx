@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { withBasePath } from "@/lib/application/routing";
+import { withBasePath } from "@/lib/config/routing";
 import { cn } from "@/shared/utils/presentation";
 
 import { PublicThemeGuard } from "./PublicThemeGuard";

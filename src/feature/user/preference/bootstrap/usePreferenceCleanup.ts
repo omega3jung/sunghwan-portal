@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import { usePreferenceStore } from "@/lib/preferenceStore";
+import { usePreferenceStore } from "@/lib/client/preference";
 
 // clear session and impersonation when sign out.
 export function usePreferenceCleanup() {

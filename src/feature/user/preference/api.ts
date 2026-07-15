@@ -1,6 +1,6 @@
 // src/feature/user/preference/api.ts
 import { Preference } from "@/domain/user/preference";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";
 
 export const userPreferenceApi = {

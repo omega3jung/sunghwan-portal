@@ -1,5 +1,5 @@
 import { Employee } from "@/domain/organization";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import type { ApiResponse, DbParams } from "@/shared/types";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 

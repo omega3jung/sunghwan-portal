@@ -7,24 +7,26 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/hooks/useNavigationBarCurrentLabel";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
-import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
-import { useServiceDeskTicketQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { useAutoStartAssignedTicketOnView } from "@/feature/serviceDesk/ticket/hooks/useAutoStartAssignedTicketOnView";
+import { TicketAttachmentList } from "@/feature/serviceDesk/shared/client";
+import {
+  useAutoStartAssignedTicketOnView,
+  useServiceDeskTicketQuery,
+} from "@/feature/serviceDesk/ticket/client";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
-import { useServiceDeskTicketActionListQuery } from "@/feature/serviceDesk/ticketAction/api/client";
 import {
   TicketActionList,
   TicketActionTool,
-} from "@/feature/serviceDesk/ticketAction/components";
-import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory/api/client";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+  useServiceDeskTicketActionListQuery,
+} from "@/feature/serviceDesk/ticketAction/client";
+import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory/client";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { DbParams, ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";

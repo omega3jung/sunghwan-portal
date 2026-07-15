@@ -14,8 +14,8 @@ import {
   useSaveServiceDeskCategoryTree,
   useServiceDeskCategoryListQuery,
 } from "@/feature/serviceDesk/category/client";
+import { NS } from "@/lib/application/i18n";
 import { useMutationToast } from "@/lib/client/toast";
-import { NS } from "@/lib/i18n";
 
 import { SETTINGS_OFFSET_STYLE } from "../../style";
 import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";

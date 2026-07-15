@@ -10,8 +10,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { CompanySettingItem } from "../types";

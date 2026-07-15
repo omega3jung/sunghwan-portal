@@ -2,9 +2,9 @@ import type { Priority, RiskLevel } from "@/domain/common";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import type { TicketDraftFormValues } from "@/feature/serviceDesk/ticketDraft/forms";
 import type {
-  TicketDraftAttachmentInputDto,
-  TicketDraftWriteDto,
-} from "@/server/data/serviceDesk/ticketDraft";
+  TicketDraftAttachmentInput,
+  TicketDraftWriteInput,
+} from "@/lib/application/serviceDesk";
 
 import type { TicketDraftResource } from "./types";
 
@@ -40,7 +40,7 @@ export function mapTicketDraftPayload(
 
 export function toTicketDraftWritePayloadFromFormValues(
   form: TicketDraftWriteFormPayload,
-): TicketDraftWriteDto {
+): TicketDraftWriteInput {
   return {
     categoryId: form.category ?? null,
     approvalStepId: null,
@@ -92,7 +92,7 @@ function normalizeRiskLevel(value: string | null): RiskLevel | null {
   return null;
 }
 
-function mapAttachments(files: File[]): TicketDraftAttachmentInputDto[] {
+function mapAttachments(files: File[]): TicketDraftAttachmentInput[] {
   return files.map((file) => ({
     name: file.name,
     type: file.type,

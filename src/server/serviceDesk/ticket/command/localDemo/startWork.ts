@@ -1,7 +1,7 @@
 ﻿import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
-import { toTicketMockDetailResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import { toTicketMockDetailResource } from "@/server/serviceDesk/ticket/localDemo/ticketResourceMapper";
 
 import { withLocalTicketWorkerHistory } from "../../localDemo/workerHistory";
 import { getLocalDemoHistories } from "../../state";

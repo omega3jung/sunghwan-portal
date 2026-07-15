@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Card } from "@/components/ui/card";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 

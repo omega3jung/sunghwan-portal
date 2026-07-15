@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation/classnames";
 
 type CreateTicketDialogFooterProps = {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import type { Locale } from "@/shared/types";
 
 export function useServiceDeskSettingsLanguage() {

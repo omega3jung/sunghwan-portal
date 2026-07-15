@@ -2,8 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { jobFieldApi } from "@/feature/organization/jobField";
-
+import { jobFieldApi } from "./api";
 import { jobFieldQueryKeys } from "./queryKeys";
 
 export const useCreateJobFieldMutation = () => {

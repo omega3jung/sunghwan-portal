@@ -4,8 +4,8 @@ import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 
+import i18n from "@/components/i18n/runtime";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import i18n from "@/lib/i18n";
 
 type Props = {
   children: ReactNode;

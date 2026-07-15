@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 export const useTicketAttachments = ({
   maxCount,

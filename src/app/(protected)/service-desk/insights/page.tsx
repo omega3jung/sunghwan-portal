@@ -33,8 +33,6 @@ import type { TicketSummary } from "@/domain/serviceDesk";
 import { useDepartmentListQuery } from "@/feature/organization/department/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
-import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { TicketList } from "@/feature/serviceDesk/ticket/components";
 import {
   AssigneeChart,
   buildAssigneeSummary,
@@ -51,18 +49,20 @@ import {
   SlaBucketValue,
   SlaChart,
   TicketChart,
-} from "@/feature/serviceDesk/ticket/components/chart";
+  TicketList,
+  useServiceDeskTicketSearchQuery,
+} from "@/feature/serviceDesk/ticket/client";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import {
   normalizeTicketSearchCriteriaFormValues,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
 } from "@/feature/serviceDesk/ticketSearch";
-import { TICKET_PERIOD_OPTIONS } from "@/feature/serviceDesk/ticketSearch/components/options";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { TICKET_PERIOD_OPTIONS } from "@/feature/serviceDesk/ticketSearch/client";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import type { DateRangePreset, DbParams } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";

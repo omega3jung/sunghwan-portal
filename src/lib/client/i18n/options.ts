@@ -1,6 +1,6 @@
 import { TFunction } from "i18next";
 
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
 import { ValueLabel } from "@/shared/types/options";
 

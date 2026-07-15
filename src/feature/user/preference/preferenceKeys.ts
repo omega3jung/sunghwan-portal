@@ -1,5 +1,5 @@
 import { createPreferenceKey } from "@/feature/user/preference/utils";
-import { programModuleKeys } from "@/lib/application/moduleKeys";
+import { programModuleKeys } from "@/lib/application/navigation";
 
 const homeKeys = {
   preference: createPreferenceKey(programModuleKeys.home, "portalPreference"),

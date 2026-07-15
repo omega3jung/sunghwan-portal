@@ -26,7 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/client";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import { useLocalizedText } from "@/lib/client/i18n";
 import { cn, initials } from "@/shared/utils/presentation";
 

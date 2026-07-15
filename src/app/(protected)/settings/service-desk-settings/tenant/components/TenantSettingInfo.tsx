@@ -12,8 +12,8 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/application/i18n";
 import { getLanguageOptions } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { Locale } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
 

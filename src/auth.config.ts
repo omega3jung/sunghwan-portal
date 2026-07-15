@@ -3,7 +3,7 @@ import NextAuth, { type AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { authorize, authSession } from "@/auth";
-import { ENVIRONMENT } from "@/lib/environment";
+import { ENVIRONMENT } from "@/lib/config/environment";
 
 export const authOptions: AuthOptions = {
   pages: {

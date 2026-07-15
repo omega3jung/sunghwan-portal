@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Stepper } from "@/components/custom/Stepper";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 type CreateTicketDialogStepFlowProps = {

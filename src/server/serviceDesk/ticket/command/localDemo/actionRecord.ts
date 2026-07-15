@@ -1,5 +1,5 @@
-import { mapFileToAttach } from "@/feature/serviceDesk/shared/utils/mapFileToAttach";
 import { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import { mapFileToAttach } from "@/lib/application/serviceDesk";
 
 import { LocalActionRuntimeContext } from "../types";
 

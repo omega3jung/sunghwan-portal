@@ -29,25 +29,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { MainCategory } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
-import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { TicketList } from "@/feature/serviceDesk/ticket/components";
-import { TicketListPagination } from "@/feature/serviceDesk/ticket/components/TicketList/TicketListPagination";
+import {
+  TicketList,
+  TicketListPagination,
+  useServiceDeskTicketSearchQuery,
+} from "@/feature/serviceDesk/ticket/client";
 import { CreateTicketDialog } from "@/feature/serviceDesk/ticketDraft/client";
 import {
   normalizeTicketSearchCriteriaFormValues,
-  TicketSearchCriteria,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
-  useTicketSearchCriteriaForm,
 } from "@/feature/serviceDesk/ticketSearch";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import {
+  TicketSearchCriteria,
+  useTicketSearchCriteriaForm,
+} from "@/feature/serviceDesk/ticketSearch/client";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import type { DbParams, ImageValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";

@@ -5,7 +5,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { TicketAction } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 import { htmlToPlainText } from "@/shared/utils/value";
 

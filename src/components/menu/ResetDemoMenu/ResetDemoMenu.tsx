@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useResetServiceDeskDemo } from "@/feature/serviceDesk/shared/api/demoReset";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 export function ResetDemoMenu() {
   const { t } = useTranslation(NS.demo);

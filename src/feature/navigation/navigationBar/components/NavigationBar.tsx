@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useCurrentSession } from "@/feature/auth/session/client";
-import { useLeftMenuQuery } from "@/feature/navigation/leftMenu/api/queries";
-import { NS } from "@/lib/i18n";
+import { useLeftMenuQuery } from "@/feature/navigation/leftMenu/client";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { useNavigationBarContext } from "../context/NavigationBarContext";

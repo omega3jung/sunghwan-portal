@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/custom/DatePicker";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import type { DateRangePreset } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";

@@ -1,7 +1,7 @@
 ﻿import { AssignmentRule } from "@/domain/serviceDesk";
 import {
   createListPayloadMapper,
-} from "@/lib/api/utils/payload";
+} from "@/lib/application/api/payload";
 import { ArrayMapper } from "@/shared/types";
 
 import { DbAssignmentRule } from "./types";

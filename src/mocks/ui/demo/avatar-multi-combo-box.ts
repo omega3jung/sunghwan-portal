@@ -1,4 +1,4 @@
-﻿import { withBasePath } from "@/lib/application/routing";
+﻿import { withBasePath } from "@/lib/config/routing";
 import { ImageValueLabel } from "@/shared/types";
 
 export const avatarComboMock: ImageValueLabel[] = [

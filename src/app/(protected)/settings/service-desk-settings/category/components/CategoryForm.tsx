@@ -21,8 +21,8 @@ import {
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { getLanguageOptions } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { Locale, ValueLabel } from "@/shared/types";
 
 import { scopeData } from "../constants";

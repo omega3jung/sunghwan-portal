@@ -3,8 +3,8 @@ import { MessageSquareText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { TicketAction, TicketHistory } from "@/domain/serviceDesk";
-import { getHistorySummary } from "@/feature/serviceDesk/ticketHistory";
-import { NS } from "@/lib/i18n";
+import { getHistorySummary } from "@/feature/serviceDesk/ticketHistory/client";
+import { NS } from "@/lib/application/i18n";
 import { formatTimeDistanceFromNow } from "@/shared/utils/format";
 
 type TicketRecentActivityProps = {

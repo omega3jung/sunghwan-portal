@@ -2,5 +2,4 @@
 
 export * from "./constants";
 export * from "./mapper";
-export * from "./mock";
 export * from "./types";

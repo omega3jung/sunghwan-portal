@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { usePreferenceStore } from "@/lib/preferenceStore";
+import { usePreferenceStore } from "@/lib/client/preference";
 
 // hydrate once on mount (restore sessionStorage -> store)
 export function usePreferenceHydration() {

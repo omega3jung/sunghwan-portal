@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 type Props = {
   stepAssignee: AssigneeByType<"MANAGER">;

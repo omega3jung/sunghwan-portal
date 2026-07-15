@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MainCategory } from "@/domain/serviceDesk";
 import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import { SupportedLanguage } from "@/lib/application/i18n";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import { TicketCreateFormProvider } from "../../context/TicketCreateFormContext";

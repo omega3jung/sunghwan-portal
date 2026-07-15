@@ -10,8 +10,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { TicketAction } from "@/domain/serviceDesk";
-import { TicketAttachmentList } from "@/feature/serviceDesk/shared";
-import { NS } from "@/lib/i18n";
+import { TicketAttachmentList } from "@/feature/serviceDesk/shared/client";
+import { NS } from "@/lib/application/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 import { initials } from "@/shared/utils/presentation";
 

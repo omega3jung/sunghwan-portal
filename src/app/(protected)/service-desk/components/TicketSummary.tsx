@@ -6,10 +6,10 @@ import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
-import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared";
+import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared/client";
 import { selectTicketIsAssigned } from "@/feature/serviceDesk/ticket/utils";
-import { NS } from "@/lib/i18n";
-import { ROUTES } from "@/lib/routes";
+import { NS } from "@/lib/application/i18n";
+import { ROUTES } from "@/lib/config/routing";
 import { ImageValueLabel, ISODateString } from "@/shared/types";
 import {
   formatCompactDurationFromMinutes,

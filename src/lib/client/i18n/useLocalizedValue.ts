@@ -1,6 +1,8 @@
+"use client";
+
 import { useCallback } from "react";
 
-import { usePreferenceStore } from "@/lib/preferenceStore";
+import { usePreferenceStore } from "@/lib/client/preference";
 import { Localized, LocalizedText } from "@/shared/types";
 import { Locale } from "@/shared/types";
 

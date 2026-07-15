@@ -3,7 +3,7 @@ import type {
   SaveServiceDeskApprovalStepTreePayload,
   ServiceDeskApprovalStepListParams,
 } from "@/feature/serviceDesk/approvalStep/types";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 

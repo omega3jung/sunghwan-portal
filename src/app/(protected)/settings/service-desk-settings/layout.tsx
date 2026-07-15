@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { useSettingsScope } from "../_providers";
 import { ServiceDeskSettingsTenantProvider } from "./ServiceDeskSettingsTenantProvider";

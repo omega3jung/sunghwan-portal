@@ -15,12 +15,12 @@ import {
   useUpdateUserPreference,
   useUserPreferenceQuery,
 } from "@/feature/user/preference/client";
-import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
+import { useLanguageState } from "@/feature/user/preference/client";
 import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
 import { isLocale } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { languageOptions } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
-import { createDefaultPreference } from "@/lib/preferenceDefault";
+import { createDefaultPreference } from "@/lib/client/preference";
 import { adminAuth } from "@/mocks/domain/user";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";

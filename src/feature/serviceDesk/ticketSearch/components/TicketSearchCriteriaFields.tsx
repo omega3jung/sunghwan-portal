@@ -15,9 +15,9 @@ import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";

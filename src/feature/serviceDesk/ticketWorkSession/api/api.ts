@@ -1,5 +1,5 @@
 import { TicketWorkSession } from "@/domain/serviceDesk";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 
 import {

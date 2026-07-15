@@ -3,7 +3,7 @@ import type { Tenant } from "@/domain/serviceDesk";
 import type { DbTenantCategoryTree } from "@/feature/serviceDesk/category";
 import { camelTenantMapper } from "@/feature/serviceDesk/tenant/mapper";
 import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
-import { idToNumber } from "@/lib/api/utils/mapId";
+import { idToNumber } from "@/lib/application/api/mapId";
 
 import {
   getLocalDemoTenants,

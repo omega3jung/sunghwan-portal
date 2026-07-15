@@ -1,15 +1,14 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { Attach } from "@/domain/serviceDesk";
+import type {
+  TicketDraftAttachmentInput,
+  TicketDraftWriteInput,
+} from "@/lib/application/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "../ticket/ticketRow";
 
-export type TicketDraftAttachmentInputDto = {
-  name?: string;
-  type?: string;
-  size?: number;
-  url?: string;
-};
+export type TicketDraftAttachmentInputDto = TicketDraftAttachmentInput;
 
 export type TicketDraftDto = {
   id: string;
@@ -32,14 +31,4 @@ export type TicketDraftDto = {
   images: Attach[];
 };
 
-export type TicketDraftWriteDto = {
-  categoryId: string | null;
-  approvalStepId?: string | null;
-  priority?: Priority | null;
-  riskLevel?: RiskLevel | null;
-  dueAt: ISODateString;
-  subject: string;
-  content: string;
-  email: ServiceDeskTicketEmail;
-  attachment: TicketDraftAttachmentInputDto[];
-};
+export type TicketDraftWriteDto = TicketDraftWriteInput;

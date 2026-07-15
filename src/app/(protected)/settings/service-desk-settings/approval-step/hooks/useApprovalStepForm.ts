@@ -10,7 +10,7 @@ import {
   ApprovalAssigneeTypeValue,
 } from "@/domain/serviceDesk";
 import { SupportedLanguage } from "@/lib/application/i18n";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 

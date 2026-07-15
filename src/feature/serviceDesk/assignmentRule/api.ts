@@ -3,7 +3,7 @@ import type {
   SaveServiceDeskAssignmentRuleTreePayload,
   ServiceDeskAssignmentRuleListParams,
 } from "@/feature/serviceDesk/assignmentRule/types";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 

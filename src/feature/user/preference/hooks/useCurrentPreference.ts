@@ -7,7 +7,7 @@ import {
   PortalPreference,
   ScreenMode,
 } from "@/domain/user/preference";
-import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
+import { PreferencePatch, usePreferenceStore } from "@/lib/client/preference";
 import { Locale } from "@/shared/types";
 
 export type UseCurrentPreferenceResult = {

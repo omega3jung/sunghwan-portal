@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { ENVIRONMENT } from "@/lib/environment";
+import { ENVIRONMENT } from "@/lib/config/environment";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";

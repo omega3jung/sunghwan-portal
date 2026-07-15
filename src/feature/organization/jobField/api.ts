@@ -1,5 +1,5 @@
 import { JobField } from "@/domain/organization";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import type { DbParams, OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 

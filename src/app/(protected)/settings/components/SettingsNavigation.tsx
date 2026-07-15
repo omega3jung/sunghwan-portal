@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 

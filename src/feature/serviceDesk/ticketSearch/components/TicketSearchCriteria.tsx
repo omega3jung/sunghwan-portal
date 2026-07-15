@@ -15,7 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MainCategory } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { ImageValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";

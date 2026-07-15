@@ -2,7 +2,7 @@ import { Tenant } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
-} from "@/lib/api/utils/payload";
+} from "@/lib/application/api/payload";
 import { ArrayMapper } from "@/shared/types";
 
 import { DbTenant } from "./types";

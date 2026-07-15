@@ -1,6 +1,6 @@
 import type { FieldPath, PathValue, UseFormReturn } from "react-hook-form";
 
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import type { TicketActionDraftFormValues } from "../../forms";
 import type { TicketActionMode } from "../../types";

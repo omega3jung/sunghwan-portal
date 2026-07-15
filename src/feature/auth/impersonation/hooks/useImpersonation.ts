@@ -8,10 +8,10 @@ import { useEffect } from "react";
 import { SessionUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { userImpersonationApi } from "@/feature/auth/impersonation/api";
-import { leftMenuQueryKeys } from "@/feature/navigation/leftMenu/api/queryKeys";
-import { userProfileQueryKeys } from "@/feature/user/profile/queryKeys";
-import { useAuthSessionStore } from "@/lib/authSessionStore";
-import { useImpersonationStore } from "@/lib/impersonationStore";
+import { leftMenuQueryKeys } from "@/feature/navigation/leftMenu";
+import { userProfileQueryKeys } from "@/feature/user/profile";
+import { useAuthSessionStore } from "@/lib/client/auth";
+import { useImpersonationStore } from "@/lib/client/auth";
 
 /**
  * Provides impersonation state and actions for starting, stopping, and syncing impersonation sessions.

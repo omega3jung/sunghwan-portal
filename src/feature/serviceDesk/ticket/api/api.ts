@@ -6,8 +6,8 @@ import {
   RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
-import client from "@/lib/api";
-import { PaginatedSearchResponse } from "@/server/shared/types/api";
+import type { PaginatedSearchResponse } from "@/lib/application/api";
+import client from "@/lib/client/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 

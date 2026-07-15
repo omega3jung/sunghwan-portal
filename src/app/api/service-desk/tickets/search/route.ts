@@ -19,8 +19,8 @@ import type {
   TicketSortField,
 } from "@/feature/serviceDesk/ticket/api";
 import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/mapper";
-import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
 import { localSearchTickets } from "@/server/serviceDesk/ticket/localDemo";
+import { toTicketMockSummaryResource } from "@/server/serviceDesk/ticket/localDemo/ticketResourceMapper";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 const TICKET_SORT_FIELDS = new Set<TicketSortField>([

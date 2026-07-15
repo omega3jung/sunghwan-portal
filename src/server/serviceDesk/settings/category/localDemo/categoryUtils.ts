@@ -8,7 +8,7 @@ import {
   camelCategoryMapper,
   camelTenantCategoryTreeMapper,
 } from "@/feature/serviceDesk/category/mapper";
-import { idToNumber } from "@/lib/api/utils/mapId";
+import { idToNumber } from "@/lib/application/api/mapId";
 
 export const sortCategories = (categories: DbCategory[]) => {
   return categories

@@ -8,11 +8,11 @@ import { useTranslation } from "react-i18next";
 
 import { ACCESS_LEVEL } from "@/domain/auth";
 import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/client";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
 import { useMutationToast } from "@/lib/client/toast";
-import { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 
 import { useTicketActionMutation } from "../../api/client";

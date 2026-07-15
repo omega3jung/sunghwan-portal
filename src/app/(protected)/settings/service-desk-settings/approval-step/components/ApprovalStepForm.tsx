@@ -20,8 +20,8 @@ import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
 import { accessLevelOptions } from "@/lib/application/auth";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { getLanguageOptions } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import type { DbParams, ValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 

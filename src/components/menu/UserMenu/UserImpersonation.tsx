@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEmployeeListQuery } from "@/feature/organization/employee/queries";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import type { DbParams } from "@/shared/types";

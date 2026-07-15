@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 type TicketActionListHeaderProps = {

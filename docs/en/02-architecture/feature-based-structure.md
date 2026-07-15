@@ -142,15 +142,18 @@ The current explicit sub-boundaries are:
 lib/
   application/  # domain-aware policies and mappings without UI/runtime ownership
   client/       # browser-facing helpers, client state, toast, theme, and client i18n
+  config/       # public environment normalization and shared route configuration
 ```
 
 - `lib/application` may import `domain` and `shared`. It must remain usable by
   both client and server callers.
-- `lib/client` may import `lib/application`, `domain`, and `shared`, and may use
-  browser or client-state dependencies.
-- Existing root modules such as API-client infrastructure, environment helpers,
-  i18n registration, and stores keep their current runtime constraints. Do not
-  infer that every root `lib` module is safe in every runtime.
+- `lib/client` may import `lib/application`, `lib/config`, `domain`, and
+  `shared`, and may use browser or client-state dependencies.
+- `lib/config` owns configuration that is safe in both runtimes, currently
+  normalized public environment values and route/path configuration. It does
+  not import application, feature, UI, or server implementations.
+- The `lib` root contains only these explicit sub-boundaries; runtime-specific
+  modules are not exposed through a mixed root barrel.
 - Database access, secrets, filesystem access, and server use-case
   implementation currently remain under `server`, `auth`, or a server-only
   `app` entry. There is no current `lib/server` boundary.
@@ -405,7 +408,8 @@ compatibility still applies within every allowed dependency.
 | `shared` | external libraries, same shared layer |
 | `domain` | shared |
 | `lib/application` | domain, shared |
-| `lib/client` | lib/application, domain, shared |
+| `lib/config` | shared or external runtime values without upper-layer imports |
+| `lib/client` | lib/application, lib/config, domain, shared |
 | `feature` | client-safe lib, domain, shared, components, runtime-safe feature contracts |
 | `server` | server-safe lib, lib/application, domain, shared, server-safe DTO/pure contract modules currently owned by feature or app API boundaries |
 | `components` | feature public APIs, client-safe lib, domain, shared |
@@ -455,8 +459,9 @@ table alone does not show:
 - A small number of feature API/mapper modules still import server-owned DTO
   types. Treat these as existing exceptions; new feature code must not add a
   dependency on server implementation.
-- Root `lib/i18n` registers locale bundles from application components, so it is
-  an application integration entry rather than a lower-layer module.
+- Base i18n resources and namespace contracts live in `lib/application/i18n`;
+  the client runtime lives in `lib/client/i18n`. Application component locale
+  registration is composed above lib in `components/i18n`.
 
 These couplings describe current implementation ownership; they do not make
 feature UI safe for server code or server implementation safe for client code.

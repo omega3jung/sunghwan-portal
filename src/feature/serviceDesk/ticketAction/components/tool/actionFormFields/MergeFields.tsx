@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { NS } from "@/lib/i18n";
+import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/client";
+import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types/api";
 import {
   combineRuleGroups,

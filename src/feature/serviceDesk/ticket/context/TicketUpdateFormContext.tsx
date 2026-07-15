@@ -10,7 +10,8 @@ import type {
 } from "@/domain/serviceDesk";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import type { SupportedLanguage } from "@/lib/application/i18n";
-import i18n, { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
+import i18n from "@/lib/client/i18n/runtime";
 import type { ImageValueLabel } from "@/shared/types";
 
 type TicketUpdateFormContextValue = {

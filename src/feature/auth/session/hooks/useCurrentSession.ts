@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { CurrentSession } from "@/domain/auth";
 import { useCurrentUserProfileQuery } from "@/feature/user/profile/client";
-import { SessionPatch, useAuthSessionStore } from "@/lib/authSessionStore";
-import { useImpersonationStore } from "@/lib/impersonationStore";
+import { SessionPatch, useAuthSessionStore } from "@/lib/client/auth";
+import { useImpersonationStore } from "@/lib/client/auth";
 
 import { UseCurrentSessionResult } from "../types";
 

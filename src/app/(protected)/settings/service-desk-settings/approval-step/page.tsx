@@ -11,8 +11,8 @@ import {
   useSaveServiceDeskApprovalStepTree,
   useServiceDeskApprovalStepListQuery,
 } from "@/feature/serviceDesk/approvalStep/client";
+import { NS } from "@/lib/application/i18n";
 import { useMutationToast } from "@/lib/client/toast";
-import { NS } from "@/lib/i18n";
 
 import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
 import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";

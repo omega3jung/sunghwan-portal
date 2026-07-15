@@ -1,7 +1,7 @@
 "use client";
 
 import { DataScope } from "@/domain/auth";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 
 import { serviceDeskTicketDraftApi } from "./api";
 import type { TicketDraftFormPayload } from "./mapper";

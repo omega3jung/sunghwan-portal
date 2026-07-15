@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import type { TicketDetail, TicketStatus } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { getTicketActionModeLabelKey } from "../../mapper";
 import type { TicketActionMode } from "../../types";

@@ -3,4 +3,5 @@
 "use client";
 // client export only.
 
+export * from "./api";
 export * from "./queries";

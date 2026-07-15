@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { MenuItem } from "@/feature/navigation/leftMenu/types";
+import type { MenuItem } from "@/feature/navigation/leftMenu";
 
 import type {
   NavigationBreadcrumbDropdownItem,

@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TicketDetail } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { RecipientGroup } from "@/feature/serviceDesk/shared";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { RecipientGroup } from "@/feature/serviceDesk/shared/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
-import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 import { cn, initials } from "@/shared/utils/presentation";
 

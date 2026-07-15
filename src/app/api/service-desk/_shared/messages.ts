@@ -2,7 +2,7 @@ import {
   interpolateMessageTemplate,
   resolveMessageKey,
 } from "@/app/api/_helpers";
-import serviceDeskMessages from "@/lib/i18n/locales/en/serviceDesk.json";
+import serviceDeskMessages from "@/lib/application/i18n/locales/en/serviceDesk.json";
 
 type ServiceDeskMessageOptions = Record<string, unknown>;
 

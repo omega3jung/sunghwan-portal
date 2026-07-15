@@ -8,14 +8,14 @@ import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
-import { MetaBadge } from "@/feature/serviceDesk/shared";
+import { MetaBadge } from "@/feature/serviceDesk/shared/client";
 import {
   selectTicketAssigneeIds,
   selectTicketIsAssigned,
 } from "@/feature/serviceDesk/ticket/utils";
 import { SupportedLanguage } from "@/lib/application/i18n";
-import { NS } from "@/lib/i18n";
-import { ROUTES } from "@/lib/routes";
+import { NS } from "@/lib/application/i18n";
+import { ROUTES } from "@/lib/config/routing";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { ImageValueLabel } from "@/shared/types";
 import { formatTimeDistanceFromNow } from "@/shared/utils/format";

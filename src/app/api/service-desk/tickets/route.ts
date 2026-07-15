@@ -20,12 +20,12 @@ import {
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
 } from "@/feature/serviceDesk/ticket/api";
-import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
 import {
   localCreateTicket,
   localListTickets,
   withLocalTicketWorkerHistory,
 } from "@/server/serviceDesk/ticket/localDemo";
+import { toTicketMockSummaryResource } from "@/server/serviceDesk/ticket/localDemo/ticketResourceMapper";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 

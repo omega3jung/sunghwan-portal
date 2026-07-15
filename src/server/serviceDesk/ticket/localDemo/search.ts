@@ -1,12 +1,12 @@
 import { TicketDetail } from "@/domain/serviceDesk";
 import { camelTicketDetailMapper } from "@/feature/serviceDesk/ticket/api";
 import { TicketSearchRequest } from "@/feature/serviceDesk/ticket/api/types";
+import type { PaginatedSearchResponse } from "@/lib/application/api";
 import {
   applyRuleGroupFilter,
   normalizePagination,
   paginateItems,
 } from "@/server/shared/query";
-import { PaginatedSearchResponse } from "@/server/shared/types/api";
 
 import { getLocalDemoTickets } from "../state";
 import { sortTickets } from "./sort";

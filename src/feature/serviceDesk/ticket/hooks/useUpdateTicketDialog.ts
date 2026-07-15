@@ -9,7 +9,7 @@ import type {
   TicketAttachmentMetadata,
   TicketDetail,
 } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import {
   serviceDeskTicketApi,
   useRequesterUpdateServiceDeskTicket,
@@ -20,8 +20,8 @@ import {
   ticketFormSchema,
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
+import { NS } from "@/lib/application/i18n";
 import { useMutationToast } from "@/lib/client/toast";
-import { NS } from "@/lib/i18n";
 
 import {
   PrepareTicketAttachmentsResponse,
