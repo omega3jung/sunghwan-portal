@@ -1,6 +1,6 @@
 import { ACCESS_LEVEL, type AccessLevel, type UserScope } from "@/domain/auth";
+import { isOwnerCompany } from "@/domain/organization";
 import type { CategoryScope } from "@/domain/serviceDesk/category";
-import { isOwnerCompany } from "@/shared/utils/organization";
 
 export type ServiceDeskAdminType = "OWNER_ADMIN" | "TENANT_ADMIN" | null;
 

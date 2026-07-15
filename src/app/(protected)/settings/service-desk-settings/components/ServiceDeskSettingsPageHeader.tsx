@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import type { ServiceDeskSettingsAccess } from "@/lib/application/serviceDesk";
 import { NS } from "@/lib/i18n";
-import type { ServiceDeskSettingsAccess } from "@/shared/utils/serviceDesk";
 
 type Props = {
   title?: string;

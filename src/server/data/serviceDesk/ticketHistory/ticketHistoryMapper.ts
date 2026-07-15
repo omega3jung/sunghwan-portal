@@ -1,4 +1,4 @@
-import { mapTicketHistoryDisplayMetadata } from "@/domain/serviceDesk";
+import { mapTicketHistoryDisplayMetadata } from "@/lib/application/serviceDesk";
 import type { ISODateString } from "@/shared/types";
 
 import { TicketHistoryDto } from "./ticketHistoryDto";

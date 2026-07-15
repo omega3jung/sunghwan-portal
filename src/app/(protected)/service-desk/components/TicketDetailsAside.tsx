@@ -9,8 +9,8 @@ import type { TicketDetail } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { RecipientGroup } from "@/feature/serviceDesk/shared";
 import { useCurrentPreference } from "@/feature/user/preference/client";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
 import { cn, initials } from "@/shared/utils/presentation";
 

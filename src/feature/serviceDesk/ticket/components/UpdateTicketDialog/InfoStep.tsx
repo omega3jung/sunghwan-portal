@@ -11,8 +11,8 @@ import {
 import { getRichEditorLabels } from "@/components/custom/RichEditor/labels";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { getTicketCategoryRequestTemplate } from "@/feature/serviceDesk/ticket/utils/categorySelection";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
 
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
 import { UpdateTicketInfoFields } from "./InfoFields";

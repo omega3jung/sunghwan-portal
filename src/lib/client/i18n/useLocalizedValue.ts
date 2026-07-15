@@ -1,13 +1,11 @@
-// shared/hooks/useLocalizedText.ts
-
 import { useCallback } from "react";
 
-import { useCurrentLanguage } from "@/feature/user/preference/hooks/useCurrentLanguage";
+import { usePreferenceStore } from "@/lib/preferenceStore";
 import { Localized, LocalizedText } from "@/shared/types";
 import { Locale } from "@/shared/types";
 
 export const useLocalizedValue = (language?: Locale) => {
-  const systemLanguage = useCurrentLanguage();
+  const systemLanguage = usePreferenceStore((state) => state.language);
   const resolvedLanguage = language ?? systemLanguage;
 
   return useCallback(

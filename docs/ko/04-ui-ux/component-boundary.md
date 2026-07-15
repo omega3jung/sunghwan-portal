@@ -45,7 +45,8 @@ Components should have a single responsibility
 
 ### 특징
 
-- 훅을 사용한다 (`React Query`, `Zustand`)
+- Server Component에서 server use case를 호출하거나 Client Component에서 훅을 사용한다
+  (`React Query`, `Zustand`)
 - API와 도메인 로직을 이해한다
 - props를 통해 하위 컴포넌트에 데이터를 전달한다
 
@@ -124,7 +125,7 @@ Data flows from container -> presentational components via props
 ### 규칙
 
 ```id="feature-boundary"
-Feature entry components handle data fetching
+Route Server Components or feature containers own data orchestration
 ```
 
 ---
@@ -144,7 +145,9 @@ TicketList (container)
 
 ### 위치
 
-- 항상 **컨테이너 컴포넌트 또는 feature hook 내부**에 둔다
+- 기본적으로 **Route Server Component, 컨테이너 컴포넌트 또는 feature hook**에 둔다
+- 독립적으로 로딩되는 widget이나 Suspense subtree는 자체 container를 가질 수 있다
+- 프레젠테이셔널 컴포넌트는 직접 API를 호출하지 않는다
 
 ---
 
@@ -166,7 +169,7 @@ Pass only what is needed
 
 ---
 
-### 좋은 예시
+### 필요한 필드만 사용하는 경우
 
 ```tsx id="good-props"
 <TicketItem title={ticket.title} status={ticket.status} />
@@ -174,11 +177,15 @@ Pass only what is needed
 
 ---
 
-### 좋지 않은 예시
+### 객체 자체가 컴포넌트 계약인 경우
 
 ```tsx id="bad-props"
 <TicketItem ticket={ticket} />
 ```
+
+객체 prop 자체를 안티패턴으로 보지 않는다. 하위 컴포넌트가 필요한 필드가
+소수라면 구체적인 prop을 사용하고, domain object 전체가 의미 있는 계약이라면
+객체 prop을 사용할 수 있다.
 
 ---
 
@@ -196,7 +203,7 @@ Pass only what is needed
 ### 규칙
 
 ```id="state-placement"
-State should live in the highest component that needs it
+State should live in the lowest common owner that needs it
 ```
 
 ---
@@ -206,6 +213,33 @@ State should live in the highest component that needs it
 - 다이얼로그 open 상태 -> 컴포넌트 또는 `Zustand`
 - 필터 상태 -> URL 또는 컨테이너
 - 폼 상태 -> `react-hook-form`
+
+전역 상태는 여러 route 또는 독립된 subtree가 같은 runtime state를 공유해야 할
+때만 사용한다.
+
+---
+
+## Server / Client Component 경계
+
+Next.js page와 layout은 기본적으로 Server Component로 유지한다.
+
+### Server Component 책임
+
+- source에 가까운 데이터 조회
+- server use case 호출
+- secret 또는 server-only dependency 사용
+- Client Component에 직렬화 가능한 props 전달
+
+### Client Component 책임
+
+- event handler와 local state
+- lifecycle hook
+- browser API
+- React Query, Zustand, form, translation 등 client hook
+
+`"use client"`는 모든 하위 파일에 반복하는 표시가 아니라 client module graph의
+entry boundary다. interactive subtree를 가능한 작게 유지하고, `client-only`와
+`server-only`를 사용해 잘못된 runtime import를 차단한다.
 
 ---
 
@@ -235,7 +269,8 @@ UI handles interaction, container handles logic
 ### 프레젠테이셔널 컴포넌트
 
 - 재사용성이 높다
-- 여러 feature에서 공유할 수 있다
+- 비즈니스 의미를 모르는 경우 `shared/ui`에서 공유할 수 있다
+- 특정 domain 의미를 가지면 재사용되더라도 해당 feature 또는 application widget에 유지한다
 
 ---
 
@@ -259,6 +294,9 @@ UI handles interaction, container handles logic
 
 - Presentational -> Container
 - feature 간 직접 의존
+
+여러 feature를 조합하는 UI는 `app` 또는 전역 `components` widget이 소유한다.
+이 상위 조합 계층이 각 feature의 명시적인 public contract를 사용한다.
 
 ---
 

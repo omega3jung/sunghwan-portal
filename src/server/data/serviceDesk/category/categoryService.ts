@@ -5,12 +5,12 @@ import {
   type MainCategory,
 } from "@/domain/serviceDesk";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category";
-import { getLocalDemoCategories } from "@/server/serviceDesk/settings/state";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
-} from "@/shared/utils/serviceDesk";
+} from "@/lib/application/serviceDesk";
+import { getLocalDemoCategories } from "@/server/serviceDesk/settings/state";
 
 import {
   getActiveTenantByCompanyId,

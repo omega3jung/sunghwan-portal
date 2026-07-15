@@ -1,5 +1,8 @@
-import { SUPPORTED_LANGUAGES } from "@/app/config/language";
-import { DEFAULT_LANGUAGE, SupportedLanguage } from "@/domain/config";
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  SupportedLanguage,
+} from "@/lib/application/i18n";
 
 export function detectBrowserLanguage(): SupportedLanguage {
   if (typeof navigator === "undefined") {

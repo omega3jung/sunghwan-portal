@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/hooks/useNavigationBarCurrentLabel";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
@@ -23,8 +22,9 @@ import {
 } from "@/feature/serviceDesk/ticketAction/components";
 import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory/api/client";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { DbParams, ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";

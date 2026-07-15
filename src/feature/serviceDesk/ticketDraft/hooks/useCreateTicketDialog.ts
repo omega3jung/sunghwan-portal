@@ -6,7 +6,6 @@ import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import {
@@ -24,9 +23,10 @@ import {
 } from "@/feature/serviceDesk/ticket/forms";
 import { useTicketForm } from "@/feature/serviceDesk/ticket/forms/client";
 import { getTicketCategoryParentId } from "@/feature/serviceDesk/ticket/utils/categorySelection";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
+import { useMutationToast } from "@/lib/client/toast";
 import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
-import { useLocalizedText } from "@/shared/hooks";
 import { DbParams } from "@/shared/types";
 import { createFieldFilter } from "@/shared/utils/routing";
 

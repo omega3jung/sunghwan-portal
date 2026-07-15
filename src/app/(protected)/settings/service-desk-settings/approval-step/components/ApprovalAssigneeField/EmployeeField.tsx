@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { SupportedLanguage } from "@/domain/config";
 import type { Employee } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
 
 import { MAX_ASSIGNEE_PER_APPROVAL } from "../../constants";

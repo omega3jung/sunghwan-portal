@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
@@ -46,9 +45,10 @@ import {
   useTicketSearchCriteriaForm,
 } from "@/feature/serviceDesk/ticketSearch";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
-import { useLocalizedValue } from "@/shared/hooks";
 import type { DbParams, ImageValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 

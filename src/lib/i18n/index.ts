@@ -1,13 +1,15 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import { SUPPORTED_LANGUAGES } from "@/app/config/language";
 import { datePickerLocales } from "@/components/custom/DatePicker/locales";
 import { fileAttachmentLocales } from "@/components/custom/FileAttachment/locales";
 import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
-import { DEFAULT_LANGUAGE } from "@/domain/config";
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+} from "@/lib/application/i18n";
 
 import { en } from "./locales/en";
 import { es } from "./locales/es";

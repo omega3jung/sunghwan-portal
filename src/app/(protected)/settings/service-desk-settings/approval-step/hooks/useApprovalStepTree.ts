@@ -11,12 +11,12 @@ import {
   resolveTreeNodeIdByPath,
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
 import {
   CategoryApprovalSettings,
   CategoryScope,
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import {
   getDefaultApprovalData,

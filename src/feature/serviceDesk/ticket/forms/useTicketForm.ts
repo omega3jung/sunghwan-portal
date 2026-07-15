@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { SessionUser } from "@/domain/auth";
+import { getLocalizedText } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
-import { getLocalizedText } from "@/shared/utils/i18n";
 
 import { ticketFormDefaultValues, ticketFormSchema, TicketFormValues } from ".";
 

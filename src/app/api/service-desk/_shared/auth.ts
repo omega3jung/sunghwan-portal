@@ -5,6 +5,13 @@ import { getAuthToken } from "@/app/api/_helpers/auth";
 import type { DataScope } from "@/domain/auth";
 import { type CategoryScope } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
+import {
+  canManageServiceDeskSettings,
+  canReadServiceDeskSettings,
+  getServiceDeskAdminType,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsResource,
+} from "@/lib/application/serviceDesk";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 import {
   getServiceDeskSettingsTenantContext,
@@ -12,13 +19,6 @@ import {
   type ServiceDeskSettingsTenantContext,
 } from "@/server/data/serviceDesk/tenant";
 import { getUserProfileDtoByUsername } from "@/server/data/users";
-import {
-  canManageServiceDeskSettings,
-  canReadServiceDeskSettings,
-  getServiceDeskAdminType,
-  resolveSettingsAccess,
-  type ServiceDeskSettingsResource,
-} from "@/shared/utils/serviceDesk";
 
 export type ServiceDeskSettingsPrincipalContext = {
   principal: AppUser;

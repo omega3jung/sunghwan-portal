@@ -24,8 +24,8 @@ import {
   MAX_ATTACH_SIZE,
   TICKET_ATTACHMENT_ACCEPT,
 } from "@/feature/serviceDesk/ticket/constants";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import type { ImageValueLabel } from "@/shared/types";
 
 import type { TicketActionDraftFormValues } from "../../forms";

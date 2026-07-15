@@ -7,6 +7,7 @@ import {
   type AssignmentRecommendationSource,
   EMPTY_ASSIGNMENT_RECOMMENDATION,
 } from "@/feature/serviceDesk/assignmentRule/recommendation";
+import { getLocalizedText } from "@/lib/application/i18n";
 import {
   type EligibleEmployee,
   getEligibleEmployeesForCategory,
@@ -17,7 +18,6 @@ import {
 } from "@/server/data/serviceDesk/category";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 import type { ImageValueLabel, Locale } from "@/shared/types";
-import { getLocalizedText } from "@/shared/utils/i18n";
 
 import { getLocalDemoAssignmentRules } from "../../state";
 

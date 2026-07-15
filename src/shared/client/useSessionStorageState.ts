@@ -6,7 +6,7 @@ import {
   readSessionStorage,
   removeSessionStorage,
   writeSessionStorage,
-} from "@/lib/sessionStorage";
+} from "./sessionStorage";
 
 type Options<T> = {
   key: string;

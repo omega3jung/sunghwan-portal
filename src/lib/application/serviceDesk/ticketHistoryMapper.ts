@@ -1,9 +1,9 @@
-import type { TicketHistoryDisplayMetadata } from "./model";
 import type {
   TicketCloseReason,
+  TicketHistoryDisplayMetadata,
   TicketHistoryEvent,
   TicketHistorySource,
-} from "./types";
+} from "@/domain/serviceDesk";
 
 const TICKET_HISTORY_SOURCES = new Set<TicketHistorySource>([
   "USER_ACTION",
@@ -62,29 +62,19 @@ export function mapTicketHistoryDisplayMetadata(
   const metadata: TicketHistoryDisplayMetadata = {};
 
   const source = toTicketHistorySource(raw.source);
-  if (source) {
-    metadata.source = source;
-  }
+  if (source) metadata.source = source;
 
   const event = toTicketHistoryEvent(raw.event);
-  if (event) {
-    metadata.event = event;
-  }
+  if (event) metadata.event = event;
 
   const reason = toNonEmptyString(raw.reason);
-  if (reason) {
-    metadata.reason = reason;
-  }
+  if (reason) metadata.reason = reason;
 
   const note = toNonEmptyString(raw.note);
-  if (note) {
-    metadata.note = note;
-  }
+  if (note) metadata.note = note;
 
   const closeReason = toTicketCloseReason(raw.closeReason);
-  if (closeReason) {
-    metadata.closeReason = closeReason;
-  }
+  if (closeReason) metadata.closeReason = closeReason;
 
   const resolvedGraceDays = toFiniteNumber(raw.resolvedGraceDays);
   if (resolvedGraceDays !== undefined) {
@@ -92,29 +82,19 @@ export function mapTicketHistoryDisplayMetadata(
   }
 
   const mergedIntoTicketId = toNonEmptyString(raw.mergedIntoTicketId);
-  if (mergedIntoTicketId) {
-    metadata.mergedIntoTicketId = mergedIntoTicketId;
-  }
+  if (mergedIntoTicketId) metadata.mergedIntoTicketId = mergedIntoTicketId;
 
   const mergedIntoTicketNo = toNonEmptyString(raw.mergedIntoTicketNo);
-  if (mergedIntoTicketNo) {
-    metadata.mergedIntoTicketNo = mergedIntoTicketNo;
-  }
+  if (mergedIntoTicketNo) metadata.mergedIntoTicketNo = mergedIntoTicketNo;
 
   const previousStatus = toNonEmptyString(raw.previousStatus);
-  if (previousStatus) {
-    metadata.previousStatus = previousStatus;
-  }
+  if (previousStatus) metadata.previousStatus = previousStatus;
 
   const nextStatus = toNonEmptyString(raw.nextStatus);
-  if (nextStatus) {
-    metadata.nextStatus = nextStatus;
-  }
+  if (nextStatus) metadata.nextStatus = nextStatus;
 
   const changedFields = toStringArray(raw.changedFields);
-  if (changedFields) {
-    metadata.changedFields = changedFields;
-  }
+  if (changedFields) metadata.changedFields = changedFields;
 
   if (typeof raw.routingSensitiveChanged === "boolean") {
     metadata.routingSensitiveChanged = raw.routingSensitiveChanged;
@@ -138,9 +118,7 @@ export function mapTicketHistoryDisplayMetadata(
     metadata.nextApprovalStepId = nextApprovalStepId;
   }
 
-  const previousAssigneeUsernames = toStringArray(
-    raw.previousAssigneeUsernames,
-  );
+  const previousAssigneeUsernames = toStringArray(raw.previousAssigneeUsernames);
   if (previousAssigneeUsernames) {
     metadata.previousAssigneeUsernames = previousAssigneeUsernames;
   }
@@ -151,9 +129,7 @@ export function mapTicketHistoryDisplayMetadata(
   }
 
   const assigneeUsernames = toStringArray(raw.assigneeUsernames);
-  if (assigneeUsernames) {
-    metadata.assigneeUsernames = assigneeUsernames;
-  }
+  if (assigneeUsernames) metadata.assigneeUsernames = assigneeUsernames;
 
   return Object.keys(metadata).length > 0 ? metadata : null;
 }
@@ -172,9 +148,7 @@ function toNonEmptyString(value: unknown): string | undefined {
     : undefined;
 }
 
-function toTicketHistorySource(
-  value: unknown,
-): TicketHistorySource | undefined {
+function toTicketHistorySource(value: unknown): TicketHistorySource | undefined {
   const source = toNonEmptyString(value);
 
   return source && TICKET_HISTORY_SOURCES.has(source as TicketHistorySource)
@@ -193,8 +167,7 @@ function toTicketHistoryEvent(value: unknown): TicketHistoryEvent | undefined {
 function toTicketCloseReason(value: unknown): TicketCloseReason | undefined {
   const closeReason = toNonEmptyString(value);
 
-  return closeReason &&
-    TICKET_CLOSE_REASONS.has(closeReason as TicketCloseReason)
+  return closeReason && TICKET_CLOSE_REASONS.has(closeReason as TicketCloseReason)
     ? (closeReason as TicketCloseReason)
     : undefined;
 }
@@ -206,25 +179,15 @@ function toFiniteNumber(value: unknown): number | undefined {
 }
 
 function toNullableString(value: unknown): string | null | undefined {
-  if (value === null) {
-    return null;
-  }
-
-  if (typeof value === "string" && value.trim().length > 0) {
-    return value;
-  }
-
-  if (typeof value === "number") {
-    return String(value);
-  }
+  if (value === null) return null;
+  if (typeof value === "string" && value.trim().length > 0) return value;
+  if (typeof value === "number") return String(value);
 
   return undefined;
 }
 
 function toStringArray(value: unknown): string[] | undefined {
-  if (!Array.isArray(value)) {
-    return undefined;
-  }
+  if (!Array.isArray(value)) return undefined;
 
   const values = value.filter(
     (item): item is string =>

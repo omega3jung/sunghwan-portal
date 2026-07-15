@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
 import { MainCategory } from "@/domain/serviceDesk";
 import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
+import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 

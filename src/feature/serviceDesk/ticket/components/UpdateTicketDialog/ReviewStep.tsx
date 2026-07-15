@@ -20,8 +20,8 @@ import {
   formatTicketCategoryPath,
   resolveTicketCategoryMeta,
 } from "@/feature/serviceDesk/ticket/utils/categorySelection";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
 import { bytesToKB } from "@/shared/utils/browser";
 
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";

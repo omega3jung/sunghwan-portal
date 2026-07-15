@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEmployeeListQuery } from "@/feature/organization/employee/queries";
 import { useCurrentPreference } from "@/feature/user/preference/client";
-import { useLocalizedValue } from "@/shared/hooks";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import type { DbParams } from "@/shared/types";
 import { createFieldFilter } from "@/shared/utils/routing";
 

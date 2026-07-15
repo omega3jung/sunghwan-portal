@@ -1,9 +1,9 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { DataScope } from "@/domain/auth";
+import { isOwnerCompany } from "@/domain/organization";
 import { internalCompanyMock } from "@/mocks/domain/organization/companies";
 import { getPortalOwnerCompany } from "@/server/data/organization/company";
 import { getLocalDemoTenants } from "@/server/serviceDesk/settings/state";
-import { isOwnerCompany } from "@/shared/utils/organization";
 
 import {
   CreateTenantInputDto,

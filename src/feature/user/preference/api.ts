@@ -1,5 +1,5 @@
 // src/feature/user/preference/api.ts
-import { Preference } from "@/domain/config";
+import { Preference } from "@/domain/user/preference";
 import client from "@/lib/api";
 import { ApiResponse } from "@/shared/types";
 

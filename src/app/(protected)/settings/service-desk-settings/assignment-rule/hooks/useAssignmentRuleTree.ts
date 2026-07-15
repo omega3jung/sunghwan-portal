@@ -8,12 +8,12 @@ import {
   resolveTreeNodeIdByPath,
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
 import {
   AssignmentRule,
   CategoryScope,
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";

@@ -9,9 +9,9 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";

@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { SupportedLanguage } from "@/domain/config";
 import type { TicketSummary } from "@/domain/serviceDesk";
 import { useDepartmentListQuery } from "@/feature/organization/department/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
@@ -61,9 +60,10 @@ import {
 } from "@/feature/serviceDesk/ticketSearch";
 import { TICKET_PERIOD_OPTIONS } from "@/feature/serviceDesk/ticketSearch/components/options";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
-import { useLocalizedValue } from "@/shared/hooks";
 import type { DateRangePreset, DbParams } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";
 import { createFieldFilter } from "@/shared/utils/routing";

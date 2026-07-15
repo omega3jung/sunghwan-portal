@@ -8,7 +8,7 @@ import {
   getServiceDeskAdminType,
   type ServiceDeskAdminType,
   type ServiceDeskSettingsPrincipal,
-} from "@/shared/utils/serviceDesk";
+} from "@/lib/application/serviceDesk";
 
 type SettingsScopeContextValue = {
   adminType: ServiceDeskAdminType;

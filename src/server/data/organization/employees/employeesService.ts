@@ -2,17 +2,15 @@ import { ACCESS_LEVEL, type DataScope } from "@/domain/auth";
 import {
   type ApprovalAssigneeType,
   type AssigneeGroup,
+  resolveAssignmentCompanyPolicy,
 } from "@/domain/serviceDesk";
+import { getAllowedAssignmentCompanyIds } from "@/lib/application/serviceDesk";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 import { type ServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
 import { getPortalOwnerCompanyId } from "@/server/data/serviceDesk/tenant";
 import { getUserProfileDtoByUsername } from "@/server/data/users/userService";
-import {
-  getAllowedAssignmentCompanyIds,
-  resolveAssignmentCompanyPolicy,
-} from "@/shared/utils/serviceDesk";
 
 import { EmployeeResponseDto } from "./employeesDto";
 import { toEmployeesResponseDto } from "./employeesMapper";

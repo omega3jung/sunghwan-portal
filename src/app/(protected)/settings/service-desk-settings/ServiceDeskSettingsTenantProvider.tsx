@@ -9,19 +9,19 @@ import {
   useState,
 } from "react";
 
+import { isOwnerCompany } from "@/domain/organization";
 import {
   type CategoryScope,
   type Tenant,
 } from "@/domain/serviceDesk";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
 import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
-import { isOwnerCompany } from "@/shared/utils/organization";
 import {
   canManageServiceDeskSettings,
   canReadServiceDeskSettings,
   resolveSettingsAccess,
   type ServiceDeskSettingsResource,
-} from "@/shared/utils/serviceDesk";
+} from "@/lib/application/serviceDesk";
 
 import { useSettingsScope } from "../_providers";
 

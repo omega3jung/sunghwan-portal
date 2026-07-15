@@ -7,13 +7,13 @@ import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { SupportedLanguage } from "@/domain/config";
 import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
 import { MetaBadge } from "@/feature/serviceDesk/shared";
 import {
   selectTicketAssigneeIds,
   selectTicketIsAssigned,
 } from "@/feature/serviceDesk/ticket/utils";
+import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/i18n";
 import { ROUTES } from "@/lib/routes";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";

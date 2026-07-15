@@ -27,8 +27,8 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { ENVIRONMENT } from "@/lib/environment";
-import { useLocalizedText } from "@/shared/hooks";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";

@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CategoryScope } from "@/domain/serviceDesk";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
 import { useSettingsScope } from "../../_providers";

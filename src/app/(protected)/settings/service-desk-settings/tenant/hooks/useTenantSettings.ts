@@ -10,8 +10,8 @@ import {
   useDeleteServiceDeskTenant,
   useUpdateServiceDeskTenant,
 } from "@/feature/serviceDesk/tenant/client";
+import { useMutationToast } from "@/lib/client/toast";
 import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
 import { Locale } from "@/shared/types";
 
 import { TenantSettingItem } from "../types";

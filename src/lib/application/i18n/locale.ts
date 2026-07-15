@@ -1,5 +1,10 @@
-import { SUPPORTED_LANGUAGES } from "@/app/config/language";
 import { Locale } from "@/shared/types";
+
+export const SUPPORTED_LANGUAGES: Locale[] = ["en", "ko", "fr", "es"] as const;
+
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
+export const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 
 /**
  * Checks whether a string matches one of the application's supported locale codes.

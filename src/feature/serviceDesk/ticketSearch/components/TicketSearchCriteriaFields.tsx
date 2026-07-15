@@ -16,8 +16,8 @@ import {
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared";
 import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
 import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";

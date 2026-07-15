@@ -8,8 +8,8 @@ import {
   tServiceDeskApi,
 } from "@/app/api/service-desk/_shared";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
+import { isLocale } from "@/lib/application/i18n";
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo/recommendation";
-import { isLocale } from "@/shared/utils/i18n";
 
 const parseRecommendationInput = async (
   request: NextRequest,

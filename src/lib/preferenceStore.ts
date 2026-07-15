@@ -1,9 +1,14 @@
 import { create } from "zustand";
 
-import { ColorTheme, PortalPreference, ScreenMode } from "@/domain/config";
-import { createDefaultPreference } from "@/domain/user/preference";
+import {
+  ColorTheme,
+  PortalPreference,
+  ScreenMode,
+} from "@/domain/user/preference";
+import { isLocale } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
-import { isLocale } from "@/shared/utils/i18n";
+
+import { createDefaultPreference } from "./preferenceDefault";
 
 const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_preference",

@@ -1,5 +1,6 @@
-import { PortalPreference } from "@/domain/config";
-import { detectBrowserLanguage } from "@/lib/i18n/detectLanguage";
+import type { PortalPreference } from "@/domain/user/preference";
+
+import { detectBrowserLanguage } from "./i18n/detectLanguage";
 
 export function createDefaultPreference(): PortalPreference {
   return {

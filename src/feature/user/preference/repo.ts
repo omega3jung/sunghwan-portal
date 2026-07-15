@@ -1,6 +1,6 @@
 // src/feature/user/preference/repo.ts
 
-import { Preference } from "@/domain/config";
+import { Preference } from "@/domain/user/preference";
 
 import { userPreferenceApi } from "./api";
 import { GetPreferenceInput, SavePreferenceInput } from "./types";

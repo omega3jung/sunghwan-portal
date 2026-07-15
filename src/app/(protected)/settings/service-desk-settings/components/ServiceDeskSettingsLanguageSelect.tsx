@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getLanguageOptions } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { getLanguageOptions } from "@/shared/constants";
 import type { Locale } from "@/shared/types";
 
 export function ServiceDeskSettingsLanguageSelect({

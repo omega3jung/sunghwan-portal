@@ -8,6 +8,11 @@ import {
 } from "@/app/api/service-desk/_shared";
 import type { DataScope } from "@/domain/auth";
 import {
+  canManageServiceDeskSettings,
+  canReadServiceDeskSettings,
+  resolveSettingsAccess,
+} from "@/lib/application/serviceDesk";
+import {
   type EligibleActorPurpose,
   getEligibleEmployeesForCategory,
   getEmployees,
@@ -22,11 +27,6 @@ import {
   getStringRuleGroupValue,
   parseRuleGroupFilter,
 } from "@/server/shared/query";
-import {
-  canManageServiceDeskSettings,
-  canReadServiceDeskSettings,
-  resolveSettingsAccess,
-} from "@/shared/utils/serviceDesk";
 
 import type { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";

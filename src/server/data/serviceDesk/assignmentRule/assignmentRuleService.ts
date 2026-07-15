@@ -1,9 +1,9 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { getLocalizedText } from "@/lib/application/i18n";
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
 import { getEligibleEmployeesForCategory } from "@/server/data/organization/employees";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
 import type { ImageValueLabel, Locale } from "@/shared/types";
-import { getLocalizedText } from "@/shared/utils/i18n";
 
 import type { CategoryDto } from "../category/categoryDto";
 import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";

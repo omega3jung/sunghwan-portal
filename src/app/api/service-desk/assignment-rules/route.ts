@@ -19,16 +19,16 @@ import {
 } from "@/feature/serviceDesk/assignmentRule/mapper";
 import { saveAssignmentRuleTreeSchema } from "@/feature/serviceDesk/assignmentRule/request.schema";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+} from "@/lib/application/serviceDesk";
 import { assertAssignmentAssigneeEligible } from "@/server/data/organization/employees";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
 import {
   localListAssignmentRules,
   localSaveAssignmentRuleTree,
 } from "@/server/serviceDesk/settings/assignmentRule/localDemo";
-import {
-  canManageServiceDeskSettings,
-  resolveSettingsAccess,
-} from "@/shared/utils/serviceDesk";
 
 export async function GET(request: NextRequest) {
   try {

@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 
 import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/service-desk/_shared";
 import { authOptions } from "@/auth.config";
-import { getServiceDeskAdminType } from "@/shared/utils/serviceDesk";
+import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
 import { SettingsAccessGuard, SettingsScopeProvider } from "./_providers";
 import { SettingsNavigation } from "./components";

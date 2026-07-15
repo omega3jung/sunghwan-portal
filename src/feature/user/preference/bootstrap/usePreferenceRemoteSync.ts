@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import { PortalPreference, Preference } from "@/domain/config";
-import { createDefaultPreference } from "@/domain/user/preference";
+import { PortalPreference, Preference } from "@/domain/user/preference";
+import { createDefaultPreference } from "@/lib/preferenceDefault";
 import { usePreferenceStore } from "@/lib/preferenceStore";
 
 import { preferenceKeys } from "../preferenceKeys";

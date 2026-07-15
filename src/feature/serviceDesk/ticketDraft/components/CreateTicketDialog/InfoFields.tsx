@@ -25,8 +25,8 @@ import {
   mapTicketCategoriesToHierarchicalItems,
   resolveTicketCategoryMeta,
 } from "@/feature/serviceDesk/ticket/utils/categorySelection";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks/useLocalizedValue";
 import type { ImageValueLabel } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 

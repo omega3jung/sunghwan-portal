@@ -15,12 +15,13 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { SupportedLanguage } from "@/domain/config";
 import { useDepartmentListQuery } from "@/feature/organization/department/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
+import { accessLevelOptions } from "@/lib/application/auth";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { getLanguageOptions } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { accessLevelOptions, getLanguageOptions } from "@/shared/constants";
 import type { DbParams, ValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 

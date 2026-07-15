@@ -8,6 +8,10 @@ import {
 } from "@/app/api/service-desk/_shared";
 import { camelDepartmentMapper } from "@/feature/organization/department";
 import { camelJobFieldMapper } from "@/feature/organization/jobField";
+import {
+  canReadServiceDeskSettings,
+  resolveSettingsAccess,
+} from "@/lib/application/serviceDesk";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import { getActiveDepartments } from "@/server/data/organization/department";
@@ -22,10 +26,6 @@ import {
   getStringRuleGroupValue,
   parseRuleGroupFilter,
 } from "@/server/shared/query";
-import {
-  canReadServiceDeskSettings,
-  resolveSettingsAccess,
-} from "@/shared/utils/serviceDesk";
 
 import type { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue } from "../utils";

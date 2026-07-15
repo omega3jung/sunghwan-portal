@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { TicketDetail } from "@/domain/serviceDesk";
+import { useMutationToast } from "@/lib/client/toast";
 import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
 import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 import { useSubmitTicketWorkSession } from "../../api/client";

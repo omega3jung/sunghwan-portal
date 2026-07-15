@@ -3,13 +3,13 @@
 import { createContext, useContext } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
-import type { SupportedLanguage } from "@/domain/config";
 import type {
   MainCategory,
   TicketAttachmentMetadata,
   TicketDetail,
 } from "@/domain/serviceDesk";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
+import type { SupportedLanguage } from "@/lib/application/i18n";
 import i18n, { NS } from "@/lib/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 

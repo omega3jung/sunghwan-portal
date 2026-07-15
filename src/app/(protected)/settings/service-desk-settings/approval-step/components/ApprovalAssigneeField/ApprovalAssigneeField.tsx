@@ -1,10 +1,10 @@
-import { SupportedLanguage } from "@/domain/config";
 import type { Department, Employee, JobField } from "@/domain/organization";
 import {
   ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
   AssigneeByType,
 } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import { DepartmentField } from "./DepartmentField";
 import { EmployeeField } from "./EmployeeField";

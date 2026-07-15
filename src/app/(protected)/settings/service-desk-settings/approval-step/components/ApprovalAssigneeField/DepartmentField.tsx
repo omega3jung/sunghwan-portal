@@ -11,11 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SupportedLanguage } from "@/domain/config";
 import type { Department } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";
 
 type Props = {

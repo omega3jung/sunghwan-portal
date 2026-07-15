@@ -8,9 +8,9 @@ import {
   Role,
   UserScope,
 } from "@/domain/auth";
+import { isOwnerCompany } from "@/domain/organization";
 import { resolveDemoAuth, resolveDemoProfile } from "@/mocks/domain/user";
 import { getUserProfileDtoByUsername } from "@/server/data/users";
-import { isOwnerCompany } from "@/shared/utils/organization";
 
 export async function getAuthToken(req: NextRequest) {
   return getToken({ req, secret: process.env.NEXTAUTH_SECRET });

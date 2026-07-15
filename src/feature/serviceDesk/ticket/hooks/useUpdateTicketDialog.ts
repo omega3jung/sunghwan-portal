@@ -20,8 +20,8 @@ import {
   ticketFormSchema,
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
+import { useMutationToast } from "@/lib/client/toast";
 import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
 
 import {
   PrepareTicketAttachmentsResponse,

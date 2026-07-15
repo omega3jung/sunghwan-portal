@@ -1,5 +1,6 @@
-import { DEFAULT_LANGUAGE } from "@/domain/config";
 import { Locale, LocalizedText } from "@/shared/types";
+
+import { DEFAULT_LANGUAGE } from "./locale";
 
 /**
  * Returns localized text for a requested language with a fallback to the default language.

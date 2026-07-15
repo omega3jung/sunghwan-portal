@@ -17,8 +17,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
 import { cn } from "@/shared/utils/presentation";
 
 import { TenantSettingItem } from "../types";

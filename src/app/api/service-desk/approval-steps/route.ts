@@ -20,6 +20,10 @@ import {
 } from "@/feature/serviceDesk/approvalStep/mapper";
 import { saveApprovalStepTreeSchema } from "@/feature/serviceDesk/approvalStep/request.schema";
 import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+} from "@/lib/application/serviceDesk";
 import { assertApprovalAssigneeEligible } from "@/server/data/organization/employees";
 import {
   getCategoryApprovalSettingsByTenantId,
@@ -33,10 +37,6 @@ import {
   getApprovalStepStore,
   normalizeCategoryApprovalSettings,
 } from "@/server/serviceDesk/settings/approvalStep/localDemo/approvalStepUtils";
-import {
-  canManageServiceDeskSettings,
-  resolveSettingsAccess,
-} from "@/shared/utils/serviceDesk";
 
 export async function GET(request: NextRequest) {
   try {

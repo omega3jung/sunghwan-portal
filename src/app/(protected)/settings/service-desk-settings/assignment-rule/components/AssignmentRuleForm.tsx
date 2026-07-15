@@ -10,13 +10,13 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SupportedLanguage } from "@/domain/config";
 import type { CategoryScope } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { getLanguageOptions } from "@/lib/client/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { NS } from "@/lib/i18n";
-import { getLanguageOptions } from "@/shared/constants";
-import { useLocalizedValue } from "@/shared/hooks";
 import type {
   DbParams,
   ImageValueLabel,

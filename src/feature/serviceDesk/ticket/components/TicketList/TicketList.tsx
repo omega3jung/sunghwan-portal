@@ -2,8 +2,8 @@
 
 import { useTranslation } from "react-i18next";
 
-import { SupportedLanguage } from "@/domain/config";
 import { TicketSummary } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/i18n";
 import { ImageValueLabel } from "@/shared/types";
 

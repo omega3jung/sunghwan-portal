@@ -9,7 +9,7 @@ import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSessio
 import { LeftMenu } from "@/feature/navigation/leftMenu";
 import { NavigationBar } from "@/feature/navigation/navigationBar";
 import { NavigationBarProvider } from "@/feature/navigation/navigationBar/context/NavigationBarContext";
-import { withLeadingSlash } from "@/shared/utils/routing";
+import { withLeadingSlash } from "@/lib/application/routing";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";

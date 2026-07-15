@@ -1,6 +1,6 @@
 ﻿import { AuthUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { displayNameMapper } from "@/shared/utils/i18n/displayName";
+import { displayNameMapper } from "@/lib/application/organization";
 
 import {
   adminEmployee,

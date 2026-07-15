@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { UserIdRouteContext } from "@/app/api/_helpers/types";
-import { Preference } from "@/domain/config";
+import { Preference } from "@/domain/user/preference";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = context.params;

@@ -1,4 +1,4 @@
-import { ColorTheme } from "@/domain/config";
+import { ColorTheme } from "@/domain/user/preference";
 
 /**
  * Applies the selected color theme to the root document element.
