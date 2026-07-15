@@ -62,7 +62,7 @@ export type ExecutedLocalAction = {
 
 export type LocalActionHandler = (
   context: LocalActionRuntimeContext,
-) => LocalActionEffect;
+) => LocalActionEffect | Promise<LocalActionEffect>;
 
 export type LocalActionSpec = {
   handler: LocalActionHandler;

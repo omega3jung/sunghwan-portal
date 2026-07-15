@@ -16,7 +16,7 @@ const EDITABLE_TICKET_STATUSES: TicketStatus[] = [
   "Declined",
 ];
 
-export const localUpdateTicket = ({
+export const localUpdateTicket = async ({
   isInternal,
   ticketId,
   input,
@@ -50,7 +50,7 @@ export const localUpdateTicket = ({
   });
   const resetDeclinedFlow = ticket.status === "Declined";
   const resetRouting = resetDeclinedFlow
-    ? resolveCreateTicketRouting({
+    ? await resolveCreateTicketRouting({
         isInternal,
         categoryId: category.id,
         parentCategoryId: category.parentId,

@@ -3,7 +3,9 @@ import type { resolveApprovedTicketRouting } from "@/server/serviceDesk/ticket/l
 
 import { mergeTicketToEmails } from "./email";
 
-type ApprovedTicketRouting = ReturnType<typeof resolveApprovedTicketRouting>;
+type ApprovedTicketRouting = Awaited<
+  ReturnType<typeof resolveApprovedTicketRouting>
+>;
 
 export const buildTicketStatusPatch = (
   ticket?: DbTicketDetail,

@@ -19,8 +19,8 @@ export const createRuleGroup = (
   return { rules };
 };
 
-export function buildDbSearchParams<TSortField extends string>(
-  params: DbParams<TSortField>,
+export function buildDbSearchParams<TParams extends DbParams>(
+  params: TParams,
 ): URLSearchParams {
   const searchParams = new URLSearchParams();
 
@@ -28,20 +28,38 @@ export function buildDbSearchParams<TSortField extends string>(
     searchParams.set("filter", JSON.stringify(params.filter));
   }
 
-  if (params.sort) {
-    searchParams.set("sortField", params.sort.field);
-    searchParams.set("sortDirection", params.sort.direction);
-  }
+  for (const [key, value] of Object.entries(params)) {
+    if (key === "filter") {
+      continue;
+    }
 
-  if (params.page != null) {
-    searchParams.set("page", String(params.page));
-  }
-
-  if (params.pageSize != null) {
-    searchParams.set("pageSize", String(params.pageSize));
+    setSearchParamValue(searchParams, key, value);
   }
 
   return searchParams;
+}
+
+function setSearchParamValue(
+  searchParams: URLSearchParams,
+  key: string,
+  value: unknown,
+) {
+  if (value === null || value === undefined) {
+    return;
+  }
+
+  if (value instanceof Date) {
+    searchParams.set(key, value.toISOString());
+    return;
+  }
+
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    searchParams.set(key, String(value));
+  }
 }
 
 export const joinRuleGroups = (

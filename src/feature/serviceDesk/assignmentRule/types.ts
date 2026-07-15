@@ -1,10 +1,11 @@
-import type { AssigneeGroup } from "@/domain/serviceDesk";
+import type { AssigneeGroup, CategoryScope } from "@/domain/serviceDesk";
 import type { DbParams } from "@/shared/types/api";
 
 // back-end data structures.
 export interface DbAssigneeGroup {
   job_field_id: number[]; // string number. can use parseInt.
   employee_username: string[];
+  include_tenant_company?: boolean;
 }
 
 export interface DbAssignmentRule {
@@ -14,6 +15,9 @@ export interface DbAssignmentRule {
 
 export type ServiceDeskAssignmentRuleListParams = DbParams & {
   tenantId?: string;
+  settings?: boolean;
+  context?: "settings";
+  scope?: CategoryScope;
 };
 
 export type AssignmentRuleTreeSyncSubCategoryInput = {

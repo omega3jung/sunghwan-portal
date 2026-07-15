@@ -1,6 +1,7 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
-import { getEmployees } from "@/server/data/organization/employees";
+import { getEligibleEmployeesForCategory } from "@/server/data/organization/employees";
+import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 import { getLocalizedText } from "@/shared/utils/i18n";
 
@@ -47,7 +48,7 @@ export type GetAssignmentRulesResponseParams = {
 export type GetAssignmentRecommendationResponseParams = {
   input: AssignmentRecommendationInputDto;
   tenantId?: string | number | null;
-  isInternal: boolean;
+  isInternal?: boolean;
 };
 
 export async function getAssignmentRulesResponseByTenantId({
@@ -64,21 +65,22 @@ export async function getAssignmentRulesResponseByTenantId({
 
 export async function getAssignmentRecommendationResponse({
   input,
-  tenantId,
-  isInternal,
 }: GetAssignmentRecommendationResponseParams): Promise<AssignmentRecommendationResultDto> {
-  const targetTenantId = await resolveTargetTenantId({
-    tenantId,
-    isInternal,
-  });
+  const categoryContext = await getServiceDeskCategoryContext(
+    "REMOTE",
+    input.categoryId,
+  );
+
+  if (!categoryContext || !categoryContext.tenant.active) {
+    throw new ServiceDeskApiError("api.common.notFound", 404);
+  }
+
+  const targetTenantId = categoryContext.tenant.id;
   const language = input.language ?? "en";
-  const [categories, rules, activeEmployees, inactiveEmployees] =
-    await Promise.all([
-      getCategoryTreeByTenantId(targetTenantId),
-      getAssignmentRulesByTenantId(targetTenantId),
-      getEmployees(true),
-      getEmployees(false),
-    ]);
+  const [categories, rules] = await Promise.all([
+    getCategoryTreeByTenantId(targetTenantId),
+    getAssignmentRulesByTenantId(targetTenantId),
+  ]);
   const selectedCategoryLabel = getCategoryLabel(
     categories,
     input.categoryId,
@@ -94,12 +96,19 @@ export async function getAssignmentRecommendationResponse({
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
+  const activeEmployees = await getEligibleEmployeesForCategory({
+    dataScope: "REMOTE",
+    category: categoryContext,
+    purpose: "ASSIGNMENT",
+    includeTenantCompany:
+      assignmentRule.assignee.include_tenant_company === true,
+  });
+
   return {
     recommendedUsers: collectRecommendedUsers({
       assignmentRule,
       assigneeUsernames: input.assigneeUsernames,
       activeEmployees,
-      employees: [...activeEmployees, ...inactiveEmployees],
       language,
     }),
     source: resolveRecommendationSource(assignmentRule),
@@ -297,18 +306,13 @@ function collectRecommendedUsers({
   assignmentRule,
   assigneeUsernames,
   activeEmployees,
-  employees,
   language,
 }: {
   assignmentRule: AssignmentRuleDto;
   assigneeUsernames: string[];
-  activeEmployees: EmployeeResponseDto[];
-  employees: EmployeeResponseDto[];
+  activeEmployees: RecommendationEmployee[];
   language: Locale;
 }) {
-  const employeeMap = new Map(
-    employees.map((employee) => [employee.username, employee]),
-  );
   const activeEmployeeMap = new Map(
     activeEmployees.map((employee) => [employee.username, employee]),
   );
@@ -317,9 +321,7 @@ function collectRecommendedUsers({
   const recommendedUsers: ImageValueLabel[] = [];
 
   for (const employeeUserName of assignmentRule.assignee.employee_username) {
-    const employee =
-      activeEmployeeMap.get(employeeUserName) ??
-      employeeMap.get(employeeUserName);
+    const employee = activeEmployeeMap.get(employeeUserName);
 
     pushUniqueUser(
       recommendedUsers,
@@ -362,7 +364,7 @@ function pushUniqueUser(
 }
 
 function toRecommendedUser(
-  employee: EmployeeResponseDto,
+  employee: RecommendationEmployee,
   language: Locale,
 ): ImageValueLabel {
   return {
@@ -373,13 +375,18 @@ function toRecommendedUser(
   };
 }
 
-function getEmployeeLabel(employee: EmployeeResponseDto, language: Locale) {
+function getEmployeeLabel(employee: RecommendationEmployee, language: Locale) {
   const localizedName = employee.name[language] ?? employee.name.en;
 
   return [localizedName.first, localizedName.middle, localizedName.last]
     .filter(Boolean)
     .join(" ");
 }
+
+type RecommendationEmployee = Pick<
+  EmployeeResponseDto,
+  "username" | "name" | "email" | "imageUrl" | "jobFieldId"
+>;
 
 function resolveRecommendationSource(
   assignmentRule: AssignmentRuleDto,

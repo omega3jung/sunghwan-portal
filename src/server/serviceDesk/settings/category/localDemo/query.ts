@@ -34,6 +34,7 @@ export const localListCategories = ({
     parseOptionalBoolean(searchParams.get("active")) ??
     getBooleanRuleGroupValue(filter, "active");
   const tenantId = searchParams.get("tenantId");
+  const scope = searchParams.get("scope");
   const tenantCategoryTrees = filterTenantCategoryTreesByActive(
     filterTenantCategoryTreesByTenantId(
       camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
@@ -43,7 +44,9 @@ export const localListCategories = ({
   );
   const items = filterItemsByQuery(
     searchParams,
-    addTenantCategoryTreeFilterAliases(tenantCategoryTrees),
+    addTenantCategoryTreeFilterAliases(
+      filterTenantCategoryTreesByScope(tenantCategoryTrees, scope),
+    ),
   ).map(removeTenantCategoryTreeFilterAliases);
 
   return {
@@ -51,6 +54,22 @@ export const localListCategories = ({
     total: items.length,
   };
 };
+
+function filterTenantCategoryTreesByScope(
+  items: TenantCategoryTree[],
+  scope: string | null,
+) {
+  if (scope !== "INTERNAL" && scope !== "PORTAL") {
+    return items;
+  }
+
+  return items.map((tenant) => ({
+    ...tenant,
+    categories: tenant.categories.filter(
+      (category) => category.scope === scope,
+    ),
+  }));
+}
 
 function filterTenantCategoryTreesByTenantId(
   items: TenantCategoryTree[],

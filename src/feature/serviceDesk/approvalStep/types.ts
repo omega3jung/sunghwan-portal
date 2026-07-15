@@ -2,6 +2,7 @@ import { AccessLevel } from "@/domain/auth";
 import type {
   ApprovalStep,
   CategoryApprovalSettings,
+  CategoryScope,
 } from "@/domain/serviceDesk";
 import { LocalizedText } from "@/shared/types";
 import type { DbParams } from "@/shared/types/api";
@@ -49,6 +50,9 @@ export type DbApprovalAssigneeType =
 
 export type ServiceDeskApprovalStepListParams = DbParams & {
   tenantId?: string;
+  settings?: boolean;
+  context?: "settings";
+  scope?: CategoryScope;
 };
 
 export type ApprovalStepTreeSyncInput = Omit<

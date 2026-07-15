@@ -12,7 +12,7 @@ import { getNextActionNo, getTicketContext } from "../utils";
 import { createTicketAction } from "./actionRecord";
 import { executeLocalAction } from "./execute";
 
-export function localPost({
+export async function localPost({
   ticketId,
   employeeUserName,
   content,
@@ -30,7 +30,8 @@ export function localPost({
       actionNo,
       createdAt,
     });
-    const { histories: createdHistories, updatedTicket } = executeLocalAction({
+    const { histories: createdHistories, updatedTicket } =
+      await executeLocalAction({
       ticketId,
       employeeUserName,
       content,
@@ -39,7 +40,7 @@ export function localPost({
       isInternal,
       isAdmin,
       action,
-    });
+      });
 
     const actions = getLocalDemoActions(isInternal);
     const histories = getLocalDemoHistories(isInternal);

@@ -5,6 +5,10 @@ import {
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
+import {
+  requireServiceDeskSettingsAdmin,
+  resolveTenantResourceAccess,
+} from "@/app/api/service-desk/_shared";
 import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
 import {
   createTenantSchema,
@@ -17,46 +21,72 @@ import { localCreateTenant, localListTenants } from "@/server/serviceDesk/settin
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
-  const token = await getAuthToken(request);
-  const isRemote = token?.dataScope === "REMOTE";
+  try {
+    const principalContext = await requireServiceDeskSettingsAdmin(request);
+    const token = await getAuthToken(request);
+    const isRemote = token?.dataScope === "REMOTE";
+    const ownCompanyId =
+      principalContext.adminType === "TENANT_ADMIN"
+        ? String(principalContext.principal.companyId)
+        : null;
 
-  if (!isRemote) {
-    try {
-      return NextResponse.json(
-        localListTenants({
-          searchParams: request.nextUrl.searchParams,
-        }),
-      );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tenants.fetchList"),
+    if (!isRemote) {
+      const response = localListTenants({
+        searchParams: request.nextUrl.searchParams,
       });
-    }
-  }
+      const items = ownCompanyId
+        ? response.items.filter(
+            (tenant) => String(tenant.companyId) === ownCompanyId,
+          )
+        : response.items;
 
-  return portalApiJson(request, {
-    path: "/service-desk/tenants",
-    query: request.nextUrl.searchParams,
-    errorMessage: tServiceDeskApi("api.tenants.fetchList"),
-    mapData: mapTenantListPayload,
-  });
+      return NextResponse.json(
+        { items, total: items.length },
+      );
+    }
+
+    const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+
+    if (ownCompanyId) {
+      proxyQuery.set("companyId", ownCompanyId);
+    } else {
+      proxyQuery.delete("companyId");
+    }
+
+    return portalApiJson(request, {
+      path: "/service-desk/tenants",
+      query: proxyQuery,
+      errorMessage: tServiceDeskApi("api.tenants.fetchList"),
+      mapData: mapTenantListPayload,
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: tServiceDeskApi("api.tenants.fetchList"),
+    });
+  }
 }
 
 export async function POST(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-  const parsedBody = createTenantSchema.safeParse(await request.json());
+  try {
+    const { principal } = await requireServiceDeskSettingsAdmin(request);
 
-  if (!parsedBody.success) {
-    return NextResponse.json(
-      { message: tServiceDeskApi("api.tenants.localDemo.invalidPayload") },
-      { status: 400 },
-    );
-  }
+    if (resolveTenantResourceAccess(principal) !== "manage") {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
 
-  const body = parsedBody.data;
+    const isRemote = await isRemoteRequest(request);
+    const parsedBody = createTenantSchema.safeParse(await request.json());
 
-  if (!isRemote) {
-    try {
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        { message: tServiceDeskApi("api.tenants.localDemo.invalidPayload") },
+        { status: 400 },
+      );
+    }
+
+    const body = parsedBody.data;
+
+    if (!isRemote) {
       return NextResponse.json(
         localCreateTenant({
           input: {
@@ -67,22 +97,22 @@ export async function POST(request: NextRequest) {
         }),
         { status: 201 },
       );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tenants.create"),
-      });
     }
-  }
 
-  return portalApiJson(request, {
-    method: "POST",
-    path: "/service-desk/tenants",
-    body: toTenantWritePayload({
-      ...body,
-      active: body.active ?? true,
-      color: body.color ?? "",
-    }),
-    errorMessage: tServiceDeskApi("api.tenants.create"),
-    mapData: mapTenantItemPayload,
-  });
+    return portalApiJson(request, {
+      method: "POST",
+      path: "/service-desk/tenants",
+      body: toTenantWritePayload({
+        ...body,
+        active: body.active ?? true,
+        color: body.color ?? "",
+      }),
+      errorMessage: tServiceDeskApi("api.tenants.create"),
+      mapData: mapTenantItemPayload,
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: tServiceDeskApi("api.tenants.create"),
+    });
+  }
 }

@@ -1,11 +1,27 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import type { Tenant } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/client";
+import {
+  type CategoryScope,
+  type Tenant,
+} from "@/domain/serviceDesk";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
 import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
+import { isOwnerCompany } from "@/shared/utils/organization";
+import {
+  canManageServiceDeskSettings,
+  canReadServiceDeskSettings,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsResource,
+} from "@/shared/utils/serviceDesk";
 
 import { useSettingsScope } from "../_providers";
 
@@ -17,25 +33,8 @@ type ServiceDeskSettingsTenantContextValue = {
   currentCompanyId: string | null;
 };
 
-type CompanyScopedUser =
-  | {
-      companyId?: number | string | null;
-    }
-  | null
-  | undefined;
-
-type CompanyScopedSession =
-  | {
-      user?: CompanyScopedUser;
-    }
-  | null
-  | undefined;
-
-const ACTIVE_TENANT_PARAMS = {
-  active: true,
-} satisfies ServiceDeskTenantListParams;
-
 const EMPTY_TENANTS: Tenant[] = [];
+const SETTINGS_SCOPES = ["INTERNAL", "PORTAL"] as const satisfies readonly CategoryScope[];
 
 const ServiceDeskSettingsTenantContext =
   createContext<ServiceDeskSettingsTenantContextValue | null>(null);
@@ -45,16 +44,24 @@ export function ServiceDeskSettingsTenantProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { isInternal } = useSettingsScope();
-  const { current: currentSession, data: authSession } = useCurrentSession();
-  const currentCompanyId = resolveCurrentCompanyId(
-    authSession,
-    currentSession.user,
-  );
+  const { adminType, principal } = useSettingsScope();
+  const currentCompanyId = String(principal.companyId);
+  const selectionIdentityKey = `${adminType ?? "NONE"}:${currentCompanyId}`;
+  const previousIdentityKeyRef = useRef<string | null>(null);
   const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
+  const tenantParams = useMemo(
+    () =>
+      ({
+        active: true,
+        settings: true,
+        context: "settings",
+        settingsPrincipalKey: selectionIdentityKey,
+      }) satisfies ServiceDeskTenantListParams,
+    [selectionIdentityKey],
+  );
 
   const { data: tenantData = EMPTY_TENANTS, isLoading: isTenantsLoading } =
-    useServiceDeskTenantListQuery(ACTIVE_TENANT_PARAMS);
+    useServiceDeskTenantListQuery(tenantParams);
 
   useEffect(() => {
     if (!tenantData.length) {
@@ -64,19 +71,20 @@ export function ServiceDeskSettingsTenantProvider({
 
     const currentCompanyTenant = currentCompanyId
       ? tenantData.find(
-          (tenant) =>
-            tenant.id === currentCompanyId ||
-            tenant.companyId === currentCompanyId,
+          (tenant) => tenant.companyId === currentCompanyId,
         )
       : undefined;
     const firstTenant = tenantData[0]?.id ?? null;
-    const preferredTenant = isInternal
-      ? firstTenant
-      : (currentCompanyTenant?.id ?? firstTenant);
+    const preferredTenant =
+      currentCompanyTenant?.id ??
+      (adminType === "OWNER_ADMIN" ? firstTenant : null);
+    const identityChanged =
+      previousIdentityKeyRef.current !== selectionIdentityKey;
+    previousIdentityKeyRef.current = selectionIdentityKey;
 
     setSelectedTenant((previousSelectedTenant) => {
-      if (!isInternal && currentCompanyTenant) {
-        return currentCompanyTenant.id;
+      if (adminType === "TENANT_ADMIN" || identityChanged) {
+        return preferredTenant;
       }
 
       if (
@@ -88,20 +96,18 @@ export function ServiceDeskSettingsTenantProvider({
 
       return preferredTenant;
     });
-  }, [currentCompanyId, isInternal, tenantData]);
+  }, [adminType, currentCompanyId, selectionIdentityKey, tenantData]);
 
   const value = useMemo<ServiceDeskSettingsTenantContextValue>(
     () => ({
       tenantData,
       selectedTenant,
       setSelectedTenant,
-      isTenantSelectionLoading:
-        isTenantsLoading || (!isInternal && !currentCompanyId),
+      isTenantSelectionLoading: isTenantsLoading,
       currentCompanyId,
     }),
     [
       currentCompanyId,
-      isInternal,
       isTenantsLoading,
       selectedTenant,
       tenantData,
@@ -127,15 +133,63 @@ export function useServiceDeskSettingsTenant() {
   return context;
 }
 
-function resolveCurrentCompanyId(
-  authSession: CompanyScopedSession,
-  currentUser: CompanyScopedUser,
+export function useServiceDeskSettingsScopeAccess(
+  resource: Exclude<ServiceDeskSettingsResource, "TENANT">,
 ) {
-  const companyId = authSession?.user?.companyId ?? currentUser?.companyId;
+  const { principal } = useSettingsScope();
+  const { selectedTenant, tenantData } = useServiceDeskSettingsTenant();
+  const [requestedScope, setRequestedScope] =
+    useState<CategoryScope>("INTERNAL");
 
-  if (companyId === null || companyId === undefined) {
-    return null;
-  }
+  const selectedTenantData = useMemo(
+    () => tenantData.find((tenant) => tenant.id === selectedTenant) ?? null,
+    [selectedTenant, tenantData],
+  );
+  const isOwnerTenant =
+    selectedTenantData !== null && isOwnerCompany(selectedTenantData.companyId);
 
-  return String(companyId);
+  const accessByScope = useMemo(
+    () =>
+      Object.fromEntries(
+        SETTINGS_SCOPES.map((scope) => [
+          scope,
+          resolveSettingsAccess(principal, {
+            resource,
+            tenantCompanyId: selectedTenantData?.companyId,
+            isOwnerTenant: selectedTenantData ? isOwnerTenant : undefined,
+            scope,
+          }),
+        ]),
+      ) as Record<CategoryScope, ReturnType<typeof resolveSettingsAccess>>,
+    [isOwnerTenant, principal, resource, selectedTenantData],
+  );
+  const availableScopes = useMemo(
+    () =>
+      SETTINGS_SCOPES.filter((scope) =>
+        canReadServiceDeskSettings(accessByScope[scope]),
+      ),
+    [accessByScope],
+  );
+  const selectedScope = availableScopes.includes(requestedScope)
+    ? requestedScope
+    : (availableScopes[0] ?? requestedScope);
+  const access = accessByScope[selectedScope];
+
+  useEffect(() => {
+    if (availableScopes.length && requestedScope !== selectedScope) {
+      setRequestedScope(selectedScope);
+    }
+  }, [availableScopes.length, requestedScope, selectedScope]);
+
+  return {
+    selectedScope,
+    setSelectedScope: setRequestedScope,
+    availableScopes,
+    access,
+    canRead: canReadServiceDeskSettings(access),
+    canManage: canManageServiceDeskSettings(access),
+    selectedTenantData,
+    isOwnerTenant,
+    contextKey: selectedTenant ? `${selectedTenant}:${selectedScope}` : null,
+  };
 }

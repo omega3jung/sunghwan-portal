@@ -9,7 +9,9 @@ import {
 import { getMaxHistoryNo, toHistoryMetadata } from "../utils";
 import { requireNextStatus, requireTicket } from "./ticketContext";
 
-type ApprovedTicketRouting = ReturnType<typeof resolveApprovedTicketRouting>;
+type ApprovedTicketRouting = Awaited<
+  ReturnType<typeof resolveApprovedTicketRouting>
+>;
 type LocalTicket = NonNullable<LocalActionRuntimeContext["ticket"]>;
 
 const buildHistoryBase = ({

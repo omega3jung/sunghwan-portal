@@ -3,6 +3,7 @@ import type { ImageValueLabel, Locale } from "@/shared/types";
 export interface AssigneeGroupDto {
   job_field_id: number[]; // string number. can use parseInt.
   employee_username: string[];
+  include_tenant_company?: boolean;
 }
 
 export interface AssignmentRuleDto {

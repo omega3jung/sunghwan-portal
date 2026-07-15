@@ -1,4 +1,5 @@
 import { SupportedLanguage } from "@/domain/config";
+import type { Department, Employee, JobField } from "@/domain/organization";
 import {
   ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
@@ -14,22 +15,41 @@ type Props = {
   stepAssignee: AssigneeByType<ApprovalAssigneeTypeValue>;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
+  employees?: Employee[];
+  departments?: Department[];
+  jobFields?: JobField[];
+  isLoading?: boolean;
 };
 
 export function ApprovalAssigneeField({
   stepAssignee,
   onChange,
   language,
+  readOnly = false,
+  employees,
+  departments,
+  jobFields,
+  isLoading = false,
 }: Props) {
   switch (stepAssignee.type) {
     case "MANAGER":
-      return <ManagerField stepAssignee={stepAssignee} onChange={onChange} />;
+      return (
+        <ManagerField
+          stepAssignee={stepAssignee}
+          onChange={onChange}
+          readOnly={readOnly}
+        />
+      );
     case "DEPARTMENT":
       return (
         <DepartmentField
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
+          readOnly={readOnly}
+          departments={departments}
+          isLoading={isLoading}
         />
       );
     case "JOB_FIELD":
@@ -38,6 +58,9 @@ export function ApprovalAssigneeField({
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
+          readOnly={readOnly}
+          jobFields={jobFields}
+          isLoading={isLoading}
         />
       );
     case "EMPLOYEE":
@@ -46,6 +69,9 @@ export function ApprovalAssigneeField({
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
+          readOnly={readOnly}
+          employees={employees}
+          isLoading={isLoading}
         />
       );
   }

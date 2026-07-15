@@ -26,6 +26,7 @@ type Props = {
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
 };
 
 export const AsgginmentRuleTree = ({
@@ -34,6 +35,7 @@ export const AsgginmentRuleTree = ({
   selectedId,
   setSelectedId,
   language,
+  readOnly = false,
 }: Props) => {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
@@ -43,7 +45,7 @@ export const AsgginmentRuleTree = ({
       <SortableTree
         items={tree}
         onChange={(nextTree) => {
-          setTree(nextTree);
+          if (!readOnly) setTree(nextTree);
         }}
         collapsible={true}
         renderItem={(item, { onCollapse }) => {

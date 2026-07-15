@@ -23,7 +23,7 @@ export type TicketSearchSort = DbSort<TicketSortField>;
 export type TicketSearchRequest = Required<
   Pick<DbParams<TicketSortField>, "page" | "pageSize">
 > &
-  Pick<DbParams<TicketSortField>, "filter" | "sort">;
+  Pick<DbParams<TicketSortField>, "filter" | "sortField" | "sortDirection">;
 
 export interface DbTicketSummary {
   id: string;

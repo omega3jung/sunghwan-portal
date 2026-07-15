@@ -449,6 +449,9 @@
       "invalidInput": "La recomendación de asignación requiere categoryId y assigneeUsernames.",
       "fetch": "No se pudieron obtener las recomendaciones de asignación."
     },
+    "eligibleActors": {
+      "fetch": "No se pudieron obtener los actores elegibles de Service Desk."
+    },
     "categories": {
       "fetchList": "No se pudieron obtener las categorías.",
       "create": "No se pudo crear la categoría.",
@@ -459,7 +462,8 @@
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de categorías no válida.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",
-        "clientMismatch": "La categoría no pertenece al cliente {{clientId}}."
+        "clientMismatch": "La categoría no pertenece al cliente {{clientId}}.",
+        "scopeImmutable": "El ámbito de una categoría no se puede cambiar. Desactiva esta categoría y crea una nueva."
       }
     },
     "tenants": {
@@ -521,6 +525,7 @@
         "createFailed": "No se pudo crear la acción.",
         "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
         "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
+        "assigneeUnavailable": "El enrutamiento configurado no encontró responsables activos y elegibles.",
         "assigneeForbidden": "Solo una persona asignada puede iniciar el trabajo en este ticket.",
         "approvalForbidden": "Solo la persona aprobadora asignada puede aprobar o declinar este ticket.",
         "cancelForbidden": "Solo la persona solicitante puede cancelar este ticket antes de que comience el trabajo.",

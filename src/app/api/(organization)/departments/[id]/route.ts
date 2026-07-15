@@ -13,7 +13,7 @@ import {
   toDepartmentWritePayload,
   UpdateDepartmentInput,
 } from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization/departments";
+import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const departmentData = camelDepartmentMapper(departmentsMock);
+    const departmentData = camelDepartmentMapper(allDepartmentsMock);
     const targetDepartment = departmentData.find(
       (department) => department.id === id,
     );

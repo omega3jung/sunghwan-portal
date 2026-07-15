@@ -64,14 +64,21 @@ import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrent
 import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
-import type { DateRangePreset } from "@/shared/types";
+import type { DateRangePreset, DbParams } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";
+import { createFieldFilter } from "@/shared/utils/routing";
 
 const INSIGHTS_PAGE = 1;
 const INSIGHTS_PAGE_SIZE = 500;
 const INSIGHTS_SORT = "ticketNumber";
 const INSIGHTS_ORDER = "desc";
 const DEFAULT_INSIGHTS_PERIOD: DateRangePreset = "last_3month";
+const activeEmployeeListParams: DbParams = {
+  filter: createFieldFilter({
+    field: "e_active",
+    value: true,
+  }),
+};
 
 type ChartViewMode = "full" | "compact" | "hidden";
 type CriteriaPeriodRange =
@@ -233,7 +240,7 @@ export default function ServiceDeskInsightsPage() {
   const ticketItems = ticketSearchResult?.items;
   const tickets = useMemo(() => ticketItems ?? [], [ticketItems]);
 
-  const { data: employees } = useEmployeeListQuery({});
+  const { data: employees } = useEmployeeListQuery(activeEmployeeListParams);
   const { data: departments } = useDepartmentListQuery({});
 
   const users = useMemo<ImageValueLabel[]>(() => {

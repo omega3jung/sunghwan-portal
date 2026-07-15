@@ -1,10 +1,12 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, LockKeyhole } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { NS } from "@/lib/i18n";
+import type { ServiceDeskSettingsAccess } from "@/shared/utils/serviceDesk";
 
 type Props = {
   title?: string;
@@ -62,5 +64,39 @@ export function ServiceDeskSettingsPageHeader({
         </Button>
       </div>
     </div>
+  );
+}
+
+export function ServiceDeskSettingsAccessBanner({
+  access,
+  managedBy,
+}: {
+  access: ServiceDeskSettingsAccess;
+  managedBy: "serviceProvider" | "customer";
+}) {
+  const { t } = useTranslation(NS.settings);
+
+  if (access !== "read") {
+    return null;
+  }
+
+  return (
+    <Alert className="border-amber-500/40 bg-amber-500/5">
+      <LockKeyhole className="h-4 w-4" />
+      <AlertTitle className="flex flex-wrap gap-1">
+        <span>{t("serviceDeskSettings.common.readOnly")}</span>
+        <span aria-hidden="true">/</span>
+        <span>
+          {t(
+            managedBy === "serviceProvider"
+              ? "serviceDeskSettings.common.managedByServiceProvider"
+              : "serviceDeskSettings.common.managedByCustomer",
+          )}
+        </span>
+      </AlertTitle>
+      <AlertDescription>
+        {t("serviceDeskSettings.common.readOnlyDescription")}
+      </AlertDescription>
+    </Alert>
   );
 }

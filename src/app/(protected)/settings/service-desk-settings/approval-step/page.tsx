@@ -16,11 +16,20 @@ import { useMutationToast } from "@/shared/client/toast";
 
 import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
 import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
-import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
-import { ServiceDeskTenantSelect } from "../components/ServiceDeskTenantSelect";
+import {
+  ServiceDeskSettingsAccessBanner,
+  ServiceDeskSettingsPageHeader,
+} from "../components/ServiceDeskSettingsPageHeader";
+import {
+  ServiceDeskSettingsScopeSelect,
+  ServiceDeskTenantSelect,
+} from "../components/ServiceDeskTenantSelect";
 import { useActiveServiceDeskCategoryListQuery } from "../hooks/useActiveServiceDeskCategoryListQuery";
 import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
+import {
+  useServiceDeskSettingsScopeAccess,
+  useServiceDeskSettingsTenant,
+} from "../ServiceDeskSettingsTenantProvider";
 import { ApprovalStepForm } from "./components/ApprovalStepForm";
 import { ApprovalStepperPanel } from "./components/ApprovalStepperPanel";
 import { ApprovalStepTree } from "./components/ApprovalStepTree";
@@ -38,19 +47,51 @@ export default function ApprovalStepPage() {
   const mutationToast = useMutationToast();
   const { selectedTenant, isTenantSelectionLoading } =
     useServiceDeskSettingsTenant();
+  const {
+    selectedScope,
+    setSelectedScope,
+    availableScopes,
+    access,
+    canRead,
+    canManage,
+    contextKey,
+  } = useServiceDeskSettingsScopeAccess("APPROVAL_STEP");
 
   const { language, setLanguage } = useServiceDeskSettingsLanguage();
 
-  const [baselineSignatureByTenant, setBaselineSignatureByTenant] = useState<
+  const [baselineSignatureByContext, setBaselineSignatureByContext] = useState<
     Record<string, string>
   >({});
 
   const { data: categories, isLoading: isCategoriesLoading } =
-    useActiveServiceDeskCategoryListQuery(selectedTenant);
+    useActiveServiceDeskCategoryListQuery(
+      selectedTenant,
+      selectedScope,
+      canRead,
+    );
+
+  const scopedCategories = useMemo(
+    () =>
+      categories?.map((tenant) => ({
+        ...tenant,
+        categories: tenant.categories.filter(
+          (category) => category.scope === selectedScope,
+        ),
+      })),
+    [categories, selectedScope],
+  );
 
   const approvalStepParams = useMemo(
-    () => (selectedTenant ? { tenantId: selectedTenant } : undefined),
-    [selectedTenant],
+    () =>
+      selectedTenant && canRead
+        ? {
+            tenantId: selectedTenant,
+            settings: true,
+            context: "settings" as const,
+            scope: selectedScope,
+          }
+        : undefined,
+    [canRead, selectedScope, selectedTenant],
   );
 
   const { data: approvalSteps, isLoading: isApprovalStepsLoading } =
@@ -65,11 +106,13 @@ export default function ApprovalStepPage() {
     selectedId,
     setSelectedId,
     treeTenantId,
+    treeContextKey,
     addApprovalStep,
     removeApprovalStep,
   } = useApprovalStepTree({
     selectedTenant,
-    categories,
+    scope: selectedScope,
+    categories: scopedCategories,
     approvalSteps,
     language,
   });
@@ -77,16 +120,16 @@ export default function ApprovalStepPage() {
   // logics.
   const queryBaselineSignature = useMemo(() => {
     return createApprovalStepSettingsSignatureFromApprovalSettings({
-      categories,
+      categories: scopedCategories,
       selectedTenant,
       approvalSteps,
     });
-  }, [approvalSteps, categories, selectedTenant]);
+  }, [approvalSteps, scopedCategories, selectedTenant]);
 
   const baselineSignature =
-    selectedTenant === null
+    contextKey === null
       ? queryBaselineSignature
-      : (baselineSignatureByTenant[selectedTenant] ?? queryBaselineSignature);
+      : (baselineSignatureByContext[contextKey] ?? queryBaselineSignature);
 
   const currentSignature = useMemo(() => {
     return createApprovalStepSettingsSignatureFromTree(tree);
@@ -97,30 +140,38 @@ export default function ApprovalStepPage() {
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
   const isTreeReadyForSelectedTenant =
-    Boolean(selectedTenant) && treeTenantId === selectedTenant;
+    Boolean(contextKey) &&
+    treeTenantId === selectedTenant &&
+    treeContextKey === contextKey;
   const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
 
-  const canReset = hasUnsavedChanges && !isSaving;
-  const canSave = hasUnsavedChanges && isTreeValid && !isSaving;
+  const canReset = canManage && hasUnsavedChanges && !isSaving;
+  const canSave = canManage && hasUnsavedChanges && isTreeValid && !isSaving;
   const isLoading =
     isTenantSelectionLoading ||
     (Boolean(selectedTenant) &&
       (isCategoriesLoading || isApprovalStepsLoading));
 
   const handleReset = () => {
-    if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
+    if (
+      !canManage ||
+      !selectedTenant ||
+      treeContextKey !== contextKey ||
+      !scopedCategories ||
+      !contextKey
+    ) {
       return;
     }
 
     const nextTree = approvalStepToTree(
-      mapApprovalData(categories, selectedTenant, approvalSteps ?? []),
+      mapApprovalData(scopedCategories, selectedTenant, approvalSteps ?? []),
     );
     const nextBaselineSignature =
       createApprovalStepSettingsSignatureFromTree(nextTree);
 
-    setBaselineSignatureByTenant((previousState) => ({
+    setBaselineSignatureByContext((previousState) => ({
       ...previousState,
-      [selectedTenant]: nextBaselineSignature,
+      [contextKey]: nextBaselineSignature,
     }));
     setTree(nextTree);
     setSelectedId(null);
@@ -129,10 +180,12 @@ export default function ApprovalStepPage() {
   const onSaveChange = async () => {
     if (
       !selectedTenant ||
-      treeTenantId !== selectedTenant ||
+      treeContextKey !== contextKey ||
+      !canManage ||
       !isDirty ||
       !isTreeValid ||
-      !categories
+      !scopedCategories ||
+      !contextKey
     ) {
       return;
     }
@@ -152,13 +205,17 @@ export default function ApprovalStepPage() {
       );
       const savedApprovalSettings = await savePromise;
       const nextTree = approvalStepToTree(
-        mapApprovalData(categories, selectedTenant, savedApprovalSettings),
+        mapApprovalData(
+          scopedCategories,
+          selectedTenant,
+          savedApprovalSettings,
+        ),
       );
 
-      setBaselineSignatureByTenant((previousState) => ({
+      setBaselineSignatureByContext((previousState) => ({
         ...previousState,
-        [selectedTenant]: createApprovalStepSettingsSignatureFromApprovalSettings({
-          categories,
+        [contextKey]: createApprovalStepSettingsSignatureFromApprovalSettings({
+          categories: scopedCategories,
           selectedTenant,
           approvalSteps: savedApprovalSettings,
         }),
@@ -171,21 +228,21 @@ export default function ApprovalStepPage() {
   };
 
   useEffect(() => {
-    if (!selectedTenant) {
+    if (!contextKey) {
       return;
     }
 
-    setBaselineSignatureByTenant((previousState) => {
-      if (previousState[selectedTenant] === queryBaselineSignature) {
+    setBaselineSignatureByContext((previousState) => {
+      if (previousState[contextKey] === queryBaselineSignature) {
         return previousState;
       }
 
       return {
         ...previousState,
-        [selectedTenant]: queryBaselineSignature,
+        [contextKey]: queryBaselineSignature,
       };
     });
-  }, [queryBaselineSignature, selectedTenant]);
+  }, [contextKey, queryBaselineSignature]);
 
   if (isLoading) {
     return <ServiceDeskSettingsLoading />;
@@ -207,8 +264,18 @@ export default function ApprovalStepPage() {
         />
       </div>
 
+      <div className="px-2">
+        <ServiceDeskSettingsAccessBanner access={access} managedBy="customer" />
+      </div>
+
       <div className="flex flex-wrap items-end gap-4 px-2">
         <ServiceDeskTenantSelect className="min-w-60" />
+        <ServiceDeskSettingsScopeSelect
+          value={selectedScope}
+          onValueChange={setSelectedScope}
+          availableScopes={availableScopes}
+          disabled={isLoading || isSaving}
+        />
         <ServiceDeskSettingsLanguageSelect
           language={language}
           onLanguageChange={setLanguage}
@@ -225,12 +292,14 @@ export default function ApprovalStepPage() {
           removeApprovalStep={removeApprovalStep}
           language={language}
           isLoading={isApprovalStepsLoading || isSaving}
+          readOnly={!canManage}
         />
 
         <ApprovalStepForm
           selectedNode={selectedNode}
           language={language}
           setTree={setTree}
+          readOnly={!canManage}
         />
 
         <ApprovalStepperPanel

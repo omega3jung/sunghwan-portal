@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
+  getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
@@ -32,7 +32,13 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const isInternal = await isInternalUser(request);
+    const currentUserScope = await getCurrentUserScope(request);
+
+    if (currentUserScope === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    const isInternal = currentUserScope === "INTERNAL";
     const ticket = localGetTicket({ isInternal, id: ticketId });
 
     if (!ticket) {
@@ -81,10 +87,16 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const currentUserScope = await getCurrentUserScope(request);
+
+      if (currentUserScope === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = currentUserScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
-        localRequesterUpdateTicket({
+        await localRequesterUpdateTicket({
           isInternal,
           ticketId,
           requesterUsername: currentUserName,
@@ -130,7 +142,13 @@ export async function DELETE(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const currentUserScope = await getCurrentUserScope(request);
+
+      if (currentUserScope === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = currentUserScope === "INTERNAL";
       localDeleteTicket({
         isInternal,
         ticketId,

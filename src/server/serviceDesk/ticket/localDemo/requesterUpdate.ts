@@ -13,7 +13,7 @@ import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 const REQUESTER_EDITABLE_TICKET_STATUSES: readonly DbTicketDetail["status"][] =
   ["Approval", "Assigned"];
 
-export const localRequesterUpdateTicket = ({
+export const localRequesterUpdateTicket = async ({
   isInternal,
   ticketId,
   requesterUsername,
@@ -74,7 +74,7 @@ export const localRequesterUpdateTicket = ({
     isRoutingSensitiveField,
   );
   const routing = routingSensitiveChanged
-    ? resolveCreateTicketRouting({
+    ? await resolveCreateTicketRouting({
         isInternal,
         categoryId: category.id,
         parentCategoryId: category.parentId,

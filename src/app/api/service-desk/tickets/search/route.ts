@@ -112,7 +112,7 @@ async function handleTicketSearch(
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     ...(method === "GET"
       ? { query: buildDbSearchParams(body) }
-      : { body }),
+      : { body: toLegacyTicketSearchRequest(body) }),
     errorMessage: tServiceDeskApi("api.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
@@ -122,9 +122,12 @@ function parseTicketSearchQuery(
   searchParams: URLSearchParams,
 ): TicketSearchRequest | null {
   try {
+    const sort = parseSortQueryValue(searchParams);
+
     return normalizeTicketSearchRequest({
       filter: parseFilterQueryValue(searchParams.get("filter")),
-      sort: parseSortQueryValue(searchParams),
+      sortField: sort?.field,
+      sortDirection: sort?.direction,
       page: parseNumberQueryValue(searchParams.get("page")) ?? 1,
       pageSize:
         parseNumberQueryValue(searchParams.get("pageSize")) ?? 10,
@@ -135,11 +138,33 @@ function parseTicketSearchQuery(
 }
 
 function normalizeTicketSearchRequest(
-  request: TicketSearchRequest,
+  request: Partial<TicketSearchRequest> & { sort?: unknown },
 ): TicketSearchRequest {
+  const legacySort = normalizeSortValue(request.sort);
+  const sort = normalizeSortValue({
+    field: request.sortField ?? legacySort?.field,
+    direction: request.sortDirection ?? legacySort?.direction,
+  });
+
   return {
     filter: normalizeFilterValue(request.filter),
-    sort: normalizeSortValue(request.sort),
+    sortField: sort?.field,
+    sortDirection: sort?.direction,
+    page: request.page ?? 1,
+    pageSize: request.pageSize ?? 10,
+  };
+}
+
+function toLegacyTicketSearchRequest(request: TicketSearchRequest) {
+  return {
+    filter: request.filter,
+    sort:
+      request.sortField && request.sortDirection
+        ? {
+            field: request.sortField,
+            direction: request.sortDirection,
+          }
+        : undefined,
     page: request.page,
     pageSize: request.pageSize,
   };
@@ -198,6 +223,10 @@ function normalizeSortValue(value: unknown): TicketSearchSort | undefined {
   }
 
   const sort = value as Partial<TicketSearchSort>;
+
+  if (!sort.field && !sort.direction) {
+    return undefined;
+  }
 
   if (!isTicketSortField(sort.field) || !isSortDirection(sort.direction)) {
     throw new Error("Invalid sort value");

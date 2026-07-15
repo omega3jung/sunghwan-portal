@@ -94,14 +94,99 @@ LOCAL settings behavior uses server-side mutable demo state where the demo
 allows mutation. REMOTE behavior uses DTO services and repositories. Both
 runtimes must return compatible application-facing shapes.
 
+Authorization is resolved before the LOCAL/REMOTE branch. Query filtering,
+mutation validation, and actor-candidate lookup must therefore produce the
+same authorization result in both runtimes.
+
+---
+
+## Settings Authorization
+
+### Trusted Principal
+
+Service Desk Settings has two administrative principal types. They are derived
+from a server-resolved canonical `AppUser`, not from a client claim or role
+hierarchy.
+
+| Settings admin type      | Required trusted fields                               |
+| ------------------------ | ----------------------------------------------------- |
+| Owner Admin              | `permission = ADMIN` (`9`) and `userScope = INTERNAL` |
+| Tenant Admin             | `permission = ADMIN` (`9`) and `userScope = CLIENT`   |
+| no Settings admin access | any lower permission, regardless of `userScope`       |
+
+Use the canonical access-level constant rather than duplicating the numeric
+value in feature code. `role`, `dataScope`, the focused tenant, request
+`tenantId`/`companyId`, and client state do not determine the admin type.
+
+The server resolves the effective username from the session and then loads the
+canonical application user so that `permission`, `userScope`, and `companyId`
+are server-trusted. During impersonation, authorization follows the effective
+user. Audit context keeps both the original and effective usernames.
+
+Owner Admin and Tenant Admin are peers with different resource capabilities.
+Owner Admin is not a super-role over Tenant Admin: for example, a customer
+`PORTAL` approval pipeline is managed by the customer Tenant Admin while the
+Owner Admin has read-only access.
+
+### Tenant Boundary and Management Authority
+
+Tenant answers _where_ category-driven workflow configuration applies. The
+authorization policy answers _who_ can read or manage each settings resource.
+The phrase "tenant owns configuration" means that configuration belongs to a
+tenant boundary; it does not mean that one tenant-side actor manages every
+resource in that boundary.
+
+A Tenant Admin's target is resolved on the server through:
+
+```txt id="tenant-admin-boundary"
+effective AppUser.companyId
+-> Tenant.companyId
+-> that customer Tenant
+```
+
+The client cannot select another tenant to expand this boundary. The Owner
+Tenant and owner/service-provider company are identified through the canonical
+portal-owner company resolver or flag, never through a hard-coded ID.
+
+### Capability Matrix
+
+Access values have these meanings:
+
+- `manage`: create, update, deactivate, or use the entity's documented
+  replace/delete lifecycle
+- `read`: query and display only
+- `none`: neither query nor mutate
+
+| Target                      | Resource        | Owner Admin | Same-company Tenant Admin | Other Tenant Admin |
+| --------------------------- | --------------- | ----------- | ------------------------- | ------------------ |
+| Tenant Settings             | Tenant          | manage      | none                      | none               |
+| Owner Tenant, either scope  | Category        | manage      | none                      | none               |
+| Owner Tenant, either scope  | Approval Step   | manage      | none                      | none               |
+| Owner Tenant, either scope  | Assignment Rule | manage      | none                      | none               |
+| Customer Tenant, `INTERNAL` | Category        | none        | manage                    | none               |
+| Customer Tenant, `INTERNAL` | Approval Step   | none        | manage                    | none               |
+| Customer Tenant, `INTERNAL` | Assignment Rule | none        | manage                    | none               |
+| Customer Tenant, `PORTAL`   | Category        | manage      | read                      | none               |
+| Customer Tenant, `PORTAL`   | Approval Step   | read        | manage                    | none               |
+| Customer Tenant, `PORTAL`   | Assignment Rule | manage      | read                      | none               |
+
+Owner Admin has no implicit support/read access to customer `INTERNAL`
+configuration. A separate platform/support capability is not part of this
+policy.
+
+Tenant Admin may receive the minimum metadata needed to label its own tenant on
+other settings pages. That does not grant access to the Tenant Settings list or
+its mutation APIs.
+
 ---
 
 ## Tenant
 
 ### Responsibility
 
-A Service Desk tenant defines the configuration boundary for ticket categories,
-approval steps, and assignment rules.
+A Service Desk tenant defines the organizational and workflow boundary for
+ticket categories, approval steps, and assignment rules. Management authority
+inside that boundary is resolved separately by the settings capability matrix.
 
 Tenant is related to Company, but it is not the same concept. Company is
 organization reference data. Tenant is the Service Desk configuration surface
@@ -153,6 +238,11 @@ configuration surface.
 - deactivating a tenant removes it from active settings workflows
 - protected portal-owner behavior must be enforced by the server boundary
 - existing tickets should remain readable even if a tenant is later inactive
+
+Only Owner Admin can list and manage Tenant Settings. Tenant Admin does not see
+the Tenant Settings tab, and direct page access redirects to Settings Home as a
+UI guard. An unauthorized Tenant Settings API request returns `403`; API
+authorization never uses a redirect.
 
 ---
 
@@ -230,6 +320,31 @@ that already reference an inactive category remain readable and auditable.
 Deactivation should affect future selection and future evaluation. It must not
 erase or reinterpret existing ticket history.
 
+### Creation and Boundary Invariants
+
+Main-category creation follows the capability matrix:
+
+- Owner Admin may create `INTERNAL` and `PORTAL` categories in the Owner Tenant
+- Owner Admin may create only `PORTAL` categories in a customer Tenant
+- the customer Tenant Admin may create only `INTERNAL` categories in its own
+  Tenant
+
+After creation, these boundary fields are immutable:
+
+- category `tenantId`
+- main-category `scope`
+- subcategory `parentId` when a change would cross a tenant or scope boundary
+
+A scope change is modeled by deactivating the old category and creating a new
+one. Categories use `active = false`, not hard delete, so existing tickets and
+history retain their category references. A subcategory inherits tenant and
+scope from its parent main category and has no independent scope capability.
+
+For update or deactivation, the server loads the stored category before
+authorizing. For create, it validates the target tenant and requested scope.
+For a subcategory, it loads the parent main category and derives tenant/scope
+from that relationship. Request payload fields are not authorization facts.
+
 ---
 
 ## Approval Step
@@ -298,11 +413,30 @@ resulting activity and history when approval execution occurs.
 
 Approval-step mutation must validate:
 
-- tenant and category ownership
+- stored tenant/category relationship
+- settings capability for the stored main category's tenant and scope
 - ordered index values
 - supported assignee type
 - referenced department, job field, employee, or manager level
 - skip access level
+
+Every resolved approver must belong to the category tenant's company:
+
+- `EMPLOYEE`: every employee has the category tenant `companyId`
+- `DEPARTMENT`: the department and resolved employees stay in that company
+- `JOB_FIELD`: final employee resolution applies the company filter even when
+  job field is shared reference data
+- `MANAGER`: the resolved manager belongs to that company
+
+The same eligibility check runs when settings are saved and again during
+ticket submit/resubmit or another explicit routing recalculation. This catches
+employees who became inactive or changed company after configuration. Routing
+fails when no valid approver remains; it does not create an unowned `Approval`
+ticket.
+
+Read-only Owner Admin access to customer `PORTAL` approval settings may include
+display data for currently referenced approvers. It does not grant customer
+employee-directory candidate search.
 
 The client may help the user build valid input, but the server remains the
 authority.
@@ -355,11 +489,36 @@ trusted final routing output as if it were authoritative.
 
 Assignment-rule mutation must validate:
 
-- tenant and category ownership
+- stored tenant/category relationship
+- settings capability for the stored category's tenant and inherited scope
 - referenced job fields
 - referenced employee usernames
 - empty or invalid assignment groups
 - cross-tenant or inactive reference usage
+
+The allowed employee company is derived from category context:
+
+| Category context                  | Allowed assignment company                                 |
+| --------------------------------- | ---------------------------------------------------------- |
+| `INTERNAL` in Owner Tenant        | owner/service-provider company                             |
+| `INTERNAL` in customer Tenant     | that customer Tenant company                               |
+| `PORTAL`, default                 | owner/service-provider company                             |
+| `PORTAL`, explicit joint handling | owner/service-provider company and category Tenant company |
+
+Both `jobFieldIds` and `assigneeUsernames` are filtered and validated against
+the allowed company during final employee resolution. Client-provided company
+IDs, a job-field-only global lookup, other customer companies, and an implicit
+co-support relationship are not valid sources of assignment scope. A `PORTAL`
+Assignment Rule may explicitly set `includeTenantCompany` for joint handling;
+the default is `false`, and the option is invalid for `INTERNAL` rules.
+
+Eligibility is checked when the rule is saved and again when submit, resubmit,
+or another explicit routing command resolves workers. Routing fails when no
+valid worker remains instead of creating an unowned `Assigned` ticket.
+
+Read-only Tenant Admin access to a customer `PORTAL` assignment rule may
+include display data for its currently referenced provider assignees. It does
+not grant candidate search across the owner-company employee directory.
 
 Assignment-rule changes affect future routing decisions. Existing tickets keep
 their current assignees and recorded history.
@@ -386,6 +545,29 @@ Job-field data is used by approval-step and assignment-rule configuration.
 
 Employee data is used for explicit approval assignees, explicit assignment
 targets, and assignment recommendation display.
+
+Candidate lookup is category-centered. Conceptually:
+
+```ts id="settings-eligible-actors"
+getEligibleActors({
+  categoryId,
+  purpose: "APPROVAL" | "ASSIGNMENT",
+});
+```
+
+The server loads the category, its main-category scope, tenant, tenant company,
+and Owner Tenant/company relationship. It then applies both the current
+principal's settings capability and the purpose-specific company rule. The
+request's `categoryId` and `purpose` select a target; they do not establish
+authorization. Approval Step and Assignment Rule do not persist `tenantId` as
+an independent authorization source; a DTO may project derived context:
+
+```txt id="settings-resource-boundary"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
 
 The settings domain should not duplicate organization ownership. It should
 store references and resolve them through the proper reference data boundary.
@@ -493,10 +675,15 @@ Shared UI responsibilities include:
 - loading and empty states
 - consistent mutation feedback
 - preserving tenant context across settings pages
+- applying the shared `manage` / `read` / `none` result
 
 Each page should present the configuration in the shape the user actually edits.
 For example, category is tree-shaped, approval steps are ordered under a
 category, and assignment rules are shown by category.
+
+Read-only views identify the responsible party, for example "Managed by
+service provider", "Managed by customer", and "Read only". Hiding a tab or
+button is a usability behavior only; it does not replace server authorization.
 
 ---
 
@@ -507,13 +694,27 @@ The server boundary is authoritative.
 Validation must cover:
 
 - authenticated user and administrative access
-- tenant ownership
+- canonical Owner Admin/Tenant Admin classification
+- stored tenant/company relationship
+- category-scope resource capability
 - cross-tenant reference protection
 - valid category hierarchy
+- immutable tenant, main scope, and parent boundary
 - valid approval assignee references
 - valid assignment references
 - active/inactive behavior
 - protected portal-owner tenant behavior
+
+Read APIs filter out `none` resources; they must not return another tenant's
+settings and rely on the UI to hide them. Mutation APIs reload stored resource
+context and return `403` for a principal without `manage` access. DTO validation
+rejects attempts to claim an admin type/company boundary or mutate immutable
+category context.
+
+The shared application policy is invoked above the LOCAL/REMOTE split and is
+rechecked in server services/repositories where persisted relationships are
+resolved. Existing RLS, database functions, and constraints should preserve
+the same tenant boundary as defense in depth.
 
 The client can improve usability with immediate feedback, but it cannot be the
 trusted settings validator.
@@ -530,6 +731,8 @@ The current design supports:
 - category tree editing
 - main/subcategory defaults
 - category `PORTAL` and `INTERNAL` scope
+- Owner Admin/Tenant Admin capability resolution by category scope
+- category-centered, company-filtered approver and assignee lookup
 - ordered approval steps
 - manager, department, job-field, and employee approval assignees
 - assignment groups with job fields and employee usernames
@@ -557,17 +760,19 @@ The following items are deferred unless explicitly implemented:
 
 ## Responsibility Matrix
 
-| Area | Responsibility |
-| --- | --- |
-| Domain model | Define application-facing settings shapes |
-| Feature API client | Call settings APIs and expose typed operations |
-| Route handler | Parse HTTP and delegate by runtime |
-| LOCAL settings handler | Provide safe mutable demo behavior |
-| REMOTE DTO service | Map persisted rows to stable DTOs |
-| React Query | Own settings server state |
-| Settings UI | Edit configuration through workflow-shaped forms |
-| Ticket workflow | Resolve current settings into ticket behavior |
-| Ticket history | Preserve the meaning of executed ticket actions |
+| Area                          | Responsibility                                          |
+| ----------------------------- | ------------------------------------------------------- |
+| Domain model                  | Define application-facing settings shapes               |
+| Feature API client            | Call settings APIs and expose typed operations          |
+| Route handler                 | Parse HTTP and delegate by runtime                      |
+| Settings authorization policy | Resolve trusted principal and resource capability       |
+| LOCAL settings handler        | Provide safe mutable demo behavior                      |
+| REMOTE DTO service            | Map persisted rows to stable DTOs                       |
+| Server service/repository     | Revalidate stored tenant/category and actor eligibility |
+| React Query                   | Own settings server state                               |
+| Settings UI                   | Edit configuration through workflow-shaped forms        |
+| Ticket workflow               | Resolve current settings into ticket behavior           |
+| Ticket history                | Preserve the meaning of executed ticket actions         |
 
 ---
 
@@ -590,9 +795,12 @@ The following items are deferred unless explicitly implemented:
 Service Desk Settings define future ticket behavior through tenant, category,
 approval-step, and assignment-rule configuration.
 
-The current model uses tenant-scoped category trees, category scopes
-`PORTAL` and `INTERNAL`, ordered approval steps with typed assignees, and
-group-based assignment rules.
+The current model uses tenant-scoped category trees, category scopes `PORTAL`
+and `INTERNAL`, ordered approval steps with typed assignees, and group-based
+assignment rules. Tenant is the workflow boundary; category-scope authorization
+selects the actual manager for each resource. `INTERNAL` configuration is
+managed by that tenant's administrator, while customer `PORTAL` category and
+assignment are managed by Owner Admin and approval is managed by Tenant Admin.
 
 Settings data is server state owned by React Query and served through a
 LOCAL/REMOTE API boundary. Settings changes should guide future workflows while

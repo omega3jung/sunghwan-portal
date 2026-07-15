@@ -54,11 +54,7 @@ export const localSaveCategoryTree = ({
   );
   const preservedCategories = targetTenant.category
     .filter((category) => !submittedIds.has(String(category.category_id)))
-    .sort((left, right) => left.category_index - right.category_index)
-    .map((category, categoryIndex) => ({
-      ...category,
-      category_index: synchronizedCategories.length + categoryIndex + 1,
-    }));
+    .sort((left, right) => left.category_index - right.category_index);
 
   targetTenant.category = sortCategories([
     ...synchronizedCategories,

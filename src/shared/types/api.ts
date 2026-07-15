@@ -9,7 +9,8 @@ export type DbSort<TField extends string = string> = {
 
 export type DbParams<TSortField extends string = string> = {
   filter?: RuleGroupTypeIC;
-  sort?: DbSort<TSortField>;
+  sortField?: TSortField;
+  sortDirection?: SortDirection;
   page?: number;
   pageSize?: number;
 };

@@ -49,10 +49,16 @@ import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrent
 import { NS } from "@/lib/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import { useLocalizedValue } from "@/shared/hooks";
-import type { ImageValueLabel } from "@/shared/types";
+import type { DbParams, ImageValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
+const activeEmployeeListParams: DbParams = {
+  filter: createFieldFilter({
+    field: "e_active",
+    value: true,
+  }),
+};
 
 const isPresent = <T,>(value: T | null | undefined): value is T =>
   value !== null && value !== undefined;
@@ -139,7 +145,7 @@ export default function ServiceDeskPage() {
       }),
     ]),
   });
-  const { data: employees } = useEmployeeListQuery({});
+  const { data: employees } = useEmployeeListQuery(activeEmployeeListParams);
 
   const categories = useMemo<MainCategory[]>(() => {
     return (categoryTrees ?? [])

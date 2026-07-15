@@ -8,14 +8,22 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupportedLanguage } from "@/domain/config";
+import type { CategoryScope } from "@/domain/serviceDesk";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
 import { NS } from "@/lib/i18n";
 import { getLanguageOptions } from "@/shared/constants";
 import { useLocalizedValue } from "@/shared/hooks";
-import { ImageValueLabel, Locale, ValueLabel } from "@/shared/types";
+import type {
+  DbParams,
+  ImageValueLabel,
+  Locale,
+  ValueLabel,
+} from "@/shared/types";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 import { MAX_EMPLOYEE_PER_CATEGORY } from "../constants";
 import { useAssignmentRuleForm } from "../hooks/useAssignmentRuleForm";
@@ -27,39 +35,98 @@ type Props = {
   setTree: React.Dispatch<
     React.SetStateAction<TreeNodes<AssignmentRuleData | SubAssignmentRuleData>>
   >;
+  readOnly?: boolean;
+  scope: CategoryScope;
 };
 
 export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
-  ({ selectedNode, language, setTree }, ref) => {
+  (
+    {
+      selectedNode,
+      language,
+      setTree,
+      readOnly = false,
+      scope,
+    },
+    ref,
+  ) => {
     const { t } = useTranslation(NS.settings);
     const tLocal = useLocalizedValue(language);
     const localLocales = getLanguageOptions(t);
 
-    const { languageTab, setLanguageTab, assigneeChange } =
-      useAssignmentRuleForm({
-        selectedNode,
-        language,
-        setTree,
-      });
+    const {
+      languageTab,
+      setLanguageTab,
+      assigneeChange,
+      includeTenantCompanyChange,
+    } = useAssignmentRuleForm({
+      selectedNode,
+      language,
+      setTree,
+    });
 
-    const { data: jobFields } = useJobFieldListQuery({});
-    const { data: employees } = useEmployeeListQuery({});
+    const includeTenantCompany =
+      scope === "PORTAL" && selectedNode?.includeTenantCompany === true;
+    const employeeListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "categoryId",
+            value: selectedNode?.id,
+          }),
+          createFieldFilter({
+            field: "purpose",
+            value: selectedNode ? "ASSIGNMENT" : null,
+          }),
+          createFieldFilter({
+            field: "includeTenantCompany",
+            value: includeTenantCompany,
+          }),
+          createFieldFilter({
+            field: "e_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [includeTenantCompany, selectedNode],
+    );
+    const { data: employees, isLoading: isEmployeesLoading } =
+      useEmployeeListQuery(employeeListParams);
+    const { data: allJobFields, isLoading: isJobFieldsLoading } =
+      useJobFieldListQuery(employeeListParams);
+    const jobFields = useMemo(() => {
+      const eligibleIds = new Set(
+        (employees ?? []).map((employee) => employee.jobFieldId),
+      );
+      const selectedIds = new Set(selectedNode?.jobFieldIds ?? []);
+
+      return (allJobFields ?? []).filter(
+        (jobField) =>
+          eligibleIds.has(jobField.id) || selectedIds.has(jobField.id),
+      );
+    }, [allJobFields, employees, selectedNode?.jobFieldIds]);
+    const isReferenceDataLoading = isEmployeesLoading || isJobFieldsLoading;
 
     const jobFieldData = useMemo((): ValueLabel[] => {
-      if (!jobFields) return [];
-
-      return jobFields.map((jobField) => {
+      const options = jobFields.map((jobField) => {
         return {
           value: jobField.id,
           label: tLocal(jobField.name),
         };
       });
-    }, [jobFields, tLocal]);
+
+      const optionIds = new Set(options.map((option) => option.value));
+
+      return [
+        ...options,
+        ...(selectedNode?.jobFieldIds ?? [])
+          .filter((id) => !optionIds.has(id))
+          .map((id) => ({ value: id, label: id })),
+      ];
+    }, [jobFields, selectedNode?.jobFieldIds, tLocal]);
 
     const employeeData = useMemo((): ImageValueLabel[] => {
-      if (!employees) return [];
-
-      return employees.map((employee) => {
+      const options = (employees ?? []).map((employee) => {
         const name = tLocal(employee.name);
         return {
           value: employee.username,
@@ -68,7 +135,20 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
           image: employee.imageUrl,
         };
       });
-    }, [employees, tLocal]);
+
+      const optionUsernames = new Set(options.map((option) => option.value));
+
+      return [
+        ...options,
+        ...(selectedNode?.assigneeUsernames ?? [])
+          .filter((username) => !optionUsernames.has(username))
+          .map((username) => ({
+            value: username,
+            label: username,
+            displayName: username,
+          })),
+      ];
+    }, [employees, selectedNode?.assigneeUsernames, tLocal]);
 
     // displat empty box.
     if (!selectedNode) {
@@ -98,7 +178,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
           </TabsList>
         </Tabs>
         <FieldGroup className="mt-8 pt-2">
-          <FieldSet>
+          <FieldSet disabled={readOnly}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="category-input-name">
@@ -122,6 +202,9 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   badgeVariant="secondary"
                   options={jobFieldData}
                   value={selectedNode.jobFieldIds || []}
+                  readOnly={readOnly}
+                  disabled={isReferenceDataLoading}
+                  isLoading={isReferenceDataLoading}
                   placeholder={t(
                     "serviceDeskSettings.assignmentRuleTab.selectAssigneeJobField",
                   )}
@@ -150,6 +233,9 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   badgeVariant={"primary"}
                   options={employeeData}
                   value={selectedNode.assigneeUsernames || []}
+                  readOnly={readOnly}
+                  disabled={isReferenceDataLoading}
+                  isLoading={isReferenceDataLoading}
                   maxImages={MAX_EMPLOYEE_PER_CATEGORY}
                   placeholder={t(
                     "serviceDeskSettings.assignmentRuleTab.selectAssignee",
@@ -175,6 +261,28 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
                   }}
                 />
               </Field>
+              {scope === "PORTAL" && (
+                <Field orientation="horizontal">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <FieldLabel htmlFor="assignment-rule-include-tenant-company">
+                      {t(
+                        "serviceDeskSettings.assignmentRuleTab.includeTenantCompany",
+                      )}
+                    </FieldLabel>
+                    <p className="text-sm text-muted-foreground">
+                      {t(
+                        "serviceDeskSettings.assignmentRuleTab.includeTenantCompanyDescription",
+                      )}
+                    </p>
+                  </div>
+                  <Switch
+                    id="assignment-rule-include-tenant-company"
+                    checked={selectedNode.includeTenantCompany === true}
+                    disabled={readOnly}
+                    onCheckedChange={includeTenantCompanyChange}
+                  />
+                </Field>
+              )}
             </FieldGroup>
           </FieldSet>
         </FieldGroup>

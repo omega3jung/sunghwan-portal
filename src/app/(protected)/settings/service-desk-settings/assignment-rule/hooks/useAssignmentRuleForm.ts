@@ -39,10 +39,19 @@ export const useAssignmentRuleForm = ({
     );
   };
 
-  const assigneeChange = (key: keyof AssigneeGroup) => (ids: string[]) => {
+  const assigneeChange =
+    (key: Exclude<keyof AssigneeGroup, "includeTenantCompany">) =>
+    (ids: string[]) => {
+      updateNode((data) => ({
+        ...data,
+        [key]: ids,
+      }));
+    };
+
+  const includeTenantCompanyChange = (checked: boolean) => {
     updateNode((data) => ({
       ...data,
-      [key]: ids,
+      includeTenantCompany: checked,
     }));
   };
 
@@ -50,6 +59,7 @@ export const useAssignmentRuleForm = ({
     languageTab,
     setLanguageTab,
     assigneeChange,
+    includeTenantCompanyChange,
     language,
   };
 };

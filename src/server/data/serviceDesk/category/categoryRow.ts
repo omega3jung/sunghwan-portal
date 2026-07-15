@@ -17,6 +17,15 @@ export type CategoryRow = {
   cat_default_sla_days: number | null;
 };
 
+export type CategoryContextRow = {
+  category_id: number;
+  main_category_id: number;
+  category_scope: CategoryScope;
+  tenant_id: number;
+  tenant_company_id: number;
+  tenant_active: boolean;
+};
+
 export type CreateCategoryRowInput = {
   cat_tenant_id: number;
   cat_parent_id: number | null;

@@ -1,9 +1,23 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import type { DataScope } from "@/domain/auth";
+import {
+  type CategoryScope,
+  type MainCategory,
+} from "@/domain/serviceDesk";
+import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category";
+import { getLocalDemoCategories } from "@/server/serviceDesk/settings/state";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsPrincipal,
+} from "@/shared/utils/serviceDesk";
 
 import {
   getActiveTenantByCompanyId,
   getActiveTenantById,
   getActiveTenants,
+  getServiceDeskSettingsTenantContext,
+  type ServiceDeskSettingsTenantContext,
   TenantDto,
 } from "../tenant";
 import {
@@ -21,6 +35,7 @@ import {
 } from "./categoryMapper";
 import {
   createCategoryRow,
+  findCategoryContextRowById,
   findCategoryRowsByTenantId,
   findCategoryRowsByTenantIdAndCategoryId,
   updateCategoryRowById,
@@ -43,6 +58,192 @@ export async function getCategoryTreeByTenantId(
   const rows = await findCategoryRowsByTenantId(tenantId);
 
   return mapCategoryRowsToDtos(rows);
+}
+
+export type ServiceDeskCategoryContext = {
+  categoryId: string;
+  mainCategoryId: string;
+  scope: CategoryScope;
+  tenant: ServiceDeskSettingsTenantContext;
+};
+
+export async function getServiceDeskCategoryContext(
+  dataScope: DataScope,
+  categoryId: string | number,
+): Promise<ServiceDeskCategoryContext | null> {
+  if (dataScope === "LOCAL") {
+    const tenantTrees = [
+      ...getLocalDemoCategories(true),
+      ...getLocalDemoCategories(false),
+    ];
+    const matches = new Map<
+      string,
+      {
+        tenantId: number;
+        mainCategoryId: string;
+        scope: CategoryScope;
+      }
+    >();
+
+    for (const tenantTree of tenantTrees) {
+      for (const mainCategory of tenantTree.category) {
+        const isMain = String(mainCategory.category_id) === String(categoryId);
+        const isSub = mainCategory.sub_category.some(
+          (subCategory) =>
+            String(subCategory.category_id) === String(categoryId),
+        );
+
+        if (!isMain && !isSub) {
+          continue;
+        }
+
+        const match = {
+          tenantId: tenantTree.tenant_id,
+          mainCategoryId: String(mainCategory.category_id),
+          scope: mainCategory.category_scope,
+        };
+
+        matches.set(
+          [match.tenantId, match.mainCategoryId, match.scope].join(":"),
+          match,
+        );
+      }
+    }
+
+    if (matches.size !== 1) {
+      return null;
+    }
+
+    const match = matches.values().next().value;
+
+    if (!match) {
+      return null;
+    }
+
+    const tenant = await getServiceDeskSettingsTenantContext(
+      dataScope,
+      match.tenantId,
+    );
+
+    if (!tenant) {
+      return null;
+    }
+
+    return {
+      categoryId: String(categoryId),
+      mainCategoryId: match.mainCategoryId,
+      scope: match.scope,
+      tenant,
+    };
+  }
+
+  const row = await findCategoryContextRowById(categoryId);
+
+  if (!row) {
+    return null;
+  }
+
+  const tenant = await getServiceDeskSettingsTenantContext(
+    dataScope,
+    row.tenant_id,
+  );
+
+  if (!tenant) {
+    return null;
+  }
+
+  return {
+    categoryId: String(row.category_id),
+    mainCategoryId: String(row.main_category_id),
+    scope: row.category_scope,
+    tenant,
+  };
+}
+
+export function assertCategoryTreeMutationAllowed({
+  principal,
+  tenant,
+  currentCategories,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  currentCategories: MainCategory[];
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const currentCategoriesById = new Map(
+    currentCategories.map((category) => [category.id, category]),
+  );
+  const submittedCategoryIds = new Set<string>();
+  const submittedSubCategoryIds = new Set<string>();
+
+  for (const category of payload.categories) {
+    const currentCategory = category.id
+      ? currentCategoriesById.get(category.id)
+      : undefined;
+    const scope = currentCategory?.scope ?? category.scope;
+    const access = resolveSettingsAccess(principal, {
+      resource: "CATEGORY",
+      tenantCompanyId: tenant.companyId,
+      isOwnerTenant: tenant.isOwnerTenant,
+      scope,
+    });
+
+    if (!canManageServiceDeskSettings(access)) {
+      throw createStatusError(
+        "The submitted category scope is read-only or outside this administrator scope.",
+        403,
+      );
+    }
+
+    if (category.id) {
+      if (!currentCategory) {
+        throw createStatusError(
+          "The submitted category does not belong to the target tenant.",
+          400,
+        );
+      }
+
+      if (submittedCategoryIds.has(category.id)) {
+        throw createStatusError(
+          "A category cannot be submitted more than once.",
+          400,
+        );
+      }
+
+      submittedCategoryIds.add(category.id);
+
+      if (category.scope !== currentCategory.scope) {
+        throw createStatusError(
+          "Category scope is immutable. Deactivate the category and create a new one.",
+          400,
+        );
+      }
+    }
+
+    const currentSubCategoryIds = new Set(
+      currentCategory?.subCategories.map((subCategory) => subCategory.id) ?? [],
+    );
+
+    for (const subCategory of category.subCategories) {
+      if (!subCategory.id) {
+        continue;
+      }
+
+      if (
+        !currentCategory ||
+        !currentSubCategoryIds.has(subCategory.id) ||
+        submittedSubCategoryIds.has(subCategory.id)
+      ) {
+        throw createStatusError(
+          "A subcategory cannot move to another category or tenant.",
+          400,
+        );
+      }
+
+      submittedSubCategoryIds.add(subCategory.id);
+    }
+  }
 }
 
 export async function getCategorySettingsResponseByTenantId({
@@ -93,6 +294,13 @@ export async function updateCategoryById(
 ): Promise<CategoryDto> {
   const { parentRow: currentParentRow, childRows: currentChildRows } =
     await getCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
+
+  if (currentParentRow.cat_scope !== input.category_scope) {
+    throw new ServiceDeskApiError(
+      "api.categories.localDemo.scopeImmutable",
+      400,
+    );
+  }
 
   const parentRow = await updateCategoryRowById(
     tenantId,
@@ -426,4 +634,8 @@ function toUpdateCategoryRowInput(
     cat_default_sla_days: row.cat_default_sla_days,
     ...overrides,
   };
+}
+
+function createStatusError(message: string, status: number) {
+  return Object.assign(new Error(message), { status });
 }

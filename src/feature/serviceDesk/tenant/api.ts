@@ -13,16 +13,10 @@ export const serviceDeskTenantApi = {
   list: async (params: ServiceDeskTenantListParams): Promise<Tenant[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.active !== undefined) {
-      searchParams.set("active", String(params.active));
-    }
-
     const res = await client.api.get<TenantResponse, URLSearchParams>(
       `/api/service-desk/tenants`,
       {
-        params: searchParams,
+        params: buildDbSearchParams(params),
       },
     );
 

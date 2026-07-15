@@ -16,17 +16,24 @@ const normalizeIdList = (value: string[]) => {
   );
 };
 
-const normalizeAssignee = (assignmentRule: {
-  assignee: {
-    jobFieldIds: string[];
-    assigneeUsernames: string[];
-  };
-}) => {
+const normalizeAssignee = (
+  assignmentRule: {
+    assignee: {
+      jobFieldIds: string[];
+      assigneeUsernames: string[];
+      includeTenantCompany?: boolean;
+    };
+  },
+  allowTenantCompany = true,
+) => {
   return {
     jobFieldIds: normalizeIdList(assignmentRule.assignee.jobFieldIds),
     assigneeUsernames: normalizeIdList(
       assignmentRule.assignee.assigneeUsernames,
     ),
+    includeTenantCompany:
+      allowTenantCompany &&
+      assignmentRule.assignee.includeTenantCompany === true,
   };
 };
 
@@ -56,13 +63,19 @@ export const buildAssignmentRuleTreeSavePayload = ({
 
       return {
         id: categoryData.id,
-        assignee: normalizeAssignee({ assignee: categoryData }),
+        assignee: normalizeAssignee(
+          { assignee: categoryData },
+          categoryData.scope === "PORTAL",
+        ),
         subCategories: categoryNode.children.map((subCategoryNode) => {
           const subCategoryData = subCategoryNode.data as SubAssignmentRuleData;
 
           return {
             id: subCategoryData.id,
-            assignee: normalizeAssignee({ assignee: subCategoryData }),
+            assignee: normalizeAssignee(
+              { assignee: subCategoryData },
+              categoryData.scope === "PORTAL",
+            ),
           };
         }),
       };
@@ -143,12 +156,14 @@ export const createAssignmentRuleSettingsSignatureFromAssignmentRules = ({
     assignee: {
       jobFieldIds: category.jobFieldIds,
       assigneeUsernames: category.assigneeUsernames,
+      includeTenantCompany: category.includeTenantCompany,
     },
     subCategories: category.subCategories.map((subCategory) => ({
       id: subCategory.id,
       assignee: {
         jobFieldIds: subCategory.jobFieldIds,
         assigneeUsernames: subCategory.assigneeUsernames,
+        includeTenantCompany: subCategory.includeTenantCompany,
       },
     })),
   }));

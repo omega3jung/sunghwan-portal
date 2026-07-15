@@ -19,11 +19,26 @@ import { NS } from "@/lib/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 
+import { useSettingsScope } from "../_providers";
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
+
+const SERVICE_DESK_TENANT_SETTINGS_PATH =
+  "/settings/service-desk-settings/tenant";
 
 export function SettingsNavigation() {
   const { t } = useTranslation(NS.settings);
-  const settingsNavigationItems = createSettingsNavigationMock(t);
+  const { adminType } = useSettingsScope();
+  const settingsNavigationItems = createSettingsNavigationMock(t).map(
+    (group) => ({
+      ...group,
+      items:
+        adminType === "TENANT_ADMIN"
+          ? group.items.filter(
+              (item) => item.path !== SERVICE_DESK_TENANT_SETTINGS_PATH,
+            )
+          : group.items,
+    }),
+  );
 
   const router = useRouter();
   const { startRouteLoadingForHref } = useRouteLoading();

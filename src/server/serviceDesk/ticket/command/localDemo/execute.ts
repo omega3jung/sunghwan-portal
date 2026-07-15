@@ -11,9 +11,9 @@ import {
 import { resolveNextTicketStatus } from "./ticketContext";
 import { buildTicketStatusPatch, mergeActionPatch } from "./ticketPatch";
 
-export const executeLocalAction = ({
+export const executeLocalAction = async ({
   ...context
-}: LocalActionRuntimeContext): ExecutedLocalAction => {
+}: LocalActionRuntimeContext): Promise<ExecutedLocalAction> => {
   const spec = actionSpecMap[context.action];
   const ticket = spec.needsTicket
     ? getTicketContext(context.ticketId, context.isInternal).ticket
@@ -41,7 +41,7 @@ export const executeLocalAction = ({
     );
   }
 
-  const effect = spec.handler(runtimeContext);
+  const effect = await spec.handler(runtimeContext);
   const ticketPatch = mergeActionPatch(
     buildTicketStatusPatch(ticket, nextStatus),
     effect.ticketPatch,

@@ -1,4 +1,4 @@
-import { DbParams } from "@/shared/types/api";
+import type { DbParams } from "@/shared/types/api";
 
 import { ORGANIZATION_EMPLOYEE_KEY, ORGANIZATION_KEY } from "../keys";
 

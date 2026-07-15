@@ -119,7 +119,14 @@
       "clientList": "Lista de clientes",
       "tenant": "Tenant",
       "noResults": "Sin resultados",
-      "saveChanges": "Guardar cambios"
+      "saveChanges": "Guardar cambios",
+      "scope": "Ámbito de la categoría",
+      "scopeInternal": "Interno",
+      "scopePortal": "Portal",
+      "readOnly": "Solo lectura",
+      "readOnlyDescription": "Puedes consultar esta configuración, pero solo el administrador responsable puede modificarla.",
+      "managedByServiceProvider": "Gestionado por el proveedor de servicios",
+      "managedByCustomer": "Gestionado por el cliente"
     },
     "categoryTab": {
       "scope": "Alcance",
@@ -157,6 +164,8 @@
       "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado",
+      "includeTenantCompany": "Incluir la empresa del tenant para gestión conjunta",
+      "includeTenantCompanyDescription": "Desactivado de forma predeterminada. Actívalo solo cuando esta regla PORTAL deba ser gestionada conjuntamente por el proveedor y la empresa del tenant de la categoría.",
       "empty": "Selecciona un regla de asignación para editar su configuración."
     },
     "tenant": {

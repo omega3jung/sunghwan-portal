@@ -26,6 +26,7 @@ export const mapAssignmentRuleData = (
       ...cat,
       jobFieldIds: catAssRule?.jobFieldIds || [],
       assigneeUsernames: catAssRule?.assigneeUsernames || [],
+      includeTenantCompany: catAssRule?.includeTenantCompany === true,
       subCategories: cat.subCategories?.map((sub) => {
         const subCatAssRule = assignmentRules.find(
           (assignmentRule) => assignmentRule.categoryId === sub.id,
@@ -34,6 +35,8 @@ export const mapAssignmentRuleData = (
           ...sub,
           jobFieldIds: subCatAssRule?.jobFieldIds || [],
           assigneeUsernames: subCatAssRule?.assigneeUsernames || [],
+          includeTenantCompany:
+            subCatAssRule?.includeTenantCompany === true,
         };
       }),
     };

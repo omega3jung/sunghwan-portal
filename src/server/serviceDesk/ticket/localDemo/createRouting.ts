@@ -1,14 +1,16 @@
-﻿import { ACCESS_LEVEL, AccessLevel } from "@/domain/auth";
-import { TicketStatus } from "@/domain/serviceDesk";
-import { DbEmployee } from "@/feature/organization/employee";
-import { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
-import { createEmployeesMock } from "@/mocks/domain/organization/employee";
+import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
+import type { TicketStatus } from "@/domain/serviceDesk";
+import type { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
+import { resolveDemoAuth } from "@/mocks/domain/user";
 import {
-  clientAuths,
-  internalAuths,
-  resolveClientAuth,
-  resolveInternalAuth,
-} from "@/mocks/domain/user";
+  type EligibleEmployee,
+  getEligibleEmployeesForCategory,
+} from "@/server/data/organization/employees";
+import {
+  getServiceDeskCategoryContext,
+  type ServiceDeskCategoryContext,
+} from "@/server/data/serviceDesk/category";
 import {
   getLocalDemoApprovalSteps,
   getLocalDemoAssignmentRules,
@@ -17,117 +19,64 @@ import {
 const DEFAULT_REQUESTER_ACCESS_LEVEL = ACCESS_LEVEL.USER;
 const CREATE_TICKET_APPROVAL_STATUS: TicketStatus = "Approval";
 const CREATE_TICKET_ASSIGNED_STATUS: TicketStatus = "Assigned";
-const INTERNAL_COMPANY_ID = 1;
-const CLIENT_COMPANY_ID = 11;
 
-type CreateTicketRouting = {
+export type CreateTicketRouting = {
   status: TicketStatus;
   approvalStepId: string | null;
   assigneeUsernames: string[];
 };
 
-type RoutingCategoryReference = {
+type RoutingInput = {
+  // Kept for caller compatibility. Category context, not the requester, is the
+  // authority for tenant and scope during routing.
+  isInternal: boolean;
   categoryId: string;
   parentCategoryId: string;
+  requesterUsername: string;
 };
 
-export function resolveCreateTicketRouting({
-  isInternal,
-  categoryId,
-  parentCategoryId,
-  requesterUsername,
-}: {
-  isInternal: boolean;
-  categoryId: string;
-  parentCategoryId: string;
-  requesterUsername: string;
-}): CreateTicketRouting {
-  const employees = createEmployeesMock();
-  const requesterAccessLevel = resolveRequesterAccessLevel({
-    isInternal,
-    requesterUsername,
-    employees,
-  });
-  const categoryReference: RoutingCategoryReference = {
-    categoryId,
-    parentCategoryId,
-  };
-  const approvalSteps = resolveCategoryApprovalSteps({
-    isInternal,
-    categoryReference,
-  });
-  const nextApprovalStep = resolveNextApprovalStep({
-    approvalSteps,
-    requesterAccessLevel,
-  });
-
-  if (nextApprovalStep) {
-    const assigneeUsernames = resolveApprovalStepAssignees({
-      approvalStep: nextApprovalStep,
-      isInternal,
-      requesterUsername,
-      employees,
-    });
-
-    return {
-      status: CREATE_TICKET_APPROVAL_STATUS,
-      approvalStepId: String(nextApprovalStep.approval_step_id),
-      assigneeUsernames,
-    };
-  }
-
-  return {
-    status: CREATE_TICKET_ASSIGNED_STATUS,
-    approvalStepId: null,
-    assigneeUsernames: resolveAssignmentAssignees({
-      isInternal,
-      categoryReference,
-      requesterUsername,
-      employees,
-    }),
-  };
-}
-
-export function resolveApprovedTicketRouting({
-  isInternal,
-  categoryId,
-  parentCategoryId,
-  requesterUsername,
-  currentApprovalStepId,
-}: {
-  isInternal: boolean;
-  categoryId: string;
-  parentCategoryId: string;
-  requesterUsername: string;
+type ApprovedRoutingInput = RoutingInput & {
   currentApprovalStepId: string;
-}): CreateTicketRouting {
-  const employees = createEmployeesMock();
-  const requesterAccessLevel = resolveRequesterAccessLevel({
-    isInternal,
-    requesterUsername,
-    employees,
-  });
-  const categoryReference: RoutingCategoryReference = {
-    categoryId,
-    parentCategoryId,
-  };
-  const approvalSteps = resolveCategoryApprovalSteps({
-    isInternal,
-    categoryReference,
-  });
+};
+
+export async function resolveCreateTicketRouting(
+  input: RoutingInput,
+): Promise<CreateTicketRouting> {
+  return resolveTicketRouting(input);
+}
+
+export async function resolveApprovedTicketRouting(
+  input: ApprovedRoutingInput,
+): Promise<CreateTicketRouting> {
+  return resolveTicketRouting(input);
+}
+
+async function resolveTicketRouting(
+  input: RoutingInput & { currentApprovalStepId?: string },
+): Promise<CreateTicketRouting> {
+  const category = await requireLocalCategoryContext(input.categoryId);
+  const requesterAccessLevel = resolveRequesterAccessLevel(
+    input.requesterUsername,
+  );
+  const approvalSteps = resolveCategoryApprovalSteps(category);
   const nextApprovalStep = resolveNextApprovalStep({
     approvalSteps,
     requesterAccessLevel,
-    currentApprovalStepId,
+    currentApprovalStepId: input.currentApprovalStepId,
   });
 
   if (nextApprovalStep) {
+    const eligibleEmployees = await getEligibleEmployeesForCategory({
+      dataScope: "LOCAL",
+      category,
+      purpose: "APPROVAL",
+    });
     const assigneeUsernames = resolveApprovalStepAssignees({
       approvalStep: nextApprovalStep,
-      isInternal,
-      requesterUsername,
-      employees,
+      eligibleEmployees,
     });
+
+    assertRoutingResolved(assigneeUsernames, input.categoryId);
 
     return {
       status: CREATE_TICKET_APPROVAL_STATUS,
@@ -136,74 +85,41 @@ export function resolveApprovedTicketRouting({
     };
   }
 
+  const assigneeUsernames = await resolveAssignmentAssignees(category);
+
+  assertRoutingResolved(assigneeUsernames, input.categoryId);
+
   return {
     status: CREATE_TICKET_ASSIGNED_STATUS,
     approvalStepId: null,
-    assigneeUsernames: resolveAssignmentAssignees({
-      isInternal,
-      categoryReference,
-      requesterUsername,
-      employees,
-    }),
+    assigneeUsernames,
   };
 }
 
-function resolveRequesterAccessLevel({
-  isInternal,
-  requesterUsername,
-  employees,
-}: {
-  isInternal: boolean;
-  requesterUsername: string;
-  employees: DbEmployee[];
-}): AccessLevel {
-  const directAuth = isInternal
-    ? resolveInternalAuth(requesterUsername)
-    : resolveClientAuth(requesterUsername);
+async function requireLocalCategoryContext(categoryId: string) {
+  const category = await getServiceDeskCategoryContext("LOCAL", categoryId);
 
-  if (directAuth) {
-    return directAuth.permission;
+  if (!category || !category.tenant.active) {
+    throw new ServiceDeskApiError(
+      "api.tickets.localDemo.categoryNotFound",
+      404,
+      { categoryId },
+    );
   }
 
-  const requesterEmployee = resolveEmployeeByIdentifier(
-    employees,
-    requesterUsername,
-  );
-
-  if (!requesterEmployee) {
-    return DEFAULT_REQUESTER_ACCESS_LEVEL;
-  }
-
-  const employeeKeyCandidates = [
-    requesterEmployee.e_username,
-    String(requesterEmployee.e_id),
-  ];
-
-  for (const employeeKey of employeeKeyCandidates) {
-    const auth = isInternal
-      ? resolveInternalAuth(employeeKey)
-      : resolveClientAuth(employeeKey);
-
-    if (auth) {
-      return auth.permission;
-    }
-  }
-
-  return DEFAULT_REQUESTER_ACCESS_LEVEL;
+  return category;
 }
 
-function resolveCategoryApprovalSteps({
-  isInternal,
-  categoryReference,
-}: {
-  isInternal: boolean;
-  categoryReference: RoutingCategoryReference;
-}) {
-  const categories = getLocalDemoApprovalSteps(isInternal);
-  const targetCategory = findByCategoryIdWithParentFallback(
-    categories,
-    categoryReference,
+function resolveRequesterAccessLevel(requesterUsername: string): AccessLevel {
+  return (
+    resolveDemoAuth(requesterUsername)?.permission ??
+    DEFAULT_REQUESTER_ACCESS_LEVEL
   );
+}
+
+function resolveCategoryApprovalSteps(category: ServiceDeskCategoryContext) {
+  const categories = getLocalDemoApprovalSteps(category.tenant.isOwnerTenant);
+  const targetCategory = findByCategoryIdWithMainFallback(categories, category);
 
   if (!targetCategory) {
     return [];
@@ -250,27 +166,21 @@ function resolveNextApprovalStep({
 
 function resolveApprovalStepAssignees({
   approvalStep,
-  isInternal,
-  requesterUsername,
-  employees,
+  eligibleEmployees,
 }: {
   approvalStep: DbCategoryApprovalSettings["approval_step"][number];
-  isInternal: boolean;
-  requesterUsername: string;
-  employees: DbEmployee[];
+  eligibleEmployees: EligibleEmployee[];
 }) {
-  const scopedEmployees = resolveScopedEmployees({
-    isInternal,
-    requesterUsername,
-    employees,
-  });
   const assignee = approvalStep.approval_step_assignee;
 
   switch (assignee.type) {
     case "EMPLOYEE":
       return normalizeAssigneeIds(
         assignee.employee_username.map((employeeUsername) =>
-          resolveEmployeeIdentifier(scopedEmployees, String(employeeUsername)),
+          resolveEligibleEmployeeUsername(
+            eligibleEmployees,
+            String(employeeUsername),
+          ),
         ),
       );
     case "JOB_FIELD":
@@ -278,69 +188,63 @@ function resolveApprovalStepAssignees({
         return [];
       }
       return normalizeAssigneeIds(
-        scopedEmployees
-          .filter((employee) => employee.e_job_field_id === assignee.field_id)
-          .map((employee) => employee.e_username),
+        eligibleEmployees
+          .filter((employee) => employee.jobFieldId === assignee.field_id)
+          .map((employee) => employee.username),
       );
     case "DEPARTMENT":
       if (!("department_id" in assignee)) {
         return [];
       }
       return normalizeAssigneeIds(
-        scopedEmployees
+        eligibleEmployees
           .filter(
-            (employee) => employee.e_department_id === assignee.department_id,
+            (employee) => employee.departmentId === assignee.department_id,
           )
-          .map((employee) => employee.e_username),
+          .map((employee) => employee.username),
       );
     case "MANAGER":
       if (!("level" in assignee)) {
         return [];
       }
       return normalizeAssigneeIds(
-        resolveManagerAssigneeIds({
-          isInternal,
-          scopedEmployees,
-          level: assignee.level,
-        }),
+        resolveManagerAssigneeUsernames(eligibleEmployees, assignee.level),
       );
   }
 }
 
-function resolveAssignmentAssignees({
-  isInternal,
-  categoryReference,
-  requesterUsername,
-  employees,
-}: {
-  isInternal: boolean;
-  categoryReference: RoutingCategoryReference;
-  requesterUsername: string;
-  employees: DbEmployee[];
-}) {
-  const assignmentRule = findByCategoryIdWithParentFallback(
-    getLocalDemoAssignmentRules(isInternal),
-    categoryReference,
+async function resolveAssignmentAssignees(
+  category: ServiceDeskCategoryContext,
+) {
+  const assignmentRule = findByCategoryIdWithMainFallback(
+    getLocalDemoAssignmentRules(category.tenant.isOwnerTenant),
+    category,
   );
 
   if (!assignmentRule) {
     return [];
   }
 
-  const scopedEmployees = resolveScopedEmployees({
-    isInternal,
-    requesterUsername,
-    employees,
+  const eligibleEmployees = await getEligibleEmployeesForCategory({
+    dataScope: "LOCAL",
+    category,
+    purpose: "ASSIGNMENT",
+    includeTenantCompany:
+      assignmentRule.assignee.include_tenant_company === true,
   });
+
   const directAssignees = assignmentRule.assignee.employee_username.map(
     (employeeUsername) =>
-      resolveEmployeeIdentifier(scopedEmployees, String(employeeUsername)),
+      resolveEligibleEmployeeUsername(
+        eligibleEmployees,
+        String(employeeUsername),
+      ),
   );
   const jobFieldAssignees = assignmentRule.assignee.job_field_id.flatMap(
     (jobFieldId) =>
-      scopedEmployees
-        .filter((employee) => employee.e_job_field_id === jobFieldId)
-        .map((employee) => employee.e_username),
+      eligibleEmployees
+        .filter((employee) => employee.jobFieldId === jobFieldId)
+        .map((employee) => employee.username),
   );
 
   return normalizeAssigneeIds([...directAssignees, ...jobFieldAssignees]);
@@ -370,15 +274,12 @@ function normalizeAssigneeIds(
   return normalized;
 }
 
-function findByCategoryIdWithParentFallback<
+function findByCategoryIdWithMainFallback<
   T extends {
     category_id: number;
   },
->(items: T[], categoryReference: RoutingCategoryReference): T | null {
-  const categoryCandidates = [
-    categoryReference.categoryId,
-    categoryReference.parentCategoryId,
-  ];
+>(items: T[], category: ServiceDeskCategoryContext): T | null {
+  const categoryCandidates = [category.categoryId, category.mainCategoryId];
 
   for (const categoryCandidate of categoryCandidates) {
     const found = items.find(
@@ -393,78 +294,44 @@ function findByCategoryIdWithParentFallback<
   return null;
 }
 
-function resolveEmployeeByIdentifier(
-  employees: DbEmployee[],
+function resolveEligibleEmployeeUsername(
+  employees: EligibleEmployee[],
   identifier: string,
-): DbEmployee | null {
-  return (
-    employees.find(
-      (employee) =>
-        employee.e_username === identifier ||
-        String(employee.e_id) === identifier,
-    ) ?? null
-  );
-}
-
-function resolveEmployeeIdentifier(
-  employees: DbEmployee[],
-  value: string,
 ): string | null {
-  const employee = resolveEmployeeByIdentifier(employees, value);
+  const employee = employees.find(
+    (item) => item.username === identifier || String(item.id) === identifier,
+  );
 
-  return employee?.e_username ?? value;
+  return employee?.username ?? null;
 }
 
-function resolveScopedEmployees({
-  isInternal,
-  requesterUsername,
-  employees,
-}: {
-  isInternal: boolean;
-  requesterUsername: string;
-  employees: DbEmployee[];
-}) {
-  const requesterEmployee = resolveEmployeeByIdentifier(
-    employees,
-    requesterUsername,
-  );
-  const companyId =
-    requesterEmployee?.e_company_id ??
-    (isInternal ? INTERNAL_COMPANY_ID : CLIENT_COMPANY_ID);
-  const scopedEmployees = employees.filter(
-    (employee) => employee.e_company_id === companyId && employee.e_active,
-  );
+function resolveManagerAssigneeUsernames(
+  eligibleEmployees: EligibleEmployee[],
+  level: 1 | 2,
+) {
+  const minimumPermission =
+    level === 1 ? ACCESS_LEVEL.MANAGER : ACCESS_LEVEL.ADMIN;
 
-  return scopedEmployees.length > 0
-    ? scopedEmployees
-    : employees.filter((employee) => employee.e_active);
+  return eligibleEmployees
+    .filter(
+      (employee) =>
+        (resolveDemoAuth(employee.username)?.permission ?? ACCESS_LEVEL.NONE) >=
+        minimumPermission,
+    )
+    .map((employee) => employee.username);
 }
 
-function resolveManagerAssigneeIds({
-  isInternal,
-  scopedEmployees,
-  level,
-}: {
-  isInternal: boolean;
-  scopedEmployees: DbEmployee[];
-  level: 1 | 2;
-}) {
-  const scopedAuths = (isInternal ? internalAuths : clientAuths).filter(
-    (auth) =>
-      level === 1
-        ? auth.permission >= ACCESS_LEVEL.MANAGER
-        : auth.permission >= ACCESS_LEVEL.ADMIN,
-  );
-  const scopedUserNameSet = new Set(
-    scopedEmployees.map((employee) => employee.e_username),
-  );
-  const managerUserNames = scopedAuths
-    .map((auth) => auth.username)
-    .filter((username) => scopedUserNameSet.has(username));
-
-  if (managerUserNames.length > 0) {
-    return managerUserNames;
+function assertRoutingResolved(
+  assigneeUsernames: string[],
+  categoryId: string,
+) {
+  if (assigneeUsernames.length > 0) {
+    return;
   }
 
-  return scopedAuths.map((auth) => auth.username);
+  throw new ServiceDeskApiError(
+    "api.ticketCommand.localDemo.assigneeUnavailable",
+    409,
+    { categoryId },
+  );
 }

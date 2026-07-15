@@ -17,6 +17,7 @@ export const camelAssignmentRuleMapper: ArrayMapper<
       assigneeUsernames: item.assignee.employee_username.map((id) =>
         String(id),
       ),
+      includeTenantCompany: item.assignee.include_tenant_company === true,
     },
   }));
 };

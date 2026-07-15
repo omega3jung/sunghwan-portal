@@ -37,6 +37,11 @@ export async function handleTenantPortalApi(
 
   if (tenantListMatch) {
     if (context.method === "GET") {
+      const companyId = getPortalApiQueryValue(
+        context.request,
+        context.options,
+        "companyId",
+      );
       const active =
         parseBooleanQueryValue(
           getPortalApiQueryValue(context.request, context.options, "active"),
@@ -47,7 +52,10 @@ export async function handleTenantPortalApi(
           ),
           "active",
         );
-      const items = filterTenantsByActive(await getTenants(), active);
+      const items = filterTenantsByCompanyId(
+        filterTenantsByActive(await getTenants(), active),
+        companyId,
+      );
 
       return NextResponse.json({
         items,
@@ -94,6 +102,19 @@ export async function handleTenantPortalApi(
   }
 
   return createNotFoundResponse();
+}
+
+function filterTenantsByCompanyId(
+  items: DbTenant[],
+  companyId: string | null,
+) {
+  if (!companyId) {
+    return items;
+  }
+
+  return items.filter(
+    (tenant) => String(tenant.tenant_company_id) === companyId,
+  );
 }
 
 function filterTenantsByActive(items: DbTenant[], active: boolean | null) {

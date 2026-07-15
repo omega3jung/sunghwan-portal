@@ -1,8 +1,12 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 
-import { isInternalUser, isRemoteRequest } from "@/app/api/_helpers";
+import { toApiErrorResponse } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+import {
+  resolveServiceDeskSettingsPrincipal,
+  toCurrentUsernameProxyHeaders,
+  tServiceDeskApi,
+} from "@/app/api/service-desk/_shared";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo/recommendation";
 import { isLocale } from "@/shared/utils/i18n";
@@ -44,34 +48,39 @@ const parseRecommendationInput = async (
 };
 
 export async function POST(request: NextRequest) {
-  const input = await parseRecommendationInput(request);
+  try {
+    const principalContext = await resolveServiceDeskSettingsPrincipal(request);
+    const input = await parseRecommendationInput(request);
 
-  if (!input) {
-    return NextResponse.json(
-      {
-        message: tServiceDeskApi("api.assignmentRecommendations.invalidInput"),
-      },
-      { status: 400 },
-    );
+    if (!input) {
+      return NextResponse.json(
+        {
+          message: tServiceDeskApi(
+            "api.assignmentRecommendations.invalidInput",
+          ),
+        },
+        { status: 400 },
+      );
+    }
+
+    if (principalContext.dataScope === "LOCAL") {
+      return NextResponse.json(
+        await resolveLocalAssignmentRecommendation({ input }),
+      );
+    }
+
+    return portalApiJson(request, {
+      method: "POST",
+      path: "/service-desk/assignment-rules/recommendations",
+      headers: toCurrentUsernameProxyHeaders(
+        principalContext.effectiveUsername,
+      ),
+      body: input,
+      errorMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
+    });
   }
-
-  const isRemote = await isRemoteRequest(request);
-
-  if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-
-    return NextResponse.json(
-      resolveLocalAssignmentRecommendation({
-        input,
-        isInternal,
-      }),
-    );
-  }
-
-  return portalApiJson(request, {
-    method: "POST",
-    path: "/service-desk/assignment-rules/recommendations",
-    body: input,
-    errorMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
-  });
 }

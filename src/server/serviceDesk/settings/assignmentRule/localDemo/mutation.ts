@@ -26,14 +26,17 @@ export const localSaveAssignmentRuleTree = ({
       assignee: node.assignee,
     }),
   );
+  const submittedCategoryIds = new Set(
+    nextRules.map((rule) => String(rule.category_id)),
+  );
+  const preservedRules = previousRules.filter(
+    (rule) => !submittedCategoryIds.has(String(rule.category_id)),
+  );
 
-  items[tenantId] = nextRules;
+  items[tenantId] = [...nextRules, ...preservedRules];
   replaceLocalDemoAssignmentRules({
     tenantId,
-    categoryIds: [
-      ...previousRules.map((rule) => rule.category_id),
-      ...nextRules.map((rule) => rule.category_id),
-    ],
+    categoryIds: nextRules.map((rule) => rule.category_id),
     assignmentRules: nextRules,
   });
 

@@ -8,9 +8,10 @@ import { NS } from "@/lib/i18n";
 type Props = {
   stepAssignee: AssigneeByType<"MANAGER">;
   onChange: (value: ApprovalAssigneeType) => void;
+  readOnly?: boolean;
 };
 
-export function ManagerField({ stepAssignee, onChange }: Props) {
+export function ManagerField({ stepAssignee, onChange, readOnly }: Props) {
   const { t } = useTranslation(NS.settings);
 
   return (
@@ -22,6 +23,7 @@ export function ManagerField({ stepAssignee, onChange }: Props) {
         id="start-index-input"
         className="w-20"
         value={stepAssignee.level}
+        disabled={readOnly}
         onChange={(e) => {
           const number = parseInt(e.target.value);
           onChange({ type: "MANAGER", level: number > 1 ? 2 : 1 });

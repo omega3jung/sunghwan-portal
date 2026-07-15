@@ -1,6 +1,5 @@
-﻿import type { Employee } from "@/domain/organization";
+import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { AssignmentRule, MainCategory } from "@/domain/serviceDesk";
-import { camelEmployeeMapper } from "@/feature/organization/employee";
 import { camelAssignmentRuleMapper } from "@/feature/serviceDesk/assignmentRule/mapper";
 import {
   type AssignmentRecommendationInput,
@@ -8,7 +7,14 @@ import {
   type AssignmentRecommendationSource,
   EMPTY_ASSIGNMENT_RECOMMENDATION,
 } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import { createEmployeesMock } from "@/mocks/domain/organization/employee";
+import {
+  type EligibleEmployee,
+  getEligibleEmployeesForCategory,
+} from "@/server/data/organization/employees";
+import {
+  getServiceDeskCategoryContext,
+  type ServiceDeskCategoryContext,
+} from "@/server/data/serviceDesk/category";
 import { getLocalCategoryTrees } from "@/server/serviceDesk/settings/category/localDemo";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 import { getLocalizedText } from "@/shared/utils/i18n";
@@ -17,38 +23,13 @@ import { getLocalDemoAssignmentRules } from "../../state";
 
 type LocalRecommendationContext = {
   input: AssignmentRecommendationInput;
-  isInternal: boolean;
 };
 
 type RecommendationCollectionContext = {
   assignmentRule: AssignmentRule;
   assigneeUsernames: string[];
-  employees: Employee[];
+  employees: EligibleEmployee[];
   language: Locale;
-};
-
-const buildCategoryList = (isInternal: boolean) => {
-  return getLocalCategoryTrees(isInternal).flatMap((tree) => tree.categories);
-};
-
-const buildEmployees = () => camelEmployeeMapper(createEmployeesMock());
-
-const findMainCategoryIdByCategoryId = (
-  categories: MainCategory[],
-  categoryId: string,
-) => {
-  let result = undefined;
-
-  for (let i = 0; i < categories.length && !result; i++) {
-    const subCategory = categories[i].subCategories.find(
-      (item) => item.id === categoryId,
-    );
-    if (subCategory) {
-      result = categories[i].id;
-    }
-  }
-
-  return result;
 };
 
 const getCategoryLabel = (
@@ -57,10 +38,16 @@ const getCategoryLabel = (
   language: Locale,
 ): string => {
   for (const category of categories) {
-    for (const subCategory of category.subCategories) {
-      if (subCategory.id === categoryId) {
-        return getLocalizedText(subCategory.name, language) ?? "";
-      }
+    if (category.id === categoryId) {
+      return getLocalizedText(category.name, language) ?? "";
+    }
+
+    const subCategory = category.subCategories.find(
+      (item) => item.id === categoryId,
+    );
+
+    if (subCategory) {
+      return getLocalizedText(subCategory.name, language) ?? "";
     }
   }
 
@@ -74,20 +61,22 @@ const createEmptyRecommendation = (
   selectedCategoryLabel,
 });
 
-const getEmployeeLabel = (employee: Employee, language: Locale) => {
+const getEmployeeLabel = (employee: EligibleEmployee, language: Locale) => {
   const localizedName = employee.name[language] ?? employee.name.en;
 
-  return `${localizedName.first} ${localizedName.last}`.trim();
+  return [localizedName.first, localizedName.middle, localizedName.last]
+    .filter(Boolean)
+    .join(" ");
 };
 
 const toRecommendedUser = (
-  employee: Employee,
+  employee: EligibleEmployee,
   language: Locale,
 ): ImageValueLabel => ({
   value: employee.username,
   label: getEmployeeLabel(employee, language),
   displayName: employee.email,
-  image: employee.imageUrl,
+  image: employee.imageUrl ?? undefined,
 });
 
 const pushUniqueUser = (
@@ -106,34 +95,18 @@ const pushUniqueUser = (
 
 const resolveAssignmentRuleWithCategoryFallback = (
   rules: AssignmentRule[],
-  categories: MainCategory[],
-  categoryId: string,
+  category: ServiceDeskCategoryContext,
 ) => {
   const exactAssignmentRule = rules.find(
-    (item) => item.categoryId === categoryId,
+    (item) => item.categoryId === category.categoryId,
   );
 
   if (exactAssignmentRule) {
     return exactAssignmentRule;
   }
 
-  const mainCategoryId = findMainCategoryIdByCategoryId(categories, categoryId);
-
-  if (!mainCategoryId) {
-    return undefined;
-  }
-
-  return rules.find((item) => item.categoryId === mainCategoryId);
+  return rules.find((item) => item.categoryId === category.mainCategoryId);
 };
-
-const buildEmployeeMap = (employees: Employee[]) =>
-  new Map(employees.map((employee) => [employee.username, employee]));
-
-const buildActiveEmployees = (employees: Employee[]) =>
-  employees.filter((employee) => employee.active);
-
-const buildActiveEmployeeMap = (activeEmployees: Employee[]) =>
-  new Map(activeEmployees.map((employee) => [employee.username, employee]));
 
 const collectRecommendedUsers = ({
   assignmentRule,
@@ -141,17 +114,15 @@ const collectRecommendedUsers = ({
   employees,
   language,
 }: RecommendationCollectionContext) => {
-  const employeeMap = buildEmployeeMap(employees);
-  const activeEmployees = buildActiveEmployees(employees);
-  const activeEmployeeMap = buildActiveEmployeeMap(activeEmployees);
+  const eligibleEmployeeMap = new Map(
+    employees.map((employee) => [employee.username, employee]),
+  );
   const excludedIds = new Set(assigneeUsernames);
   const seen = new Set<string>();
   const recommendedUsers: ImageValueLabel[] = [];
 
   for (const employeeUserName of assignmentRule.assignee.assigneeUsernames) {
-    const employee =
-      activeEmployeeMap.get(employeeUserName) ??
-      employeeMap.get(employeeUserName);
+    const employee = eligibleEmployeeMap.get(employeeUserName);
 
     pushUniqueUser(
       recommendedUsers,
@@ -162,8 +133,8 @@ const collectRecommendedUsers = ({
   }
 
   for (const jobFieldId of assignmentRule.assignee.jobFieldIds) {
-    for (const activeEmployee of activeEmployees) {
-      if (activeEmployee.jobFieldId !== jobFieldId) {
+    for (const employee of employees) {
+      if (String(employee.jobFieldId) !== jobFieldId) {
         continue;
       }
 
@@ -171,7 +142,7 @@ const collectRecommendedUsers = ({
         recommendedUsers,
         seen,
         excludedIds,
-        toRecommendedUser(activeEmployee, language),
+        toRecommendedUser(employee, language),
       );
     }
   }
@@ -202,36 +173,57 @@ const resolveRecommendationSource = (
   return null;
 };
 
-export const resolveLocalAssignmentRecommendation = ({
+export const resolveLocalAssignmentRecommendation = async ({
   input,
-  isInternal,
-}: LocalRecommendationContext): AssignmentRecommendationResult => {
+}: LocalRecommendationContext): Promise<AssignmentRecommendationResult> => {
+  const category = await getServiceDeskCategoryContext(
+    "LOCAL",
+    input.categoryId,
+  );
+
+  if (!category || !category.tenant.active) {
+    throw new ServiceDeskApiError(
+      "api.tickets.localDemo.categoryNotFound",
+      404,
+      { categoryId: input.categoryId },
+    );
+  }
+
   const language = input.language ?? "en";
-  const categories = buildCategoryList(isInternal);
+  const categories =
+    getLocalCategoryTrees(category.tenant.isOwnerTenant).find(
+      (tenant) => tenant.id === category.tenant.id,
+    )?.categories ?? [];
   const selectedCategoryLabel = getCategoryLabel(
     categories,
     input.categoryId,
     language,
   );
   const assignmentRule = resolveAssignmentRuleWithCategoryFallback(
-    camelAssignmentRuleMapper(getLocalDemoAssignmentRules(isInternal)),
-    categories,
-    input.categoryId,
+    camelAssignmentRuleMapper(
+      getLocalDemoAssignmentRules(category.tenant.isOwnerTenant),
+    ),
+    category,
   );
 
   if (!assignmentRule) {
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
-  const recommendedUsers = collectRecommendedUsers({
-    assignmentRule,
-    assigneeUsernames: input.assigneeUsernames,
-    employees: buildEmployees(),
-    language,
+  const eligibleEmployees = await getEligibleEmployeesForCategory({
+    dataScope: "LOCAL",
+    category,
+    purpose: "ASSIGNMENT",
+    includeTenantCompany: assignmentRule.assignee.includeTenantCompany === true,
   });
 
   return {
-    recommendedUsers,
+    recommendedUsers: collectRecommendedUsers({
+      assignmentRule,
+      assigneeUsernames: input.assigneeUsernames,
+      employees: eligibleEmployees,
+      language,
+    }),
     source: resolveRecommendationSource(assignmentRule),
     selectedCategoryLabel,
   };

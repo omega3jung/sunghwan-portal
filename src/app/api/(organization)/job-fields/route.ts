@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isRemoteRequest } from "@/app/api/_helpers";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import {
   camelJobFieldMapper,
   mapJobFieldItemPayload,
@@ -12,18 +13,38 @@ import {
   toJobFieldMockResource,
   toJobFieldWritePayload,
 } from "@/feature/organization/jobField/write";
-import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
+import {
+  handleServiceDeskJobFieldReferenceRequest,
+  isServiceDeskOrganizationReferenceRequest,
+} from "@/server/portalApi/organization/serviceDeskOrganizationReferenceHandler";
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
+  if (isServiceDeskOrganizationReferenceRequest(request)) {
+    return handleServiceDeskJobFieldReferenceRequest(request, {
+      query: request.nextUrl.searchParams,
+      errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    });
+  }
+
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const jobFieldData = camelJobFieldMapper(jobFieldsMock);
+    const jobFieldData = camelJobFieldMapper(
+      applyRuleGroupFilter(
+        allJobFieldsMock,
+        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
+      ),
+    );
 
     return NextResponse.json({
       items: jobFieldData,

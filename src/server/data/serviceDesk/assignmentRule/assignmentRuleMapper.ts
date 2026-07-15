@@ -55,6 +55,7 @@ function mapAssigneeGroupToDto(value: unknown): AssigneeGroupDto {
   return {
     job_field_id: value.job_field_id.map((jobFieldId) => Number(jobFieldId)),
     employee_username: value.employee_username,
+    include_tenant_company: value.include_tenant_company === true,
   };
 }
 
@@ -96,5 +97,6 @@ function normalizeAssigneeGroupDto(input: AssigneeGroupDto): AssigneeGroupDto {
   return {
     job_field_id: input.job_field_id.map(Number),
     employee_username: input.employee_username.map(String),
+    include_tenant_company: input.include_tenant_company === true,
   };
 }

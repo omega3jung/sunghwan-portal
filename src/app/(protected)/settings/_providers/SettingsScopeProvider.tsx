@@ -2,13 +2,17 @@
 
 import { createContext, useContext, useMemo } from "react";
 
-import { DataScope, UserScope } from "@/domain/auth";
+import { UserScope } from "@/domain/auth";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import {
+  getServiceDeskAdminType,
+  type ServiceDeskAdminType,
+  type ServiceDeskSettingsPrincipal,
+} from "@/shared/utils/serviceDesk";
 
 type SettingsScopeContextValue = {
-  isDemo: boolean;
-  isInternal: boolean;
-  permission: number;
+  adminType: ServiceDeskAdminType;
+  principal: ServiceDeskSettingsPrincipal;
 };
 
 const SettingsScopeContext = createContext<SettingsScopeContextValue | null>(
@@ -16,34 +20,38 @@ const SettingsScopeContext = createContext<SettingsScopeContextValue | null>(
 );
 
 export function SettingsScopeProvider({
-  dataScope,
   userScope,
   permission,
+  companyId,
   children,
 }: {
-  dataScope: DataScope;
   userScope: UserScope;
   permission: number;
+  companyId: string | number;
   children: React.ReactNode;
 }) {
-  const { current, data } = useCurrentSession();
+  const { current } = useCurrentSession();
   const currentUser = current.user;
 
   const value = useMemo<SettingsScopeContextValue>(() => {
-    const resolvedDataScope = data?.user?.dataScope ?? dataScope;
     const resolvedUserScope = currentUser?.userScope ?? userScope;
     const resolvedPermission = currentUser?.permission ?? permission;
+    const resolvedCompanyId = currentUser?.companyId ?? companyId;
+    const principal = {
+      permission: resolvedPermission,
+      userScope: resolvedUserScope,
+      companyId: resolvedCompanyId,
+    } satisfies ServiceDeskSettingsPrincipal;
 
     return {
-      isDemo: resolvedDataScope === "LOCAL",
-      isInternal: resolvedUserScope === "INTERNAL",
-      permission: resolvedPermission,
+      adminType: getServiceDeskAdminType(principal),
+      principal,
     };
   }, [
+    companyId,
+    currentUser?.companyId,
     currentUser?.permission,
     currentUser?.userScope,
-    data?.user?.dataScope,
-    dataScope,
     permission,
     userScope,
   ]);

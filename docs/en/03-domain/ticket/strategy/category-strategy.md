@@ -68,7 +68,10 @@ current model. The current boundary is tenant-scoped.
 
 ### Tenant
 
-The tenant owns the category tree for a Service Desk configuration scope.
+The category tree belongs to the tenant's Service Desk workflow boundary.
+"Belongs to" is a scoping statement, not a statement that one actor manages
+every resource. Actual read/manage authority is selected by tenant kind,
+category scope, settings resource, and trusted principal.
 
 ### Main Category
 
@@ -104,6 +107,59 @@ type CategoryScope = "PORTAL" | "INTERNAL";
 
 Subcategories inherit the main category scope for visibility and routing
 purposes.
+
+---
+
+## Category Settings Authorization
+
+Owner Admin is identified by trusted `permission = ADMIN` and
+`userScope = INTERNAL`. Tenant Admin is identified by trusted
+`permission = ADMIN` and `userScope = CLIENT`; its tenant is resolved through
+the effective user's `companyId -> Tenant.companyId` relationship.
+
+Category access is:
+
+| Target | Owner Admin | Same-company Tenant Admin | Other Tenant Admin |
+| --- | --- | --- | --- |
+| Owner Tenant, `INTERNAL` or `PORTAL` | manage | none | none |
+| Customer Tenant, `INTERNAL` | none | manage | none |
+| Customer Tenant, `PORTAL` | manage | read | none |
+
+There is no Owner Admin support/read exception for customer `INTERNAL`
+categories. Owner Admin and Tenant Admin are not ordered roles; the central
+settings policy resolves the resource capability.
+
+Main-category creation follows the same boundary:
+
+- Owner Admin can create either scope in the Owner Tenant
+- Owner Admin can create only `PORTAL` in a customer Tenant
+- Tenant Admin can create only `INTERNAL` in its own customer Tenant
+
+Read APIs filter category trees by this policy. A client-selected tenant or
+scope never grants access.
+
+---
+
+## Immutable Boundary
+
+The following values cannot be moved after creation:
+
+- category tenant
+- main-category scope
+- subcategory parent when the change crosses tenant or scope
+
+Subcategories inherit both tenant and scope from the parent main category. They
+do not have an independent scope-management capability.
+
+Update and deactivation load the existing category before authorization.
+Creation validates the target tenant and requested scope on the server.
+Subcategory creation or update loads the parent main category and derives its
+boundary from the stored parent. Payload `tenantId`, `scope`, and `parentId`
+claims are not authorization facts.
+
+When a category needs another scope, deactivate it and create a new category.
+Category removal is `active = false`, not hard delete, so ticket and history
+references remain valid.
 
 ---
 
@@ -233,6 +289,8 @@ be preserved and `ROUTING_PRESERVED` is recorded.
 The UI should:
 
 - display the tenant-scoped category tree
+- hide category trees for which settings access is `none`
+- make `read` category trees visibly read-only and identify the managing party
 - show only selectable active categories for new workflows
 - preserve inactive category display for existing tickets
 - apply useful defaults for priority, risk, and due date
@@ -243,6 +301,7 @@ The UI should not:
 - invent final routing output
 - hide category changes as ordinary field edits
 - treat category settings as local-only client state
+- treat a hidden edit control as the authorization boundary
 
 ---
 
@@ -296,8 +355,9 @@ Tenant -> Main Category -> Sub Category
 ```
 
 Main categories provide required defaults and `PORTAL`/`INTERNAL` scope.
-Subcategories refine those defaults. Approval resolves from the parent/main
-category; assignment uses subcategory override with parent/main fallback.
-Category changes are routing-sensitive ticket updates, while settings changes
-affect future workflow resolution rather than silently rewriting existing
-tickets.
+Subcategories refine those defaults and inherit the parent's tenant and scope.
+The central settings policy separates the tenant workflow boundary from actual
+management authority. Approval resolves from the parent/main category;
+assignment uses subcategory override with parent/main fallback. Category
+changes are routing-sensitive ticket updates, while settings changes affect
+future workflow resolution rather than silently rewriting existing tickets.

@@ -449,6 +449,9 @@
       "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeUsernames.",
       "fetch": "Impossible de récupérer les recommandations d'attribution."
     },
+    "eligibleActors": {
+      "fetch": "Impossible de récupérer les intervenants Service Desk éligibles."
+    },
     "categories": {
       "fetchList": "Impossible de récupérer les catégories.",
       "create": "Impossible de créer la catégorie.",
@@ -459,7 +462,8 @@
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
-        "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}."
+        "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}.",
+        "scopeImmutable": "La portée d'une catégorie ne peut pas être modifiée. Désactivez cette catégorie et créez-en une nouvelle."
       }
     },
     "tenants": {
@@ -521,6 +525,7 @@
         "createFailed": "Impossible de créer l'action.",
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
         "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
+        "assigneeUnavailable": "Le routage configuré n'a trouvé aucun intervenant actif et éligible.",
         "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
         "approvalForbidden": "Seule la personne approbatrice assignée peut approuver ou refuser ce ticket.",
         "cancelForbidden": "Seule la personne demandeuse peut annuler ce ticket avant le début du travail.",

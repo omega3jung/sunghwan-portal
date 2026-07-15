@@ -895,28 +895,38 @@ async function resolveApprovedTicketRouting(
   );
 
   if (nextApprovalStepId !== null) {
-    return {
-      approvalStepId: nextApprovalStepId,
-      assigneeUsernames: await findApprovalStepAssigneeUsernames(
+    const assigneeUsernames = requireResolvedRoutingAssignees(
+      await findApprovalStepAssigneeUsernames(
         {
           approvalStepId: nextApprovalStepId,
           requesterUsername: ticket.tk_requester_username,
         },
         { query },
       ),
+      "Unable to resolve approval assignees.",
+    );
+
+    return {
+      approvalStepId: nextApprovalStepId,
+      assigneeUsernames,
       status: "Approval",
     };
   }
 
-  return {
-    approvalStepId: null,
-    assigneeUsernames: await findCategoryAssignmentUsernames(
+  const assigneeUsernames = requireResolvedRoutingAssignees(
+    await findCategoryAssignmentUsernames(
       {
         categoryId: ticket.cat_id,
         requesterUsername: ticket.tk_requester_username,
       },
       { query },
     ),
+    "Unable to resolve ticket assignees.",
+  );
+
+  return {
+    approvalStepId: null,
+    assigneeUsernames,
     status: "Assigned",
   };
 }
@@ -939,30 +949,51 @@ async function resolveInitialTicketRouting(
   );
 
   if (nextApprovalStepId !== null) {
-    return {
-      approvalStepId: nextApprovalStepId,
-      assigneeUsernames: await findApprovalStepAssigneeUsernames(
+    const assigneeUsernames = requireResolvedRoutingAssignees(
+      await findApprovalStepAssigneeUsernames(
         {
           approvalStepId: nextApprovalStepId,
           requesterUsername: ticket.tk_requester_username,
         },
         { query },
       ),
+      "Unable to resolve approval assignees.",
+    );
+
+    return {
+      approvalStepId: nextApprovalStepId,
+      assigneeUsernames,
       status: "Approval",
     };
   }
 
-  return {
-    approvalStepId: null,
-    assigneeUsernames: await findCategoryAssignmentUsernames(
+  const assigneeUsernames = requireResolvedRoutingAssignees(
+    await findCategoryAssignmentUsernames(
       {
         categoryId: ticket.cat_id,
         requesterUsername: ticket.tk_requester_username,
       },
       { query },
     ),
+    "Unable to resolve ticket assignees.",
+  );
+
+  return {
+    approvalStepId: null,
+    assigneeUsernames,
     status: "Assigned",
   };
+}
+
+function requireResolvedRoutingAssignees(
+  assigneeUsernames: string[],
+  message: string,
+) {
+  if (assigneeUsernames.length === 0) {
+    throw createStatusError(message, 409);
+  }
+
+  return assigneeUsernames;
 }
 
 export async function resolveMergeTargetTicket({

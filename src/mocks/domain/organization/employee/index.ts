@@ -7,12 +7,14 @@ import itEmployeeMock from "./portalOwner/it.json";
 import logisticsEmployeeMock from "./portalOwner/logistics.json";
 import repairCenterEmployeeMock from "./portalOwner/repairCenter.json";
 
-export const employeesMock: DbEmployee[] = createEmployeesMock();
+const portalOwnerEmployeesMock: DbEmployee[] = createEmployeesMock();
 
-export const allDepartmentsMock: DbEmployee[] = [
-  ...employeesMock,
+export const employeesMock: DbEmployee[] = [
+  ...portalOwnerEmployeesMock,
   ...clientEmployeeMock,
 ];
+
+export const allEmployeesMock: DbEmployee[] = employeesMock;
 
 export function createEmployeesMock(): DbEmployee[] {
   const employeemock = [

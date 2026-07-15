@@ -6,9 +6,9 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { ACCESS_LEVEL } from "@/domain/auth";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { NS } from "@/lib/i18n";
+import { getServiceDeskAdminType } from "@/shared/utils/serviceDesk";
 
 const SETTINGS_ACCESS_TOAST_ID = "settings-access-guard:forbidden";
 const SETTINGS_AUTH_TOAST_ID = "settings-access-guard:unauthenticated";
@@ -32,7 +32,7 @@ export function SettingsAccessGuard({
   const isForbidden =
     !!currentUser &&
     isCurrentUserSynced &&
-    currentUser.permission < ACCESS_LEVEL.ADMIN;
+    !getServiceDeskAdminType(currentUser);
 
   useEffect(() => {
     if (session.status === "unauthenticated") {

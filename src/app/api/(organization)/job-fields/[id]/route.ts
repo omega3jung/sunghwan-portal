@@ -13,7 +13,7 @@ import {
   toJobFieldWritePayload,
   UpdateJobFieldInput,
 } from "@/feature/organization/jobField/write";
-import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const jobFieldData = camelJobFieldMapper(jobFieldsMock);
+    const jobFieldData = camelJobFieldMapper(allJobFieldsMock);
     const targetDepartment = jobFieldData.find(
       (jobField) => jobField.id === id,
     );

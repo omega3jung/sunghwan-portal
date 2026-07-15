@@ -35,14 +35,14 @@ type Props = {
   setTree: React.Dispatch<
     React.SetStateAction<TreeNodes<CategoryData | SubCategoryData>>
   >;
+  readOnly?: boolean;
 };
 
 export const CategoryForm = forwardRef<HTMLDivElement, Props>(
-  ({ selectedNode, language, setTree }, ref) => {
+  ({ selectedNode, language, setTree, readOnly = false }, ref) => {
     const { t } = useTranslation(NS.settings);
     const localLocales = getLanguageOptions(t);
     const isCategoryNode = !!selectedNode && "subCategories" in selectedNode;
-    const isScopeEnabled = isCategoryNode && selectedNode.isCreated;
 
     const { languageTab, setLanguageTab, updateTranslation, updateValue } =
       useCategoryForm({
@@ -114,6 +114,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   data-testid="category-name"
                   className="!disabled:border-primary"
                   value={selectedNode.name[languageTab] ?? ""}
+                  disabled={readOnly}
                   onChange={(e) => updateTranslation("name")(e.target.value)}
                 />
               </Field>
@@ -125,6 +126,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   id="category-textarea-description"
                   className="!disabled:border-primary"
                   value={selectedNode.description?.[languageTab] ?? ""}
+                  disabled={readOnly}
                   onChange={(e) =>
                     updateTranslation("description")(e.target.value)
                   }
@@ -138,6 +140,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   id="category-textarea-request-template"
                   className="!disabled:border-primary"
                   value={selectedNode.requestTemplate?.[languageTab] ?? ""}
+                  disabled={readOnly}
                   onChange={(e) =>
                     updateTranslation("requestTemplate")(e.target.value)
                   }
@@ -150,7 +153,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                 <Select
                   value={isCategoryNode ? selectedNode.scope : undefined}
                   onValueChange={updateValue("scope")}
-                  disabled={!isScopeEnabled}
+                  disabled
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -172,6 +175,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   <Select
                     value={selectedNode.defaultPriority}
                     onValueChange={updateValue("defaultPriority")}
+                    disabled={readOnly}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -192,6 +196,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                   <Select
                     value={selectedNode.defaultRiskLevel}
                     onValueChange={updateValue("defaultRiskLevel")}
+                    disabled={readOnly}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -216,6 +221,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                     id="category-input-resolution-days"
                     className="w-20"
                     value={selectedNode.defaultSlaDays}
+                    disabled={readOnly}
                     onChange={(e) => {
                       updateValue("defaultSlaDays")(parseInt(e.target.value));
                     }}
@@ -233,6 +239,7 @@ export const CategoryForm = forwardRef<HTMLDivElement, Props>(
                     id="category-switch-active"
                     className="!disabled:color-primary"
                     checked={selectedNode.active ?? false}
+                    disabled={readOnly}
                     onCheckedChange={updateValue("active")}
                   />
                 </span>

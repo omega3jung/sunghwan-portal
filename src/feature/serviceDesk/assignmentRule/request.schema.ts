@@ -3,6 +3,7 @@
 const assignmentRuleAssigneeSchema = z.object({
   jobFieldIds: z.array(z.string().min(1)),
   assigneeUsernames: z.array(z.string().min(1)),
+  includeTenantCompany: z.boolean().optional().default(false),
 });
 
 const assigneeGroupSchema = assignmentRuleAssigneeSchema.refine(

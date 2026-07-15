@@ -16,15 +16,9 @@ export const serviceDeskAssignmentRuleApi = {
   ): Promise<AssignmentRule[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.tenantId) {
-      searchParams.set("tenantId", params.tenantId);
-    }
-
     const res = await client.api.get<AssignmentRuleResponse, URLSearchParams>(
       `/api/service-desk/assignment-rules`,
-      { params: searchParams },
+      { params: buildDbSearchParams(params) },
     );
     return res.data.items;
   },

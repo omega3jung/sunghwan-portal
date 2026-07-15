@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  getUserRole,
-  isInternalUser,
+  getCurrentUserRole,
+  getCurrentUserScope,
   isRemoteRequest,
 } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
@@ -108,7 +108,7 @@ export async function POST(
   const isRemote = await isRemoteRequest(request);
   const rawContent = (await request.json()) as Partial<TicketActionFormValues>;
   const content = normalizeTicketActionContent(action, rawContent);
-  const role = await getUserRole(request);
+  const role = await getCurrentUserRole(request);
   const employeeUserName = await getCurrentEmployeeUserName(request);
 
   const mergeValidationResponse = validateMergeRequest(
@@ -129,7 +129,13 @@ export async function POST(
   }
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
+    const currentUserScope = await getCurrentUserScope(request);
+
+    if (currentUserScope === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    const isInternal = currentUserScope === "INTERNAL";
 
     if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
       return NextResponse.json(

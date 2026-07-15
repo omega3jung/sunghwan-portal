@@ -449,6 +449,9 @@
       "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeUsernames가 필요합니다.",
       "fetch": "할당 추천을 불러오지 못했습니다."
     },
+    "eligibleActors": {
+      "fetch": "Service Desk 대상자 후보를 불러오지 못했습니다."
+    },
     "categories": {
       "fetchList": "카테고리를 불러오지 못했습니다.",
       "create": "카테고리를 생성하지 못했습니다.",
@@ -459,7 +462,8 @@
       "localDemo": {
         "invalidPayload": "카테고리 설정 payload가 올바르지 않습니다.",
         "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
-        "clientMismatch": "카테고리가 클라이언트 {{clientId}}에 속하지 않습니다."
+        "clientMismatch": "카테고리가 클라이언트 {{clientId}}에 속하지 않습니다.",
+        "scopeImmutable": "카테고리 범위는 변경할 수 없습니다. 기존 카테고리를 비활성화하고 새로 생성하세요."
       }
     },
     "tenants": {
@@ -521,6 +525,7 @@
         "createFailed": "액션 생성에 실패했습니다.",
         "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
         "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
+        "assigneeUnavailable": "설정된 라우팅에서 활성 상태의 유효한 담당자를 찾을 수 없습니다.",
         "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
         "approvalForbidden": "할당된 승인자만 이 티켓을 승인하거나 반려할 수 있습니다.",
         "cancelForbidden": "작업이 시작되기 전에는 요청자만 이 티켓을 취소할 수 있습니다.",

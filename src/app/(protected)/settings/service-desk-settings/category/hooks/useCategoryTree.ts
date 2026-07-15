@@ -11,7 +11,7 @@ import {
   resolveTreeNodeIdByPath,
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import type { TenantCategoryTree } from "@/domain/serviceDesk";
+import type { CategoryScope, TenantCategoryTree } from "@/domain/serviceDesk";
 
 import {
   getDefaultCategoryData,
@@ -22,11 +22,13 @@ import { categoryToTree, mapCategoryData } from "../utils/mapper";
 
 type UseCategoryTreeOptions = {
   selectedTenant: string | null;
+  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
 };
 
 export function useCategoryTree({
   selectedTenant,
+  scope,
   categories,
 }: UseCategoryTreeOptions) {
   const [tree, setTree] = useState<TreeNodes<CategoryData | SubCategoryData>>(
@@ -35,10 +37,11 @@ export function useCategoryTree({
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
   const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
+  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
 
   const [newCategoryCount, setNewCategoryCount] = useState<number>(1);
   const [newSubCategoryCount, setNewSubCategoryCount] = useState<number>(1);
-  const previousTenantRef = useRef<string | null>(null);
+  const previousContextRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -48,14 +51,20 @@ export function useCategoryTree({
   useEffect(() => {
     if (!categories || !selectedTenant) return;
 
-    const mapped = mapCategoryData(categories, selectedTenant);
+    const contextKey = `${selectedTenant}:${scope}`;
+    const scopedCategories = categories.map((tenant) => ({
+      ...tenant,
+      categories: tenant.categories.filter((category) => category.scope === scope),
+    }));
+    const mapped = mapCategoryData(scopedCategories, selectedTenant);
     const nextTree = categoryToTree(mapped);
 
     setTree(nextTree);
     setTreeTenantId(selectedTenant);
+    setTreeContextKey(contextKey);
     setSelectedId((previousSelectedId) => {
-      if (previousTenantRef.current !== selectedTenant) {
-        previousTenantRef.current = selectedTenant;
+      if (previousContextRef.current !== contextKey) {
+        previousContextRef.current = contextKey;
         return null;
       }
 
@@ -79,17 +88,18 @@ export function useCategoryTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [categories, selectedTenant]);
+  }, [categories, scope, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
   }, [selectedId, tree]);
 
-  const addCategory = () => {
+  const addCategory = (categoryScope: CategoryScope) => {
     setTree((prev) => {
-      const newCategory = categoryToTree([
-        getDefaultCategoryData(newCategoryCount),
-      ]);
+      const newCategory = categoryToTree([{
+        ...getDefaultCategoryData(newCategoryCount),
+        scope: categoryScope,
+      }]);
 
       return [...newCategory, ...prev];
     });
@@ -143,6 +153,7 @@ export function useCategoryTree({
     selectedId,
     setSelectedId,
     treeTenantId,
+    treeContextKey,
     selectedNode,
     addCategory,
     removeCategory,

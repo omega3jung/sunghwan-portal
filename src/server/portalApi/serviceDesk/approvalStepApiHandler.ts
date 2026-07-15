@@ -62,10 +62,19 @@ export async function handleApprovalStepPortalApi(
             "isInternal",
           ),
         ) ?? true;
-      const items = await getApprovalSettingsResponseByTenantId({
+      const scope = getPortalApiQueryValue(
+        context.request,
+        context.options,
+        "scope",
+      );
+      const allItems = await getApprovalSettingsResponseByTenantId({
         tenantId,
         isInternal,
       });
+      const items =
+        scope === "INTERNAL" || scope === "PORTAL"
+          ? allItems.filter((category) => category.category_scope === scope)
+          : allItems;
 
       return NextResponse.json({
         items,
@@ -95,7 +104,13 @@ async function saveApprovalStepTree(
   const currentApprovalSettings =
     await getCategoryApprovalSettingsByTenantId(tenantId);
   const currentApprovalSteps = currentApprovalSettings.flatMap(
-    (category) => category.approval_step,
+    (category) =>
+      payload.categories.some(
+        (submittedCategory) =>
+          Number(submittedCategory.id) === Number(category.category_id),
+      )
+        ? category.approval_step
+        : [],
   );
   const currentApprovalStepsById = new Map(
     currentApprovalSteps.map((approvalStep) => [

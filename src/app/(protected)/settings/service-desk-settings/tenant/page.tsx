@@ -1,16 +1,20 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useCompanyListQuery } from "@/feature/organization/company/client";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
+import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
 import { NS } from "@/lib/i18n";
 import { DbParams } from "@/shared/types";
 
+import { useSettingsScope } from "../../_providers";
+import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
 import { CompanyList } from "./components/CompanyList";
 import { TenantList } from "./components/TenantList";
@@ -19,12 +23,33 @@ import { TenantTransferControls } from "./components/TenantTransferControls";
 import { useTenantSettings } from "./hooks/useTenantSettings";
 
 export default function TenantPage() {
+  const router = useRouter();
+  const { adminType } = useSettingsScope();
+
+  useEffect(() => {
+    if (adminType !== "OWNER_ADMIN") {
+      router.replace("/settings");
+    }
+  }, [adminType, router]);
+
+  if (adminType !== "OWNER_ADMIN") {
+    return <ServiceDeskSettingsLoading />;
+  }
+
+  return <OwnerTenantPage />;
+}
+
+function OwnerTenantPage() {
   const { t } = useTranslation(NS.settings);
   const { t: tCommon } = useTranslation(NS.common);
   const { status: sessionStatus } = useCurrentSession();
   const params = useMemo<DbParams>(() => ({}), []);
+  const tenantParams = useMemo<ServiceDeskTenantListParams>(
+    () => ({ settings: true, context: "settings" }),
+    [],
+  );
   const companyQuery = useCompanyListQuery(params);
-  const tenantQuery = useServiceDeskTenantListQuery(params);
+  const tenantQuery = useServiceDeskTenantListQuery(tenantParams);
   const tenantSettings = useTenantSettings({
     companies: companyQuery.data ?? [],
     sourceTenants: tenantQuery.data ?? [],

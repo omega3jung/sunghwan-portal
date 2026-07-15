@@ -120,7 +120,14 @@
       "clientList": "Client List",
       "tenant": "Tenant",
       "noResults": "No results found",
-      "saveChanges": "Save Changes"
+      "saveChanges": "Save Changes",
+      "scope": "Category scope",
+      "scopeInternal": "Internal",
+      "scopePortal": "Portal",
+      "readOnly": "Read only",
+      "readOnlyDescription": "You can view these settings, but only the responsible administrator can change them.",
+      "managedByServiceProvider": "Managed by service provider",
+      "managedByCustomer": "Managed by customer"
     },
     "categoryTab": {
       "name": "Name",
@@ -158,6 +165,8 @@
       "selectAssigneeJobField": "Select assignee Job field",
       "employee": "Employee",
       "selectAssignee": "Select assignee",
+      "includeTenantCompany": "Include tenant company for joint handling",
+      "includeTenantCompanyDescription": "Off by default. Enable only when this PORTAL rule must route work to both the service provider and the category tenant company.",
       "empty": "Select a assignment rule to edit settings."
     },
     "tenant": {

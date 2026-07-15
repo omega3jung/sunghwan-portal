@@ -176,17 +176,123 @@ select service_desk.get_next_approval_step(
 `;
 
 const FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY = `
-select service_desk.get_approval_step_assignee_usernames(
-  $1::bigint,
-  $2::varchar
-) as assignee_usernames;
+with category_context as (
+  select tenant.tn_company_id as company_id
+  from service_desk.approval_step approval_step
+  join service_desk.category category
+    on category.cat_id = approval_step.aps_category_id
+  join service_desk.tenant tenant
+    on tenant.tn_id = category.cat_tenant_id
+  join public.company company
+    on company.c_id = tenant.tn_company_id
+  where approval_step.aps_id = $1::bigint
+    and category.cat_parent_id is null
+    and category.cat_active = true
+    and tenant.tn_active = true
+    and company.c_active = true
+),
+resolved_assignees as (
+  select unnest(
+    coalesce(
+      service_desk.get_approval_step_assignee_usernames(
+        $1::bigint,
+        $2::varchar
+      )::text[],
+      array[]::text[]
+    )
+  ) as username
+)
+select coalesce(
+  array_agg(distinct employee.e_username order by employee.e_username),
+  array[]::text[]
+) as assignee_usernames
+from resolved_assignees resolved
+join public.employee employee
+  on employee.e_username = resolved.username
+join category_context context
+  on context.company_id = employee.e_company_id
+where employee.e_active = true;
 `;
 
 const FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY = `
-select service_desk.get_category_assignment_usernames(
-  $1::bigint,
-  $2::varchar
-) as assignee_usernames;
+with category_context as (
+  select
+    coalesce(parent.cat_scope, category.cat_scope)::text as category_scope,
+    tenant.tn_company_id as tenant_company_id,
+    case
+      when exact_rule.ar_id is not null then
+        coalesce((exact_rule.ar_assignee ->> 'include_tenant_company')::boolean, false)
+      when parent_rule.ar_id is not null then
+        coalesce((parent_rule.ar_assignee ->> 'include_tenant_company')::boolean, false)
+      else false
+    end as include_tenant_company
+  from service_desk.category category
+  left join service_desk.category parent
+    on parent.cat_id = category.cat_parent_id
+    and parent.cat_tenant_id = category.cat_tenant_id
+  join service_desk.tenant tenant
+    on tenant.tn_id = category.cat_tenant_id
+  join public.company tenant_company
+    on tenant_company.c_id = tenant.tn_company_id
+  left join service_desk.assignment_rule exact_rule
+    on exact_rule.ar_category_id = category.cat_id
+  left join service_desk.assignment_rule parent_rule
+    on parent_rule.ar_category_id = parent.cat_id
+  where category.cat_id = $1::bigint
+    and category.cat_active = true
+    and (category.cat_parent_id is null or parent.cat_active = true)
+    and tenant.tn_active = true
+    and tenant_company.c_active = true
+),
+portal_owner_company as (
+  -- Ambiguous portal ownership must fail closed instead of widening routing.
+  select min(company.c_id) as company_id
+  from public.company company
+  where company.c_portal_owner = true
+    and company.c_active = true
+  having count(*) = 1
+),
+target_company as (
+  select context.tenant_company_id as company_id
+  from category_context context
+  where context.category_scope = 'INTERNAL'
+
+  union
+
+  select owner.company_id
+  from category_context context
+  join portal_owner_company owner on true
+  where context.category_scope = 'PORTAL'
+
+  union
+
+  select context.tenant_company_id
+  from category_context context
+  join portal_owner_company owner on true
+  where context.category_scope = 'PORTAL'
+    and context.include_tenant_company = true
+),
+resolved_assignees as (
+  select unnest(
+    coalesce(
+      service_desk.get_category_assignment_usernames(
+        $1::bigint,
+        $2::varchar
+      )::text[],
+      array[]::text[]
+    )
+  ) as username
+)
+select coalesce(
+  array_agg(distinct employee.e_username order by employee.e_username),
+  array[]::text[]
+) as assignee_usernames
+from resolved_assignees resolved
+join public.employee employee
+  on employee.e_username = resolved.username
+join target_company target
+  on target.company_id = employee.e_company_id
+where employee.e_active = true;
 `;
 
 const HAS_TICKET_WORK_ASSIGNMENT_HISTORY_QUERY = `
@@ -687,10 +793,10 @@ export async function updateTicketStatusById(
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(UPDATE_TICKET_STATUS_BY_ID_QUERY, [
-    ticketId,
-    input.status,
-  ]);
+  const rows = await query<{ tk_id: string }>(
+    UPDATE_TICKET_STATUS_BY_ID_QUERY,
+    [ticketId, input.status],
+  );
   const updatedTicketId = rows[0]?.tk_id;
 
   return updatedTicketId
@@ -789,9 +895,10 @@ export async function closeResolvedTicketById(
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(CLOSE_RESOLVED_TICKET_BY_ID_QUERY, [
-    ticketId,
-  ]);
+  const rows = await query<{ tk_id: string }>(
+    CLOSE_RESOLVED_TICKET_BY_ID_QUERY,
+    [ticketId],
+  );
   const updatedTicketId = rows[0]?.tk_id;
 
   return updatedTicketId

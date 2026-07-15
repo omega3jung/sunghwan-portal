@@ -449,6 +449,9 @@
       "invalidInput": "Assignment recommendation requires categoryId and assigneeUsernames.",
       "fetch": "Failed to fetch assignment recommendations."
     },
+    "eligibleActors": {
+      "fetch": "Failed to fetch eligible Service Desk actors."
+    },
     "categories": {
       "fetchList": "Failed to fetch categories.",
       "create": "Failed to create category.",
@@ -459,7 +462,8 @@
       "localDemo": {
         "invalidPayload": "Invalid category settings payload.",
         "clientNotFound": "Client {{clientId}} was not found.",
-        "clientMismatch": "Category does not belong to client {{clientId}}."
+        "clientMismatch": "Category does not belong to client {{clientId}}.",
+        "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one."
       }
     },
     "tenants": {
@@ -521,6 +525,7 @@
         "createFailed": "Failed to create action.",
         "ticketNotFound": "Ticket {{ticketId}} not found.",
         "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
+        "assigneeUnavailable": "Configured routing resolved no active eligible assignees.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
         "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
         "cancelForbidden": "Only the requester can cancel this ticket before work starts.",

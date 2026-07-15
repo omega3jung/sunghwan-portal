@@ -264,8 +264,32 @@ Current application-facing settings include:
 - `ApprovalStep`
 - `AssignmentRule`
 
-The tenant is the Service Desk configuration boundary. Categories, approval
-steps, and assignment rules are evaluated inside tenant scope.
+The tenant is the Service Desk organizational/workflow boundary. It is not a
+single management-authority label. Categories, approval steps, and assignment
+rules are evaluated inside tenant scope, while the application authorization
+policy selects the actual `manage`, `read`, or `none` capability by Owner
+Tenant/customer Tenant, category `INTERNAL`/`PORTAL` scope, and resource.
+
+Approval Step and Assignment Rule persistence derives tenant/company context
+from relationships rather than storing a second independent authorization
+source:
+
+```txt id="settings-persistence-boundary"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
+
+A DTO may project derived tenant context for a workflow, but it does not make
+that client-visible value authoritative. Repository queries and mutations join
+or load the stored relationship before authorization.
+
+Category tenant and main-category scope are immutable after creation. A
+subcategory cannot move its parent across tenant/scope boundaries. Repository
+and database constraints should enforce these invariants where available, in
+addition to service validation. Category removal uses deactivation so existing
+ticket and history references remain intact.
 
 Settings changes affect future workflow resolution. Existing tickets keep their
 stored state, routing, activity, and history unless an explicit ticket command
@@ -315,6 +339,11 @@ Every app-facing table or view should be reviewed for:
 
 Missing RLS policy can look like an application bug because a query may
 correctly return no rows for an application role.
+
+For Service Desk Settings, RLS/grants and database functions are defense in
+depth for tenant relationships. They should not replace the resource-specific
+Owner Admin/Tenant Admin capability matrix, especially customer `PORTAL` where
+category, approval, and assignment have different managers.
 
 ---
 

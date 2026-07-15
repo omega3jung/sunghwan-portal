@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NS } from "@/lib/i18n";
 
+import { useSettingsScope } from "../_providers";
 import { ServiceDeskSettingsTenantProvider } from "./ServiceDeskSettingsTenantProvider";
 
 export default function ServiceDeskSettingsLayout({
@@ -18,6 +19,7 @@ export default function ServiceDeskSettingsLayout({
 }) {
   const pathname = usePathname();
   const { t } = useTranslation(NS.settings);
+  const { adminType } = useSettingsScope();
 
   const currentTab = pathname.split("/").at(-1);
 
@@ -25,15 +27,17 @@ export default function ServiceDeskSettingsLayout({
     <main className="settings-main">
       <Tabs value={currentTab}>
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="tenant" asChild>
-            <Link
-              href="/settings/service-desk-settings/tenant"
-              className="min-w-20 gap-2 flex items-center"
-            >
-              <Building2 />
-              {t("serviceDeskSettings.common.tenant")}
-            </Link>
-          </TabsTrigger>
+          {adminType === "OWNER_ADMIN" && (
+            <TabsTrigger value="tenant" asChild>
+              <Link
+                href="/settings/service-desk-settings/tenant"
+                className="min-w-20 gap-2 flex items-center"
+              >
+                <Building2 />
+                {t("serviceDeskSettings.common.tenant")}
+              </Link>
+            </TabsTrigger>
+          )}
 
           <TabsTrigger value="category" asChild>
             <Link

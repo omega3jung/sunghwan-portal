@@ -1,6 +1,7 @@
 import { Department } from "@/domain/organization";
 import client from "@/lib/api";
-import { DbParams, OResponse } from "@/shared/types/api";
+import type { DbParams, OResponse } from "@/shared/types/api";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type DepartmentResponse = OResponse<Department>;
 
@@ -8,9 +9,12 @@ export const departmentApi = {
   list: async (params: DbParams): Promise<Department[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<DepartmentResponse>("/api/departments", {
-      params,
-    });
+    const res = await client.api.get<DepartmentResponse, URLSearchParams>(
+      "/api/departments",
+      {
+        params: buildDbSearchParams(params),
+      },
+    );
     return res.data.items;
   },
 

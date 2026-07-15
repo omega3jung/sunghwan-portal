@@ -37,10 +37,10 @@ import {
   buildAssigneePatch,
 } from "./ticketPatch";
 
-const approveTicket: LocalActionHandler = (context) => {
+const approveTicket: LocalActionHandler = async (context) => {
   const ticket = requireApprovalTicket(context);
   const currentApprovalStepId = requireApprovalStepId(ticket);
-  const routing = resolveApprovedTicketRouting({
+  const routing = await resolveApprovedTicketRouting({
     isInternal: context.isInternal ?? false,
     categoryId: ticket.category_id,
     parentCategoryId: ticket.category_parent_id ?? ticket.category_id,
@@ -388,9 +388,9 @@ const reopenTicket: LocalActionHandler = (context) => {
   };
 };
 
-const resubmitTicket: LocalActionHandler = (context) => {
+const resubmitTicket: LocalActionHandler = async (context) => {
   const ticket = assertRequester(context);
-  const routing = resolveCreateTicketRouting({
+  const routing = await resolveCreateTicketRouting({
     isInternal: context.isInternal ?? false,
     categoryId: ticket.category_id,
     parentCategoryId: ticket.category_parent_id ?? ticket.category_id,

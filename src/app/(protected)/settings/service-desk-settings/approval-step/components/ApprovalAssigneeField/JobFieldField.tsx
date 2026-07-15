@@ -12,8 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SupportedLanguage } from "@/domain/config";
+import type { JobField } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
 import { NS } from "@/lib/i18n";
 import { useLocalizedText } from "@/shared/hooks";
 import { ValueLabel } from "@/shared/types";
@@ -22,20 +22,29 @@ type Props = {
   stepAssignee: AssigneeByType<"JOB_FIELD">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
+  jobFields?: JobField[];
+  isLoading?: boolean;
 };
 
-export function JobFieldField({ stepAssignee, onChange, language }: Props) {
+export function JobFieldField({
+  stepAssignee,
+  onChange,
+  language,
+  readOnly,
+  jobFields = [],
+  isLoading,
+}: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
-  const { data: jobFields } = useJobFieldListQuery({});
-
   const jobFieldData = useMemo((): Array<{
     groupLabel: string;
     items: ValueLabel[];
   }> => {
-    if (!jobFields) return [];
-
-    const jobFieldGroup = [];
+    const jobFieldGroup: Array<{
+      groupLabel: string;
+      items: ValueLabel[];
+    }> = [];
 
     for (const jobField of jobFields) {
       const item = {
@@ -45,12 +54,37 @@ export function JobFieldField({ stepAssignee, onChange, language }: Props) {
       if (jobField.parentId === "0") {
         jobFieldGroup.push({ groupLabel: item.label, items: [item] });
       } else {
-        jobFieldGroup[jobFieldGroup.length - 1].items.push(item);
+        const parentGroup = jobFieldGroup.find(
+          (group) => group.items[0]?.value === jobField.parentId,
+        );
+
+        if (parentGroup) {
+          parentGroup.items.push(item);
+        } else {
+          jobFieldGroup.push({ groupLabel: item.label, items: [item] });
+        }
       }
     }
 
+    if (
+      stepAssignee.jobFieldId &&
+      !jobFieldGroup.some((group) =>
+        group.items.some((item) => item.value === stepAssignee.jobFieldId),
+      )
+    ) {
+      jobFieldGroup.push({
+        groupLabel: stepAssignee.jobFieldId,
+        items: [
+          {
+            value: stepAssignee.jobFieldId,
+            label: stepAssignee.jobFieldId,
+          },
+        ],
+      });
+    }
+
     return jobFieldGroup;
-  }, [jobFields, tLocal]);
+  }, [jobFields, stepAssignee.jobFieldId, tLocal]);
 
   return (
     <Field className="col-span-2">
@@ -59,6 +93,7 @@ export function JobFieldField({ stepAssignee, onChange, language }: Props) {
       </FieldLabel>
       <Select
         value={stepAssignee.jobFieldId}
+        disabled={readOnly || isLoading}
         onValueChange={(value) =>
           onChange({ type: "JOB_FIELD", jobFieldId: value })
         }

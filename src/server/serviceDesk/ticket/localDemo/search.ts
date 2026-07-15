@@ -33,7 +33,15 @@ export function localSearchTickets({
   );
 
   const filtered = applyRuleGroupFilter(tickets, request.filter);
-  const sorted = sortTickets(filtered, request.sort);
+  const sorted = sortTickets(
+    filtered,
+    request.sortField && request.sortDirection
+      ? {
+          field: request.sortField,
+          direction: request.sortDirection,
+        }
+      : undefined,
+  );
   const pagination = normalizePagination(request);
   const items = paginateItems(sorted, pagination);
 

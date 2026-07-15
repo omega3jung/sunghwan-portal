@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { ReactNode } from "react";
 
+import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/service-desk/_shared";
 import { authOptions } from "@/auth.config";
-import { ACCESS_LEVEL } from "@/domain/auth";
+import { getServiceDeskAdminType } from "@/shared/utils/serviceDesk";
 
 import { SettingsAccessGuard, SettingsScopeProvider } from "./_providers";
 import { SettingsNavigation } from "./components";
@@ -21,19 +22,25 @@ export default async function SettingsLayout({
   // check session one more.
   if (!session?.user) redirect("/login");
 
-  const { dataScope, userScope, permission } = session.user;
+  const principalContext = await resolveServiceDeskSettingsPrincipalFromSession(
+    session,
+  ).catch(() => null);
 
-  // forbidden only when access to settings itself is not possible.
-  if (permission < ACCESS_LEVEL.ADMIN) {
+  if (
+    !principalContext ||
+    !getServiceDeskAdminType(principalContext.principal)
+  ) {
     redirect("/");
   }
+
+  const { principal } = principalContext;
 
   return (
     <SettingsAccessGuard>
       <SettingsScopeProvider
-        dataScope={dataScope}
-        userScope={userScope}
-        permission={permission}
+        userScope={principal.userScope}
+        permission={principal.permission}
+        companyId={principal.companyId}
       >
         <SettingsNavigation />
         <Separator className="my-2 h-1 rounded bg-border" />

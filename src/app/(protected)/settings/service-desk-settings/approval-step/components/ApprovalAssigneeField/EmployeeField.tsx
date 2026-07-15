@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { SupportedLanguage } from "@/domain/config";
+import type { Employee } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { ImageValueLabel } from "@/shared/types";
@@ -16,21 +16,23 @@ type EmployeeFieldProps = {
   stepAssignee: AssigneeByType<"EMPLOYEE">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
+  employees?: Employee[];
+  isLoading?: boolean;
 };
 
 export function EmployeeField({
   stepAssignee,
   onChange,
   language,
+  readOnly,
+  employees = [],
+  isLoading,
 }: EmployeeFieldProps) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue(language);
-  const { data: employees } = useEmployeeListQuery({});
-
   const employeeData = useMemo((): ImageValueLabel[] => {
-    if (!employees) return [];
-
-    return employees.map((employee) => {
+    const options = employees.map((employee) => {
       const name = tLocal(employee.name);
       return {
         value: employee.username,
@@ -39,7 +41,20 @@ export function EmployeeField({
         image: employee.imageUrl,
       };
     });
-  }, [employees, tLocal]);
+
+    const optionUsernames = new Set(options.map((option) => option.value));
+
+    return [
+      ...options,
+      ...stepAssignee.employeeUsernames
+        .filter((username) => !optionUsernames.has(username))
+        .map((username) => ({
+          value: username,
+          label: username,
+          displayName: username,
+        })),
+    ];
+  }, [employees, stepAssignee.employeeUsernames, tLocal]);
 
   return (
     <Field className="col-span-2">
@@ -53,6 +68,9 @@ export function EmployeeField({
         badgeVariant={"primary"}
         options={employeeData}
         value={stepAssignee.employeeUsernames}
+        readOnly={readOnly}
+        disabled={isLoading}
+        isLoading={isLoading}
         maxImages={MAX_ASSIGNEE_PER_APPROVAL}
         placeholder={t(
           "serviceDeskSettings.approvalStepTab.employeePlaceholder",

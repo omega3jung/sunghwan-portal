@@ -14,7 +14,7 @@ import {
 } from "./ticketNumber";
 import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
-export const localCreateTicket = ({
+export const localCreateTicket = async ({
   isInternal,
   requesterUsername,
   input,
@@ -38,7 +38,7 @@ export const localCreateTicket = ({
     categoryId: String(input.categoryId),
   });
 
-  const routing = resolveCreateTicketRouting({
+  const routing = await resolveCreateTicketRouting({
     isInternal,
     categoryId: category.id,
     parentCategoryId: category.parentId,

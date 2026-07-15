@@ -1,6 +1,7 @@
 import { JobField } from "@/domain/organization";
 import client from "@/lib/api";
-import { DbParams, OResponse } from "@/shared/types/api";
+import type { DbParams, OResponse } from "@/shared/types/api";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type JobFieldResponse = OResponse<JobField>;
 
@@ -8,9 +9,12 @@ export const jobFieldApi = {
   list: async (params: DbParams): Promise<JobField[]> => {
     if (!params) return [];
 
-    const res = await client.api.get<JobFieldResponse>("/api/job-fields", {
-      params,
-    });
+    const res = await client.api.get<JobFieldResponse, URLSearchParams>(
+      "/api/job-fields",
+      {
+        params: buildDbSearchParams(params),
+      },
+    );
 
     return res.data.items;
   },

@@ -1,4 +1,9 @@
 import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import type { DataScope } from "@/domain/auth";
+import { internalCompanyMock } from "@/mocks/domain/organization/companies";
+import { getPortalOwnerCompany } from "@/server/data/organization/company";
+import { getLocalDemoTenants } from "@/server/serviceDesk/settings/state";
+import { isOwnerCompany } from "@/shared/utils/organization";
 
 import {
   CreateTenantInputDto,
@@ -68,6 +73,65 @@ export async function getActiveTenants(): Promise<TenantDto[]> {
   const rows = await findActiveTenantRows();
 
   return mapTenantRowsToDtos(rows);
+}
+
+export type ServiceDeskSettingsTenantContext = {
+  id: string;
+  companyId: number;
+  isOwnerTenant: boolean;
+  active: boolean;
+};
+
+export async function getServiceDeskSettingsTenantContexts(
+  dataScope: DataScope,
+): Promise<ServiceDeskSettingsTenantContext[]> {
+  if (dataScope === "LOCAL") {
+    return getLocalDemoTenants().map((tenant) => ({
+      id: String(tenant.tenant_id),
+      companyId: Number(tenant.tenant_company_id),
+      isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
+      active: tenant.tenant_active !== false,
+    }));
+  }
+
+  const tenants = await getTenants();
+
+  return tenants.map((tenant) => ({
+    id: String(tenant.tenant_id),
+    companyId: Number(tenant.tenant_company_id),
+    isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
+    active: tenant.tenant_active,
+  }));
+}
+
+export async function getServiceDeskSettingsTenantContext(
+  dataScope: DataScope,
+  tenantId: string | number,
+) {
+  return (
+    (await getServiceDeskSettingsTenantContexts(dataScope)).find(
+      (tenant) => tenant.id === String(tenantId),
+    ) ?? null
+  );
+}
+
+export async function getServiceDeskSettingsTenantContextByCompanyId(
+  dataScope: DataScope,
+  companyId: string | number,
+) {
+  return (
+    (await getServiceDeskSettingsTenantContexts(dataScope)).find(
+      (tenant) => String(tenant.companyId) === String(companyId),
+    ) ?? null
+  );
+}
+
+export async function getPortalOwnerCompanyId(dataScope: DataScope) {
+  if (dataScope === "LOCAL") {
+    return Number(internalCompanyMock.company_id);
+  }
+
+  return Number((await getPortalOwnerCompany()).company_id);
 }
 
 export async function createTenant(

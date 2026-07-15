@@ -20,7 +20,12 @@ export const localListApprovalSteps = ({
     ? getTenantCategoriesOrThrow(items, tenantId)
     : [];
   const normalizedItems = normalizeCategoryApprovalSettings(categories);
-  const filteredItems = filterItemsByQuery(searchParams, normalizedItems);
+  const scope = searchParams.get("scope");
+  const scopedItems =
+    scope === "INTERNAL" || scope === "PORTAL"
+      ? normalizedItems.filter((category) => category.scope === scope)
+      : normalizedItems;
+  const filteredItems = filterItemsByQuery(searchParams, scopedItems);
 
   return {
     items: filteredItems,

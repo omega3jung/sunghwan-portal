@@ -1,5 +1,6 @@
 ﻿import { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/types";
 
+import { CLIENT_DEMO_USER_IDS } from "../user";
 import {
   client1PortalSystemIssueMock,
   clientAccountAccessMock,
@@ -119,7 +120,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientAccountAccessMock.category_id,
     assignee: {
       job_field_id: [27, 28, 25],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
   /* Hardware & Device */
@@ -127,7 +128,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientHardwareDeviceMock.category_id,
     assignee: {
       job_field_id: [24, 25, 26],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
   /* Software & App */
@@ -135,7 +136,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientSoftwareApplicationMock.category_id,
     assignee: {
       job_field_id: [20, 22, 23],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
   /* Network */
@@ -143,7 +144,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientNetworkConnectivityMock.category_id,
     assignee: {
       job_field_id: [17, 19, 18],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
   /* Printing */
@@ -151,7 +152,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientPrintingOfficeEquipmentMock.category_id,
     assignee: {
       job_field_id: [25, 26],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
   /* HR Systems */
@@ -159,7 +160,7 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
     category_id: clientHrSystemPayrollMock.category_id,
     assignee: {
       job_field_id: [3, 4, 23],
-      employee_username: [],
+      employee_username: [CLIENT_DEMO_USER_IDS.ADMIN.USER_NAME],
     },
   },
 ];

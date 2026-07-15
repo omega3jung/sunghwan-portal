@@ -2,7 +2,7 @@
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
+  getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
@@ -40,7 +40,13 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const currentUserScope = await getCurrentUserScope(request);
+
+      if (currentUserScope === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = currentUserScope === "INTERNAL";
       const filtered = localListTickets({
         isInternal,
         searchParams: request.nextUrl.searchParams,
@@ -94,10 +100,16 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const currentUserScope = await getCurrentUserScope(request);
+
+      if (currentUserScope === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = currentUserScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
-        localCreateTicket({
+        await localCreateTicket({
           isInternal,
           requesterUsername: currentUserName,
           input: body,

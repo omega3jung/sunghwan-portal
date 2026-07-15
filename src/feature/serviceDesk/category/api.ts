@@ -16,19 +16,9 @@ export const serviceDeskCategoryApi = {
   ): Promise<TenantCategoryTree[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.tenantId) {
-      searchParams.set("tenantId", params.tenantId);
-    }
-
-    if (params.active !== undefined) {
-      searchParams.set("active", String(params.active));
-    }
-
     const res = await client.api.get<CategoryResponse, URLSearchParams>(
       `/api/service-desk/categories`,
-      { params: searchParams },
+      { params: buildDbSearchParams(params) },
     );
 
     return res.data.items;

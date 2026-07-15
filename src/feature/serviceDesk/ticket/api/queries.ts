@@ -47,7 +47,8 @@ export const useServiceDeskTicketSearchQuery = ({
 
   const request: TicketSearchRequest = {
     filter: dbParams.filter,
-    sort: { field: sort, direction: order },
+    sortField: sort,
+    sortDirection: order,
     page,
     pageSize,
   };

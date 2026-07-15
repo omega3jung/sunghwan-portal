@@ -1,7 +1,6 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import { getAuthToken } from "@/app/api/_helpers";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule/recommendation";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
 import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule";
@@ -13,6 +12,7 @@ import {
   getAssignmentRulesResponseByTenantId,
   updateAssignmentRuleById,
 } from "@/server/data/serviceDesk/assignmentRule";
+import { getCategoryTreeByTenantId } from "@/server/data/serviceDesk/category";
 import { isSameNumberArray, isSameStringArray } from "@/shared/utils/value";
 
 import { getPortalApiQueryValue } from "../utils";
@@ -62,10 +62,20 @@ export async function handleAssignmentRulePortalApi(
             "isInternal",
           ),
         ) ?? true;
-      const items = await getAssignmentRulesResponseByTenantId({
+      const scope = getPortalApiQueryValue(
+        context.request,
+        context.options,
+        "scope",
+      );
+      const allItems = await getAssignmentRulesResponseByTenantId({
         tenantId,
         isInternal,
       });
+      const items = await filterAssignmentRulesByScope(
+        allItems,
+        tenantId,
+        scope,
+      );
 
       return NextResponse.json({
         items,
@@ -91,16 +101,8 @@ export async function handleAssignmentRulePortalApi(
     }
 
     const input = requireBody<AssignmentRecommendationInput>(context.options);
-    const token = await getAuthToken(context.request);
-    const isInternal = token?.userScope === "INTERNAL";
-    const tenantId =
-      !isInternal && typeof token?.companyId === "number"
-        ? token.companyId
-        : null;
     const body = await getAssignmentRecommendationResponse({
       input,
-      tenantId,
-      isInternal,
     });
 
     return NextResponse.json(body);
@@ -118,7 +120,15 @@ async function saveAssignmentRuleTree(
     throw new Error("Invalid tenantId");
   }
 
-  const currentAssignmentRules = await getAssignmentRulesByTenantId(tenantId);
+  const submittedCategoryIds = new Set(
+    payload.categories.flatMap((category) => [
+      Number(category.id),
+      ...category.subCategories.map((subCategory) => Number(subCategory.id)),
+    ]),
+  );
+  const currentAssignmentRules = (
+    await getAssignmentRulesByTenantId(tenantId)
+  ).filter((rule) => submittedCategoryIds.has(rule.category_id));
   const currentAssignmentRulesByCategoryId = new Map(
     currentAssignmentRules.map((assignmentRule) => [
       assignmentRule.category_id,
@@ -196,6 +206,30 @@ async function saveAssignmentRuleTree(
   return getAssignmentRulesByTenantId(tenantId);
 }
 
+async function filterAssignmentRulesByScope(
+  items: AssignmentRuleDto[],
+  tenantId: string | null,
+  scope: string | null,
+) {
+  if (
+    (scope !== "INTERNAL" && scope !== "PORTAL") ||
+    !tenantId
+  ) {
+    return items;
+  }
+
+  const allowedCategoryIds = new Set(
+    (await getCategoryTreeByTenantId(tenantId))
+      .filter((category) => category.category_scope === scope)
+      .flatMap((category) => [
+        category.category_id,
+        ...category.sub_category.map((subCategory) => subCategory.category_id),
+      ]),
+  );
+
+  return items.filter((rule) => allowedCategoryIds.has(rule.category_id));
+}
+
 async function runWithConcurrencyLimit<T>(
   tasks: Array<() => Promise<T>>,
   limit: number,
@@ -230,7 +264,9 @@ function isSameAssignmentRuleAssignee(
 ): boolean {
   return (
     isSameNumberArray(current.job_field_id, next.job_field_id) &&
-    isSameStringArray(current.employee_username, next.employee_username)
+    isSameStringArray(current.employee_username, next.employee_username) &&
+    Boolean(current.include_tenant_company) ===
+      Boolean(next.include_tenant_company)
   );
 }
 
@@ -262,5 +298,6 @@ function mapAssignmentTreeAssignee(
   return {
     job_field_id: assignee.jobFieldIds.map(Number),
     employee_username: assignee.assigneeUsernames.map(String),
+    include_tenant_company: assignee.includeTenantCompany === true,
   };
 }

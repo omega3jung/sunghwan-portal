@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isRemoteRequest } from "@/app/api/_helpers";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import {
   camelDepartmentMapper,
   mapDepartmentItemPayload,
@@ -12,18 +13,38 @@ import {
   toDepartmentMockResource,
   toDepartmentWritePayload,
 } from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization/departments";
+import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
+import {
+  handleServiceDeskDepartmentReferenceRequest,
+  isServiceDeskOrganizationReferenceRequest,
+} from "@/server/portalApi/organization/serviceDeskOrganizationReferenceHandler";
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
+  if (isServiceDeskOrganizationReferenceRequest(request)) {
+    return handleServiceDeskDepartmentReferenceRequest(request, {
+      query: request.nextUrl.searchParams,
+      errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    });
+  }
+
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const departmentData = camelDepartmentMapper(departmentsMock);
+    const departmentData = camelDepartmentMapper(
+      applyRuleGroupFilter(
+        allDepartmentsMock,
+        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
+      ),
+    );
 
     return NextResponse.json({
       items: departmentData,

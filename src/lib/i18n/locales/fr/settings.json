@@ -119,7 +119,14 @@
       "clientList": "Liste des clients",
       "tenant": "Tenant",
       "noResults": "Aucun résultat",
-      "saveChanges": "Enregistrer les modifications"
+      "saveChanges": "Enregistrer les modifications",
+      "scope": "Portée de la catégorie",
+      "scopeInternal": "Interne",
+      "scopePortal": "Portail",
+      "readOnly": "Lecture seule",
+      "readOnlyDescription": "Vous pouvez consulter ces paramètres, mais seul l’administrateur responsable peut les modifier.",
+      "managedByServiceProvider": "Géré par le fournisseur de services",
+      "managedByCustomer": "Géré par le client"
     },
     "categoryTab": {
       "scope": "Portée",
@@ -157,6 +164,8 @@
       "selectAssigneeJobField": "Sélectionner le poste du responsable",
       "employee": "Employé",
       "selectAssignee": "Sélectionner un responsable",
+      "includeTenantCompany": "Inclure l’entreprise du tenant pour un traitement conjoint",
+      "includeTenantCompanyDescription": "Désactivé par défaut. Activez cette option uniquement lorsque cette règle PORTAL doit être traitée conjointement par le fournisseur et l’entreprise du tenant de la catégorie.",
       "empty": "Sélectionnez un règle d’attribution pour modifier ses paramètres."
     },
     "tenant": {

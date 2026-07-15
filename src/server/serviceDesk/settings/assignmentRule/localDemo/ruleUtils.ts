@@ -150,6 +150,7 @@ export const buildDbAssignmentRule = ({
     assignee: {
       job_field_id: normalizeJobFieldIds(assignee.jobFieldIds),
       employee_username: normalizeAssigneeIds(assignee.assigneeUsernames),
+      include_tenant_company: assignee.includeTenantCompany === true,
     },
   };
 };

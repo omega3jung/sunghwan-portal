@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isRemoteRequest } from "@/app/api/_helpers";
+import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import {
   camelEmployeeMapper,
   mapEmployeeItemPayload,
@@ -12,18 +13,38 @@ import {
   toEmployeeMockResource,
   toEmployeeWritePayload,
 } from "@/feature/organization/employee/write";
-import { createEmployeesMock } from "@/mocks/domain/organization/employee";
+import { employeesMock } from "@/mocks/domain/organization/employee";
+import {
+  handleServiceDeskEligibleEmployeesPortalApi,
+  isServiceDeskEligibleEmployeeRequest,
+} from "@/server/portalApi/employees/employeesPortalApiHandler";
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/server/shared/query";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
 export async function GET(request: NextRequest) {
+  if (isServiceDeskEligibleEmployeeRequest(request)) {
+    return handleServiceDeskEligibleEmployeesPortalApi(request, {
+      query: request.nextUrl.searchParams,
+      errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    });
+  }
+
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const employeeData = camelEmployeeMapper(createEmployeesMock());
+    const employeeData = camelEmployeeMapper(
+      applyRuleGroupFilter(
+        employeesMock,
+        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
+      ),
+    );
 
     return NextResponse.json({ data: employeeData });
   }

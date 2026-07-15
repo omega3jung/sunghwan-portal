@@ -257,7 +257,7 @@ const clientPortalSystemIssueMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 111,
+      category_id: 118,
       category_name: {
         en: "Issue Investigation Request",
         es: "Solicitud de investigación de problemas",
@@ -376,5 +376,18 @@ const mergeClientCustomCategory = (): DbCategory => {
   };
 };
 
+const createClient2PortalSystemIssue = (): DbCategory => {
+  const category = mergeClientCustomCategory();
+
+  return {
+    ...category,
+    category_id: category.category_id + 100,
+    sub_category: category.sub_category.map((subCategory) => ({
+      ...subCategory,
+      category_id: subCategory.category_id + 100,
+    })),
+  };
+};
+
 export const client1PortalSystemIssueMock = clientPortalSystemIssueMock;
-export const client2PortalSystemIssueMock = mergeClientCustomCategory();
+export const client2PortalSystemIssueMock = createClient2PortalSystemIssue();

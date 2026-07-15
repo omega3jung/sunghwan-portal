@@ -77,11 +77,42 @@ Route handlers decide HTTP and runtime orchestration.
 route.ts
 -> parse request
 -> resolve session/runtime
+-> invoke the applicable server authorization policy
 -> delegate to LOCAL handler or REMOTE service
 -> return DTO response
 ```
 
-They should not own domain rules or row mapping.
+They should not implement domain rules or row mapping inline. Route handlers
+invoke the applicable domain policy and server services that resolve stored
+resource context.
+
+### Service Desk Settings Authorization
+
+Settings routes apply the same policy to reads and mutations before branching
+to LOCAL or REMOTE behavior.
+
+```txt id="settings-route-authorization"
+effective username
+-> canonical AppUser permission / userScope / companyId
+-> target Category -> Tenant -> Company context
+-> manage / read / none
+-> LOCAL or REMOTE operation
+```
+
+List/read routes filter out `none` resources. Mutation routes require `manage`,
+reload the stored category/tenant relationship, and return `403` for read-only
+or out-of-bound principals. Request `tenantId`, `companyId`, scope, or admin
+type is target input, not authorization evidence.
+
+The Settings UI may redirect unauthorized direct page access to Settings Home
+for a better user experience. API routes return `401` for missing
+authentication and `403` for authenticated principals without capability; they
+do not use page redirects.
+
+Actor-candidate lookup, wherever exposed by the current API surface, is
+category-centered and purpose-aware. It applies both the settings capability
+and the approver/assignee company boundary rather than returning a global user
+directory.
 
 ---
 
@@ -235,4 +266,6 @@ This keeps routing stable as persistence evolves.
 The current routing strategy uses stable page routes for Service Desk list and
 detail, dialogs for focused ticket commands, and API route handlers as the
 LOCAL/REMOTE orchestration boundary. The documented API surface should match the
-route files that actually exist.
+route files that actually exist. Service Desk Settings routes additionally
+resolve the effective canonical principal and apply the shared category-scope
+capability before either runtime path.

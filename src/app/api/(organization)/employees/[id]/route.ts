@@ -13,7 +13,7 @@ import {
   toEmployeeWritePayload,
   UpdateEmployeeInput,
 } from "@/feature/organization/employee/write";
-import { createEmployeesMock } from "@/mocks/domain/organization/employee";
+import { employeesMock } from "@/mocks/domain/organization/employee";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const employeeData = camelEmployeeMapper(createEmployeesMock());
+    const employeeData = camelEmployeeMapper(employeesMock);
     const targetEmployee = employeeData.find(
       (employee) => employee.id === Number(id),
     );

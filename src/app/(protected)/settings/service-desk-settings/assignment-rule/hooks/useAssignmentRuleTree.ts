@@ -9,13 +9,18 @@ import {
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
 import { SupportedLanguage } from "@/domain/config";
-import { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
+import {
+  AssignmentRule,
+  CategoryScope,
+  TenantCategoryTree,
+} from "@/domain/serviceDesk";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";
 
 type UseAssignmentRuleTreeOptions = {
   selectedTenant: string | null;
+  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
   assignmentRules: AssignmentRule[] | undefined;
   language: SupportedLanguage;
@@ -23,6 +28,7 @@ type UseAssignmentRuleTreeOptions = {
 
 export function useAssignmentRuleTree({
   selectedTenant,
+  scope,
   categories,
   assignmentRules,
   language: _language,
@@ -33,7 +39,8 @@ export function useAssignmentRuleTree({
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
   const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
-  const previousTenantRef = useRef<string | null>(null);
+  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
+  const previousContextRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -43,8 +50,13 @@ export function useAssignmentRuleTree({
   useEffect(() => {
     if (!categories || !selectedTenant || !assignmentRules) return;
 
+    const contextKey = `${selectedTenant}:${scope}`;
+    const scopedCategories = categories.map((tenant) => ({
+      ...tenant,
+      categories: tenant.categories.filter((category) => category.scope === scope),
+    }));
     const mapped = mapAssignmentRuleData(
-      categories,
+      scopedCategories,
       selectedTenant,
       assignmentRules,
     );
@@ -52,9 +64,10 @@ export function useAssignmentRuleTree({
 
     setTree(nextTree);
     setTreeTenantId(selectedTenant);
+    setTreeContextKey(contextKey);
     setSelectedId((previousSelectedId) => {
-      if (previousTenantRef.current !== selectedTenant) {
-        previousTenantRef.current = selectedTenant;
+      if (previousContextRef.current !== contextKey) {
+        previousContextRef.current = contextKey;
         return null;
       }
 
@@ -70,7 +83,7 @@ export function useAssignmentRuleTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [assignmentRules, categories, selectedTenant]);
+  }, [assignmentRules, categories, scope, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
@@ -82,6 +95,7 @@ export function useAssignmentRuleTree({
     selectedId,
     setSelectedId,
     treeTenantId,
+    treeContextKey,
     selectedNode,
   };
 }

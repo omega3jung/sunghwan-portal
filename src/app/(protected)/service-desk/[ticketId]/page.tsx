@@ -26,7 +26,7 @@ import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrent
 import { NS } from "@/lib/i18n";
 import { useLocalizedValue } from "@/shared/hooks";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
-import { ImageValueLabel } from "@/shared/types";
+import { DbParams, ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
@@ -44,6 +44,13 @@ type Props = {
   params: {
     ticketId: string;
   };
+};
+
+const activeEmployeeListParams: DbParams = {
+  filter: createFieldFilter({
+    field: "e_active",
+    value: true,
+  }),
 };
 
 export default function ServiceDeskTicketDetailPage({ params }: Props) {
@@ -84,7 +91,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     ]),
   });
 
-  const { data: employees } = useEmployeeListQuery({});
+  const { data: employees } = useEmployeeListQuery(activeEmployeeListParams);
 
   const users = useMemo<ImageValueLabel[]>(() => {
     if (!employees) {
