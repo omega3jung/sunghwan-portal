@@ -19,7 +19,7 @@ import { NS } from "@/lib/application/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 
-import { useSettingsScope } from "../_providers";
+import { useSettingsAccess } from "../_providers";
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
 
 const SERVICE_DESK_TENANT_SETTINGS_PATH =
@@ -27,12 +27,12 @@ const SERVICE_DESK_TENANT_SETTINGS_PATH =
 
 export function SettingsNavigation() {
   const { t } = useTranslation(NS.settings);
-  const { adminType } = useSettingsScope();
+  const { type } = useSettingsAccess();
   const settingsNavigationItems = createSettingsNavigationMock(t).map(
     (group) => ({
       ...group,
       items:
-        adminType === "TENANT_ADMIN"
+        type === "TENANT_ADMIN"
           ? group.items.filter(
               (item) => item.path !== SERVICE_DESK_TENANT_SETTINGS_PATH,
             )

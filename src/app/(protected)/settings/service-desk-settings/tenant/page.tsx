@@ -13,7 +13,7 @@ import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/t
 import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types";
 
-import { useSettingsScope } from "../../_providers";
+import { useSettingsAccess } from "../../_providers";
 import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
 import { CompanyList } from "./components/CompanyList";
@@ -24,15 +24,15 @@ import { useTenantSettings } from "./hooks/useTenantSettings";
 
 export default function TenantPage() {
   const router = useRouter();
-  const { adminType } = useSettingsScope();
+  const { type } = useSettingsAccess();
 
   useEffect(() => {
-    if (adminType !== "OWNER_ADMIN") {
+    if (type !== "OWNER_ADMIN") {
       router.replace("/settings");
     }
-  }, [adminType, router]);
+  }, [router, type]);
 
-  if (adminType !== "OWNER_ADMIN") {
+  if (type !== "OWNER_ADMIN") {
     return <ServiceDeskSettingsLoading />;
   }
 

@@ -13,10 +13,10 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api/mapper";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { mapTicketDetailPayload } from "@/lib/application/contracts/serviceDesk";
 
 export async function POST(
   request: NextRequest,

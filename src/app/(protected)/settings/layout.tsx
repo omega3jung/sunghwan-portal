@@ -9,7 +9,7 @@ import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/_adapt
 import { authOptions } from "@/auth.config";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
-import { SettingsAccessGuard, SettingsScopeProvider } from "./_providers";
+import { SettingsAccessGuard, SettingsAccessProvider } from "./_providers";
 import { SettingsNavigation } from "./components";
 
 export default async function SettingsLayout({
@@ -36,16 +36,16 @@ export default async function SettingsLayout({
   const { principal } = principalContext;
 
   return (
-    <SettingsAccessGuard>
-      <SettingsScopeProvider
-        userScope={principal.userScope}
-        permission={principal.permission}
-        companyId={principal.companyId}
-      >
+    <SettingsAccessProvider
+      userScope={principal.userScope}
+      permission={principal.permission}
+      companyId={principal.companyId}
+    >
+      <SettingsAccessGuard>
         <SettingsNavigation />
         <Separator className="my-2 h-1 rounded bg-border" />
         {children}
-      </SettingsScopeProvider>
-    </SettingsAccessGuard>
+      </SettingsAccessGuard>
+    </SettingsAccessProvider>
   );
 }

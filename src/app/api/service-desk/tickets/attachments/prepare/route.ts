@@ -5,7 +5,7 @@ import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
+} from "@/app/api/_adapters";
 
 const BODY_FIELD_NAME = "body";
 const FILES_FIELD_NAME = "files";

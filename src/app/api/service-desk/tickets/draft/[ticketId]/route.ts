@@ -8,9 +8,9 @@ import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
 import {
   ticketDraftFormSchema,

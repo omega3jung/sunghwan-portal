@@ -6,9 +6,9 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { useCurrentSession } from "@/feature/auth/session/client";
 import { NS } from "@/lib/application/i18n";
-import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
+
+import { useSettingsAccess } from "./SettingsAccessProvider";
 
 const SETTINGS_ACCESS_TOAST_ID = "settings-access-guard:forbidden";
 const SETTINGS_AUTH_TOAST_ID = "settings-access-guard:unauthenticated";
@@ -19,23 +19,11 @@ export function SettingsAccessGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const session = useCurrentSession();
+  const { isChecking, isForbidden, status } = useSettingsAccess();
   const { t } = useTranslation(NS.auth);
 
-  const currentUser = session.current.user;
-  const impersonatedUsername =
-    session.data?.impersonation?.impersonatedUser.username ?? null;
-  const isCurrentUserSynced =
-    !impersonatedUsername || currentUser?.username === impersonatedUsername;
-  const isChecking =
-    session.status === "loading" || !currentUser || !isCurrentUserSynced;
-  const isForbidden =
-    !!currentUser &&
-    isCurrentUserSynced &&
-    !getServiceDeskAdminType(currentUser);
-
   useEffect(() => {
-    if (session.status === "unauthenticated") {
+    if (status === "unauthenticated") {
       toast.warning(t("settingsAccessGuard.unauthenticated.title"), {
         id: SETTINGS_AUTH_TOAST_ID,
         description: t("settingsAccessGuard.unauthenticated.description"),
@@ -53,9 +41,9 @@ export function SettingsAccessGuard({
       });
       router.replace("/");
     }
-  }, [isForbidden, router, session.status, t]);
+  }, [isForbidden, router, status, t]);
 
-  if (isChecking || isForbidden || session.status === "unauthenticated") {
+  if (isChecking || isForbidden || status === "unauthenticated") {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />

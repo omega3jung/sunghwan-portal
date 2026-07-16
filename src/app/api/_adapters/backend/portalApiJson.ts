@@ -1,19 +1,18 @@
-import { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { proxyJson } from "@/app/api/_helpers";
-import { dispatchPortalApi } from "@/server/portalApi";
-import { PortalApiJsonOptions } from "@/server/portalApi/types";
+import { requestExternalPortalApi } from "./externalPortalApi";
+import { requestEmbeddedPortalApi } from "./embeddedServer";
+import type { BackendJsonOptions } from "./types";
 
 export async function portalApiJson(
   request: NextRequest,
-  options: PortalApiJsonOptions,
+  options: BackendJsonOptions,
 ) {
   if (hasExternalPortalApiBaseUrl()) {
-    return proxyJson(request, options);
+    return requestExternalPortalApi(request, options);
   }
 
-  const response = await dispatchPortalApi(request, options);
+  const response = await requestEmbeddedPortalApi(request, options);
 
   if (!options.mapData || !response.ok || response.status === 204) {
     return response;
@@ -40,16 +39,13 @@ export async function portalApiJson(
 }
 
 function hasExternalPortalApiBaseUrl() {
-  const baseUrl = process.env.API_BASE_URL;
-  return typeof baseUrl === "string" && baseUrl.trim().length > 0;
+  return Boolean(process.env.API_BASE_URL?.trim());
 }
 
 async function readPayload(response: Response) {
   const raw = await response.text();
 
-  if (!raw) {
-    return null;
-  }
+  if (!raw) return null;
 
   try {
     return JSON.parse(raw) as unknown;

@@ -29,10 +29,8 @@ import {
 } from "../components/ServiceDeskTenantSelect";
 import { useActiveServiceDeskCategoryListQuery } from "../hooks/useActiveServiceDeskCategoryListQuery";
 import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import {
-  useServiceDeskSettingsScopeAccess,
-  useServiceDeskSettingsTenant,
-} from "../ServiceDeskSettingsTenantProvider";
+import { useServiceDeskSettingsScopeAccess } from "../hooks/useServiceDeskSettingsScopeAccess";
+import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 import { AssignmentRuleForm } from "./components/AssignmentRuleForm";
 import { AsgginmentRuleTree } from "./components/AssignmentRuleTree";
 import { useAssignmentRuleTree } from "./hooks/useAssignmentRuleTree";
@@ -47,7 +45,7 @@ export default function CategoryPage() {
   const { t } = useTranslation(NS.settings);
   const mutationToast = useMutationToast();
   const { selectedTenant, isTenantSelectionLoading } =
-    useServiceDeskSettingsTenant();
+    useTenantSelection();
   const {
     selectedScope,
     setSelectedScope,

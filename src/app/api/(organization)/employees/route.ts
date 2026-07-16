@@ -2,32 +2,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
-import { isRemoteRequest } from "@/app/api/_helpers";
 import {
-  camelEmployeeMapper,
+  handleEmbeddedServiceDeskEligibleEmployeesPortalApi,
+  isEmbeddedServiceDeskEligibleEmployeeRequest,
+} from "@/app/api/_adapters/backend/embeddedServer";
+import {
+  createLocalEmployee,
+  listLocalEmployees,
+} from "@/app/api/_adapters/localDemo/organization";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import {
   mapEmployeeItemPayload,
   mapEmployeeListPayload,
-} from "@/feature/organization/employee/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateEmployeeInput,
-  toEmployeeMockResource,
+  type CreateEmployeeInput,
   toEmployeeWritePayload,
-} from "@/feature/organization/employee/write";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/lib/application/api/query";
-import { employeesMock } from "@/mocks/domain/organization/employee";
-import {
-  handleServiceDeskEligibleEmployeesPortalApi,
-  isServiceDeskEligibleEmployeeRequest,
-} from "@/server/portalApi/employees/employeesPortalApiHandler";
+} from "@/lib/application/contracts/organization";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
-  if (isServiceDeskEligibleEmployeeRequest(request)) {
-    return handleServiceDeskEligibleEmployeesPortalApi(request, {
+  if (isEmbeddedServiceDeskEligibleEmployeeRequest(request)) {
+    return handleEmbeddedServiceDeskEligibleEmployeesPortalApi(request, {
       query: request.nextUrl.searchParams,
       errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
     });
@@ -39,14 +36,7 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const employeeData = camelEmployeeMapper(
-      applyRuleGroupFilter(
-        employeesMock,
-        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
-      ),
-    );
-
-    return NextResponse.json({ data: employeeData });
+    return NextResponse.json(listLocalEmployees(request.nextUrl.searchParams));
   }
 
   // real backend
@@ -65,7 +55,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toEmployeeMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalEmployee(body), { status: 201 });
   }
 
   return portalApiJson(request, {

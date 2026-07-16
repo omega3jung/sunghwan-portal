@@ -9,16 +9,16 @@ import {
   getAuthToken,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
+} from "@/app/api/_adapters";
 import {
   createTenantSchema,
   mapTenantItemPayload,
   mapTenantListPayload,
   toTenantWritePayload,
-} from "@/feature/serviceDesk/tenant";
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   try {

@@ -2,32 +2,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
-import { isRemoteRequest } from "@/app/api/_helpers";
 import {
-  camelDepartmentMapper,
+  handleEmbeddedServiceDeskDepartmentReferenceRequest,
+  isEmbeddedServiceDeskOrganizationReferenceRequest,
+} from "@/app/api/_adapters/backend/embeddedServer";
+import {
+  createLocalDepartment,
+  listLocalDepartments,
+} from "@/app/api/_adapters/localDemo/organization";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import {
   mapDepartmentItemPayload,
   mapDepartmentListPayload,
-} from "@/feature/organization/department/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateDepartmentInput,
-  toDepartmentMockResource,
+  type CreateDepartmentInput,
   toDepartmentWritePayload,
-} from "@/feature/organization/department/write";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/lib/application/api/query";
-import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
-import {
-  handleServiceDeskDepartmentReferenceRequest,
-  isServiceDeskOrganizationReferenceRequest,
-} from "@/server/portalApi/organization/serviceDeskOrganizationReferenceHandler";
+} from "@/lib/application/contracts/organization";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
-  if (isServiceDeskOrganizationReferenceRequest(request)) {
-    return handleServiceDeskDepartmentReferenceRequest(request, {
+  if (isEmbeddedServiceDeskOrganizationReferenceRequest(request)) {
+    return handleEmbeddedServiceDeskDepartmentReferenceRequest(request, {
       query: request.nextUrl.searchParams,
       errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
     });
@@ -39,17 +36,9 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const departmentData = camelDepartmentMapper(
-      applyRuleGroupFilter(
-        allDepartmentsMock,
-        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
-      ),
+    return NextResponse.json(
+      listLocalDepartments(request.nextUrl.searchParams),
     );
-
-    return NextResponse.json({
-      items: departmentData,
-      total: departmentData.length,
-    });
   }
 
   // real backend
@@ -68,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toDepartmentMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalDepartment(body), { status: 201 });
   }
 
   return portalApiJson(request, {

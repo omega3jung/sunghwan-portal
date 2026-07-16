@@ -6,6 +6,10 @@ import {
   localSaveCategoryTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
 import {
+  assertEmbeddedCategoryTreeMutationAllowed,
+  getEmbeddedCategoryTreeByTenantId,
+} from "@/app/api/_adapters/backend/embeddedServer";
+import {
   isServiceDeskSettingsRequest,
   parseCategoryScope,
   requireSettingsResourceAccess,
@@ -13,21 +17,17 @@ import {
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
 } from "@/app/api/_adapters/serviceDesk";
-import { toApiErrorResponse } from "@/app/api/_helpers";
+import { toApiErrorResponse } from "@/app/api/_adapters";
 import {
   camelCategoryMapper,
   mapCategoryListPayload,
   mapCategoryTreePayload,
-} from "@/feature/serviceDesk/category/mapper";
-import { saveCategoryTreeSchema } from "@/feature/serviceDesk/category/request.schema";
-import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
+  saveCategoryTreeSchema,
+  type SaveServiceDeskCategoryTreePayload,
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
-import {
-  assertCategoryTreeMutationAllowed,
-  getCategoryTreeByTenantId,
-} from "@/server/data/serviceDesk/category";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   try {
@@ -131,12 +131,14 @@ export async function PUT(request: NextRequest) {
     const useOwnerStore = tenant.isOwnerTenant;
     const isRemote = authorization.dataScope === "REMOTE";
     const currentCategories = isRemote
-      ? camelCategoryMapper(await getCategoryTreeByTenantId(tenant.id))
+      ? camelCategoryMapper(
+          await getEmbeddedCategoryTreeByTenantId(tenant.id),
+        )
       : (getLocalCategoryTrees(useOwnerStore).find(
           (item) => item.id === tenant.id,
         )?.categories ?? []);
 
-    assertCategoryTreeMutationAllowed({
+    assertEmbeddedCategoryTreeMutationAllowed({
       principal: authorization.principal,
       tenant,
       currentCategories,

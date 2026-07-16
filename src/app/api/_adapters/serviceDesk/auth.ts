@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 import type { Session } from "next-auth";
 
 import { getAuthToken } from "@/app/api/_adapters/auth/requestAuth";
+import {
+  getEmbeddedServiceDeskSettingsTenantContext,
+  getEmbeddedServiceDeskSettingsTenantContextByCompanyId,
+  getEmbeddedUserProfile,
+  type EmbeddedServiceDeskSettingsTenantContext,
+} from "@/app/api/_adapters/backend/embeddedServer";
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import type { DataScope } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
@@ -15,12 +21,8 @@ import {
   type ServiceDeskSettingsResource,
 } from "@/lib/application/serviceDesk";
 import { resolveDemoProfile } from "@/mocks/domain/user";
-import {
-  getServiceDeskSettingsTenantContext as getRemoteServiceDeskSettingsTenantContext,
-  getServiceDeskSettingsTenantContextByCompanyId as getRemoteServiceDeskSettingsTenantContextByCompanyId,
-  type ServiceDeskSettingsTenantContext,
-} from "@/server/data/serviceDesk/tenant";
-import { getUserProfileDtoByUsername } from "@/server/data/users";
+type ServiceDeskSettingsTenantContext =
+  EmbeddedServiceDeskSettingsTenantContext;
 
 export type ServiceDeskSettingsPrincipalContext = {
   principal: AppUser;
@@ -34,7 +36,7 @@ async function getServiceDeskSettingsTenantContext(
   tenantId: string | number,
 ) {
   if (dataScope === "REMOTE") {
-    return getRemoteServiceDeskSettingsTenantContext(dataScope, tenantId);
+    return getEmbeddedServiceDeskSettingsTenantContext(dataScope, tenantId);
   }
 
   const tenant = getLocalDemoTenants().find(
@@ -49,7 +51,7 @@ async function getServiceDeskSettingsTenantContextByCompanyId(
   companyId: string | number,
 ) {
   if (dataScope === "REMOTE") {
-    return getRemoteServiceDeskSettingsTenantContextByCompanyId(
+    return getEmbeddedServiceDeskSettingsTenantContextByCompanyId(
       dataScope,
       companyId,
     );
@@ -383,7 +385,7 @@ async function resolveCanonicalAppUser(
     return resolveDemoProfile(username);
   }
 
-  return getUserProfileDtoByUsername(username);
+  return getEmbeddedUserProfile(username);
 }
 
 function normalizeUsername(value: unknown) {

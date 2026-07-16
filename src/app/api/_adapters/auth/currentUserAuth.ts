@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 
 import { getAuthToken } from "@/app/api/_adapters/auth/requestAuth";
+import { getEmbeddedUserProfile } from "@/app/api/_adapters/backend/embeddedServer";
 import type { Role, UserScope } from "@/domain/auth";
 import {
   resolveDemoAuth,
   resolveDemoProfile,
 } from "@/mocks/domain/user";
-import { getUserProfileDtoByUsername } from "@/server/data/users";
 
 /** Resolves the effective user's role, including impersonation. */
 export async function getCurrentUserRole(req: NextRequest): Promise<Role> {
@@ -22,7 +22,7 @@ export async function getCurrentUserRole(req: NextRequest): Promise<Role> {
     return resolveDemoAuth(currentUserName)?.role ?? "NONE";
   }
 
-  const profile = await getUserProfileDtoByUsername(currentUserName);
+  const profile = await getEmbeddedUserProfile(currentUserName);
   return profile?.role ?? "NONE";
 }
 
@@ -42,6 +42,6 @@ export async function getCurrentUserScope(
     return resolveDemoProfile(currentUserName)?.userScope ?? null;
   }
 
-  const profile = await getUserProfileDtoByUsername(currentUserName);
+  const profile = await getEmbeddedUserProfile(currentUserName);
   return profile?.userScope ?? null;
 }

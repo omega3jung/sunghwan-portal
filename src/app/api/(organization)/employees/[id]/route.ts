@@ -1,19 +1,18 @@
 // app/api/employees/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
-  camelEmployeeMapper,
+  getLocalEmployee,
+  updateLocalEmployee,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapEmployeeItemPayload,
-} from "@/feature/organization/employee/mapper";
-import {
-  toEmployeeMockResource,
   toEmployeeWritePayload,
-  UpdateEmployeeInput,
-} from "@/feature/organization/employee/write";
-import { employeesMock } from "@/mocks/domain/organization/employee";
+  type UpdateEmployeeInput,
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,10 +25,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const employeeData = camelEmployeeMapper(employeesMock);
-    const targetEmployee = employeeData.find(
-      (employee) => employee.id === Number(id),
-    );
+    const targetEmployee = getLocalEmployee(id);
 
     if (!targetEmployee) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -56,7 +52,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toEmployeeMockResource(body, id), { status: 200 });
+    return NextResponse.json(updateLocalEmployee(body, id), { status: 200 });
   }
 
   return portalApiJson(request, {

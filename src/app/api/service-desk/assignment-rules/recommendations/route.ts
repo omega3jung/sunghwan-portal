@@ -6,9 +6,9 @@ import {
   resolveServiceDeskSettingsPrincipal,
   toCurrentUsernameProxyHeaders,
 } from "@/app/api/_adapters/serviceDesk";
-import { toApiErrorResponse } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
+import { toApiErrorResponse } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
 import { isLocale } from "@/lib/application/i18n";
 
 const parseRecommendationInput = async (

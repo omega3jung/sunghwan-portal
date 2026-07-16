@@ -14,14 +14,14 @@ import {
   getAuthToken,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
   mapTenantItemPayload,
   toTenantWritePayload,
   updateTenantSchema,
-} from "@/feature/serviceDesk/tenant";
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {

@@ -4,6 +4,7 @@ import {
   localListApprovalSteps,
   localSaveApprovalStepTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep";
+import { getEmbeddedCategoryApprovalSettingsByTenantId } from "@/app/api/_adapters/backend/embeddedServer";
 import {
   getApprovalStepStore,
   normalizeCategoryApprovalSettings,
@@ -20,23 +21,20 @@ import {
 } from "@/app/api/_adapters/serviceDesk";
 import {
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   camelCategoryApprovalSettingMapper,
   mapApprovalSettingsListPayload,
   mapApprovalSettingsTreePayload,
-} from "@/feature/serviceDesk/approvalStep/mapper";
-import { saveApprovalStepTreeSchema } from "@/feature/serviceDesk/approvalStep/request.schema";
-import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+  saveApprovalStepTreeSchema,
+  type SaveServiceDeskApprovalStepTreePayload,
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
 } from "@/lib/application/serviceDesk";
-import {
-  getCategoryApprovalSettingsByTenantId,
-} from "@/server/data/serviceDesk/approvalStep";
 
 export async function GET(request: NextRequest) {
   try {
@@ -148,7 +146,7 @@ export async function PUT(request: NextRequest) {
             getApprovalStepStore(useOwnerStore)[tenant.id] ?? [],
           )
         : camelCategoryApprovalSettingMapper(
-            await getCategoryApprovalSettingsByTenantId(tenant.id),
+            await getEmbeddedCategoryApprovalSettingsByTenantId(tenant.id),
           );
     const currentStepsById = new Map(
       currentSettings.flatMap((category) =>

@@ -16,14 +16,14 @@ import {
 } from "@/app/api/_adapters/serviceDesk";
 import {
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   mapAssignmentRuleListPayload,
   mapAssignmentRuleTreePayload,
-} from "@/feature/serviceDesk/assignmentRule/mapper";
-import { saveAssignmentRuleTreeSchema } from "@/feature/serviceDesk/assignmentRule/request.schema";
-import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
+  saveAssignmentRuleTreeSchema,
+  type SaveServiceDeskAssignmentRuleTreePayload,
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,

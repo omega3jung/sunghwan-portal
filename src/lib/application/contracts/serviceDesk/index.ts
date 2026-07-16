@@ -6,6 +6,7 @@ export * from "./assignmentRule";
 export * from "./assignmentRuleMapper";
 export * from "./category";
 export * from "./categoryMapper";
+export * from "./requestSchemas";
 export * from "./tenant";
 export * from "./tenantMapper";
 export * from "./tenantWrite";

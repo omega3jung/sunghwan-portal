@@ -18,6 +18,21 @@ export const TICKET_ACTION_TYPE_TO_PATH = {
 export type TicketActionPath =
   (typeof TICKET_ACTION_TYPE_TO_PATH)[TicketActionType];
 
+export const TICKET_ACTION_PATH_TO_TYPE = {
+  approve: "APPROVE",
+  decline: "DECLINE",
+  comment: "COMMENT",
+  note: "NOTE",
+  assign: "ASSIGN",
+  assignSelf: "ASSIGN_SELF",
+  reject: "REJECT",
+  merge: "MERGE",
+  adjust: "ADJUST",
+  reopen: "REOPEN",
+  resubmit: "RESUBMIT",
+  cancel: "CANCEL",
+} as const satisfies Record<TicketActionPath, TicketActionType>;
+
 export type TicketActionAttachment = {
   id: string;
   name: string;

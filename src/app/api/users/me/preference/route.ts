@@ -1,8 +1,8 @@
 // app/api/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserName, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import { Preference } from "@/domain/user/preference";
 
 export async function GET(req: NextRequest) {

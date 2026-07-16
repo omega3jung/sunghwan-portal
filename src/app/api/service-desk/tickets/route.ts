@@ -17,17 +17,15 @@ import {
   getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import {
-  type TicketMutateRequestPayload,
-  ticketMutateRequestPayloadSchema,
-} from "@/feature/serviceDesk/ticket";
+} from "@/app/api/_adapters";
+import { ticketMutateRequestPayloadSchema } from "@/feature/serviceDesk/ticket";
 import {
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
-} from "@/feature/serviceDesk/ticket/api";
+  type TicketMutateRequestPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

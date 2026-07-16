@@ -2,32 +2,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
-import { isRemoteRequest } from "@/app/api/_helpers";
 import {
-  camelJobFieldMapper,
+  handleEmbeddedServiceDeskJobFieldReferenceRequest,
+  isEmbeddedServiceDeskOrganizationReferenceRequest,
+} from "@/app/api/_adapters/backend/embeddedServer";
+import {
+  createLocalJobField,
+  listLocalJobFields,
+} from "@/app/api/_adapters/localDemo/organization";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import {
   mapJobFieldItemPayload,
   mapJobFieldListPayload,
-} from "@/feature/organization/jobField/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateJobFieldInput,
-  toJobFieldMockResource,
+  type CreateJobFieldInput,
   toJobFieldWritePayload,
-} from "@/feature/organization/jobField/write";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/lib/application/api/query";
-import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
-import {
-  handleServiceDeskJobFieldReferenceRequest,
-  isServiceDeskOrganizationReferenceRequest,
-} from "@/server/portalApi/organization/serviceDeskOrganizationReferenceHandler";
+} from "@/lib/application/contracts/organization";
 
-import { portalApiJson } from "../../_helpers/portalApiJson";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
-  if (isServiceDeskOrganizationReferenceRequest(request)) {
-    return handleServiceDeskJobFieldReferenceRequest(request, {
+  if (isEmbeddedServiceDeskOrganizationReferenceRequest(request)) {
+    return handleEmbeddedServiceDeskJobFieldReferenceRequest(request, {
       query: request.nextUrl.searchParams,
       errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
     });
@@ -39,17 +36,7 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const jobFieldData = camelJobFieldMapper(
-      applyRuleGroupFilter(
-        allJobFieldsMock,
-        parseRuleGroupFilter(request.nextUrl.searchParams.get("filter")),
-      ),
-    );
-
-    return NextResponse.json({
-      items: jobFieldData,
-      total: jobFieldData.length,
-    });
+    return NextResponse.json(listLocalJobFields(request.nextUrl.searchParams));
   }
 
   // real backend
@@ -68,7 +55,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toJobFieldMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalJobField(body), { status: 201 });
   }
 
   return portalApiJson(request, {

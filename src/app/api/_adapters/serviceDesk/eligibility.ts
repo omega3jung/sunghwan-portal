@@ -1,11 +1,14 @@
 import * as localEligibility from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
+import {
+  assertEmbeddedApprovalAssigneeEligible,
+  assertEmbeddedAssignmentAssigneeEligible,
+  getEmbeddedServiceDeskCategoryContext,
+  type EmbeddedServiceDeskCategoryContext,
+} from "@/app/api/_adapters/backend/embeddedServer";
 import type { DataScope } from "@/domain/auth";
 import type { ApprovalAssigneeType, AssigneeGroup } from "@/domain/serviceDesk";
-import * as remoteEmployees from "@/server/data/organization/employees";
-import * as remoteCategory from "@/server/data/serviceDesk/category";
 
-export type ServiceDeskCategoryContext =
-  remoteCategory.ServiceDeskCategoryContext;
+export type ServiceDeskCategoryContext = EmbeddedServiceDeskCategoryContext;
 
 export async function getServiceDeskCategoryContext(
   dataScope: DataScope,
@@ -13,7 +16,7 @@ export async function getServiceDeskCategoryContext(
 ) {
   return dataScope === "LOCAL"
     ? localEligibility.getServiceDeskCategoryContext("LOCAL", categoryId)
-    : remoteCategory.getServiceDeskCategoryContext(dataScope, categoryId);
+    : getEmbeddedServiceDeskCategoryContext(dataScope, categoryId);
 }
 
 export async function assertApprovalAssigneeEligible({
@@ -31,7 +34,7 @@ export async function assertApprovalAssigneeEligible({
         category,
         assignee,
       })
-    : remoteEmployees.assertApprovalAssigneeEligible({
+    : assertEmbeddedApprovalAssigneeEligible({
         dataScope,
         category,
         assignee,
@@ -53,7 +56,7 @@ export async function assertAssignmentAssigneeEligible({
         category,
         assignee,
       })
-    : remoteEmployees.assertAssignmentAssigneeEligible({
+    : assertEmbeddedAssignmentAssigneeEligible({
         dataScope,
         category,
         assignee,

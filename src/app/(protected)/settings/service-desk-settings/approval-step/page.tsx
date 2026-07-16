@@ -26,10 +26,8 @@ import {
 } from "../components/ServiceDeskTenantSelect";
 import { useActiveServiceDeskCategoryListQuery } from "../hooks/useActiveServiceDeskCategoryListQuery";
 import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import {
-  useServiceDeskSettingsScopeAccess,
-  useServiceDeskSettingsTenant,
-} from "../ServiceDeskSettingsTenantProvider";
+import { useServiceDeskSettingsScopeAccess } from "../hooks/useServiceDeskSettingsScopeAccess";
+import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 import { ApprovalStepForm } from "./components/ApprovalStepForm";
 import { ApprovalStepperPanel } from "./components/ApprovalStepperPanel";
 import { ApprovalStepTree } from "./components/ApprovalStepTree";
@@ -46,7 +44,7 @@ export default function ApprovalStepPage() {
   const { t } = useTranslation(NS.settings);
   const mutationToast = useMutationToast();
   const { selectedTenant, isTenantSelectionLoading } =
-    useServiceDeskSettingsTenant();
+    useTenantSelection();
   const {
     selectedScope,
     setSelectedScope,

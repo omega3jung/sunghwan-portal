@@ -1,15 +1,7 @@
-// src/app/api/_helpers/types.ts
-
 export type RouteContext<
   TParams extends Record<string, string> = Record<string, string>,
 > = {
   params: TParams;
-};
-
-export type FilterRule = {
-  field?: string;
-  operator?: string;
-  value?: string;
 };
 
 export type IdRouteContext = RouteContext<{ id: string }>;

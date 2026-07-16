@@ -13,14 +13,14 @@ import {
   isInternalUser,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import type {
   TicketSearchRequest,
   TicketSearchSort,
   TicketSortField,
-} from "@/feature/serviceDesk/ticket/api";
-import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/mapper";
+} from "@/lib/application/contracts/serviceDesk";
+import { mapTicketSummaryListPayload } from "@/lib/application/contracts/serviceDesk";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 const TICKET_SORT_FIELDS = new Set<TicketSortField>([

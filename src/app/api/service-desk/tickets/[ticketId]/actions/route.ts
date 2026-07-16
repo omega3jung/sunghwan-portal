@@ -9,13 +9,13 @@ import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import {
   camelTicketActionMapper,
   mapTicketActionListPayload,
-} from "@/feature/serviceDesk/ticketAction/api";
+} from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;

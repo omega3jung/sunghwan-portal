@@ -1,19 +1,18 @@
 // app/api/departments/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
-  camelDepartmentMapper,
+  getLocalDepartment,
+  updateLocalDepartment,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapDepartmentItemPayload,
-} from "@/feature/organization/department/mapper";
-import {
-  toDepartmentMockResource,
   toDepartmentWritePayload,
-  UpdateDepartmentInput,
-} from "@/feature/organization/department/write";
-import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
+  type UpdateDepartmentInput,
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,10 +25,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const departmentData = camelDepartmentMapper(allDepartmentsMock);
-    const targetDepartment = departmentData.find(
-      (department) => department.id === id,
-    );
+    const targetDepartment = getLocalDepartment(id);
 
     if (!targetDepartment) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -56,7 +52,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toDepartmentMockResource(body, id), {
+    return NextResponse.json(updateLocalDepartment(body, id), {
       status: 200,
     });
   }

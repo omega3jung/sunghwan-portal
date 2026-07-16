@@ -14,21 +14,21 @@ import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
-import { useSettingsScope } from "../../_providers";
-import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
+import { useSettingsAccess } from "../../_providers";
+import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 
 export function ServiceDeskTenantSelect({
   className,
 }: {
   className?: string;
 }) {
-  const { adminType } = useSettingsScope();
+  const { type } = useSettingsAccess();
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue();
   const { tenantData, selectedTenant, setSelectedTenant } =
-    useServiceDeskSettingsTenant();
+    useTenantSelection();
 
-  if (adminType !== "OWNER_ADMIN") {
+  if (type !== "OWNER_ADMIN") {
     return null;
   }
 

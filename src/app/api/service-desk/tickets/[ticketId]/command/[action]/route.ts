@@ -14,14 +14,14 @@ import {
   getCurrentUserRole,
   getCurrentUserScope,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { RouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { RouteContext } from "@/app/api/_adapters/http";
 import {
   TICKET_ACTION_PATH_TO_TYPE as TICKET_ACTION_TYPE_BY_PATH,
   TicketActionFormValues,
-} from "@/feature/serviceDesk/ticketAction";
-import { mapTicketActionPayload } from "@/feature/serviceDesk/ticketAction/api";
+  mapTicketActionPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
