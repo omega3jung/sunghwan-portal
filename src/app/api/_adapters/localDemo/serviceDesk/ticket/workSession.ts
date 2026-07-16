@@ -1,12 +1,4 @@
 import {
-  createUpdatedTicket,
-  getMaxHistoryNo,
-  getTicketContext,
-} from "./command/utils";
-import { getLocalDemoHistories } from "./state";
-import { hasLocalTicketWorkAssignmentHistory } from "./workerHistory";
-import { ApiError } from "@/lib/application/api";
-import {
   camelTicketWorkSessionMapper,
   type DbTicketWorkSession,
 } from "@/feature/serviceDesk/ticketWorkSession/api";
@@ -19,7 +11,16 @@ import {
   canChangeStatus,
   getCurrentTrackedMinutes,
 } from "@/feature/serviceDesk/ticketWorkSession/utils";
+import { ApiError } from "@/lib/application/api";
 import { normalizeNonNegativeInteger } from "@/shared/utils/value";
+
+import {
+  createUpdatedTicket,
+  getMaxHistoryNo,
+  getTicketContext,
+} from "./command/utils";
+import { getLocalDemoHistories } from "./state";
+import { hasLocalTicketWorkAssignmentHistory } from "./workerHistory";
 
 const localWorkSessions: DbTicketWorkSession[] = [];
 

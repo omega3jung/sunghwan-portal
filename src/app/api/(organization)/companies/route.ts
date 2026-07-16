@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   createLocalCompany,
   listLocalCompanies,
 } from "@/app/api/_adapters/localDemo/organization";
 import {
+  type CreateCompanyInput,
   mapCompanyItemPayload,
   mapCompanyListPayload,
-  type CreateCompanyInput,
   toCompanyWritePayload,
 } from "@/lib/application/contracts/organization";
-
-import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

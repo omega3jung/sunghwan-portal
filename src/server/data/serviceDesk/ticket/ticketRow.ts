@@ -71,5 +71,3 @@ export type CreateTicketRowInput = TicketMutateRowInput & {
   tk_requester_username: string;
   tk_status: TicketStatus;
 };
-
-export type UpdateTicketRowInput = TicketMutateRowInput;

@@ -1,7 +1,5 @@
-import type { DataScope } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
-import { getPortalOwnerCompany } from "@/server/data/organization/company";
 
 import {
   CreateTenantInputDto,
@@ -81,7 +79,6 @@ export type ServiceDeskSettingsTenantContext = {
 };
 
 export async function getServiceDeskSettingsTenantContexts(
-  _dataScope: DataScope,
 ): Promise<ServiceDeskSettingsTenantContext[]> {
   const tenants = await getTenants();
 
@@ -94,30 +91,25 @@ export async function getServiceDeskSettingsTenantContexts(
 }
 
 export async function getServiceDeskSettingsTenantContext(
-  dataScope: DataScope,
   tenantId: string | number,
 ) {
   return (
-    (await getServiceDeskSettingsTenantContexts(dataScope)).find(
+    (await getServiceDeskSettingsTenantContexts()).find(
       (tenant) => tenant.id === String(tenantId),
     ) ?? null
   );
 }
 
 export async function getServiceDeskSettingsTenantContextByCompanyId(
-  dataScope: DataScope,
   companyId: string | number,
 ) {
   return (
-    (await getServiceDeskSettingsTenantContexts(dataScope)).find(
+    (await getServiceDeskSettingsTenantContexts()).find(
       (tenant) => String(tenant.companyId) === String(companyId),
     ) ?? null
   );
 }
 
-export async function getPortalOwnerCompanyId(_dataScope: DataScope) {
-  return Number((await getPortalOwnerCompany()).company_id);
-}
 
 export async function createTenant(
   input: CreateTenantInputDto,

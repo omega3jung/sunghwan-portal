@@ -11,8 +11,15 @@ import {
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
   updateAssignmentRuleById,
+  validateAssignmentRuleTreeMutation,
 } from "@/server/data/serviceDesk/assignmentRule";
 import { getCategoryTreeByTenantId } from "@/server/data/serviceDesk/category";
+import { mapSettingsWriteError } from "@/server/data/serviceDesk/settingsWriteError";
+import { assertAssignmentReferencesValidForWrite } from "@/server/data/serviceDesk/settingsWriteValidationRepository";
+import {
+  type PortalApiQueryExecutor,
+  withPortalApiTransaction,
+} from "@/server/shared/supabase/portalApiClient";
 import { isSameNumberArray, isSameStringArray } from "@/shared/utils/value";
 
 import { getPortalApiQueryValue } from "../utils";
@@ -22,6 +29,7 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
+import { resolveAuthorizedSettingsTenant } from "./shared";
 
 type AssignmentTreeCategoryItem =
   SaveServiceDeskAssignmentRuleTreePayload["categories"][number];
@@ -87,9 +95,30 @@ export async function handleAssignmentRulePortalApi(
       const body = requireBody<SaveServiceDeskAssignmentRuleTreePayload>(
         context.options,
       );
+      const authorization = await resolveAuthorizedSettingsTenant({
+        request: context.request,
+        requestedTenantId: body.tenantId,
+      });
+      const tenant = authorization.tenant;
+
+      if (!tenant) {
+        throw Object.assign(new Error("A target tenant is required."), {
+          status: 400,
+        });
+      }
+
+      const submittedCategoryIds = await validateAssignmentRuleTreeMutation({
+        principal: authorization.principal,
+        tenant,
+        payload: body,
+      });
       const assignmentRules = await saveAssignmentRuleTree(body);
 
-      return NextResponse.json(assignmentRules);
+      return NextResponse.json(
+        assignmentRules.filter((rule) =>
+          submittedCategoryIds.has(String(rule.category_id)),
+        ),
+      );
     }
 
     return createNotFoundResponse();
@@ -114,6 +143,19 @@ export async function handleAssignmentRulePortalApi(
 async function saveAssignmentRuleTree(
   payload: SaveServiceDeskAssignmentRuleTreePayload,
 ) {
+  try {
+    return await withPortalApiTransaction((query) =>
+      saveAssignmentRuleTreeInTransaction(payload, query),
+    );
+  } catch (error) {
+    throw mapSettingsWriteError(error, "assignmentRules");
+  }
+}
+
+async function saveAssignmentRuleTreeInTransaction(
+  payload: SaveServiceDeskAssignmentRuleTreePayload,
+  query: PortalApiQueryExecutor,
+) {
   const tenantId = Number(payload.tenantId);
 
   if (!Number.isFinite(tenantId)) {
@@ -127,7 +169,7 @@ async function saveAssignmentRuleTree(
     ]),
   );
   const currentAssignmentRules = (
-    await getAssignmentRulesByTenantId(tenantId)
+    await getAssignmentRulesByTenantId(tenantId, query)
   ).filter((rule) => submittedCategoryIds.has(rule.category_id));
   const currentAssignmentRulesByCategoryId = new Map(
     currentAssignmentRules.map((assignmentRule) => [
@@ -144,6 +186,15 @@ async function saveAssignmentRuleTree(
     ]),
   );
 
+  await assertAssignmentReferencesValidForWrite(
+    query,
+    tenantId,
+    nextAssignmentRules.map((rule) => ({
+      categoryId: rule.category_id,
+      assignee: rule.assignee,
+    })),
+  );
+
   const createTasks: Array<() => Promise<unknown>> = [];
   const updateTasks: Array<() => Promise<unknown>> = [];
   const deleteTasks: Array<() => Promise<unknown>> = [];
@@ -155,11 +206,14 @@ async function saveAssignmentRuleTree(
 
     if (!currentAssignmentRule) {
       createTasks.push(() =>
-        createAssignmentRule({
-          tenant_id: tenantId,
-          category_id: nextAssignmentRule.category_id,
-          assignee: nextAssignmentRule.assignee,
-        }),
+        createAssignmentRule(
+          {
+            tenant_id: tenantId,
+            category_id: nextAssignmentRule.category_id,
+            assignee: nextAssignmentRule.assignee,
+          },
+          query,
+        ),
       );
       continue;
     }
@@ -181,6 +235,7 @@ async function saveAssignmentRuleTree(
           category_id: nextAssignmentRule.category_id,
           assignee: nextAssignmentRule.assignee,
         },
+        query,
       ),
     );
   }
@@ -193,6 +248,7 @@ async function saveAssignmentRuleTree(
         deleteAssignmentRuleById(
           tenantId,
           currentAssignmentRule.assignment_rule_id,
+          query,
         ),
       );
     }
@@ -203,7 +259,7 @@ async function saveAssignmentRuleTree(
     8,
   );
 
-  return getAssignmentRulesByTenantId(tenantId);
+  return getAssignmentRulesByTenantId(tenantId, query);
 }
 
 async function filterAssignmentRulesByScope(

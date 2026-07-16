@@ -36,26 +36,19 @@ type Props = {
     React.SetStateAction<TreeNodes<CategoryApprovalStepData | ApprovalStepData>>
   >;
   readOnly?: boolean;
+  companyId: string | null;
 };
 
 export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
-  ({ selectedNode, language, setTree, readOnly = false }, ref) => {
+  ({ selectedNode, language, setTree, readOnly = false, companyId }, ref) => {
     const { t } = useTranslation(NS.settings);
     const localLocales = getLanguageOptions(t);
-    const selectedCategoryId =
-      selectedNode?.nodeType === "approvalStep"
-        ? selectedNode.categoryId
-        : null;
     const employeeListParams = useMemo<DbParams>(
       () => ({
         filter: combineRuleGroups([
           createFieldFilter({
-            field: "categoryId",
-            value: selectedCategoryId,
-          }),
-          createFieldFilter({
-            field: "purpose",
-            value: selectedCategoryId ? "APPROVAL" : null,
+            field: "companyId",
+            value: companyId,
           }),
           createFieldFilter({
             field: "e_active",
@@ -63,45 +56,44 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
           }),
         ]),
       }),
-      [selectedCategoryId],
+      [companyId],
+    );
+    const departmentListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "d_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
+    );
+    const jobFieldListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "jf_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
     );
     const { data: employees, isLoading: isEmployeesLoading } =
       useEmployeeListQuery(employeeListParams);
-    const { data: allDepartments, isLoading: isDepartmentsLoading } =
-      useDepartmentListQuery(employeeListParams);
-    const { data: allJobFields, isLoading: isJobFieldsLoading } =
-      useJobFieldListQuery(employeeListParams);
-
-    const departments = useMemo(() => {
-      const eligibleIds = new Set(
-        (employees ?? []).map((employee) => employee.departmentId),
-      );
-      const selectedId =
-        selectedNode?.nodeType === "approvalStep" &&
-        selectedNode.stepAssignee.type === "DEPARTMENT"
-          ? selectedNode.stepAssignee.departmentId
-          : null;
-
-      return (allDepartments ?? []).filter(
-        (department) =>
-          eligibleIds.has(department.id) || department.id === selectedId,
-      );
-    }, [allDepartments, employees, selectedNode]);
-    const jobFields = useMemo(() => {
-      const eligibleIds = new Set(
-        (employees ?? []).map((employee) => employee.jobFieldId),
-      );
-      const selectedId =
-        selectedNode?.nodeType === "approvalStep" &&
-        selectedNode.stepAssignee.type === "JOB_FIELD"
-          ? selectedNode.stepAssignee.jobFieldId
-          : null;
-
-      return (allJobFields ?? []).filter(
-        (jobField) =>
-          eligibleIds.has(jobField.id) || jobField.id === selectedId,
-      );
-    }, [allJobFields, employees, selectedNode]);
+    const { data: departments, isLoading: isDepartmentsLoading } =
+      useDepartmentListQuery(departmentListParams);
+    const { data: jobFields, isLoading: isJobFieldsLoading } =
+      useJobFieldListQuery(jobFieldListParams);
     const isReferenceDataLoading =
       isEmployeesLoading || isDepartmentsLoading || isJobFieldsLoading;
 
@@ -222,8 +214,8 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
                   language={language}
                   readOnly={readOnly}
                   employees={employees}
-                  departments={departments}
-                  jobFields={jobFields}
+                  departments={departments ?? []}
+                  jobFields={jobFields ?? []}
                   isLoading={isReferenceDataLoading}
                 />
               </div>

@@ -66,17 +66,10 @@ export const ticketMutateRequestSchema = z.object({
 });
 
 export const ticketCreateRequestSchema = ticketMutateRequestSchema;
-export const ticketUpdateRequestSchema = ticketMutateRequestSchema;
 
-export type TicketEmailDto = ServiceDeskTicketEmail;
-export type TicketPriority = Priority;
-export type TicketRiskLevel = RiskLevel;
 export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
-export type TicketFileDto = TicketAttachmentMetadataDto;
-export type TicketImageDto = TicketAttachmentMetadataDto;
 export type TicketMutateRequestDto = z.infer<typeof ticketMutateRequestSchema>;
 export type TicketCreateRequestDto = z.infer<typeof ticketCreateRequestSchema>;
-export type TicketUpdateRequestDto = z.infer<typeof ticketUpdateRequestSchema>;
 
 export type TicketListItemDto = {
   id: string;

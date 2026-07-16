@@ -1,7 +1,7 @@
 import {
-  type EligibleEmployee,
-  getEligibleEmployeesForCategory,
+  getActiveLocalEmployeesByCompanyId,
   getServiceDeskCategoryContext,
+  type LocalCompanyEmployee,
   type ServiceDeskCategoryContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import {
@@ -64,14 +64,12 @@ async function resolveTicketRouting(
   });
 
   if (nextApprovalStep) {
-    const eligibleEmployees = await getEligibleEmployeesForCategory({
-      dataScope: "LOCAL",
-      category,
-      purpose: "APPROVAL",
-    });
+    const companyEmployees = getActiveLocalEmployeesByCompanyId(
+      category.tenant.companyId,
+    );
     const assigneeUsernames = resolveApprovalStepAssignees({
       approvalStep: nextApprovalStep,
-      eligibleEmployees,
+      eligibleEmployees: companyEmployees,
     });
 
     assertRoutingResolved(assigneeUsernames, input.categoryId);
@@ -95,7 +93,7 @@ async function resolveTicketRouting(
 }
 
 async function requireLocalCategoryContext(categoryId: string) {
-  const category = await getServiceDeskCategoryContext("LOCAL", categoryId);
+  const category = await getServiceDeskCategoryContext(categoryId);
 
   if (!category || !category.tenant.active) {
     throw new ApiError(
@@ -167,7 +165,7 @@ function resolveApprovalStepAssignees({
   eligibleEmployees,
 }: {
   approvalStep: DbCategoryApprovalSettings["approval_step"][number];
-  eligibleEmployees: EligibleEmployee[];
+  eligibleEmployees: LocalCompanyEmployee[];
 }) {
   const assignee = approvalStep.approval_step_assignee;
 
@@ -175,7 +173,7 @@ function resolveApprovalStepAssignees({
     case "EMPLOYEE":
       return normalizeAssigneeIds(
         assignee.employee_username.map((employeeUsername) =>
-          resolveEligibleEmployeeUsername(
+          resolveCompanyEmployeeUsername(
             eligibleEmployees,
             String(employeeUsername),
           ),
@@ -223,17 +221,13 @@ async function resolveAssignmentAssignees(
     return [];
   }
 
-  const eligibleEmployees = await getEligibleEmployeesForCategory({
-    dataScope: "LOCAL",
-    category,
-    purpose: "ASSIGNMENT",
-    includeTenantCompany:
-      assignmentRule.assignee.include_tenant_company === true,
-  });
+  const eligibleEmployees = getActiveLocalEmployeesByCompanyId(
+    category.tenant.companyId,
+  );
 
   const directAssignees = assignmentRule.assignee.employee_username.map(
     (employeeUsername) =>
-      resolveEligibleEmployeeUsername(
+      resolveCompanyEmployeeUsername(
         eligibleEmployees,
         String(employeeUsername),
       ),
@@ -292,8 +286,8 @@ function findByCategoryIdWithMainFallback<
   return null;
 }
 
-function resolveEligibleEmployeeUsername(
-  employees: EligibleEmployee[],
+function resolveCompanyEmployeeUsername(
+  employees: LocalCompanyEmployee[],
   identifier: string,
 ): string | null {
   const employee = employees.find(
@@ -304,7 +298,7 @@ function resolveEligibleEmployeeUsername(
 }
 
 function resolveManagerAssigneeUsernames(
-  eligibleEmployees: EligibleEmployee[],
+  eligibleEmployees: LocalCompanyEmployee[],
   level: 1 | 2,
 ) {
   const minimumPermission =

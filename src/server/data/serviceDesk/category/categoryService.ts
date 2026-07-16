@@ -1,7 +1,5 @@
-import type { DataScope } from "@/domain/auth";
 import {
   type CategoryScope,
-  type MainCategory,
 } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
@@ -10,6 +8,7 @@ import {
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
 } from "@/lib/application/serviceDesk";
+import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
 import {
   getActiveTenantByCompanyId,
@@ -35,6 +34,7 @@ import {
 import {
   createCategoryRow,
   findCategoryContextRowById,
+  findCategoryRowsByCompanyId,
   findCategoryRowsByTenantId,
   findCategoryRowsByTenantIdAndCategoryId,
   updateCategoryRowById,
@@ -53,8 +53,17 @@ export type GetCategorySettingsResponseParams = {
 
 export async function getCategoryTreeByTenantId(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<CategoryDto[]> {
-  const rows = await findCategoryRowsByTenantId(tenantId);
+  const rows = await findCategoryRowsByTenantId(tenantId, query);
+
+  return mapCategoryRowsToDtos(rows);
+}
+
+export async function getCategoryTreeByCompanyId(
+  companyId: string | number,
+): Promise<CategoryDto[]> {
+  const rows = await findCategoryRowsByCompanyId(companyId);
 
   return mapCategoryRowsToDtos(rows);
 }
@@ -66,8 +75,13 @@ export type ServiceDeskCategoryContext = {
   tenant: ServiceDeskSettingsTenantContext;
 };
 
+type CategoryMutationReference = {
+  id: string;
+  scope: CategoryScope;
+  subCategories: Array<{ id: string }>;
+};
+
 export async function getServiceDeskCategoryContext(
-  dataScope: DataScope,
   categoryId: string | number,
 ): Promise<ServiceDeskCategoryContext | null> {
   const row = await findCategoryContextRowById(categoryId);
@@ -77,7 +91,6 @@ export async function getServiceDeskCategoryContext(
   }
 
   const tenant = await getServiceDeskSettingsTenantContext(
-    dataScope,
     row.tenant_id,
   );
 
@@ -101,7 +114,7 @@ export function assertCategoryTreeMutationAllowed({
 }: {
   principal: ServiceDeskSettingsPrincipal;
   tenant: ServiceDeskSettingsTenantContext;
-  currentCategories: MainCategory[];
+  currentCategories: CategoryMutationReference[];
   payload: SaveServiceDeskCategoryTreePayload;
 }) {
   const currentCategoriesById = new Map(
@@ -179,6 +192,31 @@ export function assertCategoryTreeMutationAllowed({
   }
 }
 
+export async function validateCategoryTreeMutation({
+  principal,
+  tenant,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const categories = await getCategoryTreeByTenantId(tenant.id);
+
+  assertCategoryTreeMutationAllowed({
+    principal,
+    tenant,
+    payload,
+    currentCategories: categories.map((category) => ({
+      id: String(category.category_id),
+      scope: category.category_scope,
+      subCategories: category.sub_category.map((subCategory) => ({
+        id: String(subCategory.category_id),
+      })),
+    })),
+  });
+}
+
 export async function getCategorySettingsResponseByTenantId({
   tenantId,
   companyId,
@@ -193,7 +231,9 @@ export async function getCategorySettingsResponseByTenantId({
   return Promise.all(
     targetTenants.map(async (tenant) => ({
       ...tenant,
-      category: await getCategoryTreeByTenantId(tenant.tenant_id),
+      category: hasTenantId(companyId)
+        ? await getCategoryTreeByCompanyId(companyId)
+        : await getCategoryTreeByTenantId(tenant.tenant_id),
     })),
   );
 }

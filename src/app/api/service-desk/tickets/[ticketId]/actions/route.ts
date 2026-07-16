@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getLocalDemoActions } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
-import {
-  resolveApiErrorMessage,
-  toCurrentUsernameProxyHeaders,
-} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   isInternalUser,
@@ -12,6 +7,11 @@ import {
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getLocalDemoActions } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   camelTicketActionMapper,
   mapTicketActionListPayload,

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isRemoteRequest } from "@/app/api/_adapters";
 import { resetLocalDemoSettingsState } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { resetLocalDemoTicketState } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
-import { isRemoteRequest } from "@/app/api/_adapters";
 
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

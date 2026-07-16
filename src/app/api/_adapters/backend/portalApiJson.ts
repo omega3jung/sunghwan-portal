@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { dispatchPortalApi } from "@/server/portalApi";
+
 import { requestExternalPortalApi } from "./externalPortalApi";
-import { requestEmbeddedPortalApi } from "./embeddedServer";
 import type { BackendJsonOptions } from "./types";
 
 export async function portalApiJson(
@@ -12,7 +13,7 @@ export async function portalApiJson(
     return requestExternalPortalApi(request, options);
   }
 
-  const response = await requestEmbeddedPortalApi(request, options);
+  const response = await dispatchPortalApi(request, options);
 
   if (!options.mapData || !response.ok || response.status === 204) {
     return response;

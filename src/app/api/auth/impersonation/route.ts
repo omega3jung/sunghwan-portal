@@ -8,9 +8,8 @@ import {
   tokenToOriginalAuthUser,
 } from "@/app/api/_adapters";
 import { getLocalImpersonationTarget } from "@/app/api/_adapters/localDemo/user";
-import { AuthUser } from "@/domain/auth";
-
 import { authApiJson } from "@/auth/api";
+import { AuthUser } from "@/domain/auth";
 
 const requestSchema = z.object({
   impersonatedUsername: z.string().trim().min(1),

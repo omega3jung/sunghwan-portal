@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  toApiErrorResponse,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import {
+  assertApprovalAssigneeEligible,
+} from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
+import {
   localListApprovalSteps,
   localSaveApprovalStepTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep";
-import { getEmbeddedCategoryApprovalSettingsByTenantId } from "@/app/api/_adapters/backend/embeddedServer";
 import {
   getApprovalStepStore,
   normalizeCategoryApprovalSettings,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep/approvalStepUtils";
 import {
-  assertApprovalAssigneeEligible,
   getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
@@ -19,18 +24,13 @@ import {
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
 } from "@/app/api/_adapters/serviceDesk";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
-  toApiErrorResponse,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
-import {
-  camelCategoryApprovalSettingMapper,
   mapApprovalSettingsListPayload,
   mapApprovalSettingsTreePayload,
   saveApprovalStepTreeSchema,
   type SaveServiceDeskApprovalStepTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
@@ -139,15 +139,20 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    if (authorization.dataScope === "REMOTE") {
+      return portalApiJson(request, {
+        method: "PUT",
+        path: "/service-desk/approval-steps",
+        body,
+        errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
+        mapData: mapApprovalSettingsTreePayload,
+      });
+    }
+
     const useOwnerStore = tenant.isOwnerTenant;
-    const currentSettings =
-      authorization.dataScope === "LOCAL"
-        ? normalizeCategoryApprovalSettings(
-            getApprovalStepStore(useOwnerStore)[tenant.id] ?? [],
-          )
-        : camelCategoryApprovalSettingMapper(
-            await getEmbeddedCategoryApprovalSettingsByTenantId(tenant.id),
-          );
+    const currentSettings = normalizeCategoryApprovalSettings(
+      getApprovalStepStore(useOwnerStore)[tenant.id] ?? [],
+    );
     const currentStepsById = new Map(
       currentSettings.flatMap((category) =>
         category.approvalSteps.map((step) => [step.id, step] as const),
@@ -210,38 +215,23 @@ export async function PUT(request: NextRequest) {
           submittedStepIds.add(step.id);
         }
 
-        await assertApprovalAssigneeEligible({
-          dataScope: authorization.dataScope,
-          category: categoryContext,
-          assignee: step.stepAssignee,
-        });
+        if (authorization.dataScope === "LOCAL") {
+          await assertApprovalAssigneeEligible({
+            category: categoryContext,
+            assignee: step.stepAssignee,
+          });
+        }
       }
     }
 
-    if (authorization.dataScope === "LOCAL") {
-      const savedSettings = localSaveApprovalStepTree({
-        isInternal: useOwnerStore,
-        payload: body,
-      });
-
-      return NextResponse.json(
-        savedSettings.filter((category) => submittedScopes.has(category.scope)),
-      );
-    }
-
-    return portalApiJson(request, {
-      method: "PUT",
-      path: "/service-desk/approval-steps",
-      body,
-      errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
-      mapData: (payload) => {
-        const settings = mapApprovalSettingsTreePayload(payload);
-
-        return Array.isArray(settings)
-          ? settings.filter((category) => submittedScopes.has(category.scope))
-          : settings;
-      },
+    const savedSettings = localSaveApprovalStepTree({
+      isInternal: useOwnerStore,
+      payload: body,
     });
+
+    return NextResponse.json(
+      savedSettings.filter((category) => submittedScopes.has(category.scope)),
+    );
   } catch (error) {
     return toApiErrorResponse(error, {
       fallbackMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),

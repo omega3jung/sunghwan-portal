@@ -15,11 +15,9 @@ import {
   TicketListItemDto,
   TicketSearchRequestDto,
   TicketSearchResponseDto,
-  TicketUpdateRequestDto,
 } from "./ticketDto";
 import {
   mapTicketCreateRequestDtoToRowInput,
-  mapTicketUpdateRequestDtoToRowInput,
   toTicketDetailDto,
   toTicketListItemDto,
 } from "./ticketMapper";
@@ -40,7 +38,6 @@ import {
   submitDraftTicketRowById,
   type TicketRepositoryOptions,
   updateTicketInitialRoutingById,
-  updateTicketRowById,
 } from "./ticketRepository";
 
 export type CreateTicketOptions = {
@@ -299,23 +296,6 @@ export async function createTicket(
     options.requesterUsername,
     repositoryOptions,
   );
-}
-
-export async function updateTicket(
-  ticketId: string,
-  input: TicketUpdateRequestDto,
-  currentUserName: string | null,
-): Promise<TicketDetailDto> {
-  const row = await updateTicketRowById(
-    ticketId,
-    mapTicketUpdateRequestDtoToRowInput(input),
-  );
-
-  if (!row) {
-    throw createStatusError("Ticket not found.", 404);
-  }
-
-  return projectTicketDetail(row, currentUserName);
 }
 
 export async function searchTicketListItems(

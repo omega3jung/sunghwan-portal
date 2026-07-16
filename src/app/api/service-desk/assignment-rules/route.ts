@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  toApiErrorResponse,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import {
+  assertAssignmentAssigneeEligible,
+} from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
+import {
   localListAssignmentRules,
   localSaveAssignmentRuleTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule";
 import {
-  assertAssignmentAssigneeEligible,
   getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
@@ -14,17 +20,13 @@ import {
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
 } from "@/app/api/_adapters/serviceDesk";
-import {
-  toApiErrorResponse,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   mapAssignmentRuleListPayload,
   mapAssignmentRuleTreePayload,
   saveAssignmentRuleTreeSchema,
   type SaveServiceDeskAssignmentRuleTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
@@ -133,6 +135,16 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    if (authorization.dataScope === "REMOTE") {
+      return portalApiJson(request, {
+        method: "PUT",
+        path: "/service-desk/assignment-rules",
+        body,
+        errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
+        mapData: mapAssignmentRuleTreePayload,
+      });
+    }
+
     const submittedCategoryIds = new Set<string>();
 
     for (const category of body.categories) {
@@ -167,11 +179,12 @@ export async function PUT(request: NextRequest) {
       }
 
       submittedCategoryIds.add(category.id);
-      await assertAssignmentAssigneeEligible({
-        dataScope: authorization.dataScope,
-        category: categoryContext,
-        assignee: category.assignee,
-      });
+      if (authorization.dataScope === "LOCAL") {
+        await assertAssignmentAssigneeEligible({
+          category: categoryContext,
+          assignee: category.assignee,
+        });
+      }
 
       for (const subCategory of category.subCategories) {
         const subCategoryContext = await getServiceDeskCategoryContext(
@@ -191,40 +204,25 @@ export async function PUT(request: NextRequest) {
         }
 
         submittedCategoryIds.add(subCategory.id);
-        await assertAssignmentAssigneeEligible({
-          dataScope: authorization.dataScope,
-          category: subCategoryContext,
-          assignee: subCategory.assignee,
-        });
+        if (authorization.dataScope === "LOCAL") {
+          await assertAssignmentAssigneeEligible({
+            category: subCategoryContext,
+            assignee: subCategory.assignee,
+          });
+        }
       }
     }
 
     const useOwnerStore = tenant.isOwnerTenant;
 
-    if (authorization.dataScope === "LOCAL") {
-      const savedRules = localSaveAssignmentRuleTree({
-        isInternal: useOwnerStore,
-        payload: body,
-      });
-
-      return NextResponse.json(
-        savedRules.filter((rule) => submittedCategoryIds.has(rule.categoryId)),
-      );
-    }
-
-    return portalApiJson(request, {
-      method: "PUT",
-      path: "/service-desk/assignment-rules",
-      body,
-      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
-      mapData: (payload) => {
-        const rules = mapAssignmentRuleTreePayload(payload);
-
-        return Array.isArray(rules)
-          ? rules.filter((rule) => submittedCategoryIds.has(rule.categoryId))
-          : rules;
-      },
+    const savedRules = localSaveAssignmentRuleTree({
+      isInternal: useOwnerStore,
+      payload: body,
     });
+
+    return NextResponse.json(
+      savedRules.filter((rule) => submittedCategoryIds.has(rule.categoryId)),
+    );
   } catch (error) {
     return toApiErrorResponse(error, {
       fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),

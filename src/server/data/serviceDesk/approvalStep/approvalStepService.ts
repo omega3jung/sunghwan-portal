@@ -1,8 +1,21 @@
 import { ApiError } from "@/lib/application/api";
+import type { SaveServiceDeskApprovalStepTreePayload } from "@/lib/application/contracts/serviceDesk";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsPrincipal,
+} from "@/lib/application/serviceDesk";
+import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
-import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
-import { getCategoryTreeByTenantId } from "../category/categoryService";
-import { getActiveTenantById, getActiveTenants } from "../tenant";
+import {
+  getCategoryTreeByTenantId,
+  getServiceDeskCategoryContext,
+} from "../category/categoryService";
+import {
+  getActiveTenantById,
+  getActiveTenants,
+  type ServiceDeskSettingsTenantContext,
+} from "../tenant";
 import {
   ApprovalStepDto,
   CategoryApprovalSettingsDto,
@@ -25,8 +38,9 @@ import {
 
 export async function getApprovalStepsByTenantId(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<ApprovalStepDto[]> {
-  const rows = await findApprovalStepRowsByTenantId(tenantId);
+  const rows = await findApprovalStepRowsByTenantId(tenantId, query);
 
   return mapApprovalStepRowsToDtos(rows);
 }
@@ -38,10 +52,11 @@ export type GetApprovalSettingsResponseParams = {
 
 export async function getCategoryApprovalSettingsByTenantId(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<CategoryApprovalSettingsDto[]> {
   const [categories, approvalSteps] = await Promise.all([
-    getCategoryTreeByTenantId(tenantId),
-    getApprovalStepsByTenantId(tenantId),
+    getCategoryTreeByTenantId(tenantId, query),
+    getApprovalStepsByTenantId(tenantId, query),
   ]);
   const approvalStepsByCategoryId = new Map<number, ApprovalStepDto[]>();
 
@@ -72,15 +87,11 @@ export async function getApprovalSettingsResponseByTenantId({
 
 export async function createApprovalStep(
   input: CreateApprovalStepInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<ApprovalStepDto> {
-  await assertActiveTenantExists(input.tenant_id);
-  await assertActiveMainCategoryExistsInTenant(
-    input.tenant_id,
-    input.category_id,
-  );
-
   const row = await createApprovalStepRow(
     mapCreateApprovalStepInputDtoToRowInput(input),
+    query,
   );
 
   if (!row) {
@@ -94,10 +105,12 @@ export async function updateApprovalStepById(
   tenantId: string | number,
   approvalStepId: string | number,
   input: UpdateApprovalStepInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<ApprovalStepDto> {
   const currentRows = await findApprovalStepRowsByTenantIdAndApprovalStepId(
     tenantId,
     approvalStepId,
+    query,
   );
   const currentRow = currentRows[0] ?? null;
 
@@ -105,12 +118,11 @@ export async function updateApprovalStepById(
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
-  await assertActiveMainCategoryExistsInTenant(tenantId, input.category_id);
-
   const row = await updateApprovalStepRowById(
     tenantId,
     approvalStepId,
     mapUpdateApprovalStepInputDtoToRowInput(input),
+    query,
   );
 
   if (!row) {
@@ -123,8 +135,9 @@ export async function updateApprovalStepById(
 export async function deleteApprovalStepById(
   tenantId: string | number,
   approvalStepId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<ApprovalStepDto> {
-  const row = await deleteApprovalStepRowById(tenantId, approvalStepId);
+  const row = await deleteApprovalStepRowById(tenantId, approvalStepId, query);
 
   if (!row) {
     throw new ApiError("serviceDesk.common.notFound", 404);
@@ -164,34 +177,80 @@ function hasTenantId(value?: string | number | null): value is string | number {
   return String(value).trim().length > 0;
 }
 
-async function assertActiveTenantExists(tenantId: string | number) {
-  const tenant = await getActiveTenantById(tenantId);
+export async function validateApprovalStepTreeMutation({
+  principal,
+  tenant,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  payload: SaveServiceDeskApprovalStepTreePayload;
+}) {
+  const currentSettings = await getCategoryApprovalSettingsByTenantId(tenant.id);
+  const currentStepCategoryById = new Map(
+    currentSettings.flatMap((category) =>
+      category.approval_step.map(
+        (step) => [String(step.approval_step_id), String(category.category_id)] as const,
+      ),
+    ),
+  );
+  const submittedCategoryIds = new Set<string>();
+  const submittedStepIds = new Set<string>();
+  const submittedScopes = new Set<string>();
 
-  if (!tenant) {
-    throw new ApiError("serviceDesk.common.notFound", 404);
+  for (const category of payload.categories) {
+    if (submittedCategoryIds.has(category.id)) {
+      throw createStatusError("A category cannot be submitted more than once.", 400);
+    }
+    submittedCategoryIds.add(category.id);
+
+    const context = await getServiceDeskCategoryContext(category.id);
+
+    if (
+      !context ||
+      context.tenant.id !== tenant.id ||
+      context.mainCategoryId !== category.id
+    ) {
+      throw createStatusError(
+        "Approval settings must reference a main category in the target tenant.",
+        400,
+      );
+    }
+
+    const access = resolveSettingsAccess(principal, {
+      resource: "APPROVAL_STEP",
+      tenantCompanyId: tenant.companyId,
+      isOwnerTenant: tenant.isOwnerTenant,
+      scope: context.scope,
+    });
+
+    if (!canManageServiceDeskSettings(access)) {
+      throw createStatusError(
+        "Approval settings are read-only for this category scope.",
+        403,
+      );
+    }
+    submittedScopes.add(context.scope);
+
+    for (const step of category.approvalSteps) {
+      if (
+        step.id &&
+        (currentStepCategoryById.get(step.id) !== category.id ||
+          submittedStepIds.has(step.id))
+      ) {
+        throw createStatusError(
+          "An approval step cannot move to another category or tenant.",
+          400,
+        );
+      }
+
+      if (step.id) submittedStepIds.add(step.id);
+    }
   }
 
-  return tenant;
+  return submittedScopes;
 }
 
-async function assertActiveMainCategoryExistsInTenant(
-  tenantId: string | number,
-  categoryId: string | number,
-) {
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(
-    tenantId,
-    categoryId,
-  );
-  const targetRow = rows.find(
-    (row) =>
-      Number(row.cat_id) === Number(categoryId) && row.cat_parent_id === null,
-  );
-
-  if (!targetRow || targetRow.cat_active === false) {
-    throw new ApiError(
-      "serviceDesk.approvalSteps.categoryNotFound",
-      404,
-      { categoryId },
-    );
-  }
+function createStatusError(message: string, status: number) {
+  return Object.assign(new Error(message), { status });
 }

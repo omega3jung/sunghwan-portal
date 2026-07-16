@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   applyRuleGroupFilter,
+  getStringRuleGroupValue,
   parseRuleGroupFilter,
 } from "@/lib/application/api/query";
 import { getActiveCompanies } from "@/server/data/organization/company";
 import type { DepartmentDto } from "@/server/data/organization/department";
 import { getActiveDepartments } from "@/server/data/organization/department";
+import { getActiveDepartmentsByCompanyId } from "@/server/data/organization/department";
 import type { JobFieldDto } from "@/server/data/organization/jobField";
 import { getActiveJobFields } from "@/server/data/organization/jobField";
+import { getActiveJobFieldsByCompanyId } from "@/server/data/organization/jobField";
 
 import { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";
@@ -42,8 +45,11 @@ export async function handleOrganizationPortalApi(
     }
 
     if (departmentsMatch) {
+      const companyId = resolveCompanyId(request, options);
       const items = filterDepartmentsByQuery(
-        await getActiveDepartments(),
+        companyId
+          ? await getActiveDepartmentsByCompanyId(companyId)
+          : await getActiveDepartments(),
         request,
         options,
       );
@@ -55,8 +61,11 @@ export async function handleOrganizationPortalApi(
     }
 
     if (jobFieldsMatch) {
+      const companyId = resolveCompanyId(request, options);
       const items = filterJobFieldsByQuery(
-        await getActiveJobFields(),
+        companyId
+          ? await getActiveJobFieldsByCompanyId(companyId)
+          : await getActiveJobFields(),
         request,
         options,
       );
@@ -81,16 +90,12 @@ function filterDepartmentsByQuery(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query">,
 ) {
-  const companyId = getPortalApiQueryValue(request, options, "companyId");
   const filter = parseRuleGroupFilter(
     getPortalApiQueryValue(request, options, "filter"),
   );
-  const filteredByCompany = companyId
-    ? items.filter((department) => String(department.d_company_id) === companyId)
-    : items;
 
   return applyRuleGroupFilter(
-    filteredByCompany.map((department) => ({
+    items.map((department) => ({
       ...department,
       id: department.d_id,
       companyId: department.d_company_id,
@@ -107,16 +112,12 @@ function filterJobFieldsByQuery(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query">,
 ) {
-  const companyId = getPortalApiQueryValue(request, options, "companyId");
   const filter = parseRuleGroupFilter(
     getPortalApiQueryValue(request, options, "filter"),
   );
-  const filteredByCompany = companyId
-    ? items.filter((jobField) => String(jobField.jf_company_id) === companyId)
-    : items;
 
   return applyRuleGroupFilter(
-    filteredByCompany.map((jobField) => ({
+    items.map((jobField) => ({
       ...jobField,
       id: jobField.jf_id,
       companyId: jobField.jf_company_id,
@@ -126,4 +127,19 @@ function filterJobFieldsByQuery(
   ).map(({ id: _id, companyId: _companyId, active: _active, ...jobField }) =>
     jobField as JobFieldDto,
   );
+}
+
+function resolveCompanyId(
+  request: NextRequest,
+  options: Pick<PortalApiJsonOptions, "query">,
+): number | null {
+  const filter = parseRuleGroupFilter(
+    getPortalApiQueryValue(request, options, "filter"),
+  );
+  const value =
+    getPortalApiQueryValue(request, options, "companyId") ??
+    getStringRuleGroupValue(filter, "companyId");
+  const companyId = Number(value);
+
+  return Number.isSafeInteger(companyId) && companyId > 0 ? companyId : null;
 }

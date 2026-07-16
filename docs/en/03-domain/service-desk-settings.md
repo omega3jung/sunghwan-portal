@@ -428,11 +428,14 @@ Every resolved approver must belong to the category tenant's company:
   job field is shared reference data
 - `MANAGER`: the resolved manager belongs to that company
 
-The same eligibility check runs when settings are saved and again during
-ticket submit/resubmit or another explicit routing recalculation. This catches
-employees who became inactive or changed company after configuration. Routing
-fails when no valid approver remains; it does not create an unowned `Approval`
-ticket.
+Eligibility is enforced at two different boundaries. Candidate read APIs return
+only references that the current principal may select. A REMOTE settings write
+does not fetch those candidate lists again: PostgreSQL validates all submitted
+approval references as a set against the stored category, tenant, company, and
+active organization rows in the same transaction that persists the tree.
+Ticket submit/resubmit and explicit routing recalculation validate eligibility
+again because organization data may change after configuration. Routing fails
+when no valid approver remains; it does not create an unowned `Approval` ticket.
 
 Read-only Owner Admin access to customer `PORTAL` approval settings may include
 display data for currently referenced approvers. It does not grant customer
@@ -496,25 +499,21 @@ Assignment-rule mutation must validate:
 - empty or invalid assignment groups
 - cross-tenant or inactive reference usage
 
-The allowed employee company is derived from category context:
+Employees and organization references are filtered and validated against the
+selected Tenant company. Employee lookup uses `e_company_id`; department lookup
+uses `d_company_id`; and job-field lookup joins `jf_department_id = d_id` before
+applying `d_company_id`. Client-provided category scope, purpose, owner flags,
+or precomputed allowed-company lists are not organization lookup inputs.
 
-| Category context                  | Allowed assignment company                                 |
-| --------------------------------- | ---------------------------------------------------------- |
-| `INTERNAL` in Owner Tenant        | owner/service-provider company                             |
-| `INTERNAL` in customer Tenant     | that customer Tenant company                               |
-| `PORTAL`, default                 | owner/service-provider company                             |
-| `PORTAL`, explicit joint handling | owner/service-provider company and category Tenant company |
-
-Both `jobFieldIds` and `assigneeUsernames` are filtered and validated against
-the allowed company during final employee resolution. Client-provided company
-IDs, a job-field-only global lookup, other customer companies, and an implicit
-co-support relationship are not valid sources of assignment scope. A `PORTAL`
-Assignment Rule may explicitly set `includeTenantCompany` for joint handling;
-the default is `false`, and the option is invalid for `INTERNAL` rules.
-
-Eligibility is checked when the rule is saved and again when submit, resubmit,
-or another explicit routing command resolves workers. Routing fails when no
-valid worker remains instead of creating an unowned `Assigned` ticket.
+Candidate read APIs receive the selected company ID and choose the corresponding
+repository query before returning departments, job fields, and employees.
+On REMOTE save, PostgreSQL resolves the canonical policy from the stored
+category and validates all submitted job-field and employee references in one
+set-based query inside the assignment-tree write transaction. The write API
+does not reproduce the candidate lookup. Submit, resubmit, and explicit routing
+commands validate eligibility again because organization data may change after
+configuration. Routing fails when no valid worker remains instead of creating
+an unowned `Assigned` ticket.
 
 Read-only Tenant Admin access to a customer `PORTAL` assignment rule may
 include display data for its currently referenced provider assignees. It does
@@ -546,21 +545,19 @@ Job-field data is used by approval-step and assignment-rule configuration.
 Employee data is used for explicit approval assignees, explicit assignment
 targets, and assignment recommendation display.
 
-Candidate lookup is category-centered. Conceptually:
+Organization lookup is company-centered. Conceptually:
 
 ```ts id="settings-eligible-actors"
-getEligibleActors({
-  categoryId,
-  purpose: "APPROVAL" | "ASSIGNMENT",
-});
+getEmployeesByCompanyId(companyId);
+getDepartmentsByCompanyId(companyId);
+getJobFieldsByCompanyId(companyId);
 ```
 
-The server loads the category, its main-category scope, tenant, tenant company,
-and Owner Tenant/company relationship. It then applies both the current
-principal's settings capability and the purpose-specific company rule. The
-request's `categoryId` and `purpose` select a target; they do not establish
-authorization. Approval Step and Assignment Rule do not persist `tenantId` as
-an independent authorization source; a DTO may project derived context:
+The settings page obtains `companyId` from its selected, authorized Tenant.
+Repository variants apply the company predicate in SQL rather than loading an
+organization-wide list and filtering it in application code. Approval Step and
+Assignment Rule do not persist `tenantId` as an independent authorization
+source; a DTO may project derived context:
 
 ```txt id="settings-resource-boundary"
 Approval Step / Assignment Rule
@@ -768,7 +765,7 @@ The following items are deferred unless explicitly implemented:
 | Settings authorization policy | Resolve trusted principal and resource capability       |
 | LOCAL settings handler        | Provide safe mutable demo behavior                      |
 | REMOTE DTO service            | Map persisted rows to stable DTOs                       |
-| Server service/repository     | Revalidate stored tenant/category and actor eligibility |
+| Server service/repository     | Atomically validate stored category/organization relations and write REMOTE settings |
 | React Query                   | Own settings server state                               |
 | Settings UI                   | Edit configuration through workflow-shaped forms        |
 | Ticket workflow               | Resolve current settings into ticket behavior           |
@@ -786,6 +783,7 @@ The following items are deferred unless explicitly implemented:
 - [`../02-architecture/routing-strategy.md`](../02-architecture/routing-strategy.md)
 - [`../05-data-fetching/react-query-strategy.md`](../05-data-fetching/react-query-strategy.md)
 - [`../08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md`](../08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
+- [`../08-dev-strategy/decision-log/2026-07-service-desk-settings-reference-validation-boundary.md`](../08-dev-strategy/decision-log/2026-07-service-desk-settings-reference-validation-boundary.md)
 - [`../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md`](../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
 
 ---

@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  getCurrentEmployeeUserName,
+  getCurrentUserRole,
+  getCurrentUserScope,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { RouteContext } from "@/app/api/_adapters/http";
 import { localPost } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
 import {
   ACTION_PATH_BY_TYPE,
@@ -10,17 +18,9 @@ import {
   toCurrentUsernameProxyHeaders,
 } from "@/app/api/_adapters/serviceDesk";
 import {
-  getCurrentEmployeeUserName,
-  getCurrentUserRole,
-  getCurrentUserScope,
-  isRemoteRequest,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
-import { RouteContext } from "@/app/api/_adapters/http";
-import {
+  mapTicketActionPayload,
   TICKET_ACTION_PATH_TO_TYPE as TICKET_ACTION_TYPE_BY_PATH,
   TicketActionFormValues,
-  mapTicketActionPayload,
 } from "@/lib/application/contracts/serviceDesk";
 
 type TicketActionRouteContext = RouteContext<{

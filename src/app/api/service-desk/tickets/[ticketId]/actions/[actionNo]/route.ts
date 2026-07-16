@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getCurrentEmployeeUserName,
+  isInternalUser,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { RouteContext } from "@/app/api/_adapters/http";
+import {
   getMaxHistoryNo,
   getTicketContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/utils";
@@ -9,20 +16,13 @@ import {
   getLocalDemoHistories,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import {
-  getCurrentEmployeeUserName,
-  isInternalUser,
-  isRemoteRequest,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
-import { RouteContext } from "@/app/api/_adapters/http";
+  ApiError,
+  resolveApiErrorMessage,
+} from "@/lib/application/api";
 import {
   camelTicketActionMapper,
   mapTicketActionPayload,
 } from "@/lib/application/contracts/serviceDesk";
-import {
-  ApiError,
-  resolveApiErrorMessage,
-} from "@/lib/application/api";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;

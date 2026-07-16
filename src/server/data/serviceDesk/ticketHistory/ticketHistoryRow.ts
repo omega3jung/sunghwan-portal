@@ -14,8 +14,3 @@ export type TicketHistoryRow = {
   tkh_metadata: unknown | null;
   tkh_created_at: ISODateString | Date;
 };
-
-export type TicketHistoryCreatedRow = {
-  tkh_ticket_id: string;
-  tkh_history_no: number;
-};

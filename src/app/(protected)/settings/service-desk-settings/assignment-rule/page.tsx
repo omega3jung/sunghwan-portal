@@ -54,6 +54,7 @@ export default function CategoryPage() {
     canRead,
     canManage,
     contextKey,
+    selectedTenantData,
   } = useServiceDeskSettingsScopeAccess("ASSIGNMENT_RULE");
 
   const { language, setLanguage } = useServiceDeskSettingsLanguage();
@@ -307,6 +308,7 @@ export default function CategoryPage() {
             setTree={setTree}
             readOnly={!canManage}
             scope={selectedScope}
+            companyId={selectedTenantData?.companyId ?? null}
           />
         </div>
       </div>

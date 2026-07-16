@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { AccessLevel, Role } from "@/domain/auth";
+import { AccessLevel } from "@/domain/auth";
 
 import type { PortalApiJsonOptions, PortalApiQueryValue } from "./types";
 
@@ -41,20 +41,6 @@ export function getPortalApiQueryValue(
     request.nextUrl.searchParams.get(key)
   );
 }
-export function resolveRole(value: unknown): Role | null {
-  if (
-    value === "ADMIN" ||
-    value === "MANAGER" ||
-    value === "LEADER" ||
-    value === "USER" ||
-    value === "GUEST"
-  ) {
-    return value;
-  }
-
-  return null;
-}
-
 export function resolveAccessLevel(value: unknown): AccessLevel | null {
   if (value === 9 || value === 7 || value === 5 || value === 3 || value === 1) {
     return value;

@@ -130,9 +130,8 @@ export async function resolveOperationalServiceDeskReadTarget({
   requestedTenantId?: string | number | null;
   requestedScope?: CategoryScope | null;
 }) {
-  const { dataScope, principal } = principalContext;
+  const { principal } = principalContext;
   const ownTenant = await getServiceDeskSettingsTenantContextByCompanyId(
-    dataScope,
     principal.companyId,
   );
 
@@ -164,7 +163,7 @@ export async function resolveOperationalServiceDeskReadTarget({
   const targetTenant =
     requestedTenantId === null || requestedTenantId === undefined
       ? ownTenant
-      : await getServiceDeskSettingsTenantContext(dataScope, requestedTenantId);
+      : await getServiceDeskSettingsTenantContext(requestedTenantId);
 
   if (!targetTenant || !targetTenant.active) {
     throw createSettingsAuthorizationError(
@@ -196,11 +195,10 @@ export async function resolveAuthorizedSettingsTenant({
   requestedTenantId?: string | number | null;
 }) {
   const principalContext = await requireServiceDeskSettingsAdmin(request);
-  const { adminType, dataScope, principal } = principalContext;
+  const { adminType, principal } = principalContext;
 
   if (adminType === "TENANT_ADMIN") {
     const ownTenant = await getServiceDeskSettingsTenantContextByCompanyId(
-      dataScope,
       principal.companyId,
     );
 
@@ -236,7 +234,6 @@ export async function resolveAuthorizedSettingsTenant({
   }
 
   const tenant = await getServiceDeskSettingsTenantContext(
-    dataScope,
     requestedTenantId,
   );
 

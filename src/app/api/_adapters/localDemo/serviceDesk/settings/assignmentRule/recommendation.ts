@@ -1,7 +1,7 @@
 import {
-  type EligibleEmployee,
-  getEligibleEmployeesForCategory,
+  getActiveLocalEmployeesByCompanyId,
   getServiceDeskCategoryContext,
+  type LocalCompanyEmployee,
   type ServiceDeskCategoryContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import { getLocalCategoryTrees } from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
@@ -25,7 +25,7 @@ type LocalRecommendationContext = {
 type RecommendationCollectionContext = {
   assignmentRule: AssignmentRule;
   assigneeUsernames: string[];
-  employees: EligibleEmployee[];
+  employees: LocalCompanyEmployee[];
   language: Locale;
 };
 
@@ -58,7 +58,7 @@ const createEmptyRecommendation = (
   selectedCategoryLabel,
 });
 
-const getEmployeeLabel = (employee: EligibleEmployee, language: Locale) => {
+const getEmployeeLabel = (employee: LocalCompanyEmployee, language: Locale) => {
   const localizedName = employee.name[language] ?? employee.name.en;
 
   return [localizedName.first, localizedName.middle, localizedName.last]
@@ -67,7 +67,7 @@ const getEmployeeLabel = (employee: EligibleEmployee, language: Locale) => {
 };
 
 const toRecommendedUser = (
-  employee: EligibleEmployee,
+  employee: LocalCompanyEmployee,
   language: Locale,
 ): ImageValueLabel => ({
   value: employee.username,
@@ -173,10 +173,7 @@ const resolveRecommendationSource = (
 export const resolveLocalAssignmentRecommendation = async ({
   input,
 }: LocalRecommendationContext): Promise<AssignmentRecommendationResult> => {
-  const category = await getServiceDeskCategoryContext(
-    "LOCAL",
-    input.categoryId,
-  );
+  const category = await getServiceDeskCategoryContext(input.categoryId);
 
   if (!category || !category.tenant.active) {
     throw new ApiError(
@@ -207,18 +204,15 @@ export const resolveLocalAssignmentRecommendation = async ({
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
-  const eligibleEmployees = await getEligibleEmployeesForCategory({
-    dataScope: "LOCAL",
-    category,
-    purpose: "ASSIGNMENT",
-    includeTenantCompany: assignmentRule.assignee.includeTenantCompany === true,
-  });
+  const companyEmployees = getActiveLocalEmployeesByCompanyId(
+    category.tenant.companyId,
+  );
 
   return {
     recommendedUsers: collectRecommendedUsers({
       assignmentRule,
       assigneeUsernames: input.assigneeUsernames,
-      employees: eligibleEmployees,
+      employees: companyEmployees,
       language,
     }),
     source: resolveRecommendationSource(assignmentRule),

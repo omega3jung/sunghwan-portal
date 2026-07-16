@@ -12,14 +12,12 @@ import {
   TicketDetailDto,
   TicketListItemDto,
   TicketMutateRequestDto,
-  TicketUpdateRequestDto,
 } from "./ticketDto";
 import {
   CreateTicketRowInput,
   ServiceDeskTicketEmail,
   ServiceDeskTicketViewRow,
   TicketMutateRowInput,
-  UpdateTicketRowInput,
 } from "./ticketRow";
 
 const DEFAULT_PRIORITY: Priority = "medium";
@@ -75,12 +73,6 @@ export function mapTicketCreateRequestDtoToRowInput(
     tk_requester_username: options.requesterUsername,
     tk_status: options.status ?? DEFAULT_CREATE_TICKET_STATUS,
   };
-}
-
-export function mapTicketUpdateRequestDtoToRowInput(
-  input: TicketUpdateRequestDto,
-): UpdateTicketRowInput {
-  return mapTicketMutateRequestDtoToRowInput(input);
 }
 
 export function mapTicketMutateRequestDtoToRowInput(

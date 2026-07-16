@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getCurrentEmployeeUserName,
+  isInternalUser,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import {
   createLocalTicketWorkSession,
   listLocalTicketWorkSessions,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/workSession";
@@ -9,13 +16,6 @@ import {
   resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
 } from "@/app/api/_adapters/serviceDesk";
-import {
-  getCurrentEmployeeUserName,
-  isInternalUser,
-  isRemoteRequest,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
-import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import {
   mapTicketWorkSessionListPayload,
   mapTicketWorkSessionPayload,

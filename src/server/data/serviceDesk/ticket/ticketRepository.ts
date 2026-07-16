@@ -7,7 +7,6 @@ import { TicketSearchRequestDto } from "./ticketDto";
 import {
   CreateTicketRowInput,
   ServiceDeskTicketViewRow,
-  UpdateTicketRowInput,
 } from "./ticketRow";
 
 type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
@@ -326,27 +325,6 @@ where tk_id = $1
   and tk_status = 'Approval'
   and tk_approval_step_id = $5::bigint
   and ($7::boolean = true or $6 = any(tk_assignee_usernames))
-returning tk_id;
-`;
-
-const UPDATE_TICKET_ROW_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_tenant_id = $2,
-  tk_category_id = $3,
-  tk_approval_step_id = $4,
-  tk_email = $5::jsonb,
-  tk_subject = $6,
-  tk_content = $7,
-  tk_files = $8::jsonb,
-  tk_images = $9::jsonb,
-  tk_priority = $10,
-  tk_risk_level = $11,
-  tk_due_at = $12,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
 returning tk_id;
 `;
 
@@ -710,33 +688,6 @@ export async function updateTicketApprovalRoutingById(
       input.isAdmin ?? false,
     ],
   );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowById(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketRowById(
-  ticketId: string,
-  input: UpdateTicketRowInput,
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(UPDATE_TICKET_ROW_BY_ID_QUERY, [
-    ticketId,
-    input.tk_tenant_id,
-    input.tk_category_id,
-    input.tk_approval_step_id,
-    JSON.stringify(input.tk_email),
-    input.tk_subject,
-    input.tk_content,
-    JSON.stringify(input.tk_files),
-    JSON.stringify(input.tk_images),
-    input.tk_priority,
-    input.tk_risk_level,
-    input.tk_due_at,
-  ]);
   const updatedTicketId = rows[0]?.tk_id;
 
   return updatedTicketId

@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getCurrentEmployeeUserName,
+  getCurrentUserScope,
+  isRemoteRequest,
+  toApiErrorResponse,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import {
   localCreateTicket,
   localListTickets,
   withLocalTicketWorkerHistory,
@@ -12,20 +19,12 @@ import {
   withDerivedTicketOwnership,
   withDerivedTicketOwnershipList,
 } from "@/app/api/_adapters/serviceDesk";
-import {
-  getCurrentEmployeeUserName,
-  getCurrentUserScope,
-  isRemoteRequest,
-  toApiErrorResponse,
-} from "@/app/api/_adapters";
 import { ticketMutateRequestPayloadSchema } from "@/feature/serviceDesk/ticket";
 import {
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
   type TicketMutateRequestPayload,
 } from "@/lib/application/contracts/serviceDesk";
-
-import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);

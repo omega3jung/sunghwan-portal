@@ -4,10 +4,7 @@ import {
   type ApprovalAssigneeType,
   type AssigneeGroup,
   type CategoryScope,
-  resolveAssignmentCompanyPolicy,
 } from "@/domain/serviceDesk";
-import { getAllowedAssignmentCompanyIds } from "@/lib/application/serviceDesk";
-import { internalCompanyMock } from "@/mocks/domain/organization/companies";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
 import { resolveDemoProfile } from "@/mocks/domain/user";
@@ -31,9 +28,7 @@ export type ServiceDeskCategoryContext = {
   tenant: LocalServiceDeskTenantContext;
 };
 
-export type EligibleActorPurpose = "APPROVAL" | "ASSIGNMENT";
-
-export type EligibleEmployee = {
+export type LocalCompanyEmployee = {
   id: number;
   username: string;
   name: (typeof employeesMock)[number]["e_name"];
@@ -46,7 +41,6 @@ export type EligibleEmployee = {
 };
 
 export async function getServiceDeskCategoryContext(
-  _dataScope: "LOCAL",
   categoryId: string | number,
 ): Promise<ServiceDeskCategoryContext | null> {
   const matches = new Map<
@@ -105,33 +99,13 @@ export async function getServiceDeskCategoryContext(
   };
 }
 
-export async function getEligibleEmployeesForCategory({
-  category,
-  purpose,
-  includeTenantCompany = false,
-}: {
-  dataScope: "LOCAL";
-  category: ServiceDeskCategoryContext;
-  purpose: EligibleActorPurpose;
-  includeTenantCompany?: boolean;
-}): Promise<EligibleEmployee[]> {
-  const companyIds =
-    purpose === "APPROVAL"
-      ? [category.tenant.companyId]
-      : getAllowedAssignmentCompanyIds({
-          tenantCompanyId: category.tenant.companyId,
-          ownerCompanyId: Number(internalCompanyMock.company_id),
-          companyPolicy: resolveAssignmentCompanyPolicy({
-            scope: category.scope,
-            includeTenantCompany,
-          }),
-        });
-  const eligibleCompanyIds = new Set(companyIds);
-
+export function getActiveLocalEmployeesByCompanyId(
+  companyId: number,
+): LocalCompanyEmployee[] {
   return [...employeesMock, ...clientDemoEmployee]
     .filter(
       (employee) =>
-        employee.e_active && eligibleCompanyIds.has(employee.e_company_id),
+        employee.e_active && employee.e_company_id === companyId,
     )
     .map((employee) => ({
       id: employee.e_id,
@@ -150,15 +124,12 @@ export async function assertApprovalAssigneeEligible({
   category,
   assignee,
 }: {
-  dataScope: "LOCAL";
   category: ServiceDeskCategoryContext;
   assignee: ApprovalAssigneeType;
 }) {
-  const employees = await getEligibleEmployeesForCategory({
-    dataScope: "LOCAL",
-    category,
-    purpose: "APPROVAL",
-  });
+  const employees = getActiveLocalEmployeesByCompanyId(
+    category.tenant.companyId,
+  );
 
   switch (assignee.type) {
     case "EMPLOYEE": {
@@ -217,7 +188,6 @@ export async function assertAssignmentAssigneeEligible({
   category,
   assignee,
 }: {
-  dataScope: "LOCAL";
   category: ServiceDeskCategoryContext;
   assignee: AssigneeGroup;
 }) {
@@ -227,12 +197,9 @@ export async function assertAssignmentAssigneeEligible({
     );
   }
 
-  const employees = await getEligibleEmployeesForCategory({
-    dataScope: "LOCAL",
-    category,
-    purpose: "ASSIGNMENT",
-    includeTenantCompany: assignee.includeTenantCompany === true,
-  });
+  const employees = getActiveLocalEmployeesByCompanyId(
+    category.tenant.companyId,
+  );
   const employeesByUsername = new Map(
     employees.map((employee) => [employee.username, employee]),
   );

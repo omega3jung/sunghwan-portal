@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  resolveApiErrorMessage,
-  toCurrentUsernameProxyHeaders,
-} from "@/app/api/_adapters/serviceDesk";
-import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
 import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
 import {
   ticketDraftFormSchema,

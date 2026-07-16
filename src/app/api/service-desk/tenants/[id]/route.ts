@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  getAuthToken,
+  isRemoteRequest,
+  toApiErrorResponse,
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
+import {
   localGetTenant,
   localSoftDeleteTenant,
   localUpdateTenant,
@@ -10,19 +17,12 @@ import {
   resolveAuthorizedSettingsTenant,
   resolveTenantResourceAccess,
 } from "@/app/api/_adapters/serviceDesk";
-import {
-  getAuthToken,
-  isRemoteRequest,
-  toApiErrorResponse,
-} from "@/app/api/_adapters";
-import { portalApiJson } from "@/app/api/_adapters/backend";
-import { IdRouteContext } from "@/app/api/_adapters/http";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   mapTenantItemPayload,
   toTenantWritePayload,
   updateTenantSchema,
 } from "@/lib/application/contracts/serviceDesk";
-import { resolveApiErrorMessage } from "@/lib/application/api";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   try {

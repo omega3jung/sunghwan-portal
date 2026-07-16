@@ -17,6 +17,7 @@ import {
   createCategory,
   getCategorySettingsResponseByTenantId,
   updateCategoryById,
+  validateCategoryTreeMutation,
 } from "@/server/data/serviceDesk/category";
 
 import { getPortalApiQueryValue } from "../utils";
@@ -27,6 +28,7 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
+import { resolveAuthorizedSettingsTenant } from "./shared";
 
 type CategoryTreeItem =
   SaveServiceDeskCategoryTreePayload["categories"][number];
@@ -95,6 +97,24 @@ export async function handleCategoryPortalApi(
       const body = requireBody<SaveServiceDeskCategoryTreePayload>(
         context.options,
       );
+      const authorization = await resolveAuthorizedSettingsTenant({
+        request: context.request,
+        requestedTenantId: body.tenantId,
+      });
+      const tenant = authorization.tenant;
+
+      if (!tenant) {
+        throw Object.assign(new Error("A target tenant is required."), {
+          status: 400,
+        });
+      }
+
+      await validateCategoryTreeMutation({
+        principal: authorization.principal,
+        tenant,
+        payload: body,
+      });
+
       const categoryTree = await saveCategoryTree(body);
 
       return NextResponse.json(categoryTree);

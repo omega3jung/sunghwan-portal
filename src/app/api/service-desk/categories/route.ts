@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { toApiErrorResponse } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  getLocalCategoryTrees,
   localListCategories,
   localSaveCategoryTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
-import {
-  assertEmbeddedCategoryTreeMutationAllowed,
-  getEmbeddedCategoryTreeByTenantId,
-} from "@/app/api/_adapters/backend/embeddedServer";
 import {
   isServiceDeskSettingsRequest,
   parseCategoryScope,
@@ -17,17 +14,13 @@ import {
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
 } from "@/app/api/_adapters/serviceDesk";
-import { toApiErrorResponse } from "@/app/api/_adapters";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
-  camelCategoryMapper,
   mapCategoryListPayload,
   mapCategoryTreePayload,
   saveCategoryTreeSchema,
   type SaveServiceDeskCategoryTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import { resolveApiErrorMessage } from "@/lib/application/api";
-
-import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   try {
@@ -79,10 +72,9 @@ export async function GET(request: NextRequest) {
     if (!isRemote) {
       return NextResponse.json(
         localListCategories({
-          isInternal:
-            settingsAuthorization
-              ? settingsAuthorization.tenant.isOwnerTenant
-              : isInternal,
+          isInternal: settingsAuthorization
+            ? settingsAuthorization.tenant.isOwnerTenant
+            : isInternal,
           searchParams: proxyQuery,
         }),
       );
@@ -96,7 +88,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.categories.fetchList",
+      ),
     });
   }
 }
@@ -109,7 +103,11 @@ export async function PUT(request: NextRequest) {
 
     if (!parsedBody.success) {
       return NextResponse.json(
-        { message: resolveApiErrorMessage("serviceDesk.categories.localDemo.invalidPayload") },
+        {
+          message: resolveApiErrorMessage(
+            "serviceDesk.categories.localDemo.invalidPayload",
+          ),
+        },
         { status: 400 },
       );
     }
@@ -128,56 +126,46 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const useOwnerStore = tenant.isOwnerTenant;
-    const isRemote = authorization.dataScope === "REMOTE";
-    const currentCategories = isRemote
-      ? camelCategoryMapper(
-          await getEmbeddedCategoryTreeByTenantId(tenant.id),
-        )
-      : (getLocalCategoryTrees(useOwnerStore).find(
-          (item) => item.id === tenant.id,
-        )?.categories ?? []);
+    if (authorization.dataScope === "REMOTE") {
+      const submittedScopes = new Set(
+        body.categories.map((category) => category.scope),
+      );
 
-    assertEmbeddedCategoryTreeMutationAllowed({
-      principal: authorization.principal,
-      tenant,
-      currentCategories,
-      payload: body,
-    });
+      return portalApiJson(request, {
+        method: "PUT",
+        path: "/service-desk/categories",
+        body,
+        errorMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
+        mapData: (payload) => {
+          const tree = mapCategoryTreePayload(payload);
 
-    const submittedScopes = new Set(body.categories.map((category) => category.scope));
-
-    if (!isRemote) {
-      const savedTree = localSaveCategoryTree({
-        isInternal: useOwnerStore,
-        payload: body,
-      });
-
-      return NextResponse.json({
-        ...savedTree,
-        categories: savedTree.categories.filter((category) =>
-          submittedScopes.has(category.scope),
-        ),
+          return tree
+            ? {
+                ...tree,
+                categories: tree.categories.filter((category) =>
+                  submittedScopes.has(category.scope),
+                ),
+              }
+            : null;
+        },
       });
     }
 
-    return portalApiJson(request, {
-      method: "PUT",
-      path: "/service-desk/categories",
-      body,
-      errorMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
-      mapData: (payload) => {
-        const tree = mapCategoryTreePayload(payload);
+    const useOwnerStore = tenant.isOwnerTenant;
+    const submittedScopes = new Set(
+      body.categories.map((category) => category.scope),
+    );
 
-        return tree
-          ? {
-              ...tree,
-              categories: tree.categories.filter((category) =>
-                submittedScopes.has(category.scope),
-              ),
-            }
-          : null;
-      },
+    const savedTree = localSaveCategoryTree({
+      isInternal: useOwnerStore,
+      payload: body,
+    });
+
+    return NextResponse.json({
+      ...savedTree,
+      categories: savedTree.categories.filter((category) =>
+        submittedScopes.has(category.scope),
+      ),
     });
   } catch (error) {
     return toApiErrorResponse(error, {
@@ -186,9 +174,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-function requireCategoryScope(
-  scope: ReturnType<typeof parseCategoryScope>,
-) {
+function requireCategoryScope(scope: ReturnType<typeof parseCategoryScope>) {
   if (!scope) {
     throw Object.assign(new Error("A category scope is required."), {
       status: 400,

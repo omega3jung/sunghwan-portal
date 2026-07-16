@@ -13,7 +13,14 @@ import {
   getApprovalSettingsResponseByTenantId,
   getCategoryApprovalSettingsByTenantId,
   updateApprovalStepById,
+  validateApprovalStepTreeMutation,
 } from "@/server/data/serviceDesk/approvalStep";
+import { mapSettingsWriteError } from "@/server/data/serviceDesk/settingsWriteError";
+import { assertApprovalReferencesValidForWrite } from "@/server/data/serviceDesk/settingsWriteValidationRepository";
+import {
+  type PortalApiQueryExecutor,
+  withPortalApiTransaction,
+} from "@/server/shared/supabase/portalApiClient";
 
 import { getPortalApiQueryValue } from "../utils";
 import {
@@ -23,6 +30,7 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
+import { resolveAuthorizedSettingsTenant } from "./shared";
 
 type ApprovalTreeCategoryItem =
   SaveServiceDeskApprovalStepTreePayload["categories"][number];
@@ -86,9 +94,30 @@ export async function handleApprovalStepPortalApi(
       const body = requireBody<SaveServiceDeskApprovalStepTreePayload>(
         context.options,
       );
+      const authorization = await resolveAuthorizedSettingsTenant({
+        request: context.request,
+        requestedTenantId: body.tenantId,
+      });
+      const tenant = authorization.tenant;
+
+      if (!tenant) {
+        throw Object.assign(new Error("A target tenant is required."), {
+          status: 400,
+        });
+      }
+
+      const submittedScopes = await validateApprovalStepTreeMutation({
+        principal: authorization.principal,
+        tenant,
+        payload: body,
+      });
       const approvalSettings = await saveApprovalStepTree(body);
 
-      return NextResponse.json(approvalSettings);
+      return NextResponse.json(
+        approvalSettings.filter((category) =>
+          submittedScopes.has(category.category_scope),
+        ),
+      );
     }
 
     return createNotFoundResponse();
@@ -100,9 +129,22 @@ export async function handleApprovalStepPortalApi(
 async function saveApprovalStepTree(
   payload: SaveServiceDeskApprovalStepTreePayload,
 ) {
+  try {
+    return await withPortalApiTransaction((query) =>
+      saveApprovalStepTreeInTransaction(payload, query),
+    );
+  } catch (error) {
+    throw mapSettingsWriteError(error, "approvalSteps");
+  }
+}
+
+async function saveApprovalStepTreeInTransaction(
+  payload: SaveServiceDeskApprovalStepTreePayload,
+  query: PortalApiQueryExecutor,
+) {
   const tenantId = Number(payload.tenantId);
   const currentApprovalSettings =
-    await getCategoryApprovalSettingsByTenantId(tenantId);
+    await getCategoryApprovalSettingsByTenantId(tenantId, query);
   const currentApprovalSteps = currentApprovalSettings.flatMap(
     (category) =>
       payload.categories.some(
@@ -136,18 +178,32 @@ async function saveApprovalStepTree(
     ),
   );
 
+  await assertApprovalReferencesValidForWrite(
+    query,
+    tenantId,
+    submittedApprovalStepPlans.map((plan) => ({
+      categoryId: plan.categoryId,
+      assignee: mapApprovalTreeAssignee(plan.approvalStep.stepAssignee),
+    })),
+  );
+
   for (const approvalStep of currentApprovalSteps) {
     if (submittedExistingApprovalStepIds.has(approvalStep.approval_step_id)) {
       continue;
     }
 
-    await deleteApprovalStepById(tenantId, approvalStep.approval_step_id);
+    await deleteApprovalStepById(
+      tenantId,
+      approvalStep.approval_step_id,
+      query,
+    );
   }
 
   await moveRetainedApprovalStepsToTemporaryIndexes(
     tenantId,
     currentApprovalSteps,
     submittedExistingApprovalStepIds,
+    query,
   );
 
   for (const plan of submittedApprovalStepPlans) {
@@ -166,6 +222,7 @@ async function saveApprovalStepTree(
         plan.approvalStep,
         plan.approvalStepIndex,
       ),
+      query,
     );
   }
 
@@ -184,16 +241,18 @@ async function saveApprovalStepTree(
         plan.approvalStep,
         plan.approvalStepIndex,
       ),
+      query,
     );
   }
 
-  return getCategoryApprovalSettingsByTenantId(tenantId);
+  return getCategoryApprovalSettingsByTenantId(tenantId, query);
 }
 
 async function moveRetainedApprovalStepsToTemporaryIndexes(
   tenantId: number,
   currentApprovalSteps: ApprovalStepDto[],
   retainedApprovalStepIds: Set<number>,
+  query: PortalApiQueryExecutor,
 ) {
   const retainedApprovalStepsByCategoryId = new Map<
     number,
@@ -228,6 +287,7 @@ async function moveRetainedApprovalStepsToTemporaryIndexes(
             currentMaxIndex,
           ),
         ),
+        query,
       );
     }
   }

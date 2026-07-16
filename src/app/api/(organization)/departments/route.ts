@@ -1,16 +1,12 @@
 // app/api/departments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
-import {
-  handleEmbeddedServiceDeskDepartmentReferenceRequest,
-  isEmbeddedServiceDeskOrganizationReferenceRequest,
-} from "@/app/api/_adapters/backend/embeddedServer";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   createLocalDepartment,
   listLocalDepartments,
 } from "@/app/api/_adapters/localDemo/organization";
-import { isRemoteRequest } from "@/app/api/_adapters";
 import {
   mapDepartmentItemPayload,
   mapDepartmentListPayload,
@@ -20,16 +16,7 @@ import {
   toDepartmentWritePayload,
 } from "@/lib/application/contracts/organization";
 
-import { portalApiJson } from "@/app/api/_adapters/backend";
-
 export async function GET(request: NextRequest) {
-  if (isEmbeddedServiceDeskOrganizationReferenceRequest(request)) {
-    return handleEmbeddedServiceDeskDepartmentReferenceRequest(request, {
-      query: request.nextUrl.searchParams,
-      errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
-    });
-  }
-
   const isRemote = await isRemoteRequest(request);
 
   // demo mode

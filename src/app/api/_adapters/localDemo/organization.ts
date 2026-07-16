@@ -1,4 +1,8 @@
 import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
+import {
   camelCompanyMapper,
   camelDepartmentMapper,
   camelEmployeeMapper,
@@ -16,10 +20,6 @@ import {
   type UpdateEmployeeInput,
   type UpdateJobFieldInput,
 } from "@/lib/application/contracts/organization";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/lib/application/api/query";
 import { allCompaniesMock } from "@/mocks/domain/organization/companies";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { employeesMock } from "@/mocks/domain/organization/employee";
@@ -50,7 +50,10 @@ export const updateLocalCompany = (input: UpdateCompanyInput, id: string) =>
 export function listLocalDepartments(searchParams: URLSearchParams) {
   const items = camelDepartmentMapper(
     applyRuleGroupFilter(
-      allDepartmentsMock,
+      allDepartmentsMock.map((department) => ({
+        ...department,
+        companyId: department.d_company_id,
+      })),
       parseRuleGroupFilter(searchParams.get("filter")),
     ),
   );
@@ -74,7 +77,10 @@ export const updateLocalDepartment = (
 export function listLocalEmployees(searchParams: URLSearchParams) {
   const data = camelEmployeeMapper(
     applyRuleGroupFilter(
-      employeesMock,
+      employeesMock.map((employee) => ({
+        ...employee,
+        companyId: employee.e_company_id,
+      })),
       parseRuleGroupFilter(searchParams.get("filter")),
     ),
   );
@@ -94,9 +100,18 @@ export const updateLocalEmployee = (input: UpdateEmployeeInput, id: string) =>
   toEmployeeMockResource(input, id);
 
 export function listLocalJobFields(searchParams: URLSearchParams) {
+  const companyIdByDepartmentId = new Map(
+    allDepartmentsMock.map((department) => [
+      department.d_id,
+      department.d_company_id,
+    ]),
+  );
   const items = camelJobFieldMapper(
     applyRuleGroupFilter(
-      allJobFieldsMock,
+      allJobFieldsMock.map((jobField) => ({
+        ...jobField,
+        companyId: companyIdByDepartmentId.get(jobField.jf_department_id),
+      })),
       parseRuleGroupFilter(searchParams.get("filter")),
     ),
   );

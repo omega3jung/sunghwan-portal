@@ -53,6 +53,7 @@ export default function ApprovalStepPage() {
     canRead,
     canManage,
     contextKey,
+    selectedTenantData,
   } = useServiceDeskSettingsScopeAccess("APPROVAL_STEP");
 
   const { language, setLanguage } = useServiceDeskSettingsLanguage();
@@ -298,6 +299,7 @@ export default function ApprovalStepPage() {
           language={language}
           setTree={setTree}
           readOnly={!canManage}
+          companyId={selectedTenantData?.companyId ?? null}
         />
 
         <ApprovalStepperPanel

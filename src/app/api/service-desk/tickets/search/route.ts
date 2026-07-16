@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { RuleGroupTypeIC } from "react-querybuilder";
 
-import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
-import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
-import {
-  resolveApiErrorMessage,
-  toCurrentUsernameProxyHeaders,
-  withDerivedTicketOwnershipList,
-} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   isInternalUser,
@@ -15,6 +8,13 @@ import {
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+  withDerivedTicketOwnershipList,
+} from "@/app/api/_adapters/serviceDesk";
 import type {
   TicketSearchRequest,
   TicketSearchSort,

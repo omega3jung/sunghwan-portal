@@ -37,6 +37,7 @@ type Props = {
   >;
   readOnly?: boolean;
   scope: CategoryScope;
+  companyId: string | null;
 };
 
 export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
@@ -47,6 +48,7 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
       setTree,
       readOnly = false,
       scope,
+      companyId,
     },
     ref,
   ) => {
@@ -65,22 +67,12 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
       setTree,
     });
 
-    const includeTenantCompany =
-      scope === "PORTAL" && selectedNode?.includeTenantCompany === true;
     const employeeListParams = useMemo<DbParams>(
       () => ({
         filter: combineRuleGroups([
           createFieldFilter({
-            field: "categoryId",
-            value: selectedNode?.id,
-          }),
-          createFieldFilter({
-            field: "purpose",
-            value: selectedNode ? "ASSIGNMENT" : null,
-          }),
-          createFieldFilter({
-            field: "includeTenantCompany",
-            value: includeTenantCompany,
+            field: "companyId",
+            value: companyId,
           }),
           createFieldFilter({
             field: "e_active",
@@ -88,23 +80,27 @@ export const AssignmentRuleForm = forwardRef<HTMLDivElement, Props>(
           }),
         ]),
       }),
-      [includeTenantCompany, selectedNode],
+      [companyId],
+    );
+    const jobFieldListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "jf_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
     );
     const { data: employees, isLoading: isEmployeesLoading } =
       useEmployeeListQuery(employeeListParams);
-    const { data: allJobFields, isLoading: isJobFieldsLoading } =
-      useJobFieldListQuery(employeeListParams);
-    const jobFields = useMemo(() => {
-      const eligibleIds = new Set(
-        (employees ?? []).map((employee) => employee.jobFieldId),
-      );
-      const selectedIds = new Set(selectedNode?.jobFieldIds ?? []);
-
-      return (allJobFields ?? []).filter(
-        (jobField) =>
-          eligibleIds.has(jobField.id) || selectedIds.has(jobField.id),
-      );
-    }, [allJobFields, employees, selectedNode?.jobFieldIds]);
+    const { data: jobFields = [], isLoading: isJobFieldsLoading } =
+      useJobFieldListQuery(jobFieldListParams);
     const isReferenceDataLoading = isEmployeesLoading || isJobFieldsLoading;
 
     const jobFieldData = useMemo((): ValueLabel[] => {

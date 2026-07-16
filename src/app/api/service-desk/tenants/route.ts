@@ -1,24 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { localCreateTenant, localListTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
-import {
-  requireServiceDeskSettingsAdmin,
-  resolveTenantResourceAccess,
-} from "@/app/api/_adapters/serviceDesk";
 import {
   getAuthToken,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { localCreateTenant, localListTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
+import {
+  requireServiceDeskSettingsAdmin,
+  resolveTenantResourceAccess,
+} from "@/app/api/_adapters/serviceDesk";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   createTenantSchema,
   mapTenantItemPayload,
   mapTenantListPayload,
   toTenantWritePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import { resolveApiErrorMessage } from "@/lib/application/api";
-
-import { portalApiJson } from "@/app/api/_adapters/backend";
 
 export async function GET(request: NextRequest) {
   try {

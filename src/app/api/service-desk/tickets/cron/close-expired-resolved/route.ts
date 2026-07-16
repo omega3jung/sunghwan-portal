@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getLocalDemoHistories, getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
-import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
 import { isRemoteRequest } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getLocalDemoHistories, getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
 const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
