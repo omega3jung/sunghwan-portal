@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getLocalDemoHistories, getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
 import { isRemoteRequest } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
-import { getLocalDemoHistories, getLocalDemoTickets } from "@/server/serviceDesk/ticket/state";
 
 const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       path: "/service-desk/tickets/cron/close-expired-resolved",
       body: {},
-      errorMessage: tServiceDeskApi("api.ticketCommand.autoClose"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.autoClose"),
     });
   }
 

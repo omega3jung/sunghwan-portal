@@ -94,7 +94,7 @@ export function NavigationBar(props: NavigationBarProps) {
       <div className="flex h-full items-center gap-1 py-2">
         {isLocal && <ResetDemoMenu />}
         <Separator orientation="vertical" />
-        <UserMenu />
+        <UserMenu demoCandidates={props.userMenuDemoCandidates} />
       </div>
     </nav>
   );

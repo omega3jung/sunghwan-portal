@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  createUpdatedTicket,
+  getMaxHistoryNo,
+  getTicketContext,
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/utils";
+import { getLocalDemoHistories } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { hasLocalTicketWorkAssignmentHistory } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/workerHistory";
+import {
+  ApiError,
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
+import {
   getCurrentEmployeeUserName,
   isInternalUser,
   isRemoteRequest,
 } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import {
-  ServiceDeskApiError,
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
 import {
   camelTicketWorkSessionMapper,
   type DbTicketWorkSession,
@@ -29,13 +36,6 @@ import {
   canChangeStatus,
   getCurrentTrackedMinutes,
 } from "@/feature/serviceDesk/ticketWorkSession/utils";
-import {
-  createUpdatedTicket,
-  getMaxHistoryNo,
-  getTicketContext,
-} from "@/server/serviceDesk/ticket/command/utils";
-import { hasLocalTicketWorkAssignmentHistory } from "@/server/serviceDesk/ticket/localDemo/workerHistory";
-import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
 import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 const localWorkSessions: DbTicketWorkSession[] = [];
@@ -72,15 +72,15 @@ const validatePayload = (
   },
 ) => {
   if (payload.ticketId !== ticketId) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.ticketMismatch",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.ticketMismatch",
       400,
     );
   }
 
   if (payload.nextStatus && !isWorkSessionStatus(payload.nextStatus)) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatus",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.invalidStatus",
       400,
       { value: payload.nextStatus },
     );
@@ -91,16 +91,16 @@ const validatePayload = (
     payload.nextStatus !== ticketStatus &&
     !isAllowedWorkStatusTransition(ticketStatus, payload.nextStatus)
   ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.invalidStatusTransition",
       409,
       { from: ticketStatus, to: payload.nextStatus },
     );
   }
 
   if (payload.nextStatus && !options.isCurrentWorkAssignee) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.assigneeForbidden",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.assigneeForbidden",
       403,
     );
   }
@@ -110,8 +110,8 @@ const validatePayload = (
     (ticketStatus === "Assigned" || ticketStatus === "Pending") &&
     (!payload.nextStatus || payload.nextStatus === ticketStatus)
   ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.statusTransitionRequired",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.statusTransitionRequired",
       409,
       { status: ticketStatus },
     );
@@ -122,8 +122,8 @@ const validatePayload = (
     ticketStatus !== "Working" &&
     ticketStatus !== "Pending"
   ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatusTransition",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.invalidStatusTransition",
       409,
       { from: ticketStatus },
     );
@@ -132,8 +132,8 @@ const validatePayload = (
   const trackedMinutes = resolveServerTrackedMinutes(payload);
 
   if (trackedMinutes <= 0) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidTrackedMinutes",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.invalidTrackedMinutes",
       400,
     );
   }
@@ -177,8 +177,8 @@ const resolveWorkSessionAuthorization = (
     });
 
   if (!hasBeenWorker) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.assigneeForbidden",
+    throw new ApiError(
+      "serviceDesk.ticketWorkSession.localDemo.assigneeForbidden",
       403,
       { ticketId: ticket.id, username: currentUserName },
     );
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/work-session`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.ticketWorkSession.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketWorkSession.fetchList"),
     mapData: mapTicketWorkSessionListPayload,
   });
 }
@@ -230,7 +230,7 @@ export async function POST(
       path: `/service-desk/tickets/${ticketId}/work-session`,
       headers: toCurrentUsernameProxyHeaders(currentUserName),
       body: payload,
-      errorMessage: tServiceDeskApi("api.ticketWorkSession.create"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.ticketWorkSession.create"),
       mapData: mapTicketWorkSessionPayload,
     });
   }
@@ -238,7 +238,7 @@ export async function POST(
   try {
     if (currentUserName === null) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
+        { message: resolveApiErrorMessage("serviceDesk.ticketCommand.employeeUnavailable") },
         { status: 401 },
       );
     }
@@ -275,8 +275,8 @@ export async function POST(
         currentTrackedMinutes: trackedMinutes,
       })
     ) {
-      throw new ServiceDeskApiError(
-        "api.ticketWorkSession.localDemo.statusRequiresTime",
+      throw new ApiError(
+        "serviceDesk.ticketWorkSession.localDemo.statusRequiresTime",
         400,
       );
     }
@@ -333,12 +333,12 @@ export async function POST(
     });
   } catch (error) {
     const message =
-      error instanceof ServiceDeskApiError
-        ? error.message
+      error instanceof ApiError
+        ? resolveApiErrorMessage(error.messageKey, error.options)
         : error instanceof Error
           ? error.message
-          : tServiceDeskApi("api.ticketWorkSession.create");
-    const status = error instanceof ServiceDeskApiError ? error.status : 500;
+          : resolveApiErrorMessage("serviceDesk.ticketWorkSession.create");
+    const status = error instanceof ApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });
   }

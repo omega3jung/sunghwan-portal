@@ -1,6 +1,6 @@
 import type { QueryResultRow } from "pg";
 
-import { normalizePagination } from "@/server/shared/query";
+import { normalizePagination } from "@/lib/application/api/query";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";

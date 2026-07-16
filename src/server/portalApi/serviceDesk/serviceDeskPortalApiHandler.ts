@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { toApiErrorResponse } from "@/app/api/_helpers";
+import { toApiErrorResponse } from "@/server/portalApi/http";
 
 import type { PortalApiJsonOptions } from "../types";
 import { normalizePath } from "../utils";

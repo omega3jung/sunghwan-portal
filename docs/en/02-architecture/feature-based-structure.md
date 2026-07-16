@@ -188,16 +188,15 @@ application-wide component.
 ### 5. server/ (Server Layer)
 
 - Owns repositories, database access, server use cases, and external API adapters
-- Includes both LOCAL demo and REMOTE implementation boundaries
+- Contains only code that can move with an independently extracted server repository
 - May import server-safe `lib` modules, `lib/application`, `domain`, and
   `shared`
-- Does not import feature components, hooks, forms, or client APIs
+- Does not import `app`, `feature`, `components`, `mocks`, or client APIs
 
-Some current LOCAL demo and portal modules consume feature-owned DTO types,
-payload contracts, and pure mappers. These imports are allowed only when the
-referenced module graph is server-safe. They do not permit server code to
-import feature hooks, components, contexts, forms with client hooks, or client
-API entry points.
+LOCAL demo implementations belong to the web adapter boundary under
+`app/api/_adapters/localDemo`; their fixtures remain in `mocks`. Contracts used
+by both the web adapter and the extracted server belong in
+`lib/application/contracts` so neither side imports the other's implementation.
 
 Place a shared concept according to its actual ownership: a durable business
 concept in `domain`, an HTTP/DTO contract with the API boundary that owns it,
@@ -447,26 +446,15 @@ query contracts, and shared Service Desk client helpers across adjacent slices.
 - Use `client-only` and `server-only` boundaries to prevent environment poisoning
 - Do not expose client and server modules through the same root barrel
 
-### Current Compatibility Couplings
+### Repository Extraction Boundaries
 
-The current source still contains a few ownership couplings that the dependency
-table alone does not show:
-
-- LOCAL demo and portal server modules consume server-safe feature DTOs, payload
-  types, and pure mappers.
-- Several server modules reuse error, filtering, and response helpers currently
-  located under `app/api`.
-- A small number of feature API/mapper modules still import server-owned DTO
-  types. Treat these as existing exceptions; new feature code must not add a
-  dependency on server implementation.
+- `server` owns only production server implementation and server-only infrastructure.
+- `app/api/_adapters` owns Next.js route adaptation and the LOCAL demo implementation.
+- `lib/application/contracts` owns DTOs, schemas, and pure mappers shared across repositories.
+- `mocks` owns LOCAL demo and test fixtures and is never imported by `server`.
 - Base i18n resources and namespace contracts live in `lib/application/i18n`;
   the client runtime lives in `lib/client/i18n`. Application component locale
   registration is composed above lib in `components/i18n`.
-
-These couplings describe current implementation ownership; they do not make
-feature UI safe for server code or server implementation safe for client code.
-When one is refactored, move the contract to the boundary that actually owns it
-instead of adding a new layer by default.
 
 ---
 

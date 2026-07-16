@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { RuleGroupTypeIC } from "react-querybuilder";
 
+import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+  withDerivedTicketOwnershipList,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   isInternalUser,
@@ -8,19 +15,12 @@ import {
   toApiErrorResponse,
 } from "@/app/api/_helpers";
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-  withDerivedTicketOwnershipList,
-} from "@/app/api/service-desk/_shared";
 import type {
   TicketSearchRequest,
   TicketSearchSort,
   TicketSortField,
 } from "@/feature/serviceDesk/ticket/api";
 import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/mapper";
-import { localSearchTickets } from "@/server/serviceDesk/ticket/localDemo";
-import { toTicketMockSummaryResource } from "@/server/serviceDesk/ticket/localDemo/ticketResourceMapper";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 const TICKET_SORT_FIELDS = new Set<TicketSortField>([
@@ -101,7 +101,7 @@ async function handleTicketSearch(
       });
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.fetchList"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
       });
     }
   }
@@ -113,7 +113,7 @@ async function handleTicketSearch(
     ...(method === "GET"
       ? { query: buildDbSearchParams(body) }
       : { body: toLegacyTicketSearchRequest(body) }),
-    errorMessage: tServiceDeskApi("api.tickets.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
 }

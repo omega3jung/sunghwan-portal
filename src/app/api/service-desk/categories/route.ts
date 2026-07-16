@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { toApiErrorResponse } from "@/app/api/_helpers";
+import {
+  getLocalCategoryTrees,
+  localListCategories,
+  localSaveCategoryTree,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
 import {
   isServiceDeskSettingsRequest,
   parseCategoryScope,
@@ -8,8 +12,8 @@ import {
   resolveAuthorizedSettingsTenant,
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
-} from "@/app/api/service-desk/_shared";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+} from "@/app/api/_adapters/serviceDesk";
+import { toApiErrorResponse } from "@/app/api/_helpers";
 import {
   camelCategoryMapper,
   mapCategoryListPayload,
@@ -17,15 +21,11 @@ import {
 } from "@/feature/serviceDesk/category/mapper";
 import { saveCategoryTreeSchema } from "@/feature/serviceDesk/category/request.schema";
 import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   assertCategoryTreeMutationAllowed,
   getCategoryTreeByTenantId,
 } from "@/server/data/serviceDesk/category";
-import {
-  getLocalCategoryTrees,
-  localListCategories,
-  localSaveCategoryTree,
-} from "@/server/serviceDesk/settings/category/localDemo";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
@@ -91,12 +91,12 @@ export async function GET(request: NextRequest) {
     return portalApiJson(request, {
       path: "/service-desk/categories",
       query: proxyQuery,
-      errorMessage: tServiceDeskApi("api.categories.fetchList"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
       mapData: mapCategoryListPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.categories.fetchList"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
     });
   }
 }
@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
 
     if (!parsedBody.success) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
+        { message: resolveApiErrorMessage("serviceDesk.categories.localDemo.invalidPayload") },
         { status: 400 },
       );
     }
@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest) {
       method: "PUT",
       path: "/service-desk/categories",
       body,
-      errorMessage: tServiceDeskApi("api.categories.save"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
       mapData: (payload) => {
         const tree = mapCategoryTreePayload(payload);
 
@@ -179,7 +179,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.categories.save"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
     });
   }
 }

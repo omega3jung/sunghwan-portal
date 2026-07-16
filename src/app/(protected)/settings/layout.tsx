@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { ReactNode } from "react";
 
-import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/service-desk/_shared";
+import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/_adapters/serviceDesk";
 import { authOptions } from "@/auth.config";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 

@@ -1,8 +1,8 @@
 // app/api/job-fields/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
 import { isRemoteRequest } from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import {
   camelJobFieldMapper,
   mapJobFieldItemPayload,
@@ -13,15 +13,15 @@ import {
   toJobFieldMockResource,
   toJobFieldWritePayload,
 } from "@/feature/organization/jobField/write";
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import {
   handleServiceDeskJobFieldReferenceRequest,
   isServiceDeskOrganizationReferenceRequest,
 } from "@/server/portalApi/organization/serviceDeskOrganizationReferenceHandler";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   if (isServiceDeskOrganizationReferenceRequest(request)) {
     return handleServiceDeskJobFieldReferenceRequest(request, {
       query: request.nextUrl.searchParams,
-      errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
     });
   }
 

@@ -2,9 +2,9 @@
 
 import { datePickerLocales } from "@/components/custom/DatePicker/locales";
 import { fileAttachmentLocales } from "@/components/custom/FileAttachment/locales";
-import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
 import { preferencesMenuLocales } from "@/components/menu/PreferencesMenu/locales";
 import { userMenuLocales } from "@/components/menu/UserMenu/locales";
+import { ticketStatusLocales } from "@/feature/serviceDesk/shared";
 import { SUPPORTED_LANGUAGES } from "@/lib/application/i18n";
 import i18n from "@/lib/client/i18n/runtime";
 
@@ -39,8 +39,8 @@ SUPPORTED_LANGUAGES.forEach((language) => {
   );
   i18n.addResourceBundle(
     language,
-    "StatusBadge",
-    statusBadgeLocales[language],
+    "TicketStatusBadge",
+    ticketStatusLocales[language],
     true,
     false,
   );

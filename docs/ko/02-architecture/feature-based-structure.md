@@ -164,12 +164,13 @@ ground로 사용하지 않는다.
 ### 5. server/ (Server Layer)
 
 - repository, database data access, server use case, 외부 API adapter를 소유
-- LOCAL demo와 REMOTE 구현 경계를 모두 포함
+- 독립 서버 저장소로 함께 이동할 수 있는 코드만 포함
 - `lib/server`, `lib/application`, `domain`, `shared`를 참조할 수 있음
-- feature의 component, hook, form, client API를 참조하지 않음
+- `app`, `feature`, `components`, `mocks`, client API를 참조하지 않음
 
-서버에서도 필요한 요청 contract가 feature에 있다면 server 또는
-`lib/application` contract로 소유권을 이동한다.
+LOCAL demo 구현은 `app/api/_adapters/localDemo`, fixture는 `mocks`가 소유한다.
+웹 adapter와 서버가 함께 사용하는 DTO, schema, 순수 mapper는
+`lib/application/contracts`가 소유하여 서로의 구현을 직접 참조하지 않는다.
 
 ---
 

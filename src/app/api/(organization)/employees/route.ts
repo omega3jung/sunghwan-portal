@@ -1,8 +1,8 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
 import { isRemoteRequest } from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
 import {
   camelEmployeeMapper,
   mapEmployeeItemPayload,
@@ -13,15 +13,15 @@ import {
   toEmployeeMockResource,
   toEmployeeWritePayload,
 } from "@/feature/organization/employee/write";
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import {
   handleServiceDeskEligibleEmployeesPortalApi,
   isServiceDeskEligibleEmployeeRequest,
 } from "@/server/portalApi/employees/employeesPortalApiHandler";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   if (isServiceDeskEligibleEmployeeRequest(request)) {
     return handleServiceDeskEligibleEmployeesPortalApi(request, {
       query: request.nextUrl.searchParams,
-      errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
     });
   }
 

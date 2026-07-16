@@ -1,34 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+  localListAssignmentRules,
+  localSaveAssignmentRuleTree,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule";
 import {
+  assertAssignmentAssigneeEligible,
+  getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
   requireSettingsResourceAccess,
   resolveAuthorizedSettingsTenant,
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
-} from "@/app/api/service-desk/_shared";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+} from "@/app/api/_adapters/serviceDesk";
+import {
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import {
   mapAssignmentRuleListPayload,
   mapAssignmentRuleTreePayload,
 } from "@/feature/serviceDesk/assignmentRule/mapper";
 import { saveAssignmentRuleTreeSchema } from "@/feature/serviceDesk/assignmentRule/request.schema";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
 } from "@/lib/application/serviceDesk";
-import { assertAssignmentAssigneeEligible } from "@/server/data/organization/employees";
-import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
-import {
-  localListAssignmentRules,
-  localSaveAssignmentRuleTree,
-} from "@/server/serviceDesk/settings/assignmentRule/localDemo";
 
 export async function GET(request: NextRequest) {
   try {
@@ -92,12 +92,12 @@ export async function GET(request: NextRequest) {
     return portalApiJson(request, {
       path: "/service-desk/assignment-rules",
       query: proxyQuery,
-      errorMessage: tServiceDeskApi("api.assignmentRules.fetchList"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.fetchList"),
       mapData: mapAssignmentRuleListPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.assignmentRules.fetchList"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.fetchList"),
     });
   }
 }
@@ -111,8 +111,8 @@ export async function PUT(request: NextRequest) {
     if (!parsedBody.success) {
       return NextResponse.json(
         {
-          message: tServiceDeskApi(
-            "api.assignmentRules.localDemo.invalidPayload",
+          message: resolveApiErrorMessage(
+            "serviceDesk.assignmentRules.localDemo.invalidPayload",
           ),
         },
         { status: 400 },
@@ -216,7 +216,7 @@ export async function PUT(request: NextRequest) {
       method: "PUT",
       path: "/service-desk/assignment-rules",
       body,
-      errorMessage: tServiceDeskApi("api.assignmentRules.save"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
       mapData: (payload) => {
         const rules = mapAssignmentRuleTreePayload(payload);
 
@@ -227,7 +227,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.assignmentRules.save"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
     });
   }
 }

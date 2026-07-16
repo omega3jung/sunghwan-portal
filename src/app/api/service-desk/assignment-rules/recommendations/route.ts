@@ -1,15 +1,15 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { toApiErrorResponse } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+import { resolveLocalAssignmentRecommendation } from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule/recommendation";
 import {
+  resolveApiErrorMessage,
   resolveServiceDeskSettingsPrincipal,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
+import { toApiErrorResponse } from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule";
 import { isLocale } from "@/lib/application/i18n";
-import { resolveLocalAssignmentRecommendation } from "@/server/serviceDesk/settings/assignmentRule/localDemo/recommendation";
 
 const parseRecommendationInput = async (
   request: NextRequest,
@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
     if (!input) {
       return NextResponse.json(
         {
-          message: tServiceDeskApi(
-            "api.assignmentRecommendations.invalidInput",
+          message: resolveApiErrorMessage(
+            "serviceDesk.assignmentRecommendations.invalidInput",
           ),
         },
         { status: 400 },
@@ -76,11 +76,11 @@ export async function POST(request: NextRequest) {
         principalContext.effectiveUsername,
       ),
       body: input,
-      errorMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRecommendations.fetch"),
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.assignmentRecommendations.fetch"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRecommendations.fetch"),
     });
   }
 }

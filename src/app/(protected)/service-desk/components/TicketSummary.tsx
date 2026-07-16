@@ -2,11 +2,14 @@ import { Pickaxe, Timer } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
-import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared/client";
+import {
+  MetaBadge,
+  PriorityBadge,
+  TicketStatusBadge,
+} from "@/feature/serviceDesk/shared/client";
 import { selectTicketIsAssigned } from "@/feature/serviceDesk/ticket/utils";
 import { NS } from "@/lib/application/i18n";
 import { ROUTES } from "@/lib/config/routing";
@@ -68,7 +71,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
               </MetaBadge>
             </li>
             <li>
-              <StatusBadge status={ticket.status} />
+              <TicketStatusBadge status={ticket.status} />
             </li>
             <li>
               <PriorityBadge priority={ticket.priority} />

@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getLocalDemoActions } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   isInternalUser,
@@ -8,14 +13,9 @@ import {
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { TicketIdRouteContext } from "@/app/api/_helpers/types";
 import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
-import {
   camelTicketActionMapper,
   mapTicketActionListPayload,
 } from "@/feature/serviceDesk/ticketAction/api";
-import { getLocalDemoActions } from "@/server/serviceDesk/ticket/state";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.ticketActions.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.fetchList"),
     mapData: mapTicketActionListPayload,
   });
 }

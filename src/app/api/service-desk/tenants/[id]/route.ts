@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  localGetTenant,
+  localSoftDeleteTenant,
+  localUpdateTenant,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
+import {
+  requireServiceDeskSettingsAdmin,
+  resolveAuthorizedSettingsTenant,
+  resolveTenantResourceAccess,
+} from "@/app/api/_adapters/serviceDesk";
+import {
   getAuthToken,
   isRemoteRequest,
   toApiErrorResponse,
@@ -8,21 +18,11 @@ import {
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { IdRouteContext } from "@/app/api/_helpers/types";
 import {
-  requireServiceDeskSettingsAdmin,
-  resolveAuthorizedSettingsTenant,
-  resolveTenantResourceAccess,
-} from "@/app/api/service-desk/_shared";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
-import {
   mapTenantItemPayload,
   toTenantWritePayload,
   updateTenantSchema,
 } from "@/feature/serviceDesk/tenant";
-import {
-  localGetTenant,
-  localSoftDeleteTenant,
-  localUpdateTenant,
-} from "@/server/serviceDesk/settings/tenant/localDemo";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   try {
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
       if (!tenant) {
         return NextResponse.json(
-          { message: tServiceDeskApi("api.common.notFound") },
+          { message: resolveApiErrorMessage("serviceDesk.common.notFound") },
           { status: 404 },
         );
       }
@@ -49,12 +49,12 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
     return portalApiJson(request, {
       path: `/service-desk/tenants/${id}`,
-      errorMessage: tServiceDeskApi("api.tenants.fetch"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.tenants.fetch"),
       mapData: mapTenantItemPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tenants.fetch"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tenants.fetch"),
     });
   }
 }
@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
     if (!parsedBody.success) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.tenants.localDemo.invalidPayload") },
+        { message: resolveApiErrorMessage("serviceDesk.tenants.localDemo.invalidPayload") },
         { status: 400 },
       );
     }
@@ -107,12 +107,12 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
         active: body.active ?? true,
         color: body.color ?? "",
       }),
-      errorMessage: tServiceDeskApi("api.tenants.update"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.tenants.update"),
       mapData: mapTenantItemPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tenants.update"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tenants.update"),
     });
   }
 }
@@ -143,11 +143,11 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     return portalApiJson(request, {
       method: "DELETE",
       path: `/service-desk/tenants/${id}`,
-      errorMessage: tServiceDeskApi("api.tenants.delete"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.tenants.delete"),
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tenants.delete"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tenants.delete"),
     });
   }
 }

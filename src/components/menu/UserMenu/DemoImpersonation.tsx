@@ -1,5 +1,4 @@
 import { ShieldUser } from "lucide-react";
-import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -12,54 +11,38 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AuthUser } from "@/domain/auth";
-import { AppUser } from "@/domain/user";
-import { clientAuths, internalAuths } from "@/mocks/domain/user";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
 type Props = {
-  user: AppUser;
-  impersonatedUser: AppUser | null;
+  internalCandidates: AuthUser[];
+  clientCandidates: AuthUser[];
+  isImpersonating: boolean;
   onDemoImpersonate: (impersonatedUsername: string) => Promise<void>;
 };
 
 export function DemoImpersonation(props: Props) {
-  const { user, onDemoImpersonate, impersonatedUser } = props;
+  const {
+    internalCandidates,
+    clientCandidates,
+    isImpersonating,
+    onDemoImpersonate,
+  } = props;
 
   const { t } = useTranslation("UserMenu");
-
-  const filterUser = useCallback(
-    (username: string): boolean => {
-      if (!impersonatedUser) {
-        return username !== user.username;
-      }
-      return (
-        username !== user.username && username !== impersonatedUser.username
-      );
-    },
-    [impersonatedUser, user.username],
-  );
-
-  const impersonationDemoCandidates = useMemo<AuthUser[]>(() => {
-    return internalAuths.filter((auth) => filterUser(auth.username));
-  }, [filterUser]);
-
-  const impersonationClientCandidates = useMemo<AuthUser[]>(() => {
-    return clientAuths.filter((auth) => filterUser(auth.username));
-  }, [filterUser]);
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <ShieldUser />
-        {!impersonatedUser
+        {!isImpersonating
           ? t("demoUserImpersonation")
           : t("switchImpersonation")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
-          {impersonationDemoCandidates.map((profile) => {
+          {internalCandidates.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
             );
@@ -75,7 +58,7 @@ export function DemoImpersonation(props: Props) {
           })}
           <DropdownMenuSeparator />
           <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
-          {impersonationClientCandidates.map((profile) => {
+          {clientCandidates.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
             );

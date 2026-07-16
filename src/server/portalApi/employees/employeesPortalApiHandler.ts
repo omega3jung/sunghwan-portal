@@ -1,12 +1,11 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { toApiErrorResponse } from "@/app/api/_helpers";
 import {
-  requireServiceDeskSettingsAdmin,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
-import type { DataScope } from "@/domain/auth";
+  getBooleanRuleGroupValue,
+  getStringRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
 import {
   canManageServiceDeskSettings,
   canReadServiceDeskSettings,
@@ -20,13 +19,11 @@ import {
 import { getCategoryApprovalSettingsByTenantId } from "@/server/data/serviceDesk/approvalStep";
 import { getAssignmentRulesByTenantId } from "@/server/data/serviceDesk/assignmentRule";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
-import { getApprovalStepStore } from "@/server/serviceDesk/settings/approvalStep/localDemo/approvalStepUtils";
-import { getAssignmentRuleStore } from "@/server/serviceDesk/settings/assignmentRule/localDemo/ruleUtils";
+import { toApiErrorResponse } from "@/server/portalApi/http";
 import {
-  getBooleanRuleGroupValue,
-  getStringRuleGroupValue,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
+  requireServiceDeskSettingsAdmin,
+  resolveApiErrorMessage,
+} from "@/server/portalApi/serviceDesk/shared";
 
 import type { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";
@@ -80,7 +77,7 @@ export async function handleEmployeesPortalApi(
 export async function handleServiceDeskEligibleEmployeesPortalApi(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query" | "errorMessage"> = {
-    errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
   },
 ): Promise<NextResponseType> {
   try {
@@ -148,8 +145,6 @@ async function createServiceDeskEligibleEmployeesResponse(
   const references = canManage
     ? null
     : await getConfiguredEmployeeReferences({
-        dataScope: authorization.dataScope,
-        useOwnerStore: category.tenant.isOwnerTenant,
         tenantId: category.tenant.id,
         categoryId,
         mainCategoryId: category.mainCategoryId,
@@ -207,15 +202,11 @@ type ConfiguredEmployeeReferences = {
 };
 
 async function getConfiguredEmployeeReferences({
-  dataScope,
-  useOwnerStore,
   tenantId,
   categoryId,
   mainCategoryId,
   purpose,
 }: {
-  dataScope: DataScope;
-  useOwnerStore: boolean;
   tenantId: string;
   categoryId: string;
   mainCategoryId: string;
@@ -227,10 +218,7 @@ async function getConfiguredEmployeeReferences({
   };
 
   if (purpose === "APPROVAL") {
-    const categories =
-      dataScope === "LOCAL"
-        ? (getApprovalStepStore(useOwnerStore)[tenantId] ?? [])
-        : await getCategoryApprovalSettingsByTenantId(tenantId);
+    const categories = await getCategoryApprovalSettingsByTenantId(tenantId);
     const category = categories.find(
       (item) => String(item.category_id) === categoryId,
     );
@@ -248,10 +236,7 @@ async function getConfiguredEmployeeReferences({
     return references;
   }
 
-  const rules =
-    dataScope === "LOCAL"
-      ? (getAssignmentRuleStore(useOwnerStore)[tenantId] ?? [])
-      : await getAssignmentRulesByTenantId(tenantId);
+  const rules = await getAssignmentRulesByTenantId(tenantId);
   const rule =
     rules.find((item) => String(item.category_id) === categoryId) ??
     rules.find((item) => String(item.category_id) === mainCategoryId);

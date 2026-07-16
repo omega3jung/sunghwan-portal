@@ -1,17 +1,23 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import {
+  localCreateTicket,
+  localListTickets,
+  withLocalTicketWorkerHistory,
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+  withDerivedTicketOwnership,
+  withDerivedTicketOwnershipList,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
-import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-  withDerivedTicketOwnership,
-  withDerivedTicketOwnershipList,
-} from "@/app/api/service-desk/_shared";
 import {
   type TicketMutateRequestPayload,
   ticketMutateRequestPayloadSchema,
@@ -20,12 +26,6 @@ import {
   mapTicketDetailPayload,
   mapTicketSummaryListPayload,
 } from "@/feature/serviceDesk/ticket/api";
-import {
-  localCreateTicket,
-  localListTickets,
-  withLocalTicketWorkerHistory,
-} from "@/server/serviceDesk/ticket/localDemo";
-import { toTicketMockSummaryResource } from "@/server/serviceDesk/ticket/localDemo/ticketResourceMapper";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.fetchList"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
       });
     }
   }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
 }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { message: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload") },
       { status: 400 },
     );
   }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       );
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.create"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.create"),
       });
     }
   }
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     path: "/service-desk/tickets",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body,
-    errorMessage: tServiceDeskApi("api.tickets.create"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.create"),
     mapData: mapTicketDetailPayload,
   });
 }

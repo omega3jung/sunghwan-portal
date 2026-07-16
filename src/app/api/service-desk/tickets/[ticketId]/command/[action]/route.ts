@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { localPost } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
+import {
+  ACTION_PATH_BY_TYPE,
+  type TicketActionApiType,
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/types";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   getCurrentEmployeeUserName,
   getCurrentUserRole,
@@ -9,19 +18,10 @@ import {
 import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import { RouteContext } from "@/app/api/_helpers/types";
 import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
-import {
   TICKET_ACTION_PATH_TO_TYPE as TICKET_ACTION_TYPE_BY_PATH,
   TicketActionFormValues,
 } from "@/feature/serviceDesk/ticketAction";
 import { mapTicketActionPayload } from "@/feature/serviceDesk/ticketAction/api";
-import { localPost } from "@/server/serviceDesk/ticket/command/localDemo";
-import {
-  ACTION_PATH_BY_TYPE,
-  type TicketActionApiType,
-} from "@/server/serviceDesk/ticket/command/types";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
@@ -85,14 +85,14 @@ const validateMergeRequest = (
 
   if (!targetTicketId) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.ticketCommand.mergeTargetRequired") },
+      { message: resolveApiErrorMessage("serviceDesk.ticketCommand.mergeTargetRequired") },
       { status: 400 },
     );
   }
 
   if (targetTicketId === ticketId) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.ticketCommand.mergeSameTicket") },
+      { message: resolveApiErrorMessage("serviceDesk.ticketCommand.mergeSameTicket") },
       { status: 400 },
     );
   }
@@ -123,7 +123,7 @@ export async function POST(
 
   if (employeeUserName === null) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
+      { message: resolveApiErrorMessage("serviceDesk.ticketCommand.employeeUnavailable") },
       { status: 401 },
     );
   }
@@ -139,7 +139,7 @@ export async function POST(
 
     if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.ticketCommand.actionMismatch") },
+        { message: resolveApiErrorMessage("serviceDesk.ticketCommand.actionMismatch") },
         { status: 400 },
       );
     }
@@ -159,7 +159,7 @@ export async function POST(
     path: `/service-desk/tickets/${ticketId}/command/${action}`,
     headers: toCurrentUsernameProxyHeaders(employeeUserName, role),
     body: toRemoteCommandBody(action, content),
-    errorMessage: tServiceDeskApi("api.ticketCommand.execute"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.execute"),
     mapData: mapTicketActionPayload,
   });
 }

@@ -15,7 +15,6 @@ import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/custom/DatePicker";
-import { getStatusOptions } from "@/components/custom/StatusBadge/options";
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import type { TicketSummary } from "@/domain/serviceDesk";
 import { useDepartmentListQuery } from "@/feature/organization/department/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import { getStatusOptions } from "@/feature/serviceDesk/shared";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import {
   AssigneeChart,

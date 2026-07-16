@@ -20,9 +20,9 @@ import {
   ScreenMode,
 } from "@/domain/user/preference";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { preferenceKeys } from "@/feature/user/preference";
 import { useUpdateUserPreference } from "@/feature/user/preference/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
-import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
 import { isLocale } from "@/lib/application/i18n";
 import { languageOptions } from "@/lib/client/i18n";
 import { applyColorTheme } from "@/lib/client/theme";

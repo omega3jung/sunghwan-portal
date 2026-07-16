@@ -1,8 +1,8 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
+import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
+import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
 import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule";
 import {
   createAssignmentRule,

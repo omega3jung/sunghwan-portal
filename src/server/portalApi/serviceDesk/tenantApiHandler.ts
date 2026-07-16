@@ -1,7 +1,11 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
+import {
+  getBooleanRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
+import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
 import {
   createTenant,
   deactivateTenantById,
@@ -9,10 +13,6 @@ import {
   getTenants,
   updateTenantById,
 } from "@/server/data/serviceDesk/tenant";
-import {
-  getBooleanRuleGroupValue,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
 
 import { getPortalApiQueryValue } from "../utils";
 import {

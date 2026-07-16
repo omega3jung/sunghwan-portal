@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { ApiError } from "@/lib/application/api";
 import { getLocalizedText } from "@/lib/application/i18n";
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
 import { getEligibleEmployeesForCategory } from "@/server/data/organization/employees";
@@ -72,7 +72,7 @@ export async function getAssignmentRecommendationResponse({
   );
 
   if (!categoryContext || !categoryContext.tenant.active) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   const targetTenantId = categoryContext.tenant.id;
@@ -121,7 +121,7 @@ export async function createAssignmentRule(
 ): Promise<AssignmentRuleDto> {
   await assertActiveTenantExists(input.tenant_id);
   await assertActiveCategoryExistsInTenant(input.tenant_id, input.category_id, {
-    messageKey: "api.assignmentRules.localDemo.categoryNotFound",
+    messageKey: "serviceDesk.assignmentRules.categoryNotFound",
   });
 
   const duplicateRules = await findAssignmentRuleRowsByTenantIdAndCategoryId(
@@ -158,11 +158,11 @@ export async function updateAssignmentRuleById(
   );
 
   if (!currentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   await assertActiveCategoryExistsInTenant(tenantId, input.category_id, {
-    messageKey: "api.assignmentRules.localDemo.categoryNotFound",
+    messageKey: "serviceDesk.assignmentRules.categoryNotFound",
   });
 
   const duplicateRules = await findAssignmentRuleRowsByTenantIdAndCategoryId(
@@ -187,7 +187,7 @@ export async function updateAssignmentRuleById(
   );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapAssignmentRuleRowToDto(row);
@@ -200,7 +200,7 @@ export async function deleteAssignmentRuleById(
   const row = await deleteAssignmentRuleRowById(tenantId, assignmentRuleId);
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapAssignmentRuleRowToDto(row);
@@ -415,7 +415,7 @@ async function assertActiveTenantExists(tenantId: string | number) {
   const tenant = await getActiveTenantById(tenantId);
 
   if (!tenant) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return tenant;
@@ -437,7 +437,7 @@ async function assertActiveCategoryExistsInTenant(
   );
 
   if (!targetRow || targetRow.cat_active === false) {
-    throw new ServiceDeskApiError(options.messageKey, 404, { categoryId });
+    throw new ApiError(options.messageKey, 404, { categoryId });
   }
 }
 

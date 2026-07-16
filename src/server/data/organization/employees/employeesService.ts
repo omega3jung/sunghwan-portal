@@ -5,9 +5,6 @@ import {
   resolveAssignmentCompanyPolicy,
 } from "@/domain/serviceDesk";
 import { getAllowedAssignmentCompanyIds } from "@/lib/application/serviceDesk";
-import { employeesMock } from "@/mocks/domain/organization/employee";
-import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
-import { resolveDemoProfile } from "@/mocks/domain/user";
 import { type ServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
 import { getPortalOwnerCompanyId } from "@/server/data/serviceDesk/tenant";
 import { getUserProfileDtoByUsername } from "@/server/data/users/userService";
@@ -230,24 +227,8 @@ export async function resolveEligibleActorCompanyIds({
 }
 
 async function getActiveEmployeeEligibilityRecords(
-  dataScope: DataScope,
+  _dataScope: DataScope,
 ): Promise<EligibleEmployee[]> {
-  if (dataScope === "LOCAL") {
-    return [...employeesMock, ...clientDemoEmployee]
-      .filter((employee) => employee.e_active)
-      .map((employee) => ({
-        id: employee.e_id,
-        username: employee.e_username,
-        name: employee.e_name,
-        email: employee.e_email,
-        imageUrl: employee.e_image_url,
-        departmentId: employee.e_department_id,
-        jobFieldId: employee.e_job_field_id,
-        companyId: employee.e_company_id,
-        active: employee.e_active,
-      }));
-  }
-
   return (await getEmployees(true)).map((employee) => ({
     id: employee.employeeId,
     username: employee.username,
@@ -261,10 +242,8 @@ async function getActiveEmployeeEligibilityRecords(
   }));
 }
 
-async function resolveEmployeeProfile(dataScope: DataScope, username: string) {
-  return dataScope === "LOCAL"
-    ? resolveDemoProfile(username)
-    : getUserProfileDtoByUsername(username);
+async function resolveEmployeeProfile(_dataScope: DataScope, username: string) {
+  return getUserProfileDtoByUsername(username);
 }
 
 function createEligibilityError(message: string) {

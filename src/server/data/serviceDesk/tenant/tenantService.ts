@@ -1,9 +1,7 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { DataScope } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
-import { internalCompanyMock } from "@/mocks/domain/organization/companies";
+import { ApiError } from "@/lib/application/api";
 import { getPortalOwnerCompany } from "@/server/data/organization/company";
-import { getLocalDemoTenants } from "@/server/serviceDesk/settings/state";
 
 import {
   CreateTenantInputDto,
@@ -83,17 +81,8 @@ export type ServiceDeskSettingsTenantContext = {
 };
 
 export async function getServiceDeskSettingsTenantContexts(
-  dataScope: DataScope,
+  _dataScope: DataScope,
 ): Promise<ServiceDeskSettingsTenantContext[]> {
-  if (dataScope === "LOCAL") {
-    return getLocalDemoTenants().map((tenant) => ({
-      id: String(tenant.tenant_id),
-      companyId: Number(tenant.tenant_company_id),
-      isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
-      active: tenant.tenant_active !== false,
-    }));
-  }
-
   const tenants = await getTenants();
 
   return tenants.map((tenant) => ({
@@ -126,11 +115,7 @@ export async function getServiceDeskSettingsTenantContextByCompanyId(
   );
 }
 
-export async function getPortalOwnerCompanyId(dataScope: DataScope) {
-  if (dataScope === "LOCAL") {
-    return Number(internalCompanyMock.company_id);
-  }
-
+export async function getPortalOwnerCompanyId(_dataScope: DataScope) {
   return Number((await getPortalOwnerCompany()).company_id);
 }
 
@@ -143,8 +128,8 @@ export async function createTenant(
   );
 
   if (duplicateTenant) {
-    throw new ServiceDeskApiError(
-      "api.tenants.localDemo.companyAlreadyAssigned",
+    throw new ApiError(
+      "serviceDesk.tenants.companyAlreadyAssigned",
       409,
       { companyId: input.tenant_company_id },
     );
@@ -166,12 +151,12 @@ export async function updateTenantById(
   const currentRow = await findTenantRowById(tenantId);
 
   if (!currentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   if (Number(currentRow.tn_company_id) !== Number(input.tenant_company_id)) {
-    throw new ServiceDeskApiError(
-      "api.tenants.localDemo.companyMismatch",
+    throw new ApiError(
+      "serviceDesk.tenants.companyMismatch",
       400,
       { companyId: input.tenant_company_id },
     );
@@ -183,7 +168,7 @@ export async function updateTenantById(
   );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapTenantRowToDto(row);
@@ -195,7 +180,7 @@ export async function deactivateTenantById(
   const row = await deactivateTenantRowById(tenantId);
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapTenantRowToDto(row);

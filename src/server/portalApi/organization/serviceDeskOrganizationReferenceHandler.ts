@@ -1,19 +1,17 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { toApiErrorResponse } from "@/app/api/_helpers";
 import {
-  requireServiceDeskSettingsAdmin,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
-import { camelDepartmentMapper } from "@/feature/organization/department";
-import { camelJobFieldMapper } from "@/feature/organization/jobField";
+  getBooleanRuleGroupValue,
+  getStringRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
+import { camelDepartmentMapper } from "@/lib/application/contracts/organization";
+import { camelJobFieldMapper } from "@/lib/application/contracts/organization";
 import {
   canReadServiceDeskSettings,
   resolveSettingsAccess,
 } from "@/lib/application/serviceDesk";
-import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
-import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import { getActiveDepartments } from "@/server/data/organization/department";
 import {
   type EligibleActorPurpose,
@@ -21,11 +19,11 @@ import {
 } from "@/server/data/organization/employees";
 import { getActiveJobFields } from "@/server/data/organization/jobField";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
+import { toApiErrorResponse } from "@/server/portalApi/http";
 import {
-  getBooleanRuleGroupValue,
-  getStringRuleGroupValue,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
+  requireServiceDeskSettingsAdmin,
+  resolveApiErrorMessage,
+} from "@/server/portalApi/serviceDesk/shared";
 
 import type { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue } from "../utils";
@@ -42,14 +40,13 @@ export function isServiceDeskOrganizationReferenceRequest(
 export async function handleServiceDeskDepartmentReferenceRequest(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query" | "errorMessage"> = {
-    errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
   },
 ): Promise<NextResponseType> {
   try {
-    const { eligibleDepartmentIds, dataScope } =
+    const { eligibleDepartmentIds } =
       await resolveEligibleOrganizationReference(request, options);
-    const source =
-      dataScope === "LOCAL" ? allDepartmentsMock : await getActiveDepartments();
+    const source = await getActiveDepartments();
     const items = camelDepartmentMapper(
       source.filter((department) =>
         eligibleDepartmentIds.has(String(department.d_id)),
@@ -70,14 +67,13 @@ export async function handleServiceDeskDepartmentReferenceRequest(
 export async function handleServiceDeskJobFieldReferenceRequest(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query" | "errorMessage"> = {
-    errorMessage: tServiceDeskApi("api.eligibleActors.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.eligibleActors.fetch"),
   },
 ): Promise<NextResponseType> {
   try {
-    const { eligibleJobFieldIds, dataScope } =
+    const { eligibleJobFieldIds } =
       await resolveEligibleOrganizationReference(request, options);
-    const source =
-      dataScope === "LOCAL" ? allJobFieldsMock : await getActiveJobFields();
+    const source = await getActiveJobFields();
     const items = camelJobFieldMapper(
       source.filter((jobField) =>
         eligibleJobFieldIds.has(String(jobField.jf_id)),

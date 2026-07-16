@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { localCreateTenant, localListTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
+import {
+  requireServiceDeskSettingsAdmin,
+  resolveTenantResourceAccess,
+} from "@/app/api/_adapters/serviceDesk";
 import {
   getAuthToken,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_helpers";
 import {
-  requireServiceDeskSettingsAdmin,
-  resolveTenantResourceAccess,
-} from "@/app/api/service-desk/_shared";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
-import {
   createTenantSchema,
   mapTenantItemPayload,
   mapTenantListPayload,
   toTenantWritePayload,
 } from "@/feature/serviceDesk/tenant";
-import { localCreateTenant, localListTenants } from "@/server/serviceDesk/settings/tenant/localDemo";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 
 import { portalApiJson } from "../../_helpers/portalApiJson";
 
@@ -56,12 +56,12 @@ export async function GET(request: NextRequest) {
     return portalApiJson(request, {
       path: "/service-desk/tenants",
       query: proxyQuery,
-      errorMessage: tServiceDeskApi("api.tenants.fetchList"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.tenants.fetchList"),
       mapData: mapTenantListPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tenants.fetchList"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tenants.fetchList"),
     });
   }
 }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     if (!parsedBody.success) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.tenants.localDemo.invalidPayload") },
+        { message: resolveApiErrorMessage("serviceDesk.tenants.localDemo.invalidPayload") },
         { status: 400 },
       );
     }
@@ -107,12 +107,12 @@ export async function POST(request: NextRequest) {
         active: body.active ?? true,
         color: body.color ?? "",
       }),
-      errorMessage: tServiceDeskApi("api.tenants.create"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.tenants.create"),
       mapData: mapTenantItemPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tenants.create"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tenants.create"),
     });
   }
 }

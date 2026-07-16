@@ -1,18 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+  localListApprovalSteps,
+  localSaveApprovalStepTree,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep";
 import {
+  getApprovalStepStore,
+  normalizeCategoryApprovalSettings,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep/approvalStepUtils";
+import {
+  assertApprovalAssigneeEligible,
+  getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
   requireSettingsResourceAccess,
   resolveAuthorizedSettingsTenant,
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskSettingsPrincipal,
-} from "@/app/api/service-desk/_shared";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+} from "@/app/api/_adapters/serviceDesk";
+import {
+  toApiErrorResponse,
+} from "@/app/api/_helpers";
+import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
 import {
   camelCategoryApprovalSettingMapper,
   mapApprovalSettingsListPayload,
@@ -20,23 +29,14 @@ import {
 } from "@/feature/serviceDesk/approvalStep/mapper";
 import { saveApprovalStepTreeSchema } from "@/feature/serviceDesk/approvalStep/request.schema";
 import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
 } from "@/lib/application/serviceDesk";
-import { assertApprovalAssigneeEligible } from "@/server/data/organization/employees";
 import {
   getCategoryApprovalSettingsByTenantId,
 } from "@/server/data/serviceDesk/approvalStep";
-import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
-import {
-  localListApprovalSteps,
-  localSaveApprovalStepTree,
-} from "@/server/serviceDesk/settings/approvalStep/localDemo";
-import {
-  getApprovalStepStore,
-  normalizeCategoryApprovalSettings,
-} from "@/server/serviceDesk/settings/approvalStep/localDemo/approvalStepUtils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -100,12 +100,12 @@ export async function GET(request: NextRequest) {
     return portalApiJson(request, {
       path: "/service-desk/approval-steps",
       query: proxyQuery,
-      errorMessage: tServiceDeskApi("api.approvalSteps.fetchList"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.fetchList"),
       mapData: mapApprovalSettingsListPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.approvalSteps.fetchList"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.fetchList"),
     });
   }
 }
@@ -119,8 +119,8 @@ export async function PUT(request: NextRequest) {
     if (!parsedBody.success) {
       return NextResponse.json(
         {
-          message: tServiceDeskApi(
-            "api.approvalSteps.localDemo.invalidPayload",
+          message: resolveApiErrorMessage(
+            "serviceDesk.approvalSteps.localDemo.invalidPayload",
           ),
         },
         { status: 400 },
@@ -235,7 +235,7 @@ export async function PUT(request: NextRequest) {
       method: "PUT",
       path: "/service-desk/approval-steps",
       body,
-      errorMessage: tServiceDeskApi("api.approvalSteps.save"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
       mapData: (payload) => {
         const settings = mapApprovalSettingsTreePayload(payload);
 
@@ -246,7 +246,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.approvalSteps.save"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
     });
   }
 }

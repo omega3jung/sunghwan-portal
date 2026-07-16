@@ -1,8 +1,13 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
-import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
+import { ApiError } from "@/lib/application/api";
+import {
+  getBooleanRuleGroupValue,
+  getStringRuleGroupValue,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
+import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
 import {
   CategorySettingsResponseDto,
   CreateCategoryInputDto,
@@ -13,11 +18,6 @@ import {
   getCategorySettingsResponseByTenantId,
   updateCategoryById,
 } from "@/server/data/serviceDesk/category";
-import {
-  getBooleanRuleGroupValue,
-  getStringRuleGroupValue,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
 
 import { getPortalApiQueryValue } from "../utils";
 import {
@@ -170,7 +170,7 @@ async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {
   ).find((tenant) => tenant.tenant_id === tenantId);
 
   if (!tenantCategoryTree) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return tenantCategoryTree;

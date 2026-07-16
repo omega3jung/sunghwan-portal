@@ -1,4 +1,4 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { ApiError } from "@/lib/application/api";
 
 import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
 import { getCategoryTreeByTenantId } from "../category/categoryService";
@@ -102,7 +102,7 @@ export async function updateApprovalStepById(
   const currentRow = currentRows[0] ?? null;
 
   if (!currentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   await assertActiveMainCategoryExistsInTenant(tenantId, input.category_id);
@@ -114,7 +114,7 @@ export async function updateApprovalStepById(
   );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapApprovalStepRowToDto(row);
@@ -127,7 +127,7 @@ export async function deleteApprovalStepById(
   const row = await deleteApprovalStepRowById(tenantId, approvalStepId);
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapApprovalStepRowToDto(row);
@@ -168,7 +168,7 @@ async function assertActiveTenantExists(tenantId: string | number) {
   const tenant = await getActiveTenantById(tenantId);
 
   if (!tenant) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return tenant;
@@ -188,8 +188,8 @@ async function assertActiveMainCategoryExistsInTenant(
   );
 
   if (!targetRow || targetRow.cat_active === false) {
-    throw new ServiceDeskApiError(
-      "api.approvalSteps.localDemo.categoryNotFound",
+    throw new ApiError(
+      "serviceDesk.approvalSteps.categoryNotFound",
       404,
       { categoryId },
     );

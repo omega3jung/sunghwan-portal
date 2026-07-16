@@ -1,7 +1,7 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+import type { SaveServiceDeskApprovalStepTreePayload } from "@/lib/application/contracts/serviceDesk";
 import type {
   ApprovalStepDto,
   CreateApprovalStepInputDto,

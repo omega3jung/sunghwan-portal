@@ -42,7 +42,10 @@ export function TicketHistoryTimelineContent({
   const { t: tHistory } = useTranslation(NS.serviceDesk, {
     keyPrefix: "recentActivity",
   });
-  const { t: tStatus } = useTranslation("StatusBadge");
+  const { t: tStatus } = useTranslation("TicketStatusBadge");
+  const emptyContent = tCommon("empty.withItem", {
+    item: tCommon("field.history"),
+  });
 
   const mappedItems = useMemo<TimelineItemData[]>(() => {
     const resolvedItems = items?.length ? items : [];
@@ -85,7 +88,12 @@ export function TicketHistoryTimelineContent({
               {isLoading ? (
                 <TicketHistoryTimelineSkeleton />
               ) : (
-                <Timeline compact={compact} items={mappedItems} order={order} />
+                <Timeline
+                  compact={compact}
+                  emptyContent={emptyContent}
+                  items={mappedItems}
+                  order={order}
+                />
               )}
             </div>
           </div>

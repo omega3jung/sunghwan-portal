@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useResetServiceDeskDemo } from "@/feature/serviceDesk/shared/api/demoReset";
+import { useResetServiceDeskDemo } from "@/feature/serviceDesk/shared/client";
 import { NS } from "@/lib/application/i18n";
 
 export function ResetDemoMenu() {

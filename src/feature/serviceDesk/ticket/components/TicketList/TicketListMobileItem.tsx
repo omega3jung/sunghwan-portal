@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
-import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
-import { MetaBadge } from "@/feature/serviceDesk/shared/client";
+import {
+  MetaBadge,
+  TicketStatusBadge,
+} from "@/feature/serviceDesk/shared/client";
 import {
   selectTicketAssigneeIds,
   selectTicketIsAssigned,
@@ -88,7 +90,7 @@ export const TicketListMobileItem = ({
               {t("detailAside.assignedBadge")}
             </Badge>
           )}
-          <StatusBadge status={ticket.status} />
+          <TicketStatusBadge status={ticket.status} />
         </div>
       </div>
 

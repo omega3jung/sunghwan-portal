@@ -225,7 +225,12 @@ export default function TimelineDemoPage() {
             </p>
           </div>
 
-          <Timeline compact={compact} items={demoItems} order={order} />
+          <Timeline
+            compact={compact}
+            emptyContent="No timeline items"
+            items={demoItems}
+            order={order}
+          />
         </section>
 
         <section className="rounded-xl border bg-muted/30 p-4">
@@ -254,8 +259,8 @@ export default function TimelineDemoPage() {
               without introducing any Service Desk specific dependency.
             </p>
             <p>
-              Empty state rendering is handled directly by `Timeline` so wrapper
-              components can stay thin.
+              Empty state content is provided by the owning screen while
+              `Timeline` handles its layout.
             </p>
           </div>
         </section>

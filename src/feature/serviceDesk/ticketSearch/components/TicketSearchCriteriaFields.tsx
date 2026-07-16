@@ -8,9 +8,9 @@ import {
   TreeMultiComboBox,
   type TreeMultiComboBoxOption,
 } from "@/components/custom/MultiComboBox";
-import { getStatusOptions } from "@/components/custom/StatusBadge/options";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import type { MainCategory } from "@/domain/serviceDesk";
+import { getStatusOptions } from "@/feature/serviceDesk/shared";
 import {
   priorityOptions,
   riskLevelOptions,

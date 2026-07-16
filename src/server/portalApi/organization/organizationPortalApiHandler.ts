@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  applyRuleGroupFilter,
+  parseRuleGroupFilter,
+} from "@/lib/application/api/query";
 import { getActiveCompanies } from "@/server/data/organization/company";
 import type { DepartmentDto } from "@/server/data/organization/department";
 import { getActiveDepartments } from "@/server/data/organization/department";
 import type { JobFieldDto } from "@/server/data/organization/jobField";
 import { getActiveJobFields } from "@/server/data/organization/jobField";
-import {
-  applyRuleGroupFilter,
-  parseRuleGroupFilter,
-} from "@/server/shared/query";
 
 import { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";

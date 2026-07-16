@@ -1,16 +1,15 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
 import type { DataScope } from "@/domain/auth";
 import {
   type CategoryScope,
   type MainCategory,
 } from "@/domain/serviceDesk";
-import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category";
+import { ApiError } from "@/lib/application/api";
+import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
 import {
   canManageServiceDeskSettings,
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
 } from "@/lib/application/serviceDesk";
-import { getLocalDemoCategories } from "@/server/serviceDesk/settings/state";
 
 import {
   getActiveTenantByCompanyId,
@@ -71,72 +70,6 @@ export async function getServiceDeskCategoryContext(
   dataScope: DataScope,
   categoryId: string | number,
 ): Promise<ServiceDeskCategoryContext | null> {
-  if (dataScope === "LOCAL") {
-    const tenantTrees = [
-      ...getLocalDemoCategories(true),
-      ...getLocalDemoCategories(false),
-    ];
-    const matches = new Map<
-      string,
-      {
-        tenantId: number;
-        mainCategoryId: string;
-        scope: CategoryScope;
-      }
-    >();
-
-    for (const tenantTree of tenantTrees) {
-      for (const mainCategory of tenantTree.category) {
-        const isMain = String(mainCategory.category_id) === String(categoryId);
-        const isSub = mainCategory.sub_category.some(
-          (subCategory) =>
-            String(subCategory.category_id) === String(categoryId),
-        );
-
-        if (!isMain && !isSub) {
-          continue;
-        }
-
-        const match = {
-          tenantId: tenantTree.tenant_id,
-          mainCategoryId: String(mainCategory.category_id),
-          scope: mainCategory.category_scope,
-        };
-
-        matches.set(
-          [match.tenantId, match.mainCategoryId, match.scope].join(":"),
-          match,
-        );
-      }
-    }
-
-    if (matches.size !== 1) {
-      return null;
-    }
-
-    const match = matches.values().next().value;
-
-    if (!match) {
-      return null;
-    }
-
-    const tenant = await getServiceDeskSettingsTenantContext(
-      dataScope,
-      match.tenantId,
-    );
-
-    if (!tenant) {
-      return null;
-    }
-
-    return {
-      categoryId: String(categoryId),
-      mainCategoryId: match.mainCategoryId,
-      scope: match.scope,
-      tenant,
-    };
-  }
-
   const row = await findCategoryContextRowById(categoryId);
 
   if (!row) {
@@ -296,8 +229,8 @@ export async function updateCategoryById(
     await getCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
 
   if (currentParentRow.cat_scope !== input.category_scope) {
-    throw new ServiceDeskApiError(
-      "api.categories.localDemo.scopeImmutable",
+    throw new ApiError(
+      "serviceDesk.categories.scopeImmutable",
       400,
     );
   }
@@ -309,7 +242,7 @@ export async function updateCategoryById(
   );
 
   if (!parentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   const childRows = await synchronizeSubCategoryRows({
@@ -369,7 +302,7 @@ async function assertActiveTenantExists(tenantId: string | number) {
   const tenant = await getActiveTenantById(tenantId);
 
   if (!tenant) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return tenant;
@@ -387,7 +320,7 @@ async function getCategoryTreeRowsByTenantIdAndCategoryId(
 
   // Tree save must be able to resubmit inactive categories as well.
   if (!parentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return {
@@ -467,7 +400,7 @@ async function synchronizeSubCategoryRows({
       );
 
       if (!updatedChildRow) {
-        throw new ServiceDeskApiError("api.common.notFound", 404);
+        throw new ApiError("serviceDesk.common.notFound", 404);
       }
 
       nextSubmittedChildRows.push(updatedChildRow);
@@ -528,7 +461,7 @@ async function synchronizeSubCategoryRows({
     );
 
     if (!updatedPreservedChildRow) {
-      throw new ServiceDeskApiError("api.common.notFound", 404);
+      throw new ApiError("serviceDesk.common.notFound", 404);
     }
 
     nextPreservedChildRows.push(updatedPreservedChildRow);
@@ -560,7 +493,7 @@ async function resolveExistingSubCategoryRow({
   const existingRow = rows.find((row) => Number(row.cat_id) === Number(subCategoryId));
 
   if (existingRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return null;

@@ -12,10 +12,27 @@ import {
   NavigationBarProvider,
 } from "@/feature/navigation/navigationBar/client";
 import { withLeadingSlash } from "@/lib/config/routing";
+import {
+  clientAuths,
+  clientProfiles,
+  internalAuths,
+  internalProfiles,
+} from "@/mocks/domain/user";
 
 import { AppUserBootstrap } from "../_providers/AppUserBootstrap";
 import { PreferenceBootstrap } from "../_providers/PreferenceBootstrap";
 import { SessionStatusOverlay } from "./SessionStatusOverlay";
+
+const userMenuDemoCandidates = {
+  auths: {
+    internal: internalAuths,
+    client: clientAuths,
+  },
+  profiles: {
+    internal: internalProfiles,
+    client: clientProfiles,
+  },
+};
 
 export function ProtectedShell({ children }: { children: React.ReactNode }) {
   const session = useCurrentSession();
@@ -65,7 +82,10 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
           {/* Right Main Screen */}
           <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
             {/* Top Navigation */}
-            <NavigationBar className="h-[57px]" />
+            <NavigationBar
+              className="h-[57px]"
+              userMenuDemoCandidates={userMenuDemoCandidates}
+            />
 
             {/* Page Content */}
             <main className="overflow-auto p-2 min-h-0 bg-background">
