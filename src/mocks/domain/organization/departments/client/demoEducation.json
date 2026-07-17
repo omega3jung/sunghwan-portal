@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 221,
+    "d_name": {
+      "en": "Demo Education - Academic Affairs"
+    },
+    "d_code": "EDU-OPS",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 222,
+    "d_name": {
+      "en": "Demo Education - Student Services"
+    },
+    "d_code": "EDU-STD",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": 221,
+    "d_active": true
+  },
+  {
+    "d_id": 223,
+    "d_name": {
+      "en": "Demo Education - Faculty Support"
+    },
+    "d_code": "EDU-FAC",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": 221,
+    "d_active": true
+  },
+  {
+    "d_id": 224,
+    "d_name": {
+      "en": "Demo Education - Admissions"
+    },
+    "d_code": "EDU-ADM",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": 221,
+    "d_active": true
+  },
+  {
+    "d_id": 225,
+    "d_name": {
+      "en": "Demo Education - Education Technology"
+    },
+    "d_code": "EDU-TEC",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 226,
+    "d_name": {
+      "en": "Demo Education - Learning Platforms"
+    },
+    "d_code": "EDU-SYS",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": 225,
+    "d_active": true
+  },
+  {
+    "d_id": 227,
+    "d_name": {
+      "en": "Demo Education - Administration"
+    },
+    "d_code": "EDU-COR",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 228,
+    "d_name": {
+      "en": "Demo Education - Research Support"
+    },
+    "d_code": "EDU-RSH",
+    "d_description": null,
+    "d_company_id": 14,
+    "d_parent_id": 227,
+    "d_active": true
+  }
+]

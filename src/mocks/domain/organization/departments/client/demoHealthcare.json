@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 111,
+    "d_name": {
+      "en": "Demo Healthcare - Clinical Operations"
+    },
+    "d_code": "HLT-OPS",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 112,
+    "d_name": {
+      "en": "Demo Healthcare - Patient Services"
+    },
+    "d_code": "HLT-PAT",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": 111,
+    "d_active": true
+  },
+  {
+    "d_id": 113,
+    "d_name": {
+      "en": "Demo Healthcare - Nursing Services"
+    },
+    "d_code": "HLT-NUR",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": 111,
+    "d_active": true
+  },
+  {
+    "d_id": 114,
+    "d_name": {
+      "en": "Demo Healthcare - Medical Records"
+    },
+    "d_code": "HLT-REC",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": 111,
+    "d_active": true
+  },
+  {
+    "d_id": 115,
+    "d_name": {
+      "en": "Demo Healthcare - Health Technology"
+    },
+    "d_code": "HLT-TEC",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 116,
+    "d_name": {
+      "en": "Demo Healthcare - Health IT Support"
+    },
+    "d_code": "HLT-ITS",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": 115,
+    "d_active": true
+  },
+  {
+    "d_id": 117,
+    "d_name": {
+      "en": "Demo Healthcare - Administration"
+    },
+    "d_code": "HLT-ADM",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 118,
+    "d_name": {
+      "en": "Demo Healthcare - Quality & Compliance"
+    },
+    "d_code": "HLT-QAC",
+    "d_description": null,
+    "d_company_id": 3,
+    "d_parent_id": 117,
+    "d_active": true
+  }
+]

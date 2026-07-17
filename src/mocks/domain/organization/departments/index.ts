@@ -1,7 +1,7 @@
 ﻿import { DbDepartment } from "@/feature/organization/department";
 
 import { internalCompanyMock } from "../companies";
-import { clientDepartmentsMock } from "./demoDepartment";
+import { clientDepartmentsMock } from "./client";
 import headOfficeDepartmentMock from "./portalOwner/headOffice.json";
 import itDepartmentMock from "./portalOwner/it.json";
 import logisticsDepartmentMock from "./portalOwner/logistics.json";

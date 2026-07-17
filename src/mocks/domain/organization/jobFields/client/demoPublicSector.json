@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 361,
+    "jf_name": {
+      "en": "Demo Public Sector - Public Administration Director"
+    },
+    "jf_description": {
+      "en": "Public Administration Director at Demo Public Sector"
+    },
+    "jf_department_id": 231,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 362,
+    "jf_name": {
+      "en": "Demo Public Sector - Public Administration Officer"
+    },
+    "jf_description": {
+      "en": "Public Administration Officer at Demo Public Sector"
+    },
+    "jf_department_id": 231,
+    "jf_company_id": 15,
+    "jf_parent_id": 361,
+    "jf_active": true
+  },
+  {
+    "jf_id": 363,
+    "jf_name": {
+      "en": "Demo Public Sector - Citizen Services Manager"
+    },
+    "jf_description": {
+      "en": "Citizen Services Manager at Demo Public Sector"
+    },
+    "jf_department_id": 232,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 364,
+    "jf_name": {
+      "en": "Demo Public Sector - Citizen Services Officer"
+    },
+    "jf_description": {
+      "en": "Citizen Services Officer at Demo Public Sector"
+    },
+    "jf_department_id": 232,
+    "jf_company_id": 15,
+    "jf_parent_id": 363,
+    "jf_active": true
+  },
+  {
+    "jf_id": 365,
+    "jf_name": {
+      "en": "Demo Public Sector - Policy Planning Director"
+    },
+    "jf_description": {
+      "en": "Policy Planning Director at Demo Public Sector"
+    },
+    "jf_department_id": 233,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 366,
+    "jf_name": {
+      "en": "Demo Public Sector - Policy Analyst"
+    },
+    "jf_description": {
+      "en": "Policy Analyst at Demo Public Sector"
+    },
+    "jf_department_id": 233,
+    "jf_company_id": 15,
+    "jf_parent_id": 365,
+    "jf_active": true
+  },
+  {
+    "jf_id": 367,
+    "jf_name": {
+      "en": "Demo Public Sector - Budget Manager"
+    },
+    "jf_description": {
+      "en": "Budget Manager at Demo Public Sector"
+    },
+    "jf_department_id": 234,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 368,
+    "jf_name": {
+      "en": "Demo Public Sector - Budget Analyst"
+    },
+    "jf_description": {
+      "en": "Budget Analyst at Demo Public Sector"
+    },
+    "jf_department_id": 234,
+    "jf_company_id": 15,
+    "jf_parent_id": 367,
+    "jf_active": true
+  },
+  {
+    "jf_id": 369,
+    "jf_name": {
+      "en": "Demo Public Sector - Public Technology Director"
+    },
+    "jf_description": {
+      "en": "Public Technology Director at Demo Public Sector"
+    },
+    "jf_department_id": 235,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 370,
+    "jf_name": {
+      "en": "Demo Public Sector - Public Technology Manager"
+    },
+    "jf_description": {
+      "en": "Public Technology Manager at Demo Public Sector"
+    },
+    "jf_department_id": 235,
+    "jf_company_id": 15,
+    "jf_parent_id": 369,
+    "jf_active": true
+  },
+  {
+    "jf_id": 371,
+    "jf_name": {
+      "en": "Demo Public Sector - Digital Government Services Manager"
+    },
+    "jf_description": {
+      "en": "Digital Government Services Manager at Demo Public Sector"
+    },
+    "jf_department_id": 236,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 372,
+    "jf_name": {
+      "en": "Demo Public Sector - Platform Engineer"
+    },
+    "jf_description": {
+      "en": "Platform Engineer at Demo Public Sector"
+    },
+    "jf_department_id": 236,
+    "jf_company_id": 15,
+    "jf_parent_id": 371,
+    "jf_active": true
+  },
+  {
+    "jf_id": 373,
+    "jf_name": {
+      "en": "Demo Public Sector - Governance Services Director"
+    },
+    "jf_description": {
+      "en": "Governance Services Director at Demo Public Sector"
+    },
+    "jf_department_id": 237,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 374,
+    "jf_name": {
+      "en": "Demo Public Sector - Governance Officer"
+    },
+    "jf_description": {
+      "en": "Governance Officer at Demo Public Sector"
+    },
+    "jf_department_id": 237,
+    "jf_company_id": 15,
+    "jf_parent_id": 373,
+    "jf_active": true
+  },
+  {
+    "jf_id": 375,
+    "jf_name": {
+      "en": "Demo Public Sector - Records & Audit Manager"
+    },
+    "jf_description": {
+      "en": "Records & Audit Manager at Demo Public Sector"
+    },
+    "jf_department_id": 238,
+    "jf_company_id": 15,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 376,
+    "jf_name": {
+      "en": "Demo Public Sector - Public Auditor"
+    },
+    "jf_description": {
+      "en": "Public Auditor at Demo Public Sector"
+    },
+    "jf_department_id": 238,
+    "jf_company_id": 15,
+    "jf_parent_id": 375,
+    "jf_active": true
+  }
+]

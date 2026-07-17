@@ -1,7 +1,7 @@
 ﻿import { DbJobField } from "@/feature/organization/jobField";
 
 import { internalCompanyMock } from "../companies";
-import { clientJobFieldMock } from "./demoJobField";
+import { clientJobFieldsMock } from "./client";
 import headOfficeJobFieldMock from "./portalOwner/headOffice.json";
 import itJobFielMock from "./portalOwner/it.json";
 import logisticsJobFielMock from "./portalOwner/logistics.json";
@@ -26,5 +26,5 @@ export const allJobFieldsMock: DbJobField[] = [
     jf_active: true,
   },
   ...jobFieldsMock,
-  ...clientJobFieldMock,
+  ...clientJobFieldsMock,
 ];

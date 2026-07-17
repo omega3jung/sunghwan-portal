@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 241,
+    "d_name": {
+      "en": "Demo Media - Content Operations"
+    },
+    "d_code": "MED-OPS",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 242,
+    "d_name": {
+      "en": "Demo Media - Editorial"
+    },
+    "d_code": "MED-EDT",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": 241,
+    "d_active": true
+  },
+  {
+    "d_id": 243,
+    "d_name": {
+      "en": "Demo Media - Broadcast Production"
+    },
+    "d_code": "MED-BRD",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": 241,
+    "d_active": true
+  },
+  {
+    "d_id": 244,
+    "d_name": {
+      "en": "Demo Media - Advertising Sales"
+    },
+    "d_code": "MED-ADS",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": 241,
+    "d_active": true
+  },
+  {
+    "d_id": 245,
+    "d_name": {
+      "en": "Demo Media - Media Technology"
+    },
+    "d_code": "MED-TEC",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 246,
+    "d_name": {
+      "en": "Demo Media - Digital Platforms"
+    },
+    "d_code": "MED-SYS",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": 245,
+    "d_active": true
+  },
+  {
+    "d_id": 247,
+    "d_name": {
+      "en": "Demo Media - Corporate Services"
+    },
+    "d_code": "MED-COR",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 248,
+    "d_name": {
+      "en": "Demo Media - Rights Management"
+    },
+    "d_code": "MED-RGT",
+    "d_description": null,
+    "d_company_id": 16,
+    "d_parent_id": 247,
+    "d_active": true
+  }
+]

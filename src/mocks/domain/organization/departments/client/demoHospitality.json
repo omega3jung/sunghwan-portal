@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 271,
+    "d_name": {
+      "en": "Demo Hospitality - Hotel Operations"
+    },
+    "d_code": "HSP-OPS",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 272,
+    "d_name": {
+      "en": "Demo Hospitality - Front Office"
+    },
+    "d_code": "HSP-FRO",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": 271,
+    "d_active": true
+  },
+  {
+    "d_id": 273,
+    "d_name": {
+      "en": "Demo Hospitality - Housekeeping"
+    },
+    "d_code": "HSP-HSK",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": 271,
+    "d_active": true
+  },
+  {
+    "d_id": 274,
+    "d_name": {
+      "en": "Demo Hospitality - Food & Beverage"
+    },
+    "d_code": "HSP-FNB",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": 271,
+    "d_active": true
+  },
+  {
+    "d_id": 275,
+    "d_name": {
+      "en": "Demo Hospitality - Hospitality Technology"
+    },
+    "d_code": "HSP-TEC",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 276,
+    "d_name": {
+      "en": "Demo Hospitality - Reservation Systems"
+    },
+    "d_code": "HSP-SYS",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": 275,
+    "d_active": true
+  },
+  {
+    "d_id": 277,
+    "d_name": {
+      "en": "Demo Hospitality - Corporate Services"
+    },
+    "d_code": "HSP-COR",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 278,
+    "d_name": {
+      "en": "Demo Hospitality - Guest Experience"
+    },
+    "d_code": "HSP-GST",
+    "d_description": null,
+    "d_company_id": 19,
+    "d_parent_id": 277,
+    "d_active": true
+  }
+]

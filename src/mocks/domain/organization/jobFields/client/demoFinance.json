@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 141,
+    "jf_name": {
+      "en": "Demo Finance - Financial Operations Director"
+    },
+    "jf_description": {
+      "en": "Financial Operations Director at Demo Finance"
+    },
+    "jf_department_id": 121,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 142,
+    "jf_name": {
+      "en": "Demo Finance - Financial Analyst"
+    },
+    "jf_description": {
+      "en": "Financial Analyst at Demo Finance"
+    },
+    "jf_department_id": 121,
+    "jf_company_id": 4,
+    "jf_parent_id": 141,
+    "jf_active": true
+  },
+  {
+    "jf_id": 143,
+    "jf_name": {
+      "en": "Demo Finance - Treasury Manager"
+    },
+    "jf_description": {
+      "en": "Treasury Manager at Demo Finance"
+    },
+    "jf_department_id": 122,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 144,
+    "jf_name": {
+      "en": "Demo Finance - Treasury Analyst"
+    },
+    "jf_description": {
+      "en": "Treasury Analyst at Demo Finance"
+    },
+    "jf_department_id": 122,
+    "jf_company_id": 4,
+    "jf_parent_id": 143,
+    "jf_active": true
+  },
+  {
+    "jf_id": 145,
+    "jf_name": {
+      "en": "Demo Finance - Client Advisory Manager"
+    },
+    "jf_description": {
+      "en": "Client Advisory Manager at Demo Finance"
+    },
+    "jf_department_id": 123,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 146,
+    "jf_name": {
+      "en": "Demo Finance - Client Advisor"
+    },
+    "jf_description": {
+      "en": "Client Advisor at Demo Finance"
+    },
+    "jf_department_id": 123,
+    "jf_company_id": 4,
+    "jf_parent_id": 145,
+    "jf_active": true
+  },
+  {
+    "jf_id": 147,
+    "jf_name": {
+      "en": "Demo Finance - Risk Management Director"
+    },
+    "jf_description": {
+      "en": "Risk Management Director at Demo Finance"
+    },
+    "jf_department_id": 124,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 148,
+    "jf_name": {
+      "en": "Demo Finance - Risk Analyst"
+    },
+    "jf_description": {
+      "en": "Risk Analyst at Demo Finance"
+    },
+    "jf_department_id": 124,
+    "jf_company_id": 4,
+    "jf_parent_id": 147,
+    "jf_active": true
+  },
+  {
+    "jf_id": 149,
+    "jf_name": {
+      "en": "Demo Finance - Finance Technology Director"
+    },
+    "jf_description": {
+      "en": "Finance Technology Director at Demo Finance"
+    },
+    "jf_department_id": 125,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 150,
+    "jf_name": {
+      "en": "Demo Finance - Finance Technology Manager"
+    },
+    "jf_description": {
+      "en": "Finance Technology Manager at Demo Finance"
+    },
+    "jf_department_id": 125,
+    "jf_company_id": 4,
+    "jf_parent_id": 149,
+    "jf_active": true
+  },
+  {
+    "jf_id": 151,
+    "jf_name": {
+      "en": "Demo Finance - Banking Systems Manager"
+    },
+    "jf_description": {
+      "en": "Banking Systems Manager at Demo Finance"
+    },
+    "jf_department_id": 126,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 152,
+    "jf_name": {
+      "en": "Demo Finance - Banking Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Banking Systems Engineer at Demo Finance"
+    },
+    "jf_department_id": 126,
+    "jf_company_id": 4,
+    "jf_parent_id": 151,
+    "jf_active": true
+  },
+  {
+    "jf_id": 153,
+    "jf_name": {
+      "en": "Demo Finance - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Finance"
+    },
+    "jf_department_id": 127,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 154,
+    "jf_name": {
+      "en": "Demo Finance - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Finance"
+    },
+    "jf_department_id": 127,
+    "jf_company_id": 4,
+    "jf_parent_id": 153,
+    "jf_active": true
+  },
+  {
+    "jf_id": 155,
+    "jf_name": {
+      "en": "Demo Finance - Regulatory Compliance Manager"
+    },
+    "jf_description": {
+      "en": "Regulatory Compliance Manager at Demo Finance"
+    },
+    "jf_department_id": 128,
+    "jf_company_id": 4,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 156,
+    "jf_name": {
+      "en": "Demo Finance - Compliance Officer"
+    },
+    "jf_description": {
+      "en": "Compliance Officer at Demo Finance"
+    },
+    "jf_department_id": 128,
+    "jf_company_id": 4,
+    "jf_parent_id": 155,
+    "jf_active": true
+  }
+]

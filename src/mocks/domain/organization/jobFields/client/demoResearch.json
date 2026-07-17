@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 241,
+    "jf_name": {
+      "en": "Demo Research - Research Programs Director"
+    },
+    "jf_description": {
+      "en": "Research Programs Director at Demo Research"
+    },
+    "jf_department_id": 171,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 242,
+    "jf_name": {
+      "en": "Demo Research - Research Program Manager"
+    },
+    "jf_description": {
+      "en": "Research Program Manager at Demo Research"
+    },
+    "jf_department_id": 171,
+    "jf_company_id": 9,
+    "jf_parent_id": 241,
+    "jf_active": true
+  },
+  {
+    "jf_id": 243,
+    "jf_name": {
+      "en": "Demo Research - Laboratory Operations Manager"
+    },
+    "jf_description": {
+      "en": "Laboratory Operations Manager at Demo Research"
+    },
+    "jf_department_id": 172,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 244,
+    "jf_name": {
+      "en": "Demo Research - Laboratory Specialist"
+    },
+    "jf_description": {
+      "en": "Laboratory Specialist at Demo Research"
+    },
+    "jf_department_id": 172,
+    "jf_company_id": 9,
+    "jf_parent_id": 243,
+    "jf_active": true
+  },
+  {
+    "jf_id": 245,
+    "jf_name": {
+      "en": "Demo Research - Data Science Manager"
+    },
+    "jf_description": {
+      "en": "Data Science Manager at Demo Research"
+    },
+    "jf_department_id": 173,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 246,
+    "jf_name": {
+      "en": "Demo Research - Data Scientist"
+    },
+    "jf_description": {
+      "en": "Data Scientist at Demo Research"
+    },
+    "jf_department_id": 173,
+    "jf_company_id": 9,
+    "jf_parent_id": 245,
+    "jf_active": true
+  },
+  {
+    "jf_id": 247,
+    "jf_name": {
+      "en": "Demo Research - Knowledge Management Manager"
+    },
+    "jf_description": {
+      "en": "Knowledge Management Manager at Demo Research"
+    },
+    "jf_department_id": 174,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 248,
+    "jf_name": {
+      "en": "Demo Research - Knowledge Specialist"
+    },
+    "jf_description": {
+      "en": "Knowledge Specialist at Demo Research"
+    },
+    "jf_department_id": 174,
+    "jf_company_id": 9,
+    "jf_parent_id": 247,
+    "jf_active": true
+  },
+  {
+    "jf_id": 249,
+    "jf_name": {
+      "en": "Demo Research - Research Technology Director"
+    },
+    "jf_description": {
+      "en": "Research Technology Director at Demo Research"
+    },
+    "jf_department_id": 175,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 250,
+    "jf_name": {
+      "en": "Demo Research - Research Technology Manager"
+    },
+    "jf_description": {
+      "en": "Research Technology Manager at Demo Research"
+    },
+    "jf_department_id": 175,
+    "jf_company_id": 9,
+    "jf_parent_id": 249,
+    "jf_active": true
+  },
+  {
+    "jf_id": 251,
+    "jf_name": {
+      "en": "Demo Research - Research IT Support Manager"
+    },
+    "jf_description": {
+      "en": "Research IT Support Manager at Demo Research"
+    },
+    "jf_department_id": 176,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 252,
+    "jf_name": {
+      "en": "Demo Research - Research IT Specialist"
+    },
+    "jf_description": {
+      "en": "Research IT Specialist at Demo Research"
+    },
+    "jf_department_id": 176,
+    "jf_company_id": 9,
+    "jf_parent_id": 251,
+    "jf_active": true
+  },
+  {
+    "jf_id": 253,
+    "jf_name": {
+      "en": "Demo Research - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Research"
+    },
+    "jf_department_id": 177,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 254,
+    "jf_name": {
+      "en": "Demo Research - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Research"
+    },
+    "jf_department_id": 177,
+    "jf_company_id": 9,
+    "jf_parent_id": 253,
+    "jf_active": true
+  },
+  {
+    "jf_id": 255,
+    "jf_name": {
+      "en": "Demo Research - Grants & Compliance Manager"
+    },
+    "jf_description": {
+      "en": "Grants & Compliance Manager at Demo Research"
+    },
+    "jf_department_id": 178,
+    "jf_company_id": 9,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 256,
+    "jf_name": {
+      "en": "Demo Research - Grants Officer"
+    },
+    "jf_description": {
+      "en": "Grants Officer at Demo Research"
+    },
+    "jf_department_id": 178,
+    "jf_company_id": 9,
+    "jf_parent_id": 255,
+    "jf_active": true
+  }
+]

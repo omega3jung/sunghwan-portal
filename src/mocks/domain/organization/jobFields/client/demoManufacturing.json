@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 181,
+    "jf_name": {
+      "en": "Demo Manufacturing - Plant Operations Director"
+    },
+    "jf_description": {
+      "en": "Plant Operations Director at Demo Manufacturing"
+    },
+    "jf_department_id": 141,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 182,
+    "jf_name": {
+      "en": "Demo Manufacturing - Plant Operations Manager"
+    },
+    "jf_description": {
+      "en": "Plant Operations Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 141,
+    "jf_company_id": 6,
+    "jf_parent_id": 181,
+    "jf_active": true
+  },
+  {
+    "jf_id": 183,
+    "jf_name": {
+      "en": "Demo Manufacturing - Production Engineering Manager"
+    },
+    "jf_description": {
+      "en": "Production Engineering Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 142,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 184,
+    "jf_name": {
+      "en": "Demo Manufacturing - Production Engineer"
+    },
+    "jf_description": {
+      "en": "Production Engineer at Demo Manufacturing"
+    },
+    "jf_department_id": 142,
+    "jf_company_id": 6,
+    "jf_parent_id": 183,
+    "jf_active": true
+  },
+  {
+    "jf_id": 185,
+    "jf_name": {
+      "en": "Demo Manufacturing - Quality Assurance Manager"
+    },
+    "jf_description": {
+      "en": "Quality Assurance Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 143,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 186,
+    "jf_name": {
+      "en": "Demo Manufacturing - Quality Inspector"
+    },
+    "jf_description": {
+      "en": "Quality Inspector at Demo Manufacturing"
+    },
+    "jf_department_id": 143,
+    "jf_company_id": 6,
+    "jf_parent_id": 185,
+    "jf_active": true
+  },
+  {
+    "jf_id": 187,
+    "jf_name": {
+      "en": "Demo Manufacturing - Supply Chain Manager"
+    },
+    "jf_description": {
+      "en": "Supply Chain Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 144,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 188,
+    "jf_name": {
+      "en": "Demo Manufacturing - Supply Chain Planner"
+    },
+    "jf_description": {
+      "en": "Supply Chain Planner at Demo Manufacturing"
+    },
+    "jf_department_id": 144,
+    "jf_company_id": 6,
+    "jf_parent_id": 187,
+    "jf_active": true
+  },
+  {
+    "jf_id": 189,
+    "jf_name": {
+      "en": "Demo Manufacturing - Manufacturing Technology Director"
+    },
+    "jf_description": {
+      "en": "Manufacturing Technology Director at Demo Manufacturing"
+    },
+    "jf_department_id": 145,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 190,
+    "jf_name": {
+      "en": "Demo Manufacturing - Manufacturing Technology Manager"
+    },
+    "jf_description": {
+      "en": "Manufacturing Technology Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 145,
+    "jf_company_id": 6,
+    "jf_parent_id": 189,
+    "jf_active": true
+  },
+  {
+    "jf_id": 191,
+    "jf_name": {
+      "en": "Demo Manufacturing - Equipment Systems Manager"
+    },
+    "jf_description": {
+      "en": "Equipment Systems Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 146,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 192,
+    "jf_name": {
+      "en": "Demo Manufacturing - Equipment Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Equipment Systems Engineer at Demo Manufacturing"
+    },
+    "jf_department_id": 146,
+    "jf_company_id": 6,
+    "jf_parent_id": 191,
+    "jf_active": true
+  },
+  {
+    "jf_id": 193,
+    "jf_name": {
+      "en": "Demo Manufacturing - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Manufacturing"
+    },
+    "jf_department_id": 147,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 194,
+    "jf_name": {
+      "en": "Demo Manufacturing - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Manufacturing"
+    },
+    "jf_department_id": 147,
+    "jf_company_id": 6,
+    "jf_parent_id": 193,
+    "jf_active": true
+  },
+  {
+    "jf_id": 195,
+    "jf_name": {
+      "en": "Demo Manufacturing - Environment, Health & Safety Manager"
+    },
+    "jf_description": {
+      "en": "Environment, Health & Safety Manager at Demo Manufacturing"
+    },
+    "jf_department_id": 148,
+    "jf_company_id": 6,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 196,
+    "jf_name": {
+      "en": "Demo Manufacturing - EHS Specialist"
+    },
+    "jf_description": {
+      "en": "EHS Specialist at Demo Manufacturing"
+    },
+    "jf_department_id": 148,
+    "jf_company_id": 6,
+    "jf_parent_id": 195,
+    "jf_active": true
+  }
+]

@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 321,
+    "jf_name": {
+      "en": "Demo Energy - Energy Operations Director"
+    },
+    "jf_description": {
+      "en": "Energy Operations Director at Demo Energy"
+    },
+    "jf_department_id": 211,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 322,
+    "jf_name": {
+      "en": "Demo Energy - Energy Operations Manager"
+    },
+    "jf_description": {
+      "en": "Energy Operations Manager at Demo Energy"
+    },
+    "jf_department_id": 211,
+    "jf_company_id": 13,
+    "jf_parent_id": 321,
+    "jf_active": true
+  },
+  {
+    "jf_id": 323,
+    "jf_name": {
+      "en": "Demo Energy - Power Generation Manager"
+    },
+    "jf_description": {
+      "en": "Power Generation Manager at Demo Energy"
+    },
+    "jf_department_id": 212,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 324,
+    "jf_name": {
+      "en": "Demo Energy - Plant Engineer"
+    },
+    "jf_description": {
+      "en": "Plant Engineer at Demo Energy"
+    },
+    "jf_department_id": 212,
+    "jf_company_id": 13,
+    "jf_parent_id": 323,
+    "jf_active": true
+  },
+  {
+    "jf_id": 325,
+    "jf_name": {
+      "en": "Demo Energy - Grid Management Manager"
+    },
+    "jf_description": {
+      "en": "Grid Management Manager at Demo Energy"
+    },
+    "jf_department_id": 213,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 326,
+    "jf_name": {
+      "en": "Demo Energy - Grid Engineer"
+    },
+    "jf_description": {
+      "en": "Grid Engineer at Demo Energy"
+    },
+    "jf_department_id": 213,
+    "jf_company_id": 13,
+    "jf_parent_id": 325,
+    "jf_active": true
+  },
+  {
+    "jf_id": 327,
+    "jf_name": {
+      "en": "Demo Energy - Asset Maintenance Manager"
+    },
+    "jf_description": {
+      "en": "Asset Maintenance Manager at Demo Energy"
+    },
+    "jf_department_id": 214,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 328,
+    "jf_name": {
+      "en": "Demo Energy - Maintenance Engineer"
+    },
+    "jf_description": {
+      "en": "Maintenance Engineer at Demo Energy"
+    },
+    "jf_department_id": 214,
+    "jf_company_id": 13,
+    "jf_parent_id": 327,
+    "jf_active": true
+  },
+  {
+    "jf_id": 329,
+    "jf_name": {
+      "en": "Demo Energy - Energy Technology Director"
+    },
+    "jf_description": {
+      "en": "Energy Technology Director at Demo Energy"
+    },
+    "jf_department_id": 215,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 330,
+    "jf_name": {
+      "en": "Demo Energy - Energy Technology Manager"
+    },
+    "jf_description": {
+      "en": "Energy Technology Manager at Demo Energy"
+    },
+    "jf_department_id": 215,
+    "jf_company_id": 13,
+    "jf_parent_id": 329,
+    "jf_active": true
+  },
+  {
+    "jf_id": 331,
+    "jf_name": {
+      "en": "Demo Energy - Energy Management Systems Manager"
+    },
+    "jf_description": {
+      "en": "Energy Management Systems Manager at Demo Energy"
+    },
+    "jf_department_id": 216,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 332,
+    "jf_name": {
+      "en": "Demo Energy - Energy Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Energy Systems Engineer at Demo Energy"
+    },
+    "jf_department_id": 216,
+    "jf_company_id": 13,
+    "jf_parent_id": 331,
+    "jf_active": true
+  },
+  {
+    "jf_id": 333,
+    "jf_name": {
+      "en": "Demo Energy - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Energy"
+    },
+    "jf_department_id": 217,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 334,
+    "jf_name": {
+      "en": "Demo Energy - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Energy"
+    },
+    "jf_department_id": 217,
+    "jf_company_id": 13,
+    "jf_parent_id": 333,
+    "jf_active": true
+  },
+  {
+    "jf_id": 335,
+    "jf_name": {
+      "en": "Demo Energy - Trading & Safety Manager"
+    },
+    "jf_description": {
+      "en": "Trading & Safety Manager at Demo Energy"
+    },
+    "jf_department_id": 218,
+    "jf_company_id": 13,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 336,
+    "jf_name": {
+      "en": "Demo Energy - Energy Trader"
+    },
+    "jf_description": {
+      "en": "Energy Trader at Demo Energy"
+    },
+    "jf_department_id": 218,
+    "jf_company_id": 13,
+    "jf_parent_id": 335,
+    "jf_active": true
+  }
+]

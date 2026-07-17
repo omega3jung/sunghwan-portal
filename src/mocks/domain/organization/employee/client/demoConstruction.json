@@ -1,20 +1,44 @@
 [
   {
-    "e_id": 31,
-    "e_username": "daniel_kim",
+    "e_id": 321,
+    "e_username": "aiden_diaz",
     "e_name": {
       "en": {
-        "first": "Daniel",
+        "first": "Aiden",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.diaz@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 161,
+    "e_job_field_id": 221,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 322,
+    "e_username": "amelia_kim",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
         "middle": "",
         "last": "Kim"
       }
     },
     "e_phone": "",
-    "e_email": "Daniel.Kim@sunghwan-portal.dev",
+    "e_email": "amelia.kim@client-demo-construction.com",
     "e_image_url": null,
-    "e_department_id": 10,
-    "e_job_field_id": 15,
-    "e_company_id": 1,
+    "e_department_id": 161,
+    "e_job_field_id": 222,
+    "e_company_id": 8,
     "e_start_date": "2026-03-27T18:25:00+09:00",
     "e_work_shift_id": 1,
     "e_active": true,
@@ -24,429 +48,21 @@
     "e_end_date": null
   },
   {
-    "e_id": 32,
-    "e_username": "olivia_park",
-    "e_name": {
-      "en": {
-        "first": "Olivia",
-        "middle": "",
-        "last": "Park"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Olivia.Park@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 10,
-    "e_job_field_id": 16,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 33,
-    "e_username": "ryan_choi",
-    "e_name": {
-      "en": {
-        "first": "Ryan",
-        "middle": "",
-        "last": "Choi"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Ryan.Choi@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 11,
-    "e_job_field_id": 17,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 34,
-    "e_username": "sophia_lee",
-    "e_name": {
-      "en": {
-        "first": "Sophia",
-        "middle": "",
-        "last": "Lee"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Sophia.Lee@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 11,
-    "e_job_field_id": 18,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 35,
-    "e_username": "kevin_jung",
-    "e_name": {
-      "en": {
-        "first": "Kevin",
-        "middle": "",
-        "last": "Jung"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Kevin.Jung@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 11,
-    "e_job_field_id": 19,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 36,
-    "e_username": "emma_shin",
-    "e_name": {
-      "en": {
-        "first": "Emma",
-        "middle": "",
-        "last": "Shin"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Emma.Shin@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 20,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 37,
-    "e_username": "lucas_han",
-    "e_name": {
-      "en": {
-        "first": "Lucas",
-        "middle": "",
-        "last": "Han"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Lucas.Han@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 21,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 38,
-    "e_username": "grace_kang",
-    "e_name": {
-      "en": {
-        "first": "Grace",
-        "middle": "",
-        "last": "Kang"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Grace.Kang@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 21,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": false,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": "2026-07-01T18:25:00+09:00"
-  },
-  {
-    "e_id": 39,
-    "e_username": "noah_yoon",
-    "e_name": {
-      "en": {
-        "first": "Noah",
-        "middle": "",
-        "last": "Yoon"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Noah.Yoon@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 22,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 40,
-    "e_username": "chloe_lim",
-    "e_name": {
-      "en": {
-        "first": "Chloe",
-        "middle": "",
-        "last": "Lim"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Chloe.Lim@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 22,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": false,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": "2026-04-21T18:25:00+09:00"
-  },
-  {
-    "e_id": 41,
-    "e_username": "evan_seo",
-    "e_name": {
-      "en": {
-        "first": "Evan",
-        "middle": "",
-        "last": "Seo"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Evan.Seo@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 23,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 42,
-    "e_username": "ava_hwang",
-    "e_name": {
-      "en": {
-        "first": "Ava",
-        "middle": "",
-        "last": "Hwang"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Ava.Hwang@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 13,
-    "e_job_field_id": 25,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": false,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": "2026-05-04T18:25:00+09:00"
-  },
-  {
-    "e_id": 43,
-    "e_username": "mason_kwon",
-    "e_name": {
-      "en": {
-        "first": "Mason",
-        "middle": "",
-        "last": "Kwon"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Mason.Kwon@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 13,
-    "e_job_field_id": 26,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 44,
-    "e_username": "isabella_oh",
-    "e_name": {
-      "en": {
-        "first": "Isabella",
-        "middle": "",
-        "last": "Oh"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Isabella.Oh@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 14,
-    "e_job_field_id": 27,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 45,
-    "e_username": "julian_moon",
-    "e_name": {
-      "en": {
-        "first": "Julian",
-        "middle": "",
-        "last": "Moon"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Julian.Moon@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 14,
-    "e_job_field_id": 28,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 46,
-    "e_username": "mia_ryu",
-    "e_name": {
-      "en": {
-        "first": "Mia",
-        "middle": "",
-        "last": "Ryu"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Mia.Ryu@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 14,
-    "e_job_field_id": 29,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 47,
-    "e_username": "logan_baek",
-    "e_name": {
-      "en": {
-        "first": "Logan",
-        "middle": "",
-        "last": "Baek"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Logan.Baek@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 21,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 48,
-    "e_username": "ella_nam",
-    "e_name": {
-      "en": {
-        "first": "Ella",
-        "middle": "",
-        "last": "Nam"
-      }
-    },
-    "e_phone": "",
-    "e_email": "Ella.Nam@sunghwan-portal.dev",
-    "e_image_url": null,
-    "e_department_id": 12,
-    "e_job_field_id": 22,
-    "e_company_id": 1,
-    "e_start_date": "2026-03-27T18:25:00+09:00",
-    "e_work_shift_id": 1,
-    "e_active": true,
-    "e_engineer_id": null,
-    "e_rf_tag_id": null,
-    "e_hour_rate": null,
-    "e_end_date": null
-  },
-  {
-    "e_id": 49,
-    "e_username": "benjamin_hong",
+    "e_id": 323,
+    "e_username": "benjamin_rossi",
     "e_name": {
       "en": {
         "first": "Benjamin",
         "middle": "",
-        "last": "Hong"
+        "last": "Rossi"
       }
     },
     "e_phone": "",
-    "e_email": "Benjamin.Hong@sunghwan-portal.dev",
+    "e_email": "benjamin.rossi@client-demo-construction.com",
     "e_image_url": null,
-    "e_department_id": 13,
-    "e_job_field_id": 25,
-    "e_company_id": 1,
+    "e_department_id": 162,
+    "e_job_field_id": 223,
+    "e_company_id": 8,
     "e_start_date": "2026-03-27T18:25:00+09:00",
     "e_work_shift_id": 1,
     "e_active": true,
@@ -456,21 +72,21 @@
     "e_end_date": null
   },
   {
-    "e_id": 50,
-    "e_username": "aria_jeon",
+    "e_id": 324,
+    "e_username": "chloe_young",
     "e_name": {
       "en": {
-        "first": "Aria",
+        "first": "Chloe",
         "middle": "",
-        "last": "Jeon"
+        "last": "Young"
       }
     },
     "e_phone": "",
-    "e_email": "Aria.Jeon@sunghwan-portal.dev",
+    "e_email": "chloe.young@client-demo-construction.com",
     "e_image_url": null,
-    "e_department_id": 13,
-    "e_job_field_id": 25,
-    "e_company_id": 1,
+    "e_department_id": 162,
+    "e_job_field_id": 224,
+    "e_company_id": 8,
     "e_start_date": "2026-03-27T18:25:00+09:00",
     "e_work_shift_id": 1,
     "e_active": true,
@@ -478,5 +94,341 @@
     "e_rf_tag_id": null,
     "e_hour_rate": null,
     "e_end_date": null
+  },
+  {
+    "e_id": 325,
+    "e_username": "daniel_king",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "King"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.king@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 163,
+    "e_job_field_id": 225,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 326,
+    "e_username": "elena_chen",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Chen"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.chen@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 163,
+    "e_job_field_id": 226,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 327,
+    "e_username": "ethan_johnson",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Johnson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.johnson@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 164,
+    "e_job_field_id": 227,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 328,
+    "e_username": "freya_quinn",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Quinn"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.quinn@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 164,
+    "e_job_field_id": 228,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 329,
+    "e_username": "gabriel_xu",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Xu"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.xu@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 165,
+    "e_job_field_id": 229,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 330,
+    "e_username": "hana_hall",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Hall"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.hall@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 165,
+    "e_job_field_id": 230,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 331,
+    "e_username": "isaac_baker",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.baker@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 166,
+    "e_job_field_id": 231,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 332,
+    "e_username": "julia_ito",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.ito@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 166,
+    "e_job_field_id": 232,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 333,
+    "e_username": "kai_patel",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.patel@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 167,
+    "e_job_field_id": 233,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 334,
+    "e_username": "layla_wilson",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.wilson@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 167,
+    "e_job_field_id": 234,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 335,
+    "e_username": "mateo_green",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.green@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 168,
+    "e_job_field_id": 235,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 336,
+    "e_username": "nora_anderson",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.anderson@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 168,
+    "e_job_field_id": 236,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 337,
+    "e_username": "oliver_hassan",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.hassan@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 166,
+    "e_job_field_id": 232,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-10T18:25:00+09:00"
+  },
+  {
+    "e_id": 338,
+    "e_username": "priya_okafor",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.okafor@client-demo-construction.com",
+    "e_image_url": null,
+    "e_department_id": 162,
+    "e_job_field_id": 223,
+    "e_company_id": 8,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-06-10T18:25:00+09:00"
   }
 ]

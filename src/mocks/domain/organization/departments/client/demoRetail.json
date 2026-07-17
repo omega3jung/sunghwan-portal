@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 131,
+    "d_name": {
+      "en": "Demo Retail - Retail Operations"
+    },
+    "d_code": "RTL-OPS",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 132,
+    "d_name": {
+      "en": "Demo Retail - Store Management"
+    },
+    "d_code": "RTL-STR",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": 131,
+    "d_active": true
+  },
+  {
+    "d_id": 133,
+    "d_name": {
+      "en": "Demo Retail - Merchandising"
+    },
+    "d_code": "RTL-MER",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": 131,
+    "d_active": true
+  },
+  {
+    "d_id": 134,
+    "d_name": {
+      "en": "Demo Retail - Inventory Control"
+    },
+    "d_code": "RTL-INV",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": 131,
+    "d_active": true
+  },
+  {
+    "d_id": 135,
+    "d_name": {
+      "en": "Demo Retail - Retail Technology"
+    },
+    "d_code": "RTL-TEC",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 136,
+    "d_name": {
+      "en": "Demo Retail - E-Commerce Platform"
+    },
+    "d_code": "RTL-ECM",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": 135,
+    "d_active": true
+  },
+  {
+    "d_id": 137,
+    "d_name": {
+      "en": "Demo Retail - Corporate Services"
+    },
+    "d_code": "RTL-COR",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 138,
+    "d_name": {
+      "en": "Demo Retail - Customer Experience"
+    },
+    "d_code": "RTL-CEX",
+    "d_description": null,
+    "d_company_id": 5,
+    "d_parent_id": 137,
+    "d_active": true
+  }
+]
