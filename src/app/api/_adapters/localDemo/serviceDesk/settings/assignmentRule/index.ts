@@ -1,4 +1,4 @@
-// src/server/serviceDesk/settings/assignmentRule/localDemo/index.ts
+// src/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule/index.ts
 
 export {
   localSaveAssignmentRuleTree,

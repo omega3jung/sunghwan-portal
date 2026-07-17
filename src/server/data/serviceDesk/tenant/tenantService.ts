@@ -1,5 +1,8 @@
 import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
+import type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
+
+export type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
 
 import {
   CreateTenantInputDto,
@@ -70,13 +73,6 @@ export async function getActiveTenants(): Promise<TenantDto[]> {
 
   return mapTenantRowsToDtos(rows);
 }
-
-export type ServiceDeskSettingsTenantContext = {
-  id: string;
-  companyId: number;
-  isOwnerTenant: boolean;
-  active: boolean;
-};
 
 export async function getServiceDeskSettingsTenantContexts(
 ): Promise<ServiceDeskSettingsTenantContext[]> {

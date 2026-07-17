@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  getCurrentUserRole,
-  getCurrentUserScope,
   isRemoteRequest,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { RouteContext } from "@/app/api/_adapters/http";
+import {
+  getCurrentLocalUserRole,
+  getCurrentLocalUserScope,
+} from "@/app/api/_adapters/localDemo/auth";
 import { localPost } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
 import {
   ACTION_PATH_BY_TYPE,
@@ -108,7 +110,6 @@ export async function POST(
   const isRemote = await isRemoteRequest(request);
   const rawContent = (await request.json()) as Partial<TicketActionFormValues>;
   const content = normalizeTicketActionContent(action, rawContent);
-  const role = await getCurrentUserRole(request);
   const employeeUserName = await getCurrentEmployeeUserName(request);
 
   const mergeValidationResponse = validateMergeRequest(
@@ -129,7 +130,10 @@ export async function POST(
   }
 
   if (!isRemote) {
-    const currentUserScope = await getCurrentUserScope(request);
+    const [role, currentUserScope] = await Promise.all([
+      getCurrentLocalUserRole(request),
+      getCurrentLocalUserScope(request),
+    ]);
 
     if (currentUserScope === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -157,7 +161,7 @@ export async function POST(
   return portalApiJson(request, {
     method: "POST",
     path: `/service-desk/tickets/${ticketId}/command/${action}`,
-    headers: toCurrentUsernameProxyHeaders(employeeUserName, role),
+    headers: toCurrentUsernameProxyHeaders(employeeUserName),
     body: toRemoteCommandBody(action, content),
     errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.execute"),
     mapData: mapTicketActionPayload,

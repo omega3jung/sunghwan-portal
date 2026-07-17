@@ -10,6 +10,13 @@ export type DbTenant = {
   tenant_active?: boolean;
 };
 
+export type ServiceDeskSettingsTenantContext = {
+  id: string;
+  companyId: number;
+  isOwnerTenant: boolean;
+  active: boolean;
+};
+
 export type ServiceDeskTenantListParams = DbParams & {
   active?: boolean;
   settings?: boolean;

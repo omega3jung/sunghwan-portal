@@ -1,4 +1,4 @@
-// src/server/serviceDesk/ticket/localDemo/index.ts
+// src/app/api/_adapters/localDemo/serviceDesk/ticket/index.ts
 
 export { localCreateTicket } from "./create";
 export { localDeleteTicket } from "./delete";

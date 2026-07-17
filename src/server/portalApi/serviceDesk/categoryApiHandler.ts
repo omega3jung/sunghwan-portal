@@ -16,6 +16,7 @@ import {
 import {
   createCategory,
   getCategorySettingsResponseByTenantId,
+  getServiceDeskCategoryContext as getRemoteServiceDeskCategoryContext,
   updateCategoryById,
   validateCategoryTreeMutation,
 } from "@/server/data/serviceDesk/category";
@@ -34,10 +35,28 @@ type CategoryTreeItem =
   SaveServiceDeskCategoryTreePayload["categories"][number];
 
 const CATEGORY_LIST_PATH_PATTERN = /^\/service-desk\/categories$/;
+const CATEGORY_CONTEXT_PATH_PATTERN =
+  /^\/service-desk\/categories\/([^/]+)\/context$/;
 
 export async function handleCategoryPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
+  const categoryContextMatch = CATEGORY_CONTEXT_PATH_PATTERN.exec(context.path);
+
+  if (categoryContextMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
+    const categoryId = decodeURIComponent(categoryContextMatch[1] ?? "");
+    const categoryContext =
+      await getRemoteServiceDeskCategoryContext(categoryId);
+
+    return categoryContext
+      ? NextResponse.json(categoryContext)
+      : createNotFoundResponse();
+  }
+
   const categoryListMatch = CATEGORY_LIST_PATH_PATTERN.exec(context.path);
 
   if (!categoryListMatch) {

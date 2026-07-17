@@ -6,13 +6,13 @@ import {
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   assertAssignmentAssigneeEligible,
+  getServiceDeskCategoryContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import {
   localListAssignmentRules,
   localSaveAssignmentRuleTree,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule";
 import {
-  getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
   requireSettingsResourceAccess,
@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     const operationalTarget = settingsAuthorization
       ? null
       : await resolveOperationalServiceDeskReadTarget({
+          request,
           principalContext,
           requestedTenantId,
           requestedScope,
@@ -149,7 +150,6 @@ export async function PUT(request: NextRequest) {
 
     for (const category of body.categories) {
       const categoryContext = await getServiceDeskCategoryContext(
-        authorization.dataScope,
         category.id,
       );
 
@@ -188,7 +188,6 @@ export async function PUT(request: NextRequest) {
 
       for (const subCategory of category.subCategories) {
         const subCategoryContext = await getServiceDeskCategoryContext(
-          authorization.dataScope,
           subCategory.id,
         );
 

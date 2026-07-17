@@ -1,11 +1,13 @@
 // app/(protected)/settings/layout.tsx
 
 import { Separator } from "@radix-ui/react-select";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { ReactNode } from "react";
 
-import { resolveServiceDeskSettingsPrincipalFromSession } from "@/app/api/_adapters/serviceDesk";
+import { resolveServiceDeskSettingsPrincipal } from "@/app/api/_adapters/serviceDesk";
 import { authOptions } from "@/auth.config";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
@@ -22,8 +24,12 @@ export default async function SettingsLayout({
   // check session one more.
   if (!session?.user) redirect("/login");
 
-  const principalContext = await resolveServiceDeskSettingsPrincipalFromSession(
-    session,
+  const requestHeaders = new Headers(headers());
+  const request = new NextRequest(resolveRequestUrl(requestHeaders), {
+    headers: requestHeaders,
+  });
+  const principalContext = await resolveServiceDeskSettingsPrincipal(
+    request,
   ).catch(() => null);
 
   if (
@@ -48,4 +54,14 @@ export default async function SettingsLayout({
       </SettingsAccessGuard>
     </SettingsAccessProvider>
   );
+}
+
+function resolveRequestUrl(requestHeaders: Headers) {
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    "localhost";
+
+  return `${protocol}://${host}/settings`;
 }

@@ -19,3 +19,26 @@ export const useServiceDeskCategoryListQuery = (
     ...queryOptions,
   });
 };
+
+export const useServiceDeskCategoryContextQuery = (
+  categoryId?: string | number | null,
+) => {
+  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
+  const hasCategoryId =
+    categoryId !== null &&
+    categoryId !== undefined &&
+    String(categoryId).trim().length > 0;
+
+  return useQuery({
+    queryKey: categoryQueryKeys.context(categoryId),
+    queryFn: () => {
+      if (!hasCategoryId) {
+        throw new Error("A category id is required.");
+      }
+
+      return serviceDeskCategoryApi.getContext(categoryId);
+    },
+    enabled: hasCategoryId && !!dataScope,
+    ...queryOptions,
+  });
+};

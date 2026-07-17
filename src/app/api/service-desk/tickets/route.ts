@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getCurrentLocalUserScope } from "@/app/api/_adapters/localDemo/auth";
 import {
   localCreateTicket,
   localListTickets,
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentUserScope(request);
+      const currentUserScope = await getCurrentLocalUserScope(request);
 
       if (currentUserScope === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentUserScope(request);
+      const currentUserScope = await getCurrentLocalUserScope(request);
 
       if (currentUserScope === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });

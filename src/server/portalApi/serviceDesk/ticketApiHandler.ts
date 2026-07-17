@@ -38,6 +38,7 @@ import {
   createWorkSession,
   getWorkSessionsByTicketId,
 } from "@/server/data/serviceDesk/workSession";
+import { getUserProfileDtoByUsername } from "@/server/data/users";
 import { getPortalApiQueryValue } from "@/server/portalApi/utils";
 
 import {
@@ -66,7 +67,6 @@ const TICKET_WORK_SESSION_LIST_PATH_PATTERN =
 const TICKET_START_WORK_COMMAND = "start-work";
 const TICKET_DETAIL_PATH_PATTERN = /^\/service-desk\/tickets\/([^/]+)$/;
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
-const CURRENT_USER_ROLE_HEADER = "X-Current-User-Role";
 const TICKET_SORT_FIELDS = new Set<TicketSearchSortDto["field"]>([
   "ticketNumber",
   "createdAt",
@@ -92,7 +92,6 @@ export async function handleTicketPortalApi(
   }
 
   const currentUserName = getCurrentUserName(context);
-  const currentUserRole = getCurrentUserRole(context);
 
   if (currentUserName === null) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -209,24 +208,31 @@ export async function handleTicketPortalApi(
       return NextResponse.json(ticket);
     }
 
-    if (isTicketApprovalActionPath(action)) {
+    const isApprovalAction = isTicketApprovalActionPath(action);
+
+    if (!isApprovalAction && !isTicketGeneralActionPath(action)) {
+      return createNotFoundResponse();
+    }
+
+    const currentUserProfile =
+      await getUserProfileDtoByUsername(currentUserName);
+
+    if (currentUserProfile === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    const isAdmin = currentUserProfile.role === "ADMIN";
+
+    if (isApprovalAction) {
       const actionDto = await executeTicketApprovalAction({
         ticketId,
         action,
         currentUserName,
-        isAdmin: currentUserRole === "ADMIN",
+        isAdmin,
         payload: requireBody<ApprovalTicketActionRequestDto>(context.options),
       });
 
       return NextResponse.json(actionDto, { status: 201 });
-    }
-
-    if (!isTicketGeneralActionPath(action)) {
-      return createNotFoundResponse();
-    }
-
-    if (currentUserRole === null) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const actionDto = await executeTicketAction({
@@ -234,7 +240,7 @@ export async function handleTicketPortalApi(
       action,
       currentUserName,
       payload: requireBody<TicketActionRequestDto>(context.options),
-      isAdmin: currentUserRole === "ADMIN",
+      isAdmin,
     });
 
     return NextResponse.json(actionDto, { status: 201 });
@@ -375,15 +381,6 @@ async function handleTicketDraftDetailPortalApi(
 function getCurrentUserName(context: ServiceDeskPortalApiContext) {
   const value = new Headers(context.options.headers).get(
     CURRENT_USERNAME_HEADER,
-  );
-  const normalizedValue = value?.trim();
-
-  return normalizedValue ? normalizedValue : null;
-}
-
-function getCurrentUserRole(context: ServiceDeskPortalApiContext) {
-  const value = new Headers(context.options.headers).get(
-    CURRENT_USER_ROLE_HEADER,
   );
   const normalizedValue = value?.trim();
 

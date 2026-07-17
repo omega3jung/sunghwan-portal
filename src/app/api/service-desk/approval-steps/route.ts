@@ -6,6 +6,7 @@ import {
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   assertApprovalAssigneeEligible,
+  getServiceDeskCategoryContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import {
   localListApprovalSteps,
@@ -16,7 +17,6 @@ import {
   normalizeCategoryApprovalSettings,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep/approvalStepUtils";
 import {
-  getServiceDeskCategoryContext,
   isServiceDeskSettingsRequest,
   parseCategoryScope,
   requireSettingsResourceAccess,
@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
     const operationalTarget = settingsAuthorization
       ? null
       : await resolveOperationalServiceDeskReadTarget({
+          request,
           principalContext,
           requestedTenantId,
           requestedScope,
@@ -169,7 +170,6 @@ export async function PUT(request: NextRequest) {
       submittedCategoryIds.add(category.id);
 
       const categoryContext = await getServiceDeskCategoryContext(
-        authorization.dataScope,
         category.id,
       );
 

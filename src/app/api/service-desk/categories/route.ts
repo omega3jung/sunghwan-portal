@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const operationalTarget = settingsAuthorization
       ? null
       : await resolveOperationalServiceDeskReadTarget({
+          request,
           principalContext,
           requestedTenantId,
           requestedScope,

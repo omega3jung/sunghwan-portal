@@ -9,6 +9,8 @@ import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
 import {
   createTenant,
   deactivateTenantById,
+  getServiceDeskSettingsTenantContext,
+  getServiceDeskSettingsTenantContextByCompanyId,
   getTenantById,
   getTenants,
   updateTenantById,
@@ -23,16 +25,64 @@ import {
 } from "./serviceDeskPortalApiUtils";
 
 const TENANT_LIST_PATH_PATTERN = /^\/service-desk\/tenants$/;
+const TENANT_CONTEXT_BY_COMPANY_PATH_PATTERN =
+  /^\/service-desk\/tenants\/context$/;
+const TENANT_DETAIL_CONTEXT_PATH_PATTERN =
+  /^\/service-desk\/tenants\/([^/]+)\/context$/;
 const TENANT_DETAIL_PATH_PATTERN = /^\/service-desk\/tenants\/([^/]+)$/;
 
 export async function handleTenantPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
   const tenantListMatch = TENANT_LIST_PATH_PATTERN.exec(context.path);
+  const tenantContextByCompanyMatch =
+    TENANT_CONTEXT_BY_COMPANY_PATH_PATTERN.exec(context.path);
+  const tenantDetailContextMatch =
+    TENANT_DETAIL_CONTEXT_PATH_PATTERN.exec(context.path);
   const tenantDetailMatch = TENANT_DETAIL_PATH_PATTERN.exec(context.path);
 
-  if (!tenantListMatch && !tenantDetailMatch) {
+  if (
+    !tenantListMatch &&
+    !tenantContextByCompanyMatch &&
+    !tenantDetailContextMatch &&
+    !tenantDetailMatch
+  ) {
     return createNotFoundResponse();
+  }
+
+  if (tenantDetailContextMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
+    const tenantId = decodeURIComponent(tenantDetailContextMatch[1] ?? "");
+    const tenant = await getServiceDeskSettingsTenantContext(tenantId);
+
+    return tenant ? NextResponse.json(tenant) : createNotFoundResponse();
+  }
+
+  if (tenantContextByCompanyMatch) {
+    if (context.method !== "GET") {
+      return createNotFoundResponse();
+    }
+
+    const companyId = getPortalApiQueryValue(
+      context.request,
+      context.options,
+      "companyId",
+    );
+
+    if (!companyId) {
+      return NextResponse.json(
+        { message: "companyId is required" },
+        { status: 400 },
+      );
+    }
+
+    const tenant =
+      await getServiceDeskSettingsTenantContextByCompanyId(companyId);
+
+    return tenant ? NextResponse.json(tenant) : createNotFoundResponse();
   }
 
   if (tenantListMatch) {

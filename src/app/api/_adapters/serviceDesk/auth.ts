@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
-import type { Session } from "next-auth";
 
 import { getAuthToken } from "@/app/api/_adapters/auth/requestAuth";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import type { DataScope } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
 import { type CategoryScope } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
+import type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
 import {
   canManageServiceDeskSettings,
   canReadServiceDeskSettings,
@@ -15,12 +16,6 @@ import {
   type ServiceDeskSettingsResource,
 } from "@/lib/application/serviceDesk";
 import { resolveDemoProfile } from "@/mocks/domain/user";
-import {
-  getServiceDeskSettingsTenantContext as getRemoteServiceDeskSettingsTenantContext,
-  getServiceDeskSettingsTenantContextByCompanyId as getRemoteServiceDeskSettingsTenantContextByCompanyId,
-  type ServiceDeskSettingsTenantContext,
-} from "@/server/data/serviceDesk/tenant";
-import { getUserProfileDtoByUsername } from "@/server/data/users";
 
 export type ServiceDeskSettingsPrincipalContext = {
   principal: AppUser;
@@ -30,11 +25,18 @@ export type ServiceDeskSettingsPrincipalContext = {
 };
 
 async function getServiceDeskSettingsTenantContext(
+  request: NextRequest,
   dataScope: DataScope,
   tenantId: string | number,
 ) {
   if (dataScope === "REMOTE") {
-    return getRemoteServiceDeskSettingsTenantContext(tenantId);
+    const response = await portalApiJson(request, {
+      method: "GET",
+      path: `/service-desk/tenants/${encodeURIComponent(String(tenantId))}/context`,
+      errorMessage: "Failed to fetch Service Desk tenant context",
+    });
+
+    return readTenantContextResponse(response);
   }
 
   const tenant = getLocalDemoTenants().find(
@@ -45,11 +47,19 @@ async function getServiceDeskSettingsTenantContext(
 }
 
 async function getServiceDeskSettingsTenantContextByCompanyId(
+  request: NextRequest,
   dataScope: DataScope,
   companyId: string | number,
 ) {
   if (dataScope === "REMOTE") {
-    return getRemoteServiceDeskSettingsTenantContextByCompanyId(companyId);
+    const response = await portalApiJson(request, {
+      method: "GET",
+      path: "/service-desk/tenants/context",
+      query: { companyId },
+      errorMessage: "Failed to fetch Service Desk tenant context",
+    });
+
+    return readTenantContextResponse(response);
   }
 
   const tenant = getLocalDemoTenants().find(
@@ -89,38 +99,11 @@ export async function resolveServiceDeskSettingsPrincipal(
   }
 
   const dataScope = token.dataScope;
-  const principal = await resolveCanonicalAppUser(effectiveUsername, dataScope);
-
-  if (!principal) {
-    throw createAuthorizationError("User profile is unavailable.", 403);
-  }
-
-  return {
-    principal,
-    dataScope,
-    originalUsername,
+  const principal = await resolveCanonicalAppUser(
+    request,
     effectiveUsername,
-  };
-}
-
-export async function resolveServiceDeskSettingsPrincipalFromSession(
-  session: Session | null,
-): Promise<ServiceDeskSettingsPrincipalContext> {
-  if (!session?.user) {
-    throw createAuthorizationError("Authentication is required.", 401);
-  }
-
-  const originalUsername = normalizeUsername(session.user.username);
-  const effectiveUsername = normalizeUsername(
-    session.impersonation?.impersonatedUser.username ?? session.user.username,
+    dataScope,
   );
-
-  if (!originalUsername || !effectiveUsername) {
-    throw createAuthorizationError("User identity is unavailable.", 401);
-  }
-
-  const dataScope = session.user.dataScope;
-  const principal = await resolveCanonicalAppUser(effectiveUsername, dataScope);
 
   if (!principal) {
     throw createAuthorizationError("User profile is unavailable.", 403);
@@ -166,16 +149,19 @@ export async function requireServiceDeskSettingsAdmin(request: NextRequest) {
 }
 
 export async function resolveOperationalServiceDeskReadTarget({
+  request,
   principalContext,
   requestedTenantId,
   requestedScope,
 }: {
+  request: NextRequest;
   principalContext: ServiceDeskSettingsPrincipalContext;
   requestedTenantId?: string | number | null;
   requestedScope?: CategoryScope | null;
 }) {
   const { dataScope, principal } = principalContext;
   const ownTenant = await getServiceDeskSettingsTenantContextByCompanyId(
+    request,
     dataScope,
     principal.companyId,
   );
@@ -208,7 +194,11 @@ export async function resolveOperationalServiceDeskReadTarget({
   const targetTenant =
     requestedTenantId === null || requestedTenantId === undefined
       ? ownTenant
-      : await getServiceDeskSettingsTenantContext(dataScope, requestedTenantId);
+      : await getServiceDeskSettingsTenantContext(
+          request,
+          dataScope,
+          requestedTenantId,
+        );
 
   if (!targetTenant || !targetTenant.active) {
     throw createSettingsAuthorizationError(
@@ -244,6 +234,7 @@ export async function resolveAuthorizedSettingsTenant({
 
   if (adminType === "TENANT_ADMIN") {
     const ownTenant = await getServiceDeskSettingsTenantContextByCompanyId(
+      request,
       dataScope,
       principal.companyId,
     );
@@ -280,6 +271,7 @@ export async function resolveAuthorizedSettingsTenant({
   }
 
   const tenant = await getServiceDeskSettingsTenantContext(
+    request,
     dataScope,
     requestedTenantId,
   );
@@ -373,6 +365,7 @@ export function toSettingsResourceContext(
 }
 
 async function resolveCanonicalAppUser(
+  request: NextRequest,
   username: string,
   dataScope: DataScope,
 ): Promise<AppUser | null> {
@@ -380,7 +373,42 @@ async function resolveCanonicalAppUser(
     return resolveDemoProfile(username);
   }
 
-  return getUserProfileDtoByUsername(username);
+  const response = await portalApiJson(request, {
+    method: "GET",
+    path: `/users/${encodeURIComponent(username)}/profile`,
+    errorMessage: "Failed to fetch user profile",
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw Object.assign(new Error("Failed to fetch user profile"), {
+      status: response.status,
+    });
+  }
+
+  const payload = (await response.json()) as { data?: AppUser | null };
+
+  return payload.data ?? null;
+}
+
+async function readTenantContextResponse(
+  response: Response,
+): Promise<ServiceDeskSettingsTenantContext | null> {
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw Object.assign(
+      new Error("Failed to fetch Service Desk tenant context"),
+      { status: response.status },
+    );
+  }
+
+  return (await response.json()) as ServiceDeskSettingsTenantContext;
 }
 
 function normalizeUsername(value: unknown) {

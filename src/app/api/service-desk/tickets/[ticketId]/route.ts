@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  getCurrentUserScope,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalUserScope } from "@/app/api/_adapters/localDemo/auth";
 import {
   localDeleteTicket,
   localGetTicket,
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const currentUserScope = await getCurrentUserScope(request);
+    const currentUserScope = await getCurrentLocalUserScope(request);
 
     if (currentUserScope === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentUserScope(request);
+      const currentUserScope = await getCurrentLocalUserScope(request);
 
       if (currentUserScope === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -142,7 +142,7 @@ export async function DELETE(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentUserScope(request);
+      const currentUserScope = await getCurrentLocalUserScope(request);
 
       if (currentUserScope === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });

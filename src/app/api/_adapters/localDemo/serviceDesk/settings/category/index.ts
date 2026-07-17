@@ -1,4 +1,4 @@
-// src/server/serviceDesk/settings/category/localDemo/index.ts
+// src/app/api/_adapters/localDemo/serviceDesk/settings/category/index.ts
 
 export {
   localSaveCategoryTree,

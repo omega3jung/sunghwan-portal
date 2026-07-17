@@ -1,6 +1,7 @@
 import { TenantCategoryTree } from "@/domain/serviceDesk";
 import type {
   SaveServiceDeskCategoryTreePayload,
+  ServiceDeskCategoryContext,
   ServiceDeskCategoryListParams,
 } from "@/feature/serviceDesk/category/types";
 import client from "@/lib/client/api";
@@ -22,6 +23,16 @@ export const serviceDeskCategoryApi = {
     );
 
     return res.data.items;
+  },
+  getContext: async (
+    categoryId: string | number,
+  ): Promise<ServiceDeskCategoryContext> => {
+    const normalizedCategoryId = String(categoryId).trim();
+    const res = await client.api.get<ServiceDeskCategoryContext>(
+      `/api/service-desk/categories/${encodeURIComponent(normalizedCategoryId)}/context`,
+    );
+
+    return res.data;
   },
   saveTree: async (
     payload: SaveServiceDeskCategoryTreePayload,
