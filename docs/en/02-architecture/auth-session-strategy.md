@@ -57,13 +57,13 @@ The current stack is:
 type AuthUser = {
   id: string;
   username: string;
-  displayName: string;
+  displayName: LocalizedText;
   email: string;
   accessToken: string;
 
   dataScope: "LOCAL" | "REMOTE";
   userScope: "INTERNAL" | "CLIENT";
-  clientId: string | null;
+  companyId: number;
   permission: AccessLevel;
   role: Role;
 };
@@ -104,16 +104,14 @@ So the session is not "id only", but it is still intentionally smaller than the 
 type AppUser = {
   id: string;
   username: string;
-  displayName: string;
+  displayName: LocalizedText;
   email: string | null;
   image?: string;
 
   userScope: UserScope;
-  clientId: string | null;
+  companyId: number;
 
   permission: AccessLevel;
-  role: Role | null;
-
   canUseSuperUser: boolean | null;
   canUseImpersonation: boolean | null;
 };
@@ -169,7 +167,7 @@ On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 - `accessToken`
 - `dataScope`
 - `userScope`
-- `clientId`
+- `companyId`
 - `permission`
 - `role`
 
@@ -189,7 +187,7 @@ session.user = {
   email,
   dataScope,
   userScope,
-  clientId,
+  companyId,
   permission,
   role,
 };
@@ -298,6 +296,7 @@ type CurrentSession = {
   user: AppUser | null;
   isDemoUser: boolean;
   isSuperUser: boolean;
+  isClient: boolean;
   superUserActivated: Date | null;
   security: {
     loginLockedUntil: number | null;
@@ -308,6 +307,22 @@ type CurrentSession = {
 ```
 
 This is the object the protected UI actually consumes.
+
+During impersonation, `CurrentSession.user` is always the effective user:
+
+```txt
+impersonated AppUser ?? original logged-in AppUser
+```
+
+`useCurrentSession()` also exposes the underlying NextAuth result for auth/session
+operations. These two user projections have intentionally different meanings:
+
+```ts
+const session = useCurrentSession();
+
+session.data?.user; // original authenticated SessionUser
+session.current.user; // effective AppUser used by the UI
+```
 
 ---
 
@@ -420,7 +435,7 @@ Meaning:
 startImpersonation(impersonatedUsername)
 -> POST /api/auth/impersonation
 -> session.update({ impersonation })
--> useImpersonation() fetches impersonated user profile
+-> useCurrentUserProfileQuery() fetches the effective user profile
 -> impersonationStore.syncFromSession()
 -> currentUser switches in UI
 ```
@@ -434,7 +449,7 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 Based on the current implementation:
 
 - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `TENANT` user
+- the impersonation target must be a `CLIENT` user
 
 This rule lives in the auth layer, not in the UI.
 

@@ -22,7 +22,7 @@ import {
 } from "@/lib/application/contracts/organization";
 import { allCompaniesMock } from "@/mocks/domain/organization/companies";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
-import { employeesMock } from "@/mocks/domain/organization/employee";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 export function listLocalCompanies() {
@@ -77,7 +77,7 @@ export const updateLocalDepartment = (
 export function listLocalEmployees(searchParams: URLSearchParams) {
   const data = camelEmployeeMapper(
     applyRuleGroupFilter(
-      employeesMock.map((employee) => ({
+      allEmployeesMock.map((employee) => ({
         ...employee,
         companyId: employee.e_company_id,
       })),
@@ -89,7 +89,9 @@ export function listLocalEmployees(searchParams: URLSearchParams) {
 
 export function getLocalEmployee(id: string) {
   return (
-    camelEmployeeMapper(employeesMock).find((item) => item.id === Number(id)) ??
+    camelEmployeeMapper(allEmployeesMock).find(
+      (item) => item.id === Number(id),
+    ) ??
     null
   );
 }

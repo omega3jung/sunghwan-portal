@@ -3,11 +3,11 @@ import type { RuleGroupTypeIC } from "react-querybuilder";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
 import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
 import {
@@ -81,7 +81,11 @@ async function handleTicketSearch(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const isInternal = await isCurrentLocalUserInternal(request);
+
+      if (isInternal === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
 
       const result = localSearchTickets({
         isInternal,

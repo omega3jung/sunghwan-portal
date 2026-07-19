@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
 import {
   startTicketWorkLocal,
   toLocalStartWorkResponse,
@@ -35,7 +35,11 @@ export async function POST(
 
   if (!isRemote) {
     try {
-      const isInternal = await isInternalUser(request);
+      const isInternal = await isCurrentLocalUserInternal(request);
+
+      if (isInternal === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
       const updatedTicket = startTicketWorkLocal({
         ticketId,
         employeeUserName: currentUserName,

@@ -1,31 +1,97 @@
 import { ACCESS_LEVEL } from "@/domain/auth";
-import type { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
+import type {
+  DbApprovalStep,
+  DbCategoryApprovalSettings,
+} from "@/feature/serviceDesk/approvalStep";
 
 import {
-  client1PortalSystemIssueMock,
-  client2PortalSystemIssueMock,
-  clientAccountAccessMock,
-  clientHardwareDeviceMock,
-  clientHrSystemPayrollMock,
-  clientNetworkConnectivityMock,
-  clientPrintingOfficeEquipmentMock,
-  clientSoftwareApplicationMock,
-} from "../categories/client";
+  clientAccountAccessMock as demoCorporationAccountAccessMock,
+  clientHardwareDeviceMock as demoCorporationHardwareDeviceMock,
+  clientHrSystemPayrollMock as demoCorporationHrSystemPayrollMock,
+  clientNetworkConnectivityMock as demoCorporationNetworkConnectivityMock,
+  clientPortalSystemIssueMock as demoCorporationPortalSystemIssueMock,
+  clientPrintingOfficeEquipmentMock as demoCorporationPrintingOfficeEquipmentMock,
+  clientSoftwareApplicationMock as demoCorporationSoftwareApplicationMock,
+} from "../categories/client/demoCorporation";
+import {
+  clientAccountAccessMock as demoEnergyAccountAccessMock,
+  clientDataInfoManagementMock as demoEnergyDataInfoManagementMock,
+  clientHardwareDeviceMock as demoEnergyHardwareDeviceMock,
+  clientHrSystemPayrollMock as demoEnergyHrSystemPayrollMock,
+  clientOtherInquiryMock as demoEnergyOtherInquiryMock,
+  clientPortalSystemIssueMock as demoEnergyPortalSystemIssueMock,
+  clientSoftwareApplicationMock as demoEnergySoftwareApplicationMock,
+} from "../categories/client/demoEnergy";
 import { categoryApprovalSettingsHelper } from "./shared";
 
-const CLIENT_1_JOB_FIELD_ID = {
+const DEMO_CORPORATION_JOB_FIELD_ID = {
   HR_MANAGER: 293,
   IT_MANAGER: 290,
 } as const;
 
-const CLIENT_2_JOB_FIELD_ID = {
-  IT_MANAGER: 310,
+const DEMO_ENERGY_JOB_FIELD_ID = {
+  CORPORATE_SERVICES_DIRECTOR: 333,
+  ENERGY_SYSTEMS_MANAGER: 331,
+  TECHNOLOGY_MANAGER: 330,
 } as const;
+
+const createManagerApprovalStep = (
+  approvalStepId: number,
+  categoryId: number,
+): DbApprovalStep => ({
+  approval_step_id: approvalStepId,
+  approval_step_name: {
+    en: "Upper manager's approval",
+    es: "Aprobación del superior",
+    fr: "Approbation du supérieur",
+    ko: "상위 관리자 승인",
+  },
+  approval_step_description: {
+    en: "Review the request before work begins.",
+    es: "Revise la solicitud antes de comenzar el trabajo.",
+    fr: "Examinez la demande avant le début du traitement.",
+    ko: "작업을 시작하기 전에 요청을 검토합니다.",
+  },
+  approval_step_index: 1,
+  category_id: categoryId,
+  approval_step_assignee: {
+    type: "MANAGER",
+    level: 1,
+  },
+  skip_access_level: ACCESS_LEVEL.MANAGER,
+});
+
+const createJobFieldApprovalStep = (
+  approvalStepId: number,
+  categoryId: number,
+  fieldId: number,
+): DbApprovalStep => ({
+  approval_step_id: approvalStepId,
+  approval_step_name: {
+    en: "Responsible manager's approval",
+    es: "Aprobación del responsable",
+    fr: "Approbation du responsable",
+    ko: "담당 관리자 승인",
+  },
+  approval_step_description: {
+    en: "Confirm that the responsible team can process the request.",
+    es: "Confirme que el equipo responsable puede procesar la solicitud.",
+    fr: "Confirmez que l'équipe responsable peut traiter la demande.",
+    ko: "담당 조직에서 요청을 처리할 수 있는지 확인합니다.",
+  },
+  approval_step_index: 1,
+  category_id: categoryId,
+  approval_step_assignee: {
+    type: "JOB_FIELD",
+    field_id: fieldId,
+  },
+  skip_access_level: ACCESS_LEVEL.MANAGER,
+});
 
 export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   /* Portal / System */
   {
-    ...categoryApprovalSettingsHelper(client1PortalSystemIssueMock),
+    ...categoryApprovalSettingsHelper(demoCorporationPortalSystemIssueMock),
     approval_step: [
       {
         approval_step_id: 11,
@@ -42,7 +108,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: client1PortalSystemIssueMock.category_id,
+        category_id: demoCorporationPortalSystemIssueMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -64,10 +130,10 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "네트워크 문제의 IT와 관련 유무를 확인",
         },
         approval_step_index: 2,
-        category_id: client1PortalSystemIssueMock.category_id,
+        category_id: demoCorporationPortalSystemIssueMock.category_id,
         approval_step_assignee: {
           type: "JOB_FIELD",
-          field_id: CLIENT_1_JOB_FIELD_ID.IT_MANAGER,
+          field_id: DEMO_CORPORATION_JOB_FIELD_ID.IT_MANAGER,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
       },
@@ -75,7 +141,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* Account & Access */
   {
-    ...categoryApprovalSettingsHelper(clientAccountAccessMock),
+    ...categoryApprovalSettingsHelper(demoCorporationAccountAccessMock),
     approval_step: [
       {
         approval_step_id: 13,
@@ -92,7 +158,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: clientAccountAccessMock.category_id,
+        category_id: demoCorporationAccountAccessMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -103,7 +169,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* Hardware & Device */
   {
-    ...categoryApprovalSettingsHelper(clientHardwareDeviceMock),
+    ...categoryApprovalSettingsHelper(demoCorporationHardwareDeviceMock),
     approval_step: [
       {
         approval_step_id: 14,
@@ -120,7 +186,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: clientHardwareDeviceMock.category_id,
+        category_id: demoCorporationHardwareDeviceMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -131,7 +197,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* Software & App */
   {
-    ...categoryApprovalSettingsHelper(clientSoftwareApplicationMock),
+    ...categoryApprovalSettingsHelper(demoCorporationSoftwareApplicationMock),
     approval_step: [
       {
         approval_step_id: 15,
@@ -148,7 +214,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: clientSoftwareApplicationMock.category_id,
+        category_id: demoCorporationSoftwareApplicationMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -159,7 +225,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* Network */
   {
-    ...categoryApprovalSettingsHelper(clientNetworkConnectivityMock),
+    ...categoryApprovalSettingsHelper(demoCorporationNetworkConnectivityMock),
     approval_step: [
       {
         approval_step_id: 16,
@@ -176,10 +242,10 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "네트워크 문제의 IT와 관련 유무를 확인",
         },
         approval_step_index: 1,
-        category_id: clientNetworkConnectivityMock.category_id,
+        category_id: demoCorporationNetworkConnectivityMock.category_id,
         approval_step_assignee: {
           type: "JOB_FIELD",
-          field_id: CLIENT_1_JOB_FIELD_ID.IT_MANAGER,
+          field_id: DEMO_CORPORATION_JOB_FIELD_ID.IT_MANAGER,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
       },
@@ -187,7 +253,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* Printing */
   {
-    ...categoryApprovalSettingsHelper(clientPrintingOfficeEquipmentMock),
+    ...categoryApprovalSettingsHelper(demoCorporationPrintingOfficeEquipmentMock),
     approval_step: [
       {
         approval_step_id: 17,
@@ -204,7 +270,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: clientPrintingOfficeEquipmentMock.category_id,
+        category_id: demoCorporationPrintingOfficeEquipmentMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -215,7 +281,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
   },
   /* HR Systems */
   {
-    ...categoryApprovalSettingsHelper(clientHrSystemPayrollMock),
+    ...categoryApprovalSettingsHelper(demoCorporationHrSystemPayrollMock),
     approval_step: [
       {
         approval_step_id: 18,
@@ -232,18 +298,18 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "인사 문제 관련 유무 확인",
         },
         approval_step_index: 1,
-        category_id: clientHrSystemPayrollMock.category_id,
+        category_id: demoCorporationHrSystemPayrollMock.category_id,
         approval_step_assignee: {
           type: "JOB_FIELD",
-          field_id: CLIENT_1_JOB_FIELD_ID.HR_MANAGER,
+          field_id: DEMO_CORPORATION_JOB_FIELD_ID.HR_MANAGER,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
       },
     ],
   },
-  /* Client 2 Portal / System */
+  /* Demo Energy - Portal / System */
   {
-    ...categoryApprovalSettingsHelper(client2PortalSystemIssueMock),
+    ...categoryApprovalSettingsHelper(demoEnergyPortalSystemIssueMock),
     approval_step: [
       {
         approval_step_id: 19,
@@ -260,7 +326,7 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "중복 문제를 방지하기 위한 확인",
         },
         approval_step_index: 1,
-        category_id: client2PortalSystemIssueMock.category_id,
+        category_id: demoEnergyPortalSystemIssueMock.category_id,
         approval_step_assignee: {
           type: "MANAGER",
           level: 1,
@@ -282,43 +348,103 @@ export const clientApprovalStepSettingsMock: DbCategoryApprovalSettings[] = [
           ko: "시스템 문제가 IT와 관련되었는지 확인",
         },
         approval_step_index: 2,
-        category_id: client2PortalSystemIssueMock.category_id,
+        category_id: demoEnergyPortalSystemIssueMock.category_id,
         approval_step_assignee: {
           type: "JOB_FIELD",
-          field_id: CLIENT_2_JOB_FIELD_ID.IT_MANAGER,
+          field_id: DEMO_ENERGY_JOB_FIELD_ID.TECHNOLOGY_MANAGER,
         },
         skip_access_level: ACCESS_LEVEL.MANAGER,
       },
     ],
   },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergyAccountAccessMock),
+    approval_step: [
+      createManagerApprovalStep(
+        21,
+        demoEnergyAccountAccessMock.category_id,
+      ),
+    ],
+  },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergyHardwareDeviceMock),
+    approval_step: [
+      createManagerApprovalStep(
+        22,
+        demoEnergyHardwareDeviceMock.category_id,
+      ),
+    ],
+  },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergySoftwareApplicationMock),
+    approval_step: [
+      createManagerApprovalStep(
+        23,
+        demoEnergySoftwareApplicationMock.category_id,
+      ),
+    ],
+  },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergyDataInfoManagementMock),
+    approval_step: [
+      createJobFieldApprovalStep(
+        24,
+        demoEnergyDataInfoManagementMock.category_id,
+        DEMO_ENERGY_JOB_FIELD_ID.ENERGY_SYSTEMS_MANAGER,
+      ),
+    ],
+  },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergyHrSystemPayrollMock),
+    approval_step: [
+      createJobFieldApprovalStep(
+        25,
+        demoEnergyHrSystemPayrollMock.category_id,
+        DEMO_ENERGY_JOB_FIELD_ID.CORPORATE_SERVICES_DIRECTOR,
+      ),
+    ],
+  },
+  {
+    ...categoryApprovalSettingsHelper(demoEnergyOtherInquiryMock),
+    approval_step: [],
+  },
 ];
 
-const client1ApprovalStepSettingsMock =
+const demoEnergyCategoryIds = new Set(
+  [
+    demoEnergyPortalSystemIssueMock,
+    demoEnergyAccountAccessMock,
+    demoEnergyHardwareDeviceMock,
+    demoEnergySoftwareApplicationMock,
+    demoEnergyDataInfoManagementMock,
+    demoEnergyHrSystemPayrollMock,
+    demoEnergyOtherInquiryMock,
+  ].map((category) => category.category_id),
+);
+
+const demoCorporationApprovalStepSettingsMock =
   clientApprovalStepSettingsMock.filter(
-    ({ category_id }) => category_id !== client2PortalSystemIssueMock.category_id,
+    ({ category_id }) => !demoEnergyCategoryIds.has(category_id),
   );
-const client2ApprovalStepSettingsMock =
-  clientApprovalStepSettingsMock.filter(
-    ({ category_id }) => category_id === client2PortalSystemIssueMock.category_id,
+const demoEnergyApprovalStepSettingsMock =
+  clientApprovalStepSettingsMock.filter(({ category_id }) =>
+    demoEnergyCategoryIds.has(category_id),
   );
 
 const clientApprovalStepSettingsMocks: Record<
   string,
   DbCategoryApprovalSettings[]
 > = {
-  "11": client1ApprovalStepSettingsMock,
-  "12": client2ApprovalStepSettingsMock,
-  client_1: client1ApprovalStepSettingsMock,
-  client_2: client2ApprovalStepSettingsMock,
+  "11": demoCorporationApprovalStepSettingsMock,
+  "13": demoEnergyApprovalStepSettingsMock,
+  client_1: demoCorporationApprovalStepSettingsMock,
+  client_2: demoEnergyApprovalStepSettingsMock,
+  demo_corporation: demoCorporationApprovalStepSettingsMock,
+  demo_energy: demoEnergyApprovalStepSettingsMock,
 };
-
-const defaultClientApprovalStepSettingsMock = client1ApprovalStepSettingsMock;
 
 export const getClientApprovalStepSettingsMock = (
   clientId: string,
 ): DbCategoryApprovalSettings[] => {
-  return (
-    clientApprovalStepSettingsMocks[clientId] ??
-    defaultClientApprovalStepSettingsMock
-  );
+  return clientApprovalStepSettingsMocks[clientId] ?? [];
 };

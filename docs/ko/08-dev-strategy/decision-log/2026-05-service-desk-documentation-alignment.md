@@ -141,7 +141,7 @@ AppUser     -> application-facing user model
 - impersonation을 server/session-aware 동작(클라이언트 단독 override 아님)으로 정렬함.
 - 인가 경계를 명확히 함:
   - 최소 `ADMIN` 권한의 `INTERNAL` 사용자만 impersonation 시작 가능
-  - impersonation 대상은 `TENANT` 사용자여야 함
+  - impersonation 대상은 `CLIENT` 사용자여야 함
   - 규칙은 UI가 아닌 auth layer에 존재
 
 ---

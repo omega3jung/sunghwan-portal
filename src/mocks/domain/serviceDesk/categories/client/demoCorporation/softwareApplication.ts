@@ -1,7 +1,7 @@
-﻿import { DbCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/feature/serviceDesk/category";
 
 export const clientSoftwareApplicationMock = {
-  category_id: 131,
+  category_id: 128,
   category_name: {
     en: "Software & Application",
     es: "Software y Aplicaciones",
@@ -23,7 +23,7 @@ export const clientSoftwareApplicationMock = {
   default_sla_days: 2,
   sub_category: [
     {
-      category_id: 132,
+      category_id: 129,
       category_name: {
         en: "Software installation",
         es: "Instalación de software",
@@ -49,7 +49,7 @@ export const clientSoftwareApplicationMock = {
       default_sla_days: 3,
     },
     {
-      category_id: 133,
+      category_id: 130,
       category_name: {
         en: "Application access issue",
         es: "Problema de acceso a la aplicación",
@@ -75,7 +75,7 @@ export const clientSoftwareApplicationMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 134,
+      category_id: 131,
       category_name: {
         en: "Application bug / error",
         es: "Error / fallo de la aplicación",
@@ -101,7 +101,7 @@ export const clientSoftwareApplicationMock = {
       default_sla_days: 2,
     },
     {
-      category_id: 135,
+      category_id: 132,
       category_name: {
         en: "New feature request",
         es: "Solicitud de nueva funcionalidad",
@@ -127,7 +127,7 @@ export const clientSoftwareApplicationMock = {
       default_sla_days: 5,
     },
     {
-      category_id: 136,
+      category_id: 133,
       category_name: {
         en: "Version upgrade request",
         es: "Solicitud de actualización de versión",
@@ -153,7 +153,7 @@ export const clientSoftwareApplicationMock = {
       default_sla_days: 3,
     },
     {
-      category_id: 137,
+      category_id: 134,
       category_name: {
         en: "License issue",
         es: "Problema de licencia",

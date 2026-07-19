@@ -1,7 +1,7 @@
-﻿import { DbCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/feature/serviceDesk/category";
 
 export const clientAccountAccessMock = {
-  category_id: 111,
+  category_id: 165,
   category_name: {
     en: "Account & Access",
     es: "Cuenta y Acceso",
@@ -23,7 +23,7 @@ export const clientAccountAccessMock = {
   default_sla_days: 2,
   sub_category: [
     {
-      category_id: 112,
+      category_id: 166,
       category_name: {
         en: "New account request",
         es: "Solicitud de nueva cuenta",
@@ -49,7 +49,7 @@ export const clientAccountAccessMock = {
       default_sla_days: 3,
     },
     {
-      category_id: 113,
+      category_id: 167,
       category_name: {
         en: "Access permission change",
         es: "Cambio de permisos de acceso",
@@ -75,7 +75,7 @@ export const clientAccountAccessMock = {
       default_sla_days: null,
     },
     {
-      category_id: 114,
+      category_id: 168,
       category_name: {
         en: "Role / group assignment",
         es: "Asignación de roles / grupos",
@@ -101,7 +101,7 @@ export const clientAccountAccessMock = {
       default_sla_days: null,
     },
     {
-      category_id: 115,
+      category_id: 169,
       category_name: {
         en: "Password reset / MFA issue",
         es: "Restablecimiento de contraseña / problema de MFA",
@@ -127,7 +127,7 @@ export const clientAccountAccessMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 116,
+      category_id: 170,
       category_name: {
         en: "Account lock / unlock",
         es: "Bloqueo / desbloqueo de cuenta",
@@ -153,7 +153,7 @@ export const clientAccountAccessMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 117,
+      category_id: 171,
       category_name: {
         en: "Email account issue",
         es: "Problema con la cuenta de correo electrónico",

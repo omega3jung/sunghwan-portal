@@ -51,6 +51,8 @@ export async function GET(request: NextRequest) {
     const isRemote = principalContext.dataScope === "REMOTE";
     const isInternal = principalContext.principal.userScope === "INTERNAL";
     const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+    const targetTenant =
+      settingsAuthorization?.tenant ?? operationalTarget?.tenant;
 
     if (settingsAuthorization) {
       proxyQuery.set("tenantId", settingsAuthorization.tenant.id);
@@ -77,6 +79,8 @@ export async function GET(request: NextRequest) {
             ? settingsAuthorization.tenant.isOwnerTenant
             : isInternal,
           searchParams: proxyQuery,
+          tenantCompanyId:
+            targetTenant?.companyId ?? principalContext.principal.companyId,
         }),
       );
     }

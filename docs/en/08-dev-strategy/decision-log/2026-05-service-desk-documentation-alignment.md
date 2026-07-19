@@ -141,7 +141,7 @@ AppUser     -> application-facing user model
 - Aligned impersonation as server/session-aware behavior (not client-only override).
 - Clarified authorization boundary:
   - only `INTERNAL` users with at least `ADMIN` access can start impersonation
-  - impersonation target must be a `TENANT` user
+  - impersonation target must be a `CLIENT` user
   - rule lives in auth layer, not UI
 
 ---

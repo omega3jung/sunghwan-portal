@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { RouteContext } from "@/app/api/_adapters/http";
+import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
 import {
   getMaxHistoryNo,
   getTicketContext,
@@ -37,7 +37,11 @@ export async function GET(
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
+    const isInternal = await isCurrentLocalUserInternal(request);
+
+    if (isInternal === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
     const item = getLocalDemoActions(isInternal).find(
       (candidate) =>
         candidate.ticket_id === ticketId &&
@@ -86,7 +90,11 @@ export async function PATCH(
         );
       }
 
-      const isInternal = await isInternalUser(request);
+      const isInternal = await isCurrentLocalUserInternal(request);
+
+      if (isInternal === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
       const numericActionNo = Number(actionNo);
       const { ticket } = getTicketContext(ticketId, isInternal);
 

@@ -1,7 +1,7 @@
 import type { DbEmployee } from "@/feature/organization/employee";
 
 import { clientEmployeesMockData } from "./client";
-import { internalDemoEmployee } from "./demoUser";
+import { clientDemoEmployee, internalDemoEmployee } from "./demoUser";
 import headOfficeEmployeeMock from "./portalOwner/headOffice.json";
 import itEmployeeMock from "./portalOwner/it.json";
 import logisticsEmployeeMock from "./portalOwner/logistics.json";
@@ -36,5 +36,6 @@ export const employeesMock: DbEmployee[] = [
 export const allEmployeesMock: DbEmployee[] = [
   ...portalOwnerEmployeesMock,
   ...internalDemoEmployee,
+  ...clientDemoEmployee,
   ...clientEmployeesMock,
 ];

@@ -46,14 +46,15 @@ export const useCreateTicketDialog = ({
 }: UseCreateTicketDialogParams) => {
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
-  const { data: currentSession } = useCurrentSession();
-  const isRemoteMode = currentSession?.user.dataScope === "REMOTE";
+  const { current, data: session } = useCurrentSession();
+  const effectiveUser = current.user;
+  const isRemoteMode = session?.user.dataScope === "REMOTE";
 
   const [open, setOpen] = useState(false);
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(ticketStep.info);
 
-  const ticketForm = useTicketForm(currentSession?.user, language);
+  const ticketForm = useTicketForm(effectiveUser, language);
   const {
     formState: { isDirty },
   } = ticketForm;
@@ -93,17 +94,17 @@ export const useCreateTicketDialog = ({
       ...ticketFormDefaultValues,
       dueAt: new Date(),
       requester: {
-        id: currentSession?.user.username ?? "",
-        email: currentSession?.user.email ?? "",
-        name: currentSession?.user.displayName
-          ? tLocal(currentSession.user.displayName)
+        id: effectiveUser?.username ?? "",
+        email: effectiveUser?.email ?? "",
+        name: effectiveUser?.displayName
+          ? tLocal(effectiveUser.displayName)
           : "",
       },
     }),
     [
-      currentSession?.user.displayName,
-      currentSession?.user.email,
-      currentSession?.user.username,
+      effectiveUser?.displayName,
+      effectiveUser?.email,
+      effectiveUser?.username,
       tLocal,
     ],
   );

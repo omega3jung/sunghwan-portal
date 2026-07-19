@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
 import {
   createLocalTicketWorkSession,
   listLocalTicketWorkSessions,
@@ -79,10 +79,16 @@ export async function POST(
       );
     }
 
+    const isInternal = await isCurrentLocalUserInternal(request);
+
+    if (isInternal === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const workSession = createLocalTicketWorkSession({
       ticketId,
       currentUserName,
-      isInternal: await isInternalUser(request),
+      isInternal,
       payload,
     });
 

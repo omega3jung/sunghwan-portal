@@ -216,7 +216,7 @@ Impersonation must not elevate privileges beyond what the original user is allow
 ### Current Authorization Boundary
 
 - Only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- The impersonation target must be a `TENANT` user
+- The impersonation target must be a `CLIENT` user
 
 ---
 

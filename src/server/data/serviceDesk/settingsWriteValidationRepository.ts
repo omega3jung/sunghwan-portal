@@ -50,7 +50,7 @@ with submitted as (
         from jsonb_array_elements_text(context.assignee->'employee_username') username(value)
         where not exists (
           select 1
-          from public.employee employee
+          from public.vw_employee employee
           where employee.e_username = username.value
             and employee.e_company_id = context.tn_company_id
             and employee.e_active = true
@@ -59,7 +59,7 @@ with submitted as (
     when 'DEPARTMENT' then not exists (
       select 1
       from public.department department
-      join public.employee employee
+      join public.vw_employee employee
         on employee.e_department_id = department.d_id
        and employee.e_company_id = context.tn_company_id
        and employee.e_active = true
@@ -74,7 +74,7 @@ with submitted as (
         on department.d_id = job_field.jf_department_id
        and department.d_company_id = context.tn_company_id
        and department.d_active = true
-      join public.employee employee
+      join public.vw_employee employee
         on employee.e_job_field_id = job_field.jf_id
        and employee.e_company_id = context.tn_company_id
        and employee.e_active = true
@@ -83,7 +83,7 @@ with submitted as (
     )
     when 'MANAGER' then not exists (
       select 1
-      from public.employee employee
+      from public.vw_employee employee
       join public.vw_auth_login_user profile
         on profile.e_username = employee.e_username
       where employee.e_company_id = context.tn_company_id
@@ -135,7 +135,7 @@ with submitted as (
 ), resolved_employee as (
   select distinct context.category_id, employee.e_username
   from category_context context
-  join public.employee employee
+  join public.vw_employee employee
     on employee.e_company_id = context.tn_company_id
    and employee.e_active = true
   where employee.e_username in (
@@ -155,7 +155,7 @@ with submitted as (
       from jsonb_array_elements_text(context.assignee->'employee_username') username(value)
       where not exists (
         select 1
-        from public.employee employee
+        from public.vw_employee employee
         where employee.e_company_id = context.tn_company_id
           and employee.e_active = true
           and employee.e_username = username.value
@@ -171,7 +171,7 @@ with submitted as (
           on department.d_id = job_field.jf_department_id
          and department.d_company_id = context.tn_company_id
          and department.d_active = true
-        join public.employee employee
+        join public.vw_employee employee
           on job_field.jf_id = field.value::bigint
          and job_field.jf_active = true
          and employee.e_job_field_id = job_field.jf_id

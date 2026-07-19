@@ -57,13 +57,6 @@ import type { DbParams, ImageValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
-const activeEmployeeListParams: DbParams = {
-  filter: createFieldFilter({
-    field: "e_active",
-    value: true,
-  }),
-};
-
 const isPresent = <T,>(value: T | null | undefined): value is T =>
   value !== null && value !== undefined;
 
@@ -104,7 +97,8 @@ export default function ServiceDeskPage() {
   const { t: tCommon } = useTranslation(NS.common);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
-  const { data: currentSession } = useCurrentSession();
+  const { current } = useCurrentSession();
+  const effectiveCompanyId = current.user?.companyId;
 
   const searchCriteriaState =
     useSessionStorageState<TicketSearchCriteriaFormValues>({
@@ -137,19 +131,41 @@ export default function ServiceDeskPage() {
   const tickets = ticketSearchResult?.items ?? [];
   const totalCount = ticketSearchResult?.totalCount ?? 0;
 
-  const { data: categoryTrees } = useServiceDeskCategoryListQuery({
-    filter: combineRuleGroups([
-      createFieldFilter({
-        field: "active",
-        value: true,
-      }),
-      createFieldFilter({
-        field: "tenant_company_id",
-        value: currentSession?.user.companyId,
-      }),
-    ]),
-  });
-  const { data: employees } = useEmployeeListQuery(activeEmployeeListParams);
+  const categoryListParams = useMemo<DbParams | undefined>(() => {
+    if (effectiveCompanyId === undefined) return undefined;
+
+    return {
+      filter: combineRuleGroups([
+        createFieldFilter({
+          field: "active",
+          value: true,
+        }),
+        createFieldFilter({
+          field: "tenant_company_id",
+          value: effectiveCompanyId,
+        }),
+      ]),
+    };
+  }, [effectiveCompanyId]);
+  const employeeListParams = useMemo<DbParams | undefined>(() => {
+    if (effectiveCompanyId === undefined) return undefined;
+
+    return {
+      filter: combineRuleGroups([
+        createFieldFilter({
+          field: "companyId",
+          value: effectiveCompanyId,
+        }),
+        createFieldFilter({
+          field: "e_active",
+          value: true,
+        }),
+      ]),
+    };
+  }, [effectiveCompanyId]);
+  const { data: categoryTrees } =
+    useServiceDeskCategoryListQuery(categoryListParams);
+  const { data: employees } = useEmployeeListQuery(employeeListParams);
 
   const categories = useMemo<MainCategory[]>(() => {
     return (categoryTrees ?? [])

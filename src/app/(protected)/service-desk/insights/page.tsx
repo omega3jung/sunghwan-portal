@@ -29,6 +29,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import type { TicketSummary } from "@/domain/serviceDesk";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import { useDepartmentListQuery } from "@/feature/organization/department/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { getStatusOptions } from "@/feature/serviceDesk/shared";
@@ -66,20 +67,16 @@ import { useLocalizedValue } from "@/lib/client/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
 import type { DateRangePreset, DbParams } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";
-import { createFieldFilter } from "@/shared/utils/routing";
+import {
+  combineRuleGroups,
+  createFieldFilter,
+} from "@/shared/utils/routing";
 
 const INSIGHTS_PAGE = 1;
 const INSIGHTS_PAGE_SIZE = 500;
 const INSIGHTS_SORT = "ticketNumber";
 const INSIGHTS_ORDER = "desc";
 const DEFAULT_INSIGHTS_PERIOD: DateRangePreset = "last_3month";
-const activeEmployeeListParams: DbParams = {
-  filter: createFieldFilter({
-    field: "e_active",
-    value: true,
-  }),
-};
-
 type ChartViewMode = "full" | "compact" | "hidden";
 type CriteriaPeriodRange =
   TicketSearchCriteriaFormValues["period"]["dateRange"];
@@ -203,6 +200,8 @@ export default function ServiceDeskInsightsPage() {
   const { t: tCommon } = useTranslation(NS.common);
 
   const { current: userPreference } = useCurrentPreference();
+  const { current } = useCurrentSession();
+  const effectiveCompanyId = current.user?.companyId;
   const tLocal = useLocalizedValue(userPreference.language);
 
   const searchCriteriaState =
@@ -240,7 +239,23 @@ export default function ServiceDeskInsightsPage() {
   const ticketItems = ticketSearchResult?.items;
   const tickets = useMemo(() => ticketItems ?? [], [ticketItems]);
 
-  const { data: employees } = useEmployeeListQuery(activeEmployeeListParams);
+  const employeeListParams = useMemo<DbParams | undefined>(() => {
+    if (effectiveCompanyId === undefined) return undefined;
+
+    return {
+      filter: combineRuleGroups([
+        createFieldFilter({
+          field: "companyId",
+          value: effectiveCompanyId,
+        }),
+        createFieldFilter({
+          field: "e_active",
+          value: true,
+        }),
+      ]),
+    };
+  }, [effectiveCompanyId]);
+  const { data: employees } = useEmployeeListQuery(employeeListParams);
   const { data: departments } = useDepartmentListQuery({});
 
   const users = useMemo<ImageValueLabel[]>(() => {

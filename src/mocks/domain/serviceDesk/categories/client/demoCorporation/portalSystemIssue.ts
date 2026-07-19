@@ -1,6 +1,6 @@
-﻿import { DbCategory, DbSubCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/feature/serviceDesk/category";
 
-const clientPortalSystemIssueMock = {
+export const clientPortalSystemIssueMock = {
   category_id: 101,
   category_name: {
     en: "Portal / System Issues",
@@ -257,7 +257,7 @@ const clientPortalSystemIssueMock = {
       default_sla_days: 1,
     },
     {
-      category_id: 118,
+      category_id: 111,
       category_name: {
         en: "Issue Investigation Request",
         es: "Solicitud de investigación de problemas",
@@ -282,112 +282,57 @@ const clientPortalSystemIssueMock = {
       default_risk_level: null,
       default_sla_days: 2,
     },
+    {
+      category_id: 112,
+      category_name: {
+        en: "Approval Workflow Issue",
+        es: "Problema del flujo de aprobación",
+        fr: "Problème de workflow d’approbation",
+        ko: "승인 워크플로 문제",
+      },
+      category_description: {
+        en: "Request support when an approval request is missing, routed incorrectly, or cannot be completed.",
+        es: "Solicite asistencia cuando una solicitud de aprobación falte, se dirija incorrectamente o no pueda completarse.",
+        fr: "Demandez de l’assistance lorsqu’une demande d’approbation est manquante, mal acheminée ou ne peut pas être finalisée.",
+        ko: "승인 요청이 누락되거나 잘못 전달되거나 완료할 수 없는 문제에 대해 해결을 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please include the request type, approver, and current workflow status.",
+        es: "Incluya el tipo de solicitud, el aprobador y el estado actual del flujo de trabajo.",
+        fr: "Veuillez inclure le type de demande, l’approbateur et l’état actuel du workflow.",
+        ko: "요청 유형, 승인자와 현재 워크플로 상태를 포함하여 요청해주세요.",
+      },
+      category_index: 11,
+      category_active: true,
+      default_priority: "high",
+      default_risk_level: "medium",
+      default_sla_days: 2,
+    },
+    {
+      category_id: 113,
+      category_name: {
+        en: "Employee Directory / Organization Data Issue",
+        es: "Problema del directorio de empleados / datos organizativos",
+        fr: "Problème d’annuaire des employés / données organisationnelles",
+        ko: "직원 디렉터리 / 조직 정보 문제",
+      },
+      category_description: {
+        en: "Request corrections to employee directory, department, or job field information displayed in the portal.",
+        es: "Solicite correcciones en el directorio de empleados, departamento o información del puesto mostrada en el portal.",
+        fr: "Demandez la correction des informations d’annuaire, de service ou de fonction affichées dans le portail.",
+        ko: "포털에 표시된 직원 디렉터리, 부서 또는 직무 정보를 수정하도록 요청합니다.",
+      },
+      category_request_template: {
+        en: "Please include the employee and the organization information that needs to be corrected.",
+        es: "Incluya el empleado y la información organizativa que debe corregirse.",
+        fr: "Veuillez inclure l’employé et les informations organisationnelles à corriger.",
+        ko: "직원 정보와 수정이 필요한 조직 정보를 포함하여 요청해주세요.",
+      },
+      category_index: 12,
+      category_active: true,
+      default_priority: "medium",
+      default_risk_level: "medium",
+      default_sla_days: 2,
+    },
   ],
 } satisfies DbCategory;
-
-const clientCustomIssueMock = [
-  {
-    category_id: 171,
-    category_name: {
-      en: "Client-Specific Issue 1",
-      es: "Problema específico del cliente 1",
-      fr: "Problème spécifique au client 1",
-      ko: "고객사 특화 문제 1",
-    },
-    category_description: {
-      en: "Request support for client-specific issues that are unique to your organization.",
-      es: "Solicite asistencia para problemas específicos del cliente que sean propios de su organización.",
-      fr: "Demandez une assistance pour les problèmes spécifiques au client propres à votre organisation.",
-      ko: "고객사 특화 문제 1에 대해 해결을 요청합니다.",
-    },
-    category_request_template: {
-      en: "Please provide details about the issue you are experiencing.",
-      es: "Proporcione detalles sobre el problema que está experimentando.",
-      fr: "Veuillez fournir des détails sur le problème rencontré.",
-      ko: "발생한 문제에 대한 정보를 포함하여 요청해주세요.",
-    },
-    category_index: 11,
-    category_active: true,
-    default_priority: "high",
-    default_risk_level: null,
-    default_sla_days: 2,
-  },
-  {
-    category_id: 173,
-    category_name: {
-      en: "Client-Specific Issue 2",
-      es: "Problema específico del cliente 2",
-      fr: "Problème spécifique au client 2",
-      ko: "고객사 특화 문제 2",
-    },
-    category_description: {
-      en: "Request support for custom operational or system-related issues defined by your client.",
-      es: "Solicite asistencia para problemas operativos o del sistema personalizados definidos por su cliente.",
-      fr: "Demandez une assistance pour des problèmes opérationnels ou système personnalisés définis par votre client.",
-      ko: "고객사 특화 문제 2에 대해 해결을 요청합니다.",
-    },
-    category_request_template: {
-      en: "Please describe the issue and any relevant context.",
-      es: "Describa el problema y cualquier contexto relevante.",
-      fr: "Veuillez décrire le problème et tout contexte pertinent.",
-      ko: "발생한 문제에 대한 정보를 포함하여 요청해주세요.",
-    },
-    category_index: 12,
-    category_active: true,
-    default_priority: "urgent",
-    default_risk_level: "medium",
-    default_sla_days: 5,
-  },
-  {
-    category_id: 174,
-    category_name: {
-      en: "Client-Specific Issue 3",
-      es: "Problema específico del cliente 3",
-      fr: "Problème spécifique au client 3",
-      ko: "고객사 특화 문제 3",
-    },
-    category_description: {
-      en: "Request support for additional client-defined issues not covered by standard categories.",
-      es: "Solicite asistencia para problemas adicionales definidos por el cliente que no estén cubiertos por las categorías estándar.",
-      fr: "Demandez une assistance pour des problèmes supplémentaires définis par le client et non couverts par les catégories standard.",
-      ko: "고객사 특화 문제 3에 대해 해결을 요청합니다.",
-    },
-    category_request_template: {
-      en: "Please include any information that may help with investigation or resolution.",
-      es: "Incluya cualquier información que ayude a la investigación o resolución.",
-      fr: "Veuillez inclure toute information utile à l’investigation ou à la résolution.",
-      ko: "발생한 문제에 대한 정보를 포함하여 요청해주세요.",
-    },
-    category_index: 13,
-    category_active: false,
-    default_priority: "medium",
-    default_risk_level: "critical",
-    default_sla_days: 2,
-  },
-] satisfies DbSubCategory[];
-
-const mergeClientCustomCategory = (): DbCategory => {
-  return {
-    ...clientPortalSystemIssueMock,
-    sub_category: [
-      ...clientPortalSystemIssueMock.sub_category,
-      ...clientCustomIssueMock,
-    ],
-  };
-};
-
-const createClient2PortalSystemIssue = (): DbCategory => {
-  const category = mergeClientCustomCategory();
-
-  return {
-    ...category,
-    category_id: category.category_id + 100,
-    sub_category: category.sub_category.map((subCategory) => ({
-      ...subCategory,
-      category_id: subCategory.category_id + 100,
-    })),
-  };
-};
-
-export const client1PortalSystemIssueMock = clientPortalSystemIssueMock;
-export const client2PortalSystemIssueMock = createClient2PortalSystemIssue();

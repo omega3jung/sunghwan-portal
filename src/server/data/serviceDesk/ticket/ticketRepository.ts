@@ -206,7 +206,7 @@ select coalesce(
   array[]::text[]
 ) as assignee_usernames
 from resolved_assignees resolved
-join public.employee employee
+join public.vw_employee employee
   on employee.e_username = resolved.username
 join category_context context
   on context.company_id = employee.e_company_id
@@ -287,7 +287,7 @@ select coalesce(
   array[]::text[]
 ) as assignee_usernames
 from resolved_assignees resolved
-join public.employee employee
+join public.vw_employee employee
   on employee.e_username = resolved.username
 join target_company target
   on target.company_id = employee.e_company_id

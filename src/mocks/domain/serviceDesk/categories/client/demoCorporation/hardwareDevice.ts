@@ -1,4 +1,4 @@
-﻿import { DbCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/feature/serviceDesk/category";
 
 export const clientHardwareDeviceMock = {
   category_id: 121,

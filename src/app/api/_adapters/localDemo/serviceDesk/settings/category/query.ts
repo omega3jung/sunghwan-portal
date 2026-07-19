@@ -25,9 +25,11 @@ export const getLocalCategoryTrees = (
 export const localListCategories = ({
   isInternal,
   searchParams,
+  tenantCompanyId,
 }: {
   isInternal: boolean;
   searchParams: URLSearchParams;
+  tenantCompanyId: string | number;
 }) => {
   const filter = parseRuleGroupFilter(searchParams.get("filter"));
   const active =
@@ -37,7 +39,10 @@ export const localListCategories = ({
   const scope = searchParams.get("scope");
   const tenantCategoryTrees = filterTenantCategoryTreesByActive(
     filterTenantCategoryTreesByTenantId(
-      camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+      filterTenantCategoryTreesByCompanyId(
+        camelTenantCategoryTreeMapper(getLocalDemoCategories(isInternal)),
+        tenantCompanyId,
+      ),
       tenantId,
     ),
     active,
@@ -54,6 +59,15 @@ export const localListCategories = ({
     total: items.length,
   };
 };
+
+function filterTenantCategoryTreesByCompanyId(
+  items: TenantCategoryTree[],
+  tenantCompanyId: string | number,
+) {
+  return items.filter(
+    (tenant) => String(tenant.companyId) === String(tenantCompanyId),
+  );
+}
 
 function filterTenantCategoryTreesByScope(
   items: TenantCategoryTree[],

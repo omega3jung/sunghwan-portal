@@ -18,6 +18,14 @@ export async function getCurrentLocalUserScope(
   return (await resolveCurrentLocalAuth(request))?.userScope ?? null;
 }
 
+/** Resolves whether the effective local demo user belongs to the internal scope. */
+export async function isCurrentLocalUserInternal(
+  request: NextRequest,
+): Promise<boolean | null> {
+  const scope = await getCurrentLocalUserScope(request);
+  return scope === null ? null : scope === "INTERNAL";
+}
+
 async function resolveCurrentLocalAuth(request: NextRequest) {
   const token = await getAuthToken(request);
   const currentUserName =

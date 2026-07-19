@@ -9,6 +9,8 @@ import { SessionUser } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { userImpersonationApi } from "@/feature/auth/impersonation/api";
 import { leftMenuQueryKeys } from "@/feature/navigation/leftMenu";
+import { employeeQueryKeys } from "@/feature/organization/employee";
+import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import { userProfileQueryKeys } from "@/feature/user/profile";
 import { useAuthSessionStore } from "@/lib/client/auth";
 import { useImpersonationStore } from "@/lib/client/auth";
@@ -33,6 +35,8 @@ export const useImpersonation = () => {
   const invalidateImpersonationDependentQueries = () =>
     Promise.all([
       queryClient.invalidateQueries({ queryKey: leftMenuQueryKeys.all }),
+      queryClient.invalidateQueries({ queryKey: employeeQueryKeys.all }),
+      queryClient.invalidateQueries({ queryKey: [SERVICE_DESK_KEY] }),
       queryClient.invalidateQueries({ queryKey: userProfileQueryKeys.all }),
     ]);
 

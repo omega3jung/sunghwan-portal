@@ -20,7 +20,7 @@ const FIND_ACTIVE_EMPLOYEE_BY_ID_QUERY = `
     e_engineer_id,
     e_rf_tag_id,
     e_hour_rate
-  from public.employee
+  from public.vw_employee
   where e_active = $1
 `;
 
@@ -42,7 +42,7 @@ const FIND_EMPLOYEES_BY_COMPANY_ID_QUERY = `
     e_engineer_id,
     e_rf_tag_id,
     e_hour_rate
-  from public.employee
+  from public.vw_employee
   where e_active = $1
     and e_company_id = $2
 `;

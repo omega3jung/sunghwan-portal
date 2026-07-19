@@ -80,6 +80,22 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    */
   const dataScope = session.data?.user?.dataScope;
   const expires = session.data?.expires ?? "";
+  const effectiveUsername =
+    session.data?.impersonation?.impersonatedUser.username ??
+    session.data?.user.username ??
+    null;
+
+  /**
+   * Expose only the profile that belongs to the effective session identity.
+   * The persisted store can briefly contain the previous identity while the
+   * profile query is switching after impersonation starts or stops.
+   */
+  const effectiveUser =
+    currentUserProfile?.username === effectiveUsername
+      ? currentUserProfile
+      : user?.username === effectiveUsername
+        ? user
+        : null;
 
   /**
    * Final session object consumed by the UI.
@@ -91,10 +107,10 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
    */
   const current = useMemo<CurrentSession>(() => {
     const isDemoUser = dataScope === "LOCAL";
-    const isClient = user?.userScope === "CLIENT";
+    const isClient = effectiveUser?.userScope === "CLIENT";
 
     return {
-      user: user ?? null,
+      user: effectiveUser,
       expires,
 
       /**
@@ -105,12 +121,19 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       /**
        * Values that are only meaningful when a user exists.
        */
-      isSuperUser: user ? isSuperUser : false,
-      isClient: user ? isClient : false,
-      superUserActivated: user ? superUserActivated : null,
-      security: user ? security : EMPTY_SECURITY,
+      isSuperUser: effectiveUser ? isSuperUser : false,
+      isClient: effectiveUser ? isClient : false,
+      superUserActivated: effectiveUser ? superUserActivated : null,
+      security: effectiveUser ? security : EMPTY_SECURITY,
     };
-  }, [dataScope, expires, isSuperUser, security, superUserActivated, user]);
+  }, [
+    dataScope,
+    effectiveUser,
+    expires,
+    isSuperUser,
+    security,
+    superUserActivated,
+  ]);
 
   /**
    * Updates the local session facade and optionally refreshes NextAuth first.
