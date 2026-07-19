@@ -13,8 +13,9 @@ import {
   localUpdateTenant,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
 import {
-  requireServiceDeskSettingsAdmin,
+  requireServiceDeskSettingsRouteAccess,
   resolveAuthorizedSettingsTenant,
+  resolveServiceDeskSettingsAdminContext,
   resolveTenantResourceAccess,
 } from "@/app/api/_adapters/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
@@ -26,6 +27,8 @@ import {
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   try {
+    await requireServiceDeskSettingsRouteAccess(request);
+
     const { id } = context.params;
     await resolveAuthorizedSettingsTenant({
       request,
@@ -61,8 +64,10 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   try {
+    await requireServiceDeskSettingsRouteAccess(request);
     const { id } = context.params;
-    const { principal } = await requireServiceDeskSettingsAdmin(request);
+    const { principal } =
+      await resolveServiceDeskSettingsAdminContext(request);
 
     if (resolveTenantResourceAccess(principal) !== "manage") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -119,8 +124,10 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
   try {
+    await requireServiceDeskSettingsRouteAccess(request);
     const { id } = context.params;
-    const { principal } = await requireServiceDeskSettingsAdmin(request);
+    const { principal } =
+      await resolveServiceDeskSettingsAdminContext(request);
 
     if (resolveTenantResourceAccess(principal) !== "manage") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });

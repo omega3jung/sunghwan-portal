@@ -31,7 +31,7 @@ export function getServiceDeskAdminType(
     | null
     | undefined,
 ): ServiceDeskAdminType {
-  if (!user || user.permission !== ACCESS_LEVEL.ADMIN) {
+  if (!user || user.permission < ACCESS_LEVEL.ADMIN) {
     return null;
   }
 

@@ -69,11 +69,45 @@ Route handler는 HTTP와 runtime orchestration을 결정한다.
 route.ts
 -> parse request
 -> resolve session/runtime
+-> settings operation이면 getUserAccessLevel(request) >= ADMIN 확인
+-> 해당 server authorization policy 적용
 -> delegate to LOCAL handler or REMOTE service
 -> return DTO response
 ```
 
-Domain rule과 row mapping은 route handler가 소유하지 않는다.
+Route handler는 domain rule이나 row mapping을 inline으로 구현하지 않는다. 저장된
+resource context를 해석하는 domain policy와 server service를 호출한다.
+
+### Service Desk Settings Authorization
+
+Settings route는 LOCAL/REMOTE로 분기하기 전에 read와 mutation에 같은 policy를
+적용한다.
+
+```txt id="settings-route-authorization"
+authenticated JWT access level >= ADMIN (9)
+-> effective username
+-> canonical AppUser permission / userScope / companyId
+-> target Category -> Tenant -> Company context
+-> manage / read / none
+-> LOCAL or REMOTE operation
+```
+
+Route access-level gate와 effective-user resource resolution은 의도적으로 분리한다.
+Impersonation 중에는 JWT access-level gate가 Settings operation 진입을 보호하고,
+effective canonical user가 tenant 및 resource capability를 결정한다.
+
+List/read route는 `none` resource를 제외한다. Mutation route는 `manage`를 요구하고
+저장된 category/tenant 관계를 다시 load하며, read-only 또는 boundary 밖의 principal에는
+`403`을 반환한다. Request의 `tenantId`, `companyId`, scope, admin type은 target
+input일 뿐 authorization evidence가 아니다.
+
+Settings UI는 사용자 경험을 위해 unauthorized direct page access를 Settings Home으로
+redirect할 수 있다. API route는 authentication이 없으면 `401`, capability가 없는
+authenticated principal에는 `403`을 반환하며 page redirect를 사용하지 않는다.
+
+Actor candidate lookup은 API surface에 존재하는 경우 category-centered,
+purpose-aware해야 한다. Settings capability와 approver/assignee company boundary를
+모두 적용하며 global user directory를 반환하지 않는다.
 
 ---
 
@@ -213,3 +247,6 @@ page/component
 현재 routing 전략은 Service Desk list/detail page를 안정적으로 유지하고, 집중
 command는 dialog/API command로 처리하며, LOCAL/REMOTE runtime orchestration은 route
 handler에 둔다. 문서화된 API surface는 실제 route file과 맞아야 한다.
+Service Desk Settings route는 추가로 JWT ADMIN access gate를 적용한 다음 effective
+canonical principal과 category-scope capability를 해석하고 두 runtime 중 하나로
+분기한다.

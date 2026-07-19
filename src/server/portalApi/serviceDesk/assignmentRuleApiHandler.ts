@@ -14,8 +14,10 @@ import {
   validateAssignmentRuleTreeMutation,
 } from "@/server/data/serviceDesk/assignmentRule";
 import { getCategoryTreeByTenantId } from "@/server/data/serviceDesk/category";
-import { mapSettingsWriteError } from "@/server/data/serviceDesk/settingsWriteError";
-import { assertAssignmentReferencesValidForWrite } from "@/server/data/serviceDesk/settingsWriteValidationRepository";
+import {
+  assertAssignmentReferencesValidForWrite,
+  mapSettingsWriteError,
+} from "@/server/data/serviceDesk/shared";
 import {
   type PortalApiQueryExecutor,
   withPortalApiTransaction,
@@ -267,10 +269,7 @@ async function filterAssignmentRulesByScope(
   tenantId: string | null,
   scope: string | null,
 ) {
-  if (
-    (scope !== "INTERNAL" && scope !== "PORTAL") ||
-    !tenantId
-  ) {
+  if ((scope !== "INTERNAL" && scope !== "PORTAL") || !tenantId) {
     return items;
   }
 

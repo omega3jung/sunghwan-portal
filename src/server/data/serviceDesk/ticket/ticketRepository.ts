@@ -1,6 +1,5 @@
-import type { QueryResultRow } from "pg";
-
 import { normalizePagination } from "@/lib/application/api/query";
+import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";
@@ -11,15 +10,7 @@ import {
 
 type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
 
-export type TicketQueryExecutor = <T extends QueryResultRow = QueryResultRow>(
-  text: string,
-  params?: unknown[],
-) => Promise<T[]>;
-
-export type TicketRepositoryOptions = {
-  // Allows service flows to execute multiple repository calls in one transaction.
-  query?: TicketQueryExecutor;
-};
+export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
@@ -136,34 +127,6 @@ where tk_requester_username = $1
 order by coalesce(tk_updated_at, tk_created_at) desc, tk_created_at desc
 limit 1
 for update;
-`;
-
-const SUBMIT_DRAFT_TICKET_ROW_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_ticket_no = $2,
-  tk_tenant_id = $3,
-  tk_category_id = $4,
-  tk_approval_step_id = $15,
-  tk_requester_username = $5,
-  tk_assignee_usernames = array[]::text[],
-  tk_email = $6::jsonb,
-  tk_subject = $7,
-  tk_content = $8,
-  tk_files = $9::jsonb,
-  tk_images = $10::jsonb,
-  tk_status = $14,
-  tk_priority = $11,
-  tk_risk_level = $12,
-  tk_due_at = $13,
-  tk_active = true,
-  tk_created_at = now(),
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_status = 'Draft'
-  and tk_requester_username = $5
-  and tk_active = true
-returning tk_id;
 `;
 
 const FIND_NEXT_APPROVAL_STEP_ID_QUERY = `
@@ -301,119 +264,6 @@ select service_desk.has_ticket_work_assignment_history(
 ) as has_been_worker;
 `;
 
-const UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_approval_step_id = $2,
-  tk_assignee_usernames = $3::text[],
-  tk_status = $4,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-returning tk_id;
-`;
-
-const UPDATE_TICKET_APPROVAL_ROUTING_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_approval_step_id = $2,
-  tk_assignee_usernames = $3::text[],
-  tk_status = $4,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status = 'Approval'
-  and tk_approval_step_id = $5::bigint
-  and ($7::boolean = true or $6 = any(tk_assignee_usernames))
-returning tk_id;
-`;
-
-const UPDATE_TICKET_ASSIGNEES_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_assignee_usernames = $2::text[],
-  tk_status = $3,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-returning tk_id;
-`;
-
-const UPDATE_TICKET_PLANNING_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_priority = $2,
-  tk_risk_level = $3,
-  tk_due_at = $4,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-returning tk_id;
-`;
-
-const UPDATE_TICKET_STATUS_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = $2,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-returning tk_id;
-`;
-
-const START_ASSIGNED_TICKET_WORK_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = 'Working',
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status = 'Assigned'
-  and tk_approval_step_id is null
-  and $2 = any(tk_assignee_usernames)
-returning tk_id;
-`;
-
-// Work minutes are derived from service_desk.work_session in vw_ticket.
-const UPDATE_TICKET_WORK_PROGRESS_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = $2,
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-  and tk_approval_step_id is null
-  and $3 = any(tk_assignee_usernames)
-returning tk_id;
-`;
-
-// Close reason and merge target fields are derived from ticket_history in vw_ticket.
-const UPDATE_TICKET_MERGE_STATE_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = 'Closed',
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-returning tk_id;
-`;
-
-const UPDATE_TICKET_CLOSE_STATE_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = 'Closed',
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status != 'Draft'
-returning tk_id;
-`;
-
 const FIND_EXPIRED_RESOLVED_TICKET_VIEW_ROWS_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS},
@@ -430,17 +280,6 @@ where tk_active = true
   and resolved_history.resolved_at is not null
   and resolved_history.resolved_at <= $1::timestamptz - make_interval(days => $2::int)
 order by resolved_history.resolved_at asc, tk_ticket_no asc;
-`;
-
-const CLOSE_RESOLVED_TICKET_BY_ID_QUERY = `
-update service_desk.ticket
-set
-  tk_status = 'Closed',
-  tk_updated_at = now()
-where tk_id = $1
-  and tk_active = true
-  and tk_status = 'Resolved'
-returning tk_id;
 `;
 
 const FIND_ACTIVE_TICKET_VIEW_ROWS_BY_SEARCH_QUERY = `
@@ -542,39 +381,6 @@ export async function findActiveDraftTicketIdByRequesterUsername(
   return rows[0]?.tk_id ?? null;
 }
 
-export async function submitDraftTicketRowById(
-  ticketId: string,
-  input: CreateTicketRowInput,
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    SUBMIT_DRAFT_TICKET_ROW_BY_ID_QUERY,
-    [
-      ticketId,
-      input.tk_ticket_no,
-      input.tk_tenant_id,
-      input.tk_category_id,
-      input.tk_requester_username,
-      JSON.stringify(input.tk_email),
-      input.tk_subject,
-      input.tk_content,
-      JSON.stringify(input.tk_files),
-      JSON.stringify(input.tk_images),
-      input.tk_priority,
-      input.tk_risk_level,
-      input.tk_due_at,
-      input.tk_status,
-      input.tk_approval_step_id,
-    ],
-  );
-  const submittedTicketId = rows[0]?.tk_id;
-
-  return submittedTicketId
-    ? findActiveTicketViewRowById(submittedTicketId, options)
-    : null;
-}
-
 export async function findNextApprovalStepId(
   params: {
     requesterUsername: string;
@@ -642,190 +448,6 @@ export async function hasTicketWorkAssignmentHistory(
   return rows[0]?.has_been_worker === true;
 }
 
-export async function updateTicketInitialRoutingById(
-  ticketId: string,
-  input: {
-    approvalStepId: number | string | null;
-    assigneeUsernames: string[];
-    status: ServiceDeskTicketViewRow["tk_status"];
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_INITIAL_ROUTING_BY_ID_QUERY,
-    [ticketId, input.approvalStepId, input.assigneeUsernames, input.status],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowById(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketApprovalRoutingById(
-  ticketId: string,
-  input: {
-    approvalStepId: number | string | null;
-    assigneeUsernames: string[];
-    status: ServiceDeskTicketViewRow["tk_status"];
-    currentApprovalStepId: number | string;
-    currentApproverUsername: string;
-    isAdmin?: boolean;
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_APPROVAL_ROUTING_BY_ID_QUERY,
-    [
-      ticketId,
-      input.approvalStepId,
-      input.assigneeUsernames,
-      input.status,
-      input.currentApprovalStepId,
-      input.currentApproverUsername,
-      input.isAdmin ?? false,
-    ],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowById(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketAssigneesById(
-  ticketId: string,
-  input: {
-    assigneeUsernames: string[];
-    status: ServiceDeskTicketViewRow["tk_status"];
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_ASSIGNEES_BY_ID_QUERY,
-    [ticketId, input.assigneeUsernames, input.status],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketPlanningById(
-  ticketId: string,
-  input: {
-    priority: ServiceDeskTicketViewRow["tk_priority"];
-    riskLevel: ServiceDeskTicketViewRow["tk_risk_level"];
-    dueAt: ServiceDeskTicketViewRow["tk_due_at"];
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_PLANNING_BY_ID_QUERY,
-    [ticketId, input.priority, input.riskLevel, input.dueAt],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketStatusById(
-  ticketId: string,
-  input: {
-    status: ServiceDeskTicketViewRow["tk_status"];
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_STATUS_BY_ID_QUERY,
-    [ticketId, input.status],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
-export async function startAssignedTicketWorkById(
-  ticketId: string,
-  input: {
-    assigneeUsername: string;
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    START_ASSIGNED_TICKET_WORK_BY_ID_QUERY,
-    [ticketId, input.assigneeUsername],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowById(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketWorkProgressById(
-  ticketId: string,
-  input: {
-    status: ServiceDeskTicketViewRow["tk_status"];
-    assigneeUsername: string;
-  },
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_WORK_PROGRESS_BY_ID_QUERY,
-    [ticketId, input.status, input.assigneeUsername],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketMergeStateById(
-  ticketId: string,
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_MERGE_STATE_BY_ID_QUERY,
-    [ticketId],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
-export async function updateTicketCloseStateById(
-  ticketId: string,
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    UPDATE_TICKET_CLOSE_STATE_BY_ID_QUERY,
-    [ticketId],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
-}
-
 export async function findExpiredResolvedTicketViewRows(
   input: {
     now: string;
@@ -839,22 +461,6 @@ export async function findExpiredResolvedTicketViewRows(
     FIND_EXPIRED_RESOLVED_TICKET_VIEW_ROWS_QUERY,
     [input.now, input.graceDays],
   );
-}
-
-export async function closeResolvedTicketById(
-  ticketId: string,
-  options: TicketRepositoryOptions = {},
-): Promise<ServiceDeskTicketViewRow | null> {
-  const query = options.query ?? queryPortalApi;
-  const rows = await query<{ tk_id: string }>(
-    CLOSE_RESOLVED_TICKET_BY_ID_QUERY,
-    [ticketId],
-  );
-  const updatedTicketId = rows[0]?.tk_id;
-
-  return updatedTicketId
-    ? findActiveTicketViewRowByIdIncludingDraft(updatedTicketId, options)
-    : null;
 }
 
 export async function findActiveTicketViewRowsBySearch(

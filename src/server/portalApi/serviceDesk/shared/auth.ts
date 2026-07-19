@@ -26,7 +26,7 @@ export type ServiceDeskSettingsPrincipalContext = {
   effectiveUsername: string;
 };
 
-export async function resolveServiceDeskSettingsPrincipal(
+export async function resolveServiceDeskRequestContext(
   request: NextRequest,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
   const token = await getAuthToken(request);
@@ -59,7 +59,7 @@ export async function resolveServiceDeskSettingsPrincipal(
   };
 }
 
-export async function resolveServiceDeskSettingsPrincipalFromSession(
+export async function resolveServiceDeskRequestContextFromSession(
   session: Session | null,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
   if (!session?.user) {
@@ -104,8 +104,10 @@ export function parseCategoryScope(value: unknown): CategoryScope | null {
   return value === "INTERNAL" || value === "PORTAL" ? value : null;
 }
 
-export async function requireServiceDeskSettingsAdmin(request: NextRequest) {
-  const principalContext = await resolveServiceDeskSettingsPrincipal(request);
+export async function resolveServiceDeskSettingsAdminContext(
+  request: NextRequest,
+) {
+  const principalContext = await resolveServiceDeskRequestContext(request);
   const adminType = getServiceDeskAdminType(principalContext.principal);
 
   if (!adminType) {
@@ -194,7 +196,7 @@ export async function resolveAuthorizedSettingsTenant({
   request: NextRequest;
   requestedTenantId?: string | number | null;
 }) {
-  const principalContext = await requireServiceDeskSettingsAdmin(request);
+  const principalContext = await resolveServiceDeskSettingsAdminContext(request);
   const { adminType, principal } = principalContext;
 
   if (adminType === "TENANT_ADMIN") {

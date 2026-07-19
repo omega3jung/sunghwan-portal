@@ -1,3 +1,4 @@
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import {
   findActiveTicketViewRowById,
   findActiveTicketViewRowByIdIncludingDraft,
@@ -5,17 +6,17 @@ import {
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import { createTicketHistory } from "../ticketHistory/ticketHistoryService";
-import type {
-  CreateApprovalTicketActionDto,
-  TicketActionDto,
-  TicketActionRequestDto,
-} from "./ticketActionDto";
 import {
   applyTicketActionEffect,
   approveTicket,
   declineTicket,
   resolveMergeTargetTicket,
-} from "./ticketActionExecution";
+} from "./execute";
+import type {
+  CreateApprovalTicketActionDto,
+  TicketActionDto,
+  TicketActionRequestDto,
+} from "./ticketActionDto";
 import { mapTicketActionRowToDto } from "./ticketActionMapper";
 import {
   createApprovalTicketActionRow,
@@ -33,7 +34,6 @@ import {
   type ApprovalTicketActionRequestDto,
   assertApprovalActionAllowed,
   assertTicketActionAllowed,
-  createStatusError,
   resolveTicketActionExecutionMode,
   type TicketApprovalActionPath,
   type TicketGeneralActionPath,

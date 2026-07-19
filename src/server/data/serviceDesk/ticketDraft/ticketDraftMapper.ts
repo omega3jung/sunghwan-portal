@@ -1,7 +1,7 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { Attach } from "@/domain/serviceDesk";
+import { normalizePostgresStringArray } from "@/server/data/serviceDesk/shared";
 
-import { normalizePostgresStringArray } from "../ticket/ticketMapper";
 import { ServiceDeskTicketEmail } from "../ticket/ticketRow";
 import {
   TicketDraftAttachmentInputDto,

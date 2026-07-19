@@ -112,9 +112,9 @@ purposes.
 
 ## Category Settings Authorization
 
-Owner Admin is identified by trusted `permission = ADMIN` and
+Owner Admin is identified by trusted `permission >= ADMIN` and
 `userScope = INTERNAL`. Tenant Admin is identified by trusted
-`permission = ADMIN` and `userScope = CLIENT`; its tenant is resolved through
+`permission >= ADMIN` and `userScope = CLIENT`; its tenant is resolved through
 the effective user's `companyId -> Tenant.companyId` relationship.
 
 Category access is:

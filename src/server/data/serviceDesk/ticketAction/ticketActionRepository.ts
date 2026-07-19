@@ -1,6 +1,5 @@
-import type { QueryResultRow } from "pg";
-
 import type { Attach, TicketActionType } from "@/domain/serviceDesk";
+import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import type {
@@ -9,16 +8,7 @@ import type {
 } from "./ticketActionDto";
 import type { TicketActionRow } from "./ticketActionRow";
 
-export type TicketActionQueryExecutor = <
-  T extends QueryResultRow = QueryResultRow,
->(
-  text: string,
-  params?: unknown[],
-) => Promise<T[]>;
-
-export type TicketActionRepositoryOptions = {
-  query?: TicketActionQueryExecutor;
-};
+export type TicketActionRepositoryOptions = ServiceDeskRepositoryOptions;
 
 export type CreateTicketActionRowInput = {
   ticketId: string;

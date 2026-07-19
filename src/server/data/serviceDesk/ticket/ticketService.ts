@@ -1,4 +1,5 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import {
@@ -22,7 +23,6 @@ import {
   toTicketListItemDto,
 } from "./ticketMapper";
 import {
-  closeResolvedTicketById,
   createTicketRow,
   findActiveDraftTicketIdByRequesterUsername,
   findActiveTicketViewRowById,
@@ -34,11 +34,14 @@ import {
   findNextApprovalStepId,
   findNextTicketNumber,
   hasTicketWorkAssignmentHistory,
+  type TicketRepositoryOptions,
+} from "./ticketRepository";
+import {
+  closeResolvedTicketById,
   startAssignedTicketWorkById,
   submitDraftTicketRowById,
-  type TicketRepositoryOptions,
   updateTicketInitialRoutingById,
-} from "./ticketRepository";
+} from "./ticketUpdateRepository";
 
 export type CreateTicketOptions = {
   ticketNo?: string;
@@ -310,12 +313,6 @@ export async function searchTicketListItems(
     page: result.page,
     pageSize: result.pageSize,
   };
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }
 
 async function projectTicketDetail(

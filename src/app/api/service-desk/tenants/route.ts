@@ -8,7 +8,8 @@ import {
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { localCreateTenant, localListTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/tenant";
 import {
-  requireServiceDeskSettingsAdmin,
+  requireServiceDeskSettingsRouteAccess,
+  resolveServiceDeskSettingsAdminContext,
   resolveTenantResourceAccess,
 } from "@/app/api/_adapters/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
@@ -21,7 +22,9 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
-    const principalContext = await requireServiceDeskSettingsAdmin(request);
+    await requireServiceDeskSettingsRouteAccess(request);
+    const principalContext =
+      await resolveServiceDeskSettingsAdminContext(request);
     const token = await getAuthToken(request);
     const isRemote = token?.dataScope === "REMOTE";
     const ownCompanyId =
@@ -67,7 +70,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { principal } = await requireServiceDeskSettingsAdmin(request);
+    await requireServiceDeskSettingsRouteAccess(request);
+    const { principal } =
+      await resolveServiceDeskSettingsAdminContext(request);
 
     if (resolveTenantResourceAccess(principal) !== "manage") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });

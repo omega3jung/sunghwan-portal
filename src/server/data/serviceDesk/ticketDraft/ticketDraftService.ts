@@ -1,3 +1,5 @@
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
+
 import { TicketDraftDto, TicketDraftWriteDto } from "./ticketDraftDto";
 import {
   mapTicketDraftRowToDto,
@@ -71,12 +73,6 @@ export async function discardTicketDraft(
   if (!discarded) {
     throw createStatusError("Ticket draft not found.", 404);
   }
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }
 
 function isUniqueViolation(error: unknown) {

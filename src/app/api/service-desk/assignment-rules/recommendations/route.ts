@@ -5,7 +5,7 @@ import { portalApiJson } from "@/app/api/_adapters/backend";
 import { resolveLocalAssignmentRecommendation } from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule/recommendation";
 import {
   resolveApiErrorMessage,
-  resolveServiceDeskSettingsPrincipal,
+  resolveServiceDeskRequestContext,
   toCurrentUsernameProxyHeaders,
 } from "@/app/api/_adapters/serviceDesk";
 import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
@@ -49,7 +49,7 @@ const parseRecommendationInput = async (
 
 export async function POST(request: NextRequest) {
   try {
-    const principalContext = await resolveServiceDeskSettingsPrincipal(request);
+    const principalContext = await resolveServiceDeskRequestContext(request);
     const input = await parseRecommendationInput(request);
 
     if (!input) {

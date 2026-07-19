@@ -193,6 +193,8 @@ select case
 end as error_code;
 `;
 
+// Approval and assignment settings share the same organization-reference
+// integrity boundary even though their write services remain domain-specific.
 export async function assertApprovalReferencesValidForWrite(
   query: PortalApiQueryExecutor,
   tenantId: string | number,

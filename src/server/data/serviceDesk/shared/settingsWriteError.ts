@@ -2,6 +2,7 @@ import { ApiError } from "@/lib/application/api";
 
 type SettingsWriteResource = "approvalSteps" | "assignmentRules";
 
+// Normalizes database write failures shared by Service Desk settings flows.
 export function mapSettingsWriteError(
   error: unknown,
   resource: SettingsWriteResource,

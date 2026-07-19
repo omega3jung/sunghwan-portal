@@ -9,10 +9,11 @@ import {
 import {
   isServiceDeskSettingsRequest,
   parseCategoryScope,
+  requireServiceDeskSettingsRouteAccess,
   requireSettingsResourceAccess,
   resolveAuthorizedSettingsTenant,
   resolveOperationalServiceDeskReadTarget,
-  resolveServiceDeskSettingsPrincipal,
+  resolveServiceDeskRequestContext,
 } from "@/app/api/_adapters/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
@@ -29,6 +30,11 @@ export async function GET(request: NextRequest) {
       request.nextUrl.searchParams.get("scope"),
     );
     const requestedTenantId = request.nextUrl.searchParams.get("tenantId");
+
+    if (settingsRequest) {
+      await requireServiceDeskSettingsRouteAccess(request);
+    }
+
     const settingsAuthorization = settingsRequest
       ? await requireSettingsResourceAccess({
           request,
@@ -39,7 +45,7 @@ export async function GET(request: NextRequest) {
       : null;
     const principalContext =
       settingsAuthorization ??
-      (await resolveServiceDeskSettingsPrincipal(request));
+      (await resolveServiceDeskRequestContext(request));
     const operationalTarget = settingsAuthorization
       ? null
       : await resolveOperationalServiceDeskReadTarget({
@@ -102,6 +108,8 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    await requireServiceDeskSettingsRouteAccess(request);
+
     const parsedBody = saveCategoryTreeSchema.safeParse(
       (await request.json()) as SaveServiceDeskCategoryTreePayload,
     );

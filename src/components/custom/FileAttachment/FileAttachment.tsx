@@ -6,13 +6,13 @@ import type { FieldValues, UseFormReturn } from "react-hook-form";
 
 import { Separator } from "@/components/ui/separator";
 
+import { FileAttachmentDropzone } from "./FileAttachmentDropzone";
+import { FileAttachmentList } from "./FileAttachmentList";
 import {
-  FileAttachmentDropzone,
   type FileAttachmentErrorType,
   type FileAttachmentFieldPath,
-  FileAttachmentList,
   useFileAttachments,
-} from ".";
+} from "./useFileAttachments";
 
 type FileAttachmentProps<
   TForm extends FieldValues,

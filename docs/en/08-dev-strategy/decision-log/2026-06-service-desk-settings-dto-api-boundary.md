@@ -353,6 +353,7 @@ runtime implementations.
 
 ```txt id="settings-authorization-api-flow"
 Route Handler
+-> require authenticated JWT access level >= ADMIN (9)
 -> resolve effective canonical AppUser
 -> resolve target Category -> Tenant -> Company context
 -> apply manage / read / none capability

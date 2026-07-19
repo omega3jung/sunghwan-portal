@@ -15,8 +15,10 @@ import {
   updateApprovalStepById,
   validateApprovalStepTreeMutation,
 } from "@/server/data/serviceDesk/approvalStep";
-import { mapSettingsWriteError } from "@/server/data/serviceDesk/settingsWriteError";
-import { assertApprovalReferencesValidForWrite } from "@/server/data/serviceDesk/settingsWriteValidationRepository";
+import {
+  assertApprovalReferencesValidForWrite,
+  mapSettingsWriteError,
+} from "@/server/data/serviceDesk/shared";
 import {
   type PortalApiQueryExecutor,
   withPortalApiTransaction,
@@ -143,16 +145,17 @@ async function saveApprovalStepTreeInTransaction(
   query: PortalApiQueryExecutor,
 ) {
   const tenantId = Number(payload.tenantId);
-  const currentApprovalSettings =
-    await getCategoryApprovalSettingsByTenantId(tenantId, query);
-  const currentApprovalSteps = currentApprovalSettings.flatMap(
-    (category) =>
-      payload.categories.some(
-        (submittedCategory) =>
-          Number(submittedCategory.id) === Number(category.category_id),
-      )
-        ? category.approval_step
-        : [],
+  const currentApprovalSettings = await getCategoryApprovalSettingsByTenantId(
+    tenantId,
+    query,
+  );
+  const currentApprovalSteps = currentApprovalSettings.flatMap((category) =>
+    payload.categories.some(
+      (submittedCategory) =>
+        Number(submittedCategory.id) === Number(category.category_id),
+    )
+      ? category.approval_step
+      : [],
   );
   const currentApprovalStepsById = new Map(
     currentApprovalSteps.map((approvalStep) => [

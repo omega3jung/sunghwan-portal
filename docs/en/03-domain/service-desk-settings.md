@@ -110,18 +110,20 @@ hierarchy.
 
 | Settings admin type      | Required trusted fields                               |
 | ------------------------ | ----------------------------------------------------- |
-| Owner Admin              | `permission = ADMIN` (`9`) and `userScope = INTERNAL` |
-| Tenant Admin             | `permission = ADMIN` (`9`) and `userScope = CLIENT`   |
+| Owner Admin              | `permission >= ADMIN` (`9`) and `userScope = INTERNAL` |
+| Tenant Admin             | `permission >= ADMIN` (`9`) and `userScope = CLIENT`   |
 | no Settings admin access | any lower permission, regardless of `userScope`       |
 
 Use the canonical access-level constant rather than duplicating the numeric
 value in feature code. `role`, `dataScope`, the focused tenant, request
 `tenantId`/`companyId`, and client state do not determine the admin type.
 
-The server resolves the effective username from the session and then loads the
-canonical application user so that `permission`, `userScope`, and `companyId`
-are server-trusted. During impersonation, authorization follows the effective
-user. Audit context keeps both the original and effective usernames.
+For settings operations, the API route first requires the authenticated JWT's
+`getUserAccessLevel(request) >= 9`. The server then resolves the effective
+username from the session and loads the canonical application user so that
+`permission`, `userScope`, and `companyId` are server-trusted. During
+impersonation, resource capability follows the effective user. Audit context
+keeps both the original and effective usernames.
 
 Owner Admin and Tenant Admin are peers with different resource capabilities.
 Owner Admin is not a super-role over Tenant Admin: for example, a customer

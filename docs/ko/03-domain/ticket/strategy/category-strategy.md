@@ -67,7 +67,9 @@ type SubCategory = CategoryBase & {
 
 ### Tenant
 
-Tenant는 Service Desk configuration scope의 category tree를 소유한다.
+Category tree는 tenant의 Service Desk workflow boundary에 속한다. 여기서 "속한다"는
+scoping을 의미하며, 한 actor가 모든 resource를 관리한다는 뜻이 아니다. 실제 read/manage
+권한은 tenant kind, category scope, settings resource, trusted principal로 결정한다.
 
 ### Main Category
 
@@ -102,6 +104,55 @@ type CategoryScope = "PORTAL" | "INTERNAL";
 | `INTERNAL` | internal Service Desk operation용 category |
 
 Subcategory는 visibility와 routing 목적에서 main category scope를 상속한다.
+
+---
+
+## Category Settings Authorization
+
+Owner Admin은 trusted `permission >= ADMIN`과 `userScope = INTERNAL`로 식별한다.
+Tenant Admin은 trusted `permission >= ADMIN`과 `userScope = CLIENT`로 식별하며,
+effective user의 `companyId -> Tenant.companyId` 관계로 tenant를 해석한다.
+
+| Target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
+| --- | --- | --- | --- |
+| Owner Tenant, `INTERNAL` 또는 `PORTAL` | manage | none | none |
+| Customer Tenant, `INTERNAL` | none | manage | none |
+| Customer Tenant, `PORTAL` | manage | read | none |
+
+Customer `INTERNAL` category에는 Owner Admin support/read 예외가 없다. Owner Admin과
+Tenant Admin은 상하 관계의 role이 아니며 central settings policy가 resource capability를
+결정한다.
+
+Main-category 생성도 같은 boundary를 따른다.
+
+- Owner Admin은 Owner Tenant에서 두 scope를 모두 생성할 수 있다.
+- Owner Admin은 customer Tenant에서 `PORTAL`만 생성할 수 있다.
+- Tenant Admin은 자신의 customer Tenant에서 `INTERNAL`만 생성할 수 있다.
+
+Read API는 이 policy에 따라 category tree를 filter한다. Client-selected tenant나 scope는
+권한을 부여하지 않는다.
+
+---
+
+## Immutable Boundary
+
+다음 값은 생성 후 다른 boundary로 이동할 수 없다.
+
+- category tenant
+- main-category scope
+- tenant 또는 scope를 넘는 subcategory parent 변경
+
+Subcategory는 parent main category의 tenant와 scope를 모두 상속하며 독립적인 scope
+management capability를 갖지 않는다.
+
+Update와 deactivation은 authorization 전에 기존 category를 load한다. Creation은 target
+tenant와 requested scope를 server에서 검증한다. Subcategory 생성 또는 update는 저장된
+parent main category를 load하고 그 관계에서 boundary를 파생한다. Payload의 `tenantId`,
+`scope`, `parentId`는 authorization fact가 아니다.
+
+다른 scope가 필요하면 기존 category를 deactivate하고 새 category를 생성한다. Category
+제거는 hard delete가 아니라 `active = false`를 사용하여 ticket과 history reference를
+보존한다.
 
 ---
 
@@ -230,6 +281,8 @@ Category가 바뀌지 않고 routing-neutral field만 바뀌면 routing은 prese
 UI는 다음을 해야 한다.
 
 - tenant-scoped category tree 표시
+- settings access가 `none`인 category tree 숨김
+- `read` category tree를 명확한 read-only로 표시하고 관리 주체 안내
 - 새 workflow에는 selectable active category만 표시
 - 기존 ticket에는 inactive category display 보존
 - priority, risk, due date에 유용한 default 적용
@@ -240,6 +293,7 @@ UI는 다음을 하면 안 된다.
 - final routing output을 만들어내기
 - category change를 ordinary field edit처럼 숨기기
 - category settings를 local-only client state로 취급하기
+- edit control을 숨기는 것을 authorization boundary로 취급하기
 
 ---
 
@@ -292,7 +346,9 @@ Tenant -> Main Category -> Sub Category
 ```
 
 Main category는 required default와 `PORTAL`/`INTERNAL` scope를 제공한다.
-Subcategory는 해당 default를 refine한다. Approval은 parent/main category에서
-resolve되고, assignment는 subcategory override와 parent/main fallback을 사용한다.
-Category change는 routing-sensitive ticket update이며, settings change는 existing
-ticket을 조용히 다시 쓰지 않고 future workflow resolution에 영향을 준다.
+Subcategory는 해당 default를 refine하며 parent의 tenant와 scope를 상속한다. Central
+settings policy는 tenant workflow boundary와 실제 management authority를 분리한다.
+Approval은 parent/main category에서 resolve되고, assignment는 subcategory override와
+parent/main fallback을 사용한다. Category change는 routing-sensitive ticket update이며,
+settings change는 existing ticket을 조용히 다시 쓰지 않고 future workflow resolution에
+영향을 준다.

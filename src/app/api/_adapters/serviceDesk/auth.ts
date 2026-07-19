@@ -1,9 +1,12 @@
 import { NextRequest } from "next/server";
 
-import { getAuthToken } from "@/app/api/_adapters/auth/requestAuth";
+import {
+  getAuthToken,
+  getUserAccessLevel,
+} from "@/app/api/_adapters/auth/requestAuth";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
-import type { DataScope } from "@/domain/auth";
+import { ACCESS_LEVEL, type DataScope } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
 import { type CategoryScope } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
@@ -80,7 +83,26 @@ function toLocalTenantContext(
   };
 }
 
-export async function resolveServiceDeskSettingsPrincipal(
+export async function requireServiceDeskSettingsRouteAccess(
+  request: NextRequest,
+) {
+  const token = await getAuthToken(request);
+
+  if (!token) {
+    throw createSettingsAuthorizationError("Authentication is required.", 401);
+  }
+
+  const accessLevel = await getUserAccessLevel(request);
+
+  if (accessLevel < ACCESS_LEVEL.ADMIN) {
+    throw createSettingsAuthorizationError(
+      "Service Desk Settings administrator access is required.",
+      403,
+    );
+  }
+}
+
+export async function resolveServiceDeskRequestContext(
   request: NextRequest,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
   const token = await getAuthToken(request);
@@ -131,8 +153,10 @@ export function parseCategoryScope(value: unknown): CategoryScope | null {
   return value === "INTERNAL" || value === "PORTAL" ? value : null;
 }
 
-export async function requireServiceDeskSettingsAdmin(request: NextRequest) {
-  const principalContext = await resolveServiceDeskSettingsPrincipal(request);
+export async function resolveServiceDeskSettingsAdminContext(
+  request: NextRequest,
+) {
+  const principalContext = await resolveServiceDeskRequestContext(request);
   const adminType = getServiceDeskAdminType(principalContext.principal);
 
   if (!adminType) {
@@ -229,7 +253,7 @@ export async function resolveAuthorizedSettingsTenant({
   request: NextRequest;
   requestedTenantId?: string | number | null;
 }) {
-  const principalContext = await requireServiceDeskSettingsAdmin(request);
+  const principalContext = await resolveServiceDeskSettingsAdminContext(request);
   const { adminType, dataScope, principal } = principalContext;
 
   if (adminType === "TENANT_ADMIN") {

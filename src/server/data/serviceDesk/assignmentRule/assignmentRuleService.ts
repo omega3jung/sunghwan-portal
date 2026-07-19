@@ -9,6 +9,7 @@ import {
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
 import { getEmployeesByCompanyId } from "@/server/data/organization/employees";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 import type { ImageValueLabel, Locale } from "@/shared/types";
 
@@ -453,8 +454,4 @@ function resolveRecommendationSource(
   }
 
   return null;
-}
-
-function createStatusError(message: string, status: number) {
-  return Object.assign(new Error(message), { status });
 }

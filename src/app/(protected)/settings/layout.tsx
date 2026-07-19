@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { ReactNode } from "react";
 
-import { resolveServiceDeskSettingsPrincipal } from "@/app/api/_adapters/serviceDesk";
+import { resolveServiceDeskRequestContext } from "@/app/api/_adapters/serviceDesk";
 import { authOptions } from "@/auth.config";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
@@ -28,7 +28,7 @@ export default async function SettingsLayout({
   const request = new NextRequest(resolveRequestUrl(requestHeaders), {
     headers: requestHeaders,
   });
-  const principalContext = await resolveServiceDeskSettingsPrincipal(
+  const principalContext = await resolveServiceDeskRequestContext(
     request,
   ).catch(() => null);
 

@@ -8,6 +8,7 @@ import {
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
 } from "@/lib/application/serviceDesk";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
 import {
@@ -607,8 +608,4 @@ function toUpdateCategoryRowInput(
     cat_default_sla_days: row.cat_default_sla_days,
     ...overrides,
   };
-}
-
-function createStatusError(message: string, status: number) {
-  return Object.assign(new Error(message), { status });
 }

@@ -91,14 +91,95 @@ LOCAL 설정 동작은 수정 가능한 데모 흐름에서 서버 측 mutable d
 사용한다. REMOTE 동작은 DTO service와 repository를 사용한다. 두 런타임은
 호환 가능한 애플리케이션 응답 형태를 반환해야 한다.
 
+권한은 LOCAL/REMOTE 분기 전에 결정한다. 따라서 query filtering, mutation
+validation, actor-candidate lookup은 두 runtime에서 같은 권한 결과를 만들어야 한다.
+
+---
+
+## 설정 권한
+
+### 신뢰할 수 있는 Principal
+
+서비스 데스크 설정에는 두 종류의 관리자 principal이 있다. 이 값은 client claim이나
+role hierarchy가 아니라 서버에서 확인한 canonical `AppUser`로부터 파생한다.
+
+| 설정 관리자 유형 | 필요한 신뢰 필드 |
+| --- | --- |
+| Owner Admin | `permission >= ADMIN` (`9`) 및 `userScope = INTERNAL` |
+| Tenant Admin | `permission >= ADMIN` (`9`) 및 `userScope = CLIENT` |
+| 설정 관리자 권한 없음 | `userScope`와 무관하게 더 낮은 permission |
+
+API route의 설정 작업은 먼저 인증된 JWT의 `getUserAccessLevel(request) >= 9`를
+검사한다. 그 다음 서버는 session에서 effective username을 구하고 canonical
+application user를 로드하여 `permission`, `userScope`, `companyId`를 신뢰할 수
+있는 값으로 만든다. Impersonation 중 resource capability는 effective user를 따르며,
+감사 context에는 original username과 effective username을 모두 유지한다.
+
+Feature code에서 숫자 값을 반복하지 말고 canonical access-level constant를 사용한다.
+`role`, `dataScope`, focused tenant, request의 `tenantId`/`companyId`, client state는
+관리자 유형을 결정하지 않는다.
+
+Owner Admin과 Tenant Admin은 resource capability가 서로 다른 동등한 관리자다.
+Owner Admin은 Tenant Admin의 상위 super-role이 아니다. 예를 들어 customer
+`PORTAL` approval pipeline은 customer Tenant Admin이 관리하고 Owner Admin은
+read-only access만 가진다.
+
+### Tenant 경계와 관리 권한
+
+Tenant는 category 기반 workflow 설정이 적용되는 _위치_를 답한다. 권한 정책은
+각 설정 resource를 _누가_ 읽거나 관리할 수 있는지 답한다. "tenant가 설정을
+소유한다"는 표현은 설정이 tenant 경계에 속한다는 뜻이지, tenant 측 actor 한 명이
+그 경계의 모든 resource를 관리한다는 뜻이 아니다.
+
+Tenant Admin의 대상은 서버에서 다음 관계로 결정한다.
+
+```txt id="tenant-admin-boundary"
+effective AppUser.companyId
+-> Tenant.companyId
+-> 해당 customer Tenant
+```
+
+Client는 다른 tenant를 선택해 이 경계를 확장할 수 없다. Owner Tenant와
+owner/service-provider company는 hard-coded ID가 아니라 canonical portal-owner
+company resolver 또는 flag로 식별한다.
+
+### Capability Matrix
+
+Access 값의 의미는 다음과 같다.
+
+- `manage`: create, update, deactivate 또는 해당 entity에 정의된 replace/delete lifecycle 사용
+- `read`: query와 display만 허용
+- `none`: query와 mutation 모두 금지
+
+| 대상 | Resource | Owner Admin | 동일 회사 Tenant Admin | 다른 Tenant Admin |
+| --- | --- | --- | --- | --- |
+| Tenant Settings | Tenant | manage | none | none |
+| Owner Tenant, 양쪽 scope | Category | manage | none | none |
+| Owner Tenant, 양쪽 scope | Approval Step | manage | none | none |
+| Owner Tenant, 양쪽 scope | Assignment Rule | manage | none | none |
+| Customer Tenant, `INTERNAL` | Category | none | manage | none |
+| Customer Tenant, `INTERNAL` | Approval Step | none | manage | none |
+| Customer Tenant, `INTERNAL` | Assignment Rule | none | manage | none |
+| Customer Tenant, `PORTAL` | Category | manage | read | none |
+| Customer Tenant, `PORTAL` | Approval Step | read | manage | none |
+| Customer Tenant, `PORTAL` | Assignment Rule | manage | read | none |
+
+Owner Admin은 customer `INTERNAL` 설정에 대한 암묵적인 support/read access가 없다.
+별도의 platform/support capability는 이 정책의 범위에 포함하지 않는다.
+
+Tenant Admin은 다른 설정 페이지에서 자신의 tenant를 표시하는 데 필요한 최소
+metadata를 받을 수 있다. 이것이 Tenant Settings 목록이나 mutation API에 대한
+access를 부여하지는 않는다.
+
 ---
 
 ## 테넌트
 
 ### 책임
 
-서비스 데스크 테넌트는 티켓 카테고리, 승인 단계, 배정 규칙의 구성 경계를
-정의한다.
+서비스 데스크 테넌트는 티켓 카테고리, 승인 단계, 배정 규칙의 조직 및 workflow
+경계를 정의한다. 이 경계 안의 관리 권한은 설정 capability matrix에서 별도로
+결정한다.
 
 Tenant는 Company와 관련되지만 같은 개념은 아니다. Company는 조직 기준
 데이터이고, Tenant는 회사에서 만들어지거나 회사에 연결된 서비스 데스크 구성
@@ -147,6 +228,11 @@ UI는 테넌트 설정 페이지에서 사용하는 tenant/company projection을
 - 테넌트를 비활성화하면 active 설정 워크플로에서 제외된다.
 - 포털 소유자 보호 동작은 서버 경계에서 강제해야 한다.
 - 테넌트가 나중에 비활성화되어도 기존 티켓은 읽을 수 있어야 한다.
+
+Tenant Settings 목록과 관리는 Owner Admin에게만 허용한다. Tenant Admin에게는
+Tenant Settings tab을 표시하지 않으며 직접 page에 접근하면 UI guard로 Settings
+Home으로 redirect한다. 권한 없는 Tenant Settings API 요청은 `403`을 반환하며,
+API 권한 처리는 redirect를 사용하지 않는다.
 
 ---
 
@@ -223,6 +309,30 @@ category의 scope를 상속한다.
 비활성화는 이후 선택과 이후 평가에 영향을 주어야 한다. 기존 티켓 이력을
 지우거나 다시 해석하면 안 된다.
 
+### 생성 및 경계 불변 조건
+
+Main category 생성은 capability matrix를 따른다.
+
+- Owner Admin은 Owner Tenant에 `INTERNAL`, `PORTAL` category를 만들 수 있다.
+- Owner Admin은 customer Tenant에 `PORTAL` category만 만들 수 있다.
+- customer Tenant Admin은 자신의 Tenant에 `INTERNAL` category만 만들 수 있다.
+
+생성 후 다음 경계 필드는 변경할 수 없다.
+
+- category `tenantId`
+- main-category `scope`
+- tenant 또는 scope 경계를 넘게 되는 subcategory `parentId`
+
+Scope 변경은 기존 category를 비활성화하고 새 category를 만드는 방식으로 모델링한다.
+Category는 hard delete 대신 `active = false`를 사용하여 기존 ticket과 history의
+category 참조를 보존한다. Subcategory는 parent main category의 tenant와 scope를
+상속하며 독립된 scope capability를 갖지 않는다.
+
+Update 또는 deactivate 시 서버는 저장된 category를 먼저 로드한 다음 권한을
+확인한다. Create 시에는 대상 tenant와 요청 scope를 검증한다. Subcategory는 parent
+main category를 로드해 관계로부터 tenant/scope를 파생한다. Request payload field를
+권한 사실로 신뢰하지 않는다.
+
 ---
 
 ## 승인 단계
@@ -290,11 +400,31 @@ Skip 규칙은 구성 규칙이다. 승인 실행이 발생할 때 티켓 워크
 
 승인 단계 mutation은 다음을 검증해야 한다.
 
-- 테넌트와 카테고리 소유 관계
+- 저장된 tenant/category 관계
+- 저장된 main category의 tenant와 scope에 대한 settings capability
 - 정렬된 index 값
 - 지원되는 assignee type
 - 참조된 부서, 직무, 직원, manager level
 - skip access level
+
+결정된 모든 approver는 category tenant의 company에 속해야 한다.
+
+- `EMPLOYEE`: 모든 employee의 `companyId`가 category tenant와 같아야 한다.
+- `DEPARTMENT`: department와 결정된 employee가 해당 company 안에 있어야 한다.
+- `JOB_FIELD`: job field가 공유 기준 데이터여도 최종 employee 결정에 company filter를 적용한다.
+- `MANAGER`: 결정된 manager가 해당 company에 속해야 한다.
+
+Eligibility는 두 경계에서 검사한다. Candidate read API는 현재 principal이 선택할 수
+있는 reference만 반환한다. REMOTE settings write는 candidate list를 다시 조회하지
+않고 PostgreSQL이 저장된 category, tenant, company, active organization row를 기준으로
+제출된 approval reference 전체를 tree 저장 transaction 안에서 검증한다. Ticket
+submit/resubmit 및 명시적 routing 재계산은 설정 이후 organization data가 바뀔 수
+있으므로 eligibility를 다시 검사한다. 유효한 approver가 없으면 routing은 실패하며
+owner 없는 `Approval` ticket을 만들지 않는다.
+
+Customer `PORTAL` approval 설정에 read-only access가 있는 Owner Admin에게는 현재
+참조된 approver의 표시 데이터를 제공할 수 있다. 이것이 customer employee directory의
+candidate search 권한을 부여하지는 않는다.
 
 클라이언트는 사용자가 유효한 입력을 만들도록 도울 수 있지만, 서버가 최종
 권한을 가진다.
@@ -346,11 +476,30 @@ Selected subcategory
 
 배정 규칙 mutation은 다음을 검증해야 한다.
 
-- 테넌트와 카테고리 소유 관계
+- 저장된 tenant/category 관계
+- 저장된 category의 tenant와 상속 scope에 대한 settings capability
 - 참조된 직무
 - 참조된 직원 username
 - 비어 있거나 유효하지 않은 assignee group
 - cross-tenant 또는 inactive reference 사용
+
+Employee와 organization reference는 선택된 Tenant company를 기준으로 filter하고
+검증한다. Employee lookup은 `e_company_id`, department lookup은 `d_company_id`를
+사용한다. Job-field lookup은 `jf_department_id = d_id`로 join한 뒤 `d_company_id`를
+적용한다. Client가 제공한 category scope, purpose, owner flag, 미리 계산한 allowed
+company list는 organization lookup input으로 사용하지 않는다.
+
+Candidate read API는 선택된 company ID를 받아 해당 repository query를 선택한 뒤
+department, job field, employee를 반환한다. REMOTE save에서는 PostgreSQL이 저장된
+category로부터 canonical policy를 결정하고 제출된 job-field 및 employee reference
+전체를 assignment-tree write transaction 안에서 set-based query로 검증한다. Write
+API가 candidate lookup을 재현하지 않는다. Submit, resubmit, 명시적 routing command는
+설정 이후 organization data가 바뀔 수 있으므로 eligibility를 다시 검사한다. 유효한
+worker가 없으면 routing은 owner 없는 `Assigned` ticket을 만드는 대신 실패한다.
+
+Customer `PORTAL` assignment rule에 read-only access가 있는 Tenant Admin에게는 현재
+참조된 provider assignee의 표시 데이터를 제공할 수 있다. 이것이 owner-company
+employee directory 전체의 candidate search 권한을 부여하지는 않는다.
 
 배정 규칙 변경은 이후 라우팅 결정에 영향을 준다. 기존 티켓은 현재 assignee와
 기록된 이력을 유지한다.
@@ -377,6 +526,26 @@ Job field 데이터는 승인 단계와 배정 규칙 구성에 사용된다.
 
 Employee 데이터는 명시적 승인 담당자, 명시적 배정 대상, 배정 추천 표시 등에
 사용된다.
+
+Organization lookup은 company 중심이다.
+
+```ts id="settings-eligible-actors"
+getEmployeesByCompanyId(companyId);
+getDepartmentsByCompanyId(companyId);
+getJobFieldsByCompanyId(companyId);
+```
+
+설정 page는 선택되고 권한이 확인된 Tenant에서 `companyId`를 얻는다. Repository
+variant는 organization 전체를 읽어 application code에서 filter하지 않고 SQL에
+company predicate를 적용한다. Approval Step과 Assignment Rule은 독립적인 권한
+source로 `tenantId`를 저장하지 않는다. DTO는 파생 context를 project할 수 있다.
+
+```txt id="settings-resource-boundary"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
 
 설정 도메인은 조직 소유권을 중복 저장하면 안 된다. 참조를 저장하고 적절한
 기준 데이터 경계를 통해 해석해야 한다.
@@ -483,10 +652,15 @@ React Query가 소유해야 하는 것:
 - loading and empty states
 - 일관된 mutation feedback
 - settings pages 사이의 tenant context 유지
+- 공통 `manage` / `read` / `none` 결과 적용
 
 각 페이지는 사용자가 실제로 편집하는 형태로 구성을 보여주어야 한다. 예를 들어
 category는 tree 형태이고, approval step은 category 아래 순서 있는 단계이며,
 assignment rule은 category별로 표시된다.
+
+Read-only view는 "서비스 제공자가 관리", "고객사가 관리", "읽기 전용"과 같이
+책임 주체를 표시한다. Tab이나 button을 숨기는 것은 usability 동작일 뿐이며 서버
+권한 검사를 대신하지 않는다.
 
 ---
 
@@ -497,13 +671,26 @@ assignment rule은 category별로 표시된다.
 검증 대상은 다음과 같다.
 
 - 인증된 사용자와 admin access
-- tenant ownership
+- canonical Owner Admin/Tenant Admin 분류
+- 저장된 tenant/company 관계
+- category-scope resource capability
 - cross-tenant reference protection
 - 유효한 category hierarchy
+- immutable tenant, main scope, parent boundary
 - 유효한 approval assignee reference
 - 유효한 assignment reference
 - active/inactive behavior
 - protected portal-owner tenant behavior
+
+Read API는 `none` resource를 filter해야 하며, 다른 tenant 설정을 반환한 뒤 UI가
+숨길 것이라고 가정하면 안 된다. Mutation API는 저장된 resource context를 다시
+로드하고 `manage` access가 없는 principal에게 `403`을 반환한다. DTO validation은
+admin type/company boundary를 주장하거나 immutable category context를 바꾸려는
+요청을 거부한다.
+
+공통 application policy는 LOCAL/REMOTE 분기 위에서 실행하고, 영속 관계가 결정되는
+server service/repository에서 다시 검사한다. 기존 RLS, database function, constraint는
+defense in depth로 같은 tenant boundary를 보존해야 한다.
 
 클라이언트는 즉각적인 feedback으로 사용성을 높일 수 있지만, 신뢰 가능한 설정
 검증자가 될 수는 없다.
@@ -520,6 +707,8 @@ assignment rule은 category별로 표시된다.
 - category tree editing
 - main/subcategory defaults
 - category `PORTAL` and `INTERNAL` scope
+- category scope에 따른 Owner Admin/Tenant Admin capability 결정
+- category 중심의 company-filtered approver/assignee lookup
 - ordered approval steps
 - manager, department, job-field, employee approval assignees
 - job field와 employee username을 포함하는 assignment group
@@ -552,8 +741,10 @@ assignment rule은 category별로 표시된다.
 | Domain model | 애플리케이션 설정 형태 정의 |
 | Feature API client | 설정 API 호출과 typed operation 제공 |
 | Route handler | HTTP 파싱과 runtime별 위임 |
+| Settings authorization policy | 신뢰할 수 있는 principal과 resource capability 결정 |
 | LOCAL settings handler | 안전한 mutable demo behavior 제공 |
 | REMOTE DTO service | persisted row를 stable DTO로 매핑 |
+| Server service/repository | 저장된 category/organization 관계를 transaction 안에서 검증하고 REMOTE 설정 저장 |
 | React Query | 설정 server state 소유 |
 | Settings UI | workflow-shaped form으로 구성 편집 |
 | Ticket workflow | 현재 설정을 티켓 동작으로 해석 |
@@ -571,6 +762,7 @@ assignment rule은 category별로 표시된다.
 - [`../02-architecture/routing-strategy.md`](../02-architecture/routing-strategy.md)
 - [`../05-data-fetching/react-query-strategy.md`](../05-data-fetching/react-query-strategy.md)
 - [`../08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md`](../08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
+- [`../08-dev-strategy/decision-log/2026-07-service-desk-settings-reference-validation-boundary.md`](../08-dev-strategy/decision-log/2026-07-service-desk-settings-reference-validation-boundary.md)
 - [`../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md`](../08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
 
 ---
@@ -582,7 +774,10 @@ assignment rule은 category별로 표시된다.
 
 현재 모델은 tenant-scoped category tree, `PORTAL`/`INTERNAL` category
 scope, typed assignee를 가진 ordered approval step, group-based assignment
-rule을 사용한다.
+rule을 사용한다. Tenant는 workflow 경계이며 category-scope 권한이 각 resource의
+실제 관리자를 결정한다. `INTERNAL` 설정은 해당 tenant의 관리자가 담당하고,
+customer `PORTAL` category와 assignment는 Owner Admin이, approval은 Tenant Admin이
+관리한다.
 
 설정 데이터는 React Query가 소유하는 server state이며 LOCAL/REMOTE API
 경계를 통해 제공된다. 설정 변경은 이후 워크플로를 안내해야 하고, 기존 티켓

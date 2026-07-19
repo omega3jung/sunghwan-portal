@@ -77,6 +77,7 @@ Route handlers decide HTTP and runtime orchestration.
 route.ts
 -> parse request
 -> resolve session/runtime
+-> require getUserAccessLevel(request) >= ADMIN for settings operations
 -> invoke the applicable server authorization policy
 -> delegate to LOCAL handler or REMOTE service
 -> return DTO response
@@ -92,12 +93,18 @@ Settings routes apply the same policy to reads and mutations before branching
 to LOCAL or REMOTE behavior.
 
 ```txt id="settings-route-authorization"
-effective username
+authenticated JWT access level >= ADMIN (9)
+-> effective username
 -> canonical AppUser permission / userScope / companyId
 -> target Category -> Tenant -> Company context
 -> manage / read / none
 -> LOCAL or REMOTE operation
 ```
+
+The route-level access check is deliberately separate from effective-user
+resource resolution. During impersonation, the JWT access-level gate protects
+entry into Settings operations, while the effective canonical user determines
+the tenant and resource capability.
 
 List/read routes filter out `none` resources. Mutation routes require `manage`,
 reload the stored category/tenant relationship, and return `403` for read-only
@@ -267,5 +274,5 @@ The current routing strategy uses stable page routes for Service Desk list and
 detail, dialogs for focused ticket commands, and API route handlers as the
 LOCAL/REMOTE orchestration boundary. The documented API surface should match the
 route files that actually exist. Service Desk Settings routes additionally
-resolve the effective canonical principal and apply the shared category-scope
-capability before either runtime path.
+apply the JWT ADMIN access gate, then resolve the effective canonical principal
+and shared category-scope capability before either runtime path.

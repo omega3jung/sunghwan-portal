@@ -255,8 +255,30 @@ Service Desk Settings도 row/mapper/DTO rule을 따른다.
 - `ApprovalStep`
 - `AssignmentRule`
 
-Tenant가 Service Desk configuration boundary이다. Category, approval step,
-assignment rule은 tenant scope에서 평가된다.
+Tenant는 Service Desk의 조직/workflow boundary이며, 단일 관리 권한을 의미하지 않는다.
+Category, approval step, assignment rule은 tenant scope에서 평가하지만, 실제
+`manage`, `read`, `none` 권한은 Owner Tenant/customer Tenant, category의
+`INTERNAL`/`PORTAL` scope, resource에 따라 application authorization policy가
+결정한다.
+
+Approval Step과 Assignment Rule persistence는 별도의 authorization source를
+중복 저장하지 않고 관계를 통해 tenant/company context를 파생한다.
+
+```txt id="settings-persistence-boundary"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
+
+DTO가 workflow를 위해 파생된 tenant context를 노출할 수는 있지만, client에 보이는
+값이 authoritative해지는 것은 아니다. Repository query와 mutation은 authorization
+전에 저장된 관계를 join하거나 다시 load한다.
+
+Category tenant와 main-category scope는 생성 후 변경할 수 없다. Subcategory는
+tenant/scope boundary를 넘도록 parent를 옮길 수 없다. 가능한 경우 service validation과
+함께 repository 및 database constraint도 이 invariant를 강제해야 한다. Category 제거는
+deactivation을 사용하여 기존 ticket과 history reference를 보존한다.
 
 Settings 변경은 future workflow resolution에 영향을 준다. Existing ticket은 explicit
 ticket command가 없으면 stored state/routing/activity/history를 유지한다.
@@ -297,6 +319,11 @@ App-facing table/view는 다음을 점검해야 한다.
 - table/view/function grants
 - RLS policy coverage
 - least-privilege role behavior
+
+Service Desk Settings에서 RLS/grant와 database function은 tenant 관계를 보호하는
+defense in depth이다. 특히 customer `PORTAL`에서는 category, approval, assignment의
+관리 주체가 서로 다르므로 resource별 Owner Admin/Tenant Admin capability matrix를
+대체해서는 안 된다.
 
 ---
 

@@ -37,18 +37,22 @@ Components should have a single responsibility
 
 다음 책임을 가지는 컴포넌트이다.
 
-- 데이터 조회
-- 상태 관리
-- 비즈니스 로직 오케스트레이션
+- 데이터 로딩 또는 mutation orchestration
+- UI와 workflow state 조합
+- permission, domain, API 결과를 presentational prop으로 변환
+- loading, error, empty state 조정
 
 ---
 
 ### 특징
 
-- Server Component에서 server use case를 호출하거나 Client Component에서 훅을 사용한다
-  (`React Query`, `Zustand`)
-- API와 도메인 로직을 이해한다
+- Server Component에서는 server-safe loader/service를, Client Component에서는 feature hook을 호출한다
+- workflow contract를 알고 domain rule을 소비한다
 - props를 통해 하위 컴포넌트에 데이터를 전달한다
+
+Container는 workflow를 조정하지만 지속되는 domain rule, authorization policy,
+persistence behavior의 source of truth가 되지 않는다. 규칙의 결과를 선택하고 표시할
+수는 있지만 JSX나 event handler에서 그 규칙을 다시 구현하면 안 된다.
 
 ---
 
@@ -85,7 +89,16 @@ export function TicketList() {
 
 - props를 통해 데이터를 전달받는다
 - 직접 데이터를 조회하지 않는다
-- 비즈니스 로직을 포함하지 않는다
+- display-only derivation, formatting, badge/variant mapping, accessibility behavior,
+  local open/close state, UI event callback을 가질 수 있다
+- 지속되는 workflow, persistence, authorization rule을 소유하지 않는다
+
+Presentational component가 소유하면 안 되는 책임의 예:
+
+- direct API call 또는 persistence mutation
+- source of truth로 사용되는 authorization decision
+- ticket status transition 또는 approval/assignment routing decision
+- React Query server-state ownership
 
 ---
 
@@ -111,8 +124,10 @@ Data flows from container -> presentational components via props
 
 ### 의미
 
-- 프레젠테이셔널 컴포넌트 내부에서는 데이터를 조회하지 않는다
-- 깊게 중첩된 UI 컴포넌트에서 API 호출을 하지 않는다
+- presentational component는 API를 직접 호출하지 않는다
+- tree depth만으로 fetching 허용 여부를 결정하지 않는다
+- nested subtree가 명시적인 독립 container boundary와 자체 query/loading/error
+  lifecycle을 가진 경우에는 data를 소유할 수 있다
 
 ---
 
@@ -145,7 +160,8 @@ TicketList (container)
 
 ### 위치
 
-- 기본적으로 **Route Server Component, 컨테이너 컴포넌트 또는 feature hook**에 둔다
+- Server Component는 server-safe loader/service/use-case 경계를 통해 server-rendered data를 로드할 수 있다
+- interactive Client Component container는 feature hook과 React Query를 사용한다
 - 독립적으로 로딩되는 widget이나 Suspense subtree는 자체 container를 가질 수 있다
 - 프레젠테이셔널 컴포넌트는 직접 API를 호출하지 않는다
 
@@ -210,12 +226,14 @@ State should live in the lowest common owner that needs it
 
 ### 예시
 
-- 다이얼로그 open 상태 -> 컴포넌트 또는 `Zustand`
-- 필터 상태 -> URL 또는 컨테이너
-- 폼 상태 -> `react-hook-form`
+- 다이얼로그 open 상태 → 기본적으로 local component/container state
+- 필터 상태 → navigation 의미가 있으면 URL, 아니면 owning container
+- form input/validation state → form boundary 안의 React Hook Form
+- interactive server state → 중복 Zustand store가 아니라 React Query
 
-전역 상태는 여러 route 또는 독립된 subtree가 같은 runtime state를 공유해야 할
-때만 사용한다.
+서로 무관하거나 멀리 떨어진 client subtree가 같은 runtime state를 공유할 때만
+Zustand를 사용한다. Callback 하나를 전달하지 않으려고 local dialog state를
+globalize하거나 React Query data를 Zustand에 복사하지 않는다.
 
 ---
 
@@ -225,8 +243,7 @@ Next.js page와 layout은 기본적으로 Server Component로 유지한다.
 
 ### Server Component 책임
 
-- source에 가까운 데이터 조회
-- server use case 호출
+- server-safe loader/service/use case를 통한 server-rendered data 조회
 - secret 또는 server-only dependency 사용
 - Client Component에 직렬화 가능한 props 전달
 
@@ -241,6 +258,15 @@ Next.js page와 layout은 기본적으로 Server Component로 유지한다.
 entry boundary다. interactive subtree를 가능한 작게 유지하고, `client-only`와
 `server-only`를 사용해 잘못된 runtime import를 차단한다.
 
+Server Component에서 Client Component로 넘어가기 전에 runtime-specific value를
+normalize한다.
+
+| 경계 값 | 지침 |
+| --- | --- |
+| DTO, string, number, boolean, serializable array/object, ISO date string | 그대로 전달 |
+| `Date`, `Map`, `Set`, database row | application-facing serializable value로 normalize |
+| Repository, database client, request/response object, runtime handle | 전달 금지 |
+
 ---
 
 ## 상호작용 처리
@@ -248,7 +274,7 @@ entry boundary다. interactive subtree를 가능한 작게 유지하고, `client
 ### 원칙
 
 ```id="interaction-principle"
-UI handles interaction, container handles logic
+UI reports interaction, container coordinates the workflow
 ```
 
 ---
@@ -268,16 +294,22 @@ UI handles interaction, container handles logic
 
 ### 프레젠테이셔널 컴포넌트
 
-- 재사용성이 높다
-- 비즈니스 의미를 모르는 경우 `shared/ui`에서 공유할 수 있다
-- 특정 domain 의미를 가지면 재사용되더라도 해당 feature 또는 application widget에 유지한다
+- visual/interaction contract가 안정적이면 재사용할 수 있다
+- business-agnostic primitive는 현재 `components/ui` 경계에 둔다
+- generic composed control은 `components/custom`에 둔다
+- domain-aware component는 여러 screen이 사용해도 owning feature 또는 application-wide widget에 유지한다
+
+재사용 횟수만으로 소유권을 정하지 않는다. Generic button, dialog primitive, table
+shell은 reusable component 경계에 둘 수 있지만 ticket status view, approval editor,
+assignment-rule card는 Service Desk 소유권을 유지한다.
 
 ---
 
 ### 컨테이너 컴포넌트
 
-- feature 전용이다
-- 재사용을 목적으로 하지 않는다
+- 보통 feature 전용이다
+- workflow contract가 안정적이면 owning feature 안에서 재사용할 수 있다
+- 두 screen이 사용한다는 이유만으로 shared 위치로 이동하지 않는다
 
 ---
 
@@ -292,11 +324,14 @@ UI handles interaction, container handles logic
 
 ### 비허용
 
-- Presentational -> Container
-- feature 간 직접 의존
+- Presentational → container workflow ownership
+- Presentational → direct persistence 또는 authorization implementation
+- Client component → server-only module
 
 여러 feature를 조합하는 UI는 `app` 또는 전역 `components` widget이 소유한다.
-이 상위 조합 계층이 각 feature의 명시적인 public contract를 사용한다.
+서로 밀접한 workflow slice는 `feature-based-structure.md`에 정의된 명시적이고
+runtime-safe한 feature contract를 사용할 수 있다. 이것이 명확한 workflow owner 없이
+다른 slice의 internal component나 client hook을 import하도록 허용하지는 않는다.
 
 ---
 
@@ -379,8 +414,17 @@ UI handles interaction, container handles logic
 
 ---
 
+## 관련 문서
+
+- [`../02-architecture/feature-based-structure.md`](../02-architecture/feature-based-structure.md)
+- [`../02-architecture/state-management.md`](../02-architecture/state-management.md)
+- [`dialog-pattern.md`](dialog-pattern.md)
+
+---
+
 ## 요약
 
-컴포넌트 경계 전략은 **데이터를 인지하는 컨테이너 컴포넌트**와
-**순수 UI 프레젠테이셔널 컴포넌트**를 명확히 구분함으로써,
-확장 가능하고 유지보수 가능한 프런트엔드 아키텍처를 가능하게 한다.
+컴포넌트 경계 전략은 **workflow를 조정하는 container**와 **rendering 및 local
+interaction을 담당하는 presentational component**를 구분한다. Presentational
+component는 display logic을 가질 수 있지만 지속되는 domain, persistence,
+authorization, server-state rule은 이를 소유한 경계에 남는다.

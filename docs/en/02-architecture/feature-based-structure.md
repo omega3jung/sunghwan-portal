@@ -410,7 +410,7 @@ compatibility still applies within every allowed dependency.
 | `lib/config` | shared or external runtime values without upper-layer imports |
 | `lib/client` | lib/application, lib/config, domain, shared |
 | `feature` | client-safe lib, domain, shared, components, runtime-safe feature contracts |
-| `server` | server-safe lib, lib/application, domain, shared, server-safe DTO/pure contract modules currently owned by feature or app API boundaries |
+| `server` | server-safe lib, lib/application, domain, shared |
 | `components` | feature public APIs, client-safe lib, domain, shared |
 | `app` | components, feature, server, lib, domain, shared |
 
@@ -456,6 +456,20 @@ query contracts, and shared Service Desk client helpers across adjacent slices.
   the client runtime lives in `lib/client/i18n`. Application component locale
   registration is composed above lib in `components/i18n`.
 
+### Automated Enforcement
+
+```bash
+npm run lint
+```
+
+`eslint-plugin-boundaries` classifies the project elements under `src` and
+enforces the layer allow-list from `.eslintrc.json`. It analyzes imports,
+re-exports, dynamic imports, and `require` calls, and rejects unknown local
+files or dependencies. The deliberate collaboration between adjacent
+Service Desk `ticket*` feature slices remains allowed through the `feature`
+element policy. Client/server runtime markers and the Next.js build continue
+to enforce runtime compatibility separately.
+
 ---
 
 ### Purpose
@@ -492,10 +506,10 @@ feature/serviceDesk/ticket/api/client.ts
 ```
 
 Here, `server-safe` means that the complete module graph can execute in a Server
-Component, route handler, or server implementation. Current server code may
-consume such feature-owned DTO or pure mapper contracts, but this never makes a
-client feature entry safe for the server. Runtime compatibility and ownership
-are separate review questions.
+Component, route handler, or server implementation. Runtime compatibility and
+ownership are separate review questions. A DTO or pure mapper shared with the
+production server belongs in `lib/application/contracts`, not in a feature or
+app implementation boundary.
 
 Client-only shared utilities should be separated under boundaries such as:
 
