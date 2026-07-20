@@ -68,7 +68,7 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
-      relatedTicketId: "b0eacda0-e252-4dba-bdde-f5c37dbda5a7",
+      relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
     tka_files: [],
@@ -85,7 +85,7 @@ export const actions: TicketActionMockInput[] = [
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
-      relatedTicketId: "b0eacda0-e252-4dba-bdde-f5c37dbda5a7",
+      relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
     tka_files: [],

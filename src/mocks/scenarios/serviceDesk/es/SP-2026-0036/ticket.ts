@@ -1,7 +1,7 @@
 import { TicketMockInput } from "../../types";
 
 export const ticket: TicketMockInput = {
-  tk_id: "36c6a1a1-4bf9-4e4c-b626-8753f9f21d36",
+  tk_id: "3c4dd9dd-b2d4-4a9a-b337-264c48b6472d",
   tk_ticket_no: "SP-2026-0036",
   tk_created_at: "2026-07-16T01:13:27Z",
   tk_updated_at: "2026-07-16T01:18:09Z",

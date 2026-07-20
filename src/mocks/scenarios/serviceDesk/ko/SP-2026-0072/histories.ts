@@ -2,7 +2,7 @@ import { TicketHistoryMockInput } from "../../types";
 import { ticket } from "./ticket";
 
 const relatedPortalTicket = {
-  relatedTicketId: "2955efc9-49f1-491c-94cd-1eb2c4724e17",
+  relatedTicketId: "6d6b7582-7e7e-4a6c-942c-c61d5408ce93",
   relatedTicketNo: "SP-2026-0073",
 };
 

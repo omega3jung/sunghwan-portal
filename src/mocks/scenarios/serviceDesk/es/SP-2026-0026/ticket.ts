@@ -1,7 +1,7 @@
 import { TicketMockInput } from "../../types";
 
 export const ticket: TicketMockInput = {
-  tk_id: "0320cad6-68c3-4e48-aced-1eb93014e225",
+  tk_id: "e773a057-e943-468e-b204-a0b7e33b5eb8",
   tk_ticket_no: "SP-2026-0026",
   tk_created_at: "2026-07-06T06:13:27Z",
   tk_updated_at: "2026-07-06T07:13:18Z",
@@ -11,7 +11,7 @@ export const ticket: TicketMockInput = {
   tk_priority: "high",
   tk_risk_level: "high",
   tk_assignee_usernames: ["evan_seo", "daniel_kim"],
-  tk_merged_into_ticket_id: "s70d38856-b21d-4784-aa48-9e6a80e9db35",
+  tk_merged_into_ticket_id: "5604da0d-48b7-43ce-9155-587687d957ef",
   tk_merged_into_ticket_no: "SP-2026-0025",
   tk_work_minutes: 20,
   tka_last_comment_at: "2026-07-06T07:13:18Z",

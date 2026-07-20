@@ -125,7 +125,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {
-      relatedTicketId: "b0eacda0-e252-4dba-bdde-f5c37dbda5a7",
+      relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
     tkh_created_at: "2026-07-12T08:15:10Z",
@@ -141,7 +141,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {
-      relatedTicketId: "b0eacda0-e252-4dba-bdde-f5c37dbda5a7",
+      relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
     tkh_created_at: "2026-07-12T08:18:04Z",
@@ -161,7 +161,7 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Resolved",
     },
     tkh_metadata: {
-      relatedTicketId: "b0eacda0-e252-4dba-bdde-f5c37dbda5a7",
+      relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
       reason: "Internal data pipeline verified; portal issue handed off",
     },

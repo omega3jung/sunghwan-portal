@@ -3,9 +3,9 @@ import type {
   DbTicketDetail,
   DbTicketHistory,
 } from "@/lib/application/contracts/serviceDesk";
-import { ticketActionsMock } from "@/mocks/scenarios/serviceDesk/internalActionsMock";
-import { ticketHistoriesMock } from "@/mocks/scenarios/serviceDesk/internalHistoriesMock";
-import { ticketsMock } from "@/mocks/scenarios/serviceDesk/internalTicketsMock";
+import { ticketActionsMock } from "@/mocks/scenarios/serviceDesk/ticketActionsMock";
+import { ticketHistoriesMock } from "@/mocks/scenarios/serviceDesk/ticketHistoriesMock";
+import { ticketsMock } from "@/mocks/scenarios/serviceDesk/ticketsMock";
 
 const clone = <T>(value: T): T => structuredClone(value);
 

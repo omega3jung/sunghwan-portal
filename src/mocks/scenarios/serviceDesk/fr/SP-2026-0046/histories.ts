@@ -107,6 +107,10 @@ export const histories: TicketHistoryMockInput[] = [
       closeReason: "Merged",
       mergedIntoTicketId: ticket.tk_merged_into_ticket_id,
       mergedIntoTicketNo: ticket.tk_merged_into_ticket_no,
+      sourceTenantId: "1",
+      targetTenantId: "1",
+      sourceScope: "PORTAL",
+      targetScope: "PORTAL",
       reason:
         "Doublon du même incident de performance du portail déjà suivi dans SP-2026-0045",
       note: "Closed as merged child ticket",

@@ -3,13 +3,14 @@ import { NextResponse } from "next/server";
 
 import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
-import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule";
 import {
+  type AssignmentRuleDto,
   createAssignmentRule,
   deleteAssignmentRuleById,
   getAssignmentRecommendationResponse,
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
+  hasAssignmentRuleAssigneeSelection,
   updateAssignmentRuleById,
   validateAssignmentRuleTreeMutation,
 } from "@/server/data/serviceDesk/assignmentRule";
@@ -191,10 +192,12 @@ async function saveAssignmentRuleTreeInTransaction(
   await assertAssignmentReferencesValidForWrite(
     query,
     tenantId,
-    nextAssignmentRules.map((rule) => ({
-      categoryId: rule.category_id,
-      assignee: rule.assignee,
-    })),
+    nextAssignmentRules
+      .filter((rule) => hasAssignmentRuleAssigneeSelection(rule.assignee))
+      .map((rule) => ({
+        categoryId: rule.category_id,
+        assignee: rule.assignee,
+      })),
   );
 
   const createTasks: Array<() => Promise<unknown>> = [];
@@ -207,12 +210,18 @@ async function saveAssignmentRuleTreeInTransaction(
     );
 
     if (!currentAssignmentRule) {
+      const assignee = nextAssignmentRule.assignee;
+
+      if (!hasAssignmentRuleAssigneeSelection(assignee)) {
+        continue;
+      }
+
       createTasks.push(() =>
         createAssignmentRule(
           {
             tenant_id: tenantId,
             category_id: nextAssignmentRule.category_id,
-            assignee: nextAssignmentRule.assignee,
+            assignee,
           },
           query,
         ),

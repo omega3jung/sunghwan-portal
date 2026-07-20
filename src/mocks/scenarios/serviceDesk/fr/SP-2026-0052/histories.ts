@@ -125,7 +125,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {
-      relatedTicketId: "e7807eb6-102e-4cc8-a408-51cc166879c3",
+      relatedTicketId: "37c196e0-106c-471a-8049-7bc1fa9d8431",
       relatedTicketNo: "SP-2026-0053",
     },
     tkh_created_at: "2026-07-12T08:15:10Z",
@@ -141,7 +141,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {
-      relatedTicketId: "e7807eb6-102e-4cc8-a408-51cc166879c3",
+      relatedTicketId: "37c196e0-106c-471a-8049-7bc1fa9d8431",
       relatedTicketNo: "SP-2026-0053",
     },
     tkh_created_at: "2026-07-12T08:18:04Z",
@@ -161,7 +161,7 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Resolved",
     },
     tkh_metadata: {
-      relatedTicketId: "e7807eb6-102e-4cc8-a408-51cc166879c3",
+      relatedTicketId: "37c196e0-106c-471a-8049-7bc1fa9d8431",
       relatedTicketNo: "SP-2026-0053",
       reason:
         "Flux de données interne vérifié et problème transmis à l’équipe du portail",

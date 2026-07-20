@@ -3,7 +3,7 @@ import { DbTicketWorkSession } from "@/feature/serviceDesk/ticketWorkSession/api
 export const workSessions: DbTicketWorkSession[] = [
   {
     work_session_no: 1,
-    ticket_id: "d8211189-b898-47a9-9cb0-fc8c8bacf16d",
+    ticket_id: "f144356b-6363-46b1-ace5-3b352eaf1eaa",
     assignee_username: "julian_moon",
     start_at: null,
     end_at: "2026-07-07T02:04:30Z",
@@ -14,7 +14,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 2,
-    ticket_id: "d8211189-b898-47a9-9cb0-fc8c8bacf16d",
+    ticket_id: "f144356b-6363-46b1-ace5-3b352eaf1eaa",
     assignee_username: "matthew_williams",
     start_at: null,
     end_at: "2026-07-07T02:35:00Z",

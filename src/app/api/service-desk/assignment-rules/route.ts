@@ -187,7 +187,10 @@ export async function PUT(request: NextRequest) {
       }
 
       submittedCategoryIds.add(category.id);
-      if (authorization.dataScope === "LOCAL") {
+      if (
+        authorization.dataScope === "LOCAL" &&
+        hasAssignmentRuleAssigneeSelection(category.assignee)
+      ) {
         await assertAssignmentAssigneeEligible({
           category: categoryContext,
           assignee: category.assignee,
@@ -211,7 +214,10 @@ export async function PUT(request: NextRequest) {
         }
 
         submittedCategoryIds.add(subCategory.id);
-        if (authorization.dataScope === "LOCAL") {
+        if (
+          authorization.dataScope === "LOCAL" &&
+          hasAssignmentRuleAssigneeSelection(subCategory.assignee)
+        ) {
           await assertAssignmentAssigneeEligible({
             category: subCategoryContext,
             assignee: subCategory.assignee,
@@ -251,4 +257,13 @@ function requireCategoryScope(
 
 function createBadRequest(message: string) {
   return Object.assign(new Error(message), { status: 400 });
+}
+
+type AssignmentRuleAssignee =
+  SaveServiceDeskAssignmentRuleTreePayload["categories"][number]["assignee"];
+
+function hasAssignmentRuleAssigneeSelection(assignee: AssignmentRuleAssignee) {
+  return (
+    assignee.jobFieldIds.length > 0 || assignee.assigneeUsernames.length > 0
+  );
 }

@@ -3,7 +3,7 @@ import { DbTicketWorkSession } from "@/feature/serviceDesk/ticketWorkSession/api
 export const workSessions: DbTicketWorkSession[] = [
   {
     work_session_no: 1,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "yusuf_garcia",
     start_at: null,
     end_at: "2026-07-11T08:18:40Z",
@@ -14,7 +14,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 2,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "rosa_green",
     start_at: null,
     end_at: "2026-07-11T09:06:04Z",
@@ -25,7 +25,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 3,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "adrian_usman",
     start_at: null,
     end_at: "2026-07-11T11:42:28Z",
@@ -36,7 +36,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 4,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "tessa_hassan",
     start_at: null,
     end_at: "2026-07-11T14:18:51Z",
@@ -47,7 +47,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 5,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "zoe_novak",
     start_at: null,
     end_at: "2026-07-12T01:15:47Z",
@@ -58,7 +58,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 6,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "ximena_smith",
     start_at: null,
     end_at: "2026-07-12T04:33:10Z",
@@ -69,7 +69,7 @@ export const workSessions: DbTicketWorkSession[] = [
   },
   {
     work_session_no: 7,
-    ticket_id: "f7604a8b-0ccb-49a4-a2cc-b83926c7d397",
+    ticket_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
     assignee_username: "bianca_clark",
     start_at: null,
     end_at: "2026-07-12T06:15:00Z",

@@ -107,6 +107,10 @@ export const histories: TicketHistoryMockInput[] = [
       closeReason: "Merged",
       mergedIntoTicketId: ticket.tk_merged_into_ticket_id,
       mergedIntoTicketNo: ticket.tk_merged_into_ticket_no,
+      sourceTenantId: "1",
+      targetTenantId: "1",
+      sourceScope: "PORTAL",
+      targetScope: "PORTAL",
       reason:
         "SP-2026-0065에서 이미 추적 중인 동일한 포털 성능 이슈의 중복 티켓",
       note: "Closed as merged child ticket",

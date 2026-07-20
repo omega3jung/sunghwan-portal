@@ -19,13 +19,22 @@ export const localSaveAssignmentRuleTree = ({
   const items = getAssignmentRuleStore(isInternal);
   const tenantId = payload.tenantId;
   const previousRules = getTenantRulesOrThrow(items, tenantId);
+  const previousRulesByCategoryId = new Map(
+    previousRules.map((rule) => [String(rule.category_id), rule]),
+  );
 
-  const nextRules = flattenAssignmentRuleTree(payload).map((node) =>
-    buildDbAssignmentRule({
+  const nextRules = flattenAssignmentRuleTree(payload).flatMap((node) => {
+    const rule = buildDbAssignmentRule({
       categoryId: node.categoryId,
       assignee: node.assignee,
-    }),
-  );
+    });
+    const hasExistingRule = previousRulesByCategoryId.has(node.categoryId);
+    const hasAssigneeSelection =
+      rule.assignee.job_field_id.length > 0 ||
+      rule.assignee.employee_username.length > 0;
+
+    return hasExistingRule || hasAssigneeSelection ? [rule] : [];
+  });
   const submittedCategoryIds = new Set(
     nextRules.map((rule) => String(rule.category_id)),
   );
