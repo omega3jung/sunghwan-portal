@@ -1,0 +1,194 @@
+import { TicketHistoryMockInput } from "../../types";
+import { ticket } from "./ticket";
+
+const relatedPortalTicket = {
+  relatedTicketId: "2955efc9-49f1-491c-94cd-1eb2c4724e17",
+  relatedTicketNo: "SP-2026-0073",
+};
+
+export const histories: TicketHistoryMockInput[] = [
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 1,
+
+    tkh_history_type: "TICKET",
+    tkh_event: "TICKET_SUBMITTED",
+
+    tkh_actor_username: "tessa_ito",
+    tkh_action_no: null,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T05:46:12Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 2,
+
+    tkh_history_type: "APPROVAL",
+    tkh_event: "APPROVAL_REQUESTED",
+
+    tkh_actor_username: null,
+    tkh_action_no: null,
+    tkh_source: "APPROVAL_RULE",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T05:46:13Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 3,
+
+    tkh_history_type: "APPROVAL",
+    tkh_event: "APPROVAL_APPROVED",
+
+    tkh_actor_username: "adrian_vega",
+    tkh_action_no: 1,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T05:54:30Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 4,
+
+    tkh_history_type: "ASSIGNMENT",
+    tkh_event: "ASSIGNMENT_RESOLVED",
+
+    tkh_actor_username: null,
+    tkh_action_no: null,
+    tkh_source: "ASSIGNMENT_RULE",
+
+    tkh_from_value: { assigneeUsernames: [] },
+    tkh_to_value: {
+      assigneeUsernames: ["adrian_vega", "bianca_davis"],
+    },
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T05:54:35Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 5,
+
+    tkh_history_type: "STATUS",
+    tkh_event: "STATUS_UPDATED",
+
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: null,
+    tkh_source: "USER_ACTION",
+
+    tkh_from_value: { status: "Assigned" },
+    tkh_to_value: { status: "Working" },
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T06:01:00Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 6,
+
+    tkh_history_type: "COMMENT",
+    tkh_event: "COMMENT_CREATED",
+
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: 2,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T06:12:18Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 7,
+
+    tkh_history_type: "COMMENT",
+    tkh_event: "COMMENT_CREATED",
+
+    tkh_actor_username: "tessa_ito",
+    tkh_action_no: 3,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T06:35:42Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 8,
+
+    tkh_history_type: "COMMENT",
+    tkh_event: "COMMENT_CREATED",
+
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: 4,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: {},
+
+    tkh_created_at: "2026-07-12T07:52:36Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 9,
+
+    tkh_history_type: "COMMENT",
+    tkh_event: "COMMENT_CREATED",
+
+    tkh_actor_username: "tessa_ito",
+    tkh_action_no: 5,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: relatedPortalTicket,
+
+    tkh_created_at: "2026-07-12T08:15:10Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 10,
+
+    tkh_history_type: "COMMENT",
+    tkh_event: "COMMENT_CREATED",
+
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: 6,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: null,
+    tkh_to_value: null,
+    tkh_metadata: relatedPortalTicket,
+
+    tkh_created_at: "2026-07-12T08:18:04Z",
+  },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 11,
+
+    tkh_history_type: "STATUS",
+    tkh_event: "STATUS_UPDATED",
+
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: null,
+    tkh_source: "USER_ACTION",
+
+    tkh_from_value: { status: "Working" },
+    tkh_to_value: { status: "Resolved" },
+    tkh_metadata: {
+      ...relatedPortalTicket,
+      reason: "Internal data pipeline verified; portal issue handed off",
+    },
+
+    tkh_created_at: "2026-07-12T08:19:20Z",
+  },
+];

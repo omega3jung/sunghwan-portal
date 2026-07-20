@@ -64,13 +64,8 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
   {
     category_id: demoCorporationPortalSystemIssueMock.category_id,
     assignee: {
-      job_field_id: [
-        DEMO_CORPORATION_JOB_FIELD_ID.TECHNOLOGY_DIRECTOR,
-        DEMO_CORPORATION_JOB_FIELD_ID.TECHNOLOGY_MANAGER,
-        DEMO_CORPORATION_JOB_FIELD_ID.IT_SUPPORT_MANAGER,
-        DEMO_CORPORATION_JOB_FIELD_ID.IT_SPECIALIST,
-      ],
-      employee_username: [],
+      job_field_id: [21, 22, 23],
+      employee_username: ["olivia_park"],
     },
   },
   /* Account & Access */
@@ -146,15 +141,8 @@ export const clientAssignmentRuleSettingsMock: DbAssignmentRule[] = [
   {
     category_id: demoEnergyPortalSystemIssueMock.category_id,
     assignee: {
-      job_field_id: [
-        DEMO_ENERGY_JOB_FIELD_ID.TECHNOLOGY_DIRECTOR,
-        DEMO_ENERGY_JOB_FIELD_ID.TECHNOLOGY_MANAGER,
-        DEMO_ENERGY_JOB_FIELD_ID.ENERGY_SYSTEMS_MANAGER,
-        DEMO_ENERGY_JOB_FIELD_ID.ENERGY_SYSTEMS_ENGINEER,
-      ],
-      employee_username: [
-        DEMO_ENERGY_EMPLOYEE_USERNAME.TECHNOLOGY_DIRECTOR,
-      ],
+      job_field_id: [21, 22, 23],
+      employee_username: ["olivia_park"],
     },
   },
   {
