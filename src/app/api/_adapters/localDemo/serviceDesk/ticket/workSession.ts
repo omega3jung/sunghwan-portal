@@ -101,7 +101,7 @@ export function createLocalTicketWorkSession({
   localWorkSessions.push(workSession);
 
   if (nextStatus) {
-    getLocalDemoHistories(isInternal).push({
+    getLocalDemoHistories().push({
       ticket_id: ticketId,
       history_no: getMaxHistoryNo(ticketId, isInternal),
       type: "STATUS",

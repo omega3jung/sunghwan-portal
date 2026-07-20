@@ -6,7 +6,8 @@ import {
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
-import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import {
   startTicketWorkLocal,
   toLocalStartWorkResponse,
@@ -35,11 +36,18 @@ export async function POST(
 
   if (!isRemote) {
     try {
-      const isInternal = await isCurrentLocalUserInternal(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (isInternal === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
+      if (!localGetTicket({ access, id: ticketId })) {
+        return NextResponse.json(
+          { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+          { status: 404 },
+        );
+      }
+      const isInternal = access.userScope === "INTERNAL";
       const updatedTicket = startTicketWorkLocal({
         ticketId,
         employeeUserName: currentUserName,

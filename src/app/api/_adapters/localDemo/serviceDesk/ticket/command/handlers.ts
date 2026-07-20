@@ -225,7 +225,7 @@ const rejectTicket: LocalActionHandler = (context) => {
 const mergeTicket: LocalActionHandler = (context) => {
   assertWorkAssigneeOrAdmin(context);
   const targetTicketId = requireTargetTicketId(context.content);
-  const { sourceTicket, targetTicket } = validateMergeTarget(
+  const { sourceTicket, targetTicket, closeReason } = validateMergeTarget(
     context,
     targetTicketId,
   );
@@ -240,20 +240,24 @@ const mergeTicket: LocalActionHandler = (context) => {
       },
       to_value: {
         status: "Closed",
-        closeReason: "Merged",
+        closeReason,
         mergedIntoTicketId: targetTicketId,
         mergedIntoTicketNo: targetTicket.ticket_number,
       },
       metadata: {
         ...toHistoryMetadata(context.content),
-        closeReason: "Merged",
+        closeReason,
         mergedIntoTicketId: targetTicketId,
         mergedIntoTicketNo: targetTicket.ticket_number,
+        sourceTenantId: sourceTicket.tenant_id,
+        targetTenantId: targetTicket.tenant_id,
+        sourceScope: sourceTicket.scope,
+        targetScope: targetTicket.scope,
         reason: context.content.content.trim(),
       },
     },
     ticketPatch: {
-      close_reason: "Merged",
+      close_reason: closeReason,
       merged_into_ticket_id: targetTicketId,
       merged_into_ticket_no: targetTicket.ticket_number,
     },

@@ -42,8 +42,8 @@ export async function localPost({
       action,
       });
 
-    const actions = getLocalDemoActions(isInternal);
-    const histories = getLocalDemoHistories(isInternal);
+    const actions = getLocalDemoActions();
+    const histories = getLocalDemoHistories();
 
     actions.push(ticketAction);
     histories.push(...createdHistories);

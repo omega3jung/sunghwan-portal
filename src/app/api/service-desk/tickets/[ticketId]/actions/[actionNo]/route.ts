@@ -6,7 +6,8 @@ import {
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { RouteContext } from "@/app/api/_adapters/http";
-import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import {
   getMaxHistoryNo,
   getTicketContext,
@@ -37,12 +38,18 @@ export async function GET(
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isCurrentLocalUserInternal(request);
+    const access = await getCurrentLocalTicketAccessContext(request);
 
-    if (isInternal === null) {
+    if (access === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
-    const item = getLocalDemoActions(isInternal).find(
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+    const item = getLocalDemoActions().find(
       (candidate) =>
         candidate.ticket_id === ticketId &&
         candidate.action_no === Number(actionNo) &&
@@ -90,11 +97,15 @@ export async function PATCH(
         );
       }
 
-      const isInternal = await isCurrentLocalUserInternal(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (isInternal === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
+      if (!localGetTicket({ access, id: ticketId })) {
+        throw new ApiError("serviceDesk.common.notFound", 404);
+      }
+      const isInternal = access.userScope === "INTERNAL";
       const numericActionNo = Number(actionNo);
       const { ticket } = getTicketContext(ticketId, isInternal);
 
@@ -106,7 +117,7 @@ export async function PATCH(
         );
       }
 
-      const actions = getLocalDemoActions(isInternal);
+      const actions = getLocalDemoActions();
       const actionIndex = actions.findIndex(
         (candidate) =>
           candidate.ticket_id === ticketId &&
@@ -141,7 +152,7 @@ export async function PATCH(
       };
 
       actions.splice(actionIndex, 1, updatedAction);
-      getLocalDemoHistories(isInternal).push({
+      getLocalDemoHistories().push({
         ticket_id: ticketId,
         history_no: getMaxHistoryNo(ticketId, isInternal),
         type: action.action_type === "COMMENT" ? "COMMENT" : "NOTE",

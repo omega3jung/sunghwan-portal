@@ -201,6 +201,7 @@
       "COMMENT_DELETED": "Comentario eliminado",
       "WORK_SESSION_UPDATED": "Tiempo registrado actualizado",
       "MERGED": "Fusionado en {{target}}",
+      "ESCALATED": "Escalado al ticket del portal {{target}}",
       "TICKET_REJECTED": "Ticket rechazado",
       "TICKET_CANCELED": "Ticket cancelado",
       "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
@@ -221,7 +222,9 @@
   },
   "merge": {
     "badge": "Fusionado",
-    "into": "Fusionado en {{ticketId}}"
+    "into": "Fusionado en {{ticketId}}",
+    "escalatedBadge": "Escalado",
+    "escalatedInto": "Escalado al ticket del portal {{ticketId}}"
   },
   "historyTimeline": {
     "description": "Vista cronológica de la actividad reciente del ticket.",

@@ -71,7 +71,7 @@ Operational action은 ticket state나 routing을 변경할 수 있는 command다
 | `ASSIGN_SELF` | current worker가 multi-assignee work를 claim | `ASSIGNMENT_UPDATED` |
 | `ADJUST` | planning field 변경 | `PLANNING_UPDATED` |
 | `REJECT` | work를 `Rejected`로 이동 | `TICKET_REJECTED` |
-| `MERGE` | source ticket을 target으로 닫음 | `TICKET_MERGED` |
+| `MERGE` | source를 동일 Tenant의 target으로 닫음. `INTERNAL -> PORTAL`은 `Escalated`로 기록 | `TICKET_MERGED` |
 | `REOPEN` | `Resolved -> Working` | `TICKET_REOPENED` |
 | `RESUBMIT` | initial routing 재실행 | `TICKET_SUBMITTED` plus routing history |
 | `CANCEL` | requester-owned ticket 닫기 | `TICKET_CANCELED` |

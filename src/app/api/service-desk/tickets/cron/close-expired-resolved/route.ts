@@ -67,11 +67,10 @@ function closeExpiredResolvedTicketsLocal(now: Date): AutoCloseResult {
   const cutoffTime =
     now.getTime() - RESOLVED_AUTO_CLOSE_GRACE_DAYS * MS_PER_DAY;
 
-  for (const isInternal of [false, true]) {
-    const tickets = getLocalDemoTickets(isInternal);
-    const histories = getLocalDemoHistories(isInternal);
+  const tickets = getLocalDemoTickets();
+  const histories = getLocalDemoHistories();
 
-    tickets.forEach((ticket, index) => {
+  tickets.forEach((ticket, index) => {
       if (ticket.status !== "Resolved") {
         return;
       }
@@ -113,8 +112,7 @@ function closeExpiredResolvedTicketsLocal(now: Date): AutoCloseResult {
         created_at: now.toISOString(),
       });
       ticketIds.push(ticket.id);
-    });
-  }
+  });
 
   return {
     closedCount: ticketIds.length,

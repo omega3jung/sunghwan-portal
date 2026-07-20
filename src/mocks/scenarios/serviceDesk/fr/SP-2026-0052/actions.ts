@@ -91,4 +91,18 @@ export const actions: TicketActionMockInput[] = [
     tka_files: [],
     tka_images: [],
   },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 7,
+    tka_action_type: "MERGE",
+    tka_content:
+      "Le flux de données interne fonctionne normalement et le problème est limité à la synchronisation du portail. Ce ticket est transféré vers le ticket portail SP-2026-0053 pour le suivi.",
+    tka_owner_username: "bianca_davis",
+    tka_created_at: "2026-07-13T08:20:34Z",
+    tka_updated_at: null,
+    tka_active: true,
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
 ];

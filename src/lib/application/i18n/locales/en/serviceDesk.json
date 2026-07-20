@@ -201,6 +201,7 @@
       "COMMENT_DELETED": "Comment deleted",
       "WORK_SESSION_UPDATED": "Work session updated",
       "MERGED": "Merged into {{target}}",
+      "ESCALATED": "Escalated to portal ticket {{target}}",
       "TICKET_REJECTED": "Ticket rejected",
       "TICKET_CANCELED": "Ticket canceled",
       "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
@@ -221,7 +222,9 @@
   },
   "merge": {
     "badge": "Merged",
-    "into": "Merged into {{ticketId}}"
+    "into": "Merged into {{ticketId}}",
+    "escalatedBadge": "Escalated",
+    "escalatedInto": "Escalated to portal ticket {{ticketId}}"
   },
   "historyTimeline": {
     "description": "Timeline view for recent ticket activity.",

@@ -159,6 +159,7 @@
         "cannotMergeIntoDraft": "No se puede fusionar con un ticket en borrador.",
         "ticketAlreadyMerged": "El ticket ya está fusionado.",
         "mergeTargetAlreadyMerged": "El ticket de destino ya está fusionado.",
+        "portalToInternalMergeForbidden": "Los tickets del portal no se pueden fusionar con tickets internos.",
         "invalidMergeTarget": "Destino de fusión no válido.",
         "invalidPriority": "Prioridad no válida: {{value}}.",
         "invalidRiskLevel": "Nivel de riesgo no válido: {{value}}.",

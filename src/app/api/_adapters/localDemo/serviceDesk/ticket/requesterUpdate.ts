@@ -5,6 +5,11 @@ import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
 
+import {
+  type LocalTicketAccessContext,
+  requireLocalDemoCategoryAccess,
+  requireLocalDemoTicketAccess,
+} from "./access";
 import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import { getLocalDemoHistories, getLocalDemoTickets } from "./state";
@@ -15,16 +20,18 @@ const REQUESTER_EDITABLE_TICKET_STATUSES: readonly DbTicketDetail["status"][] =
 
 export const localRequesterUpdateTicket = async ({
   isInternal,
+  access,
   ticketId,
   requesterUsername,
   input,
 }: {
   isInternal: boolean;
+  access: LocalTicketAccessContext;
   ticketId: string;
   requesterUsername: string;
   input: RequesterUpdateTicketRequestDto;
 }) => {
-  const targetMock = getLocalDemoTickets(isInternal);
+  const targetMock = getLocalDemoTickets();
   const ticketIndex = targetMock.findIndex((item) => item.id === ticketId);
 
   if (ticketIndex < 0) {
@@ -32,6 +39,7 @@ export const localRequesterUpdateTicket = async ({
   }
 
   const ticket = targetMock[ticketIndex];
+  requireLocalDemoTicketAccess(ticket, access);
 
   if (!ticket.active) {
     throw new ApiError("serviceDesk.common.notFound", 404);
@@ -58,6 +66,7 @@ export const localRequesterUpdateTicket = async ({
     isInternal,
     categoryId: input.categoryId,
   });
+  requireLocalDemoCategoryAccess(category, access);
   const preservedTicket = createUpdatedTicket({
     ticket,
     input,
@@ -98,7 +107,7 @@ export const localRequesterUpdateTicket = async ({
   const changedFields = resolveChangedFields(ticket, updatedTicket);
 
   targetMock.splice(ticketIndex, 1, updatedTicket);
-  getLocalDemoHistories(isInternal).push(
+  getLocalDemoHistories().push(
     createUpdateHistory({
       isInternal,
       ticket,
@@ -135,6 +144,7 @@ function createUpdatedTicket({
 
   return {
     ...ticket,
+    tenant_id: category.tenantId,
     status,
     close_reason: ticket.close_reason ?? null,
     priority,
@@ -198,7 +208,7 @@ function resolveChangedFields(
 }
 
 function createUpdateHistory({
-  isInternal,
+  isInternal: _isInternal,
   ticket,
   updatedTicket,
   actorUsername,
@@ -212,7 +222,7 @@ function createUpdateHistory({
   changedFields: string[];
   routingSensitiveChanged: boolean;
 }): DbTicketHistory {
-  const histories = getLocalDemoHistories(isInternal).filter(
+  const histories = getLocalDemoHistories().filter(
     (history) => history.ticket_id === ticket.id,
   );
   const nextHistoryNo =

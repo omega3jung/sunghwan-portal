@@ -201,6 +201,7 @@
       "COMMENT_DELETED": "댓글이 삭제됨",
       "WORK_SESSION_UPDATED": "작업 시간이 업데이트됨",
       "MERGED": "{{target}} 티켓으로 병합됨",
+      "ESCALATED": "포털 티켓 {{target}}(으)로 에스컬레이션됨",
       "TICKET_REJECTED": "티켓이 반려됨",
       "TICKET_CANCELED": "티켓 취소",
       "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
@@ -221,7 +222,9 @@
   },
   "merge": {
     "badge": "병합됨",
-    "into": "{{ticketId}} 티켓으로 병합됨"
+    "into": "{{ticketId}} 티켓으로 병합됨",
+    "escalatedBadge": "에스컬레이션됨",
+    "escalatedInto": "포털 티켓 {{ticketId}}(으)로 에스컬레이션됨"
   },
   "historyTimeline": {
     "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",

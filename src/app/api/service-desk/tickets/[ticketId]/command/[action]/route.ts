@@ -7,9 +7,10 @@ import {
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { RouteContext } from "@/app/api/_adapters/http";
 import {
+  getCurrentLocalTicketAccessContext,
   getCurrentLocalUserRole,
-  getCurrentLocalUserScope,
 } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import { localPost } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
 import {
   ACTION_PATH_BY_TYPE,
@@ -130,16 +131,34 @@ export async function POST(
   }
 
   if (!isRemote) {
-    const [role, currentUserScope] = await Promise.all([
+    const [role, access] = await Promise.all([
       getCurrentLocalUserRole(request),
-      getCurrentLocalUserScope(request),
+      getCurrentLocalTicketAccessContext(request),
     ]);
 
-    if (currentUserScope === null) {
+    if (access === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const isInternal = currentUserScope === "INTERNAL";
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+
+    if (
+      action === "merge" &&
+      content.targetTicketId &&
+      !localGetTicket({ access, id: content.targetTicketId })
+    ) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+
+    const isInternal = access.userScope === "INTERNAL";
 
     if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
       return NextResponse.json(

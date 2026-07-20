@@ -1,4 +1,5 @@
 import type {
+  CategoryScope,
   TicketCloseReason,
   TicketHistoryDisplayMetadata,
   TicketHistoryEvent,
@@ -47,6 +48,7 @@ const TICKET_CLOSE_REASONS = new Set<TicketCloseReason>([
   "Completed",
   "Rejected",
   "Merged",
+  "Escalated",
   "Canceled",
 ]);
 
@@ -86,6 +88,18 @@ export function mapTicketHistoryDisplayMetadata(
 
   const mergedIntoTicketNo = toNonEmptyString(raw.mergedIntoTicketNo);
   if (mergedIntoTicketNo) metadata.mergedIntoTicketNo = mergedIntoTicketNo;
+
+  const sourceTenantId = toNonEmptyString(raw.sourceTenantId);
+  if (sourceTenantId) metadata.sourceTenantId = sourceTenantId;
+
+  const targetTenantId = toNonEmptyString(raw.targetTenantId);
+  if (targetTenantId) metadata.targetTenantId = targetTenantId;
+
+  const sourceScope = toCategoryScope(raw.sourceScope);
+  if (sourceScope) metadata.sourceScope = sourceScope;
+
+  const targetScope = toCategoryScope(raw.targetScope);
+  if (targetScope) metadata.targetScope = targetScope;
 
   const previousStatus = toNonEmptyString(raw.previousStatus);
   if (previousStatus) metadata.previousStatus = previousStatus;
@@ -170,6 +184,10 @@ function toTicketCloseReason(value: unknown): TicketCloseReason | undefined {
   return closeReason && TICKET_CLOSE_REASONS.has(closeReason as TicketCloseReason)
     ? (closeReason as TicketCloseReason)
     : undefined;
+}
+
+function toCategoryScope(value: unknown): CategoryScope | undefined {
+  return value === "INTERNAL" || value === "PORTAL" ? value : undefined;
 }
 
 function toFiniteNumber(value: unknown): number | undefined {

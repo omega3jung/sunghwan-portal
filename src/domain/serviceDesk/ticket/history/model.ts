@@ -1,5 +1,6 @@
 import { ISODateString } from "@/shared/types/date";
 
+import { CategoryScope } from "../../category";
 import {
   HistoryType,
   TicketCloseReason,
@@ -19,6 +20,10 @@ export type TicketHistoryDisplayMetadata = {
 
   mergedIntoTicketId?: string;
   mergedIntoTicketNo?: string;
+  sourceTenantId?: string;
+  targetTenantId?: string;
+  sourceScope?: CategoryScope;
+  targetScope?: CategoryScope;
 
   previousStatus?: string;
   nextStatus?: string;

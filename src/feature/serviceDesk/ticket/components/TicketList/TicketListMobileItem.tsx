@@ -6,7 +6,11 @@ import { useTranslation } from "react-i18next";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
+import {
+  isEscalatedTicket,
+  isMergedChildTicket,
+  TicketSummary,
+} from "@/domain/serviceDesk";
 import {
   MetaBadge,
   TicketStatusBadge,
@@ -56,6 +60,7 @@ export const TicketListMobileItem = ({
     : null;
   const assigneeUsernames = selectTicketAssigneeIds(ticket);
   const isAssigned = selectTicketIsAssigned(ticket);
+  const isEscalated = isEscalatedTicket(ticket);
 
   return (
     <div
@@ -82,7 +87,9 @@ export const TicketListMobileItem = ({
 
         <div className="flex gap-2">
           {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-            <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+            <MetaBadge tone="merge">
+              {t(isEscalated ? "merge.escalatedBadge" : "merge.badge")}
+            </MetaBadge>
           ) : null}
 
           {isAssigned && (
@@ -104,7 +111,9 @@ export const TicketListMobileItem = ({
                 event.stopPropagation();
               }}
             >
-              {`${t("merge.badge")} : ${ticket.mergedIntoTicketNo}`}
+              {`${t(
+                isEscalated ? "merge.escalatedBadge" : "merge.badge",
+              )} : ${ticket.mergedIntoTicketNo}`}
             </Link>
           ) : null}
 

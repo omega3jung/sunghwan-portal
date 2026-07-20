@@ -8,15 +8,19 @@ import {
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { TicketSearchRequest } from "@/lib/application/contracts/serviceDesk";
 
+import {
+  filterAccessibleLocalDemoTickets,
+  type LocalTicketAccessContext,
+} from "./access";
 import { sortTickets } from "./sort";
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
 
 export function localSearchTickets({
-  isInternal,
+  access,
   request,
 }: {
-  isInternal: boolean;
+  access: LocalTicketAccessContext;
   request: TicketSearchRequest;
 }): PaginatedSearchResponse<TicketDetail> {
   /* return only active tickets.
@@ -25,7 +29,10 @@ export function localSearchTickets({
    * Admin/audit views may need access to inactive tickets.
    * Keep this as not-found for the current local demo user-facing flow.
    */
-  const activeTickets = getLocalDemoTickets(isInternal).filter(
+  const activeTickets = filterAccessibleLocalDemoTickets(
+    getLocalDemoTickets(),
+    access,
+  ).filter(
     (ticket) => ticket.active !== false,
   );
   const tickets = camelTicketDetailMapper(activeTickets).map(

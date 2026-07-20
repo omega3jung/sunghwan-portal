@@ -6,7 +6,7 @@ import {
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
-import { getCurrentLocalUserScope } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import {
   localCreateTicket,
   localListTickets,
@@ -37,15 +37,14 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentLocalUserScope(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (currentUserScope === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
-      const isInternal = currentUserScope === "INTERNAL";
       const filtered = localListTickets({
-        isInternal,
+        access,
         searchParams: request.nextUrl.searchParams,
       });
 
@@ -97,17 +96,18 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentLocalUserScope(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (currentUserScope === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
-      const isInternal = currentUserScope === "INTERNAL";
+      const isInternal = access.userScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
         await localCreateTicket({
           isInternal,
+          access,
           requesterUsername: currentUserName,
           input: body,
         }),

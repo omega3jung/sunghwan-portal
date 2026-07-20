@@ -1,4 +1,7 @@
-import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
+import {
+  canMergeTicketInto,
+  resolveTicketMergeCloseReason,
+} from "@/domain/serviceDesk/ticket/merge";
 import { ApiError } from "@/lib/application/api";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
@@ -8,6 +11,8 @@ import { LocalActionRuntimeContext } from "./types";
 
 const toMergeAwareTicket = (ticket: DbTicketDetail) => ({
   id: ticket.id,
+  tenantId: ticket.tenant_id,
+  scope: ticket.scope,
   status: ticket.status,
   closeReason: ticket.close_reason ?? undefined,
   mergedIntoTicketId: ticket.merged_into_ticket_id ?? null,
@@ -18,7 +23,7 @@ export const validateMergeTarget = (
   targetTicketId: string,
 ) => {
   const sourceTicket = requireTicket(context);
-  const tickets = getLocalDemoTickets(context.isInternal ?? false);
+  const tickets = getLocalDemoTickets();
   const targetTicket = tickets.find((ticket) => ticket.id === targetTicketId);
 
   if (!targetTicket) {
@@ -56,6 +61,32 @@ export const validateMergeTarget = (
     );
   }
 
+  if (
+    sourceTicket.tenant_id === null ||
+    targetTicket.tenant_id === null ||
+    sourceTicket.tenant_id !== targetTicket.tenant_id
+  ) {
+    throw new ApiError(
+      "serviceDesk.ticketCommand.localDemo.mergeTargetNotFound",
+      404,
+    );
+  }
+
+  if (
+    sourceTicket.scope === "PORTAL" &&
+    targetTicket.scope === "INTERNAL"
+  ) {
+    throw new ApiError(
+      "serviceDesk.ticketCommand.localDemo.portalToInternalMergeForbidden",
+      400,
+    );
+  }
+
+  const closeReason = resolveTicketMergeCloseReason(
+    toMergeAwareTicket(sourceTicket),
+    toMergeAwareTicket(targetTicket),
+  );
+
   const canMerge = canMergeTicketInto(
     toMergeAwareTicket(sourceTicket),
     toMergeAwareTicket(targetTicket),
@@ -65,7 +96,7 @@ export const validateMergeTarget = (
     },
   );
 
-  if (!canMerge) {
+  if (!canMerge || !closeReason) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.invalidMergeTarget",
       400,
@@ -75,5 +106,6 @@ export const validateMergeTarget = (
   return {
     sourceTicket,
     targetTicket,
+    closeReason,
   };
 };

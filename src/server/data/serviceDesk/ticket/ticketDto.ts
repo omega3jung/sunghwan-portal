@@ -73,6 +73,7 @@ export type TicketCreateRequestDto = z.infer<typeof ticketCreateRequestSchema>;
 
 export type TicketListItemDto = {
   id: string;
+  tenant_id: string | null;
   ticket_number: string;
   created_at: ISODateString;
   updated_at: ISODateString | null;

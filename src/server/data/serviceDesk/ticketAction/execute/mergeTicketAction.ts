@@ -1,4 +1,7 @@
-import { canMergeTicketInto } from "@/domain/serviceDesk/ticket/merge";
+import {
+  canMergeTicketInto,
+  resolveTicketMergeCloseReason,
+} from "@/domain/serviceDesk/ticket/merge";
 import {
   createServiceDeskStatusError as createStatusError,
   type ServiceDeskQueryExecutor,
@@ -40,6 +43,15 @@ export async function executeMergeTicketAction({
     throw createStatusError("Merge target ticket is required.", 400);
   }
 
+  const closeReason = resolveTicketMergeCloseReason(
+    toMergeAwareTicket(ticket),
+    toMergeAwareTicket(targetTicket),
+  );
+
+  if (!closeReason) {
+    throw createStatusError("Invalid merge target.", 400);
+  }
+
   const updatedTicket = await updateTicketMergeStateById(ticketId, { query });
 
   assertTicketUpdated(
@@ -61,6 +73,11 @@ export async function executeMergeTicketAction({
       fromStatus: ticket.tk_status,
       targetTicketId: payload.targetTicketId,
       targetTicketNo: targetTicket.tk_ticket_no,
+      closeReason,
+      sourceTenantId: String(ticket.tk_tenant_id),
+      targetTenantId: String(targetTicket.tk_tenant_id),
+      sourceScope: ticket.cat_scope,
+      targetScope: targetTicket.cat_scope,
       reason: payload.content,
       metadata: payload.historyMetadata,
     },
@@ -110,6 +127,24 @@ export async function resolveMergeTargetTicket({
     throw createStatusError("Merge target has already been merged.", 400);
   }
 
+  if (
+    ticket.tk_tenant_id === null ||
+    targetTicket.tk_tenant_id === null ||
+    ticket.tk_tenant_id !== targetTicket.tk_tenant_id
+  ) {
+    throw createStatusError("Merge target ticket not found.", 404);
+  }
+
+  if (
+    ticket.cat_scope === "PORTAL" &&
+    targetTicket.cat_scope === "INTERNAL"
+  ) {
+    throw createStatusError(
+      "Portal tickets cannot be merged into internal tickets.",
+      400,
+    );
+  }
+
   const canMerge = canMergeTicketInto(
     toMergeAwareTicket(ticket),
     toMergeAwareTicket(targetTicket),
@@ -125,6 +160,9 @@ export async function resolveMergeTargetTicket({
 function toMergeAwareTicket(ticket: ServiceDeskTicketViewRow) {
   return {
     id: ticket.tk_id,
+    tenantId:
+      ticket.tk_tenant_id === null ? null : String(ticket.tk_tenant_id),
+    scope: ticket.cat_scope,
     status: ticket.tk_status,
     closeReason: ticket.tk_close_reason ?? undefined,
     mergedIntoTicketId: ticket.tk_merged_into_ticket_id,

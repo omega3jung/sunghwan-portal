@@ -4,6 +4,11 @@ import type { TicketMutateRequestPayload } from "@/lib/application/contracts/ser
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
+import {
+  type LocalTicketAccessContext,
+  requireLocalDemoCategoryAccess,
+  requireLocalDemoTicketAccess,
+} from "./access";
 import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import { getLocalDemoTickets } from "./state";
@@ -18,14 +23,16 @@ const EDITABLE_TICKET_STATUSES: TicketStatus[] = [
 
 export const localUpdateTicket = async ({
   isInternal,
+  access,
   ticketId,
   input,
 }: {
   isInternal: boolean;
+  access: LocalTicketAccessContext;
   ticketId: string;
   input: TicketMutateRequestPayload;
 }) => {
-  const targetMock = getLocalDemoTickets(isInternal);
+  const targetMock = getLocalDemoTickets();
   const ticketIndex = targetMock.findIndex((item) => item.id === ticketId);
 
   if (ticketIndex < 0) {
@@ -33,6 +40,7 @@ export const localUpdateTicket = async ({
   }
 
   const ticket = targetMock[ticketIndex];
+  requireLocalDemoTicketAccess(ticket, access);
 
   if (!EDITABLE_TICKET_STATUSES.includes(ticket.status)) {
     throw new ApiError(
@@ -48,6 +56,7 @@ export const localUpdateTicket = async ({
     isInternal,
     categoryId: String(input.categoryId),
   });
+  requireLocalDemoCategoryAccess(category, access);
   const resetDeclinedFlow = ticket.status === "Declined";
   const resetRouting = resetDeclinedFlow
     ? await resolveCreateTicketRouting({
@@ -64,6 +73,7 @@ export const localUpdateTicket = async ({
   const isApprovalPhase = nextApprovalStepId !== null;
   const updatedTicket: DbTicketDetail = {
     ...ticket,
+    tenant_id: category.tenantId,
     status: resetRouting?.status ?? ticket.status,
     close_reason: resetDeclinedFlow ? null : (ticket.close_reason ?? null),
     priority: resolvePriorityValue(input.priority, ticket.priority),

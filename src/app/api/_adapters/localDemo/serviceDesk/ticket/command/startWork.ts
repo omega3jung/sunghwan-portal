@@ -39,7 +39,7 @@ export function startTicketWorkLocal({
 
   targetMock.splice(index, 1, updatedTicket);
 
-  const histories = getLocalDemoHistories(isInternal);
+  const histories = getLocalDemoHistories();
   histories.push(
     createStatusUpdatedHistory(
       ticket,

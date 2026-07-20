@@ -91,4 +91,18 @@ export const actions: TicketActionMockInput[] = [
     tka_files: [],
     tka_images: [],
   },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 7,
+    tka_action_type: "MERGE",
+    tka_content:
+      "The internal data pipeline is operating normally and the issue is isolated to portal synchronization. This ticket is escalated to portal ticket SP-2026-0013 for follow-up.",
+    tka_owner_username: "bianca_davis",
+    tka_created_at: "2026-07-13T08:20:34Z",
+    tka_updated_at: null,
+    tka_active: true,
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
 ];

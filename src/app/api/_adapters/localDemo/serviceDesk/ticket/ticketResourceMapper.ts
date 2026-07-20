@@ -18,6 +18,7 @@ export function toTicketMockSummaryResource(
 
   return {
     id: detail.id,
+    tenantId: detail.tenantId,
     ticketNumber: detail.ticketNumber,
     createdAt: detail.createdAt,
     updatedAt: detail.updatedAt,
@@ -72,6 +73,7 @@ export function toTicketMockDetail(
 
   return {
     id,
+    tenantId: null,
     ticketNumber: `MOCK-${id}`,
     createdAt: now,
     updatedAt: now,

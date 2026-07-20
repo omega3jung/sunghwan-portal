@@ -6,7 +6,11 @@ import { useTranslation } from "react-i18next";
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
+import {
+  isEscalatedTicket,
+  isMergedChildTicket,
+  TicketSummary,
+} from "@/domain/serviceDesk";
 import {
   MetaBadge,
   TicketStatusBadge,
@@ -56,6 +60,7 @@ export const TicketListItem = ({
     : null;
   const assigneeUsernames = selectTicketAssigneeIds(ticket);
   const isAssigned = selectTicketIsAssigned(ticket);
+  const isEscalated = isEscalatedTicket(ticket);
 
   return (
     <div
@@ -84,7 +89,9 @@ export const TicketListItem = ({
 
             {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
               <div className="flex flex-wrap items-center gap-2 text-xs">
-                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+                <MetaBadge tone="merge">
+                  {t(isEscalated ? "merge.escalatedBadge" : "merge.badge")}
+                </MetaBadge>
                 <Link
                   className="text-primary underline-offset-4 hover:underline"
                   href={mergedIntoTicketHref}
@@ -92,7 +99,9 @@ export const TicketListItem = ({
                     event.stopPropagation();
                   }}
                 >
-                  {t("merge.into", { ticketId: ticket.mergedIntoTicketNo })}
+                  {t(isEscalated ? "merge.escalatedInto" : "merge.into", {
+                    ticketId: ticket.mergedIntoTicketNo,
+                  })}
                 </Link>
               </div>
             ) : null}

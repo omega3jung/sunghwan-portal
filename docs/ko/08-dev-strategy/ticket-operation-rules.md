@@ -400,14 +400,25 @@ Soft delete:
   - self-merge 금지
   - draft source 또는 target 금지
   - 이미 merged된 source 또는 target 금지
+  - source와 target은 저장된 category 기준으로 동일 Tenant에 속해야 한다.
+  - 같은 scope 간 merge는 허용한다.
+  - cross-scope merge는 `INTERNAL -> PORTAL`만 허용한다.
+  - `PORTAL -> INTERNAL` 및 cross-Tenant merge는 금지한다.
+  - 서버는 저장된 ticket/category context에서 Tenant와 scope를 파생한다.
+    request field는 authorization 사실로 사용하지 않는다.
   - domain merge rule이 source/target status pair를 허용해야 한다.
 - ticket effect:
   - source ticket -> `Closed`
-  - `closeReason = Merged`
+  - 같은 scope merge: `closeReason = Merged`
+  - `INTERNAL -> PORTAL`: `closeReason = Escalated`
   - merged target id/number 설정
   - 지원되는 경우 running work session 종료
 - action persistence: `MERGE`
 - history event: `TICKET_MERGED`
+- history metadata: close reason, source/target Tenant, source/target scope,
+  merged target id/number, operator reason
+- content policy: merge는 티켓 관계만 연결하며 INTERNAL action, history,
+  attachment 또는 content를 PORTAL target에 복사하지 않는다.
 - query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---

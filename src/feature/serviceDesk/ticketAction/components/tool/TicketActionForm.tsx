@@ -17,7 +17,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import type { MainCategory } from "@/domain/serviceDesk";
+import type { CategoryScope, MainCategory } from "@/domain/serviceDesk";
 import type { TicketAssignmentPhase } from "@/domain/serviceDesk";
 import {
   MAX_ATTACH_COUNT,
@@ -51,6 +51,8 @@ const approvalActionRichEditorPreset: RichEditorPreset = {
 
 type TicketActionFormProps = {
   ticketId: string;
+  ticketTenantId?: string | null;
+  ticketScope?: CategoryScope;
   originalCategoryId?: string;
   assignmentPhase?: TicketAssignmentPhase;
   isRemoteMode?: boolean;
@@ -63,6 +65,8 @@ type TicketActionFormProps = {
 
 export function TicketActionForm({
   ticketId,
+  ticketTenantId,
+  ticketScope,
   originalCategoryId,
   assignmentPhase = "WORK",
   isRemoteMode = false,
@@ -107,7 +111,13 @@ export function TicketActionForm({
       {mode === "adjust" ? <AdjustFields form={form} t={t} /> : null}
 
       {mode === "merge" ? (
-        <MergeFields ticketId={ticketId} form={form} t={t} />
+        <MergeFields
+          ticketId={ticketId}
+          ticketTenantId={ticketTenantId}
+          ticketScope={ticketScope}
+          form={form}
+          t={t}
+        />
       ) : null}
 
       <Field

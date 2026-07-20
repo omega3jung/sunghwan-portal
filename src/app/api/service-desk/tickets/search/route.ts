@@ -7,7 +7,7 @@ import {
   toApiErrorResponse,
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
-import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
 import {
@@ -81,14 +81,14 @@ async function handleTicketSearch(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isCurrentLocalUserInternal(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (isInternal === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
       const result = localSearchTickets({
-        isInternal,
+        access,
         request: body,
       });
 

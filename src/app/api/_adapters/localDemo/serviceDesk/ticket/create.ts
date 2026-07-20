@@ -3,6 +3,10 @@ import type { TicketMutateRequestPayload } from "@/lib/application/contracts/ser
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
+import {
+  type LocalTicketAccessContext,
+  requireLocalDemoCategoryAccess,
+} from "./access";
 import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import { getLocalDemoTickets } from "./state";
@@ -16,14 +20,16 @@ import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
 export const localCreateTicket = async ({
   isInternal,
+  access,
   requesterUsername,
   input,
 }: {
   isInternal: boolean;
+  access: LocalTicketAccessContext;
   requesterUsername: string | null;
   input: TicketMutateRequestPayload;
 }) => {
-  const targetMock = getLocalDemoTickets(isInternal);
+  const targetMock = getLocalDemoTickets();
   const resolvedRequesterId = normalizeRequesterId(requesterUsername);
 
   if (!resolvedRequesterId) {
@@ -37,6 +43,7 @@ export const localCreateTicket = async ({
     isInternal,
     categoryId: String(input.categoryId),
   });
+  requireLocalDemoCategoryAccess(category, access);
 
   const routing = await resolveCreateTicketRouting({
     isInternal,
@@ -50,6 +57,7 @@ export const localCreateTicket = async ({
   const nextSequence = resolveNextTicketSequence(targetMock, year);
   const nextTicket: DbTicketDetail = {
     id: createTicketId(year, nextSequence),
+    tenant_id: category.tenantId,
     ticket_number: createTicketNumber(year, nextSequence),
     created_at: now,
     updated_at: now,

@@ -14,6 +14,12 @@ export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
+  (
+    select category.cat_tenant_id
+    from service_desk.category category
+    where category.cat_id = ticket_view.cat_id
+    limit 1
+  ) as tk_tenant_id,
   tk_ticket_no,
   tk_created_at,
   tk_updated_at,
@@ -47,7 +53,7 @@ const TICKET_VIEW_COLUMNS = `
 const FIND_ACTIVE_TICKET_VIEW_ROWS_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 where tk_active = true
   and tk_status != 'Draft'
 order by tk_ticket_no desc, tk_created_at desc;
@@ -56,7 +62,7 @@ order by tk_ticket_no desc, tk_created_at desc;
 const FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 where tk_active = true
   and tk_status != 'Draft'
   and tk_id = $1
@@ -66,7 +72,7 @@ limit 1;
 const FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_INCLUDING_DRAFT_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 where tk_active = true
   and tk_id = $1
 limit 1;
@@ -268,7 +274,7 @@ const FIND_EXPIRED_RESOLVED_TICKET_VIEW_ROWS_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS},
   resolved_history.resolved_at
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 cross join lateral (
   select max(tkh_created_at) as resolved_at
   from service_desk.ticket_history
@@ -285,7 +291,7 @@ order by resolved_history.resolved_at asc, tk_ticket_no asc;
 const FIND_ACTIVE_TICKET_VIEW_ROWS_BY_SEARCH_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 where __WHERE_CLAUSE__
 order by __ORDER_BY_CLAUSE__
 limit __LIMIT_PARAM__ offset __OFFSET_PARAM__;

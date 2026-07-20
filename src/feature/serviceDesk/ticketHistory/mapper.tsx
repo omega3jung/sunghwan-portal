@@ -106,9 +106,14 @@ function getHistoryEventSummary(
     case "APPROVAL_DECLINED":
       return t("history.APPROVAL_DECLINED");
     case "TICKET_MERGED":
-      return t("history.MERGED", {
-        target: resolveMergeTargetLabel(history.metadata),
-      });
+      return t(
+        history.metadata?.closeReason === "Escalated"
+          ? "history.ESCALATED"
+          : "history.MERGED",
+        {
+          target: resolveMergeTargetLabel(history.metadata),
+        },
+      );
     case "TICKET_REJECTED":
       return t("history.TICKET_REJECTED");
     case "TICKET_CANCELED":

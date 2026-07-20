@@ -135,7 +135,7 @@ controlled branch를 추가한다.
 | `Rejected` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
 | `Resolved` | `Working` | reopen action | `TICKET_REOPENED` |
 | `Approval`/`Declined`/`Assigned`/`Working`/`Pending`/`Rejected` | `Closed` | requester cancel | `TICKET_CANCELED` |
-| active work statuses or Admin-allowed statuses | `Closed` | merge source ticket | `TICKET_MERGED` |
+| active work statuses or Admin-allowed statuses | `Closed` | 동일 Tenant merge. 같은 scope는 `Merged`, `INTERNAL -> PORTAL`은 `Escalated`로 종료 | `TICKET_MERGED` |
 | `Resolved` | `Closed` | system auto-close | `RESOLUTION_CLOSE` |
 
 ---

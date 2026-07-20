@@ -295,6 +295,8 @@ export function TicketActionTool({
 
           <TicketActionForm
             ticketId={ticketId}
+            ticketTenantId={ticket?.tenantId}
+            ticketScope={ticket?.scope}
             originalCategoryId={ticket?.categoryId}
             assignmentPhase={ticket?.assignmentPhase}
             isRemoteMode={isRemoteMode}

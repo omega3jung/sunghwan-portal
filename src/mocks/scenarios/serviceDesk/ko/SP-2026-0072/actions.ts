@@ -108,4 +108,21 @@ export const actions: TicketActionMockInput[] = [
     tka_files: [],
     tka_images: [],
   },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 7,
+
+    tka_action_type: "MERGE",
+    tka_content:
+      "내부 데이터 처리 과정에는 이상이 없고 포털 동기화 문제로 확인되어, 후속 처리를 위해 이 티켓을 포털 티켓 SP-2026-0073으로 에스컬레이션합니다.",
+    tka_owner_username: "bianca_davis",
+
+    tka_created_at: "2026-07-13T08:20:34Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
 ];

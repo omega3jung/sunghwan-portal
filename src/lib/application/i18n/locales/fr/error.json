@@ -159,6 +159,7 @@
         "cannotMergeIntoDraft": "Impossible de fusionner avec un ticket en brouillon.",
         "ticketAlreadyMerged": "Le ticket est déjà fusionné.",
         "mergeTargetAlreadyMerged": "Le ticket cible est déjà fusionné.",
+        "portalToInternalMergeForbidden": "Les tickets portail ne peuvent pas être fusionnés dans des tickets internes.",
         "invalidMergeTarget": "Cible de fusion invalide.",
         "invalidPriority": "Priorité invalide : {{value}}.",
         "invalidRiskLevel": "Niveau de risque invalide : {{value}}.",

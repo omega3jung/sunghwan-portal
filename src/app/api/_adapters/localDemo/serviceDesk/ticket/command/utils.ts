@@ -15,16 +15,16 @@ type TicketContext = {
   ticket: DbTicketDetail;
 };
 
-export const getMaxHistoryNo = (ticketId: string, isInternal: boolean) => {
-  const items = getLocalDemoHistories(isInternal)
+export const getMaxHistoryNo = (ticketId: string, _isInternal: boolean) => {
+  const items = getLocalDemoHistories()
     .filter((item) => item.ticket_id === ticketId)
     .map((action) => action.history_no);
 
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
-export const getNextActionNo = (ticketId: string, isInternal: boolean) => {
-  const items = getLocalDemoActions(isInternal)
+export const getNextActionNo = (ticketId: string, _isInternal: boolean) => {
+  const items = getLocalDemoActions()
     .filter((item) => item.ticket_id === ticketId && item.active)
     .map((action) => action.action_no);
 
@@ -33,9 +33,9 @@ export const getNextActionNo = (ticketId: string, isInternal: boolean) => {
 
 export const getTicketContext = (
   ticketId: string,
-  isInternal = false,
+  _isInternal = false,
 ): TicketContext => {
-  const targetMock = getLocalDemoTickets(isInternal);
+  const targetMock = getLocalDemoTickets();
   const index = targetMock.findIndex((item) => item.id === ticketId);
 
   if (index < 0) {

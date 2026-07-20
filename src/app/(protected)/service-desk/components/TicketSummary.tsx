@@ -4,7 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
+import {
+  isEscalatedTicket,
+  isMergedChildTicket,
+  type TicketDetail,
+} from "@/domain/serviceDesk";
 import {
   MetaBadge,
   PriorityBadge,
@@ -31,6 +35,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
   const isAssigned = selectTicketIsAssigned(ticket);
+  const isEscalated = isEscalatedTicket(ticket);
 
   return (
     <section className="flex min-w-0 max-w-full flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -86,7 +91,9 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
 
             {isMergedChildTicket(ticket) ? (
               <li>
-                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+                <MetaBadge tone="merge">
+                  {t(isEscalated ? "merge.escalatedBadge" : "merge.badge")}
+                </MetaBadge>
               </li>
             ) : null}
           </ul>
@@ -97,7 +104,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
                 className="text-primary underline-offset-4 hover:underline"
                 href={mergedIntoTicketHref}
               >
-                {t("merge.into", {
+                {t(isEscalated ? "merge.escalatedInto" : "merge.into", {
                   ticketId: ticket.mergedIntoTicketNo,
                 })}
               </Link>

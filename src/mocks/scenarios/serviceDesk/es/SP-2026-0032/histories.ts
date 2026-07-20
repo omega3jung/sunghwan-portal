@@ -168,4 +168,32 @@ export const histories: TicketHistoryMockInput[] = [
     },
     tkh_created_at: "2026-07-12T08:19:20Z",
   },
+  {
+    tkh_ticket_id: ticket.tk_id,
+    tkh_history_no: 12,
+    tkh_history_type: "TICKET",
+    tkh_event: "TICKET_MERGED",
+    tkh_actor_username: "bianca_davis",
+    tkh_action_no: 7,
+    tkh_source: "USER_ACTION",
+    tkh_from_value: { status: "Resolved", mergedIntoTicketId: null },
+    tkh_to_value: {
+      status: "Closed",
+      closeReason: "Escalated",
+      mergedIntoTicketId: ticket.tk_merged_into_ticket_id,
+      mergedIntoTicketNo: ticket.tk_merged_into_ticket_no,
+    },
+    tkh_metadata: {
+      closeReason: "Escalated",
+      mergedIntoTicketId: ticket.tk_merged_into_ticket_id,
+      mergedIntoTicketNo: ticket.tk_merged_into_ticket_no,
+      sourceTenantId: "13",
+      targetTenantId: "13",
+      sourceScope: "INTERNAL",
+      targetScope: "PORTAL",
+      reason:
+        "Flujo interno de datos verificado; problema escalado al ticket del portal",
+    },
+    tkh_created_at: "2026-07-13T08:20:34Z",
+  },
 ];

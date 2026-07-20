@@ -6,7 +6,8 @@ import {
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
-import { isCurrentLocalUserInternal } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import { getLocalDemoHistories } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import {
   resolveApiErrorMessage,
@@ -27,13 +28,20 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   }
 
   if (!isRemote) {
-    const isInternal = await isCurrentLocalUserInternal(request);
+    const access = await getCurrentLocalTicketAccessContext(request);
 
-    if (isInternal === null) {
+    if (access === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const items = getLocalDemoHistories(isInternal).filter(
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+
+    const items = getLocalDemoHistories().filter(
       (item) => item.ticket_id === ticketId,
     );
 

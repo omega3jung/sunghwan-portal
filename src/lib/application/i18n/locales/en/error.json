@@ -173,6 +173,7 @@
         "cannotMergeIntoDraft": "Cannot merge into a draft ticket.",
         "ticketAlreadyMerged": "Ticket is already merged.",
         "mergeTargetAlreadyMerged": "Merge target is already merged.",
+        "portalToInternalMergeForbidden": "Portal tickets cannot be merged into internal tickets.",
         "invalidMergeTarget": "Invalid merge target.",
         "invalidPriority": "Invalid priority: {{value}}.",
         "invalidRiskLevel": "Invalid risk level: {{value}}.",

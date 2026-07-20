@@ -10,6 +10,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  type CategoryScope,
+  resolveTicketMergeCloseReason,
+} from "@/domain/serviceDesk";
 import { useServiceDeskTicketListQuery } from "@/feature/serviceDesk/ticket/client";
 import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types/api";
@@ -23,11 +27,19 @@ import { setActionFieldValue, type Translate } from "../utils";
 
 type MergeFieldsProps = {
   ticketId: string;
+  ticketTenantId?: string | null;
+  ticketScope?: CategoryScope;
   form: UseFormReturn<TicketActionDraftFormValues>;
   t: Translate;
 };
 
-export function MergeFields({ ticketId, form, t }: MergeFieldsProps) {
+export function MergeFields({
+  ticketId,
+  ticketTenantId,
+  ticketScope,
+  form,
+  t,
+}: MergeFieldsProps) {
   const targetTicketId = useWatch({
     control: form.control,
     name: "targetTicketId",
@@ -66,9 +78,14 @@ export function MergeFields({ ticketId, form, t }: MergeFieldsProps) {
         (ticket) =>
           ticket.id !== ticketId &&
           ticket.status !== "Draft" &&
-          ticket.mergedIntoTicketId == null,
+          ticket.mergedIntoTicketId == null &&
+          ticketScope !== undefined &&
+          resolveTicketMergeCloseReason(
+            { tenantId: ticketTenantId ?? null, scope: ticketScope },
+            { tenantId: ticket.tenantId, scope: ticket.scope },
+          ) !== null,
       ),
-    [ticketId, ticketList],
+    [ticketId, ticketList, ticketScope, ticketTenantId],
   );
   const hasMergeTicketList = canMergeTicketList.length > 0;
   const emptyMergeCandidateLabel = `${t("actionTool.form.targetTicketId")}: ${t("empty.noResults", { ns: NS.common })}`;

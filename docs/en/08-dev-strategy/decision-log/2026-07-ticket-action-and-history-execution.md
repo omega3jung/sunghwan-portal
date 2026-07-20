@@ -687,8 +687,10 @@ Merge:
 
 ```txt
 validate source and target tickets
+-> require the same persisted category Tenant
+-> allow the same scope or one-way INTERNAL -> PORTAL
 -> insert MERGE action
--> close source ticket with merge context
+-> close source as Merged or Escalated from the derived scope relationship
 -> create TICKET_MERGED history
 ```
 

@@ -124,6 +124,13 @@ Action-specific input:
 Every action requires content, except the UI may generate content for
 `ASSIGN_SELF`.
 
+`MERGE` also covers the controlled handoff of an existing `INTERNAL` ticket
+into an existing `PORTAL` ticket. It does not create the target ticket. The
+server permits same-scope merge inside one Tenant and the one-way
+`INTERNAL -> PORTAL` transition inside that same Tenant. The latter retains
+the `MERGE` action and `TICKET_MERGED` event but closes the source with
+`closeReason = Escalated`. Reverse-scope and cross-Tenant merge are rejected.
+
 ---
 
 ## Mutability Policy

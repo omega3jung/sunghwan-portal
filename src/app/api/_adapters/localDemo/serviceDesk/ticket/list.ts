@@ -1,14 +1,18 @@
 import { filterItemsByQuery } from "@/lib/application/api/query";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 
+import {
+  filterAccessibleLocalDemoTickets,
+  type LocalTicketAccessContext,
+} from "./access";
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
 
 export const localListTickets = ({
-  isInternal,
+  access,
   searchParams,
 }: {
-  isInternal: boolean;
+  access: LocalTicketAccessContext;
   searchParams: URLSearchParams;
 }) => {
   /* return only active tickets.
@@ -17,7 +21,10 @@ export const localListTickets = ({
    * Admin/audit views may need access to inactive tickets.
    * Keep this as not-found for the current local demo user-facing flow.
    */
-  const activeTickets = getLocalDemoTickets(isInternal).filter(
+  const activeTickets = filterAccessibleLocalDemoTickets(
+    getLocalDemoTickets(),
+    access,
+  ).filter(
     (ticket) => ticket.active !== false,
   );
   const items = filterItemsByQuery(

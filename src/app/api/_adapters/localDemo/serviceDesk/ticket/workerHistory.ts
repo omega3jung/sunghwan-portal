@@ -42,7 +42,7 @@ export function withLocalTicketWorkerHistory<
 }
 
 export function hasLocalTicketWorkAssignmentHistory({
-  isInternal,
+  isInternal: _isInternal,
   ticketId,
   username,
 }: {
@@ -56,7 +56,7 @@ export function hasLocalTicketWorkAssignmentHistory({
     return false;
   }
 
-  return getLocalDemoHistories(isInternal).some(
+  return getLocalDemoHistories().some(
     (history) =>
       history.ticket_id === ticketId &&
       isWorkAssignmentHistory(history) &&

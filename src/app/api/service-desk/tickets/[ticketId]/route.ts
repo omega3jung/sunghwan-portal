@@ -7,7 +7,7 @@ import {
 } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
-import { getCurrentLocalUserScope } from "@/app/api/_adapters/localDemo/auth";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import {
   localDeleteTicket,
   localGetTicket,
@@ -32,14 +32,14 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const currentUserScope = await getCurrentLocalUserScope(request);
+    const access = await getCurrentLocalTicketAccessContext(request);
 
-    if (currentUserScope === null) {
+    if (access === null) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const isInternal = currentUserScope === "INTERNAL";
-    const ticket = localGetTicket({ isInternal, id: ticketId });
+    const isInternal = access.userScope === "INTERNAL";
+    const ticket = localGetTicket({ access, id: ticketId });
 
     if (!ticket) {
       return NextResponse.json(
@@ -87,17 +87,18 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentLocalUserScope(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (currentUserScope === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
-      const isInternal = currentUserScope === "INTERNAL";
+      const isInternal = access.userScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
         await localRequesterUpdateTicket({
           isInternal,
+          access,
           ticketId,
           requesterUsername: currentUserName,
           input: body,
@@ -142,15 +143,14 @@ export async function DELETE(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const currentUserScope = await getCurrentLocalUserScope(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
 
-      if (currentUserScope === null) {
+      if (access === null) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
-      const isInternal = currentUserScope === "INTERNAL";
       localDeleteTicket({
-        isInternal,
+        access,
         ticketId,
       });
 

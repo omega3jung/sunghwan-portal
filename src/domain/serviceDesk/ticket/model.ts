@@ -83,6 +83,7 @@ interface TicketViewState {
  * These are the key fields for determining the ticket classification.
  */
 interface TicketScopeContext {
+  tenantId: string | null;
   scope: CategoryScope;
   categoryParentId?: string;
 }
