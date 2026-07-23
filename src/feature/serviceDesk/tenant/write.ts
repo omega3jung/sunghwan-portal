@@ -1,5 +1,5 @@
 import { Tenant } from "@/domain/serviceDesk";
-import { idToNumber } from "@/lib/api/utils/mapId";
+import { idToNumber } from "@/lib/application/api/mapId";
 
 import { DbTenant } from "./types";
 

@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DEFAULT_LANGUAGE } from "@/domain/config";
+import { DEFAULT_LANGUAGE } from "@/lib/application/i18n";
+import { isLocale } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
-import { isLocale } from "@/shared/utils/i18n";
 
 const resolveLocale = (value?: string): Locale => {
   return value && isLocale(value) ? value : DEFAULT_LANGUAGE;

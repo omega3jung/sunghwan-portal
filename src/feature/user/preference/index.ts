@@ -2,6 +2,6 @@
 
 // server-safe export only.
 
-export * from "./api";
+export * from "./preferenceKeys";
 export * from "./queryKeys";
 export * from "./types";

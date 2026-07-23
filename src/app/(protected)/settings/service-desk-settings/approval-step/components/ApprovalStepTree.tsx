@@ -10,9 +10,9 @@ import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
-import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { SETTINGS_OFFSET_STYLE } from "../../../style";
@@ -32,6 +32,7 @@ type Props = {
   removeApprovalStep: (id: UniqueIdentifier) => void;
   language: SupportedLanguage;
   isLoading: boolean;
+  readOnly?: boolean;
 };
 
 export const ApprovalStepTree = ({
@@ -43,6 +44,7 @@ export const ApprovalStepTree = ({
   removeApprovalStep,
   language,
   isLoading,
+  readOnly = false,
 }: Props) => {
   const { t: tDomain } = useTranslation(NS.domain);
   const tLocal = useLocalizedText(language);
@@ -71,7 +73,7 @@ export const ApprovalStepTree = ({
         <SortableTree
           items={tree}
           onChange={(nextTree) => {
-            setTree(nextTree);
+            if (!readOnly) setTree(nextTree);
           }}
           collapsible={true}
           renderItem={(item, { onCollapse }) => {
@@ -129,18 +131,21 @@ export const ApprovalStepTree = ({
                       <span className="truncate">{tLocal(data.name)}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      {!isSub &&
+                      {!isSub && (
+                        <Badge
+                          variant="outline"
+                          className={getRiskBadgeClassName(
+                            data.defaultRiskLevel,
+                          )}
+                        >
+                          {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
+                        </Badge>
+                      )}
+                      {!readOnly &&
+                        !isSub &&
                         limit != null &&
                         item.children.length < limit && (
                           <>
-                            <Badge
-                              variant="outline"
-                              className={getRiskBadgeClassName(
-                                data.defaultRiskLevel,
-                              )}
-                            >
-                              {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
-                            </Badge>
                             <Button
                               variant="ghost"
                               type="button"
@@ -163,19 +168,21 @@ export const ApprovalStepTree = ({
                               )}
                             </Badge>
                           )}
-                          <span className="w-4"></span>
-                          <Button
-                            variant="ghost"
-                            type="button"
-                            size="icon_xs"
-                            disabled={isLoading}
-                            onClick={() => removeApprovalStep(data.id)}
-                          >
-                            <X />
-                          </Button>
+                          {!readOnly && <span className="w-4"></span>}
+                          {!readOnly && (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              size="icon_xs"
+                              disabled={isLoading}
+                              onClick={() => removeApprovalStep(data.id)}
+                            >
+                              <X />
+                            </Button>
+                          )}
                         </>
                       )}
-                      {isSub && <DragHandle {...dragHandleProps} />}
+                      {!readOnly && isSub && <DragHandle {...dragHandleProps} />}
                     </div>
                   </div>
                 )}

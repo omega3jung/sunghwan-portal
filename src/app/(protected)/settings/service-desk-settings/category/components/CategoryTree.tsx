@@ -8,8 +8,8 @@ import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
-import { useLocalizedText } from "@/shared/hooks";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { CategoryData, SubCategoryData } from "../types";
@@ -25,6 +25,7 @@ type Props = {
   removeCategory: (id: UniqueIdentifier) => void;
   language: SupportedLanguage;
   isLoading: boolean;
+  readOnly?: boolean;
 };
 
 export const CategoryTree = ({
@@ -36,6 +37,7 @@ export const CategoryTree = ({
   removeCategory,
   language,
   isLoading,
+  readOnly = false,
 }: Props) => {
   const tLocal = useLocalizedText(language);
 
@@ -44,7 +46,7 @@ export const CategoryTree = ({
       <SortableTree
         items={tree}
         onChange={(nextTree) => {
-          setTree(nextTree);
+          if (!readOnly) setTree(nextTree);
         }}
         collapsible={true}
         renderItem={(item, { onCollapse }) => {
@@ -99,7 +101,7 @@ export const CategoryTree = ({
                     <span className="truncate">{tLocal(data.name)}</span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    {!isSub &&
+                    {!readOnly &&
                       !isSub &&
                       limit != null &&
                       item.children.length < limit && (
@@ -113,7 +115,7 @@ export const CategoryTree = ({
                           <Plus />
                         </Button>
                       )}
-                    {data.isCreated ? (
+                    {!readOnly && data.isCreated ? (
                       <Button
                         variant="ghost"
                         type="button"
@@ -126,7 +128,7 @@ export const CategoryTree = ({
                     ) : (
                       <span className="w-5"></span>
                     )}
-                    <DragHandle {...dragHandleProps} />
+                    {!readOnly && <DragHandle {...dragHandleProps} />}
                   </div>
                 </div>
               )}

@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 export function UpdateTicketDialogHeader() {
   const { t } = useTranslation(NS.serviceDesk);

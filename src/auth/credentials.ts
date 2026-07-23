@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { authApiJson } from "@/app/api/_helpers/authApiJson";
+import { authApiJson } from "@/auth/api";
 import { AuthUser } from "@/domain/auth";
 import { resolveDemoAuth } from "@/mocks/domain/user";
 

@@ -1,3 +1,8 @@
+import type {
+  CategoryScope,
+  TicketMergeCloseReason,
+} from "@/domain/serviceDesk";
+
 import type { TicketHistoryDto } from "./ticketHistoryDto";
 import {
   compactJsonObject,
@@ -412,6 +417,11 @@ export async function createHistoryOfTicketMerged(
     fromStatus: string;
     targetTicketId: string;
     targetTicketNo: string;
+    closeReason: TicketMergeCloseReason;
+    sourceTenantId: string;
+    targetTenantId: string;
+    sourceScope: CategoryScope;
+    targetScope: CategoryScope;
     reason: string;
     metadata?: TicketHistoryJsonValue | null;
   },
@@ -431,15 +441,19 @@ export async function createHistoryOfTicketMerged(
       },
       toValue: {
         status: "Closed",
-        closeReason: "Merged",
+        closeReason: params.closeReason,
         mergedIntoTicketId: params.targetTicketId,
         mergedIntoTicketNo: params.targetTicketNo,
       },
       metadata: compactJsonObject({
         ...omitMetadataIdentity(normalizeMetadataRecord(params.metadata)),
-        closeReason: "Merged",
+        closeReason: params.closeReason,
         mergedIntoTicketId: params.targetTicketId,
         mergedIntoTicketNo: params.targetTicketNo,
+        sourceTenantId: params.sourceTenantId,
+        targetTenantId: params.targetTenantId,
+        sourceScope: params.sourceScope,
+        targetScope: params.targetScope,
         reason: params.reason,
       }),
     },

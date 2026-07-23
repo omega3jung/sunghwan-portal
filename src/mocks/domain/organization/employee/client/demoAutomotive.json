@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 501,
+    "e_username": "quentin_zhang",
+    "e_name": {
+      "en": {
+        "first": "Quentin",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "quentin.zhang@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 251,
+    "e_job_field_id": 401,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 502,
+    "e_username": "rosa_lee",
+    "e_name": {
+      "en": {
+        "first": "Rosa",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "rosa.lee@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 251,
+    "e_job_field_id": 402,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 503,
+    "e_username": "samuel_diaz",
+    "e_name": {
+      "en": {
+        "first": "Samuel",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "samuel.diaz@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 252,
+    "e_job_field_id": 403,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 504,
+    "e_username": "tessa_kim",
+    "e_name": {
+      "en": {
+        "first": "Tessa",
+        "middle": "",
+        "last": "Kim"
+      }
+    },
+    "e_phone": "",
+    "e_email": "tessa.kim@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 252,
+    "e_job_field_id": 404,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 505,
+    "e_username": "umar_rossi",
+    "e_name": {
+      "en": {
+        "first": "Umar",
+        "middle": "",
+        "last": "Rossi"
+      }
+    },
+    "e_phone": "",
+    "e_email": "umar.rossi@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 253,
+    "e_job_field_id": 405,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 506,
+    "e_username": "violet_young",
+    "e_name": {
+      "en": {
+        "first": "Violet",
+        "middle": "",
+        "last": "Young"
+      }
+    },
+    "e_phone": "",
+    "e_email": "violet.young@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 253,
+    "e_job_field_id": 406,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 507,
+    "e_username": "william_king",
+    "e_name": {
+      "en": {
+        "first": "William",
+        "middle": "",
+        "last": "King"
+      }
+    },
+    "e_phone": "",
+    "e_email": "william.king@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 254,
+    "e_job_field_id": 407,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 508,
+    "e_username": "ximena_chen",
+    "e_name": {
+      "en": {
+        "first": "Ximena",
+        "middle": "",
+        "last": "Chen"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ximena.chen@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 254,
+    "e_job_field_id": 408,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 509,
+    "e_username": "yusuf_johnson",
+    "e_name": {
+      "en": {
+        "first": "Yusuf",
+        "middle": "",
+        "last": "Johnson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "yusuf.johnson@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 255,
+    "e_job_field_id": 409,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 510,
+    "e_username": "zoe_quinn",
+    "e_name": {
+      "en": {
+        "first": "Zoe",
+        "middle": "",
+        "last": "Quinn"
+      }
+    },
+    "e_phone": "",
+    "e_email": "zoe.quinn@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 255,
+    "e_job_field_id": 410,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 511,
+    "e_username": "adrian_xu",
+    "e_name": {
+      "en": {
+        "first": "Adrian",
+        "middle": "",
+        "last": "Xu"
+      }
+    },
+    "e_phone": "",
+    "e_email": "adrian.xu@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 256,
+    "e_job_field_id": 411,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 512,
+    "e_username": "bianca_hall",
+    "e_name": {
+      "en": {
+        "first": "Bianca",
+        "middle": "",
+        "last": "Hall"
+      }
+    },
+    "e_phone": "",
+    "e_email": "bianca.hall@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 256,
+    "e_job_field_id": 412,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 513,
+    "e_username": "caleb_baker",
+    "e_name": {
+      "en": {
+        "first": "Caleb",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "caleb.baker@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 257,
+    "e_job_field_id": 413,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 514,
+    "e_username": "diana_ito",
+    "e_name": {
+      "en": {
+        "first": "Diana",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "diana.ito@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 257,
+    "e_job_field_id": 414,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 515,
+    "e_username": "elias_patel",
+    "e_name": {
+      "en": {
+        "first": "Elias",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elias.patel@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 258,
+    "e_job_field_id": 415,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 516,
+    "e_username": "fiona_wilson",
+    "e_name": {
+      "en": {
+        "first": "Fiona",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "fiona.wilson@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 258,
+    "e_job_field_id": 416,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 517,
+    "e_username": "henry_green",
+    "e_name": {
+      "en": {
+        "first": "Henry",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "henry.green@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 253,
+    "e_job_field_id": 405,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-10T18:25:00+09:00"
+  },
+  {
+    "e_id": 518,
+    "e_username": "iris_anderson",
+    "e_name": {
+      "en": {
+        "first": "Iris",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "iris.anderson@client-demo-automotive.com",
+    "e_image_url": null,
+    "e_department_id": 256,
+    "e_job_field_id": 412,
+    "e_company_id": 17,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-07-12T18:25:00+09:00"
+  }
+]

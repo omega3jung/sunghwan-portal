@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
 import type { TicketAction } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
-import type { ImageValueLabel } from "@/shared/types";
+import { NS } from "@/lib/application/i18n";
 import {
   formatDateTime,
   formatTimeDistanceFromNow,
@@ -15,7 +14,7 @@ import { getTicketActionTypeLabelKey } from "../../mapper";
 
 type TicketActionMetaProps = {
   action: TicketAction;
-  owner?: ImageValueLabel;
+  ownerName?: string;
   dateLocale?: Locale;
 };
 
@@ -36,14 +35,14 @@ const ACTION_BADGE_CLASSNAME: Record<TicketAction["actionType"], string> = {
 
 export function TicketActionMeta({
   action,
-  owner,
+  ownerName,
   dateLocale,
 }: TicketActionMetaProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const ownerLabel =
-    owner?.label ||
+    ownerName ||
     t("actionTool.list.unknownOwner", { defaultValue: "Unknown employee" });
-  const ownerSubText = owner?.displayName || "-";
+  const ownerSubText = action.ownerUsername || "-";
 
   return (
     <div className="min-w-0 space-y-2">

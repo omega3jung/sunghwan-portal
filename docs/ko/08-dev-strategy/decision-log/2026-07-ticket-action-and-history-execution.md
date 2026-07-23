@@ -684,10 +684,12 @@ validate current approver
 Merge:
 
 ```txt
-validate source and target tickets
--> insert MERGE action
--> close source ticket with merge context
--> create TICKET_MERGED history
+source 및 target 티켓 검증
+-> 저장된 category Tenant가 동일한지 확인
+-> 같은 scope 또는 단방향 INTERNAL -> PORTAL만 허용
+-> MERGE action 생성
+-> 파생된 scope 관계에 따라 source를 Merged 또는 Escalated로 종료
+-> TICKET_MERGED history 생성
 ```
 
 ---

@@ -1,5 +1,5 @@
 import { TicketHistory } from "@/domain/serviceDesk";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 
 type TicketHistoryResponse = OResponse<TicketHistory>;

@@ -1,9 +1,9 @@
 // app/api/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserName, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { clientProfiles, demoProfiles } from "@/mocks/domain/user";
+import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
 
 export async function GET(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
@@ -15,11 +15,7 @@ export async function GET(req: NextRequest) {
   const isRemote = await isRemoteRequest(req);
 
   if (!isRemote) {
-    const demoUserProfiles = [...demoProfiles, ...clientProfiles];
-
-    const targetProfile = demoUserProfiles.find(
-      (profile) => profile.username === currentUserName,
-    );
+    const targetProfile = getLocalUserProfile(currentUserName);
 
     if (!targetProfile) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });

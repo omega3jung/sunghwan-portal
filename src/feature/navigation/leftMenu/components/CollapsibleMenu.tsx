@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronRight, Settings2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,8 +29,8 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ENVIRONMENT } from "@/lib/environment";
-import { useLocalizedText } from "@/shared/hooks";
+import { useLocalizedText } from "@/lib/client/i18n";
+import { ENVIRONMENT } from "@/lib/config/environment";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";

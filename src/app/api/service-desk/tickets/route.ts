@@ -1,33 +1,30 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-  withDerivedTicketOwnership,
-  withDerivedTicketOwnershipList,
-} from "@/app/api/service-desk/_shared";
-import {
-  type TicketMutateRequestPayload,
-  ticketMutateRequestPayloadSchema,
-} from "@/feature/serviceDesk/ticket";
-import {
-  mapTicketDetailPayload,
-  mapTicketSummaryListPayload,
-} from "@/feature/serviceDesk/ticket/api";
-import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import {
   localCreateTicket,
   localListTickets,
   withLocalTicketWorkerHistory,
-} from "@/server/serviceDesk/ticket/localDemo";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+  withDerivedTicketOwnership,
+  withDerivedTicketOwnershipList,
+} from "@/app/api/_adapters/serviceDesk";
+import { ticketMutateRequestPayloadSchema } from "@/feature/serviceDesk/ticket";
+import {
+  mapTicketDetailPayload,
+  mapTicketSummaryListPayload,
+  type TicketMutateRequestPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -40,9 +37,14 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
       const filtered = localListTickets({
-        isInternal,
+        access,
         searchParams: request.nextUrl.searchParams,
       });
 
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.fetchList"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
       });
     }
   }
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
 }
@@ -81,7 +83,7 @@ export async function POST(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { message: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload") },
       { status: 400 },
     );
   }
@@ -94,11 +96,18 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = access.userScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
-        localCreateTicket({
+        await localCreateTicket({
           isInternal,
+          access,
           requesterUsername: currentUserName,
           input: body,
         }),
@@ -111,7 +120,7 @@ export async function POST(request: NextRequest) {
       );
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.create"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.create"),
       });
     }
   }
@@ -121,7 +130,7 @@ export async function POST(request: NextRequest) {
     path: "/service-desk/tickets",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body,
-    errorMessage: tServiceDeskApi("api.tickets.create"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.create"),
     mapData: mapTicketDetailPayload,
   });
 }

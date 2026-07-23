@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
 import { AccessLevel } from "@/domain/auth";
-import { SupportedLanguage } from "@/domain/config";
 import {
   APPROVAL_ASSIGNEE_TYPES,
   ApprovalAssigneeType,
   ApprovalAssigneeTypeValue,
 } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
 import { camelCase } from "@/shared/utils/value";
 

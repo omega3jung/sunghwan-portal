@@ -6,11 +6,10 @@ import {
   getAuthToken,
   isAdmin,
   tokenToOriginalAuthUser,
-} from "@/app/api/_helpers";
+} from "@/app/api/_adapters";
+import { getLocalImpersonationTarget } from "@/app/api/_adapters/localDemo/user";
+import { authApiJson } from "@/auth/api";
 import { AuthUser } from "@/domain/auth";
-import { resolveDemoAuth } from "@/mocks";
-
-import { authApiJson } from "../../_helpers/authApiJson";
 
 const requestSchema = z.object({
   impersonatedUsername: z.string().trim().min(1),
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
     // 2-a. client demo impersonation.
     if (originalUser.dataScope === "LOCAL") {
       // 3-a. search impersonated user.
-      const demoAuth = resolveDemoAuth(impersonatedUsername);
+      const demoAuth = getLocalImpersonationTarget(impersonatedUsername);
 
       // 4-a. validate and return response.
       return validateAuth(originalUser, demoAuth);

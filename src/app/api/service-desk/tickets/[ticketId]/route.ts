@@ -2,25 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import {
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-  withDerivedTicketOwnership,
-} from "@/app/api/service-desk/_shared";
-import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api";
-import { requesterUpdateTicketRequestSchema } from "@/server/data/serviceDesk/ticket";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import {
   localDeleteTicket,
   localGetTicket,
   localRequesterUpdateTicket,
   withLocalTicketWorkerHistory,
-} from "@/server/serviceDesk/ticket/localDemo";
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import {
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+  withDerivedTicketOwnership,
+} from "@/app/api/_adapters/serviceDesk";
+import { mapTicketDetailPayload } from "@/lib/application/contracts/serviceDesk";
+import { requesterUpdateTicketRequestSchema } from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -32,12 +32,18 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const isInternal = await isInternalUser(request);
-    const ticket = localGetTicket({ isInternal, id: ticketId });
+    const access = await getCurrentLocalTicketAccessContext(request);
+
+    if (access === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    const isInternal = access.userScope === "INTERNAL";
+    const ticket = localGetTicket({ access, id: ticketId });
 
     if (!ticket) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.tickets.notFound") },
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
         { status: 404 },
       );
     }
@@ -53,7 +59,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetch"),
     mapData: mapTicketDetailPayload,
   });
 }
@@ -68,7 +74,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { message: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload") },
       { status: 400 },
     );
   }
@@ -81,11 +87,18 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
+      const isInternal = access.userScope === "INTERNAL";
 
       const ticket = withDerivedTicketOwnership(
-        localRequesterUpdateTicket({
+        await localRequesterUpdateTicket({
           isInternal,
+          access,
           ticketId,
           requesterUsername: currentUserName,
           input: body,
@@ -101,7 +114,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
       );
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.update"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.update"),
       });
     }
   }
@@ -111,7 +124,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body,
-    errorMessage: tServiceDeskApi("api.tickets.update"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.update"),
     mapData: mapTicketDetailPayload,
   });
 }
@@ -130,16 +143,21 @@ export async function DELETE(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
       localDeleteTicket({
-        isInternal,
+        access,
         ticketId,
       });
 
       return new NextResponse(null, { status: 204 });
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.delete"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.delete"),
       });
     }
   }
@@ -148,6 +166,6 @@ export async function DELETE(
     method: "DELETE",
     path: `/service-desk/tickets/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.delete"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.delete"),
   });
 }

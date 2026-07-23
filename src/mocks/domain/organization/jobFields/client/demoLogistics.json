@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 101,
+    "jf_name": {
+      "en": "Demo Logistics - Logistics Operations Director"
+    },
+    "jf_description": {
+      "en": "Logistics Operations Director at Demo Logistics"
+    },
+    "jf_department_id": 101,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 102,
+    "jf_name": {
+      "en": "Demo Logistics - Logistics Coordinator"
+    },
+    "jf_description": {
+      "en": "Logistics Coordinator at Demo Logistics"
+    },
+    "jf_department_id": 101,
+    "jf_company_id": 2,
+    "jf_parent_id": 101,
+    "jf_active": true
+  },
+  {
+    "jf_id": 103,
+    "jf_name": {
+      "en": "Demo Logistics - Transportation Manager"
+    },
+    "jf_description": {
+      "en": "Transportation Manager at Demo Logistics"
+    },
+    "jf_department_id": 102,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 104,
+    "jf_name": {
+      "en": "Demo Logistics - Transportation Specialist"
+    },
+    "jf_description": {
+      "en": "Transportation Specialist at Demo Logistics"
+    },
+    "jf_department_id": 102,
+    "jf_company_id": 2,
+    "jf_parent_id": 103,
+    "jf_active": true
+  },
+  {
+    "jf_id": 105,
+    "jf_name": {
+      "en": "Demo Logistics - Warehouse Manager"
+    },
+    "jf_description": {
+      "en": "Warehouse Manager at Demo Logistics"
+    },
+    "jf_department_id": 103,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 106,
+    "jf_name": {
+      "en": "Demo Logistics - Warehouse Supervisor"
+    },
+    "jf_description": {
+      "en": "Warehouse Supervisor at Demo Logistics"
+    },
+    "jf_department_id": 103,
+    "jf_company_id": 2,
+    "jf_parent_id": 105,
+    "jf_active": true
+  },
+  {
+    "jf_id": 107,
+    "jf_name": {
+      "en": "Demo Logistics - Fleet Manager"
+    },
+    "jf_description": {
+      "en": "Fleet Manager at Demo Logistics"
+    },
+    "jf_department_id": 104,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 108,
+    "jf_name": {
+      "en": "Demo Logistics - Fleet Coordinator"
+    },
+    "jf_description": {
+      "en": "Fleet Coordinator at Demo Logistics"
+    },
+    "jf_department_id": 104,
+    "jf_company_id": 2,
+    "jf_parent_id": 107,
+    "jf_active": true
+  },
+  {
+    "jf_id": 109,
+    "jf_name": {
+      "en": "Demo Logistics - IT Director"
+    },
+    "jf_description": {
+      "en": "IT Director at Demo Logistics"
+    },
+    "jf_department_id": 105,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 110,
+    "jf_name": {
+      "en": "Demo Logistics - IT Manager"
+    },
+    "jf_description": {
+      "en": "IT Manager at Demo Logistics"
+    },
+    "jf_department_id": 105,
+    "jf_company_id": 2,
+    "jf_parent_id": 109,
+    "jf_active": true
+  },
+  {
+    "jf_id": 111,
+    "jf_name": {
+      "en": "Demo Logistics - Logistics Systems Manager"
+    },
+    "jf_description": {
+      "en": "Logistics Systems Manager at Demo Logistics"
+    },
+    "jf_department_id": 106,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 112,
+    "jf_name": {
+      "en": "Demo Logistics - Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Systems Engineer at Demo Logistics"
+    },
+    "jf_department_id": 106,
+    "jf_company_id": 2,
+    "jf_parent_id": 111,
+    "jf_active": true
+  },
+  {
+    "jf_id": 113,
+    "jf_name": {
+      "en": "Demo Logistics - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Logistics"
+    },
+    "jf_department_id": 107,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 114,
+    "jf_name": {
+      "en": "Demo Logistics - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Logistics"
+    },
+    "jf_department_id": 107,
+    "jf_company_id": 2,
+    "jf_parent_id": 113,
+    "jf_active": true
+  },
+  {
+    "jf_id": 115,
+    "jf_name": {
+      "en": "Demo Logistics - Customer Support Manager"
+    },
+    "jf_description": {
+      "en": "Customer Support Manager at Demo Logistics"
+    },
+    "jf_department_id": 108,
+    "jf_company_id": 2,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 116,
+    "jf_name": {
+      "en": "Demo Logistics - Support Specialist"
+    },
+    "jf_description": {
+      "en": "Support Specialist at Demo Logistics"
+    },
+    "jf_department_id": 108,
+    "jf_company_id": 2,
+    "jf_parent_id": 115,
+    "jf_active": true
+  }
+]

@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 241,
+    "e_username": "aiden_baker",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.baker@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 121,
+    "e_job_field_id": 141,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 242,
+    "e_username": "amelia_ito",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.ito@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 121,
+    "e_job_field_id": 142,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 243,
+    "e_username": "benjamin_patel",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.patel@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 122,
+    "e_job_field_id": 143,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 244,
+    "e_username": "chloe_wilson",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.wilson@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 122,
+    "e_job_field_id": 144,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 245,
+    "e_username": "daniel_green",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.green@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 123,
+    "e_job_field_id": 145,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 246,
+    "e_username": "elena_anderson",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.anderson@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 123,
+    "e_job_field_id": 146,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 247,
+    "e_username": "ethan_hassan",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.hassan@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 124,
+    "e_job_field_id": 147,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 248,
+    "e_username": "freya_okafor",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.okafor@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 124,
+    "e_job_field_id": 148,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 249,
+    "e_username": "gabriel_vega",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.vega@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 125,
+    "e_job_field_id": 149,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 250,
+    "e_username": "hana_davis",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.davis@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 125,
+    "e_job_field_id": 150,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 251,
+    "e_username": "isaac_smith",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.smith@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 126,
+    "e_job_field_id": 151,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 252,
+    "e_username": "julia_garcia",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.garcia@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 126,
+    "e_job_field_id": 152,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 253,
+    "e_username": "kai_novak",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.novak@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 127,
+    "e_job_field_id": 153,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 254,
+    "e_username": "layla_usman",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.usman@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 127,
+    "e_job_field_id": 154,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 255,
+    "e_username": "mateo_clark",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.clark@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 128,
+    "e_job_field_id": 155,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 256,
+    "e_username": "nora_park",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.park@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 128,
+    "e_job_field_id": 156,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 257,
+    "e_username": "oliver_foster",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.foster@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 124,
+    "e_job_field_id": 148,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-06-17T18:25:00+09:00"
+  },
+  {
+    "e_id": 258,
+    "e_username": "priya_martinez",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.martinez@client-demo-finance.com",
+    "e_image_url": null,
+    "e_department_id": 128,
+    "e_job_field_id": 155,
+    "e_company_id": 4,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-29T18:25:00+09:00"
+  }
+]

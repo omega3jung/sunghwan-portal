@@ -18,15 +18,16 @@ import {
   PortalPreference,
   Preference,
   ScreenMode,
-} from "@/domain/config";
+} from "@/domain/user/preference";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { preferenceKeys } from "@/feature/user/preference";
 import { useUpdateUserPreference } from "@/feature/user/preference/client";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
-import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { isLocale } from "@/lib/application/i18n";
+import { languageOptions } from "@/lib/client/i18n";
+import { applyColorTheme } from "@/lib/client/theme";
 import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
-import { languageOptions } from "@/shared/constants/options/language";
-import { isLocale } from "@/shared/utils/i18n";
-import { applyColorTheme, cn } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
 const themeButtons = [
   { name: "default", primary: "0,0%,9%", muted: "0,0%,96.1%" },

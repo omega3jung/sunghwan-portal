@@ -1,35 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  camelCompanyMapper,
+  createLocalCompany,
+  listLocalCompanies,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
+  type CreateCompanyInput,
   mapCompanyItemPayload,
   mapCompanyListPayload,
-} from "@/feature/organization/company/mapper";
-import {
-  CreateCompanyInput,
-  toCompanyMockResource,
   toCompanyWritePayload,
-} from "@/feature/organization/company/write";
-import { allCompaniesMock } from "@/mocks/domain/organization/companies";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
-    const companyData = camelCompanyMapper(
-      allCompaniesMock
-        .filter((company) => company.company_active)
-        .sort(compareCompanies),
-    );
-
-    return NextResponse.json({
-      items: companyData,
-      total: companyData.length,
-    });
+    return NextResponse.json(listLocalCompanies());
   }
 
   // real backend
@@ -48,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toCompanyMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalCompany(body), { status: 201 });
   }
 
   return portalApiJson(request, {
@@ -58,29 +47,4 @@ export async function POST(request: NextRequest) {
     errorMessage: "Failed to create company",
     mapData: mapCompanyItemPayload,
   });
-}
-
-function compareCompanies(
-  a: (typeof allCompaniesMock)[number],
-  b: (typeof allCompaniesMock)[number],
-) {
-  if (a.company_portal_owner !== b.company_portal_owner) {
-    return Number(a.company_portal_owner) - Number(b.company_portal_owner);
-  }
-
-  const nameCompare = (a.company_name.en ?? "").localeCompare(
-    b.company_name.en ?? "",
-  );
-
-  if (nameCompare !== 0) {
-    return nameCompare;
-  }
-
-  const codeCompare = (a.company_code ?? "").localeCompare(b.company_code ?? "");
-
-  if (codeCompare !== 0) {
-    return codeCompare;
-  }
-
-  return a.company_id - b.company_id;
 }

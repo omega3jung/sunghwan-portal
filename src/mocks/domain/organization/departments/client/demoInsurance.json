@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 261,
+    "d_name": {
+      "en": "Demo Insurance - Insurance Operations"
+    },
+    "d_code": "INS-OPS",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 262,
+    "d_name": {
+      "en": "Demo Insurance - Underwriting"
+    },
+    "d_code": "INS-UND",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": 261,
+    "d_active": true
+  },
+  {
+    "d_id": 263,
+    "d_name": {
+      "en": "Demo Insurance - Claims Management"
+    },
+    "d_code": "INS-CLM",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": 261,
+    "d_active": true
+  },
+  {
+    "d_id": 264,
+    "d_name": {
+      "en": "Demo Insurance - Actuarial Services"
+    },
+    "d_code": "INS-ACT",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": 261,
+    "d_active": true
+  },
+  {
+    "d_id": 265,
+    "d_name": {
+      "en": "Demo Insurance - Insurance Technology"
+    },
+    "d_code": "INS-TEC",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 266,
+    "d_name": {
+      "en": "Demo Insurance - Policy Systems"
+    },
+    "d_code": "INS-SYS",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": 265,
+    "d_active": true
+  },
+  {
+    "d_id": 267,
+    "d_name": {
+      "en": "Demo Insurance - Corporate Services"
+    },
+    "d_code": "INS-COR",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 268,
+    "d_name": {
+      "en": "Demo Insurance - Risk & Compliance"
+    },
+    "d_code": "INS-RNC",
+    "d_description": null,
+    "d_company_id": 18,
+    "d_parent_id": 267,
+    "d_active": true
+  }
+]

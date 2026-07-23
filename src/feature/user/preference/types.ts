@@ -1,6 +1,6 @@
 // src/feature/user/preference/types.ts
 
-import { Preference } from "@/domain/config";
+import { Preference } from "@/domain/user/preference";
 
 export interface GetPreferenceInput {
   userId?: string | null;

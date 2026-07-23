@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 201,
+    "e_username": "aiden_anderson",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.anderson@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 101,
+    "e_job_field_id": 101,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 202,
+    "e_username": "amelia_hassan",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.hassan@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 101,
+    "e_job_field_id": 102,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 203,
+    "e_username": "benjamin_okafor",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.okafor@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 102,
+    "e_job_field_id": 103,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 204,
+    "e_username": "chloe_vega",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.vega@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 102,
+    "e_job_field_id": 104,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 205,
+    "e_username": "daniel_davis",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.davis@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 103,
+    "e_job_field_id": 105,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 206,
+    "e_username": "elena_smith",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.smith@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 103,
+    "e_job_field_id": 106,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 207,
+    "e_username": "ethan_garcia",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.garcia@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 104,
+    "e_job_field_id": 107,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 208,
+    "e_username": "freya_novak",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.novak@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 104,
+    "e_job_field_id": 108,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 209,
+    "e_username": "gabriel_usman",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.usman@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 105,
+    "e_job_field_id": 109,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 210,
+    "e_username": "hana_clark",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.clark@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 105,
+    "e_job_field_id": 110,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 211,
+    "e_username": "isaac_park",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.park@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 106,
+    "e_job_field_id": 111,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 212,
+    "e_username": "julia_foster",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.foster@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 106,
+    "e_job_field_id": 112,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 213,
+    "e_username": "kai_martinez",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.martinez@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 107,
+    "e_job_field_id": 113,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 214,
+    "e_username": "layla_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.tanaka@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 107,
+    "e_job_field_id": 114,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 215,
+    "e_username": "mateo_brown",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Brown"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.brown@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 108,
+    "e_job_field_id": 115,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 216,
+    "e_username": "nora_moore",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Moore"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.moore@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 108,
+    "e_job_field_id": 116,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 217,
+    "e_username": "oliver_evans",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.evans@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 103,
+    "e_job_field_id": 106,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-06-16T18:25:00+09:00"
+  },
+  {
+    "e_id": 218,
+    "e_username": "priya_laurent",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.laurent@client-demo-logistics.com",
+    "e_image_url": null,
+    "e_department_id": 107,
+    "e_job_field_id": 113,
+    "e_company_id": 2,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-06-13T18:25:00+09:00"
+  }
+]

@@ -18,8 +18,8 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ENVIRONMENT } from "@/lib/environment";
-import { useLocalizedText } from "@/shared/hooks";
+import { useLocalizedText } from "@/lib/client/i18n";
+import { ENVIRONMENT } from "@/lib/config/environment";
 
 import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";

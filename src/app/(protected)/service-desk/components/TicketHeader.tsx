@@ -13,11 +13,11 @@ import { useTranslation } from "react-i18next";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
-import type { SupportedLanguage } from "@/domain/config";
 import type { MainCategory, TicketDetail } from "@/domain/serviceDesk";
-import { UpdateTicketDialog } from "@/feature/serviceDesk/ticket/components";
+import { UpdateTicketDialog } from "@/feature/serviceDesk/ticket/client";
 import { WorkSessionTool } from "@/feature/serviceDesk/ticketWorkSession/client";
-import { NS } from "@/lib/i18n";
+import type { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 import type { ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
 

@@ -1,0 +1,65 @@
+import { TicketMockInput } from "../../types";
+
+export const ticket: TicketMockInput = {
+  tk_id: "b90d71b5-f55a-4238-81d9-20676fbe31cf",
+  tk_ticket_no: "SP-2026-0011",
+  tk_created_at: "2026-07-11T08:13:53Z",
+  tk_updated_at: "2026-07-12T07:42:16Z",
+  tk_requester_username: "fiona_tanaka",
+  tk_requester: {
+    username: "fiona_tanaka",
+    name: {
+      en: { first: "Fiona", middle: "", last: "Tanaka" },
+    },
+    email: "fiona.tanaka@client-demo-corporation.com",
+    image: null,
+  },
+  tk_status: "Working",
+  tk_priority: "medium",
+  tk_risk_level: "medium",
+  tk_assignee_usernames: [
+    "yusuf_garcia",
+    "zoe_novak",
+    "bianca_clark",
+    "rosa_green",
+    "adrian_usman",
+    "tessa_hassan",
+    "ximena_smith",
+  ],
+  tk_work_minutes: 210,
+  tka_last_comment_at: "2026-07-12T07:42:16Z",
+  tka_last_comment_email: "fiona.tanaka@client-demo-corporation.com",
+  tka_last_user_activity_at: "2026-07-12T07:42:16Z",
+  tka_last_user_activity_email: "fiona.tanaka@client-demo-corporation.com",
+  tk_due_at: "2026-07-16T18:00:00Z",
+  tk_active: true,
+  cat_scope: "INTERNAL",
+  cat_id: "132",
+  cat_name: {
+    en: "New feature request",
+    es: "Solicitud de nueva funcionalidad",
+    fr: "Demande de nouvelle fonctionnalité",
+    ko: "새로운 기능 요청",
+  },
+  tk_approval_step_id: null,
+  tk_subject:
+    "Review Request to Add Demo-Com Products to End-to-End Unit Repair",
+  tk_content:
+    "Hello. We are considering a new contract with Demo-Com and would like to expand the supported scope so its products can be processed in End-to-End Unit Repair.<br><br>The current page is configured around products and repair procedures from existing registered manufacturers. Please internally review the screen and data changes required to add Demo-Com products.<br><br>The main review items are as follows:<br><br>Manufacturer and product model registration method<br>Manufacturer-specific Serial Number validation rules<br>Inspection items and repair result codes<br>Parts and warranty information management<br>Quality Check criteria<br>Whether integration with the manufacturer's system is required<br><br>After the internal review determines the request scope, we plan to request new feature development from the portal provider.",
+  tk_email: {
+    to: [
+      "yusuf.garcia@client-demo-corporation.com",
+      "zoe.novak@client-demo-corporation.com",
+      "bianca.clark@client-demo-corporation.com",
+      "rosa.green@client-demo-corporation.com",
+      "adrian.usman@client-demo-corporation.com",
+      "tessa.hassan@client-demo-corporation.com",
+      "ximena.smith@client-demo-corporation.com",
+      "fiona.tanaka@client-demo-corporation.com",
+    ],
+    cc: ["elias.martinez@client-demo-corporation.com"],
+    bcc: [],
+  },
+  tk_files: [],
+  tk_images: [],
+};

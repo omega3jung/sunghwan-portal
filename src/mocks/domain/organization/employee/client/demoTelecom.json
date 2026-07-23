@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 301,
+    "e_username": "quentin_usman",
+    "e_name": {
+      "en": {
+        "first": "Quentin",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "quentin.usman@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 151,
+    "e_job_field_id": 201,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 302,
+    "e_username": "rosa_clark",
+    "e_name": {
+      "en": {
+        "first": "Rosa",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "rosa.clark@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 151,
+    "e_job_field_id": 202,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 303,
+    "e_username": "samuel_park",
+    "e_name": {
+      "en": {
+        "first": "Samuel",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "samuel.park@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 152,
+    "e_job_field_id": 203,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 304,
+    "e_username": "tessa_foster",
+    "e_name": {
+      "en": {
+        "first": "Tessa",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "tessa.foster@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 152,
+    "e_job_field_id": 204,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 305,
+    "e_username": "umar_martinez",
+    "e_name": {
+      "en": {
+        "first": "Umar",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "umar.martinez@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 153,
+    "e_job_field_id": 205,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 306,
+    "e_username": "violet_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Violet",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "violet.tanaka@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 153,
+    "e_job_field_id": 206,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 307,
+    "e_username": "william_brown",
+    "e_name": {
+      "en": {
+        "first": "William",
+        "middle": "",
+        "last": "Brown"
+      }
+    },
+    "e_phone": "",
+    "e_email": "william.brown@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 154,
+    "e_job_field_id": 207,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 308,
+    "e_username": "ximena_moore",
+    "e_name": {
+      "en": {
+        "first": "Ximena",
+        "middle": "",
+        "last": "Moore"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ximena.moore@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 154,
+    "e_job_field_id": 208,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 309,
+    "e_username": "yusuf_evans",
+    "e_name": {
+      "en": {
+        "first": "Yusuf",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "yusuf.evans@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 155,
+    "e_job_field_id": 209,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 310,
+    "e_username": "zoe_laurent",
+    "e_name": {
+      "en": {
+        "first": "Zoe",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "zoe.laurent@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 155,
+    "e_job_field_id": 210,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 311,
+    "e_username": "adrian_silva",
+    "e_name": {
+      "en": {
+        "first": "Adrian",
+        "middle": "",
+        "last": "Silva"
+      }
+    },
+    "e_phone": "",
+    "e_email": "adrian.silva@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 156,
+    "e_job_field_id": 211,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 312,
+    "e_username": "bianca_zhang",
+    "e_name": {
+      "en": {
+        "first": "Bianca",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "bianca.zhang@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 156,
+    "e_job_field_id": 212,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 313,
+    "e_username": "caleb_lee",
+    "e_name": {
+      "en": {
+        "first": "Caleb",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "caleb.lee@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 157,
+    "e_job_field_id": 213,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 314,
+    "e_username": "diana_diaz",
+    "e_name": {
+      "en": {
+        "first": "Diana",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "diana.diaz@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 157,
+    "e_job_field_id": 214,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 315,
+    "e_username": "elias_kim",
+    "e_name": {
+      "en": {
+        "first": "Elias",
+        "middle": "",
+        "last": "Kim"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elias.kim@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 158,
+    "e_job_field_id": 215,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 316,
+    "e_username": "fiona_rossi",
+    "e_name": {
+      "en": {
+        "first": "Fiona",
+        "middle": "",
+        "last": "Rossi"
+      }
+    },
+    "e_phone": "",
+    "e_email": "fiona.rossi@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 158,
+    "e_job_field_id": 216,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 317,
+    "e_username": "henry_young",
+    "e_name": {
+      "en": {
+        "first": "Henry",
+        "middle": "",
+        "last": "Young"
+      }
+    },
+    "e_phone": "",
+    "e_email": "henry.young@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 156,
+    "e_job_field_id": 211,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-15T18:25:00+09:00"
+  },
+  {
+    "e_id": 318,
+    "e_username": "iris_king",
+    "e_name": {
+      "en": {
+        "first": "Iris",
+        "middle": "",
+        "last": "King"
+      }
+    },
+    "e_phone": "",
+    "e_email": "iris.king@client-demo-telecom.net",
+    "e_image_url": null,
+    "e_department_id": 151,
+    "e_job_field_id": 202,
+    "e_company_id": 7,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-11T18:25:00+09:00"
+  }
+]

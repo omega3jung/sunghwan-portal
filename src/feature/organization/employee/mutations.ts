@@ -2,8 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { employeeApi } from "@/feature/organization/employee";
-
+import { employeeApi } from "./api";
 import { employeeQueryKeys } from "./queryKeys";
 
 export const useCreateEmployeeMutation = () => {

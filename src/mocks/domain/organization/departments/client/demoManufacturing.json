@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 141,
+    "d_name": {
+      "en": "Demo Manufacturing - Plant Operations"
+    },
+    "d_code": "MFG-OPS",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 142,
+    "d_name": {
+      "en": "Demo Manufacturing - Production Engineering"
+    },
+    "d_code": "MFG-ENG",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": 141,
+    "d_active": true
+  },
+  {
+    "d_id": 143,
+    "d_name": {
+      "en": "Demo Manufacturing - Quality Assurance"
+    },
+    "d_code": "MFG-QAS",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": 141,
+    "d_active": true
+  },
+  {
+    "d_id": 144,
+    "d_name": {
+      "en": "Demo Manufacturing - Supply Chain"
+    },
+    "d_code": "MFG-SUP",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": 141,
+    "d_active": true
+  },
+  {
+    "d_id": 145,
+    "d_name": {
+      "en": "Demo Manufacturing - Manufacturing Technology"
+    },
+    "d_code": "MFG-TEC",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 146,
+    "d_name": {
+      "en": "Demo Manufacturing - Equipment Systems"
+    },
+    "d_code": "MFG-SYS",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": 145,
+    "d_active": true
+  },
+  {
+    "d_id": 147,
+    "d_name": {
+      "en": "Demo Manufacturing - Corporate Services"
+    },
+    "d_code": "MFG-COR",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 148,
+    "d_name": {
+      "en": "Demo Manufacturing - Environment, Health & Safety"
+    },
+    "d_code": "MFG-EHS",
+    "d_description": null,
+    "d_company_id": 6,
+    "d_parent_id": 147,
+    "d_active": true
+  }
+]

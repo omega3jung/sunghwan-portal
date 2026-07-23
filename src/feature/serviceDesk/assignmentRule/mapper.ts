@@ -1,7 +1,7 @@
 ﻿import { AssignmentRule } from "@/domain/serviceDesk";
 import {
   createListPayloadMapper,
-} from "@/lib/api/utils/payload";
+} from "@/lib/application/api/payload";
 import { ArrayMapper } from "@/shared/types";
 
 import { DbAssignmentRule } from "./types";
@@ -17,6 +17,7 @@ export const camelAssignmentRuleMapper: ArrayMapper<
       assigneeUsernames: item.assignee.employee_username.map((id) =>
         String(id),
       ),
+      includeTenantCompany: item.assignee.include_tenant_company === true,
     },
   }));
 };

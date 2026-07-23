@@ -1,52 +1,41 @@
-﻿import { DbEmployee } from "@/feature/organization/employee";
+import type { DbEmployee } from "@/feature/organization/employee";
 
-import { internalDemoEmployee } from "./demoUser";
-import headOfficeEmployeeMock from "./headOffice.json";
-import itEmployeeMock from "./it.json";
-import logisticsEmployeeMock from "./logistics.json";
-import repairCenterEmployeeMock from "./repairCenter.json";
+import { clientEmployeesMockData } from "./client";
+import { clientDemoEmployee, internalDemoEmployee } from "./demoUser";
+import headOfficeEmployeeMock from "./portalOwner/headOffice.json";
+import itEmployeeMock from "./portalOwner/it.json";
+import logisticsEmployeeMock from "./portalOwner/logistics.json";
+import repairCenterEmployeeMock from "./portalOwner/repairCenter.json";
 
-export function createEmployeesMock(): DbEmployee[] {
-  const employeemock = [
-    ...headOfficeEmployeeMock,
-    ...itEmployeeMock,
-    ...repairCenterEmployeeMock,
-    ...logisticsEmployeeMock,
-  ].map((employee) => {
-    const startDday = randomNumber(1000, 1);
+const portalOwnerEmployeesMock: DbEmployee[] = [
+  ...headOfficeEmployeeMock,
+  ...itEmployeeMock,
+  ...repairCenterEmployeeMock,
+  ...logisticsEmployeeMock,
+].map((employee) => ({
+  ...employee,
+  e_start_date: new Date(employee.e_start_date),
+  e_end_date:
+    employee.e_end_date === null ? null : new Date(employee.e_end_date),
+}));
 
-    // currently working.
-    if (employee.e_active) {
-      return {
-        ...employee,
-        e_start_date: getBeforeDate(startDday),
-      } as DbEmployee;
-    }
-    const endDday = randomNumber(startDday, 1);
-    return {
-      ...employee,
-      e_start_date: getBeforeDate(startDday),
-      e_end_date: getBeforeDate(endDday),
-    } as DbEmployee;
-  });
+const clientEmployeesMock: DbEmployee[] = clientEmployeesMockData.map(
+  (employee) => ({
+    ...employee,
+    e_start_date: new Date(employee.e_start_date),
+    e_end_date:
+      employee.e_end_date === null ? null : new Date(employee.e_end_date),
+  }),
+);
 
-  return [...employeemock, ...internalDemoEmployee];
-}
+export const employeesMock: DbEmployee[] = [
+  ...portalOwnerEmployeesMock,
+  ...internalDemoEmployee,
+];
 
-function randomNumber(num1: number, num2: number): number {
-  const min = num1 > num2 ? num2 : num1;
-  const max = num1 > num2 ? num1 : num2;
-
-  const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-
-  return randomNumber;
-}
-
-function getBeforeDate(num: number): Date {
-  const now = new Date();
-
-  const result = new Date(now);
-  result.setDate(now.getDate() - num);
-
-  return result;
-}
+export const allEmployeesMock: DbEmployee[] = [
+  ...portalOwnerEmployeesMock,
+  ...internalDemoEmployee,
+  ...clientDemoEmployee,
+  ...clientEmployeesMock,
+];

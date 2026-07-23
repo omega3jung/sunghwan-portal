@@ -3,7 +3,7 @@ import type {
   SaveServiceDeskApprovalStepTreePayload,
   ServiceDeskApprovalStepListParams,
 } from "@/feature/serviceDesk/approvalStep/types";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
@@ -16,15 +16,9 @@ export const serviceDeskApprovalStepApi = {
   ): Promise<CategoryApprovalSettings[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.tenantId) {
-      searchParams.set("tenantId", params.tenantId);
-    }
-
     const res = await client.api.get<ApprovalStepResponse, URLSearchParams>(
       `/api/service-desk/approval-steps`,
-      { params: searchParams },
+      { params: buildDbSearchParams(params) },
     );
     return res.data.items;
   },

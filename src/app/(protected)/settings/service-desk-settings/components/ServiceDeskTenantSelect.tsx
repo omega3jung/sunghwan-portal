@@ -9,25 +9,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NS } from "@/lib/i18n";
-import { useLocalizedValue } from "@/shared/hooks";
+import type { CategoryScope } from "@/domain/serviceDesk";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
-import { useSettingsScope } from "../../_providers";
-import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
+import { useSettingsAccess } from "../../_providers";
+import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 
 export function ServiceDeskTenantSelect({
   className,
 }: {
   className?: string;
 }) {
-  const { isInternal } = useSettingsScope();
+  const { type } = useSettingsAccess();
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue();
   const { tenantData, selectedTenant, setSelectedTenant } =
-    useServiceDeskSettingsTenant();
+    useTenantSelection();
 
-  if (!isInternal) {
+  if (type !== "OWNER_ADMIN") {
     return null;
   }
 
@@ -49,6 +50,48 @@ export function ServiceDeskTenantSelect({
                 ></span>
                 {tLocal(tenant.name)}
               </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export function ServiceDeskSettingsScopeSelect({
+  value,
+  onValueChange,
+  availableScopes,
+  disabled = false,
+  className,
+}: {
+  value: CategoryScope;
+  onValueChange: (scope: CategoryScope) => void;
+  availableScopes: readonly CategoryScope[];
+  disabled?: boolean;
+  className?: string;
+}) {
+  const { t } = useTranslation(NS.settings);
+
+  return (
+    <div className={cn("flex min-w-44 flex-col gap-2", className)}>
+      <span>{t("serviceDeskSettings.common.scope")}</span>
+      <Select
+        value={value}
+        onValueChange={(scope) => onValueChange(scope as CategoryScope)}
+        disabled={disabled || availableScopes.length === 0}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={t("serviceDeskSettings.common.scope")} />
+        </SelectTrigger>
+        <SelectContent>
+          {availableScopes.map((scope) => (
+            <SelectItem key={scope} value={scope}>
+              {t(
+                `serviceDeskSettings.common.scope${
+                  scope === "INTERNAL" ? "Internal" : "Portal"
+                }`,
+              )}
             </SelectItem>
           ))}
         </SelectContent>

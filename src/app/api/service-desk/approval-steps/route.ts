@@ -1,115 +1,264 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  getAuthToken,
-  isInternalUser,
-  isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  mapApprovalSettingsListPayload,
-  mapApprovalSettingsTreePayload,
-} from "@/feature/serviceDesk/approvalStep/mapper";
-import {
-  saveApprovalStepTreeSchema,
-} from "@/feature/serviceDesk/approvalStep/request.schema";
-import type { SaveServiceDeskApprovalStepTreePayload } from "@/feature/serviceDesk/approvalStep/types";
+  assertApprovalAssigneeEligible,
+  getServiceDeskCategoryContext,
+} from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import {
   localListApprovalSteps,
   localSaveApprovalStepTree,
-} from "@/server/serviceDesk/settings/approvalStep/localDemo";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep";
+import {
+  getApprovalStepStore,
+  normalizeCategoryApprovalSettings,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/approvalStep/approvalStepUtils";
+import {
+  isServiceDeskSettingsRequest,
+  parseCategoryScope,
+  requireServiceDeskSettingsRouteAccess,
+  requireSettingsResourceAccess,
+  resolveAuthorizedSettingsTenant,
+  resolveOperationalServiceDeskReadTarget,
+  resolveServiceDeskRequestContext,
+} from "@/app/api/_adapters/serviceDesk";
+import { resolveApiErrorMessage } from "@/lib/application/api";
+import {
+  mapApprovalSettingsListPayload,
+  mapApprovalSettingsTreePayload,
+  saveApprovalStepTreeSchema,
+  type SaveServiceDeskApprovalStepTreePayload,
+} from "@/lib/application/contracts/serviceDesk";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+} from "@/lib/application/serviceDesk";
 
 export async function GET(request: NextRequest) {
-  const token = await getAuthToken(request);
-  const isRemote = token?.dataScope === "REMOTE";
-  const isInternal = token?.userScope === "INTERNAL";
+  try {
+    const settingsRequest = isServiceDeskSettingsRequest(request);
+    const requestedScope = parseCategoryScope(
+      request.nextUrl.searchParams.get("scope"),
+    );
+    const requestedTenantId = request.nextUrl.searchParams.get("tenantId");
 
-  if (!isRemote) {
-    try {
+    if (settingsRequest) {
+      await requireServiceDeskSettingsRouteAccess(request);
+    }
+
+    const settingsAuthorization = settingsRequest
+      ? await requireSettingsResourceAccess({
+          request,
+          requestedTenantId,
+          resource: "APPROVAL_STEP",
+          scope: requireCategoryScope(requestedScope),
+        })
+      : null;
+    const principalContext =
+      settingsAuthorization ??
+      (await resolveServiceDeskRequestContext(request));
+    const operationalTarget = settingsAuthorization
+      ? null
+      : await resolveOperationalServiceDeskReadTarget({
+          request,
+          principalContext,
+          requestedTenantId,
+          requestedScope,
+        });
+    const isRemote = principalContext.dataScope === "REMOTE";
+    const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+    const isInternal = principalContext.principal.userScope === "INTERNAL";
+
+    proxyQuery.set("isInternal", String(isInternal));
+
+    if (settingsAuthorization) {
+      proxyQuery.set("tenantId", settingsAuthorization.tenant.id);
+      proxyQuery.set("scope", requestedScope as string);
+      proxyQuery.set(
+        "isInternal",
+        String(settingsAuthorization.tenant.isOwnerTenant),
+      );
+    } else if (operationalTarget) {
+      proxyQuery.set("tenantId", operationalTarget.tenant.id);
+
+      if (operationalTarget.scope) {
+        proxyQuery.set("scope", operationalTarget.scope);
+      } else {
+        proxyQuery.delete("scope");
+      }
+    }
+
+    if (!isRemote) {
       return NextResponse.json(
         localListApprovalSteps({
-          isInternal,
-          searchParams: request.nextUrl.searchParams,
+          isInternal: settingsAuthorization
+            ? settingsAuthorization.tenant.isOwnerTenant
+            : isInternal,
+          searchParams: proxyQuery,
         }),
       );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.approvalSteps.fetchList"),
-      });
     }
+
+    return portalApiJson(request, {
+      path: "/service-desk/approval-steps",
+      query: proxyQuery,
+      errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.fetchList"),
+      mapData: mapApprovalSettingsListPayload,
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.fetchList"),
+    });
   }
-
-  const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
-
-  if (!proxyQuery.has("isInternal")) {
-    proxyQuery.set("isInternal", String(isInternal));
-  }
-
-  const defaultTenantId = resolveDefaultTenantId(token);
-
-  if (!proxyQuery.has("tenantId") && !isInternal && defaultTenantId) {
-    proxyQuery.set("tenantId", defaultTenantId);
-  }
-
-  return portalApiJson(request, {
-    path: "/service-desk/approval-steps",
-    query: proxyQuery,
-    errorMessage: tServiceDeskApi("api.approvalSteps.fetchList"),
-    mapData: mapApprovalSettingsListPayload,
-  });
 }
 
 export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-  const parsedBody = saveApprovalStepTreeSchema.safeParse(
-    (await request.json()) as SaveServiceDeskApprovalStepTreePayload,
-  );
+  try {
+    await requireServiceDeskSettingsRouteAccess(request);
 
-  if (!parsedBody.success) {
-    return NextResponse.json(
-      {
-        message: tServiceDeskApi("api.approvalSteps.localDemo.invalidPayload"),
-      },
-      { status: 400 },
+    const parsedBody = saveApprovalStepTreeSchema.safeParse(
+      (await request.json()) as SaveServiceDeskApprovalStepTreePayload,
     );
-  }
 
-  const body = parsedBody.data;
-
-  if (!isRemote) {
-    try {
-      const isInternal = await isInternalUser(request);
+    if (!parsedBody.success) {
       return NextResponse.json(
-        localSaveApprovalStepTree({
-          isInternal,
-          payload: body,
-        }),
+        {
+          message: resolveApiErrorMessage(
+            "serviceDesk.approvalSteps.localDemo.invalidPayload",
+          ),
+        },
+        { status: 400 },
       );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.approvalSteps.save"),
+    }
+
+    const body = parsedBody.data;
+    const authorization = await resolveAuthorizedSettingsTenant({
+      request,
+      requestedTenantId: body.tenantId,
+    });
+    const tenant = authorization.tenant;
+
+    if (!tenant) {
+      return NextResponse.json(
+        { message: "A target tenant is required." },
+        { status: 400 },
+      );
+    }
+
+    if (authorization.dataScope === "REMOTE") {
+      return portalApiJson(request, {
+        method: "PUT",
+        path: "/service-desk/approval-steps",
+        body,
+        errorMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
+        mapData: mapApprovalSettingsTreePayload,
       });
     }
-  }
 
-  return portalApiJson(request, {
-    method: "PUT",
-    path: "/service-desk/approval-steps",
-    body,
-    errorMessage: tServiceDeskApi("api.approvalSteps.save"),
-    mapData: mapApprovalSettingsTreePayload,
-  });
+    const useOwnerStore = tenant.isOwnerTenant;
+    const currentSettings = normalizeCategoryApprovalSettings(
+      getApprovalStepStore(useOwnerStore)[tenant.id] ?? [],
+    );
+    const currentStepsById = new Map(
+      currentSettings.flatMap((category) =>
+        category.approvalSteps.map((step) => [step.id, step] as const),
+      ),
+    );
+    const submittedCategoryIds = new Set<string>();
+    const submittedStepIds = new Set<string>();
+    const submittedScopes = new Set<string>();
+
+    for (const category of body.categories) {
+      if (submittedCategoryIds.has(category.id)) {
+        throw createBadRequest("A category cannot be submitted more than once.");
+      }
+      submittedCategoryIds.add(category.id);
+
+      const categoryContext = await getServiceDeskCategoryContext(
+        category.id,
+      );
+
+      if (!categoryContext || categoryContext.tenant.id !== tenant.id) {
+        throw createBadRequest(
+          "Approval settings must reference a main category in the target tenant.",
+        );
+      }
+
+      if (categoryContext.mainCategoryId !== category.id) {
+        throw createBadRequest("Approval settings require a main category.");
+      }
+
+      const access = resolveSettingsAccess(authorization.principal, {
+        resource: "APPROVAL_STEP",
+        tenantCompanyId: tenant.companyId,
+        isOwnerTenant: tenant.isOwnerTenant,
+        scope: categoryContext.scope,
+      });
+
+      if (!canManageServiceDeskSettings(access)) {
+        throw Object.assign(
+          new Error("Approval settings are read-only for this category scope."),
+          { status: 403 },
+        );
+      }
+      submittedScopes.add(categoryContext.scope);
+
+      for (const step of category.approvalSteps) {
+        if (step.id) {
+          const currentStep = currentStepsById.get(step.id);
+
+          if (
+            !currentStep ||
+            currentStep.categoryId !== category.id ||
+            submittedStepIds.has(step.id)
+          ) {
+            throw createBadRequest(
+              "An approval step cannot move to another category or tenant.",
+            );
+          }
+
+          submittedStepIds.add(step.id);
+        }
+
+        if (authorization.dataScope === "LOCAL") {
+          await assertApprovalAssigneeEligible({
+            category: categoryContext,
+            assignee: step.stepAssignee,
+          });
+        }
+      }
+    }
+
+    const savedSettings = localSaveApprovalStepTree({
+      isInternal: useOwnerStore,
+      payload: body,
+    });
+
+    return NextResponse.json(
+      savedSettings.filter((category) => submittedScopes.has(category.scope)),
+    );
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.approvalSteps.save"),
+    });
+  }
 }
 
-function resolveDefaultTenantId(
-  token: Awaited<ReturnType<typeof getAuthToken>>,
+function requireCategoryScope(
+  scope: ReturnType<typeof parseCategoryScope>,
 ) {
-  if (typeof token?.companyId === "number") {
-    return String(token.companyId);
+  if (!scope) {
+    throw Object.assign(new Error("A category scope is required."), {
+      status: 400,
+    });
   }
 
-  return null;
+  return scope;
+}
+
+function createBadRequest(message: string) {
+  return Object.assign(new Error(message), { status: 400 });
 }

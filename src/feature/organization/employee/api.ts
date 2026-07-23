@@ -1,16 +1,14 @@
 import { Employee } from "@/domain/organization";
-import client from "@/lib/api";
-import { ApiResponse } from "@/shared/types";
-import { DbParams } from "@/shared/types/api";
+import client from "@/lib/client/api";
+import type { ApiResponse, DbParams } from "@/shared/types";
+import { buildDbSearchParams } from "@/shared/utils/routing";
 
 export const employeeApi = {
   list: async (params: DbParams): Promise<Employee[]> => {
-    if (!params) return [];
-
-    const res = await client.api.get<ApiResponse<Employee[]>>(
+    const res = await client.api.get<ApiResponse<Employee[]>, URLSearchParams>(
       "/api/employees",
       {
-        params,
+        params: buildDbSearchParams(params),
       },
     );
     return res.data.data;

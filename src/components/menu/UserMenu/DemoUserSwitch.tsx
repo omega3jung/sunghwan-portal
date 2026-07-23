@@ -1,5 +1,4 @@
 import { UsersRound } from "lucide-react";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -12,29 +11,26 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AppUser } from "@/domain/user";
-import { clientProfiles, internalProfiles } from "@/mocks/domain/user";
 import { cn } from "@/shared/utils/presentation";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
 type Props = {
-  user: AppUser;
+  internalCandidates: AppUser[];
+  clientCandidates: AppUser[];
   disabled: boolean;
   onDemoUserSwitch: (user: AppUser) => Promise<void>;
 };
 
 export function DemoUserSwitch(props: Props) {
-  const { user, disabled, onDemoUserSwitch } = props;
+  const {
+    internalCandidates,
+    clientCandidates,
+    disabled,
+    onDemoUserSwitch,
+  } = props;
 
   const { t } = useTranslation("UserMenu");
-
-  const switchDemoUserProfiles = useMemo<AppUser[]>(() => {
-    return internalProfiles.filter((profile) => profile.id !== user.id);
-  }, [user.id]);
-
-  const switchClientUserProfiles = useMemo<AppUser[]>(() => {
-    return clientProfiles.filter((profile) => profile.id !== user.id);
-  }, [user.id]);
 
   return (
     <DropdownMenuSub>
@@ -50,7 +46,7 @@ export function DemoUserSwitch(props: Props) {
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
-          {switchDemoUserProfiles.map((profile) => {
+          {internalCandidates.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
             );
@@ -66,7 +62,7 @@ export function DemoUserSwitch(props: Props) {
           })}
           <DropdownMenuSeparator />
           <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
-          {switchClientUserProfiles.map((profile) => {
+          {clientCandidates.map((profile) => {
             const profileDisplayNameKey = getDisplayNameKey(
               profile.displayName,
             );

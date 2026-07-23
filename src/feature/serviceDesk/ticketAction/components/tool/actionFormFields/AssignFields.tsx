@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/select";
 import type { MainCategory, TicketAssignmentPhase } from "@/domain/serviceDesk";
 import { useServiceDeskAssignmentRecommendationsQuery } from "@/feature/serviceDesk/assignmentRule/client";
-import { useCurrentLanguage } from "@/feature/user/preference/hooks/useCurrentLanguage";
-import { NS } from "@/lib/i18n";
+import { useCurrentLanguage } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 import type { ImageValueLabel, Localized, ValueLabel } from "@/shared/types";
 
 import { TicketActionDraftFormValues } from "../../../forms";

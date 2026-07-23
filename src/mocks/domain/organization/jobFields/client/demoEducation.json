@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 341,
+    "jf_name": {
+      "en": "Demo Education - Academic Affairs Director"
+    },
+    "jf_description": {
+      "en": "Academic Affairs Director at Demo Education"
+    },
+    "jf_department_id": 221,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 342,
+    "jf_name": {
+      "en": "Demo Education - Academic Affairs Coordinator"
+    },
+    "jf_description": {
+      "en": "Academic Affairs Coordinator at Demo Education"
+    },
+    "jf_department_id": 221,
+    "jf_company_id": 14,
+    "jf_parent_id": 341,
+    "jf_active": true
+  },
+  {
+    "jf_id": 343,
+    "jf_name": {
+      "en": "Demo Education - Student Services Director"
+    },
+    "jf_description": {
+      "en": "Student Services Director at Demo Education"
+    },
+    "jf_department_id": 222,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 344,
+    "jf_name": {
+      "en": "Demo Education - Student Advisor"
+    },
+    "jf_description": {
+      "en": "Student Advisor at Demo Education"
+    },
+    "jf_department_id": 222,
+    "jf_company_id": 14,
+    "jf_parent_id": 343,
+    "jf_active": true
+  },
+  {
+    "jf_id": 345,
+    "jf_name": {
+      "en": "Demo Education - Faculty Support Manager"
+    },
+    "jf_description": {
+      "en": "Faculty Support Manager at Demo Education"
+    },
+    "jf_department_id": 223,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 346,
+    "jf_name": {
+      "en": "Demo Education - Faculty Support Coordinator"
+    },
+    "jf_description": {
+      "en": "Faculty Support Coordinator at Demo Education"
+    },
+    "jf_department_id": 223,
+    "jf_company_id": 14,
+    "jf_parent_id": 345,
+    "jf_active": true
+  },
+  {
+    "jf_id": 347,
+    "jf_name": {
+      "en": "Demo Education - Admissions Director"
+    },
+    "jf_description": {
+      "en": "Admissions Director at Demo Education"
+    },
+    "jf_department_id": 224,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 348,
+    "jf_name": {
+      "en": "Demo Education - Admissions Officer"
+    },
+    "jf_description": {
+      "en": "Admissions Officer at Demo Education"
+    },
+    "jf_department_id": 224,
+    "jf_company_id": 14,
+    "jf_parent_id": 347,
+    "jf_active": true
+  },
+  {
+    "jf_id": 349,
+    "jf_name": {
+      "en": "Demo Education - Education Technology Director"
+    },
+    "jf_description": {
+      "en": "Education Technology Director at Demo Education"
+    },
+    "jf_department_id": 225,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 350,
+    "jf_name": {
+      "en": "Demo Education - Education Technology Manager"
+    },
+    "jf_description": {
+      "en": "Education Technology Manager at Demo Education"
+    },
+    "jf_department_id": 225,
+    "jf_company_id": 14,
+    "jf_parent_id": 349,
+    "jf_active": true
+  },
+  {
+    "jf_id": 351,
+    "jf_name": {
+      "en": "Demo Education - Learning Platforms Manager"
+    },
+    "jf_description": {
+      "en": "Learning Platforms Manager at Demo Education"
+    },
+    "jf_department_id": 226,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 352,
+    "jf_name": {
+      "en": "Demo Education - Learning Platform Engineer"
+    },
+    "jf_description": {
+      "en": "Learning Platform Engineer at Demo Education"
+    },
+    "jf_department_id": 226,
+    "jf_company_id": 14,
+    "jf_parent_id": 351,
+    "jf_active": true
+  },
+  {
+    "jf_id": 353,
+    "jf_name": {
+      "en": "Demo Education - Administration Director"
+    },
+    "jf_description": {
+      "en": "Administration Director at Demo Education"
+    },
+    "jf_department_id": 227,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 354,
+    "jf_name": {
+      "en": "Demo Education - Administrative Officer"
+    },
+    "jf_description": {
+      "en": "Administrative Officer at Demo Education"
+    },
+    "jf_department_id": 227,
+    "jf_company_id": 14,
+    "jf_parent_id": 353,
+    "jf_active": true
+  },
+  {
+    "jf_id": 355,
+    "jf_name": {
+      "en": "Demo Education - Research Support Manager"
+    },
+    "jf_description": {
+      "en": "Research Support Manager at Demo Education"
+    },
+    "jf_department_id": 228,
+    "jf_company_id": 14,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 356,
+    "jf_name": {
+      "en": "Demo Education - Research Coordinator"
+    },
+    "jf_description": {
+      "en": "Research Coordinator at Demo Education"
+    },
+    "jf_department_id": 228,
+    "jf_company_id": 14,
+    "jf_parent_id": 355,
+    "jf_active": true
+  }
+]

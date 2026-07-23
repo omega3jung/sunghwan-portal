@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/hooks/useServiceDeskQueryOptions";
+import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client";
 
 import { serviceDeskTicketHistoryApi } from "./api";
 import { ticketHistoryQueryKeys } from "./queryKeys";

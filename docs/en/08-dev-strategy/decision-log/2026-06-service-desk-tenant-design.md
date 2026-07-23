@@ -156,13 +156,31 @@ Category = tenant-scoped behavior configuration
 
 A tenant is mapped to a company, but it is not the same concept as a company.
 
+### Authorization Clarification (2026-07)
+
+This decision defines the configuration *boundary*, not a single management
+actor. Wording such as "tenant owns configuration" means that categories,
+approval steps, and assignment rules are interpreted within that tenant's
+workflow and company boundary. It does not mean that Tenant Admin manages every
+resource.
+
+The category-scope settings policy assigns management separately:
+
+- owner-tenant configuration is managed by Owner Admin
+- customer `INTERNAL` configuration is managed by that customer Tenant Admin
+- customer `PORTAL` category and assignment are managed by Owner Admin
+- customer `PORTAL` approval is managed by that customer Tenant Admin
+
+This policy governs authorization where the tenant boundary could otherwise be
+read as assigning a single owner.
+
 ---
 
 ## Scope Rules
 
 ### 1. Tenant Is the Service Desk Configuration Boundary
 
-A tenant owns Service Desk behavior configuration.
+Service Desk behavior configuration belongs to a tenant boundary.
 
 Tenant-scoped settings include:
 
@@ -173,6 +191,9 @@ Tenant-scoped settings include:
 - tenant-specific display metadata such as name and color
 
 This allows the Service Desk module to treat each tenant as an operational scope.
+
+The administrator that can read or manage each item is selected separately by
+the category-scope settings authorization policy.
 
 ---
 
@@ -375,7 +396,7 @@ This prevents company records from becoming overloaded with Service Desk-specifi
 
 The settings structure was aligned around tenant-scoped configuration.
 
-Tenant settings act as the entry point for configuring:
+The tenant boundary is the entry point for organizing:
 
 - category hierarchy
 - approval behavior
@@ -383,6 +404,9 @@ Tenant settings act as the entry point for configuring:
 - SLA-related defaults
 
 This makes Service Desk settings more coherent as an administrative configuration surface.
+
+It does not imply one administrative actor for the entire list. Owner Admin and
+Tenant Admin receive resource-specific `manage`, `read`, or `none` capability.
 
 ---
 
@@ -482,17 +506,19 @@ Category should reference tenant as its configuration scope.
 Conceptual shape:
 
 ```ts
-type Category = {
+type MainCategory = {
   id: string;
   tenantId: string;
-  parentId: string | null;
-  scope: "MAIN" | "SUB";
+  scope: "PORTAL" | "INTERNAL";
   name: LocalizedText;
   active: boolean;
+  subCategories: SubCategory[];
 };
 ```
 
-This keeps category behavior tenant-scoped and avoids global category ambiguity.
+Main/subcategory is a hierarchy, not a category-scope value. Subcategories
+inherit tenant and `PORTAL`/`INTERNAL` scope from their main category. This
+keeps category behavior tenant-scoped and avoids global category ambiguity.
 
 ---
 
@@ -577,7 +603,8 @@ Tenant design should support future expansion such as:
 - tenant-specific category templates
 - tenant-scoped approval policies
 - tenant-scoped assignment strategies
-- tenant-level access restrictions
+- further tenant-level access restrictions beyond the current category-scope
+  settings matrix
 - tenant-specific Service Desk settings
 
 These do not need to be fully implemented immediately, but the model should not block them.

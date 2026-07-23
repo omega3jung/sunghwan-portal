@@ -3,8 +3,8 @@ import { MessageSquareText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { TicketAction, TicketHistory } from "@/domain/serviceDesk";
-import { getHistorySummary } from "@/feature/serviceDesk/ticketHistory";
-import { NS } from "@/lib/i18n";
+import { getHistorySummary } from "@/feature/serviceDesk/ticketHistory/client";
+import { NS } from "@/lib/application/i18n";
 import { formatTimeDistanceFromNow } from "@/shared/utils/format";
 
 type TicketRecentActivityProps = {
@@ -27,7 +27,7 @@ export function TicketRecentActivity({
   const { t } = useTranslation(NS.serviceDesk, {
     keyPrefix: "recentActivity",
   });
-  const { t: tStatus } = useTranslation("StatusBadge");
+  const { t: tStatus } = useTranslation("TicketStatusBadge");
 
   return (
     <div className="space-y-4 border-b border-border/40 pb-6">

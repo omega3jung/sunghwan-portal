@@ -7,6 +7,7 @@ const ticketStatusFilterValueSchema = z.custom<TicketStatusFilterValue>(
 );
 
 export const ticketSearchCriteriaFormSchema = z.object({
+  cat_scope: z.enum(["INTERNAL", "PORTAL"]).optional(),
   category: z.string().array(),
   status: ticketStatusFilterValueSchema.array(),
   riskLevel: z.string().array(),

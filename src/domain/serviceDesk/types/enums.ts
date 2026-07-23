@@ -22,6 +22,7 @@ export type NoteVisibility =
 export type TicketResolutionReason =
   | "Completed"
   | "Merged"
+  | "Escalated"
   | "Rejected"
   | "Declined"
   | "Canceled";

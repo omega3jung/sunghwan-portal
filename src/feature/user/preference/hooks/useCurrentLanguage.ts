@@ -1,4 +1,4 @@
-import { usePreferenceStore } from "@/lib/preferenceStore";
+import { usePreferenceStore } from "@/lib/client/preference";
 
 /**
  * Reads the currently selected language from the preference store.

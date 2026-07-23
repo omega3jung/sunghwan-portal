@@ -2,15 +2,22 @@ import { Pickaxe, Timer } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { isMergedChildTicket, type TicketDetail } from "@/domain/serviceDesk";
-import { MetaBadge, PriorityBadge } from "@/feature/serviceDesk/shared";
+import {
+  isEscalatedTicket,
+  isMergedChildTicket,
+  type TicketDetail,
+} from "@/domain/serviceDesk";
+import {
+  MetaBadge,
+  PriorityBadge,
+  TicketStatusBadge,
+} from "@/feature/serviceDesk/shared/client";
 import { selectTicketIsAssigned } from "@/feature/serviceDesk/ticket/utils";
-import { NS } from "@/lib/i18n";
-import { ROUTES } from "@/lib/routes";
-import { ImageValueLabel, ISODateString } from "@/shared/types";
+import { NS } from "@/lib/application/i18n";
+import { ROUTES } from "@/lib/config/routing";
+import { ISODateString } from "@/shared/types";
 import {
   formatCompactDurationFromMinutes,
   formatCompactTimeDistanceFromNow,
@@ -19,23 +26,24 @@ import { initials } from "@/shared/utils/presentation";
 
 type TicketSummaryProps = {
   ticket: TicketDetail;
-  requester?: ImageValueLabel;
+  requesterName?: string;
 };
 
-export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
+export function TicketSummary({ ticket, requesterName }: TicketSummaryProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
   const isAssigned = selectTicketIsAssigned(ticket);
+  const isEscalated = isEscalatedTicket(ticket);
 
   return (
     <section className="flex min-w-0 max-w-full flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
       <div className="flex min-w-0 flex-col gap-4 sm:flex-row">
         <aside className="flex shrink-0 gap-2 sm:flex-col sm:space-y-3 sm:gap-0">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={requester?.image} />
-            <AvatarFallback>{initials(requester?.label || "")}</AvatarFallback>
+            <AvatarImage src={ticket.requester.image ?? undefined} />
+            <AvatarFallback>{initials(requesterName || "")}</AvatarFallback>
           </Avatar>
 
           <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full bg-cyan-50/70 whitespace-nowrap hover:bg-cyan-100/70">
@@ -68,7 +76,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
               </MetaBadge>
             </li>
             <li>
-              <StatusBadge status={ticket.status} />
+              <TicketStatusBadge status={ticket.status} />
             </li>
             <li>
               <PriorityBadge priority={ticket.priority} />
@@ -83,7 +91,9 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
 
             {isMergedChildTicket(ticket) ? (
               <li>
-                <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+                <MetaBadge tone="merge">
+                  {t(isEscalated ? "merge.escalatedBadge" : "merge.badge")}
+                </MetaBadge>
               </li>
             ) : null}
           </ul>
@@ -94,7 +104,7 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
                 className="text-primary underline-offset-4 hover:underline"
                 href={mergedIntoTicketHref}
               >
-                {t("merge.into", {
+                {t(isEscalated ? "merge.escalatedInto" : "merge.into", {
                   ticketId: ticket.mergedIntoTicketNo,
                 })}
               </Link>

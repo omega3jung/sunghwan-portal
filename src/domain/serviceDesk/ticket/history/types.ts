@@ -57,4 +57,5 @@ export type TicketCloseReason =
   | "Completed"
   | "Rejected"
   | "Merged"
+  | "Escalated"
   | "Canceled";

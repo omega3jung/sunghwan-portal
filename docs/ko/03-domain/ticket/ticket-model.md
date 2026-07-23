@@ -72,6 +72,11 @@ type TicketWorkflowState = {
 };
 ```
 
+`TicketResolutionReason`에는 같은 scope 티켓 통합을 위한 `Merged`와,
+`INTERNAL` source를 기존 `PORTAL` target으로 merge할 때 사용하는
+`Escalated`가 포함된다. 두 경우 모두 merged-target 관계를 유지하며,
+close reason으로 리포트와 화면 표시 의미를 구분한다.
+
 ### Assignment Projection
 
 ```ts id="ticket-assignment-projection"

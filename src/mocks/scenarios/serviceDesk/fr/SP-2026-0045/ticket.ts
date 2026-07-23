@@ -1,0 +1,48 @@
+import { TicketMockInput } from "../../types";
+
+export const ticket: TicketMockInput = {
+  tk_id: "bc65af84-078d-4c52-b614-ff0a41514acb",
+  tk_ticket_no: "SP-2026-0045",
+  tk_created_at: "2026-07-05T06:03:14Z",
+  tk_updated_at: "2026-07-05T07:21:42Z",
+  tk_requester_username: "grant_murphy",
+  tk_requester: {
+    username: "grant_murphy",
+    name: {
+      en: { first: "Grant", middle: "", last: "Murphy" },
+    },
+    email: "Grant.Murphy@sunghwan-portal.dev",
+    image: null,
+  },
+  tk_status: "Resolved",
+  tk_priority: "high",
+  tk_risk_level: "high",
+  tk_assignee_usernames: ["evan_seo", "daniel_kim"],
+  tk_work_minutes: 105,
+  tka_last_comment_at: "2026-07-05T07:21:42Z",
+  tka_last_comment_email: "Daniel.Kim@sunghwan-portal.dev",
+
+  tka_last_user_activity_at: "2026-07-05T07:21:42Z",
+  tka_last_user_activity_email: "Daniel.Kim@sunghwan-portal.dev",
+  tk_due_at: "2026-07-06T18:00:00Z",
+  tk_active: true,
+  cat_scope: "PORTAL",
+  cat_id: "5",
+  cat_name: {
+    en: "Performance / Availability",
+    es: "Rendimiento / disponibilidad",
+    fr: "Performance / disponibilité",
+    ko: "성능 / 사용성",
+  },
+  tk_approval_step_id: null,
+  tk_subject: "L'écran d'expédition sortante reste bloqué sur le chargement",
+  tk_content:
+    "Lors du traitement des expéditions sortantes, l'écran d'exécution des expéditions continue d'afficher uniquement l'icône de chargement et ne se termine jamais.<br>Les utilisateurs de la logistique ne peuvent pas finaliser les transactions d'expédition sortante.",
+  tk_email: {
+    to: ["Evan.Seo@sunghwan-portal.dev", "Daniel.Kim@sunghwan-portal.dev"],
+    cc: ["Victor.Rivera@sunghwan-portal.dev"],
+    bcc: [],
+  },
+  tk_files: [],
+  tk_images: [],
+};

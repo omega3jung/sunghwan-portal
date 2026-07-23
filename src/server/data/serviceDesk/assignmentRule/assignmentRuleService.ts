@@ -1,13 +1,25 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { ApiError } from "@/lib/application/api";
+import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
+import { getLocalizedText } from "@/lib/application/i18n";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsPrincipal,
+} from "@/lib/application/serviceDesk";
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
-import { getEmployees } from "@/server/data/organization/employees";
+import { getEmployeesByCompanyId } from "@/server/data/organization/employees";
+import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
+import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 import type { ImageValueLabel, Locale } from "@/shared/types";
-import { getLocalizedText } from "@/shared/utils/i18n";
 
 import type { CategoryDto } from "../category/categoryDto";
-import { findCategoryRowsByTenantIdAndCategoryId } from "../category/categoryRepository";
 import { getCategoryTreeByTenantId } from "../category/categoryService";
-import { getActiveTenantById, getActiveTenants } from "../tenant";
+import {
+  getActiveTenantById,
+  getActiveTenants,
+  type ServiceDeskSettingsTenantContext,
+} from "../tenant";
 import {
   AssignmentRecommendationInputDto,
   AssignmentRecommendationResultDto,
@@ -27,14 +39,14 @@ import {
   deleteAssignmentRuleRowById,
   findAssignmentRuleRowByTenantIdAndAssignmentRuleId,
   findAssignmentRuleRowsByTenantId,
-  findAssignmentRuleRowsByTenantIdAndCategoryId,
   updateAssignmentRuleRowById,
 } from "./assignmentRuleRepository";
 
 export async function getAssignmentRulesByTenantId(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto[]> {
-  const rows = await findAssignmentRuleRowsByTenantId(tenantId);
+  const rows = await findAssignmentRuleRowsByTenantId(tenantId, query);
 
   return mapAssignmentRuleRowsToDtos(rows);
 }
@@ -47,7 +59,7 @@ export type GetAssignmentRulesResponseParams = {
 export type GetAssignmentRecommendationResponseParams = {
   input: AssignmentRecommendationInputDto;
   tenantId?: string | number | null;
-  isInternal: boolean;
+  isInternal?: boolean;
 };
 
 export async function getAssignmentRulesResponseByTenantId({
@@ -62,23 +74,87 @@ export async function getAssignmentRulesResponseByTenantId({
   return getAssignmentRulesByTenantId(targetTenantId);
 }
 
+export async function validateAssignmentRuleTreeMutation({
+  principal,
+  tenant,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  payload: SaveServiceDeskAssignmentRuleTreePayload;
+}) {
+  const submittedCategoryIds = new Set<string>();
+
+  for (const category of payload.categories) {
+    const categoryContext = await getServiceDeskCategoryContext(category.id);
+
+    if (
+      !categoryContext ||
+      categoryContext.tenant.id !== tenant.id ||
+      categoryContext.mainCategoryId !== category.id ||
+      submittedCategoryIds.has(category.id)
+    ) {
+      throw createStatusError(
+        "Assignment settings must reference each target main category once.",
+        400,
+      );
+    }
+
+    const access = resolveSettingsAccess(principal, {
+      resource: "ASSIGNMENT_RULE",
+      tenantCompanyId: tenant.companyId,
+      isOwnerTenant: tenant.isOwnerTenant,
+      scope: categoryContext.scope,
+    });
+
+    if (!canManageServiceDeskSettings(access)) {
+      throw createStatusError(
+        "Assignment settings are read-only for this category scope.",
+        403,
+      );
+    }
+
+    submittedCategoryIds.add(category.id);
+
+    for (const subCategory of category.subCategories) {
+      const subCategoryContext = await getServiceDeskCategoryContext(
+        subCategory.id,
+      );
+
+      if (
+        !subCategoryContext ||
+        subCategoryContext.tenant.id !== tenant.id ||
+        subCategoryContext.mainCategoryId !== category.id ||
+        submittedCategoryIds.has(subCategory.id)
+      ) {
+        throw createStatusError(
+          "An assignment rule cannot move to another category or tenant.",
+          400,
+        );
+      }
+
+      submittedCategoryIds.add(subCategory.id);
+    }
+  }
+
+  return submittedCategoryIds;
+}
+
 export async function getAssignmentRecommendationResponse({
   input,
-  tenantId,
-  isInternal,
 }: GetAssignmentRecommendationResponseParams): Promise<AssignmentRecommendationResultDto> {
-  const targetTenantId = await resolveTargetTenantId({
-    tenantId,
-    isInternal,
-  });
+  const categoryContext = await getServiceDeskCategoryContext(input.categoryId);
+
+  if (!categoryContext || !categoryContext.tenant.active) {
+    throw new ApiError("serviceDesk.common.notFound", 404);
+  }
+
+  const targetTenantId = categoryContext.tenant.id;
   const language = input.language ?? "en";
-  const [categories, rules, activeEmployees, inactiveEmployees] =
-    await Promise.all([
-      getCategoryTreeByTenantId(targetTenantId),
-      getAssignmentRulesByTenantId(targetTenantId),
-      getEmployees(true),
-      getEmployees(false),
-    ]);
+  const [categories, rules] = await Promise.all([
+    getCategoryTreeByTenantId(targetTenantId),
+    getAssignmentRulesByTenantId(targetTenantId),
+  ]);
   const selectedCategoryLabel = getCategoryLabel(
     categories,
     input.categoryId,
@@ -94,12 +170,16 @@ export async function getAssignmentRecommendationResponse({
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
+  const activeEmployees = await getEmployeesByCompanyId(
+    true,
+    categoryContext.tenant.companyId,
+  );
+
   return {
     recommendedUsers: collectRecommendedUsers({
       assignmentRule,
       assigneeUsernames: input.assigneeUsernames,
       activeEmployees,
-      employees: [...activeEmployees, ...inactiveEmployees],
       language,
     }),
     source: resolveRecommendationSource(assignmentRule),
@@ -109,26 +189,11 @@ export async function getAssignmentRecommendationResponse({
 
 export async function createAssignmentRule(
   input: CreateAssignmentRuleInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
-  await assertActiveTenantExists(input.tenant_id);
-  await assertActiveCategoryExistsInTenant(input.tenant_id, input.category_id, {
-    messageKey: "api.assignmentRules.localDemo.categoryNotFound",
-  });
-
-  const duplicateRules = await findAssignmentRuleRowsByTenantIdAndCategoryId(
-    input.tenant_id,
-    input.category_id,
-  );
-
-  if (duplicateRules.length > 0) {
-    throw createStatusError(
-      `Assignment rule already exists for category ${input.category_id}.`,
-      409,
-    );
-  }
-
   const row = await createAssignmentRuleRow(
     mapCreateAssignmentRuleInputDtoToRowInput(input),
+    query,
   );
 
   if (!row) {
@@ -142,43 +207,27 @@ export async function updateAssignmentRuleById(
   tenantId: string | number,
   assignmentRuleId: string | number,
   input: UpdateAssignmentRuleInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
   const currentRow = await findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
     tenantId,
     assignmentRuleId,
+    query,
   );
 
   if (!currentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  await assertActiveCategoryExistsInTenant(tenantId, input.category_id, {
-    messageKey: "api.assignmentRules.localDemo.categoryNotFound",
-  });
-
-  const duplicateRules = await findAssignmentRuleRowsByTenantIdAndCategoryId(
-    tenantId,
-    input.category_id,
-  );
-  const hasDuplicateRule = duplicateRules.some(
-    (row) => Number(row.ar_id) !== Number(currentRow.ar_id),
-  );
-
-  if (hasDuplicateRule) {
-    throw createStatusError(
-      `Assignment rule already exists for category ${input.category_id}.`,
-      409,
-    );
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   const row = await updateAssignmentRuleRowById(
     tenantId,
     assignmentRuleId,
     mapUpdateAssignmentRuleInputDtoToRowInput(input),
+    query,
   );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapAssignmentRuleRowToDto(row);
@@ -187,11 +236,16 @@ export async function updateAssignmentRuleById(
 export async function deleteAssignmentRuleById(
   tenantId: string | number,
   assignmentRuleId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
-  const row = await deleteAssignmentRuleRowById(tenantId, assignmentRuleId);
+  const row = await deleteAssignmentRuleRowById(
+    tenantId,
+    assignmentRuleId,
+    query,
+  );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapAssignmentRuleRowToDto(row);
@@ -297,18 +351,13 @@ function collectRecommendedUsers({
   assignmentRule,
   assigneeUsernames,
   activeEmployees,
-  employees,
   language,
 }: {
   assignmentRule: AssignmentRuleDto;
   assigneeUsernames: string[];
-  activeEmployees: EmployeeResponseDto[];
-  employees: EmployeeResponseDto[];
+  activeEmployees: RecommendationEmployee[];
   language: Locale;
 }) {
-  const employeeMap = new Map(
-    employees.map((employee) => [employee.username, employee]),
-  );
   const activeEmployeeMap = new Map(
     activeEmployees.map((employee) => [employee.username, employee]),
   );
@@ -317,9 +366,7 @@ function collectRecommendedUsers({
   const recommendedUsers: ImageValueLabel[] = [];
 
   for (const employeeUserName of assignmentRule.assignee.employee_username) {
-    const employee =
-      activeEmployeeMap.get(employeeUserName) ??
-      employeeMap.get(employeeUserName);
+    const employee = activeEmployeeMap.get(employeeUserName);
 
     pushUniqueUser(
       recommendedUsers,
@@ -362,7 +409,7 @@ function pushUniqueUser(
 }
 
 function toRecommendedUser(
-  employee: EmployeeResponseDto,
+  employee: RecommendationEmployee,
   language: Locale,
 ): ImageValueLabel {
   return {
@@ -373,13 +420,18 @@ function toRecommendedUser(
   };
 }
 
-function getEmployeeLabel(employee: EmployeeResponseDto, language: Locale) {
+function getEmployeeLabel(employee: RecommendationEmployee, language: Locale) {
   const localizedName = employee.name[language] ?? employee.name.en;
 
   return [localizedName.first, localizedName.middle, localizedName.last]
     .filter(Boolean)
     .join(" ");
 }
+
+type RecommendationEmployee = Pick<
+  EmployeeResponseDto,
+  "username" | "name" | "email" | "imageUrl" | "jobFieldId"
+>;
 
 function resolveRecommendationSource(
   assignmentRule: AssignmentRuleDto,
@@ -402,40 +454,4 @@ function resolveRecommendationSource(
   }
 
   return null;
-}
-
-async function assertActiveTenantExists(tenantId: string | number) {
-  const tenant = await getActiveTenantById(tenantId);
-
-  if (!tenant) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
-  }
-
-  return tenant;
-}
-
-async function assertActiveCategoryExistsInTenant(
-  tenantId: string | number,
-  categoryId: string | number,
-  options: {
-    messageKey: string;
-  },
-): Promise<void> {
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(
-    tenantId,
-    categoryId,
-  );
-  const targetRow = rows.find(
-    (row) => Number(row.cat_id) === Number(categoryId),
-  );
-
-  if (!targetRow || targetRow.cat_active === false) {
-    throw new ServiceDeskApiError(options.messageKey, 404, { categoryId });
-  }
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }

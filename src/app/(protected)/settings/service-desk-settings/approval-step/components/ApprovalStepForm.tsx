@@ -15,10 +15,15 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { SupportedLanguage } from "@/domain/config";
-import { NS } from "@/lib/i18n";
-import { accessLevelOptions, getLanguageOptions } from "@/shared/constants";
-import { ValueLabel } from "@/shared/types";
+import { useDepartmentListQuery } from "@/feature/organization/department/client";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import { useJobFieldListQuery } from "@/feature/organization/jobField/client";
+import { accessLevelOptions } from "@/lib/application/auth";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { getLanguageOptions } from "@/lib/client/i18n";
+import type { DbParams, ValueLabel } from "@/shared/types";
+import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 import { useApprovalStepForm } from "../hooks/useApprovalStepForm";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
@@ -30,12 +35,67 @@ type Props = {
   setTree: React.Dispatch<
     React.SetStateAction<TreeNodes<CategoryApprovalStepData | ApprovalStepData>>
   >;
+  readOnly?: boolean;
+  companyId: string | null;
 };
 
 export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
-  ({ selectedNode, language, setTree }, ref) => {
+  ({ selectedNode, language, setTree, readOnly = false, companyId }, ref) => {
     const { t } = useTranslation(NS.settings);
     const localLocales = getLanguageOptions(t);
+    const employeeListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "e_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
+    );
+    const departmentListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "d_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
+    );
+    const jobFieldListParams = useMemo<DbParams>(
+      () => ({
+        filter: combineRuleGroups([
+          createFieldFilter({
+            field: "companyId",
+            value: companyId,
+          }),
+          createFieldFilter({
+            field: "jf_active",
+            value: true,
+          }),
+        ]),
+      }),
+      [companyId],
+    );
+    const { data: employees, isLoading: isEmployeesLoading } =
+      useEmployeeListQuery(employeeListParams);
+    const { data: departments, isLoading: isDepartmentsLoading } =
+      useDepartmentListQuery(departmentListParams);
+    const { data: jobFields, isLoading: isJobFieldsLoading } =
+      useJobFieldListQuery(jobFieldListParams);
+    const isReferenceDataLoading =
+      isEmployeesLoading || isDepartmentsLoading || isJobFieldsLoading;
 
     const {
       languageTab,
@@ -93,7 +153,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
         </Tabs>
 
         <FieldGroup className="mt-8 pt-2">
-          <FieldSet>
+          <FieldSet disabled={readOnly}>
             <FieldGroup>
               <Field>
                 <FieldLabel>
@@ -101,6 +161,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
                 </FieldLabel>
                 <Input
                   value={selectedNode.name[languageTab] ?? ""}
+                  disabled={readOnly}
                   onChange={(e) => updateTranslation("name")(e.target.value)}
                 />
               </Field>
@@ -111,6 +172,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
                 </FieldLabel>
                 <Textarea
                   value={selectedNode.description?.[languageTab] ?? ""}
+                  disabled={readOnly}
                   onChange={(e) =>
                     updateTranslation("description")(e.target.value)
                   }
@@ -125,6 +187,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
 
                   <Select
                     value={selectedNode.stepAssignee.type}
+                    disabled={readOnly}
                     onValueChange={(value) =>
                       onAssigneeTypeChange(value as any)
                     }
@@ -149,6 +212,11 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
                   stepAssignee={selectedNode.stepAssignee}
                   onChange={assigneeTypeValueChange}
                   language={language}
+                  readOnly={readOnly}
+                  employees={employees}
+                  departments={departments ?? []}
+                  jobFields={jobFields ?? []}
+                  isLoading={isReferenceDataLoading}
                 />
               </div>
 
@@ -159,6 +227,7 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
 
                 <Select
                   value={selectedNode.skipAccessLevel?.toString()}
+                  disabled={readOnly}
                   onValueChange={onSkipAccessLevelChange}
                 >
                   <SelectTrigger>

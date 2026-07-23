@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 221,
+    "jf_name": {
+      "en": "Demo Construction - Project Delivery Director"
+    },
+    "jf_description": {
+      "en": "Project Delivery Director at Demo Construction"
+    },
+    "jf_department_id": 161,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 222,
+    "jf_name": {
+      "en": "Demo Construction - Project Manager"
+    },
+    "jf_description": {
+      "en": "Project Manager at Demo Construction"
+    },
+    "jf_department_id": 161,
+    "jf_company_id": 8,
+    "jf_parent_id": 221,
+    "jf_active": true
+  },
+  {
+    "jf_id": 223,
+    "jf_name": {
+      "en": "Demo Construction - Site Operations Manager"
+    },
+    "jf_description": {
+      "en": "Site Operations Manager at Demo Construction"
+    },
+    "jf_department_id": 162,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 224,
+    "jf_name": {
+      "en": "Demo Construction - Site Supervisor"
+    },
+    "jf_description": {
+      "en": "Site Supervisor at Demo Construction"
+    },
+    "jf_department_id": 162,
+    "jf_company_id": 8,
+    "jf_parent_id": 223,
+    "jf_active": true
+  },
+  {
+    "jf_id": 225,
+    "jf_name": {
+      "en": "Demo Construction - Civil Engineering Manager"
+    },
+    "jf_description": {
+      "en": "Civil Engineering Manager at Demo Construction"
+    },
+    "jf_department_id": 163,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 226,
+    "jf_name": {
+      "en": "Demo Construction - Civil Engineer"
+    },
+    "jf_description": {
+      "en": "Civil Engineer at Demo Construction"
+    },
+    "jf_department_id": 163,
+    "jf_company_id": 8,
+    "jf_parent_id": 225,
+    "jf_active": true
+  },
+  {
+    "jf_id": 227,
+    "jf_name": {
+      "en": "Demo Construction - Procurement Manager"
+    },
+    "jf_description": {
+      "en": "Procurement Manager at Demo Construction"
+    },
+    "jf_department_id": 164,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 228,
+    "jf_name": {
+      "en": "Demo Construction - Buyer"
+    },
+    "jf_description": {
+      "en": "Buyer at Demo Construction"
+    },
+    "jf_department_id": 164,
+    "jf_company_id": 8,
+    "jf_parent_id": 227,
+    "jf_active": true
+  },
+  {
+    "jf_id": 229,
+    "jf_name": {
+      "en": "Demo Construction - Construction Technology Director"
+    },
+    "jf_description": {
+      "en": "Construction Technology Director at Demo Construction"
+    },
+    "jf_department_id": 165,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 230,
+    "jf_name": {
+      "en": "Demo Construction - Construction Technology Manager"
+    },
+    "jf_description": {
+      "en": "Construction Technology Manager at Demo Construction"
+    },
+    "jf_department_id": 165,
+    "jf_company_id": 8,
+    "jf_parent_id": 229,
+    "jf_active": true
+  },
+  {
+    "jf_id": 231,
+    "jf_name": {
+      "en": "Demo Construction - Project Systems Manager"
+    },
+    "jf_description": {
+      "en": "Project Systems Manager at Demo Construction"
+    },
+    "jf_department_id": 166,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 232,
+    "jf_name": {
+      "en": "Demo Construction - Project Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Project Systems Engineer at Demo Construction"
+    },
+    "jf_department_id": 166,
+    "jf_company_id": 8,
+    "jf_parent_id": 231,
+    "jf_active": true
+  },
+  {
+    "jf_id": 233,
+    "jf_name": {
+      "en": "Demo Construction - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Construction"
+    },
+    "jf_department_id": 167,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 234,
+    "jf_name": {
+      "en": "Demo Construction - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Construction"
+    },
+    "jf_department_id": 167,
+    "jf_company_id": 8,
+    "jf_parent_id": 233,
+    "jf_active": true
+  },
+  {
+    "jf_id": 235,
+    "jf_name": {
+      "en": "Demo Construction - Safety Manager"
+    },
+    "jf_description": {
+      "en": "Safety Manager at Demo Construction"
+    },
+    "jf_department_id": 168,
+    "jf_company_id": 8,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 236,
+    "jf_name": {
+      "en": "Demo Construction - Safety Officer"
+    },
+    "jf_description": {
+      "en": "Safety Officer at Demo Construction"
+    },
+    "jf_department_id": 168,
+    "jf_company_id": 8,
+    "jf_parent_id": 235,
+    "jf_active": true
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 171,
+    "d_name": {
+      "en": "Demo Research - Research Programs"
+    },
+    "d_code": "RSH-OPS",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 172,
+    "d_name": {
+      "en": "Demo Research - Laboratory Operations"
+    },
+    "d_code": "RSH-LAB",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": 171,
+    "d_active": true
+  },
+  {
+    "d_id": 173,
+    "d_name": {
+      "en": "Demo Research - Data Science"
+    },
+    "d_code": "RSH-DAT",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": 171,
+    "d_active": true
+  },
+  {
+    "d_id": 174,
+    "d_name": {
+      "en": "Demo Research - Knowledge Management"
+    },
+    "d_code": "RSH-KNO",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": 171,
+    "d_active": true
+  },
+  {
+    "d_id": 175,
+    "d_name": {
+      "en": "Demo Research - Research Technology"
+    },
+    "d_code": "RSH-TEC",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 176,
+    "d_name": {
+      "en": "Demo Research - Research IT Support"
+    },
+    "d_code": "RSH-ITS",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": 175,
+    "d_active": true
+  },
+  {
+    "d_id": 177,
+    "d_name": {
+      "en": "Demo Research - Corporate Services"
+    },
+    "d_code": "RSH-COR",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 178,
+    "d_name": {
+      "en": "Demo Research - Grants & Compliance"
+    },
+    "d_code": "RSH-GRC",
+    "d_description": null,
+    "d_company_id": 9,
+    "d_parent_id": 177,
+    "d_active": true
+  }
+]

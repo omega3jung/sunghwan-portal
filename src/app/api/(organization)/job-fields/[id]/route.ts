@@ -1,19 +1,18 @@
 // app/api/job-fields/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
-  camelJobFieldMapper,
+  getLocalJobField,
+  updateLocalJobField,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapJobFieldItemPayload,
-} from "@/feature/organization/jobField/mapper";
-import {
-  toJobFieldMockResource,
   toJobFieldWritePayload,
-  UpdateJobFieldInput,
-} from "@/feature/organization/jobField/write";
-import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
+  type UpdateJobFieldInput,
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
@@ -26,10 +25,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   if (!isRemote) {
     // Return mock department.
 
-    const jobFieldData = camelJobFieldMapper(jobFieldsMock);
-    const targetDepartment = jobFieldData.find(
-      (jobField) => jobField.id === id,
-    );
+    const targetDepartment = getLocalJobField(id);
 
     if (!targetDepartment) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -56,7 +52,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toJobFieldMockResource(body, id), { status: 200 });
+    return NextResponse.json(updateLocalJobField(body, id), { status: 200 });
   }
 
   return portalApiJson(request, {

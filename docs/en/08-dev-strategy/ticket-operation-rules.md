@@ -401,14 +401,25 @@ Derived assignee emails must not be written into persisted `tk_email`.
   - self-merge is forbidden
   - draft source or target is forbidden
   - already merged source or target is forbidden
+  - source and target must belong to the same persisted category Tenant
+  - same-scope merge is allowed
+  - cross-scope merge is allowed only from `INTERNAL` to `PORTAL`
+  - `PORTAL -> INTERNAL` and cross-Tenant merge are forbidden
+  - the server derives Tenant and scope from stored ticket/category context;
+    request fields are not authorization facts
   - domain merge rule accepts the source/target status pair
 - ticket effect:
   - source ticket -> `Closed`
-  - `closeReason = Merged`
+  - same-scope merge: `closeReason = Merged`
+  - `INTERNAL -> PORTAL`: `closeReason = Escalated`
   - set merged target id/number
   - running work sessions are finished where supported
 - action persistence: `MERGE`
 - history event: `TICKET_MERGED`
+- history metadata: close reason, source/target Tenant, source/target scope,
+  merged target id/number, and operator reason
+- content policy: merge links the tickets but never copies INTERNAL actions,
+  history, attachments, or content into the PORTAL target
 - query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---

@@ -10,7 +10,7 @@ import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
 } from "@/feature/serviceDesk/ticket/constants";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { TicketInfoFields } from "./InfoFields";

@@ -1,4 +1,5 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import {
@@ -15,16 +16,13 @@ import {
   TicketListItemDto,
   TicketSearchRequestDto,
   TicketSearchResponseDto,
-  TicketUpdateRequestDto,
 } from "./ticketDto";
 import {
   mapTicketCreateRequestDtoToRowInput,
-  mapTicketUpdateRequestDtoToRowInput,
   toTicketDetailDto,
   toTicketListItemDto,
 } from "./ticketMapper";
 import {
-  closeResolvedTicketById,
   createTicketRow,
   findActiveDraftTicketIdByRequesterUsername,
   findActiveTicketViewRowById,
@@ -32,16 +30,19 @@ import {
   findActiveTicketViewRowsBySearch,
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
+  findEmployeeDepartmentIdByUsername,
   findExpiredResolvedTicketViewRows,
   findNextApprovalStepId,
   findNextTicketNumber,
   hasTicketWorkAssignmentHistory,
+  type TicketRepositoryOptions,
+} from "./ticketRepository";
+import {
+  closeResolvedTicketById,
   startAssignedTicketWorkById,
   submitDraftTicketRowById,
-  type TicketRepositoryOptions,
   updateTicketInitialRoutingById,
-  updateTicketRowById,
-} from "./ticketRepository";
+} from "./ticketUpdateRepository";
 
 export type CreateTicketOptions = {
   ticketNo?: string;
@@ -206,9 +207,19 @@ export async function createTicket(
       new Date().getUTCFullYear(),
       repositoryOptions,
     ));
+  const requesterDepartmentId = await findEmployeeDepartmentIdByUsername(
+    options.requesterUsername,
+    repositoryOptions,
+  );
+
+  if (requesterDepartmentId === null) {
+    throw createStatusError("Requester department was not found.", 422);
+  }
+
   const baseRowInput = mapTicketCreateRequestDtoToRowInput(input, {
     ticketNo,
     requesterUsername: options.requesterUsername,
+    requesterDepartmentId,
   });
   const routing = await resolveInitialTicketRouting(
     {
@@ -301,23 +312,6 @@ export async function createTicket(
   );
 }
 
-export async function updateTicket(
-  ticketId: string,
-  input: TicketUpdateRequestDto,
-  currentUserName: string | null,
-): Promise<TicketDetailDto> {
-  const row = await updateTicketRowById(
-    ticketId,
-    mapTicketUpdateRequestDtoToRowInput(input),
-  );
-
-  if (!row) {
-    throw createStatusError("Ticket not found.", 404);
-  }
-
-  return projectTicketDetail(row, currentUserName);
-}
-
 export async function searchTicketListItems(
   request: TicketSearchRequestDto,
   currentUserName: string | null,
@@ -326,16 +320,11 @@ export async function searchTicketListItems(
 
   return {
     items: result.rows.map((row) => toTicketListItemDto(row, currentUserName)),
+    facets: result.facets,
     totalCount: result.totalCount,
     page: result.page,
     pageSize: result.pageSize,
   };
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }
 
 async function projectTicketDetail(

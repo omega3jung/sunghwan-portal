@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 361,
+    "e_username": "aiden_evans",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.evans@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 181,
+    "e_job_field_id": 261,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 362,
+    "e_username": "amelia_laurent",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.laurent@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 181,
+    "e_job_field_id": 262,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 363,
+    "e_username": "benjamin_silva",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Silva"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.silva@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 182,
+    "e_job_field_id": 263,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 364,
+    "e_username": "chloe_zhang",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.zhang@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 182,
+    "e_job_field_id": 264,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 365,
+    "e_username": "daniel_lee",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.lee@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 183,
+    "e_job_field_id": 265,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 366,
+    "e_username": "elena_diaz",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.diaz@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 183,
+    "e_job_field_id": 266,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 367,
+    "e_username": "ethan_kim",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Kim"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.kim@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 184,
+    "e_job_field_id": 267,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 368,
+    "e_username": "freya_rossi",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Rossi"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.rossi@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 184,
+    "e_job_field_id": 268,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 369,
+    "e_username": "gabriel_young",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Young"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.young@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 185,
+    "e_job_field_id": 269,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 370,
+    "e_username": "hana_king",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "King"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.king@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 185,
+    "e_job_field_id": 270,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 371,
+    "e_username": "isaac_chen",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Chen"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.chen@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 186,
+    "e_job_field_id": 271,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 372,
+    "e_username": "julia_johnson",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Johnson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.johnson@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 186,
+    "e_job_field_id": 272,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 373,
+    "e_username": "kai_quinn",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Quinn"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.quinn@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 187,
+    "e_job_field_id": 273,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 374,
+    "e_username": "layla_xu",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Xu"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.xu@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 187,
+    "e_job_field_id": 274,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 375,
+    "e_username": "mateo_hall",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Hall"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.hall@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 188,
+    "e_job_field_id": 275,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 376,
+    "e_username": "nora_baker",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.baker@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 188,
+    "e_job_field_id": 276,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 377,
+    "e_username": "oliver_ito",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.ito@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 187,
+    "e_job_field_id": 274,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-21T18:25:00+09:00"
+  },
+  {
+    "e_id": 378,
+    "e_username": "priya_patel",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.patel@client-demo-security.com",
+    "e_image_url": null,
+    "e_department_id": 183,
+    "e_job_field_id": 265,
+    "e_company_id": 10,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-07-12T18:25:00+09:00"
+  }
+]

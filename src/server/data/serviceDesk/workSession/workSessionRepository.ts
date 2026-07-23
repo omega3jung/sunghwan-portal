@@ -1,19 +1,9 @@
-import type { QueryResultRow } from "pg";
-
+import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import type { WorkSessionRow } from "./workSessionRow";
 
-export type WorkSessionQueryExecutor = <
-  T extends QueryResultRow = QueryResultRow,
->(
-  text: string,
-  params?: unknown[],
-) => Promise<T[]>;
-
-export type WorkSessionRepositoryOptions = {
-  query?: WorkSessionQueryExecutor;
-};
+export type WorkSessionRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const FIND_WORK_SESSION_ROWS_BY_TICKET_ID_QUERY = `
 select

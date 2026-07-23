@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 121,
+    "d_name": {
+      "en": "Demo Finance - Financial Operations"
+    },
+    "d_code": "FIN-OPS",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 122,
+    "d_name": {
+      "en": "Demo Finance - Treasury"
+    },
+    "d_code": "FIN-TRY",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": 121,
+    "d_active": true
+  },
+  {
+    "d_id": 123,
+    "d_name": {
+      "en": "Demo Finance - Client Advisory"
+    },
+    "d_code": "FIN-ADV",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": 121,
+    "d_active": true
+  },
+  {
+    "d_id": 124,
+    "d_name": {
+      "en": "Demo Finance - Risk Management"
+    },
+    "d_code": "FIN-RSK",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": 121,
+    "d_active": true
+  },
+  {
+    "d_id": 125,
+    "d_name": {
+      "en": "Demo Finance - Finance Technology"
+    },
+    "d_code": "FIN-TEC",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 126,
+    "d_name": {
+      "en": "Demo Finance - Banking Systems"
+    },
+    "d_code": "FIN-SYS",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": 125,
+    "d_active": true
+  },
+  {
+    "d_id": 127,
+    "d_name": {
+      "en": "Demo Finance - Corporate Services"
+    },
+    "d_code": "FIN-COR",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 128,
+    "d_name": {
+      "en": "Demo Finance - Regulatory Compliance"
+    },
+    "d_code": "FIN-REG",
+    "d_description": null,
+    "d_company_id": 4,
+    "d_parent_id": 127,
+    "d_active": true
+  }
+]

@@ -1,95 +1,198 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  getAuthToken,
-  isInternalUser,
-  isRemoteRequest,
-  toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared/messages";
-import {
-  mapCategoryListPayload,
-  mapCategoryTreePayload,
-} from "@/feature/serviceDesk/category/mapper";
-import { saveCategoryTreeSchema } from "@/feature/serviceDesk/category/request.schema";
-import type { SaveServiceDeskCategoryTreePayload } from "@/feature/serviceDesk/category/types";
+import { toApiErrorResponse } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   localListCategories,
   localSaveCategoryTree,
-} from "@/server/serviceDesk/settings/category/localDemo";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
+import {
+  isServiceDeskSettingsRequest,
+  parseCategoryScope,
+  requireServiceDeskSettingsRouteAccess,
+  requireSettingsResourceAccess,
+  resolveAuthorizedSettingsTenant,
+  resolveOperationalServiceDeskReadTarget,
+  resolveServiceDeskRequestContext,
+} from "@/app/api/_adapters/serviceDesk";
+import { resolveApiErrorMessage } from "@/lib/application/api";
+import {
+  mapCategoryListPayload,
+  mapCategoryTreePayload,
+  saveCategoryTreeSchema,
+  type SaveServiceDeskCategoryTreePayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest) {
-  const token = await getAuthToken(request);
-  const isRemote = token?.dataScope === "REMOTE";
-  const isInternal = token?.userScope === "INTERNAL";
+  try {
+    const settingsRequest = isServiceDeskSettingsRequest(request);
+    const requestedScope = parseCategoryScope(
+      request.nextUrl.searchParams.get("scope"),
+    );
+    const requestedTenantId = request.nextUrl.searchParams.get("tenantId");
 
-  if (!isRemote) {
-    try {
+    if (settingsRequest) {
+      await requireServiceDeskSettingsRouteAccess(request);
+    }
+
+    const settingsAuthorization = settingsRequest
+      ? await requireSettingsResourceAccess({
+          request,
+          requestedTenantId,
+          resource: "CATEGORY",
+          scope: requireCategoryScope(requestedScope),
+        })
+      : null;
+    const principalContext =
+      settingsAuthorization ??
+      (await resolveServiceDeskRequestContext(request));
+    const operationalTarget = settingsAuthorization
+      ? null
+      : await resolveOperationalServiceDeskReadTarget({
+          request,
+          principalContext,
+          requestedTenantId,
+          requestedScope,
+        });
+    const isRemote = principalContext.dataScope === "REMOTE";
+    const isInternal = principalContext.principal.userScope === "INTERNAL";
+    const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
+    const targetTenant =
+      settingsAuthorization?.tenant ?? operationalTarget?.tenant;
+
+    if (settingsAuthorization) {
+      proxyQuery.set("tenantId", settingsAuthorization.tenant.id);
+      proxyQuery.set("scope", requestedScope as string);
+      proxyQuery.set(
+        "isInternal",
+        String(settingsAuthorization.tenant.isOwnerTenant),
+      );
+    } else if (operationalTarget) {
+      proxyQuery.set("tenantId", operationalTarget.tenant.id);
+      proxyQuery.set("isInternal", String(isInternal));
+
+      if (operationalTarget.scope) {
+        proxyQuery.set("scope", operationalTarget.scope);
+      } else {
+        proxyQuery.delete("scope");
+      }
+    }
+
+    if (!isRemote) {
       return NextResponse.json(
         localListCategories({
-          isInternal,
-          searchParams: request.nextUrl.searchParams,
+          isInternal: settingsAuthorization
+            ? settingsAuthorization.tenant.isOwnerTenant
+            : isInternal,
+          searchParams: proxyQuery,
+          tenantCompanyId:
+            targetTenant?.companyId ?? principalContext.principal.companyId,
         }),
       );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.categories.fetchList"),
-      });
     }
+
+    return portalApiJson(request, {
+      path: "/service-desk/categories",
+      query: proxyQuery,
+      errorMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
+      mapData: mapCategoryListPayload,
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.categories.fetchList",
+      ),
+    });
   }
-
-  const proxyQuery = new URLSearchParams(request.nextUrl.searchParams);
-
-  if (!proxyQuery.has("isInternal")) {
-    proxyQuery.set("isInternal", String(isInternal));
-  }
-
-  return portalApiJson(request, {
-    path: "/service-desk/categories",
-    query: proxyQuery,
-    errorMessage: tServiceDeskApi("api.categories.fetchList"),
-    mapData: mapCategoryListPayload,
-  });
 }
 
 export async function PUT(request: NextRequest) {
-  const isRemote = await isRemoteRequest(request);
-  const parsedBody = saveCategoryTreeSchema.safeParse(
-    (await request.json()) as SaveServiceDeskCategoryTreePayload,
-  );
+  try {
+    await requireServiceDeskSettingsRouteAccess(request);
 
-  if (!parsedBody.success) {
-    return NextResponse.json(
-      { message: tServiceDeskApi("api.categories.localDemo.invalidPayload") },
-      { status: 400 },
+    const parsedBody = saveCategoryTreeSchema.safeParse(
+      (await request.json()) as SaveServiceDeskCategoryTreePayload,
     );
-  }
 
-  const body = parsedBody.data;
-
-  if (!isRemote) {
-    try {
-      const isInternal = await isInternalUser(request);
+    if (!parsedBody.success) {
       return NextResponse.json(
-        localSaveCategoryTree({
-          isInternal,
-          payload: body,
-        }),
+        {
+          message: resolveApiErrorMessage(
+            "serviceDesk.categories.localDemo.invalidPayload",
+          ),
+        },
+        { status: 400 },
       );
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.categories.save"),
+    }
+
+    const body = parsedBody.data;
+    const authorization = await resolveAuthorizedSettingsTenant({
+      request,
+      requestedTenantId: body.tenantId,
+    });
+    const tenant = authorization.tenant;
+
+    if (!tenant) {
+      return NextResponse.json(
+        { message: "A target tenant is required." },
+        { status: 400 },
+      );
+    }
+
+    if (authorization.dataScope === "REMOTE") {
+      const submittedScopes = new Set(
+        body.categories.map((category) => category.scope),
+      );
+
+      return portalApiJson(request, {
+        method: "PUT",
+        path: "/service-desk/categories",
+        body,
+        errorMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
+        mapData: (payload) => {
+          const tree = mapCategoryTreePayload(payload);
+
+          return tree
+            ? {
+                ...tree,
+                categories: tree.categories.filter((category) =>
+                  submittedScopes.has(category.scope),
+                ),
+              }
+            : null;
+        },
       });
     }
+
+    const useOwnerStore = tenant.isOwnerTenant;
+    const submittedScopes = new Set(
+      body.categories.map((category) => category.scope),
+    );
+
+    const savedTree = localSaveCategoryTree({
+      isInternal: useOwnerStore,
+      payload: body,
+    });
+
+    return NextResponse.json({
+      ...savedTree,
+      categories: savedTree.categories.filter((category) =>
+        submittedScopes.has(category.scope),
+      ),
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.categories.save"),
+    });
+  }
+}
+
+function requireCategoryScope(scope: ReturnType<typeof parseCategoryScope>) {
+  if (!scope) {
+    throw Object.assign(new Error("A category scope is required."), {
+      status: 400,
+    });
   }
 
-  return portalApiJson(request, {
-    method: "PUT",
-    path: "/service-desk/categories",
-    body,
-    errorMessage: tServiceDeskApi("api.categories.save"),
-    mapData: mapCategoryTreePayload,
-  });
+  return scope;
 }

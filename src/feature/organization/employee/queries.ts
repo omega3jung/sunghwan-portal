@@ -2,17 +2,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { employeeApi } from "@/feature/organization/employee";
-import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
-import { DbParams } from "@/shared/types/api";
+import { STATIC_QUERY_OPTIONS } from "@/lib/client/query";
+import type { DbParams } from "@/shared/types/api";
 
+import { employeeApi } from "./api";
 import { employeeQueryKeys } from "./queryKeys";
 
-export const useEmployeeListQuery = (params: DbParams) => {
+export const useEmployeeListQuery = (params?: DbParams) => {
   return useQuery({
     queryKey: employeeQueryKeys.list(params),
-    queryFn: () => employeeApi.list(params),
-    enabled: !!params,
+    queryFn: () => (params ? employeeApi.list(params) : Promise.resolve([])),
+    enabled: params !== undefined,
     ...STATIC_QUERY_OPTIONS,
   });
 };

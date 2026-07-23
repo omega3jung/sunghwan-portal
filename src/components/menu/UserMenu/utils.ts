@@ -11,7 +11,7 @@ import { createElement } from "react";
 
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
-import { getLocalizedText } from "@/shared/utils/i18n";
+import { getLocalizedText } from "@/lib/application/i18n";
 
 const permissionIconByAccessLevel: Record<AccessLevel, LucideIcon> = {
   [ACCESS_LEVEL.ADMIN]: UserStar,

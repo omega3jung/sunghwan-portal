@@ -3,6 +3,7 @@
 "use client";
 // client export only.
 
+export * from "./api";
 export * from "./hooks/useCurrentLanguage";
 export * from "./hooks/useCurrentPreference";
 export * from "./hooks/useLanguage";

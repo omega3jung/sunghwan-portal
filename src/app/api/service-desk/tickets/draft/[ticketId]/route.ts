@@ -4,13 +4,13 @@ import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import {
+  resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
 import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
 import {
   ticketDraftFormSchema,
@@ -31,7 +31,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     rawBody = await request.json();
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tickets.localDemo.invalidPayload"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload"),
       fallbackStatus: 400,
     });
   }
@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { message: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload") },
       { status: 400 },
     );
   }
@@ -56,7 +56,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     path: `/service-desk/tickets/draft/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body: toTicketDraftWritePayloadFromFormValues(form),
-    errorMessage: tServiceDeskApi("api.tickets.update"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.update"),
   });
 }
 
@@ -79,6 +79,6 @@ export async function DELETE(
     method: "DELETE",
     path: `/service-desk/tickets/draft/${ticketId}`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.delete"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.delete"),
   });
 }

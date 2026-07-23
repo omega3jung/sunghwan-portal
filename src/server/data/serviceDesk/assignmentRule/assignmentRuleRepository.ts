@@ -1,4 +1,7 @@
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import {
   AssignmentRuleRow,
@@ -22,18 +25,6 @@ where cat.cat_tenant_id = $1
 order by
   cat.cat_index,
   cat.cat_id,
-  ar.ar_id;
-`;
-
-const FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_AND_CATEGORY_ID_QUERY = `
-select
-${ASSIGNMENT_RULE_COLUMNS}
-from service_desk.assignment_rule ar
-join service_desk.category cat
-  on cat.cat_id = ar.ar_category_id
-where cat.cat_tenant_id = $1
-  and ar.ar_category_id = $2
-order by
   ar.ar_id;
 `;
 
@@ -90,28 +81,20 @@ ${ASSIGNMENT_RULE_COLUMNS};
 
 export async function findAssignmentRuleRowsByTenantId(
   tenantId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<AssignmentRuleRow[]> {
-  return queryPortalApi<AssignmentRuleRow>(
+  return query<AssignmentRuleRow>(
     FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_QUERY,
     [Number(tenantId)],
-  );
-}
-
-export async function findAssignmentRuleRowsByTenantIdAndCategoryId(
-  tenantId: string | number,
-  categoryId: string | number,
-): Promise<AssignmentRuleRow[]> {
-  return queryPortalApi<AssignmentRuleRow>(
-    FIND_ASSIGNMENT_RULE_ROWS_BY_TENANT_ID_AND_CATEGORY_ID_QUERY,
-    [Number(tenantId), Number(categoryId)],
   );
 }
 
 export async function findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
   tenantId: string | number,
   assignmentRuleId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<AssignmentRuleRow | null> {
-  const rows = await queryPortalApi<AssignmentRuleRow>(
+  const rows = await query<AssignmentRuleRow>(
     FIND_ASSIGNMENT_RULE_ROW_BY_TENANT_ID_AND_ASSIGNMENT_RULE_ID_QUERY,
     [Number(tenantId), Number(assignmentRuleId)],
   );
@@ -121,8 +104,9 @@ export async function findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
 
 export async function createAssignmentRuleRow(
   input: CreateAssignmentRuleRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<AssignmentRuleRow | null> {
-  const rows = await queryPortalApi<AssignmentRuleRow>(
+  const rows = await query<AssignmentRuleRow>(
     CREATE_ASSIGNMENT_RULE_ROW_QUERY,
     [input.ar_category_id, JSON.stringify(input.ar_assignee)],
   );
@@ -134,8 +118,9 @@ export async function updateAssignmentRuleRowById(
   tenantId: string | number,
   assignmentRuleId: string | number,
   input: UpdateAssignmentRuleRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<AssignmentRuleRow | null> {
-  const rows = await queryPortalApi<AssignmentRuleRow>(
+  const rows = await query<AssignmentRuleRow>(
     UPDATE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY,
     [
       Number(tenantId),
@@ -151,8 +136,9 @@ export async function updateAssignmentRuleRowById(
 export async function deleteAssignmentRuleRowById(
   tenantId: string | number,
   assignmentRuleId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<AssignmentRuleRow | null> {
-  const rows = await queryPortalApi<AssignmentRuleRow>(
+  const rows = await query<AssignmentRuleRow>(
     DELETE_ASSIGNMENT_RULE_ROW_BY_ID_QUERY,
     [Number(tenantId), Number(assignmentRuleId)],
   );

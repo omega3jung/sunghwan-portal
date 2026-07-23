@@ -1,5 +1,8 @@
 import type { Attach, TicketActionType } from "@/domain/serviceDesk";
-import type { ISODateString } from "@/shared/types";
+import {
+  toNullableRowIsoDateString,
+  toRowIsoDateString,
+} from "@/server/data/serviceDesk/shared";
 
 import type { TicketActionDto } from "./ticketActionDto";
 import type { TicketActionRow } from "./ticketActionRow";
@@ -14,8 +17,9 @@ export function mapTicketActionRowToDto(
     content: row.tka_content ?? "",
     metadata: normalizeMetadata(row.tka_metadata),
     owner_username: row.tka_owner_username,
-    created_at: toIsoDateString(row.tka_created_at),
-    updated_at: toNullableIsoDateString(row.tka_updated_at),
+    owner_name: row.tka_owner_name ?? null,
+    created_at: toRowIsoDateString(row.tka_created_at),
+    updated_at: toNullableRowIsoDateString(row.tka_updated_at),
     active: row.tka_active,
     files: normalizeJsonArray<Attach>(row.tka_files),
     images: normalizeJsonArray<Attach>(row.tka_images),
@@ -30,14 +34,4 @@ function normalizeMetadata(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
-}
-
-function toNullableIsoDateString(
-  value: ISODateString | Date | null,
-): ISODateString | null {
-  return value === null ? null : toIsoDateString(value);
-}
-
-function toIsoDateString(value: ISODateString | Date): ISODateString {
-  return (value instanceof Date ? value.toISOString() : value) as ISODateString;
 }

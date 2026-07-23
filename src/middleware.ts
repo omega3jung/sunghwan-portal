@@ -2,8 +2,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-import { ENVIRONMENT } from "@/lib/environment";
-import { isPublicRoute } from "@/lib/routes";
+import { ENVIRONMENT } from "@/lib/config/environment";
+import { isPublicRoute } from "@/lib/config/routing";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;

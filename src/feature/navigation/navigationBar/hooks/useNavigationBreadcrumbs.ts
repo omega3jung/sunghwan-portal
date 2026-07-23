@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from "react";
 
-import { useLocalizedText } from "@/shared/hooks";
+import { useLocalizedText } from "@/lib/client/i18n";
 
 import type { NavigationBreadcrumbItem } from "../types";
 import type { LeftMenuBreadcrumbSource } from "../utils/buildBreadcrumbItemsFromLeftMenu";

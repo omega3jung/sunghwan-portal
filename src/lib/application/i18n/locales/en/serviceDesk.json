@@ -1,0 +1,430 @@
+{
+  "action": {
+    "comment": "Comment",
+    "note": "Note",
+    "assign": "Assign",
+    "assignToMe": "Assign to me",
+    "approve": "Approve",
+    "decline": "Decline",
+    "reject": "Reject",
+    "merge": "Merge",
+    "adjust": "Adjust",
+    "adjustPlan": "Adjust Plan",
+    "reopenIssue": "Reopen Issue",
+    "resubmitRequest": "Resubmit Request",
+    "cancelTicket": "Cancel ticket",
+    "searchCriteria": "Search criteria",
+    "workSession": {
+      "submit": "Save work session",
+      "submitWithStatus": "Save time and update status",
+      "submitting": "Saving..."
+    }
+  },
+  "chart": {
+    "category": {
+      "title": "Tickets by Category",
+      "label": "Category"
+    },
+    "department": {
+      "title": "Tickets by Requesting Department",
+      "label": "Department"
+    },
+    "tenant": {
+      "title": "Tickets by Tenant",
+      "label": "Tenant"
+    },
+    "assignee": {
+      "title": "Tickets by Assignee",
+      "label": "Assignee"
+    },
+    "sla": {
+      "title": "SLA Performance",
+      "status": {
+        "withinSla": "Within SLA",
+        "resolvedLate": "Resolved Late",
+        "overdue": "Overdue",
+        "inProgress": "In Progress"
+      }
+    }
+  },
+  "field": {
+    "workSession": "Work session",
+    "durationMinutes": "Duration",
+    "startAt": "Start time",
+    "endAt": "End time",
+    "status": "Status",
+    "note": "Note",
+    "noCode": "No code"
+  },
+  "tenant": {
+    "portalOwner": "Portal owner"
+  },
+  "status": {
+    "active": "Active"
+  },
+  "option": {
+    "status": {
+      "working": "Working",
+      "pending": "Pending",
+      "resolved": "Resolved"
+    }
+  },
+  "validation": {
+    "workSession": {
+      "required": "Enter work session before submitting.",
+      "positive": "Work session must be greater than 0 minutes.",
+      "invalidRange": "End time must be after start time.",
+      "statusRequiresTime": "Status can only change when accumulated work session plus this entry is greater than 0.",
+      "noteMaxLength": "Note must be 500 characters or less."
+    },
+    "invalidFieldItems": "Invalid fields: {{item}}"
+  },
+  "message": {
+    "refineSearchCriteria": "Refine your search criteria",
+    "lastComment": "Last comment",
+    "ticketCreation": "Ticket Creation",
+    "processingFlow": "Processing Flow",
+    "foundDraft": "Found draft",
+    "loadDraft": "Do you want to load the draft? If not, the previous draft will be discarded.",
+    "loadDraftExceptInvalid": "Loaded the draft except in cases where it is invalid."
+  },
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Select category",
+      "back": "Back",
+      "empty": "No selectable categories."
+    }
+  },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    }
+  },
+  "ticketUpdate": {
+    "trigger": "Update ticket",
+    "title": "Update ticket",
+    "description": "Update requester-editable ticket fields.",
+    "loadingTicket": "Loading ticket...",
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    },
+    "category": {
+      "placeholder": "Select category",
+      "back": "Back",
+      "empty": "No selectable categories."
+    },
+    "step": {
+      "info": "Issue Details",
+      "attachment": "Attachments",
+      "review": "Review"
+    },
+    "routing": {
+      "preserve": "Due date and recipient-only changes preserve the current approval and assignment.",
+      "reset": "Changing request details other than due date or email recalculates approval steps and assignee assignment."
+    },
+    "field": {
+      "existingFiles": "Existing files",
+      "existingImages": "Existing images",
+      "newAttachments": "New attachments"
+    },
+    "empty": {
+      "existingAttachments": "No existing attachments.",
+      "newAttachments": "No new attachments."
+    },
+    "action": {
+      "submit": "Update ticket",
+      "submitting": "Updating..."
+    },
+    "error": {
+      "load": "Failed to load the latest ticket details."
+    }
+  },
+  "hoverMessage": {
+    "backToList": "Back to ticket list",
+    "workSessionTool": "Record manual work time and optionally move the ticket status in the same action.",
+    "openDetailAside": "Open the aside to see ticket details",
+    "openHistoryDrawer": "Open the aside to view this ticket's history"
+  },
+  "step": {
+    "issueDetails": "Issue Details",
+    "attachments": "Attachments",
+    "review": "Review & Submit",
+    "assign": "Assign"
+  },
+  "detailAside": {
+    "recipientsTitle": "Recipients",
+    "unassigned": "Unassigned",
+    "ticketNo": "Ticket No",
+    "currentUserBadge": "Me",
+    "assignedBadge": "Assigned"
+  },
+  "historySheet": {
+    "title": "Ticket History",
+    "description": "Review the ticket history timeline."
+  },
+  "detailPage": {
+    "detailsTitle": "Ticket Details",
+    "descriptionTitleHint": "Core request details and the latest at-a-glance activity.",
+    "replyTitle": "Tools",
+    "replyTitleHint": "Reply, leave an internal note, and review discussion in one continuous workflow.",
+    "notFound": "Ticket not found."
+  },
+  "recentActivity": {
+    "title": "Recent activity",
+    "latestUpdate": {
+      "label": "Latest update",
+      "empty": "No history yet",
+      "fallbackMeta": "Timeline will appear here"
+    },
+    "conversation": {
+      "label": "Conversation",
+      "empty": "No comments yet",
+      "latestPrefix": "Latest",
+      "start": "Start the conversation below",
+      "count_one": "{{count}} comment",
+      "count_other": "{{count}} comments"
+    },
+    "lastCommenter": {
+      "label": "Last commenter",
+      "emptyName": "No commenter yet",
+      "emptyEmail": "Updates will appear as the ticket moves"
+    },
+    "history": {
+      "STATUS_UPDATED": "Status moved from {{from}} to {{to}}",
+      "STATUS_UPDATED_SIMPLE": "Status changed",
+      "ASSIGNMENT_RESOLVED": "Assignee updated",
+      "TICKET_SUBMITTED": "Ticket submitted",
+      "APPROVAL_REQUESTED": "Approval requested",
+      "APPROVAL_APPROVED": "Approval approved",
+      "APPROVAL_DECLINED": "Approval declined",
+      "COMMENT_CREATED": "Comment added",
+      "NOTE_CREATED": "Note added",
+      "COMMENT_UPDATED": "Comment updated",
+      "COMMENT_DELETED": "Comment deleted",
+      "WORK_SESSION_UPDATED": "Work session updated",
+      "MERGED": "Merged into {{target}}",
+      "ESCALATED": "Escalated to portal ticket {{target}}",
+      "TICKET_REJECTED": "Ticket rejected",
+      "TICKET_CANCELED": "Ticket canceled",
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "History updated",
+      "TICKET_UPDATED": "Ticket updated",
+      "CATEGORY_UPDATED": "Category updated",
+      "ASSIGNMENT_UPDATED": "Assignee updated",
+      "NOTE_UPDATED": "Note updated",
+      "NOTE_DELETED": "Note deleted",
+      "PLANNING_UPDATED": "Planning updated",
+      "WORK_SESSION_STARTED": "Work session started",
+      "WORK_SESSION_STOPPED": "Work session stopped",
+      "WORK_SESSION_DELETED": "Work session deleted"
+    }
+  },
+  "merge": {
+    "badge": "Merged",
+    "into": "Merged into {{ticketId}}",
+    "escalatedBadge": "Escalated",
+    "escalatedInto": "Escalated to portal ticket {{ticketId}}"
+  },
+  "historyTimeline": {
+    "description": "Timeline view for recent ticket activity.",
+    "badge": {
+      "assignment": "Assignment",
+      "approval": "Approval",
+      "workSession": "Work session",
+      "planning": "Planning",
+      "system": "System"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "Images",
+      "files": "Files"
+    },
+    "editor": {
+      "validationEmpty": "Please enter a comment before submitting."
+    }
+  },
+  "actionTool": {
+    "currentUser": "Current user",
+    "currentUserFallback": "You",
+    "launcher": {
+      "approve": "Approve this step and move the ticket to the next stage.",
+      "decline": "Decline this approval request and record the reason.",
+      "comment": "Post a public reply to the requester and watchers.",
+      "note": "Leave an internal note that stays inside the team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "Take ownership of this ticket right away with an automatic activity note.",
+      "reject": "Record a rejection reason before closing the request.",
+      "merge": "Merge this ticket into another ticket.",
+      "adjust": "Update priority, risk level, and due date settings.",
+      "reopen": "Reopen the ticket when the resolved result still needs more work.",
+      "resubmit": "Send this rejected request back for review.",
+      "cancel": "Cancel this request before work starts."
+    },
+    "helper": {
+      "approve": "Leave an approval note before sending the ticket onward.",
+      "decline": "Explain why this approval request is being declined.",
+      "comment": "Share a public update with everyone following this ticket.",
+      "note": "Add an internal note for the service desk team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "This action automatically records that you took ownership of the ticket.",
+      "reject": "Capture why this request is being rejected.",
+      "merge": "Choose the ticket to merge into and leave a short note.",
+      "adjust": "Review priority, risk level, and due date before applying changes.",
+      "reopen": "Explain what still needs to be resolved before this ticket can stay closed.",
+      "resubmit": "Explain what changed before resubmitting this rejected request.",
+      "cancel": "Explain why this request should be canceled."
+    },
+    "submit": {
+      "approve": "Approve",
+      "decline": "Decline",
+      "comment": "Post comment",
+      "note": "Save note",
+      "assign": "Save assignment",
+      "assignSelf": "Assign to Me",
+      "reject": "Reject ticket",
+      "merge": "Merge ticket",
+      "adjust": "Update plan",
+      "reopen": "Reopen Issue",
+      "resubmit": "Resubmit Request",
+      "cancel": "Cancel ticket"
+    },
+    "list": {
+      "title": "Activity",
+      "titleHint": "Search, sort, and review ticket actions.",
+      "empty": "No actions yet",
+      "noResult": "No actions match your search.",
+      "toggleDetails": "Toggle action details",
+      "number": "Action #{{number}}",
+      "edited": "Edited",
+      "searchPlaceholder": "Search actions",
+      "countLabel_one": "activity",
+      "countLabel_other": "activities"
+    },
+    "form": {
+      "editorLabel": "Reason",
+      "approvalNoteLabel": "Approval note",
+      "declineReasonLabel": "Decline reason",
+      "editorPlaceholder": {
+        "approve": "Leave a note for this approval",
+        "decline": "Describe why this approval should be declined",
+        "comment": "Write a comment and keep the conversation moving",
+        "note": "Share an internal note for this ticket",
+        "assign": "Share assignment context for the next owner",
+        "assignSelf": "This activity note is generated automatically",
+        "reject": "Describe why this ticket should be rejected",
+        "merge": "Explain why these tickets should be merged",
+        "adjust": "Describe why these values need to be adjusted",
+        "reopen": "Describe what still needs to be resolved",
+        "resubmit": "Describe what changed before resubmitting this ticket",
+        "cancel": "Describe why this ticket should be canceled"
+      },
+      "targetTicketId": "Target ticket",
+      "mergeTargetPlaceholder": "Enter the representative ticket ID"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} has decided to take ownership of this ticket. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "Please enter a reason before submitting.",
+      "contentMaxLength": "Reason must be 2000 characters or less.",
+      "assigneeRequired": "Select at least one assignee.",
+      "targetTicketRequired": "Enter the target ticket id.",
+      "adjustNoChanges": "Change priority, risk level, or due date before updating."
+    }
+  },
+  "workSessionTool": {
+    "title": "Work session",
+    "tab": {
+      "duration": "Duration",
+      "range": "Range"
+    },
+    "status": {
+      "keepCurrent": "Keep current status",
+      "currentSuffix": "(current)",
+      "description": "Changing status is guarded by the ticket's accumulated work session."
+    },
+    "note": {
+      "toggle": "Optional note",
+      "description": "Keep it short. Maximum {{count}} characters."
+    },
+    "summary": {
+      "current": "This entry",
+      "totalAfterSubmit": "Total after submit",
+      "minutes": "{{count}} mins",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} mins"
+    }
+  },
+  "placeholder": {
+    "workSession": {
+      "durationMinutes": "e.g. 30 min",
+      "note": "Add a short note for this time entry"
+    }
+  },
+  "viewOption": {
+    "title": "View",
+    "internal": "Internal",
+    "portal": "Portal"
+  },
+  "listPage": {
+    "title": "IT Service Desk",
+    "description": "Search and browse service desk tickets."
+  },
+  "reports": {
+    "title": "Service Desk Reports",
+    "description": "Legacy reports migration is queued for the next step."
+  },
+  "insights": {
+    "title": "Service Desk Insights",
+    "description": "Analyze ticket status, assignee workload, requester departments, and SLA health.",
+    "chartSummary": "Chart Summary",
+    "chartSummaryDescription": "Click a chart item to filter the ticket list.",
+    "activeFilter": "Active filter",
+    "clearFilter": "Clear filter",
+    "clearAll": "Clear all",
+    "emptyFilteredTickets": "No tickets match this insight filter.",
+    "unknownDepartment": "Unknown department",
+    "unknownTenant": "Unknown tenant",
+    "chart": {
+      "statusTitle": "Tickets by Status"
+    },
+    "sla": {
+      "overdue": "Overdue",
+      "dueToday": "Due today",
+      "dueThisWeek": "Due this week",
+      "later": "Later"
+    },
+    "currentInsightSummary": "Charts are based on {{count}} tickets in the current insight range.",
+    "totalTicketCountSummary": "Total tickets: {{count}}",
+    "filteredTicketCountSummary": "Filtered tickets: {{filteredCount}} / {{totalCount}}",
+    "chartView": {
+      "label": "Chart",
+      "full": "Full",
+      "compact": "Compact",
+      "hidden": "Hidden"
+    }
+  },
+  "ticketList": {
+    "empty": "No tickets found",
+    "requesterMeta": "{{name}} ??{{time}}",
+    "dueMeta": "Due {{time}}"
+  },
+  "searchCriteria": {
+    "primaryFilters": "Primary filters",
+    "additionalFilters": "Additional filters",
+    "dateFilters": "Date filters"
+  },
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext must be used inside provider."
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext must be used inside provider."
+  }
+}

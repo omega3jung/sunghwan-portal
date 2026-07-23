@@ -1,10 +1,9 @@
 // src/app/api/navigation/left-menu/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserName, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { resolveDemoAuth } from "@/mocks/domain/user";
-import { leftMenuJsonMock } from "@/mocks/ui/navigation/leftMenu";
+import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getLocalLeftMenu } from "@/app/api/_adapters/localDemo/user";
 
 export async function GET(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
@@ -16,15 +15,11 @@ export async function GET(req: NextRequest) {
   const isRemote = await isRemoteRequest(req);
 
   if (!isRemote) {
-    const demoAuth = resolveDemoAuth(currentUserName);
+    const leftMenu = getLocalLeftMenu(currentUserName);
 
-    if (!demoAuth) {
+    if (!leftMenu) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
-
-    const leftMenu = leftMenuJsonMock.filter(
-      (item) => item.minAccessLevel <= demoAuth.permission,
-    );
 
     return NextResponse.json({ data: leftMenu });
   }

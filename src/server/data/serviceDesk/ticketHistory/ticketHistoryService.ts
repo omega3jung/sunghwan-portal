@@ -1,3 +1,5 @@
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
+
 import type { CreateTicketHistoryInput, TicketHistoryDto } from "./ticketHistoryDto";
 import { mapTicketHistoryRowToDto } from "./ticketHistoryMapper";
 import { omitMetadataIdentityFromJsonValue } from "./ticketHistoryMetadata";
@@ -35,10 +37,4 @@ export async function getTicketHistoriesByTicketId(
   const rows = await findTicketHistoryRowsByTicketId(ticketId, options);
 
   return rows.map(mapTicketHistoryRowToDto);
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }

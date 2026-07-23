@@ -26,15 +26,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/client";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { useLocalizedText } from "@/shared/hooks";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { cn, initials } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
 import { UserImpersonation } from "./UserImpersonation";
+import {
+  getDemoImpersonationCandidates,
+  getDemoUserSwitchCandidates,
+  type UserMenuDemoCandidates,
+} from "./userMenuCandidates";
 
-export function UserMenu() {
+type Props = {
+  demoCandidates?: UserMenuDemoCandidates;
+};
+
+const EMPTY_DEMO_CANDIDATES: UserMenuDemoCandidates = {
+  auths: { internal: [], client: [] },
+  profiles: { internal: [], client: [] },
+};
+
+export function UserMenu({
+  demoCandidates = EMPTY_DEMO_CANDIDATES,
+}: Props) {
   const { current } = useCurrentSession();
   const {
     originalUser,
@@ -71,6 +87,27 @@ export function UserMenu() {
   const hasImpersonatedUser = useMemo<boolean>(
     () => isImpersonating && !!impersonatedUser,
     [impersonatedUser, isImpersonating],
+  );
+  const demoUserSwitchCandidates = useMemo(
+    () =>
+      getDemoUserSwitchCandidates(demoCandidates.profiles, visibleUser?.id),
+    [demoCandidates.profiles, visibleUser?.id],
+  );
+  const demoImpersonationCandidates = useMemo(
+    () =>
+      getDemoImpersonationCandidates(
+        demoCandidates.auths,
+        [
+          displayedOriginalUser?.username ?? visibleUser?.username,
+          impersonatedUser?.username,
+        ],
+      ),
+    [
+      demoCandidates.auths,
+      displayedOriginalUser?.username,
+      impersonatedUser?.username,
+      visibleUser?.username,
+    ],
   );
 
   const [openUserMenu, setOpenUserMenu] = useState(false);
@@ -231,8 +268,9 @@ export function UserMenu() {
             {isDemo && (
               <DropdownMenuGroup>
                 <DemoUserSwitch
-                  user={visibleUser}
+                  clientCandidates={demoUserSwitchCandidates.client}
                   disabled={isImpersonating}
+                  internalCandidates={demoUserSwitchCandidates.internal}
                   onDemoUserSwitch={onDemoUserSwitch}
                 />
                 <DropdownMenuSeparator />
@@ -280,8 +318,9 @@ export function UserMenu() {
               {/* demo impersonation */}
               {canDemoImpersonate && (
                 <DemoImpersonation
-                  user={displayedOriginalUser ?? visibleUser}
-                  impersonatedUser={impersonatedUser}
+                  clientCandidates={demoImpersonationCandidates.client}
+                  internalCandidates={demoImpersonationCandidates.internal}
+                  isImpersonating={hasImpersonatedUser}
                   onDemoImpersonate={startImpersonation}
                 />
               )}
@@ -310,8 +349,9 @@ export function UserMenu() {
           {/* demo impersonation */}
           {!hasImpersonatedUser && canDemoImpersonate && (
             <DemoImpersonation
-              user={displayedOriginalUser ?? visibleUser}
-              impersonatedUser={impersonatedUser}
+              clientCandidates={demoImpersonationCandidates.client}
+              internalCandidates={demoImpersonationCandidates.internal}
+              isImpersonating={hasImpersonatedUser}
               onDemoImpersonate={startImpersonation}
             />
           )}

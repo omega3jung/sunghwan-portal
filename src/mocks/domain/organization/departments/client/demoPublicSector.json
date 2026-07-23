@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 231,
+    "d_name": {
+      "en": "Demo Public Sector - Public Administration"
+    },
+    "d_code": "PUB-OPS",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 232,
+    "d_name": {
+      "en": "Demo Public Sector - Citizen Services"
+    },
+    "d_code": "PUB-CTZ",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": 231,
+    "d_active": true
+  },
+  {
+    "d_id": 233,
+    "d_name": {
+      "en": "Demo Public Sector - Policy Planning"
+    },
+    "d_code": "PUB-POL",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": 231,
+    "d_active": true
+  },
+  {
+    "d_id": 234,
+    "d_name": {
+      "en": "Demo Public Sector - Budget Management"
+    },
+    "d_code": "PUB-BDG",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": 231,
+    "d_active": true
+  },
+  {
+    "d_id": 235,
+    "d_name": {
+      "en": "Demo Public Sector - Public Technology"
+    },
+    "d_code": "PUB-TEC",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 236,
+    "d_name": {
+      "en": "Demo Public Sector - Digital Government Services"
+    },
+    "d_code": "PUB-SYS",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": 235,
+    "d_active": true
+  },
+  {
+    "d_id": 237,
+    "d_name": {
+      "en": "Demo Public Sector - Governance Services"
+    },
+    "d_code": "PUB-COR",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 238,
+    "d_name": {
+      "en": "Demo Public Sector - Records & Audit"
+    },
+    "d_code": "PUB-RNA",
+    "d_description": null,
+    "d_company_id": 15,
+    "d_parent_id": 237,
+    "d_active": true
+  }
+]

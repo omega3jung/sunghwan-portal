@@ -5,8 +5,13 @@
 - use fetch only.
 - do not use api.fetch in route handlers.
 - prefer direct backend proxying with `fetch`.
-- use shared helpers from `@/app/api/_helpers` for auth-aware backend proxying when possible.
-- keep `@/app/api/_helpers` limited to cross-resource helpers such as auth, proxy, and route context types.
+- use `@/app/api/_adapters/backend` for backend dispatch and authenticated JSON proxying.
+- use `@/app/api/_adapters/auth` for NextAuth request interpretation.
+- use `@/app/api/_adapters/http` for route contexts and Next.js error responses.
+- keep LOCAL mock-backed behavior under `@/app/api/_adapters/localDemo`.
+- keep resource-specific web orchestration under its owning adapter folder.
+- do not import `src/server` outside `_adapters/backend/embeddedServer.ts`.
+  This bridge is replaced by HTTP clients when the server is extracted.
 
 ---
 
@@ -50,7 +55,7 @@
 
 ## Types
 
-- use shared route context types from `@/app/api/_helpers/types`.
+- use shared route context types from `@/app/api/_adapters/http`.
 
 ### Examples
 
@@ -105,8 +110,10 @@ if (!res.ok) {
 
 - keep route handlers thin (BFF-style).
 - do not include business logic in route handlers.
-- delegate logic to feature/domain layer when needed.
-- default remote JSON proxying to `proxyJson`.
+- delegate reusable policies to `lib/application` or domain code.
+- consume server-safe DTOs, schemas, and mappers from
+  `lib/application/contracts` instead of feature UI modules.
+- default remote JSON proxying to `portalApiJson`.
 - keep mock and remote responses on the same contract whenever practical:
   - list: `{ items, total }`
   - item: single resource or `404`

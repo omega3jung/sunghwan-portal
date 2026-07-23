@@ -1,9 +1,22 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import {
+  type CategoryScope,
+} from "@/domain/serviceDesk";
+import { ApiError } from "@/lib/application/api";
+import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
+import {
+  canManageServiceDeskSettings,
+  resolveSettingsAccess,
+  type ServiceDeskSettingsPrincipal,
+} from "@/lib/application/serviceDesk";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
+import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
 import {
   getActiveTenantByCompanyId,
   getActiveTenantById,
   getActiveTenants,
+  getServiceDeskSettingsTenantContext,
+  type ServiceDeskSettingsTenantContext,
   TenantDto,
 } from "../tenant";
 import {
@@ -21,6 +34,8 @@ import {
 } from "./categoryMapper";
 import {
   createCategoryRow,
+  findCategoryContextRowById,
+  findCategoryRowsByCompanyId,
   findCategoryRowsByTenantId,
   findCategoryRowsByTenantIdAndCategoryId,
   updateCategoryRowById,
@@ -39,10 +54,168 @@ export type GetCategorySettingsResponseParams = {
 
 export async function getCategoryTreeByTenantId(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<CategoryDto[]> {
-  const rows = await findCategoryRowsByTenantId(tenantId);
+  const rows = await findCategoryRowsByTenantId(tenantId, query);
 
   return mapCategoryRowsToDtos(rows);
+}
+
+export async function getCategoryTreeByCompanyId(
+  companyId: string | number,
+): Promise<CategoryDto[]> {
+  const rows = await findCategoryRowsByCompanyId(companyId);
+
+  return mapCategoryRowsToDtos(rows);
+}
+
+export type ServiceDeskCategoryContext = {
+  categoryId: string;
+  mainCategoryId: string;
+  scope: CategoryScope;
+  tenant: ServiceDeskSettingsTenantContext;
+};
+
+type CategoryMutationReference = {
+  id: string;
+  scope: CategoryScope;
+  subCategories: Array<{ id: string }>;
+};
+
+export async function getServiceDeskCategoryContext(
+  categoryId: string | number,
+): Promise<ServiceDeskCategoryContext | null> {
+  const row = await findCategoryContextRowById(categoryId);
+
+  if (!row) {
+    return null;
+  }
+
+  const tenant = await getServiceDeskSettingsTenantContext(
+    row.tenant_id,
+  );
+
+  if (!tenant) {
+    return null;
+  }
+
+  return {
+    categoryId: String(row.category_id),
+    mainCategoryId: String(row.main_category_id),
+    scope: row.category_scope,
+    tenant,
+  };
+}
+
+export function assertCategoryTreeMutationAllowed({
+  principal,
+  tenant,
+  currentCategories,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  currentCategories: CategoryMutationReference[];
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const currentCategoriesById = new Map(
+    currentCategories.map((category) => [category.id, category]),
+  );
+  const submittedCategoryIds = new Set<string>();
+  const submittedSubCategoryIds = new Set<string>();
+
+  for (const category of payload.categories) {
+    const currentCategory = category.id
+      ? currentCategoriesById.get(category.id)
+      : undefined;
+    const scope = currentCategory?.scope ?? category.scope;
+    const access = resolveSettingsAccess(principal, {
+      resource: "CATEGORY",
+      tenantCompanyId: tenant.companyId,
+      isOwnerTenant: tenant.isOwnerTenant,
+      scope,
+    });
+
+    if (!canManageServiceDeskSettings(access)) {
+      throw createStatusError(
+        "The submitted category scope is read-only or outside this administrator scope.",
+        403,
+      );
+    }
+
+    if (category.id) {
+      if (!currentCategory) {
+        throw createStatusError(
+          "The submitted category does not belong to the target tenant.",
+          400,
+        );
+      }
+
+      if (submittedCategoryIds.has(category.id)) {
+        throw createStatusError(
+          "A category cannot be submitted more than once.",
+          400,
+        );
+      }
+
+      submittedCategoryIds.add(category.id);
+
+      if (category.scope !== currentCategory.scope) {
+        throw createStatusError(
+          "Category scope is immutable. Deactivate the category and create a new one.",
+          400,
+        );
+      }
+    }
+
+    const currentSubCategoryIds = new Set(
+      currentCategory?.subCategories.map((subCategory) => subCategory.id) ?? [],
+    );
+
+    for (const subCategory of category.subCategories) {
+      if (!subCategory.id) {
+        continue;
+      }
+
+      if (
+        !currentCategory ||
+        !currentSubCategoryIds.has(subCategory.id) ||
+        submittedSubCategoryIds.has(subCategory.id)
+      ) {
+        throw createStatusError(
+          "A subcategory cannot move to another category or tenant.",
+          400,
+        );
+      }
+
+      submittedSubCategoryIds.add(subCategory.id);
+    }
+  }
+}
+
+export async function validateCategoryTreeMutation({
+  principal,
+  tenant,
+  payload,
+}: {
+  principal: ServiceDeskSettingsPrincipal;
+  tenant: ServiceDeskSettingsTenantContext;
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const categories = await getCategoryTreeByTenantId(tenant.id);
+
+  assertCategoryTreeMutationAllowed({
+    principal,
+    tenant,
+    payload,
+    currentCategories: categories.map((category) => ({
+      id: String(category.category_id),
+      scope: category.category_scope,
+      subCategories: category.sub_category.map((subCategory) => ({
+        id: String(subCategory.category_id),
+      })),
+    })),
+  });
 }
 
 export async function getCategorySettingsResponseByTenantId({
@@ -59,7 +232,9 @@ export async function getCategorySettingsResponseByTenantId({
   return Promise.all(
     targetTenants.map(async (tenant) => ({
       ...tenant,
-      category: await getCategoryTreeByTenantId(tenant.tenant_id),
+      category: hasTenantId(companyId)
+        ? await getCategoryTreeByCompanyId(companyId)
+        : await getCategoryTreeByTenantId(tenant.tenant_id),
     })),
   );
 }
@@ -94,6 +269,13 @@ export async function updateCategoryById(
   const { parentRow: currentParentRow, childRows: currentChildRows } =
     await getCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
 
+  if (currentParentRow.cat_scope !== input.category_scope) {
+    throw new ApiError(
+      "serviceDesk.categories.scopeImmutable",
+      400,
+    );
+  }
+
   const parentRow = await updateCategoryRowById(
     tenantId,
     categoryId,
@@ -101,7 +283,7 @@ export async function updateCategoryById(
   );
 
   if (!parentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   const childRows = await synchronizeSubCategoryRows({
@@ -161,7 +343,7 @@ async function assertActiveTenantExists(tenantId: string | number) {
   const tenant = await getActiveTenantById(tenantId);
 
   if (!tenant) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return tenant;
@@ -179,7 +361,7 @@ async function getCategoryTreeRowsByTenantIdAndCategoryId(
 
   // Tree save must be able to resubmit inactive categories as well.
   if (!parentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return {
@@ -259,7 +441,7 @@ async function synchronizeSubCategoryRows({
       );
 
       if (!updatedChildRow) {
-        throw new ServiceDeskApiError("api.common.notFound", 404);
+        throw new ApiError("serviceDesk.common.notFound", 404);
       }
 
       nextSubmittedChildRows.push(updatedChildRow);
@@ -320,7 +502,7 @@ async function synchronizeSubCategoryRows({
     );
 
     if (!updatedPreservedChildRow) {
-      throw new ServiceDeskApiError("api.common.notFound", 404);
+      throw new ApiError("serviceDesk.common.notFound", 404);
     }
 
     nextPreservedChildRows.push(updatedPreservedChildRow);
@@ -352,7 +534,7 @@ async function resolveExistingSubCategoryRow({
   const existingRow = rows.find((row) => Number(row.cat_id) === Number(subCategoryId));
 
   if (existingRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return null;

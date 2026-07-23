@@ -2,20 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { getLocalDemoActions } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import {
+  resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
 import {
   camelTicketActionMapper,
   mapTicketActionListPayload,
-} from "@/feature/serviceDesk/ticketAction/api";
-import { getLocalDemoActions } from "@/server/serviceDesk/ticket/state";
+} from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = context.params;
@@ -27,9 +28,20 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   }
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
+    const access = await getCurrentLocalTicketAccessContext(request);
 
-    const items = getLocalDemoActions(isInternal).filter(
+    if (access === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+
+    const items = getLocalDemoActions().filter(
       (item) => item.ticket_id === ticketId && item.active !== false,
     );
 
@@ -42,7 +54,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.ticketActions.fetchList"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.fetchList"),
     mapData: mapTicketActionListPayload,
   });
 }

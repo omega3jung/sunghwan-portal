@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 521,
+    "e_username": "aiden_ito",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.ito@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 261,
+    "e_job_field_id": 421,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 522,
+    "e_username": "amelia_patel",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.patel@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 261,
+    "e_job_field_id": 422,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 523,
+    "e_username": "benjamin_wilson",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.wilson@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 262,
+    "e_job_field_id": 423,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 524,
+    "e_username": "chloe_green",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.green@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 262,
+    "e_job_field_id": 424,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 525,
+    "e_username": "daniel_anderson",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.anderson@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 263,
+    "e_job_field_id": 425,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 526,
+    "e_username": "elena_hassan",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.hassan@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 263,
+    "e_job_field_id": 426,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 527,
+    "e_username": "ethan_okafor",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.okafor@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 264,
+    "e_job_field_id": 427,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 528,
+    "e_username": "freya_vega",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.vega@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 264,
+    "e_job_field_id": 428,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 529,
+    "e_username": "gabriel_davis",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.davis@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 265,
+    "e_job_field_id": 429,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 530,
+    "e_username": "hana_smith",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.smith@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 265,
+    "e_job_field_id": 430,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 531,
+    "e_username": "isaac_garcia",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.garcia@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 266,
+    "e_job_field_id": 431,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 532,
+    "e_username": "julia_novak",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.novak@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 266,
+    "e_job_field_id": 432,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 533,
+    "e_username": "kai_usman",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.usman@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 267,
+    "e_job_field_id": 433,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 534,
+    "e_username": "layla_clark",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.clark@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 267,
+    "e_job_field_id": 434,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 535,
+    "e_username": "mateo_park",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.park@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 268,
+    "e_job_field_id": 435,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 536,
+    "e_username": "nora_foster",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.foster@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 268,
+    "e_job_field_id": 436,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 537,
+    "e_username": "oliver_martinez",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.martinez@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 263,
+    "e_job_field_id": 426,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-24T18:25:00+09:00"
+  },
+  {
+    "e_id": 538,
+    "e_username": "priya_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.tanaka@client-demo-insurance.com",
+    "e_image_url": null,
+    "e_department_id": 267,
+    "e_job_field_id": 433,
+    "e_company_id": 18,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-22T18:25:00+09:00"
+  }
+]

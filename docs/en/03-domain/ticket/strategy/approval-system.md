@@ -81,6 +81,53 @@ Related document: [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
+## Approval Settings Authorization
+
+Approval Step authority is resolved from the stored main category through
+`Category -> Tenant -> Company`, not from a duplicated `tenantId` on the step
+or a client-selected company.
+
+| Main-category target | Owner Admin | Same-company Tenant Admin | Other Tenant Admin |
+| --- | --- | --- | --- |
+| Owner Tenant, either scope | manage | none | none |
+| Customer Tenant, `INTERNAL` | none | manage | none |
+| Customer Tenant, `PORTAL` | read | manage | none |
+
+Customer `PORTAL` approval is the customer's approval system. Owner Admin may
+inspect its current configuration but cannot mutate it. Read-only inspection
+may include display information for referenced approvers; it does not grant
+candidate search across the customer employee directory.
+
+Both read and mutation paths load the category relationship and use the shared
+settings policy. An unauthorized API request returns `403`; query responses do
+not include approval settings whose access is `none`.
+
+---
+
+## Approver Eligibility
+
+Every approval candidate and finally resolved approver must belong to the
+category tenant's company, for both `INTERNAL` and `PORTAL` categories.
+
+| Assignee type | Company validation |
+| --- | --- |
+| `EMPLOYEE` | each employee's `companyId` equals the category tenant company |
+| `DEPARTMENT` | department and resolved employees remain in that company |
+| `JOB_FIELD` | final employee resolution applies the company filter even if job field is shared |
+| `MANAGER` | the resolved manager belongs to that company |
+
+Candidate lookup is category-centered and also checks the caller's Approval
+Step capability. Request `categoryId`, `purpose`, or `companyId` values select
+a target; they do not grant authority.
+
+Eligibility is validated when an Approval Step is saved and again when submit,
+resubmit, or another explicit routing command resolves the current approvers.
+This second check is required because an employee can become inactive or move
+to another company after configuration. Zero valid approvers is a routing
+failure; the system must not create an unowned `Approval` ticket.
+
+---
+
 ## Initial Approval Routing
 
 Ticket submit and resubmit both start routing from the first applicable
@@ -156,6 +203,20 @@ assigneeUsernames = []
 ```
 
 The requester may later resubmit through initial routing.
+
+---
+
+## Ticket Action Authorization Boundary
+
+Approval Step settings authorization and ticket action authorization are
+separate policies. Being classified as Owner Admin or Tenant Admin for settings
+does not automatically satisfy the current-approver condition for `APPROVE` or
+`DECLINE`, and the settings helper must not be reused as an action override.
+
+The current ticket action matrix documented above still includes a generic
+Admin override. A separate follow-up must audit that override for cross-tenant
+behavior and define any intentional break-glass capability. This settings
+decision does not silently broaden or rewrite the existing action matrix.
 
 ---
 

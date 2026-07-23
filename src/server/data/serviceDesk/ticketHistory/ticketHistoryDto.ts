@@ -1,3 +1,4 @@
+import type { LocalizedName } from "@/domain/organization";
 import type { TicketHistoryDisplayMetadata } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
@@ -15,6 +16,7 @@ export type TicketHistoryDto = {
   source: TicketHistorySource;
   event: TicketHistoryEvent;
   actor_username: string | null;
+  actor_name: LocalizedName | null;
   action_no: number | null;
   from_value?: TicketHistoryJsonValue;
   to_value?: TicketHistoryJsonValue;

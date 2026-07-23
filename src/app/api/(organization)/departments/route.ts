@@ -1,20 +1,20 @@
 // app/api/departments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  camelDepartmentMapper,
+  createLocalDepartment,
+  listLocalDepartments,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapDepartmentItemPayload,
   mapDepartmentListPayload,
-} from "@/feature/organization/department/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateDepartmentInput,
-  toDepartmentMockResource,
+  type CreateDepartmentInput,
   toDepartmentWritePayload,
-} from "@/feature/organization/department/write";
-import { departmentsMock } from "@/mocks/domain/organization/departments";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -23,12 +23,9 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const departmentData = camelDepartmentMapper(departmentsMock);
-
-    return NextResponse.json({
-      items: departmentData,
-      total: departmentData.length,
-    });
+    return NextResponse.json(
+      listLocalDepartments(request.nextUrl.searchParams),
+    );
   }
 
   // real backend
@@ -47,7 +44,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toDepartmentMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalDepartment(body), { status: 201 });
   }
 
   return portalApiJson(request, {

@@ -1,0 +1,170 @@
+{
+  "common": {
+    "failed": "실패",
+    "load": {
+      "title": "불러오기 실패",
+      "message": "{{item}}을(를) 불러오지 못했습니다."
+    },
+    "create": {
+      "title": "생성 실패",
+      "message": "{{item}}을(를) 생성하지 못했습니다."
+    },
+    "update": {
+      "title": "수정 실패",
+      "message": "{{item}}을(를) 수정하지 못했습니다."
+    },
+    "delete": {
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
+    },
+    "add": {
+      "title": "추가 실패",
+      "message": "{{item}}을(를) 추가하지 못했습니다."
+    },
+    "save": {
+      "title": "저장 실패",
+      "message": "{{item}}을(를) 저장하지 못했습니다."
+    },
+    "remove": {
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
+    }
+  },
+  "unsupportedBrowser": {
+    "title": "지원되지 않는 브라우저",
+    "description": "현재 사용 중인 브라우저는 지원되지 않습니다.",
+    "browserRecommendation": "원활한 사용을 위해 최신 버전의 Chrome, Firefox, Edge 또는 Safari로 업그레이드해 주세요."
+  },
+  "ticket": {},
+
+  "serviceDesk": {
+    "common": {
+      "notFound": "찾을 수 없습니다."
+    },
+    "approvalSteps": {
+      "fetchList": "승인 단계를 불러오지 못했습니다.",
+      "create": "승인 단계를 생성하지 못했습니다.",
+      "fetch": "승인 단계를 불러오지 못했습니다.",
+      "update": "승인 단계를 수정하지 못했습니다.",
+      "delete": "승인 단계를 삭제하지 못했습니다.",
+      "save": "승인 단계 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "승인 단계 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다."
+      }
+    },
+    "assignmentRules": {
+      "fetchList": "할당 규칙을 불러오지 못했습니다.",
+      "create": "할당 규칙을 생성하지 못했습니다.",
+      "fetch": "할당 규칙을 불러오지 못했습니다.",
+      "update": "할당 규칙을 수정하지 못했습니다.",
+      "delete": "할당 규칙을 삭제하지 못했습니다.",
+      "save": "할당 규칙 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "할당 규칙 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
+        "emptyAssignee": "할당 규칙에는 최소 한 명의 담당자가 필요합니다."
+      }
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "할당 추천을 위해서는 categoryId와 assigneeUsernames가 필요합니다.",
+      "fetch": "할당 추천을 불러오지 못했습니다."
+    },
+    "eligibleActors": {
+      "fetch": "Service Desk 대상자 후보를 불러오지 못했습니다."
+    },
+    "categories": {
+      "fetchList": "카테고리를 불러오지 못했습니다.",
+      "create": "카테고리를 생성하지 못했습니다.",
+      "fetch": "카테고리를 불러오지 못했습니다.",
+      "update": "카테고리를 수정하지 못했습니다.",
+      "delete": "카테고리를 삭제하지 못했습니다.",
+      "save": "카테고리 설정을 저장하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "카테고리 설정 payload가 올바르지 않습니다.",
+        "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
+        "clientMismatch": "카테고리가 클라이언트 {{clientId}}에 속하지 않습니다.",
+        "scopeImmutable": "카테고리 범위는 변경할 수 없습니다. 기존 카테고리를 비활성화하고 새로 생성하세요."
+      }
+    },
+    "tenants": {
+      "fetchList": "테넌트를 불러오지 못했습니다.",
+      "create": "테넌트를 생성하지 못했습니다.",
+      "fetch": "테넌트를 불러오지 못했습니다.",
+      "update": "테넌트를 수정하지 못했습니다.",
+      "delete": "테넌트를 삭제하지 못했습니다.",
+      "save": "테넌트 설정을 저장하지 못했습니다.",
+      "remoteNotImplemented": "REMOTE 테넌트 설정 변경은 아직 구현되지 않았습니다.",
+      "localDemo": {
+        "invalidPayload": "테넌트 설정 payload가 올바르지 않습니다.",
+        "companyAlreadyAssigned": "회사 {{companyId}}는 이미 활성 테넌트에 할당되어 있습니다.",
+        "companyMismatch": "테넌트가 회사 {{companyId}}에 속하지 않습니다."
+      }
+    },
+    "tickets": {
+      "fetchList": "티켓을 불러오지 못했습니다.",
+      "create": "티켓을 생성하지 못했습니다.",
+      "notFound": "티켓을 찾을 수 없습니다.",
+      "fetch": "티켓을 불러오지 못했습니다.",
+      "update": "티켓을 수정하지 못했습니다.",
+      "delete": "티켓을 삭제하지 못했습니다.",
+      "localDemo": {
+        "invalidPayload": "티켓 payload가 올바르지 않습니다.",
+        "requesterRequired": "요청자는 필수입니다.",
+        "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
+        "updateForbidden": "요청자만 이 티켓을 수정할 수 있습니다.",
+        "updateNotAllowed": "상태가 {{status}}인 티켓은 수정할 수 없습니다."
+      }
+    },
+    "ticketActions": {
+      "fetchList": "티켓 액션을 불러오지 못했습니다.",
+      "notFound": "액션을 찾을 수 없습니다.",
+      "fetch": "티켓 액션을 불러오지 못했습니다.",
+      "remove": "티켓 액션을 삭제하지 못했습니다."
+    },
+    "ticketHistories": {
+      "fetchList": "티켓 이력을 불러오지 못했습니다."
+    },
+    "ticketWorkSession": {
+      "fetchList": "티켓 작업 시간을 불러오지 못했습니다.",
+      "create": "티켓 작업 시간을 저장하지 못했습니다.",
+      "localDemo": {
+        "ticketMismatch": "작업 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
+        "invalidStatus": "유효하지 않은 상태입니다: {{value}}.",
+        "invalidTrackedMinutes": "작업 시간은 0분보다 커야 합니다.",
+        "statusRequiresTime": "전체 작업 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
+      }
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "병합 작업에는 targetTicketId가 필요합니다.",
+      "mergeSameTicket": "같은 티켓으로는 병합할 수 없습니다.",
+      "employeeUnavailable": "인증되지 않음: 직원 식별 정보를 확인할 수 없습니다.",
+      "actionMismatch": "액션 경로와 payload가 일치하지 않습니다.",
+      "startWork": "티켓 작업을 시작하지 못했습니다.",
+      "execute": "티켓 명령 실행에 실패했습니다.",
+      "localDemo": {
+        "createFailed": "액션 생성에 실패했습니다.",
+        "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
+        "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
+        "assigneeUnavailable": "설정된 라우팅에서 활성 상태의 유효한 담당자를 찾을 수 없습니다.",
+        "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
+        "approvalForbidden": "할당된 승인자만 이 티켓을 승인하거나 반려할 수 있습니다.",
+        "cancelForbidden": "작업이 시작되기 전에는 요청자만 이 티켓을 취소할 수 있습니다.",
+        "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
+        "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
+        "mergeTargetNotFound": "병합 대상 티켓을 찾을 수 없습니다.",
+        "draftCannotBeMerged": "임시 저장 티켓은 병합할 수 없습니다.",
+        "cannotMergeIntoDraft": "임시 저장 티켓으로는 병합할 수 없습니다.",
+        "ticketAlreadyMerged": "이미 병합된 티켓입니다.",
+        "mergeTargetAlreadyMerged": "병합 대상 티켓이 이미 병합되어 있습니다.",
+        "portalToInternalMergeForbidden": "포털 티켓을 내부 티켓으로 병합할 수 없습니다.",
+        "invalidMergeTarget": "유효하지 않은 병합 대상입니다.",
+        "invalidPriority": "유효하지 않은 우선순위입니다: {{value}}.",
+        "invalidRiskLevel": "유효하지 않은 위험도입니다: {{value}}.",
+        "actionNotAllowed": "{{status}} 상태에서는 {{action}} 작업을 수행할 수 없습니다."
+      }
+    }
+  }
+}

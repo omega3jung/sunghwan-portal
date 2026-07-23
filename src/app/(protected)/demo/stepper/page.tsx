@@ -16,8 +16,8 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
-import { NS } from "@/lib/i18n";
+import { useLanguageState } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 import {
   connectorStyleData,
   labelPositionData,

@@ -2,4 +2,3 @@
 
 export * from "./employeesDto";
 export * from "./employeesService";
-export * from "./username/employeeService";

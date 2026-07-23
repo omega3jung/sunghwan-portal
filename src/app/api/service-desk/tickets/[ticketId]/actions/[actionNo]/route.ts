@@ -2,27 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { RouteContext } from "@/app/api/_helpers/types";
-import {
-  ServiceDeskApiError,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared/messages";
-import {
-  camelTicketActionMapper,
-  mapTicketActionPayload,
-} from "@/feature/serviceDesk/ticketAction/api";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { RouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import {
   getMaxHistoryNo,
   getTicketContext,
-} from "@/server/serviceDesk/ticket/command/utils";
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/utils";
 import {
   getLocalDemoActions,
   getLocalDemoHistories,
-} from "@/server/serviceDesk/ticket/state";
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import {
+  ApiError,
+  resolveApiErrorMessage,
+} from "@/lib/application/api";
+import {
+  camelTicketActionMapper,
+  mapTicketActionPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
@@ -37,8 +38,18 @@ export async function GET(
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
-    const isInternal = await isInternalUser(request);
-    const item = getLocalDemoActions(isInternal).find(
+    const access = await getCurrentLocalTicketAccessContext(request);
+
+    if (access === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+    const item = getLocalDemoActions().find(
       (candidate) =>
         candidate.ticket_id === ticketId &&
         candidate.action_no === Number(actionNo) &&
@@ -47,7 +58,7 @@ export async function GET(
 
     if (!item) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.ticketActions.notFound") },
+        { message: resolveApiErrorMessage("serviceDesk.ticketActions.notFound") },
         { status: 404 },
       );
     }
@@ -57,7 +68,7 @@ export async function GET(
 
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
-    errorMessage: tServiceDeskApi("api.ticketActions.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.fetch"),
     mapData: mapTicketActionPayload,
   });
 }
@@ -80,25 +91,33 @@ export async function PATCH(
       }
 
       if (body.active !== false) {
-        throw new ServiceDeskApiError(
-          "api.ticketActions.invalidPatch",
+        throw new ApiError(
+          "serviceDesk.ticketActions.invalidPatch",
           400,
         );
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+      if (!localGetTicket({ access, id: ticketId })) {
+        throw new ApiError("serviceDesk.common.notFound", 404);
+      }
+      const isInternal = access.userScope === "INTERNAL";
       const numericActionNo = Number(actionNo);
       const { ticket } = getTicketContext(ticketId, isInternal);
 
       if (ticket.status === "Draft" || ticket.status === "Closed") {
-        throw new ServiceDeskApiError(
-          "api.ticketActions.removeForbiddenByStatus",
+        throw new ApiError(
+          "serviceDesk.ticketActions.removeForbiddenByStatus",
           409,
           { ticketId, status: ticket.status },
         );
       }
 
-      const actions = getLocalDemoActions(isInternal);
+      const actions = getLocalDemoActions();
       const actionIndex = actions.findIndex(
         (candidate) =>
           candidate.ticket_id === ticketId &&
@@ -108,19 +127,19 @@ export async function PATCH(
       const action = actionIndex >= 0 ? actions[actionIndex] : null;
 
       if (!action) {
-        throw new ServiceDeskApiError("api.ticketActions.notFound", 404);
+        throw new ApiError("serviceDesk.ticketActions.notFound", 404);
       }
 
       if (action.action_type !== "COMMENT" && action.action_type !== "NOTE") {
-        throw new ServiceDeskApiError(
-          "api.ticketActions.operationalRemoveForbidden",
+        throw new ApiError(
+          "serviceDesk.ticketActions.operationalRemoveForbidden",
           403,
         );
       }
 
       if (action.owner_username !== currentUserName) {
-        throw new ServiceDeskApiError(
-          "api.ticketActions.writerOnly",
+        throw new ApiError(
+          "serviceDesk.ticketActions.writerOnly",
           403,
         );
       }
@@ -133,7 +152,7 @@ export async function PATCH(
       };
 
       actions.splice(actionIndex, 1, updatedAction);
-      getLocalDemoHistories(isInternal).push({
+      getLocalDemoHistories().push({
         ticket_id: ticketId,
         history_no: getMaxHistoryNo(ticketId, isInternal),
         type: action.action_type === "COMMENT" ? "COMMENT" : "NOTE",
@@ -156,13 +175,13 @@ export async function PATCH(
 
       return NextResponse.json(camelTicketActionMapper([updatedAction])[0]);
     } catch (error) {
-      const status = error instanceof ServiceDeskApiError ? error.status : 500;
+      const status = error instanceof ApiError ? error.status : 500;
       const message =
-        error instanceof ServiceDeskApiError
-          ? error.message
+        error instanceof ApiError
+          ? resolveApiErrorMessage(error.messageKey, error.options)
           : error instanceof Error
             ? error.message
-            : tServiceDeskApi("api.ticketActions.remove");
+            : resolveApiErrorMessage("serviceDesk.ticketActions.remove");
 
       return NextResponse.json({ message }, { status });
     }
@@ -172,6 +191,6 @@ export async function PATCH(
     method: "PATCH",
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
     body,
-    errorMessage: tServiceDeskApi("api.ticketActions.remove"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.remove"),
   });
 }

@@ -1,0 +1,184 @@
+{
+  "common": {
+    "failed": "Failed",
+
+    "load": {
+      "title": "Failed to load",
+      "message": "Failed to load {{item}}"
+    },
+
+    "create": {
+      "title": "Failed to create",
+      "message": "Failed to create {{item}}"
+    },
+
+    "update": {
+      "title": "Failed to update",
+      "message": "Failed to update {{item}}"
+    },
+
+    "delete": {
+      "title": "Failed to delete",
+      "message": "Failed to delete {{item}}"
+    },
+
+    "add": {
+      "title": "Failed to add",
+      "message": "Failed to add {{item}}"
+    },
+
+    "save": {
+      "title": "Failed to save",
+      "message": "Failed to save {{item}}"
+    },
+
+    "remove": {
+      "title": "Failed to remove",
+      "message": "Failed to remove {{item}}"
+    }
+  },
+
+  "unsupportedBrowser": {
+    "title": "Unsupported Browser",
+    "description": "The current browser is not supported.",
+    "browserRecommendation": "For a smooth experience, please upgrade to the latest version of Chrome, Firefox, Edge or Safari."
+  },
+
+  "ticket": {},
+
+  "serviceDesk": {
+    "common": {
+      "notFound": "Not found."
+    },
+    "approvalSteps": {
+      "fetchList": "Failed to fetch approval steps.",
+      "create": "Failed to create approval step.",
+      "fetch": "Failed to fetch approval step.",
+      "update": "Failed to update approval step.",
+      "delete": "Failed to delete approval step.",
+      "save": "Failed to save approval step settings.",
+      "categoryNotFound": "Category {{categoryId}} was not found.",
+      "localDemo": {
+        "invalidPayload": "Invalid approval step settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "categoryNotFound": "Category {{categoryId}} was not found."
+      }
+    },
+    "assignmentRules": {
+      "fetchList": "Failed to fetch assignment rules.",
+      "create": "Failed to create assignment rule.",
+      "fetch": "Failed to fetch assignment rule.",
+      "update": "Failed to update assignment rule.",
+      "delete": "Failed to delete assignment rule.",
+      "save": "Failed to save assignment rule settings.",
+      "categoryNotFound": "Category {{categoryId}} was not found.",
+      "localDemo": {
+        "invalidPayload": "Invalid assignment rule settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "categoryNotFound": "Category {{categoryId}} was not found.",
+        "emptyAssignee": "Assignment rule requires at least one assignee."
+      }
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "Assignment recommendation requires categoryId and assigneeUsernames.",
+      "fetch": "Failed to fetch assignment recommendations."
+    },
+    "eligibleActors": {
+      "fetch": "Failed to fetch eligible Service Desk actors."
+    },
+    "categories": {
+      "fetchList": "Failed to fetch categories.",
+      "create": "Failed to create category.",
+      "fetch": "Failed to fetch category.",
+      "update": "Failed to update category.",
+      "delete": "Failed to delete category.",
+      "save": "Failed to save category settings.",
+      "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one.",
+      "localDemo": {
+        "invalidPayload": "Invalid category settings payload.",
+        "clientNotFound": "Client {{clientId}} was not found.",
+        "clientMismatch": "Category does not belong to client {{clientId}}.",
+        "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one."
+      }
+    },
+    "tenants": {
+      "fetchList": "Failed to fetch tenants.",
+      "create": "Failed to create tenant.",
+      "fetch": "Failed to fetch tenant.",
+      "update": "Failed to update tenant.",
+      "delete": "Failed to delete tenant.",
+      "save": "Failed to save tenant settings.",
+      "remoteNotImplemented": "REMOTE tenant settings mutations are not implemented yet.",
+      "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
+      "companyMismatch": "Tenant does not belong to company {{companyId}}.",
+      "localDemo": {
+        "invalidPayload": "Invalid tenant settings payload.",
+        "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
+        "companyMismatch": "Tenant does not belong to company {{companyId}}."
+      }
+    },
+    "tickets": {
+      "fetchList": "Failed to fetch tickets.",
+      "create": "Failed to create ticket.",
+      "notFound": "Ticket not found.",
+      "fetch": "Failed to fetch ticket.",
+      "update": "Failed to update ticket.",
+      "delete": "Failed to delete ticket.",
+      "localDemo": {
+        "invalidPayload": "Invalid ticket payload.",
+        "requesterRequired": "Requester is required.",
+        "categoryNotFound": "Category {{categoryId}} was not found.",
+        "updateForbidden": "Only the requester can update this ticket.",
+        "updateNotAllowed": "Ticket cannot be updated in status {{status}}."
+      }
+    },
+    "ticketActions": {
+      "fetchList": "Failed to fetch ticket actions.",
+      "notFound": "Action not found.",
+      "fetch": "Failed to fetch ticket action.",
+      "remove": "Failed to remove ticket action."
+    },
+    "ticketHistories": {
+      "fetchList": "Failed to fetch ticket histories."
+    },
+    "ticketWorkSession": {
+      "fetchList": "Failed to fetch ticket work session.",
+      "create": "Failed to save ticket work session.",
+      "localDemo": {
+        "ticketMismatch": "Work session payload ticketId does not match the route ticketId.",
+        "invalidStatus": "Invalid status: {{value}}.",
+        "invalidTrackedMinutes": "Work session must be greater than 0 minutes.",
+        "statusRequiresTime": "Status cannot change until total work session is greater than 0."
+      }
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "Merge action requires targetTicketId.",
+      "mergeSameTicket": "Cannot merge into the same ticket.",
+      "employeeUnavailable": "Unauthorized: employee identity is unavailable.",
+      "actionMismatch": "Action path and payload do not match.",
+      "startWork": "Failed to start ticket work.",
+      "execute": "Failed to execute ticket command.",
+      "localDemo": {
+        "createFailed": "Failed to create action.",
+        "ticketNotFound": "Ticket {{ticketId}} not found.",
+        "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
+        "assigneeUnavailable": "Configured routing resolved no active eligible assignees.",
+        "assigneeForbidden": "Only an assigned user can start work on this ticket.",
+        "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
+        "cancelForbidden": "Only the requester can cancel this ticket before work starts.",
+        "targetTicketRequired": "MERGE action requires targetTicketId.",
+        "nextStatusUnresolved": "Next status could not be resolved.",
+        "mergeTargetNotFound": "Merge target not found.",
+        "draftCannotBeMerged": "Draft tickets cannot be merged.",
+        "cannotMergeIntoDraft": "Cannot merge into a draft ticket.",
+        "ticketAlreadyMerged": "Ticket is already merged.",
+        "mergeTargetAlreadyMerged": "Merge target is already merged.",
+        "portalToInternalMergeForbidden": "Portal tickets cannot be merged into internal tickets.",
+        "invalidMergeTarget": "Invalid merge target.",
+        "invalidPriority": "Invalid priority: {{value}}.",
+        "invalidRiskLevel": "Invalid risk level: {{value}}.",
+        "actionNotAllowed": "Action {{action}} is not allowed in status {{status}}."
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 251,
+    "d_name": {
+      "en": "Demo Automotive - Vehicle Operations"
+    },
+    "d_code": "AUT-OPS",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 252,
+    "d_name": {
+      "en": "Demo Automotive - Vehicle Engineering"
+    },
+    "d_code": "AUT-VEH",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": 251,
+    "d_active": true
+  },
+  {
+    "d_id": 253,
+    "d_name": {
+      "en": "Demo Automotive - Manufacturing Engineering"
+    },
+    "d_code": "AUT-MFG",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": 251,
+    "d_active": true
+  },
+  {
+    "d_id": 254,
+    "d_name": {
+      "en": "Demo Automotive - Quality Management"
+    },
+    "d_code": "AUT-QMS",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": 251,
+    "d_active": true
+  },
+  {
+    "d_id": 255,
+    "d_name": {
+      "en": "Demo Automotive - Automotive Technology"
+    },
+    "d_code": "AUT-TEC",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 256,
+    "d_name": {
+      "en": "Demo Automotive - Connected Vehicle Systems"
+    },
+    "d_code": "AUT-SYS",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": 255,
+    "d_active": true
+  },
+  {
+    "d_id": 257,
+    "d_name": {
+      "en": "Demo Automotive - Corporate Services"
+    },
+    "d_code": "AUT-COR",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 258,
+    "d_name": {
+      "en": "Demo Automotive - Dealer Support"
+    },
+    "d_code": "AUT-DLR",
+    "d_description": null,
+    "d_company_id": 17,
+    "d_parent_id": 257,
+    "d_active": true
+  }
+]

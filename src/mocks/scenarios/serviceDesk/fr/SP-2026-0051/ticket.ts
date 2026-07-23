@@ -1,0 +1,65 @@
+import { TicketMockInput } from "../../types";
+
+export const ticket: TicketMockInput = {
+  tk_id: "c90be534-5e12-4c0b-ac44-991e4a2bf680",
+  tk_ticket_no: "SP-2026-0051",
+  tk_created_at: "2026-07-11T08:13:53Z",
+  tk_updated_at: "2026-07-12T07:42:16Z",
+  tk_requester_username: "fiona_tanaka",
+  tk_requester: {
+    username: "fiona_tanaka",
+    name: {
+      en: { first: "Fiona", middle: "", last: "Tanaka" },
+    },
+    email: "fiona.tanaka@client-demo-corporation.com",
+    image: null,
+  },
+  tk_status: "Working",
+  tk_priority: "medium",
+  tk_risk_level: "medium",
+  tk_assignee_usernames: [
+    "yusuf_garcia",
+    "zoe_novak",
+    "bianca_clark",
+    "rosa_green",
+    "adrian_usman",
+    "tessa_hassan",
+    "ximena_smith",
+  ],
+  tk_work_minutes: 210,
+  tka_last_comment_at: "2026-07-12T07:42:16Z",
+  tka_last_comment_email: "fiona.tanaka@client-demo-corporation.com",
+  tka_last_user_activity_at: "2026-07-12T07:42:16Z",
+  tka_last_user_activity_email: "fiona.tanaka@client-demo-corporation.com",
+  tk_due_at: "2026-07-16T18:00:00Z",
+  tk_active: true,
+  cat_scope: "INTERNAL",
+  cat_id: "132",
+  cat_name: {
+    en: "New feature request",
+    es: "Solicitud de nueva funcionalidad",
+    fr: "Demande de nouvelle fonctionnalité",
+    ko: "새로운 기능 요청",
+  },
+  tk_approval_step_id: null,
+  tk_subject:
+    "Demande d’étude pour l’ajout des produits Demo-Com à End-to-End Unit Repair",
+  tk_content:
+    "Bonjour. Nous étudions un nouveau contrat avec Demo-Com et souhaitons étendre le périmètre pris en charge afin que ses produits puissent être traités dans End-to-End Unit Repair.<br><br>La page actuelle est configurée selon les produits et les procédures de réparation des fabricants déjà enregistrés. Veuillez examiner en interne les modifications d’écran et de données nécessaires pour ajouter les produits Demo-Com.<br><br>Les principaux points à examiner sont les suivants :<br><br>Méthode d’enregistrement du fabricant et des modèles de produit<br>Règles de validation du Serial Number propres à chaque fabricant<br>Éléments d’inspection et codes de résultat de réparation<br>Gestion des pièces et des informations de garantie<br>Critères de Quality Check<br>Nécessité d’une intégration avec le système du fabricant<br><br>Une fois le périmètre défini à l’issue de l’étude interne, nous demanderons au fournisseur du portail de développer la nouvelle fonctionnalité.",
+  tk_email: {
+    to: [
+      "yusuf.garcia@client-demo-corporation.com",
+      "zoe.novak@client-demo-corporation.com",
+      "bianca.clark@client-demo-corporation.com",
+      "rosa.green@client-demo-corporation.com",
+      "adrian.usman@client-demo-corporation.com",
+      "tessa.hassan@client-demo-corporation.com",
+      "ximena.smith@client-demo-corporation.com",
+      "fiona.tanaka@client-demo-corporation.com",
+    ],
+    cc: ["elias.martinez@client-demo-corporation.com"],
+    bcc: [],
+  },
+  tk_files: [],
+  tk_images: [],
+};

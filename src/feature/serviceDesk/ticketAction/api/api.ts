@@ -1,5 +1,5 @@
 import type { TicketAction } from "@/domain/serviceDesk";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types";
 
 import { TICKET_ACTION_TYPE_TO_PATH } from "../constants";

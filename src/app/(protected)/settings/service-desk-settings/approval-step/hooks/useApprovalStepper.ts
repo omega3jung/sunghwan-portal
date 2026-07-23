@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { flattenTree } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 

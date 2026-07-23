@@ -2,8 +2,10 @@
 
 import {
   BarChart3,
+  Building2,
   ChevronDown,
   EyeOff,
+  Globe,
   LayoutGrid,
   RefreshCw,
   Rows3,
@@ -15,7 +17,6 @@ import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/custom/DatePicker";
-import { getStatusOptions } from "@/components/custom/StatusBadge/options";
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,13 +30,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { SupportedLanguage } from "@/domain/config";
-import type { TicketSummary } from "@/domain/serviceDesk";
-import { useDepartmentListQuery } from "@/feature/organization/department/client";
-import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import { isOwnerCompany } from "@/domain/organization";
+import type { CategoryScope, TicketSummary } from "@/domain/serviceDesk";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { getStatusOptions } from "@/feature/serviceDesk/shared";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
-import { useServiceDeskTicketSearchQuery } from "@/feature/serviceDesk/ticket/api/client";
-import { TicketList } from "@/feature/serviceDesk/ticket/components";
 import {
   AssigneeChart,
   buildAssigneeSummary,
@@ -43,6 +42,7 @@ import {
   buildDepartmentSummary,
   buildSlaSummary,
   buildStatusSummary,
+  buildTenantSummary,
   CategoryChart,
   ChartFilter,
   type ChartSummaryItem,
@@ -51,19 +51,23 @@ import {
   isUnassignedAssigneeValue,
   SlaBucketValue,
   SlaChart,
+  TenantChart,
   TicketChart,
-} from "@/feature/serviceDesk/ticket/components/chart";
+  TicketList,
+  useServiceDeskTicketSearchQuery,
+} from "@/feature/serviceDesk/ticket/client";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
 import {
   normalizeTicketSearchCriteriaFormValues,
   ticketSearchCriteriaFormDefaultValues,
   type TicketSearchCriteriaFormValues,
 } from "@/feature/serviceDesk/ticketSearch";
-import { TICKET_PERIOD_OPTIONS } from "@/feature/serviceDesk/ticketSearch/components/options";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
-import { NS } from "@/lib/i18n";
+import { TICKET_PERIOD_OPTIONS } from "@/feature/serviceDesk/ticketSearch/client";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
-import { useLocalizedValue } from "@/shared/hooks";
 import type { DateRangePreset } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";
 
@@ -73,6 +77,10 @@ const INSIGHTS_SORT = "ticketNumber";
 const INSIGHTS_ORDER = "desc";
 const DEFAULT_INSIGHTS_PERIOD: DateRangePreset = "last_3month";
 
+type ViewOption = CategoryScope;
+type InsightsSearchState = TicketSearchCriteriaFormValues & {
+  scope: ViewOption;
+};
 type ChartViewMode = "full" | "compact" | "hidden";
 type CriteriaPeriodRange =
   TicketSearchCriteriaFormValues["period"]["dateRange"];
@@ -81,6 +89,18 @@ type OptionItem<T> = {
   value: T;
   icon: JSX.Element;
 };
+
+const viewOption: OptionItem<ViewOption>[] = [
+  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
+  {
+    value: "INTERNAL",
+    icon: <Building2 className="h-4 w-4" />,
+  },
+  {
+    value: "PORTAL",
+    icon: <Globe className="h-4 w-4" />,
+  },
+];
 
 const chartViewOption: OptionItem<ChartViewMode>[] = [
   {
@@ -99,6 +119,11 @@ const chartViewOption: OptionItem<ChartViewMode>[] = [
 
 const checkboxItemRightCheckClass =
   "gap-2 pl-2 pr-8 [&>span]:left-auto [&>span]:right-2";
+
+const insightsSearchStateDefaultValues: InsightsSearchState = {
+  ...ticketSearchCriteriaFormDefaultValues,
+  scope: "INTERNAL",
+};
 
 const isDateRangePreset = (value: string): value is DateRangePreset => {
   return TICKET_PERIOD_OPTIONS.includes(value as DateRangePreset);
@@ -123,6 +148,7 @@ const getChartFilterFieldLabel = (
     status: string;
     category: string;
     department: string;
+    tenant: string;
     assignee: string;
     sla: string;
   },
@@ -134,6 +160,8 @@ const getChartFilterFieldLabel = (
       return labels.category;
     case "department":
       return labels.department;
+    case "tenant":
+      return labels.tenant;
     case "assignee":
       return labels.assignee;
     case "sla":
@@ -147,34 +175,32 @@ const isTicketMatchedByChartFilter = ({
   ticket,
   filter,
   getCategoryLabel,
-  requesterByUserName,
-  departmentsById,
   fallbackDepartmentLabel,
+  fallbackTenantLabel,
 }: {
   ticket: TicketSummary;
   filter: NonNullable<ChartFilter>;
   getCategoryLabel: (ticket: TicketSummary) => string;
-  requesterByUserName: Map<string, { departmentId: string }>;
-  departmentsById: Map<string, unknown>;
   fallbackDepartmentLabel: string;
+  fallbackTenantLabel: string;
 }): boolean => {
   switch (filter.type) {
     case "status":
       return ticket.status === filter.value;
     case "category":
       return getCategoryLabel(ticket) === filter.value;
-    case "department": {
-      const requester = requesterByUserName.get(ticket.requesterUsername);
-      const departmentId = requester?.departmentId;
-      const hasDepartment = departmentId
-        ? departmentsById.has(departmentId)
-        : false;
-
+    case "department":
       return (
-        (hasDepartment ? departmentId : fallbackDepartmentLabel) ===
-        filter.value
+        (ticket.requesterDepartmentId && ticket.requesterDepartmentName
+          ? ticket.requesterDepartmentId
+          : fallbackDepartmentLabel) === filter.value
       );
-    }
+    case "tenant":
+      return (
+        (ticket.tenantId && ticket.tenantName
+          ? ticket.tenantId
+          : fallbackTenantLabel) === filter.value
+      );
     case "assignee":
       const assigneeUsernames = selectTicketAssigneeIds(ticket);
 
@@ -194,19 +220,21 @@ export default function ServiceDeskInsightsPage() {
   const { startRouteLoadingForHref } = useRouteLoading();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
+  const { current } = useCurrentSession();
 
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
 
-  const searchCriteriaState =
-    useSessionStorageState<TicketSearchCriteriaFormValues>({
-      key: `${SERVICE_DESK_KEY}.insights`,
-      initialValue: ticketSearchCriteriaFormDefaultValues,
-    });
+  const searchCriteriaState = useSessionStorageState<InsightsSearchState>({
+    key: `${SERVICE_DESK_KEY}.insights`,
+    initialValue: insightsSearchStateDefaultValues,
+  });
 
+  const restoredSearchStateRef = useRef(false);
   const [criteria, setCriteria] = useState<TicketSearchCriteriaFormValues>(
     ticketSearchCriteriaFormDefaultValues,
   );
+  const [scope, setScope] = useState<ViewOption>("INTERNAL");
   const [chartFilter, setChartFilter] = useState<ChartFilter>(null);
   const [chartViewMode, setChartViewMode] = useState<ChartViewMode>("full");
   const [pickerRange, setPickerRange] = useState<DateRange | undefined>(
@@ -216,13 +244,18 @@ export default function ServiceDeskInsightsPage() {
     ? criteria.period.type
     : DEFAULT_INSIGHTS_PERIOD;
   const nextPeriodTypeRef = useRef<DateRangePreset>(currentPeriodType);
+  const showTenantChart =
+    scope === "PORTAL" && isOwnerCompany(current.user?.companyId);
 
   const {
     data: ticketSearchResult,
     isLoading: isTicketListLoading,
     refetch: refetchTickets,
   } = useServiceDeskTicketSearchQuery({
-    criteria,
+    criteria: {
+      ...criteria,
+      cat_scope: scope,
+    },
     sort: INSIGHTS_SORT,
     order: INSIGHTS_ORDER,
     page: INSIGHTS_PAGE,
@@ -233,49 +266,32 @@ export default function ServiceDeskInsightsPage() {
   const ticketItems = ticketSearchResult?.items;
   const tickets = useMemo(() => ticketItems ?? [], [ticketItems]);
 
-  const { data: employees } = useEmployeeListQuery({});
-  const { data: departments } = useDepartmentListQuery({});
-
-  const users = useMemo<ImageValueLabel[]>(() => {
-    if (!employees) {
-      return [];
-    }
-
-    return employees.map((employee) => {
-      const name = tLocal(employee.name);
-
-      return {
-        value: employee.username,
-        label: `${name.first} ${name.last}`,
-        displayName: employee.email,
-        image: employee.imageUrl,
-      };
-    });
-  }, [employees, tLocal]);
-
   const statusLabelMap = useMemo(() => {
     const statusOptions = getStatusOptions(userPreference.language);
     return new Map(statusOptions.map((option) => [option.value, option.label]));
   }, [userPreference.language]);
 
   const usersById = useMemo(() => {
-    return new Map(users.map((user) => [user.value, user]));
-  }, [users]);
-
-  const requesterByUserName = useMemo(() => {
     return new Map(
-      (employees ?? []).map((employee) => [employee.username, employee]),
-    );
-  }, [employees]);
+      (ticketSearchResult?.facets?.assignees ?? []).map((assignee) => {
+        const name = tLocal(assignee.name);
+        const option: ImageValueLabel = {
+          value: assignee.username,
+          label: `${name.first} ${name.last}`.trim(),
+          displayName: assignee.username,
+          image: assignee.image ?? undefined,
+        };
 
-  const departmentsById = useMemo(() => {
-    return new Map(
-      (departments ?? []).map((department) => [department.id, department]),
+        return [assignee.username, option];
+      }),
     );
-  }, [departments]);
+  }, [ticketSearchResult?.facets?.assignees, tLocal]);
 
   const fallbackDepartmentLabel = t("insights.unknownDepartment", {
     defaultValue: "Unknown department",
+  });
+  const fallbackTenantLabel = t("insights.unknownTenant", {
+    defaultValue: "Unknown tenant",
   });
   const unassignedAssigneeLabel = t("detailAside.unassigned", {
     defaultValue: "Unassigned",
@@ -297,20 +313,12 @@ export default function ServiceDeskInsightsPage() {
   }, [tickets, getCategoryLabel]);
 
   const departmentChartData = useMemo(() => {
-    return buildDepartmentSummary(
-      tickets,
-      requesterByUserName,
-      departmentsById,
-      (department) => tLocal(department.name),
-      fallbackDepartmentLabel,
-    );
-  }, [
-    tickets,
-    requesterByUserName,
-    departmentsById,
-    tLocal,
-    fallbackDepartmentLabel,
-  ]);
+    return buildDepartmentSummary(tickets, tLocal, fallbackDepartmentLabel);
+  }, [tickets, tLocal, fallbackDepartmentLabel]);
+
+  const tenantChartData = useMemo(() => {
+    return buildTenantSummary(tickets, tLocal, fallbackTenantLabel);
+  }, [tickets, tLocal, fallbackTenantLabel]);
 
   const assigneeChartData = useMemo(() => {
     return buildAssigneeSummary(tickets, usersById, unassignedAssigneeLabel);
@@ -342,29 +350,31 @@ export default function ServiceDeskInsightsPage() {
         ticket,
         filter: chartFilter,
         getCategoryLabel,
-        requesterByUserName,
-        departmentsById,
         fallbackDepartmentLabel,
+        fallbackTenantLabel,
       }),
     );
   }, [
     tickets,
     chartFilter,
     getCategoryLabel,
-    requesterByUserName,
-    departmentsById,
     fallbackDepartmentLabel,
+    fallbackTenantLabel,
   ]);
 
   useEffect(() => {
-    if (!searchCriteriaState.hydrated) {
+    if (!searchCriteriaState.hydrated || restoredSearchStateRef.current) {
       return;
     }
 
-    const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
-      searchCriteriaState.value,
-    );
+    restoredSearchStateRef.current = true;
 
+    const { scope: restoredScope = "INTERNAL", ...storedCriteria } =
+      searchCriteriaState.value;
+    const restoredCriteria =
+      normalizeTicketSearchCriteriaFormValues(storedCriteria);
+
+    setScope(restoredScope);
     setCriteria(restoredCriteria);
     setPickerRange(restoredCriteria.period.dateRange);
   }, [searchCriteriaState.hydrated, searchCriteriaState.value]);
@@ -378,6 +388,24 @@ export default function ServiceDeskInsightsPage() {
       setPickerRange(criteria.period.dateRange);
     }
   }, [criteria.period.dateRange, currentPeriodType]);
+
+  useEffect(() => {
+    if (showTenantChart) {
+      return;
+    }
+
+    setChartFilter((previous) =>
+      previous?.type === "tenant" ? null : previous,
+    );
+  }, [showTenantChart]);
+
+  const handleScopeChange = (nextScope: ViewOption) => {
+    setScope(nextScope);
+    searchCriteriaState.setValue((prev) => ({
+      ...prev,
+      scope: nextScope,
+    }));
+  };
 
   const handleTicketSelected = (ticketId: string) => {
     const href = `/service-desk/${ticketId}`;
@@ -398,7 +426,11 @@ export default function ServiceDeskInsightsPage() {
         },
       };
 
-      searchCriteriaState.setValue(nextCriteria);
+      searchCriteriaState.setValue((prev) => ({
+        ...prev,
+        ...nextCriteria,
+        scope,
+      }));
       return nextCriteria;
     });
   };
@@ -423,6 +455,7 @@ export default function ServiceDeskInsightsPage() {
         status: tCommon("field.status"),
         category: tCommon("field.category"),
         department: tCommon("field.department"),
+        tenant: t("chart.tenant.label", { defaultValue: "Tenant" }),
         assignee: tCommon("field.assignee"),
         sla: "SLA",
       })
@@ -436,7 +469,9 @@ export default function ServiceDeskInsightsPage() {
   const chartCardMode = chartViewMode === "compact" ? "compact" : "full";
   const chartGridClassName =
     chartViewMode === "compact"
-      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+      ? showTenantChart
+        ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+        : "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
       : "grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3";
   const totalTicketCount = tickets.length;
   const filteredTicketCount = filteredTickets.length;
@@ -467,6 +502,35 @@ export default function ServiceDeskInsightsPage() {
         </div>
 
         <div className="flex w-full flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="min-w-0 justify-end">
+                <span className="truncate">
+                  {t(`viewOption.${scope.toLowerCase()}`)}
+                </span>
+                <ChevronDown className="transition-transform" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-40">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
+                {viewOption.map((option) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={option.value}
+                      className={checkboxItemRightCheckClass}
+                      checked={option.value === scope}
+                      onClick={() => handleScopeChange(option.value)}
+                    >
+                      {option.icon}
+                      {t(`viewOption.${option.value.toLowerCase()}`)}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             className="h-9.5 shrink-0 px-2.5"
             variant="softPrimary"
@@ -588,6 +652,23 @@ export default function ServiceDeskInsightsPage() {
               onSelect={handleChartSelect("department")}
               emptyMessage={tCommon("empty.noResults")}
             />
+            {showTenantChart ? (
+              <TenantChart
+                title={t("chart.tenant.title", {
+                  defaultValue: "Tickets by Tenant",
+                })}
+                data={tenantChartData}
+                isLoading={isTicketListLoading}
+                mode={chartCardMode}
+                activeValue={
+                  chartFilter?.type === "tenant"
+                    ? chartFilter.value
+                    : undefined
+                }
+                onSelect={handleChartSelect("tenant")}
+                emptyMessage={tCommon("empty.noResults")}
+              />
+            ) : null}
             <AssigneeChart
               title={t("chart.assignee.title")}
               data={assigneeChartData}
@@ -671,7 +752,6 @@ export default function ServiceDeskInsightsPage() {
           <TicketList
             tickets={filteredTickets}
             onTicketSelected={handleTicketSelected}
-            users={users}
             language={userPreference.language as SupportedLanguage}
             isLoading={isTicketListLoading}
           />

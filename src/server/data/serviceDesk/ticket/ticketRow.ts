@@ -2,8 +2,10 @@ import { Priority, RiskLevel } from "@/domain/common";
 import {
   CategoryScope,
   TicketAttachmentMetadata,
+  TicketRequester,
   TicketResolutionReason,
   TicketStatus,
+  TicketUser,
 } from "@/domain/serviceDesk";
 import { ISODateString, LocalizedText } from "@/shared/types";
 
@@ -15,15 +17,22 @@ export type ServiceDeskTicketEmail = {
 
 export type ServiceDeskTicketViewRow = {
   tk_id: string;
+  tk_tenant_id: number | null;
+  tn_name: LocalizedText | null;
   tk_ticket_no: string;
   tk_created_at: ISODateString;
   tk_updated_at: ISODateString | null;
 
   tk_requester_username: string;
+  tk_requester: TicketRequester;
+  tk_requester_department_id: number | null;
+  tk_requester_department_name: LocalizedText | null;
+
   tk_status: TicketStatus;
   tk_priority: Priority;
   tk_risk_level: RiskLevel;
   tk_assignee_usernames: string[];
+  tk_assignees: TicketUser[];
 
   tk_work_minutes: number;
 
@@ -69,7 +78,6 @@ export type TicketMutateRowInput = {
 export type CreateTicketRowInput = TicketMutateRowInput & {
   tk_ticket_no: string;
   tk_requester_username: string;
+  tk_requester_department_id: number;
   tk_status: TicketStatus;
 };
-
-export type UpdateTicketRowInput = TicketMutateRowInput;

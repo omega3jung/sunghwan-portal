@@ -1,6 +1,6 @@
 import { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Stepper } from "@/components/custom/Stepper";
-import { SupportedLanguage } from "@/domain/config";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import { useApprovalStepper } from "../hooks/useApprovalStepper";
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";

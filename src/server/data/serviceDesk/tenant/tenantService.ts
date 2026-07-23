@@ -1,4 +1,8 @@
-import { ServiceDeskApiError } from "@/app/api/service-desk/_shared/messages";
+import { isOwnerCompany } from "@/domain/organization";
+import { ApiError } from "@/lib/application/api";
+import type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
+
+export type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
 
 import {
   CreateTenantInputDto,
@@ -70,6 +74,39 @@ export async function getActiveTenants(): Promise<TenantDto[]> {
   return mapTenantRowsToDtos(rows);
 }
 
+export async function getServiceDeskSettingsTenantContexts(
+): Promise<ServiceDeskSettingsTenantContext[]> {
+  const tenants = await getTenants();
+
+  return tenants.map((tenant) => ({
+    id: String(tenant.tenant_id),
+    companyId: Number(tenant.tenant_company_id),
+    isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
+    active: tenant.tenant_active,
+  }));
+}
+
+export async function getServiceDeskSettingsTenantContext(
+  tenantId: string | number,
+) {
+  return (
+    (await getServiceDeskSettingsTenantContexts()).find(
+      (tenant) => tenant.id === String(tenantId),
+    ) ?? null
+  );
+}
+
+export async function getServiceDeskSettingsTenantContextByCompanyId(
+  companyId: string | number,
+) {
+  return (
+    (await getServiceDeskSettingsTenantContexts()).find(
+      (tenant) => String(tenant.companyId) === String(companyId),
+    ) ?? null
+  );
+}
+
+
 export async function createTenant(
   input: CreateTenantInputDto,
 ): Promise<TenantDto> {
@@ -79,8 +116,8 @@ export async function createTenant(
   );
 
   if (duplicateTenant) {
-    throw new ServiceDeskApiError(
-      "api.tenants.localDemo.companyAlreadyAssigned",
+    throw new ApiError(
+      "serviceDesk.tenants.companyAlreadyAssigned",
       409,
       { companyId: input.tenant_company_id },
     );
@@ -102,12 +139,12 @@ export async function updateTenantById(
   const currentRow = await findTenantRowById(tenantId);
 
   if (!currentRow) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   if (Number(currentRow.tn_company_id) !== Number(input.tenant_company_id)) {
-    throw new ServiceDeskApiError(
-      "api.tenants.localDemo.companyMismatch",
+    throw new ApiError(
+      "serviceDesk.tenants.companyMismatch",
       400,
       { companyId: input.tenant_company_id },
     );
@@ -119,7 +156,7 @@ export async function updateTenantById(
   );
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapTenantRowToDto(row);
@@ -131,7 +168,7 @@ export async function deactivateTenantById(
   const row = await deactivateTenantRowById(tenantId);
 
   if (!row) {
-    throw new ServiceDeskApiError("api.common.notFound", 404);
+    throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapTenantRowToDto(row);

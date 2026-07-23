@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 441,
+    "e_username": "aiden_garcia",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.garcia@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 221,
+    "e_job_field_id": 341,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 442,
+    "e_username": "amelia_novak",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.novak@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 221,
+    "e_job_field_id": 342,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 443,
+    "e_username": "benjamin_usman",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.usman@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 222,
+    "e_job_field_id": 343,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 444,
+    "e_username": "chloe_clark",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.clark@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 222,
+    "e_job_field_id": 344,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 445,
+    "e_username": "daniel_park",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.park@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 223,
+    "e_job_field_id": 345,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 446,
+    "e_username": "elena_foster",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.foster@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 223,
+    "e_job_field_id": 346,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 447,
+    "e_username": "ethan_martinez",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.martinez@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 224,
+    "e_job_field_id": 347,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 448,
+    "e_username": "freya_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.tanaka@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 224,
+    "e_job_field_id": 348,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 449,
+    "e_username": "gabriel_brown",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Brown"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.brown@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 225,
+    "e_job_field_id": 349,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 450,
+    "e_username": "hana_moore",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Moore"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.moore@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 225,
+    "e_job_field_id": 350,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 451,
+    "e_username": "isaac_evans",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.evans@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 226,
+    "e_job_field_id": 351,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 452,
+    "e_username": "julia_laurent",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.laurent@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 226,
+    "e_job_field_id": 352,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 453,
+    "e_username": "kai_silva",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Silva"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.silva@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 227,
+    "e_job_field_id": 353,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 454,
+    "e_username": "layla_zhang",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.zhang@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 227,
+    "e_job_field_id": 354,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 455,
+    "e_username": "mateo_lee",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.lee@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 228,
+    "e_job_field_id": 355,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 456,
+    "e_username": "nora_diaz",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.diaz@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 228,
+    "e_job_field_id": 356,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 457,
+    "e_username": "oliver_kim",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Kim"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.kim@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 221,
+    "e_job_field_id": 342,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-09T18:25:00+09:00"
+  },
+  {
+    "e_id": 458,
+    "e_username": "priya_rossi",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Rossi"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.rossi@client-demo-education.edu",
+    "e_image_url": null,
+    "e_department_id": 225,
+    "e_job_field_id": 349,
+    "e_company_id": 14,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-12T18:25:00+09:00"
+  }
+]

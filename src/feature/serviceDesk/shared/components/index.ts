@@ -2,3 +2,4 @@
 
 export * from "./TicketAttachmentList";
 export * from "./TicketMetaBadge";
+export * from "./TicketStatusBadge";

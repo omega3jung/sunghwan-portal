@@ -1,5 +1,5 @@
 // src/feature/navigation/leftMenu/api/api.ts
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";
 
 import type { DbMenuItem } from "../types";

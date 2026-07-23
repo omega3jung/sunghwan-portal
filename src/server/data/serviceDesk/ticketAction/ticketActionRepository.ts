@@ -1,6 +1,5 @@
-import type { QueryResultRow } from "pg";
-
 import type { Attach, TicketActionType } from "@/domain/serviceDesk";
+import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import type {
@@ -9,16 +8,7 @@ import type {
 } from "./ticketActionDto";
 import type { TicketActionRow } from "./ticketActionRow";
 
-export type TicketActionQueryExecutor = <
-  T extends QueryResultRow = QueryResultRow,
->(
-  text: string,
-  params?: unknown[],
-) => Promise<T[]>;
-
-export type TicketActionRepositoryOptions = {
-  query?: TicketActionQueryExecutor;
-};
+export type TicketActionRepositoryOptions = ServiceDeskRepositoryOptions;
 
 export type CreateTicketActionRowInput = {
   ticketId: string;
@@ -48,6 +38,12 @@ const TICKET_ACTION_ROW_COLUMNS = `
   tka_files,
   tka_images,
   tka_owner_username,
+  (
+    select employee.e_name
+    from public.vw_employee employee
+    where employee.e_username = tka_owner_username
+    limit 1
+  ) as tka_owner_name,
   tka_active,
   tka_created_at,
   tka_updated_at
