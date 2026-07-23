@@ -60,6 +60,7 @@ export const localCreateTicket = async ({
   const nextTicket: DbTicketDetail = {
     id: createTicketId(year, nextSequence),
     tenant_id: category.tenantId,
+    tenant_name: category.tenantName,
     ticket_number: createTicketNumber(year, nextSequence),
     created_at: now,
     updated_at: now,

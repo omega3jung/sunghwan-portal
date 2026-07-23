@@ -145,6 +145,7 @@ function createUpdatedTicket({
   return {
     ...ticket,
     tenant_id: category.tenantId,
+    tenant_name: category.tenantName,
     status,
     close_reason: ticket.close_reason ?? null,
     priority,

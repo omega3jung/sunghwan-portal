@@ -8,9 +8,9 @@ import {
   Building2,
   CalendarCheck,
   CalendarDays,
-  ChartPie,
   ChevronDown,
   FlagTriangleRight,
+  Globe,
   RefreshCw,
   Ticket,
 } from "lucide-react";
@@ -86,7 +86,7 @@ const viewOption: OptionItem<ViewOption>[] = [
   },
   {
     value: "PORTAL",
-    icon: <ChartPie className="h-4 w-4" />,
+    icon: <Globe className="h-4 w-4" />,
   },
 ];
 
@@ -130,11 +130,10 @@ export default function ServiceDeskPage() {
   const { current } = useCurrentSession();
   const effectiveCompanyId = current.user?.companyId;
 
-  const searchCriteriaState =
-    useSessionStorageState<TicketSearchState>({
-      key: SERVICE_DESK_KEY,
-      initialValue: ticketSearchStateDefaultValues,
-    });
+  const searchCriteriaState = useSessionStorageState<TicketSearchState>({
+    key: SERVICE_DESK_KEY,
+    initialValue: ticketSearchStateDefaultValues,
+  });
 
   const form = useTicketSearchCriteriaForm();
   const restoredSearchStateRef = useRef(false);
@@ -216,7 +215,8 @@ export default function ServiceDeskPage() {
     () =>
       (ticketSearchResult?.facets?.requesters ?? []).map((requester) => ({
         value: requester.username,
-        label: `${tLocal(requester.name).first} ${tLocal(requester.name).last}`.trim(),
+        label:
+          `${tLocal(requester.name).first} ${tLocal(requester.name).last}`.trim(),
         displayName: requester.username,
         image: requester.image ?? undefined,
       })),
@@ -226,7 +226,8 @@ export default function ServiceDeskPage() {
     () =>
       (ticketSearchResult?.facets?.assignees ?? []).map((assignee) => ({
         value: assignee.username,
-        label: `${tLocal(assignee.name).first} ${tLocal(assignee.name).last}`.trim(),
+        label:
+          `${tLocal(assignee.name).first} ${tLocal(assignee.name).last}`.trim(),
         displayName: assignee.username,
         image: assignee.image ?? undefined,
       })),
@@ -269,10 +270,7 @@ export default function ServiceDeskPage() {
 
   // Restore session storage.
   useEffect(() => {
-    if (
-      !searchCriteriaState.hydrated ||
-      restoredSearchStateRef.current
-    ) {
+    if (!searchCriteriaState.hydrated || restoredSearchStateRef.current) {
       return;
     }
 
@@ -286,9 +284,8 @@ export default function ServiceDeskPage() {
       ...storedCriteria
     } = searchCriteriaState.value;
 
-    const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
-      storedCriteria,
-    );
+    const restoredCriteria =
+      normalizeTicketSearchCriteriaFormValues(storedCriteria);
 
     form.reset(restoredCriteria);
     setCriteria(restoredCriteria);

@@ -107,6 +107,7 @@ function toTicketCommonDto(
     id: row.tk_id,
     tenant_id:
       row.tk_tenant_id === null ? null : String(row.tk_tenant_id),
+    tenant_name: row.tn_name,
     ticket_number: row.tk_ticket_no,
     created_at: row.tk_created_at,
     updated_at: row.tk_updated_at,

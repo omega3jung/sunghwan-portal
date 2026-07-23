@@ -97,6 +97,28 @@ export const buildDepartmentSummary = (
   );
 };
 
+export const buildTenantSummary = (
+  tickets: TicketSummary[],
+  getTenantLabel: (name: LocalizedText) => string,
+  fallbackLabel: string,
+): ChartSummaryItem[] => {
+  return toSummaryItems(
+    tickets.map((ticket) => {
+      if (!ticket.tenantId || !ticket.tenantName) {
+        return {
+          value: fallbackLabel,
+          label: fallbackLabel,
+        };
+      }
+
+      return {
+        value: ticket.tenantId,
+        label: getTenantLabel(ticket.tenantName),
+      };
+    }),
+  );
+};
+
 export const buildAssigneeSummary = (
   tickets: TicketSummary[],
   usersById: Map<string, ImageValueLabel>,

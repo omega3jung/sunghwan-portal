@@ -29,6 +29,10 @@
       "title": "Tickets par département demandeur",
       "label": "Département"
     },
+    "tenant": {
+      "title": "Tickets par tenant",
+      "label": "Tenant"
+    },
     "assignee": {
       "title": "Tickets par responsable",
       "label": "Responsable"
@@ -387,6 +391,7 @@
     "clearAll": "Tout effacer",
     "emptyFilteredTickets": "Aucun ticket ne correspond à ce filtre d'insight.",
     "unknownDepartment": "Département inconnu",
+    "unknownTenant": "Tenant inconnu",
     "chart": {
       "statusTitle": "Tickets par statut"
     },

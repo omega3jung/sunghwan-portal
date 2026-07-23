@@ -11,6 +11,11 @@ import { serviceDeskScenariosMock } from "./scenariosMock";
 import type { TicketMockInput } from "./types";
 
 const categoryTenantIds = buildCategoryTenantIds();
+const tenantNamesById = new Map(
+  [...internalCategorySettingsMock, ...clientCategorySettingsMock].map(
+    (tenant) => [String(tenant.tenant_id), tenant.tenant_name],
+  ),
+);
 const employeesByUsername = new Map(
   allEmployeesMock.map((employee) => [employee.e_username, employee]),
 );
@@ -19,6 +24,7 @@ const departmentsById = new Map(
 );
 
 const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => {
+  const tenantId = resolveTicketTenantId(ticket.cat_id);
   const assignees = ticket.tk_assignee_usernames.flatMap((username) => {
     const employee = employeesByUsername.get(username);
     return employee
@@ -39,7 +45,8 @@ const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => {
 
   return {
   id: ticket.tk_id,
-  tenant_id: resolveTicketTenantId(ticket.cat_id),
+  tenant_id: tenantId,
+  tenant_name: tenantNamesById.get(tenantId) ?? null,
   ticket_number: ticket.tk_ticket_no,
   created_at: ticket.tk_created_at,
   updated_at: ticket.tk_updated_at,

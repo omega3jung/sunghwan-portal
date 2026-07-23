@@ -29,6 +29,10 @@
       "title": "Tickets by Requesting Department",
       "label": "Department"
     },
+    "tenant": {
+      "title": "Tickets by Tenant",
+      "label": "Tenant"
+    },
     "assignee": {
       "title": "Tickets by Assignee",
       "label": "Assignee"
@@ -387,6 +391,7 @@
     "clearAll": "Clear all",
     "emptyFilteredTickets": "No tickets match this insight filter.",
     "unknownDepartment": "Unknown department",
+    "unknownTenant": "Unknown tenant",
     "chart": {
       "statusTitle": "Tickets by Status"
     },

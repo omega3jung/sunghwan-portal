@@ -25,6 +25,7 @@ export const camelTicketSummaryMapper: ArrayMapper<
   return data.map((item) => ({
     id: item.id,
     tenantId: item.tenant_id,
+    tenantName: item.tenant_name,
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
@@ -66,6 +67,7 @@ export const camelTicketDetailMapper: ArrayMapper<
   return data.map((item) => ({
     id: item.id,
     tenantId: item.tenant_id,
+    tenantName: item.tenant_name,
     ticketNumber: item.ticket_number,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
@@ -109,6 +111,7 @@ export const snakeTicketSummaryMapper: ArrayMapper<
   return data.map((item) => ({
     id: item.id,
     tenant_id: item.tenantId,
+    tenant_name: item.tenantName,
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
@@ -159,6 +162,7 @@ export const snakeTicketDetailMapper: ArrayMapper<
   return data.map((item) => ({
     id: item.id,
     tenant_id: item.tenantId,
+    tenant_name: item.tenantName,
     ticket_number: item.ticketNumber,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),

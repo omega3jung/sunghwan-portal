@@ -30,6 +30,7 @@ export type TicketSearchRequest = Required<
 export interface DbTicketSummary {
   id: string;
   tenant_id: string | null;
+  tenant_name: LocalizedText | null;
   ticket_number: string;
 
   created_at: ISODateString;
@@ -87,6 +88,7 @@ export interface DbTicketSummary {
 export interface DbTicketDetail {
   id: string;
   tenant_id: string | null;
+  tenant_name: LocalizedText | null;
   ticket_number: string;
 
   created_at: ISODateString;

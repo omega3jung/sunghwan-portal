@@ -100,6 +100,7 @@ interface TicketViewState {
  */
 interface TicketScopeContext {
   tenantId: string | null;
+  tenantName: LocalizedText | null;
   scope: CategoryScope;
   categoryParentId?: string;
 }

@@ -7,6 +7,7 @@ import { LocalizedText } from "@/shared/types";
 export type ResolvedCategorySnapshot = {
   id: string;
   tenantId: string;
+  tenantName: LocalizedText;
   parentId: string;
   name: LocalizedText;
   scope: CategoryScope;
@@ -29,6 +30,7 @@ export function resolveCategorySnapshot({
         return {
           id: String(category.category_id),
           tenantId: String(client.tenant_id),
+          tenantName: client.tenant_name,
           parentId: String(category.category_id),
           name: category.category_name,
           scope: category.category_scope,
@@ -45,6 +47,7 @@ export function resolveCategorySnapshot({
         return {
           id: String(subCategory.category_id),
           tenantId: String(client.tenant_id),
+          tenantName: client.tenant_name,
           parentId: String(category.category_id),
           name: subCategory.category_name,
           scope: category.category_scope,

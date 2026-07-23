@@ -12,6 +12,7 @@ export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
 const TICKET_VIEW_COLUMNS = `
   tk_id,
   tk_tenant_id,
+  tn_name,
   tk_ticket_no,
   tk_created_at,
   tk_updated_at,

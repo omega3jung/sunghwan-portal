@@ -18,6 +18,7 @@ export type ServiceDeskTicketEmail = {
 export type ServiceDeskTicketViewRow = {
   tk_id: string;
   tk_tenant_id: number | null;
+  tn_name: LocalizedText | null;
   tk_ticket_no: string;
   tk_created_at: ISODateString;
   tk_updated_at: ISODateString | null;

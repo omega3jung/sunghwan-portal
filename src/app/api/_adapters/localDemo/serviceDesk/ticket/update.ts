@@ -74,6 +74,7 @@ export const localUpdateTicket = async ({
   const updatedTicket: DbTicketDetail = {
     ...ticket,
     tenant_id: category.tenantId,
+    tenant_name: category.tenantName,
     status: resetRouting?.status ?? ticket.status,
     close_reason: resetDeclinedFlow ? null : (ticket.close_reason ?? null),
     priority: resolvePriorityValue(input.priority, ticket.priority),
