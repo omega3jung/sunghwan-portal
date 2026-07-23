@@ -1,7 +1,7 @@
 export type RouteContext<
   TParams extends Record<string, string> = Record<string, string>,
 > = {
-  params: TParams;
+  params: Promise<TParams>;
 };
 
 export type IdRouteContext = RouteContext<{ id: string }>;

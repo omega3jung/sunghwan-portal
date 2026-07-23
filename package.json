@@ -1,19 +1,19 @@
 {
   "name": "sunghwan-portal",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "dev:clean": "taskkill /F /IM node.exe 2>nul || exit 0 && rmdir /s /q .next && npm run dev"
   },
   "engines": {
     "node": "24.x",
-    "npm": "10.x"
+    "npm": "11.x"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

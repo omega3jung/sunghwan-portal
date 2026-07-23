@@ -24,7 +24,7 @@ export default async function SettingsLayout({
   // check session one more.
   if (!session?.user) redirect("/login");
 
-  const requestHeaders = new Headers(headers());
+  const requestHeaders = new Headers(await headers());
   const request = new NextRequest(resolveRequestUrl(requestHeaders), {
     headers: requestHeaders,
   });

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
@@ -42,7 +42,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   const body = (await request.json()) as UpdateCompanyInput;
@@ -65,7 +65,7 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   // demo mode

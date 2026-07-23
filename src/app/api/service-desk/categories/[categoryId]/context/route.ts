@@ -18,7 +18,8 @@ export async function GET(
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const categoryId = context.params.categoryId.trim();
+  const { categoryId: rawCategoryId } = await context.params;
+  const categoryId = rawCategoryId.trim();
 
   if (!categoryId) {
     return NextResponse.json(

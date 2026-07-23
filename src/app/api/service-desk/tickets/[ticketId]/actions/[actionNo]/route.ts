@@ -34,7 +34,7 @@ export async function GET(
   request: NextRequest,
   context: TicketActionRouteContext,
 ) {
-  const { ticketId, actionNo } = context.params;
+  const { ticketId, actionNo } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   if (!isRemote) {
@@ -78,7 +78,7 @@ export async function PATCH(
   request: NextRequest,
   context: TicketActionRouteContext,
 ) {
-  const { ticketId, actionNo } = context.params;
+  const { ticketId, actionNo } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const body = (await request.json()) as { active?: boolean };
 

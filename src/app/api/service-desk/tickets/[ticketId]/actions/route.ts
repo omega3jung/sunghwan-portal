@@ -19,7 +19,7 @@ import {
 } from "@/lib/application/contracts/serviceDesk";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
 

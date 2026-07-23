@@ -15,6 +15,7 @@ import {
   Ticket,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { ReactElement } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -75,7 +76,7 @@ type TicketSearchState = TicketSearchCriteriaFormValues & {
 
 type OptionItem<T> = {
   value: T;
-  icon: JSX.Element;
+  icon: ReactElement;
 };
 
 const viewOption: OptionItem<ViewOption>[] = [

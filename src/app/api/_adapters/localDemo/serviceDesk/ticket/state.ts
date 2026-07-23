@@ -16,7 +16,6 @@ type LocalDemoTicketState = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __SP_LOCAL_DEMO_TICKET_STATE__: LocalDemoTicketState | undefined;
 }
 

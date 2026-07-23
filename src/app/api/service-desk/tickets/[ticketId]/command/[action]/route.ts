@@ -28,12 +28,17 @@ import {
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
-  action: TicketActionApiType;
+  action: string;
 }>;
 type ApprovalActionApiType = Extract<
   TicketActionApiType,
   "approve" | "decline"
 >;
+
+const isTicketActionApiType = (
+  action: string,
+): action is TicketActionApiType =>
+  Object.hasOwn(TICKET_ACTION_TYPE_BY_PATH, action);
 
 const isApprovalAction = (
   action: TicketActionApiType,
@@ -107,7 +112,12 @@ export async function POST(
   request: NextRequest,
   context: TicketActionRouteContext,
 ) {
-  const { ticketId, action } = context.params;
+  const { ticketId, action } = await context.params;
+
+  if (!isTicketActionApiType(action)) {
+    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+  }
+
   const isRemote = await isRemoteRequest(request);
   const rawContent = (await request.json()) as Partial<TicketActionFormValues>;
   const content = normalizeTicketActionContent(action, rawContent);
