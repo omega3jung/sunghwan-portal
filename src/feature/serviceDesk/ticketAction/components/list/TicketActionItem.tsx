@@ -12,7 +12,6 @@ import {
 import type { TicketAction } from "@/domain/serviceDesk";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared/client";
 import { NS } from "@/lib/application/i18n";
-import type { ImageValueLabel } from "@/shared/types";
 import { initials } from "@/shared/utils/presentation";
 
 import { TicketActionBody } from "./TicketActionBody";
@@ -20,14 +19,14 @@ import { TicketActionMeta } from "./TicketActionMeta";
 
 type TicketActionItemProps = {
   action: TicketAction;
-  owner?: ImageValueLabel;
+  ownerName?: string;
   dateLocale?: Locale;
   defaultOpen?: boolean;
 };
 
 export function TicketActionItem({
   action,
-  owner,
+  ownerName,
   dateLocale,
   defaultOpen = false,
 }: TicketActionItemProps) {
@@ -35,7 +34,7 @@ export function TicketActionItem({
   const files = action.files.filter((file) => file.active);
   const images = action.images.filter((image) => image.active);
   const ownerLabel =
-    owner?.label ||
+    ownerName ||
     t("actionTool.list.unknownOwner", { defaultValue: "Unknown employee" });
 
   return (
@@ -45,7 +44,7 @@ export function TicketActionItem({
     >
       <div className="flex gap-3 p-4">
         <Avatar className="mt-0.5 h-10 w-10 ring-1 ring-border/40">
-          <AvatarImage src={owner?.image} />
+          <AvatarImage />
           <AvatarFallback className="bg-primary/10 text-primary">
             {initials(ownerLabel)}
           </AvatarFallback>
@@ -55,7 +54,7 @@ export function TicketActionItem({
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <TicketActionMeta
               action={action}
-              owner={owner}
+              ownerName={ownerName}
               dateLocale={dateLocale}
             />
 

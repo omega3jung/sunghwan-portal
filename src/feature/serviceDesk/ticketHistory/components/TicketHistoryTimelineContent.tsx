@@ -13,7 +13,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import type { TicketHistory } from "@/domain/serviceDesk";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import { NS } from "@/lib/application/i18n";
+import { formatDisplayName } from "@/lib/application/organization";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { mapTicketHistoryToTimelineItem } from "../mapper";
@@ -43,6 +46,8 @@ export function TicketHistoryTimelineContent({
     keyPrefix: "recentActivity",
   });
   const { t: tStatus } = useTranslation("TicketStatusBadge");
+  const { current: userPreference } = useCurrentPreference();
+  const tLocal = useLocalizedValue(userPreference.language);
   const emptyContent = tCommon("empty.withItem", {
     item: tCommon("field.history"),
   });
@@ -50,10 +55,23 @@ export function TicketHistoryTimelineContent({
   const mappedItems = useMemo<TimelineItemData[]>(() => {
     const resolvedItems = items?.length ? items : [];
 
-    return resolvedItems.map((item) =>
-      mapTicketHistoryToTimelineItem(item, { t, tCommon, tHistory, tStatus }),
-    );
-  }, [items, t, tCommon, tHistory, tStatus]);
+    return resolvedItems.map((item) => {
+      const timelineItem = mapTicketHistoryToTimelineItem(item, {
+        t,
+        tCommon,
+        tHistory,
+        tStatus,
+      });
+      const actorName = item.actorName
+        ? formatDisplayName(tLocal(item.actorName))
+        : item.actorUsername;
+
+      return {
+        ...timelineItem,
+        meta: [actorName, timelineItem.meta].filter(Boolean).join(" · "),
+      };
+    });
+  }, [items, t, tCommon, tHistory, tLocal, tStatus]);
 
   return (
     <div className={cn("flex min-h-0 flex-1 flex-col", className)}>

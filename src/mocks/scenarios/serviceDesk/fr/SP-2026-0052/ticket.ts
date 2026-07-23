@@ -6,6 +6,14 @@ export const ticket: TicketMockInput = {
   tk_created_at: "2026-07-12T05:46:12Z",
   tk_updated_at: "2026-07-13T08:20:34Z",
   tk_requester_username: "tessa_ito",
+  tk_requester: {
+    username: "tessa_ito",
+    name: {
+      en: { first: "Tessa", middle: "", last: "Ito" },
+    },
+    email: "tessa.ito@client-demo-energy.com",
+    image: null,
+  },
   tk_status: "Closed",
   tk_close_reason: "Escalated",
   tk_priority: "high",

@@ -29,6 +29,9 @@ export const camelTicketSummaryMapper: ArrayMapper<
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
     requesterUsername: item.requester_username,
+    requester: item.requester,
+    requesterDepartmentId: item.requester_department_id ?? null,
+    requesterDepartmentName: item.requester_department_name ?? null,
     status: item.status,
     closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
@@ -67,6 +70,9 @@ export const camelTicketDetailMapper: ArrayMapper<
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
     requesterUsername: item.requester_username,
+    requester: item.requester,
+    requesterDepartmentId: item.requester_department_id ?? null,
+    requesterDepartmentName: item.requester_department_name ?? null,
     status: item.status,
     closeReason: nullToUndefined(item.close_reason),
     priority: item.priority,
@@ -107,16 +113,22 @@ export const snakeTicketSummaryMapper: ArrayMapper<
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
     requester_username: item.requesterUsername,
+    requester: item.requester,
+    requester_department_id: item.requesterDepartmentId,
+    requester_department_name: item.requesterDepartmentName,
     status: item.status,
     close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
     risk_level: item.riskLevel,
     assignment_phase: item.assignmentPhase,
+    approval_assignees: item.approvalAssignees,
+    work_assignees: item.workAssignees,
     approval_assignee_usernames: item.approvalAssigneeUsernames,
     work_assignee_usernames: item.workAssigneeUsernames,
     assigned_approver: item.isCurrentApprover,
     assigned_worker: item.isCurrentWorker,
     assignee_usernames: selectCurrentResponsibleUsernames(item),
+    assignees: selectCurrentResponsibleAssignees(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
@@ -151,17 +163,23 @@ export const snakeTicketDetailMapper: ArrayMapper<
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
     requester_username: item.requesterUsername,
+    requester: item.requester,
+    requester_department_id: item.requesterDepartmentId,
+    requester_department_name: item.requesterDepartmentName,
     status: item.status,
     close_reason: undefinedToNull(item.closeReason),
     priority: item.priority,
     risk_level: item.riskLevel,
     assignment_phase: item.assignmentPhase,
+    approval_assignees: item.approvalAssignees,
+    work_assignees: item.workAssignees,
     approval_assignee_usernames: item.approvalAssigneeUsernames,
     work_assignee_usernames: item.workAssigneeUsernames,
     assigned_approver: item.isCurrentApprover,
     assigned_worker: item.isCurrentWorker,
     has_been_worker: item.hasBeenWorker,
     assignee_usernames: selectCurrentResponsibleUsernames(item),
+    assignees: selectCurrentResponsibleAssignees(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
     merged_into_ticket_no: item.mergedIntoTicketNo ?? null,
     last_comment_at: undefinedToNull(item.lastCommentAt),
@@ -191,11 +209,14 @@ type DbTicketAssignmentSource = Pick<
   DbTicketSummary,
   | "approval_step_id"
   | "assignment_phase"
+  | "approval_assignees"
+  | "work_assignees"
   | "approval_assignee_usernames"
   | "work_assignee_usernames"
   | "assigned_approver"
   | "assigned_worker"
   | "assignee_usernames"
+  | "assignees"
   | "assigned"
 >;
 
@@ -221,9 +242,18 @@ function mapTicketCurrentAssignment(
     item.work_assignee_usernames ??
       (assignmentPhase === "WORK" ? legacyAssigneeUsernames : []),
   );
+  const legacyAssignees = item.assignees ?? [];
+  const approvalAssignees =
+    item.approval_assignees ??
+    (assignmentPhase === "APPROVAL" ? legacyAssignees : []);
+  const workAssignees =
+    item.work_assignees ??
+    (assignmentPhase === "WORK" ? legacyAssignees : []);
 
   return {
     assignmentPhase,
+    approvalAssignees,
+    workAssignees,
     approvalAssigneeUsernames,
     workAssigneeUsernames,
     isCurrentApprover:
@@ -251,6 +281,14 @@ function selectCurrentResponsibleUsernames(
   return item.assignmentPhase === "APPROVAL"
     ? item.approvalAssigneeUsernames
     : item.workAssigneeUsernames;
+}
+
+function selectCurrentResponsibleAssignees(
+  item: TicketCurrentAssignmentState,
+) {
+  return item.assignmentPhase === "APPROVAL"
+    ? item.approvalAssignees
+    : item.workAssignees;
 }
 
 function normalizeStringArray(value: unknown): string[] {

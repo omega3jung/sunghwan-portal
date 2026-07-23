@@ -3,6 +3,7 @@ import {
   TicketAssignmentPhase,
   TicketAttachmentMetadata,
   TicketStatus,
+  TicketUser,
 } from "@/domain/serviceDesk";
 import { normalizePostgresStringArray } from "@/server/data/serviceDesk/shared";
 import { ISODateString } from "@/shared/types";
@@ -65,6 +66,7 @@ export function mapTicketCreateRequestDtoToRowInput(
   options: {
     ticketNo: string;
     requesterUsername: string;
+    requesterDepartmentId: number;
     status?: TicketStatus;
   },
 ): CreateTicketRowInput {
@@ -72,6 +74,7 @@ export function mapTicketCreateRequestDtoToRowInput(
     ...mapTicketMutateRequestDtoToRowInput(input),
     tk_ticket_no: options.ticketNo,
     tk_requester_username: options.requesterUsername,
+    tk_requester_department_id: options.requesterDepartmentId,
     tk_status: options.status ?? DEFAULT_CREATE_TICKET_STATUS,
   };
 }
@@ -108,6 +111,12 @@ function toTicketCommonDto(
     created_at: row.tk_created_at,
     updated_at: row.tk_updated_at,
     requester_username: row.tk_requester_username,
+    requester: row.tk_requester,
+    requester_department_id:
+      row.tk_requester_department_id === null
+        ? null
+        : String(row.tk_requester_department_id),
+    requester_department_name: row.tk_requester_department_name,
     status: normalizeTicketStatus(row),
     priority: row.tk_priority,
     risk_level: row.tk_risk_level,
@@ -123,7 +132,8 @@ function toTicketCommonDto(
     closed_at: row.tkh_closed_at,
     due_at: row.tk_due_at,
     owner:
-      currentUserName !== null && currentUserName === row.tk_requester_username,
+      currentUserName !== null &&
+      currentUserName === row.tk_requester_username,
     active: true,
     scope: row.cat_scope,
     category_id: String(row.cat_id),
@@ -143,6 +153,10 @@ function mapTicketAssignment(
   const assigneeUsernames = normalizePostgresStringArray(
     row.tk_assignee_usernames,
   );
+  const assignees = normalizeTicketUsers(
+    row.tk_assignees,
+    assigneeUsernames,
+  );
   const isApprovalPhase = row.tk_approval_step_id !== null;
   const assignmentPhase: TicketAssignmentPhase = isApprovalPhase
     ? "APPROVAL"
@@ -152,13 +166,60 @@ function mapTicketAssignment(
 
   return {
     assignment_phase: assignmentPhase,
+    approval_assignees: isApprovalPhase ? assignees : [],
+    work_assignees: isApprovalPhase ? [] : assignees,
     approval_assignee_usernames: isApprovalPhase ? assigneeUsernames : [],
     work_assignee_usernames: isApprovalPhase ? [] : assigneeUsernames,
     assigned_approver: isApprovalPhase ? isAssigned : false,
     assigned_worker: isApprovalPhase ? false : isAssigned,
     assignee_usernames: assigneeUsernames,
+    assignees,
     assigned: isAssigned,
   };
+}
+
+function normalizeTicketUsers(
+  value: unknown,
+  assigneeUsernames: string[],
+): TicketUser[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const assigneesByUsername = new Map<string, TicketUser>();
+
+  for (const item of value) {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      Array.isArray(item) ||
+      !("username" in item) ||
+      typeof item.username !== "string" ||
+      !("name" in item) ||
+      !item.name ||
+      typeof item.name !== "object" ||
+      Array.isArray(item.name)
+    ) {
+      continue;
+    }
+
+    const username = item.username.trim();
+    if (username) {
+      assigneesByUsername.set(username, {
+        username,
+        name: item.name as TicketUser["name"],
+        image:
+          "image" in item && typeof item.image === "string"
+            ? item.image
+            : null,
+      });
+    }
+  }
+
+  return assigneeUsernames.flatMap((username) => {
+    const assignee = assigneesByUsername.get(username);
+    return assignee ? [assignee] : [];
+  });
 }
 
 function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {

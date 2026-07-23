@@ -1,5 +1,6 @@
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 
+import { findEmployeeDepartmentIdByUsername } from "../ticket/ticketRepository";
 import { TicketDraftDto, TicketDraftWriteDto } from "./ticketDraftDto";
 import {
   mapTicketDraftRowToDto,
@@ -25,11 +26,16 @@ export async function createTicketDraft(
   input: TicketDraftWriteDto,
 ): Promise<TicketDraftDto> {
   let row;
+  const requesterDepartmentId =
+    await requireRequesterDepartmentId(requesterUsername);
 
   try {
     row = await createTicketDraftRow(
       requesterUsername,
-      mapTicketDraftWriteDtoToRowInput(input),
+      {
+        ...mapTicketDraftWriteDtoToRowInput(input),
+        tk_requester_department_id: requesterDepartmentId,
+      },
     );
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -51,10 +57,15 @@ export async function updateTicketDraft(
   requesterUsername: string,
   input: TicketDraftWriteDto,
 ): Promise<TicketDraftDto> {
+  const requesterDepartmentId =
+    await requireRequesterDepartmentId(requesterUsername);
   const row = await updateTicketDraftRowById(
     ticketId,
     requesterUsername,
-    mapTicketDraftWriteDtoToRowInput(input),
+    {
+      ...mapTicketDraftWriteDtoToRowInput(input),
+      tk_requester_department_id: requesterDepartmentId,
+    },
   );
 
   if (!row) {
@@ -62,6 +73,19 @@ export async function updateTicketDraft(
   }
 
   return mapTicketDraftRowToDto(row);
+}
+
+async function requireRequesterDepartmentId(
+  requesterUsername: string,
+): Promise<number> {
+  const departmentId =
+    await findEmployeeDepartmentIdByUsername(requesterUsername);
+
+  if (departmentId === null) {
+    throw createStatusError("Requester department was not found.", 422);
+  }
+
+  return departmentId;
 }
 
 export async function discardTicketDraft(

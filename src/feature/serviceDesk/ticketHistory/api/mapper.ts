@@ -1,4 +1,5 @@
-﻿import {
+﻿import type { LocalizedName } from "@/domain/organization";
+import {
   HistoryType,
   TicketHistory,
   TicketHistoryEvent,
@@ -22,6 +23,7 @@ export interface DbTicketHistory {
   source: TicketHistorySource;
 
   actor_username: string | null;
+  actor_name?: LocalizedName | null;
   action_no: number | null;
 
   from_value?: unknown;
@@ -42,6 +44,7 @@ export const camelTicketHistoryMapper: ArrayMapper<
     event: item.event,
     source: item.source,
     actorUsername: item.actor_username,
+    actorName: item.actor_name ?? null,
     actionNo: item.action_no,
     fromValue: item.from_value,
     toValue: item.to_value,
@@ -65,6 +68,7 @@ export const snakeTicketHistoryMapper: ArrayMapper<
     event: item.event,
     source: item.source,
     actor_username: item.actorUsername,
+    actor_name: item.actorName,
     action_no: item.actionNo,
     from_value: item.fromValue,
     to_value: item.toValue,

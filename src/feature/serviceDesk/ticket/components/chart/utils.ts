@@ -1,9 +1,8 @@
 ﻿import { endOfDay, endOfWeek, isBefore, isValid, startOfDay } from "date-fns";
 
-import { Department } from "@/domain/organization";
 import { TicketSummary } from "@/domain/serviceDesk";
 import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
-import { ImageValueLabel } from "@/shared/types";
+import { ImageValueLabel, LocalizedText } from "@/shared/types";
 
 import { ChartSummaryItem, SlaBucketValue } from "./types";
 
@@ -73,29 +72,25 @@ export const buildCategorySummary = (
 
 export const buildDepartmentSummary = (
   tickets: TicketSummary[],
-  requesterById: Map<string, { departmentId: string }>,
-  departmentsById: Map<string, Department>,
-  getDepartmentLabel: (department: Department) => string,
+  getDepartmentLabel: (name: LocalizedText) => string,
   fallbackLabel: string,
 ): ChartSummaryItem[] => {
   return toSummaryItems(
     tickets.map((ticket) => {
-      const requester = requesterById.get(ticket.requesterUsername);
-      const department = requester
-        ? departmentsById.get(requester.departmentId)
-        : undefined;
-
-      if (!requester || !department) {
+      if (
+        !ticket.requesterDepartmentId ||
+        !ticket.requesterDepartmentName
+      ) {
         return {
           value: fallbackLabel,
           label: fallbackLabel,
         };
       }
 
-      const label = getDepartmentLabel(department);
+      const label = getDepartmentLabel(ticket.requesterDepartmentName);
 
       return {
-        value: requester.departmentId,
+        value: ticket.requesterDepartmentId,
         label,
       };
     }),

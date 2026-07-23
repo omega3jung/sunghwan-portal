@@ -29,9 +29,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import type { TicketSummary } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/client";
-import { useDepartmentListQuery } from "@/feature/organization/department/client";
-import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { getStatusOptions } from "@/feature/serviceDesk/shared";
 import { SERVICE_DESK_KEY } from "@/feature/serviceDesk/shared/keys";
 import {
@@ -65,12 +62,8 @@ import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import { useSessionStorageState } from "@/shared/client/useSessionStorageState";
-import type { DateRangePreset, DbParams } from "@/shared/types";
+import type { DateRangePreset } from "@/shared/types";
 import type { ImageValueLabel } from "@/shared/types";
-import {
-  combineRuleGroups,
-  createFieldFilter,
-} from "@/shared/utils/routing";
 
 const INSIGHTS_PAGE = 1;
 const INSIGHTS_PAGE_SIZE = 500;
@@ -151,15 +144,11 @@ const isTicketMatchedByChartFilter = ({
   ticket,
   filter,
   getCategoryLabel,
-  requesterByUserName,
-  departmentsById,
   fallbackDepartmentLabel,
 }: {
   ticket: TicketSummary;
   filter: NonNullable<ChartFilter>;
   getCategoryLabel: (ticket: TicketSummary) => string;
-  requesterByUserName: Map<string, { departmentId: string }>;
-  departmentsById: Map<string, unknown>;
   fallbackDepartmentLabel: string;
 }): boolean => {
   switch (filter.type) {
@@ -167,18 +156,13 @@ const isTicketMatchedByChartFilter = ({
       return ticket.status === filter.value;
     case "category":
       return getCategoryLabel(ticket) === filter.value;
-    case "department": {
-      const requester = requesterByUserName.get(ticket.requesterUsername);
-      const departmentId = requester?.departmentId;
-      const hasDepartment = departmentId
-        ? departmentsById.has(departmentId)
-        : false;
-
+    case "department":
       return (
-        (hasDepartment ? departmentId : fallbackDepartmentLabel) ===
-        filter.value
+        (ticket.requesterDepartmentId &&
+        ticket.requesterDepartmentName
+          ? ticket.requesterDepartmentId
+          : fallbackDepartmentLabel) === filter.value
       );
-    }
     case "assignee":
       const assigneeUsernames = selectTicketAssigneeIds(ticket);
 
@@ -200,8 +184,6 @@ export default function ServiceDeskInsightsPage() {
   const { t: tCommon } = useTranslation(NS.common);
 
   const { current: userPreference } = useCurrentPreference();
-  const { current } = useCurrentSession();
-  const effectiveCompanyId = current.user?.companyId;
   const tLocal = useLocalizedValue(userPreference.language);
 
   const searchCriteriaState =
@@ -239,62 +221,26 @@ export default function ServiceDeskInsightsPage() {
   const ticketItems = ticketSearchResult?.items;
   const tickets = useMemo(() => ticketItems ?? [], [ticketItems]);
 
-  const employeeListParams = useMemo<DbParams | undefined>(() => {
-    if (effectiveCompanyId === undefined) return undefined;
-
-    return {
-      filter: combineRuleGroups([
-        createFieldFilter({
-          field: "companyId",
-          value: effectiveCompanyId,
-        }),
-        createFieldFilter({
-          field: "e_active",
-          value: true,
-        }),
-      ]),
-    };
-  }, [effectiveCompanyId]);
-  const { data: employees } = useEmployeeListQuery(employeeListParams);
-  const { data: departments } = useDepartmentListQuery({});
-
-  const users = useMemo<ImageValueLabel[]>(() => {
-    if (!employees) {
-      return [];
-    }
-
-    return employees.map((employee) => {
-      const name = tLocal(employee.name);
-
-      return {
-        value: employee.username,
-        label: `${name.first} ${name.last}`,
-        displayName: employee.email,
-        image: employee.imageUrl,
-      };
-    });
-  }, [employees, tLocal]);
-
   const statusLabelMap = useMemo(() => {
     const statusOptions = getStatusOptions(userPreference.language);
     return new Map(statusOptions.map((option) => [option.value, option.label]));
   }, [userPreference.language]);
 
   const usersById = useMemo(() => {
-    return new Map(users.map((user) => [user.value, user]));
-  }, [users]);
-
-  const requesterByUserName = useMemo(() => {
     return new Map(
-      (employees ?? []).map((employee) => [employee.username, employee]),
-    );
-  }, [employees]);
+      (ticketSearchResult?.facets?.assignees ?? []).map((assignee) => {
+        const name = tLocal(assignee.name);
+        const option: ImageValueLabel = {
+          value: assignee.username,
+          label: `${name.first} ${name.last}`.trim(),
+          displayName: assignee.username,
+          image: assignee.image ?? undefined,
+        };
 
-  const departmentsById = useMemo(() => {
-    return new Map(
-      (departments ?? []).map((department) => [department.id, department]),
+        return [assignee.username, option];
+      }),
     );
-  }, [departments]);
+  }, [ticketSearchResult?.facets?.assignees, tLocal]);
 
   const fallbackDepartmentLabel = t("insights.unknownDepartment", {
     defaultValue: "Unknown department",
@@ -321,18 +267,10 @@ export default function ServiceDeskInsightsPage() {
   const departmentChartData = useMemo(() => {
     return buildDepartmentSummary(
       tickets,
-      requesterByUserName,
-      departmentsById,
-      (department) => tLocal(department.name),
+      tLocal,
       fallbackDepartmentLabel,
     );
-  }, [
-    tickets,
-    requesterByUserName,
-    departmentsById,
-    tLocal,
-    fallbackDepartmentLabel,
-  ]);
+  }, [tickets, tLocal, fallbackDepartmentLabel]);
 
   const assigneeChartData = useMemo(() => {
     return buildAssigneeSummary(tickets, usersById, unassignedAssigneeLabel);
@@ -364,8 +302,6 @@ export default function ServiceDeskInsightsPage() {
         ticket,
         filter: chartFilter,
         getCategoryLabel,
-        requesterByUserName,
-        departmentsById,
         fallbackDepartmentLabel,
       }),
     );
@@ -373,8 +309,6 @@ export default function ServiceDeskInsightsPage() {
     tickets,
     chartFilter,
     getCategoryLabel,
-    requesterByUserName,
-    departmentsById,
     fallbackDepartmentLabel,
   ]);
 
@@ -693,7 +627,6 @@ export default function ServiceDeskInsightsPage() {
           <TicketList
             tickets={filteredTickets}
             onTicketSelected={handleTicketSelected}
-            users={users}
             language={userPreference.language as SupportedLanguage}
             isLoading={isTicketListLoading}
           />

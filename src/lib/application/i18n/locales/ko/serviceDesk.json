@@ -364,6 +364,11 @@
       "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
     }
   },
+  "viewOption": {
+    "title": "보기",
+    "internal": "내부",
+    "portal": "포털"
+  },
   "listPage": {
     "title": "IT 서비스 데스크",
     "description": "서비스 데스크 티켓을 검색하고 조회하세요."

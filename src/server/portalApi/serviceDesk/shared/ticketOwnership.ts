@@ -22,7 +22,8 @@ export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
   return {
     ...ticket,
     owner:
-      normalizedUserName !== null && ticket.requesterUsername === normalizedUserName,
+      normalizedUserName !== null &&
+      ticket.requesterUsername === normalizedUserName,
     isCurrentApprover:
       normalizedUserName !== null &&
       ticket.assignmentPhase === "APPROVAL" &&

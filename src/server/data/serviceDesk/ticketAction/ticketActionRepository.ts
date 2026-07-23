@@ -38,6 +38,12 @@ const TICKET_ACTION_ROW_COLUMNS = `
   tka_files,
   tka_images,
   tka_owner_username,
+  (
+    select employee.e_name
+    from public.vw_employee employee
+    where employee.e_username = tka_owner_username
+    limit 1
+  ) as tka_owner_name,
   tka_active,
   tka_created_at,
   tka_updated_at

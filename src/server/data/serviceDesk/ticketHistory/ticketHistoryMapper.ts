@@ -23,6 +23,7 @@ export function mapTicketHistoryRowToDto(
     source: row.tkh_source as TicketHistorySource,
     event: row.tkh_event as TicketHistoryEvent,
     actor_username: row.tkh_actor_username,
+    actor_name: row.tkh_actor_name ?? null,
     action_no: row.tkh_action_no,
     ...(fromValue !== null ? { from_value: fromValue } : {}),
     ...(toValue !== null ? { to_value: toValue } : {}),

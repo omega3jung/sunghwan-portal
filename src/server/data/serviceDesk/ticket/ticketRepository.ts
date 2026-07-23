@@ -3,10 +3,7 @@ import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/sha
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";
-import {
-  CreateTicketRowInput,
-  ServiceDeskTicketViewRow,
-} from "./ticketRow";
+import { CreateTicketRowInput, ServiceDeskTicketViewRow } from "./ticketRow";
 
 type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
 
@@ -14,20 +11,19 @@ export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
-  (
-    select category.cat_tenant_id
-    from service_desk.category category
-    where category.cat_id = ticket_view.cat_id
-    limit 1
-  ) as tk_tenant_id,
+  tk_tenant_id,
   tk_ticket_no,
   tk_created_at,
   tk_updated_at,
   tk_requester_username,
+  tk_requester,
+  tk_requester_department_id,
+  tk_requester_department_name,
   tk_status,
   tk_priority,
   tk_risk_level,
   tk_assignee_usernames,
+  tk_assignees,
   tk_work_minutes,
   tka_last_comment_at,
   tka_last_comment_email,
@@ -95,6 +91,7 @@ insert into service_desk.ticket (
   tk_category_id,
   tk_approval_step_id,
   tk_requester_username,
+  tk_requester_department_id,
   tk_email,
   tk_subject,
   tk_content,
@@ -111,17 +108,25 @@ values (
   $3,
   $4,
   $5,
-  $6::jsonb,
-  $7,
+  $6,
+  $7::jsonb,
   $8,
-  $9::jsonb,
+  $9,
   $10::jsonb,
-  $11,
+  $11::jsonb,
   $12,
   $13,
-  $14
+  $14,
+  $15
 )
 returning tk_id;
+`;
+
+const FIND_EMPLOYEE_DEPARTMENT_ID_BY_USERNAME_QUERY = `
+select e_department_id
+from public.vw_employee
+where e_username = $1
+limit 1;
 `;
 
 const FIND_ACTIVE_DRAFT_TICKET_ID_BY_REQUESTER_QUERY = `
@@ -346,6 +351,7 @@ export async function createTicketRow(
     input.tk_category_id,
     input.tk_approval_step_id,
     input.tk_requester_username,
+    input.tk_requester_department_id,
     JSON.stringify(input.tk_email),
     input.tk_subject,
     input.tk_content,
@@ -359,6 +365,22 @@ export async function createTicketRow(
   const ticketId = rows[0]?.tk_id;
 
   return ticketId ? findActiveTicketViewRowById(ticketId, options) : null;
+}
+
+export async function findEmployeeDepartmentIdByUsername(
+  username: string,
+  options: TicketRepositoryOptions = {},
+): Promise<number | null> {
+  const query = options.query ?? queryPortalApi;
+  const rows = await query<{ e_department_id: number | string | null }>(
+    FIND_EMPLOYEE_DEPARTMENT_ID_BY_USERNAME_QUERY,
+    [username],
+  );
+  const departmentId = Number(rows[0]?.e_department_id);
+
+  return Number.isInteger(departmentId) && departmentId > 0
+    ? departmentId
+    : null;
 }
 
 export async function findNextTicketNumber(
@@ -497,9 +519,49 @@ export async function findActiveTicketViewRowsBySearch(
     ),
     where.values,
   );
+  const requesterFacets = await queryPortalApi<{
+    username: string;
+    name: ServiceDeskTicketViewRow["tk_requester"]["name"];
+    image: string | null;
+  }>(
+    `
+select distinct
+  tk_requester_username as username,
+  tk_requester->'name' as name,
+  nullif(tk_requester->>'image', '') as image
+from service_desk.vw_ticket ticket_view
+where ${where.clause}
+order by tk_requester_username;
+`,
+    where.values,
+  );
+  const assigneeFacets = await queryPortalApi<{
+    username: string;
+    name: ServiceDeskTicketViewRow["tk_requester"]["name"];
+    image: string | null;
+  }>(
+    `
+select distinct
+  assignee->>'username' as username,
+  assignee->'name' as name,
+  nullif(assignee->>'image', '') as image
+from service_desk.vw_ticket ticket_view
+cross join lateral jsonb_array_elements(
+  coalesce(tk_assignees::jsonb, '[]'::jsonb)
+) assignee
+where ${where.clause}
+  and nullif(assignee->>'username', '') is not null
+order by assignee->>'username';
+`,
+    where.values,
+  );
 
   return {
     rows,
+    facets: {
+      requesters: requesterFacets,
+      assignees: assigneeFacets,
+    },
     totalCount: Number(countRows[0]?.count ?? 0),
     page: pagination.page,
     pageSize: pagination.pageSize,
@@ -509,7 +571,14 @@ export async function findActiveTicketViewRowsBySearch(
 type TicketFilterConnector = "and" | "or";
 
 type TicketFilterOperator =
-  "=" | "!=" | "contains" | "in" | ">" | ">=" | "<" | "<=";
+  | "="
+  | "!="
+  | "contains"
+  | "in"
+  | ">"
+  | ">="
+  | "<"
+  | "<=";
 
 type TicketFilterLeaf = {
   field?: string;

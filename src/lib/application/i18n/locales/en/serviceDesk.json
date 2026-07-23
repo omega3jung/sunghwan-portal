@@ -364,6 +364,11 @@
       "note": "Add a short note for this time entry"
     }
   },
+  "viewOption": {
+    "title": "View",
+    "internal": "Internal",
+    "portal": "Portal"
+  },
   "listPage": {
     "title": "IT Service Desk",
     "description": "Search and browse service desk tickets."

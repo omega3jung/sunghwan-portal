@@ -68,6 +68,7 @@ type TicketActionInput = {
   currentUserName: string;
   payload: TicketActionRequestDto;
   isAdmin?: boolean;
+  isInternal?: boolean;
 };
 type TicketActionDeleteInput = {
   ticketId: string;
@@ -280,6 +281,7 @@ export async function executeTicketAction({
   currentUserName,
   payload,
   isAdmin = false,
+  isInternal = false,
 }: TicketActionInput) {
   const normalizedPayload = validateTicketActionPayload(action, payload);
 
@@ -294,6 +296,17 @@ export async function executeTicketAction({
 
     if (!ticket) {
       throw createStatusError("Ticket not found.", 404);
+    }
+
+    if (
+      action === "assign" &&
+      !isInternal &&
+      ticket.cat_scope === "PORTAL"
+    ) {
+      throw createStatusError(
+        "Tenant users cannot assign provider employees on portal tickets.",
+        403,
+      );
     }
 
     const actionMode = resolveTicketActionExecutionMode(action, isAdmin);

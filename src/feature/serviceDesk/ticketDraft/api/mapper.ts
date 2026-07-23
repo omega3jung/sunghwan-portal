@@ -30,12 +30,30 @@ export function mapTicketDraftPayload(
     riskLevel: draft.riskLevel,
     email: draft.email,
     requester: {
-      id: draft.requesterUsername,
-      email: "",
-      name: "",
+      id: draft.requester.username,
+      email: draft.requester.email ?? "",
+      name: formatRequesterName(draft.requester.name),
     },
     attachment: [],
   };
+}
+
+function formatRequesterName(
+  name: TicketDraftResource["requester"]["name"],
+): string {
+  const localizedName = name.en ?? Object.values(name)[0];
+
+  if (!localizedName) {
+    return "";
+  }
+
+  return [
+    localizedName.first,
+    localizedName.middle,
+    localizedName.last,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 export function toTicketDraftWritePayloadFromFormValues(

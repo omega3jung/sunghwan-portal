@@ -241,6 +241,7 @@ export async function handleTicketPortalApi(
       currentUserName,
       payload: requireBody<TicketActionRequestDto>(context.options),
       isAdmin,
+      isInternal: currentUserProfile.userScope === "INTERNAL",
     });
 
     return NextResponse.json(actionDto, { status: 201 });

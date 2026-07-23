@@ -1,7 +1,12 @@
 import type { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { serviceDeskScenariosMock } from "./scenariosMock";
 import type { TicketActionMockInput } from "./types";
+
+const employeeNamesByUsername = new Map(
+  allEmployeesMock.map((employee) => [employee.e_username, employee.e_name]),
+);
 
 const toDbTicketAction = (action: TicketActionMockInput): DbTicketAction => ({
   ticket_id: action.tka_ticket_id,
@@ -9,6 +14,8 @@ const toDbTicketAction = (action: TicketActionMockInput): DbTicketAction => ({
   action_type: action.tka_action_type,
   content: action.tka_content,
   owner_username: action.tka_owner_username,
+  owner_name:
+    employeeNamesByUsername.get(action.tka_owner_username) ?? null,
   created_at: action.tka_created_at,
   updated_at: action.tka_updated_at,
   active: action.tka_active,

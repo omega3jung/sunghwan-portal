@@ -25,6 +25,6 @@ export const displayNameMapper = (name: LocalizedName): LocalizedText => {
   return result;
 };
 
-const formatDisplayName = (name: DisplayName): string => {
+export const formatDisplayName = (name: DisplayName): string => {
   return [name.first, name.middle, name.last].filter(Boolean).join(" ");
 };

@@ -1,7 +1,12 @@
 import type { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { serviceDeskScenariosMock } from "./scenariosMock";
 import type { TicketHistoryMockInput } from "./types";
+
+const employeeNamesByUsername = new Map(
+  allEmployeesMock.map((employee) => [employee.e_username, employee.e_name]),
+);
 
 const toDbTicketHistory = (
   history: TicketHistoryMockInput,
@@ -12,6 +17,9 @@ const toDbTicketHistory = (
   event: history.tkh_event,
   source: history.tkh_source,
   actor_username: history.tkh_actor_username,
+  actor_name: history.tkh_actor_username
+    ? employeeNamesByUsername.get(history.tkh_actor_username) ?? null
+    : null,
   action_no: history.tkh_action_no,
   from_value: history.tkh_from_value,
   to_value: history.tkh_to_value,

@@ -27,7 +27,19 @@ export function mapTicketDraftRowToDto(
     ticketNo: row.tk_ticket_no,
     createdAt: row.tk_created_at,
     updatedAt: row.tk_updated_at ?? row.tk_created_at,
-    requesterUsername: row.tk_requester_username,
+    requester: {
+      username: row.tk_requester_username,
+      name:
+        row.tk_requester_name ?? {
+          en: {
+            first: row.tk_requester_username,
+            middle: "",
+            last: "",
+          },
+        },
+      email: row.tk_requester_email,
+      image: row.tk_requester_image,
+    },
     status: "Draft",
     active: row.tk_active,
     categoryId: row.tk_category_id === null ? null : String(row.tk_category_id),
@@ -49,7 +61,7 @@ export function mapTicketDraftRowToDto(
 
 export function mapTicketDraftWriteDtoToRowInput(
   input: TicketDraftWriteDto,
-): TicketDraftRowInput {
+): Omit<TicketDraftRowInput, "tk_requester_department_id"> {
   const attachments = splitAttachments(input.attachment);
 
   return {

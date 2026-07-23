@@ -61,6 +61,7 @@ set
   tk_category_id = $4,
   tk_approval_step_id = $15,
   tk_requester_username = $5,
+  tk_requester_department_id = $16,
   tk_assignee_usernames = array[]::text[],
   tk_email = $6::jsonb,
   tk_subject = $7,
@@ -280,6 +281,7 @@ export async function submitDraftTicketRowById(
       input.tk_due_at,
       input.tk_status,
       input.tk_approval_step_id,
+      input.tk_requester_department_id,
     ],
   );
   const submittedTicketId = rows[0]?.tk_id;

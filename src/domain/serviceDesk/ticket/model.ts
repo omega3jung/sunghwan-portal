@@ -1,4 +1,5 @@
 import { Priority, RiskLevel } from "@/domain/common";
+import { LocalizedName } from "@/domain/organization";
 import { LocalizedText } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
@@ -17,6 +18,9 @@ interface TicketBase {
   updatedAt?: ISODateString;
 
   requesterUsername: string;
+  requester: TicketRequester;
+  requesterDepartmentId: string | null;
+  requesterDepartmentName: LocalizedText | null;
 }
 
 /**
@@ -32,6 +36,16 @@ interface TicketWorkflowState {
 
 export type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
+export type TicketUser = {
+  username: string;
+  name: LocalizedName;
+  image: string | null;
+};
+
+export type TicketRequester = TicketUser & {
+  email: string | null;
+};
+
 /**
  * Ticket assignment state.
  * The persisted assignee column stores the current responsible users, whose
@@ -39,6 +53,8 @@ export type TicketAssignmentPhase = "APPROVAL" | "WORK";
  */
 export interface TicketCurrentAssignmentState {
   assignmentPhase: TicketAssignmentPhase;
+  approvalAssignees: TicketUser[];
+  workAssignees: TicketUser[];
   approvalAssigneeUsernames: string[];
   workAssigneeUsernames: string[];
   isCurrentApprover: boolean;

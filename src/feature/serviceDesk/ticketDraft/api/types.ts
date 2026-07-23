@@ -1,5 +1,5 @@
 import { Priority, RiskLevel } from "@/domain/common";
-import { Attach } from "@/domain/serviceDesk";
+import { Attach, TicketRequester } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types/date";
 
 export interface TicketDraftResource {
@@ -7,7 +7,7 @@ export interface TicketDraftResource {
   ticketNo: string;
   createdAt: ISODateString;
   updatedAt: ISODateString;
-  requesterUsername: string;
+  requester: TicketRequester;
   status: "Draft";
   active: boolean;
   categoryId: string | null;

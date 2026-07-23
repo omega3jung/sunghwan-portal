@@ -2,6 +2,8 @@ import { ApiError } from "@/lib/application/api";
 import type { TicketMutateRequestPayload } from "@/lib/application/contracts/serviceDesk";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
+import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import {
   type LocalTicketAccessContext,
@@ -62,6 +64,8 @@ export const localCreateTicket = async ({
     created_at: now,
     updated_at: now,
     requester_username: resolvedRequesterId,
+    requester: resolveRequester(resolvedRequesterId),
+    ...resolveRequesterDepartment(resolvedRequesterId),
     status: routing.status,
     close_reason: null,
     priority: resolvePriorityValue(
@@ -99,6 +103,40 @@ export const localCreateTicket = async ({
 
   return camelTicketDetailMapper([nextTicket])[0];
 };
+
+function resolveRequester(username: string) {
+  const employee = allEmployeesMock.find(
+    (candidate) => candidate.e_username === username,
+  );
+
+  return {
+    username,
+    name:
+      employee?.e_name ?? {
+      en: { first: username, middle: "", last: "" },
+      },
+    email: employee?.e_email ?? null,
+    image: employee?.e_image_url ?? null,
+  };
+}
+
+function resolveRequesterDepartment(username: string) {
+  const employee = allEmployeesMock.find(
+    (candidate) => candidate.e_username === username,
+  );
+  const department = employee
+    ? allDepartmentsMock.find(
+        (candidate) => candidate.d_id === employee.e_department_id,
+      )
+    : undefined;
+
+  return {
+    requester_department_id: employee
+      ? String(employee.e_department_id)
+      : null,
+    requester_department_name: department?.d_name ?? null,
+  };
+}
 
 function normalizeRequesterId(value: string | null): string | null {
   if (typeof value !== "string") {

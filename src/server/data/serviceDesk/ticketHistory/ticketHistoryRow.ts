@@ -1,3 +1,4 @@
+import type { LocalizedName } from "@/domain/organization";
 import type { TicketHistoryEvent } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
@@ -9,6 +10,7 @@ export type TicketHistoryRow = {
   tkh_event: TicketHistoryEvent;
   tkh_source: string;
   tkh_actor_username: string | null;
+  tkh_actor_name?: LocalizedName | null;
   tkh_from_value: unknown | null;
   tkh_to_value: unknown | null;
   tkh_metadata: unknown | null;

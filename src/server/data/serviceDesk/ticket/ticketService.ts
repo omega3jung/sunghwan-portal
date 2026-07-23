@@ -30,6 +30,7 @@ import {
   findActiveTicketViewRowsBySearch,
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
+  findEmployeeDepartmentIdByUsername,
   findExpiredResolvedTicketViewRows,
   findNextApprovalStepId,
   findNextTicketNumber,
@@ -206,9 +207,19 @@ export async function createTicket(
       new Date().getUTCFullYear(),
       repositoryOptions,
     ));
+  const requesterDepartmentId = await findEmployeeDepartmentIdByUsername(
+    options.requesterUsername,
+    repositoryOptions,
+  );
+
+  if (requesterDepartmentId === null) {
+    throw createStatusError("Requester department was not found.", 422);
+  }
+
   const baseRowInput = mapTicketCreateRequestDtoToRowInput(input, {
     ticketNo,
     requesterUsername: options.requesterUsername,
+    requesterDepartmentId,
   });
   const routing = await resolveInitialTicketRouting(
     {
@@ -309,6 +320,7 @@ export async function searchTicketListItems(
 
   return {
     items: result.rows.map((row) => toTicketListItemDto(row, currentUserName)),
+    facets: result.facets,
     totalCount: result.totalCount,
     page: result.page,
     pageSize: result.pageSize,

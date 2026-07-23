@@ -17,6 +17,7 @@ export function mapTicketActionRowToDto(
     content: row.tka_content ?? "",
     metadata: normalizeMetadata(row.tka_metadata),
     owner_username: row.tka_owner_username,
+    owner_name: row.tka_owner_name ?? null,
     created_at: toRowIsoDateString(row.tka_created_at),
     updated_at: toNullableRowIsoDateString(row.tka_updated_at),
     active: row.tka_active,

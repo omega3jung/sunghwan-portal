@@ -1,5 +1,5 @@
 import { Priority, RiskLevel } from "@/domain/common";
-import { Attach } from "@/domain/serviceDesk";
+import { Attach, TicketRequester } from "@/domain/serviceDesk";
 import type {
   TicketDraftAttachmentInput,
   TicketDraftWriteInput,
@@ -15,7 +15,7 @@ export type TicketDraftDto = {
   ticketNo: string;
   createdAt: ISODateString;
   updatedAt: ISODateString;
-  requesterUsername: string;
+  requester: TicketRequester;
   status: "Draft";
   active: boolean;
   categoryId: string | null;

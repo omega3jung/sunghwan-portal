@@ -146,7 +146,10 @@ export const assertRequester = (context: LocalActionRuntimeContext) => {
 export const assertRequesterOrAdmin = (context: LocalActionRuntimeContext) => {
   const ticket = requireTicket(context);
 
-  if (context.isAdmin || ticket.requester_username === context.employeeUserName) {
+  if (
+    context.isAdmin ||
+    ticket.requester_username === context.employeeUserName
+  ) {
     return ticket;
   }
 

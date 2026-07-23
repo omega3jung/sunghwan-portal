@@ -1,19 +1,21 @@
-﻿// src/app/(protected)/service-desk/page.tsx
+// src/app/(protected)/service-desk/page.tsx
 
 "use client";
 
 import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
+  Building2,
   CalendarCheck,
   CalendarDays,
+  ChartPie,
   ChevronDown,
   FlagTriangleRight,
   RefreshCw,
   Ticket,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
@@ -28,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { MainCategory } from "@/domain/serviceDesk";
+import type { CategoryScope, MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
@@ -57,16 +59,36 @@ import type { DbParams, ImageValueLabel } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 const TICKET_PAGE_SIZE = 10;
+
 const isPresent = <T,>(value: T | null | undefined): value is T =>
   value !== null && value !== undefined;
 
 type SortOrder = "asc" | "desc";
 type SortOption = "ticketNumber" | "createdAt" | "dueAt" | "priority";
+type ViewOption = CategoryScope;
+type TicketSearchState = TicketSearchCriteriaFormValues & {
+  page: number;
+  order: SortOrder;
+  scope: ViewOption;
+  sort: SortOption;
+};
 
 type OptionItem<T> = {
   value: T;
   icon: JSX.Element;
 };
+
+const viewOption: OptionItem<ViewOption>[] = [
+  // { value: "portal", icon: <Globe className="h-4 w-4" /> },
+  {
+    value: "INTERNAL",
+    icon: <Building2 className="h-4 w-4" />,
+  },
+  {
+    value: "PORTAL",
+    icon: <ChartPie className="h-4 w-4" />,
+  },
+];
 
 const sortOptions: OptionItem<SortOption>[] = [
   {
@@ -90,6 +112,14 @@ const sortOptions: OptionItem<SortOption>[] = [
 const checkboxItemRightCheckClass =
   "gap-2 pl-2 pr-8 [&>span]:left-auto [&>span]:right-2";
 
+const ticketSearchStateDefaultValues: TicketSearchState = {
+  ...ticketSearchCriteriaFormDefaultValues,
+  page: 1,
+  order: "desc",
+  scope: "INTERNAL",
+  sort: "ticketNumber",
+};
+
 export default function ServiceDeskPage() {
   const router = useRouter();
   const { startRouteLoadingForHref } = useRouteLoading();
@@ -101,18 +131,20 @@ export default function ServiceDeskPage() {
   const effectiveCompanyId = current.user?.companyId;
 
   const searchCriteriaState =
-    useSessionStorageState<TicketSearchCriteriaFormValues>({
+    useSessionStorageState<TicketSearchState>({
       key: SERVICE_DESK_KEY,
-      initialValue: ticketSearchCriteriaFormDefaultValues,
+      initialValue: ticketSearchStateDefaultValues,
     });
 
   const form = useTicketSearchCriteriaForm();
+  const restoredSearchStateRef = useRef(false);
 
   const [criteria, setCriteria] = useState<TicketSearchCriteriaFormValues>(
     ticketSearchCriteriaFormDefaultValues,
   );
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<SortOrder>("desc");
+  const [scope, setScope] = useState<ViewOption>("INTERNAL");
   const [sort, setSort] = useState<SortOption>("ticketNumber");
 
   const {
@@ -120,7 +152,10 @@ export default function ServiceDeskPage() {
     isLoading: isTicketListLoading,
     refetch: refetchTickets,
   } = useServiceDeskTicketSearchQuery({
-    criteria,
+    criteria: {
+      ...criteria,
+      cat_scope: scope,
+    },
     sort,
     order,
     page,
@@ -177,22 +212,26 @@ export default function ServiceDeskPage() {
       }));
   }, [categoryTrees]);
 
-  const users = useMemo<ImageValueLabel[]>(() => {
-    if (!employees) {
-      return [];
-    }
-
-    return employees.map((employee) => {
-      const name = tLocal(employee.name);
-
-      return {
-        value: employee.username,
-        label: `${name.first} ${name.last}`,
-        displayName: employee.email,
-        image: employee.imageUrl,
-      };
-    });
-  }, [employees, tLocal]);
+  const requesters = useMemo<ImageValueLabel[]>(
+    () =>
+      (ticketSearchResult?.facets?.requesters ?? []).map((requester) => ({
+        value: requester.username,
+        label: `${tLocal(requester.name).first} ${tLocal(requester.name).last}`.trim(),
+        displayName: requester.username,
+        image: requester.image ?? undefined,
+      })),
+    [ticketSearchResult?.facets?.requesters, tLocal],
+  );
+  const assignees = useMemo<ImageValueLabel[]>(
+    () =>
+      (ticketSearchResult?.facets?.assignees ?? []).map((assignee) => ({
+        value: assignee.username,
+        label: `${tLocal(assignee.name).first} ${tLocal(assignee.name).last}`.trim(),
+        displayName: assignee.username,
+        image: assignee.image ?? undefined,
+      })),
+    [ticketSearchResult?.facets?.assignees, tLocal],
+  );
 
   const emails = useMemo<ImageValueLabel[]>(() => {
     if (!employees) {
@@ -213,32 +252,62 @@ export default function ServiceDeskPage() {
 
   // Page overflow correction.
   useEffect(() => {
+    if (ticketSearchResult?.page !== page) {
+      return;
+    }
+
     const totalPages = Math.ceil(totalCount / TICKET_PAGE_SIZE);
 
     if (totalPages > 0 && page > totalPages) {
       setPage(totalPages);
+      searchCriteriaState.setValue((prev) => ({
+        ...prev,
+        page: totalPages,
+      }));
     }
-  }, [page, totalCount]);
+  }, [page, searchCriteriaState, ticketSearchResult?.page, totalCount]);
 
   // Restore session storage.
   useEffect(() => {
-    if (!searchCriteriaState.hydrated) {
+    if (
+      !searchCriteriaState.hydrated ||
+      restoredSearchStateRef.current
+    ) {
       return;
     }
 
+    restoredSearchStateRef.current = true;
+
+    const {
+      page: restoredPage = 1,
+      order: restoredOrder = "desc",
+      scope: restoredScope = "INTERNAL",
+      sort: restoredSort = "ticketNumber",
+      ...storedCriteria
+    } = searchCriteriaState.value;
+
     const restoredCriteria = normalizeTicketSearchCriteriaFormValues(
-      searchCriteriaState.value,
+      storedCriteria,
     );
 
     form.reset(restoredCriteria);
     setCriteria(restoredCriteria);
-    setPage(1);
+    setPage(restoredPage);
+    setOrder(restoredOrder);
+    setScope(restoredScope);
+    setSort(restoredSort);
   }, [form, searchCriteriaState.hydrated, searchCriteriaState.value]);
 
   const handleSearchSubmit = async (values: TicketSearchCriteriaFormValues) => {
     const nextCriteria = normalizeTicketSearchCriteriaFormValues(values);
 
-    searchCriteriaState.setValue(nextCriteria);
+    searchCriteriaState.setValue({
+      ...nextCriteria,
+      page: 1,
+      order,
+      scope,
+      sort,
+    });
     setCriteria(nextCriteria);
     setPage(1);
   };
@@ -246,11 +315,41 @@ export default function ServiceDeskPage() {
   const handleSortChange = (nextSort: SortOption) => {
     setSort(nextSort);
     setPage(1);
+    searchCriteriaState.setValue((prev) => ({
+      ...prev,
+      sort: nextSort,
+      page: 1,
+    }));
   };
 
   const handleOrderChange = () => {
-    setOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+    const nextOrder = order === "desc" ? "asc" : "desc";
+
+    setOrder(nextOrder);
     setPage(1);
+    searchCriteriaState.setValue((prev) => ({
+      ...prev,
+      order: nextOrder,
+      page: 1,
+    }));
+  };
+
+  const handleScopeChange = (nextScope: ViewOption) => {
+    setScope(nextScope);
+    setPage(1);
+    searchCriteriaState.setValue((prev) => ({
+      ...prev,
+      scope: nextScope,
+      page: 1,
+    }));
+  };
+
+  const handlePageChange = (nextPage: number) => {
+    setPage(nextPage);
+    searchCriteriaState.setValue((prev) => ({
+      ...prev,
+      page: nextPage,
+    }));
   };
 
   const handleTicketSelected = (ticketId: string) => {
@@ -271,6 +370,36 @@ export default function ServiceDeskPage() {
 
         <div className="w-full lg:w-auto">
           <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
+            {/* view selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="w-full min-w-0 justify-end">
+                  <span className="truncate">
+                    {t(`viewOption.${scope.toLowerCase()}`)}
+                  </span>
+                  <ChevronDown className="transition-transform" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{t("viewOption.title")}</DropdownMenuLabel>
+                  {viewOption.map((option) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={option.value}
+                        className={checkboxItemRightCheckClass}
+                        checked={option.value === scope}
+                        onClick={() => handleScopeChange(option.value)}
+                      >
+                        {option.icon}
+                        {t(`viewOption.${option.value.toLowerCase()}`)}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {/* sort + order */}
             <ButtonGroup className="w-full">
               <DropdownMenu>
@@ -346,7 +475,8 @@ export default function ServiceDeskPage() {
               }
               form={form}
               categories={categories}
-              users={users}
+              requesters={requesters}
+              assignees={assignees}
               onSubmit={handleSearchSubmit}
             />
 
@@ -377,7 +507,6 @@ export default function ServiceDeskPage() {
         <TicketList
           tickets={tickets}
           onTicketSelected={handleTicketSelected}
-          users={users}
           language={userPreference.language as SupportedLanguage}
           isLoading={isTicketListLoading}
         />
@@ -387,7 +516,7 @@ export default function ServiceDeskPage() {
         page={page}
         pageSize={TICKET_PAGE_SIZE}
         totalCount={totalCount}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
         className="gap-2 px-0 py-1 sm:px-1 sm:py-2"
         disabled={isTicketListLoading}
       />

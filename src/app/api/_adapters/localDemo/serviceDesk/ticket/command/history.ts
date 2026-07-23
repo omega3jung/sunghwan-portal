@@ -1,5 +1,6 @@
 import type { resolveApprovedTicketRouting } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/createRouting";
 import { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { requireNextStatus, requireTicket } from "./ticketContext";
 import {
@@ -27,6 +28,7 @@ const buildHistoryBase = ({
   | "history_no"
   | "source"
   | "actor_username"
+  | "actor_name"
   | "action_no"
   | "created_at"
 > => ({
@@ -34,6 +36,10 @@ const buildHistoryBase = ({
   history_no: getMaxHistoryNo(ticketId, isInternal) + historyNoOffset,
   source: "USER_ACTION",
   actor_username: employeeUserName,
+  actor_name:
+    allEmployeesMock.find(
+      (employee) => employee.e_username === employeeUserName,
+    )?.e_name ?? null,
   action_no: actionNo,
   created_at: createdAt,
 });

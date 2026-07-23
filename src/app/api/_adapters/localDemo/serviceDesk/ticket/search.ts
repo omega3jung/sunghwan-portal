@@ -1,4 +1,4 @@
-import { TicketDetail } from "@/domain/serviceDesk";
+import { TicketDetail, TicketUser } from "@/domain/serviceDesk";
 import type { PaginatedSearchResponse } from "@/lib/application/api";
 import {
   applyRuleGroupFilter,
@@ -22,7 +22,12 @@ export function localSearchTickets({
 }: {
   access: LocalTicketAccessContext;
   request: TicketSearchRequest;
-}): PaginatedSearchResponse<TicketDetail> {
+}): PaginatedSearchResponse<TicketDetail> & {
+  facets: {
+    requesters: TicketUser[];
+    assignees: TicketUser[];
+  };
+} {
   /* return only active tickets.
    *
    * TODO.
@@ -35,9 +40,13 @@ export function localSearchTickets({
   ).filter(
     (ticket) => ticket.active !== false,
   );
-  const tickets = camelTicketDetailMapper(activeTickets).map(
-    withAssigneeFilterField,
-  );
+  const tickets = camelTicketDetailMapper(activeTickets)
+    .map(withAssigneeFilterField)
+    .map((ticket) => ({
+      ...ticket,
+      cat_scope: ticket.scope,
+      requesterUsername: ticket.requesterUsername,
+    }));
 
   const filtered = applyRuleGroupFilter(tickets, request.filter);
   const sorted = sortTickets(
@@ -54,8 +63,29 @@ export function localSearchTickets({
 
   return {
     items,
+    facets: {
+      requesters: uniquePeople(
+        filtered.map((ticket) => ({
+          username: ticket.requesterUsername,
+          name: ticket.requester.name,
+          image: ticket.requester.image,
+        })),
+      ),
+      assignees: uniquePeople(
+        filtered.flatMap((ticket) =>
+          ticket.assignmentPhase === "APPROVAL"
+            ? ticket.approvalAssignees
+            : ticket.workAssignees,
+        ),
+      ),
+    },
     totalCount: filtered.length,
     page: pagination.page,
     pageSize: pagination.pageSize,
   };
+}
+
+function uniquePeople(people: TicketUser[]): TicketUser[] {
+  return [...new Map(people.map((person) => [person.username, person])).values()]
+    .sort((left, right) => left.username.localeCompare(right.username));
 }

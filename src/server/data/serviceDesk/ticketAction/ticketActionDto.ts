@@ -1,4 +1,5 @@
 import type { Priority, RiskLevel } from "@/domain/common";
+import type { LocalizedName } from "@/domain/organization";
 import type { Attach, TicketActionType } from "@/domain/serviceDesk";
 import type { ISODateString } from "@/shared/types";
 
@@ -16,6 +17,7 @@ export type TicketActionDto = {
   content: string;
   metadata: TicketActionMetadataDto;
   owner_username: string | null;
+  owner_name: LocalizedName | null;
   created_at: ISODateString;
   updated_at: ISODateString | null;
   active: boolean;

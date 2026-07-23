@@ -1,4 +1,5 @@
-﻿import { Attach, TicketAction, TicketActionType } from "@/domain/serviceDesk";
+﻿import type { LocalizedName } from "@/domain/organization";
+import { Attach, TicketAction, TicketActionType } from "@/domain/serviceDesk";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
@@ -14,6 +15,7 @@ export interface DbTicketAction {
   action_type: TicketActionType;
   content: string;
   owner_username: string | null;
+  owner_name?: LocalizedName | null;
 
   created_at: ISODateString;
   updated_at: ISODateString | null;
@@ -33,6 +35,7 @@ export const camelTicketActionMapper: ArrayMapper<
     actionType: item.action_type,
     content: item.content,
     ownerUsername: item.owner_username,
+    ownerName: item.owner_name ?? null,
     createdAt: item.created_at,
     updatedAt: nullToUndefined(item.updated_at),
     active: item.active,
@@ -51,6 +54,7 @@ export const snakeTicketActionMapper: ArrayMapper<
     action_type: item.actionType,
     content: item.content,
     owner_username: item.ownerUsername,
+    owner_name: item.ownerName,
     created_at: item.createdAt,
     updated_at: undefinedToNull(item.updatedAt),
     active: item.active,

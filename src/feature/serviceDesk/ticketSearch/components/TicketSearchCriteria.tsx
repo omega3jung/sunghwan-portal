@@ -25,12 +25,13 @@ type FilterProps = {
   trigger?: React.ReactNode;
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
   categories: MainCategory[];
-  users: ImageValueLabel[];
+  requesters: ImageValueLabel[];
+  assignees: ImageValueLabel[];
   onSubmit: (values: TicketSearchCriteriaFormValues) => Promise<void>;
 };
 
 export const TicketSearchCriteria = (props: FilterProps) => {
-  const { form, categories, users, onSubmit } = props;
+  const { form, categories, requesters, assignees, onSubmit } = props;
 
   const { t } = useTranslation(NS.serviceDesk);
 
@@ -72,7 +73,8 @@ export const TicketSearchCriteria = (props: FilterProps) => {
               <TicketSearchCriteriaFields
                 form={form}
                 categories={categories}
-                users={users}
+                requesters={requesters}
+                assignees={assignees}
               />
             </FieldGroup>
           </ScrollArea>

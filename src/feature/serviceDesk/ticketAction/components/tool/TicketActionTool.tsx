@@ -135,6 +135,9 @@ export function TicketActionTool({
 
   const currentUser = current.user;
   const isAdmin = (currentUser?.permission ?? 0) >= ACCESS_LEVEL.ADMIN;
+  const canAssign = !(
+    currentUser?.userScope === "CLIENT" && ticket?.scope === "PORTAL"
+  );
   const isRemoteMode = sessionData?.user.dataScope === "REMOTE";
   const currentUserOption = useMemo(
     () => users.find((user) => user.value === currentUser?.username),
@@ -280,6 +283,7 @@ export function TicketActionTool({
         hidden={isOpen}
         isPending={isPending}
         isAdmin={isAdmin}
+        canAssign={canAssign}
         onOpen={handleOpen}
         ticket={ticket}
       />

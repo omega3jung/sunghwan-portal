@@ -1,5 +1,7 @@
 import type { Attach, TicketAttachmentMetadata } from "@/domain/serviceDesk";
 import type { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import {
   clientCategorySettingsMock,
   internalCategorySettingsMock,
@@ -9,18 +11,58 @@ import { serviceDeskScenariosMock } from "./scenariosMock";
 import type { TicketMockInput } from "./types";
 
 const categoryTenantIds = buildCategoryTenantIds();
+const employeesByUsername = new Map(
+  allEmployeesMock.map((employee) => [employee.e_username, employee]),
+);
+const departmentsById = new Map(
+  allDepartmentsMock.map((department) => [department.d_id, department]),
+);
 
-const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => ({
+const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => {
+  const assignees = ticket.tk_assignee_usernames.flatMap((username) => {
+    const employee = employeesByUsername.get(username);
+    return employee
+      ? [
+          {
+            username,
+            name: employee.e_name,
+            image: employee.e_image_url ?? null,
+          },
+        ]
+      : [];
+  });
+  const isApprovalPhase = ticket.tk_approval_step_id !== null;
+  const requester = employeesByUsername.get(ticket.tk_requester_username);
+  const requesterDepartment = requester
+    ? departmentsById.get(requester.e_department_id)
+    : undefined;
+
+  return {
   id: ticket.tk_id,
   tenant_id: resolveTicketTenantId(ticket.cat_id),
   ticket_number: ticket.tk_ticket_no,
   created_at: ticket.tk_created_at,
   updated_at: ticket.tk_updated_at,
   requester_username: ticket.tk_requester_username,
+  requester: ticket.tk_requester,
+  requester_department_id: requester
+    ? String(requester.e_department_id)
+    : null,
+  requester_department_name: requesterDepartment?.d_name ?? null,
   status: ticket.tk_status,
   close_reason: ticket.tk_close_reason,
   priority: ticket.tk_priority,
   risk_level: ticket.tk_risk_level,
+  assignment_phase: isApprovalPhase ? "APPROVAL" : "WORK",
+  approval_assignees: isApprovalPhase ? assignees : [],
+  work_assignees: isApprovalPhase ? [] : assignees,
+  approval_assignee_usernames: isApprovalPhase
+    ? ticket.tk_assignee_usernames
+    : [],
+  work_assignee_usernames: isApprovalPhase
+    ? []
+    : ticket.tk_assignee_usernames,
+  assignees,
   assignee_usernames: ticket.tk_assignee_usernames,
   merged_into_ticket_id: ticket.tk_merged_into_ticket_id,
   merged_into_ticket_no: ticket.tk_merged_into_ticket_no,
@@ -42,7 +84,8 @@ const toDbTicketDetail = (ticket: TicketMockInput): DbTicketDetail => ({
   email: ticket.tk_email,
   files: ticket.tk_files.map(toTicketAttachmentMetadata),
   images: ticket.tk_images.map(toTicketAttachmentMetadata),
-});
+  };
+};
 
 /** Canonical ticket seed. Visibility is projected from tenant and scope at read time. */
 export const ticketsMock: DbTicketDetail[] = serviceDeskScenariosMock.map(

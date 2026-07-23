@@ -1,3 +1,4 @@
+import type { LocalizedName } from "@/domain/organization";
 import { ISODateString } from "@/shared/types/date";
 
 import { CategoryScope } from "../../category";
@@ -61,6 +62,7 @@ export interface TicketHistory {
   event: TicketHistoryEvent;
 
   actorUsername: string | null;
+  actorName: LocalizedName | null;
   actionNo: number | null;
 
   fromValue?: unknown;

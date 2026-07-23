@@ -32,10 +32,16 @@ import { appendUnique, removeValue } from "./utils";
 type Props = {
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
   categories: MainCategory[];
-  users: ImageValueLabel[];
+  requesters: ImageValueLabel[];
+  assignees: ImageValueLabel[];
 };
 
-export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
+export function TicketSearchCriteriaFields({
+  form,
+  categories,
+  requesters,
+  assignees,
+}: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
@@ -211,7 +217,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
             render={({ field }) => (
               <AvatarMultiComboBox
                 value={field.value}
-                options={users}
+                options={assignees}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));
                 }}
@@ -238,7 +244,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
             render={({ field }) => (
               <AvatarMultiComboBox
                 value={field.value}
-                options={users}
+                options={requesters}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));
                 }}

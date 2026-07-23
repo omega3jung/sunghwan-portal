@@ -6,6 +6,14 @@ export const ticket: TicketMockInput = {
   tk_created_at: "2026-07-03T01:14:33Z",
   tk_updated_at: "2026-07-06T02:02:00Z",
   tk_requester_username: "liam_williams",
+  tk_requester: {
+    username: "liam_williams",
+    name: {
+      en: { first: "Liam", middle: "", last: "Williams" },
+    },
+    email: "liam.williams@sunghwan-portal.dev",
+    image: null,
+  },
   tk_status: "Working",
   tk_priority: "medium",
   tk_risk_level: "low",

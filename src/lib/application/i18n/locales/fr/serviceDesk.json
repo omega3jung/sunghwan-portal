@@ -364,6 +364,11 @@
       "note": "Ajoutez une courte note pour cette saisie de temps"
     }
   },
+  "viewOption": {
+    "title": "Vue",
+    "internal": "Interne",
+    "portal": "Portail"
+  },
   "listPage": {
     "title": "IT Service Desk",
     "description": "Recherchez et parcourez les tickets du centre de services."

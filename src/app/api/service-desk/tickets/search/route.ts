@@ -99,6 +99,7 @@ async function handleTicketSearch(
 
       return NextResponse.json({
         items,
+        facets: result.facets,
         totalCount: result.totalCount,
         page: result.page,
         pageSize: result.pageSize,

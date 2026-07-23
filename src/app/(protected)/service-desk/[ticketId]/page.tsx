@@ -16,7 +16,7 @@ import {
   useAutoStartAssignedTicketOnView,
   useServiceDeskTicketQuery,
 } from "@/feature/serviceDesk/ticket/client";
-import { selectTicketAssigneeIds } from "@/feature/serviceDesk/ticket/utils";
+import { selectTicketAssignees } from "@/feature/serviceDesk/ticket/utils";
 import {
   TicketActionList,
   TicketActionTool,
@@ -26,6 +26,7 @@ import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/tick
 import { useCurrentPreference } from "@/feature/user/preference/client";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
+import { formatDisplayName } from "@/lib/application/organization";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
 import { DbParams, ImageValueLabel } from "@/shared/types";
@@ -144,22 +145,21 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     });
   }, [employees, tLocal]);
 
-  const userMap = useMemo(
-    () => new Map(users.map((user) => [user.value, user])),
-    [users],
-  );
-
-  const requester = useMemo(
-    () => users.find((user) => user.value === ticket?.requesterUsername),
-    [ticket?.requesterUsername, users],
-  );
+  const requesterName = ticket
+    ? formatDisplayName(tLocal(ticket.requester.name))
+    : undefined;
 
   const assignees = useMemo(
     () =>
-      users.filter((user) =>
-        ticket ? selectTicketAssigneeIds(ticket).includes(user.value) : false,
-      ),
-    [ticket, users],
+      ticket
+        ? selectTicketAssignees(ticket).map((assignee) => ({
+            value: assignee.username,
+          label: formatDisplayName(tLocal(assignee.name)),
+          displayName: assignee.username,
+          image: assignee.image ?? undefined,
+          }))
+        : [],
+    [ticket, tLocal],
   );
 
   const dateLocale = useMemo(
@@ -193,11 +193,9 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
     )[0];
   }, [ticketHistories]);
 
-  const latestActionOwner = latestAction
-    ? latestAction.ownerUsername
-      ? userMap.get(latestAction.ownerUsername)
-      : undefined
-    : undefined;
+  const latestActionOwnerName = latestAction?.ownerName
+    ? formatDisplayName(tLocal(latestAction.ownerName))
+    : latestAction?.ownerUsername;
 
   useEffect(() => {
     if (!isTicketLoading && !ticket) {
@@ -238,17 +236,20 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                 <TicketDetailSkeleton />
               ) : ticket ? (
                 <article className="min-w-0 space-y-5 xl:space-y-9">
-                  <TicketSummary ticket={ticket} requester={requester} />
+                  <TicketSummary
+                    ticket={ticket}
+                    requesterName={requesterName}
+                  />
 
                   <TicketRecentActivity
                     latestHistory={latestHistory}
                     activeActions={activeActions}
                     latestAction={latestAction}
                     latestActionName={
-                      latestActionOwner?.label || ticket.lastCommenterEmail
+                      latestActionOwnerName || ticket.lastCommenterEmail
                     }
                     latestActionEmail={
-                      latestActionOwner?.displayName ||
+                      latestAction?.ownerUsername ||
                       ticket.lastCommenterEmail
                     }
                     dateLocale={dateLocale}
@@ -300,7 +301,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                       <div className="rounded-xl border border-border/40 bg-background/60 p-1">
                         <TicketDetailsAside
                           assignees={assignees}
-                          requester={requester}
+                          requesterName={requesterName}
                           ticket={ticket}
                         />
                       </div>
@@ -329,7 +330,6 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                     <TicketActionList
                       actions={ticketActions}
                       isLoading={isTicketActionsLoading}
-                      users={users}
                       dateLocale={dateLocale}
                       showHeader
                     />
@@ -365,7 +365,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                 ) : (
                   <TicketDetailsAside
                     assignees={assignees}
-                    requester={requester}
+                    requesterName={requesterName}
                     ticket={ticket}
                   />
                 )}

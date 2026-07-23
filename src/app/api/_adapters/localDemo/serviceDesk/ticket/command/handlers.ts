@@ -119,6 +119,17 @@ const assignTicket: LocalActionHandler = (context) => {
   const assignmentPhase = ticket.status === "Approval" ? "APPROVAL" : "WORK";
   const nextStatus = context.nextStatus ?? ticket.status;
 
+  if (!context.isInternal && ticket.scope === "PORTAL") {
+    throw new ApiError(
+      "serviceDesk.ticketCommand.localDemo.portalAssignForbidden",
+      403,
+      {
+        ticketId: ticket.id,
+        username: context.employeeUserName,
+      },
+    );
+  }
+
   if (assignmentPhase === "APPROVAL" && !context.isAdmin) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.approvalAssignForbidden",

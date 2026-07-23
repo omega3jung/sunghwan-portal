@@ -17,7 +17,7 @@ import {
 import { selectTicketIsAssigned } from "@/feature/serviceDesk/ticket/utils";
 import { NS } from "@/lib/application/i18n";
 import { ROUTES } from "@/lib/config/routing";
-import { ImageValueLabel, ISODateString } from "@/shared/types";
+import { ISODateString } from "@/shared/types";
 import {
   formatCompactDurationFromMinutes,
   formatCompactTimeDistanceFromNow,
@@ -26,10 +26,10 @@ import { initials } from "@/shared/utils/presentation";
 
 type TicketSummaryProps = {
   ticket: TicketDetail;
-  requester?: ImageValueLabel;
+  requesterName?: string;
 };
 
-export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
+export function TicketSummary({ ticket, requesterName }: TicketSummaryProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
@@ -42,8 +42,8 @@ export function TicketSummary({ ticket, requester }: TicketSummaryProps) {
       <div className="flex min-w-0 flex-col gap-4 sm:flex-row">
         <aside className="flex shrink-0 gap-2 sm:flex-col sm:space-y-3 sm:gap-0">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={requester?.image} />
-            <AvatarFallback>{initials(requester?.label || "")}</AvatarFallback>
+            <AvatarImage src={ticket.requester.image ?? undefined} />
+            <AvatarFallback>{initials(requesterName || "")}</AvatarFallback>
           </Avatar>
 
           <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full bg-cyan-50/70 whitespace-nowrap hover:bg-cyan-100/70">

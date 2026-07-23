@@ -16,13 +16,13 @@ import { cn, initials } from "@/shared/utils/presentation";
 
 type TicketDetailsAsideProps = {
   ticket: TicketDetail;
-  requester?: ImageValueLabel;
+  requesterName?: string;
   assignees: ImageValueLabel[];
 };
 
 export function TicketDetailsAside({
   ticket,
-  requester,
+  requesterName,
   assignees,
 }: TicketDetailsAsideProps) {
   const { t } = useTranslation(NS.serviceDesk);
@@ -31,8 +31,8 @@ export function TicketDetailsAside({
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const currentEmployeeUserName = current.user?.username ?? null;
-  const requesterName =
-    requester?.label ||
+  const resolvedRequesterName =
+    requesterName ||
     t("detailAside.requesterUnknown", { defaultValue: "Unknown requester" });
   const assigneeTitle =
     ticket.assignmentPhase === "APPROVAL"
@@ -50,9 +50,9 @@ export function TicketDetailsAside({
         title={tCommon("field.requester")}
       >
         <PersonRow
-          name={requesterName}
-          subText={requester?.displayName || "-"}
-          image={requester?.image}
+          name={resolvedRequesterName}
+          subText={ticket.requester.email ?? ticket.requesterUsername}
+          image={ticket.requester.image ?? undefined}
         />
       </InfoCard>
 

@@ -364,6 +364,11 @@
       "note": "Añade una nota breve para esta entrada de tiempo"
     }
   },
+  "viewOption": {
+    "title": "Vista",
+    "internal": "Interno",
+    "portal": "Portal"
+  },
   "listPage": {
     "title": "Mesa de Servicio de TI",
     "description": "Busca y consulta tickets de la mesa de servicio."

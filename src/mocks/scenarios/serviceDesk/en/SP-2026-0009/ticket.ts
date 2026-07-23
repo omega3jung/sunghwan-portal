@@ -6,6 +6,14 @@ export const ticket: TicketMockInput = {
   tk_created_at: "2026-07-09T08:13:53Z",
   tk_updated_at: "2026-07-09T12:45:10Z",
   tk_requester_username: "fiona_tanaka",
+  tk_requester: {
+    username: "fiona_tanaka",
+    name: {
+      en: { first: "Fiona", middle: "", last: "Tanaka" },
+    },
+    email: "fiona.tanaka@client-demo-corporation.com",
+    image: null,
+  },
   tk_status: "Resolved",
   tk_priority: "urgent",
   tk_risk_level: "high",

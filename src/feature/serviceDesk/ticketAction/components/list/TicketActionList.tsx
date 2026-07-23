@@ -5,8 +5,10 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { TicketAction } from "@/domain/serviceDesk";
+import { useCurrentPreference } from "@/feature/user/preference/client";
 import { NS } from "@/lib/application/i18n";
-import type { ImageValueLabel } from "@/shared/types";
+import { formatDisplayName } from "@/lib/application/organization";
+import { useLocalizedValue } from "@/lib/client/i18n";
 import { htmlToPlainText } from "@/shared/utils/value";
 
 import { getTicketActionTypeLabelKey } from "../../mapper";
@@ -17,7 +19,6 @@ import { TicketActionListHeader } from "./TicketActionListHeader";
 type TicketActionListProps = {
   actions?: TicketAction[];
   isLoading?: boolean;
-  users?: ImageValueLabel[];
   dateLocale?: Locale;
   showHeader?: boolean;
 };
@@ -25,11 +26,12 @@ type TicketActionListProps = {
 export function TicketActionList({
   actions = [],
   isLoading = false,
-  users = [],
   dateLocale,
   showHeader = true,
 }: TicketActionListProps) {
   const { t } = useTranslation(NS.serviceDesk);
+  const { current: userPreference } = useCurrentPreference();
+  const tLocal = useLocalizedValue(userPreference.language);
   const [query, setQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
@@ -45,11 +47,6 @@ export function TicketActionList({
     return () => mediaQuery.removeEventListener("change", updateViewport);
   }, []);
 
-  const userMap = useMemo(
-    () => new Map(users.map((user) => [user.value, user])),
-    [users],
-  );
-
   const activeActions = useMemo(
     () => actions.filter((action) => action.active),
     [actions],
@@ -63,15 +60,15 @@ export function TicketActionList({
         return true;
       }
 
-      const owner = action.ownerUsername
-        ? userMap.get(action.ownerUsername)
-        : undefined;
+      const ownerName = action.ownerName
+        ? formatDisplayName(tLocal(action.ownerName))
+        : action.ownerUsername;
       const searchTarget = [
         action.actionNo,
         t(getTicketActionTypeLabelKey(action.actionType)),
         htmlToPlainText(action.content || ""),
-        owner?.label,
-        owner?.displayName,
+        ownerName,
+        action.ownerUsername,
       ]
         .filter(Boolean)
         .join(" ")
@@ -86,7 +83,7 @@ export function TicketActionList({
 
       return sortOrder === "desc" ? rightTime - leftTime : leftTime - rightTime;
     });
-  }, [activeActions, deferredQuery, sortOrder, t, userMap]);
+  }, [activeActions, deferredQuery, sortOrder, t, tLocal]);
 
   return (
     <section className="min-w-0 space-y-4">
@@ -113,10 +110,10 @@ export function TicketActionList({
             <TicketActionItem
               key={`${action.ticketId}-${action.actionNo}-${isDesktop === null ? "initial" : isDesktop ? "desktop" : "mobile"}`}
               action={action}
-              owner={
-                action.ownerUsername
-                  ? userMap.get(action.ownerUsername)
-                  : undefined
+              ownerName={
+                action.ownerName
+                  ? formatDisplayName(tLocal(action.ownerName))
+                  : action.ownerUsername ?? undefined
               }
               dateLocale={dateLocale}
               defaultOpen={isDesktop ? true : index === 0}

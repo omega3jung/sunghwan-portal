@@ -32,6 +32,11 @@ export const mapSearchCriteriaToDbParams = (
       value: true,
     }),
 
+    createFieldFilter({
+      field: "cat_scope",
+      value: values.cat_scope,
+    }),
+
     createKeywordFilter({
       fields: ["ticketNumber", "subject"],
       keyword: values.keyword,

@@ -3,9 +3,13 @@ import {
   CategoryScope,
   TicketAssignmentPhase,
   TicketAttachmentMetadata,
+  TicketRequester,
   TicketResolutionReason,
   TicketStatus,
+  TicketSummary,
+  TicketUser,
 } from "@/domain/serviceDesk";
+import type { PaginatedSearchResponse } from "@/lib/application/api";
 import { LocalizedText } from "@/shared/types";
 import type { DbParams, DbSort } from "@/shared/types/api";
 import { ISODateString } from "@/shared/types/date";
@@ -34,6 +38,9 @@ export interface DbTicketSummary {
   updated_at: ISODateString | null;
 
   requester_username: string;
+  requester: TicketRequester;
+  requester_department_id?: string | null;
+  requester_department_name?: LocalizedText | null;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
@@ -41,12 +48,15 @@ export interface DbTicketSummary {
   risk_level: RiskLevel;
 
   assignment_phase?: TicketAssignmentPhase;
+  approval_assignees?: TicketUser[];
+  work_assignees?: TicketUser[];
   approval_assignee_usernames?: string[];
   work_assignee_usernames?: string[];
   assigned_approver?: boolean;
   assigned_worker?: boolean;
 
   assignee_usernames: string[];
+  assignees?: TicketUser[];
   merged_into_ticket_id?: string | null;
   merged_into_ticket_no?: string | null;
 
@@ -85,6 +95,9 @@ export interface DbTicketDetail {
   updated_at: ISODateString | null;
 
   requester_username: string;
+  requester: TicketRequester;
+  requester_department_id?: string | null;
+  requester_department_name?: LocalizedText | null;
 
   status: TicketStatus;
   close_reason?: TicketResolutionReason | null;
@@ -92,6 +105,8 @@ export interface DbTicketDetail {
   risk_level: RiskLevel;
 
   assignment_phase?: TicketAssignmentPhase;
+  approval_assignees?: TicketUser[];
+  work_assignees?: TicketUser[];
   approval_assignee_usernames?: string[];
   work_assignee_usernames?: string[];
   assigned_approver?: boolean;
@@ -99,6 +114,7 @@ export interface DbTicketDetail {
   has_been_worker?: boolean;
 
   assignee_usernames: string[];
+  assignees?: TicketUser[];
   merged_into_ticket_id?: string | null;
   merged_into_ticket_no?: string | null;
 
@@ -135,3 +151,10 @@ export interface DbTicketDetail {
   files: TicketAttachmentMetadata[];
   images: TicketAttachmentMetadata[];
 }
+
+export type TicketSearchResponse = PaginatedSearchResponse<TicketSummary> & {
+  facets: {
+    requesters: TicketUser[];
+    assignees: TicketUser[];
+  };
+};
