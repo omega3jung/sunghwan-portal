@@ -3,7 +3,7 @@
 
 html[data-theme="sapphire"] {
   /* Core */
-  --primary: 221 84% 34%; /* Deep sapphire blue */
+  --primary: hsl(221 84% 34%); /* Deep sapphire blue */
   --primary-muted: 221 45% 88%;
   --primary-subtle: 221 65% 95%;
   --primary-accent: 221 80% 26%;
