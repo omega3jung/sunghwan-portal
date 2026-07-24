@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { NS } from "@/lib/application/i18n";
+import { toast } from "@/shared/client/toast";
 import { MutationAction } from "@/shared/types";
 
 /**
@@ -20,13 +20,17 @@ export const useToastMessage = () => {
   const { t: tMessage } = useTranslation(NS.message);
 
   const saved = (item: string) =>
-    toast.info(tMessage("saved.title"), {
+    toast.add({
+      title: tMessage("saved.title"),
       description: tMessage("saved.success", { item }),
+      type: "info",
     });
 
   const deleted = (item: string) =>
-    toast.info(tMessage("deleted.title"), {
+    toast.add({
+      title: tMessage("deleted.title"),
       description: tMessage("deleted.success", { item }),
+      type: "info",
     });
 
   return {
@@ -54,7 +58,26 @@ export const mutationToast = <T>(
     error: string | ((error: any) => string);
   },
 ) => {
-  return toast.promise(promise, messages);
+  return toast.promise(promise, {
+    loading: {
+      title: messages.loading,
+      type: "loading",
+    },
+    success: (data) => ({
+      title:
+        typeof messages.success === "function"
+          ? messages.success(data)
+          : messages.success,
+      type: "success",
+    }),
+    error: (error) => ({
+      title:
+        typeof messages.error === "function"
+          ? messages.error(error)
+          : messages.error,
+      type: "error",
+    }),
+  });
 };
 
 /**
@@ -73,19 +96,21 @@ export const useMutationToast = () => {
 
   return <T>(promise: Promise<T>, type: MutationAction, item: string) => {
     return toast.promise(promise, {
-      loading: tMessage(`common.${type}.loading`, { item }),
+      loading: {
+        title: tMessage(`common.${type}.loading`, { item }),
+        type: "loading",
+      },
 
       success: {
-        message: tMessage(`common.${type}.title`),
+        title: tMessage(`common.${type}.title`),
         description: tMessage(`common.${type}.success`, { item }),
-        closeButton: true,
-        position: "top-right",
+        type: "success",
       },
 
       error: {
-        message: tError(`common.${type}.title`),
+        title: tError(`common.${type}.title`),
         description: tError(`common.${type}.message`, { item }),
-        closeButton: true,
+        type: "error",
       },
     });
   };

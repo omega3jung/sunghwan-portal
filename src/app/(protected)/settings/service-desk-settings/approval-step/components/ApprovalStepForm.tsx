@@ -228,7 +228,11 @@ export const ApprovalStepForm = forwardRef<HTMLDivElement, Props>(
                 <Select
                   value={selectedNode.skipAccessLevel?.toString()}
                   disabled={readOnly}
-                  onValueChange={onSkipAccessLevelChange}
+                  onValueChange={(value) => {
+                    if (value !== null) {
+                      onSkipAccessLevelChange(value);
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />

@@ -294,23 +294,17 @@ export default function ProtectedPage() {
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button asChild>
-              <Link href="/service-desk">
+            <Button render={<Link href="/service-desk" />}>
                 {t("hero.actions.openServiceDesk")}
                 <ArrowRight className="h-4 w-4" />
-              </Link>
             </Button>
-            <Button asChild variant="outline">
-              <Link href="/documents">
+            <Button render={<Link href="/documents" />} variant="outline">
                 {t("hero.actions.browseDocumentation")}
                 <FileText className="h-4 w-4" />
-              </Link>
             </Button>
-            <Button asChild variant="secondary">
-              <Link href="/settings">
+            <Button render={<Link href="/settings" />} variant="secondary">
                 {t("hero.actions.reviewSettings")}
                 <Settings2 className="h-4 w-4" />
-              </Link>
             </Button>
           </CardContent>
         </Card>

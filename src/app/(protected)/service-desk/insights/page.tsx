@@ -504,13 +504,13 @@ export default function ServiceDeskInsightsPage() {
 
         <div className="flex w-full flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="min-w-0 justify-end">
+            <DropdownMenuTrigger
+              render={<Button className="min-w-0 justify-end" />}
+            >
                 <span className="truncate">
                   {t(`viewOption.${scope.toLowerCase()}`)}
                 </span>
                 <ChevronDown className="transition-transform" />
-              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-40">
               <DropdownMenuGroup>
@@ -534,7 +534,7 @@ export default function ServiceDeskInsightsPage() {
 
           <Button
             className="h-9.5 shrink-0 px-2.5"
-            variant="softPrimary"
+            variant="default"
             onClick={() => refetchTickets()}
           >
             <RefreshCw />
@@ -571,18 +571,20 @@ export default function ServiceDeskInsightsPage() {
           />
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
+            <DropdownMenuTrigger
+              render={
+                <Button
                 variant="outline"
                 className="w-full min-w-0 justify-between border-border sm:w-auto sm:justify-center"
-              >
+                />
+              }
+            >
                 <BarChart3 className="h-4 w-4" />
                 <span className="truncate">
                   {t("insights.chartView.label")}:{" "}
                   {t(`insights.chartView.${chartViewMode}`)}
                 </span>
                 <ChevronDown className="transition-transform" />
-              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuGroup>

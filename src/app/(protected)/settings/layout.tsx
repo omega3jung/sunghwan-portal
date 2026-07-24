@@ -1,6 +1,5 @@
 // app/(protected)/settings/layout.tsx
 
-import { Separator } from "@radix-ui/react-select";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
@@ -9,6 +8,7 @@ import { ReactNode } from "react";
 
 import { resolveServiceDeskRequestContext } from "@/app/api/_adapters/serviceDesk";
 import { authOptions } from "@/auth.config";
+import { Separator } from "@/components/ui/separator";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
 import { SettingsAccessGuard, SettingsAccessProvider } from "./_providers";

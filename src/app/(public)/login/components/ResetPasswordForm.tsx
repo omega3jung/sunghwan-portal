@@ -3,11 +3,11 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 
 import { DEMO_OTP_CODE, OTP_DURATION_SECONDS } from "../constants";
@@ -71,16 +71,17 @@ export const ResetPasswordForm = ({
     setRemainingSeconds(OTP_DURATION_SECONDS);
     setStep("otp");
 
-    toast(
-      isOtpStep ? t("resetPassword.otpResend") : t("resetPassword.otpSend"),
-      {
-        description: t("otp.sent", {
-          ns: NS.message,
-          code: DEMO_OTP_CODE,
-          minutes: 3,
-        }),
-      },
-    );
+    toast.add({
+      title: isOtpStep
+        ? t("resetPassword.otpResend")
+        : t("resetPassword.otpSend"),
+      description: t("otp.sent", {
+        ns: NS.message,
+        code: DEMO_OTP_CODE,
+        minutes: 3,
+      }),
+      type: "info",
+    });
   };
 
   useEffect(() => {

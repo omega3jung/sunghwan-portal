@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
@@ -13,8 +12,8 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
@@ -45,10 +44,11 @@ export function SettingsNavigation() {
 
   const handleNavigate = (path: string) => {
     if (!ENABLED_SETTINGS_ROUTES.has(path)) {
-      toast.info(t("disabledRouteMessage.title"), {
+      toast.add({
+        title: t("disabledRouteMessage.title"),
         description: t("disabledRouteMessage.description"),
-        position: "top-center",
-        duration: 5000,
+        timeout: 5000,
+        type: "info",
       });
       return;
     }
@@ -68,19 +68,20 @@ export function SettingsNavigation() {
             <NavigationMenuContent className="grid p-2 gap-2 sm:w-[440px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {settingMenu.items.map((item) => (
                 <NavigationMenuLink
-                  asChild
                   key={item.title}
                   title={item.title}
                   className="flex flex-col p-2 gap-1 rounded-md"
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => handleNavigate(item.path)}
+                      className={cn(
+                        "w-full h-full flex flex-col items-start justify-start text-left",
+                      )}
+                    />
+                  }
                 >
-                  <Button
-                    type="button"
-                    variant={"ghost"}
-                    onClick={() => handleNavigate(item.path)}
-                    className={cn(
-                      "w-full h-full flex flex-col items-start justify-start text-left",
-                    )}
-                  >
                     <p className="text-sm leading-none font-medium h-fit">
                       {item.title}
                     </p>
@@ -91,14 +92,12 @@ export function SettingsNavigation() {
                     >
                       {item.description}
                     </p>
-                  </Button>
                 </NavigationMenuLink>
               ))}
             </NavigationMenuContent>
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
-      <NavigationMenuViewport />
     </NavigationMenu>
   );
 }

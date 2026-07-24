@@ -108,7 +108,7 @@ export const CategoryTree = ({
                         <Button
                           variant="ghost"
                           type="button"
-                          size="icon_xs"
+                          size="icon-xs"
                           disabled={isLoading}
                           onClick={() => addSubCategory(data.id)}
                         >
@@ -119,7 +119,7 @@ export const CategoryTree = ({
                       <Button
                         variant="ghost"
                         type="button"
-                        size="icon_xs"
+                        size="icon-xs"
                         disabled={isLoading}
                         onClick={() => removeCategory(data.id)}
                       >

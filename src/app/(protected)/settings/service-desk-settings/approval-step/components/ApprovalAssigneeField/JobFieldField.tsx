@@ -94,9 +94,11 @@ export function JobFieldField({
       <Select
         value={stepAssignee.jobFieldId}
         disabled={readOnly || isLoading}
-        onValueChange={(value) =>
-          onChange({ type: "JOB_FIELD", jobFieldId: value })
-        }
+        onValueChange={(value) => {
+          if (value !== null) {
+            onChange({ type: "JOB_FIELD", jobFieldId: value });
+          }
+        }}
       >
         <SelectTrigger>
           <SelectValue

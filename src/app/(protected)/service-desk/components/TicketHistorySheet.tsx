@@ -38,9 +38,7 @@ export function TicketHistorySheet({
     <Sheet modal={true} open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        size="md"
-        padding="none"
-        className="gap-0 w-full sm:w-[380px]"
+        className="w-full gap-0 p-0 sm:w-[380px] sm:max-w-none"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>{t("historySheet.title")}</SheetTitle>

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import { PortalPreference } from "@/domain/user/preference";
 import {
   useCreateUserPreference,
@@ -114,13 +114,24 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
   ) => {
     switch (severity) {
       case "warning":
-        toast.warning(t("errors.title"), { description });
+        toast.add({
+          title: t("errors.title"),
+          description,
+          type: "warning",
+        });
         return;
       case "error":
-        toast.error(t("errors.title"), { description });
+        toast.add({
+          title: t("errors.title"),
+          description,
+          type: "error",
+        });
         return;
       default:
-        toast(t("errors.title"), { description });
+        toast.add({
+          title: t("errors.title"),
+          description,
+        });
     }
   };
 
@@ -186,11 +197,12 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
 
   const handleVerifyOtp = async ({ username, otp }: VerifyOtpFormValues) => {
     if (otp !== DEMO_OTP_CODE) {
-      toast.error(
-        t("validation:format.invalidWithField", {
+      toast.add({
+        title: t("validation:format.invalidWithField", {
           field: "OTP",
         }),
-      );
+        type: "error",
+      });
       return;
     }
 
@@ -201,19 +213,23 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
     username,
   }: ChangePasswordFormValues) => {
     if (username !== passwordResetSession?.username) {
-      toast.error(t("common.validation.errorTitle", { ns: NS.message }), {
+      toast.add({
+        title: t("common.validation.errorTitle", { ns: NS.message }),
         description: t("common.opt.differentId", { ns: NS.message }),
+        type: "error",
       });
       setPasswordResetSession(null);
       openResetPasswordView();
       return;
     }
 
-    toast.success(t("common.update.title", { ns: NS.message }), {
+    toast.add({
+      title: t("common.update.title", { ns: NS.message }),
       description: t("common.update.success", {
         ns: NS.message,
         item: t("field.password", { ns: NS.common }),
       }),
+      type: "success",
     });
 
     openLoginView();

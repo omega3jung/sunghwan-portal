@@ -4,8 +4,8 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 
 import { useSettingsAccess } from "./SettingsAccessProvider";
@@ -24,20 +24,22 @@ export function SettingsAccessGuard({
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      toast.warning(t("settingsAccessGuard.unauthenticated.title"), {
+      toast.add({
         id: SETTINGS_AUTH_TOAST_ID,
+        title: t("settingsAccessGuard.unauthenticated.title"),
         description: t("settingsAccessGuard.unauthenticated.description"),
-        position: "top-center",
+        type: "warning",
       });
       router.replace("/login");
       return;
     }
 
     if (isForbidden) {
-      toast.warning(t("settingsAccessGuard.forbidden.title"), {
+      toast.add({
         id: SETTINGS_ACCESS_TOAST_ID,
+        title: t("settingsAccessGuard.forbidden.title"),
         description: t("settingsAccessGuard.forbidden.description"),
-        position: "top-center",
+        type: "warning",
       });
       router.replace("/");
     }

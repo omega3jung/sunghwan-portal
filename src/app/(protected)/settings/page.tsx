@@ -3,10 +3,10 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Card } from "@/components/ui/card";
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
@@ -23,10 +23,11 @@ export default function SettingsPage() {
 
   const handleNavigate = (path: string) => {
     if (!ENABLED_SETTINGS_ROUTES.has(path)) {
-      toast.info(t("disabledRouteMessage.title"), {
+      toast.add({
+        title: t("disabledRouteMessage.title"),
         description: t("disabledRouteMessage.description"),
-        position: "top-center",
-        duration: 5000,
+        timeout: 5000,
+        type: "info",
       });
       return;
     }

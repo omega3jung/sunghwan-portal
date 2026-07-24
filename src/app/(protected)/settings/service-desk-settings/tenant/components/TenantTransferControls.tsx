@@ -33,7 +33,7 @@ export function TenantTransferControls({
       <div className="flex flex-row gap-2 lg:flex-col">
         <Button
           type="button"
-          size="icon_sm"
+          size="icon-sm"
           title={t("serviceDeskSettings.tenant.actions.addToTenants")}
           aria-label={t("serviceDeskSettings.tenant.actions.addToTenants")}
           disabled={!canAddTenants || disabled}
@@ -43,7 +43,7 @@ export function TenantTransferControls({
         </Button>
         <Button
           type="button"
-          size="icon_sm"
+          size="icon-sm"
           title={t("serviceDeskSettings.tenant.actions.moveToCompanies")}
           aria-label={t("serviceDeskSettings.tenant.actions.moveToCompanies")}
           disabled={!canRemoveTenants || disabled}

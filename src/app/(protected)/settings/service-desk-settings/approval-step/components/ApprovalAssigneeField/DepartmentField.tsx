@@ -94,9 +94,11 @@ export function DepartmentField({
       <Select
         value={stepAssignee.departmentId}
         disabled={readOnly || isLoading}
-        onValueChange={(value) =>
-          onChange({ type: "DEPARTMENT", departmentId: value })
-        }
+        onValueChange={(value) => {
+          if (value !== null) {
+            onChange({ type: "DEPARTMENT", departmentId: value });
+          }
+        }}
       >
         <SelectTrigger>
           <SelectValue

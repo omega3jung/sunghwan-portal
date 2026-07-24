@@ -370,13 +370,13 @@ export default function ServiceDeskPage() {
           <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
             {/* view selector */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full min-w-0 justify-end">
+              <DropdownMenuTrigger
+                render={<Button className="w-full min-w-0 justify-end" />}
+              >
                   <span className="truncate">
                     {t(`viewOption.${scope.toLowerCase()}`)}
                   </span>
                   <ChevronDown className="transition-transform" />
-                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
@@ -401,16 +401,18 @@ export default function ServiceDeskPage() {
             {/* sort + order */}
             <ButtonGroup className="w-full">
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
+                <DropdownMenuTrigger
+                  render={
+                    <Button
                     variant="outline"
                     className="min-w-0 flex-1 justify-end lg:flex-none"
-                  >
+                    />
+                  }
+                >
                     <span className="truncate">
                       {t(`sort.sort`, { ns: NS.common })}
                     </span>
                     <ChevronDown className="transition-transform" />
-                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40">
                   <DropdownMenuGroup>
@@ -451,7 +453,7 @@ export default function ServiceDeskPage() {
             {/* refresh */}
             <Button
               className="h-9 w-full min-w-[2.5rem] gap-1.5 px-2.5 lg:w-auto"
-              variant="softPrimary"
+              variant="default"
               onClick={() => refetchTickets()}
             >
               <RefreshCw />

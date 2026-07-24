@@ -49,10 +49,11 @@ export function TenantList({
       <Field className="gap-0">
         <FieldLabel>
           {t("serviceDeskSettings.tenant.tenantList.title")}
-          <HoverCard openDelay={150}>
-            <HoverCardTrigger asChild>
-              <Info className="h-4 w-4" />
-            </HoverCardTrigger>
+          <HoverCard>
+            <HoverCardTrigger
+              delay={150}
+              render={<Info className="h-4 w-4" />}
+            />
             <HoverCardContent align="start" className="text-sm">
               {t("serviceDeskSettings.tenant.tenantList.portalOwnerHint")}
             </HoverCardContent>

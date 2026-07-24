@@ -149,7 +149,7 @@ export const ApprovalStepTree = ({
                             <Button
                               variant="ghost"
                               type="button"
-                              size="icon_xs"
+                              size="icon-xs"
                               disabled={isLoading}
                               onClick={() => addApprovalStep(data.id)}
                             >
@@ -173,7 +173,7 @@ export const ApprovalStepTree = ({
                             <Button
                               variant="ghost"
                               type="button"
-                              size="icon_xs"
+                              size="icon-xs"
                               disabled={isLoading}
                               onClick={() => removeApprovalStep(data.id)}
                             >

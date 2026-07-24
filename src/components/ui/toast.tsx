@@ -5,9 +5,8 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon,OctagonXIcon, TriangleAlertIcon,
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
+import { toast } from "@/shared/client/toast"
 import { cn } from "@/shared/utils/presentation"
-
-const toast = ToastPrimitive.createToastManager()
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />
