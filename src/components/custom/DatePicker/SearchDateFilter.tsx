@@ -347,7 +347,7 @@ const Component = <T extends string>(
 
       <PopoverContent
         anchor={selectTriggerRef}
-        className="z-[51] w-auto p-0"
+        className="z-51 w-auto p-0"
         align="start"
       >
         <Calendar

@@ -1,59 +1,109 @@
-import { Check, Minus } from "lucide-react";
-import type { ReactNode } from "react";
+import { Check, ChevronDown, ChevronRight, Minus } from "lucide-react";
 
-import { CommandItem } from "@/components/ui/command";
+import { ComboboxItem } from "@/components/ui/combobox";
 import { cn } from "@/shared/utils/presentation";
 
-import type { TreeCheckState } from "./types";
+import type {
+  TreeCheckState,
+  TreeMultiComboBoxNode,
+} from "./types";
 
 type TreeMultiComboBoxOptionItemProps = {
-  value: string;
-  label: string;
-  selected?: boolean;
-  checkState?: TreeCheckState;
-  disabled?: boolean;
-  depth?: 0 | 1;
-  className?: string;
-  rightAdornment?: ReactNode;
-  onSelect: (value: string) => void;
+  item: TreeMultiComboBoxNode;
+  checkState: TreeCheckState;
+  disabled: boolean;
+  expanded?: boolean;
+  selectedChildCount?: number;
+  totalChildCount?: number;
+  onToggleExpand?: (value: string) => void;
 };
 
 export function TreeMultiComboBoxOptionItem({
-  value,
-  label,
-  selected = false,
+  item,
   checkState,
-  disabled = false,
-  depth = 0,
-  className,
-  rightAdornment,
-  onSelect,
+  disabled,
+  expanded = false,
+  selectedChildCount = 0,
+  totalChildCount = 0,
+  onToggleExpand,
 }: TreeMultiComboBoxOptionItemProps) {
-  const isPartial = checkState === "partial";
-  const isChecked = checkState === "checked" || selected;
+  const isParent = item.kind === "parent";
+  const hasChildren = isParent && item.children.length > 0;
 
   return (
-    <CommandItem
-      value={value}
+    <ComboboxItem
+      value={item}
       disabled={disabled}
+      indicator={null}
+      aria-expanded={hasChildren ? expanded : undefined}
       className={cn(
-        "gap-2 data-[disabled=true]:bg-muted/40 data-[disabled=true]:text-muted-foreground",
-        depth === 0 ? "font-medium" : "pl-8 font-normal",
-        className,
+        "gap-2 pr-1.5 data-disabled:bg-muted/40 data-disabled:text-muted-foreground",
+        isParent ? "font-medium" : "pl-8 font-normal",
       )}
-      onSelect={() => onSelect(value)}
+      onKeyDown={(event) => {
+        if (!hasChildren) {
+          return;
+        }
+
+        if (event.key === "ArrowRight" && !expanded) {
+          event.preventDefault();
+          onToggleExpand?.(item.value);
+        }
+
+        if (event.key === "ArrowLeft" && expanded) {
+          event.preventDefault();
+          onToggleExpand?.(item.value);
+        }
+      }}
     >
-      <span className="flex h-4 w-4 items-center justify-center">
-        {isPartial ? (
-          <Minus className="h-4 w-4 opacity-100" />
+      <span
+        aria-hidden
+        className="flex size-4 shrink-0 items-center justify-center"
+      >
+        {checkState === "partial" ? (
+          <Minus className="size-4" />
         ) : (
           <Check
-            className={cn("h-4 w-4", isChecked ? "opacity-100" : "opacity-0")}
+            className={cn(
+              "size-4",
+              checkState === "checked" ? "opacity-100" : "opacity-0",
+            )}
           />
         )}
       </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      {rightAdornment}
-    </CommandItem>
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {hasChildren ? (
+        <span className="ml-2 flex items-center gap-1 text-xs text-muted-foreground">
+          {totalChildCount > 0 ? (
+            <span>
+              {selectedChildCount}/{totalChildCount}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            tabIndex={-1}
+            className="inline-flex size-5 items-center justify-center rounded-sm hover:bg-accent hover:text-accent-foreground"
+            aria-label={
+              expanded ? `Collapse ${item.label}` : `Expand ${item.label}`
+            }
+            onPointerDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onToggleExpand?.(item.value);
+            }}
+          >
+            {expanded ? (
+              <ChevronDown className="size-4" />
+            ) : (
+              <ChevronRight className="size-4" />
+            )}
+          </button>
+        </span>
+      ) : null}
+    </ComboboxItem>
   );
 }

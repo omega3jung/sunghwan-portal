@@ -23,21 +23,17 @@ export const splitOptionsBySelection = (
   return { selectedOptions, unselectedOptions };
 };
 
-export const createCommandFilter = (options: ImageValueLabel[]) => {
-  return (itemValue: string, search: string) => {
+export const createComboboxFilter = () => {
+  return (item: ImageValueLabel, search: string) => {
     const normalizedSearch = normalize(search);
 
     if (!normalizedSearch) {
-      return 1;
+      return true;
     }
 
-    const matchedOption = options.find(
-      ({ label, value }) =>
-        value === itemValue &&
-        (normalize(label).includes(normalizedSearch) ||
-          normalize(value).includes(normalizedSearch)),
+    return (
+      normalize(item.label).includes(normalizedSearch) ||
+      normalize(item.value).includes(normalizedSearch)
     );
-
-    return matchedOption ? 1 : 0;
   };
 };

@@ -4,8 +4,16 @@ import { Check, Globe, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { InputGroupAddon } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -146,7 +154,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
                     } as React.CSSProperties
                   }
                   className={cn(
-                    "rounded-full bg-[var(--theme-primary)] hover:bg-[var(--theme-muted)] transition-colors",
+                    "rounded-full bg-(--theme-primary) hover:bg-(--theme-muted) transition-colors",
                     userPreference.colorTheme === item.name
                       ? "h-8 w-8 p-0"
                       : "h-4 w-4 p-0",
@@ -190,16 +198,41 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
             <Label htmlFor="language-picker" className="font-semibold">
               {t("language")}
             </Label>
-            <ComboBox
-              id="language-picker"
-              className="my-2"
-              placeholder="Language Picker"
-              variant="icon"
-              options={languageOptions}
-              onChange={handleLanguageChange}
-              icon={<Globe />}
-              value={userPreference.language ?? "en"}
-            />
+            <Combobox
+              items={languageOptions}
+              itemToStringValue={(option) => option.label}
+              value={
+                languageOptions.find(
+                  (option) =>
+                    option.value === (userPreference.language ?? "en"),
+                ) ?? null
+              }
+              onValueChange={(option) => {
+                if (option) {
+                  handleLanguageChange(option.value);
+                }
+              }}
+            >
+              <ComboboxInput
+                id="language-picker"
+                className="my-2 w-full"
+                placeholder="Language Picker"
+              >
+                <InputGroupAddon align="inline-start">
+                  <Globe />
+                </InputGroupAddon>
+              </ComboboxInput>
+              <ComboboxContent>
+                <ComboboxEmpty>No option found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(option) => (
+                    <ComboboxItem key={option.value} value={option}>
+                      {option.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
         </div>
       </PopoverContent>

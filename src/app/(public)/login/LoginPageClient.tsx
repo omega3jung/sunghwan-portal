@@ -6,8 +6,16 @@ import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { InputGroupAddon } from "@/components/ui/input-group";
 import { toast } from "@/components/ui/toast";
 import { PortalPreference } from "@/domain/user/preference";
 import {
@@ -45,7 +53,7 @@ type LoginPageClientProps = {
 };
 
 const panelClassName =
-  "flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:min-h-[44rem] xl:w-[40rem] xl:gap-9 xl:px-10 xl:pb-8 xl:pt-12";
+  "flex w-full flex-col gap-5 rounded-lg bg-foreground/10 p-4 xl:min-h-176 xl:w-160 xl:gap-9 xl:px-10 xl:pb-8 xl:pt-12";
 
 const footerLinkClassName = "py-0 text-base font-normal";
 
@@ -323,7 +331,7 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
         />
       )}
 
-      <div className="flex flex-col justify-center border-t-[1px] border-primary/20 pt-6 text-center">
+      <div className="flex flex-col justify-center border-t border-primary/20 pt-6 text-center">
         <p>
           <Button
             variant="link"
@@ -349,18 +357,43 @@ export function LoginPageClient({ redirectHref }: LoginPageClientProps) {
           </Button>
         </p>
 
-        <p>
-          <ComboBox
-            id="language-picker"
-            className="mt-2 w-48"
-            placeholder="Language Picker"
-            variant="icon"
-            options={languageOptions}
-            onChange={handleLanguageChange}
-            icon={<Globe />}
-            value={language ?? "en"}
-          />
-        </p>
+        <div className="flex justify-center">
+          <Combobox
+            items={languageOptions}
+            itemToStringValue={(option) => option.label}
+            value={
+              languageOptions.find(
+                (option) => option.value === (language ?? "en"),
+              ) ?? null
+            }
+            onValueChange={(option) => {
+              if (option) {
+                handleLanguageChange(option.value);
+              }
+            }}
+          >
+            <ComboboxInput
+              id="language-picker"
+              aria-label="Language Picker"
+              className="mt-2 w-48"
+              placeholder="Language Picker"
+            >
+              <InputGroupAddon align="inline-start">
+                <Globe />
+              </InputGroupAddon>
+            </ComboboxInput>
+            <ComboboxContent>
+              <ComboboxEmpty>No option found.</ComboboxEmpty>
+              <ComboboxList>
+                {(option) => (
+                  <ComboboxItem key={option.value} value={option}>
+                    {option.label}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+        </div>
       </div>
     </div>
   );

@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/shared/utils/presentation";
 
-import { useControllableState } from "../useControllableState";
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
 import {
   formatDateTimeText,
@@ -106,13 +105,11 @@ function withTimeParts(baseDate: Date, hour: number, minute: number) {
 
 function getDefaultDateTime(
   value: Date | undefined,
-  defaultValue: Date | undefined,
   minuteStep: DateTimePickerMinuteStep,
   minDate?: Date,
   maxDate?: Date,
 ) {
-  const baseDate =
-    normalizeDateValue(value) ?? normalizeDateValue(defaultValue) ?? new Date();
+  const baseDate = normalizeDateValue(value) ?? new Date();
   return clampDateTime(
     roundDateToMinuteStep(baseDate, minuteStep),
     minDate,
@@ -122,7 +119,6 @@ function getDefaultDateTime(
 
 export function DateTimePicker({
   value,
-  defaultValue,
   onChange,
   minDate,
   maxDate,
@@ -138,13 +134,7 @@ export function DateTimePicker({
   const { t } = useTranslation("DatePicker");
 
   const [open, setOpen] = useState(false);
-  const [dateTime, setDateTime] = useControllableState<Date | undefined>({
-    prop: value,
-    defaultProp: defaultValue,
-    onChange,
-  });
-  const normalizedDateTime = normalizeDateValue(dateTime);
-  const normalizedDefaultValue = normalizeDateValue(defaultValue);
+  const normalizedDateTime = normalizeDateValue(value);
   const normalizedMinDate = normalizeDateValue(minDate);
   const normalizedMaxDate = normalizeDateValue(maxDate);
 
@@ -167,7 +157,6 @@ export function DateTimePicker({
       : undefined;
   const calendarMonth =
     normalizedDateTime ??
-    normalizedDefaultValue ??
     normalizedMinDate ??
     normalizedMaxDate ??
     new Date();
@@ -186,7 +175,7 @@ export function DateTimePicker({
   );
 
   const updateDateTime = (nextDate: Date | undefined) => {
-    setDateTime(nextDate);
+    onChange(nextDate);
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -197,7 +186,6 @@ export function DateTimePicker({
 
     const baseDate = getDefaultDateTime(
       normalizedDateTime,
-      normalizedDefaultValue,
       resolvedMinuteStep,
       normalizedMinDate,
       normalizedMaxDate,

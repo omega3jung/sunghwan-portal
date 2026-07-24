@@ -1,4 +1,4 @@
-// src/app/(protected)/service-desk/page.tsx
+﻿// src/app/(protected)/service-desk/page.tsx
 
 "use client";
 
@@ -452,7 +452,7 @@ export default function ServiceDeskPage() {
 
             {/* refresh */}
             <Button
-              className="h-9 w-full min-w-[2.5rem] gap-1.5 px-2.5 lg:w-auto"
+              className="h-9 w-full min-w-10 gap-1.5 px-2.5 lg:w-auto"
               variant="default"
               onClick={() => refetchTickets()}
             >

@@ -72,7 +72,7 @@ export const TicketListMobileItem = ({
     >
       <div className="space-y-0.5 flex flex-col items-start">
         <div className="text-xs font-bold text-primary">#{ticket.id}</div>
-        <div className="min-w-0 break-words text-sm font-semibold leading-5 line-clamp-2">
+        <div className="min-w-0 wrap-break-word text-sm font-semibold leading-5 line-clamp-2">
           {ticket.subject}
         </div>
       </div>

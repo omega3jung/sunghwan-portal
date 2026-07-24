@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils/presentation";
 
-import { useControllableState } from "../useControllableState";
 import type { DatePickerProps } from "./types";
 import {
   formatDateText,
@@ -23,7 +22,6 @@ import {
 
 export function DatePicker({
   value,
-  defaultValue,
   onChange,
   minDate,
   maxDate,
@@ -36,18 +34,12 @@ export function DatePicker({
   const { t } = useTranslation("DatePicker");
 
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useControllableState<Date | undefined>({
-    prop: value,
-    defaultProp: defaultValue,
-    onChange,
-  });
-  const normalizedDate = normalizeDateValue(date);
-  const normalizedDefaultValue = normalizeDateValue(defaultValue);
+  const normalizedDate = normalizeDateValue(value);
   const normalizedMinDate = normalizeDateValue(minDate);
   const normalizedMaxDate = normalizeDateValue(maxDate);
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
+    onChange(selectedDate);
     setOpen(false);
   };
 
@@ -79,7 +71,7 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={normalizedDate}
-          defaultMonth={normalizedDate ?? normalizedDefaultValue}
+          defaultMonth={normalizedDate}
           onSelect={handleSelect}
           disabled={(calendarDate) =>
             isCalendarDateDisabled(

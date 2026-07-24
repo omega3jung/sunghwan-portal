@@ -151,7 +151,7 @@ function InfoLine({ label, value }: InfoLineProps) {
       <p className="text-xs uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="break-words text-sm">{value || "-"}</p>
+      <p className="wrap-break-word text-sm">{value || "-"}</p>
     </div>
   );
 }
@@ -185,7 +185,7 @@ function PersonRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <p className="break-words text-sm font-medium">{name}</p>
+          <p className="wrap-break-word text-sm font-medium">{name}</p>
           {isCurrentUser && (
             <span className="shrink-0 rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
               {t("detailAside.currentUserBadge")}

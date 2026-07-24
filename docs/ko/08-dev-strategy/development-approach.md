@@ -25,14 +25,14 @@ Functional completeness comes before optimization and abstraction
 ## 배경
 
 이 프로젝트는 과거 레거시 환경에서 구현된 기존 시스템을 기반으로 하며,
-**Next.js 14 App Router**를 사용해 마이그레이션하고 개선하는 작업이다.
+**Next.js 16 App Router**로 마이그레이션되었으며 이를 기반으로 계속 개선하는 작업이다.
 
 ---
 
 ### 레거시 맥락
 
 ```txt id="legacy-context"
-Oracle JET -> Next.js v12 -> Next.js 14 App Router
+Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 ```
 
 ---
@@ -112,7 +112,7 @@ Make it work -> Make it better -> Make it scalable
 
 - 네이밍과 모듈성을 개선한다
 - 공통 패턴을 강화한다
-- 구현을 Next.js 14 관례에 맞춘다
+- 구현을 Next.js 16 관례에 맞춘다
 
 ---
 

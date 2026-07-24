@@ -276,17 +276,20 @@ Work Session is separate from Ticket Action. The current route surface supports 
 
 ## Tech Stack
 
-- Framework: `next@14` App Router
-- Language: `typescript`, `react@18`
-- UI: `tailwindcss`, `shadcn/ui`, `radix-ui`, `lucide-react`
+- Runtime: `node@24`, `npm@11`
+- Framework: `next@16` App Router, `react@19`
+- Language: `typescript@5`
+- UI: `tailwindcss@4`, `shadcn/ui` (`shadcn@4`) with `@base-ui/react`, `lucide-react`
 - Authentication: `next-auth@4`, Credentials Provider, JWT session strategy
-- Database / Backend Direction: PostgreSQL through server-only access and Supabase-related infrastructure
-- Data Fetching: `@tanstack/react-query`, `axios`
-- Form: `react-hook-form`, `zod`
-- Client State: `zustand`
-- Table / Chart / Editor: `@tanstack/react-table`, `recharts`, `tiptap`
-- Testing / Tooling: `vitest`, `jest`, `@testing-library/*`, `playwright`, `storybook`
-- Deployment: `vercel`
+- Database / Backend: PostgreSQL via `pg`, `@supabase/supabase-js`, Next.js Route Handlers
+- Data Fetching: `@tanstack/react-query@5`, `axios`
+- Forms / Validation: `react-hook-form@7`, `zod@4`, `@hookform/resolvers`
+- Client State: `zustand@5`
+- Internationalization: `i18next`, `react-i18next`
+- Table / Chart / Editor: `@tanstack/react-table@8`, `recharts@3`, `tiptap@3`
+- Interaction: `dnd-kit`, `embla-carousel-react`, `react-querybuilder`
+- Testing / Tooling: `eslint@9`, `vitest@4`, Testing Library, Playwright, Storybook 10
+- Deployment: Vercel Analytics, Next.js standalone output
 
 ## Architecture Overview
 

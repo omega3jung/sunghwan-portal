@@ -13,12 +13,12 @@ import type { TreeMultiComboBoxSelectedItem } from "./types";
 
 type TreeMultiComboBoxBadgeListProps = {
   items: TreeMultiComboBoxSelectedItem[];
-  itemOrderMap?: ReadonlyMap<string, number>;
+  itemOrderMap: ReadonlyMap<string, number>;
   badgeVariant?: BadgeVariant;
   paletteStart: PaletteIndex;
   palettePick?: PaletteIndex;
   readOnly?: boolean;
-  onRemove?: (value: string) => void;
+  onRemove: (value: string) => void;
 };
 
 export function TreeMultiComboBoxBadgeList({
@@ -33,16 +33,20 @@ export function TreeMultiComboBoxBadgeList({
   return (
     <div className="flex flex-wrap items-center gap-1">
       {items.map((item, index) => {
-        const itemOrder = itemOrderMap?.get(item.value) ?? index;
+        const itemOrder = itemOrderMap.get(item.value) ?? index;
+        const parentOrder =
+          item.kind === "child"
+            ? itemOrderMap.get(item.parentValue)
+            : undefined;
         const parentAccentClassName =
-          item.kind === "child" && itemOrderMap?.has(item.parentValue)
-            ? resolveBadgeAccentClassName(
+          parentOrder === undefined
+            ? undefined
+            : resolveBadgeAccentClassName(
                 badgeVariant,
-                itemOrderMap.get(item.parentValue) ?? index,
+                parentOrder,
                 paletteStart,
                 palettePick,
-              )
-            : undefined;
+              );
 
         return (
           <Badge
@@ -58,7 +62,7 @@ export function TreeMultiComboBoxBadgeList({
                 item.kind === "parent" &&
                   "font-semibold ring-1 ring-inset ring-white/30",
                 item.kind === "child" && "pl-3 font-medium",
-                readOnly ? undefined : "cursor-pointer",
+                !readOnly && "cursor-pointer",
               ),
             )}
             onClick={(event) => {
@@ -67,7 +71,7 @@ export function TreeMultiComboBoxBadgeList({
               }
 
               event.stopPropagation();
-              onRemove?.(item.value);
+              onRemove(item.value);
             }}
           >
             {item.kind === "child" && parentAccentClassName ? (

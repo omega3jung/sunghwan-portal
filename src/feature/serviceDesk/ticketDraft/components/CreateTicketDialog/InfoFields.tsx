@@ -230,7 +230,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
 };
 
 const ReadOnlyValue = ({ children }: { children: string }) => (
-  <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm break-words">
+  <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm wrap-break-word">
     {children}
   </div>
 );

@@ -58,7 +58,7 @@ export const TicketSearchCriteria = (props: FilterProps) => {
         }
       />
 
-      <SheetContent className="w-full border-l p-0 shadow-2xl sm:w-[28rem] sm:max-w-none">
+      <SheetContent className="w-full border-l p-0 shadow-2xl sm:w-md sm:max-w-none">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex h-full flex-col"

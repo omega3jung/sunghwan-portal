@@ -274,17 +274,20 @@ Work Session은 Ticket Action과 분리됩니다. 현재 route surface는 list/c
 
 ## 기술 스택
 
-- Framework: `next@14` App Router
-- Language: `typescript`, `react@18`
-- UI: `tailwindcss`, `shadcn/ui`, `radix-ui`, `lucide-react`
+- Runtime: `node@24`, `npm@11`
+- Framework: `next@16` App Router, `react@19`
+- Language: `typescript@5`
+- UI: `tailwindcss@4`, `@base-ui/react` 기반 `shadcn/ui` (`shadcn@4`), `lucide-react`
 - Authentication: `next-auth@4`, Credentials Provider, JWT session strategy
-- Database / Backend Direction: server-only access와 Supabase 관련 infrastructure를 통한 PostgreSQL
-- Data Fetching: `@tanstack/react-query`, `axios`
-- Form: `react-hook-form`, `zod`
-- Client State: `zustand`
-- Table / Chart / Editor: `@tanstack/react-table`, `recharts`, `tiptap`
-- Testing / Tooling: `vitest`, `jest`, `@testing-library/*`, `playwright`, `storybook`
-- Deployment: `vercel`
+- Database / Backend: `pg`, `@supabase/supabase-js`, Next.js Route Handler를 통한 PostgreSQL
+- Data Fetching: `@tanstack/react-query@5`, `axios`
+- Forms / Validation: `react-hook-form@7`, `zod@4`, `@hookform/resolvers`
+- Client State: `zustand@5`
+- Internationalization: `i18next`, `react-i18next`
+- Table / Chart / Editor: `@tanstack/react-table@8`, `recharts@3`, `tiptap@3`
+- Interaction: `dnd-kit`, `embla-carousel-react`, `react-querybuilder`
+- Testing / Tooling: `eslint@9`, `vitest@4`, Testing Library, Playwright, Storybook 10
+- Deployment: Vercel Analytics, Next.js standalone output
 
 ## 아키텍처 개요
 

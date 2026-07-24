@@ -110,7 +110,7 @@ function OwnerTenantPage() {
       />
 
       <div
-        className="grid grid-cols-1 gap-y-6 pt-4 lg:grid-cols-[minmax(0,_30%)_28px_1.5rem_minmax(0,_30%)_1.5rem_minmax(0,_1fr)] lg:gap-x-0"
+        className="grid grid-cols-1 gap-y-6 pt-4 lg:grid-cols-[minmax(0,30%)_28px_1.5rem_minmax(0,30%)_1.5rem_minmax(0,1fr)] lg:gap-x-0"
         style={{ "--settings-offset": "18rem" } as React.CSSProperties}
       >
         <CompanyList

@@ -278,7 +278,7 @@ export function UserMenu({
               </DropdownMenuGroup>
             )}
             <DropdownMenuItem
-              className="text-red-600/80 focus:text-red-500 data-[highlighted]:text-red-500"
+              className="text-red-600/80 focus:text-red-500 data-highlighted:text-red-500"
               onClick={() => signOut()}
             >
               <LogOut />

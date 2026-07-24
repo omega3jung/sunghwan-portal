@@ -361,7 +361,7 @@ const Component = (
       {/* The calendar is responsible for picking actual dates, while the parent stores the result. */}
       <PopoverContent
         anchor={selectTriggerRef}
-        className="z-[51] w-auto p-0"
+        className="z-51 w-auto p-0"
         align="start"
       >
         <Calendar

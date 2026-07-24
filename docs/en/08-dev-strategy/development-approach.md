@@ -24,15 +24,15 @@ Functional completeness comes before optimization and abstraction
 
 ## Background
 
-The project is based on an existing system previously implemented in a legacy environment
-and is being migrated and improved using **Next.js 14 App Router**.
+The project is based on an existing system previously implemented in a legacy environment,
+has been migrated to **Next.js 16 App Router**, and continues to be improved on that foundation.
 
 ---
 
 ### Legacy Context
 
 ```txt id="legacy-context"
-Oracle JET -> Next.js v12 -> Next.js 14 App Router
+Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 ```
 
 ---
@@ -112,7 +112,7 @@ Refactoring and design improvements should happen continuously as the system bec
 
 - Improve naming and modularity
 - Strengthen shared patterns
-- Align implementation with Next.js 14 conventions
+- Align implementation with Next.js 16 conventions
 
 ---
 

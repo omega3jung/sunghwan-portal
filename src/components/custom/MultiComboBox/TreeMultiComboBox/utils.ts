@@ -2,6 +2,7 @@ import type { MultiComboBoxItem } from "../types";
 import { EMPTY_OPTION_TEXT } from "../utils";
 import type {
   TreeCheckState,
+  TreeMultiComboBoxNode,
   TreeMultiComboBoxOption,
   TreeMultiComboBoxOptionIndex,
   TreeMultiComboBoxSelectedItem,
@@ -12,9 +13,6 @@ const normalize = (value: string) => value.trim().toUpperCase();
 
 export { EMPTY_OPTION_TEXT };
 
-/**
- * Creates an index for fast parent and child lookup.
- */
 export const createTreeOptionIndex = (
   options: TreeMultiComboBoxOption[],
 ): TreeMultiComboBoxOptionIndex => {
@@ -31,21 +29,9 @@ export const createTreeOptionIndex = (
     }
   }
 
-  return {
-    parentMap,
-    childMap,
-    childToParentMap,
-  };
+  return { parentMap, childMap, childToParentMap };
 };
 
-/**
- * Creates a value-keyed palette order map for trigger badges.
- *
- * Rules for the current 2-depth tree:
- * - Parent items use the top-level parent order only.
- * - Child items start at `parent palette index + 1`
- *   and continue in their own sibling order.
- */
 export const createTreeBadgeOrderMap = (
   options: TreeMultiComboBoxOption[],
 ) => {
@@ -62,42 +48,20 @@ export const createTreeBadgeOrderMap = (
   return orderMap;
 };
 
-/**
- * Flattens parent and child items into a single array.
- * Useful for search and rendering helpers.
- */
-export const flattenTreeOptions = (options: TreeMultiComboBoxOption[]) => {
-  return options.flatMap((parent) => [parent, ...parent.children]);
+export const flattenTreeOptions = (
+  options: TreeMultiComboBoxOption[],
+): TreeMultiComboBoxNode[] => {
+  return options.flatMap<TreeMultiComboBoxNode>((parent) => [
+    { ...parent, kind: "parent" },
+    ...parent.children.map((child) => ({
+      ...child,
+      kind: "child" as const,
+      parentValue: parent.value,
+    })),
+  ]);
 };
 
-export const isParentValue = (
-  value: string,
-  index: TreeMultiComboBoxOptionIndex,
-): boolean => {
-  return index.parentMap.has(value);
-};
-
-export const isChildValue = (
-  value: string,
-  index: TreeMultiComboBoxOptionIndex,
-): boolean => {
-  return index.childMap.has(value);
-};
-
-export const getParentByChildValue = (
-  childValue: string,
-  index: TreeMultiComboBoxOptionIndex,
-): TreeMultiComboBoxOption | undefined => {
-  return index.childToParentMap.get(childValue);
-};
-
-export const getChildValues = (
-  parent: TreeMultiComboBoxOption,
-): string[] => {
-  return parent.children.map((child) => child.value);
-};
-
-export const getEnabledChildValues = (
+const getEnabledChildValues = (
   parent: TreeMultiComboBoxOption,
 ): string[] => {
   return parent.children
@@ -105,40 +69,17 @@ export const getEnabledChildValues = (
     .map((child) => child.value);
 };
 
-export const isParentDisabled = (
-  parent: TreeMultiComboBoxOption,
-): boolean => {
-  return Boolean(parent.disabled);
-};
-
-export const isLeafParent = (parent: TreeMultiComboBoxOption): boolean => {
-  return parent.children.length === 0;
-};
-
-export const isChildDisabled = (
+const isChildDisabled = (
   childValue: string,
   index: TreeMultiComboBoxOptionIndex,
 ): boolean => {
   const child = index.childMap.get(childValue);
+  const parent = index.childToParentMap.get(childValue);
 
-  if (!child) {
-    return true;
-  }
-
-  const parent = getParentByChildValue(childValue, index);
-
-  return Boolean(child.disabled || parent?.disabled);
+  return !child || Boolean(child.disabled || parent?.disabled);
 };
 
-/**
- * Resolves the set of selected child values under a given parent.
- * Uses the external value array as the source of truth.
- *
- * Rules:
- * - If the parent value exists, all enabled children are considered selected.
- * - If child values exist, only those children are considered selected.
- */
-export const getSelectedChildValuesForParent = (
+const getSelectedChildValuesForParent = (
   parent: TreeMultiComboBoxOption,
   values: TreeMultiComboBoxValue,
 ): string[] => {
@@ -153,47 +94,30 @@ export const getSelectedChildValuesForParent = (
     .map((child) => child.value);
 };
 
-export const getSelectedChildCountForParent = (
-  parent: TreeMultiComboBoxOption,
-  values: TreeMultiComboBoxValue,
-): number => {
-  return getSelectedChildValuesForParent(parent, values).length;
-};
-
-export const getTotalEnabledChildCountForParent = (
-  parent: TreeMultiComboBoxOption,
-): number => {
-  return getEnabledChildValues(parent).length;
-};
-
-/**
- * Calculates the checkbox state for a parent row.
- */
 export const getParentCheckState = (
   parent: TreeMultiComboBoxOption,
   values: TreeMultiComboBoxValue,
 ): TreeCheckState => {
-  if (isLeafParent(parent)) {
+  if (parent.children.length === 0) {
     return values.includes(parent.value) ? "checked" : "unchecked";
   }
 
-  const totalEnabledChildCount = getTotalEnabledChildCountForParent(parent);
+  const totalChildCount = getEnabledChildValues(parent).length;
 
-  if (totalEnabledChildCount === 0) {
+  if (totalChildCount === 0) {
     return "unchecked";
   }
 
-  const selectedChildCount = getSelectedChildCountForParent(parent, values);
+  const selectedChildCount = getSelectedChildValuesForParent(
+    parent,
+    values,
+  ).length;
 
   if (selectedChildCount === 0) {
     return "unchecked";
   }
 
-  if (selectedChildCount === totalEnabledChildCount) {
-    return "checked";
-  }
-
-  return "partial";
+  return selectedChildCount === totalChildCount ? "checked" : "partial";
 };
 
 export const isChildSelected = (
@@ -201,9 +125,7 @@ export const isChildSelected = (
   values: TreeMultiComboBoxValue,
   index: TreeMultiComboBoxOptionIndex,
 ): boolean => {
-  const child = index.childMap.get(childValue);
-
-  if (!child || isChildDisabled(childValue, index)) {
+  if (isChildDisabled(childValue, index)) {
     return false;
   }
 
@@ -211,79 +133,117 @@ export const isChildSelected = (
     return true;
   }
 
-  const parent = getParentByChildValue(childValue, index);
+  const parent = index.childToParentMap.get(childValue);
 
   return Boolean(parent && values.includes(parent.value));
 };
 
-export const isParentSelected = (
-  parent: TreeMultiComboBoxOption,
+export const normalizeTreeValues = (
   values: TreeMultiComboBoxValue,
-): boolean => {
-  return getParentCheckState(parent, values) === "checked";
+  options: TreeMultiComboBoxOption[],
+): TreeMultiComboBoxValue => {
+  const index = createTreeOptionIndex(options);
+  const nextValueSet = new Set<string>();
+
+  for (const value of values) {
+    const parent = index.parentMap.get(value);
+
+    if (parent) {
+      if (!parent.disabled) {
+        nextValueSet.add(value);
+      }
+
+      continue;
+    }
+
+    if (index.childMap.has(value) && !isChildDisabled(value, index)) {
+      nextValueSet.add(value);
+    }
+  }
+
+  for (const parent of options) {
+    const enabledChildValues = getEnabledChildValues(parent);
+
+    if (parent.disabled) {
+      nextValueSet.delete(parent.value);
+
+      for (const child of parent.children) {
+        nextValueSet.delete(child.value);
+      }
+
+      continue;
+    }
+
+    if (parent.children.length === 0) {
+      continue;
+    }
+
+    if (nextValueSet.has(parent.value)) {
+      for (const childValue of enabledChildValues) {
+        nextValueSet.delete(childValue);
+      }
+
+      continue;
+    }
+
+    if (
+      enabledChildValues.length > 0 &&
+      enabledChildValues.every((childValue) =>
+        nextValueSet.has(childValue),
+      )
+    ) {
+      for (const childValue of enabledChildValues) {
+        nextValueSet.delete(childValue);
+      }
+
+      nextValueSet.add(parent.value);
+    }
+  }
+
+  return [...nextValueSet];
 };
 
-/**
- * Toggles a parent selection.
- *
- * Rules:
- * - If already checked, deselect it.
- * - If unchecked or partial, select the full parent branch.
- * - Remove child values under that parent and normalize to the parent value.
- */
-export const toggleParentValue = (
-  parentKey: string,
+const toggleParentValue = (
+  parentValue: string,
   currentValues: TreeMultiComboBoxValue,
   options: TreeMultiComboBoxOption[],
 ): TreeMultiComboBoxValue => {
   const index = createTreeOptionIndex(options);
-  const parent = index.parentMap.get(parentKey);
+  const parent = index.parentMap.get(parentValue);
 
-  if (!parent || isParentDisabled(parent)) {
+  if (!parent || parent.disabled) {
     return currentValues;
   }
 
-  const currentCheckState = getParentCheckState(parent, currentValues);
-  const childValues = getChildValues(parent);
+  const childValues = parent.children.map((child) => child.value);
   const nextValues = currentValues.filter(
-    (value) => value !== parentKey && !childValues.includes(value),
+    (value) => value !== parentValue && !childValues.includes(value),
   );
 
-  if (currentCheckState === "checked") {
+  if (getParentCheckState(parent, currentValues) === "checked") {
     return normalizeTreeValues(nextValues, options);
   }
 
-  return normalizeTreeValues([...nextValues, parentKey], options);
+  return normalizeTreeValues([...nextValues, parentValue], options);
 };
 
-/**
- * Toggles a child selection.
- *
- * Rules:
- * - If the parent is currently selected, remove that compressed parent state
- *   and keep only the clicked child under that branch.
- * - If all enabled children become selected, collapse them into the parent value.
- */
-export const toggleChildValue = (
+const toggleChildValue = (
   childValue: string,
   currentValues: TreeMultiComboBoxValue,
   options: TreeMultiComboBoxOption[],
 ): TreeMultiComboBoxValue => {
   const index = createTreeOptionIndex(options);
-  const child = index.childMap.get(childValue);
-  const parent = getParentByChildValue(childValue, index);
+  const parent = index.childToParentMap.get(childValue);
 
-  if (!child || !parent || isChildDisabled(childValue, index)) {
+  if (!parent || isChildDisabled(childValue, index)) {
     return currentValues;
   }
 
-  const strippedValues = currentValues.filter((value) => {
-    if (value === parent.value) {
-      return false;
-    }
-
-    return !parent.children.some((item) => item.value === value);
-  });
+  const strippedValues = currentValues.filter(
+    (value) =>
+      value !== parent.value &&
+      !parent.children.some((child) => child.value === value),
+  );
 
   if (currentValues.includes(parent.value)) {
     return normalizeTreeValues([...strippedValues, childValue], options);
@@ -299,124 +259,38 @@ export const toggleChildValue = (
     selectedChildValues.add(childValue);
   }
 
-  const nextValues = [...strippedValues, ...selectedChildValues];
-
-  return normalizeTreeValues(nextValues, options);
+  return normalizeTreeValues(
+    [...strippedValues, ...selectedChildValues],
+    options,
+  );
 };
 
-/**
- * Toggles a single value without requiring the caller
- * to distinguish between parent and child nodes.
- */
 export const toggleTreeValue = (
-  value: string,
+  targetValue: string,
   currentValues: TreeMultiComboBoxValue,
   options: TreeMultiComboBoxOption[],
 ): TreeMultiComboBoxValue => {
   const index = createTreeOptionIndex(options);
 
-  if (isParentValue(value, index)) {
-    return toggleParentValue(value, currentValues, options);
+  if (index.parentMap.has(targetValue)) {
+    return toggleParentValue(targetValue, currentValues, options);
   }
 
-  if (isChildValue(value, index)) {
-    return toggleChildValue(value, currentValues, options);
+  if (index.childMap.has(targetValue)) {
+    return toggleChildValue(targetValue, currentValues, options);
   }
 
   return currentValues;
 };
 
-/**
- * Normalizes a value array according to tree semantics.
- *
- * Normalization rules:
- * - Remove values that do not exist.
- * - Remove disabled children.
- * - Remove disabled parents.
- * - Keep leaf parents as standalone values.
- * - Remove child values when their parent value is selected.
- * - Collapse fully selected enabled children into a single parent value.
- * - Remove duplicates.
- */
-export const normalizeTreeValues = (
-  values: TreeMultiComboBoxValue,
-  options: TreeMultiComboBoxOption[],
-): TreeMultiComboBoxValue => {
-  const index = createTreeOptionIndex(options);
-  const nextValueSet = new Set<string>();
-
-  for (const value of values) {
-    if (isParentValue(value, index)) {
-      const parent = index.parentMap.get(value);
-
-      if (parent && !isParentDisabled(parent)) {
-        nextValueSet.add(value);
-      }
-
-      continue;
-    }
-
-    if (isChildValue(value, index) && !isChildDisabled(value, index)) {
-      nextValueSet.add(value);
-    }
-  }
-
-  for (const parent of options) {
-    const enabledChildValues = getEnabledChildValues(parent);
-
-    if (isParentDisabled(parent)) {
-      nextValueSet.delete(parent.value);
-
-      for (const childValue of enabledChildValues) {
-        nextValueSet.delete(childValue);
-      }
-
-      continue;
-    }
-
-    if (isLeafParent(parent)) {
-      continue;
-    }
-
-    if (nextValueSet.has(parent.value)) {
-      for (const childValue of enabledChildValues) {
-        nextValueSet.delete(childValue);
-      }
-
-      continue;
-    }
-
-    const areAllEnabledChildrenSelected = enabledChildValues.every(
-      (childValue) => nextValueSet.has(childValue),
-    );
-
-    if (areAllEnabledChildrenSelected) {
-      for (const childValue of enabledChildValues) {
-        nextValueSet.delete(childValue);
-      }
-
-      nextValueSet.add(parent.value);
-    }
-  }
-
-  return [...nextValueSet];
-};
-
-/**
- * Builds the selected item list used by trigger badges.
- *
- * Rules:
- * - A fully selected parent is rendered as a single parent badge.
- * - Partial child selections are rendered as child badges.
- */
 export const getSelectedTreeItems = (
   values: TreeMultiComboBoxValue,
   options: TreeMultiComboBoxOption[],
 ): TreeMultiComboBoxSelectedItem[] => {
-  const normalizedValues = normalizeTreeValues(values, options);
   const index = createTreeOptionIndex(options);
 
-  return normalizedValues.flatMap<TreeMultiComboBoxSelectedItem>((value) => {
+  return normalizeTreeValues(values, options).flatMap<TreeMultiComboBoxSelectedItem>(
+    (value) => {
     const parent = index.parentMap.get(value);
 
     if (parent) {
@@ -438,88 +312,56 @@ export const getSelectedTreeItems = (
 
     return [
       {
+        ...child,
         kind: "child" as const,
-        value: child.value,
-        label: child.label,
-        disabled: child.disabled,
-        parentValue: getParentByChildValue(child.value, index)?.value ?? "",
+        parentValue: index.childToParentMap.get(value)?.value ?? "",
       },
     ];
-  });
+    },
+  );
 };
 
-/**
- * Creates a filter function for `Command`.
- *
- * Rules:
- * - Parent rows match against parent label and value.
- * - Child rows match against child label/value and parent label/value.
- *
- * For example, searching for "Hardware" also exposes children under "Hardware".
- */
-export const createTreeCommandFilter = (options: TreeMultiComboBoxOption[]) => {
+export const createTreeComboboxFilter = (
+  options: TreeMultiComboBoxOption[],
+) => {
   const index = createTreeOptionIndex(options);
 
-  return (itemValue: string, search: string) => {
+  return (item: TreeMultiComboBoxNode, search: string): boolean => {
     const normalizedSearch = normalize(search);
 
     if (!normalizedSearch) {
-      return 1;
+      return true;
     }
 
-    const parent = index.parentMap.get(itemValue);
-
-    if (parent) {
-      return normalize(parent.label).includes(normalizedSearch) ||
-        normalize(parent.value).includes(normalizedSearch)
-        ? 1
-        : 0;
+    if (
+      normalize(item.label).includes(normalizedSearch) ||
+      normalize(item.value).includes(normalizedSearch)
+    ) {
+      return true;
     }
 
-    const child = index.childMap.get(itemValue);
-
-    if (!child) {
-      return 0;
+    if (item.kind === "parent") {
+      return false;
     }
 
-    const childParent = getParentByChildValue(child.value, index);
+    const parent = index.parentMap.get(item.parentValue);
 
-    return normalize(child.label).includes(normalizedSearch) ||
-      normalize(child.value).includes(normalizedSearch) ||
-      normalize(childParent?.label ?? "").includes(normalizedSearch) ||
-      normalize(childParent?.value ?? "").includes(normalizedSearch)
-      ? 1
-      : 0;
+    return Boolean(
+      parent &&
+        (normalize(parent.label).includes(normalizedSearch) ||
+          normalize(parent.value).includes(normalizedSearch)),
+    );
   };
 };
 
-/**
- * Returns derived state used to render a parent row.
- */
 export const getParentRenderState = (
   parent: TreeMultiComboBoxOption,
   values: TreeMultiComboBoxValue,
 ) => {
   return {
-    item: parent,
     checkState: getParentCheckState(parent, values),
-    selectedChildCount: getSelectedChildCountForParent(parent, values),
-    totalChildCount: getTotalEnabledChildCountForParent(parent),
-    disabled: isParentDisabled(parent),
-  };
-};
-
-/**
- * Returns derived state used to render a child row.
- */
-export const getChildRenderState = (
-  child: MultiComboBoxItem,
-  values: TreeMultiComboBoxValue,
-  index: TreeMultiComboBoxOptionIndex,
-) => {
-  return {
-    item: child,
-    selected: isChildSelected(child.value, values, index),
-    disabled: isChildDisabled(child.value, index),
+    selectedChildCount: getSelectedChildValuesForParent(parent, values).length,
+    totalChildCount: getEnabledChildValues(parent).length,
+    disabled: Boolean(parent.disabled),
   };
 };

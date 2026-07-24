@@ -62,7 +62,7 @@ export function TicketSummary({ ticket, requesterName }: TicketSummaryProps) {
         </aside>
 
         <section className="min-w-0 space-y-3">
-          <h1 className="max-w-full break-words text-xl font-semibold leading-tight tracking-[-0.01em] sm:text-2xl">
+          <h1 className="max-w-full wrap-break-word text-xl font-semibold leading-tight tracking-[-0.01em] sm:text-2xl">
             {ticket.subject}
           </h1>
 
@@ -99,7 +99,7 @@ export function TicketSummary({ ticket, requesterName }: TicketSummaryProps) {
           </ul>
 
           {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-            <p className="break-words text-sm text-muted-foreground">
+            <p className="wrap-break-word text-sm text-muted-foreground">
               <Link
                 className="text-primary underline-offset-4 hover:underline"
                 href={mergedIntoTicketHref}
@@ -151,10 +151,10 @@ export function DateStack({ label, value }: DateStackProps) {
 
       {parts ? (
         <div className="leading-tight">
-          <p className="break-words text-sm font-medium text-foreground">
+          <p className="wrap-break-word text-sm font-medium text-foreground">
             {parts.date}
           </p>
-          <p className="break-words text-sm text-muted-foreground">
+          <p className="wrap-break-word text-sm text-muted-foreground">
             {parts.time}
           </p>
         </div>

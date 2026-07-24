@@ -92,10 +92,10 @@ function ActivityPreview({
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground/80">
             {label}
           </p>
-          <p className="break-words text-sm font-medium leading-5 text-foreground/90">
+          <p className="wrap-break-word text-sm font-medium leading-5 text-foreground/90">
             {value}
           </p>
-          <p className="break-words text-xs leading-5 text-muted-foreground/75">
+          <p className="wrap-break-word text-xs leading-5 text-muted-foreground/75">
             {meta || "-"}
           </p>
         </div>

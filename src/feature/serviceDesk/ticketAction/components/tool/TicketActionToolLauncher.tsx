@@ -278,10 +278,10 @@ function LauncherButton({
         {actionIcons[action]}
       </div>
       <div className="min-w-0 space-y-1">
-        <p className="break-words font-medium leading-5">
+        <p className="wrap-break-word font-medium leading-5">
           {t(getTicketActionModeLabelKey(action))}
         </p>
-        <p className="break-words text-sm text-muted-foreground">
+        <p className="wrap-break-word text-sm text-muted-foreground">
           {t(`actionTool.launcher.${action}`)}
         </p>
       </div>

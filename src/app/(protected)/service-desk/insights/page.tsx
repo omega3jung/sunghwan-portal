@@ -610,10 +610,10 @@ export default function ServiceDeskInsightsPage() {
         </div>
       </div>
 
-      <section className="z-20 rounded-md bg-background/95 pb-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:sticky md:top-0 md:pb-3">
+      <section className="z-20 rounded-md bg-background/95 pb-2 backdrop-blur supports-backdrop-filter:bg-background/80 md:sticky md:top-0 md:pb-3">
         <div className="flex flex-wrap items-start justify-between gap-1.5 text-xs text-muted-foreground sm:gap-2">
-          <span className="min-w-0 break-words">{chartBaseDescription}</span>
-          <span className="min-w-0 break-words">
+          <span className="min-w-0 wrap-break-word">{chartBaseDescription}</span>
+          <span className="min-w-0 wrap-break-word">
             {t("insights.chartSummaryDescription")}
           </span>
         </div>

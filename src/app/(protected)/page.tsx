@@ -271,7 +271,7 @@ export default function ProtectedPage() {
   return (
     <main className="mx-auto flex min-h-full w-full max-w-[1440px] flex-col gap-6 p-4 md:p-6">
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <Card className="overflow-hidden border-border/70 bg-gradient-to-br from-background via-background to-primary/5">
+        <Card className="overflow-hidden border-border/70 bg-linear-to-br from-background via-background to-primary/5">
           <CardHeader className="gap-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-primary">

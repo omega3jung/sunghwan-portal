@@ -84,7 +84,7 @@ export function ReviewStep() {
         <FieldLabel>{t("field.description", { ns: NS.common })}</FieldLabel>
         <div className="max-w-full overflow-x-auto">
           <div
-            className="prose prose-sm min-h-52 min-w-0 max-w-none break-words rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
+            className="prose prose-sm min-h-52 min-w-0 max-w-none wrap-break-word rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
             dangerouslySetInnerHTML={{
               __html: values.body || "<p>-</p>",
             }}
@@ -215,7 +215,7 @@ function formatEmailSummary(
 
 function ReadOnlyValue({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm break-words">
+    <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm wrap-break-word">
       {children}
     </div>
   );

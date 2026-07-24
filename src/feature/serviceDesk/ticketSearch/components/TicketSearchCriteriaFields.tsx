@@ -91,7 +91,7 @@ export function TicketSearchCriteriaFields({
         <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
           {t("searchCriteria.primaryFilters")}
         </h3>
-        <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/[0.18] p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/18 p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <FieldGroup className="gap-5">
             <Field>
               <FieldLabel htmlFor="ticket-search-select-category">
