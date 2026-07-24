@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { ReactElement } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
@@ -87,7 +88,7 @@ type CriteriaPeriodRange =
 
 type OptionItem<T> = {
   value: T;
-  icon: JSX.Element;
+  icon: ReactElement;
 };
 
 const viewOption: OptionItem<ViewOption>[] = [

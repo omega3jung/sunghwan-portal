@@ -11,7 +11,7 @@ type FileAttachmentDropzoneProps = {
   maxCount: number;
   onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
   onDrop: (files: FileList) => void;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
   accept?: string[];
 };
 

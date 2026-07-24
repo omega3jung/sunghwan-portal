@@ -8,7 +8,7 @@ import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
 import { AppUser } from "@/domain/user";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   // demo mode
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function POST(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as AppUser;
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function PUT(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as AppUser;

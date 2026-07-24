@@ -7,7 +7,7 @@ import {
   UserKey,
   UserStar,
 } from "lucide-react";
-import { createElement } from "react";
+import { createElement, type ReactElement } from "react";
 
 import { ACCESS_LEVEL, AccessLevel, Role } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
@@ -28,7 +28,7 @@ const resolveAccessLevel = (permission: AccessLevel | Role): AccessLevel => {
 
 export const getPermissionIcon = (
   permission: AccessLevel | Role,
-): JSX.Element => {
+): ReactElement => {
   const accessLevel = resolveAccessLevel(permission);
   const Icon = permissionIconByAccessLevel[accessLevel] ?? Contact;
 

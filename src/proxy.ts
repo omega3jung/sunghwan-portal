@@ -1,11 +1,11 @@
-// middleware.ts
+// proxy.ts
 import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 import { ENVIRONMENT } from "@/lib/config/environment";
 import { isPublicRoute } from "@/lib/config/routing";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const MAX_DURATION = 24 * 60 * 1000; // 24hours.
 
@@ -56,15 +56,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ⛔ Internal protected page movement is not blocked by middleware.
-  const isProtectedRoot =
-    pathname === `${ENVIRONMENT.BASE_PATH}` ||
-    pathname === `${ENVIRONMENT.BASE_PATH}/`;
-
-  if (!isProtectedRoot) {
-    return NextResponse.next();
-  }
-
   // ✅ JWT-based login check (v4 standard)
   let token = null;
 
@@ -74,7 +65,7 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
   } catch (e) {
-    console.error("[middleware] getToken failed", e);
+    console.error("[proxy] getToken failed", e);
   }
 
   if (token?.accessToken) {

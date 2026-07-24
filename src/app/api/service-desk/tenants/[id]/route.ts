@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);
 
-    const { id } = context.params;
+    const { id } = await context.params;
     await resolveAuthorizedSettingsTenant({
       request,
       requestedTenantId: id,
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);
-    const { id } = context.params;
+    const { id } = await context.params;
     const { principal } =
       await resolveServiceDeskSettingsAdminContext(request);
 
@@ -125,7 +125,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);
-    const { id } = context.params;
+    const { id } = await context.params;
     const { principal } =
       await resolveServiceDeskSettingsAdminContext(request);
 

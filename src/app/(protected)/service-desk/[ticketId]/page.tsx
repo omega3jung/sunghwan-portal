@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -43,13 +43,16 @@ import {
 import { TicketHeader } from "../components/TicketHeader";
 import { TicketRecentActivity } from "../components/TicketRecentActivity";
 
-type Props = {
-  params: {
+type ServiceDeskTicketDetailPageProps = {
+  params: Promise<{
     ticketId: string;
-  };
+  }>;
 };
 
-export default function ServiceDeskTicketDetailPage({ params }: Props) {
+export default function ServiceDeskTicketDetailPage({
+  params,
+}: ServiceDeskTicketDetailPageProps) {
+  const { ticketId } = use(params);
   const router = useRouter();
   const [isDetailsAsideOpen, setIsDetailsAsideOpen] = useState(true);
   const [isHistorySheetOpen, setIsHistorySheetOpen] = useState(false);
@@ -60,10 +63,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   const effectiveCompanyId = current.user?.companyId;
 
   const { data: ticket, isLoading: isTicketLoading } =
-    useServiceDeskTicketQuery(params.ticketId);
+    useServiceDeskTicketQuery(ticketId);
 
   useNavigationBarCurrentLabel(
-    ticket?.id === params.ticketId ? ticket.ticketNumber : null,
+    ticket?.id === ticketId ? ticket.ticketNumber : null,
   );
 
   useAutoStartAssignedTicketOnView({
@@ -71,10 +74,10 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
   });
 
   const { data: ticketActions, isLoading: isTicketActionsLoading } =
-    useServiceDeskTicketActionListQuery(params.ticketId);
+    useServiceDeskTicketActionListQuery(ticketId);
 
   const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
-    useServiceDeskTicketHistoryListQuery(params.ticketId);
+    useServiceDeskTicketHistoryListQuery(ticketId);
   const categoryListParams = useMemo<DbParams | undefined>(() => {
     if (effectiveCompanyId === undefined) return undefined;
 
@@ -318,7 +321,7 @@ export default function ServiceDeskTicketDetailPage({ params }: Props) {
                     </h2>
 
                     <TicketActionTool
-                      ticketId={params.ticketId}
+                      ticketId={ticketId}
                       ticket={ticket}
                       users={users}
                       categories={categories}

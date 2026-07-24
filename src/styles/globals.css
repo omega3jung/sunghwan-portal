@@ -1,11 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import "./themes/emerald.css";
 @import "./themes/ruby.css";
 @import "./themes/sapphire.css";
 @import "./themes/topaz.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer utilities {
   .text-balance {

@@ -23,7 +23,7 @@ export async function POST(
   request: NextRequest,
   context: TicketIdRouteContext,
 ) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
 

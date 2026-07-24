@@ -18,7 +18,7 @@ import {
 } from "@/feature/serviceDesk/ticketDraft/forms";
 
 export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const currentUserName = await getCurrentEmployeeUserName(request);
 
   if (currentUserName === null) {
@@ -64,7 +64,7 @@ export async function DELETE(
   request: NextRequest,
   context: TicketIdRouteContext,
 ) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const currentUserName = await getCurrentEmployeeUserName(request);
 
   if (currentUserName === null) {

@@ -36,7 +36,6 @@ type CategoryScopedItem = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __SP_LOCAL_DEMO_SETTINGS_STATE__: LocalDemoSettingsState | undefined;
 }
 
