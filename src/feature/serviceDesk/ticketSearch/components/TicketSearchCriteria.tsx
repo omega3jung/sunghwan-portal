@@ -1,4 +1,5 @@
 import { Filter, Search } from "lucide-react";
+import type { ReactElement } from "react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ import type { TicketSearchCriteriaFormValues } from "../forms";
 import { TicketSearchCriteriaFields } from "./TicketSearchCriteriaFields";
 
 type FilterProps = {
-  trigger?: React.ReactNode;
+  trigger?: ReactElement;
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
   categories: MainCategory[];
   requesters: ImageValueLabel[];
@@ -39,8 +40,9 @@ export const TicketSearchCriteria = (props: FilterProps) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        {props.trigger ?? (
+      <SheetTrigger
+        render={
+          props.trigger ?? (
           <Button
             type="button"
             variant="outline"
@@ -52,10 +54,11 @@ export const TicketSearchCriteria = (props: FilterProps) => {
             <Filter />
             {t("action.searchCriteria")}
           </Button>
-        )}
-      </SheetTrigger>
+          )
+        }
+      />
 
-      <SheetContent size="md" className="w-full border-l p-0 shadow-2xl">
+      <SheetContent className="w-full border-l p-0 shadow-2xl sm:w-[28rem] sm:max-w-none">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex h-full flex-col"

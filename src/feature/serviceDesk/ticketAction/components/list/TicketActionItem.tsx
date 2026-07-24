@@ -58,22 +58,24 @@ export function TicketActionItem({
               dateLocale={dateLocale}
             />
 
-            <CollapsibleTrigger asChild>
-              <Button
+            <CollapsibleTrigger
+              render={
+                <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="self-end rounded-md text-muted-foreground hover:bg-muted/40 hover:text-foreground md:self-start [&[data-state=open]>svg]:rotate-180"
-              >
+                className="self-end rounded-md text-muted-foreground hover:bg-muted/40 hover:text-foreground md:self-start data-open:[&>svg]:rotate-180"
+                />
+              }
+            >
                 <ChevronDown className="h-4 w-4 transition-transform" />
                 <span className="sr-only">
                   {t("actionTool.list.toggleDetails")}
                 </span>
-              </Button>
             </CollapsibleTrigger>
           </div>
 
-          <CollapsibleContent className="space-y-4 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+          <CollapsibleContent className="space-y-4 overflow-hidden data-closed:animate-accordion-up data-open:animate-accordion-down">
             <TicketActionBody content={action.content} />
             <TicketAttachmentList files={files} images={images} />
           </CollapsibleContent>

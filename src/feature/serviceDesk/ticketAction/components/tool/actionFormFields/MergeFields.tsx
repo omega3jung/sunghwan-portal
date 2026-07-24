@@ -119,7 +119,11 @@ export function MergeFields({
       ) : (
         <Select
           value={targetTicketId}
-          onValueChange={onTargetTicketIdChange}
+          onValueChange={(value) => {
+            if (value !== null) {
+              onTargetTicketIdChange(value);
+            }
+          }}
           disabled={!hasMergeTicketList}
         >
           <SelectTrigger id="ticket-action-merge-target">

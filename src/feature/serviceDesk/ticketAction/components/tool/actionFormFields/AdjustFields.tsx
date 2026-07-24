@@ -69,7 +69,14 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
     <>
       <Field data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.priority", { ns: NS.common })}</FieldLabel>
-        <Select value={priority} onValueChange={onPriorityChange}>
+        <Select
+          value={priority}
+          onValueChange={(value) => {
+            if (value !== null) {
+              onPriorityChange(value);
+            }
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder={t("field.priority", { ns: NS.common })} />
           </SelectTrigger>
@@ -85,7 +92,14 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
 
       <Field data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.riskLevel", { ns: NS.common })}</FieldLabel>
-        <Select value={riskLevel} onValueChange={onRiskLevelChange}>
+        <Select
+          value={riskLevel}
+          onValueChange={(value) => {
+            if (value !== null) {
+              onRiskLevelChange(value);
+            }
+          }}
+        >
           <SelectTrigger>
             <SelectValue
               placeholder={t("field.riskLevel", { ns: NS.common })}

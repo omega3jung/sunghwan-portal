@@ -175,15 +175,17 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
             )}
           </Field>
 
-          <CollapsibleTrigger asChild>
-            <Button
+          <CollapsibleTrigger
+            render={
+              <Button
               variant="ghost"
               size="sm"
               className="group h-9 w-full justify-between transition-none hover:bg-accent hover:text-accent-foreground md:w-auto md:justify-start"
-            >
+              />
+            }
+          >
               {t("field.email", { ns: "common" })}
-              <ChevronRight className="transition-transform group-data-[state=open]:rotate-90" />
-            </Button>
+              <ChevronRight className="transition-transform group-data-open:rotate-90" />
           </CollapsibleTrigger>
         </div>
 

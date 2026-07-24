@@ -64,14 +64,12 @@ export function LeftMenu() {
     return (
       <SidebarMenuItem key={item.id}>
         <SidebarMenuButton
-          asChild
+          render={<Link href={item.path} />}
           tooltip={title}
           isActive={isActivePath(item.path)}
         >
-          <Link href={item.path}>
-            <item.icon />
-            <span>{title}</span>
-          </Link>
+          <item.icon />
+          <span>{title}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -81,14 +79,12 @@ export function LeftMenu() {
     return (
       <SidebarMenuSubItem key={item.id}>
         <SidebarMenuSubButton
-          asChild
+          render={<Link href={item.path} />}
           isActive={isActivePath(item.path)}
           className="ml-0.5"
         >
-          <Link href={item.path}>
-            <item.icon />
-            <span>{tLocal(item.title)}</span>
-          </Link>
+          <item.icon />
+          <span>{tLocal(item.title)}</span>
         </SidebarMenuSubButton>
       </SidebarMenuSubItem>
     );
@@ -108,12 +104,12 @@ export function LeftMenu() {
           //defaultOpen={isItemActive(item)}
           className="group/sub-collapsible"
         >
-          <CollapsibleTrigger asChild>
-            <SidebarMenuSubButton className="w-full ml-0.5">
+          <CollapsibleTrigger
+            render={<SidebarMenuSubButton className="w-full ml-0.5" />}
+          >
               <item.icon />
               <span>{tLocal(item.title)}</span>
-              <ChevronRight className="ml-auto size-3.5 transition-transform group-data-[state=open]/sub-collapsible:rotate-90" />
-            </SidebarMenuSubButton>
+              <ChevronRight className="ml-auto size-3.5 transition-transform group-data-open/sub-collapsible:rotate-90" />
           </CollapsibleTrigger>
 
           <CollapsibleContent>
@@ -148,16 +144,18 @@ export function LeftMenu() {
         className="group/collapsible"
       >
         <SidebarMenuItem>
-          <CollapsibleTrigger asChild>
-            <SidebarMenuButton
+          <CollapsibleTrigger
+            render={
+              <SidebarMenuButton
               tooltip={title}
               isActive={isItemActive(item)}
               className="w-full"
-            >
+              />
+            }
+          >
               <item.icon />
               <span>{title}</span>
-              <ChevronRight className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
-            </SidebarMenuButton>
+              <ChevronRight className="ml-auto size-4 transition-transform group-data-open/collapsible:rotate-90" />
           </CollapsibleTrigger>
 
           <CollapsibleContent>

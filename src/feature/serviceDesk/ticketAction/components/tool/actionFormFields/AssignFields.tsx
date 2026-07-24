@@ -275,7 +275,14 @@ export function AssignFields({
       {assignmentPhase === "WORK" ? (
         <Field>
           <FieldLabel>{t("field.category", { ns: NS.common })}</FieldLabel>
-          <Select value={categoryId} onValueChange={onCategoryChange}>
+          <Select
+            value={categoryId}
+            onValueChange={(value) => {
+              if (value !== null) {
+                onCategoryChange(value);
+              }
+            }}
+          >
             <SelectTrigger id="ticket-info-select-category">
               <SelectValue
                 placeholder={t("placeholder.select", {

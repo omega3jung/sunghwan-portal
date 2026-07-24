@@ -4,8 +4,8 @@ import { addDays, endOfDay, startOfToday } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import {
@@ -155,7 +155,7 @@ export const useCreateTicketDialog = ({
   );
 
   const handleClose = useCallback(async () => {
-    toast.dismiss(TICKET_DRAFT_TOAST_ID);
+    toast.close(TICKET_DRAFT_TOAST_ID);
     setShouldShowDraftToast(false);
     setOpen(false);
 
@@ -166,12 +166,13 @@ export const useCreateTicketDialog = ({
     const draft = await ticketDraftState.saveDraftNow();
 
     if (draft) {
-      toast.success(
-        t("common.save.success", {
+      toast.add({
+        title: t("common.save.success", {
           ns: NS.message,
           item: t("field.draft", { ns: NS.common }),
         }),
-      );
+        type: "success",
+      });
     }
   }, [isDirty, t, ticketDraftState]);
 
@@ -289,12 +290,13 @@ export const useCreateTicketDialog = ({
       ticketForm.reset(nextValues);
 
       if (invalidFields.size > 0) {
-        toast(
-          `${t("message.loadDraftExceptInvalid")} : ${t("validation.invalidFieldItems", { item: Array.from(invalidFields).join(", ") })}`,
-        );
+        toast.add({
+          title: `${t("message.loadDraftExceptInvalid")} : ${t("validation.invalidFieldItems", { item: Array.from(invalidFields).join(", ") })}`,
+          type: "warning",
+        });
       }
 
-      toast.dismiss(TICKET_DRAFT_TOAST_ID);
+      toast.close(TICKET_DRAFT_TOAST_ID);
       setShouldShowDraftToast(false);
     },
     [t, ticketForm],
@@ -309,24 +311,25 @@ export const useCreateTicketDialog = ({
       !shouldShowDraftToast ||
       isDirty
     ) {
-      toast.dismiss(TICKET_DRAFT_TOAST_ID);
+      toast.close(TICKET_DRAFT_TOAST_ID);
       return;
     }
 
-    toast(t("message.foundDraft"), {
+    toast.add({
       id: TICKET_DRAFT_TOAST_ID,
+      title: t("message.foundDraft"),
       description: t("message.loadDraft"),
-      action: {
-        label: t("action.load", { ns: NS.common }),
+      actionProps: {
+        children: t("action.load", { ns: NS.common }),
         onClick: () => {
           loadDraft(ticketDraft);
         },
       },
-      duration: 30000,
+      timeout: 30000,
     });
 
     return () => {
-      toast.dismiss(TICKET_DRAFT_TOAST_ID);
+      toast.close(TICKET_DRAFT_TOAST_ID);
     };
   }, [
     isDirty,
@@ -339,7 +342,7 @@ export const useCreateTicketDialog = ({
 
   useEffect(() => {
     if (isDirty) {
-      toast.dismiss(TICKET_DRAFT_TOAST_ID);
+      toast.close(TICKET_DRAFT_TOAST_ID);
       setShouldShowDraftToast(false);
     }
   }, [isDirty]);

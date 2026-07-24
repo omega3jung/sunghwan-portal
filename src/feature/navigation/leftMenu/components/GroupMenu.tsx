@@ -37,11 +37,9 @@ export function LeftMenu() {
 
     return (
       <SidebarMenuItem key={item.id}>
-        <SidebarMenuButton asChild tooltip={title}>
-          <Link href={item.path}>
-            <item.icon />
-            <span>{title}</span>
-          </Link>
+        <SidebarMenuButton render={<Link href={item.path} />} tooltip={title}>
+          <item.icon />
+          <span>{title}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     );

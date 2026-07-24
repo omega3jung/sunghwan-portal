@@ -1,4 +1,3 @@
-import { Separator } from "@radix-ui/react-separator";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -6,6 +5,7 @@ import {
   useFileAttachments,
 } from "@/components/custom/FileAttachment";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { Separator } from "@/components/ui/separator";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
