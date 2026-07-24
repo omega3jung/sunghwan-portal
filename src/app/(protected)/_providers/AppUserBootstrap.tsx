@@ -4,7 +4,7 @@
 import { useEffect } from "react";
 
 import { AppUser } from "@/domain/user";
-import { useImpersonationStore } from "@/lib/impersonationStore";
+import { useImpersonationStore } from "@/lib/client/auth";
 
 type Props = {
   user: AppUser;

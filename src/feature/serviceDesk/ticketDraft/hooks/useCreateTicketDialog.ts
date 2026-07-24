@@ -6,12 +6,12 @@ import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { SupportedLanguage } from "@/domain/config";
 import type { MainCategory } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import {
   useCreateServiceDeskTicket,
-} from "@/feature/serviceDesk/ticket/api/client";
+} from "@/feature/serviceDesk/ticket/client";
+import { useTicketForm } from "@/feature/serviceDesk/ticket/client";
 import {
   afterStepData,
   createStepData,
@@ -22,11 +22,11 @@ import {
   ticketFormSchema,
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
-import { useTicketForm } from "@/feature/serviceDesk/ticket/forms/client";
 import { getTicketCategoryParentId } from "@/feature/serviceDesk/ticket/utils/categorySelection";
-import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
-import { useLocalizedText } from "@/shared/hooks";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
+import { useMutationToast } from "@/lib/client/toast";
 import { DbParams } from "@/shared/types";
 import { createFieldFilter } from "@/shared/utils/routing";
 
@@ -46,14 +46,15 @@ export const useCreateTicketDialog = ({
 }: UseCreateTicketDialogParams) => {
   const { t } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText(language);
-  const { data: currentSession } = useCurrentSession();
-  const isRemoteMode = currentSession?.user.dataScope === "REMOTE";
+  const { current, data: session } = useCurrentSession();
+  const effectiveUser = current.user;
+  const isRemoteMode = session?.user.dataScope === "REMOTE";
 
   const [open, setOpen] = useState(false);
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(ticketStep.info);
 
-  const ticketForm = useTicketForm(currentSession?.user, language);
+  const ticketForm = useTicketForm(effectiveUser, language);
   const {
     formState: { isDirty },
   } = ticketForm;
@@ -93,17 +94,17 @@ export const useCreateTicketDialog = ({
       ...ticketFormDefaultValues,
       dueAt: new Date(),
       requester: {
-        id: currentSession?.user.username ?? "",
-        email: currentSession?.user.email ?? "",
-        name: currentSession?.user.displayName
-          ? tLocal(currentSession.user.displayName)
+        id: effectiveUser?.username ?? "",
+        email: effectiveUser?.email ?? "",
+        name: effectiveUser?.displayName
+          ? tLocal(effectiveUser.displayName)
           : "",
       },
     }),
     [
-      currentSession?.user.displayName,
-      currentSession?.user.email,
-      currentSession?.user.username,
+      effectiveUser?.displayName,
+      effectiveUser?.email,
+      effectiveUser?.username,
       tLocal,
     ],
   );

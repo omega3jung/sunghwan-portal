@@ -1,40 +1,6 @@
 import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
 
-import {
-  clientCompaniesMock,
-  internalCompanyMock,
-} from "../organization/companies";
-
-const clientTenantColors = [
-  "#B22222", // red.
-  "#006400", // green.
-  "#FFF4E5", // muted orange
-  "#E8F7F6", // teal
-  "#F2ECFF", // purple
-  "#F5EFEA", // brown
-  "#F9EDF5", // muted pink
-  "#E9F0FF", // deep blue
-  "#F3F3F3", // gray
-];
-
-const tenantCompanyIds = [11, 12];
-
-const createClientTenantMock = (): DbTenant[] => {
-  const colorCount = clientTenantColors.length;
-  const clientTenants = clientCompaniesMock.filter((company) =>
-    tenantCompanyIds.includes(company.company_id),
-  );
-
-  return clientTenants.map((company, idx) => {
-    return {
-      tenant_id: company.company_id,
-      tenant_company_id: company.company_id,
-      tenant_name: company.company_name,
-      tenant_color: clientTenantColors[colorCount % (idx + 1)],
-      tenant_active: true,
-    };
-  });
-};
+import { internalCompanyMock } from "../organization/companies";
 
 export const internalTenantMock: DbTenant = {
   tenant_id: internalCompanyMock.company_id,
@@ -44,4 +10,33 @@ export const internalTenantMock: DbTenant = {
   tenant_active: true,
 };
 
-export const clientTenantsMock: DbTenant[] = createClientTenantMock();
+const demoCorporationTenantMock: DbTenant = {
+  tenant_id: 11,
+  tenant_company_id: 11,
+  tenant_name: {
+    en: "Client Demo Corporation",
+    es: "Corporación de demostración de clientes",
+    fr: "Client Demo Corporation",
+    ko: "클라이언트 데모 법인",
+  },
+  tenant_color: "#B22222", // red
+  tenant_active: true,
+};
+
+const demoEnergyTenantMock: DbTenant = {
+  tenant_id: 13,
+  tenant_company_id: 13,
+  tenant_name: {
+    en: "Client Demo Energy",
+    es: "Demostración energética para clientes",
+    fr: "Démonstration client énergie",
+    ko: "클라이언트 데모 에너지",
+  },
+  tenant_color: "#006400", // green
+  tenant_active: true,
+};
+
+export const clientTenantsMock: DbTenant[] = [
+  demoCorporationTenantMock,
+  demoEnergyTenantMock,
+];

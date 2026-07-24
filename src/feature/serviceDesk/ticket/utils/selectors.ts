@@ -4,6 +4,8 @@ type TicketLike = Pick<
   TicketDetail | TicketSummary,
   | "status"
   | "assignmentPhase"
+  | "approvalAssignees"
+  | "workAssignees"
   | "approvalAssigneeUsernames"
   | "workAssigneeUsernames"
   | "isCurrentApprover"
@@ -15,6 +17,12 @@ export function selectTicketAssigneeIds(ticket: TicketLike) {
   return ticket.assignmentPhase === "APPROVAL"
     ? ticket.approvalAssigneeUsernames
     : ticket.workAssigneeUsernames;
+}
+
+export function selectTicketAssignees(ticket: TicketLike) {
+  return ticket.assignmentPhase === "APPROVAL"
+    ? ticket.approvalAssignees
+    : ticket.workAssignees;
 }
 
 export function selectTicketIsAssigned(ticket: TicketLike) {

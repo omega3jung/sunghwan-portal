@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
 import { AssigneeGroup } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
@@ -39,10 +39,19 @@ export const useAssignmentRuleForm = ({
     );
   };
 
-  const assigneeChange = (key: keyof AssigneeGroup) => (ids: string[]) => {
+  const assigneeChange =
+    (key: Exclude<keyof AssigneeGroup, "includeTenantCompany">) =>
+    (ids: string[]) => {
+      updateNode((data) => ({
+        ...data,
+        [key]: ids,
+      }));
+    };
+
+  const includeTenantCompanyChange = (checked: boolean) => {
     updateNode((data) => ({
       ...data,
-      [key]: ids,
+      includeTenantCompany: checked,
     }));
   };
 
@@ -50,6 +59,7 @@ export const useAssignmentRuleForm = ({
     languageTab,
     setLanguageTab,
     assigneeChange,
+    includeTenantCompanyChange,
     language,
   };
 };

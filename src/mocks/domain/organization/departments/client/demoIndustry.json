@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 201,
+    "d_name": {
+      "en": "Demo Industry - Industrial Operations"
+    },
+    "d_code": "IND-OPS",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 202,
+    "d_name": {
+      "en": "Demo Industry - Process Engineering"
+    },
+    "d_code": "IND-ENG",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": 201,
+    "d_active": true
+  },
+  {
+    "d_id": 203,
+    "d_name": {
+      "en": "Demo Industry - Quality Management"
+    },
+    "d_code": "IND-QMS",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": 201,
+    "d_active": true
+  },
+  {
+    "d_id": 204,
+    "d_name": {
+      "en": "Demo Industry - Supply Chain"
+    },
+    "d_code": "IND-SUP",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": 201,
+    "d_active": true
+  },
+  {
+    "d_id": 205,
+    "d_name": {
+      "en": "Demo Industry - Industrial Technology"
+    },
+    "d_code": "IND-TEC",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 206,
+    "d_name": {
+      "en": "Demo Industry - Plant Systems"
+    },
+    "d_code": "IND-SYS",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": 205,
+    "d_active": true
+  },
+  {
+    "d_id": 207,
+    "d_name": {
+      "en": "Demo Industry - Corporate Services"
+    },
+    "d_code": "IND-COR",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 208,
+    "d_name": {
+      "en": "Demo Industry - Maintenance & Safety"
+    },
+    "d_code": "IND-MNS",
+    "d_description": null,
+    "d_company_id": 12,
+    "d_parent_id": 207,
+    "d_active": true
+  }
+]

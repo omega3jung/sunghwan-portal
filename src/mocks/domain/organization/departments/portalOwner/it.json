@@ -1,0 +1,67 @@
+[
+  {
+    "d_id": 10,
+    "d_name": {
+      "en": "IT"
+    },
+    "d_code": "IT",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 0,
+    "d_active": true
+  },
+  {
+    "d_id": 11,
+    "d_name": {
+      "en": "Infrastructure"
+    },
+    "d_code": "INF",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 10,
+    "d_active": true
+  },
+  {
+    "d_id": 12,
+    "d_name": {
+      "en": "Application Development"
+    },
+    "d_code": "APP",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 10,
+    "d_active": true
+  },
+  {
+    "d_id": 13,
+    "d_name": {
+      "en": "IT Support"
+    },
+    "d_code": "ISP",
+    "d_description": {
+      "en": "Management of PCs, peripherals, and network equipment"
+    },
+    "d_company_id": 1,
+    "d_parent_id": 10,
+    "d_active": true
+  },
+  {
+    "d_id": 14,
+    "d_name": {
+      "en": "IT Security"
+    },
+    "d_code": "ISC",
+    "d_description": {
+      "en": "Management of IT security policies and systems"
+    },
+    "d_company_id": 1,
+    "d_parent_id": 10,
+    "d_active": true
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 191,
+    "d_name": {
+      "en": "Demo Corporation - Corporate Operations"
+    },
+    "d_code": "CRP-OPS",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 192,
+    "d_name": {
+      "en": "Demo Corporation - Corporate Strategy"
+    },
+    "d_code": "CRP-STG",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": 191,
+    "d_active": true
+  },
+  {
+    "d_id": 193,
+    "d_name": {
+      "en": "Demo Corporation - Finance"
+    },
+    "d_code": "CRP-FIN",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": 191,
+    "d_active": true
+  },
+  {
+    "d_id": 194,
+    "d_name": {
+      "en": "Demo Corporation - Sales"
+    },
+    "d_code": "CRP-SAL",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": 191,
+    "d_active": true
+  },
+  {
+    "d_id": 195,
+    "d_name": {
+      "en": "Demo Corporation - Enterprise Technology"
+    },
+    "d_code": "CRP-TEC",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 196,
+    "d_name": {
+      "en": "Demo Corporation - Enterprise IT Support"
+    },
+    "d_code": "CRP-ITS",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": 195,
+    "d_active": true
+  },
+  {
+    "d_id": 197,
+    "d_name": {
+      "en": "Demo Corporation - People & Legal"
+    },
+    "d_code": "CRP-PNL",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 198,
+    "d_name": {
+      "en": "Demo Corporation - Customer Success"
+    },
+    "d_code": "CRP-CUS",
+    "d_description": null,
+    "d_company_id": 11,
+    "d_parent_id": 197,
+    "d_active": true
+  }
+]

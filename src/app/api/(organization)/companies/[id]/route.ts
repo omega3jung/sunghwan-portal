@@ -1,31 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { IdRouteContext } from "@/app/api/_helpers/types";
+import { checkAdmin, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
-  camelCompanyMapper,
+  getLocalCompany,
+  updateLocalCompany,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapCompanyItemPayload,
-} from "@/feature/organization/company/mapper";
-import {
-  toCompanyMockResource,
   toCompanyWritePayload,
-  UpdateCompanyInput,
-} from "@/feature/organization/company/write";
-import { allCompaniesMock } from "@/mocks/domain/organization/companies";
+  type UpdateCompanyInput,
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
   if (!isRemote) {
-    const [targetCompany] = camelCompanyMapper(
-      allCompaniesMock.filter((company) => company.company_id.toString() === id),
-    );
+    const targetCompany = getLocalCompany(id);
 
     if (!targetCompany) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -45,14 +42,14 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   const body = (await request.json()) as UpdateCompanyInput;
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toCompanyMockResource(body, id), { status: 200 });
+    return NextResponse.json(updateLocalCompany(body, id), { status: 200 });
   }
 
   return portalApiJson(request, {
@@ -68,7 +65,7 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
 
-  const { id } = context.params;
+  const { id } = await context.params;
   const isRemote = await isRemoteRequest(request);
 
   // demo mode

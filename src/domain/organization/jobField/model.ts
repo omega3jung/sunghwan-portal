@@ -8,6 +8,7 @@ export interface JobField {
   description?: LocalizedText;
 
   // organization
+  companyId: string;
   departmentId: string;
   parentId?: string; // parent field id.
 

@@ -2,7 +2,7 @@ import { Company } from "@/domain/organization";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
-} from "@/lib/api/utils/payload";
+} from "@/lib/application/api/payload";
 import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 

@@ -136,7 +136,7 @@ branches around this main flow.
 | `Rejected` | `Approval` or `Assigned` | requester resubmit | `TICKET_SUBMITTED` plus routing history |
 | `Resolved` | `Working` | reopen action | `TICKET_REOPENED` |
 | `Approval`/`Declined`/`Assigned`/`Working`/`Pending`/`Rejected` | `Closed` | requester cancel | `TICKET_CANCELED` |
-| active work statuses or Admin-allowed statuses | `Closed` | merge source ticket | `TICKET_MERGED` |
+| active work statuses or Admin-allowed statuses | `Closed` | same-Tenant merge; same scope closes as `Merged`, `INTERNAL -> PORTAL` closes as `Escalated` | `TICKET_MERGED` |
 | `Resolved` | `Closed` | system auto-close | `RESOLUTION_CLOSE` |
 
 ---

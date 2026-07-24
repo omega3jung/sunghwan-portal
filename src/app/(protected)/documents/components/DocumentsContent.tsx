@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
-import { NS } from "@/lib/i18n";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 
 import { DEFAULT_DOCUMENT_ID } from "../constants/documents";
 import type { DocumentGroup, DocumentResource } from "../types/documents";

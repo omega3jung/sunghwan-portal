@@ -1,6 +1,10 @@
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import {
+  CategoryContextRow,
   CategoryRow,
   CreateCategoryRowInput,
   UpdateCategoryRowInput,
@@ -42,6 +46,47 @@ order by
   cat_parent_id nulls first,
   cat_index,
   cat_id;
+`;
+
+const FIND_CATEGORY_ROWS_BY_COMPANY_ID_QUERY = `
+select
+  cat.cat_id,
+  cat.cat_tenant_id,
+  cat.cat_parent_id,
+  cat.cat_scope,
+  cat.cat_name,
+  cat.cat_description,
+  cat.cat_request_template,
+  cat.cat_index,
+  cat.cat_active,
+  cat.cat_default_priority,
+  cat.cat_default_risk_level,
+  cat.cat_default_sla_days
+from service_desk.category cat
+join service_desk.tenant tn on tn.tn_id = cat.cat_tenant_id
+where tn.tn_company_id = $1
+order by
+  cat.cat_parent_id nulls first,
+  cat.cat_index,
+  cat.cat_id;
+`;
+
+const FIND_CATEGORY_CONTEXT_ROW_BY_ID_QUERY = `
+select
+  target.cat_id as category_id,
+  main.cat_id as main_category_id,
+  main.cat_scope as category_scope,
+  tn.tn_id as tenant_id,
+  tn.tn_company_id as tenant_company_id,
+  tn.tn_active as tenant_active
+from service_desk.category target
+join service_desk.category main
+  on main.cat_id = coalesce(target.cat_parent_id, target.cat_id)
+join service_desk.tenant tn
+  on tn.tn_id = main.cat_tenant_id
+where target.cat_id = $1
+  and target.cat_tenant_id = main.cat_tenant_id
+limit 1;
 `;
 
 const CREATE_CATEGORY_ROW_QUERY = `
@@ -98,8 +143,9 @@ ${ACTIVE_CATEGORY_COLUMNS};
 
 export async function findCategoryRowsByTenantId(
   tenantId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<CategoryRow[]> {
-  return queryPortalApi<CategoryRow>(FIND_CATEGORY_ROWS_BY_TENANT_ID_QUERY, [
+  return query<CategoryRow>(FIND_CATEGORY_ROWS_BY_TENANT_ID_QUERY, [
     Number(tenantId),
   ]);
 }
@@ -112,6 +158,25 @@ export async function findCategoryRowsByTenantIdAndCategoryId(
     FIND_CATEGORY_ROWS_BY_TENANT_ID_AND_CATEGORY_ID_QUERY,
     [Number(tenantId), Number(categoryId)],
   );
+}
+
+export async function findCategoryRowsByCompanyId(
+  companyId: string | number,
+): Promise<CategoryRow[]> {
+  return queryPortalApi<CategoryRow>(FIND_CATEGORY_ROWS_BY_COMPANY_ID_QUERY, [
+    Number(companyId),
+  ]);
+}
+
+export async function findCategoryContextRowById(
+  categoryId: string | number,
+): Promise<CategoryContextRow | null> {
+  const rows = await queryPortalApi<CategoryContextRow>(
+    FIND_CATEGORY_CONTEXT_ROW_BY_ID_QUERY,
+    [Number(categoryId)],
+  );
+
+  return rows[0] ?? null;
 }
 
 export async function createCategoryRow(

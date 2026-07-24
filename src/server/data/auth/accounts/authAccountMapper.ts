@@ -1,4 +1,4 @@
-import { displayNameMapper } from "@/shared/utils/i18n/displayName";
+import { displayNameMapper } from "@/lib/application/organization";
 
 import { AuthUserDto } from "./authAccountDto";
 import { DbAuthUserProjectionRow } from "./authAccountRow";

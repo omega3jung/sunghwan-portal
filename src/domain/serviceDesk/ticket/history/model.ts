@@ -1,5 +1,7 @@
+import type { LocalizedName } from "@/domain/organization";
 import { ISODateString } from "@/shared/types/date";
 
+import { CategoryScope } from "../../category";
 import {
   HistoryType,
   TicketCloseReason,
@@ -19,6 +21,10 @@ export type TicketHistoryDisplayMetadata = {
 
   mergedIntoTicketId?: string;
   mergedIntoTicketNo?: string;
+  sourceTenantId?: string;
+  targetTenantId?: string;
+  sourceScope?: CategoryScope;
+  targetScope?: CategoryScope;
 
   previousStatus?: string;
   nextStatus?: string;
@@ -56,6 +62,7 @@ export interface TicketHistory {
   event: TicketHistoryEvent;
 
   actorUsername: string | null;
+  actorName: LocalizedName | null;
   actionNo: number | null;
 
   fromValue?: unknown;

@@ -11,11 +11,12 @@ import {
   resolveTreeNodeIdByPath,
   TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
 import {
   CategoryApprovalSettings,
+  CategoryScope,
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
+import { SupportedLanguage } from "@/lib/application/i18n";
 
 import {
   getDefaultApprovalData,
@@ -26,6 +27,7 @@ import { approvalStepToTree, mapApprovalData } from "../utils/mapper";
 
 type UseApprovalStepTreeOptions = {
   selectedTenant: string | null;
+  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
   approvalSteps: CategoryApprovalSettings[] | undefined;
   language: SupportedLanguage;
@@ -33,6 +35,7 @@ type UseApprovalStepTreeOptions = {
 
 export function useApprovalStepTree({
   selectedTenant,
+  scope,
   categories,
   approvalSteps,
   language: _language,
@@ -43,9 +46,10 @@ export function useApprovalStepTree({
 
   const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
   const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
+  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
 
   const [newStepCount, setNewStepCount] = useState(1);
-  const previousTenantRef = useRef<string | null>(null);
+  const previousContextRef = useRef<string | null>(null);
   const selectedPathRef = useRef<TreeNodePath | null>(null);
 
   useEffect(() => {
@@ -55,14 +59,24 @@ export function useApprovalStepTree({
   useEffect(() => {
     if (!categories || !selectedTenant || !approvalSteps) return;
 
-    const mapped = mapApprovalData(categories, selectedTenant, approvalSteps);
+    const contextKey = `${selectedTenant}:${scope}`;
+    const scopedCategories = categories.map((tenant) => ({
+      ...tenant,
+      categories: tenant.categories.filter((category) => category.scope === scope),
+    }));
+    const mapped = mapApprovalData(
+      scopedCategories,
+      selectedTenant,
+      approvalSteps,
+    );
     const nextTree = approvalStepToTree(mapped);
 
     setTree(nextTree);
     setTreeTenantId(selectedTenant);
+    setTreeContextKey(contextKey);
     setSelectedId((previousSelectedId) => {
-      if (previousTenantRef.current !== selectedTenant) {
-        previousTenantRef.current = selectedTenant;
+      if (previousContextRef.current !== contextKey) {
+        previousContextRef.current = contextKey;
         return null;
       }
 
@@ -78,7 +92,7 @@ export function useApprovalStepTree({
 
       return resolveTreeNodeIdByPath(nextTree, selectionPath);
     });
-  }, [approvalSteps, categories, selectedTenant]);
+  }, [approvalSteps, categories, scope, selectedTenant]);
 
   const selectedNode = useMemo(() => {
     return findTreeNodeData(tree, selectedId);
@@ -144,6 +158,7 @@ export function useApprovalStepTree({
     selectedId,
     setSelectedId,
     treeTenantId,
+    treeContextKey,
     selectedNode,
     addApprovalStep,
     removeApprovalStep,

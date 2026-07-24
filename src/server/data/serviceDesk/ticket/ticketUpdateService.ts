@@ -1,14 +1,15 @@
 import type { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
+import {
+  createServiceDeskStatusError as createStatusError,
+  normalizePostgresStringArray,
+} from "@/server/data/serviceDesk/shared";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import { createTicketHistory } from "../ticketHistory";
 import { TicketDetailDto } from "./ticketDto";
-import {
-  normalizePostgresStringArray,
-  toTicketDetailDto,
-} from "./ticketMapper";
+import { toTicketDetailDto } from "./ticketMapper";
 import {
   findApprovalStepAssigneeUsernames,
   findCategoryAssignmentUsernames,
@@ -482,10 +483,4 @@ function normalizeJsonValue(value: unknown): TicketHistoryJsonValue {
 
 function normalizeNullableId(value: number | string | null) {
   return value === null ? null : String(value);
-}
-
-function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }

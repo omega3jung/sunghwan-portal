@@ -57,13 +57,13 @@ Zustand = frontend runtime cache and facade
 type AuthUser = {
   id: string;
   username: string;
-  displayName: string;
+  displayName: LocalizedText;
   email: string;
   accessToken: string;
 
   dataScope: "LOCAL" | "REMOTE";
   userScope: "INTERNAL" | "CLIENT";
-  clientId: string | null;
+  companyId: number;
   permission: AccessLevel;
   role: Role;
 };
@@ -104,15 +104,14 @@ type SessionUser = Omit<AuthUser, "accessToken">;
 type AppUser = {
   id: string;
   username: string;
-  displayName: string;
+  displayName: LocalizedText;
   email: string | null;
   image?: string;
 
   userScope: UserScope;
-  clientId: string | null;
+  companyId: number;
 
   permission: AccessLevel;
-  role: Role | null;
 
   canUseSuperUser: boolean | null;
   canUseImpersonation: boolean | null;
@@ -169,7 +168,7 @@ sign-in 시 `jwt` callback은 다음 신뢰 가능한 auth field를 token에 저
 - `accessToken`
 - `dataScope`
 - `userScope`
-- `clientId`
+- `companyId`
 - `permission`
 - `role`
 
@@ -189,7 +188,7 @@ session.user = {
   email,
   dataScope,
   userScope,
-  clientId,
+  companyId,
   permission,
   role,
 };
@@ -298,6 +297,7 @@ type CurrentSession = {
   user: AppUser | null;
   isDemoUser: boolean;
   isSuperUser: boolean;
+  isClient: boolean;
   superUserActivated: Date | null;
   security: {
     loginLockedUntil: number | null;
@@ -308,6 +308,22 @@ type CurrentSession = {
 ```
 
 실제로 protected UI가 소비하는 것은 이 객체다.
+
+impersonation 중 `CurrentSession.user`는 항상 effective user를 나타낸다.
+
+```txt
+impersonated AppUser ?? original logged-in AppUser
+```
+
+`useCurrentSession()`은 auth/session 작업을 위해 기반 NextAuth 결과도 함께
+노출한다. 두 사용자 projection의 의미는 의도적으로 다르다.
+
+```ts
+const session = useCurrentSession();
+
+session.data?.user; // original authenticated SessionUser
+session.current.user; // UI가 사용하는 effective AppUser
+```
 
 ---
 
@@ -418,7 +434,7 @@ type ImpersonationState = {
 startImpersonation(impersonatedUsername)
 -> POST /api/auth/impersonation
 -> session.update({ impersonation })
--> useImpersonation() fetches impersonated user profile
+-> useCurrentUserProfileQuery() fetches the effective user profile
 -> impersonationStore.syncFromSession()
 -> currentUser switches in UI
 ```
@@ -432,7 +448,7 @@ impersonation을 종료하면 반대 흐름을 수행하며 session의 impersona
 현재 구현 기준 규칙은 다음과 같다.
 
 - `INTERNAL` 사용자이면서 최소 `ADMIN` 권한 이상인 경우만 impersonation을 시작할 수 있다
-- impersonation 대상은 `TENANT` 사용자여야 한다
+- impersonation 대상은 `CLIENT` 사용자여야 한다
 
 이 규칙은 UI가 아니라 auth layer에 위치한다.
 

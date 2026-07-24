@@ -122,6 +122,13 @@ Action-specific input:
 
 모든 action은 content가 필요하다. 단, UI가 `ASSIGN_SELF`용 content를 생성할 수 있다.
 
+`MERGE`는 기존 `INTERNAL` 티켓을 기존 `PORTAL` 티켓으로 제어된 방식으로
+인계하는 경우도 포함한다. 이 동작은 target 티켓을 새로 생성하지 않는다. 서버는
+동일 Tenant 안에서 같은 scope 간 merge와 단방향 `INTERNAL -> PORTAL` 전환을
+허용한다. 후자의 경우에도 `MERGE` action과 `TICKET_MERGED` event를 유지하지만,
+source 티켓은 `closeReason = Escalated`로 닫는다. 반대 방향의 scope 전환과
+cross-Tenant merge는 거부한다.
+
 ---
 
 ## Mutability Policy

@@ -15,11 +15,6 @@ const documentItemsByPath = new Map(
     .map((item) => [item.relativePath, item]),
 );
 
-const localeRoot = {
-  en: path.join(process.cwd(), "docs", "en"),
-  ko: path.join(process.cwd(), "docs", "ko"),
-} as const;
-
 const readDocument = async (absolutePath: string) => {
   return readFile(absolutePath, "utf8");
 };
@@ -33,8 +28,8 @@ const readLocalizedDocument = async (
     throw new Error(`Unknown document path: ${relativePath}`);
   }
 
-  const englishPath = path.join(localeRoot.en, relativePath);
-  const koreanPath = path.join(localeRoot.ko, relativePath);
+  const englishPath = path.join(process.cwd(), "docs", "en", relativePath);
+  const koreanPath = path.join(process.cwd(), "docs", "ko", relativePath);
   const englishContent = await readDocument(englishPath);
 
   try {

@@ -71,7 +71,7 @@ Operational actions are commands that may mutate ticket state or routing.
 | `ASSIGN_SELF` | current worker claims multi-assignee work | `ASSIGNMENT_UPDATED` |
 | `ADJUST` | change planning fields | `PLANNING_UPDATED` |
 | `REJECT` | move work to `Rejected` | `TICKET_REJECTED` |
-| `MERGE` | close source ticket into target | `TICKET_MERGED` |
+| `MERGE` | close source into a same-Tenant target; `INTERNAL -> PORTAL` is recorded as `Escalated` | `TICKET_MERGED` |
 | `REOPEN` | `Resolved -> Working` | `TICKET_REOPENED` |
 | `RESUBMIT` | rerun initial routing | `TICKET_SUBMITTED` plus routing history |
 | `CANCEL` | close requester-owned ticket | `TICKET_CANCELED` |

@@ -241,7 +241,7 @@ export function createSettingsNavigationMock(
             "settingsNavigation.serviceDeskSettings.approvalSteps.title",
             ns,
           ),
-          path: "/settings/service-desk-settings/approval-steps",
+          path: "/settings/service-desk-settings/approval-step",
           description: t(
             "settingsNavigation.serviceDeskSettings.approvalSteps.description",
             ns,
@@ -252,7 +252,7 @@ export function createSettingsNavigationMock(
             "settingsNavigation.serviceDeskSettings.assignmentRules.title",
             ns,
           ),
-          path: "/settings/it-help-desk-settings/assignment-rules",
+          path: "/settings/service-desk-settings/assignment-rule",
           description: t(
             "settingsNavigation.serviceDeskSettings.assignmentRules.description",
             ns,

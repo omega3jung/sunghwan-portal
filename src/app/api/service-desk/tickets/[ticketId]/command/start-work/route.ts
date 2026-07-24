@@ -2,40 +2,52 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
-import {
-  ServiceDeskApiError,
-  toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
-import { mapTicketDetailPayload } from "@/feature/serviceDesk/ticket/api/mapper";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import {
   startTicketWorkLocal,
   toLocalStartWorkResponse,
-} from "@/server/serviceDesk/ticket/command/localDemo";
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
+import {
+  ApiError,
+  resolveApiErrorMessage,
+  toCurrentUsernameProxyHeaders,
+} from "@/app/api/_adapters/serviceDesk";
+import { mapTicketDetailPayload } from "@/lib/application/contracts/serviceDesk";
 
 export async function POST(
   request: NextRequest,
   context: TicketIdRouteContext,
 ) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
 
   if (currentUserName === null) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
+      { message: resolveApiErrorMessage("serviceDesk.ticketCommand.employeeUnavailable") },
       { status: 401 },
     );
   }
 
   if (!isRemote) {
     try {
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+      if (!localGetTicket({ access, id: ticketId })) {
+        return NextResponse.json(
+          { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+          { status: 404 },
+        );
+      }
+      const isInternal = access.userScope === "INTERNAL";
       const updatedTicket = startTicketWorkLocal({
         ticketId,
         employeeUserName: currentUserName,
@@ -47,12 +59,12 @@ export async function POST(
       );
     } catch (error) {
       const message =
-        error instanceof ServiceDeskApiError
-          ? error.message
+        error instanceof ApiError
+          ? resolveApiErrorMessage(error.messageKey, error.options)
           : error instanceof Error
             ? error.message
-            : tServiceDeskApi("api.ticketCommand.startWork");
-      const status = error instanceof ServiceDeskApiError ? error.status : 500;
+            : resolveApiErrorMessage("serviceDesk.ticketCommand.startWork");
+      const status = error instanceof ApiError ? error.status : 500;
 
       return NextResponse.json({ message }, { status });
     }
@@ -63,7 +75,7 @@ export async function POST(
     path: `/service-desk/tickets/${ticketId}/command/start-work`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body: {},
-    errorMessage: tServiceDeskApi("api.ticketCommand.startWork"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.startWork"),
     mapData: mapTicketDetailPayload,
   });
 }

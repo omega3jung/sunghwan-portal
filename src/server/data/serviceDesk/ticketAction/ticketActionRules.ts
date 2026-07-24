@@ -4,6 +4,7 @@ import type {
   TicketActionType,
   TicketStatus,
 } from "@/domain/serviceDesk";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory/ticketHistoryTypes";
 
@@ -635,10 +636,4 @@ export function normalizeAssigneeUsernames(value: unknown): string[] {
         (item): item is string => typeof item === "string" && item.length > 0,
       )
     : [];
-}
-
-export function createStatusError(message: string, status: number) {
-  const error = new Error(message) as Error & { status: number };
-  error.status = status;
-  return error;
 }

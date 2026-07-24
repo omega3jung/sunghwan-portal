@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import type { TicketDetail, TicketStatus } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { getTicketActionModeLabelKey } from "../../mapper";
 import type { TicketActionMode } from "../../types";
@@ -100,6 +100,7 @@ type TicketActionToolLauncherProps = {
   hidden: boolean;
   isPending?: boolean;
   isAdmin?: boolean;
+  canAssign?: boolean;
   onOpen: (mode: TicketActionMode) => void;
   ticket: TicketDetail;
 };
@@ -122,6 +123,7 @@ const actionIcons: Record<TicketActionMode, ReactNode> = {
 export function TicketActionToolLauncher({
   hidden,
   isAdmin = false,
+  canAssign = true,
   isPending = false,
   onOpen,
   ticket,
@@ -164,6 +166,9 @@ export function TicketActionToolLauncher({
         }
 
         if (action === "assign") {
+          if (!canAssign) {
+            return false;
+          }
           if (ticket.status === "Approval") {
             return isAdmin;
           }
@@ -221,6 +226,7 @@ export function TicketActionToolLauncher({
       ticket.status,
       ticket.workAssigneeUsernames.length,
       isAdmin,
+      canAssign,
     ],
   );
 

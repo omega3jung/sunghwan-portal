@@ -2,6 +2,8 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { employeeQueryKeys } from "@/feature/organization/employee";
+
 import { serviceDeskAssignmentRuleApi } from "./api";
 import { assignmentRuleQueryKeys } from "./queryKeys";
 
@@ -12,9 +14,14 @@ export const useSaveServiceDeskAssignmentRuleTree = () => {
   return useMutation({
     mutationFn: serviceDeskAssignmentRuleApi.saveTree,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: assignmentRuleQueryKeys.all,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: assignmentRuleQueryKeys.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: employeeQueryKeys.lists(),
+        }),
+      ]);
     },
   });
 };

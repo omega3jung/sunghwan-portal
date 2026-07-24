@@ -2,7 +2,7 @@ import { SendHorizontal, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 type TicketActionToolFooterProps = {
   disabled: boolean;

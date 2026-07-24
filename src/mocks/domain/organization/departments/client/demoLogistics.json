@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 101,
+    "d_name": {
+      "en": "Demo Logistics - Logistics Operations"
+    },
+    "d_code": "LOG-OPS",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 102,
+    "d_name": {
+      "en": "Demo Logistics - Transportation"
+    },
+    "d_code": "LOG-TRN",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": 101,
+    "d_active": true
+  },
+  {
+    "d_id": 103,
+    "d_name": {
+      "en": "Demo Logistics - Warehousing"
+    },
+    "d_code": "LOG-WHS",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": 101,
+    "d_active": true
+  },
+  {
+    "d_id": 104,
+    "d_name": {
+      "en": "Demo Logistics - Fleet Management"
+    },
+    "d_code": "LOG-FLT",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": 101,
+    "d_active": true
+  },
+  {
+    "d_id": 105,
+    "d_name": {
+      "en": "Demo Logistics - IT"
+    },
+    "d_code": "LOG-IT",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 106,
+    "d_name": {
+      "en": "Demo Logistics - Logistics Systems"
+    },
+    "d_code": "LOG-SYS",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": 105,
+    "d_active": true
+  },
+  {
+    "d_id": 107,
+    "d_name": {
+      "en": "Demo Logistics - Corporate Services"
+    },
+    "d_code": "LOG-COR",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 108,
+    "d_name": {
+      "en": "Demo Logistics - Customer Support"
+    },
+    "d_code": "LOG-CUS",
+    "d_description": null,
+    "d_company_id": 2,
+    "d_parent_id": 107,
+    "d_active": true
+  }
+]

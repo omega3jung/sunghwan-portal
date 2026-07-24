@@ -1,20 +1,20 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  camelEmployeeMapper,
+  createLocalEmployee,
+  listLocalEmployees,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapEmployeeItemPayload,
   mapEmployeeListPayload,
-} from "@/feature/organization/employee/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateEmployeeInput,
-  toEmployeeMockResource,
+  type CreateEmployeeInput,
   toEmployeeWritePayload,
-} from "@/feature/organization/employee/write";
-import { createEmployeesMock } from "@/mocks/domain/organization/employee";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -23,9 +23,7 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const employeeData = camelEmployeeMapper(createEmployeesMock());
-
-    return NextResponse.json({ data: employeeData });
+    return NextResponse.json(listLocalEmployees(request.nextUrl.searchParams));
   }
 
   // real backend
@@ -44,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toEmployeeMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalEmployee(body), { status: 201 });
   }
 
   return portalApiJson(request, {

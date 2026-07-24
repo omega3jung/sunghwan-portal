@@ -53,6 +53,58 @@ Related document: [Service Desk Settings](../../service-desk-settings.md)
 
 ---
 
+## Assignment Settings Authorization
+
+Assignment Rule authority is resolved from the stored category through
+`Category -> Tenant -> Company`; the persisted rule does not duplicate
+`tenantId` as an independent authority, and a request company value is not an
+authorization source.
+
+| Category target             | Owner Admin | Same-company Tenant Admin | Other Tenant Admin |
+| --------------------------- | ----------- | ------------------------- | ------------------ |
+| Owner Tenant, either scope  | manage      | none                      | none               |
+| Customer Tenant, `INTERNAL` | none        | manage                    | none               |
+| Customer Tenant, `PORTAL`   | manage      | read                      | none               |
+
+Customer `PORTAL` work routing is managed by the owner/service provider. A
+Tenant Admin's read-only view may include display data for currently referenced
+provider assignees; it does not grant candidate search across the owner-company
+employee directory.
+
+Both read and mutation paths load the category relationship and invoke the
+shared settings policy. An unauthorized API request returns `403`; query
+responses do not include rules whose access is `none`.
+
+---
+
+## Assignee Eligibility
+
+Allowed workers are derived from category context:
+
+| Category context                  | Allowed employee company                                   |
+| --------------------------------- | ---------------------------------------------------------- |
+| `INTERNAL` in Owner Tenant        | owner/service-provider company                             |
+| `INTERNAL` in customer Tenant     | that customer Tenant company                               |
+| `PORTAL`, default                 | owner/service-provider company                             |
+| `PORTAL`, explicit joint handling | owner/service-provider company and category Tenant company |
+
+Both explicit `assigneeUsernames` and employees resolved from `jobFieldIds`
+must pass the company filter. The server must not use a global employee search,
+another customer company's employees, a job field without tenant/company
+filtering, or a client-supplied company ID. Joint handling across the provider
+and category Tenant company is enabled only by the persisted PORTAL Assignment
+Rule option `includeTenantCompany`; it defaults to `false` and is never inferred
+from selected employees or client-supplied company context.
+
+Candidate lookup is category-centered and checks both the caller's Assignment
+Rule capability and the purpose-specific company boundary. Eligibility is
+validated when a rule is saved and again during submit, resubmit, or another
+explicit routing recalculation. If employees become inactive or move company,
+they are rejected at routing time. Zero valid workers is a routing failure; the
+system does not create an unowned `Assigned` ticket.
+
+---
+
 ## Initial Work Assignment
 
 Work assignees are resolved when a ticket does not require approval or when
@@ -108,6 +160,11 @@ Admin override:
 - effect: replace current approvers or workers
 - history: `ASSIGNMENT_UPDATED`
 
+This ticket action override is not derived from the Service Desk Settings admin
+classification. Owner Admin or Tenant Admin status alone does not make an actor
+a current approver/worker and the settings authorization helper must not be
+used to authorize `ASSIGN`.
+
 Assignee notification must resolve emails outside the persisted `tk_email`
 field. Derived assignee emails are not stored in requester email configuration.
 
@@ -133,6 +190,11 @@ Requester `RESUBMIT` after `Declined` or `Rejected` reruns initial routing.
 
 Settings changes do not retroactively rewrite existing tickets. Existing
 tickets keep their current assignees until a ticket command changes them.
+
+The current generic Admin ticket-action override requires a separate
+cross-tenant audit and, if retained, an explicit break-glass/platform policy.
+That follow-up is distinct from the category-scope settings policy; the
+existing ticket action matrix is not otherwise changed here.
 
 ---
 

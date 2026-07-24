@@ -14,7 +14,7 @@ import {
   MAX_ATTACH_SIZE,
   TICKET_ATTACHMENT_ACCEPT,
 } from "@/feature/serviceDesk/ticket/constants";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 import { bytesToKB } from "@/shared/utils/browser";
 
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";

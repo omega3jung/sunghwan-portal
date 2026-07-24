@@ -11,31 +11,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SupportedLanguage } from "@/domain/config";
+import type { Department } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
-import { useDepartmentListQuery } from "@/feature/organization/department/client";
-import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { ValueLabel } from "@/shared/types";
 
 type Props = {
   stepAssignee: AssigneeByType<"DEPARTMENT">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
+  departments?: Department[];
+  isLoading?: boolean;
 };
 
-export function DepartmentField({ stepAssignee, onChange, language }: Props) {
+export function DepartmentField({
+  stepAssignee,
+  onChange,
+  language,
+  readOnly,
+  departments = [],
+  isLoading,
+}: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
-  const { data: departments } = useDepartmentListQuery({});
-
   const departmentData = useMemo((): Array<{
     groupLabel: string;
     items: ValueLabel[];
   }> => {
-    if (!departments) return [];
-
-    const departmentGroup = [];
+    const departmentGroup: Array<{
+      groupLabel: string;
+      items: ValueLabel[];
+    }> = [];
 
     for (const department of departments) {
       const item = {
@@ -45,12 +54,37 @@ export function DepartmentField({ stepAssignee, onChange, language }: Props) {
       if (department.parentId === "0") {
         departmentGroup.push({ groupLabel: item.label, items: [item] });
       } else {
-        departmentGroup[departmentGroup.length - 1].items.push(item);
+        const parentGroup = departmentGroup.find(
+          (group) => group.items[0]?.value === department.parentId,
+        );
+
+        if (parentGroup) {
+          parentGroup.items.push(item);
+        } else {
+          departmentGroup.push({ groupLabel: item.label, items: [item] });
+        }
       }
     }
 
+    if (
+      stepAssignee.departmentId &&
+      !departmentGroup.some((group) =>
+        group.items.some((item) => item.value === stepAssignee.departmentId),
+      )
+    ) {
+      departmentGroup.push({
+        groupLabel: stepAssignee.departmentId,
+        items: [
+          {
+            value: stepAssignee.departmentId,
+            label: stepAssignee.departmentId,
+          },
+        ],
+      });
+    }
+
     return departmentGroup;
-  }, [departments, tLocal]);
+  }, [departments, stepAssignee.departmentId, tLocal]);
 
   return (
     <Field className="col-span-2">
@@ -59,6 +93,7 @@ export function DepartmentField({ stepAssignee, onChange, language }: Props) {
       </FieldLabel>
       <Select
         value={stepAssignee.departmentId}
+        disabled={readOnly || isLoading}
         onValueChange={(value) =>
           onChange({ type: "DEPARTMENT", departmentId: value })
         }

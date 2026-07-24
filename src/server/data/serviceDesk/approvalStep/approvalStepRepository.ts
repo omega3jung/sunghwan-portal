@@ -1,4 +1,7 @@
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import {
   ApprovalStepRow,
@@ -95,8 +98,9 @@ ${APPROVAL_STEP_COLUMNS};
 
 export async function findApprovalStepRowsByTenantId(
   tenantId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<ApprovalStepRow[]> {
-  return queryPortalApi<ApprovalStepRow>(
+  return query<ApprovalStepRow>(
     FIND_APPROVAL_STEP_ROWS_BY_TENANT_ID_QUERY,
     [Number(tenantId)],
   );
@@ -105,8 +109,9 @@ export async function findApprovalStepRowsByTenantId(
 export async function findApprovalStepRowsByTenantIdAndApprovalStepId(
   tenantId: string | number,
   approvalStepId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<ApprovalStepRow[]> {
-  return queryPortalApi<ApprovalStepRow>(
+  return query<ApprovalStepRow>(
     FIND_APPROVAL_STEP_ROWS_BY_TENANT_ID_AND_APPROVAL_STEP_ID_QUERY,
     [Number(tenantId), Number(approvalStepId)],
   );
@@ -114,8 +119,9 @@ export async function findApprovalStepRowsByTenantIdAndApprovalStepId(
 
 export async function createApprovalStepRow(
   input: CreateApprovalStepRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<ApprovalStepRow | null> {
-  const rows = await queryPortalApi<ApprovalStepRow>(
+  const rows = await query<ApprovalStepRow>(
     CREATE_APPROVAL_STEP_ROW_QUERY,
     [
       input.aps_category_id,
@@ -134,8 +140,9 @@ export async function updateApprovalStepRowById(
   tenantId: string | number,
   approvalStepId: string | number,
   input: UpdateApprovalStepRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<ApprovalStepRow | null> {
-  const rows = await queryPortalApi<ApprovalStepRow>(
+  const rows = await query<ApprovalStepRow>(
     UPDATE_APPROVAL_STEP_ROW_BY_ID_QUERY,
     [
       Number(tenantId),
@@ -155,8 +162,9 @@ export async function updateApprovalStepRowById(
 export async function deleteApprovalStepRowById(
   tenantId: string | number,
   approvalStepId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<ApprovalStepRow | null> {
-  const rows = await queryPortalApi<ApprovalStepRow>(
+  const rows = await query<ApprovalStepRow>(
     DELETE_APPROVAL_STEP_ROW_BY_ID_QUERY,
     [Number(tenantId), Number(approvalStepId)],
   );

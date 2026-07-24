@@ -15,7 +15,7 @@ import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { TicketActionDraftFormValues } from "../../../forms";
 import { setActionFieldValue, type Translate } from "../utils";

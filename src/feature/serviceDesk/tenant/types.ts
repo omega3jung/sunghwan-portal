@@ -12,4 +12,8 @@ export type DbTenant = {
 
 export type ServiceDeskTenantListParams = DbParams & {
   active?: boolean;
+  settings?: boolean;
+  context?: "settings";
+  /** Client-only discriminator so settings tenant caches cannot cross principals. */
+  settingsPrincipalKey?: string;
 };

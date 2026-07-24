@@ -1,4 +1,5 @@
 import { Priority, RiskLevel } from "@/domain/common";
+import { LocalizedName } from "@/domain/organization";
 import { Attach } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
@@ -10,6 +11,10 @@ export type ServiceDeskTicketDraftRow = {
   tk_created_at: ISODateString;
   tk_updated_at: ISODateString | null;
   tk_requester_username: string;
+  tk_requester_name: LocalizedName | null;
+  tk_requester_email: string | null;
+  tk_requester_image: string | null;
+  tk_requester_department_id: number | null;
   tk_status: "Draft";
   tk_priority: Priority | null;
   tk_risk_level: RiskLevel | null;
@@ -26,6 +31,7 @@ export type ServiceDeskTicketDraftRow = {
 };
 
 export type TicketDraftRowInput = {
+  tk_requester_department_id: number;
   tk_category_id: number | null;
   tk_approval_step_id: number | null;
   tk_priority: Priority;

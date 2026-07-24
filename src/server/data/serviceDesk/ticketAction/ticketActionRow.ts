@@ -1,3 +1,4 @@
+import type { LocalizedName } from "@/domain/organization";
 import type { TicketActionType } from "@/domain/serviceDesk";
 import type { ISODateString } from "@/shared/types";
 
@@ -10,6 +11,7 @@ export type TicketActionRow = {
   tka_files: unknown | null;
   tka_images: unknown | null;
   tka_owner_username: string | null;
+  tka_owner_name?: LocalizedName | null;
   tka_active: boolean;
   tka_created_at: ISODateString | Date;
   tka_updated_at: ISODateString | Date | null;

@@ -2,9 +2,9 @@ import type { Priority, RiskLevel } from "@/domain/common";
 import type { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import type { TicketDraftFormValues } from "@/feature/serviceDesk/ticketDraft/forms";
 import type {
-  TicketDraftAttachmentInputDto,
-  TicketDraftWriteDto,
-} from "@/server/data/serviceDesk/ticketDraft";
+  TicketDraftAttachmentInput,
+  TicketDraftWriteInput,
+} from "@/lib/application/serviceDesk";
 
 import type { TicketDraftResource } from "./types";
 
@@ -30,17 +30,35 @@ export function mapTicketDraftPayload(
     riskLevel: draft.riskLevel,
     email: draft.email,
     requester: {
-      id: draft.requesterUsername,
-      email: "",
-      name: "",
+      id: draft.requester.username,
+      email: draft.requester.email ?? "",
+      name: formatRequesterName(draft.requester.name),
     },
     attachment: [],
   };
 }
 
+function formatRequesterName(
+  name: TicketDraftResource["requester"]["name"],
+): string {
+  const localizedName = name.en ?? Object.values(name)[0];
+
+  if (!localizedName) {
+    return "";
+  }
+
+  return [
+    localizedName.first,
+    localizedName.middle,
+    localizedName.last,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function toTicketDraftWritePayloadFromFormValues(
   form: TicketDraftWriteFormPayload,
-): TicketDraftWriteDto {
+): TicketDraftWriteInput {
   return {
     categoryId: form.category ?? null,
     approvalStepId: null,
@@ -92,7 +110,7 @@ function normalizeRiskLevel(value: string | null): RiskLevel | null {
   return null;
 }
 
-function mapAttachments(files: File[]): TicketDraftAttachmentInputDto[] {
+function mapAttachments(files: File[]): TicketDraftAttachmentInput[] {
   return files.map((file) => ({
     name: file.name,
     type: file.type,

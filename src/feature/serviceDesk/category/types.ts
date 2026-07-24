@@ -36,6 +36,21 @@ export type DbTenantCategoryTree = DbTenant & { category: DbCategory[] };
 export type ServiceDeskCategoryListParams = DbParams & {
   tenantId?: string;
   active?: boolean;
+  settings?: boolean;
+  context?: "settings";
+  scope?: CategoryScope;
+};
+
+export type ServiceDeskCategoryContext = {
+  categoryId: string;
+  mainCategoryId: string;
+  scope: CategoryScope;
+  tenant: {
+    id: string;
+    companyId: number;
+    isOwnerTenant: boolean;
+    active: boolean;
+  };
 };
 
 export type CategoryTreeSyncSubCategoryInput = Omit<SubCategory, "id"> & {

@@ -1,9 +1,9 @@
 ﻿import { Employee } from "@/domain/organization";
-import { idToNumber, numberToId } from "@/lib/api/utils/mapId";
+import { idToNumber, numberToId } from "@/lib/application/api/mapId";
 import {
   createItemPayloadMapper,
   createListPayloadMapper,
-} from "@/lib/api/utils/payload";
+} from "@/lib/application/api/payload";
 import { ArrayMapper } from "@/shared/types";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 

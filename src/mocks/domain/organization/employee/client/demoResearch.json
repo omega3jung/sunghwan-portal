@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 341,
+    "e_username": "quentin_vega",
+    "e_name": {
+      "en": {
+        "first": "Quentin",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "quentin.vega@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 171,
+    "e_job_field_id": 241,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 342,
+    "e_username": "rosa_davis",
+    "e_name": {
+      "en": {
+        "first": "Rosa",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "rosa.davis@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 171,
+    "e_job_field_id": 242,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 343,
+    "e_username": "samuel_smith",
+    "e_name": {
+      "en": {
+        "first": "Samuel",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "samuel.smith@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 172,
+    "e_job_field_id": 243,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 344,
+    "e_username": "tessa_garcia",
+    "e_name": {
+      "en": {
+        "first": "Tessa",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "tessa.garcia@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 172,
+    "e_job_field_id": 244,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 345,
+    "e_username": "umar_novak",
+    "e_name": {
+      "en": {
+        "first": "Umar",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "umar.novak@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 173,
+    "e_job_field_id": 245,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 346,
+    "e_username": "violet_usman",
+    "e_name": {
+      "en": {
+        "first": "Violet",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "violet.usman@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 173,
+    "e_job_field_id": 246,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 347,
+    "e_username": "william_clark",
+    "e_name": {
+      "en": {
+        "first": "William",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "william.clark@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 174,
+    "e_job_field_id": 247,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 348,
+    "e_username": "ximena_park",
+    "e_name": {
+      "en": {
+        "first": "Ximena",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ximena.park@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 174,
+    "e_job_field_id": 248,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 349,
+    "e_username": "yusuf_foster",
+    "e_name": {
+      "en": {
+        "first": "Yusuf",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "yusuf.foster@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 175,
+    "e_job_field_id": 249,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 350,
+    "e_username": "zoe_martinez",
+    "e_name": {
+      "en": {
+        "first": "Zoe",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "zoe.martinez@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 175,
+    "e_job_field_id": 250,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 351,
+    "e_username": "adrian_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Adrian",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "adrian.tanaka@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 176,
+    "e_job_field_id": 251,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 352,
+    "e_username": "bianca_brown",
+    "e_name": {
+      "en": {
+        "first": "Bianca",
+        "middle": "",
+        "last": "Brown"
+      }
+    },
+    "e_phone": "",
+    "e_email": "bianca.brown@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 176,
+    "e_job_field_id": 252,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 353,
+    "e_username": "caleb_moore",
+    "e_name": {
+      "en": {
+        "first": "Caleb",
+        "middle": "",
+        "last": "Moore"
+      }
+    },
+    "e_phone": "",
+    "e_email": "caleb.moore@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 177,
+    "e_job_field_id": 253,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 354,
+    "e_username": "diana_evans",
+    "e_name": {
+      "en": {
+        "first": "Diana",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "diana.evans@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 177,
+    "e_job_field_id": 254,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 355,
+    "e_username": "elias_laurent",
+    "e_name": {
+      "en": {
+        "first": "Elias",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elias.laurent@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 178,
+    "e_job_field_id": 255,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 356,
+    "e_username": "fiona_silva",
+    "e_name": {
+      "en": {
+        "first": "Fiona",
+        "middle": "",
+        "last": "Silva"
+      }
+    },
+    "e_phone": "",
+    "e_email": "fiona.silva@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 178,
+    "e_job_field_id": 256,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 357,
+    "e_username": "henry_zhang",
+    "e_name": {
+      "en": {
+        "first": "Henry",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "henry.zhang@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 177,
+    "e_job_field_id": 253,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-04-08T18:25:00+09:00"
+  },
+  {
+    "e_id": 358,
+    "e_username": "iris_lee",
+    "e_name": {
+      "en": {
+        "first": "Iris",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "iris.lee@client-demo-research.org",
+    "e_image_url": null,
+    "e_department_id": 172,
+    "e_job_field_id": 244,
+    "e_company_id": 9,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-23T18:25:00+09:00"
+  }
+]

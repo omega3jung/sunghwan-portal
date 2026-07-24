@@ -6,8 +6,10 @@ import {
   CategoryScope,
   TicketAssignmentPhase,
   TicketAttachmentMetadata,
+  TicketRequester,
   TicketResolutionReason,
   TicketStatus,
+  TicketUser,
 } from "@/domain/serviceDesk";
 import { ISODateString, LocalizedText, SortDirection } from "@/shared/types";
 
@@ -66,36 +68,37 @@ export const ticketMutateRequestSchema = z.object({
 });
 
 export const ticketCreateRequestSchema = ticketMutateRequestSchema;
-export const ticketUpdateRequestSchema = ticketMutateRequestSchema;
 
-export type TicketEmailDto = ServiceDeskTicketEmail;
-export type TicketPriority = Priority;
-export type TicketRiskLevel = RiskLevel;
 export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
-export type TicketFileDto = TicketAttachmentMetadataDto;
-export type TicketImageDto = TicketAttachmentMetadataDto;
 export type TicketMutateRequestDto = z.infer<typeof ticketMutateRequestSchema>;
 export type TicketCreateRequestDto = z.infer<typeof ticketCreateRequestSchema>;
-export type TicketUpdateRequestDto = z.infer<typeof ticketUpdateRequestSchema>;
 
 export type TicketListItemDto = {
   id: string;
+  tenant_id: string | null;
+  tenant_name: LocalizedText | null;
   ticket_number: string;
   created_at: ISODateString;
   updated_at: ISODateString | null;
 
   requester_username: string;
+  requester: TicketRequester;
+  requester_department_id: string | null;
+  requester_department_name: LocalizedText | null;
   status: TicketStatus;
   priority: Priority;
   risk_level: RiskLevel;
 
   assignment_phase: TicketAssignmentPhase;
+  approval_assignees: TicketUser[];
+  work_assignees: TicketUser[];
   approval_assignee_usernames: string[];
   work_assignee_usernames: string[];
   assigned_approver: boolean;
   assigned_worker: boolean;
 
   assignee_usernames: string[];
+  assignees: TicketUser[];
 
   work_minutes: number;
   last_comment_at: ISODateString | null;
@@ -153,6 +156,10 @@ export type TicketSearchRequestDto = {
 
 export type TicketSearchResponseDto = {
   items: TicketListItemDto[];
+  facets: {
+    requesters: TicketUser[];
+    assignees: TicketUser[];
+  };
   totalCount: number;
   page: number;
   pageSize: number;

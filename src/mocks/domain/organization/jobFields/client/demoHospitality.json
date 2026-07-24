@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 441,
+    "jf_name": {
+      "en": "Demo Hospitality - Hotel Operations Director"
+    },
+    "jf_description": {
+      "en": "Hotel Operations Director at Demo Hospitality"
+    },
+    "jf_department_id": 271,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 442,
+    "jf_name": {
+      "en": "Demo Hospitality - Hotel Operations Manager"
+    },
+    "jf_description": {
+      "en": "Hotel Operations Manager at Demo Hospitality"
+    },
+    "jf_department_id": 271,
+    "jf_company_id": 19,
+    "jf_parent_id": 441,
+    "jf_active": true
+  },
+  {
+    "jf_id": 443,
+    "jf_name": {
+      "en": "Demo Hospitality - Front Office Manager"
+    },
+    "jf_description": {
+      "en": "Front Office Manager at Demo Hospitality"
+    },
+    "jf_department_id": 272,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 444,
+    "jf_name": {
+      "en": "Demo Hospitality - Guest Services Agent"
+    },
+    "jf_description": {
+      "en": "Guest Services Agent at Demo Hospitality"
+    },
+    "jf_department_id": 272,
+    "jf_company_id": 19,
+    "jf_parent_id": 443,
+    "jf_active": true
+  },
+  {
+    "jf_id": 445,
+    "jf_name": {
+      "en": "Demo Hospitality - Housekeeping Manager"
+    },
+    "jf_description": {
+      "en": "Housekeeping Manager at Demo Hospitality"
+    },
+    "jf_department_id": 273,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 446,
+    "jf_name": {
+      "en": "Demo Hospitality - Housekeeping Supervisor"
+    },
+    "jf_description": {
+      "en": "Housekeeping Supervisor at Demo Hospitality"
+    },
+    "jf_department_id": 273,
+    "jf_company_id": 19,
+    "jf_parent_id": 445,
+    "jf_active": true
+  },
+  {
+    "jf_id": 447,
+    "jf_name": {
+      "en": "Demo Hospitality - Food & Beverage Manager"
+    },
+    "jf_description": {
+      "en": "Food & Beverage Manager at Demo Hospitality"
+    },
+    "jf_department_id": 274,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 448,
+    "jf_name": {
+      "en": "Demo Hospitality - Restaurant Supervisor"
+    },
+    "jf_description": {
+      "en": "Restaurant Supervisor at Demo Hospitality"
+    },
+    "jf_department_id": 274,
+    "jf_company_id": 19,
+    "jf_parent_id": 447,
+    "jf_active": true
+  },
+  {
+    "jf_id": 449,
+    "jf_name": {
+      "en": "Demo Hospitality - Hospitality Technology Director"
+    },
+    "jf_description": {
+      "en": "Hospitality Technology Director at Demo Hospitality"
+    },
+    "jf_department_id": 275,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 450,
+    "jf_name": {
+      "en": "Demo Hospitality - Hospitality Technology Manager"
+    },
+    "jf_description": {
+      "en": "Hospitality Technology Manager at Demo Hospitality"
+    },
+    "jf_department_id": 275,
+    "jf_company_id": 19,
+    "jf_parent_id": 449,
+    "jf_active": true
+  },
+  {
+    "jf_id": 451,
+    "jf_name": {
+      "en": "Demo Hospitality - Reservation Systems Manager"
+    },
+    "jf_description": {
+      "en": "Reservation Systems Manager at Demo Hospitality"
+    },
+    "jf_department_id": 276,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 452,
+    "jf_name": {
+      "en": "Demo Hospitality - Reservation Specialist"
+    },
+    "jf_description": {
+      "en": "Reservation Specialist at Demo Hospitality"
+    },
+    "jf_department_id": 276,
+    "jf_company_id": 19,
+    "jf_parent_id": 451,
+    "jf_active": true
+  },
+  {
+    "jf_id": 453,
+    "jf_name": {
+      "en": "Demo Hospitality - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Hospitality"
+    },
+    "jf_department_id": 277,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 454,
+    "jf_name": {
+      "en": "Demo Hospitality - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Hospitality"
+    },
+    "jf_department_id": 277,
+    "jf_company_id": 19,
+    "jf_parent_id": 453,
+    "jf_active": true
+  },
+  {
+    "jf_id": 455,
+    "jf_name": {
+      "en": "Demo Hospitality - Guest Experience Manager"
+    },
+    "jf_description": {
+      "en": "Guest Experience Manager at Demo Hospitality"
+    },
+    "jf_department_id": 278,
+    "jf_company_id": 19,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 456,
+    "jf_name": {
+      "en": "Demo Hospitality - Guest Experience Specialist"
+    },
+    "jf_description": {
+      "en": "Guest Experience Specialist at Demo Hospitality"
+    },
+    "jf_department_id": 278,
+    "jf_company_id": 19,
+    "jf_parent_id": 455,
+    "jf_active": true
+  }
+]

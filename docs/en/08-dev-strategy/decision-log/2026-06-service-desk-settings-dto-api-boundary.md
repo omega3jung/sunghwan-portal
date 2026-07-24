@@ -162,7 +162,7 @@ Route handlers should focus on:
 
 - HTTP method handling
 - request parsing
-- session/auth checks
+- invoking the shared session/principal and settings authorization boundary
 - runtime context resolution
 - delegating to the correct domain handler
 - returning `NextResponse`
@@ -344,6 +344,58 @@ This allows:
 
 ---
 
+## Authorization Addendum (2026-07)
+
+The DTO/API boundary also carries the category-scope settings authorization
+decision. Authorization is application behavior shared above the LOCAL/REMOTE
+branch; it is not a UI condition and is not delegated independently to two
+runtime implementations.
+
+```txt id="settings-authorization-api-flow"
+Route Handler
+-> require authenticated JWT access level >= ADMIN (9)
+-> resolve effective canonical AppUser
+-> resolve target Category -> Tenant -> Company context
+-> apply manage / read / none capability
+-> delegate to LOCAL handler or REMOTE service
+-> return filtered DTO response
+```
+
+The canonical principal supplies server-trusted `permission`, `userScope`, and
+`companyId`. Request body/query admin type, tenant/company claims, focused
+tenant, `role`, `dataScope`, and client state do not establish authority.
+During impersonation, the effective user is authorized while original and
+effective identities remain available for audit.
+
+Read APIs must filter out `none` resources. Mutation APIs load the stored
+category/tenant relationship before applying `manage`, and return `403` for
+read-only or out-of-bound principals. A page may redirect to Settings Home for
+user experience; an API does not redirect an unauthorized mutation.
+
+Approval Step and Assignment Rule DTOs do not duplicate tenant authority. The
+source relationship remains:
+
+```txt id="settings-dto-authorization-context"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
+
+Category update DTO validation treats tenant, main-category scope, and a
+subcategory parent move across tenant/scope as immutable. The server derives
+context from stored state for update/deactivation and from the stored parent
+for subcategories; it does not trust payload context alone.
+
+Actor candidate lookup is category-centered and purpose-aware. It resolves
+approval candidates from the category tenant company and assignment candidates
+from the category-dependent allowed company. The lookup checks the caller's
+resource capability as well as the company filter. Read-only access may return
+display data for currently referenced actors without granting employee
+directory search.
+
+---
+
 ## What Was Aligned
 
 ### 1. Settings API Responsibility
@@ -389,14 +441,19 @@ Category settings are tree-shaped configuration.
 
 A category is not only a flat record; it belongs to a tenant and may have parent/child relationships.
 
-Conceptual DTO:
+Current conceptual DTO direction:
 
 ```ts id="f6ykgn"
-type CategoryDto = {
-  id: string;
+type CategoryScope = "PORTAL" | "INTERNAL";
+
+type CategoryTreeDto = {
   tenantId: string;
-  parentId: string | null;
-  scope: "MAIN" | "SUB";
+  categories: MainCategoryDto[];
+};
+
+type MainCategoryDto = {
+  id: string;
+  scope: CategoryScope;
   name: LocalizedText;
   description: LocalizedText | null;
   requestTemplate: LocalizedText | null;
@@ -405,8 +462,13 @@ type CategoryDto = {
   defaultSlaDays: number;
   index: number;
   active: boolean;
+  subCategories: SubCategoryDto[];
 };
 ```
+
+`PORTAL`/`INTERNAL` is workflow scope. Main/subcategory is hierarchy and must
+not be encoded as an alternative value of `CategoryScope`. Subcategories
+inherit tenant and scope from the parent main category.
 
 The API should support the way the UI edits the category tree instead of forcing the UI to coordinate many unrelated CRUD calls.
 
@@ -443,10 +505,14 @@ Conceptual DTO:
 type AssignmentRuleDto = {
   id: string;
   categoryId: string;
-  ruleType: AssignmentRuleType;
-  payload: AssignmentRulePayload;
+  assignee: {
+    jobFieldIds: string[];
+    assigneeUsernames: string[];
+  };
 };
 ```
+
+The current assignment model is group-based and has no separate `ruleType`.
 
 Assignment rule changes should affect future or newly evaluated behavior, not silently rewrite historical ticket assignment records.
 
@@ -662,6 +728,10 @@ DTOs should remain stable when possible so UI components and feature API clients
 Any new settings API must define how LOCAL and REMOTE return the same application-facing shape.
 
 Do not allow the UI to branch based on local mock shape versus remote database shape.
+
+The same rule applies to capability and filtering results. LOCAL mutable state
+and REMOTE repositories must not expose different tenant/category visibility
+or accept different mutations for the same effective principal.
 
 ---
 

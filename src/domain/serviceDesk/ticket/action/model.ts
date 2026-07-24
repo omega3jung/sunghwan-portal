@@ -1,3 +1,4 @@
+import type { LocalizedName } from "@/domain/organization";
 import { ISODateString } from "@/shared/types/date";
 
 import { Attach } from "../../types";
@@ -16,6 +17,7 @@ export interface TicketAction {
   actionType: TicketActionType;
   content: string;
   ownerUsername: string | null;
+  ownerName: LocalizedName | null;
 
   createdAt: ISODateString;
   updatedAt?: ISODateString;

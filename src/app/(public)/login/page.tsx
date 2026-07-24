@@ -1,7 +1,7 @@
 import { LoginPageClient } from "./LoginPageClient";
 
 type LoginPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const getFirstParam = (value: string | string[] | undefined) => {
@@ -40,6 +40,10 @@ const buildRedirectHref = (
   return queryString ? `${target}?${queryString}` : target;
 };
 
-export default function LoginPage({ searchParams }: LoginPageProps) {
-  return <LoginPageClient redirectHref={buildRedirectHref(searchParams)} />;
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const resolvedSearchParams = await searchParams;
+
+  return (
+    <LoginPageClient redirectHref={buildRedirectHref(resolvedSearchParams)} />
+  );
 }

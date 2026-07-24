@@ -1,7 +1,7 @@
 "use client";
 
 import { DataScope } from "@/domain/auth";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 
 import { serviceDeskTicketDraftApi } from "./api";
 import type { TicketDraftFormPayload } from "./mapper";
@@ -20,12 +20,13 @@ type LocalTicketDraft = {
 const TICKET_DRAFT_STORAGE_KEY = "sunghwan_portal_ticket_draft";
 
 export function useTicketDraftRepoContext(): TicketDraftRepoContext {
-  const { data: currentSession } = useCurrentSession();
+  const { current, data: session } = useCurrentSession();
+  const effectiveUser = current.user;
 
   return {
-    userId: currentSession?.user.id ?? null,
-    dataScope: currentSession?.user.dataScope ?? "LOCAL",
-    isReady: !!currentSession?.user,
+    userId: effectiveUser?.id ?? null,
+    dataScope: session?.user.dataScope ?? "LOCAL",
+    isReady: !!effectiveUser && !!session?.user,
   };
 }
 

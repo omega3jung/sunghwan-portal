@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 281,
+    "jf_name": {
+      "en": "Demo Corporation - Corporate Operations Director"
+    },
+    "jf_description": {
+      "en": "Corporate Operations Director at Demo Corporation"
+    },
+    "jf_department_id": 191,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 282,
+    "jf_name": {
+      "en": "Demo Corporation - Corporate Operations Manager"
+    },
+    "jf_description": {
+      "en": "Corporate Operations Manager at Demo Corporation"
+    },
+    "jf_department_id": 191,
+    "jf_company_id": 11,
+    "jf_parent_id": 281,
+    "jf_active": true
+  },
+  {
+    "jf_id": 283,
+    "jf_name": {
+      "en": "Demo Corporation - Corporate Strategy Director"
+    },
+    "jf_description": {
+      "en": "Corporate Strategy Director at Demo Corporation"
+    },
+    "jf_department_id": 192,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 284,
+    "jf_name": {
+      "en": "Demo Corporation - Strategy Analyst"
+    },
+    "jf_description": {
+      "en": "Strategy Analyst at Demo Corporation"
+    },
+    "jf_department_id": 192,
+    "jf_company_id": 11,
+    "jf_parent_id": 283,
+    "jf_active": true
+  },
+  {
+    "jf_id": 285,
+    "jf_name": {
+      "en": "Demo Corporation - Finance Director"
+    },
+    "jf_description": {
+      "en": "Finance Director at Demo Corporation"
+    },
+    "jf_department_id": 193,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 286,
+    "jf_name": {
+      "en": "Demo Corporation - Financial Analyst"
+    },
+    "jf_description": {
+      "en": "Financial Analyst at Demo Corporation"
+    },
+    "jf_department_id": 193,
+    "jf_company_id": 11,
+    "jf_parent_id": 285,
+    "jf_active": true
+  },
+  {
+    "jf_id": 287,
+    "jf_name": {
+      "en": "Demo Corporation - Sales Director"
+    },
+    "jf_description": {
+      "en": "Sales Director at Demo Corporation"
+    },
+    "jf_department_id": 194,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 288,
+    "jf_name": {
+      "en": "Demo Corporation - Account Manager"
+    },
+    "jf_description": {
+      "en": "Account Manager at Demo Corporation"
+    },
+    "jf_department_id": 194,
+    "jf_company_id": 11,
+    "jf_parent_id": 287,
+    "jf_active": true
+  },
+  {
+    "jf_id": 289,
+    "jf_name": {
+      "en": "Demo Corporation - Enterprise Technology Director"
+    },
+    "jf_description": {
+      "en": "Enterprise Technology Director at Demo Corporation"
+    },
+    "jf_department_id": 195,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 290,
+    "jf_name": {
+      "en": "Demo Corporation - Enterprise Technology Manager"
+    },
+    "jf_description": {
+      "en": "Enterprise Technology Manager at Demo Corporation"
+    },
+    "jf_department_id": 195,
+    "jf_company_id": 11,
+    "jf_parent_id": 289,
+    "jf_active": true
+  },
+  {
+    "jf_id": 291,
+    "jf_name": {
+      "en": "Demo Corporation - Enterprise IT Support Manager"
+    },
+    "jf_description": {
+      "en": "Enterprise IT Support Manager at Demo Corporation"
+    },
+    "jf_department_id": 196,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 292,
+    "jf_name": {
+      "en": "Demo Corporation - Enterprise IT Specialist"
+    },
+    "jf_description": {
+      "en": "Enterprise IT Specialist at Demo Corporation"
+    },
+    "jf_department_id": 196,
+    "jf_company_id": 11,
+    "jf_parent_id": 291,
+    "jf_active": true
+  },
+  {
+    "jf_id": 293,
+    "jf_name": {
+      "en": "Demo Corporation - People & Legal Director"
+    },
+    "jf_description": {
+      "en": "People & Legal Director at Demo Corporation"
+    },
+    "jf_department_id": 197,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 294,
+    "jf_name": {
+      "en": "Demo Corporation - People Operations Specialist"
+    },
+    "jf_description": {
+      "en": "People Operations Specialist at Demo Corporation"
+    },
+    "jf_department_id": 197,
+    "jf_company_id": 11,
+    "jf_parent_id": 293,
+    "jf_active": true
+  },
+  {
+    "jf_id": 295,
+    "jf_name": {
+      "en": "Demo Corporation - Customer Success Manager"
+    },
+    "jf_description": {
+      "en": "Customer Success Manager at Demo Corporation"
+    },
+    "jf_department_id": 198,
+    "jf_company_id": 11,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 296,
+    "jf_name": {
+      "en": "Demo Corporation - Customer Success Specialist"
+    },
+    "jf_description": {
+      "en": "Customer Success Specialist at Demo Corporation"
+    },
+    "jf_department_id": 198,
+    "jf_company_id": 11,
+    "jf_parent_id": 295,
+    "jf_active": true
+  }
+]

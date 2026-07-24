@@ -1,13 +1,13 @@
 // app/api/user-preference/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { UserIdRouteContext } from "@/app/api/_helpers/types";
-import { Preference } from "@/domain/config";
+import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { UserIdRouteContext } from "@/app/api/_adapters/http";
+import { Preference } from "@/domain/user/preference";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   // local demo mode.
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function POST<T>(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as Preference<T>;
@@ -48,7 +48,7 @@ export async function POST<T>(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function PUT<T>(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as Preference<T>;

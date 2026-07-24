@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 381,
+    "jf_name": {
+      "en": "Demo Media - Content Operations Director"
+    },
+    "jf_description": {
+      "en": "Content Operations Director at Demo Media"
+    },
+    "jf_department_id": 241,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 382,
+    "jf_name": {
+      "en": "Demo Media - Content Operations Manager"
+    },
+    "jf_description": {
+      "en": "Content Operations Manager at Demo Media"
+    },
+    "jf_department_id": 241,
+    "jf_company_id": 16,
+    "jf_parent_id": 381,
+    "jf_active": true
+  },
+  {
+    "jf_id": 383,
+    "jf_name": {
+      "en": "Demo Media - Editorial Director"
+    },
+    "jf_description": {
+      "en": "Editorial Director at Demo Media"
+    },
+    "jf_department_id": 242,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 384,
+    "jf_name": {
+      "en": "Demo Media - Editor"
+    },
+    "jf_description": {
+      "en": "Editor at Demo Media"
+    },
+    "jf_department_id": 242,
+    "jf_company_id": 16,
+    "jf_parent_id": 383,
+    "jf_active": true
+  },
+  {
+    "jf_id": 385,
+    "jf_name": {
+      "en": "Demo Media - Broadcast Production Manager"
+    },
+    "jf_description": {
+      "en": "Broadcast Production Manager at Demo Media"
+    },
+    "jf_department_id": 243,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 386,
+    "jf_name": {
+      "en": "Demo Media - Producer"
+    },
+    "jf_description": {
+      "en": "Producer at Demo Media"
+    },
+    "jf_department_id": 243,
+    "jf_company_id": 16,
+    "jf_parent_id": 385,
+    "jf_active": true
+  },
+  {
+    "jf_id": 387,
+    "jf_name": {
+      "en": "Demo Media - Advertising Sales Director"
+    },
+    "jf_description": {
+      "en": "Advertising Sales Director at Demo Media"
+    },
+    "jf_department_id": 244,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 388,
+    "jf_name": {
+      "en": "Demo Media - Account Executive"
+    },
+    "jf_description": {
+      "en": "Account Executive at Demo Media"
+    },
+    "jf_department_id": 244,
+    "jf_company_id": 16,
+    "jf_parent_id": 387,
+    "jf_active": true
+  },
+  {
+    "jf_id": 389,
+    "jf_name": {
+      "en": "Demo Media - Media Technology Director"
+    },
+    "jf_description": {
+      "en": "Media Technology Director at Demo Media"
+    },
+    "jf_department_id": 245,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 390,
+    "jf_name": {
+      "en": "Demo Media - Media Technology Manager"
+    },
+    "jf_description": {
+      "en": "Media Technology Manager at Demo Media"
+    },
+    "jf_department_id": 245,
+    "jf_company_id": 16,
+    "jf_parent_id": 389,
+    "jf_active": true
+  },
+  {
+    "jf_id": 391,
+    "jf_name": {
+      "en": "Demo Media - Digital Platforms Manager"
+    },
+    "jf_description": {
+      "en": "Digital Platforms Manager at Demo Media"
+    },
+    "jf_department_id": 246,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 392,
+    "jf_name": {
+      "en": "Demo Media - Digital Platform Engineer"
+    },
+    "jf_description": {
+      "en": "Digital Platform Engineer at Demo Media"
+    },
+    "jf_department_id": 246,
+    "jf_company_id": 16,
+    "jf_parent_id": 391,
+    "jf_active": true
+  },
+  {
+    "jf_id": 393,
+    "jf_name": {
+      "en": "Demo Media - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Media"
+    },
+    "jf_department_id": 247,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 394,
+    "jf_name": {
+      "en": "Demo Media - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Media"
+    },
+    "jf_department_id": 247,
+    "jf_company_id": 16,
+    "jf_parent_id": 393,
+    "jf_active": true
+  },
+  {
+    "jf_id": 395,
+    "jf_name": {
+      "en": "Demo Media - Rights Management Manager"
+    },
+    "jf_description": {
+      "en": "Rights Management Manager at Demo Media"
+    },
+    "jf_department_id": 248,
+    "jf_company_id": 16,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 396,
+    "jf_name": {
+      "en": "Demo Media - Rights Specialist"
+    },
+    "jf_description": {
+      "en": "Rights Specialist at Demo Media"
+    },
+    "jf_department_id": 248,
+    "jf_company_id": 16,
+    "jf_parent_id": 395,
+    "jf_active": true
+  }
+]

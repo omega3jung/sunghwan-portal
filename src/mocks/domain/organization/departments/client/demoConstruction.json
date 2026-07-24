@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 161,
+    "d_name": {
+      "en": "Demo Construction - Project Delivery"
+    },
+    "d_code": "CON-OPS",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 162,
+    "d_name": {
+      "en": "Demo Construction - Site Operations"
+    },
+    "d_code": "CON-SIT",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": 161,
+    "d_active": true
+  },
+  {
+    "d_id": 163,
+    "d_name": {
+      "en": "Demo Construction - Civil Engineering"
+    },
+    "d_code": "CON-ENG",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": 161,
+    "d_active": true
+  },
+  {
+    "d_id": 164,
+    "d_name": {
+      "en": "Demo Construction - Procurement"
+    },
+    "d_code": "CON-PRO",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": 161,
+    "d_active": true
+  },
+  {
+    "d_id": 165,
+    "d_name": {
+      "en": "Demo Construction - Construction Technology"
+    },
+    "d_code": "CON-TEC",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 166,
+    "d_name": {
+      "en": "Demo Construction - Project Systems"
+    },
+    "d_code": "CON-SYS",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": 165,
+    "d_active": true
+  },
+  {
+    "d_id": 167,
+    "d_name": {
+      "en": "Demo Construction - Corporate Services"
+    },
+    "d_code": "CON-COR",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 168,
+    "d_name": {
+      "en": "Demo Construction - Safety Management"
+    },
+    "d_code": "CON-SAF",
+    "d_description": null,
+    "d_company_id": 8,
+    "d_parent_id": 167,
+    "d_active": true
+  }
+]

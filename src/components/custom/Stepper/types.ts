@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import {
   ConnectorStyle,
@@ -38,10 +38,10 @@ export type StepperProps = StepperBaseProps &
 export type StepperItemProps = {
   index: number;
   total: number;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export type Step = {
-  label: string | JSX.Element;
+  label: string | ReactElement;
   disabled?: boolean;
 };

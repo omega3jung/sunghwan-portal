@@ -14,16 +14,23 @@ import {
   useSaveServiceDeskCategoryTree,
   useServiceDeskCategoryListQuery,
 } from "@/feature/serviceDesk/category/client";
-import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
+import { NS } from "@/lib/application/i18n";
+import { useMutationToast } from "@/lib/client/toast";
 
 import { SETTINGS_OFFSET_STYLE } from "../../style";
 import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
 import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
-import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
-import { ServiceDeskTenantSelect } from "../components/ServiceDeskTenantSelect";
+import {
+  ServiceDeskSettingsAccessBanner,
+  ServiceDeskSettingsPageHeader,
+} from "../components/ServiceDeskSettingsPageHeader";
+import {
+  ServiceDeskSettingsScopeSelect,
+  ServiceDeskTenantSelect,
+} from "../components/ServiceDeskTenantSelect";
 import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import { useServiceDeskSettingsTenant } from "../ServiceDeskSettingsTenantProvider";
+import { useServiceDeskSettingsScopeAccess } from "../hooks/useServiceDeskSettingsScopeAccess";
+import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 import { CategoryForm } from "./components/CategoryForm";
 import { CategoryTree } from "./components/CategoryTree";
 import { useCategoryTree } from "./hooks/useCategoryTree";
@@ -38,17 +45,34 @@ export default function CategoryPage() {
   const { t } = useTranslation(NS.settings);
   const mutationToast = useMutationToast();
   const { selectedTenant, isTenantSelectionLoading } =
-    useServiceDeskSettingsTenant();
+    useTenantSelection();
+  const {
+    selectedScope,
+    setSelectedScope,
+    availableScopes,
+    access,
+    canRead,
+    canManage,
+    contextKey,
+  } = useServiceDeskSettingsScopeAccess("CATEGORY");
 
   const { language, setLanguage } = useServiceDeskSettingsLanguage();
 
-  const [baselineSignatureByTenant, setBaselineSignatureByTenant] = useState<
+  const [baselineSignatureByContext, setBaselineSignatureByContext] = useState<
     Record<string, string>
   >({});
 
   const categoryParams = useMemo(
-    () => (selectedTenant ? { tenantId: selectedTenant } : undefined),
-    [selectedTenant],
+    () =>
+      selectedTenant && canRead
+        ? {
+            tenantId: selectedTenant,
+            settings: true,
+            context: "settings" as const,
+            scope: selectedScope,
+          }
+        : undefined,
+    [canRead, selectedScope, selectedTenant],
   );
   const { data: categories, isLoading: isCategoriesLoading } =
     useServiceDeskCategoryListQuery(categoryParams);
@@ -61,18 +85,30 @@ export default function CategoryPage() {
     selectedId,
     setSelectedId,
     treeTenantId,
+    treeContextKey,
     selectedNode,
     addCategory,
     removeCategory,
     addSubCategory,
-  } = useCategoryTree({ selectedTenant, categories });
+  } = useCategoryTree({ selectedTenant, scope: selectedScope, categories });
+
+  const scopedCategories = useMemo(
+    () =>
+      categories?.map((tenant) => ({
+        ...tenant,
+        categories: tenant.categories.filter(
+          (category) => category.scope === selectedScope,
+        ),
+      })),
+    [categories, selectedScope],
+  );
 
   const selectedTenantCategories = useMemo(() => {
     return (
-      categories?.find((tenant) => tenant.id === selectedTenant)?.categories ??
-      []
+      scopedCategories?.find((tenant) => tenant.id === selectedTenant)
+        ?.categories ?? []
     );
-  }, [categories, selectedTenant]);
+  }, [scopedCategories, selectedTenant]);
 
   // logics.
   const queryBaselineSignature = useMemo(() => {
@@ -82,9 +118,9 @@ export default function CategoryPage() {
   }, [selectedTenantCategories]);
 
   const baselineSignature =
-    selectedTenant === null
+    contextKey === null
       ? queryBaselineSignature
-      : (baselineSignatureByTenant[selectedTenant] ?? queryBaselineSignature);
+      : (baselineSignatureByContext[contextKey] ?? queryBaselineSignature);
 
   const currentSignature = useMemo(() => {
     return createCategorySettingsSignatureFromTree(tree);
@@ -93,20 +129,28 @@ export default function CategoryPage() {
   const isDirty =
     Boolean(selectedTenant) && baselineSignature !== currentSignature;
   const isTreeReadyForSelectedTenant =
-    Boolean(selectedTenant) && treeTenantId === selectedTenant;
+    Boolean(contextKey) &&
+    treeTenantId === selectedTenant &&
+    treeContextKey === contextKey;
   const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
-  const canReset = hasUnsavedChanges && !isSaving;
-  const canSave = hasUnsavedChanges && !isSaving;
+  const canReset = canManage && hasUnsavedChanges && !isSaving;
+  const canSave = canManage && hasUnsavedChanges && !isSaving;
   const isLoading =
-    isTenantSelectionLoading || (Boolean(selectedTenant) && isCategoriesLoading);
+    isTenantSelectionLoading ||
+    (Boolean(selectedTenant) && canRead && isCategoriesLoading);
 
   const handleReset = () => {
-    if (!selectedTenant || treeTenantId !== selectedTenant || !categories) {
+    if (
+      !canManage ||
+      !selectedTenant ||
+      treeContextKey !== contextKey ||
+      !scopedCategories
+    ) {
       return;
     }
 
     const nextTree = categoryToTree(
-      mapCategoryData(categories, selectedTenant),
+      mapCategoryData(scopedCategories, selectedTenant),
     );
 
     setTree(nextTree);
@@ -114,7 +158,13 @@ export default function CategoryPage() {
   };
 
   const onSaveChange = async () => {
-    if (!selectedTenant || treeTenantId !== selectedTenant || !isDirty) {
+    if (
+      !canManage ||
+      !selectedTenant ||
+      treeContextKey !== contextKey ||
+      !isDirty ||
+      !contextKey
+    ) {
       return;
     }
 
@@ -132,15 +182,21 @@ export default function CategoryPage() {
         t("serviceDeskSettings.common.categoryList"),
       );
       const savedTenant = await savePromise;
+      const scopedSavedTenant = {
+        ...savedTenant,
+        categories: savedTenant.categories.filter(
+          (category) => category.scope === selectedScope,
+        ),
+      };
 
       const nextTree = categoryToTree(
-        mapCategoryData([savedTenant], savedTenant.id),
+        mapCategoryData([scopedSavedTenant], scopedSavedTenant.id),
       );
 
-      setBaselineSignatureByTenant((previousState) => ({
+      setBaselineSignatureByContext((previousState) => ({
         ...previousState,
-        [savedTenant.id]: createCategorySettingsSignatureFromCategories(
-          savedTenant.categories,
+        [contextKey]: createCategorySettingsSignatureFromCategories(
+          scopedSavedTenant.categories,
         ),
       }));
       setTree(nextTree);
@@ -151,21 +207,21 @@ export default function CategoryPage() {
   };
 
   useEffect(() => {
-    if (!selectedTenant) {
+    if (!contextKey) {
       return;
     }
 
-    setBaselineSignatureByTenant((previousState) => {
-      if (previousState[selectedTenant] === queryBaselineSignature) {
+    setBaselineSignatureByContext((previousState) => {
+      if (previousState[contextKey] === queryBaselineSignature) {
         return previousState;
       }
 
       return {
         ...previousState,
-        [selectedTenant]: queryBaselineSignature,
+        [contextKey]: queryBaselineSignature,
       };
     });
-  }, [queryBaselineSignature, selectedTenant]);
+  }, [contextKey, queryBaselineSignature]);
 
   if (isLoading) {
     return <ServiceDeskSettingsLoading />;
@@ -187,13 +243,28 @@ export default function CategoryPage() {
         />
       </div>
 
+      <div className="px-2">
+        <ServiceDeskSettingsAccessBanner
+          access={access}
+          managedBy="serviceProvider"
+        />
+      </div>
+
       <div className="grid grid-cols-5 gap-2">
         {/* Category Tree */}
         <div
           className="col-span-3 flex flex-col gap-2 p-2 pr-10"
           style={SETTINGS_OFFSET_STYLE}
         >
-          <ServiceDeskTenantSelect className="pb-6" />
+          <div className="flex flex-wrap items-end gap-4 pb-6">
+            <ServiceDeskTenantSelect className="min-w-60" />
+            <ServiceDeskSettingsScopeSelect
+              value={selectedScope}
+              onValueChange={setSelectedScope}
+              availableScopes={availableScopes}
+              disabled={isLoading || isSaving}
+            />
+          </div>
           <div className="flex items-center justify-between">
             <ServiceDeskSettingsLanguageSelect
               language={language}
@@ -203,8 +274,8 @@ export default function CategoryPage() {
               variant="outline"
               type="button"
               size="sm"
-              disabled={!selectedTenant || isLoading || isSaving}
-              onClick={addCategory}
+              disabled={!selectedTenant || !canManage || isLoading || isSaving}
+              onClick={() => addCategory(selectedScope)}
             >
               {t("serviceDeskSettings.categoryTab.addCategory")}
             </Button>
@@ -218,6 +289,7 @@ export default function CategoryPage() {
             removeCategory={removeCategory}
             language={language}
             isLoading={isLoading || isSaving}
+            readOnly={!canManage}
           />
         </div>
 
@@ -227,6 +299,7 @@ export default function CategoryPage() {
             selectedNode={selectedNode}
             language={language}
             setTree={setTree}
+            readOnly={!canManage}
           />
         </div>
       </div>

@@ -6,12 +6,11 @@ import {
   RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
-import client from "@/lib/api";
-import { PaginatedSearchResponse } from "@/server/shared/types/api";
+import client from "@/lib/client/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
-import { TicketSearchRequest } from "./types";
+import { TicketSearchRequest, TicketSearchResponse } from "./types";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;
 
@@ -29,9 +28,9 @@ export const serviceDeskTicketApi = {
 
   search: async (
     request: TicketSearchRequest,
-  ): Promise<PaginatedSearchResponse<TicketSummary>> => {
+  ): Promise<TicketSearchResponse> => {
     const res = await client.api.get<
-      PaginatedSearchResponse<TicketSummary>,
+      TicketSearchResponse,
       URLSearchParams
     >("/api/service-desk/tickets/search", {
       params: buildDbSearchParams(request),

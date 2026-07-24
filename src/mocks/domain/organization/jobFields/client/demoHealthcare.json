@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 121,
+    "jf_name": {
+      "en": "Demo Healthcare - Clinical Operations Director"
+    },
+    "jf_description": {
+      "en": "Clinical Operations Director at Demo Healthcare"
+    },
+    "jf_department_id": 111,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 122,
+    "jf_name": {
+      "en": "Demo Healthcare - Clinical Operations Manager"
+    },
+    "jf_description": {
+      "en": "Clinical Operations Manager at Demo Healthcare"
+    },
+    "jf_department_id": 111,
+    "jf_company_id": 3,
+    "jf_parent_id": 121,
+    "jf_active": true
+  },
+  {
+    "jf_id": 123,
+    "jf_name": {
+      "en": "Demo Healthcare - Patient Services Manager"
+    },
+    "jf_description": {
+      "en": "Patient Services Manager at Demo Healthcare"
+    },
+    "jf_department_id": 112,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 124,
+    "jf_name": {
+      "en": "Demo Healthcare - Patient Services Specialist"
+    },
+    "jf_description": {
+      "en": "Patient Services Specialist at Demo Healthcare"
+    },
+    "jf_department_id": 112,
+    "jf_company_id": 3,
+    "jf_parent_id": 123,
+    "jf_active": true
+  },
+  {
+    "jf_id": 125,
+    "jf_name": {
+      "en": "Demo Healthcare - Nursing Director"
+    },
+    "jf_description": {
+      "en": "Nursing Director at Demo Healthcare"
+    },
+    "jf_department_id": 113,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 126,
+    "jf_name": {
+      "en": "Demo Healthcare - Nursing Supervisor"
+    },
+    "jf_description": {
+      "en": "Nursing Supervisor at Demo Healthcare"
+    },
+    "jf_department_id": 113,
+    "jf_company_id": 3,
+    "jf_parent_id": 125,
+    "jf_active": true
+  },
+  {
+    "jf_id": 127,
+    "jf_name": {
+      "en": "Demo Healthcare - Medical Records Manager"
+    },
+    "jf_description": {
+      "en": "Medical Records Manager at Demo Healthcare"
+    },
+    "jf_department_id": 114,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 128,
+    "jf_name": {
+      "en": "Demo Healthcare - Medical Records Specialist"
+    },
+    "jf_description": {
+      "en": "Medical Records Specialist at Demo Healthcare"
+    },
+    "jf_department_id": 114,
+    "jf_company_id": 3,
+    "jf_parent_id": 127,
+    "jf_active": true
+  },
+  {
+    "jf_id": 129,
+    "jf_name": {
+      "en": "Demo Healthcare - Health Technology Director"
+    },
+    "jf_description": {
+      "en": "Health Technology Director at Demo Healthcare"
+    },
+    "jf_department_id": 115,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 130,
+    "jf_name": {
+      "en": "Demo Healthcare - Health Technology Manager"
+    },
+    "jf_description": {
+      "en": "Health Technology Manager at Demo Healthcare"
+    },
+    "jf_department_id": 115,
+    "jf_company_id": 3,
+    "jf_parent_id": 129,
+    "jf_active": true
+  },
+  {
+    "jf_id": 131,
+    "jf_name": {
+      "en": "Demo Healthcare - Health IT Support Manager"
+    },
+    "jf_description": {
+      "en": "Health IT Support Manager at Demo Healthcare"
+    },
+    "jf_department_id": 116,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 132,
+    "jf_name": {
+      "en": "Demo Healthcare - Health IT Specialist"
+    },
+    "jf_description": {
+      "en": "Health IT Specialist at Demo Healthcare"
+    },
+    "jf_department_id": 116,
+    "jf_company_id": 3,
+    "jf_parent_id": 131,
+    "jf_active": true
+  },
+  {
+    "jf_id": 133,
+    "jf_name": {
+      "en": "Demo Healthcare - Administration Director"
+    },
+    "jf_description": {
+      "en": "Administration Director at Demo Healthcare"
+    },
+    "jf_department_id": 117,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 134,
+    "jf_name": {
+      "en": "Demo Healthcare - Administrative Officer"
+    },
+    "jf_description": {
+      "en": "Administrative Officer at Demo Healthcare"
+    },
+    "jf_department_id": 117,
+    "jf_company_id": 3,
+    "jf_parent_id": 133,
+    "jf_active": true
+  },
+  {
+    "jf_id": 135,
+    "jf_name": {
+      "en": "Demo Healthcare - Quality & Compliance Manager"
+    },
+    "jf_description": {
+      "en": "Quality & Compliance Manager at Demo Healthcare"
+    },
+    "jf_department_id": 118,
+    "jf_company_id": 3,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 136,
+    "jf_name": {
+      "en": "Demo Healthcare - Compliance Specialist"
+    },
+    "jf_description": {
+      "en": "Compliance Specialist at Demo Healthcare"
+    },
+    "jf_department_id": 118,
+    "jf_company_id": 3,
+    "jf_parent_id": 135,
+    "jf_active": true
+  }
+]

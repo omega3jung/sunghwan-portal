@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 401,
+    "jf_name": {
+      "en": "Demo Automotive - Vehicle Operations Director"
+    },
+    "jf_description": {
+      "en": "Vehicle Operations Director at Demo Automotive"
+    },
+    "jf_department_id": 251,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 402,
+    "jf_name": {
+      "en": "Demo Automotive - Vehicle Operations Manager"
+    },
+    "jf_description": {
+      "en": "Vehicle Operations Manager at Demo Automotive"
+    },
+    "jf_department_id": 251,
+    "jf_company_id": 17,
+    "jf_parent_id": 401,
+    "jf_active": true
+  },
+  {
+    "jf_id": 403,
+    "jf_name": {
+      "en": "Demo Automotive - Vehicle Engineering Manager"
+    },
+    "jf_description": {
+      "en": "Vehicle Engineering Manager at Demo Automotive"
+    },
+    "jf_department_id": 252,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 404,
+    "jf_name": {
+      "en": "Demo Automotive - Vehicle Engineer"
+    },
+    "jf_description": {
+      "en": "Vehicle Engineer at Demo Automotive"
+    },
+    "jf_department_id": 252,
+    "jf_company_id": 17,
+    "jf_parent_id": 403,
+    "jf_active": true
+  },
+  {
+    "jf_id": 405,
+    "jf_name": {
+      "en": "Demo Automotive - Manufacturing Engineering Manager"
+    },
+    "jf_description": {
+      "en": "Manufacturing Engineering Manager at Demo Automotive"
+    },
+    "jf_department_id": 253,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 406,
+    "jf_name": {
+      "en": "Demo Automotive - Manufacturing Engineer"
+    },
+    "jf_description": {
+      "en": "Manufacturing Engineer at Demo Automotive"
+    },
+    "jf_department_id": 253,
+    "jf_company_id": 17,
+    "jf_parent_id": 405,
+    "jf_active": true
+  },
+  {
+    "jf_id": 407,
+    "jf_name": {
+      "en": "Demo Automotive - Quality Management Manager"
+    },
+    "jf_description": {
+      "en": "Quality Management Manager at Demo Automotive"
+    },
+    "jf_department_id": 254,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 408,
+    "jf_name": {
+      "en": "Demo Automotive - Quality Inspector"
+    },
+    "jf_description": {
+      "en": "Quality Inspector at Demo Automotive"
+    },
+    "jf_department_id": 254,
+    "jf_company_id": 17,
+    "jf_parent_id": 407,
+    "jf_active": true
+  },
+  {
+    "jf_id": 409,
+    "jf_name": {
+      "en": "Demo Automotive - Automotive Technology Director"
+    },
+    "jf_description": {
+      "en": "Automotive Technology Director at Demo Automotive"
+    },
+    "jf_department_id": 255,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 410,
+    "jf_name": {
+      "en": "Demo Automotive - Automotive Technology Manager"
+    },
+    "jf_description": {
+      "en": "Automotive Technology Manager at Demo Automotive"
+    },
+    "jf_department_id": 255,
+    "jf_company_id": 17,
+    "jf_parent_id": 409,
+    "jf_active": true
+  },
+  {
+    "jf_id": 411,
+    "jf_name": {
+      "en": "Demo Automotive - Connected Vehicle Systems Manager"
+    },
+    "jf_description": {
+      "en": "Connected Vehicle Systems Manager at Demo Automotive"
+    },
+    "jf_department_id": 256,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 412,
+    "jf_name": {
+      "en": "Demo Automotive - Connected Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Connected Systems Engineer at Demo Automotive"
+    },
+    "jf_department_id": 256,
+    "jf_company_id": 17,
+    "jf_parent_id": 411,
+    "jf_active": true
+  },
+  {
+    "jf_id": 413,
+    "jf_name": {
+      "en": "Demo Automotive - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Automotive"
+    },
+    "jf_department_id": 257,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 414,
+    "jf_name": {
+      "en": "Demo Automotive - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Automotive"
+    },
+    "jf_department_id": 257,
+    "jf_company_id": 17,
+    "jf_parent_id": 413,
+    "jf_active": true
+  },
+  {
+    "jf_id": 415,
+    "jf_name": {
+      "en": "Demo Automotive - Dealer Support Manager"
+    },
+    "jf_description": {
+      "en": "Dealer Support Manager at Demo Automotive"
+    },
+    "jf_department_id": 258,
+    "jf_company_id": 17,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 416,
+    "jf_name": {
+      "en": "Demo Automotive - Dealer Support Specialist"
+    },
+    "jf_description": {
+      "en": "Dealer Support Specialist at Demo Automotive"
+    },
+    "jf_department_id": 258,
+    "jf_company_id": 17,
+    "jf_parent_id": 415,
+    "jf_active": true
+  }
+]

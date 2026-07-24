@@ -4,43 +4,44 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
-import { StatusBadge } from "@/components/custom/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { SupportedLanguage } from "@/domain/config";
-import { isMergedChildTicket, TicketSummary } from "@/domain/serviceDesk";
-import { MetaBadge } from "@/feature/serviceDesk/shared";
 import {
-  selectTicketAssigneeIds,
+  isEscalatedTicket,
+  isMergedChildTicket,
+  TicketSummary,
+} from "@/domain/serviceDesk";
+import {
+  MetaBadge,
+  TicketStatusBadge,
+} from "@/feature/serviceDesk/shared/client";
+import {
+  selectTicketAssignees,
   selectTicketIsAssigned,
 } from "@/feature/serviceDesk/ticket/utils";
-import { NS } from "@/lib/i18n";
-import { ROUTES } from "@/lib/routes";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { formatDisplayName } from "@/lib/application/organization";
+import { useLocalizedValue } from "@/lib/client/i18n";
+import { ROUTES } from "@/lib/config/routing";
 import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
-import { ImageValueLabel } from "@/shared/types";
 import { formatTimeDistanceFromNow } from "@/shared/utils/format";
 import { cn, initials } from "@/shared/utils/presentation";
 
 interface TicketListItemProps {
   ticket: TicketSummary;
-  users: ImageValueLabel[];
   language: SupportedLanguage;
   onClick: () => void;
 }
 
 export const TicketListMobileItem = ({
   ticket,
-  users,
   language,
   onClick,
 }: TicketListItemProps) => {
   const { t } = useTranslation(NS.serviceDesk);
-  const requester = users.find(
-    (user) => user.value === ticket.requesterUsername,
-  );
-  const requesterName =
-    requester?.label ||
-    t("ticketList.unknownRequester", { defaultValue: "Unknown requester" });
+  const tLocal = useLocalizedValue(language);
+  const requesterName = formatDisplayName(tLocal(ticket.requester.name));
   const createdTime = formatTimeDistanceFromNow(
     ticket.createdAt,
     dateLocaleMap[language],
@@ -52,8 +53,14 @@ export const TicketListMobileItem = ({
   const mergedIntoTicketHref = ticket.mergedIntoTicketId
     ? `${ROUTES.SERVICE_DESK}/${ticket.mergedIntoTicketId}`
     : null;
-  const assigneeUsernames = selectTicketAssigneeIds(ticket);
+  const assignees = selectTicketAssignees(ticket);
+  const assigneeOptions = assignees.map((assignee) => ({
+    value: assignee.username,
+    label: formatDisplayName(tLocal(assignee.name)),
+    image: assignee.image ?? undefined,
+  }));
   const isAssigned = selectTicketIsAssigned(ticket);
+  const isEscalated = isEscalatedTicket(ticket);
 
   return (
     <div
@@ -80,7 +87,9 @@ export const TicketListMobileItem = ({
 
         <div className="flex gap-2">
           {isMergedChildTicket(ticket) && mergedIntoTicketHref ? (
-            <MetaBadge tone="merge">{t("merge.badge")}</MetaBadge>
+            <MetaBadge tone="merge">
+              {t(isEscalated ? "merge.escalatedBadge" : "merge.badge")}
+            </MetaBadge>
           ) : null}
 
           {isAssigned && (
@@ -88,7 +97,7 @@ export const TicketListMobileItem = ({
               {t("detailAside.assignedBadge")}
             </Badge>
           )}
-          <StatusBadge status={ticket.status} />
+          <TicketStatusBadge status={ticket.status} />
         </div>
       </div>
 
@@ -102,14 +111,16 @@ export const TicketListMobileItem = ({
                 event.stopPropagation();
               }}
             >
-              {`${t("merge.badge")} : ${ticket.mergedIntoTicketNo}`}
+              {`${t(
+                isEscalated ? "merge.escalatedBadge" : "merge.badge",
+              )} : ${ticket.mergedIntoTicketNo}`}
             </Link>
           ) : null}
 
           <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={requester?.image} />
-              <AvatarFallback>{initials(requesterName)}</AvatarFallback>
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={ticket.requester.image ?? undefined} />
+                <AvatarFallback>{initials(requesterName)}</AvatarFallback>
             </Avatar>
 
             <span className="text-xs text-muted-foreground">
@@ -119,8 +130,8 @@ export const TicketListMobileItem = ({
         </div>
         <AvatarMultiComboBox
           variant="ghost"
-          value={assigneeUsernames}
-          options={users}
+          value={assignees.map((assignee) => assignee.username)}
+          options={assigneeOptions}
           maxImages={5}
           readOnly={true}
         />

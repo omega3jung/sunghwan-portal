@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 401,
+    "e_username": "aiden_foster",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Foster"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.foster@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 201,
+    "e_job_field_id": 301,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 402,
+    "e_username": "amelia_martinez",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Martinez"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.martinez@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 201,
+    "e_job_field_id": 302,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 403,
+    "e_username": "benjamin_tanaka",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Tanaka"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.tanaka@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 202,
+    "e_job_field_id": 303,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 404,
+    "e_username": "chloe_brown",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Brown"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.brown@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 202,
+    "e_job_field_id": 304,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 405,
+    "e_username": "daniel_moore",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Moore"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.moore@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 203,
+    "e_job_field_id": 305,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 406,
+    "e_username": "elena_evans",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Evans"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.evans@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 203,
+    "e_job_field_id": 306,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 407,
+    "e_username": "ethan_laurent",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Laurent"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.laurent@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 204,
+    "e_job_field_id": 307,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 408,
+    "e_username": "freya_silva",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Silva"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.silva@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 204,
+    "e_job_field_id": 308,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 409,
+    "e_username": "gabriel_zhang",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Zhang"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.zhang@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 205,
+    "e_job_field_id": 309,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 410,
+    "e_username": "hana_lee",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Lee"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.lee@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 205,
+    "e_job_field_id": 310,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 411,
+    "e_username": "isaac_diaz",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Diaz"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.diaz@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 206,
+    "e_job_field_id": 311,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 412,
+    "e_username": "julia_kim",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Kim"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.kim@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 206,
+    "e_job_field_id": 312,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 413,
+    "e_username": "kai_rossi",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Rossi"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.rossi@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 207,
+    "e_job_field_id": 313,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 414,
+    "e_username": "layla_young",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Young"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.young@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 207,
+    "e_job_field_id": 314,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 415,
+    "e_username": "mateo_king",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "King"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.king@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 208,
+    "e_job_field_id": 315,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 416,
+    "e_username": "nora_chen",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Chen"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.chen@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 208,
+    "e_job_field_id": 316,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 417,
+    "e_username": "oliver_johnson",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Johnson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.johnson@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 208,
+    "e_job_field_id": 316,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-31T18:25:00+09:00"
+  },
+  {
+    "e_id": 418,
+    "e_username": "priya_quinn",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Quinn"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.quinn@client-demo-industry.com",
+    "e_image_url": null,
+    "e_department_id": 204,
+    "e_job_field_id": 307,
+    "e_company_id": 12,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-15T18:25:00+09:00"
+  }
+]

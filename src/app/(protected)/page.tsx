@@ -26,8 +26,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
-import { NS } from "@/lib/i18n";
+import { useCurrentSession } from "@/feature/auth/session/client";
+import { NS } from "@/lib/application/i18n";
 
 type QuickAction = {
   title: string;

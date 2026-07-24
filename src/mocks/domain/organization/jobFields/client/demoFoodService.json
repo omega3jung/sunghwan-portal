@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 461,
+    "jf_name": {
+      "en": "Demo Food Service - Food Service Operations Director"
+    },
+    "jf_description": {
+      "en": "Food Service Operations Director at Demo Food Service"
+    },
+    "jf_department_id": 281,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 462,
+    "jf_name": {
+      "en": "Demo Food Service - Food Service Operations Manager"
+    },
+    "jf_description": {
+      "en": "Food Service Operations Manager at Demo Food Service"
+    },
+    "jf_department_id": 281,
+    "jf_company_id": 20,
+    "jf_parent_id": 461,
+    "jf_active": true
+  },
+  {
+    "jf_id": 463,
+    "jf_name": {
+      "en": "Demo Food Service - Restaurant Operations Manager"
+    },
+    "jf_description": {
+      "en": "Restaurant Operations Manager at Demo Food Service"
+    },
+    "jf_department_id": 282,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 464,
+    "jf_name": {
+      "en": "Demo Food Service - Restaurant Supervisor"
+    },
+    "jf_description": {
+      "en": "Restaurant Supervisor at Demo Food Service"
+    },
+    "jf_department_id": 282,
+    "jf_company_id": 20,
+    "jf_parent_id": 463,
+    "jf_active": true
+  },
+  {
+    "jf_id": 465,
+    "jf_name": {
+      "en": "Demo Food Service - Kitchen Operations Manager"
+    },
+    "jf_description": {
+      "en": "Kitchen Operations Manager at Demo Food Service"
+    },
+    "jf_department_id": 283,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 466,
+    "jf_name": {
+      "en": "Demo Food Service - Head Chef"
+    },
+    "jf_description": {
+      "en": "Head Chef at Demo Food Service"
+    },
+    "jf_department_id": 283,
+    "jf_company_id": 20,
+    "jf_parent_id": 465,
+    "jf_active": true
+  },
+  {
+    "jf_id": 467,
+    "jf_name": {
+      "en": "Demo Food Service - Menu Development Manager"
+    },
+    "jf_description": {
+      "en": "Menu Development Manager at Demo Food Service"
+    },
+    "jf_department_id": 284,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 468,
+    "jf_name": {
+      "en": "Demo Food Service - Culinary Specialist"
+    },
+    "jf_description": {
+      "en": "Culinary Specialist at Demo Food Service"
+    },
+    "jf_department_id": 284,
+    "jf_company_id": 20,
+    "jf_parent_id": 467,
+    "jf_active": true
+  },
+  {
+    "jf_id": 469,
+    "jf_name": {
+      "en": "Demo Food Service - Food Service Technology Director"
+    },
+    "jf_description": {
+      "en": "Food Service Technology Director at Demo Food Service"
+    },
+    "jf_department_id": 285,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 470,
+    "jf_name": {
+      "en": "Demo Food Service - Food Service Technology Manager"
+    },
+    "jf_description": {
+      "en": "Food Service Technology Manager at Demo Food Service"
+    },
+    "jf_department_id": 285,
+    "jf_company_id": 20,
+    "jf_parent_id": 469,
+    "jf_active": true
+  },
+  {
+    "jf_id": 471,
+    "jf_name": {
+      "en": "Demo Food Service - Delivery Platforms Manager"
+    },
+    "jf_description": {
+      "en": "Delivery Platforms Manager at Demo Food Service"
+    },
+    "jf_department_id": 286,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 472,
+    "jf_name": {
+      "en": "Demo Food Service - Delivery Platform Engineer"
+    },
+    "jf_description": {
+      "en": "Delivery Platform Engineer at Demo Food Service"
+    },
+    "jf_department_id": 286,
+    "jf_company_id": 20,
+    "jf_parent_id": 471,
+    "jf_active": true
+  },
+  {
+    "jf_id": 473,
+    "jf_name": {
+      "en": "Demo Food Service - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Food Service"
+    },
+    "jf_department_id": 287,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 474,
+    "jf_name": {
+      "en": "Demo Food Service - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Food Service"
+    },
+    "jf_department_id": 287,
+    "jf_company_id": 20,
+    "jf_parent_id": 473,
+    "jf_active": true
+  },
+  {
+    "jf_id": 475,
+    "jf_name": {
+      "en": "Demo Food Service - Quality & Procurement Manager"
+    },
+    "jf_description": {
+      "en": "Quality & Procurement Manager at Demo Food Service"
+    },
+    "jf_department_id": 288,
+    "jf_company_id": 20,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 476,
+    "jf_name": {
+      "en": "Demo Food Service - Procurement Specialist"
+    },
+    "jf_description": {
+      "en": "Procurement Specialist at Demo Food Service"
+    },
+    "jf_department_id": 288,
+    "jf_company_id": 20,
+    "jf_parent_id": 475,
+    "jf_active": true
+  }
+]

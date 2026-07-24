@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 421,
+    "e_username": "quentin_xu",
+    "e_name": {
+      "en": {
+        "first": "Quentin",
+        "middle": "",
+        "last": "Xu"
+      }
+    },
+    "e_phone": "",
+    "e_email": "quentin.xu@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 211,
+    "e_job_field_id": 321,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 422,
+    "e_username": "rosa_hall",
+    "e_name": {
+      "en": {
+        "first": "Rosa",
+        "middle": "",
+        "last": "Hall"
+      }
+    },
+    "e_phone": "",
+    "e_email": "rosa.hall@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 211,
+    "e_job_field_id": 322,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 423,
+    "e_username": "samuel_baker",
+    "e_name": {
+      "en": {
+        "first": "Samuel",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "samuel.baker@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 212,
+    "e_job_field_id": 323,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 424,
+    "e_username": "tessa_ito",
+    "e_name": {
+      "en": {
+        "first": "Tessa",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "tessa.ito@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 212,
+    "e_job_field_id": 324,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 425,
+    "e_username": "umar_patel",
+    "e_name": {
+      "en": {
+        "first": "Umar",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "umar.patel@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 213,
+    "e_job_field_id": 325,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 426,
+    "e_username": "violet_wilson",
+    "e_name": {
+      "en": {
+        "first": "Violet",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "violet.wilson@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 213,
+    "e_job_field_id": 326,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 427,
+    "e_username": "william_green",
+    "e_name": {
+      "en": {
+        "first": "William",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "william.green@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 214,
+    "e_job_field_id": 327,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 428,
+    "e_username": "ximena_anderson",
+    "e_name": {
+      "en": {
+        "first": "Ximena",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ximena.anderson@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 214,
+    "e_job_field_id": 328,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 429,
+    "e_username": "yusuf_hassan",
+    "e_name": {
+      "en": {
+        "first": "Yusuf",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "yusuf.hassan@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 215,
+    "e_job_field_id": 329,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 430,
+    "e_username": "zoe_okafor",
+    "e_name": {
+      "en": {
+        "first": "Zoe",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "zoe.okafor@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 215,
+    "e_job_field_id": 330,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 431,
+    "e_username": "adrian_vega",
+    "e_name": {
+      "en": {
+        "first": "Adrian",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "adrian.vega@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 216,
+    "e_job_field_id": 331,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 432,
+    "e_username": "bianca_davis",
+    "e_name": {
+      "en": {
+        "first": "Bianca",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "bianca.davis@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 216,
+    "e_job_field_id": 332,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 433,
+    "e_username": "caleb_smith",
+    "e_name": {
+      "en": {
+        "first": "Caleb",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "caleb.smith@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 217,
+    "e_job_field_id": 333,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 434,
+    "e_username": "diana_garcia",
+    "e_name": {
+      "en": {
+        "first": "Diana",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "diana.garcia@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 217,
+    "e_job_field_id": 334,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 435,
+    "e_username": "elias_novak",
+    "e_name": {
+      "en": {
+        "first": "Elias",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elias.novak@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 218,
+    "e_job_field_id": 335,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 436,
+    "e_username": "fiona_usman",
+    "e_name": {
+      "en": {
+        "first": "Fiona",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "fiona.usman@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 218,
+    "e_job_field_id": 336,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 437,
+    "e_username": "henry_clark",
+    "e_name": {
+      "en": {
+        "first": "Henry",
+        "middle": "",
+        "last": "Clark"
+      }
+    },
+    "e_phone": "",
+    "e_email": "henry.clark@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 211,
+    "e_job_field_id": 321,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-06-28T18:25:00+09:00"
+  },
+  {
+    "e_id": 438,
+    "e_username": "iris_park",
+    "e_name": {
+      "en": {
+        "first": "Iris",
+        "middle": "",
+        "last": "Park"
+      }
+    },
+    "e_phone": "",
+    "e_email": "iris.park@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 214,
+    "e_job_field_id": 328,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-07-03T18:25:00+09:00"
+  }
+]

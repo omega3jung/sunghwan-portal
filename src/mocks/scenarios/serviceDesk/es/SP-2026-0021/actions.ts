@@ -1,0 +1,96 @@
+import { TicketActionMockInput } from "../../types";
+import { ticket } from "./ticket";
+
+export const actions: TicketActionMockInput[] = [
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 1,
+
+    tka_action_type: "APPROVE",
+    tka_content: "Olivia Johnson aprobó",
+    tka_owner_username: "olivia_johnson",
+
+    tka_created_at: "2026-07-02T08:48:37Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 2,
+
+    tka_action_type: "COMMENT",
+    tka_content:
+      "Hola, Liam.<br>No pude encontrar 84321565 en el sistema. ¿Podrías verificar si el ID del dispositivo es correcto?<br> Gracias.",
+    tka_owner_username: "evan_seo",
+
+    tka_created_at: "2026-07-02T09:15:00Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 3,
+
+    tka_action_type: "COMMENT",
+    tka_content:
+      "84321565 es correcto. Revisa la captura de pantalla.<br><img src='/_mocks/scenarios/serviceDesk/ticket-2026-1/comment-2_image-1.png' />",
+    tka_owner_username: "liam_williams",
+
+    tka_created_at: "2026-07-02T12:55:58Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [
+      {
+        index: 1,
+        type: "image",
+        name: "comment-2_image-1.png",
+        url: "/_mocks/scenarios/serviceDesk/ticket-2026-1/comment-2_image-1.png",
+        active: true,
+      },
+    ],
+  },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 4,
+
+    tka_action_type: "COMMENT",
+    tka_content:
+      "Era ' 84321565'. Hay un espacio en blanco antes de 84321565.<br> Actualicé el ID del dispositivo a 84321585.<br> Saludos y gracias.",
+    tka_owner_username: "evan_seo",
+
+    tka_created_at: "2026-07-02T14:36:47Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
+  {
+    tka_ticket_id: ticket.tk_id,
+    tka_action_no: 5,
+
+    tka_action_type: "COMMENT",
+    tka_content: "¡¡Gracias!!",
+    tka_owner_username: "liam_williams",
+
+    tka_created_at: "2026-07-02T15:02:13Z",
+    tka_updated_at: null,
+    tka_active: true,
+
+    tka_metadata: {},
+    tka_files: [],
+    tka_images: [],
+  },
+];

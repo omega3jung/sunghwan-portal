@@ -3,7 +3,7 @@ import type {
   SaveServiceDeskAssignmentRuleTreePayload,
   ServiceDeskAssignmentRuleListParams,
 } from "@/feature/serviceDesk/assignmentRule/types";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
@@ -16,15 +16,9 @@ export const serviceDeskAssignmentRuleApi = {
   ): Promise<AssignmentRule[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.tenantId) {
-      searchParams.set("tenantId", params.tenantId);
-    }
-
     const res = await client.api.get<AssignmentRuleResponse, URLSearchParams>(
       `/api/service-desk/assignment-rules`,
-      { params: searchParams },
+      { params: buildDbSearchParams(params) },
     );
     return res.data.items;
   },

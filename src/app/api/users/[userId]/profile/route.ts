@@ -1,27 +1,20 @@
 // app/api/user-profile/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { UserIdRouteContext } from "@/app/api/_helpers/types";
+import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { UserIdRouteContext } from "@/app/api/_adapters/http";
+import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
 import { AppUser } from "@/domain/user";
-import { clientProfiles, demoProfiles } from "@/mocks/domain/user";
 
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   // demo mode
   if (!isRemote) {
     // Return mock user preference.
-    const demoUserProfiles = [...demoProfiles, ...clientProfiles];
-    const normalizedUserKey = userId.trim();
-
-    const targetProfile = demoUserProfiles.find(
-      (profile) =>
-        profile.id === normalizedUserKey ||
-        profile.username === normalizedUserKey,
-    );
+    const targetProfile = getLocalUserProfile(userId);
 
     if (!targetProfile) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -45,7 +38,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function POST(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as AppUser;
@@ -67,7 +60,7 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
 }
 
 export async function PUT(req: NextRequest, context: UserIdRouteContext) {
-  const { userId } = context.params;
+  const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as AppUser;

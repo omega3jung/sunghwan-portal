@@ -1,5 +1,5 @@
 import { Company } from "@/domain/organization";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 
 type CompanyResponse = OResponse<Company>;

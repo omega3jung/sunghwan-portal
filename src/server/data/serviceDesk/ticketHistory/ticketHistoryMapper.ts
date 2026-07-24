@@ -1,5 +1,5 @@
-import { mapTicketHistoryDisplayMetadata } from "@/domain/serviceDesk";
-import type { ISODateString } from "@/shared/types";
+import { mapTicketHistoryDisplayMetadata } from "@/lib/application/serviceDesk";
+import { toRowIsoDateString } from "@/server/data/serviceDesk/shared";
 
 import { TicketHistoryDto } from "./ticketHistoryDto";
 import { TicketHistoryRow } from "./ticketHistoryRow";
@@ -23,6 +23,7 @@ export function mapTicketHistoryRowToDto(
     source: row.tkh_source as TicketHistorySource,
     event: row.tkh_event as TicketHistoryEvent,
     actor_username: row.tkh_actor_username,
+    actor_name: row.tkh_actor_name ?? null,
     action_no: row.tkh_action_no,
     ...(fromValue !== null ? { from_value: fromValue } : {}),
     ...(toValue !== null ? { to_value: toValue } : {}),
@@ -31,7 +32,7 @@ export function mapTicketHistoryRowToDto(
       source: row.tkh_source,
       event: row.tkh_event,
     }),
-    created_at: toIsoDateString(row.tkh_created_at),
+    created_at: toRowIsoDateString(row.tkh_created_at),
   };
 }
 
@@ -73,10 +74,6 @@ function isTicketHistoryJsonValue(
   return Object.values(value as Record<string, unknown>).every(
     isTicketHistoryJsonValue,
   );
-}
-
-function toIsoDateString(value: ISODateString | Date): ISODateString {
-  return (value instanceof Date ? value.toISOString() : value) as ISODateString;
 }
 
 function asRecord(value: unknown): Record<string, unknown> {

@@ -1,3 +1,3 @@
-import type { DbCompany } from "@/feature/organization/company/types";
+import type { DbCompany } from "@/lib/application/contracts/organization";
 
 export type CompanyDto = DbCompany;

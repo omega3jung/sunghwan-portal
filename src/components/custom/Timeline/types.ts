@@ -15,6 +15,7 @@ export type TimelineItemData = {
 
 export type TimelineProps = {
   items: TimelineItemData[];
+  emptyContent: ReactNode;
   order?: TimelineOrder; // default: "desc"
   className?: string;
   itemClassName?: string;

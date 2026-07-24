@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 421,
+    "jf_name": {
+      "en": "Demo Insurance - Insurance Operations Director"
+    },
+    "jf_description": {
+      "en": "Insurance Operations Director at Demo Insurance"
+    },
+    "jf_department_id": 261,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 422,
+    "jf_name": {
+      "en": "Demo Insurance - Insurance Operations Manager"
+    },
+    "jf_description": {
+      "en": "Insurance Operations Manager at Demo Insurance"
+    },
+    "jf_department_id": 261,
+    "jf_company_id": 18,
+    "jf_parent_id": 421,
+    "jf_active": true
+  },
+  {
+    "jf_id": 423,
+    "jf_name": {
+      "en": "Demo Insurance - Underwriting Manager"
+    },
+    "jf_description": {
+      "en": "Underwriting Manager at Demo Insurance"
+    },
+    "jf_department_id": 262,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 424,
+    "jf_name": {
+      "en": "Demo Insurance - Underwriter"
+    },
+    "jf_description": {
+      "en": "Underwriter at Demo Insurance"
+    },
+    "jf_department_id": 262,
+    "jf_company_id": 18,
+    "jf_parent_id": 423,
+    "jf_active": true
+  },
+  {
+    "jf_id": 425,
+    "jf_name": {
+      "en": "Demo Insurance - Claims Manager"
+    },
+    "jf_description": {
+      "en": "Claims Manager at Demo Insurance"
+    },
+    "jf_department_id": 263,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 426,
+    "jf_name": {
+      "en": "Demo Insurance - Claims Adjuster"
+    },
+    "jf_description": {
+      "en": "Claims Adjuster at Demo Insurance"
+    },
+    "jf_department_id": 263,
+    "jf_company_id": 18,
+    "jf_parent_id": 425,
+    "jf_active": true
+  },
+  {
+    "jf_id": 427,
+    "jf_name": {
+      "en": "Demo Insurance - Actuarial Manager"
+    },
+    "jf_description": {
+      "en": "Actuarial Manager at Demo Insurance"
+    },
+    "jf_department_id": 264,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 428,
+    "jf_name": {
+      "en": "Demo Insurance - Actuary"
+    },
+    "jf_description": {
+      "en": "Actuary at Demo Insurance"
+    },
+    "jf_department_id": 264,
+    "jf_company_id": 18,
+    "jf_parent_id": 427,
+    "jf_active": true
+  },
+  {
+    "jf_id": 429,
+    "jf_name": {
+      "en": "Demo Insurance - Insurance Technology Director"
+    },
+    "jf_description": {
+      "en": "Insurance Technology Director at Demo Insurance"
+    },
+    "jf_department_id": 265,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 430,
+    "jf_name": {
+      "en": "Demo Insurance - Insurance Technology Manager"
+    },
+    "jf_description": {
+      "en": "Insurance Technology Manager at Demo Insurance"
+    },
+    "jf_department_id": 265,
+    "jf_company_id": 18,
+    "jf_parent_id": 429,
+    "jf_active": true
+  },
+  {
+    "jf_id": 431,
+    "jf_name": {
+      "en": "Demo Insurance - Policy Systems Manager"
+    },
+    "jf_description": {
+      "en": "Policy Systems Manager at Demo Insurance"
+    },
+    "jf_department_id": 266,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 432,
+    "jf_name": {
+      "en": "Demo Insurance - Policy Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Policy Systems Engineer at Demo Insurance"
+    },
+    "jf_department_id": 266,
+    "jf_company_id": 18,
+    "jf_parent_id": 431,
+    "jf_active": true
+  },
+  {
+    "jf_id": 433,
+    "jf_name": {
+      "en": "Demo Insurance - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Insurance"
+    },
+    "jf_department_id": 267,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 434,
+    "jf_name": {
+      "en": "Demo Insurance - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Insurance"
+    },
+    "jf_department_id": 267,
+    "jf_company_id": 18,
+    "jf_parent_id": 433,
+    "jf_active": true
+  },
+  {
+    "jf_id": 435,
+    "jf_name": {
+      "en": "Demo Insurance - Risk & Compliance Manager"
+    },
+    "jf_description": {
+      "en": "Risk & Compliance Manager at Demo Insurance"
+    },
+    "jf_department_id": 268,
+    "jf_company_id": 18,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 436,
+    "jf_name": {
+      "en": "Demo Insurance - Compliance Analyst"
+    },
+    "jf_description": {
+      "en": "Compliance Analyst at Demo Insurance"
+    },
+    "jf_department_id": 268,
+    "jf_company_id": 18,
+    "jf_parent_id": 435,
+    "jf_active": true
+  }
+]

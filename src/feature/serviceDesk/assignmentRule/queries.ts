@@ -7,8 +7,8 @@ import { serviceDeskAssignmentRuleApi } from "./api";
 import { assignmentRuleQueryKeys } from "./queryKeys";
 import {
   AssignmentRecommendationInput,
-  serviceDeskAssignmentRecommendationApi,
 } from "./recommendation";
+import { serviceDeskAssignmentRecommendationApi } from "./recommendationApi";
 import { ServiceDeskAssignmentRuleListParams } from "./types";
 
 export const useServiceDeskAssignmentRuleListQuery = (

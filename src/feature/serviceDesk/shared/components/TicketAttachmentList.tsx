@@ -2,7 +2,7 @@ import { FileText, ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import type { Attach, TicketAttachmentMetadata } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 type TicketAttachmentListItem = Attach | TicketAttachmentMetadata;
 

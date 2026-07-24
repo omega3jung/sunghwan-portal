@@ -12,9 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEmployeeListQuery } from "@/feature/organization/employee/queries";
+import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
-import { useLocalizedValue } from "@/shared/hooks";
+import { useLocalizedValue } from "@/lib/client/i18n";
+import type { DbParams } from "@/shared/types";
+import { createFieldFilter } from "@/shared/utils/routing";
 
 type Props = {
   username?: string;
@@ -22,6 +24,13 @@ type Props = {
   onUserImpersonate: (impersonatedUsername: string) => Promise<void>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+};
+
+const activeEmployeeListParams: DbParams = {
+  filter: createFieldFilter({
+    field: "e_active",
+    value: true,
+  }),
 };
 
 export function UserImpersonation(props: Props) {
@@ -39,7 +48,9 @@ export function UserImpersonation(props: Props) {
 
   const [candidate, setCandidate] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: employees, isFetching } = useEmployeeListQuery({});
+  const { data: employees, isFetching } = useEmployeeListQuery(
+    activeEmployeeListParams,
+  );
   const excludedUserSet = useMemo(
     () =>
       new Set(

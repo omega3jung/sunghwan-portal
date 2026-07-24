@@ -1,6 +1,8 @@
 import type { LucideProps } from "lucide-react";
 import type { ReactElement, ReactNode } from "react";
 
+import type { UserMenuDemoCandidates } from "@/components/menu/UserMenu";
+
 export type LinkBarItem = {
   text: ReactNode;
   value?: string;
@@ -32,6 +34,7 @@ export type NavigationBarProps = {
   breadcrumbs?: NavigationBreadcrumbItem[];
   actions?: ReactNode;
   tabs?: LinkBarItem[];
+  userMenuDemoCandidates?: UserMenuDemoCandidates;
 
   /**
    * @deprecated Role state is displayed by UserMenu and is not rendered here.

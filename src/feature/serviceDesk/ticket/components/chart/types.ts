@@ -1,6 +1,12 @@
 export type ChartFilter =
   | {
-      type: "status" | "category" | "department" | "assignee" | "sla";
+      type:
+        | "status"
+        | "category"
+        | "department"
+        | "tenant"
+        | "assignee"
+        | "sla";
       value: string;
       label: string;
     }

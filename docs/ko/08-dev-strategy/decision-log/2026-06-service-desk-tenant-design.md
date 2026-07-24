@@ -156,13 +156,30 @@ Category = tenant-scoped behavior configuration
 
 tenant는 company에 mapping되지만, company와 같은 개념은 아니다.
 
+### 권한 명확화 (2026-07)
+
+이 결정은 하나의 관리 actor가 아니라 configuration *경계*를 정의한다. "tenant가
+설정을 소유한다"는 표현은 category, approval step, assignment rule이 해당 tenant의
+workflow와 company 경계 안에서 해석된다는 뜻이다. Tenant Admin이 모든 resource를
+관리한다는 뜻은 아니다.
+
+Category-scope 설정 정책은 관리 권한을 다음과 같이 별도로 배정한다.
+
+- owner-tenant 설정은 Owner Admin이 관리한다.
+- customer `INTERNAL` 설정은 해당 customer Tenant Admin이 관리한다.
+- customer `PORTAL` category와 assignment는 Owner Admin이 관리한다.
+- customer `PORTAL` approval은 해당 customer Tenant Admin이 관리한다.
+
+Tenant 경계를 하나의 소유자에게 배정하는 것으로 오해할 수 있는 곳에서는 이
+권한 정책을 적용한다.
+
 ---
 
 ## Scope Rules
 
 ### 1. Tenant는 Service Desk Configuration Boundary임
 
-tenant는 Service Desk behavior configuration을 소유한다.
+Service Desk behavior configuration은 tenant 경계에 속한다.
 
 tenant-scoped settings에는 다음이 포함된다.
 
@@ -173,6 +190,9 @@ tenant-scoped settings에는 다음이 포함된다.
 - name, color 같은 tenant-specific display metadata
 
 이를 통해 Service Desk 모듈은 각 tenant를 operational scope로 다룰 수 있다.
+
+각 항목을 읽거나 관리할 수 있는 관리자는 category-scope 설정 권한 정책에서
+별도로 결정한다.
 
 ---
 
@@ -375,7 +395,7 @@ Tenant
 
 settings structure를 tenant-scoped configuration 중심으로 정렬했다.
 
-Tenant settings는 다음을 설정하는 entry point 역할을 한다.
+Tenant 경계는 다음 항목을 구성하는 entry point 역할을 한다.
 
 - category hierarchy
 - approval behavior
@@ -383,6 +403,9 @@ Tenant settings는 다음을 설정하는 entry point 역할을 한다.
 - SLA-related defaults
 
 이렇게 하면 Service Desk settings가 administrative configuration surface로서 더 일관성을 가진다.
+
+이것이 전체 목록에 하나의 administrative actor가 있다는 뜻은 아니다. Owner Admin과
+Tenant Admin은 resource별 `manage`, `read`, `none` capability를 받는다.
 
 ---
 
@@ -482,17 +505,19 @@ category는 configuration scope로 tenant를 참조해야 한다.
 개념적 shape는 다음과 같다.
 
 ```ts
-type Category = {
+type MainCategory = {
   id: string;
   tenantId: string;
-  parentId: string | null;
-  scope: "MAIN" | "SUB";
+  scope: "PORTAL" | "INTERNAL";
   name: LocalizedText;
   active: boolean;
+  subCategories: SubCategory[];
 };
 ```
 
-이 구조는 category behavior를 tenant-scoped로 유지하고 global category ambiguity를 피한다.
+Main/subcategory는 category-scope 값이 아니라 hierarchy다. Subcategory는 main
+category로부터 tenant와 `PORTAL`/`INTERNAL` scope를 상속한다. 이 구조는 category
+behavior를 tenant-scoped로 유지하고 global category ambiguity를 피한다.
 
 ---
 
@@ -577,7 +602,7 @@ tenant design은 다음과 같은 future expansion을 지원해야 한다.
 - tenant-specific category templates
 - tenant-scoped approval policies
 - tenant-scoped assignment strategies
-- tenant-level access restrictions
+- 현재 category-scope 설정 matrix를 넘어서는 추가 tenant-level access restriction
 - tenant-specific Service Desk settings
 
 이들을 즉시 완전히 구현할 필요는 없지만, model이 이를 막아서는 안 된다.

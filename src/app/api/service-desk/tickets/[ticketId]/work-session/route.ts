@@ -2,193 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { TicketIdRouteContext } from "@/app/api/_helpers/types";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { TicketIdRouteContext } from "@/app/api/_adapters/http";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import {
-  ServiceDeskApiError,
+  createLocalTicketWorkSession,
+  listLocalTicketWorkSessions,
+} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/workSession";
+import {
+  ApiError,
+  resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
 import {
-  camelTicketWorkSessionMapper,
-  type DbTicketWorkSession,
   mapTicketWorkSessionListPayload,
   mapTicketWorkSessionPayload,
 } from "@/feature/serviceDesk/ticketWorkSession/api";
-import {
-  TICKET_WORK_SESSION_STATUS_OPTIONS,
-} from "@/feature/serviceDesk/ticketWorkSession/constants";
-import type {
-  TicketWorkSessionStatus,
-  TicketWorkSessionSubmitPayload,
-} from "@/feature/serviceDesk/ticketWorkSession/types";
-import {
-  canChangeStatus,
-  getCurrentTrackedMinutes,
-} from "@/feature/serviceDesk/ticketWorkSession/utils";
-import {
-  createUpdatedTicket,
-  getMaxHistoryNo,
-  getTicketContext,
-} from "@/server/serviceDesk/ticket/command/utils";
-import { hasLocalTicketWorkAssignmentHistory } from "@/server/serviceDesk/ticket/localDemo/workerHistory";
-import { getLocalDemoHistories } from "@/server/serviceDesk/ticket/state";
-import { normalizeNonNegativeInteger } from "@/shared/utils/value";
-
-const localWorkSessions: DbTicketWorkSession[] = [];
-
-const isWorkSessionStatus = (
-  value: unknown,
-): value is TicketWorkSessionStatus =>
-  TICKET_WORK_SESSION_STATUS_OPTIONS.includes(value as TicketWorkSessionStatus);
-
-const getNextWorkSessionNo = (ticketId: string) => {
-  const items = localWorkSessions
-    .filter((item) => item.ticket_id === ticketId)
-    .map((item) => item.work_session_no);
-
-  return items.length ? Math.max(...items) + 1 : 1;
-};
-
-const resolveServerTrackedMinutes = (
-  payload: TicketWorkSessionSubmitPayload,
-) => {
-  return getCurrentTrackedMinutes({
-    inputMode: payload.inputMode,
-    durationValues: { durationMinutes: payload.durationMinutes },
-    rangeValues: { startAt: payload.startAt, endAt: payload.endAt },
-  });
-};
-
-const validatePayload = (
-  ticketId: string,
-  ticketStatus: string,
-  payload: TicketWorkSessionSubmitPayload,
-  options: {
-    isCurrentWorkAssignee: boolean;
-  },
-) => {
-  if (payload.ticketId !== ticketId) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.ticketMismatch",
-      400,
-    );
-  }
-
-  if (payload.nextStatus && !isWorkSessionStatus(payload.nextStatus)) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatus",
-      400,
-      { value: payload.nextStatus },
-    );
-  }
-
-  if (
-    payload.nextStatus &&
-    payload.nextStatus !== ticketStatus &&
-    !isAllowedWorkStatusTransition(ticketStatus, payload.nextStatus)
-  ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatusTransition",
-      409,
-      { from: ticketStatus, to: payload.nextStatus },
-    );
-  }
-
-  if (payload.nextStatus && !options.isCurrentWorkAssignee) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.assigneeForbidden",
-      403,
-    );
-  }
-
-  if (
-    options.isCurrentWorkAssignee &&
-    (ticketStatus === "Assigned" || ticketStatus === "Pending") &&
-    (!payload.nextStatus || payload.nextStatus === ticketStatus)
-  ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.statusTransitionRequired",
-      409,
-      { status: ticketStatus },
-    );
-  }
-
-  if (
-    ticketStatus !== "Assigned" &&
-    ticketStatus !== "Working" &&
-    ticketStatus !== "Pending"
-  ) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidStatusTransition",
-      409,
-      { from: ticketStatus },
-    );
-  }
-
-  const trackedMinutes = resolveServerTrackedMinutes(payload);
-
-  if (trackedMinutes <= 0) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.invalidTrackedMinutes",
-      400,
-    );
-  }
-
-  return trackedMinutes;
-};
-
-const isAllowedWorkStatusTransition = (
-  currentStatus: string,
-  nextStatus: TicketWorkSessionStatus,
-) => {
-  if (currentStatus === "Assigned") {
-    return nextStatus === "Working";
-  }
-
-  if (currentStatus === "Working") {
-    return nextStatus === "Pending" || nextStatus === "Resolved";
-  }
-
-  if (currentStatus === "Pending") {
-    return nextStatus === "Working" || nextStatus === "Resolved";
-  }
-
-  return false;
-};
-
-const resolveWorkSessionAuthorization = (
-  ticket: ReturnType<typeof getTicketContext>["ticket"],
-  currentUserName: string,
-  isInternal: boolean,
-) => {
-  const isCurrentWorkAssignee =
-    ticket.approval_step_id === null &&
-    ticket.assignee_usernames.includes(currentUserName);
-  const hasBeenWorker =
-    isCurrentWorkAssignee ||
-    hasLocalTicketWorkAssignmentHistory({
-      isInternal,
-      ticketId: ticket.id,
-      username: currentUserName,
-    });
-
-  if (!hasBeenWorker) {
-    throw new ServiceDeskApiError(
-      "api.ticketWorkSession.localDemo.assigneeForbidden",
-      403,
-      { ticketId: ticket.id, username: currentUserName },
-    );
-  }
-
-  return { isCurrentWorkAssignee };
-};
+import type { TicketWorkSessionSubmitPayload } from "@/feature/serviceDesk/ticketWorkSession/types";
 
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
 
@@ -197,20 +33,26 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   }
 
   if (!isRemote) {
-    const items = localWorkSessions.filter(
-      (item) => item.ticket_id === ticketId,
-    );
+    const access = await getCurrentLocalTicketAccessContext(request);
 
-    return NextResponse.json({
-      items: camelTicketWorkSessionMapper(items),
-      total: items.length,
-    });
+    if (access === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+    if (!localGetTicket({ access, id: ticketId })) {
+      return NextResponse.json(
+        { message: resolveApiErrorMessage("serviceDesk.tickets.notFound") },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(listLocalTicketWorkSessions(ticketId));
   }
 
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/work-session`,
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.ticketWorkSession.fetchList"),
+    errorMessage: resolveApiErrorMessage(
+      "serviceDesk.ticketWorkSession.fetchList",
+    ),
     mapData: mapTicketWorkSessionListPayload,
   });
 }
@@ -219,7 +61,7 @@ export async function POST(
   request: NextRequest,
   context: TicketIdRouteContext,
 ) {
-  const { ticketId } = context.params;
+  const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
   const payload = (await request.json()) as TicketWorkSessionSubmitPayload;
@@ -230,7 +72,9 @@ export async function POST(
       path: `/service-desk/tickets/${ticketId}/work-session`,
       headers: toCurrentUsernameProxyHeaders(currentUserName),
       body: payload,
-      errorMessage: tServiceDeskApi("api.ticketWorkSession.create"),
+      errorMessage: resolveApiErrorMessage(
+        "serviceDesk.ticketWorkSession.create",
+      ),
       mapData: mapTicketWorkSessionPayload,
     });
   }
@@ -238,107 +82,41 @@ export async function POST(
   try {
     if (currentUserName === null) {
       return NextResponse.json(
-        { message: tServiceDeskApi("api.ticketCommand.employeeUnavailable") },
+        {
+          message: resolveApiErrorMessage(
+            "serviceDesk.ticketCommand.employeeUnavailable",
+          ),
+        },
         { status: 401 },
       );
     }
 
-    const isInternal = await isInternalUser(request);
-    const { ticket, targetMock, index } = getTicketContext(
+    const access = await getCurrentLocalTicketAccessContext(request);
+
+    if (access === null) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+    if (!localGetTicket({ access, id: ticketId })) {
+      throw new ApiError("serviceDesk.common.notFound", 404);
+    }
+    const isInternal = access.userScope === "INTERNAL";
+
+    const workSession = createLocalTicketWorkSession({
       ticketId,
-      isInternal,
-    );
-    const authorization = resolveWorkSessionAuthorization(
-      ticket,
       currentUserName,
       isInternal,
-    );
-
-    const trackedMinutes = validatePayload(
-      ticketId,
-      ticket.status,
       payload,
-      authorization,
-    );
-    const previousTrackedMinutes = normalizeNonNegativeInteger(
-      ticket.work_minutes,
-    );
-    const nextStatus =
-      payload.nextStatus && payload.nextStatus !== ticket.status
-        ? payload.nextStatus
-        : undefined;
-
-    if (
-      nextStatus &&
-      !canChangeStatus({
-        previousTrackedMinutes,
-        currentTrackedMinutes: trackedMinutes,
-      })
-    ) {
-      throw new ServiceDeskApiError(
-        "api.ticketWorkSession.localDemo.statusRequiresTime",
-        400,
-      );
-    }
-
-    const createdAt = new Date().toISOString();
-    const workSession: DbTicketWorkSession = {
-      ticket_id: ticketId,
-      work_session_no: getNextWorkSessionNo(ticketId),
-      assignee_username: currentUserName,
-      start_at: payload.startAt ?? createdAt,
-      end_at: payload.endAt ?? null,
-      duration_minutes: trackedMinutes,
-      note: payload.note?.trim() || null,
-      created_at: createdAt,
-      updated_at: null,
-    };
-    const updatedTicket = createUpdatedTicket(
-      ticket,
-      {
-        work_minutes: previousTrackedMinutes + trackedMinutes,
-        ...(nextStatus ? { status: nextStatus } : {}),
-      },
-      createdAt,
-    );
-
-    localWorkSessions.push(workSession);
-
-    if (nextStatus) {
-      const histories = getLocalDemoHistories(isInternal);
-
-      histories.push({
-        ticket_id: ticketId,
-        history_no: getMaxHistoryNo(ticketId, isInternal),
-        type: "STATUS",
-        event: "STATUS_UPDATED",
-        source: "USER_ACTION",
-        actor_username: currentUserName,
-        action_no: null,
-        from_value: { status: ticket.status },
-        to_value: { status: nextStatus },
-        metadata: {
-          ...payload,
-          previousStatus: ticket.status,
-          nextStatus,
-        },
-        created_at: createdAt,
-      });
-    }
-
-    targetMock.splice(index, 1, updatedTicket);
-
-    return NextResponse.json(camelTicketWorkSessionMapper([workSession])[0], {
-      status: 201,
     });
+
+    return NextResponse.json(workSession, { status: 201 });
   } catch (error) {
     const message =
-      error instanceof ServiceDeskApiError
-        ? error.message
+      error instanceof ApiError
+        ? resolveApiErrorMessage(error.messageKey, error.options)
         : error instanceof Error
           ? error.message
-          : tServiceDeskApi("api.ticketWorkSession.create");
-    const status = error instanceof ServiceDeskApiError ? error.status : 500;
+          : resolveApiErrorMessage("serviceDesk.ticketWorkSession.create");
+    const status = error instanceof ApiError ? error.status : 500;
 
     return NextResponse.json({ message }, { status });
   }

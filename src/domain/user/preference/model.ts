@@ -1,5 +1,7 @@
-import { ColorTheme, ScreenMode } from "@/domain/config";
 import { Locale } from "@/shared/types";
+
+export type ScreenMode = "light" | "dark" | "system";
+export type ColorTheme = "default" | "emerald" | "ruby" | "sapphire" | "topaz";
 
 export interface Preference<T> {
   preferenceKey: string;

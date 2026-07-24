@@ -214,7 +214,7 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 ### Current Authorization Boundary
 
 - 관리자 권한 이상을 가진 내부 사용자만 가장을 시작할 수 있습니다.
-- 가장 대상은 테넌트 사용자여야 합니다.
+- 가장 대상은 클라이언트 사용자여야 합니다.
 
 ### Requirement
 

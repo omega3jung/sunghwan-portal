@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 161,
+    "jf_name": {
+      "en": "Demo Retail - Retail Operations Director"
+    },
+    "jf_description": {
+      "en": "Retail Operations Director at Demo Retail"
+    },
+    "jf_department_id": 131,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 162,
+    "jf_name": {
+      "en": "Demo Retail - Retail Operations Manager"
+    },
+    "jf_description": {
+      "en": "Retail Operations Manager at Demo Retail"
+    },
+    "jf_department_id": 131,
+    "jf_company_id": 5,
+    "jf_parent_id": 161,
+    "jf_active": true
+  },
+  {
+    "jf_id": 163,
+    "jf_name": {
+      "en": "Demo Retail - Store Manager"
+    },
+    "jf_description": {
+      "en": "Store Manager at Demo Retail"
+    },
+    "jf_department_id": 132,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 164,
+    "jf_name": {
+      "en": "Demo Retail - Store Supervisor"
+    },
+    "jf_description": {
+      "en": "Store Supervisor at Demo Retail"
+    },
+    "jf_department_id": 132,
+    "jf_company_id": 5,
+    "jf_parent_id": 163,
+    "jf_active": true
+  },
+  {
+    "jf_id": 165,
+    "jf_name": {
+      "en": "Demo Retail - Merchandising Manager"
+    },
+    "jf_description": {
+      "en": "Merchandising Manager at Demo Retail"
+    },
+    "jf_department_id": 133,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 166,
+    "jf_name": {
+      "en": "Demo Retail - Merchandising Specialist"
+    },
+    "jf_description": {
+      "en": "Merchandising Specialist at Demo Retail"
+    },
+    "jf_department_id": 133,
+    "jf_company_id": 5,
+    "jf_parent_id": 165,
+    "jf_active": true
+  },
+  {
+    "jf_id": 167,
+    "jf_name": {
+      "en": "Demo Retail - Inventory Control Manager"
+    },
+    "jf_description": {
+      "en": "Inventory Control Manager at Demo Retail"
+    },
+    "jf_department_id": 134,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 168,
+    "jf_name": {
+      "en": "Demo Retail - Inventory Analyst"
+    },
+    "jf_description": {
+      "en": "Inventory Analyst at Demo Retail"
+    },
+    "jf_department_id": 134,
+    "jf_company_id": 5,
+    "jf_parent_id": 167,
+    "jf_active": true
+  },
+  {
+    "jf_id": 169,
+    "jf_name": {
+      "en": "Demo Retail - Retail Technology Director"
+    },
+    "jf_description": {
+      "en": "Retail Technology Director at Demo Retail"
+    },
+    "jf_department_id": 135,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 170,
+    "jf_name": {
+      "en": "Demo Retail - Retail Technology Manager"
+    },
+    "jf_description": {
+      "en": "Retail Technology Manager at Demo Retail"
+    },
+    "jf_department_id": 135,
+    "jf_company_id": 5,
+    "jf_parent_id": 169,
+    "jf_active": true
+  },
+  {
+    "jf_id": 171,
+    "jf_name": {
+      "en": "Demo Retail - E-Commerce Platform Manager"
+    },
+    "jf_description": {
+      "en": "E-Commerce Platform Manager at Demo Retail"
+    },
+    "jf_department_id": 136,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 172,
+    "jf_name": {
+      "en": "Demo Retail - E-Commerce Engineer"
+    },
+    "jf_description": {
+      "en": "E-Commerce Engineer at Demo Retail"
+    },
+    "jf_department_id": 136,
+    "jf_company_id": 5,
+    "jf_parent_id": 171,
+    "jf_active": true
+  },
+  {
+    "jf_id": 173,
+    "jf_name": {
+      "en": "Demo Retail - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Retail"
+    },
+    "jf_department_id": 137,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 174,
+    "jf_name": {
+      "en": "Demo Retail - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Retail"
+    },
+    "jf_department_id": 137,
+    "jf_company_id": 5,
+    "jf_parent_id": 173,
+    "jf_active": true
+  },
+  {
+    "jf_id": 175,
+    "jf_name": {
+      "en": "Demo Retail - Customer Experience Manager"
+    },
+    "jf_description": {
+      "en": "Customer Experience Manager at Demo Retail"
+    },
+    "jf_department_id": 138,
+    "jf_company_id": 5,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 176,
+    "jf_name": {
+      "en": "Demo Retail - Customer Experience Specialist"
+    },
+    "jf_description": {
+      "en": "Customer Experience Specialist at Demo Retail"
+    },
+    "jf_department_id": 138,
+    "jf_company_id": 5,
+    "jf_parent_id": 175,
+    "jf_active": true
+  }
+]

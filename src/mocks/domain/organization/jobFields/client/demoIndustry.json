@@ -1,0 +1,210 @@
+[
+  {
+    "jf_id": 301,
+    "jf_name": {
+      "en": "Demo Industry - Industrial Operations Director"
+    },
+    "jf_description": {
+      "en": "Industrial Operations Director at Demo Industry"
+    },
+    "jf_department_id": 201,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 302,
+    "jf_name": {
+      "en": "Demo Industry - Industrial Operations Manager"
+    },
+    "jf_description": {
+      "en": "Industrial Operations Manager at Demo Industry"
+    },
+    "jf_department_id": 201,
+    "jf_company_id": 12,
+    "jf_parent_id": 301,
+    "jf_active": true
+  },
+  {
+    "jf_id": 303,
+    "jf_name": {
+      "en": "Demo Industry - Process Engineering Manager"
+    },
+    "jf_description": {
+      "en": "Process Engineering Manager at Demo Industry"
+    },
+    "jf_department_id": 202,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 304,
+    "jf_name": {
+      "en": "Demo Industry - Process Engineer"
+    },
+    "jf_description": {
+      "en": "Process Engineer at Demo Industry"
+    },
+    "jf_department_id": 202,
+    "jf_company_id": 12,
+    "jf_parent_id": 303,
+    "jf_active": true
+  },
+  {
+    "jf_id": 305,
+    "jf_name": {
+      "en": "Demo Industry - Quality Management Manager"
+    },
+    "jf_description": {
+      "en": "Quality Management Manager at Demo Industry"
+    },
+    "jf_department_id": 203,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 306,
+    "jf_name": {
+      "en": "Demo Industry - Quality Inspector"
+    },
+    "jf_description": {
+      "en": "Quality Inspector at Demo Industry"
+    },
+    "jf_department_id": 203,
+    "jf_company_id": 12,
+    "jf_parent_id": 305,
+    "jf_active": true
+  },
+  {
+    "jf_id": 307,
+    "jf_name": {
+      "en": "Demo Industry - Supply Chain Manager"
+    },
+    "jf_description": {
+      "en": "Supply Chain Manager at Demo Industry"
+    },
+    "jf_department_id": 204,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 308,
+    "jf_name": {
+      "en": "Demo Industry - Supply Chain Planner"
+    },
+    "jf_description": {
+      "en": "Supply Chain Planner at Demo Industry"
+    },
+    "jf_department_id": 204,
+    "jf_company_id": 12,
+    "jf_parent_id": 307,
+    "jf_active": true
+  },
+  {
+    "jf_id": 309,
+    "jf_name": {
+      "en": "Demo Industry - Industrial Technology Director"
+    },
+    "jf_description": {
+      "en": "Industrial Technology Director at Demo Industry"
+    },
+    "jf_department_id": 205,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 310,
+    "jf_name": {
+      "en": "Demo Industry - Industrial Technology Manager"
+    },
+    "jf_description": {
+      "en": "Industrial Technology Manager at Demo Industry"
+    },
+    "jf_department_id": 205,
+    "jf_company_id": 12,
+    "jf_parent_id": 309,
+    "jf_active": true
+  },
+  {
+    "jf_id": 311,
+    "jf_name": {
+      "en": "Demo Industry - Plant Systems Manager"
+    },
+    "jf_description": {
+      "en": "Plant Systems Manager at Demo Industry"
+    },
+    "jf_department_id": 206,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 312,
+    "jf_name": {
+      "en": "Demo Industry - Plant Systems Engineer"
+    },
+    "jf_description": {
+      "en": "Plant Systems Engineer at Demo Industry"
+    },
+    "jf_department_id": 206,
+    "jf_company_id": 12,
+    "jf_parent_id": 311,
+    "jf_active": true
+  },
+  {
+    "jf_id": 313,
+    "jf_name": {
+      "en": "Demo Industry - Corporate Services Director"
+    },
+    "jf_description": {
+      "en": "Corporate Services Director at Demo Industry"
+    },
+    "jf_department_id": 207,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 314,
+    "jf_name": {
+      "en": "Demo Industry - Corporate Services Specialist"
+    },
+    "jf_description": {
+      "en": "Corporate Services Specialist at Demo Industry"
+    },
+    "jf_department_id": 207,
+    "jf_company_id": 12,
+    "jf_parent_id": 313,
+    "jf_active": true
+  },
+  {
+    "jf_id": 315,
+    "jf_name": {
+      "en": "Demo Industry - Maintenance & Safety Manager"
+    },
+    "jf_description": {
+      "en": "Maintenance & Safety Manager at Demo Industry"
+    },
+    "jf_department_id": 208,
+    "jf_company_id": 12,
+    "jf_parent_id": null,
+    "jf_active": true
+  },
+  {
+    "jf_id": 316,
+    "jf_name": {
+      "en": "Demo Industry - Maintenance Specialist"
+    },
+    "jf_description": {
+      "en": "Maintenance Specialist at Demo Industry"
+    },
+    "jf_department_id": 208,
+    "jf_company_id": 12,
+    "jf_parent_id": 315,
+    "jf_active": true
+  }
+]

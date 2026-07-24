@@ -1,0 +1,80 @@
+[
+  {
+    "d_id": 1,
+    "d_name": {
+      "en": "Corporate"
+    },
+    "d_code": "CO",
+    "d_description": {
+      "en": "Main department"
+    },
+    "d_company_id": 1,
+    "d_parent_id": 0,
+    "d_active": true
+  },
+  {
+    "d_id": 2,
+    "d_name": {
+      "en": "Human Resources"
+    },
+    "d_code": "HRE",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 1,
+    "d_active": true
+  },
+  {
+    "d_id": 3,
+    "d_name": {
+      "en": "Finance"
+    },
+    "d_code": "FIN",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 1,
+    "d_active": true
+  },
+  {
+    "d_id": 4,
+    "d_name": {
+      "en": "Sales"
+    },
+    "d_code": "SAL",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 1,
+    "d_active": true
+  },
+  {
+    "d_id": 5,
+    "d_name": {
+      "en": "Customer Support"
+    },
+    "d_code": "CUS",
+    "d_description": {
+      "en": ""
+    },
+    "d_company_id": 1,
+    "d_parent_id": 1,
+    "d_active": true
+  },
+  {
+    "d_id": 9,
+    "d_name": {
+      "en": "Security"
+    },
+    "d_code": "SEC",
+    "d_description": {
+      "en": "Physical security"
+    },
+    "d_company_id": 1,
+    "d_parent_id": 1,
+    "d_active": true
+  }
+]

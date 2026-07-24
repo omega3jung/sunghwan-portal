@@ -9,19 +9,19 @@ import { toast } from "sonner";
 
 import { ComboBox } from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
-import { PortalPreference } from "@/domain/config";
-import { createDefaultPreference } from "@/domain/user/preference";
+import { PortalPreference } from "@/domain/user/preference";
 import {
   useCreateUserPreference,
   useUpdateUserPreference,
   useUserPreferenceQuery,
 } from "@/feature/user/preference/client";
-import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
+import { useLanguageState } from "@/feature/user/preference/client";
 import { preferenceKeys } from "@/feature/user/preference/preferenceKeys";
-import { NS } from "@/lib/i18n";
+import { isLocale } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { languageOptions } from "@/lib/client/i18n";
+import { createDefaultPreference } from "@/lib/client/preference";
 import { adminAuth } from "@/mocks/domain/user";
-import { languageOptions } from "@/shared/constants/options/language";
-import { isLocale } from "@/shared/utils/i18n";
 
 import { ChangePasswordForm } from "./components/ChangePasswordForm";
 import { LoginForm } from "./components/LoginForm";

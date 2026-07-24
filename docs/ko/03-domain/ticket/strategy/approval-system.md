@@ -79,6 +79,51 @@ REMOTE settings는 같은 application-facing behavior로 resolve되어야 한다
 
 ---
 
+## Approval Settings Authorization
+
+Approval Step 권한은 step이나 client-selected company에 중복 저장된 `tenantId`가
+아니라 저장된 main category의 `Category -> Tenant -> Company` 관계로 해석한다.
+
+| Main-category target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
+| --- | --- | --- | --- |
+| Owner Tenant, 모든 scope | manage | none | none |
+| Customer Tenant, `INTERNAL` | none | manage | none |
+| Customer Tenant, `PORTAL` | read | manage | none |
+
+Customer `PORTAL` approval은 customer의 approval system이다. Owner Admin은 현재
+configuration을 조회할 수 있지만 변경할 수 없다. Read-only 조회는 참조된 approver의
+display information을 포함할 수 있지만 customer employee directory 전체의 candidate
+search 권한을 부여하지 않는다.
+
+Read와 mutation path 모두 category 관계를 load하고 shared settings policy를 사용한다.
+Unauthorized API request는 `403`을 반환하며, query response는 access가 `none`인
+approval settings를 포함하지 않는다.
+
+---
+
+## Approver Eligibility
+
+`INTERNAL`과 `PORTAL` category 모두에서 모든 approval candidate와 최종 resolved
+approver는 category tenant의 company에 속해야 한다.
+
+| Assignee type | Company validation |
+| --- | --- |
+| `EMPLOYEE` | 각 employee의 `companyId`가 category tenant company와 같음 |
+| `DEPARTMENT` | department와 resolved employee가 해당 company 안에 유지됨 |
+| `JOB_FIELD` | job field가 shared여도 최종 employee resolution에 company filter 적용 |
+| `MANAGER` | resolved manager가 해당 company에 속함 |
+
+Candidate lookup은 category-centered이며 caller의 Approval Step capability도 검사한다.
+Request의 `categoryId`, `purpose`, `companyId`는 target을 선택할 뿐 권한을 부여하지
+않는다.
+
+Eligibility는 Approval Step 저장 시점과 submit, resubmit 또는 explicit routing
+command에서 approver를 resolve하는 시점에 다시 검증한다. Configuration 이후 employee가
+inactive가 되거나 다른 company로 이동할 수 있기 때문이다. Valid approver가 0명이면
+routing은 실패하며 unowned `Approval` ticket을 만들지 않는다.
+
+---
+
 ## Initial Approval Routing
 
 Ticket submit과 resubmit은 모두 첫 applicable approval step부터 routing을 시작한다.
@@ -153,6 +198,19 @@ assigneeUsernames = []
 ```
 
 Requester는 나중에 initial routing으로 resubmit할 수 있다.
+
+---
+
+## Ticket Action Authorization Boundary
+
+Approval Step settings authorization과 ticket action authorization은 별도 policy다.
+Settings의 Owner Admin 또는 Tenant Admin이라고 해서 `APPROVE`/`DECLINE`의 current
+approver 조건을 자동으로 만족하지 않으며, settings helper를 action override로 재사용하면
+안 된다.
+
+현재 ticket action matrix에는 generic Admin override가 남아 있다. 별도 후속 작업에서
+cross-tenant behavior를 검토하고 intentional break-glass capability를 정의해야 한다.
+이번 settings decision은 기존 action matrix를 암묵적으로 확장하거나 변경하지 않는다.
 
 ---
 

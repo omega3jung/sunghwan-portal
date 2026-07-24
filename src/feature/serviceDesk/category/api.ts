@@ -1,9 +1,10 @@
 import { TenantCategoryTree } from "@/domain/serviceDesk";
 import type {
   SaveServiceDeskCategoryTreePayload,
+  ServiceDeskCategoryContext,
   ServiceDeskCategoryListParams,
 } from "@/feature/serviceDesk/category/types";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
@@ -16,22 +17,22 @@ export const serviceDeskCategoryApi = {
   ): Promise<TenantCategoryTree[]> => {
     if (!params) return [];
 
-    const searchParams = buildDbSearchParams(params);
-
-    if (params.tenantId) {
-      searchParams.set("tenantId", params.tenantId);
-    }
-
-    if (params.active !== undefined) {
-      searchParams.set("active", String(params.active));
-    }
-
     const res = await client.api.get<CategoryResponse, URLSearchParams>(
       `/api/service-desk/categories`,
-      { params: searchParams },
+      { params: buildDbSearchParams(params) },
     );
 
     return res.data.items;
+  },
+  getContext: async (
+    categoryId: string | number,
+  ): Promise<ServiceDeskCategoryContext> => {
+    const normalizedCategoryId = String(categoryId).trim();
+    const res = await client.api.get<ServiceDeskCategoryContext>(
+      `/api/service-desk/categories/${encodeURIComponent(normalizedCategoryId)}/context`,
+    );
+
+    return res.data;
   },
   saveTree: async (
     payload: SaveServiceDeskCategoryTreePayload,

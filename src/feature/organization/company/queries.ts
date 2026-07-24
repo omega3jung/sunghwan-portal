@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { companyApi } from "@/feature/organization/company/api";
-import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
+import { STATIC_QUERY_OPTIONS } from "@/lib/client/query";
 import { DbParams } from "@/shared/types/api";
 
 import { companyQueryKeys } from "./queryKeys";

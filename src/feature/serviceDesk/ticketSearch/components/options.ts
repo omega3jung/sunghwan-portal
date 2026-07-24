@@ -1,9 +1,8 @@
 import type { SearchDateFilterOption } from "@/components/custom/DatePicker";
 import type { TreeMultiComboBoxOption } from "@/components/custom/MultiComboBox";
-import { statusBadgeLocales } from "@/components/custom/StatusBadge/locales";
-import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import type { dueAt } from "@/domain/common";
-import type { MainCategory } from "@/domain/serviceDesk";
+import type { MainCategory, TicketStatus } from "@/domain/serviceDesk";
+import { ticketStatusLocales } from "@/feature/serviceDesk/shared";
 import {
   OPEN_TICKET_STATUS_FILTER_VALUE,
   OPEN_TICKET_STATUS_FILTER_VALUES,
@@ -40,14 +39,15 @@ export const createTicketCategoryOptions = (
 };
 
 export const createTicketStatusFilterOptions = (
-  statusOptions: ValueLabel<SystemStatus>[],
+  statusOptions: ValueLabel<TicketStatus>[],
   locale: Locale,
 ): TreeMultiComboBoxOption[] => {
   const statusLabelMap = new Map(
     statusOptions.map((option) => [option.value, option.label]),
   );
-  const localizedLabels = statusBadgeLocales[locale] ?? statusBadgeLocales.en;
-  const fallbackLabels = statusBadgeLocales.en;
+  const localizedLabels =
+    ticketStatusLocales[locale] ?? ticketStatusLocales.en;
+  const fallbackLabels = ticketStatusLocales.en;
   const openLabel =
     localizedLabels.open ??
     fallbackLabels.open ??

@@ -4,4 +4,5 @@
 // client export only.
 
 export * from "./api/demoReset";
+export * from "./components";
 export * from "./hooks";

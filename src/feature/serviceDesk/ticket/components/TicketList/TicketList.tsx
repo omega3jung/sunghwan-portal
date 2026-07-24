@@ -2,10 +2,9 @@
 
 import { useTranslation } from "react-i18next";
 
-import { SupportedLanguage } from "@/domain/config";
 import { TicketSummary } from "@/domain/serviceDesk";
-import { NS } from "@/lib/i18n";
-import { ImageValueLabel } from "@/shared/types";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { TicketListItem } from "./TicketListItem";
 import { TicketListMobileItem } from "./TicketListMobileItem";
@@ -14,7 +13,6 @@ import { TicketListSkeleton } from "./TicketListSkeleton";
 interface TicketListProps {
   tickets: TicketSummary[];
   onTicketSelected: (ticketId: string) => void;
-  users: ImageValueLabel[];
   language: SupportedLanguage;
   isLoading: boolean;
 }
@@ -22,7 +20,6 @@ interface TicketListProps {
 export const TicketList = ({
   tickets,
   onTicketSelected,
-  users,
   language,
   isLoading,
 }: TicketListProps) => {
@@ -44,7 +41,6 @@ export const TicketList = ({
           <div className="hidden md:block">
             <TicketListItem
               ticket={ticket}
-              users={users}
               language={language}
               onClick={() => onTicketSelected(ticket.id)}
             />
@@ -53,7 +49,6 @@ export const TicketList = ({
           <div className="block md:hidden">
             <TicketListMobileItem
               ticket={ticket}
-              users={users}
               language={language}
               onClick={() => onTicketSelected(ticket.id)}
             />

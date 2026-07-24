@@ -162,7 +162,7 @@ route handler는 다음에 집중해야 한다.
 
 - HTTP method handling
 - request parsing
-- session/auth checks
+- 공통 session/principal 및 settings authorization boundary 호출
 - runtime context resolution
 - 올바른 domain handler로 위임
 - `NextResponse` 반환
@@ -344,6 +344,56 @@ local settings mutation은 React Query cache만이 아니라 server-side local s
 
 ---
 
+## 권한 보충 (2026-07)
+
+DTO/API 경계는 category-scope 설정 권한 결정도 전달한다. 권한은 LOCAL/REMOTE
+분기 위에서 공유하는 application behavior다. UI 조건이 아니며 두 runtime
+implementation이 각자 다르게 처리하도록 위임하지 않는다.
+
+```txt id="settings-authorization-api-flow"
+Route Handler
+-> 인증된 JWT access level >= ADMIN (9) 검사
+-> effective canonical AppUser 결정
+-> 대상 Category -> Tenant -> Company context 결정
+-> manage / read / none capability 적용
+-> LOCAL handler 또는 REMOTE service로 위임
+-> filter된 DTO response 반환
+```
+
+Canonical principal은 서버가 신뢰하는 `permission`, `userScope`, `companyId`를
+제공한다. Request body/query의 admin type, tenant/company claim, focused tenant,
+`role`, `dataScope`, client state는 권한을 성립시키지 않는다. Impersonation 중에는
+effective user의 resource capability를 적용하고 original/effective identity는 감사에
+사용할 수 있도록 유지한다.
+
+Read API는 `none` resource를 filter해야 한다. Mutation API는 `manage`를 적용하기
+전에 저장된 category/tenant 관계를 로드하고 read-only 또는 경계 밖 principal에게
+`403`을 반환한다. Page는 UX를 위해 Settings Home으로 redirect할 수 있지만 API는
+권한 없는 mutation을 redirect하지 않는다.
+
+Approval Step과 Assignment Rule DTO는 tenant 권한을 중복 저장하지 않는다.
+Source relationship은 다음과 같다.
+
+```txt id="settings-dto-authorization-context"
+Approval Step / Assignment Rule
+-> Category
+-> Tenant
+-> Company
+```
+
+Category update DTO validation은 tenant, main-category scope, tenant/scope 경계를
+넘는 subcategory parent 이동을 immutable로 다룬다. 서버는 update/deactivation에는
+저장된 state에서, subcategory에는 저장된 parent에서 context를 파생하며 payload
+context만 신뢰하지 않는다.
+
+Actor candidate lookup은 category 중심이며 purpose를 구분한다. Approval candidate는
+category tenant company에서, assignment candidate는 category에 따라 허용된 company에서
+결정한다. Lookup은 company filter뿐 아니라 caller의 resource capability도 검사한다.
+Read-only access는 현재 참조된 actor의 표시 데이터를 반환할 수 있지만 employee
+directory search 권한을 부여하지 않는다.
+
+---
+
 ## 정렬한 내용
 
 ### 1. Settings API Responsibility
@@ -367,7 +417,7 @@ Tenant는 Service Desk configuration boundary가 되었다.
 
 tenant API는 raw company row 또는 tenant row가 아니라 application-facing DTO를 반환해야 했다.
 
-개념적 DTO:
+현재의 개념적 DTO 방향:
 
 ```ts id="mbjjfw"
 type TenantDto = {
@@ -389,14 +439,19 @@ Category settings는 tree-shaped configuration이다.
 
 category는 단순한 flat record가 아니다. tenant에 속하고 parent/child relationship을 가질 수 있다.
 
-개념적 DTO:
+현재의 개념적 DTO 방향:
 
 ```ts id="f6ykgn"
-type CategoryDto = {
-  id: string;
+type CategoryScope = "PORTAL" | "INTERNAL";
+
+type CategoryTreeDto = {
   tenantId: string;
-  parentId: string | null;
-  scope: "MAIN" | "SUB";
+  categories: MainCategoryDto[];
+};
+
+type MainCategoryDto = {
+  id: string;
+  scope: CategoryScope;
   name: LocalizedText;
   description: LocalizedText | null;
   requestTemplate: LocalizedText | null;
@@ -405,8 +460,13 @@ type CategoryDto = {
   defaultSlaDays: number;
   index: number;
   active: boolean;
+  subCategories: SubCategoryDto[];
 };
 ```
+
+`PORTAL`/`INTERNAL`은 workflow scope다. Main/subcategory는 hierarchy이므로
+`CategoryScope`의 다른 값으로 표현하면 안 된다. Subcategory는 parent main
+category로부터 tenant와 scope를 상속한다.
 
 API는 UI가 여러 관련 없는 CRUD call을 조정하도록 강제하기보다, UI가 category tree를 편집하는 방식을 지원해야 한다.
 
@@ -443,10 +503,14 @@ Assignment rule은 category의 현재 routing behavior를 정의한다.
 type AssignmentRuleDto = {
   id: string;
   categoryId: string;
-  ruleType: AssignmentRuleType;
-  payload: AssignmentRulePayload;
+  assignee: {
+    jobFieldIds: string[];
+    assigneeUsernames: string[];
+  };
 };
 ```
+
+현재 assignment model은 group 기반이며 별도의 `ruleType`이 없다.
 
 assignment rule 변경은 future 또는 newly evaluated behavior에 영향을 줘야 하며, historical ticket assignment record를 조용히 다시 써서는 안 된다.
 
@@ -662,6 +726,10 @@ database schema는 진화할 수 있다.
 새 settings API는 LOCAL과 REMOTE가 같은 application-facing shape를 어떻게 반환하는지 정의해야 한다.
 
 UI가 local mock shape와 remote database shape 차이를 기준으로 branch하도록 허용하지 않는다.
+
+같은 규칙을 capability와 filtering 결과에도 적용한다. 같은 effective principal에 대해
+LOCAL mutable state와 REMOTE repository가 서로 다른 tenant/category visibility를
+노출하거나 서로 다른 mutation을 허용하면 안 된다.
 
 ---
 

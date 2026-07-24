@@ -73,6 +73,11 @@ type TicketWorkflowState = {
 };
 ```
 
+`TicketResolutionReason` includes `Merged` for same-scope consolidation and
+`Escalated` when an `INTERNAL` source is merged into an existing `PORTAL`
+target. Both retain the merged-target relation; the close reason distinguishes
+reporting and display semantics.
+
 ### Assignment Projection
 
 ```ts id="ticket-assignment-projection"

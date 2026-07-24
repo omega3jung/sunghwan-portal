@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import {
   changePasswordFormSchema,

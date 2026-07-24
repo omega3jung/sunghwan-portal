@@ -4,8 +4,8 @@ import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { prepareTicketAttachments } from "@/server/serviceDesk/ticket/attachments/ticketAttachmentPrepareService";
+} from "@/app/api/_adapters";
+import { prepareTicketAttachments } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/attachments/ticketAttachmentPrepareService";
 
 const BODY_FIELD_NAME = "body";
 const FILES_FIELD_NAME = "files";

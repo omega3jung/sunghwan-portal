@@ -9,9 +9,9 @@ import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SupportedLanguage } from "@/domain/config";
-import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
+import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
@@ -26,6 +26,7 @@ type Props = {
   selectedId: UniqueIdentifier | null;
   setSelectedId: (value: SetStateAction<UniqueIdentifier | null>) => void;
   language: SupportedLanguage;
+  readOnly?: boolean;
 };
 
 export const AsgginmentRuleTree = ({
@@ -34,6 +35,7 @@ export const AsgginmentRuleTree = ({
   selectedId,
   setSelectedId,
   language,
+  readOnly = false,
 }: Props) => {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
@@ -43,7 +45,7 @@ export const AsgginmentRuleTree = ({
       <SortableTree
         items={tree}
         onChange={(nextTree) => {
-          setTree(nextTree);
+          if (!readOnly) setTree(nextTree);
         }}
         collapsible={true}
         renderItem={(item, { onCollapse }) => {

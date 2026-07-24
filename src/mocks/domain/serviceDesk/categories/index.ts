@@ -1,71 +1,26 @@
-﻿import {
-  DbCategory,
-  DbTenantCategoryTree,
-} from "@/feature/serviceDesk/category/";
+﻿import { DbTenantCategoryTree } from "@/feature/serviceDesk/category/";
 
-import { clientTenantsMock, internalTenantMock } from "../tenants";
-import {
-  client1PortalSystemIssueMock,
-  client2PortalSystemIssueMock,
-  clientAccountAccessMock,
-  clientHardwareDeviceMock,
-  clientHrSystemPayrollMock,
-  clientNetworkConnectivityMock,
-  clientPrintingOfficeEquipmentMock,
-  clientSoftwareApplicationMock,
-} from "./client";
-import {
-  internalAccountAccessMock,
-  internalClientUserSupportMock,
-  internalDataInfoManagementMock,
-  internalHardwareDeviceMock,
-  internalHrSystemPayrollMock,
-  internalNetworkConnectivityMock,
-  internalOtherInquiryMock,
-  internalPortalSystemIssueMock,
-  internalPrintingOfficeEquipmentMock,
-  internalSoftwareApplicationMock,
-} from "./internal";
+import { demoCorporationCategoryMock, demoEnergyCategoryMock } from "./client";
+import { internalCategoryMock } from "./internal";
 
-export const internalCategoryMock: DbCategory[] = [
-  internalPortalSystemIssueMock,
-  internalAccountAccessMock,
-  internalHardwareDeviceMock,
-  internalSoftwareApplicationMock,
-  internalNetworkConnectivityMock,
-  internalPrintingOfficeEquipmentMock,
-  internalHrSystemPayrollMock,
-  internalDataInfoManagementMock,
-  internalClientUserSupportMock,
-  internalOtherInquiryMock,
-];
+const getPortalCategory = (
+  tenantCategory: DbTenantCategoryTree,
+): DbTenantCategoryTree => {
+  return {
+    ...tenantCategory,
+    category: tenantCategory.category.filter(
+      (cat) => cat.category_scope === "PORTAL",
+    ),
+  };
+};
 
 export const internalCategorySettingsMock: DbTenantCategoryTree[] = [
-  {
-    ...internalTenantMock,
-    category: internalCategoryMock,
-  },
-  {
-    ...clientTenantsMock[0],
-    category: [client1PortalSystemIssueMock],
-  },
-  {
-    ...clientTenantsMock[1],
-    category: [client2PortalSystemIssueMock],
-  },
+  internalCategoryMock,
+  getPortalCategory(demoCorporationCategoryMock),
+  getPortalCategory(demoEnergyCategoryMock),
 ];
 
 export const clientCategorySettingsMock: DbTenantCategoryTree[] = [
-  {
-    ...clientTenantsMock[0],
-    category: [
-      client1PortalSystemIssueMock,
-      clientAccountAccessMock,
-      clientHardwareDeviceMock,
-      clientSoftwareApplicationMock,
-      clientNetworkConnectivityMock,
-      clientPrintingOfficeEquipmentMock,
-      clientHrSystemPayrollMock,
-    ],
-  },
+  demoCorporationCategoryMock,
+  demoEnergyCategoryMock,
 ];

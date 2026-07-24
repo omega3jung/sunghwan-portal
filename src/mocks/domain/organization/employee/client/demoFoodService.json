@@ -1,0 +1,434 @@
+[
+  {
+    "e_id": 561,
+    "e_username": "aiden_johnson",
+    "e_name": {
+      "en": {
+        "first": "Aiden",
+        "middle": "",
+        "last": "Johnson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "aiden.johnson@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 281,
+    "e_job_field_id": 461,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 562,
+    "e_username": "amelia_quinn",
+    "e_name": {
+      "en": {
+        "first": "Amelia",
+        "middle": "",
+        "last": "Quinn"
+      }
+    },
+    "e_phone": "",
+    "e_email": "amelia.quinn@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 281,
+    "e_job_field_id": 462,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 563,
+    "e_username": "benjamin_xu",
+    "e_name": {
+      "en": {
+        "first": "Benjamin",
+        "middle": "",
+        "last": "Xu"
+      }
+    },
+    "e_phone": "",
+    "e_email": "benjamin.xu@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 282,
+    "e_job_field_id": 463,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 564,
+    "e_username": "chloe_hall",
+    "e_name": {
+      "en": {
+        "first": "Chloe",
+        "middle": "",
+        "last": "Hall"
+      }
+    },
+    "e_phone": "",
+    "e_email": "chloe.hall@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 282,
+    "e_job_field_id": 464,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 565,
+    "e_username": "daniel_baker",
+    "e_name": {
+      "en": {
+        "first": "Daniel",
+        "middle": "",
+        "last": "Baker"
+      }
+    },
+    "e_phone": "",
+    "e_email": "daniel.baker@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 283,
+    "e_job_field_id": 465,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 566,
+    "e_username": "elena_ito",
+    "e_name": {
+      "en": {
+        "first": "Elena",
+        "middle": "",
+        "last": "Ito"
+      }
+    },
+    "e_phone": "",
+    "e_email": "elena.ito@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 283,
+    "e_job_field_id": 466,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 567,
+    "e_username": "ethan_patel",
+    "e_name": {
+      "en": {
+        "first": "Ethan",
+        "middle": "",
+        "last": "Patel"
+      }
+    },
+    "e_phone": "",
+    "e_email": "ethan.patel@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 284,
+    "e_job_field_id": 467,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 568,
+    "e_username": "freya_wilson",
+    "e_name": {
+      "en": {
+        "first": "Freya",
+        "middle": "",
+        "last": "Wilson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "freya.wilson@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 284,
+    "e_job_field_id": 468,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 569,
+    "e_username": "gabriel_green",
+    "e_name": {
+      "en": {
+        "first": "Gabriel",
+        "middle": "",
+        "last": "Green"
+      }
+    },
+    "e_phone": "",
+    "e_email": "gabriel.green@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 285,
+    "e_job_field_id": 469,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 570,
+    "e_username": "hana_anderson",
+    "e_name": {
+      "en": {
+        "first": "Hana",
+        "middle": "",
+        "last": "Anderson"
+      }
+    },
+    "e_phone": "",
+    "e_email": "hana.anderson@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 285,
+    "e_job_field_id": 470,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 571,
+    "e_username": "isaac_hassan",
+    "e_name": {
+      "en": {
+        "first": "Isaac",
+        "middle": "",
+        "last": "Hassan"
+      }
+    },
+    "e_phone": "",
+    "e_email": "isaac.hassan@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 286,
+    "e_job_field_id": 471,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 572,
+    "e_username": "julia_okafor",
+    "e_name": {
+      "en": {
+        "first": "Julia",
+        "middle": "",
+        "last": "Okafor"
+      }
+    },
+    "e_phone": "",
+    "e_email": "julia.okafor@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 286,
+    "e_job_field_id": 472,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 573,
+    "e_username": "kai_vega",
+    "e_name": {
+      "en": {
+        "first": "Kai",
+        "middle": "",
+        "last": "Vega"
+      }
+    },
+    "e_phone": "",
+    "e_email": "kai.vega@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 287,
+    "e_job_field_id": 473,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 574,
+    "e_username": "layla_davis",
+    "e_name": {
+      "en": {
+        "first": "Layla",
+        "middle": "",
+        "last": "Davis"
+      }
+    },
+    "e_phone": "",
+    "e_email": "layla.davis@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 287,
+    "e_job_field_id": 474,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 575,
+    "e_username": "mateo_smith",
+    "e_name": {
+      "en": {
+        "first": "Mateo",
+        "middle": "",
+        "last": "Smith"
+      }
+    },
+    "e_phone": "",
+    "e_email": "mateo.smith@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 288,
+    "e_job_field_id": 475,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 576,
+    "e_username": "nora_garcia",
+    "e_name": {
+      "en": {
+        "first": "Nora",
+        "middle": "",
+        "last": "Garcia"
+      }
+    },
+    "e_phone": "",
+    "e_email": "nora.garcia@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 288,
+    "e_job_field_id": 476,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
+  },
+  {
+    "e_id": 577,
+    "e_username": "oliver_novak",
+    "e_name": {
+      "en": {
+        "first": "Oliver",
+        "middle": "",
+        "last": "Novak"
+      }
+    },
+    "e_phone": "",
+    "e_email": "oliver.novak@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 284,
+    "e_job_field_id": 468,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-01T18:25:00+09:00"
+  },
+  {
+    "e_id": 578,
+    "e_username": "priya_usman",
+    "e_name": {
+      "en": {
+        "first": "Priya",
+        "middle": "",
+        "last": "Usman"
+      }
+    },
+    "e_phone": "",
+    "e_email": "priya.usman@client-demo-food-service.com",
+    "e_image_url": null,
+    "e_department_id": 288,
+    "e_job_field_id": 475,
+    "e_company_id": 20,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": false,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": "2026-05-08T18:25:00+09:00"
+  }
+]

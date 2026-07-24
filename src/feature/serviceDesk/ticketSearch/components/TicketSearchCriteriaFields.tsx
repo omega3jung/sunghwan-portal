@@ -8,16 +8,16 @@ import {
   TreeMultiComboBox,
   type TreeMultiComboBoxOption,
 } from "@/components/custom/MultiComboBox";
-import { getStatusOptions } from "@/components/custom/StatusBadge/options";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import type { MainCategory } from "@/domain/serviceDesk";
+import { getStatusOptions } from "@/feature/serviceDesk/shared";
 import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared";
-import { useCurrentPreference } from "@/feature/user/preference/hooks/useCurrentPreference";
-import { NS } from "@/lib/i18n";
-import { useLocalizedText } from "@/shared/hooks";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
+import { useLocalizedText } from "@/lib/client/i18n";
 import type { ImageValueLabel, ValueLabel } from "@/shared/types";
 
 import type { TicketSearchCriteriaFormValues } from "../forms";
@@ -32,10 +32,16 @@ import { appendUnique, removeValue } from "./utils";
 type Props = {
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
   categories: MainCategory[];
-  users: ImageValueLabel[];
+  requesters: ImageValueLabel[];
+  assignees: ImageValueLabel[];
 };
 
-export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
+export function TicketSearchCriteriaFields({
+  form,
+  categories,
+  requesters,
+  assignees,
+}: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
   const { t: tCommon } = useTranslation(NS.common);
@@ -211,7 +217,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
             render={({ field }) => (
               <AvatarMultiComboBox
                 value={field.value}
-                options={users}
+                options={assignees}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));
                 }}
@@ -238,7 +244,7 @@ export function TicketSearchCriteriaFields({ form, categories, users }: Props) {
             render={({ field }) => (
               <AvatarMultiComboBox
                 value={field.value}
-                options={users}
+                options={requesters}
                 onSelect={(selected) => {
                   field.onChange(appendUnique(field.value, selected));
                 }}

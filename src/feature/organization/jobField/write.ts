@@ -1,12 +1,12 @@
 import { JobField } from "@/domain/organization";
-import { idToNumber } from "@/lib/api/utils/mapId";
+import { idToNumber } from "@/lib/application/api/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
 import { DbJobField } from "./types";
 
 type JobFieldWriteFields = Pick<
   JobField,
-  "name" | "description" | "departmentId" | "parentId" | "active"
+  "name" | "description" | "companyId" | "departmentId" | "parentId" | "active"
 >;
 
 type DbJobFieldWriteInput = Omit<DbJobField, "jf_id"> & {
@@ -24,6 +24,7 @@ export function toJobFieldWritePayload(
     jf_name: input.name,
     jf_description: undefinedToNull(input.description),
     jf_department_id: Number(input.departmentId),
+    jf_company_id: Number(input.companyId),
     jf_parent_id: idToNumber(input.parentId),
     jf_active: input.active,
   };

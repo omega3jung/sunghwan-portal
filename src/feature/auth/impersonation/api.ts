@@ -1,6 +1,6 @@
 // src/feature/auth/impersonation/api.ts
 import { ImpersonationInfo } from "@/domain/auth";
-import client from "@/lib/api";
+import client from "@/lib/client/api";
 
 export const userImpersonationApi = {
   start: async (impersonatedUsername: string): Promise<ImpersonationInfo> => {

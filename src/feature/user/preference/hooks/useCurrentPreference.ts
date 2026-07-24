@@ -2,10 +2,26 @@
 
 import { useSession } from "next-auth/react";
 
-import { ColorTheme, ScreenMode } from "@/domain/config";
-import { UseCurrentPreferenceResult } from "@/domain/user/preference";
-import { PreferencePatch, usePreferenceStore } from "@/lib/preferenceStore";
+import {
+  ColorTheme,
+  PortalPreference,
+  ScreenMode,
+} from "@/domain/user/preference";
+import { PreferencePatch, usePreferenceStore } from "@/lib/client/preference";
 import { Locale } from "@/shared/types";
+
+export type UseCurrentPreferenceResult = {
+  status: "loading" | "ready";
+  current: PortalPreference;
+
+  setLanguage: (language: Locale) => void;
+  setColorTheme: (theme: ColorTheme) => void;
+  setScreenMode: (mode: ScreenMode) => void;
+
+  updatePreference: (patch: PreferencePatch, force?: boolean) => Promise<void>;
+  hydratePreference: () => void;
+  clearPreference: () => void;
+};
 
 /**
  * Combines session, preference store, theme state, and language state into a single preference facade for the UI.

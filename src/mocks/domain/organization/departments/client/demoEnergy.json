@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 211,
+    "d_name": {
+      "en": "Demo Energy - Energy Operations"
+    },
+    "d_code": "ENR-OPS",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 212,
+    "d_name": {
+      "en": "Demo Energy - Power Generation"
+    },
+    "d_code": "ENR-GEN",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": 211,
+    "d_active": true
+  },
+  {
+    "d_id": 213,
+    "d_name": {
+      "en": "Demo Energy - Grid Management"
+    },
+    "d_code": "ENR-GRD",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": 211,
+    "d_active": true
+  },
+  {
+    "d_id": 214,
+    "d_name": {
+      "en": "Demo Energy - Asset Maintenance"
+    },
+    "d_code": "ENR-AST",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": 211,
+    "d_active": true
+  },
+  {
+    "d_id": 215,
+    "d_name": {
+      "en": "Demo Energy - Energy Technology"
+    },
+    "d_code": "ENR-TEC",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 216,
+    "d_name": {
+      "en": "Demo Energy - Energy Management Systems"
+    },
+    "d_code": "ENR-SYS",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": 215,
+    "d_active": true
+  },
+  {
+    "d_id": 217,
+    "d_name": {
+      "en": "Demo Energy - Corporate Services"
+    },
+    "d_code": "ENR-COR",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 218,
+    "d_name": {
+      "en": "Demo Energy - Trading & Safety"
+    },
+    "d_code": "ENR-TNS",
+    "d_description": null,
+    "d_company_id": 13,
+    "d_parent_id": 217,
+    "d_active": true
+  }
+]

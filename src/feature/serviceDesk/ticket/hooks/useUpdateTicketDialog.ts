@@ -9,7 +9,7 @@ import type {
   TicketAttachmentMetadata,
   TicketDetail,
 } from "@/domain/serviceDesk";
-import { useCurrentSession } from "@/feature/auth/session/hooks/useCurrentSession";
+import { useCurrentSession } from "@/feature/auth/session/client";
 import {
   serviceDeskTicketApi,
   useRequesterUpdateServiceDeskTicket,
@@ -20,8 +20,11 @@ import {
   ticketFormSchema,
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
-import { NS } from "@/lib/i18n";
-import { useMutationToast } from "@/shared/client/toast";
+import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
+import { formatDisplayName } from "@/lib/application/organization";
+import { useLocalizedValue } from "@/lib/client/i18n";
+import { useMutationToast } from "@/lib/client/toast";
 
 import {
   PrepareTicketAttachmentsResponse,
@@ -40,6 +43,8 @@ export function useUpdateTicketDialog({
 }: UseUpdateTicketDialogParams) {
   const { t } = useTranslation(NS.serviceDesk);
   const { data: currentSession } = useCurrentSession();
+  const { current: userPreference } = useCurrentPreference();
+  const tLocal = useLocalizedValue(userPreference.language);
   const mutationToast = useMutationToast();
   const loadRequestRef = useRef(0);
   const [open, setOpen] = useState(false);
@@ -74,7 +79,10 @@ export function useUpdateTicketDialog({
   const createInitialTicketFormValues = useCallback(
     (freshTicket?: TicketDetail): TicketFormValues => {
       if (freshTicket) {
-        return mapTicketToTicketFormValues(freshTicket);
+        return mapTicketToTicketFormValues(
+          freshTicket,
+          formatDisplayName(tLocal(freshTicket.requester.name)),
+        );
       }
 
       return {
@@ -83,7 +91,7 @@ export function useUpdateTicketDialog({
         attachment: [],
       };
     },
-    [],
+    [tLocal],
   );
 
   const resetDialogState = useCallback(() => {
@@ -316,7 +324,10 @@ export function useUpdateTicketDialog({
   };
 }
 
-function mapTicketToTicketFormValues(ticket: TicketDetail): TicketFormValues {
+function mapTicketToTicketFormValues(
+  ticket: TicketDetail,
+  requesterName: string,
+): TicketFormValues {
   return {
     ...ticketFormDefaultValues,
     id: ticket.id,
@@ -329,8 +340,8 @@ function mapTicketToTicketFormValues(ticket: TicketDetail): TicketFormValues {
     email: ticket.email,
     requester: {
       id: ticket.requesterUsername,
-      email: "",
-      name: ticket.requesterUsername,
+      email: ticket.requester.email ?? "",
+      name: requesterName,
     },
     attachment: [],
   };

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { setProperty } from "@/components/custom/dnd/tree/utilities";
-import { SupportedLanguage } from "@/domain/config";
+import { SupportedLanguage } from "@/lib/application/i18n";
 import { Locale } from "@/shared/types";
 
 import { CategoryData, SubCategoryData } from "../types";

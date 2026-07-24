@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
 import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
-import { usePreferenceStore } from "@/lib/preferenceStore";
-import { applyColorTheme } from "@/shared/utils/presentation";
+import { usePreferenceStore } from "@/lib/client/preference";
+import { applyColorTheme } from "@/lib/client/theme";
 
 export function usePreferencePresentationSync() {
   const colorTheme = usePreferenceStore((state) => state.colorTheme);

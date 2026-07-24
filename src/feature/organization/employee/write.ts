@@ -1,5 +1,5 @@
 ﻿import { Employee } from "@/domain/organization";
-import { idToNumber } from "@/lib/api/utils/mapId";
+import { idToNumber } from "@/lib/application/api/mapId";
 import { undefinedToNull } from "@/shared/utils/value";
 
 import { DbEmployee } from "./types";

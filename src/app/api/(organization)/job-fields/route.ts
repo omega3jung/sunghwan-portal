@@ -1,20 +1,20 @@
 // app/api/job-fields/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
-  camelJobFieldMapper,
+  createLocalJobField,
+  listLocalJobFields,
+} from "@/app/api/_adapters/localDemo/organization";
+import {
   mapJobFieldItemPayload,
   mapJobFieldListPayload,
-} from "@/feature/organization/jobField/mapper";
+} from "@/lib/application/contracts/organization";
 import {
-  CreateJobFieldInput,
-  toJobFieldMockResource,
+  type CreateJobFieldInput,
   toJobFieldWritePayload,
-} from "@/feature/organization/jobField/write";
-import { jobFieldsMock } from "@/mocks/domain/organization/jobFields";
-
-import { portalApiJson } from "../../_helpers/portalApiJson";
+} from "@/lib/application/contracts/organization";
 
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
@@ -23,12 +23,7 @@ export async function GET(request: NextRequest) {
   if (!isRemote) {
     // Return mock categories of it service deck.
 
-    const jobFieldData = camelJobFieldMapper(jobFieldsMock);
-
-    return NextResponse.json({
-      items: jobFieldData,
-      total: jobFieldData.length,
-    });
+    return NextResponse.json(listLocalJobFields(request.nextUrl.searchParams));
   }
 
   // real backend
@@ -47,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   // demo mode
   if (!isRemote) {
-    return NextResponse.json(toJobFieldMockResource(body), { status: 201 });
+    return NextResponse.json(createLocalJobField(body), { status: 201 });
   }
 
   return portalApiJson(request, {

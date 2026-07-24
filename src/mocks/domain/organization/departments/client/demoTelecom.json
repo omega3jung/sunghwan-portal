@@ -1,0 +1,90 @@
+[
+  {
+    "d_id": 151,
+    "d_name": {
+      "en": "Demo Telecom - Network Operations"
+    },
+    "d_code": "TEL-OPS",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 152,
+    "d_name": {
+      "en": "Demo Telecom - Radio Engineering"
+    },
+    "d_code": "TEL-RAD",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": 151,
+    "d_active": true
+  },
+  {
+    "d_id": 153,
+    "d_name": {
+      "en": "Demo Telecom - Service Provisioning"
+    },
+    "d_code": "TEL-SRV",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": 151,
+    "d_active": true
+  },
+  {
+    "d_id": 154,
+    "d_name": {
+      "en": "Demo Telecom - Billing Operations"
+    },
+    "d_code": "TEL-BIL",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": 151,
+    "d_active": true
+  },
+  {
+    "d_id": 155,
+    "d_name": {
+      "en": "Demo Telecom - Telecom Technology"
+    },
+    "d_code": "TEL-TEC",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 156,
+    "d_name": {
+      "en": "Demo Telecom - Network Systems"
+    },
+    "d_code": "TEL-SYS",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": 155,
+    "d_active": true
+  },
+  {
+    "d_id": 157,
+    "d_name": {
+      "en": "Demo Telecom - Corporate Services"
+    },
+    "d_code": "TEL-COR",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": null,
+    "d_active": true
+  },
+  {
+    "d_id": 158,
+    "d_name": {
+      "en": "Demo Telecom - Customer Care"
+    },
+    "d_code": "TEL-CAR",
+    "d_description": null,
+    "d_company_id": 7,
+    "d_parent_id": 157,
+    "d_active": true
+  }
+]

@@ -6,6 +6,7 @@ import type {
   TicketActionType,
   TicketHistoryEvent,
   TicketHistorySource,
+  TicketRequester,
   TicketResolutionReason,
   TicketStatus,
 } from "@/domain/serviceDesk";
@@ -19,6 +20,7 @@ export type TicketMockInput = {
   tk_updated_at: ISODateString | null;
 
   tk_requester_username: string;
+  tk_requester: TicketRequester;
 
   tk_status: TicketStatus;
   tk_priority: Priority;

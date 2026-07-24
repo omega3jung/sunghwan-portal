@@ -3,24 +3,24 @@ import type { RuleGroupTypeIC } from "react-querybuilder";
 
 import {
   getCurrentEmployeeUserName,
-  isInternalUser,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
+import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { toTicketMockSummaryResource } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/ticketResourceMapper";
 import {
+  resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
   withDerivedTicketOwnershipList,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
 import type {
   TicketSearchRequest,
   TicketSearchSort,
   TicketSortField,
-} from "@/feature/serviceDesk/ticket/api";
-import { mapTicketSummaryListPayload } from "@/feature/serviceDesk/ticket/api/mapper";
-import { toTicketMockSummaryResource } from "@/feature/serviceDesk/ticketAction/mock";
-import { localSearchTickets } from "@/server/serviceDesk/ticket/localDemo";
+} from "@/lib/application/contracts/serviceDesk";
+import { mapTicketSummaryListPayload } from "@/lib/application/contracts/serviceDesk";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 const TICKET_SORT_FIELDS = new Set<TicketSortField>([
@@ -81,10 +81,14 @@ async function handleTicketSearch(
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
 
-      const isInternal = await isInternalUser(request);
+      const access = await getCurrentLocalTicketAccessContext(request);
+
+      if (access === null) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
 
       const result = localSearchTickets({
-        isInternal,
+        access,
         request: body,
       });
 
@@ -95,13 +99,14 @@ async function handleTicketSearch(
 
       return NextResponse.json({
         items,
+        facets: result.facets,
         totalCount: result.totalCount,
         page: result.page,
         pageSize: result.pageSize,
       });
     } catch (error) {
       return toApiErrorResponse(error, {
-        fallbackMessage: tServiceDeskApi("api.tickets.fetchList"),
+        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
       });
     }
   }
@@ -112,8 +117,8 @@ async function handleTicketSearch(
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     ...(method === "GET"
       ? { query: buildDbSearchParams(body) }
-      : { body }),
-    errorMessage: tServiceDeskApi("api.tickets.fetchList"),
+      : { body: toLegacyTicketSearchRequest(body) }),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetchList"),
     mapData: mapTicketSummaryListPayload,
   });
 }
@@ -122,9 +127,12 @@ function parseTicketSearchQuery(
   searchParams: URLSearchParams,
 ): TicketSearchRequest | null {
   try {
+    const sort = parseSortQueryValue(searchParams);
+
     return normalizeTicketSearchRequest({
       filter: parseFilterQueryValue(searchParams.get("filter")),
-      sort: parseSortQueryValue(searchParams),
+      sortField: sort?.field,
+      sortDirection: sort?.direction,
       page: parseNumberQueryValue(searchParams.get("page")) ?? 1,
       pageSize:
         parseNumberQueryValue(searchParams.get("pageSize")) ?? 10,
@@ -135,11 +143,33 @@ function parseTicketSearchQuery(
 }
 
 function normalizeTicketSearchRequest(
-  request: TicketSearchRequest,
+  request: Partial<TicketSearchRequest> & { sort?: unknown },
 ): TicketSearchRequest {
+  const legacySort = normalizeSortValue(request.sort);
+  const sort = normalizeSortValue({
+    field: request.sortField ?? legacySort?.field,
+    direction: request.sortDirection ?? legacySort?.direction,
+  });
+
   return {
     filter: normalizeFilterValue(request.filter),
-    sort: normalizeSortValue(request.sort),
+    sortField: sort?.field,
+    sortDirection: sort?.direction,
+    page: request.page ?? 1,
+    pageSize: request.pageSize ?? 10,
+  };
+}
+
+function toLegacyTicketSearchRequest(request: TicketSearchRequest) {
+  return {
+    filter: request.filter,
+    sort:
+      request.sortField && request.sortDirection
+        ? {
+            field: request.sortField,
+            direction: request.sortDirection,
+          }
+        : undefined,
     page: request.page,
     pageSize: request.pageSize,
   };
@@ -198,6 +228,10 @@ function normalizeSortValue(value: unknown): TicketSearchSort | undefined {
   }
 
   const sort = value as Partial<TicketSearchSort>;
+
+  if (!sort.field && !sort.direction) {
+    return undefined;
+  }
 
   if (!isTicketSortField(sort.field) || !isSortDirection(sort.direction)) {
     throw new Error("Invalid sort value");

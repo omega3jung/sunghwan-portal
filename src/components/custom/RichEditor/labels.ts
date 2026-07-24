@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
 
 import type { RichEditorToolbarLabels } from "@/components/custom/RichEditor";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 export function getRichEditorLabels(t: TFunction): RichEditorToolbarLabels {
   return {

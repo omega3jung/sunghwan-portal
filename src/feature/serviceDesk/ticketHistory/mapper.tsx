@@ -14,13 +14,13 @@ import {
   X,
 } from "lucide-react";
 
-import { statusLocaleKey } from "@/components/custom/StatusBadge/locales";
-import type { SystemStatus } from "@/components/custom/StatusBadge/types";
 import type { TimelineItemData } from "@/components/custom/Timeline";
 import type {
   TicketHistory,
   TicketHistoryDisplayMetadata,
+  TicketStatus,
 } from "@/domain/serviceDesk";
+import { ticketStatusLocaleKey } from "@/feature/serviceDesk/shared";
 
 import { formatHistoryMeta } from "./utils";
 
@@ -106,9 +106,14 @@ function getHistoryEventSummary(
     case "APPROVAL_DECLINED":
       return t("history.APPROVAL_DECLINED");
     case "TICKET_MERGED":
-      return t("history.MERGED", {
-        target: resolveMergeTargetLabel(history.metadata),
-      });
+      return t(
+        history.metadata?.closeReason === "Escalated"
+          ? "history.ESCALATED"
+          : "history.MERGED",
+        {
+          target: resolveMergeTargetLabel(history.metadata),
+        },
+      );
     case "TICKET_REJECTED":
       return t("history.TICKET_REJECTED");
     case "TICKET_CANCELED":
@@ -155,8 +160,8 @@ function getHistoryEventSummary(
   }
 }
 
-function isSystemStatus(value: unknown): value is SystemStatus {
-  return typeof value === "string" && value in statusLocaleKey;
+function isTicketStatus(value: unknown): value is TicketStatus {
+  return typeof value === "string" && value in ticketStatusLocaleKey;
 }
 
 function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
@@ -168,8 +173,8 @@ function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
   ) {
     const status = (value as { status?: unknown }).status;
 
-    if (isSystemStatus(status)) {
-      return tStatus(statusLocaleKey[status]);
+    if (isTicketStatus(status)) {
+      return tStatus(ticketStatusLocaleKey[status]);
     }
 
     if (typeof status === "string") {
@@ -177,8 +182,8 @@ function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
     }
   }
 
-  if (isSystemStatus(value)) {
-    return tStatus(statusLocaleKey[value]);
+  if (isTicketStatus(value)) {
+    return tStatus(ticketStatusLocaleKey[value]);
   }
 
   return String(value);

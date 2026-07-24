@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { STATIC_QUERY_OPTIONS } from "@/lib/reactQuery";
+import { STATIC_QUERY_OPTIONS } from "@/lib/client/query";
 
 import { createLeftMenuFromDbMenuItem } from "../utils/mapper";
 import { leftMenuApi } from "./api";

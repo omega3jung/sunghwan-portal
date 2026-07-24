@@ -4,12 +4,12 @@ import {
   getCurrentEmployeeUserName,
   isRemoteRequest,
   toApiErrorResponse,
-} from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
+} from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
+  resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
-  tServiceDeskApi,
-} from "@/app/api/service-desk/_shared";
+} from "@/app/api/_adapters/serviceDesk";
 import { toTicketDraftWritePayloadFromFormValues } from "@/feature/serviceDesk/ticketDraft/api/mapper";
 import {
   ticketDraftFormSchema,
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   return portalApiJson(request, {
     path: "/service-desk/tickets/draft",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: tServiceDeskApi("api.tickets.fetch"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.fetch"),
   });
 }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     rawBody = await request.json();
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: tServiceDeskApi("api.tickets.localDemo.invalidPayload"),
+      fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload"),
       fallbackStatus: 400,
     });
   }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
   if (!parsedBody.success) {
     return NextResponse.json(
-      { message: tServiceDeskApi("api.tickets.localDemo.invalidPayload") },
+      { message: resolveApiErrorMessage("serviceDesk.tickets.localDemo.invalidPayload") },
       { status: 400 },
     );
   }
@@ -72,6 +72,6 @@ export async function POST(request: NextRequest) {
     path: "/service-desk/tickets/draft",
     headers: toCurrentUsernameProxyHeaders(currentUserName),
     body: toTicketDraftWritePayloadFromFormValues(form),
-    errorMessage: tServiceDeskApi("api.tickets.create"),
+    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.create"),
   });
 }

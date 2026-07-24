@@ -1,22 +1,11 @@
-import type { QueryResultRow } from "pg";
-
+import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import { CreateTicketHistoryInput } from "./ticketHistoryDto";
 import { TicketHistoryRow } from "./ticketHistoryRow";
 import { TicketHistoryJsonValue } from "./ticketHistoryTypes";
 
-export type TicketHistoryQueryExecutor = <
-  T extends QueryResultRow = QueryResultRow,
->(
-  text: string,
-  params?: unknown[],
-) => Promise<T[]>;
-
-export type TicketHistoryRepositoryOptions = {
-  // Allows service flows to execute multiple repository calls in one transaction.
-  query?: TicketHistoryQueryExecutor;
-};
+export type TicketHistoryRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const CREATE_TICKET_HISTORY_QUERY = `
 insert into service_desk.ticket_history (
@@ -26,6 +15,12 @@ insert into service_desk.ticket_history (
   tkh_source,
   tkh_event,
   tkh_actor_username,
+  (
+    select employee.e_name
+    from public.vw_employee employee
+    where employee.e_username = tkh_actor_username
+    limit 1
+  ) as tkh_actor_name,
   tkh_from_value,
   tkh_to_value,
   tkh_metadata
@@ -49,6 +44,12 @@ returning
   tkh_source,
   tkh_event,
   tkh_actor_username,
+  (
+    select employee.e_name
+    from public.vw_employee employee
+    where employee.e_username = tkh_actor_username
+    limit 1
+  ) as tkh_actor_name,
   tkh_from_value,
   tkh_to_value,
   tkh_metadata,

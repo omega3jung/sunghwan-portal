@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { NS } from "@/lib/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { UPDATE_TICKET_REVIEW_STEP } from "../../hooks/useUpdateTicketDialog";
 

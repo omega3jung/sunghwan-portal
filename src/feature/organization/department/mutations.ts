@@ -2,8 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { departmentApi } from "@/feature/organization/department";
-
+import { departmentApi } from "./api";
 import { departmentQueryKeys } from "./queryKeys";
 
 export const useCreateDepartmentMutation = () => {

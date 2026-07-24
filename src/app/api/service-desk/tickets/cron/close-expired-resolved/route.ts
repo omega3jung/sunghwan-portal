@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_helpers";
-import { portalApiJson } from "@/app/api/_helpers/portalApiJson";
-import { tServiceDeskApi } from "@/app/api/service-desk/_shared";
-import { DbTicketDetail } from "@/feature/serviceDesk/ticket/api/types";
-import { getLocalDemoHistories, getLocalDemoTickets } from "@/server/serviceDesk/ticket/state";
+import { isRemoteRequest } from "@/app/api/_adapters";
+import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getLocalDemoHistories, getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { resolveApiErrorMessage } from "@/app/api/_adapters/serviceDesk";
+import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
 const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       path: "/service-desk/tickets/cron/close-expired-resolved",
       body: {},
-      errorMessage: tServiceDeskApi("api.ticketCommand.autoClose"),
+      errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.autoClose"),
     });
   }
 
@@ -67,11 +67,10 @@ function closeExpiredResolvedTicketsLocal(now: Date): AutoCloseResult {
   const cutoffTime =
     now.getTime() - RESOLVED_AUTO_CLOSE_GRACE_DAYS * MS_PER_DAY;
 
-  for (const isInternal of [false, true]) {
-    const tickets = getLocalDemoTickets(isInternal);
-    const histories = getLocalDemoHistories(isInternal);
+  const tickets = getLocalDemoTickets();
+  const histories = getLocalDemoHistories();
 
-    tickets.forEach((ticket, index) => {
+  tickets.forEach((ticket, index) => {
       if (ticket.status !== "Resolved") {
         return;
       }
@@ -113,8 +112,7 @@ function closeExpiredResolvedTicketsLocal(now: Date): AutoCloseResult {
         created_at: now.toISOString(),
       });
       ticketIds.push(ticket.id);
-    });
-  }
+  });
 
   return {
     closedCount: ticketIds.length,

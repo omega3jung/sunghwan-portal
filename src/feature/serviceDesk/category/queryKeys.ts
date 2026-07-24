@@ -11,4 +11,8 @@ export const categoryQueryKeys = {
   lists: () => [...categoryQueryKeys.all, "list"] as const,
   list: (params?: ServiceDeskCategoryListParams) =>
     [...categoryQueryKeys.lists(), params] as const,
+
+  contexts: () => [...categoryQueryKeys.all, "context"] as const,
+  context: (categoryId?: string | number | null) =>
+    [...categoryQueryKeys.contexts(), categoryId] as const,
 };

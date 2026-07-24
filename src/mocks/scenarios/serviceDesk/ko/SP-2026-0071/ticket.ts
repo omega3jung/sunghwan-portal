@@ -1,0 +1,65 @@
+import { TicketMockInput } from "../../types";
+
+export const ticket: TicketMockInput = {
+  tk_id: "13afd116-711e-49bc-9c28-c71e703793f0",
+  tk_ticket_no: "SP-2026-0071",
+  tk_created_at: "2026-07-11T08:13:53Z",
+  tk_updated_at: "2026-07-12T07:42:16Z",
+  tk_requester_username: "fiona_tanaka",
+  tk_requester: {
+    username: "fiona_tanaka",
+    name: {
+      en: { first: "Fiona", middle: "", last: "Tanaka" },
+    },
+    email: "fiona.tanaka@client-demo-corporation.com",
+    image: null,
+  },
+  tk_status: "Working",
+  tk_priority: "medium",
+  tk_risk_level: "medium",
+  tk_assignee_usernames: [
+    "yusuf_garcia",
+    "zoe_novak",
+    "bianca_clark",
+    "rosa_green",
+    "adrian_usman",
+    "tessa_hassan",
+    "ximena_smith",
+  ],
+  tk_work_minutes: 210,
+  tka_last_comment_at: "2026-07-12T07:42:16Z",
+  tka_last_comment_email: "fiona.tanaka@client-demo-corporation.com",
+
+  tka_last_user_activity_at: "2026-07-12T07:42:16Z",
+  tka_last_user_activity_email: "fiona.tanaka@client-demo-corporation.com",
+  tk_due_at: "2026-07-16T18:00:00Z",
+  tk_active: true,
+  cat_scope: "INTERNAL",
+  cat_id: "132",
+  cat_name: {
+    en: "New feature request",
+    es: "Solicitud de nueva funcionalidad",
+    fr: "Demande de nouvelle fonctionnalité",
+    ko: "새로운 기능 요청",
+  },
+  tk_approval_step_id: null,
+  tk_subject: "End-to-End Unit Repair에 Demo-Com사 제품 추가 검토 요청",
+  tk_content:
+    "안녕하세요. 신규 계약을 검토 중인 Demo-Com사의 제품을 End-to-End Unit Repair에서 처리할 수 있도록 지원 범위를 확장하려고 합니다.<br><br>현재 페이지는 기존 등록 제조사의 제품과 수리 절차를 기준으로 구성되어 있어, Demo-Com사 제품을 추가할 때 필요한 화면과 데이터 변경 사항을 내부적으로 검토해 주세요.<br><br>검토가 필요한 주요 항목은 다음과 같습니다.<br><br>제조사 및 제품 모델 등록 방식<br>제조사별 Serial Number 검증 규칙<br>점검 항목과 수리 결과 코드<br>부품 및 보증 정보 관리<br>Quality Check 기준<br>제조사 시스템과의 데이터 연동 필요 여부<br><br>내부 검토 결과를 바탕으로 요청 범위를 확정한 후 포털 제공사에 신규 기능 개발을 요청할 예정입니다.",
+  tk_email: {
+    to: [
+      "yusuf.garcia@client-demo-corporation.com",
+      "zoe.novak@client-demo-corporation.com",
+      "bianca.clark@client-demo-corporation.com",
+      "rosa.green@client-demo-corporation.com",
+      "adrian.usman@client-demo-corporation.com",
+      "tessa.hassan@client-demo-corporation.com",
+      "ximena.smith@client-demo-corporation.com",
+      "fiona.tanaka@client-demo-corporation.com",
+    ],
+    cc: ["elias.martinez@client-demo-corporation.com"],
+    bcc: [],
+  },
+  tk_files: [],
+  tk_images: [],
+};

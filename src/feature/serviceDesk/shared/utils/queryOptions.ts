@@ -1,4 +1,4 @@
-import { DYNAMIC_QUERY_OPTIONS } from "@/lib/reactQuery";
+import { DYNAMIC_QUERY_OPTIONS } from "@/lib/client/query";
 
 const LOCAL_DEMO_GC_TIME = 1000 * 60 * 60 * 24; // 24h
 

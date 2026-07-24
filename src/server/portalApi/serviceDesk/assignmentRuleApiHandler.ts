@@ -1,18 +1,28 @@
 import type { NextResponse as NextResponseType } from "next/server";
 import { NextResponse } from "next/server";
 
-import { getAuthToken } from "@/app/api/_helpers";
-import type { AssignmentRecommendationInput } from "@/feature/serviceDesk/assignmentRule/recommendation";
-import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/feature/serviceDesk/assignmentRule/types";
-import type { AssignmentRuleDto } from "@/server/data/serviceDesk/assignmentRule";
+import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
+import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
 import {
+  type AssignmentRuleDto,
   createAssignmentRule,
   deleteAssignmentRuleById,
   getAssignmentRecommendationResponse,
   getAssignmentRulesByTenantId,
   getAssignmentRulesResponseByTenantId,
+  hasAssignmentRuleAssigneeSelection,
   updateAssignmentRuleById,
+  validateAssignmentRuleTreeMutation,
 } from "@/server/data/serviceDesk/assignmentRule";
+import { getCategoryTreeByTenantId } from "@/server/data/serviceDesk/category";
+import {
+  assertAssignmentReferencesValidForWrite,
+  mapSettingsWriteError,
+} from "@/server/data/serviceDesk/shared";
+import {
+  type PortalApiQueryExecutor,
+  withPortalApiTransaction,
+} from "@/server/shared/supabase/portalApiClient";
 import { isSameNumberArray, isSameStringArray } from "@/shared/utils/value";
 
 import { getPortalApiQueryValue } from "../utils";
@@ -22,6 +32,7 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
+import { resolveAuthorizedSettingsTenant } from "./shared";
 
 type AssignmentTreeCategoryItem =
   SaveServiceDeskAssignmentRuleTreePayload["categories"][number];
@@ -62,10 +73,20 @@ export async function handleAssignmentRulePortalApi(
             "isInternal",
           ),
         ) ?? true;
-      const items = await getAssignmentRulesResponseByTenantId({
+      const scope = getPortalApiQueryValue(
+        context.request,
+        context.options,
+        "scope",
+      );
+      const allItems = await getAssignmentRulesResponseByTenantId({
         tenantId,
         isInternal,
       });
+      const items = await filterAssignmentRulesByScope(
+        allItems,
+        tenantId,
+        scope,
+      );
 
       return NextResponse.json({
         items,
@@ -77,9 +98,30 @@ export async function handleAssignmentRulePortalApi(
       const body = requireBody<SaveServiceDeskAssignmentRuleTreePayload>(
         context.options,
       );
+      const authorization = await resolveAuthorizedSettingsTenant({
+        request: context.request,
+        requestedTenantId: body.tenantId,
+      });
+      const tenant = authorization.tenant;
+
+      if (!tenant) {
+        throw Object.assign(new Error("A target tenant is required."), {
+          status: 400,
+        });
+      }
+
+      const submittedCategoryIds = await validateAssignmentRuleTreeMutation({
+        principal: authorization.principal,
+        tenant,
+        payload: body,
+      });
       const assignmentRules = await saveAssignmentRuleTree(body);
 
-      return NextResponse.json(assignmentRules);
+      return NextResponse.json(
+        assignmentRules.filter((rule) =>
+          submittedCategoryIds.has(String(rule.category_id)),
+        ),
+      );
     }
 
     return createNotFoundResponse();
@@ -91,16 +133,8 @@ export async function handleAssignmentRulePortalApi(
     }
 
     const input = requireBody<AssignmentRecommendationInput>(context.options);
-    const token = await getAuthToken(context.request);
-    const isInternal = token?.userScope === "INTERNAL";
-    const tenantId =
-      !isInternal && typeof token?.companyId === "number"
-        ? token.companyId
-        : null;
     const body = await getAssignmentRecommendationResponse({
       input,
-      tenantId,
-      isInternal,
     });
 
     return NextResponse.json(body);
@@ -112,13 +146,34 @@ export async function handleAssignmentRulePortalApi(
 async function saveAssignmentRuleTree(
   payload: SaveServiceDeskAssignmentRuleTreePayload,
 ) {
+  try {
+    return await withPortalApiTransaction((query) =>
+      saveAssignmentRuleTreeInTransaction(payload, query),
+    );
+  } catch (error) {
+    throw mapSettingsWriteError(error, "assignmentRules");
+  }
+}
+
+async function saveAssignmentRuleTreeInTransaction(
+  payload: SaveServiceDeskAssignmentRuleTreePayload,
+  query: PortalApiQueryExecutor,
+) {
   const tenantId = Number(payload.tenantId);
 
   if (!Number.isFinite(tenantId)) {
     throw new Error("Invalid tenantId");
   }
 
-  const currentAssignmentRules = await getAssignmentRulesByTenantId(tenantId);
+  const submittedCategoryIds = new Set(
+    payload.categories.flatMap((category) => [
+      Number(category.id),
+      ...category.subCategories.map((subCategory) => Number(subCategory.id)),
+    ]),
+  );
+  const currentAssignmentRules = (
+    await getAssignmentRulesByTenantId(tenantId, query)
+  ).filter((rule) => submittedCategoryIds.has(rule.category_id));
   const currentAssignmentRulesByCategoryId = new Map(
     currentAssignmentRules.map((assignmentRule) => [
       assignmentRule.category_id,
@@ -134,6 +189,17 @@ async function saveAssignmentRuleTree(
     ]),
   );
 
+  await assertAssignmentReferencesValidForWrite(
+    query,
+    tenantId,
+    nextAssignmentRules
+      .filter((rule) => hasAssignmentRuleAssigneeSelection(rule.assignee))
+      .map((rule) => ({
+        categoryId: rule.category_id,
+        assignee: rule.assignee,
+      })),
+  );
+
   const createTasks: Array<() => Promise<unknown>> = [];
   const updateTasks: Array<() => Promise<unknown>> = [];
   const deleteTasks: Array<() => Promise<unknown>> = [];
@@ -144,12 +210,21 @@ async function saveAssignmentRuleTree(
     );
 
     if (!currentAssignmentRule) {
+      const assignee = nextAssignmentRule.assignee;
+
+      if (!hasAssignmentRuleAssigneeSelection(assignee)) {
+        continue;
+      }
+
       createTasks.push(() =>
-        createAssignmentRule({
-          tenant_id: tenantId,
-          category_id: nextAssignmentRule.category_id,
-          assignee: nextAssignmentRule.assignee,
-        }),
+        createAssignmentRule(
+          {
+            tenant_id: tenantId,
+            category_id: nextAssignmentRule.category_id,
+            assignee,
+          },
+          query,
+        ),
       );
       continue;
     }
@@ -171,6 +246,7 @@ async function saveAssignmentRuleTree(
           category_id: nextAssignmentRule.category_id,
           assignee: nextAssignmentRule.assignee,
         },
+        query,
       ),
     );
   }
@@ -183,6 +259,7 @@ async function saveAssignmentRuleTree(
         deleteAssignmentRuleById(
           tenantId,
           currentAssignmentRule.assignment_rule_id,
+          query,
         ),
       );
     }
@@ -193,7 +270,28 @@ async function saveAssignmentRuleTree(
     8,
   );
 
-  return getAssignmentRulesByTenantId(tenantId);
+  return getAssignmentRulesByTenantId(tenantId, query);
+}
+
+async function filterAssignmentRulesByScope(
+  items: AssignmentRuleDto[],
+  tenantId: string | null,
+  scope: string | null,
+) {
+  if ((scope !== "INTERNAL" && scope !== "PORTAL") || !tenantId) {
+    return items;
+  }
+
+  const allowedCategoryIds = new Set(
+    (await getCategoryTreeByTenantId(tenantId))
+      .filter((category) => category.category_scope === scope)
+      .flatMap((category) => [
+        category.category_id,
+        ...category.sub_category.map((subCategory) => subCategory.category_id),
+      ]),
+  );
+
+  return items.filter((rule) => allowedCategoryIds.has(rule.category_id));
 }
 
 async function runWithConcurrencyLimit<T>(
@@ -230,7 +328,9 @@ function isSameAssignmentRuleAssignee(
 ): boolean {
   return (
     isSameNumberArray(current.job_field_id, next.job_field_id) &&
-    isSameStringArray(current.employee_username, next.employee_username)
+    isSameStringArray(current.employee_username, next.employee_username) &&
+    Boolean(current.include_tenant_company) ===
+      Boolean(next.include_tenant_company)
   );
 }
 
@@ -262,5 +362,6 @@ function mapAssignmentTreeAssignee(
   return {
     job_field_id: assignee.jobFieldIds.map(Number),
     employee_username: assignee.assigneeUsernames.map(String),
+    include_tenant_company: assignee.includeTenantCompany === true,
   };
 }

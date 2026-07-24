@@ -1,0 +1,170 @@
+{
+  "common": {
+    "failed": "Échec",
+    "load": {
+      "title": "Échec du chargement",
+      "message": "Impossible de charger {{item}}"
+    },
+    "create": {
+      "title": "Échec de la création",
+      "message": "Impossible de créer {{item}}"
+    },
+    "update": {
+      "title": "Échec de la mise à jour",
+      "message": "Impossible de mettre à jour {{item}}"
+    },
+    "delete": {
+      "title": "Échec de la suppression",
+      "message": "Impossible de supprimer {{item}}"
+    },
+    "add": {
+      "title": "Échec de l'ajout",
+      "message": "Impossible d'ajouter {{item}}"
+    },
+    "save": {
+      "title": "Échec de l'enregistrement",
+      "message": "Impossible d'enregistrer {{item}}"
+    },
+    "remove": {
+      "title": "Échec du retrait",
+      "message": "Impossible de retirer {{item}}"
+    }
+  },
+  "unsupportedBrowser": {
+    "title": "Navigateur non pris en charge",
+    "description": "Le navigateur actuel n'est pas pris en charge.",
+    "browserRecommendation": "Pour une expérience optimale, veuillez passer à la dernière version de Chrome, Firefox, Edge ou Safari."
+  },
+  "ticket": {},
+
+  "serviceDesk": {
+    "common": {
+      "notFound": "Introuvable."
+    },
+    "approvalSteps": {
+      "fetchList": "Impossible de récupérer les étapes d'approbation.",
+      "create": "Impossible de créer l'étape d'approbation.",
+      "fetch": "Impossible de récupérer l'étape d'approbation.",
+      "update": "Impossible de mettre à jour l'étape d'approbation.",
+      "delete": "Impossible de supprimer l'étape d'approbation.",
+      "save": "Impossible d'enregistrer les paramètres des étapes d'approbation.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres d'étapes d'approbation invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable."
+      }
+    },
+    "assignmentRules": {
+      "fetchList": "Impossible de récupérer les règles d'attribution.",
+      "create": "Impossible de créer la règle d'attribution.",
+      "fetch": "Impossible de récupérer la règle d'attribution.",
+      "update": "Impossible de mettre à jour la règle d'attribution.",
+      "delete": "Impossible de supprimer la règle d'attribution.",
+      "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "emptyAssignee": "La règle d'attribution nécessite au moins une personne assignée."
+      }
+    },
+    "assignmentRecommendations": {
+      "invalidInput": "La recommandation d'attribution nécessite categoryId et assigneeUsernames.",
+      "fetch": "Impossible de récupérer les recommandations d'attribution."
+    },
+    "eligibleActors": {
+      "fetch": "Impossible de récupérer les intervenants Service Desk éligibles."
+    },
+    "categories": {
+      "fetchList": "Impossible de récupérer les catégories.",
+      "create": "Impossible de créer la catégorie.",
+      "fetch": "Impossible de récupérer la catégorie.",
+      "update": "Impossible de mettre à jour la catégorie.",
+      "delete": "Impossible de supprimer la catégorie.",
+      "save": "Impossible d'enregistrer les paramètres de catégorie.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
+        "clientNotFound": "Le client {{clientId}} est introuvable.",
+        "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}.",
+        "scopeImmutable": "La portée d'une catégorie ne peut pas être modifiée. Désactivez cette catégorie et créez-en une nouvelle."
+      }
+    },
+    "tenants": {
+      "fetchList": "Impossible de récupérer les tenants.",
+      "create": "Impossible de créer le tenant.",
+      "fetch": "Impossible de récupérer le tenant.",
+      "update": "Impossible de mettre à jour le tenant.",
+      "delete": "Impossible de supprimer le tenant.",
+      "save": "Impossible d'enregistrer les paramètres du tenant.",
+      "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "localDemo": {
+        "invalidPayload": "Charge utile des paramètres du tenant invalide.",
+        "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",
+        "companyMismatch": "Le tenant n'appartient pas à l'entreprise {{companyId}}."
+      }
+    },
+    "tickets": {
+      "fetchList": "Impossible de récupérer les tickets.",
+      "create": "Impossible de créer le ticket.",
+      "notFound": "Ticket introuvable.",
+      "fetch": "Impossible de récupérer le ticket.",
+      "update": "Impossible de mettre à jour le ticket.",
+      "delete": "Impossible de supprimer le ticket.",
+      "localDemo": {
+        "invalidPayload": "Charge utile du ticket invalide.",
+        "requesterRequired": "Le demandeur est obligatoire.",
+        "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
+        "updateForbidden": "Seul le demandeur peut mettre à jour ce ticket.",
+        "updateNotAllowed": "Le ticket ne peut pas être mis à jour avec le statut {{status}}."
+      }
+    },
+    "ticketActions": {
+      "fetchList": "Impossible de récupérer les actions du ticket.",
+      "notFound": "Action introuvable.",
+      "fetch": "Impossible de récupérer l'action du ticket.",
+      "remove": "Impossible de supprimer l'action du ticket."
+    },
+    "ticketHistories": {
+      "fetchList": "Impossible de récupérer les historiques du ticket."
+    },
+    "ticketWorkSession": {
+      "fetchList": "Impossible de récupérer le temps suivi du ticket.",
+      "create": "Impossible d'enregistrer le temps suivi du ticket.",
+      "localDemo": {
+        "ticketMismatch": "Le ticketId de la charge utile ne correspond pas au ticketId de la route.",
+        "invalidStatus": "Statut invalide : {{value}}.",
+        "invalidTrackedMinutes": "Le temps suivi doit être supérieur à 0 minute.",
+        "statusRequiresTime": "Le statut ne peut pas changer tant que le temps suivi total n'est pas supérieur à 0."
+      }
+    },
+    "ticketCommand": {
+      "mergeTargetRequired": "L'action de fusion nécessite targetTicketId.",
+      "mergeSameTicket": "Impossible de fusionner avec le même ticket.",
+      "employeeUnavailable": "Non autorisé : l'identité de l'employé est indisponible.",
+      "actionMismatch": "Le chemin de l'action et la charge utile ne correspondent pas.",
+      "startWork": "Impossible de démarrer le travail sur le ticket.",
+      "execute": "Impossible d'exécuter la commande du ticket.",
+      "localDemo": {
+        "createFailed": "Impossible de créer l'action.",
+        "ticketNotFound": "Ticket {{ticketId}} introuvable.",
+        "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
+        "assigneeUnavailable": "Le routage configuré n'a trouvé aucun intervenant actif et éligible.",
+        "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
+        "approvalForbidden": "Seule la personne approbatrice assignée peut approuver ou refuser ce ticket.",
+        "cancelForbidden": "Seule la personne demandeuse peut annuler ce ticket avant le début du travail.",
+        "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
+        "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
+        "mergeTargetNotFound": "Le ticket cible de la fusion est introuvable.",
+        "draftCannotBeMerged": "Les tickets en brouillon ne peuvent pas être fusionnés.",
+        "cannotMergeIntoDraft": "Impossible de fusionner avec un ticket en brouillon.",
+        "ticketAlreadyMerged": "Le ticket est déjà fusionné.",
+        "mergeTargetAlreadyMerged": "Le ticket cible est déjà fusionné.",
+        "portalToInternalMergeForbidden": "Les tickets portail ne peuvent pas être fusionnés dans des tickets internes.",
+        "invalidMergeTarget": "Cible de fusion invalide.",
+        "invalidPriority": "Priorité invalide : {{value}}.",
+        "invalidRiskLevel": "Niveau de risque invalide : {{value}}.",
+        "actionNotAllowed": "L'action {{action}} n'est pas autorisée dans l'état {{status}}."
+      }
+    }
+  }
+}
