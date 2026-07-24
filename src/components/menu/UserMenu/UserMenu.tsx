@@ -1,4 +1,3 @@
-import { AvatarImage } from "@radix-ui/react-avatar";
 import {
   Bell,
   LogOut,
@@ -9,9 +8,8 @@ import {
 import { signIn, signOut } from "next-auth/react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/toast";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/client";
@@ -155,8 +154,10 @@ export function UserMenu({
 
       signingRef.current = false;
     } catch {
-      toast(t("errors.title"), {
+      toast.add({
+        title: t("errors.title"),
         description: "login switch error",
+        type: "error",
       });
     }
   };
@@ -213,25 +214,25 @@ export function UserMenu({
   return (
     <>
       <DropdownMenu open={openUserMenu} onOpenChange={setOpenUserMenu}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="w-20">
+        <DropdownMenuTrigger
+          render={<Button variant="ghost" className="w-20" />}
+        >
             {hasImpersonatedUser
               ? renderImpersonationAvatar(originalUser, impersonatedUser)
               : renderUserAvatar(visibleUser)}
-          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="p-2 mt-2 mr-1"
           align="start"
-          onCloseAutoFocus={(event) => {
-            if (!shouldOpenImpersonationDialogRef.current) return;
-
-            event.preventDefault();
+          finalFocus={() => {
+            if (!shouldOpenImpersonationDialogRef.current) return true;
 
             window.setTimeout(() => {
               setOpenImpersonationDialog(true);
               shouldOpenImpersonationDialogRef.current = false;
             }, 0);
+
+            return false;
           }}
         >
           <DropdownMenuGroup>

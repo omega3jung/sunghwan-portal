@@ -7,8 +7,8 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 import { bytesToMB } from "@/shared/utils/browser";
 
 type FileValue = File[];
@@ -84,7 +84,10 @@ export const useFileAttachments = <
 
     if (invalidFile) {
       onError?.("type");
-      toast.warning(t("invalidFileType"));
+      toast.add({
+        title: t("invalidFileType"),
+        type: "warning",
+      });
       return;
     }
 
@@ -99,8 +102,10 @@ export const useFileAttachments = <
 
     if (uniqueFiles.length > maxCount) {
       onError?.("count");
-      toast.warning(t("fileLimitTitle"), {
+      toast.add({
+        title: t("fileLimitTitle"),
         description: t("maxFileCount", { count: maxCount }),
+        type: "warning",
       });
       return;
     }
@@ -112,8 +117,10 @@ export const useFileAttachments = <
 
     if (totalSizeBytes > maxSizeBytes) {
       onError?.("size");
-      toast.warning(t("fileLimitTitle"), {
+      toast.add({
+        title: t("fileLimitTitle"),
         description: t("maxTotalFileSize", { size: maxSizeMB }),
+        type: "warning",
       });
       return;
     }

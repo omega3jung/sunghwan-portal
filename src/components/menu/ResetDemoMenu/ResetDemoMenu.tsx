@@ -3,7 +3,6 @@
 import { RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "@/components/ui/toast";
 import { useResetServiceDeskDemo } from "@/feature/serviceDesk/shared/client";
 import { NS } from "@/lib/application/i18n";
 
@@ -23,11 +23,17 @@ export function ResetDemoMenu() {
   const handleResetDemo = () => {
     resetServiceDeskDemo(undefined, {
       onSuccess: () => {
-        toast.success(t("common.reset.successfully", { ns: NS.message }));
+        toast.add({
+          title: t("common.reset.successfully", { ns: NS.message }),
+          type: "success",
+        });
         setOpen(false);
       },
       onError: () => {
-        toast.error(t("resetDemo.error"));
+        toast.add({
+          title: t("resetDemo.error"),
+          type: "error",
+        });
       },
     });
   };
@@ -38,11 +44,13 @@ export function ResetDemoMenu() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button className="p-2.5 md:mr-5 bg-orange-400/80 hover:bg-orange-400">
+      <PopoverTrigger
+        render={
+          <Button className="p-2.5 md:mr-5 bg-orange-400/80 hover:bg-orange-400" />
+        }
+      >
           <RefreshCcwDot />
           <p className="hidden md:block">{t("resetDemo.title")}</p>
-        </Button>
       </PopoverTrigger>
 
       <PopoverContent align="center" className="w-60 p-4 flex flex-col gap-4">

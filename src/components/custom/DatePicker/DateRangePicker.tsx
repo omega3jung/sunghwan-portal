@@ -14,11 +14,7 @@ import type { DateRange, OnSelectHandler } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -89,8 +85,9 @@ const Component = (
     DateRangePreset | undefined
   >(() => defaultPeriod ?? (hasRangeValue(range) ? "range" : undefined));
 
-  // Prevent Radix Select from restoring focus when we intentionally reopen the calendar.
+  // Prevent Select from restoring focus when we intentionally reopen the calendar.
   const preventSelectFocusRestoreRef = useRef(false);
+  const selectTriggerRef = useRef<HTMLButtonElement>(null);
 
   // Relative presets such as "last_month" must be resolved from a stable anchor time.
   const presetSyncAnchorRef = useRef<Date | null>(null);
@@ -310,62 +307,63 @@ const Component = (
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverAnchor asChild>
-        <div ref={ref} className="relative">
-          {/* The Select controls only the preset choice, not the concrete range itself. */}
-          <Select
-            value={safePeriod}
-            onValueChange={(value: DateRangePreset) => {
+      <div ref={ref} className="relative">
+        {/* The Select controls only the preset choice, not the concrete range itself. */}
+        <Select
+          value={safePeriod}
+          onValueChange={(value) => {
+            if (value !== null) {
               applyPreset(value);
-            }}
+            }
+          }}
+        >
+          {/* Trigger text is fully controlled by showTextType policy. */}
+          <SelectTrigger
+            ref={selectTriggerRef}
+            variant={variant}
+            className={cn("border-slate-150 h-10", className)}
+            title={triggerText}
           >
-            {/* Trigger text is fully controlled by showTextType policy. */}
-            <SelectTrigger
-              variant={variant}
-              className={cn("border-slate-150 h-10", className)}
-              title={triggerText}
-            >
-              <span className="truncate">{triggerText}</span>
-            </SelectTrigger>
+            <span className="truncate">{triggerText}</span>
+          </SelectTrigger>
 
-            <SelectContent
-              // Keep focus on the calendar when "range" selection intentionally chains into popover open.
-              onCloseAutoFocus={(event) => {
-                if (preventSelectFocusRestoreRef.current) {
-                  event.preventDefault();
-                }
-              }}
-            >
-              {optionData.map((item) => (
-                <SelectItem
-                  key={item.value}
-                  value={item.value}
-                  // Re-open the calendar when the already-selected "range" item is selected again.
-                  // Select does not fire onValueChange when the value does not change.
-                  onPointerUp={() => {
-                    if (item.value === "range") {
-                      handleRangeReselect();
-                    }
-                  }}
-                  onKeyDown={(event) => {
-                    if (
-                      item.value === "range" &&
-                      (event.key === "Enter" || event.key === " ")
-                    ) {
-                      handleRangeReselect();
-                    }
-                  }}
-                >
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </PopoverAnchor>
+          <SelectContent
+            // Keep focus on the calendar when "range" selection intentionally chains into popover open.
+            finalFocus={() => !preventSelectFocusRestoreRef.current}
+          >
+            {optionData.map((item) => (
+              <SelectItem
+                key={item.value}
+                value={item.value}
+                // Re-open the calendar when the already-selected "range" item is selected again.
+                // Select does not fire onValueChange when the value does not change.
+                onPointerUp={() => {
+                  if (item.value === "range") {
+                    handleRangeReselect();
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (
+                    item.value === "range" &&
+                    (event.key === "Enter" || event.key === " ")
+                  ) {
+                    handleRangeReselect();
+                  }
+                }}
+              >
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* The calendar is responsible for picking actual dates, while the parent stores the result. */}
-      <PopoverContent className="z-[51] w-auto p-0" align="start">
+      <PopoverContent
+        anchor={selectTriggerRef}
+        className="z-[51] w-auto p-0"
+        align="start"
+      >
         <Calendar
           mode="range"
           resetOnSelect

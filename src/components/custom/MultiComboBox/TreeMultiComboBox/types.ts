@@ -126,7 +126,6 @@ export interface TreeMultiComboBoxProps
     TreeMultiComboBoxBaseProps,
     TreeMultiComboBoxActionProps {
   value: TreeMultiComboBoxValue;
-  asChild?: boolean;
   variant?: ComboBoxVariant;
   size?: ComboBoxSize;
   modal?: boolean;

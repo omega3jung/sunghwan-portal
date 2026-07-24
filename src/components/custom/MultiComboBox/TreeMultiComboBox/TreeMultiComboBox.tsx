@@ -140,8 +140,9 @@ const Component = (
 
   return (
     <Popover modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           {...buttonProps}
           ref={ref}
           variant="outline"
@@ -149,7 +150,9 @@ const Component = (
           type="button"
           className={cn(comboBoxVariants({ variant, size }), className)}
           disabled={disabled || readOnly}
-        >
+          />
+        }
+      >
           {!selectedItems.length ? (
             <div className="px-2 font-normal text-muted-foreground">
               {placeholder}
@@ -171,10 +174,9 @@ const Component = (
           ) : !readOnly ? (
             <ChevronDown className="ml-2 mr-2 h-4 w-4 shrink-0 text-basic" />
           ) : null}
-        </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent className="w-(--anchor-width) p-0">
         <Command filter={commandFilter}>
           <CommandInput
             value={search}

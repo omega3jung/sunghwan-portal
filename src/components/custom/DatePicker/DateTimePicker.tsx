@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Calendar as CalendarIcon, Clock3 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/shared/utils/presentation";
 
+import { useControllableState } from "../useControllableState";
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
 import {
   formatDateTimeText,
@@ -283,8 +283,9 @@ export function DateTimePicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           {...buttonProps}
           variant={variant}
           size={resolvedSize}
@@ -293,14 +294,15 @@ export function DateTimePicker({
             !normalizedDateTime && "text-muted-foreground",
             className,
           )}
-        >
+          />
+        }
+      >
           {normalizedDateTime ? (
             <span>{formatDateTimeText(normalizedDateTime)}</span>
           ) : (
             <span>{placeholder ?? t("dateTimePlaceholder")}</span>
           )}
           <CalendarIcon className="h-4 w-4" />
-        </Button>
       </PopoverTrigger>
 
       <PopoverContent
@@ -336,7 +338,11 @@ export function DateTimePicker({
 
             <Select
               value={selectedHour}
-              onValueChange={handleHourChange}
+              onValueChange={(nextHour) => {
+                if (nextHour !== null) {
+                  handleHourChange(nextHour);
+                }
+              }}
               disabled={!normalizedDateTime}
             >
               <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>
@@ -357,7 +363,11 @@ export function DateTimePicker({
 
             <Select
               value={selectedMinute}
-              onValueChange={handleMinuteChange}
+              onValueChange={(nextMinute) => {
+                if (nextMinute !== null) {
+                  handleMinuteChange(nextMinute);
+                }
+              }}
               disabled={!normalizedDateTime}
             >
               <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>

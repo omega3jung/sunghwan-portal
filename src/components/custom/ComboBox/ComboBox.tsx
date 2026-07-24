@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Check, ChevronDown, Loader2 } from "lucide-react";
 import React, { useRef, useState } from "react";
 
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils/presentation";
 
+import { useControllableState } from "../useControllableState";
 import { ComboBoxProps, Props } from "./type";
 import { comboBoxVariants } from "./variants";
 
@@ -72,21 +72,23 @@ const Component = (props: ComboBoxProps & Props, _: any) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           ref={buttonRef}
           variant="outline"
           role="combobox"
           className={cn(comboBoxVariants({ variant, className }))}
           disabled={disabled || readOnly}
-        >
+          />
+        }
+      >
           <div className="flex items-center gap-2 overflow-hidden">
             {variant === "icon" && <div>{props.icon}</div>}
             <div>{current?.label ?? placeholder}</div>
           </div>
 
           {getIcon()}
-        </Button>
       </PopoverTrigger>
       <PopoverContent
         sideOffset={-(buttonRef.current?.offsetHeight ?? 0)}

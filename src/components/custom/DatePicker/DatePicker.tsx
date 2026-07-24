@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/shared/utils/presentation";
 
+import { useControllableState } from "../useControllableState";
 import type { DatePickerProps } from "./types";
 import {
   formatDateText,
@@ -53,8 +53,9 @@ export function DatePicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           {...buttonProps}
           variant={variant}
           size={size}
@@ -63,14 +64,15 @@ export function DatePicker({
             !normalizedDate && "text-muted-foreground",
             className,
           )}
-        >
+          />
+        }
+      >
           {normalizedDate ? (
             <span>{formatDateText(normalizedDate)}</span>
           ) : (
             <span>{t("placeholder")}</span>
           )}
           <CalendarIcon className="h-4 w-4" />
-        </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0" align="start">

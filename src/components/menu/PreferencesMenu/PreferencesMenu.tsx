@@ -114,19 +114,21 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {trigger ? (
-          trigger({ label })
-        ) : (
-          <Button
-            className="h-8 w-full justify-start px-2 font-normal"
-            variant="ghost"
-          >
-            <Settings2 />
-            <span>{label}</span>
-          </Button>
-        )}
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          trigger ? (
+            trigger({ label })
+          ) : (
+            <Button
+              className="h-8 w-full justify-start px-2 font-normal"
+              variant="ghost"
+            >
+              <Settings2 />
+              <span>{label}</span>
+            </Button>
+          )
+        }
+      />
       <PopoverContent className="h-full w-80 p-6">
         <div id="PreferenceMenu" className="flex flex-col gap-2">
           <div className="font-semibold">{t("colorTheme")}</div>
@@ -165,7 +167,6 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
               onValueChange={(value: string) =>
                 handleThemeChange(value as ScreenMode)
               }
-              orientation="horizontal"
               className="flex justify-center space-x-4"
             >
               <div className="flex items-center space-x-2">

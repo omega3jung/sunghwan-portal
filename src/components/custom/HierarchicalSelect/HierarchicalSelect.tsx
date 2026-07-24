@@ -89,8 +89,9 @@ export const HierarchicalSelect = ({
   return (
     <div className={cn("w-full", className)}>
       <Popover open={open} onOpenChange={handleOpenChange} modal>
-        <PopoverTrigger asChild>
-          <Button
+        <PopoverTrigger
+          render={
+            <Button
             id={id}
             type="button"
             variant="outline"
@@ -102,17 +103,18 @@ export const HierarchicalSelect = ({
               !displayLabel && "text-muted-foreground",
               triggerClassName,
             )}
-          >
+            />
+          }
+        >
             <span className="min-w-0 truncate">
               {displayLabel ?? placeholder}
             </span>
             <ChevronDown className="opacity-50" />
-          </Button>
         </PopoverTrigger>
 
         <PopoverContent
           align="start"
-          className="max-h-80 w-[var(--radix-popover-trigger-width)] overflow-y-auto overflow-x-hidden p-1"
+          className="max-h-80 w-(--anchor-width) overflow-y-auto overflow-x-hidden p-1"
           role="listbox"
         >
           <div

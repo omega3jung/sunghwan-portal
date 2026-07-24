@@ -85,8 +85,9 @@ const Component = (
   return (
     <div data-testid="avatarcombobox">
       <Popover modal={modal} open={open} onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
+        <PopoverTrigger
+          render={
+            <Button
             {...buttonProps}
             ref={ref}
             variant="outline"
@@ -97,7 +98,9 @@ const Component = (
               className,
             )}
             disabled={isBlocked}
-          >
+            />
+          }
+        >
             {selectedOption ? (
               <div className="flex min-w-0 items-center gap-2">
                 <Avatar className="h-8 w-8 shrink-0">
@@ -137,10 +140,9 @@ const Component = (
             ) : !readOnly ? (
               <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-basic" />
             ) : null}
-          </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+        <PopoverContent className="w-(--anchor-width) p-0">
           <Command filter={commandFilter}>
             <CommandInput placeholder={placeholder} />
             <CommandList className="max-h-48 min-h-0">
