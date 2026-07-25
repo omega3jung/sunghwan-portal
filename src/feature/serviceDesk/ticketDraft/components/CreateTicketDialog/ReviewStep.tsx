@@ -1,9 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import {
-  FileAttachmentList,
-  useFileAttachments,
-} from "@/components/custom/FileAttachment";
+import { FileAttachment } from "@/components/custom/FileAttachment";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -19,12 +16,6 @@ export const ReviewStep = () => {
   const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const bodyValue = form.watch("body");
-  const { files, totalFileSizeMB } = useFileAttachments({
-    form,
-    name: "attachment",
-    maxCount: MAX_ATTACH_COUNT,
-    maxSizeMB: MAX_ATTACH_SIZE,
-  });
 
   return (
     <>
@@ -45,13 +36,15 @@ export const ReviewStep = () => {
       </Field>
 
       <Field>
-        <Separator className="mb-4 mt-6 h-0.5 bg-border" />
+      <Separator className="mb-4 mt-6 h-0.5" />
 
-        <FileAttachmentList
-          files={files}
-          totalFileSizeMB={totalFileSizeMB}
+        <FileAttachment
+          form={form}
+          name="attachment"
           maxCount={MAX_ATTACH_COUNT}
           maxSizeMB={MAX_ATTACH_SIZE}
+          readOnly
+          showSeparator={false}
         />
       </Field>
     </>

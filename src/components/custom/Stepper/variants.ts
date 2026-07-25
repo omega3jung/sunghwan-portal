@@ -57,7 +57,7 @@ export const triggerVariant = cva(
       state: {
         active: "border border-primary bg-background text-primary",
         completed: "bg-primary",
-        future: "border bg-background text-muted-foreground",
+        future: "border border-border bg-background text-muted-foreground",
       },
       color: {
         primary: "",

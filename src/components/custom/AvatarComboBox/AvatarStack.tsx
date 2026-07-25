@@ -41,7 +41,7 @@ export function AvatarStack({
       {visibleSelected.map((item, index) => (
         <div data-testid={`parentdiv${index}`} key={item.value}>
           <Avatar
-            className="h-8 w-8 ring-2 ring-background"
+            className="h-8 w-8 ring-2 ring-background bg-background"
             style={{ zIndex: selected.length - index }}
           >
             <AvatarImage src={item.image} alt={item.label} />
@@ -56,7 +56,7 @@ export function AvatarStack({
       {remainingCount > 0 && (
         <div data-testid={`parentdiv${visibleSelected.length}`}>
           <Avatar
-            className="h-8 w-8 ring-2 ring-foreground"
+            className="h-8 w-8 bg-foreground"
             style={{ zIndex: selected.length - visibleSelected.length }}
           >
             <AvatarFallback

@@ -18,14 +18,12 @@ export type MetaBadgeTone = keyof typeof ticketMetaBadgeClassMap;
 
 type MetaBadgeProps = {
   tone: MetaBadgeTone;
-  size?: "sm" | "md";
   className?: string;
   children: ReactNode;
 };
 
 export function MetaBadge({
   tone,
-  size = "md",
   className,
   children,
 }: MetaBadgeProps) {
@@ -33,8 +31,6 @@ export function MetaBadge({
     <Badge
       variant="secondary"
       className={cn(
-        "font-medium",
-        size === "sm" && "px-2 py-0.5 text-xs",
         ticketMetaBadgeClassMap[tone],
         className,
       )}

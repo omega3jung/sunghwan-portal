@@ -439,7 +439,7 @@ export default function ServiceDeskPage() {
               <Button
                 title={t(`sort.${order}`, { ns: NS.common })}
                 variant="outline"
-                className="w-10 shrink-0 px-0"
+                className="w-10 px-0"
                 onClick={handleOrderChange}
               >
                 {order === "desc" ? (
@@ -452,7 +452,8 @@ export default function ServiceDeskPage() {
 
             {/* refresh */}
             <Button
-              className="h-9 w-full min-w-10 gap-1.5 px-2.5 lg:w-auto"
+              className="w-full min-w-10 lg:w-auto"
+              size="lg"
               variant="default"
               onClick={() => refetchTickets()}
             >
@@ -468,7 +469,7 @@ export default function ServiceDeskPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full justify-center border-border/70 shadow-sm hover:bg-muted/40"
+                  className="w-full border-border/70 shadow-sm hover:bg-muted/40"
                 >
                   {t("action.searchCriteria")}
                 </Button>

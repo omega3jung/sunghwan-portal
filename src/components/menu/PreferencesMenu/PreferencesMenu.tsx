@@ -38,12 +38,22 @@ import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
 import { cn } from "@/shared/utils/presentation";
 
 const themeButtons = [
-  { name: "default", primary: "0,0%,9%", muted: "0,0%,96.1%" },
+  {
+    name: "default",
+    primary: "0,0%,9%",
+    darkPrimary: "0,0%,90%",
+    muted: "0,0%,96.1%",
+  },
   { name: "emerald", primary: "168,75%,32%", muted: "168,40%,88%" },
   { name: "ruby", primary: "350,65%,48%", muted: "350,40%,88%" },
   { name: "sapphire", primary: "221,84%,34%", muted: "221,45%,88%" },
   { name: "topaz", primary: "38,90%,48%", muted: "38,55%,88%" },
-] as { name: ColorTheme; primary: string; muted: string }[];
+] as {
+  name: ColorTheme;
+  primary: string;
+  darkPrimary?: string;
+  muted: string;
+}[];
 
 type PreferencesMenuProps = {
   trigger?: (props: { label: string }) => React.ReactElement; // Popover trigger.
@@ -128,7 +138,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
             trigger({ label })
           ) : (
             <Button
-              className="h-8 w-full justify-start px-2 font-normal"
+              className="w-full justify-start px-2 font-normal"
               variant="ghost"
             >
               <Settings2 />
@@ -150,19 +160,27 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
                   style={
                     {
                       "--theme-primary": `hsl(${item.primary})`,
+                      "--theme-primary-dark": `hsl(${
+                        item.darkPrimary ?? item.primary
+                      })`,
                       "--theme-muted": `hsl(${item.muted})`,
                     } as React.CSSProperties
                   }
                   className={cn(
-                    "rounded-full bg-(--theme-primary) hover:bg-(--theme-muted) transition-colors",
+                    "rounded-full bg-(--theme-primary) transition-colors hover:bg-(--theme-muted) dark:bg-(--theme-primary-dark) dark:hover:bg-(--theme-muted)",
                     userPreference.colorTheme === item.name
-                      ? "h-8 w-8 p-0"
-                      : "h-4 w-4 p-0",
+                      ? "w-8 p-0"
+                      : "h-6 w-6 p-0",
                   )}
                   onClick={() => handleColorThemeChange(item.name)}
                 >
                   {userPreference.colorTheme === item.name && (
-                    <Check className="text-white/80" />
+                    <Check
+                      className={cn(
+                        "text-white/80",
+                        item.name === "default" && "dark:text-black/80",
+                      )}
+                    />
                   )}
                 </Button>
               );

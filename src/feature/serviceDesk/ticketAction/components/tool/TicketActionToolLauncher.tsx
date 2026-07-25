@@ -269,7 +269,7 @@ function LauncherButton({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "min-w-0 items-start justify-start gap-3 rounded-lg border border-border/50 p-3 text-left whitespace-normal transition-colors hover:bg-muted/30",
+          "min-w-0 items-start justify-start gap-3 border-border/50 p-3 text-left whitespace-normal transition-colors hover:bg-muted/30",
         "h-auto min-h-24 sm:min-h-28 sm:p-4",
         isPrimary ? "col-span-2 md:col-span-1" : "",
       ].join(" ")}

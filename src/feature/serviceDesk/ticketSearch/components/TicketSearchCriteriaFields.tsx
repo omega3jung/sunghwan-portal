@@ -92,7 +92,7 @@ export function TicketSearchCriteriaFields({
           {t("searchCriteria.primaryFilters")}
         </h3>
         <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/18 p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-          <FieldGroup className="gap-5">
+          <FieldGroup>
             <Field>
               <FieldLabel htmlFor="ticket-search-select-category">
                 {tCommon("field.category")}
@@ -143,7 +143,7 @@ export function TicketSearchCriteriaFields({
           </FieldGroup>
         </div>
       </div>
-      <FieldGroup className="gap-5">
+      <FieldGroup>
         <div className="border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
             {t("searchCriteria.additionalFilters")}
@@ -262,7 +262,7 @@ export function TicketSearchCriteriaFields({
         </Field>
         <div className="pt-4 border-t border-border/60" />
       </FieldGroup>
-      <FieldGroup className="gap-5">
+      <FieldGroup>
         <div className="pt-2 border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
             {t("searchCriteria.dateFilters")}

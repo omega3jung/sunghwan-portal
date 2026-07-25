@@ -2,6 +2,7 @@ import { UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
@@ -45,37 +46,41 @@ export function DemoUserSwitch(props: Props) {
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
-          {internalCandidates.map((profile) => {
-            const profileDisplayNameKey = getDisplayNameKey(
-              profile.displayName,
-            );
-            return (
-              <DropdownMenuItem
-                key={`switch_${profile.id}`}
-                onClick={() => onDemoUserSwitch(profile)}
-              >
-                {getPermissionIcon(profile.permission)}
-                {t(`login${profileDisplayNameKey}`)}
-              </DropdownMenuItem>
-            );
-          })}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
+            {internalCandidates.map((profile) => {
+              const profileDisplayNameKey = getDisplayNameKey(
+                profile.displayName,
+              );
+              return (
+                <DropdownMenuItem
+                  key={`switch_${profile.id}`}
+                  onClick={() => onDemoUserSwitch(profile)}
+                >
+                  {getPermissionIcon(profile.permission)}
+                  {t(`login${profileDisplayNameKey}`)}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
-          {clientCandidates.map((profile) => {
-            const profileDisplayNameKey = getDisplayNameKey(
-              profile.displayName,
-            );
-            return (
-              <DropdownMenuItem
-                key={`switch_${profile.id}`}
-                onClick={() => onDemoUserSwitch(profile)}
-              >
-                {getPermissionIcon(profile.permission)}
-                {t(`login${profileDisplayNameKey}`)}
-              </DropdownMenuItem>
-            );
-          })}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
+            {clientCandidates.map((profile) => {
+              const profileDisplayNameKey = getDisplayNameKey(
+                profile.displayName,
+              );
+              return (
+                <DropdownMenuItem
+                  key={`switch_${profile.id}`}
+                  onClick={() => onDemoUserSwitch(profile)}
+                >
+                  {getPermissionIcon(profile.permission)}
+                  {t(`login${profileDisplayNameKey}`)}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
         </DropdownMenuSubContent>
       </DropdownMenuPortal>
     </DropdownMenuSub>

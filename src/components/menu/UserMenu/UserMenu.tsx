@@ -47,9 +47,7 @@ const EMPTY_DEMO_CANDIDATES: UserMenuDemoCandidates = {
   profiles: { internal: [], client: [] },
 };
 
-export function UserMenu({
-  demoCandidates = EMPTY_DEMO_CANDIDATES,
-}: Props) {
+export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
   const { current } = useCurrentSession();
   const {
     originalUser,
@@ -88,19 +86,15 @@ export function UserMenu({
     [impersonatedUser, isImpersonating],
   );
   const demoUserSwitchCandidates = useMemo(
-    () =>
-      getDemoUserSwitchCandidates(demoCandidates.profiles, visibleUser?.id),
+    () => getDemoUserSwitchCandidates(demoCandidates.profiles, visibleUser?.id),
     [demoCandidates.profiles, visibleUser?.id],
   );
   const demoImpersonationCandidates = useMemo(
     () =>
-      getDemoImpersonationCandidates(
-        demoCandidates.auths,
-        [
-          displayedOriginalUser?.username ?? visibleUser?.username,
-          impersonatedUser?.username,
-        ],
-      ),
+      getDemoImpersonationCandidates(demoCandidates.auths, [
+        displayedOriginalUser?.username ?? visibleUser?.username,
+        impersonatedUser?.username,
+      ]),
     [
       demoCandidates.auths,
       displayedOriginalUser?.username,
@@ -217,12 +211,12 @@ export function UserMenu({
         <DropdownMenuTrigger
           render={<Button variant="ghost" className="w-20" />}
         >
-            {hasImpersonatedUser
-              ? renderImpersonationAvatar(originalUser, impersonatedUser)
-              : renderUserAvatar(visibleUser)}
+          {hasImpersonatedUser
+            ? renderImpersonationAvatar(originalUser, impersonatedUser)
+            : renderUserAvatar(visibleUser)}
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="p-2 mt-2 mr-1"
+          className="p-2 mt-2 mr-1 w-full"
           align="start"
           finalFocus={() => {
             if (!shouldOpenImpersonationDialogRef.current) return true;

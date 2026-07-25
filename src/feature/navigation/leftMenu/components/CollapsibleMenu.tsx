@@ -105,6 +105,7 @@ export function LeftMenu() {
           className="group/sub-collapsible"
         >
           <CollapsibleTrigger
+            nativeButton={false}
             render={<SidebarMenuSubButton className="w-full ml-0.5" />}
           >
               <item.icon />
@@ -113,7 +114,7 @@ export function LeftMenu() {
           </CollapsibleTrigger>
 
           <CollapsibleContent>
-            <SidebarMenuSub className="mr-0 border-l border-sidebar-border px-0 py-1">
+            <SidebarMenuSub className="mr-0 px-0 py-1">
               {children.map(renderSubMenuItem)}
             </SidebarMenuSub>
           </CollapsibleContent>
@@ -147,9 +148,8 @@ export function LeftMenu() {
           <CollapsibleTrigger
             render={
               <SidebarMenuButton
-              tooltip={title}
-              isActive={isItemActive(item)}
-              className="w-full"
+                tooltip={title}
+                isActive={isItemActive(item)}
               />
             }
           >
@@ -159,7 +159,7 @@ export function LeftMenu() {
           </CollapsibleTrigger>
 
           <CollapsibleContent>
-            <SidebarMenuSub className="mr-0 border-l border-sidebar-border p-0 py-1">
+            <SidebarMenuSub className="mr-0 p-0 py-1">
               {children.map(renderSubMenuItem)}
             </SidebarMenuSub>
           </CollapsibleContent>
@@ -182,22 +182,24 @@ export function LeftMenu() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
+      <SidebarHeader className="h-14 flex-row items-center justify-between p-2.5">
         {!isMobile && <SidebarTrigger />}
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt="Portal Logo"
-          className="block dark:hidden group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
-          width={120}
-          height={32}
+          className="h-8 w-auto shrink-0 dark:hidden group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
+          width={700}
+          height={240}
+          sizes="94px"
           priority
         />
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
           alt="Portal Logo"
-          className="hidden dark:block group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
-          width={120}
-          height={32}
+          className="hidden h-8 w-auto shrink-0 dark:block group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
+          width={700}
+          height={240}
+          sizes="94px"
           priority
         />
       </SidebarHeader>

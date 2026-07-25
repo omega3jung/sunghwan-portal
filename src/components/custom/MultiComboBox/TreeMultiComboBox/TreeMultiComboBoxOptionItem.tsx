@@ -37,7 +37,7 @@ export function TreeMultiComboBoxOptionItem({
       indicator={null}
       aria-expanded={hasChildren ? expanded : undefined}
       className={cn(
-        "gap-2 pr-1.5 data-disabled:bg-muted/40 data-disabled:text-muted-foreground",
+        "pr-1.5 data-disabled:bg-muted/40 data-disabled:text-muted-foreground",
         isParent ? "font-medium" : "pl-8 font-normal",
       )}
       onKeyDown={(event) => {

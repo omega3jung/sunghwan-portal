@@ -64,7 +64,7 @@ export function TicketActionItem({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="self-end rounded-md text-muted-foreground hover:bg-muted/40 hover:text-foreground md:self-start data-open:[&>svg]:rotate-180"
+                className="self-end rounded-md text-muted-foreground hover:bg-muted/40 md:self-start data-open:[&>svg]:rotate-180"
                 />
               }
             >

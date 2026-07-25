@@ -74,7 +74,7 @@ export function TicketHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className="hidden h-8 w-8 rounded-md xl:inline-flex"
+            className="hidden rounded-md xl:inline-flex"
               title={t("hoverMessage.workSessionTool")}
             >
               <Pickaxe
@@ -87,7 +87,7 @@ export function TicketHeader({
           type="button"
           variant="ghost"
           size="icon"
-          className="hidden h-8 w-8 rounded-md xl:inline-flex"
+            className="hidden rounded-md xl:inline-flex"
           title={t("hoverMessage.openDetailAside")}
           onClick={() => {
             onToggleDetailsAside((previous) => !previous);
@@ -105,7 +105,7 @@ export function TicketHeader({
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-md"
+            className="rounded-md"
           title={t("hoverMessage.openHistoryDrawer")}
           onClick={() => {
             onOpenHistorySheet(true);
@@ -125,7 +125,7 @@ export function TicketHeader({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-md"
+            className="rounded-md"
                 title={t("ticketUpdate.trigger")}
               >
                 <SquarePen className="h-4 w-4 text-emerald-700" />

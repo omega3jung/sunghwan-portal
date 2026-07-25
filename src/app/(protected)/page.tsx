@@ -77,19 +77,19 @@ const quickActionConfigs = [
 const summaryMetricConfigs = [
   {
     id: "openTickets",
-    value: "24",
+    value: "9",
   },
   {
     id: "pendingApprovals",
-    value: "5",
+    value: "12",
   },
   {
     id: "workingItems",
-    value: "8",
+    value: "4",
   },
   {
     id: "resolvedThisWeek",
-    value: "17",
+    value: "2",
   },
 ];
 
@@ -152,8 +152,8 @@ function QuickActionCard({
             </span>
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-base">{title}</CardTitle>
-            <CardDescription className="text-sm leading-6">
+            <CardTitle>{title}</CardTitle>
+            <CardDescription className="leading-6">
               {description}
             </CardDescription>
           </div>
@@ -207,7 +207,7 @@ function HighlightCard({
             {status}
           </span>
         </div>
-        <CardTitle className="text-base">{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm leading-6 text-muted-foreground">{description}</p>
@@ -269,9 +269,9 @@ export default function ProtectedPage() {
   );
 
   return (
-    <main className="mx-auto flex min-h-full w-full max-w-[1440px] flex-col gap-6 p-4 md:p-6">
+    <main className="mx-auto flex min-h-full w-full max-w-360 flex-col gap-6 p-4 md:p-6">
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <Card className="overflow-hidden border-border/70 bg-linear-to-br from-background via-background to-primary/5">
+        <Card className="border-border/70 bg-linear-to-br from-background via-background to-primary/5">
           <CardHeader className="gap-5">
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-primary">
@@ -284,27 +284,35 @@ export default function ProtectedPage() {
               </span>
             </div>
 
-            <div className="max-w-[720px] space-y-3">
+            <div className="max-w-180 space-y-3">
               <CardTitle className="text-3xl font-semibold tracking-tight md:text-4xl">
                 {t("hero.title")}
               </CardTitle>
-              <CardDescription className="text-base leading-7 text-muted-foreground">
+              <CardDescription className="text-base leading-7">
                 {t(`hero.description.${homeModeKey}`)}
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 pt-0 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button render={<Link href="/service-desk" />}>
-                {t("hero.actions.openServiceDesk")}
-                <ArrowRight className="h-4 w-4" />
+            <Button nativeButton={false} render={<Link href="/service-desk" />}>
+              {t("hero.actions.openServiceDesk")}
+              <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button render={<Link href="/documents" />} variant="outline">
-                {t("hero.actions.browseDocumentation")}
-                <FileText className="h-4 w-4" />
+            <Button
+              nativeButton={false}
+              render={<Link href="/documents" />}
+              variant="outline"
+            >
+              {t("hero.actions.browseDocumentation")}
+              <FileText className="h-4 w-4" />
             </Button>
-            <Button render={<Link href="/settings" />} variant="secondary">
-                {t("hero.actions.reviewSettings")}
-                <Settings2 className="h-4 w-4" />
+            <Button
+              nativeButton={false}
+              render={<Link href="/settings" />}
+              variant="secondary"
+            >
+              {t("hero.actions.reviewSettings")}
+              <Settings2 className="h-4 w-4" />
             </Button>
           </CardContent>
         </Card>

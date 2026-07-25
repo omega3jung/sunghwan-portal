@@ -49,7 +49,7 @@ export default async function SettingsLayout({
     >
       <SettingsAccessGuard>
         <SettingsNavigation />
-        <Separator className="my-2 h-1 rounded bg-border" />
+        <Separator className="my-2 h-1 rounded" />
         {children}
       </SettingsAccessGuard>
     </SettingsAccessProvider>

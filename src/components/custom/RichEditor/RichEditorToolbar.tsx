@@ -114,7 +114,7 @@ export function RichEditorToolbar({
                         size="icon"
                         aria-label={label}
                         className={cn(
-                          "h-8 w-8 rounded-md hover:bg-muted/40",
+          "rounded-md hover:bg-muted/40",
                           editor &&
                             item.isActive?.(editor) &&
                             "bg-muted text-foreground",

@@ -110,7 +110,7 @@ export function JobFieldField({
         <SelectContent id="approval-select-job-field">
           {jobFieldData.map((jobField) => (
             <SelectGroup key={`select_group_${jobField.items[0].value}`}>
-              <SelectLabel className="bg-muted/50 text-xs rounded">
+              <SelectLabel className="rounded bg-muted/50">
                 {jobField.items[0].label}
               </SelectLabel>
               {jobField.items.map((item) => (

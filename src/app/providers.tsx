@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
 import { useState } from "react";
 
 type Props = {
@@ -23,8 +24,12 @@ export function RootProviders({ children }: Props) {
   const [queryClient] = useState(makeQueryClient);
 
   return (
-    <SessionProvider refetchOnWindowFocus={false} refetchInterval={5 * 60}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </SessionProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <SessionProvider refetchOnWindowFocus={false} refetchInterval={5 * 60}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </SessionProvider>
+    </ThemeProvider>
   );
 }

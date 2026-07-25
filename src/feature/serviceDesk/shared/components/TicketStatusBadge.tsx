@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
 import type { TicketStatus } from "@/domain/serviceDesk";
-import { cn } from "@/shared/utils/presentation";
 
 import { ticketStatusLocaleKey } from "../ticketStatus/locales";
 import type { TicketStatusBadgeProps } from "../ticketStatus/types";
@@ -21,23 +20,13 @@ export const ticketStatusClassMap: Record<TicketStatus, string> = {
   Closed: "bg-cyan-100 text-cyan-600",
 };
 
-export const TicketStatusBadge = ({
-  status,
-  size = "md",
-}: TicketStatusBadgeProps) => {
+export const TicketStatusBadge = ({ status }: TicketStatusBadgeProps) => {
   const { t } = useTranslation("TicketStatusBadge");
 
   if (!status) return null;
 
   return (
-    <Badge
-      variant="secondary"
-      className={cn(
-        "font-medium",
-        size === "sm" && "text-xs px-2 py-0.5",
-        ticketStatusClassMap[status],
-      )}
-    >
+    <Badge variant="secondary" className={ticketStatusClassMap[status]}>
       {t(ticketStatusLocaleKey[status])}
     </Badge>
   );

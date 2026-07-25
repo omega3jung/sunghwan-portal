@@ -111,7 +111,7 @@ export const AsgginmentRuleTree = ({
                       <span />
                     )}
                     {data.jobFieldIds.length > 0 ? (
-                      <Badge className="rounded-full w-fit" variant="secondary">
+                      <Badge className="rounded-full" variant="secondary">
                         {data.jobFieldIds.length > 0 &&
                           `${data.jobFieldIds.length} ${t("serviceDeskSettings.assignmentRuleTab.jobField")}`}
                       </Badge>

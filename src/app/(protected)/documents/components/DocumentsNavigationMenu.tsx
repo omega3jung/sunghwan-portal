@@ -146,7 +146,7 @@ export function DocumentsNavigationMenu({
 
   return (
     <NavigationMenu className="justify-start gap-2 py-3">
-      <NavigationMenuList className="flex flex-wrap gap-1">
+      <NavigationMenuList className="flex-wrap gap-1">
         {documentGroups.map((group) => {
           const isDecisionLog = group.id === DECISION_LOG_GROUP_ID;
           const sections = group.sections ?? [];

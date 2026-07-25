@@ -24,7 +24,7 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
 
   return (
     <Breadcrumb className="min-w-0 flex-1">
-      <BreadcrumbList className="flex-nowrap text-sm">
+      <BreadcrumbList className="flex-nowrap">
         {items.map((item, index) => {
           const isCurrentPage = index === items.length - 1;
 

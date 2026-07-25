@@ -46,7 +46,7 @@ export const FileAttachmentDropzone = ({
         onDragEnter={(event) => event.preventDefault()}
         onDragOver={(event) => event.preventDefault()}
         className={cn(
-          "rounded-xs h-32 w-full border border-dashed",
+          "h-32 w-full rounded-xs border-dashed",
           files.length >= maxCount &&
             "cursor-not-allowed border-gray-500 bg-gray-50 text-gray-500",
         )}

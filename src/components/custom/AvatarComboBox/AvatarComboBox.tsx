@@ -110,7 +110,7 @@ const Component = (
         >
           {selectedOption ? (
             <div className="flex min-w-0 items-center gap-2">
-              <Avatar className="h-8 w-8 shrink-0">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={selectedOption.image}
                   alt={selectedOption.label}

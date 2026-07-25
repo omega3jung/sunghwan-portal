@@ -58,10 +58,10 @@ export function TreeMultiComboBoxBadgeList({
               paletteStart,
               palettePick,
               cn(
-                "relative overflow-hidden",
+                "relative",
                 item.kind === "parent" &&
                   "font-semibold ring-1 ring-inset ring-white/30",
-                item.kind === "child" && "pl-3 font-medium",
+                item.kind === "child" && "pl-3",
                 !readOnly && "cursor-pointer",
               ),
             )}

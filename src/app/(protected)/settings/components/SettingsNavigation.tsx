@@ -70,7 +70,7 @@ export function SettingsNavigation() {
                 <NavigationMenuLink
                   key={item.title}
                   title={item.title}
-                  className="flex flex-col p-2 gap-1 rounded-md"
+                  className="flex-col gap-1 rounded-md"
                   render={
                     <Button
                       type="button"

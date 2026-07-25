@@ -110,7 +110,7 @@ export function DepartmentField({
         <SelectContent id="approval-select-department">
           {departmentData.map((department) => (
             <SelectGroup key={`select_group_${department.items[0].value}`}>
-              <SelectLabel className="bg-muted/50 text-xs rounded">
+              <SelectLabel className="rounded bg-muted/50">
                 {department.items[0].label}
               </SelectLabel>
               {department.items.map((item) => (

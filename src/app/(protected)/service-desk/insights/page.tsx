@@ -533,7 +533,7 @@ export default function ServiceDeskInsightsPage() {
           </DropdownMenu>
 
           <Button
-            className="h-9.5 shrink-0 px-2.5"
+            className="h-9.5"
             variant="default"
             onClick={() => refetchTickets()}
           >
@@ -575,7 +575,7 @@ export default function ServiceDeskInsightsPage() {
               render={
                 <Button
                 variant="outline"
-                className="w-full min-w-0 justify-between border-border sm:w-auto sm:justify-center"
+                className="w-full min-w-0 justify-between sm:w-auto sm:justify-center"
                 />
               }
             >
@@ -712,7 +712,7 @@ export default function ServiceDeskInsightsPage() {
           </span>
           <Badge
             variant="secondary"
-            className="max-w-full gap-1 rounded-full pr-1"
+            className="max-w-full rounded-full pr-1"
           >
             <span className="max-w-[220px] truncate sm:max-w-none">
               {filterFieldLabel}: {chartFilter.label}
@@ -729,7 +729,7 @@ export default function ServiceDeskInsightsPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 px-2"
+              className="px-2"
             onClick={() => setChartFilter(null)}
           >
             {t("insights.clearAll")}

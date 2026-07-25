@@ -6,7 +6,15 @@ import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { FileAttachment } from "@/components/custom/FileAttachment";
-import { Button } from "@/components/ui/button";
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import type { TicketAttachmentMetadata } from "@/domain/serviceDesk";
 import {
@@ -84,7 +92,7 @@ function ExistingAttachmentSection({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <Field className="min-w-0 gap-2">
+    <Field className="min-w-0">
       <FieldLabel>{label}</FieldLabel>
       {items.length === 0 ? (
         <div className="text-sm text-muted-foreground">
@@ -93,39 +101,38 @@ function ExistingAttachmentSection({
       ) : (
         <div className="grid gap-2">
           {items.map((item, index) => (
-            <div
+            <Attachment
               key={`${item.replacedName}-${index}`}
-              className="flex min-w-0 items-center gap-3 rounded-md border px-3 py-2"
+              className="w-full flex-nowrap rounded-md"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted text-muted-foreground">
+              <AttachmentMedia variant={image ? "image" : "icon"}>
                 {image ? (
                   <img
                     src={item.demoUrl}
                     alt={item.originalName}
-                    className="h-full w-full object-cover"
                   />
                 ) : (
                   icon
                 )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">
-                  {item.originalName}
-                </div>
-                <div className="text-xs text-muted-foreground">
+              </AttachmentMedia>
+              <AttachmentContent>
+                <AttachmentTitle>{item.originalName}</AttachmentTitle>
+                <AttachmentDescription>
                   {bytesToKB(item.size)} KB
-                </div>
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="shrink-0 text-destructive"
-                onClick={() => onRemove(index)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+                </AttachmentDescription>
+              </AttachmentContent>
+              <AttachmentActions>
+                <AttachmentAction
+                  type="button"
+                  size="icon"
+                  className="text-destructive"
+                  aria-label={`${t("delete", { ns: NS.common })}: ${item.originalName}`}
+                  onClick={() => onRemove(index)}
+                >
+                  <Trash2 />
+                </AttachmentAction>
+              </AttachmentActions>
+            </Attachment>
           ))}
         </div>
       )}

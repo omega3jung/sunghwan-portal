@@ -65,7 +65,7 @@ export const TicketSearchCriteria = (props: FilterProps) => {
         >
           <SheetHeader>
             <div className="flex h-12 items-center justify-between border-b border-border/70 bg-muted/30 px-3">
-              <SheetTitle className="text-base text-foreground">
+              <SheetTitle>
                 {t("message.refineSearchCriteria")}
               </SheetTitle>
             </div>
@@ -82,10 +82,10 @@ export const TicketSearchCriteria = (props: FilterProps) => {
             </FieldGroup>
           </ScrollArea>
 
-          <SheetFooter className="border-t border-border/60 p-4">
+          <SheetFooter className="border-t border-border/60">
             <Button
               size="sm"
-              className="h-10 w-full rounded-md px-4 text-sm font-semibold"
+              className="h-10 w-full rounded-md px-4 font-semibold"
               type="submit"
               data-testid="ticket-search-submit"
             >

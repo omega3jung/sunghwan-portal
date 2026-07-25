@@ -1,7 +1,15 @@
-import { Trash2 } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment";
 import { bytesToKB } from "@/shared/utils/browser";
 
 type FileAttachmentListProps = {
@@ -19,7 +27,7 @@ export const FileAttachmentList = ({
   maxCount,
   maxSizeMB,
 }: FileAttachmentListProps) => {
-  const { t } = useTranslation("FileAttachment");
+  const { t } = useTranslation(["FileAttachment", "common"]);
 
   return (
     <>
@@ -29,29 +37,34 @@ export const FileAttachmentList = ({
         ) : null}
 
         {files.map((file, index) => (
-          <div
+          <Attachment
             key={`${file.name}-${index}`}
-            className="flex items-center justify-between rounded-md border px-3 py-2"
+            className="w-full flex-nowrap rounded-md"
           >
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">{file.name}</span>
-              <span className="text-xs text-muted-foreground">
+            <AttachmentMedia>
+              <FileText />
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{file.name}</AttachmentTitle>
+              <AttachmentDescription>
                 {bytesToKB(file.size)} KB
-              </span>
-            </div>
+              </AttachmentDescription>
+            </AttachmentContent>
 
             {onRemove ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="text-destructive"
-                onClick={() => onRemove(index)}
-              >
-                <Trash2 size={18} />
-              </Button>
+              <AttachmentActions>
+                <AttachmentAction
+                  type="button"
+                  size="icon"
+                  className="text-destructive"
+                  aria-label={`${t("delete", { ns: "common" })}: ${file.name}`}
+                  onClick={() => onRemove(index)}
+                >
+                  <Trash2 />
+                </AttachmentAction>
+              </AttachmentActions>
             ) : null}
-          </div>
+          </Attachment>
         ))}
       </div>
 

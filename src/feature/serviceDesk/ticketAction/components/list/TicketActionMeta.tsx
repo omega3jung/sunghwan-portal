@@ -51,7 +51,7 @@ export function TicketActionMeta({
         <Badge
           variant="secondary"
           className={cn(
-            "capitalize text-xs font-medium",
+          "capitalize",
             ACTION_BADGE_CLASSNAME[action.actionType],
           )}
         >
@@ -59,7 +59,7 @@ export function TicketActionMeta({
         </Badge>
         <Badge
           variant="outline"
-          className="border-border/60 text-xs text-muted-foreground/75"
+        className="border-border/60 text-muted-foreground/75"
         >
           {t("actionTool.list.number", { number: action.actionNo })}
         </Badge>

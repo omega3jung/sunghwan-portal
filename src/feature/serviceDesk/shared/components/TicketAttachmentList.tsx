@@ -1,8 +1,17 @@
 import { FileText, ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import {
+  Attachment,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from "@/components/ui/attachment";
 import type { Attach, TicketAttachmentMetadata } from "@/domain/serviceDesk";
 import { NS } from "@/lib/application/i18n";
+import { bytesToKB } from "@/shared/utils/browser";
 
 type TicketAttachmentListItem = Attach | TicketAttachmentMetadata;
 
@@ -34,30 +43,46 @@ export function TicketAttachmentList({
             {images.map((image, index) => {
               const href = getAttachmentHref(image);
               const name = getAttachmentName(image);
+              const size = getAttachmentSize(image);
 
               return (
-                <a
+                <Attachment
                   key={getAttachmentKey(image, index)}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group overflow-hidden rounded-lg border border-border/40 bg-background"
+                  orientation="vertical"
+                  className="w-full overflow-hidden border-border/40 bg-background"
                 >
-                  {href ? (
-                    <img
-                      src={href}
-                      alt={name}
-                      className="h-36 w-full object-cover transition-transform group-hover:scale-[1.02]"
-                    />
-                  ) : (
-                    <div className="flex h-36 items-center justify-center bg-muted/60 text-muted-foreground">
+                  <AttachmentMedia variant="image">
+                    {href ? (
+                      <img
+                        src={href}
+                        alt={name}
+                        className="transition-transform group-hover/attachment:scale-[1.02]"
+                      />
+                    ) : (
                       <ImageIcon className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="truncate border-t border-border/40 px-3 py-2 text-xs text-muted-foreground/75">
-                    {name}
-                  </div>
-                </a>
+                    )}
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>{name}</AttachmentTitle>
+                    {size === undefined ? null : (
+                      <AttachmentDescription>
+                        {bytesToKB(size)} KB
+                      </AttachmentDescription>
+                    )}
+                  </AttachmentContent>
+                  {href ? (
+                    <AttachmentTrigger
+                      render={
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={name}
+                        />
+                      }
+                    />
+                  ) : null}
+                </Attachment>
               );
             })}
           </div>
@@ -73,18 +98,39 @@ export function TicketAttachmentList({
           <div className="flex flex-wrap gap-2">
             {files.map((file, index) => {
               const href = getAttachmentHref(file);
+              const name = getAttachmentName(file);
+              const size = getAttachmentSize(file);
 
               return (
-                <a
+                <Attachment
                   key={getAttachmentKey(file, index)}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex max-w-full items-center gap-2 rounded-full border border-border/40 bg-background px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted/30"
+                  size="sm"
+                  className="flex-nowrap rounded-full border-border/40 bg-background"
                 >
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="truncate">{getAttachmentName(file)}</span>
-                </a>
+                  <AttachmentMedia>
+                    <FileText />
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>{name}</AttachmentTitle>
+                    {size === undefined ? null : (
+                      <AttachmentDescription>
+                        {bytesToKB(size)} KB
+                      </AttachmentDescription>
+                    )}
+                  </AttachmentContent>
+                  {href ? (
+                    <AttachmentTrigger
+                      render={
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={name}
+                        />
+                      }
+                    />
+                  ) : null}
+                </Attachment>
               );
             })}
           </div>
@@ -115,4 +161,10 @@ function getAttachmentHref(
   }
 
   return "demoUrl" in item ? item.demoUrl : undefined;
+}
+
+function getAttachmentSize(
+  item: TicketAttachmentListItem,
+): number | undefined {
+  return "size" in item ? item.size : undefined;
 }

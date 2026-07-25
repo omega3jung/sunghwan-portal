@@ -96,7 +96,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
             <footer className="h-10 px-4 py-2 border-t flex items-center">
               <Button
                 variant="link"
-                className=" text-sm text-muted-foreground p-0 hover:underline"
+                className="p-0 text-muted-foreground"
                 onClick={() =>
                   window.open(
                     "https://github.com/omega3jung/sunghwan-portal",

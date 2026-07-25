@@ -21,7 +21,7 @@ export function AvatarComboBoxOptionItem({
 }: AvatarComboBoxOptionItemProps) {
   return (
     <ComboboxItem
-      className={cn("flex items-center", className)}
+      className={className}
       value={user}
       data-testid={testId}
     >

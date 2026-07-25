@@ -74,7 +74,7 @@
   "remoteRouteGuard": {
     "limited": {
       "title": "Remote demo is limited",
-      "description": "Database-backed pages are still being connected. Please use the Home, Demo or Documents pages for now."
+      "description": "Direct Service Desk UI access is disabled for the hosted remote demo. Use Home, Demo, Settings, or Documents instead."
     }
   }
 }

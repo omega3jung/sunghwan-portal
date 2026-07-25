@@ -241,7 +241,7 @@ export function AssignFields({
                     type="button"
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 shrink-0 text-amber-900 hover:bg-amber-100 hover:text-amber-950 dark:text-amber-100 dark:hover:bg-amber-950/40"
+                    className="text-amber-900 hover:bg-amber-100 hover:text-amber-950 dark:text-amber-100 dark:hover:bg-amber-950/40"
                     onClick={() => onRecommendedAssigneeAdd(user.value)}
                     aria-label={t("actionTool.assignRecommendation.addOne", {
                       defaultValue: "Add {{name}}",
@@ -295,7 +295,7 @@ export function AssignFields({
             <SelectContent>
               {categoryData.map((group) => (
                 <SelectGroup key={group.category.value}>
-                  <SelectLabel className="rounded bg-muted/50 text-xs">
+                  <SelectLabel className="rounded bg-muted/50">
                     {group.category.label}
                   </SelectLabel>
 

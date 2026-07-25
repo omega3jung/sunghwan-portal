@@ -110,7 +110,7 @@ export const TicketListItem = ({
 
         <div className="flex gap-2">
           {isAssigned && (
-            <Badge className="bg-primary/10 text-primary border border-primary/20">
+            <Badge className="border-primary/20 bg-primary/10 text-primary">
               {t("detailAside.assignedBadge")}
             </Badge>
           )}

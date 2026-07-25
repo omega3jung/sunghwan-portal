@@ -27,7 +27,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           <img src={logoImageUrl} alt="logo" />
         </div>
       </div>
-      <main className="flex flex-col items-center justify-center text-primary">
+      <main className="flex flex-col items-center justify-center text-foreground">
         {children}
       </main>
     </div>

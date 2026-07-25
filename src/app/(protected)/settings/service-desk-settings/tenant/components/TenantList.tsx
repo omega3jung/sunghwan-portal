@@ -54,7 +54,7 @@ export function TenantList({
               delay={150}
               render={<Info className="h-4 w-4" />}
             />
-            <HoverCardContent align="start" className="text-sm">
+            <HoverCardContent align="start">
               {t("serviceDeskSettings.tenant.tenantList.portalOwnerHint")}
             </HoverCardContent>
           </HoverCard>
@@ -83,7 +83,7 @@ export function TenantList({
                     disabled={disabled}
                     onClick={() => onSelectTenant(tenant)}
                     className={cn(
-                      "h-20 w-full flex-col items-stretch gap-2 border-border p-4 text-left ",
+                      "h-20 w-full flex-col items-stretch gap-2 p-4 text-left",
                       isSelected && "bg-primary/5",
                       isFocused && "border-primary ring-1 ring-primary",
                       isPortalOwner && "border-dashed bg-muted/20",

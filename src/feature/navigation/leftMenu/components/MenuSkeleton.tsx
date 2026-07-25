@@ -15,24 +15,24 @@ import { ENVIRONMENT } from "@/lib/config/environment";
 export function LeftMenuSkeleton() {
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-14 flex flex-row justify-between items-center p-2.5">
+      <SidebarHeader className="h-14 flex-row items-center justify-between p-2.5">
         <SidebarTrigger />
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
           alt="Portal Logo"
-          className="block dark:hidden
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
-          width={120}
-          height={32}
+          className="h-8 w-auto shrink-0 dark:hidden group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
+          width={700}
+          height={240}
+          sizes="94px"
           priority
         />
         <Image
           src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
           alt="Portal Logo"
-          className="hidden dark:block
-          group-data-[state=collapsed]:transition-all group-data-[state=collapsed]:hidden"
-          width={120}
-          height={32}
+          className="hidden h-8 w-auto shrink-0 dark:block group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
+          width={700}
+          height={240}
+          sizes="94px"
           priority
         />
       </SidebarHeader>

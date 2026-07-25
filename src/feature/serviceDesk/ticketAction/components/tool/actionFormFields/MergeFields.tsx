@@ -115,7 +115,7 @@ export function MergeFields({
       <FieldLabel>{t("actionTool.form.targetTicketId")}</FieldLabel>
 
       {isTicketListLoading ? (
-        <Skeleton className="h-9 w-full rounded-md" />
+          <Skeleton className="h-9 w-full" />
       ) : (
         <Select
           value={targetTicketId}

@@ -53,7 +53,7 @@ export function ResetDemoMenu() {
           <p className="hidden md:block">{t("resetDemo.title")}</p>
       </PopoverTrigger>
 
-      <PopoverContent align="center" className="w-60 p-4 flex flex-col gap-4">
+      <PopoverContent align="center" className="w-60 gap-4 p-4">
         <p className="font-medium">{t("resetDemo.message")}</p>
         <p className="text-sm text-foreground/80">
           {t("resetDemo.description")}

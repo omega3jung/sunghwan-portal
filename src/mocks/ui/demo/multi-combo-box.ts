@@ -26,7 +26,6 @@ export const multiComboBoxMocks: MultiComboBoxItem[] = [
   { value: "October", label: "October" },
   { value: "November", label: "November" },
   { value: "December", label: "December" },
-  { value: "January", label: "January" },
 ];
 export const treeMultiComboBoxMocks: TreeMultiComboBoxOption[] = [
   {

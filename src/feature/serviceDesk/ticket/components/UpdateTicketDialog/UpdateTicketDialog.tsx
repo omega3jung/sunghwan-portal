@@ -68,7 +68,7 @@ export function UpdateTicketDialog({
     >
       <DialogTrigger render={trigger} />
       <DialogContent
-        className="grid h-full min-h-0 min-w-0 w-full max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[760px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
+        className="h-full min-h-0 min-w-0 max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[760px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
       >
         <UpdateTicketDialogHeader />
 

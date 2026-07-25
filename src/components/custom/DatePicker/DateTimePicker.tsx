@@ -309,7 +309,7 @@ export function DateTimePicker({
               normalizedMaxDate,
             )
           }
-          className={cn(compact && "p-2 [--cell-size:1.75rem]")}
+          className={cn(compact && "[--cell-size:1.75rem]")}
         />
 
         <div
@@ -333,7 +333,7 @@ export function DateTimePicker({
               }}
               disabled={!normalizedDateTime}
             >
-              <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>
+              <SelectTrigger className={cn(compact && "px-2 text-xs")}>
                 <SelectValue placeholder={t("hour")} />
               </SelectTrigger>
               <SelectContent>
@@ -358,7 +358,7 @@ export function DateTimePicker({
               }}
               disabled={!normalizedDateTime}
             >
-              <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>
+              <SelectTrigger className={cn(compact && "px-2 text-xs")}>
                 <SelectValue placeholder={t("minute")} />
               </SelectTrigger>
               <SelectContent>
