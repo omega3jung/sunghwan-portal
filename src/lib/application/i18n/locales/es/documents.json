@@ -4,8 +4,8 @@
     "description": "Usa el menu de navegacion para cambiar entre los documentos Markdown principales."
   },
   "group": {
-    "project": {
-      "title": "Proyecto"
+    "overview": {
+      "title": "Resumen"
     },
     "architecture": {
       "title": "Arquitectura"
@@ -13,27 +13,52 @@
     "domain": {
       "title": "Dominio"
     },
-    "uiUx": {
-      "title": "UI/UX"
+    "engineering": {
+      "title": "Ingenieria"
     },
-    "dataFetching": {
-      "title": "Obtencion de datos"
+    "releases": {
+      "title": "Versiones"
     },
-    "formDesign": {
-      "title": "Diseno de formularios"
-    },
-    "i18n": {
-      "title": "i18n"
-    },
-    "devStrategy": {
-      "title": "Estrategia de desarrollo"
-    },
-    "decisionLog": {
-      "title": "Registro de decisiones"
+    "decisions": {
+      "title": "Decisiones"
     }
   },
   "section": {
-    "decisionLog": {
+    "domain": {
+      "coreModel": {
+        "title": "Modelo principal"
+      },
+      "workflow": {
+        "title": "Flujo de trabajo"
+      },
+      "strategies": {
+        "title": "Estrategias"
+      },
+      "reference": {
+        "title": "Referencia"
+      }
+    },
+    "engineering": {
+      "approach": {
+        "title": "Enfoque"
+      },
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "Formularios"
+      },
+      "dataFetching": {
+        "title": "Obtencion de datos"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "Resumen"
+      },
       "2025-12": {
         "title": "2025-12"
       },
@@ -54,6 +79,9 @@
       },
       "2026-06": {
         "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
       }
     }
   },
@@ -114,6 +142,10 @@
       "title": "Seguimiento de tiempo del ticket",
       "description": "Modelo de seguimiento de trabajo basado en sesiones y registro de tiempo."
     },
+    "serviceDeskSettings": {
+      "title": "Configuracion de Service Desk",
+      "description": "Modelo de configuracion para creacion, aprobacion, asignacion y visualizacion de tickets."
+    },
     "actionStrategy": {
       "title": "Estrategia de acciones",
       "description": "Estrategia de interaccion orientada a acciones y diseno de metadatos."
@@ -158,6 +190,10 @@
       "title": "Formulario de ticket",
       "description": "Flujo del formulario, comportamiento por categoria y diseno de envio."
     },
+    "ticketAttachment": {
+      "title": "Diseno de adjuntos de ticket",
+      "description": "Gestion de archivos, imagenes de texto enriquecido, metadatos e integracion futura de almacenamiento."
+    },
     "localeStructure": {
       "title": "Estructura de locales",
       "description": "Estructura de namespaces y limites de responsabilidad de traduccion."
@@ -173,6 +209,14 @@
     "serviceDeskEvolution": {
       "title": "Evolucion de Service Desk",
       "description": "Como la experiencia de Service Hub evoluciono hacia el dominio Service Desk."
+    },
+    "releaseOverview": {
+      "title": "Resumen de versiones",
+      "description": "Cambios por version, migraciones, impacto arquitectonico y registros de verificacion."
+    },
+    "decisionOverview": {
+      "title": "Resumen de decisiones",
+      "description": "Como leer las decisiones fechadas y distinguirlas del diseno actual."
     },
     "serviceDeskImplementationStrategy": {
       "title": "Estrategia de implementacion de Service Desk",
@@ -253,6 +297,26 @@
     "decisionServiceDeskSettingsDtoApiBoundary202606": {
       "title": "2026-06 Limite DTO/API de configuracion de Service Desk",
       "description": "Entrada del registro de decisiones sobre el limite DTO/API de configuracion de Service Desk."
+    },
+    "decisionTicketAttachmentBoundary202606": {
+      "title": "2026-06 Limite de adjuntos de ticket",
+      "description": "Entrada del registro de decisiones sobre el limite de adjuntos de ticket."
+    },
+    "decisionTicketFormAndDraftWorkflow202606": {
+      "title": "2026-06 Formulario de ticket y flujo de borradores",
+      "description": "Entrada del registro de decisiones sobre el formulario de ticket y el flujo de borradores."
+    },
+    "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+      "title": "2026-07 Limite de validacion de referencias de configuracion de Service Desk",
+      "description": "Entrada del registro de decisiones sobre el limite de validacion de referencias."
+    },
+    "decisionTicketActionAndHistoryExecution202607": {
+      "title": "2026-07 Ejecucion de acciones e historial de ticket",
+      "description": "Entrada del registro de decisiones sobre la ejecucion de acciones e historial."
+    },
+    "decisionTicketRoutingAndUpdatePolicy202607": {
+      "title": "2026-07 Politica de enrutamiento y actualizacion de tickets",
+      "description": "Entrada del registro de decisiones sobre enrutamiento y actualizacion de tickets."
     }
   }
 }

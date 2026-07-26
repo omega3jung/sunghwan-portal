@@ -41,10 +41,10 @@ type SectionedDocumentListProps = {
   sections: DocumentSection[];
   selectedDocumentId: string;
   onSelectDocument: (documentId: string) => void;
-  isDecisionLog: boolean;
+  isDecisionsGroup: boolean;
 };
 
-const DECISION_LOG_GROUP_ID = "decision-log";
+const DECISIONS_GROUP_ID = "decisions";
 
 const documentMenuItemButtonClassName =
   "h-auto w-full flex-col items-start justify-start gap-0 whitespace-normal px-3 py-2 text-left font-normal";
@@ -100,7 +100,7 @@ function SectionedDocumentList({
   sections,
   selectedDocumentId,
   onSelectDocument,
-  isDecisionLog,
+  isDecisionsGroup,
 }: SectionedDocumentListProps) {
   const { t } = useTranslation(NS.documents);
 
@@ -108,7 +108,7 @@ function SectionedDocumentList({
     <div
       className={cn(
         "grid gap-4",
-        isDecisionLog ? "md:grid-cols-3" : "md:grid-cols-2",
+        isDecisionsGroup ? "md:grid-cols-3" : "md:grid-cols-2",
       )}
     >
       {sections.map((section) => (
@@ -148,7 +148,7 @@ export function DocumentsNavigationMenu({
     <NavigationMenu className="justify-start gap-2 py-3">
       <NavigationMenuList className="flex-wrap gap-1">
         {documentGroups.map((group) => {
-          const isDecisionLog = group.id === DECISION_LOG_GROUP_ID;
+          const isDecisionsGroup = group.id === DECISIONS_GROUP_ID;
           const sections = group.sections ?? [];
           const hasSectionHeaders = sections.length > 0;
           const items = hasSectionHeaders
@@ -164,7 +164,7 @@ export function DocumentsNavigationMenu({
                 <div
                   className={cn(
                     "max-h-[60vh] max-w-[calc(100vw-2rem)] overflow-y-auto p-3 pr-4",
-                    isDecisionLog ? "w-[900px]" : "w-[600px]",
+                    isDecisionsGroup ? "w-[900px]" : "w-[600px]",
                   )}
                 >
                   {hasSectionHeaders ? (
@@ -172,7 +172,7 @@ export function DocumentsNavigationMenu({
                       sections={sections}
                       selectedDocumentId={selectedDocumentId}
                       onSelectDocument={onSelectDocument}
-                      isDecisionLog={isDecisionLog}
+                      isDecisionsGroup={isDecisionsGroup}
                     />
                   ) : (
                     <FlatDocumentList

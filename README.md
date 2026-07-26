@@ -9,97 +9,113 @@ Portfolio project by Sunghwan Jung.
 
 ## Overview
 
-`sunghwan-portal` is a **Service Desk system prototype** built with **Next.js 14 App Router**.
+`sunghwan-portal` is a **production-aligned Service Desk prototype** built with
+Next.js 16 App Router, React 19, and TypeScript.
 
-It is a production-aligned frontend portfolio project, not a simple UI showcase. The project focuses on realistic Service Desk workflows, domain boundaries, role-aware UX, authentication/session boundaries, server-state ownership, and implementation-aligned design documentation.
-
-The core idea is:
+It redesigns workflows learned from an internal IT Help Desk environment as an
+explicit Service Desk domain. Tickets are treated as operational entities that
+move through intake, approval, assignment, work, resolution, closing, and
+traceable history—not as generic CRUD records.
 
 ```txt
 Service Desk is not a CRUD board.
 It is a workflow-driven operational system.
 ```
 
-Tickets are modeled as workflow entities that move through draft, approval, work assignment, execution, resolution, immutable history, and work-session evidence.
+The same feature contracts and Next.js Route Handler boundaries support a
+self-contained `LOCAL` portfolio experience and PostgreSQL-backed `REMOTE`
+services. The project is production-aligned, but intentionally not
+production-complete.
 
 ## Live Demo
 
-**Live Demo**: [sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
+[sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
 
-The project centers on a Service Desk domain with:
+Select **Try Demo** on the login page for the fastest review path. The LOCAL
+experience exercises implemented ticket and settings workflows without database
+credentials. REMOTE service boundaries and workflows are also implemented, but
+the hosted REMOTE account deliberately guards direct Service Desk page access.
 
-- tenant-scoped Service Desk settings
-- category-driven ticket intake, defaults, approval, assignment, and SLA
-- REMOTE draft persistence as ticket rows with `status = Draft`
-- attachment preparation with controlled demo replacement
-- command-based ticket actions
-- event-based immutable history
-- work-session create/list and tracked-minute aggregation
-- role-aware dashboard, ticket, and settings UX
-- LOCAL demo behavior and REMOTE PostgreSQL/DTO boundaries
+## Quick Review
 
-The design intent, trade-offs, and implementation approach are documented in
-[`docs/en`](./docs/en/README.md).
+A focused review takes about five minutes:
 
-## Project Purpose
+1. Open the live demo and select **Try Demo**.
+2. Enter **Service Desk**, open a ticket, and inspect its details, permitted
+   actions, work evidence, and **Ticket History**.
+3. Open the user menu, select **Impersonation**, and compare controls across
+   demo roles.
+4. Open **Settings → IT Service Desk Settings** and review Tenant, Category,
+   Approval Steps, and Assignment Rules.
+5. Review the [canonical ticket specification](./docs/spec/ticket-system.md),
+   [operation rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md), or
+   [documentation index](./docs/en/README.md) for the underlying decisions.
 
-This project was built to demonstrate more than screen implementation.
+## What This Project Demonstrates
 
-It focuses on showing the ability to:
+- structuring a complex operational workflow as a maintainable frontend system
+- redesigning a legacy Help Desk concept as an explicit Service Desk domain
+- modeling commands, routing, immutable history, and work evidence beyond CRUD
+- separating UI, server state, form state, client state, and server-only access
+- designing role- and relationship-aware UX for requesters, assignees,
+  approvers, and administrators
+- keeping PostgreSQL row, repository, mapper, DTO, service, and HTTP boundaries
+  explicit
+- accounting for failure handling, traceability, and change impact based on
+  operational experience
+- maintaining current design documents separately from historical decision logs
 
-- understand a real operational workflow
-- redesign a legacy-style IT Help Desk idea into a clearer Service Desk domain
-- structure a frontend project around maintainable feature and domain boundaries
-- separate UI, server state, client state, authentication, and server-only data access
-- model workflow commands, history, and work evidence explicitly
-- document architectural reasoning and trade-offs clearly
+## Key Highlights
 
-The project is based on real operational experience from an internal Service Hub / IT Help Desk environment, then redesigned as a portfolio-ready Service Desk prototype.
+- end-to-end ticket intake, approval, assignment, work, resolution, and closing
+  workflow
+- server-controlled commands paired with event-based immutable history
+- category-derived priority, risk, due date, approval, and assignment behavior
+- LOCAL demo adapters and PostgreSQL-backed REMOTE services behind shared
+  contracts
+- role/permission-aware controls with LOCAL and REMOTE impersonation flows
+- per-requester draft recovery and attachment preparation boundaries
+- work-session evidence with tracked-minute aggregation
+- responsive dashboard, insights, ticket, and settings experiences
 
-## Current Scope
+## Current Status
 
-The current project covers:
+The LOCAL portfolio experience is working and can be reviewed without external
+infrastructure. It includes mutable demo data for ticket workflows,
+tenant-scoped settings, role-aware commands, history, and work sessions.
 
-- ticket list, search, detail, create, requester update, and command execution
-- REMOTE draft persistence as normal ticket rows
-- tenant-scoped settings for category, approval step, and assignment rule
-- category-driven priority, risk, due date, approval, and work assignment
-- attachment preparation before draft/create/update/action commands
-- action-oriented ticket commands
-- event-based immutable ticket history
-- work-session list/create and tracked-minute aggregation
-- LOCAL demo behavior and REMOTE PostgreSQL/DTO service boundaries
-- documentation and decision logs as project deliverables
+The REMOTE path implements server-only PostgreSQL repositories, DTO mapping,
+services, transactions, and optional external API adapters for the major ticket
+and settings workflows. Running it outside the hosted review path requires the
+corresponding database schema and credentials or compatible external services.
 
-The project is production-aligned, not production-complete. Production object storage, notification delivery, full SLA engine, real-time updates, complete timer routes, and compliance-grade audit infrastructure remain deferred unless
-explicitly implemented.
+The system is production-aligned rather than production-complete. Deferred
+production concerns are listed under [Project Limitations](#project-limitations).
 
-## Core Service Desk Model
+## Domain and Workflow
+
+Tenant is the Service Desk configuration boundary, while category is the central
+behavior configuration.
 
 ```txt
 Company
--> Service Desk Tenant
-   -> Category
-      -> Approval Step
-      -> Assignment Rule
+└─ Service Desk Tenant
+   └─ Category
+      ├─ Approval Step
+      └─ Assignment Rule
 
 Ticket
--> Action
--> History
--> Work Session
--> Attachment metadata
+├─ Action
+├─ History
+├─ Work Session
+└─ Attachment metadata
 ```
 
-Tenant is the configuration scope. Category is the central behavior configuration.
+Approval steps are resolved from the selected subcategory's parent/main
+category. Assignment rules first check the selected subcategory, then fall back
+to the parent/main category when no subcategory rule exists.
 
-Approval and assignment intentionally use different resolution rules:
-
-- Approval steps are resolved from the selected subcategory's parent/main category.
-- Assignment rules check the selected subcategory first, then fall back to the parent/main category only when no subcategory rule exists.
-
-## Ticket Workflow
-
-The current persisted status union is:
+The persisted ticket status union is:
 
 ```txt
 Draft
@@ -113,402 +129,329 @@ Resolved
 Closed
 ```
 
-Important rules:
-
-- `Open` is not a persisted status.
-- `Approved` is not a persisted status.
-- `Reopen` is not a persisted status.
-- Approval completion is recorded as `APPROVAL_APPROVED` history.
-- Reopen is a ticket action whose current result is `Resolved -> Working`.
-- GET/read requests must not mutate ticket status.
-
-Main flow:
+The main path is:
 
 ```txt
 Draft
--> Approval | Assigned
--> Working
-<-> Pending
--> Resolved
--> Closed
+  -> Approval | Assigned
+  -> Working
+  <-> Pending
+  -> Resolved
+  -> Closed
 ```
 
-State changes are caused by explicit commands, workflow rules, or system operations, not hidden field updates.
+`Open`, `Approved`, and `Reopen` are not persisted statuses. Approval completion
+is an `APPROVAL_APPROVED` history event; reopen is an action that currently
+transitions `Resolved -> Working`. Read requests do not mutate workflow state.
 
-## Draft and Attachment Boundary
+### Draft and Attachment Boundaries
 
-REMOTE draft is not browser-only state and not a separate draft table.
+REMOTE drafts are ordinary ticket rows with `status = Draft`. One active draft
+is retained per requester, and final submission reuses that row before resolving
+approval and work routing. Operational lists exclude drafts.
 
-```txt
-ticket row
-+ status = Draft
-```
+LOCAL drafts use browser `localStorage`, scoped to the current demo user. They
+provide the corresponding UX but do not claim persistence equivalence with
+REMOTE drafts.
 
-Rules:
-
-- one active draft per requester
-- draft save/update uses the draft API
-- final submit reuses the same row
-- submit resolves initial approval/work routing
-- operational ticket lists exclude drafts
-- LOCAL draft uses a simplified demo-safe implementation behind the feature API boundary and is not persistence-equivalent to the REMOTE PostgreSQL draft
-
-Attachment input is prepared before ticket commands write metadata.
+Attachment input passes through the prepare route before metadata is written:
 
 ```txt
 File[] / inline image
--> Attachment Prepare API
--> prepared body, files, images
--> Draft / Create / Update / Action command where applicable
--> metadata persistence
+  -> Attachment Prepare API
+  -> prepared body, files, and images
+  -> Draft / Create / Update / Action
+  -> metadata persistence
 ```
 
-The current implementation uses controlled demo replacement. It does not provide production object storage. Raw `File`, binary data, base64 data URLs, blob URLs, and local paths must not be persisted in ticket rows, DTOs, action metadata, or history metadata.
+The current prepare route uses controlled demo-file replacement in both data
+scopes. Raw files, binary data, data URLs, blob URLs, and local paths are not
+persisted in ticket or history metadata.
 
-## Actions, History, and Work Sessions
+### Action, History, and Work-Session Boundaries
 
-Ticket Action is a server-controlled command model.
+Ticket actions follow a server-controlled command pipeline:
 
 ```txt
-Action command
--> authenticate
--> authorize
--> validate current status
--> validate action input
--> insert action when applicable
--> mutate ticket when applicable
--> create history
+authenticate
+  -> authorize
+  -> validate status and input
+  -> insert action when applicable
+  -> mutate the ticket
+  -> append immutable history
 ```
 
-Current action union:
+The current action union is:
 
 ```txt
-APPROVE
-DECLINE
-COMMENT
-NOTE
-ASSIGN
-ASSIGN_SELF
-REJECT
-MERGE
-ADJUST
-REOPEN
-RESUBMIT
-CANCEL
+APPROVE | DECLINE | COMMENT | NOTE | ASSIGN | ASSIGN_SELF
+REJECT | MERGE | ADJUST | REOPEN | RESUBMIT | CANCEL
 ```
 
-The explicit start-work command is separate from the Ticket Action union:
+The explicit start-work route is separate from that union:
 
 ```txt
 POST /api/service-desk/tickets/:ticketId/command/start-work
 ```
 
-It moves `Assigned -> Working`, creates `STATUS_UPDATED` history, and does not
-insert a Ticket Action row.
+History records the affected domain area (`type`), cause (`source`),
+authoritative event, actor, structured before/after values, and supplemental
+metadata. Work sessions remain separate from ticket actions. The current route
+surface supports list/create behavior and supported work-status transitions;
+complete timer-style start/finish/switch routes are deferred.
 
-History is event-based and immutable:
+## Architecture and State Ownership
 
-```txt
-type   -> affected domain area
-source -> why or which rule produced it
-event  -> what happened
-actor  -> who initiated it
-from/to value -> structured JSON before/after
-metadata -> supplemental display/audit context
-```
-
-`event` is authoritative. `SYSTEM_AUTO` is a source, not a history type.
-
-Resolved auto-close is implemented as a system operation:
+The codebase separates domain rules, feature workflows, application contracts,
+Route Handler adapters, and server data access.
 
 ```txt
-Resolved history timestamp
-+ 7-day grace period
--> Closed
--> closeReason = Completed
--> finish running work sessions where applicable
--> RESOLUTION_CLOSE history
--> source = SYSTEM_AUTO
--> actionNo = null
+Browser UI
+  -> feature API/repository
+  -> same-origin Next.js Route Handler
+     ├─ LOCAL session -> local demo adapter/state
+     └─ REMOTE session
+        -> embedded portal/auth service -> PostgreSQL
+        or
+        -> external auth/portal API adapter
 ```
 
-Work Session is separate from Ticket Action. The current route surface supports list/create, tracked-minute aggregation, and supported work-status transitions. Timer-style start/finish/switch routes are not part of the current route surface.
+REMOTE portal and authentication requests use embedded services by default.
+Deployment configuration can replace either boundary with a compatible external
+API adapter.
 
-## Main Features
+The embedded data path is:
 
-### Service Desk
+```txt
+PostgreSQL row
+  -> repository
+  -> mapper
+  -> DTO
+  -> service
+  -> Route Handler
+  -> feature API
+  -> UI
+```
 
-- Ticket list, search, filter, sort, and pagination
-- Ticket detail page as a primary workflow
-- Ticket creation and requester update flows
-- REMOTE draft row recovery through draft APIs
-- Attachment preparation before ticket commands
-- Status, priority, risk, assignee, due date, history, and work evidence display
-- Action-oriented ticket interactions
-- Reopen, resubmit, reject, merge, cancel, adjust, assign, comment, and note commands
-- Mobile-supported core Service Desk views
+PostgreSQL access and credentials stay server-only. Client components consume
+application contracts and do not receive database rows.
 
-### Service Desk Settings
+State ownership follows the same boundary discipline:
 
-- Tenant settings
-- Main/subcategory configuration
-- Main-category approval step configuration
-- Subcategory assignment override and parent/main fallback
-- Company, department, job field, and employee reference integration
-- LOCAL and REMOTE behavior alignment through API/DTO contracts
+- React Query owns tickets, actions, history, work sessions, settings, and
+  organization server state.
+- React Hook Form owns form input and validation state.
+- Zustand owns cross-component client state such as session, impersonation,
+  preferences, and sidebar state.
+- Component state owns transient interaction details such as dialogs and form
+  steps.
 
-### Dashboard and Insights
+Ticket, history, settings, and organization query results are not mirrored into
+Zustand.
 
-- Dashboard as quick operational overview
-- Insights as analytical/reporting view
-- Chart-based summaries for Service Desk state
-- Status/category/assignee/requester-department/SLA-oriented visibility
+## Project Evolution and Migration
 
-### Authentication and Session
+This repository was modernized incrementally while preserving the operational
+behavior already represented by the project.
 
-- NextAuth v4 Credentials Provider
-- JWT session strategy
-- Middleware-assisted route protection
-- Session-safe user projection
-- Application user model separated from session model
-- Session-aware impersonation design
-- Role-aware UI behavior
+### Framework and Tooling
+
+- upgraded the dependency baseline through Next.js 14 → 15 → 16
+- moved React 18 → 19 and the Node.js baseline from the Node 20 range → 24,
+  followed by npm 11 alignment
+- adapted pages and Route Handlers to asynchronous `params`, `searchParams`,
+  and request APIs required by the newer App Router
+- migrated `middleware.ts` to the Next.js 16 `proxy.ts` convention while
+  retaining JWT route protection and impersonation behavior
+- replaced legacy lint configuration and `next lint` with ESLint 9 flat config
+- preserved dependency-direction checks by integrating
+  `eslint-plugin-boundaries` into the repository lint command
+
+### UI Foundation
+
+- migrated shadcn/ui primitives from Radix UI to Base UI and the current
+  `base-nova` configuration
+- moved the styling foundation from Tailwind CSS 3 to Tailwind CSS 4
+- adapted shared primitives and application-specific combobox, date-picker,
+  toast, menu, dialog, and form consumers to the changed component APIs
+- followed the primitive migration with targeted adjustments across login,
+  dashboard, ticket, mobile, and settings screens to retain established layout
+  and interaction behavior
+
+No performance improvement figures are claimed; the migration work focused on
+compatibility, maintained behavior, and a current dependency baseline.
 
 ## Tech Stack
 
-- Runtime: `node@24`, `npm@11`
-- Framework: `next@16` App Router, `react@19`
-- Language: `typescript@5`
-- UI: `tailwindcss@4`, `shadcn/ui` (`shadcn@4`) with `@base-ui/react`, `lucide-react`
-- Authentication: `next-auth@4`, Credentials Provider, JWT session strategy
-- Database / Backend: PostgreSQL via `pg`, `@supabase/supabase-js`, Next.js Route Handlers
-- Data Fetching: `@tanstack/react-query@5`, `axios`
-- Forms / Validation: `react-hook-form@7`, `zod@4`, `@hookform/resolvers`
-- Client State: `zustand@5`
-- Internationalization: `i18next`, `react-i18next`
-- Table / Chart / Editor: `@tanstack/react-table@8`, `recharts@3`, `tiptap@3`
-- Interaction: `dnd-kit`, `embla-carousel-react`, `react-querybuilder`
-- Testing / Tooling: `eslint@9`, `vitest@4`, Testing Library, Playwright, Storybook 10
-- Deployment: Vercel Analytics, Next.js standalone output
+| Area                  | Current stack                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| Runtime               | Node.js 24, npm 11                                                                          |
+| Framework             | Next.js 16 App Router, React 19                                                             |
+| Language              | TypeScript 5                                                                                |
+| Styling and UI        | Tailwind CSS 4, shadcn/ui components generated with shadcn 4 on Base UI, Lucide             |
+| Authentication        | NextAuth 4 Credentials Provider, JWT sessions                                               |
+| Backend and data      | Next.js Route Handlers, PostgreSQL through `pg`, embedded services or external API adapters |
+| Server state and HTTP | TanStack React Query 5, Axios, native server `fetch`                                        |
+| Forms and validation  | React Hook Form 7, Zod 4, `@hookform/resolvers`                                             |
+| Client state          | Zustand 5                                                                                   |
+| Internationalization  | i18next, react-i18next                                                                      |
+| Data UI               | TanStack Table 8, Recharts 3, Tiptap 3                                                      |
+| Interaction           | dnd-kit, Embla Carousel, React Query Builder                                                |
+| Component development | Storybook 10 with the Next.js/Vite framework                                                |
+| Quality tooling       | ESLint 9, Vitest 4 browser mode, Playwright Chromium provider, Testing Library              |
+| Deployment            | Vercel Analytics, Next.js standalone output                                                 |
 
-## Architecture Overview
+Versions describe the installed major versions in `package.json`. The active
+application data path uses `pg`; the installed Supabase JavaScript client is not
+part of that path.
 
-The project uses a layered, feature-based structure.
+## Project Structure
 
 ```txt
 src/
-  app/         # Next.js routes, layouts, route handlers
-  auth/        # NextAuth integration and auth/session logic
-  components/  # shared/custom UI components
-  domain/      # Service Desk domain models and rules
-  feature/     # feature-level screens, workflows, hooks, API clients
-  lib/         # app-wide configuration and infrastructure helpers
-  server/      # server-only logic, DTOs, local demo state, data access
-  shared/      # reusable utilities and shared UI
-  types/       # cross-cutting TypeScript types
+  app/          # App Router pages, layouts, providers, and Route Handlers
+  auth/         # Credentials auth, session callbacks, and auth adapters
+  components/   # shared UI primitives and composed widgets
+  domain/       # framework-independent domain models and rules
+  feature/      # feature UI, hooks, repositories, mappers, and API clients
+  lib/          # application contracts, configuration, and infrastructure
+  mocks/        # LOCAL users, organization data, and Service Desk scenarios
+  server/       # embedded services, repositories, mappers, and DTOs
+  shared/       # reusable hooks, types, constants, and utilities
+  stories/      # Storybook examples
+  styles/       # global Tailwind CSS and theme tokens
+  types/        # global and library type augmentation
+docs/
+  en/           # English architecture and domain documentation
+  ko/           # Korean architecture and domain documentation
+  spec/         # canonical ticket-system specification
 ```
-
-Runtime flow:
-
-```txt
-UI
--> feature API client
--> Next.js Route Handler
--> LOCAL handler or REMOTE portal API/service
--> DTO
-```
-
-REMOTE data flow:
-
-```txt
-DB Row
--> Mapper
--> DTO
--> Service
--> Route Handler
--> Feature API client
--> UI
-```
-
-UI code should not access Supabase or database rows directly.
-
-## Runtime Strategy
-
-```txt
-LOCAL  = safe portfolio demo behavior behind API routes
-REMOTE = PostgreSQL / portal API-service behavior behind DTO boundaries
-```
-
-### LOCAL
-
-LOCAL mode is designed for portfolio review.
-
-It provides:
-
-- safe demo interaction
-- mock/demo-backed data
-- server-side mutable demo state
-- resettable demo behavior
-- realistic API flow without requiring production infrastructure
-
-### REMOTE
-
-REMOTE mode is the PostgreSQL-backed path.
-
-It is designed around:
-
-- server-only database access
-- separated database roles
-- row / mapper / DTO boundaries
-- route handler orchestration
-- transaction boundaries for workflow mutations
-- future backend extraction readiness
-
-The project treats Supabase-related infrastructure as PostgreSQL persistence, not as a client-side shortcut.
-
-## State Management
-
-Server state belongs to React Query.
-
-Examples:
-
-- ticket list/search/detail
-- active draft
-- ticket actions and history
-- work-session list
-- tenant/category/approval-step/assignment-rule settings
-- organization reference data
-
-Client state is kept limited.
-
-Examples:
-
-- dialog open state
-- current form step
-- transient form input
-- temporary UI interaction state
-
-The project avoids duplicating server data into Zustand.
 
 ## Documentation
 
-Documentation is one of the main deliverables of this project. It explains not only what was built, but why it was designed that way.
+Documentation is a project deliverable rather than an afterthought. Current
+design documents describe the implementation as it exists; decision logs retain
+the historical context and trade-offs behind earlier choices.
 
 Recommended entry points:
 
 1. [Ticket System Specification](./docs/spec/ticket-system.md)
-2. [Service Desk System Documentation](./docs/en/README.md)
-3. [Ticket System Overview](./docs/en/03-domain/ticket/ticket-system-overview.md)
-4. [Ticket Lifecycle](./docs/en/03-domain/ticket/ticket-lifecycle.md)
-5. [Ticket Model](./docs/en/03-domain/ticket/ticket-model.md)
-6. [Ticket Activity Model](./docs/en/03-domain/ticket/ticket-activity.md)
-7. [Ticket History](./docs/en/03-domain/ticket/ticket-history.md)
-8. [Ticket Track Time](./docs/en/03-domain/ticket/ticket-track-time.md)
-9. [Ticket Form Design](./docs/en/06-form-design/ticket-form.md)
-10. [Ticket Attachment Design](./docs/en/06-form-design/ticket-attachment.md)
-11. [Service Desk Settings](./docs/en/03-domain/service-desk-settings.md)
-12. [Service Desk Implementation Strategy](./docs/en/08-dev-strategy/service-desk-implementation-strategy.md)
-13. [Ticket Operation Rules](./docs/en/08-dev-strategy/ticket-operation-rules.md)
+2. [Service Desk Documentation Index](./docs/en/README.md)
+3. [Ticket Lifecycle](./docs/en/03-domain/service-desk/ticket/ticket-lifecycle.md)
+4. [Ticket Model](./docs/en/03-domain/service-desk/ticket/ticket-model.md)
+5. [Ticket Activity and Actions](./docs/en/03-domain/service-desk/ticket/ticket-activity.md)
+6. [Ticket History](./docs/en/03-domain/service-desk/ticket/ticket-history.md)
+7. [Service Desk Settings](./docs/en/03-domain/service-desk/settings.md)
+8. [Ticket Form](./docs/en/04-engineering/forms/ticket-form.md) and
+   [Attachment Design](./docs/en/04-engineering/forms/ticket-attachment.md)
+9. [Implementation Strategy](./docs/en/04-engineering/service-desk-implementation-strategy.md)
+10. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
-## Key Decision Logs
+Historical implementation decisions are under
+[`docs/en/06-decisions`](./docs/en/06-decisions/).
 
-Decision logs capture important architectural and domain decisions made during development. They preserve historical reasoning and are not rewritten as current design.
+## Quality and Verification
 
-Important recent logs include:
+Current repository-level verification includes:
 
-- [Service Desk Documentation Alignment](./docs/en/08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md)
-- [Database Role and Access Strategy](./docs/en/08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.md)
-- [Service Desk Tenant Design](./docs/en/08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md)
-- [Service Desk Settings DTO/API Boundary](./docs/en/08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md)
-- [Ticket Form and Draft Workflow](./docs/en/08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md)
-- [Ticket Attachment Boundary](./docs/en/08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md)
-- [Ticket Routing and Update Policy](./docs/en/08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
-- [Ticket Action and History Execution](./docs/en/08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md)
+- Next.js production build and TypeScript compilation through `npm run build`
+- ESLint 9 static analysis through `npm run lint`
+- architecture dependency policies enforced by `eslint-plugin-boundaries` as
+  part of that lint command
+- Storybook static-build verification through `npm run build-storybook`
+- Storybook/Vitest browser-mode configuration with a Playwright Chromium
+  provider
+
+The current Storybook surface contains three story files and its configuration
+MDX. Testing Library is installed, but the repository contains no standalone
+`*.test` or `*.spec` suites and exposes no repository-level `test` script.
+Automated coverage remains an improvement area.
 
 ## Local Development
 
-Install dependencies:
+### Prerequisites
+
+- Node.js `24.x`
+- npm `11.x`
+
+The versions are enforced through the `engines` field in `package.json`.
+
+### Run the LOCAL Demo
 
 ```bash
-npm install
-```
-
-Start development server:
-
-```bash
+npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Default local URL:
+On PowerShell, use `Copy-Item .env.example .env.local` instead of `cp` if
+needed. Set `NEXTAUTH_SECRET` in `.env.local` to a non-empty development value,
+then open [http://localhost:3000](http://localhost:3000) and select **Try Demo**.
+The LOCAL experience does not require PostgreSQL or an external API.
 
-```txt
-http://localhost:3000
-```
+### Available Scripts
 
-Useful scripts:
+| Command                   | Purpose                                         |
+| ------------------------- | ----------------------------------------------- |
+| `npm run dev`             | Start the Next.js development server            |
+| `npm run dev:clean`       | Remove `.next` and start the development server |
+| `npm run build`           | Create a production build                       |
+| `npm run start`           | Start a previously built production server      |
+| `npm run lint`            | Run ESLint and architecture boundary rules      |
+| `npm run storybook`       | Start Storybook on port 6006                    |
+| `npm run build-storybook` | Create a static Storybook build                 |
 
-```bash
-npm run dev
-npm run dev:clean
-npm run build
-npm run start
-npm run lint
-npm run storybook
-npm run build-storybook
-```
+## Environment Variables
 
-## Environment
+The checked-in [`.env.example`](./.env.example) contains the common local
+configuration. Secrets and database connections must remain server-only.
 
-The project uses environment variables for authentication, runtime context, and API/database behavior.
+### Common Application Configuration
 
-Common environment values include:
+| Variable                     | Purpose                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_CONTEXT`        | Presentation/runtime label such as `development`; it does not select the data scope |
+| `NEXT_PUBLIC_BASE_PATH`      | Optional Next.js base path                                                          |
+| `NEXT_PUBLIC_ASSET_LOGO`     | Public logo asset path                                                              |
+| `NEXTAUTH_URL`               | Canonical NextAuth URL; locally `http://localhost:3000`                             |
+| `NEXTAUTH_SECRET`            | Secret used to sign and encrypt NextAuth tokens                                     |
+| `NEXT_PUBLIC_DB_API_URL`     | Optional client database API base URL                                               |
+| `NEXT_PUBLIC_PORTAL_API_URL` | Optional client portal/file API base URL                                            |
+| `NEXT_PUBLIC_NODE_API_URL`   | Optional separate Node API base URL                                                 |
 
-- `NEXTAUTH_URL`
-- `NEXTAUTH_SECRET`
-- `NEXT_PUBLIC_BASE_PATH`
-- `NEXT_PUBLIC_CONTEXT`
-- database/API connection variables for server-side access
+LOCAL versus REMOTE behavior is selected by the authenticated session's
+`dataScope`, not by `NEXT_PUBLIC_CONTEXT`.
 
-Secrets and database credentials should remain server-only.
+### REMOTE Deployment Boundary
 
-## Project Status
+- Embedded REMOTE services use server-only authentication and portal database
+  connections.
+- External REMOTE adapters use server-only authentication and portal service
+  base URLs instead of embedded dispatch.
+- These deployment credentials are intentionally not included in the checked-in
+  local example.
 
-This is a portfolio/demo project, but it is intentionally structured like a real application.
+## Project Limitations
 
-Current implementation includes a working LOCAL demo and staged REMOTE PostgreSQL/DTO integration.
+The current portfolio scope deliberately stops before these production
+extensions:
 
-Production-grade areas intentionally deferred include:
-
-- production object storage, file scanning, and signed download URLs
+- object storage, malware scanning, and signed download URLs
 - real notification delivery
-- full SLA calendar, pause/resume clock, breach, and escalation engine
+- a complete SLA calendar, pause/resume clock, breach, and escalation engine
 - real-time updates
-- complete work-session update/delete/timer route surface
+- complete work-session update/delete and timer route surfaces
 - compliance-grade audit infrastructure
 - advanced assignment load balancing
 
-These are future expansion points, not ignored concerns.
-
-## What This Project Demonstrates
-
-This project is intended to demonstrate:
-
-- practical frontend architecture with Next.js App Router
-- workflow-oriented domain modeling
-- TypeScript-based API and model boundaries
-- role-aware and permission-aware UI design
-- server/client boundary awareness
-- React Query server-state strategy
-- local demo architecture that behaves like a realistic API flow
-- authentication/session/impersonation design judgment
-- database access and DTO boundary thinking
-- documentation and decision-log discipline
+These boundaries distinguish implemented workflow behavior from the additional
+infrastructure and controls required for a production-complete service.
 
 ## Author
 
 **Sunghwan Jung**
 Frontend Developer (React / Next.js)
 
-- GitHub: https://github.com/omega3jung
-- Repository: https://github.com/omega3jung/sunghwan-portal
-- LinkedIn: https://www.linkedin.com/in/sunghwan4jung/
+- [GitHub](https://github.com/omega3jung)
+- [Repository](https://github.com/omega3jung/sunghwan-portal)
+- [LinkedIn](https://www.linkedin.com/in/sunghwan4jung/)

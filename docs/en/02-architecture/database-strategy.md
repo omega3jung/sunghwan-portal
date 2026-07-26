@@ -397,12 +397,12 @@ The current database strategy does not claim the following as complete:
 
 ## Related Documents
 
-- [`../03-domain/service-desk-settings.md`](../03-domain/service-desk-settings.md)
-- [`../03-domain/ticket/ticket-model.md`](../03-domain/ticket/ticket-model.md)
-- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
-- [`../03-domain/ticket/ticket-track-time.md`](../03-domain/ticket/ticket-track-time.md)
-- [`../06-form-design/ticket-attachment.md`](../06-form-design/ticket-attachment.md)
-- [`../08-dev-strategy/service-desk-implementation-strategy.md`](../08-dev-strategy/service-desk-implementation-strategy.md)
+- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
+- [`../03-domain/service-desk/ticket/ticket-model.md`](../03-domain/service-desk/ticket/ticket-model.md)
+- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
+- [`../03-domain/service-desk/ticket/ticket-track-time.md`](../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../04-engineering/forms/ticket-attachment.md`](../04-engineering/forms/ticket-attachment.md)
+- [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
 
 ---
 
