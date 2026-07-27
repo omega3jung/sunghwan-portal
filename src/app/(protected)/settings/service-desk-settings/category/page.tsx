@@ -44,8 +44,7 @@ import {
 export default function CategoryPage() {
   const { t } = useTranslation(NS.settings);
   const mutationToast = useMutationToast();
-  const { selectedTenant, isTenantSelectionLoading } =
-    useTenantSelection();
+  const { selectedTenant, isTenantSelectionLoading } = useTenantSelection();
   const {
     selectedScope,
     setSelectedScope,

@@ -83,12 +83,12 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
           <div className="grid grid-rows-[auto_1fr_auto] h-screen w-screen min-h-0">
             {/* Top Navigation */}
             <NavigationBar
-              className="h-[57px]"
+              className="h-14.25"
               userMenuDemoCandidates={userMenuDemoCandidates}
             />
 
             {/* Page Content */}
-            <main className="overflow-auto p-2 min-h-0 bg-background">
+            <main className="overflow-auto min-h-0 bg-background">
               {children}
             </main>
 

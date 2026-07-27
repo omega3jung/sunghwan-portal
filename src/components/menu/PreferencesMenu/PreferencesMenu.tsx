@@ -13,16 +13,25 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 import { InputGroupAddon } from "@/components/ui/input-group";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   ColorTheme,
+  MenuMode,
   PortalPreference,
   Preference,
   ScreenMode,
@@ -68,6 +77,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
 
   const {
     current: userPreference,
+    setMenu,
     setLanguage,
     setColorTheme,
     setScreenMode,
@@ -79,6 +89,18 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   useEffect(() => {
     setOpen(false);
   }, [width]);
+
+  const handleMenuChange = (menu: MenuMode) => {
+    setMenu(menu);
+
+    handleSavePreferences({
+      preferenceKey: preferenceKeys.home.preference,
+      preferenceMeta: {
+        ...userPreference,
+        menu,
+      },
+    });
+  };
 
   const handleThemeChange = (newTheme: ScreenMode) => {
     if (!userPreference) return;
@@ -148,74 +170,136 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
         }
       />
       <PopoverContent className="h-full w-80 p-6">
-        <div id="PreferenceMenu" className="flex flex-col gap-2">
-          <div className="font-semibold">{t("colorTheme")}</div>
-          <div className="flex w-full items-center justify-between px-8 py-2">
-            {themeButtons.map((item) => {
-              return (
-                <Button
-                  key={item.name}
-                  aria-label={`Color theme: ${item.name}`}
-                  title={item.name}
-                  style={
-                    {
-                      "--theme-primary": `hsl(${item.primary})`,
-                      "--theme-primary-dark": `hsl(${
-                        item.darkPrimary ?? item.primary
-                      })`,
-                      "--theme-muted": `hsl(${item.muted})`,
-                    } as React.CSSProperties
-                  }
-                  className={cn(
-                    "rounded-full bg-(--theme-primary) transition-colors hover:bg-(--theme-muted) dark:bg-(--theme-primary-dark) dark:hover:bg-(--theme-muted)",
-                    userPreference.colorTheme === item.name
-                      ? "w-8 p-0"
-                      : "h-6 w-6 p-0",
-                  )}
-                  onClick={() => handleColorThemeChange(item.name)}
-                >
-                  {userPreference.colorTheme === item.name && (
-                    <Check
+        <PopoverHeader className="sr-only">
+          <PopoverTitle>{label}</PopoverTitle>
+        </PopoverHeader>
+
+        <FieldGroup id="PreferenceMenu" className="gap-6">
+          <FieldSet className="gap-2">
+            <FieldLegend variant="label" className="mb-0 font-semibold">
+              {t("menu")}
+            </FieldLegend>
+
+            <RadioGroup
+              value={userPreference.menu}
+              onValueChange={(value: string) =>
+                handleMenuChange(value as MenuMode)
+              }
+              className="flex justify-around gap-4"
+            >
+              <Field orientation="horizontal" className="w-auto gap-2">
+                <RadioGroupItem
+                  value="collapsible"
+                  id="menu-mode-collapsible"
+                />
+                <FieldLabel htmlFor="menu-mode-collapsible">
+                  {t("collapsible")}
+                </FieldLabel>
+              </Field>
+
+              <Field orientation="horizontal" className="w-auto gap-2">
+                <RadioGroupItem value="group" id="menu-mode-group" />
+                <FieldLabel htmlFor="menu-mode-group">{t("group")}</FieldLabel>
+              </Field>
+            </RadioGroup>
+          </FieldSet>
+
+          <FieldSet className="gap-2">
+            <FieldLegend variant="label" className="mb-0 font-semibold">
+              {t("colorTheme")}
+            </FieldLegend>
+
+            <RadioGroup
+              value={userPreference.colorTheme}
+              onValueChange={(value: string) =>
+                handleColorThemeChange(value as ColorTheme)
+              }
+              className="flex w-full h-12 items-center justify-between px-8 py-2"
+            >
+              {themeButtons.map((item) => {
+                const selected = userPreference.colorTheme === item.name;
+                const itemId = `color-theme-${item.name}`;
+
+                return (
+                  <Field
+                    key={item.name}
+                    orientation="horizontal"
+                    className="relative w-auto gap-0"
+                  >
+                    <RadioGroupItem
+                      value={item.name}
+                      id={itemId}
+                      title={item.name}
+                      style={
+                        {
+                          "--theme-primary": `hsl(${item.primary})`,
+                          "--theme-primary-dark": `hsl(${
+                            item.darkPrimary ?? item.primary
+                          })`,
+                          "--theme-muted": `hsl(${item.muted})`,
+                        } as React.CSSProperties
+                      }
                       className={cn(
-                        "text-white/80",
-                        item.name === "default" && "dark:text-black/80",
+                        "border-0 bg-(--theme-primary) transition-[width,height,background-color] hover:bg-(--theme-muted) data-checked:bg-(--theme-primary) dark:bg-(--theme-primary-dark) dark:hover:bg-(--theme-muted) dark:data-checked:bg-(--theme-primary-dark) [&_[data-slot=radio-group-indicator]]:hidden",
+                        selected ? "size-8" : "size-6",
                       )}
                     />
-                  )}
-                </Button>
-              );
-            })}
-          </div>
-          <div className="pt-4 font-semibold">{t("theme")}</div>
-          <div>
+                    <FieldLabel htmlFor={itemId} className="sr-only">
+                      {item.name}
+                    </FieldLabel>
+
+                    {selected && (
+                      <Check
+                        aria-hidden="true"
+                        className={cn(
+                          "pointer-events-none absolute top-1/2 left-1/2 size-4 -translate-x-1/2 -translate-y-1/2 text-white/80",
+                          item.name === "default" && "dark:text-black/80",
+                        )}
+                      />
+                    )}
+                  </Field>
+                );
+              })}
+            </RadioGroup>
+          </FieldSet>
+
+          <FieldSet className="gap-2">
+            <FieldLegend variant="label" className="mb-0 font-semibold">
+              {t("theme")}
+            </FieldLegend>
+
             <RadioGroup
               value={userPreference.screenMode}
               onValueChange={(value: string) =>
                 handleThemeChange(value as ScreenMode)
               }
-              className="flex justify-center space-x-4"
+              className="flex justify-center gap-4"
             >
-              <div className="flex items-center space-x-2">
+              <Field orientation="horizontal" className="w-auto gap-2">
                 <RadioGroupItem value="light" id="screen-mode-light" />
-                <Label htmlFor="screen-mode-light">{t("light")}</Label>
-              </div>
+                <FieldLabel htmlFor="screen-mode-light">
+                  {t("light")}
+                </FieldLabel>
+              </Field>
 
-              <div className="flex items-center space-x-2">
+              <Field orientation="horizontal" className="w-auto gap-2">
                 <RadioGroupItem value="dark" id="screen-mode-dark" />
-                <Label htmlFor="screen-mode-dark">{t("dark")}</Label>
-              </div>
+                <FieldLabel htmlFor="screen-mode-dark">{t("dark")}</FieldLabel>
+              </Field>
 
-              <div className="flex items-center space-x-2">
+              <Field orientation="horizontal" className="w-auto gap-2">
                 <RadioGroupItem value="system" id="screen-mode-system" />
-                <Label htmlFor="screen-mode-system">{t("system")}</Label>
-              </div>
+                <FieldLabel htmlFor="screen-mode-system">
+                  {t("system")}
+                </FieldLabel>
+              </Field>
             </RadioGroup>
-          </div>
+          </FieldSet>
 
-          <div className="pt-6">
-            <Label htmlFor="language-picker" className="font-semibold">
+          <Field className="gap-2">
+            <FieldLabel htmlFor="language-picker" className="font-semibold">
               {t("language")}
-            </Label>
+            </FieldLabel>
             <Combobox
               items={languageOptions}
               itemToStringValue={(option) => option.label}
@@ -233,7 +317,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
             >
               <ComboboxInput
                 id="language-picker"
-                className="my-2 w-full"
+                className="w-full"
                 placeholder="Language Picker"
               >
                 <InputGroupAddon align="inline-start">
@@ -251,8 +335,8 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>
-          </div>
-        </div>
+          </Field>
+        </FieldGroup>
       </PopoverContent>
     </Popover>
   );

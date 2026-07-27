@@ -141,7 +141,7 @@ function QuickActionCard({
 
   return (
     <Link href={href} className="block h-full">
-      <Card className="h-full border-border/70 transition-colors hover:border-primary/40 hover:bg-accent/20">
+      <Card className="flex flex-col justify-between h-full border-border/70 transition-colors hover:border-primary/40 hover:bg-accent/20">
         <CardHeader className="gap-4 pb-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -158,7 +158,7 @@ function QuickActionCard({
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent>
           <div className="flex items-center gap-2 text-sm font-medium text-primary">
             {t("quickActions.openWorkspace")}
             <ArrowRight className="h-4 w-4" />

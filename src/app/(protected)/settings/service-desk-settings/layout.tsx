@@ -1,88 +1,14 @@
-// app/(protected)/settings/service-desk-settings/layout.tsx
-"use client";
+import type { ReactNode } from "react";
 
-import { Bot, Building2, Tags, Workflow } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useTranslation } from "react-i18next";
-
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NS } from "@/lib/application/i18n";
-
-import { useSettingsAccess } from "../_providers";
 import { ServiceDeskSettingsTenantSelectionProvider } from "./ServiceDeskSettingsTenantSelectionProvider";
 
 export default function ServiceDeskSettingsLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const pathname = usePathname();
-  const { t } = useTranslation(NS.settings);
-  const { type } = useSettingsAccess();
-
-  const currentTab = pathname.split("/").at(-1);
-
   return (
-    <main className="settings-main">
-      <Tabs value={currentTab}>
-        <TabsList className="w-full justify-start">
-          {type === "OWNER_ADMIN" && (
-            <TabsTrigger
-              value="tenant"
-              render={
-                <Link
-                href="/settings/service-desk-settings/tenant"
-                className="min-w-20 gap-2 flex items-center"
-                />
-              }
-            >
-                <Building2 />
-                {t("serviceDeskSettings.common.tenant")}
-            </TabsTrigger>
-          )}
-
-          <TabsTrigger
-            value="category"
-            render={
-              <Link
-              href="/settings/service-desk-settings/category"
-              className="min-w-20 gap-2 flex items-center"
-              />
-            }
-          >
-              <Tags />
-              {t("serviceDeskSettings.common.category")}
-          </TabsTrigger>
-
-          <TabsTrigger
-            value="approval-step"
-            render={
-              <Link
-              href="/settings/service-desk-settings/approval-step"
-              className="min-w-20 gap-2 flex items-center"
-              />
-            }
-          >
-              <Workflow />
-              {t("serviceDeskSettings.common.approvalStep")}
-          </TabsTrigger>
-          <TabsTrigger
-            value="assignment-rule"
-            render={
-              <Link
-              href="/settings/service-desk-settings/assignment-rule"
-              className="min-w-20 gap-2 flex items-center"
-              />
-            }
-          >
-              <Bot />
-              {t("serviceDeskSettings.common.assignmentRule")}
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      {/* 👇 rendering tab page.tsx */}
+    <main className="settings-main p-4">
       <ServiceDeskSettingsTenantSelectionProvider>
         {children}
       </ServiceDeskSettingsTenantSelectionProvider>

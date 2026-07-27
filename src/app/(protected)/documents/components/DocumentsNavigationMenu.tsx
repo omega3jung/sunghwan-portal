@@ -164,7 +164,7 @@ export function DocumentsNavigationMenu({
                 <div
                   className={cn(
                     "max-h-[60vh] max-w-[calc(100vw-2rem)] overflow-y-auto p-3 pr-4",
-                    isDecisionsGroup ? "w-[900px]" : "w-[600px]",
+                    isDecisionsGroup ? "w-225" : "w-150",
                   )}
                 >
                   {hasSectionHeaders ? (

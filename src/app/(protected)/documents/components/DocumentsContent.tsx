@@ -53,12 +53,10 @@ export function DocumentsContent({
       : `docs/en/${selectedDocument.relativePath}`;
 
   return (
-    <main className="min-h-full p-4">
+    <main className="min-h-full p-6">
       <span>
         <h1 className="font-semibold tracking-tight">{t("page.title")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t("page.description")}
-        </p>
+        <p className="text-sm text-muted-foreground">{t("page.description")}</p>
       </span>
 
       <div className="mt-2 h-1 rounded bg-primary-muted" />

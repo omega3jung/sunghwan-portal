@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 
 import {
   ColorTheme,
+  MenuMode,
   PortalPreference,
   ScreenMode,
 } from "@/domain/user/preference";
@@ -14,6 +15,7 @@ export type UseCurrentPreferenceResult = {
   status: "loading" | "ready";
   current: PortalPreference;
 
+  setMenu: (menu: MenuMode) => void;
   setLanguage: (language: Locale) => void;
   setColorTheme: (theme: ColorTheme) => void;
   setScreenMode: (mode: ScreenMode) => void;
@@ -43,12 +45,14 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
 
   /*
    * zustand preference store.
+   * - menu
    * - language
    * - colorTheme
    * - screenMode
    */
   const store = usePreferenceStore();
   const current = {
+    menu: store.menu,
     language: store.language,
     colorTheme: store.colorTheme,
     screenMode: store.screenMode,
@@ -73,6 +77,10 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
     }
 
     store.setPreference(patch);
+  };
+
+  const setMenu = (menu: MenuMode) => {
+    store.setPreference({ menu });
   };
 
   /**
@@ -120,6 +128,7 @@ export const useCurrentPreference = (): UseCurrentPreferenceResult => {
   return {
     status,
     current,
+    setMenu,
     setLanguage,
     setColorTheme,
     setScreenMode,

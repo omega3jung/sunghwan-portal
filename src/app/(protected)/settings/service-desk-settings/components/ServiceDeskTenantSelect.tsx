@@ -17,11 +17,7 @@ import { cn } from "@/shared/utils/presentation";
 import { useSettingsAccess } from "../../_providers";
 import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 
-export function ServiceDeskTenantSelect({
-  className,
-}: {
-  className?: string;
-}) {
+export function ServiceDeskTenantSelect({ className }: { className?: string }) {
   const { type } = useSettingsAccess();
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue();
@@ -39,7 +35,7 @@ export function ServiceDeskTenantSelect({
         <SelectTrigger>
           <SelectValue placeholder={t("serviceDeskSettings.common.tenant")} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className={"w-full"}>
           {tenantData.map((tenant) => (
             <SelectItem key={`select_item_${tenant.id}`} value={tenant.id}>
               <div className="flex items-center gap-2">

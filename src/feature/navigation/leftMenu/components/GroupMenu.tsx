@@ -1,45 +1,48 @@
-import { Settings2 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useMemo } from "react";
+"use client";
 
-import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
+import Link from "next/link";
+
 import {
-  Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { ENVIRONMENT } from "@/lib/config/environment";
 
-import { useLeftMenuQuery } from "../api/queries";
 import type { MenuItem } from "../types";
-import { LeftMenuSkeleton } from "./MenuSkeleton";
 
-export function LeftMenu() {
+const collapsedMenuButtonClassName =
+  "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center";
+const collapsedMenuItemClassName =
+  "group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:justify-center";
+const rootMenuItemClassName = `${collapsedMenuItemClassName} pt-2 pl-2 group-data-[collapsible=icon]:pl-0`;
+
+type GroupMenuProps = {
+  items: MenuItem[];
+};
+
+export function GroupMenu({ items }: GroupMenuProps) {
   const tLocal = useLocalizedText();
-  const { data: menuItems, isLoading } = useLeftMenuQuery();
 
-  const content = useMemo(() => menuItems?.content ?? [], [menuItems]);
-  const footer = useMemo(() => menuItems?.footer ?? [], [menuItems]);
-
-  const renderPageItem = (item: MenuItem) => {
+  const renderPageItem = (item: MenuItem, isRoot = false) => {
     const title = tLocal(item.title);
 
     return (
-      <SidebarMenuItem key={item.id}>
-        <SidebarMenuButton render={<Link href={item.path} />} tooltip={title}>
+      <SidebarMenuItem
+        key={item.id}
+        className={isRoot ? rootMenuItemClassName : collapsedMenuItemClassName}
+      >
+        <SidebarMenuButton
+          render={<Link href={item.path} />}
+          tooltip={title}
+          className={collapsedMenuButtonClassName}
+        >
           <item.icon />
-          <span>{title}</span>
+          <span className="group-data-[collapsible=icon]:hidden">{title}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -53,8 +56,11 @@ export function LeftMenu() {
     }
 
     return (
-      <SidebarGroup key={item.id}>
-        <SidebarGroupLabel className="flex items-center gap-2">
+      <SidebarGroup
+        key={item.id}
+        className="pr-0 group-data-[collapsible=icon]:px-0"
+      >
+        <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
           <item.icon className="size-4" />
           <span>{tLocal(item.title)}</span>
         </SidebarGroupLabel>
@@ -74,62 +80,17 @@ export function LeftMenu() {
     return renderPageItem(item);
   };
 
-  if (isLoading) {
-    return <LeftMenuSkeleton />;
-  }
+  const renderRootMenuItem = (item: MenuItem) => {
+    if (item.type === "GROUP") {
+      return renderGroupItem(item);
+    }
+
+    return renderPageItem(item, true);
+  };
 
   return (
-    <Sidebar collapsible="icon" className="group">
-      <SidebarHeader className="h-14 flex-row items-center justify-between p-2.5">
-        <SidebarTrigger />
-
-        <Image
-          src={`${ENVIRONMENT.BASE_PATH}/images/logo_light.png`}
-          alt="Portal Logo"
-          className="h-8 w-auto shrink-0 dark:hidden group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
-          width={700}
-          height={240}
-          sizes="94px"
-          priority
-        />
-
-        <Image
-          src={`${ENVIRONMENT.BASE_PATH}/images/logo_dark.png`}
-          alt="Portal Logo"
-          className="hidden h-8 w-auto shrink-0 dark:block group-data-[state=collapsed]:hidden group-data-[state=collapsed]:transition-all"
-          width={700}
-          height={240}
-          sizes="94px"
-          priority
-        />
-      </SidebarHeader>
-
-      <SidebarSeparator className="mx-0" />
-
-      <SidebarContent>{content.map(renderMenuItem)}</SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          {footer.map((item) => {
-            if (item.type === "GROUP") {
-              return null;
-            }
-
-            return renderPageItem(item);
-          })}
-
-          <SidebarMenuItem key="Preferences">
-            <PreferencesMenu
-              trigger={({ label }) => (
-                <SidebarMenuButton>
-                  <Settings2 />
-                  <span>{label}</span>
-                </SidebarMenuButton>
-              )}
-            />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+    <SidebarContent className="pr-2 group-data-[collapsible=icon]:pr-0">
+      {items.map(renderRootMenuItem)}
+    </SidebarContent>
   );
 }

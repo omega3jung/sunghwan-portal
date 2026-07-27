@@ -6,6 +6,8 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import type { Company } from "@/domain/organization";
+import type { Tenant } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useCompanyListQuery } from "@/feature/organization/company/client";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
@@ -21,6 +23,9 @@ import { TenantList } from "./components/TenantList";
 import { TenantSettingInfo } from "./components/TenantSettingInfo";
 import { TenantTransferControls } from "./components/TenantTransferControls";
 import { useTenantSettings } from "./hooks/useTenantSettings";
+
+const EMPTY_COMPANIES: Company[] = [];
+const EMPTY_TENANTS: Tenant[] = [];
 
 export default function TenantPage() {
   const router = useRouter();
@@ -51,8 +56,8 @@ function OwnerTenantPage() {
   const companyQuery = useCompanyListQuery(params);
   const tenantQuery = useServiceDeskTenantListQuery(tenantParams);
   const tenantSettings = useTenantSettings({
-    companies: companyQuery.data ?? [],
-    sourceTenants: tenantQuery.data ?? [],
+    companies: companyQuery.data ?? EMPTY_COMPANIES,
+    sourceTenants: tenantQuery.data ?? EMPTY_TENANTS,
   });
   const hasError = Boolean(companyQuery.error || tenantQuery.error);
   const isLoading =
