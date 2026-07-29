@@ -8,7 +8,7 @@ import type {
   ApprovalStepTreeSyncInput,
   CategoryApprovalStepTreeSyncInput,
   SaveServiceDeskApprovalStepTreePayload,
-} from "@/feature/serviceDesk/approvalStep/types";
+} from "@/lib/application/contracts/serviceDesk";
 import type { LocalizedText } from "@/shared/types";
 
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";

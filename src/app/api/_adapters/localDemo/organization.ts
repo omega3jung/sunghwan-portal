@@ -1,3 +1,10 @@
+import type {
+  Company,
+  Department,
+  Employee,
+  JobField,
+} from "@/domain/organization";
+import { idToNumber } from "@/lib/application/api/mapId";
 import {
   applyRuleGroupFilter,
   parseRuleGroupFilter,
@@ -11,10 +18,6 @@ import {
   type CreateDepartmentInput,
   type CreateEmployeeInput,
   type CreateJobFieldInput,
-  toCompanyMockResource,
-  toDepartmentMockResource,
-  toEmployeeMockResource,
-  toJobFieldMockResource,
   type UpdateCompanyInput,
   type UpdateDepartmentInput,
   type UpdateEmployeeInput,
@@ -43,9 +46,9 @@ export function getLocalCompany(id: string) {
 }
 
 export const createLocalCompany = (input: CreateCompanyInput) =>
-  toCompanyMockResource(input);
+  toLocalCompany(input);
 export const updateLocalCompany = (input: UpdateCompanyInput, id: string) =>
-  toCompanyMockResource(input, id);
+  toLocalCompany(input, id);
 
 export function listLocalDepartments(searchParams: URLSearchParams) {
   const items = camelDepartmentMapper(
@@ -68,11 +71,11 @@ export function getLocalDepartment(id: string) {
 }
 
 export const createLocalDepartment = (input: CreateDepartmentInput) =>
-  toDepartmentMockResource(input);
+  toLocalDepartment(input);
 export const updateLocalDepartment = (
   input: UpdateDepartmentInput,
   id: string,
-) => toDepartmentMockResource(input, id);
+) => toLocalDepartment(input, id);
 
 export function listLocalEmployees(searchParams: URLSearchParams) {
   const data = camelEmployeeMapper(
@@ -97,9 +100,9 @@ export function getLocalEmployee(id: string) {
 }
 
 export const createLocalEmployee = (input: CreateEmployeeInput) =>
-  toEmployeeMockResource(input);
+  toLocalEmployee(input);
 export const updateLocalEmployee = (input: UpdateEmployeeInput, id: string) =>
-  toEmployeeMockResource(input, id);
+  toLocalEmployee(input, id);
 
 export function listLocalJobFields(searchParams: URLSearchParams) {
   const companyIdByDepartmentId = new Map(
@@ -127,9 +130,53 @@ export function getLocalJobField(id: string) {
 }
 
 export const createLocalJobField = (input: CreateJobFieldInput) =>
-  toJobFieldMockResource(input);
+  toLocalJobField(input);
 export const updateLocalJobField = (input: UpdateJobFieldInput, id: string) =>
-  toJobFieldMockResource(input, id);
+  toLocalJobField(input, id);
+
+function toLocalCompany(
+  input: CreateCompanyInput | UpdateCompanyInput,
+  id = Date.now().toString(),
+): Company {
+  return { id, ...input };
+}
+
+function toLocalDepartment(
+  input: CreateDepartmentInput | UpdateDepartmentInput,
+  id = Date.now().toString(),
+): Department {
+  return { id, ...input };
+}
+
+function toLocalJobField(
+  input: CreateJobFieldInput | UpdateJobFieldInput,
+  id = Date.now().toString(),
+): JobField {
+  return { id, ...input };
+}
+
+function toLocalEmployee(
+  input: CreateEmployeeInput | UpdateEmployeeInput,
+  id: number | string = Date.now(),
+): Employee {
+  const { startDate, endDate, ...rest } = input;
+
+  return {
+    ...rest,
+    id: resolveEmployeeId(id) ?? Date.now(),
+    startDate: toDate(startDate),
+    ...(endDate ? { endDate: toDate(endDate) } : {}),
+  };
+}
+
+function resolveEmployeeId(value: number | string | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return typeof value === "string" ? idToNumber(value) : null;
+}
+
+function toDate(value: Date | string) {
+  return value instanceof Date ? value : new Date(value);
+}
 
 function compareCompanies(
   a: (typeof allCompaniesMock)[number],

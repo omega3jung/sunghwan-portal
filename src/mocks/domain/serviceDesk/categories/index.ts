@@ -1,4 +1,4 @@
-﻿import { DbTenantCategoryTree } from "@/feature/serviceDesk/category/";
+import { DbTenantCategoryTree } from "@/lib/application/contracts/serviceDesk";
 
 import { demoCorporationCategoryMock, demoEnergyCategoryMock } from "./client";
 import { internalCategoryMock } from "./internal";

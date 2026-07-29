@@ -1,4 +1,4 @@
-﻿import { DbDepartment } from "@/feature/organization/department";
+import type { DbDepartment } from "@/lib/application/contracts/organization";
 
 import { internalCompanyMock } from "../companies";
 import { clientDepartmentsMock } from "./client";

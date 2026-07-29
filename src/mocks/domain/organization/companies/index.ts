@@ -1,4 +1,4 @@
-import type { DbCompany } from "@/feature/organization/company/types";
+import type { DbCompany } from "@/lib/application/contracts/organization";
 
 import demoCompanyMock from "./demoCompany.json";
 

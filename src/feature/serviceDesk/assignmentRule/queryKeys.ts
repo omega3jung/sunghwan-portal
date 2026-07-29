@@ -2,9 +2,10 @@ import {
   SERVICE_DESK_ASSIGNMENT_RULE_KEY,
   SERVICE_DESK_KEY,
 } from "@/feature/serviceDesk/shared/keys";
-
-import type { AssignmentRecommendationInput } from "./recommendation";
-import { ServiceDeskAssignmentRuleListParams } from "./types";
+import type {
+  AssignmentRecommendationInput,
+  ServiceDeskAssignmentRuleListParams,
+} from "@/lib/application/contracts/serviceDesk";
 
 export const assignmentRuleQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_ASSIGNMENT_RULE_KEY] as const,

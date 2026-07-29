@@ -2,7 +2,7 @@ import { CategoryApprovalSettings } from "@/domain/serviceDesk";
 import type {
   SaveServiceDeskApprovalStepTreePayload,
   ServiceDeskApprovalStepListParams,
-} from "@/feature/serviceDesk/approvalStep/types";
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";

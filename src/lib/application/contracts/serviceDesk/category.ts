@@ -3,7 +3,7 @@ import { CategoryScope, MainCategory, SubCategory } from "@/domain/serviceDesk";
 import { LocalizedText } from "@/shared/types";
 import type { DbParams } from "@/shared/types/api";
 
-import type { DbTenant } from "./tenant";
+import type { DbTenant, ServiceDeskSettingsTenantContext } from "./tenant";
 
 // back-end data structures.
 export interface DbCategoryBase {
@@ -39,6 +39,13 @@ export type ServiceDeskCategoryListParams = DbParams & {
   settings?: boolean;
   context?: "settings";
   scope?: CategoryScope;
+};
+
+export type ServiceDeskCategoryContext = {
+  categoryId: string;
+  mainCategoryId: string;
+  scope: CategoryScope;
+  tenant: ServiceDeskSettingsTenantContext;
 };
 
 export type CategoryTreeSyncSubCategoryInput = Omit<SubCategory, "id"> & {

@@ -6,11 +6,13 @@ import {
   RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
+import type {
+  TicketSearchRequest,
+  TicketSearchResponse,
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
-
-import { TicketSearchRequest, TicketSearchResponse } from "./types";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;
 

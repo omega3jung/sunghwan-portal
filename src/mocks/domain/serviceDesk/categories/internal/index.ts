@@ -3,7 +3,7 @@
 import {
   DbCategory,
   DbTenantCategoryTree,
-} from "@/feature/serviceDesk/category";
+} from "@/lib/application/contracts/serviceDesk";
 
 import { internalTenantMock } from "../../tenants";
 import { internalAccountAccessMock } from "./accountAccess";

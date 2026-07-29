@@ -2,8 +2,7 @@ import {
   SERVICE_DESK_KEY,
   SERVICE_DESK_TENANT_KEY,
 } from "@/feature/serviceDesk/shared/keys";
-
-import type { ServiceDeskTenantListParams } from "./types";
+import type { ServiceDeskTenantListParams } from "@/lib/application/contracts/serviceDesk";
 
 export const tenantQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_TENANT_KEY] as const,

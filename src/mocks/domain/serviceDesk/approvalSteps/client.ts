@@ -2,7 +2,7 @@ import { ACCESS_LEVEL } from "@/domain/auth";
 import type {
   DbApprovalStep,
   DbCategoryApprovalSettings,
-} from "@/feature/serviceDesk/approvalStep";
+} from "@/lib/application/contracts/serviceDesk";
 
 import {
   clientAccountAccessMock as demoCorporationAccountAccessMock,

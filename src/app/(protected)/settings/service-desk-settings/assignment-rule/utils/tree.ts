@@ -3,7 +3,7 @@ import type { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
 import type {
   AssignmentRuleTreeSyncCategoryInput,
   SaveServiceDeskAssignmentRuleTreePayload,
-} from "@/feature/serviceDesk/assignmentRule/types";
+} from "@/lib/application/contracts/serviceDesk";
 
 import type { AssignmentRuleData, SubAssignmentRuleData } from "../types";
 import { mapAssignmentRuleData } from "./mapper";

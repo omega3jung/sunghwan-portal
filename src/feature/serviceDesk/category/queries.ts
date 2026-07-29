@@ -2,10 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import type { ServiceDeskCategoryListParams } from "@/lib/application/contracts/serviceDesk";
+
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskCategoryApi } from "./api";
 import { categoryQueryKeys } from "./queryKeys";
-import type { ServiceDeskCategoryListParams } from "./types";
 
 export const useServiceDeskCategoryListQuery = (
   params?: ServiceDeskCategoryListParams,

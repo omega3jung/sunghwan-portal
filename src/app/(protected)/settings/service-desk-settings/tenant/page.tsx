@@ -11,7 +11,7 @@ import type { Tenant } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useCompanyListQuery } from "@/feature/organization/company/client";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
-import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
+import type { ServiceDeskTenantListParams } from "@/lib/application/contracts/serviceDesk";
 import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types";
 

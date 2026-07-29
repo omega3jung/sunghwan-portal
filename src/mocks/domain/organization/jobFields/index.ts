@@ -1,4 +1,4 @@
-﻿import { DbJobField } from "@/feature/organization/jobField";
+import type { DbJobField } from "@/lib/application/contracts/organization";
 
 import { internalCompanyMock } from "../companies";
 import { clientJobFieldsMock } from "./client";

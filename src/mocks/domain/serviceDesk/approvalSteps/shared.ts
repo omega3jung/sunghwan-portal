@@ -1,4 +1,4 @@
-import type { DbCategory } from "@/feature/serviceDesk/category";
+import type { DbCategory } from "@/lib/application/contracts/serviceDesk";
 
 export const categoryApprovalSettingsHelper = (
   categoryMock: DbCategory,

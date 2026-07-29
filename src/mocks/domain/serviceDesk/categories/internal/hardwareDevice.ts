@@ -1,4 +1,4 @@
-﻿import { DbCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/lib/application/contracts/serviceDesk";
 
 export const internalHardwareDeviceMock = {
   category_id: 21,

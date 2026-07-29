@@ -3,7 +3,7 @@ import type { MainCategory } from "@/domain/serviceDesk";
 import type {
   CategoryTreeSyncCategoryInput,
   SaveServiceDeskCategoryTreePayload,
-} from "@/feature/serviceDesk/category/types";
+} from "@/lib/application/contracts/serviceDesk";
 import type { LocalizedText } from "@/shared/types";
 
 import type { CategoryData, SubCategoryData } from "../types";
