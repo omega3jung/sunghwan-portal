@@ -1,3 +1,4 @@
+import type { TicketActionExecutionMode } from "@/lib/application/contracts/serviceDesk";
 import {
   createServiceDeskStatusError as createStatusError,
   type ServiceDeskQueryExecutor,
@@ -14,7 +15,6 @@ import {
   type NormalizedTicketActionPayload,
   normalizeHistoryMetadataRecord,
   requireNextTicketStatus,
-  type TicketActionExecutionMode,
 } from "../ticketActionRules";
 
 export async function executeReopenTicketAction({

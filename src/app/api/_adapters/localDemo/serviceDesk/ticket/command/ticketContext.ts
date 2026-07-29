@@ -1,8 +1,11 @@
 import { ApiError } from "@/lib/application/api";
-import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
+import {
+  DbTicketDetail,
+  resolveTicketActionNextStatus,
+  type TicketActionExecutionMode,
+} from "@/lib/application/contracts/serviceDesk";
 
-import { getLocalDemoNextStatus } from "./rules";
-import { LocalActionRuntimeContext, TicketActionExecutionMode } from "./types";
+import { LocalActionRuntimeContext } from "./types";
 
 export const requireTicket = ({
   ticket,
@@ -27,7 +30,7 @@ export const resolveNextTicketStatus = (
     return undefined;
   }
 
-  return getLocalDemoNextStatus(actionMode, ticket.status);
+  return resolveTicketActionNextStatus(actionMode, ticket.status);
 };
 
 export const requireNextStatus = ({

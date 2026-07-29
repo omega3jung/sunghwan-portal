@@ -4,6 +4,12 @@ import {
 } from "next/server";
 
 import {
+  isTicketApprovalActionPath,
+  isTicketGeneralActionPath,
+  type TicketActionCommandRequest,
+  type TicketApprovalActionCommandRequest,
+} from "@/lib/application/contracts/serviceDesk";
+import {
   closeExpiredResolvedTickets,
   createTicket,
   getTicketDetail,
@@ -17,14 +23,10 @@ import {
   updateRequesterTicket,
 } from "@/server/data/serviceDesk/ticket";
 import {
-  type ApprovalTicketActionRequestDto,
   executeTicketAction,
   executeTicketApprovalAction,
   getTicketActionsByTicketId,
-  isTicketApprovalActionPath,
-  isTicketGeneralActionPath,
   softDeleteTicketAction,
-  type TicketActionRequestDto,
 } from "@/server/data/serviceDesk/ticketAction";
 import {
   createTicketDraft,
@@ -229,7 +231,8 @@ export async function handleTicketPortalApi(
         action,
         currentUserName,
         isAdmin,
-        payload: requireBody<ApprovalTicketActionRequestDto>(context.options),
+        payload:
+          requireBody<TicketApprovalActionCommandRequest>(context.options),
       });
 
       return NextResponse.json(actionDto, { status: 201 });
@@ -239,7 +242,7 @@ export async function handleTicketPortalApi(
       ticketId,
       action,
       currentUserName,
-      payload: requireBody<TicketActionRequestDto>(context.options),
+      payload: requireBody<TicketActionCommandRequest>(context.options),
       isAdmin,
       isInternal: currentUserProfile.userScope === "INTERNAL",
     });

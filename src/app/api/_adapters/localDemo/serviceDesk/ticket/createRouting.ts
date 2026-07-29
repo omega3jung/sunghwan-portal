@@ -11,7 +11,10 @@ import {
 import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
 import type { TicketStatus } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
-import type { DbCategoryApprovalSettings } from "@/lib/application/contracts/serviceDesk";
+import type {
+  DbAssignmentRule,
+  DbCategoryApprovalSettings,
+} from "@/lib/application/contracts/serviceDesk";
 import { resolveDemoAuth } from "@/mocks/domain/user";
 
 const DEFAULT_REQUESTER_ACCESS_LEVEL = ACCESS_LEVEL.USER;
@@ -96,11 +99,9 @@ async function requireLocalCategoryContext(categoryId: string) {
   const category = await getServiceDeskCategoryContext(categoryId);
 
   if (!category || !category.tenant.active) {
-    throw new ApiError(
-      "serviceDesk.tickets.localDemo.categoryNotFound",
-      404,
-      { categoryId },
-    );
+    throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
+      categoryId,
+    });
   }
 
   return category;
@@ -212,7 +213,7 @@ function resolveApprovalStepAssignees({
 async function resolveAssignmentAssignees(
   category: ServiceDeskCategoryContext,
 ) {
-  const assignmentRule = findByCategoryIdWithMainFallback(
+  const assignmentRule = findAssignmentRuleWithMainFallback(
     getLocalDemoAssignmentRules(category.tenant.isOwnerTenant),
     category,
   );
@@ -240,6 +241,34 @@ async function resolveAssignmentAssignees(
   );
 
   return normalizeAssigneeIds([...directAssignees, ...jobFieldAssignees]);
+}
+
+function findAssignmentRuleWithMainFallback(
+  rules: DbAssignmentRule[],
+  category: ServiceDeskCategoryContext,
+) {
+  const categoryCandidates = [category.categoryId, category.mainCategoryId];
+
+  for (const categoryCandidate of categoryCandidates) {
+    const found = rules.find(
+      (rule) =>
+        String(rule.category_id) === categoryCandidate &&
+        hasDbAssignmentRuleSelection(rule),
+    );
+
+    if (found) {
+      return found;
+    }
+  }
+
+  return null;
+}
+
+function hasDbAssignmentRuleSelection(rule: DbAssignmentRule) {
+  return (
+    rule.assignee.job_field_id.length > 0 ||
+    rule.assignee.employee_username.length > 0
+  );
 }
 
 function normalizeAssigneeIds(

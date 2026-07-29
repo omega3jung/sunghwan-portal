@@ -1,27 +1,17 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
-import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
-import {
-  TICKET_ACTION_TYPE_TO_PATH,
-  TicketActionFormValues,
+import type {
+  DbTicketDetail,
+  DbTicketHistory,
+  TicketActionCommandPayload,
   TicketActionPath,
 } from "@/lib/application/contracts/serviceDesk";
-import { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
-
-export const ACTION_PATH_BY_TYPE = TICKET_ACTION_TYPE_TO_PATH;
 
 export type TicketActionApiType = TicketActionPath;
-
-export type TicketActionExecutionMode =
-  | TicketActionApiType
-  | "assignManager"
-  | "adjustManager"
-  | "mergeManager"
-  | "rejectManager";
 
 type LocalActionBaseContext = {
   ticketId: string;
   employeeUserName: string;
-  content: TicketActionFormValues;
+  content: TicketActionCommandPayload;
 };
 
 type LocalActionMutationContext = LocalActionBaseContext & {

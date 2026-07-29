@@ -2,11 +2,11 @@ import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import {
   PrepareTicketAttachmentsInput,
-  PrepareTicketAttachmentsResponse,
   RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
 import type {
+  PrepareTicketAttachmentsResponse,
   TicketSearchRequest,
   TicketSearchResponse,
 } from "@/lib/application/contracts/serviceDesk";

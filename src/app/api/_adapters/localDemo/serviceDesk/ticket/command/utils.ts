@@ -1,7 +1,9 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { ApiError } from "@/lib/application/api";
-import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
-import { TicketActionFormValues } from "@/lib/application/contracts/serviceDesk";
+import {
+  DbTicketDetail,
+  TicketActionCommandPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 import {
   getLocalDemoActions,
@@ -64,12 +66,12 @@ export const createUpdatedTicket = (
 });
 
 export const toHistoryMetadata = (
-  content: TicketActionFormValues,
+  content: TicketActionCommandPayload,
 ): Record<string, unknown> => ({
   ...content,
 });
 
-export const requireAssigneeIds = (content: TicketActionFormValues) => {
+export const requireAssigneeIds = (content: TicketActionCommandPayload) => {
   if (!content.assigneeUsernames) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.assigneeRequired",
@@ -80,7 +82,7 @@ export const requireAssigneeIds = (content: TicketActionFormValues) => {
   return content.assigneeUsernames;
 };
 
-export const requireTargetTicketId = (content: TicketActionFormValues) => {
+export const requireTargetTicketId = (content: TicketActionCommandPayload) => {
   if (!content.targetTicketId) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.targetTicketRequired",
@@ -104,7 +106,7 @@ export const isRiskLevel = (value: string): value is RiskLevel =>
   value === "low";
 
 export const resolvePriority = (
-  value: TicketActionFormValues["priority"],
+  value: TicketActionCommandPayload["priority"],
   fallback: Priority,
 ) => {
   if (!value) {
@@ -123,7 +125,7 @@ export const resolvePriority = (
 };
 
 export const resolveRiskLevel = (
-  value: TicketActionFormValues["riskLevel"],
+  value: TicketActionCommandPayload["riskLevel"],
   fallback: RiskLevel,
 ) => {
   if (!value) {

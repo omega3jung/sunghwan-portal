@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
+import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
 
 import type { TicketFormValues } from "./forms";
 
@@ -37,12 +38,6 @@ type TicketRequestAttachmentInput = {
 export type PrepareTicketAttachmentsInput = {
   body: string;
   files: File[];
-};
-
-export type PrepareTicketAttachmentsResponse = {
-  body: string;
-  files: TicketAttachmentMetadataDto[];
-  images: TicketAttachmentMetadataDto[];
 };
 
 export type RequesterUpdateTicketPayload = {

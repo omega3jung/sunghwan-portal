@@ -1,11 +1,11 @@
+import type {
+  TicketActionExecutionMode,
+  TicketGeneralActionPath,
+} from "@/lib/application/contracts/serviceDesk";
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 
-import type {
-  NormalizedTicketActionPayload,
-  TicketActionExecutionMode,
-  TicketGeneralActionPath,
-} from "../ticketActionRules";
+import type { NormalizedTicketActionPayload } from "../ticketActionRules";
 import { executeAdjustTicketAction } from "./adjustTicketAction";
 import { executeAssignSelfTicketAction } from "./assignSelfTicketAction";
 import { executeAssignTicketAction } from "./assignTicketAction";

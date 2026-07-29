@@ -1,10 +1,5 @@
-import type { z } from "zod";
-
 import type { TicketAction, TicketActionType } from "@/domain/serviceDesk";
-
-import { ticketActionPayloadSchema } from "./forms/schema";
-
-export type TicketActionFormValues = z.infer<typeof ticketActionPayloadSchema>;
+import type { TicketActionCommandPayload } from "@/lib/application/contracts/serviceDesk";
 
 export type TicketActionMode =
   | "approve"
@@ -25,7 +20,7 @@ export type TicketActionUIState = "idle" | TicketActionMode;
 export interface TicketActionCommandInput {
   ticketId: string;
   actionType: TicketActionType;
-  values: TicketActionFormValues;
+  values: TicketActionCommandPayload;
 }
 
 export interface TicketActionDeleteInput {
