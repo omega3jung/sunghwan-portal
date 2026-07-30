@@ -1,2 +1,6 @@
-export { SortableTreeItem } from "./SortableTreeItem";
-export { TreeItem } from "./TreeItem";
+export {
+  SortableTreeItem,
+  type SortableTreeItemProps,
+  type SortableTreeItemRenderParams,
+} from "./SortableTreeItem";
+export { TreeItem, type TreeItemProps } from "./TreeItem";

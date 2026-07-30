@@ -9,23 +9,23 @@ import { NS } from "@/lib/application/i18n";
 import type { ServiceDeskSettingsAccess } from "@/lib/application/serviceDesk";
 
 type Props = {
-  title?: string;
-  description?: string;
-  isResetDisabled: boolean;
+  title: string;
+  description: string;
+  canReset: boolean;
   onReset: () => void;
-  isSaveDisabled: boolean;
+  canSave: boolean;
   onSave: () => void;
-  isSaving?: boolean;
+  isSaving: boolean;
 };
 
 export function ServiceDeskSettingsPageHeader({
   title,
   description,
-  isResetDisabled,
+  canReset,
   onReset,
-  isSaveDisabled,
+  canSave,
   onSave,
-  isSaving = false,
+  isSaving,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const { t: tCommon } = useTranslation(NS.common);
@@ -43,7 +43,7 @@ export function ServiceDeskSettingsPageHeader({
             type="button"
             size="sm"
             variant="outline"
-            disabled={isResetDisabled}
+            disabled={!canReset}
             onClick={onReset}
           >
             {tCommon("action.reset", { defaultValue: "Reset" })}
@@ -51,7 +51,7 @@ export function ServiceDeskSettingsPageHeader({
           <Button
             type="button"
             size="sm"
-            disabled={isSaveDisabled}
+            disabled={!canSave}
             onClick={onSave}
           >
             {isSaving ? (
@@ -70,7 +70,7 @@ export function ServiceDeskSettingsPageHeader({
   );
 }
 
-export function ServiceDeskSettingsAccessBanner({
+export function ServiceDeskSettingsReadOnlyBanner({
   access,
   managedBy,
 }: {

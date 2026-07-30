@@ -1,70 +1,44 @@
-// TreeItem.tsx
-import React, { forwardRef, HTMLAttributes } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  forwardRef,
+} from "react";
 
 import { cn } from "@/shared/utils/presentation";
 
 import styles from "./TreeItem.module.css";
 
-export interface TreeItemProps extends Omit<
-  HTMLAttributes<HTMLLIElement>,
-  "id"
-> {
-  depth: number;
-  indentationWidth: number;
-
+export interface TreeItemProps extends ComponentPropsWithoutRef<"div"> {
   clone?: boolean;
   ghost?: boolean;
-  indicator?: boolean;
-
   disableInteraction?: boolean;
-  disableSelection?: boolean;
-
-  wrapperRef?(node: HTMLLIElement | null): void;
-
-  children: React.ReactNode;
 }
 
 export const TreeItem = forwardRef<HTMLDivElement, TreeItemProps>(
   (
     {
-      depth,
-      indentationWidth,
-      clone,
-      ghost,
-      indicator,
-      disableInteraction,
-      disableSelection,
-      wrapperRef,
+      clone = false,
+      ghost = false,
+      disableInteraction = false,
+      className,
       style,
-      children,
       ...props
     },
     ref,
-  ) => {
-    return (
-      <li
-        ref={wrapperRef}
-        className={cn(
-          styles.Wrapper,
-          clone && styles.clone,
-          ghost && styles.ghost,
-          indicator && styles.indicator,
-          disableSelection && styles.disableSelection,
-          disableInteraction && styles.disableInteraction,
-        )}
-        style={
-          {
-            "--spacing": `${indentationWidth * depth}px`,
-          } as React.CSSProperties
-        }
-        {...props}
-      >
-        <div ref={ref} className={styles.TreeItem} style={style}>
-          {children}
-        </div>
-      </li>
-    );
-  },
+  ) => (
+    <div
+      {...props}
+      ref={ref}
+      className={cn(
+        styles.TreeItem,
+        clone && styles.clone,
+        ghost && styles.ghost,
+        disableInteraction && styles.disableInteraction,
+        className,
+      )}
+      style={style as CSSProperties}
+    />
+  ),
 );
 
 TreeItem.displayName = "TreeItem";

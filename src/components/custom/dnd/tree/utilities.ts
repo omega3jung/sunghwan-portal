@@ -16,6 +16,11 @@ export function getProjection<T>(
 ) {
   const overItemIndex = items.findIndex(({ id }) => id === overId);
   const activeItemIndex = items.findIndex(({ id }) => id === activeId);
+
+  if (overItemIndex < 0 || activeItemIndex < 0) {
+    return null;
+  }
+
   const activeItem = items[activeItemIndex];
   const newItems = arrayMove(items, activeItemIndex, overItemIndex);
   const previousItem = newItems[overItemIndex - 1];
@@ -79,13 +84,14 @@ function flatten<T>(
   parentId: UniqueIdentifier | null = null,
   depth = 0,
 ): FlattenedNode<T>[] {
-  return items.reduce<FlattenedNode<T>[]>((acc, item, index) => {
-    return [
-      ...acc,
-      { ...item, parentId, depth, index },
-      ...flatten(item.children, item.id, depth + 1),
-    ];
-  }, []);
+  const flattened: FlattenedNode<T>[] = [];
+
+  items.forEach((item, index) => {
+    flattened.push({ ...item, parentId, depth, index });
+    flattened.push(...flatten(item.children, item.id, depth + 1));
+  });
+
+  return flattened;
 }
 
 export function flattenTree<T>(items: TreeNodes<T>): FlattenedNode<T>[] {
@@ -93,19 +99,36 @@ export function flattenTree<T>(items: TreeNodes<T>): FlattenedNode<T>[] {
 }
 
 export function buildTree<T>(flattenedItems: FlattenedNode<T>[]): TreeNodes<T> {
-  const root: TreeNode<T | null> = { id: "root", children: [], data: null };
-  const nodes: Record<string, TreeNode<T | null>> = { [root.id]: root };
-  const items = flattenedItems.map((item) => ({ ...item, children: [] }));
+  const items = flattenedItems.map<TreeNode<T>>((item) => ({
+    id: item.id,
+    data: item.data,
+    children: [],
+    collapsed: item.collapsed,
+    maximum: item.maximum,
+  }));
+  const nodes = new Map<UniqueIdentifier, TreeNode<T>>(
+    items.map((item) => [item.id, item]),
+  );
+  const roots: TreeNodes<T> = [];
 
-  for (const item of items) {
-    const parentId = item.parentId ?? root.id;
-    const parent = nodes[parentId] ?? findItem(items, parentId);
+  flattenedItems.forEach((flattenedItem, index) => {
+    const item = items[index];
 
-    nodes[item.id] = item;
-    parent.children.push(item);
-  }
+    if (flattenedItem.parentId === null) {
+      roots.push(item);
+      return;
+    }
 
-  return root.children as TreeNodes<T>;
+    const parent = nodes.get(flattenedItem.parentId);
+
+    if (parent) {
+      parent.children.push(item);
+    } else {
+      roots.push(item);
+    }
+  });
+
+  return roots;
 }
 
 export function findItem<T>(
@@ -146,28 +169,37 @@ export function setProperty<TData, K extends keyof TreeNode<TData>>(
   property: K,
   setter: (value: TreeNode<TData>[K]) => TreeNode<TData>[K],
 ): TreeNodes<TData> {
-  for (const item of items) {
+  let didChange = false;
+
+  const nextItems = items.map((item) => {
     if (item.id === id) {
-      item[property] = setter(item[property]);
-      continue;
+      didChange = true;
+      return {
+        ...item,
+        [property]: setter(item[property]),
+      };
     }
 
     if (item.children.length) {
-      item.children = setProperty(item.children, id, property, setter);
-    }
-  }
+      const children = setProperty(item.children, id, property, setter);
 
-  return [...items];
+      if (children !== item.children) {
+        didChange = true;
+        return { ...item, children };
+      }
+    }
+
+    return item;
+  });
+
+  return didChange ? nextItems : items;
 }
 
-function countChildren<T>(items: TreeNode<T>[], count = 0): number {
-  return items.reduce((acc, { children }) => {
-    if (children.length) {
-      return countChildren(children, acc + 1);
-    }
-
-    return acc + 1;
-  }, count);
+function countChildren<T>(items: TreeNode<T>[]): number {
+  return items.reduce(
+    (count, item) => count + 1 + countChildren(item.children),
+    0,
+  );
 }
 
 export function getChildCount<T>(items: TreeNodes<T>, id: UniqueIdentifier) {
@@ -189,7 +221,7 @@ export function removeChildrenOf<T>(
 
     // if parent is collapsed, this node is exclude.
     if (
-      item.parentId &&
+      item.parentId !== null &&
       (collapsedIds.has(item.parentId) || excluded.has(item.parentId))
     ) {
       excluded.add(item.id);

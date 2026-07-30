@@ -1,17 +1,16 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { ChevronRight, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { SetStateAction } from "react";
 
 import { DragHandle } from "@/components/custom/dnd/DragHandle";
 import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import { SortableTreeItem } from "@/components/custom/dnd/tree/TreeItem";
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { cn } from "@/shared/utils/presentation";
 
+import { ServiceDeskSettingsTreeRow } from "../../components/ServiceDeskSettingsTreeRow";
 import { CategoryData, SubCategoryData } from "../types";
 
 type Props = {
@@ -42,97 +41,86 @@ export const CategoryTree = ({
   const tLocal = useLocalizedText(language);
 
   return (
-    <ScrollArea className="h-full w-full border-y md:h-[calc(100vh-var(--settings-offset))]">
+    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-27.5rem)]">
       <SortableTree
         items={tree}
-        onChange={(nextTree) => {
-          if (!readOnly) setTree(nextTree);
-        }}
-        collapsible={true}
-        renderItem={(item, { onCollapse }) => {
+        onChange={setTree}
+        collapsible
+        disabled={readOnly}
+        indentationWidth={20}
+        reorderScope="sameDepth"
+        renderItem={(item, { dragHandleProps, isOverlay, onCollapse }) => {
           const data = item.data;
-          const isSub = item.depth > 0;
-          const limit = item.maximum;
+          const isSubCategory = item.depth > 0;
+          const canAddSubCategory =
+            !readOnly &&
+            !isSubCategory &&
+            item.maximum != null &&
+            item.children.length < item.maximum;
 
           return (
-            <SortableTreeItem
-              key={item.id}
-              id={item.id}
-              depth={item.depth}
-              indentationWidth={20}
-              onClick={() => setSelectedId(item.id)}
-            >
-              {({ dragHandleProps }) => (
-                <div
-                  data-selected={item.id === selectedId}
-                  className={cn(
-                    "flex items-center justify-between w-full pl-3 pr-5 py-2",
-                    "border-b last:border-b-0",
-                    "border-l-[3px] border-l-transparent",
-                    "data-[selected='true']:border-l-primary",
-                    "data-[selected='true']:bg-primary/5",
-                    "transition-colors",
-                    "bg-background hover:bg-muted/50 text-foreground",
-                    isSub && "text-sm",
+            <ServiceDeskSettingsTreeRow
+              label={tLocal(data.name)}
+              hasChildren={item.children.length > 0}
+              collapsed={item.collapsed}
+              selected={item.id === selectedId}
+              overlay={isOverlay}
+              child={isSubCategory}
+              collapseLabel={item.collapsed ? "Expand" : "Collapse"}
+              onCollapse={() => onCollapse?.(item.id)}
+              onClick={() => {
+                if (!isOverlay) setSelectedId(item.id);
+              }}
+              actions={
+                <>
+                  {canAddSubCategory && (
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      size="icon-xs"
+                      className="size-5 rounded-sm"
+                      disabled={isLoading}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        addSubCategory(data.id);
+                      }}
+                    >
+                      <Plus className="size-4" />
+                    </Button>
                   )}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    {item.children.length ? (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-4 w-4"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCollapse?.(item.id);
-                        }}
-                      >
-                        <ChevronRight
-                          className={cn(
-                            "transition-transform",
-                            !item.collapsed && "rotate-90",
-                          )}
-                        />
-                      </Button>
-                    ) : (
-                      <span className="w-4" />
-                    )}
 
-                    <span className="truncate">{tLocal(data.name)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {!readOnly &&
-                      !isSub &&
-                      limit != null &&
-                      item.children.length < limit && (
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          size="icon-xs"
-                          disabled={isLoading}
-                          onClick={() => addSubCategory(data.id)}
-                        >
-                          <Plus />
-                        </Button>
-                      )}
-                    {!readOnly && data.isCreated ? (
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon-xs"
-                        disabled={isLoading}
-                        onClick={() => removeCategory(data.id)}
-                      >
-                        <X />
-                      </Button>
-                    ) : (
-                      <span className="w-5"></span>
-                    )}
-                    {!readOnly && <DragHandle {...dragHandleProps} />}
-                  </div>
-                </div>
-              )}
-            </SortableTreeItem>
+                  {!readOnly && data.isCreated ? (
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      size="icon-xs"
+                      className="size-5 rounded-sm"
+                      disabled={isLoading}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        removeCategory(data.id);
+                      }}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  ) : (
+                    !readOnly && (
+                      <span className="size-5 shrink-0" aria-hidden="true" />
+                    )
+                  )}
+
+                  {!readOnly && !isOverlay && (
+                    <DragHandle
+                      {...dragHandleProps}
+                      aria-label={tLocal(data.name)}
+                    />
+                  )}
+                  {!readOnly && isOverlay && (
+                    <span className="size-5 shrink-0" aria-hidden="true" />
+                  )}
+                </>
+              }
+            />
           );
         }}
       />

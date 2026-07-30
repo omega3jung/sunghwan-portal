@@ -196,10 +196,7 @@ export function createSettingsNavigationMock(
           icon: CalendarClock,
         },
         {
-          triggerTitle: t(
-            "settingsNavigation.accountSettings.users.title",
-            ns,
-          ),
+          triggerTitle: t("settingsNavigation.accountSettings.users.title", ns),
           path: "/settings/account-settings/users",
           triggerDescription: t(
             "settingsNavigation.accountSettings.users.description",
@@ -293,18 +290,6 @@ export function createSettingsNavigationMock(
       items: [
         {
           triggerTitle: t(
-            "settingsNavigation.serviceDeskSettings.tenant.title",
-            ns,
-          ),
-          path: "/settings/service-desk-settings/tenant",
-          triggerDescription: t(
-            "settingsNavigation.serviceDeskSettings.tenant.description",
-            ns,
-          ),
-          icon: Building2,
-        },
-        {
-          triggerTitle: t(
             "settingsNavigation.serviceDeskSettings.category.title",
             ns,
           ),
@@ -338,6 +323,18 @@ export function createSettingsNavigationMock(
             ns,
           ),
           icon: Bot,
+        },
+        {
+          triggerTitle: t(
+            "settingsNavigation.serviceDeskSettings.tenant.title",
+            ns,
+          ),
+          path: "/settings/service-desk-settings/tenant",
+          triggerDescription: t(
+            "settingsNavigation.serviceDeskSettings.tenant.description",
+            ns,
+          ),
+          icon: Building2,
         },
       ],
     },

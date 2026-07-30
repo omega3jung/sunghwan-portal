@@ -1,37 +1,20 @@
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import type {
-  ApprovalStep,
-  CategoryApprovalSettings,
-  TenantCategoryTree,
-} from "@/domain/serviceDesk";
-import type {
   ApprovalStepTreeSyncInput,
   CategoryApprovalStepTreeSyncInput,
   SaveServiceDeskApprovalStepTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import type { LocalizedText } from "@/shared/types";
+import {
+  normalizeLocalizedText,
+  normalizeOptionalLocalizedText,
+} from "@/shared/utils/value";
 
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
-import { mapApprovalData } from "./mapper";
 
 type ApprovalStepTree = TreeNodes<CategoryApprovalStepData | ApprovalStepData>;
 
 const APPROVAL_STEP_ID_PREFIX = "approval:";
 const NEW_APPROVAL_STEP_ID_PREFIX = "newApproval:";
-
-const normalizeLocalizedText = (value?: LocalizedText) => {
-  return Object.fromEntries(
-    Object.entries(value ?? {})
-      .filter(([, text]) => typeof text === "string")
-      .sort(([left], [right]) => left.localeCompare(right)),
-  ) as LocalizedText;
-};
-
-const normalizeOptionalLocalizedText = (value?: LocalizedText) => {
-  const normalizedValue = normalizeLocalizedText(value);
-
-  return Object.keys(normalizedValue).length ? normalizedValue : undefined;
-};
 
 const normalizeApprovalStepId = (value?: string) => {
   if (!value) {
@@ -101,7 +84,7 @@ export const buildApprovalStepTreeSavePayload = ({
 };
 
 const normalizeApprovalStepsForComparison = (
-  approvalSteps: ApprovalStepTreeSyncInput[] | ApprovalStep[],
+  approvalSteps: ApprovalStepTreeSyncInput[],
 ) => {
   return approvalSteps.map((approvalStep, approvalIndex) => ({
     id: normalizeApprovalStepId(approvalStep.id),
@@ -114,7 +97,7 @@ const normalizeApprovalStepsForComparison = (
 };
 
 const normalizeCategoriesForComparison = (
-  categories: CategoryApprovalStepTreeSyncInput[] | CategoryApprovalSettings[],
+  categories: CategoryApprovalStepTreeSyncInput[],
 ) => {
   return categories.map((category) => ({
     id: category.id,
@@ -137,8 +120,8 @@ export const isApprovalStepAssigneeValid = (approvalStep: ApprovalStepData) => {
   switch (approvalStep.stepAssignee.type) {
     case "MANAGER":
       return (
-        approvalStep.stepAssignee.level === 1 ||
-        approvalStep.stepAssignee.level === 2
+        approvalStep.stepAssignee.managerDistance === 1 ||
+        approvalStep.stepAssignee.managerDistance === 2
       );
     case "DEPARTMENT":
       return approvalStep.stepAssignee.departmentId.trim().length > 0;
@@ -155,37 +138,21 @@ export const isApprovalStepAssigneeValid = (approvalStep: ApprovalStepData) => {
 };
 
 export const isApprovalStepTreeValid = (tree: ApprovalStepTree) => {
-  return tree.every((categoryNode) =>
-    categoryNode.children.every((approvalNode) => {
-      const approvalData = approvalNode.data as ApprovalStepData;
-
-      return isApprovalStepAssigneeValid(approvalData);
-    }),
-  );
+  return getApprovalStepTreeErrors(tree).size === 0;
 };
 
-export const createApprovalStepSettingsSignatureFromApprovalSettings = ({
-  categories,
-  selectedTenant,
-  approvalSteps,
-}: {
-  categories: TenantCategoryTree[] | undefined;
-  selectedTenant: string | null;
-  approvalSteps: CategoryApprovalSettings[] | undefined;
-}) => {
-  if (!categories || !selectedTenant) {
-    return JSON.stringify([]);
-  }
+export const getApprovalStepTreeErrors = (tree: ApprovalStepTree) => {
+  const errors = new Map<string, "invalidAssignee">();
 
-  const mappedCategories = mapApprovalData(
-    categories,
-    selectedTenant,
-    approvalSteps ?? [],
-  );
-  const normalizedCategories = mappedCategories.map((category) => ({
-    id: category.categoryId,
-    approvalSteps: category.approvalSteps,
-  }));
+  tree.forEach((categoryNode) => {
+    categoryNode.children.forEach((approvalNode) => {
+      const approvalData = approvalNode.data as ApprovalStepData;
 
-  return JSON.stringify(normalizeCategoriesForComparison(normalizedCategories));
+      if (!isApprovalStepAssigneeValid(approvalData)) {
+        errors.set(approvalNode.id.toString(), "invalidAssignee");
+      }
+    });
+  });
+
+  return errors;
 };

@@ -1,312 +1,140 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Workflow } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  findTreeNodePath,
-  resolveTreeNodeIdByPath,
-} from "@/components/custom/dnd/tree/utilities";
-import {
-  useSaveServiceDeskApprovalStepTree,
-  useServiceDeskApprovalStepListQuery,
-} from "@/feature/serviceDesk/approvalStep/client";
+import { Button } from "@/components/ui/button";
 import { NS } from "@/lib/application/i18n";
-import { useMutationToast } from "@/lib/client/toast";
+import { cn } from "@/shared/utils/presentation";
 
-import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
-import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import {
-  ServiceDeskSettingsAccessBanner,
   ServiceDeskSettingsPageHeader,
+  ServiceDeskSettingsReadOnlyBanner,
 } from "../components/ServiceDeskSettingsPageHeader";
-import {
-  ServiceDeskSettingsScopeSelect,
-  ServiceDeskTenantSelect,
-} from "../components/ServiceDeskTenantSelect";
-import { useActiveServiceDeskCategoryListQuery } from "../hooks/useActiveServiceDeskCategoryListQuery";
-import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import { useServiceDeskSettingsScopeAccess } from "../hooks/useServiceDeskSettingsScopeAccess";
-import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
+import { ServiceDeskSettingsPageLoading } from "../components/ServiceDeskSettingsPageLoading";
+import { ServiceDeskSettingsToolbar } from "../components/ServiceDeskSettingsToolbar";
 import { ApprovalStepForm } from "./components/ApprovalStepForm";
 import { ApprovalStepperPanel } from "./components/ApprovalStepperPanel";
 import { ApprovalStepTree } from "./components/ApprovalStepTree";
-import { useApprovalStepTree } from "./hooks/useApprovalStepTree";
-import { approvalStepToTree, mapApprovalData } from "./utils/mapper";
-import {
-  buildApprovalStepTreeSavePayload,
-  createApprovalStepSettingsSignatureFromApprovalSettings,
-  createApprovalStepSettingsSignatureFromTree,
-  isApprovalStepTreeValid,
-} from "./utils/tree";
+import { useApprovalStepSettings } from "./hooks/useApprovalStepSettings";
 
 export default function ApprovalStepPage() {
+  const [isStepperAsideOpen, setIsStepperAsideOpen] = useState(false);
+  const settings = useApprovalStepSettings();
   const { t } = useTranslation(NS.settings);
-  const mutationToast = useMutationToast();
-  const { selectedTenant, isTenantSelectionLoading } =
-    useTenantSelection();
-  const {
-    selectedScope,
-    setSelectedScope,
-    availableScopes,
-    access,
-    canRead,
-    canManage,
-    contextKey,
-    selectedTenantData,
-  } = useServiceDeskSettingsScopeAccess("APPROVAL_STEP");
 
-  const { language, setLanguage } = useServiceDeskSettingsLanguage();
+  if (settings.isLoading) {
+    return <ServiceDeskSettingsPageLoading />;
+  }
 
-  const [baselineSignatureByContext, setBaselineSignatureByContext] = useState<
-    Record<string, string>
-  >({});
-
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useActiveServiceDeskCategoryListQuery(
-      selectedTenant,
-      selectedScope,
-      canRead,
+  if (settings.errorMessage) {
+    return (
+      <div className="flex h-40 w-full flex-col items-center justify-center gap-3 text-center">
+        <p className="text-sm text-muted-foreground">{settings.errorMessage}</p>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={settings.onRetry}
+        >
+          {settings.retryLabel}
+        </Button>
+      </div>
     );
-
-  const scopedCategories = useMemo(
-    () =>
-      categories?.map((tenant) => ({
-        ...tenant,
-        categories: tenant.categories.filter(
-          (category) => category.scope === selectedScope,
-        ),
-      })),
-    [categories, selectedScope],
-  );
-
-  const approvalStepParams = useMemo(
-    () =>
-      selectedTenant && canRead
-        ? {
-            tenantId: selectedTenant,
-            settings: true,
-            context: "settings" as const,
-            scope: selectedScope,
-          }
-        : undefined,
-    [canRead, selectedScope, selectedTenant],
-  );
-
-  const { data: approvalSteps, isLoading: isApprovalStepsLoading } =
-    useServiceDeskApprovalStepListQuery(approvalStepParams);
-  const { mutateAsync: saveApprovalStepTree, isPending: isSaving } =
-    useSaveServiceDeskApprovalStepTree();
-
-  const {
-    tree,
-    setTree,
-    selectedNode,
-    selectedId,
-    setSelectedId,
-    treeTenantId,
-    treeContextKey,
-    addApprovalStep,
-    removeApprovalStep,
-  } = useApprovalStepTree({
-    selectedTenant,
-    scope: selectedScope,
-    categories: scopedCategories,
-    approvalSteps,
-    language,
-  });
-
-  // logics.
-  const queryBaselineSignature = useMemo(() => {
-    return createApprovalStepSettingsSignatureFromApprovalSettings({
-      categories: scopedCategories,
-      selectedTenant,
-      approvalSteps,
-    });
-  }, [approvalSteps, scopedCategories, selectedTenant]);
-
-  const baselineSignature =
-    contextKey === null
-      ? queryBaselineSignature
-      : (baselineSignatureByContext[contextKey] ?? queryBaselineSignature);
-
-  const currentSignature = useMemo(() => {
-    return createApprovalStepSettingsSignatureFromTree(tree);
-  }, [tree]);
-  const isTreeValid = useMemo(() => {
-    return isApprovalStepTreeValid(tree);
-  }, [tree]);
-  const isDirty =
-    Boolean(selectedTenant) && baselineSignature !== currentSignature;
-  const isTreeReadyForSelectedTenant =
-    Boolean(contextKey) &&
-    treeTenantId === selectedTenant &&
-    treeContextKey === contextKey;
-  const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
-
-  const canReset = canManage && hasUnsavedChanges && !isSaving;
-  const canSave = canManage && hasUnsavedChanges && isTreeValid && !isSaving;
-  const isLoading =
-    isTenantSelectionLoading ||
-    (Boolean(selectedTenant) &&
-      (isCategoriesLoading || isApprovalStepsLoading));
-
-  const handleReset = () => {
-    if (
-      !canManage ||
-      !selectedTenant ||
-      treeContextKey !== contextKey ||
-      !scopedCategories ||
-      !contextKey
-    ) {
-      return;
-    }
-
-    const nextTree = approvalStepToTree(
-      mapApprovalData(scopedCategories, selectedTenant, approvalSteps ?? []),
-    );
-    const nextBaselineSignature =
-      createApprovalStepSettingsSignatureFromTree(nextTree);
-
-    setBaselineSignatureByContext((previousState) => ({
-      ...previousState,
-      [contextKey]: nextBaselineSignature,
-    }));
-    setTree(nextTree);
-    setSelectedId(null);
-  };
-
-  const onSaveChange = async () => {
-    if (
-      !selectedTenant ||
-      treeContextKey !== contextKey ||
-      !canManage ||
-      !isDirty ||
-      !isTreeValid ||
-      !scopedCategories ||
-      !contextKey
-    ) {
-      return;
-    }
-
-    const selectedPath = findTreeNodePath(tree, selectedId);
-    const payload = buildApprovalStepTreeSavePayload({
-      tenantId: selectedTenant,
-      tree,
-    });
-
-    try {
-      const savePromise = saveApprovalStepTree(payload);
-      void mutationToast(
-        savePromise,
-        "save",
-        t("serviceDeskSettings.common.approvalStep"),
-      );
-      const savedApprovalSettings = await savePromise;
-      const nextTree = approvalStepToTree(
-        mapApprovalData(
-          scopedCategories,
-          selectedTenant,
-          savedApprovalSettings,
-        ),
-      );
-
-      setBaselineSignatureByContext((previousState) => ({
-        ...previousState,
-        [contextKey]: createApprovalStepSettingsSignatureFromApprovalSettings({
-          categories: scopedCategories,
-          selectedTenant,
-          approvalSteps: savedApprovalSettings,
-        }),
-      }));
-      setTree(nextTree);
-      setSelectedId(resolveTreeNodeIdByPath(nextTree, selectedPath));
-    } catch {
-      // Toast is handled by useMutationToast.
-    }
-  };
-
-  useEffect(() => {
-    if (!contextKey) {
-      return;
-    }
-
-    setBaselineSignatureByContext((previousState) => {
-      if (previousState[contextKey] === queryBaselineSignature) {
-        return previousState;
-      }
-
-      return {
-        ...previousState,
-        [contextKey]: queryBaselineSignature,
-      };
-    });
-  }, [contextKey, queryBaselineSignature]);
-
-  if (isLoading) {
-    return <ServiceDeskSettingsLoading />;
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="px-2 pt-2">
-        <ServiceDeskSettingsPageHeader
-          title={t("serviceDeskSettings.common.approvalStep")}
-          description={t(
-            "settingsNavigation.serviceDeskSettings.approvalSteps.description",
+    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col gap-4 overflow-x-hidden p-2">
+      <ServiceDeskSettingsPageHeader
+        title={settings.title}
+        description={settings.description}
+        canReset={settings.canReset}
+        onReset={settings.onReset}
+        canSave={settings.canSave}
+        onSave={settings.onSave}
+        isSaving={settings.isSaving}
+      />
+
+      <ServiceDeskSettingsToolbar
+        controls={settings.toolbar}
+        action={
+          <Button
+            type="button"
+            variant="secondary"
+            className="hidden rounded-md xl:inline-flex"
+            title={settings.title}
+            aria-controls="approval-stepper-aside"
+            aria-expanded={isStepperAsideOpen}
+            onClick={() => {
+              setIsStepperAsideOpen((previous) => !previous);
+            }}
+          >
+            <Workflow
+              className={cn(
+                "h-4 w-4 transition-transform",
+                isStepperAsideOpen && "text-primary",
+              )}
+            />
+            {t("serviceDeskSettings.common.approvalStepList")}
+          </Button>
+        }
+      />
+
+      <ServiceDeskSettingsReadOnlyBanner
+        access={settings.access}
+        managedBy={settings.managedBy}
+      />
+
+      <div className="flex min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden">
+        <main className="min-w-0 flex-1">
+          <div className="grid min-h-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+            <ApprovalStepTree
+              tree={settings.tree.tree}
+              setTree={settings.tree.setTree}
+              selectedId={settings.tree.selectedId}
+              setSelectedId={settings.tree.setSelectedId}
+              addApprovalStep={settings.tree.addApprovalStep}
+              removeApprovalStep={settings.tree.removeApprovalStep}
+              language={settings.toolbar.language.value}
+              isLoading={settings.isSaving}
+              errors={settings.tree.errors}
+              readOnly={settings.tree.readOnly}
+            />
+
+            <ApprovalStepForm
+              selectedNode={settings.tree.selectedNode}
+              language={settings.toolbar.language.value}
+              onChange={settings.tree.updateSelectedNode}
+              readOnly={settings.tree.readOnly}
+              companyId={settings.companyId}
+            />
+          </div>
+        </main>
+
+        <div
+          className={cn(
+            "hidden overflow-hidden transition-[width] duration-200 ease-linear xl:block",
+            isStepperAsideOpen ? "w-80" : "w-0",
           )}
-          isResetDisabled={!canReset}
-          onReset={handleReset}
-          isSaveDisabled={!canSave}
-          onSave={() => void onSaveChange()}
-          isSaving={isSaving}
-        />
-      </div>
-
-      <div className="px-2">
-        <ServiceDeskSettingsAccessBanner access={access} managedBy="customer" />
-      </div>
-
-      <div className="flex flex-wrap items-end gap-4 px-2">
-        <ServiceDeskTenantSelect className="min-w-60" />
-        <ServiceDeskSettingsScopeSelect
-          value={selectedScope}
-          onValueChange={setSelectedScope}
-          availableScopes={availableScopes}
-          disabled={isLoading || isSaving}
-        />
-        <ServiceDeskSettingsLanguageSelect
-          language={language}
-          onLanguageChange={setLanguage}
-        />
-      </div>
-
-      <div className="grid grid-cols-5 gap-2">
-        <ApprovalStepTree
-          tree={tree}
-          setTree={setTree}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          addApprovalStep={addApprovalStep}
-          removeApprovalStep={removeApprovalStep}
-          language={language}
-          isLoading={isApprovalStepsLoading || isSaving}
-          readOnly={!canManage}
-        />
-
-        <ApprovalStepForm
-          selectedNode={selectedNode}
-          language={language}
-          setTree={setTree}
-          readOnly={!canManage}
-          companyId={selectedTenantData?.companyId ?? null}
-        />
-
-        <ApprovalStepperPanel
-          selectedNode={selectedNode}
-          tree={tree}
-          language={language}
-        />
+        >
+          <aside
+            id="approval-stepper-aside"
+            aria-label={settings.title}
+            className={cn(
+              "h-full w-80 shrink-0 pl-4 transition-[opacity,transform] duration-200 ease-linear",
+              isStepperAsideOpen
+                ? "translate-x-0 opacity-100"
+                : "pointer-events-none translate-x-2 opacity-0",
+            )}
+          >
+            <ApprovalStepperPanel
+              selectedNode={settings.tree.selectedNode}
+              tree={settings.tree.tree}
+              language={settings.toolbar.language.value}
+            />
+          </aside>
+        </div>
       </div>
     </div>
   );

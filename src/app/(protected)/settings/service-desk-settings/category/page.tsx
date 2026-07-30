@@ -1,304 +1,105 @@
-// src/app/(protected)/settings/service-desk-settings/category/page.tsx
-
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  findTreeNodePath,
-  resolveTreeNodeIdByPath,
-} from "@/components/custom/dnd/tree/utilities";
 import { Button } from "@/components/ui/button";
-import {
-  useSaveServiceDeskCategoryTree,
-  useServiceDeskCategoryListQuery,
-} from "@/feature/serviceDesk/category/client";
 import { NS } from "@/lib/application/i18n";
-import { useMutationToast } from "@/lib/client/toast";
 
-import { SETTINGS_OFFSET_STYLE } from "../../style";
-import { ServiceDeskSettingsLanguageSelect } from "../components/ServiceDeskSettingsLanguageSelect";
-import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import {
-  ServiceDeskSettingsAccessBanner,
   ServiceDeskSettingsPageHeader,
+  ServiceDeskSettingsReadOnlyBanner,
 } from "../components/ServiceDeskSettingsPageHeader";
-import {
-  ServiceDeskSettingsScopeSelect,
-  ServiceDeskTenantSelect,
-} from "../components/ServiceDeskTenantSelect";
-import { useServiceDeskSettingsLanguage } from "../hooks/useServiceDeskSettingsLanguage";
-import { useServiceDeskSettingsScopeAccess } from "../hooks/useServiceDeskSettingsScopeAccess";
-import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
+import { ServiceDeskSettingsPageLoading } from "../components/ServiceDeskSettingsPageLoading";
+import { ServiceDeskSettingsToolbar } from "../components/ServiceDeskSettingsToolbar";
 import { CategoryForm } from "./components/CategoryForm";
 import { CategoryTree } from "./components/CategoryTree";
-import { useCategoryTree } from "./hooks/useCategoryTree";
-import { categoryToTree, mapCategoryData } from "./utils/mapper";
-import {
-  buildCategoryTreeSavePayload,
-  createCategorySettingsSignatureFromCategories,
-  createCategorySettingsSignatureFromTree,
-} from "./utils/tree";
+import { useCategorySettings } from "./hooks/useCategorySettings";
 
 export default function CategoryPage() {
+  const settings = useCategorySettings();
   const { t } = useTranslation(NS.settings);
-  const mutationToast = useMutationToast();
-  const { selectedTenant, isTenantSelectionLoading } = useTenantSelection();
-  const {
-    selectedScope,
-    setSelectedScope,
-    availableScopes,
-    access,
-    canRead,
-    canManage,
-    contextKey,
-  } = useServiceDeskSettingsScopeAccess("CATEGORY");
 
-  const { language, setLanguage } = useServiceDeskSettingsLanguage();
+  if (settings.isLoading) {
+    return <ServiceDeskSettingsPageLoading />;
+  }
 
-  const [baselineSignatureByContext, setBaselineSignatureByContext] = useState<
-    Record<string, string>
-  >({});
-
-  const categoryParams = useMemo(
-    () =>
-      selectedTenant && canRead
-        ? {
-            tenantId: selectedTenant,
-            settings: true,
-            context: "settings" as const,
-            scope: selectedScope,
-          }
-        : undefined,
-    [canRead, selectedScope, selectedTenant],
-  );
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useServiceDeskCategoryListQuery(categoryParams);
-  const { mutateAsync: saveCategoryTree, isPending: isSaving } =
-    useSaveServiceDeskCategoryTree();
-
-  const {
-    tree,
-    setTree,
-    selectedId,
-    setSelectedId,
-    treeTenantId,
-    treeContextKey,
-    selectedNode,
-    addCategory,
-    removeCategory,
-    addSubCategory,
-  } = useCategoryTree({ selectedTenant, scope: selectedScope, categories });
-
-  const scopedCategories = useMemo(
-    () =>
-      categories?.map((tenant) => ({
-        ...tenant,
-        categories: tenant.categories.filter(
-          (category) => category.scope === selectedScope,
-        ),
-      })),
-    [categories, selectedScope],
-  );
-
-  const selectedTenantCategories = useMemo(() => {
+  if (settings.errorMessage) {
     return (
-      scopedCategories?.find((tenant) => tenant.id === selectedTenant)
-        ?.categories ?? []
+      <div className="flex h-40 w-full flex-col items-center justify-center gap-3 text-center">
+        <p className="text-sm text-muted-foreground">{settings.errorMessage}</p>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={settings.onRetry}
+        >
+          {settings.retryLabel}
+        </Button>
+      </div>
     );
-  }, [scopedCategories, selectedTenant]);
-
-  // logics.
-  const queryBaselineSignature = useMemo(() => {
-    return createCategorySettingsSignatureFromCategories(
-      selectedTenantCategories,
-    );
-  }, [selectedTenantCategories]);
-
-  const baselineSignature =
-    contextKey === null
-      ? queryBaselineSignature
-      : (baselineSignatureByContext[contextKey] ?? queryBaselineSignature);
-
-  const currentSignature = useMemo(() => {
-    return createCategorySettingsSignatureFromTree(tree);
-  }, [tree]);
-
-  const isDirty =
-    Boolean(selectedTenant) && baselineSignature !== currentSignature;
-  const isTreeReadyForSelectedTenant =
-    Boolean(contextKey) &&
-    treeTenantId === selectedTenant &&
-    treeContextKey === contextKey;
-  const hasUnsavedChanges = isTreeReadyForSelectedTenant && isDirty;
-  const canReset = canManage && hasUnsavedChanges && !isSaving;
-  const canSave = canManage && hasUnsavedChanges && !isSaving;
-  const isLoading =
-    isTenantSelectionLoading ||
-    (Boolean(selectedTenant) && canRead && isCategoriesLoading);
-
-  const handleReset = () => {
-    if (
-      !canManage ||
-      !selectedTenant ||
-      treeContextKey !== contextKey ||
-      !scopedCategories
-    ) {
-      return;
-    }
-
-    const nextTree = categoryToTree(
-      mapCategoryData(scopedCategories, selectedTenant),
-    );
-
-    setTree(nextTree);
-    setSelectedId(null);
-  };
-
-  const onSaveChange = async () => {
-    if (
-      !canManage ||
-      !selectedTenant ||
-      treeContextKey !== contextKey ||
-      !isDirty ||
-      !contextKey
-    ) {
-      return;
-    }
-
-    const selectedPath = findTreeNodePath(tree, selectedId);
-    const payload = buildCategoryTreeSavePayload({
-      tenantId: selectedTenant,
-      tree,
-    });
-
-    try {
-      const savePromise = saveCategoryTree(payload);
-      void mutationToast(
-        savePromise,
-        "save",
-        t("serviceDeskSettings.common.categoryList"),
-      );
-      const savedTenant = await savePromise;
-      const scopedSavedTenant = {
-        ...savedTenant,
-        categories: savedTenant.categories.filter(
-          (category) => category.scope === selectedScope,
-        ),
-      };
-
-      const nextTree = categoryToTree(
-        mapCategoryData([scopedSavedTenant], scopedSavedTenant.id),
-      );
-
-      setBaselineSignatureByContext((previousState) => ({
-        ...previousState,
-        [contextKey]: createCategorySettingsSignatureFromCategories(
-          scopedSavedTenant.categories,
-        ),
-      }));
-      setTree(nextTree);
-      setSelectedId(resolveTreeNodeIdByPath(nextTree, selectedPath));
-    } catch {
-      // Toast is handled by useMutationToast.
-    }
-  };
-
-  useEffect(() => {
-    if (!contextKey) {
-      return;
-    }
-
-    setBaselineSignatureByContext((previousState) => {
-      if (previousState[contextKey] === queryBaselineSignature) {
-        return previousState;
-      }
-
-      return {
-        ...previousState,
-        [contextKey]: queryBaselineSignature,
-      };
-    });
-  }, [contextKey, queryBaselineSignature]);
-
-  if (isLoading) {
-    return <ServiceDeskSettingsLoading />;
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="px-2 pt-2">
-        <ServiceDeskSettingsPageHeader
-          title={t("serviceDeskSettings.common.category")}
-          description={t(
-            "settingsNavigation.serviceDeskSettings.category.description",
-          )}
-          isResetDisabled={!canReset}
-          onReset={handleReset}
-          isSaveDisabled={!canSave}
-          onSave={() => void onSaveChange()}
-          isSaving={isSaving}
-        />
-      </div>
+    <div className="flex flex-col gap-4 p-2">
+      <ServiceDeskSettingsPageHeader
+        title={settings.title}
+        description={settings.description}
+        canReset={settings.canReset}
+        onReset={settings.onReset}
+        canSave={settings.canSave}
+        onSave={settings.onSave}
+        isSaving={settings.isSaving}
+      />
 
-      <div className="px-2">
-        <ServiceDeskSettingsAccessBanner
-          access={access}
-          managedBy="serviceProvider"
-        />
-      </div>
+      <ServiceDeskSettingsToolbar
+        controls={settings.toolbar}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="border-primary/90 shadow-sm"
+            disabled={
+              !settings.selectedTenant ||
+              settings.tree.readOnly ||
+              settings.isSaving
+            }
+            onClick={() =>
+              settings.tree.addCategory(settings.toolbar.scope.value)
+            }
+          >
+            {t("serviceDeskSettings.categoryTab.addCategory")}
+          </Button>
+        }
+      />
 
-      <div className="grid grid-cols-5 gap-2">
-        {/* Category Tree */}
-        <div
-          className="col-span-3 flex flex-col gap-2 p-2 pr-10"
-          style={SETTINGS_OFFSET_STYLE}
-        >
-          <div className="flex flex-wrap items-end gap-4 pb-6">
-            <ServiceDeskTenantSelect className="min-w-60" />
-            <ServiceDeskSettingsScopeSelect
-              value={selectedScope}
-              onValueChange={setSelectedScope}
-              availableScopes={availableScopes}
-              disabled={isLoading || isSaving}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <ServiceDeskSettingsLanguageSelect
-              language={language}
-              onLanguageChange={setLanguage}
-            />
-            <Button
-              variant="outline"
-              type="button"
-              size="sm"
-              disabled={!selectedTenant || !canManage || isLoading || isSaving}
-              onClick={() => addCategory(selectedScope)}
-            >
-              {t("serviceDeskSettings.categoryTab.addCategory")}
-            </Button>
-          </div>
+      <ServiceDeskSettingsReadOnlyBanner
+        access={settings.access}
+        managedBy={settings.managedBy}
+      />
+
+      <div className="grid min-h-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <div className="min-w-0">
           <CategoryTree
-            tree={tree}
-            setTree={setTree}
-            selectedId={selectedId}
-            setSelectedId={setSelectedId}
-            addSubCategory={addSubCategory}
-            removeCategory={removeCategory}
-            language={language}
-            isLoading={isLoading || isSaving}
-            readOnly={!canManage}
+            tree={settings.tree.tree}
+            setTree={settings.tree.setTree}
+            selectedId={settings.tree.selectedId}
+            setSelectedId={settings.tree.setSelectedId}
+            addSubCategory={settings.tree.addSubCategory}
+            removeCategory={settings.tree.removeCategory}
+            language={settings.toolbar.language.value}
+            isLoading={settings.isSaving}
+            readOnly={settings.tree.readOnly}
           />
         </div>
 
-        {/* Category details */}
-        <div className="col-span-2 p-2 pt-10">
+        <div className="min-w-0">
           <CategoryForm
-            selectedNode={selectedNode}
-            language={language}
-            setTree={setTree}
-            readOnly={!canManage}
+            selectedNode={settings.tree.selectedNode}
+            language={settings.toolbar.language.value}
+            availableScopes={settings.toolbar.scope.availableScopes}
+            onChange={settings.tree.updateSelectedNode}
+            readOnly={settings.tree.readOnly}
           />
         </div>
       </div>

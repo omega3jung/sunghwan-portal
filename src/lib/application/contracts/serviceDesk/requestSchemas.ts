@@ -61,7 +61,7 @@ const accessLevelValues = Object.values(ACCESS_LEVEL) as AccessLevel[];
 const approvalAssigneeSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("MANAGER"),
-    level: z.union([z.literal(1), z.literal(2)]),
+    managerDistance: z.union([z.literal(1), z.literal(2)]),
   }),
   z.object({ type: z.literal("DEPARTMENT"), departmentId: z.string().min(1) }),
   z.object({ type: z.literal("JOB_FIELD"), jobFieldId: z.string().min(1) }),

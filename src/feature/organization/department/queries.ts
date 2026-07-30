@@ -8,11 +8,11 @@ import { DbParams } from "@/shared/types/api";
 
 import { departmentQueryKeys } from "./queryKeys";
 
-export const useDepartmentListQuery = (params: DbParams) => {
+export const useDepartmentListQuery = (params?: DbParams) => {
   return useQuery({
-    queryKey: departmentQueryKeys.list(params),
-    queryFn: () => departmentApi.list(params),
-    enabled: !!params,
+    queryKey: departmentQueryKeys.list(params ?? {}),
+    queryFn: () => (params ? departmentApi.list(params) : Promise.resolve([])),
+    enabled: params !== undefined,
     ...STATIC_QUERY_OPTIONS,
   });
 };

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  toApiErrorResponse,
-} from "@/app/api/_adapters";
+import { toApiErrorResponse } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   assertAssignmentAssigneeEligible,
@@ -21,6 +19,7 @@ import {
   resolveOperationalServiceDeskReadTarget,
   resolveServiceDeskRequestContext,
 } from "@/app/api/_adapters/serviceDesk";
+import { hasAssignmentRuleSelection } from "@/domain/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 import {
   mapAssignmentRuleListPayload,
@@ -101,12 +100,16 @@ export async function GET(request: NextRequest) {
     return portalApiJson(request, {
       path: "/service-desk/assignment-rules",
       query: proxyQuery,
-      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.fetchList"),
+      errorMessage: resolveApiErrorMessage(
+        "serviceDesk.assignmentRules.fetchList",
+      ),
       mapData: mapAssignmentRuleListPayload,
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.fetchList"),
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.assignmentRules.fetchList",
+      ),
     });
   }
 }
@@ -149,7 +152,9 @@ export async function PUT(request: NextRequest) {
         method: "PUT",
         path: "/service-desk/assignment-rules",
         body,
-        errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
+        errorMessage: resolveApiErrorMessage(
+          "serviceDesk.assignmentRules.save",
+        ),
         mapData: mapAssignmentRuleTreePayload,
       });
     }
@@ -157,9 +162,7 @@ export async function PUT(request: NextRequest) {
     const submittedCategoryIds = new Set<string>();
 
     for (const category of body.categories) {
-      const categoryContext = await getServiceDeskCategoryContext(
-        category.id,
-      );
+      const categoryContext = await getServiceDeskCategoryContext(category.id);
 
       if (
         !categoryContext ||
@@ -181,7 +184,9 @@ export async function PUT(request: NextRequest) {
 
       if (!canManageServiceDeskSettings(access)) {
         throw Object.assign(
-          new Error("Assignment settings are read-only for this category scope."),
+          new Error(
+            "Assignment settings are read-only for this category scope.",
+          ),
           { status: 403 },
         );
       }
@@ -189,7 +194,7 @@ export async function PUT(request: NextRequest) {
       submittedCategoryIds.add(category.id);
       if (
         authorization.dataScope === "LOCAL" &&
-        hasAssignmentRuleAssigneeSelection(category.assignee)
+        hasAssignmentRuleSelection(category.assignee)
       ) {
         await assertAssignmentAssigneeEligible({
           category: categoryContext,
@@ -216,7 +221,7 @@ export async function PUT(request: NextRequest) {
         submittedCategoryIds.add(subCategory.id);
         if (
           authorization.dataScope === "LOCAL" &&
-          hasAssignmentRuleAssigneeSelection(subCategory.assignee)
+          hasAssignmentRuleSelection(subCategory.assignee)
         ) {
           await assertAssignmentAssigneeEligible({
             category: subCategoryContext,
@@ -238,14 +243,14 @@ export async function PUT(request: NextRequest) {
     );
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRules.save"),
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.assignmentRules.save",
+      ),
     });
   }
 }
 
-function requireCategoryScope(
-  scope: ReturnType<typeof parseCategoryScope>,
-) {
+function requireCategoryScope(scope: ReturnType<typeof parseCategoryScope>) {
   if (!scope) {
     throw Object.assign(new Error("A category scope is required."), {
       status: 400,
@@ -257,13 +262,4 @@ function requireCategoryScope(
 
 function createBadRequest(message: string) {
   return Object.assign(new Error(message), { status: 400 });
-}
-
-type AssignmentRuleAssignee =
-  SaveServiceDeskAssignmentRuleTreePayload["categories"][number]["assignee"];
-
-function hasAssignmentRuleAssigneeSelection(assignee: AssignmentRuleAssignee) {
-  return (
-    assignee.jobFieldIds.length > 0 || assignee.assigneeUsernames.length > 0
-  );
 }

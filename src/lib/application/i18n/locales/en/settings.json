@@ -121,6 +121,8 @@
       "tenant": "Tenant",
       "noResults": "No results found",
       "saveChanges": "Save Changes",
+      "discardUnsavedChanges": "You have unsaved changes. Discard them and continue?",
+      "loadError": "Failed to load settings.",
       "scope": "Category scope",
       "scopeInternal": "Internal",
       "scopePortal": "Portal",
@@ -149,7 +151,7 @@
         "jobField": "Job Field",
         "employee": "Employee"
       },
-      "managerLevel": "Manager Level",
+      "managerStepsAboveRequester": "Manager steps above requester",
       "department": "Department",
       "departmentPlaceholder": "Select a department",
       "jobField": "Job Field",
@@ -158,6 +160,8 @@
       "employeePlaceholder": "Select an assignee",
       "skipAccessLevel": "Skippable Access Level",
       "saveUnavailable": "Cannot Save",
+      "created": "Created",
+      "assign": "Assign",
       "empty": "Select a approval step to edit settings."
     },
     "assignmentRuleTab": {

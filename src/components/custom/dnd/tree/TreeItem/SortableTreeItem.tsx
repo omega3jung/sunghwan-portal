@@ -1,29 +1,44 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { AnimateLayoutChanges, useSortable } from "@dnd-kit/sortable";
+import { type AnimateLayoutChanges, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import React, { CSSProperties } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 
-import { TreeItem, TreeItemProps } from "./TreeItem";
+import { TreeItem } from "./TreeItem";
+import styles from "./TreeItem.module.css";
 
-export interface SortableTreeItemProps extends Omit<TreeItemProps, "children"> {
+export interface SortableTreeItemRenderParams {
+  dragHandleProps: HTMLAttributes<HTMLButtonElement>;
+  isDragging: boolean;
+  isSorting: boolean;
+}
+
+export interface SortableTreeItemProps
+  extends Omit<ComponentPropsWithoutRef<"div">, "children" | "id"> {
   id: UniqueIdentifier;
-
-  children: (params: {
-    dragHandleProps: React.HTMLAttributes<HTMLElement>;
-    isDragging: boolean;
-    isSorting: boolean;
-  }) => React.ReactNode;
+  depth: number;
+  indentationWidth: number;
+  disabled?: boolean;
+  children: (params: SortableTreeItemRenderParams) => ReactNode;
 }
 
 const animateLayoutChanges: AnimateLayoutChanges = ({
   isSorting,
   wasDragging,
-}) => (isSorting || wasDragging ? false : true);
+}) => !isSorting && !wasDragging;
 
 export function SortableTreeItem({
   id,
+  depth,
+  indentationWidth,
+  disabled = false,
   children,
-  ...props
+  style,
+  ...itemProps
 }: SortableTreeItemProps) {
   const {
     attributes,
@@ -36,31 +51,41 @@ export function SortableTreeItem({
     transition,
   } = useSortable({
     id,
+    disabled,
     animateLayoutChanges,
   });
 
-  const style: CSSProperties = {
+  const indentationStyle = {
+    "--tree-item-indentation": `${indentationWidth * depth}px`,
+  } as CSSProperties;
+  const transformStyle: CSSProperties = {
+    ...style,
     transform: CSS.Translate.toString(transform),
     transition,
   };
 
   return (
-    <TreeItem
-      ref={setDraggableNodeRef}
-      wrapperRef={setDroppableNodeRef}
-      style={style}
-      ghost={isDragging}
-      disableInteraction={isSorting}
-      {...props}
+    <li
+      ref={setDroppableNodeRef}
+      className={styles.Wrapper}
+      style={indentationStyle}
     >
-      {children({
-        dragHandleProps: {
-          ...attributes,
-          ...listeners,
-        },
-        isDragging,
-        isSorting,
-      })}
-    </TreeItem>
+      <TreeItem
+        {...itemProps}
+        ref={setDraggableNodeRef}
+        style={transformStyle}
+        ghost={isDragging}
+        disableInteraction={isSorting}
+      >
+        {children({
+          dragHandleProps: {
+            ...attributes,
+            ...listeners,
+          },
+          isDragging,
+          isSorting,
+        })}
+      </TreeItem>
+    </li>
   );
 }

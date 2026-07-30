@@ -1,9 +1,8 @@
 "use client";
 
-import { forwardRef, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,242 +13,279 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import type { CategoryScope } from "@/domain/serviceDesk";
 import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
-import { getLanguageOptions } from "@/lib/client/i18n";
-import { Locale, ValueLabel } from "@/shared/types";
+import { ValueLabel } from "@/shared/types";
 
-import { scopeData } from "../constants";
-import { useCategoryForm } from "../hooks/useCategoryForm";
+import {
+  ServiceDeskSettingsEditorEmptyState,
+  ServiceDeskSettingsLanguageEditor,
+} from "../../components/ServiceDeskSettingsLanguageEditor";
+import { ScopeSelect } from "../../components/ServiceDeskSettingsToolbar";
+import { useServiceDeskSettingsEditorLanguage } from "../../hooks/useServiceDeskSettingsEditorLanguage";
 import { CategoryData, SubCategoryData } from "../types";
+
+type CategoryFormValues = {
+  scope: CategoryData["scope"];
+  defaultPriority:
+    | CategoryData["defaultPriority"]
+    | SubCategoryData["defaultPriority"];
+  defaultRiskLevel:
+    | CategoryData["defaultRiskLevel"]
+    | SubCategoryData["defaultRiskLevel"];
+  defaultSlaDays:
+    | CategoryData["defaultSlaDays"]
+    | SubCategoryData["defaultSlaDays"];
+  active: CategoryData["active"];
+};
 
 type Props = {
   selectedNode: CategoryData | SubCategoryData | null;
   language: SupportedLanguage;
-  setTree: React.Dispatch<
-    React.SetStateAction<TreeNodes<CategoryData | SubCategoryData>>
-  >;
+  availableScopes: readonly CategoryScope[];
+  onChange: (
+    updater: (
+      data: CategoryData | SubCategoryData,
+    ) => CategoryData | SubCategoryData,
+  ) => void;
   readOnly?: boolean;
 };
 
-export const CategoryForm = forwardRef<HTMLDivElement, Props>(
-  ({ selectedNode, language, setTree, readOnly = false }, ref) => {
-    const { t } = useTranslation(NS.settings);
-    const localLocales = getLanguageOptions(t);
-    const isCategoryNode = !!selectedNode && "subCategories" in selectedNode;
+export function CategoryForm({
+  selectedNode,
+  language,
+  availableScopes,
+  onChange,
+  readOnly = false,
+}: Props) {
+  const { t } = useTranslation(NS.settings);
+  const isCategoryNode = selectedNode?.nodeType === "category";
 
-    const { languageTab, setLanguageTab, updateTranslation, updateValue } =
-      useCategoryForm({
-        selectedNode,
-        language,
-        setTree,
-      });
+  const { editorLanguage, setEditorLanguage } =
+    useServiceDeskSettingsEditorLanguage(language);
 
-    const priorityData = useMemo((): ValueLabel[] => {
-      if (!priorityOptions) return [];
+  const priorityData = useMemo((): ValueLabel[] => {
+    if (!priorityOptions) return [];
 
-      return priorityOptions.map((priority) => {
-        return {
-          value: priority.value,
-          label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
-        };
-      });
-    }, [t]);
+    return priorityOptions.map((priority) => {
+      return {
+        value: priority.value,
+        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+      };
+    });
+  }, [t]);
 
-    const riskLevelData = useMemo((): ValueLabel[] => {
-      if (!riskLevelOptions) return [];
+  const riskLevelData = useMemo((): ValueLabel[] => {
+    if (!riskLevelOptions) return [];
 
-      return riskLevelOptions.map((riskLevel) => {
-        return {
-          value: riskLevel.value,
-          label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-            ns: "domain",
-          }),
-        };
-      });
-    }, [t]);
+    return riskLevelOptions.map((riskLevel) => {
+      return {
+        value: riskLevel.value,
+        label: t(`enum.riskLevel.options.${riskLevel.value}`, {
+          ns: "domain",
+        }),
+      };
+    });
+  }, [t]);
 
-    // displat empty box.
-    if (!selectedNode) {
-      return (
-        <div className="h-full rounded-lg border border-dashed p-7 text-sm text-muted-foreground">
-          {t("serviceDeskSettings.categoryTab.empty")}
-        </div>
-      );
+  const updateNode = (
+    updater: (
+      data: CategoryData | SubCategoryData,
+    ) => CategoryData | SubCategoryData,
+  ) => {
+    if (selectedNode) {
+      onChange(updater);
     }
+  };
 
+  const updateTranslation =
+    (key: "name" | "description" | "requestTemplate") => (value: string) => {
+      updateNode((data) => ({
+        ...data,
+        [key]: {
+          ...data[key],
+          [editorLanguage]: value,
+        },
+      }));
+    };
+
+  const updateValue =
+    <Key extends keyof CategoryFormValues>(key: Key) =>
+    (value: CategoryFormValues[Key]) => {
+      updateNode((data) => ({
+        ...data,
+        [key]: value,
+      }));
+    };
+
+  // displat empty box.
+  if (!selectedNode) {
     return (
-      <div ref={ref}>
-        <Tabs
-          value={languageTab}
-          onValueChange={(value) => setLanguageTab(value as Locale)}
-        >
-          <TabsList className="w-full justify-start">
-            {localLocales.map((locale) => (
-              <TabsTrigger
-                key={locale.value}
-                value={locale.value}
-                className="min-w-20 gap-2 data-[state=inactive]:border-none"
-              >
-                {locale.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-        <FieldGroup className="mt-8 pt-2">
-          <FieldSet>
-            <FieldGroup>
+      <ServiceDeskSettingsEditorEmptyState>
+        {t("serviceDeskSettings.categoryTab.empty")}
+      </ServiceDeskSettingsEditorEmptyState>
+    );
+  }
+
+  return (
+    <ServiceDeskSettingsLanguageEditor
+      activeLanguage={editorLanguage}
+      onLanguageChange={setEditorLanguage}
+    >
+      <FieldGroup>
+        <FieldSet>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="category-input-name">
+                {t("serviceDeskSettings.categoryTab.name")}
+              </FieldLabel>
+              <Input
+                id="category-input-name"
+                data-testid="category-name"
+                className="!disabled:border-primary"
+                value={selectedNode.name[editorLanguage] ?? ""}
+                disabled={readOnly}
+                onChange={(e) => updateTranslation("name")(e.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="category-textarea-description">
+                {t("serviceDeskSettings.categoryTab.description")}
+              </FieldLabel>
+              <Textarea
+                id="category-textarea-description"
+                className="!disabled:border-primary"
+                value={selectedNode.description?.[editorLanguage] ?? ""}
+                disabled={readOnly}
+                onChange={(e) =>
+                  updateTranslation("description")(e.target.value)
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="category-textarea-request-template">
+                {t("serviceDeskSettings.categoryTab.requestTemplate")}
+              </FieldLabel>
+              <Textarea
+                id="category-textarea-request-template"
+                className="!disabled:border-primary"
+                value={selectedNode.requestTemplate?.[editorLanguage] ?? ""}
+                disabled={readOnly}
+                onChange={(e) =>
+                  updateTranslation("requestTemplate")(e.target.value)
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="category-select-scope">
+                {t("serviceDeskSettings.categoryTab.scope")}
+              </FieldLabel>
+              <ScopeSelect
+                value={isCategoryNode ? selectedNode.scope : null}
+                availableScopes={availableScopes}
+                onValueChange={updateValue("scope")}
+                disabled={
+                  readOnly || !isCategoryNode || !selectedNode.isCreated
+                }
+              />
+            </Field>
+            <div className="grid grid-cols-3 gap-2">
               <Field>
-                <FieldLabel htmlFor="category-input-name">
-                  {t("serviceDeskSettings.categoryTab.name")}
-                </FieldLabel>
-                <Input
-                  id="category-input-name"
-                  data-testid="category-name"
-                  className="!disabled:border-primary"
-                  value={selectedNode.name[languageTab] ?? ""}
-                  disabled={readOnly}
-                  onChange={(e) => updateTranslation("name")(e.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-textarea-description">
-                  {t("serviceDeskSettings.categoryTab.description")}
-                </FieldLabel>
-                <Textarea
-                  id="category-textarea-description"
-                  className="!disabled:border-primary"
-                  value={selectedNode.description?.[languageTab] ?? ""}
-                  disabled={readOnly}
-                  onChange={(e) =>
-                    updateTranslation("description")(e.target.value)
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-textarea-request-template">
-                  {t("serviceDeskSettings.categoryTab.requestTemplate")}
-                </FieldLabel>
-                <Textarea
-                  id="category-textarea-request-template"
-                  className="!disabled:border-primary"
-                  value={selectedNode.requestTemplate?.[languageTab] ?? ""}
-                  disabled={readOnly}
-                  onChange={(e) =>
-                    updateTranslation("requestTemplate")(e.target.value)
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-select-scope">
-                  {t("serviceDeskSettings.categoryTab.scope")}
+                <FieldLabel htmlFor="category-select-priority">
+                  {t("enum.priority.label", { ns: "domain" })}
                 </FieldLabel>
                 <Select
-                  value={isCategoryNode ? selectedNode.scope : undefined}
-                  onValueChange={updateValue("scope")}
-                  disabled
+                  items={priorityData}
+                  value={selectedNode.defaultPriority ?? null}
+                  onValueChange={(value) => {
+                    if (value) {
+                      updateValue("defaultPriority")(value);
+                    }
+                  }}
+                  disabled={readOnly}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent id="category-select-scope">
-                    {scopeData.map((scope) => (
-                      <SelectItem key={scope.value} value={scope.value}>
-                        {scope.label}
+                  <SelectContent id="category-select-priority">
+                    {priorityData.map((priority) => (
+                      <SelectItem key={priority.value} value={priority.value}>
+                        {priority.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Field>
-              <div className="grid grid-cols-3 gap-2">
-                <Field>
-                  <FieldLabel htmlFor="category-select-priority">
-                    {t("enum.priority.label", { ns: "domain" })}
-                  </FieldLabel>
-                  <Select
-                    value={selectedNode.defaultPriority}
-                    onValueChange={updateValue("defaultPriority")}
-                    disabled={readOnly}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent id="category-select-priority">
-                      {priorityData.map((priority) => (
-                        <SelectItem key={priority.value} value={priority.value}>
-                          {priority.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="category-select-risk-level">
-                    {t("enum.riskLevel.label", { ns: "domain" })}
-                  </FieldLabel>
-                  <Select
-                    value={selectedNode.defaultRiskLevel}
-                    onValueChange={updateValue("defaultRiskLevel")}
-                    disabled={readOnly}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent id="category-select-risk-level">
-                      {riskLevelData.map((riskLevel) => (
-                        <SelectItem
-                          key={riskLevel.value}
-                          value={riskLevel.value}
-                        >
-                          {riskLevel.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="category-input-resolution-days">
-                    {t("serviceDeskSettings.categoryTab.resolutionDays")}
-                  </FieldLabel>
-                  <Input
-                    id="category-input-resolution-days"
-                    className="w-20"
-                    value={selectedNode.defaultSlaDays}
-                    disabled={readOnly}
-                    onChange={(e) => {
-                      updateValue("defaultSlaDays")(parseInt(e.target.value));
-                    }}
-                    type={"number"}
-                    min={0}
-                  />
-                </Field>
-              </div>
               <Field>
-                <FieldLabel htmlFor="category-switch-active">
-                  {t("serviceDeskSettings.categoryTab.active")}
+                <FieldLabel htmlFor="category-select-risk-level">
+                  {t("enum.riskLevel.label", { ns: "domain" })}
                 </FieldLabel>
-                <span>
-                  <Switch
-                    id="category-switch-active"
-                    className="!disabled:color-primary"
-                    checked={selectedNode.active ?? false}
-                    disabled={readOnly}
-                    onCheckedChange={updateValue("active")}
-                  />
-                </span>
+                <Select
+                  items={riskLevelData}
+                  value={selectedNode.defaultRiskLevel ?? null}
+                  onValueChange={(value) => {
+                    if (value) {
+                      updateValue("defaultRiskLevel")(value);
+                    }
+                  }}
+                  disabled={readOnly}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent id="category-select-risk-level">
+                    {riskLevelData.map((riskLevel) => (
+                      <SelectItem key={riskLevel.value} value={riskLevel.value}>
+                        {riskLevel.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
-            </FieldGroup>
-          </FieldSet>
-        </FieldGroup>
-      </div>
-    );
-  },
-);
-
-CategoryForm.displayName = "CategoryForm";
+              <Field>
+                <FieldLabel htmlFor="category-input-resolution-days">
+                  {t("serviceDeskSettings.categoryTab.resolutionDays")}
+                </FieldLabel>
+                <Input
+                  id="category-input-resolution-days"
+                  className="w-20"
+                  value={selectedNode.defaultSlaDays ?? ""}
+                  disabled={readOnly}
+                  onChange={(e) => {
+                    updateValue("defaultSlaDays")(
+                      e.target.value === ""
+                        ? undefined
+                        : Number.parseInt(e.target.value, 10),
+                    );
+                  }}
+                  type={"number"}
+                  min={0}
+                />
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel htmlFor="category-switch-active">
+                {t("serviceDeskSettings.categoryTab.active")}
+              </FieldLabel>
+              <span>
+                <Switch
+                  id="category-switch-active"
+                  className="!disabled:color-primary"
+                  checked={selectedNode.active ?? false}
+                  disabled={readOnly}
+                  onCheckedChange={updateValue("active")}
+                />
+              </span>
+            </Field>
+          </FieldGroup>
+        </FieldSet>
+      </FieldGroup>
+    </ServiceDeskSettingsLanguageEditor>
+  );
+}

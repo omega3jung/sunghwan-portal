@@ -59,6 +59,7 @@ export function ApprovalAssigneeField({
           onChange={onChange}
           language={language}
           readOnly={readOnly}
+          departments={departments}
           jobFields={jobFields}
           isLoading={isLoading}
         />

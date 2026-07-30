@@ -1,22 +1,15 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { HierarchicalSelect } from "@/components/custom/HierarchicalSelect";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Department } from "@/domain/organization";
 import { ApprovalAssigneeType, AssigneeByType } from "@/domain/serviceDesk";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { ValueLabel } from "@/shared/types";
+
+import { buildHierarchicalSelectItems } from "./hierarchy";
 
 type Props = {
   stepAssignee: AssigneeByType<"DEPARTMENT">;
@@ -37,95 +30,45 @@ export function DepartmentField({
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
-  const departmentData = useMemo((): Array<{
-    groupLabel: string;
-    items: ValueLabel[];
-  }> => {
-    const departmentGroup: Array<{
-      groupLabel: string;
-      items: ValueLabel[];
-    }> = [];
-
-    for (const department of departments) {
-      const item = {
-        value: department.id,
-        label: tLocal(department.name),
-      };
-      if (department.parentId === "0") {
-        departmentGroup.push({ groupLabel: item.label, items: [item] });
-      } else {
-        const parentGroup = departmentGroup.find(
-          (group) => group.items[0]?.value === department.parentId,
-        );
-
-        if (parentGroup) {
-          parentGroup.items.push(item);
-        } else {
-          departmentGroup.push({ groupLabel: item.label, items: [item] });
-        }
-      }
-    }
-
-    if (
-      stepAssignee.departmentId &&
-      !departmentGroup.some((group) =>
-        group.items.some((item) => item.value === stepAssignee.departmentId),
-      )
-    ) {
-      departmentGroup.push({
-        groupLabel: stepAssignee.departmentId,
-        items: [
-          {
-            value: stepAssignee.departmentId,
-            label: stepAssignee.departmentId,
-          },
-        ],
-      });
-    }
-
-    return departmentGroup;
-  }, [departments, stepAssignee.departmentId, tLocal]);
+  const departmentItems = useMemo(
+    () =>
+      buildHierarchicalSelectItems(
+        departments.map((department) => ({
+          id: department.id,
+          parentId: department.parentId,
+          label: tLocal(department.name),
+        })),
+        stepAssignee.departmentId,
+      ),
+    [departments, stepAssignee.departmentId, tLocal],
+  );
 
   return (
     <Field className="col-span-2">
       <FieldLabel htmlFor="approval-select-department">
         {t("serviceDeskSettings.approvalStepTab.department")}
       </FieldLabel>
-      <Select
+      <HierarchicalSelect
+        id="approval-select-department"
         value={stepAssignee.departmentId}
+        items={departmentItems}
+        placeholder={t(
+          "serviceDeskSettings.approvalStepTab.departmentPlaceholder",
+        )}
+        backLabel={t("action.back", { ns: NS.common })}
+        emptyText={t("empty.withItem", {
+          ns: NS.common,
+          item: t("serviceDeskSettings.approvalStepTab.department"),
+        })}
+        selectableStrategy="all"
         disabled={readOnly || isLoading}
-        onValueChange={(value) => {
-          if (value !== null) {
-            onChange({ type: "DEPARTMENT", departmentId: value });
-          }
-        }}
-      >
-        <SelectTrigger>
-          <SelectValue
-            placeholder={t(
-              "serviceDeskSettings.approvalStepTab.departmentPlaceholder",
-            )}
-          />
-        </SelectTrigger>
-        <SelectContent id="approval-select-department">
-          {departmentData.map((department) => (
-            <SelectGroup key={`select_group_${department.items[0].value}`}>
-              <SelectLabel className="rounded bg-muted/50">
-                {department.items[0].label}
-              </SelectLabel>
-              {department.items.map((item) => (
-                <SelectItem
-                  className="text-xs ml-2"
-                  key={`select_item_${item.value}`}
-                  value={item.value}
-                >
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          ))}
-        </SelectContent>
-      </Select>
+        onValueChange={(departmentId) =>
+          onChange({ type: "DEPARTMENT", departmentId })
+        }
+        getDisplayLabel={(_, path) =>
+          path.map((item) => item.label).join(" / ")
+        }
+      />
     </Field>
   );
 }

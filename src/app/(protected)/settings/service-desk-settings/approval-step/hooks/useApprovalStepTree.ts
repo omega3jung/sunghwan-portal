@@ -1,165 +1,121 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
   buildTree,
-  findTreeNodeData,
-  findTreeNodePath,
   flattenTree,
   removeItem,
-  resolveTreeNodeIdByPath,
-  TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
-import {
+import type {
   CategoryApprovalSettings,
-  CategoryScope,
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
-import { SupportedLanguage } from "@/lib/application/i18n";
 
+import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
 import {
   getDefaultApprovalData,
   MAX_APPROVAL_STEP_PER_CATEGORY,
 } from "../constants";
-import { ApprovalStepData, CategoryApprovalStepData } from "../types";
-import { approvalStepToTree, mapApprovalData } from "../utils/mapper";
+import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
+import { createApprovalStepTree } from "../utils/mapper";
+import { createApprovalStepSettingsSignatureFromTree } from "../utils/tree";
 
 type UseApprovalStepTreeOptions = {
+  contextKey: string | null;
   selectedTenant: string | null;
-  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
   approvalSteps: CategoryApprovalSettings[] | undefined;
-  language: SupportedLanguage;
 };
 
 export function useApprovalStepTree({
+  contextKey,
   selectedTenant,
-  scope,
   categories,
   approvalSteps,
-  language: _language,
 }: UseApprovalStepTreeOptions) {
-  const [tree, setTree] = useState<
-    TreeNodes<CategoryApprovalStepData | ApprovalStepData>
-  >([]);
+  const newStepCountRef = useRef(1);
+  const source = useMemo(() => {
+    if (!contextKey || !categories || !selectedTenant || !approvalSteps) {
+      return undefined;
+    }
 
-  const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
-  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
-
-  const [newStepCount, setNewStepCount] = useState(1);
-  const previousContextRef = useRef<string | null>(null);
-  const selectedPathRef = useRef<TreeNodePath | null>(null);
-
-  useEffect(() => {
-    selectedPathRef.current = findTreeNodePath(tree, selectedId);
-  }, [selectedId, tree]);
-
-  useEffect(() => {
-    if (!categories || !selectedTenant || !approvalSteps) return;
-
-    const contextKey = `${selectedTenant}:${scope}`;
-    const scopedCategories = categories.map((tenant) => ({
-      ...tenant,
-      categories: tenant.categories.filter((category) => category.scope === scope),
-    }));
-    const mapped = mapApprovalData(
-      scopedCategories,
+    const tree = createApprovalStepTree(
+      categories,
       selectedTenant,
       approvalSteps,
     );
-    const nextTree = approvalStepToTree(mapped);
 
-    setTree(nextTree);
-    setTreeTenantId(selectedTenant);
-    setTreeContextKey(contextKey);
-    setSelectedId((previousSelectedId) => {
-      if (previousContextRef.current !== contextKey) {
-        previousContextRef.current = contextKey;
-        return null;
-      }
+    return {
+      contextKey,
+      tree,
+      signature: createApprovalStepSettingsSignatureFromTree(tree),
+    };
+  }, [approvalSteps, categories, contextKey, selectedTenant]);
+  const draft = useServiceDeskSettingsTreeDraft<
+    CategoryApprovalStepData | ApprovalStepData
+  >({
+    contextKey,
+    source,
+    getTreeSignature: createApprovalStepSettingsSignatureFromTree,
+  });
 
-      if (!previousSelectedId) {
-        return null;
-      }
-
-      const selectionPath = selectedPathRef.current;
-
-      if (!selectionPath?.length) {
-        return null;
-      }
-
-      return resolveTreeNodeIdByPath(nextTree, selectionPath);
-    });
-  }, [approvalSteps, categories, scope, selectedTenant]);
-
-  const selectedNode = useMemo(() => {
-    return findTreeNodeData(tree, selectedId);
-  }, [selectedId, tree]);
-
-  // ✅ add
   const addApprovalStep = (parentId: UniqueIdentifier) => {
-    setTree((prev) => {
-      const flattened = flattenTree(prev);
+    const stepCount = newStepCountRef.current;
 
-      const parentIndex = flattened.findIndex((item) => item.id === parentId);
-      if (parentIndex === -1) return prev;
+    draft.setTree((previousTree) => {
+      const flattenedTree = flattenTree(previousTree);
+      const parentIndex = flattenedTree.findIndex(
+        (item) => item.id === parentId,
+      );
 
-      const stepCount = flattened.filter(
+      if (parentIndex === -1) {
+        return previousTree;
+      }
+
+      const siblingCount = flattenedTree.filter(
         (node) => node.parentId === parentId,
       ).length;
 
-      if (stepCount >= MAX_APPROVAL_STEP_PER_CATEGORY) return prev;
+      if (siblingCount >= MAX_APPROVAL_STEP_PER_CATEGORY) {
+        return previousTree;
+      }
 
-      const parentNode = flattened[parentIndex];
+      const parentNode = flattenedTree[parentIndex];
 
-      if (parentNode.data.nodeType !== "category") return prev;
+      if (parentNode.data.nodeType !== "category") {
+        return previousTree;
+      }
 
       const newApprovalStep = getDefaultApprovalData(
         parentNode.data.categoryId,
-        newStepCount,
+        stepCount,
       );
+      const insertIndex = parentIndex + siblingCount + 1;
 
-      const insertIndex = parentIndex + stepCount + 1;
+      newStepCountRef.current += 1;
 
-      const newNode = {
-        id: newApprovalStep.id,
-        parentId,
-        depth: parentNode.depth + 1,
-        index: 0,
-        data: newApprovalStep,
-        children: [],
-      };
-
-      const next = [
-        ...flattened.slice(0, insertIndex),
-        newNode,
-        ...flattened.slice(insertIndex),
-      ];
-
-      return buildTree(next);
+      return buildTree([
+        ...flattenedTree.slice(0, insertIndex),
+        {
+          id: newApprovalStep.id,
+          parentId,
+          depth: parentNode.depth + 1,
+          index: 0,
+          data: newApprovalStep,
+          children: [],
+        },
+        ...flattenedTree.slice(insertIndex),
+      ]);
     });
-
-    setNewStepCount((prev) => prev + 1);
   };
 
-  // ✅ remove
   const removeApprovalStep = (id: UniqueIdentifier) => {
-    setTree((prev) => {
-      return removeItem(prev, id);
-    });
-    setSelectedId((prev) => (prev === id ? null : prev));
+    draft.setTree((previousTree) => removeItem(previousTree, id));
+    draft.setSelectedId((previousId) => (previousId === id ? null : previousId));
   };
 
   return {
-    tree,
-    setTree,
-    selectedId,
-    setSelectedId,
-    treeTenantId,
-    treeContextKey,
-    selectedNode,
+    ...draft,
     addApprovalStep,
     removeApprovalStep,
   };

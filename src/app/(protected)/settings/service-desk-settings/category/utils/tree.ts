@@ -1,28 +1,16 @@
 import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import type { MainCategory } from "@/domain/serviceDesk";
 import type {
   CategoryTreeSyncCategoryInput,
   SaveServiceDeskCategoryTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
-import type { LocalizedText } from "@/shared/types";
+import {
+  normalizeLocalizedText,
+  normalizeOptionalLocalizedText,
+} from "@/shared/utils/value";
 
 import type { CategoryData, SubCategoryData } from "../types";
 
 type CategoryTree = TreeNodes<CategoryData | SubCategoryData>;
-
-const normalizeLocalizedText = (value?: LocalizedText) => {
-  return Object.fromEntries(
-    Object.entries(value ?? {})
-      .filter(([, text]) => typeof text === "string")
-      .sort(([left], [right]) => left.localeCompare(right)),
-  ) as LocalizedText;
-};
-
-const normalizeOptionalLocalizedText = (value?: LocalizedText) => {
-  const normalizedValue = normalizeLocalizedText(value);
-
-  return Object.keys(normalizedValue).length ? normalizedValue : undefined;
-};
 
 export const buildCategoryTreeSavePayload = ({
   tenantId,
@@ -34,8 +22,11 @@ export const buildCategoryTreeSavePayload = ({
   return {
     tenantId,
     categories: tree.map((categoryNode, categoryIndex) => {
-      const { isCreated: _categoryIsCreated, ...categoryData } =
-        categoryNode.data as CategoryData;
+      const {
+        isCreated: _categoryIsCreated,
+        nodeType: _categoryNodeType,
+        ...categoryData
+      } = categoryNode.data as CategoryData;
 
       return {
         ...categoryData,
@@ -47,8 +38,11 @@ export const buildCategoryTreeSavePayload = ({
         index: categoryIndex + 1,
         subCategories: categoryNode.children.map(
           (subCategoryNode, subIndex) => {
-            const { isCreated: _subCategoryIsCreated, ...subCategoryData } =
-              subCategoryNode.data as SubCategoryData;
+            const {
+              isCreated: _subCategoryIsCreated,
+              nodeType: _subCategoryNodeType,
+              ...subCategoryData
+            } = subCategoryNode.data as SubCategoryData;
 
             return {
               ...subCategoryData,
@@ -69,7 +63,7 @@ export const buildCategoryTreeSavePayload = ({
 };
 
 const normalizeCategoriesForComparison = (
-  categories: Array<CategoryTreeSyncCategoryInput | MainCategory>,
+  categories: CategoryTreeSyncCategoryInput[],
 ) => {
   return categories.map((category, categoryIndex) => ({
     ...category,
@@ -96,20 +90,4 @@ export const createCategorySettingsSignatureFromTree = (tree: CategoryTree) => {
   });
 
   return JSON.stringify(normalizeCategoriesForComparison(payload.categories));
-};
-
-export const createCategorySettingsSignatureFromCategories = (
-  categories: MainCategory[],
-) => {
-  const normalizedCategories = categories
-    .slice()
-    .sort((left, right) => left.index - right.index)
-    .map((category) => ({
-      ...category,
-      subCategories: category.subCategories
-        .slice()
-        .sort((left, right) => left.index - right.index),
-    }));
-
-  return JSON.stringify(normalizeCategoriesForComparison(normalizedCategories));
 };

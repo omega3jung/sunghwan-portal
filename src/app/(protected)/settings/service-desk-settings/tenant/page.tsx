@@ -16,8 +16,8 @@ import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types";
 
 import { useSettingsAccess } from "../../_providers";
-import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
+import { ServiceDeskSettingsPageLoading } from "../components/ServiceDeskSettingsPageLoading";
 import { CompanyList } from "./components/CompanyList";
 import { TenantList } from "./components/TenantList";
 import { TenantSettingInfo } from "./components/TenantSettingInfo";
@@ -38,7 +38,7 @@ export default function TenantPage() {
   }, [router, type]);
 
   if (type !== "OWNER_ADMIN") {
-    return <ServiceDeskSettingsLoading />;
+    return <ServiceDeskSettingsPageLoading />;
   }
 
   return <OwnerTenantPage />;
@@ -104,12 +104,12 @@ function OwnerTenantPage() {
         description={t(
           "settingsNavigation.serviceDeskSettings.tenant.description",
         )}
-        isResetDisabled={
-          !tenantSettings.pageHeader.canReset ||
-          tenantSettings.pageHeader.isSaving
+        canReset={
+          tenantSettings.pageHeader.canReset &&
+          !tenantSettings.pageHeader.isSaving
         }
         onReset={tenantSettings.pageHeader.onReset}
-        isSaveDisabled={!tenantSettings.pageHeader.canSave}
+        canSave={tenantSettings.pageHeader.canSave}
         onSave={() => void tenantSettings.pageHeader.onSave()}
         isSaving={tenantSettings.pageHeader.isSaving}
       />

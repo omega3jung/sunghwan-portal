@@ -1,3 +1,4 @@
+import { hasAssignmentRuleSelection } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
 import { getLocalizedText } from "@/lib/application/i18n";
@@ -26,6 +27,7 @@ import {
   AssignmentRecommendationSourceDto,
   AssignmentRuleDto,
   CreateAssignmentRuleInputDto,
+  hasAssignmentRuleAssigneeSelection,
   UpdateAssignmentRuleInputDto,
 } from "./assignmentRuleDto";
 import {
@@ -86,6 +88,13 @@ export async function validateAssignmentRuleTreeMutation({
   const submittedCategoryIds = new Set<string>();
 
   for (const category of payload.categories) {
+    if (!hasAssignmentRuleSelection(category.assignee)) {
+      throw createStatusError(
+        "A main category assignment rule requires at least one assignee.",
+        400,
+      );
+    }
+
     const categoryContext = await getServiceDeskCategoryContext(category.id);
 
     if (
@@ -331,7 +340,9 @@ function resolveAssignmentRuleWithCategoryFallback(
   categoryId: string,
 ) {
   const exactAssignmentRule = rules.find(
-    (rule) => String(rule.category_id) === categoryId,
+    (rule) =>
+      String(rule.category_id) === categoryId &&
+      hasAssignmentRuleAssigneeSelection(rule.assignee),
   );
 
   if (exactAssignmentRule) {
@@ -344,7 +355,11 @@ function resolveAssignmentRuleWithCategoryFallback(
     return undefined;
   }
 
-  return rules.find((rule) => rule.category_id === mainCategoryId);
+  return rules.find(
+    (rule) =>
+      rule.category_id === mainCategoryId &&
+      hasAssignmentRuleAssigneeSelection(rule.assignee),
+  );
 }
 
 function collectRecommendedUsers({
