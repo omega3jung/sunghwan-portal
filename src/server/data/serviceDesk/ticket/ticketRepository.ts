@@ -7,6 +7,7 @@ import { CreateTicketRowInput, ServiceDeskTicketViewRow } from "./ticketRow";
 
 type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
 
+/** Lets ticket reads and writes participate in a caller-owned PostgreSQL transaction. */
 export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const TICKET_VIEW_COLUMNS = `
@@ -331,12 +332,14 @@ from service_desk.vw_ticket
 where __WHERE_CLAUSE__;
 `;
 
+/** Queries PostgreSQL for active ticket view rows without applying presentation concerns. */
 export async function findActiveTicketViewRows() {
   return queryPortalApi<ServiceDeskTicketViewRow>(
     FIND_ACTIVE_TICKET_VIEW_ROWS_QUERY,
   );
 }
 
+/** Queries PostgreSQL for active ticket view row by id without applying presentation concerns. */
 export async function findActiveTicketViewRowById(
   ticketId: string,
   options: TicketRepositoryOptions = {},
@@ -350,6 +353,7 @@ export async function findActiveTicketViewRowById(
   return rows[0] ?? null;
 }
 
+/** Queries PostgreSQL for active ticket view row by id including draft without applying presentation concerns. */
 export async function findActiveTicketViewRowByIdIncludingDraft(
   ticketId: string,
   options: TicketRepositoryOptions = {},
@@ -363,6 +367,7 @@ export async function findActiveTicketViewRowByIdIncludingDraft(
   return rows[0] ?? null;
 }
 
+/** Creates ticket row through the server persistence boundary. */
 export async function createTicketRow(
   input: CreateTicketRowInput,
   options: TicketRepositoryOptions = {},
@@ -390,6 +395,7 @@ export async function createTicketRow(
   return ticketId ? findActiveTicketViewRowById(ticketId, options) : null;
 }
 
+/** Queries PostgreSQL for employee department id by username without applying presentation concerns. */
 export async function findEmployeeDepartmentIdByUsername(
   username: string,
   options: TicketRepositoryOptions = {},
@@ -406,6 +412,7 @@ export async function findEmployeeDepartmentIdByUsername(
     : null;
 }
 
+/** Queries PostgreSQL for next ticket number without applying presentation concerns. */
 export async function findNextTicketNumber(
   year: number,
   options: TicketRepositoryOptions = {},
@@ -419,6 +426,7 @@ export async function findNextTicketNumber(
   return rows[0]?.ticket_no ?? `SP-${year}-0001`;
 }
 
+/** Queries PostgreSQL for active draft ticket id by requester username without applying presentation concerns. */
 export async function findActiveDraftTicketIdByRequesterUsername(
   requesterUsername: string,
   options: TicketRepositoryOptions = {},
@@ -432,6 +440,7 @@ export async function findActiveDraftTicketIdByRequesterUsername(
   return rows[0]?.tk_id ?? null;
 }
 
+/** Queries PostgreSQL for next approval step id without applying presentation concerns. */
 export async function findNextApprovalStepId(
   params: {
     requesterUsername: string;
@@ -440,6 +449,8 @@ export async function findNextApprovalStepId(
   },
   options: TicketRepositoryOptions = {},
 ): Promise<number | null> {
+  // Approval order, category applicability, and skip thresholds live in the DB
+  // function so creation, updates, and action execution share one policy source.
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ next_approval_step_id: number | string | null }>(
     FIND_NEXT_APPROVAL_STEP_ID_QUERY,
@@ -453,6 +464,7 @@ export async function findNextApprovalStepId(
   return normalizeNumberResult(rows[0]?.next_approval_step_id);
 }
 
+/** Queries PostgreSQL for approval step assignee usernames without applying presentation concerns. */
 export async function findApprovalStepAssigneeUsernames(
   params: {
     approvalStepId: number | string;
@@ -469,6 +481,7 @@ export async function findApprovalStepAssigneeUsernames(
   return normalizeTextArray(rows[0]?.assignee_usernames);
 }
 
+/** Queries PostgreSQL for category assignment usernames without applying presentation concerns. */
 export async function findCategoryAssignmentUsernames(
   params: {
     categoryId: number | string;
@@ -485,11 +498,14 @@ export async function findCategoryAssignmentUsernames(
   return normalizeTextArray(rows[0]?.assignee_usernames);
 }
 
+/** Reports whether ticket work assignment history meets the server-side condition. */
 export async function hasTicketWorkAssignmentHistory(
   ticketId: string,
   username: string,
   options: TicketRepositoryOptions = {},
 ): Promise<boolean> {
+  // This is historical authorization evidence, distinct from membership in the
+  // ticket's phase-dependent current assignee array.
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ has_been_worker: boolean | null }>(
     HAS_TICKET_WORK_ASSIGNMENT_HISTORY_QUERY,
@@ -499,6 +515,7 @@ export async function hasTicketWorkAssignmentHistory(
   return rows[0]?.has_been_worker === true;
 }
 
+/** Queries PostgreSQL for expired resolved ticket view rows without applying presentation concerns. */
 export async function findExpiredResolvedTicketViewRows(
   input: {
     now: string;
@@ -514,6 +531,7 @@ export async function findExpiredResolvedTicketViewRows(
   );
 }
 
+/** Queries PostgreSQL for active ticket view rows by search without applying presentation concerns. */
 export async function findActiveTicketViewRowsBySearch(
   request: TicketSearchRequestDto,
 ) {
@@ -644,6 +662,7 @@ const TICKET_SORT_FIELD_MAP: Record<TicketSortField, string> = {
   status: "tk_status",
 };
 
+// Only allow mapped column expressions; raw client sort fields never enter SQL.
 function resolveTicketOrderBy(sort: TicketSearchRequestDto["sort"]) {
   if (!sort) {
     return DEFAULT_TICKET_ORDER_BY;
@@ -655,6 +674,7 @@ function resolveTicketOrderBy(sort: TicketSearchRequestDto["sort"]) {
   return `${expression} ${direction}, tk_ticket_no desc`;
 }
 
+// Compiles the recursive UI filter model into parameterized SQL plus its bound values.
 function buildTicketSearchWhereClause(filter: unknown): {
   clause: string;
   values: unknown[];
@@ -691,6 +711,7 @@ function buildTicketFilterNode(
   return buildTicketFilterLeaf(node, values);
 }
 
+// Preserves connector order from the filter builder while omitting invalid child rules.
 function buildTicketFilterGroup(
   group: TicketFilterGroup,
   values: unknown[],
@@ -722,6 +743,7 @@ function buildTicketFilterGroup(
   return parts.length > 0 ? `(${parts.join(" ")})` : null;
 }
 
+// Maps the supported field/operator pairs to fixed SQL fragments and bound parameters.
 function buildTicketFilterLeaf(
   rule: TicketFilterLeaf,
   values: unknown[],

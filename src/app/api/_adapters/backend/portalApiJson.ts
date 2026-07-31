@@ -5,6 +5,14 @@ import { dispatchPortalApi } from "@/server/portalApi";
 import { requestExternalPortalApi } from "./externalPortalApi";
 import type { BackendJsonOptions } from "./types";
 
+/**
+ * Presents one backend transport contract to Next.js route handlers.
+ *
+ * Deployments with `API_BASE_URL` proxy to the external portal API; otherwise
+ * the same request is dispatched to the in-process server implementation. DTO
+ * mapping is applied only to successful bodies, preserving backend status and
+ * error payloads without exposing deployment topology to route modules.
+ */
 export async function portalApiJson(
   request: NextRequest,
   options: BackendJsonOptions,

@@ -1,6 +1,7 @@
 import { ISODateString } from "@/shared/types";
 import { LocalizedText } from "@/shared/types/language";
 
+/** Represents work shift within the organization domain. */
 export interface WorkShift {
   id: string;
 

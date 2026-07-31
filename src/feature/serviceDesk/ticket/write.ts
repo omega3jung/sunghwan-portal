@@ -6,22 +6,27 @@ import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contrac
 
 import type { TicketFormValues } from "./forms";
 
+/** Defines the date input accepted at this feature boundary. */
 export type DateInput = Date | string;
 
+/** Defines the ticket email input accepted at this feature boundary. */
 export type TicketEmailInput = {
   to: string[];
   cc: string[];
   bcc: string[];
 };
 
+/** Defines the ticket requester input accepted at this feature boundary. */
 export type TicketRequesterInput = {
   id: string;
   email: string;
   name: string;
 };
 
+/** Reuses the durable attachment metadata contract at the ticket-write boundary. */
 export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
 
+/** Defines the ticket attachment input accepted at this feature boundary. */
 export type TicketAttachmentInput = TicketAttachmentMetadataDto;
 
 type TicketRequestAttachmentInput = {
@@ -35,11 +40,13 @@ type TicketRequestAttachmentInput = {
   reason: "SECURITY_DEMO_REPLACEMENT";
 };
 
+/** Defines the prepare ticket attachments input accepted at this feature boundary. */
 export type PrepareTicketAttachmentsInput = {
   body: string;
   files: File[];
 };
 
+/** Defines the requester update ticket payload accepted at this feature boundary. */
 export type RequesterUpdateTicketPayload = {
   categoryId: string;
   subject: string;
@@ -91,6 +98,7 @@ const ticketWriteRequestSchema = z.object({
   attachment: z.array(ticketAttachmentSchema).default([]),
 });
 
+/** Validates and normalizes ticket mutate request payload values before they leave the client feature boundary. */
 export const ticketMutateRequestPayloadSchema = z.object({
   id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.number().int().positive().nullable().optional(),
@@ -109,6 +117,7 @@ export const ticketMutateRequestPayloadSchema = z.object({
   images: z.array(ticketAttachmentSchema).default([]),
 });
 
+/** Validates and normalizes create ticket values before they leave the client feature boundary. */
 export const createTicketSchema = ticketWriteRequestSchema.refine(
   (value) => isRequiredNumberId(value.category),
   {
@@ -117,6 +126,7 @@ export const createTicketSchema = ticketWriteRequestSchema.refine(
   },
 );
 
+/** Validates and normalizes update ticket values before they leave the client feature boundary. */
 export const updateTicketSchema = ticketWriteRequestSchema.refine(
   (value) => isRequiredNumberId(value.category),
   {
@@ -125,8 +135,10 @@ export const updateTicketSchema = ticketWriteRequestSchema.refine(
   },
 );
 
+/** Defines the ticket write request input accepted at this feature boundary. */
 export type TicketWriteRequestInput = z.infer<typeof ticketWriteRequestSchema>;
 
+/** Collects the normalized fields shared by ticket create and update operations. */
 export type TicketWriteFields = {
   category?: string;
   subject: string;
@@ -139,9 +151,12 @@ export type TicketWriteFields = {
   attachment: TicketAttachmentInput[];
 };
 
+/** Defines the create ticket input accepted at this feature boundary. */
 export type CreateTicketInput = TicketWriteFields & { id?: null };
+/** Defines the update ticket input accepted at this feature boundary. */
 export type UpdateTicketInput = TicketWriteFields & { id: string };
 
+/** Defines the db ticket write input accepted at this feature boundary. */
 export type DbTicketWriteInput = {
   id?: string;
   category: string | null;
@@ -155,6 +170,7 @@ export type DbTicketWriteInput = {
   attachment: TicketAttachmentInput[];
 };
 
+/** Defines the ticket mutate request payload accepted at this feature boundary. */
 export type TicketMutateRequestPayload = {
   id?: string | null;
   tenantId?: number | null;
@@ -170,13 +186,16 @@ export type TicketMutateRequestPayload = {
   images: TicketAttachmentMetadataDto[];
 };
 
+/** Converts validated form fields to a new-ticket write input. */
 export function toTicketWriteInput(
   input: TicketWriteRequestInput,
 ): CreateTicketInput;
+/** Converts validated form fields plus an identity to an existing-ticket write input. */
 export function toTicketWriteInput(
   input: TicketWriteRequestInput,
   ticketId: string,
 ): UpdateTicketInput;
+/** Normalizes shared write fields and selects create or update shape from the optional ticket identity. */
 export function toTicketWriteInput(
   input: TicketWriteRequestInput,
   ticketId?: string,
@@ -216,6 +235,7 @@ export function toTicketWriteInput(
   return normalized;
 }
 
+/** Maps a normalized ticket write input to the database-oriented compatibility payload. */
 export function toTicketWritePayload(
   input: CreateTicketInput | UpdateTicketInput,
 ): DbTicketWriteInput {
@@ -233,6 +253,7 @@ export function toTicketWritePayload(
   };
 }
 
+/** Maps normalized write fields to the HTTP mutation payload and separates file and image metadata. */
 export function toTicketMutateRequestPayload(
   input: CreateTicketInput | UpdateTicketInput,
   prepared?: PrepareTicketAttachmentsResponse,
@@ -254,6 +275,7 @@ export function toTicketMutateRequestPayload(
   };
 }
 
+/** Validates form values before producing the ticket mutation payload sent to the API. */
 export function toTicketMutateRequestPayloadFromFormValues(
   input: TicketFormValues,
   prepared: PrepareTicketAttachmentsResponse,

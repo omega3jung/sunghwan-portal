@@ -1,6 +1,7 @@
 import { CategoryScope } from "../category";
 import { TicketResolutionReason, TicketStatus } from "../types";
 
+/** Close reasons that represent a ticket relation created by merge or escalation. */
 export type TicketMergeCloseReason = Extract<
   TicketResolutionReason,
   "Merged" | "Escalated"
@@ -19,6 +20,7 @@ type AggregateOptions = {
   excludeMergedChildren?: boolean;
 };
 
+/** Returns whether a closed ticket is a child of a merge or escalation relation. */
 export function isMergedChildTicket(ticket: MergeAwareTicket): boolean {
   return (
     ticket.status === "Closed" &&
@@ -28,6 +30,7 @@ export function isMergedChildTicket(ticket: MergeAwareTicket): boolean {
   );
 }
 
+/** Returns whether a closed ticket was escalated into a portal-scoped target. */
 export function isEscalatedTicket(ticket: MergeAwareTicket): boolean {
   return (
     ticket.status === "Closed" &&
@@ -36,6 +39,7 @@ export function isEscalatedTicket(ticket: MergeAwareTicket): boolean {
   );
 }
 
+/** Resolves the allowed same-tenant relation from the source and target scopes. */
 export function resolveTicketMergeCloseReason(
   source: Pick<MergeAwareTicket, "tenantId" | "scope">,
   target: Pick<MergeAwareTicket, "tenantId" | "scope">,
@@ -59,6 +63,7 @@ export function resolveTicketMergeCloseReason(
   return null;
 }
 
+/** Applies the caller's policy for excluding merged child tickets from aggregates. */
 export function shouldIncludeInTicketAggregates(
   ticket: MergeAwareTicket,
   options: AggregateOptions = {},
@@ -70,6 +75,7 @@ export function shouldIncludeInTicketAggregates(
   return true;
 }
 
+/** Validates merge direction, status, identity, and optional relation-cycle safety. */
 export function canMergeTicketInto(
   source: MergeAwareTicket,
   target: MergeAwareTicket,

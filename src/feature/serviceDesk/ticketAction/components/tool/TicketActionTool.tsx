@@ -114,6 +114,7 @@ function resolveFormErrorMessage(
   return "";
 }
 
+/** Documents the ticket action tool responsibility exposed by this client feature module. */
 export function TicketActionTool({
   ticketId,
   ticket,

@@ -1,5 +1,6 @@
 import type { DbCategory } from "@/lib/application/contracts/serviceDesk";
 
+/** Removes nested subcategories when a category is embedded in demo approval settings. */
 export const categoryApprovalSettingsHelper = (
   categoryMock: DbCategory,
 ): Omit<DbCategory, "sub_category"> => ({

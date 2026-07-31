@@ -5,6 +5,7 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type DepartmentResponse = OResponse<Department>;
 
+/** Groups browser API operations for department behind one typed client boundary. */
 export const departmentApi = {
   list: async (params: DbParams): Promise<Department[]> => {
     if (!params) return [];

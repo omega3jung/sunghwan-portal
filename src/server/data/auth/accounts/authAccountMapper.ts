@@ -3,6 +3,7 @@ import { displayNameMapper } from "@/lib/application/organization";
 import { AuthUserDto } from "./authAccountDto";
 import { DbAuthUserProjectionRow } from "./authAccountRow";
 
+/** Maps auth user across the database and API boundary. */
 export function toAuthUser(row: DbAuthUserProjectionRow): AuthUserDto {
   return {
     id: row.aa_id,

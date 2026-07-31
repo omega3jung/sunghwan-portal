@@ -8,6 +8,7 @@ import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryO
 import { serviceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
 
+/** Provides the client query hook for service desk approval step list query and its cache policy. */
 export const useServiceDeskApprovalStepListQuery = (
   params?: ServiceDeskApprovalStepListParams,
 ) => {

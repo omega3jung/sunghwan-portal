@@ -14,6 +14,7 @@ import { LocalizedText } from "@/shared/types";
 import type { DbParams, DbSort } from "@/shared/types/api";
 import { ISODateString } from "@/shared/types/date";
 
+/** Represents ticket sort field within the Service Desk application boundary. */
 export type TicketSortField =
   | "ticketNumber"
   | "createdAt"
@@ -22,13 +23,16 @@ export type TicketSortField =
   | "priority"
   | "status";
 
+/** Represents ticket search sort within the Service Desk application boundary. */
 export type TicketSearchSort = DbSort<TicketSortField>;
 
+/** Request contract for ticket search operations at the Service Desk application boundary. */
 export type TicketSearchRequest = Required<
   Pick<DbParams<TicketSortField>, "page" | "pageSize">
 > &
   Pick<DbParams<TicketSortField>, "filter" | "sortField" | "sortDirection">;
 
+/** Database-facing ticket summary shape used by the Service Desk application boundary. */
 export interface DbTicketSummary {
   id: string;
   tenant_id: string | null;
@@ -87,6 +91,7 @@ export interface DbTicketSummary {
   age: number;
 }
 
+/** Database-facing ticket detail shape used by the Service Desk application boundary. */
 export interface DbTicketDetail {
   id: string;
   tenant_id: string | null;
@@ -154,6 +159,7 @@ export interface DbTicketDetail {
   images: TicketAttachmentMetadata[];
 }
 
+/** Response contract returned by ticket search operations at the Service Desk application boundary. */
 export type TicketSearchResponse = PaginatedSearchResponse<TicketSummary> & {
   facets: {
     requesters: TicketUser[];

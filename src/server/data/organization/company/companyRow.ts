@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL company row used only within the repository boundary. */
 export interface CompanyRow {
   c_id: number;
   c_name: LocalizedText;

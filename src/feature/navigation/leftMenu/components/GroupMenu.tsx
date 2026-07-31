@@ -25,6 +25,7 @@ type GroupMenuProps = {
   items: MenuItem[];
 };
 
+/** Documents the group menu responsibility exposed by this client feature module. */
 export function GroupMenu({ items }: GroupMenuProps) {
   const tLocal = useLocalizedText();
 

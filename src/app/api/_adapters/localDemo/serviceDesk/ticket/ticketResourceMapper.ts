@@ -11,6 +11,11 @@ import {
   UpdateTicketInput,
 } from "@/lib/application/contracts/serviceDesk";
 
+/**
+ * Projects a LOCAL persistence-shaped ticket through the same application DTO
+ * mapper used by API payloads, then narrows it to list fields. This keeps UI
+ * contracts independent of whether the source is fixture state or REMOTE rows.
+ */
 export function toTicketMockSummaryResource(
   ticket: DbTicketDetail | TicketDetail,
 ): TicketSummary {
@@ -60,9 +65,11 @@ export function toTicketMockSummaryResource(
   };
 }
 
+/** Projects ticket mock detail resource for the server-side LOCAL ticket adapter. */
 export function toTicketMockDetailResource(
   ticket: DbTicketDetail | TicketDetail,
 ): TicketDetail {
+  // LOCAL handlers may already hold an application DTO; avoid remapping it.
   if (isDbTicketDetail(ticket)) {
     return camelTicketDetailMapper([ticket])[0];
   }
@@ -70,6 +77,7 @@ export function toTicketMockDetailResource(
   return ticket;
 }
 
+/** Projects ticket mock detail for the server-side LOCAL ticket adapter. */
 export function toTicketMockDetail(
   input: CreateTicketInput | UpdateTicketInput,
   id = createMockId(),

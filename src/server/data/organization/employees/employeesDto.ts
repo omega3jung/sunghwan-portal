@@ -1,5 +1,6 @@
 ﻿import { LocalizedName } from "@/domain/organization";
 
+/** Defines the employee response dto exchanged across the server API boundary. */
 export interface EmployeeResponseDto {
   employeeId: number;
   username: string;

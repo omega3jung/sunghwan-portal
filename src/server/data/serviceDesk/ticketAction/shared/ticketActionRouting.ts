@@ -10,12 +10,14 @@ import {
 } from "@/server/data/serviceDesk/ticket/ticketRepository";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 
+/** Describes the next status, approval step, and assignees selected by approval routing. */
 export type ApprovalRouting = {
   approvalStepId: number | null;
   assigneeUsernames: string[];
   status: TicketStatus;
 };
 
+/** Advances an approved ticket to the next approval step or its assignment phase. */
 export async function resolveApprovedTicketRouting(
   ticket: ServiceDeskTicketViewRow,
   {
@@ -72,6 +74,7 @@ export async function resolveApprovedTicketRouting(
   };
 }
 
+/** Chooses the first approval step or category-based assignment for a submitted ticket. */
 export async function resolveInitialTicketRouting(
   ticket: ServiceDeskTicketViewRow,
   { query }: { query: ServiceDeskQueryExecutor },

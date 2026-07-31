@@ -7,6 +7,7 @@ import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client"
 import { serviceDeskTicketHistoryApi } from "./api";
 import { ticketHistoryQueryKeys } from "./queryKeys";
 
+/** Provides the client query hook for service desk ticket history list query and its cache policy. */
 export const useServiceDeskTicketHistoryListQuery = (ticketId: string) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 

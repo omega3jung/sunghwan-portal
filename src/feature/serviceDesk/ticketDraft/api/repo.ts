@@ -6,6 +6,7 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { serviceDeskTicketDraftApi } from "./api";
 import type { TicketDraftFormPayload } from "./mapper";
 
+/** Supplies effective user and runtime mode to the ticket draft repository. */
 export type TicketDraftRepoContext = {
   userId: string | null;
   dataScope: DataScope;
@@ -19,6 +20,7 @@ type LocalTicketDraft = {
 
 const TICKET_DRAFT_STORAGE_KEY = "sunghwan_portal_ticket_draft";
 
+/** Derives the draft repository context from the effective session user. */
 export function useTicketDraftRepoContext(): TicketDraftRepoContext {
   const { current, data: session } = useCurrentSession();
   const effectiveUser = current.user;
@@ -30,6 +32,13 @@ export function useTicketDraftRepoContext(): TicketDraftRepoContext {
   };
 }
 
+/**
+ * Selects draft persistence at the feature boundary.
+ *
+ * LOCAL drafts are browser-local convenience state, isolated by effective user
+ * ID and lost when localStorage is cleared. REMOTE drafts are server resources
+ * reached through the API. React Query only caches either result.
+ */
 export const serviceDeskTicketDraftRepo = {
   async get({
     userId,
@@ -97,6 +106,8 @@ const ticketDraftLocalStore = {
 
     if (!draft) return null;
 
+    // Never restore a previous effective user's draft after logout or an
+    // impersonation switch on the same browser profile.
     if (draft.ownerUserId !== userId) {
       localStorage.removeItem(TICKET_DRAFT_STORAGE_KEY);
       return null;

@@ -6,6 +6,7 @@ type FilterRule = {
   value?: string;
 };
 
+/** Reconstructs legacy indexed filter rules from flat URL search parameters. */
 export function getFilterRules(searchParams: URLSearchParams): FilterRule[] {
   const rulesByIndex = new Map<string, FilterRule>();
 
@@ -80,6 +81,7 @@ function matchesFilterRule<T extends object>(
   }
 }
 
+/** Applies a serialized rule group when present, otherwise the legacy flat rules. */
 export function filterItemsByQuery<T extends object>(
   searchParams: URLSearchParams,
   items: T[],

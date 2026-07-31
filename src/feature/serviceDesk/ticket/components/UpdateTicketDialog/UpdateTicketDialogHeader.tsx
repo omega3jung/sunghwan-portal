@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { NS } from "@/lib/application/i18n";
 
+/** Documents the update ticket dialog header responsibility exposed by this client feature module. */
 export function UpdateTicketDialogHeader() {
   const { t } = useTranslation(NS.serviceDesk);
 

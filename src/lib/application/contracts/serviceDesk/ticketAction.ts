@@ -8,6 +8,7 @@ import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
+/** Database-facing ticket action shape used by the Service Desk application boundary. */
 export interface DbTicketAction {
   ticket_id: string;
   action_no: number;
@@ -25,6 +26,7 @@ export interface DbTicketAction {
   images: Attach[];
 }
 
+/** Maps a database ticket action record into the application-facing model. */
 export const camelTicketActionMapper: ArrayMapper<
   DbTicketAction,
   TicketAction
@@ -44,6 +46,7 @@ export const camelTicketActionMapper: ArrayMapper<
   }));
 };
 
+/** Maps an application ticket action model into its database-facing shape. */
 export const snakeTicketActionMapper: ArrayMapper<
   TicketAction,
   DbTicketAction
@@ -63,12 +66,15 @@ export const snakeTicketActionMapper: ArrayMapper<
   }));
 };
 
+/** Maps a ticket action collection payload into application models. */
 export const mapTicketActionListPayload = createListPayloadMapper(
   camelTicketActionMapper,
 );
+/** Maps a ticket action payload into the application model. */
 export const mapTicketActionPayload = createItemPayloadMapper(
   camelTicketActionMapper,
 );
+/** Converts ticket action input into the API write payload. */
 export const toTicketActionWritePayload = createItemPayloadMapper(
   snakeTicketActionMapper,
 );

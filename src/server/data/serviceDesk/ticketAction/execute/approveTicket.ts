@@ -16,6 +16,7 @@ import {
   requireCurrentApprovalStepId,
 } from "../ticketActionRules";
 
+/** Records approval and advances the ticket to the next approval or assignment route atomically. */
 export async function approveTicket({
   ticket,
   ticketId,

@@ -63,6 +63,7 @@ select aa_id,
  where e_username = $1;
 `;
 
+/** Queries PostgreSQL for user preference by key without applying presentation concerns. */
 export async function findUserPreferenceByKey(
   params: GetUserPreferenceByKeyParams,
 ): Promise<UserPreferenceRow | null> {
@@ -75,6 +76,7 @@ export async function findUserPreferenceByKey(
   return rows[0] ?? null;
 }
 
+/** Defines the insert user preference by key used by the PostgreSQL repository boundary. */
 export async function insertUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceRow | null> {
@@ -87,6 +89,7 @@ export async function insertUserPreferenceByKey(
   return rows[0] ?? null;
 }
 
+/** Defines the patch user preference by key used by the PostgreSQL repository boundary. */
 export async function patchUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceRow | null> {
@@ -99,6 +102,7 @@ export async function patchUserPreferenceByKey(
   return rows[0] ?? null;
 }
 
+/** Queries PostgreSQL for user profile by username without applying presentation concerns. */
 export async function findUserProfileByUsername(
   username: string,
 ): Promise<UserProfileRow | null> {

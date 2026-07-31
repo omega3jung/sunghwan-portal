@@ -14,6 +14,7 @@ type AutoCloseResult = {
   ticketIds: string[];
 };
 
+/** Handles POST /api/service-desk/tickets/cron/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const unauthorized = validateCronSecret(request);
 
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(closeExpiredResolvedTicketsLocal(new Date()));
 }
 
+/** Handles GET /api/service-desk/tickets/cron/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   return POST(request);
 }

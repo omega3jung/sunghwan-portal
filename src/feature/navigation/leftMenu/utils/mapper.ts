@@ -13,6 +13,7 @@ type MenuArea = DbMenuItem["area"];
 
 const ROOT_PARENT_ID = 0;
 
+/** Rebuilds sorted header, main, and footer menu trees from flat database menu rows. */
 export function createLeftMenuFromDbMenuItem(
   dbItems: DbMenuItem[] | null | undefined,
 ): LeftMenuItems {

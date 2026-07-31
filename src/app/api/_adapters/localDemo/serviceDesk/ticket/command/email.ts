@@ -5,6 +5,7 @@ const employeeEmailByUserName = new Map(
   employeesMock.map((employee) => [employee.e_username, employee.e_email]),
 );
 
+/** Adds resolved assignee emails to notification targets without duplicating recipients. */
 export const mergeTicketToEmails = (
   ticket: DbTicketDetail,
   assigneeUsernames: string[],

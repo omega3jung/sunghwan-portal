@@ -7,6 +7,7 @@ import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
+/** Describes the snake-case work-session payload returned by legacy endpoints. */
 export interface DbTicketWorkSession {
   ticket_id: string;
   work_session_no: number;
@@ -22,6 +23,7 @@ export interface DbTicketWorkSession {
   updated_at: ISODateString | null;
 }
 
+/** Passes through work-session payloads that already use the client model shape. */
 export const camelTicketWorkSessionMapper: ArrayMapper<
   DbTicketWorkSession,
   TicketWorkSession
@@ -39,6 +41,7 @@ export const camelTicketWorkSessionMapper: ArrayMapper<
   }));
 };
 
+/** Converts legacy snake-case work-session payloads to the client model. */
 export const snakeTicketWorkSessionMapper: ArrayMapper<
   TicketWorkSession,
   DbTicketWorkSession
@@ -56,9 +59,11 @@ export const snakeTicketWorkSessionMapper: ArrayMapper<
   }));
 };
 
+/** Maps ticket work session list payload at the feature's API or form boundary. */
 export const mapTicketWorkSessionListPayload = createListPayloadMapper(
   camelTicketWorkSessionMapper,
 );
+/** Maps ticket work session payload at the feature's API or form boundary. */
 export const mapTicketWorkSessionPayload = createItemPayloadMapper(
   camelTicketWorkSessionMapper,
 );

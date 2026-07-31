@@ -3,6 +3,7 @@ import type {
   TicketStatus,
 } from "@/domain/serviceDesk";
 
+/** Defines the ticket action type to path policy value used by the Service Desk application boundary. */
 export const TICKET_ACTION_TYPE_TO_PATH = {
   APPROVE: "approve",
   DECLINE: "decline",
@@ -18,9 +19,11 @@ export const TICKET_ACTION_TYPE_TO_PATH = {
   CANCEL: "cancel",
 } as const satisfies Record<TicketActionType, string>;
 
+/** Represents ticket action path within the Service Desk application boundary. */
 export type TicketActionPath =
   (typeof TICKET_ACTION_TYPE_TO_PATH)[TicketActionType];
 
+/** Defines the ticket action path to type policy value used by the Service Desk application boundary. */
 export const TICKET_ACTION_PATH_TO_TYPE = {
   approve: "APPROVE",
   decline: "DECLINE",
@@ -36,38 +39,45 @@ export const TICKET_ACTION_PATH_TO_TYPE = {
   cancel: "CANCEL",
 } as const satisfies Record<TicketActionPath, TicketActionType>;
 
+/** Defines the ticket action paths policy value used by the Service Desk application boundary. */
 export const TICKET_ACTION_PATHS = Object.values(
   TICKET_ACTION_TYPE_TO_PATH,
 ) as TicketActionPath[];
 
 const TICKET_ACTION_PATH_SET = new Set<TicketActionPath>(TICKET_ACTION_PATHS);
 
+/** Represents ticket approval action path within the Service Desk application boundary. */
 export type TicketApprovalActionPath = Extract<
   TicketActionPath,
   "approve" | "decline"
 >;
 
+/** Represents ticket general action path within the Service Desk application boundary. */
 export type TicketGeneralActionPath = Exclude<
   TicketActionPath,
   TicketApprovalActionPath
 >;
 
+/** Returns whether ticket action path applies in the Service Desk application boundary. */
 export function isTicketActionPath(action: string): action is TicketActionPath {
   return TICKET_ACTION_PATH_SET.has(action as TicketActionPath);
 }
 
+/** Returns whether ticket approval action path applies in the Service Desk application boundary. */
 export function isTicketApprovalActionPath(
   action: string,
 ): action is TicketApprovalActionPath {
   return action === "approve" || action === "decline";
 }
 
+/** Returns whether ticket general action path applies in the Service Desk application boundary. */
 export function isTicketGeneralActionPath(
   action: string,
 ): action is TicketGeneralActionPath {
   return isTicketActionPath(action) && !isTicketApprovalActionPath(action);
 }
 
+/** Represents ticket action command attachment within the Service Desk application boundary. */
 export type TicketActionCommandAttachment = {
   id: string;
   name: string;
@@ -75,6 +85,7 @@ export type TicketActionCommandAttachment = {
   url?: string;
 };
 
+/** Request contract for ticket action command operations at the Service Desk application boundary. */
 export type TicketActionCommandRequest = {
   id?: string;
   actionType?: TicketActionType;
@@ -89,6 +100,7 @@ export type TicketActionCommandRequest = {
   dueAt?: string;
 };
 
+/** Represents ticket action command payload within the Service Desk application boundary. */
 export type TicketActionCommandPayload = TicketActionCommandRequest & {
   id: string;
   actionType: TicketActionType;
@@ -96,6 +108,7 @@ export type TicketActionCommandPayload = TicketActionCommandRequest & {
   images: TicketActionCommandAttachment[];
 };
 
+/** Request contract for ticket approval action command operations at the Service Desk application boundary. */
 export type TicketApprovalActionCommandRequest = Pick<
   TicketActionCommandRequest,
   "content"
@@ -107,6 +120,7 @@ export type TicketApprovalActionCommandRequest = Pick<
     >
   >;
 
+/** Represents ticket action execution mode within the Service Desk application boundary. */
 export type TicketActionExecutionMode =
   | TicketActionPath
   | "assignAdminOverride"
@@ -171,6 +185,7 @@ const EXECUTABLE_STATUSES_BY_MODE: Record<
   cancel: ["Approval", "Declined", "Assigned", "Working", "Pending", "Rejected"],
 };
 
+/** Resolves ticket action execution mode according to the Service Desk application boundary policy. */
 export function resolveTicketActionExecutionMode(
   action: TicketActionPath,
   isAdmin = false,
@@ -182,6 +197,7 @@ export function resolveTicketActionExecutionMode(
   return ADMIN_OVERRIDE_ACTION_MODE_BY_PATH[action] ?? action;
 }
 
+/** Returns whether ticket action execution allowed applies in the Service Desk application boundary. */
 export function isTicketActionExecutionAllowed(
   actionMode: TicketActionExecutionMode,
   status: TicketStatus,
@@ -189,6 +205,7 @@ export function isTicketActionExecutionAllowed(
   return EXECUTABLE_STATUSES_BY_MODE[actionMode].includes(status);
 }
 
+/** Resolves ticket action next status according to the Service Desk application boundary policy. */
 export function resolveTicketActionNextStatus(
   actionMode: TicketActionExecutionMode,
   currentStatus: TicketStatus,

@@ -16,6 +16,7 @@ import {
   type TicketDraftFormValues,
 } from "@/feature/serviceDesk/ticketDraft/forms";
 
+/** Handles GET /api/service-desk/tickets/draft; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   const currentUserName = await getCurrentEmployeeUserName(request);
 
@@ -34,6 +35,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
+/** Handles POST /api/service-desk/tickets/draft; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const currentUserName = await getCurrentEmployeeUserName(request);
 

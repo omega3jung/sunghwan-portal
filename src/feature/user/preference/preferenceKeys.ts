@@ -16,6 +16,7 @@ const serviceDeskKeys = {
   ),
 };
 
+/** Enumerates the preference keys that may be persisted through the user preference API. */
 export const preferenceKeys = {
   home: homeKeys,
   serviceDesk: serviceDeskKeys,

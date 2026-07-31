@@ -10,6 +10,12 @@ import {
 } from "./ruleUtils";
 import { flattenAssignmentRuleTree } from "./treeSync";
 
+/**
+ * Reconciles submitted assignment rules while preserving unsubmitted categories.
+ *
+ * Nodes with no effective selection intentionally remove that category's rule;
+ * runtime routing may then fall back from a subcategory to its main category.
+ */
 export const localSaveAssignmentRuleTree = ({
   isInternal,
   payload,

@@ -7,6 +7,7 @@ type ErrorResponseOptions = {
   fallbackStatus?: number;
 };
 
+/** Converts unknown route failures to the project's stable JSON error response without exposing internals. */
 export const toApiErrorResponse = (
   error: unknown,
   { fallbackMessage, fallbackStatus = 500 }: ErrorResponseOptions,

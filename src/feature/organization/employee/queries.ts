@@ -8,6 +8,7 @@ import type { DbParams } from "@/shared/types/api";
 import { employeeApi } from "./api";
 import { employeeQueryKeys } from "./queryKeys";
 
+/** Provides the client query hook for employee list query and its cache policy. */
 export const useEmployeeListQuery = (params?: DbParams) => {
   return useQuery({
     queryKey: employeeQueryKeys.list(params),
@@ -17,6 +18,7 @@ export const useEmployeeListQuery = (params?: DbParams) => {
   });
 };
 
+/** Provides the client query hook for employee query and its cache policy. */
 export const useEmployeeQuery = (id: string | number) => {
   return useQuery({
     queryKey: employeeQueryKeys.detail(id),

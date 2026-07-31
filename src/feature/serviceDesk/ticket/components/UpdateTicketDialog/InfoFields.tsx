@@ -34,6 +34,7 @@ import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContex
 const EMAIL_FIELDS = ["email.to", "email.cc", "email.bcc"] as const;
 type EmailFieldName = (typeof EMAIL_FIELDS)[number];
 
+/** Documents the update ticket info fields responsibility exposed by this client feature module. */
 export function UpdateTicketInfoFields() {
   const { form, categories, users, language } = useTicketUpdateFormContext();
   const { t } = useTranslation(NS.serviceDesk);

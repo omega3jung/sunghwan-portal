@@ -11,6 +11,7 @@ import {
 import { PreferencePatch, usePreferenceStore } from "@/lib/client/preference";
 import { Locale } from "@/shared/types";
 
+/** Defines the use current preference result returned to this feature boundary. */
 export type UseCurrentPreferenceResult = {
   status: "loading" | "ready";
   current: PortalPreference;

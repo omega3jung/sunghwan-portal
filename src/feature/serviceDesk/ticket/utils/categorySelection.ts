@@ -14,12 +14,14 @@ type TicketCategoryNode = {
   defaultSlaDays?: number;
 };
 
+/** Describes the selected category, its parent, and requester guidance text. */
 export type TicketCategoryMeta = {
   selected?: TicketCategoryNode;
   parentCategory?: MainCategory;
   path: TicketCategoryNode[];
 };
 
+/** Converts category records to parent-child picker items while preserving display order. */
 export const mapTicketCategoriesToHierarchicalItems = (
   categories: MainCategory[],
   localizeText: LocalizeText,
@@ -43,6 +45,7 @@ export const mapTicketCategoriesToHierarchicalItems = (
       };
     });
 
+/** Resolves ticket category meta from feature data using the current client policy. */
 export const resolveTicketCategoryMeta = (
   categories: MainCategory[],
   categoryId?: string | null,
@@ -75,6 +78,7 @@ export const resolveTicketCategoryMeta = (
   return { path: [] };
 };
 
+/** Formats ticket category path for presentation without changing the source model. */
 export const formatTicketCategoryPath = (
   meta: TicketCategoryMeta,
   localizeText: LocalizeText,
@@ -87,6 +91,7 @@ export const formatTicketCategoryPath = (
   return meta.path.map((item) => localizeText(item.name)).join(" / ");
 };
 
+/** Returns the parent category used to keep hierarchical picker state synchronized. */
 export const getTicketCategoryParentId = (
   categories: MainCategory[],
   categoryId?: string | null,
@@ -96,6 +101,7 @@ export const getTicketCategoryParentId = (
   return meta.parentCategory?.id ?? meta.selected?.id;
 };
 
+/** Returns requester guidance inherited from the selected category path. */
 export const getTicketCategoryRequestTemplate = (
   categories: MainCategory[],
   categoryId: string | undefined,

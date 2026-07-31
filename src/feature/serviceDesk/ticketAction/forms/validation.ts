@@ -2,6 +2,7 @@ import type { TicketDetail } from "@/domain/serviceDesk";
 
 import type { TicketActionDraftFormValues } from "./types";
 
+/** Defines the stable cache or persistence key for action adjust no changes data. */
 export const ACTION_ADJUST_NO_CHANGES_KEY =
   "actionTool.validation.adjustNoChanges";
 
@@ -14,6 +15,7 @@ const normalizeDateValue = (value?: Date | string) => {
   return Number.isNaN(timeValue) ? undefined : timeValue;
 };
 
+/** Reports whether an adjust command changes at least one planning field. */
 export function hasTicketActionAdjustChanges(
   values: TicketActionDraftFormValues,
   ticket?: TicketDetail | null,

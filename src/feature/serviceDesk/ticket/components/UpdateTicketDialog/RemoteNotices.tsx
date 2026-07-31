@@ -9,6 +9,7 @@ type RemoteNoticeProps = {
   isVisible: boolean;
 };
 
+/** Documents the remote attachment notice responsibility exposed by this client feature module. */
 export const RemoteAttachmentNotice = ({
   children,
   isVisible,
@@ -26,6 +27,7 @@ export const RemoteAttachmentNotice = ({
   );
 };
 
+/** Documents the routing recalculation notice responsibility exposed by this client feature module. */
 export const RoutingRecalculationNotice = ({
   children,
   isVisible,

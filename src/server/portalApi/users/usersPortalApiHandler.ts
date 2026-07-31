@@ -17,6 +17,7 @@ import {
 
 const USER_PROFILE_PATH_PATTERN = /^\/users\/([^/]+)\/profile$/;
 const USER_PREFERENCE_PATH_PATTERN = /^\/users\/([^/]+)\/preference$/;
+/** Handles user portal api requests and translates domain results into portal API responses. */
 export async function handleUserPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,

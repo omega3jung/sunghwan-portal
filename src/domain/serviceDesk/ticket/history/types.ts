@@ -17,6 +17,7 @@ export type HistoryType =
   | "NOTE"
   | "PLANNING";
 
+/** Authority that produced an immutable ticket history event. */
 export type TicketHistorySource =
   | "USER_ACTION"
   | "SYSTEM_AUTO"
@@ -24,6 +25,7 @@ export type TicketHistorySource =
   | "APPROVAL_RULE"
   | "ASSIGNMENT_RULE";
 
+/** Immutable event kinds represented in the ticket activity history. */
 export type TicketHistoryEvent =
   | "TICKET_SUBMITTED"
   | "TICKET_UPDATED"
@@ -53,6 +55,7 @@ export type TicketHistoryEvent =
   | "ROUTING_RESET"
   | "ROUTING_PRESERVED";
 
+/** Represents ticket close reason within the Service Desk domain. */
 export type TicketCloseReason =
   | "Completed"
   | "Rejected"

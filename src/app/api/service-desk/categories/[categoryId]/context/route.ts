@@ -8,6 +8,7 @@ import { resolveApiErrorMessage } from "@/lib/application/api";
 
 type CategoryContextRouteContext = RouteContext<{ categoryId: string }>;
 
+/** Handles GET /api/service-desk/categories/[categoryId]/context; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(
   request: NextRequest,
   context: CategoryContextRouteContext,

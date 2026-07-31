@@ -15,6 +15,7 @@ import { NS } from "@/lib/application/i18n";
 import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { RemoteAttachmentNotice } from "./RemoteAttachmentNotice";
 
+/** Documents the attachment step responsibility exposed by this client feature module. */
 export const AttachmentStep = () => {
   const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);

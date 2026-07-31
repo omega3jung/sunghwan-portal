@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types/language";
 
+/** Represents job field within the organization domain. */
 export interface JobField {
   id: string;
 

@@ -1,5 +1,6 @@
 import { AppUser } from "@/domain/user";
 
+/** Client-facing session projection combining effective user, security, and presentation flags. */
 export interface CurrentSession {
   user: AppUser | null;
   expires: string;

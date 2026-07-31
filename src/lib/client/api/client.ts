@@ -1,3 +1,4 @@
+// src/lib/client/api/client.ts
 import axios, { AxiosRequestConfig } from "axios";
 
 /**

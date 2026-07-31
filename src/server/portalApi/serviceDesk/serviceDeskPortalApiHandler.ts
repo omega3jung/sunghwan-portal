@@ -17,6 +17,7 @@ import { handleTicketPortalApi } from "./ticketApiHandler";
 import { handleTicketHistoryPortalApi } from "./ticketHistoryApiHandler";
 import { handleWorkSessionPortalApi } from "./workSessionApiHandler";
 
+/** Handles service desk portal api requests and translates domain results into portal API responses. */
 export async function handleServiceDeskPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,

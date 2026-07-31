@@ -1,5 +1,6 @@
 import type { ISODateString } from "@/shared/types";
 
+/** Defines the work session dto exchanged across the server API boundary. */
 export type WorkSessionDto = {
   ticket_id: string;
   work_session_no: number;

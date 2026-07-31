@@ -5,6 +5,7 @@ import {
 
 const SERVICE_DESK_TICKET_HISTORY_KEY = "history";
 
+/** Builds stable TanStack Query keys for ticket history cache entries. */
 export const ticketHistoryQueryKeys = {
   all: [
     SERVICE_DESK_KEY,

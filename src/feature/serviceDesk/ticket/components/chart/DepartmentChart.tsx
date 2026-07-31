@@ -5,6 +5,7 @@ type DepartmentChartProps = Omit<SummaryChartProps, "title"> & {
   title?: string;
 };
 
+/** Documents the department chart responsibility exposed by this client feature module. */
 export function DepartmentChart({
   title = "Tickets by Department",
   ...props

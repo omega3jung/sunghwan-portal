@@ -4,6 +4,7 @@ import {
 } from "@/feature/serviceDesk/shared/keys";
 import type { ServiceDeskCategoryListParams } from "@/lib/application/contracts/serviceDesk";
 
+/** Builds stable TanStack Query keys for category cache entries. */
 export const categoryQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_CATEGORY_KEY] as const,
 

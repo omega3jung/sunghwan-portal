@@ -9,6 +9,7 @@ const ACTION_VALIDATION_KEY = {
   targetTicketRequired: "actionTool.validation.targetTicketRequired",
 } as const;
 
+/** Validates and normalizes ticket action type values before they leave the client feature boundary. */
 export const ticketActionTypeSchema = z.enum([
   "APPROVE",
   "DECLINE",
@@ -37,6 +38,7 @@ const actionAttachmentSchema = z.object({
   url: z.string().optional(),
 });
 
+/** Validates and normalizes ticket action draft form values before they leave the client feature boundary. */
 export const ticketActionDraftFormSchema = z
   .object({
     actionType: ticketActionTypeSchema,
@@ -70,6 +72,7 @@ export const ticketActionDraftFormSchema = z
     }
   });
 
+/** Validates and normalizes ticket action payload values before they leave the client feature boundary. */
 export const ticketActionPayloadSchema: z.ZodType<TicketActionCommandPayload> =
   z.object({
     id: z.string(),
@@ -85,4 +88,5 @@ export const ticketActionPayloadSchema: z.ZodType<TicketActionCommandPayload> =
     dueAt: z.string().optional(),
   });
 
+/** Validates and normalizes ticket action form values before they leave the client feature boundary. */
 export const ticketActionFormSchema = ticketActionPayloadSchema;

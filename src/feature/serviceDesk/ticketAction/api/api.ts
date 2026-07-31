@@ -41,6 +41,7 @@ async function executeAction({
   return res.data;
 }
 
+/** Groups browser API operations for service desk ticket action behind one typed client boundary. */
 export const serviceDeskTicketActionApi = {
   list: async (ticketId: string): Promise<TicketAction[]> => {
     if (!ticketId) return [];

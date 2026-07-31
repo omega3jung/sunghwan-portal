@@ -1,3 +1,4 @@
+/** Represents one scalar or repeated query value accepted by the authentication adapter. */
 export type AuthApiQueryValue =
   | string
   | number
@@ -7,6 +8,7 @@ export type AuthApiQueryValue =
   | null
   | undefined;
 
+/** Configures an embedded or external authentication request through one shared contract. */
 export type AuthApiJsonOptions = {
   path: string;
   errorMessage: string;

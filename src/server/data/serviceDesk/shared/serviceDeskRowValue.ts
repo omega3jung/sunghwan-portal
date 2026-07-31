@@ -1,5 +1,6 @@
 import type { ISODateString } from "@/shared/types";
 
+/** Normalizes PostgreSQL array encodings and driver values into a stable string array. */
 export function normalizePostgresStringArray(value: unknown): string[] {
   if (Array.isArray(value)) {
     return value.filter(
@@ -37,12 +38,14 @@ export function normalizePostgresStringArray(value: unknown): string[] {
     .filter(Boolean);
 }
 
+/** Converts a required database date value to the ISO string used by row contracts. */
 export function toRowIsoDateString(
   value: ISODateString | Date,
 ): ISODateString {
   return (value instanceof Date ? value.toISOString() : value) as ISODateString;
 }
 
+/** Converts an optional database date value to an ISO string while preserving null. */
 export function toNullableRowIsoDateString(
   value: ISODateString | Date | null,
 ): ISODateString | null {

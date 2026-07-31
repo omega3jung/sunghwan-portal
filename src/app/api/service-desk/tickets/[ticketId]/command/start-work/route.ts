@@ -19,6 +19,7 @@ import {
 } from "@/app/api/_adapters/serviceDesk";
 import { mapTicketDetailPayload } from "@/lib/application/contracts/serviceDesk";
 
+/** Handles POST /api/service-desk/tickets/[ticketId]/command/start-work; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(
   request: NextRequest,
   context: TicketIdRouteContext,

@@ -1,6 +1,7 @@
 import { DepartmentDto } from "./departmentDto";
 import { DepartmentRow } from "./departmentRow";
 
+/** Maps department row to dto across the database and API boundary. */
 export function mapDepartmentRowToDto(row: DepartmentRow): DepartmentDto {
   return {
     d_id: Number(row.d_id),
@@ -13,6 +14,7 @@ export function mapDepartmentRowToDto(row: DepartmentRow): DepartmentDto {
   };
 }
 
+/** Maps department rows to dtos across the database and API boundary. */
 export function mapDepartmentRowsToDtos(rows: DepartmentRow[]): DepartmentDto[] {
   return rows.map(mapDepartmentRowToDto);
 }

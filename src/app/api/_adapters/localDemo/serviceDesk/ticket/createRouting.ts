@@ -21,6 +21,7 @@ const DEFAULT_REQUESTER_ACCESS_LEVEL = ACCESS_LEVEL.USER;
 const CREATE_TICKET_APPROVAL_STATUS: TicketStatus = "Approval";
 const CREATE_TICKET_ASSIGNED_STATUS: TicketStatus = "Assigned";
 
+/** Describes create ticket routing used by the server-side LOCAL ticket adapter. */
 export type CreateTicketRouting = {
   status: TicketStatus;
   approvalStepId: string | null;
@@ -40,12 +41,21 @@ type ApprovedRoutingInput = RoutingInput & {
   currentApprovalStepId: string;
 };
 
+/**
+ * Resolves initial LOCAL approval or work routing from the selected category.
+ *
+ * Category relationships, not caller-supplied tenant flags, define the tenant
+ * and scope boundary. Approval uses the main-category fallback; work assignment
+ * checks the selected category before its main category. A route that resolves
+ * no active assignee fails instead of creating an unowned workflow ticket.
+ */
 export async function resolveCreateTicketRouting(
   input: RoutingInput,
 ): Promise<CreateTicketRouting> {
   return resolveTicketRouting(input);
 }
 
+/** Resolves approved ticket routing using the server-side LOCAL ticket adapter policy. */
 export async function resolveApprovedTicketRouting(
   input: ApprovedRoutingInput,
 ): Promise<CreateTicketRouting> {
@@ -138,6 +148,8 @@ function resolveNextApprovalStep({
   requesterAccessLevel: AccessLevel;
   currentApprovalStepId?: string | number | null;
 }) {
+  // Skip thresholds mean users at or above the configured access level do not
+  // require that step. Ordering is workflow order, not display-only sorting.
   const currentApprovalStep = approvalSteps.find(
     (approvalStep) =>
       String(approvalStep.approval_step_id) ===
@@ -247,6 +259,8 @@ function findAssignmentRuleWithMainFallback(
   rules: DbAssignmentRule[],
   category: ServiceDeskCategoryContext,
 ) {
+  // Subcategory assignment is more specific. The main-category rule is used
+  // only when the selected subcategory has no effective assignee selection.
   const categoryCandidates = [category.categoryId, category.mainCategoryId];
 
   for (const categoryCandidate of categoryCandidates) {

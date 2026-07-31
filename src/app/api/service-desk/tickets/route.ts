@@ -26,11 +26,13 @@ import {
   type TicketMutateRequestPayload,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Handles GET /api/service-desk/tickets; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);
 
-  // demo mode
+  // LOCAL applies the same access projection in process; its mutable adapter
+  // state is demo-only and is not a durable replacement for the REMOTE database.
   if (!isRemote) {
     try {
       if (currentUserName === null) {
@@ -64,7 +66,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // real backend
+  // REMOTE delegates authorization and persistence to the portal API while this
+  // route keeps the browser-facing DTO contract stable.
   return portalApiJson(request, {
     path: "/service-desk/tickets",
     query: request.nextUrl.searchParams,
@@ -74,6 +77,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
+/** Handles POST /api/service-desk/tickets; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
   const currentUserName = await getCurrentEmployeeUserName(request);

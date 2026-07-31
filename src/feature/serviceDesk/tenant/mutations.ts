@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
 
+/** Provides the client mutation hook for create service desk tenant and invalidates affected cached data. */
 export const useCreateServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 
@@ -17,6 +18,7 @@ export const useCreateServiceDeskTenant = () => {
   });
 };
 
+/** Provides the client mutation hook for update service desk tenant and invalidates affected cached data. */
 export const useUpdateServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 
@@ -29,6 +31,7 @@ export const useUpdateServiceDeskTenant = () => {
   });
 };
 
+/** Provides the client mutation hook for delete service desk tenant and invalidates affected cached data. */
 export const useDeleteServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 

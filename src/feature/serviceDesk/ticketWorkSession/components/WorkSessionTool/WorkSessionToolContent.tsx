@@ -68,6 +68,7 @@ function isWorkSessionStatus(
   );
 }
 
+/** Documents the work session tool content responsibility exposed by this client feature module. */
 export function WorkSessionToolContent({
   onClose,
   ticket,

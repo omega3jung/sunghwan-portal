@@ -34,14 +34,17 @@ interface TicketWorkflowState {
   closeReason?: TicketResolutionReason;
 }
 
+/** Phase that determines whether current assignees are approvers or work assignees. */
 export type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
+/** Represents ticket user within the Service Desk domain. */
 export type TicketUser = {
   username: string;
   name: LocalizedName;
   image: string | null;
 };
 
+/** Represents ticket requester within the Service Desk domain. */
 export type TicketRequester = TicketUser & {
   email: string | null;
 };

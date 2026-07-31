@@ -31,6 +31,7 @@ type HistoryTimelineMapperTranslation = {
   tStatus: TFunction;
 };
 
+/** Resolves history badge from feature data using the current client policy. */
 export function resolveHistoryBadge(
   history: TicketHistory,
   t: TFunction,
@@ -56,6 +57,7 @@ export function resolveHistoryBadge(
   }
 }
 
+/** Resolves the localized one-line summary for a history event and its metadata. */
 export function getHistorySummary(
   history: {
     type?: string;
@@ -189,6 +191,7 @@ function resolveHistoryStatusLabel(value: unknown, tStatus: TFunction): string {
   return String(value);
 }
 
+/** Resolves history icon from feature data using the current client policy. */
 export function resolveHistoryIcon(history: TicketHistory) {
   if (history.source === "SYSTEM_AUTO") {
     return <Bot className="h-3 w-3" />;
@@ -257,6 +260,7 @@ function resolveMergeTargetLabel(
   );
 }
 
+/** Resolves history description from feature data using the current client policy. */
 export function resolveHistoryDescription(
   history: TicketHistory,
   t: TFunction,
@@ -275,6 +279,7 @@ export function resolveHistoryDescription(
   return history.metadata?.reason ?? history.metadata?.note;
 }
 
+/** Projects a history record to the badge, icon, summary, and description used by the timeline. */
 export function mapTicketHistoryToTimelineItem(
   history: TicketHistory,
   { t, tCommon, tHistory, tStatus }: HistoryTimelineMapperTranslation,

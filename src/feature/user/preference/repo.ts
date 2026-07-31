@@ -5,6 +5,7 @@ import { Preference } from "@/domain/user/preference";
 import { userPreferenceApi } from "./api";
 import { GetPreferenceInput, SavePreferenceInput } from "./types";
 
+/** Provides the client repository for user preference across remote and local persistence modes. */
 export const userPreferenceRepo = {
   async get<T>({
     userId = null,

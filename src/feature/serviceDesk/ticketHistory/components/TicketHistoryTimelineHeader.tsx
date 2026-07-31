@@ -9,6 +9,7 @@ type TicketHistoryTimelineHeaderProps = {
   description?: string;
 };
 
+/** Documents the ticket history timeline header responsibility exposed by this client feature module. */
 export function TicketHistoryTimelineHeader({
   title,
   description,

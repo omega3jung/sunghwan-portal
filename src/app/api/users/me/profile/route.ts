@@ -5,6 +5,7 @@ import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
 
+/** Handles GET /api/users/me/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
 

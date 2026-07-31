@@ -31,6 +31,7 @@ type FilterProps = {
   onSubmit: (values: TicketSearchCriteriaFormValues) => Promise<void>;
 };
 
+/** Documents the ticket search criteria responsibility exposed by this client feature module. */
 export const TicketSearchCriteria = (props: FilterProps) => {
   const { form, categories, requesters, assignees, onSubmit } = props;
 

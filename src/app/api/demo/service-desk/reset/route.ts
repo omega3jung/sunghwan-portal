@@ -4,6 +4,7 @@ import { isRemoteRequest } from "@/app/api/_adapters";
 import { resetLocalDemoSettingsState } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { resetLocalDemoTicketState } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 
+/** Handles POST /api/demo/service-desk/reset; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 

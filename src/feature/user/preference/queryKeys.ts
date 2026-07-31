@@ -3,6 +3,7 @@
 import { USER_KEY, USER_PREFERENCE_KEY } from "../keys";
 import { GetPreferenceInput } from "./types";
 
+/** Builds stable TanStack Query keys for user preference cache entries. */
 export const userPreferenceQueryKeys = {
   all: [USER_KEY, USER_PREFERENCE_KEY] as const,
 

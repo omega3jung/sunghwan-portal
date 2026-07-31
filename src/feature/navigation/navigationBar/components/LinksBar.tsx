@@ -13,6 +13,7 @@ type Props = {
   onClick?: (index: number, name?: string | ReactNode, value?: string) => void;
 };
 
+/** Documents the links bar responsibility exposed by this client feature module. */
 export const LinksBar = (props: Props) => {
   const { items, isLinkable = true, onClick = () => {} } = props;
   const path = usePathname();

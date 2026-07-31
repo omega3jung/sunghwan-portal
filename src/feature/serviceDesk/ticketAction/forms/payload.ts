@@ -69,6 +69,7 @@ const resolveActionAttachments = (
   return splitActionAttachments(values.attachment);
 };
 
+/** Defines the build ticket action payload accepted at this feature boundary. */
 export function buildTicketActionPayload({
   userId,
   values,

@@ -14,6 +14,13 @@ type FilterGroup = {
 
 type FilterNode = FilterGroup | FilterLeaf | FilterConnector | null | undefined;
 
+/**
+ * Applies the shared query-builder filter shape to an in-memory collection.
+ *
+ * This powers LOCAL parity with REMOTE query parameters. Malformed JSON,
+ * incomplete rules, and unknown operators intentionally degrade to no-op
+ * matching instead of making demo reads fail with parser errors.
+ */
 export function applyRuleGroupFilter<T extends object>(
   items: T[],
   filter: unknown,
@@ -29,10 +36,12 @@ export function applyRuleGroupFilter<T extends object>(
   );
 }
 
+/** Parses a serialized rule group without throwing on malformed input. */
 export function parseRuleGroupFilter(value: unknown): unknown {
   return normalizeFilterInput(value);
 }
 
+/** Finds a field's first explicit boolean rule value, returning null when absent. */
 export function getBooleanRuleGroupValue(
   filter: unknown,
   field: string,
@@ -46,6 +55,7 @@ export function getBooleanRuleGroupValue(
   return findBooleanRuleValue(normalizedFilter as FilterNode, field);
 }
 
+/** Finds and trims a field's first rule value, returning null when empty or absent. */
 export function getStringRuleGroupValue(
   filter: unknown,
   field: string,

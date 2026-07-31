@@ -29,13 +29,16 @@ import { useMutationToast } from "@/lib/client/toast";
 
 import { RequesterUpdateTicketPayload } from "../write";
 
+/** Defines the editable workflow steps shown before ticket update review. */
 export const UPDATE_TICKET_STEPS = ["info", "attachment", "review"] as const;
+/** Identifies the final review stage of the ticket update dialog. */
 export const UPDATE_TICKET_REVIEW_STEP = UPDATE_TICKET_STEPS.length - 1;
 
 type UseUpdateTicketDialogParams = {
   ticketId: string;
 };
 
+/** Coordinates ticket loading, step validation, attachment preparation, and requester update submission. */
 export function useUpdateTicketDialog({
   ticketId,
 }: UseUpdateTicketDialogParams) {

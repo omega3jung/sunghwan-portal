@@ -1,5 +1,6 @@
 import { TicketFormValues } from "./types";
 
+/** Defines stable initial values for the ticket form form. */
 export const ticketFormDefaultValues: TicketFormValues = {
   id: null,
   category: undefined,

@@ -15,6 +15,7 @@ const statusOptionValues = [
   "Closed",
 ] as const satisfies readonly TicketStatus[];
 
+/** Defines the supported get status choices presented by the feature. */
 export const getStatusOptions = (
   locale: Locale = "en",
 ): ValueLabel<TicketStatus>[] => {
@@ -31,4 +32,5 @@ export const getStatusOptions = (
   });
 };
 
+/** Defines the supported status choices presented by the feature. */
 export const statusOptions = getStatusOptions();

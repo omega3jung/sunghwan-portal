@@ -28,6 +28,7 @@ import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
+/** Returns companies from the server-side LOCAL organization adapter. */
 export function listLocalCompanies() {
   const items = camelCompanyMapper(
     allCompaniesMock
@@ -37,6 +38,7 @@ export function listLocalCompanies() {
   return { items, total: items.length };
 }
 
+/** Returns company from the server-side LOCAL organization adapter. */
 export function getLocalCompany(id: string) {
   return (
     camelCompanyMapper(
@@ -45,11 +47,14 @@ export function getLocalCompany(id: string) {
   );
 }
 
+/** Creates company in the server-side LOCAL organization adapter mutable state. */
 export const createLocalCompany = (input: CreateCompanyInput) =>
   toLocalCompany(input);
+/** Updates company in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalCompany = (input: UpdateCompanyInput, id: string) =>
   toLocalCompany(input, id);
 
+/** Returns departments from the server-side LOCAL organization adapter. */
 export function listLocalDepartments(searchParams: URLSearchParams) {
   const items = camelDepartmentMapper(
     applyRuleGroupFilter(
@@ -63,6 +68,7 @@ export function listLocalDepartments(searchParams: URLSearchParams) {
   return { items, total: items.length };
 }
 
+/** Returns department from the server-side LOCAL organization adapter. */
 export function getLocalDepartment(id: string) {
   return (
     camelDepartmentMapper(allDepartmentsMock).find((item) => item.id === id) ??
@@ -70,13 +76,16 @@ export function getLocalDepartment(id: string) {
   );
 }
 
+/** Creates department in the server-side LOCAL organization adapter mutable state. */
 export const createLocalDepartment = (input: CreateDepartmentInput) =>
   toLocalDepartment(input);
+/** Updates department in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalDepartment = (
   input: UpdateDepartmentInput,
   id: string,
 ) => toLocalDepartment(input, id);
 
+/** Returns employees from the server-side LOCAL organization adapter. */
 export function listLocalEmployees(searchParams: URLSearchParams) {
   const data = camelEmployeeMapper(
     applyRuleGroupFilter(
@@ -90,6 +99,7 @@ export function listLocalEmployees(searchParams: URLSearchParams) {
   return { data };
 }
 
+/** Returns employee from the server-side LOCAL organization adapter. */
 export function getLocalEmployee(id: string) {
   return (
     camelEmployeeMapper(allEmployeesMock).find(
@@ -99,11 +109,14 @@ export function getLocalEmployee(id: string) {
   );
 }
 
+/** Creates employee in the server-side LOCAL organization adapter mutable state. */
 export const createLocalEmployee = (input: CreateEmployeeInput) =>
   toLocalEmployee(input);
+/** Updates employee in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalEmployee = (input: UpdateEmployeeInput, id: string) =>
   toLocalEmployee(input, id);
 
+/** Returns job fields from the server-side LOCAL organization adapter. */
 export function listLocalJobFields(searchParams: URLSearchParams) {
   const companyIdByDepartmentId = new Map(
     allDepartmentsMock.map((department) => [
@@ -123,14 +136,17 @@ export function listLocalJobFields(searchParams: URLSearchParams) {
   return { items, total: items.length };
 }
 
+/** Returns job field from the server-side LOCAL organization adapter. */
 export function getLocalJobField(id: string) {
   return (
     camelJobFieldMapper(allJobFieldsMock).find((item) => item.id === id) ?? null
   );
 }
 
+/** Creates job field in the server-side LOCAL organization adapter mutable state. */
 export const createLocalJobField = (input: CreateJobFieldInput) =>
   toLocalJobField(input);
+/** Updates job field in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalJobField = (input: UpdateJobFieldInput, id: string) =>
   toLocalJobField(input, id);
 

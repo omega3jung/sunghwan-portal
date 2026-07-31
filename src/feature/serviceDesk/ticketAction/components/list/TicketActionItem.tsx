@@ -24,6 +24,7 @@ type TicketActionItemProps = {
   defaultOpen?: boolean;
 };
 
+/** Documents the ticket action item responsibility exposed by this client feature module. */
 export function TicketActionItem({
   action,
   ownerName,

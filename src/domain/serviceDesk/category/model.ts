@@ -3,8 +3,10 @@ import { LocalizedText } from "@/shared/types";
 
 import { Tenant } from "../tenant";
 
+/** Represents category scope within the Service Desk domain. */
 export type CategoryScope = "PORTAL" | "INTERNAL";
 
+/** Represents category base within the Service Desk domain. */
 export interface CategoryBase {
   id: string; // string number. can use parseInt.
   name: LocalizedText;

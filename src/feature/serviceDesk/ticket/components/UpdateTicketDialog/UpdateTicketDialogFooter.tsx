@@ -17,6 +17,7 @@ type UpdateTicketDialogFooterProps = {
   onNext: () => void;
 };
 
+/** Documents the update ticket dialog footer responsibility exposed by this client feature module. */
 export function UpdateTicketDialogFooter({
   currentStep,
   disabled,

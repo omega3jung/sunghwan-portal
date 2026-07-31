@@ -1,4 +1,4 @@
-// src/feature/auth/index.ts
+// src/feature/user/index.ts
 
 export * from "./keys";
 export * from "./preference";

@@ -79,6 +79,7 @@ returning
 ${ASSIGNMENT_RULE_COLUMNS};
 `;
 
+/** Queries PostgreSQL for assignment rule rows by tenant id without applying presentation concerns. */
 export async function findAssignmentRuleRowsByTenantId(
   tenantId: string | number,
   query: PortalApiQueryExecutor = queryPortalApi,
@@ -89,6 +90,7 @@ export async function findAssignmentRuleRowsByTenantId(
   );
 }
 
+/** Queries PostgreSQL for assignment rule row by tenant id and assignment rule id without applying presentation concerns. */
 export async function findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
   tenantId: string | number,
   assignmentRuleId: string | number,
@@ -102,6 +104,7 @@ export async function findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
   return rows[0] ?? null;
 }
 
+/** Creates assignment rule row through the server persistence boundary. */
 export async function createAssignmentRuleRow(
   input: CreateAssignmentRuleRowInput,
   query: PortalApiQueryExecutor = queryPortalApi,
@@ -114,6 +117,7 @@ export async function createAssignmentRuleRow(
   return rows[0] ?? null;
 }
 
+/** Updates assignment rule row by id while preserving server-side validation and persistence rules. */
 export async function updateAssignmentRuleRowById(
   tenantId: string | number,
   assignmentRuleId: string | number,
@@ -133,6 +137,7 @@ export async function updateAssignmentRuleRowById(
   return rows[0] ?? null;
 }
 
+/** Removes or deactivates assignment rule row by id through the server persistence boundary. */
 export async function deleteAssignmentRuleRowById(
   tenantId: string | number,
   assignmentRuleId: string | number,

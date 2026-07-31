@@ -20,6 +20,7 @@ import {
 } from "./ticketNumber";
 import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
+/** Creates ticket in the server-side LOCAL ticket adapter mutable state. */
 export const localCreateTicket = async ({
   isInternal,
   access,

@@ -2,6 +2,7 @@ import type { UserScope } from "@/domain/auth";
 import { ApiError } from "@/lib/application/api";
 import type { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
+/** Describes local ticket access context used by the server-side LOCAL ticket adapter. */
 export type LocalTicketAccessContext = {
   userScope: UserScope;
   tenantId: string;
@@ -22,6 +23,7 @@ export function canAccessLocalDemoTicket(
   return access.userScope === "INTERNAL" && ticket.scope === "PORTAL";
 }
 
+/** Filters accessible local demo tickets by the server-side LOCAL ticket adapter scope rules. */
 export function filterAccessibleLocalDemoTickets(
   tickets: DbTicketDetail[],
   access: LocalTicketAccessContext,
@@ -29,6 +31,7 @@ export function filterAccessibleLocalDemoTickets(
   return tickets.filter((ticket) => canAccessLocalDemoTicket(ticket, access));
 }
 
+/** Returns whether access local demo category under the server-side LOCAL ticket adapter policy. */
 export function canAccessLocalDemoCategory(
   category: { tenantId: string; scope: DbTicketDetail["scope"] },
   access: LocalTicketAccessContext,
@@ -39,15 +42,19 @@ export function canAccessLocalDemoCategory(
   );
 }
 
+/** Enforces local demo ticket access before LOCAL state is exposed or mutated. */
 export function requireLocalDemoTicketAccess(
   ticket: Pick<DbTicketDetail, "tenant_id" | "scope">,
   access: LocalTicketAccessContext,
 ) {
+  // Return not-found rather than forbidden so callers cannot probe tickets
+  // outside the tenant/scope visibility boundary.
   if (!canAccessLocalDemoTicket(ticket, access)) {
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 }
 
+/** Enforces local demo category access before LOCAL state is exposed or mutated. */
 export function requireLocalDemoCategoryAccess(
   category: { tenantId: string; scope: DbTicketDetail["scope"] },
   access: LocalTicketAccessContext,

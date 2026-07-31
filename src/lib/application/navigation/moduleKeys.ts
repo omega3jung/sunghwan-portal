@@ -1,3 +1,4 @@
+/** Stable translation and permission keys for portal navigation modules. */
 export const programModuleKeys = {
   devMenu: {
     base: "devMenu",

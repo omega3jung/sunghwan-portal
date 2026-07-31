@@ -32,6 +32,7 @@ import {
   resolveSettingsAccess,
 } from "@/lib/application/serviceDesk";
 
+/** Handles GET /api/service-desk/assignment-rules; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   try {
     const settingsRequest = isServiceDeskSettingsRequest(request);
@@ -114,6 +115,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/** Handles PUT /api/service-desk/assignment-rules; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);

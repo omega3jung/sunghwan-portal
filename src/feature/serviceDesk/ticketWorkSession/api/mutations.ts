@@ -5,6 +5,11 @@ import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketWorkSessionApi } from "./api";
 import { ticketWorkSessionQueryKeys } from "./queryKeys";
 
+/**
+ * Invalidates all projections that a work-session command may change.
+ * A single server transaction can update tracked time, ticket status, history,
+ * and running sessions, so these caches must be reconciled together.
+ */
 const invalidateTicketWorkSessionQueries = (
   queryClient: ReturnType<typeof useQueryClient>,
   ticketId: string,
@@ -33,10 +38,10 @@ const invalidateTicketWorkSessionQueries = (
   });
 };
 
+/** Provides the client mutation hook for create ticket work session by range and invalidates affected cached data. */
 export const useCreateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.range.create,
     onSuccess: (data, variables) => {
@@ -49,10 +54,10 @@ export const useCreateTicketWorkSessionByRange = () => {
   });
 };
 
+/** Provides the client mutation hook for submit ticket work session and invalidates affected cached data. */
 export const useSubmitTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.submitManual,
     onSuccess: (data, variables) => {
@@ -65,10 +70,10 @@ export const useSubmitTicketWorkSession = () => {
   });
 };
 
+/** Provides the client mutation hook for update ticket work session by range and invalidates affected cached data. */
 export const useUpdateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.range.update,
     onSuccess: (_data, variables) => {
@@ -81,10 +86,10 @@ export const useUpdateTicketWorkSessionByRange = () => {
   });
 };
 
+/** Provides the client mutation hook for create ticket work session by duration and invalidates affected cached data. */
 export const useCreateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.duration.create,
     onSuccess: (data, variables) => {
@@ -97,10 +102,10 @@ export const useCreateTicketWorkSessionByDuration = () => {
   });
 };
 
+/** Provides the client mutation hook for update ticket work session by duration and invalidates affected cached data. */
 export const useUpdateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.duration.update,
     onSuccess: (_data, variables) => {
@@ -113,10 +118,10 @@ export const useUpdateTicketWorkSessionByDuration = () => {
   });
 };
 
+/** Provides the client mutation hook for delete ticket work session and invalidates affected cached data. */
 export const useDeleteTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: ({
       ticketId,
@@ -135,10 +140,10 @@ export const useDeleteTicketWorkSession = () => {
   });
 };
 
+/** Provides the client mutation hook for start ticket work sessionr and invalidates affected cached data. */
 export const useStartTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.start,
     onSuccess: (data, ticketId) => {
@@ -151,10 +156,10 @@ export const useStartTicketWorkSessionr = () => {
   });
 };
 
+/** Provides the client mutation hook for finish ticket work sessionr and invalidates affected cached data. */
 export const useFinishTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.finish,
     onSuccess: (data, ticketId) => {
@@ -167,6 +172,7 @@ export const useFinishTicketWorkSessionr = () => {
   });
 };
 
+/** Provides the client mutation hook for switch ticket work sessionr and invalidates affected cached data. */
 export const useSwitchTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 

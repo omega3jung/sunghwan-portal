@@ -4,6 +4,7 @@ import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { LocalActionRuntimeContext } from "./types";
 
+/** Describes create ticket action context used by the server-side LOCAL ticket adapter. */
 export type CreateTicketActionContext = Pick<
   LocalActionRuntimeContext,
   "ticketId" | "employeeUserName" | "content" | "actionNo" | "createdAt"
@@ -13,6 +14,11 @@ const isAttachmentlessAction = (
   actionType: CreateTicketActionContext["content"]["actionType"],
 ) => actionType === "APPROVE" || actionType === "DECLINE";
 
+/**
+ * Builds the LOCAL persistence-shaped action row without mutating state.
+ * Approval decisions deliberately discard attachment input, matching the
+ * REMOTE command contract that accepts text-only approval evidence.
+ */
 export const createTicketAction = ({
   ticketId,
   employeeUserName,

@@ -1,4 +1,4 @@
-// src/lib/i18n/locales/es/index.ts
+// src/lib/application/i18n/locales/es/index.ts
 
 import auth from "./auth.json";
 import common from "./common.json";
@@ -12,6 +12,7 @@ import serviceDesk from "./serviceDesk.json";
 import settings from "./settings.json";
 import validation from "./validation.json";
 
+/** Bundled Spanish namespaces registered with the localization runtime. */
 export const es = {
   demo,
   auth,

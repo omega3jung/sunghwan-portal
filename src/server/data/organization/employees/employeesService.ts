@@ -5,6 +5,7 @@ import {
   findEmployeesByCompanyId,
 } from "./employeesRepository";
 
+/** Loads employees through the server data boundary. */
 export async function getEmployees(
   active: boolean,
 ): Promise<EmployeeResponseDto[]> {
@@ -13,6 +14,7 @@ export async function getEmployees(
   return toEmployeesResponseDto(employee);
 }
 
+/** Loads employees by company id through the server data boundary. */
 export async function getEmployeesByCompanyId(
   active: boolean,
   companyId: number,

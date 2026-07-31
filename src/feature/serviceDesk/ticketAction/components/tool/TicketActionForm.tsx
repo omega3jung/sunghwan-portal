@@ -63,6 +63,7 @@ type TicketActionFormProps = {
   users?: ImageValueLabel[];
 };
 
+/** Documents the ticket action form responsibility exposed by this client feature module. */
 export function TicketActionForm({
   ticketId,
   ticketTenantId,

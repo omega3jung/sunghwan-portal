@@ -31,8 +31,10 @@ export interface DbCategory extends DbCategoryBase {
   sub_category: DbSubCategory[];
 }
 
+/** Database-facing tenant category tree shape used by the Service Desk application boundary. */
 export type DbTenantCategoryTree = DbTenant & { category: DbCategory[] };
 
+/** Parameters that configure service desk category list behavior in the Service Desk application boundary. */
 export type ServiceDeskCategoryListParams = DbParams & {
   tenantId?: string;
   active?: boolean;
@@ -41,6 +43,7 @@ export type ServiceDeskCategoryListParams = DbParams & {
   scope?: CategoryScope;
 };
 
+/** Represents service desk category context within the Service Desk application boundary. */
 export type ServiceDeskCategoryContext = {
   categoryId: string;
   mainCategoryId: string;
@@ -48,10 +51,12 @@ export type ServiceDeskCategoryContext = {
   tenant: ServiceDeskSettingsTenantContext;
 };
 
+/** Input contract for category tree sync sub category operations at the Service Desk application boundary. */
 export type CategoryTreeSyncSubCategoryInput = Omit<SubCategory, "id"> & {
   id?: string;
 };
 
+/** Input contract for category tree sync category operations at the Service Desk application boundary. */
 export type CategoryTreeSyncCategoryInput = Omit<
   MainCategory,
   "id" | "subCategories"
@@ -60,6 +65,7 @@ export type CategoryTreeSyncCategoryInput = Omit<
   subCategories: CategoryTreeSyncSubCategoryInput[];
 };
 
+/** Represents save service desk category tree payload within the Service Desk application boundary. */
 export type SaveServiceDeskCategoryTreePayload = {
   tenantId: string;
   categories: CategoryTreeSyncCategoryInput[];

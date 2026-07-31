@@ -96,6 +96,7 @@ returning
 ${APPROVAL_STEP_COLUMNS};
 `;
 
+/** Queries PostgreSQL for approval step rows by tenant id without applying presentation concerns. */
 export async function findApprovalStepRowsByTenantId(
   tenantId: string | number,
   query: PortalApiQueryExecutor = queryPortalApi,
@@ -106,6 +107,7 @@ export async function findApprovalStepRowsByTenantId(
   );
 }
 
+/** Queries PostgreSQL for approval step rows by tenant id and approval step id without applying presentation concerns. */
 export async function findApprovalStepRowsByTenantIdAndApprovalStepId(
   tenantId: string | number,
   approvalStepId: string | number,
@@ -117,6 +119,7 @@ export async function findApprovalStepRowsByTenantIdAndApprovalStepId(
   );
 }
 
+/** Creates approval step row through the server persistence boundary. */
 export async function createApprovalStepRow(
   input: CreateApprovalStepRowInput,
   query: PortalApiQueryExecutor = queryPortalApi,
@@ -136,6 +139,7 @@ export async function createApprovalStepRow(
   return rows[0] ?? null;
 }
 
+/** Updates approval step row by id while preserving server-side validation and persistence rules. */
 export async function updateApprovalStepRowById(
   tenantId: string | number,
   approvalStepId: string | number,
@@ -159,6 +163,7 @@ export async function updateApprovalStepRowById(
   return rows[0] ?? null;
 }
 
+/** Removes or deactivates approval step row by id through the server persistence boundary. */
 export async function deleteApprovalStepRowById(
   tenantId: string | number,
   approvalStepId: string | number,

@@ -5,6 +5,7 @@ import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { getLocalLeftMenu } from "@/app/api/_adapters/localDemo/user";
 
+/** Handles GET /api/navigation/left-menu; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
 

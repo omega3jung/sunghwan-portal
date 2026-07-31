@@ -5,6 +5,7 @@ import { CreateTicketHistoryInput } from "./ticketHistoryDto";
 import { TicketHistoryRow } from "./ticketHistoryRow";
 import { TicketHistoryJsonValue } from "./ticketHistoryTypes";
 
+/** Lets history persistence share the transaction that produced the audited change. */
 export type TicketHistoryRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const CREATE_TICKET_HISTORY_QUERY = `
@@ -74,6 +75,7 @@ where tkh_ticket_id = $1
 order by tkh_history_no asc;
 `;
 
+/** Queries PostgreSQL for ticket history rows by ticket id without applying presentation concerns. */
 export async function findTicketHistoryRowsByTicketId(
   ticketId: string,
   options: TicketHistoryRepositoryOptions = {},
@@ -85,6 +87,7 @@ export async function findTicketHistoryRowsByTicketId(
   ]);
 }
 
+/** Creates ticket history row through the server persistence boundary. */
 export async function createTicketHistoryRow(
   input: CreateTicketHistoryInput,
   options: TicketHistoryRepositoryOptions = {},

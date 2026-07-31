@@ -34,6 +34,7 @@ interface TicketListItemProps {
   onClick: () => void;
 }
 
+/** Documents the ticket list item responsibility exposed by this client feature module. */
 export const TicketListItem = ({
   ticket,
   language,

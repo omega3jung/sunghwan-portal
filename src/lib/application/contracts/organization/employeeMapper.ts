@@ -9,6 +9,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 import { DbEmployee } from "./employee";
 
+/** Maps a database employee record into the application-facing model. */
 export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (data) =>
   data.map((item) => ({
     id: item.e_id,
@@ -29,6 +30,7 @@ export const camelEmployeeMapper: ArrayMapper<DbEmployee, Employee> = (data) =>
     hourRate: nullToUndefined(item.e_hour_rate),
   }));
 
+/** Maps an application employee model into its database-facing shape. */
 export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (data) =>
   data.map((item) => ({
     e_id: item.id,
@@ -49,7 +51,9 @@ export const snakeEmployeeMapper: ArrayMapper<Employee, DbEmployee> = (data) =>
     e_hour_rate: undefinedToNull(item.hourRate),
   }));
 
+/** Maps a employee collection payload into application models. */
 export const mapEmployeeListPayload =
   createListPayloadMapper(camelEmployeeMapper);
+/** Maps a employee payload into the application model. */
 export const mapEmployeeItemPayload =
   createItemPayloadMapper(camelEmployeeMapper);

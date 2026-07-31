@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobFieldApi } from "./api";
 import { jobFieldQueryKeys } from "./queryKeys";
 
+/** Provides the client mutation hook for create job field mutation and invalidates affected cached data. */
 export const useCreateJobFieldMutation = () => {
   const queryClient = useQueryClient();
 
@@ -17,6 +18,7 @@ export const useCreateJobFieldMutation = () => {
   });
 };
 
+/** Provides the client mutation hook for update job field mutation and invalidates affected cached data. */
 export const useUpdateJobFieldMutation = () => {
   const queryClient = useQueryClient();
 
@@ -29,6 +31,7 @@ export const useUpdateJobFieldMutation = () => {
   });
 };
 
+/** Provides the client mutation hook for delete job field mutation and invalidates affected cached data. */
 export const useDeleteJobFieldMutation = () => {
   const queryClient = useQueryClient();
 

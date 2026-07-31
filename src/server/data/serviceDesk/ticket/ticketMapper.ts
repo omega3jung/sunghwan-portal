@@ -32,11 +32,15 @@ const EMPTY_EMAIL: ServiceDeskTicketEmail = {
   bcc: [],
 };
 
+/** Supplies viewer identity and prior-work context needed to derive ticket permissions. */
 export type TicketDetailProjectionContext = {
+  /** Effective request user used only for viewer-relative flags. */
   currentUserName: string | null;
+  /** Repository-derived assignment history, not a persisted ticket column. */
   hasBeenWorker: boolean;
 };
 
+/** Maps ticket list item dto across the database and API boundary. */
 export function toTicketListItemDto(
   row: ServiceDeskTicketViewRow,
   currentUserName: string | null,
@@ -47,6 +51,7 @@ export function toTicketListItemDto(
   };
 }
 
+/** Maps ticket detail dto across the database and API boundary. */
 export function toTicketDetailDto(
   row: ServiceDeskTicketViewRow,
   context: TicketDetailProjectionContext,
@@ -61,6 +66,7 @@ export function toTicketDetailDto(
   };
 }
 
+/** Maps ticket create request dto to row input across the database and API boundary. */
 export function mapTicketCreateRequestDtoToRowInput(
   input: TicketCreateRequestDto,
   options: {
@@ -79,6 +85,7 @@ export function mapTicketCreateRequestDtoToRowInput(
   };
 }
 
+/** Maps ticket mutate request dto to row input across the database and API boundary. */
 export function mapTicketMutateRequestDtoToRowInput(
   input: TicketMutateRequestDto,
 ): TicketMutateRowInput {
@@ -158,6 +165,8 @@ function mapTicketAssignment(
     row.tk_assignees,
     assigneeUsernames,
   );
+  // `approvalStepId` is the phase source of truth. The shared assignee array
+  // means current approvers during APPROVAL and current workers during WORK.
   const isApprovalPhase = row.tk_approval_step_id !== null;
   const assignmentPhase: TicketAssignmentPhase = isApprovalPhase
     ? "APPROVAL"
@@ -226,6 +235,9 @@ function normalizeTicketUsers(
 function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {
   const status = row.tk_status as string;
 
+  // Keep old persisted values readable while the API exposes only the current
+  // state model. `Reopen` is now an action that returns a ticket to Working,
+  // rather than a status clients should persist or branch on.
   if (status === "Open") {
     return row.tk_approval_step_id === null ? "Assigned" : "Approval";
   }
@@ -241,6 +253,7 @@ function normalizeTicketStatus(row: ServiceDeskTicketViewRow): TicketStatus {
   return row.tk_status;
 }
 
+/** Normalizes ticket email so downstream server logic receives a stable representation. */
 export function normalizeTicketEmail(
   value: ServiceDeskTicketEmail | null | undefined,
 ): ServiceDeskTicketEmail {
@@ -255,6 +268,7 @@ export function normalizeTicketEmail(
   };
 }
 
+/** Normalizes ticket attachment metadata so downstream server logic receives a stable representation. */
 export function normalizeTicketAttachmentMetadata(
   value: TicketAttachmentMetadata[] | null | undefined,
 ): TicketAttachmentMetadata[] {

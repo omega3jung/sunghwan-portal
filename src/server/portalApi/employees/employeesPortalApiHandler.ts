@@ -15,6 +15,7 @@ import { getPortalApiQueryValue, normalizePath } from "../utils";
 
 const EMPLOYEES_PATH_PATTERN = /^\/employees(?:\/([^/]+))?$/;
 
+/** Handles employees portal api requests and translates domain results into portal API responses. */
 export async function handleEmployeesPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,

@@ -29,6 +29,7 @@ type CreateTicketDialogProps = {
   trigger?: ReactElement;
 };
 
+/** Documents the create ticket dialog responsibility exposed by this client feature module. */
 export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
   const { categories, users, language } = props;
   const { t } = useTranslation(NS.serviceDesk);

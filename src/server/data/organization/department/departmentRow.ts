@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL department row used only within the repository boundary. */
 export interface DepartmentRow {
   d_id: number;
   d_name: LocalizedText;

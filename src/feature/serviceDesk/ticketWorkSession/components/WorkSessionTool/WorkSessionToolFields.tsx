@@ -72,6 +72,7 @@ type WorkSessionNoteFieldProps = {
   describedBy?: string;
 };
 
+/** Documents the compact field row responsibility exposed by this client feature module. */
 export function CompactFieldRow({
   htmlFor,
   label,
@@ -113,6 +114,7 @@ export function CompactFieldRow({
   );
 }
 
+/** Documents the work session duration field responsibility exposed by this client feature module. */
 export function WorkSessionDurationField({
   value,
   onChange,
@@ -146,6 +148,7 @@ export function WorkSessionDurationField({
   );
 }
 
+/** Documents the work session date time field responsibility exposed by this client feature module. */
 export function WorkSessionDateTimeField({
   id,
   label,
@@ -168,6 +171,7 @@ export function WorkSessionDateTimeField({
   );
 }
 
+/** Documents the work session status field responsibility exposed by this client feature module. */
 export function WorkSessionStatusField({
   value,
   onValueChange,
@@ -212,6 +216,7 @@ export function WorkSessionStatusField({
   );
 }
 
+/** Documents the work session note field responsibility exposed by this client feature module. */
 export function WorkSessionNoteField({
   open,
   onOpenChange,

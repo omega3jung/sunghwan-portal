@@ -24,6 +24,7 @@ function getAuthApiPool() {
   return pool;
 }
 
+/** Invokes the server-only authentication dispatcher without exposing database access to clients. */
 export async function queryAuthApi<T extends QueryResultRow>(
   text: string,
   params: unknown[] = [],

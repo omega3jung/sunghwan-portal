@@ -3,6 +3,7 @@
 import { ticketActionDraftFormDefaultValues } from "./defaultValues";
 import type { TicketActionDraftFormValues } from "./types";
 
+/** Creates action-specific draft defaults from the current ticket and selected mode. */
 export function createTicketActionDraftValues(
   actionType: TicketActionDraftFormValues["actionType"],
   ticket?: TicketDetail | null,

@@ -20,6 +20,7 @@ type TicketAttachmentListProps = {
   images: TicketAttachmentListItem[];
 };
 
+/** Documents the ticket attachment list responsibility exposed by this client feature module. */
 export function TicketAttachmentList({
   files,
   images,

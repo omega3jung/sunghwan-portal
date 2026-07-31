@@ -6,6 +6,7 @@ import { portalApiJson } from "@/app/api/_adapters/backend";
 import { UserIdRouteContext } from "@/app/api/_adapters/http";
 import { Preference } from "@/domain/user/preference";
 
+/** Handles GET /api/users/[userId]/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
   });
 }
 
+/** Handles POST /api/users/[userId]/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST<T>(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
@@ -47,6 +49,7 @@ export async function POST<T>(req: NextRequest, context: UserIdRouteContext) {
   });
 }
 
+/** Handles PUT /api/users/[userId]/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT<T>(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);

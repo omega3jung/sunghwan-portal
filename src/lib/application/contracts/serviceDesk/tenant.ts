@@ -10,6 +10,7 @@ export type DbTenant = {
   tenant_active?: boolean;
 };
 
+/** Represents service desk settings tenant context within the Service Desk application boundary. */
 export type ServiceDeskSettingsTenantContext = {
   id: string;
   companyId: number;
@@ -17,6 +18,7 @@ export type ServiceDeskSettingsTenantContext = {
   active: boolean;
 };
 
+/** Parameters that configure service desk tenant list behavior in the Service Desk application boundary. */
 export type ServiceDeskTenantListParams = DbParams & {
   active?: boolean;
   settings?: boolean;

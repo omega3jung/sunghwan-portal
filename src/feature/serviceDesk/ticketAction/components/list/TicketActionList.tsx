@@ -23,6 +23,7 @@ type TicketActionListProps = {
   showHeader?: boolean;
 };
 
+/** Documents the ticket action list responsibility exposed by this client feature module. */
 export function TicketActionList({
   actions = [],
   isLoading = false,

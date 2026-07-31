@@ -1,5 +1,6 @@
 import { DateRangePreset } from "../types";
 
+/** Translation keys used to label each supported date-range preset. */
 export const DATE_RANGE_PRESET_LABEL_KEYS: Record<DateRangePreset, string> = {
   today: "today",
   this_week: "thisWeek",
@@ -25,9 +26,15 @@ export const DATE_RANGE_PRESET_LABEL_KEYS: Record<DateRangePreset, string> = {
   range: "dateRange",
 };
 
+/** Calendar weeks start on Monday across shared date controls. */
 export const WEEK_STARTS_ON = 1 as const;
+/** Calendar-date format used where time and timezone are intentionally omitted. */
 export const DATE_FORMAT = "yyyy-MM-dd";
 
+/**
+ * Canonical presentation order for selectable range presets. Consumers rely on
+ * this order when restoring and sorting user-selected options.
+ */
 export const DEFAULT_DATE_RANGE_PRESETS: DateRangePreset[] = [
   "today",
   "this_week",

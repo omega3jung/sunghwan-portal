@@ -25,6 +25,7 @@ type AdjustFieldsProps = {
   t: Translate;
 };
 
+/** Documents the adjust fields responsibility exposed by this client feature module. */
 export function AdjustFields({ form, t }: AdjustFieldsProps) {
   const mindueAt = addDays(startOfToday(), 1);
 

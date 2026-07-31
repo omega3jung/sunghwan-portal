@@ -9,6 +9,7 @@ const priorityRank: Record<string, number> = {
   urgent: 4,
 };
 
+/** Returns tickets in deterministic LOCAL display order. */
 export function sortTickets(
   tickets: TicketDetail[],
   sort?: {

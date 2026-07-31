@@ -6,6 +6,7 @@ import {
 } from "./access";
 import { getLocalDemoTickets } from "./state";
 
+/** Removes ticket from the server-side LOCAL ticket adapter mutable state. */
 export const localDeleteTicket = ({
   access,
   ticketId,

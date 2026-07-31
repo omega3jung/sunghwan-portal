@@ -1,3 +1,4 @@
+// src/server/portalApi/serviceDesk/shared/index.ts
 export * from "./auth";
 export * from "./ticketOwnership";
 export { ApiError, resolveApiErrorMessage } from "@/lib/application/api";

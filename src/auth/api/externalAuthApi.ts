@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import type { AuthApiJsonOptions } from "./types";
 
+/** Forwards an authentication request to the configured backend and normalizes its response for Next.js. */
 export async function requestExternalAuthApi({
   path,
   errorMessage,

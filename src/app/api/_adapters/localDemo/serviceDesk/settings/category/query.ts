@@ -14,6 +14,7 @@ type FilterableTenantCategoryTree = TenantCategoryTree & {
   tenant_id: string;
 };
 
+/** Returns category trees from the server-side LOCAL settings adapter. */
 export const getLocalCategoryTrees = (
   isInternal: boolean,
 ): TenantCategoryTree[] => {
@@ -22,6 +23,7 @@ export const getLocalCategoryTrees = (
   );
 };
 
+/** Returns categories from the server-side LOCAL settings adapter. */
 export const localListCategories = ({
   isInternal,
   searchParams,

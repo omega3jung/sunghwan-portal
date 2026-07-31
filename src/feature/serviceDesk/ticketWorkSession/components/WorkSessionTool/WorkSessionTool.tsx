@@ -14,6 +14,7 @@ import { NS } from "@/lib/application/i18n";
 
 import { WorkSessionToolContent } from "./WorkSessionToolContent";
 
+/** Documents the work session tool props responsibility exposed by this client feature module. */
 export type WorkSessionToolProps = {
   children: ReactElement;
   ticket?: Pick<
@@ -22,6 +23,7 @@ export type WorkSessionToolProps = {
   > | null;
 };
 
+/** Documents the work session tool responsibility exposed by this client feature module. */
 export function WorkSessionTool({ children, ticket }: WorkSessionToolProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const [open, setOpen] = useState(false);

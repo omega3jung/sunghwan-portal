@@ -7,6 +7,9 @@
  *
  * @param none - This function does not accept any arguments
  * @returns A breakpoint label of `sm`, `md`, `lg`, `xl`, or `xxl` for the current window width
+ *
+ * This helper reads `window` directly and must only run in a browser context;
+ * unlike the shared window-dimensions hook, it has no server-rendering fallback.
  */
 export const getCurrentBreakpoint = (): string => {
   const width = window.innerWidth;

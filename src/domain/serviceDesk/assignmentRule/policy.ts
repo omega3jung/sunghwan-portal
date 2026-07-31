@@ -1,10 +1,12 @@
 import type { CategoryScope } from "../category";
 
+/** Company boundary applied when resolving assignment candidates. */
 export type AssignmentCompanyPolicy =
   | "TENANT_ONLY"
   | "OWNER_ONLY"
   | "OWNER_AND_TENANT";
 
+/** Resolves eligible company scope from category scope and tenant inclusion policy. */
 export function resolveAssignmentCompanyPolicy({
   scope,
   includeTenantCompany,

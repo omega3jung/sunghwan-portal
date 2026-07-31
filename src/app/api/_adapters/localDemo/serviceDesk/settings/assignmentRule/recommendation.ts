@@ -180,6 +180,7 @@ const resolveRecommendationSource = (
   return null;
 };
 
+/** Resolves local assignment recommendation using the server-side LOCAL settings adapter policy. */
 export const resolveLocalAssignmentRecommendation = async ({
   input,
 }: LocalRecommendationContext): Promise<AssignmentRecommendationResult> => {

@@ -19,6 +19,7 @@ type TicketHistoryTimelineProps = {
   className?: string;
 };
 
+/** Documents the ticket history timeline responsibility exposed by this client feature module. */
 export function TicketHistoryTimeline({
   items,
   isLoading = false,

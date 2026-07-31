@@ -1,6 +1,7 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 import { Locale } from "@/shared/types";
 
+/** Defines the stable cache or persistence key for ticket status locale data. */
 export const ticketStatusLocaleKey: Record<TicketStatus, string> = {
   Draft: "draft",
   Approval: "approval",
@@ -13,6 +14,7 @@ export const ticketStatusLocaleKey: Record<TicketStatus, string> = {
   Closed: "closed",
 };
 
+/** Maps ticket statuses to localized labels for each supported language. */
 export const ticketStatusLocales: Record<Locale, Record<string, string>> = {
   en: {
     draft: "Draft",

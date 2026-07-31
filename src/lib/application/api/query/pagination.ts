@@ -1,8 +1,10 @@
+/** Input contract for pagination operations at shared application APIs. */
 export type PaginationInput = {
   page?: number;
   pageSize?: number;
 };
 
+/** Normalizes pagination values for shared application APIs. */
 export function normalizePagination({ page, pageSize }: PaginationInput): {
   page: number;
   pageSize: number;
@@ -13,6 +15,7 @@ export function normalizePagination({ page, pageSize }: PaginationInput): {
   };
 }
 
+/** Returns the in-memory page slice described by normalized pagination values. */
 export function paginateItems<T>(
   items: T[],
   {

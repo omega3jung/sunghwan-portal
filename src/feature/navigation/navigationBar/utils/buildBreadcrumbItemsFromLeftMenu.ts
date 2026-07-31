@@ -7,6 +7,7 @@ import type {
   NavigationBreadcrumbItem,
 } from "../types";
 
+/** Restricts breadcrumb construction to the menu fields needed for route matching. */
 export type LeftMenuBreadcrumbSource = {
   content: MenuItem[];
   footer: MenuItem[];
@@ -230,6 +231,7 @@ function getFallbackItemsAfterMatch({
   return lastFallbackItem == null ? [] : [lastFallbackItem];
 }
 
+/** Builds breadcrumbs from the best exact or prefix menu match, then appends unmatched URL segments. */
 export function buildBreadcrumbItemsFromLeftMenu({
   fallbackItems,
   leftMenu,

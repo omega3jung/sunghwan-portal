@@ -9,6 +9,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 import { DbDepartment } from "./department";
 
+/** Maps a database department record into the application-facing model. */
 export const camelDepartmentMapper: ArrayMapper<DbDepartment, Department> = (
   data,
 ) => {
@@ -23,6 +24,7 @@ export const camelDepartmentMapper: ArrayMapper<DbDepartment, Department> = (
   }));
 };
 
+/** Maps an application department model into its database-facing shape. */
 export const snakeDepartmentMapper: ArrayMapper<Department, DbDepartment> = (
   data,
 ) => {
@@ -37,9 +39,11 @@ export const snakeDepartmentMapper: ArrayMapper<Department, DbDepartment> = (
   }));
 };
 
+/** Maps a department collection payload into application models. */
 export const mapDepartmentListPayload = createListPayloadMapper(
   camelDepartmentMapper,
 );
+/** Maps a department payload into the application model. */
 export const mapDepartmentItemPayload = createItemPayloadMapper(
   camelDepartmentMapper,
 );

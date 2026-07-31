@@ -3,6 +3,7 @@ interface UserInfo {
   username: string;
 }
 
+/** Represents impersonation info within the authentication domain. */
 export interface ImpersonationInfo {
   originalUser: UserInfo;
   impersonatedUser: UserInfo;

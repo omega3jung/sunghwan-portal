@@ -8,6 +8,7 @@ import {
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
 
+/** Returns tickets from the server-side LOCAL ticket adapter. */
 export const localListTickets = ({
   access,
   searchParams,

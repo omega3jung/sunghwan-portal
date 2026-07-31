@@ -58,6 +58,7 @@ function TicketPeriodFieldInput({
   );
 }
 
+/** Documents the ticket period field responsibility exposed by this client feature module. */
 export function TicketPeriodField({ control }: Props) {
   const { t } = useTranslation(NS.serviceDesk);
 

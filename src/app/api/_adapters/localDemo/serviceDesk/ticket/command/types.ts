@@ -6,6 +6,7 @@ import type {
   TicketActionPath,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Describes ticket action API type used by the server-side LOCAL ticket adapter. */
 export type TicketActionApiType = TicketActionPath;
 
 type LocalActionBaseContext = {
@@ -19,6 +20,7 @@ type LocalActionMutationContext = LocalActionBaseContext & {
   createdAt: string;
 };
 
+/** Describes local action runtime context used by the server-side LOCAL ticket adapter. */
 export type LocalActionRuntimeContext = LocalActionMutationContext & {
   action: TicketActionApiType;
   isAdmin?: boolean;
@@ -28,6 +30,7 @@ export type LocalActionRuntimeContext = LocalActionMutationContext & {
   nextStatus?: TicketStatus;
 };
 
+/** Describes local action history used by the server-side LOCAL ticket adapter. */
 export type LocalActionHistory = Omit<
   DbTicketHistory,
   | "ticket_id"
@@ -40,25 +43,30 @@ export type LocalActionHistory = Omit<
   source?: DbTicketHistory["source"];
 };
 
+/** Describes local action effect used by the server-side LOCAL ticket adapter. */
 export type LocalActionEffect = {
   history: LocalActionHistory | LocalActionHistory[];
   ticketPatch?: Partial<DbTicketDetail>;
 };
 
+/** Describes executed local action used by the server-side LOCAL ticket adapter. */
 export type ExecutedLocalAction = {
   histories: DbTicketHistory[];
   updatedTicket?: DbTicketDetail;
 };
 
+/** Describes local action handler used by the server-side LOCAL ticket adapter. */
 export type LocalActionHandler = (
   context: LocalActionRuntimeContext,
 ) => LocalActionEffect | Promise<LocalActionEffect>;
 
+/** Describes local action spec used by the server-side LOCAL ticket adapter. */
 export type LocalActionSpec = {
   handler: LocalActionHandler;
   needsTicket?: boolean;
 };
 
+/** Describes database ticket action local context used by the server-side LOCAL ticket adapter. */
 export type DbTicketActionLocalContext = LocalActionBaseContext & {
   action: TicketActionApiType;
   isAdmin?: boolean;

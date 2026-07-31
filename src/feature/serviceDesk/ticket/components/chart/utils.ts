@@ -42,6 +42,7 @@ const toSummaryItems = (
   return sortSummaryItems(Array.from(map.values()));
 };
 
+/** Documents the build status summary responsibility exposed by this client feature module. */
 export const buildStatusSummary = (
   tickets: TicketSummary[],
   statusLabelMap: Map<string, string>,
@@ -54,6 +55,7 @@ export const buildStatusSummary = (
   );
 };
 
+/** Documents the build category summary responsibility exposed by this client feature module. */
 export const buildCategorySummary = (
   tickets: TicketSummary[],
   getCategoryLabel: (ticket: TicketSummary) => string,
@@ -70,6 +72,7 @@ export const buildCategorySummary = (
   );
 };
 
+/** Documents the build department summary responsibility exposed by this client feature module. */
 export const buildDepartmentSummary = (
   tickets: TicketSummary[],
   getDepartmentLabel: (name: LocalizedText) => string,
@@ -97,6 +100,7 @@ export const buildDepartmentSummary = (
   );
 };
 
+/** Documents the build tenant summary responsibility exposed by this client feature module. */
 export const buildTenantSummary = (
   tickets: TicketSummary[],
   getTenantLabel: (name: LocalizedText) => string,
@@ -119,6 +123,7 @@ export const buildTenantSummary = (
   );
 };
 
+/** Documents the build assignee summary responsibility exposed by this client feature module. */
 export const buildAssigneeSummary = (
   tickets: TicketSummary[],
   usersById: Map<string, ImageValueLabel>,
@@ -150,6 +155,7 @@ export const buildAssigneeSummary = (
   return toSummaryItems(values);
 };
 
+/** Documents the get sla bucket responsibility exposed by this client feature module. */
 export const getSlaBucket = (
   dueAt: string,
   now: Date = new Date(),
@@ -180,6 +186,7 @@ export const getSlaBucket = (
   return "later";
 };
 
+/** Documents the build sla summary responsibility exposed by this client feature module. */
 export const buildSlaSummary = (
   tickets: TicketSummary[],
   labels: Record<SlaBucketValue, string>,
@@ -218,6 +225,7 @@ export const buildSlaSummary = (
     .filter((item): item is ChartSummaryItem => Boolean(item));
 };
 
+/** Reports whether unassigned assignee value satisfies the feature policy. */
 export const isUnassignedAssigneeValue = (value: string) => {
   return value === UNASSIGNED_VALUE;
 };

@@ -33,6 +33,7 @@ const collapsedMenuButtonClassName =
 const collapsedMenuItemClassName =
   "group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:justify-center";
 
+/** Documents the left menu responsibility exposed by this client feature module. */
 export function LeftMenu() {
   const pathname = usePathname();
   const tLocal = useLocalizedText();

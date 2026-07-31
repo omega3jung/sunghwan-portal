@@ -4,6 +4,7 @@ import {
   SERVICE_DESK_TICKET_DRAFT_KEY,
 } from "@/feature/serviceDesk/shared/keys";
 
+/** Builds stable TanStack Query keys for ticket draft cache entries. */
 export const ticketDraftQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_TICKET_DRAFT_KEY] as const,
 

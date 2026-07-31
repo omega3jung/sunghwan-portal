@@ -8,11 +8,14 @@ import type {
 
 import type { TicketDraftResource } from "./types";
 
+/** Defines the ticket draft form payload accepted at this feature boundary. */
 export type TicketDraftFormPayload = TicketDraftFormValues;
+/** Defines the ticket draft write form payload accepted at this feature boundary. */
 export type TicketDraftWriteFormPayload =
   | TicketDraftFormValues
   | TicketFormValues;
 
+/** Maps ticket draft payload at the feature's API or form boundary. */
 export function mapTicketDraftPayload(
   draft: TicketDraftResource | null,
 ): TicketDraftFormPayload | null {
@@ -56,6 +59,7 @@ function formatRequesterName(
     .join(" ");
 }
 
+/** Maps ticket draft write payload from form values at the feature's API or form boundary. */
 export function toTicketDraftWritePayloadFromFormValues(
   form: TicketDraftWriteFormPayload,
 ): TicketDraftWriteInput {

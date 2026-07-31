@@ -19,6 +19,14 @@ import {
   internalTenantMock,
 } from "@/mocks/domain/serviceDesk/tenants";
 
+/**
+ * Process-local mutable Service Desk settings for the LOCAL demo runtime.
+ *
+ * The state mirrors REMOTE DTO-facing behavior where implemented, but it does
+ * not emulate PostgreSQL transactions, RLS, grants, or durable persistence.
+ * Server restart/cold start may discard mutations; the reset flow intentionally
+ * recreates the same deterministic fixture state.
+ */
 const clone = <T>(value: T): T => structuredClone(value);
 
 type LocalDemoSettingsState = {
@@ -76,15 +84,18 @@ function getLocalDemoSettingsState() {
   return globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
 }
 
+/** Returns demo tenants from the server-side LOCAL settings adapter. */
 export function getLocalDemoTenants() {
   return getLocalDemoSettingsState().tenants;
 }
 
+/** Returns mutable local demo categories from the server-side LOCAL settings adapter. */
 export function getMutableLocalDemoCategories(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal ? state.internalCategories : state.clientCategories;
 }
 
+/** Returns demo categories from the server-side LOCAL settings adapter. */
 export function getLocalDemoCategories(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   const activeTenantIds = new Set(
@@ -101,6 +112,7 @@ export function getLocalDemoCategories(isInternal: boolean) {
   );
 }
 
+/** Returns demo approval steps tree from the server-side LOCAL settings adapter. */
 export function getLocalDemoApprovalStepsTree(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal
@@ -116,11 +128,13 @@ export function getLocalDemoApprovalStepsTree(isInternal: boolean) {
         templateCategories: state.clientApprovalSteps,
       };
 }
+/** Returns demo approval steps from the server-side LOCAL settings adapter. */
 export function getLocalDemoApprovalSteps(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal ? state.internalApprovalSteps : state.clientApprovalSteps;
 }
 
+/** Returns demo assignment rules tree from the server-side LOCAL settings adapter. */
 export function getLocalDemoAssignmentRulesTree(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal
@@ -136,6 +150,7 @@ export function getLocalDemoAssignmentRulesTree(isInternal: boolean) {
         templateRules: state.clientAssignmentRules,
       };
 }
+/** Returns demo assignment rules from the server-side LOCAL settings adapter. */
 export function getLocalDemoAssignmentRules(isInternal: boolean) {
   const state = getLocalDemoSettingsState();
   return isInternal
@@ -152,6 +167,8 @@ function replaceCategoryScopedItems<T extends CategoryScopedItem>({
   categoryIds: Iterable<string | number>;
   nextItems: T[];
 }) {
+  // Replace the complete category-owned slice so removed tree nodes do not
+  // linger in mutable state after a settings save.
   const categoryIdSet = new Set(
     Array.from(categoryIds, (categoryId) => String(categoryId)),
   );
@@ -171,6 +188,7 @@ function isInternalTenant(state: LocalDemoSettingsState, tenantId: string) {
   return String(internalTenantId) === tenantId;
 }
 
+/** Replaces local demo approval step categories in process-local mutable demo state. */
 export function replaceLocalDemoApprovalStepCategories({
   tenantId,
   categoryIds,
@@ -192,6 +210,7 @@ export function replaceLocalDemoApprovalStepCategories({
   });
 }
 
+/** Replaces local demo assignment rules in process-local mutable demo state. */
 export function replaceLocalDemoAssignmentRules({
   tenantId,
   categoryIds,
@@ -213,6 +232,9 @@ export function replaceLocalDemoAssignmentRules({
   });
 }
 
+/** Restores local demo settings state from immutable demo fixtures. */
 export function resetLocalDemoSettingsState() {
+  // Recreate every nested array; reusing mutated references would make reset
+  // results depend on previous demo activity.
   globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ = createLocalDemoSettingsState();
 }

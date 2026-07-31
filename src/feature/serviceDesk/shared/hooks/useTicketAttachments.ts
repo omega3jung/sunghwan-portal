@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 
+/** Maintains a de-duplicated attachment list and its total byte size for ticket forms. */
 export const useTicketAttachments = ({
   maxCount,
   maxSizeMB,

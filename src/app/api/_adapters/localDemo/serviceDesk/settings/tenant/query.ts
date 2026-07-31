@@ -7,6 +7,7 @@ import {
 
 import { listTenants, normalizeTenant } from "./tenantUtils";
 
+/** Returns tenants from the server-side LOCAL settings adapter. */
 export const localListTenants = ({
   searchParams,
 }: {
@@ -30,6 +31,7 @@ export const localListTenants = ({
   };
 };
 
+/** Returns tenant from the server-side LOCAL settings adapter. */
 export const localGetTenant = ({ id }: { id: string }) => {
   const targetTenant = listTenants(getLocalDemoTenants()).find(
     (tenant) => String(tenant.tenant_id) === id,

@@ -1,5 +1,12 @@
 import type { AssignmentCompanyPolicy } from "@/domain/serviceDesk";
 
+/**
+ * Resolves the company boundary in which an assignment rule may select users.
+ *
+ * Duplicate owner/tenant IDs are collapsed and malformed numeric IDs are
+ * discarded. This is a shared policy projection; persistence and authorization
+ * layers must still validate referenced employees against stored relationships.
+ */
 export function getAllowedAssignmentCompanyIds({
   tenantCompanyId,
   ownerCompanyId,

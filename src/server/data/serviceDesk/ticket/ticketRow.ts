@@ -9,12 +9,14 @@ import {
 } from "@/domain/serviceDesk";
 import { ISODateString, LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL service desk ticket email used only within the repository boundary. */
 export type ServiceDeskTicketEmail = {
   to: string[];
   cc: string[];
   bcc: string[];
 };
 
+/** Defines the PostgreSQL service desk ticket view row used only within the repository boundary. */
 export type ServiceDeskTicketViewRow = {
   tk_id: string;
   tk_tenant_id: number | null;
@@ -61,6 +63,7 @@ export type ServiceDeskTicketViewRow = {
   tk_images: TicketAttachmentMetadata[];
 };
 
+/** Defines the PostgreSQL ticket mutate row input used only within the repository boundary. */
 export type TicketMutateRowInput = {
   tk_tenant_id: number | null;
   tk_category_id: number;
@@ -75,6 +78,7 @@ export type TicketMutateRowInput = {
   tk_images: TicketAttachmentMetadata[];
 };
 
+/** Defines the PostgreSQL create ticket row input used only within the repository boundary. */
 export type CreateTicketRowInput = TicketMutateRowInput & {
   tk_ticket_no: string;
   tk_requester_username: string;

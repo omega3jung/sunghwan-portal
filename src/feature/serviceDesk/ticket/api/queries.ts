@@ -14,6 +14,7 @@ import { DbParams, type SortDirection } from "@/shared/types";
 import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
 
+/** Provides the client query hook for service desk ticket list query and its cache policy. */
 export const useServiceDeskTicketListQuery = (params: DbParams) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
@@ -35,6 +36,7 @@ type UseServiceDeskTicketSearchQueryParams = {
   enabled?: boolean;
 };
 
+/** Provides the client query hook for service desk ticket search query and its cache policy. */
 export const useServiceDeskTicketSearchQuery = ({
   criteria,
   sort,
@@ -64,6 +66,7 @@ export const useServiceDeskTicketSearchQuery = ({
   });
 };
 
+/** Provides the client query hook for service desk ticket query and its cache policy. */
 export const useServiceDeskTicketQuery = (id: string | number) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 

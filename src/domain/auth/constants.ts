@@ -1,3 +1,4 @@
+/** Numeric authorization thresholds keyed by application role. */
 export const ACCESS_LEVEL = {
   ADMIN: 9,
   MANAGER: 7,
@@ -8,5 +9,7 @@ export const ACCESS_LEVEL = {
   // 8, 6, 4, 2 reserved.
 } as const;
 
+/** Represents role within the authentication domain. */
 export type Role = keyof typeof ACCESS_LEVEL;
+/** Represents access level within the authentication domain. */
 export type AccessLevel = (typeof ACCESS_LEVEL)[Role];

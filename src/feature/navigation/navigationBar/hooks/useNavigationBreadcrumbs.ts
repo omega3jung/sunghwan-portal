@@ -39,6 +39,7 @@ function applyCurrentLabelOverride({
   );
 }
 
+/** Combines menu-aware breadcrumbs with the current page-label override. */
 export function useNavigationBreadcrumbs({
   currentLabel,
   currentLabelPathname,

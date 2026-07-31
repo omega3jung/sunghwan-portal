@@ -14,6 +14,7 @@ type TicketActionToolFooterProps = {
   onSubmit: () => void;
 };
 
+/** Documents the ticket action tool footer responsibility exposed by this client feature module. */
 export function TicketActionToolFooter({
   disabled,
   errorMessage,

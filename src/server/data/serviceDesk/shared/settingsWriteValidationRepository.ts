@@ -193,8 +193,14 @@ select case
 end as error_code;
 `;
 
-// Approval and assignment settings share the same organization-reference
-// integrity boundary even though their write services remain domain-specific.
+/**
+ * Validates approval references against the database state used by the write.
+ *
+ * Submitted IDs are not authority: the category must be an active main category
+ * in the target tenant, and each assignee must resolve to an active organization
+ * member allowed by that tenant. The caller supplies its transaction executor so
+ * validation and mutation observe one consistent boundary.
+ */
 export async function assertApprovalReferencesValidForWrite(
   query: PortalApiQueryExecutor,
   tenantId: string | number,
@@ -208,6 +214,12 @@ export async function assertApprovalReferencesValidForWrite(
   assertValidationResult(rows[0]?.error_code, "approvalSteps");
 }
 
+/**
+ * Applies the same database-backed boundary to assignment-rule references.
+ * Subcategories may be targeted, but their active main category and every
+ * employee/job-field reference must belong to the tenant and resolve to at least
+ * one active employee before the write is accepted.
+ */
 export async function assertAssignmentReferencesValidForWrite(
   query: PortalApiQueryExecutor,
   tenantId: string | number,

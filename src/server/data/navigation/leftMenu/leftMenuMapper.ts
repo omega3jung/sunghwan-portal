@@ -1,6 +1,7 @@
 import { LeftMenuDto } from "./leftMenuDto";
 import { LeftMenuRow } from "./leftMenuRow";
 
+/** Maps left menu row to dto across the database and API boundary. */
 export function mapLeftMenuRowToDto(row: LeftMenuRow): LeftMenuDto {
   return {
     id: Number(row.pm_id),
@@ -15,6 +16,7 @@ export function mapLeftMenuRowToDto(row: LeftMenuRow): LeftMenuDto {
   };
 }
 
+/** Maps left menu rows to dtos across the database and API boundary. */
 export function mapLeftMenuRowsToDtos(rows: LeftMenuRow[]): LeftMenuDto[] {
   return rows.map(mapLeftMenuRowToDto);
 }

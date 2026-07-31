@@ -40,6 +40,7 @@ type UseCreateTicketDialogParams = {
   categories: MainCategory[];
 };
 
+/** Coordinates draft hydration, step validation, attachments, and final ticket submission. */
 export const useCreateTicketDialog = ({
   language,
   categories,

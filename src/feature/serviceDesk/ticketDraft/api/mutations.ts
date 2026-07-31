@@ -6,6 +6,7 @@ import type { TicketDraftFormPayload } from "./mapper";
 import { ticketDraftQueryKeys } from "./queryKeys";
 import { serviceDeskTicketDraftRepo, useTicketDraftRepoContext } from "./repo";
 
+/** Provides the client mutation hook for create service desk ticket draft and invalidates affected cached data. */
 export function useCreateServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
   const context = useTicketDraftRepoContext();
@@ -24,6 +25,7 @@ export function useCreateServiceDeskTicketDraft() {
   });
 }
 
+/** Provides the client mutation hook for update service desk ticket draft and invalidates affected cached data. */
 export function useUpdateServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
   const context = useTicketDraftRepoContext();
@@ -42,6 +44,7 @@ export function useUpdateServiceDeskTicketDraft() {
   });
 }
 
+/** Provides the client mutation hook for discard service desk ticket draft and invalidates affected cached data. */
 export function useDiscardServiceDeskTicketDraft() {
   const queryClient = useQueryClient();
   const context = useTicketDraftRepoContext();

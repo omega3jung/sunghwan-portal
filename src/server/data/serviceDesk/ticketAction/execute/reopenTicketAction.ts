@@ -17,6 +17,7 @@ import {
   requireNextTicketStatus,
 } from "../ticketActionRules";
 
+/** Executes reopen ticket action after shared authorization and payload validation have succeeded. */
 export async function executeReopenTicketAction({
   ticket,
   ticketId,

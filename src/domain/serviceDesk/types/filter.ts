@@ -3,6 +3,7 @@ import { ISODateString } from "@/shared/types";
 
 import { TicketPeriod, TicketStatus } from "./enums";
 
+/** Represents filter setting within the Service Desk domain. */
 export interface FilterSetting {
   category: number[];
   status: TicketStatus[];

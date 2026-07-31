@@ -80,6 +80,7 @@ function mapApprovalAssigneeToDto(value: unknown): ApprovalAssigneeTypeDto {
   throw new Error("Invalid approval step assignee shape");
 }
 
+/** Maps approval step row to dto across the database and API boundary. */
 export function mapApprovalStepRowToDto(row: ApprovalStepRow): ApprovalStepDto {
   return {
     approval_step_id: Number(row.aps_id),
@@ -92,12 +93,14 @@ export function mapApprovalStepRowToDto(row: ApprovalStepRow): ApprovalStepDto {
   };
 }
 
+/** Maps approval step rows to dtos across the database and API boundary. */
 export function mapApprovalStepRowsToDtos(
   rows: ApprovalStepRow[],
 ): ApprovalStepDto[] {
   return rows.map(mapApprovalStepRowToDto);
 }
 
+/** Maps create approval step input dto to row input across the database and API boundary. */
 export function mapCreateApprovalStepInputDtoToRowInput(
   input: CreateApprovalStepInputDto,
 ): CreateApprovalStepRowInput {
@@ -113,6 +116,7 @@ export function mapCreateApprovalStepInputDtoToRowInput(
   };
 }
 
+/** Maps update approval step input dto to row input across the database and API boundary. */
 export function mapUpdateApprovalStepInputDtoToRowInput(
   input: UpdateApprovalStepInputDto,
 ): UpdateApprovalStepRowInput {

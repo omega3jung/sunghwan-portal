@@ -33,10 +33,12 @@ where jf.jf_active = true
 order by jf.jf_id;
 `;
 
+/** Queries PostgreSQL for active job field rows without applying presentation concerns. */
 export async function findActiveJobFieldRows(): Promise<JobFieldRow[]> {
   return queryPortalApi<JobFieldRow>(FIND_ACTIVE_JOB_FIELD_ROWS_QUERY);
 }
 
+/** Queries PostgreSQL for active job field rows by company id without applying presentation concerns. */
 export async function findActiveJobFieldRowsByCompanyId(
   companyId: number,
 ): Promise<JobFieldRow[]> {

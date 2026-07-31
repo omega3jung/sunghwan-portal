@@ -7,6 +7,7 @@ import {
   TicketSearchCriteriaFormValues,
 } from ".";
 
+/** Creates the search criteria form with schema validation and normalized defaults. */
 export const useTicketSearchCriteriaForm = () =>
   useForm<TicketSearchCriteriaFormValues>({
     resolver: zodResolver(ticketSearchCriteriaFormSchema),

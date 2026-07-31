@@ -9,6 +9,7 @@ import {
   TicketHistorySource,
 } from "./types";
 
+/** Normalized optional metadata used to render ticket history without reinterpreting raw JSON. */
 export type TicketHistoryDisplayMetadata = {
   source?: TicketHistorySource;
   event?: TicketHistoryEvent;

@@ -7,6 +7,7 @@ const ticketDueAtSchema = z
     message: "Due date cannot be earlier than today.",
   });
 
+/** Validates and normalizes ticket form values before they leave the client feature boundary. */
 export const ticketFormSchema = z.object({
   id: z.string().nullable(),
   category: z.string().optional(),

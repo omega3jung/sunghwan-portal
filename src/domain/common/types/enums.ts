@@ -1,3 +1,4 @@
+/** Defines the canonical priority values used by the shared domain model. */
 export const PRIORITY = {
   urgent: 4,
   high: 3,
@@ -5,8 +6,10 @@ export const PRIORITY = {
   low: 1,
 } as const;
 
+/** Represents priority within the shared domain model. */
 export type Priority = keyof typeof PRIORITY;
 
+/** Defines the canonical risk level values used by the shared domain model. */
 export const RISK_LEVEL = {
   critical: 4,
   high: 3,
@@ -14,6 +17,7 @@ export const RISK_LEVEL = {
   low: 1,
 } as const;
 
+/** Represents risk level within the shared domain model. */
 export type RiskLevel = keyof typeof RISK_LEVEL;
 
 // Subset of DateRangePreset, intentionally defined locally
@@ -29,6 +33,7 @@ export type TicketSearchPeriod =
   | "last_6month"
   | "range";
 
+/** Represents due at within the shared domain model. */
 export type dueAt =
   | "all"
   | "overdue"

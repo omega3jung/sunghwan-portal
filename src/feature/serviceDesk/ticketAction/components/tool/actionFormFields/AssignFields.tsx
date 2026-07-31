@@ -40,6 +40,7 @@ type AssignFieldsProps = {
   tLocal: Localize;
 };
 
+/** Documents the assign fields responsibility exposed by this client feature module. */
 export function AssignFields({
   form,
   originalCategoryId,

@@ -7,6 +7,7 @@ import {
 import type { TicketActionDto } from "./ticketActionDto";
 import type { TicketActionRow } from "./ticketActionRow";
 
+/** Maps ticket action row to dto across the database and API boundary. */
 export function mapTicketActionRowToDto(
   row: TicketActionRow,
 ): TicketActionDto {

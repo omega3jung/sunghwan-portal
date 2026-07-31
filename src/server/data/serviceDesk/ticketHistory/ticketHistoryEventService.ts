@@ -21,6 +21,7 @@ import type {
   TicketHistorySource,
 } from "./ticketHistoryTypes";
 
+/** Records the ticket create event in the immutable ticket audit timeline. */
 export async function createHistoryOfTicketCreate(
   params: {
     ticketId: string;
@@ -51,6 +52,7 @@ export async function createHistoryOfTicketCreate(
   );
 }
 
+/** Records the status change event in the immutable ticket audit timeline. */
 export async function createHistoryOfStatusChange(
   params: {
     ticketId: string;
@@ -85,6 +87,7 @@ export async function createHistoryOfStatusChange(
   );
 }
 
+/** Records the system resolution close event in the immutable ticket audit timeline. */
 export async function createHistoryOfSystemResolutionClose(
   params: {
     ticketId: string;
@@ -116,6 +119,7 @@ export async function createHistoryOfSystemResolutionClose(
   );
 }
 
+/** Records the comment created event in the immutable ticket audit timeline. */
 export async function createHistoryOfCommentCreated(
   params: {
     ticketId: string;
@@ -141,6 +145,7 @@ export async function createHistoryOfCommentCreated(
   );
 }
 
+/** Records the note created event in the immutable ticket audit timeline. */
 export async function createHistoryOfNoteCreated(
   params: {
     ticketId: string;
@@ -166,6 +171,7 @@ export async function createHistoryOfNoteCreated(
   );
 }
 
+/** Records the approval requested event in the immutable ticket audit timeline. */
 export async function createHistoryOfApprovalRequested(
   params: {
     ticketId: string;
@@ -198,6 +204,7 @@ export async function createHistoryOfApprovalRequested(
   );
 }
 
+/** Records the approval approved event in the immutable ticket audit timeline. */
 export async function createHistoryOfApprovalApproved(
   params: {
     ticketId: string;
@@ -227,6 +234,7 @@ export async function createHistoryOfApprovalApproved(
   );
 }
 
+/** Records the approval declined event in the immutable ticket audit timeline. */
 export async function createHistoryOfApprovalDeclined(
   params: {
     ticketId: string;
@@ -265,6 +273,7 @@ export async function createHistoryOfApprovalDeclined(
   );
 }
 
+/** Records the assignment change event in the immutable ticket audit timeline. */
 export async function createHistoryOfAssignmentChange(
   params: {
     ticketId: string;
@@ -286,6 +295,7 @@ export async function createHistoryOfAssignmentChange(
   );
 }
 
+/** Records the assignment resolved by rule event in the immutable ticket audit timeline. */
 export async function createHistoryOfAssignmentResolvedByRule(
   params: {
     ticketId: string;
@@ -345,6 +355,7 @@ async function createAssignmentHistory(
   );
 }
 
+/** Records the planning change event in the immutable ticket audit timeline. */
 export async function createHistoryOfPlanningChange(
   params: {
     ticketId: string;
@@ -374,6 +385,7 @@ export async function createHistoryOfPlanningChange(
   );
 }
 
+/** Records the ticket rejected event in the immutable ticket audit timeline. */
 export async function createHistoryOfTicketRejected(
   params: {
     ticketId: string;
@@ -409,6 +421,7 @@ export async function createHistoryOfTicketRejected(
   );
 }
 
+/** Records the ticket merged event in the immutable ticket audit timeline. */
 export async function createHistoryOfTicketMerged(
   params: {
     ticketId: string;
@@ -461,6 +474,7 @@ export async function createHistoryOfTicketMerged(
   );
 }
 
+/** Records the ticket canceled event in the immutable ticket audit timeline. */
 export async function createHistoryOfTicketCanceled(
   params: {
     ticketId: string;

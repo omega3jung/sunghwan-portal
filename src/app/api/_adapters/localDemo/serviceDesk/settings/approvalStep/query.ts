@@ -7,6 +7,7 @@ import {
   resolveTenantId,
 } from "./approvalStepUtils";
 
+/** Returns approval steps from the server-side LOCAL settings adapter. */
 export const localListApprovalSteps = ({
   isInternal,
   searchParams,

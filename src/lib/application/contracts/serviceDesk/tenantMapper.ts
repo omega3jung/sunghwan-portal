@@ -7,6 +7,7 @@ import { ArrayMapper } from "@/shared/types";
 
 import { DbTenant } from "./tenant";
 
+/** Maps a database tenant record into the application-facing model. */
 export const camelTenantMapper: ArrayMapper<DbTenant, Tenant> = (data) => {
   return data.flatMap((item) => {
     if (!item) {
@@ -25,5 +26,7 @@ export const camelTenantMapper: ArrayMapper<DbTenant, Tenant> = (data) => {
   });
 };
 
+/** Maps a tenant collection payload into application models. */
 export const mapTenantListPayload = createListPayloadMapper(camelTenantMapper);
+/** Maps a tenant payload into the application model. */
 export const mapTenantItemPayload = createItemPayloadMapper(camelTenantMapper);

@@ -1,3 +1,4 @@
+/** Defines the stable cache or persistence key for create preference data. */
 export function createPreferenceKey<
   TModuleKey extends string,
   TPreferenceType extends string,
@@ -5,6 +6,7 @@ export function createPreferenceKey<
   return `${moduleKey}.${preferenceType}` as `${TModuleKey}.${TPreferenceType}`;
 }
 
+/** Defines the stable cache or persistence key for parse preference data. */
 export function parsePreferenceKey(preferenceKey: string) {
   const lastDotIndex = preferenceKey.lastIndexOf(".");
 

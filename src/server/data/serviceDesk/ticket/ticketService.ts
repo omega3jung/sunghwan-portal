@@ -44,12 +44,14 @@ import {
   updateTicketInitialRoutingById,
 } from "./ticketUpdateRepository";
 
+/** Supplies requester identity, optional numbering, and transaction context for ticket creation. */
 export type CreateTicketOptions = {
   ticketNo?: string;
   requesterUsername: string;
   query?: TicketRepositoryOptions["query"];
 };
 
+// Operational cleanup policy after resolution; this is not an SLA deadline.
 const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
 
 type InitialTicketRoutingResult =
@@ -64,6 +66,7 @@ type InitialTicketRoutingResult =
       assigneeUsernames: string[];
     };
 
+/** Loads active tickets and projects viewer-specific ownership flags for list views. */
 export async function getTicketListItems(
   currentUserName: string | null,
 ): Promise<TicketListItemDto[]> {
@@ -72,6 +75,7 @@ export async function getTicketListItems(
   return rows.map((row) => toTicketListItemDto(row, currentUserName));
 }
 
+/** Loads one active ticket and derives permissions for the current viewer. */
 export async function getTicketDetail(
   ticketId: string,
   currentUserName: string | null,
@@ -81,6 +85,13 @@ export async function getTicketDetail(
   return row ? projectTicketDetail(row, currentUserName) : null;
 }
 
+/**
+ * Starts work only for a current WORK-phase assignee.
+ *
+ * The state transition and immutable history entry share one transaction. An
+ * already-started ticket is returned unchanged, making repeated view-triggered
+ * requests safe without manufacturing duplicate status history.
+ */
 export async function startTicketWork(
   ticketId: string,
   currentUserName: string,
@@ -134,6 +145,11 @@ export async function startTicketWork(
   });
 }
 
+/**
+ * Closes resolved tickets after the grace period as one maintenance workflow.
+ * Running sessions are ended and a system-authored history event is recorded
+ * for each successful close. A failure rolls back the batch transaction.
+ */
 export async function closeExpiredResolvedTickets(
   now: Date = new Date(),
 ): Promise<{ closedCount: number; ticketIds: string[] }> {
@@ -185,6 +201,14 @@ export async function closeExpiredResolvedTickets(
   });
 }
 
+/**
+ * Submits an existing requester draft or creates a new routed ticket.
+ *
+ * Ticket number allocation, requester/category validation, initial approval or
+ * work routing, and all creation history use the caller's transaction. This
+ * prevents a visible ticket from being committed without assignees or its
+ * authoritative audit trail.
+ */
 export async function createTicket(
   input: TicketCreateRequestDto,
   options: CreateTicketOptions,
@@ -312,6 +336,7 @@ export async function createTicket(
   );
 }
 
+/** Applies repository-side search, sorting, facets, and pagination before projecting list items. */
 export async function searchTicketListItems(
   request: TicketSearchRequestDto,
   currentUserName: string | null,
@@ -327,6 +352,7 @@ export async function searchTicketListItems(
   };
 }
 
+// Prior assignment history affects derived viewer permissions, so projection performs one contextual lookup.
 async function projectTicketDetail(
   row: Parameters<typeof toTicketDetailDto>[0],
   currentUserName: string | null,
@@ -342,6 +368,7 @@ async function projectTicketDetail(
   });
 }
 
+// Approval takes precedence; category assignment is used only when no approval step applies.
 async function resolveInitialTicketRouting(
   params: {
     requesterUsername: string;

@@ -1,5 +1,6 @@
 type MessageOptions = Record<string, unknown>;
 
+/** Resolves message key according to application localization policy. */
 export const resolveMessageKey = (
   messages: unknown,
   key: string,
@@ -17,6 +18,7 @@ export const resolveMessageKey = (
   return typeof resolved === "string" ? resolved : undefined;
 };
 
+/** Replaces `{{token}}` placeholders, using an empty string for missing values. */
 export const interpolateMessageTemplate = (
   template: string,
   options?: MessageOptions,

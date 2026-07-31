@@ -2,6 +2,7 @@ import type { LocalizedName } from "@/domain/organization";
 import type { TicketHistoryEvent } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types";
 
+/** Defines the PostgreSQL ticket history row used only within the repository boundary. */
 export type TicketHistoryRow = {
   tkh_ticket_id: string;
   tkh_history_no: number;

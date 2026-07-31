@@ -1,5 +1,6 @@
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
 
+/** Flattens category and subcategory selections into repository-like rule rows. */
 export const flattenAssignmentRuleTree = (
   payload: SaveServiceDeskAssignmentRuleTreePayload,
 ) => {

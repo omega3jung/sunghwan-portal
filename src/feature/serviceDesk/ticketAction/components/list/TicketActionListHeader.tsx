@@ -16,6 +16,7 @@ type TicketActionListHeaderProps = {
   onToggleSort: () => void;
 };
 
+/** Documents the ticket action list header responsibility exposed by this client feature module. */
 export function TicketActionListHeader({
   count,
   query,

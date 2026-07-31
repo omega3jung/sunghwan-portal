@@ -17,6 +17,7 @@ interface TicketListProps {
   isLoading: boolean;
 }
 
+/** Documents the ticket list responsibility exposed by this client feature module. */
 export const TicketList = ({
   tickets,
   onTicketSelected,

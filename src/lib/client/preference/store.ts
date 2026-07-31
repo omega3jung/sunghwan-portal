@@ -13,6 +13,13 @@ import { Locale } from "@/shared/types";
 
 import { createDefaultPreference } from "./default";
 
+/**
+ * Browser-only cache for user presentation preferences.
+ *
+ * Persisted values are normalized field by field so stale or malformed storage
+ * cannot introduce unsupported themes, menu modes, or locales. This state is
+ * UI preference data, not React Query server state or an authorization input.
+ */
 const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_preference",
 } as const;

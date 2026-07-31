@@ -12,6 +12,7 @@ import { NS } from "@/lib/application/i18n";
 import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { TicketInfoFields } from "./InfoFields";
 
+/** Documents the review step responsibility exposed by this client feature module. */
 export const ReviewStep = () => {
   const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);

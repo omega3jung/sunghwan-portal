@@ -12,6 +12,7 @@ function isEmptyLabel(label: ReactNode) {
   );
 }
 
+/** Registers a page-specific navigation label and clears it when the route or component changes. */
 export function useNavigationBarCurrentLabel(label: ReactNode) {
   const pathname = usePathname();
   const { resetCurrentLabel, setCurrentLabel } = useNavigationBarContext();

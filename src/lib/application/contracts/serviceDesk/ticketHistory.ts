@@ -13,6 +13,7 @@ import { mapTicketHistoryDisplayMetadata } from "@/lib/application/serviceDesk";
 import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 
+/** Database-facing ticket history shape used by the Service Desk application boundary. */
 export interface DbTicketHistory {
   ticket_id: string;
   history_no: number;
@@ -32,6 +33,7 @@ export interface DbTicketHistory {
   created_at: ISODateString;
 }
 
+/** Maps a database ticket history record into the application-facing model. */
 export const camelTicketHistoryMapper: ArrayMapper<
   DbTicketHistory,
   TicketHistory
@@ -56,6 +58,7 @@ export const camelTicketHistoryMapper: ArrayMapper<
   }));
 };
 
+/** Maps an application ticket history model into its database-facing shape. */
 export const snakeTicketHistoryMapper: ArrayMapper<
   TicketHistory,
   DbTicketHistory
@@ -76,9 +79,11 @@ export const snakeTicketHistoryMapper: ArrayMapper<
   }));
 };
 
+/** Maps a ticket history collection payload into application models. */
 export const mapTicketHistoryListPayload = createListPayloadMapper(
   camelTicketHistoryMapper,
 );
+/** Maps a ticket history payload into the application model. */
 export const mapTicketHistoryPayload = createItemPayloadMapper(
   camelTicketHistoryMapper,
 );

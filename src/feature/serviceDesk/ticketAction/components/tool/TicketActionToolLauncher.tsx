@@ -120,6 +120,7 @@ const actionIcons: Record<TicketActionMode, ReactNode> = {
   cancel: <XCircle className="h-4 w-4" />,
 };
 
+/** Documents the ticket action tool launcher responsibility exposed by this client feature module. */
 export function TicketActionToolLauncher({
   hidden,
   isAdmin = false,

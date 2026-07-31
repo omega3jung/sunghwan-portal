@@ -14,6 +14,7 @@ type CreateTicketDialogStepFlowProps = {
   afterSteps: { label: string }[];
 };
 
+/** Documents the create ticket dialog step flow responsibility exposed by this client feature module. */
 export const CreateTicketDialogStepFlow = ({
   currentStep,
   onStepChange,

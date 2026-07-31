@@ -16,6 +16,7 @@ type UseTicketDraftOptions = {
   form: UseFormReturn<TicketDraftFormPayload>;
 };
 
+/** Coordinates draft loading, immediate save, debounced persistence, and removal for one form. */
 export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
   const [draftId, setDraftId] = useState<string | null>(null);
 
@@ -38,9 +39,13 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
     values: TicketDraftFormPayload,
   ): TicketDraftFormPayload => ({
     ...values,
+    // File objects are browser-session values and are not safe to restore from
+    // either localStorage or a server draft. Attachments are prepared only when
+    // the final ticket is submitted.
     attachment: [],
   });
 
+  /** Saves at most one create-mode draft operation at a time. */
   const saveDraftNow = async () => {
     if (mode !== "create" || savingRef.current) return null;
 

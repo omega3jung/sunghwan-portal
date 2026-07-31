@@ -1,4 +1,4 @@
-// src/feature/user/preference/queries.ts
+// src/feature/user/preference/mutations.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Preference } from "@/domain/user/preference";
@@ -7,6 +7,7 @@ import { userPreferenceQueryKeys } from "./queryKeys";
 import { userPreferenceRepo } from "./repo";
 import { SavePreferenceInput } from "./types";
 
+/** Provides the client mutation hook for create user preference and invalidates affected cached data. */
 export const useCreateUserPreference = <T>() => {
   const queryClient = useQueryClient();
 
@@ -18,6 +19,7 @@ export const useCreateUserPreference = <T>() => {
   });
 };
 
+/** Provides the client mutation hook for update user preference and invalidates affected cached data. */
 export const useUpdateUserPreference = <T>() => {
   const queryClient = useQueryClient();
 

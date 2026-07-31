@@ -2,6 +2,7 @@
 import { ImpersonationInfo } from "@/domain/auth";
 import client from "@/lib/client/api";
 
+/** Groups browser API operations for user impersonation behind one typed client boundary. */
 export const userImpersonationApi = {
   start: async (impersonatedUsername: string): Promise<ImpersonationInfo> => {
     const res = await client.api.post<{ impersonation: ImpersonationInfo }>(

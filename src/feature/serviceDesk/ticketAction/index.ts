@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/action/index.ts
+// src/feature/serviceDesk/ticketAction/index.ts
 
 export * from "./mapper";
 export * from "./types";

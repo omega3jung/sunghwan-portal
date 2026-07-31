@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types/language";
 
+/** Represents department within the organization domain. */
 export interface Department {
   id: string;
 

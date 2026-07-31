@@ -8,6 +8,7 @@ import {
   resolveTenantId,
 } from "./ruleUtils";
 
+/** Returns assignment rules from the server-side LOCAL settings adapter. */
 export const localListAssignmentRules = ({
   isInternal,
   searchParams,

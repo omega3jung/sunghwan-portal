@@ -5,6 +5,7 @@ import {
 
 const SERVICE_DESK_TICKET_WORK_SESSION_KEY = "work-session";
 
+/** Builds stable TanStack Query keys for ticket work session cache entries. */
 export const ticketWorkSessionQueryKeys = {
   all: [
     SERVICE_DESK_KEY,

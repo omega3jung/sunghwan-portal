@@ -5,6 +5,13 @@ import { create } from "zustand";
 import { CurrentSession } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 
+/**
+ * Client runtime cache for the application-facing session projection.
+ *
+ * JWT/session data remains the authentication and server-authorization source
+ * of truth. Persisting this Zustand state only supports browser rendering and
+ * navigation continuity; it must never be trusted by a server permission check.
+ */
 const STORAGE_KEYS = {
   SESSION: "sunghwan_portal_session",
 } as const;
@@ -18,6 +25,7 @@ const STORAGE_KEYS = {
  */
 export type SessionState = Omit<CurrentSession, "expires">;
 
+/** Represents session patch within the browser client runtime. */
 export type SessionPatch = Omit<Partial<SessionState>, "user"> & {
   user?: Partial<AppUser> | null;
 };

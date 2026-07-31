@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types/language";
 
+/** Represents company within the organization domain. */
 export interface Company {
   id: string;
 

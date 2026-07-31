@@ -18,6 +18,7 @@ import {
 
 import { DbTicketDetail, DbTicketSummary } from "./ticket";
 
+/** Maps a database ticket summary record into the application-facing model. */
 export const camelTicketSummaryMapper: ArrayMapper<
   DbTicketSummary,
   TicketSummary
@@ -60,6 +61,7 @@ export const camelTicketSummaryMapper: ArrayMapper<
   }));
 };
 
+/** Maps a database ticket detail record into the application-facing model. */
 export const camelTicketDetailMapper: ArrayMapper<
   DbTicketDetail,
   TicketDetail
@@ -104,6 +106,7 @@ export const camelTicketDetailMapper: ArrayMapper<
   }));
 };
 
+/** Maps an application ticket summary model into its database-facing shape. */
 export const snakeTicketSummaryMapper: ArrayMapper<
   TicketSummary,
   DbTicketSummary
@@ -155,6 +158,7 @@ export const snakeTicketSummaryMapper: ArrayMapper<
   }));
 };
 
+/** Maps an application ticket detail model into its database-facing shape. */
 export const snakeTicketDetailMapper: ArrayMapper<
   TicketDetail,
   DbTicketDetail
@@ -236,6 +240,8 @@ function mapTicketAssignment(
 function mapTicketCurrentAssignment(
   item: DbTicketAssignmentSource,
 ): TicketCurrentAssignmentState {
+  // New DTOs expose phase-specific assignees. Older payloads only have the
+  // shared assignee fields, so they are projected into exactly one phase.
   const assignmentPhase = resolveAssignmentPhase(item);
   const legacyAssigneeUsernames = normalizeStringArray(item.assignee_usernames);
   const approvalAssigneeUsernames = normalizeStringArray(
@@ -272,6 +278,8 @@ function mapTicketCurrentAssignment(
 function resolveAssignmentPhase(
   item: Pick<DbTicketAssignmentSource, "approval_step_id" | "assignment_phase">,
 ): TicketAssignmentPhase {
+  // approvalStepId is the persisted source of truth when an older payload does
+  // not include the explicit assignment_phase projection.
   if (item.assignment_phase === "APPROVAL" || item.assignment_phase === "WORK") {
     return item.assignment_phase;
   }
@@ -306,10 +314,11 @@ function normalizeStringArray(value: unknown): string[] {
     .filter(Boolean);
 }
 
+/** Maps a ticket summary collection payload into application models. */
 export const mapTicketSummaryListPayload = createListPayloadMapper(
   camelTicketSummaryMapper,
 );
+/** Maps a ticket detail payload into the application model. */
 export const mapTicketDetailPayload = createItemPayloadMapper(
   camelTicketDetailMapper,
 );
-

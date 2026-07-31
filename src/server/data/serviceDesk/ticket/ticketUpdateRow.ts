@@ -4,6 +4,7 @@ import { ISODateString } from "@/shared/types";
 
 import type { ServiceDeskTicketEmail } from "./ticketRow";
 
+/** Defines the PostgreSQL requester update ticket row input used only within the repository boundary. */
 export type RequesterUpdateTicketRowInput = {
   tk_category_id: number;
   tk_subject: string;
@@ -19,6 +20,7 @@ export type RequesterUpdateTicketRowInput = {
   tk_assignee_usernames: string[];
 };
 
+/** Defines the PostgreSQL requester update category snapshot used only within the repository boundary. */
 export type RequesterUpdateCategorySnapshot = {
   cat_id: number;
   cat_parent_id: number | null;

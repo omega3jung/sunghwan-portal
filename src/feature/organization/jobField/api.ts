@@ -5,6 +5,7 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type JobFieldResponse = OResponse<JobField>;
 
+/** Groups browser API operations for job field behind one typed client boundary. */
 export const jobFieldApi = {
   list: async (params: DbParams): Promise<JobField[]> => {
     if (!params) return [];

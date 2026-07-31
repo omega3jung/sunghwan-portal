@@ -14,6 +14,7 @@ type CreateTicketDialogFooterProps = {
   onNext: () => void;
 };
 
+/** Documents the create ticket dialog footer responsibility exposed by this client feature module. */
 export const CreateTicketDialogFooter = ({
   currentStep,
   canMoveNext,

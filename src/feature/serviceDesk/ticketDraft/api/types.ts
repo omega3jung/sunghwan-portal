@@ -2,6 +2,7 @@ import { Priority, RiskLevel } from "@/domain/common";
 import { Attach, TicketRequester } from "@/domain/serviceDesk";
 import { ISODateString } from "@/shared/types/date";
 
+/** Defines the ticket draft resource returned to this feature boundary. */
 export interface TicketDraftResource {
   id: string;
   ticketNo: string;

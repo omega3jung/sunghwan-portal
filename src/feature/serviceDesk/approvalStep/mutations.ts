@@ -7,6 +7,7 @@ import { employeeQueryKeys } from "@/feature/organization/employee";
 import { serviceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
 
+/** Provides the client mutation hook for save service desk approval step tree and invalidates affected cached data. */
 export const useSaveServiceDeskApprovalStepTree = () => {
   const queryClient = useQueryClient();
 

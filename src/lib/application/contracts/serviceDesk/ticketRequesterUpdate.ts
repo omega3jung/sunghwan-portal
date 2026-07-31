@@ -28,6 +28,7 @@ const requesterUpdateCategoryIdSchema = z
     message: "Invalid category id.",
   });
 
+/** Validates requester update ticket request payloads at the Service Desk application boundary. */
 export const requesterUpdateTicketRequestSchema = z
   .object({
     categoryId: requesterUpdateCategoryIdSchema,
@@ -40,8 +41,10 @@ export const requesterUpdateTicketRequestSchema = z
   })
   .strict();
 
+/** Represents requester update ticket request dto within the Service Desk application boundary. */
 export type RequesterUpdateTicketRequestDto = z.infer<
   typeof requesterUpdateTicketRequestSchema
 >;
 
+/** Represents requester update ticket attachment dto within the Service Desk application boundary. */
 export type RequesterUpdateTicketAttachmentDto = TicketAttachmentMetadata;

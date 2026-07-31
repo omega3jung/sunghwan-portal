@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL job field row used only within the repository boundary. */
 export interface JobFieldRow {
   jf_id: number;
   jf_name: LocalizedText;

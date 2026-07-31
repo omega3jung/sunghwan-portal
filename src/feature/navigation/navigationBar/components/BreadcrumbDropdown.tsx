@@ -20,6 +20,7 @@ type BreadcrumbDropdownProps = {
   label: ReactNode;
 };
 
+/** Documents the breadcrumb dropdown responsibility exposed by this client feature module. */
 export function BreadcrumbDropdown({
   isCurrentPage = false,
   items,

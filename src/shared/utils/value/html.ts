@@ -1,3 +1,10 @@
+/**
+ * Produces a compact text preview from trusted rich-text HTML.
+ *
+ * Block boundaries become spaces and the small entity set emitted by the
+ * current editor is decoded. This is intentionally not a general HTML parser
+ * or sanitizer; callers must not use the result as a security boundary.
+ */
 export function htmlToPlainText(value: string) {
   return value
     .replace(/<br\s*\/?>/gi, " ")

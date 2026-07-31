@@ -126,6 +126,7 @@ function TicketDueByFieldInput({
   );
 }
 
+/** Documents the ticket due by field responsibility exposed by this client feature module. */
 export function TicketDueByField({ control }: Props) {
   const { t } = useTranslation(NS.common);
   const { t: tDomain } = useTranslation(NS.domain);
