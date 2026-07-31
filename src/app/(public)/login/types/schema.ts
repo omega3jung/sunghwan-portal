@@ -19,7 +19,10 @@ export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export const recoveryIdentityFormSchema = z.object({
   username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
-  email: z.string().trim().email(VALIDATION_MESSAGES.invalidFormat),
+  email: z
+    .string()
+    .trim()
+    .pipe(z.email(VALIDATION_MESSAGES.invalidFormat)),
 });
 
 export type RecoveryIdentityFormValues = z.infer<

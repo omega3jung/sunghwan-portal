@@ -7,7 +7,7 @@ import Underline from "@tiptap/extension-underline";
 import { Placeholder } from "@tiptap/extensions";
 import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import type { CSSProperties, MutableRefObject } from "react";
+import type { CSSProperties, RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 
 import { cn } from "@/shared/utils/presentation";
@@ -208,7 +208,7 @@ export function RichEditor({
 }
 
 function createEditorExtensions(
-  placeholderRef: MutableRefObject<string>,
+  placeholderRef: RefObject<string>,
   preset: RichEditorPreset,
 ) {
   const enabledToolbarItems = new Set(preset.toolbar.flat());
