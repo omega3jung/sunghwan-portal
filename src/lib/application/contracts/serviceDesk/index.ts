@@ -13,6 +13,7 @@ export * from "./tenantWrite";
 export * from "./ticket";
 export * from "./ticketAction";
 export * from "./ticketActionCommand";
+export * from "./ticketAttachmentPreparation";
 export * from "./ticketHistory";
 export * from "./ticketMapper";
 export * from "./ticketRequesterUpdate";

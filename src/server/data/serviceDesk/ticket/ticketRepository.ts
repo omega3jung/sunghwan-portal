@@ -193,6 +193,11 @@ with category_context as (
   select
     coalesce(parent.cat_scope, category.cat_scope)::text as category_scope,
     tenant.tn_company_id as tenant_company_id,
+    coalesce(
+      exact_rule.ar_category_id,
+      parent_rule.ar_category_id,
+      category.cat_id
+    ) as assignment_category_id,
     case
       when exact_rule.ar_id is not null then
         coalesce((exact_rule.ar_assignee ->> 'include_tenant_company')::boolean, false)
@@ -210,8 +215,24 @@ with category_context as (
     on tenant_company.c_id = tenant.tn_company_id
   left join service_desk.assignment_rule exact_rule
     on exact_rule.ar_category_id = category.cat_id
+    and (
+      jsonb_array_length(
+        coalesce(exact_rule.ar_assignee -> 'job_field_id', '[]'::jsonb)
+      ) > 0
+      or jsonb_array_length(
+        coalesce(exact_rule.ar_assignee -> 'employee_username', '[]'::jsonb)
+      ) > 0
+    )
   left join service_desk.assignment_rule parent_rule
     on parent_rule.ar_category_id = parent.cat_id
+    and (
+      jsonb_array_length(
+        coalesce(parent_rule.ar_assignee -> 'job_field_id', '[]'::jsonb)
+      ) > 0
+      or jsonb_array_length(
+        coalesce(parent_rule.ar_assignee -> 'employee_username', '[]'::jsonb)
+      ) > 0
+    )
   where category.cat_id = $1::bigint
     and category.cat_active = true
     and (category.cat_parent_id is null or parent.cat_active = true)
@@ -250,12 +271,13 @@ resolved_assignees as (
   select unnest(
     coalesce(
       service_desk.get_category_assignment_usernames(
-        $1::bigint,
+        context.assignment_category_id,
         $2::varchar
       )::text[],
       array[]::text[]
     )
   ) as username
+  from category_context context
 )
 select coalesce(
   array_agg(distinct employee.e_username order by employee.e_username),
@@ -572,14 +594,7 @@ order by assignee->>'username';
 type TicketFilterConnector = "and" | "or";
 
 type TicketFilterOperator =
-  | "="
-  | "!="
-  | "contains"
-  | "in"
-  | ">"
-  | ">="
-  | "<"
-  | "<=";
+  "=" | "!=" | "contains" | "in" | ">" | ">=" | "<" | "<=";
 
 type TicketFilterLeaf = {
   field?: string;

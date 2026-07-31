@@ -34,13 +34,6 @@ export function toCompanyWritePayload(
   };
 }
 
-export function toCompanyMockResource(
-  input: CreateCompanyInput | UpdateCompanyInput,
-  id = Date.now().toString(),
-): Company {
-  return { id, ...input };
-}
-
 type DepartmentWriteFields = Pick<
   Department,
   "name" | "code" | "description" | "companyId" | "parentId" | "active"
@@ -62,13 +55,6 @@ export function toDepartmentWritePayload(
   };
 }
 
-export function toDepartmentMockResource(
-  input: CreateDepartmentInput | UpdateDepartmentInput,
-  id = Date.now().toString(),
-): Department {
-  return { id, ...input };
-}
-
 type JobFieldWriteFields = Pick<
   JobField,
   "name" | "description" | "companyId" | "departmentId" | "parentId" | "active"
@@ -88,13 +74,6 @@ export function toJobFieldWritePayload(
     jf_parent_id: idToNumber(input.parentId),
     jf_active: input.active,
   };
-}
-
-export function toJobFieldMockResource(
-  input: CreateJobFieldInput | UpdateJobFieldInput,
-  id = Date.now().toString(),
-): JobField {
-  return { id, ...input };
 }
 
 type DateInput = Date | string;
@@ -136,25 +115,7 @@ export function toEmployeeWritePayload(
   };
 }
 
-export function toEmployeeMockResource(
-  input: CreateEmployeeInput | UpdateEmployeeInput,
-  id: number | string = Date.now(),
-): Employee {
-  const { startDate, endDate, ...rest } = input;
-
-  return {
-    ...rest,
-    id: resolveEmployeeId(id) ?? Date.now(),
-    startDate: toDateValue(startDate),
-    ...(endDate ? { endDate: toDateValue(endDate) } : {}),
-  };
-}
-
 function resolveEmployeeId(value: number | string | undefined) {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   return typeof value === "string" ? idToNumber(value) : null;
-}
-
-function toDateValue(value: DateInput) {
-  return value instanceof Date ? value : new Date(value);
 }

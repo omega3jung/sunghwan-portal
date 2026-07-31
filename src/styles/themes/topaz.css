@@ -3,7 +3,7 @@
 
 html[data-theme="topaz"] {
   /* Core */
-  --primary: 38 90% 48%;
+  --primary: hsl(38 90% 48%);
   --primary-muted: 38 55% 88%;
   --primary-subtle: 38 80% 94%;
   --primary-accent: 38 85% 38%;

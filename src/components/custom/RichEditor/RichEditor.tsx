@@ -46,7 +46,7 @@ type RichEditorProps = {
 
 const DEFAULT_EDITOR_MIN_HEIGHT = "10rem";
 const DEFAULT_EDITOR_CONTENT_CLASS_NAME =
-  "px-4 py-3 text-sm focus:outline-none prose prose-sm max-w-none break-words prose-p:my-2 prose-p:leading-6 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-blockquote:my-3 prose-blockquote:border-l prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-a:text-primary prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 [&_img]:max-h-64 [&_img]:rounded-md [&_img]:object-contain [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1.5 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1.5";
+  "px-4 py-3 text-sm focus:outline-none prose prose-sm max-w-none wrap-break-word prose-p:my-2 prose-p:leading-6 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-blockquote:my-3 prose-blockquote:border-l prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-a:text-primary prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 [&_img]:max-h-64 [&_img]:rounded-md [&_img]:object-contain [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1.5 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1.5";
 
 export function RichEditor({
   className,
@@ -83,7 +83,7 @@ export function RichEditor({
     editorProps: {
       attributes: {
         class: cn(
-          "min-h-[var(--rich-editor-min-height)]",
+          "min-h-(--rich-editor-min-height)",
           DEFAULT_EDITOR_CONTENT_CLASS_NAME,
           contentClassName,
         ),
@@ -198,7 +198,7 @@ export function RichEditor({
         id={id}
         editor={editor}
         className={cn(
-          "editor-wrapper min-h-[var(--rich-editor-min-height)]",
+          "editor-wrapper min-h-(--rich-editor-min-height)",
           "[&_.is-editor-empty:first-child::before]:pointer-events-none [&_.is-editor-empty:first-child::before]:float-left [&_.is-editor-empty:first-child::before]:h-0 [&_.is-editor-empty:first-child::before]:text-muted-foreground [&_.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]",
           error && "[&_.ProseMirror]:text-destructive",
         )}

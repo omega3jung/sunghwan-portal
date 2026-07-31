@@ -64,7 +64,7 @@ export function CompanyList({
                     disabled={disabled}
                     onClick={() => onSelectCompany(companyId)}
                     className={cn(
-                      "h-20 w-full flex-col items-stretch gap-2 p-4 border-border text-left",
+                      "h-20 w-full flex-col items-stretch gap-2 p-4 text-left",
                       isSelected && "bg-primary/5",
                     )}
                   >

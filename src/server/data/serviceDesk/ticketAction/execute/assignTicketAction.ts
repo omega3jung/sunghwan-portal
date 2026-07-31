@@ -1,3 +1,7 @@
+import {
+  resolveTicketActionNextStatus,
+  type TicketActionExecutionMode,
+} from "@/lib/application/contracts/serviceDesk";
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import { updateTicketAssigneesById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
@@ -11,8 +15,6 @@ import {
   normalizeAssigneeUsernames,
   type NormalizedTicketActionPayload,
   normalizeHistoryMetadataRecord,
-  resolveNextTicketStatus,
-  type TicketActionExecutionMode,
 } from "../ticketActionRules";
 
 export async function executeAssignTicketAction({
@@ -44,7 +46,8 @@ export async function executeAssignTicketAction({
 
   const assigneeUsernames = payload.assigneeUsernames;
   const status =
-    resolveNextTicketStatus(actionMode, ticket.tk_status) ?? ticket.tk_status;
+    resolveTicketActionNextStatus(actionMode, ticket.tk_status) ??
+    ticket.tk_status;
   // TODO(notification): Resolve assignee emails through a trusted server-side
   // employee email resolver at send time. Do not persist derived emails in tk_email.
   const updatedTicket = await updateTicketAssigneesById(

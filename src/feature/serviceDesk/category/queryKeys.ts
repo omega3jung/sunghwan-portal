@@ -2,8 +2,7 @@ import {
   SERVICE_DESK_CATEGORY_KEY,
   SERVICE_DESK_KEY,
 } from "@/feature/serviceDesk/shared/keys";
-
-import type { ServiceDeskCategoryListParams } from "./types";
+import type { ServiceDeskCategoryListParams } from "@/lib/application/contracts/serviceDesk";
 
 export const categoryQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_CATEGORY_KEY] as const,

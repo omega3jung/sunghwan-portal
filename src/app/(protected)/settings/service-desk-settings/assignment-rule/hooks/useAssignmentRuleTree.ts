@@ -1,101 +1,76 @@
-import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import {
-  findTreeNodeData,
-  findTreeNodePath,
-  resolveTreeNodeIdByPath,
-  TreeNodePath,
-} from "@/components/custom/dnd/tree/utilities";
-import {
+import type {
+  AssigneeGroup,
   AssignmentRule,
-  CategoryScope,
   TenantCategoryTree,
 } from "@/domain/serviceDesk";
-import { SupportedLanguage } from "@/lib/application/i18n";
 
-import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
-import { assignmentRuleToTree, mapAssignmentRuleData } from "../utils/mapper";
+import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
+import { type AssignmentRuleNodeData,isSubAssignmentRuleData } from "../types";
+import { createAssignmentRuleTree } from "../utils/mapper";
+import {
+  createAssignmentRuleSettingsSignatureFromTree,
+  getEffectiveAssignmentRuleAssignee,
+} from "../utils/tree";
 
 type UseAssignmentRuleTreeOptions = {
+  contextKey: string | null;
   selectedTenant: string | null;
-  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
   assignmentRules: AssignmentRule[] | undefined;
-  language: SupportedLanguage;
 };
 
 export function useAssignmentRuleTree({
+  contextKey,
   selectedTenant,
-  scope,
   categories,
   assignmentRules,
-  language: _language,
 }: UseAssignmentRuleTreeOptions) {
-  const [tree, setTree] = useState<
-    TreeNodes<AssignmentRuleData | SubAssignmentRuleData>
-  >([]);
+  const source = useMemo(() => {
+    if (!contextKey || !categories || !selectedTenant || !assignmentRules) {
+      return undefined;
+    }
 
-  const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
-  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
-  const previousContextRef = useRef<string | null>(null);
-  const selectedPathRef = useRef<TreeNodePath | null>(null);
-
-  useEffect(() => {
-    selectedPathRef.current = findTreeNodePath(tree, selectedId);
-  }, [selectedId, tree]);
-
-  useEffect(() => {
-    if (!categories || !selectedTenant || !assignmentRules) return;
-
-    const contextKey = `${selectedTenant}:${scope}`;
-    const scopedCategories = categories.map((tenant) => ({
-      ...tenant,
-      categories: tenant.categories.filter((category) => category.scope === scope),
-    }));
-    const mapped = mapAssignmentRuleData(
-      scopedCategories,
+    const tree = createAssignmentRuleTree(
+      categories,
       selectedTenant,
       assignmentRules,
     );
-    const nextTree = assignmentRuleToTree(mapped);
 
-    setTree(nextTree);
-    setTreeTenantId(selectedTenant);
-    setTreeContextKey(contextKey);
-    setSelectedId((previousSelectedId) => {
-      if (previousContextRef.current !== contextKey) {
-        previousContextRef.current = contextKey;
-        return null;
-      }
+    return {
+      contextKey,
+      tree,
+      signature: createAssignmentRuleSettingsSignatureFromTree(tree),
+    };
+  }, [assignmentRules, categories, contextKey, selectedTenant]);
 
-      if (!previousSelectedId) {
-        return null;
-      }
+  const draft = useServiceDeskSettingsTreeDraft<AssignmentRuleNodeData>({
+    contextKey,
+    source,
+    getTreeSignature: createAssignmentRuleSettingsSignatureFromTree,
+  });
 
-      const selectionPath = selectedPathRef.current;
+  const inheritedAssignee = useMemo<AssigneeGroup | null>(() => {
+    if (
+      draft.selectedId === null ||
+      !draft.selectedNode ||
+      !isSubAssignmentRuleData(draft.selectedNode)
+    ) {
+      return null;
+    }
 
-      if (!selectionPath?.length) {
-        return null;
-      }
+    const parentNode = draft.tree.find((node) =>
+      node.children.some((child) => child.id === draft.selectedId),
+    );
 
-      return resolveTreeNodeIdByPath(nextTree, selectionPath);
-    });
-  }, [assignmentRules, categories, scope, selectedTenant]);
-
-  const selectedNode = useMemo(() => {
-    return findTreeNodeData(tree, selectedId);
-  }, [selectedId, tree]);
+    return parentNode
+      ? getEffectiveAssignmentRuleAssignee(parentNode.data)
+      : null;
+  }, [draft.selectedId, draft.selectedNode, draft.tree]);
 
   return {
-    tree,
-    setTree,
-    selectedId,
-    setSelectedId,
-    treeTenantId,
-    treeContextKey,
-    selectedNode,
+    ...draft,
+    inheritedAssignee,
   };
 }

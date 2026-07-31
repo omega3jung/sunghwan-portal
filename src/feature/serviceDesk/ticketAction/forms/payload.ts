@@ -1,4 +1,4 @@
-﻿import type { PrepareTicketAttachmentsResponse } from "@/feature/serviceDesk/ticket/write";
+import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
 
 import type {
   TicketActionDraftFormValues,

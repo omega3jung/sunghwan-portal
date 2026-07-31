@@ -1,30 +1,26 @@
 "use client";
 
-import { ChevronDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
-import { forwardRef, useMemo } from "react";
+import { forwardRef, Fragment, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxSeparator,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { cn } from "@/shared/utils/presentation";
 
 import { AvatarComboBoxOptionItem } from "./AvatarComboBoxOptionItem";
 import { AvatarStack } from "./AvatarStack";
 import type { AvatarMultiProps } from "./types";
 import {
-  createCommandFilter,
+  createComboboxFilter,
   EMPTY_OPTION_TEXT,
   splitOptionsBySelection,
 } from "./utils";
@@ -56,87 +52,106 @@ const Component = (
     [options, value],
   );
 
-  const commandFilter = useMemo(() => createCommandFilter(options), [options]);
+  const orderedOptions = useMemo(
+    () => [...selectedOptions, ...unselectedOptions],
+    [selectedOptions, unselectedOptions],
+  );
+  const comboboxFilter = useMemo(() => createComboboxFilter(), []);
 
-  const handleToggleOption = (selection: string) => {
-    if (value.includes(selection)) {
-      onRemove?.(selection);
-      return;
+  const handleValueChange = (nextOptions: typeof options) => {
+    const currentValueSet = new Set(value);
+    const optionValueSet = new Set(options.map((option) => option.value));
+    const nextValueSet = new Set(nextOptions.map((option) => option.value));
+
+    for (const removedValue of value) {
+      if (
+        optionValueSet.has(removedValue) &&
+        !nextValueSet.has(removedValue)
+      ) {
+        onRemove?.(removedValue);
+      }
     }
 
-    onSelect?.(selection);
+    for (const addedValue of nextValueSet) {
+      if (!currentValueSet.has(addedValue)) {
+        onSelect?.(addedValue);
+      }
+    }
   };
 
   return (
     <div data-testid="avatarcombobox">
-      <Popover modal={modal}>
-        <PopoverTrigger asChild>
-          <Button
-            {...buttonProps}
-            ref={ref}
-            variant="outline"
-            role="combobox"
-            className={cn(
-              comboBoxVariants({ variant, size }),
-              "py-0.5",
-              className,
-            )}
-            disabled={disabled || readOnly}
-          >
-            <AvatarStack
-              selected={selectedOptions}
-              placeholder={placeholder}
-              placeholderClassName={placeholderClassName}
-              badgeVariant={badgeVariant}
-              maxImages={maxImages}
+      <Combobox
+        items={orderedOptions}
+        value={selectedOptions}
+        onValueChange={handleValueChange}
+        filter={comboboxFilter}
+        multiple
+        disabled={disabled}
+        readOnly={readOnly}
+        modal={modal}
+      >
+        <ComboboxTrigger
+          render={
+            <Button
+              {...buttonProps}
+              ref={ref}
+              variant="outline"
+              className={cn(
+                comboBoxVariants({ variant, size }),
+                "py-0.5",
+                className,
+              )}
+              disabled={disabled || readOnly}
             />
-            {isLoading ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : !readOnly ? (
-              <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-basic" />
-            ) : null}
-          </Button>
-        </PopoverTrigger>
+          }
+          icon={
+            isLoading ? (
+              <Loader2 className="pointer-events-none size-6 animate-spin" />
+            ) : readOnly ? null : undefined
+          }
+        >
+          <AvatarStack
+            selected={selectedOptions}
+            placeholder={placeholder}
+            placeholderClassName={placeholderClassName}
+            badgeVariant={badgeVariant}
+            size={size}
+            maxImages={maxImages}
+          />
+        </ComboboxTrigger>
 
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-          <Command filter={commandFilter}>
-            <CommandInput placeholder={placeholder} />
-            <CommandList className="max-h-48 min-h-0">
-              <CommandEmpty>{EMPTY_OPTION_TEXT}</CommandEmpty>
+        <ComboboxContent>
+          <ComboboxInput
+            aria-label={placeholder ?? "Search users"}
+            placeholder={placeholder}
+            showTrigger={false}
+          />
+          <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
+          <ComboboxList showScrollbar className="max-h-48 min-h-0">
+            {(user) => {
+              const unselectedIndex = unselectedOptions.indexOf(user);
+              const isFirstUnselected =
+                selectedOptions.length > 0 && unselectedIndex === 0;
 
-              {selectedOptions.length > 0 && (
-                <CommandGroup>
-                  {selectedOptions.map((user) => (
-                    <AvatarComboBoxOptionItem
-                      key={`selected-${user.value}`}
-                      user={user}
-                      badgeVariant={badgeVariant}
-                      onSelect={handleToggleOption}
-                    />
-                  ))}
-                </CommandGroup>
-              )}
-
-              {!readOnly && (
-                <>
-                  {selectedOptions.length > 0 && <Separator />}
-                  <CommandGroup data-testid="unselected-list">
-                    {unselectedOptions.map((user, index) => (
-                      <AvatarComboBoxOptionItem
-                        key={`unselected-${user.value}`}
-                        user={user}
-                        badgeVariant={badgeVariant}
-                        onSelect={handleToggleOption}
-                        testId={`unselected-list-item-${index}`}
-                      />
-                    ))}
-                  </CommandGroup>
-                </>
-              )}
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+              return (
+                <Fragment key={user.value}>
+                  {isFirstUnselected && <ComboboxSeparator />}
+                  <AvatarComboBoxOptionItem
+                    user={user}
+                    badgeVariant={badgeVariant}
+                    testId={
+                      unselectedIndex >= 0
+                        ? `unselected-list-item-${unselectedIndex}`
+                        : undefined
+                    }
+                  />
+                </Fragment>
+              );
+            }}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </div>
   );
 };

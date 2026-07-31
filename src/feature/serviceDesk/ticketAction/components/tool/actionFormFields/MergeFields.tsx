@@ -115,11 +115,15 @@ export function MergeFields({
       <FieldLabel>{t("actionTool.form.targetTicketId")}</FieldLabel>
 
       {isTicketListLoading ? (
-        <Skeleton className="h-9 w-full rounded-md" />
+          <Skeleton className="h-9 w-full" />
       ) : (
         <Select
           value={targetTicketId}
-          onValueChange={onTargetTicketIdChange}
+          onValueChange={(value) => {
+            if (value !== null) {
+              onTargetTicketIdChange(value);
+            }
+          }}
           disabled={!hasMergeTicketList}
         >
           <SelectTrigger id="ticket-action-merge-target">

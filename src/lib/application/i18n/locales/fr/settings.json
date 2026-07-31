@@ -120,6 +120,8 @@
       "tenant": "Tenant",
       "noResults": "Aucun résultat",
       "saveChanges": "Enregistrer les modifications",
+      "discardUnsavedChanges": "Vous avez des modifications non enregistrées. Les ignorer et continuer ?",
+      "loadError": "Impossible de charger les paramètres.",
       "scope": "Portée de la catégorie",
       "scopeInternal": "Interne",
       "scopePortal": "Portail",
@@ -134,6 +136,9 @@
       "description": "Description",
       "requestTemplate": "Modèle de demande",
       "resolutionDays": "Jours de résolution",
+      "followMainCategory": "Suivre la catégorie principale ({{value}})",
+      "customValue": "Définir une valeur personnalisée",
+      "daysValue": "{{value}} jours",
       "active": "Actif",
       "addCategory": "Ajouter une catégorie",
       "empty": "Sélectionnez un catégorie pour modifier ses paramètres."
@@ -148,7 +153,7 @@
         "jobField": "Poste",
         "employee": "Employé"
       },
-      "managerLevel": "Niveau du responsable",
+      "managerStepsAboveRequester": "Étapes hiérarchiques au-dessus du demandeur",
       "department": "Département",
       "departmentPlaceholder": "Sélectionner un département",
       "jobField": "Poste",
@@ -157,6 +162,8 @@
       "employeePlaceholder": "Sélectionner un responsable",
       "skipAccessLevel": "Niveau d’accès pouvant être ignoré",
       "saveUnavailable": "Enregistrement impossible",
+      "created": "Créé",
+      "assign": "Attribuer",
       "empty": "Sélectionnez un étape d'approbation pour modifier ses paramètres."
     },
     "assignmentRuleTab": {

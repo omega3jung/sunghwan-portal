@@ -4,6 +4,7 @@ import { create } from "zustand";
 
 import {
   ColorTheme,
+  MenuMode,
   PortalPreference,
   ScreenMode,
 } from "@/domain/user/preference";
@@ -17,6 +18,7 @@ const STORAGE_KEYS = {
 } as const;
 
 const SCREEN_MODES = ["light", "dark", "system"] as const;
+const MENU_MODES = ["collapsible", "group"] as const;
 const COLOR_THEMES = [
   "default",
   "emerald",
@@ -27,6 +29,10 @@ const COLOR_THEMES = [
 
 const isScreenMode = (value: unknown): value is ScreenMode => {
   return typeof value === "string" && SCREEN_MODES.includes(value as ScreenMode);
+};
+
+const isMenuMode = (value: unknown): value is MenuMode => {
+  return typeof value === "string" && MENU_MODES.includes(value as MenuMode);
 };
 
 const isColorTheme = (value: unknown): value is ColorTheme => {
@@ -50,6 +56,7 @@ const normalizePortalPreference = (
   const record = value as Record<string, unknown>;
 
   return {
+    menu: isMenuMode(record.menu) ? record.menu : fallback.menu,
     screenMode: isScreenMode(record.screenMode)
       ? record.screenMode
       : fallback.screenMode,
@@ -65,11 +72,13 @@ const normalizePortalPreference = (
 
 /*
  * Minimum state stored in the session
+ * - menu: collapsible | group
  * - screenMode: light | dark | system
  * - colorTheme: default | emerald | ruby | sapphire | topaz
  * - language: en | es | fr | ko
  */
 export type PreferencePatch = Partial<PortalPreference> & {
+  menu?: Partial<MenuMode> | null;
   screenMode?: Partial<ScreenMode> | null;
   colorTheme?: Partial<ColorTheme> | null;
   language?: Partial<Locale> | null;

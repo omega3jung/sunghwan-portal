@@ -162,9 +162,7 @@ export default function AvatarMultiComboBoxPage() {
                 <span className="col-span-2 flex items-center gap-2 pt-2">
                   <Checkbox
                     checked={leadingConnector}
-                    onCheckedChange={(value) =>
-                      setLeadingConnector(value === "indeterminate" || value)
-                    }
+                    onCheckedChange={setLeadingConnector}
                   />
                   Leading Connector
                 </span>
@@ -184,9 +182,7 @@ export default function AvatarMultiComboBoxPage() {
                 <span className="flex items-center gap-2">
                   <Checkbox
                     checked={disableSteps}
-                    onCheckedChange={(value) =>
-                      setDisableSteps(value === "indeterminate" || value)
-                    }
+                    onCheckedChange={setDisableSteps}
                   />
                   {t("stepper.disable")}
                 </span>

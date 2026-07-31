@@ -157,9 +157,9 @@ export default function ServiceDeskTicketDetailPage({
       ticket
         ? selectTicketAssignees(ticket).map((assignee) => ({
             value: assignee.username,
-          label: formatDisplayName(tLocal(assignee.name)),
-          displayName: assignee.username,
-          image: assignee.image ?? undefined,
+            label: formatDisplayName(tLocal(assignee.name)),
+            displayName: assignee.username,
+            image: assignee.image ?? undefined,
           }))
         : [],
     [ticket, tLocal],
@@ -211,7 +211,7 @@ export default function ServiceDeskTicketDetailPage({
   }
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-2 pt-1">
+    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-4 pt-3">
       <TicketHeader
         ticket={ticket}
         categories={categories}
@@ -234,7 +234,7 @@ export default function ServiceDeskTicketDetailPage({
       <div className="flex min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden pt-4">
         <main className="min-w-0 flex-1">
           <ScrollArea className="h-full w-full">
-            <div className="mx-auto w-full min-w-0 max-w-[1040px] p-2 pb-10">
+            <div className="mx-auto w-full min-w-0 max-w-260 p-2 pb-10">
               {isTicketLoading ? (
                 <TicketDetailSkeleton />
               ) : ticket ? (
@@ -252,8 +252,7 @@ export default function ServiceDeskTicketDetailPage({
                       latestActionOwnerName || ticket.lastCommenterEmail
                     }
                     latestActionEmail={
-                      latestAction?.ownerUsername ||
-                      ticket.lastCommenterEmail
+                      latestAction?.ownerUsername || ticket.lastCommenterEmail
                     }
                     dateLocale={dateLocale}
                   />
@@ -269,7 +268,7 @@ export default function ServiceDeskTicketDetailPage({
 
                     <div className="max-w-full overflow-x-auto">
                       <div
-                        className="prose prose-sm min-w-0 max-w-none break-words text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-7 prose-pre:max-w-full prose-pre:overflow-x-auto"
+                        className="prose prose-sm min-w-0 max-w-none wrap-break-word text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-7 prose-pre:max-w-full prose-pre:overflow-x-auto"
                         dangerouslySetInnerHTML={{
                           __html: ticket.content || "<p>-</p>",
                         }}

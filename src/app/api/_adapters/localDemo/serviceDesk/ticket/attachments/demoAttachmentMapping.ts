@@ -1,7 +1,7 @@
 import type {
   TicketAttachmentExtension,
   TicketAttachmentImageExtension,
-} from "./ticketAttachmentPrepareDto";
+} from "@/lib/application/contracts/serviceDesk";
 
 export const ALLOWED_TICKET_ATTACHMENT_EXTENSIONS = [
   "jpg",

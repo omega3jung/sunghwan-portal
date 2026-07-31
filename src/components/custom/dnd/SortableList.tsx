@@ -3,11 +3,10 @@
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  UniqueIdentifier,
+  PointerSensor,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -15,6 +14,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
+  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useMemo } from "react";
@@ -35,9 +35,14 @@ export function SortableList<T>({
   const ids = useMemo(() => items.map(getId), [items, getId]);
 
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor)
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 4,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -45,6 +50,8 @@ export function SortableList<T>({
 
     const oldIndex = ids.indexOf(active.id);
     const newIndex = ids.indexOf(over.id);
+
+    if (oldIndex < 0 || newIndex < 0) return;
 
     onChange(arrayMove(items, oldIndex, newIndex));
   };

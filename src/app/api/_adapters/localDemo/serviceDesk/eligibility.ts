@@ -168,7 +168,9 @@ export async function assertApprovalAssigneeEligible({
       return;
     case "MANAGER": {
       const minimumPermission =
-        assignee.level === 1 ? ACCESS_LEVEL.MANAGER : ACCESS_LEVEL.ADMIN;
+        assignee.managerDistance === 1
+          ? ACCESS_LEVEL.MANAGER
+          : ACCESS_LEVEL.ADMIN;
       if (
         !employees.some(
           (employee) =>

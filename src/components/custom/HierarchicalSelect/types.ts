@@ -1,3 +1,5 @@
+import type { BadgeProps } from "@/components/ui/badge";
+
 export type HierarchicalSelectItem = {
   value: string;
   label: string;
@@ -10,20 +12,31 @@ export type HierarchicalSelectSelectableStrategy =
   | "parent-without-children"
   | "all";
 
-export type HierarchicalSelectProps = {
+type HierarchicalSelectBaseProps = {
   id?: string;
-  value?: string | null;
   items: HierarchicalSelectItem[];
   placeholder?: string;
   disabled?: boolean;
   emptyText?: string;
   backLabel?: string;
   selectableStrategy?: HierarchicalSelectSelectableStrategy;
-  onValueChange: (value: string) => void;
   getDisplayLabel?: (
     selected: HierarchicalSelectItem,
     path: HierarchicalSelectItem[],
   ) => string;
   className?: string;
   triggerClassName?: string;
+};
+
+export type HierarchicalSelectProps = HierarchicalSelectBaseProps & {
+  value?: string | null;
+  onValueChange: (value: string) => void;
+};
+
+export type MultiHierarchicalSelectProps = HierarchicalSelectBaseProps & {
+  value: string[];
+  onValueChange: (value: string[]) => void;
+  readOnly?: boolean;
+  isLoading?: boolean;
+  badgeVariant?: BadgeProps["variant"];
 };

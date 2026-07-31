@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 import { DEMO_OTP_CODE } from "../constants";
+import type { PasswordChangeReason } from "./states";
 
 const VALIDATION_MESSAGES = {
   required: "validation:required.default",
@@ -16,9 +17,16 @@ export const loginFormSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-export const verifyOtpFormSchema = z.object({
+export const recoveryIdentityFormSchema = z.object({
   username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
   email: z.string().trim().email(VALIDATION_MESSAGES.invalidFormat),
+});
+
+export type RecoveryIdentityFormValues = z.infer<
+  typeof recoveryIdentityFormSchema
+>;
+
+export const verifyOtpFormSchema = z.object({
   otp: z
     .string()
     .trim()
@@ -28,9 +36,8 @@ export const verifyOtpFormSchema = z.object({
 
 export type VerifyOtpFormValues = z.infer<typeof verifyOtpFormSchema>;
 
-export const changePasswordFormSchema = z
+const setPasswordFormSchema = z
   .object({
-    username: z.string().trim().min(1, VALIDATION_MESSAGES.required),
     current: z.string(),
     password: z.string().min(8, VALIDATION_MESSAGES.minLength),
     confirm: z.string().min(1, VALIDATION_MESSAGES.required),
@@ -40,4 +47,18 @@ export const changePasswordFormSchema = z
     path: ["confirm"],
   });
 
-export type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
+export const createSetPasswordFormSchema = (reason: PasswordChangeReason) =>
+  setPasswordFormSchema.superRefine((data, context) => {
+    if (
+      reason === "expired-credentials" &&
+      data.current.trim().length === 0
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: VALIDATION_MESSAGES.required,
+        path: ["current"],
+      });
+    }
+  });
+
+export type SetPasswordFormValues = z.infer<typeof setPasswordFormSchema>;

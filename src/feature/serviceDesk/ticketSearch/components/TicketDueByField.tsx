@@ -90,6 +90,7 @@ function TicketDueByFieldInput({
 
   return (
     <SearchDateFilter
+      className="w-full"
       value={safeValue.type}
       onValueChange={(selected) => {
         nextTypeRef.current = selected ?? safeValue.type;

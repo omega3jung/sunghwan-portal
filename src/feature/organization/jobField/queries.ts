@@ -8,11 +8,11 @@ import { DbParams } from "@/shared/types/api";
 import { jobFieldApi } from "./api";
 import { jobFieldQueryKeys } from "./queryKeys";
 
-export const useJobFieldListQuery = (params: DbParams) => {
+export const useJobFieldListQuery = (params?: DbParams) => {
   return useQuery({
-    queryKey: jobFieldQueryKeys.list(params),
-    queryFn: () => jobFieldApi.list(params),
-    enabled: !!params,
+    queryKey: jobFieldQueryKeys.list(params ?? {}),
+    queryFn: () => (params ? jobFieldApi.list(params) : Promise.resolve([])),
+    enabled: params !== undefined,
     ...STATIC_QUERY_OPTIONS,
   });
 };

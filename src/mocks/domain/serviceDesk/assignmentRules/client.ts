@@ -1,4 +1,4 @@
-import type { DbAssignmentRule } from "@/feature/serviceDesk/assignmentRule/types";
+import type { DbAssignmentRule } from "@/lib/application/contracts/serviceDesk";
 
 import {
   clientAccountAccessMock as demoCorporationAccountAccessMock,

@@ -558,9 +558,9 @@ src/lib/client/
 - [`state-management.md`](state-management.md)
 - [`routing-strategy.md`](routing-strategy.md)
 - [`database-strategy.md`](database-strategy.md)
-- [`../04-ui-ux/component-boundary.md`](../04-ui-ux/component-boundary.md)
-- [`../08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md`](../08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
-- [`../08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`](../08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md)
+- [`../04-engineering/ui/component-boundary.md`](../04-engineering/ui/component-boundary.md)
+- [`../06-decisions/2026-05-barrel-export-boundary.md`](../06-decisions/2026-05-barrel-export-boundary.md)
+- [`../06-decisions/2026-05-service-desk-documentation-alignment.md`](../06-decisions/2026-05-service-desk-documentation-alignment.md)
 
 ---
 

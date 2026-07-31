@@ -1,4 +1,4 @@
-import type { DbTicketAction } from "@/feature/serviceDesk/ticketAction/api";
+import type { DbTicketAction } from "@/lib/application/contracts/serviceDesk";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { serviceDeskScenariosMock } from "./scenariosMock";

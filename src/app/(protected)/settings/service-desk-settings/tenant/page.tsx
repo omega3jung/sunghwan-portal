@@ -6,21 +6,26 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import type { Company } from "@/domain/organization";
+import type { Tenant } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { useCompanyListQuery } from "@/feature/organization/company/client";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
-import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
+import type { ServiceDeskTenantListParams } from "@/lib/application/contracts/serviceDesk";
 import { NS } from "@/lib/application/i18n";
 import { DbParams } from "@/shared/types";
 
 import { useSettingsAccess } from "../../_providers";
-import { ServiceDeskSettingsLoading } from "../components/ServiceDeskSettingsLoading";
 import { ServiceDeskSettingsPageHeader } from "../components/ServiceDeskSettingsPageHeader";
+import { ServiceDeskSettingsPageLoading } from "../components/ServiceDeskSettingsPageLoading";
 import { CompanyList } from "./components/CompanyList";
 import { TenantList } from "./components/TenantList";
 import { TenantSettingInfo } from "./components/TenantSettingInfo";
 import { TenantTransferControls } from "./components/TenantTransferControls";
 import { useTenantSettings } from "./hooks/useTenantSettings";
+
+const EMPTY_COMPANIES: Company[] = [];
+const EMPTY_TENANTS: Tenant[] = [];
 
 export default function TenantPage() {
   const router = useRouter();
@@ -33,7 +38,7 @@ export default function TenantPage() {
   }, [router, type]);
 
   if (type !== "OWNER_ADMIN") {
-    return <ServiceDeskSettingsLoading />;
+    return <ServiceDeskSettingsPageLoading />;
   }
 
   return <OwnerTenantPage />;
@@ -51,8 +56,8 @@ function OwnerTenantPage() {
   const companyQuery = useCompanyListQuery(params);
   const tenantQuery = useServiceDeskTenantListQuery(tenantParams);
   const tenantSettings = useTenantSettings({
-    companies: companyQuery.data ?? [],
-    sourceTenants: tenantQuery.data ?? [],
+    companies: companyQuery.data ?? EMPTY_COMPANIES,
+    sourceTenants: tenantQuery.data ?? EMPTY_TENANTS,
   });
   const hasError = Boolean(companyQuery.error || tenantQuery.error);
   const isLoading =
@@ -99,18 +104,18 @@ function OwnerTenantPage() {
         description={t(
           "settingsNavigation.serviceDeskSettings.tenant.description",
         )}
-        isResetDisabled={
-          !tenantSettings.pageHeader.canReset ||
-          tenantSettings.pageHeader.isSaving
+        canReset={
+          tenantSettings.pageHeader.canReset &&
+          !tenantSettings.pageHeader.isSaving
         }
         onReset={tenantSettings.pageHeader.onReset}
-        isSaveDisabled={!tenantSettings.pageHeader.canSave}
+        canSave={tenantSettings.pageHeader.canSave}
         onSave={() => void tenantSettings.pageHeader.onSave()}
         isSaving={tenantSettings.pageHeader.isSaving}
       />
 
       <div
-        className="grid grid-cols-1 gap-y-6 pt-4 lg:grid-cols-[minmax(0,_30%)_28px_1.5rem_minmax(0,_30%)_1.5rem_minmax(0,_1fr)] lg:gap-x-0"
+        className="grid grid-cols-1 gap-y-6 pt-4 lg:grid-cols-[minmax(0,30%)_28px_1.5rem_minmax(0,30%)_1.5rem_minmax(0,1fr)] lg:gap-x-0"
         style={{ "--settings-offset": "18rem" } as React.CSSProperties}
       >
         <CompanyList

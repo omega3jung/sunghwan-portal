@@ -1,9 +1,8 @@
-import client from "@/lib/client/api";
-
 import type {
   AssignmentRecommendationInput,
   AssignmentRecommendationResult,
-} from "./recommendation";
+} from "@/lib/application/contracts/serviceDesk";
+import client from "@/lib/client/api";
 
 export const serviceDeskAssignmentRecommendationApi = {
   recommend: async (

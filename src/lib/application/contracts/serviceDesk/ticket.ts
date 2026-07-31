@@ -6,8 +6,10 @@ import {
   TicketRequester,
   TicketResolutionReason,
   TicketStatus,
+  TicketSummary,
   TicketUser,
 } from "@/domain/serviceDesk";
+import type { PaginatedSearchResponse } from "@/lib/application/api";
 import { LocalizedText } from "@/shared/types";
 import type { DbParams, DbSort } from "@/shared/types/api";
 import { ISODateString } from "@/shared/types/date";
@@ -151,3 +153,10 @@ export interface DbTicketDetail {
   files: TicketAttachmentMetadata[];
   images: TicketAttachmentMetadata[];
 }
+
+export type TicketSearchResponse = PaginatedSearchResponse<TicketSummary> & {
+  facets: {
+    requesters: TicketUser[];
+    assignees: TicketUser[];
+  };
+};

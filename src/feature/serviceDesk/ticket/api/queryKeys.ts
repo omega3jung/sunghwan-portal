@@ -2,9 +2,8 @@ import {
   SERVICE_DESK_KEY,
   SERVICE_DESK_TICKET_KEY,
 } from "@/feature/serviceDesk/shared/keys";
+import type { TicketSearchRequest } from "@/lib/application/contracts/serviceDesk";
 import { DbParams } from "@/shared/types/api";
-
-import { TicketSearchRequest } from "./types";
 
 export const ticketQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_TICKET_KEY] as const,

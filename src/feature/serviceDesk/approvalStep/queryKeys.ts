@@ -2,8 +2,7 @@ import {
   SERVICE_DESK_APPROVAL_STEP_KEY,
   SERVICE_DESK_KEY,
 } from "@/feature/serviceDesk/shared/keys";
-
-import { ServiceDeskApprovalStepListParams } from "./types";
+import type { ServiceDeskApprovalStepListParams } from "@/lib/application/contracts/serviceDesk";
 
 export const approvalStepQueryKeys = {
   all: [SERVICE_DESK_KEY, SERVICE_DESK_APPROVAL_STEP_KEY] as const,

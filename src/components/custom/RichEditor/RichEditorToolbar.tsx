@@ -83,7 +83,7 @@ export function RichEditorToolbar({
   const actionDisabled = disabled || readOnly;
 
   return (
-    <TooltipProvider delayDuration={150}>
+    <TooltipProvider delay={150}>
       <div
         className={cn(
           "flex flex-wrap items-center gap-1 border-b border-border/50 p-2",
@@ -105,15 +105,16 @@ export function RichEditorToolbar({
 
               return (
                 <Tooltip key={itemKey}>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
+                  <TooltipTrigger
+                    render={<span className="inline-flex" />}
+                  >
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
                         aria-label={label}
                         className={cn(
-                          "h-8 w-8 rounded-md hover:bg-muted/40",
+          "rounded-md hover:bg-muted/40",
                           editor &&
                             item.isActive?.(editor) &&
                             "bg-muted text-foreground",
@@ -129,7 +130,6 @@ export function RichEditorToolbar({
                       >
                         {item.icon}
                       </Button>
-                    </span>
                   </TooltipTrigger>
                   <TooltipContent side="top">{label}</TooltipContent>
                 </Tooltip>

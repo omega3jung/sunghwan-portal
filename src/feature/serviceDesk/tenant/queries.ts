@@ -2,10 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import type { ServiceDeskTenantListParams } from "@/lib/application/contracts/serviceDesk";
+
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
-import type { ServiceDeskTenantListParams } from "./types";
 
 export const useServiceDeskTenantListQuery = (
   params: ServiceDeskTenantListParams,

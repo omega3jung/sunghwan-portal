@@ -54,7 +54,7 @@ export const TimelineItem = ({
 
         <p
           className={cn(
-            "break-words font-medium text-foreground",
+            "wrap-break-word font-medium text-foreground",
             compact ? "text-sm leading-5" : "text-sm leading-5",
           )}
         >
@@ -64,7 +64,7 @@ export const TimelineItem = ({
         {item.description ? (
           <p
             className={cn(
-              "break-words text-muted-foreground",
+              "wrap-break-word text-muted-foreground",
               compact ? "text-xs leading-5" : "text-sm leading-6",
             )}
           >
@@ -75,7 +75,7 @@ export const TimelineItem = ({
         {item.meta ? (
           <p
             className={cn(
-              "break-words text-muted-foreground/90",
+              "wrap-break-word text-muted-foreground/90",
               compact ? "text-[11px] leading-4" : "text-xs leading-5",
             )}
           >

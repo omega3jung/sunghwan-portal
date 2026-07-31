@@ -1,5 +1,5 @@
 import { ACCESS_LEVEL } from "@/domain/auth";
-import type { DbCategoryApprovalSettings } from "@/feature/serviceDesk/approvalStep";
+import type { DbCategoryApprovalSettings } from "@/lib/application/contracts/serviceDesk";
 
 import {
   internalAccountAccessMock,

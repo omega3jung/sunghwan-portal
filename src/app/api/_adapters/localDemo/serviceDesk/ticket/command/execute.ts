@@ -1,11 +1,11 @@
 import { ApiError } from "@/lib/application/api";
+import {
+  isTicketActionExecutionAllowed,
+  resolveTicketActionExecutionMode,
+} from "@/lib/application/contracts/serviceDesk";
 
 import { actionSpecMap } from "./handlers";
 import { buildHistory } from "./history";
-import {
-  isLocalDemoExecutionAllowed,
-  resolveLocalDemoExecutionMode,
-} from "./rules";
 import { resolveNextTicketStatus } from "./ticketContext";
 import { buildTicketStatusPatch, mergeActionPatch } from "./ticketPatch";
 import { ExecutedLocalAction, LocalActionRuntimeContext } from "./types";
@@ -19,7 +19,7 @@ export const executeLocalAction = async ({
     ? getTicketContext(context.ticketId, context.isInternal).ticket
     : undefined;
 
-  const actionMode = resolveLocalDemoExecutionMode(
+  const actionMode = resolveTicketActionExecutionMode(
     context.action,
     context.isAdmin,
   );
@@ -30,7 +30,10 @@ export const executeLocalAction = async ({
     nextStatus,
   };
 
-  if (ticket && !isLocalDemoExecutionAllowed(actionMode, ticket.status)) {
+  if (
+    ticket &&
+    !isTicketActionExecutionAllowed(actionMode, ticket.status)
+  ) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.actionNotAllowed",
       409,

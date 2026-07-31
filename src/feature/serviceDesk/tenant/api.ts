@@ -1,10 +1,12 @@
 import { Tenant } from "@/domain/serviceDesk";
+import type {
+  CreateTenantInput,
+  ServiceDeskTenantListParams,
+  UpdateTenantInput,
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
-
-import type { ServiceDeskTenantListParams } from "./types";
-import { CreateTenantInput, UpdateTenantInput } from "./write";
 
 type TenantResponse = OResponse<Tenant>;
 

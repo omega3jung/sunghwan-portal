@@ -22,22 +22,23 @@ import { cn } from "@/shared/utils/presentation";
 
 import { SummaryChartProps } from "./types";
 
+const CHART_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+] as const;
+
 const chartConfig = {
   count: {
     label: "Tickets",
-    color: "hsl(var(--chart-1))",
+    color: CHART_COLORS[0],
   },
 } satisfies ChartConfig;
 
-const ACTIVE_COLOR = "hsl(var(--primary))";
-const DEFAULT_COLOR = "hsl(var(--chart-3))";
-const DONUT_COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
+const ACTIVE_COLOR = "var(--primary)";
+const DEFAULT_COLOR = CHART_COLORS[2];
 
 const SummaryChartSkeleton = () => {
   return (
@@ -218,7 +219,7 @@ export const SummaryChartCard = ({
                     <Cell
                       key={item.value}
                       cursor={onSelect ? "pointer" : "default"}
-                      fill={DONUT_COLORS[index % DONUT_COLORS.length]}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
                       fillOpacity={selected ? 1 : 0.7}
                       stroke={selected ? ACTIVE_COLOR : "transparent"}
                       strokeWidth={selected ? 2 : 1}

@@ -107,9 +107,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={compact}
                   id="timeline-compact"
-                  onCheckedChange={(value) =>
-                    setCompact(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setCompact}
                 />
                 Compact spacing for sidebar layout
               </span>
@@ -138,9 +136,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={showMarkerIcon}
                   id="timeline-icons"
-                  onCheckedChange={(value) =>
-                    setShowMarkerIcon(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setShowMarkerIcon}
                 />
                 Render icons inside markers
               </span>
@@ -152,9 +148,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={showEmptyState}
                   id="timeline-empty"
-                  onCheckedChange={(value) =>
-                    setShowEmptyState(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setShowEmptyState}
                 />
                 Show empty timeline
               </span>
@@ -166,9 +160,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={showBadge}
                   id="timeline-badge"
-                  onCheckedChange={(value) =>
-                    setShowBadge(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setShowBadge}
                 />
                 Display badge text
               </span>
@@ -182,9 +174,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={showDescription}
                   id="timeline-description"
-                  onCheckedChange={(value) =>
-                    setShowDescription(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setShowDescription}
                 />
                 Display description body
               </span>
@@ -196,9 +186,7 @@ export default function TimelineDemoPage() {
                 <Checkbox
                   checked={showMeta}
                   id="timeline-meta"
-                  onCheckedChange={(value) =>
-                    setShowMeta(value === "indeterminate" || value)
-                  }
+                  onCheckedChange={setShowMeta}
                 />
                 Display time or actor text
               </span>

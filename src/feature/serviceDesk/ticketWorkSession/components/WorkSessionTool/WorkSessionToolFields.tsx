@@ -184,7 +184,14 @@ export function WorkSessionStatusField({
       labelTitle={labelTitle}
       error={error}
     >
-      <Select value={value} onValueChange={onValueChange}>
+      <Select
+        value={value}
+        onValueChange={(nextValue) => {
+          if (nextValue !== null) {
+            onValueChange(nextValue);
+          }
+        }}
+      >
         <SelectTrigger
           id="ticket-track-status"
           aria-invalid={Boolean(error)}
@@ -221,14 +228,16 @@ export function WorkSessionNoteField({
       onOpenChange={onOpenChange}
       className="rounded-lg border border-border/50 bg-muted/20"
     >
-      <CollapsibleTrigger asChild>
-        <Button
+      <CollapsibleTrigger
+        render={
+          <Button
           type="button"
           variant="ghost"
           className="flex w-full justify-between px-3 text-xs"
-        >
+          />
+        }
+      >
           {toggleLabel}
-        </Button>
       </CollapsibleTrigger>
 
       <CollapsibleContent className="space-y-2 px-3 pb-3">

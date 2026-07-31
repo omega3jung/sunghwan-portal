@@ -5,6 +5,15 @@ import { FileText, ImageIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
+import { FileAttachmentList } from "@/components/custom/FileAttachment";
+import {
+  Attachment,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from "@/components/ui/attachment";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import type {
@@ -22,7 +31,7 @@ import {
 } from "@/feature/serviceDesk/ticket/utils/categorySelection";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { bytesToKB } from "@/shared/utils/browser";
+import { bytesToKB, bytesToMB } from "@/shared/utils/browser";
 
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
 import { RoutingRecalculationNotice } from "./RemoteNotices";
@@ -38,11 +47,9 @@ export function ReviewStep() {
     tLocal,
     values.category || "-",
   );
-  const totalFileSizeMB = (
-    values.attachment.reduce((sum, file) => sum + file.size, 0) /
-    1024 /
-    1024
-  ).toFixed(2);
+  const totalFileSizeMB = bytesToMB(
+    values.attachment.reduce((sum, file) => sum + file.size, 0),
+  );
   const shouldShowRoutingRecalculationNotice =
     !!ticket &&
     hasRoutingSensitiveChanges({
@@ -84,7 +91,7 @@ export function ReviewStep() {
         <FieldLabel>{t("field.description", { ns: NS.common })}</FieldLabel>
         <div className="max-w-full overflow-x-auto">
           <div
-            className="prose prose-sm min-h-52 min-w-0 max-w-none break-words rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
+            className="prose prose-sm min-h-52 min-w-0 max-w-none wrap-break-word rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
             dangerouslySetInnerHTML={{
               __html: values.body || "<p>-</p>",
             }}
@@ -102,34 +109,12 @@ export function ReviewStep() {
 
       <Field className="min-w-0">
         <FieldLabel>{t("ticketUpdate.field.newAttachments")}</FieldLabel>
-        <div className="max-h-48 space-y-2 overflow-y-auto">
-          {values.attachment.length === 0 ? (
-            <div className="text-sm text-muted-foreground">
-              {t("ticketUpdate.empty.newAttachments")}
-            </div>
-          ) : null}
-          {values.attachment.map((file, index) => (
-            <div
-              key={`${file.name}-${index}`}
-              className="flex min-w-0 items-center justify-between rounded-md border px-3 py-2"
-            >
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">{file.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {bytesToKB(file.size)} KB
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex justify-between text-sm text-muted-foreground">
-          <span>
-            {values.attachment.length}/{MAX_ATTACH_COUNT}
-          </span>
-          <span>
-            {totalFileSizeMB}/{MAX_ATTACH_SIZE} MB
-          </span>
-        </div>
+        <FileAttachmentList
+          files={values.attachment}
+          totalFileSizeMB={totalFileSizeMB}
+          maxCount={MAX_ATTACH_COUNT}
+          maxSizeMB={MAX_ATTACH_SIZE}
+        />
       </Field>
     </FieldGroup>
   );
@@ -215,7 +200,7 @@ function formatEmailSummary(
 
 function ReadOnlyValue({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm break-words">
+    <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm wrap-break-word">
       {children}
     </div>
   );
@@ -282,16 +267,35 @@ function ReviewAttachmentGroup({
       </div>
       <div className="flex flex-wrap gap-2">
         {items.map((item, index) => (
-          <a
+          <Attachment
             key={`${item.replacedName}-${index}`}
-            href={item.demoUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-2 text-sm"
+            size="sm"
+            className="flex-nowrap rounded-md"
           >
-            {image ? <ImageIcon className="h-4 w-4" /> : icon}
-            <span className="truncate">{item.originalName}</span>
-          </a>
+            <AttachmentMedia variant={image ? "image" : "icon"}>
+              {image ? (
+                <img src={item.demoUrl} alt={item.originalName} />
+              ) : (
+                icon
+              )}
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{item.originalName}</AttachmentTitle>
+              <AttachmentDescription>
+                {bytesToKB(item.size)} KB
+              </AttachmentDescription>
+            </AttachmentContent>
+            <AttachmentTrigger
+              render={
+                <a
+                  href={item.demoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={item.originalName}
+                />
+              }
+            />
+          </Attachment>
         ))}
       </div>
     </div>

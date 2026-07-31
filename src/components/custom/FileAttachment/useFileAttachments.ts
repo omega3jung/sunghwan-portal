@@ -7,8 +7,8 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 import { bytesToMB } from "@/shared/utils/browser";
 
 type FileValue = File[];
@@ -17,6 +17,7 @@ export type FileAttachmentFieldPath<TForm extends FieldValues> =
   FieldPathByValue<TForm, FileValue>;
 
 export type FileAttachmentErrorType = "count" | "size" | "type";
+export type FileAttachmentLimitBehavior = "accept-available" | "reject-all";
 
 type UseFileAttachmentsOptions<
   TForm extends FieldValues,
@@ -26,6 +27,7 @@ type UseFileAttachmentsOptions<
   name: TFieldName;
   maxCount: number;
   maxSizeMB: number;
+  limitBehavior?: FileAttachmentLimitBehavior;
   accept?: string[];
   onError?: (type: FileAttachmentErrorType) => void;
 };
@@ -38,6 +40,7 @@ export const useFileAttachments = <
   name,
   maxCount,
   maxSizeMB,
+  limitBehavior = "accept-available",
   accept,
   onError,
 }: UseFileAttachmentsOptions<TForm, TFieldName>) => {
@@ -78,47 +81,94 @@ export const useFileAttachments = <
     form.setValue(name, nextFiles as PathValue<TForm, TFieldName>);
   };
 
+  const reportLimitError = (
+    type: Extract<FileAttachmentErrorType, "count" | "size">,
+  ) => {
+    onError?.(type);
+    toast.add({
+      title: t("fileLimitTitle"),
+      description:
+        type === "count"
+          ? t("maxFileCount", { count: maxCount })
+          : t("maxTotalFileSize", { size: maxSizeMB }),
+      type: "warning",
+    });
+  };
+
   const addFiles = (input: FileList | FileValue) => {
     const incomingFiles = Array.from(input);
     const invalidFile = incomingFiles.find((file) => !isValidType(file));
 
     if (invalidFile) {
       onError?.("type");
-      toast.warning(t("invalidFileType"));
-      return;
-    }
-
-    const mergedFiles = [...files, ...incomingFiles];
-    const uniqueFiles = mergedFiles.filter(
-      (file, index, array) =>
-        array.findIndex(
-          (candidate) =>
-            candidate.name === file.name && candidate.size === file.size,
-        ) === index,
-    );
-
-    if (uniqueFiles.length > maxCount) {
-      onError?.("count");
-      toast.warning(t("fileLimitTitle"), {
-        description: t("maxFileCount", { count: maxCount }),
+      toast.add({
+        title: t("invalidFileType"),
+        type: "warning",
       });
       return;
     }
 
-    const totalSizeBytes = uniqueFiles.reduce(
-      (acc, file) => acc + file.size,
-      0,
-    );
+    if (limitBehavior === "reject-all") {
+      const uniqueFiles = mergeUniqueFiles(files, incomingFiles);
 
-    if (totalSizeBytes > maxSizeBytes) {
-      onError?.("size");
-      toast.warning(t("fileLimitTitle"), {
-        description: t("maxTotalFileSize", { size: maxSizeMB }),
-      });
+      if (uniqueFiles.length > maxCount) {
+        reportLimitError("count");
+        return;
+      }
+
+      const totalSizeBytes = uniqueFiles.reduce(
+        (total, file) => total + file.size,
+        0,
+      );
+
+      if (totalSizeBytes > maxSizeBytes) {
+        reportLimitError("size");
+        return;
+      }
+
+      if (uniqueFiles.length !== files.length) {
+        setFiles(uniqueFiles);
+      }
       return;
     }
 
-    setFiles(uniqueFiles.slice(0, maxCount));
+    const nextFiles = [...files];
+    const fileKeys = new Set(
+      files.map((file) => createFileKey(file)),
+    );
+    let totalSizeBytes = files.reduce((acc, file) => acc + file.size, 0);
+    let limitError: Extract<FileAttachmentErrorType, "count" | "size"> | null =
+      null;
+
+    for (const file of incomingFiles) {
+      const fileKey = createFileKey(file);
+
+      if (fileKeys.has(fileKey)) {
+        continue;
+      }
+
+      if (nextFiles.length >= maxCount) {
+        limitError ??= "count";
+        break;
+      }
+
+      if (totalSizeBytes + file.size > maxSizeBytes) {
+        limitError ??= "size";
+        continue;
+      }
+
+      nextFiles.push(file);
+      fileKeys.add(fileKey);
+      totalSizeBytes += file.size;
+    }
+
+    if (limitError) {
+      reportLimitError(limitError);
+    }
+
+    if (nextFiles.length !== files.length) {
+      setFiles(nextFiles);
+    }
   };
 
   const removeFile = (index: number) => {
@@ -136,4 +186,22 @@ export const useFileAttachments = <
     removeFile,
     clear,
   };
+};
+
+const createFileKey = (file: File) => `${file.name}:${file.size}`;
+
+const mergeUniqueFiles = (currentFiles: FileValue, incomingFiles: FileValue) => {
+  const fileKeys = new Set(currentFiles.map((file) => createFileKey(file)));
+  const uniqueFiles = [...currentFiles];
+
+  for (const file of incomingFiles) {
+    const fileKey = createFileKey(file);
+
+    if (!fileKeys.has(fileKey)) {
+      uniqueFiles.push(file);
+      fileKeys.add(fileKey);
+    }
+  }
+
+  return uniqueFiles;
 };

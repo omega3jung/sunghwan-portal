@@ -21,15 +21,13 @@ import {
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
 import { useCurrentPreference } from "@/feature/user/preference/client";
+import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
 import { NS } from "@/lib/application/i18n";
 import { formatDisplayName } from "@/lib/application/organization";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import { useMutationToast } from "@/lib/client/toast";
 
-import {
-  PrepareTicketAttachmentsResponse,
-  RequesterUpdateTicketPayload,
-} from "../write";
+import { RequesterUpdateTicketPayload } from "../write";
 
 export const UPDATE_TICKET_STEPS = ["info", "attachment", "review"] as const;
 export const UPDATE_TICKET_REVIEW_STEP = UPDATE_TICKET_STEPS.length - 1;

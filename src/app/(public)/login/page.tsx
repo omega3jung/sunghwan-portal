@@ -1,4 +1,4 @@
-import { LoginPageClient } from "./LoginPageClient";
+import { LoginScreen } from "./LoginScreen";
 
 type LoginPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -12,7 +12,19 @@ const buildRedirectHref = (
   searchParams: Record<string, string | string[] | undefined> = {},
 ) => {
   const redirectParam = getFirstParam(searchParams.r);
-  const params = new URLSearchParams();
+  const baseUrl = new URL("https://portal.local");
+  let targetUrl = new URL("/", baseUrl);
+
+  if (redirectParam.startsWith("/")) {
+    try {
+      const candidateUrl = new URL(redirectParam, baseUrl);
+      if (candidateUrl.origin === baseUrl.origin) {
+        targetUrl = candidateUrl;
+      }
+    } catch {
+      targetUrl = new URL("/", baseUrl);
+    }
+  }
 
   for (const [key, value] of Object.entries(searchParams)) {
     if (key === "r") {
@@ -22,28 +34,22 @@ const buildRedirectHref = (
     if (Array.isArray(value)) {
       for (const item of value) {
         if (item != null) {
-          params.append(key, item);
+          targetUrl.searchParams.append(key, item);
         }
       }
       continue;
     }
 
     if (value != null) {
-      params.set(key, value);
+      targetUrl.searchParams.set(key, value);
     }
   }
 
-  const isSafePath = redirectParam.startsWith("/");
-  const target = isSafePath && redirectParam ? redirectParam : "/";
-  const queryString = params.toString();
-
-  return queryString ? `${target}?${queryString}` : target;
+  return `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const resolvedSearchParams = await searchParams;
 
-  return (
-    <LoginPageClient redirectHref={buildRedirectHref(resolvedSearchParams)} />
-  );
+  return <LoginScreen redirectHref={buildRedirectHref(resolvedSearchParams)} />;
 }

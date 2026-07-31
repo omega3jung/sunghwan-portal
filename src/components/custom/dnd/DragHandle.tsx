@@ -1,21 +1,25 @@
-// DragHandle.tsx
 import { GripVertical } from "lucide-react";
-import React from "react";
+import type { ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils/presentation";
 
-export function DragHandle(props: React.HTMLAttributes<HTMLButtonElement>) {
+export function DragHandle({
+  className,
+  type = "button",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      type="button"
       {...props}
+      type={type}
       className={cn(
-        "cursor-grab active:cursor-grabbing",
-        "text-primary hover:text-foreground",
-        props.className,
+        "inline-flex size-5 shrink-0 touch-none items-center justify-center border-0 bg-transparent p-0",
+        "cursor-grab text-primary active:cursor-grabbing hover:text-foreground",
+        "rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+        className,
       )}
     >
-      <GripVertical className="h-4 w-4" />
+      <GripVertical className="size-4" />
     </button>
   );
 }

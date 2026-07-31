@@ -15,6 +15,15 @@ export type MenuItem = {
   children?: MenuItem[];
 };
 
+export type PageMenuItem = Omit<MenuItem, "type" | "children"> & {
+  type: "PAGE";
+};
+
+export type LeftMenuItems = {
+  content: MenuItem[];
+  footer: PageMenuItem[];
+};
+
 export type DbMenuItem = {
   id: number;
   parentId: number | null;

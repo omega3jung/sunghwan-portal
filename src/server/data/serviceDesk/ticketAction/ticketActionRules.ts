@@ -4,6 +4,16 @@ import type {
   TicketActionType,
   TicketStatus,
 } from "@/domain/serviceDesk";
+import {
+  isTicketActionExecutionAllowed,
+  resolveTicketActionNextStatus,
+  TICKET_ACTION_PATH_TO_TYPE,
+  type TicketActionCommandRequest,
+  type TicketActionExecutionMode,
+  type TicketApprovalActionCommandRequest,
+  type TicketApprovalActionPath,
+  type TicketGeneralActionPath,
+} from "@/lib/application/contracts/serviceDesk";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory/ticketHistoryTypes";
@@ -11,42 +21,8 @@ import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHis
 import type {
   ApprovalTicketActionType,
   TicketActionMetadataDto,
-  TicketActionRequestDto,
 } from "./ticketActionDto";
 
-export type TicketActionPath =
-  | "approve"
-  | "decline"
-  | "comment"
-  | "note"
-  | "assign"
-  | "assignSelf"
-  | "adjust"
-  | "reject"
-  | "merge"
-  | "reopen"
-  | "resubmit"
-  | "cancel";
-export type TicketApprovalActionPath = Extract<
-  TicketActionPath,
-  "approve" | "decline"
->;
-export type TicketGeneralActionPath = Exclude<
-  TicketActionPath,
-  TicketApprovalActionPath
->;
-export type ApprovalTicketActionRequestDto = {
-  content: string;
-  actionType?: TicketActionType;
-  files?: unknown[];
-  images?: unknown[];
-};
-export type TicketActionExecutionMode =
-  | TicketGeneralActionPath
-  | "assignAdminOverride"
-  | "adjustAdminOverride"
-  | "mergeAdminOverride"
-  | "rejectAdminOverride";
 export type NormalizedTicketActionPayload = {
   actionType: TicketActionType;
   content: string;
@@ -65,23 +41,7 @@ export const APPROVAL_ACTION_TYPES = new Set<ApprovalTicketActionType>([
   "APPROVE",
   "DECLINE",
 ]);
-const TICKET_ACTION_TYPE_BY_PATH: Record<TicketActionPath, TicketActionType> = {
-  approve: "APPROVE",
-  decline: "DECLINE",
-  comment: "COMMENT",
-  note: "NOTE",
-  assign: "ASSIGN",
-  assignSelf: "ASSIGN_SELF",
-  adjust: "ADJUST",
-  reject: "REJECT",
-  merge: "MERGE",
-  reopen: "REOPEN",
-  resubmit: "RESUBMIT",
-  cancel: "CANCEL",
-};
-const TICKET_ACTION_PATHS = new Set<TicketActionPath>(
-  Object.keys(TICKET_ACTION_TYPE_BY_PATH) as TicketActionPath[],
-);
+const TICKET_ACTION_TYPE_BY_PATH = TICKET_ACTION_PATH_TO_TYPE;
 export const APPROVAL_ACTION_TYPE_BY_PATH: Record<
   TicketApprovalActionPath,
   ApprovalTicketActionType
@@ -90,82 +50,10 @@ export const APPROVAL_ACTION_TYPE_BY_PATH: Record<
   decline: "DECLINE",
 };
 const IMAGE_TAG_PATTERN = /<img\b/i;
-const ALL_LIVE_TICKET_STATUSES: readonly TicketStatus[] = [
-  "Approval",
-  "Declined",
-  "Assigned",
-  "Working",
-  "Pending",
-  "Rejected",
-  "Resolved",
-  "Closed",
-];
-const COMMENTABLE_TICKET_STATUSES = ALL_LIVE_TICKET_STATUSES.filter(
-  (status) => status !== "Closed",
-);
-const ADMIN_OVERRIDE_ACTION_MODE_BY_PATH: Partial<
-  Record<TicketGeneralActionPath, TicketActionExecutionMode>
-> = {
-  assign: "assignAdminOverride",
-  adjust: "adjustAdminOverride",
-  merge: "mergeAdminOverride",
-  reject: "rejectAdminOverride",
-};
-const EXECUTABLE_STATUSES_BY_MODE: Record<
-  TicketActionExecutionMode,
-  readonly TicketStatus[]
-> = {
-  comment: COMMENTABLE_TICKET_STATUSES,
-  note: COMMENTABLE_TICKET_STATUSES,
-  assign: ["Assigned", "Working", "Pending"],
-  assignAdminOverride: ["Approval", "Assigned", "Working", "Pending"],
-  assignSelf: ["Assigned", "Working", "Pending"],
-  adjust: ["Assigned", "Working", "Pending"],
-  adjustAdminOverride: [
-    "Approval",
-    "Assigned",
-    "Working",
-    "Pending",
-    "Resolved",
-    "Closed",
-  ],
-  reject: ["Assigned", "Working", "Pending"],
-  rejectAdminOverride: ["Assigned", "Working", "Pending"],
-  merge: ["Assigned", "Working", "Pending", "Resolved"],
-  mergeAdminOverride: [
-    "Approval",
-    "Declined",
-    "Assigned",
-    "Working",
-    "Pending",
-    "Rejected",
-    "Resolved",
-    "Closed",
-  ],
-  reopen: ["Resolved"],
-  resubmit: ["Declined", "Rejected"],
-  cancel: ["Approval", "Declined", "Assigned", "Working", "Pending", "Rejected"],
-};
-
-export function isTicketActionPath(action: string): action is TicketActionPath {
-  return TICKET_ACTION_PATHS.has(action as TicketActionPath);
-}
-
-export function isTicketApprovalActionPath(
-  action: string,
-): action is TicketApprovalActionPath {
-  return action === "approve" || action === "decline";
-}
-
-export function isTicketGeneralActionPath(
-  action: string,
-): action is TicketGeneralActionPath {
-  return isTicketActionPath(action) && !isTicketApprovalActionPath(action);
-}
 
 export function validateTicketActionPayload(
   action: TicketGeneralActionPath,
-  payload: TicketActionRequestDto,
+  payload: TicketActionCommandRequest,
 ): NormalizedTicketActionPayload {
   const actionType = TICKET_ACTION_TYPE_BY_PATH[action];
   const content =
@@ -225,22 +113,11 @@ export function validateTicketActionPayload(
   };
 }
 
-export function resolveTicketActionExecutionMode(
-  action: TicketGeneralActionPath,
-  isAdmin?: boolean,
-): TicketActionExecutionMode {
-  if (!isAdmin) {
-    return action;
-  }
-
-  return ADMIN_OVERRIDE_ACTION_MODE_BY_PATH[action] ?? action;
-}
-
 export function assertTicketActionAllowed(
   actionMode: TicketActionExecutionMode,
   status: TicketStatus,
 ) {
-  if (EXECUTABLE_STATUSES_BY_MODE[actionMode].includes(status)) {
+  if (isTicketActionExecutionAllowed(actionMode, status)) {
     return;
   }
 
@@ -250,39 +127,14 @@ export function assertTicketActionAllowed(
   );
 }
 
-export function resolveNextTicketStatus(
-  actionMode: TicketActionExecutionMode,
-  currentStatus: TicketStatus,
-): TicketStatus | undefined {
-  switch (actionMode) {
-    case "assign":
-    case "assignAdminOverride":
-      return currentStatus === "Pending" ? "Working" : undefined;
-
-    case "reject":
-    case "rejectAdminOverride":
-      return currentStatus === "Rejected" ? undefined : "Rejected";
-
-    case "merge":
-    case "mergeAdminOverride":
-      return currentStatus === "Closed" ? undefined : "Closed";
-
-    case "reopen":
-      return currentStatus === "Resolved" ? "Working" : undefined;
-
-    case "cancel":
-      return "Closed";
-
-    default:
-      return undefined;
-  }
-}
-
 export function requireNextTicketStatus(
   actionMode: TicketActionExecutionMode,
   currentStatus: TicketStatus,
 ) {
-  const nextStatus = resolveNextTicketStatus(actionMode, currentStatus);
+  const nextStatus = resolveTicketActionNextStatus(
+    actionMode,
+    currentStatus,
+  );
 
   if (!nextStatus) {
     throw createStatusError("Next ticket status could not be resolved.", 409);
@@ -293,7 +145,7 @@ export function requireNextTicketStatus(
 
 export function validateApprovalActionPayload(
   action: TicketApprovalActionPath,
-  payload: ApprovalTicketActionRequestDto,
+  payload: TicketApprovalActionCommandRequest,
 ) {
   const content =
     typeof payload.content === "string" ? payload.content.trim() : "";

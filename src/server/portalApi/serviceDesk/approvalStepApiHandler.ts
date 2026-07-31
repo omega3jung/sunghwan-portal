@@ -365,7 +365,7 @@ function mapApprovalTreeAssignee(
     case "MANAGER":
       return {
         type: assignee.type,
-        level: assignee.level,
+        level: assignee.managerDistance,
       };
     case "DEPARTMENT":
       return {

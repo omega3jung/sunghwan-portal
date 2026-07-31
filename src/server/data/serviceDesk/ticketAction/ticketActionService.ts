@@ -1,3 +1,10 @@
+import {
+  resolveTicketActionExecutionMode,
+  type TicketActionCommandRequest,
+  type TicketApprovalActionCommandRequest,
+  type TicketApprovalActionPath,
+  type TicketGeneralActionPath,
+} from "@/lib/application/contracts/serviceDesk";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import {
   findActiveTicketViewRowById,
@@ -15,7 +22,6 @@ import {
 import type {
   CreateApprovalTicketActionDto,
   TicketActionDto,
-  TicketActionRequestDto,
 } from "./ticketActionDto";
 import { mapTicketActionRowToDto } from "./ticketActionMapper";
 import {
@@ -31,26 +37,10 @@ import {
 import {
   APPROVAL_ACTION_TYPE_BY_PATH,
   APPROVAL_ACTION_TYPES,
-  type ApprovalTicketActionRequestDto,
   assertApprovalActionAllowed,
   assertTicketActionAllowed,
-  resolveTicketActionExecutionMode,
-  type TicketApprovalActionPath,
-  type TicketGeneralActionPath,
   validateApprovalActionPayload,
   validateTicketActionPayload,
-} from "./ticketActionRules";
-
-export type {
-  ApprovalTicketActionRequestDto,
-  TicketActionPath,
-  TicketApprovalActionPath,
-  TicketGeneralActionPath,
-} from "./ticketActionRules";
-export {
-  isTicketActionPath,
-  isTicketApprovalActionPath,
-  isTicketGeneralActionPath,
 } from "./ticketActionRules";
 
 type TicketActionServiceOptions = TicketActionRepositoryOptions;
@@ -59,14 +49,14 @@ type TicketApprovalActionInput = {
   ticketId: string;
   action: TicketApprovalActionPath;
   currentUserName: string;
-  payload: ApprovalTicketActionRequestDto;
+  payload: TicketApprovalActionCommandRequest;
   isAdmin?: boolean;
 };
 type TicketActionInput = {
   ticketId: string;
   action: TicketGeneralActionPath;
   currentUserName: string;
-  payload: TicketActionRequestDto;
+  payload: TicketActionCommandRequest;
   isAdmin?: boolean;
   isInternal?: boolean;
 };

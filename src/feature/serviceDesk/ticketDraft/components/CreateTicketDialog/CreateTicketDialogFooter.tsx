@@ -23,7 +23,7 @@ export const CreateTicketDialogFooter = ({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <DialogFooter className="grid grid-cols-2 items-stretch gap-2 px-4 py-3 md:px-6 md:py-4 md:flex">
+    <DialogFooter className="grid grid-cols-2 items-stretch px-4 py-3 md:flex md:px-6 md:py-4">
       <Button
         variant="outline"
         type="button"

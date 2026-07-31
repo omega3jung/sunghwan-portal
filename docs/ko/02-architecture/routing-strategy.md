@@ -234,11 +234,11 @@ page/component
 ## 관련 문서
 
 - [`database-strategy.md`](database-strategy.md)
-- [`../03-domain/ticket/ticket-system-overview.md`](../03-domain/ticket/ticket-system-overview.md)
-- [`../03-domain/ticket/ticket-lifecycle.md`](../03-domain/ticket/ticket-lifecycle.md)
-- [`../04-ui-ux/dialog-pattern.md`](../04-ui-ux/dialog-pattern.md)
-- [`../06-form-design/ticket-form.md`](../06-form-design/ticket-form.md)
-- [`../08-dev-strategy/service-desk-implementation-strategy.md`](../08-dev-strategy/service-desk-implementation-strategy.md)
+- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [`../04-engineering/ui/dialog-pattern.md`](../04-engineering/ui/dialog-pattern.md)
+- [`../04-engineering/forms/ticket-form.md`](../04-engineering/forms/ticket-form.md)
+- [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
 
 ---
 

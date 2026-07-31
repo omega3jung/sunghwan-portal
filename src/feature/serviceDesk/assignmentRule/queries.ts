@@ -2,14 +2,15 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import type {
+  AssignmentRecommendationInput,
+  ServiceDeskAssignmentRuleListParams,
+} from "@/lib/application/contracts/serviceDesk";
+
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskAssignmentRuleApi } from "./api";
 import { assignmentRuleQueryKeys } from "./queryKeys";
-import {
-  AssignmentRecommendationInput,
-} from "./recommendation";
 import { serviceDeskAssignmentRecommendationApi } from "./recommendationApi";
-import { ServiceDeskAssignmentRuleListParams } from "./types";
 
 export const useServiceDeskAssignmentRuleListQuery = (
   params?: ServiceDeskAssignmentRuleListParams,

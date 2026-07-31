@@ -4,8 +4,8 @@
     "description": "탐색 메뉴에서 주요 마크다운 문서를 전환해서 볼 수 있습니다."
   },
   "group": {
-    "project": {
-      "title": "프로젝트"
+    "overview": {
+      "title": "개요"
     },
     "architecture": {
       "title": "아키텍처"
@@ -13,27 +13,52 @@
     "domain": {
       "title": "도메인"
     },
-    "uiUx": {
-      "title": "UI/UX"
+    "engineering": {
+      "title": "엔지니어링"
     },
-    "dataFetching": {
-      "title": "데이터 패칭"
+    "releases": {
+      "title": "릴리스"
     },
-    "formDesign": {
-      "title": "폼 설계"
-    },
-    "i18n": {
-      "title": "i18n"
-    },
-    "devStrategy": {
-      "title": "개발 전략"
-    },
-    "decisionLog": {
-      "title": "결정 기록"
+    "decisions": {
+      "title": "설계 결정"
     }
   },
   "section": {
-    "decisionLog": {
+    "domain": {
+      "coreModel": {
+        "title": "핵심 모델"
+      },
+      "workflow": {
+        "title": "워크플로"
+      },
+      "strategies": {
+        "title": "전략"
+      },
+      "reference": {
+        "title": "참조"
+      }
+    },
+    "engineering": {
+      "approach": {
+        "title": "구현 접근"
+      },
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "폼"
+      },
+      "dataFetching": {
+        "title": "데이터 패칭"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "안내"
+      },
       "2025-12": {
         "title": "2025-12"
       },
@@ -185,6 +210,14 @@
       "title": "Service Desk 진화",
       "description": "Service Hub 경험이 Service Desk 도메인으로 진화한 과정을 설명합니다."
     },
+    "releaseOverview": {
+      "title": "릴리스 안내",
+      "description": "버전 변경, 마이그레이션, 아키텍처 영향과 검증 기록을 설명합니다."
+    },
+    "decisionOverview": {
+      "title": "설계 결정 안내",
+      "description": "날짜별 설계 결정과 현재 적용 중인 설계를 구분해 읽는 방법을 설명합니다."
+    },
     "serviceDeskImplementationStrategy": {
       "title": "Service Desk 구현 전략",
       "description": "Service Desk의 런타임, 아키텍처, 구현 전략을 설명합니다."
@@ -272,6 +305,10 @@
     "decisionTicketFormAndDraftWorkflow202606": {
       "title": "2026-06 티켓 Form 및 Draft Workflow",
       "description": "티켓 Form 및 Draft Workflow 결정 기록입니다."
+    },
+    "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+      "title": "2026-07 Service Desk Settings Reference Validation Boundary",
+      "description": "Settings reference validation boundary 설계 결정 기록입니다."
     },
     "decisionTicketActionAndHistoryExecution202607": {
       "title": "2026-07 티켓 Action 및 History 실행",

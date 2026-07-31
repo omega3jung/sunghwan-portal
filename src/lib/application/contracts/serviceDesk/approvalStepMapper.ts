@@ -54,7 +54,7 @@ const camelAssigneeTypeMapper: Mapper<
 > = (data) => {
   switch (data.type) {
     case "MANAGER":
-      return { type: data.type, level: data.level };
+      return { type: data.type, managerDistance: data.level };
     case "DEPARTMENT":
       return { type: data.type, departmentId: data.department_id.toString() };
     case "JOB_FIELD":

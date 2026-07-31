@@ -27,7 +27,7 @@ export function TicketActionToolFooter({
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-      <div className="break-words text-sm text-muted-foreground/75">
+      <div className="wrap-break-word text-sm text-muted-foreground/75">
         {errorMessage || helperText}
       </div>
 

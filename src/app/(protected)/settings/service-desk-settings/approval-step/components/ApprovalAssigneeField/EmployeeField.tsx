@@ -63,8 +63,7 @@ export function EmployeeField({
       </FieldLabel>
       <AvatarMultiComboBox
         id="approval-select-employee"
-        placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
-        variant={"ghost"}
+        placeholderClassName="font-normal flex items-center pl-2 text-muted-foreground"
         badgeVariant={"primary"}
         options={employeeData}
         value={stepAssignee.employeeUsernames}

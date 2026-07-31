@@ -1,29 +1,25 @@
 "use client";
 
-import { ChevronDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { cn } from "@/shared/utils/presentation";
 
 import { MultiComboBoxBadgeList } from "./MultiComboBoxBadgeList";
 import { MultiComboBoxOptionItem } from "./MultiComboBoxOptionItem";
 import type { ComboBoxProps } from "./types";
 import {
-  createCommandFilter,
+  createComboboxFilter,
   createOptionOrderMap,
   EMPTY_OPTION_TEXT,
   getSelectedOptions,
@@ -64,78 +60,83 @@ const Component = (
     () => badgeOrderMap ?? createOptionOrderMap(options),
     [badgeOrderMap, options],
   );
-  const commandFilter = useMemo(() => createCommandFilter(options), [options]);
+  const comboboxFilter = useMemo(() => createComboboxFilter(), []);
 
-  const handleToggleOption = (selection: string) => {
-    const selectedOption = options.find((item) => item.value === selection);
+  const handleValueChange = (nextOptions: typeof options) => {
+    const currentValueSet = new Set(value);
+    const optionValueSet = new Set(options.map((option) => option.value));
+    const nextValueSet = new Set(nextOptions.map((option) => option.value));
 
-    if (selectedOption?.disabled) {
-      return;
+    for (const removedValue of value) {
+      if (optionValueSet.has(removedValue) && !nextValueSet.has(removedValue)) {
+        onRemove?.(removedValue);
+      }
     }
 
-    if (value.includes(selection)) {
-      onRemove?.(selection);
-      return;
+    for (const addedValue of nextValueSet) {
+      if (!currentValueSet.has(addedValue)) {
+        onSelect?.(addedValue);
+      }
     }
-
-    onSelect?.(selection);
   };
 
   return (
-    <Popover modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
-          {...buttonProps}
-          ref={ref}
-          variant="outline"
-          role="combobox"
-          type="button"
-          className={cn(comboBoxVariants({ variant, size }), className)}
-          disabled={disabled || readOnly}
-        >
-          {!selectedOptions.length ? (
-            <div className="px-2 font-normal text-muted-foreground">
-              {placeholder}
-            </div>
-          ) : (
-            <MultiComboBoxBadgeList
-              items={selectedOptions}
-              itemOrderMap={optionOrderMap}
-              badgeVariant={resolvedBadgeVariant}
-              paletteStart={resolvedPaletteStart}
-              palettePick={resolvedPalettePick}
-              readOnly={readOnly}
-              onRemove={onRemove}
-            />
-          )}
+    <Combobox
+      items={options}
+      value={selectedOptions}
+      onValueChange={handleValueChange}
+      filter={comboboxFilter}
+      multiple
+      disabled={disabled}
+      readOnly={readOnly}
+      modal={modal}
+    >
+      <ComboboxTrigger
+        render={
+          <Button
+            {...buttonProps}
+            ref={ref}
+            variant="outline"
+            type="button"
+            className={cn(comboBoxVariants({ variant, size }), className)}
+            disabled={disabled || readOnly}
+          />
+        }
+        icon={
+          isLoading ? (
+            <Loader2 className="pointer-events-none size-5 animate-spin" />
+          ) : readOnly ? null : undefined
+        }
+      >
+        {!selectedOptions.length ? (
+          <div className="px-2 font-normal text-muted-foreground">
+            {placeholder}
+          </div>
+        ) : (
+          <MultiComboBoxBadgeList
+            items={selectedOptions}
+            itemOrderMap={optionOrderMap}
+            badgeVariant={resolvedBadgeVariant}
+            paletteStart={resolvedPaletteStart}
+            palettePick={resolvedPalettePick}
+            readOnly={readOnly}
+            onRemove={onRemove}
+          />
+        )}
+      </ComboboxTrigger>
 
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : !readOnly ? (
-            <ChevronDown className="ml-2 mr-2 h-4 w-4 shrink-0 text-basic" />
-          ) : null}
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command filter={commandFilter}>
-          <CommandInput placeholder={placeholder} />
-          <CommandList className="max-h-48 min-h-0">
-            <CommandEmpty>{EMPTY_OPTION_TEXT}</CommandEmpty>
-            <CommandGroup>
-              {options.map((item) => (
-                <MultiComboBoxOptionItem
-                  key={item.value}
-                  item={item}
-                  selected={value.includes(item.value)}
-                  onSelect={handleToggleOption}
-                />
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+      <ComboboxContent>
+        <ComboboxInput
+          aria-label={placeholder ?? "Search options"}
+          placeholder={placeholder}
+          showTrigger={false}
+        />
+        <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
+        <ComboboxList showScrollbar className="max-h-48 min-h-0">
+          {(item) => <MultiComboBoxOptionItem key={item.value} item={item} />}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 };
 

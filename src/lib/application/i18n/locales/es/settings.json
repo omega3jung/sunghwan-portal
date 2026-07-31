@@ -120,6 +120,8 @@
       "tenant": "Tenant",
       "noResults": "Sin resultados",
       "saveChanges": "Guardar cambios",
+      "discardUnsavedChanges": "Tienes cambios sin guardar. ¿Quieres descartarlos y continuar?",
+      "loadError": "No se pudo cargar la configuración.",
       "scope": "Ámbito de la categoría",
       "scopeInternal": "Interno",
       "scopePortal": "Portal",
@@ -134,6 +136,9 @@
       "description": "Descripción",
       "requestTemplate": "Plantilla de solicitud",
       "resolutionDays": "Días de resolución",
+      "followMainCategory": "Seguir la categoría principal ({{value}})",
+      "customValue": "Establecer un valor personalizado",
+      "daysValue": "{{value}} días",
       "active": "Activo",
       "addCategory": "Agregar categoría",
       "empty": "Selecciona un categoría para editar su configuración."
@@ -148,7 +153,7 @@
         "jobField": "Puesto",
         "employee": "Empleado"
       },
-      "managerLevel": "Nivel del gerente",
+      "managerStepsAboveRequester": "Pasos jerárquicos por encima del solicitante",
       "department": "Departamento",
       "departmentPlaceholder": "Seleccionar departamento",
       "jobField": "Puesto",
@@ -157,6 +162,8 @@
       "employeePlaceholder": "Seleccionar asignado",
       "skipAccessLevel": "Nivel de acceso omitible",
       "saveUnavailable": "No se puede guardar",
+      "created": "Creado",
+      "assign": "Asignar",
       "empty": "Selecciona un paso de aprobación para editar su configuración."
     },
     "assignmentRuleTab": {

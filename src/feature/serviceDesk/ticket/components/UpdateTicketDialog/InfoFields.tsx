@@ -162,16 +162,18 @@ export function UpdateTicketInfoFields() {
             <ValidationError message={dueAtError} />
           </Field>
 
-          <CollapsibleTrigger asChild>
-            <Button
+          <CollapsibleTrigger
+            render={
+              <Button
               type="button"
               variant="ghost"
               size="sm"
               className="group h-9 w-full justify-between md:w-auto md:justify-start"
-            >
+              />
+            }
+          >
               {t("field.email", { ns: NS.common })}
-              <ChevronRight className="transition-transform group-data-[state=open]:rotate-90" />
-            </Button>
+              <ChevronRight className="transition-transform group-data-open:rotate-90" />
           </CollapsibleTrigger>
         </div>
 

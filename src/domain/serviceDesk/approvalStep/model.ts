@@ -35,7 +35,7 @@ export type ApprovalAssigneeTypeValue =
   (typeof APPROVAL_ASSIGNEE_TYPES)[number];
 
 export type ApprovalAssigneePayloadMap = {
-  MANAGER: { level: 1 | 2 };
+  MANAGER: { managerDistance: 1 | 2 };
   DEPARTMENT: { departmentId: string }; // string number. can use parseInt.
   JOB_FIELD: { jobFieldId: string }; // string number. can use parseInt.
   EMPLOYEE: { employeeUsernames: string[] }; // employee username identifiers

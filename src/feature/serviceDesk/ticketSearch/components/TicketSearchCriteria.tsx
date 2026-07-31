@@ -1,4 +1,5 @@
 import { Filter, Search } from "lucide-react";
+import type { ReactElement } from "react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ import type { TicketSearchCriteriaFormValues } from "../forms";
 import { TicketSearchCriteriaFields } from "./TicketSearchCriteriaFields";
 
 type FilterProps = {
-  trigger?: React.ReactNode;
+  trigger?: ReactElement;
   form: UseFormReturn<TicketSearchCriteriaFormValues>;
   categories: MainCategory[];
   requesters: ImageValueLabel[];
@@ -39,33 +40,31 @@ export const TicketSearchCriteria = (props: FilterProps) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        {props.trigger ?? (
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2 border-border/70 shadow-sm hover:bg-muted/40"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <Filter />
-            {t("action.searchCriteria")}
-          </Button>
-        )}
-      </SheetTrigger>
+      <SheetTrigger
+        render={
+          props.trigger ?? (
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2 border-border/70 shadow-sm hover:bg-muted/40"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              <Filter />
+              {t("action.searchCriteria")}
+            </Button>
+          )
+        }
+      />
 
-      <SheetContent size="md" className="w-full border-l p-0 shadow-2xl">
+      <SheetContent className="w-full border-l p-0 shadow-2xl sm:w-md sm:max-w-none">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex h-full flex-col"
         >
-          <SheetHeader>
-            <div className="flex h-12 items-center justify-between border-b border-border/70 bg-muted/30 px-3">
-              <SheetTitle className="text-base text-foreground">
-                {t("message.refineSearchCriteria")}
-              </SheetTitle>
-            </div>
+          <SheetHeader className={"border-b border-border/70 pl-6"}>
+            <SheetTitle>{t("message.refineSearchCriteria")}</SheetTitle>
           </SheetHeader>
 
           <ScrollArea className="flex-1 p-6 pb-8">
@@ -79,10 +78,10 @@ export const TicketSearchCriteria = (props: FilterProps) => {
             </FieldGroup>
           </ScrollArea>
 
-          <SheetFooter className="border-t border-border/60 p-4">
+          <SheetFooter className="border-t border-border/60">
             <Button
               size="sm"
-              className="h-10 w-full rounded-md px-4 text-sm font-semibold"
+              className="h-10 w-full rounded-md px-4 font-semibold"
               type="submit"
               data-testid="ticket-search-submit"
             >

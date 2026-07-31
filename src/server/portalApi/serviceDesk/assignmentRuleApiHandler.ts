@@ -181,7 +181,9 @@ async function saveAssignmentRuleTreeInTransaction(
     ]),
   );
 
-  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload);
+  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload).filter(
+    (rule) => hasAssignmentRuleAssigneeSelection(rule.assignee),
+  );
   const nextAssignmentRulesByCategoryId = new Map(
     nextAssignmentRules.map((assignmentRule) => [
       assignmentRule.category_id,
@@ -192,12 +194,10 @@ async function saveAssignmentRuleTreeInTransaction(
   await assertAssignmentReferencesValidForWrite(
     query,
     tenantId,
-    nextAssignmentRules
-      .filter((rule) => hasAssignmentRuleAssigneeSelection(rule.assignee))
-      .map((rule) => ({
-        categoryId: rule.category_id,
-        assignee: rule.assignee,
-      })),
+    nextAssignmentRules.map((rule) => ({
+      categoryId: rule.category_id,
+      assignee: rule.assignee,
+    })),
   );
 
   const createTasks: Array<() => Promise<unknown>> = [];

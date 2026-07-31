@@ -16,17 +16,20 @@ export function ManagerField({ stepAssignee, onChange, readOnly }: Props) {
 
   return (
     <Field className="col-span-2">
-      <FieldLabel htmlFor="approval-select-manager-level">
-        {t("serviceDeskSettings.approvalStepTab.managerLevel")}
+      <FieldLabel htmlFor="approval-input-manager-distance">
+        {t("serviceDeskSettings.approvalStepTab.managerStepsAboveRequester")}
       </FieldLabel>
       <Input
-        id="start-index-input"
+        id="approval-input-manager-distance"
         className="w-20"
-        value={stepAssignee.level}
+        value={stepAssignee.managerDistance}
         disabled={readOnly}
         onChange={(e) => {
           const number = parseInt(e.target.value);
-          onChange({ type: "MANAGER", level: number > 1 ? 2 : 1 });
+          onChange({
+            type: "MANAGER",
+            managerDistance: number > 1 ? 2 : 1,
+          });
         }}
         type={"number"}
         min={1}

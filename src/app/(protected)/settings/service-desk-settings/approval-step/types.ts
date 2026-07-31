@@ -13,5 +13,4 @@ export type ApprovalStepData = ApprovalStep & {
 export type CategoryApprovalStepData = Omit<MainCategory, "subCategories"> & {
   categoryId: string;
   nodeType: "category";
-  approvalSteps: ApprovalStepData[];
 };

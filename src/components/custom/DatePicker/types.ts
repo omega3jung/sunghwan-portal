@@ -42,9 +42,8 @@ export type SearchDateFilterOption<T extends string = string> = {
  * but they share the same ownership model for a single Date value.
  */
 type BaseSingleDatePickerProps = {
-  value?: Date;
-  defaultValue?: Date;
-  onChange?: (value?: Date) => void;
+  value: Date | undefined;
+  onChange: (value?: Date) => void;
   minDate?: Date;
   maxDate?: Date;
   modal?: boolean;
@@ -54,7 +53,7 @@ type BaseSingleDatePickerProps = {
  * DatePicker remains date-only and keeps the existing button ergonomics.
  */
 export type DatePickerProps = BaseSingleDatePickerProps &
-  Omit<ButtonProps, "value" | "defaultValue" | "onChange">;
+  Omit<ButtonProps, "value" | "onChange">;
 
 /**
  * DateTimePicker minute options stay constrained to common 24-hour schedules.
@@ -66,7 +65,7 @@ export type DateTimePickerMinuteStep = 1 | 5 | 10 | 15 | 30;
  * the same single-Date ownership model as DatePicker.
  */
 export type DateTimePickerProps = BaseSingleDatePickerProps &
-  Omit<ButtonProps, "value" | "defaultValue" | "onChange"> & {
+  Omit<ButtonProps, "value" | "onChange"> & {
     compact?: boolean;
     minuteStep?: DateTimePickerMinuteStep;
     placeholder?: string;

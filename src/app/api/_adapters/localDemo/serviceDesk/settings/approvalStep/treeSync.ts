@@ -15,7 +15,7 @@ const toDbApprovalAssignee = (approvalStep: ApprovalStep["stepAssignee"]) => {
     case "MANAGER":
       return {
         type: approvalStep.type,
-        level: approvalStep.level,
+        level: approvalStep.managerDistance,
       } as const;
     case "DEPARTMENT":
       return {

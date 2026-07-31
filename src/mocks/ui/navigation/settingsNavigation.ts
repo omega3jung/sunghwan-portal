@@ -1,7 +1,30 @@
 ﻿import { TFunction } from "i18next";
-import { Database, Eye, Headset, UserRound, Workflow } from "lucide-react";
+import {
+  BadgeCheck,
+  Bot,
+  Boxes,
+  BriefcaseBusiness,
+  Building2,
+  CalendarClock,
+  Database,
+  Eye,
+  Factory,
+  FolderKanban,
+  Headset,
+  ListOrdered,
+  Network,
+  PanelsTopLeft,
+  Ship,
+  Tag,
+  Tags,
+  UserCog,
+  UserRound,
+  Users,
+  UsersRound,
+  Workflow,
+} from "lucide-react";
 
-import { LucideIcon } from "@/shared/types";
+import type { LucideIcon } from "@/shared/types";
 
 interface SettingsCardGroup {
   triggerTitle: string;
@@ -13,7 +36,7 @@ interface SettingsCardGroup {
 interface SettingsNavigationGroup {
   triggerTitle: string;
   triggerDescription: string;
-  items: { title: string; path: string; description: string }[];
+  items: SettingsCardGroup[];
 }
 
 const ns = { ns: "settings" };
@@ -71,35 +94,49 @@ export function createSettingsNavigationMock(
       triggerDescription: t("settingsNavigation.dataSetup.description", ns),
       items: [
         {
-          title: t("settingsNavigation.dataSetup.carrier.title", ns),
+          triggerTitle: t("settingsNavigation.dataSetup.carrier.title", ns),
           path: "/settings/data-setup/carrier",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.dataSetup.carrier.description",
             ns,
           ),
+          icon: Ship,
         },
         {
-          title: t("settingsNavigation.dataSetup.project.title", ns),
+          triggerTitle: t("settingsNavigation.dataSetup.project.title", ns),
           path: "/settings/data-setup/project",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.dataSetup.project.description",
             ns,
           ),
+          icon: FolderKanban,
         },
         {
-          title: t("settingsNavigation.dataSetup.maker.title", ns),
+          triggerTitle: t("settingsNavigation.dataSetup.maker.title", ns),
           path: "/settings/data-setup/maker",
-          description: t("settingsNavigation.dataSetup.maker.description", ns),
+          triggerDescription: t(
+            "settingsNavigation.dataSetup.maker.description",
+            ns,
+          ),
+          icon: Factory,
         },
         {
-          title: t("settingsNavigation.dataSetup.model.title", ns),
+          triggerTitle: t("settingsNavigation.dataSetup.model.title", ns),
           path: "/settings/data-setup/model",
-          description: t("settingsNavigation.dataSetup.model.description", ns),
+          triggerDescription: t(
+            "settingsNavigation.dataSetup.model.description",
+            ns,
+          ),
+          icon: Boxes,
         },
         {
-          title: t("settingsNavigation.dataSetup.label.title", ns),
+          triggerTitle: t("settingsNavigation.dataSetup.label.title", ns),
           path: "/settings/data-setup/label",
-          description: t("settingsNavigation.dataSetup.label.description", ns),
+          triggerDescription: t(
+            "settingsNavigation.dataSetup.label.description",
+            ns,
+          ),
+          icon: Tag,
         },
       ],
     },
@@ -111,52 +148,73 @@ export function createSettingsNavigationMock(
       ),
       items: [
         {
-          title: t("settingsNavigation.accountSettings.company.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.accountSettings.company.title",
+            ns,
+          ),
           path: "/settings/account-settings/company",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.company.description",
             ns,
           ),
+          icon: Building2,
         },
         {
-          title: t("settingsNavigation.accountSettings.departments.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.accountSettings.departments.title",
+            ns,
+          ),
           path: "/settings/account-settings/departments",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.departments.description",
             ns,
           ),
+          icon: Network,
         },
         {
-          title: t("settingsNavigation.accountSettings.jobFields.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.accountSettings.jobFields.title",
+            ns,
+          ),
           path: "/settings/account-settings/job-fields",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.jobFields.description",
             ns,
           ),
+          icon: BriefcaseBusiness,
         },
         {
-          title: t("settingsNavigation.accountSettings.shifts.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.accountSettings.shifts.title",
+            ns,
+          ),
           path: "/settings/account-settings/shifts",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.shifts.description",
             ns,
           ),
+          icon: CalendarClock,
         },
         {
-          title: t("settingsNavigation.accountSettings.users.title", ns),
+          triggerTitle: t("settingsNavigation.accountSettings.users.title", ns),
           path: "/settings/account-settings/users",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.users.description",
             ns,
           ),
+          icon: Users,
         },
         {
-          title: t("settingsNavigation.accountSettings.workspaces.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.accountSettings.workspaces.title",
+            ns,
+          ),
           path: "/settings/account-settings/workspaces",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accountSettings.workspaces.description",
             ns,
           ),
+          icon: PanelsTopLeft,
         },
       ],
     },
@@ -165,26 +223,28 @@ export function createSettingsNavigationMock(
       triggerDescription: t("settingsNavigation.accessControl.description", ns),
       items: [
         {
-          title: t(
+          triggerTitle: t(
             "settingsNavigation.accessControl.userPermissions.title",
             ns,
           ),
           path: "/settings/access-control/user-permissions",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accessControl.userPermissions.description",
             ns,
           ),
+          icon: UserCog,
         },
         {
-          title: t(
+          triggerTitle: t(
             "settingsNavigation.accessControl.groupPermissions.title",
             ns,
           ),
           path: "/settings/access-control/group-permissions",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.accessControl.groupPermissions.description",
             ns,
           ),
+          icon: UsersRound,
         },
       ],
     },
@@ -196,20 +256,28 @@ export function createSettingsNavigationMock(
       ),
       items: [
         {
-          title: t("settingsNavigation.workflowSettings.steps.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.workflowSettings.steps.title",
+            ns,
+          ),
           path: "/settings/workflow-settings/steps",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.workflowSettings.steps.description",
             ns,
           ),
+          icon: ListOrdered,
         },
         {
-          title: t("settingsNavigation.workflowSettings.validations.title", ns),
+          triggerTitle: t(
+            "settingsNavigation.workflowSettings.validations.title",
+            ns,
+          ),
           path: "/settings/workflow-settings/validations",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.workflowSettings.validations.description",
             ns,
           ),
+          icon: BadgeCheck,
         },
       ],
     },
@@ -221,42 +289,52 @@ export function createSettingsNavigationMock(
       ),
       items: [
         {
-          title: t("settingsNavigation.serviceDeskSettings.tenant.title", ns),
-          path: "/settings/service-desk-settings/tenant",
-          description: t(
-            "settingsNavigation.serviceDeskSettings.tenant.description",
+          triggerTitle: t(
+            "settingsNavigation.serviceDeskSettings.category.title",
             ns,
           ),
-        },
-        {
-          title: t("settingsNavigation.serviceDeskSettings.category.title", ns),
           path: "/settings/service-desk-settings/category",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.serviceDeskSettings.category.description",
             ns,
           ),
+          icon: Tags,
         },
         {
-          title: t(
+          triggerTitle: t(
             "settingsNavigation.serviceDeskSettings.approvalSteps.title",
             ns,
           ),
           path: "/settings/service-desk-settings/approval-step",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.serviceDeskSettings.approvalSteps.description",
             ns,
           ),
+          icon: Workflow,
         },
         {
-          title: t(
+          triggerTitle: t(
             "settingsNavigation.serviceDeskSettings.assignmentRules.title",
             ns,
           ),
           path: "/settings/service-desk-settings/assignment-rule",
-          description: t(
+          triggerDescription: t(
             "settingsNavigation.serviceDeskSettings.assignmentRules.description",
             ns,
           ),
+          icon: Bot,
+        },
+        {
+          triggerTitle: t(
+            "settingsNavigation.serviceDeskSettings.tenant.title",
+            ns,
+          ),
+          path: "/settings/service-desk-settings/tenant",
+          triggerDescription: t(
+            "settingsNavigation.serviceDeskSettings.tenant.description",
+            ns,
+          ),
+          icon: Building2,
         },
       ],
     },

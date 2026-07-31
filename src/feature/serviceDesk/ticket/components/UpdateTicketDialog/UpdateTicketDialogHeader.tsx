@@ -14,7 +14,7 @@ export function UpdateTicketDialogHeader() {
 
   return (
     <DialogHeader className="px-4 py-3 md:px-6 md:py-4">
-      <DialogTitle className="max-w-full break-words text-center">
+      <DialogTitle className="max-w-full wrap-break-word text-center">
         {t("ticketUpdate.title")}
       </DialogTitle>
       <DialogDescription className="sr-only">

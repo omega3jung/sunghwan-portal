@@ -4,7 +4,8 @@ import "@/styles/globals.css";
 
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
+
+import { Toaster } from "@/components/ui/toast";
 
 import { inter, pretendard } from "./fonts";
 import { RootProviders } from "./providers";
@@ -35,7 +36,7 @@ export default function RootLayout({
           {children}
           <Analytics />
         </RootProviders>
-        <Toaster richColors />
+        <Toaster />
       </body>
     </html>
   );

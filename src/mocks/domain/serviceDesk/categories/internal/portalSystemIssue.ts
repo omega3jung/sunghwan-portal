@@ -1,4 +1,4 @@
-﻿import { DbCategory } from "@/feature/serviceDesk/category";
+import { DbCategory } from "@/lib/application/contracts/serviceDesk";
 
 export const internalPortalSystemIssueMock = {
   category_id: 1,

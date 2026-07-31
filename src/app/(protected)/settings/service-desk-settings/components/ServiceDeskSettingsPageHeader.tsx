@@ -9,65 +9,68 @@ import { NS } from "@/lib/application/i18n";
 import type { ServiceDeskSettingsAccess } from "@/lib/application/serviceDesk";
 
 type Props = {
-  title?: string;
-  description?: string;
-  isResetDisabled: boolean;
+  title: string;
+  description: string;
+  canReset: boolean;
   onReset: () => void;
-  isSaveDisabled: boolean;
+  canSave: boolean;
   onSave: () => void;
-  isSaving?: boolean;
+  isSaving: boolean;
 };
 
 export function ServiceDeskSettingsPageHeader({
   title,
   description,
-  isResetDisabled,
+  canReset,
   onReset,
-  isSaveDisabled,
+  canSave,
   onSave,
-  isSaving = false,
+  isSaving,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const { t: tCommon } = useTranslation(NS.common);
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="text-lg font-semibold">{title}</h1>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
+    <>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-lg font-semibold">{title}</h1>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
 
-      <div className="flex gap-2 self-start sm:self-auto">
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={isResetDisabled}
-          onClick={onReset}
-        >
-          {tCommon("action.reset", { defaultValue: "Reset" })}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          disabled={isSaveDisabled}
-          onClick={onSave}
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t("serviceDeskSettings.common.saveChanges")}
-            </>
-          ) : (
-            t("serviceDeskSettings.common.saveChanges")
-          )}
-        </Button>
+        <div className="flex gap-2 self-start sm:self-auto">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!canReset}
+            onClick={onReset}
+          >
+            {tCommon("action.reset", { defaultValue: "Reset" })}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            disabled={!canSave}
+            onClick={onSave}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t("serviceDeskSettings.common.saveChanges")}
+              </>
+            ) : (
+              t("serviceDeskSettings.common.saveChanges")
+            )}
+          </Button>
+        </div>
       </div>
-    </div>
+      <div className="mt-2 h-1 rounded bg-primary-muted" />
+    </>
   );
 }
 
-export function ServiceDeskSettingsAccessBanner({
+export function ServiceDeskSettingsReadOnlyBanner({
   access,
   managedBy,
 }: {

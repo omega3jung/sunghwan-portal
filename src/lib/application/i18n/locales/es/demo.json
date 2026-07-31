@@ -1,12 +1,12 @@
 {
   "home": {
     "hero": {
-      "protectedBadge": "Inicio protegido",
-      "enterpriseBadge": "Demostración del portal empresarial",
-      "title": "Esta es la página de inicio del espacio de trabajo para operaciones de servicio, documentos de referencia y configuración de la plataforma.",
+      "protectedBadge": "Espacio autenticado",
+      "enterpriseBadge": "Service Desk orientado a workflows",
+      "title": "Un prototipo de Service Desk alineado con producción, centrado en workflows, enrutamiento e historial de auditoría explícitos.",
       "description": {
-        "local": "En la demostración local, el comportamiento de permisos se simplifica: ADMIN tiene acceso amplio, mientras que las acciones de tickets para usuarios que no son ADMIN dependen de la relación del usuario con cada ticket.",
-        "remote": "Esta página de inicio es el punto de entrada para navegar por las áreas principales del portafolio de Service Desk. En modo remoto, puedes revisar flujos de permisos más cercanos a operaciones reales de servicio combinando el rol con la relación del usuario con cada ticket."
+        "local": "La demostración local ejecuta los workflows implementados de tickets y configuración sobre un estado mutable. ADMIN tiene acceso amplio, mientras que los comandos de usuarios no ADMIN se autorizan según su relación con cada ticket.",
+        "remote": "La capa de datos REMOTE implementa los principales workflows de Service Desk con servicios del servidor y PostgreSQL. El acceso directo a las páginas de Service Desk sigue limitado en el modo remoto desplegado."
       },
       "actions": {
         "openServiceDesk": "Abrir Service Desk",
@@ -18,25 +18,25 @@
       "title": "Calendario"
     },
     "about": {
-      "title": "Acerca de esta página de inicio",
-      "description": "Esta sección explica el modo de ejecución actual del portal de portafolio y el alcance principal de navegación.",
+      "title": "Implementación actual",
+      "description": "El portal mantiene un único contrato orientado a funcionalidades y selecciona la ejecución LOCAL o REMOTE en el límite del servidor.",
       "currentScope": {
-        "title": "Alcance actual",
+        "title": "Alcance de ejecución",
         "description": {
-          "local": "En la demostración local, Service Desk y la configuración usan flujos basados en mocks, mientras que los documentos permanecen disponibles como pantallas de referencia. Los permisos se simplifican: ADMIN tiene acceso amplio y las acciones de tickets para usuarios que no son ADMIN dependen de relaciones con el ticket.",
-          "remote": "En modo remoto, el flujo de Service Desk, los documentos y las pantallas de configuración pueden conectarse a API reales, mientras que el comportamiento de permisos refleja tanto el rol como las relaciones del usuario."
+          "local": "LOCAL ofrece estado de demostración reiniciable en el servidor para búsqueda, borradores, comandos, historial, sesiones de trabajo y configuración por tenant. Conserva el contrato de API sin afirmar equivalencia de persistencia con PostgreSQL.",
+          "remote": "REMOTE usa servicios de datos, repositorios, mappers, DTO y PostgreSQL del lado del servidor para los workflows implementados. La cuenta remota desplegada mantiene restringido el acceso a las páginas de Service Desk."
         }
       },
       "architectureNotes": {
         "local": {
-          "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
-          "note2": "En la demostración local, los permisos se simplifican intencionalmente: ADMIN tiene acceso amplio y las acciones de usuarios que no son ADMIN requieren una relación con el ticket, como solicitante, responsable asignado u otro participante relevante.",
-          "note3": "La bifurcación de runtime se orquesta mediante route handlers (LOCAL handler vs REMOTE proxy), para que la UI pueda mantener un flujo consistente entre modos."
+          "note1": "La interfaz llama a clientes de API de funcionalidad y Route Handlers de Next.js; el comportamiento específico queda en adaptadores LOCAL o servicios REMOTE.",
+          "note2": "Los tickets usan estados explícitos y comandos controlados por el servidor para transiciones de aprobación, asignación, trabajo, resolución y cierre.",
+          "note3": "El estado LOCAL es reiniciable y seguro para la demostración. Refleja los contratos observables implementados, no la durabilidad de la persistencia REMOTE."
         },
         "remote": {
-          "note1": "Las rutas protegidas están diseñadas como pantallas internas del portal después del inicio de sesión, no como una página pública de aterrizaje.",
-          "note2": "En modo remoto, el alcance de acceso se determina considerando no solo el rol, sino también relaciones como solicitante, responsable asignado y aprobador.",
-          "note3": "Los datos de tickets, documentos, aprobaciones, asignaciones y configuración se conectan mediante límites reales de API para ofrecer un flujo más cercano a un entorno operativo."
+          "note1": "REMOTE persiste tickets, borradores, configuración, acciones, historial y sesiones de trabajo mediante límites PostgreSQL exclusivos del servidor.",
+          "note2": "Los comandos operativos coordinan la mutación del ticket, la persistencia de acciones y el historial inmutable; las escrituras de árboles de configuración validan referencias dentro de una transacción.",
+          "note3": "El guard de rutas desplegado limita el acceso directo a la interfaz de Service Desk en modo REMOTE, aunque los principales límites de workflow están implementados."
         }
       }
     },
@@ -47,95 +47,95 @@
       "items": {
         "serviceDesk": {
           "title": "Service Desk",
-          "description": "Explora tickets, revisa el estado de la cola y continúa el trabajo actual.",
+          "description": "Busca tickets, crea o retoma borradores, consulta detalles y ejecuta comandos de workflow permitidos.",
           "meta": "Espacio central"
         },
         "documentation": {
           "title": "Documentación",
-          "description": "Abre notas de trabajo, referencias de diseño y documentación de implementación.",
+          "description": "Explora guías de arquitectura, reglas de dominio y registros de decisiones alineados con la implementación.",
           "meta": "Centro de conocimiento"
         },
         "systemSettings": {
           "title": "Configuración del sistema",
-          "description": "Revisa áreas de configuración del portal y ajustes operativos del servicio.",
+          "description": "Revisa configuración del portal, navegación y preferencias de usuario con control de acceso.",
           "meta": "Administración"
         },
         "serviceDeskSetup": {
           "title": "Configuración de Service Desk",
-          "description": "Revisa categorías, pasos de aprobación, reglas de asignación y configuración relacionada con SLA.",
+          "description": "Gestiona tenants, árboles de categorías, pasos de aprobación ordenados y reglas de asignación.",
           "meta": "Configuración de la plataforma"
         }
       }
     },
     "workSummary": {
-      "title": "Resumen de trabajo",
-      "description": "Contexto operativo ligero para la página de inicio del portal de demostración.",
+      "title": "Resumen de implementación",
+      "description": "Un recuento conciso de los conceptos de workflow representados actualmente en el código.",
       "items": {
         "openTickets": {
-          "label": "Tickets abiertos",
-          "description": "Incidencias actualmente en curso en las colas de soporte."
+          "label": "Estados del workflow",
+          "description": "Desde Draft hasta Closed, con estados de aprobación y trabajo alineados con la responsabilidad."
         },
         "pendingApprovals": {
-          "label": "Aprobaciones pendientes",
-          "description": "Solicitudes en espera de confirmación de flujo o política."
+          "label": "Acciones de ticket",
+          "description": "Intención del usuario modelada como comandos validados con efectos controlados."
         },
         "workingItems": {
-          "label": "Elementos en curso",
-          "description": "Tareas activas de implementación y seguimiento dentro de este alcance de demostración."
+          "label": "Áreas de configuración",
+          "description": "Configuración de tenant, categoría, paso de aprobación y regla de asignación."
         },
         "resolvedThisWeek": {
-          "label": "Resueltos esta semana",
-          "description": "Tickets, correcciones y resultados de iteración completados."
+          "label": "Rutas de ejecución",
+          "description": "Adaptadores de demostración LOCAL y servicios PostgreSQL REMOTE tras un único contrato de API."
         }
       }
     },
     "highlights": {
-      "title": "Recientes y destacados",
-      "description": "Áreas que mejor representan la dirección actual del proyecto y el contexto del trabajo reciente.",
+      "title": "Capacidades implementadas",
+      "description": "Las áreas que mejor representan el diseño y la implementación actuales de Service Desk.",
       "viewSection": "Ver sección",
       "items": {
         "ticketWorkspace": {
           "title": "Espacio de tickets",
-          "description": "Área principal de trabajo para búsqueda, filtrado y seguimiento de tickets.",
+          "description": "Workflows de lista, búsqueda, detalle, creación, borrador, actualización del solicitante y comandos.",
           "category": "Service Desk",
-          "status": "Listo"
+          "status": "Implementado"
         },
         "authSessionFlow": {
-          "title": "Flujo de autenticación y sesión",
-          "description": "Experiencia de inicio de sesión, manejo de redirecciones y separación de AuthUser/SessionUser/AppUser con impersonation consciente de la sesión.",
-          "category": "Arquitectura",
-          "status": "Enfoque actual"
+          "title": "Ejecución de comandos e historial",
+          "description": "Las acciones controladas por el servidor aplican efectos validados y crean historial inmutable basado en eventos.",
+          "category": "Workflow",
+          "status": "Implementado"
         },
         "serviceDeskSettings": {
           "title": "Configuración de Service Desk",
-          "description": "Superficies para pasos de aprobación, reglas de asignación y gestión de categorías.",
+          "description": "Categorías, pasos de aprobación y reglas de asignación por tenant con validación de referencias.",
           "category": "Administración",
-          "status": "En revisión"
+          "status": "Implementado"
         },
         "documentsHub": {
           "title": "Centro de documentos",
-          "description": "Área de referencia para documentos, notas y futuros registros de decisiones.",
+          "description": "Documentación bilingüe de arquitectura, dominio, interfaz, datos y decisiones alineada con la implementación.",
           "category": "Documentación",
-          "status": "Crecimiento planificado"
+          "status": "Mantenido"
         }
       }
     },
     "currentFocus": {
-      "title": "Enfoque actual",
-      "description": "Un panel de resumen compacto sobre lo que este portal está enfatizando ahora mismo.",
-      "panelTitle": "Dirección del portal empresarial",
-      "panelDescription": "La pantalla de inicio está deliberadamente acotada como un punto de entrada al espacio de trabajo interno.",
+      "title": "Prioridades de diseño",
+      "description": "Los principios que guían actualmente la implementación de Service Desk.",
+      "panelTitle": "Integridad del workflow",
+      "panelDescription": "El estado del ticket, la responsabilidad actual, los comandos y el historial deben describir un resultado operativo coherente.",
       "primaryGoals": {
-        "title": "Objetivos principales de experiencia",
+        "title": "Objetivos actuales de ingeniería",
         "items": {
-          "goal1": "Navegación clara del primer paso después de la autenticación",
-          "goal2": "Mantener la UI independiente del runtime gestionando la bifurcación LOCAL y REMOTE en los route handlers",
-          "goal3": "Preparar el reemplazo del contenido resumido basado en mocks por datos del espacio de trabajo respaldados por API/base de datos en etapas posteriores"
+          "goal1": "Resolver aprobación y asignación por categoría con responsabilidad consciente de la fase",
+          "goal2": "Mantener consistentes la mutación del ticket, las acciones y el historial inmutable dentro de comandos del servidor",
+          "goal3": "Mantener workflows de UI independientes del runtime mediante contratos DTO estables compartidos por LOCAL y REMOTE"
         }
       },
       "nextIntegrations": {
-        "title": "Próximas integraciones sugeridas",
-        "description": "Conecte las tarjetas de resumen con recuentos de tickets, aprobaciones y actividad reciente de documentos una vez que el inicio protegido esté listo para consumir datos reales del espacio de trabajo."
+        "title": "Alcance de producción diferido",
+        "description": "El almacenamiento de objetos de producción, las notificaciones, un motor SLA completo, las actualizaciones en tiempo real, las rutas completas de temporizador y la auditoría de nivel normativo siguen diferidos intencionalmente."
       }
     }
   },
@@ -160,7 +160,7 @@
   "remoteRouteGuard": {
     "limited": {
       "title": "La demostración remota es limitada",
-      "description": "El modo remoto actualmente admite las páginas Home, Demo, Settings y Documents. Las páginas de Service Desk aún se están conectando."
+      "description": "El acceso directo a la interfaz de Service Desk está deshabilitado en la demostración remota desplegada. Usa Home, Demo, Settings o Documents."
     }
   }
 }

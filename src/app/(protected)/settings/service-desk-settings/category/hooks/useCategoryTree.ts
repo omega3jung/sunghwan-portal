@@ -1,128 +1,114 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
   buildTree,
-  findTreeNodeData,
-  findTreeNodePath,
   flattenTree,
   removeItem,
-  resolveTreeNodeIdByPath,
-  TreeNodePath,
 } from "@/components/custom/dnd/tree/utilities";
 import type { CategoryScope, TenantCategoryTree } from "@/domain/serviceDesk";
 
+import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
 import {
   getDefaultCategoryData,
   getDefaultSubCategoryData,
+  MAX_SUB_CATEGORY_PER_CATEGORY,
 } from "../constants";
-import { CategoryData, SubCategoryData } from "../types";
-import { categoryToTree, mapCategoryData } from "../utils/mapper";
+import type { CategoryData, SubCategoryData } from "../types";
+import { createCategoryTree } from "../utils/mapper";
+import { createCategorySettingsSignatureFromTree } from "../utils/tree";
 
 type UseCategoryTreeOptions = {
+  contextKey: string | null;
   selectedTenant: string | null;
-  scope: CategoryScope;
   categories: TenantCategoryTree[] | undefined;
 };
 
 export function useCategoryTree({
+  contextKey,
   selectedTenant,
-  scope,
   categories,
 }: UseCategoryTreeOptions) {
-  const [tree, setTree] = useState<TreeNodes<CategoryData | SubCategoryData>>(
-    [],
-  );
+  const newCategoryCountRef = useRef(1);
+  const newSubCategoryCountRef = useRef(1);
+  const source = useMemo(() => {
+    if (!contextKey || !categories || !selectedTenant) {
+      return undefined;
+    }
 
-  const [selectedId, setSelectedId] = useState<UniqueIdentifier | null>(null);
-  const [treeTenantId, setTreeTenantId] = useState<string | null>(null);
-  const [treeContextKey, setTreeContextKey] = useState<string | null>(null);
+    const tree = createCategoryTree(categories, selectedTenant);
 
-  const [newCategoryCount, setNewCategoryCount] = useState<number>(1);
-  const [newSubCategoryCount, setNewSubCategoryCount] = useState<number>(1);
-  const previousContextRef = useRef<string | null>(null);
-  const selectedPathRef = useRef<TreeNodePath | null>(null);
+    return {
+      contextKey,
+      tree,
+      signature: createCategorySettingsSignatureFromTree(tree),
+    };
+  }, [categories, contextKey, selectedTenant]);
+  const draft = useServiceDeskSettingsTreeDraft<
+    CategoryData | SubCategoryData
+  >({
+    contextKey,
+    source,
+    getTreeSignature: createCategorySettingsSignatureFromTree,
+  });
+  const selectedParentCategory = useMemo<CategoryData | null>(() => {
+    if (
+      draft.selectedId === null ||
+      draft.selectedNode?.nodeType !== "subCategory"
+    ) {
+      return null;
+    }
 
-  useEffect(() => {
-    selectedPathRef.current = findTreeNodePath(tree, selectedId);
-  }, [selectedId, tree]);
+    const parentNode = draft.tree.find((node) =>
+      node.children.some((child) => child.id === draft.selectedId),
+    );
 
-  useEffect(() => {
-    if (!categories || !selectedTenant) return;
+    return parentNode?.data.nodeType === "category" ? parentNode.data : null;
+  }, [draft.selectedId, draft.selectedNode, draft.tree]);
 
-    const contextKey = `${selectedTenant}:${scope}`;
-    const scopedCategories = categories.map((tenant) => ({
-      ...tenant,
-      categories: tenant.categories.filter((category) => category.scope === scope),
-    }));
-    const mapped = mapCategoryData(scopedCategories, selectedTenant);
-    const nextTree = categoryToTree(mapped);
+  const addCategory = (scope: CategoryScope) => {
+    const categoryCount = newCategoryCountRef.current;
+    newCategoryCountRef.current += 1;
 
-    setTree(nextTree);
-    setTreeTenantId(selectedTenant);
-    setTreeContextKey(contextKey);
-    setSelectedId((previousSelectedId) => {
-      if (previousContextRef.current !== contextKey) {
-        previousContextRef.current = contextKey;
-        return null;
-      }
+    draft.setTree((previousTree) => {
+      const data = {
+        ...getDefaultCategoryData(categoryCount),
+        scope,
+      };
 
-      if (!previousSelectedId) {
-        return null;
-      }
-
-      const matchingCategory = nextTree.find(
-        (node) => node.id === previousSelectedId,
-      );
-
-      if (matchingCategory) {
-        return previousSelectedId;
-      }
-
-      const selectionPath = selectedPathRef.current;
-
-      if (!selectionPath?.length) {
-        return null;
-      }
-
-      return resolveTreeNodeIdByPath(nextTree, selectionPath);
+      return [
+        {
+          id: data.id,
+          data,
+          collapsed: false,
+          maximum: MAX_SUB_CATEGORY_PER_CATEGORY,
+          children: [],
+        },
+        ...previousTree,
+      ];
     });
-  }, [categories, scope, selectedTenant]);
-
-  const selectedNode = useMemo(() => {
-    return findTreeNodeData(tree, selectedId);
-  }, [selectedId, tree]);
-
-  const addCategory = (categoryScope: CategoryScope) => {
-    setTree((prev) => {
-      const newCategory = categoryToTree([{
-        ...getDefaultCategoryData(newCategoryCount),
-        scope: categoryScope,
-      }]);
-
-      return [...newCategory, ...prev];
-    });
-    setNewCategoryCount(newCategoryCount + 1);
   };
 
-  // 🔴 only for not saved category. existing category can not be deleted.
   const removeCategory = (id: UniqueIdentifier) => {
-    setTree((prev) => {
-      return removeItem(prev, id);
-    });
-    setSelectedId((prev) => (prev === id ? null : prev));
+    draft.setTree((previousTree) => removeItem(previousTree, id));
+    draft.setSelectedId((previousId) => (previousId === id ? null : previousId));
   };
 
   const addSubCategory = (parentId: UniqueIdentifier) => {
-    setTree((prev) => {
-      const flattened = flattenTree(prev);
+    const subCategoryCount = newSubCategoryCountRef.current;
+    newSubCategoryCountRef.current += 1;
 
-      const parentIndex = flattened.findIndex((item) => item.id === parentId);
-      if (parentIndex === -1) return prev;
+    draft.setTree((previousTree) => {
+      const flattenedTree = flattenTree(previousTree);
+      const parentIndex = flattenedTree.findIndex(
+        (item) => item.id === parentId,
+      );
 
-      const newSubCategory = getDefaultSubCategoryData(newSubCategoryCount);
+      if (parentIndex === -1) {
+        return previousTree;
+      }
 
+      const newSubCategory = getDefaultSubCategoryData(subCategoryCount);
       const newNode = {
         id: newSubCategory.id,
         parentId,
@@ -131,30 +117,19 @@ export function useCategoryTree({
         data: newSubCategory,
         children: [],
       };
-
-      // next of parent, first child.
       const insertIndex = parentIndex + 1;
 
-      const next = [
-        ...flattened.slice(0, insertIndex),
+      return buildTree([
+        ...flattenedTree.slice(0, insertIndex),
         newNode,
-        ...flattened.slice(insertIndex),
-      ];
-
-      return buildTree(next);
+        ...flattenedTree.slice(insertIndex),
+      ]);
     });
-
-    setNewSubCategoryCount((c) => c + 1);
   };
 
   return {
-    tree,
-    setTree,
-    selectedId,
-    setSelectedId,
-    treeTenantId,
-    treeContextKey,
-    selectedNode,
+    ...draft,
+    selectedParentCategory,
     addCategory,
     removeCategory,
     addSubCategory,

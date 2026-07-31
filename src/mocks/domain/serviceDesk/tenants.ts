@@ -1,4 +1,4 @@
-import type { DbTenant } from "@/feature/serviceDesk/tenant/types";
+import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
 
 import { internalCompanyMock } from "../organization/companies";
 

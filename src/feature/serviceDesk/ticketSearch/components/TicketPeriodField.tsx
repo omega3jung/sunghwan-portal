@@ -36,6 +36,7 @@ function TicketPeriodFieldInput({
 
   return (
     <DateRangePicker
+      className="w-full"
       period={value.type}
       onPeriodChange={(selected) => {
         nextTypeRef.current = selected ?? value.type;

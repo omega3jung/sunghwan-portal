@@ -4,8 +4,8 @@
     "description": "Use the navigation menu to switch between major markdown documents."
   },
   "group": {
-    "project": {
-      "title": "Project"
+    "overview": {
+      "title": "Overview"
     },
     "architecture": {
       "title": "Architecture"
@@ -13,27 +13,52 @@
     "domain": {
       "title": "Domain"
     },
-    "uiUx": {
-      "title": "UI/UX"
+    "engineering": {
+      "title": "Engineering"
     },
-    "dataFetching": {
-      "title": "Data Fetching"
+    "releases": {
+      "title": "Releases"
     },
-    "formDesign": {
-      "title": "Form Design"
-    },
-    "i18n": {
-      "title": "i18n"
-    },
-    "devStrategy": {
-      "title": "Dev Strategy"
-    },
-    "decisionLog": {
-      "title": "Decision Log"
+    "decisions": {
+      "title": "Decisions"
     }
   },
   "section": {
-    "decisionLog": {
+    "domain": {
+      "coreModel": {
+        "title": "Core Model"
+      },
+      "workflow": {
+        "title": "Workflow"
+      },
+      "strategies": {
+        "title": "Strategies"
+      },
+      "reference": {
+        "title": "Reference"
+      }
+    },
+    "engineering": {
+      "approach": {
+        "title": "Approach"
+      },
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "Forms"
+      },
+      "dataFetching": {
+        "title": "Data Fetching"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "Overview"
+      },
       "2025-12": {
         "title": "2025-12"
       },
@@ -185,6 +210,14 @@
       "title": "Service Desk Evolution",
       "description": "How Service Hub experience evolved into the Service Desk domain."
     },
+    "releaseOverview": {
+      "title": "Release Overview",
+      "description": "Version changes, migrations, architecture impact, and verification records."
+    },
+    "decisionOverview": {
+      "title": "Decision Overview",
+      "description": "How to read the dated design decisions and distinguish them from current design."
+    },
     "serviceDeskImplementationStrategy": {
       "title": "Service Desk Implementation Strategy",
       "description": "Runtime, architecture, and implementation strategy for Service Desk."
@@ -272,6 +305,10 @@
     "decisionTicketFormAndDraftWorkflow202606": {
       "title": "2026-06 Ticket Form and Draft Workflow",
       "description": "Ticket form and draft workflow decision log entry."
+    },
+    "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+      "title": "2026-07 Service Desk Settings Reference Validation Boundary",
+      "description": "Settings reference validation boundary decision log entry."
     },
     "decisionTicketActionAndHistoryExecution202607": {
       "title": "2026-07 Ticket Action and History Execution",

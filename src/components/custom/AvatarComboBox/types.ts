@@ -28,7 +28,6 @@ export interface AvatarSingleProps
       "value" | "onChange" | "onSelect"
     >,
     AvatarComboBoxProps {
-  asChild?: boolean;
   variant?: ComboBoxVariant;
   badgeVariant?: BadgeVariant;
   size?: ComboBoxSize;
@@ -52,7 +51,6 @@ export interface AvatarMultiProps
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
     AvatarMultiComboBoxProps {
   value: string[];
-  asChild?: boolean;
   variant?: ComboBoxVariant;
   badgeVariant?: BadgeVariant;
   size?: ComboBoxSize;

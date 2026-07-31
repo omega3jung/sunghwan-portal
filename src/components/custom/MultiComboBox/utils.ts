@@ -77,33 +77,23 @@ export const getToggledValues = (
 };
 
 /**
- * Creates a filter function for `Command`.
+ * Creates a filter function for Base UI `Combobox`.
  * Matching is based on `label` and `value`.
  *
  * Disabled options are still searchable and visible,
  * but they remain non-selectable.
  */
-export const createCommandFilter = <T extends MultiComboBoxItem>(
-  options: T[],
-) => {
-  const optionMap = createOptionMap(options);
-
-  return (itemValue: string, search: string) => {
+export const createComboboxFilter = () => {
+  return (item: MultiComboBoxItem, search: string) => {
     const normalizedSearch = normalize(search);
 
     if (!normalizedSearch) {
-      return 1;
+      return true;
     }
 
-    const matchedOption = optionMap.get(itemValue);
-
-    if (!matchedOption) {
-      return 0;
-    }
-
-    return normalize(matchedOption.label).includes(normalizedSearch) ||
-      normalize(matchedOption.value).includes(normalizedSearch)
-      ? 1
-      : 0;
+    return (
+      normalize(item.label).includes(normalizedSearch) ||
+      normalize(item.value).includes(normalizedSearch)
+    );
   };
 };

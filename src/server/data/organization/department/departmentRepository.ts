@@ -12,8 +12,7 @@ select
   d_parent_id,
   d_active
 from department
-where d_parent_id is not null
-  and d_active = true
+where d_active = true
 order by d_id;
 `;
 
@@ -27,8 +26,7 @@ select
   d_parent_id,
   d_active
 from department
-where d_parent_id is not null
-  and d_active = true
+where d_active = true
   and d_company_id = $1
 order by d_id;
 `;

@@ -41,7 +41,6 @@ export interface ComboBoxProps
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onSelect">,
     MultiComboBoxProps {
   value: string[];
-  asChild?: boolean;
   variant?: ComboBoxVariant;
   size?: ComboBoxSize;
 }
