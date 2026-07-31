@@ -43,17 +43,17 @@ export const TicketSearchCriteria = (props: FilterProps) => {
       <SheetTrigger
         render={
           props.trigger ?? (
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2 border-border/70 shadow-sm hover:bg-muted/40"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <Filter />
-            {t("action.searchCriteria")}
-          </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2 border-border/70 shadow-sm hover:bg-muted/40"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              <Filter />
+              {t("action.searchCriteria")}
+            </Button>
           )
         }
       />
@@ -63,12 +63,8 @@ export const TicketSearchCriteria = (props: FilterProps) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex h-full flex-col"
         >
-          <SheetHeader>
-            <div className="flex h-12 items-center justify-between border-b border-border/70 bg-muted/30 px-3">
-              <SheetTitle>
-                {t("message.refineSearchCriteria")}
-              </SheetTitle>
-            </div>
+          <SheetHeader className={"border-b border-border/70 pl-6"}>
+            <SheetTitle>{t("message.refineSearchCriteria")}</SheetTitle>
           </SheetHeader>
 
           <ScrollArea className="flex-1 p-6 pb-8">

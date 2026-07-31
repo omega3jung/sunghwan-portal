@@ -11,6 +11,7 @@ import { FileAttachmentList } from "./FileAttachmentList";
 import {
   type FileAttachmentErrorType,
   type FileAttachmentFieldPath,
+  type FileAttachmentLimitBehavior,
   useFileAttachments,
 } from "./useFileAttachments";
 
@@ -22,6 +23,7 @@ type FileAttachmentProps<
   name: TFieldName;
   maxCount: number;
   maxSizeMB: number;
+  limitBehavior?: FileAttachmentLimitBehavior;
   accept?: string[];
   readOnly?: boolean;
   showSeparator?: boolean;
@@ -37,6 +39,7 @@ export const FileAttachment = <
   name,
   maxCount,
   maxSizeMB,
+  limitBehavior = "accept-available",
   accept,
   readOnly = false,
   showSeparator = true,
@@ -49,6 +52,7 @@ export const FileAttachment = <
     name,
     maxCount,
     maxSizeMB,
+    limitBehavior,
     accept,
     onError,
   });

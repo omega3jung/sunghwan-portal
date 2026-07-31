@@ -10,7 +10,9 @@ import {
   CalendarDays,
   ChevronDown,
   FlagTriangleRight,
+  Funnel,
   Globe,
+  Plus,
   RefreshCw,
   Ticket,
 } from "lucide-react";
@@ -357,8 +359,8 @@ export default function ServiceDeskPage() {
   };
 
   return (
-    <main className="flex h-full min-h-0 max-w-full flex-col gap-2 overflow-x-hidden p-3 sm:p-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+    <main className="flex h-full min-h-0 max-w-full flex-col gap-5 overflow-x-hidden p-3 sm:p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <h1 className="text-2xl font-semibold">{t("listPage.title")}</h1>
           <p className="text-sm text-muted-foreground lg:max-w-prose">
@@ -367,16 +369,16 @@ export default function ServiceDeskPage() {
         </div>
 
         <div className="w-full lg:w-auto">
-          <div className="grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
+          <div className="grid w-full grid-cols-2 gap-3 lg:flex lg:w-auto lg:flex-nowrap lg:items-center lg:justify-end">
             {/* view selector */}
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button className="w-full min-w-0 justify-end" />}
+                render={<Button className="min-w-0 justify-end" />}
               >
-                  <span className="truncate">
-                    {t(`viewOption.${scope.toLowerCase()}`)}
-                  </span>
-                  <ChevronDown className="transition-transform" />
+                <span className="truncate">
+                  {t(`viewOption.${scope.toLowerCase()}`)}
+                </span>
+                <ChevronDown className="transition-transform" />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
@@ -404,15 +406,15 @@ export default function ServiceDeskPage() {
                 <DropdownMenuTrigger
                   render={
                     <Button
-                    variant="outline"
-                    className="min-w-0 flex-1 justify-end lg:flex-none"
+                      variant="outline"
+                      className="min-w-0 flex-1 justify-end lg:flex-none"
                     />
                   }
                 >
-                    <span className="truncate">
-                      {t(`sort.sort`, { ns: NS.common })}
-                    </span>
-                    <ChevronDown className="transition-transform" />
+                  <span className="truncate">
+                    {t(`sort.sort`, { ns: NS.common })}
+                  </span>
+                  <ChevronDown className="transition-transform" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40">
                   <DropdownMenuGroup>
@@ -452,8 +454,7 @@ export default function ServiceDeskPage() {
 
             {/* refresh */}
             <Button
-              className="w-full min-w-10 lg:w-auto"
-              size="lg"
+              className="w-full p-2 lg:w-auto"
               variant="default"
               onClick={() => refetchTickets()}
             >
@@ -469,8 +470,9 @@ export default function ServiceDeskPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-border/70 shadow-sm hover:bg-muted/40"
+                  className="border-border/70 shadow-sm hover:bg-muted/40"
                 >
+                  <Funnel />
                   {t("action.searchCriteria")}
                 </Button>
               }
@@ -491,6 +493,7 @@ export default function ServiceDeskPage() {
                   type="button"
                   className="col-span-2 w-full lg:col-span-1 lg:w-auto"
                 >
+                  <Plus />
                   <span className="truncate">
                     {tCommon("action.withItem", {
                       action: tCommon("action.create"),
@@ -518,7 +521,7 @@ export default function ServiceDeskPage() {
         pageSize={TICKET_PAGE_SIZE}
         totalCount={totalCount}
         onPageChange={handlePageChange}
-        className="gap-2 px-0 py-1 sm:px-1 sm:py-2"
+        className="gap-2 px-0 py-1 sm:px-1 sm:pt-2 sm:pb-1"
         disabled={isTicketListLoading}
       />
     </main>

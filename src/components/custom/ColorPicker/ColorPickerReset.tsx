@@ -17,7 +17,7 @@ export const ColorPickerReset = ({
   children = "Reset",
   className,
   variant = "outline",
-  size = "default",
+  size = "md",
 }: ColorPickerResetProps) => {
   const { resolvedDefaultValue, disabled, onChange } = useColorPickerContext();
 

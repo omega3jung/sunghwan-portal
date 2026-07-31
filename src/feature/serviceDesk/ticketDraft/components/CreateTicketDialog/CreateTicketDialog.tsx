@@ -59,20 +59,18 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
       <DialogTrigger
         render={
           props.trigger ?? (
-          <Button type="button" className="gap-2">
-            <Plus />
-            {t("action.withItem", {
-              ns: NS.common,
-              action: t("action.create", { ns: NS.common }),
-              item: t("field.ticket", { ns: NS.common }),
-            })}
-          </Button>
+            <Button type="button" className="gap-2">
+              <Plus />
+              {t("action.withItem", {
+                ns: NS.common,
+                action: t("action.create", { ns: NS.common }),
+                item: t("field.ticket", { ns: NS.common }),
+              })}
+            </Button>
           )
         }
       />
-      <DialogContent
-        className="h-full min-h-0 min-w-0 max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[800px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
-      >
+      <DialogContent className="h-full min-h-0 min-w-0 max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-200 md:max-h-[90vh] md:max-w-4xl md:rounded-lg">
         <CreateTicketDialogHeader />
         <form className="flex min-h-0 min-w-0 flex-col overflow-x-hidden px-4 py-3 md:px-6 md:py-4">
           <TicketCreateFormProvider

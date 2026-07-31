@@ -66,7 +66,7 @@ export const TicketListItem = ({
     <div
       onClick={onClick}
       className={cn(
-        "cursor-pointer flex flex-col gap-2 border-b px-4 py-1.5 hover:bg-muted",
+        "cursor-pointer flex flex-col gap-2 border-b px-4 py-2 hover:bg-muted",
         isAssigned && "border-l-primary border-l-4",
       )}
     >

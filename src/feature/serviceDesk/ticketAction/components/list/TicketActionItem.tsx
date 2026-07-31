@@ -61,21 +61,21 @@ export function TicketActionItem({
             <CollapsibleTrigger
               render={
                 <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="self-end rounded-md text-muted-foreground hover:bg-muted/40 md:self-start data-open:[&>svg]:rotate-180"
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="self-end rounded-md text-muted-foreground hover:bg-muted/40 aria-expanded:bg-transparent data-panel-open:[&>svg]:rotate-180 md:self-start"
                 />
               }
             >
-                <ChevronDown className="h-4 w-4 transition-transform" />
-                <span className="sr-only">
-                  {t("actionTool.list.toggleDetails")}
-                </span>
+              <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-out" />
+              <span className="sr-only">
+                {t("actionTool.list.toggleDetails")}
+              </span>
             </CollapsibleTrigger>
           </div>
 
-          <CollapsibleContent className="space-y-4 overflow-hidden data-closed:animate-accordion-up data-open:animate-accordion-down">
+          <CollapsibleContent className="h-(--collapsible-panel-height) space-y-4 overflow-hidden transition-[height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 motion-reduce:transition-none">
             <TicketActionBody content={action.content} />
             <TicketAttachmentList files={files} images={images} />
           </CollapsibleContent>

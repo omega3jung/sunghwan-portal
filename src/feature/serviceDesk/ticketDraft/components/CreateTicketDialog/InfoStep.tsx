@@ -30,11 +30,7 @@ export const InfoStep = () => {
   const hasAttachedImage = IMAGE_TAG_PATTERN.test(bodyValue ?? "");
 
   const requestTemplate = useMemo(() => {
-    return getTicketCategoryRequestTemplate(
-      categories,
-      categoryValue,
-      tLocal,
-    );
+    return getTicketCategoryRequestTemplate(categories, categoryValue, tLocal);
   }, [categories, categoryValue, tLocal]);
 
   return (
