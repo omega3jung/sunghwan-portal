@@ -136,6 +136,9 @@
       "description": "Descripción",
       "requestTemplate": "Plantilla de solicitud",
       "resolutionDays": "Días de resolución",
+      "followMainCategory": "Seguir la categoría principal ({{value}})",
+      "customValue": "Establecer un valor personalizado",
+      "daysValue": "{{value}} días",
       "active": "Activo",
       "addCategory": "Agregar categoría",
       "empty": "Selecciona un categoría para editar su configuración."

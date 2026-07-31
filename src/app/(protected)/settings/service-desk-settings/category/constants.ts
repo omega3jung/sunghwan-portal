@@ -30,8 +30,5 @@ export const getDefaultSubCategoryData = (count: number): SubCategoryData => {
     active: true,
     nodeType: "subCategory",
     isCreated: true,
-    defaultPriority: "medium",
-    defaultRiskLevel: "medium",
-    defaultSlaDays: 3,
   };
 };

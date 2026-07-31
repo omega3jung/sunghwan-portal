@@ -18,10 +18,7 @@ import { cn } from "@/shared/utils/presentation";
 import { comboBoxVariants } from "../variants";
 import { TreeMultiComboBoxBadgeList } from "./TreeMultiComboBoxBadgeList";
 import { TreeMultiComboBoxOptionItem } from "./TreeMultiComboBoxOptionItem";
-import type {
-  TreeMultiComboBoxNode,
-  TreeMultiComboBoxProps,
-} from "./types";
+import type { TreeMultiComboBoxNode, TreeMultiComboBoxProps } from "./types";
 import {
   createTreeBadgeOrderMap,
   createTreeComboboxFilter,
@@ -113,8 +110,7 @@ const Component = (
         ? allNodes
         : allNodes.filter(
             (node) =>
-              node.kind === "parent" ||
-              expandedParentSet.has(node.parentValue),
+              node.kind === "parent" || expandedParentSet.has(node.parentValue),
           ),
     [allNodes, expandedParentSet, isSearching],
   );
@@ -232,7 +228,7 @@ const Component = (
           showTrigger={false}
         />
         <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
-        <ComboboxList className="max-h-64 min-h-0">
+        <ComboboxList showScrollbar className="max-h-64 min-h-0">
           {(item) => {
             if (item.kind === "parent") {
               const state = getParentRenderState(item, normalizedValue);
@@ -243,9 +239,7 @@ const Component = (
                   item={item}
                   checkState={state.checkState}
                   disabled={state.disabled}
-                  expanded={
-                    isSearching || expandedParentSet.has(item.value)
-                  }
+                  expanded={isSearching || expandedParentSet.has(item.value)}
                   selectedChildCount={state.selectedChildCount}
                   totalChildCount={state.totalChildCount}
                   onToggleExpand={toggleExpandedParent}
@@ -264,7 +258,7 @@ const Component = (
                 }
                 disabled={Boolean(
                   item.disabled ||
-                    optionIndex.parentMap.get(item.parentValue)?.disabled,
+                  optionIndex.parentMap.get(item.parentValue)?.disabled,
                 )}
               />
             );

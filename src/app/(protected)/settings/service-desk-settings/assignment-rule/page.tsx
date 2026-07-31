@@ -36,7 +36,7 @@ export default function AssignmentRulePage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-2">
+    <div className="flex min-h-[calc(100dvh-185px)] flex-col gap-4 p-2">
       <ServiceDeskSettingsPageHeader
         title={settings.title}
         description={settings.description}
@@ -54,29 +54,24 @@ export default function AssignmentRulePage() {
         managedBy={settings.managedBy}
       />
 
-      <div className="grid min-h-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="min-w-0">
-          <AssignmentRuleTree
-            tree={settings.tree.tree}
-            setTree={settings.tree.setTree}
-            selectedId={settings.tree.selectedId}
-            setSelectedId={settings.tree.setSelectedId}
-            language={settings.toolbar.language.value}
-            errors={settings.tree.errors}
-          />
-        </div>
-
-        <div className="min-w-0">
-          <AssignmentRuleForm
-            selectedNode={settings.tree.selectedNode}
-            inheritedAssignee={settings.tree.inheritedAssignee}
-            language={settings.toolbar.language.value}
-            onChange={settings.tree.updateSelectedNode}
-            readOnly={settings.tree.readOnly}
-            scope={settings.toolbar.scope.value}
-            companyId={settings.companyId}
-          />
-        </div>
+      <div className="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <AssignmentRuleTree
+          tree={settings.tree.tree}
+          setTree={settings.tree.setTree}
+          selectedId={settings.tree.selectedId}
+          setSelectedId={settings.tree.setSelectedId}
+          language={settings.toolbar.language.value}
+          errors={settings.tree.errors}
+        />
+        <AssignmentRuleForm
+          selectedNode={settings.tree.selectedNode}
+          inheritedAssignee={settings.tree.inheritedAssignee}
+          language={settings.toolbar.language.value}
+          onChange={settings.tree.updateSelectedNode}
+          readOnly={settings.tree.readOnly}
+          scope={settings.toolbar.scope.value}
+          companyId={settings.companyId}
+        />
       </div>
     </div>
   );

@@ -51,6 +51,20 @@ export function useCategoryTree({
     source,
     getTreeSignature: createCategorySettingsSignatureFromTree,
   });
+  const selectedParentCategory = useMemo<CategoryData | null>(() => {
+    if (
+      draft.selectedId === null ||
+      draft.selectedNode?.nodeType !== "subCategory"
+    ) {
+      return null;
+    }
+
+    const parentNode = draft.tree.find((node) =>
+      node.children.some((child) => child.id === draft.selectedId),
+    );
+
+    return parentNode?.data.nodeType === "category" ? parentNode.data : null;
+  }, [draft.selectedId, draft.selectedNode, draft.tree]);
 
   const addCategory = (scope: CategoryScope) => {
     const categoryCount = newCategoryCountRef.current;
@@ -115,6 +129,7 @@ export function useCategoryTree({
 
   return {
     ...draft,
+    selectedParentCategory,
     addCategory,
     removeCategory,
     addSubCategory,

@@ -68,10 +68,7 @@ const Component = (
     const nextValueSet = new Set(nextOptions.map((option) => option.value));
 
     for (const removedValue of value) {
-      if (
-        optionValueSet.has(removedValue) &&
-        !nextValueSet.has(removedValue)
-      ) {
+      if (optionValueSet.has(removedValue) && !nextValueSet.has(removedValue)) {
         onRemove?.(removedValue);
       }
     }
@@ -135,10 +132,8 @@ const Component = (
           showTrigger={false}
         />
         <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
-        <ComboboxList className="max-h-48 min-h-0">
-          {(item) => (
-            <MultiComboBoxOptionItem key={item.value} item={item} />
-          )}
+        <ComboboxList showScrollbar className="max-h-48 min-h-0">
+          {(item) => <MultiComboBoxOptionItem key={item.value} item={item} />}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>

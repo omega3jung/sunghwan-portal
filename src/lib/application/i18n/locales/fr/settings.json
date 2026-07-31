@@ -136,6 +136,9 @@
       "description": "Description",
       "requestTemplate": "Modèle de demande",
       "resolutionDays": "Jours de résolution",
+      "followMainCategory": "Suivre la catégorie principale ({{value}})",
+      "customValue": "Définir une valeur personnalisée",
+      "daysValue": "{{value}} jours",
       "active": "Actif",
       "addCategory": "Ajouter une catégorie",
       "empty": "Sélectionnez un catégorie pour modifier ses paramètres."

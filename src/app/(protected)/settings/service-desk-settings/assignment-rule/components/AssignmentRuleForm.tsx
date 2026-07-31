@@ -4,15 +4,15 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
-import { MultiComboBox } from "@/components/custom/MultiComboBox";
+import { MultiHierarchicalSelect } from "@/components/custom/HierarchicalSelect";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { AssigneeGroup, CategoryScope } from "@/domain/serviceDesk";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
-import { useLocalizedValue } from "@/lib/client/i18n";
-import type { ImageValueLabel, ValueLabel } from "@/shared/types";
+import { useLocalizedText, useLocalizedValue } from "@/lib/client/i18n";
+import type { ImageValueLabel } from "@/shared/types";
 
 import {
   ServiceDeskSettingsEditorEmptyState,
@@ -20,6 +20,7 @@ import {
 } from "../../components/ServiceDeskSettingsLanguageEditor";
 import { useServiceDeskSettingsEditorLanguage } from "../../hooks/useServiceDeskSettingsEditorLanguage";
 import { useServiceDeskSettingsOrganizationData } from "../../hooks/useServiceDeskSettingsOrganizationData";
+import { buildJobFieldItems } from "../../utils/jobFieldItems";
 import { MAX_EMPLOYEE_PER_CATEGORY } from "../constants";
 import type { AssignmentRuleNodeData } from "../types";
 import {
@@ -50,6 +51,7 @@ export function AssignmentRuleForm({
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue(language);
+  const tLocalText = useLocalizedText(language);
 
   const { editorLanguage, setEditorLanguage } =
     useServiceDeskSettingsEditorLanguage(language);
@@ -60,26 +62,29 @@ export function AssignmentRuleForm({
   const organization = useServiceDeskSettingsOrganizationData({
     companyId,
     enabled: selectedNode !== null,
+    includeDepartments: true,
   });
   const employees = organization.employees;
 
-  const jobFieldData = useMemo((): ValueLabel[] => {
-    const options = (organization.jobFields ?? []).map((jobField) => {
-      return {
-        value: jobField.id,
-        label: tLocal(jobField.name),
-      };
-    });
-
-    const optionIds = new Set(options.map((option) => option.value));
-
-    return [
-      ...options,
-      ...(assignee?.jobFieldIds ?? [])
-        .filter((id) => !optionIds.has(id))
-        .map((id) => ({ value: id, label: id })),
-    ];
-  }, [assignee?.jobFieldIds, organization.jobFields, tLocal]);
+  const jobFieldItems = useMemo(
+    () =>
+      buildJobFieldItems({
+        departments: organization.departments ?? [],
+        jobFields: organization.jobFields ?? [],
+        selectedJobFieldIds: assignee?.jobFieldIds ?? [],
+        getLocalizedText: tLocalText,
+        fallbackDepartmentLabel: t(
+          "serviceDeskSettings.approvalStepTab.department",
+        ),
+      }),
+    [
+      assignee?.jobFieldIds,
+      organization.departments,
+      organization.jobFields,
+      t,
+      tLocalText,
+    ],
+  );
 
   const employeeData = useMemo((): ImageValueLabel[] => {
     const options = (employees ?? []).map((employee) => {
@@ -167,11 +172,10 @@ export function AssignmentRuleForm({
               <FieldLabel htmlFor="assignment-rule-select-job-field">
                 {t("serviceDeskSettings.assignmentRuleTab.jobField")}
               </FieldLabel>
-              <MultiComboBox
+              <MultiHierarchicalSelect
                 id="assignment-rule-select-job-field"
-                variant="default"
                 badgeVariant="secondary"
-                options={jobFieldData}
+                items={jobFieldItems}
                 value={assignee.jobFieldIds}
                 readOnly={readOnly}
                 disabled={organization.isLoading}
@@ -179,19 +183,13 @@ export function AssignmentRuleForm({
                 placeholder={t(
                   "serviceDeskSettings.assignmentRuleTab.selectAssigneeJobField",
                 )}
-                onSelect={(selected: string) => {
-                  assigneeChange("jobFieldIds")([
-                    ...assignee.jobFieldIds,
-                    selected,
-                  ]);
-                }}
-                onRemove={(selected: string) => {
-                  const newChoice = assignee.jobFieldIds.filter(
-                    (value) => value !== selected,
-                  );
-
-                  assigneeChange("jobFieldIds")(newChoice);
-                }}
+                backLabel={t("action.back", { ns: NS.common })}
+                emptyText={t("empty.withItem", {
+                  ns: NS.common,
+                  item: t("serviceDeskSettings.assignmentRuleTab.jobField"),
+                })}
+                selectableStrategy="leaf-only"
+                onValueChange={assigneeChange("jobFieldIds")}
               />
             </Field>
             <Field>
@@ -200,7 +198,7 @@ export function AssignmentRuleForm({
               </FieldLabel>
               <AvatarMultiComboBox
                 id="assignment-rule-select-employee"
-                placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
+                placeholderClassName="font-normal flex items-center pl-2 text-muted-foreground"
                 badgeVariant={"primary"}
                 options={employeeData}
                 value={assignee.assigneeUsernames}

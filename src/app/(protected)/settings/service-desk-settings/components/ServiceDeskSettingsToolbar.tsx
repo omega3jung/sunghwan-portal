@@ -41,7 +41,7 @@ export function ServiceDeskSettingsToolbar({
   const { t } = useTranslation(NS.settings);
 
   return (
-    <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
       <span className="shrink-0 text-base">
         {t("serviceDeskSettings.common.categoryList")}
       </span>
@@ -63,11 +63,13 @@ export function ScopeSelect({
   onValueChange,
   availableScopes,
   disabled = false,
+  placeholder,
 }: {
   value: CategoryScope | null;
   onValueChange: (scope: CategoryScope) => void;
   availableScopes: readonly CategoryScope[];
   disabled?: boolean;
+  placeholder?: string;
 }) {
   const { t } = useTranslation(NS.settings);
 
@@ -92,7 +94,9 @@ export function ScopeSelect({
       disabled={disabled || availableScopes.length === 0}
     >
       <SelectTrigger className="min-w-28 shadow-sm">
-        <SelectValue placeholder={t("serviceDeskSettings.common.scope")} />
+        <SelectValue
+          placeholder={placeholder ?? t("serviceDeskSettings.common.scope")}
+        />
       </SelectTrigger>
       <SelectContent>
         {scopeOptions.map((scope) => (

@@ -64,109 +64,106 @@ export const ApprovalStepTree = ({
   };
 
   return (
-    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-27.5rem)]">
-        <SortableTree
-          items={tree}
-          onChange={setTree}
-          collapsible
-          disabled={readOnly}
-          indentationWidth={20}
-          reorderScope="sameDepth"
-          renderItem={(
-            item,
-            { dragHandleProps, isOverlay, onCollapse },
-          ) => {
-            const data = item.data;
-            const isApprovalStep = data.nodeType === "approvalStep";
-            const isInvalidApprovalStep =
-              isApprovalStep && errors.has(item.id.toString());
-            const limit = item.maximum;
-            const canAddApprovalStep =
-              !readOnly &&
-              !isApprovalStep &&
-              limit != null &&
-              item.children.length < limit;
+    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-21.5rem)]">
+      <SortableTree
+        items={tree}
+        onChange={setTree}
+        collapsible
+        disabled={readOnly}
+        indentationWidth={20}
+        reorderScope="sameDepth"
+        renderItem={(item, { dragHandleProps, isOverlay, onCollapse }) => {
+          const data = item.data;
+          const isApprovalStep = data.nodeType === "approvalStep";
+          const isInvalidApprovalStep =
+            isApprovalStep && errors.has(item.id.toString());
+          const limit = item.maximum;
+          const canAddApprovalStep =
+            !readOnly &&
+            !isApprovalStep &&
+            limit != null &&
+            item.children.length < limit;
 
-            return (
-              <ServiceDeskSettingsTreeRow
-                label={tLocal(data.name)}
-                hasChildren={item.children.length > 0}
-                collapsed={item.collapsed}
-                selected={item.id === selectedId}
-                overlay={isOverlay}
-                child={isApprovalStep}
-                collapseLabel={item.collapsed ? "Expand" : "Collapse"}
-                onCollapse={() => onCollapse?.(item.id)}
-                onClick={() => {
-                  if (!isOverlay) setSelectedId(item.id);
-                }}
-                actions={
-                  <>
-                    {!isApprovalStep && (
-                      <Badge
-                        variant="outline"
-                        className={getRiskBadgeClassName(data.defaultRiskLevel)}
-                      >
-                        {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
-                      </Badge>
-                    )}
+          return (
+            <ServiceDeskSettingsTreeRow
+              label={tLocal(data.name)}
+              hasChildren={item.children.length > 0}
+              collapsed={item.collapsed}
+              selected={item.id === selectedId}
+              overlay={isOverlay}
+              child={isApprovalStep}
+              collapseLabel={item.collapsed ? "Expand" : "Collapse"}
+              onCollapse={() => onCollapse?.(item.id)}
+              onClick={() => {
+                if (!isOverlay) setSelectedId(item.id);
+              }}
+              actions={
+                <>
+                  {!isApprovalStep && (
+                    <Badge
+                      variant="outline"
+                      className={getRiskBadgeClassName(data.defaultRiskLevel)}
+                    >
+                      {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
+                    </Badge>
+                  )}
 
-                    {canAddApprovalStep && (
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon-xs"
-                        className="size-5 rounded-sm"
-                        disabled={isLoading}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          addApprovalStep(data.id);
-                        }}
-                      >
-                        <Plus className="size-4" />
-                      </Button>
-                    )}
+                  {canAddApprovalStep && (
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      size="icon-xs"
+                      className="size-5 rounded-sm"
+                      disabled={isLoading}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        addApprovalStep(data.id);
+                      }}
+                    >
+                      <Plus className="size-4" />
+                    </Button>
+                  )}
 
-                    {isApprovalStep && isInvalidApprovalStep && (
-                      <Badge variant="destructive">
-                        {tDomain(
-                          "serviceDeskSettings.approvalStepTab.saveUnavailable",
-                          { ns: NS.settings },
-                        )}
-                      </Badge>
-                    )}
+                  {isApprovalStep && isInvalidApprovalStep && (
+                    <Badge variant="destructive">
+                      {tDomain(
+                        "serviceDeskSettings.approvalStepTab.saveUnavailable",
+                        { ns: NS.settings },
+                      )}
+                    </Badge>
+                  )}
 
-                    {!readOnly && isApprovalStep && (
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon-xs"
-                        className="size-5 rounded-sm"
-                        disabled={isLoading}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          removeApprovalStep(data.id);
-                        }}
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    )}
+                  {!readOnly && isApprovalStep && (
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      size="icon-xs"
+                      className="size-5 rounded-sm"
+                      disabled={isLoading}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        removeApprovalStep(data.id);
+                      }}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  )}
 
-                    {!readOnly && isApprovalStep && !isOverlay && (
-                      <DragHandle
-                        {...dragHandleProps}
-                        aria-label={tLocal(data.name)}
-                      />
-                    )}
-                    {!readOnly && isApprovalStep && isOverlay && (
-                      <span className="size-5 shrink-0" aria-hidden="true" />
-                    )}
-                  </>
-                }
-              />
-            );
-          }}
-        />
+                  {!readOnly && isApprovalStep && !isOverlay && (
+                    <DragHandle
+                      {...dragHandleProps}
+                      aria-label={tLocal(data.name)}
+                    />
+                  )}
+                  {!readOnly && isApprovalStep && isOverlay && (
+                    <span className="size-5 shrink-0" aria-hidden="true" />
+                  )}
+                </>
+              }
+            />
+          );
+        }}
+      />
     </ScrollArea>
   );
 };

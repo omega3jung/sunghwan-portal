@@ -11,7 +11,7 @@ import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
 
 import { ServiceDeskSettingsTreeRow } from "../../components/ServiceDeskSettingsTreeRow";
-import { type AssignmentRuleNodeData,isSubAssignmentRuleData } from "../types";
+import { type AssignmentRuleNodeData, isSubAssignmentRuleData } from "../types";
 
 type Props = {
   tree: TreeNodes<AssignmentRuleNodeData>;
@@ -34,7 +34,7 @@ export const AssignmentRuleTree = ({
   const tLocal = useLocalizedText(language);
 
   return (
-    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-27.5rem)]">
+    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-21.5rem)]">
       <SortableTree
         items={tree}
         onChange={setTree}

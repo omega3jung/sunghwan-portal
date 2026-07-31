@@ -40,7 +40,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-2">
+    <div className="flex min-h-[calc(100dvh-185px)] flex-col gap-4 p-2">
       <ServiceDeskSettingsPageHeader
         title={settings.title}
         description={settings.description}
@@ -78,30 +78,27 @@ export default function CategoryPage() {
         managedBy={settings.managedBy}
       />
 
-      <div className="grid min-h-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="min-w-0">
-          <CategoryTree
-            tree={settings.tree.tree}
-            setTree={settings.tree.setTree}
-            selectedId={settings.tree.selectedId}
-            setSelectedId={settings.tree.setSelectedId}
-            addSubCategory={settings.tree.addSubCategory}
-            removeCategory={settings.tree.removeCategory}
-            language={settings.toolbar.language.value}
-            isLoading={settings.isSaving}
-            readOnly={settings.tree.readOnly}
-          />
-        </div>
+      <div className="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <CategoryTree
+          tree={settings.tree.tree}
+          setTree={settings.tree.setTree}
+          selectedId={settings.tree.selectedId}
+          setSelectedId={settings.tree.setSelectedId}
+          addSubCategory={settings.tree.addSubCategory}
+          removeCategory={settings.tree.removeCategory}
+          language={settings.toolbar.language.value}
+          isLoading={settings.isSaving}
+          readOnly={settings.tree.readOnly}
+        />
 
-        <div className="min-w-0">
-          <CategoryForm
-            selectedNode={settings.tree.selectedNode}
-            language={settings.toolbar.language.value}
-            availableScopes={settings.toolbar.scope.availableScopes}
-            onChange={settings.tree.updateSelectedNode}
-            readOnly={settings.tree.readOnly}
-          />
-        </div>
+        <CategoryForm
+          selectedNode={settings.tree.selectedNode}
+          parentCategory={settings.tree.selectedParentCategory}
+          language={settings.toolbar.language.value}
+          availableScopes={settings.toolbar.scope.availableScopes}
+          onChange={settings.tree.updateSelectedNode}
+          readOnly={settings.tree.readOnly}
+        />
       </div>
     </div>
   );

@@ -19,7 +19,11 @@ import { cn, initials } from "@/shared/utils/presentation";
 import { AvatarComboBoxOptionItem } from "./AvatarComboBoxOptionItem";
 import type { AvatarSingleProps } from "./types";
 import { createComboboxFilter, EMPTY_OPTION_TEXT } from "./utils";
-import { badgeVariants, comboBoxVariants } from "./variants";
+import {
+  badgeVariants,
+  comboBoxAvatarVariants,
+  comboBoxVariants,
+} from "./variants";
 
 const Component = (
   {
@@ -109,21 +113,23 @@ const Component = (
           }
         >
           {selectedOption ? (
-            <div className="flex min-w-0 items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  src={selectedOption.image}
-                  alt={selectedOption.label}
-                />
-                <AvatarFallback
-                  className={cn(
-                    badgeVariants({ badgeVariant }),
-                    "font-normal",
-                  )}
-                >
-                  {initials(selectedOption.label)}
-                </AvatarFallback>
-              </Avatar>
+            <div className="flex h-full min-w-0 items-center gap-2">
+              <div className={comboBoxAvatarVariants({ size })}>
+                <Avatar className="size-full">
+                  <AvatarImage
+                    src={selectedOption.image}
+                    alt={selectedOption.label}
+                  />
+                  <AvatarFallback
+                    className={cn(
+                      badgeVariants({ badgeVariant }),
+                      "font-normal",
+                    )}
+                  >
+                    {initials(selectedOption.label)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <div className="min-w-0 text-left">
                 <h4 className="truncate text-xs">{selectedOption.label}</h4>
                 <h4 className="truncate text-xs">
@@ -150,7 +156,7 @@ const Component = (
             showTrigger={false}
           />
           <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
-          <ComboboxList className="max-h-48 min-h-0">
+          <ComboboxList showScrollbar className="max-h-48 min-h-0">
             {(option) => (
               <AvatarComboBoxOptionItem
                 key={`option-${option.value}`}

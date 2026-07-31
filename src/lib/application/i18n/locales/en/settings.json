@@ -137,6 +137,9 @@
       "scope": "Scope",
       "requestTemplate": "Request Template",
       "resolutionDays": "Resolution Days",
+      "followMainCategory": "Follow main category ({{value}})",
+      "customValue": "Set a custom value",
+      "daysValue": "{{value}} days",
       "active": "Active",
       "addCategory": "Add Category",
       "empty": "Select a category to edit settings."

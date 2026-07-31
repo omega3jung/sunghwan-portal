@@ -116,6 +116,7 @@ const Component = (
             placeholder={placeholder}
             placeholderClassName={placeholderClassName}
             badgeVariant={badgeVariant}
+            size={size}
             maxImages={maxImages}
           />
         </ComboboxTrigger>
@@ -127,7 +128,7 @@ const Component = (
             showTrigger={false}
           />
           <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
-          <ComboboxList className="max-h-48 min-h-0">
+          <ComboboxList showScrollbar className="max-h-48 min-h-0">
             {(user) => {
               const unselectedIndex = unselectedOptions.indexOf(user);
               const isFirstUnselected =

@@ -41,7 +41,7 @@ export const CategoryTree = ({
   const tLocal = useLocalizedText(language);
 
   return (
-    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-27.5rem)]">
+    <ScrollArea className="h-full min-h-0 w-full overflow-hidden border-y md:h-[calc(100dvh-21.5rem)]">
       <SortableTree
         items={tree}
         onChange={setTree}
