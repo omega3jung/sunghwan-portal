@@ -274,7 +274,7 @@ export function TicketActionTool({
     },
   );
 
-  const disableSubmit = isPending || !editor;
+  const canSubmit = !isPending && Boolean(editor);
 
   if (!ticket) return null;
 
@@ -313,7 +313,7 @@ export function TicketActionTool({
           />
 
           <TicketActionToolFooter
-            disabled={disableSubmit}
+            canSubmit={canSubmit}
             errorMessage={errorMessage}
             helperText={helperText}
             isPending={isPending}

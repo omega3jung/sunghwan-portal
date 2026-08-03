@@ -42,6 +42,12 @@
       "approach": {
         "title": "Enfoque"
       },
+      "conventions": {
+        "title": "Convenciones"
+      },
+      "documentation": {
+        "title": "Documentacion"
+      },
       "ui": {
         "title": "UI"
       },
@@ -94,6 +100,10 @@
       "title": "Estrategia del README",
       "description": "Como el repositorio se presenta y guia a los lectores hacia documentos mas detallados."
     },
+    "booleanNamingConvention": {
+      "title": "Convencion de nombres booleanos",
+      "description": "Reglas comunes para nombres booleanos en limites de capacidad, estado y presentacion."
+    },
     "featureBasedStructure": {
       "title": "Estructura basada en funcionalidades",
       "description": "Limites de los segmentos del proyecto y estrategia de propiedad de carpetas."
@@ -130,17 +140,17 @@
       "title": "Modelo de ticket",
       "description": "Modelo central de ticket y estructura de propiedad."
     },
-    "ticketActivity": {
-      "title": "Actividad del ticket",
-      "description": "Modelo de actividad para comunicaciones y acciones operativas."
+    "ticketAction": {
+      "title": "Accion del ticket",
+      "description": "Modelo principal de acciones para comunicaciones y comandos operativos."
     },
     "ticketHistory": {
       "title": "Historial del ticket",
       "description": "Estrategia de auditabilidad y linea temporal del historial."
     },
-    "ticketTrackTime": {
-      "title": "Seguimiento de tiempo del ticket",
-      "description": "Modelo de seguimiento de trabajo basado en sesiones y registro de tiempo."
+    "ticketWorkSession": {
+      "title": "Sesion de trabajo del ticket",
+      "description": "Modelo de evidencia de sesiones de trabajo y tiempo registrado."
     },
     "serviceDeskSettings": {
       "title": "Configuracion de Service Desk",

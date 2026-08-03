@@ -238,7 +238,7 @@ closure 이후 새 comment creation이 허용된다는 뜻이 아니다.
 
 관련 문서:
 
-- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket Action Model](./ticket-action.md)
 - [Action Strategy](./strategy/action-strategy.md)
 
 ---
@@ -287,7 +287,7 @@ POST /api/service-desk/tickets/:ticketId/work-session
 - GET은 status를 변경하지 않는다.
 - timer-style start/finish/switch route는 현재 route surface에 포함되지 않는다.
 
-관련 문서: [Ticket Track Time](./ticket-track-time.md)
+관련 문서: [Ticket Work Session](./ticket-work-session.md)
 
 ---
 
@@ -337,12 +337,12 @@ REMOTE와 맞춰 유지해야 한다.
 - Status and transitions: [Ticket Lifecycle](./ticket-lifecycle.md)
 - Current executable rules: [Ticket Operation Rules](reference/ticket-operation-rules.md)
 - Ticket entity and DTO boundary: [Ticket Model](./ticket-model.md)
-- Action timeline: [Ticket Activity Model](./ticket-activity.md)
+- Action timeline: [Ticket Action Model](./ticket-action.md)
 - Command execution: [Action Strategy](./strategy/action-strategy.md)
 - Immutable audit model: [Ticket History](./ticket-history.md)
 - Approval rules: [Approval System](./strategy/approval-system.md)
 - Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
-- Work sessions: [Ticket Track Time](./ticket-track-time.md)
+- Work sessions: [Ticket Work Session](./ticket-work-session.md)
 - Form workflow: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
 - Attachment boundary: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
 - Settings structure: [Service Desk Settings](../settings.md)

@@ -1,8 +1,8 @@
-# Ticket Track Time
+# Ticket Work Session
 
 ## Goal
 
-Ticket Track Time defines the current Work Session model.
+Ticket Work Session defines the current work-time evidence model.
 
 Work tracking is separate from Ticket Action. It records work-time evidence and
 can optionally move a ticket through work statuses.

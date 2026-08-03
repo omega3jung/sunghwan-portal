@@ -107,7 +107,7 @@ export function useCategorySettings() {
     toolbar: editor.toolbar,
     tree: {
       ...tree,
-      readOnly: !context.canManage,
+      canEdit: context.canManage,
     },
   };
 }

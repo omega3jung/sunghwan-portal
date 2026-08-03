@@ -52,8 +52,8 @@ At the top of the root README:
 ```md
 ## **Languages**
 
-- [English](../../../README.md)
-- [Korean](../../../README.ko.md)
+- [English](../../../../README.md)
+- [Korean](../../../../README.ko.md)
 ```
 
 ---
@@ -142,13 +142,17 @@ Current structure:
 ```txt
 docs/
   en/
-    01-overview/
-    02-architecture/
-    03-domain/
-    04-engineering/
-    05-releases/
-    06-decisions/
+    01-overview/     # project and Service Desk evolution
+    02-architecture/ # application and runtime boundaries
+    03-domain/       # current domain models and workflow rules
+    04-engineering/  # implementation patterns and conventions
+    05-releases/     # release-specific records
+    06-decisions/    # historical decision records
 ```
+
+Current design documents explain the implementation-aligned system. Decision
+logs preserve point-in-time context, while README and overview documents orient
+readers and link to the appropriate source-of-truth documents.
 
 ---
 

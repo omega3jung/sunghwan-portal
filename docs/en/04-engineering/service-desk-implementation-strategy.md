@@ -19,7 +19,7 @@ It focuses on implementation boundaries that are now present in the codebase:
 
 Conceptual evolution belongs in
 [`service-desk-evolution.md`](../01-overview/service-desk-evolution.md). Historical decisions
-belong in the `decision-log` directory.
+belong in the `06-decisions` directory.
 
 ---
 
@@ -398,9 +398,9 @@ These are not described as completed current behavior in current design docs.
 - [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
 - [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
 - [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-activity.md`](../03-domain/service-desk/ticket/ticket-activity.md)
+- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
 - [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-track-time.md`](../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
 - [`forms/ticket-form.md`](forms/ticket-form.md)
 - [`forms/ticket-attachment.md`](forms/ticket-attachment.md)
 - [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)

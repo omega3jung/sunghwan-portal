@@ -264,7 +264,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
               <DropdownMenuGroup>
                 <DemoUserSwitch
                   clientCandidates={demoUserSwitchCandidates.client}
-                  disabled={isImpersonating}
+                  canSwitchDemoUser={!isImpersonating}
                   internalCandidates={demoUserSwitchCandidates.internal}
                   onDemoUserSwitch={onDemoUserSwitch}
                 />

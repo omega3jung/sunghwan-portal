@@ -61,7 +61,7 @@ type Props = {
       data: CategoryData | SubCategoryData,
     ) => CategoryData | SubCategoryData,
   ) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
 export function CategoryForm({
@@ -70,7 +70,7 @@ export function CategoryForm({
   language,
   availableScopes,
   onChange,
-  readOnly = false,
+  canEdit = true,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const isCategoryNode = selectedNode?.nodeType === "category";
@@ -257,7 +257,7 @@ export function CategoryForm({
                 data-testid="category-name"
                 className="!disabled:border-primary"
                 value={selectedNode.name[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) => updateTranslation("name")(e.target.value)}
               />
             </Field>
@@ -269,7 +269,7 @@ export function CategoryForm({
                 id="category-textarea-description"
                 className="!disabled:border-primary"
                 value={selectedNode.description?.[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) =>
                   updateTranslation("description")(e.target.value)
                 }
@@ -283,7 +283,7 @@ export function CategoryForm({
                 id="category-textarea-request-template"
                 className="!disabled:border-primary"
                 value={selectedNode.requestTemplate?.[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) =>
                   updateTranslation("requestTemplate")(e.target.value)
                 }
@@ -297,8 +297,8 @@ export function CategoryForm({
                 value={isCategoryNode ? selectedNode.scope : null}
                 availableScopes={availableScopes}
                 onValueChange={updateValue("scope")}
-                disabled={
-                  readOnly || !isCategoryNode || !selectedNode.isCreated
+                canChangeScope={
+                  canEdit && isCategoryNode && selectedNode.isCreated
                 }
                 placeholder={parentScopeString}
               />
@@ -323,7 +323,7 @@ export function CategoryForm({
                       updateValue("defaultPriority")(value as PriorityValue);
                     }
                   }}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                 >
                   <SelectTrigger id="category-select-priority">
                     <SelectValue />
@@ -356,7 +356,7 @@ export function CategoryForm({
                       updateValue("defaultRiskLevel")(value as RiskLevelValue);
                     }
                   }}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                 >
                   <SelectTrigger id="category-select-risk-level">
                     <SelectValue />
@@ -393,7 +393,7 @@ export function CategoryForm({
                         );
                       }
                     }}
-                    disabled={readOnly}
+                    disabled={!canEdit}
                   >
                     <SelectTrigger className={"w-full"}>
                       <SelectValue />
@@ -417,7 +417,7 @@ export function CategoryForm({
                       : selectedNode.defaultSlaDays
                   }
                   disabled={
-                    readOnly ||
+                    !canEdit ||
                     (isSubCategoryNode &&
                       selectedNode.defaultSlaDays === undefined)
                   }
@@ -448,7 +448,7 @@ export function CategoryForm({
                   id="category-switch-active"
                   className="!disabled:color-primary"
                   checked={selectedNode.active ?? false}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                   onCheckedChange={updateValue("active")}
                 />
               </span>

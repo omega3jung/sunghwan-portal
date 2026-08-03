@@ -42,6 +42,12 @@
       "approach": {
         "title": "Approach"
       },
+      "conventions": {
+        "title": "Conventions"
+      },
+      "documentation": {
+        "title": "Documentation"
+      },
       "ui": {
         "title": "UI"
       },
@@ -94,6 +100,10 @@
       "title": "README Strategy",
       "description": "How the repository introduces itself and routes readers into deeper docs."
     },
+    "booleanNamingConvention": {
+      "title": "Boolean Naming Convention",
+      "description": "Project-wide boolean naming rules for capability, state, and presentation boundaries."
+    },
     "featureBasedStructure": {
       "title": "Feature-Based Structure",
       "description": "Project slice boundaries and folder ownership strategy."
@@ -130,17 +140,17 @@
       "title": "Ticket Model",
       "description": "Core ticket model and ownership structure."
     },
-    "ticketActivity": {
-      "title": "Ticket Activity",
-      "description": "Activity model for communication and operational actions."
+    "ticketAction": {
+      "title": "Ticket Action",
+      "description": "First-class action model for communication and operational commands."
     },
     "ticketHistory": {
       "title": "Ticket History",
       "description": "Auditability and history timeline strategy."
     },
-    "ticketTrackTime": {
-      "title": "Ticket Track Time",
-      "description": "Session-based work tracking and time recording model."
+    "ticketWorkSession": {
+      "title": "Ticket Work Session",
+      "description": "Work-session evidence and tracked-time model."
     },
     "serviceDeskSettings": {
       "title": "Service Desk Settings",

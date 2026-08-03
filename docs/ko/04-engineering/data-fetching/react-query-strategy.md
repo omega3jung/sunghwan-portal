@@ -101,12 +101,27 @@ Attachment input은 durable draft state가 아니다. Raw `File`은 React Query�
 
 ---
 
-## Action과 History Query Policy
+## Ticket Action Query Policy
 
-Action은 workflow record이고 History는 append-oriented server state이다.
+Action은 workflow record다.
 
-Operational action execution 후에는 action query와 history query를 함께 invalidate한다.
-성공한 command가 아닌 UI intent만으로 history를 만들지 않는다.
+Action query는 ticket의 action list, route가 노출하는 action detail, comment/note의
+soft-delete state에 사용한다.
+
+Operational action execution 후에는 성공한 command가 history event를 만들기 때문에
+action query와 history query를 함께 invalidate한다.
+
+---
+
+## History Query Policy
+
+History는 append-oriented server state다.
+
+Command 성공 후 해당 ticket history를 invalidate한다. Event contract를 완전히
+통제하지 않는다면 UI에서 history event를 optimistic하게 만들지 않는다.
+
+Server는 `type`, `source`, `event`, previous/current value, actor/timestamp의
+authority다.
 
 ---
 
@@ -169,10 +184,22 @@ Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포
 
 ## 안티패턴
 
-- API data를 Zustand에 복제
-- raw `File`을 cache에 저장
-- server 성공 전 fake history 생성
-- 모든 mutation 후 overbroad invalidation
+### API Data in Zustand
+
+Ticket detail, settings, draft 또는 history를 parallel source of truth로 Zustand에
+복제하지 않는다.
+
+### Raw Files in Cache
+
+Browser `File` object를 React Query에 저장하지 않는다.
+
+### Fake History
+
+Server에서 성공하지 않은 command에 대해 UI-only history row를 만들지 않는다.
+
+### Overbroad Invalidations
+
+모든 Service Desk mutation 후 모든 query를 invalidate하지 않는다.
 
 ---
 
@@ -181,7 +208,7 @@ Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포
 - [`../../03-domain/service-desk/settings.md`](../../03-domain/service-desk/settings.md)
 - [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
 - [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../../03-domain/service-desk/ticket/ticket-track-time.md`](../../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../../03-domain/service-desk/ticket/ticket-work-session.md`](../../03-domain/service-desk/ticket/ticket-work-session.md)
 - [`../forms/ticket-form.md`](../forms/ticket-form.md)
 - [`../service-desk-implementation-strategy.md`](../service-desk-implementation-strategy.md)
 

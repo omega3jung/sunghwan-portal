@@ -68,7 +68,7 @@ export function AssignmentRulePage() {
           inheritedAssignee={settings.tree.inheritedAssignee}
           language={settings.toolbar.language.value}
           onChange={settings.tree.updateSelectedNode}
-          readOnly={settings.tree.readOnly}
+          canEdit={settings.tree.canEdit}
           scope={settings.toolbar.scope.value}
           companyId={settings.companyId}
         />

@@ -170,16 +170,23 @@ Command route는 action rule과 execution service로 위임한다.
 
 ---
 
-## Draft and Attachment Routes
+## Draft Routes
 
-Draft:
+Draft route는 create-ticket workflow를 지원한다.
 
 ```txt id="draft-routes"
 /api/service-desk/tickets/draft
 /api/service-desk/tickets/draft/[ticketId]
 ```
 
-Attachment preparation:
+REMOTE draft behavior는 server가 소유한다. Create dialog는 draft를 component-local
+state로만 취급하지 말고 이 API를 사용해야 한다.
+
+---
+
+## Attachment Prepare Route
+
+Attachment preparation은 별도 route다.
 
 ```txt id="attachment-prepare-route"
 POST /api/service-desk/tickets/attachments/prepare

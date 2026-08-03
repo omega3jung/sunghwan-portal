@@ -11,7 +11,7 @@ import { UPDATE_TICKET_REVIEW_STEP } from "../../hooks/useUpdateTicketDialog";
 
 type UpdateTicketDialogFooterProps = {
   currentStep: number;
-  disabled: boolean;
+  canProceed: boolean;
   isBusy: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -20,7 +20,7 @@ type UpdateTicketDialogFooterProps = {
 /** Documents the update ticket dialog footer responsibility exposed by this client feature module. */
 export function UpdateTicketDialogFooter({
   currentStep,
-  disabled,
+  canProceed,
   isBusy,
   onBack,
   onNext,
@@ -43,7 +43,7 @@ export function UpdateTicketDialogFooter({
       <Button
         type="button"
         className="w-full gap-2 whitespace-normal sm:w-48"
-        disabled={disabled}
+        disabled={!canProceed}
         onClick={onNext}
       >
         {isBusy ? (

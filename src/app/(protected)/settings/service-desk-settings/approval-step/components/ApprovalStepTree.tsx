@@ -30,7 +30,7 @@ type Props = {
   language: SupportedLanguage;
   isLoading: boolean;
   errors: ReadonlyMap<string, "invalidAssignee">;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
 export const ApprovalStepTree = ({
@@ -43,7 +43,7 @@ export const ApprovalStepTree = ({
   language,
   isLoading,
   errors,
-  readOnly = false,
+  canEdit = true,
 }: Props) => {
   const { t: tDomain } = useTranslation(NS.domain);
   const tLocal = useLocalizedText(language);
@@ -69,7 +69,7 @@ export const ApprovalStepTree = ({
         items={tree}
         onChange={setTree}
         collapsible
-        disabled={readOnly}
+        disabled={!canEdit}
         indentationWidth={20}
         reorderScope="sameDepth"
         renderItem={(item, { dragHandleProps, isOverlay, onCollapse }) => {
@@ -79,7 +79,7 @@ export const ApprovalStepTree = ({
             isApprovalStep && errors.has(item.id.toString());
           const limit = item.maximum;
           const canAddApprovalStep =
-            !readOnly &&
+            canEdit &&
             !isApprovalStep &&
             limit != null &&
             item.children.length < limit;
@@ -133,7 +133,7 @@ export const ApprovalStepTree = ({
                     </Badge>
                   )}
 
-                  {!readOnly && isApprovalStep && (
+                  {canEdit && isApprovalStep && (
                     <Button
                       variant="ghost"
                       type="button"
@@ -149,13 +149,13 @@ export const ApprovalStepTree = ({
                     </Button>
                   )}
 
-                  {!readOnly && isApprovalStep && !isOverlay && (
+                  {canEdit && isApprovalStep && !isOverlay && (
                     <DragHandle
                       {...dragHandleProps}
                       aria-label={tLocal(data.name)}
                     />
                   )}
-                  {!readOnly && isApprovalStep && isOverlay && (
+                  {canEdit && isApprovalStep && isOverlay && (
                     <span className="size-5 shrink-0" aria-hidden="true" />
                   )}
                 </>

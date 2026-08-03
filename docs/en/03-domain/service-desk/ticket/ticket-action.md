@@ -1,8 +1,8 @@
-# Ticket Activity Model
+# Ticket Action Model
 
 ## Goal
 
-Ticket Activity describes the user-facing action timeline.
+Ticket Action describes the user-facing action timeline and its command records.
 
 It is related to, but different from, immutable Ticket History.
 
@@ -150,7 +150,7 @@ Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticke
 
 ## Summary
 
-Ticket Activity is the user-facing action timeline. It records commands and
-communication, while Ticket History records immutable audit events. Keeping the
-two separate lets the UI explain what users did without losing exact event
-traceability.
+Ticket Action is the first-class model behind the user-facing activity
+timeline. It records commands and communication, while Ticket History records
+immutable audit events. Keeping the two separate lets the UI explain what users
+did without losing exact event traceability.

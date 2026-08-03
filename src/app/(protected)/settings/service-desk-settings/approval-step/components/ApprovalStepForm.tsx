@@ -43,7 +43,7 @@ type Props = {
       data: CategoryApprovalStepData | ApprovalStepData,
     ) => CategoryApprovalStepData | ApprovalStepData,
   ) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
   companyId: string | null;
 };
 
@@ -51,7 +51,7 @@ export function ApprovalStepForm({
   selectedNode,
   language,
   onChange,
-  readOnly = false,
+  canEdit = true,
   companyId,
 }: Props) {
   const { t } = useTranslation(NS.settings);
@@ -146,7 +146,7 @@ export function ApprovalStepForm({
       onLanguageChange={setEditorLanguage}
     >
       <FieldGroup>
-        <FieldSet disabled={readOnly}>
+        <FieldSet disabled={!canEdit}>
           <FieldGroup>
             <Field>
               <FieldLabel>
@@ -154,7 +154,7 @@ export function ApprovalStepForm({
               </FieldLabel>
               <Input
                 value={selectedNode.name[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) => updateTranslation("name")(e.target.value)}
               />
             </Field>
@@ -165,7 +165,7 @@ export function ApprovalStepForm({
               </FieldLabel>
               <Textarea
                 value={selectedNode.description?.[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) =>
                   updateTranslation("description")(e.target.value)
                 }
@@ -181,7 +181,7 @@ export function ApprovalStepForm({
                 <Select
                   items={approvalTypeValueLabels}
                   value={selectedNode.stepAssignee.type}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                   onValueChange={(value) =>
                     onAssigneeTypeChange(value as ApprovalAssigneeTypeValue)
                   }
@@ -206,7 +206,7 @@ export function ApprovalStepForm({
                 stepAssignee={selectedNode.stepAssignee}
                 onChange={assigneeTypeValueChange}
                 language={language}
-                readOnly={readOnly}
+                canEdit={canEdit}
                 employees={organization.employees}
                 departments={organization.departments ?? []}
                 jobFields={organization.jobFields ?? []}
@@ -222,7 +222,7 @@ export function ApprovalStepForm({
               <Select
                 items={accessLevelData}
                 value={selectedNode.skipAccessLevel?.toString()}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onValueChange={(value) => {
                   if (value !== null) {
                     onSkipAccessLevelChange(value);

@@ -124,6 +124,15 @@ const [open, setOpen] = useState(false);
 
 ---
 
+## Trigger Policy
+
+Dialog trigger는 caller가 제공할 수 있다.
+
+이를 통해 list row, toolbar button 및 detail-page command가 dialog 내부 구현을
+중복하지 않게 한다.
+
+---
+
 ## 데이터 로드 정책
 
 Dialog는 자신이 entry point인 경우에만 데이터를 fetch한다.
@@ -161,6 +170,21 @@ Create cancel/close에서 dirty input이 있으면:
 - 첨부 복구는 보장하지 않는다.
 
 Update/action cancel은 별도 draft 규칙이 없는 한 미저장 local input을 버린다.
+
+---
+
+## Accessibility and UX
+
+Dialog는 다음을 보존해야 한다.
+
+- focus 진입 및 복귀 동작
+- keyboard navigation
+- 명확한 submit/cancel action
+- mutation 중 loading 및 disabled state
+- 긴 content의 scroll 처리
+- localized validation message
+
+Action dialog에는 선택한 command가 지원하지 않는 field를 표시하지 않는다.
 
 ---
 

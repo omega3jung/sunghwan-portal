@@ -370,9 +370,9 @@ request tracking screen
 - [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
 - [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
 - [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-activity.md`](../03-domain/service-desk/ticket/ticket-activity.md)
+- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
 - [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-track-time.md`](../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
 
 ---
 

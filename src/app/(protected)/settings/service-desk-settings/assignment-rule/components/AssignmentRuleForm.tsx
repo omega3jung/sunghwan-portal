@@ -35,7 +35,7 @@ type Props = {
   onChange: (
     updater: (data: AssignmentRuleNodeData) => AssignmentRuleNodeData,
   ) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
   scope: CategoryScope;
   companyId: string | null;
 };
@@ -45,7 +45,7 @@ export function AssignmentRuleForm({
   inheritedAssignee,
   language,
   onChange,
-  readOnly = false,
+  canEdit = true,
   scope,
   companyId,
 }: Props) {
@@ -154,7 +154,7 @@ export function AssignmentRuleForm({
       onLanguageChange={setEditorLanguage}
     >
       <FieldGroup>
-        <FieldSet disabled={readOnly}>
+        <FieldSet disabled={!canEdit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="category-input-name">
@@ -177,7 +177,7 @@ export function AssignmentRuleForm({
                 badgeVariant="secondary"
                 items={jobFieldItems}
                 value={assignee.jobFieldIds}
-                readOnly={readOnly}
+                readOnly={!canEdit}
                 disabled={organization.isLoading}
                 isLoading={organization.isLoading}
                 placeholder={t(
@@ -202,7 +202,7 @@ export function AssignmentRuleForm({
                 badgeVariant={"primary"}
                 options={employeeData}
                 value={assignee.assigneeUsernames}
-                readOnly={readOnly}
+                readOnly={!canEdit}
                 disabled={organization.isLoading}
                 isLoading={organization.isLoading}
                 maxImages={MAX_EMPLOYEE_PER_CATEGORY}
@@ -243,7 +243,7 @@ export function AssignmentRuleForm({
                 <Switch
                   id="assignment-rule-include-tenant-company"
                   checked={assignee.includeTenantCompany === true}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                   onCheckedChange={includeTenantCompanyChange}
                 />
               </Field>

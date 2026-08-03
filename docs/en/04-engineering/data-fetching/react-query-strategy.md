@@ -226,7 +226,7 @@ Do not invalidate every query after every Service Desk mutation.
 - [`../../03-domain/service-desk/settings.md`](../../03-domain/service-desk/settings.md)
 - [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
 - [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../../03-domain/service-desk/ticket/ticket-track-time.md`](../../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../../03-domain/service-desk/ticket/ticket-work-session.md`](../../03-domain/service-desk/ticket/ticket-work-session.md)
 - [`../forms/ticket-form.md`](../forms/ticket-form.md)
 - [`../service-desk-implementation-strategy.md`](../service-desk-implementation-strategy.md)
 

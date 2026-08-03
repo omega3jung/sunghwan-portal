@@ -28,12 +28,13 @@ documents.
 
 The `docs/en` folder is organized by responsibility:
 
-- `01-overview`: project orientation, README strategy, and system evolution
-- `02-architecture`: app structure, routing, database, state, auth/session
-- `03-domain`: Service Desk domain rules and workflow behavior
-- `04-engineering`: implementation, UI, forms, data fetching, and i18n
-- `05-releases`: version changes, migrations, impact, and verification
-- `06-decisions`: point-in-time design decisions and alternatives
+- `01-overview`: project and Service Desk evolution
+- `02-architecture`: application and runtime boundaries
+- `03-domain`: current Service Desk domain model and workflow rules
+- `04-engineering`: implementation patterns, UI, forms, data fetching, i18n,
+  conventions, and documentation practices
+- `05-releases`: release-specific records
+- `06-decisions`: historical decision records
 
 ---
 
@@ -41,9 +42,8 @@ The `docs/en` folder is organized by responsibility:
 
 Overview documents orient readers to the repository and its evolution.
 
-Key documents:
+Key document:
 
-- [README Strategy](./01-overview/readme-strategy.md)
 - [Service Desk Evolution](./01-overview/service-desk-evolution.md)
 
 ---
@@ -73,9 +73,9 @@ Key documents:
 - [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 - [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-- [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
-- [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+- [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 - [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 - [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 - [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 - [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
@@ -179,6 +179,18 @@ Key documents:
 
 ---
 
+### Conventions and Documentation Practices
+
+Project-wide conventions and documentation practices apply across feature,
+application, domain, and UI boundaries.
+
+Key documents:
+
+- [Boolean Naming Convention](./04-engineering/conventions/boolean-naming-convention.md)
+- [README Strategy](./04-engineering/documentation/readme-strategy.md)
+
+---
+
 ## Releases
 
 Release documentation records version changes, migrations, architecture impact,
@@ -232,9 +244,9 @@ Current decision log topics include:
 3. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
 4. [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 5. [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-6. [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
+6. [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 7. [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
-8. [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+8. [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 9. [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 10. [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
 11. [Assignment Policy](./03-domain/service-desk/ticket/strategy/assignment-policy.md)

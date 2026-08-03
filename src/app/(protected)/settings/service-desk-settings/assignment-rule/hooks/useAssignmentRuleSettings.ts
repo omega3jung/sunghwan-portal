@@ -144,7 +144,7 @@ export function useAssignmentRuleSettings() {
     tree: {
       ...tree,
       errors,
-      readOnly: !context.canManage,
+      canEdit: context.canManage,
     },
   };
 }

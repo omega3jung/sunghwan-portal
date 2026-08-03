@@ -294,7 +294,7 @@ Do not model current history as:
 
 - [Ticket System Overview](./ticket-system-overview.md)
 - [Ticket Lifecycle](./ticket-lifecycle.md)
-- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket Action Model](./ticket-action.md)
 - [Action Strategy](./strategy/action-strategy.md)
 - [Ticket Operation Rules](reference/ticket-operation-rules.md)
 

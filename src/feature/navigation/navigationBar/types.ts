@@ -10,8 +10,8 @@ export type LinkBarItem = {
   route: string;
   selected?: boolean;
   icon?: ReactElement<LucideProps>;
-  isDisable?: boolean;
-  isLinkable?: boolean;
+  disabled?: boolean;
+  canNavigate?: boolean;
   onClick?: (index: number, name?: string | ReactNode) => void;
 };
 

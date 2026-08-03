@@ -503,10 +503,10 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 
 - [Ticket System Overview](../ticket-system-overview.md)
 - [Ticket Lifecycle](../ticket-lifecycle.md)
-- [Ticket Activity Model](../ticket-activity.md)
+- [Ticket Action Model](../ticket-action.md)
 - [Action Strategy](../strategy/action-strategy.md)
 - [Ticket History](../ticket-history.md)
-- [Ticket Track Time](../ticket-track-time.md)
+- [Ticket Work Session](../ticket-work-session.md)
 
 ---
 

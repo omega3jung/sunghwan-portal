@@ -61,7 +61,7 @@ export function CategoryPage() {
             className="border-primary/90 shadow-sm"
             disabled={
               !settings.selectedTenant ||
-              settings.tree.readOnly ||
+              !settings.tree.canEdit ||
               settings.isSaving
             }
             onClick={() =>
@@ -88,7 +88,7 @@ export function CategoryPage() {
           removeCategory={settings.tree.removeCategory}
           language={settings.toolbar.language.value}
           isLoading={settings.isSaving}
-          readOnly={settings.tree.readOnly}
+          canEdit={settings.tree.canEdit}
         />
 
         <CategoryForm
@@ -97,7 +97,7 @@ export function CategoryPage() {
           language={settings.toolbar.language.value}
           availableScopes={settings.toolbar.scope.availableScopes}
           onChange={settings.tree.updateSelectedNode}
-          readOnly={settings.tree.readOnly}
+          canEdit={settings.tree.canEdit}
         />
       </div>
     </div>

@@ -327,7 +327,7 @@ Existing ticket state와 history는 explicit ticket command를 통해서만 변�
 
 ## 관련 문서
 
-- [`../../service-desk-settings.md`](../../settings.md)
+- [`../../settings.md`](../../settings.md)
 - [`approval-system.md`](approval-system.md)
 - [`assignment-policy.md`](assignment-policy.md)
 - [`sla-strategy.md`](sla-strategy.md)

@@ -5,7 +5,7 @@ import type {
   TicketStatus,
 } from "@/domain/serviceDesk";
 import {
-  isTicketActionExecutionAllowed,
+  canExecuteTicketAction,
   resolveTicketActionNextStatus,
   TICKET_ACTION_PATH_TO_TYPE,
   type TicketActionCommandRequest,
@@ -130,7 +130,7 @@ export function assertTicketActionAllowed(
   actionMode: TicketActionExecutionMode,
   status: TicketStatus,
 ) {
-  if (isTicketActionExecutionAllowed(actionMode, status)) {
+  if (canExecuteTicketAction(actionMode, status)) {
     return;
   }
 

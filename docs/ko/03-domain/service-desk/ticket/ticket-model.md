@@ -242,7 +242,7 @@ DTO의 일부가 아니다.
 Ticket action은 command로 생성되는 timeline entry다. History와 같지 않다. 일부
 action은 ticket state를 변경하고 여러 history record를 만든다.
 
-관련 문서: [Ticket Activity Model](./ticket-activity.md)
+관련 문서: [Ticket Action Model](./ticket-action.md)
 
 ### Ticket History
 
@@ -256,7 +256,7 @@ immutable event/audit data다.
 Work Session은 실제 tracked work를 기록한다. 티켓은 aggregate `workMinutes`를
 노출하지만, 개별 session은 별도 subresource로 남는다.
 
-관련 문서: [Ticket Track Time](./ticket-track-time.md)
+관련 문서: [Ticket Work Session](./ticket-work-session.md)
 
 ---
 

@@ -1,253 +1,292 @@
-# 2025-12 Dialog vs Page vs Drawer Decision
+# System Layout (2025-12)
 
-## Context
+## 맥락
 
-Service Desk 시스템에서 **티켓 상세, 생성, 수정 UI를 어떤 형태로 제공할 것인지**에 대한 고민이 있었다.
+Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증가했다.
 
-특히 다음과 같은 선택지가 존재했다:
+- 여러 interaction pattern(dialog, drawer, full page)
+- 커지는 feature scope(ticket detail, form, comment, history)
+- 일관된 navigation 및 layout structure의 필요
 
-1. 모든 것을 Dialog/Drawer 기반으로 처리
-2. Detail을 Modal(Route Modal / Drawer)로 구성
-3. Detail을 Page로 구성하고, 일부 interaction만 Dialog/Drawer로 처리
+또한 시스템에는 다음이 필요했다.
 
-초기에는 기존 시스템(Oracle JET + Next.js v12 기반)에서 사용하던 방식처럼
-**overlay 중심 UI (drawer/dialog)**를 적극적으로 활용하는 방향도 고려되었다.
-
----
-
-## Problem
-
-다음과 같은 문제가 명확하게 드러났다:
-
-### 1. Nested Overlay Complexity
-
-- Drawer 위에 Drawer
-- Dialog 안에서 또 Dialog
-
-이런 구조는 다음 문제를 발생시킴:
-
-- 상태 관리 복잡도 증가
-- focus 관리 어려움
-- UX 혼란 (현재 위치 인지 어려움)
-- ESC / close 동작 예측 어려움
-
-👉 특히 **ticket detail 위에 추가 drawer를 띄우는 구조는 빠르게 복잡도가 폭발**함
+- **primary workflow**와 **secondary interaction**의 명확한 분리
+- 모든 feature를 위한 안정적인 **home layout 기반**
+- 예측 가능하고 확장 가능한 UI 동작
 
 ---
 
-### 2. Ticket Detail의 성격
+## 문제
 
-Ticket detail은 단순 조회 UI가 아니라:
+### 1. Interaction 복잡도
 
-- 상태 변경
-- assignment
-- approval
-- history 확인
-- comment 작성
-
-등이 포함된 **“핵심 workflow”**임
-
-👉 즉, transient UI가 아니라 **primary workflow**
+- 복잡한 flow에 dialog를 사용하면 state management가 어렵고 navigation 경험이 나빠짐
+- 중첩 overlay(drawer 위 drawer, dialog 위 dialog)가 복잡도를 높임
 
 ---
 
-### 3. Navigation & Deep Linking 문제
+### 2. Layout 불일치
 
-Modal/Drawer 기반일 경우:
-
-- URL로 직접 접근 어려움
-- 상태 복원 어려움
-- 브라우저 히스토리와 자연스럽게 연결되지 않음
+- 다음 항목의 명확한 정의가 없었음:
+  - global layout(sidebar, navbar, footer)
+  - feature-level rendering boundary
 
 ---
 
-## Options Considered
+### 3. Navigation과 Interaction의 모호성
 
-### Option 1. Full Modal/Drawer Based UI
+- 일부 view는 오래 유지되고 탐색할 수 있어 page처럼 동작함
+- 하지만 dialog 또는 drawer로 구현됨
 
-- 모든 interaction을 overlay로 처리
+그 결과 UX가 일관되지 않았다.
 
-#### Pros
+---
+
+## 결정
+
+### 1. System-Level Layout 정의
+
+Application은 다음 **home layout structure**를 채택한다.
+
+```txt
+App Layout
+-> Sidebar (navigation)
+-> Navbar (context / actions)
+-> Main Content (page)
+-> Footer (optional)
+```
+
+#### 특성
+
+- protected route level에 layout 적용
+- 모든 feature를 이 구조 안에서 rendering
+- sidebar에 role-based rendering 반영
+- layout이 impersonation을 인식
+
+#### 이유
+
+- 일관된 navigation 경험 제공
+- 안정적인 UI 기반 확립
+- role-aware UI 지원
+- 확장 가능한 feature 추가 지원
+
+---
+
+### 2. Interaction 전략: Page vs Drawer vs Dialog
+
+#### 핵심 원칙
+
+```txt
+Page -> primary workflow
+Drawer -> secondary interaction
+Dialog -> atomic action
+```
+
+#### Page
+
+사용 대상:
+
+- core workflow
+- 복잡한 form
+- 오래 지속되는 interaction
+
+예:
+
+```txt
+/service-desk/[ticketId]
+```
+
+#### Drawer
+
+사용 대상:
+
+- supporting interaction
+- contextual operation
+
+예:
+
+- comment panel
+- history view
+- detail page 안의 sub-action
+
+#### Dialog
+
+사용 대상:
+
+- 짧은 action
+- confirmation flow
+- 단순 form
+
+예:
+
+- ticket 생성
+- action 확인
+- 작은 input form
+
+---
+
+### 3. 핵심 결정: Ticket Detail = Page
+
+#### 결정
+
+Ticket detail은 dialog나 drawer가 아닌 full page로 구현한다.
+
+#### 이유
+
+##### 1. 복잡도 제어
+
+- nested overlay 방지
+- state management 단순화
+
+##### 2. 명확한 Navigation
+
+- 각 ticket이 고유 URL을 가짐
+- deep linking 지원
+
+##### 3. 일관된 UX
+
+- primary workflow로 취급
+- 임시 interaction으로 취급하지 않음
+
+---
+
+### 4. Layout + Interaction 통합
+
+#### 결합 모델
+
+```txt
+Home Layout (persistent)
+-> Page (primary workflow)
+-> Drawer (secondary interaction)
+-> Dialog (atomic action)
+```
+
+#### Flow 예
+
+```txt
+Ticket List Page
+-> Navigate to Ticket Detail Page
+-> Open Comment Drawer
+-> Open Confirm Dialog
+```
+
+#### 결과
+
+- 명확한 interaction hierarchy
+- navigation과 UI state 사이의 모호성 제거
+- 예측 가능한 사용자 경험
+
+---
+
+### 5. Role-Aware Layout 동작
+
+Layout은 user context에 따라 동적으로 바뀐다.
+
+#### 예
+
+- role에 따른 sidebar menu 변경
+- permission에 따른 visible feature 변경
+- impersonation에 따른 current-user UI context 변경
+
+#### 통합
+
+- session + impersonation context 사용
+- UI는 항상 current user를 반영
+
+---
+
+### 6. Impersonation 인식
+
+Layout은 impersonation을 지원하도록 설계한다.
+
+#### 동작
+
+- UI에 current user를 즉시 반영
+- sidebar와 navigation을 동적으로 갱신
+- global indicator에 impersonation state 표시
+
+#### 목적
+
+- 혼동 방지
+- 안전한 testing 지원
+- 투명성 유지
+
+---
+
+## Trade-off
+
+### 장점
+
+- 명확한 UI hierarchy
+- 확장 가능한 interaction model
+- 일관된 navigation
+- nested overlay 복잡도 감소
+- domain workflow와 강하게 정렬
+
+---
+
+### 단점
+
+- UI pattern 선택에 discipline 필요
+- page-based approach에 더 많은 routing setup 필요
+- modal-first UX보다 navigation이 약간 무거움
+
+---
+
+## 검토한 대안
+
+### 1. Dialog-Driven UI
 
 - 빠른 interaction
-- 페이지 전환 없음
+- 확장하기 어려움
+- navigation 명확성이 낮음
 
-#### Cons
+---
 
-- 복잡도 급증
-- deep linking 불가능
+### 2. Drawer-Only Detail View
+
+- 가벼운 UI
+- 복잡한 workflow에 부적합
+- state management가 어려움
+
+---
+
+### 3. Modal Routing
+
+- advanced UX pattern
+- 높은 복잡도
 - 유지보수 어려움
 
-👉 **장기적으로 유지 불가능**
+---
+
+## 영향
+
+이 결정은 다음을 정의한다.
+
+- 향후 UI 구조
+- navigation pattern
+- feature integration approach
+
+다음 영역에 영향을 준다.
+
+- routing strategy
+- component boundary decision
+- state management
+- UX consistency
 
 ---
 
-### Option 2. Modal Route (Next.js Intercepting Route)
+## 요약
 
-- detail을 modal route로 처리
+System layout은 다음으로 정의된다.
 
-#### Pros
+- persistent home layout(sidebar + navbar)
+- page-based primary workflow
+- drawer-based secondary interaction model
+- dialog-based atomic action model
 
-- URL 유지 가능
-- modal UX 유지
+이를 통해 predictable, scalable, role-aware하며 domain workflow와 정렬된 UI
+architecture를 만든다.
 
-#### Cons
-
-- 구현 복잡도 높음
-- overlay 구조 유지됨
-- nested overlay 문제 여전히 존재
-
-👉 **문제 해결이 아니라 우회**
-
----
-
-### Option 3. Page + Drawer Hybrid (Final)
-
-- Detail = Page
-- Sub interaction = Drawer / Dialog
-
----
-
-## Decision
-
-```txt
-Ticket Detail은 Page로 구성한다.
-Drawer/Dialog는 보조 interaction에만 사용한다.
-```
-
----
-
-## Rationale
-
-### 1. Complexity Control
-
-```txt
-Primary workflow는 Page에서 처리하고,
-Overlay는 보조 수단으로 제한한다.
-```
-
-- nested overlay 제거
-- 상태 흐름 단순화
-- 유지보수 용이
-
----
-
-### 2. Clear Navigation
-
-- `/service-desk/[ticketId]` 형태의 명확한 URL
-- 브라우저 히스토리 자연스럽게 동작
-- 직접 접근 가능 (deep link)
-
-👉 이는 실제 운영 시스템에서 매우 중요
-
----
-
-### 3. UX Consistency
-
-- “이건 페이지인가? 모달인가?” 혼란 제거
-- 사용자가 현재 위치를 명확히 인지 가능
-
----
-
-### 4. Workflow Alignment
-
-Ticket Detail은:
-
-- 단순 조회가 아니라
-- 작업 수행의 중심
-
-👉 Page가 더 적절한 abstraction
-
----
-
-## Drawer Usage Rule
-
-Drawer는 다음 조건에서만 사용한다:
-
-### ✅ 사용
-
-- Comment 작성
-- History 조회
-- 간단한 수정 (partial edit)
-- 보조 정보 표시
-
----
-
-### ❌ 사용하지 않음
-
-- Ticket 전체 수정
-- Approval flow 전체
-- 주요 workflow
-
----
-
-## Key Insight
-
-```txt
-Overlay는 빠른 interaction을 위한 도구이지,
-복잡한 workflow를 담는 컨테이너가 아니다.
-```
-
----
-
-## Additional Consideration
-
-### Drawer as “Last UI Layer”
-
-- Drawer는 항상 **가장 마지막 UI 레이어**로 사용
-- Drawer 위에 Drawer를 쌓지 않는다
-
-👉 이 규칙 하나로 UI 복잡도 크게 감소
-
----
-
-## Impact
-
-### Architecture
-
-- Routing 전략이 Page 중심으로 명확해짐
-- 와 일관성 확보
-
----
-
-### UI Pattern
-
-- 에서 정의한 dialog 역할이 명확해짐
-
----
-
-### Developer Experience
-
-- 상태 관리 단순화
-- 디버깅 쉬움
-- 컴포넌트 구조 명확
-
----
-
-## Trade-offs
-
-### Pros
-
-- 명확한 UX 구조
-- deep linking 가능
-- 유지보수성 향상
-- 복잡도 감소
-
----
-
-### Cons
-
-- 일부 interaction에서 페이지 전환 발생
-- modal 기반 UX보다 느리게 느껴질 수 있음
-
----
-
-## Final Summary
-
-```txt
-Primary workflow는 Page,
-보조 interaction은 Drawer/Dialog로 분리한다.
-```
-
-이 결정은 단순 UI 선택이 아니라
-**시스템 복잡도를 통제하기 위한 구조적 결정**이다.
+시스템이 screen 모음이 아니라 일관되고 구조화된 application interface로 동작하게
+한다.

@@ -19,12 +19,6 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "README.md",
       },
       {
-        id: "readme-strategy",
-        titleKey: "item.readmeStrategy.title",
-        descriptionKey: "item.readmeStrategy.description",
-        relativePath: "01-overview/readme-strategy.md",
-      },
-      {
         id: "service-desk-evolution",
         titleKey: "item.serviceDeskEvolution.title",
         descriptionKey: "item.serviceDeskEvolution.description",
@@ -115,10 +109,10 @@ export const documentGroups: DocumentGroup[] = [
               "03-domain/service-desk/ticket/ticket-lifecycle.md",
           },
           {
-            id: "ticket-activity",
-            titleKey: "item.ticketActivity.title",
-            descriptionKey: "item.ticketActivity.description",
-            relativePath: "03-domain/service-desk/ticket/ticket-activity.md",
+            id: "ticket-action",
+            titleKey: "item.ticketAction.title",
+            descriptionKey: "item.ticketAction.description",
+            relativePath: "03-domain/service-desk/ticket/ticket-action.md",
           },
           {
             id: "ticket-history",
@@ -127,11 +121,11 @@ export const documentGroups: DocumentGroup[] = [
             relativePath: "03-domain/service-desk/ticket/ticket-history.md",
           },
           {
-            id: "ticket-track-time",
-            titleKey: "item.ticketTrackTime.title",
-            descriptionKey: "item.ticketTrackTime.description",
+            id: "ticket-work-session",
+            titleKey: "item.ticketWorkSession.title",
+            descriptionKey: "item.ticketWorkSession.description",
             relativePath:
-              "03-domain/service-desk/ticket/ticket-track-time.md",
+              "03-domain/service-desk/ticket/ticket-work-session.md",
           },
         ],
       },
@@ -212,6 +206,31 @@ export const documentGroups: DocumentGroup[] = [
               "item.serviceDeskImplementationStrategy.description",
             relativePath:
               "04-engineering/service-desk-implementation-strategy.md",
+          },
+        ],
+      },
+      {
+        id: "conventions",
+        titleKey: "section.engineering.conventions.title",
+        items: [
+          {
+            id: "boolean-naming-convention",
+            titleKey: "item.booleanNamingConvention.title",
+            descriptionKey: "item.booleanNamingConvention.description",
+            relativePath:
+              "04-engineering/conventions/boolean-naming-convention.md",
+          },
+        ],
+      },
+      {
+        id: "documentation",
+        titleKey: "section.engineering.documentation.title",
+        items: [
+          {
+            id: "readme-strategy",
+            titleKey: "item.readmeStrategy.title",
+            descriptionKey: "item.readmeStrategy.description",
+            relativePath: "04-engineering/documentation/readme-strategy.md",
           },
         ],
       },

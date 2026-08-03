@@ -189,7 +189,7 @@ breach rule.
 
 - [`category-strategy.md`](category-strategy.md)
 - [`action-strategy.md`](action-strategy.md)
-- [`../ticket-track-time.md`](../ticket-track-time.md)
+- [`../ticket-work-session.md`](../ticket-work-session.md)
 - [`../ticket-history.md`](../ticket-history.md)
 - [`../../../../04-engineering/forms/ticket-form.md`](../../../../04-engineering/forms/ticket-form.md)
 

@@ -52,8 +52,8 @@ README는 전체 문서가 아니라 진입점이다
 ```md
 ## **Languages**
 
-- [English](../../../README.md)
-- [Korean](../../../README.ko.md)
+- [English](../../../../README.md)
+- [Korean](../../../../README.ko.md)
 ```
 
 ---
@@ -91,7 +91,7 @@ README는 전체 문서가 아니라 진입점이다
 ### 3. 더 깊은 문서로 이동할 수 있게 안내한다
 
 ```md
-See more in: docs/en/README.md
+See more in: docs/ko/README.md
 ```
 
 ---
@@ -130,7 +130,7 @@ Docs -> 시스템 설명
 ### 흐름
 
 ```txt
-README -> docs/en/README.md -> 상세 문서들
+README -> docs/ko/README.md -> 상세 문서들
 ```
 
 ---
@@ -142,13 +142,17 @@ README -> docs/en/README.md -> 상세 문서들
 ```txt
 docs/
   ko/
-    01-overview/
-    02-architecture/
-    03-domain/
-    04-engineering/
-    05-releases/
-    06-decisions/
+    01-overview/     # 프로젝트와 Service Desk의 발전 과정
+    02-architecture/ # application 및 runtime boundary
+    03-domain/       # 현재 domain model과 workflow rule
+    04-engineering/  # 구현 pattern과 convention
+    05-releases/     # release별 기록
+    06-decisions/    # historical decision record
 ```
+
+현재 설계 문서는 구현과 정렬된 시스템을 설명한다. Decision log는 특정 시점의
+맥락을 보존하고, README와 overview 문서는 독자를 안내하며 적절한 source-of-truth
+문서로 연결한다.
 
 ---
 

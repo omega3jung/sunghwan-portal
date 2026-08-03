@@ -1,6 +1,6 @@
 import { ApiError } from "@/lib/application/api";
 import {
-  isTicketActionExecutionAllowed,
+  canExecuteTicketAction,
   resolveTicketActionExecutionMode,
 } from "@/lib/application/contracts/serviceDesk";
 
@@ -41,7 +41,7 @@ export const executeLocalAction = async ({
 
   if (
     ticket &&
-    !isTicketActionExecutionAllowed(actionMode, ticket.status)
+    !canExecuteTicketAction(actionMode, ticket.status)
   ) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.actionNotAllowed",

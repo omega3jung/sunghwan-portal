@@ -207,7 +207,7 @@ Differences in storage implementation should remain behind the route handler.
 
 ## Related Documents
 
-- [Ticket Activity Model](../ticket-activity.md)
+- [Ticket Action Model](../ticket-action.md)
 - [Ticket History](../ticket-history.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
 - [Ticket Lifecycle](../ticket-lifecycle.md)

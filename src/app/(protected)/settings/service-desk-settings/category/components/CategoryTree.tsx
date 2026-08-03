@@ -24,7 +24,7 @@ type Props = {
   removeCategory: (id: UniqueIdentifier) => void;
   language: SupportedLanguage;
   isLoading: boolean;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
 export const CategoryTree = ({
@@ -36,7 +36,7 @@ export const CategoryTree = ({
   removeCategory,
   language,
   isLoading,
-  readOnly = false,
+  canEdit = true,
 }: Props) => {
   const tLocal = useLocalizedText(language);
 
@@ -46,14 +46,14 @@ export const CategoryTree = ({
         items={tree}
         onChange={setTree}
         collapsible
-        disabled={readOnly}
+        disabled={!canEdit}
         indentationWidth={20}
         reorderScope="sameDepth"
         renderItem={(item, { dragHandleProps, isOverlay, onCollapse }) => {
           const data = item.data;
           const isSubCategory = item.depth > 0;
           const canAddSubCategory =
-            !readOnly &&
+            canEdit &&
             !isSubCategory &&
             item.maximum != null &&
             item.children.length < item.maximum;
@@ -89,7 +89,7 @@ export const CategoryTree = ({
                     </Button>
                   )}
 
-                  {!readOnly && data.isCreated ? (
+                  {canEdit && data.isCreated ? (
                     <Button
                       variant="ghost"
                       type="button"
@@ -104,18 +104,18 @@ export const CategoryTree = ({
                       <X className="size-4" />
                     </Button>
                   ) : (
-                    !readOnly && (
+                    canEdit && (
                       <span className="size-5 shrink-0" aria-hidden="true" />
                     )
                   )}
 
-                  {!readOnly && !isOverlay && (
+                  {canEdit && !isOverlay && (
                     <DragHandle
                       {...dragHandleProps}
                       aria-label={tLocal(data.name)}
                     />
                   )}
-                  {!readOnly && isOverlay && (
+                  {canEdit && isOverlay && (
                     <span className="size-5 shrink-0" aria-hidden="true" />
                   )}
                 </>

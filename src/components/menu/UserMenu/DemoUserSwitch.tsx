@@ -19,7 +19,7 @@ import { getDisplayNameKey, getPermissionIcon } from "./utils";
 type Props = {
   internalCandidates: AppUser[];
   clientCandidates: AppUser[];
-  disabled: boolean;
+  canSwitchDemoUser: boolean;
   onDemoUserSwitch: (user: AppUser) => Promise<void>;
 };
 
@@ -27,7 +27,7 @@ export function DemoUserSwitch(props: Props) {
   const {
     internalCandidates,
     clientCandidates,
-    disabled,
+    canSwitchDemoUser,
     onDemoUserSwitch,
   } = props;
 
@@ -36,9 +36,10 @@ export function DemoUserSwitch(props: Props) {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger
-        disabled={disabled}
+        disabled={!canSwitchDemoUser}
         className={cn(
-          disabled && "cursor-not-allowed text-muted-foreground opacity-50",
+          !canSwitchDemoUser &&
+            "cursor-not-allowed text-muted-foreground opacity-50",
         )}
       >
         <UsersRound />

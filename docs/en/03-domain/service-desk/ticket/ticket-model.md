@@ -243,7 +243,7 @@ Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticke
 Ticket actions are command-created timeline entries. They are not the same as
 history. Some actions mutate ticket state and create multiple history records.
 
-Related document: [Ticket Activity Model](./ticket-activity.md)
+Related document: [Ticket Action Model](./ticket-action.md)
 
 ### Ticket History
 
@@ -257,7 +257,7 @@ Related document: [Ticket History](./ticket-history.md)
 Work Session records actual tracked work. The ticket exposes aggregated
 `workMinutes`, while individual sessions remain a separate subresource.
 
-Related document: [Ticket Track Time](./ticket-track-time.md)
+Related document: [Ticket Work Session](./ticket-work-session.md)
 
 ---
 

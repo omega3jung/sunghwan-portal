@@ -42,6 +42,12 @@
       "approach": {
         "title": "구현 접근"
       },
+      "conventions": {
+        "title": "규칙"
+      },
+      "documentation": {
+        "title": "문서화"
+      },
       "ui": {
         "title": "UI"
       },
@@ -94,6 +100,10 @@
       "title": "README 전략",
       "description": "저장소를 소개하고 독자를 심화 문서로 안내하는 방식을 설명합니다."
     },
+    "booleanNamingConvention": {
+      "title": "Boolean 명명 규칙",
+      "description": "capability, state, presentation 경계에 적용하는 프로젝트 공통 boolean 명명 규칙입니다."
+    },
     "featureBasedStructure": {
       "title": "기능 기반 구조",
       "description": "프로젝트 슬라이스 경계와 폴더 소유권 전략을 설명합니다."
@@ -130,17 +140,17 @@
       "title": "티켓 모델",
       "description": "핵심 티켓 모델과 소유 구조를 설명합니다."
     },
-    "ticketActivity": {
-      "title": "티켓 활동",
-      "description": "커뮤니케이션과 운영 액션을 위한 활동 모델을 설명합니다."
+    "ticketAction": {
+      "title": "Ticket Action",
+      "description": "커뮤니케이션과 운영 command를 위한 first-class action model을 설명합니다."
     },
     "ticketHistory": {
       "title": "티켓 이력",
       "description": "감사 가능성과 이력 타임라인 전략을 설명합니다."
     },
-    "ticketTrackTime": {
-      "title": "티켓 작업 시간 추적",
-      "description": "세션 기반 작업 추적과 시간 기록 모델을 설명합니다."
+    "ticketWorkSession": {
+      "title": "Ticket Work Session",
+      "description": "작업 시간 근거와 tracked-time model을 설명합니다."
     },
     "serviceDeskSettings": {
       "title": "서비스 데스크 설정",

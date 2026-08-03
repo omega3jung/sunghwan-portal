@@ -210,6 +210,17 @@ Assigned
 
 요청자는 티켓 소유자여야 한다.
 
+Update flow:
+
+```txt id="requester-update-flow"
+load latest ticket detail
+-> keep existing prepared attachments
+-> prepare new body/files/images
+-> merge prepared metadata
+-> submit requester update
+-> server decides routing reset or preservation
+```
+
 Routing-sensitive fields:
 
 - category
@@ -247,6 +258,23 @@ Zustand는 form input, draft, attachment metadata의 source of truth가 아니�
 
 ---
 
+## Reset and Close Policy
+
+Create 또는 update 성공 시:
+
+- dialog를 닫는다.
+- form state를 reset한다.
+- 영향받은 ticket query를 invalidate한다.
+- 필요한 경우 제출한 draft를 clear 또는 remove한다.
+
+Dirty input이 있는 create dialog를 닫을 때:
+
+- draft behavior가 활성화되어 있으면 draft를 저장한다.
+- 현재 dialog behavior에 따라 경고하거나 미저장 intent를 보존한다.
+- attachment recovery를 보장하지 않는다.
+
+---
+
 ## 안티패턴
 
 ### Generic `TicketFormDialog`
@@ -262,6 +290,11 @@ Raw browser file은 ticket row, React Query cache, draft DTO, global state에 �
 
 클라이언트는 경고와 기본값을 표시할 수 있지만 승인 reset, assignment resolution,
 routing history의 권위자는 서버다.
+
+### Silent Requester Updates
+
+Routing-sensitive field에 영향을 주는 requester update는 history event를 통해 추적할
+수 있어야 한다.
 
 ---
 

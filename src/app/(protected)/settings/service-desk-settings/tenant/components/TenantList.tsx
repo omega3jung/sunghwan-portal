@@ -27,7 +27,7 @@ type TenantListProps = {
   tenants: TenantSettingItem[];
   selectedTenantIds: string[];
   focusedTenantId: string | null;
-  disabled?: boolean;
+  canSelectTenants?: boolean;
   onSelectTenant: (tenant: TenantSettingItem) => void;
   className?: string;
 };
@@ -36,7 +36,7 @@ export function TenantList({
   tenants,
   selectedTenantIds,
   focusedTenantId,
-  disabled = false,
+  canSelectTenants = true,
   onSelectTenant,
   className,
 }: TenantListProps) {
@@ -80,7 +80,7 @@ export function TenantList({
                     type="button"
                     variant="outline"
                     aria-pressed={isSelected}
-                    disabled={disabled}
+                    disabled={!canSelectTenants}
                     onClick={() => onSelectTenant(tenant)}
                     className={cn(
                       "h-20 w-full flex-col items-stretch gap-2 p-4 text-left",

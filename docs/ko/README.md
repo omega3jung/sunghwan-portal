@@ -27,22 +27,22 @@
 
 `docs/ko` 폴더 구성:
 
-- `01-overview`: 프로젝트 안내, README 전략, 시스템 발전 과정
-- `02-architecture`: app structure, routing, database, state, auth/session
-- `03-domain`: Service Desk domain rules and workflow behavior
-- `04-engineering`: 구현, UI, form, data fetching, i18n
-- `05-releases`: 버전 변경, migration, 영향, 검증 기록
-- `06-decisions`: 특정 시점의 설계 결정과 대안 기록
+- `01-overview`: 프로젝트와 Service Desk의 발전 과정
+- `02-architecture`: application 및 runtime boundary
+- `03-domain`: 현재 Service Desk domain model과 workflow rule
+- `04-engineering`: 구현 pattern, UI, form, data fetching, i18n, convention,
+  documentation practice
+- `05-releases`: release별 기록
+- `06-decisions`: historical decision record
 
 ---
 
 ## Overview
 
-프로젝트와 문서 구성, Service Desk의 발전 과정을 안내한다.
+프로젝트와 Service Desk의 발전 과정을 안내한다.
 
 주요 문서:
 
-- [README Strategy](./01-overview/readme-strategy.md)
 - [Service Desk Evolution](./01-overview/service-desk-evolution.md)
 
 ---
@@ -68,9 +68,9 @@
 - [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 - [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-- [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
-- [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+- [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 - [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 - [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 - [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 - [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
@@ -163,6 +163,18 @@ tenant-scoped settings가 포함된다.
 
 ---
 
+### Convention과 Documentation Practice
+
+프로젝트 전반의 convention과 documentation practice는 feature, application,
+domain 및 UI boundary에 공통으로 적용된다.
+
+주요 문서:
+
+- [Boolean Naming Convention](./04-engineering/conventions/boolean-naming-convention.md)
+- [README Strategy](./04-engineering/documentation/readme-strategy.md)
+
+---
+
 ## Releases
 
 버전별 주요 변경 사항, migration 내용, architecture 영향, 검증 결과와
@@ -215,9 +227,9 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 3. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
 4. [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 5. [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-6. [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
+6. [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 7. [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
-8. [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+8. [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 9. [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 10. [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
 11. [Assignment Policy](./03-domain/service-desk/ticket/strategy/assignment-policy.md)

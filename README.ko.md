@@ -48,7 +48,7 @@ production-complete 범위까지 구현하지는 않았습니다.
    어떻게 달라지는지 비교합니다.
 4. **Settings → IT Service Desk Settings**에서 Tenant, Category, Approval
    Steps와 Assignment Rules를 확인합니다.
-5. 설계 판단은 [Ticket System 표준 명세](./docs/spec/ticket-system.ko.md),
+5. 설계와 workflow의 자세한 내용은 [Ticket System 표준 명세](./docs/spec/ticket-system.ko.md),
    [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md),
    [문서 인덱스](./docs/ko/README.md)에서 확인합니다.
 
@@ -190,7 +190,7 @@ REJECT | MERGE | ADJUST | REOPEN | RESUBMIT | CANCEL
 명시적인 start-work route는 이 union과 분리되어 있습니다.
 
 ```txt
-POST /api/service-desk/tickets/:ticketId/command/start-work
+POST /api/service-desk/tickets/[ticketId]/command/start-work
 ```
 
 History는 영향을 받은 domain area(`type`), 원인(`source`), authoritative
@@ -320,9 +320,9 @@ src/
   styles/       # global Tailwind CSS와 theme token
   types/        # global 및 library type augmentation
 docs/
-  en/           # 영어 architecture 및 domain 문서
-  ko/           # 한국어 architecture 및 domain 문서
-  spec/         # Ticket System 표준 명세
+  en/           # 영어 overview, architecture, domain, engineering, release 및 decision 문서
+  ko/           # 영어 문서 구조와 정렬된 한국어 번역
+  spec/         # 영어 및 한국어 Ticket System 표준 명세
 ```
 
 ## 문서
@@ -335,19 +335,22 @@ docs/
 
 1. [Ticket System 표준 명세](./docs/spec/ticket-system.ko.md)
 2. [Service Desk 문서 인덱스](./docs/ko/README.md)
-3. [Ticket Lifecycle](./docs/ko/03-domain/service-desk/ticket/ticket-lifecycle.md)
-4. [Ticket Model](./docs/ko/03-domain/service-desk/ticket/ticket-model.md)
-5. [Ticket Activity와 Action](./docs/ko/03-domain/service-desk/ticket/ticket-activity.md)
-6. [Ticket History](./docs/ko/03-domain/service-desk/ticket/ticket-history.md)
-7. [Service Desk Settings](./docs/ko/03-domain/service-desk/settings.md)
-8. [Ticket Form](./docs/ko/04-engineering/forms/ticket-form.md)과
+3. [Ticket System Overview](./docs/ko/03-domain/service-desk/ticket/ticket-system-overview.md)
+4. [Service Desk Settings](./docs/ko/03-domain/service-desk/settings.md)
+5. [Ticket Lifecycle](./docs/ko/03-domain/service-desk/ticket/ticket-lifecycle.md)
+6. [Ticket Model](./docs/ko/03-domain/service-desk/ticket/ticket-model.md)
+7. [Ticket Action](./docs/ko/03-domain/service-desk/ticket/ticket-action.md)
+8. [Ticket History](./docs/ko/03-domain/service-desk/ticket/ticket-history.md)
+9. [Ticket Work Session](./docs/ko/03-domain/service-desk/ticket/ticket-work-session.md)
+10. [Ticket Form](./docs/ko/04-engineering/forms/ticket-form.md)과
    [Attachment 설계](./docs/ko/04-engineering/forms/ticket-attachment.md)
-9. [구현 전략](./docs/ko/04-engineering/service-desk-implementation-strategy.md)
-10. [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+11. [구현 전략](./docs/ko/04-engineering/service-desk-implementation-strategy.md)
+12. [Boolean 명명 규칙](./docs/ko/04-engineering/conventions/boolean-naming-convention.md)
+13. [README 전략](./docs/ko/04-engineering/documentation/readme-strategy.md)
+14. [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
-과거 구현 결정은
-[`docs/ko/06-decisions`](./docs/ko/06-decisions/)에
-정리되어 있습니다.
+과거 decision record는
+[Decision 문서](./docs/ko/06-decisions/README.md)에 정리되어 있습니다.
 
 ## 품질과 검증
 

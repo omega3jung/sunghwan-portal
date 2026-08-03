@@ -42,6 +42,12 @@
       "approach": {
         "title": "Approche"
       },
+      "conventions": {
+        "title": "Conventions"
+      },
+      "documentation": {
+        "title": "Documentation"
+      },
       "ui": {
         "title": "UI"
       },
@@ -94,6 +100,10 @@
       "title": "Strategie README",
       "description": "Comment le depot se presente et oriente les lecteurs vers des documents plus detailles."
     },
+    "booleanNamingConvention": {
+      "title": "Convention de nommage des booleens",
+      "description": "Regles communes de nommage des booleens pour les limites de capacite, d'etat et de presentation."
+    },
     "featureBasedStructure": {
       "title": "Structure par fonctionnalite",
       "description": "Limites des segments du projet et strategie de propriete des dossiers."
@@ -130,17 +140,17 @@
       "title": "Modele de ticket",
       "description": "Modele central du ticket et structure de propriete."
     },
-    "ticketActivity": {
-      "title": "Activite du ticket",
-      "description": "Modele d'activite pour les communications et les actions operationnelles."
+    "ticketAction": {
+      "title": "Action du ticket",
+      "description": "Modele d'action principal pour les communications et les commandes operationnelles."
     },
     "ticketHistory": {
       "title": "Historique du ticket",
       "description": "Strategie d'auditabilite et de chronologie d'historique."
     },
-    "ticketTrackTime": {
-      "title": "Suivi du temps du ticket",
-      "description": "Modele de suivi du travail par session et d'enregistrement du temps."
+    "ticketWorkSession": {
+      "title": "Session de travail du ticket",
+      "description": "Modele de preuves de session de travail et de temps enregistre."
     },
     "serviceDeskSettings": {
       "title": "Parametres Service Desk",

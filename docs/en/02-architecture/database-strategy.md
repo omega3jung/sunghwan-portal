@@ -400,7 +400,7 @@ The current database strategy does not claim the following as complete:
 - [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
 - [`../03-domain/service-desk/ticket/ticket-model.md`](../03-domain/service-desk/ticket/ticket-model.md)
 - [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-track-time.md`](../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
 - [`../04-engineering/forms/ticket-attachment.md`](../04-engineering/forms/ticket-attachment.md)
 - [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
 

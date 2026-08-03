@@ -511,7 +511,7 @@ Attachment tests should cover:
 
 - [`ticket-form.md`](ticket-form.md)
 - [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-activity.md`](../../03-domain/service-desk/ticket/ticket-activity.md)
+- [`../../03-domain/service-desk/ticket/ticket-action.md`](../../03-domain/service-desk/ticket/ticket-action.md)
 - [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
 - [`../02-architecture/database-strategy.md`](../../02-architecture/database-strategy.md)
 - [`../../06-decisions/2026-06-ticket-attachment-boundary.md`](../../06-decisions/2026-06-ticket-attachment-boundary.md)

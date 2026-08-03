@@ -1,329 +1,388 @@
-# 2025-12 인증/세션 아키텍처 결정
+# Auth & Session Architecture (2025-12)
 
-## 배경
+## 맥락
 
-이 프로젝트는 레거시 **Next.js v12 (Page Router)** 시스템을
-**Next.js 14 (App Router)** 로 마이그레이션하는 것에서 시작되었다.
+Service Desk 시스템에는 다음을 지원하는 인증 및 세션 모델이 필요했다.
 
-기존 시스템은 다음과 같은 특성을 가지고 있었다.
+- 안전한 로그인과 route 보호
+- authentication, session, client state 사이의 명확한 분리
+- role-aware UI 동작
+- first-class feature로서의 impersonation
+- 추적 가능성과 감사 가능성
 
-- 페이지 단위 상태 관리에 의존했다
-- 인증 로직과 UI 로직이 섞여 있었다
-- 세션 처리가 임시방편으로 구성되어 있었고 NextAuth 패턴과 완전히 맞지 않았다
-
-마이그레이션 과정에서의 목표는 다음과 같았다.
-
-- **프로덕션 수준의 인증 아키텍처**를 수립한다
-- **NextAuth v4 (JWT 전략)** 와 정렬한다
-- 인증, 세션, 클라이언트 상태의 책임을 분리한다
-- **데모(local)** 와 **실제(remote)** 로그인 흐름을 모두 지원한다
+이 단계의 목표는 사용자 인증에 그치지 않고 application 전반에서 사용자 맥락에
+의존하는 모든 동작을 위한 안정적인 기반을 만드는 것이었다.
 
 ---
 
-## 문제
-
-### 1. 세션 책임의 경계가 모호함
-
-- 인증, 세션, UI 상태가 강하게 결합되어 있었다
-- 다음 경계가 명확하지 않았다
-  - 서버 신원(auth)
-  - 클라이언트 런타임 상태(session)
-
----
-
-### 2. `useSession()`의 활용 범위가 제한적임
-
-NextAuth는 다음을 제공한다.
-
-```ts
-useSession();
-```
-
-하지만:
-
-- React 컴포넌트 내부에서만 사용할 수 있다
-- 서비스나 유틸리티에서는 접근할 수 없다
-- 불필요한 리렌더링을 유발할 수 있다
-- 전역 상태처럼 다루기 어렵다
-
----
-
-### 3. 데이터 소스가 혼합되어 있음
-
-시스템은 다음 두 흐름을 모두 지원해야 했다.
-
-- LOCAL (demo/mock)
-- REMOTE (real API)
-
-이로 인해 다음 영역의 복잡성이 증가했다.
-
-- 세션 일관성
-- 권한 처리
-- 데이터 소스 전환
-
----
-
-## 검토한 선택지
-
-### 선택지 1. NextAuth Session만 사용
-
-- `useSession()`에 전적으로 의존한다
-
-**장점**
-
-- 단순하다
-- 기본적인 NextAuth 패턴을 따른다
-
-**단점**
-
-- 전역적으로 접근하기 어렵다
-- React 바깥 로직과 통합하기 어렵다
-- 세션 생명주기를 세밀하게 제어하기 어렵다
-
----
-
-### 선택지 2. 완전한 커스텀 세션 시스템
-
-- NextAuth의 session 추상화를 사용하지 않는다
-- 인증 + 세션 레이어를 직접 구축한다
-
-**장점**
-
-- 완전한 제어가 가능하다
-
-**단점**
-
-- 인증 시스템을 다시 만드는 셈이 된다
-- 복잡도가 증가한다
-- 보안 리스크가 커진다
-
----
-
-### 선택지 3. 하이브리드 접근 방식 (채택)
+## 1. 핵심 원칙
 
 ```txt
-NextAuth (JWT + Session)
-+ Zustand (client session store)
+Authentication은 identity를 검증한다.
+Session은 runtime context를 제공한다.
+Client state는 UI 동작을 제어한다.
 ```
 
 ---
 
-## 결정
+## 2. 핵심 Concept
 
-다음과 같은 **하이브리드 세션 아키텍처**를 채택한다.
+### 1. JWT (Authentication Layer)
 
-### 1. NextAuth
-
-- 인증을 담당한다
-- JWT를 발급한다(상태 비저장 신원 정보)
-- session 추상화를 제공한다
+- 로그인 후 발급되는 stateless token
+- HTTP-only cookie에 저장
+- server-side validation에 사용
 
 ---
 
-### 2. JWT
+### 2. Session (Runtime Context)
 
-- 신원 정보의 source of truth다
-- HTTP-only 쿠키에 저장된다
-- 인가 처리를 위해 middleware에서 사용된다
-
----
-
-### 3. Session (NextAuth)
-
-- JWT에서 파생된다
-- UI 소비를 위해 사용된다
+- JWT에서 도출
+- UI와 application logic 전반에서 사용
+- impersonation을 지원하도록 확장
 
 ---
 
-### 4. authSessionStore (Zustand)
+### 3. Client State (Control Layer)
 
-- 클라이언트 측 세션 캐시다
-- 전역 접근 경로를 제공한다
-- NextAuth session과 동기화된다
+- Zustand로 관리
+- 다음 용도로 사용:
+  - React hook 밖에서 session 접근
+  - impersonation 제어
+  - UI state
 
 ---
 
-### 5. Facade Hook
+## 3. Architecture 개요
 
 ```txt
-useCurrentSession()
-```
-
-- NextAuth + Zustand를 결합한다
-- UI를 위한 단일 인터페이스를 제공한다
-
----
-
-## 아키텍처 개요
-
-```txt
-Login -> authorize()
--> JWT 발급
--> Cookie 저장
-
-Request -> middleware -> JWT 검증
-
-Client -> useSession()
--> sync -> authSessionStore
-
-UI -> useCurrentSession()
+Login
+-> JWT issued (cookie)
+-> Middleware validates JWT
+-> Session derived (NextAuth)
+-> Synced to Zustand
+-> UI consumes currentUser
 ```
 
 ---
 
-## 근거
+## 4. 이 Architecture를 선택한 이유
 
 ### 1. 관심사 분리
 
-| 레이어   | 책임                   |
-| -------- | ---------------------- |
-| NextAuth | 인증                   |
-| JWT      | 신원                   |
-| Session  | 런타임 컨텍스트        |
-| Zustand  | 클라이언트 접근 레이어 |
+| Layer | 책임 |
+| --- | --- |
+| JWT | Identity 검증 |
+| Session | Runtime context |
+| Zustand | UI + control layer |
 
 ---
 
-### 2. 유연성
+### 2. 확장성
 
-- LOCAL과 REMOTE 흐름을 모두 지원할 수 있다
-- 앞으로 다음 기능을 수용할 수 있다
-  - impersonation
-  - role-based access
-  - multi-client logic
+- Stateless JWT는 horizontal scaling을 지원
+- DB session 의존성 없음
+- Edge Middleware와 함께 동작
 
 ---
 
-### 3. 실용성
+### 3. 확장 가능성
 
-- React hook 바깥에서도 접근이 가능해진다
-- UI 소비 방식이 단순해진다
-- 서버 측 검증 구조를 유지할 수 있다
-
----
-
-## 트레이드오프
-
-### 복잡도 증가
-
-- 여러 레이어가 생긴다
-  - JWT
-  - Session
-  - Zustand
+- impersonation 지원
+- role-based UI 동작 지원
+- 향후 audit 확장 여지 확보
 
 ---
 
-### 동기화 비용
+## 5. Session Model
 
-- NextAuth와 Zustand를 동기화해야 한다
-- 주의 깊게 다루지 않으면 stale state가 생길 수 있다
+### 기본 구조
 
----
+```ts
+type AppSession = {
+  user: {
+    id: string;
+    role: string;
+  };
 
-### 중복 위험
-
-- 동일한 데이터가 다음 위치에 존재한다
-  - JWT
-  - Session
-  - Store
-
-완화 방안:
-
-- JWT = source of truth
-- Store = cache only
-
----
-
-## 핵심 설계 결정
-
-### 1. JWT를 source of truth로 둔다
-
-- 클라이언트 상태만 단독으로 신뢰하지 않는다
-- 인증 판단은 항상 JWT를 기준으로 한다
-
----
-
-### 2. Session은 projection이다
-
-- Session이 원본은 아니다
-- UI 사용을 위해 JWT에서 파생된 표현이다
-
----
-
-### 3. Zustand는 접근 레이어이지 권한 주체가 아니다
-
-```txt
-Zustand는 캐시이지 source of truth가 아니다
+  accessToken?: string;
+};
 ```
 
 ---
 
-### 4. Hook 안에 비즈니스 로직을 넣지 않는다
+### Impersonation 통합
 
-- `useCurrentSession`은 **facade**다
-- 클라이언트 내부에서 권한 계산을 수행하지 않는다
-
----
-
-### 5. 인가는 서버가 소유한다
-
-- permission / role 로직은 서버 측에서 처리한다
-- 클라이언트는 결과를 소비만 한다
-
----
-
-## 기각한 패턴
-
-### `localStorage`에 JWT 저장
-
-- 보안 위험이 크다(XSS)
+```ts
+session = {
+  user: originalUser,
+  impersonation: {
+    originalUserId,
+    impersonatedUserId,
+  },
+};
+```
 
 ---
 
-### 인증을 클라이언트 상태에만 의존
+### Concept
 
-- 안전하지 않다
-- 신뢰할 수 없다
+#### `currentUser`
 
----
+- UI와 API가 사용
+- 현재 작업 identity를 나타냄
 
-### 인증 로직과 UI 로직 혼합
+#### `originalUser`
 
-- 동작이 일관되지 않게 된다
-- 유지보수가 어려워진다
+- 실제 authenticated user
+- audit과 traceability에 사용
 
----
+#### `isImpersonating` (Derived)
 
-## 향후 고려 사항
-
-- refresh token 전략 추가
-- role hierarchy 로직 도입
-- impersonation 지원 확장
-- 토큰 크기 최적화 검토
+- impersonation mode 활성 여부를 나타냄
 
 ---
 
-## 결과
+### 이 구성이 중요한 이유
 
-최종 아키텍처는 다음을 만족한다.
+다음을 가능하게 한다.
 
-- NextAuth 모범 사례와 정렬된다
-- App Router + Edge Middleware를 지원한다
-- 확장 가능하고 유연한 인증 시스템을 제공한다
-- 서버와 클라이언트의 책임을 명확히 분리한다
+- 전체 audit trail
+- role-aware UI rendering
+- 안전한 context switching
+
+---
+
+## 6. Client-Side 통합 (Zustand)
+
+### Impersonation State Model
+
+```ts
+type ImpersonationState = {
+  originalUser: AppUser | null; // original user
+  impersonatedUser: AppUser | null; // impersonated user
+  currentUser: AppUser | null; // current UI user
+};
+```
+
+---
+
+### 책임
+
+| Field | 의미 |
+| --- | --- |
+| originalUser | 원래 authenticated user |
+| impersonatedUser | impersonated user |
+| currentUser | UI의 active user |
+
+---
+
+### Data Flow
+
+```txt
+NextAuth Session -> Sync -> Zustand -> UI
+```
+
+---
+
+### 통합 규칙
+
+- 로그인 후 `originalUser` 설정
+- impersonation 시작 시 `impersonatedUser` 설정
+- UI는 항상 `currentUser` 사용
+
+---
+
+### 설계 원칙
+
+```txt
+NextAuth = source of truth
+Zustand = runtime control layer
+```
+
+---
+
+## 7. Impersonation Lifecycle
+
+```txt
+Login -> setOriginalUser
+-> Start Impersonation -> setImpersonatedUser
+-> currentUser changes
+-> UI re-renders
+-> Stop Impersonation -> restore originalUser
+```
+
+---
+
+### 중요한 구분
+
+| Action | 동작 |
+| --- | --- |
+| Stop Impersonation | original user 복원 |
+| Sign Out | 전체 session 제거 |
+
+---
+
+## 8. UI 통합
+
+Impersonation은 UI에 명시적으로 반영된다.
+
+---
+
+### UI 동작
+
+- global impersonation indicator(예: banner/label)
+- 표시되는 `Stop Impersonation` action
+- layout-level awareness
+- 즉시 적용되는 user context switch
+
+---
+
+### 예
+
+- 현재 사용자에 따라 sidebar menu 변경
+- role-based rendering 즉시 적용
+- demo mode UI에서 LOCAL border indicator 같은 state 노출 가능
+
+---
+
+### 목적
+
+- 사용자 혼동 방지
+- 투명성 보장
+- 안전한 testing과 debugging 지원
+
+---
+
+## 9. Authentication Flow
+
+```txt
+User Login
+-> authorize()
+-> JWT issued
+-> stored in cookie
+-> middleware validates
+-> session created
+-> Zustand sync
+-> UI rendered
+```
+
+---
+
+## 10. Middleware 전략
+
+### 동작
+
+- page rendering 전에 실행
+- `getToken()`으로 JWT 검증
+- unauthenticated 상태이면 redirect
+
+---
+
+### 장점
+
+- client-side flicker 없음
+- 이른 access control
+- App Router와 함께 동작
+
+---
+
+## 11. 보안 고려 사항
+
+### 1. Cookie Storage
+
+- JWT를 HTTP-only cookie에 저장
+- XSS 접근 방지
+
+---
+
+### 2. Token Validation
+
+- middleware에서 항상 검증
+- client-only state를 신뢰하지 않음
+
+---
+
+### 3. Impersonation Safety
+
+- original user를 항상 보존
+- privilege escalation을 허용하지 않음
+
+---
+
+### 4. Explicit Activation
+
+- 사용자가 impersonation을 직접 시작해야 함
+- 자동 전환 없음
+
+---
+
+## 12. 피한 Anti-Pattern
+
+### JWT를 `localStorage`에 저장
+
+- XSS에 취약
+
+---
+
+### Session을 Auth Source로 사용
+
+- JWT가 source of truth
+
+---
+
+### Auth와 UI Logic 혼합
+
+- Auth는 NextAuth + middleware에서 처리
+
+---
+
+### Server Data를 Zustand에 저장
+
+- Session은 runtime context로만 취급
+
+---
+
+## 13. Trade-off
+
+### 장점
+
+- scalable하고 stateless함
+- 명확한 관심사 분리
+- impersonation 지원
+- role-aware UI 지원
+- audit-friendly
+
+---
+
+### 단점
+
+- 더 높은 복잡도(JWT + session + Zustand)
+- synchronization 필요
+- impersonation 처리를 위한 UI condition 증가
+
+---
+
+## 14. 향후 고려 사항
+
+- impersonation audit logging 개선
+- 더 명확한 UI indicator
+- role-based permission check 확장
+- session expiration 처리 개선
 
 ---
 
 ## 요약
 
-```txt
-JWT -> 신원 정보 (서버 기준 truth)
-Session -> UI 컨텍스트
-Zustand -> 클라이언트 접근 레이어
-```
+이 architecture는 다음을 결합한다.
 
-이 결정은 다음 균형을 맞추는 **하이브리드 세션 아키텍처**를 확립한다.
+- NextAuth(authentication)
+- JWT(identity)
+- Session(runtime context)
+- Zustand(client control layer)
 
-- 정확성(server-driven auth)
-- 사용성(client access)
-- 확장성(stateless design)
+이를 통해 secure, scalable, extensible하며 impersonation과 완전히 통합된 시스템을
+만든다.
+
+단순한 authentication system이 아니라 impersonation, role-based UI, auditability를
+포함한 모든 user-context-dependent behavior의 기반이다.

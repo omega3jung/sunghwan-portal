@@ -17,7 +17,7 @@
 - React Query server-state ownership
 
 개념적 진화는 [`service-desk-evolution.md`](../01-overview/service-desk-evolution.md)에서 다루고,
-당시 의사결정 맥락은 `decision-log`에 보존한다.
+당시 의사결정 맥락은 `06-decisions`에 보존한다.
 
 ---
 
@@ -380,9 +380,9 @@ Current design docs는 이 항목을 완료된 동작으로 설명하지 않는�
 - [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
 - [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
 - [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-activity.md`](../03-domain/service-desk/ticket/ticket-activity.md)
+- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
 - [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-track-time.md`](../03-domain/service-desk/ticket/ticket-track-time.md)
+- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
 - [`forms/ticket-form.md`](forms/ticket-form.md)
 - [`forms/ticket-attachment.md`](forms/ticket-attachment.md)
 - [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)

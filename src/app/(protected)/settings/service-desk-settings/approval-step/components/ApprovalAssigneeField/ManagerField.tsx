@@ -8,10 +8,14 @@ import { NS } from "@/lib/application/i18n";
 type Props = {
   stepAssignee: AssigneeByType<"MANAGER">;
   onChange: (value: ApprovalAssigneeType) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
-export function ManagerField({ stepAssignee, onChange, readOnly }: Props) {
+export function ManagerField({
+  stepAssignee,
+  onChange,
+  canEdit = true,
+}: Props) {
   const { t } = useTranslation(NS.settings);
 
   return (
@@ -23,7 +27,7 @@ export function ManagerField({ stepAssignee, onChange, readOnly }: Props) {
         id="approval-input-manager-distance"
         className="w-20"
         value={stepAssignee.managerDistance}
-        disabled={readOnly}
+        disabled={!canEdit}
         onChange={(e) => {
           const number = parseInt(e.target.value);
           onChange({

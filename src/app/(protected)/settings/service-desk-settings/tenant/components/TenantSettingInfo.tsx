@@ -22,7 +22,7 @@ import { TenantSettingItem } from "../types";
 
 type TenantSettingInfoProps = {
   tenant: TenantSettingItem | null;
-  disabled?: boolean;
+  canEditTenant?: boolean;
   onTenantNameChange: (tenantId: string, locale: Locale, value: string) => void;
   onTenantColorChange: (tenantId: string, color: string) => void;
   className?: string;
@@ -30,7 +30,7 @@ type TenantSettingInfoProps = {
 
 export function TenantSettingInfo({
   tenant,
-  disabled = false,
+  canEditTenant = true,
   onTenantNameChange,
   onTenantColorChange,
   className,
@@ -91,7 +91,7 @@ export function TenantSettingInfo({
                     <FieldLabel htmlFor={inputId}>{locale.label}</FieldLabel>
                     <Input
                       id={inputId}
-                      disabled={disabled}
+                      disabled={!canEditTenant}
                       value={tenant.name[locale.value]}
                       onChange={(event) =>
                         onTenantNameChange(
@@ -119,7 +119,7 @@ export function TenantSettingInfo({
                   value={tenant.color}
                   onChange={(color) => onTenantColorChange(tenant.id, color)}
                   defaultValue={DEFAULT_TENANT_COLOR}
-                  disabled={disabled}
+                  disabled={!canEditTenant}
                 >
                   <ColorPicker.Trigger />
                   <ColorPicker.HexInput />

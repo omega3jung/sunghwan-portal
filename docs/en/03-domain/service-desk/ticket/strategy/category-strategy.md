@@ -336,7 +336,7 @@ The current category strategy does not claim:
 
 ## Related Documents
 
-- [`../../service-desk-settings.md`](../../settings.md)
+- [`../../settings.md`](../../settings.md)
 - [`approval-system.md`](approval-system.md)
 - [`assignment-policy.md`](assignment-policy.md)
 - [`sla-strategy.md`](sla-strategy.md)

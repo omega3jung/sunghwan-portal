@@ -256,7 +256,7 @@ Examples:
 - [Ticket Operation Rules](reference/ticket-operation-rules.md)
 - [Approval System](./strategy/approval-system.md)
 - [Assignment Policy](./strategy/assignment-policy.md)
-- [Ticket Track Time](./ticket-track-time.md)
+- [Ticket Work Session](./ticket-work-session.md)
 - [Ticket History](./ticket-history.md)
 
 ---

@@ -1,8 +1,8 @@
-# 티켓 Activity 모델
+# Ticket Action 모델
 
 ## 목표
 
-Ticket Activity는 사용자에게 보이는 action timeline을 설명한다.
+Ticket Action은 사용자에게 보이는 activity timeline과 command record를 설명한다.
 
 이는 immutable Ticket History와 관련은 있지만 서로 다르다.
 
@@ -149,6 +149,7 @@ URL은 action payload validator에서 거부된다.
 
 ## 요약
 
-Ticket Activity는 사용자에게 보이는 action timeline이다. Command와 communication을
-기록하고, Ticket History는 immutable audit event를 기록한다. 둘을 분리하면 UI가
-사용자의 행위를 설명하면서도 정확한 event traceability를 잃지 않는다.
+Ticket Action은 사용자에게 보이는 activity timeline의 first-class model이다.
+Command와 communication을 기록하고, Ticket History는 immutable audit event를
+기록한다. 둘을 분리하면 UI가 사용자의 행위를 설명하면서도 정확한 event
+traceability를 잃지 않는다.

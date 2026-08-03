@@ -197,8 +197,8 @@ export function resolveTicketActionExecutionMode(
   return ADMIN_OVERRIDE_ACTION_MODE_BY_PATH[action] ?? action;
 }
 
-/** Returns whether ticket action execution allowed applies in the Service Desk application boundary. */
-export function isTicketActionExecutionAllowed(
+/** Returns whether the requested action can execute for the ticket's current status. */
+export function canExecuteTicketAction(
   actionMode: TicketActionExecutionMode,
   status: TicketStatus,
 ): boolean {

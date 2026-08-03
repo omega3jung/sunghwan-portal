@@ -241,7 +241,7 @@ does not imply new comment creation is allowed after closure.
 
 Related documents:
 
-- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket Action Model](./ticket-action.md)
 - [Action Strategy](./strategy/action-strategy.md)
 
 ---
@@ -291,7 +291,7 @@ Current behavior:
 - GET does not mutate status
 - timer-style start/finish/switch routes are not part of the current route surface
 
-Related document: [Ticket Track Time](./ticket-track-time.md)
+Related document: [Ticket Work Session](./ticket-work-session.md)
 
 ---
 
@@ -342,12 +342,12 @@ with REMOTE where a workflow is supported.
 - Status and transitions: [Ticket Lifecycle](./ticket-lifecycle.md)
 - Current executable rules: [Ticket Operation Rules](reference/ticket-operation-rules.md)
 - Ticket entity and DTO boundary: [Ticket Model](./ticket-model.md)
-- Action timeline: [Ticket Activity Model](./ticket-activity.md)
+- Action timeline: [Ticket Action Model](./ticket-action.md)
 - Command execution: [Action Strategy](./strategy/action-strategy.md)
 - Immutable audit model: [Ticket History](./ticket-history.md)
 - Approval rules: [Approval System](./strategy/approval-system.md)
 - Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
-- Work sessions: [Ticket Track Time](./ticket-track-time.md)
+- Work sessions: [Ticket Work Session](./ticket-work-session.md)
 - Form workflow: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
 - Attachment boundary: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
 - Settings structure: [Service Desk Settings](../settings.md)

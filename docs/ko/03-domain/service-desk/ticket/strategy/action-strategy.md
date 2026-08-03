@@ -203,7 +203,7 @@ Storage implementation의 차이는 route handler 뒤에 남아야 한다.
 
 ## 관련 문서
 
-- [Ticket Activity Model](../ticket-activity.md)
+- [Ticket Action Model](../ticket-action.md)
 - [Ticket History](../ticket-history.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
 - [Ticket Lifecycle](../ticket-lifecycle.md)

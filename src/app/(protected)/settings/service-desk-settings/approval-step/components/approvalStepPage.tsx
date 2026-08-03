@@ -98,14 +98,14 @@ export function ApprovalStepPage() {
             language={settings.toolbar.language.value}
             isLoading={settings.isSaving}
             errors={settings.tree.errors}
-            readOnly={settings.tree.readOnly}
+            canEdit={settings.tree.canEdit}
           />
 
           <ApprovalStepForm
             selectedNode={settings.tree.selectedNode}
             language={settings.toolbar.language.value}
             onChange={settings.tree.updateSelectedNode}
-            readOnly={settings.tree.readOnly}
+            canEdit={settings.tree.canEdit}
             companyId={settings.companyId}
           />
         </main>

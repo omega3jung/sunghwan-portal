@@ -147,12 +147,12 @@ export function WorkSessionToolContent({
   const isSubmitBlockedByActiveTab =
     activeTab === "duration" ? currentTrackedMinutes <= 0 : !startAt || !endAt;
 
-  const disableSubmit =
-    !ticket ||
-    isPending ||
-    isSubmitBlockedByActiveTab ||
-    Boolean(noteErrorKey) ||
-    Boolean(statusGuardErrorKey);
+  const canSubmit =
+    Boolean(ticket) &&
+    !isPending &&
+    !isSubmitBlockedByActiveTab &&
+    !noteErrorKey &&
+    !statusGuardErrorKey;
 
   const submitLabel = nextStatus
     ? t("action.workSession.submitWithStatus")
@@ -371,7 +371,7 @@ export function WorkSessionToolContent({
         }
       />
 
-      <Button type="submit" className="w-full" disabled={disableSubmit}>
+      <Button type="submit" className="w-full" disabled={!canSubmit}>
         {isPending ? t("action.workSession.submitting") : submitLabel}
       </Button>
     </form>

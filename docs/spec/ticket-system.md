@@ -68,8 +68,8 @@ Important rules:
 
 See:
 
-- [Ticket Lifecycle](../en/03-domain/ticket/ticket-lifecycle.md)
-- [Ticket Operation Rules](../en/08-dev-strategy/ticket-operation-rules.md)
+- [Ticket Lifecycle](../en/03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Operation Rules](../en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---
 
@@ -96,8 +96,8 @@ falls back to the parent/main category only when no subcategory rule exists.
 
 See:
 
-- [Service Desk Settings](../en/03-domain/service-desk-settings.md)
-- [Category Strategy](../en/03-domain/ticket/strategy/category-strategy.md)
+- [Service Desk Settings](../en/03-domain/service-desk/settings.md)
+- [Category Strategy](../en/03-domain/service-desk/ticket/strategy/category-strategy.md)
 
 ---
 
@@ -122,7 +122,7 @@ Rules:
 
 See:
 
-- [Ticket Form Design](../en/06-form-design/ticket-form.md)
+- [Ticket Form Design](../en/04-engineering/forms/ticket-form.md)
 
 ---
 
@@ -153,8 +153,8 @@ Application DTOs expose phase-aware projection fields such as
 
 See:
 
-- [Approval System](../en/03-domain/ticket/strategy/approval-system.md)
-- [Assignment Policy](../en/03-domain/ticket/strategy/assignment-policy.md)
+- [Approval System](../en/03-domain/service-desk/ticket/strategy/approval-system.md)
+- [Assignment Policy](../en/03-domain/service-desk/ticket/strategy/assignment-policy.md)
 
 ---
 
@@ -204,7 +204,7 @@ metadata.
 
 See:
 
-- [Ticket Attachment Design](../en/06-form-design/ticket-attachment.md)
+- [Ticket Attachment Design](../en/04-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -252,8 +252,8 @@ exposed as current route behavior.
 
 See:
 
-- [Ticket Activity Model](../en/03-domain/ticket/ticket-activity.md)
-- [Action Strategy](../en/03-domain/ticket/strategy/action-strategy.md)
+- [Ticket Action Model](../en/03-domain/service-desk/ticket/ticket-action.md)
+- [Action Strategy](../en/03-domain/service-desk/ticket/strategy/action-strategy.md)
 
 ---
 
@@ -282,7 +282,7 @@ work sessions where applicable, and records `RESOLUTION_CLOSE` with
 
 See:
 
-- [Ticket History](../en/03-domain/ticket/ticket-history.md)
+- [Ticket History](../en/03-domain/service-desk/ticket/ticket-history.md)
 
 ---
 
@@ -309,7 +309,7 @@ Current behavior:
 
 See:
 
-- [Ticket Track Time](../en/03-domain/ticket/ticket-track-time.md)
+- [Ticket Work Session](../en/03-domain/service-desk/ticket/ticket-work-session.md)
 
 ---
 
@@ -342,8 +342,8 @@ supported.
 See:
 
 - [Database Strategy](../en/02-architecture/database-strategy.md)
-- [React Query Strategy](../en/05-data-fetching/react-query-strategy.md)
-- [Service Desk Implementation Strategy](../en/08-dev-strategy/service-desk-implementation-strategy.md)
+- [React Query Strategy](../en/04-engineering/data-fetching/react-query-strategy.md)
+- [Service Desk Implementation Strategy](../en/04-engineering/service-desk-implementation-strategy.md)
 
 ---
 
@@ -368,32 +368,32 @@ Deferred items must not be described as current implementation.
 ### Current Design
 
 - [Service Desk Documentation Index](../en/README.md)
-- [Ticket System Overview](../en/03-domain/ticket/ticket-system-overview.md)
-- [Ticket Lifecycle](../en/03-domain/ticket/ticket-lifecycle.md)
-- [Ticket Model](../en/03-domain/ticket/ticket-model.md)
-- [Ticket Activity Model](../en/03-domain/ticket/ticket-activity.md)
-- [Ticket History](../en/03-domain/ticket/ticket-history.md)
-- [Ticket Track Time](../en/03-domain/ticket/ticket-track-time.md)
-- [Ticket Form Design](../en/06-form-design/ticket-form.md)
-- [Ticket Attachment Design](../en/06-form-design/ticket-attachment.md)
-- [Service Desk Settings](../en/03-domain/service-desk-settings.md)
+- [Ticket System Overview](../en/03-domain/service-desk/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../en/03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Model](../en/03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket Action Model](../en/03-domain/service-desk/ticket/ticket-action.md)
+- [Ticket History](../en/03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../en/03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Form Design](../en/04-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](../en/04-engineering/forms/ticket-attachment.md)
+- [Service Desk Settings](../en/03-domain/service-desk/settings.md)
 
 ### Strategies
 
-- [Action Strategy](../en/03-domain/ticket/strategy/action-strategy.md)
-- [Approval System](../en/03-domain/ticket/strategy/approval-system.md)
-- [Assignment Policy](../en/03-domain/ticket/strategy/assignment-policy.md)
-- [Category Strategy](../en/03-domain/ticket/strategy/category-strategy.md)
-- [SLA Strategy](../en/03-domain/ticket/strategy/sla-strategy.md)
-- [Ticket Operation Rules](../en/08-dev-strategy/ticket-operation-rules.md)
-- [Service Desk Implementation Strategy](../en/08-dev-strategy/service-desk-implementation-strategy.md)
+- [Action Strategy](../en/03-domain/service-desk/ticket/strategy/action-strategy.md)
+- [Approval System](../en/03-domain/service-desk/ticket/strategy/approval-system.md)
+- [Assignment Policy](../en/03-domain/service-desk/ticket/strategy/assignment-policy.md)
+- [Category Strategy](../en/03-domain/service-desk/ticket/strategy/category-strategy.md)
+- [SLA Strategy](../en/03-domain/service-desk/ticket/strategy/sla-strategy.md)
+- [Ticket Operation Rules](../en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [Service Desk Implementation Strategy](../en/04-engineering/service-desk-implementation-strategy.md)
 
 ### Decision Logs
 
-- [2026-06 Ticket Form and Draft Workflow](../en/08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md)
-- [2026-06 Ticket Attachment Boundary](../en/08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md)
-- [2026-07 Ticket Routing and Update Policy](../en/08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
-- [2026-07 Ticket Action and History Execution](../en/08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md)
+- [2026-06 Ticket Form and Draft Workflow](../en/06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [2026-06 Ticket Attachment Boundary](../en/06-decisions/2026-06-ticket-attachment-boundary.md)
+- [2026-07 Ticket Routing and Update Policy](../en/06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [2026-07 Ticket Action and History Execution](../en/06-decisions/2026-07-ticket-action-and-history-execution.md)
 
 ---
 

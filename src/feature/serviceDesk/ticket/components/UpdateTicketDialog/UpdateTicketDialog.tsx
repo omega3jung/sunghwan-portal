@@ -119,7 +119,7 @@ export function UpdateTicketDialog({
 
         <UpdateTicketDialogFooter
           currentStep={currentStep}
-          disabled={isBusy || !ticket || !!loadError}
+          canProceed={!isBusy && Boolean(ticket) && !loadError}
           isBusy={isBusy}
           onBack={moveToBack}
           onNext={() => {

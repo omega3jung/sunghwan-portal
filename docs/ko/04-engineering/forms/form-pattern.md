@@ -169,6 +169,33 @@ pipeline에 포함된다.
 
 ---
 
+## Reset Policy
+
+다음 경우 form state를 reset한다.
+
+- submit 성공 후
+- draft behavior로 input을 보존할 필요 없이 dialog가 닫힐 때
+- update dialog에 최신 ticket detail을 로드할 때
+
+Mutation contract가 optimistic update를 명시적으로 지원하지 않는다면 React Query
+data를 직접 편집해 server state를 reset하지 않는다.
+
+---
+
+## Error Handling
+
+다음을 사용한다.
+
+- validation에는 inline field message
+- API error에는 form-level message 또는 toast
+- mutation pending 중에는 disabled control
+- 가능한 경우 server error message
+
+Routing reset, attachment rejection 및 permission failure는 generic validation에
+삼키지 말고 workflow feedback으로 표시해야 한다.
+
+---
+
 ## State Ownership
 
 | 상태 | 소유자 |

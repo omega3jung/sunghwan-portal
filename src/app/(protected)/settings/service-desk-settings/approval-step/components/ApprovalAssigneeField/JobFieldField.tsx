@@ -25,7 +25,7 @@ type Props = {
   stepAssignee: AssigneeByType<"JOB_FIELD">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
-  readOnly?: boolean;
+  canEdit?: boolean;
   departments?: Department[];
   jobFields?: JobField[];
   isLoading?: boolean;
@@ -35,7 +35,7 @@ export function JobFieldField({
   stepAssignee,
   onChange,
   language,
-  readOnly,
+  canEdit = true,
   departments = [],
   jobFields = [],
   isLoading,
@@ -76,7 +76,7 @@ export function JobFieldField({
           item: t("serviceDeskSettings.approvalStepTab.jobField"),
         })}
         selectableStrategy="leaf-only"
-        disabled={readOnly || isLoading}
+        disabled={!canEdit || isLoading}
         onValueChange={(jobFieldId) =>
           onChange({ type: "JOB_FIELD", jobFieldId })
         }
@@ -89,7 +89,7 @@ export function LegacyJobFieldField({
   stepAssignee,
   onChange,
   language,
-  readOnly,
+  canEdit = true,
   jobFields = [],
   isLoading,
 }: Props) {
@@ -151,7 +151,7 @@ export function LegacyJobFieldField({
       </FieldLabel>
       <Select
         value={stepAssignee.jobFieldId}
-        disabled={readOnly || isLoading}
+        disabled={!canEdit || isLoading}
         onValueChange={(value) => {
           if (value !== null) {
             onChange({ type: "JOB_FIELD", jobFieldId: value });
