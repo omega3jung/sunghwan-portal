@@ -1,4 +1,4 @@
-import { CategoryPage } from "./components/categoryPage";
+import { CategoryPage } from "./components/CategoryPage";
 
 export default function Page() {
   return <CategoryPage />;

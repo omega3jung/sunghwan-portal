@@ -232,7 +232,7 @@ function HighlightCard({
   );
 }
 
-export function ProtectedPage() {
+export function HomePage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const { t } = useTranslation(NS.demo, {
     keyPrefix: "home",

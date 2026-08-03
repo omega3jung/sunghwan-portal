@@ -1,64 +1,68 @@
-﻿"use client";
+"use client";
 
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCurrentSession } from "@/feature/auth/session/client";
 import { useNavigationBarCurrentLabel } from "@/feature/navigation/navigationBar/client";
-import { useEmployeeListQuery } from "@/feature/organization/employee/client";
-import { useServiceDeskCategoryListQuery } from "@/feature/serviceDesk/category/client";
 import { TicketAttachmentList } from "@/feature/serviceDesk/shared/client";
-import {
-  useAutoStartAssignedTicketOnView,
-  useServiceDeskTicketQuery,
-} from "@/feature/serviceDesk/ticket/client";
-import { selectTicketAssignees } from "@/feature/serviceDesk/ticket/utils";
+import { useAutoStartAssignedTicketOnView } from "@/feature/serviceDesk/ticket/client";
 import {
   TicketActionList,
   TicketActionTool,
-  useServiceDeskTicketActionListQuery,
 } from "@/feature/serviceDesk/ticketAction/client";
-import { useServiceDeskTicketHistoryListQuery } from "@/feature/serviceDesk/ticketHistory/client";
-import { useCurrentPreference } from "@/feature/user/preference/client";
-import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
-import { formatDisplayName } from "@/lib/application/organization";
-import { useLocalizedValue } from "@/lib/client/i18n";
-import { dateLocaleMap } from "@/shared/mapper/dateLocaleMap";
-import { DbParams, ImageValueLabel } from "@/shared/types";
 import { cn } from "@/shared/utils/presentation";
-import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
+import { useTicketDetailData } from "../hooks/useTicketDetailData";
+import { useTicketDetailViewModel } from "../hooks/useTicketDetailViewModel";
 import {
   TicketDetailsAside,
   TicketDetailsAsideSkeleton,
   TicketDetailSkeleton,
+  TicketHeader,
   TicketHistorySheet,
+  TicketRecentActivity,
   TicketSummary,
-} from "../../components";
-import { TicketHeader } from "../../components/TicketHeader";
-import { TicketRecentActivity } from "../../components/TicketRecentActivity";
+} from ".";
 
-type TicketIdPageProps = {
+type TicketDetailPageProps = {
   ticketId: string;
 };
 
-export function TicketIdPage({ ticketId }: TicketIdPageProps) {
+export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
   const router = useRouter();
   const [isDetailsAsideOpen, setIsDetailsAsideOpen] = useState(true);
   const [isHistorySheetOpen, setIsHistorySheetOpen] = useState(false);
   const { t } = useTranslation(NS.serviceDesk);
-  const { current: userPreference } = useCurrentPreference();
-  const tLocal = useLocalizedValue(userPreference.language);
-  const { current } = useCurrentSession();
-  const effectiveCompanyId = current.user?.companyId;
-
-  const { data: ticket, isLoading: isTicketLoading } =
-    useServiceDeskTicketQuery(ticketId);
+  const {
+    ticket,
+    ticketActions,
+    ticketHistories,
+    isTicketLoading,
+    isTicketActionsLoading,
+    isTicketHistoriesLoading,
+  } = useTicketDetailData(ticketId);
+  const {
+    language,
+    dateLocale,
+    categories,
+    assigneeOptions,
+    recipientOptions,
+    ticketAssignees,
+    requesterName,
+    activeActions,
+    latestAction,
+    latestHistory,
+    latestActionOwnerName,
+  } = useTicketDetailViewModel({
+    ticket,
+    ticketActions,
+    ticketHistories,
+  });
 
   useNavigationBarCurrentLabel(
     ticket?.id === ticketId ? ticket.ticketNumber : null,
@@ -67,133 +71,6 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
   useAutoStartAssignedTicketOnView({
     ticket,
   });
-
-  const { data: ticketActions, isLoading: isTicketActionsLoading } =
-    useServiceDeskTicketActionListQuery(ticketId);
-
-  const { data: ticketHistories, isLoading: isTicketHistoriesLoading } =
-    useServiceDeskTicketHistoryListQuery(ticketId);
-  const categoryListParams = useMemo<DbParams | undefined>(() => {
-    if (effectiveCompanyId === undefined) return undefined;
-
-    return {
-      filter: combineRuleGroups([
-        createFieldFilter({
-          field: "active",
-          value: true,
-        }),
-        createFieldFilter({
-          field: "tenant_company_id",
-          value: effectiveCompanyId,
-        }),
-      ]),
-    };
-  }, [effectiveCompanyId]);
-  const employeeListParams = useMemo<DbParams | undefined>(() => {
-    if (effectiveCompanyId === undefined) return undefined;
-
-    return {
-      filter: combineRuleGroups([
-        createFieldFilter({
-          field: "companyId",
-          value: effectiveCompanyId,
-        }),
-        createFieldFilter({
-          field: "e_active",
-          value: true,
-        }),
-      ]),
-    };
-  }, [effectiveCompanyId]);
-  const { data: categoryTrees } =
-    useServiceDeskCategoryListQuery(categoryListParams);
-  const { data: employees } = useEmployeeListQuery(employeeListParams);
-
-  const users = useMemo<ImageValueLabel[]>(() => {
-    if (!employees) {
-      return [];
-    }
-
-    return employees.map((employee) => {
-      const name = tLocal(employee.name);
-
-      return {
-        value: employee.username,
-        label: `${name.first} ${name.last}`.trim(),
-        displayName: employee.email,
-        image: employee.imageUrl,
-      };
-    });
-  }, [employees, tLocal]);
-
-  const emails = useMemo<ImageValueLabel[]>(() => {
-    if (!employees) {
-      return [];
-    }
-
-    return employees.map((employee) => {
-      const name = tLocal(employee.name);
-
-      return {
-        value: employee.email,
-        label: `${name.first} ${name.last}`,
-        displayName: employee.email,
-        image: employee.imageUrl,
-      };
-    });
-  }, [employees, tLocal]);
-
-  const requesterName = ticket
-    ? formatDisplayName(tLocal(ticket.requester.name))
-    : undefined;
-
-  const assignees = useMemo(
-    () =>
-      ticket
-        ? selectTicketAssignees(ticket).map((assignee) => ({
-            value: assignee.username,
-            label: formatDisplayName(tLocal(assignee.name)),
-            displayName: assignee.username,
-            image: assignee.image ?? undefined,
-          }))
-        : [],
-    [ticket, tLocal],
-  );
-
-  const dateLocale = useMemo(
-    () => dateLocaleMap[userPreference.language as SupportedLanguage],
-    [userPreference.language],
-  );
-
-  const categories = useMemo(
-    () => categoryTrees?.flatMap((tree) => tree.categories) ?? [],
-    [categoryTrees],
-  );
-
-  const activeActions = useMemo(
-    () => (ticketActions ?? []).filter((action) => action.active),
-    [ticketActions],
-  );
-
-  const latestAction = useMemo(() => {
-    return [...activeActions].sort(
-      (left, right) =>
-        new Date(right.createdAt).getTime() -
-        new Date(left.createdAt).getTime(),
-    )[0];
-  }, [activeActions]);
-
-  const latestHistory = useMemo(() => {
-    return [...(ticketHistories ?? [])].sort(
-      (left, right) =>
-        new Date(right.createdAt).getTime() -
-        new Date(left.createdAt).getTime(),
-    )[0];
-  }, [ticketHistories]);
-
-  const latestActionOwnerName = latestAction?.ownerName
-    ? formatDisplayName(tLocal(latestAction.ownerName))
-    : latestAction?.ownerUsername;
 
   useEffect(() => {
     if (!isTicketLoading && !ticket) {
@@ -210,8 +87,8 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
       <TicketHeader
         ticket={ticket}
         categories={categories}
-        users={emails}
-        language={userPreference.language as SupportedLanguage}
+        users={recipientOptions}
+        language={language}
         isDetailsAsideOpen={isDetailsAsideOpen}
         onToggleDetailsAside={setIsDetailsAsideOpen}
         onOpenHistorySheet={setIsHistorySheetOpen}
@@ -252,7 +129,6 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                     dateLocale={dateLocale}
                   />
 
-                  {/* ticket description */}
                   <section className="space-y-3">
                     <h2
                       className="text-base font-semibold tracking-[-0.01em]"
@@ -275,13 +151,12 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                     />
                   </section>
 
-                  {/* ticket details */}
                   <section className="space-y-4 border-t border-border/50 xl:hidden xl:pt-7">
                     <h2 className="hidden text-base font-semibold tracking-[-0.01em] sm:block">
                       {t("detailPage.detailsTitle")}
                     </h2>
                     <Button
-                      variant={"ghost"}
+                      variant="ghost"
                       className="w-full justify-between text-base"
                       onClick={() => setIsDetailsAsideOpen(!isDetailsAsideOpen)}
                     >
@@ -297,7 +172,7 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                     {isDetailsAsideOpen && (
                       <div className="rounded-xl border border-border/40 bg-background/60 p-1">
                         <TicketDetailsAside
-                          assignees={assignees}
+                          assignees={ticketAssignees}
                           requesterName={requesterName}
                           ticket={ticket}
                         />
@@ -305,7 +180,6 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                     )}
                   </section>
 
-                  {/* reply comment */}
                   <section className="space-y-3 border-t border-border/50 pt-7 xl:pt-7">
                     <h2
                       className="text-base font-semibold tracking-[-0.01em]"
@@ -317,12 +191,11 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                     <TicketActionTool
                       ticketId={ticketId}
                       ticket={ticket}
-                      users={users}
+                      users={assigneeOptions}
                       categories={categories}
                     />
                   </section>
 
-                  {/* conversation */}
                   <section className="space-y-3 border-t border-border/50 pt-7">
                     <TicketActionList
                       actions={ticketActions}
@@ -361,7 +234,7 @@ export function TicketIdPage({ ticketId }: TicketIdPageProps) {
                   <TicketDetailsAsideSkeleton />
                 ) : (
                   <TicketDetailsAside
-                    assignees={assignees}
+                    assignees={ticketAssignees}
                     requesterName={requesterName}
                     ticket={ticket}
                   />

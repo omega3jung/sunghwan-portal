@@ -1,5 +1,5 @@
-import { ProtectedPage } from "./components/protectedPage";
+import { HomePage } from "./components/HomePage";
 
 export default function Page() {
-  return <ProtectedPage />;
+  return <HomePage />;
 }

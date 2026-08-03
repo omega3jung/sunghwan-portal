@@ -1,4 +1,4 @@
-import { TicketIdPage } from "./components/ticketIdPage";
+import { TicketDetailPage } from "./components/TicketDetailPage";
 
 type ServiceDeskTicketDetailPageProps = {
   params: Promise<{
@@ -11,5 +11,5 @@ export default async function ServiceDeskTicketDetailPage({
 }: ServiceDeskTicketDetailPageProps) {
   const { ticketId } = await params;
 
-  return <TicketIdPage ticketId={ticketId} />;
+  return <TicketDetailPage ticketId={ticketId} />;
 }
