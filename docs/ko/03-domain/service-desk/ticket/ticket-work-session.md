@@ -11,7 +11,7 @@ ticket을 work status 사이에서 이동시킬 수 있다.
 
 ## 현재 Route Surface
 
-```txt id="work-session-routes"
+```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
@@ -32,7 +32,7 @@ route file은 list/create만 노출한다.
 
 ## Work Session DTO
 
-```ts id="work-session-dto"
+```ts
 type WorkSessionDto = {
   ticket_id: string;
   work_session_no: number;
@@ -52,7 +52,7 @@ Domain/UI mapping은 같은 concept을 camelCase로 노출한다.
 
 ## Submit Payload
 
-```ts id="work-session-submit-payload"
+```ts
 type TicketWorkSessionSubmitPayload = {
   ticketId: string;
   inputMode: "duration" | "range";
@@ -94,7 +94,7 @@ Work-session creation은 ticket status를 업데이트할 수 있다.
 
 허용 transition:
 
-```txt id="work-session-status-transitions"
+```txt
 Assigned -> Working
 Working -> Pending
 Working -> Resolved

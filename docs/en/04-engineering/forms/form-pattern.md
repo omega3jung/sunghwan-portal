@@ -16,7 +16,7 @@ The current pattern is:
 
 ## Core Principle
 
-```txt id="form-core"
+```txt
 Form state is local input state.
 Workflow state is server state.
 ```
@@ -62,7 +62,7 @@ completion.
 
 Current ticket form steps:
 
-```txt id="current-ticket-form-steps"
+```txt
 issueDetails
 attachments
 review
@@ -109,7 +109,7 @@ Requester update flow includes:
 
 Raw browser `File` objects belong only to the open form.
 
-```txt id="form-attachment-boundary"
+```txt
 React Hook Form File[]
 -> Attachment Prepare API
 -> prepared metadata
@@ -133,6 +133,11 @@ Draft is not the same as unsaved component state.
 In REMOTE mode, create-ticket draft is server state loaded through the draft API
 and React Query. The form hydrates from the active draft and can save form values
 back to the draft workflow.
+
+In LOCAL mode, the same feature-level draft hooks read and write a browser
+`localStorage` record through the feature draft repository. React Query may
+cache that repository result, but the cache is not the recovery store and no
+draft Route Handler is called.
 
 Drafts do not guarantee attachment recovery.
 
@@ -159,7 +164,7 @@ field components.
 
 Forms submit through feature mutations.
 
-```txt id="form-submit-policy"
+```txt
 form validation
 -> optional preparation step
 -> mutation
@@ -205,7 +210,8 @@ as workflow feedback rather than swallowed by generic validation.
 | --- | --- |
 | field input while editing | React Hook Form |
 | current form step | local component/hook state |
-| active draft | React Query/API |
+| REMOTE active draft | React Query/API and PostgreSQL ticket row |
+| LOCAL draft recovery | feature draft repository and browser `localStorage` |
 | ticket detail | React Query/API |
 | settings/category options | React Query/API |
 | raw files | React Hook Form while open |
@@ -239,10 +245,10 @@ workflow and recorded in history.
 
 ## Related Documents
 
-- [`dialog-pattern.md`](../ui/dialog-pattern.md)
-- [`ticket-form.md`](ticket-form.md)
-- [`ticket-attachment.md`](ticket-attachment.md)
-- [`../data-fetching/react-query-strategy.md`](../data-fetching/react-query-strategy.md)
+- [Dialog Pattern](../ui/dialog-pattern.md)
+- [Ticket Form Design](ticket-form.md)
+- [Ticket Attachment Design](ticket-attachment.md)
+- [React Query Strategy](../data-fetching/react-query-strategy.md)
 
 ---
 

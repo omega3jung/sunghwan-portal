@@ -6,7 +6,7 @@
 
 Approval은 category-driven, sequential이며 현재 ticket routing field로 표현된다.
 
-```txt id="approval-routing-fields"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -27,7 +27,7 @@ resolve하고 `Assigned`로 이동한다.
 
 Ticket은 다음 상태일 때 approval phase다.
 
-```txt id="approval-phase"
+```txt
 approvalStepId != null
 assignmentPhase = APPROVAL
 assigneeUsernames = current approvers
@@ -51,7 +51,7 @@ Approval resolution은 항상 선택된 subcategory의 parent/main category를 �
 선택된 subcategory는 ticket classification으로 남지만 별도의 approval pipeline을
 정의하지 않는다.
 
-```ts id="approval-step-shape"
+```ts
 type ApprovalStep = {
   id: string;
   name: LocalizedText;
@@ -65,7 +65,7 @@ type ApprovalStep = {
 
 Assignee type:
 
-```txt id="approval-assignee-types"
+```txt
 MANAGER
 DEPARTMENT
 JOB_FIELD
@@ -128,7 +128,7 @@ routing은 실패하며 unowned `Approval` ticket을 만들지 않는다.
 
 Ticket submit과 resubmit은 모두 첫 applicable approval step부터 routing을 시작한다.
 
-```txt id="initial-approval-routing"
+```txt
 selected category
 -> parent/main category approval steps
 next approval step exists
@@ -161,7 +161,7 @@ Approve는 ticket action command다.
 
 Approve 이후:
 
-```txt id="approve-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -191,7 +191,7 @@ Decline은 ticket action command다.
 
 Decline은 approval routing을 종료한다.
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -228,7 +228,7 @@ assignment rule이 work owner를 resolve하고 ticket은 `Assigned`로 이동한
 
 Approval 관련 event:
 
-```txt id="approval-history-events"
+```txt
 APPROVAL_REQUESTED
 APPROVAL_APPROVED
 APPROVAL_DECLINED
@@ -237,7 +237,7 @@ ASSIGNMENT_RESOLVED
 
 Approve action은 둘 이상의 history record를 만들 수 있다.
 
-```txt id="approval-history-flow"
+```txt
 APPROVAL_APPROVED
 -> APPROVAL_REQUESTED
 or
@@ -281,6 +281,7 @@ Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
 
 - [Ticket Lifecycle](../ticket-lifecycle.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
+- [직원 참조 범위 매트릭스](../reference/restrict-employee-list.xlsx)
 - [Assignment Policy](./assignment-policy.md)
 - [Ticket History](../ticket-history.md)
 - [Service Desk Settings](../../settings.md)

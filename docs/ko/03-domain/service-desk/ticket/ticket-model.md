@@ -11,7 +11,7 @@
 
 ## 핵심 개념
 
-```txt id="ticket-model-core"
+```txt
 Ticket row = 현재 workflow state
 Ticket DTO = application-facing projection
 History = state가 어떻게 바뀌었는지에 대한 immutable record
@@ -26,7 +26,7 @@ work-session evidence를 저장한다.
 
 현재 status union:
 
-```txt id="ticket-status-union"
+```txt
 Draft
 Approval
 Declined
@@ -55,7 +55,7 @@ row 값을 위한 compatibility normalization을 포함한다.
 
 ### Shared Core
 
-```ts id="ticket-core-fields"
+```ts
 type TicketBase = {
   id: string;
   ticketNumber: string;
@@ -79,7 +79,7 @@ close reason으로 리포트와 화면 표시 의미를 구분한다.
 
 ### Assignment Projection
 
-```ts id="ticket-assignment-projection"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
 type TicketAssignmentState = {
@@ -93,7 +93,7 @@ type TicketAssignmentState = {
 
 Persisted source of truth은 여전히 다음 필드다.
 
-```txt id="assignment-source"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -102,7 +102,7 @@ Phase-aware field는 UI 명확성을 위한 DTO/domain projection이다.
 
 ### Metrics and View State
 
-```ts id="ticket-metric-fields"
+```ts
 type TicketMetrics = {
   workMinutes: number;
   lastCommentAt?: ISODateString;
@@ -124,7 +124,7 @@ type TicketViewState = {
 
 ### Detail Content
 
-```ts id="ticket-detail-content"
+```ts
 type TicketContent = {
   categoryId: string;
   approvalStepId: string | null;
@@ -150,7 +150,7 @@ list/search에 최적화되어 있으며 전체 content나 attachment payload를
 
 REMOTE read path는 다음과 같다.
 
-```txt id="ticket-read-boundary"
+```txt
 service_desk view/row
 -> mapper
 -> TicketListItemDto or TicketDetailDto
@@ -189,8 +189,10 @@ REMOTE draft는 ticket table을 사용한다.
 - submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 변경한다.
 - draft row는 operational ticket list에서 제외된다.
 
-LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용한다.
-REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다.
+LOCAL 초안 복구는 기능 초안 저장소가 소유하고 현재 데모 사용자 범위로 관리되는
+브라우저 로컬 `localStorage` 상태다. 저장된 소유자가 effective user와 다르면
+제거되고, 초안 Route Handler를 거치지 않으며, REMOTE PostgreSQL 초안 모델과
+영속성 측면에서 동등하지 않다.
 
 ---
 
@@ -207,7 +209,7 @@ Notification delivery는 전송 시점에 assignee email을 resolve해야 한다
 
 Ticket attachment field는 prepared metadata만 저장한다.
 
-```ts id="ticket-attachment-metadata"
+```ts
 type TicketAttachmentMetadata = {
   originalName: string;
   replacedName: string;
@@ -222,7 +224,7 @@ type TicketAttachmentMetadata = {
 
 Ticket persistence는 다음을 사용한다.
 
-```txt id="ticket-attachment-columns"
+```txt
 tk_content -> prepared body
 tk_files   -> TicketAttachmentMetadata[]
 tk_images  -> TicketAttachmentMetadata[]

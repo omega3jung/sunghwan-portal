@@ -529,6 +529,15 @@ export const documentGroups: DocumentGroup[] = [
         titleKey: "section.decisions.2026-07.title",
         items: [
           {
+            id: "decision-nextjs-16-migration-strategy-2026-07",
+            titleKey:
+              "item.decisionNextjs16MigrationStrategy202607.title",
+            descriptionKey:
+              "item.decisionNextjs16MigrationStrategy202607.description",
+            relativePath:
+              "06-decisions/2026-07-nextjs-16-migration-strategy.md",
+          },
+          {
             id: "decision-service-desk-settings-reference-validation-boundary-2026-07",
             titleKey:
               "item.decisionServiceDeskSettingsReferenceValidationBoundary202607.title",
@@ -547,12 +556,36 @@ export const documentGroups: DocumentGroup[] = [
               "06-decisions/2026-07-ticket-action-and-history-execution.md",
           },
           {
+            id: "decision-ticket-merge-and-escalation-policy-2026-07",
+            titleKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.title",
+            descriptionKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.description",
+            relativePath:
+              "06-decisions/2026-07-ticket-merge-and-escalation-policy.md",
+          },
+          {
             id: "decision-ticket-routing-and-update-policy-2026-07",
             titleKey: "item.decisionTicketRoutingAndUpdatePolicy202607.title",
             descriptionKey:
               "item.decisionTicketRoutingAndUpdatePolicy202607.description",
             relativePath:
               "06-decisions/2026-07-ticket-routing-and-update-policy.md",
+          },
+        ],
+      },
+      {
+        id: "2026-08",
+        titleKey: "section.decisions.2026-08.title",
+        items: [
+          {
+            id: "decision-boolean-capability-api-naming-2026-08",
+            titleKey:
+              "item.decisionBooleanCapabilityApiNaming202608.title",
+            descriptionKey:
+              "item.decisionBooleanCapabilityApiNaming202608.description",
+            relativePath:
+              "06-decisions/2026-08-boolean-capability-api-naming.md",
           },
         ],
       },

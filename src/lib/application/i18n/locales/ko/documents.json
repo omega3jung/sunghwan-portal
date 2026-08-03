@@ -88,6 +88,9 @@
       },
       "2026-07": {
         "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
       }
     }
   },
@@ -327,6 +330,18 @@
     "decisionTicketRoutingAndUpdatePolicy202607": {
       "title": "2026-07 티켓 Routing 및 Update 정책",
       "description": "티켓 Routing 및 Update 정책 결정 기록입니다."
+    },
+    "decisionNextjs16MigrationStrategy202607": {
+      "title": "2026-07 Next.js 16 마이그레이션 전략",
+      "description": "Next.js 16 마이그레이션 전략 결정 기록입니다."
+    },
+    "decisionTicketMergeAndEscalationPolicy202607": {
+      "title": "2026-07 티켓 Merge 및 Escalation 정책",
+      "description": "티켓 Merge 및 Escalation 정책 결정 기록입니다."
+    },
+    "decisionBooleanCapabilityApiNaming202608": {
+      "title": "2026-08 Boolean Capability API 명명",
+      "description": "Boolean capability API 명명 결정 기록입니다."
     }
   }
 }

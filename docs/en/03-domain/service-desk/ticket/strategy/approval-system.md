@@ -8,7 +8,7 @@ tickets.
 Approval is category-driven, sequential, and represented through the current
 ticket routing fields:
 
-```txt id="approval-routing-fields"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -29,7 +29,7 @@ work assignment and moves to `Assigned`.
 
 A ticket is in approval phase when:
 
-```txt id="approval-phase"
+```txt
 approvalStepId != null
 assignmentPhase = APPROVAL
 assigneeUsernames = current approvers
@@ -53,7 +53,7 @@ Approval resolution always uses the selected subcategory's parent/main
 category. The selected subcategory remains ticket classification, but it does
 not define a separate approval pipeline.
 
-```ts id="approval-step-shape"
+```ts
 type ApprovalStep = {
   id: string;
   name: LocalizedText;
@@ -67,7 +67,7 @@ type ApprovalStep = {
 
 Assignee types:
 
-```txt id="approval-assignee-types"
+```txt
 MANAGER
 DEPARTMENT
 JOB_FIELD
@@ -133,7 +133,7 @@ failure; the system must not create an unowned `Approval` ticket.
 Ticket submit and resubmit both start routing from the first applicable
 approval step.
 
-```txt id="initial-approval-routing"
+```txt
 selected category
 -> parent/main category approval steps
 next approval step exists
@@ -166,7 +166,7 @@ Approve is a ticket action command.
 
 After approve:
 
-```txt id="approve-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -196,7 +196,7 @@ Decline is a ticket action command.
 
 Decline terminates approval routing:
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -235,7 +235,7 @@ skipped, assignment rules resolve work owners and the ticket moves to
 
 Approval-related events:
 
-```txt id="approval-history-events"
+```txt
 APPROVAL_REQUESTED
 APPROVAL_APPROVED
 APPROVAL_DECLINED
@@ -244,7 +244,7 @@ ASSIGNMENT_RESOLVED
 
 An approve action can create more than one history record:
 
-```txt id="approval-history-flow"
+```txt
 APPROVAL_APPROVED
 -> APPROVAL_REQUESTED
 or
@@ -288,6 +288,7 @@ These are future production extensions.
 
 - [Ticket Lifecycle](../ticket-lifecycle.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
+- [Employee Reference Scope Matrix](../reference/restrict-employee-list.xlsx)
 - [Assignment Policy](./assignment-policy.md)
 - [Ticket History](../ticket-history.md)
 - [Service Desk Settings](../../settings.md)

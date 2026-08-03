@@ -11,13 +11,14 @@ query keys, and invalidate the smallest useful query family after mutations.
 
 ## Core Principle
 
-```txt id="react-query-core"
+```txt
 Server state belongs to React Query.
 UI state belongs to component state or small UI stores.
 ```
 
-Service Desk settings, tickets, drafts, actions, histories, and work sessions
-are server state.
+Service Desk settings, tickets, REMOTE drafts, actions, histories, and work
+sessions are server state. LOCAL draft recovery is the exception: it is
+browser-local repository state exposed through the same query hooks.
 
 ---
 
@@ -55,7 +56,7 @@ They should be invalidated after workflow mutations that can affect them.
 
 Current query key families include:
 
-```txt id="service-desk-query-families"
+```txt
 ticket list/search
 ticket detail
 ticket draft by dataScope/userId
@@ -95,9 +96,13 @@ state.
 
 ## Draft Query Policy
 
-REMOTE draft is server state. LOCAL draft uses a simplified demo-safe
-implementation behind the feature API boundary; React Query cache or browser
-recovery is not the durable ticket persistence boundary.
+REMOTE draft is server state backed by a PostgreSQL ticket row and accessed
+through the draft Route Handlers. LOCAL draft recovery is instead stored in
+browser `localStorage`, scoped by the current demo user, and read or written by
+the feature draft repository without calling those Route Handlers.
+
+React Query provides query and mutation orchestration for both data scopes. Its
+cache is not the durable REMOTE store or the LOCAL recovery store.
 
 The create dialog should load the active draft through the draft query family.
 After final submit or discard, invalidate or remove the active draft query.
@@ -144,7 +149,7 @@ The server is the authority for:
 
 The current work-session route supports list and create:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -187,7 +192,7 @@ Local component state may own:
 The same feature UI should work against LOCAL or REMOTE data where both are
 implemented.
 
-```txt id="query-runtime"
+```txt
 feature hook
 -> feature API client
 -> route handler
@@ -223,18 +228,19 @@ Do not invalidate every query after every Service Desk mutation.
 
 ## Related Documents
 
-- [`../../03-domain/service-desk/settings.md`](../../03-domain/service-desk/settings.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../../03-domain/service-desk/ticket/ticket-work-session.md`](../../03-domain/service-desk/ticket/ticket-work-session.md)
-- [`../forms/ticket-form.md`](../forms/ticket-form.md)
-- [`../service-desk-implementation-strategy.md`](../service-desk-implementation-strategy.md)
+- [Service Desk Settings](../../03-domain/service-desk/settings.md)
+- [Ticket Model](../../03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket History](../../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../../03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Form Design](../forms/ticket-form.md)
+- [Service Desk Implementation Strategy](../service-desk-implementation-strategy.md)
 
 ---
 
 ## Summary
 
-React Query is the Service Desk server-state owner. The current strategy uses
-structured query families for tickets, drafts, actions, histories, work
-sessions, and tenant-scoped settings; targeted invalidation after workflow
-mutations; and clear separation from local UI state.
+React Query is the Service Desk server-state owner and also orchestrates the
+browser-local LOCAL draft repository. The current strategy uses structured
+query families for tickets, drafts, actions, histories, work sessions, and
+tenant-scoped settings; targeted invalidation after workflow mutations; and
+clear separation from local UI state and recovery storage.

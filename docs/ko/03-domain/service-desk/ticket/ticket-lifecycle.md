@@ -13,7 +13,7 @@ Ticket lifecycle은 현재 persisted status와 티켓을 이동시키는 explici
 
 ## Persisted Statuses
 
-```txt id="ticket-statuses"
+```txt
 Draft
 Approval
 Declined
@@ -35,7 +35,7 @@ Closed
 
 ## Main Flow
 
-```txt id="main-lifecycle-flow"
+```txt
 Draft
 -> Approval | Assigned
 -> Working
@@ -144,7 +144,7 @@ controlled branch를 추가한다.
 
 Initial submit과 resubmit은 같은 routing shape를 사용한다.
 
-```txt id="initial-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -161,7 +161,7 @@ rule이 work assignee를 resolve하고 티켓은 `Assigned`로 이동한다.
 
 Decline은 approval routing을 종료한다.
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -204,7 +204,7 @@ Action이 아니며 work-time evidence를 기록하고 지원되는 work-status 
 
 현재 work-session status transition:
 
-```txt id="work-session-status"
+```txt
 Assigned -> Working
 Working -> Pending | Resolved
 Pending -> Working | Resolved

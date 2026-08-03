@@ -11,7 +11,7 @@ can optionally move a ticket through work statuses.
 
 ## Current Route Surface
 
-```txt id="work-session-routes"
+```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
@@ -32,7 +32,7 @@ current API route files expose list/create only.
 
 ## Work Session DTO
 
-```ts id="work-session-dto"
+```ts
 type WorkSessionDto = {
   ticket_id: string;
   work_session_no: number;
@@ -52,7 +52,7 @@ Domain/UI mapping exposes the same concept in camelCase.
 
 ## Submit Payload
 
-```ts id="work-session-submit-payload"
+```ts
 type TicketWorkSessionSubmitPayload = {
   ticketId: string;
   inputMode: "duration" | "range";
@@ -94,7 +94,7 @@ Work-session creation can update ticket status.
 
 Allowed transitions:
 
-```txt id="work-session-status-transitions"
+```txt
 Assigned -> Working
 Working -> Pending
 Working -> Resolved

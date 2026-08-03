@@ -15,7 +15,7 @@ It aims to:
 
 ## Core Principle
 
-```id="message-principle"
+```txt
 Different message types should be separated by purpose, not grouped only by UI location
 ```
 
@@ -29,7 +29,7 @@ The system separates feedback messages into **three namespaces**, each with a di
 
 ### Namespace List
 
-```txt id="message-categories"
+```txt
 validation
 message
 error
@@ -90,7 +90,7 @@ Contains messages directly tied to **input validation rules**.
 
 ### Example Structure
 
-```json id="validation-example"
+```json
 {
   "required": "This field is required.",
   "requiredWithField": "{{field}} is required.",
@@ -128,7 +128,7 @@ Contains general application feedback shown after **expected user actions**.
 
 ### Example Structure
 
-```json id="message-example"
+```json
 {
   "create": {
     "success": "Created successfully."
@@ -171,7 +171,7 @@ Contains **system-level or exceptional** error messages.
 
 ### Example Structure
 
-```json id="error-example"
+```json
 {
   "network": "A network error occurred.",
   "unauthorized": "You are not authorized.",
@@ -241,7 +241,7 @@ Contains **system-level or exceptional** error messages.
 
 ### validation.json
 
-```txt id="validation-keys"
+```txt
 required
 requiredWithField
 minLength
@@ -253,7 +253,7 @@ invalidEmail
 
 ### message.json
 
-```txt id="message-keys"
+```txt
 create.success
 update.success
 delete.success
@@ -264,7 +264,7 @@ save.success
 
 ### error.json
 
-```txt id="error-keys"
+```txt
 network
 unauthorized
 forbidden
@@ -282,7 +282,7 @@ Messages may support interpolation when dynamic context is needed.
 
 ### Example
 
-```json id="interpolation-example"
+```json
 {
   "requiredWithField": "{{field}} is required."
 }
@@ -315,7 +315,7 @@ A single message file may look simpler at first, but it introduces long-term pro
 
 ### Example
 
-```txt id="message-comparison"
+```txt
 validation.required
 message.create.success
 error.network

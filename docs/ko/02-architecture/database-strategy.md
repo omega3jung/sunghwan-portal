@@ -7,7 +7,7 @@ Database 전략은 `sunghwan-portal`이 persisted application data를 server cod
 
 현재 Service Desk 구현 방향:
 
-```txt id="database-core"
+```txt
 server-only database access
 + role-separated connections
 + row / mapper / DTO boundaries
@@ -21,7 +21,7 @@ server service가 row query, mapping, validation, write를 결정한다.
 
 ## Runtime Flow
 
-```txt id="database-runtime-flow"
+```txt
 UI
 -> feature API client
 -> Next.js route handler
@@ -40,7 +40,7 @@ Route handler는 HTTP orchestration boundary다. SQL이나 row mapping logic을
 
 Database access는 책임에 따라 분리한다.
 
-```txt id="database-roles"
+```txt
 auth_api     -> authentication-only database access
 portal_api   -> application data access
 service_role -> normal application flow에서 사용하지 않음
@@ -78,7 +78,7 @@ Login/authentication 관련 data access에 사용한다.
 
 Database row와 application DTO는 책임이 다르다.
 
-```txt id="row-mapper-dto"
+```txt
 Database Row
 -> Mapper
 -> Application DTO
@@ -119,7 +119,7 @@ Ticket은 current workflow state와 routing facts를 persist한다.
 
 현재 status:
 
-```ts id="ticket-status"
+```ts
 type TicketStatus =
   | "Draft"
   | "Approval"
@@ -150,7 +150,7 @@ design과 DTO contract는 현재 status union을 사용한다.
 
 Approval/work routing은 phase-aware이다.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -194,7 +194,7 @@ REMOTE draft는 별도 client-only model이 아니라 ticket persistence를 사�
 
 현재 database strategy는 attachment binary를 persist하지 않는다.
 
-```txt id="attachment-persistence-flow"
+```txt
 browser File[] / inline data images
 -> Attachment Prepare API
 -> prepared metadata
@@ -264,7 +264,7 @@ Category, approval step, assignment rule은 tenant scope에서 평가하지만, 
 Approval Step과 Assignment Rule persistence는 별도의 authorization source를
 중복 저장하지 않고 관계를 통해 tenant/company context를 파생한다.
 
-```txt id="settings-persistence-boundary"
+```txt
 Approval Step / Assignment Rule
 -> Category
 -> Tenant
@@ -299,7 +299,7 @@ Database URL과 privileged credential은 server-only이다.
 
 규칙:
 
-```txt id="database-env-rule"
+```txt
 편의가 아니라 책임을 기준으로 query client를 선택한다.
 ```
 
@@ -309,7 +309,7 @@ Database URL과 privileged credential은 server-only이다.
 
 Effective permission은 grants와 row-level security 조합이다.
 
-```txt id="rls-grants"
+```txt
 effective permission = object grants + RLS policies
 ```
 
@@ -349,7 +349,7 @@ database data layer를 사용한다.
 
 둘 모두 compatible application-facing contract를 노출해야 한다.
 
-```txt id="local-remote-dto-contract"
+```txt
 LOCAL state shape or REMOTE row shape
 -> mapper/handler
 -> application DTO
@@ -374,12 +374,12 @@ LOCAL state shape or REMOTE row shape
 
 ## 관련 문서
 
-- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
-- [`../03-domain/service-desk/ticket/ticket-model.md`](../03-domain/service-desk/ticket/ticket-model.md)
-- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [`../04-engineering/forms/ticket-attachment.md`](../04-engineering/forms/ticket-attachment.md)
-- [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
+- [서비스 데스크 설정](../03-domain/service-desk/settings.md)
+- [티켓 모델](../03-domain/service-desk/ticket/ticket-model.md)
+- [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [티켓 첨부파일 설계](../04-engineering/forms/ticket-attachment.md)
+- [서비스 데스크 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
 
 ---
 

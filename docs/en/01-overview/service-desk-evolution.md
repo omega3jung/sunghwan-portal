@@ -25,7 +25,7 @@ The previous workplace system included an IT Help Desk-style module for:
 The current project does not clone that system. It extracts the operational
 lessons and redesigns them into a clearer, portfolio-ready Service Desk domain.
 
-```txt id="evolution-flow"
+```txt
 previous workplace experience
 -> operational lessons
 -> clearer domain boundaries
@@ -59,7 +59,7 @@ The earlier model can be understood as request records with status updates.
 
 The current model treats a ticket as a workflow entity with controlled states:
 
-```txt id="current-ticket-statuses"
+```txt
 Draft
 Approval
 Declined
@@ -73,14 +73,14 @@ Closed
 
 Typical happy paths:
 
-```txt id="happy-paths"
+```txt
 Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
 Draft -> Assigned -> Working -> Resolved -> Closed
 ```
 
 Important non-happy paths:
 
-```txt id="non-happy-paths"
+```txt
 Approval -> Declined
 Assigned / Working / Pending -> Rejected
 Working -> Pending -> Working
@@ -100,7 +100,7 @@ The previous style relied heavily on comments and status edits.
 
 The current design uses explicit Ticket Action commands:
 
-```txt id="ticket-actions"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -117,7 +117,7 @@ CANCEL
 
 This makes intent and effect clearer:
 
-```txt id="action-effect-history"
+```txt
 Action intent
 -> server rule execution
 -> status/routing/data effect
@@ -146,7 +146,7 @@ This avoids mixing internal team context with requester-facing communication.
 
 The design separates action/activity from history.
 
-```txt id="activity-history"
+```txt
 Activity/Action = what someone tried to do and why
 History = immutable event record of what changed
 ```
@@ -171,7 +171,7 @@ Settings evolved from admin CRUD into behavior-defining configuration.
 
 Current settings scope:
 
-```txt id="settings-scope"
+```txt
 Tenant
 -> Category
 -> Approval Step
@@ -192,7 +192,7 @@ Important changes:
 
 Category is the primary behavior driver.
 
-```txt id="category-behavior"
+```txt
 Tenant-scoped category
 -> defaults
 -> approval resolution
@@ -211,7 +211,7 @@ Requester category changes are routing-sensitive and can trigger routing reset.
 
 Routing became phase-aware.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -232,7 +232,7 @@ The newer design gives requesters limited update ability before active work.
 
 Requester update is allowed in:
 
-```txt id="requester-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -263,7 +263,7 @@ draft per requester.
 
 Attachment handling evolved into a preparation boundary:
 
-```txt id="attachment-boundary"
+```txt
 browser file input
 -> prepare API
 -> prepared metadata
@@ -365,14 +365,14 @@ request tracking screen
 
 ## Related Documents
 
-- [`service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
-- [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
-- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
-- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
+- [Ticket Operation Rules](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [Service Desk Settings](../03-domain/service-desk/settings.md)
+- [Ticket System Overview](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Action Model](../03-domain/service-desk/ticket/ticket-action.md)
+- [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
 
 ---
 

@@ -15,7 +15,7 @@ It aims to:
 
 ## Core Principle
 
-```id="i18n-principle"
+```txt
 Localization should follow domain boundaries, not technical layers
 ```
 
@@ -29,7 +29,7 @@ Translations are divided into **namespaces**, each representing a domain or conc
 
 ### Namespace List
 
-```txt id="namespaces"
+```txt
 auth
 common
 dashboard
@@ -53,7 +53,7 @@ validation
 
 ## Directory Structure
 
-```bash id="locale-structure"
+```bash
 locales/
   en/
     common.json
@@ -121,7 +121,7 @@ Each feature defines a **default namespace**.
 
 ### Example
 
-```ts id="default-ns"
+```ts
 const { t } = useTranslation(NS.serviceDesk);
 ```
 
@@ -129,7 +129,7 @@ const { t } = useTranslation(NS.serviceDesk);
 
 ### Cross-Namespace Access
 
-```ts id="cross-ns"
+```ts
 t("field.title.label", { ns: "common" });
 ```
 
@@ -146,7 +146,7 @@ t("field.title.label", { ns: "common" });
 
 ### Standard Format
 
-```json id="field-structure"
+```json
 {
   "field": {
     "title": {
@@ -171,7 +171,7 @@ t("field.title.label", { ns: "common" });
 
 ### Rule
 
-```id="naming-rule"
+```txt
 Use structured and predictable keys
 ```
 
@@ -179,7 +179,7 @@ Use structured and predictable keys
 
 ### Pattern
 
-```txt id="naming-pattern"
+```txt
 field.<name>.label
 field.<name>.placeholder
 ```
@@ -188,7 +188,7 @@ field.<name>.placeholder
 
 ### Example
 
-```ts id="naming-example"
+```ts
 t("field.title.label", { ns: "common" });
 ```
 
@@ -198,7 +198,7 @@ t("field.title.label", { ns: "common" });
 
 ### Option
 
-```ts id="helper"
+```ts
 function fieldLabel(name: string) {
   return t(`field.${name}.label`, { ns: "common" });
 }
@@ -224,7 +224,7 @@ function fieldLabel(name: string) {
 
 ### Decision
 
-```id="explicit-rule"
+```txt
 Prefer explicit translation keys over abstraction
 ```
 

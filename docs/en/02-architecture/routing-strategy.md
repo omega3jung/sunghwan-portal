@@ -17,7 +17,7 @@ The current Service Desk design uses:
 
 ## Page Routes
 
-```txt id="service-desk-page-routes"
+```txt
 /service-desk
 /service-desk/[ticketId]
 ```
@@ -51,7 +51,7 @@ Ticket detail is a page-level workflow, not a modal route.
 
 ## Page, Drawer, Dialog Policy
 
-```txt id="interaction-policy"
+```txt
 Page   -> primary workflow
 Drawer -> secondary reading or side panel
 Dialog -> atomic action or short form
@@ -73,7 +73,7 @@ Complex ticket detail should not be hidden inside a nested modal stack.
 
 Route handlers decide HTTP and runtime orchestration.
 
-```txt id="route-handler-flow"
+```txt
 route.ts
 -> parse request
 -> resolve session/runtime
@@ -92,7 +92,7 @@ resource context.
 Settings routes apply the same policy to reads and mutations before branching
 to LOCAL or REMOTE behavior.
 
-```txt id="settings-route-authorization"
+```txt
 authenticated JWT access level >= ADMIN (9)
 -> effective username
 -> canonical AppUser permission / userScope / companyId
@@ -127,7 +127,7 @@ directory.
 
 Important current API route groups:
 
-```txt id="service-desk-api-surface"
+```txt
 /api/service-desk/tickets
 /api/service-desk/tickets/search
 /api/service-desk/tickets/draft
@@ -158,14 +158,14 @@ routes as completed until route handlers exist.
 
 Ticket operational behavior is exposed through command-style paths.
 
-```txt id="ticket-command-paths"
+```txt
 /api/service-desk/tickets/[ticketId]/command/start-work
 /api/service-desk/tickets/[ticketId]/command/[action]
 ```
 
 The dynamic action segment uses lower/camel command names such as:
 
-```txt id="ticket-action-paths"
+```txt
 approve
 decline
 comment
@@ -188,13 +188,18 @@ The command route delegates to action rules and execution services.
 
 Draft routes support the create-ticket workflow.
 
-```txt id="draft-routes"
+```txt
 /api/service-desk/tickets/draft
 /api/service-desk/tickets/draft/[ticketId]
 ```
 
-REMOTE draft behavior is server-owned. The create dialog should use these APIs
-instead of treating draft as only a component-local state.
+These routes own REMOTE draft behavior. The create dialog uses them for the
+PostgreSQL-backed draft row rather than treating REMOTE draft as component-local
+state.
+
+LOCAL draft recovery does not traverse these routes. The feature draft
+repository reads and writes browser `localStorage`, scoped to the current demo
+user; React Query only orchestrates and caches that repository result.
 
 ---
 
@@ -202,7 +207,7 @@ instead of treating draft as only a component-local state.
 
 Attachment preparation is a separate route:
 
-```txt id="attachment-prepare-route"
+```txt
 POST /api/service-desk/tickets/attachments/prepare
 ```
 
@@ -215,7 +220,7 @@ submitting ticket command payloads with prepared metadata.
 
 The current implemented route surface is:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -246,7 +251,7 @@ criteria are too rich for simple query-string-only handling.
 
 Page routes and feature components should not branch deeply on storage details.
 
-```txt id="routing-runtime"
+```txt
 page/component
 -> feature hook/client
 -> API route handler
@@ -259,12 +264,12 @@ This keeps routing stable as persistence evolves.
 
 ## Related Documents
 
-- [`database-strategy.md`](database-strategy.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../04-engineering/ui/dialog-pattern.md`](../04-engineering/ui/dialog-pattern.md)
-- [`../04-engineering/forms/ticket-form.md`](../04-engineering/forms/ticket-form.md)
-- [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
+- [Database Strategy](database-strategy.md)
+- [Ticket System Overview](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Dialog Pattern](../04-engineering/ui/dialog-pattern.md)
+- [Ticket Form Design](../04-engineering/forms/ticket-form.md)
+- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
 
 ---
 

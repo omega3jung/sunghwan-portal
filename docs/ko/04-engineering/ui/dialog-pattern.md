@@ -18,7 +18,7 @@ page 대신 dialog 안에 숨기지 않는다.
 
 ## 핵심 원칙
 
-```txt id="dialog-core"
+```txt
 집중 액션에는 dialog를 사용한다.
 주요 workflow에는 page를 사용한다.
 ```
@@ -111,7 +111,7 @@ Ticket action dialog는 generic edit form이 아니라 command input이다.
 
 Dialog open 상태는 소유 component가 제어한다.
 
-```tsx id="dialog-open-state"
+```tsx
 const [open, setOpen] = useState(false);
 ```
 
@@ -212,10 +212,10 @@ create, update, action command의 workflow 규칙이 다른데 하나의 abstrac
 
 ## 관련 문서
 
-- [`form-pattern.md`](../forms/form-pattern.md)
-- [`../02-architecture/routing-strategy.md`](../../02-architecture/routing-strategy.md)
-- [`../forms/ticket-form.md`](../forms/ticket-form.md)
-- [`../forms/ticket-attachment.md`](../forms/ticket-attachment.md)
+- [폼 패턴](../forms/form-pattern.md)
+- [라우팅 전략](../../02-architecture/routing-strategy.md)
+- [티켓 폼 설계](../forms/ticket-form.md)
+- [티켓 첨부파일 설계](../forms/ticket-attachment.md)
 
 ---
 

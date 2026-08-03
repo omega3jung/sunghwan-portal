@@ -18,7 +18,9 @@ in order to support:
 README is an entry point, not the full documentation
 ```
 
-The root README should guide the reader, not overwhelm them.
+The root README should guide the reader with enough project, domain,
+architecture, demo, and scope context to decide where to continue. It should
+summarize those areas without becoming their canonical specification.
 
 ---
 
@@ -82,9 +84,11 @@ The root README is designed to:
 
 Examples:
 
-- Domain-driven design
-- Feature-based architecture
-- SLA / approval / assignment system
+- workflow-driven Ticket, Ticket Action, Ticket History, and Ticket Work Session
+  design
+- feature, Route Handler, LOCAL/REMOTE, and server-data boundaries
+- approval, assignment, draft, and attachment scope
+- production-aligned versus production-complete status
 
 ---
 
@@ -104,15 +108,20 @@ See more in: docs/en/README.md
 
 ---
 
-## What Not to Include in Root README
+## Root README Detail Boundary
 
-Avoid:
+Include enough domain and architecture context for a reviewer to understand why
+the project is significant and how the implemented system is divided.
 
-- Deep domain explanations
-- Full architecture breakdown
-- Long decision reasoning
+Do not duplicate:
 
-These belong in `docs/`.
+- exhaustive workflow transition or permission matrices
+- DTO, database-row, and field-by-field contracts
+- full operation-rule tables
+- long decision reasoning or rejected alternatives
+
+Those details belong in the canonical specification, current design documents,
+reference matrices, and Decision Logs.
 
 ---
 
@@ -121,8 +130,9 @@ These belong in `docs/`.
 ### Principle
 
 ```txt
-README -> overview
-Docs -> system explanation
+Root README -> concise reviewer-oriented project, domain, architecture, demo, and scope summary
+Canonical spec and current design docs -> precise workflow and implementation rules
+Decision Logs -> historical reasoning and alternatives
 ```
 
 ---
@@ -180,8 +190,9 @@ A clear README improves this flow.
 
 ### 2. Separation of Concerns
 
-- README -> communication layer
-- docs -> system design layer
+- root README -> reviewer entry and technical summary layer
+- canonical spec/current docs -> current system design layer
+- Decision Logs -> historical reasoning layer
 
 ---
 
@@ -235,7 +246,9 @@ As the project grows:
 
 - Keep README files at the root level
 - Use language-specific files (`README.md`, `README.ko.md`)
-- Move detailed explanations into `docs/`
+- Keep concise, reviewer-useful domain and architecture summaries in the root
+  README
+- Keep precise rules, matrices, contracts, and extended reasoning in `docs/`
 
 ---
 
@@ -257,6 +270,8 @@ The README strategy ensures that:
 - The project makes a strong first impression
 - Documentation remains scalable
 - Multi-language support stays clean and maintainable
-- System design is properly separated from project introduction
+- Reviewer-oriented technical context remains in the root README
+- Canonical rules and historical reasoning remain separated from the project
+  introduction
 
 This allows the repository to function both as a **working project** and a **well-documented portfolio artifact**.

@@ -11,7 +11,7 @@ history를 validate하는 server-controlled command pipeline이다.
 
 ## 현재 Action Union
 
-```txt id="ticket-action-union"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -28,7 +28,7 @@ CANCEL
 
 Route path는 다음을 사용한다.
 
-```txt id="ticket-action-route-paths"
+```txt
 approve
 decline
 comment
@@ -46,7 +46,7 @@ cancel
 명시적 start-work command는 Ticket Action union member가 아니라 별도 command route로
 구현된다.
 
-```txt id="start-work-command-route"
+```txt
 POST /api/service-desk/tickets/:ticketId/command/start-work
 ```
 
@@ -54,7 +54,7 @@ POST /api/service-desk/tickets/:ticketId/command/start-work
 
 ## Command Pipeline
 
-```txt id="ticket-action-pipeline"
+```txt
 POST /api/service-desk/tickets/:ticketId/command/:action
 -> authenticate current employee
 -> resolve user role
@@ -95,7 +95,7 @@ case로 묶는다.
 
 Operational action result가 부분 commit되면 안 되기 때문에 중요하다.
 
-```txt id="action-transaction"
+```txt
 action row
 + ticket mutation
 + history rows
@@ -191,7 +191,7 @@ Production notification delivery는 명시적으로 구현되기 전까지 defer
 
 두 runtime path는 같은 action command surface와 DTO shape를 노출해야 한다.
 
-```txt id="action-runtime"
+```txt
 LOCAL command handler
 REMOTE portal API/service
 -> TicketActionDto

@@ -11,7 +11,7 @@ meaning depends on `approvalStepId`.
 
 ## Source of Truth
 
-```txt id="assignment-source"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -35,7 +35,7 @@ Work assignment resolution checks the selected subcategory first. When no
 subcategory assignment rule exists, it falls back to the parent/main category
 rule.
 
-```ts id="assignment-rule-shape"
+```ts
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
@@ -110,7 +110,7 @@ system does not create an unowned `Assigned` ticket.
 Work assignees are resolved when a ticket does not require approval or when
 final approval completes.
 
-```txt id="initial-work-assignment"
+```txt
 no approval step
 or final approval complete
 -> resolve selected subcategory assignment rule if present
@@ -202,7 +202,7 @@ existing ticket action matrix is not otherwise changed here.
 
 Assignment events:
 
-```txt id="assignment-history-events"
+```txt
 ASSIGNMENT_RESOLVED
 ASSIGNMENT_UPDATED
 ```
@@ -233,6 +233,7 @@ They are future extensions.
 
 - [Ticket Lifecycle](../ticket-lifecycle.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
+- [Employee Reference Scope Matrix](../reference/restrict-employee-list.xlsx)
 - [Approval System](./approval-system.md)
 - [Ticket History](../ticket-history.md)
 - [Service Desk Settings](../../settings.md)

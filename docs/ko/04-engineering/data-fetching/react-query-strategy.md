@@ -14,13 +14,14 @@ React Query는 Service Desk server state를 관리한다.
 
 ## 핵심 원칙
 
-```txt id="react-query-core"
+```txt
 Server state는 React Query가 소유한다.
 UI state는 component state 또는 작은 UI store가 소유한다.
 ```
 
-Service Desk settings, tickets, drafts, actions, histories, work sessions는
-server state이다.
+Service Desk settings, tickets, REMOTE drafts, actions, histories, work sessions는
+server state다. LOCAL 초안 복구는 예외이며, 동일한 query hook으로 노출되는
+브라우저 로컬 저장소 상태다.
 
 ---
 
@@ -56,7 +57,7 @@ Workflow mutation 이후 invalidate해야 한다.
 
 ## 현재 Service Desk Query Family
 
-```txt id="service-desk-query-families"
+```txt
 ticket list/search
 ticket detail
 ticket draft by dataScope/userId
@@ -90,9 +91,13 @@ settings assignment rules
 
 ## Draft Query Policy
 
-REMOTE draft는 server state이다. LOCAL draft는 feature API boundary 뒤의
-simplified demo-safe 구현을 사용한다. React Query cache나 browser recovery는 durable
-ticket persistence boundary가 아니다.
+REMOTE 초안은 PostgreSQL 티켓 행을 기반으로 하며 초안 Route Handler를 통해
+접근하는 server state다. 반면 LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저
+`localStorage`에 저장되고, 해당 Route Handler를 호출하지 않고 기능 초안 저장소가
+읽고 쓴다.
+
+React Query는 두 data scope 모두에 query와 mutation 조정을 제공한다. React Query
+캐시는 REMOTE 영속 저장소도, LOCAL 복구 저장소도 아니다.
 
 Create dialog는 draft query family로 active draft를 로드한다. Final submit 또는
 discard 후 active draft query를 invalidate/remove한다.
@@ -129,7 +134,7 @@ authority다.
 
 현재 work-session route:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -171,7 +176,7 @@ Local component state가 소유:
 
 Feature UI는 LOCAL/REMOTE storage detail을 깊게 분기하지 않는다.
 
-```txt id="query-runtime"
+```txt
 feature hook
 -> feature API client
 -> route handler
@@ -205,17 +210,19 @@ Server에서 성공하지 않은 command에 대해 UI-only history row를 만들
 
 ## 관련 문서
 
-- [`../../03-domain/service-desk/settings.md`](../../03-domain/service-desk/settings.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../../03-domain/service-desk/ticket/ticket-work-session.md`](../../03-domain/service-desk/ticket/ticket-work-session.md)
-- [`../forms/ticket-form.md`](../forms/ticket-form.md)
-- [`../service-desk-implementation-strategy.md`](../service-desk-implementation-strategy.md)
+- [서비스 데스크 설정](../../03-domain/service-desk/settings.md)
+- [티켓 모델](../../03-domain/service-desk/ticket/ticket-model.md)
+- [티켓 이력](../../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 작업 세션](../../03-domain/service-desk/ticket/ticket-work-session.md)
+- [티켓 폼 설계](../forms/ticket-form.md)
+- [서비스 데스크 구현 전략](../service-desk-implementation-strategy.md)
 
 ---
 
 ## 요약
 
-React Query는 tickets, drafts, actions, histories, work sessions,
-tenant-scoped settings의 server-state owner이다. Mutation은 필요한 query family만
-정밀하게 invalidate하고, UI state와 server state를 분리한다.
+React Query는 Service Desk server state를 소유하면서 브라우저 로컬 LOCAL 초안
+저장소에 대한 접근도 조정한다. 현재 전략은 tickets, drafts, actions, histories,
+work sessions, tenant-scoped settings의 구조화된 query family와 workflow mutation
+이후의 정밀한 invalidation을 사용하며, UI state·server state·복구 저장소를
+명확히 분리한다.

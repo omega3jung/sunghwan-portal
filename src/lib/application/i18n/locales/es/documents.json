@@ -88,6 +88,9 @@
       },
       "2026-07": {
         "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
       }
     }
   },
@@ -327,6 +330,18 @@
     "decisionTicketRoutingAndUpdatePolicy202607": {
       "title": "2026-07 Politica de enrutamiento y actualizacion de tickets",
       "description": "Entrada del registro de decisiones sobre enrutamiento y actualizacion de tickets."
+    },
+    "decisionNextjs16MigrationStrategy202607": {
+      "title": "2026-07 Estrategia de migracion a Next.js 16",
+      "description": "Entrada del registro de decisiones sobre la estrategia de migracion a Next.js 16."
+    },
+    "decisionTicketMergeAndEscalationPolicy202607": {
+      "title": "2026-07 Politica de fusion y escalamiento de tickets",
+      "description": "Entrada del registro de decisiones sobre fusion y escalamiento de tickets."
+    },
+    "decisionBooleanCapabilityApiNaming202608": {
+      "title": "2026-08 Nomenclatura de API de capacidades booleanas",
+      "description": "Entrada del registro de decisiones sobre nomenclatura de API de capacidades booleanas."
     }
   }
 }

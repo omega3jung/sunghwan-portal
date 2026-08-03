@@ -117,8 +117,10 @@ Rules:
 - final submit reuses the same row
 - submit resolves initial approval/work routing
 - operational ticket lists exclude drafts
-- LOCAL draft uses a simplified demo-safe implementation behind the feature API
-  boundary and is not persistence-equivalent to REMOTE PostgreSQL draft
+- LOCAL draft recovery is stored in browser `localStorage`, keyed to the current
+  demo user and accessed through the feature draft repository; it does not call
+  the draft Route Handlers and is not persistence-equivalent to REMOTE
+  PostgreSQL draft
 
 See:
 

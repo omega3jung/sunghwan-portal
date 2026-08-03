@@ -59,7 +59,7 @@ decision log는 당시의 판단 근거를 보존하며, 현재 규칙은 이 �
 시스템은 **도메인 모델**, **사용자 기능**, **런타임 구현**을 서로 다른 경계로
 분리하고, feature를 사용자 워크플로 단위로 구성합니다.
 
-```id="feature-concept"
+```txt
 domain = 비즈니스 개념과 순수 규칙
 feature = 사용자가 수행하는 독립적인 기능 단위
 ```
@@ -78,7 +78,7 @@ feature = 사용자가 수행하는 독립적인 기능 단위
 
 ## Directory Structure
 
-```bash id="feature-structure"
+```bash
 src/
   app/          # Next.js 라우팅과 최종 조합
   components/   # 애플리케이션 전역 UI widget
@@ -209,7 +209,7 @@ Runtime 허용 범위는 단순히 `app` 아래인지가 아니라 entry에 따�
 - Client Component는 repository, database client, secret, filesystem code 등 server-only module을 참조하지 않는다.
 - app entry가 import한 component에도 같은 runtime 규칙을 적용한다.
 
-```tsx id="app-example"
+```tsx
 export default function Page() {
   return <ServiceDeskPage />;
 }
@@ -234,7 +234,7 @@ export default function Page() {
 
 각 feature는 일관된 내부 구조를 따릅니다.
 
-```bash id="feature-module"
+```bash
 feature/serviceDesk/
   components/
   api/
@@ -258,7 +258,7 @@ feature/serviceDesk/
 - API 호출과 mutation 로직
 - 백엔드 연동 세부 사항 캡슐화
 
-```ts id="api-example"
+```ts
 export const serviceDeskTicketApi = {
   list: (params) => fetch(...),
   get: (id) => fetch(...),
@@ -272,7 +272,7 @@ export const serviceDeskTicketApi = {
 - custom hook 위치
 - 데이터 페칭과 상태 조합 담당
 
-```ts id="hook-example"
+```ts
 export const useFetchTickets = () => {
   return useQuery(...);
 };
@@ -305,7 +305,7 @@ export const useFetchTickets = () => {
 
 ### Example
 
-```tsx id="component-boundary"
+```tsx
 <TicketList>
   <TicketItem />
 </TicketList>
@@ -357,7 +357,7 @@ Desk data는 주로 feature client → route handler → LOCAL/REMOTE server imp
 
 ### Principle
 
-```id="state-principle"
+```txt
 가능한 한 client state보다 server state를 우선한다
 ```
 
@@ -555,12 +555,12 @@ src/lib/client/
 
 ## Related Documents
 
-- [`state-management.md`](state-management.md)
-- [`routing-strategy.md`](routing-strategy.md)
-- [`database-strategy.md`](database-strategy.md)
-- [`../04-engineering/ui/component-boundary.md`](../04-engineering/ui/component-boundary.md)
-- [`../06-decisions/2026-05-barrel-export-boundary.md`](../06-decisions/2026-05-barrel-export-boundary.md)
-- [`../06-decisions/2026-05-service-desk-documentation-alignment.md`](../06-decisions/2026-05-service-desk-documentation-alignment.md)
+- [상태 관리 전략](state-management.md)
+- [라우팅 전략](routing-strategy.md)
+- [데이터베이스 전략](database-strategy.md)
+- [컴포넌트 경계](../04-engineering/ui/component-boundary.md)
+- [배럴 내보내기 경계 정책 (2026-05)](../06-decisions/2026-05-barrel-export-boundary.md)
+- [서비스 데스크 문서 정렬 (2026-05)](../06-decisions/2026-05-service-desk-documentation-alignment.md)
 
 ---
 
@@ -568,4 +568,5 @@ src/lib/client/
 
 feature-based structure는 애플리케이션을 **비즈니스 도메인 중심**으로 구성함으로써, 각 기능이 독립 모듈처럼 동작하게 만듭니다.
 
-그 결과 프로젝트는 더 확장 가능하고, 유지보수하기 쉬우며, 프로덕션 지향적인 구조를 갖게 됩니다.
+그 결과 프로젝트는 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 아키텍처를 갖게 됩니다.
+이는 경계 설계를 설명하는 것이며, 프로덕션 완성을 의미하지는 않습니다.

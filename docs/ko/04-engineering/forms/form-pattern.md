@@ -16,7 +16,7 @@ Form은 Service Desk workflow에서 type-safe하고 독립적인 입력 처리�
 
 ## 핵심 원칙
 
-```txt id="form-core"
+```txt
 Form state는 local input state이다.
 Workflow state는 server state이다.
 ```
@@ -61,7 +61,7 @@ Client validation은 feedback을 개선한다. Server validation은 최종 권�
 
 현재 ticket form steps:
 
-```txt id="current-ticket-form-steps"
+```txt
 issueDetails
 attachments
 review
@@ -107,7 +107,7 @@ Requester update flow:
 
 Raw browser `File`은 열린 form 내부에만 존재한다.
 
-```txt id="form-attachment-boundary"
+```txt
 React Hook Form File[]
 -> Attachment Prepare API
 -> prepared metadata
@@ -131,6 +131,10 @@ Draft는 단순 미저장 component state와 다르다.
 REMOTE mode에서 create-ticket draft는 draft API와 React Query를 통해 로드되는
 server state이다. Form은 active draft에서 hydrate하고, form values를 draft
 workflow로 저장할 수 있다.
+
+LOCAL mode에서는 동일한 기능 수준 초안 hook이 기능 초안 저장소를 통해 브라우저
+`localStorage` 레코드를 읽고 쓴다. React Query가 저장소 결과를 캐시할 수 있지만
+그 캐시는 복구 저장소가 아니며, 초안 Route Handler도 호출하지 않는다.
 
 Draft는 attachment recovery를 보장하지 않는다.
 
@@ -156,7 +160,7 @@ Approval routing, assignment rule, history construction을 field component에 �
 
 Form은 feature mutation을 통해 제출한다.
 
-```txt id="form-submit-policy"
+```txt
 form validation
 -> optional preparation step
 -> mutation
@@ -202,7 +206,8 @@ Routing reset, attachment rejection 및 permission failure는 generic validation
 | --- | --- |
 | editing 중 field input | React Hook Form |
 | current form step | local component/hook state |
-| active draft | React Query/API |
+| REMOTE active draft | React Query/API 및 PostgreSQL 티켓 행 |
+| LOCAL draft recovery | 기능 초안 저장소 및 브라우저 `localStorage` |
 | ticket detail | React Query/API |
 | settings/category options | React Query/API |
 | raw files | 열린 form의 React Hook Form |
@@ -233,10 +238,10 @@ Requester update가 routing을 reset한다면 server workflow로 실행되고 hi
 
 ## 관련 문서
 
-- [`dialog-pattern.md`](../ui/dialog-pattern.md)
-- [`ticket-form.md`](ticket-form.md)
-- [`ticket-attachment.md`](ticket-attachment.md)
-- [`../data-fetching/react-query-strategy.md`](../data-fetching/react-query-strategy.md)
+- [다이얼로그 패턴](../ui/dialog-pattern.md)
+- [티켓 폼 설계](ticket-form.md)
+- [티켓 첨부파일 설계](ticket-attachment.md)
+- [React Query 전략](../data-fetching/react-query-strategy.md)
 
 ---
 

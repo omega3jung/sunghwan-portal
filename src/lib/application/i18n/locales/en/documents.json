@@ -88,6 +88,9 @@
       },
       "2026-07": {
         "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
       }
     }
   },
@@ -327,6 +330,18 @@
     "decisionTicketRoutingAndUpdatePolicy202607": {
       "title": "2026-07 Ticket Routing and Update Policy",
       "description": "Ticket routing and update policy decision log entry."
+    },
+    "decisionNextjs16MigrationStrategy202607": {
+      "title": "2026-07 Next.js 16 Migration Strategy",
+      "description": "Next.js 16 migration strategy decision log entry."
+    },
+    "decisionTicketMergeAndEscalationPolicy202607": {
+      "title": "2026-07 Ticket Merge and Escalation Policy",
+      "description": "Ticket merge and escalation policy decision log entry."
+    },
+    "decisionBooleanCapabilityApiNaming202608": {
+      "title": "2026-08 Boolean Capability API Naming",
+      "description": "Boolean capability API naming decision log entry."
     }
   }
 }

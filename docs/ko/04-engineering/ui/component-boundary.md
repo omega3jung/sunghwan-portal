@@ -16,7 +16,7 @@
 
 ## 핵심 원칙
 
-```id="boundary-principle"
+```txt
 Components should have a single responsibility
 ```
 
@@ -58,7 +58,7 @@ persistence behavior의 source of truth가 되지 않는다. 규칙의 결과를
 
 ### 예시
 
-```tsx id="container-example"
+```tsx
 export function TicketList() {
   const { data } = useFetchTickets();
 
@@ -104,7 +104,7 @@ Presentational component가 소유하면 안 되는 책임의 예:
 
 ### 예시
 
-```tsx id="presentational-example"
+```tsx
 export function TicketItem({ ticket }) {
   return <div>{ticket.title}</div>;
 }
@@ -116,7 +116,7 @@ export function TicketItem({ ticket }) {
 
 ### 규칙
 
-```id="boundary-rule"
+```txt
 Data flows from container -> presentational components via props
 ```
 
@@ -139,7 +139,7 @@ Data flows from container -> presentational components via props
 
 ### 규칙
 
-```id="feature-boundary"
+```txt
 Route Server Components or feature containers own data orchestration
 ```
 
@@ -147,7 +147,7 @@ Route Server Components or feature containers own data orchestration
 
 ### 예시 구조
 
-```bash id="feature-boundary-structure"
+```bash
 TicketList (container)
   -> TicketItem (presentational)
   -> TicketStatusBadge
@@ -179,7 +179,7 @@ TicketList (container)
 
 ### 원칙
 
-```id="props-principle"
+```txt
 Pass only what is needed
 ```
 
@@ -187,7 +187,7 @@ Pass only what is needed
 
 ### 필요한 필드만 사용하는 경우
 
-```tsx id="good-props"
+```tsx
 <TicketItem title={ticket.title} status={ticket.status} />
 ```
 
@@ -195,7 +195,7 @@ Pass only what is needed
 
 ### 객체 자체가 컴포넌트 계약인 경우
 
-```tsx id="bad-props"
+```tsx
 <TicketItem ticket={ticket} />
 ```
 
@@ -218,7 +218,7 @@ Pass only what is needed
 
 ### 규칙
 
-```id="state-placement"
+```txt
 State should live in the lowest common owner that needs it
 ```
 
@@ -273,7 +273,7 @@ normalize한다.
 
 ### 원칙
 
-```id="interaction-principle"
+```txt
 UI reports interaction, container coordinates the workflow
 ```
 
@@ -281,7 +281,7 @@ UI reports interaction, container coordinates the workflow
 
 ### 예시
 
-```tsx id="interaction-example"
+```tsx
 <TicketItem onClick={handleSelectTicket} />
 ```
 
@@ -416,9 +416,9 @@ runtime-safe한 feature contract를 사용할 수 있다. 이것이 명확한 wo
 
 ## 관련 문서
 
-- [`../02-architecture/feature-based-structure.md`](../../02-architecture/feature-based-structure.md)
-- [`../02-architecture/state-management.md`](../../02-architecture/state-management.md)
-- [`dialog-pattern.md`](dialog-pattern.md)
+- [기능 기반 구조](../../02-architecture/feature-based-structure.md)
+- [상태 관리 전략](../../02-architecture/state-management.md)
+- [다이얼로그 패턴](dialog-pattern.md)
 
 ---
 

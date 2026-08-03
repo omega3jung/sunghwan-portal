@@ -16,7 +16,7 @@
 
 ## 핵심 원칙
 
-```id="dashboard-principle"
+```txt
 Information should be layered by purpose: quick overview vs deep analysis
 ```
 
@@ -58,7 +58,7 @@ KPI 카드는 다음과 같은 문제를 유발한다.
 
 ## 핵심 결정
 
-```txt id="dashboard-decision"
+```txt
 Separate Dashboard (overview) and Insight (analysis)
 ```
 
@@ -135,7 +135,7 @@ Separate Dashboard (overview) and Insight (analysis)
 
 ### 규칙
 
-```id="layering-rule"
+```txt
 Do not mix overview widgets with analytical reporting in the same primary surface
 ```
 
@@ -153,7 +153,7 @@ Do not mix overview widgets with analytical reporting in the same primary surfac
 
 ### 구조
 
-```txt id="dashboard-structure"
+```txt
 Header
 Quick summary
 Personal work widgets
@@ -174,7 +174,7 @@ Recent activity
 
 ### 구조
 
-```txt id="insight-structure"
+```txt
 Header
 Filter controls
 Analytical cards

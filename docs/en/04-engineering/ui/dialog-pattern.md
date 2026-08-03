@@ -18,7 +18,7 @@ Ticket detail remains a page.
 
 ## Core Principle
 
-```txt id="dialog-core"
+```txt
 Use dialogs for focused actions.
 Use pages for primary workflows.
 ```
@@ -113,7 +113,7 @@ Separate hooks/components keep those differences visible.
 
 Dialog open state should be controlled by the owning component.
 
-```tsx id="dialog-open-state"
+```tsx
 const [open, setOpen] = useState(false);
 ```
 
@@ -220,10 +220,10 @@ workflow rules differ.
 
 ## Related Documents
 
-- [`form-pattern.md`](../forms/form-pattern.md)
-- [`../02-architecture/routing-strategy.md`](../../02-architecture/routing-strategy.md)
-- [`../forms/ticket-form.md`](../forms/ticket-form.md)
-- [`../forms/ticket-attachment.md`](../forms/ticket-attachment.md)
+- [Form Pattern](../forms/form-pattern.md)
+- [Routing Strategy](../../02-architecture/routing-strategy.md)
+- [Ticket Form Design](../forms/ticket-form.md)
+- [Ticket Attachment Design](../forms/ticket-attachment.md)
 
 ---
 

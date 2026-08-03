@@ -13,7 +13,7 @@ shape of the system, then follow the links for execution details.
 
 ## Current Ticket System
 
-```txt id="ticket-system-current"
+```txt
 Tenant-scoped settings
 -> category-driven ticket intake
 -> approval or work routing
@@ -32,7 +32,7 @@ actions, history, attachments, and work-session records.
 
 The current `TicketStatus` union is:
 
-```txt id="ticket-status-union"
+```txt
 Draft
 Approval
 Declined
@@ -67,8 +67,10 @@ Current draft rules:
 - draft save/update uses the draft API
 - final submit reuses the draft row and moves it to `Approval` or `Assigned`
 - operational lists and insights exclude draft tickets
-- LOCAL draft uses a simplified demo-safe implementation behind the feature API
-  boundary and is not persistence-equivalent to the REMOTE PostgreSQL draft model
+- LOCAL draft recovery is browser-local `localStorage` state scoped to the
+  current demo user and accessed through the feature draft repository
+- LOCAL draft operations do not traverse the draft Route Handlers and are not
+  persistence-equivalent to the REMOTE PostgreSQL draft model
 
 Related document: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
 
@@ -78,14 +80,14 @@ Related document: [Ticket Form Design](../../../04-engineering/forms/ticket-form
 
 Current routing source of truth:
 
-```txt id="routing-source-of-truth"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
 
 Interpretation:
 
-```txt id="routing-phase"
+```txt
 tk_approval_step_id != null
 -> assignmentPhase = APPROVAL
 -> tk_assignee_usernames = current approvers
@@ -116,7 +118,7 @@ Related documents:
 
 Ticket submission resolves routing from the selected category and requester.
 
-```txt id="initial-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -133,7 +135,7 @@ assignment and moves the ticket to `Assigned`.
 
 Decline terminates approval routing:
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -182,7 +184,7 @@ Related documents:
 
 Ticket attachment input is prepared before ticket commands write metadata.
 
-```txt id="attachment-flow"
+```txt
 File[] / inline image
 -> Attachment Prepare API
 -> prepared body, files, images
@@ -204,7 +206,7 @@ Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticke
 
 Ticket actions are server-controlled commands.
 
-```txt id="ticket-action-command"
+```txt
 Action command
 -> authenticate
 -> authorize
@@ -217,7 +219,7 @@ Action command
 
 Current action types:
 
-```txt id="ticket-action-types"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -250,7 +252,7 @@ Related documents:
 
 History is immutable event/audit data.
 
-```txt id="history-shape"
+```txt
 type   -> changed domain area
 source -> why or which rule produced it
 event  -> what happened
@@ -276,7 +278,7 @@ Action.
 
 Current route surface:
 
-```txt id="work-session-routes"
+```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
@@ -300,7 +302,7 @@ Related document: [Ticket Work Session](./ticket-work-session.md)
 Service Desk settings provide the behavior configuration used by ticket
 workflows.
 
-```txt id="settings-relationship"
+```txt
 Company
 -> Service Desk Tenant
    -> Category
@@ -321,7 +323,7 @@ Related document: [Service Desk Settings](../settings.md)
 
 The UI uses feature API clients. Route handlers select LOCAL or REMOTE behavior.
 
-```txt id="runtime-boundary"
+```txt
 UI
 -> feature API client
 -> Next.js Route Handler

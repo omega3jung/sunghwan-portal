@@ -11,7 +11,7 @@
 
 ## 현재 Ticket System
 
-```txt id="ticket-system-current"
+```txt
 Tenant-scoped settings
 -> category-driven ticket intake
 -> approval or work routing
@@ -30,7 +30,7 @@ attachments, work-session records를 가진다.
 
 현재 `TicketStatus` union:
 
-```txt id="ticket-status-union"
+```txt
 Draft
 Approval
 Declined
@@ -65,8 +65,10 @@ REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장된다.
 - draft save/update는 draft API를 사용한다.
 - final submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 이동시킨다.
 - operational list와 insight는 draft ticket을 제외한다.
-- LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용하며
-  REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다.
+- LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저 `localStorage` 상태이며
+  기능 초안 저장소를 통해 접근한다.
+- LOCAL 초안 작업은 초안 Route Handler를 거치지 않으며 REMOTE PostgreSQL 초안
+  모델과 영속성 측면에서 동등하지 않다.
 
 관련 문서: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
 
@@ -76,14 +78,14 @@ REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장된다.
 
 현재 routing source of truth:
 
-```txt id="routing-source-of-truth"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
 
 해석:
 
-```txt id="routing-phase"
+```txt
 tk_approval_step_id != null
 -> assignmentPhase = APPROVAL
 -> tk_assignee_usernames = current approvers
@@ -114,7 +116,7 @@ DTO는 UI 편의를 위해 projection field를 노출한다.
 
 Ticket submission은 선택된 category와 requester에서 routing을 resolve한다.
 
-```txt id="initial-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -131,7 +133,7 @@ ticket을 `Assigned`로 이동시킨다.
 
 Decline은 approval routing을 종료한다.
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -179,7 +181,7 @@ category change는 due date를 더 이른 날짜로 당기면 안 된다.
 
 Ticket attachment input은 ticket command가 metadata를 쓰기 전에 prepare된다.
 
-```txt id="attachment-flow"
+```txt
 File[] / inline image
 -> Attachment Prepare API
 -> prepared body, files, images
@@ -201,7 +203,7 @@ action metadata, history metadata에 persist하면 안 된다.
 
 Ticket action은 server-controlled command다.
 
-```txt id="ticket-action-command"
+```txt
 Action command
 -> authenticate
 -> authorize
@@ -214,7 +216,7 @@ Action command
 
 현재 action type:
 
-```txt id="ticket-action-types"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -247,7 +249,7 @@ closure 이후 새 comment creation이 허용된다는 뜻이 아니다.
 
 History는 immutable event/audit data다.
 
-```txt id="history-shape"
+```txt
 type   -> changed domain area
 source -> why or which rule produced it
 event  -> what happened
@@ -272,7 +274,7 @@ Work Session은 실제 work-time evidence를 기록한다. Ticket Action과 분�
 
 현재 route surface:
 
-```txt id="work-session-routes"
+```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
@@ -295,7 +297,7 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 Service Desk settings는 ticket workflow가 사용하는 behavior configuration을 제공한다.
 
-```txt id="settings-relationship"
+```txt
 Company
 -> Service Desk Tenant
    -> Category
@@ -316,7 +318,7 @@ subcategory override와 parent/main fallback으로 work ownership을 resolve한�
 UI는 feature API client를 사용한다. Route handler는 LOCAL 또는 REMOTE behavior를
 선택한다.
 
-```txt id="runtime-boundary"
+```txt
 UI
 -> feature API client
 -> Next.js Route Handler

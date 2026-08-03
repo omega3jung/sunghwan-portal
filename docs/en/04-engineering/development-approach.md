@@ -3,7 +3,8 @@
 ## Goal
 
 The development approach is designed to prioritize **functional completeness, iterative improvement, and practical decision-making**
-when building a production-like demo system.
+when building a production-aligned prototype that remains explicit about
+deferred production infrastructure.
 
 It aims to:
 
@@ -16,7 +17,7 @@ It aims to:
 
 ## Core Principle
 
-```id="development-principle"
+```txt
 Functional completeness comes before optimization and abstraction
 ```
 
@@ -31,7 +32,7 @@ has been migrated to **Next.js 16 App Router**, and continues to be improved on 
 
 ### Legacy Context
 
-```txt id="legacy-context"
+```txt
 Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 ```
 
@@ -48,7 +49,7 @@ Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 
 ### 1. Build First, Refine Later
 
-```txt id="build-first"
+```txt
 Make it work -> Make it better -> Make it scalable
 ```
 
@@ -120,7 +121,7 @@ Refactoring and design improvements should happen continuously as the system bec
 
 ### Rule
 
-```id="decision-rule"
+```txt
 Prefer practical decisions that move the product forward over idealized architecture chosen too early
 ```
 
@@ -162,7 +163,7 @@ Optimization should happen after behavior is correct and the usage pattern is un
 
 ### Recommended Flow
 
-```txt id="development-flow"
+```txt
 Implement -> Verify behavior -> Extract patterns -> Refine -> Standardize
 ```
 

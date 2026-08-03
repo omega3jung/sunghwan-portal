@@ -24,7 +24,7 @@ Service Desk 도메인으로 어떻게 정제되었는지 설명한다.
 현재 프로젝트는 그 시스템을 복제하지 않는다. 실제 운영 교훈을 추출하고, 더 명확한
 Service Desk 도메인으로 재설계한다.
 
-```txt id="evolution-flow"
+```txt
 previous workplace experience
 -> operational lessons
 -> clearer domain boundaries
@@ -58,7 +58,7 @@ previous workplace experience
 
 현재 모델은 ticket을 controlled state를 가진 workflow entity로 다룬다.
 
-```txt id="current-ticket-statuses"
+```txt
 Draft
 Approval
 Declined
@@ -72,14 +72,14 @@ Closed
 
 일반 happy path:
 
-```txt id="happy-paths"
+```txt
 Draft -> Approval -> Assigned -> Working -> Resolved -> Closed
 Draft -> Assigned -> Working -> Resolved -> Closed
 ```
 
 주요 non-happy path:
 
-```txt id="non-happy-paths"
+```txt
 Approval -> Declined
 Assigned / Working / Pending -> Rejected
 Working -> Pending -> Working
@@ -98,7 +98,7 @@ Assigned / Working / Pending / Resolved -> Closed
 
 현재 설계는 명시적인 Ticket Action command를 사용한다.
 
-```txt id="ticket-actions"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -115,7 +115,7 @@ CANCEL
 
 흐름:
 
-```txt id="action-effect-history"
+```txt
 Action intent
 -> server rule execution
 -> status/routing/data effect
@@ -142,7 +142,7 @@ Communication은 두 개념으로 분리되었다.
 
 ## Activity와 History 분리
 
-```txt id="activity-history"
+```txt
 Activity/Action = 누군가 무엇을 왜 하려 했는가
 History = 실제로 무엇이 바뀌었는가에 대한 immutable event record
 ```
@@ -166,7 +166,7 @@ Settings는 admin CRUD에서 behavior-defining configuration으로 진화했다.
 
 현재 settings scope:
 
-```txt id="settings-scope"
+```txt
 Tenant
 -> Category
 -> Approval Step
@@ -187,7 +187,7 @@ Tenant
 
 Category는 주요 behavior driver이다.
 
-```txt id="category-behavior"
+```txt
 Tenant-scoped category
 -> defaults
 -> approval resolution
@@ -206,7 +206,7 @@ Requester category change는 routing-sensitive이며 routing reset을 유발할 
 
 Routing은 phase-aware가 되었다.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -227,7 +227,7 @@ Ticket DTO는 다음 projection을 노출할 수 있다.
 
 허용 status:
 
-```txt id="requester-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -257,7 +257,7 @@ REMOTE draft는 requester당 하나의 active draft를 가진 `Draft` ticket row
 
 Attachment는 prepare boundary로 발전했다.
 
-```txt id="attachment-boundary"
+```txt
 browser file input
 -> prepare API
 -> prepared metadata
@@ -355,14 +355,14 @@ request tracking screen
 
 ## 관련 문서
 
-- [`service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
-- [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
-- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
-- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [서비스 데스크 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
+- [티켓 운영 규칙](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [서비스 데스크 설정](../03-domain/service-desk/settings.md)
+- [티켓 시스템 개요](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [티켓 생명주기](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [티켓 액션 모델](../03-domain/service-desk/ticket/ticket-action.md)
+- [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
 
 ---
 

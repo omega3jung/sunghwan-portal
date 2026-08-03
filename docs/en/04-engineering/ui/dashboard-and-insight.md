@@ -16,7 +16,7 @@ It aims to:
 
 ## Core Principle
 
-```id="dashboard-principle"
+```txt
 Information should be layered by purpose: quick overview vs deep analysis
 ```
 
@@ -58,7 +58,7 @@ KPI cards introduce:
 
 ## Key Decision
 
-```txt id="dashboard-decision"
+```txt
 Separate Dashboard (overview) and Insight (analysis)
 ```
 
@@ -135,7 +135,7 @@ The insight page should support operational analysis and monitoring.
 
 ### Rule
 
-```id="layering-rule"
+```txt
 Do not mix overview widgets with analytical reporting in the same primary surface
 ```
 
@@ -153,7 +153,7 @@ Do not mix overview widgets with analytical reporting in the same primary surfac
 
 ### Structure
 
-```txt id="dashboard-structure"
+```txt
 Header
 Quick summary
 Personal work widgets
@@ -174,7 +174,7 @@ Recent activity
 
 ### Structure
 
-```txt id="insight-structure"
+```txt
 Header
 Filter controls
 Analytical cards

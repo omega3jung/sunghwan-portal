@@ -16,7 +16,7 @@ It aims to:
 
 ## Core Principle
 
-```id="boundary-principle"
+```txt
 Components should have a single responsibility
 ```
 
@@ -60,7 +60,7 @@ reimplement that rule in JSX or event handlers.
 
 ### Example
 
-```tsx id="container-example"
+```tsx
 export function TicketList() {
   const { data } = useFetchTickets();
 
@@ -106,7 +106,7 @@ Examples of responsibilities that do not belong in a presentational component:
 
 ### Example
 
-```tsx id="presentational-example"
+```tsx
 export function TicketItem({ ticket }) {
   return <div>{ticket.title}</div>;
 }
@@ -118,7 +118,7 @@ export function TicketItem({ ticket }) {
 
 ### Rule
 
-```id="boundary-rule"
+```txt
 Data flows from container → presentational components via props
 ```
 
@@ -141,7 +141,7 @@ The boundary is enforced at the **feature level**.
 
 ### Rule
 
-```id="feature-boundary"
+```txt
 Route Server Components or feature containers own data orchestration
 ```
 
@@ -149,7 +149,7 @@ Route Server Components or feature containers own data orchestration
 
 ### Example Structure
 
-```bash id="feature-boundary-structure"
+```bash
 TicketList (container)
   ├── TicketItem (presentational)
   ├── TicketStatusBadge
@@ -182,7 +182,7 @@ TicketList (container)
 
 ### Principle
 
-```id="props-principle"
+```txt
 Pass only what is needed
 ```
 
@@ -190,7 +190,7 @@ Pass only what is needed
 
 ### When Only a Few Fields Are Needed
 
-```tsx id="good-props"
+```tsx
 <TicketItem title={ticket.title} status={ticket.status} />
 ```
 
@@ -198,7 +198,7 @@ Pass only what is needed
 
 ### When the Object Is the Component Contract
 
-```tsx id="object-props-example"
+```tsx
 <TicketItem ticket={ticket} />
 ```
 
@@ -221,7 +221,7 @@ itself a meaningful component contract.
 
 ### Rule
 
-```id="state-placement"
+```txt
 State should live in the lowest common owner that needs it
 ```
 
@@ -277,7 +277,7 @@ Client Component.
 
 ### Principle
 
-```id="interaction-principle"
+```txt
 UI reports interaction, container coordinates the workflow
 ```
 
@@ -285,7 +285,7 @@ UI reports interaction, container coordinates the workflow
 
 ### Example
 
-```tsx id="interaction-example"
+```tsx
 <TicketItem onClick={handleSelectTicket} />
 ```
 
@@ -423,9 +423,9 @@ This strategy aligns with:
 
 ## Related Documents
 
-- [`../02-architecture/feature-based-structure.md`](../../02-architecture/feature-based-structure.md)
-- [`../02-architecture/state-management.md`](../../02-architecture/state-management.md)
-- [`dialog-pattern.md`](dialog-pattern.md)
+- [Feature-Based Structure](../../02-architecture/feature-based-structure.md)
+- [State Management Strategy](../../02-architecture/state-management.md)
+- [Dialog Pattern](dialog-pattern.md)
 
 ---
 

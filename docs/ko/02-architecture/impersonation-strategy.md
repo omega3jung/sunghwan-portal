@@ -15,7 +15,7 @@ impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**
 
 ## Core Principle
 
-```id="impersonation-principle"
+```txt
 Impersonation은 원래 사용자를 추적할 수 있는 임시 identity override이다
 ```
 
@@ -59,7 +59,7 @@ Service Desk 시스템에서는 지원 담당자가 특정 사용자의 실제 �
 
 ### Dual Identity Concept
 
-```txt id="identity-model"
+```txt
 현재 사용자 (Effective User)
 원래 사용자 (Real User)
 ```
@@ -82,7 +82,7 @@ Service Desk 시스템에서는 지원 담당자가 특정 사용자의 실제 �
 
 ### Example
 
-```txt id="identity-example"
+```txt
 관리자(originalUser) -> impersonates -> 직원(currentUser)
 ```
 
@@ -96,7 +96,7 @@ impersonation은 **세션 레벨**에서 처리됩니다.
 
 ### Session Structure
 
-```ts id="session-structure"
+```ts
 session = {
   user: originalUser,
   impersonation: {
@@ -151,7 +151,7 @@ session = {
 
 ### Flow
 
-```txt id="activation-flow"
+```txt
 관리자가 사용자 선택 -> impersonation 시작 -> 세션 업데이트
 ```
 
@@ -170,7 +170,7 @@ session = {
 
 ### Flow
 
-```txt id="deactivation-flow"
+```txt
 impersonation 종료 -> original user 복원
 ```
 
@@ -188,7 +188,7 @@ impersonation 종료 -> original user 복원
 
 ### Rule
 
-```id="authorization-rule"
+```txt
 Impersonation은 original user의 권한 범위를 넘어서는 privilege escalation을 허용해서는 안 된다
 ```
 
@@ -234,7 +234,7 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Example
 
-```txt id="audit-example"
+```txt
 currentUser: employee123
 originalUser: admin456
 ```

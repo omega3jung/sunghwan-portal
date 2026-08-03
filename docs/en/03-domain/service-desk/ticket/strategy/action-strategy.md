@@ -11,7 +11,7 @@ that validates status, permissions, input, ticket effects, and history.
 
 ## Current Action Union
 
-```txt id="ticket-action-union"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -28,7 +28,7 @@ CANCEL
 
 Route paths use:
 
-```txt id="ticket-action-route-paths"
+```txt
 approve
 decline
 comment
@@ -46,7 +46,7 @@ cancel
 The explicit start-work command is implemented as a separate command route, not
 as a Ticket Action union member:
 
-```txt id="start-work-command-route"
+```txt
 POST /api/service-desk/tickets/:ticketId/command/start-work
 ```
 
@@ -54,7 +54,7 @@ POST /api/service-desk/tickets/:ticketId/command/start-work
 
 ## Command Pipeline
 
-```txt id="ticket-action-pipeline"
+```txt
 POST /api/service-desk/tickets/:ticketId/command/:action
 -> authenticate current employee
 -> resolve user role
@@ -96,7 +96,7 @@ rows as one use case.
 
 This matters because operational action results must not partially commit:
 
-```txt id="action-transaction"
+```txt
 action row
 + ticket mutation
 + history rows
@@ -195,7 +195,7 @@ Production notification delivery is deferred unless explicitly implemented.
 
 Both runtime paths should expose the same action command surface and DTO shape.
 
-```txt id="action-runtime"
+```txt
 LOCAL command handler
 REMOTE portal API/service
 -> TicketActionDto

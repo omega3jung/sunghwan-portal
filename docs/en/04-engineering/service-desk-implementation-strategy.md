@@ -9,7 +9,7 @@ It focuses on implementation boundaries that are now present in the codebase:
 
 - LOCAL/REMOTE runtime branching through route handlers
 - tenant-scoped settings
-- REMOTE ticket drafts
+- browser-local LOCAL ticket draft recovery and REMOTE ticket draft rows
 - attachment preparation
 - approval and work routing
 - Ticket Action command execution
@@ -28,7 +28,7 @@ belong in the `06-decisions` directory.
 The Service Desk runtime is selected at the API/server boundary, not inside
 deep UI components.
 
-```txt id="runtime-flow"
+```txt
 UI
 -> feature API client
 -> Next.js route handler
@@ -86,7 +86,7 @@ They should not own:
 
 Important Service Desk route surfaces include:
 
-```txt id="service-desk-routes"
+```txt
 /api/service-desk/tickets
 /api/service-desk/tickets/search
 /api/service-desk/tickets/draft
@@ -110,7 +110,7 @@ Important Service Desk route surfaces include:
 
 Service Desk Settings are tenant-scoped behavior configuration.
 
-```txt id="settings-boundary"
+```txt
 Company reference data
 -> Service Desk Tenant
 -> Category / Approval Step / Assignment Rule
@@ -144,6 +144,13 @@ Key behavior:
 - final create can reuse the existing draft row
 - draft discard removes the active draft workflow
 
+LOCAL draft recovery follows a different persistence boundary. The feature
+draft repository stores one browser `localStorage` record scoped to the current
+demo user and removes it on an owner mismatch. Query hooks orchestrate access to
+that repository, but the React Query cache is not the recovery store. LOCAL
+draft operations do not call the draft Route Handlers or use server-side LOCAL
+mutable state.
+
 Drafts do not provide durable attachment recovery. Browser `File` objects are
 transient, and production object storage is not implemented in the current
 scope.
@@ -154,7 +161,7 @@ scope.
 
 Attachment handling uses an explicit preparation boundary.
 
-```txt id="attachment-implementation-flow"
+```txt
 browser File[] and rich-text body
 -> POST /api/service-desk/tickets/attachments/prepare
 -> prepared body, files, images
@@ -178,7 +185,7 @@ binary files.
 
 Current ticket statuses are:
 
-```ts id="ticket-status-union"
+```ts
 type TicketStatus =
   | "Draft"
   | "Approval"
@@ -219,7 +226,7 @@ Explicit work start:
 
 Routing is phase-aware.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -253,7 +260,7 @@ Ticket actions are command execution paths.
 
 Current action types:
 
-```ts id="ticket-action-types"
+```ts
 type TicketActionType =
   | "APPROVE"
   | "DECLINE"
@@ -271,7 +278,7 @@ type TicketActionType =
 
 Current command path names are lower/camel case:
 
-```txt id="ticket-action-paths"
+```txt
 approve
 decline
 comment
@@ -336,7 +343,7 @@ Work sessions represent operational work evidence.
 
 The current route surface is:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -365,7 +372,8 @@ React Query owns server state.
 Current Service Desk query families include:
 
 - ticket list/search/detail
-- active draft by data scope and user
+- active draft by data scope and user (REMOTE API state or LOCAL browser
+  repository state)
 - ticket actions list/detail
 - ticket histories
 - work sessions
@@ -395,15 +403,15 @@ These are not described as completed current behavior in current design docs.
 
 ## Related Documents
 
-- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
-- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [`forms/ticket-form.md`](forms/ticket-form.md)
-- [`forms/ticket-attachment.md`](forms/ticket-attachment.md)
-- [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [Service Desk Settings](../03-domain/service-desk/settings.md)
+- [Ticket System Overview](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Action Model](../03-domain/service-desk/ticket/ticket-action.md)
+- [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Form Design](forms/ticket-form.md)
+- [Ticket Attachment Design](forms/ticket-attachment.md)
+- [Ticket Operation Rules](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---
 

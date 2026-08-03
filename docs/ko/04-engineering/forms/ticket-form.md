@@ -17,7 +17,7 @@
 
 ## 핵심 원칙
 
-```txt id="ticket-form-core"
+```txt
 폼은 의도를 수집한다.
 티켓 워크플로는 서버가 실행한다.
 ```
@@ -57,7 +57,7 @@
 
 티켓 상세는 폼 다이얼로그가 아니라 페이지 수준 워크플로다.
 
-```txt id="ticket-detail-route"
+```txt
 /service-desk/[ticketId]
 ```
 
@@ -67,7 +67,7 @@
 
 현재 단계 식별자는 다음과 같다.
 
-```txt id="ticket-form-steps"
+```txt
 issueDetails
 attachments
 review
@@ -89,7 +89,7 @@ review
 
 주요 필드:
 
-```ts id="ticket-form-fields"
+```ts
 type TicketFormValues = {
   id?: string;
   category: string;
@@ -130,7 +130,7 @@ UI는 사용성을 위해 기본값을 적용할 수 있다. 서버는 카테고
 
 브라우저 파일 입력은 임시 상태다.
 
-```txt id="ticket-form-attachment-flow"
+```txt
 form body and File[]
 -> POST /api/service-desk/tickets/attachments/prepare
 -> prepared body, files, images
@@ -149,17 +149,19 @@ form body and File[]
 
 ### LOCAL Draft
 
-LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용한다.
-REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다. 현재 LOCAL
-구현은 demo convenience를 위해 제한적인 client-side recovery를 사용할 수 있지만,
-그 recovery가 durable state boundary는 아니다.
+LOCAL 초안은 브라우저 로컬 복구 상태다. 기능 초안 저장소는 현재 데모 사용자에
+연결된 하나의 `localStorage` 레코드를 읽고 쓰며, 소유자가 다른 레코드는 제거한다.
+생성 워크플로에서 사용하는 동일한 기능 hook을 통해 결과를 노출한다. React Query가
+결과를 캐시할 수 있지만 캐시나 server-side LOCAL handler가 이 상태를 소유하지
+않는다. LOCAL 초안 작업은 초안 Route Handler를 호출하지 않으며 REMOTE PostgreSQL
+초안 모델과 영속성 측면에서 동등하지 않다.
 
 ### REMOTE Draft
 
 REMOTE draft는 `Draft` 상태의 티켓 row이며, 요청자당 하나의 active draft를
 가진다.
 
-```txt id="remote-draft-flow"
+```txt
 create dialog open
 -> active draft load
 -> edit form
@@ -180,7 +182,7 @@ Draft는 폼 데이터 중심 복구다. 첨부 복구를 보장하지 않는다
 
 ## 생성 제출
 
-```txt id="create-submission-flow"
+```txt
 validate form
 -> prepare attachments
 -> map to ticket payload
@@ -203,7 +205,7 @@ validate form
 
 요청자 수정은 작업 시작 전 상태에서만 허용된다.
 
-```txt id="requester-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -212,7 +214,7 @@ Assigned
 
 Update flow:
 
-```txt id="requester-update-flow"
+```txt
 load latest ticket detail
 -> keep existing prepared attachments
 -> prepare new body/files/images
@@ -250,7 +252,8 @@ Category가 변경되면 category default도 priority, risk, minimum due date를
 | 미저장 필드 입력 | React Hook Form |
 | 현재 폼 단계 | component state |
 | persisted ticket data | React Query |
-| active draft data | React Query와 draft API |
+| REMOTE active draft data | React Query와 draft API, PostgreSQL 티켓 행 |
+| LOCAL draft recovery | 기능 초안 저장소와 브라우저 `localStorage` |
 | raw browser files | 열린 폼의 React Hook Form |
 | prepared attachment metadata | API payload와 persisted ticket data |
 
@@ -300,15 +303,19 @@ Routing-sensitive field에 영향을 주는 requester update는 history event를
 
 ## 관련 문서
 
-- [`ticket-attachment.md`](ticket-attachment.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-lifecycle.md`](../../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 첨부파일 설계](ticket-attachment.md)
+- [티켓 모델](../../03-domain/service-desk/ticket/ticket-model.md)
+- [티켓 생명주기](../../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [티켓 이력](../../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 폼 및 초안 워크플로 (2026-06)](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [티켓 라우팅 및 업데이트 정책 (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 
 ## 요약
 
 티켓 폼은 워크플로 권위자가 아니라 워크플로 진입점이다. 현재 설계는
-`CreateTicketDialog`, `UpdateTicketDialog`, REMOTE draft, attachment preparation,
-server-owned requester update routing을 기준으로 정렬된다.
+`CreateTicketDialog`, `UpdateTicketDialog`, 브라우저 로컬 LOCAL 초안 복구,
+티켓 초안 API를 통한 REMOTE 초안 복구, 영속화 전 첨부파일 준비, 서버 소유의
+요청자 업데이트 라우팅을 사용한다. 이를 통해 UI 사용성을 유지하면서도 승인,
+할당, 상태, 이력의 source of truth는 티켓 서비스에 둔다.

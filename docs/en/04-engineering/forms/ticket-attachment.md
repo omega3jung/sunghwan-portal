@@ -19,7 +19,7 @@ The attachment design aims to:
 
 ## Core Concept
 
-```txt id="ticket-attachment-core"
+```txt
 Browser file input is transient.
 Ticket persistence stores prepared metadata only.
 ```
@@ -31,7 +31,7 @@ commands such as create, requester update, comment, or reject.
 
 ## Current Flow
 
-```txt id="ticket-attachment-flow"
+```txt
 Browser input
 -> Attachment Prepare API
 -> prepared body, files, and images
@@ -50,7 +50,7 @@ images. Ticket write commands then consume that prepared result.
 
 Selected files come from browser file inputs.
 
-```ts id="selected-file-input"
+```ts
 type TicketAttachmentPrepareInput = {
   body: string;
   files: File[];
@@ -74,7 +74,7 @@ the editor boundary, or file paths are rejected by the preparation service.
 
 ### Endpoint
 
-```txt id="ticket-attachment-prepare-endpoint"
+```txt
 POST /api/service-desk/tickets/attachments/prepare
 ```
 
@@ -85,7 +85,7 @@ The feature API client sends `FormData` containing:
 
 ### Response
 
-```ts id="ticket-attachment-prepare-response"
+```ts
 type PrepareTicketAttachmentsResponseDto = {
   body: string;
   files: TicketPreparedAttachmentDto[];
@@ -117,7 +117,7 @@ not duplicate attachment preparation logic.
 
 The current persisted metadata shape is:
 
-```ts id="ticket-attachment-metadata"
+```ts
 type TicketAttachmentMetadata = {
   originalName: string;
   replacedName: string;
@@ -150,7 +150,7 @@ or trusted storage object keys.
 
 The current demo boundary supports:
 
-```txt id="ticket-attachment-supported-types"
+```txt
 jpg, jpeg, png, gif, webp,
 txt, log, csv, json,
 xlsx, docx, pptx, pdf,
@@ -176,7 +176,7 @@ future scope.
 
 Selected file preparation follows this process:
 
-```txt id="selected-file-preparation"
+```txt
 File
 -> validate name, extension, and size
 -> choose controlled demo URL by extension
@@ -194,7 +194,7 @@ No raw `File` object crosses the ticket persistence boundary.
 
 Rich-text body preparation follows this process:
 
-```txt id="rich-text-image-preparation"
+```txt
 HTML body
 -> find inline data images
 -> validate image type and size
@@ -211,7 +211,7 @@ inline base64 image payloads.
 
 Tickets persist prepared attachment metadata in separate file and image fields.
 
-```txt id="ticket-attachment-persistence"
+```txt
 tk_content -> prepared body
 tk_files   -> TicketAttachmentMetadata[]
 tk_images  -> TicketAttachmentMetadata[]
@@ -219,7 +219,7 @@ tk_images  -> TicketAttachmentMetadata[]
 
 Ticket DTOs expose the same application-facing separation:
 
-```ts id="ticket-attachment-ticket-dto"
+```ts
 type TicketAttachmentFields = {
   files: TicketAttachmentMetadata[];
   images: TicketAttachmentMetadata[];
@@ -236,7 +236,7 @@ sharing the same metadata contract.
 Ticket create and requester-owned update flows call the Prepare API before the
 final ticket mutation.
 
-```txt id="ticket-create-attachment-flow"
+```txt
 form values
 -> prepare attachments
 -> toTicketMutateRequestPayloadFromFormValues(...)
@@ -260,7 +260,7 @@ the server workflow writes the ticket.
 Requester updates may add new files or rich-text images while preserving
 existing prepared attachments.
 
-```txt id="requester-update-attachment-flow"
+```txt
 existing attachments
 + newly prepared attachments
 -> requester update payload
@@ -296,18 +296,18 @@ prepared attachment metadata as a recovery guarantee.
 The create-ticket draft helper intentionally saves form content without carrying
 raw browser files forward:
 
-```txt id="ticket-draft-attachment-policy"
+```txt
 draft save
 -> keep request fields
 -> clear transient attachment input
 -> final submit prepares current attachment input
 ```
 
-LOCAL draft uses a simplified demo-safe implementation behind the feature API
-boundary. It is not persistence-equivalent to the REMOTE PostgreSQL draft model.
-REMOTE draft behavior goes through the draft route and server DTO boundary. In
-both cases, current draft recovery is form-data oriented and does not promise
-attachment restoration.
+LOCAL draft recovery is stored in browser `localStorage` through the feature
+draft repository and does not call the draft Route Handlers. REMOTE draft
+behavior goes through the draft route and server DTO boundary to a PostgreSQL
+ticket row. In both cases, current draft recovery is form-data oriented and does
+not promise attachment restoration.
 
 This is intentional for the current scope because browser `File` objects cannot
 be safely restored after reload and production-grade attachment storage is not
@@ -319,7 +319,7 @@ implemented yet.
 
 LOCAL and REMOTE use the same visible attachment contract.
 
-```txt id="ticket-attachment-runtime"
+```txt
 LOCAL  -> controlled demo replacement
 REMOTE -> controlled demo replacement plus ticket row persistence
 ```
@@ -509,14 +509,14 @@ Attachment tests should cover:
 
 ## Related Documents
 
-- [`ticket-form.md`](ticket-form.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-action.md`](../../03-domain/service-desk/ticket/ticket-action.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../02-architecture/database-strategy.md`](../../02-architecture/database-strategy.md)
-- [`../../06-decisions/2026-06-ticket-attachment-boundary.md`](../../06-decisions/2026-06-ticket-attachment-boundary.md)
-- [`../../06-decisions/2026-06-ticket-form-and-draft-workflow.md`](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
-- [`../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [Ticket Form Design](ticket-form.md)
+- [Ticket Model](../../03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket Action Model](../../03-domain/service-desk/ticket/ticket-action.md)
+- [Ticket History](../../03-domain/service-desk/ticket/ticket-history.md)
+- [Database Strategy](../../02-architecture/database-strategy.md)
+- [Ticket Attachment Boundary (2026-06)](../../06-decisions/2026-06-ticket-attachment-boundary.md)
+- [Ticket Form and Draft Workflow (2026-06)](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [Ticket Routing and Update Policy (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

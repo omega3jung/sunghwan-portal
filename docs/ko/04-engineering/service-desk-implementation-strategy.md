@@ -8,7 +8,7 @@
 
 - route handler 기반 LOCAL/REMOTE runtime branching
 - tenant-scoped settings
-- REMOTE ticket draft
+- 브라우저 로컬 LOCAL 티켓 초안 복구와 REMOTE 티켓 초안 행
 - attachment preparation
 - approval/work routing
 - Ticket Action command execution
@@ -25,7 +25,7 @@
 
 Service Desk runtime은 깊은 UI component가 아니라 API/server boundary에서 선택한다.
 
-```txt id="runtime-flow"
+```txt
 UI
 -> feature API client
 -> Next.js route handler
@@ -80,7 +80,7 @@ Next.js route handler는 HTTP orchestration boundary다.
 
 중요 route surface:
 
-```txt id="service-desk-routes"
+```txt
 /api/service-desk/tickets
 /api/service-desk/tickets/search
 /api/service-desk/tickets/draft
@@ -104,7 +104,7 @@ Next.js route handler는 HTTP orchestration boundary다.
 
 Service Desk Settings는 tenant-scoped behavior configuration이다.
 
-```txt id="settings-boundary"
+```txt
 Company reference data
 -> Service Desk Tenant
 -> Category / Approval Step / Assignment Rule
@@ -137,6 +137,12 @@ REMOTE draft는 `Draft` 상태의 ticket row로 구현된다.
 - final create가 existing draft row를 재사용 가능
 - discard는 active draft workflow를 제거
 
+LOCAL 초안 복구는 다른 영속성 경계를 따른다. 기능 초안 저장소는 현재 데모
+사용자 범위의 브라우저 `localStorage` 레코드 하나를 저장하고, 소유자가 다르면
+제거한다. Query hook은 해당 저장소에 대한 접근을 조정하지만 React Query 캐시는
+복구 저장소가 아니다. LOCAL 초안 작업은 초안 Route Handler를 호출하거나
+server-side LOCAL mutable state를 사용하지 않는다.
+
 Draft는 durable attachment recovery를 제공하지 않는다. Browser `File` 객체는
 transient이며 production object storage는 현재 범위가 아니다.
 
@@ -146,7 +152,7 @@ transient이며 production object storage는 현재 범위가 아니다.
 
 Attachment는 prepare boundary를 사용한다.
 
-```txt id="attachment-implementation-flow"
+```txt
 browser File[] and rich-text body
 -> POST /api/service-desk/tickets/attachments/prepare
 -> prepared body, files, images
@@ -169,7 +175,7 @@ Ticket write command는 raw binary가 아니라 prepared metadata만 persist한�
 
 현재 ticket status:
 
-```ts id="ticket-status-union"
+```ts
 type TicketStatus =
   | "Draft"
   | "Approval"
@@ -209,7 +215,7 @@ Explicit work start:
 
 Routing은 phase-aware이다.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -243,7 +249,7 @@ Ticket action은 command execution path다.
 
 현재 action type:
 
-```ts id="ticket-action-types"
+```ts
 type TicketActionType =
   | "APPROVE"
   | "DECLINE"
@@ -261,7 +267,7 @@ type TicketActionType =
 
 현재 command path name:
 
-```txt id="ticket-action-paths"
+```txt
 approve
 decline
 comment
@@ -321,7 +327,7 @@ Work session은 operational work evidence이다.
 
 현재 route surface:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -347,7 +353,7 @@ React Query는 server state를 소유한다.
 현재 Service Desk query family:
 
 - ticket list/search/detail
-- data scope/user별 active draft
+- data scope/user별 active draft(REMOTE API 상태 또는 LOCAL 브라우저 저장소 상태)
 - ticket actions list/detail
 - ticket histories
 - work sessions
@@ -377,15 +383,15 @@ Current design docs는 이 항목을 완료된 동작으로 설명하지 않는�
 
 ## 관련 문서
 
-- [`../03-domain/service-desk/settings.md`](../03-domain/service-desk/settings.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../03-domain/service-desk/ticket/ticket-action.md`](../03-domain/service-desk/ticket/ticket-action.md)
-- [`../03-domain/service-desk/ticket/ticket-history.md`](../03-domain/service-desk/ticket/ticket-history.md)
-- [`../03-domain/service-desk/ticket/ticket-work-session.md`](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [`forms/ticket-form.md`](forms/ticket-form.md)
-- [`forms/ticket-attachment.md`](forms/ticket-attachment.md)
-- [`ticket-operation-rules.md`](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [서비스 데스크 설정](../03-domain/service-desk/settings.md)
+- [티켓 시스템 개요](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [티켓 생명주기](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [티켓 액션 모델](../03-domain/service-desk/ticket/ticket-action.md)
+- [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [티켓 폼 설계](forms/ticket-form.md)
+- [티켓 첨부파일 설계](forms/ticket-attachment.md)
+- [티켓 운영 규칙](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---
 

@@ -2,8 +2,9 @@
 
 ## 목표
 
-개발 접근 방식은 프로덕션에 가까운 데모 시스템을 구축할 때
-**기능 완성도, 반복적 개선, 실용적인 의사결정**을 우선하도록 설계된다.
+개발 접근 방식은 연기된 프로덕션 인프라를 명시적으로 구분하는 프로덕션 정렬
+프로토타입을 구축할 때 **기능 완성도, 반복적 개선, 실용적인 의사결정**을
+우선하도록 설계된다.
 
 이 접근 방식의 목적은 다음과 같다.
 
@@ -16,7 +17,7 @@
 
 ## 핵심 원칙
 
-```id="development-principle"
+```txt
 Functional completeness comes before optimization and abstraction
 ```
 
@@ -31,7 +32,7 @@ Functional completeness comes before optimization and abstraction
 
 ### 레거시 맥락
 
-```txt id="legacy-context"
+```txt
 Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 ```
 
@@ -48,7 +49,7 @@ Oracle JET -> Next.js v12 -> Next.js 14 App Router -> Next.js 16 App Router
 
 ### 1. 먼저 만들고, 나중에 다듬는다
 
-```txt id="build-first"
+```txt
 Make it work -> Make it better -> Make it scalable
 ```
 
@@ -120,7 +121,7 @@ Make it work -> Make it better -> Make it scalable
 
 ### 규칙
 
-```id="decision-rule"
+```txt
 Prefer practical decisions that move the product forward over idealized architecture chosen too early
 ```
 
@@ -162,7 +163,7 @@ Prefer practical decisions that move the product forward over idealized architec
 
 ### 권장 흐름
 
-```txt id="development-flow"
+```txt
 Implement -> Verify behavior -> Extract patterns -> Refine -> Standardize
 ```
 

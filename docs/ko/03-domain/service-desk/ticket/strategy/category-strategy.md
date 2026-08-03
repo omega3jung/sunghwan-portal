@@ -20,7 +20,7 @@ Category는 다음에 영향을 준다.
 
 ## 핵심 개념
 
-```txt id="category-core"
+```txt
 Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
@@ -31,7 +31,7 @@ configuration boundary다. Category는 tenant에 속한다.
 
 ## 현재 Domain Shape
 
-```ts id="category-domain-shape"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 
 type CategoryBase = {
@@ -94,7 +94,7 @@ override할 수 있다. Subcategory가 값을 제공하지 않으면 main catego
 
 Main category는 다음 scope union을 사용한다.
 
-```ts id="category-scope"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 ```
 
@@ -160,14 +160,14 @@ parent main category를 load하고 그 관계에서 boundary를 파생한다. Pa
 
 Category default는 선택된 subcategory에서 parent main category로 resolve된다.
 
-```txt id="category-default-resolution"
+```txt
 Sub Category default
 -> Main Category default
 ```
 
 예:
 
-```ts id="category-default-example"
+```ts
 priority = sub.defaultPriority ?? main.defaultPriority;
 riskLevel = sub.defaultRiskLevel ?? main.defaultRiskLevel;
 slaDays = sub.defaultSlaDays ?? main.defaultSlaDays;
@@ -182,7 +182,7 @@ effect를 validate한다.
 
 Category는 historical use에서 파괴적으로 제거하는 대신 deactivate한다.
 
-```txt id="category-active-policy"
+```txt
 active = false
 ```
 
@@ -216,7 +216,7 @@ Approval step은 parent/main category에 설정된다. 선택된 subcategory는 
 classify하지만 approval pipeline은 해당 subcategory의 parent/main category에서
 resolve된다.
 
-```txt id="category-approval-flow"
+```txt
 Ticket submitted
 -> selected category
 -> resolve parent/main category
@@ -235,7 +235,7 @@ Approval configuration은 future resolution에 영향을 준다. 이미 진행 �
 Assignment rule은 subcategory override를 허용한다. 선택된 subcategory에 assignment
 rule이 없으면 parent/main category rule로 fallback한다.
 
-```txt id="category-assignment-flow"
+```txt
 Ticket ready for work
 -> selected category
 -> selected subcategory assignment rule, when present
@@ -253,7 +253,7 @@ Ticket ready for work
 
 Requester update는 active work가 시작되기 전만 허용된다.
 
-```txt id="category-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -327,13 +327,13 @@ Existing ticket state와 history는 explicit ticket command를 통해서만 변�
 
 ## 관련 문서
 
-- [`../../settings.md`](../../settings.md)
-- [`approval-system.md`](approval-system.md)
-- [`assignment-policy.md`](assignment-policy.md)
-- [`sla-strategy.md`](sla-strategy.md)
-- [`../ticket-lifecycle.md`](../ticket-lifecycle.md)
-- [`../ticket-history.md`](../ticket-history.md)
-- [`../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [서비스 데스크 설정](../../settings.md)
+- [승인 시스템](approval-system.md)
+- [할당 정책](assignment-policy.md)
+- [SLA 전략](sla-strategy.md)
+- [티켓 생명주기](../ticket-lifecycle.md)
+- [티켓 이력](../ticket-history.md)
+- [티켓 라우팅 및 업데이트 정책 (2026-07)](../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

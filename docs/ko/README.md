@@ -17,7 +17,7 @@
 
 가장 짧은 현재 시스템 명세:
 
-- [`../spec/ticket-system.ko.md`](../spec/ticket-system.ko.md)
+- [정규 티켓 시스템 명세](../spec/ticket-system.ko.md)
 
 상세 도메인 문서를 읽기 전에 이 문서를 먼저 확인한다.
 
@@ -78,6 +78,7 @@
 - [SLA Strategy](./03-domain/service-desk/ticket/strategy/sla-strategy.md)
 - [Ticket 운영 규칙](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [Ticket Action Workflow Matrix](./03-domain/service-desk/ticket/reference/ticket-action-workflow-matrix.xlsx)
+- [직원 참조 범위 매트릭스](./03-domain/service-desk/ticket/reference/restrict-employee-list.xlsx)
 
 현재 도메인 핵심:
 
@@ -125,7 +126,8 @@ React Query는 Service Desk server state를 소유한다.
 - [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
 
 현재 query family에는 tickets, drafts, actions, histories, work sessions,
-tenant-scoped settings가 포함된다.
+tenant-scoped settings가 포함된다. REMOTE 초안 query는 server state를 조회하고,
+LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 
 ---
 
@@ -139,6 +141,8 @@ tenant-scoped settings가 포함된다.
 현재 form 핵심:
 
 - `CreateTicketDialog`와 `UpdateTicketDialog`는 별도 workflow surface
+- LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저 `localStorage` 상태이며
+  기능 초안 저장소를 통해 접근
 - REMOTE draft는 requester당 하나의 active `Draft` ticket row
 - raw browser file은 transient
 - Attachment Prepare API가 ticket write 전 prepared metadata를 반환
@@ -192,39 +196,13 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 
 - [Decision 문서](./06-decisions/README.md)
 
-현재 decision log topics:
-
-- [2025-12 Auth Session Architecture](./06-decisions/2025-12-auth-session-architecture.md)
-- [2025-12 Impersonation](./06-decisions/2025-12-impersonation.md)
-- [2025-12 Naming](./06-decisions/2025-12-naming.md)
-- [2025-12 System Layout](./06-decisions/2025-12-system-layout.md)
-- [2026-01 Category Design](./06-decisions/2026-01-category-design.md)
-- [2026-01 Impersonation](./06-decisions/2026-01-impersonation.md)
-- [2026-01 Session User Boundary](./06-decisions/2026-01-session-user-boundary.md)
-- [2026-02 Service Desk Settings](./06-decisions/2026-02-service-desk-settings.md)
-- [2026-03 Service Desk](./06-decisions/2026-03-service-desk.md)
-- [2026-03 Ticket Form Dialog](./06-decisions/2026-03-ticket-form-dialog.md)
-- [2026-03 Ticket Session](./06-decisions/2026-03-ticket-session.md)
-- [2026-04 Entity Status Naming](./06-decisions/2026-04-entity-status-naming.md)
-- [2026-04 Ticket Action](./06-decisions/2026-04-ticket-action.md)
-- [2026-05 Barrel Export Boundary](./06-decisions/2026-05-barrel-export-boundary.md)
-- [2026-05 Database Role and Access Strategy](./06-decisions/2026-05-database-role-and-access-strategy.md)
-- [2026-05 Service Desk Documentation Alignment](./06-decisions/2026-05-service-desk-documentation-alignment.md)
-- [2026-06 Service Desk Tenant Design](./06-decisions/2026-06-service-desk-tenant-design.md)
-- [2026-06 Service Desk Settings DTO/API Boundary](./06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
-- [2026-06 Ticket Attachment Boundary](./06-decisions/2026-06-ticket-attachment-boundary.md)
-- [2026-06 Ticket Form and Draft Workflow](./06-decisions/2026-06-ticket-form-and-draft-workflow.md)
-- [2026-07 Service Desk Settings Reference Validation Boundary](./06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
-- [2026-07 Ticket Action and History Execution](./06-decisions/2026-07-ticket-action-and-history-execution.md)
-- [2026-07 Ticket Routing and Update Policy](./06-decisions/2026-07-ticket-routing-and-update-policy.md)
-
 ---
 
 ## 권장 읽기 순서
 
-1. [`../spec/ticket-system.ko.md`](../spec/ticket-system.ko.md)
-2. [Service Desk Settings](./03-domain/service-desk/settings.md)
-3. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
+1. [정규 티켓 시스템 명세](../spec/ticket-system.ko.md)
+2. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
+3. [Service Desk Settings](./03-domain/service-desk/settings.md)
 4. [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 5. [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
 6. [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
@@ -242,6 +220,7 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 18. [Database Strategy](./02-architecture/database-strategy.md)
 19. [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
 20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+21. [Decision 문서](./06-decisions/README.md)
 
 ---
 

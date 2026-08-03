@@ -18,7 +18,7 @@ The current design is aligned with the implemented form flow:
 
 ## Core Principle
 
-```txt id="ticket-form-core"
+```txt
 The form collects intent.
 The server executes ticket workflow.
 ```
@@ -59,7 +59,7 @@ It supports:
 
 Ticket detail is a page-level workflow, not part of the form dialog.
 
-```txt id="ticket-detail-route"
+```txt
 /service-desk/[ticketId]
 ```
 
@@ -72,7 +72,7 @@ detail view itself remains the primary ticket workflow surface.
 
 The create and update flows use the current step identifiers:
 
-```txt id="ticket-form-steps"
+```txt
 issueDetails
 attachments
 review
@@ -97,7 +97,7 @@ The form schema is implemented with Zod and React Hook Form.
 
 Current ticket form fields include:
 
-```ts id="ticket-form-fields"
+```ts
 type TicketFormValues = {
   id?: string;
   category: string;
@@ -144,7 +144,7 @@ routing-sensitive fields and records the correct routing history event.
 
 Browser file input is transient.
 
-```txt id="ticket-form-attachment-flow"
+```txt
 form body and File[]
 -> POST /api/service-desk/tickets/attachments/prepare
 -> prepared body, files, images
@@ -164,10 +164,13 @@ The current draft model supports both LOCAL and REMOTE behavior.
 
 ### LOCAL Draft
 
-LOCAL draft uses a simplified demo-safe implementation behind the feature API
-boundary. It is not persistence-equivalent to the REMOTE PostgreSQL draft model.
-The current LOCAL implementation may use limited client-side recovery for demo
-convenience, but it is not the durable state boundary.
+LOCAL draft is browser-local recovery state. The feature draft repository reads
+and writes one `localStorage` record keyed to the current demo user, removes an
+owner-mismatched record, and exposes the result through the same feature hooks
+used by the create workflow. React Query may cache the result, but neither its
+cache nor a server-side LOCAL handler owns this state. LOCAL draft operations do
+not call the draft Route Handlers and are not persistence-equivalent to the
+REMOTE PostgreSQL draft model.
 
 ### REMOTE Draft
 
@@ -175,7 +178,7 @@ REMOTE draft behavior stores an active draft through the ticket draft route and
 server DTO boundary. The current REMOTE design treats a draft as a ticket row in
 `Draft` status, with one active draft per requester.
 
-```txt id="remote-draft-flow"
+```txt
 open create dialog
 -> load active draft
 -> user edits form
@@ -198,7 +201,7 @@ Draft save is form-data oriented. It does not guarantee attachment recovery:
 
 Current create submission flow:
 
-```txt id="create-submission-flow"
+```txt
 validate form
 -> prepare attachments
 -> map form values to ticket mutate payload
@@ -221,7 +224,7 @@ Ticket creation records event-based history such as `TICKET_SUBMITTED`,
 
 Requester update is allowed only while the ticket is still before active work:
 
-```txt id="requester-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -230,7 +233,7 @@ The requester must own the ticket.
 
 Update flow:
 
-```txt id="requester-update-flow"
+```txt
 load latest ticket detail
 -> keep existing prepared attachments
 -> prepare new body/files/images
@@ -269,7 +272,8 @@ later than the new category minimum; otherwise it moves back to that minimum.
 | unsaved field input | React Hook Form |
 | current dialog step | component state |
 | persisted ticket data | React Query |
-| active draft data | React Query through draft API |
+| REMOTE active draft data | React Query through draft API; PostgreSQL ticket row |
+| LOCAL draft recovery | feature draft repository and browser `localStorage` |
 | raw browser files | React Hook Form while dialog is open |
 | prepared attachment metadata | ticket API payload and persisted ticket data |
 
@@ -322,12 +326,12 @@ history events.
 
 ## Related Documents
 
-- [`ticket-attachment.md`](ticket-attachment.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-lifecycle.md`](../../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../../06-decisions/2026-06-ticket-form-and-draft-workflow.md`](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
-- [`../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [Ticket Attachment Design](ticket-attachment.md)
+- [Ticket Model](../../03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket Lifecycle](../../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket History](../../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Form and Draft Workflow (2026-06)](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [Ticket Routing and Update Policy (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 
@@ -336,7 +340,8 @@ history events.
 Ticket forms are workflow entry points, not workflow authorities.
 
 The current design uses `CreateTicketDialog` and `UpdateTicketDialog`, a
-three-step form flow, REMOTE draft recovery through ticket draft APIs,
-attachment preparation before persistence, and server-owned requester update
-routing. This keeps the UI usable while preserving the ticket service as the
-source of truth for approval, assignment, status, and history.
+three-step form flow, browser-local LOCAL draft recovery, REMOTE draft recovery
+through ticket draft APIs, attachment preparation before persistence, and
+server-owned requester update routing. This keeps the UI usable while
+preserving the ticket service as the source of truth for approval, assignment,
+status, and history.

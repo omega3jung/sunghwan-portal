@@ -19,7 +19,7 @@ object storage에 저장하는 것처럼 보이게 만들지 않는다.
 
 ## 핵심 개념
 
-```txt id="ticket-attachment-core"
+```txt
 Browser file input은 transient하다.
 Ticket persistence는 prepared metadata만 저장한다.
 ```
@@ -31,7 +31,7 @@ comment, reject 같은 ticket command와 분리된다.
 
 ## 현재 흐름
 
-```txt id="ticket-attachment-flow"
+```txt
 Browser input
 -> Attachment Prepare API
 -> prepared body, files, and images
@@ -50,7 +50,7 @@ Prepare API는 선택 파일과 rich-text inline image에 대한 안전한 metad
 
 선택 파일은 브라우저 file input에서 온다.
 
-```ts id="selected-file-input"
+```ts
 type TicketAttachmentPrepareInput = {
   body: string;
   files: File[];
@@ -74,7 +74,7 @@ source는 preparation 중 controlled demo image URL로 교체된다.
 
 ### Endpoint
 
-```txt id="ticket-attachment-prepare-endpoint"
+```txt
 POST /api/service-desk/tickets/attachments/prepare
 ```
 
@@ -85,7 +85,7 @@ Feature API client는 다음 값을 포함한 `FormData`를 보낸다.
 
 ### Response
 
-```ts id="ticket-attachment-prepare-response"
+```ts
 type PrepareTicketAttachmentsResponseDto = {
   body: string;
   files: TicketPreparedAttachmentDto[];
@@ -117,7 +117,7 @@ attachment preparation logic을 중복 구현하면 안 된다.
 
 현재 저장되는 metadata 형태는 다음과 같다.
 
-```ts id="ticket-attachment-metadata"
+```ts
 type TicketAttachmentMetadata = {
   originalName: string;
   replacedName: string;
@@ -150,7 +150,7 @@ Metadata에는 raw bytes, local filesystem path, trusted storage object key가
 
 현재 demo boundary가 지원하는 확장자는 다음과 같다.
 
-```txt id="ticket-attachment-supported-types"
+```txt
 jpg, jpeg, png, gif, webp,
 txt, log, csv, json,
 xlsx, docx, pptx, pdf,
@@ -175,7 +175,7 @@ zip, 7z
 
 선택 파일 preparation은 다음 과정을 따른다.
 
-```txt id="selected-file-preparation"
+```txt
 File
 -> validate name, extension, and size
 -> choose controlled demo URL by extension
@@ -193,7 +193,7 @@ Raw `File` 객체는 ticket persistence boundary를 넘지 않는다.
 
 Rich-text body preparation은 다음 과정을 따른다.
 
-```txt id="rich-text-image-preparation"
+```txt
 HTML body
 -> find inline data images
 -> validate image type and size
@@ -210,7 +210,7 @@ Prepared body가 티켓에 저장되는 값이다. 이 값에는 inline base64 i
 
 티켓은 prepared attachment metadata를 file과 image field로 나누어 저장한다.
 
-```txt id="ticket-attachment-persistence"
+```txt
 tk_content -> prepared body
 tk_files   -> TicketAttachmentMetadata[]
 tk_images  -> TicketAttachmentMetadata[]
@@ -218,7 +218,7 @@ tk_images  -> TicketAttachmentMetadata[]
 
 Ticket DTO도 같은 애플리케이션 분리를 노출한다.
 
-```ts id="ticket-attachment-ticket-dto"
+```ts
 type TicketAttachmentFields = {
   files: TicketAttachmentMetadata[];
   images: TicketAttachmentMetadata[];
@@ -235,7 +235,7 @@ type TicketAttachmentFields = {
 Ticket create와 requester-owned update 흐름은 최종 ticket mutation 전에
 Prepare API를 호출한다.
 
-```txt id="ticket-create-attachment-flow"
+```txt
 form values
 -> prepare attachments
 -> toTicketMutateRequestPayloadFromFormValues(...)
@@ -259,7 +259,7 @@ shape를 다시 검증한다.
 Requester update는 기존 prepared attachment를 유지하면서 새 파일이나 rich-text
 이미지를 추가할 수 있다.
 
-```txt id="requester-update-attachment-flow"
+```txt
 existing attachments
 + newly prepared attachments
 -> requester update payload
@@ -294,17 +294,17 @@ Attachment preparation 자체는 여전히 action event가 아니다. Ticket com
 Create-ticket draft helper는 raw browser file을 이어 들고 가지 않도록 form
 content를 저장할 때 attachment input을 비운다.
 
-```txt id="ticket-draft-attachment-policy"
+```txt
 draft save
 -> keep request fields
 -> clear transient attachment input
 -> final submit prepares current attachment input
 ```
 
-LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현을 사용한다.
-REMOTE PostgreSQL draft model과 persistence-equivalent하지 않다. REMOTE draft
-behavior는 draft route와 server DTO boundary를 거친다. 두 경우 모두 현재 draft
-recovery는 form-data 중심이며 attachment 복원을 약속하지 않는다.
+LOCAL 초안 복구는 기능 초안 저장소를 통해 브라우저 `localStorage`에 저장되며
+초안 Route Handler를 호출하지 않는다. REMOTE 초안은 초안 경로와 server DTO
+경계를 거쳐 PostgreSQL 티켓 행에 저장된다. 두 경우 모두 현재 초안 복구는 폼
+데이터 중심이며 첨부파일 복원을 보장하지 않는다.
 
 이는 현재 범위에서 의도된 제약이다. 브라우저 `File` 객체는 reload 후 안전하게
 복원할 수 없고, production-grade attachment storage가 아직 구현되지 않았기
@@ -316,7 +316,7 @@ recovery는 form-data 중심이며 attachment 복원을 약속하지 않는다.
 
 LOCAL과 REMOTE는 같은 visible attachment contract를 사용한다.
 
-```txt id="ticket-attachment-runtime"
+```txt
 LOCAL  -> controlled demo replacement
 REMOTE -> controlled demo replacement plus ticket row persistence
 ```
@@ -506,14 +506,14 @@ Attachment test는 다음을 다뤄야 한다.
 
 ## 관련 문서
 
-- [`ticket-form.md`](ticket-form.md)
-- [`../../03-domain/service-desk/ticket/ticket-model.md`](../../03-domain/service-desk/ticket/ticket-model.md)
-- [`../../03-domain/service-desk/ticket/ticket-action.md`](../../03-domain/service-desk/ticket/ticket-action.md)
-- [`../../03-domain/service-desk/ticket/ticket-history.md`](../../03-domain/service-desk/ticket/ticket-history.md)
-- [`../02-architecture/database-strategy.md`](../../02-architecture/database-strategy.md)
-- [`../../06-decisions/2026-06-ticket-attachment-boundary.md`](../../06-decisions/2026-06-ticket-attachment-boundary.md)
-- [`../../06-decisions/2026-06-ticket-form-and-draft-workflow.md`](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
-- [`../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [티켓 폼 설계](ticket-form.md)
+- [티켓 모델](../../03-domain/service-desk/ticket/ticket-model.md)
+- [티켓 액션 모델](../../03-domain/service-desk/ticket/ticket-action.md)
+- [티켓 이력](../../03-domain/service-desk/ticket/ticket-history.md)
+- [데이터베이스 전략](../../02-architecture/database-strategy.md)
+- [티켓 첨부파일 경계 (2026-06)](../../06-decisions/2026-06-ticket-attachment-boundary.md)
+- [티켓 폼 및 초안 워크플로 (2026-06)](../../06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [티켓 라우팅 및 업데이트 정책 (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

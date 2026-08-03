@@ -15,7 +15,7 @@
 
 ## 핵심 원칙
 
-```id="i18n-principle"
+```txt
 Localization should follow domain boundaries, not technical layers
 ```
 
@@ -29,7 +29,7 @@ Localization should follow domain boundaries, not technical layers
 
 ### Namespace 목록
 
-```txt id="namespaces"
+```txt
 auth
 common
 dashboard
@@ -53,7 +53,7 @@ validation
 
 ## 디렉터리 구조
 
-```bash id="locale-structure"
+```bash
 locales/
   en/
     common.json
@@ -121,7 +121,7 @@ locales/
 
 ### 예시
 
-```ts id="default-ns"
+```ts
 const { t } = useTranslation(NS.serviceDesk);
 ```
 
@@ -129,7 +129,7 @@ const { t } = useTranslation(NS.serviceDesk);
 
 ### Namespace 간 접근
 
-```ts id="cross-ns"
+```ts
 t("field.title.label", { ns: "common" });
 ```
 
@@ -146,7 +146,7 @@ t("field.title.label", { ns: "common" });
 
 ### 표준 형식
 
-```json id="field-structure"
+```json
 {
   "field": {
     "title": {
@@ -171,7 +171,7 @@ t("field.title.label", { ns: "common" });
 
 ### 규칙
 
-```id="naming-rule"
+```txt
 Use structured and predictable keys
 ```
 
@@ -179,7 +179,7 @@ Use structured and predictable keys
 
 ### 패턴
 
-```txt id="naming-pattern"
+```txt
 field.<name>.label
 field.<name>.placeholder
 ```
@@ -188,7 +188,7 @@ field.<name>.placeholder
 
 ### 예시
 
-```ts id="naming-example"
+```ts
 t("field.title.label", { ns: "common" });
 ```
 
@@ -198,7 +198,7 @@ t("field.title.label", { ns: "common" });
 
 ### 옵션
 
-```ts id="helper"
+```ts
 function fieldLabel(name: string) {
   return t(`field.${name}.label`, { ns: "common" });
 }
@@ -224,7 +224,7 @@ function fieldLabel(name: string) {
 
 ### 결정
 
-```id="explicit-rule"
+```txt
 Prefer explicit translation keys over abstraction
 ```
 

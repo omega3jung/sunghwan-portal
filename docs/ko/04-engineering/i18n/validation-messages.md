@@ -16,7 +16,7 @@
 
 ## 핵심 원칙
 
-```id="message-principle"
+```txt
 Different message types should be separated by purpose, not grouped only by UI location
 ```
 
@@ -30,7 +30,7 @@ Different message types should be separated by purpose, not grouped only by UI l
 
 ### Namespace 목록
 
-```txt id="message-categories"
+```txt
 validation
 message
 error
@@ -91,7 +91,7 @@ error
 
 ### 예시 구조
 
-```json id="validation-example"
+```json
 {
   "required": "This field is required.",
   "requiredWithField": "{{field}} is required.",
@@ -129,7 +129,7 @@ error
 
 ### 예시 구조
 
-```json id="message-example"
+```json
 {
   "create": {
     "success": "Created successfully."
@@ -172,7 +172,7 @@ error
 
 ### 예시 구조
 
-```json id="error-example"
+```json
 {
   "network": "A network error occurred.",
   "unauthorized": "You are not authorized.",
@@ -242,7 +242,7 @@ error
 
 ### validation.json
 
-```txt id="validation-keys"
+```txt
 required
 requiredWithField
 minLength
@@ -254,7 +254,7 @@ invalidEmail
 
 ### message.json
 
-```txt id="message-keys"
+```txt
 create.success
 update.success
 delete.success
@@ -265,7 +265,7 @@ save.success
 
 ### error.json
 
-```txt id="error-keys"
+```txt
 network
 unauthorized
 forbidden
@@ -283,7 +283,7 @@ unknown
 
 ### 예시
 
-```json id="interpolation-example"
+```json
 {
   "requiredWithField": "{{field}} is required."
 }
@@ -316,7 +316,7 @@ unknown
 
 ### 예시
 
-```txt id="message-comparison"
+```txt
 validation.required
 message.create.success
 error.network

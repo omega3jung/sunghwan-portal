@@ -16,7 +16,7 @@ Ticket History는 ticket workflow change에 대한 immutable audit event를 기�
 
 ## 핵심 개념
 
-```txt id="ticket-history-core"
+```txt
 Action is user-facing timeline intent.
 History is immutable event evidence.
 ```
@@ -28,7 +28,7 @@ Action은 하나의 history record, 여러 history record, 또는 status change 
 
 ## 현재 History Shape
 
-```ts id="ticket-history-shape"
+```ts
 type TicketHistory = {
   ticketId: string;
   historyNo: number;
@@ -53,7 +53,7 @@ type TicketHistory = {
 
 `type`은 영향을 받은 domain area를 식별한다.
 
-```txt id="history-types"
+```txt
 TICKET
 STATUS
 CATEGORY
@@ -72,7 +72,7 @@ PLANNING
 
 `source`는 history가 왜 또는 어떤 rule에 의해 만들어졌는지를 식별한다.
 
-```txt id="history-sources"
+```txt
 USER_ACTION
 SYSTEM_AUTO
 ROUTING_RULE
@@ -94,7 +94,7 @@ ASSIGNMENT_RULE
 
 현재 event union:
 
-```txt id="history-events"
+```txt
 TICKET_SUBMITTED
 TICKET_UPDATED
 TICKET_REOPENED
@@ -166,7 +166,7 @@ ROUTING_PRESERVED
 
 예:
 
-```json id="history-from-to-example"
+```json
 {
   "fromValue": { "status": "Resolved" },
   "toValue": { "status": "Working" }
@@ -201,14 +201,14 @@ allowlist된 display metadata만 노출해야 한다.
 
 ### Ticket Submit
 
-```txt id="history-ticket-submit"
+```txt
 TICKET_SUBMITTED
 -> APPROVAL_REQUESTED or ASSIGNMENT_RESOLVED
 ```
 
 ### Approval
 
-```txt id="history-approval"
+```txt
 APPROVAL_APPROVED
 -> APPROVAL_REQUESTED when another step exists
 -> ASSIGNMENT_RESOLVED when final approval completes
@@ -216,7 +216,7 @@ APPROVAL_APPROVED
 
 ### Requester Update
 
-```txt id="history-requester-update"
+```txt
 ROUTING_PRESERVED
 or
 ROUTING_RESET
@@ -224,7 +224,7 @@ ROUTING_RESET
 
 ### Reopen
 
-```txt id="history-reopen"
+```txt
 type = STATUS
 source = USER_ACTION
 event = TICKET_REOPENED
@@ -236,7 +236,7 @@ toValue = { status: "Working" }
 
 ### Auto Close
 
-```txt id="history-auto-close"
+```txt
 type = STATUS
 source = SYSTEM_AUTO
 event = RESOLUTION_CLOSE

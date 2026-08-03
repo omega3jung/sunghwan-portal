@@ -6,7 +6,7 @@ Ticket Action describes the user-facing action timeline and its command records.
 
 It is related to, but different from, immutable Ticket History.
 
-```txt id="activity-vs-history"
+```txt
 Action / Activity -> user-facing interaction and command record
 History           -> immutable event/audit record
 ```
@@ -15,7 +15,7 @@ History           -> immutable event/audit record
 
 ## Current Action Types
 
-```txt id="ticket-action-types"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -93,7 +93,7 @@ An action command can produce:
 
 Example:
 
-```txt id="approve-action-result"
+```txt
 APPROVE action
 -> insert action row
 -> create APPROVAL_APPROVED history

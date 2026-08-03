@@ -6,7 +6,7 @@ Ticket Action은 사용자에게 보이는 activity timeline과 command record�
 
 이는 immutable Ticket History와 관련은 있지만 서로 다르다.
 
-```txt id="activity-vs-history"
+```txt
 Action / Activity -> user-facing interaction and command record
 History           -> immutable event/audit record
 ```
@@ -15,7 +15,7 @@ History           -> immutable event/audit record
 
 ## 현재 Action Type
 
-```txt id="ticket-action-types"
+```txt
 APPROVE
 DECLINE
 COMMENT
@@ -92,7 +92,7 @@ Action command는 다음을 만들 수 있다.
 
 예:
 
-```txt id="approve-action-result"
+```txt
 APPROVE action
 -> insert action row
 -> create APPROVAL_APPROVED history
