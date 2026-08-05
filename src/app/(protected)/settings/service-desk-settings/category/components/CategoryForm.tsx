@@ -95,7 +95,7 @@ export function CategoryForm({
     return priorityOptions.map((priority) => {
       return {
         value: priority.value,
-        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
       };
     });
   }, [t]);
@@ -107,7 +107,7 @@ export function CategoryForm({
       return {
         value: riskLevel.value,
         label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });
@@ -122,7 +122,7 @@ export function CategoryForm({
 
     const parentValue = parentCategory
       ? t(`enum.priority.options.${parentCategory.defaultPriority}`, {
-          ns: "domain",
+          ns: NS.shared,
         })
       : "—";
 
@@ -146,7 +146,7 @@ export function CategoryForm({
 
     const parentValue = parentCategory
       ? t(`enum.riskLevel.options.${parentCategory.defaultRiskLevel}`, {
-          ns: "domain",
+          ns: NS.shared,
         })
       : "—";
 
@@ -306,7 +306,7 @@ export function CategoryForm({
             <div className="grid grid-cols-2 gap-2">
               <Field>
                 <FieldLabel htmlFor="category-select-priority">
-                  {t("enum.priority.label", { ns: "domain" })}
+                  {t("enum.priority.label", { ns: NS.shared })}
                 </FieldLabel>
                 <Select
                   items={prioritySelectData}
@@ -339,7 +339,7 @@ export function CategoryForm({
               </Field>
               <Field>
                 <FieldLabel htmlFor="category-select-risk-level">
-                  {t("enum.riskLevel.label", { ns: "domain" })}
+                  {t("enum.riskLevel.label", { ns: NS.shared })}
                 </FieldLabel>
                 <Select
                   items={riskLevelSelectData}

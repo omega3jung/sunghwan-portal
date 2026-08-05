@@ -1,0 +1,17 @@
+{
+  "historySheet": {
+    "title": "Historial del ticket",
+    "description": "Revisa la cronología del historial del ticket."
+  },
+  "historyTimeline": {
+    "description": "Vista cronológica de la actividad reciente del ticket.",
+    "badge": {
+      "assignment": "Asignación",
+      "approval": "Aprobación",
+      "workSession": "Tiempo registrado",
+      "planning": "Planificación",
+      "system": "Sistema"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  }
+}

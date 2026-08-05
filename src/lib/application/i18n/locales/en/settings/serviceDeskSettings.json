@@ -1,0 +1,98 @@
+{
+  "serviceDeskSettings": {
+    "common": {
+      "category": "Category",
+      "categoryList": "Category List",
+      "approvalStep": "Approval Step",
+      "approvalStepList": "Approval Steps",
+      "assignmentRule": "Assignment Rule",
+      "assignmentRuleList": "Assignment Rules",
+      "client": "Client",
+      "clientList": "Client List",
+      "tenant": "Tenant",
+      "noResults": "No results found",
+      "saveChanges": "Save Changes",
+      "discardUnsavedChanges": "You have unsaved changes. Discard them and continue?",
+      "loadError": "Failed to load settings.",
+      "scope": "Category scope",
+      "scopeInternal": "Internal",
+      "scopePortal": "Portal",
+      "readOnly": "Read only",
+      "readOnlyDescription": "You can view these settings, but only the responsible administrator can change them.",
+      "managedByServiceProvider": "Managed by service provider",
+      "managedByCustomer": "Managed by customer"
+    },
+    "categoryTab": {
+      "name": "Name",
+      "description": "Description",
+      "scope": "Scope",
+      "requestTemplate": "Request Template",
+      "resolutionDays": "Resolution Days",
+      "followMainCategory": "Follow main category ({{value}})",
+      "customValue": "Set a custom value",
+      "daysValue": "{{value}} days",
+      "active": "Active",
+      "addCategory": "Add Category",
+      "empty": "Select a category to edit settings."
+    },
+    "approvalStepTab": {
+      "name": "Name",
+      "description": "Description",
+      "assigneeType": "Assignee Type",
+      "assigneeTypes": {
+        "manager": "Manager",
+        "department": "Department",
+        "jobField": "Job Field",
+        "employee": "Employee"
+      },
+      "managerStepsAboveRequester": "Manager steps above requester",
+      "department": "Department",
+      "departmentPlaceholder": "Select a department",
+      "jobField": "Job Field",
+      "jobFieldPlaceholder": "Select a job field",
+      "employee": "Employee",
+      "employeePlaceholder": "Select an assignee",
+      "skipAccessLevel": "Skippable Access Level",
+      "saveUnavailable": "Cannot Save",
+      "created": "Created",
+      "assign": "Assign",
+      "empty": "Select a approval step to edit settings."
+    },
+    "assignmentRuleTab": {
+      "jobField": "Job Field",
+      "selectAssigneeJobField": "Select assignee Job field",
+      "employee": "Employee",
+      "selectAssignee": "Select assignee",
+      "includeTenantCompany": "Include tenant company for joint handling",
+      "includeTenantCompanyDescription": "Off by default. Enable only when this PORTAL rule must route work to both the service provider and the category tenant company.",
+      "empty": "Select a assignment rule to edit settings."
+    },
+    "tenant": {
+      "companyList": {
+        "title": "Company List",
+        "description": "Active companies that are not assigned to a tenant yet.",
+        "empty": "No available companies"
+      },
+      "tenantList": {
+        "title": "Tenant List",
+        "description": "Select tenants to edit or move them back to companies.",
+        "empty": "No tenants",
+        "portalOwnerHint": "Portal owner tenants can be edited, but cannot be moved back to the company list.",
+        "infoAriaLabel": "Portal owner tenant restriction"
+      },
+      "actions": {
+        "addToTenants": "Add to tenants",
+        "moveToCompanies": "Move to companies"
+      },
+      "settingInfo": {
+        "title": "Tenant Setting Info",
+        "description": "Update names and color for the selected tenant.",
+        "empty": "Select a tenant to edit settings.",
+        "nameTitle": "Tenant Name",
+        "nameDescription": "Changes are reflected in the tenant list immediately.",
+        "colorTitle": "Tenant Color",
+        "tenantNamePlaceholder": "{{language}} tenant name"
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "developmentApproach": {
+    "title": "Development Approach",
+    "description": "Practical implementation philosophy and migration-aware decisions."
+  },
+  "serviceDeskImplementationStrategy": {
+    "title": "Service Desk Implementation Strategy",
+    "description": "Runtime, architecture, and implementation strategy for Service Desk."
+  },
+  "booleanNamingConvention": {
+    "title": "Boolean Naming Convention",
+    "description": "Project-wide boolean naming rules for capability, state, and presentation boundaries."
+  },
+  "readmeStrategy": {
+    "title": "README Strategy",
+    "description": "How the repository introduces itself and routes readers into deeper docs."
+  },
+  "componentBoundary": {
+    "title": "Component Boundary",
+    "description": "UI responsibility split across layout and feature layers."
+  },
+  "dashboardAndInsight": {
+    "title": "Dashboard and Insight",
+    "description": "How operational surfaces differ from analytical insight views."
+  },
+  "dialogPattern": {
+    "title": "Dialog Pattern",
+    "description": "Dialog usage and interaction pattern guidance."
+  },
+  "formPattern": {
+    "title": "Form Pattern",
+    "description": "Form interaction and responsibility design."
+  },
+  "ticketForm": {
+    "title": "Ticket Form",
+    "description": "Form flow, category-driven behavior, and submission design."
+  },
+  "ticketAttachment": {
+    "title": "Ticket Attachment Design",
+    "description": "Attachment handling for files, rich-text images, metadata, and future storage integration."
+  },
+  "reactQueryStrategy": {
+    "title": "React Query Strategy",
+    "description": "Data fetching, caching, and client boundary guidance."
+  },
+  "localeStructure": {
+    "title": "Locale Structure",
+    "description": "Namespace structure and translation responsibility boundaries."
+  },
+  "validationMessages": {
+    "title": "Validation Messages",
+    "description": "Validation wording strategy and translation separation."
+  }
+}

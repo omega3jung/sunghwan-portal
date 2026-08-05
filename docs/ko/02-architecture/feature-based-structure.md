@@ -413,7 +413,7 @@ query contract, 공용 Service Desk client helper를 의도적으로 재사용�
 - `app/api/_adapters`는 Next.js route adaptation과 LOCAL demo 구현을 소유한다.
 - `lib/application/contracts`는 repository 간 공유하는 DTO, schema, pure mapper를 소유한다.
 - `mocks`는 LOCAL demo/test fixture를 소유하며 `server`가 import하지 않는다.
-- 기본 i18n resource와 namespace contract는 `lib/application/i18n`, client runtime은 `lib/client/i18n`에 두고 application locale 등록은 `components/i18n`에서 조합한다.
+- 기본 i18n resource, namespace contract, 조합된 feature/component locale catalog는 `lib/application/i18n`에 두고 client runtime은 `lib/client/i18n`에 둔다.
 
 ### 자동 검사
 

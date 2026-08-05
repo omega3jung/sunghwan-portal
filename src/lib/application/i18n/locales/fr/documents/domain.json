@@ -1,0 +1,54 @@
+{
+  "ticketSystemOverview": {
+    "title": "Vue d'ensemble du systeme de tickets",
+    "description": "Vue d'ensemble haut niveau du domaine Service Desk."
+  },
+  "serviceDeskSettings": {
+    "title": "Parametres Service Desk",
+    "description": "Modele de configuration pour la creation, l'approbation, l'affectation et l'affichage des tickets."
+  },
+  "ticketModel": {
+    "title": "Modele de ticket",
+    "description": "Modele central du ticket et structure de propriete."
+  },
+  "ticketLifecycle": {
+    "title": "Cycle de vie du ticket",
+    "description": "Etats du cycle de vie et conception des transitions."
+  },
+  "ticketAction": {
+    "title": "Action du ticket",
+    "description": "Modele d'action principal pour les communications et les commandes operationnelles."
+  },
+  "ticketHistory": {
+    "title": "Historique du ticket",
+    "description": "Strategie d'auditabilite et de chronologie d'historique."
+  },
+  "ticketWorkSession": {
+    "title": "Session de travail du ticket",
+    "description": "Modele de preuves de session de travail et de temps enregistre."
+  },
+  "actionStrategy": {
+    "title": "Strategie d'actions",
+    "description": "Strategie d'interaction orientee actions et conception des metadonnees."
+  },
+  "categoryStrategy": {
+    "title": "Strategie de categories",
+    "description": "Comportement des workflows pilotes par categories dans tout le systeme."
+  },
+  "approvalSystem": {
+    "title": "Systeme d'approbation",
+    "description": "Etapes d'approbation et conception des workflows conditionnels."
+  },
+  "assignmentPolicy": {
+    "title": "Politique d'affectation",
+    "description": "Logique d'affectation et orientation de la charge de travail."
+  },
+  "slaStrategy": {
+    "title": "Strategie SLA",
+    "description": "Gestion des SLA et regles de calendrier operationnel."
+  },
+  "ticketOperationRules": {
+    "title": "Regles d'exploitation des tickets",
+    "description": "Regles d'exploitation des tickets orientees implementation et contraintes d'execution."
+  }
+}

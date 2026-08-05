@@ -2,9 +2,11 @@ import { UniqueIdentifier } from "@dnd-kit/core";
 import { Plus, X } from "lucide-react";
 import { SetStateAction } from "react";
 
-import { DragHandle } from "@/components/custom/dnd/DragHandle";
-import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import {
+  SortableTree,
+  SortableTreeDragHandle,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/lib/application/i18n";
@@ -110,7 +112,7 @@ export const CategoryTree = ({
                   )}
 
                   {canEdit && !isOverlay && (
-                    <DragHandle
+                    <SortableTreeDragHandle
                       {...dragHandleProps}
                       aria-label={tLocal(data.name)}
                     />

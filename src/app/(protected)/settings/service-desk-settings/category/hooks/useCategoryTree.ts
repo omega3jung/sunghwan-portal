@@ -5,7 +5,7 @@ import {
   buildTree,
   flattenTree,
   removeItem,
-} from "@/components/custom/dnd/tree/utilities";
+} from "@/components/custom/SortableTree";
 import type { CategoryScope, TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";

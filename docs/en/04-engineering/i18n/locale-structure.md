@@ -2,353 +2,242 @@
 
 ## Goal
 
-The localization (i18n) structure is designed to provide a **scalable, maintainable, and domain-oriented translation system**.
+The localization structure keeps translation ownership explicit while allowing
+large namespaces to be maintained as smaller source files. Translation keys
+should follow the application responsibility that owns the copy, not the route
+or component that happens to render it.
 
-It aims to:
+The structure aims to:
 
-- Organize translations by domain and responsibility
-- Improve readability for both developers and reviewers
-- Enable flexible usage across multiple features
-- Maintain consistency in translation keys
+- keep the same namespace and key shape in every supported language;
+- separate shared vocabulary, reusable component copy, and feature copy;
+- let large namespaces grow without creating one oversized JSON file;
+- keep translation calls explicit and easy to trace.
 
----
+## Runtime Model
 
-## Core Principle
+Namespace contracts live in `src/lib/application/i18n`. Each language is
+composed by its `locales/<language>/index.ts`, and
+`src/lib/client/i18n/runtime.ts` registers the completed resources with
+i18next.
 
-```txt
-Localization should follow domain boundaries, not technical layers
-```
+The current runtime bundles `en`, `es`, `fr`, and `ko` eagerly. Splitting a
+namespace into a directory is therefore a source-ownership decision; it does
+not create route-level or namespace-level lazy loading. English remains the
+fallback language.
 
----
+## Namespace List
 
-## Namespace-Based Structure
-
-Translations are divided into **namespaces**, each representing a domain or concern.
-
----
-
-### Namespace List
+The application currently registers these namespaces through `NS`:
 
 ```txt
 auth
 common
+component
 dashboard
 demo
+documents
 error
 message
 serviceDesk
 settings
+shared
 validation
 ```
 
----
-
-### Rationale
-
-- Reflects **feature/domain boundaries**
-- Prevents a single large translation file
-- Improves maintainability and scalability
-
----
-
-## Directory Structure
-
-```bash
-locales/
-  en/
-    common.json
-    serviceDesk.json
-    validation.json
-  ko/
-    common.json
-    serviceDesk.json
-    validation.json
-```
-
----
-
-### Strategy
-
-- Language-based separation (`en`, `ko`)
-- Namespace-based JSON files
-- Same structure across languages
-
----
-
-## Namespace Responsibilities
-
-### common
-
-- Shared UI labels
-- Reusable field definitions
-
----
-
-### serviceDesk
-
-- Feature-specific translations
-- Ticket-related labels and messages
-
----
-
-### validation
-
-- Validation messages
-- Error feedback for forms
-
----
-
-### message
-
-- Toast messages
-- Success/failure notifications
-
----
-
-### error
-
-- System-level error messages
-
----
-
-## Translation Access Strategy
-
-### Default Namespace
-
-Each feature defines a **default namespace**.
-
----
-
-### Example
+Use the `NS` constant instead of repeating namespace string literals.
 
 ```ts
 const { t } = useTranslation(NS.serviceDesk);
+
+t("field.priority", { ns: NS.common });
 ```
 
----
+## Directory Structure
 
-### Cross-Namespace Access
-
-```ts
-t("field.title.label", { ns: "common" });
-```
-
----
-
-### Rationale
-
-- Keeps common fields centralized
-- Allows reuse across features
-
----
-
-## Field Structure
-
-### Standard Format
-
-```json
-{
-  "field": {
-    "title": {
-      "label": "Title",
-      "placeholder": "Enter title"
-    }
-  }
-}
-```
-
----
-
-### Benefits
-
-- Consistent field definition
-- Easy reuse across forms
-- Clear structure for non-developers
-
----
-
-## Naming Convention
-
-### Rule
+Each supported language mirrors the same structure. English is shown below as
+the canonical example.
 
 ```txt
-Use structured and predictable keys
+src/lib/application/i18n/locales/en/
+├─ index.ts
+├─ auth.json
+├─ common.json
+├─ dashboard.json
+├─ message.json
+├─ validation.json
+├─ component/
+├─ demo/
+├─ documents/
+├─ error/
+├─ serviceDesk/
+├─ settings/
+└─ shared/
+   ├─ enum.json
+   └─ index.ts
 ```
 
----
+A small, cohesive namespace may stay in one JSON file. A namespace with
+multiple independent owners or a growing catalog uses a directory and an
+`index.ts` composition boundary.
 
-### Pattern
-
-```txt
-field.<name>.label
-field.<name>.placeholder
-```
-
----
-
-### Example
+For example, `serviceDesk` is maintained as feature-aligned fragments while
+remaining one public i18next namespace:
 
 ```ts
-t("field.title.label", { ns: "common" });
+import insights from "./insights.json";
+import shared from "./shared.json";
+import ticket from "./ticket.json";
+import ticketAction from "./ticketAction.json";
+
+const serviceDesk = {
+  ...shared,
+  ...ticket,
+  ...ticketAction,
+  ...insights,
+};
+
+export default serviceDesk;
 ```
 
----
+The physical file split must not require consumers to know which fragment owns
+a key. Consumers continue to use `NS.serviceDesk` and the existing public key
+path.
 
-## Helper Function (Considered)
+## Namespace Responsibilities
 
-### Option
+### `common`
 
-```ts
-function fieldLabel(name: string) {
-  return t(`field.${name}.label`, { ns: "common" });
-}
-```
+Generic UI vocabulary shared across the application:
 
----
+- action labels such as save, cancel, and search;
+- common field names;
+- pagination, sorting, table, and empty-state vocabulary;
+- generic placeholders.
 
-### Decision
+`common` describes reusable interface language, not stable code-value catalogs.
 
-- Not adopted
+### `shared`
 
----
+Localized labels for stable application values that can be rendered by
+selectors, filters, badges, and similar consumers.
 
-### Rationale
-
-- Reduces readability
-- Makes translation usage less explicit
-- Harder for non-developers to trace
-
----
-
-## Explicitness vs Abstraction
-
-### Decision
+Current examples include:
 
 ```txt
-Prefer explicit translation keys over abstraction
+shared.enum.accessLevel
+shared.enum.priority
+shared.enum.riskLevel
+shared.enum.dueAt
 ```
 
----
+The `shared` namespace is intentionally narrow. Add a key only when it maps a
+stable application value to a user-facing label. Page copy, validation text,
+workflow messages, and component instructions do not belong here.
 
-### Reason
+```ts
+const { t } = useTranslation(NS.shared, {
+  keyPrefix: "enum.priority.options",
+});
 
-- Easier for reviewers (e.g., HR, designers)
-- Improves clarity in code
-- Reduces hidden logic
+const highLabel = t("high");
+```
 
----
+Generic date-range preset labels remain owned by `component.datePicker`
+because they are part of the reusable DatePicker product rather than a shared
+application enum catalog.
 
-## Reusability Strategy
+### `component`
 
-### Shared Fields
+Copy owned by reusable application components, such as placeholders, empty
+states, and interaction labels inside DatePicker, RichEditor, or combo-box
+components.
 
-- Defined in `common`
+### `demo`
 
----
+Descriptions, fixtures, controls, and explanatory copy owned by pages under
+`src/app/(protected)/demo`.
 
-### Feature-Specific Fields
+### Feature namespaces
 
-- Defined in feature namespace
+`serviceDesk`, `settings`, `documents`, and `auth` own workflow and page copy
+for their respective application responsibilities. Reusable components should
+not depend on these namespaces unless the component itself is feature-owned.
 
----
+### Feedback namespaces
 
-### Example
+- `validation`: inline input and schema validation feedback;
+- `message`: expected action feedback such as success and confirmation copy;
+- `error`: system, API, and exceptional failure messages.
 
-- `common.field.title`
-- `serviceDesk.ticket.title`
+See [Validation Messages](./validation-messages.md) for the detailed feedback
+policy.
 
----
+## Ownership Decision
 
-## Validation Separation
+Use the following order when deciding where a translation belongs:
 
-Validation messages are separated into a dedicated namespace.
+1. If a reusable component owns the behavior and wording, use `component`.
+2. If the key maps a stable application value to a label, use `shared`.
+3. If the wording belongs to a feature workflow or page, use that feature
+   namespace.
+4. If the wording is generic UI vocabulary, use `common`.
+5. If it communicates validation, action feedback, or an exceptional failure,
+   use `validation`, `message`, or `error` respectively.
 
----
+`shared` and `common` must not become fallback locations for copy whose owner is
+unclear. Resolve the owner before adding the key.
 
-### Reason
+## Language Parity
 
-- Avoid mixing UI labels with error messages
-- Improve maintainability
-- Enable reuse across forms
+Every structural change must be applied to `en`, `es`, `fr`, and `ko` together:
 
----
+- directory and file names must match;
+- composed namespace shapes must match;
+- key paths must remain stable;
+- English provides fallback text when a non-English catalog is incomplete.
 
-## Scalability Strategy
+When splitting an existing JSON file, compare the recomposed value with the
+original object before removing the old file.
 
-### Adding New Features
+## Naming and Access
 
-- Create new namespace (e.g., `inventory`)
-- Avoid modifying existing namespaces unnecessarily
+Prefer predictable, semantic key paths and explicit namespace access.
 
----
+```ts
+const { t: tShared } = useTranslation(NS.shared);
 
-### Adding New Languages
+tShared(`enum.riskLevel.options.${riskLevel}`);
+```
 
-- Replicate namespace structure
-- Maintain key consistency
+Avoid raw namespace strings:
 
----
+```ts
+// Avoid
+t("enum.priority.options.high", { ns: "shared" });
 
-## Anti-Patterns Avoided
+// Prefer
+t("enum.priority.options.high", { ns: NS.shared });
+```
 
-### 1. Single Global Translation File
+The locale namespace named `shared` is unrelated to the repository's
+`src/shared` code layer, just as feature namespaces do not define TypeScript
+domain boundaries.
 
-- ❌ Hard to maintain
-- ❌ Poor scalability
+## Anti-Patterns
 
----
-
-### 2. Over-Abstraction
-
-- ❌ Hidden translation logic
-- ❌ Reduced readability
-
----
-
-### 3. Mixed Responsibilities
-
-- ❌ UI + validation + message in one file
-
----
-
-### 4. Inconsistent Key Naming
-
-- ❌ Difficult to maintain
-
----
-
-## Trade-offs
-
-### Pros
-
-- Clear domain separation
-- Scalable structure
-- Improved readability
-- Better collaboration
-
----
-
-### Cons
-
-- More files to manage
-- Requires discipline in naming
-- Slightly more verbose usage
-
----
-
-## Design Principles Alignment
-
-This structure aligns with:
-
-- Domain-driven design
-- Separation of concerns
-- Scalability and maintainability
-- Developer and reviewer experience
-
----
+- one global translation file;
+- creating a namespace for a single page when an existing owner is clear;
+- duplicating the same value labels in `shared` and `component`;
+- mixing validation, success messages, and feature copy;
+- splitting files in only one language;
+- changing public key paths only because the physical files were reorganized;
+- assuming a directory split provides runtime lazy loading.
 
 ## Summary
 
-The locale structure is based on **namespace-driven organization**,
-ensuring that translations are grouped by domain and remain scalable,
-explicit, and easy to maintain across the application.
+Namespaces are public translation contracts. Files and directories are
+maintenance details behind those contracts. Keep small namespaces cohesive,
+split growing namespaces by responsibility, reserve `shared` for stable
+value-to-label catalogs, and preserve the same composed shape across every
+supported language.

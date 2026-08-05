@@ -1,0 +1,97 @@
+{
+  "page": {
+    "title": "Centre de documentation",
+    "description": "Utilisez le menu de navigation pour passer d'un document Markdown majeur a l'autre."
+  },
+  "group": {
+    "overview": {
+      "title": "Vue d'ensemble"
+    },
+    "architecture": {
+      "title": "Architecture"
+    },
+    "domain": {
+      "title": "Domaine"
+    },
+    "engineering": {
+      "title": "Ingenierie"
+    },
+    "releases": {
+      "title": "Versions"
+    },
+    "decisions": {
+      "title": "Decisions"
+    }
+  },
+  "section": {
+    "domain": {
+      "coreModel": {
+        "title": "Modele principal"
+      },
+      "workflow": {
+        "title": "Workflow"
+      },
+      "strategies": {
+        "title": "Strategies"
+      },
+      "reference": {
+        "title": "Reference"
+      }
+    },
+    "engineering": {
+      "approach": {
+        "title": "Approche"
+      },
+      "conventions": {
+        "title": "Conventions"
+      },
+      "documentation": {
+        "title": "Documentation"
+      },
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "Formulaires"
+      },
+      "dataFetching": {
+        "title": "Recuperation des donnees"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "Vue d'ensemble"
+      },
+      "2025-12": {
+        "title": "2025-12"
+      },
+      "2026-01": {
+        "title": "2026-01"
+      },
+      "2026-02": {
+        "title": "2026-02"
+      },
+      "2026-03": {
+        "title": "2026-03"
+      },
+      "2026-04": {
+        "title": "2026-04"
+      },
+      "2026-05": {
+        "title": "2026-05"
+      },
+      "2026-06": {
+        "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
+      }
+    }
+  }
+}

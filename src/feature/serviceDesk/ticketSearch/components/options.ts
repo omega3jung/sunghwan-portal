@@ -66,36 +66,36 @@ export const createTicketStatusFilterOptions = (
 
 /** Defines the supported create ticket due by choices presented by the feature. */
 export const createTicketDueByOptions = (
-  tDomain: Translate,
+  tShared: Translate,
 ): SearchDateFilterOption<dueAt>[] => {
   return [
-    { value: "all", label: tDomain("enum.dueAt.options.all") },
-    { value: "overdue", label: tDomain("enum.dueAt.options.overDue") },
-    { value: "today", label: tDomain("enum.dueAt.options.today") },
+    { value: "all", label: tShared("enum.dueAt.options.all") },
+    { value: "overdue", label: tShared("enum.dueAt.options.overDue") },
+    { value: "today", label: tShared("enum.dueAt.options.today") },
     {
       value: "this_week",
-      label: tDomain("enum.dueAt.options.thisWeek"),
+      label: tShared("enum.dueAt.options.thisWeek"),
     },
     {
       value: "this_2week",
-      label: tDomain("enum.dueAt.options.this2Week"),
+      label: tShared("enum.dueAt.options.this2Week"),
     },
     {
       value: "this_month",
-      label: tDomain("enum.dueAt.options.thisMonth"),
+      label: tShared("enum.dueAt.options.thisMonth"),
     },
     {
       value: "within_week",
-      label: tDomain("enum.dueAt.options.withinWeek"),
+      label: tShared("enum.dueAt.options.withinWeek"),
     },
     {
       value: "within_2week",
-      label: tDomain("enum.dueAt.options.within2Week"),
+      label: tShared("enum.dueAt.options.within2Week"),
     },
     {
       value: "within_month",
-      label: tDomain("enum.dueAt.options.withinMonth"),
+      label: tShared("enum.dueAt.options.withinMonth"),
     },
-    { value: "range", label: tDomain("enum.dueAt.options.custom") },
+    { value: "range", label: tShared("enum.dueAt.options.custom") },
   ];
 };

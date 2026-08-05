@@ -1,0 +1,54 @@
+{
+  "developmentApproach": {
+    "title": "개발 접근 방식",
+    "description": "실용적인 구현 철학과 마이그레이션을 고려한 결정을 설명합니다."
+  },
+  "serviceDeskImplementationStrategy": {
+    "title": "Service Desk 구현 전략",
+    "description": "Service Desk의 런타임, 아키텍처, 구현 전략을 설명합니다."
+  },
+  "booleanNamingConvention": {
+    "title": "Boolean 명명 규칙",
+    "description": "capability, state, presentation 경계에 적용하는 프로젝트 공통 boolean 명명 규칙입니다."
+  },
+  "readmeStrategy": {
+    "title": "README 전략",
+    "description": "저장소를 소개하고 독자를 심화 문서로 안내하는 방식을 설명합니다."
+  },
+  "componentBoundary": {
+    "title": "컴포넌트 경계",
+    "description": "레이아웃 계층과 기능 계층 사이의 UI 책임 분리를 설명합니다."
+  },
+  "dashboardAndInsight": {
+    "title": "대시보드와 인사이트",
+    "description": "운영 화면과 분석 인사이트 뷰가 어떻게 다른지 설명합니다."
+  },
+  "dialogPattern": {
+    "title": "다이얼로그 패턴",
+    "description": "다이얼로그 사용 방식과 상호작용 패턴 지침을 설명합니다."
+  },
+  "formPattern": {
+    "title": "폼 패턴",
+    "description": "폼 상호작용과 책임 설계를 설명합니다."
+  },
+  "ticketForm": {
+    "title": "티켓 폼",
+    "description": "폼 흐름, 카테고리 기반 동작, 제출 설계를 설명합니다."
+  },
+  "ticketAttachment": {
+    "title": "티켓 첨부 설계",
+    "description": "파일, rich-text 이미지, 메타데이터, 향후 저장소 연동을 위한 첨부 처리 방식을 설명합니다."
+  },
+  "reactQueryStrategy": {
+    "title": "React Query 전략",
+    "description": "데이터 패칭, 캐싱, 클라이언트 경계 지침을 설명합니다."
+  },
+  "localeStructure": {
+    "title": "Locale 구조",
+    "description": "네임스페이스 구조와 번역 책임 경계를 설명합니다."
+  },
+  "validationMessages": {
+    "title": "검증 메시지",
+    "description": "검증 문구 전략과 번역 분리를 설명합니다."
+  }
+}

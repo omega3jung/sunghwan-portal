@@ -1,0 +1,54 @@
+{
+  "ticketSystemOverview": {
+    "title": "Ticket System Overview",
+    "description": "High-level Service Desk domain overview."
+  },
+  "serviceDeskSettings": {
+    "title": "Service Desk Settings",
+    "description": "Configuration model for ticket creation, approval, assignment, and display behavior."
+  },
+  "ticketModel": {
+    "title": "Ticket Model",
+    "description": "Core ticket model and ownership structure."
+  },
+  "ticketLifecycle": {
+    "title": "Ticket Lifecycle",
+    "description": "Lifecycle states and transition design."
+  },
+  "ticketAction": {
+    "title": "Ticket Action",
+    "description": "First-class action model for communication and operational commands."
+  },
+  "ticketHistory": {
+    "title": "Ticket History",
+    "description": "Auditability and history timeline strategy."
+  },
+  "ticketWorkSession": {
+    "title": "Ticket Work Session",
+    "description": "Work-session evidence and tracked-time model."
+  },
+  "actionStrategy": {
+    "title": "Action Strategy",
+    "description": "Action-oriented interaction and metadata design strategy."
+  },
+  "categoryStrategy": {
+    "title": "Category Strategy",
+    "description": "Category-driven workflow behavior across the system."
+  },
+  "approvalSystem": {
+    "title": "Approval System",
+    "description": "Approval steps and conditional workflow design."
+  },
+  "assignmentPolicy": {
+    "title": "Assignment Policy",
+    "description": "Assignment logic and workload direction."
+  },
+  "slaStrategy": {
+    "title": "SLA Strategy",
+    "description": "SLA handling and operational timing rules."
+  },
+  "ticketOperationRules": {
+    "title": "Ticket Operation Rules",
+    "description": "Implementation-facing ticket operation rules and execution constraints."
+  }
+}

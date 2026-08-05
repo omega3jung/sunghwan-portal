@@ -84,7 +84,7 @@ export function ApprovalStepForm({
       return {
         value: accessLevel.value.toString(),
         label: t(`enum.accessLevel.options.${accessLevel.label}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });

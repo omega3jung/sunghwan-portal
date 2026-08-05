@@ -9,6 +9,7 @@ import multiComboBox from "./multiComboBox.json";
 import remoteRouteGuard from "./remoteRouteGuard.json";
 import resetDemo from "./resetDemo.json";
 import richEditor from "./richEditor.json";
+import sortableTree from "./sortableTree.json";
 import stepper from "./stepper.json";
 import timeline from "./timeline.json";
 
@@ -24,6 +25,7 @@ const demo = {
   remoteRouteGuard,
   resetDemo,
   richEditor,
+  sortableTree,
   stepper,
   timeline,
 };

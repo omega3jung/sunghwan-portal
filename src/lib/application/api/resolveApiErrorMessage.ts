@@ -2,7 +2,7 @@ import {
   interpolateMessageTemplate,
   resolveMessageKey,
 } from "@/lib/application/i18n";
-import errorMessages from "@/lib/application/i18n/locales/en/error.json";
+import errorMessages from "@/lib/application/i18n/locales/en/error";
 
 import type { ApiErrorMessageOptions } from "./apiError";
 

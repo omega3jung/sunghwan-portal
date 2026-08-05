@@ -1,0 +1,110 @@
+{
+  "decisionOverview": {
+    "title": "Resumen de decisiones",
+    "description": "Como leer las decisiones fechadas y distinguirlas del diseno actual."
+  },
+  "decisionAuthSessionArchitecture": {
+    "title": "2025-12 Arquitectura de sesion de autenticacion",
+    "description": "Entrada del registro de decisiones sobre arquitectura de sesion."
+  },
+  "decisionImpersonation202512": {
+    "title": "2025-12 Suplantacion",
+    "description": "Entrada del registro de decisiones sobre estrategia de suplantacion."
+  },
+  "decisionNaming202512": {
+    "title": "2025-12 Nomenclatura",
+    "description": "Entrada del registro de decisiones sobre nomenclatura."
+  },
+  "decisionSystemLayout": {
+    "title": "2025-12 Layout del sistema",
+    "description": "Entrada del registro de decisiones sobre layout del sistema."
+  },
+  "decisionCategoryDesign": {
+    "title": "2026-01 Diseno de categorias",
+    "description": "Entrada del registro de decisiones sobre diseno de categorias."
+  },
+  "decisionImpersonation202601": {
+    "title": "2026-01 Suplantacion",
+    "description": "Entrada del registro de decisiones sobre suplantacion."
+  },
+  "decisionSessionUserBoundary202601": {
+    "title": "2026-01 Limite de usuario de sesion",
+    "description": "Entrada del registro de decisiones sobre el limite de usuario de sesion."
+  },
+  "decisionServiceDeskSettings": {
+    "title": "2026-02 Configuracion de Service Desk",
+    "description": "Entrada del registro de decisiones sobre el diseno de configuracion de Service Desk."
+  },
+  "decisionServiceDesk": {
+    "title": "2026-03 Service Desk",
+    "description": "Entrada del registro de decisiones sobre implementacion de Service Desk."
+  },
+  "decisionTicketFormDialog": {
+    "title": "2026-03 Dialogo del formulario de ticket",
+    "description": "Entrada del registro de decisiones sobre el dialogo del formulario de ticket."
+  },
+  "decisionTicketSession202603": {
+    "title": "2026-03 Sesion de ticket",
+    "description": "Entrada del registro de decisiones sobre comportamiento de sesion de ticket."
+  },
+  "decisionEntityStatusNaming": {
+    "title": "2026-04 Nomenclatura de estado de entidad",
+    "description": "Entrada del registro de decisiones sobre nomenclatura de entidades."
+  },
+  "decisionTicketAction": {
+    "title": "2026-04 Introduccion del modelo de accion de ticket",
+    "description": "Entrada del registro de decisiones sobre la introduccion del modelo de accion de ticket."
+  },
+  "decisionBarrelExportBoundary202605": {
+    "title": "2026-05 Limite de exportacion barrel",
+    "description": "Entrada del registro de decisiones sobre el limite de exportacion barrel."
+  },
+  "decisionDatabaseRoleAndAccessStrategy202605": {
+    "title": "2026-05 Estrategia de roles y acceso de base de datos",
+    "description": "Entrada del registro de decisiones sobre roles y acceso de base de datos."
+  },
+  "decisionServiceDeskDocumentationAlignment202605": {
+    "title": "2026-05 Alineacion de documentacion de Service Desk",
+    "description": "Entrada del registro de decisiones sobre alineacion de documentacion de Service Desk."
+  },
+  "decisionServiceDeskTenantDesign202606": {
+    "title": "2026-06 Diseno de tenants de Service Desk",
+    "description": "Entrada del registro de decisiones sobre diseno de tenants para la configuracion de Service Desk."
+  },
+  "decisionServiceDeskSettingsDtoApiBoundary202606": {
+    "title": "2026-06 Limite DTO/API de configuracion de Service Desk",
+    "description": "Entrada del registro de decisiones sobre el limite DTO/API de configuracion de Service Desk."
+  },
+  "decisionTicketAttachmentBoundary202606": {
+    "title": "2026-06 Limite de adjuntos de ticket",
+    "description": "Entrada del registro de decisiones sobre el limite de adjuntos de ticket."
+  },
+  "decisionTicketFormAndDraftWorkflow202606": {
+    "title": "2026-06 Formulario de ticket y flujo de borradores",
+    "description": "Entrada del registro de decisiones sobre el formulario de ticket y el flujo de borradores."
+  },
+  "decisionNextjs16MigrationStrategy202607": {
+    "title": "2026-07 Estrategia de migracion a Next.js 16",
+    "description": "Entrada del registro de decisiones sobre la estrategia de migracion a Next.js 16."
+  },
+  "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+    "title": "2026-07 Limite de validacion de referencias de configuracion de Service Desk",
+    "description": "Entrada del registro de decisiones sobre el limite de validacion de referencias."
+  },
+  "decisionTicketActionAndHistoryExecution202607": {
+    "title": "2026-07 Ejecucion de acciones e historial de ticket",
+    "description": "Entrada del registro de decisiones sobre la ejecucion de acciones e historial."
+  },
+  "decisionTicketMergeAndEscalationPolicy202607": {
+    "title": "2026-07 Politica de fusion y escalamiento de tickets",
+    "description": "Entrada del registro de decisiones sobre fusion y escalamiento de tickets."
+  },
+  "decisionTicketRoutingAndUpdatePolicy202607": {
+    "title": "2026-07 Politica de enrutamiento y actualizacion de tickets",
+    "description": "Entrada del registro de decisiones sobre enrutamiento y actualizacion de tickets."
+  },
+  "decisionBooleanCapabilityApiNaming202608": {
+    "title": "2026-08 Nomenclatura de API de capacidades booleanas",
+    "description": "Entrada del registro de decisiones sobre nomenclatura de API de capacidades booleanas."
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "merge": {
+    "badge": "Merged",
+    "into": "Merged into {{ticketId}}",
+    "escalatedBadge": "Escalated",
+    "escalatedInto": "Escalated to portal ticket {{ticketId}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "Images",
+      "files": "Files"
+    },
+    "editor": {
+      "validationEmpty": "Please enter a comment before submitting."
+    }
+  },
+  "actionTool": {
+    "currentUser": "Current user",
+    "currentUserFallback": "You",
+    "launcher": {
+      "approve": "Approve this step and move the ticket to the next stage.",
+      "decline": "Decline this approval request and record the reason.",
+      "comment": "Post a public reply to the requester and watchers.",
+      "note": "Leave an internal note that stays inside the team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "Take ownership of this ticket right away with an automatic activity note.",
+      "reject": "Record a rejection reason before closing the request.",
+      "merge": "Merge this ticket into another ticket.",
+      "adjust": "Update priority, risk level, and due date settings.",
+      "reopen": "Reopen the ticket when the resolved result still needs more work.",
+      "resubmit": "Send this rejected request back for review.",
+      "cancel": "Cancel this request before work starts."
+    },
+    "helper": {
+      "approve": "Leave an approval note before sending the ticket onward.",
+      "decline": "Explain why this approval request is being declined.",
+      "comment": "Share a public update with everyone following this ticket.",
+      "note": "Add an internal note for the service desk team.",
+      "assign": "Update assignees or move the ticket into another category.",
+      "assignSelf": "This action automatically records that you took ownership of the ticket.",
+      "reject": "Capture why this request is being rejected.",
+      "merge": "Choose the ticket to merge into and leave a short note.",
+      "adjust": "Review priority, risk level, and due date before applying changes.",
+      "reopen": "Explain what still needs to be resolved before this ticket can stay closed.",
+      "resubmit": "Explain what changed before resubmitting this rejected request.",
+      "cancel": "Explain why this request should be canceled."
+    },
+    "submit": {
+      "approve": "Approve",
+      "decline": "Decline",
+      "comment": "Post comment",
+      "note": "Save note",
+      "assign": "Save assignment",
+      "assignSelf": "Assign to Me",
+      "reject": "Reject ticket",
+      "merge": "Merge ticket",
+      "adjust": "Update plan",
+      "reopen": "Reopen Issue",
+      "resubmit": "Resubmit Request",
+      "cancel": "Cancel ticket"
+    },
+    "list": {
+      "title": "Activity",
+      "titleHint": "Search, sort, and review ticket actions.",
+      "empty": "No actions yet",
+      "noResult": "No actions match your search.",
+      "toggleDetails": "Toggle action details",
+      "number": "Action #{{number}}",
+      "edited": "Edited",
+      "searchPlaceholder": "Search actions",
+      "countLabel_one": "activity",
+      "countLabel_other": "activities"
+    },
+    "form": {
+      "editorLabel": "Reason",
+      "approvalNoteLabel": "Approval note",
+      "declineReasonLabel": "Decline reason",
+      "editorPlaceholder": {
+        "approve": "Leave a note for this approval",
+        "decline": "Describe why this approval should be declined",
+        "comment": "Write a comment and keep the conversation moving",
+        "note": "Share an internal note for this ticket",
+        "assign": "Share assignment context for the next owner",
+        "assignSelf": "This activity note is generated automatically",
+        "reject": "Describe why this ticket should be rejected",
+        "merge": "Explain why these tickets should be merged",
+        "adjust": "Describe why these values need to be adjusted",
+        "reopen": "Describe what still needs to be resolved",
+        "resubmit": "Describe what changed before resubmitting this ticket",
+        "cancel": "Describe why this ticket should be canceled"
+      },
+      "targetTicketId": "Target ticket",
+      "mergeTargetPlaceholder": "Enter the representative ticket ID"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} has decided to take ownership of this ticket. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "Please enter a reason before submitting.",
+      "contentMaxLength": "Reason must be 2000 characters or less.",
+      "assigneeRequired": "Select at least one assignee.",
+      "targetTicketRequired": "Enter the target ticket id.",
+      "adjustNoChanges": "Change priority, risk level, or due date before updating."
+    }
+  },
+  "workSessionTool": {
+    "title": "Work session",
+    "tab": {
+      "duration": "Duration",
+      "range": "Range"
+    },
+    "status": {
+      "keepCurrent": "Keep current status",
+      "currentSuffix": "(current)",
+      "description": "Changing status is guarded by the ticket's accumulated work session."
+    },
+    "note": {
+      "toggle": "Optional note",
+      "description": "Keep it short. Maximum {{count}} characters."
+    },
+    "summary": {
+      "current": "This entry",
+      "totalAfterSubmit": "Total after submit",
+      "minutes": "{{count}} mins",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} mins"
+    }
+  }
+}

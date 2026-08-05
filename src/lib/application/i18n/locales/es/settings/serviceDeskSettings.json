@@ -1,0 +1,98 @@
+{
+  "serviceDeskSettings": {
+    "common": {
+      "category": "Categoría",
+      "categoryList": "Lista de categorías",
+      "approvalStep": "Paso de aprobación",
+      "approvalStepList": "Lista de pasos de aprobación",
+      "assignmentRule": "Regla de asignación",
+      "assignmentRuleList": "Lista de reglas de asignación",
+      "client": "Cliente",
+      "clientList": "Lista de clientes",
+      "tenant": "Tenant",
+      "noResults": "Sin resultados",
+      "saveChanges": "Guardar cambios",
+      "discardUnsavedChanges": "Tienes cambios sin guardar. ¿Quieres descartarlos y continuar?",
+      "loadError": "No se pudo cargar la configuración.",
+      "scope": "Ámbito de la categoría",
+      "scopeInternal": "Interno",
+      "scopePortal": "Portal",
+      "readOnly": "Solo lectura",
+      "readOnlyDescription": "Puedes consultar esta configuración, pero solo el administrador responsable puede modificarla.",
+      "managedByServiceProvider": "Gestionado por el proveedor de servicios",
+      "managedByCustomer": "Gestionado por el cliente"
+    },
+    "categoryTab": {
+      "scope": "Alcance",
+      "name": "Nombre",
+      "description": "Descripción",
+      "requestTemplate": "Plantilla de solicitud",
+      "resolutionDays": "Días de resolución",
+      "followMainCategory": "Seguir la categoría principal ({{value}})",
+      "customValue": "Establecer un valor personalizado",
+      "daysValue": "{{value}} días",
+      "active": "Activo",
+      "addCategory": "Agregar categoría",
+      "empty": "Selecciona un categoría para editar su configuración."
+    },
+    "approvalStepTab": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "assigneeType": "Tipo de asignado",
+      "assigneeTypes": {
+        "manager": "Gerente",
+        "department": "Departamento",
+        "jobField": "Puesto",
+        "employee": "Empleado"
+      },
+      "managerStepsAboveRequester": "Pasos jerárquicos por encima del solicitante",
+      "department": "Departamento",
+      "departmentPlaceholder": "Seleccionar departamento",
+      "jobField": "Puesto",
+      "jobFieldPlaceholder": "Seleccionar puesto",
+      "employee": "Empleado",
+      "employeePlaceholder": "Seleccionar asignado",
+      "skipAccessLevel": "Nivel de acceso omitible",
+      "saveUnavailable": "No se puede guardar",
+      "created": "Creado",
+      "assign": "Asignar",
+      "empty": "Selecciona un paso de aprobación para editar su configuración."
+    },
+    "assignmentRuleTab": {
+      "jobField": "Puesto",
+      "selectAssigneeJobField": "Seleccionar puesto del asignado",
+      "employee": "Empleado",
+      "selectAssignee": "Seleccionar asignado",
+      "includeTenantCompany": "Incluir la empresa del tenant para gestión conjunta",
+      "includeTenantCompanyDescription": "Desactivado de forma predeterminada. Actívalo solo cuando esta regla PORTAL deba ser gestionada conjuntamente por el proveedor y la empresa del tenant de la categoría.",
+      "empty": "Selecciona un regla de asignación para editar su configuración."
+    },
+    "tenant": {
+      "companyList": {
+        "title": "Lista de empresas",
+        "description": "Empresas activas que aún no están asignadas a un tenant.",
+        "empty": "No hay empresas disponibles"
+      },
+      "tenantList": {
+        "title": "Lista de tenants",
+        "description": "Selecciona tenants para editarlos o devolverlos a empresas.",
+        "empty": "No hay tenants",
+        "portalOwnerHint": "Los tenants propietarios del portal se pueden editar, pero no se pueden devolver a la lista de empresas.",
+        "infoAriaLabel": "Restricción del tenant propietario del portal"
+      },
+      "actions": {
+        "addToTenants": "Agregar a tenants",
+        "moveToCompanies": "Mover a empresas"
+      },
+      "settingInfo": {
+        "title": "Información de configuración del tenant",
+        "description": "Actualiza los nombres y el color del tenant seleccionado.",
+        "empty": "Selecciona un tenant para editar su configuración.",
+        "nameTitle": "Nombre del tenant",
+        "nameDescription": "Los cambios se reflejan de inmediato en la lista de tenants.",
+        "colorTitle": "Color del tenant",
+        "tenantNamePlaceholder": "Nombre del tenant en {{language}}"
+      }
+    }
+  }
+}

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { flattenTree } from "@/components/custom/dnd/tree/utilities";
+import {
+  flattenTree,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
 

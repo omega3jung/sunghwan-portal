@@ -3,9 +3,11 @@ import { Plus, X } from "lucide-react";
 import { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DragHandle } from "@/components/custom/dnd/DragHandle";
-import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import { TreeNodes } from "@/components/custom/dnd/tree/types";
+import {
+  SortableTree,
+  SortableTreeDragHandle,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -45,7 +47,8 @@ export const ApprovalStepTree = ({
   errors,
   canEdit = true,
 }: Props) => {
-  const { t: tDomain } = useTranslation(NS.domain);
+  const { t: tShared } = useTranslation(NS.shared);
+  const { t: tSettings } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
 
   const getRiskBadgeClassName = (riskLevel: string) => {
@@ -104,7 +107,7 @@ export const ApprovalStepTree = ({
                       variant="outline"
                       className={getRiskBadgeClassName(data.defaultRiskLevel)}
                     >
-                      {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
+                      {`${tShared("enum.riskLevel.label")} ${tShared(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
                     </Badge>
                   )}
 
@@ -126,9 +129,8 @@ export const ApprovalStepTree = ({
 
                   {isApprovalStep && isInvalidApprovalStep && (
                     <Badge variant="destructive">
-                      {tDomain(
+                      {tSettings(
                         "serviceDeskSettings.approvalStepTab.saveUnavailable",
-                        { ns: NS.settings },
                       )}
                     </Badge>
                   )}
@@ -150,7 +152,7 @@ export const ApprovalStepTree = ({
                   )}
 
                   {canEdit && isApprovalStep && !isOverlay && (
-                    <DragHandle
+                    <SortableTreeDragHandle
                       {...dragHandleProps}
                       aria-label={tLocal(data.name)}
                     />

@@ -1,0 +1,94 @@
+{
+  "ticketStatus": {
+    "draft": "Borrador",
+    "open": "Abierto",
+    "approval": "Pendiente de aprobación",
+    "declined": "Rechazado",
+    "assigned": "Asignado",
+    "working": "Trabajando",
+    "pending": "Pendiente",
+    "rejected": "Rechazado",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "action": {
+    "comment": "Comentario",
+    "note": "Nota",
+    "assign": "Asignar",
+    "assignToMe": "Asignarme",
+    "approve": "Aprobar",
+    "decline": "Declinar",
+    "reject": "Rechazar",
+    "merge": "Fusionar",
+    "adjust": "Ajustar",
+    "adjustPlan": "Ajustar plan",
+    "reopenIssue": "Reabrir incidencia",
+    "resubmitRequest": "Reenviar solicitud",
+    "cancelTicket": "Cancelar ticket",
+    "searchCriteria": "Criterios de búsqueda",
+    "workSession": {
+      "submit": "Guardar tiempo registrado",
+      "submitWithStatus": "Guardar tiempo y actualizar estado",
+      "submitting": "Guardando..."
+    }
+  },
+  "field": {
+    "workSession": "Tiempo registrado",
+    "durationMinutes": "Duración",
+    "startAt": "Hora de inicio",
+    "endAt": "Hora de fin",
+    "status": "Estado",
+    "note": "Nota",
+    "noCode": "Sin código"
+  },
+  "tenant": {
+    "portalOwner": "Propietario del portal"
+  },
+  "status": {
+    "active": "Activo"
+  },
+  "option": {
+    "status": {
+      "working": "En curso",
+      "pending": "Pendiente",
+      "resolved": "Resuelto"
+    }
+  },
+  "validation": {
+    "workSession": {
+      "required": "Introduce el tiempo registrado antes de enviar.",
+      "positive": "El tiempo registrado debe ser mayor que 0 minutos.",
+      "invalidRange": "La hora de fin debe ser posterior a la hora de inicio.",
+      "statusRequiresTime": "El estado solo puede cambiar cuando el tiempo acumulado más esta entrada es mayor que 0.",
+      "noteMaxLength": "La nota debe tener 500 caracteres o menos."
+    },
+    "invalidFieldItems": "Campos no válidos: {{item}}"
+  },
+  "message": {
+    "refineSearchCriteria": "Refina tus criterios de búsqueda",
+    "lastComment": "Último comentario",
+    "ticketCreation": "Creación del ticket",
+    "processingFlow": "Flujo de procesamiento",
+    "foundDraft": "Borrador encontrado",
+    "loadDraft": "¿Quieres cargar el borrador? Si no lo haces, el borrador anterior se descartará.",
+    "loadDraftExceptInvalid": "Se cargó el borrador, excepto los campos no válidos."
+  },
+  "hoverMessage": {
+    "backToList": "Volver a la lista de tickets",
+    "workSessionTool": "Registra manualmente el tiempo de trabajo y, opcionalmente, cambia el estado del ticket en la misma acción.",
+    "openDetailAside": "Abra el panel lateral para ver los detalles del ticket",
+    "openHistoryDrawer": "Abra el panel lateral para ver el historial de este ticket"
+  },
+  "step": {
+    "issueDetails": "Detalles del problema",
+    "attachments": "Archivos adjuntos",
+    "review": "Revisar y enviar",
+    "assign": "Asignar"
+  },
+  "placeholder": {
+    "workSession": {
+      "durationMinutes": "p. ej. 30 min",
+      "note": "Añade una nota breve para esta entrada de tiempo"
+    }
+  }
+}

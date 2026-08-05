@@ -1,0 +1,69 @@
+{
+  "detailAside": {
+    "recipientsTitle": "Destinataires",
+    "unassigned": "Non attribué",
+    "ticketNo": "Numéro du ticket",
+    "currentUserBadge": "Moi",
+    "assignedBadge": "Attribué"
+  },
+  "detailPage": {
+    "detailsTitle": "Détails du ticket",
+    "descriptionTitleHint": "Détails essentiels de la demande et activité récente en un coup d'œil.",
+    "replyTitle": "Outils",
+    "replyTitleHint": "Répondez, laissez une note interne et consultez la discussion dans un flux continu.",
+    "notFound": "Ticket introuvable."
+  },
+  "recentActivity": {
+    "title": "Activité récente",
+    "latestUpdate": {
+      "label": "Dernière mise à jour",
+      "empty": "Aucun historique pour le moment",
+      "fallbackMeta": "La chronologie apparaîtra ici"
+    },
+    "conversation": {
+      "label": "Conversation",
+      "empty": "Aucun commentaire pour le moment",
+      "latestPrefix": "Dernier",
+      "start": "Commencez la conversation ci-dessous",
+      "count_one": "{{count}} commentaire",
+      "count_other": "{{count}} commentaires"
+    },
+    "lastCommenter": {
+      "label": "Dernier commentateur",
+      "emptyName": "Aucun commentateur pour le moment",
+      "emptyEmail": "Les mises à jour apparaîtront au fil de l'avancement du ticket"
+    },
+    "history": {
+      "STATUS_UPDATED": "Le statut est passé de {{from}} à {{to}}",
+      "STATUS_UPDATED_SIMPLE": "Le statut a changé",
+      "ASSIGNMENT_RESOLVED": "Le responsable a été mis à jour",
+      "TICKET_SUBMITTED": "Ticket submitted",
+      "APPROVAL_REQUESTED": "Approbation demandée",
+      "APPROVAL_APPROVED": "Approbation approuvée",
+      "APPROVAL_DECLINED": "Approbation refusée",
+      "COMMENT_CREATED": "Commentaire ajouté",
+      "NOTE_CREATED": "Note ajoutée",
+      "COMMENT_UPDATED": "Commentaire mis à jour",
+      "COMMENT_DELETED": "Commentaire supprimé",
+      "WORK_SESSION_UPDATED": "Temps enregistré mis à jour",
+      "MERGED": "Fusionné dans {{target}}",
+      "ESCALATED": "Transféré vers le ticket portail {{target}}",
+      "TICKET_REJECTED": "Ticket rejeté",
+      "TICKET_CANCELED": "Ticket annulé",
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "Historique mis à jour",
+      "TICKET_UPDATED": "Ticket mis a jour",
+      "CATEGORY_UPDATED": "Categorie mise a jour",
+      "ASSIGNMENT_UPDATED": "Assignation mise a jour",
+      "NOTE_UPDATED": "Note mise a jour",
+      "NOTE_DELETED": "Note supprimee",
+      "PLANNING_UPDATED": "Planification mise a jour",
+      "WORK_SESSION_STARTED": "Session de travail demarree",
+      "WORK_SESSION_STOPPED": "Session de travail arretee",
+      "WORK_SESSION_DELETED": "Session de travail supprimee"
+    }
+  }
+}

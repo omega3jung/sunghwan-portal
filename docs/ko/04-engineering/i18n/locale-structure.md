@@ -2,353 +2,206 @@
 
 ## 목표
 
-로컬라이제이션(i18n) 구조는 **확장 가능하고, 유지보수 가능하며, 도메인 지향적인 번역 시스템**을 제공하도록 설계된다.
+로컬라이제이션 구조는 번역 문구의 소유 책임을 명시적으로 유지하면서 큰 namespace를 더 작은 소스 파일로 관리할 수 있게 한다. 번역 키는 해당 문구를 표시하는 route나 component가 아니라 문구를 소유하는 애플리케이션 책임을 따라야 한다.
 
-이 구조의 목적은 다음과 같다.
+이 구조의 목표는 다음과 같다.
 
-- 번역을 도메인과 책임 기준으로 구성한다
-- 개발자와 리뷰어 모두의 가독성을 높인다
-- 여러 기능에서 유연하게 사용할 수 있도록 한다
-- 번역 키의 일관성을 유지한다
+- 지원하는 모든 언어에서 동일한 namespace와 key 구조를 유지한다.
+- 공용 어휘, 재사용 component 문구, feature 문구를 분리한다.
+- 하나의 과도하게 큰 JSON 파일을 만들지 않고 큰 namespace를 확장한다.
+- 번역 호출을 명시적이고 추적하기 쉽게 유지한다.
 
----
+## Runtime 모델
 
-## 핵심 원칙
+Namespace contract는 `src/lib/application/i18n`에 둔다. 각 언어는 `locales/<language>/index.ts`에서 조합하며, `src/lib/client/i18n/runtime.ts`가 완성된 resource를 i18next에 등록한다.
 
-```txt
-Localization should follow domain boundaries, not technical layers
-```
+현재 runtime은 `en`, `es`, `fr`, `ko`를 모두 eager bundle한다. 따라서 namespace를 디렉터리로 분리하는 것은 소스 소유권을 위한 결정이며 route 또는 namespace 단위 lazy loading을 제공하지 않는다. 영어는 fallback 언어로 유지한다.
 
----
+## Namespace 목록
 
-## Namespace 기반 구조
-
-번역은 **namespace** 단위로 나뉘며, 각 namespace는 하나의 도메인 또는 관심사를 나타낸다.
-
----
-
-### Namespace 목록
+애플리케이션은 현재 `NS`를 통해 다음 namespace를 등록한다.
 
 ```txt
 auth
 common
+component
 dashboard
 demo
+documents
 error
 message
 serviceDesk
 settings
+shared
 validation
 ```
 
----
-
-### 근거
-
-- **기능/도메인 경계**를 반영한다
-- 하나의 거대한 번역 파일이 되는 것을 방지한다
-- 유지보수성과 확장성을 높인다
-
----
-
-## 디렉터리 구조
-
-```bash
-locales/
-  en/
-    common.json
-    serviceDesk.json
-    validation.json
-  ko/
-    common.json
-    serviceDesk.json
-    validation.json
-```
-
----
-
-### 전략
-
-- 언어 기반 분리 (`en`, `ko`)
-- namespace 기반 JSON 파일 구성
-- 언어 간 동일한 구조 유지
-
----
-
-## Namespace 책임
-
-### common
-
-- 공통 UI 라벨
-- 재사용 가능한 필드 정의
-
----
-
-### serviceDesk
-
-- 기능 전용 번역
-- 티켓 관련 라벨과 메시지
-
----
-
-### validation
-
-- 검증 메시지
-- 폼 오류 피드백
-
----
-
-### message
-
-- 토스트 메시지
-- 성공/실패 알림
-
----
-
-### error
-
-- 시스템 수준 오류 메시지
-
----
-
-## 번역 접근 전략
-
-### 기본 Namespace
-
-각 feature는 **기본 namespace**를 정의한다.
-
----
-
-### 예시
+Namespace 문자열을 반복해서 작성하지 말고 `NS` 상수를 사용한다.
 
 ```ts
 const { t } = useTranslation(NS.serviceDesk);
+
+t("field.priority", { ns: NS.common });
 ```
 
----
+## 디렉터리 구조
 
-### Namespace 간 접근
-
-```ts
-t("field.title.label", { ns: "common" });
-```
-
----
-
-### 근거
-
-- 공통 필드를 중앙에서 관리할 수 있다
-- 여러 feature에서 재사용할 수 있다
-
----
-
-## 필드 구조
-
-### 표준 형식
-
-```json
-{
-  "field": {
-    "title": {
-      "label": "Title",
-      "placeholder": "Enter title"
-    }
-  }
-}
-```
-
----
-
-### 장점
-
-- 일관된 필드 정의
-- 폼 간 재사용이 쉽다
-- 비개발자에게도 구조가 명확하다
-
----
-
-## 네이밍 규칙
-
-### 규칙
+지원하는 모든 언어는 동일한 구조를 사용한다. 아래에서는 영어를 기준 예시로 사용한다.
 
 ```txt
-Use structured and predictable keys
+src/lib/application/i18n/locales/en/
+├─ index.ts
+├─ auth.json
+├─ common.json
+├─ dashboard.json
+├─ message.json
+├─ validation.json
+├─ component/
+├─ demo/
+├─ documents/
+├─ error/
+├─ serviceDesk/
+├─ settings/
+└─ shared/
+   ├─ enum.json
+   └─ index.ts
 ```
 
----
+작고 응집된 namespace는 하나의 JSON 파일로 유지할 수 있다. 서로 독립적인 소유 책임이 여러 개이거나 계속 커지는 catalog는 디렉터리와 `index.ts` 조합 경계를 사용한다.
 
-### 패턴
-
-```txt
-field.<name>.label
-field.<name>.placeholder
-```
-
----
-
-### 예시
+예를 들어 `serviceDesk`는 feature에 맞춘 fragment로 관리하지만 외부에는 하나의 i18next namespace로 제공한다.
 
 ```ts
-t("field.title.label", { ns: "common" });
+import insights from "./insights.json";
+import shared from "./shared.json";
+import ticket from "./ticket.json";
+import ticketAction from "./ticketAction.json";
+
+const serviceDesk = {
+  ...shared,
+  ...ticket,
+  ...ticketAction,
+  ...insights,
+};
+
+export default serviceDesk;
 ```
 
----
+물리적인 파일 분리 때문에 소비자가 특정 key를 소유하는 fragment를 알아야 해서는 안 된다. 소비자는 계속 `NS.serviceDesk`와 기존 공개 key 경로를 사용한다.
 
-## Helper Function (검토됨)
+## Namespace 책임
 
-### 옵션
+### `common`
 
-```ts
-function fieldLabel(name: string) {
-  return t(`field.${name}.label`, { ns: "common" });
-}
-```
+애플리케이션 전반에서 공유하는 일반 UI 어휘를 소유한다.
 
----
+- 저장, 취소, 검색 같은 action label
+- 공통 field 이름
+- pagination, sort, table, empty state 어휘
+- 일반 placeholder
 
-### 결정
+`common`은 재사용 가능한 interface 언어를 설명하며 안정적인 코드 값 catalog를 소유하지 않는다.
 
-- 채택하지 않았다
+### `shared`
 
----
+Selector, filter, badge와 같은 소비자가 표시할 수 있는 안정적인 애플리케이션 값의 다국어 label을 소유한다.
 
-### 근거
-
-- 가독성을 떨어뜨린다
-- 번역 사용 위치가 덜 명시적이 된다
-- 비개발자가 추적하기 더 어려워진다
-
----
-
-## 명시성 vs 추상화
-
-### 결정
+현재 예시는 다음과 같다.
 
 ```txt
-Prefer explicit translation keys over abstraction
+shared.enum.accessLevel
+shared.enum.priority
+shared.enum.riskLevel
+shared.enum.dueAt
 ```
 
----
+`shared` namespace의 책임은 의도적으로 좁게 유지한다. 안정적인 애플리케이션 값을 사용자에게 표시할 label로 매핑할 때만 key를 추가한다. Page 문구, validation 문구, workflow message, component 안내 문구는 여기에 두지 않는다.
 
-### 이유
+```ts
+const { t } = useTranslation(NS.shared, {
+  keyPrefix: "enum.priority.options",
+});
 
-- 리뷰어(예: HR, 디자이너)가 이해하기 쉽다
-- 코드의 명확성이 높아진다
-- 숨겨진 로직을 줄일 수 있다
+const highLabel = t("high");
+```
 
----
+일반 date range preset label은 공용 애플리케이션 enum catalog가 아니라 재사용 DatePicker 제품의 일부이므로 `component.datePicker`가 계속 소유한다.
 
-## 재사용성 전략
+### `component`
 
-### 공통 필드
+DatePicker, RichEditor, combo box와 같은 재사용 애플리케이션 component 내부의 placeholder, empty state, interaction label을 소유한다.
 
-- `common`에 정의한다
+### `demo`
 
----
+`src/app/(protected)/demo` 아래 page가 사용하는 설명, fixture, control, 안내 문구를 소유한다.
 
-### 기능 전용 필드
+### Feature namespace
 
-- 해당 feature namespace에 정의한다
+`serviceDesk`, `settings`, `documents`, `auth`는 각각의 애플리케이션 책임에 해당하는 workflow와 page 문구를 소유한다. Component 자체가 feature에 소속되지 않는 한 재사용 component가 이러한 namespace에 의존해서는 안 된다.
 
----
+### Feedback namespace
 
-### 예시
+- `validation`: input과 schema의 inline validation feedback
+- `message`: 성공 및 확인 문구 같은 예상 가능한 action feedback
+- `error`: system, API, 예외적 failure message
 
-- `common.field.title`
-- `serviceDesk.ticket.title`
+세부 feedback 정책은 [검증 메시지](./validation-messages.md)를 참고한다.
 
----
+## 소유 책임 결정
 
-## Validation 분리
+번역 문구의 위치를 결정할 때 다음 순서를 사용한다.
 
-검증 메시지는 전용 namespace로 분리한다.
+1. 재사용 component가 동작과 문구를 소유하면 `component`를 사용한다.
+2. 안정적인 애플리케이션 값을 label로 매핑하면 `shared`를 사용한다.
+3. Feature workflow 또는 page가 문구를 소유하면 해당 feature namespace를 사용한다.
+4. 일반 UI 어휘이면 `common`을 사용한다.
+5. Validation, action feedback, 예외적 failure를 전달하면 각각 `validation`, `message`, `error`를 사용한다.
 
----
+`shared`와 `common`을 소유 책임이 불분명한 문구의 기본 저장 위치로 사용해서는 안 된다. Key를 추가하기 전에 소유자를 먼저 결정한다.
 
-### 이유
+## 언어 간 구조 일치
 
-- UI 라벨과 오류 메시지가 섞이는 것을 방지한다
-- 유지보수성을 높인다
-- 여러 폼에서 재사용할 수 있다
+모든 구조 변경은 `en`, `es`, `fr`, `ko`에 함께 적용해야 한다.
 
----
+- 디렉터리와 파일 이름이 일치해야 한다.
+- 조합된 namespace 구조가 일치해야 한다.
+- 공개 key 경로를 안정적으로 유지해야 한다.
+- 영어는 영어가 아닌 catalog에 key가 없을 때 fallback 문구를 제공한다.
 
-## 확장성 전략
+기존 JSON 파일을 분리할 때는 이전 파일을 제거하기 전에 조합된 값과 원본 객체를 비교한다.
 
-### 새 기능 추가
+## 네이밍과 접근
 
-- 새 namespace를 만든다 (예: `inventory`)
-- 기존 namespace는 불필요하게 수정하지 않는다
+예측 가능하고 의미가 분명한 key 경로와 명시적인 namespace 접근을 선호한다.
 
----
+```ts
+const { t: tShared } = useTranslation(NS.shared);
 
-### 새 언어 추가
+tShared(`enum.riskLevel.options.${riskLevel}`);
+```
 
-- namespace 구조를 그대로 복제한다
-- 키의 일관성을 유지한다
+Namespace 문자열을 직접 사용하지 않는다.
 
----
+```ts
+// 지양
+t("enum.priority.options.high", { ns: "shared" });
 
-## 피하려는 안티패턴
+// 권장
+t("enum.priority.options.high", { ns: NS.shared });
+```
 
-### 1. 하나의 전역 번역 파일
+`shared`라는 locale namespace는 저장소의 `src/shared` 코드 layer와 무관하다. 마찬가지로 feature namespace는 TypeScript domain 경계를 정의하지 않는다.
 
-- 유지보수가 어렵다
-- 확장성이 떨어진다
+## 안티패턴
 
----
-
-### 2. 과도한 추상화
-
-- 번역 로직이 숨겨진다
-- 가독성이 떨어진다
-
----
-
-### 3. 책임 혼합
-
-- UI + validation + message를 한 파일에 넣는 방식
-
----
-
-### 4. 일관되지 않은 키 네이밍
-
-- 유지보수가 어려워진다
-
----
-
-## 트레이드오프
-
-### 장점
-
-- 명확한 도메인 분리
-- 확장 가능한 구조
-- 향상된 가독성
-- 더 나은 협업
-
----
-
-### 단점
-
-- 관리해야 할 파일 수가 늘어난다
-- 네이밍 규율이 필요하다
-- 사용 코드가 약간 장황해질 수 있다
-
----
-
-## 설계 원칙과의 정렬
-
-이 구조는 다음 원칙과 정렬된다.
-
-- 도메인 주도 설계
-- 관심사 분리
-- 확장성과 유지보수성
-- 개발자와 리뷰어 경험
-
----
+- 하나의 전역 번역 파일
+- 기존 소유자가 명확한데도 page 하나를 위한 namespace 생성
+- 동일한 value label을 `shared`와 `component`에 중복 정의
+- validation, success message, feature 문구 혼합
+- 한 언어에서만 파일 분리
+- 물리적인 파일 재구성만을 이유로 공개 key 경로 변경
+- 디렉터리 분리가 runtime lazy loading을 제공한다고 가정
 
 ## 요약
 
-로케일 구조는 **namespace 중심 구성**을 기반으로 하며,
-번역을 도메인별로 묶어 확장 가능하고,
-명시적이며, 애플리케이션 전반에서 유지보수하기 쉽게 만든다.
+Namespace는 공개 번역 contract이고 파일과 디렉터리는 그 contract 뒤에 있는 유지보수 세부 사항이다. 작은 namespace는 응집된 상태로 유지하고, 커지는 namespace는 책임 기준으로 분리하며, `shared`는 안정적인 값과 label의 catalog로 제한한다. 모든 지원 언어에서 조합 결과가 동일한 구조를 유지해야 한다.

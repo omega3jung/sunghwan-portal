@@ -1,0 +1,10 @@
+{
+  "readme": {
+    "title": "README",
+    "description": "Service Desk 문서 모음의 시작 문서입니다."
+  },
+  "serviceDeskEvolution": {
+    "title": "Service Desk 진화",
+    "description": "Service Hub 경험이 Service Desk 도메인으로 진화한 과정을 설명합니다."
+  }
+}

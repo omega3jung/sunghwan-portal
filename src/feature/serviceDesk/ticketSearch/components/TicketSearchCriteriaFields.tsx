@@ -71,7 +71,7 @@ export function TicketSearchCriteriaFields({
     return priorityOptions.map((priority) => {
       return {
         value: priority.value,
-        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
       };
     });
   }, [t]);
@@ -83,7 +83,7 @@ export function TicketSearchCriteriaFields({
       return {
         value: riskLevel.value,
         label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });

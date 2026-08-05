@@ -1,0 +1,97 @@
+{
+  "page": {
+    "title": "문서 허브",
+    "description": "탐색 메뉴에서 주요 마크다운 문서를 전환해서 볼 수 있습니다."
+  },
+  "group": {
+    "overview": {
+      "title": "개요"
+    },
+    "architecture": {
+      "title": "아키텍처"
+    },
+    "domain": {
+      "title": "도메인"
+    },
+    "engineering": {
+      "title": "엔지니어링"
+    },
+    "releases": {
+      "title": "릴리스"
+    },
+    "decisions": {
+      "title": "설계 결정"
+    }
+  },
+  "section": {
+    "domain": {
+      "coreModel": {
+        "title": "핵심 모델"
+      },
+      "workflow": {
+        "title": "워크플로"
+      },
+      "strategies": {
+        "title": "전략"
+      },
+      "reference": {
+        "title": "참조"
+      }
+    },
+    "engineering": {
+      "approach": {
+        "title": "구현 접근"
+      },
+      "conventions": {
+        "title": "규칙"
+      },
+      "documentation": {
+        "title": "문서화"
+      },
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "폼"
+      },
+      "dataFetching": {
+        "title": "데이터 패칭"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "안내"
+      },
+      "2025-12": {
+        "title": "2025-12"
+      },
+      "2026-01": {
+        "title": "2026-01"
+      },
+      "2026-02": {
+        "title": "2026-02"
+      },
+      "2026-03": {
+        "title": "2026-03"
+      },
+      "2026-04": {
+        "title": "2026-04"
+      },
+      "2026-05": {
+        "title": "2026-05"
+      },
+      "2026-06": {
+        "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
+      }
+    }
+  }
+}

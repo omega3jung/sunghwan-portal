@@ -1,0 +1,26 @@
+{
+  "featureBasedStructure": {
+    "title": "Estructura basada en funcionalidades",
+    "description": "Limites de los segmentos del proyecto y estrategia de propiedad de carpetas."
+  },
+  "routingStrategy": {
+    "title": "Estrategia de enrutamiento",
+    "description": "Diseno de rutas y limites del App Router."
+  },
+  "stateManagement": {
+    "title": "Gestion de estado",
+    "description": "Responsabilidades del estado de cliente y limites de persistencia."
+  },
+  "authSessionStrategy": {
+    "title": "Estrategia de autenticacion y sesion",
+    "description": "Diseno de autenticacion, sesion y rutas protegidas."
+  },
+  "impersonationStrategy": {
+    "title": "Estrategia de suplantacion",
+    "description": "Flujo de suplantacion administrativa y limites relacionados del sistema."
+  },
+  "databaseStrategy": {
+    "title": "Estrategia de base de datos",
+    "description": "Modelo de acceso a datos, roles y estrategia de limites DTO."
+  }
+}

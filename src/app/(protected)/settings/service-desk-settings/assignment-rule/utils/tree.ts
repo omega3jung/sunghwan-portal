@@ -1,4 +1,4 @@
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import type { TreeNodes } from "@/components/custom/SortableTree";
 import {
   type AssigneeGroup,
   hasAssignmentRuleSelection,

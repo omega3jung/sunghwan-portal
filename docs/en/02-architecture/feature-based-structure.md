@@ -452,9 +452,9 @@ query contracts, and shared Service Desk client helpers across adjacent slices.
 - `app/api/_adapters` owns Next.js route adaptation and the LOCAL demo implementation.
 - `lib/application/contracts` owns DTOs, schemas, and pure mappers shared across repositories.
 - `mocks` owns LOCAL demo and test fixtures and is never imported by `server`.
-- Base i18n resources and namespace contracts live in `lib/application/i18n`;
-  the client runtime lives in `lib/client/i18n`. Application component locale
-  registration is composed above lib in `components/i18n`.
+- Base i18n resources, namespace contracts, and composed feature/component
+  locale catalogs live in `lib/application/i18n`; the client runtime lives in
+  `lib/client/i18n`.
 
 ### Automated Enforcement
 
