@@ -107,26 +107,5 @@
     "rowsPerPage": "Lignes par page",
     "selected": "{{count}} sélectionnés",
     "total": "{{count}} éléments au total"
-  },
-  "richEditor": {
-    "toolbar": {
-      "bold": "Gras",
-      "italic": "Italique",
-      "underline": "Souligné",
-      "strike": "Barré",
-      "bulletList": "Liste à puces",
-      "numberedList": "Liste numérotée",
-      "quote": "Citation",
-      "codeBlock": "Bloc de code",
-      "link": "Lien",
-      "image": "Image",
-      "table": "Tableau",
-      "undo": "Annuler",
-      "redo": "Rétablir"
-    },
-    "prompt": {
-      "link": "Saisissez une URL",
-      "image": "Saisissez l'URL d'une image"
-    }
   }
 }

@@ -1,0 +1,6 @@
+{
+  "limited": {
+    "title": "La démo distante est limitée",
+    "description": "L’accès direct à l’interface Service Desk est désactivé pour la démo distante déployée. Utilisez plutôt Home, Demo, Settings ou Documents."
+  }
+}

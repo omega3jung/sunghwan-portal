@@ -1,0 +1,27 @@
+{
+  "comboVariants": "Variantes del cuadro combinado",
+  "buttonVariants": "Variantes de etiqueta",
+  "paletteStart": "Inicio de paleta",
+  "paletteStartDescription": "Selecciona el primer color de la paleta.",
+  "palettePick": "Color de paleta",
+  "palettePickPlaceholder": "Vacío utiliza la secuencia de la paleta",
+  "palettePickDescription": "Selecciona un color fijo de la paleta.",
+  "multiTitle": "Cuadro combinado múltiple",
+  "treeTitle": "Cuadro combinado múltiple en árbol",
+  "variants": {
+    "default": "Predeterminado", "ghost": "Fantasma", "secondary": "Secundario",
+    "overdue": "Vencido", "destructive": "Destructivo", "outline": "Contorno", "palette": "Paleta"
+  },
+  "months": {
+    "January": "Enero", "February": "Febrero", "March": "Marzo", "April": "Abril",
+    "May": "Mayo", "June": "Junio", "July": "Julio", "August": "Agosto",
+    "September": "Septiembre", "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
+  },
+  "items": {
+    "fruit": "Fruta", "apple": "Manzana", "banana": "Plátano", "grape": "Uva", "orange": "Naranja", "peach": "Melocotón",
+    "vegetable": "Verdura", "carrot": "Zanahoria", "onion": "Cebolla", "garlic": "Ajo", "broccoli": "Brócoli",
+    "meat": "Carne", "beef": "Carne de res", "pork": "Cerdo", "chicken": "Pollo",
+    "fish": "Pescado", "salmon": "Salmón", "tuna": "Atún", "dairy": "Lácteos", "milk": "Leche", "cheese": "Queso",
+    "empty": "Categoría vacía"
+  }
+}

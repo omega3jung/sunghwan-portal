@@ -1,4 +1,16 @@
 {
+  "ticketStatus": {
+    "draft": "Draft",
+    "open": "Open",
+    "approval": "Waiting approval",
+    "declined": "Declined",
+    "assigned": "Assigned",
+    "working": "Working",
+    "pending": "Pending",
+    "rejected": "Rejected",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
   "action": {
     "comment": "Comment",
     "note": "Note",

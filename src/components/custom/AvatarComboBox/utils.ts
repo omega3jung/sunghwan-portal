@@ -1,7 +1,5 @@
 import type { ImageValueLabel } from "@/shared/types/options";
 
-export const EMPTY_OPTION_TEXT = "No option found.";
-
 const normalize = (value: string) => value.trim().toUpperCase();
 
 export const splitOptionsBySelection = (

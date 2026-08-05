@@ -1,4 +1,4 @@
-import { StepperPage } from "./components/StepperPage";
+import { StepperPage } from "./StepperPage";
 
 export default function Page() {
   return <StepperPage />;

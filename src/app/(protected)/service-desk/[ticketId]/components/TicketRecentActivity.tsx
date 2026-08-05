@@ -27,7 +27,9 @@ export function TicketRecentActivity({
   const { t } = useTranslation(NS.serviceDesk, {
     keyPrefix: "recentActivity",
   });
-  const { t: tStatus } = useTranslation("TicketStatusBadge");
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
 
   return (
     <div className="space-y-4 border-b border-border/40 pb-6">

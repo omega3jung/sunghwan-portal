@@ -18,6 +18,30 @@ export const stepperContainer = cva("w-full", {
     },
   },
   compoundVariants: [
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "top",
+      className: "px-12 pt-6",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "bottom",
+      className: "px-12 pb-6",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "left",
+      className: "pl-36",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "right",
+      className: "pr-36",
+    },
     // 🔥 vertical - text (circle)
     {
       orientation: "vertical",

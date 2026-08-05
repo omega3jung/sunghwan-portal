@@ -1,8 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
+import { NS } from "@/lib/application/i18n";
 
 import { useColorPickerContext } from "./ColorPickerContext";
 
@@ -14,11 +16,14 @@ export type ColorPickerResetProps = {
 };
 
 export const ColorPickerReset = ({
-  children = "Reset",
+  children,
   className,
   variant = "outline",
   size = "md",
 }: ColorPickerResetProps) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "colorPicker",
+  });
   const { resolvedDefaultValue, disabled, onChange } = useColorPickerContext();
 
   return (
@@ -30,7 +35,7 @@ export const ColorPickerReset = ({
       onClick={() => onChange(resolvedDefaultValue)}
       disabled={disabled}
     >
-      {children}
+      {children ?? t("reset")}
     </Button>
   );
 };

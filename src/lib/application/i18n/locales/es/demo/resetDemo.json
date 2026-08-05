@@ -1,0 +1,6 @@
+{
+  "title": "Restablecer demostración",
+  "message": "¿Restablecer los datos de la demostración local?",
+  "description": "Restablecer los datos de la demostración local y restaurar los datos simulados iniciales.",
+  "resetting": "Restableciendo"
+}

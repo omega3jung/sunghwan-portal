@@ -40,7 +40,7 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { preferenceKeys } from "@/feature/user/preference";
 import { useUpdateUserPreference } from "@/feature/user/preference/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
-import { isLocale } from "@/lib/application/i18n";
+import { isLocale, NS } from "@/lib/application/i18n";
 import { languageOptions } from "@/lib/client/i18n";
 import { applyColorTheme } from "@/lib/client/theme";
 import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
@@ -84,7 +84,8 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   } = useCurrentPreference();
   const { mutate: updateUserPreference } = useUpdateUserPreference();
 
-  const { t } = useTranslation("PreferencesMenu");
+  const { t } = useTranslation(NS.settings, { keyPrefix: "preferences" });
+  const { t: tComponent } = useTranslation(NS.component);
 
   useEffect(() => {
     setOpen(false);
@@ -318,14 +319,14 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
               <ComboboxInput
                 id="language-picker"
                 className="w-full"
-                placeholder="Language Picker"
+                placeholder={t("languagePicker")}
               >
                 <InputGroupAddon align="inline-start">
                   <Globe />
                 </InputGroupAddon>
               </ComboboxInput>
               <ComboboxContent>
-                <ComboboxEmpty>No option found.</ComboboxEmpty>
+                <ComboboxEmpty>{tComponent("comboBox.empty")}</ComboboxEmpty>
                 <ComboboxList>
                   {(option) => (
                     <ComboboxItem key={option.value} value={option}>

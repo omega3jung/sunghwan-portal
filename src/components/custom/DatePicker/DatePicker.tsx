@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DatePickerProps } from "./types";
@@ -31,7 +32,9 @@ export function DatePicker({
   modal = true,
   ...buttonProps
 }: DatePickerProps) {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   const [open, setOpen] = useState(false);
   const normalizedDate = normalizeDateValue(value);

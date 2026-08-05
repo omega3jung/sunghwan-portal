@@ -5,6 +5,19 @@
     "french": "French",
     "korean": "Korean"
   },
+  "preferences": {
+    "menu": "Menu layout",
+    "collapsible": "Collapsible",
+    "group": "Grouped",
+    "preferences": "Preferences",
+    "colorTheme": "Color theme",
+    "theme": "Mode",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "languagePicker": "Select a language"
+  },
   "disabledRouteMessage": {
     "title": "Not implemented in this demo",
     "description": "This page exists to demonstrate the settings architecture."

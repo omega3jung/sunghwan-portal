@@ -20,6 +20,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { SearchDateFilterProps } from "./types";
@@ -61,7 +62,9 @@ const Component = <T extends string>(
   }: SearchDateFilterProps<T>,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
   const [open, setOpen] = useState(false);
 
   /**

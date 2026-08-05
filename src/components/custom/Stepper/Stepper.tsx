@@ -43,17 +43,16 @@ const Root = ({
         disabled,
       }}
     >
-      <div
-        className={cn(
-          stepperContainer({
+      <div className={cn("w-full", className)}>
+        <div
+          className={stepperContainer({
             orientation,
             variant: stepVariant,
             label: labelPosition,
-          }),
-          className,
-        )}
-      >
-        {children}
+          })}
+        >
+          {children}
+        </div>
       </div>
     </StepperContext.Provider>
   );

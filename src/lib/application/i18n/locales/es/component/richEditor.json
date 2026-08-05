@@ -1,0 +1,21 @@
+{
+  "toolbar": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "underline": "Subrayado",
+    "strike": "Tachado",
+    "bulletList": "Lista con viñetas",
+    "numberedList": "Lista numerada",
+    "quote": "Cita",
+    "codeBlock": "Bloque de código",
+    "link": "Enlace",
+    "image": "Imagen",
+    "table": "Tabla",
+    "undo": "Deshacer",
+    "redo": "Rehacer"
+  },
+  "prompt": {
+    "link": "Introduce una URL",
+    "image": "Introduce la URL de una imagen"
+  }
+}

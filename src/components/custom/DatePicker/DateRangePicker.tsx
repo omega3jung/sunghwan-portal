@@ -21,6 +21,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import {
   DATE_RANGE_PRESET_LABEL_KEYS,
   DEFAULT_DATE_RANGE_PRESETS,
@@ -74,7 +75,9 @@ const Component = (
     modal = true,
     options = DEFAULT_DATE_RANGE_PRESETS,
   } = props;
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   // Popover open state for the calendar layer.
   const [open, setOpen] = useState(false);

@@ -9,7 +9,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,8 +26,9 @@ import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { cn, initials } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
@@ -61,7 +62,8 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
   const signingRef = useRef(false);
   const shouldOpenImpersonationDialogRef = useRef(false);
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
+  const { t: tAuth } = useTranslation(NS.auth);
   const tLocal = useLocalizedText();
 
   const isDemo = current.isDemoUser;
@@ -149,8 +151,8 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
       signingRef.current = false;
     } catch {
       toast.add({
-        title: t("errors.title"),
-        description: "login switch error",
+        title: tAuth("errors.title"),
+        description: t("errors.switchFailed"),
         type: "error",
       });
     }
@@ -158,25 +160,23 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
   const renderUserAvatar = (
     user: AppUser | null,
-    options?: { size?: number; muted?: boolean },
+    options?: { muted?: boolean },
   ) => {
     if (!user) return null;
 
-    const { size = 10, muted } = options ?? {};
+    const { muted } = options ?? {};
     const localizedDisplayName = tLocal(user.displayName);
 
     return (
-      <Avatar className={cn(`h-${size} w-${size}`)}>
-        <AvatarImage src={user.image} alt={localizedDisplayName} />
-        <AvatarFallback
-          className={cn(
-            muted ? "bg-muted-foreground" : "bg-foreground",
-            "text-background",
-          )}
-        >
-          {initials(localizedDisplayName)}
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar
+        fallbackClassName={cn(
+          muted ? "bg-muted-foreground" : "bg-foreground",
+          "text-background",
+        )}
+        image={user.image}
+        name={localizedDisplayName}
+        size="lg"
+      />
     );
   };
 
@@ -305,8 +305,8 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
                 >
                   <UserRoundPlus />
                   {!impersonatedUser
-                    ? t("startImpersonation")
-                    : t("switchImpersonation")}
+                    ? t("impersonation.start")
+                    : t("impersonation.switch")}
                 </DropdownMenuItem>
               )}
 
@@ -322,7 +322,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
               <DropdownMenuItem onClick={stopImpersonation}>
                 <UserRoundMinus />
-                {t("stopImpersonation")}
+                {t("impersonation.stop")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           )}
@@ -336,7 +336,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
                 }}
               >
                 <UserRoundPlus />
-                {t("impersonation")}
+                {t("impersonation.label")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           )}

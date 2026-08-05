@@ -1,4 +1,16 @@
 {
+  "ticketStatus": {
+    "draft": "임시",
+    "open": "열림",
+    "approval": "승인 대기",
+    "declined": "승인 반려",
+    "assigned": "배정됨",
+    "working": "처리 중",
+    "pending": "대기 중",
+    "rejected": "반려됨",
+    "resolved": "해결됨",
+    "closed": "종료됨"
+  },
   "action": {
     "comment": "댓글",
     "note": "메모",

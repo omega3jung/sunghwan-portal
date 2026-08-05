@@ -1,0 +1,23 @@
+{
+  "controls": {
+    "presets": "Preajustes de intervalo de fechas",
+    "presetsDescription": "Controla los preajustes ofrecidos por DateRangePicker.",
+    "triggerText": "Texto del activador",
+    "minuteStep": "Intervalo de minutos",
+    "compact": "DateTimePicker compacto"
+  },
+  "variants": {
+    "text": "Etiqueta",
+    "range": "Intervalo de fechas",
+    "all": "Etiqueta e intervalo de fechas"
+  },
+  "cards": {
+    "date": "Selección de una fecha con límites mínimo y máximo móviles.",
+    "dateTime": "Selección de fecha y hora de 24 horas con intervalos de minutos configurables.",
+    "dateRange": "Control explícito del preajuste y del intervalo concreto.",
+    "search": "Resolución de preajustes y sincronización del intervalo personalizado."
+  },
+  "empty": "(vacío)",
+  "noPreset": "(sin preajuste)",
+  "bounds": "Límites de fecha y hora: {{min}} a {{max}}"
+}

@@ -45,16 +45,19 @@ export function TicketSearchCriteriaFields({
 }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
   const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedText(userPreference.language);
 
   const statusOptions = useMemo<TreeMultiComboBoxOption[]>(
     () =>
       createTicketStatusFilterOptions(
-        getStatusOptions(userPreference.language),
-        userPreference.language,
+        getStatusOptions(tStatus),
+        tStatus,
       ),
-    [userPreference.language],
+    [tStatus],
   );
 
   const categoryOptions = useMemo<TreeMultiComboBoxOption[]>(

@@ -1,0 +1,23 @@
+{
+  "controls": {
+    "presets": "Préréglages de plage de dates",
+    "presetsDescription": "Contrôle les préréglages proposés par DateRangePicker.",
+    "triggerText": "Texte du déclencheur",
+    "minuteStep": "Pas des minutes",
+    "compact": "DateTimePicker compact"
+  },
+  "variants": {
+    "text": "Libellé",
+    "range": "Plage de dates",
+    "all": "Libellé et plage de dates"
+  },
+  "cards": {
+    "date": "Sélection d’une date avec des limites minimale et maximale glissantes.",
+    "dateTime": "Sélection de date et d’heure sur 24 heures avec un pas de minutes configurable.",
+    "dateRange": "Contrôle explicite du préréglage et de la plage concrète.",
+    "search": "Résolution des préréglages et synchronisation de la plage personnalisée."
+  },
+  "empty": "(vide)",
+  "noPreset": "(aucun préréglage)",
+  "bounds": "Limites de date et d’heure : {{min}} à {{max}}"
+}

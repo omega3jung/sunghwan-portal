@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
@@ -131,7 +132,9 @@ export function DateTimePicker({
   modal = true,
   ...buttonProps
 }: DateTimePickerProps) {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   const [open, setOpen] = useState(false);
   const normalizedDateTime = normalizeDateValue(value);

@@ -1,4 +1,4 @@
-import { HierarchicalSelectPage } from "./components/HierarchicalSelectPage";
+import { HierarchicalSelectPage } from "./HierarchicalSelectPage";
 
 export default function Page() {
   return <HierarchicalSelectPage />;

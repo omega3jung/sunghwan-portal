@@ -12,6 +12,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AppUser } from "@/domain/user";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
@@ -31,7 +32,7 @@ export function DemoUserSwitch(props: Props) {
     onDemoUserSwitch,
   } = props;
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
 
   return (
     <DropdownMenuSub>
@@ -59,7 +60,7 @@ export function DemoUserSwitch(props: Props) {
                   onClick={() => onDemoUserSwitch(profile)}
                 >
                   {getPermissionIcon(profile.permission)}
-                  {t(`login${profileDisplayNameKey}`)}
+                  {t(`login.${profileDisplayNameKey}`)}
                 </DropdownMenuItem>
               );
             })}
@@ -77,7 +78,7 @@ export function DemoUserSwitch(props: Props) {
                   onClick={() => onDemoUserSwitch(profile)}
                 >
                   {getPermissionIcon(profile.permission)}
-                  {t(`login${profileDisplayNameKey}`)}
+                  {t(`login.${profileDisplayNameKey}`)}
                 </DropdownMenuItem>
               );
             })}

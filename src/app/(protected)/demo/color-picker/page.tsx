@@ -1,4 +1,4 @@
-import { ColorPickerPage } from "./components/ColorPickerPage";
+import { ColorPickerPage } from "./ColorPickerPage";
 
 export default function Page() {
   return <ColorPickerPage />;

@@ -1,5 +1,4 @@
 import type { MultiComboBoxItem } from "../types";
-import { EMPTY_OPTION_TEXT } from "../utils";
 import type {
   TreeCheckState,
   TreeMultiComboBoxNode,
@@ -10,8 +9,6 @@ import type {
 } from "./types";
 
 const normalize = (value: string) => value.trim().toUpperCase();
-
-export { EMPTY_OPTION_TEXT };
 
 export const createTreeOptionIndex = (
   options: TreeMultiComboBoxOption[],

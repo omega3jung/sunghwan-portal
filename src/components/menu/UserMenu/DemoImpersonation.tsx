@@ -12,6 +12,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AuthUser } from "@/domain/auth";
+import { NS } from "@/lib/application/i18n";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
@@ -30,15 +31,15 @@ export function DemoImpersonation(props: Props) {
     onDemoImpersonate,
   } = props;
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <ShieldUser />
         {!isImpersonating
-          ? t("demoUserImpersonation")
-          : t("switchImpersonation")}
+          ? t("impersonation.demoLabel")
+          : t("impersonation.switch")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
@@ -54,7 +55,7 @@ export function DemoImpersonation(props: Props) {
                   onClick={() => onDemoImpersonate(profile.username)}
                 >
                   {getPermissionIcon(profile.permission)}
-                  {t(`impersonation${profileDisplayNameKey}`)}
+                  {t(`impersonation.options.${profileDisplayNameKey}`)}
                 </DropdownMenuItem>
               );
             })}
@@ -72,7 +73,7 @@ export function DemoImpersonation(props: Props) {
                   onClick={() => onDemoImpersonate(profile.username)}
                 >
                   {getPermissionIcon(profile.permission)}
-                  {t(`impersonation${profileDisplayNameKey}`)}
+                  {t(`impersonation.options.${profileDisplayNameKey}`)}
                 </DropdownMenuItem>
               );
             })}

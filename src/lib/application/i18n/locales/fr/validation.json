@@ -25,5 +25,10 @@
     "invalid": "Doit être une date valide.",
     "invalidWithField": "{{field}} doit être une date valide.",
     "afterWithField": "{{field}} doit être postérieur à {{target}}."
+  },
+  "fileAttachment": {
+    "invalidType": "Type de fichier non pris en charge.",
+    "maxCount": "Maximum {{count}} fichiers autorisés.",
+    "maxTotalSize": "La taille totale maximale des fichiers est de {{size}} Mo."
   }
 }

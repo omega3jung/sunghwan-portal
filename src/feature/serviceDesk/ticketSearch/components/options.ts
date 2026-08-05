@@ -2,12 +2,11 @@ import type { SearchDateFilterOption } from "@/components/custom/DatePicker";
 import type { TreeMultiComboBoxOption } from "@/components/custom/MultiComboBox";
 import type { dueAt } from "@/domain/common";
 import type { MainCategory, TicketStatus } from "@/domain/serviceDesk";
-import { ticketStatusLocales } from "@/feature/serviceDesk/shared";
 import {
   OPEN_TICKET_STATUS_FILTER_VALUE,
   OPEN_TICKET_STATUS_FILTER_VALUES,
 } from "@/feature/serviceDesk/ticketSearch/statusFilter";
-import type { DateRangePreset, Locale, ValueLabel } from "@/shared/types";
+import type { DateRangePreset, ValueLabel } from "@/shared/types";
 
 type CategoryLabelResolver = (name: MainCategory["name"]) => string;
 type Translate = (key: string) => string;
@@ -43,23 +42,15 @@ export const createTicketCategoryOptions = (
 /** Defines the supported create ticket status filter choices presented by the feature. */
 export const createTicketStatusFilterOptions = (
   statusOptions: ValueLabel<TicketStatus>[],
-  locale: Locale,
+  tStatus: Translate,
 ): TreeMultiComboBoxOption[] => {
   const statusLabelMap = new Map(
     statusOptions.map((option) => [option.value, option.label]),
   );
-  const localizedLabels =
-    ticketStatusLocales[locale] ?? ticketStatusLocales.en;
-  const fallbackLabels = ticketStatusLocales.en;
-  const openLabel =
-    localizedLabels.open ??
-    fallbackLabels.open ??
-    OPEN_TICKET_STATUS_FILTER_VALUE;
-
   return [
     {
       value: OPEN_TICKET_STATUS_FILTER_VALUE,
-      label: openLabel,
+      label: tStatus("open"),
       children: OPEN_TICKET_STATUS_FILTER_VALUES.map((status) => ({
         value: status,
         label: statusLabelMap.get(status) ?? status,

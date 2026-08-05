@@ -46,7 +46,9 @@ export function TicketHistoryTimelineContent({
   const { t: tHistory } = useTranslation(NS.serviceDesk, {
     keyPrefix: "recentActivity",
   });
-  const { t: tStatus } = useTranslation("TicketStatusBadge");
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const emptyContent = tCommon("empty.withItem", {

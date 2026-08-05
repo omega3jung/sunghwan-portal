@@ -2,8 +2,9 @@
 
 import auth from "./auth.json";
 import common from "./common.json";
+import component from "./component";
 import dashboard from "./dashboard.json";
-import demo from "./demo.json";
+import demo from "./demo";
 import documents from "./documents.json";
 import domain from "./domain";
 import error from "./error.json";
@@ -16,6 +17,7 @@ import validation from "./validation.json";
 export const es = {
   demo,
   auth,
+  component,
   dashboard,
   documents,
   settings,

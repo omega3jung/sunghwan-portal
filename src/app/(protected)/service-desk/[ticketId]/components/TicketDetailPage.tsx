@@ -83,7 +83,7 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
   }
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-x-hidden p-4 pt-3">
+    <div className="flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-hidden p-4 pt-3">
       <TicketHeader
         ticket={ticket}
         categories={categories}
@@ -104,8 +104,8 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
       <div className="h-1 rounded bg-primary-muted" />
 
       <div className="flex min-h-0 min-w-0 max-w-full flex-1 overflow-x-hidden pt-4">
-        <main className="min-w-0 flex-1">
-          <ScrollArea className="h-full w-full">
+        <main className="h-full min-h-0 min-w-0 flex-1 overflow-hidden">
+          <ScrollArea className="h-full min-h-0 w-full overflow-hidden">
             <div className="mx-auto w-full min-w-0 max-w-260 p-2 pb-10">
               {isTicketLoading ? (
                 <TicketDetailSkeleton />
@@ -216,19 +216,19 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
 
         <div
           className={cn(
-            "hidden overflow-hidden transition-[width] duration-200 ease-linear xl:block",
+            "hidden h-full min-h-0 overflow-hidden transition-[width] duration-200 ease-linear xl:block",
             isDetailsAsideOpen ? "w-[320px]" : "w-0",
           )}
         >
           <aside
             className={cn(
-              "h-full w-[320px] shrink-0 transition-[opacity,transform] duration-200 ease-linear",
+              "h-full min-h-0 w-[320px] shrink-0 overflow-hidden transition-[opacity,transform] duration-200 ease-linear",
               isDetailsAsideOpen
                 ? "translate-x-0 opacity-100"
                 : "pointer-events-none translate-x-2 opacity-0",
             )}
           >
-            <ScrollArea className="h-full">
+            <ScrollArea className="h-full min-h-0 overflow-hidden">
               <div className="space-y-4 p-2">
                 {isTicketLoading || !ticket ? (
                   <TicketDetailsAsideSkeleton />

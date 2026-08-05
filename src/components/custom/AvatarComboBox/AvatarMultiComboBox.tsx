@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, Fragment, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
   ComboboxSeparator,
   ComboboxTrigger,
 } from "@/components/ui/combobox";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { AvatarComboBoxOptionItem } from "./AvatarComboBoxOptionItem";
@@ -21,7 +23,6 @@ import { AvatarStack } from "./AvatarStack";
 import type { AvatarMultiProps } from "./types";
 import {
   createComboboxFilter,
-  EMPTY_OPTION_TEXT,
   splitOptionsBySelection,
 } from "./utils";
 import { comboBoxVariants } from "./variants";
@@ -47,6 +48,9 @@ const Component = (
   }: AvatarMultiProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "comboBox",
+  });
   const { selectedOptions, unselectedOptions } = useMemo(
     () => splitOptionsBySelection(options, value),
     [options, value],
@@ -123,11 +127,11 @@ const Component = (
 
         <ComboboxContent>
           <ComboboxInput
-            aria-label={placeholder ?? "Search users"}
+            aria-label={placeholder ?? t("searchUsers")}
             placeholder={placeholder}
             showTrigger={false}
           />
-          <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
+          <ComboboxEmpty>{t("empty")}</ComboboxEmpty>
           <ComboboxList showScrollbar className="max-h-48 min-h-0">
             {(user) => {
               const unselectedIndex = unselectedOptions.indexOf(user);

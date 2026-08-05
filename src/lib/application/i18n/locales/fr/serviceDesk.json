@@ -1,4 +1,16 @@
 {
+  "ticketStatus": {
+    "draft": "Brouillon",
+    "open": "Ouvert",
+    "approval": "En attente d'approbation",
+    "declined": "Refusé",
+    "assigned": "Assigné",
+    "working": "En cours",
+    "pending": "En attente",
+    "rejected": "Rejeté",
+    "resolved": "Résolu",
+    "closed": "Fermé"
+  },
   "action": {
     "comment": "Commentaire",
     "note": "Note",

@@ -1,0 +1,28 @@
+{
+  "visibleItems": "표시 항목 수", "compactMode": "간결한 모드",
+  "compactDescription": "사이드바 레이아웃에 맞춘 좁은 간격", "order": "정렬",
+  "orders": { "desc": "최신순", "asc": "오래된순" },
+  "markerIcons": "마커 아이콘", "markerIconsDescription": "마커 안에 아이콘 표시",
+  "emptyState": "빈 상태", "emptyStateDescription": "빈 타임라인 표시",
+  "badge": "배지", "badgeDescription": "배지 문구 표시",
+  "description": "설명", "descriptionDescription": "설명 본문 표시",
+  "meta": "부가 정보", "metaDescription": "시간 또는 작업자 문구 표시",
+  "preview": "타임라인 미리보기", "sidebarTitle": "오른쪽 사이드바 미리보기",
+  "sidebarDescription": "세로로 쌓이는 이력 항목에 최적화된 타임라인입니다.",
+  "emptyContent": "타임라인 항목이 없습니다", "notesTitle": "현재 데모 참고 사항",
+  "notesDescription": "이 페이지는 공유 타임라인 mock 데이터를 사용하고 표시를 위해 선택적 필드만 변환합니다.",
+  "notes": {
+    "order": "order는 입력 데이터 구조를 변경하지 않고 최신순과 오래된순 표시를 전환합니다.",
+    "compact": "compact는 티켓 상세 오른쪽 사이드바에 필요한 조밀한 밀도를 미리 보여줍니다.",
+    "optional": "markerIcon, badge, description, meta는 Service Desk 의존성 없이 표시 여부를 전환합니다.",
+    "empty": "빈 상태 문구는 소유 화면이 제공하고 Timeline은 레이아웃을 담당합니다."
+  },
+  "items": {
+    "career-2016-bkit": { "title": "BKI IT에서 엔터프라이즈 소프트웨어 개발 시작", "description": "Java, C# WinForms/WPF, MSSQL, MariaDB를 활용해 제조 MES 플랫폼을 유지보수하고 사내 MES, 자산 관리 및 데이터 인터페이스 솔루션을 개발했습니다.", "meta": "2016.10 - 2018.12", "badge": "BKI IT" },
+    "career-2019-cynergy": { "title": "Cynergy 프론트엔드 개발자로 합류", "description": "미국 모바일 기기 보증 및 재제조 기업의 사내 ERP와 포털 업무 흐름을 현대화했으며, 댈러스에서 18개월간 근무한 뒤 글로벌 원격 협업을 이어갔습니다.", "meta": "2019.05 - 2025.03", "badge": "Cynergy" },
+    "project-2022-mobileklink": { "title": "MobileKlink 고객 맞춤형 포털 업무 흐름 제공", "description": "입고부터 출고까지 한 화면에서 처리하는 업무 흐름을 구축하고 Oracle RESTful Services로 삼성 기기 로직을 연동했으며, 10개 테스트 사례를 검증하고 9개월 계획을 8개월 만에 완료했습니다.", "meta": "2022.02 - 2025.03", "badge": "고객 포털" },
+    "career-2023-nextjs": { "title": "React와 Next.js로 레거시 ERP 및 포털 화면 현대화", "description": "10개 이상의 Oracle Forms 및 Java 포털 화면을 React, Next.js, TypeScript로 이전하고 GitHub Pull Request와 코드 리뷰를 통해 협업했습니다.", "meta": "2023.10 - 2025.03", "badge": "현대화" },
+    "career-2024-helpdesk": { "title": "IT Help Desk 프론트엔드 설계 및 운영 안정화 주도", "description": "티켓 접수, 배정, 상태 및 이력 업무 흐름과 반응형 크로스 브라우저 UI, 커스텀 컴포넌트, Chart.js 대시보드, 보고서 및 운영 이슈 대응을 구현했습니다.", "meta": "2025.03까지", "badge": "서비스 데스크" },
+    "portfolio-2025-sunghwan-portal": { "title": "Sunghwan Portal 설계 및 개발", "description": "엔터프라이즈 Help Desk 경험을 명시적인 티켓 업무 흐름, 역할 기반 UX, 불변 이력, LOCAL·REMOTE 서비스 경계와 PostgreSQL 서버 구조를 갖춘 프로덕션 지향 Service Desk 프로토타입으로 구현했습니다. Next.js 16, React 19, TypeScript를 사용했습니다.", "meta": "2025.12 - 현재 · 라이브 데모 및 GitHub", "badge": "포트폴리오" }
+  }
+}

@@ -71,6 +71,9 @@
     "timeout": "Time expired",
     "differentId": "The verified ID is different from the current ID. Please verify the OTP again."
   },
+  "fileAttachment": {
+    "limitTitle": "Please check the selected files."
+  },
   "remoteRouteGuard": {
     "limited": {
       "title": "Remote demo is limited",

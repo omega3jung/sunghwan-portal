@@ -1,4 +1,4 @@
-import { MultiComboBoxPage } from "./components/MultiComboBoxPage";
+import { MultiComboBoxPage } from "./MultiComboBoxPage";
 
 export default function Page() {
   return <MultiComboBoxPage />;

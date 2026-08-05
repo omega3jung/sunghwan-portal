@@ -98,6 +98,38 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 1,
   },
   {
+    id: -102,
+    parentId: -2,
+    title: {
+      en: "File Attachment",
+      es: "Archivos adjuntos",
+      fr: "Pièces jointes",
+      ko: "파일 첨부",
+    },
+    path: "/demo/file-attachment",
+    icon: "Paperclip",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 90,
+    minAccessLevel: 9,
+  },
+  {
+    id: -101,
+    parentId: -2,
+    title: {
+      en: "Rich Text Editor",
+      es: "Editor de texto enriquecido",
+      fr: "Éditeur de texte enrichi",
+      ko: "텍스트 에디터",
+    },
+    path: "/demo/rich-editor",
+    icon: "FileText",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 80,
+    minAccessLevel: 9,
+  },
+  {
     id: -9,
     parentId: -2,
     title: {

@@ -1,0 +1,6 @@
+{
+  "limited": {
+    "title": "원격 데모 접근이 제한됩니다",
+    "description": "배포된 원격 데모에서는 Service Desk UI 직접 접근을 제한합니다. Home, Demo, Settings 또는 Documents를 이용해 주세요."
+  }
+}

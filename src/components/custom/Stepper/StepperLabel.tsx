@@ -36,7 +36,7 @@ export const StepperLabel = ({ className, children }: Props) => {
   return (
     <span
       className={cn(
-        "text-xs font-medium whitespace-nowrap",
+        "max-w-32 truncate text-center text-xs font-medium",
         positionClasses[labelPosition],
         className,
       )}

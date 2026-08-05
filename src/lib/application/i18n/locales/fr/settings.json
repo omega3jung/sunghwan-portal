@@ -5,6 +5,19 @@
     "french": "Français",
     "korean": "Coréen"
   },
+  "preferences": {
+    "menu": "Disposition du menu",
+    "collapsible": "Repliable",
+    "group": "Groupé",
+    "preferences": "Préférences",
+    "colorTheme": "Thème de couleur",
+    "theme": "Mode",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "language": "Langue",
+    "languagePicker": "Sélectionner une langue"
+  },
   "disabledRouteMessage": {
     "title": "Non implémenté dans cette démo",
     "description": "Cette page sert à illustrer l'architecture des paramètres."

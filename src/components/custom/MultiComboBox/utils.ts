@@ -1,7 +1,5 @@
 import type { MultiComboBoxItem } from "./types";
 
-export const EMPTY_OPTION_TEXT = "No option found.";
-
 const normalize = (value: string) => value.trim().toUpperCase();
 
 /**

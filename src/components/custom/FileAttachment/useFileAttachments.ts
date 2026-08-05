@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { toast } from "@/components/ui/toast";
+import { NS } from "@/lib/application/i18n";
 import { bytesToMB } from "@/shared/utils/browser";
 
 type FileValue = File[];
@@ -44,7 +45,8 @@ export const useFileAttachments = <
   accept,
   onError,
 }: UseFileAttachmentsOptions<TForm, TFieldName>) => {
-  const { t } = useTranslation("FileAttachment");
+  const { t: tValidation } = useTranslation(NS.validation);
+  const { t: tMessage } = useTranslation(NS.message);
 
   const watchedFiles = useWatch<TForm, TFieldName>({
     control: form.control,
@@ -86,11 +88,11 @@ export const useFileAttachments = <
   ) => {
     onError?.(type);
     toast.add({
-      title: t("fileLimitTitle"),
+      title: tMessage("fileAttachment.limitTitle"),
       description:
         type === "count"
-          ? t("maxFileCount", { count: maxCount })
-          : t("maxTotalFileSize", { size: maxSizeMB }),
+          ? tValidation("fileAttachment.maxCount", { count: maxCount })
+          : tValidation("fileAttachment.maxTotalSize", { size: maxSizeMB }),
       type: "warning",
     });
   };
@@ -102,7 +104,7 @@ export const useFileAttachments = <
     if (invalidFile) {
       onError?.("type");
       toast.add({
-        title: t("invalidFileType"),
+        title: tValidation("fileAttachment.invalidType"),
         type: "warning",
       });
       return;

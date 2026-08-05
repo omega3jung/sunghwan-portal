@@ -71,6 +71,9 @@
     "timeout": "Le délai a expiré.",
     "differentId": "L'identifiant vérifié est différent de l'identifiant actuel. Veuillez vérifier à nouveau le code OTP."
   },
+  "fileAttachment": {
+    "limitTitle": "Vérifiez les fichiers sélectionnés."
+  },
   "remoteRouteGuard": {
     "limited": {
       "title": "La démo distante est limitée",
