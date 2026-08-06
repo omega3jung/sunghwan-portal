@@ -2,7 +2,7 @@ import type { TicketHistory } from "@/domain/serviceDesk";
 
 export { mapTicketHistoryDisplayMetadata } from "@/lib/application/serviceDesk";
 
-/** Formats history meta for presentation without changing the source model. */
+/** Formats presentation metadata without mutating or reinterpreting the source record. */
 export function formatHistoryMeta(history: TicketHistory) {
   return new Date(history.createdAt).toLocaleString();
 }

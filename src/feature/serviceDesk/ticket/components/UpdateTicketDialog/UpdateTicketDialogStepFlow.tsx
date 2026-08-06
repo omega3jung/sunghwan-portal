@@ -6,7 +6,6 @@ type UpdateTicketDialogStepFlowProps = {
   onStepChange: (step: number) => void;
 };
 
-/** Documents the update ticket dialog step flow responsibility exposed by this client feature module. */
 export function UpdateTicketDialogStepFlow({
   currentStep,
   steps,

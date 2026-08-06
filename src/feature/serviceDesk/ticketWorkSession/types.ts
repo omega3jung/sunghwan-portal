@@ -1,17 +1,15 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 
-/** Distinguishes range-based tracking from duration-based entry. */
+/** Distinguishes timestamp-range tracking from direct duration entry. */
 export type TicketWorkSessionEntryMode = "range" | "duration";
-/** Defines the ticket work session input mode accepted at this feature boundary. */
 export type TicketWorkSessionInputMode = TicketWorkSessionEntryMode;
 
-/** Enumerates the ticket statuses a submitted work session may request. */
+/** Ticket states a submitted work session may request as its next state. */
 export type TicketWorkSessionStatus = Extract<
   TicketStatus,
   "Working" | "Pending" | "Resolved"
 >;
 
-/** Defines the ticket work session submit payload accepted at this feature boundary. */
 export type TicketWorkSessionSubmitPayload = {
   ticketId: string;
   inputMode: TicketWorkSessionInputMode;

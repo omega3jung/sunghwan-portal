@@ -48,7 +48,7 @@ type BuildBreadcrumbItemsOptions = Pick<
   pathname: string;
 };
 
-/** Builds fallback breadcrumbs directly from URL segments when menu metadata is unavailable. */
+/** Falls back to URL segments when callers provide no breadcrumb metadata. */
 export function buildBreadcrumbItems({
   breadcrumbs,
   homeLabel = "Home",

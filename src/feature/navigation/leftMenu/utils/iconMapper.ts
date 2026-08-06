@@ -1,5 +1,3 @@
-// src/feature/navigation/leftMenu/utils/iconMapper.ts
-
 import {
   BookOpen,
   CalendarRange,
@@ -28,7 +26,7 @@ import {
   UserStar,
 } from "lucide-react";
 
-/** Maps persisted icon keys to the icon components supported by the navigation UI. */
+/** Maps icon identifiers persisted by the menu API to supported UI icons. */
 export const leftMenuIconMap: Record<string, LucideIcon> = {
   BookOpen,
   CalendarRange,
@@ -56,7 +54,7 @@ export const leftMenuIconMap: Record<string, LucideIcon> = {
   UserStar,
 };
 
-/** Resolves a persisted icon key and falls back safely when the key is unknown. */
 export function getLeftMenuIcon(iconKey: string): LucideIcon {
+  // Unknown persisted keys must not break navigation rendering.
   return leftMenuIconMap[iconKey] ?? Home;
 }

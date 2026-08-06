@@ -10,7 +10,6 @@ import { TicketWorkSessionSubmitPayload } from "../types";
 
 type TicketWorkSessionResponse = OResponse<TicketWorkSession>;
 
-// feature-scoped API.
 export const serviceDeskTicketWorkSessionApi = {
   list: async (ticketId: string): Promise<TicketWorkSession[]> => {
     if (!ticketId) return [];

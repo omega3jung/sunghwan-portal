@@ -1,6 +1,5 @@
 import { TicketAttach } from "./enums";
 
-/** Represents attach within the Service Desk domain. */
 export interface Attach {
   index: number;
   type: TicketAttach;
@@ -12,7 +11,7 @@ export interface Attach {
 /** Marker proving an attachment was replaced by controlled demo metadata. */
 export type TicketAttachmentReplacementReason = "SECURITY_DEMO_REPLACEMENT";
 
-/** JSON-safe metadata for a controlled demo attachment replacement. */
+/** JSON-safe metadata retained for a controlled demo attachment replacement. */
 export type TicketAttachmentMetadata = {
   originalName: string;
   replacedName: string;

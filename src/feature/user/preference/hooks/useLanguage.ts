@@ -11,16 +11,7 @@ const resolveLocale = (value?: string): Locale => {
   return value && isLocale(value) ? value : DEFAULT_LANGUAGE;
 };
 
-/**
- * Manages the active i18n language in local React state and synchronizes it with the document language attribute.
- *
- * Use for:
- * - Changing the active locale from client components
- * - Keeping the document `lang` attribute aligned with the selected language
- *
- * @param none - This hook does not accept any arguments
- * @returns The current local language state and a function to change it
- */
+/** Keeps React state and the document language aligned with i18next events. */
 export function useLanguageState() {
   const { i18n } = useTranslation();
   const [language, setLanguage] = useState<Locale>(() =>
@@ -47,16 +38,6 @@ export function useLanguageState() {
     };
   }, [i18n]);
 
-  /**
-   * Changes the active language in i18n state and updates the document language attribute.
-   *
-   * Use for:
-   * - Applying a new locale selected by the user
-   * - Keeping UI translations and document metadata in sync
-   *
-   * @param language - The locale code to apply to i18n and the root document
-   * @returns Nothing; the function updates language-related client state in place
-   */
   const changeLanguage = useCallback(
     (nextLanguage: Locale) => {
       const currentLanguage = resolveLocale(

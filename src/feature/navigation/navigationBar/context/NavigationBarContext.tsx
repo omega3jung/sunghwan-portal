@@ -28,7 +28,6 @@ const NavigationBarContext = createContext<NavigationBarContextValue | null>(
   null,
 );
 
-/** Provides the client context that coordinates navigation bar state below this feature boundary. */
 export function NavigationBarProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<NavigationBarState>(initialState);
 
@@ -49,6 +48,7 @@ export function NavigationBarProvider({ children }: { children: ReactNode }) {
   );
 
   const resetCurrentLabel = useCallback((pathname: string) => {
+    // An unmounting page must not clear a label already registered by the next route.
     setState((current) =>
       current.pathname === pathname ? initialState : current,
     );
@@ -66,7 +66,6 @@ export function NavigationBarProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/** Reads navigation-bar state and rejects use outside its provider. */
 export function useNavigationBarContext() {
   const context = useContext(NavigationBarContext);
 

@@ -6,7 +6,6 @@ const ticketStatusFilterValueSchema = z.custom<TicketStatusFilterValue>(
   (value) => typeof value === "string",
 );
 
-/** Validates and normalizes ticket search criteria form values before they leave the client feature boundary. */
 export const ticketSearchCriteriaFormSchema = z.object({
   cat_scope: z.enum(["INTERNAL", "PORTAL"]).optional(),
   category: z.string().array(),

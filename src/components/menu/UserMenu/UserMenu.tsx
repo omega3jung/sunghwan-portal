@@ -48,6 +48,11 @@ const EMPTY_DEMO_CANDIDATES: UserMenuDemoCandidates = {
   profiles: { internal: [], client: [] },
 };
 
+/**
+ * Presents the effective identity and routes switching through either NextAuth
+ * demo login or impersonation APIs. The original identity remains visible while
+ * impersonating, and dialog opening waits for dropdown focus cleanup.
+ */
 export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
   const { current } = useCurrentSession();
   const {
@@ -131,7 +136,6 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
     password: string;
     mode?: "login" | "demo";
   }) => {
-    // loggin in.
     if (signingRef.current) return;
     signingRef.current = true;
 
@@ -143,7 +147,6 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
         redirect: false,
       });
 
-      // handle error.
       if (!result?.ok) {
         throw result?.error;
       }
@@ -188,12 +191,10 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
     return (
       <div className="relative w-14 h-10">
-        {/* original user */}
         <div className="absolute left-0 top-0">
           {renderUserAvatar(originalUser, { muted: true })}
         </div>
 
-        {/* impersonated user */}
         <div className="absolute left-4 top-0 z-10">
           {renderUserAvatar(impersonatedUser)}
         </div>
@@ -221,6 +222,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
           finalFocus={() => {
             if (!shouldOpenImpersonationDialogRef.current) return true;
 
+            // Base UI must finish closing before the dialog can safely take focus.
             window.setTimeout(() => {
               setOpenImpersonationDialog(true);
               shouldOpenImpersonationDialogRef.current = false;
@@ -295,7 +297,6 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
               <DropdownMenuSeparator />
 
-              {/* remote impersonation */}
               {canImpersonate && (
                 <DropdownMenuItem
                   onSelect={(event) => {
@@ -310,7 +311,6 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
                 </DropdownMenuItem>
               )}
 
-              {/* demo impersonation */}
               {canDemoImpersonate && (
                 <DemoImpersonation
                   clientCandidates={demoImpersonationCandidates.client}
@@ -341,7 +341,6 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
             </DropdownMenuGroup>
           )}
 
-          {/* demo impersonation */}
           {!hasImpersonatedUser && canDemoImpersonate && (
             <DemoImpersonation
               clientCandidates={demoImpersonationCandidates.client}

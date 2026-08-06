@@ -14,7 +14,6 @@ const ticketMetaBadgeClassMap = {
   merge: "bg-violet-50 text-violet-700",
 } as const;
 
-/** Documents the meta badge tone responsibility exposed by this client feature module. */
 export type MetaBadgeTone = keyof typeof ticketMetaBadgeClassMap;
 
 type MetaBadgeProps = {
@@ -23,7 +22,6 @@ type MetaBadgeProps = {
   children: ReactNode;
 };
 
-/** Documents the meta badge responsibility exposed by this client feature module. */
 export function MetaBadge({
   tone,
   className,
@@ -53,7 +51,6 @@ type PriorityBadgeProps = {
   priority: string;
 };
 
-/** Documents the priority badge responsibility exposed by this client feature module. */
 export function PriorityBadge({ priority }: PriorityBadgeProps) {
   return (
     <MetaBadge className="capitalize" tone={resolvePriorityTone(priority)}>
@@ -77,7 +74,6 @@ type RecipientGroupProps = {
   values: string[];
 };
 
-/** Documents the recipient group responsibility exposed by this client feature module. */
 export function RecipientGroup({ label, values }: RecipientGroupProps) {
   return (
     <div className="space-y-2">

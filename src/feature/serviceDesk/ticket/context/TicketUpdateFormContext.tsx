@@ -30,7 +30,6 @@ type TicketUpdateFormContextValue = {
 const TicketUpdateFormContext =
   createContext<TicketUpdateFormContextValue | null>(null);
 
-/** Reads the ticket update form context and rejects use outside its provider. */
 export const useTicketUpdateFormContext = () => {
   const contextValue = useContext(TicketUpdateFormContext);
 
@@ -43,5 +42,4 @@ export const useTicketUpdateFormContext = () => {
   return contextValue;
 };
 
-/** Provides the client context that coordinates ticket update form state below this feature boundary. */
 export const TicketUpdateFormProvider = TicketUpdateFormContext.Provider;

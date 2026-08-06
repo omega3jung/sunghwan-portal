@@ -26,6 +26,8 @@ function applyCurrentLabelOverride({
 > & {
   items: NavigationBreadcrumbItem[];
 }) {
+  // Route changes can render before the previous page unregisters its label.
+  // Apply an override only to the pathname that registered it.
   if (
     currentLabel == null ||
     currentLabelPathname !== pathname ||
@@ -39,7 +41,6 @@ function applyCurrentLabelOverride({
   );
 }
 
-/** Combines menu-aware breadcrumbs with the current page-label override. */
 export function useNavigationBreadcrumbs({
   currentLabel,
   currentLabelPathname,

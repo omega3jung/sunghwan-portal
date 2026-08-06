@@ -53,6 +53,8 @@ const normalizeNote = (note?: string) => {
 };
 
 const getDurationTimeRange = (durationMinutes: number) => {
+  // Duration entry has no user-owned timestamps, so anchor its range once at
+  // submission instead of letting render time change the persisted interval.
   const endAt = new Date();
   const startAt = new Date(endAt.getTime() - durationMinutes * MS_PER_MINUTE);
 
@@ -62,11 +64,11 @@ const getDurationTimeRange = (durationMinutes: number) => {
   };
 };
 
-/** Calculates whole tracked minutes from a valid start/end range. */
 export function getTrackedMinutesFromRange(values?: WorkSessionRangeLike) {
   const start = parseTime(values?.startAt);
   const end = parseTime(values?.endAt);
 
+  // Incomplete and reversed ranges represent no trackable time to callers.
   if (Number.isNaN(start) || Number.isNaN(end) || end <= start) {
     return 0;
   }
@@ -74,7 +76,6 @@ export function getTrackedMinutesFromRange(values?: WorkSessionRangeLike) {
   return Math.floor((end - start) / MS_PER_MINUTE);
 }
 
-/** Resolves tracked minutes from either the range or duration entry mode. */
 export function getCurrentTrackedMinutes({
   inputMode,
   durationValues,
@@ -85,7 +86,6 @@ export function getCurrentTrackedMinutes({
     : getTrackedMinutesFromRange(rangeValues);
 }
 
-/** Checks whether a requested ticket status differs from the current status. */
 export function canChangeStatus({
   previousTrackedMinutes,
   currentTrackedMinutes,
@@ -97,7 +97,6 @@ export function canChangeStatus({
   );
 }
 
-/** Defines the get work session submit payload accepted at this feature boundary. */
 export function getWorkSessionSubmitPayload({
   ticketId,
   inputMode,

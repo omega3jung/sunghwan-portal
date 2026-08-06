@@ -4,23 +4,23 @@ import { AppUser } from "../user/model";
 import { AccessLevel, Role } from "./constants";
 import { DataScope, UserScope } from "./types";
 
-// user type for authorization.
-// properties are required info only.
+/** Minimal authenticated identity shared by authorization and session boundaries. */
 export interface AuthUser {
-  id: string; // uuid
-  username: string; // user account
-  displayName: LocalizedText; // user name
+  id: string; // UUID
+  username: string;
+  displayName: LocalizedText;
   email: string;
   accessToken: string;
 
-  dataScope: DataScope; // 🔐 server-trusted
-  userScope: UserScope; // 🔐 server-trusted
-  companyId: number; // 🔐 server-trusted
-  permission: AccessLevel; // permission represents user's access level (not feature permissions)
-  role: Role; // 🔐 server-trusted
+  /** Authentication claims supplied by the server, not client preference state. */
+  dataScope: DataScope;
+  userScope: UserScope;
+  companyId: number;
+  permission: AccessLevel; // Global access level, not feature-specific permissions.
+  role: Role;
 }
 
-// UI-facing impersonation identities.
+/** Original, impersonated, and effective identities exposed to the client UI. */
 export type ImpersonationUsers = {
   originalUser: AppUser;
   impersonatedUser: AppUser | null;

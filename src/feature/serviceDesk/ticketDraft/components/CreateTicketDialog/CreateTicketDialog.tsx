@@ -29,7 +29,6 @@ type CreateTicketDialogProps = {
   trigger?: ReactElement;
 };
 
-/** Documents the create ticket dialog responsibility exposed by this client feature module. */
 export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
   const { categories, users, language } = props;
   const { t } = useTranslation(NS.serviceDesk);
@@ -85,21 +84,11 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
             />
 
             <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
-              {
-                /* select department and cateogry */
-                currentStep === ticketStep.info && <InfoStep />
-              }
+              {currentStep === ticketStep.info && <InfoStep />}
 
-              {
-                /* Additional */
-                currentStep === ticketStep.attachment && <AttachmentStep />
-              }
+              {currentStep === ticketStep.attachment && <AttachmentStep />}
 
-              {
-                /* preview issue */ currentStep === ticketStep.review && (
-                  <ReviewStep />
-                )
-              }
+              {currentStep === ticketStep.review && (<ReviewStep />)}
             </ScrollArea>
           </TicketCreateFormProvider>
         </form>

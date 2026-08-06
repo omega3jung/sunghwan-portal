@@ -6,7 +6,6 @@ export type AssignmentCompanyPolicy =
   | "OWNER_ONLY"
   | "OWNER_AND_TENANT";
 
-/** Resolves eligible company scope from category scope and tenant inclusion policy. */
 export function resolveAssignmentCompanyPolicy({
   scope,
   includeTenantCompany,

@@ -8,14 +8,11 @@ import type {
 
 import type { TicketDraftResource } from "./types";
 
-/** Defines the ticket draft form payload accepted at this feature boundary. */
 export type TicketDraftFormPayload = TicketDraftFormValues;
-/** Defines the ticket draft write form payload accepted at this feature boundary. */
 export type TicketDraftWriteFormPayload =
   | TicketDraftFormValues
   | TicketFormValues;
 
-/** Maps ticket draft payload at the feature's API or form boundary. */
 export function mapTicketDraftPayload(
   draft: TicketDraftResource | null,
 ): TicketDraftFormPayload | null {
@@ -37,6 +34,7 @@ export function mapTicketDraftPayload(
       email: draft.requester.email ?? "",
       name: formatRequesterName(draft.requester.name),
     },
+    // Persisted metadata cannot reconstruct browser File objects.
     attachment: [],
   };
 }
@@ -59,7 +57,6 @@ function formatRequesterName(
     .join(" ");
 }
 
-/** Maps ticket draft write payload from form values at the feature's API or form boundary. */
 export function toTicketDraftWritePayloadFromFormValues(
   form: TicketDraftWriteFormPayload,
 ): TicketDraftWriteInput {
@@ -114,6 +111,7 @@ function normalizeRiskLevel(value: string | null): RiskLevel | null {
   return null;
 }
 
+/** Reduces browser-only File objects to the metadata safe to persist in a draft. */
 function mapAttachments(files: File[]): TicketDraftAttachmentInput[] {
   return files.map((file) => ({
     name: file.name,

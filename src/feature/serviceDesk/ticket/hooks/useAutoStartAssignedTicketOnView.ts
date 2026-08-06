@@ -10,7 +10,6 @@ type UseAutoStartAssignedTicketOnViewParams = {
   ticket: TicketDetail | null | undefined;
 };
 
-/** Starts an assigned ticket once when its current assignee opens the detail view. */
 export function useAutoStartAssignedTicketOnView({
   ticket,
 }: UseAutoStartAssignedTicketOnViewParams) {

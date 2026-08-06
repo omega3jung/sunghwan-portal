@@ -7,7 +7,6 @@ import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketApi } from "./api";
 import { ticketQueryKeys } from "./queryKeys";
 
-/** Provides the client mutation hook for create service desk ticket and invalidates affected cached data. */
 export const useCreateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
 
@@ -20,7 +19,6 @@ export const useCreateServiceDeskTicket = () => {
   });
 };
 
-/** Provides the client mutation hook for update service desk ticket and invalidates affected cached data. */
 export const useUpdateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
 
@@ -32,7 +30,6 @@ export const useUpdateServiceDeskTicket = () => {
   });
 };
 
-/** Provides the client mutation hook for requester update service desk ticket and invalidates affected cached data. */
 export const useRequesterUpdateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
 
@@ -50,7 +47,6 @@ export const useRequesterUpdateServiceDeskTicket = () => {
   });
 };
 
-/** Provides the client mutation hook for delete service desk ticket and invalidates affected cached data. */
 export const useDeleteServiceDeskTicket = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -61,7 +57,6 @@ export const useDeleteServiceDeskTicket = () => {
   });
 };
 
-/** Provides the client mutation hook for start ticket work mutation and invalidates affected cached data. */
 export const useStartTicketWorkMutation = () => {
   const queryClient = useQueryClient();
 
@@ -81,7 +76,6 @@ export const useStartTicketWorkMutation = () => {
   });
 };
 
-/** Provides the client mutation hook for prepare ticket attachments mutation and invalidates affected cached data. */
 export const usePrepareTicketAttachmentsMutation = () => {
   return useMutation({
     mutationFn: serviceDeskTicketApi.prepareAttachments,

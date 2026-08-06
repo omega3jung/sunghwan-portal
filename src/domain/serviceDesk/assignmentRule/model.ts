@@ -1,4 +1,3 @@
-/** Represents assignee group within the Service Desk domain. */
 export interface AssigneeGroup {
   jobFieldIds: string[];
   assigneeUsernames: string[];
@@ -6,7 +5,6 @@ export interface AssigneeGroup {
   includeTenantCompany?: boolean;
 }
 
-/** Represents assignment rule within the Service Desk domain. */
 export interface AssignmentRule {
   categoryId: string; // string number. can use parseInt.
   assignee: AssigneeGroup;

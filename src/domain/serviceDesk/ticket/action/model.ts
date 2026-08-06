@@ -5,10 +5,8 @@ import { Attach } from "../../types";
 import { TicketActionType } from "./types";
 
 /**
- * Ticket action domain model.
- *
- * actionNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, actionNo)
+ * `actionNo` is ticket-scoped, so actions are identified by ticket and action
+ * number together.
  */
 export interface TicketAction {
   ticketId: string;

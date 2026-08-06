@@ -7,7 +7,6 @@ type TicketActionEmptyProps = {
   type: "loading" | "no-data" | "no-result";
 };
 
-/** Documents the ticket action empty responsibility exposed by this client feature module. */
 export function TicketActionEmpty({ type }: TicketActionEmptyProps) {
   const { t } = useTranslation(NS.serviceDesk);
   const messageMap: Record<

@@ -9,7 +9,6 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type AssignmentRuleResponse = OResponse<AssignmentRule>;
 
-// feature-scoped API.
 export const serviceDeskAssignmentRuleApi = {
   list: async (
     params?: ServiceDeskAssignmentRuleListParams,

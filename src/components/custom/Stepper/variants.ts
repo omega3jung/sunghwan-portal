@@ -42,7 +42,6 @@ export const stepperContainer = cva("w-full", {
       label: "right",
       className: "pr-36",
     },
-    // 🔥 vertical - text (circle)
     {
       orientation: "vertical",
       variant: "circle",
@@ -89,7 +88,6 @@ export const triggerVariant = cva(
       },
     },
     compoundVariants: [
-      // 🔥 ACTIVE
       {
         state: "active",
         color: "primary",
@@ -101,7 +99,6 @@ export const triggerVariant = cva(
         className: "border-secondary text-foreground",
       },
 
-      // 🔥 COMPLETED - background
       {
         state: "completed",
         color: "primary",
@@ -113,7 +110,6 @@ export const triggerVariant = cva(
         className: "bg-secondary",
       },
 
-      // 🔥 COMPLETED - text (circle)
       {
         variant: "circle",
         state: "completed",
@@ -127,7 +123,6 @@ export const triggerVariant = cva(
         className: "text-foreground",
       },
 
-      // 🔥 COMPLETED - text (square)
       {
         variant: "square",
         state: "completed",
@@ -161,7 +156,6 @@ export const triggerIndexVariant = cva("group-hover:text-white", {
     },
   },
   compoundVariants: [
-    // 🔥 COMPLETED - text (circle)
     {
       variant: "circle",
       state: "completed",

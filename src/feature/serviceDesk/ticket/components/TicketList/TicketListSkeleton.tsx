@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** Documents the ticket list skeleton responsibility exposed by this client feature module. */
 export const TicketListSkeleton = () => {
   return (
     <div className="flex flex-col gap-3 border-b p-4">

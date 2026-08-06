@@ -1,4 +1,3 @@
-/** Presentational shell for a sortable tree item and its drag overlay. */
 import {
   type ComponentPropsWithoutRef,
   type CSSProperties,

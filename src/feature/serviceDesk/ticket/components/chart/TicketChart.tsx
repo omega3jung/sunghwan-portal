@@ -5,7 +5,6 @@ type TicketChartProps = Omit<SummaryChartProps, "title"> & {
   title?: string;
 };
 
-/** Documents the ticket chart responsibility exposed by this client feature module. */
 export function TicketChart({
   title = "Tickets by Status",
   ...props

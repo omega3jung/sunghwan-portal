@@ -8,7 +8,6 @@ import { createLeftMenuFromDbMenuItem } from "../utils/mapper";
 import { leftMenuApi } from "./api";
 import { leftMenuQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for left menu query and its cache policy. */
 export const useLeftMenuQuery = () => {
   return useQuery({
     queryKey: leftMenuQueryKeys.detail(),

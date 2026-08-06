@@ -36,7 +36,6 @@ import { bytesToKB, bytesToMB } from "@/shared/utils/browser";
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
 import { RoutingRecalculationNotice } from "./RemoteNotices";
 
-/** Documents the review step responsibility exposed by this client feature module. */
 export function ReviewStep() {
   const { form, ticket, categories, language, existingFiles, existingImages } =
     useTicketUpdateFormContext();

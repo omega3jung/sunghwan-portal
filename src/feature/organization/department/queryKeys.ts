@@ -2,7 +2,6 @@ import { DbParams } from "@/shared/types/api";
 
 import { ORGANIZATION_DEPARTMENT_KEY, ORGANIZATION_KEY } from "../keys";
 
-/** Builds stable TanStack Query keys for department cache entries. */
 export const departmentQueryKeys = {
   all: [ORGANIZATION_KEY, ORGANIZATION_DEPARTMENT_KEY] as const,
 

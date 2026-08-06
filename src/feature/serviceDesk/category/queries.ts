@@ -8,7 +8,6 @@ import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryO
 import { serviceDeskCategoryApi } from "./api";
 import { categoryQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for service desk category list query and its cache policy. */
 export const useServiceDeskCategoryListQuery = (
   params?: ServiceDeskCategoryListParams,
 ) => {
@@ -22,7 +21,6 @@ export const useServiceDeskCategoryListQuery = (
   });
 };
 
-/** Provides the client query hook for service desk category context query and its cache policy. */
 export const useServiceDeskCategoryContextQuery = (
   categoryId?: string | number | null,
 ) => {

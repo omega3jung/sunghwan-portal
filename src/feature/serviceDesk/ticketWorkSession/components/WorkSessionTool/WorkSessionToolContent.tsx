@@ -68,7 +68,6 @@ function isWorkSessionStatus(
   );
 }
 
-/** Documents the work session tool content responsibility exposed by this client feature module. */
 export function WorkSessionToolContent({
   onClose,
   ticket,
@@ -252,7 +251,6 @@ export function WorkSessionToolContent({
       await mutationToast(promise, "update", t("field.workSession"));
       onClose();
     } catch {
-      // Toast is handled by useMutationToast.
     }
   };
 

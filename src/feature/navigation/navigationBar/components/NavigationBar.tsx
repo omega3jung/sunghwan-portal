@@ -22,7 +22,6 @@ import { buildBreadcrumbItems } from "../utils/buildBreadcrumbItems";
 import { AppBreadcrumb } from "./AppBreadcrumb";
 import { LinksBar } from "./LinksBar";
 
-/** Documents the navigation bar responsibility exposed by this client feature module. */
 export function NavigationBar(props: NavigationBarProps) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar();
   const { data: currentSession } = useCurrentSession();

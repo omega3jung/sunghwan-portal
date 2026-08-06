@@ -8,7 +8,6 @@ import { DbParams } from "@/shared/types/api";
 
 import { departmentQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for department list query and its cache policy. */
 export const useDepartmentListQuery = (params?: DbParams) => {
   return useQuery({
     queryKey: departmentQueryKeys.list(params ?? {}),
@@ -18,7 +17,6 @@ export const useDepartmentListQuery = (params?: DbParams) => {
   });
 };
 
-/** Provides the client query hook for department query and its cache policy. */
 export const useDepartmentQuery = (id: string | number) => {
   return useQuery({
     queryKey: departmentQueryKeys.detail(id),

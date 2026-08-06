@@ -28,7 +28,6 @@ type CollapsibleMenuProps = {
   items: MenuItem[];
 };
 
-/** Documents the collapsible menu responsibility exposed by this client feature module. */
 export function CollapsibleMenu({ items }: CollapsibleMenuProps) {
   const pathname = usePathname();
   const tLocal = useLocalizedText();

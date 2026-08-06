@@ -15,7 +15,6 @@ type TicketActionToolHeaderProps = {
   mode: TicketActionMode;
 };
 
-/** Documents the ticket action tool header responsibility exposed by this client feature module. */
 export function TicketActionToolHeader({
   currentUserEmail,
   currentUserImage,

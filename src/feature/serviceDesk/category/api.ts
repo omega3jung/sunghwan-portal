@@ -10,7 +10,6 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type CategoryResponse = OResponse<TenantCategoryTree>;
 
-// feature-scoped API.
 export const serviceDeskCategoryApi = {
   list: async (
     params?: ServiceDeskCategoryListParams,

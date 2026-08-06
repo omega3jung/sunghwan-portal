@@ -1,11 +1,6 @@
-/* TicketHistory is defined by changed target, source, and event.
- *
- * ex) ticket submitted = type "TICKET", source "USER_ACTION", event "TICKET_SUBMITTED"
- * ex) comment created = type "COMMENT", source "USER_ACTION", event "COMMENT_CREATED"
- * ex) approval requested = type "APPROVAL", source "APPROVAL_RULE", event "APPROVAL_REQUESTED"
- * ex) approval declined = type "APPROVAL", source "USER_ACTION", event "APPROVAL_DECLINED"
- * ex) ticket resolved = type "STATUS", source "USER_ACTION", event "STATUS_UPDATED"
- * ex) system close = type "STATUS", source "SYSTEM_AUTO", event "RESOLUTION_CLOSE"
+/**
+ * A history record is classified by the changed target, the producer, and the
+ * immutable event. No single dimension fully describes the recorded change.
  */
 export type HistoryType =
   | "TICKET"
@@ -55,7 +50,6 @@ export type TicketHistoryEvent =
   | "ROUTING_RESET"
   | "ROUTING_PRESERVED";
 
-/** Represents ticket close reason within the Service Desk domain. */
 export type TicketCloseReason =
   | "Completed"
   | "Rejected"

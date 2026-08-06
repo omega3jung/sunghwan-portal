@@ -1,4 +1,3 @@
-/** Builds stable TanStack Query keys for ticket action cache entries. */
 export const ticketActionQueryKeys = {
   all: ["serviceDesk", "ticket", "action"] as const,
   lists: () => [...ticketActionQueryKeys.all, "list"] as const,

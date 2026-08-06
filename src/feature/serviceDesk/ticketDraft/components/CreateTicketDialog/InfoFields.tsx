@@ -39,7 +39,6 @@ type TicketInfoFieldsProps = {
   mode?: "edit" | "view";
 };
 
-/** Documents the ticket info fields responsibility exposed by this client feature module. */
 export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
   const { form, categories, users } = useTicketCreateFormContext();
 

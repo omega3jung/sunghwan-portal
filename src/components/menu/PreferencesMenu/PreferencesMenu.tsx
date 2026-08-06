@@ -65,9 +65,14 @@ const themeButtons = [
 }[];
 
 type PreferencesMenuProps = {
-  trigger?: (props: { label: string }) => React.ReactElement; // Popover trigger.
+  trigger?: (props: { label: string }) => React.ReactElement;
 };
 
+/**
+ * Applies preference changes to client state before persisting the complete
+ * preference payload through the active local or remote repository. Responsive
+ * layout changes close the popover because they may replace its trigger.
+ */
 export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
   const { data: currentSession } = useCurrentSession();
@@ -88,6 +93,7 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   const { t: tComponent } = useTranslation(NS.component);
 
   useEffect(() => {
+    // An anchored popover cannot retain focus reliably when its trigger is replaced.
     setOpen(false);
   }, [width]);
 

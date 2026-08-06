@@ -8,7 +8,6 @@ import { DbParams } from "@/shared/types/api";
 
 import { companyQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for company list query and its cache policy. */
 export const useCompanyListQuery = (params: DbParams) => {
   return useQuery({
     queryKey: companyQueryKeys.list(params),
@@ -18,7 +17,6 @@ export const useCompanyListQuery = (params: DbParams) => {
   });
 };
 
-/** Provides the client query hook for company query and its cache policy. */
 export const useCompanyQuery = (id: string | number) => {
   return useQuery({
     queryKey: companyQueryKeys.detail(id),

@@ -5,13 +5,11 @@ import { NS } from "@/lib/application/i18n";
 import type { TicketActionDraftFormValues } from "../../forms";
 import type { TicketActionMode } from "../../types";
 
-/** Documents the translate responsibility exposed by this client feature module. */
 export type Translate = (
   key: string,
   options?: Record<string, unknown>,
 ) => string;
 
-/** Defines the stable cache or persistence key for editor placeholder data. */
 export const EDITOR_PLACEHOLDER_KEY: Record<TicketActionMode, string> = {
   approve: "actionTool.form.editorPlaceholder.approve",
   decline: "actionTool.form.editorPlaceholder.decline",
@@ -27,7 +25,6 @@ export const EDITOR_PLACEHOLDER_KEY: Record<TicketActionMode, string> = {
   cancel: "actionTool.form.editorPlaceholder.cancel",
 };
 
-/** Documents the get field group class name responsibility exposed by this client feature module. */
 export function getFieldGroupClassName(mode: TicketActionMode) {
   switch (mode) {
     case "assign":
@@ -39,7 +36,6 @@ export function getFieldGroupClassName(mode: TicketActionMode) {
   }
 }
 
-/** Documents the get field class name responsibility exposed by this client feature module. */
 export function getFieldClassName(mode: TicketActionMode) {
   switch (mode) {
     case "assign":
@@ -51,7 +47,6 @@ export function getFieldClassName(mode: TicketActionMode) {
   }
 }
 
-/** Documents the get field label responsibility exposed by this client feature module. */
 export function getFieldLabel(mode: TicketActionMode, t: Translate) {
   switch (mode) {
     case "approve":
@@ -67,7 +62,6 @@ export function getFieldLabel(mode: TicketActionMode, t: Translate) {
   }
 }
 
-/** Reports whether controlled editor mode satisfies the feature policy. */
 export function isControlledEditorMode(mode: TicketActionMode) {
   return (
     mode === "assign" ||
@@ -79,7 +73,6 @@ export function isControlledEditorMode(mode: TicketActionMode) {
   );
 }
 
-/** Documents the set action field value responsibility exposed by this client feature module. */
 export const setActionFieldValue = <
   TFieldName extends FieldPath<TicketActionDraftFormValues>,
 >(
@@ -95,7 +88,6 @@ export const setActionFieldValue = <
   });
 };
 
-/** Resolves action error message from feature data using the current client policy. */
 export function resolveActionErrorMessage(
   message: string | undefined,
   t: Translate,

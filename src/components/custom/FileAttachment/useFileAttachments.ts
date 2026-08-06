@@ -33,6 +33,11 @@ type UseFileAttachmentsOptions<
   onError?: (type: FileAttachmentErrorType) => void;
 };
 
+/**
+ * Writes a de-duplicated `File[]` directly to React Hook Form. Type failures
+ * reject the incoming batch. For count and size limits, `reject-all` is atomic
+ * while `accept-available` keeps files that still fit.
+ */
 export const useFileAttachments = <
   TForm extends FieldValues,
   TFieldName extends FileAttachmentFieldPath<TForm>,
@@ -190,6 +195,7 @@ export const useFileAttachments = <
   };
 };
 
+// Duplicate identity intentionally follows the user-visible name and size.
 const createFileKey = (file: File) => `${file.name}:${file.size}`;
 
 const mergeUniqueFiles = (currentFiles: FileValue, incomingFiles: FileValue) => {

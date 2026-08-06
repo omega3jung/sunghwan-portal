@@ -1,5 +1,3 @@
-﻿// TicketListItem.tsx
-
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
@@ -34,7 +32,6 @@ interface TicketListItemProps {
   onClick: () => void;
 }
 
-/** Documents the ticket list item responsibility exposed by this client feature module. */
 export const TicketListItem = ({
   ticket,
   language,

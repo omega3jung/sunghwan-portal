@@ -13,6 +13,11 @@ import type { HierarchicalSelectProps } from "./types";
 import { useHierarchicalSelectNavigation } from "./useHierarchicalSelectNavigation";
 import { findItemPath } from "./utils";
 
+/**
+ * Controlled single-value selector that navigates one tree level at a time.
+ * `selectableStrategy` decides whether a node selects immediately or only
+ * drills into its children.
+ */
 export const HierarchicalSelect = ({
   id,
   value,

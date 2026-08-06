@@ -8,7 +8,6 @@ import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryO
 import { serviceDeskTenantApi } from "./api";
 import { tenantQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for service desk tenant list query and its cache policy. */
 export const useServiceDeskTenantListQuery = (
   params: ServiceDeskTenantListParams,
 ) => {

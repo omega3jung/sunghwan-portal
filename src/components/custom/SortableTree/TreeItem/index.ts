@@ -1,4 +1,5 @@
-/** Internal tree-item building blocks used by SortableTree. */
+// src\components\custom\SortableTree\TreeItem\index.ts
+
 export {
   SortableTreeItem,
   type SortableTreeItemProps,

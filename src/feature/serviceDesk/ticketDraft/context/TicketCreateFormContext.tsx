@@ -19,7 +19,6 @@ type TicketCreateFormContextValue = {
 const TicketCreateFormContext =
   createContext<TicketCreateFormContextValue | null>(null);
 
-/** Reads the ticket creation form context and rejects use outside its provider. */
 export const useTicketCreateFormContext = () => {
   const contextValue = useContext(TicketCreateFormContext);
 
@@ -32,5 +31,4 @@ export const useTicketCreateFormContext = () => {
   return contextValue;
 };
 
-/** Provides the client context that coordinates ticket create form state below this feature boundary. */
 export const TicketCreateFormProvider = TicketCreateFormContext.Provider;

@@ -55,6 +55,11 @@ type RichEditorToolbarProps = {
   className?: string;
 };
 
+/**
+ * Renders only the commands enabled by the resolved editor preset. Caller
+ * handlers override built-in link, image, and table flows without changing
+ * command availability or disabled-state checks.
+ */
 export function RichEditorToolbar({
   className,
   disabled = false,

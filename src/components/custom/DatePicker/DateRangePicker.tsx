@@ -37,8 +37,7 @@ import {
   resolvePresetRange,
 } from "./utils";
 
-// A range is treated as "present" as soon as either boundary exists.
-// The component uses this same rule for uncontrolled initialization and later sync.
+// A partial range is already user state and must not be replaced by a preset.
 function hasRangeValue(range?: DateRange) {
   return Boolean(range?.from || range?.to);
 }
@@ -54,15 +53,15 @@ function normalizeDayBoundaries(range?: DateRange): DateRange | undefined {
   };
 }
 
-// DateRangePicker supports:
-// 1. controlled period mode via period/onPeriodChange
-// 2. uncontrolled period mode via defaultPeriod/internalPeriod
-// In both cases, the parent still owns the actual date range value.
+/**
+ * Supports controlled or uncontrolled preset selection without mixing modes.
+ * The concrete range always remains parent-owned, including custom calendar
+ * selection and ranges derived from relative presets.
+ */
 const Component = (
   props: DateRangePickerProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  // Pull out the public API first so the rest of the component can focus on behavior.
   const {
     className,
     variant,
@@ -79,36 +78,29 @@ const Component = (
     keyPrefix: "datePicker",
   });
 
-  // Popover open state for the calendar layer.
   const [open, setOpen] = useState(false);
 
-  // Uncontrolled period state.
-  // If a caller passes only range in uncontrolled mode, treat it as a custom range.
   const [internalPeriod, setInternalPeriod] = useState<
     DateRangePreset | undefined
   >(() => defaultPeriod ?? (hasRangeValue(range) ? "range" : undefined));
 
-  // Prevent Select from restoring focus when we intentionally reopen the calendar.
   const preventSelectFocusRestoreRef = useRef(false);
   const selectTriggerRef = useRef<HTMLButtonElement>(null);
 
-  // Relative presets such as "last_month" must be resolved from a stable anchor time.
+  // Relative presets use one anchor so rerenders cannot move the effective range.
   const presetSyncAnchorRef = useRef<Date | null>(null);
 
-  // Tracks which preset has already been synced into the parent range.
+  // Tracks the preset already published to the parent to avoid redundant synchronization.
   const lastSyncedPresetRef = useRef<DateRangePreset | undefined>(undefined);
 
-  // Period is controlled only when both controlled props are present.
   const isControlledPeriod =
     controlledPeriod !== undefined && onPeriodChange !== undefined;
 
-  // Normalize period access so the rest of the component does not care about mode.
   const period = isControlledPeriod ? controlledPeriod : internalPeriod;
 
-  // Select expects a value, so fall back to a harmless preset for the uncontrolled empty state.
+  // Base UI Select requires a concrete value even before a preset is chosen.
   const safePeriod = period ?? "today";
 
-  // Update period in the correct ownership mode.
   const updatePeriod = useCallback(
     (nextPeriod?: DateRangePreset) => {
       if (onPeriodChange) {
@@ -129,7 +121,7 @@ const Component = (
     }
   }, [internalPeriod, isControlledPeriod, range]);
 
-  // Open the calendar after Select finishes closing to avoid focus flicker.
+  // Wait for Select cleanup before opening the calendar, or focus restoration closes it again.
   const openCalendar = useCallback(() => {
     requestAnimationFrame(() => {
       setOpen(true);
@@ -140,7 +132,6 @@ const Component = (
     });
   }, []);
 
-  // Translate preset keys once for rendering the select options and trigger label.
   const optionData = useMemo(
     () =>
       options.map((value) => ({
@@ -150,20 +141,16 @@ const Component = (
     [options, t],
   );
 
-  // Resolve the currently selected preset metadata for trigger rendering.
   const selectedOption = useMemo(
     () => optionData.find((item) => item.value === period),
     [optionData, period],
   );
 
-  // Human-readable label part of the trigger text.
   const labelText = useMemo(() => {
     return selectedOption?.label ?? t("rangePlaceholder");
   }, [selectedOption?.label, t]);
 
-  // Trigger text should prefer the concrete parent range when available.
-  // If the parent range is temporarily empty while a preset is selected,
-  // derive a display-only fallback from the same preset logic.
+  // A derived fallback keeps the trigger stable while the parent range is being synchronized.
   const rangeForTrigger = useMemo(() => {
     if (hasRangeValue(range)) {
       return range;
@@ -179,8 +166,7 @@ const Component = (
     );
   }, [period, range]);
 
-  // Build the range portion of the trigger.
-  // "today" is displayed as a single date, while other presets/custom ranges use a full range format.
+  // "today" is a presentation exception; the stored value remains a range.
   const rangeText = useMemo(() => {
     if (!rangeForTrigger?.from) {
       return "";
@@ -193,10 +179,6 @@ const Component = (
     return formatRangeText(rangeForTrigger);
   }, [period, rangeForTrigger]);
 
-  // Final trigger text policy:
-  // text  -> label only
-  // range -> range only
-  // all   -> label + range
   const triggerText = useMemo(() => {
     switch (showTextType) {
       case "range":
@@ -209,8 +191,7 @@ const Component = (
     }
   }, [labelText, rangeText, showTextType]);
 
-  // Handle preset changes from the Select.
-  // Preset selection updates the parent range immediately so the parent remains the source of truth.
+  // Presets publish their concrete range immediately; the parent remains the source of truth.
   const applyPreset = useCallback(
     (nextPeriod: DateRangePreset) => {
       updatePeriod(nextPeriod);
@@ -225,7 +206,6 @@ const Component = (
         return;
       }
 
-      // Resolve relative presets from a stable "selection time" anchor.
       preventSelectFocusRestoreRef.current = false;
       const anchorDate = new Date();
       presetSyncAnchorRef.current = anchorDate;
@@ -238,8 +218,7 @@ const Component = (
     [onRangeChange, openCalendar, period, updatePeriod],
   );
 
-  // Handle user selection inside the calendar.
-  // Once the user interacts with free-form dates, the active period becomes "range".
+  // Free-form interaction switches the semantic preset before publishing its range.
   const handleDateSelect: OnSelectHandler<DateRange | undefined> = useCallback(
     (selectedRange) => {
       if (period !== "range") {
@@ -256,7 +235,7 @@ const Component = (
     [onRangeChange, period, updatePeriod],
   );
 
-  // Selecting the already-active "range" option should reopen the calendar.
+  // Select emits no change for the active value, so reselecting "range" is bridged explicitly.
   const handleRangeReselect = useCallback(() => {
     if (period === "range") {
       preventSelectFocusRestoreRef.current = true;
@@ -264,8 +243,7 @@ const Component = (
     }
   }, [openCalendar, period]);
 
-  // Keep parent range and selected preset aligned outside of direct user clicks.
-  // This covers initial mount and cases where external state clears or replaces the range.
+  // Repair restored or externally cleared parent state without continuously recomputing relative presets.
   const syncRangeFromPreset = useCallback(() => {
     if (!period || period === "range") {
       lastSyncedPresetRef.current = period;
@@ -274,12 +252,10 @@ const Component = (
 
     const presetChanged = lastSyncedPresetRef.current !== period;
 
-    // A newly selected preset gets a fresh anchor.
     if (presetChanged || !presetSyncAnchorRef.current) {
       presetSyncAnchorRef.current = new Date();
     }
 
-    // Sync when the preset changed or when the parent range is missing.
     const shouldSyncRange = presetChanged || !hasRangeValue(range);
 
     if (!shouldSyncRange) {
@@ -291,7 +267,6 @@ const Component = (
       resolvePresetRange(period, presetSyncAnchorRef.current),
     );
 
-    // Avoid redundant parent updates when the effective range is already correct.
     if (!isSameDateRange(range, nextRange)) {
       onRangeChange(nextRange);
     }
@@ -299,11 +274,6 @@ const Component = (
     lastSyncedPresetRef.current = period;
   }, [onRangeChange, period, range]);
 
-  /**
-   * Parent always owns the concrete date range.
-   * This effect only backfills or repairs that range when a preset is already selected,
-   * such as on initial mount or when external state becomes incomplete.
-   */
   useEffect(() => {
     syncRangeFromPreset();
   }, [syncRangeFromPreset]);
@@ -311,7 +281,6 @@ const Component = (
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <div ref={ref} className="relative">
-        {/* The Select controls only the preset choice, not the concrete range itself. */}
         <Select
           value={safePeriod}
           onValueChange={(value) => {
@@ -320,7 +289,6 @@ const Component = (
             }
           }}
         >
-          {/* Trigger text is fully controlled by showTextType policy. */}
           <SelectTrigger
             ref={selectTriggerRef}
             variant={variant}
@@ -331,15 +299,13 @@ const Component = (
           </SelectTrigger>
 
           <SelectContent
-            // Keep focus on the calendar when "range" selection intentionally chains into popover open.
+            // Suppress Select focus restoration while focus is handed to the calendar.
             finalFocus={() => !preventSelectFocusRestoreRef.current}
           >
             {optionData.map((item) => (
               <SelectItem
                 key={item.value}
                 value={item.value}
-                // Re-open the calendar when the already-selected "range" item is selected again.
-                // Select does not fire onValueChange when the value does not change.
                 onPointerUp={() => {
                   if (item.value === "range") {
                     handleRangeReselect();
@@ -361,7 +327,6 @@ const Component = (
         </Select>
       </div>
 
-      {/* The calendar is responsible for picking actual dates, while the parent stores the result. */}
       <PopoverContent
         anchor={selectTriggerRef}
         className="z-51 w-auto p-0"
@@ -379,7 +344,6 @@ const Component = (
   );
 };
 
-// Forward the outer ref to the trigger wrapper so parent components can position or focus around it.
 export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   Component,
 );

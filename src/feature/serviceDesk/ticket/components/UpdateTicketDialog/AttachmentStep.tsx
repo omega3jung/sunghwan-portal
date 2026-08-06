@@ -28,7 +28,6 @@ import { bytesToKB } from "@/shared/utils/browser";
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
 import { RemoteAttachmentNotice } from "./RemoteNotices";
 
-/** Documents the attachment step responsibility exposed by this client feature module. */
 export function AttachmentStep() {
   const {
     form,

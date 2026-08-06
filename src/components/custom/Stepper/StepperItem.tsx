@@ -16,7 +16,6 @@ export const StepperItem = ({ index, total, children }: Props) => {
 
   const shouldRenderLeadingConnector = leadingConnector && index === 0;
 
-  // vertical.
   if (orientation === "vertical") {
     return (
       <div className="flex flex-col items-center">
@@ -30,7 +29,6 @@ export const StepperItem = ({ index, total, children }: Props) => {
     );
   }
 
-  // horizontal.
   return (
     <>
       {shouldRenderLeadingConnector && (

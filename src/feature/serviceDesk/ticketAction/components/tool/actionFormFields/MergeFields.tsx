@@ -33,7 +33,6 @@ type MergeFieldsProps = {
   t: Translate;
 };
 
-/** Documents the merge fields responsibility exposed by this client feature module. */
 export function MergeFields({
   ticketId,
   ticketTenantId,

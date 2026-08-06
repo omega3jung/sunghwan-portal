@@ -1,28 +1,17 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
 
-/** Public data contracts consumed by SortableTree and its owners. */
-
-/**
- * Minimal tree item interface.
- * - Domain-agnostic
- */
 export interface TreeNode<T = unknown> {
   id: UniqueIdentifier;
   children: TreeNode<T>[];
   collapsed?: boolean;
+  /** Maximum number of direct children accepted during a drop. */
   maximum?: number;
   data: T;
 }
 
-/**
- * Full tree structure.
- */
 export type TreeNodes<T = unknown> = TreeNode<T>[];
 
-/**
- * Flattened item for DnD and table rendering.
- * - parentId / depth / index are UI and DnD-only fields
- */
+/** `parentId`, `depth`, and `index` exist only in the drag projection. */
 export interface FlattenedNode<T = unknown> extends TreeNode<T> {
   parentId: UniqueIdentifier | null;
   depth: number;

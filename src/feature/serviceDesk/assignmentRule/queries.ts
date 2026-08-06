@@ -12,7 +12,6 @@ import { serviceDeskAssignmentRuleApi } from "./api";
 import { assignmentRuleQueryKeys } from "./queryKeys";
 import { serviceDeskAssignmentRecommendationApi } from "./recommendationApi";
 
-/** Provides the client query hook for service desk assignment rule list query and its cache policy. */
 export const useServiceDeskAssignmentRuleListQuery = (
   params?: ServiceDeskAssignmentRuleListParams,
 ) => {
@@ -26,7 +25,6 @@ export const useServiceDeskAssignmentRuleListQuery = (
   });
 };
 
-/** Provides the client query hook for service desk assignment recommendations query and its cache policy. */
 export const useServiceDeskAssignmentRecommendationsQuery = (
   input: AssignmentRecommendationInput,
   enabled = true,

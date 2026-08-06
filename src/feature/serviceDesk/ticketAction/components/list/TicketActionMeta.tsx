@@ -33,7 +33,6 @@ const ACTION_BADGE_CLASSNAME: Record<TicketAction["actionType"], string> = {
   CANCEL: "bg-zinc-100 text-zinc-700 hover:bg-zinc-100",
 };
 
-/** Documents the ticket action meta responsibility exposed by this client feature module. */
 export function TicketActionMeta({
   action,
   ownerName,

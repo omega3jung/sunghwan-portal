@@ -1,10 +1,8 @@
 ﻿import { ISODateString } from "@/shared/types/date";
 
 /**
- * Ticket assignee work time tracking entry.
- *
- * workSessionNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, workSessionNo)
+ * `workSessionNo` is ticket-scoped, so sessions are identified by ticket and
+ * work-session number together.
  */
 export interface TicketWorkSession {
   ticketId: string;

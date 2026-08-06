@@ -5,11 +5,9 @@ export const ACCESS_LEVEL = {
   LEADER: 5,
   USER: 3,
   GUEST: 1,
-  NONE: 0, // no permission
+  NONE: 0,
   // 8, 6, 4, 2 reserved.
 } as const;
 
-/** Represents role within the authentication domain. */
 export type Role = keyof typeof ACCESS_LEVEL;
-/** Represents access level within the authentication domain. */
 export type AccessLevel = (typeof ACCESS_LEVEL)[Role];

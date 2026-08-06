@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { TICKET_WORK_SESSION_NOTE_MAX_LENGTH } from "../constants";
 
-/** Defines the stable cache or persistence key for work session validation data. */
 export const WORK_SESSION_VALIDATION_KEY = {
   required: "validation.workSession.required",
   positive: "validation.workSession.positive",
@@ -20,7 +19,6 @@ const optionalNoteSchema = z
   .optional()
   .transform((value) => value ?? "");
 
-/** Validates and normalizes ticket track range form values before they leave the client feature boundary. */
 export const ticketTrackRangeFormSchema = z
   .object({
     startAt: z.string().min(1, WORK_SESSION_VALIDATION_KEY.required),
@@ -56,7 +54,6 @@ export const ticketTrackRangeFormSchema = z
     }
   });
 
-/** Validates and normalizes ticket track duration form values before they leave the client feature boundary. */
 export const ticketTrackDurationFormSchema = z.object({
   durationMinutes: z.coerce
     .number({ error: WORK_SESSION_VALIDATION_KEY.required })

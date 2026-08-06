@@ -1,9 +1,7 @@
-// src/feature/user/preference/api.ts
 import { Preference } from "@/domain/user/preference";
 import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";
 
-/** Groups browser API operations for user preference behind one typed client boundary. */
 export const userPreferenceApi = {
   get: async <T>(userId: string, preferenceKey: string) => {
     const res = await client.api.get<ApiResponse<Preference<T> | null>>(

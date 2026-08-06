@@ -1,4 +1,3 @@
-// TicketListPagination.tsx
 
 import {
   Pagination,
@@ -56,7 +55,6 @@ const getPageItems = (currentPage: number, totalPages: number): PageItem[] => {
   ];
 };
 
-/** Documents the ticket list pagination responsibility exposed by this client feature module. */
 export const TicketListPagination = ({
   page,
   totalCount,

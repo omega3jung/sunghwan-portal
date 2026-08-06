@@ -29,16 +29,13 @@ import { useMutationToast } from "@/lib/client/toast";
 
 import { RequesterUpdateTicketPayload } from "../write";
 
-/** Defines the editable workflow steps shown before ticket update review. */
 export const UPDATE_TICKET_STEPS = ["info", "attachment", "review"] as const;
-/** Identifies the final review stage of the ticket update dialog. */
 export const UPDATE_TICKET_REVIEW_STEP = UPDATE_TICKET_STEPS.length - 1;
 
 type UseUpdateTicketDialogParams = {
   ticketId: string;
 };
 
-/** Coordinates ticket loading, step validation, attachment preparation, and requester update submission. */
 export function useUpdateTicketDialog({
   ticketId,
 }: UseUpdateTicketDialogParams) {
@@ -47,6 +44,8 @@ export function useUpdateTicketDialog({
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const mutationToast = useMutationToast();
+  // Closing or reopening invalidates older loads so a late response cannot
+  // repopulate a reset dialog.
   const loadRequestRef = useRef(0);
   const [open, setOpen] = useState(false);
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
@@ -206,6 +205,8 @@ export function useUpdateTicketDialog({
   const onSubmit = useCallback(
     async (values: TicketFormValues) => {
       const updatePromise = (async () => {
+        // Preparation rewrites embedded image URLs before the final payload
+        // combines newly prepared and retained attachments.
         const prepared = await serviceDeskTicketApi.prepareAttachments({
           body: values.body,
           files: values.attachment,

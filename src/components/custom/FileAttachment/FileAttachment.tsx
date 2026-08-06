@@ -31,6 +31,11 @@ type FileAttachmentProps<
   className?: string;
 };
 
+/**
+ * Binds file selection, dropping, validation, and removal to a React Hook Form
+ * field whose value is `File[]`. Read-only mode hides every mutation surface
+ * while preserving the attachment summary.
+ */
 export const FileAttachment = <
   TForm extends FieldValues,
   TFieldName extends FileAttachmentFieldPath<TForm>,

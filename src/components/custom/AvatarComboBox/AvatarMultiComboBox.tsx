@@ -27,6 +27,11 @@ import {
 } from "./utils";
 import { comboBoxVariants } from "./variants";
 
+/**
+ * Controlled multi-user selector that reports selection deltas through
+ * `onSelect` and `onRemove`. Selected users are moved ahead of remaining
+ * options so the trigger and list preserve a stable selected-first order.
+ */
 const Component = (
   {
     placeholder,

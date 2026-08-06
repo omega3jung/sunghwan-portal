@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userImpersonationApi } from "./api";
 import { userImpersonationQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for start user impersonation and its cache policy. */
 export const useStartUserImpersonation = () => {
   const queryClient = useQueryClient();
 
@@ -19,7 +18,6 @@ export const useStartUserImpersonation = () => {
   });
 };
 
-/** Provides the client query hook for stop user impersonation and its cache policy. */
 export const useStopUserImpersonation = () => {
   const queryClient = useQueryClient();
 

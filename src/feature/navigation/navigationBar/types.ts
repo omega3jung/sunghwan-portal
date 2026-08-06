@@ -3,7 +3,6 @@ import type { ReactElement, ReactNode } from "react";
 
 import type { UserMenuDemoCandidates } from "@/components/menu/UserMenu";
 
-/** Models one link or label rendered in the navigation bar. */
 export type LinkBarItem = {
   text: ReactNode;
   value?: string;
@@ -15,7 +14,6 @@ export type LinkBarItem = {
   onClick?: (index: number, name?: string | ReactNode) => void;
 };
 
-/** Models one breadcrumb with optional navigation metadata. */
 export type NavigationBreadcrumbItem = {
   label: ReactNode;
   href?: string;
@@ -23,7 +21,7 @@ export type NavigationBreadcrumbItem = {
   dropdownItems?: NavigationBreadcrumbDropdownItem[];
 };
 
-/** Models an alternative sibling route displayed in a breadcrumb dropdown. */
+/** Alternative sibling route displayed from a breadcrumb dropdown. */
 export type NavigationBreadcrumbDropdownItem = {
   id: number;
   label: ReactNode;
@@ -31,7 +29,6 @@ export type NavigationBreadcrumbDropdownItem = {
   disabled?: boolean;
 };
 
-/** Configures navigation-bar breadcrumbs and the optional current-page override. */
 export type NavigationBarProps = {
   className?: string;
   title?: ReactNode;

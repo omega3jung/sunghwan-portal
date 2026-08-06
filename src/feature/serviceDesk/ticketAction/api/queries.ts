@@ -7,7 +7,6 @@ import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client"
 import { serviceDeskTicketActionApi } from "./api";
 import { ticketActionQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for service desk ticket action list query and its cache policy. */
 export const useServiceDeskTicketActionListQuery = (ticketId: string) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
@@ -20,7 +19,6 @@ export const useServiceDeskTicketActionListQuery = (ticketId: string) => {
   });
 };
 
-/** Provides the client query hook for service desk ticket action query and its cache policy. */
 export const useServiceDeskTicketActionQuery = (
   ticketId: string,
   actionNo: string,

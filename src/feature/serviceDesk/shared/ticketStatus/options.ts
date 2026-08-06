@@ -15,7 +15,6 @@ const statusOptionValues = [
   "Closed",
 ] as const satisfies readonly TicketStatus[];
 
-/** Defines the supported get status choices presented by the feature. */
 export const getStatusOptions = (
   tStatus: (key: string) => string,
 ): ValueLabel<TicketStatus>[] => {

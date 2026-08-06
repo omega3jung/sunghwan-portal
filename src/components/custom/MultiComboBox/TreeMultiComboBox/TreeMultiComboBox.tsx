@@ -43,6 +43,11 @@ const hasSameValues = (left: string[], right: string[]) => {
   return left.every((value) => rightSet.has(value));
 };
 
+/**
+ * Controlled hierarchical multi-select with compressed branch semantics:
+ * selecting a parent represents the whole branch, while child keys represent
+ * partial selection. `onChange` takes precedence over delta callbacks.
+ */
 const Component = (
   {
     placeholder,

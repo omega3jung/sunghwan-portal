@@ -27,6 +27,11 @@ import {
 } from "./utils";
 import { comboBoxVariants } from "./variants";
 
+/**
+ * Controlled multi-select that exposes additions and removals as separate
+ * callbacks. Badge order follows `value`, while palette assignment follows
+ * source-option order unless the caller provides `badgeOrderMap`.
+ */
 const Component = (
   {
     placeholder,

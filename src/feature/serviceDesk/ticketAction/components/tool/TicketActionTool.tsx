@@ -33,13 +33,9 @@ import { TicketActionToolHeader } from "./TicketActionToolHeader";
 import { TicketActionToolLauncher } from "./TicketActionToolLauncher";
 
 /**
- * TicketActionTool
- *
- * Hub component
- * - action mode switching
- * - form state orchestration
- * - shared mutation flow by action type
- * - UI entry point
+ * Owns one ticket-action draft at a time and shares validation and submission
+ * across action modes. Approval decisions skip attachment preparation; other
+ * actions prepare embedded files before building the command payload.
  */
 
 type TicketActionToolProps = {
@@ -114,7 +110,6 @@ function resolveFormErrorMessage(
   return "";
 }
 
-/** Documents the ticket action tool responsibility exposed by this client feature module. */
 export function TicketActionTool({
   ticketId,
   ticket,

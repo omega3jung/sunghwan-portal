@@ -15,6 +15,11 @@ import type { MultiHierarchicalSelectProps } from "./types";
 import { useHierarchicalSelectNavigation } from "./useHierarchicalSelectNavigation";
 import { createItemPathMap } from "./utils";
 
+/**
+ * Controlled tree selector that keeps navigation separate from selection.
+ * Selected values remain in caller order and render as removable badges;
+ * `selectableStrategy` controls which tree levels may be toggled.
+ */
 export const MultiHierarchicalSelect = ({
   id,
   value,

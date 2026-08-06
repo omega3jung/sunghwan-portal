@@ -7,7 +7,6 @@ import {
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 
-/** Documents the left menu skeleton responsibility exposed by this client feature module. */
 export function LeftMenuSkeleton() {
   return (
     <SidebarContent>

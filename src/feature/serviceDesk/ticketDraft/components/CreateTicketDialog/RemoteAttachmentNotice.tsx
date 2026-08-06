@@ -9,7 +9,6 @@ type RemoteAttachmentNoticeProps = {
   isVisible: boolean;
 };
 
-/** Documents the remote attachment notice responsibility exposed by this client feature module. */
 export const RemoteAttachmentNotice = ({
   children,
   isVisible,

@@ -9,7 +9,6 @@ import { ticketFormDefaultValues, ticketFormSchema, TicketFormValues } from ".";
 
 type TicketFormUser = Pick<AppUser, "displayName" | "email" | "username">;
 
-/** Creates the shared React Hook Form instance with the ticket schema and caller defaults. */
 export const useTicketForm = (
   user?: TicketFormUser | null,
   language: Locale = "en",

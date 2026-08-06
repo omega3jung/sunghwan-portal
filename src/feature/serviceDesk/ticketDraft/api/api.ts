@@ -6,7 +6,6 @@ import {
 } from "./mapper";
 import type { TicketDraftResource } from "./types";
 
-/** Groups browser API operations for service desk ticket draft behind one typed client boundary. */
 export const serviceDeskTicketDraftApi = {
   get: async (): Promise<TicketDraftFormPayload | null> => {
     const res = await client.api.get<TicketDraftResource | null>(

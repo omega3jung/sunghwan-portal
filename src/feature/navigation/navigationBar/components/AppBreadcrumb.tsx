@@ -17,7 +17,6 @@ import { BreadcrumbDropdown } from "./BreadcrumbDropdown";
 type AppBreadcrumbProps = {
   items: NavigationBreadcrumbItem[];
 };
-/** Documents the app breadcrumb responsibility exposed by this client feature module. */
 export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
   if (items.length === 0) {
     return null;

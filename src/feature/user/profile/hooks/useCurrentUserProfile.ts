@@ -5,7 +5,6 @@ import { userProfileQueryKeys } from "@/feature/user/profile/queryKeys";
 
 import { userProfileApi } from "../api";
 
-/** Provides the client query hook for current user profile query and its cache policy. */
 export const useCurrentUserProfileQuery = (session: Session | null) => {
   const impersonatedUsername =
     session?.impersonation?.impersonatedUser.username ?? null;

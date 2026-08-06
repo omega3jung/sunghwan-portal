@@ -9,7 +9,6 @@ import { NS } from "@/lib/application/i18n";
 import { ticketStatusLocaleKey } from "../ticketStatus/localeKeys";
 import type { TicketStatusBadgeProps } from "../ticketStatus/types";
 
-/** Documents the ticket status class map responsibility exposed by this client feature module. */
 export const ticketStatusClassMap: Record<TicketStatus, string> = {
   Draft: "bg-muted text-muted-foreground",
   Approval: "bg-amber-100 text-amber-700",
@@ -22,7 +21,6 @@ export const ticketStatusClassMap: Record<TicketStatus, string> = {
   Closed: "bg-cyan-100 text-cyan-600",
 };
 
-/** Documents the ticket status badge responsibility exposed by this client feature module. */
 export const TicketStatusBadge = ({ status }: TicketStatusBadgeProps) => {
   const { t } = useTranslation(NS.serviceDesk, {
     keyPrefix: "ticketStatus",

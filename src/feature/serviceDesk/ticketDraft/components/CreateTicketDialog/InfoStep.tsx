@@ -20,7 +20,6 @@ import { RemoteAttachmentNotice } from "./RemoteAttachmentNotice";
 
 const IMAGE_TAG_PATTERN = /<img\b/i;
 
-/** Documents the info step responsibility exposed by this client feature module. */
 export const InfoStep = () => {
   const { form, categories } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);

@@ -2,7 +2,6 @@ import { DbParams } from "@/shared/types/api";
 
 import { ORGANIZATION_COMPANY_KEY, ORGANIZATION_KEY } from "../keys";
 
-/** Builds stable TanStack Query keys for company cache entries. */
 export const companyQueryKeys = {
   all: [ORGANIZATION_KEY, ORGANIZATION_COMPANY_KEY] as const,
 

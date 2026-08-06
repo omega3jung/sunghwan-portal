@@ -1,5 +1,3 @@
-// src/feature/navigation/leftMenu/utils/mapper.ts
-
 import type {
   DbMenuItem,
   LeftMenuItems,
@@ -13,7 +11,11 @@ type MenuArea = DbMenuItem["area"];
 
 const ROOT_PARENT_ID = 0;
 
-/** Rebuilds sorted header, main, and footer menu trees from flat database menu rows. */
+/**
+ * Rebuilds flat rows into area-isolated trees in persisted sibling order.
+ * Self-parenting rows and non-root or grouped footer rows are excluded because
+ * they cannot be represented by the navigation components.
+ */
 export function createLeftMenuFromDbMenuItem(
   dbItems: DbMenuItem[] | null | undefined,
 ): LeftMenuItems {

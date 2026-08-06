@@ -31,7 +31,6 @@ type TicketHistoryTimelineContentProps = {
   className?: string;
 };
 
-/** Documents the ticket history timeline content responsibility exposed by this client feature module. */
 export function TicketHistoryTimelineContent({
   items,
   isLoading = false,

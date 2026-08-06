@@ -9,7 +9,7 @@ export interface CurrentSession {
   isClient: boolean;
   superUserActivated: Date | null;
 
-  // Security-related information for public sessions.
+  /** Security state exposed without backend credentials. */
   security: {
     loginLockedUntil: number | null;
     failedAttempts: number;

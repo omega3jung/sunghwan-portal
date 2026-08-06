@@ -1,5 +1,4 @@
 import type { UniqueIdentifier } from "@dnd-kit/core";
-/** Pure helpers for projecting, reading, and updating SortableTree data. */
 import { arrayMove } from "@dnd-kit/sortable";
 
 import type { FlattenedNode, TreeNode, TreeNodes } from "./types";
@@ -217,10 +216,9 @@ export function removeChildrenOf<T>(
   const excluded = new Set<UniqueIdentifier>();
 
   return items.filter((item) => {
-    // already removed by parent.
     if (excluded.has(item.id)) return false;
 
-    // if parent is collapsed, this node is exclude.
+    // Once a parent is excluded, descendants must be excluded transitively.
     if (
       item.parentId !== null &&
       (collapsedIds.has(item.parentId) || excluded.has(item.parentId))

@@ -6,7 +6,6 @@ type WorkSessionToolSummaryProps = {
   formatMinutes: (count: number) => string;
 };
 
-/** Documents the work session tool summary responsibility exposed by this client feature module. */
 export function WorkSessionToolSummary({
   currentLabel,
   totalLabel,

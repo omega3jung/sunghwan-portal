@@ -59,6 +59,8 @@ const resolveActionAttachments = (
   values: TicketActionDraftFormValues,
   prepared?: PrepareTicketAttachmentsResponse,
 ) => {
+  // Prepared attachments carry the rewritten body URLs and durable metadata;
+  // raw File objects are only a fallback before preparation completes.
   if (prepared) {
     return {
       files: prepared.files.map(mapPreparedAttachment),
@@ -69,7 +71,6 @@ const resolveActionAttachments = (
   return splitActionAttachments(values.attachment);
 };
 
-/** Defines the build ticket action payload accepted at this feature boundary. */
 export function buildTicketActionPayload({
   userId,
   values,
@@ -87,6 +88,8 @@ export function buildTicketActionPayload({
   switch (values.actionType) {
     case "APPROVE":
     case "DECLINE":
+      // These workflow commands never persist attachments even though they
+      // share the common draft shape with content-bearing actions.
       return {
         ...basePayload,
         files: [],

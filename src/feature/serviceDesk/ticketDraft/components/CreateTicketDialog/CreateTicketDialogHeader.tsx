@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { NS } from "@/lib/application/i18n";
 
-/** Documents the create ticket dialog header responsibility exposed by this client feature module. */
 export const CreateTicketDialogHeader = () => {
   const { t } = useTranslation(NS.serviceDesk);
 

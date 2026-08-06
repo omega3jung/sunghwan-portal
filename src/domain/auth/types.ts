@@ -1,4 +1,3 @@
-/** Represents login credentials within the authentication domain. */
 export type LoginCredentials = {
   username: string;
   password: string;

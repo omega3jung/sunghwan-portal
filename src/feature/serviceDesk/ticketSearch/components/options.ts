@@ -11,7 +11,6 @@ import type { DateRangePreset, ValueLabel } from "@/shared/types";
 type CategoryLabelResolver = (name: MainCategory["name"]) => string;
 type Translate = (key: string) => string;
 
-/** Defines the supported ticket period choices presented by the feature. */
 export const TICKET_PERIOD_OPTIONS: DateRangePreset[] = [
   "today",
   "this_week",
@@ -24,7 +23,6 @@ export const TICKET_PERIOD_OPTIONS: DateRangePreset[] = [
   "range",
 ];
 
-/** Defines the supported create ticket category choices presented by the feature. */
 export const createTicketCategoryOptions = (
   categories: MainCategory[],
   getLabel: CategoryLabelResolver,
@@ -39,7 +37,6 @@ export const createTicketCategoryOptions = (
   }));
 };
 
-/** Defines the supported create ticket status filter choices presented by the feature. */
 export const createTicketStatusFilterOptions = (
   statusOptions: ValueLabel<TicketStatus>[],
   tStatus: Translate,
@@ -64,7 +61,6 @@ export const createTicketStatusFilterOptions = (
   ];
 };
 
-/** Defines the supported create ticket due by choices presented by the feature. */
 export const createTicketDueByOptions = (
   tShared: Translate,
 ): SearchDateFilterOption<dueAt>[] => {

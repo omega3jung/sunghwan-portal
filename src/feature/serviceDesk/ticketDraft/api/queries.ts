@@ -6,7 +6,6 @@ import { getServiceDeskQueryOptions } from "../../shared/utils/queryOptions";
 import { ticketDraftQueryKeys } from "./queryKeys";
 import { serviceDeskTicketDraftRepo, useTicketDraftRepoContext } from "./repo";
 
-/** Provides the client query hook for service desk ticket draft query and its cache policy. */
 export const useServiceDeskTicketDraftQuery = () => {
   const context = useTicketDraftRepoContext();
   const ticketQueryOptions = getServiceDeskQueryOptions(context.dataScope);

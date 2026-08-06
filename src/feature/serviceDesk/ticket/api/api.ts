@@ -16,7 +16,6 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type TicketSummaryResponse = OResponse<TicketSummary>;
 
-// feature-scoped API.
 export const serviceDeskTicketApi = {
   list: async (params: DbParams): Promise<TicketSummary[]> => {
     if (!params) return [];
@@ -119,7 +118,6 @@ export const serviceDeskTicketApi = {
     return res.data;
   },
 
-  // soft delete. set disabled in db.
   remove: async (id: string): Promise<null> => {
     await client.api.delete(`/api/service-desk/tickets/${id}`);
     return null;

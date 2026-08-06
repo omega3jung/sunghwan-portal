@@ -89,7 +89,11 @@ const getOrCreatePortalPreference = ({
   return task;
 };
 
-// set session when sign in.// set preference when sign in.
+/**
+ * Loads or creates the signed-in user's preference and publishes it to the
+ * client store. Concurrent mounts share one request per user, scope, and key so
+ * development remounts cannot create duplicate preferences.
+ */
 export function usePreferenceRemoteSync() {
   const session = useSession();
 

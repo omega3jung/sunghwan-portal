@@ -36,7 +36,6 @@ type Props = {
   assignees: ImageValueLabel[];
 };
 
-/** Documents the ticket search criteria fields responsibility exposed by this client feature module. */
 export function TicketSearchCriteriaFields({
   form,
   categories,

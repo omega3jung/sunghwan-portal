@@ -38,7 +38,6 @@ const invalidateTicketWorkSessionQueries = (
   });
 };
 
-/** Provides the client mutation hook for create ticket work session by range and invalidates affected cached data. */
 export const useCreateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
@@ -54,7 +53,6 @@ export const useCreateTicketWorkSessionByRange = () => {
   });
 };
 
-/** Provides the client mutation hook for submit ticket work session and invalidates affected cached data. */
 export const useSubmitTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
@@ -70,7 +68,6 @@ export const useSubmitTicketWorkSession = () => {
   });
 };
 
-/** Provides the client mutation hook for update ticket work session by range and invalidates affected cached data. */
 export const useUpdateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
@@ -86,7 +83,6 @@ export const useUpdateTicketWorkSessionByRange = () => {
   });
 };
 
-/** Provides the client mutation hook for create ticket work session by duration and invalidates affected cached data. */
 export const useCreateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
@@ -102,7 +98,6 @@ export const useCreateTicketWorkSessionByDuration = () => {
   });
 };
 
-/** Provides the client mutation hook for update ticket work session by duration and invalidates affected cached data. */
 export const useUpdateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
@@ -118,7 +113,6 @@ export const useUpdateTicketWorkSessionByDuration = () => {
   });
 };
 
-/** Provides the client mutation hook for delete ticket work session and invalidates affected cached data. */
 export const useDeleteTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
@@ -140,7 +134,6 @@ export const useDeleteTicketWorkSession = () => {
   });
 };
 
-/** Provides the client mutation hook for start ticket work sessionr and invalidates affected cached data. */
 export const useStartTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
@@ -156,7 +149,6 @@ export const useStartTicketWorkSessionr = () => {
   });
 };
 
-/** Provides the client mutation hook for finish ticket work sessionr and invalidates affected cached data. */
 export const useFinishTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
@@ -172,11 +164,9 @@ export const useFinishTicketWorkSessionr = () => {
   });
 };
 
-/** Provides the client mutation hook for switch ticket work sessionr and invalidates affected cached data. */
 export const useSwitchTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.switch,
     onSuccess: (data, ticketId) => {

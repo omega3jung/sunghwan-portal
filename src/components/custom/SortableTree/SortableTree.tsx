@@ -47,6 +47,10 @@ import {
   setProperty,
 } from "./utilities";
 
+/**
+ * `tree` permits reparenting and depth changes; `sameDepth` preserves depth;
+ * `siblings` additionally preserves the parent.
+ */
 export type SortableTreeReorderScope = "tree" | "sameDepth" | "siblings";
 
 const VERTICAL_REORDER_MODIFIERS = [restrictToVerticalAxis];
@@ -71,6 +75,11 @@ export interface SortableTreeProps<T> {
   reorderScope?: SortableTreeReorderScope;
 }
 
+/**
+ * Controlled tree editor that flattens nodes for drag projection and rebuilds
+ * the hierarchy through `onChange`. Collapsed descendants stay in source data
+ * but are excluded from collision detection and rendering.
+ */
 export function SortableTree<T>({
   items,
   onChange,
@@ -297,6 +306,7 @@ export function SortableTree<T>({
         </ul>
       </SortableContext>
 
+      {/* The overlay portal is client-only to keep server and hydration markup identical. */}
       {isMounted &&
         createPortal(
           <DragOverlay>

@@ -2,7 +2,6 @@ type TicketActionBodyProps = {
   content: string;
 };
 
-/** Documents the ticket action body responsibility exposed by this client feature module. */
 export function TicketActionBody({ content }: TicketActionBodyProps) {
   return (
     <div className="max-w-full overflow-x-auto">

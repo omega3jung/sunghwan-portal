@@ -29,7 +29,6 @@ type UpdateTicketDialogProps = {
   trigger: ReactElement;
 };
 
-/** Documents the update ticket dialog responsibility exposed by this client feature module. */
 export function UpdateTicketDialog({
   ticketId,
   categories,

@@ -16,7 +16,6 @@ type UseTicketDraftOptions = {
   form: UseFormReturn<TicketDraftFormPayload>;
 };
 
-/** Coordinates draft loading, immediate save, debounced persistence, and removal for one form. */
 export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
   const [draftId, setDraftId] = useState<string | null>(null);
 

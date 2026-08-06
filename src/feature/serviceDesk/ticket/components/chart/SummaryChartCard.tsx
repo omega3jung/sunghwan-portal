@@ -61,7 +61,6 @@ const truncateLabel = (label: string, maxLength: number): string => {
   return `${label.slice(0, maxLength)}...`;
 };
 
-/** Documents the summary chart card responsibility exposed by this client feature module. */
 export const SummaryChartCard = ({
   title,
   data,

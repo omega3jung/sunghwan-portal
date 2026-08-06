@@ -27,6 +27,11 @@ import {
   comboBoxVariants,
 } from "./variants";
 
+/**
+ * Controlled single-user selector whose external value is an option key.
+ * Reselecting the active option clears it only when `clearable` is enabled;
+ * read-only mode blocks both opening and value changes.
+ */
 const Component = (
   {
     placeholder,

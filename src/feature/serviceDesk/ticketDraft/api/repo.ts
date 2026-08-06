@@ -6,7 +6,6 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { serviceDeskTicketDraftApi } from "./api";
 import type { TicketDraftFormPayload } from "./mapper";
 
-/** Supplies effective user and runtime mode to the ticket draft repository. */
 export type TicketDraftRepoContext = {
   userId: string | null;
   dataScope: DataScope;
@@ -20,7 +19,6 @@ type LocalTicketDraft = {
 
 const TICKET_DRAFT_STORAGE_KEY = "sunghwan_portal_ticket_draft";
 
-/** Derives the draft repository context from the effective session user. */
 export function useTicketDraftRepoContext(): TicketDraftRepoContext {
   const { current, data: session } = useCurrentSession();
   const effectiveUser = current.user;

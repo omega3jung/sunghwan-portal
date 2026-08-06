@@ -48,7 +48,6 @@ const invalidateTicketActionQueries = (
   });
 };
 
-/** Provides the client mutation hook for ticket action mutation and invalidates affected cached data. */
 export const useTicketActionMutation = () => {
   const queryClient = useQueryClient();
 
@@ -82,7 +81,6 @@ export const useTicketActionMutation = () => {
   });
 };
 
-/** Provides the client mutation hook for delete service desk ticket action and invalidates affected cached data. */
 export const useDeleteServiceDeskTicketAction = () => {
   const queryClient = useQueryClient();
 

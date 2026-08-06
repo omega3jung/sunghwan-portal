@@ -4,7 +4,6 @@ import { DbParams, OResponse } from "@/shared/types/api";
 
 type CompanyResponse = OResponse<Company>;
 
-/** Groups browser API operations for company behind one typed client boundary. */
 export const companyApi = {
   list: async (params: DbParams): Promise<Company[]> => {
     if (!params) return [];

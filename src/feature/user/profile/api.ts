@@ -1,9 +1,7 @@
-// src/feature/user/profile/api.ts
 import { AppUser } from "@/domain/user";
 import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";
 
-/** Groups browser API operations for user profile behind one typed client boundary. */
 export const userProfileApi = {
   get: async (userId: string) => {
     const res = await client.api.get<ApiResponse<AppUser> | AppUser>(

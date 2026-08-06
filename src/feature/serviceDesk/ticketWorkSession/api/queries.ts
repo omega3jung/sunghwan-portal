@@ -7,7 +7,6 @@ import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client"
 import { serviceDeskTicketWorkSessionApi } from "./api";
 import { ticketWorkSessionQueryKeys } from "./queryKeys";
 
-/** Provides the client query hook for service desk ticket work session list query and its cache policy. */
 export const useServiceDeskTicketWorkSessionListQuery = (ticketId: string) => {
   const { dataScope, queryOptions } = useServiceDeskQueryOptions();
 
@@ -20,7 +19,6 @@ export const useServiceDeskTicketWorkSessionListQuery = (ticketId: string) => {
   });
 };
 
-/** Provides the client query hook for service desk ticket work session query and its cache policy. */
 export const useServiceDeskTicketWorkSessionQuery = (
   ticketId: string,
   workSessionNo: string,

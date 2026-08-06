@@ -1,18 +1,14 @@
 import { LocalizedText } from "@/shared/types/language";
 
-/** Represents department within the organization domain. */
 export interface Department {
   id: string;
 
-  // basic info
   name: LocalizedText;
   code?: string; // HR, IT, QC.
   description?: LocalizedText;
 
-  // organization
   companyId: string;
   parentId?: string;
 
-  // system
   active: boolean;
 }

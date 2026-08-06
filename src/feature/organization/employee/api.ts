@@ -3,7 +3,6 @@ import client from "@/lib/client/api";
 import type { ApiResponse, DbParams } from "@/shared/types";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
-/** Groups browser API operations for employee behind one typed client boundary. */
 export const employeeApi = {
   list: async (params: DbParams): Promise<Employee[]> => {
     const res = await client.api.get<ApiResponse<Employee[]>, URLSearchParams>(

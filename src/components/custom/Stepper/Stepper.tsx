@@ -8,6 +8,10 @@ import { StepperContext } from "./StepperContext";
 import { StepperProps } from "./types";
 import { stepperContainer } from "./variants";
 
+/**
+ * Compound stepper with mutually exclusive controlled and uncontrolled modes.
+ * Items and connectors derive interaction and presentation state from context.
+ */
 const Root = ({
   currentStep,
   onStepChange,
