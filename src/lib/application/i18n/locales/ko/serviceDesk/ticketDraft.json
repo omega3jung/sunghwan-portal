@@ -1,0 +1,18 @@
+{
+  "ticketCreate": {
+    "category": {
+      "placeholder": "카테고리 선택",
+      "back": "뒤로",
+      "empty": "선택 가능한 카테고리가 없습니다."
+    }
+  },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 이미지가 데모 이미지로 대체됩니다.",
+      "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 파일이 데모 파일로 대체됩니다."
+    }
+  },
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext는 provider 내부에서 사용되어야 합니다."
+  }
+}

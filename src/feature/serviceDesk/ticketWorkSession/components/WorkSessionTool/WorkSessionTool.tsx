@@ -53,7 +53,7 @@ export function WorkSessionTool({ children, ticket }: WorkSessionToolProps) {
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverTrigger render={children} />
 
       <PopoverContent align="end" className="w-80 p-0">
         <div className="border-b border-primary-muted px-4 py-3">

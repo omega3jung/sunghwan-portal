@@ -1,0 +1,12 @@
+{
+  "viewOption": {
+    "title": "Vue",
+    "internal": "Interne",
+    "portal": "Portail"
+  },
+  "searchCriteria": {
+    "primaryFilters": "Filtres principaux",
+    "additionalFilters": "Filtres supplémentaires",
+    "dateFilters": "Filtres de date"
+  }
+}

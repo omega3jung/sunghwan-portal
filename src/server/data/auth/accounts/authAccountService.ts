@@ -8,6 +8,7 @@ import {
   updateAuthAccountLastLoginAt,
 } from "./authAccountRepository";
 
+/** Verifies credentials and returns the authenticated user projection without exposing the password hash. */
 export async function verifyLoginCredentials(
   username: string,
   password: string,
@@ -32,6 +33,7 @@ export async function verifyLoginCredentials(
   return toAuthUser(account);
 }
 
+/** Loads impersonation target auth user through the server data boundary. */
 export async function getImpersonationTargetAuthUser(
   username: string,
 ): Promise<AuthUserDto | null> {

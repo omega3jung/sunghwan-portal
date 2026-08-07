@@ -19,7 +19,6 @@ export async function resetServiceDeskDemo() {
 export const useResetServiceDeskDemo = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: resetServiceDeskDemo,
     onSuccess: async () => {

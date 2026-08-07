@@ -71,10 +71,13 @@
     "timeout": "시간이 만료되었습니다.",
     "differentId": "인증된 ID가 현재 ID와 다릅니다. OTP를 다시 인증해 주세요."
   },
+  "fileAttachment": {
+    "limitTitle": "선택한 파일을 확인해주세요."
+  },
   "remoteRouteGuard": {
     "limited": {
       "title": "원격 데모 접근이 제한됩니다",
-      "description": "데이터베이스 기반 페이지는 아직 연결 중입니다. 현재는 Home, Demo 또는 Documents 페이지를 이용해 주세요."
+      "description": "배포된 원격 데모에서는 Service Desk UI 직접 접근을 제한합니다. Home, Demo, Settings 또는 Documents를 이용해 주세요."
     }
   }
 }

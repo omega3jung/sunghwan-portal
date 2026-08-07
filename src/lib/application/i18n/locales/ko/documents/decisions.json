@@ -1,0 +1,110 @@
+{
+  "decisionOverview": {
+    "title": "설계 결정 안내",
+    "description": "날짜별 설계 결정과 현재 적용 중인 설계를 구분해 읽는 방법을 설명합니다."
+  },
+  "decisionAuthSessionArchitecture": {
+    "title": "2025-12 인증 세션 아키텍처",
+    "description": "세션 아키텍처 결정 기록입니다."
+  },
+  "decisionImpersonation202512": {
+    "title": "2025-12 가장",
+    "description": "가장 전략 결정 기록입니다."
+  },
+  "decisionNaming202512": {
+    "title": "2025-12 네이밍",
+    "description": "네이밍 결정 기록입니다."
+  },
+  "decisionSystemLayout": {
+    "title": "2025-12 시스템 레이아웃",
+    "description": "시스템 레이아웃 결정 기록입니다."
+  },
+  "decisionCategoryDesign": {
+    "title": "2026-01 카테고리 설계",
+    "description": "카테고리 설계 결정 기록입니다."
+  },
+  "decisionImpersonation202601": {
+    "title": "2026-01 가장",
+    "description": "가장 결정 기록입니다."
+  },
+  "decisionSessionUserBoundary202601": {
+    "title": "2026-01 세션 사용자 경계",
+    "description": "세션 사용자 경계 결정 기록입니다."
+  },
+  "decisionServiceDeskSettings": {
+    "title": "2026-02 Service Desk 설정",
+    "description": "Service Desk 설정 설계 결정 기록입니다."
+  },
+  "decisionServiceDesk": {
+    "title": "2026-03 Service Desk",
+    "description": "Service Desk 구현 결정 기록입니다."
+  },
+  "decisionTicketFormDialog": {
+    "title": "2026-03 티켓 폼 다이얼로그",
+    "description": "티켓 폼 다이얼로그 결정 기록입니다."
+  },
+  "decisionTicketSession202603": {
+    "title": "2026-03 티켓 세션",
+    "description": "티켓 세션 동작 결정 기록입니다."
+  },
+  "decisionEntityStatusNaming": {
+    "title": "2026-04 엔티티 상태 네이밍",
+    "description": "엔티티 네이밍 결정 기록입니다."
+  },
+  "decisionTicketAction": {
+    "title": "2026-04 티켓 액션 모델 도입",
+    "description": "티켓 액션 모델 도입 결정 기록입니다."
+  },
+  "decisionBarrelExportBoundary202605": {
+    "title": "2026-05 배럴 export 경계",
+    "description": "배럴 export 경계 결정 기록입니다."
+  },
+  "decisionDatabaseRoleAndAccessStrategy202605": {
+    "title": "2026-05 데이터베이스 역할 및 접근 전략",
+    "description": "데이터베이스 역할 및 접근 전략 결정 기록입니다."
+  },
+  "decisionServiceDeskDocumentationAlignment202605": {
+    "title": "2026-05 Service Desk 문서 정렬",
+    "description": "Service Desk 문서 정렬 결정 기록입니다."
+  },
+  "decisionServiceDeskTenantDesign202606": {
+    "title": "2026-06 Service Desk 테넌트 설계",
+    "description": "Service Desk 설정을 위한 테넌트 설계 결정 기록입니다."
+  },
+  "decisionServiceDeskSettingsDtoApiBoundary202606": {
+    "title": "2026-06 Service Desk 설정 DTO/API 경계",
+    "description": "Service Desk 설정 DTO/API 경계 결정 기록입니다."
+  },
+  "decisionTicketAttachmentBoundary202606": {
+    "title": "2026-06 티켓 첨부파일 경계",
+    "description": "티켓 첨부파일 경계 결정 기록입니다."
+  },
+  "decisionTicketFormAndDraftWorkflow202606": {
+    "title": "2026-06 티켓 Form 및 Draft Workflow",
+    "description": "티켓 Form 및 Draft Workflow 결정 기록입니다."
+  },
+  "decisionNextjs16MigrationStrategy202607": {
+    "title": "2026-07 Next.js 16 마이그레이션 전략",
+    "description": "Next.js 16 마이그레이션 전략 결정 기록입니다."
+  },
+  "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+    "title": "2026-07 Service Desk Settings Reference Validation Boundary",
+    "description": "Settings reference validation boundary 설계 결정 기록입니다."
+  },
+  "decisionTicketActionAndHistoryExecution202607": {
+    "title": "2026-07 티켓 Action 및 History 실행",
+    "description": "티켓 Action 및 History 실행 결정 기록입니다."
+  },
+  "decisionTicketMergeAndEscalationPolicy202607": {
+    "title": "2026-07 티켓 Merge 및 Escalation 정책",
+    "description": "티켓 Merge 및 Escalation 정책 결정 기록입니다."
+  },
+  "decisionTicketRoutingAndUpdatePolicy202607": {
+    "title": "2026-07 티켓 Routing 및 Update 정책",
+    "description": "티켓 Routing 및 Update 정책 결정 기록입니다."
+  },
+  "decisionBooleanCapabilityApiNaming202608": {
+    "title": "2026-08 Boolean Capability API 명명",
+    "description": "Boolean capability API 명명 결정 기록입니다."
+  }
+}

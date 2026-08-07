@@ -1,0 +1,23 @@
+{
+  "controls": {
+    "presets": "날짜 범위 프리셋",
+    "presetsDescription": "DateRangePicker가 제공할 프리셋을 설정합니다.",
+    "triggerText": "트리거 표시 내용",
+    "minuteStep": "분 간격",
+    "compact": "간결한 DateTimePicker"
+  },
+  "variants": {
+    "text": "라벨",
+    "range": "날짜 범위",
+    "all": "라벨과 날짜 범위"
+  },
+  "cards": {
+    "date": "변동하는 최소·최대 범위 안에서 하나의 날짜를 선택합니다.",
+    "dateTime": "설정 가능한 분 간격으로 날짜와 24시간제 시간을 선택합니다.",
+    "dateRange": "프리셋과 구체적인 날짜 범위를 외부에서 제어합니다.",
+    "search": "프리셋 해석과 사용자 지정 범위 상태를 동기화합니다."
+  },
+  "empty": "(비어 있음)",
+  "noPreset": "(프리셋 없음)",
+  "bounds": "날짜 및 시간 범위: {{min}} ~ {{max}}"
+}

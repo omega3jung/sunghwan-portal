@@ -3,14 +3,13 @@ import type {
   SaveServiceDeskCategoryTreePayload,
   ServiceDeskCategoryContext,
   ServiceDeskCategoryListParams,
-} from "@/feature/serviceDesk/category/types";
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type CategoryResponse = OResponse<TenantCategoryTree>;
 
-// feature-scoped API.
 export const serviceDeskCategoryApi = {
   list: async (
     params?: ServiceDeskCategoryListParams,

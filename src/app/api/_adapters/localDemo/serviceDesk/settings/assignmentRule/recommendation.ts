@@ -6,7 +6,11 @@ import {
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import { getLocalCategoryTrees } from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
 import { getLocalDemoAssignmentRules } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
-import type { AssignmentRule, MainCategory } from "@/domain/serviceDesk";
+import {
+  type AssignmentRule,
+  hasAssignmentRuleSelection,
+  type MainCategory,
+} from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import { camelAssignmentRuleMapper } from "@/lib/application/contracts/serviceDesk";
 import {
@@ -95,14 +99,20 @@ const resolveAssignmentRuleWithCategoryFallback = (
   category: ServiceDeskCategoryContext,
 ) => {
   const exactAssignmentRule = rules.find(
-    (item) => item.categoryId === category.categoryId,
+    (item) =>
+      item.categoryId === category.categoryId &&
+      hasAssignmentRuleSelection(item.assignee),
   );
 
   if (exactAssignmentRule) {
     return exactAssignmentRule;
   }
 
-  return rules.find((item) => item.categoryId === category.mainCategoryId);
+  return rules.find(
+    (item) =>
+      item.categoryId === category.mainCategoryId &&
+      hasAssignmentRuleSelection(item.assignee),
+  );
 };
 
 const collectRecommendedUsers = ({
@@ -170,17 +180,16 @@ const resolveRecommendationSource = (
   return null;
 };
 
+/** Resolves local assignment recommendation using the server-side LOCAL settings adapter policy. */
 export const resolveLocalAssignmentRecommendation = async ({
   input,
 }: LocalRecommendationContext): Promise<AssignmentRecommendationResult> => {
   const category = await getServiceDeskCategoryContext(input.categoryId);
 
   if (!category || !category.tenant.active) {
-    throw new ApiError(
-      "serviceDesk.tickets.localDemo.categoryNotFound",
-      404,
-      { categoryId: input.categoryId },
-    );
+    throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
+      categoryId: input.categoryId,
+    });
   }
 
   const language = input.language ?? "en";

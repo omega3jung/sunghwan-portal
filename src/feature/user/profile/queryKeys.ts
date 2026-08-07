@@ -1,5 +1,3 @@
-// src/feature/user/profile/queryKeys.ts
-
 import { USER_KEY, USER_PROFILE_KEY } from "../keys";
 
 export const userProfileQueryKeys = {

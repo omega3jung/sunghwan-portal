@@ -19,7 +19,7 @@ export const getTimelineBadgeClassName = (
   className?: string,
 ) => {
   return cn(
-    "inline-flex w-fit items-center rounded-md border border-black/[0.04] px-2 py-0.5 text-[11px] font-medium leading-4 shadow-none",
+    "inline-flex w-fit items-center rounded-md border border-black/4 px-2 py-0.5 text-[11px] font-medium leading-4 shadow-none",
     timelinePalette[paletteIndex],
     className,
   );

@@ -23,6 +23,7 @@ import {
   type SaveServiceDeskCategoryTreePayload,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Handles GET /api/service-desk/categories; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   try {
     const settingsRequest = isServiceDeskSettingsRequest(request);
@@ -106,6 +107,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/** Handles PUT /api/service-desk/categories; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);

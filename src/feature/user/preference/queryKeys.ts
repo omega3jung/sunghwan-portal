@@ -1,5 +1,3 @@
-// src/feature/user/preference/queryKeys.ts
-
 import { USER_KEY, USER_PREFERENCE_KEY } from "../keys";
 import { GetPreferenceInput } from "./types";
 

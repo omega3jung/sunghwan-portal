@@ -1,6 +1,5 @@
 // app/(protected)/settings/layout.tsx
 
-import { Separator } from "@radix-ui/react-select";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
@@ -9,6 +8,7 @@ import { ReactNode } from "react";
 
 import { resolveServiceDeskRequestContext } from "@/app/api/_adapters/serviceDesk";
 import { authOptions } from "@/auth.config";
+import { Separator } from "@/components/ui/separator";
 import { getServiceDeskAdminType } from "@/lib/application/serviceDesk";
 
 import { SettingsAccessGuard, SettingsAccessProvider } from "./_providers";
@@ -49,7 +49,7 @@ export default async function SettingsLayout({
     >
       <SettingsAccessGuard>
         <SettingsNavigation />
-        <Separator className="my-2 h-1 rounded bg-border" />
+        <Separator className="h-1 rounded" />
         {children}
       </SettingsAccessGuard>
     </SettingsAccessProvider>

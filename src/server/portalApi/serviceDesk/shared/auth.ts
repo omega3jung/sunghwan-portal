@@ -19,6 +19,7 @@ import {
 import { getUserProfileDtoByUsername } from "@/server/data/users";
 import { getAuthToken } from "@/server/portalApi/auth";
 
+/** Captures the authenticated principal and scope used to authorize settings operations. */
 export type ServiceDeskSettingsPrincipalContext = {
   principal: AppUser;
   dataScope: DataScope;
@@ -26,6 +27,14 @@ export type ServiceDeskSettingsPrincipalContext = {
   effectiveUsername: string;
 };
 
+/**
+ * Resolves both audit and acting identities from the signed auth token.
+ *
+ * `originalUsername` identifies the authenticated account, while
+ * `effectiveUsername` follows an authorized impersonation. Authorization uses
+ * a canonical server-side AppUser profile for the effective identity instead
+ * of trusting role or organization fields submitted by the browser.
+ */
 export async function resolveServiceDeskRequestContext(
   request: NextRequest,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
@@ -59,6 +68,7 @@ export async function resolveServiceDeskRequestContext(
   };
 }
 
+/** Builds the Service Desk authorization context from the server session and rejects unauthenticated requests. */
 export async function resolveServiceDeskRequestContextFromSession(
   session: Session | null,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
@@ -90,8 +100,10 @@ export async function resolveServiceDeskRequestContextFromSession(
   };
 }
 
+/** Query flag that explicitly selects the privileged Service Desk settings context. */
 export const SERVICE_DESK_SETTINGS_QUERY_VALUE = "settings";
 
+/** Distinguishes settings reads from ordinary operational Service Desk reads. */
 export function isServiceDeskSettingsRequest(request: NextRequest) {
   return (
     request.nextUrl.searchParams.get("context") ===
@@ -100,10 +112,12 @@ export function isServiceDeskSettingsRequest(request: NextRequest) {
   );
 }
 
+/** Parses category scope from the untrusted request representation. */
 export function parseCategoryScope(value: unknown): CategoryScope | null {
   return value === "INTERNAL" || value === "PORTAL" ? value : null;
 }
 
+/** Resolves service desk settings admin context from the current server-side context and policy. */
 export async function resolveServiceDeskSettingsAdminContext(
   request: NextRequest,
 ) {
@@ -123,6 +137,7 @@ export async function resolveServiceDeskSettingsAdminContext(
   };
 }
 
+/** Resolves the tenant/company target for operational reads without granting settings write access. */
 export async function resolveOperationalServiceDeskReadTarget({
   principalContext,
   requestedTenantId,
@@ -189,6 +204,11 @@ export async function resolveOperationalServiceDeskReadTarget({
   };
 }
 
+/**
+ * Selects the settings tenant within the administrator's allowed boundary.
+ * Tenant administrators are locked to their own company; provider system
+ * administrators may select a target tenant explicitly.
+ */
 export async function resolveAuthorizedSettingsTenant({
   request,
   requestedTenantId,
@@ -249,6 +269,13 @@ export async function resolveAuthorizedSettingsTenant({
   };
 }
 
+/**
+ * Enforces resource-level settings policy after resolving tenant ownership.
+ *
+ * The decision combines principal type, tenant relationship, category scope,
+ * and read-versus-manage intent. Route handlers should use the returned tenant
+ * and access projection rather than reinterpreting client-supplied identifiers.
+ */
 export async function requireSettingsResourceAccess({
   request,
   requestedTenantId,
@@ -301,12 +328,14 @@ export async function requireSettingsResourceAccess({
   };
 }
 
+/** Combines principal scope and tenant ownership to decide whether a resource may be accessed. */
 export function resolveTenantResourceAccess(
   principal: Parameters<typeof resolveSettingsAccess>[0],
 ) {
   return resolveSettingsAccess(principal, { resource: "TENANT" });
 }
 
+/** Creates an authorization error whose status is preserved by the portal API adapter. */
 export function createSettingsAuthorizationError(
   message: string,
   status: number,
@@ -314,6 +343,7 @@ export function createSettingsAuthorizationError(
   return Object.assign(new Error(message), { status });
 }
 
+/** Converts settings resource context to the representation required by this server boundary. */
 export function toSettingsResourceContext(
   tenant: ServiceDeskSettingsTenantContext,
   resource: ServiceDeskSettingsResource,

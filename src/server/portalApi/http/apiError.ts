@@ -47,6 +47,7 @@ const resolveErrorMessage = (
   return fallbackMessage;
 };
 
+/** Converts api error response to the representation required by this server boundary. */
 export const toApiErrorResponse = (
   error: unknown,
   { fallbackMessage, fallbackStatus = 500 }: ErrorResponseOptions,

@@ -16,6 +16,10 @@ import { sortTickets } from "./sort";
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
 
+/**
+ * Applies access scope, rule-group filters, sorting, and pagination to LOCAL tickets.
+ * Facets are derived from the filtered set before pagination to mirror REMOTE search.
+ */
 export function localSearchTickets({
   access,
   request,

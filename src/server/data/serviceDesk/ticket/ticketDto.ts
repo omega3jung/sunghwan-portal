@@ -15,6 +15,7 @@ import { ISODateString, LocalizedText, SortDirection } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "./ticketRow";
 
+/** Validates and normalizes the ticket priority API payload at the server boundary. */
 export const ticketPrioritySchema = z.enum([
   "urgent",
   "high",
@@ -22,6 +23,7 @@ export const ticketPrioritySchema = z.enum([
   "low",
 ]);
 
+/** Validates and normalizes the ticket risk level API payload at the server boundary. */
 export const ticketRiskLevelSchema = z.enum([
   "critical",
   "high",
@@ -29,6 +31,7 @@ export const ticketRiskLevelSchema = z.enum([
   "low",
 ]);
 
+/** Validates and normalizes the ticket email API payload at the server boundary. */
 export const ticketEmailSchema = z
   .object({
     to: z.array(z.string()).default([]),
@@ -41,6 +44,7 @@ export const ticketEmailSchema = z
     bcc: [],
   });
 
+/** Validates and normalizes the ticket attachment metadata API payload at the server boundary. */
 export const ticketAttachmentMetadataSchema = z.object({
   originalName: z.string().trim().min(1).max(200),
   replacedName: z.string().trim().min(1),
@@ -52,6 +56,7 @@ export const ticketAttachmentMetadataSchema = z.object({
   reason: z.literal("SECURITY_DEMO_REPLACEMENT"),
 });
 
+/** Validates the fields shared by ticket draft, create, and requester-update payloads. */
 export const ticketMutateRequestSchema = z.object({
   id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.coerce.number().int().positive().nullable().optional(),
@@ -67,12 +72,17 @@ export const ticketMutateRequestSchema = z.object({
   images: z.array(ticketAttachmentMetadataSchema).default([]),
 });
 
+/** Validates ticket creation payloads and requires a non-draft submission mode. */
 export const ticketCreateRequestSchema = ticketMutateRequestSchema;
 
+/** Defines the ticket attachment metadata dto exchanged across the server API boundary. */
 export type TicketAttachmentMetadataDto = TicketAttachmentMetadata;
+/** Defines the ticket mutate request dto exchanged across the server API boundary. */
 export type TicketMutateRequestDto = z.infer<typeof ticketMutateRequestSchema>;
+/** Defines the ticket create request dto exchanged across the server API boundary. */
 export type TicketCreateRequestDto = z.infer<typeof ticketCreateRequestSchema>;
 
+/** Defines the ticket list item dto exchanged across the server API boundary. */
 export type TicketListItemDto = {
   id: string;
   tenant_id: string | null;
@@ -126,6 +136,7 @@ export type TicketListItemDto = {
   age: number;
 };
 
+/** Defines the ticket detail dto exchanged across the server API boundary. */
 export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
   has_been_worker: boolean;
   content: string;
@@ -134,6 +145,7 @@ export type TicketDetailDto = Omit<TicketListItemDto, "age"> & {
   images: TicketAttachmentMetadataDto[];
 };
 
+/** Defines the ticket search sort field dto exchanged across the server API boundary. */
 export type TicketSearchSortFieldDto =
   | "ticketNumber"
   | "createdAt"
@@ -142,11 +154,13 @@ export type TicketSearchSortFieldDto =
   | "priority"
   | "status";
 
+/** Defines the ticket search sort dto exchanged across the server API boundary. */
 export type TicketSearchSortDto = {
   field: TicketSearchSortFieldDto;
   direction: SortDirection;
 };
 
+/** Defines the ticket search request dto exchanged across the server API boundary. */
 export type TicketSearchRequestDto = {
   filter?: RuleGroupTypeIC;
   sort?: TicketSearchSortDto;
@@ -154,6 +168,7 @@ export type TicketSearchRequestDto = {
   pageSize?: number;
 };
 
+/** Defines the ticket search response dto exchanged across the server API boundary. */
 export type TicketSearchResponseDto = {
   items: TicketListItemDto[];
   facets: {

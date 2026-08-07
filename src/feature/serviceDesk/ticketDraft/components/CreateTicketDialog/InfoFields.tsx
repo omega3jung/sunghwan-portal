@@ -175,15 +175,17 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
             )}
           </Field>
 
-          <CollapsibleTrigger asChild>
-            <Button
+          <CollapsibleTrigger
+            render={
+              <Button
               variant="ghost"
               size="sm"
               className="group h-9 w-full justify-between transition-none hover:bg-accent hover:text-accent-foreground md:w-auto md:justify-start"
-            >
+              />
+            }
+          >
               {t("field.email", { ns: "common" })}
-              <ChevronRight className="transition-transform group-data-[state=open]:rotate-90" />
-            </Button>
+              <ChevronRight className="transition-transform group-data-open:rotate-90" />
           </CollapsibleTrigger>
         </div>
 
@@ -228,7 +230,7 @@ export const TicketInfoFields = ({ mode = "edit" }: TicketInfoFieldsProps) => {
 };
 
 const ReadOnlyValue = ({ children }: { children: string }) => (
-  <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm break-words">
+  <div className="flex min-h-9 min-w-0 items-center rounded-md border border-input bg-muted/20 px-3 py-2 text-sm wrap-break-word">
     {children}
   </div>
 );

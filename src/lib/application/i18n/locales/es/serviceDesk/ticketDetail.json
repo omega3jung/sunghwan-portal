@@ -1,0 +1,69 @@
+{
+  "detailAside": {
+    "recipientsTitle": "Destinatarios",
+    "unassigned": "Sin asignar",
+    "ticketNo": "Número del ticket",
+    "currentUserBadge": "Yo",
+    "assignedBadge": "Asignado"
+  },
+  "detailPage": {
+    "detailsTitle": "Detalles del ticket",
+    "descriptionTitleHint": "Detalles principales de la solicitud y la actividad más reciente de un vistazo.",
+    "replyTitle": "Herramientas",
+    "replyTitleHint": "Responde, deja una nota interna y revisa la conversación en un flujo continuo.",
+    "notFound": "No se encontró el ticket."
+  },
+  "recentActivity": {
+    "title": "Actividad reciente",
+    "latestUpdate": {
+      "label": "Última actualización",
+      "empty": "Todavía no hay historial",
+      "fallbackMeta": "La cronología aparecerá aquí"
+    },
+    "conversation": {
+      "label": "Conversación",
+      "empty": "Todavía no hay comentarios",
+      "latestPrefix": "Último",
+      "start": "Inicia la conversación abajo",
+      "count_one": "{{count}} comentario",
+      "count_other": "{{count}} comentarios"
+    },
+    "lastCommenter": {
+      "label": "Último comentarista",
+      "emptyName": "Todavía no hay comentarista",
+      "emptyEmail": "Las actualizaciones aparecerán a medida que avance el ticket"
+    },
+    "history": {
+      "STATUS_UPDATED": "El estado cambió de {{from}} a {{to}}",
+      "STATUS_UPDATED_SIMPLE": "El estado cambió",
+      "ASSIGNMENT_RESOLVED": "El responsable se actualizó",
+      "TICKET_SUBMITTED": "Ticket submitted",
+      "APPROVAL_REQUESTED": "Aprobación solicitada",
+      "APPROVAL_APPROVED": "Aprobación aprobada",
+      "APPROVAL_DECLINED": "Aprobación rechazada",
+      "COMMENT_CREATED": "Comentario agregado",
+      "NOTE_CREATED": "Nota agregada",
+      "COMMENT_UPDATED": "Comentario actualizado",
+      "COMMENT_DELETED": "Comentario eliminado",
+      "WORK_SESSION_UPDATED": "Tiempo registrado actualizado",
+      "MERGED": "Fusionado en {{target}}",
+      "ESCALATED": "Escalado al ticket del portal {{target}}",
+      "TICKET_REJECTED": "Ticket rechazado",
+      "TICKET_CANCELED": "Ticket cancelado",
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "Historial actualizado",
+      "TICKET_UPDATED": "Ticket actualizado",
+      "CATEGORY_UPDATED": "Categoria actualizada",
+      "ASSIGNMENT_UPDATED": "Asignacion actualizada",
+      "NOTE_UPDATED": "Nota actualizada",
+      "NOTE_DELETED": "Nota eliminada",
+      "PLANNING_UPDATED": "Planificacion actualizada",
+      "WORK_SESSION_STARTED": "Sesion de trabajo iniciada",
+      "WORK_SESSION_STOPPED": "Sesion de trabajo detenida",
+      "WORK_SESSION_DELETED": "Sesion de trabajo eliminada"
+    }
+  }
+}

@@ -1,3 +1,3 @@
-// src/domain/organization/company/index.ts
+// src/domain/organization/workShift/index.ts
 
 export * from "./model";

@@ -8,8 +8,10 @@ import type {
 } from "./ticketActionDto";
 import type { TicketActionRow } from "./ticketActionRow";
 
+/** Lets action persistence share the transaction that mutates its ticket. */
 export type TicketActionRepositoryOptions = ServiceDeskRepositoryOptions;
 
+/** Describes the validated create ticket action row input accepted by this server operation. */
 export type CreateTicketActionRowInput = {
   ticketId: string;
   actionNo: number;
@@ -21,6 +23,7 @@ export type CreateTicketActionRowInput = {
   images: Attach[];
 };
 
+/** Describes the validated create approval ticket action row input accepted by this server operation. */
 export type CreateApprovalTicketActionRowInput = {
   ticketId: string;
   actionType: ApprovalTicketActionType;
@@ -138,6 +141,7 @@ returning
 ${TICKET_ACTION_ROW_COLUMNS};
 `;
 
+/** Queries PostgreSQL for active ticket action rows by ticket id without applying presentation concerns. */
 export async function findActiveTicketActionRowsByTicketId(
   ticketId: string,
   options: TicketActionRepositoryOptions = {},
@@ -150,6 +154,7 @@ export async function findActiveTicketActionRowsByTicketId(
   );
 }
 
+/** Queries PostgreSQL for next ticket action no without applying presentation concerns. */
 export async function findNextTicketActionNo(
   ticketId: string,
   options: TicketActionRepositoryOptions = {},
@@ -163,6 +168,7 @@ export async function findNextTicketActionNo(
   return Number(rows[0]?.action_no ?? 1);
 }
 
+/** Queries PostgreSQL for active ticket action row by ticket id and no without applying presentation concerns. */
 export async function findActiveTicketActionRowByTicketIdAndNo(
   ticketId: string,
   actionNo: number,
@@ -177,6 +183,7 @@ export async function findActiveTicketActionRowByTicketIdAndNo(
   return rows[0] ?? null;
 }
 
+/** Creates ticket action row through the server persistence boundary. */
 export async function createTicketActionRow(
   input: CreateTicketActionRowInput,
   options: TicketActionRepositoryOptions = {},
@@ -196,6 +203,7 @@ export async function createTicketActionRow(
   return rows[0] ?? null;
 }
 
+/** Creates approval ticket action row through the server persistence boundary. */
 export async function createApprovalTicketActionRow(
   input: CreateApprovalTicketActionRowInput,
   options: TicketActionRepositoryOptions = {},
@@ -215,6 +223,7 @@ export async function createApprovalTicketActionRow(
   return rows[0] ?? null;
 }
 
+/** Removes or deactivates ticket action row through the server persistence boundary. */
 export async function softDeleteTicketActionRow(
   ticketId: string,
   actionNo: number,

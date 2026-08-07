@@ -1,3 +1,4 @@
+import type { TicketActionExecutionMode } from "@/lib/application/contracts/serviceDesk";
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import { updateTicketStatusById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
@@ -9,9 +10,9 @@ import {
   assertWorkAssigneeOrAdmin,
   type NormalizedTicketActionPayload,
   requireNextTicketStatus,
-  type TicketActionExecutionMode,
 } from "../ticketActionRules";
 
+/** Executes reject ticket action after shared authorization and payload validation have succeeded. */
 export async function executeRejectTicketAction({
   ticket,
   ticketId,

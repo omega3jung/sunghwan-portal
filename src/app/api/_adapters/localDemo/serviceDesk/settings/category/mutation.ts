@@ -10,6 +10,13 @@ import {
 } from "./categoryUtils";
 import { buildSynchronizedCategory } from "./treeSync";
 
+/**
+ * Reconciles one submitted category tree into mutable LOCAL settings state.
+ *
+ * Submitted nodes are updated or assigned stable demo IDs. Existing nodes not
+ * present in the payload are preserved because category removal is modeled as
+ * deactivation, protecting references held by existing tickets and history.
+ */
 export const localSaveCategoryTree = ({
   isInternal,
   payload,

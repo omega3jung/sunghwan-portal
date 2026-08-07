@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon } from "lucide-react";
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type SubmitEvent, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -146,12 +146,12 @@ export function WorkSessionToolContent({
   const isSubmitBlockedByActiveTab =
     activeTab === "duration" ? currentTrackedMinutes <= 0 : !startAt || !endAt;
 
-  const disableSubmit =
-    !ticket ||
-    isPending ||
-    isSubmitBlockedByActiveTab ||
-    Boolean(noteErrorKey) ||
-    Boolean(statusGuardErrorKey);
+  const canSubmit =
+    Boolean(ticket) &&
+    !isPending &&
+    !isSubmitBlockedByActiveTab &&
+    !noteErrorKey &&
+    !statusGuardErrorKey;
 
   const submitLabel = nextStatus
     ? t("action.workSession.submitWithStatus")
@@ -206,7 +206,7 @@ export function WorkSessionToolContent({
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitErrorKey("");
 
@@ -251,7 +251,6 @@ export function WorkSessionToolContent({
       await mutationToast(promise, "update", t("field.workSession"));
       onClose();
     } catch {
-      // Toast is handled by useMutationToast.
     }
   };
 
@@ -370,7 +369,7 @@ export function WorkSessionToolContent({
         }
       />
 
-      <Button type="submit" className="w-full" disabled={disableSubmit}>
+      <Button type="submit" className="w-full" disabled={!canSubmit}>
         {isPending ? t("action.workSession.submitting") : submitLabel}
       </Button>
     </form>

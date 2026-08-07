@@ -27,18 +27,20 @@ export function BreadcrumbDropdown({
 }: BreadcrumbDropdownProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
+      <DropdownMenuTrigger
+        render={
+          <button
           type="button"
           aria-current={isCurrentPage ? "page" : undefined}
           className={cn(
             "group inline-flex min-w-0 items-center gap-1.5 rounded-sm outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             isCurrentPage ? "text-foreground" : "text-muted-foreground",
           )}
-        >
+          />
+        }
+      >
           <span className="flex min-w-0 items-center gap-1.5">{label}</span>
           <ChevronDown className="size-3 shrink-0 opacity-70" />
-        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start" className="min-w-48">
@@ -58,10 +60,11 @@ export function BreadcrumbDropdown({
           }
 
           return (
-            <DropdownMenuItem key={item.id} asChild>
-              <Link href={item.href} className="min-w-0">
+            <DropdownMenuItem
+              key={item.id}
+              render={<Link href={item.href} className="min-w-0" />}
+            >
                 {content}
-              </Link>
             </DropdownMenuItem>
           );
         })}

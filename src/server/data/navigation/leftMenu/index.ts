@@ -1,3 +1,4 @@
+// src/server/data/navigation/leftMenu/index.ts
 export * from "./leftMenuDto";
 export * from "./leftMenuMapper";
 export * from "./leftMenuRepository";

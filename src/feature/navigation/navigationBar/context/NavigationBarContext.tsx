@@ -48,6 +48,7 @@ export function NavigationBarProvider({ children }: { children: ReactNode }) {
   );
 
   const resetCurrentLabel = useCallback((pathname: string) => {
+    // An unmounting page must not clear a label already registered by the next route.
     setState((current) =>
       current.pathname === pathname ? initialState : current,
     );

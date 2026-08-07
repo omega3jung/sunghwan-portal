@@ -4,6 +4,7 @@ import { CategoryScope } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import { LocalizedText } from "@/shared/types";
 
+/** Describes resolved category snapshot used by the server-side LOCAL ticket adapter. */
 export type ResolvedCategorySnapshot = {
   id: string;
   tenantId: string;
@@ -15,6 +16,7 @@ export type ResolvedCategorySnapshot = {
   defaultRiskLevel: RiskLevel | null;
 };
 
+/** Resolves category snapshot using the server-side LOCAL ticket adapter policy. */
 export function resolveCategorySnapshot({
   isInternal,
   categoryId,

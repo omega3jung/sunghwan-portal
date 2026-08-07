@@ -1,6 +1,7 @@
 ﻿import { EmployeeResponseDto } from "./employeesDto";
 import { DbEmployeeRow } from "./employeesRow";
 
+/** Maps employee response dto across the database and API boundary. */
 export function toEmployeeResponseDto(row: DbEmployeeRow): EmployeeResponseDto {
   return {
     employeeId: row.e_id,
@@ -22,6 +23,7 @@ export function toEmployeeResponseDto(row: DbEmployeeRow): EmployeeResponseDto {
   };
 }
 
+/** Maps employees response dto across the database and API boundary. */
 export function toEmployeesResponseDto(
   rows: DbEmployeeRow[],
 ): EmployeeResponseDto[] {

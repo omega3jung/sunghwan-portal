@@ -1,5 +1,6 @@
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
+/** Resolves ticket year using the server-side LOCAL ticket adapter policy. */
 export function resolveTicketYear(
   tickets: DbTicketDetail[],
   nowIso: string,
@@ -17,6 +18,7 @@ export function resolveTicketYear(
   return Math.max(...years);
 }
 
+/** Resolves next ticket sequence using the server-side LOCAL ticket adapter policy. */
 export function resolveNextTicketSequence(
   tickets: DbTicketDetail[],
   year: number,
@@ -37,10 +39,12 @@ export function resolveNextTicketSequence(
   return (numbers.length ? Math.max(...numbers) : 0) + 1;
 }
 
+/** Creates ticket ID for the server-side LOCAL ticket adapter. */
 export function createTicketId(year: number, sequence: number) {
   return `sunghwan-portal-${year}-${sequence}`;
 }
 
+/** Creates ticket number for the server-side LOCAL ticket adapter. */
 export function createTicketNumber(year: number, sequence: number) {
   return `SP-${year}-${String(sequence).padStart(4, "0")}`;
 }

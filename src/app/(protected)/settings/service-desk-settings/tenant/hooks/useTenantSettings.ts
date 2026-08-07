@@ -114,7 +114,9 @@ export function useTenantSettings({
     lastInitialSignatureRef.current = initialSignature;
 
     if (matchesLatestQuery) {
-      setSavedSignature(initialSignature);
+      if (savedSignature !== initialSignature) {
+        setSavedSignature(initialSignature);
+      }
       return;
     }
 
@@ -131,17 +133,25 @@ export function useTenantSettings({
       availableCompanies.map((company) => company.id),
     );
 
-    setSelectedCompanyIds((currentIds) =>
-      currentIds.filter((companyId) => availableCompanyIds.has(companyId)),
-    );
+    setSelectedCompanyIds((currentIds) => {
+      const nextIds = currentIds.filter((companyId) =>
+        availableCompanyIds.has(companyId),
+      );
+
+      return nextIds.length === currentIds.length ? currentIds : nextIds;
+    });
   }, [availableCompanies]);
 
   useEffect(() => {
     const tenantIds = new Set(tenants.map((tenant) => tenant.id));
 
-    setSelectedTenantIds((currentIds) =>
-      currentIds.filter((tenantId) => tenantIds.has(tenantId)),
-    );
+    setSelectedTenantIds((currentIds) => {
+      const nextIds = currentIds.filter((tenantId) =>
+        tenantIds.has(tenantId),
+      );
+
+      return nextIds.length === currentIds.length ? currentIds : nextIds;
+    });
     setFocusedTenantId((currentId) =>
       currentId && tenantIds.has(currentId) ? currentId : null,
     );
@@ -411,13 +421,12 @@ export function useTenantSettings({
     companyList: {
       companies: availableCompanies,
       selectedCompanyIds,
-      disabled: isSaving,
+      canSelectCompanies: !isSaving,
       onSelectCompany: handleCompanySelect,
     },
     transferControls: {
       canAddTenants: selectedCompanyIds.length > 0 && !isSaving,
       canRemoveTenants: removableSelectedTenantIds.length > 0 && !isSaving,
-      disabled: isSaving,
       onAddTenants: handleAddTenants,
       onRemoveTenants: handleRemoveTenants,
     },
@@ -429,7 +438,7 @@ export function useTenantSettings({
     },
     settingInfo: {
       tenant: focusedTenant,
-      disabled: isSaving,
+      canEditTenant: !isSaving,
       onTenantNameChange: handleTenantNameChange,
       onTenantColorChange: handleTenantColorChange,
     },

@@ -269,7 +269,7 @@ function LauncherButton({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "min-w-0 items-start justify-start gap-3 rounded-lg border border-border/50 p-3 text-left whitespace-normal transition-colors hover:bg-muted/30",
+          "min-w-0 items-start justify-start gap-3 border-border/50 p-3 text-left whitespace-normal transition-colors hover:bg-muted/30",
         "h-auto min-h-24 sm:min-h-28 sm:p-4",
         isPrimary ? "col-span-2 md:col-span-1" : "",
       ].join(" ")}
@@ -278,10 +278,10 @@ function LauncherButton({
         {actionIcons[action]}
       </div>
       <div className="min-w-0 space-y-1">
-        <p className="break-words font-medium leading-5">
+        <p className="wrap-break-word font-medium leading-5">
           {t(getTicketActionModeLabelKey(action))}
         </p>
-        <p className="break-words text-sm text-muted-foreground">
+        <p className="wrap-break-word text-sm text-muted-foreground">
           {t(`actionTool.launcher.${action}`)}
         </p>
       </div>

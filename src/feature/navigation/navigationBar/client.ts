@@ -1,3 +1,4 @@
+// src/feature/navigation/navigationBar/client.ts
 "use client";
 
 export { NavigationBar } from "./components/NavigationBar";

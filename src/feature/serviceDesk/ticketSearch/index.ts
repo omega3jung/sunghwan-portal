@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/search/index.ts
+// src/feature/serviceDesk/ticketSearch/index.ts
 
 export * from "./forms";
 export * from "./statusFilter";

@@ -20,6 +20,7 @@ import {
   toTenantWritePayload,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Handles GET /api/service-desk/tenants; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);
@@ -68,6 +69,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/** Handles POST /api/service-desk/tenants; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   try {
     await requireServiceDeskSettingsRouteAccess(request);

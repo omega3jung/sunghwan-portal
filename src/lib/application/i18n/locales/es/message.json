@@ -71,10 +71,13 @@
     "timeout": "El tiempo ha expirado.",
     "differentId": "El ID verificado es diferente del ID actual. Verifique el OTP nuevamente."
   },
+  "fileAttachment": {
+    "limitTitle": "Revisa los archivos seleccionados."
+  },
   "remoteRouteGuard": {
     "limited": {
       "title": "La demostración remota es limitada",
-      "description": "Las páginas con base de datos aún se están conectando. Por ahora, usa las páginas Home, Demo o Documents."
+      "description": "El acceso directo a la interfaz de Service Desk está deshabilitado en la demostración remota desplegada. Usa Home, Demo, Settings o Documents."
     }
   }
 }

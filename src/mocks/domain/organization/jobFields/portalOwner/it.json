@@ -5,7 +5,7 @@
     "jf_description": { "en": "" },
     "jf_department_id": 10,
     "jf_company_id": 1,
-    "jf_parent_id": 0,
+    "jf_parent_id": null,
     "jf_active": true
   },
   {

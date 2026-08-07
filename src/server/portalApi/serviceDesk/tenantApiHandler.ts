@@ -31,6 +31,7 @@ const TENANT_DETAIL_CONTEXT_PATH_PATTERN =
   /^\/service-desk\/tenants\/([^/]+)\/context$/;
 const TENANT_DETAIL_PATH_PATTERN = /^\/service-desk\/tenants\/([^/]+)$/;
 
+/** Routes tenant settings operations and limits mutations to authorized administrators. */
 export async function handleTenantPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {

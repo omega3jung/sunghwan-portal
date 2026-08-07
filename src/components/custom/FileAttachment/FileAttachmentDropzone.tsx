@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 type FileAttachmentDropzoneProps = {
@@ -23,7 +24,9 @@ export const FileAttachmentDropzone = ({
   inputRef,
   accept,
 }: FileAttachmentDropzoneProps) => {
-  const { t } = useTranslation("FileAttachment");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "fileAttachment",
+  });
 
   const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -46,7 +49,7 @@ export const FileAttachmentDropzone = ({
         onDragEnter={(event) => event.preventDefault()}
         onDragOver={(event) => event.preventDefault()}
         className={cn(
-          "rounded-xs h-32 w-full border border-dashed",
+          "h-32 w-full rounded-xs border-dashed",
           files.length >= maxCount &&
             "cursor-not-allowed border-gray-500 bg-gray-50 text-gray-500",
         )}

@@ -11,7 +11,7 @@ import { UPDATE_TICKET_REVIEW_STEP } from "../../hooks/useUpdateTicketDialog";
 
 type UpdateTicketDialogFooterProps = {
   currentStep: number;
-  disabled: boolean;
+  canProceed: boolean;
   isBusy: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -19,7 +19,7 @@ type UpdateTicketDialogFooterProps = {
 
 export function UpdateTicketDialogFooter({
   currentStep,
-  disabled,
+  canProceed,
   isBusy,
   onBack,
   onNext,
@@ -27,7 +27,7 @@ export function UpdateTicketDialogFooter({
   const { t } = useTranslation(NS.serviceDesk);
 
   return (
-    <DialogFooter className="grid grid-cols-2 items-stretch gap-2 px-4 py-3 md:px-6 md:py-4 md:flex">
+    <DialogFooter className="grid grid-cols-2 items-stretch px-4 py-3 md:flex md:px-6 md:py-4">
       <Button
         type="button"
         variant="outline"
@@ -42,7 +42,7 @@ export function UpdateTicketDialogFooter({
       <Button
         type="button"
         className="w-full gap-2 whitespace-normal sm:w-48"
-        disabled={disabled}
+        disabled={!canProceed}
         onClick={onNext}
       >
         {isBusy ? (

@@ -13,6 +13,7 @@ import {
   toCompanyWritePayload,
 } from "@/lib/application/contracts/organization";
 
+/** Handles GET /api/companies; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
+/** Handles POST /api/companies; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const isRemote = await isRemoteRequest(request);
 

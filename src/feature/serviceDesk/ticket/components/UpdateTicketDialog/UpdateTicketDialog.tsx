@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -26,7 +26,7 @@ type UpdateTicketDialogProps = {
   categories: MainCategory[];
   users: ImageValueLabel[];
   language: SupportedLanguage;
-  trigger: ReactNode;
+  trigger: ReactElement;
 };
 
 export function UpdateTicketDialog({
@@ -60,14 +60,15 @@ export function UpdateTicketDialog({
   const isBusy = isLoadingTicket || isPending || isSubmitting;
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange} modal={false}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+    <Dialog
+      open={open}
+      onOpenChange={handleOpenChange}
+      modal={false}
+      disablePointerDismissal
+    >
+      <DialogTrigger render={trigger} />
       <DialogContent
-        className="grid h-full min-h-0 min-w-0 w-full max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[760px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
-        onInteractOutside={(event) => event.preventDefault()}
-        onPointerDownOutside={(event) => event.preventDefault()}
-        onFocusOutside={(event) => event.preventDefault()}
-        overlayStyle="dark"
+        className="h-full min-h-0 min-w-0 max-w-full grid-rows-[auto_1fr_auto] gap-0 overflow-hidden rounded-none p-0 md:h-[760px] md:max-h-[90vh] md:max-w-4xl md:rounded-lg"
       >
         <UpdateTicketDialogHeader />
 
@@ -117,7 +118,7 @@ export function UpdateTicketDialog({
 
         <UpdateTicketDialogFooter
           currentStep={currentStep}
-          disabled={isBusy || !ticket || !!loadError}
+          canProceed={!isBusy && Boolean(ticket) && !loadError}
           isBusy={isBusy}
           onBack={moveToBack}
           onNext={() => {

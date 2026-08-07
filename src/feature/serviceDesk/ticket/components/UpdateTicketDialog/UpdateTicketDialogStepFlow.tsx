@@ -13,7 +13,7 @@ export function UpdateTicketDialogStepFlow({
 }: UpdateTicketDialogStepFlowProps) {
   return (
     <Stepper
-      className="mb-4 hidden rounded-md border px-4 pb-8 pt-3 md:flex lg:px-8"
+      className="mb-4 hidden rounded-md border px-4 py-3 md:flex lg:px-8"
       currentStep={currentStep}
       onStepChange={onStepChange}
       orientation="horizontal"

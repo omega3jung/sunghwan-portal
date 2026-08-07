@@ -1,11 +1,14 @@
 import {
   Bar,
   BarChart,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   LabelList,
   Pie,
   PieChart,
+  type PieSectorShapeProps,
+  Rectangle,
+  Sector,
   XAxis,
   YAxis,
 } from "recharts";
@@ -22,22 +25,23 @@ import { cn } from "@/shared/utils/presentation";
 
 import { SummaryChartProps } from "./types";
 
+const CHART_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+] as const;
+
 const chartConfig = {
   count: {
     label: "Tickets",
-    color: "hsl(var(--chart-1))",
+    color: CHART_COLORS[0],
   },
 } satisfies ChartConfig;
 
-const ACTIVE_COLOR = "hsl(var(--primary))";
-const DEFAULT_COLOR = "hsl(var(--chart-3))";
-const DONUT_COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
+const ACTIVE_COLOR = "var(--primary)";
+const DEFAULT_COLOR = CHART_COLORS[2];
 
 const SummaryChartSkeleton = () => {
   return (
@@ -143,30 +147,38 @@ export const SummaryChartCard = ({
                   />
                 }
               />
-              <Bar dataKey="count" radius={4}>
-                <LabelList
-                  dataKey="count"
-                  position="right"
-                  className="fill-foreground text-[11px]"
-                />
-                {chartData.map((item) => {
-                  const selected = activeValue === item.value;
+              <Bar
+                dataKey="count"
+                radius={4}
+                shape={(props: BarShapeProps) => {
+                  const item = chartData[props.index];
+                  const selected = activeValue === item?.value;
 
                   return (
-                    <Cell
-                      key={item.value}
+                    <Rectangle
+                      {...props}
                       cursor={onSelect ? "pointer" : "default"}
                       fill={selected ? ACTIVE_COLOR : DEFAULT_COLOR}
                       fillOpacity={selected ? 1 : 0.7}
                       className={cn(
                         onSelect && "transition-opacity hover:opacity-90",
                       )}
-                      onClick={() => {
-                        onSelect?.(item);
-                      }}
                     />
                   );
-                })}
+                }}
+                onClick={(_data, index) => {
+                  const item = chartData[index];
+
+                  if (item) {
+                    onSelect?.(item);
+                  }
+                }}
+              >
+                <LabelList
+                  dataKey="count"
+                  position="right"
+                  className="fill-foreground text-[11px]"
+                />
               </Bar>
             </BarChart>
           </ChartContainer>
@@ -210,27 +222,32 @@ export const SummaryChartCard = ({
                 label={({ name, payload }) =>
                   String(payload?.label ?? name ?? "")
                 }
-              >
-                {chartData.map((item, index) => {
-                  const selected = activeValue === item.value;
+                shape={(props: PieSectorShapeProps) => {
+                  const item = chartData[props.index];
+                  const selected = activeValue === item?.value;
 
                   return (
-                    <Cell
-                      key={item.value}
+                    <Sector
+                      {...props}
                       cursor={onSelect ? "pointer" : "default"}
-                      fill={DONUT_COLORS[index % DONUT_COLORS.length]}
+                      fill={CHART_COLORS[props.index % CHART_COLORS.length]}
                       fillOpacity={selected ? 1 : 0.7}
                       stroke={selected ? ACTIVE_COLOR : "transparent"}
                       strokeWidth={selected ? 2 : 1}
                       className={cn(
                         onSelect && "transition-opacity hover:opacity-90",
                       )}
-                      onClick={() => {
-                        onSelect?.(item);
-                      }}
                     />
                   );
-                })}
+                }}
+                onClick={(_data, index) => {
+                  const item = chartData[index];
+
+                  if (item) {
+                    onSelect?.(item);
+                  }
+                }}
+              >
               </Pie>
             </PieChart>
           </ChartContainer>

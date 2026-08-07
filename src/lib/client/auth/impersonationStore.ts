@@ -4,6 +4,13 @@ import { create } from "zustand";
 
 import { AppUser } from "@/domain/user";
 
+/**
+ * Holds the client projection of original and effective impersonation users.
+ *
+ * `currentUser` is derived as `impersonatedUser ?? originalUser`. The server
+ * still derives effective identity from the signed session/JWT, so this store
+ * is a rendering facade and not authority to begin or authorize impersonation.
+ */
 export type ImpersonationState = {
   originalUser: AppUser | null;
   impersonatedUser: AppUser | null;

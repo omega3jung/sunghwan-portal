@@ -21,7 +21,7 @@ export const getDefaultApprovalData = (
     categoryId,
     stepAssignee: {
       type: "MANAGER",
-      level: 1,
+      managerDistance: 1,
     },
     skipAccessLevel: ACCESS_LEVEL.MANAGER,
     nodeType: "approvalStep",
@@ -33,7 +33,7 @@ export const getDefaultAssigneePayload = (
 ): ApprovalAssigneeType => {
   switch (type) {
     case "MANAGER":
-      return { type, level: 1 };
+      return { type, managerDistance: 1 };
     case "DEPARTMENT":
       return { type, departmentId: "" };
     case "JOB_FIELD":

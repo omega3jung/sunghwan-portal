@@ -1,0 +1,54 @@
+{
+  "ticketUpdate": {
+    "trigger": "Mettre à jour le ticket",
+    "title": "Mettre à jour le ticket",
+    "description": "Mettre à jour les champs modifiables par le demandeur.",
+    "loadingTicket": "Chargement du ticket...",
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    },
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    },
+    "step": {
+      "info": "Détails du problème",
+      "attachment": "Pièces jointes",
+      "review": "Vérification"
+    },
+    "routing": {
+      "preserve": "Les changements limités à l'échéance ou aux destinataires conservent l'approbation et l'assignation actuelles.",
+      "reset": "Modifier les détails de la demande autres que l'échéance ou l'e-mail recalcule les étapes d'approbation et l'affectation du responsable."
+    },
+    "field": {
+      "existingFiles": "Fichiers existants",
+      "existingImages": "Images existantes",
+      "newAttachments": "Nouvelles pièces jointes"
+    },
+    "empty": {
+      "existingAttachments": "Aucune pièce jointe existante.",
+      "newAttachments": "Aucune nouvelle pièce jointe."
+    },
+    "action": {
+      "submit": "Mettre à jour",
+      "submitting": "Mise à jour..."
+    },
+    "error": {
+      "load": "Impossible de charger les derniers détails du ticket."
+    }
+  },
+  "listPage": {
+    "title": "IT Service Desk",
+    "description": "Recherchez et parcourez les tickets du centre de services."
+  },
+  "ticketList": {
+    "empty": "Aucun ticket trouvé",
+    "requesterMeta": "{{name}} ??{{time}}",
+    "dueMeta": "Échéance {{time}}"
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext doit être utilisé à l'intérieur du provider."
+  }
+}

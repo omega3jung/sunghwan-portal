@@ -8,7 +8,6 @@ import { categoryQueryKeys } from "./queryKeys";
 export const useSaveServiceDeskCategoryTree = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskCategoryApi.saveTree,
     onSuccess: async () => {

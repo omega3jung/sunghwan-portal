@@ -13,6 +13,7 @@ type TicketOwnershipResource = Pick<
 
 const CURRENT_USERNAME_HEADER = "X-Current-Username";
 
+/** Adds requester, assignee, and prior-worker flags derived for the current session user. */
 export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
   ticket: T,
   currentUserName: string | null,
@@ -35,6 +36,7 @@ export function withDerivedTicketOwnership<T extends TicketOwnershipResource>(
   };
 }
 
+/** Adds current-user ownership flags to every ticket in a list response. */
 export function withDerivedTicketOwnershipList<
   T extends TicketOwnershipResource,
 >(tickets: readonly T[], currentUserName: string | null): T[] {
@@ -43,6 +45,7 @@ export function withDerivedTicketOwnershipList<
   );
 }
 
+/** Forwards the authenticated username through the internal proxy boundary for ownership projection. */
 export function toCurrentUsernameProxyHeaders(
   currentUserName: string | null,
 ): HeadersInit | undefined {

@@ -1,5 +1,6 @@
 import { Priority, RiskLevel } from "@/domain/common";
 
+/** Resolves priority value using the server-side LOCAL ticket adapter policy. */
 export function resolvePriorityValue(
   value: string | null,
   fallback: Priority,
@@ -18,6 +19,7 @@ export function resolvePriorityValue(
   return fallback;
 }
 
+/** Resolves risk level value using the server-side LOCAL ticket adapter policy. */
 export function resolveRiskLevelValue(
   value: string | null | undefined,
   fallback: RiskLevel,

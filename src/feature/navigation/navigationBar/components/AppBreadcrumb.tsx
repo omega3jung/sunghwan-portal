@@ -24,7 +24,7 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
 
   return (
     <Breadcrumb className="min-w-0 flex-1">
-      <BreadcrumbList className="flex-nowrap text-sm">
+      <BreadcrumbList className="flex-nowrap">
         {items.map((item, index) => {
           const isCurrentPage = index === items.length - 1;
 
@@ -70,13 +70,15 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
                     {content}
                   </span>
                 ) : (
-                  <BreadcrumbLink asChild>
-                    <Link
+                  <BreadcrumbLink
+                    render={
+                      <Link
                       href={item.href}
                       className="group flex min-w-0 items-center gap-1.5 transition-colors hover:text-foreground"
-                    >
+                      />
+                    }
+                  >
                       {content}
-                    </Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

@@ -6,6 +6,7 @@ type LegacyTicketAttachmentInput = {
   url?: string;
 };
 
+/** Normalizes legacy attachment inputs and partitions them into file and image lists. */
 export function splitAttachments(attachment: LegacyTicketAttachmentInput[]) {
   const normalized = attachment.map((item, index) => ({
     name: item.name?.trim() || `attachment-${index + 1}`,

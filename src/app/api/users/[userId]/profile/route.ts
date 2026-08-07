@@ -7,6 +7,7 @@ import { UserIdRouteContext } from "@/app/api/_adapters/http";
 import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
 import { AppUser } from "@/domain/user";
 
+/** Handles GET /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
   });
 }
 
+/** Handles POST /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);
@@ -59,6 +61,7 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
   });
 }
 
+/** Handles PUT /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
   const isRemote = await isRemoteRequest(req);

@@ -9,8 +9,10 @@ import {
   type TicketHistoryRepositoryOptions,
 } from "./ticketHistoryRepository";
 
+/** Configures ticket history service without leaking infrastructure details to callers. */
 export type TicketHistoryServiceOptions = TicketHistoryRepositoryOptions;
 
+/** Creates ticket history through the server persistence boundary. */
 export async function createTicketHistory(
   input: CreateTicketHistoryInput,
   options?: TicketHistoryServiceOptions,
@@ -30,6 +32,7 @@ export async function createTicketHistory(
   return mapTicketHistoryRowToDto(row);
 }
 
+/** Loads ticket histories by ticket id through the server data boundary. */
 export async function getTicketHistoriesByTicketId(
   ticketId: string,
   options?: TicketHistoryServiceOptions,

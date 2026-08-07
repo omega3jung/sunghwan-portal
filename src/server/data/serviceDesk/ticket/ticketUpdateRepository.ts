@@ -14,6 +14,7 @@ import {
   RequesterUpdateTicketRowInput,
 } from "./ticketUpdateRow";
 
+/** Lets requester ticket updates reuse a caller-owned PostgreSQL transaction. */
 export type RequesterUpdateTicketRepositoryOptions = TicketRepositoryOptions;
 
 const FIND_ACTIVE_REQUESTER_UPDATE_CATEGORY_SNAPSHOT_BY_ID_QUERY = `
@@ -206,6 +207,7 @@ where tk_id = $1
 returning tk_id;
 `;
 
+/** Queries PostgreSQL for requester update ticket view row by id without applying presentation concerns. */
 export async function findRequesterUpdateTicketViewRowById(
   ticketId: string,
   options: RequesterUpdateTicketRepositoryOptions = {},
@@ -213,6 +215,7 @@ export async function findRequesterUpdateTicketViewRowById(
   return findActiveTicketViewRowByIdIncludingDraft(ticketId, options);
 }
 
+/** Queries PostgreSQL for active requester update category snapshot by id without applying presentation concerns. */
 export async function findActiveRequesterUpdateCategorySnapshotById(
   categoryId: string | number,
   options: RequesterUpdateTicketRepositoryOptions = {},
@@ -226,6 +229,7 @@ export async function findActiveRequesterUpdateCategorySnapshotById(
   return rows[0] ?? null;
 }
 
+/** Updates requester ticket row by id while preserving server-side validation and persistence rules. */
 export async function updateRequesterTicketRowById(
   ticketId: string,
   input: RequesterUpdateTicketRowInput,
@@ -257,6 +261,7 @@ export async function updateRequesterTicketRowById(
     : null;
 }
 
+/** Defines the submit draft ticket row by id used by the PostgreSQL repository boundary. */
 export async function submitDraftTicketRowById(
   ticketId: string,
   input: CreateTicketRowInput,
@@ -291,6 +296,7 @@ export async function submitDraftTicketRowById(
     : null;
 }
 
+/** Updates ticket initial routing by id while preserving server-side validation and persistence rules. */
 export async function updateTicketInitialRoutingById(
   ticketId: string,
   input: {
@@ -312,6 +318,7 @@ export async function updateTicketInitialRoutingById(
     : null;
 }
 
+/** Updates ticket approval routing by id while preserving server-side validation and persistence rules. */
 export async function updateTicketApprovalRoutingById(
   ticketId: string,
   input: {
@@ -344,6 +351,7 @@ export async function updateTicketApprovalRoutingById(
     : null;
 }
 
+/** Updates ticket assignees by id while preserving server-side validation and persistence rules. */
 export async function updateTicketAssigneesById(
   ticketId: string,
   input: {
@@ -364,6 +372,7 @@ export async function updateTicketAssigneesById(
     : null;
 }
 
+/** Updates ticket planning by id while preserving server-side validation and persistence rules. */
 export async function updateTicketPlanningById(
   ticketId: string,
   input: {
@@ -385,6 +394,7 @@ export async function updateTicketPlanningById(
     : null;
 }
 
+/** Updates ticket status by id while preserving server-side validation and persistence rules. */
 export async function updateTicketStatusById(
   ticketId: string,
   input: { status: ServiceDeskTicketViewRow["tk_status"] },
@@ -402,6 +412,7 @@ export async function updateTicketStatusById(
     : null;
 }
 
+/** Defines the start assigned ticket work by id used by the PostgreSQL repository boundary. */
 export async function startAssignedTicketWorkById(
   ticketId: string,
   input: { assigneeUsername: string },
@@ -419,6 +430,7 @@ export async function startAssignedTicketWorkById(
     : null;
 }
 
+/** Updates ticket work progress by id while preserving server-side validation and persistence rules. */
 export async function updateTicketWorkProgressById(
   ticketId: string,
   input: {
@@ -439,6 +451,7 @@ export async function updateTicketWorkProgressById(
     : null;
 }
 
+/** Updates ticket merge state by id while preserving server-side validation and persistence rules. */
 export async function updateTicketMergeStateById(
   ticketId: string,
   options: TicketRepositoryOptions = {},
@@ -455,6 +468,7 @@ export async function updateTicketMergeStateById(
     : null;
 }
 
+/** Updates ticket close state by id while preserving server-side validation and persistence rules. */
 export async function updateTicketCloseStateById(
   ticketId: string,
   options: TicketRepositoryOptions = {},
@@ -471,6 +485,7 @@ export async function updateTicketCloseStateById(
     : null;
 }
 
+/** Defines the close resolved ticket by id used by the PostgreSQL repository boundary. */
 export async function closeResolvedTicketById(
   ticketId: string,
   options: TicketRepositoryOptions = {},

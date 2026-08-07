@@ -1,49 +1,40 @@
-import { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { TenantCategoryTree } from "@/domain/serviceDesk";
+import type { TreeNodes } from "@/components/custom/SortableTree";
+import type { TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { MAX_SUB_CATEGORY_PER_CATEGORY } from "../constants";
-import { CategoryData, SubCategoryData } from "../types";
+import type { CategoryData, SubCategoryData } from "../types";
 
-export const mapCategoryData = (
+export function createCategoryTree(
   categories: TenantCategoryTree[],
   tenantId: string,
-): CategoryData[] => {
-  if (!categories?.length) {
+): TreeNodes<CategoryData | SubCategoryData> {
+  const currentTenant = categories.find((tenant) => tenant.id === tenantId);
+
+  if (!currentTenant) {
     return [];
   }
 
-  const current = categories.find((category) => category.id === tenantId);
+  return currentTenant.categories.map((category) => {
+    const { subCategories, ...categoryData } = category;
 
-  if (!current) {
-    return [];
-  }
-
-  return current.categories.map((cat): CategoryData => {
     return {
-      ...cat,
-      isCreated: false,
-      subCategories: cat.subCategories.map((sub): SubCategoryData => {
-        return {
-          ...sub,
+      id: category.id,
+      data: {
+        ...categoryData,
+        nodeType: "category" as const,
+        isCreated: false,
+      },
+      collapsed: false,
+      maximum: MAX_SUB_CATEGORY_PER_CATEGORY,
+      children: subCategories.map((subCategory) => ({
+        id: subCategory.id,
+        data: {
+          ...subCategory,
+          nodeType: "subCategory" as const,
           isCreated: false,
-        };
-      }),
+        },
+        children: [],
+      })),
     };
   });
-};
-
-export const categoryToTree = (
-  categories: CategoryData[],
-): TreeNodes<CategoryData | SubCategoryData> => {
-  return categories.map((main) => ({
-    id: main.id,
-    data: main,
-    collapsed: false,
-    maximum: MAX_SUB_CATEGORY_PER_CATEGORY,
-    children: main.subCategories.map((sub) => ({
-      id: sub.id,
-      data: sub,
-      children: [],
-    })),
-  }));
-};
+}

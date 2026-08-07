@@ -1,11 +1,12 @@
+// src/server/data/serviceDesk/ticketAction/execute/index.ts
+import type {
+  TicketActionExecutionMode,
+  TicketGeneralActionPath,
+} from "@/lib/application/contracts/serviceDesk";
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 
-import type {
-  NormalizedTicketActionPayload,
-  TicketActionExecutionMode,
-  TicketGeneralActionPath,
-} from "../ticketActionRules";
+import type { NormalizedTicketActionPayload } from "../ticketActionRules";
 import { executeAdjustTicketAction } from "./adjustTicketAction";
 import { executeAssignSelfTicketAction } from "./assignSelfTicketAction";
 import { executeAssignTicketAction } from "./assignTicketAction";
@@ -17,6 +18,7 @@ import { executeRejectTicketAction } from "./rejectTicketAction";
 import { executeReopenTicketAction } from "./reopenTicketAction";
 import { executeResubmitTicketAction } from "./resubmitTicketAction";
 
+/** Routes a validated action to the executor that mutates ticket state and records its effects. */
 export async function applyTicketActionEffect({
   action,
   actionMode,

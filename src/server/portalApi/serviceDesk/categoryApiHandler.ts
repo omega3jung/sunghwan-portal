@@ -38,6 +38,7 @@ const CATEGORY_LIST_PATH_PATTERN = /^\/service-desk\/categories$/;
 const CATEGORY_CONTEXT_PATH_PATTERN =
   /^\/service-desk\/categories\/([^/]+)\/context$/;
 
+/** Routes category-tree reads and writes while enforcing operational versus settings scope. */
 export async function handleCategoryPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {

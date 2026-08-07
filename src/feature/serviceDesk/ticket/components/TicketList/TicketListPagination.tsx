@@ -1,4 +1,3 @@
-// TicketListPagination.tsx
 
 import {
   Pagination,
@@ -98,7 +97,7 @@ export const TicketListPagination = ({
         {startItem}-{endItem} / {totalCount}
       </div>
 
-      <Pagination className="mx-0 w-full sm:w-auto">
+      <Pagination className="mx-0 sm:w-auto">
         <PaginationContent className="flex-wrap justify-center">
           <PaginationItem>
             <PaginationPrevious

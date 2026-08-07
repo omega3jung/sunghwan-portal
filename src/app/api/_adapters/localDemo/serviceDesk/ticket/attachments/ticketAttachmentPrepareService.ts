@@ -1,19 +1,20 @@
 import {
+  type PrepareTicketAttachmentsResponse,
+  TICKET_ATTACHMENT_REPLACEMENT_REASON,
+  type TicketAttachmentExtension,
+  type TicketAttachmentImageExtension,
+  type TicketPreparedAttachment,
+  type TicketPreparedInlineImage,
+} from "@/lib/application/contracts/serviceDesk";
+
+import {
   getDemoUrlByExtension,
   getReplacedNameFromDemoUrl,
   TICKET_ATTACHMENT_EXTENSION_SET,
   TICKET_ATTACHMENT_LIMITS,
   TICKET_INLINE_IMAGE_EXTENSION_SET,
 } from "./demoAttachmentMapping";
-import {
-  PrepareTicketAttachmentsResponseDto,
-  TICKET_ATTACHMENT_REPLACEMENT_REASON,
-  TicketAttachmentExtension,
-  TicketAttachmentImageExtension,
-  TicketAttachmentPrepareInput,
-  TicketPreparedAttachmentDto,
-  TicketPreparedInlineImageDto,
-} from "./ticketAttachmentPrepareDto";
+import { TicketAttachmentPrepareInput } from "./ticketAttachmentPrepareDto";
 
 const IMAGE_SRC_PATTERN =
   /<img\b([^>]*?)\bsrc\s*=\s*(["'])(.*?)\2([^>]*)>/gi;
@@ -28,20 +29,28 @@ const IMAGE_EXTENSION_BY_MIME_TYPE: Record<string, TicketAttachmentImageExtensio
     "image/webp": "webp",
   };
 
+/**
+ * Validates browser attachment input and replaces it with controlled demo metadata.
+ *
+ * Both LOCAL and REMOTE routes currently use this preparation boundary; it is
+ * not production object storage. Raw `File`, base64, blob, remote, and local
+ * file URLs must not cross into ticket DTOs or persistence. The returned body
+ * references only allow-listed `/files/demo-*` assets.
+ */
 export function prepareTicketAttachments({
   body,
   files,
-}: TicketAttachmentPrepareInput): PrepareTicketAttachmentsResponseDto {
+}: TicketAttachmentPrepareInput): PrepareTicketAttachmentsResponse {
   validateSelectedFileLimits(files);
 
-  const preparedFiles: TicketPreparedAttachmentDto[] = [];
-  const preparedImages: TicketPreparedInlineImageDto[] = [];
+  const preparedFiles: TicketPreparedAttachment[] = [];
+  const preparedImages: TicketPreparedInlineImage[] = [];
 
   files.forEach((file) => {
     const prepared = prepareSelectedFile(file);
 
     if (isImageAttachment(prepared.extension, prepared.type)) {
-      preparedImages.push(prepared as TicketPreparedInlineImageDto);
+      preparedImages.push(prepared as TicketPreparedInlineImage);
       return;
     }
 
@@ -75,7 +84,7 @@ function validateSelectedFileLimits(files: File[]) {
   }
 }
 
-function prepareSelectedFile(file: File): TicketPreparedAttachmentDto {
+function prepareSelectedFile(file: File): TicketPreparedAttachment {
   const originalName = normalizeFileName(file.name);
   const extension = resolveFileExtension(originalName);
 
@@ -104,9 +113,11 @@ function prepareSelectedFile(file: File): TicketPreparedAttachmentDto {
 
 function replaceInlineImages(body: string): {
   body: string;
-  images: TicketPreparedInlineImageDto[];
+  images: TicketPreparedInlineImage[];
 } {
-  const images: TicketPreparedInlineImageDto[] = [];
+  // Replace inline images while scanning the original body so count and total
+  // byte limits are enforced before any prepared result is returned.
+  const images: TicketPreparedInlineImage[] = [];
   let inlineImageIndex = 0;
   let inlineImageTotalSize = 0;
 

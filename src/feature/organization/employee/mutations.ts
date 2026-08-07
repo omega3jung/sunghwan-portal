@@ -8,7 +8,6 @@ import { employeeQueryKeys } from "./queryKeys";
 export const useCreateEmployeeMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: employeeApi.create,
     onSuccess: () => {
@@ -20,7 +19,6 @@ export const useCreateEmployeeMutation = () => {
 export const useUpdateEmployeeMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: employeeApi.update,
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const useUpdateEmployeeMutation = () => {
 export const useDeleteEmployeeMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: employeeApi.remove,
     onSuccess: () => {

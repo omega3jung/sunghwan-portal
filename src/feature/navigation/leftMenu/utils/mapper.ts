@@ -1,20 +1,24 @@
-// src/feature/navigation/leftMenu/utils/mapper.ts
-
-import type { DbMenuItem, MenuItem, MenuItemType } from "../types";
+import type {
+  DbMenuItem,
+  LeftMenuItems,
+  MenuItem,
+  MenuItemType,
+  PageMenuItem,
+} from "../types";
 import { getLeftMenuIcon } from "./iconMapper";
-
-type MenuItems = {
-  content: MenuItem[];
-  footer: MenuItem[];
-};
 
 type MenuArea = DbMenuItem["area"];
 
 const ROOT_PARENT_ID = 0;
 
+/**
+ * Rebuilds flat rows into area-isolated trees in persisted sibling order.
+ * Self-parenting rows and non-root or grouped footer rows are excluded because
+ * they cannot be represented by the navigation components.
+ */
 export function createLeftMenuFromDbMenuItem(
   dbItems: DbMenuItem[] | null | undefined,
-): MenuItems {
+): LeftMenuItems {
   const safeItems = Array.isArray(dbItems) ? dbItems : [];
 
   const sortedItems = [...safeItems].sort((a, b) => {
@@ -65,8 +69,41 @@ export function createLeftMenuFromDbMenuItem(
       .map((item) => buildMenuItem(item, area));
   };
 
+  const buildFooter = (): PageMenuItem[] => {
+    return sortedItems.flatMap((item) => {
+      if (item.area !== "FOOTER") {
+        return [];
+      }
+
+      if (item.type !== "PAGE") {
+        console.warn(
+          `[left-menu] Footer only supports PAGE items. id=${item.id}`,
+        );
+        return [];
+      }
+
+      if ((item.parentId ?? ROOT_PARENT_ID) !== ROOT_PARENT_ID) {
+        console.warn(
+          `[left-menu] Footer only supports root items. id=${item.id}`,
+        );
+        return [];
+      }
+
+      return [
+        {
+          id: item.id,
+          title: item.title,
+          path: item.path,
+          icon: getLeftMenuIcon(item.icon),
+          type: "PAGE",
+          minAccessLevel: item.minAccessLevel,
+        },
+      ];
+    });
+  };
+
   return {
     content: buildArea("CONTENT"),
-    footer: buildArea("FOOTER"),
+    footer: buildFooter(),
   };
 }

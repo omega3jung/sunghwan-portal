@@ -1,0 +1,26 @@
+{
+  "featureBasedStructure": {
+    "title": "기능 기반 구조",
+    "description": "프로젝트 슬라이스 경계와 폴더 소유권 전략을 설명합니다."
+  },
+  "routingStrategy": {
+    "title": "라우팅 전략",
+    "description": "라우트 설계와 App Router 경계를 설명합니다."
+  },
+  "stateManagement": {
+    "title": "상태 관리",
+    "description": "클라이언트 상태 책임과 영속성 경계를 설명합니다."
+  },
+  "authSessionStrategy": {
+    "title": "인증 및 세션 전략",
+    "description": "인증, 세션, 보호 라우트 설계를 설명합니다."
+  },
+  "impersonationStrategy": {
+    "title": "가장 전략",
+    "description": "관리자 가장 흐름과 관련 시스템 경계를 설명합니다."
+  },
+  "databaseStrategy": {
+    "title": "데이터베이스 전략",
+    "description": "데이터베이스 접근 모델, 역할, DTO 경계 전략을 설명합니다."
+  }
+}

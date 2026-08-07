@@ -1,60 +1,60 @@
-﻿import { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { AssignmentRule, TenantCategoryTree } from "@/domain/serviceDesk";
+import type { TreeNodes } from "@/components/custom/SortableTree";
+import {
+  type AssignmentRule,
+  hasAssignmentRuleSelection,
+  type TenantCategoryTree,
+} from "@/domain/serviceDesk";
 
-import { AssignmentRuleData, SubAssignmentRuleData } from "../types";
+import type { AssignmentRuleNodeData } from "../types";
 
-export const mapAssignmentRuleData = (
+const createEmptyAssignee = () => ({
+  jobFieldIds: [],
+  assigneeUsernames: [],
+  includeTenantCompany: false,
+});
+
+export function createAssignmentRuleTree(
   categories: TenantCategoryTree[],
   tenantId: string,
   assignmentRules: AssignmentRule[],
-): AssignmentRuleData[] => {
-  if (!categories?.length) {
+): TreeNodes<AssignmentRuleNodeData> {
+  const currentTenant = categories.find((tenant) => tenant.id === tenantId);
+
+  if (!currentTenant) {
     return [];
   }
 
-  const current = categories.find((category) => category.id === tenantId);
+  const assigneeByCategoryId = new Map(
+    assignmentRules.map((rule) => [rule.categoryId, rule.assignee]),
+  );
 
-  if (!current) {
-    return [];
-  }
+  return currentTenant.categories.map((category) => {
+    const { subCategories, ...categoryData } = category;
 
-  return current.categories.map((cat) => {
-    const catAssRule = assignmentRules.find(
-      (assignmentRule) => assignmentRule.categoryId === cat.id,
-    )?.assignee;
     return {
-      ...cat,
-      jobFieldIds: catAssRule?.jobFieldIds || [],
-      assigneeUsernames: catAssRule?.assigneeUsernames || [],
-      includeTenantCompany: catAssRule?.includeTenantCompany === true,
-      subCategories: cat.subCategories?.map((sub) => {
-        const subCatAssRule = assignmentRules.find(
-          (assignmentRule) => assignmentRule.categoryId === sub.id,
-        )?.assignee;
+      id: category.id,
+      data: {
+        ...categoryData,
+        ...(assigneeByCategoryId.get(category.id) ?? createEmptyAssignee()),
+        nodeType: "mainCategory" as const,
+      },
+      collapsed: false,
+      children: subCategories.map((subCategory) => {
+        const assignmentRule = assigneeByCategoryId.get(subCategory.id);
+
         return {
-          ...sub,
-          jobFieldIds: subCatAssRule?.jobFieldIds || [],
-          assigneeUsernames: subCatAssRule?.assigneeUsernames || [],
-          includeTenantCompany:
-            subCatAssRule?.includeTenantCompany === true,
+          id: subCategory.id,
+          data: {
+            ...subCategory,
+            nodeType: "subCategory" as const,
+            assignmentRule:
+              assignmentRule && hasAssignmentRuleSelection(assignmentRule)
+                ? assignmentRule
+                : null,
+          },
+          children: [],
         };
       }),
     };
   });
-};
-
-export const assignmentRuleToTree = (
-  categories: AssignmentRuleData[],
-): TreeNodes<AssignmentRuleData | SubAssignmentRuleData> => {
-  return categories.map((main) => ({
-    id: main.id,
-    data: main,
-    collapsed: false,
-    children:
-      main.subCategories?.map((sub) => ({
-        id: sub.id,
-        data: sub,
-        children: [],
-      })) ?? [],
-  }));
-};
+}

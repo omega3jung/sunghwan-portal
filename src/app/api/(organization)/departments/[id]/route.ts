@@ -14,6 +14,7 @@ import {
   type UpdateDepartmentInput,
 } from "@/lib/application/contracts/organization";
 
+/** Handles GET /api/departments/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
   });
 }
 
+/** Handles PUT /api/departments/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;
@@ -66,6 +68,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
   });
 }
 
+/** Handles DELETE /api/departments/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
   const authError = await getAdminError(request);
   if (authError) return authError;

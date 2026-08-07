@@ -1,6 +1,5 @@
-// src/feature/serviceDesk/ticket/history/api/index.ts
+// src/feature/serviceDesk/ticketHistory/api/index.ts
 
 // server-safe export only.
 
-export * from "./mapper";
 export * from "./queryKeys";

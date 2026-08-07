@@ -6,6 +6,7 @@ import {
 import type { WorkSessionDto } from "./workSessionDto";
 import type { WorkSessionRow } from "./workSessionRow";
 
+/** Maps work session row to dto across the database and API boundary. */
 export function mapWorkSessionRowToDto(
   row: WorkSessionRow,
 ): WorkSessionDto {

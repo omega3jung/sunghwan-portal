@@ -1,5 +1,6 @@
 import type { ISODateString } from "@/shared/types";
 
+/** Defines the PostgreSQL work session row used only within the repository boundary. */
 export type WorkSessionRow = {
   ws_id: number;
   ws_ticket_id: string;

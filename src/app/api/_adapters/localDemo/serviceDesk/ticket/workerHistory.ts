@@ -18,6 +18,7 @@ const WORK_ASSIGNMENT_EVENTS = new Set<DbTicketHistory["event"]>([
   "ASSIGNMENT_UPDATED",
 ]);
 
+/** Projects local ticket worker history for the server-side LOCAL ticket adapter. */
 export function withLocalTicketWorkerHistory<
   T extends LocalTicketWorkerHistoryProjection,
 >(
@@ -41,6 +42,7 @@ export function withLocalTicketWorkerHistory<
   };
 }
 
+/** Returns whether local ticket work assignment history under the server-side LOCAL ticket adapter policy. */
 export function hasLocalTicketWorkAssignmentHistory({
   isInternal: _isInternal,
   ticketId,

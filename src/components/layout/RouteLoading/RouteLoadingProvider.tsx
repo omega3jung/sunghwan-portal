@@ -56,6 +56,11 @@ function isInternalRouteNavigation(href: string): boolean {
   );
 }
 
+/**
+ * Tracks client-side transitions started by links, history, or explicit callers.
+ * Completion follows committed pathname/search changes, while a fallback timeout
+ * prevents an interrupted navigation from leaving the overlay visible.
+ */
 export function RouteLoadingProvider({
   children,
 }: {
@@ -87,6 +92,7 @@ export function RouteLoadingProvider({
     clearFallbackTimeout();
     setIsRouteLoading(true);
 
+    // Navigation errors do not always produce a route-state change to stop the overlay.
     timeoutRef.current = window.setTimeout(() => {
       setIsRouteLoading(false);
       timeoutRef.current = null;

@@ -105,6 +105,8 @@ export const getTicketCategoryRequestTemplate = (
     categories,
     categoryId,
   );
+  // A leaf-specific template wins; otherwise requester guidance is inherited
+  // from its parent category.
   const requestTemplate =
     selected?.requestTemplate ?? parentCategory?.requestTemplate;
 

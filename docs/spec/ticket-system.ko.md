@@ -65,8 +65,8 @@ Closed
 
 관련 문서:
 
-- [Ticket Lifecycle](../ko/03-domain/ticket/ticket-lifecycle.md)
-- [Ticket Operation Rules](../ko/08-dev-strategy/ticket-operation-rules.md)
+- [Ticket Lifecycle](../ko/03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Operation Rules](../ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---
 
@@ -93,8 +93,8 @@ parent/main category rule로 fallback한다.
 
 관련 문서:
 
-- [Service Desk Settings](../ko/03-domain/service-desk-settings.md)
-- [Category Strategy](../ko/03-domain/ticket/strategy/category-strategy.md)
+- [Service Desk Settings](../ko/03-domain/service-desk/settings.md)
+- [Category Strategy](../ko/03-domain/service-desk/ticket/strategy/category-strategy.md)
 
 ---
 
@@ -119,7 +119,7 @@ ticket row
 
 관련 문서:
 
-- [Ticket Form Design](../ko/06-form-design/ticket-form.md)
+- [Ticket Form Design](../ko/04-client-engineering/forms/ticket-form.md)
 
 ---
 
@@ -150,8 +150,8 @@ projection field를 제공한다.
 
 관련 문서:
 
-- [Approval System](../ko/03-domain/ticket/strategy/approval-system.md)
-- [Assignment Policy](../ko/03-domain/ticket/strategy/assignment-policy.md)
+- [Approval System](../ko/03-domain/service-desk/ticket/strategy/approval-system.md)
+- [Assignment Policy](../ko/03-domain/service-desk/ticket/strategy/assignment-policy.md)
 
 ---
 
@@ -200,7 +200,7 @@ ticket row, DTO, action metadata, history metadata에 저장하면 안 된다.
 
 관련 문서:
 
-- [Ticket Attachment Design](../ko/06-form-design/ticket-attachment.md)
+- [Ticket Attachment Design](../ko/04-client-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -248,8 +248,8 @@ Update event는 history model에 예약되어 있지만 현재 route behavior로
 
 관련 문서:
 
-- [Ticket Activity Model](../ko/03-domain/ticket/ticket-activity.md)
-- [Action Strategy](../ko/03-domain/ticket/strategy/action-strategy.md)
+- [Ticket Action Model](../ko/03-domain/service-desk/ticket/ticket-action.md)
+- [Action Strategy](../ko/03-domain/service-desk/ticket/strategy/action-strategy.md)
 
 ---
 
@@ -279,7 +279,7 @@ session을 종료하며, `RESOLUTION_CLOSE` history를 `SYSTEM_AUTO` 및
 
 관련 문서:
 
-- [Ticket History](../ko/03-domain/ticket/ticket-history.md)
+- [Ticket History](../ko/03-domain/service-desk/ticket/ticket-history.md)
 
 ---
 
@@ -306,7 +306,7 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 관련 문서:
 
-- [Ticket Track Time](../ko/03-domain/ticket/ticket-track-time.md)
+- [Ticket Work Session](../ko/03-domain/service-desk/ticket/ticket-work-session.md)
 
 ---
 
@@ -338,8 +338,8 @@ REMOTE service는 지원하는 workflow에서 compatible DTO contract를 유지�
 관련 문서:
 
 - [Database Strategy](../ko/02-architecture/database-strategy.md)
-- [React Query Strategy](../ko/05-data-fetching/react-query-strategy.md)
-- [Service Desk Implementation Strategy](../ko/08-dev-strategy/service-desk-implementation-strategy.md)
+- [React Query Strategy](../ko/05-development/react-query-strategy.md)
+- [Service Desk Implementation Strategy](../ko/05-development/service-desk-implementation-strategy.md)
 
 ---
 
@@ -364,32 +364,32 @@ Deferred item은 current implementation처럼 설명하면 안 된다.
 ### Current Design
 
 - [Service Desk Documentation Index](../ko/README.md)
-- [Ticket System Overview](../ko/03-domain/ticket/ticket-system-overview.md)
-- [Ticket Lifecycle](../ko/03-domain/ticket/ticket-lifecycle.md)
-- [Ticket Model](../ko/03-domain/ticket/ticket-model.md)
-- [Ticket Activity Model](../ko/03-domain/ticket/ticket-activity.md)
-- [Ticket History](../ko/03-domain/ticket/ticket-history.md)
-- [Ticket Track Time](../ko/03-domain/ticket/ticket-track-time.md)
-- [Ticket Form Design](../ko/06-form-design/ticket-form.md)
-- [Ticket Attachment Design](../ko/06-form-design/ticket-attachment.md)
-- [Service Desk Settings](../ko/03-domain/service-desk-settings.md)
+- [Ticket System Overview](../ko/03-domain/service-desk/ticket/ticket-system-overview.md)
+- [Ticket Lifecycle](../ko/03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [Ticket Model](../ko/03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket Action Model](../ko/03-domain/service-desk/ticket/ticket-action.md)
+- [Ticket History](../ko/03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../ko/03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Form Design](../ko/04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](../ko/04-client-engineering/forms/ticket-attachment.md)
+- [Service Desk Settings](../ko/03-domain/service-desk/settings.md)
 
 ### Strategies
 
-- [Action Strategy](../ko/03-domain/ticket/strategy/action-strategy.md)
-- [Approval System](../ko/03-domain/ticket/strategy/approval-system.md)
-- [Assignment Policy](../ko/03-domain/ticket/strategy/assignment-policy.md)
-- [Category Strategy](../ko/03-domain/ticket/strategy/category-strategy.md)
-- [SLA Strategy](../ko/03-domain/ticket/strategy/sla-strategy.md)
-- [Ticket Operation Rules](../ko/08-dev-strategy/ticket-operation-rules.md)
-- [Service Desk Implementation Strategy](../ko/08-dev-strategy/service-desk-implementation-strategy.md)
+- [Action Strategy](../ko/03-domain/service-desk/ticket/strategy/action-strategy.md)
+- [Approval System](../ko/03-domain/service-desk/ticket/strategy/approval-system.md)
+- [Assignment Policy](../ko/03-domain/service-desk/ticket/strategy/assignment-policy.md)
+- [Category Strategy](../ko/03-domain/service-desk/ticket/strategy/category-strategy.md)
+- [SLA Strategy](../ko/03-domain/service-desk/ticket/strategy/sla-strategy.md)
+- [Ticket Operation Rules](../ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+- [Service Desk Implementation Strategy](../ko/05-development/service-desk-implementation-strategy.md)
 
 ### Decision Logs
 
-- [2026-06 Ticket Form and Draft Workflow](../ko/08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md)
-- [2026-06 Ticket Attachment Boundary](../ko/08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md)
-- [2026-07 Ticket Routing and Update Policy](../ko/08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md)
-- [2026-07 Ticket Action and History Execution](../ko/08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md)
+- [2026-06 Ticket Form and Draft Workflow](../ko/06-decisions/2026-06-ticket-form-and-draft-workflow.md)
+- [2026-06 Ticket Attachment Boundary](../ko/06-decisions/2026-06-ticket-attachment-boundary.md)
+- [2026-07 Ticket Routing and Update Policy](../ko/06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [2026-07 Ticket Action and History Execution](../ko/06-decisions/2026-07-ticket-action-and-history-execution.md)
 
 ---
 

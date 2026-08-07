@@ -1,9 +1,12 @@
 import { Locale } from "@/shared/types";
 
+/** Defines the supported languages policy value used by application localization. */
 export const SUPPORTED_LANGUAGES: Locale[] = ["en", "ko", "fr", "es"] as const;
 
+/** Represents supported language within application localization. */
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
+/** Defines the default language policy value used by application localization. */
 export const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 
 /**

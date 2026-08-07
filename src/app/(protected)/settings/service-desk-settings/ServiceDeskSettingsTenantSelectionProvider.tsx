@@ -11,7 +11,7 @@ import {
 
 import { type Tenant } from "@/domain/serviceDesk";
 import { useServiceDeskTenantListQuery } from "@/feature/serviceDesk/tenant/client";
-import type { ServiceDeskTenantListParams } from "@/feature/serviceDesk/tenant/types";
+import type { ServiceDeskTenantListParams } from "@/lib/application/contracts/serviceDesk";
 
 import { useSettingsAccess } from "../_providers";
 

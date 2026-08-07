@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { authorize, authSession } from "@/auth";
 import { ENVIRONMENT } from "@/lib/config/environment";
 
+/** Configures server-side Auth.js credentials login, JWT sessions, and the custom login route. */
 export const authOptions: AuthOptions = {
   pages: {
     signIn: `${ENVIRONMENT.BASE_PATH}/login`,

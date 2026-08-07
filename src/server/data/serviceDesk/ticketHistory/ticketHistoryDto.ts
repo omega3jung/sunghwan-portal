@@ -9,6 +9,7 @@ import {
   TicketHistoryType,
 } from "./ticketHistoryTypes";
 
+/** Defines the ticket history dto exchanged across the server API boundary. */
 export type TicketHistoryDto = {
   ticket_id: string;
   history_no: number;
@@ -24,6 +25,7 @@ export type TicketHistoryDto = {
   created_at: ISODateString;
 };
 
+/** Defines the create ticket history input exchanged across the server API boundary. */
 export type CreateTicketHistoryInput = {
   ticketId: string;
   actionNo?: number | null;

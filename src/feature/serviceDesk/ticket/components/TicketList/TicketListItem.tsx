@@ -1,5 +1,3 @@
-﻿// TicketListItem.tsx
-
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
@@ -66,7 +64,7 @@ export const TicketListItem = ({
     <div
       onClick={onClick}
       className={cn(
-        "cursor-pointer flex flex-col gap-2 border-b px-4 py-1.5 hover:bg-muted",
+        "cursor-pointer flex flex-col gap-2 border-b px-4 py-2 hover:bg-muted",
         isAssigned && "border-l-primary border-l-4",
       )}
     >
@@ -110,7 +108,7 @@ export const TicketListItem = ({
 
         <div className="flex gap-2">
           {isAssigned && (
-            <Badge className="bg-primary/10 text-primary border border-primary/20">
+            <Badge className="border-primary/20 bg-primary/10 text-primary">
               {t("detailAside.assignedBadge")}
             </Badge>
           )}

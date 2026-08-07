@@ -6,6 +6,8 @@ export function createPreferenceKey<
 }
 
 export function parsePreferenceKey(preferenceKey: string) {
+  // Module keys may contain dots; only the final segment identifies the
+  // preference type.
   const lastDotIndex = preferenceKey.lastIndexOf(".");
 
   if (lastDotIndex <= 0 || lastDotIndex === preferenceKey.length - 1) {

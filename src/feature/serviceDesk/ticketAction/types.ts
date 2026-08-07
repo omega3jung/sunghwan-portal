@@ -1,11 +1,7 @@
-import type { z } from "zod";
-
 import type { TicketAction, TicketActionType } from "@/domain/serviceDesk";
+import type { TicketActionCommandPayload } from "@/lib/application/contracts/serviceDesk";
 
-import { ticketActionPayloadSchema } from "./forms/schema";
-
-export type TicketActionFormValues = z.infer<typeof ticketActionPayloadSchema>;
-
+/** Action dialogs and commands supported by the ticket UI. */
 export type TicketActionMode =
   | "approve"
   | "decline"
@@ -20,12 +16,13 @@ export type TicketActionMode =
   | "resubmit"
   | "cancel";
 
+/** `idle` closes the action surface; every other value selects one action draft. */
 export type TicketActionUIState = "idle" | TicketActionMode;
 
 export interface TicketActionCommandInput {
   ticketId: string;
   actionType: TicketActionType;
-  values: TicketActionFormValues;
+  values: TicketActionCommandPayload;
 }
 
 export interface TicketActionDeleteInput {
@@ -35,6 +32,7 @@ export interface TicketActionDeleteInput {
 
 export type TicketActionCommandResult = TicketAction;
 
+/** Async handler signature shared by ticket-action submissions. */
 export type TicketActionApiHandler = (
   input: TicketActionCommandInput,
 ) => Promise<TicketActionCommandResult>;

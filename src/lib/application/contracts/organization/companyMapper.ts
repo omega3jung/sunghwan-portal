@@ -8,6 +8,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 import { DbCompany } from "./company";
 
+/** Maps a database company record into the application-facing model. */
 export const camelCompanyMapper: ArrayMapper<DbCompany, Company> = (data) =>
   data.map((item) => ({
     id: item.company_id.toString(),
@@ -17,6 +18,7 @@ export const camelCompanyMapper: ArrayMapper<DbCompany, Company> = (data) =>
     active: item.company_active,
   }));
 
+/** Maps an application company model into its database-facing shape. */
 export const snakeCompanyMapper: ArrayMapper<Company, DbCompany> = (data) =>
   data.map((item) => ({
     company_id: Number(item.id),
@@ -26,7 +28,9 @@ export const snakeCompanyMapper: ArrayMapper<Company, DbCompany> = (data) =>
     company_active: item.active,
   }));
 
+/** Maps a company collection payload into application models. */
 export const mapCompanyListPayload =
   createListPayloadMapper(camelCompanyMapper);
+/** Maps a company payload into the application model. */
 export const mapCompanyItemPayload =
   createItemPayloadMapper(camelCompanyMapper);

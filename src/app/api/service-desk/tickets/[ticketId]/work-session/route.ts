@@ -23,6 +23,7 @@ import {
 } from "@/feature/serviceDesk/ticketWorkSession/api";
 import type { TicketWorkSessionSubmitPayload } from "@/feature/serviceDesk/ticketWorkSession/types";
 
+/** Handles GET /api/service-desk/tickets/[ticketId]/work-session; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
@@ -57,6 +58,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   });
 }
 
+/** Handles POST /api/service-desk/tickets/[ticketId]/work-session; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(
   request: NextRequest,
   context: TicketIdRouteContext,

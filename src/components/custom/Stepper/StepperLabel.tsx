@@ -19,7 +19,6 @@ export const StepperLabel = ({ className, children }: Props) => {
       "absolute left-full ml-3 px-1 top-1/2 -translate-y-1/2 bg-background",
   };
 
-  // Do not render when the step variant is square
   if (stepVariant === "square")
     return (
       <span
@@ -36,7 +35,7 @@ export const StepperLabel = ({ className, children }: Props) => {
   return (
     <span
       className={cn(
-        "text-xs font-medium whitespace-nowrap",
+        "max-w-32 truncate text-center text-xs font-medium",
         positionClasses[labelPosition],
         className,
       )}

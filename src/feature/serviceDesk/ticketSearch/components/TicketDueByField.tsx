@@ -90,6 +90,7 @@ function TicketDueByFieldInput({
 
   return (
     <SearchDateFilter
+      className="w-full"
       value={safeValue.type}
       onValueChange={(selected) => {
         nextTypeRef.current = selected ?? safeValue.type;
@@ -127,11 +128,11 @@ function TicketDueByFieldInput({
 
 export function TicketDueByField({ control }: Props) {
   const { t } = useTranslation(NS.common);
-  const { t: tDomain } = useTranslation(NS.domain);
+  const { t: tShared } = useTranslation(NS.shared);
 
   const dueByOptions = useMemo(
-    () => createTicketDueByOptions(tDomain),
-    [tDomain],
+    () => createTicketDueByOptions(tShared),
+    [tShared],
   );
 
   return (

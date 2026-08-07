@@ -1,0 +1,69 @@
+{
+  "detailAside": {
+    "recipientsTitle": "수신자",
+    "unassigned": "미할당",
+    "ticketNo": "티켓 번호",
+    "currentUserBadge": "나",
+    "assignedBadge": "할당됨"
+  },
+  "detailPage": {
+    "detailsTitle": "티켓 상세 정보",
+    "descriptionTitleHint": "핵심 요청 내용과 최신 활동을 한눈에 확인하세요.",
+    "replyTitle": "도구",
+    "replyTitleHint": "답글을 남기고, 내부 메모를 작성하고, 대화를 한 흐름에서 검토하세요.",
+    "notFound": "티켓을 찾을 수 없습니다."
+  },
+  "recentActivity": {
+    "title": "최근 활동",
+    "latestUpdate": {
+      "label": "최신 업데이트",
+      "empty": "아직 이력이 없습니다",
+      "fallbackMeta": "타임라인이 여기에 표시됩니다"
+    },
+    "conversation": {
+      "label": "대화",
+      "empty": "아직 댓글이 없습니다",
+      "latestPrefix": "최근",
+      "start": "아래에서 대화를 시작하세요",
+      "count_one": "댓글 {{count}}개",
+      "count_other": "댓글 {{count}}개"
+    },
+    "lastCommenter": {
+      "label": "마지막 댓글 작성자",
+      "emptyName": "아직 댓글 작성자가 없습니다",
+      "emptyEmail": "티켓이 진행되면 업데이트가 여기에 표시됩니다"
+    },
+    "history": {
+      "STATUS_UPDATED": "상태가 {{from}}에서 {{to}}(으)로 변경됨",
+      "STATUS_UPDATED_SIMPLE": "상태가 변경됨",
+      "ASSIGNMENT_RESOLVED": "담당자가 업데이트됨",
+      "TICKET_SUBMITTED": "Ticket submitted",
+      "APPROVAL_REQUESTED": "승인 요청됨",
+      "APPROVAL_APPROVED": "승인 완료됨",
+      "APPROVAL_DECLINED": "승인 반려됨",
+      "COMMENT_CREATED": "댓글이 추가됨",
+      "NOTE_CREATED": "메모가 추가됨",
+      "COMMENT_UPDATED": "댓글이 수정됨",
+      "COMMENT_DELETED": "댓글이 삭제됨",
+      "WORK_SESSION_UPDATED": "작업 시간이 업데이트됨",
+      "MERGED": "{{target}} 티켓으로 병합됨",
+      "ESCALATED": "포털 티켓 {{target}}(으)로 에스컬레이션됨",
+      "TICKET_REJECTED": "티켓이 반려됨",
+      "TICKET_CANCELED": "티켓 취소",
+      "RESOLUTION_CLOSE": "Auto-closed from {{from}} to {{to}}",
+      "RESOLUTION_CLOSE_SIMPLE": "Auto-closed after resolution",
+      "ROUTING_RESET": "Routing reset",
+      "ROUTING_PRESERVED": "Routing preserved",
+      "DEFAULT": "이력이 업데이트됨",
+      "TICKET_UPDATED": "티켓이 수정됨",
+      "CATEGORY_UPDATED": "카테고리가 변경됨",
+      "ASSIGNMENT_UPDATED": "담당자가 변경됨",
+      "NOTE_UPDATED": "노트가 수정됨",
+      "NOTE_DELETED": "노트가 삭제됨",
+      "PLANNING_UPDATED": "계획 정보가 변경됨",
+      "WORK_SESSION_STARTED": "작업 세션이 시작됨",
+      "WORK_SESSION_STOPPED": "작업 세션이 중지됨",
+      "WORK_SESSION_DELETED": "작업 세션이 삭제됨"
+    }
+  }
+}

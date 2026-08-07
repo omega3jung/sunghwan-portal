@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/client/client.ts
+// src/feature/serviceDesk/tenant/client.ts
 
 "use client";
 // client export only.

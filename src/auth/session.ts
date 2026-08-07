@@ -4,6 +4,7 @@ import { JWT } from "next-auth/jwt";
 
 import { AuthUser } from "@/domain/auth";
 
+/** Keeps original identity in the JWT and exposes impersonation only as explicit session metadata. */
 export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
   /*
    * JWT enables stateless authentication.

@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/action/forms/index.ts
+// src/feature/serviceDesk/ticketAction/forms/index.ts
 
 export * from "./defaultValues";
 export * from "./payload";

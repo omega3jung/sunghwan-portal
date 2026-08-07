@@ -10,10 +10,6 @@ import { useImpersonationStore } from "@/lib/client/auth";
 
 import { UseCurrentSessionResult } from "../types";
 
-/**
- * Default security state used when no authenticated user is available.
- * Acts as a null-safe fallback for the session facade.
- */
 const EMPTY_SECURITY: CurrentSession["security"] = {
   loginLockedUntil: null,
   failedAttempts: 0,
@@ -21,41 +17,16 @@ const EMPTY_SECURITY: CurrentSession["security"] = {
 };
 
 /**
- * Builds the final session facade used by the UI.
- *
- * Purpose:
- * - Combines the NextAuth session, the fetched AppUser profile, and the
- *   Zustand runtime cache into a single UI-facing session object
- *
- * Composition:
- * - NextAuth authenticated session state
- * - React Query AppUser profile data
- * - Zustand runtime cache and session actions
- *
- * Layering:
- * - NextAuth remains the source of truth for authentication
- * - AppUser is fetched from the backend when needed
- * - Zustand acts as a cache and facade layer for the UI
+ * Exposes a null-safe UI session assembled from NextAuth, the current profile,
+ * and the local runtime cache. NextAuth owns authentication; the store only
+ * caches the richer application user and client-side session flags.
  */
 export const useCurrentSession = (): UseCurrentSessionResult => {
-  /**
-   * NextAuth session state.
-   * Includes authentication status and minimal user information.
-   */
   const session = useSession();
 
-  /**
-   * Current AppUser used by the UI.
-   * - Loaded from the current session user id
-   * - Resolves the current user during impersonation
-   */
   const { data: currentUserProfile } = useCurrentUserProfileQuery(session.data);
 
-  /**
-   * Zustand store slices.
-   * Subscribe only to the values this hook actually needs to avoid
-   * subscribing to the entire store.
-   */
+  // Slice subscriptions keep unrelated store updates from rerendering every session consumer.
   const user = useAuthSessionStore((state) => state.user);
   const isSuperUser = useAuthSessionStore((state) => state.isSuperUser);
   const superUserActivated = useAuthSessionStore(
@@ -63,21 +34,12 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
   );
   const security = useAuthSessionStore((state) => state.security);
 
-  /**
-   * Zustand actions used by this hook.
-   */
   const setSession = useAuthSessionStore((state) => state.setSession);
   const hydrateSession = useAuthSessionStore((state) => state.hydrateSession);
   const clearSession = useAuthSessionStore((state) => state.clearSession);
 
-  /**
-   * Impersonation reset action.
-   */
   const resetImpersonation = useImpersonationStore((state) => state.reset);
 
-  /**
-   * Values derived directly from the NextAuth session.
-   */
   const dataScope = session.data?.user?.dataScope;
   const expires = session.data?.expires ?? "";
   const effectiveUsername =
@@ -85,11 +47,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     session.data?.user.username ??
     null;
 
-  /**
-   * Expose only the profile that belongs to the effective session identity.
-   * The persisted store can briefly contain the previous identity while the
-   * profile query is switching after impersonation starts or stops.
-   */
+  // During impersonation transitions, reject cached profiles from the previous identity.
   const effectiveUser =
     currentUserProfile?.username === effectiveUsername
       ? currentUserProfile
@@ -97,14 +55,6 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
         ? user
         : null;
 
-  /**
-   * Final session object consumed by the UI.
-   *
-   * Notes:
-   * - Always null-safe
-   * - Uses safe defaults when no user exists
-   * - Keeps components from depending on raw session/store internals
-   */
   const current = useMemo<CurrentSession>(() => {
     const isDemoUser = dataScope === "LOCAL";
     const isClient = effectiveUser?.userScope === "CLIENT";
@@ -113,14 +63,8 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
       user: effectiveUser,
       expires,
 
-      /**
-       * Whether the current session uses local demo data.
-       */
       isDemoUser,
 
-      /**
-       * Values that are only meaningful when a user exists.
-       */
       isSuperUser: effectiveUser ? isSuperUser : false,
       isClient: effectiveUser ? isClient : false,
       superUserActivated: effectiveUser ? superUserActivated : null,
@@ -135,16 +79,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     superUserActivated,
   ]);
 
-  /**
-   * Updates the local session facade and optionally refreshes NextAuth first.
-   *
-   * @param patch - Partial local store patch
-   * @param force - When true, refresh the NextAuth session before patching locally
-   *
-   * Notes:
-   * - `force` is not a full sync. It means "refresh session first, then patch locally"
-   * - NextAuth remains the real source of truth
-   */
+  // `force` refreshes NextAuth before applying the caller's local cache patch.
   const updateSession = useCallback(
     async (patch: SessionPatch, force = false) => {
       if (force) {
@@ -156,28 +91,11 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     [session, setSession],
   );
 
-  /**
-   * 1. Initial hydration
-   *
-   * - Restores the persisted session snapshot from sessionStorage
-   * - Helps the UI render quickly on the first client mount
-   *
-   * Note:
-   * - This can later be overwritten by authenticated profile sync
-   */
+  // Restore the persisted snapshot first; authenticated profile data replaces it when ready.
   useEffect(() => {
     hydrateSession();
   }, [hydrateSession]);
 
-  /**
-   * 2. Sync AppUser after authentication
-   *
-   * - Runs after authentication completes
-   * - Writes the fetched profile into the local store
-   *
-   * Purpose:
-   * - Lets the UI work from the richer AppUser model
-   */
   useEffect(() => {
     if (session.status !== "authenticated") return;
     if (!currentUserProfile) return;
@@ -185,12 +103,7 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     setSession({ user: currentUserProfile });
   }, [currentUserProfile, session.status, setSession]);
 
-  /**
-   * 3. Reset client state after becoming unauthenticated
-   *
-   * - Handles logout or expired session cases
-   * - Clears both impersonation state and the local session store
-   */
+  // Logout must clear both identity stores to prevent stale impersonation state.
   useEffect(() => {
     if (session.status !== "unauthenticated") return;
 
@@ -198,12 +111,6 @@ export const useCurrentSession = (): UseCurrentSessionResult => {
     clearSession();
   }, [clearSession, resetImpersonation, session.status]);
 
-  /**
-   * Final return value:
-   * - NextAuth session result
-   * - Current UI-facing session facade
-   * - Session helper functions
-   */
   return {
     ...session,
     current,

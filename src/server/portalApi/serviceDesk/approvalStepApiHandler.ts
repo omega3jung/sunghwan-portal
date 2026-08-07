@@ -46,6 +46,7 @@ type SubmittedApprovalStepPlan = {
 
 const APPROVAL_SETTINGS_LIST_PATH_PATTERN = /^\/service-desk\/approval-steps$/;
 
+/** Routes approval-step settings requests after resolving tenant scope and administrator access. */
 export async function handleApprovalStepPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
@@ -365,7 +366,7 @@ function mapApprovalTreeAssignee(
     case "MANAGER":
       return {
         type: assignee.type,
-        level: assignee.level,
+        level: assignee.managerDistance,
       };
     case "DEPARTMENT":
       return {

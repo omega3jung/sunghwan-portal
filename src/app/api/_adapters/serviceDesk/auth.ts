@@ -20,6 +20,7 @@ import {
 } from "@/lib/application/serviceDesk";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 
+/** Captures the authenticated principal and scope used to authorize settings operations. */
 export type ServiceDeskSettingsPrincipalContext = {
   principal: AppUser;
   dataScope: DataScope;
@@ -83,6 +84,7 @@ function toLocalTenantContext(
   };
 }
 
+/** Rejects settings routes unless the session is authenticated and belongs to an internal administrator. */
 export async function requireServiceDeskSettingsRouteAccess(
   request: NextRequest,
 ) {
@@ -102,6 +104,12 @@ export async function requireServiceDeskSettingsRouteAccess(
   }
 }
 
+/**
+ * Resolves the canonical acting profile for the selected data runtime.
+ * LOCAL reads the fixed demo profile set; REMOTE asks the trusted portal API.
+ * The signed token chooses the runtime and retains both original audit identity
+ * and effective impersonated identity.
+ */
 export async function resolveServiceDeskRequestContext(
   request: NextRequest,
 ): Promise<ServiceDeskSettingsPrincipalContext> {
@@ -139,8 +147,10 @@ export async function resolveServiceDeskRequestContext(
   };
 }
 
+/** Query flag that explicitly selects the privileged Service Desk settings context. */
 export const SERVICE_DESK_SETTINGS_QUERY_VALUE = "settings";
 
+/** Distinguishes settings reads from ordinary operational Service Desk reads. */
 export function isServiceDeskSettingsRequest(request: NextRequest) {
   return (
     request.nextUrl.searchParams.get("context") ===
@@ -149,10 +159,12 @@ export function isServiceDeskSettingsRequest(request: NextRequest) {
   );
 }
 
+/** Parses category scope from the untrusted request representation. */
 export function parseCategoryScope(value: unknown): CategoryScope | null {
   return value === "INTERNAL" || value === "PORTAL" ? value : null;
 }
 
+/** Resolves service desk settings admin context from the current server-side context and policy. */
 export async function resolveServiceDeskSettingsAdminContext(
   request: NextRequest,
 ) {
@@ -172,6 +184,7 @@ export async function resolveServiceDeskSettingsAdminContext(
   };
 }
 
+/** Resolves the tenant/company target for operational reads without granting settings write access. */
 export async function resolveOperationalServiceDeskReadTarget({
   request,
   principalContext,
@@ -246,6 +259,7 @@ export async function resolveOperationalServiceDeskReadTarget({
   };
 }
 
+/** Resolves authorized settings tenant from the current server-side context and policy. */
 export async function resolveAuthorizedSettingsTenant({
   request,
   requestedTenantId,
@@ -310,6 +324,11 @@ export async function resolveAuthorizedSettingsTenant({
   };
 }
 
+/**
+ * Applies settings policy only after resolving the runtime-specific tenant.
+ * Client-supplied tenant and scope values are treated as requests; the returned
+ * access projection is derived from the canonical user and tenant relationship.
+ */
 export async function requireSettingsResourceAccess({
   request,
   requestedTenantId,
@@ -362,12 +381,14 @@ export async function requireSettingsResourceAccess({
   };
 }
 
+/** Combines principal scope and tenant ownership to decide whether a resource may be accessed. */
 export function resolveTenantResourceAccess(
   principal: Parameters<typeof resolveSettingsAccess>[0],
 ) {
   return resolveSettingsAccess(principal, { resource: "TENANT" });
 }
 
+/** Creates an authorization error whose status is retained by both local and remote adapters. */
 export function createSettingsAuthorizationError(
   message: string,
   status: number,
@@ -375,6 +396,7 @@ export function createSettingsAuthorizationError(
   return Object.assign(new Error(message), { status });
 }
 
+/** Converts settings resource context to the representation required by this server boundary. */
 export function toSettingsResourceContext(
   tenant: ServiceDeskSettingsTenantContext,
   resource: ServiceDeskSettingsResource,

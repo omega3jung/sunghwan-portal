@@ -4,8 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 export function RemoteRouteGuard() {
   const { data: session, status } = useSession();
   const { t } = useTranslation();
@@ -25,12 +25,13 @@ export function RemoteRouteGuard() {
       return;
 
     if (!notifiedPathnamesRef.current.has(pathname)) {
-      toast.error(t("remoteRouteGuard.limited.title", { ns: "message" }), {
+      toast.add({
+        id: `remote-route-guard:${pathname}`,
+        title: t("remoteRouteGuard.limited.title", { ns: "message" }),
         description: t("remoteRouteGuard.limited.description", {
           ns: "message",
         }),
-        id: `remote-route-guard:${pathname}`,
-        position: "top-center",
+        type: "error",
       });
       notifiedPathnamesRef.current.add(pathname);
     }

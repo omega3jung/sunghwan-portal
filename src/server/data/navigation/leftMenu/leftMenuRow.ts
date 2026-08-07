@@ -1,6 +1,7 @@
 import { AccessLevel } from "@/domain/auth";
 import { LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL left menu row used only within the repository boundary. */
 export type LeftMenuRow = {
   pm_id: number;
   pm_parent_id: number | null;

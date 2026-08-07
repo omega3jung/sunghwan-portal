@@ -1,11 +1,13 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 
+/** Synthetic filter value representing every non-closed ticket status. */
 export const OPEN_TICKET_STATUS_FILTER_VALUE = "Open";
 
 export type TicketStatusFilterValue =
   | TicketStatus
   | typeof OPEN_TICKET_STATUS_FILTER_VALUE;
 
+/** Concrete workflow states represented by the synthetic Open filter. */
 export const OPEN_TICKET_STATUS_FILTER_VALUES = [
   "Approval",
   "Declined",
@@ -28,6 +30,7 @@ const ticketStatusSet = new Set<string>(
   ),
 );
 
+/** Migrates legacy labels, drops unknown values, and preserves first-seen order. */
 export const normalizeTicketStatusFilterValues = (
   values: readonly string[],
 ): TicketStatusFilterValue[] => {
@@ -50,6 +53,7 @@ export const normalizeTicketStatusFilterValues = (
   return Array.from(new Set(normalized));
 };
 
+/** Expands the UI-only Open value before criteria reach the ticket API. */
 export const expandTicketStatusFilters = (
   values: readonly string[],
 ): TicketStatus[] => {

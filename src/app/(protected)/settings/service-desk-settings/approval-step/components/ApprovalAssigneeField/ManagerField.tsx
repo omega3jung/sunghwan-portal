@@ -8,25 +8,32 @@ import { NS } from "@/lib/application/i18n";
 type Props = {
   stepAssignee: AssigneeByType<"MANAGER">;
   onChange: (value: ApprovalAssigneeType) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
-export function ManagerField({ stepAssignee, onChange, readOnly }: Props) {
+export function ManagerField({
+  stepAssignee,
+  onChange,
+  canEdit = true,
+}: Props) {
   const { t } = useTranslation(NS.settings);
 
   return (
     <Field className="col-span-2">
-      <FieldLabel htmlFor="approval-select-manager-level">
-        {t("serviceDeskSettings.approvalStepTab.managerLevel")}
+      <FieldLabel htmlFor="approval-input-manager-distance">
+        {t("serviceDeskSettings.approvalStepTab.managerStepsAboveRequester")}
       </FieldLabel>
       <Input
-        id="start-index-input"
+        id="approval-input-manager-distance"
         className="w-20"
-        value={stepAssignee.level}
-        disabled={readOnly}
+        value={stepAssignee.managerDistance}
+        disabled={!canEdit}
         onChange={(e) => {
           const number = parseInt(e.target.value);
-          onChange({ type: "MANAGER", level: number > 1 ? 2 : 1 });
+          onChange({
+            type: "MANAGER",
+            managerDistance: number > 1 ? 2 : 1,
+          });
         }}
         type={"number"}
         min={1}

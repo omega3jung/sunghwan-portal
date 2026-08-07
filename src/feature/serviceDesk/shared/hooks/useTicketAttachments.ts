@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 
 export const useTicketAttachments = ({
@@ -15,33 +15,34 @@ export const useTicketAttachments = ({
   const [files, setFiles] = useState<File[]>([]);
 
   const addFiles = (fileList: FileList) => {
-    // convert FileList to File.
     const selectedFiles = Array.from(fileList);
     const merged = files?.concat(selectedFiles);
 
-    // validate count maximum.
     if ((merged?.length ?? 0) > maxCount) {
-      toast.warning(t("createTicketDialog.maximumWarningTitle"), {
+      toast.add({
+        title: t("createTicketDialog.maximumWarningTitle"),
         description: t("createTicketDialog.maximumWarningMessage").replace(
           "${attachMaxCount}",
           maxCount.toString(),
         ),
+        type: "warning",
       });
 
       return;
     }
 
-    // validate size maximum.
     let sizeTotal = 0;
 
     merged.forEach((file) => (sizeTotal += file.size));
 
     if (sizeTotal > maxSizeMB) {
-      toast.warning(t("createTicketDialog.maxSizeWarningTitle"), {
+      toast.add({
+        title: t("createTicketDialog.maxSizeWarningTitle"),
         description: t("createTicketDialog.maxSizeWarningMessage").replace(
           "${attachMaxSize}",
           maxCount.toString(),
         ),
+        type: "warning",
       });
 
       return;

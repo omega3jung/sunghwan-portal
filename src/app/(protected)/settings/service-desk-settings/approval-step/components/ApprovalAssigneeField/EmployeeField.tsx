@@ -16,7 +16,7 @@ type EmployeeFieldProps = {
   stepAssignee: AssigneeByType<"EMPLOYEE">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
-  readOnly?: boolean;
+  canEdit?: boolean;
   employees?: Employee[];
   isLoading?: boolean;
 };
@@ -25,7 +25,7 @@ export function EmployeeField({
   stepAssignee,
   onChange,
   language,
-  readOnly,
+  canEdit = true,
   employees = [],
   isLoading,
 }: EmployeeFieldProps) {
@@ -63,12 +63,11 @@ export function EmployeeField({
       </FieldLabel>
       <AvatarMultiComboBox
         id="approval-select-employee"
-        placeholderClassName="h-8 font-normal flex items-center pl-2 text-muted-foreground"
-        variant={"ghost"}
+        placeholderClassName="font-normal flex items-center pl-2 text-muted-foreground"
         badgeVariant={"primary"}
         options={employeeData}
         value={stepAssignee.employeeUsernames}
-        readOnly={readOnly}
+        readOnly={!canEdit}
         disabled={isLoading}
         isLoading={isLoading}
         maxImages={MAX_ASSIGNEE_PER_APPROVAL}

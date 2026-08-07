@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/history/api/client.ts
+// src/feature/serviceDesk/ticketHistory/api/client.ts
 
 "use client";
 // client export only.

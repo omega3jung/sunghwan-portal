@@ -1,4 +1,4 @@
-import type { DbDepartment } from "@/feature/organization/department";
+import type { DbDepartment } from "@/lib/application/contracts/organization";
 
 import demoAutomotiveDepartmentMock from "./demoAutomotive.json";
 import demoConstructionDepartmentMock from "./demoConstruction.json";

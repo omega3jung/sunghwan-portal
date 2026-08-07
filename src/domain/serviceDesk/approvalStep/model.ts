@@ -3,7 +3,6 @@ import { LocalizedText } from "@/shared/types";
 
 import { MainCategory } from "../category/model";
 
-// category data structure.
 export type CategoryApprovalSettings = Omit<MainCategory, "subCategories"> & {
   approvalSteps: ApprovalStep[];
 };
@@ -35,10 +34,10 @@ export type ApprovalAssigneeTypeValue =
   (typeof APPROVAL_ASSIGNEE_TYPES)[number];
 
 export type ApprovalAssigneePayloadMap = {
-  MANAGER: { level: 1 | 2 };
+  MANAGER: { managerDistance: 1 | 2 };
   DEPARTMENT: { departmentId: string }; // string number. can use parseInt.
   JOB_FIELD: { jobFieldId: string }; // string number. can use parseInt.
-  EMPLOYEE: { employeeUsernames: string[] }; // employee username identifiers
+  EMPLOYEE: { employeeUsernames: string[] };
 };
 
 export type ApprovalAssigneeType = {

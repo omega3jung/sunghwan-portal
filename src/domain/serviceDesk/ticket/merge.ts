@@ -1,6 +1,7 @@
 import { CategoryScope } from "../category";
 import { TicketResolutionReason, TicketStatus } from "../types";
 
+/** Close reasons that create a persisted merge or escalation relation. */
 export type TicketMergeCloseReason = Extract<
   TicketResolutionReason,
   "Merged" | "Escalated"
@@ -36,6 +37,7 @@ export function isEscalatedTicket(ticket: MergeAwareTicket): boolean {
   );
 }
 
+/** Only same-tenant scope combinations map to an allowed merge relation. */
 export function resolveTicketMergeCloseReason(
   source: Pick<MergeAwareTicket, "tenantId" | "scope">,
   target: Pick<MergeAwareTicket, "tenantId" | "scope">,
@@ -70,6 +72,7 @@ export function shouldIncludeInTicketAggregates(
   return true;
 }
 
+/** The optional lookup extends validation to relation cycles beyond the direct target. */
 export function canMergeTicketInto(
   source: MergeAwareTicket,
   target: MergeAwareTicket,

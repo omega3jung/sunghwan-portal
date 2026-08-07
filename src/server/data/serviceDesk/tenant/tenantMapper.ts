@@ -9,6 +9,7 @@ import {
   UpdateTenantRowInput,
 } from "./tenantRow";
 
+/** Maps tenant row to dto across the database and API boundary. */
 export function mapTenantRowToDto(row: TenantRow): TenantDto {
   return {
     tenant_id: Number(row.tn_id),
@@ -19,10 +20,12 @@ export function mapTenantRowToDto(row: TenantRow): TenantDto {
   };
 }
 
+/** Maps tenant rows to dtos across the database and API boundary. */
 export function mapTenantRowsToDtos(rows: TenantRow[]): TenantDto[] {
   return rows.map(mapTenantRowToDto);
 }
 
+/** Maps create tenant input dto to row input across the database and API boundary. */
 export function mapCreateTenantInputDtoToRowInput(
   input: CreateTenantInputDto,
 ): CreateTenantRowInput {
@@ -34,6 +37,7 @@ export function mapCreateTenantInputDtoToRowInput(
   };
 }
 
+/** Maps update tenant input dto to row input across the database and API boundary. */
 export function mapUpdateTenantInputDtoToRowInput(
   input: UpdateTenantInputDto,
 ): UpdateTenantRowInput {

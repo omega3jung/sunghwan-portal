@@ -2,10 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import type { ServiceDeskApprovalStepListParams } from "@/lib/application/contracts/serviceDesk";
+
 import { useServiceDeskQueryOptions } from "../shared/hooks/useServiceDeskQueryOptions";
 import { serviceDeskApprovalStepApi } from "./api";
 import { approvalStepQueryKeys } from "./queryKeys";
-import { ServiceDeskApprovalStepListParams } from "./types";
 
 export const useServiceDeskApprovalStepListQuery = (
   params?: ServiceDeskApprovalStepListParams,

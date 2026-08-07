@@ -59,6 +59,7 @@ function mapAssigneeGroupToDto(value: unknown): AssigneeGroupDto {
   };
 }
 
+/** Maps assignment rule row to dto across the database and API boundary. */
 export function mapAssignmentRuleRowToDto(
   row: AssignmentRuleRow,
 ): AssignmentRuleDto {
@@ -69,12 +70,14 @@ export function mapAssignmentRuleRowToDto(
   };
 }
 
+/** Maps assignment rule rows to dtos across the database and API boundary. */
 export function mapAssignmentRuleRowsToDtos(
   rows: AssignmentRuleRow[],
 ): AssignmentRuleDto[] {
   return rows.map(mapAssignmentRuleRowToDto);
 }
 
+/** Maps create assignment rule input dto to row input across the database and API boundary. */
 export function mapCreateAssignmentRuleInputDtoToRowInput(
   input: CreateAssignmentRuleInputDto,
 ): CreateAssignmentRuleRowInput {
@@ -84,6 +87,7 @@ export function mapCreateAssignmentRuleInputDtoToRowInput(
   };
 }
 
+/** Maps update assignment rule input dto to row input across the database and API boundary. */
 export function mapUpdateAssignmentRuleInputDtoToRowInput(
   input: UpdateAssignmentRuleInputDto,
 ): UpdateAssignmentRuleRowInput {

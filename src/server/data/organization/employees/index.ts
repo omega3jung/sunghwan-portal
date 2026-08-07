@@ -1,4 +1,4 @@
-// src/server/data/organization/employee/index.ts
+// src/server/data/organization/employees/index.ts
 
 export * from "./employeesDto";
 export * from "./employeesService";

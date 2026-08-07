@@ -1,4 +1,3 @@
-// src/feature/user/profile/api.ts
 import { AppUser } from "@/domain/user";
 import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";

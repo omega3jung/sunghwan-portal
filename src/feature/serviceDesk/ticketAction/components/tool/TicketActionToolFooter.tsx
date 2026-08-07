@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { NS } from "@/lib/application/i18n";
 
 type TicketActionToolFooterProps = {
-  disabled: boolean;
+  canSubmit: boolean;
   errorMessage: string;
   helperText: string;
   isPending: boolean;
@@ -15,7 +15,7 @@ type TicketActionToolFooterProps = {
 };
 
 export function TicketActionToolFooter({
-  disabled,
+  canSubmit,
   errorMessage,
   helperText,
   isPending,
@@ -27,7 +27,7 @@ export function TicketActionToolFooter({
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-      <div className="break-words text-sm text-muted-foreground/75">
+      <div className="wrap-break-word text-sm text-muted-foreground/75">
         {errorMessage || helperText}
       </div>
 
@@ -46,7 +46,7 @@ export function TicketActionToolFooter({
           type="button"
           className="w-full whitespace-normal sm:w-auto"
           onClick={onSubmit}
-          disabled={disabled}
+          disabled={!canSubmit}
         >
           <SendHorizontal className="h-4 w-4" />
           {submitLabel}

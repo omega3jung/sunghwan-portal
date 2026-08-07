@@ -1,0 +1,27 @@
+.Wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding-inline-start: var(--tree-item-indentation);
+  list-style: none;
+}
+
+.TreeItem {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.TreeItem.clone {
+  pointer-events: none;
+  filter: drop-shadow(0 15px 15px rgb(34 33 81 / 10%));
+}
+
+.TreeItem.ghost {
+  opacity: 0.35;
+}
+
+.TreeItem.disableInteraction {
+  pointer-events: none;
+}

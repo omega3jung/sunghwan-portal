@@ -23,7 +23,9 @@ const tenantSchema = z.object({
   active: z.boolean().optional(),
 });
 
+/** Validates create tenant payloads at the Service Desk application boundary. */
 export const createTenantSchema = tenantSchema.omit({ id: true });
+/** Validates update tenant payloads at the Service Desk application boundary. */
 export const updateTenantSchema = tenantSchema.omit({ id: true });
 
 const subCategorySchema = z.object({
@@ -52,6 +54,7 @@ const categorySchema = z.object({
   subCategories: z.array(subCategorySchema),
 });
 
+/** Validates save category tree payloads at the Service Desk application boundary. */
 export const saveCategoryTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(categorySchema.omit({ tenantId: true })),
@@ -61,7 +64,7 @@ const accessLevelValues = Object.values(ACCESS_LEVEL) as AccessLevel[];
 const approvalAssigneeSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("MANAGER"),
-    level: z.union([z.literal(1), z.literal(2)]),
+    managerDistance: z.union([z.literal(1), z.literal(2)]),
   }),
   z.object({ type: z.literal("DEPARTMENT"), departmentId: z.string().min(1) }),
   z.object({ type: z.literal("JOB_FIELD"), jobFieldId: z.string().min(1) }),
@@ -88,6 +91,7 @@ const approvalStepSchema = z.object({
   skipAccessLevel: skipAccessLevelSchema.optional(),
 });
 
+/** Validates save approval step tree payloads at the Service Desk application boundary. */
 export const saveApprovalStepTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(
@@ -111,6 +115,7 @@ const assigneeGroupSchema = assignmentRuleAssigneeSchema.refine(
   },
 );
 
+/** Validates save assignment rule tree payloads at the Service Desk application boundary. */
 export const saveAssignmentRuleTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(

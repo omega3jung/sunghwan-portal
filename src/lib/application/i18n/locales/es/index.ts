@@ -1,27 +1,30 @@
-// src/lib/i18n/locales/es/index.ts
+// src/lib/application/i18n/locales/es/index.ts
 
 import auth from "./auth.json";
 import common from "./common.json";
+import component from "./component";
 import dashboard from "./dashboard.json";
-import demo from "./demo.json";
-import documents from "./documents.json";
-import domain from "./domain";
-import error from "./error.json";
+import demo from "./demo";
+import documents from "./documents";
+import error from "./error";
 import message from "./message.json";
-import serviceDesk from "./serviceDesk.json";
-import settings from "./settings.json";
+import serviceDesk from "./serviceDesk";
+import settings from "./settings";
+import shared from "./shared";
 import validation from "./validation.json";
 
+/** Bundled Spanish namespaces registered with the localization runtime. */
 export const es = {
   demo,
   auth,
+  component,
   dashboard,
   documents,
   settings,
   error,
   validation,
   message,
-  domain,
+  shared,
   common,
   serviceDesk,
 };

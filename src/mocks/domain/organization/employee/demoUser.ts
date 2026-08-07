@@ -1,4 +1,4 @@
-﻿import { DbEmployee } from "@/feature/organization/employee";
+import type { DbEmployee } from "@/lib/application/contracts/organization";
 
 export const adminEmployee: DbEmployee = {
   e_id: -1,

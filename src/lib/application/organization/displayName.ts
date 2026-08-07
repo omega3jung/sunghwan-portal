@@ -1,6 +1,7 @@
 import { DisplayName, LocalizedName } from "@/domain/organization";
 import { LocalizedText } from "@/shared/types";
 
+/** Maps display name values across shared organization policy. */
 export const displayNameMapper = (name: LocalizedName): LocalizedText => {
   const result: LocalizedText = {
     en: formatDisplayName(name.en),
@@ -25,6 +26,7 @@ export const displayNameMapper = (name: LocalizedName): LocalizedText => {
   return result;
 };
 
+/** Formats display name for shared organization policy. */
 export const formatDisplayName = (name: DisplayName): string => {
   return [name.first, name.middle, name.last].filter(Boolean).join(" ");
 };

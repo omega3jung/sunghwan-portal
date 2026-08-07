@@ -19,6 +19,7 @@ const EMPTY_EMAIL: ServiceDeskTicketEmail = {
   bcc: [],
 };
 
+/** Maps ticket draft row to dto across the database and API boundary. */
 export function mapTicketDraftRowToDto(
   row: ServiceDeskTicketDraftRow,
 ): TicketDraftDto {
@@ -59,6 +60,7 @@ export function mapTicketDraftRowToDto(
   };
 }
 
+/** Maps ticket draft write dto to row input across the database and API boundary. */
 export function mapTicketDraftWriteDtoToRowInput(
   input: TicketDraftWriteDto,
 ): Omit<TicketDraftRowInput, "tk_requester_department_id"> {

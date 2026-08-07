@@ -45,6 +45,7 @@ const ASSIGNMENT_RULE_RECOMMENDATIONS_PATH_PATTERN =
   /^\/service-desk\/assignment-rules\/recommendations$/;
 const ASSIGNMENT_RULES_LIST_PATH_PATTERN = /^\/service-desk\/assignment-rules$/;
 
+/** Routes assignment-rule reads and mutations through the authorized tenant settings context. */
 export async function handleAssignmentRulePortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
@@ -181,7 +182,9 @@ async function saveAssignmentRuleTreeInTransaction(
     ]),
   );
 
-  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload);
+  const nextAssignmentRules = flattenAssignmentRuleTreePayload(payload).filter(
+    (rule) => hasAssignmentRuleAssigneeSelection(rule.assignee),
+  );
   const nextAssignmentRulesByCategoryId = new Map(
     nextAssignmentRules.map((assignmentRule) => [
       assignmentRule.category_id,
@@ -192,12 +195,10 @@ async function saveAssignmentRuleTreeInTransaction(
   await assertAssignmentReferencesValidForWrite(
     query,
     tenantId,
-    nextAssignmentRules
-      .filter((rule) => hasAssignmentRuleAssigneeSelection(rule.assignee))
-      .map((rule) => ({
-        categoryId: rule.category_id,
-        assignee: rule.assignee,
-      })),
+    nextAssignmentRules.map((rule) => ({
+      categoryId: rule.category_id,
+      assignee: rule.assignee,
+    })),
   );
 
   const createTasks: Array<() => Promise<unknown>> = [];

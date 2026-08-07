@@ -3,6 +3,7 @@ import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
 
 import type { WorkSessionRow } from "./workSessionRow";
 
+/** Lets work-session persistence share the transaction that updates ticket work state. */
 export type WorkSessionRepositoryOptions = ServiceDeskRepositoryOptions;
 
 const FIND_WORK_SESSION_ROWS_BY_TICKET_ID_QUERY = `
@@ -75,6 +76,7 @@ returning
   ws_updated_at;
 `;
 
+/** Queries PostgreSQL for work session rows by ticket id without applying presentation concerns. */
 export async function findWorkSessionRowsByTicketId(
   ticketId: string,
   options: WorkSessionRepositoryOptions = {},
@@ -86,6 +88,7 @@ export async function findWorkSessionRowsByTicketId(
   ]);
 }
 
+/** Defines the finish running work session rows by ticket id used by the PostgreSQL repository boundary. */
 export async function finishRunningWorkSessionRowsByTicketId(
   ticketId: string,
   endedAt: string,
@@ -99,6 +102,7 @@ export async function finishRunningWorkSessionRowsByTicketId(
   ]);
 }
 
+/** Creates work session row through the server persistence boundary. */
 export async function createWorkSessionRow(
   input: {
     ticketId: string;

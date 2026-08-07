@@ -1,11 +1,6 @@
-/* TicketHistory is defined by changed target, source, and event.
- *
- * ex) ticket submitted = type "TICKET", source "USER_ACTION", event "TICKET_SUBMITTED"
- * ex) comment created = type "COMMENT", source "USER_ACTION", event "COMMENT_CREATED"
- * ex) approval requested = type "APPROVAL", source "APPROVAL_RULE", event "APPROVAL_REQUESTED"
- * ex) approval declined = type "APPROVAL", source "USER_ACTION", event "APPROVAL_DECLINED"
- * ex) ticket resolved = type "STATUS", source "USER_ACTION", event "STATUS_UPDATED"
- * ex) system close = type "STATUS", source "SYSTEM_AUTO", event "RESOLUTION_CLOSE"
+/**
+ * A history record is classified by the changed target, the producer, and the
+ * immutable event. No single dimension fully describes the recorded change.
  */
 export type HistoryType =
   | "TICKET"
@@ -17,6 +12,7 @@ export type HistoryType =
   | "NOTE"
   | "PLANNING";
 
+/** Authority that produced an immutable ticket history event. */
 export type TicketHistorySource =
   | "USER_ACTION"
   | "SYSTEM_AUTO"
@@ -24,6 +20,7 @@ export type TicketHistorySource =
   | "APPROVAL_RULE"
   | "ASSIGNMENT_RULE";
 
+/** Immutable event kinds represented in the ticket activity history. */
 export type TicketHistoryEvent =
   | "TICKET_SUBMITTED"
   | "TICKET_UPDATED"

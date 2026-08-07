@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Calendar as CalendarIcon, Clock3 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
@@ -91,6 +91,7 @@ function createMinuteOptions(
     optionSet.add(minute);
   }
 
+  // Preserve a controlled value that is not aligned with a newly changed step.
   if (selectedMinute !== undefined) {
     optionSet.add(selectedMinute);
   }
@@ -106,13 +107,11 @@ function withTimeParts(baseDate: Date, hour: number, minute: number) {
 
 function getDefaultDateTime(
   value: Date | undefined,
-  defaultValue: Date | undefined,
   minuteStep: DateTimePickerMinuteStep,
   minDate?: Date,
   maxDate?: Date,
 ) {
-  const baseDate =
-    normalizeDateValue(value) ?? normalizeDateValue(defaultValue) ?? new Date();
+  const baseDate = normalizeDateValue(value) ?? new Date();
   return clampDateTime(
     roundDateToMinuteStep(baseDate, minuteStep),
     minDate,
@@ -120,9 +119,13 @@ function getDefaultDateTime(
   );
 }
 
+/**
+ * Controlled date-time picker that preserves the current time when changing
+ * the calendar day. New values are rounded to `minuteStep` and clamped to
+ * min/max; exact time restrictions remain in the hour and minute controls.
+ */
 export function DateTimePicker({
   value,
-  defaultValue,
   onChange,
   minDate,
   maxDate,
@@ -135,16 +138,12 @@ export function DateTimePicker({
   modal = true,
   ...buttonProps
 }: DateTimePickerProps) {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   const [open, setOpen] = useState(false);
-  const [dateTime, setDateTime] = useControllableState<Date | undefined>({
-    prop: value,
-    defaultProp: defaultValue,
-    onChange,
-  });
-  const normalizedDateTime = normalizeDateValue(dateTime);
-  const normalizedDefaultValue = normalizeDateValue(defaultValue);
+  const normalizedDateTime = normalizeDateValue(value);
   const normalizedMinDate = normalizeDateValue(minDate);
   const normalizedMaxDate = normalizeDateValue(maxDate);
 
@@ -167,7 +166,6 @@ export function DateTimePicker({
       : undefined;
   const calendarMonth =
     normalizedDateTime ??
-    normalizedDefaultValue ??
     normalizedMinDate ??
     normalizedMaxDate ??
     new Date();
@@ -186,7 +184,7 @@ export function DateTimePicker({
   );
 
   const updateDateTime = (nextDate: Date | undefined) => {
-    setDateTime(nextDate);
+    onChange(nextDate);
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -197,7 +195,6 @@ export function DateTimePicker({
 
     const baseDate = getDefaultDateTime(
       normalizedDateTime,
-      normalizedDefaultValue,
       resolvedMinuteStep,
       normalizedMinDate,
       normalizedMaxDate,
@@ -283,8 +280,9 @@ export function DateTimePicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           {...buttonProps}
           variant={variant}
           size={resolvedSize}
@@ -293,14 +291,15 @@ export function DateTimePicker({
             !normalizedDateTime && "text-muted-foreground",
             className,
           )}
-        >
+          />
+        }
+      >
           {normalizedDateTime ? (
             <span>{formatDateTimeText(normalizedDateTime)}</span>
           ) : (
             <span>{placeholder ?? t("dateTimePlaceholder")}</span>
           )}
           <CalendarIcon className="h-4 w-4" />
-        </Button>
       </PopoverTrigger>
 
       <PopoverContent
@@ -319,7 +318,7 @@ export function DateTimePicker({
               normalizedMaxDate,
             )
           }
-          className={cn(compact && "p-2 [--cell-size:1.75rem]")}
+          className={cn(compact && "[--cell-size:1.75rem]")}
         />
 
         <div
@@ -336,10 +335,14 @@ export function DateTimePicker({
 
             <Select
               value={selectedHour}
-              onValueChange={handleHourChange}
+              onValueChange={(nextHour) => {
+                if (nextHour !== null) {
+                  handleHourChange(nextHour);
+                }
+              }}
               disabled={!normalizedDateTime}
             >
-              <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>
+              <SelectTrigger className={cn(compact && "px-2 text-xs")}>
                 <SelectValue placeholder={t("hour")} />
               </SelectTrigger>
               <SelectContent>
@@ -357,10 +360,14 @@ export function DateTimePicker({
 
             <Select
               value={selectedMinute}
-              onValueChange={handleMinuteChange}
+              onValueChange={(nextMinute) => {
+                if (nextMinute !== null) {
+                  handleMinuteChange(nextMinute);
+                }
+              }}
               disabled={!normalizedDateTime}
             >
-              <SelectTrigger className={cn(compact && "h-8 px-2 text-xs")}>
+              <SelectTrigger className={cn(compact && "px-2 text-xs")}>
                 <SelectValue placeholder={t("minute")} />
               </SelectTrigger>
               <SelectContent>

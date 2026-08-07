@@ -15,7 +15,7 @@ type Props = {
   stepAssignee: AssigneeByType<ApprovalAssigneeTypeValue>;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
-  readOnly?: boolean;
+  canEdit?: boolean;
   employees?: Employee[];
   departments?: Department[];
   jobFields?: JobField[];
@@ -26,7 +26,7 @@ export function ApprovalAssigneeField({
   stepAssignee,
   onChange,
   language,
-  readOnly = false,
+  canEdit = true,
   employees,
   departments,
   jobFields,
@@ -38,7 +38,7 @@ export function ApprovalAssigneeField({
         <ManagerField
           stepAssignee={stepAssignee}
           onChange={onChange}
-          readOnly={readOnly}
+          canEdit={canEdit}
         />
       );
     case "DEPARTMENT":
@@ -47,7 +47,7 @@ export function ApprovalAssigneeField({
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
-          readOnly={readOnly}
+          canEdit={canEdit}
           departments={departments}
           isLoading={isLoading}
         />
@@ -58,7 +58,8 @@ export function ApprovalAssigneeField({
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
-          readOnly={readOnly}
+          canEdit={canEdit}
+          departments={departments}
           jobFields={jobFields}
           isLoading={isLoading}
         />
@@ -69,7 +70,7 @@ export function ApprovalAssigneeField({
           stepAssignee={stepAssignee}
           onChange={onChange}
           language={language}
-          readOnly={readOnly}
+          canEdit={canEdit}
           employees={employees}
           isLoading={isLoading}
         />

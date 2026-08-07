@@ -1,6 +1,7 @@
 import { CompanyDto } from "./companyDto";
 import { CompanyRow } from "./companyRow";
 
+/** Maps company row to dto across the database and API boundary. */
 export function mapCompanyRowToDto(row: CompanyRow): CompanyDto {
   return {
     company_id: Number(row.c_id),
@@ -11,6 +12,7 @@ export function mapCompanyRowToDto(row: CompanyRow): CompanyDto {
   };
 }
 
+/** Maps company rows to dtos across the database and API boundary. */
 export function mapCompanyRowsToDtos(rows: CompanyRow[]): CompanyDto[] {
   return rows.map(mapCompanyRowToDto);
 }

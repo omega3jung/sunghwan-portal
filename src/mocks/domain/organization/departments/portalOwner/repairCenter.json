@@ -9,7 +9,7 @@
       "en": "Department responsible for device repair and refurbishment operations"
     },
     "d_company_id": 1,
-    "d_parent_id": 0,
+    "d_parent_id": null,
     "d_active": true
   },
   {

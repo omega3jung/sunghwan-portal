@@ -4,6 +4,7 @@ import { AccessLevel } from "@/domain/auth";
 
 import type { PortalApiJsonOptions, PortalApiQueryValue } from "./types";
 
+/** Normalizes path so downstream server logic receives a stable representation. */
 export function normalizePath(path: string): string {
   return path.startsWith("/") ? path : `/${path}`;
 }
@@ -23,6 +24,7 @@ function resolvePortalApiQueryValue(value: PortalApiQueryValue): string | null {
   return String(value);
 }
 
+/** Returns the first scalar value for a normalized portal query parameter. */
 export function getPortalApiQueryValue(
   request: NextRequest,
   options: Pick<PortalApiJsonOptions, "query">,
@@ -41,6 +43,7 @@ export function getPortalApiQueryValue(
     request.nextUrl.searchParams.get(key)
   );
 }
+/** Resolves access level from the current server-side context and policy. */
 export function resolveAccessLevel(value: unknown): AccessLevel | null {
   if (value === 9 || value === 7 || value === 5 || value === 3 || value === 1) {
     return value;
@@ -49,6 +52,7 @@ export function resolveAccessLevel(value: unknown): AccessLevel | null {
   return null;
 }
 
+/** Parses preference key from the untrusted request representation. */
 export function parsePreferenceKey(preferenceKey: string) {
   const lastDotIndex = preferenceKey.lastIndexOf(".");
 

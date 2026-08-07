@@ -1,3 +1,4 @@
+// src/feature/navigation/navigationBar/index.ts
 // Server-safe navigation contracts.
 
 export * from "./types";

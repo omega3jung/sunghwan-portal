@@ -18,6 +18,10 @@ const toMergeAwareTicket = (ticket: DbTicketDetail) => ({
   mergedIntoTicketId: ticket.merged_into_ticket_id ?? null,
 });
 
+/**
+ * Validates a LOCAL merge target for tenant, scope, status, and relation cycles.
+ * Out-of-tenant targets remain concealed behind the same not-found response.
+ */
 export const validateMergeTarget = (
   context: LocalActionRuntimeContext,
   targetTicketId: string,

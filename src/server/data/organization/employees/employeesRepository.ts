@@ -47,6 +47,7 @@ const FIND_EMPLOYEES_BY_COMPANY_ID_QUERY = `
     and e_company_id = $2
 `;
 
+/** Queries PostgreSQL for employees without applying presentation concerns. */
 export async function findEmployees(active: boolean): Promise<DbEmployeeRow[]> {
   const rows = await queryPortalApi<DbEmployeeRow>(
     FIND_ACTIVE_EMPLOYEE_BY_ID_QUERY,
@@ -55,6 +56,7 @@ export async function findEmployees(active: boolean): Promise<DbEmployeeRow[]> {
   return rows ?? [];
 }
 
+/** Queries PostgreSQL for employees by company id without applying presentation concerns. */
 export async function findEmployeesByCompanyId(
   active: boolean,
   companyId: number,

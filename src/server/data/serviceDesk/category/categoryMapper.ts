@@ -36,6 +36,7 @@ function assertParentCategoryRow(
   }
 }
 
+/** Maps category row to sub category dto across the database and API boundary. */
 export function mapCategoryRowToSubCategoryDto(
   row: CategoryRow,
 ): SubCategoryDto {
@@ -52,6 +53,7 @@ export function mapCategoryRowToSubCategoryDto(
   };
 }
 
+/** Maps category row to category dto across the database and API boundary. */
 export function mapCategoryRowToCategoryDto(row: CategoryRow): CategoryDto {
   assertParentCategoryRow(row);
 
@@ -70,6 +72,7 @@ export function mapCategoryRowToCategoryDto(row: CategoryRow): CategoryDto {
   };
 }
 
+/** Maps category rows to dtos across the database and API boundary. */
 export function mapCategoryRowsToDtos(rows: CategoryRow[]): CategoryDto[] {
   const categoryMap = new Map<number, CategoryDto>();
 
@@ -94,6 +97,7 @@ export function mapCategoryRowsToDtos(rows: CategoryRow[]): CategoryDto[] {
   return Array.from(categoryMap.values());
 }
 
+/** Maps create category input dto to row input across the database and API boundary. */
 export function mapCreateCategoryInputDtoToRowInput(
   input: CreateCategoryInputDto,
 ): CreateCategoryRowInput {
@@ -112,6 +116,7 @@ export function mapCreateCategoryInputDtoToRowInput(
   };
 }
 
+/** Maps update category input dto to row input across the database and API boundary. */
 export function mapUpdateCategoryInputDtoToRowInput(
   input: UpdateCategoryInputDto,
 ): UpdateCategoryRowInput {
@@ -129,6 +134,7 @@ export function mapUpdateCategoryInputDtoToRowInput(
   };
 }
 
+/** Maps category sub category input dto to create row input across the database and API boundary. */
 export function mapCategorySubCategoryInputDtoToCreateRowInput(
   tenantId: string | number,
   parentCategoryId: string | number,
@@ -150,6 +156,7 @@ export function mapCategorySubCategoryInputDtoToCreateRowInput(
   };
 }
 
+/** Maps category sub category input dto to update row input across the database and API boundary. */
 export function mapCategorySubCategoryInputDtoToUpdateRowInput(
   parentCategoryId: string | number,
   input: CategorySubCategoryInputDto,

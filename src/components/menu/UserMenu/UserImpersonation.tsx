@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEmployeeListQuery } from "@/feature/organization/employee/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import type { DbParams } from "@/shared/types";
 import { createFieldFilter } from "@/shared/utils/routing";
@@ -42,7 +43,8 @@ export function UserImpersonation(props: Props) {
     onOpenChange,
   } = props;
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
+  const { t: tCommon } = useTranslation(NS.common);
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
 
@@ -87,7 +89,7 @@ export function UserImpersonation(props: Props) {
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
       <DialogContent className="sm:max-w-md left-auto right-1 top-[60px] translate-x-0 translate-y-0">
         <DialogHeader>
-          <DialogTitle>{t("impersonation")}</DialogTitle>
+          <DialogTitle>{t("impersonation.label")}</DialogTitle>
         </DialogHeader>
 
         <AvatarComboBox
@@ -107,7 +109,7 @@ export function UserImpersonation(props: Props) {
               onOpenChange(false);
             }}
           >
-            {t("action.cancel", { ns: "common" })}
+            {tCommon("action.cancel")}
           </Button>
 
           <Button
@@ -127,7 +129,7 @@ export function UserImpersonation(props: Props) {
               }
             }}
           >
-            {t("startImpersonation")}
+            {t("impersonation.start")}
           </Button>
         </DialogFooter>
       </DialogContent>

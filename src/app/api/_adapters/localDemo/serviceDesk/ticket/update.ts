@@ -21,6 +21,7 @@ const EDITABLE_TICKET_STATUSES: TicketStatus[] = [
   "Declined",
 ];
 
+/** Updates ticket in the server-side LOCAL ticket adapter mutable state. */
 export const localUpdateTicket = async ({
   isInternal,
   access,

@@ -7,9 +7,7 @@ import { CategoryScope } from "../category";
 import { TicketAttachmentMetadata } from "../types";
 import { TicketResolutionReason, TicketStatus } from "../types/enums";
 
-/**
- * Ticket core identifiers and audit fields.
- */
+/** Identifiers, requester snapshot, and audit timestamps shared by read projections. */
 interface TicketBase {
   id: string;
   ticketNumber: string;
@@ -23,10 +21,7 @@ interface TicketBase {
   requesterDepartmentName: LocalizedText | null;
 }
 
-/**
- * Ticket workflow state.
- * These fields represent the current processing state of a ticket.
- */
+/** Current workflow state used for routing and resolution. */
 interface TicketWorkflowState {
   status: TicketStatus;
   priority: Priority;
@@ -34,6 +29,7 @@ interface TicketWorkflowState {
   closeReason?: TicketResolutionReason;
 }
 
+/** Determines whether current assignees are approvers or work assignees. */
 export type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
 export type TicketUser = {
@@ -61,18 +57,12 @@ export interface TicketCurrentAssignmentState {
   isCurrentWorker: boolean;
 }
 
-/**
- * Whether the current user has been assigned as a work assignee
- * at any point, including the current assignment.
- */
 export interface TicketAssignmentState extends TicketCurrentAssignmentState {
+  /** Includes both previous and current work assignments. */
   hasBeenWorker: boolean;
 }
 
-/**
- * Ticket metrics or derived operational state.
- * These values are useful for domain-level summary/detail reads.
- */
+/** Accumulated work and latest activity timestamps shared by read projections. */
 interface TicketMetrics {
   workMinutes: number;
 
@@ -83,21 +73,15 @@ interface TicketMetrics {
   closedAt?: ISODateString;
 }
 
-/**
- * Shared ticket flags and due-date state.
- */
+/** Ticket due date and current-user view projections. */
 interface TicketViewState {
   dueAt: ISODateString;
 
-  // Derived in the response for the current authenticated user.
   owner: boolean;
   active: boolean;
 }
 
-/**
- * Ticket scope fields.
- * These are the key fields for determining the ticket classification.
- */
+/** Tenant and category fields that determine the ticket's operating scope. */
 interface TicketScopeContext {
   tenantId: string | null;
   tenantName: LocalizedText | null;
@@ -105,10 +89,7 @@ interface TicketScopeContext {
   categoryParentId?: string;
 }
 
-/**
- * Ticket content fields.
- * These are the main editable fields of a ticket.
- */
+/** Editable request content and its attachment metadata. */
 interface TicketContent {
   categoryId: string;
   approvalStepId: string | null;
@@ -126,9 +107,7 @@ interface TicketContent {
   images: TicketAttachmentMetadata[];
 }
 
-/**
- * Ticket merge info fields.
- */
+/** Target identity recorded when a ticket is merged or escalated. */
 interface TicketRelation {
   mergedIntoTicketId?: string | null;
   mergedIntoTicketNo?: string | null;

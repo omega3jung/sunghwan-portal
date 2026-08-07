@@ -1,3 +1,10 @@
+import type {
+  Company,
+  Department,
+  Employee,
+  JobField,
+} from "@/domain/organization";
+import { idToNumber } from "@/lib/application/api/mapId";
 import {
   applyRuleGroupFilter,
   parseRuleGroupFilter,
@@ -11,10 +18,6 @@ import {
   type CreateDepartmentInput,
   type CreateEmployeeInput,
   type CreateJobFieldInput,
-  toCompanyMockResource,
-  toDepartmentMockResource,
-  toEmployeeMockResource,
-  toJobFieldMockResource,
   type UpdateCompanyInput,
   type UpdateDepartmentInput,
   type UpdateEmployeeInput,
@@ -25,6 +28,7 @@ import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
+/** Returns companies from the server-side LOCAL organization adapter. */
 export function listLocalCompanies() {
   const items = camelCompanyMapper(
     allCompaniesMock
@@ -34,6 +38,7 @@ export function listLocalCompanies() {
   return { items, total: items.length };
 }
 
+/** Returns company from the server-side LOCAL organization adapter. */
 export function getLocalCompany(id: string) {
   return (
     camelCompanyMapper(
@@ -42,11 +47,14 @@ export function getLocalCompany(id: string) {
   );
 }
 
+/** Creates company in the server-side LOCAL organization adapter mutable state. */
 export const createLocalCompany = (input: CreateCompanyInput) =>
-  toCompanyMockResource(input);
+  toLocalCompany(input);
+/** Updates company in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalCompany = (input: UpdateCompanyInput, id: string) =>
-  toCompanyMockResource(input, id);
+  toLocalCompany(input, id);
 
+/** Returns departments from the server-side LOCAL organization adapter. */
 export function listLocalDepartments(searchParams: URLSearchParams) {
   const items = camelDepartmentMapper(
     applyRuleGroupFilter(
@@ -60,6 +68,7 @@ export function listLocalDepartments(searchParams: URLSearchParams) {
   return { items, total: items.length };
 }
 
+/** Returns department from the server-side LOCAL organization adapter. */
 export function getLocalDepartment(id: string) {
   return (
     camelDepartmentMapper(allDepartmentsMock).find((item) => item.id === id) ??
@@ -67,13 +76,16 @@ export function getLocalDepartment(id: string) {
   );
 }
 
+/** Creates department in the server-side LOCAL organization adapter mutable state. */
 export const createLocalDepartment = (input: CreateDepartmentInput) =>
-  toDepartmentMockResource(input);
+  toLocalDepartment(input);
+/** Updates department in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalDepartment = (
   input: UpdateDepartmentInput,
   id: string,
-) => toDepartmentMockResource(input, id);
+) => toLocalDepartment(input, id);
 
+/** Returns employees from the server-side LOCAL organization adapter. */
 export function listLocalEmployees(searchParams: URLSearchParams) {
   const data = camelEmployeeMapper(
     applyRuleGroupFilter(
@@ -87,6 +99,7 @@ export function listLocalEmployees(searchParams: URLSearchParams) {
   return { data };
 }
 
+/** Returns employee from the server-side LOCAL organization adapter. */
 export function getLocalEmployee(id: string) {
   return (
     camelEmployeeMapper(allEmployeesMock).find(
@@ -96,11 +109,14 @@ export function getLocalEmployee(id: string) {
   );
 }
 
+/** Creates employee in the server-side LOCAL organization adapter mutable state. */
 export const createLocalEmployee = (input: CreateEmployeeInput) =>
-  toEmployeeMockResource(input);
+  toLocalEmployee(input);
+/** Updates employee in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalEmployee = (input: UpdateEmployeeInput, id: string) =>
-  toEmployeeMockResource(input, id);
+  toLocalEmployee(input, id);
 
+/** Returns job fields from the server-side LOCAL organization adapter. */
 export function listLocalJobFields(searchParams: URLSearchParams) {
   const companyIdByDepartmentId = new Map(
     allDepartmentsMock.map((department) => [
@@ -120,16 +136,63 @@ export function listLocalJobFields(searchParams: URLSearchParams) {
   return { items, total: items.length };
 }
 
+/** Returns job field from the server-side LOCAL organization adapter. */
 export function getLocalJobField(id: string) {
   return (
     camelJobFieldMapper(allJobFieldsMock).find((item) => item.id === id) ?? null
   );
 }
 
+/** Creates job field in the server-side LOCAL organization adapter mutable state. */
 export const createLocalJobField = (input: CreateJobFieldInput) =>
-  toJobFieldMockResource(input);
+  toLocalJobField(input);
+/** Updates job field in the server-side LOCAL organization adapter mutable state. */
 export const updateLocalJobField = (input: UpdateJobFieldInput, id: string) =>
-  toJobFieldMockResource(input, id);
+  toLocalJobField(input, id);
+
+function toLocalCompany(
+  input: CreateCompanyInput | UpdateCompanyInput,
+  id = Date.now().toString(),
+): Company {
+  return { id, ...input };
+}
+
+function toLocalDepartment(
+  input: CreateDepartmentInput | UpdateDepartmentInput,
+  id = Date.now().toString(),
+): Department {
+  return { id, ...input };
+}
+
+function toLocalJobField(
+  input: CreateJobFieldInput | UpdateJobFieldInput,
+  id = Date.now().toString(),
+): JobField {
+  return { id, ...input };
+}
+
+function toLocalEmployee(
+  input: CreateEmployeeInput | UpdateEmployeeInput,
+  id: number | string = Date.now(),
+): Employee {
+  const { startDate, endDate, ...rest } = input;
+
+  return {
+    ...rest,
+    id: resolveEmployeeId(id) ?? Date.now(),
+    startDate: toDate(startDate),
+    ...(endDate ? { endDate: toDate(endDate) } : {}),
+  };
+}
+
+function resolveEmployeeId(value: number | string | undefined) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return typeof value === "string" ? idToNumber(value) : null;
+}
+
+function toDate(value: Date | string) {
+  return value instanceof Date ? value : new Date(value);
+}
 
 function compareCompanies(
   a: (typeof allCompaniesMock)[number],

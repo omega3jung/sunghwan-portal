@@ -5,6 +5,11 @@ import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { serviceDeskTicketWorkSessionApi } from "./api";
 import { ticketWorkSessionQueryKeys } from "./queryKeys";
 
+/**
+ * Invalidates all projections that a work-session command may change.
+ * A single server transaction can update tracked time, ticket status, history,
+ * and running sessions, so these caches must be reconciled together.
+ */
 const invalidateTicketWorkSessionQueries = (
   queryClient: ReturnType<typeof useQueryClient>,
   ticketId: string,
@@ -36,7 +41,6 @@ const invalidateTicketWorkSessionQueries = (
 export const useCreateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.range.create,
     onSuccess: (data, variables) => {
@@ -52,7 +56,6 @@ export const useCreateTicketWorkSessionByRange = () => {
 export const useSubmitTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.submitManual,
     onSuccess: (data, variables) => {
@@ -68,7 +71,6 @@ export const useSubmitTicketWorkSession = () => {
 export const useUpdateTicketWorkSessionByRange = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.range.update,
     onSuccess: (_data, variables) => {
@@ -84,7 +86,6 @@ export const useUpdateTicketWorkSessionByRange = () => {
 export const useCreateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.duration.create,
     onSuccess: (data, variables) => {
@@ -100,7 +101,6 @@ export const useCreateTicketWorkSessionByDuration = () => {
 export const useUpdateTicketWorkSessionByDuration = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.duration.update,
     onSuccess: (_data, variables) => {
@@ -116,7 +116,6 @@ export const useUpdateTicketWorkSessionByDuration = () => {
 export const useDeleteTicketWorkSession = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: ({
       ticketId,
@@ -138,7 +137,6 @@ export const useDeleteTicketWorkSession = () => {
 export const useStartTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.start,
     onSuccess: (data, ticketId) => {
@@ -154,7 +152,6 @@ export const useStartTicketWorkSessionr = () => {
 export const useFinishTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.finish,
     onSuccess: (data, ticketId) => {
@@ -170,7 +167,6 @@ export const useFinishTicketWorkSessionr = () => {
 export const useSwitchTicketWorkSessionr = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketWorkSessionApi.timer.switch,
     onSuccess: (data, ticketId) => {

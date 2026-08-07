@@ -21,6 +21,9 @@ export function useAutoStartAssignedTicketOnView({
   }, [ticket?.id]);
 
   useEffect(() => {
+    // Viewing is allowed to start work only when the server projection says the
+    // effective user is a current WORK-phase assignee. The server repeats this
+    // authorization and owns the actual state transition.
     const shouldAutoStart =
       ticket?.active === true &&
       ticket.status === "Assigned" &&
@@ -39,6 +42,8 @@ export function useAutoStartAssignedTicketOnView({
       return;
     }
 
+    // Guard Strict Mode/effect reruns locally. The server command is also
+    // idempotent once the ticket is no longer Assigned.
     executedRef.current = true;
 
     mutate(

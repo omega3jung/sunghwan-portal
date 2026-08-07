@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 import { ENVIRONMENT } from "@/lib/config/environment";
 import { isPublicRoute } from "@/lib/config/routing";
 
+/** Guards HTML document navigation while leaving APIs and static resources to their own boundaries. */
 export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const MAX_DURATION = 24 * 60 * 1000; // 24hours.
@@ -97,6 +98,7 @@ export async function proxy(request: NextRequest) {
   });
 }
 
+/** Limits the Next.js proxy to application routes that may require document-level authentication. */
 export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|_next/webpack|favicon.ico|login).*)",

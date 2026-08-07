@@ -1,0 +1,54 @@
+{
+  "ticketUpdate": {
+    "trigger": "Update ticket",
+    "title": "Update ticket",
+    "description": "Update requester-editable ticket fields.",
+    "loadingTicket": "Loading ticket...",
+    "notice": {
+      "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
+      "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."
+    },
+    "category": {
+      "placeholder": "Select category",
+      "back": "Back",
+      "empty": "No selectable categories."
+    },
+    "step": {
+      "info": "Issue Details",
+      "attachment": "Attachments",
+      "review": "Review"
+    },
+    "routing": {
+      "preserve": "Due date and recipient-only changes preserve the current approval and assignment.",
+      "reset": "Changing request details other than due date or email recalculates approval steps and assignee assignment."
+    },
+    "field": {
+      "existingFiles": "Existing files",
+      "existingImages": "Existing images",
+      "newAttachments": "New attachments"
+    },
+    "empty": {
+      "existingAttachments": "No existing attachments.",
+      "newAttachments": "No new attachments."
+    },
+    "action": {
+      "submit": "Update ticket",
+      "submitting": "Updating..."
+    },
+    "error": {
+      "load": "Failed to load the latest ticket details."
+    }
+  },
+  "listPage": {
+    "title": "IT Service Desk",
+    "description": "Search and browse service desk tickets."
+  },
+  "ticketList": {
+    "empty": "No tickets found",
+    "requesterMeta": "{{name}} ??{{time}}",
+    "dueMeta": "Due {{time}}"
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext must be used inside provider."
+  }
+}

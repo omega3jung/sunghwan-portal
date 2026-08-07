@@ -1,3 +1,4 @@
+// src/server/portalApi/index.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import { handleEmployeesPortalApi } from "./employees/employeesPortalApiHandler";
@@ -8,6 +9,7 @@ import { PortalApiJsonOptions } from "./types";
 import { handleUserPortalApi } from "./users/usersPortalApiHandler";
 import { normalizePath } from "./utils";
 
+/** Dispatches an in-process portal API request while preserving the same boundary as an HTTP route. */
 export async function dispatchPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,

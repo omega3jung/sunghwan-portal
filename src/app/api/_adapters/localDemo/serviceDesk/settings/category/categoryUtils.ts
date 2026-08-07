@@ -10,6 +10,7 @@ import {
   camelTenantCategoryTreeMapper,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Returns categories in deterministic LOCAL display order. */
 export const sortCategories = (categories: DbCategory[]) => {
   return categories
     .slice()
@@ -31,6 +32,7 @@ const collectCategoryIds = (items: DbTenantCategoryTree[]) => {
   ]);
 };
 
+/** Creates category ID assigner for the server-side LOCAL settings adapter. */
 export const createCategoryIdAssigner = (items: DbTenantCategoryTree[]) => {
   const assignNextId = createIncrementalIdAssigner(collectCategoryIds(items));
 
@@ -45,6 +47,7 @@ export const createCategoryIdAssigner = (items: DbTenantCategoryTree[]) => {
   };
 };
 
+/** Returns tenant index by ID from the server-side LOCAL settings adapter. */
 export const getTenantIndexById = (
   items: DbTenantCategoryTree[],
   tenantId: string,
@@ -52,6 +55,7 @@ export const getTenantIndexById = (
   return items.findIndex((tenant) => String(tenant.tenant_id) === tenantId);
 };
 
+/** Returns category location from the server-side LOCAL settings adapter. */
 export const getCategoryLocation = (
   items: DbTenantCategoryTree[],
   id: string,
@@ -72,6 +76,7 @@ export const getCategoryLocation = (
   return null;
 };
 
+/** Normalizes tenant tree into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeTenantTree = (
   tenant: DbTenantCategoryTree,
 ): TenantCategoryTree => {
@@ -83,6 +88,7 @@ export const normalizeTenantTree = (
   ])[0];
 };
 
+/** Normalizes category into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeCategory = (category: DbCategory) => {
   return camelCategoryMapper([
     {

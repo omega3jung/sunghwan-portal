@@ -14,6 +14,7 @@ import {
   getLocalDemoTenants,
 } from "./settings/state";
 
+/** Describes local service desk tenant context used by the server-side LOCAL demo runtime. */
 export type LocalServiceDeskTenantContext = {
   id: string;
   companyId: number;
@@ -21,6 +22,7 @@ export type LocalServiceDeskTenantContext = {
   active: boolean;
 };
 
+/** Describes service desk category context used by the server-side LOCAL demo runtime. */
 export type ServiceDeskCategoryContext = {
   categoryId: string;
   mainCategoryId: string;
@@ -28,6 +30,7 @@ export type ServiceDeskCategoryContext = {
   tenant: LocalServiceDeskTenantContext;
 };
 
+/** Describes local company employee used by the server-side LOCAL demo runtime. */
 export type LocalCompanyEmployee = {
   id: number;
   username: string;
@@ -40,9 +43,12 @@ export type LocalCompanyEmployee = {
   active: boolean;
 };
 
+/** Returns service desk category context from the server-side LOCAL demo runtime. */
 export async function getServiceDeskCategoryContext(
   categoryId: string | number,
 ): Promise<ServiceDeskCategoryContext | null> {
+  // Category IDs in fixtures are not accepted as globally authoritative. The
+  // enclosing tenant/main-category/scope relationship must resolve uniquely.
   const matches = new Map<
     string,
     { tenantId: number; mainCategoryId: string; scope: CategoryScope }
@@ -99,6 +105,7 @@ export async function getServiceDeskCategoryContext(
   };
 }
 
+/** Returns active local employees by company ID from the server-side LOCAL demo runtime. */
 export function getActiveLocalEmployeesByCompanyId(
   companyId: number,
 ): LocalCompanyEmployee[] {
@@ -120,6 +127,7 @@ export function getActiveLocalEmployeesByCompanyId(
     }));
 }
 
+/** Enforces approval assignee eligible before LOCAL state is exposed or mutated. */
 export async function assertApprovalAssigneeEligible({
   category,
   assignee,
@@ -168,7 +176,9 @@ export async function assertApprovalAssigneeEligible({
       return;
     case "MANAGER": {
       const minimumPermission =
-        assignee.level === 1 ? ACCESS_LEVEL.MANAGER : ACCESS_LEVEL.ADMIN;
+        assignee.managerDistance === 1
+          ? ACCESS_LEVEL.MANAGER
+          : ACCESS_LEVEL.ADMIN;
       if (
         !employees.some(
           (employee) =>
@@ -184,6 +194,7 @@ export async function assertApprovalAssigneeEligible({
   }
 }
 
+/** Enforces assignment assignee eligible before LOCAL state is exposed or mutated. */
 export async function assertAssignmentAssigneeEligible({
   category,
   assignee,
@@ -191,6 +202,8 @@ export async function assertAssignmentAssigneeEligible({
   category: ServiceDeskCategoryContext;
   assignee: AssigneeGroup;
 }) {
+  // LOCAL validates against active tenant-company employees to preserve the
+  // same reference boundary enforced by REMOTE repository validation queries.
   if (category.scope !== "PORTAL" && assignee.includeTenantCompany) {
     throw createEligibilityError(
       "Tenant-company joint handling is available only for PORTAL assignment rules.",

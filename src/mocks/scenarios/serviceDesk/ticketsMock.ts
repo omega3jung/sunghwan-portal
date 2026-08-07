@@ -1,5 +1,5 @@
 import type { Attach, TicketAttachmentMetadata } from "@/domain/serviceDesk";
-import type { DbTicketDetail } from "@/feature/serviceDesk/ticket/api";
+import type { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import {

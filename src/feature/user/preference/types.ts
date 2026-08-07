@@ -1,5 +1,3 @@
-// src/feature/user/preference/types.ts
-
 import { Preference } from "@/domain/user/preference";
 
 export interface GetPreferenceInput {

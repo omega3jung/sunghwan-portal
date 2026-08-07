@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
-import { flattenTree } from "@/components/custom/dnd/tree/utilities";
+import {
+  flattenTree,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { SupportedLanguage } from "@/lib/application/i18n";
+import { NS } from "@/lib/application/i18n";
 
 import { ApprovalStepData, CategoryApprovalStepData } from "../types";
 
@@ -17,6 +21,7 @@ export function useApprovalStepper({
   tree,
   language,
 }: UseApprovalStepperOptions) {
+  const { t } = useTranslation(NS.settings);
   const [currentStep, setCurrentStep] = useState(1);
 
   // 1. Compute the step list
@@ -33,32 +38,41 @@ export function useApprovalStepper({
       (node) => node.parentId === selectedCategoryId,
     );
 
-    const result = [{ label: "Created" }];
+    const result = [
+      {
+        id: "created",
+        label: t("serviceDeskSettings.approvalStepTab.created"),
+      },
+    ];
 
     for (const approval of approvals) {
       result.push({
+        id: approval.id.toString(),
         label: approval.data.name[language] || approval.id.toString(),
       });
     }
 
-    result.push({ label: "Assign" });
+    result.push({
+      id: "assign",
+      label: t("serviceDeskSettings.approvalStepTab.assign"),
+    });
 
     return result;
-  }, [selectedNode, tree, language]);
+  }, [language, selectedNode, t, tree]);
 
   // 2. Sync currentStep automatically
   useEffect(() => {
     if (!selectedNode) return;
     if (selectedNode.nodeType === "category") return;
 
-    const selectedLabel = selectedNode.name[language] || selectedNode.id;
-
-    const index = steps.findIndex((step) => step.label === selectedLabel);
+    const index = steps.findIndex(
+      (step) => step.id === selectedNode.id.toString(),
+    );
 
     if (index > 0) {
       setCurrentStep(index - 1);
     }
-  }, [selectedNode, steps, language]);
+  }, [selectedNode, steps]);
 
   return {
     steps,

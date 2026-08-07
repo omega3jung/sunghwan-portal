@@ -12,8 +12,7 @@ select
   d_parent_id,
   d_active
 from department
-where d_parent_id is not null
-  and d_active = true
+where d_active = true
 order by d_id;
 `;
 
@@ -27,16 +26,17 @@ select
   d_parent_id,
   d_active
 from department
-where d_parent_id is not null
-  and d_active = true
+where d_active = true
   and d_company_id = $1
 order by d_id;
 `;
 
+/** Queries PostgreSQL for active department rows without applying presentation concerns. */
 export async function findActiveDepartmentRows(): Promise<DepartmentRow[]> {
   return queryPortalApi<DepartmentRow>(FIND_ACTIVE_DEPARTMENT_ROWS_QUERY);
 }
 
+/** Queries PostgreSQL for active department rows by company id without applying presentation concerns. */
 export async function findActiveDepartmentRowsByCompanyId(
   companyId: number,
 ): Promise<DepartmentRow[]> {

@@ -1,3 +1,4 @@
+import type { TicketActionExecutionMode } from "@/lib/application/contracts/serviceDesk";
 import {
   createServiceDeskStatusError as createStatusError,
   type ServiceDeskQueryExecutor,
@@ -14,9 +15,9 @@ import {
   type NormalizedTicketActionPayload,
   normalizeHistoryMetadataRecord,
   requireNextTicketStatus,
-  type TicketActionExecutionMode,
 } from "../ticketActionRules";
 
+/** Executes reopen ticket action after shared authorization and payload validation have succeeded. */
 export async function executeReopenTicketAction({
   ticket,
   ticketId,

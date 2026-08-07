@@ -5,6 +5,7 @@ import {
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
 
+/** Routes work-session reads and writes for the authenticated ticket participant. */
 export async function handleWorkSessionPortalApi(
   _context: ServiceDeskPortalApiContext,
 ): Promise<NextResponse> {

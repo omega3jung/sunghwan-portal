@@ -1,0 +1,23 @@
+{
+  "controls": {
+    "presets": "Date range presets",
+    "presetsDescription": "Controls the presets offered by DateRangePicker.",
+    "triggerText": "Trigger text",
+    "minuteStep": "Minute step",
+    "compact": "Compact DateTimePicker"
+  },
+  "variants": {
+    "text": "Label",
+    "range": "Date range",
+    "all": "Label and date range"
+  },
+  "cards": {
+    "date": "Single-date selection with a rolling minimum and maximum date.",
+    "dateTime": "Date and 24-hour time selection with configurable minute steps.",
+    "dateRange": "Controlled preset and concrete range ownership.",
+    "search": "Preset resolution and custom-range state synchronization."
+  },
+  "empty": "(empty)",
+  "noPreset": "(no preset)",
+  "bounds": "Date and time bounds: {{min}} to {{max}}"
+}

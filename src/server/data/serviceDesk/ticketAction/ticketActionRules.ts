@@ -4,6 +4,16 @@ import type {
   TicketActionType,
   TicketStatus,
 } from "@/domain/serviceDesk";
+import {
+  canExecuteTicketAction,
+  resolveTicketActionNextStatus,
+  TICKET_ACTION_PATH_TO_TYPE,
+  type TicketActionCommandRequest,
+  type TicketActionExecutionMode,
+  type TicketApprovalActionCommandRequest,
+  type TicketApprovalActionPath,
+  type TicketGeneralActionPath,
+} from "@/lib/application/contracts/serviceDesk";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory/ticketHistoryTypes";
@@ -11,42 +21,9 @@ import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHis
 import type {
   ApprovalTicketActionType,
   TicketActionMetadataDto,
-  TicketActionRequestDto,
 } from "./ticketActionDto";
 
-export type TicketActionPath =
-  | "approve"
-  | "decline"
-  | "comment"
-  | "note"
-  | "assign"
-  | "assignSelf"
-  | "adjust"
-  | "reject"
-  | "merge"
-  | "reopen"
-  | "resubmit"
-  | "cancel";
-export type TicketApprovalActionPath = Extract<
-  TicketActionPath,
-  "approve" | "decline"
->;
-export type TicketGeneralActionPath = Exclude<
-  TicketActionPath,
-  TicketApprovalActionPath
->;
-export type ApprovalTicketActionRequestDto = {
-  content: string;
-  actionType?: TicketActionType;
-  files?: unknown[];
-  images?: unknown[];
-};
-export type TicketActionExecutionMode =
-  | TicketGeneralActionPath
-  | "assignAdminOverride"
-  | "adjustAdminOverride"
-  | "mergeAdminOverride"
-  | "rejectAdminOverride";
+/** Represents a validated action payload after defaults and attachment values are normalized. */
 export type NormalizedTicketActionPayload = {
   actionType: TicketActionType;
   content: string;
@@ -61,27 +38,13 @@ export type NormalizedTicketActionPayload = {
   historyMetadata: TicketHistoryJsonValue;
 };
 
+/** Lists the action types that must follow the ticket approval workflow. */
 export const APPROVAL_ACTION_TYPES = new Set<ApprovalTicketActionType>([
   "APPROVE",
   "DECLINE",
 ]);
-const TICKET_ACTION_TYPE_BY_PATH: Record<TicketActionPath, TicketActionType> = {
-  approve: "APPROVE",
-  decline: "DECLINE",
-  comment: "COMMENT",
-  note: "NOTE",
-  assign: "ASSIGN",
-  assignSelf: "ASSIGN_SELF",
-  adjust: "ADJUST",
-  reject: "REJECT",
-  merge: "MERGE",
-  reopen: "REOPEN",
-  resubmit: "RESUBMIT",
-  cancel: "CANCEL",
-};
-const TICKET_ACTION_PATHS = new Set<TicketActionPath>(
-  Object.keys(TICKET_ACTION_TYPE_BY_PATH) as TicketActionPath[],
-);
+const TICKET_ACTION_TYPE_BY_PATH = TICKET_ACTION_PATH_TO_TYPE;
+/** Maps approval endpoint path segments to their canonical domain action type. */
 export const APPROVAL_ACTION_TYPE_BY_PATH: Record<
   TicketApprovalActionPath,
   ApprovalTicketActionType
@@ -90,82 +53,19 @@ export const APPROVAL_ACTION_TYPE_BY_PATH: Record<
   decline: "DECLINE",
 };
 const IMAGE_TAG_PATTERN = /<img\b/i;
-const ALL_LIVE_TICKET_STATUSES: readonly TicketStatus[] = [
-  "Approval",
-  "Declined",
-  "Assigned",
-  "Working",
-  "Pending",
-  "Rejected",
-  "Resolved",
-  "Closed",
-];
-const COMMENTABLE_TICKET_STATUSES = ALL_LIVE_TICKET_STATUSES.filter(
-  (status) => status !== "Closed",
-);
-const ADMIN_OVERRIDE_ACTION_MODE_BY_PATH: Partial<
-  Record<TicketGeneralActionPath, TicketActionExecutionMode>
-> = {
-  assign: "assignAdminOverride",
-  adjust: "adjustAdminOverride",
-  merge: "mergeAdminOverride",
-  reject: "rejectAdminOverride",
-};
-const EXECUTABLE_STATUSES_BY_MODE: Record<
-  TicketActionExecutionMode,
-  readonly TicketStatus[]
-> = {
-  comment: COMMENTABLE_TICKET_STATUSES,
-  note: COMMENTABLE_TICKET_STATUSES,
-  assign: ["Assigned", "Working", "Pending"],
-  assignAdminOverride: ["Approval", "Assigned", "Working", "Pending"],
-  assignSelf: ["Assigned", "Working", "Pending"],
-  adjust: ["Assigned", "Working", "Pending"],
-  adjustAdminOverride: [
-    "Approval",
-    "Assigned",
-    "Working",
-    "Pending",
-    "Resolved",
-    "Closed",
-  ],
-  reject: ["Assigned", "Working", "Pending"],
-  rejectAdminOverride: ["Assigned", "Working", "Pending"],
-  merge: ["Assigned", "Working", "Pending", "Resolved"],
-  mergeAdminOverride: [
-    "Approval",
-    "Declined",
-    "Assigned",
-    "Working",
-    "Pending",
-    "Rejected",
-    "Resolved",
-    "Closed",
-  ],
-  reopen: ["Resolved"],
-  resubmit: ["Declined", "Rejected"],
-  cancel: ["Approval", "Declined", "Assigned", "Working", "Pending", "Rejected"],
-};
 
-export function isTicketActionPath(action: string): action is TicketActionPath {
-  return TICKET_ACTION_PATHS.has(action as TicketActionPath);
-}
-
-export function isTicketApprovalActionPath(
-  action: string,
-): action is TicketApprovalActionPath {
-  return action === "approve" || action === "decline";
-}
-
-export function isTicketGeneralActionPath(
-  action: string,
-): action is TicketGeneralActionPath {
-  return isTicketActionPath(action) && !isTicketApprovalActionPath(action);
-}
-
+/**
+ * Converts an untrusted command body into the single payload used by action,
+ * effect, and history writers.
+ *
+ * The route path determines the command; a supplied action type may only agree
+ * with it. Attachment entries are metadata prepared by the upload policy, and
+ * browser-local blob/data URLs are rejected because the server cannot treat
+ * them as durable resources.
+ */
 export function validateTicketActionPayload(
   action: TicketGeneralActionPath,
-  payload: TicketActionRequestDto,
+  payload: TicketActionCommandRequest,
 ): NormalizedTicketActionPayload {
   const actionType = TICKET_ACTION_TYPE_BY_PATH[action];
   const content =
@@ -225,22 +125,12 @@ export function validateTicketActionPayload(
   };
 }
 
-export function resolveTicketActionExecutionMode(
-  action: TicketGeneralActionPath,
-  isAdmin?: boolean,
-): TicketActionExecutionMode {
-  if (!isAdmin) {
-    return action;
-  }
-
-  return ADMIN_OVERRIDE_ACTION_MODE_BY_PATH[action] ?? action;
-}
-
+/** Enforces role, ownership, status, and assignment policy before a ticket action executes. */
 export function assertTicketActionAllowed(
   actionMode: TicketActionExecutionMode,
   status: TicketStatus,
 ) {
-  if (EXECUTABLE_STATUSES_BY_MODE[actionMode].includes(status)) {
+  if (canExecuteTicketAction(actionMode, status)) {
     return;
   }
 
@@ -250,39 +140,15 @@ export function assertTicketActionAllowed(
   );
 }
 
-export function resolveNextTicketStatus(
-  actionMode: TicketActionExecutionMode,
-  currentStatus: TicketStatus,
-): TicketStatus | undefined {
-  switch (actionMode) {
-    case "assign":
-    case "assignAdminOverride":
-      return currentStatus === "Pending" ? "Working" : undefined;
-
-    case "reject":
-    case "rejectAdminOverride":
-      return currentStatus === "Rejected" ? undefined : "Rejected";
-
-    case "merge":
-    case "mergeAdminOverride":
-      return currentStatus === "Closed" ? undefined : "Closed";
-
-    case "reopen":
-      return currentStatus === "Resolved" ? "Working" : undefined;
-
-    case "cancel":
-      return "Closed";
-
-    default:
-      return undefined;
-  }
-}
-
+/** Returns the allowed destination status for an action or rejects an invalid transition. */
 export function requireNextTicketStatus(
   actionMode: TicketActionExecutionMode,
   currentStatus: TicketStatus,
 ) {
-  const nextStatus = resolveNextTicketStatus(actionMode, currentStatus);
+  const nextStatus = resolveTicketActionNextStatus(
+    actionMode,
+    currentStatus,
+  );
 
   if (!nextStatus) {
     throw createStatusError("Next ticket status could not be resolved.", 409);
@@ -291,13 +157,16 @@ export function requireNextTicketStatus(
   return nextStatus;
 }
 
+/** Validates the content required by approval decisions before persistence. */
 export function validateApprovalActionPayload(
   action: TicketApprovalActionPath,
-  payload: ApprovalTicketActionRequestDto,
+  payload: TicketApprovalActionCommandRequest,
 ) {
   const content =
     typeof payload.content === "string" ? payload.content.trim() : "";
 
+  // Approval decisions are deliberately text-only. This keeps the approval
+  // record reviewable without depending on the demo attachment replacement.
   if (
     payload.actionType &&
     payload.actionType !== APPROVAL_ACTION_TYPE_BY_PATH[action]
@@ -500,6 +369,7 @@ function serializeAttachmentsForHistory(
   }));
 }
 
+/** Removes undefined history fields while retaining explicit null values for audit comparisons. */
 export function compactHistoryObject(
   value: Record<string, TicketHistoryJsonValue | undefined>,
 ): TicketHistoryJsonValue | null {
@@ -511,6 +381,7 @@ export function compactHistoryObject(
   return entries.length > 0 ? Object.fromEntries(entries) : null;
 }
 
+/** Normalizes unknown metadata into a JSON-safe history object. */
 export function normalizeHistoryMetadataRecord(
   value: TicketHistoryJsonValue | null,
 ): Record<string, TicketHistoryJsonValue> {
@@ -523,6 +394,8 @@ function isWorkAssignee(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
 ) {
+  // The same DB array changes meaning by phase, so an approval assignee is not
+  // implicitly authorized to execute work commands.
   return (
     ticket.tk_approval_step_id === null &&
     normalizeAssigneeUsernames(ticket.tk_assignee_usernames).includes(
@@ -531,6 +404,7 @@ function isWorkAssignee(
   );
 }
 
+/** Restricts work-only actions to a current assignee after the approval phase has ended. */
 export function assertWorkAssignee(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
@@ -542,6 +416,7 @@ export function assertWorkAssignee(
   throw createStatusError("Only a current work assignee can execute this.", 403);
 }
 
+/** Allows work-only actions to a current assignee or an administrator override. */
 export function assertWorkAssigneeOrAdmin(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
@@ -557,6 +432,7 @@ export function assertWorkAssigneeOrAdmin(
   );
 }
 
+/** Restricts requester-owned actions while retaining the explicit administrator override. */
 export function assertRequesterOrAdmin(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
@@ -569,6 +445,7 @@ export function assertRequesterOrAdmin(
   throw createStatusError("Only the requester or admin can execute this.", 403);
 }
 
+/** Enforces an administrator-only action with a caller-specific denial message. */
 export function assertAdminActionAllowed(isAdmin: boolean, message: string) {
   if (isAdmin) {
     return;
@@ -577,6 +454,7 @@ export function assertAdminActionAllowed(isAdmin: boolean, message: string) {
   throw createStatusError(message, 403);
 }
 
+/** Enforces requester ownership for actions that do not permit administrator override. */
 export function assertRequesterActionAllowed(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
@@ -588,6 +466,7 @@ export function assertRequesterActionAllowed(
   throw createStatusError("Only the requester can execute this action.", 403);
 }
 
+/** Converts a failed conditional update into a conflict instead of returning a stale ticket. */
 export function assertTicketUpdated(
   ticket: ServiceDeskTicketViewRow | null,
   message: string,
@@ -599,6 +478,7 @@ export function assertTicketUpdated(
   throw createStatusError(message, 409);
 }
 
+/** Ensures the current user is an assignee of the active approval step. */
 export function assertApprovalActionAllowed(
   ticket: ServiceDeskTicketViewRow,
   currentUserName: string,
@@ -622,6 +502,7 @@ export function assertApprovalActionAllowed(
   );
 }
 
+/** Returns the active approval step identifier or rejects tickets outside approval routing. */
 export function requireCurrentApprovalStepId(ticket: ServiceDeskTicketViewRow) {
   if (ticket.tk_approval_step_id !== null) {
     return ticket.tk_approval_step_id;
@@ -630,6 +511,7 @@ export function requireCurrentApprovalStepId(ticket: ServiceDeskTicketViewRow) {
   throw createStatusError("Approval step is unavailable.", 409);
 }
 
+/** Trims and de-duplicates assignee usernames so authorization and persistence use one canonical list. */
 export function normalizeAssigneeUsernames(value: unknown): string[] {
   return Array.isArray(value)
     ? value.filter(

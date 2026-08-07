@@ -1,4 +1,3 @@
-// src/feature/user/profile/queries.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { userProfileApi } from "./api";

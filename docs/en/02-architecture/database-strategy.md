@@ -7,7 +7,7 @@ application data from server code while keeping UI contracts stable.
 
 The current Service Desk implementation uses this direction:
 
-```txt id="database-core"
+```txt
 server-only database access
 + role-separated connections
 + row / mapper / DTO boundaries
@@ -21,7 +21,7 @@ and server services decide how rows are queried, mapped, validated, and written.
 
 ## Runtime Flow
 
-```txt id="database-runtime-flow"
+```txt
 UI
 -> feature API client
 -> Next.js route handler
@@ -40,7 +40,7 @@ row mapping logic.
 
 The project separates database access by responsibility.
 
-```txt id="database-roles"
+```txt
 auth_api     -> authentication-only database access
 portal_api   -> application data access
 service_role -> not used for normal application flows
@@ -78,7 +78,7 @@ should remain an administrative/platform capability, not a routine app flow.
 
 Database rows and application DTOs have different responsibilities.
 
-```txt id="row-mapper-dto"
+```txt
 Database Row
 -> Mapper
 -> Application DTO
@@ -120,7 +120,7 @@ Tickets persist the current workflow state and routing facts.
 
 Current ticket status values are:
 
-```ts id="ticket-status"
+```ts
 type TicketStatus =
   | "Draft"
   | "Approval"
@@ -151,7 +151,7 @@ Important persistence boundaries:
 
 Approval and work routing are phase-aware.
 
-```ts id="assignment-phase"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
@@ -202,7 +202,7 @@ The current database strategy does not persist attachment binaries.
 
 Attachment writes use this flow:
 
-```txt id="attachment-persistence-flow"
+```txt
 browser File[] / inline data images
 -> Attachment Prepare API
 -> prepared metadata
@@ -274,7 +274,7 @@ Approval Step and Assignment Rule persistence derives tenant/company context
 from relationships rather than storing a second independent authorization
 source:
 
-```txt id="settings-persistence-boundary"
+```txt
 Approval Step / Assignment Rule
 -> Category
 -> Tenant
@@ -313,7 +313,7 @@ Typical environment responsibility:
 
 Rule:
 
-```txt id="database-env-rule"
+```txt
 Choose the query client by responsibility, not convenience.
 ```
 
@@ -326,7 +326,7 @@ application access.
 
 Effective permission is the combination of grants and row-level security.
 
-```txt id="rls-grants"
+```txt
 effective permission = object grants + RLS policies
 ```
 
@@ -370,7 +370,7 @@ database data layer.
 
 Both should expose compatible application-facing contracts:
 
-```txt id="local-remote-dto-contract"
+```txt
 LOCAL state shape or REMOTE row shape
 -> mapper/handler
 -> application DTO
@@ -397,12 +397,12 @@ The current database strategy does not claim the following as complete:
 
 ## Related Documents
 
-- [`../03-domain/service-desk-settings.md`](../03-domain/service-desk-settings.md)
-- [`../03-domain/ticket/ticket-model.md`](../03-domain/ticket/ticket-model.md)
-- [`../03-domain/ticket/ticket-history.md`](../03-domain/ticket/ticket-history.md)
-- [`../03-domain/ticket/ticket-track-time.md`](../03-domain/ticket/ticket-track-time.md)
-- [`../06-form-design/ticket-attachment.md`](../06-form-design/ticket-attachment.md)
-- [`../08-dev-strategy/service-desk-implementation-strategy.md`](../08-dev-strategy/service-desk-implementation-strategy.md)
+- [Service Desk Settings](../03-domain/service-desk/settings.md)
+- [Ticket Model](../03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Attachment Design](../04-client-engineering/forms/ticket-attachment.md)
+- [Service Desk Implementation Strategy](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

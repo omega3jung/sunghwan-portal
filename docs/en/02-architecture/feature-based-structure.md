@@ -62,7 +62,7 @@ The previous system was based on a **Page Router structure**, where:
 The system separates **domain models**, **user-facing capabilities**, and
 **runtime implementations**, while organizing features around user workflows.
 
-```id="feature-concept"
+```txt
 domain = business concepts and pure rules
 feature = user-facing capability with an explicit workflow owner
 ```
@@ -81,7 +81,7 @@ Features do not own core domain models or pure business rules. Those belong to
 
 ## Directory Structure
 
-```bash id="feature-structure"
+```bash
 src/
   app/          # Next.js routing and final composition
   components/   # application-wide UI widgets
@@ -231,7 +231,7 @@ Runtime permission depends on the entry, not merely on being under `app`:
   filesystem code, or other server-only modules.
 - The same runtime rule applies to components imported by an app entry.
 
-```tsx id="app-example"
+```tsx
 export default function Page() {
   return <ServiceDeskPage />;
 }
@@ -258,7 +258,7 @@ top-level folder without an established responsibility.
 
 Each feature follows a consistent structure.
 
-```bash id="feature-module"
+```bash
 feature/serviceDesk/
   components/
   api/
@@ -282,7 +282,7 @@ feature/serviceDesk/
 - Encapsulates backend interaction
 - Split into server-safe helpers and client-only wrappers when needed
 
-```ts id="api-example"
+```ts
 export const serviceDeskTicketApi = {
   list: (params) => fetch(...),
   get: (id) => fetch(...),
@@ -296,7 +296,7 @@ export const serviceDeskTicketApi = {
 - Custom hooks
 - Handles data fetching and state composition
 
-```ts id="hook-example"
+```ts
 export const useFetchTickets = () => {
   return useQuery(...);
 };
@@ -331,7 +331,7 @@ export const useFetchTickets = () => {
 
 ### Example
 
-```tsx id="component-boundary"
+```tsx
 <TicketList>
   <TicketItem />
 </TicketList>
@@ -391,7 +391,7 @@ Component follows the Server Component and Next.js request/cache lifecycle.
 
 ### Principle
 
-```id="state-principle"
+```txt
 Prefer server state over client state whenever possible
 ```
 
@@ -452,9 +452,9 @@ query contracts, and shared Service Desk client helpers across adjacent slices.
 - `app/api/_adapters` owns Next.js route adaptation and the LOCAL demo implementation.
 - `lib/application/contracts` owns DTOs, schemas, and pure mappers shared across repositories.
 - `mocks` owns LOCAL demo and test fixtures and is never imported by `server`.
-- Base i18n resources and namespace contracts live in `lib/application/i18n`;
-  the client runtime lives in `lib/client/i18n`. Application component locale
-  registration is composed above lib in `components/i18n`.
+- Base i18n resources, namespace contracts, and composed feature/component
+  locale catalogs live in `lib/application/i18n`; the client runtime lives in
+  `lib/client/i18n`.
 
 ### Automated Enforcement
 
@@ -601,12 +601,12 @@ This architecture aligns with:
 
 ## Related Documents
 
-- [`state-management.md`](state-management.md)
-- [`routing-strategy.md`](routing-strategy.md)
-- [`database-strategy.md`](database-strategy.md)
-- [`../04-ui-ux/component-boundary.md`](../04-ui-ux/component-boundary.md)
-- [`../08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md`](../08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md)
-- [`../08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md`](../08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md)
+- [State Management Strategy](state-management.md)
+- [Routing Strategy](routing-strategy.md)
+- [Database Strategy](database-strategy.md)
+- [Component Boundary](../04-client-engineering/ui/component-boundary.md)
+- [Barrel Export Boundary Policy (2026-05)](../06-decisions/2026-05-barrel-export-boundary.md)
+- [Service Desk Documentation Alignment (2026-05)](../06-decisions/2026-05-service-desk-documentation-alignment.md)
 
 ---
 
@@ -614,4 +614,5 @@ This architecture aligns with:
 
 The feature-based structure organizes the application around **business domains**,
 allowing each feature to operate as an independent module,
-resulting in a scalable, maintainable, and production-ready architecture.
+resulting in a scalable, maintainable, and production-aligned architecture.
+This describes the boundary design, not production completeness.

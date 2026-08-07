@@ -1,0 +1,67 @@
+{
+  "visibleItems": "Visible items",
+  "compactMode": "Compact mode",
+  "compactDescription": "Compact spacing for sidebar layout",
+  "order": "Order",
+  "orders": { "desc": "Newest first", "asc": "Oldest first" },
+  "markerIcons": "Marker icons",
+  "markerIconsDescription": "Render icons inside markers",
+  "emptyState": "Empty state",
+  "emptyStateDescription": "Show an empty timeline",
+  "badge": "Badge",
+  "badgeDescription": "Display badge text",
+  "description": "Description",
+  "descriptionDescription": "Display the description body",
+  "meta": "Meta",
+  "metaDescription": "Display time or actor text",
+  "preview": "Timeline preview",
+  "sidebarTitle": "Right sidebar preview",
+  "sidebarDescription": "Vertical timeline optimized for stacked history items.",
+  "emptyContent": "No timeline items",
+  "notesTitle": "Current demo notes",
+  "notesDescription": "This page uses shared timeline mock data and only transforms optional fields for presentation.",
+  "notes": {
+    "order": "order switches between newest-first and oldest-first rendering without changing the input data shape.",
+    "compact": "compact previews the tighter density expected in the ticket detail right sidebar.",
+    "optional": "markerIcon, badge, description, and meta are toggled without introducing a Service Desk dependency.",
+    "empty": "Empty-state content is provided by the owning screen while Timeline handles its layout."
+  },
+  "items": {
+    "career-2016-bkit": {
+      "title": "Started enterprise software development at BKI IT",
+      "description": "Maintained manufacturing MES platforms and developed in-house MES, asset-management, and data-interface solutions with Java, C# WinForms/WPF, MSSQL, and MariaDB.",
+      "meta": "2016.10 - 2018.12",
+      "badge": "BKI IT"
+    },
+    "career-2019-cynergy": {
+      "title": "Joined Cynergy as a Frontend Developer",
+      "description": "Modernized internal ERP and portal workflows for a US-based mobile-device warranty and remanufacturing business, including 18 months onsite in Dallas and continued global remote collaboration.",
+      "meta": "2019.05 - 2025.03",
+      "badge": "Cynergy"
+    },
+    "project-2022-mobileklink": {
+      "title": "Delivered a customer-specific portal workflow for MobileKlink",
+      "description": "Built a single-screen receiving-to-shipping workflow, connected Samsung device logic through Oracle RESTful Services, validated 10 test cases, and completed the initial nine-month plan in eight months.",
+      "meta": "2022.02 - 2025.03",
+      "badge": "Customer Portal"
+    },
+    "career-2023-nextjs": {
+      "title": "Modernized legacy ERP and portal screens with React and Next.js",
+      "description": "Helped migrate more than 10 Oracle Forms and Java portal screens to React, Next.js, and TypeScript while collaborating through GitHub pull requests and code reviews.",
+      "meta": "2023.10 - 2025.03",
+      "badge": "Modernization"
+    },
+    "career-2024-helpdesk": {
+      "title": "Led IT Help Desk frontend design and operational stabilization",
+      "description": "Implemented ticket intake, assignment, status, and history workflows alongside responsive cross-browser UI, custom components, Chart.js dashboards, reporting, and production issue response.",
+      "meta": "Through 2025.03",
+      "badge": "Service Desk"
+    },
+    "portfolio-2025-sunghwan-portal": {
+      "title": "Designed and built Sunghwan Portal",
+      "description": "Turned enterprise Help Desk experience into a production-aligned Service Desk prototype with explicit ticket workflows, role-aware UX, immutable history, LOCAL and REMOTE service boundaries, and PostgreSQL-backed server architecture using Next.js 16, React 19, and TypeScript.",
+      "meta": "2025.12 - Present · Live Demo and GitHub",
+      "badge": "Portfolio"
+    }
+  }
+}

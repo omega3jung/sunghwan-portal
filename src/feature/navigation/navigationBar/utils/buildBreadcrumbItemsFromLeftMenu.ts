@@ -230,6 +230,7 @@ function getFallbackItemsAfterMatch({
   return lastFallbackItem == null ? [] : [lastFallbackItem];
 }
 
+/** Uses the best exact or prefix menu match, then retains any unmatched URL suffix. */
 export function buildBreadcrumbItemsFromLeftMenu({
   fallbackItems,
   leftMenu,

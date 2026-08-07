@@ -1,0 +1,26 @@
+{
+  "developmentApproach": {
+    "title": "Development Approach",
+    "description": "Practical implementation philosophy and migration-aware decisions."
+  },
+  "serviceDeskImplementationStrategy": {
+    "title": "Service Desk Implementation Strategy",
+    "description": "Runtime, architecture, and implementation strategy for Service Desk."
+  },
+  "booleanNamingConvention": {
+    "title": "Boolean Naming Convention",
+    "description": "Project-wide boolean naming rules for capability, state, and presentation boundaries."
+  },
+  "readmeStrategy": {
+    "title": "README Strategy",
+    "description": "How the repository introduces itself and routes readers into deeper docs."
+  },
+  "reactQueryStrategy": {
+    "title": "React Query Strategy",
+    "description": "Data fetching, caching, and client boundary guidance."
+  },
+  "releaseOverview": {
+    "title": "Production Releases",
+    "description": "Changes merged into main and applied to the production branch."
+  }
+}

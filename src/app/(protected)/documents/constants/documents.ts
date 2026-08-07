@@ -9,8 +9,8 @@ export const getDocumentGroupItems = (group: DocumentGroup) =>
 
 export const documentGroups: DocumentGroup[] = [
   {
-    id: "project",
-    titleKey: "group.project.title",
+    id: "overview",
+    titleKey: "group.overview.title",
     items: [
       {
         id: "readme",
@@ -19,10 +19,10 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "README.md",
       },
       {
-        id: "readme-strategy",
-        titleKey: "item.readmeStrategy.title",
-        descriptionKey: "item.readmeStrategy.description",
-        relativePath: "01-project/readme-strategy.md",
+        id: "service-desk-evolution",
+        titleKey: "item.serviceDeskEvolution.title",
+        descriptionKey: "item.serviceDeskEvolution.description",
+        relativePath: "01-overview/service-desk-evolution.md",
       },
     ],
   },
@@ -71,323 +71,377 @@ export const documentGroups: DocumentGroup[] = [
   {
     id: "domain",
     titleKey: "group.domain.title",
-    items: [
+    sections: [
       {
-        id: "ticket-system-overview",
-        titleKey: "item.ticketSystemOverview.title",
-        descriptionKey: "item.ticketSystemOverview.description",
-        relativePath: "03-domain/ticket/ticket-system-overview.md",
+        id: "core-model",
+        titleKey: "section.domain.coreModel.title",
+        items: [
+          {
+            id: "ticket-system-overview",
+            titleKey: "item.ticketSystemOverview.title",
+            descriptionKey: "item.ticketSystemOverview.description",
+            relativePath:
+              "03-domain/service-desk/ticket/ticket-system-overview.md",
+          },
+          {
+            id: "service-desk-settings",
+            titleKey: "item.serviceDeskSettings.title",
+            descriptionKey: "item.serviceDeskSettings.description",
+            relativePath: "03-domain/service-desk/settings.md",
+          },
+          {
+            id: "ticket-model",
+            titleKey: "item.ticketModel.title",
+            descriptionKey: "item.ticketModel.description",
+            relativePath: "03-domain/service-desk/ticket/ticket-model.md",
+          },
+        ],
       },
       {
-        id: "ticket-lifecycle",
-        titleKey: "item.ticketLifecycle.title",
-        descriptionKey: "item.ticketLifecycle.description",
-        relativePath: "03-domain/ticket/ticket-lifecycle.md",
+        id: "workflow",
+        titleKey: "section.domain.workflow.title",
+        items: [
+          {
+            id: "ticket-lifecycle",
+            titleKey: "item.ticketLifecycle.title",
+            descriptionKey: "item.ticketLifecycle.description",
+            relativePath:
+              "03-domain/service-desk/ticket/ticket-lifecycle.md",
+          },
+          {
+            id: "ticket-action",
+            titleKey: "item.ticketAction.title",
+            descriptionKey: "item.ticketAction.description",
+            relativePath: "03-domain/service-desk/ticket/ticket-action.md",
+          },
+          {
+            id: "ticket-history",
+            titleKey: "item.ticketHistory.title",
+            descriptionKey: "item.ticketHistory.description",
+            relativePath: "03-domain/service-desk/ticket/ticket-history.md",
+          },
+          {
+            id: "ticket-work-session",
+            titleKey: "item.ticketWorkSession.title",
+            descriptionKey: "item.ticketWorkSession.description",
+            relativePath:
+              "03-domain/service-desk/ticket/ticket-work-session.md",
+          },
+        ],
       },
       {
-        id: "ticket-model",
-        titleKey: "item.ticketModel.title",
-        descriptionKey: "item.ticketModel.description",
-        relativePath: "03-domain/ticket/ticket-model.md",
+        id: "strategies",
+        titleKey: "section.domain.strategies.title",
+        items: [
+          {
+            id: "action-strategy",
+            titleKey: "item.actionStrategy.title",
+            descriptionKey: "item.actionStrategy.description",
+            relativePath:
+              "03-domain/service-desk/ticket/strategy/action-strategy.md",
+          },
+          {
+            id: "category-strategy",
+            titleKey: "item.categoryStrategy.title",
+            descriptionKey: "item.categoryStrategy.description",
+            relativePath:
+              "03-domain/service-desk/ticket/strategy/category-strategy.md",
+          },
+          {
+            id: "approval-system",
+            titleKey: "item.approvalSystem.title",
+            descriptionKey: "item.approvalSystem.description",
+            relativePath:
+              "03-domain/service-desk/ticket/strategy/approval-system.md",
+          },
+          {
+            id: "assignment-policy",
+            titleKey: "item.assignmentPolicy.title",
+            descriptionKey: "item.assignmentPolicy.description",
+            relativePath:
+              "03-domain/service-desk/ticket/strategy/assignment-policy.md",
+          },
+          {
+            id: "sla-strategy",
+            titleKey: "item.slaStrategy.title",
+            descriptionKey: "item.slaStrategy.description",
+            relativePath:
+              "03-domain/service-desk/ticket/strategy/sla-strategy.md",
+          },
+        ],
       },
       {
-        id: "ticket-activity",
-        titleKey: "item.ticketActivity.title",
-        descriptionKey: "item.ticketActivity.description",
-        relativePath: "03-domain/ticket/ticket-activity.md",
-      },
-      {
-        id: "ticket-history",
-        titleKey: "item.ticketHistory.title",
-        descriptionKey: "item.ticketHistory.description",
-        relativePath: "03-domain/ticket/ticket-history.md",
-      },
-      {
-        id: "ticket-track-time",
-        titleKey: "item.ticketTrackTime.title",
-        descriptionKey: "item.ticketTrackTime.description",
-        relativePath: "03-domain/ticket/ticket-track-time.md",
-      },
-      {
-        id: "service-desk-settings",
-        titleKey: "item.serviceDeskSettings.title",
-        descriptionKey: "item.serviceDeskSettings.description",
-        relativePath: "03-domain/service-desk-settings.md",
-      },
-      {
-        id: "action-strategy",
-        titleKey: "item.actionStrategy.title",
-        descriptionKey: "item.actionStrategy.description",
-        relativePath: "03-domain/ticket/strategy/action-strategy.md",
-      },
-      {
-        id: "category-strategy",
-        titleKey: "item.categoryStrategy.title",
-        descriptionKey: "item.categoryStrategy.description",
-        relativePath: "03-domain/ticket/strategy/category-strategy.md",
-      },
-      {
-        id: "approval-system",
-        titleKey: "item.approvalSystem.title",
-        descriptionKey: "item.approvalSystem.description",
-        relativePath: "03-domain/ticket/strategy/approval-system.md",
-      },
-      {
-        id: "assignment-policy",
-        titleKey: "item.assignmentPolicy.title",
-        descriptionKey: "item.assignmentPolicy.description",
-        relativePath: "03-domain/ticket/strategy/assignment-policy.md",
-      },
-      {
-        id: "sla-strategy",
-        titleKey: "item.slaStrategy.title",
-        descriptionKey: "item.slaStrategy.description",
-        relativePath: "03-domain/ticket/strategy/sla-strategy.md",
-      },
-    ],
-  },
-  {
-    id: "ui-ux",
-    titleKey: "group.uiUx.title",
-    items: [
-      {
-        id: "component-boundary",
-        titleKey: "item.componentBoundary.title",
-        descriptionKey: "item.componentBoundary.description",
-        relativePath: "04-ui-ux/component-boundary.md",
-      },
-      {
-        id: "dialog-pattern",
-        titleKey: "item.dialogPattern.title",
-        descriptionKey: "item.dialogPattern.description",
-        relativePath: "04-ui-ux/dialog-pattern.md",
-      },
-      {
-        id: "form-pattern",
-        titleKey: "item.formPattern.title",
-        descriptionKey: "item.formPattern.description",
-        relativePath: "04-ui-ux/form-pattern.md",
-      },
-      {
-        id: "dashboard-and-insight",
-        titleKey: "item.dashboardAndInsight.title",
-        descriptionKey: "item.dashboardAndInsight.description",
-        relativePath: "04-ui-ux/dashboard-and-insight.md",
-      },
-    ],
-  },
-  {
-    id: "data-fetching",
-    titleKey: "group.dataFetching.title",
-    items: [
-      {
-        id: "react-query-strategy",
-        titleKey: "item.reactQueryStrategy.title",
-        descriptionKey: "item.reactQueryStrategy.description",
-        relativePath: "05-data-fetching/react-query-strategy.md",
+        id: "reference",
+        titleKey: "section.domain.reference.title",
+        items: [
+          {
+            id: "ticket-operation-rules",
+            titleKey: "item.ticketOperationRules.title",
+            descriptionKey: "item.ticketOperationRules.description",
+            relativePath:
+              "03-domain/service-desk/ticket/reference/ticket-operation-rules.md",
+          },
+        ],
       },
     ],
   },
   {
-    id: "form-design",
-    titleKey: "group.formDesign.title",
-    items: [
+    id: "client-engineering",
+    titleKey: "group.clientEngineering.title",
+    sections: [
       {
-        id: "ticket-form",
-        titleKey: "item.ticketForm.title",
-        descriptionKey: "item.ticketForm.description",
-        relativePath: "06-form-design/ticket-form.md",
+        id: "ui",
+        titleKey: "section.clientEngineering.ui.title",
+        items: [
+          {
+            id: "component-boundary",
+            titleKey: "item.componentBoundary.title",
+            descriptionKey: "item.componentBoundary.description",
+            relativePath:
+              "04-client-engineering/ui/component-boundary.md",
+          },
+          {
+            id: "dashboard-and-insight",
+            titleKey: "item.dashboardAndInsight.title",
+            descriptionKey: "item.dashboardAndInsight.description",
+            relativePath:
+              "04-client-engineering/ui/dashboard-and-insight.md",
+          },
+          {
+            id: "dialog-pattern",
+            titleKey: "item.dialogPattern.title",
+            descriptionKey: "item.dialogPattern.description",
+            relativePath: "04-client-engineering/ui/dialog-pattern.md",
+          },
+        ],
       },
       {
-        id: "ticket-attachment",
-        titleKey: "item.ticketAttachment.title",
-        descriptionKey: "item.ticketAttachment.description",
-        relativePath: "06-form-design/ticket-attachment.md",
+        id: "forms",
+        titleKey: "section.clientEngineering.forms.title",
+        items: [
+          {
+            id: "form-pattern",
+            titleKey: "item.formPattern.title",
+            descriptionKey: "item.formPattern.description",
+            relativePath: "04-client-engineering/forms/form-pattern.md",
+          },
+          {
+            id: "ticket-form",
+            titleKey: "item.ticketForm.title",
+            descriptionKey: "item.ticketForm.description",
+            relativePath: "04-client-engineering/forms/ticket-form.md",
+          },
+          {
+            id: "ticket-attachment",
+            titleKey: "item.ticketAttachment.title",
+            descriptionKey: "item.ticketAttachment.description",
+            relativePath:
+              "04-client-engineering/forms/ticket-attachment.md",
+          },
+        ],
+      },
+      {
+        id: "i18n",
+        titleKey: "section.clientEngineering.i18n.title",
+        items: [
+          {
+            id: "locale-structure",
+            titleKey: "item.localeStructure.title",
+            descriptionKey: "item.localeStructure.description",
+            relativePath: "04-client-engineering/i18n/locale-structure.md",
+          },
+          {
+            id: "validation-messages",
+            titleKey: "item.validationMessages.title",
+            descriptionKey: "item.validationMessages.description",
+            relativePath:
+              "04-client-engineering/i18n/validation-messages.md",
+          },
+        ],
       },
     ],
   },
   {
-    id: "i18n",
-    titleKey: "group.i18n.title",
-    items: [
-      {
-        id: "locale-structure",
-        titleKey: "item.localeStructure.title",
-        descriptionKey: "item.localeStructure.description",
-        relativePath: "07-i18n/locale-structure.md",
-      },
-      {
-        id: "validation-messages",
-        titleKey: "item.validationMessages.title",
-        descriptionKey: "item.validationMessages.description",
-        relativePath: "07-i18n/validation-messages.md",
-      },
-    ],
-  },
-  {
-    id: "dev-strategy",
-    titleKey: "group.devStrategy.title",
+    id: "development",
+    titleKey: "group.development.title",
     items: [
       {
         id: "development-approach",
         titleKey: "item.developmentApproach.title",
         descriptionKey: "item.developmentApproach.description",
-        relativePath: "08-dev-strategy/development-approach.md",
-      },
-      {
-        id: "service-desk-evolution",
-        titleKey: "item.serviceDeskEvolution.title",
-        descriptionKey: "item.serviceDeskEvolution.description",
-        relativePath: "08-dev-strategy/service-desk-evolution.md",
+        relativePath: "05-development/development-approach.md",
       },
       {
         id: "service-desk-implementation-strategy",
         titleKey: "item.serviceDeskImplementationStrategy.title",
         descriptionKey: "item.serviceDeskImplementationStrategy.description",
         relativePath:
-          "08-dev-strategy/service-desk-implementation-strategy.md",
+          "05-development/service-desk-implementation-strategy.md",
       },
       {
-        id: "ticket-operation-rules",
-        titleKey: "item.ticketOperationRules.title",
-        descriptionKey: "item.ticketOperationRules.description",
-        relativePath: "08-dev-strategy/ticket-operation-rules.md",
+        id: "boolean-naming-convention",
+        titleKey: "item.booleanNamingConvention.title",
+        descriptionKey: "item.booleanNamingConvention.description",
+        relativePath: "05-development/boolean-naming-convention.md",
+      },
+      {
+        id: "readme-strategy",
+        titleKey: "item.readmeStrategy.title",
+        descriptionKey: "item.readmeStrategy.description",
+        relativePath: "05-development/readme-strategy.md",
+      },
+      {
+        id: "react-query-strategy",
+        titleKey: "item.reactQueryStrategy.title",
+        descriptionKey: "item.reactQueryStrategy.description",
+        relativePath: "05-development/react-query-strategy.md",
+      },
+      {
+        id: "release-overview",
+        titleKey: "item.releaseOverview.title",
+        descriptionKey: "item.releaseOverview.description",
+        relativePath: "05-development/releases.md",
       },
     ],
   },
   {
-    id: "decision-log",
-    titleKey: "group.decisionLog.title",
+    id: "decisions",
+    titleKey: "group.decisions.title",
     sections: [
       {
+        id: "overview",
+        titleKey: "section.decisions.overview.title",
+        items: [
+          {
+            id: "decision-overview",
+            titleKey: "item.decisionOverview.title",
+            descriptionKey: "item.decisionOverview.description",
+            relativePath: "06-decisions/README.md",
+          },
+        ],
+      },
+      {
         id: "2025-12",
-        titleKey: "section.decisionLog.2025-12.title",
+        titleKey: "section.decisions.2025-12.title",
         items: [
           {
             id: "decision-auth-session-architecture",
             titleKey: "item.decisionAuthSessionArchitecture.title",
             descriptionKey: "item.decisionAuthSessionArchitecture.description",
             relativePath:
-              "08-dev-strategy/decision-log/2025-12-auth-session-architecture.md",
+              "06-decisions/2025-12-auth-session-architecture.md",
           },
           {
             id: "decision-impersonation-2025-12",
             titleKey: "item.decisionImpersonation202512.title",
             descriptionKey: "item.decisionImpersonation202512.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2025-12-impersonation.md",
+            relativePath: "06-decisions/2025-12-impersonation.md",
           },
           {
             id: "decision-naming-2025-12",
             titleKey: "item.decisionNaming202512.title",
             descriptionKey: "item.decisionNaming202512.description",
-            relativePath: "08-dev-strategy/decision-log/2025-12-naming.md",
+            relativePath: "06-decisions/2025-12-naming.md",
           },
           {
             id: "decision-system-layout",
             titleKey: "item.decisionSystemLayout.title",
             descriptionKey: "item.decisionSystemLayout.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2025-12-system-layout.md",
+            relativePath: "06-decisions/2025-12-system-layout.md",
           },
         ],
       },
       {
         id: "2026-01",
-        titleKey: "section.decisionLog.2026-01.title",
+        titleKey: "section.decisions.2026-01.title",
         items: [
           {
             id: "decision-category-design",
             titleKey: "item.decisionCategoryDesign.title",
             descriptionKey: "item.decisionCategoryDesign.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2026-01-category-design.md",
+            relativePath: "06-decisions/2026-01-category-design.md",
           },
           {
             id: "decision-impersonation-2026-01",
             titleKey: "item.decisionImpersonation202601.title",
             descriptionKey: "item.decisionImpersonation202601.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2026-01-impersonation.md",
+            relativePath: "06-decisions/2026-01-impersonation.md",
           },
           {
             id: "decision-session-user-boundary-2026-01",
             titleKey: "item.decisionSessionUserBoundary202601.title",
             descriptionKey: "item.decisionSessionUserBoundary202601.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-01-session-user-boundary.md",
+              "06-decisions/2026-01-session-user-boundary.md",
           },
         ],
       },
       {
         id: "2026-02",
-        titleKey: "section.decisionLog.2026-02.title",
+        titleKey: "section.decisions.2026-02.title",
         items: [
           {
             id: "decision-service-desk-settings",
             titleKey: "item.decisionServiceDeskSettings.title",
             descriptionKey: "item.decisionServiceDeskSettings.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-02-service-desk-settings.md",
+              "06-decisions/2026-02-service-desk-settings.md",
           },
         ],
       },
       {
         id: "2026-03",
-        titleKey: "section.decisionLog.2026-03.title",
+        titleKey: "section.decisions.2026-03.title",
         items: [
           {
             id: "decision-service-desk",
             titleKey: "item.decisionServiceDesk.title",
             descriptionKey: "item.decisionServiceDesk.description",
-            relativePath: "08-dev-strategy/decision-log/2026-03-service-desk.md",
+            relativePath: "06-decisions/2026-03-service-desk.md",
           },
           {
             id: "decision-ticket-form-dialog",
             titleKey: "item.decisionTicketFormDialog.title",
             descriptionKey: "item.decisionTicketFormDialog.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2026-03-ticket-form-dialog.md",
+            relativePath: "06-decisions/2026-03-ticket-form-dialog.md",
           },
           {
             id: "decision-ticket-session-2026-03",
             titleKey: "item.decisionTicketSession202603.title",
             descriptionKey: "item.decisionTicketSession202603.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2026-03-ticket-session.md",
+            relativePath: "06-decisions/2026-03-ticket-session.md",
           },
         ],
       },
       {
         id: "2026-04",
-        titleKey: "section.decisionLog.2026-04.title",
+        titleKey: "section.decisions.2026-04.title",
         items: [
           {
             id: "decision-entity-status-naming",
             titleKey: "item.decisionEntityStatusNaming.title",
             descriptionKey: "item.decisionEntityStatusNaming.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-04-entity-status-naming.md",
+              "06-decisions/2026-04-entity-status-naming.md",
           },
           {
             id: "decision-ticket-action",
             titleKey: "item.decisionTicketAction.title",
             descriptionKey: "item.decisionTicketAction.description",
-            relativePath:
-              "08-dev-strategy/decision-log/2026-04-ticket-action.md",
+            relativePath: "06-decisions/2026-04-ticket-action.md",
           },
         ],
       },
       {
         id: "2026-05",
-        titleKey: "section.decisionLog.2026-05.title",
+        titleKey: "section.decisions.2026-05.title",
         items: [
           {
             id: "decision-barrel-export-boundary-2026-05",
             titleKey: "item.decisionBarrelExportBoundary202605.title",
             descriptionKey: "item.decisionBarrelExportBoundary202605.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-05-barrel-export-boundary.md",
+              "06-decisions/2026-05-barrel-export-boundary.md",
           },
           {
             id: "decision-database-role-and-access-strategy-2026-05",
@@ -395,7 +449,7 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionDatabaseRoleAndAccessStrategy202605.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.md",
+              "06-decisions/2026-05-database-role-and-access-strategy.md",
           },
           {
             id: "decision-service-desk-documentation-alignment-2026-05",
@@ -404,13 +458,13 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionServiceDeskDocumentationAlignment202605.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-05-service-desk-documentation-alignment.md",
+              "06-decisions/2026-05-service-desk-documentation-alignment.md",
           },
         ],
       },
       {
         id: "2026-06",
-        titleKey: "section.decisionLog.2026-06.title",
+        titleKey: "section.decisions.2026-06.title",
         items: [
           {
             id: "decision-service-desk-tenant-design-2026-06",
@@ -418,7 +472,7 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionServiceDeskTenantDesign202606.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-06-service-desk-tenant-design.md",
+              "06-decisions/2026-06-service-desk-tenant-design.md",
           },
           {
             id: "decision-service-desk-settings-dto-api-boundary-2026-06",
@@ -427,7 +481,7 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionServiceDeskSettingsDtoApiBoundary202606.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-06-service-desk-settings-dto-api-boundary.md",
+              "06-decisions/2026-06-service-desk-settings-dto-api-boundary.md",
           },
           {
             id: "decision-ticket-attachment-boundary-2026-06",
@@ -435,7 +489,7 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionTicketAttachmentBoundary202606.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-06-ticket-attachment-boundary.md",
+              "06-decisions/2026-06-ticket-attachment-boundary.md",
           },
           {
             id: "decision-ticket-form-and-draft-workflow-2026-06",
@@ -443,14 +497,32 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionTicketFormAndDraftWorkflow202606.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-06-ticket-form-and-draft-workflow.md",
+              "06-decisions/2026-06-ticket-form-and-draft-workflow.md",
           },
         ],
       },
       {
         id: "2026-07",
-        titleKey: "section.decisionLog.2026-07.title",
+        titleKey: "section.decisions.2026-07.title",
         items: [
+          {
+            id: "decision-nextjs-16-migration-strategy-2026-07",
+            titleKey:
+              "item.decisionNextjs16MigrationStrategy202607.title",
+            descriptionKey:
+              "item.decisionNextjs16MigrationStrategy202607.description",
+            relativePath:
+              "06-decisions/2026-07-nextjs-16-migration-strategy.md",
+          },
+          {
+            id: "decision-service-desk-settings-reference-validation-boundary-2026-07",
+            titleKey:
+              "item.decisionServiceDeskSettingsReferenceValidationBoundary202607.title",
+            descriptionKey:
+              "item.decisionServiceDeskSettingsReferenceValidationBoundary202607.description",
+            relativePath:
+              "06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md",
+          },
           {
             id: "decision-ticket-action-and-history-execution-2026-07",
             titleKey:
@@ -458,7 +530,16 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionTicketActionAndHistoryExecution202607.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-07-ticket-action-and-history-execution.md",
+              "06-decisions/2026-07-ticket-action-and-history-execution.md",
+          },
+          {
+            id: "decision-ticket-merge-and-escalation-policy-2026-07",
+            titleKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.title",
+            descriptionKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.description",
+            relativePath:
+              "06-decisions/2026-07-ticket-merge-and-escalation-policy.md",
           },
           {
             id: "decision-ticket-routing-and-update-policy-2026-07",
@@ -466,7 +547,22 @@ export const documentGroups: DocumentGroup[] = [
             descriptionKey:
               "item.decisionTicketRoutingAndUpdatePolicy202607.description",
             relativePath:
-              "08-dev-strategy/decision-log/2026-07-ticket-routing-and-update-policy.md",
+              "06-decisions/2026-07-ticket-routing-and-update-policy.md",
+          },
+        ],
+      },
+      {
+        id: "2026-08",
+        titleKey: "section.decisions.2026-08.title",
+        items: [
+          {
+            id: "decision-boolean-capability-api-naming-2026-08",
+            titleKey:
+              "item.decisionBooleanCapabilityApiNaming202608.title",
+            descriptionKey:
+              "item.decisionBooleanCapabilityApiNaming202608.description",
+            relativePath:
+              "06-decisions/2026-08-boolean-capability-api-naming.md",
           },
         ],
       },

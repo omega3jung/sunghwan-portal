@@ -1,6 +1,5 @@
 import { cva } from "class-variance-authority";
 
-// comboBox variants.
 export const comboBoxVariants = cva(
   "w-full justify-between rounded-md px-3 py-2 text-sm text-basic font-semibold disabled:cursor-not-allowed disabled:opacity-50 bg-white dark:bg-accent h-auto p-1 flex items-center",
   {
@@ -36,3 +35,19 @@ export const badgeVariants = cva("", {
     badgeVariant: "default",
   },
 });
+
+export const comboBoxAvatarVariants = cva(
+  "h-full shrink-0 aspect-square rounded-full",
+  {
+    variants: {
+      size: {
+        default: "min-h-7 min-w-7",
+        sm: "min-h-5 min-w-5",
+        lg: "min-h-9 min-w-9",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  },
+);

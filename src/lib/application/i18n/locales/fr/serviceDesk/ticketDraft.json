@@ -1,0 +1,18 @@
+{
+  "ticketCreate": {
+    "category": {
+      "placeholder": "Sélectionner une catégorie",
+      "back": "Retour",
+      "empty": "Aucune catégorie sélectionnable."
+    }
+  },
+  "ticketDraft": {
+    "notice": {
+      "remoteImagesReplaced": "En mode distant, les images jointes sont remplacées par des images de démonstration pour des raisons de sécurité.",
+      "remoteFilesReplaced": "En mode distant, les fichiers joints sont remplacés par des fichiers de démonstration pour des raisons de sécurité."
+    }
+  },
+  "ticketCreateFormContext": {
+    "missingProvider": "useTicketCreateFormContext doit être utilisé à l'intérieur du provider."
+  }
+}

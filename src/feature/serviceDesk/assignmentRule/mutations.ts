@@ -10,7 +10,6 @@ import { assignmentRuleQueryKeys } from "./queryKeys";
 export const useSaveServiceDeskAssignmentRuleTree = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskAssignmentRuleApi.saveTree,
     onSuccess: async () => {

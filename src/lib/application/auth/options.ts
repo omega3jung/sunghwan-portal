@@ -1,5 +1,6 @@
 import { ACCESS_LEVEL } from "@/domain/auth";
 
+/** Ordered access-level choices used by authorization-aware selectors. */
 export const accessLevelOptions = [
   { label: "admin", value: ACCESS_LEVEL.ADMIN },
   { label: "manager", value: ACCESS_LEVEL.MANAGER },

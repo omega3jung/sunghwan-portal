@@ -9,6 +9,7 @@ import {
   TicketHistorySource,
 } from "./types";
 
+/** Normalized optional metadata used to render ticket history without reinterpreting raw JSON. */
 export type TicketHistoryDisplayMetadata = {
   source?: TicketHistorySource;
   event?: TicketHistoryEvent;
@@ -44,14 +45,9 @@ export type TicketHistoryDisplayMetadata = {
 };
 
 /**
- * Ticket history domain model.
- *
- * historyNo is ticket-scoped, not globally unique.
- * Recommended identity: (ticketId, historyNo)
- *
- * actionNo:
- * - null   => ticket-level history
- * - number => action-level history
+ * `historyNo` is ticket-scoped, so records are identified by ticket and history
+ * number together. A null `actionNo` denotes ticket-level history; a number
+ * links the record to an action on that ticket.
  */
 export interface TicketHistory {
   ticketId: string;

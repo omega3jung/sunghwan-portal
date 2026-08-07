@@ -1,5 +1,7 @@
-export type ISODateString = string; // block to timezone issue.
+/** String contract for timestamps serialized in ISO 8601 form. */
+export type ISODateString = string;
 
+/** Date-range choices supported by shared filter controls and query builders. */
 export type DateRangePreset =
   | "today"
   | "this_week"

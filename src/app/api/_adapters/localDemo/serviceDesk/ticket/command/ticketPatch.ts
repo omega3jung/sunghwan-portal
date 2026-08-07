@@ -7,6 +7,7 @@ type ApprovedTicketRouting = Awaited<
   ReturnType<typeof resolveApprovedTicketRouting>
 >;
 
+/** Builds ticket status patch without mutating shared LOCAL state. */
 export const buildTicketStatusPatch = (
   ticket?: DbTicketDetail,
   nextStatus?: DbTicketDetail["status"],
@@ -18,6 +19,7 @@ export const buildTicketStatusPatch = (
   return { status: nextStatus };
 };
 
+/** Combines defined ticket patches and omits an empty result. */
 export const mergeActionPatch = (
   ...patches: Array<Partial<DbTicketDetail> | undefined>
 ): Partial<DbTicketDetail> | undefined => {
@@ -31,6 +33,7 @@ export const mergeActionPatch = (
   return Object.keys(mergedPatch).length > 0 ? mergedPatch : undefined;
 };
 
+/** Adds the acting employee to the assignee list without creating a duplicate. */
 export const mergeAssigneeIds = (
   currentAssigneeIds: DbTicketDetail["assignee_usernames"],
   employeeUserName: string,
@@ -40,6 +43,7 @@ export const mergeAssigneeIds = (
     : [...currentAssigneeIds, employeeUserName];
 };
 
+/** Builds approval routing patch without mutating shared LOCAL state. */
 export const buildApprovalRoutingPatch = (
   routing: ApprovedTicketRouting,
   employeeUserName: string,
@@ -62,6 +66,7 @@ export const buildApprovalRoutingPatch = (
   };
 };
 
+/** Builds assignee patch without mutating shared LOCAL state. */
 export const buildAssigneePatch = (
   ticket: DbTicketDetail,
   assigneeUsernames: string[],

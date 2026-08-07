@@ -30,6 +30,7 @@ order by
   pm_id;
 `;
 
+/** Queries PostgreSQL for left menu rows by username without applying presentation concerns. */
 export async function findLeftMenuRowsByUsername(
   username: string,
 ): Promise<LeftMenuRow[]> {

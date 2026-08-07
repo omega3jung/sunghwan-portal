@@ -1,4 +1,4 @@
-import type { DbTicketHistory } from "@/feature/serviceDesk/ticketHistory/api";
+import type { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { serviceDeskScenariosMock } from "./scenariosMock";

@@ -15,6 +15,8 @@ type ApprovedTicketRouting = Awaited<
 >;
 type LocalTicket = NonNullable<LocalActionRuntimeContext["ticket"]>;
 
+// History numbers are derived before commit and offset when one command emits
+// multiple immutable events, such as approval plus next-step routing.
 const buildHistoryBase = ({
   ticketId,
   employeeUserName,
@@ -44,6 +46,7 @@ const buildHistoryBase = ({
   created_at: createdAt,
 });
 
+/** Builds history without mutating shared LOCAL state. */
 export const buildHistory = (
   context: LocalActionRuntimeContext,
   history: LocalActionHistory,
@@ -52,6 +55,7 @@ export const buildHistory = (
   ...history,
 });
 
+/** Creates status history for the server-side LOCAL ticket adapter. */
 export const createStatusHistory: LocalActionHandler = (context) => {
   const ticket = requireTicket(context);
   const nextStatus = requireNextStatus(context);
@@ -67,7 +71,10 @@ export const createStatusHistory: LocalActionHandler = (context) => {
   };
 };
 
+/** Normalizes approval step ID into the server-side LOCAL ticket adapter canonical shape. */
 export const normalizeApprovalStepId = (approvalStepId: string | null) => {
+  // LOCAL fixtures historically used both numeric and string identifiers.
+  // Preserve non-numeric IDs while aligning numeric values with REMOTE history.
   if (approvalStepId === null) {
     return null;
   }
@@ -79,10 +86,13 @@ export const normalizeApprovalStepId = (approvalStepId: string | null) => {
     : approvalStepId;
 };
 
+/** Creates routing history for the server-side LOCAL ticket adapter. */
 export const createRoutingHistory = (
   ticket: LocalTicket,
   routing: ApprovedTicketRouting,
 ): LocalActionHistory => {
+  // approvalStepId is the phase source of truth: a value means approval;
+  // null means routing has crossed into work assignment.
   if (routing.approvalStepId !== null) {
     return {
       type: "APPROVAL",
@@ -121,6 +131,7 @@ export const createRoutingHistory = (
   };
 };
 
+/** Creates message history for the server-side LOCAL ticket adapter. */
 export const createMessageHistory =
   (
     type: Extract<DbTicketHistory["type"], "COMMENT" | "NOTE">,

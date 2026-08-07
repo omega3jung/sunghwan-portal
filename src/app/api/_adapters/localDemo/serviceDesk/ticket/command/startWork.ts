@@ -17,6 +17,11 @@ type StartTicketWorkLocalContext = {
   isInternal?: boolean;
 };
 
+/**
+ * Starts an Assigned ticket for a current WORK-phase assignee.
+ * Validation precedes the ticket and history array mutations because LOCAL has
+ * no database transaction to roll back a partially applied transition.
+ */
 export function startTicketWorkLocal({
   ticketId,
   employeeUserName,
@@ -53,6 +58,7 @@ export function startTicketWorkLocal({
   return updatedTicket;
 }
 
+/** Projects local start work response for the server-side LOCAL ticket adapter. */
 export function toLocalStartWorkResponse(
   ticket: DbTicketDetail,
   currentUserName: string,

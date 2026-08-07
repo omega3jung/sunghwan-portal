@@ -11,12 +11,17 @@ const ACCESS_LEVEL = {
   // 8, 6, 4, 2 reserved.
 };
 
+/** Defines the PostgreSQL auth account role used only within the repository boundary. */
 export type AuthAccountRole = keyof typeof ACCESS_LEVEL;
+/** Defines the PostgreSQL auth account permission used only within the repository boundary. */
 export type AuthAccountPermission = (typeof ACCESS_LEVEL)[AuthAccountRole];
 
+/** Defines the PostgreSQL auth account data scope used only within the repository boundary. */
 export type AuthAccountDataScope = "LOCAL" | "REMOTE";
+/** Defines the PostgreSQL auth account user scope used only within the repository boundary. */
 export type AuthAccountUserScope = "INTERNAL" | "CLIENT";
 
+/** Defines the PostgreSQL db auth user projection row used only within the repository boundary. */
 export interface DbAuthUserProjectionRow {
   aa_id: string;
   aa_role: AuthAccountRole;
@@ -30,6 +35,7 @@ export interface DbAuthUserProjectionRow {
   e_company_id: number;
 }
 
+/** Defines the PostgreSQL db auth login user row used only within the repository boundary. */
 export interface DbAuthLoginUserRow extends DbAuthUserProjectionRow {
   aa_password_hash: string;
 }

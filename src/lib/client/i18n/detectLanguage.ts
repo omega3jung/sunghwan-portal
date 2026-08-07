@@ -4,6 +4,13 @@ import {
   SupportedLanguage,
 } from "@/lib/application/i18n";
 
+/**
+ * Resolves the first supported base language advertised by the browser.
+ *
+ * Region suffixes such as `ko-KR` are intentionally collapsed to the project's
+ * language-only locale keys. Server rendering and unsupported browser locales
+ * fall back to `DEFAULT_LANGUAGE` rather than throwing.
+ */
 export function detectBrowserLanguage(): SupportedLanguage {
   if (typeof navigator === "undefined") {
     return DEFAULT_LANGUAGE;

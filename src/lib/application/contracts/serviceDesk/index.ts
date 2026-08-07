@@ -1,3 +1,4 @@
+// src/lib/application/contracts/serviceDesk/index.ts
 export * from "./approvalStep";
 export * from "./approvalStepMapper";
 export * from "./approvalStepWrite";
@@ -13,6 +14,7 @@ export * from "./tenantWrite";
 export * from "./ticket";
 export * from "./ticketAction";
 export * from "./ticketActionCommand";
+export * from "./ticketAttachmentPreparation";
 export * from "./ticketHistory";
 export * from "./ticketMapper";
 export * from "./ticketRequesterUpdate";

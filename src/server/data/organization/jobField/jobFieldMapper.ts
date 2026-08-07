@@ -1,6 +1,7 @@
 import { JobFieldDto } from "./jobFieldDto";
 import { JobFieldRow } from "./jobFieldRow";
 
+/** Maps job field row to dto across the database and API boundary. */
 export function mapJobFieldRowToDto(row: JobFieldRow): JobFieldDto {
   return {
     jf_id: Number(row.jf_id),
@@ -13,6 +14,7 @@ export function mapJobFieldRowToDto(row: JobFieldRow): JobFieldDto {
   };
 }
 
+/** Maps job field rows to dtos across the database and API boundary. */
 export function mapJobFieldRowsToDtos(rows: JobFieldRow[]): JobFieldDto[] {
   return rows.map(mapJobFieldRowToDto);
 }

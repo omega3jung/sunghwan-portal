@@ -42,16 +42,19 @@ import {
 } from "./categoryRepository";
 import { CategoryRow, UpdateCategoryRowInput } from "./categoryRow";
 
+/** Describes the category settings response dto returned across the server boundary. */
 export type CategorySettingsResponseDto = TenantDto & {
   category: CategoryDto[];
 };
 
+/** Describes the validated get category settings response params accepted by this server operation. */
 export type GetCategorySettingsResponseParams = {
   tenantId?: string | number | null;
   companyId?: string | number | null;
   isInternal: boolean;
 };
 
+/** Loads category tree by tenant id through the server data boundary. */
 export async function getCategoryTreeByTenantId(
   tenantId: string | number,
   query?: PortalApiQueryExecutor,
@@ -61,6 +64,7 @@ export async function getCategoryTreeByTenantId(
   return mapCategoryRowsToDtos(rows);
 }
 
+/** Loads category tree by company id through the server data boundary. */
 export async function getCategoryTreeByCompanyId(
   companyId: string | number,
 ): Promise<CategoryDto[]> {
@@ -69,6 +73,7 @@ export async function getCategoryTreeByCompanyId(
   return mapCategoryRowsToDtos(rows);
 }
 
+/** Defines the server-side service desk category context contract used by this module. */
 export type ServiceDeskCategoryContext = {
   categoryId: string;
   mainCategoryId: string;
@@ -82,6 +87,7 @@ type CategoryMutationReference = {
   subCategories: Array<{ id: string }>;
 };
 
+/** Loads service desk category context through the server data boundary. */
 export async function getServiceDeskCategoryContext(
   categoryId: string | number,
 ): Promise<ServiceDeskCategoryContext | null> {
@@ -107,6 +113,7 @@ export async function getServiceDeskCategoryContext(
   };
 }
 
+/** Checks that a principal may mutate the requested category tree before any database write. */
 export function assertCategoryTreeMutationAllowed({
   principal,
   tenant,
@@ -193,6 +200,7 @@ export function assertCategoryTreeMutationAllowed({
   }
 }
 
+/** Validates category identities and nested structure before synchronizing the persisted tree. */
 export async function validateCategoryTreeMutation({
   principal,
   tenant,
@@ -218,6 +226,7 @@ export async function validateCategoryTreeMutation({
   });
 }
 
+/** Loads category settings response by tenant id through the server data boundary. */
 export async function getCategorySettingsResponseByTenantId({
   tenantId,
   companyId,
@@ -239,6 +248,7 @@ export async function getCategorySettingsResponseByTenantId({
   );
 }
 
+/** Creates category through the server persistence boundary. */
 export async function createCategory(
   input: CreateCategoryInputDto,
 ): Promise<CategoryDto> {
@@ -261,6 +271,7 @@ export async function createCategory(
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
 }
 
+/** Updates category by id while preserving server-side validation and persistence rules. */
 export async function updateCategoryById(
   tenantId: string | number,
   categoryId: string | number,
@@ -297,6 +308,7 @@ export async function updateCategoryById(
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
 }
 
+// Owner administrators may target all active tenants; tenant administrators remain fixed to their own tenant.
 async function resolveTargetTenants({
   tenantId,
   companyId,
@@ -403,6 +415,7 @@ async function createSubCategoryRows({
   return rows;
 }
 
+// Reuses submitted identities, creates new children, and soft-deactivates omitted children without losing row history.
 async function synchronizeSubCategoryRows({
   tenantId,
   parentRow,
@@ -511,6 +524,7 @@ async function synchronizeSubCategoryRows({
   return [...nextSubmittedChildRows, ...nextPreservedChildRows];
 }
 
+// Resolves a submitted child only within its current parent to prevent cross-tree row reassignment.
 async function resolveExistingSubCategoryRow({
   tenantId,
   subCategoryId,
@@ -540,6 +554,7 @@ async function resolveExistingSubCategoryRow({
   return null;
 }
 
+// Removes blank entries and assigns the persisted display order from the submitted sequence.
 function normalizeSubCategoryInputs(
   subCategories: CategorySubCategoryInputDto[],
 ): CategorySubCategoryInputDto[] {

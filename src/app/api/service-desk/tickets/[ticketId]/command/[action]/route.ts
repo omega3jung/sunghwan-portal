@@ -13,42 +13,32 @@ import {
 import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
 import { localPost } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command";
 import {
-  ACTION_PATH_BY_TYPE,
-  type TicketActionApiType,
-} from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/types";
-import {
   resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
 } from "@/app/api/_adapters/serviceDesk";
 import {
+  isTicketActionPath,
   mapTicketActionPayload,
   TICKET_ACTION_PATH_TO_TYPE as TICKET_ACTION_TYPE_BY_PATH,
-  TicketActionFormValues,
+  TICKET_ACTION_TYPE_TO_PATH,
+  type TicketActionCommandPayload,
+  type TicketActionCommandRequest,
+  type TicketApprovalActionPath,
 } from "@/lib/application/contracts/serviceDesk";
 
 type TicketActionRouteContext = RouteContext<{
   ticketId: string;
   action: string;
 }>;
-type ApprovalActionApiType = Extract<
-  TicketActionApiType,
-  "approve" | "decline"
->;
-
-const isTicketActionApiType = (
-  action: string,
-): action is TicketActionApiType =>
-  Object.hasOwn(TICKET_ACTION_TYPE_BY_PATH, action);
-
 const isApprovalAction = (
-  action: TicketActionApiType,
-): action is ApprovalActionApiType =>
+  action: string,
+): action is TicketApprovalActionPath =>
   action === "approve" || action === "decline";
 
 const createApprovalActionContent = (
-  action: ApprovalActionApiType,
-  rawContent: Partial<TicketActionFormValues>,
-): TicketActionFormValues => ({
+  action: TicketApprovalActionPath,
+  rawContent: Partial<TicketActionCommandRequest>,
+): TicketActionCommandPayload => ({
   id: typeof rawContent.id === "string" ? rawContent.id : "",
   actionType: TICKET_ACTION_TYPE_BY_PATH[action],
   content: typeof rawContent.content === "string" ? rawContent.content : "",
@@ -56,22 +46,35 @@ const createApprovalActionContent = (
   images: [],
 });
 
+// Normalize once before the LOCAL/REMOTE split so both runtimes receive the
+// same route-derived action type and attachment defaults.
 const normalizeTicketActionContent = (
-  action: TicketActionApiType,
-  rawContent: Partial<TicketActionFormValues>,
-): TicketActionFormValues => {
+  action: keyof typeof TICKET_ACTION_TYPE_BY_PATH,
+  rawContent: Partial<TicketActionCommandRequest>,
+): TicketActionCommandPayload => {
   if (isApprovalAction(action)) {
     return createApprovalActionContent(action, rawContent);
   }
 
-  return rawContent as TicketActionFormValues;
+  return {
+    ...rawContent,
+    id: typeof rawContent.id === "string" ? rawContent.id : "",
+    actionType:
+      rawContent.actionType ?? TICKET_ACTION_TYPE_BY_PATH[action],
+    content:
+      typeof rawContent.content === "string" ? rawContent.content : "",
+    files: Array.isArray(rawContent.files) ? rawContent.files : [],
+    images: Array.isArray(rawContent.images) ? rawContent.images : [],
+  };
 };
 
 const toRemoteCommandBody = (
-  action: TicketActionApiType,
-  content: TicketActionFormValues,
+  action: keyof typeof TICKET_ACTION_TYPE_BY_PATH,
+  content: TicketActionCommandPayload,
 ) => {
   if (isApprovalAction(action)) {
+    // Approval commands are text-only at the public boundary. The REMOTE server
+    // independently enforces the same rule before writing an action.
     return {
       content: content.content,
     };
@@ -82,8 +85,8 @@ const toRemoteCommandBody = (
 
 const validateMergeRequest = (
   ticketId: string,
-  action: TicketActionApiType,
-  content: TicketActionFormValues,
+  action: keyof typeof TICKET_ACTION_TYPE_BY_PATH,
+  content: TicketActionCommandPayload,
 ) => {
   if (action !== "merge") {
     return null;
@@ -108,18 +111,20 @@ const validateMergeRequest = (
   return null;
 };
 
+/** Handles POST /api/service-desk/tickets/[ticketId]/command/[action]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(
   request: NextRequest,
   context: TicketActionRouteContext,
 ) {
   const { ticketId, action } = await context.params;
 
-  if (!isTicketActionApiType(action)) {
+  if (!isTicketActionPath(action)) {
     return NextResponse.json({ message: "Not Found" }, { status: 404 });
   }
 
   const isRemote = await isRemoteRequest(request);
-  const rawContent = (await request.json()) as Partial<TicketActionFormValues>;
+  const rawContent =
+    (await request.json()) as Partial<TicketActionCommandRequest>;
   const content = normalizeTicketActionContent(action, rawContent);
   const employeeUserName = await getCurrentEmployeeUserName(request);
 
@@ -170,7 +175,7 @@ export async function POST(
 
     const isInternal = access.userScope === "INTERNAL";
 
-    if (ACTION_PATH_BY_TYPE[content.actionType] !== action) {
+    if (TICKET_ACTION_TYPE_TO_PATH[content.actionType] !== action) {
       return NextResponse.json(
         { message: resolveApiErrorMessage("serviceDesk.ticketCommand.actionMismatch") },
         { status: 400 },

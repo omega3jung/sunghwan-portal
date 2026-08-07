@@ -6,6 +6,7 @@ import {
 } from "./access";
 import { getLocalDemoTickets } from "./state";
 
+/** Returns ticket from the server-side LOCAL ticket adapter. */
 export const localGetTicket = ({
   access,
   id,

@@ -1,34 +1,34 @@
 "use client";
 
-import { ChevronDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { comboBoxVariants } from "@/components/custom/MultiComboBox/variants";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
+import { comboBoxVariants } from "../variants";
 import { TreeMultiComboBoxBadgeList } from "./TreeMultiComboBoxBadgeList";
-import { TreeMultiComboBoxParentItem } from "./TreeMultiComboBoxParentItem";
-import type { TreeMultiComboBoxProps } from "./types";
+import { TreeMultiComboBoxOptionItem } from "./TreeMultiComboBoxOptionItem";
+import type { TreeMultiComboBoxNode, TreeMultiComboBoxProps } from "./types";
 import {
   createTreeBadgeOrderMap,
-  createTreeCommandFilter,
+  createTreeComboboxFilter,
   createTreeOptionIndex,
-  EMPTY_OPTION_TEXT,
+  flattenTreeOptions,
+  getParentRenderState,
   getSelectedTreeItems,
+  isChildSelected,
   normalizeTreeValues,
   toggleTreeValue,
 } from "./utils";
@@ -43,6 +43,11 @@ const hasSameValues = (left: string[], right: string[]) => {
   return left.every((value) => rightSet.has(value));
 };
 
+/**
+ * Controlled hierarchical multi-select with compressed branch semantics:
+ * selecting a parent represents the whole branch, while child keys represent
+ * partial selection. `onChange` takes precedence over delta callbacks.
+ */
 const Component = (
   {
     placeholder,
@@ -65,40 +70,65 @@ const Component = (
   }: TreeMultiComboBoxProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "comboBox",
+  });
   const [search, setSearch] = useState("");
   const [expandedParentValues, setExpandedParentValues] = useState<string[]>(
     [],
   );
-
-  const resolvedBadgeVariant = badgeVariant ?? "default";
-  const resolvedPaletteStart = paletteStart ?? 1;
-  const resolvedPalettePick = palettePick;
 
   const normalizedValue = useMemo(
     () => normalizeTreeValues(value, options),
     [options, value],
   );
   const optionIndex = useMemo(() => createTreeOptionIndex(options), [options]);
-  const badgeOrderMap = useMemo(
-    () => createTreeBadgeOrderMap(options),
-    [options],
+  const allNodes = useMemo(() => flattenTreeOptions(options), [options]);
+  const nodeMap = useMemo(
+    () => new Map(allNodes.map((node) => [node.value, node])),
+    [allNodes],
+  );
+  const selectedNodes = useMemo(
+    () =>
+      normalizedValue
+        .map((selectedValue) => nodeMap.get(selectedValue))
+        .filter((node): node is TreeMultiComboBoxNode => Boolean(node)),
+    [nodeMap, normalizedValue],
   );
   const selectedItems = useMemo(
     () => getSelectedTreeItems(normalizedValue, options),
     [normalizedValue, options],
   );
-  const commandFilter = useMemo(
-    () => createTreeCommandFilter(options),
+  const badgeOrderMap = useMemo(
+    () => createTreeBadgeOrderMap(options),
+    [options],
+  );
+  const comboboxFilter = useMemo(
+    () => createTreeComboboxFilter(options),
     [options],
   );
 
   const isSearching = search.trim().length > 0;
+  const expandedParentSet = useMemo(
+    () => new Set(expandedParentValues),
+    [expandedParentValues],
+  );
+  const visibleNodes = useMemo(
+    () =>
+      isSearching
+        ? allNodes
+        : allNodes.filter(
+            (node) =>
+              node.kind === "parent" || expandedParentSet.has(node.parentValue),
+          ),
+    [allNodes, expandedParentSet, isSearching],
+  );
 
   const toggleExpandedParent = (parentValue: string) => {
-    setExpandedParentValues((prev) =>
-      prev.includes(parentValue)
-        ? prev.filter((value) => value !== parentValue)
-        : [...prev, parentValue],
+    setExpandedParentValues((currentValues) =>
+      currentValues.includes(parentValue)
+        ? currentValues.filter((value) => value !== parentValue)
+        : [...currentValues, parentValue],
     );
   };
 
@@ -131,77 +161,120 @@ const Component = (
 
     const nextValue = toggleTreeValue(targetValue, normalizedValue, options);
 
-    if (hasSameValues(normalizedValue, nextValue)) {
-      return;
+    if (!hasSameValues(normalizedValue, nextValue)) {
+      emitSelectionChange(nextValue);
     }
+  };
 
-    emitSelectionChange(nextValue);
+  const handleValueChange = (nextNodes: TreeMultiComboBoxNode[]) => {
+    const currentValueSet = new Set(
+      selectedNodes.map((selectedNode) => selectedNode.value),
+    );
+    const nextValueSet = new Set(nextNodes.map((node) => node.value));
+    const changedNode =
+      nextNodes.find((node) => !currentValueSet.has(node.value)) ??
+      selectedNodes.find((node) => !nextValueSet.has(node.value));
+
+    if (changedNode) {
+      handleToggleValue(changedNode.value);
+    }
   };
 
   return (
-    <Popover modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
-          {...buttonProps}
-          ref={ref}
-          variant="outline"
-          role="combobox"
-          type="button"
-          className={cn(comboBoxVariants({ variant, size }), className)}
-          disabled={disabled || readOnly}
-        >
-          {!selectedItems.length ? (
-            <div className="px-2 font-normal text-muted-foreground">
-              {placeholder}
-            </div>
-          ) : (
-            <TreeMultiComboBoxBadgeList
-              items={selectedItems}
-              itemOrderMap={badgeOrderMap}
-              badgeVariant={resolvedBadgeVariant}
-              paletteStart={resolvedPaletteStart}
-              palettePick={resolvedPalettePick}
-              readOnly={readOnly}
-              onRemove={handleToggleValue}
-            />
-          )}
-
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : !readOnly ? (
-            <ChevronDown className="ml-2 mr-2 h-4 w-4 shrink-0 text-basic" />
-          ) : null}
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command filter={commandFilter}>
-          <CommandInput
-            value={search}
-            onValueChange={setSearch}
-            placeholder={placeholder}
+    <Combobox
+      items={visibleNodes}
+      value={selectedNodes}
+      onValueChange={handleValueChange}
+      inputValue={search}
+      onInputValueChange={setSearch}
+      filter={comboboxFilter}
+      isItemEqualToValue={(item, selectedItem) =>
+        item.value === selectedItem.value
+      }
+      multiple
+      disabled={disabled}
+      readOnly={readOnly}
+      modal={modal}
+    >
+      <ComboboxTrigger
+        render={
+          <Button
+            {...buttonProps}
+            ref={ref}
+            variant="outline"
+            type="button"
+            className={cn(comboBoxVariants({ variant, size }), className)}
+            disabled={disabled || readOnly}
           />
-          <CommandList className="max-h-64 min-h-0">
-            <CommandEmpty>{EMPTY_OPTION_TEXT}</CommandEmpty>
-            <CommandGroup>
-              {options.map((parent) => (
-                <TreeMultiComboBoxParentItem
-                  key={parent.value}
-                  item={parent}
-                  values={normalizedValue}
-                  index={optionIndex}
-                  expanded={
-                    isSearching || expandedParentValues.includes(parent.value)
-                  }
+        }
+        icon={
+          isLoading ? (
+            <Loader2 className="pointer-events-none size-5 animate-spin" />
+          ) : readOnly ? null : undefined
+        }
+      >
+        {selectedItems.length === 0 ? (
+          <div className="px-2 font-normal text-muted-foreground">
+            {placeholder}
+          </div>
+        ) : (
+          <TreeMultiComboBoxBadgeList
+            items={selectedItems}
+            itemOrderMap={badgeOrderMap}
+            badgeVariant={badgeVariant ?? "default"}
+            paletteStart={paletteStart ?? 1}
+            palettePick={palettePick}
+            readOnly={readOnly}
+            onRemove={handleToggleValue}
+          />
+        )}
+      </ComboboxTrigger>
+
+      <ComboboxContent>
+        <ComboboxInput
+          aria-label={placeholder ?? t("searchTreeOptions")}
+          placeholder={placeholder}
+          showTrigger={false}
+        />
+        <ComboboxEmpty>{t("empty")}</ComboboxEmpty>
+        <ComboboxList showScrollbar className="max-h-64 min-h-0">
+          {(item) => {
+            if (item.kind === "parent") {
+              const state = getParentRenderState(item, normalizedValue);
+
+              return (
+                <TreeMultiComboBoxOptionItem
+                  key={item.value}
+                  item={item}
+                  checkState={state.checkState}
+                  disabled={state.disabled}
+                  expanded={isSearching || expandedParentSet.has(item.value)}
+                  selectedChildCount={state.selectedChildCount}
+                  totalChildCount={state.totalChildCount}
                   onToggleExpand={toggleExpandedParent}
-                  onToggleValue={handleToggleValue}
                 />
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+              );
+            }
+
+            return (
+              <TreeMultiComboBoxOptionItem
+                key={item.value}
+                item={item}
+                checkState={
+                  isChildSelected(item.value, normalizedValue, optionIndex)
+                    ? "checked"
+                    : "unchecked"
+                }
+                disabled={Boolean(
+                  item.disabled ||
+                  optionIndex.parentMap.get(item.parentValue)?.disabled,
+                )}
+              />
+            );
+          }}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 };
 

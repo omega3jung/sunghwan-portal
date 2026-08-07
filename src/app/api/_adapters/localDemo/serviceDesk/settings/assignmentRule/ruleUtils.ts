@@ -6,6 +6,7 @@ import type { DbAssignmentRule } from "@/lib/application/contracts/serviceDesk";
 import type { DbTenantCategoryTree } from "@/lib/application/contracts/serviceDesk";
 import { camelAssignmentRuleMapper } from "@/lib/application/contracts/serviceDesk";
 
+/** Describes assignment rule store used by the server-side LOCAL settings adapter. */
 export type AssignmentRuleStore = Record<string, DbAssignmentRule[]>;
 
 const buildAssignmentRuleSeed = ({
@@ -36,6 +37,7 @@ const buildAssignmentRuleSeed = ({
   );
 };
 
+/** Returns assignment rule store from the server-side LOCAL settings adapter. */
 export const getAssignmentRuleStore = (isInternal: boolean) => {
   return buildAssignmentRuleSeed(getLocalDemoAssignmentRulesTree(isInternal));
 };
@@ -56,10 +58,12 @@ const normalizeJobFieldIds = (value: string[]) => {
     .sort((left, right) => left - right);
 };
 
+/** Normalizes assignment rule into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeAssignmentRule = (assignmentRule: DbAssignmentRule) => {
   return camelAssignmentRuleMapper([assignmentRule])[0] ?? null;
 };
 
+/** Normalizes assignment rules into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeAssignmentRules = (
   assignmentRules: DbAssignmentRule[],
 ) => {
@@ -70,6 +74,7 @@ export const normalizeAssignmentRules = (
   );
 };
 
+/** Resolves tenant ID using the server-side LOCAL settings adapter policy. */
 export const resolveTenantId = (
   items: AssignmentRuleStore,
   requestedTenantId: string | null,
@@ -81,6 +86,7 @@ export const resolveTenantId = (
   return Object.keys(items)[0] ?? null;
 };
 
+/** Returns tenant rules or throw from the server-side LOCAL settings adapter. */
 export const getTenantRulesOrThrow = (
   items: AssignmentRuleStore,
   tenantId: string,
@@ -98,6 +104,7 @@ export const getTenantRulesOrThrow = (
   return rules;
 };
 
+/** Returns rule index by category ID from the server-side LOCAL settings adapter. */
 export const getRuleIndexByCategoryId = (
   rules: DbAssignmentRule[],
   categoryId: string,
@@ -105,6 +112,7 @@ export const getRuleIndexByCategoryId = (
   return rules.findIndex((rule) => String(rule.category_id) === categoryId);
 };
 
+/** Finds category tenant ID within the server-side LOCAL settings adapter. */
 export const findCategoryTenantId = (
   items: AssignmentRuleStore,
   isInternal: boolean,
@@ -137,6 +145,7 @@ export const findCategoryTenantId = (
   return null;
 };
 
+/** Builds database assignment rule without mutating shared LOCAL state. */
 export const buildDbAssignmentRule = ({
   categoryId,
   assignee,

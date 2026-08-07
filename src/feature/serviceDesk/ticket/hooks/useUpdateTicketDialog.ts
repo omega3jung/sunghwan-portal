@@ -21,15 +21,13 @@ import {
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
 import { useCurrentPreference } from "@/feature/user/preference/client";
+import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
 import { NS } from "@/lib/application/i18n";
 import { formatDisplayName } from "@/lib/application/organization";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import { useMutationToast } from "@/lib/client/toast";
 
-import {
-  PrepareTicketAttachmentsResponse,
-  RequesterUpdateTicketPayload,
-} from "../write";
+import { RequesterUpdateTicketPayload } from "../write";
 
 export const UPDATE_TICKET_STEPS = ["info", "attachment", "review"] as const;
 export const UPDATE_TICKET_REVIEW_STEP = UPDATE_TICKET_STEPS.length - 1;
@@ -46,6 +44,8 @@ export function useUpdateTicketDialog({
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const mutationToast = useMutationToast();
+  // Closing or reopening invalidates older loads so a late response cannot
+  // repopulate a reset dialog.
   const loadRequestRef = useRef(0);
   const [open, setOpen] = useState(false);
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
@@ -205,6 +205,8 @@ export function useUpdateTicketDialog({
   const onSubmit = useCallback(
     async (values: TicketFormValues) => {
       const updatePromise = (async () => {
+        // Preparation rewrites embedded image URLs before the final payload
+        // combines newly prepared and retained attachments.
         const prepared = await serviceDeskTicketApi.prepareAttachments({
           body: values.body,
           files: values.attachment,

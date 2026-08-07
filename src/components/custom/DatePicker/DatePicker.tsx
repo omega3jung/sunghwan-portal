@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DatePickerProps } from "./types";
@@ -23,7 +23,6 @@ import {
 
 export function DatePicker({
   value,
-  defaultValue,
   onChange,
   minDate,
   maxDate,
@@ -33,28 +32,25 @@ export function DatePicker({
   modal = true,
   ...buttonProps
 }: DatePickerProps) {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useControllableState<Date | undefined>({
-    prop: value,
-    defaultProp: defaultValue,
-    onChange,
-  });
-  const normalizedDate = normalizeDateValue(date);
-  const normalizedDefaultValue = normalizeDateValue(defaultValue);
+  const normalizedDate = normalizeDateValue(value);
   const normalizedMinDate = normalizeDateValue(minDate);
   const normalizedMaxDate = normalizeDateValue(maxDate);
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
+    onChange(selectedDate);
     setOpen(false);
   };
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger
+        render={
+          <Button
           {...buttonProps}
           variant={variant}
           size={size}
@@ -63,21 +59,22 @@ export function DatePicker({
             !normalizedDate && "text-muted-foreground",
             className,
           )}
-        >
+          />
+        }
+      >
           {normalizedDate ? (
             <span>{formatDateText(normalizedDate)}</span>
           ) : (
             <span>{t("placeholder")}</span>
           )}
           <CalendarIcon className="h-4 w-4" />
-        </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
           selected={normalizedDate}
-          defaultMonth={normalizedDate ?? normalizedDefaultValue}
+          defaultMonth={normalizedDate}
           onSelect={handleSelect}
           disabled={(calendarDate) =>
             isCalendarDateDisabled(

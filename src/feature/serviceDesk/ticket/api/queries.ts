@@ -3,12 +3,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client";
-import {
-  type TicketSearchRequest,
-  type TicketSortField,
-} from "@/feature/serviceDesk/ticket/api/types";
 import type { TicketSearchCriteriaFormValues } from "@/feature/serviceDesk/ticketSearch";
 import { mapSearchCriteriaToDbParams } from "@/feature/serviceDesk/ticketSearch/utils";
+import type {
+  TicketSearchRequest,
+  TicketSortField,
+} from "@/lib/application/contracts/serviceDesk";
 import { DbParams, type SortDirection } from "@/shared/types";
 
 import { serviceDeskTicketApi } from "./api";

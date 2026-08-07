@@ -7,6 +7,7 @@ import { useLanguageState } from "@/feature/user/preference/hooks/useLanguage";
 import { usePreferenceStore } from "@/lib/client/preference";
 import { applyColorTheme } from "@/lib/client/theme";
 
+/** Applies persisted language, theme, and screen mode to their client presentation runtimes. */
 export function usePreferencePresentationSync() {
   const colorTheme = usePreferenceStore((state) => state.colorTheme);
   const screenMode = usePreferenceStore((state) => state.screenMode);
@@ -15,19 +16,16 @@ export function usePreferencePresentationSync() {
   const { setTheme } = useTheme();
   const { language, changeLanguage } = useLanguageState();
 
-  // color theme
   useEffect(() => {
     if (!colorTheme) return;
     applyColorTheme(colorTheme);
   }, [colorTheme]);
 
-  // screen mode (light / dark)
   useEffect(() => {
     if (!screenMode) return;
     setTheme(screenMode);
   }, [screenMode, setTheme]);
 
-  // language
   useEffect(() => {
     if (!storeLanguage || storeLanguage === language) return;
     changeLanguage(storeLanguage);

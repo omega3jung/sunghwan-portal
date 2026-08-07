@@ -1,0 +1,110 @@
+{
+  "decisionOverview": {
+    "title": "Vue d'ensemble des decisions",
+    "description": "Comment lire les decisions datees et les distinguer de la conception actuelle."
+  },
+  "decisionAuthSessionArchitecture": {
+    "title": "2025-12 Architecture de session d'authentification",
+    "description": "Entree du journal des decisions sur l'architecture de session."
+  },
+  "decisionImpersonation202512": {
+    "title": "2025-12 Usurpation",
+    "description": "Entree du journal des decisions sur la strategie d'usurpation."
+  },
+  "decisionNaming202512": {
+    "title": "2025-12 Nommage",
+    "description": "Entree du journal des decisions sur le nommage."
+  },
+  "decisionSystemLayout": {
+    "title": "2025-12 Layout systeme",
+    "description": "Entree du journal des decisions sur le layout systeme."
+  },
+  "decisionCategoryDesign": {
+    "title": "2026-01 Conception des categories",
+    "description": "Entree du journal des decisions sur la conception des categories."
+  },
+  "decisionImpersonation202601": {
+    "title": "2026-01 Usurpation",
+    "description": "Entree du journal des decisions sur l'usurpation."
+  },
+  "decisionSessionUserBoundary202601": {
+    "title": "2026-01 Limite utilisateur de session",
+    "description": "Entree du journal des decisions sur la limite utilisateur de session."
+  },
+  "decisionServiceDeskSettings": {
+    "title": "2026-02 Parametres Service Desk",
+    "description": "Entree du journal des decisions sur la conception des parametres Service Desk."
+  },
+  "decisionServiceDesk": {
+    "title": "2026-03 Service Desk",
+    "description": "Entree du journal des decisions sur l'implementation de Service Desk."
+  },
+  "decisionTicketFormDialog": {
+    "title": "2026-03 Dialogue du formulaire de ticket",
+    "description": "Entree du journal des decisions sur le dialogue du formulaire de ticket."
+  },
+  "decisionTicketSession202603": {
+    "title": "2026-03 Session de ticket",
+    "description": "Entree du journal des decisions sur le comportement de session de ticket."
+  },
+  "decisionEntityStatusNaming": {
+    "title": "2026-04 Nommage des statuts d'entite",
+    "description": "Entree du journal des decisions sur le nommage des entites."
+  },
+  "decisionTicketAction": {
+    "title": "2026-04 Introduction du modele d'action de ticket",
+    "description": "Entree du journal des decisions sur l'introduction du modele d'action de ticket."
+  },
+  "decisionBarrelExportBoundary202605": {
+    "title": "2026-05 Limite d'export barrel",
+    "description": "Entree du journal des decisions sur la limite d'export barrel."
+  },
+  "decisionDatabaseRoleAndAccessStrategy202605": {
+    "title": "2026-05 Strategie de roles et d'acces base de donnees",
+    "description": "Entree du journal des decisions sur les roles et l'acces base de donnees."
+  },
+  "decisionServiceDeskDocumentationAlignment202605": {
+    "title": "2026-05 Alignement de la documentation Service Desk",
+    "description": "Entree du journal des decisions sur l'alignement de la documentation Service Desk."
+  },
+  "decisionServiceDeskTenantDesign202606": {
+    "title": "2026-06 Conception des tenants Service Desk",
+    "description": "Entree du journal des decisions sur la conception des tenants pour les parametres Service Desk."
+  },
+  "decisionServiceDeskSettingsDtoApiBoundary202606": {
+    "title": "2026-06 Limite DTO/API des parametres Service Desk",
+    "description": "Entree du journal des decisions sur la limite DTO/API des parametres Service Desk."
+  },
+  "decisionTicketAttachmentBoundary202606": {
+    "title": "2026-06 Limite des pieces jointes de ticket",
+    "description": "Entree du journal des decisions sur la limite des pieces jointes de ticket."
+  },
+  "decisionTicketFormAndDraftWorkflow202606": {
+    "title": "2026-06 Formulaire de ticket et workflow de brouillon",
+    "description": "Entree du journal des decisions sur le formulaire de ticket et le workflow de brouillon."
+  },
+  "decisionNextjs16MigrationStrategy202607": {
+    "title": "2026-07 Strategie de migration Next.js 16",
+    "description": "Entree du journal des decisions sur la strategie de migration Next.js 16."
+  },
+  "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
+    "title": "2026-07 Limite de validation des references des parametres Service Desk",
+    "description": "Entree du journal des decisions sur la limite de validation des references."
+  },
+  "decisionTicketActionAndHistoryExecution202607": {
+    "title": "2026-07 Execution des actions et de l'historique de ticket",
+    "description": "Entree du journal des decisions sur l'execution des actions et de l'historique."
+  },
+  "decisionTicketMergeAndEscalationPolicy202607": {
+    "title": "2026-07 Politique de fusion et d'escalade des tickets",
+    "description": "Entree du journal des decisions sur la fusion et l'escalade des tickets."
+  },
+  "decisionTicketRoutingAndUpdatePolicy202607": {
+    "title": "2026-07 Politique de routage et de mise a jour des tickets",
+    "description": "Entree du journal des decisions sur le routage et la mise a jour des tickets."
+  },
+  "decisionBooleanCapabilityApiNaming202608": {
+    "title": "2026-08 Nommage des API de capacite booleenne",
+    "description": "Entree du journal des decisions sur le nommage des API de capacite booleenne."
+  }
+}

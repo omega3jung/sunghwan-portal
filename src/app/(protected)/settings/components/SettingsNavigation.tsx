@@ -1,8 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,10 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
 import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
@@ -40,15 +38,17 @@ export function SettingsNavigation() {
     }),
   );
 
+  const pathname = usePathname();
   const router = useRouter();
   const { startRouteLoadingForHref } = useRouteLoading();
 
   const handleNavigate = (path: string) => {
     if (!ENABLED_SETTINGS_ROUTES.has(path)) {
-      toast.info(t("disabledRouteMessage.title"), {
+      toast.add({
+        title: t("disabledRouteMessage.title"),
         description: t("disabledRouteMessage.description"),
-        position: "top-center",
-        duration: 5000,
+        timeout: 5000,
+        type: "info",
       });
       return;
     }
@@ -58,47 +58,48 @@ export function SettingsNavigation() {
   };
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList className="flex-wrap">
+    <NavigationMenu className="justify-start gap-2 p-2">
+      <NavigationMenuList className="flex-wrap gap-1">
         {settingsNavigationItems.map((settingMenu) => (
           <NavigationMenuItem key={settingMenu.triggerTitle}>
-            <NavigationMenuTrigger>
+            <NavigationMenuTrigger className="h-9 px-3 text-sm">
               {settingMenu.triggerTitle}
             </NavigationMenuTrigger>
-            <NavigationMenuContent className="grid p-2 gap-2 sm:w-[440px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {settingMenu.items.map((item) => (
-                <NavigationMenuLink
-                  asChild
-                  key={item.title}
-                  title={item.title}
-                  className="flex flex-col p-2 gap-1 rounded-md"
-                >
-                  <Button
-                    type="button"
-                    variant={"ghost"}
-                    onClick={() => handleNavigate(item.path)}
-                    className={cn(
-                      "w-full h-full flex flex-col items-start justify-start text-left",
-                    )}
-                  >
-                    <p className="text-sm leading-none font-medium h-fit">
-                      {item.title}
-                    </p>
-                    <p
+            <NavigationMenuContent>
+              <div className="max-h-[60vh] w-150 max-w-[calc(100vw-2rem)] overflow-y-auto p-3 pr-4">
+                <div className="grid gap-1 md:grid-cols-2">
+                  {settingMenu.items.map((item) => (
+                    <Button
+                      key={item.path}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => handleNavigate(item.path)}
                       className={cn(
-                        "text-muted-foreground text-sm leading-snug text-wrap",
+                        "h-auto w-full flex-row items-center justify-start gap-3 whitespace-normal px-3 py-2 text-left font-normal",
+                        pathname === item.path && "bg-primary/10 text-primary",
                       )}
+                      title={item.triggerTitle}
                     >
-                      {item.description}
-                    </p>
-                  </Button>
-                </NavigationMenuLink>
-              ))}
+                      <item.icon
+                        aria-hidden="true"
+                        className="size-5 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium">
+                          {item.triggerTitle}
+                        </span>
+                        <span className="mt-0.5 line-clamp-2 block text-xs font-normal leading-5 text-muted-foreground">
+                          {item.triggerDescription}
+                        </span>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
-      <NavigationMenuViewport />
     </NavigationMenu>
   );
 }

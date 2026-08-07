@@ -1,3 +1,4 @@
+import type { TicketActionExecutionMode } from "@/lib/application/contracts/serviceDesk";
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import { updateTicketCloseStateById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
@@ -9,9 +10,9 @@ import {
   assertTicketUpdated,
   type NormalizedTicketActionPayload,
   requireNextTicketStatus,
-  type TicketActionExecutionMode,
 } from "../ticketActionRules";
 
+/** Executes cancel ticket action after shared authorization and payload validation have succeeded. */
 export async function executeCancelTicketAction({
   ticket,
   ticketId,

@@ -134,7 +134,7 @@ export const getBadgeClassName = (
   className?: string,
 ) => {
   return cn(
-    "flex h-6 items-center gap-1.5 rounded-md border border-black/[0.04] pr-1 text-nowrap shadow-none",
+    "flex h-6 items-center gap-1.5 rounded-md border border-black/4 pr-1 text-nowrap shadow-none",
     resolveBadgeClassName(variant, itemIndex, paletteStart, palettePick),
     className,
   );

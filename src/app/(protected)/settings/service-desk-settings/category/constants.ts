@@ -1,6 +1,3 @@
-import { CategoryScope } from "@/domain/serviceDesk";
-import { ValueLabel } from "@/shared/types";
-
 import { CategoryData, SubCategoryData } from "./types";
 
 export const MAX_SUB_CATEGORY_PER_CATEGORY = 20;
@@ -16,8 +13,8 @@ export const getDefaultCategoryData = (count: number): CategoryData => {
     name: { en: `${newCategoryNamePrefix}${count}` },
     index: 1,
     active: true,
-    subCategories: [],
     scope: "INTERNAL",
+    nodeType: "category",
     isCreated: true,
     defaultPriority: "medium",
     defaultRiskLevel: "medium",
@@ -31,14 +28,7 @@ export const getDefaultSubCategoryData = (count: number): SubCategoryData => {
     name: { en: `${newSubCategoryNamePrefix}${count}` },
     index: 1,
     active: true,
+    nodeType: "subCategory",
     isCreated: true,
-    defaultPriority: "medium",
-    defaultRiskLevel: "medium",
-    defaultSlaDays: 3,
   };
 };
-
-export const scopeData: ValueLabel<CategoryScope>[] = [
-  { value: "PORTAL", label: "PORTAL" },
-  { value: "INTERNAL", label: "INTERNAL" },
-];

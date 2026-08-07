@@ -1,5 +1,7 @@
 ﻿import { z } from "zod";
 
+import type { TicketActionCommandPayload } from "@/lib/application/contracts/serviceDesk";
+
 const ACTION_VALIDATION_KEY = {
   contentRequired: "actionTool.validation.contentRequired",
   contentMaxLength: "actionTool.validation.contentMaxLength",
@@ -68,18 +70,19 @@ export const ticketActionDraftFormSchema = z
     }
   });
 
-export const ticketActionPayloadSchema = z.object({
-  id: z.string(),
-  actionType: ticketActionTypeSchema,
-  content: actionContentSchema,
-  files: z.array(actionAttachmentSchema),
-  images: z.array(actionAttachmentSchema),
-  assigneeUsernames: z.string().array().optional(),
-  categoryId: z.string().optional(),
-  targetTicketId: z.string().optional(),
-  priority: z.string().optional(),
-  riskLevel: z.string().optional(),
-  dueAt: z.string().optional(),
-});
+export const ticketActionPayloadSchema: z.ZodType<TicketActionCommandPayload> =
+  z.object({
+    id: z.string(),
+    actionType: ticketActionTypeSchema,
+    content: actionContentSchema,
+    files: z.array(actionAttachmentSchema),
+    images: z.array(actionAttachmentSchema),
+    assigneeUsernames: z.string().array().optional(),
+    categoryId: z.string().optional(),
+    targetTicketId: z.string().optional(),
+    priority: z.string().optional(),
+    riskLevel: z.string().optional(),
+    dueAt: z.string().optional(),
+  });
 
 export const ticketActionFormSchema = ticketActionPayloadSchema;

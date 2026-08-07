@@ -1,0 +1,129 @@
+{
+  "merge": {
+    "badge": "Fusionado",
+    "into": "Fusionado en {{ticketId}}",
+    "escalatedBadge": "Escalado",
+    "escalatedInto": "Escalado al ticket del portal {{ticketId}}"
+  },
+  "comment": {
+    "attachments": {
+      "images": "Imágenes",
+      "files": "Archivos"
+    },
+    "editor": {
+      "validationEmpty": "Ingresa un comentario antes de enviarlo."
+    }
+  },
+  "actionTool": {
+    "currentUser": "Usuario actual",
+    "currentUserFallback": "Tú",
+    "launcher": {
+      "approve": "Aprueba este paso y envía el ticket a la siguiente etapa.",
+      "decline": "Declina esta solicitud de aprobación y registra el motivo.",
+      "comment": "Publica una respuesta visible para el solicitante y las personas observadoras.",
+      "note": "Deja una nota interna que permanezca dentro del equipo.",
+      "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
+      "assignSelf": "Asume este ticket de inmediato con una nota de actividad automática.",
+      "reject": "Registra el motivo del rechazo antes de cerrar la solicitud.",
+      "merge": "Fusiona este ticket con otro ticket.",
+      "adjust": "Actualiza la prioridad, el nivel de riesgo y la fecha límite.",
+      "reopen": "Reabre el ticket cuando el resultado resuelto aún requiere más trabajo.",
+      "resubmit": "Vuelve a enviar esta solicitud rechazada para su revisión.",
+      "cancel": "Cancela esta solicitud antes de que comience el trabajo."
+    },
+    "helper": {
+      "approve": "Deja una nota de aprobación antes de enviar el ticket a la siguiente etapa.",
+      "decline": "Explica por qué se está declinando esta solicitud de aprobación.",
+      "comment": "Comparte una actualización pública con todas las personas que siguen este ticket.",
+      "note": "Agrega una nota interna para el equipo de Service Desk.",
+      "assign": "Actualiza responsables o mueve el ticket a otra categoría.",
+      "assignSelf": "Esta acción registra automáticamente que asumiste la responsabilidad del ticket.",
+      "reject": "Explica por qué se está rechazando esta solicitud.",
+      "merge": "Elige el ticket con el que se fusionará y deja una nota breve.",
+      "adjust": "Revisa la prioridad, el nivel de riesgo y la fecha límite antes de aplicar los cambios.",
+      "reopen": "Explica qué queda por resolver antes de que este ticket pueda permanecer cerrado.",
+      "resubmit": "Explica qué cambió antes de volver a enviar esta solicitud rechazada.",
+      "cancel": "Explica por qué se debe cancelar esta solicitud."
+    },
+    "submit": {
+      "approve": "Aprobar",
+      "decline": "Declinar",
+      "comment": "Publicar comentario",
+      "note": "Guardar nota",
+      "assign": "Guardar asignación",
+      "assignSelf": "Asignarme",
+      "reject": "Rechazar ticket",
+      "merge": "Fusionar ticket",
+      "adjust": "Actualizar plan",
+      "reopen": "Reabrir incidencia",
+      "resubmit": "Reenviar solicitud",
+      "cancel": "Cancelar ticket"
+    },
+    "list": {
+      "title": "Actividad",
+      "titleHint": "Busca, ordena y revisa las acciones del ticket.",
+      "empty": "Todavía no hay acciones",
+      "noResult": "Ninguna acción coincide con tu búsqueda.",
+      "toggleDetails": "Mostrar u ocultar detalles de la acción",
+      "number": "Acción n.º {{number}}",
+      "edited": "Editado",
+      "searchPlaceholder": "Buscar acciones",
+      "countLabel_one": "actividad",
+      "countLabel_other": "actividades"
+    },
+    "form": {
+      "editorLabel": "Motivo",
+      "approvalNoteLabel": "Nota de aprobación",
+      "declineReasonLabel": "Motivo de declinación",
+      "editorPlaceholder": {
+        "approve": "Deja una nota para esta aprobación",
+        "decline": "Describe por qué debe declinarse esta aprobación",
+        "comment": "Escribe un comentario y mantén la conversación en marcha",
+        "note": "Comparte una nota interna para este ticket",
+        "assign": "Comparte el contexto de asignación para la siguiente persona responsable",
+        "assignSelf": "Esta nota de actividad se genera automáticamente",
+        "reject": "Describe por qué este ticket debe ser rechazado",
+        "merge": "Explica por qué estos tickets deben fusionarse",
+        "adjust": "Describe por qué estos valores deben ajustarse",
+        "reopen": "Describe qué sigue pendiente de resolver",
+        "resubmit": "Describe qué cambió antes de volver a enviar este ticket",
+        "cancel": "Describe por qué se debe cancelar este ticket"
+      },
+      "targetTicketId": "Ticket de destino",
+      "mergeTargetPlaceholder": "Ingresa el ID del ticket principal"
+    },
+    "autoComment": {
+      "assignSelf": "{{name}} ha decidido hacerse cargo de este ticket. {{time}}"
+    },
+    "validation": {
+      "contentRequired": "Introduce un motivo antes de enviarlo.",
+      "contentMaxLength": "El motivo debe tener 2000 caracteres o menos.",
+      "assigneeRequired": "Selecciona al menos una persona asignada.",
+      "targetTicketRequired": "Introduce el ID del ticket de destino.",
+      "adjustNoChanges": "Cambia la prioridad, el nivel de riesgo o la fecha límite antes de actualizar."
+    }
+  },
+  "workSessionTool": {
+    "title": "Tiempo registrado",
+    "tab": {
+      "duration": "Duración",
+      "range": "Rango"
+    },
+    "status": {
+      "keepCurrent": "Mantener estado",
+      "currentSuffix": "(actual)",
+      "description": "El cambio de estado se valida con el tiempo registrado acumulado del ticket."
+    },
+    "note": {
+      "toggle": "Nota opcional",
+      "description": "Sé breve. Máximo {{count}} caracteres."
+    },
+    "summary": {
+      "current": "Esta entrada",
+      "totalAfterSubmit": "Total tras enviar",
+      "minutes": "{{count}} min",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
+  }
+}

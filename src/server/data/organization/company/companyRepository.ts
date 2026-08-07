@@ -14,6 +14,7 @@ where c_active = true
 order by c_portal_owner, c_name, c_code, c_id
 `;
 
+/** Queries PostgreSQL for active company rows without applying presentation concerns. */
 export async function findActiveCompanyRows(): Promise<CompanyRow[]> {
   return queryPortalApi<CompanyRow>(FIND_ACTIVE_COMPANY_ROWS_QUERY);
 }

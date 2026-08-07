@@ -44,16 +44,19 @@ export function TicketSearchCriteriaFields({
 }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
   const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedText(userPreference.language);
 
   const statusOptions = useMemo<TreeMultiComboBoxOption[]>(
     () =>
       createTicketStatusFilterOptions(
-        getStatusOptions(userPreference.language),
-        userPreference.language,
+        getStatusOptions(tStatus),
+        tStatus,
       ),
-    [userPreference.language],
+    [tStatus],
   );
 
   const categoryOptions = useMemo<TreeMultiComboBoxOption[]>(
@@ -67,7 +70,7 @@ export function TicketSearchCriteriaFields({
     return priorityOptions.map((priority) => {
       return {
         value: priority.value,
-        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
       };
     });
   }, [t]);
@@ -79,7 +82,7 @@ export function TicketSearchCriteriaFields({
       return {
         value: riskLevel.value,
         label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });
@@ -88,11 +91,11 @@ export function TicketSearchCriteriaFields({
   return (
     <FieldSet className="gap-10">
       <div>
-        <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
+        <h3 className="pb-1 text-xs font-semibold text-muted-foreground tracking-wide uppercase">
           {t("searchCriteria.primaryFilters")}
         </h3>
-        <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/[0.18] p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-          <FieldGroup className="gap-5">
+        <div className="rounded-lg rounded-tl-none border border-border/60 border-t-2 bg-muted/18 p-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <FieldGroup>
             <Field>
               <FieldLabel htmlFor="ticket-search-select-category">
                 {tCommon("field.category")}
@@ -103,6 +106,7 @@ export function TicketSearchCriteriaFields({
                 render={({ field }) => (
                   <TreeMultiComboBox
                     id="ticket-search-select-category"
+                    className="min-h-8.5"
                     badgeVariant="palette"
                     paletteStart={9}
                     options={categoryOptions}
@@ -127,6 +131,7 @@ export function TicketSearchCriteriaFields({
                 render={({ field }) => (
                   <TreeMultiComboBox
                     id="ticket-search-select-status"
+                    className="min-h-8.5"
                     badgeVariant="palette"
                     paletteStart={10}
                     options={statusOptions}
@@ -143,8 +148,8 @@ export function TicketSearchCriteriaFields({
           </FieldGroup>
         </div>
       </div>
-      <FieldGroup className="gap-5">
-        <div className="border-b-2 border-border/60">
+      <FieldGroup>
+        <div className="pb-1 border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
             {t("searchCriteria.additionalFilters")}
           </h3>
@@ -216,6 +221,7 @@ export function TicketSearchCriteriaFields({
             name="assignee"
             render={({ field }) => (
               <AvatarMultiComboBox
+                badgeVariant={"primary"}
                 value={field.value}
                 options={assignees}
                 onSelect={(selected) => {
@@ -243,6 +249,7 @@ export function TicketSearchCriteriaFields({
             name="requester"
             render={({ field }) => (
               <AvatarMultiComboBox
+                badgeVariant={"primary"}
                 value={field.value}
                 options={requesters}
                 onSelect={(selected) => {
@@ -262,8 +269,8 @@ export function TicketSearchCriteriaFields({
         </Field>
         <div className="pt-4 border-t border-border/60" />
       </FieldGroup>
-      <FieldGroup className="gap-5">
-        <div className="pt-2 border-b-2 border-border/60">
+      <FieldGroup>
+        <div className="pt-2 pb-1 border-b-2 border-border/60">
           <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
             {t("searchCriteria.dateFilters")}
           </h3>

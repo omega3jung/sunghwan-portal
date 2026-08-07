@@ -5,77 +5,44 @@ import type { ButtonProps } from "@/components/ui/button";
 import { selectVariants } from "@/components/ui/select";
 import { DateRangePreset } from "@/shared/types";
 
-/**
- * SearchDateFilter keeps its value generic, but still needs to interoperate with
- * shared date preset values in some places.
- */
+/** Adds the search-only `all` option to the shared date presets. */
 export type SearchPeriod = "all" | DateRangePreset;
 
-/**
- * Reuse the visual variants from the shared Select trigger so date controls stay aligned
- * with the rest of the design system.
- */
+/** Keeps date-control triggers aligned with the shared Select variants. */
 export type SelectVariant = VariantProps<typeof selectVariants>["variant"];
 
-/**
- * Trigger text can show:
- * - only the semantic label
- * - only the concrete date range
- * - both together
- *
- * Components decide trigger display from this policy, while dropdown item labels stay unchanged.
- */
+/** `text` shows the semantic label, `range` concrete dates, and `all` both. */
 export type ShowTextType = "text" | "range" | "all";
 
-/**
- * SearchDateFilter is generic because the selectable values are domain-specific.
- * Only the display label is universal.
- */
+/** Filter values are domain-specific; only their display label is shared. */
 export type SearchDateFilterOption<T extends string = string> = {
   value: T;
   label: string;
 };
 
-/**
- * Shared single-value picker contract for date-like controls.
- * DatePicker and DateTimePicker intentionally stay separate components,
- * but they share the same ownership model for a single Date value.
- */
+/** Shared ownership contract for single-date controls. */
 type BaseSingleDatePickerProps = {
-  value?: Date;
-  defaultValue?: Date;
-  onChange?: (value?: Date) => void;
+  value: Date | undefined;
+  onChange: (value?: Date) => void;
   minDate?: Date;
   maxDate?: Date;
   modal?: boolean;
 };
 
-/**
- * DatePicker remains date-only and keeps the existing button ergonomics.
- */
 export type DatePickerProps = BaseSingleDatePickerProps &
-  Omit<ButtonProps, "value" | "defaultValue" | "onChange">;
+  Omit<ButtonProps, "value" | "onChange">;
 
-/**
- * DateTimePicker minute options stay constrained to common 24-hour schedules.
- */
+/** Supported steps divide an hour evenly and keep the minute list predictable. */
 export type DateTimePickerMinuteStep = 1 | 5 | 10 | 15 | 30;
 
-/**
- * DateTimePicker adds compact layout and time stepping while keeping
- * the same single-Date ownership model as DatePicker.
- */
 export type DateTimePickerProps = BaseSingleDatePickerProps &
-  Omit<ButtonProps, "value" | "defaultValue" | "onChange"> & {
+  Omit<ButtonProps, "value" | "onChange"> & {
     compact?: boolean;
     minuteStep?: DateTimePickerMinuteStep;
     placeholder?: string;
   };
 
-/**
- * Shared DateRangePicker props that apply regardless of how the period itself is owned.
- * The actual date range is always parent-owned.
- */
+/** The concrete range is parent-owned in both preset ownership modes. */
 type DateRangePickerBaseProps = {
   range: DateRange | undefined;
   onRangeChange: (value?: DateRange) => void;
@@ -86,40 +53,27 @@ type DateRangePickerBaseProps = {
   modal?: boolean;
 };
 
-/**
- * Controlled mode:
- * the parent owns both the selected preset and the concrete range.
- * defaultPeriod is intentionally disallowed here to avoid mixed ownership.
- */
+/** Controlled preset mode; `defaultPeriod` is disallowed to prevent mixed ownership. */
 type ControlledDateRangePickerProps = {
   period: DateRangePreset | undefined;
   onPeriodChange: (value?: DateRangePreset) => void;
   defaultPeriod?: never;
 };
 
-/**
- * Uncontrolled period mode:
- * the component manages the selected preset internally, but the parent still owns the actual range.
- */
+/** The component owns only the preset; the parent still owns `range`. */
 type UncontrolledDateRangePickerProps = {
   period?: never;
   onPeriodChange?: never;
   defaultPeriod?: DateRangePreset;
 };
 
-/**
- * DateRangePicker supports controlled and uncontrolled preset selection,
- * but never mixed ownership of the preset state.
- */
 export type DateRangePickerProps = DateRangePickerBaseProps &
   (ControlledDateRangePickerProps | UncontrolledDateRangePickerProps);
 
 /**
- * SearchDateFilter keeps the selected value generic so it can represent domain filters
- * such as due dates while still borrowing the same date-range interaction model.
- *
- * `rangeValue` marks the option that should open the calendar instead of resolving a preset.
- * `resolveRange` is the bridge from a preset-like value to a concrete parent-owned range.
+ * Filter values remain generic so domain-specific presets can reuse the range
+ * interaction. `rangeValue` opens free-form selection; other values are
+ * converted to the parent-owned range through `resolveRange`.
  */
 export type SearchDateFilterProps<T extends string = SearchPeriod> = {
   value?: T;

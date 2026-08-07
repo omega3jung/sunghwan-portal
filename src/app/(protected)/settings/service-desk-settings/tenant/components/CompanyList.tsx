@@ -19,7 +19,7 @@ import { CompanySettingItem } from "../types";
 type CompanyListProps = {
   companies: CompanySettingItem[];
   selectedCompanyIds: string[];
-  disabled?: boolean;
+  canSelectCompanies?: boolean;
   onSelectCompany: (companyId: string) => void;
   className?: string;
 };
@@ -27,7 +27,7 @@ type CompanyListProps = {
 export function CompanyList({
   companies,
   selectedCompanyIds,
-  disabled = false,
+  canSelectCompanies = true,
   onSelectCompany,
   className,
 }: CompanyListProps) {
@@ -61,10 +61,10 @@ export function CompanyList({
                     type="button"
                     variant="outline"
                     aria-pressed={isSelected}
-                    disabled={disabled}
+                    disabled={!canSelectCompanies}
                     onClick={() => onSelectCompany(companyId)}
                     className={cn(
-                      "h-20 w-full flex-col items-stretch gap-2 p-4 border-border text-left",
+                      "h-20 w-full flex-col items-stretch gap-2 p-4 text-left",
                       isSelected && "bg-primary/5",
                     )}
                   >

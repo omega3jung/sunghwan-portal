@@ -36,7 +36,7 @@ export function MultiComboBoxBadgeList({
             itemOrderMap?.get(item.value) ?? index,
             paletteStart,
             palettePick,
-            cn("font-medium", readOnly ? undefined : "cursor-pointer"),
+            cn(readOnly ? undefined : "cursor-pointer"),
           )}
           onClick={(event) => {
             if (readOnly) {

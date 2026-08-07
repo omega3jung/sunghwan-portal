@@ -1,11 +1,13 @@
 import type { AccessLevel, Role, UserScope } from "@/domain/auth";
 import { LocalizedName } from "@/domain/organization";
 
+/** Defines the PostgreSQL user preference row used only within the repository boundary. */
 export interface UserPreferenceRow {
   ump_preference_key: string;
   ump_preference_meta: unknown;
 }
 
+/** Defines the PostgreSQL user profile row used only within the repository boundary. */
 export type UserProfileRow = {
   aa_id: string;
   aa_username: string;

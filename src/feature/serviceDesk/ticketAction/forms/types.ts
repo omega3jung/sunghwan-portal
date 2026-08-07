@@ -11,7 +11,6 @@ export type TicketActionDraftFormValues = z.infer<
 export type TicketActionPayloadValues = z.infer<
   typeof ticketActionPayloadSchema
 >;
-export type TicketActionFormValues = TicketActionPayloadValues;
 
 type TicketActionDraftBase = Pick<
   TicketActionDraftFormValues,

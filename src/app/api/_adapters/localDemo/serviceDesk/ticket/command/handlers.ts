@@ -436,6 +436,7 @@ const resubmitTicket: LocalActionHandler = async (context) => {
   };
 };
 
+/** Maps each supported ticket action to its LOCAL validation and effect handler. */
 export const actionSpecMap: Record<TicketActionApiType, LocalActionSpec> = {
   approve: { handler: approveTicket, needsTicket: true },
   decline: { handler: declineTicket, needsTicket: true },

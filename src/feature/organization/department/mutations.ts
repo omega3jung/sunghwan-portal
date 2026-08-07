@@ -8,7 +8,6 @@ import { departmentQueryKeys } from "./queryKeys";
 export const useCreateDepartmentMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: departmentApi.create,
     onSuccess: () => {
@@ -20,7 +19,6 @@ export const useCreateDepartmentMutation = () => {
 export const useUpdateDepartmentMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: departmentApi.update,
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const useUpdateDepartmentMutation = () => {
 export const useDeleteDepartmentMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: departmentApi.remove,
     onSuccess: () => {

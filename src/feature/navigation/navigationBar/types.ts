@@ -9,8 +9,8 @@ export type LinkBarItem = {
   route: string;
   selected?: boolean;
   icon?: ReactElement<LucideProps>;
-  isDisable?: boolean;
-  isLinkable?: boolean;
+  disabled?: boolean;
+  canNavigate?: boolean;
   onClick?: (index: number, name?: string | ReactNode) => void;
 };
 
@@ -21,6 +21,7 @@ export type NavigationBreadcrumbItem = {
   dropdownItems?: NavigationBreadcrumbDropdownItem[];
 };
 
+/** Alternative sibling route displayed from a breadcrumb dropdown. */
 export type NavigationBreadcrumbDropdownItem = {
   id: number;
   label: ReactNode;

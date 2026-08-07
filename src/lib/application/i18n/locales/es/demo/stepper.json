@@ -1,0 +1,16 @@
+{
+  "title": "Indicador de pasos",
+  "orientation": "Orientación", "stepVariant": "Variante de paso", "labelPosition": "Posición de la etiqueta",
+  "stepColor": "Color del paso", "connectorStyle": "Estilo del conector", "leadingConnector": "Conector inicial",
+  "showOrderLabel": "Mostrar etiqueta del paso", "startIndex": "Número inicial", "disable": "Deshabilitar",
+  "stepLabel": "Paso {{order}} - {{label}}",
+  "options": {
+    "horizontal": "Horizontal", "vertical": "Vertical", "square": "Cuadrado", "circle": "Círculo",
+    "primary": "Primario", "secondary": "Secundario", "top": "Arriba", "bottom": "Abajo",
+    "right": "Derecha", "left": "Izquierda", "solid": "Sólido", "dashed": "Discontinuo", "dotted": "Punteado"
+  },
+  "steps": {
+    "receiving": "Recepción", "triage": "Clasificación", "estimate": "Estimación", "quote": "Cotización",
+    "repair": "Reparación", "qc": "Control de calidad", "shipping": "Envío"
+  }
+}

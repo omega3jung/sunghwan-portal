@@ -70,20 +70,24 @@ const upsertTenantTree = ({
   sortTenantTreeStore(items);
 };
 
+/** Returns a sorted copy of LOCAL tenants without reordering mutable state. */
 export const listTenants = (items = getLocalDemoTenants()) => {
   return items
     .slice()
     .sort(compareTenants);
 };
 
+/** Normalizes tenant into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeTenant = (tenant: DbTenant): Tenant => {
   return camelTenantMapper([tenant])[0] as Tenant;
 };
 
+/** Finds tenant index by ID within the server-side LOCAL settings adapter. */
 export const findTenantIndexById = (items: DbTenant[], id: string) => {
   return items.findIndex((tenant) => matchesTenant(tenant, id));
 };
 
+/** Creates tenant ID assigner for the server-side LOCAL settings adapter. */
 export const createTenantIdAssigner = (items: DbTenant[]) => {
   const assignNextId = createIncrementalIdAssigner(
     items.map((tenant) => tenant.tenant_id),
@@ -100,10 +104,12 @@ export const createTenantIdAssigner = (items: DbTenant[]) => {
   };
 };
 
+/** Returns tenants in deterministic LOCAL display order. */
 export const sortTenants = (items: DbTenant[]) => {
   items.sort(compareTenants);
 };
 
+/** Synchronizes a tenant snapshot across internal and client settings trees. */
 export const syncTenantAcrossSettings = (tenant: DbTenant) => {
   upsertTenantTree({
     isInternal: true,

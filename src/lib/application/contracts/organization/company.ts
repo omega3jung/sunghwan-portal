@@ -1,5 +1,6 @@
 import { LocalizedText } from "@/shared/types/language";
 
+/** Database-facing company shape used by the organization application boundary. */
 export interface DbCompany {
   company_id: number;
 

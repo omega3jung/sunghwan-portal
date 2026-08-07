@@ -4,6 +4,7 @@ import type {
   TicketHistorySource,
 } from "./ticketHistoryTypes";
 
+/** Removes undefined properties before history metadata is serialized to JSONB. */
 export function compactJsonObject(
   value: Record<string, TicketHistoryJsonValue | undefined>,
 ): TicketHistoryJsonValue | null {
@@ -15,6 +16,7 @@ export function compactJsonObject(
   return entries.length > 0 ? Object.fromEntries(entries) : null;
 }
 
+/** Normalizes unknown history metadata into a safe object representation. */
 export function normalizeMetadataRecord(
   value: TicketHistoryJsonValue | null | undefined,
 ): Record<string, TicketHistoryJsonValue> {
@@ -23,18 +25,21 @@ export function normalizeMetadataRecord(
     : {};
 }
 
+/** Loads metadata source through the server data boundary. */
 export function getMetadataSource(
   value: Record<string, TicketHistoryJsonValue>,
 ): TicketHistorySource | undefined {
   return isTicketHistorySource(value.source) ? value.source : undefined;
 }
 
+/** Loads metadata event through the server data boundary. */
 export function getMetadataEvent(
   value: Record<string, TicketHistoryJsonValue>,
 ): TicketHistoryEvent | undefined {
   return isTicketHistoryEvent(value.event) ? value.event : undefined;
 }
 
+/** Removes event identity fields so callers can compare only event-specific metadata. */
 export function omitMetadataIdentity(
   value: Record<string, TicketHistoryJsonValue>,
 ): Record<string, TicketHistoryJsonValue> {
@@ -42,6 +47,7 @@ export function omitMetadataIdentity(
   return metadata;
 }
 
+/** Recursively removes history identity fields from a JSON value when it is an object. */
 export function omitMetadataIdentityFromJsonValue(
   value: TicketHistoryJsonValue | null | undefined,
 ): TicketHistoryJsonValue | null | undefined {

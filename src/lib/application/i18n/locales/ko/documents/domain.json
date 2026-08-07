@@ -1,0 +1,54 @@
+{
+  "ticketSystemOverview": {
+    "title": "티켓 시스템 개요",
+    "description": "Service Desk 도메인의 상위 수준 개요입니다."
+  },
+  "serviceDeskSettings": {
+    "title": "서비스 데스크 설정",
+    "description": "티켓 생성, 승인, 배정, 표시 동작을 제어하는 설정 모델을 설명합니다."
+  },
+  "ticketModel": {
+    "title": "티켓 모델",
+    "description": "핵심 티켓 모델과 소유 구조를 설명합니다."
+  },
+  "ticketLifecycle": {
+    "title": "티켓 생명주기",
+    "description": "생명주기 상태와 전환 설계를 설명합니다."
+  },
+  "ticketAction": {
+    "title": "Ticket Action",
+    "description": "커뮤니케이션과 운영 command를 위한 first-class action model을 설명합니다."
+  },
+  "ticketHistory": {
+    "title": "티켓 이력",
+    "description": "감사 가능성과 이력 타임라인 전략을 설명합니다."
+  },
+  "ticketWorkSession": {
+    "title": "Ticket Work Session",
+    "description": "작업 시간 근거와 tracked-time model을 설명합니다."
+  },
+  "actionStrategy": {
+    "title": "액션 전략",
+    "description": "액션 중심 상호작용과 메타데이터 설계 전략을 설명합니다."
+  },
+  "categoryStrategy": {
+    "title": "카테고리 전략",
+    "description": "시스템 전반의 카테고리 기반 워크플로 동작을 설명합니다."
+  },
+  "approvalSystem": {
+    "title": "승인 시스템",
+    "description": "승인 단계와 조건부 워크플로 설계를 설명합니다."
+  },
+  "assignmentPolicy": {
+    "title": "배정 정책",
+    "description": "배정 로직과 업무 방향성을 설명합니다."
+  },
+  "slaStrategy": {
+    "title": "SLA 전략",
+    "description": "SLA 처리와 운영 시간 규칙을 설명합니다."
+  },
+  "ticketOperationRules": {
+    "title": "티켓 운영 규칙",
+    "description": "구현 관점의 티켓 운영 규칙과 실행 제약을 설명합니다."
+  }
+}

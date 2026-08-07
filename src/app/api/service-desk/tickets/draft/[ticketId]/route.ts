@@ -17,6 +17,7 @@ import {
   type TicketDraftFormValues,
 } from "@/feature/serviceDesk/ticketDraft/forms";
 
+/** Handles PUT /api/service-desk/tickets/draft/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = await context.params;
   const currentUserName = await getCurrentEmployeeUserName(request);
@@ -60,6 +61,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   });
 }
 
+/** Handles DELETE /api/service-desk/tickets/draft/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function DELETE(
   request: NextRequest,
   context: TicketIdRouteContext,

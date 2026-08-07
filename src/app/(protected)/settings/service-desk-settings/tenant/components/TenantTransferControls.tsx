@@ -10,7 +10,6 @@ import { cn } from "@/shared/utils/presentation";
 type TenantTransferControlsProps = {
   canAddTenants: boolean;
   canRemoveTenants: boolean;
-  disabled?: boolean;
   onAddTenants: () => void;
   onRemoveTenants: () => void;
   className?: string;
@@ -19,7 +18,6 @@ type TenantTransferControlsProps = {
 export function TenantTransferControls({
   canAddTenants,
   canRemoveTenants,
-  disabled = false,
   onAddTenants,
   onRemoveTenants,
   className,
@@ -33,20 +31,20 @@ export function TenantTransferControls({
       <div className="flex flex-row gap-2 lg:flex-col">
         <Button
           type="button"
-          size="icon_sm"
+          size="icon-sm"
           title={t("serviceDeskSettings.tenant.actions.addToTenants")}
           aria-label={t("serviceDeskSettings.tenant.actions.addToTenants")}
-          disabled={!canAddTenants || disabled}
+          disabled={!canAddTenants}
           onClick={onAddTenants}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
         <Button
           type="button"
-          size="icon_sm"
+          size="icon-sm"
           title={t("serviceDeskSettings.tenant.actions.moveToCompanies")}
           aria-label={t("serviceDeskSettings.tenant.actions.moveToCompanies")}
-          disabled={!canRemoveTenants || disabled}
+          disabled={!canRemoveTenants}
           onClick={onRemoveTenants}
         >
           <ChevronLeft className="h-4 w-4" />

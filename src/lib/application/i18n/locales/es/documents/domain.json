@@ -1,0 +1,54 @@
+{
+  "ticketSystemOverview": {
+    "title": "Resumen del sistema de tickets",
+    "description": "Resumen de alto nivel del dominio Service Desk."
+  },
+  "serviceDeskSettings": {
+    "title": "Configuracion de Service Desk",
+    "description": "Modelo de configuracion para creacion, aprobacion, asignacion y visualizacion de tickets."
+  },
+  "ticketModel": {
+    "title": "Modelo de ticket",
+    "description": "Modelo central de ticket y estructura de propiedad."
+  },
+  "ticketLifecycle": {
+    "title": "Ciclo de vida del ticket",
+    "description": "Estados del ciclo de vida y diseno de transiciones."
+  },
+  "ticketAction": {
+    "title": "Accion del ticket",
+    "description": "Modelo principal de acciones para comunicaciones y comandos operativos."
+  },
+  "ticketHistory": {
+    "title": "Historial del ticket",
+    "description": "Estrategia de auditabilidad y linea temporal del historial."
+  },
+  "ticketWorkSession": {
+    "title": "Sesion de trabajo del ticket",
+    "description": "Modelo de evidencia de sesiones de trabajo y tiempo registrado."
+  },
+  "actionStrategy": {
+    "title": "Estrategia de acciones",
+    "description": "Estrategia de interaccion orientada a acciones y diseno de metadatos."
+  },
+  "categoryStrategy": {
+    "title": "Estrategia de categorias",
+    "description": "Comportamiento de flujos de trabajo basado en categorias en todo el sistema."
+  },
+  "approvalSystem": {
+    "title": "Sistema de aprobacion",
+    "description": "Pasos de aprobacion y diseno de flujos de trabajo condicionales."
+  },
+  "assignmentPolicy": {
+    "title": "Politica de asignacion",
+    "description": "Logica de asignacion y direccion de carga de trabajo."
+  },
+  "slaStrategy": {
+    "title": "Estrategia de SLA",
+    "description": "Manejo de SLA y reglas de tiempos operativos."
+  },
+  "ticketOperationRules": {
+    "title": "Reglas de operacion de tickets",
+    "description": "Reglas de operacion de tickets orientadas a implementacion y restricciones de ejecucion."
+  }
+}

@@ -2,14 +2,13 @@ import { AssignmentRule } from "@/domain/serviceDesk";
 import type {
   SaveServiceDeskAssignmentRuleTreePayload,
   ServiceDeskAssignmentRuleListParams,
-} from "@/feature/serviceDesk/assignmentRule/types";
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type AssignmentRuleResponse = OResponse<AssignmentRule>;
 
-// feature-scoped API.
 export const serviceDeskAssignmentRuleApi = {
   list: async (
     params?: ServiceDeskAssignmentRuleListParams,

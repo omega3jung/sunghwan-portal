@@ -12,6 +12,7 @@ import {
   patchUserPreferenceByKey,
 } from "./userRepository";
 
+/** Loads user preference by key through the server data boundary. */
 export async function getUserPreferenceByKey(
   params: GetUserPreferenceByKeyParams,
 ): Promise<UserPreferenceDto | null> {
@@ -24,6 +25,7 @@ export async function getUserPreferenceByKey(
   return toUserPreferenceDto(row);
 }
 
+/** Creates user preference by key through the server persistence boundary. */
 export async function createUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceDto | null> {
@@ -36,6 +38,7 @@ export async function createUserPreferenceByKey(
   return toUserPreferenceDto(row);
 }
 
+/** Updates user preference by key while preserving server-side validation and persistence rules. */
 export async function updateUserPreferenceByKey(
   params: SaveUserPreferenceByKeyInput,
 ): Promise<UserPreferenceDto | null> {
@@ -48,6 +51,7 @@ export async function updateUserPreferenceByKey(
   return toUserPreferenceDto(row);
 }
 
+/** Loads user profile dto by username through the server data boundary. */
 export async function getUserProfileDtoByUsername(
   username: string,
 ): Promise<UserProfileDto | null> {

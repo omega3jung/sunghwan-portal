@@ -1,0 +1,140 @@
+{
+    "hero": {
+      "protectedBadge": "Authenticated Workspace",
+      "enterpriseBadge": "Workflow-driven Service Desk",
+      "title": "A production-aligned Service Desk prototype centered on explicit workflow, routing, and audit history.",
+      "description": {
+        "local": "Local Demo runs the implemented ticket and settings workflows through mutable demo state. ADMIN has broad access, while non-ADMIN commands are authorized from the user's relationship to each ticket.",
+        "remote": "The REMOTE data boundary implements the major Service Desk workflows with server-only services and PostgreSQL. Direct Service Desk page access remains limited in the hosted remote mode."
+      },
+      "actions": {
+        "openServiceDesk": "Open Service Desk",
+        "browseDocumentation": "Browse Documentation",
+        "reviewSettings": "Review Settings"
+      }
+    },
+    "calendar": {
+      "title": "Calendar"
+    },
+    "about": {
+      "title": "Current implementation",
+      "description": "The portal keeps one feature-facing contract while selecting LOCAL or REMOTE execution at the server boundary.",
+      "currentScope": {
+        "title": "Runtime scope",
+        "description": {
+          "local": "LOCAL provides resettable, server-side demo state for ticket search, drafts, commands, history, work sessions, and tenant-scoped settings. It preserves the feature API contract without claiming persistence equivalence with PostgreSQL.",
+          "remote": "REMOTE uses server-only data services, repositories, row mappers, DTOs, and PostgreSQL for the implemented ticket and settings workflows. The hosted remote account still has guarded access to Service Desk pages."
+        }
+      },
+      "architectureNotes": {
+        "local": {
+          "note1": "The UI calls feature API clients and Next.js Route Handlers; runtime-specific behavior stays in LOCAL adapters or REMOTE data services.",
+          "note2": "Tickets use explicit statuses and server-controlled commands for approval, assignment, work, resolution, and close transitions.",
+          "note3": "LOCAL state is intentionally demo-safe and resettable. It mirrors observable contracts where implemented, not the durability of REMOTE persistence."
+        },
+        "remote": {
+          "note1": "REMOTE persists tickets, drafts, settings, actions, history, and work sessions through server-only PostgreSQL boundaries.",
+          "note2": "Operational commands coordinate ticket mutation, action persistence, and immutable history; settings tree writes validate references transactionally.",
+          "note3": "The hosted route guard limits direct Service Desk UI access in REMOTE mode even though the underlying major workflow boundaries are implemented."
+        }
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Open the main work areas you are most likely to need right after sign-in.",
+      "openWorkspace": "Open workspace",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Search tickets, create or resume drafts, inspect details, and execute permitted workflow commands.",
+          "meta": "Core workspace"
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Browse implementation-aligned architecture guides, domain rules, and decision logs.",
+          "meta": "Knowledge hub"
+        },
+        "systemSettings": {
+          "title": "System Settings",
+          "description": "Review access-controlled portal settings, navigation, and user preferences.",
+          "meta": "Administration"
+        },
+        "serviceDeskSetup": {
+          "title": "Service Desk Setup",
+          "description": "Manage tenants, category trees, ordered approval steps, and assignment rules.",
+          "meta": "Platform setup"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Implementation Snapshot",
+      "description": "A concise count of the workflow concepts currently represented in the codebase.",
+      "items": {
+        "openTickets": {
+          "label": "Workflow Statuses",
+          "description": "Draft through Closed, with responsibility-aligned approval and work states."
+        },
+        "pendingApprovals": {
+          "label": "Ticket Actions",
+          "description": "User intent modeled as validated commands with controlled domain effects."
+        },
+        "workingItems": {
+          "label": "Settings Areas",
+          "description": "Tenant, category, approval-step, and assignment-rule configuration."
+        },
+        "resolvedThisWeek": {
+          "label": "Runtime Paths",
+          "description": "LOCAL demo adapters and REMOTE PostgreSQL services behind one API contract."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Implemented Capabilities",
+      "description": "The areas that best represent the current Service Desk design and implementation.",
+      "viewSection": "View section",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Ticket Workspace",
+          "description": "List, search, detail, create, draft, requester-update, and command-driven ticket workflows.",
+          "category": "Service Desk",
+          "status": "Implemented"
+        },
+        "authSessionFlow": {
+          "title": "Command & History Execution",
+          "description": "Server-controlled actions apply validated ticket effects and create event-based immutable history.",
+          "category": "Workflow",
+          "status": "Implemented"
+        },
+        "serviceDeskSettings": {
+          "title": "Service Desk Settings",
+          "description": "Tenant-scoped categories, approval steps, and assignment rules with reference validation.",
+          "category": "Administration",
+          "status": "Implemented"
+        },
+        "documentsHub": {
+          "title": "Documents Hub",
+          "description": "Bilingual architecture, domain, UI, data-fetching, and decision documentation aligned with implementation.",
+          "category": "Documentation",
+          "status": "Maintained"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Design Priorities",
+      "description": "The principles that currently guide the Service Desk implementation.",
+      "panelTitle": "Workflow Integrity",
+      "panelDescription": "Ticket state, current responsibility, commands, and history must describe one consistent operational result.",
+      "primaryGoals": {
+        "title": "Current engineering goals",
+        "items": {
+          "goal1": "Resolve category-driven approval and work assignment with phase-aware ownership",
+          "goal2": "Keep ticket mutation, action records, and immutable history consistent within server command boundaries",
+          "goal3": "Keep UI workflows runtime-agnostic while LOCAL and REMOTE implementations share stable DTO contracts"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Deferred production scope",
+        "description": "Production object storage, notification delivery, a full SLA engine, real-time updates, complete timer routes, and compliance-grade audit infrastructure remain intentionally deferred."
+      }
+    }
+}

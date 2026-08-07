@@ -1,11 +1,8 @@
-import { Separator } from "@radix-ui/react-separator";
 import { useTranslation } from "react-i18next";
 
-import {
-  FileAttachmentList,
-  useFileAttachments,
-} from "@/components/custom/FileAttachment";
+import { FileAttachment } from "@/components/custom/FileAttachment";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { Separator } from "@/components/ui/separator";
 import {
   MAX_ATTACH_COUNT,
   MAX_ATTACH_SIZE,
@@ -19,12 +16,6 @@ export const ReviewStep = () => {
   const { form } = useTicketCreateFormContext();
   const { t } = useTranslation(NS.serviceDesk);
   const bodyValue = form.watch("body");
-  const { files, totalFileSizeMB } = useFileAttachments({
-    form,
-    name: "attachment",
-    maxCount: MAX_ATTACH_COUNT,
-    maxSizeMB: MAX_ATTACH_SIZE,
-  });
 
   return (
     <>
@@ -38,20 +29,22 @@ export const ReviewStep = () => {
         <div className="max-w-full overflow-x-auto">
           <div
             id="review-step-body-preview"
-            className="prose prose-sm min-h-52 min-w-0 max-w-none break-words rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
+            className="prose prose-sm min-h-52 min-w-0 max-w-none wrap-break-word rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
             dangerouslySetInnerHTML={{ __html: bodyValue || "<p>-</p>" }}
           />
         </div>
       </Field>
 
       <Field>
-        <Separator className="mb-4 mt-6 h-0.5 bg-border" />
+      <Separator className="mb-4 mt-6 h-0.5" />
 
-        <FileAttachmentList
-          files={files}
-          totalFileSizeMB={totalFileSizeMB}
+        <FileAttachment
+          form={form}
+          name="attachment"
           maxCount={MAX_ATTACH_COUNT}
           maxSizeMB={MAX_ATTACH_SIZE}
+          readOnly
+          showSeparator={false}
         />
       </Field>
     </>

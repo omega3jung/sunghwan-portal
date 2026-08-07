@@ -1,7 +1,9 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { ApiError } from "@/lib/application/api";
-import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
-import { TicketActionFormValues } from "@/lib/application/contracts/serviceDesk";
+import {
+  DbTicketDetail,
+  TicketActionCommandPayload,
+} from "@/lib/application/contracts/serviceDesk";
 
 import {
   getLocalDemoActions,
@@ -15,6 +17,7 @@ type TicketContext = {
   ticket: DbTicketDetail;
 };
 
+/** Returns max history no from the server-side LOCAL ticket adapter. */
 export const getMaxHistoryNo = (ticketId: string, _isInternal: boolean) => {
   const items = getLocalDemoHistories()
     .filter((item) => item.ticket_id === ticketId)
@@ -23,6 +26,7 @@ export const getMaxHistoryNo = (ticketId: string, _isInternal: boolean) => {
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
+/** Returns next action no from the server-side LOCAL ticket adapter. */
 export const getNextActionNo = (ticketId: string, _isInternal: boolean) => {
   const items = getLocalDemoActions()
     .filter((item) => item.ticket_id === ticketId && item.active)
@@ -31,6 +35,7 @@ export const getNextActionNo = (ticketId: string, _isInternal: boolean) => {
   return items.length ? Math.max(...items) + 1 : 1;
 };
 
+/** Returns ticket context from the server-side LOCAL ticket adapter. */
 export const getTicketContext = (
   ticketId: string,
   _isInternal = false,
@@ -53,6 +58,7 @@ export const getTicketContext = (
   };
 };
 
+/** Creates updated ticket for the server-side LOCAL ticket adapter. */
 export const createUpdatedTicket = (
   ticket: DbTicketDetail,
   patch: Partial<DbTicketDetail>,
@@ -63,13 +69,15 @@ export const createUpdatedTicket = (
   updated_at: updatedAt,
 });
 
+/** Projects history metadata for the server-side LOCAL ticket adapter. */
 export const toHistoryMetadata = (
-  content: TicketActionFormValues,
+  content: TicketActionCommandPayload,
 ): Record<string, unknown> => ({
   ...content,
 });
 
-export const requireAssigneeIds = (content: TicketActionFormValues) => {
+/** Enforces assignee IDs before LOCAL state is exposed or mutated. */
+export const requireAssigneeIds = (content: TicketActionCommandPayload) => {
   if (!content.assigneeUsernames) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.assigneeRequired",
@@ -80,7 +88,8 @@ export const requireAssigneeIds = (content: TicketActionFormValues) => {
   return content.assigneeUsernames;
 };
 
-export const requireTargetTicketId = (content: TicketActionFormValues) => {
+/** Enforces target ticket ID before LOCAL state is exposed or mutated. */
+export const requireTargetTicketId = (content: TicketActionCommandPayload) => {
   if (!content.targetTicketId) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.targetTicketRequired",
@@ -91,20 +100,23 @@ export const requireTargetTicketId = (content: TicketActionFormValues) => {
   return content.targetTicketId;
 };
 
+/** Returns whether a string is a supported ticket priority. */
 export const isPriority = (value: string): value is Priority =>
   value === "urgent" ||
   value === "high" ||
   value === "medium" ||
   value === "low";
 
+/** Returns whether a string is a supported ticket risk level. */
 export const isRiskLevel = (value: string): value is RiskLevel =>
   value === "critical" ||
   value === "high" ||
   value === "medium" ||
   value === "low";
 
+/** Resolves priority using the server-side LOCAL ticket adapter policy. */
 export const resolvePriority = (
-  value: TicketActionFormValues["priority"],
+  value: TicketActionCommandPayload["priority"],
   fallback: Priority,
 ) => {
   if (!value) {
@@ -122,8 +134,9 @@ export const resolvePriority = (
   return value;
 };
 
+/** Resolves risk level using the server-side LOCAL ticket adapter policy. */
 export const resolveRiskLevel = (
-  value: TicketActionFormValues["riskLevel"],
+  value: TicketActionCommandPayload["riskLevel"],
   fallback: RiskLevel,
 ) => {
   if (!value) {

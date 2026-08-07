@@ -26,6 +26,7 @@ import {
   updateTenantRowById,
 } from "./tenantRepository";
 
+/** Loads tenant by id through the server data boundary. */
 export async function getTenantById(
   tenantId: string | number,
 ): Promise<TenantDto | null> {
@@ -38,12 +39,14 @@ export async function getTenantById(
   return mapTenantRowToDto(row);
 }
 
+/** Loads tenants through the server data boundary. */
 export async function getTenants(): Promise<TenantDto[]> {
   const rows = await findTenantRows();
 
   return mapTenantRowsToDtos(rows);
 }
 
+/** Loads active tenant by id through the server data boundary. */
 export async function getActiveTenantById(
   tenantId: string | number,
 ): Promise<TenantDto | null> {
@@ -56,6 +59,7 @@ export async function getActiveTenantById(
   return mapTenantRowToDto(row);
 }
 
+/** Loads active tenant by company id through the server data boundary. */
 export async function getActiveTenantByCompanyId(
   companyId: string | number,
 ): Promise<TenantDto | null> {
@@ -68,12 +72,14 @@ export async function getActiveTenantByCompanyId(
   return mapTenantRowToDto(row);
 }
 
+/** Loads active tenants through the server data boundary. */
 export async function getActiveTenants(): Promise<TenantDto[]> {
   const rows = await findActiveTenantRows();
 
   return mapTenantRowsToDtos(rows);
 }
 
+/** Loads service desk settings tenant contexts through the server data boundary. */
 export async function getServiceDeskSettingsTenantContexts(
 ): Promise<ServiceDeskSettingsTenantContext[]> {
   const tenants = await getTenants();
@@ -86,6 +92,7 @@ export async function getServiceDeskSettingsTenantContexts(
   }));
 }
 
+/** Loads service desk settings tenant context through the server data boundary. */
 export async function getServiceDeskSettingsTenantContext(
   tenantId: string | number,
 ) {
@@ -96,6 +103,7 @@ export async function getServiceDeskSettingsTenantContext(
   );
 }
 
+/** Loads service desk settings tenant context by company id through the server data boundary. */
 export async function getServiceDeskSettingsTenantContextByCompanyId(
   companyId: string | number,
 ) {
@@ -107,6 +115,7 @@ export async function getServiceDeskSettingsTenantContextByCompanyId(
 }
 
 
+/** Creates tenant through the server persistence boundary. */
 export async function createTenant(
   input: CreateTenantInputDto,
 ): Promise<TenantDto> {
@@ -132,6 +141,7 @@ export async function createTenant(
   return mapTenantRowToDto(row);
 }
 
+/** Updates tenant by id while preserving server-side validation and persistence rules. */
 export async function updateTenantById(
   tenantId: string | number,
   input: UpdateTenantInputDto,
@@ -162,6 +172,7 @@ export async function updateTenantById(
   return mapTenantRowToDto(row);
 }
 
+/** Removes or deactivates tenant by id through the server persistence boundary. */
 export async function deactivateTenantById(
   tenantId: string | number,
 ): Promise<TenantDto> {

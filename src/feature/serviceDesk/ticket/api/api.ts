@@ -2,19 +2,20 @@ import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import { TicketFormValues } from "@/feature/serviceDesk/ticket/forms";
 import {
   PrepareTicketAttachmentsInput,
-  PrepareTicketAttachmentsResponse,
   RequesterUpdateTicketPayload,
   toTicketMutateRequestPayloadFromFormValues,
 } from "@/feature/serviceDesk/ticket/write";
+import type {
+  PrepareTicketAttachmentsResponse,
+  TicketSearchRequest,
+  TicketSearchResponse,
+} from "@/lib/application/contracts/serviceDesk";
 import client from "@/lib/client/api";
 import { DbParams, OResponse } from "@/shared/types/api";
 import { buildDbSearchParams } from "@/shared/utils/routing";
 
-import { TicketSearchRequest, TicketSearchResponse } from "./types";
-
 type TicketSummaryResponse = OResponse<TicketSummary>;
 
-// feature-scoped API.
 export const serviceDeskTicketApi = {
   list: async (params: DbParams): Promise<TicketSummary[]> => {
     if (!params) return [];
@@ -117,7 +118,6 @@ export const serviceDeskTicketApi = {
     return res.data;
   },
 
-  // soft delete. set disabled in db.
   remove: async (id: string): Promise<null> => {
     await client.api.delete(`/api/service-desk/tickets/${id}`);
     return null;

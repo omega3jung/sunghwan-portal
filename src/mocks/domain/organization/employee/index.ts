@@ -1,4 +1,4 @@
-import type { DbEmployee } from "@/feature/organization/employee";
+import type { DbEmployee } from "@/lib/application/contracts/organization";
 
 import { clientEmployeesMockData } from "./client";
 import { clientDemoEmployee, internalDemoEmployee } from "./demoUser";

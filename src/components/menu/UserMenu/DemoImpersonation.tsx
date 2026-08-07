@@ -2,6 +2,7 @@ import { ShieldUser } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
@@ -11,6 +12,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AuthUser } from "@/domain/auth";
+import { NS } from "@/lib/application/i18n";
 
 import { getDisplayNameKey, getPermissionIcon } from "./utils";
 
@@ -29,49 +31,53 @@ export function DemoImpersonation(props: Props) {
     onDemoImpersonate,
   } = props;
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <ShieldUser />
         {!isImpersonating
-          ? t("demoUserImpersonation")
-          : t("switchImpersonation")}
+          ? t("impersonation.demoLabel")
+          : t("impersonation.switch")}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
-          {internalCandidates.map((profile) => {
-            const profileDisplayNameKey = getDisplayNameKey(
-              profile.displayName,
-            );
-            return (
-              <DropdownMenuItem
-                key={`impersonate_${profile.username}`}
-                onClick={() => onDemoImpersonate(profile.username)}
-              >
-                {getPermissionIcon(profile.permission)}
-                {t(`impersonation${profileDisplayNameKey}`)}
-              </DropdownMenuItem>
-            );
-          })}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("internalUserLabel")}</DropdownMenuLabel>
+            {internalCandidates.map((profile) => {
+              const profileDisplayNameKey = getDisplayNameKey(
+                profile.displayName,
+              );
+              return (
+                <DropdownMenuItem
+                  key={`impersonate_${profile.username}`}
+                  onClick={() => onDemoImpersonate(profile.username)}
+                >
+                  {getPermissionIcon(profile.permission)}
+                  {t(`impersonation.options.${profileDisplayNameKey}`)}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
-          {clientCandidates.map((profile) => {
-            const profileDisplayNameKey = getDisplayNameKey(
-              profile.displayName,
-            );
-            return (
-              <DropdownMenuItem
-                key={`impersonate_${profile.username}`}
-                onClick={() => onDemoImpersonate(profile.username)}
-              >
-                {getPermissionIcon(profile.permission)}
-                {t(`impersonation${profileDisplayNameKey}`)}
-              </DropdownMenuItem>
-            );
-          })}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("clientUserLabel")}</DropdownMenuLabel>
+            {clientCandidates.map((profile) => {
+              const profileDisplayNameKey = getDisplayNameKey(
+                profile.displayName,
+              );
+              return (
+                <DropdownMenuItem
+                  key={`impersonate_${profile.username}`}
+                  onClick={() => onDemoImpersonate(profile.username)}
+                >
+                  {getPermissionIcon(profile.permission)}
+                  {t(`impersonation.options.${profileDisplayNameKey}`)}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
         </DropdownMenuSubContent>
       </DropdownMenuPortal>
     </DropdownMenuSub>

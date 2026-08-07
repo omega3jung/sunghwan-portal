@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
+import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
 
 import type { TicketFormValues } from "./forms";
 
@@ -37,12 +38,6 @@ type TicketRequestAttachmentInput = {
 export type PrepareTicketAttachmentsInput = {
   body: string;
   files: File[];
-};
-
-export type PrepareTicketAttachmentsResponse = {
-  body: string;
-  files: TicketAttachmentMetadataDto[];
-  images: TicketAttachmentMetadataDto[];
 };
 
 export type RequesterUpdateTicketPayload = {
@@ -96,6 +91,7 @@ const ticketWriteRequestSchema = z.object({
   attachment: z.array(ticketAttachmentSchema).default([]),
 });
 
+/** Canonical transport boundary for trimmed text, IDs, dates, enums, and attachment metadata. */
 export const ticketMutateRequestPayloadSchema = z.object({
   id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.number().int().positive().nullable().optional(),
@@ -242,6 +238,8 @@ export function toTicketMutateRequestPayload(
   input: CreateTicketInput | UpdateTicketInput,
   prepared?: PrepareTicketAttachmentsResponse,
 ): TicketMutateRequestPayload {
+  // Attachment preparation may rewrite embedded image URLs and metadata, so
+  // its body and split file lists supersede the original form values.
   const files = prepared?.files ?? normalizeAttachmentMetadataList(input.attachment);
   const images = prepared?.images ?? [];
 

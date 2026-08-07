@@ -11,6 +11,7 @@ import { FileAttachmentList } from "./FileAttachmentList";
 import {
   type FileAttachmentErrorType,
   type FileAttachmentFieldPath,
+  type FileAttachmentLimitBehavior,
   useFileAttachments,
 } from "./useFileAttachments";
 
@@ -22,6 +23,7 @@ type FileAttachmentProps<
   name: TFieldName;
   maxCount: number;
   maxSizeMB: number;
+  limitBehavior?: FileAttachmentLimitBehavior;
   accept?: string[];
   readOnly?: boolean;
   showSeparator?: boolean;
@@ -29,6 +31,11 @@ type FileAttachmentProps<
   className?: string;
 };
 
+/**
+ * Binds file selection, dropping, validation, and removal to a React Hook Form
+ * field whose value is `File[]`. Read-only mode hides every mutation surface
+ * while preserving the attachment summary.
+ */
 export const FileAttachment = <
   TForm extends FieldValues,
   TFieldName extends FileAttachmentFieldPath<TForm>,
@@ -37,6 +44,7 @@ export const FileAttachment = <
   name,
   maxCount,
   maxSizeMB,
+  limitBehavior = "accept-available",
   accept,
   readOnly = false,
   showSeparator = true,
@@ -49,6 +57,7 @@ export const FileAttachment = <
     name,
     maxCount,
     maxSizeMB,
+    limitBehavior,
     accept,
     onError,
   });

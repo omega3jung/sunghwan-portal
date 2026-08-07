@@ -13,8 +13,7 @@ select
   jf.jf_active
 from job_field jf
 join department d on d.d_id = jf.jf_department_id
-where jf.jf_parent_id is not null
-  and jf.jf_active = true
+where jf.jf_active = true
 order by jf.jf_id;
 `;
 
@@ -29,16 +28,17 @@ select
   jf.jf_active
 from job_field jf
 join department d on d.d_id = jf.jf_department_id
-where jf.jf_parent_id is not null
-  and jf.jf_active = true
+where jf.jf_active = true
   and d.d_company_id = $1
 order by jf.jf_id;
 `;
 
+/** Queries PostgreSQL for active job field rows without applying presentation concerns. */
 export async function findActiveJobFieldRows(): Promise<JobFieldRow[]> {
   return queryPortalApi<JobFieldRow>(FIND_ACTIVE_JOB_FIELD_ROWS_QUERY);
 }
 
+/** Queries PostgreSQL for active job field rows by company id without applying presentation concerns. */
 export async function findActiveJobFieldRowsByCompanyId(
   companyId: number,
 ): Promise<JobFieldRow[]> {

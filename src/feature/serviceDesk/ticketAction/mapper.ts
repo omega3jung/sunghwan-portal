@@ -2,6 +2,7 @@ import type { TicketActionType } from "@/domain/serviceDesk";
 
 import type { TicketActionMode } from "./types";
 
+/** Canonical domain command emitted for each UI-only action mode. */
 export const ACTION_TYPE_BY_MODE: Record<TicketActionMode, TicketActionType> = {
   approve: "APPROVE",
   decline: "DECLINE",
@@ -17,6 +18,7 @@ export const ACTION_TYPE_BY_MODE: Record<TicketActionMode, TicketActionType> = {
   cancel: "CANCEL",
 };
 
+/** Translation keys for persisted actions shared by history and action views. */
 export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
   APPROVE: "action.approve",
   DECLINE: "action.decline",
@@ -32,6 +34,7 @@ export const ACTION_LABEL_KEY_BY_TYPE: Record<TicketActionType, string> = {
   CANCEL: "action.cancelTicket",
 };
 
+/** Translation keys used while an action is still represented by its UI mode. */
 export const ACTION_LABEL_KEY_BY_MODE: Record<TicketActionMode, string> = {
   approve: "action.approve",
   decline: "action.decline",

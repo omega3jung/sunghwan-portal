@@ -1,0 +1,12 @@
+{
+  "viewOption": {
+    "title": "보기",
+    "internal": "내부",
+    "portal": "포털"
+  },
+  "searchCriteria": {
+    "primaryFilters": "주요 필터",
+    "additionalFilters": "추가 필터",
+    "dateFilters": "날짜 필터"
+  }
+}

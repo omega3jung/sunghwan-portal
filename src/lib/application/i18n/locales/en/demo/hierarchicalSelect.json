@@ -1,0 +1,41 @@
+{
+  "selectableStrategy": "Selectable strategy",
+  "strategies": {
+    "leaf-only": "Leaves only",
+    "parent-without-children": "Parents without children",
+    "all": "All items"
+  },
+  "strategyDescription": "Determines whether branches, leaves, or both can be selected.",
+  "componentState": "Component state",
+  "disabled": "Disabled",
+  "multiReadOnly": "Multi read only",
+  "multiLoading": "Multi loading",
+  "singleDescription": "Selects one value and closes after a valid selection.",
+  "multipleDescription": "Keeps multiple values as removable path badges.",
+  "empty": "(empty)",
+  "noCategories": "No categories",
+  "selectCategory": "Select a category",
+  "selectCategories": "Select categories",
+  "back": "Back",
+  "clear": "Clear",
+  "fixture": {
+    "title": "Fixture behavior",
+    "portal": "Portal contains three navigation levels.",
+    "general": "General is a root item without children.",
+    "reporting": "Operations / Reporting is always disabled."
+  },
+  "items": {
+    "portal": "Portal",
+    "account": "Account",
+    "login": "Login",
+    "profile": "Profile",
+    "notification": "Notification",
+    "email": "Email",
+    "push": "Push",
+    "operations": "Operations",
+    "approval": "Approval",
+    "assignment": "Assignment",
+    "reporting": "Reporting",
+    "general": "General"
+  }
+}

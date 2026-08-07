@@ -1,33 +1,20 @@
 import type { MultiComboBoxItem } from "./types";
 
-export const EMPTY_OPTION_TEXT = "No option found.";
-
 const normalize = (value: string) => value.trim().toUpperCase();
 
-/**
- * Creates a value-keyed map for fast option lookup.
- * This helper is also reused by `TreeMultiComboBox`.
- */
+/** Shared by flat and tree selectors to preserve one value-to-option lookup rule. */
 export const createOptionMap = <T extends MultiComboBoxItem>(options: T[]) => {
   return new Map(options.map((option) => [option.value, option]));
 };
 
-/**
- * Creates a value-keyed map of the original `options` order.
- * Useful when selected values should keep their own render order,
- * while derived UI like palette colors must stay aligned with source options.
- */
+// Badge colors follow source-option order even when selected badges use value order.
 export const createOptionOrderMap = <T extends MultiComboBoxItem>(
   options: T[],
 ) => {
   return new Map(options.map((option, index) => [option.value, index]));
 };
 
-/**
- * Rebuilds the selected option list in the order of `selectedValues`,
- * not in the original `options` order.
- * Used when rendering badges.
- */
+/** Selected badges follow caller-provided value order, not source-option order. */
 export const getSelectedOptions = <T extends MultiComboBoxItem>(
   options: T[],
   selectedValues: string[],
@@ -39,10 +26,7 @@ export const getSelectedOptions = <T extends MultiComboBoxItem>(
     .filter((option): option is T => Boolean(option));
 };
 
-/**
- * Returns whether a value points to a selectable option.
- * Disabled options are treated as non-selectable.
- */
+/** Disabled options are valid display data but never selectable values. */
 export const isSelectableOption = (
   options: MultiComboBoxItem[],
   value: string,
@@ -53,13 +37,7 @@ export const isSelectableOption = (
   return Boolean(option && !option.disabled);
 };
 
-/**
- * Returns the next selection state for a single toggle action.
- * Disabled options keep the current state unchanged.
- *
- * This works well with the current `onSelect` / `onRemove` API
- * and can be reused later if the component moves to an `onChange` API.
- */
+/** A disabled or unknown option leaves the current selection unchanged. */
 export const getToggledValues = (
   currentValues: string[],
   targetValue: string,
@@ -76,34 +54,18 @@ export const getToggledValues = (
   return [...currentValues, targetValue];
 };
 
-/**
- * Creates a filter function for `Command`.
- * Matching is based on `label` and `value`.
- *
- * Disabled options are still searchable and visible,
- * but they remain non-selectable.
- */
-export const createCommandFilter = <T extends MultiComboBoxItem>(
-  options: T[],
-) => {
-  const optionMap = createOptionMap(options);
-
-  return (itemValue: string, search: string) => {
+// Disabled options remain discoverable in search; selection guards reject them later.
+export const createComboboxFilter = () => {
+  return (item: MultiComboBoxItem, search: string) => {
     const normalizedSearch = normalize(search);
 
     if (!normalizedSearch) {
-      return 1;
+      return true;
     }
 
-    const matchedOption = optionMap.get(itemValue);
-
-    if (!matchedOption) {
-      return 0;
-    }
-
-    return normalize(matchedOption.label).includes(normalizedSearch) ||
-      normalize(matchedOption.value).includes(normalizedSearch)
-      ? 1
-      : 0;
+    return (
+      normalize(item.label).includes(normalizedSearch) ||
+      normalize(item.value).includes(normalizedSearch)
+    );
   };
 };

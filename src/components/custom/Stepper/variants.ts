@@ -18,7 +18,30 @@ export const stepperContainer = cva("w-full", {
     },
   },
   compoundVariants: [
-    // 🔥 vertical - text (circle)
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "top",
+      className: "px-12 pt-6",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "bottom",
+      className: "px-12 pb-6",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "left",
+      className: "pl-36",
+    },
+    {
+      orientation: "horizontal",
+      variant: "circle",
+      label: "right",
+      className: "pr-36",
+    },
     {
       orientation: "vertical",
       variant: "circle",
@@ -57,7 +80,7 @@ export const triggerVariant = cva(
       state: {
         active: "border border-primary bg-background text-primary",
         completed: "bg-primary",
-        future: "border bg-background text-muted-foreground",
+        future: "border border-border bg-background text-muted-foreground",
       },
       color: {
         primary: "",
@@ -65,7 +88,6 @@ export const triggerVariant = cva(
       },
     },
     compoundVariants: [
-      // 🔥 ACTIVE
       {
         state: "active",
         color: "primary",
@@ -77,7 +99,6 @@ export const triggerVariant = cva(
         className: "border-secondary text-foreground",
       },
 
-      // 🔥 COMPLETED - background
       {
         state: "completed",
         color: "primary",
@@ -89,7 +110,6 @@ export const triggerVariant = cva(
         className: "bg-secondary",
       },
 
-      // 🔥 COMPLETED - text (circle)
       {
         variant: "circle",
         state: "completed",
@@ -103,7 +123,6 @@ export const triggerVariant = cva(
         className: "text-foreground",
       },
 
-      // 🔥 COMPLETED - text (square)
       {
         variant: "square",
         state: "completed",
@@ -137,7 +156,6 @@ export const triggerIndexVariant = cva("group-hover:text-white", {
     },
   },
   compoundVariants: [
-    // 🔥 COMPLETED - text (circle)
     {
       variant: "circle",
       state: "completed",

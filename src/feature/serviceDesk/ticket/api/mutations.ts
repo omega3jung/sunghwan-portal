@@ -10,7 +10,6 @@ import { ticketQueryKeys } from "./queryKeys";
 export const useCreateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketApi.create,
     onSuccess: () => {
@@ -23,7 +22,6 @@ export const useCreateServiceDeskTicket = () => {
 export const useUpdateServiceDeskTicket = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketApi.update,
     onSuccess: () => {
@@ -51,7 +49,6 @@ export const useRequesterUpdateServiceDeskTicket = () => {
 
 export const useDeleteServiceDeskTicket = () => {
   const queryClient = useQueryClient();
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTicketApi.remove,
     onSuccess: () => {

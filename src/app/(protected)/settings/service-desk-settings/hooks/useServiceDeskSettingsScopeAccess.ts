@@ -64,7 +64,7 @@ export function useServiceDeskSettingsScopeAccess(
 
   return {
     selectedScope,
-    setSelectedScope: setRequestedScope,
+    selectScope: setRequestedScope,
     availableScopes,
     access,
     canRead: canReadServiceDeskSettings(access),

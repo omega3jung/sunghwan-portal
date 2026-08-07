@@ -1,4 +1,3 @@
-import { AvatarImage } from "@radix-ui/react-avatar";
 import {
   Bell,
   LogOut,
@@ -9,9 +8,8 @@ import {
 import { signIn, signOut } from "next-auth/react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,12 +21,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/toast";
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { AppUser } from "@/domain/user";
 import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { cn, initials } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
@@ -48,9 +48,12 @@ const EMPTY_DEMO_CANDIDATES: UserMenuDemoCandidates = {
   profiles: { internal: [], client: [] },
 };
 
-export function UserMenu({
-  demoCandidates = EMPTY_DEMO_CANDIDATES,
-}: Props) {
+/**
+ * Presents the effective identity and routes switching through either NextAuth
+ * demo login or impersonation APIs. The original identity remains visible while
+ * impersonating, and dialog opening waits for dropdown focus cleanup.
+ */
+export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
   const { current } = useCurrentSession();
   const {
     originalUser,
@@ -64,7 +67,8 @@ export function UserMenu({
   const signingRef = useRef(false);
   const shouldOpenImpersonationDialogRef = useRef(false);
 
-  const { t } = useTranslation("UserMenu");
+  const { t } = useTranslation(NS.auth, { keyPrefix: "userMenu" });
+  const { t: tAuth } = useTranslation(NS.auth);
   const tLocal = useLocalizedText();
 
   const isDemo = current.isDemoUser;
@@ -89,19 +93,15 @@ export function UserMenu({
     [impersonatedUser, isImpersonating],
   );
   const demoUserSwitchCandidates = useMemo(
-    () =>
-      getDemoUserSwitchCandidates(demoCandidates.profiles, visibleUser?.id),
+    () => getDemoUserSwitchCandidates(demoCandidates.profiles, visibleUser?.id),
     [demoCandidates.profiles, visibleUser?.id],
   );
   const demoImpersonationCandidates = useMemo(
     () =>
-      getDemoImpersonationCandidates(
-        demoCandidates.auths,
-        [
-          displayedOriginalUser?.username ?? visibleUser?.username,
-          impersonatedUser?.username,
-        ],
-      ),
+      getDemoImpersonationCandidates(demoCandidates.auths, [
+        displayedOriginalUser?.username ?? visibleUser?.username,
+        impersonatedUser?.username,
+      ]),
     [
       demoCandidates.auths,
       displayedOriginalUser?.username,
@@ -136,7 +136,6 @@ export function UserMenu({
     password: string;
     mode?: "login" | "demo";
   }) => {
-    // loggin in.
     if (signingRef.current) return;
     signingRef.current = true;
 
@@ -148,40 +147,39 @@ export function UserMenu({
         redirect: false,
       });
 
-      // handle error.
       if (!result?.ok) {
         throw result?.error;
       }
 
       signingRef.current = false;
     } catch {
-      toast(t("errors.title"), {
-        description: "login switch error",
+      toast.add({
+        title: tAuth("errors.title"),
+        description: t("errors.switchFailed"),
+        type: "error",
       });
     }
   };
 
   const renderUserAvatar = (
     user: AppUser | null,
-    options?: { size?: number; muted?: boolean },
+    options?: { muted?: boolean },
   ) => {
     if (!user) return null;
 
-    const { size = 10, muted } = options ?? {};
+    const { muted } = options ?? {};
     const localizedDisplayName = tLocal(user.displayName);
 
     return (
-      <Avatar className={cn(`h-${size} w-${size}`)}>
-        <AvatarImage src={user.image} alt={localizedDisplayName} />
-        <AvatarFallback
-          className={cn(
-            muted ? "bg-muted-foreground" : "bg-foreground",
-            "text-background",
-          )}
-        >
-          {initials(localizedDisplayName)}
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar
+        fallbackClassName={cn(
+          muted ? "bg-muted-foreground" : "bg-foreground",
+          "text-background",
+        )}
+        image={user.image}
+        name={localizedDisplayName}
+        size="lg"
+      />
     );
   };
 
@@ -193,12 +191,10 @@ export function UserMenu({
 
     return (
       <div className="relative w-14 h-10">
-        {/* original user */}
         <div className="absolute left-0 top-0">
           {renderUserAvatar(originalUser, { muted: true })}
         </div>
 
-        {/* impersonated user */}
         <div className="absolute left-4 top-0 z-10">
           {renderUserAvatar(impersonatedUser)}
         </div>
@@ -213,25 +209,26 @@ export function UserMenu({
   return (
     <>
       <DropdownMenu open={openUserMenu} onOpenChange={setOpenUserMenu}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="w-20">
-            {hasImpersonatedUser
-              ? renderImpersonationAvatar(originalUser, impersonatedUser)
-              : renderUserAvatar(visibleUser)}
-          </Button>
+        <DropdownMenuTrigger
+          render={<Button variant="ghost" className="w-20" />}
+        >
+          {hasImpersonatedUser
+            ? renderImpersonationAvatar(originalUser, impersonatedUser)
+            : renderUserAvatar(visibleUser)}
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="p-2 mt-2 mr-1"
+          className="p-2 mt-2 mr-1 w-full"
           align="start"
-          onCloseAutoFocus={(event) => {
-            if (!shouldOpenImpersonationDialogRef.current) return;
+          finalFocus={() => {
+            if (!shouldOpenImpersonationDialogRef.current) return true;
 
-            event.preventDefault();
-
+            // Base UI must finish closing before the dialog can safely take focus.
             window.setTimeout(() => {
               setOpenImpersonationDialog(true);
               shouldOpenImpersonationDialogRef.current = false;
             }, 0);
+
+            return false;
           }}
         >
           <DropdownMenuGroup>
@@ -269,7 +266,7 @@ export function UserMenu({
               <DropdownMenuGroup>
                 <DemoUserSwitch
                   clientCandidates={demoUserSwitchCandidates.client}
-                  disabled={isImpersonating}
+                  canSwitchDemoUser={!isImpersonating}
                   internalCandidates={demoUserSwitchCandidates.internal}
                   onDemoUserSwitch={onDemoUserSwitch}
                 />
@@ -277,7 +274,7 @@ export function UserMenu({
               </DropdownMenuGroup>
             )}
             <DropdownMenuItem
-              className="text-red-600/80 focus:text-red-500 data-[highlighted]:text-red-500"
+              className="text-red-600/80 focus:text-red-500 data-highlighted:text-red-500"
               onClick={() => signOut()}
             >
               <LogOut />
@@ -300,7 +297,6 @@ export function UserMenu({
 
               <DropdownMenuSeparator />
 
-              {/* remote impersonation */}
               {canImpersonate && (
                 <DropdownMenuItem
                   onSelect={(event) => {
@@ -310,12 +306,11 @@ export function UserMenu({
                 >
                   <UserRoundPlus />
                   {!impersonatedUser
-                    ? t("startImpersonation")
-                    : t("switchImpersonation")}
+                    ? t("impersonation.start")
+                    : t("impersonation.switch")}
                 </DropdownMenuItem>
               )}
 
-              {/* demo impersonation */}
               {canDemoImpersonate && (
                 <DemoImpersonation
                   clientCandidates={demoImpersonationCandidates.client}
@@ -327,7 +322,7 @@ export function UserMenu({
 
               <DropdownMenuItem onClick={stopImpersonation}>
                 <UserRoundMinus />
-                {t("stopImpersonation")}
+                {t("impersonation.stop")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           )}
@@ -341,12 +336,11 @@ export function UserMenu({
                 }}
               >
                 <UserRoundPlus />
-                {t("impersonation")}
+                {t("impersonation.label")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           )}
 
-          {/* demo impersonation */}
           {!hasImpersonatedUser && canDemoImpersonate && (
             <DemoImpersonation
               clientCandidates={demoImpersonationCandidates.client}

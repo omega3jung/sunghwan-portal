@@ -1,15 +1,17 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
-import type { BadgeVariant } from "./types";
-import { badgeVariants } from "./variants";
+import type { BadgeVariant, ComboBoxSize } from "./types";
+import { badgeVariants, comboBoxAvatarVariants } from "./variants";
 
 type AvatarStackProps = {
   selected: ImageValueLabel[];
   placeholder?: string;
   placeholderClassName?: string;
   badgeVariant?: BadgeVariant;
+  size?: ComboBoxSize;
   maxImages: number;
 };
 
@@ -18,6 +20,7 @@ export function AvatarStack({
   placeholder,
   placeholderClassName,
   badgeVariant,
+  size,
   maxImages,
 }: AvatarStackProps) {
   if (!selected.length) {
@@ -37,26 +40,32 @@ export function AvatarStack({
   const remainingCount = Math.max(selected.length - maxImages, 0);
 
   return (
-    <div className="flex items-center -space-x-3">
+    <div className="flex h-full items-center -space-x-3">
       {visibleSelected.map((item, index) => (
-        <div data-testid={`parentdiv${index}`} key={item.value}>
-          <Avatar
-            className="h-8 w-8 ring-2 ring-background"
+        <div
+          data-testid={`parentdiv${index}`}
+          key={item.value}
+          className={comboBoxAvatarVariants({ size })}
+        >
+          <UserAvatar
+            className="size-full bg-background ring-2 ring-background"
+            fallbackClassName={cn(
+              badgeVariants({ badgeVariant }),
+              "font-normal",
+            )}
+            image={item.image}
+            name={item.label}
             style={{ zIndex: selected.length - index }}
-          >
-            <AvatarImage src={item.image} alt={item.label} />
-            <AvatarFallback
-              className={cn(badgeVariants({ badgeVariant }), "font-normal")}
-            >
-              {initials(item.label)}
-            </AvatarFallback>
-          </Avatar>
+          />
         </div>
       ))}
       {remainingCount > 0 && (
-        <div data-testid={`parentdiv${visibleSelected.length}`}>
+        <div
+          data-testid={`parentdiv${visibleSelected.length}`}
+          className={comboBoxAvatarVariants({ size })}
+        >
           <Avatar
-            className="h-8 w-8 ring-2 ring-foreground"
+            className="size-full bg-foreground"
             style={{ zIndex: selected.length - visibleSelected.length }}
           >
             <AvatarFallback

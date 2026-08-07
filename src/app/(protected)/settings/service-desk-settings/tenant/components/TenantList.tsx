@@ -27,7 +27,7 @@ type TenantListProps = {
   tenants: TenantSettingItem[];
   selectedTenantIds: string[];
   focusedTenantId: string | null;
-  disabled?: boolean;
+  canSelectTenants?: boolean;
   onSelectTenant: (tenant: TenantSettingItem) => void;
   className?: string;
 };
@@ -36,7 +36,7 @@ export function TenantList({
   tenants,
   selectedTenantIds,
   focusedTenantId,
-  disabled = false,
+  canSelectTenants = true,
   onSelectTenant,
   className,
 }: TenantListProps) {
@@ -49,11 +49,12 @@ export function TenantList({
       <Field className="gap-0">
         <FieldLabel>
           {t("serviceDeskSettings.tenant.tenantList.title")}
-          <HoverCard openDelay={150}>
-            <HoverCardTrigger asChild>
-              <Info className="h-4 w-4" />
-            </HoverCardTrigger>
-            <HoverCardContent align="start" className="text-sm">
+          <HoverCard>
+            <HoverCardTrigger
+              delay={150}
+              render={<Info className="h-4 w-4" />}
+            />
+            <HoverCardContent align="start">
               {t("serviceDeskSettings.tenant.tenantList.portalOwnerHint")}
             </HoverCardContent>
           </HoverCard>
@@ -79,10 +80,10 @@ export function TenantList({
                     type="button"
                     variant="outline"
                     aria-pressed={isSelected}
-                    disabled={disabled}
+                    disabled={!canSelectTenants}
                     onClick={() => onSelectTenant(tenant)}
                     className={cn(
-                      "h-20 w-full flex-col items-stretch gap-2 border-border p-4 text-left ",
+                      "h-20 w-full flex-col items-stretch gap-2 p-4 text-left",
                       isSelected && "bg-primary/5",
                       isFocused && "border-primary ring-1 ring-primary",
                       isPortalOwner && "border-dashed bg-muted/20",

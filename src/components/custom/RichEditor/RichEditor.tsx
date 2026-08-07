@@ -7,7 +7,7 @@ import Underline from "@tiptap/extension-underline";
 import { Placeholder } from "@tiptap/extensions";
 import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import type { CSSProperties, MutableRefObject } from "react";
+import type { CSSProperties, RefObject } from "react";
 import { useEffect, useMemo, useRef } from "react";
 
 import { cn } from "@/shared/utils/presentation";
@@ -45,9 +45,23 @@ type RichEditorProps = {
 };
 
 const DEFAULT_EDITOR_MIN_HEIGHT = "10rem";
-const DEFAULT_EDITOR_CONTENT_CLASS_NAME =
-  "px-4 py-3 text-sm focus:outline-none prose prose-sm max-w-none break-words prose-p:my-2 prose-p:leading-6 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-blockquote:my-3 prose-blockquote:border-l prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-a:text-primary prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 [&_img]:max-h-64 [&_img]:rounded-md [&_img]:object-contain [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1.5 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1.5";
+const DEFAULT_EDITOR_BASE_CLASS_NAME =
+  "px-4 py-3 text-sm focus:outline-none prose prose-sm max-w-none wrap-break-word";
 
+const DEFAULT_EDITOR_TEXT_FORMATTING_CLASS_NAME =
+  "prose-p:my-2 prose-p:leading-6 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-a:text-primary prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5";
+const DEFAULT_EDITOR_BLOCKQUOTE_CLASS_NAME =
+  "prose-blockquote:my-3 prose-blockquote:border-l prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground";
+const DEFAULT_EDITOR_IMAGE_CLASS_NAME =
+  "[&_img]:max-h-64 [&_img]:rounded-md [&_img]:object-contain";
+const DEFAULT_EDITOR_TABLE_CLASS_NAME =
+  "[&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1.5 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1.5";
+
+/**
+ * Controlled HTML editor whose preset configures extensions and toolbar groups.
+ * External value changes update Tiptap without emitting `onChange`; only user
+ * document transactions publish new HTML.
+ */
 export function RichEditor({
   className,
   contentClassName,
@@ -83,8 +97,12 @@ export function RichEditor({
     editorProps: {
       attributes: {
         class: cn(
-          "min-h-[var(--rich-editor-min-height)]",
-          DEFAULT_EDITOR_CONTENT_CLASS_NAME,
+          "min-h-(--rich-editor-min-height)",
+          DEFAULT_EDITOR_BASE_CLASS_NAME,
+          DEFAULT_EDITOR_TEXT_FORMATTING_CLASS_NAME,
+          DEFAULT_EDITOR_BLOCKQUOTE_CLASS_NAME,
+          DEFAULT_EDITOR_IMAGE_CLASS_NAME,
+          DEFAULT_EDITOR_TABLE_CLASS_NAME,
           contentClassName,
         ),
       },
@@ -198,7 +216,7 @@ export function RichEditor({
         id={id}
         editor={editor}
         className={cn(
-          "editor-wrapper min-h-[var(--rich-editor-min-height)]",
+          "editor-wrapper min-h-(--rich-editor-min-height)",
           "[&_.is-editor-empty:first-child::before]:pointer-events-none [&_.is-editor-empty:first-child::before]:float-left [&_.is-editor-empty:first-child::before]:h-0 [&_.is-editor-empty:first-child::before]:text-muted-foreground [&_.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]",
           error && "[&_.ProseMirror]:text-destructive",
         )}
@@ -208,7 +226,7 @@ export function RichEditor({
 }
 
 function createEditorExtensions(
-  placeholderRef: MutableRefObject<string>,
+  placeholderRef: RefObject<string>,
   preset: RichEditorPreset,
 ) {
   const enabledToolbarItems = new Set(preset.toolbar.flat());

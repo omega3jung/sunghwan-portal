@@ -2,6 +2,7 @@ import type { LocalizedName } from "@/domain/organization";
 import type { TicketActionType } from "@/domain/serviceDesk";
 import type { ISODateString } from "@/shared/types";
 
+/** Defines the PostgreSQL ticket action row used only within the repository boundary. */
 export type TicketActionRow = {
   tka_ticket_id: string;
   tka_action_no: number;

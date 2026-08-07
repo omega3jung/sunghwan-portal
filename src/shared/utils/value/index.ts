@@ -3,6 +3,7 @@
 export * from "./array";
 export * from "./case";
 export * from "./html";
+export * from "./localizedText";
 export * from "./normalize";
 export * from "./nullable";
 export * from "./number";
