@@ -389,8 +389,8 @@ Current design docs는 이 항목을 완료된 동작으로 설명하지 않는�
 - [티켓 액션 모델](../03-domain/service-desk/ticket/ticket-action.md)
 - [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
 - [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [티켓 폼 설계](forms/ticket-form.md)
-- [티켓 첨부파일 설계](forms/ticket-attachment.md)
+- [티켓 폼 설계](../04-client-engineering/forms/ticket-form.md)
+- [티켓 첨부파일 설계](../04-client-engineering/forms/ticket-attachment.md)
 - [티켓 운영 규칙](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---

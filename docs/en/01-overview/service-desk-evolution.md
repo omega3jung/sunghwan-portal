@@ -7,7 +7,7 @@ was refined into the current Service Desk domain in `sunghwan-portal`.
 
 It describes the design evolution, not every implementation detail. Current
 implementation boundaries are documented in
-[`service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md).
+[`service-desk-implementation-strategy.md`](../05-development/service-desk-implementation-strategy.md).
 Historical point-in-time decisions are preserved in the decision logs.
 
 ---
@@ -365,7 +365,7 @@ request tracking screen
 
 ## Related Documents
 
-- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
+- [Service Desk Implementation Strategy](../05-development/service-desk-implementation-strategy.md)
 - [Ticket Operation Rules](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [Service Desk Settings](../03-domain/service-desk/settings.md)
 - [Ticket System Overview](../03-domain/service-desk/ticket/ticket-system-overview.md)

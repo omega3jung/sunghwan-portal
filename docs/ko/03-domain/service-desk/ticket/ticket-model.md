@@ -233,7 +233,7 @@ tk_images  -> TicketAttachmentMetadata[]
 Raw `File`, binary data, base64 data URL, blob URL, local path는 ticket row나
 DTO의 일부가 아니다.
 
-관련 문서: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+관련 문서: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 

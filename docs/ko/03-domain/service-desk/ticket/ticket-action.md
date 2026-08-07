@@ -134,7 +134,7 @@ Approval action은 file이나 inline image를 허용하지 않는다.
 Action attachment payload는 prepared/safe value를 사용해야 한다. Blob URL과 data
 URL은 action payload validator에서 거부된다.
 
-관련 문서: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+관련 문서: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 

@@ -409,8 +409,8 @@ These are not described as completed current behavior in current design docs.
 - [Ticket Action Model](../03-domain/service-desk/ticket/ticket-action.md)
 - [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
 - [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [Ticket Form Design](forms/ticket-form.md)
-- [Ticket Attachment Design](forms/ticket-attachment.md)
+- [Ticket Form Design](../04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](../04-client-engineering/forms/ticket-attachment.md)
 - [Ticket Operation Rules](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 ---

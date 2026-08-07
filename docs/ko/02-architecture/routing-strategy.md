@@ -247,9 +247,9 @@ page/component
 - [데이터베이스 전략](database-strategy.md)
 - [티켓 시스템 개요](../03-domain/service-desk/ticket/ticket-system-overview.md)
 - [티켓 생명주기](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [다이얼로그 패턴](../04-engineering/ui/dialog-pattern.md)
-- [티켓 폼 설계](../04-engineering/forms/ticket-form.md)
-- [서비스 데스크 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
+- [다이얼로그 패턴](../04-client-engineering/ui/dialog-pattern.md)
+- [티켓 폼 설계](../04-client-engineering/forms/ticket-form.md)
+- [서비스 데스크 구현 전략](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

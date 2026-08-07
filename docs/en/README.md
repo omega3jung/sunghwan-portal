@@ -31,10 +31,10 @@ The `docs/en` folder is organized by responsibility:
 - `01-overview`: project and Service Desk evolution
 - `02-architecture`: application and runtime boundaries
 - `03-domain`: current Service Desk domain model and workflow rules
-- `04-engineering`: implementation patterns, UI, forms, data fetching, i18n,
-  conventions, and documentation practices
-- `05-releases`: release-specific records
-- `06-decisions`: historical decision records
+- `04-client-engineering`: UI, form, and localization implementation patterns
+- `05-development`: data fetching, implementation strategy, conventions,
+  documentation practices, and release records
+- `06-decisions`: historical decision logs
 
 ---
 
@@ -97,10 +97,10 @@ Current domain themes:
 
 ---
 
-## Engineering
+## Client Engineering
 
-Engineering documents cover implementation practices and client-side
-responsibility boundaries.
+Client engineering documents cover UI, form, and localization responsibility
+boundaries.
 
 ### UI/UX
 
@@ -108,10 +108,9 @@ UI/UX documents describe how workflow behavior is represented in the interface.
 
 Key documents:
 
-- [Component Boundary](./04-engineering/ui/component-boundary.md)
-- [Dialog Pattern](./04-engineering/ui/dialog-pattern.md)
-- [Form Pattern](./04-engineering/forms/form-pattern.md)
-- [Dashboard and Insight](./04-engineering/ui/dashboard-and-insight.md)
+- [Component Boundary](./04-client-engineering/ui/component-boundary.md)
+- [Dialog Pattern](./04-client-engineering/ui/dialog-pattern.md)
+- [Dashboard and Insight](./04-client-engineering/ui/dashboard-and-insight.md)
 
 The current policy is:
 
@@ -125,20 +124,6 @@ focused dialog/tool workflows.
 
 ---
 
-### Data Fetching
-
-React Query owns Service Desk server state.
-
-Key document:
-
-- [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
-
-Current query families include tickets, drafts, actions, histories, work
-sessions, and tenant-scoped settings. REMOTE draft queries resolve server state;
-LOCAL draft hooks orchestrate browser-local repository state.
-
----
-
 ### Form Design
 
 Form documents describe ticket creation, requester update, draft, and attachment
@@ -146,8 +131,9 @@ boundaries.
 
 Key documents:
 
-- [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-- [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
+- [Form Pattern](./04-client-engineering/forms/form-pattern.md)
+- [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
 
 Current form themes:
 
@@ -166,8 +152,27 @@ i18n documents describe locale and validation-message structure.
 
 Key documents:
 
-- [Locale Structure](./04-engineering/i18n/locale-structure.md)
-- [Validation Messages](./04-engineering/i18n/validation-messages.md)
+- [Locale Structure](./04-client-engineering/i18n/locale-structure.md)
+- [Validation Messages](./04-client-engineering/i18n/validation-messages.md)
+
+---
+
+## Development
+
+Development documents cover server-state ownership, implementation strategy,
+project-wide conventions, documentation practices, and release records.
+
+### Data Fetching
+
+React Query owns Service Desk server state.
+
+Key document:
+
+- [React Query Strategy](./05-development/react-query-strategy.md)
+
+Current query families include tickets, drafts, actions, histories, work
+sessions, and tenant-scoped settings. REMOTE draft queries resolve server state;
+LOCAL draft hooks orchestrate browser-local repository state.
 
 ---
 
@@ -178,8 +183,8 @@ design responsibilities are separated.
 
 Key documents:
 
-- [Development Approach](./04-engineering/development-approach.md)
-- [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+- [Development Approach](./05-development/development-approach.md)
+- [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 
 ---
 
@@ -190,17 +195,17 @@ application, domain, and UI boundaries.
 
 Key documents:
 
-- [Boolean Naming Convention](./04-engineering/conventions/boolean-naming-convention.md)
-- [README Strategy](./04-engineering/documentation/readme-strategy.md)
+- [Boolean Naming Convention](./05-development/boolean-naming-convention.md)
+- [README Strategy](./05-development/readme-strategy.md)
 
 ---
 
-## Releases
+### Releases
 
 Release documentation records version changes, migrations, architecture impact,
 verification results, and related pull requests or decisions.
 
-- [Release Documentation](./05-releases/README.md)
+- [Release Documentation](./05-development/releases.md)
 
 ---
 
@@ -230,12 +235,12 @@ decided at that time.
 11. [Assignment Policy](./03-domain/service-desk/ticket/strategy/assignment-policy.md)
 12. [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 13. [SLA Strategy](./03-domain/service-desk/ticket/strategy/sla-strategy.md)
-14. [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-15. [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
-16. [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
+14. [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+15. [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
+16. [React Query Strategy](./05-development/react-query-strategy.md)
 17. [Routing Strategy](./02-architecture/routing-strategy.md)
 18. [Database Strategy](./02-architecture/database-strategy.md)
-19. [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+19. [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 21. [Decision Documentation](./06-decisions/README.md)
 

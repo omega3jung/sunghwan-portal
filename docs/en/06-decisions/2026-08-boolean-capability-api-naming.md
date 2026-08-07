@@ -715,8 +715,8 @@ authorization, status, Tenant, company, and relationship validation.
 
 ## Related Documents
 
-- [Boolean Naming Convention](../04-engineering/conventions/boolean-naming-convention.md)
-- [Component Boundary](../04-engineering/ui/component-boundary.md)
+- [Boolean Naming Convention](../05-development/boolean-naming-convention.md)
+- [Component Boundary](../04-client-engineering/ui/component-boundary.md)
 - [Feature-Based Structure](../02-architecture/feature-based-structure.md)
 - [Naming Decision](./2025-12-naming.md)
 - [Entity Status Naming Decision](./2026-04-entity-status-naming.md)

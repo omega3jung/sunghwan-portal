@@ -1,0 +1,26 @@
+{
+  "developmentApproach": {
+    "title": "Enfoque de desarrollo",
+    "description": "Filosofia practica de implementacion y decisiones conscientes de migracion."
+  },
+  "serviceDeskImplementationStrategy": {
+    "title": "Estrategia de implementacion de Service Desk",
+    "description": "Estrategia de runtime, arquitectura e implementacion para Service Desk."
+  },
+  "booleanNamingConvention": {
+    "title": "Convencion de nombres booleanos",
+    "description": "Reglas comunes para nombres booleanos en limites de capacidad, estado y presentacion."
+  },
+  "readmeStrategy": {
+    "title": "Estrategia del README",
+    "description": "Como el repositorio se presenta y guia a los lectores hacia documentos mas detallados."
+  },
+  "reactQueryStrategy": {
+    "title": "Estrategia de React Query",
+    "description": "Guia sobre obtencion de datos, cache y limites de cliente."
+  },
+  "releaseOverview": {
+    "title": "Versiones de produccion",
+    "description": "Cambios integrados en main y aplicados a la rama de produccion."
+  }
+}

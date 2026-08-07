@@ -344,11 +344,11 @@ Recommended entry points:
 7. [Ticket Action](./docs/en/03-domain/service-desk/ticket/ticket-action.md)
 8. [Ticket History](./docs/en/03-domain/service-desk/ticket/ticket-history.md)
 9. [Ticket Work Session](./docs/en/03-domain/service-desk/ticket/ticket-work-session.md)
-10. [Ticket Form](./docs/en/04-engineering/forms/ticket-form.md) and
-   [Attachment Design](./docs/en/04-engineering/forms/ticket-attachment.md)
-11. [Implementation Strategy](./docs/en/04-engineering/service-desk-implementation-strategy.md)
-12. [Boolean Naming Convention](./docs/en/04-engineering/conventions/boolean-naming-convention.md)
-13. [README Strategy](./docs/en/04-engineering/documentation/readme-strategy.md)
+10. [Ticket Form](./docs/en/04-client-engineering/forms/ticket-form.md) and
+   [Attachment Design](./docs/en/04-client-engineering/forms/ticket-attachment.md)
+11. [Implementation Strategy](./docs/en/05-development/service-desk-implementation-strategy.md)
+12. [Boolean Naming Convention](./docs/en/05-development/boolean-naming-convention.md)
+13. [README Strategy](./docs/en/05-development/readme-strategy.md)
 14. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 Historical decision records are indexed in

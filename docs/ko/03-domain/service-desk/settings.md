@@ -761,7 +761,7 @@ defense in depth로 같은 tenant boundary를 보존해야 한다.
 - [직원 참조 범위 매트릭스](ticket/reference/restrict-employee-list.xlsx)
 - [데이터베이스 전략](../../02-architecture/database-strategy.md)
 - [라우팅 전략](../../02-architecture/routing-strategy.md)
-- [React Query 전략](../../04-engineering/data-fetching/react-query-strategy.md)
+- [React Query 전략](../../05-development/react-query-strategy.md)
 - [서비스 데스크 설정 DTO/API 경계 결정](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
 - [서비스 데스크 설정 참조 검증 경계 결정](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
 - [티켓 라우팅 및 업데이트 정책 (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)

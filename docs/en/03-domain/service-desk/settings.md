@@ -784,7 +784,7 @@ The following items are deferred unless explicitly implemented:
 - [Employee Reference Scope Matrix](ticket/reference/restrict-employee-list.xlsx)
 - [Database Strategy](../../02-architecture/database-strategy.md)
 - [Routing Strategy](../../02-architecture/routing-strategy.md)
-- [React Query Strategy](../../04-engineering/data-fetching/react-query-strategy.md)
+- [React Query Strategy](../../05-development/react-query-strategy.md)
 - [Service Desk Settings DTO/API Boundary Decision](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
 - [Service Desk Settings Reference Validation Boundary Decision](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
 - [Ticket Routing and Update Policy Decision](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)

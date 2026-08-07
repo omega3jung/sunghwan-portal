@@ -1,10 +1,10 @@
 import architecture from "./architecture.json";
+import clientEngineering from "./client-engineering.json";
 import decisions from "./decisions.json";
+import development from "./development.json";
 import domain from "./domain.json";
-import engineering from "./engineering.json";
 import navigation from "./navigation.json";
 import overview from "./overview.json";
-import releases from "./releases.json";
 
 const documents = {
   ...navigation,
@@ -12,8 +12,8 @@ const documents = {
     ...overview,
     ...architecture,
     ...domain,
-    ...engineering,
-    ...releases,
+    ...clientEngineering,
+    ...development,
     ...decisions,
   },
 };

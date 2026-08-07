@@ -6,7 +6,7 @@
 Service Desk 도메인으로 어떻게 정제되었는지 설명한다.
 
 이 문서는 설계 진화를 다룬다. 구현 경계는
-[`service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)에서
+[`service-desk-implementation-strategy.md`](../05-development/service-desk-implementation-strategy.md)에서
 다루고, 당시의 의사결정 맥락은 decision log에 보존한다.
 
 ---
@@ -355,7 +355,7 @@ request tracking screen
 
 ## 관련 문서
 
-- [서비스 데스크 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
+- [서비스 데스크 구현 전략](../05-development/service-desk-implementation-strategy.md)
 - [티켓 운영 규칙](../03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [서비스 데스크 설정](../03-domain/service-desk/settings.md)
 - [티켓 시스템 개요](../03-domain/service-desk/ticket/ticket-system-overview.md)

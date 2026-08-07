@@ -186,7 +186,7 @@ Resolved-ticket auto close는 lifecycle cleanup rule이지 service-level breach 
 - [액션 전략](action-strategy.md)
 - [티켓 작업 세션](../ticket-work-session.md)
 - [티켓 이력](../ticket-history.md)
-- [티켓 폼 설계](../../../../04-engineering/forms/ticket-form.md)
+- [티켓 폼 설계](../../../../04-client-engineering/forms/ticket-form.md)
 
 ---
 

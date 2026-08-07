@@ -241,7 +241,7 @@ Requester update가 routing을 reset한다면 server workflow로 실행되고 hi
 - [다이얼로그 패턴](../ui/dialog-pattern.md)
 - [티켓 폼 설계](ticket-form.md)
 - [티켓 첨부파일 설계](ticket-attachment.md)
-- [React Query 전략](../data-fetching/react-query-strategy.md)
+- [React Query 전략](../../05-development/react-query-strategy.md)
 
 ---
 

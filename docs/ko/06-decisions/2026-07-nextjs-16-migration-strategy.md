@@ -416,11 +416,11 @@ Next.js 16 component 및 workflow boundary를 대상으로 해야 한다.
 
 ## Related Documents
 
-- [개발 접근 방식](../04-engineering/development-approach.md)
+- [개발 접근 방식](../05-development/development-approach.md)
 - [기능 기반 구조](../02-architecture/feature-based-structure.md)
 - [라우팅 전략](../02-architecture/routing-strategy.md)
 - [상태 관리 전략](../02-architecture/state-management.md)
-- [Service Desk 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
+- [Service Desk 구현 전략](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

@@ -72,7 +72,7 @@ Current draft rules:
 - LOCAL draft operations do not traverse the draft Route Handlers and are not
   persistence-equivalent to the REMOTE PostgreSQL draft model
 
-Related document: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
+Related document: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
 
 ---
 
@@ -198,7 +198,7 @@ not provide production object storage.
 Raw `File`, binary data, base64 data URLs, blob URLs, and local file paths must
 not be persisted in ticket rows, DTOs, action metadata, or history metadata.
 
-Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+Related document: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -350,8 +350,8 @@ with REMOTE where a workflow is supported.
 - Approval rules: [Approval System](./strategy/approval-system.md)
 - Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
 - Work sessions: [Ticket Work Session](./ticket-work-session.md)
-- Form workflow: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
-- Attachment boundary: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+- Form workflow: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
+- Attachment boundary: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 - Settings structure: [Service Desk Settings](../settings.md)
 
 ---

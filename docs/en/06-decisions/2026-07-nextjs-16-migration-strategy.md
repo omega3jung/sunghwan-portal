@@ -429,11 +429,11 @@ APIs.
 
 ## Related Documents
 
-- [Development Approach](../04-engineering/development-approach.md)
+- [Development Approach](../05-development/development-approach.md)
 - [Feature-Based Structure](../02-architecture/feature-based-structure.md)
 - [Routing Strategy](../02-architecture/routing-strategy.md)
 - [State Management Strategy](../02-architecture/state-management.md)
-- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
+- [Service Desk Implementation Strategy](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

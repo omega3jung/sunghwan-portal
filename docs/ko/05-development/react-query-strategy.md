@@ -210,12 +210,12 @@ Server에서 성공하지 않은 command에 대해 UI-only history row를 만들
 
 ## 관련 문서
 
-- [서비스 데스크 설정](../../03-domain/service-desk/settings.md)
-- [티켓 모델](../../03-domain/service-desk/ticket/ticket-model.md)
-- [티켓 이력](../../03-domain/service-desk/ticket/ticket-history.md)
-- [티켓 작업 세션](../../03-domain/service-desk/ticket/ticket-work-session.md)
-- [티켓 폼 설계](../forms/ticket-form.md)
-- [서비스 데스크 구현 전략](../service-desk-implementation-strategy.md)
+- [서비스 데스크 설정](../03-domain/service-desk/settings.md)
+- [티켓 모델](../03-domain/service-desk/ticket/ticket-model.md)
+- [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
+- [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [티켓 폼 설계](../04-client-engineering/forms/ticket-form.md)
+- [서비스 데스크 구현 전략](./service-desk-implementation-strategy.md)
 
 ---
 

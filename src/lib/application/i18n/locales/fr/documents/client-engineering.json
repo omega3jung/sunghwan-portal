@@ -1,20 +1,4 @@
 {
-  "developmentApproach": {
-    "title": "Approche de developpement",
-    "description": "Philosophie pratique d'implementation et decisions tenant compte des migrations."
-  },
-  "serviceDeskImplementationStrategy": {
-    "title": "Strategie d'implementation de Service Desk",
-    "description": "Strategie de runtime, d'architecture et d'implementation pour Service Desk."
-  },
-  "booleanNamingConvention": {
-    "title": "Convention de nommage des booleens",
-    "description": "Regles communes de nommage des booleens pour les limites de capacite, d'etat et de presentation."
-  },
-  "readmeStrategy": {
-    "title": "Strategie README",
-    "description": "Comment le depot se presente et oriente les lecteurs vers des documents plus detailles."
-  },
   "componentBoundary": {
     "title": "Limite des composants",
     "description": "Separation des responsabilites UI entre couches de layout et de fonctionnalite."
@@ -38,10 +22,6 @@
   "ticketAttachment": {
     "title": "Conception des pieces jointes de ticket",
     "description": "Gestion des fichiers, images de texte enrichi, metadonnees et integration future du stockage."
-  },
-  "reactQueryStrategy": {
-    "title": "Strategie React Query",
-    "description": "Guide de recuperation des donnees, de cache et de limites client."
   },
   "localeStructure": {
     "title": "Structure des locales",

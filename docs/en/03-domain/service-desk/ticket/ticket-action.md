@@ -135,7 +135,7 @@ Approval actions do not accept files or inline images.
 Action attachment payloads must use prepared/safe values. Blob URLs and data
 URLs are rejected by the action payload validator.
 
-Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+Related document: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 

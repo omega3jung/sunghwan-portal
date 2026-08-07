@@ -401,8 +401,8 @@ The current database strategy does not claim the following as complete:
 - [Ticket Model](../03-domain/service-desk/ticket/ticket-model.md)
 - [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
 - [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [Ticket Attachment Design](../04-engineering/forms/ticket-attachment.md)
-- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
+- [Ticket Attachment Design](../04-client-engineering/forms/ticket-attachment.md)
+- [Service Desk Implementation Strategy](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

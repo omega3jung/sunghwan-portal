@@ -604,7 +604,7 @@ This architecture aligns with:
 - [State Management Strategy](state-management.md)
 - [Routing Strategy](routing-strategy.md)
 - [Database Strategy](database-strategy.md)
-- [Component Boundary](../04-engineering/ui/component-boundary.md)
+- [Component Boundary](../04-client-engineering/ui/component-boundary.md)
 - [Barrel Export Boundary Policy (2026-05)](../06-decisions/2026-05-barrel-export-boundary.md)
 - [Service Desk Documentation Alignment (2026-05)](../06-decisions/2026-05-service-desk-documentation-alignment.md)
 

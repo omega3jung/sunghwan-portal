@@ -378,8 +378,8 @@ LOCAL state shape or REMOTE row shape
 - [티켓 모델](../03-domain/service-desk/ticket/ticket-model.md)
 - [티켓 이력](../03-domain/service-desk/ticket/ticket-history.md)
 - [티켓 작업 세션](../03-domain/service-desk/ticket/ticket-work-session.md)
-- [티켓 첨부파일 설계](../04-engineering/forms/ticket-attachment.md)
-- [서비스 데스크 구현 전략](../04-engineering/service-desk-implementation-strategy.md)
+- [티켓 첨부파일 설계](../04-client-engineering/forms/ticket-attachment.md)
+- [서비스 데스크 구현 전략](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

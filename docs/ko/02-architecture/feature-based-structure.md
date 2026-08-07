@@ -558,7 +558,7 @@ src/lib/client/
 - [상태 관리 전략](state-management.md)
 - [라우팅 전략](routing-strategy.md)
 - [데이터베이스 전략](database-strategy.md)
-- [컴포넌트 경계](../04-engineering/ui/component-boundary.md)
+- [컴포넌트 경계](../04-client-engineering/ui/component-boundary.md)
 - [배럴 내보내기 경계 정책 (2026-05)](../06-decisions/2026-05-barrel-export-boundary.md)
 - [서비스 데스크 문서 정렬 (2026-05)](../06-decisions/2026-05-service-desk-documentation-alignment.md)
 

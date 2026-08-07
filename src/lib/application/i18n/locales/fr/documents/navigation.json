@@ -13,11 +13,11 @@
     "domain": {
       "title": "Domaine"
     },
-    "engineering": {
-      "title": "Ingenierie"
+    "clientEngineering": {
+      "title": "Ingenierie client"
     },
-    "releases": {
-      "title": "Versions"
+    "development": {
+      "title": "Developpement"
     },
     "decisions": {
       "title": "Decisions"
@@ -38,24 +38,12 @@
         "title": "Reference"
       }
     },
-    "engineering": {
-      "approach": {
-        "title": "Approche"
-      },
-      "conventions": {
-        "title": "Conventions"
-      },
-      "documentation": {
-        "title": "Documentation"
-      },
+    "clientEngineering": {
       "ui": {
         "title": "UI"
       },
       "forms": {
         "title": "Formulaires"
-      },
-      "dataFetching": {
-        "title": "Recuperation des donnees"
       },
       "i18n": {
         "title": "i18n"

@@ -54,8 +54,8 @@ README는 전체 문서가 아니라 진입점이다
 ```md
 ## **Languages**
 
-- [English](../../../../README.md)
-- [Korean](../../../../README.ko.md)
+- [English](../../../README.md)
+- [Korean](../../../README.ko.md)
 ```
 
 ---
@@ -153,14 +153,14 @@ docs/
     01-overview/     # 프로젝트와 Service Desk의 발전 과정
     02-architecture/ # application 및 runtime boundary
     03-domain/       # 현재 domain model과 workflow rule
-    04-engineering/  # 구현 pattern과 convention
-    05-releases/     # release별 기록
-    06-decisions/    # historical decision record
+    04-client-engineering/ # UI, form, localization pattern
+    05-development/        # 구현, 프로젝트 공통 practice와 release 기록
+    06-decisions/          # historical decision record
 ```
 
-현재 설계 문서는 구현과 정렬된 시스템을 설명한다. Decision log는 특정 시점의
-맥락을 보존하고, README와 overview 문서는 독자를 안내하며 적절한 source-of-truth
-문서로 연결한다.
+현재 설계 문서는 구현과 정렬된 시스템을 설명한다. Development 문서에는 통합
+release 기록이 포함되고, decision log는 특정 시점의 맥락을 보존한다. README와
+overview 문서는 독자를 안내하며 적절한 source-of-truth 문서로 연결한다.
 
 ---
 

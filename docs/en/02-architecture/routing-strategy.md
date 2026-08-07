@@ -267,9 +267,9 @@ This keeps routing stable as persistence evolves.
 - [Database Strategy](database-strategy.md)
 - [Ticket System Overview](../03-domain/service-desk/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [Dialog Pattern](../04-engineering/ui/dialog-pattern.md)
-- [Ticket Form Design](../04-engineering/forms/ticket-form.md)
-- [Service Desk Implementation Strategy](../04-engineering/service-desk-implementation-strategy.md)
+- [Dialog Pattern](../04-client-engineering/ui/dialog-pattern.md)
+- [Ticket Form Design](../04-client-engineering/forms/ticket-form.md)
+- [Service Desk Implementation Strategy](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

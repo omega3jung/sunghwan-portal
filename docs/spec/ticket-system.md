@@ -124,7 +124,7 @@ Rules:
 
 See:
 
-- [Ticket Form Design](../en/04-engineering/forms/ticket-form.md)
+- [Ticket Form Design](../en/04-client-engineering/forms/ticket-form.md)
 
 ---
 
@@ -206,7 +206,7 @@ metadata.
 
 See:
 
-- [Ticket Attachment Design](../en/04-engineering/forms/ticket-attachment.md)
+- [Ticket Attachment Design](../en/04-client-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -344,8 +344,8 @@ supported.
 See:
 
 - [Database Strategy](../en/02-architecture/database-strategy.md)
-- [React Query Strategy](../en/04-engineering/data-fetching/react-query-strategy.md)
-- [Service Desk Implementation Strategy](../en/04-engineering/service-desk-implementation-strategy.md)
+- [React Query Strategy](../en/05-development/react-query-strategy.md)
+- [Service Desk Implementation Strategy](../en/05-development/service-desk-implementation-strategy.md)
 
 ---
 
@@ -376,8 +376,8 @@ Deferred items must not be described as current implementation.
 - [Ticket Action Model](../en/03-domain/service-desk/ticket/ticket-action.md)
 - [Ticket History](../en/03-domain/service-desk/ticket/ticket-history.md)
 - [Ticket Work Session](../en/03-domain/service-desk/ticket/ticket-work-session.md)
-- [Ticket Form Design](../en/04-engineering/forms/ticket-form.md)
-- [Ticket Attachment Design](../en/04-engineering/forms/ticket-attachment.md)
+- [Ticket Form Design](../en/04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](../en/04-client-engineering/forms/ticket-attachment.md)
 - [Service Desk Settings](../en/03-domain/service-desk/settings.md)
 
 ### Strategies
@@ -388,7 +388,7 @@ Deferred items must not be described as current implementation.
 - [Category Strategy](../en/03-domain/service-desk/ticket/strategy/category-strategy.md)
 - [SLA Strategy](../en/03-domain/service-desk/ticket/strategy/sla-strategy.md)
 - [Ticket Operation Rules](../en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
-- [Service Desk Implementation Strategy](../en/04-engineering/service-desk-implementation-strategy.md)
+- [Service Desk Implementation Strategy](../en/05-development/service-desk-implementation-strategy.md)
 
 ### Decision Logs
 

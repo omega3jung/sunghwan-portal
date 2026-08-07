@@ -248,7 +248,7 @@ workflow and recorded in history.
 - [Dialog Pattern](../ui/dialog-pattern.md)
 - [Ticket Form Design](ticket-form.md)
 - [Ticket Attachment Design](ticket-attachment.md)
-- [React Query Strategy](../data-fetching/react-query-strategy.md)
+- [React Query Strategy](../../05-development/react-query-strategy.md)
 
 ---
 

@@ -234,7 +234,7 @@ tk_images  -> TicketAttachmentMetadata[]
 Raw `File`, binary data, base64 data URLs, blob URLs, and local paths are not
 part of the ticket row or DTO.
 
-Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+Related document: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 

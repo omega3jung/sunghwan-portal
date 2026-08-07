@@ -70,7 +70,7 @@ REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장된다.
 - LOCAL 초안 작업은 초안 Route Handler를 거치지 않으며 REMOTE PostgreSQL 초안
   모델과 영속성 측면에서 동등하지 않다.
 
-관련 문서: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
+관련 문서: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
 
 ---
 
@@ -195,7 +195,7 @@ storage를 제공하지 않는다.
 Raw `File`, binary data, base64 data URL, blob URL, local file path는 ticket row, DTO,
 action metadata, history metadata에 persist하면 안 된다.
 
-관련 문서: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+관련 문서: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -345,8 +345,8 @@ REMOTE와 맞춰 유지해야 한다.
 - Approval rules: [Approval System](./strategy/approval-system.md)
 - Work assignment: [Assignment Policy](./strategy/assignment-policy.md)
 - Work sessions: [Ticket Work Session](./ticket-work-session.md)
-- Form workflow: [Ticket Form Design](../../../04-engineering/forms/ticket-form.md)
-- Attachment boundary: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+- Form workflow: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
+- Attachment boundary: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 - Settings structure: [Service Desk Settings](../settings.md)
 
 ---

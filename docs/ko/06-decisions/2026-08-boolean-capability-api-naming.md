@@ -702,8 +702,8 @@ relationship validation을 계속 보존해야 한다.
 
 ## Related Documents
 
-- [Boolean 명명 규칙](../04-engineering/conventions/boolean-naming-convention.md)
-- [Component Boundary](../04-engineering/ui/component-boundary.md)
+- [Boolean 명명 규칙](../05-development/boolean-naming-convention.md)
+- [Component Boundary](../04-client-engineering/ui/component-boundary.md)
 - [기능 기반 구조](../02-architecture/feature-based-structure.md)
 - [Naming 결정](./2025-12-naming.md)
 - [엔티티 상태 명명 결정](./2026-04-entity-status-naming.md)

@@ -30,10 +30,10 @@
 - `01-overview`: 프로젝트와 Service Desk의 발전 과정
 - `02-architecture`: application 및 runtime boundary
 - `03-domain`: 현재 Service Desk domain model과 workflow rule
-- `04-engineering`: 구현 pattern, UI, form, data fetching, i18n, convention,
-  documentation practice
-- `05-releases`: release별 기록
-- `06-decisions`: historical decision record
+- `04-client-engineering`: UI, form, localization 구현 pattern
+- `05-development`: data fetching, 구현 전략, convention, documentation practice,
+  release 기록
+- `06-decisions`: historical decision log
 
 ---
 
@@ -92,18 +92,17 @@
 
 ---
 
-## Engineering
+## Client Engineering
 
-구현 방식과 client-side 책임 경계를 설명하는 문서:
+UI, form, localization의 client-side 책임 경계를 설명하는 문서:
 
 ### UI/UX
 
 주요 문서:
 
-- [Component Boundary](./04-engineering/ui/component-boundary.md)
-- [Dialog Pattern](./04-engineering/ui/dialog-pattern.md)
-- [Form Pattern](./04-engineering/forms/form-pattern.md)
-- [Dashboard and Insight](./04-engineering/ui/dashboard-and-insight.md)
+- [Component Boundary](./04-client-engineering/ui/component-boundary.md)
+- [Dialog Pattern](./04-client-engineering/ui/dialog-pattern.md)
+- [Dashboard and Insight](./04-client-engineering/ui/dashboard-and-insight.md)
 
 현재 정책:
 
@@ -117,26 +116,13 @@ dialog/tool workflow다.
 
 ---
 
-### Data Fetching
-
-React Query는 Service Desk server state를 소유한다.
-
-주요 문서:
-
-- [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
-
-현재 query family에는 tickets, drafts, actions, histories, work sessions,
-tenant-scoped settings가 포함된다. REMOTE 초안 query는 server state를 조회하고,
-LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
-
----
-
 ### Form Design
 
 주요 문서:
 
-- [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-- [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
+- [Form Pattern](./04-client-engineering/forms/form-pattern.md)
+- [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
 
 현재 form 핵심:
 
@@ -153,8 +139,27 @@ LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 
 주요 문서:
 
-- [Locale Structure](./04-engineering/i18n/locale-structure.md)
-- [Validation Messages](./04-engineering/i18n/validation-messages.md)
+- [Locale Structure](./04-client-engineering/i18n/locale-structure.md)
+- [Validation Messages](./04-client-engineering/i18n/validation-messages.md)
+
+---
+
+## Development
+
+Server-state ownership, 구현 전략, 프로젝트 전반의 convention, documentation
+practice와 release 기록을 설명한다.
+
+### Data Fetching
+
+React Query는 Service Desk server state를 소유한다.
+
+주요 문서:
+
+- [React Query Strategy](./05-development/react-query-strategy.md)
+
+현재 query family에는 tickets, drafts, actions, histories, work sessions,
+tenant-scoped settings가 포함된다. REMOTE 초안 query는 server state를 조회하고,
+LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 
 ---
 
@@ -162,8 +167,8 @@ LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 
 주요 문서:
 
-- [Development Approach](./04-engineering/development-approach.md)
-- [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+- [Development Approach](./05-development/development-approach.md)
+- [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 
 ---
 
@@ -174,17 +179,17 @@ domain 및 UI boundary에 공통으로 적용된다.
 
 주요 문서:
 
-- [Boolean Naming Convention](./04-engineering/conventions/boolean-naming-convention.md)
-- [README Strategy](./04-engineering/documentation/readme-strategy.md)
+- [Boolean Naming Convention](./05-development/boolean-naming-convention.md)
+- [README Strategy](./05-development/readme-strategy.md)
 
 ---
 
-## Releases
+### Releases
 
 버전별 주요 변경 사항, migration 내용, architecture 영향, 검증 결과와
 관련 PR 및 decision 문서를 기록한다.
 
-- [Release 문서](./05-releases/README.md)
+- [Release 문서](./05-development/releases.md)
 
 ---
 
@@ -213,12 +218,12 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 11. [Assignment Policy](./03-domain/service-desk/ticket/strategy/assignment-policy.md)
 12. [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 13. [SLA Strategy](./03-domain/service-desk/ticket/strategy/sla-strategy.md)
-14. [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-15. [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
-16. [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
+14. [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+15. [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
+16. [React Query Strategy](./05-development/react-query-strategy.md)
 17. [Routing Strategy](./02-architecture/routing-strategy.md)
 18. [Database Strategy](./02-architecture/database-strategy.md)
-19. [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+19. [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 21. [Decision 문서](./06-decisions/README.md)
 

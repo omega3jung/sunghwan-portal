@@ -228,12 +228,12 @@ Do not invalidate every query after every Service Desk mutation.
 
 ## Related Documents
 
-- [Service Desk Settings](../../03-domain/service-desk/settings.md)
-- [Ticket Model](../../03-domain/service-desk/ticket/ticket-model.md)
-- [Ticket History](../../03-domain/service-desk/ticket/ticket-history.md)
-- [Ticket Work Session](../../03-domain/service-desk/ticket/ticket-work-session.md)
-- [Ticket Form Design](../forms/ticket-form.md)
-- [Service Desk Implementation Strategy](../service-desk-implementation-strategy.md)
+- [Service Desk Settings](../03-domain/service-desk/settings.md)
+- [Ticket Model](../03-domain/service-desk/ticket/ticket-model.md)
+- [Ticket History](../03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](../03-domain/service-desk/ticket/ticket-work-session.md)
+- [Ticket Form Design](../04-client-engineering/forms/ticket-form.md)
+- [Service Desk Implementation Strategy](./service-desk-implementation-strategy.md)
 
 ---
 
