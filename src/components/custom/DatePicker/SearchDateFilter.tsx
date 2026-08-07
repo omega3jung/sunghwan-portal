@@ -20,6 +20,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { SearchDateFilterProps } from "./types";
@@ -35,15 +36,9 @@ function hasRangeValue(range?: DateRange) {
 }
 
 /**
- * SearchDateFilter combines a generic select filter with optional date-range picking.
- *
- * The selected `value` decides whether the component is in preset mode or custom-range mode:
- * - `value === rangeValue`: custom-range mode
- * - `value !== rangeValue`: preset mode
- *
- * The parent always owns the concrete `range`.
- * In preset mode, that parent range is expected to stay in sync with `resolveRange(value)`.
- * In custom-range mode, the parent range comes directly from calendar interaction.
+ * Combines domain-specific filter values with optional free-form date selection.
+ * `rangeValue` selects calendar mode; every other value resolves through
+ * `resolveRange`. The parent always owns the concrete range.
  */
 const Component = <T extends string>(
   {
@@ -61,31 +56,23 @@ const Component = <T extends string>(
   }: SearchDateFilterProps<T>,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
   const [open, setOpen] = useState(false);
 
-  /**
-   * Opening the calendar immediately after a Select interaction can cause focus restoration
-   * to bounce focus back into the trigger and close the popover again.
-   * This ref plus the delayed open sequence below intentionally breaks that cycle.
-   */
   const preventSelectFocusRestoreRef = useRef(false);
   const selectTriggerRef = useRef<HTMLButtonElement>(null);
+  // Cache one resolution per value so relative presets do not drift during synchronization.
   const resolvedValueRangeRef = useRef<DateRange | undefined>(undefined);
+  // Tracks the value already published to the parent to avoid redundant synchronization.
   const lastSyncedValueRef = useRef<T | undefined>(undefined);
 
-  /**
-   * Select expects a concrete value at all times.
-   * Passing `undefined` directly can push the component into awkward controlled/uncontrolled edges,
-   * so we fall back to the first available option only for Select's internal value handling.
-   */
+  // Base UI Select requires a concrete value even while the external filter is empty.
   const safeValue = value ?? options[0]?.value ?? "";
   const normalizedRange = useMemo(() => normalizeDateRange(range), [range]);
 
-  /**
-   * The calendar is opened one tick after the Select interaction finishes.
-   * That timing avoids Select's own focus cleanup from immediately collapsing the popover we want to show.
-   */
+  // Wait for Select cleanup before opening the calendar, or focus restoration closes it again.
   const openCalendar = useCallback(() => {
     requestAnimationFrame(() => {
       setOpen(true);
@@ -105,16 +92,7 @@ const Component = <T extends string>(
     return selectedOption?.label ?? t("rangePlaceholder");
   }, [selectedOption?.label, t]);
 
-  /**
-   * Trigger text should prefer the actual parent-owned range when it exists.
-   * If the parent range has not been synchronized yet, we fall back to a display-only resolved range
-   * so the trigger can still reflect the current preset selection without pretending state is already saved.
-   *
-   * Priority:
-   * 1. actual parent range
-   * 2. custom-range mode with no fallback resolution
-   * 3. preset value resolved through resolveRange(value)
-   */
+  // Prefer parent state; resolve a display-only fallback while preset synchronization is pending.
   const rangeForTrigger = useMemo(() => {
     if (hasRangeValue(normalizedRange)) {
       return normalizedRange;
@@ -129,10 +107,7 @@ const Component = <T extends string>(
     );
   }, [normalizedRange, rangeValue, resolveRange, value]);
 
-  /**
-   * Trigger formatting has one UX exception: "today" reads better as a single date than as a one-day range.
-   * This exception is only for trigger presentation; the underlying stored range remains a normal date range.
-   */
+  // "today" is a presentation exception; the stored value remains a range.
   const rangeText = useMemo(() => {
     if (!rangeForTrigger?.from) {
       return "";
@@ -157,19 +132,7 @@ const Component = <T extends string>(
     }
   }, [labelText, rangeText, showTextType]);
 
-  /**
-   * This handles direct user intent from the Select.
-   *
-   * Preset selection:
-   * - resolve the preset immediately
-   * - push the concrete range to the parent immediately
-   * - close the calendar
-   *
-   * Custom-range selection (`rangeValue`):
-   * - clear the previously owned range when switching into free-form mode
-   * - open the calendar instead of resolving anything
-   * - suppress Select's focus restoration so the popover stays open
-   */
+  // Presets publish their range immediately; calendar mode clears the prior preset range first.
   const applyValue = useCallback(
     (nextValue: T) => {
       onValueChange(nextValue);
@@ -206,12 +169,8 @@ const Component = <T extends string>(
   );
 
   /**
-   * Parent updates must happen in value-first order.
-   * If the range is pushed first and the parent still thinks it is in preset mode,
-   * the subsequent value update can overwrite that freshly selected range with older state.
-   *
-   * By switching to `rangeValue` first, the parent is already in custom-range mode
-   * when the concrete range arrives, so the selectedRange is preserved.
+   * Publish calendar mode before its range. Reversing the order lets preset-mode
+   * synchronization overwrite the user's newly selected dates.
    */
   const handleDateSelect: OnSelectHandler<DateRange | undefined> = useCallback(
     (selectedRange) => {
@@ -227,11 +186,7 @@ const Component = <T extends string>(
     [onRangeChange, onValueChange, rangeValue],
   );
 
-  /**
-   * Select does not emit a change when the user picks the already-selected value again.
-   * Custom-range mode still needs a way to reopen the calendar in that case,
-   * so pointer/key handlers explicitly bridge that UX gap.
-   */
+  // Select emits no change for the active value, so calendar reselection is bridged explicitly.
   const handleRangeReselect = useCallback(() => {
     if (value === rangeValue) {
       preventSelectFocusRestoreRef.current = true;
@@ -240,24 +195,8 @@ const Component = <T extends string>(
   }, [openCalendar, rangeValue, value]);
 
   /**
-   * This is not trigger fallback logic; it is parent-state repair logic.
-   *
-   * Its job is to keep the actual parent-owned range aligned with the current preset value when:
-   * - the component mounts with a restored preset value
-   * - external state changes the value
-   * - the stored range is missing or stale
-   *
-   * It only applies in preset mode:
-   * - value exists
-   * - value !== rangeValue
-   * - resolveRange exists
-   *
-   * Synchronization is needed when:
-   * - the selected value changed
-   * - the parent range is empty/incomplete
-   * - the parent range no longer matches resolveRange(value)
-   *
-   * isSameDateRange prevents redundant parent updates once the effective state is already aligned.
+   * Repair parent state after restoration or external filter changes. The
+   * resolved range is cached so relative presets stay stable during a sync.
    */
   const syncRangeFromValue = useCallback(() => {
     if (!value || value === rangeValue || !resolveRange) {
@@ -284,11 +223,8 @@ const Component = <T extends string>(
     lastSyncedValueRef.current = value;
   }, [normalizedRange, onRangeChange, rangeValue, resolveRange, value]);
 
-  /**
-   * User actions are handled immediately in applyValue/handleDateSelect.
-   * This effect exists for the other half of the contract: initial mount and external state restoration.
-   */
   useEffect(() => {
+    // Direct user actions publish immediately; this path repairs mount and external restoration.
     syncRangeFromValue();
   }, [syncRangeFromValue]);
 
@@ -313,11 +249,7 @@ const Component = <T extends string>(
           </SelectTrigger>
 
           <SelectContent
-            /**
-             * When Select selection intentionally chains into calendar open,
-             * its default focus restoration would collapse the popover again.
-             * Preventing that restoration is what lets Select and Calendar behave like one control.
-             */
+            // Suppress Select focus restoration while focus is handed to the calendar.
             finalFocus={() => !preventSelectFocusRestoreRef.current}
           >
             {options.map((item) => (

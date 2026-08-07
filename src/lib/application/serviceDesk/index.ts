@@ -1,3 +1,4 @@
+// src/lib/application/serviceDesk/index.ts
 export * from "./assignmentRule";
 export * from "./attachment";
 export * from "./settingsAccess";

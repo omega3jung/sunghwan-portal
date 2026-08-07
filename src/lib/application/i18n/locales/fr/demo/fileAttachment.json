@@ -1,0 +1,32 @@
+{
+  "maximumFiles": "Nombre maximal de fichiers",
+  "totalSizeLimit": "Limite de taille totale",
+  "limitInMb": "Limite en Mo.",
+  "limitBehavior": "Comportement de la limite",
+  "behaviors": {
+    "accept-available": "Accepter les fichiers disponibles",
+    "reject-all": "Rejeter tout le lot"
+  },
+  "limitDescription": "Accepte les fichiers valides jusqu’à la limite ou rejette tout le lot.",
+  "attachmentState": "État des pièces jointes",
+  "imagesOnly": "Images uniquement",
+  "readOnly": "Lecture seule",
+  "title": "Pièces jointes",
+  "description": "Sélectionnez ou déposez des fichiers pour tester le type, le nombre, la taille et les doublons.",
+  "clearFiles": "Effacer les fichiers",
+  "formState": "État du formulaire",
+  "formDescription": "Valeur React Hook Form actuelle et événements de validation.",
+  "files": "Fichiers",
+  "totalSize": "Taille totale",
+  "lastError": "Dernière erreur",
+  "errorCount": "Nombre d’erreurs",
+  "none": "Aucune",
+  "noFiles": "Aucun fichier sélectionné.",
+  "unknownType": "type inconnu",
+  "fileSize": "{{size}} octets",
+  "errors": {
+    "count": "Limite du nombre de fichiers",
+    "size": "Limite de taille totale",
+    "type": "Type de fichier non pris en charge"
+  }
+}

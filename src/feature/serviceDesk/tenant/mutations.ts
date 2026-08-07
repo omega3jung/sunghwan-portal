@@ -8,7 +8,6 @@ import { tenantQueryKeys } from "./queryKeys";
 export const useCreateServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTenantApi.create,
     onSuccess: () => {
@@ -20,7 +19,6 @@ export const useCreateServiceDeskTenant = () => {
 export const useUpdateServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTenantApi.update,
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const useUpdateServiceDeskTenant = () => {
 export const useDeleteServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskTenantApi.remove,
     onSuccess: () => {

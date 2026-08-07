@@ -10,13 +10,13 @@ import {
   useState,
 } from "react";
 
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
 import {
   findTreeNodeData,
   findTreeNodePath,
   resolveTreeNodeIdByPath,
   setProperty,
-} from "@/components/custom/dnd/tree/utilities";
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 
 type TreeDraftSource<T> = {
   contextKey: string;

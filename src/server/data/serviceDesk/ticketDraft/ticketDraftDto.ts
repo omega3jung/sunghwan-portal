@@ -8,8 +8,10 @@ import { ISODateString } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "../ticket/ticketRow";
 
+/** Defines the ticket draft attachment input dto exchanged across the server API boundary. */
 export type TicketDraftAttachmentInputDto = TicketDraftAttachmentInput;
 
+/** Defines the ticket draft dto exchanged across the server API boundary. */
 export type TicketDraftDto = {
   id: string;
   ticketNo: string;
@@ -31,4 +33,5 @@ export type TicketDraftDto = {
   images: Attach[];
 };
 
+/** Defines the ticket draft write dto exchanged across the server API boundary. */
 export type TicketDraftWriteDto = TicketDraftWriteInput;

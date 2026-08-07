@@ -17,7 +17,7 @@ It aims to:
 
 ## Core Principle
 
-```id="impersonation-principle"
+```txt
 Impersonation is a temporary identity override with a traceable origin
 ```
 
@@ -61,7 +61,7 @@ The system must:
 
 ### Dual Identity Concept
 
-```txt id="identity-model"
+```txt
 Current User
 Original User
 ```
@@ -84,7 +84,7 @@ Original User
 
 ### Example
 
-```txt id="identity-example"
+```txt
 Admin (originalUser) -> impersonates -> Employee (currentUser)
 ```
 
@@ -98,7 +98,7 @@ Impersonation is handled at the **session level**.
 
 ### Session Structure
 
-```ts id="session-structure"
+```ts
 session = {
   user: originalUser,
   impersonation: {
@@ -157,7 +157,7 @@ Use **NextAuth** as the base authentication layer and extend the session with im
 
 ### Flow
 
-```txt id="activation-flow"
+```txt
 Admin selects user -> Start impersonation -> Session updated
 ```
 
@@ -175,7 +175,7 @@ Admin selects user -> Start impersonation -> Session updated
 
 ### Flow
 
-```txt id="deactivation-flow"
+```txt
 Stop impersonation -> Restore original user
 ```
 
@@ -193,7 +193,7 @@ Stop impersonation -> Restore original user
 
 ### Rule
 
-```id="authorization-rule"
+```txt
 Impersonation must not elevate privileges beyond what the original user is allowed to do
 ```
 
@@ -238,7 +238,7 @@ All actions must remain traceable.
 
 ### Example
 
-```txt id="audit-example"
+```txt
 currentUser: employee123
 originalUser: admin456
 ```

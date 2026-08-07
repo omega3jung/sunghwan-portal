@@ -1,0 +1,6 @@
+{
+  "title": "Réinitialiser la démo",
+  "message": "Réinitialiser les données de la démo locale ?",
+  "description": "Réinitialiser les données de la démo locale et restaurer les données simulées initiales.",
+  "resetting": "Réinitialisation"
+}

@@ -1,0 +1,33 @@
+{
+  "common": {
+    "failed": "실패",
+    "load": {
+      "title": "불러오기 실패",
+      "message": "{{item}}을(를) 불러오지 못했습니다."
+    },
+    "create": {
+      "title": "생성 실패",
+      "message": "{{item}}을(를) 생성하지 못했습니다."
+    },
+    "update": {
+      "title": "수정 실패",
+      "message": "{{item}}을(를) 수정하지 못했습니다."
+    },
+    "delete": {
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
+    },
+    "add": {
+      "title": "추가 실패",
+      "message": "{{item}}을(를) 추가하지 못했습니다."
+    },
+    "save": {
+      "title": "저장 실패",
+      "message": "{{item}}을(를) 저장하지 못했습니다."
+    },
+    "remove": {
+      "title": "삭제 실패",
+      "message": "{{item}}을(를) 삭제하지 못했습니다."
+    }
+  }
+}

@@ -44,6 +44,7 @@ import {
   updateAssignmentRuleRowById,
 } from "./assignmentRuleRepository";
 
+/** Loads assignment rules by tenant id through the server data boundary. */
 export async function getAssignmentRulesByTenantId(
   tenantId: string | number,
   query?: PortalApiQueryExecutor,
@@ -53,17 +54,20 @@ export async function getAssignmentRulesByTenantId(
   return mapAssignmentRuleRowsToDtos(rows);
 }
 
+/** Describes the validated get assignment rules response params accepted by this server operation. */
 export type GetAssignmentRulesResponseParams = {
   tenantId?: string | number | null;
   isInternal: boolean;
 };
 
+/** Describes the validated get assignment recommendation response params accepted by this server operation. */
 export type GetAssignmentRecommendationResponseParams = {
   input: AssignmentRecommendationInputDto;
   tenantId?: string | number | null;
   isInternal?: boolean;
 };
 
+/** Loads assignment rules response by tenant id through the server data boundary. */
 export async function getAssignmentRulesResponseByTenantId({
   tenantId,
   isInternal,
@@ -76,6 +80,7 @@ export async function getAssignmentRulesResponseByTenantId({
   return getAssignmentRulesByTenantId(targetTenantId);
 }
 
+/** Validates assignment rules and their assignees against the selected tenant and category scope. */
 export async function validateAssignmentRuleTreeMutation({
   principal,
   tenant,
@@ -149,6 +154,7 @@ export async function validateAssignmentRuleTreeMutation({
   return submittedCategoryIds;
 }
 
+/** Resolves effective category rules and filters assignees to active employees visible in the tenant. */
 export async function getAssignmentRecommendationResponse({
   input,
 }: GetAssignmentRecommendationResponseParams): Promise<AssignmentRecommendationResultDto> {
@@ -196,6 +202,7 @@ export async function getAssignmentRecommendationResponse({
   };
 }
 
+/** Creates assignment rule through the server persistence boundary. */
 export async function createAssignmentRule(
   input: CreateAssignmentRuleInputDto,
   query?: PortalApiQueryExecutor,
@@ -212,6 +219,7 @@ export async function createAssignmentRule(
   return mapAssignmentRuleRowToDto(row);
 }
 
+/** Updates assignment rule by id while preserving server-side validation and persistence rules. */
 export async function updateAssignmentRuleById(
   tenantId: string | number,
   assignmentRuleId: string | number,
@@ -242,6 +250,7 @@ export async function updateAssignmentRuleById(
   return mapAssignmentRuleRowToDto(row);
 }
 
+/** Removes or deactivates assignment rule by id through the server persistence boundary. */
 export async function deleteAssignmentRuleById(
   tenantId: string | number,
   assignmentRuleId: string | number,
@@ -260,6 +269,7 @@ export async function deleteAssignmentRuleById(
   return mapAssignmentRuleRowToDto(row);
 }
 
+// Owner administrators may select a tenant; tenant administrators are pinned to their authorized tenant.
 async function resolveTargetTenantId({
   tenantId,
   isInternal: _isInternal,
@@ -334,6 +344,7 @@ function findMainCategoryIdByCategoryId(
   return null;
 }
 
+// Prefer the exact subcategory rule, then inherit the parent-category rule when it has assignees.
 function resolveAssignmentRuleWithCategoryFallback(
   rules: AssignmentRuleDto[],
   categories: CategoryDto[],
@@ -362,6 +373,7 @@ function resolveAssignmentRuleWithCategoryFallback(
   );
 }
 
+// Expands rule groups to active employees and de-duplicates direct and group-derived matches.
 function collectRecommendedUsers({
   assignmentRule,
   assigneeUsernames,

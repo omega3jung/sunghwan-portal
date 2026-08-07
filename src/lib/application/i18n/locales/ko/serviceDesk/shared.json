@@ -1,0 +1,94 @@
+{
+  "ticketStatus": {
+    "draft": "임시",
+    "open": "열림",
+    "approval": "승인 대기",
+    "declined": "승인 반려",
+    "assigned": "배정됨",
+    "working": "처리 중",
+    "pending": "대기 중",
+    "rejected": "반려됨",
+    "resolved": "해결됨",
+    "closed": "종료됨"
+  },
+  "action": {
+    "comment": "댓글",
+    "note": "메모",
+    "assign": "할당",
+    "assignToMe": "나에게 할당",
+    "approve": "승인",
+    "decline": "승인 반려",
+    "reject": "반려",
+    "merge": "병합",
+    "adjust": "조정",
+    "adjustPlan": "계획 조정",
+    "reopenIssue": "티켓 다시 열기",
+    "resubmitRequest": "요청 재제출",
+    "cancelTicket": "티켓 취소",
+    "searchCriteria": "검색 조건",
+    "workSession": {
+      "submit": "작업 시간 저장",
+      "submitWithStatus": "시간 저장 및 상태 변경",
+      "submitting": "저장 중..."
+    }
+  },
+  "field": {
+    "workSession": "작업 시간",
+    "durationMinutes": "소요 시간",
+    "startAt": "시작 시간",
+    "endAt": "종료 시간",
+    "status": "상태",
+    "note": "메모",
+    "noCode": "코드 없음"
+  },
+  "tenant": {
+    "portalOwner": "포털 소유자"
+  },
+  "status": {
+    "active": "활성"
+  },
+  "option": {
+    "status": {
+      "working": "진행 중",
+      "pending": "대기",
+      "resolved": "해결됨"
+    }
+  },
+  "validation": {
+    "workSession": {
+      "required": "제출하기 전에 작업 시간을 입력해 주세요.",
+      "positive": "작업 시간은 0분보다 커야 합니다.",
+      "invalidRange": "종료 시간은 시작 시간보다 이후여야 합니다.",
+      "statusRequiresTime": "누적 작업 시간과 이번 입력 시간이 0보다 클 때만 상태를 변경할 수 있습니다.",
+      "noteMaxLength": "메모는 500자 이하여야 합니다."
+    },
+    "invalidFieldItems": "잘못된 필드: {{item}}"
+  },
+  "message": {
+    "refineSearchCriteria": "검색 조건을 더 구체화해 주세요",
+    "lastComment": "마지막 댓글",
+    "ticketCreation": "티켓 생성",
+    "processingFlow": "처리 흐름",
+    "foundDraft": "임시 저장된 내용이 있습니다",
+    "loadDraft": "임시 저장된 내용을 불러오시겠습니까? 불러오지 않으면 이전 임시 저장 내용은 삭제됩니다.",
+    "loadDraftExceptInvalid": "유효하지 않은 필드를 제외하고 임시 저장 내용을 불러왔습니다."
+  },
+  "hoverMessage": {
+    "backToList": "티켓 목록으로 돌아가기",
+    "workSessionTool": "수동으로 작업 시간을 기록하고 필요하면 같은 작업에서 티켓 상태를 변경합니다.",
+    "openDetailAside": "티켓 상세 정보를 보려면 사이드 패널을 여세요",
+    "openHistoryDrawer": "이 티켓의 이력을 보려면 사이드 패널을 여세요"
+  },
+  "step": {
+    "issueDetails": "문제 상세",
+    "attachments": "첨부 파일",
+    "review": "검토 및 제출",
+    "assign": "할당"
+  },
+  "placeholder": {
+    "workSession": {
+      "durationMinutes": "예: 30분",
+      "note": "이번 시간 기록에 대한 짧은 메모를 남기세요"
+    }
+  }
+}

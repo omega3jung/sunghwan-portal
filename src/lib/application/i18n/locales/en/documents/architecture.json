@@ -1,0 +1,26 @@
+{
+  "featureBasedStructure": {
+    "title": "Feature-Based Structure",
+    "description": "Project slice boundaries and folder ownership strategy."
+  },
+  "routingStrategy": {
+    "title": "Routing Strategy",
+    "description": "Route design and App Router boundaries."
+  },
+  "stateManagement": {
+    "title": "State Management",
+    "description": "Client state responsibilities and persistence boundaries."
+  },
+  "authSessionStrategy": {
+    "title": "Auth & Session Strategy",
+    "description": "Authentication, session, and protected route design."
+  },
+  "impersonationStrategy": {
+    "title": "Impersonation Strategy",
+    "description": "Admin impersonation flow and related system boundaries."
+  },
+  "databaseStrategy": {
+    "title": "Database Strategy",
+    "description": "Database access model, roles, and DTO boundary strategy."
+  }
+}

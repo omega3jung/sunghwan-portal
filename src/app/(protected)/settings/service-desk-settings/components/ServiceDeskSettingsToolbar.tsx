@@ -23,7 +23,7 @@ export type ServiceDeskSettingsToolbarModel = {
     value: CategoryScope;
     onValueChange: (scope: CategoryScope) => void;
     availableScopes: readonly CategoryScope[];
-    disabled?: boolean;
+    canChangeScope?: boolean;
   };
   language: {
     value: Locale;
@@ -62,13 +62,13 @@ export function ScopeSelect({
   value,
   onValueChange,
   availableScopes,
-  disabled = false,
+  canChangeScope = true,
   placeholder,
 }: {
   value: CategoryScope | null;
   onValueChange: (scope: CategoryScope) => void;
   availableScopes: readonly CategoryScope[];
-  disabled?: boolean;
+  canChangeScope?: boolean;
   placeholder?: string;
 }) {
   const { t } = useTranslation(NS.settings);
@@ -91,7 +91,7 @@ export function ScopeSelect({
           onValueChange(scope as CategoryScope);
         }
       }}
-      disabled={disabled || availableScopes.length === 0}
+      disabled={!canChangeScope || availableScopes.length === 0}
     >
       <SelectTrigger className="min-w-28 shadow-sm">
         <SelectValue

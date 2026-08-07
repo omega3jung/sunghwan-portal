@@ -1,0 +1,140 @@
+{
+    "hero": {
+      "protectedBadge": "인증된 워크스페이스",
+      "enterpriseBadge": "워크플로 중심 Service Desk",
+      "title": "명시적인 워크플로, 라우팅, 감사 이력을 중심으로 설계한 production-aligned Service Desk 프로토타입입니다.",
+      "description": {
+        "local": "Local Demo는 구현된 티켓 및 설정 워크플로를 변경 가능한 데모 상태로 실행합니다. ADMIN은 넓은 접근 권한을 가지며, non-ADMIN 명령은 사용자와 각 티켓의 관계를 기준으로 인가됩니다.",
+        "remote": "REMOTE 데이터 경계는 server-only 서비스와 PostgreSQL로 주요 Service Desk 워크플로를 구현합니다. 배포된 Remote 모드에서는 Service Desk 페이지의 직접 접근을 제한하고 있습니다."
+      },
+      "actions": {
+        "openServiceDesk": "Service Desk 열기",
+        "browseDocumentation": "문서 둘러보기",
+        "reviewSettings": "설정 검토"
+      }
+    },
+    "calendar": {
+      "title": "캘린더"
+    },
+    "about": {
+      "title": "현재 구현",
+      "description": "포털은 하나의 feature-facing contract를 유지하고 서버 경계에서 LOCAL 또는 REMOTE 실행 경로를 선택합니다.",
+      "currentScope": {
+        "title": "실행 범위",
+        "description": {
+          "local": "LOCAL은 티켓 검색, draft, command, history, work session 및 tenant 범위 설정을 위해 초기화 가능한 서버 측 데모 상태를 제공합니다. feature API contract는 유지하지만 PostgreSQL과 동일한 영속성을 보장하지는 않습니다.",
+          "remote": "REMOTE는 구현된 티켓 및 설정 워크플로에 server-only data service, repository, row mapper, DTO, PostgreSQL을 사용합니다. 배포된 Remote 계정은 Service Desk 페이지 접근이 계속 제한됩니다."
+        }
+      },
+      "architectureNotes": {
+        "local": {
+          "note1": "UI는 feature API client와 Next.js Route Handler를 호출하며, 실행 모드별 동작은 LOCAL adapter 또는 REMOTE data service에 머뭅니다.",
+          "note2": "티켓은 명시적인 상태와 server-controlled command를 사용해 승인, 할당, 작업, 해결, 종료 전이를 처리합니다.",
+          "note3": "LOCAL 상태는 데모에 안전하고 초기화할 수 있도록 단순화했습니다. 구현된 observable contract는 따르지만 REMOTE 영속성과 동등하지는 않습니다."
+        },
+        "remote": {
+          "note1": "REMOTE는 server-only PostgreSQL 경계를 통해 티켓, draft, 설정, action, history, work session을 영속화합니다.",
+          "note2": "운영 command는 티켓 변경, action 저장, 불변 history를 함께 조정하며, 설정 트리 쓰기는 참조 무결성을 transaction 안에서 검증합니다.",
+          "note3": "주요 워크플로의 데이터 경계는 구현되어 있지만, 배포된 REMOTE 모드에서는 route guard가 Service Desk UI 직접 접근을 제한합니다."
+        }
+      }
+    },
+    "quickActions": {
+      "title": "빠른 작업",
+      "description": "로그인 직후 가장 필요할 가능성이 높은 주요 작업 영역을 바로 열 수 있습니다.",
+      "openWorkspace": "워크스페이스 열기",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "티켓을 검색하고 draft를 생성하거나 이어서 작성하며, 상세 조회와 허용된 workflow command를 실행합니다.",
+          "meta": "핵심 워크스페이스"
+        },
+        "documentation": {
+          "title": "문서",
+          "description": "구현과 정렬된 아키텍처, 도메인 규칙, 의사결정 기록을 살펴봅니다.",
+          "meta": "지식 허브"
+        },
+        "systemSettings": {
+          "title": "시스템 설정",
+          "description": "접근 제어가 적용된 포털 설정, 내비게이션, 사용자 환경설정을 검토합니다.",
+          "meta": "관리"
+        },
+        "serviceDeskSetup": {
+          "title": "Service Desk 설정",
+          "description": "tenant, category tree, 순서가 있는 approval step, assignment rule을 관리합니다.",
+          "meta": "플랫폼 설정"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "구현 요약",
+      "description": "현재 코드베이스에 표현된 주요 워크플로 개념을 간결하게 보여줍니다.",
+      "items": {
+        "openTickets": {
+          "label": "워크플로 상태",
+          "description": "Draft부터 Closed까지 승인과 작업 책임을 명확히 표현하는 상태입니다."
+        },
+        "pendingApprovals": {
+          "label": "티켓 Action",
+          "description": "검증된 command와 통제된 도메인 효과로 모델링한 사용자 의도입니다."
+        },
+        "workingItems": {
+          "label": "설정 영역",
+          "description": "Tenant, category, approval step, assignment rule 구성입니다."
+        },
+        "resolvedThisWeek": {
+          "label": "실행 경로",
+          "description": "하나의 API contract 뒤에서 동작하는 LOCAL adapter와 REMOTE PostgreSQL service입니다."
+        }
+      }
+    },
+    "highlights": {
+      "title": "구현된 기능",
+      "description": "현재 Service Desk 설계와 구현을 가장 잘 보여주는 영역입니다.",
+      "viewSection": "섹션 보기",
+      "items": {
+        "ticketWorkspace": {
+          "title": "티켓 워크스페이스",
+          "description": "목록, 검색, 상세, 생성, draft, 요청자 수정, command 기반 티켓 워크플로를 제공합니다.",
+          "category": "Service Desk",
+          "status": "구현됨"
+        },
+        "authSessionFlow": {
+          "title": "Command 및 History 실행",
+          "description": "Server-controlled action이 검증된 티켓 효과를 적용하고 event 기반 불변 history를 생성합니다.",
+          "category": "워크플로",
+          "status": "구현됨"
+        },
+        "serviceDeskSettings": {
+          "title": "Service Desk 설정",
+          "description": "참조 무결성 검증을 포함한 tenant 범위 category, approval step, assignment rule을 제공합니다.",
+          "category": "관리",
+          "status": "구현됨"
+        },
+        "documentsHub": {
+          "title": "문서 허브",
+          "description": "구현과 정렬된 한·영 아키텍처, 도메인, UI, 데이터 조회 및 의사결정 문서를 제공합니다.",
+          "category": "문서",
+          "status": "관리 중"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "설계 우선순위",
+      "description": "현재 Service Desk 구현을 이끄는 핵심 원칙입니다.",
+      "panelTitle": "워크플로 무결성",
+      "panelDescription": "티켓 상태, 현재 책임자, command, history는 하나의 일관된 운영 결과를 설명해야 합니다.",
+      "primaryGoals": {
+        "title": "현재 엔지니어링 목표",
+        "items": {
+          "goal1": "Category 기반 approval 및 work assignment를 phase-aware ownership으로 해석",
+          "goal2": "Server command 경계에서 티켓 변경, action 기록, 불변 history의 일관성 유지",
+          "goal3": "LOCAL과 REMOTE가 안정적인 DTO contract를 공유하도록 UI workflow의 실행 모드 독립성 유지"
+        }
+      },
+      "nextIntegrations": {
+        "title": "유예한 production 범위",
+        "description": "Production object storage, notification delivery, 전체 SLA engine, real-time update, 완전한 timer route, compliance-grade audit infrastructure는 의도적으로 후속 범위로 남겨 두었습니다."
+      }
+    }
+}

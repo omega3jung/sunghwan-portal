@@ -5,6 +5,7 @@ import { ISODateString } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "../ticket/ticketRow";
 
+/** Defines the PostgreSQL service desk ticket draft row used only within the repository boundary. */
 export type ServiceDeskTicketDraftRow = {
   tk_id: string;
   tk_ticket_no: string;
@@ -30,6 +31,7 @@ export type ServiceDeskTicketDraftRow = {
   tk_active: boolean;
 };
 
+/** Defines the PostgreSQL ticket draft row input used only within the repository boundary. */
 export type TicketDraftRowInput = {
   tk_requester_department_id: number;
   tk_category_id: number | null;

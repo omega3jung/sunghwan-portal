@@ -1,0 +1,17 @@
+{
+  "historySheet": {
+    "title": "티켓 이력",
+    "description": "티켓 이력 타임라인을 확인하세요."
+  },
+  "historyTimeline": {
+    "description": "최근 티켓 활동을 타임라인으로 보여줍니다.",
+    "badge": {
+      "assignment": "할당",
+      "approval": "승인",
+      "workSession": "작업 시간",
+      "planning": "계획",
+      "system": "시스템"
+    },
+    "valueChanged": "{{from}} -> {{to}}"
+  }
+}

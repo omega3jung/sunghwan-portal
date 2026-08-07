@@ -33,13 +33,9 @@ import { TicketActionToolHeader } from "./TicketActionToolHeader";
 import { TicketActionToolLauncher } from "./TicketActionToolLauncher";
 
 /**
- * TicketActionTool
- *
- * Hub component
- * - action mode switching
- * - form state orchestration
- * - shared mutation flow by action type
- * - UI entry point
+ * Owns one ticket-action draft at a time and shares validation and submission
+ * across action modes. Approval decisions skip attachment preparation; other
+ * actions prepare embedded files before building the command payload.
  */
 
 type TicketActionToolProps = {
@@ -273,7 +269,7 @@ export function TicketActionTool({
     },
   );
 
-  const disableSubmit = isPending || !editor;
+  const canSubmit = !isPending && Boolean(editor);
 
   if (!ticket) return null;
 
@@ -312,7 +308,7 @@ export function TicketActionTool({
           />
 
           <TicketActionToolFooter
-            disabled={disableSubmit}
+            canSubmit={canSubmit}
             errorMessage={errorMessage}
             helperText={helperText}
             isPending={isPending}

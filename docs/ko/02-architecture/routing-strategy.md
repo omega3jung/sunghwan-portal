@@ -17,7 +17,7 @@ API route handler 뒤에 둔다.
 
 ## Page Routes
 
-```txt id="service-desk-page-routes"
+```txt
 /service-desk
 /service-desk/[ticketId]
 ```
@@ -51,7 +51,7 @@ Ticket detail은 modal route가 아니라 page-level workflow이다.
 
 ## Page, Drawer, Dialog Policy
 
-```txt id="interaction-policy"
+```txt
 Page   -> primary workflow
 Drawer -> secondary reading or side panel
 Dialog -> atomic action or short form
@@ -65,7 +65,7 @@ Dialog -> atomic action or short form
 
 Route handler는 HTTP와 runtime orchestration을 결정한다.
 
-```txt id="route-handler-flow"
+```txt
 route.ts
 -> parse request
 -> resolve session/runtime
@@ -83,7 +83,7 @@ resource context를 해석하는 domain policy와 server service를 호출한다
 Settings route는 LOCAL/REMOTE로 분기하기 전에 read와 mutation에 같은 policy를
 적용한다.
 
-```txt id="settings-route-authorization"
+```txt
 authenticated JWT access level >= ADMIN (9)
 -> effective username
 -> canonical AppUser permission / userScope / companyId
@@ -113,7 +113,7 @@ purpose-aware해야 한다. Settings capability와 approver/assignee company bou
 
 ## 현재 Service Desk API Surface
 
-```txt id="service-desk-api-surface"
+```txt
 /api/service-desk/tickets
 /api/service-desk/tickets/search
 /api/service-desk/tickets/draft
@@ -144,14 +144,14 @@ Work-session update/delete/timer route는 route handler가 생기기 전까지 c
 
 Ticket operational behavior는 command-style path로 노출된다.
 
-```txt id="ticket-command-paths"
+```txt
 /api/service-desk/tickets/[ticketId]/command/start-work
 /api/service-desk/tickets/[ticketId]/command/[action]
 ```
 
 Dynamic action segment:
 
-```txt id="ticket-action-paths"
+```txt
 approve
 decline
 comment
@@ -170,18 +170,29 @@ Command route는 action rule과 execution service로 위임한다.
 
 ---
 
-## Draft and Attachment Routes
+## Draft Routes
 
-Draft:
+Draft route는 create-ticket workflow를 지원한다.
 
-```txt id="draft-routes"
+```txt
 /api/service-desk/tickets/draft
 /api/service-desk/tickets/draft/[ticketId]
 ```
 
-Attachment preparation:
+이 경로들은 REMOTE 초안 동작을 소유한다. 생성 다이얼로그는 REMOTE 초안을
+컴포넌트 로컬 상태로 취급하지 않고 PostgreSQL 기반 초안 행에 이 API를 사용한다.
 
-```txt id="attachment-prepare-route"
+LOCAL 초안 복구는 이 경로를 거치지 않는다. 기능 초안 저장소가 현재 데모 사용자
+범위의 브라우저 `localStorage`를 읽고 쓰며, React Query는 저장소 결과를 조정하고
+캐시하는 역할만 한다.
+
+---
+
+## Attachment Prepare Route
+
+Attachment preparation은 별도 route다.
+
+```txt
 POST /api/service-desk/tickets/attachments/prepare
 ```
 
@@ -194,7 +205,7 @@ Create/update/supported action flow는 ticket command payload 제출 전 prepare
 
 현재 구현된 route surface:
 
-```txt id="work-session-route"
+```txt
 GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
@@ -222,7 +233,7 @@ Query parameter는 공유/탐색에 유용한 list/search state에 사용한다.
 
 Page route와 feature component는 storage detail에 깊게 결합하지 않는다.
 
-```txt id="routing-runtime"
+```txt
 page/component
 -> feature hook/client
 -> API route handler
@@ -233,12 +244,12 @@ page/component
 
 ## 관련 문서
 
-- [`database-strategy.md`](database-strategy.md)
-- [`../03-domain/service-desk/ticket/ticket-system-overview.md`](../03-domain/service-desk/ticket/ticket-system-overview.md)
-- [`../03-domain/service-desk/ticket/ticket-lifecycle.md`](../03-domain/service-desk/ticket/ticket-lifecycle.md)
-- [`../04-engineering/ui/dialog-pattern.md`](../04-engineering/ui/dialog-pattern.md)
-- [`../04-engineering/forms/ticket-form.md`](../04-engineering/forms/ticket-form.md)
-- [`../04-engineering/service-desk-implementation-strategy.md`](../04-engineering/service-desk-implementation-strategy.md)
+- [데이터베이스 전략](database-strategy.md)
+- [티켓 시스템 개요](../03-domain/service-desk/ticket/ticket-system-overview.md)
+- [티켓 생명주기](../03-domain/service-desk/ticket/ticket-lifecycle.md)
+- [다이얼로그 패턴](../04-client-engineering/ui/dialog-pattern.md)
+- [티켓 폼 설계](../04-client-engineering/forms/ticket-form.md)
+- [서비스 데스크 구현 전략](../05-development/service-desk-implementation-strategy.md)
 
 ---
 

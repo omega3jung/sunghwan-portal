@@ -9,12 +9,12 @@ import { LinkBarItem } from "../types";
 
 type Props = {
   items: LinkBarItem[];
-  isLinkable?: boolean;
+  canNavigate?: boolean;
   onClick?: (index: number, name?: string | ReactNode, value?: string) => void;
 };
 
 export const LinksBar = (props: Props) => {
-  const { items, isLinkable = true, onClick = () => {} } = props;
+  const { items, canNavigate = true, onClick = () => {} } = props;
   const path = usePathname();
   const firstSelectedItem = items.find((item) => item.selected);
 
@@ -40,7 +40,7 @@ export const LinksBar = (props: Props) => {
     <button
       key={`${link.text}-${index}`}
       onClick={() => {
-        if (!link.isDisable) {
+        if (!link.disabled) {
           onClick(index, link.text, link.value);
         }
       }}
@@ -51,7 +51,7 @@ export const LinksBar = (props: Props) => {
         link.selected
           ? "border-b-2 border-b-primary font-bold text-primary"
           : "",
-        link.isDisable
+        link.disabled
           ? "cursor-not-allowed text-muted-foreground hover:text-muted-foreground"
           : "cursor-pointer",
         link === firstSelectedItem
@@ -62,7 +62,7 @@ export const LinksBar = (props: Props) => {
       style={{
         padding: 0,
         margin: 0,
-        cursor: link.isDisable ? "not-allowed" : "pointer",
+        cursor: link.disabled ? "not-allowed" : "pointer",
       }}
     >
       {link?.icon &&
@@ -81,7 +81,7 @@ export const LinksBar = (props: Props) => {
     <div className="flex h-full w-full items-center justify-center rounded-lg">
       {items.map((link, index) => (
         <Fragment key={`${link.text}-${index}`}>
-          {!isLinkable || link.isLinkable === false
+          {!canNavigate || link.canNavigate === false
             ? renderButton(link, index)
             : renderLink(link, index)}
         </Fragment>

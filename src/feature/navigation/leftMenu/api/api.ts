@@ -1,4 +1,3 @@
-// src/feature/navigation/leftMenu/api/api.ts
 import client from "@/lib/client/api";
 import { ApiResponse } from "@/shared/types";
 

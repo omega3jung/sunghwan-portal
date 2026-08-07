@@ -1,6 +1,6 @@
 import { ApiError } from "@/lib/application/api";
 import {
-  isTicketActionExecutionAllowed,
+  canExecuteTicketAction,
   resolveTicketActionExecutionMode,
 } from "@/lib/application/contracts/serviceDesk";
 
@@ -11,6 +11,15 @@ import { buildTicketStatusPatch, mergeActionPatch } from "./ticketPatch";
 import { ExecutedLocalAction, LocalActionRuntimeContext } from "./types";
 import { createUpdatedTicket, getTicketContext } from "./utils";
 
+/**
+ * Validates and stages the complete effect of one LOCAL ticket action.
+ *
+ * This function does not mutate shared demo arrays. It resolves status policy,
+ * runs action-specific authorization/validation, and returns the action's
+ * histories and replacement ticket. `localPost` commits those staged values
+ * only after all expected failures have been evaluated, approximating the
+ * all-or-nothing behavior of the REMOTE database transaction.
+ */
 export const executeLocalAction = async ({
   ...context
 }: LocalActionRuntimeContext): Promise<ExecutedLocalAction> => {
@@ -32,7 +41,7 @@ export const executeLocalAction = async ({
 
   if (
     ticket &&
-    !isTicketActionExecutionAllowed(actionMode, ticket.status)
+    !canExecuteTicketAction(actionMode, ticket.status)
   ) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.actionNotAllowed",

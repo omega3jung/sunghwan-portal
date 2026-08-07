@@ -1,7 +1,7 @@
 import { Workflow } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { TreeNodes } from "@/components/custom/dnd/tree/types";
+import type { TreeNodes } from "@/components/custom/SortableTree";
 import { Stepper } from "@/components/custom/Stepper";
 import { NS, SupportedLanguage } from "@/lib/application/i18n";
 

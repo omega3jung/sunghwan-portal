@@ -7,6 +7,7 @@ import { normalizePath } from "../utils";
 
 const LEFT_MENU_PATH_PATTERN = /^\/navigation\/left-menu\/([^/]+)$/;
 
+/** Handles navigation portal api requests and translates domain results into portal API responses. */
 export async function handleNavigationPortalApi(
   _request: NextRequest,
   options: PortalApiJsonOptions,

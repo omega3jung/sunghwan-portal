@@ -1,0 +1,54 @@
+{
+  "ticketUpdate": {
+    "trigger": "티켓 수정",
+    "title": "티켓 수정",
+    "description": "요청자가 수정할 수 있는 티켓 항목을 변경합니다.",
+    "loadingTicket": "티켓을 불러오는 중...",
+    "notice": {
+      "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부 이미지가 데모 이미지로 대체됩니다.",
+      "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부 파일이 데모 파일로 대체됩니다."
+    },
+    "category": {
+      "placeholder": "카테고리 선택",
+      "back": "뒤로",
+      "empty": "선택 가능한 카테고리가 없습니다."
+    },
+    "step": {
+      "info": "문제 상세",
+      "attachment": "첨부 파일",
+      "review": "검토"
+    },
+    "routing": {
+      "preserve": "기한 또는 수신자만 변경하면 현재 승인 및 담당자 배정을 유지합니다.",
+      "reset": "기한 또는 이메일 외의 요청 내용을 수정하면 결재 단계와 담당자 할당이 다시 계산됩니다."
+    },
+    "field": {
+      "existingFiles": "기존 파일",
+      "existingImages": "기존 이미지",
+      "newAttachments": "새 첨부"
+    },
+    "empty": {
+      "existingAttachments": "기존 첨부가 없습니다.",
+      "newAttachments": "새 첨부가 없습니다."
+    },
+    "action": {
+      "submit": "티켓 수정",
+      "submitting": "수정 중..."
+    },
+    "error": {
+      "load": "최신 티켓 상세 정보를 불러오지 못했습니다."
+    }
+  },
+  "listPage": {
+    "title": "IT 서비스 데스크",
+    "description": "서비스 데스크 티켓을 검색하고 조회하세요."
+  },
+  "ticketList": {
+    "empty": "티켓이 없습니다",
+    "requesterMeta": "{{name}} • {{time}}",
+    "dueMeta": "기한 {{time}}"
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext는 provider 내부에서 사용되어야 합니다."
+  }
+}

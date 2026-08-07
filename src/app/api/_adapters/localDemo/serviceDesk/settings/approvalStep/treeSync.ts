@@ -35,6 +35,7 @@ const toDbApprovalAssignee = (approvalStep: ApprovalStep["stepAssignee"]) => {
   }
 };
 
+/** Builds approval step from input without mutating shared LOCAL state. */
 export const buildApprovalStepFromInput = ({
   input,
   assignId,
@@ -65,6 +66,7 @@ export const buildApprovalStepFromInput = ({
   } satisfies LocalDbApprovalStep;
 };
 
+/** Creates fallback category for the server-side LOCAL settings adapter. */
 export const createFallbackCategory = ({
   categoryId,
   index,

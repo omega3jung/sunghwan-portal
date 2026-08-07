@@ -5,6 +5,7 @@ import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { Preference } from "@/domain/user/preference";
 
+/** Handles GET /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
 
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
+/** Handles POST /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST<T>(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
 
@@ -50,6 +52,7 @@ export async function POST<T>(req: NextRequest) {
   });
 }
 
+/** Handles PUT /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT<T>(req: NextRequest) {
   const currentUserName = await getCurrentUserName(req);
 

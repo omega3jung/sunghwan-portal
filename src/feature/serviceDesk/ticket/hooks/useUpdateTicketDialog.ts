@@ -44,6 +44,8 @@ export function useUpdateTicketDialog({
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
   const mutationToast = useMutationToast();
+  // Closing or reopening invalidates older loads so a late response cannot
+  // repopulate a reset dialog.
   const loadRequestRef = useRef(0);
   const [open, setOpen] = useState(false);
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
@@ -203,6 +205,8 @@ export function useUpdateTicketDialog({
   const onSubmit = useCallback(
     async (values: TicketFormValues) => {
       const updatePromise = (async () => {
+        // Preparation rewrites embedded image URLs before the final payload
+        // combines newly prepared and retained attachments.
         const prepared = await serviceDeskTicketApi.prepareAttachments({
           body: values.body,
           files: values.attachment,

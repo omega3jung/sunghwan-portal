@@ -44,16 +44,19 @@ export function TicketSearchCriteriaFields({
 }: Props) {
   const { current: userPreference } = useCurrentPreference();
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
   const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedText(userPreference.language);
 
   const statusOptions = useMemo<TreeMultiComboBoxOption[]>(
     () =>
       createTicketStatusFilterOptions(
-        getStatusOptions(userPreference.language),
-        userPreference.language,
+        getStatusOptions(tStatus),
+        tStatus,
       ),
-    [userPreference.language],
+    [tStatus],
   );
 
   const categoryOptions = useMemo<TreeMultiComboBoxOption[]>(
@@ -67,7 +70,7 @@ export function TicketSearchCriteriaFields({
     return priorityOptions.map((priority) => {
       return {
         value: priority.value,
-        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
       };
     });
   }, [t]);
@@ -79,7 +82,7 @@ export function TicketSearchCriteriaFields({
       return {
         value: riskLevel.value,
         label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });

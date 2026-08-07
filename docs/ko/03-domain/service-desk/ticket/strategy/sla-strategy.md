@@ -19,7 +19,7 @@ Full SLA breach, pause, escalation, calendar, notification engine은 future scop
 
 ## 핵심 원칙
 
-```txt id="sla-core"
+```txt
 Current SLA = configured expectation + ticket due date.
 Full SLA automation is deferred.
 ```
@@ -47,7 +47,7 @@ default를 override한다.
 
 ## Category Default Resolution
 
-```txt id="sla-category-resolution"
+```txt
 selected subcategory defaultSlaDays
 -> fallback main category defaultSlaDays
 -> due date expectation
@@ -66,7 +66,7 @@ Ticket form은 `dueAt`이 오늘보다 이후인지 validate한다.
 
 Requester update는 ticket이 다음 상태일 때 due date를 변경할 수 있다.
 
-```txt id="sla-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -82,7 +82,7 @@ update를 따른다.
 Routing-sensitive field가 category일 때 requester update는 새 category default SLA
 days에서 minimum due date도 다시 평가한다.
 
-```txt id="category-update-min-due-date"
+```txt
 newCategoryMinimumDueAt = today + new category default SLA days
 nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
 ```
@@ -127,7 +127,7 @@ Work session은 future SLA reporting이 다음 질문에 답하는 데 도움을
 
 이는 SLA breach handling과 같지 않다.
 
-```txt id="auto-close-boundary"
+```txt
 Resolved ticket grace period close
 != SLA breach/escalation engine
 ```
@@ -182,11 +182,11 @@ Resolved-ticket auto close는 lifecycle cleanup rule이지 service-level breach 
 
 ## 관련 문서
 
-- [`category-strategy.md`](category-strategy.md)
-- [`action-strategy.md`](action-strategy.md)
-- [`../ticket-track-time.md`](../ticket-track-time.md)
-- [`../ticket-history.md`](../ticket-history.md)
-- [`../../../../04-engineering/forms/ticket-form.md`](../../../../04-engineering/forms/ticket-form.md)
+- [카테고리 전략](category-strategy.md)
+- [액션 전략](action-strategy.md)
+- [티켓 작업 세션](../ticket-work-session.md)
+- [티켓 이력](../ticket-history.md)
+- [티켓 폼 설계](../../../../04-client-engineering/forms/ticket-form.md)
 
 ---
 

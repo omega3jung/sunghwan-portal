@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { toast } from "@/components/ui/toast";
+import { NS } from "@/lib/application/i18n";
 import { bytesToMB } from "@/shared/utils/browser";
 
 type FileValue = File[];
@@ -32,6 +33,11 @@ type UseFileAttachmentsOptions<
   onError?: (type: FileAttachmentErrorType) => void;
 };
 
+/**
+ * Writes a de-duplicated `File[]` directly to React Hook Form. Type failures
+ * reject the incoming batch. For count and size limits, `reject-all` is atomic
+ * while `accept-available` keeps files that still fit.
+ */
 export const useFileAttachments = <
   TForm extends FieldValues,
   TFieldName extends FileAttachmentFieldPath<TForm>,
@@ -44,7 +50,8 @@ export const useFileAttachments = <
   accept,
   onError,
 }: UseFileAttachmentsOptions<TForm, TFieldName>) => {
-  const { t } = useTranslation("FileAttachment");
+  const { t: tValidation } = useTranslation(NS.validation);
+  const { t: tMessage } = useTranslation(NS.message);
 
   const watchedFiles = useWatch<TForm, TFieldName>({
     control: form.control,
@@ -86,11 +93,11 @@ export const useFileAttachments = <
   ) => {
     onError?.(type);
     toast.add({
-      title: t("fileLimitTitle"),
+      title: tMessage("fileAttachment.limitTitle"),
       description:
         type === "count"
-          ? t("maxFileCount", { count: maxCount })
-          : t("maxTotalFileSize", { size: maxSizeMB }),
+          ? tValidation("fileAttachment.maxCount", { count: maxCount })
+          : tValidation("fileAttachment.maxTotalSize", { size: maxSizeMB }),
       type: "warning",
     });
   };
@@ -102,7 +109,7 @@ export const useFileAttachments = <
     if (invalidFile) {
       onError?.("type");
       toast.add({
-        title: t("invalidFileType"),
+        title: tValidation("fileAttachment.invalidType"),
         type: "warning",
       });
       return;
@@ -188,6 +195,7 @@ export const useFileAttachments = <
   };
 };
 
+// Duplicate identity intentionally follows the user-visible name and size.
 const createFileKey = (file: File) => `${file.name}:${file.size}`;
 
 const mergeUniqueFiles = (currentFiles: FileValue, incomingFiles: FileValue) => {

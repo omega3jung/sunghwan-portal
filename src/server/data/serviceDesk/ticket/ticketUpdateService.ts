@@ -50,6 +50,15 @@ const REQUESTER_EDITABLE_TICKET_STATUSES: readonly TicketStatus[] = [
   "Assigned",
 ];
 
+/**
+ * Applies the requester-edit policy and records the resulting routing decision.
+ *
+ * Requesters may edit only their own Approval or Assigned tickets. Changes to
+ * category, subject, content, files, or images invalidate the existing route;
+ * due date and email changes preserve it. When no transaction executor is
+ * supplied, this function opens one and re-enters itself so the ticket update
+ * and its history event commit or roll back together.
+ */
 export async function updateRequesterTicket(
   ticketId: string,
   input: RequesterUpdateTicketRequestDto,
@@ -104,6 +113,9 @@ export async function updateRequesterTicket(
       currentRow.tk_assignee_usernames,
     ),
   };
+  // Compare user-editable values against the current route first. If derived
+  // routing fields participated in this comparison, a reroute could trigger
+  // itself even when the requester changed only a routing-neutral field.
   const preservedRowInput = mapRequesterUpdateTicketRequestDtoToRowInput(
     input,
     preservedRoutingState,
@@ -277,6 +289,8 @@ function buildRequesterUpdateChangeSet({
     }
 
     changedFields.push("content");
+    // History records that the body changed without copying potentially
+    // sensitive or large rich-text content into an immutable audit record.
     fromValue.contentChanged = true;
     toValue.contentChanged = true;
   }

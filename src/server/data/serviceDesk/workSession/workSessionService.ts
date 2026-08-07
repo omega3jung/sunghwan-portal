@@ -33,6 +33,7 @@ type WorkSessionCreateInput = {
 
 const MS_PER_MINUTE = 60 * 1000;
 
+/** Loads work sessions by ticket id through the server data boundary. */
 export async function getWorkSessionsByTicketId(
   ticketId: string,
   options?: WorkSessionServiceOptions,
@@ -42,6 +43,7 @@ export async function getWorkSessionsByTicketId(
   return rows.map(mapWorkSessionRowToDto);
 }
 
+/** Finishes every running session for a ticket at one shared timestamp. */
 export async function finishRunningWorkSessionsByTicketId(
   ticketId: string,
   endedAt: string,
@@ -56,6 +58,14 @@ export async function finishRunningWorkSessionsByTicketId(
   return rows.map(mapWorkSessionRowToDto);
 }
 
+/**
+ * Adds tracked work and, when requested, advances the ticket in one transaction.
+ *
+ * Historical work assignees may add evidence for work they performed, but only
+ * an assignee in the current WORK phase (`approvalStepId === null`) may change
+ * status. A status update, work-session row, history event, and resolution-time
+ * cleanup either all commit or all roll back.
+ */
 export async function createWorkSession(
   input: WorkSessionCreateInput,
 ): Promise<WorkSessionDto> {

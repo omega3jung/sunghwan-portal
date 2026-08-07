@@ -1,5 +1,14 @@
 import { Pool, type QueryResultRow } from "pg";
 
+/**
+ * Server-only PostgreSQL access for the portal API.
+ *
+ * The pool is created lazily so importing a server module does not open a
+ * connection by itself. Browser code must use an HTTP client instead of
+ * importing this module, because the database URL and connection are trusted
+ * server resources.
+ */
+
 export type PortalApiQueryExecutor = <
   T extends QueryResultRow = QueryResultRow,
 >(
@@ -7,8 +16,6 @@ export type PortalApiQueryExecutor = <
   params?: unknown[],
 ) => Promise<T[]>;
 
-// portal API only after login.
-// portal_api DB connection use.
 function getRequiredEnv(key: "PORTAL_DATABASE_URL"): string {
   const value = process.env[key];
 
@@ -21,6 +28,7 @@ function getRequiredEnv(key: "PORTAL_DATABASE_URL"): string {
 
 let portalPool: Pool | null = null;
 
+/** Returns the shared PostgreSQL pool used by server-side portal repositories. */
 export function getPortalApiPool(): Pool {
   if (!portalPool) {
     portalPool = new Pool({
@@ -37,6 +45,7 @@ export function getPortalApiPool(): Pool {
   return portalPool;
 }
 
+/** Runs one independent query against the shared pool. */
 export async function queryPortalApi<T extends QueryResultRow = QueryResultRow>(
   text: string,
   params: unknown[] = [],
@@ -52,6 +61,14 @@ export async function queryPortalApi<T extends QueryResultRow = QueryResultRow>(
   }
 }
 
+/**
+ * Runs a multi-query workflow on one connection and commits it atomically.
+ *
+ * Callers must pass the supplied `query` executor to every repository involved
+ * in the workflow. Falling back to `queryPortalApi` inside the callback would
+ * use another pooled connection and place that operation outside this
+ * transaction. Any thrown error rolls back before the connection is released.
+ */
 export async function withPortalApiTransaction<T>(
   callback: (query: PortalApiQueryExecutor) => Promise<T>,
 ): Promise<T> {

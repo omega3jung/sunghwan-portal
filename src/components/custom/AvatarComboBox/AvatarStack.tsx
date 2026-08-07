@@ -1,6 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
 import type { BadgeVariant, ComboBoxSize } from "./types";
 import { badgeVariants, comboBoxAvatarVariants } from "./variants";
@@ -46,17 +47,16 @@ export function AvatarStack({
           key={item.value}
           className={comboBoxAvatarVariants({ size })}
         >
-          <Avatar
+          <UserAvatar
             className="size-full bg-background ring-2 ring-background"
+            fallbackClassName={cn(
+              badgeVariants({ badgeVariant }),
+              "font-normal",
+            )}
+            image={item.image}
+            name={item.label}
             style={{ zIndex: selected.length - index }}
-          >
-            <AvatarImage src={item.image} alt={item.label} />
-            <AvatarFallback
-              className={cn(badgeVariants({ badgeVariant }), "font-normal")}
-            >
-              {initials(item.label)}
-            </AvatarFallback>
-          </Avatar>
+          />
         </div>
       ))}
       {remainingCount > 0 && (

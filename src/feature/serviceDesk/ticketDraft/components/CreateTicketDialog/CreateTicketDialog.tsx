@@ -84,21 +84,11 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
             />
 
             <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
-              {
-                /* select department and cateogry */
-                currentStep === ticketStep.info && <InfoStep />
-              }
+              {currentStep === ticketStep.info && <InfoStep />}
 
-              {
-                /* Additional */
-                currentStep === ticketStep.attachment && <AttachmentStep />
-              }
+              {currentStep === ticketStep.attachment && <AttachmentStep />}
 
-              {
-                /* preview issue */ currentStep === ticketStep.review && (
-                  <ReviewStep />
-                )
-              }
+              {currentStep === ticketStep.review && (<ReviewStep />)}
             </ScrollArea>
           </TicketCreateFormProvider>
         </form>

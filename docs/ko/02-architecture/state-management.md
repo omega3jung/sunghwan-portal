@@ -16,7 +16,7 @@
 
 ## 핵심 원칙
 
-```id="core-principle"
+```txt
 Prefer server state over client state whenever possible
 ```
 
@@ -66,7 +66,7 @@ Prefer server state over client state whenever possible
 
 ### Example
 
-```ts id="server-state-example"
+```ts
 export const useFetchTickets = (params) => {
   return useQuery({
     queryKey: ["tickets", params],
@@ -121,7 +121,7 @@ export const useFetchTickets = (params) => {
 
 ### Example
 
-```ts id="client-state-example"
+```ts
 const useDialogStore = create((set) => ({
   open: false,
   setOpen: (open) => set({ open }),
@@ -176,7 +176,7 @@ const useDialogStore = create((set) => ({
 
 ### Rule 1
 
-```id="rule-1"
+```txt
 Do not store server data in client state
 ```
 
@@ -184,7 +184,7 @@ Do not store server data in client state
 
 ### Rule 2
 
-```id="rule-2"
+```txt
 Do not use global state for local UI concerns
 ```
 
@@ -192,7 +192,7 @@ Do not use global state for local UI concerns
 
 ### Rule 3
 
-```id="rule-3"
+```txt
 Keep state as close as possible to where it is used
 ```
 
@@ -200,7 +200,7 @@ Keep state as close as possible to where it is used
 
 ### Rule 4
 
-```id="rule-4"
+```txt
 Persist page-level UI state separately from auth/runtime stores
 ```
 
@@ -212,7 +212,7 @@ Persist page-level UI state separately from auth/runtime stores
 
 - 구조적이고 예측 가능한 query key를 사용한다.
 
-```ts id="query-key"
+```ts
 ["tickets", params][("ticket", id)];
 ```
 
@@ -224,7 +224,7 @@ Persist page-level UI state separately from auth/runtime stores
 
 - 자주 바뀌지 않는 데이터(예: 카테고리)
 
-```ts id="static-query"
+```ts
 staleTime: Infinity;
 ```
 
@@ -235,7 +235,7 @@ staleTime: Infinity;
 - 자주 갱신되는 데이터(예: 티켓 목록)
 - LOCAL runtime의 mutable demo 데이터 경로를 포함한다.
 
-```ts id="dynamic-query"
+```ts
 refetchOnWindowFocus: true;
 staleTime: 0;
 ```
@@ -247,6 +247,10 @@ demo reset은 아래 endpoint를 통해 orchestration되어야 한다.
 ```txt
 /api/demo/service-desk/reset
 ```
+
+LOCAL 티켓 초안 복구는 별도의 브라우저 로컬 예외다. 기능 초안 저장소가
+`localStorage` 레코드를 소유하고, React Query는 해당 레코드에 대한 접근을
+캐시하고 조정할 뿐이다.
 
 ---
 
@@ -263,7 +267,7 @@ demo reset은 아래 endpoint를 통해 orchestration되어야 한다.
 
 ### Example
 
-```ts id="mutation-example"
+```ts
 const mutation = useMutation({
   mutationFn: createTicket,
   onSuccess: () => {
@@ -306,7 +310,7 @@ const mutation = useMutation({
 
 ### 원칙
 
-```id="client-principle"
+```txt
 Only globalize state when necessary
 ```
 
@@ -345,7 +349,7 @@ Only globalize state when necessary
 
 ### 원칙
 
-```id="url-state"
+```txt
 If state affects navigation -> store in URL
 ```
 
@@ -476,7 +480,7 @@ UI persistence는 장애에 강해야 한다.
 
 ### Example
 
-```ts id="derived-state"
+```ts
 const isOwner = ticket.requesterId === currentUser.id;
 ```
 
@@ -484,7 +488,7 @@ const isOwner = ticket.requesterId === currentUser.id;
 
 ### 원칙
 
-```id="derived-rule"
+```txt
 Derive instead of store
 ```
 
@@ -604,4 +608,5 @@ Auth session과 UI persistence는 분리되어야 한다.
 - 클라이언트 runtime 상태에는 Zustand 또는 local state
 - page local session persistence에는 URL과 `sessionStorage`
 
-그 결과, 확장 가능하고 유지보수 가능하며 프로덕션 수준에 적합한 아키텍처를 만들 수 있다.
+그 결과 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 상태 모델을 만든다.
+이는 연기된 프로덕션 인프라가 완성되었다는 의미가 아니다.

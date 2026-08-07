@@ -9,6 +9,12 @@ import {
 } from "./approvalStepUtils";
 import { buildApprovalStepFromInput, createFallbackCategory } from "./treeSync";
 
+/**
+ * Replaces approval-step slices for submitted categories in LOCAL state.
+ *
+ * Step order is persisted as workflow order. Categories omitted by the client
+ * are retained so a scoped save cannot erase configuration outside its tree.
+ */
 export const localSaveApprovalStepTree = ({
   isInternal,
   payload,

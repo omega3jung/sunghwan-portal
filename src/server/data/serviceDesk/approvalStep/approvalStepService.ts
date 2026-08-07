@@ -37,6 +37,7 @@ import {
   updateApprovalStepRowById,
 } from "./approvalStepRepository";
 
+/** Loads approval steps by tenant id through the server data boundary. */
 export async function getApprovalStepsByTenantId(
   tenantId: string | number,
   query?: PortalApiQueryExecutor,
@@ -46,11 +47,13 @@ export async function getApprovalStepsByTenantId(
   return mapApprovalStepRowsToDtos(rows);
 }
 
+/** Describes the validated get approval settings response params accepted by this server operation. */
 export type GetApprovalSettingsResponseParams = {
   tenantId?: string | number | null;
   isInternal: boolean;
 };
 
+/** Loads category approval settings by tenant id through the server data boundary. */
 export async function getCategoryApprovalSettingsByTenantId(
   tenantId: string | number,
   query?: PortalApiQueryExecutor,
@@ -74,6 +77,7 @@ export async function getCategoryApprovalSettingsByTenantId(
   }));
 }
 
+/** Loads approval settings response by tenant id through the server data boundary. */
 export async function getApprovalSettingsResponseByTenantId({
   tenantId,
   isInternal,
@@ -86,6 +90,7 @@ export async function getApprovalSettingsResponseByTenantId({
   return getCategoryApprovalSettingsByTenantId(targetTenantId);
 }
 
+/** Creates approval step through the server persistence boundary. */
 export async function createApprovalStep(
   input: CreateApprovalStepInputDto,
   query?: PortalApiQueryExecutor,
@@ -102,6 +107,7 @@ export async function createApprovalStep(
   return mapApprovalStepRowToDto(row);
 }
 
+/** Updates approval step by id while preserving server-side validation and persistence rules. */
 export async function updateApprovalStepById(
   tenantId: string | number,
   approvalStepId: string | number,
@@ -133,6 +139,7 @@ export async function updateApprovalStepById(
   return mapApprovalStepRowToDto(row);
 }
 
+/** Removes or deactivates approval step by id through the server persistence boundary. */
 export async function deleteApprovalStepById(
   tenantId: string | number,
   approvalStepId: string | number,
@@ -147,6 +154,7 @@ export async function deleteApprovalStepById(
   return mapApprovalStepRowToDto(row);
 }
 
+// Owner administrators may select a tenant; tenant administrators are pinned to their authorized tenant.
 async function resolveTargetTenantId({
   tenantId,
   isInternal: _isInternal,
@@ -178,6 +186,7 @@ function hasTenantId(value?: string | number | null): value is string | number {
   return String(value).trim().length > 0;
 }
 
+/** Validates the submitted approval tree against tenant scope and referenced organization data before writing. */
 export async function validateApprovalStepTreeMutation({
   principal,
   tenant,

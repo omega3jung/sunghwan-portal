@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { NS } from "@/lib/application/i18n";
 
 type TicketActionToolFooterProps = {
-  disabled: boolean;
+  canSubmit: boolean;
   errorMessage: string;
   helperText: string;
   isPending: boolean;
@@ -15,7 +15,7 @@ type TicketActionToolFooterProps = {
 };
 
 export function TicketActionToolFooter({
-  disabled,
+  canSubmit,
   errorMessage,
   helperText,
   isPending,
@@ -46,7 +46,7 @@ export function TicketActionToolFooter({
           type="button"
           className="w-full whitespace-normal sm:w-auto"
           onClick={onSubmit}
-          disabled={disabled}
+          disabled={!canSubmit}
         >
           <SendHorizontal className="h-4 w-4" />
           {submitLabel}

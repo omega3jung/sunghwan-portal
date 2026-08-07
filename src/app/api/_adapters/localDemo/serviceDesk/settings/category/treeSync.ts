@@ -47,6 +47,7 @@ const synchronizeSubCategories = ({
   return [...synchronizedSubCategories, ...preservedSubCategories];
 };
 
+/** Builds synchronized category without mutating shared LOCAL state. */
 export const buildSynchronizedCategory = ({
   category,
   previousCategory,
@@ -56,6 +57,8 @@ export const buildSynchronizedCategory = ({
   previousCategory?: DbCategory;
   assignId: (value?: string) => number;
 }) => {
+  // Parent inactivity dominates child flags so LOCAL reads cannot expose an
+  // active subcategory beneath an inactive main category.
   const resolvedId = previousCategory?.category_id ?? assignId(category.id);
   const active = category.active;
 

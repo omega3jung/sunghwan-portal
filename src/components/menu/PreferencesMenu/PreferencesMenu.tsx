@@ -40,7 +40,7 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { preferenceKeys } from "@/feature/user/preference";
 import { useUpdateUserPreference } from "@/feature/user/preference/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
-import { isLocale } from "@/lib/application/i18n";
+import { isLocale, NS } from "@/lib/application/i18n";
 import { languageOptions } from "@/lib/client/i18n";
 import { applyColorTheme } from "@/lib/client/theme";
 import { useWindowDimensions } from "@/shared/client/useWindowDimensions";
@@ -65,9 +65,14 @@ const themeButtons = [
 }[];
 
 type PreferencesMenuProps = {
-  trigger?: (props: { label: string }) => React.ReactElement; // Popover trigger.
+  trigger?: (props: { label: string }) => React.ReactElement;
 };
 
+/**
+ * Applies preference changes to client state before persisting the complete
+ * preference payload through the active local or remote repository. Responsive
+ * layout changes close the popover because they may replace its trigger.
+ */
 export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   const { width } = useWindowDimensions();
   const { data: currentSession } = useCurrentSession();
@@ -84,9 +89,11 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
   } = useCurrentPreference();
   const { mutate: updateUserPreference } = useUpdateUserPreference();
 
-  const { t } = useTranslation("PreferencesMenu");
+  const { t } = useTranslation(NS.settings, { keyPrefix: "preferences" });
+  const { t: tComponent } = useTranslation(NS.component);
 
   useEffect(() => {
+    // An anchored popover cannot retain focus reliably when its trigger is replaced.
     setOpen(false);
   }, [width]);
 
@@ -318,14 +325,14 @@ export const PreferencesMenu = ({ trigger }: PreferencesMenuProps) => {
               <ComboboxInput
                 id="language-picker"
                 className="w-full"
-                placeholder="Language Picker"
+                placeholder={t("languagePicker")}
               >
                 <InputGroupAddon align="inline-start">
                   <Globe />
                 </InputGroupAddon>
               </ComboboxInput>
               <ComboboxContent>
-                <ComboboxEmpty>No option found.</ComboboxEmpty>
+                <ComboboxEmpty>{tComponent("comboBox.empty")}</ComboboxEmpty>
                 <ComboboxList>
                   {(option) => (
                     <ComboboxItem key={option.value} value={option}>

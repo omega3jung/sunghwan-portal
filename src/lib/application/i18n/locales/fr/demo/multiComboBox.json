@@ -1,0 +1,27 @@
+{
+  "comboVariants": "Variantes de liste combinée",
+  "buttonVariants": "Variantes de badge",
+  "paletteStart": "Début de palette",
+  "paletteStartDescription": "Sélectionne la première couleur de la palette.",
+  "palettePick": "Couleur de palette",
+  "palettePickPlaceholder": "Vide utilise la séquence de la palette",
+  "palettePickDescription": "Sélectionne une couleur fixe de la palette.",
+  "multiTitle": "Liste combinée multiple",
+  "treeTitle": "Liste combinée multiple arborescente",
+  "variants": {
+    "default": "Par défaut", "ghost": "Fantôme", "secondary": "Secondaire",
+    "overdue": "En retard", "destructive": "Destructif", "outline": "Contour", "palette": "Palette"
+  },
+  "months": {
+    "January": "Janvier", "February": "Février", "March": "Mars", "April": "Avril",
+    "May": "Mai", "June": "Juin", "July": "Juillet", "August": "Août",
+    "September": "Septembre", "October": "Octobre", "November": "Novembre", "December": "Décembre"
+  },
+  "items": {
+    "fruit": "Fruit", "apple": "Pomme", "banana": "Banane", "grape": "Raisin", "orange": "Orange", "peach": "Pêche",
+    "vegetable": "Légume", "carrot": "Carotte", "onion": "Oignon", "garlic": "Ail", "broccoli": "Brocoli",
+    "meat": "Viande", "beef": "Bœuf", "pork": "Porc", "chicken": "Poulet",
+    "fish": "Poisson", "salmon": "Saumon", "tuna": "Thon", "dairy": "Produits laitiers", "milk": "Lait", "cheese": "Fromage",
+    "empty": "Catégorie vide"
+  }
+}

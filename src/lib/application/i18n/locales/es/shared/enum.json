@@ -1,0 +1,45 @@
+{
+  "accessLevel": {
+    "label": "Nivel de acceso",
+    "options": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "leader": "Líder",
+      "user": "Usuario",
+      "guest": "Invitado"
+    }
+  },
+  "priority": {
+    "label": "Prioridad",
+    "options": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  },
+  "riskLevel": {
+    "label": "Nivel de Riesgo",
+    "options": {
+      "critical": "Crítico",
+      "high": "Alto",
+      "medium": "Medio",
+      "low": "Bajo"
+    }
+  },
+  "dueAt": {
+    "label": "Fecha de vencimiento",
+    "options": {
+      "all": "Todos",
+      "overDue": "Vencido",
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "this2Week": "Estas 2 semanas",
+      "thisMonth": "Este mes",
+      "withinWeek": "Dentro de una semana",
+      "within2Week": "Dentro de 2 semanas",
+      "withinMonth": "Dentro de un mes",
+      "custom": "Personalizado"
+    }
+  }
+}

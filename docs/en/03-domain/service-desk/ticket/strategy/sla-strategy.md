@@ -20,7 +20,7 @@ future scope.
 
 ## Core Principle
 
-```txt id="sla-core"
+```txt
 Current SLA = configured expectation + ticket due date.
 Full SLA automation is deferred.
 ```
@@ -49,7 +49,7 @@ defaults where provided.
 
 ## Category Default Resolution
 
-```txt id="sla-category-resolution"
+```txt
 selected subcategory defaultSlaDays
 -> fallback main category defaultSlaDays
 -> due date expectation
@@ -68,7 +68,7 @@ The ticket form validates that `dueAt` is later than today.
 
 Requester update can change due date while the ticket is in:
 
-```txt id="sla-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -84,7 +84,7 @@ follows the routing-sensitive update.
 When the routing-sensitive field is category, the requester update also
 re-evaluates the minimum due date from the new category default SLA days:
 
-```txt id="category-update-min-due-date"
+```txt
 newCategoryMinimumDueAt = today + new category default SLA days
 nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
 ```
@@ -130,7 +130,7 @@ tickets after a grace period.
 
 This is not the same as SLA breach handling.
 
-```txt id="auto-close-boundary"
+```txt
 Resolved ticket grace period close
 != SLA breach/escalation engine
 ```
@@ -187,11 +187,11 @@ breach rule.
 
 ## Related Documents
 
-- [`category-strategy.md`](category-strategy.md)
-- [`action-strategy.md`](action-strategy.md)
-- [`../ticket-track-time.md`](../ticket-track-time.md)
-- [`../ticket-history.md`](../ticket-history.md)
-- [`../../../../04-engineering/forms/ticket-form.md`](../../../../04-engineering/forms/ticket-form.md)
+- [Category Strategy](category-strategy.md)
+- [Action Strategy](action-strategy.md)
+- [Ticket Work Session](../ticket-work-session.md)
+- [Ticket History](../ticket-history.md)
+- [Ticket Form Design](../../../../04-client-engineering/forms/ticket-form.md)
 
 ---
 

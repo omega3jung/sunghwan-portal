@@ -4,6 +4,7 @@ import { authApiJson } from "@/auth/api";
 import { AuthUser } from "@/domain/auth";
 import { resolveDemoAuth } from "@/mocks/domain/user";
 
+/** Returns the authenticated internal user projection consumed by Auth.js. */
 export type LoginResponse = AuthUser;
 
 // process login.

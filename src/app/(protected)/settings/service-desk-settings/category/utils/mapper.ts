@@ -1,4 +1,4 @@
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import type { TreeNodes } from "@/components/custom/SortableTree";
 import type { TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { MAX_SUB_CATEGORY_PER_CATEGORY } from "../constants";

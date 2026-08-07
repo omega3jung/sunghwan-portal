@@ -96,6 +96,7 @@ returning
 ${TENANT_COLUMNS};
 `;
 
+/** Queries PostgreSQL for tenant row by id without applying presentation concerns. */
 export async function findTenantRowById(
   tenantId: string | number,
 ): Promise<TenantRow | null> {
@@ -106,10 +107,12 @@ export async function findTenantRowById(
   return rows[0] ?? null;
 }
 
+/** Queries PostgreSQL for tenant rows without applying presentation concerns. */
 export async function findTenantRows(): Promise<TenantRow[]> {
   return queryPortalApi<TenantRow>(FIND_TENANT_ROWS_QUERY);
 }
 
+/** Queries PostgreSQL for active tenant row by id without applying presentation concerns. */
 export async function findActiveTenantRowById(
   tenantId: string | number,
 ): Promise<TenantRow | null> {
@@ -121,6 +124,7 @@ export async function findActiveTenantRowById(
   return rows[0] ?? null;
 }
 
+/** Queries PostgreSQL for active tenant row by company id without applying presentation concerns. */
 export async function findActiveTenantRowByCompanyId(
   companyId: string | number,
 ): Promise<TenantRow | null> {
@@ -132,10 +136,12 @@ export async function findActiveTenantRowByCompanyId(
   return rows[0] ?? null;
 }
 
+/** Queries PostgreSQL for active tenant rows without applying presentation concerns. */
 export async function findActiveTenantRows(): Promise<TenantRow[]> {
   return queryPortalApi<TenantRow>(FIND_ACTIVE_TENANT_ROWS_QUERY);
 }
 
+/** Creates tenant row through the server persistence boundary. */
 export async function createTenantRow(
   input: CreateTenantRowInput,
 ): Promise<TenantRow | null> {
@@ -149,6 +155,7 @@ export async function createTenantRow(
   return rows[0] ?? null;
 }
 
+/** Updates tenant row by id while preserving server-side validation and persistence rules. */
 export async function updateTenantRowById(
   tenantId: string | number,
   input: UpdateTenantRowInput,
@@ -163,6 +170,7 @@ export async function updateTenantRowById(
   return rows[0] ?? null;
 }
 
+/** Removes or deactivates tenant row by id through the server persistence boundary. */
 export async function deactivateTenantRowById(
   tenantId: string | number,
 ): Promise<TenantRow | null> {

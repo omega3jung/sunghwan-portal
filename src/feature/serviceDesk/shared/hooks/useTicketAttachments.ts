@@ -15,11 +15,9 @@ export const useTicketAttachments = ({
   const [files, setFiles] = useState<File[]>([]);
 
   const addFiles = (fileList: FileList) => {
-    // convert FileList to File.
     const selectedFiles = Array.from(fileList);
     const merged = files?.concat(selectedFiles);
 
-    // validate count maximum.
     if ((merged?.length ?? 0) > maxCount) {
       toast.add({
         title: t("createTicketDialog.maximumWarningTitle"),
@@ -33,7 +31,6 @@ export const useTicketAttachments = ({
       return;
     }
 
-    // validate size maximum.
     let sizeTotal = 0;
 
     merged.forEach((file) => (sizeTotal += file.size));

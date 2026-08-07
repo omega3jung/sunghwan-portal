@@ -3,8 +3,9 @@
 import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -14,17 +15,23 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/combobox";
-import { cn, initials } from "@/shared/utils/presentation";
+import { NS } from "@/lib/application/i18n";
+import { cn } from "@/shared/utils/presentation";
 
 import { AvatarComboBoxOptionItem } from "./AvatarComboBoxOptionItem";
 import type { AvatarSingleProps } from "./types";
-import { createComboboxFilter, EMPTY_OPTION_TEXT } from "./utils";
+import { createComboboxFilter } from "./utils";
 import {
   badgeVariants,
   comboBoxAvatarVariants,
   comboBoxVariants,
 } from "./variants";
 
+/**
+ * Controlled single-user selector whose external value is an option key.
+ * Reselecting the active option clears it only when `clearable` is enabled;
+ * read-only mode blocks both opening and value changes.
+ */
 const Component = (
   {
     placeholder,
@@ -45,6 +52,9 @@ const Component = (
   }: AvatarSingleProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "comboBox",
+  });
   const [open, setOpen] = useState(false);
 
   const selectedOption = useMemo(
@@ -115,20 +125,15 @@ const Component = (
           {selectedOption ? (
             <div className="flex h-full min-w-0 items-center gap-2">
               <div className={comboBoxAvatarVariants({ size })}>
-                <Avatar className="size-full">
-                  <AvatarImage
-                    src={selectedOption.image}
-                    alt={selectedOption.label}
-                  />
-                  <AvatarFallback
-                    className={cn(
-                      badgeVariants({ badgeVariant }),
-                      "font-normal",
-                    )}
-                  >
-                    {initials(selectedOption.label)}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  className="size-full"
+                  fallbackClassName={cn(
+                    badgeVariants({ badgeVariant }),
+                    "font-normal",
+                  )}
+                  image={selectedOption.image}
+                  name={selectedOption.label}
+                />
               </div>
               <div className="min-w-0 text-left">
                 <h4 className="truncate text-xs">{selectedOption.label}</h4>
@@ -151,11 +156,11 @@ const Component = (
 
         <ComboboxContent>
           <ComboboxInput
-            aria-label={placeholder ?? "Search users"}
+            aria-label={placeholder ?? t("searchUsers")}
             placeholder={placeholder}
             showTrigger={false}
           />
-          <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
+          <ComboboxEmpty>{t("empty")}</ComboboxEmpty>
           <ComboboxList showScrollbar className="max-h-48 min-h-0">
             {(option) => (
               <AvatarComboBoxOptionItem

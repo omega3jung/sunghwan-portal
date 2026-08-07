@@ -3,6 +3,7 @@ import { displayNameMapper } from "@/lib/application/organization";
 import { UserPreferenceDto, UserProfileDto } from "./userDto";
 import { UserPreferenceRow, UserProfileRow } from "./userRow";
 
+/** Maps user preference dto across the database and API boundary. */
 export function toUserPreferenceDto(row: UserPreferenceRow): UserPreferenceDto {
   return {
     preferenceKey: row.ump_preference_key,
@@ -10,6 +11,7 @@ export function toUserPreferenceDto(row: UserPreferenceRow): UserPreferenceDto {
   };
 }
 
+/** Maps user profile dto across the database and API boundary. */
 export function toUserProfileDto(row: UserProfileRow): UserProfileDto {
   return {
     id: row.aa_id,

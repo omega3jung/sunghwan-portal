@@ -21,17 +21,10 @@ import {
 } from "@/shared/constants/date";
 import { DateRangePreset } from "@/shared/types";
 
-/**
- * Preset validation is intentionally data-driven so the type guard stays aligned
- * with the shared preset list rather than duplicating string literals here.
- */
+// Derive the guard from the rendered preset source to prevent the two lists drifting.
 const DATE_RANGE_PRESET_SET = new Set<string>(DEFAULT_DATE_RANGE_PRESETS);
 
-/**
- * External state restoration can rehydrate dates as strings or numbers.
- * Utility consumers should not need to care about that distinction,
- * so this helper normalizes supported date-like inputs into real Date instances.
- */
+/** Accepts serialized dates because persisted form state may not retain `Date` instances. */
 export function normalizeDateValue(value: unknown): Date | undefined {
   if (value instanceof Date) {
     return Number.isNaN(value.getTime()) ? undefined : value;
@@ -46,10 +39,7 @@ export function normalizeDateValue(value: unknown): Date | undefined {
   return undefined;
 }
 
-/**
- * Components compare, format, and render ranges more safely when inputs are normalized first.
- * Returning undefined for a fully invalid range keeps downstream logic simple and defensive.
- */
+/** A fully invalid range collapses to `undefined` instead of carrying empty endpoints. */
 export function normalizeDateRange(range?: DateRange): DateRange | undefined {
   if (!range) {
     return undefined;
@@ -65,10 +55,7 @@ export function normalizeDateRange(range?: DateRange): DateRange | undefined {
   return { from, to };
 }
 
-/**
- * Trigger and summary text should tolerate restored string dates as well as live Date objects.
- * Formatting returns an empty string instead of throwing so UI fallbacks can take over.
- */
+/** Returns an empty string for missing or invalid restored values so UI fallbacks can render. */
 export function formatDateText(date?: Date | string | number) {
   const resolvedDate = normalizeDateValue(date);
 
@@ -79,10 +66,7 @@ export function formatDateText(date?: Date | string | number) {
   return format(resolvedDate, DATE_FORMAT);
 }
 
-/**
- * DateTimePicker renders a fixed 24-hour timestamp string in triggers and summaries.
- * Keeping this formatter beside formatDateText makes the single-value picker family consistent.
- */
+/** Uses the same tolerant input contract as `formatDateText` with 24-hour time. */
 export function formatDateTimeText(date?: Date | string | number) {
   const resolvedDate = normalizeDateValue(date);
 
@@ -93,11 +77,7 @@ export function formatDateTimeText(date?: Date | string | number) {
   return format(resolvedDate, `${DATE_FORMAT} HH:mm`);
 }
 
-/**
- * Range formatting is presentation-only.
- * It assumes the caller already decided whether the UI wants a full range, a single date,
- * or some other special-case text such as the "today" trigger policy.
- */
+/** A range with only `from` renders as a single date until the endpoint is chosen. */
 export function formatRangeText(range?: DateRange) {
   const normalizedRange = normalizeDateRange(range);
 
@@ -112,10 +92,7 @@ export function formatRangeText(range?: DateRange) {
   return `${formatDateText(normalizedRange.from)} ~ ${formatDateText(normalizedRange.to)}`;
 }
 
-/**
- * Relative presets are resolved from an explicit anchor date so callers can keep
- * preset-derived ranges stable across a render cycle or restored state sync.
- */
+/** The explicit anchor keeps relative presets stable across renders and restoration. */
 export function getRelativeStartDate(period: DateRangePreset, today: Date) {
   const match = /^last_(\d+)?(week|month|year)$/.exec(period);
 
@@ -142,17 +119,11 @@ export function getRelativeStartDate(period: DateRangePreset, today: Date) {
   }
 }
 
-/**
- * Runtime type guard used when generic string values may actually be shared date presets.
- */
 export function isDateRangePreset(value: string): value is DateRangePreset {
   return DATE_RANGE_PRESET_SET.has(value);
 }
 
-/**
- * Converts a shared preset into the concrete date range the parent state should store.
- * "range" intentionally resolves to undefined because free-form selection must come from the calendar.
- */
+/** `range` has no derived value because its dates must come from calendar interaction. */
 export function resolvePresetRange(
   period: DateRangePreset,
   baseDate: Date = new Date(),
@@ -199,10 +170,7 @@ export function resolvePresetRange(
   }
 }
 
-/**
- * Range equality is normalization-aware so restored string dates and live Date objects
- * compare by effective timestamps rather than by raw input shape.
- */
+/** Compares restored serialized dates and live dates by their effective timestamps. */
 export function isSameDateRange(a?: DateRange, b?: DateRange): boolean {
   const normalizedA = normalizeDateRange(a);
   const normalizedB = normalizeDateRange(b);
@@ -215,9 +183,8 @@ export function isSameDateRange(a?: DateRange, b?: DateRange): boolean {
 }
 
 /**
- * Calendar day disabling should work from whole-day availability, not exact timestamps.
- * This lets DateTimePicker keep a partially available day selectable while time controls
- * handle the finer-grained min/max restriction.
+ * A partially available day stays selectable; time controls enforce the exact
+ * min/max boundary after the calendar chooses that day.
  */
 export function isCalendarDateDisabled(
   date: Date,

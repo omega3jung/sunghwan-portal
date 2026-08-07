@@ -141,6 +141,7 @@ returning
 ${ACTIVE_CATEGORY_COLUMNS};
 `;
 
+/** Queries PostgreSQL for category rows by tenant id without applying presentation concerns. */
 export async function findCategoryRowsByTenantId(
   tenantId: string | number,
   query: PortalApiQueryExecutor = queryPortalApi,
@@ -150,6 +151,7 @@ export async function findCategoryRowsByTenantId(
   ]);
 }
 
+/** Queries PostgreSQL for category rows by tenant id and category id without applying presentation concerns. */
 export async function findCategoryRowsByTenantIdAndCategoryId(
   tenantId: string | number,
   categoryId: string | number,
@@ -160,6 +162,7 @@ export async function findCategoryRowsByTenantIdAndCategoryId(
   );
 }
 
+/** Queries PostgreSQL for category rows by company id without applying presentation concerns. */
 export async function findCategoryRowsByCompanyId(
   companyId: string | number,
 ): Promise<CategoryRow[]> {
@@ -168,6 +171,7 @@ export async function findCategoryRowsByCompanyId(
   ]);
 }
 
+/** Queries PostgreSQL for category context row by id without applying presentation concerns. */
 export async function findCategoryContextRowById(
   categoryId: string | number,
 ): Promise<CategoryContextRow | null> {
@@ -179,6 +183,7 @@ export async function findCategoryContextRowById(
   return rows[0] ?? null;
 }
 
+/** Creates category row through the server persistence boundary. */
 export async function createCategoryRow(
   input: CreateCategoryRowInput,
 ): Promise<CategoryRow | null> {
@@ -199,6 +204,7 @@ export async function createCategoryRow(
   return rows[0] ?? null;
 }
 
+/** Updates category row by id while preserving server-side validation and persistence rules. */
 export async function updateCategoryRowById(
   tenantId: string | number,
   categoryId: string | number,

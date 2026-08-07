@@ -1,3 +1,4 @@
+// src/server/data/serviceDesk/ticketAction/execute/index.ts
 import type {
   TicketActionExecutionMode,
   TicketGeneralActionPath,
@@ -17,6 +18,7 @@ import { executeRejectTicketAction } from "./rejectTicketAction";
 import { executeReopenTicketAction } from "./reopenTicketAction";
 import { executeResubmitTicketAction } from "./resubmitTicketAction";
 
+/** Routes a validated action to the executor that mutates ticket state and records its effects. */
 export async function applyTicketActionEffect({
   action,
   actionMode,

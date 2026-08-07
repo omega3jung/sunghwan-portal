@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 import { usePreferenceStore } from "@/lib/client/preference";
 
-// clear session and impersonation when sign out.
 export function usePreferenceCleanup() {
   const session = useSession();
   const clearPreference = usePreferenceStore((state) => state.clearPreference);

@@ -10,7 +10,6 @@ import { approvalStepQueryKeys } from "./queryKeys";
 export const useSaveServiceDeskApprovalStepTree = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: serviceDeskApprovalStepApi.saveTree,
     onSuccess: async () => {

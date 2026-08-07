@@ -8,7 +8,6 @@ import { jobFieldQueryKeys } from "./queryKeys";
 export const useCreateJobFieldMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: jobFieldApi.create,
     onSuccess: () => {
@@ -20,7 +19,6 @@ export const useCreateJobFieldMutation = () => {
 export const useUpdateJobFieldMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: jobFieldApi.update,
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const useUpdateJobFieldMutation = () => {
 export const useDeleteJobFieldMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: jobFieldApi.remove,
     onSuccess: () => {

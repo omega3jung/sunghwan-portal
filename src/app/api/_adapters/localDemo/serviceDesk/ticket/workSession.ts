@@ -22,8 +22,11 @@ import {
 import { getLocalDemoHistories } from "./state";
 import { hasLocalTicketWorkAssignmentHistory } from "./workerHistory";
 
+// Work sessions are process/module memory in LOCAL mode. They support demo
+// refetch behavior but are not durable and are not PostgreSQL-equivalent.
 const localWorkSessions: DbTicketWorkSession[] = [];
 
+/** Returns ticket work sessions from the server-side LOCAL ticket adapter. */
 export function listLocalTicketWorkSessions(ticketId: string) {
   const items = localWorkSessions.filter((item) => item.ticket_id === ticketId);
 
@@ -33,6 +36,7 @@ export function listLocalTicketWorkSessions(ticketId: string) {
   };
 }
 
+/** Creates ticket work session in the server-side LOCAL ticket adapter mutable state. */
 export function createLocalTicketWorkSession({
   ticketId,
   currentUserName,
@@ -44,6 +48,8 @@ export function createLocalTicketWorkSession({
   isInternal: boolean;
   payload: TicketWorkSessionSubmitPayload;
 }) {
+  // Resolve every expected authorization, transition, and duration failure
+  // before appending a session or replacing the ticket in shared state.
   const { ticket, targetMock, index } = getTicketContext(ticketId, isInternal);
   const authorization = resolveWorkSessionAuthorization(
     ticket,
@@ -233,6 +239,8 @@ function resolveWorkSessionAuthorization(
   currentUserName: string,
   isInternal: boolean,
 ) {
+  // Historical workers may add evidence but cannot change current status.
+  // Current work assignment is phase-aware: approval assignees are not workers.
   const isCurrentWorkAssignee =
     ticket.approval_step_id === null &&
     ticket.assignee_usernames.includes(currentUserName);

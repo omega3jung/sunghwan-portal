@@ -8,7 +8,6 @@ import { companyQueryKeys } from "./queryKeys";
 export const useCreateCompanyMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: companyApi.create,
     onSuccess: () => {
@@ -20,7 +19,6 @@ export const useCreateCompanyMutation = () => {
 export const useUpdateCompanyMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: companyApi.update,
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const useUpdateCompanyMutation = () => {
 export const useDeleteCompanyMutation = () => {
   const queryClient = useQueryClient();
 
-  // message will be handeled where call mutation by useMutationToast.
   return useMutation({
     mutationFn: companyApi.remove,
     onSuccess: () => {

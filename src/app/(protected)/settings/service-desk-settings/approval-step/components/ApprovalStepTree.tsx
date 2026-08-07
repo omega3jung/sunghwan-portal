@@ -3,9 +3,11 @@ import { Plus, X } from "lucide-react";
 import { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DragHandle } from "@/components/custom/dnd/DragHandle";
-import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import { TreeNodes } from "@/components/custom/dnd/tree/types";
+import {
+  SortableTree,
+  SortableTreeDragHandle,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,7 +32,7 @@ type Props = {
   language: SupportedLanguage;
   isLoading: boolean;
   errors: ReadonlyMap<string, "invalidAssignee">;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
 export const ApprovalStepTree = ({
@@ -43,9 +45,10 @@ export const ApprovalStepTree = ({
   language,
   isLoading,
   errors,
-  readOnly = false,
+  canEdit = true,
 }: Props) => {
-  const { t: tDomain } = useTranslation(NS.domain);
+  const { t: tShared } = useTranslation(NS.shared);
+  const { t: tSettings } = useTranslation(NS.settings);
   const tLocal = useLocalizedText(language);
 
   const getRiskBadgeClassName = (riskLevel: string) => {
@@ -69,7 +72,7 @@ export const ApprovalStepTree = ({
         items={tree}
         onChange={setTree}
         collapsible
-        disabled={readOnly}
+        disabled={!canEdit}
         indentationWidth={20}
         reorderScope="sameDepth"
         renderItem={(item, { dragHandleProps, isOverlay, onCollapse }) => {
@@ -79,7 +82,7 @@ export const ApprovalStepTree = ({
             isApprovalStep && errors.has(item.id.toString());
           const limit = item.maximum;
           const canAddApprovalStep =
-            !readOnly &&
+            canEdit &&
             !isApprovalStep &&
             limit != null &&
             item.children.length < limit;
@@ -104,7 +107,7 @@ export const ApprovalStepTree = ({
                       variant="outline"
                       className={getRiskBadgeClassName(data.defaultRiskLevel)}
                     >
-                      {`${tDomain("enum.riskLevel.label")} ${tDomain(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
+                      {`${tShared("enum.riskLevel.label")} ${tShared(`enum.riskLevel.options.${data.defaultRiskLevel}`)}`}
                     </Badge>
                   )}
 
@@ -126,14 +129,13 @@ export const ApprovalStepTree = ({
 
                   {isApprovalStep && isInvalidApprovalStep && (
                     <Badge variant="destructive">
-                      {tDomain(
+                      {tSettings(
                         "serviceDeskSettings.approvalStepTab.saveUnavailable",
-                        { ns: NS.settings },
                       )}
                     </Badge>
                   )}
 
-                  {!readOnly && isApprovalStep && (
+                  {canEdit && isApprovalStep && (
                     <Button
                       variant="ghost"
                       type="button"
@@ -149,13 +151,13 @@ export const ApprovalStepTree = ({
                     </Button>
                   )}
 
-                  {!readOnly && isApprovalStep && !isOverlay && (
-                    <DragHandle
+                  {canEdit && isApprovalStep && !isOverlay && (
+                    <SortableTreeDragHandle
                       {...dragHandleProps}
                       aria-label={tLocal(data.name)}
                     />
                   )}
-                  {!readOnly && isApprovalStep && isOverlay && (
+                  {canEdit && isApprovalStep && isOverlay && (
                     <span className="size-5 shrink-0" aria-hidden="true" />
                   )}
                 </>

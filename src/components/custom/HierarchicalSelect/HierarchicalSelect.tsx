@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Popover } from "@/components/ui/popover";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { HierarchicalSelectContent } from "./HierarchicalSelectContent";
@@ -11,24 +13,31 @@ import type { HierarchicalSelectProps } from "./types";
 import { useHierarchicalSelectNavigation } from "./useHierarchicalSelectNavigation";
 import { findItemPath } from "./utils";
 
-const DEFAULT_PLACEHOLDER = "Select an option";
-const DEFAULT_EMPTY_TEXT = "No options available.";
-const DEFAULT_BACK_LABEL = "Back";
-
+/**
+ * Controlled single-value selector that navigates one tree level at a time.
+ * `selectableStrategy` decides whether a node selects immediately or only
+ * drills into its children.
+ */
 export const HierarchicalSelect = ({
   id,
   value,
   items,
-  placeholder = DEFAULT_PLACEHOLDER,
+  placeholder,
   disabled = false,
-  emptyText = DEFAULT_EMPTY_TEXT,
-  backLabel = DEFAULT_BACK_LABEL,
+  emptyText,
+  backLabel,
   selectableStrategy = "parent-without-children",
   onValueChange,
   getDisplayLabel,
   className,
   triggerClassName,
 }: HierarchicalSelectProps) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "hierarchicalSelect",
+  });
+  const resolvedPlaceholder = placeholder ?? t("singlePlaceholder");
+  const resolvedEmptyText = emptyText ?? t("empty");
+  const resolvedBackLabel = backLabel ?? t("back");
   const {
     open,
     path,
@@ -67,7 +76,7 @@ export const HierarchicalSelect = ({
           className={triggerClassName}
         >
           <span className="min-w-0 truncate">
-            {displayLabel ?? placeholder}
+            {displayLabel ?? resolvedPlaceholder}
           </span>
         </HierarchicalSelectTrigger>
 
@@ -76,8 +85,8 @@ export const HierarchicalSelect = ({
           path={path}
           direction={direction}
           selectedValues={selectedValues}
-          backLabel={backLabel}
-          emptyText={emptyText}
+          backLabel={resolvedBackLabel}
+          emptyText={resolvedEmptyText}
           selectableStrategy={selectableStrategy}
           onBack={goBack}
           onDrill={goForward}

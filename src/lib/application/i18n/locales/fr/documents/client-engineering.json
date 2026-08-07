@@ -1,0 +1,34 @@
+{
+  "componentBoundary": {
+    "title": "Limite des composants",
+    "description": "Separation des responsabilites UI entre couches de layout et de fonctionnalite."
+  },
+  "dashboardAndInsight": {
+    "title": "Tableau de bord et insights",
+    "description": "En quoi les surfaces operationnelles different des vues analytiques."
+  },
+  "dialogPattern": {
+    "title": "Patron de dialogue",
+    "description": "Guide d'utilisation des dialogues et des patrons d'interaction."
+  },
+  "formPattern": {
+    "title": "Patron de formulaire",
+    "description": "Conception de l'interaction et des responsabilites des formulaires."
+  },
+  "ticketForm": {
+    "title": "Formulaire de ticket",
+    "description": "Flux du formulaire, comportement pilote par categorie et conception de la soumission."
+  },
+  "ticketAttachment": {
+    "title": "Conception des pieces jointes de ticket",
+    "description": "Gestion des fichiers, images de texte enrichi, metadonnees et integration future du stockage."
+  },
+  "localeStructure": {
+    "title": "Structure des locales",
+    "description": "Structure des namespaces et limites de responsabilite de traduction."
+  },
+  "validationMessages": {
+    "title": "Messages de validation",
+    "description": "Strategie de formulation des validations et separation des traductions."
+  }
+}

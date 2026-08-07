@@ -1,4 +1,3 @@
-// src/feature/user/preference/queries.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Preference } from "@/domain/user/preference";

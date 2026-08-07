@@ -14,6 +14,7 @@ import {
   normalizeHistoryMetadataRecord,
 } from "../ticketActionRules";
 
+/** Executes adjust ticket action after shared authorization and payload validation have succeeded. */
 export async function executeAdjustTicketAction({
   ticket,
   ticketId,

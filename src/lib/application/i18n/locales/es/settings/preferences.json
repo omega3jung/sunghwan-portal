@@ -1,0 +1,21 @@
+{
+  "language": {
+    "english": "Inglés",
+    "spanish": "Español",
+    "french": "Francés",
+    "korean": "Coreano"
+  },
+  "preferences": {
+    "menu": "Diseño del menú",
+    "collapsible": "Plegable",
+    "group": "Agrupado",
+    "preferences": "Preferencias",
+    "colorTheme": "Tema de color",
+    "theme": "Modo",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "language": "Idioma",
+    "languagePicker": "Seleccionar un idioma"
+  }
+}

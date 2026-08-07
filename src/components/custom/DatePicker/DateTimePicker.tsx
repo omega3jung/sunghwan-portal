@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import type { DateTimePickerMinuteStep, DateTimePickerProps } from "./types";
@@ -90,6 +91,7 @@ function createMinuteOptions(
     optionSet.add(minute);
   }
 
+  // Preserve a controlled value that is not aligned with a newly changed step.
   if (selectedMinute !== undefined) {
     optionSet.add(selectedMinute);
   }
@@ -117,6 +119,11 @@ function getDefaultDateTime(
   );
 }
 
+/**
+ * Controlled date-time picker that preserves the current time when changing
+ * the calendar day. New values are rounded to `minuteStep` and clamped to
+ * min/max; exact time restrictions remain in the hour and minute controls.
+ */
 export function DateTimePicker({
   value,
   onChange,
@@ -131,7 +138,9 @@ export function DateTimePicker({
   modal = true,
   ...buttonProps
 }: DateTimePickerProps) {
-  const { t } = useTranslation("DatePicker");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "datePicker",
+  });
 
   const [open, setOpen] = useState(false);
   const normalizedDateTime = normalizeDateValue(value);

@@ -19,12 +19,6 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "README.md",
       },
       {
-        id: "readme-strategy",
-        titleKey: "item.readmeStrategy.title",
-        descriptionKey: "item.readmeStrategy.description",
-        relativePath: "01-overview/readme-strategy.md",
-      },
-      {
         id: "service-desk-evolution",
         titleKey: "item.serviceDeskEvolution.title",
         descriptionKey: "item.serviceDeskEvolution.description",
@@ -115,10 +109,10 @@ export const documentGroups: DocumentGroup[] = [
               "03-domain/service-desk/ticket/ticket-lifecycle.md",
           },
           {
-            id: "ticket-activity",
-            titleKey: "item.ticketActivity.title",
-            descriptionKey: "item.ticketActivity.description",
-            relativePath: "03-domain/service-desk/ticket/ticket-activity.md",
+            id: "ticket-action",
+            titleKey: "item.ticketAction.title",
+            descriptionKey: "item.ticketAction.description",
+            relativePath: "03-domain/service-desk/ticket/ticket-action.md",
           },
           {
             id: "ticket-history",
@@ -127,11 +121,11 @@ export const documentGroups: DocumentGroup[] = [
             relativePath: "03-domain/service-desk/ticket/ticket-history.md",
           },
           {
-            id: "ticket-track-time",
-            titleKey: "item.ticketTrackTime.title",
-            descriptionKey: "item.ticketTrackTime.description",
+            id: "ticket-work-session",
+            titleKey: "item.ticketWorkSession.title",
+            descriptionKey: "item.ticketWorkSession.description",
             relativePath:
-              "03-domain/service-desk/ticket/ticket-track-time.md",
+              "03-domain/service-desk/ticket/ticket-work-session.md",
           },
         ],
       },
@@ -192,119 +186,121 @@ export const documentGroups: DocumentGroup[] = [
     ],
   },
   {
-    id: "engineering",
-    titleKey: "group.engineering.title",
+    id: "client-engineering",
+    titleKey: "group.clientEngineering.title",
     sections: [
       {
-        id: "approach",
-        titleKey: "section.engineering.approach.title",
-        items: [
-          {
-            id: "development-approach",
-            titleKey: "item.developmentApproach.title",
-            descriptionKey: "item.developmentApproach.description",
-            relativePath: "04-engineering/development-approach.md",
-          },
-          {
-            id: "service-desk-implementation-strategy",
-            titleKey: "item.serviceDeskImplementationStrategy.title",
-            descriptionKey:
-              "item.serviceDeskImplementationStrategy.description",
-            relativePath:
-              "04-engineering/service-desk-implementation-strategy.md",
-          },
-        ],
-      },
-      {
         id: "ui",
-        titleKey: "section.engineering.ui.title",
+        titleKey: "section.clientEngineering.ui.title",
         items: [
           {
             id: "component-boundary",
             titleKey: "item.componentBoundary.title",
             descriptionKey: "item.componentBoundary.description",
-            relativePath: "04-engineering/ui/component-boundary.md",
+            relativePath:
+              "04-client-engineering/ui/component-boundary.md",
           },
           {
             id: "dashboard-and-insight",
             titleKey: "item.dashboardAndInsight.title",
             descriptionKey: "item.dashboardAndInsight.description",
-            relativePath: "04-engineering/ui/dashboard-and-insight.md",
+            relativePath:
+              "04-client-engineering/ui/dashboard-and-insight.md",
           },
           {
             id: "dialog-pattern",
             titleKey: "item.dialogPattern.title",
             descriptionKey: "item.dialogPattern.description",
-            relativePath: "04-engineering/ui/dialog-pattern.md",
+            relativePath: "04-client-engineering/ui/dialog-pattern.md",
           },
         ],
       },
       {
         id: "forms",
-        titleKey: "section.engineering.forms.title",
+        titleKey: "section.clientEngineering.forms.title",
         items: [
           {
             id: "form-pattern",
             titleKey: "item.formPattern.title",
             descriptionKey: "item.formPattern.description",
-            relativePath: "04-engineering/forms/form-pattern.md",
+            relativePath: "04-client-engineering/forms/form-pattern.md",
           },
           {
             id: "ticket-form",
             titleKey: "item.ticketForm.title",
             descriptionKey: "item.ticketForm.description",
-            relativePath: "04-engineering/forms/ticket-form.md",
+            relativePath: "04-client-engineering/forms/ticket-form.md",
           },
           {
             id: "ticket-attachment",
             titleKey: "item.ticketAttachment.title",
             descriptionKey: "item.ticketAttachment.description",
-            relativePath: "04-engineering/forms/ticket-attachment.md",
-          },
-        ],
-      },
-      {
-        id: "data-fetching",
-        titleKey: "section.engineering.dataFetching.title",
-        items: [
-          {
-            id: "react-query-strategy",
-            titleKey: "item.reactQueryStrategy.title",
-            descriptionKey: "item.reactQueryStrategy.description",
             relativePath:
-              "04-engineering/data-fetching/react-query-strategy.md",
+              "04-client-engineering/forms/ticket-attachment.md",
           },
         ],
       },
       {
         id: "i18n",
-        titleKey: "section.engineering.i18n.title",
+        titleKey: "section.clientEngineering.i18n.title",
         items: [
           {
             id: "locale-structure",
             titleKey: "item.localeStructure.title",
             descriptionKey: "item.localeStructure.description",
-            relativePath: "04-engineering/i18n/locale-structure.md",
+            relativePath: "04-client-engineering/i18n/locale-structure.md",
           },
           {
             id: "validation-messages",
             titleKey: "item.validationMessages.title",
             descriptionKey: "item.validationMessages.description",
-            relativePath: "04-engineering/i18n/validation-messages.md",
+            relativePath:
+              "04-client-engineering/i18n/validation-messages.md",
           },
         ],
       },
     ],
   },
   {
-    id: "releases",
-    titleKey: "group.releases.title",
+    id: "development",
+    titleKey: "group.development.title",
     items: [
+      {
+        id: "development-approach",
+        titleKey: "item.developmentApproach.title",
+        descriptionKey: "item.developmentApproach.description",
+        relativePath: "05-development/development-approach.md",
+      },
+      {
+        id: "service-desk-implementation-strategy",
+        titleKey: "item.serviceDeskImplementationStrategy.title",
+        descriptionKey: "item.serviceDeskImplementationStrategy.description",
+        relativePath:
+          "05-development/service-desk-implementation-strategy.md",
+      },
+      {
+        id: "boolean-naming-convention",
+        titleKey: "item.booleanNamingConvention.title",
+        descriptionKey: "item.booleanNamingConvention.description",
+        relativePath: "05-development/boolean-naming-convention.md",
+      },
+      {
+        id: "readme-strategy",
+        titleKey: "item.readmeStrategy.title",
+        descriptionKey: "item.readmeStrategy.description",
+        relativePath: "05-development/readme-strategy.md",
+      },
+      {
+        id: "react-query-strategy",
+        titleKey: "item.reactQueryStrategy.title",
+        descriptionKey: "item.reactQueryStrategy.description",
+        relativePath: "05-development/react-query-strategy.md",
+      },
       {
         id: "release-overview",
         titleKey: "item.releaseOverview.title",
         descriptionKey: "item.releaseOverview.description",
-        relativePath: "05-releases/README.md",
+        relativePath: "05-development/releases.md",
       },
     ],
   },
@@ -510,6 +506,15 @@ export const documentGroups: DocumentGroup[] = [
         titleKey: "section.decisions.2026-07.title",
         items: [
           {
+            id: "decision-nextjs-16-migration-strategy-2026-07",
+            titleKey:
+              "item.decisionNextjs16MigrationStrategy202607.title",
+            descriptionKey:
+              "item.decisionNextjs16MigrationStrategy202607.description",
+            relativePath:
+              "06-decisions/2026-07-nextjs-16-migration-strategy.md",
+          },
+          {
             id: "decision-service-desk-settings-reference-validation-boundary-2026-07",
             titleKey:
               "item.decisionServiceDeskSettingsReferenceValidationBoundary202607.title",
@@ -528,12 +533,36 @@ export const documentGroups: DocumentGroup[] = [
               "06-decisions/2026-07-ticket-action-and-history-execution.md",
           },
           {
+            id: "decision-ticket-merge-and-escalation-policy-2026-07",
+            titleKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.title",
+            descriptionKey:
+              "item.decisionTicketMergeAndEscalationPolicy202607.description",
+            relativePath:
+              "06-decisions/2026-07-ticket-merge-and-escalation-policy.md",
+          },
+          {
             id: "decision-ticket-routing-and-update-policy-2026-07",
             titleKey: "item.decisionTicketRoutingAndUpdatePolicy202607.title",
             descriptionKey:
               "item.decisionTicketRoutingAndUpdatePolicy202607.description",
             relativePath:
               "06-decisions/2026-07-ticket-routing-and-update-policy.md",
+          },
+        ],
+      },
+      {
+        id: "2026-08",
+        titleKey: "section.decisions.2026-08.title",
+        items: [
+          {
+            id: "decision-boolean-capability-api-naming-2026-08",
+            titleKey:
+              "item.decisionBooleanCapabilityApiNaming202608.title",
+            descriptionKey:
+              "item.decisionBooleanCapabilityApiNaming202608.description",
+            relativePath:
+              "06-decisions/2026-08-boolean-capability-api-naming.md",
           },
         ],
       },

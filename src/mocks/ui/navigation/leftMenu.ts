@@ -2,8 +2,8 @@ import { DbMenuItem } from "@/feature/navigation/leftMenu/types";
 
 export const leftMenuJsonMock: DbMenuItem[] = [
   {
-    id: -16,
-    parentId: -11,
+    id: -106,
+    parentId: -101,
     title: {
       en: "Guest Privilege Menu",
       es: "Menú de privilegios de invitado",
@@ -18,8 +18,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 1,
   },
   {
-    id: -15,
-    parentId: -11,
+    id: -105,
+    parentId: -101,
     title: {
       en: "User Privilege Menu",
       es: "Menú de privilegios de usuario",
@@ -34,8 +34,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 3,
   },
   {
-    id: -14,
-    parentId: -11,
+    id: -104,
+    parentId: -101,
     title: {
       en: "Leader Privilege Menu",
       es: "Menú de privilegios de líder",
@@ -50,8 +50,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 5,
   },
   {
-    id: -13,
-    parentId: -11,
+    id: -103,
+    parentId: -101,
     title: {
       en: "Manager Privilege Menu",
       es: "Menú de privilegios de gerente",
@@ -66,8 +66,8 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 7,
   },
   {
-    id: -12,
-    parentId: -11,
+    id: -102,
+    parentId: -101,
     title: {
       en: "Admin Privilege Menu",
       es: "Menú de privilegios de administrador",
@@ -82,7 +82,7 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     minAccessLevel: 9,
   },
   {
-    id: -11,
+    id: -101,
     parentId: 0,
     title: {
       en: "Permission Based Rendering Menu",
@@ -96,6 +96,54 @@ export const leftMenuJsonMock: DbMenuItem[] = [
     area: "CONTENT",
     order: 40,
     minAccessLevel: 1,
+  },
+  {
+    id: -12,
+    parentId: -2,
+    title: {
+      en: "File Attachment",
+      es: "Archivos adjuntos",
+      fr: "Pièces jointes",
+      ko: "파일 첨부",
+    },
+    path: "/demo/file-attachment",
+    icon: "Paperclip",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 90,
+    minAccessLevel: 9,
+  },
+  {
+    id: -11,
+    parentId: -2,
+    title: {
+      en: "Rich Text Editor",
+      es: "Editor de texto enriquecido",
+      fr: "Éditeur de texte enrichi",
+      ko: "텍스트 에디터",
+    },
+    path: "/demo/rich-editor",
+    icon: "FileText",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 80,
+    minAccessLevel: 9,
+  },
+  {
+    id: -10,
+    parentId: -2,
+    title: {
+      en: "Sortable Tree",
+      es: "Árbol ordenable",
+      fr: "Arbre réorganisable",
+      ko: "정렬 트리",
+    },
+    path: "/demo/sortable-tree",
+    icon: "ListTree",
+    type: "PAGE",
+    area: "CONTENT",
+    order: 75,
+    minAccessLevel: 9,
   },
   {
     id: -9,

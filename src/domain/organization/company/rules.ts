@@ -1,3 +1,4 @@
+/** Canonical provider company identifier used by tenant-boundary rules. */
 export const OWNER_COMPANY_ID = "1";
 
 export function isOwnerCompany(companyId: string | number | null | undefined) {

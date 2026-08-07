@@ -51,7 +51,7 @@ export const CreateTicketDialogStepFlow = ({
           {t("message.ticketCreation")}
         </h3>
         <Stepper
-          className={cn("mb-4 rounded-md border px-4 pb-8 pt-3 lg:px-8")}
+          className={cn("mb-4 rounded-md border px-4 py-3 lg:px-8")}
           currentStep={currentStep}
           onStepChange={onStepChange}
           orientation="horizontal"
@@ -82,7 +82,7 @@ export const CreateTicketDialogStepFlow = ({
         </h3>
         <Stepper
           className={cn(
-            "mb-4 rounded-md border border-l-0 border-dotted pb-8 pl-1 pr-4 pt-3 lg:pr-8",
+            "mb-4 rounded-md border border-l-0 border-dotted py-3 pl-1 pr-4 lg:pr-8",
           )}
           orientation="horizontal"
           stepVariant="circle"

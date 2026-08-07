@@ -9,7 +9,6 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type ApprovalStepResponse = OResponse<CategoryApprovalSettings>;
 
-// feature-scoped API.
 export const serviceDeskApprovalStepApi = {
   list: async (
     params?: ServiceDeskApprovalStepListParams,

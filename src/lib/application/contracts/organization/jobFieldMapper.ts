@@ -9,6 +9,7 @@ import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
 import { DbJobField } from "./jobField";
 
+/** Maps a database job field record into the application-facing model. */
 export const camelJobFieldMapper: ArrayMapper<DbJobField, JobField> = (
   data,
 ) => {
@@ -23,6 +24,7 @@ export const camelJobFieldMapper: ArrayMapper<DbJobField, JobField> = (
   }));
 };
 
+/** Maps an application job field model into its database-facing shape. */
 export const snakeJobFieldMapper: ArrayMapper<JobField, DbJobField> = (
   data,
 ) => {
@@ -37,7 +39,9 @@ export const snakeJobFieldMapper: ArrayMapper<JobField, DbJobField> = (
   }));
 };
 
+/** Maps a job field collection payload into application models. */
 export const mapJobFieldListPayload =
   createListPayloadMapper(camelJobFieldMapper);
+/** Maps a job field payload into the application model. */
 export const mapJobFieldItemPayload =
   createItemPayloadMapper(camelJobFieldMapper);

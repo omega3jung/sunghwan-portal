@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/custom/UserAvatar";
 import { ComboboxItem } from "@/components/ui/combobox";
 import type { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/shared/utils/presentation";
+import { cn } from "@/shared/utils/presentation";
 
 import type { BadgeVariant } from "./types";
 import { badgeVariants } from "./variants";
@@ -25,14 +25,15 @@ export function AvatarComboBoxOptionItem({
       value={user}
       data-testid={testId}
     >
-      <Avatar className="mx-1 h-8 w-8">
-        <AvatarImage src={user.image} alt={user.label} />
-        <AvatarFallback
-          className={cn(badgeVariants({ badgeVariant }), "font-normal")}
-        >
-          {initials(user.label)}
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar
+        className="mx-1"
+        fallbackClassName={cn(
+          badgeVariants({ badgeVariant }),
+          "font-normal",
+        )}
+        image={user.image}
+        name={user.label}
+      />
       <div>
         <h4 className="text-xs">{user.label}</h4>
         <h4 className="text-xs">{user.displayName || user.value}</h4>

@@ -15,6 +15,7 @@ export interface SubCategoryDto {
   default_sla_days?: number | null;
 }
 
+/** Defines the category sub category input dto exchanged across the server API boundary. */
 export interface CategorySubCategoryInputDto {
   category_id?: number;
   category_name: LocalizedText;
@@ -42,6 +43,7 @@ export interface CategoryDto {
   sub_category: SubCategoryDto[];
 }
 
+/** Defines the create category input dto exchanged across the server API boundary. */
 export interface CreateCategoryInputDto {
   category_tenant_id: number;
   category_name: LocalizedText;
@@ -56,6 +58,7 @@ export interface CreateCategoryInputDto {
   sub_category: CategorySubCategoryInputDto[];
 }
 
+/** Defines the update category input dto exchanged across the server API boundary. */
 export interface UpdateCategoryInputDto {
   category_name: LocalizedText;
   category_description: LocalizedText | null;

@@ -7,6 +7,7 @@ import {
 
 import { LocalActionRuntimeContext } from "./types";
 
+/** Enforces ticket before LOCAL state is exposed or mutated. */
 export const requireTicket = ({
   ticket,
   ticketId,
@@ -22,6 +23,7 @@ export const requireTicket = ({
   return ticket;
 };
 
+/** Resolves next ticket status using the server-side LOCAL ticket adapter policy. */
 export const resolveNextTicketStatus = (
   actionMode: TicketActionExecutionMode,
   ticket?: DbTicketDetail,
@@ -33,6 +35,7 @@ export const resolveNextTicketStatus = (
   return resolveTicketActionNextStatus(actionMode, ticket.status);
 };
 
+/** Enforces next status before LOCAL state is exposed or mutated. */
 export const requireNextStatus = ({
   nextStatus,
 }: Pick<LocalActionRuntimeContext, "nextStatus">) => {
@@ -46,6 +49,7 @@ export const requireNextStatus = ({
   return nextStatus;
 };
 
+/** Enforces approval step ID before LOCAL state is exposed or mutated. */
 export const requireApprovalStepId = (ticket: DbTicketDetail) => {
   if (ticket.approval_step_id !== null) {
     return ticket.approval_step_id;
@@ -58,6 +62,7 @@ export const requireApprovalStepId = (ticket: DbTicketDetail) => {
   );
 };
 
+/** Enforces approval ticket before LOCAL state is exposed or mutated. */
 export const requireApprovalTicket = (
   context: LocalActionRuntimeContext,
 ): DbTicketDetail => {
@@ -94,6 +99,7 @@ const isCurrentWorkAssignee = (
   employeeUserName: string,
 ) => isWorkPhase(ticket) && ticket.assignee_usernames.includes(employeeUserName);
 
+/** Enforces current work assignee before LOCAL state is exposed or mutated. */
 export const assertCurrentWorkAssignee = (
   context: LocalActionRuntimeContext,
 ) => {
@@ -113,6 +119,7 @@ export const assertCurrentWorkAssignee = (
   );
 };
 
+/** Enforces work assignee or admin before LOCAL state is exposed or mutated. */
 export const assertWorkAssigneeOrAdmin = (
   context: LocalActionRuntimeContext,
   messageKey = "serviceDesk.ticketCommand.localDemo.assigneeForbidden",
@@ -129,6 +136,7 @@ export const assertWorkAssigneeOrAdmin = (
   });
 };
 
+/** Enforces requester before LOCAL state is exposed or mutated. */
 export const assertRequester = (context: LocalActionRuntimeContext) => {
   const ticket = requireTicket(context);
 
@@ -146,6 +154,7 @@ export const assertRequester = (context: LocalActionRuntimeContext) => {
   );
 };
 
+/** Enforces requester or admin before LOCAL state is exposed or mutated. */
 export const assertRequesterOrAdmin = (context: LocalActionRuntimeContext) => {
   const ticket = requireTicket(context);
 

@@ -9,6 +9,12 @@ type DateRangeValue = {
 
 type Combinator = "and" | "or";
 
+/**
+ * Wraps interleaved query-builder rules only when at least one rule exists.
+ *
+ * Returning `undefined` for an empty rule list lets callers omit the filter
+ * entirely instead of serializing a group that would match every record.
+ */
 export const createRuleGroup = (
   rules: RuleGroupTypeIC["rules"],
 ): RuleGroupTypeIC | undefined => {
@@ -19,6 +25,13 @@ export const createRuleGroup = (
   return { rules };
 };
 
+/**
+ * Serializes database query parameters for the feature HTTP boundary.
+ *
+ * Rule-group filters are JSON encoded because their nested, interleaved shape
+ * cannot be represented as scalar search parameters. Dates become ISO strings;
+ * nullish and unsupported object values are intentionally omitted.
+ */
 export function buildDbSearchParams<TParams extends DbParams>(
   params: TParams,
 ): URLSearchParams {
@@ -62,6 +75,10 @@ function setSearchParamValue(
   }
 }
 
+/**
+ * Joins complete rule groups using the query-builder interleaved combinator
+ * representation (`group, combinator, group`). Empty input remains absent.
+ */
 export const joinRuleGroups = (
   ruleGroups: RuleGroupTypeIC[],
   combinator: Combinator,
@@ -81,6 +98,10 @@ export const joinRuleGroups = (
   return createRuleGroup(rules);
 };
 
+/**
+ * Removes absent filters before joining them, so optional search criteria do
+ * not create empty nested groups with ambiguous matching behavior.
+ */
 export const combineRuleGroups = (
   ruleGroups: Array<RuleGroupTypeIC | undefined>,
   combinator: Combinator = "and",
@@ -92,6 +113,12 @@ export const combineRuleGroups = (
   return joinRuleGroups(validRuleGroups, combinator);
 };
 
+/**
+ * Converts a date-like value to an ISO timestamp without throwing.
+ *
+ * Empty or malformed values return `undefined`, allowing the caller to omit an
+ * invalid optional boundary rather than emitting an unusable filter value.
+ */
 export const toIsoString = (value: Date | string | null | undefined) => {
   if (!value) {
     return undefined;
@@ -112,6 +139,7 @@ const createSingleRuleGroup = (rule: RuleType): RuleGroupTypeIC => {
   };
 };
 
+/** Creates a scalar filter unless the supplied value is nullish or blank. */
 export const createFieldFilter = ({
   field,
   operator = "=",
@@ -136,6 +164,10 @@ export const createFieldFilter = ({
   });
 };
 
+/**
+ * Builds a case-insensitive keyword intent across multiple fields by OR-joining
+ * `contains` rules. Blank keywords and empty field lists produce no filter.
+ */
 export const createKeywordFilter = ({
   fields,
   keyword,
@@ -160,6 +192,7 @@ export const createKeywordFilter = ({
   return joinRuleGroups(ruleGroups, "or");
 };
 
+/** Builds an OR group that matches a field against any non-empty scalar value. */
 export const createEqualsAnyFilter = ({
   field,
   values,
@@ -184,6 +217,7 @@ export const createEqualsAnyFilter = ({
   return joinRuleGroups(ruleGroups, "or");
 };
 
+/** Builds an OR group that checks an array-like field for any supplied value. */
 export const createArrayContainsAnyFilter = ({
   field,
   values,
@@ -208,6 +242,10 @@ export const createArrayContainsAnyFilter = ({
   return joinRuleGroups(ruleGroups, "or");
 };
 
+/**
+ * Builds an inclusive ISO date range. Either boundary may be omitted; malformed
+ * boundaries are ignored through `toIsoString` rather than throwing.
+ */
 export const createDateRangeFilter = ({
   field,
   dateRange,

@@ -1,5 +1,6 @@
 import type { CategoryScope } from "../category";
 
+/** Company boundary applied when resolving assignment candidates. */
 export type AssignmentCompanyPolicy =
   | "TENANT_ONLY"
   | "OWNER_ONLY"

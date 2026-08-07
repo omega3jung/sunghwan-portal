@@ -10,7 +10,6 @@ import { buildDbSearchParams } from "@/shared/utils/routing";
 
 type TenantResponse = OResponse<Tenant>;
 
-// feature-scoped API.
 export const serviceDeskTenantApi = {
   list: async (params: ServiceDeskTenantListParams): Promise<Tenant[]> => {
     if (!params) return [];

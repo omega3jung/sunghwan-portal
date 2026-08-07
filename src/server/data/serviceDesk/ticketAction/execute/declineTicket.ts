@@ -9,6 +9,7 @@ import { updateTicketApprovalRoutingById } from "@/server/data/serviceDesk/ticke
 import { createHistoryOfApprovalDeclined } from "../../ticketHistory/ticketHistoryEventService";
 import { requireCurrentApprovalStepId } from "../ticketActionRules";
 
+/** Records a declined approval and returns the ticket to the requester-facing rejected state. */
 export async function declineTicket({
   ticket,
   ticketId,

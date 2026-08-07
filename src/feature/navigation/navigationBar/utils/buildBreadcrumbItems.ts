@@ -48,6 +48,7 @@ type BuildBreadcrumbItemsOptions = Pick<
   pathname: string;
 };
 
+/** Falls back to URL segments when callers provide no breadcrumb metadata. */
 export function buildBreadcrumbItems({
   breadcrumbs,
   homeLabel = "Home",

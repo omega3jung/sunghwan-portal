@@ -1,3 +1,4 @@
+// src/server/authApi/index.ts
 import { NextResponse } from "next/server";
 
 import {
@@ -10,6 +11,7 @@ import { AuthApiJsonOptions } from "./types";
 const LOGIN_PATH_PATTERN = /^\/auth\/login$/;
 const IMPERSONATION_PATH_PATTERN = /^\/auth\/impersonation\/([^/]+)$/;
 
+/** Dispatches an in-process authentication API request to the matching server handler. */
 export async function dispatchAuthApi(options: AuthApiJsonOptions) {
   const path = normalizePath(options.path);
 

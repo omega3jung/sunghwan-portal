@@ -7,6 +7,7 @@ import { ArrayMapper } from "@/shared/types";
 import { ISODateString } from "@/shared/types/date";
 import { nullToUndefined, undefinedToNull } from "@/shared/utils/value";
 
+/** Legacy snake-case payload; note and update-time nulls become optional client fields. */
 export interface DbTicketWorkSession {
   ticket_id: string;
   work_session_no: number;

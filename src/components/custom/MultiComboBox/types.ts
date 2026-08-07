@@ -14,10 +14,7 @@ export type ButtonVariant = BadgeVariant;
 export type ComboBoxVariant = VariantProps<typeof comboBoxVariants>["variant"];
 export type ComboBoxSize = VariantProps<typeof comboBoxVariants>["size"];
 
-/**
- * The base item shape shared by both flat and tree-based combo boxes.
- * Tree variants can extend this type with hierarchical fields such as `children`.
- */
+/** Base option shape shared by flat and tree-based combo boxes. */
 export type MultiComboBoxItem = ValueLabel & {
   disabled?: boolean;
 };

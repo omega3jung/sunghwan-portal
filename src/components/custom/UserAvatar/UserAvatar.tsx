@@ -1,34 +1,44 @@
-import { useMemo } from "react";
+import type { ComponentProps } from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ImageValueLabel } from "@/shared/types/options";
-import { cn, initials } from "@/shared/utils/presentation";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { initials } from "@/shared/utils/presentation";
 
-export const UserAvatar = ({
-  item,
+export type UserAvatarProps = Omit<
+  ComponentProps<typeof Avatar>,
+  "children"
+> & {
+  name: string;
+  image?: string | null;
+  alt?: string;
+  imageClassName?: string;
+  fallbackClassName?: string;
+};
+
+export function UserAvatar({
+  name,
+  image,
+  alt,
   className,
-}: {
-  item: ImageValueLabel;
-  className?: string;
-}) => {
-  const nameInitials = useMemo(() => {
-    return initials(item.label);
-  }, [item.label]);
-
-  if (item.image) {
-    return (
-      <div
-        className={cn("h-8 w-8 rounded-full bg-cover bg-center", className)}
-        style={{ backgroundImage: `url(${item.image})` }}
-      ></div>
-    );
-  }
-
+  imageClassName,
+  fallbackClassName,
+  ...props
+}: UserAvatarProps) {
   return (
-    <Avatar className={cn("h-8 w-8", className)}>
-      <AvatarFallback className="bg-gray-800 text-white">
-        {nameInitials}
+    <Avatar className={className} {...props}>
+      {image ? (
+        <AvatarImage
+          className={imageClassName}
+          src={image}
+          alt={alt ?? name}
+        />
+      ) : null}
+      <AvatarFallback className={fallbackClassName}>
+        {initials(name)}
       </AvatarFallback>
     </Avatar>
   );
-};
+}

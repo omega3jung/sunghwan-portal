@@ -18,6 +18,7 @@ import {
   type NormalizedTicketActionPayload,
 } from "../ticketActionRules";
 
+/** Executes merge ticket action after shared authorization and payload validation have succeeded. */
 export async function executeMergeTicketAction({
   ticket,
   targetTicket,
@@ -85,6 +86,7 @@ export async function executeMergeTicketAction({
   );
 }
 
+/** Loads and validates a merge target while preventing cross-scope or cyclic ticket relationships. */
 export async function resolveMergeTargetTicket({
   ticket,
   targetTicketId,

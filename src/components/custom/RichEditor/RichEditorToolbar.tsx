@@ -16,7 +16,8 @@ import {
   Underline,
   Undo2,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -26,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import {
@@ -33,6 +35,7 @@ import {
   isSupportedRichEditorImageFile,
   RICH_EDITOR_IMAGE_FILE_ACCEPT,
 } from "./imageFiles";
+import { getRichEditorLabels } from "./labels";
 import { resolveRichEditorPreset } from "./presets";
 import type {
   RichEditorPreset,
@@ -52,24 +55,11 @@ type RichEditorToolbarProps = {
   className?: string;
 };
 
-const DEFAULT_LABELS: Record<RichEditorToolbarItemKey, string> = {
-  bold: "Bold",
-  italic: "Italic",
-  underline: "Underline",
-  strike: "Strike",
-  bulletList: "Bullet list",
-  orderedList: "Numbered list",
-  blockquote: "Quote",
-  codeBlock: "Code block",
-  link: "Link",
-  image: "Image",
-  table: "Table",
-  undo: "Undo",
-  redo: "Redo",
-};
-
-const DEFAULT_LINK_PROMPT = "Enter a URL";
-
+/**
+ * Renders only the commands enabled by the resolved editor preset. Caller
+ * handlers override built-in link, image, and table flows without changing
+ * command availability or disabled-state checks.
+ */
 export function RichEditorToolbar({
   className,
   disabled = false,
@@ -79,6 +69,11 @@ export function RichEditorToolbar({
   preset = "default",
   readOnly = false,
 }: RichEditorToolbarProps) {
+  const { t } = useTranslation(NS.component);
+  const resolvedLabels = useMemo(
+    () => ({ ...getRichEditorLabels(t), ...labels }),
+    [labels, t],
+  );
   const resolvedPreset = resolveRichEditorPreset(preset);
   const actionDisabled = disabled || readOnly;
 
@@ -97,7 +92,7 @@ export function RichEditorToolbar({
           >
             {group.map((itemKey) => {
               const item = createToolbarItem(itemKey);
-              const label = labels[itemKey] || DEFAULT_LABELS[itemKey];
+              const label = resolvedLabels[itemKey] ?? itemKey;
               const itemDisabled =
                 !editor ||
                 actionDisabled ||
@@ -124,7 +119,7 @@ export function RichEditorToolbar({
                             return;
                           }
 
-                          item.run(editor, labels, handlers);
+                          item.run(editor, resolvedLabels, handlers);
                         }}
                         disabled={itemDisabled}
                       >
@@ -311,7 +306,7 @@ function runDefaultLinkAction(
 ) {
   const previousUrl = String(editor.getAttributes("link").href ?? "");
   const value = window.prompt(
-    labels?.linkPrompt || DEFAULT_LINK_PROMPT,
+    labels?.linkPrompt ?? "",
     previousUrl || "https://",
   );
 

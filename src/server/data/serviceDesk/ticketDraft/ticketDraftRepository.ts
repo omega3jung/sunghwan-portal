@@ -112,6 +112,7 @@ where tk_id = $1
 limit 1;
 `;
 
+/** Queries PostgreSQL for ticket draft row by requester username without applying presentation concerns. */
 export async function findTicketDraftRowByRequesterUsername(
   requesterUsername: string,
 ): Promise<ServiceDeskTicketDraftRow | null> {
@@ -123,6 +124,7 @@ export async function findTicketDraftRowByRequesterUsername(
   return rows[0] ?? null;
 }
 
+/** Creates ticket draft row through the server persistence boundary. */
 export async function createTicketDraftRow(
   requesterUsername: string,
   input: TicketDraftRowInput,
@@ -152,6 +154,7 @@ export async function createTicketDraftRow(
     : null;
 }
 
+/** Updates ticket draft row by id while preserving server-side validation and persistence rules. */
 export async function updateTicketDraftRowById(
   ticketId: string,
   requesterUsername: string,
@@ -182,6 +185,7 @@ export async function updateTicketDraftRowById(
     : null;
 }
 
+/** Removes or deactivates ticket draft row by id through the server persistence boundary. */
 export async function discardTicketDraftRowById(
   ticketId: string,
   requesterUsername: string,

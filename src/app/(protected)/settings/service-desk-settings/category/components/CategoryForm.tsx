@@ -61,7 +61,7 @@ type Props = {
       data: CategoryData | SubCategoryData,
     ) => CategoryData | SubCategoryData,
   ) => void;
-  readOnly?: boolean;
+  canEdit?: boolean;
 };
 
 export function CategoryForm({
@@ -70,7 +70,7 @@ export function CategoryForm({
   language,
   availableScopes,
   onChange,
-  readOnly = false,
+  canEdit = true,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const isCategoryNode = selectedNode?.nodeType === "category";
@@ -95,7 +95,7 @@ export function CategoryForm({
     return priorityOptions.map((priority) => {
       return {
         value: priority.value,
-        label: t(`enum.priority.options.${priority.value}`, { ns: "domain" }),
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
       };
     });
   }, [t]);
@@ -107,7 +107,7 @@ export function CategoryForm({
       return {
         value: riskLevel.value,
         label: t(`enum.riskLevel.options.${riskLevel.value}`, {
-          ns: "domain",
+          ns: NS.shared,
         }),
       };
     });
@@ -122,7 +122,7 @@ export function CategoryForm({
 
     const parentValue = parentCategory
       ? t(`enum.priority.options.${parentCategory.defaultPriority}`, {
-          ns: "domain",
+          ns: NS.shared,
         })
       : "—";
 
@@ -146,7 +146,7 @@ export function CategoryForm({
 
     const parentValue = parentCategory
       ? t(`enum.riskLevel.options.${parentCategory.defaultRiskLevel}`, {
-          ns: "domain",
+          ns: NS.shared,
         })
       : "—";
 
@@ -257,7 +257,7 @@ export function CategoryForm({
                 data-testid="category-name"
                 className="!disabled:border-primary"
                 value={selectedNode.name[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) => updateTranslation("name")(e.target.value)}
               />
             </Field>
@@ -269,7 +269,7 @@ export function CategoryForm({
                 id="category-textarea-description"
                 className="!disabled:border-primary"
                 value={selectedNode.description?.[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) =>
                   updateTranslation("description")(e.target.value)
                 }
@@ -283,7 +283,7 @@ export function CategoryForm({
                 id="category-textarea-request-template"
                 className="!disabled:border-primary"
                 value={selectedNode.requestTemplate?.[editorLanguage] ?? ""}
-                disabled={readOnly}
+                disabled={!canEdit}
                 onChange={(e) =>
                   updateTranslation("requestTemplate")(e.target.value)
                 }
@@ -297,8 +297,8 @@ export function CategoryForm({
                 value={isCategoryNode ? selectedNode.scope : null}
                 availableScopes={availableScopes}
                 onValueChange={updateValue("scope")}
-                disabled={
-                  readOnly || !isCategoryNode || !selectedNode.isCreated
+                canChangeScope={
+                  canEdit && isCategoryNode && selectedNode.isCreated
                 }
                 placeholder={parentScopeString}
               />
@@ -306,7 +306,7 @@ export function CategoryForm({
             <div className="grid grid-cols-2 gap-2">
               <Field>
                 <FieldLabel htmlFor="category-select-priority">
-                  {t("enum.priority.label", { ns: "domain" })}
+                  {t("enum.priority.label", { ns: NS.shared })}
                 </FieldLabel>
                 <Select
                   items={prioritySelectData}
@@ -323,7 +323,7 @@ export function CategoryForm({
                       updateValue("defaultPriority")(value as PriorityValue);
                     }
                   }}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                 >
                   <SelectTrigger id="category-select-priority">
                     <SelectValue />
@@ -339,7 +339,7 @@ export function CategoryForm({
               </Field>
               <Field>
                 <FieldLabel htmlFor="category-select-risk-level">
-                  {t("enum.riskLevel.label", { ns: "domain" })}
+                  {t("enum.riskLevel.label", { ns: NS.shared })}
                 </FieldLabel>
                 <Select
                   items={riskLevelSelectData}
@@ -356,7 +356,7 @@ export function CategoryForm({
                       updateValue("defaultRiskLevel")(value as RiskLevelValue);
                     }
                   }}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                 >
                   <SelectTrigger id="category-select-risk-level">
                     <SelectValue />
@@ -393,7 +393,7 @@ export function CategoryForm({
                         );
                       }
                     }}
-                    disabled={readOnly}
+                    disabled={!canEdit}
                   >
                     <SelectTrigger className={"w-full"}>
                       <SelectValue />
@@ -417,7 +417,7 @@ export function CategoryForm({
                       : selectedNode.defaultSlaDays
                   }
                   disabled={
-                    readOnly ||
+                    !canEdit ||
                     (isSubCategoryNode &&
                       selectedNode.defaultSlaDays === undefined)
                   }
@@ -448,7 +448,7 @@ export function CategoryForm({
                   id="category-switch-active"
                   className="!disabled:color-primary"
                   checked={selectedNode.active ?? false}
-                  disabled={readOnly}
+                  disabled={!canEdit}
                   onCheckedChange={updateValue("active")}
                 />
               </span>

@@ -4,6 +4,7 @@ import { isBoolean } from "@/shared/utils/value";
 
 import type { PortalApiJsonOptions } from "../types";
 
+/** Carries the normalized method, path, query, body, and headers shared by Service Desk handlers. */
 export type ServiceDeskPortalApiContext = {
   request: NextRequest;
   options: PortalApiJsonOptions;
@@ -11,10 +12,12 @@ export type ServiceDeskPortalApiContext = {
   method: string;
 };
 
+/** Creates the consistent JSON response used when a Service Desk route is unmatched. */
 export function createNotFoundResponse() {
   return NextResponse.json({ message: "Not found" }, { status: 404 });
 }
 
+/** Parses boolean query value from the untrusted request representation. */
 export function parseBooleanQueryValue(value: string | null): boolean | null {
   if (value === null || !isBoolean(value)) {
     return null;
@@ -39,10 +42,12 @@ function parseNumberValue(value: unknown): number | null {
   return null;
 }
 
+/** Parses optional id from the untrusted request representation. */
 export function parseOptionalId(value: unknown) {
   return parseNumberValue(value);
 }
 
+/** Requires a parsed request body before a mutation handler enters the service layer. */
 export function requireBody<T>(options: PortalApiJsonOptions): T {
   if (!isRecord(options.body)) {
     throw createStatusError("Invalid request body.", 400);

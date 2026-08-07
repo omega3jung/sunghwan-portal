@@ -15,7 +15,7 @@
 
 ## 핵심 개념
 
-```txt id="service-desk-settings-core"
+```txt
 설정은 이후 티켓 동작을 구성한다.
 이미 존재하는 티켓 이력은 원래 의미를 유지한다.
 ```
@@ -30,7 +30,7 @@
 
 서비스 데스크 설정은 조직 기준 데이터와 티켓 실행 사이에 위치한다.
 
-```txt id="service-desk-settings-position"
+```txt
 조직 기준 데이터
 -> 서비스 데스크 설정
 -> 티켓 워크플로
@@ -57,7 +57,7 @@
 
 현재 설정 화면은 다음 구조로 구성된다.
 
-```txt id="service-desk-settings-scope"
+```txt
 Service Desk Settings
 -> Tenant
 -> Category
@@ -75,7 +75,7 @@ LOCAL/REMOTE 구현 경계를 가진다.
 UI는 설정 데이터가 로컬 데모 상태에서 왔는지, REMOTE 영속성에서 왔는지에
 의존하면 안 된다.
 
-```txt id="service-desk-settings-api-flow"
+```txt
 UI
 -> feature API client
 -> Next.js Route Handler
@@ -133,7 +133,7 @@ Tenant는 category 기반 workflow 설정이 적용되는 _위치_를 답한다.
 
 Tenant Admin의 대상은 서버에서 다음 관계로 결정한다.
 
-```txt id="tenant-admin-boundary"
+```txt
 effective AppUser.companyId
 -> Tenant.companyId
 -> 해당 customer Tenant
@@ -187,7 +187,7 @@ Tenant는 Company와 관련되지만 같은 개념은 아니다. Company는 조�
 
 ### 현재 도메인 형태
 
-```ts id="tenant-domain-shape"
+```ts
 type Tenant = {
   id: string;
   companyId: string;
@@ -247,7 +247,7 @@ API 권한 처리는 redirect를 사용하지 않는다.
 
 현재 도메인 모델은 main category와 subcategory를 구분한다.
 
-```ts id="category-domain-shape"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 
 type CategoryBase = {
@@ -280,7 +280,7 @@ CategoryScope`를 사용한다. `"CLIENT"`를 사용하는 오래된 설명은 �
 
 ### 계층
 
-```txt id="category-hierarchy"
+```txt
 Tenant
 -> Main Category
 -> Sub Category
@@ -351,7 +351,7 @@ resolve된다. Subcategory는 요청을 classify하지만 독립적인 approval 
 
 ### 현재 도메인 형태
 
-```ts id="approval-step-domain-shape"
+```ts
 type ApprovalStep = {
   id: string;
   name: LocalizedText;
@@ -376,7 +376,7 @@ type ApprovalAssigneeType =
 
 승인 단계는 `index` 오름차순으로 평가된다.
 
-```txt id="approval-step-flow"
+```txt
 Ticket submitted
 -> category selected
 -> parent/main category resolved
@@ -440,7 +440,7 @@ candidate search 권한을 부여하지는 않는다.
 
 ### 현재 도메인 형태
 
-```ts id="assignment-rule-domain-shape"
+```ts
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
@@ -460,7 +460,7 @@ DTO는 `job_field_id`와 `employee_username` 배열을 사용하며, 다시
 
 배정 해석은 서버 경계에서 이루어져야 한다.
 
-```txt id="assignment-resolution"
+```txt
 Selected subcategory
 -> subcategory assignment rule, when present
 -> parent/main category assignment rule fallback
@@ -529,7 +529,7 @@ Employee 데이터는 명시적 승인 담당자, 명시적 배정 대상, 배�
 
 Organization lookup은 company 중심이다.
 
-```ts id="settings-eligible-actors"
+```ts
 getEmployeesByCompanyId(companyId);
 getDepartmentsByCompanyId(companyId);
 getJobFieldsByCompanyId(companyId);
@@ -540,7 +540,7 @@ variant는 organization 전체를 읽어 application code에서 filter하지 않
 company predicate를 적용한다. Approval Step과 Assignment Rule은 독립적인 권한
 source로 `tenantId`를 저장하지 않는다. DTO는 파생 context를 project할 수 있다.
 
-```txt id="settings-resource-boundary"
+```txt
 Approval Step / Assignment Rule
 -> Category
 -> Tenant
@@ -554,7 +554,7 @@ Approval Step / Assignment Rule
 
 ## 관계 모델
 
-```txt id="service-desk-settings-relationship"
+```txt
 Company
 -> Tenant
 -> Main Category
@@ -637,7 +637,7 @@ React Query가 소유해야 하는 것:
 
 설정 UI는 설정 범위를 따른다.
 
-```txt id="service-desk-settings-ui"
+```txt
 /settings/service-desk-settings
 -> tenant
 -> category
@@ -754,16 +754,17 @@ defense in depth로 같은 tenant boundary를 보존해야 한다.
 
 ## 관련 문서
 
-- [`ticket/ticket-system-overview.md`](ticket/ticket-system-overview.md)
-- [`ticket/strategy/category-strategy.md`](ticket/strategy/category-strategy.md)
-- [`ticket/strategy/approval-system.md`](ticket/strategy/approval-system.md)
-- [`ticket/strategy/assignment-policy.md`](ticket/strategy/assignment-policy.md)
-- [`../02-architecture/database-strategy.md`](../../02-architecture/database-strategy.md)
-- [`../02-architecture/routing-strategy.md`](../../02-architecture/routing-strategy.md)
-- [`../../04-engineering/data-fetching/react-query-strategy.md`](../../04-engineering/data-fetching/react-query-strategy.md)
-- [`../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md`](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
-- [`../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md`](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
-- [`../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [티켓 시스템 개요](ticket/ticket-system-overview.md)
+- [카테고리 전략](ticket/strategy/category-strategy.md)
+- [승인 시스템](ticket/strategy/approval-system.md)
+- [할당 정책](ticket/strategy/assignment-policy.md)
+- [직원 참조 범위 매트릭스](ticket/reference/restrict-employee-list.xlsx)
+- [데이터베이스 전략](../../02-architecture/database-strategy.md)
+- [라우팅 전략](../../02-architecture/routing-strategy.md)
+- [React Query 전략](../../05-development/react-query-strategy.md)
+- [서비스 데스크 설정 DTO/API 경계 결정](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
+- [서비스 데스크 설정 참조 검증 경계 결정](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
+- [티켓 라우팅 및 업데이트 정책 (2026-07)](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

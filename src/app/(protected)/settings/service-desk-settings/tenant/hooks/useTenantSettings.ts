@@ -421,13 +421,12 @@ export function useTenantSettings({
     companyList: {
       companies: availableCompanies,
       selectedCompanyIds,
-      disabled: isSaving,
+      canSelectCompanies: !isSaving,
       onSelectCompany: handleCompanySelect,
     },
     transferControls: {
       canAddTenants: selectedCompanyIds.length > 0 && !isSaving,
       canRemoveTenants: removableSelectedTenantIds.length > 0 && !isSaving,
-      disabled: isSaving,
       onAddTenants: handleAddTenants,
       onRemoveTenants: handleRemoveTenants,
     },
@@ -439,7 +438,7 @@ export function useTenantSettings({
     },
     settingInfo: {
       tenant: focusedTenant,
-      disabled: isSaving,
+      canEditTenant: !isSaving,
       onTenantNameChange: handleTenantNameChange,
       onTenantColorChange: handleTenantColorChange,
     },

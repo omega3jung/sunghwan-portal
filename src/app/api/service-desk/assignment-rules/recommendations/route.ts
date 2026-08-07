@@ -47,6 +47,7 @@ const parseRecommendationInput = async (
   };
 };
 
+/** Handles POST /api/service-desk/assignment-rules/recommendations; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   try {
     const principalContext = await resolveServiceDeskRequestContext(request);

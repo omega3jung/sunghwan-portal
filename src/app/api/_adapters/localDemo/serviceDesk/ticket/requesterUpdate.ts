@@ -18,6 +18,15 @@ import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 const REQUESTER_EDITABLE_TICKET_STATUSES: readonly DbTicketDetail["status"][] =
   ["Approval", "Assigned"];
 
+/**
+ * Applies the requester-edit workflow to LOCAL server-side state.
+ *
+ * All access, status, category, and routing resolution checks complete before
+ * the ticket array is replaced. Routing-neutral edits preserve status, approval
+ * step, and assignees; category/content/attachment changes restart routing and
+ * record `ROUTING_RESET`. This mirrors the REMOTE application contract without
+ * claiming database-level transaction guarantees.
+ */
 export const localRequesterUpdateTicket = async ({
   isInternal,
   access,
@@ -325,6 +334,8 @@ function isRoutingSensitiveField(field: string) {
 }
 
 function getAttachmentComparisonKeys(items: TicketAttachmentMetadata[]) {
+  // Compare stable metadata rather than object identity or array order so the
+  // workflow is not reset by an equivalent attachment payload.
   return items
     .map((item) =>
       [

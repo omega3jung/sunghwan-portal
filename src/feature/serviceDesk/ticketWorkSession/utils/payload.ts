@@ -53,6 +53,8 @@ const normalizeNote = (note?: string) => {
 };
 
 const getDurationTimeRange = (durationMinutes: number) => {
+  // Duration entry has no user-owned timestamps, so anchor its range once at
+  // submission instead of letting render time change the persisted interval.
   const endAt = new Date();
   const startAt = new Date(endAt.getTime() - durationMinutes * MS_PER_MINUTE);
 
@@ -66,6 +68,7 @@ export function getTrackedMinutesFromRange(values?: WorkSessionRangeLike) {
   const start = parseTime(values?.startAt);
   const end = parseTime(values?.endAt);
 
+  // Incomplete and reversed ranges represent no trackable time to callers.
   if (Number.isNaN(start) || Number.isNaN(end) || end <= start) {
     return 0;
   }

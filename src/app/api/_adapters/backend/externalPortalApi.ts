@@ -4,6 +4,12 @@ import { getAccessToken } from "@/app/api/_adapters/auth/requestAuth";
 
 import type { BackendJsonOptions, BackendQuery } from "./types";
 
+/**
+ * Proxies a server-side route request to a configured external portal API.
+ * The access token is read from the trusted session and forwarded as a bearer
+ * token; browser-provided authorization headers are not used as the auth source.
+ * Responses are normalized back to the same shape as embedded dispatch.
+ */
 export async function requestExternalPortalApi(
   request: NextRequest,
   {

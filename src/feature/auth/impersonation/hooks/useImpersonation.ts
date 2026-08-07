@@ -1,4 +1,3 @@
-// hooks/useImpersonation.ts
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,14 +15,9 @@ import { useAuthSessionStore } from "@/lib/client/auth";
 import { useImpersonationStore } from "@/lib/client/auth";
 
 /**
- * Provides impersonation state and actions for starting, stopping, and syncing impersonation sessions.
- *
- * Use for:
- * - Managing admin impersonation flows from client components
- * - Reading current user context alongside original and impersonated users
- *
- * @param none - This hook does not accept any arguments
- * @returns An impersonation facade containing originalUser, impersonatedUser, currentUser state, and control actions
+ * Coordinates impersonation across NextAuth, the client identity store, and
+ * identity-dependent query caches. Store synchronization waits for the fetched
+ * profile to match the session identity so consumers never receive mixed users.
  */
 export const useImpersonation = () => {
   const session = useSession();
@@ -32,6 +26,7 @@ export const useImpersonation = () => {
   const { originalUser, impersonatedUser, currentUser, syncFromSession } =
     useImpersonationStore();
 
+  // Call only after NextAuth publishes the effective identity so refetches use the new user.
   const invalidateImpersonationDependentQueries = () =>
     Promise.all([
       queryClient.invalidateQueries({ queryKey: leftMenuQueryKeys.all }),
@@ -40,16 +35,6 @@ export const useImpersonation = () => {
       queryClient.invalidateQueries({ queryKey: userProfileQueryKeys.all }),
     ]);
 
-  /**
-   * Starts impersonation for a target user and refreshes the session with the returned impersonation payload.
-   *
-   * Use for:
-   * - Entering impersonation mode from an admin control flow
-   * - Switching the current session context to another user
-   *
-   * @param impersonatedUsername - The username of the user to impersonate
-   * @returns A promise that resolves after the impersonation request and session update complete
-   */
   const startImpersonation = async (impersonatedUsername: string) => {
     const impersonation =
       await userImpersonationApi.start(impersonatedUsername);
@@ -57,23 +42,12 @@ export const useImpersonation = () => {
     await invalidateImpersonationDependentQueries();
   };
 
-  /**
-   * Stops the current impersonation session and clears impersonation data from the active session.
-   *
-   * Use for:
-   * - Exiting impersonation mode from the UI
-   * - Restoring the original user as the only active session identity
-   *
-   * @param none - This function does not accept any arguments
-   * @returns A promise that resolves after the impersonation session is cleared and the session is updated
-   */
   const stopImpersonation = async () => {
     await userImpersonationApi.stop();
     await session.update({ impersonation: null });
     await invalidateImpersonationDependentQueries();
   };
 
-  // Store synchronization when session changed.
   useEffect(() => {
     if (!sessionUser) {
       return;
@@ -128,7 +102,7 @@ export const useImpersonation = () => {
 
       syncFromSession({ originalUser: sessionUser, impersonatedUser: null });
     }
-    // optimized to dependencies. Do not update this.
+    // Full store objects change during synchronization; identity-only dependencies avoid a feedback loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     originalUser?.username,

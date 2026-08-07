@@ -2,6 +2,7 @@ import { Role } from "@/domain/auth";
 
 import { TicketStatus } from "../../types";
 
+/** User-intent and workflow action kinds recorded for Service Desk tickets. */
 export type TicketActionType =
   | "APPROVE"
   | "DECLINE"

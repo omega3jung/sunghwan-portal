@@ -1,5 +1,3 @@
-// feature/organization/keys.ts
-
 export const ORGANIZATION_KEY = "organization";
 export const ORGANIZATION_COMPANY_KEY = "company";
 export const ORGANIZATION_DEPARTMENT_KEY = "department";

@@ -15,6 +15,7 @@ import {
   DbCategoryApprovalSettings,
 } from "./approvalStep";
 
+/** Maps a database category approval setting record into the application-facing model. */
 export const camelCategoryApprovalSettingMapper: ArrayMapper<
   DbCategoryApprovalSettings,
   CategoryApprovalSettings
@@ -33,6 +34,7 @@ export const camelCategoryApprovalSettingMapper: ArrayMapper<
   }));
 };
 
+/** Maps a database approval step record into the application-facing model. */
 export const camelApprovalStepMapper: ArrayMapper<
   DbApprovalStep,
   ApprovalStep
@@ -69,10 +71,12 @@ const camelAssigneeTypeMapper: Mapper<
   }
 };
 
+/** Maps a approval settings collection payload into application models. */
 export const mapApprovalSettingsListPayload = createListPayloadMapper(
   camelCategoryApprovalSettingMapper,
 );
 
+/** Maps a approval settings tree payload into the application model. */
 export const mapApprovalSettingsTreePayload = (payload: unknown) => {
   if (!Array.isArray(payload)) {
     return payload;

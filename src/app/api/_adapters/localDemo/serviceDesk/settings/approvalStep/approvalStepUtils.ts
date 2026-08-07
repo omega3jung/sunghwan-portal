@@ -14,8 +14,10 @@ import {
   camelCategoryApprovalSettingMapper,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** Describes local database approval step used by the server-side LOCAL settings adapter. */
 export type LocalDbApprovalStep = DbApprovalStep;
 
+/** Describes local database category approval settings used by the server-side LOCAL settings adapter. */
 export type LocalDbCategoryApprovalSettings = Omit<
   DbCategoryApprovalSettings,
   "approval_step"
@@ -23,6 +25,7 @@ export type LocalDbCategoryApprovalSettings = Omit<
   approval_step: LocalDbApprovalStep[];
 };
 
+/** Describes approval step store used by the server-side LOCAL settings adapter. */
 export type ApprovalStepStore = Record<
   string,
   LocalDbCategoryApprovalSettings[]
@@ -67,6 +70,7 @@ const buildApprovalStepSeed = ({
   );
 };
 
+/** Returns approval step store from the server-side LOCAL settings adapter. */
 export const getApprovalStepStore = (isInternal: boolean) => {
   const items = buildApprovalStepSeed(
     getLocalDemoApprovalStepsTree(isInternal),
@@ -109,6 +113,7 @@ export const getApprovalStepStore = (isInternal: boolean) => {
   return items;
 };
 
+/** Returns approval steps in deterministic LOCAL display order. */
 export const sortApprovalSteps = (approvalSteps: LocalDbApprovalStep[]) => {
   return approvalSteps
     .slice()
@@ -117,6 +122,7 @@ export const sortApprovalSteps = (approvalSteps: LocalDbApprovalStep[]) => {
     );
 };
 
+/** Normalizes category approval settings into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeCategoryApprovalSettings = (
   categories: LocalDbCategoryApprovalSettings[],
 ): CategoryApprovalSettings[] => {
@@ -131,10 +137,12 @@ export const normalizeCategoryApprovalSettings = (
   );
 };
 
+/** Normalizes approval step into the server-side LOCAL settings adapter canonical shape. */
 export const normalizeApprovalStep = (approvalStep: LocalDbApprovalStep) => {
   return camelApprovalStepMapper([approvalStep])[0] ?? null;
 };
 
+/** Resolves tenant ID using the server-side LOCAL settings adapter policy. */
 export const resolveTenantId = (
   items: ApprovalStepStore,
   requestedTenantId: string | null,
@@ -146,6 +154,7 @@ export const resolveTenantId = (
   return Object.keys(items)[0] ?? null;
 };
 
+/** Returns tenant categories or throw from the server-side LOCAL settings adapter. */
 export const getTenantCategoriesOrThrow = (
   items: ApprovalStepStore,
   tenantId: string,
@@ -173,6 +182,7 @@ const collectApprovalStepIds = (items: ApprovalStepStore) => {
   );
 };
 
+/** Creates approval step ID assigner for the server-side LOCAL settings adapter. */
 export const createApprovalStepIdAssigner = (items: ApprovalStepStore) => {
   const assignNextId = createIncrementalIdAssigner(
     collectApprovalStepIds(items),
@@ -189,6 +199,7 @@ export const createApprovalStepIdAssigner = (items: ApprovalStepStore) => {
   };
 };
 
+/** Returns category location by ID from the server-side LOCAL settings adapter. */
 export const getCategoryLocationById = (
   items: ApprovalStepStore,
   categoryId: string,
@@ -209,6 +220,7 @@ export const getCategoryLocationById = (
   return null;
 };
 
+/** Returns approval step location from the server-side LOCAL settings adapter. */
 export const getApprovalStepLocation = (
   items: ApprovalStepStore,
   id: string,

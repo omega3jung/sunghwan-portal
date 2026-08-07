@@ -82,6 +82,7 @@ const SORT_DIRECTIONS = new Set<TicketSearchSortDto["direction"]>([
   "desc",
 ]);
 
+/** Routes ticket list, detail, search, create, update, and work-start requests to server services. */
 export async function handleTicketPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {

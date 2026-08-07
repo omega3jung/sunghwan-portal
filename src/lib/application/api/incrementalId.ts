@@ -1,3 +1,4 @@
+/** Creates a closure that allocates string IDs after the highest finite existing ID. */
 export const createIncrementalIdAssigner = (existingIds: number[]) => {
   let nextId = Math.max(0, ...existingIds.filter(Number.isFinite)) + 1;
 

@@ -15,6 +15,7 @@ import {
   normalizeHistoryMetadataRecord,
 } from "../ticketActionRules";
 
+/** Executes assign self ticket action after shared authorization and payload validation have succeeded. */
 export async function executeAssignSelfTicketAction({
   ticket,
   ticketId,

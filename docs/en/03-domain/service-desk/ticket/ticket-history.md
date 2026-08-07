@@ -16,7 +16,7 @@ It answers:
 
 ## Core Concept
 
-```txt id="ticket-history-core"
+```txt
 Action is user-facing timeline intent.
 History is immutable event evidence.
 ```
@@ -28,7 +28,7 @@ change. A system operation can produce history without a ticket action row.
 
 ## Current History Shape
 
-```ts id="ticket-history-shape"
+```ts
 type TicketHistory = {
   ticketId: string;
   historyNo: number;
@@ -53,7 +53,7 @@ primary event source.
 
 `type` identifies the affected domain area.
 
-```txt id="history-types"
+```txt
 TICKET
 STATUS
 CATEGORY
@@ -73,7 +73,7 @@ There is no `SYSTEM` history type. System automation is represented through the
 
 `source` identifies why or which rule produced the history.
 
-```txt id="history-sources"
+```txt
 USER_ACTION
 SYSTEM_AUTO
 ROUTING_RULE
@@ -95,7 +95,7 @@ Examples:
 
 Current event union:
 
-```txt id="history-events"
+```txt
 TICKET_SUBMITTED
 TICKET_UPDATED
 TICKET_REOPENED
@@ -168,7 +168,7 @@ They should describe the before/after change in a stable, displayable shape.
 
 Examples:
 
-```json id="history-from-to-example"
+```json
 {
   "fromValue": { "status": "Resolved" },
   "toValue": { "status": "Working" }
@@ -203,14 +203,14 @@ The client DTO should expose only allowlisted display metadata.
 
 ### Ticket Submit
 
-```txt id="history-ticket-submit"
+```txt
 TICKET_SUBMITTED
 -> APPROVAL_REQUESTED or ASSIGNMENT_RESOLVED
 ```
 
 ### Approval
 
-```txt id="history-approval"
+```txt
 APPROVAL_APPROVED
 -> APPROVAL_REQUESTED when another step exists
 -> ASSIGNMENT_RESOLVED when final approval completes
@@ -218,7 +218,7 @@ APPROVAL_APPROVED
 
 ### Requester Update
 
-```txt id="history-requester-update"
+```txt
 ROUTING_PRESERVED
 or
 ROUTING_RESET
@@ -226,7 +226,7 @@ ROUTING_RESET
 
 ### Reopen
 
-```txt id="history-reopen"
+```txt
 type = STATUS
 source = USER_ACTION
 event = TICKET_REOPENED
@@ -238,7 +238,7 @@ toValue = { status: "Working" }
 
 ### Auto Close
 
-```txt id="history-auto-close"
+```txt
 type = STATUS
 source = SYSTEM_AUTO
 event = RESOLUTION_CLOSE
@@ -294,7 +294,7 @@ Do not model current history as:
 
 - [Ticket System Overview](./ticket-system-overview.md)
 - [Ticket Lifecycle](./ticket-lifecycle.md)
-- [Ticket Activity Model](./ticket-activity.md)
+- [Ticket Action Model](./ticket-action.md)
 - [Action Strategy](./strategy/action-strategy.md)
 - [Ticket Operation Rules](reference/ticket-operation-rules.md)
 

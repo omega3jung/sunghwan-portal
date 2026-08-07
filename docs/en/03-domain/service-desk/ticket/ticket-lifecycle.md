@@ -13,7 +13,7 @@ permission details are documented in
 
 ## Persisted Statuses
 
-```txt id="ticket-statuses"
+```txt
 Draft
 Approval
 Declined
@@ -35,7 +35,7 @@ Closed
 
 ## Main Flow
 
-```txt id="main-lifecycle-flow"
+```txt
 Draft
 -> Approval | Assigned
 -> Working
@@ -145,7 +145,7 @@ branches around this main flow.
 
 Initial submit and resubmit use the same routing shape.
 
-```txt id="initial-routing"
+```txt
 next approval step exists
 -> status = Approval
 -> approvalStepId = next step
@@ -162,7 +162,7 @@ assignment rules resolve work assignees and the ticket moves to `Assigned`.
 
 Decline ends approval routing:
 
-```txt id="decline-routing"
+```txt
 status = Declined
 approvalStepId = null
 assigneeUsernames = []
@@ -206,7 +206,7 @@ supported work-status transition.
 
 Current work-session status transitions:
 
-```txt id="work-session-status"
+```txt
 Assigned -> Working
 Working -> Pending | Resolved
 Pending -> Working | Resolved
@@ -256,7 +256,7 @@ Examples:
 - [Ticket Operation Rules](reference/ticket-operation-rules.md)
 - [Approval System](./strategy/approval-system.md)
 - [Assignment Policy](./strategy/assignment-policy.md)
-- [Ticket Track Time](./ticket-track-time.md)
+- [Ticket Work Session](./ticket-work-session.md)
 - [Ticket History](./ticket-history.md)
 
 ---

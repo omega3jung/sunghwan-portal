@@ -17,7 +17,7 @@ Conceptual status meaning is documented in
 
 ### Ticket Routes
 
-```txt id="ticket-routes"
+```txt
 GET    /api/service-desk/tickets
 POST   /api/service-desk/tickets
 GET    /api/service-desk/tickets/search
@@ -28,7 +28,7 @@ DELETE /api/service-desk/tickets/:ticketId
 
 ### Draft Routes
 
-```txt id="draft-routes"
+```txt
 GET    /api/service-desk/tickets/draft
 POST   /api/service-desk/tickets/draft
 PUT    /api/service-desk/tickets/draft/:ticketId
@@ -37,14 +37,14 @@ DELETE /api/service-desk/tickets/draft/:ticketId
 
 ### Command Routes
 
-```txt id="command-routes"
+```txt
 POST /api/service-desk/tickets/:ticketId/command/start-work
 POST /api/service-desk/tickets/:ticketId/command/:action
 ```
 
 `:action` is one of:
 
-```txt id="command-actions"
+```txt
 approve
 decline
 comment
@@ -61,7 +61,7 @@ cancel
 
 ### Subresource Routes
 
-```txt id="subresource-routes"
+```txt
 GET   /api/service-desk/tickets/:ticketId/actions
 GET   /api/service-desk/tickets/:ticketId/actions/:actionNo
 PATCH /api/service-desk/tickets/:ticketId/actions/:actionNo
@@ -76,7 +76,7 @@ POST  /api/service-desk/tickets/:ticketId/work-session
 
 ## Common Command Pipeline
 
-```txt id="ticket-command-pipeline"
+```txt
 command request
 -> authenticate
 -> authorize
@@ -504,10 +504,12 @@ not currently have matching route files.
 
 - [Ticket System Overview](../ticket-system-overview.md)
 - [Ticket Lifecycle](../ticket-lifecycle.md)
-- [Ticket Activity Model](../ticket-activity.md)
+- [Ticket Action Model](../ticket-action.md)
 - [Action Strategy](../strategy/action-strategy.md)
 - [Ticket History](../ticket-history.md)
-- [Ticket Track Time](../ticket-track-time.md)
+- [Ticket Work Session](../ticket-work-session.md)
+- [Ticket Action Workflow Matrix](./ticket-action-workflow-matrix.xlsx)
+- [Employee Reference Scope Matrix](./restrict-employee-list.xlsx)
 
 ---
 

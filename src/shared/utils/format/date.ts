@@ -104,6 +104,10 @@ export const formatISODate = (date?: string | number | Date) => {
   return formatISO(date, { representation: "date" });
 };
 
+/**
+ * Parses a form date-time value without throwing. Missing or invalid values are
+ * represented as `undefined`, which matches optional form-field semantics.
+ */
 export function parseFormDateTime(value?: string | null) {
   if (!value) {
     return undefined;
@@ -113,10 +117,16 @@ export function parseFormDateTime(value?: string | null) {
   return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
 }
 
+/** Converts an optional form `Date` to the API-facing ISO representation. */
 export function formatFormDateTime(date?: Date) {
   return date ? date.toISOString() : "";
 }
 
+/**
+ * Formats a date-time for display using the application's stable English
+ * fallback format. Missing values use `-`; invalid non-empty values still
+ * surface the platform formatter error instead of silently hiding bad data.
+ */
 export function formatDateTime(value?: string | Date) {
   if (!value) {
     return "-";

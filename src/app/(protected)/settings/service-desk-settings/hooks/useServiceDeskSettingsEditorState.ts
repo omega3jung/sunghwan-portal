@@ -73,7 +73,7 @@ export function useServiceDeskSettingsEditorState({
         value: pageContext.selectedScope,
         onValueChange: handleScopeChange,
         availableScopes: pageContext.availableScopes,
-        disabled: isLoading || isSaving,
+        canChangeScope: !isLoading && !isSaving,
       },
       language: {
         value: pageContext.language,

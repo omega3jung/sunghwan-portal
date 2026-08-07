@@ -16,7 +16,7 @@ configuration for the Service Desk domain.
 
 ## Core Concept
 
-```txt id="service-desk-settings-core"
+```txt
 Settings configure future ticket behavior.
 Existing ticket history keeps its original meaning.
 ```
@@ -33,7 +33,7 @@ rewrite the meaning of already recorded ticket history.
 Service Desk Settings sit between organization reference data and ticket
 execution.
 
-```txt id="service-desk-settings-position"
+```txt
 Organization reference data
 -> Service Desk Settings
 -> Ticket workflow
@@ -60,7 +60,7 @@ It consumes, but does not own:
 
 The current settings surface is organized as:
 
-```txt id="service-desk-settings-scope"
+```txt
 Service Desk Settings
 -> Tenant
 -> Category
@@ -78,7 +78,7 @@ model, and LOCAL/REMOTE implementation boundary.
 The UI should not depend on whether settings data comes from local demo state
 or REMOTE persistence.
 
-```txt id="service-desk-settings-api-flow"
+```txt
 UI
 -> feature API client
 -> Next.js Route Handler
@@ -140,7 +140,7 @@ resource in that boundary.
 
 A Tenant Admin's target is resolved on the server through:
 
-```txt id="tenant-admin-boundary"
+```txt
 effective AppUser.companyId
 -> Tenant.companyId
 -> that customer Tenant
@@ -196,7 +196,7 @@ created from or linked to a company.
 
 ### Current Domain Shape
 
-```ts id="tenant-domain-shape"
+```ts
 type Tenant = {
   id: string;
   companyId: string;
@@ -260,7 +260,7 @@ approval configuration, and assignment configuration.
 
 The current domain model separates main categories from subcategories.
 
-```ts id="category-domain-shape"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 
 type CategoryBase = {
@@ -293,7 +293,7 @@ aligned with the current model.
 
 ### Hierarchy
 
-```txt id="category-hierarchy"
+```txt
 Tenant
 -> Main Category
 -> Sub Category
@@ -365,7 +365,7 @@ an independent approval pipeline.
 
 ### Current Domain Shape
 
-```ts id="approval-step-domain-shape"
+```ts
 type ApprovalStep = {
   id: string;
   name: LocalizedText;
@@ -390,7 +390,7 @@ The server DTO represents the same concept with `approval_step_assignee` and
 
 Approval steps are evaluated in ascending `index` order.
 
-```txt id="approval-step-flow"
+```txt
 Ticket submitted
 -> category selected
 -> parent/main category resolved
@@ -458,7 +458,7 @@ work ownership.
 
 ### Current Domain Shape
 
-```ts id="assignment-rule-domain-shape"
+```ts
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
@@ -478,7 +478,7 @@ back to the application model.
 
 Assignment resolution should happen on the server boundary.
 
-```txt id="assignment-resolution"
+```txt
 Selected subcategory
 -> subcategory assignment rule, when present
 -> parent/main category assignment rule fallback
@@ -549,7 +549,7 @@ targets, and assignment recommendation display.
 
 Organization lookup is company-centered. Conceptually:
 
-```ts id="settings-eligible-actors"
+```ts
 getEmployeesByCompanyId(companyId);
 getDepartmentsByCompanyId(companyId);
 getJobFieldsByCompanyId(companyId);
@@ -561,7 +561,7 @@ organization-wide list and filtering it in application code. Approval Step and
 Assignment Rule do not persist `tenantId` as an independent authorization
 source; a DTO may project derived context:
 
-```txt id="settings-resource-boundary"
+```txt
 Approval Step / Assignment Rule
 -> Category
 -> Tenant
@@ -575,7 +575,7 @@ store references and resolve them through the proper reference data boundary.
 
 ## Relationship Model
 
-```txt id="service-desk-settings-relationship"
+```txt
 Company
 -> Tenant
 -> Main Category
@@ -659,7 +659,7 @@ Do not duplicate settings server data into Zustand as another source of truth.
 
 The settings UI follows the settings scope:
 
-```txt id="service-desk-settings-ui"
+```txt
 /settings/service-desk-settings
 -> tenant
 -> category
@@ -777,16 +777,17 @@ The following items are deferred unless explicitly implemented:
 
 ## Related Documents
 
-- [`ticket/ticket-system-overview.md`](ticket/ticket-system-overview.md)
-- [`ticket/strategy/category-strategy.md`](ticket/strategy/category-strategy.md)
-- [`ticket/strategy/approval-system.md`](ticket/strategy/approval-system.md)
-- [`ticket/strategy/assignment-policy.md`](ticket/strategy/assignment-policy.md)
-- [`../02-architecture/database-strategy.md`](../../02-architecture/database-strategy.md)
-- [`../02-architecture/routing-strategy.md`](../../02-architecture/routing-strategy.md)
-- [`../../04-engineering/data-fetching/react-query-strategy.md`](../../04-engineering/data-fetching/react-query-strategy.md)
-- [`../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md`](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
-- [`../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md`](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
-- [`../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [Ticket System Overview](ticket/ticket-system-overview.md)
+- [Category Strategy](ticket/strategy/category-strategy.md)
+- [Approval System](ticket/strategy/approval-system.md)
+- [Assignment Policy](ticket/strategy/assignment-policy.md)
+- [Employee Reference Scope Matrix](ticket/reference/restrict-employee-list.xlsx)
+- [Database Strategy](../../02-architecture/database-strategy.md)
+- [Routing Strategy](../../02-architecture/routing-strategy.md)
+- [React Query Strategy](../../05-development/react-query-strategy.md)
+- [Service Desk Settings DTO/API Boundary Decision](../../06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
+- [Service Desk Settings Reference Validation Boundary Decision](../../06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
+- [Ticket Routing and Update Policy Decision](../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

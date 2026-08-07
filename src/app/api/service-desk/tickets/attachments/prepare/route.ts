@@ -10,6 +10,7 @@ import { prepareTicketAttachments } from "@/app/api/_adapters/localDemo/serviceD
 const BODY_FIELD_NAME = "body";
 const FILES_FIELD_NAME = "files";
 
+/** Handles POST /api/service-desk/tickets/attachments/prepare; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const currentUserName = await getCurrentEmployeeUserName(request);
 

@@ -20,6 +20,7 @@ const FIND_LOGIN_AUTH_USER_QUERY = `
   limit 1
 `;
 
+/** Queries PostgreSQL for login auth user without applying presentation concerns. */
 export async function findLoginAuthUser(
   loginUsername: string,
 ): Promise<DbAuthLoginUserRow | null> {
@@ -55,6 +56,7 @@ const FIND_IMPERSONATION_TARGET_QUERY = `
   limit 1
 `;
 
+/** Queries PostgreSQL for impersonation target without applying presentation concerns. */
 export async function findImpersonationTarget(
   employeeUsername: string,
 ): Promise<DbAuthUserProjectionRow | null> {
@@ -82,6 +84,7 @@ const UPDATE_AUTH_ACCOUNT_LAST_LOGIN_AT_QUERY = `
     and aa_active = true
 `;
 
+/** Updates auth account last login at while preserving server-side validation and persistence rules. */
 export async function updateAuthAccountLastLoginAt(
   authAccountId: string,
 ): Promise<void> {

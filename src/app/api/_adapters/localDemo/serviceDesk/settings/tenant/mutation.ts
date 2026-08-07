@@ -28,6 +28,7 @@ const toDbTenant = ({
   tenant_active: active,
 });
 
+/** Creates tenant in the server-side LOCAL settings adapter mutable state. */
 export const localCreateTenant = ({
   input,
 }: {
@@ -61,6 +62,7 @@ export const localCreateTenant = ({
   return normalizeTenant(nextTenant);
 };
 
+/** Updates tenant in the server-side LOCAL settings adapter mutable state. */
 export const localUpdateTenant = ({
   id,
   input,
@@ -113,6 +115,7 @@ export const localUpdateTenant = ({
   return normalizeTenant(nextTenant);
 };
 
+/** Removes tenant from the server-side LOCAL settings adapter mutable state. */
 export const localSoftDeleteTenant = ({ id }: { id: string }) => {
   const items = getLocalDemoTenants();
   const tenantIndex = findTenantIndexById(items, id);

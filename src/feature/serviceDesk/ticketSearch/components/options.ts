@@ -2,12 +2,11 @@ import type { SearchDateFilterOption } from "@/components/custom/DatePicker";
 import type { TreeMultiComboBoxOption } from "@/components/custom/MultiComboBox";
 import type { dueAt } from "@/domain/common";
 import type { MainCategory, TicketStatus } from "@/domain/serviceDesk";
-import { ticketStatusLocales } from "@/feature/serviceDesk/shared";
 import {
   OPEN_TICKET_STATUS_FILTER_VALUE,
   OPEN_TICKET_STATUS_FILTER_VALUES,
 } from "@/feature/serviceDesk/ticketSearch/statusFilter";
-import type { DateRangePreset, Locale, ValueLabel } from "@/shared/types";
+import type { DateRangePreset, ValueLabel } from "@/shared/types";
 
 type CategoryLabelResolver = (name: MainCategory["name"]) => string;
 type Translate = (key: string) => string;
@@ -40,23 +39,15 @@ export const createTicketCategoryOptions = (
 
 export const createTicketStatusFilterOptions = (
   statusOptions: ValueLabel<TicketStatus>[],
-  locale: Locale,
+  tStatus: Translate,
 ): TreeMultiComboBoxOption[] => {
   const statusLabelMap = new Map(
     statusOptions.map((option) => [option.value, option.label]),
   );
-  const localizedLabels =
-    ticketStatusLocales[locale] ?? ticketStatusLocales.en;
-  const fallbackLabels = ticketStatusLocales.en;
-  const openLabel =
-    localizedLabels.open ??
-    fallbackLabels.open ??
-    OPEN_TICKET_STATUS_FILTER_VALUE;
-
   return [
     {
       value: OPEN_TICKET_STATUS_FILTER_VALUE,
-      label: openLabel,
+      label: tStatus("open"),
       children: OPEN_TICKET_STATUS_FILTER_VALUES.map((status) => ({
         value: status,
         label: statusLabelMap.get(status) ?? status,
@@ -71,36 +62,36 @@ export const createTicketStatusFilterOptions = (
 };
 
 export const createTicketDueByOptions = (
-  tDomain: Translate,
+  tShared: Translate,
 ): SearchDateFilterOption<dueAt>[] => {
   return [
-    { value: "all", label: tDomain("enum.dueAt.options.all") },
-    { value: "overdue", label: tDomain("enum.dueAt.options.overDue") },
-    { value: "today", label: tDomain("enum.dueAt.options.today") },
+    { value: "all", label: tShared("enum.dueAt.options.all") },
+    { value: "overdue", label: tShared("enum.dueAt.options.overDue") },
+    { value: "today", label: tShared("enum.dueAt.options.today") },
     {
       value: "this_week",
-      label: tDomain("enum.dueAt.options.thisWeek"),
+      label: tShared("enum.dueAt.options.thisWeek"),
     },
     {
       value: "this_2week",
-      label: tDomain("enum.dueAt.options.this2Week"),
+      label: tShared("enum.dueAt.options.this2Week"),
     },
     {
       value: "this_month",
-      label: tDomain("enum.dueAt.options.thisMonth"),
+      label: tShared("enum.dueAt.options.thisMonth"),
     },
     {
       value: "within_week",
-      label: tDomain("enum.dueAt.options.withinWeek"),
+      label: tShared("enum.dueAt.options.withinWeek"),
     },
     {
       value: "within_2week",
-      label: tDomain("enum.dueAt.options.within2Week"),
+      label: tShared("enum.dueAt.options.within2Week"),
     },
     {
       value: "within_month",
-      label: tDomain("enum.dueAt.options.withinMonth"),
+      label: tShared("enum.dueAt.options.withinMonth"),
     },
-    { value: "range", label: tDomain("enum.dueAt.options.custom") },
+    { value: "range", label: tShared("enum.dueAt.options.custom") },
   ];
 };

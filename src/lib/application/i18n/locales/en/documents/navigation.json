@@ -1,0 +1,85 @@
+{
+  "page": {
+    "title": "Docs Hub",
+    "description": "Use the navigation menu to switch between major markdown documents."
+  },
+  "group": {
+    "overview": {
+      "title": "Overview"
+    },
+    "architecture": {
+      "title": "Architecture"
+    },
+    "domain": {
+      "title": "Domain"
+    },
+    "clientEngineering": {
+      "title": "Client Engineering"
+    },
+    "development": {
+      "title": "Development"
+    },
+    "decisions": {
+      "title": "Decisions"
+    }
+  },
+  "section": {
+    "domain": {
+      "coreModel": {
+        "title": "Core Model"
+      },
+      "workflow": {
+        "title": "Workflow"
+      },
+      "strategies": {
+        "title": "Strategies"
+      },
+      "reference": {
+        "title": "Reference"
+      }
+    },
+    "clientEngineering": {
+      "ui": {
+        "title": "UI"
+      },
+      "forms": {
+        "title": "Forms"
+      },
+      "i18n": {
+        "title": "i18n"
+      }
+    },
+    "decisions": {
+      "overview": {
+        "title": "Overview"
+      },
+      "2025-12": {
+        "title": "2025-12"
+      },
+      "2026-01": {
+        "title": "2026-01"
+      },
+      "2026-02": {
+        "title": "2026-02"
+      },
+      "2026-03": {
+        "title": "2026-03"
+      },
+      "2026-04": {
+        "title": "2026-04"
+      },
+      "2026-05": {
+        "title": "2026-05"
+      },
+      "2026-06": {
+        "title": "2026-06"
+      },
+      "2026-07": {
+        "title": "2026-07"
+      },
+      "2026-08": {
+        "title": "2026-08"
+      }
+    }
+  }
+}

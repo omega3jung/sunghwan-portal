@@ -2,9 +2,11 @@
 
 import { Loader2, X } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
 import { Popover } from "@/components/ui/popover";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { HierarchicalSelectContent } from "./HierarchicalSelectContent";
@@ -13,20 +15,21 @@ import type { MultiHierarchicalSelectProps } from "./types";
 import { useHierarchicalSelectNavigation } from "./useHierarchicalSelectNavigation";
 import { createItemPathMap } from "./utils";
 
-const DEFAULT_PLACEHOLDER = "Select options";
-const DEFAULT_EMPTY_TEXT = "No options available.";
-const DEFAULT_BACK_LABEL = "Back";
-
+/**
+ * Controlled tree selector that keeps navigation separate from selection.
+ * Selected values remain in caller order and render as removable badges;
+ * `selectableStrategy` controls which tree levels may be toggled.
+ */
 export const MultiHierarchicalSelect = ({
   id,
   value,
   items,
-  placeholder = DEFAULT_PLACEHOLDER,
+  placeholder,
   disabled = false,
   readOnly = false,
   isLoading = false,
-  emptyText = DEFAULT_EMPTY_TEXT,
-  backLabel = DEFAULT_BACK_LABEL,
+  emptyText,
+  backLabel,
   selectableStrategy = "parent-without-children",
   onValueChange,
   getDisplayLabel,
@@ -34,6 +37,12 @@ export const MultiHierarchicalSelect = ({
   className,
   triggerClassName,
 }: MultiHierarchicalSelectProps) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "hierarchicalSelect",
+  });
+  const resolvedPlaceholder = placeholder ?? t("multiplePlaceholder");
+  const resolvedEmptyText = emptyText ?? t("empty");
+  const resolvedBackLabel = backLabel ?? t("back");
   const {
     open,
     path,
@@ -86,7 +95,7 @@ export const MultiHierarchicalSelect = ({
           className={cn("h-auto min-h-8 py-1", triggerClassName)}
         >
           {selectedItems.length === 0 ? (
-            <span className="min-w-0 truncate">{placeholder}</span>
+            <span className="min-w-0 truncate">{resolvedPlaceholder}</span>
           ) : (
             <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
               {selectedItems.map((item) => (
@@ -116,8 +125,8 @@ export const MultiHierarchicalSelect = ({
           path={path}
           direction={direction}
           selectedValues={selectedValues}
-          backLabel={backLabel}
-          emptyText={emptyText}
+          backLabel={resolvedBackLabel}
+          emptyText={resolvedEmptyText}
           selectableStrategy={selectableStrategy}
           multiple
           onBack={goBack}

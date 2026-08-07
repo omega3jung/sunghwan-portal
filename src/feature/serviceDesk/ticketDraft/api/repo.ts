@@ -30,6 +30,13 @@ export function useTicketDraftRepoContext(): TicketDraftRepoContext {
   };
 }
 
+/**
+ * Selects draft persistence at the feature boundary.
+ *
+ * LOCAL drafts are browser-local convenience state, isolated by effective user
+ * ID and lost when localStorage is cleared. REMOTE drafts are server resources
+ * reached through the API. React Query only caches either result.
+ */
 export const serviceDeskTicketDraftRepo = {
   async get({
     userId,
@@ -97,6 +104,8 @@ const ticketDraftLocalStore = {
 
     if (!draft) return null;
 
+    // Never restore a previous effective user's draft after logout or an
+    // impersonation switch on the same browser profile.
     if (draft.ownerUserId !== userId) {
       localStorage.removeItem(TICKET_DRAFT_STORAGE_KEY);
       return null;

@@ -20,6 +20,7 @@ const COMPANIES_PATH_PATTERN = /^\/company$/;
 const DEPARTMENTS_PATH_PATTERN = /^\/department$/;
 const JOB_FIELDS_PATH_PATTERN = /^\/job-field$/;
 
+/** Handles organization portal api requests and translates domain results into portal API responses. */
 export async function handleOrganizationPortalApi(
   request: NextRequest,
   options: PortalApiJsonOptions,

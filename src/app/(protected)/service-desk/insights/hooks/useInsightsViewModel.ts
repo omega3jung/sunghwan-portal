@@ -35,13 +35,16 @@ export function useInsightsViewModel({
   isLoading,
 }: UseInsightsViewModelParams) {
   const { t } = useTranslation(NS.serviceDesk);
+  const { t: tStatus } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
   const { t: tCommon } = useTranslation(NS.common);
   const tLocal = useLocalizedValue(language);
 
   const statusLabelMap = useMemo(() => {
-    const statusOptions = getStatusOptions(language);
+    const statusOptions = getStatusOptions(tStatus);
     return new Map(statusOptions.map((option) => [option.value, option.label]));
-  }, [language]);
+  }, [tStatus]);
 
   const usersById = useMemo(() => {
     return new Map(

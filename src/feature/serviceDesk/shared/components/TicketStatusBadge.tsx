@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
 import type { TicketStatus } from "@/domain/serviceDesk";
+import { NS } from "@/lib/application/i18n";
 
-import { ticketStatusLocaleKey } from "../ticketStatus/locales";
+import { ticketStatusLocaleKey } from "../ticketStatus/localeKeys";
 import type { TicketStatusBadgeProps } from "../ticketStatus/types";
 
 export const ticketStatusClassMap: Record<TicketStatus, string> = {
@@ -21,7 +22,9 @@ export const ticketStatusClassMap: Record<TicketStatus, string> = {
 };
 
 export const TicketStatusBadge = ({ status }: TicketStatusBadgeProps) => {
-  const { t } = useTranslation("TicketStatusBadge");
+  const { t } = useTranslation(NS.serviceDesk, {
+    keyPrefix: "ticketStatus",
+  });
 
   if (!status) return null;
 

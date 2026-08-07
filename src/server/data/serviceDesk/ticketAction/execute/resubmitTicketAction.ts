@@ -17,6 +17,7 @@ import {
   normalizeHistoryMetadataRecord,
 } from "../ticketActionRules";
 
+/** Executes resubmit ticket action after shared authorization and payload validation have succeeded. */
 export async function executeResubmitTicketAction({
   ticket,
   ticketId,

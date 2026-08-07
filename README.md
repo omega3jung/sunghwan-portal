@@ -49,7 +49,7 @@ A focused review takes about five minutes:
    Approval Steps, and Assignment Rules.
 5. Review the [canonical ticket specification](./docs/spec/ticket-system.md),
    [operation rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md), or
-   [documentation index](./docs/en/README.md) for the underlying decisions.
+   [documentation index](./docs/en/README.md) for design and workflow details.
 
 ## What This Project Demonstrates
 
@@ -191,7 +191,7 @@ REJECT | MERGE | ADJUST | REOPEN | RESUBMIT | CANCEL
 The explicit start-work route is separate from that union:
 
 ```txt
-POST /api/service-desk/tickets/:ticketId/command/start-work
+POST /api/service-desk/tickets/[ticketId]/command/start-work
 ```
 
 History records the affected domain area (`type`), cause (`source`),
@@ -322,9 +322,9 @@ src/
   styles/       # global Tailwind CSS and theme tokens
   types/        # global and library type augmentation
 docs/
-  en/           # English architecture and domain documentation
-  ko/           # Korean architecture and domain documentation
-  spec/         # canonical ticket-system specification
+  en/           # English overview, architecture, domain, engineering, release, and decision docs
+  ko/           # Korean translations aligned to the English documentation structure
+  spec/         # canonical English and Korean ticket-system specifications
 ```
 
 ## Documentation
@@ -337,18 +337,22 @@ Recommended entry points:
 
 1. [Ticket System Specification](./docs/spec/ticket-system.md)
 2. [Service Desk Documentation Index](./docs/en/README.md)
-3. [Ticket Lifecycle](./docs/en/03-domain/service-desk/ticket/ticket-lifecycle.md)
-4. [Ticket Model](./docs/en/03-domain/service-desk/ticket/ticket-model.md)
-5. [Ticket Activity and Actions](./docs/en/03-domain/service-desk/ticket/ticket-activity.md)
-6. [Ticket History](./docs/en/03-domain/service-desk/ticket/ticket-history.md)
-7. [Service Desk Settings](./docs/en/03-domain/service-desk/settings.md)
-8. [Ticket Form](./docs/en/04-engineering/forms/ticket-form.md) and
-   [Attachment Design](./docs/en/04-engineering/forms/ticket-attachment.md)
-9. [Implementation Strategy](./docs/en/04-engineering/service-desk-implementation-strategy.md)
-10. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+3. [Ticket System Overview](./docs/en/03-domain/service-desk/ticket/ticket-system-overview.md)
+4. [Service Desk Settings](./docs/en/03-domain/service-desk/settings.md)
+5. [Ticket Lifecycle](./docs/en/03-domain/service-desk/ticket/ticket-lifecycle.md)
+6. [Ticket Model](./docs/en/03-domain/service-desk/ticket/ticket-model.md)
+7. [Ticket Action](./docs/en/03-domain/service-desk/ticket/ticket-action.md)
+8. [Ticket History](./docs/en/03-domain/service-desk/ticket/ticket-history.md)
+9. [Ticket Work Session](./docs/en/03-domain/service-desk/ticket/ticket-work-session.md)
+10. [Ticket Form](./docs/en/04-client-engineering/forms/ticket-form.md) and
+   [Attachment Design](./docs/en/04-client-engineering/forms/ticket-attachment.md)
+11. [Implementation Strategy](./docs/en/05-development/service-desk-implementation-strategy.md)
+12. [Boolean Naming Convention](./docs/en/05-development/boolean-naming-convention.md)
+13. [README Strategy](./docs/en/05-development/readme-strategy.md)
+14. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
-Historical implementation decisions are under
-[`docs/en/06-decisions`](./docs/en/06-decisions/).
+Historical decision records are indexed in
+[Decision Documentation](./docs/en/06-decisions/README.md).
 
 ## Quality and Verification
 

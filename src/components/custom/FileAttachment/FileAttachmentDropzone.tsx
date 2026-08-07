@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 type FileAttachmentDropzoneProps = {
@@ -23,7 +24,9 @@ export const FileAttachmentDropzone = ({
   inputRef,
   accept,
 }: FileAttachmentDropzoneProps) => {
-  const { t } = useTranslation("FileAttachment");
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "fileAttachment",
+  });
 
   const handleDrop = (event: DragEvent<HTMLButtonElement>) => {
     event.preventDefault();

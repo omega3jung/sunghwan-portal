@@ -15,6 +15,7 @@ const requestSchema = z.object({
   impersonatedUsername: z.string().trim().min(1),
 });
 
+/** Handles POST /api/auth/impersonation; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(req: NextRequest) {
   const token = await getAuthToken(req);
 
@@ -90,6 +91,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/** Handles DELETE /api/auth/impersonation; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function DELETE(req: NextRequest) {
   const token = await getAuthToken(req);
 

@@ -3,6 +3,7 @@ import type {
   TicketAttachmentImageExtension,
 } from "@/lib/application/contracts/serviceDesk";
 
+/** File extensions accepted by the LOCAL attachment preparation boundary. */
 export const ALLOWED_TICKET_ATTACHMENT_EXTENSIONS = [
   "jpg",
   "jpeg",
@@ -21,6 +22,7 @@ export const ALLOWED_TICKET_ATTACHMENT_EXTENSIONS = [
   "7z",
 ] as const satisfies readonly TicketAttachmentExtension[];
 
+/** Inline-image extensions accepted by the LOCAL attachment preparation boundary. */
 export const TICKET_INLINE_IMAGE_EXTENSIONS = [
   "jpg",
   "jpeg",
@@ -29,6 +31,7 @@ export const TICKET_INLINE_IMAGE_EXTENSIONS = [
   "webp",
 ] as const satisfies readonly TicketAttachmentImageExtension[];
 
+/** Controlled demo resource selected for each accepted attachment extension. */
 export const DEMO_FILE_BY_EXTENSION = {
   jpg: "/files/demo-jpg.jpg",
   jpeg: "/files/demo-jpg.jpg",
@@ -47,14 +50,17 @@ export const DEMO_FILE_BY_EXTENSION = {
   "7z": "/files/demo-7z.7z",
 } as const satisfies Record<TicketAttachmentExtension, string>;
 
+/** Defines ticket attachment extension set used by the server-side LOCAL ticket adapter. */
 export const TICKET_ATTACHMENT_EXTENSION_SET = new Set<string>(
   ALLOWED_TICKET_ATTACHMENT_EXTENSIONS,
 );
 
+/** Defines ticket inline image extension set used by the server-side LOCAL ticket adapter. */
 export const TICKET_INLINE_IMAGE_EXTENSION_SET = new Set<string>(
   TICKET_INLINE_IMAGE_EXTENSIONS,
 );
 
+/** Upload limits enforced by the controlled LOCAL attachment replacement. */
 export const TICKET_ATTACHMENT_LIMITS = {
   // TODO: Move these demo-mode limits to a tenant/service-desk settings source.
   maxFileCount: 10,
@@ -66,15 +72,18 @@ export const TICKET_ATTACHMENT_LIMITS = {
   maxFileNameLength: 200,
 } as const;
 
+/** Browser accept string derived from supported LOCAL attachment extensions. */
 export const TICKET_ATTACHMENT_ACCEPT =
   ALLOWED_TICKET_ATTACHMENT_EXTENSIONS.map((extension) => `.${extension}`).join(
     ",",
   );
 
+/** Returns demo url by extension from the server-side LOCAL ticket adapter. */
 export function getDemoUrlByExtension(extension: TicketAttachmentExtension) {
   return DEMO_FILE_BY_EXTENSION[extension];
 }
 
+/** Returns replaced name from demo url from the server-side LOCAL ticket adapter. */
 export function getReplacedNameFromDemoUrl(demoUrl: string) {
   return demoUrl.split("/").pop() ?? "demo-file";
 }

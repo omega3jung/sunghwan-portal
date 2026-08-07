@@ -16,9 +16,12 @@ type CompanyWriteFields = Pick<
   Company,
   "name" | "code" | "isPortalOwner" | "active"
 >;
+/** Input contract for create company operations at the organization application boundary. */
 export type CreateCompanyInput = CompanyWriteFields & { id?: string };
+/** Input contract for update company operations at the organization application boundary. */
 export type UpdateCompanyInput = CompanyWriteFields & { id: string };
 
+/** Converts company input into the API write payload. */
 export function toCompanyWritePayload(
   input: CreateCompanyInput | UpdateCompanyInput,
 ): Omit<DbCompany, "company_id" | "company_code"> & {
@@ -38,9 +41,12 @@ type DepartmentWriteFields = Pick<
   Department,
   "name" | "code" | "description" | "companyId" | "parentId" | "active"
 >;
+/** Input contract for create department operations at the organization application boundary. */
 export type CreateDepartmentInput = DepartmentWriteFields & { id?: string };
+/** Input contract for update department operations at the organization application boundary. */
 export type UpdateDepartmentInput = DepartmentWriteFields & { id: string };
 
+/** Converts department input into the API write payload. */
 export function toDepartmentWritePayload(
   input: CreateDepartmentInput | UpdateDepartmentInput,
 ): Omit<DbDepartment, "d_id"> & { d_id?: number | null } {
@@ -59,9 +65,12 @@ type JobFieldWriteFields = Pick<
   JobField,
   "name" | "description" | "companyId" | "departmentId" | "parentId" | "active"
 >;
+/** Input contract for create job field operations at the organization application boundary. */
 export type CreateJobFieldInput = JobFieldWriteFields & { id?: string };
+/** Input contract for update job field operations at the organization application boundary. */
 export type UpdateJobFieldInput = JobFieldWriteFields & { id: string };
 
+/** Converts job field input into the API write payload. */
 export function toJobFieldWritePayload(
   input: CreateJobFieldInput | UpdateJobFieldInput,
 ): Omit<DbJobField, "jf_id"> & { jf_id?: number | null } {
@@ -81,13 +90,16 @@ type EmployeeWriteFields = Omit<Employee, "id" | "startDate" | "endDate"> & {
   startDate: DateInput;
   endDate?: DateInput;
 };
+/** Input contract for create employee operations at the organization application boundary. */
 export type CreateEmployeeInput = EmployeeWriteFields & {
   id?: number | string;
 };
+/** Input contract for update employee operations at the organization application boundary. */
 export type UpdateEmployeeInput = EmployeeWriteFields & {
   id: number | string;
 };
 
+/** Converts employee input into the API write payload. */
 export function toEmployeeWritePayload(
   input: CreateEmployeeInput | UpdateEmployeeInput,
 ): Omit<DbEmployee, "e_id" | "e_start_date" | "e_end_date"> & {

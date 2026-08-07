@@ -1,5 +1,6 @@
 import { AppUser } from "@/domain/user";
 
+/** Client-facing session projection combining effective user, security, and presentation flags. */
 export interface CurrentSession {
   user: AppUser | null;
   expires: string;
@@ -8,7 +9,7 @@ export interface CurrentSession {
   isClient: boolean;
   superUserActivated: Date | null;
 
-  // Security-related information for public sessions.
+  /** Security state exposed without backend credentials. */
   security: {
     loginLockedUntil: number | null;
     failedAttempts: number;

@@ -10,6 +10,7 @@ import {
   TicketHistoryType,
 } from "./ticketHistoryTypes";
 
+/** Maps ticket history row to dto across the database and API boundary. */
 export function mapTicketHistoryRowToDto(
   row: TicketHistoryRow,
 ): TicketHistoryDto {
@@ -36,6 +37,7 @@ export function mapTicketHistoryRowToDto(
   };
 }
 
+/** Converts database JSON values to the recursively constrained history JSON contract. */
 export function normalizeTicketHistoryJsonValue(
   value: unknown,
 ): TicketHistoryJsonValue | null {

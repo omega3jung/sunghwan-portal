@@ -12,6 +12,7 @@ import {
   requireNextTicketStatus,
 } from "../ticketActionRules";
 
+/** Executes reject ticket action after shared authorization and payload validation have succeeded. */
 export async function executeRejectTicketAction({
   ticket,
   ticketId,

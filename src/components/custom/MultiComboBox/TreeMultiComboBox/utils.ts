@@ -1,5 +1,4 @@
 import type { MultiComboBoxItem } from "../types";
-import { EMPTY_OPTION_TEXT } from "../utils";
 import type {
   TreeCheckState,
   TreeMultiComboBoxNode,
@@ -10,8 +9,6 @@ import type {
 } from "./types";
 
 const normalize = (value: string) => value.trim().toUpperCase();
-
-export { EMPTY_OPTION_TEXT };
 
 export const createTreeOptionIndex = (
   options: TreeMultiComboBoxOption[],
@@ -138,6 +135,10 @@ export const isChildSelected = (
   return Boolean(parent && values.includes(parent.value));
 };
 
+/**
+ * Canonicalizes a full enabled branch to its parent key and removes unknown or
+ * disabled keys. This prevents equivalent selections from having two shapes.
+ */
 export const normalizeTreeValues = (
   values: TreeMultiComboBoxValue,
   options: TreeMultiComboBoxOption[],
@@ -344,6 +345,7 @@ export const createTreeComboboxFilter = (
       return false;
     }
 
+    // A parent-name match exposes its children even when the parent row itself is not a direct match.
     const parent = index.parentMap.get(item.parentValue);
 
     return Boolean(

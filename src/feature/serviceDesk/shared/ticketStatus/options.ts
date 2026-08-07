@@ -1,7 +1,7 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
-import { Locale, ValueLabel } from "@/shared/types";
+import { ValueLabel } from "@/shared/types";
 
-import { ticketStatusLocaleKey, ticketStatusLocales } from "./locales";
+import { ticketStatusLocaleKey } from "./localeKeys";
 
 const statusOptionValues = [
   "Draft",
@@ -16,19 +16,14 @@ const statusOptionValues = [
 ] as const satisfies readonly TicketStatus[];
 
 export const getStatusOptions = (
-  locale: Locale = "en",
+  tStatus: (key: string) => string,
 ): ValueLabel<TicketStatus>[] => {
-  const localizedLabels = ticketStatusLocales[locale];
-  const fallbackLabels = ticketStatusLocales.en;
-
   return statusOptionValues.map((value) => {
     const localeKey = ticketStatusLocaleKey[value];
 
     return {
       value,
-      label: localizedLabels[localeKey] ?? fallbackLabels[localeKey] ?? value,
+      label: tStatus(localeKey),
     };
   });
 };
-
-export const statusOptions = getStatusOptions();

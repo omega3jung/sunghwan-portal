@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import type { ForwardedRef } from "react";
 import { forwardRef, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/combobox";
+import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
 
 import { comboBoxVariants } from "../variants";
@@ -23,7 +25,6 @@ import {
   createTreeBadgeOrderMap,
   createTreeComboboxFilter,
   createTreeOptionIndex,
-  EMPTY_OPTION_TEXT,
   flattenTreeOptions,
   getParentRenderState,
   getSelectedTreeItems,
@@ -42,6 +43,11 @@ const hasSameValues = (left: string[], right: string[]) => {
   return left.every((value) => rightSet.has(value));
 };
 
+/**
+ * Controlled hierarchical multi-select with compressed branch semantics:
+ * selecting a parent represents the whole branch, while child keys represent
+ * partial selection. `onChange` takes precedence over delta callbacks.
+ */
 const Component = (
   {
     placeholder,
@@ -64,6 +70,9 @@ const Component = (
   }: TreeMultiComboBoxProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) => {
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "comboBox",
+  });
   const [search, setSearch] = useState("");
   const [expandedParentValues, setExpandedParentValues] = useState<string[]>(
     [],
@@ -223,11 +232,11 @@ const Component = (
 
       <ComboboxContent>
         <ComboboxInput
-          aria-label={placeholder ?? "Search tree options"}
+          aria-label={placeholder ?? t("searchTreeOptions")}
           placeholder={placeholder}
           showTrigger={false}
         />
-        <ComboboxEmpty>{EMPTY_OPTION_TEXT}</ComboboxEmpty>
+        <ComboboxEmpty>{t("empty")}</ComboboxEmpty>
         <ComboboxList showScrollbar className="max-h-64 min-h-0">
           {(item) => {
             if (item.kind === "parent") {

@@ -1,4 +1,3 @@
-// TicketListPagination.tsx
 
 import {
   Pagination,

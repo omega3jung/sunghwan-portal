@@ -15,7 +15,7 @@ type Props = {
   stepAssignee: AssigneeByType<"DEPARTMENT">;
   onChange: (value: ApprovalAssigneeType) => void;
   language: SupportedLanguage;
-  readOnly?: boolean;
+  canEdit?: boolean;
   departments?: Department[];
   isLoading?: boolean;
 };
@@ -24,7 +24,7 @@ export function DepartmentField({
   stepAssignee,
   onChange,
   language,
-  readOnly,
+  canEdit = true,
   departments = [],
   isLoading,
 }: Props) {
@@ -61,7 +61,7 @@ export function DepartmentField({
           item: t("serviceDeskSettings.approvalStepTab.department"),
         })}
         selectableStrategy="all"
-        disabled={readOnly || isLoading}
+        disabled={!canEdit || isLoading}
         onValueChange={(departmentId) =>
           onChange({ type: "DEPARTMENT", departmentId })
         }

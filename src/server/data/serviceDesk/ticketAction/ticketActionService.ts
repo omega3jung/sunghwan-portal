@@ -66,6 +66,7 @@ type TicketActionDeleteInput = {
   currentUserName: string;
 };
 
+/** Loads ticket actions by ticket id through the server data boundary. */
 export async function getTicketActionsByTicketId(
   ticketId: string,
   options?: TicketActionServiceOptions,
@@ -75,6 +76,7 @@ export async function getTicketActionsByTicketId(
   return rows.map(mapTicketActionRowToDto);
 }
 
+/** Creates ticket action through the server persistence boundary. */
 export async function createTicketAction(
   input: Omit<CreateTicketActionRowInput, "actionNo">,
   options?: TicketActionServiceOptions,
@@ -95,6 +97,7 @@ export async function createTicketAction(
   return mapTicketActionRowToDto(row);
 }
 
+/** Creates approval ticket action through the server persistence boundary. */
 export async function createApprovalTicketAction(
   input: CreateApprovalTicketActionDto,
   options?: TicketActionServiceOptions,
@@ -131,6 +134,13 @@ export async function createApprovalTicketAction(
   return mapTicketActionRowToDto(row);
 }
 
+/**
+ * Soft-deletes user-authored commentary without rewriting operational history.
+ *
+ * COMMENT and NOTE records may be hidden only by their writer. Workflow actions
+ * remain immutable evidence. The row update and deletion history event share a
+ * transaction so consumers never observe one without the other.
+ */
 export async function softDeleteTicketAction({
   ticketId,
   actionNo,
@@ -207,6 +217,11 @@ export async function softDeleteTicketAction({
   });
 }
 
+/**
+ * Records an approval decision and applies its routing effect atomically.
+ * The action row, ticket state, next approvers, and history therefore describe
+ * one committed decision rather than independently successful writes.
+ */
 export async function executeTicketApprovalAction({
   ticketId,
   action,
@@ -265,6 +280,13 @@ export async function executeTicketApprovalAction({
   });
 }
 
+/**
+ * Executes a general ticket command against the current canonical ticket row.
+ *
+ * Payload normalization happens before opening the transaction. Authorization,
+ * action creation, state/routing effects, and history then use the same query
+ * executor, so a failed effect cannot leave a misleading action in the timeline.
+ */
 export async function executeTicketAction({
   ticketId,
   action,

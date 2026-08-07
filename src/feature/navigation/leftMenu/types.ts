@@ -3,18 +3,21 @@ import { LucideIcon } from "lucide-react";
 import { AccessLevel } from "@/domain/auth";
 import { LocalizedText } from "@/shared/types";
 
+/** Distinguishes navigable pages from structural menu groups. */
 export type MenuItemType = "PAGE" | "GROUP";
 
+/** Recursively nested item rendered by the left menu. */
 export type MenuItem = {
   id: number;
   title: LocalizedText;
   path: string;
   icon: LucideIcon;
   type: MenuItemType;
-  minAccessLevel?: AccessLevel; // minimum access level required to view this menu item.
+  minAccessLevel?: AccessLevel;
   children?: MenuItem[];
 };
 
+/** Reduced page identity used by navigation controls that cannot contain groups. */
 export type PageMenuItem = Omit<MenuItem, "type" | "children"> & {
   type: "PAGE";
 };
@@ -24,6 +27,7 @@ export type LeftMenuItems = {
   footer: PageMenuItem[];
 };
 
+/** Flat menu record returned by the navigation API before tree reconstruction. */
 export type DbMenuItem = {
   id: number;
   parentId: number | null;

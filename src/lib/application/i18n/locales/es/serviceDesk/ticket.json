@@ -1,0 +1,54 @@
+{
+  "ticketUpdate": {
+    "trigger": "Actualizar ticket",
+    "title": "Actualizar ticket",
+    "description": "Actualizar los campos editables por el solicitante.",
+    "loadingTicket": "Cargando ticket...",
+    "notice": {
+      "remoteImagesReplaced": "En el modo remoto, las imágenes adjuntas se reemplazan por imágenes de demostración por motivos de seguridad.",
+      "remoteFilesReplaced": "En el modo remoto, los archivos adjuntos se reemplazan por archivos de demostración por motivos de seguridad."
+    },
+    "category": {
+      "placeholder": "Seleccionar categoría",
+      "back": "Volver",
+      "empty": "No hay categorías seleccionables."
+    },
+    "step": {
+      "info": "Detalles del problema",
+      "attachment": "Archivos adjuntos",
+      "review": "Revisión"
+    },
+    "routing": {
+      "preserve": "Los cambios solo en vencimiento o destinatarios conservan la aprobación y la asignación actuales.",
+      "reset": "Cambiar detalles de la solicitud distintos de la fecha límite o el correo recalcula los pasos de aprobación y la asignación de responsables."
+    },
+    "field": {
+      "existingFiles": "Archivos existentes",
+      "existingImages": "Imágenes existentes",
+      "newAttachments": "Nuevos adjuntos"
+    },
+    "empty": {
+      "existingAttachments": "No hay adjuntos existentes.",
+      "newAttachments": "No hay adjuntos nuevos."
+    },
+    "action": {
+      "submit": "Actualizar ticket",
+      "submitting": "Actualizando..."
+    },
+    "error": {
+      "load": "No se pudieron cargar los últimos detalles del ticket."
+    }
+  },
+  "listPage": {
+    "title": "Mesa de Servicio de TI",
+    "description": "Busca y consulta tickets de la mesa de servicio."
+  },
+  "ticketList": {
+    "empty": "No se encontraron tickets",
+    "requesterMeta": "{{name}} ??{{time}}",
+    "dueMeta": "Vence {{time}}"
+  },
+  "ticketUpdateFormContext": {
+    "missingProvider": "useTicketUpdateFormContext debe usarse dentro del provider."
+  }
+}

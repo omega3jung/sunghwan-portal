@@ -247,6 +247,8 @@ export const useCreateTicketDialog = ({
         normalizedDraft.dueAt = normalizedDraft.dueDate;
       }
 
+      // Drafts may outlive the current form schema. Preserve valid fields and
+      // report stale ones instead of rejecting the whole draft.
       Object.keys(normalizedDraft).forEach((fieldName) => {
         if (!(fieldName in schemaShape) && fieldName !== "dueDate") {
           invalidFields.add(fieldName);
@@ -305,6 +307,8 @@ export const useCreateTicketDialog = ({
   useEffect(() => {
     const ticketDraft = ticketDraftState.ticketDraft;
 
+    // Never offer restoration after local edits; accepting an older draft at
+    // that point would overwrite the user's current form state.
     if (
       !open ||
       !ticketDraft ||

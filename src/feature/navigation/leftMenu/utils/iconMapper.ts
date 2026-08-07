@@ -1,5 +1,3 @@
-// src/feature/navigation/leftMenu/utils/leftMenuIconMap.ts
-
 import {
   BookOpen,
   CalendarRange,
@@ -7,11 +5,14 @@ import {
   CircleUserRound,
   CodeXml,
   Contact,
+  FileText,
   History,
   Home,
   ListCollapse,
+  ListTree,
   LucideIcon,
   Palette,
+  Paperclip,
   RectangleEllipsis,
   Settings,
   Shapes,
@@ -25,6 +26,7 @@ import {
   UserStar,
 } from "lucide-react";
 
+/** Maps icon identifiers persisted by the menu API to supported UI icons. */
 export const leftMenuIconMap: Record<string, LucideIcon> = {
   BookOpen,
   CalendarRange,
@@ -32,10 +34,13 @@ export const leftMenuIconMap: Record<string, LucideIcon> = {
   CircleUserRound,
   CodeXml,
   Contact,
+  FileText,
   History,
   Home,
   ListCollapse,
+  ListTree,
   Palette,
+  Paperclip,
   RectangleEllipsis,
   Settings,
   Shapes,
@@ -50,5 +55,6 @@ export const leftMenuIconMap: Record<string, LucideIcon> = {
 };
 
 export function getLeftMenuIcon(iconKey: string): LucideIcon {
+  // Unknown persisted keys must not break navigation rendering.
   return leftMenuIconMap[iconKey] ?? Home;
 }

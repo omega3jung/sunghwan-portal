@@ -9,6 +9,7 @@ import { ChartSummaryItem, SlaBucketValue } from "./types";
 const UNASSIGNED_VALUE = "__unassigned__";
 
 const sortSummaryItems = (items: ChartSummaryItem[]): ChartSummaryItem[] => {
+  // Count is primary; localized label makes equal-count output deterministic.
   return items.sort((a, b) => {
     if (b.count !== a.count) {
       return b.count - a.count;

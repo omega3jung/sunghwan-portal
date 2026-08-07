@@ -31,10 +31,12 @@ where d_active = true
 order by d_id;
 `;
 
+/** Queries PostgreSQL for active department rows without applying presentation concerns. */
 export async function findActiveDepartmentRows(): Promise<DepartmentRow[]> {
   return queryPortalApi<DepartmentRow>(FIND_ACTIVE_DEPARTMENT_ROWS_QUERY);
 }
 
+/** Queries PostgreSQL for active department rows by company id without applying presentation concerns. */
 export async function findActiveDepartmentRowsByCompanyId(
   companyId: number,
 ): Promise<DepartmentRow[]> {

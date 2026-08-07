@@ -1,3 +1,4 @@
+// src/lib/application/contracts/organization/index.ts
 export * from "./company";
 export * from "./companyMapper";
 export * from "./department";

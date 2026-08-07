@@ -52,6 +52,14 @@ const TICKET_CLOSE_REASONS = new Set<TicketCloseReason>([
   "Canceled",
 ]);
 
+/**
+ * Projects untrusted or legacy history metadata into display-safe fields.
+ *
+ * Unknown properties and invalid enum values are ignored instead of rejecting
+ * the history row. The persisted history `event` column remains authoritative;
+ * a metadata event is retained only as a compatibility/display projection.
+ * Returns `null` when no recognized metadata survives normalization.
+ */
 export function mapTicketHistoryDisplayMetadata(
   rawMetadata: unknown,
 ): TicketHistoryDisplayMetadata | null {

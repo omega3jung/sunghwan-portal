@@ -46,6 +46,8 @@ const createApprovalActionContent = (
   images: [],
 });
 
+// Normalize once before the LOCAL/REMOTE split so both runtimes receive the
+// same route-derived action type and attachment defaults.
 const normalizeTicketActionContent = (
   action: keyof typeof TICKET_ACTION_TYPE_BY_PATH,
   rawContent: Partial<TicketActionCommandRequest>,
@@ -71,6 +73,8 @@ const toRemoteCommandBody = (
   content: TicketActionCommandPayload,
 ) => {
   if (isApprovalAction(action)) {
+    // Approval commands are text-only at the public boundary. The REMOTE server
+    // independently enforces the same rule before writing an action.
     return {
       content: content.content,
     };
@@ -107,6 +111,7 @@ const validateMergeRequest = (
   return null;
 };
 
+/** Handles POST /api/service-desk/tickets/[ticketId]/command/[action]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(
   request: NextRequest,
   context: TicketActionRouteContext,

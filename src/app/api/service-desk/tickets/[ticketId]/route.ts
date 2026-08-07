@@ -22,6 +22,7 @@ import {
 import { mapTicketDetailPayload } from "@/lib/application/contracts/serviceDesk";
 import { requesterUpdateTicketRequestSchema } from "@/lib/application/contracts/serviceDesk";
 
+/** Handles GET /api/service-desk/tickets/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
@@ -64,6 +65,7 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
   });
 }
 
+/** Handles PUT /api/service-desk/tickets/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   const { ticketId } = await context.params;
   const isRemote = await isRemoteRequest(request);
@@ -129,6 +131,7 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
   });
 }
 
+/** Handles DELETE /api/service-desk/tickets/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function DELETE(
   request: NextRequest,
   context: TicketIdRouteContext,

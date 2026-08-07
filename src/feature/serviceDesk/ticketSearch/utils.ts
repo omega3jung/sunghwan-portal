@@ -14,6 +14,7 @@ import {
   normalizeTicketStatusFilterValues,
 } from "./statusFilter";
 
+/** Normalizes optional form values before the criteria are persisted or submitted. */
 export const normalizeTicketSearchCriteriaFormValues = (
   values: TicketSearchCriteriaFormValues,
 ): TicketSearchCriteriaFormValues => ({
@@ -21,6 +22,7 @@ export const normalizeTicketSearchCriteriaFormValues = (
   status: normalizeTicketStatusFilterValues(values.status),
 });
 
+/** Maps UI criteria to the recursive filter and sort contract consumed by the ticket API. */
 export const mapSearchCriteriaToDbParams = (
   values: TicketSearchCriteriaFormValues,
 ): DbParams => {

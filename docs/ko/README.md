@@ -17,7 +17,7 @@
 
 가장 짧은 현재 시스템 명세:
 
-- [`../spec/ticket-system.ko.md`](../spec/ticket-system.ko.md)
+- [정규 티켓 시스템 명세](../spec/ticket-system.ko.md)
 
 상세 도메인 문서를 읽기 전에 이 문서를 먼저 확인한다.
 
@@ -27,22 +27,22 @@
 
 `docs/ko` 폴더 구성:
 
-- `01-overview`: 프로젝트 안내, README 전략, 시스템 발전 과정
-- `02-architecture`: app structure, routing, database, state, auth/session
-- `03-domain`: Service Desk domain rules and workflow behavior
-- `04-engineering`: 구현, UI, form, data fetching, i18n
-- `05-releases`: 버전 변경, migration, 영향, 검증 기록
-- `06-decisions`: 특정 시점의 설계 결정과 대안 기록
+- `01-overview`: 프로젝트와 Service Desk의 발전 과정
+- `02-architecture`: application 및 runtime boundary
+- `03-domain`: 현재 Service Desk domain model과 workflow rule
+- `04-client-engineering`: UI, form, localization 구현 pattern
+- `05-development`: data fetching, 구현 전략, convention, documentation practice,
+  release 기록
+- `06-decisions`: historical decision log
 
 ---
 
 ## Overview
 
-프로젝트와 문서 구성, Service Desk의 발전 과정을 안내한다.
+프로젝트와 Service Desk의 발전 과정을 안내한다.
 
 주요 문서:
 
-- [README Strategy](./01-overview/readme-strategy.md)
 - [Service Desk Evolution](./01-overview/service-desk-evolution.md)
 
 ---
@@ -68,9 +68,9 @@
 - [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
 - [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 - [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-- [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
-- [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+- [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 - [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
+- [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 - [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 - [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 - [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
@@ -78,6 +78,7 @@
 - [SLA Strategy](./03-domain/service-desk/ticket/strategy/sla-strategy.md)
 - [Ticket 운영 규칙](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [Ticket Action Workflow Matrix](./03-domain/service-desk/ticket/reference/ticket-action-workflow-matrix.xlsx)
+- [직원 참조 범위 매트릭스](./03-domain/service-desk/ticket/reference/restrict-employee-list.xlsx)
 
 현재 도메인 핵심:
 
@@ -91,18 +92,17 @@
 
 ---
 
-## Engineering
+## Client Engineering
 
-구현 방식과 client-side 책임 경계를 설명하는 문서:
+UI, form, localization의 client-side 책임 경계를 설명하는 문서:
 
 ### UI/UX
 
 주요 문서:
 
-- [Component Boundary](./04-engineering/ui/component-boundary.md)
-- [Dialog Pattern](./04-engineering/ui/dialog-pattern.md)
-- [Form Pattern](./04-engineering/forms/form-pattern.md)
-- [Dashboard and Insight](./04-engineering/ui/dashboard-and-insight.md)
+- [Component Boundary](./04-client-engineering/ui/component-boundary.md)
+- [Dialog Pattern](./04-client-engineering/ui/dialog-pattern.md)
+- [Dashboard and Insight](./04-client-engineering/ui/dashboard-and-insight.md)
 
 현재 정책:
 
@@ -116,29 +116,19 @@ dialog/tool workflow다.
 
 ---
 
-### Data Fetching
-
-React Query는 Service Desk server state를 소유한다.
-
-주요 문서:
-
-- [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
-
-현재 query family에는 tickets, drafts, actions, histories, work sessions,
-tenant-scoped settings가 포함된다.
-
----
-
 ### Form Design
 
 주요 문서:
 
-- [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-- [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
+- [Form Pattern](./04-client-engineering/forms/form-pattern.md)
+- [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+- [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
 
 현재 form 핵심:
 
 - `CreateTicketDialog`와 `UpdateTicketDialog`는 별도 workflow surface
+- LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저 `localStorage` 상태이며
+  기능 초안 저장소를 통해 접근
 - REMOTE draft는 requester당 하나의 active `Draft` ticket row
 - raw browser file은 transient
 - Attachment Prepare API가 ticket write 전 prepared metadata를 반환
@@ -149,8 +139,27 @@ tenant-scoped settings가 포함된다.
 
 주요 문서:
 
-- [Locale Structure](./04-engineering/i18n/locale-structure.md)
-- [Validation Messages](./04-engineering/i18n/validation-messages.md)
+- [Locale Structure](./04-client-engineering/i18n/locale-structure.md)
+- [Validation Messages](./04-client-engineering/i18n/validation-messages.md)
+
+---
+
+## Development
+
+Server-state ownership, 구현 전략, 프로젝트 전반의 convention, documentation
+practice와 release 기록을 설명한다.
+
+### Data Fetching
+
+React Query는 Service Desk server state를 소유한다.
+
+주요 문서:
+
+- [React Query Strategy](./05-development/react-query-strategy.md)
+
+현재 query family에는 tickets, drafts, actions, histories, work sessions,
+tenant-scoped settings가 포함된다. REMOTE 초안 query는 server state를 조회하고,
+LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 
 ---
 
@@ -158,17 +167,29 @@ tenant-scoped settings가 포함된다.
 
 주요 문서:
 
-- [Development Approach](./04-engineering/development-approach.md)
-- [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+- [Development Approach](./05-development/development-approach.md)
+- [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 
 ---
 
-## Releases
+### Convention과 Documentation Practice
+
+프로젝트 전반의 convention과 documentation practice는 feature, application,
+domain 및 UI boundary에 공통으로 적용된다.
+
+주요 문서:
+
+- [Boolean Naming Convention](./05-development/boolean-naming-convention.md)
+- [README Strategy](./05-development/readme-strategy.md)
+
+---
+
+### Releases
 
 버전별 주요 변경 사항, migration 내용, architecture 영향, 검증 결과와
 관련 PR 및 decision 문서를 기록한다.
 
-- [Release 문서](./05-releases/README.md)
+- [Release 문서](./05-development/releases.md)
 
 ---
 
@@ -180,56 +201,31 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 
 - [Decision 문서](./06-decisions/README.md)
 
-현재 decision log topics:
-
-- [2025-12 Auth Session Architecture](./06-decisions/2025-12-auth-session-architecture.md)
-- [2025-12 Impersonation](./06-decisions/2025-12-impersonation.md)
-- [2025-12 Naming](./06-decisions/2025-12-naming.md)
-- [2025-12 System Layout](./06-decisions/2025-12-system-layout.md)
-- [2026-01 Category Design](./06-decisions/2026-01-category-design.md)
-- [2026-01 Impersonation](./06-decisions/2026-01-impersonation.md)
-- [2026-01 Session User Boundary](./06-decisions/2026-01-session-user-boundary.md)
-- [2026-02 Service Desk Settings](./06-decisions/2026-02-service-desk-settings.md)
-- [2026-03 Service Desk](./06-decisions/2026-03-service-desk.md)
-- [2026-03 Ticket Form Dialog](./06-decisions/2026-03-ticket-form-dialog.md)
-- [2026-03 Ticket Session](./06-decisions/2026-03-ticket-session.md)
-- [2026-04 Entity Status Naming](./06-decisions/2026-04-entity-status-naming.md)
-- [2026-04 Ticket Action](./06-decisions/2026-04-ticket-action.md)
-- [2026-05 Barrel Export Boundary](./06-decisions/2026-05-barrel-export-boundary.md)
-- [2026-05 Database Role and Access Strategy](./06-decisions/2026-05-database-role-and-access-strategy.md)
-- [2026-05 Service Desk Documentation Alignment](./06-decisions/2026-05-service-desk-documentation-alignment.md)
-- [2026-06 Service Desk Tenant Design](./06-decisions/2026-06-service-desk-tenant-design.md)
-- [2026-06 Service Desk Settings DTO/API Boundary](./06-decisions/2026-06-service-desk-settings-dto-api-boundary.md)
-- [2026-06 Ticket Attachment Boundary](./06-decisions/2026-06-ticket-attachment-boundary.md)
-- [2026-06 Ticket Form and Draft Workflow](./06-decisions/2026-06-ticket-form-and-draft-workflow.md)
-- [2026-07 Service Desk Settings Reference Validation Boundary](./06-decisions/2026-07-service-desk-settings-reference-validation-boundary.md)
-- [2026-07 Ticket Action and History Execution](./06-decisions/2026-07-ticket-action-and-history-execution.md)
-- [2026-07 Ticket Routing and Update Policy](./06-decisions/2026-07-ticket-routing-and-update-policy.md)
-
 ---
 
 ## 권장 읽기 순서
 
-1. [`../spec/ticket-system.ko.md`](../spec/ticket-system.ko.md)
-2. [Service Desk Settings](./03-domain/service-desk/settings.md)
-3. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
+1. [정규 티켓 시스템 명세](../spec/ticket-system.ko.md)
+2. [Ticket System Overview](./03-domain/service-desk/ticket/ticket-system-overview.md)
+3. [Service Desk Settings](./03-domain/service-desk/settings.md)
 4. [Ticket Lifecycle](./03-domain/service-desk/ticket/ticket-lifecycle.md)
 5. [Ticket Model](./03-domain/service-desk/ticket/ticket-model.md)
-6. [Ticket Activity Model](./03-domain/service-desk/ticket/ticket-activity.md)
+6. [Ticket Action Model](./03-domain/service-desk/ticket/ticket-action.md)
 7. [Ticket History](./03-domain/service-desk/ticket/ticket-history.md)
-8. [Ticket Track Time](./03-domain/service-desk/ticket/ticket-track-time.md)
+8. [Ticket Work Session](./03-domain/service-desk/ticket/ticket-work-session.md)
 9. [Action Strategy](./03-domain/service-desk/ticket/strategy/action-strategy.md)
 10. [Approval System](./03-domain/service-desk/ticket/strategy/approval-system.md)
 11. [Assignment Policy](./03-domain/service-desk/ticket/strategy/assignment-policy.md)
 12. [Category Strategy](./03-domain/service-desk/ticket/strategy/category-strategy.md)
 13. [SLA Strategy](./03-domain/service-desk/ticket/strategy/sla-strategy.md)
-14. [Ticket Form Design](./04-engineering/forms/ticket-form.md)
-15. [Ticket Attachment Design](./04-engineering/forms/ticket-attachment.md)
-16. [React Query Strategy](./04-engineering/data-fetching/react-query-strategy.md)
+14. [Ticket Form Design](./04-client-engineering/forms/ticket-form.md)
+15. [Ticket Attachment Design](./04-client-engineering/forms/ticket-attachment.md)
+16. [React Query Strategy](./05-development/react-query-strategy.md)
 17. [Routing Strategy](./02-architecture/routing-strategy.md)
 18. [Database Strategy](./02-architecture/database-strategy.md)
-19. [Service Desk Implementation Strategy](./04-engineering/service-desk-implementation-strategy.md)
+19. [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
 20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+21. [Decision 문서](./06-decisions/README.md)
 
 ---
 

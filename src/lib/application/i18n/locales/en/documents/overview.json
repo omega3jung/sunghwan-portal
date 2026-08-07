@@ -1,0 +1,10 @@
+{
+  "readme": {
+    "title": "README",
+    "description": "Landing document for the Service Desk documentation set."
+  },
+  "serviceDeskEvolution": {
+    "title": "Service Desk Evolution",
+    "description": "How Service Hub experience evolved into the Service Desk domain."
+  }
+}

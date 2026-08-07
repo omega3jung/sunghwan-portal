@@ -37,6 +37,7 @@ const SORT_DIRECTIONS = new Set<TicketSearchSort["direction"]>([
   "desc",
 ]);
 
+/** Handles GET /api/service-desk/tickets/search; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   const searchRequest = parseTicketSearchQuery(request.nextUrl.searchParams);
 
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest) {
   return handleTicketSearch(request, searchRequest, "GET");
 }
 
+/** Handles POST /api/service-desk/tickets/search; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   let body: TicketSearchRequest;
 

@@ -11,7 +11,7 @@ phase-aware routing state다.
 
 ## Source of Truth
 
-```txt id="assignment-source"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -34,7 +34,7 @@ Assignment rule은 category settings 아래에 설정된다.
 Work assignment resolution은 먼저 선택된 subcategory를 확인한다. Subcategory
 assignment rule이 없으면 parent/main category rule로 fallback한다.
 
-```ts id="assignment-rule-shape"
+```ts
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
@@ -105,7 +105,7 @@ routing은 실패하고 unowned `Assigned` ticket을 만들지 않는다.
 Ticket이 approval을 필요로 하지 않거나 final approval이 완료되면 work assignee를
 resolve한다.
 
-```txt id="initial-work-assignment"
+```txt
 no approval step
 or final approval complete
 -> resolve selected subcategory assignment rule if present
@@ -196,7 +196,7 @@ category-scope settings policy와 별개이며 기존 ticket action matrix는 �
 
 Assignment event:
 
-```txt id="assignment-history-events"
+```txt
 ASSIGNMENT_RESOLVED
 ASSIGNMENT_UPDATED
 ```
@@ -227,6 +227,7 @@ ASSIGNMENT_UPDATED
 
 - [Ticket Lifecycle](../ticket-lifecycle.md)
 - [Ticket Operation Rules](../reference/ticket-operation-rules.md)
+- [직원 참조 범위 매트릭스](../reference/restrict-employee-list.xlsx)
 - [Approval System](./approval-system.md)
 - [Ticket History](../ticket-history.md)
 - [Service Desk Settings](../../settings.md)

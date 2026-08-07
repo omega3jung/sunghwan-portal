@@ -3,7 +3,6 @@ import { LocalizedText } from "@/shared/types";
 import { AccessLevel } from "../auth/constants";
 import { UserScope } from "../auth/types";
 
-// user type for app.
 export interface AppUser {
   id: string;
   username: string; // user account

@@ -7,6 +7,7 @@ import {
 import { RequesterUpdateTicketRequestDto } from "./ticketUpdateDto";
 import { RequesterUpdateTicketRowInput } from "./ticketUpdateRow";
 
+/** Maps requester update ticket request dto to row input across the database and API boundary. */
 export function mapRequesterUpdateTicketRequestDtoToRowInput(
   input: RequesterUpdateTicketRequestDto,
   state: Pick<

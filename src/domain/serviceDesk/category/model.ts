@@ -14,14 +14,14 @@ export interface CategoryBase {
   active: boolean;
 }
 
-// leaf category.
+/** Selectable leaf category that may override defaults inherited from its parent. */
 export interface SubCategory extends CategoryBase {
   defaultPriority?: Priority; // optional to sub category.
   defaultRiskLevel?: RiskLevel; // optional to sub category.
   defaultSlaDays?: number; // optional to sub category.
 }
 
-// parent category.
+/** Parent category that supplies required defaults and groups selectable leaves. */
 export interface MainCategory extends CategoryBase {
   scope: CategoryScope;
   defaultPriority: Priority; // required to category.
@@ -30,5 +30,5 @@ export interface MainCategory extends CategoryBase {
   subCategories: SubCategory[];
 }
 
-// client-category tree.
+/** Tenant-scoped category hierarchy. */
 export type TenantCategoryTree = Tenant & { categories: MainCategory[] };

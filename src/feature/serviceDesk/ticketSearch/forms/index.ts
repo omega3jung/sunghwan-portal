@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/search/forms/index.ts
+// src/feature/serviceDesk/ticketSearch/forms/index.ts
 
 export * from "./defaultValues";
 export * from "./schema";

@@ -1,3 +1,4 @@
+/** Canonical priority values shared by domain models. */
 export const PRIORITY = {
   urgent: 4,
   high: 3,
@@ -7,6 +8,7 @@ export const PRIORITY = {
 
 export type Priority = keyof typeof PRIORITY;
 
+/** Canonical risk-level values shared by domain models. */
 export const RISK_LEVEL = {
   critical: 4,
   high: 3,

@@ -1,3 +1,3 @@
-// src/domain/serviceDesk/client/index.ts
+// src/domain/serviceDesk/tenant/index.ts
 
 export * from "./model";

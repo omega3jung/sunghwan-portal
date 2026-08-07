@@ -3,6 +3,7 @@ import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared"
 import { createHistoryOfCommentCreated } from "../../ticketHistory/ticketHistoryEventService";
 import type { NormalizedTicketActionPayload } from "../ticketActionRules";
 
+/** Executes comment ticket action after shared authorization and payload validation have succeeded. */
 export async function executeCommentTicketAction({
   ticketId,
   actionNo,

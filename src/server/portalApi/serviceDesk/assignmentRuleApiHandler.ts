@@ -45,6 +45,7 @@ const ASSIGNMENT_RULE_RECOMMENDATIONS_PATH_PATTERN =
   /^\/service-desk\/assignment-rules\/recommendations$/;
 const ASSIGNMENT_RULES_LIST_PATH_PATTERN = /^\/service-desk\/assignment-rules$/;
 
+/** Routes assignment-rule reads and mutations through the authorized tenant settings context. */
 export async function handleAssignmentRulePortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {

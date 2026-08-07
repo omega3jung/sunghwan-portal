@@ -12,6 +12,14 @@ import { executeLocalAction } from "./execute";
 import { DbTicketActionLocalContext } from "./types";
 import { getNextActionNo, getTicketContext } from "./utils";
 
+/**
+ * Orchestrates a LOCAL action command at the HTTP adapter boundary.
+ *
+ * LOCAL has no database transaction, so the action row, history rows, and
+ * replacement ticket are built and validated before shared arrays are touched.
+ * The final writes intentionally stay together here to preserve the REMOTE
+ * command contract and avoid an activity row without its workflow effect.
+ */
 export async function localPost({
   ticketId,
   employeeUserName,
@@ -42,6 +50,8 @@ export async function localPost({
       action,
       });
 
+    // No expected validation remains after this point. Commit the staged
+    // process-memory changes as one synchronous block.
     const actions = getLocalDemoActions();
     const histories = getLocalDemoHistories();
 

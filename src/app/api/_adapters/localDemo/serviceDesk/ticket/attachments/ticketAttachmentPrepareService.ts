@@ -29,6 +29,14 @@ const IMAGE_EXTENSION_BY_MIME_TYPE: Record<string, TicketAttachmentImageExtensio
     "image/webp": "webp",
   };
 
+/**
+ * Validates browser attachment input and replaces it with controlled demo metadata.
+ *
+ * Both LOCAL and REMOTE routes currently use this preparation boundary; it is
+ * not production object storage. Raw `File`, base64, blob, remote, and local
+ * file URLs must not cross into ticket DTOs or persistence. The returned body
+ * references only allow-listed `/files/demo-*` assets.
+ */
 export function prepareTicketAttachments({
   body,
   files,
@@ -107,6 +115,8 @@ function replaceInlineImages(body: string): {
   body: string;
   images: TicketPreparedInlineImage[];
 } {
+  // Replace inline images while scanning the original body so count and total
+  // byte limits are enforced before any prepared result is returned.
   const images: TicketPreparedInlineImage[] = [];
   let inlineImageIndex = 0;
   let inlineImageTotalSize = 0;

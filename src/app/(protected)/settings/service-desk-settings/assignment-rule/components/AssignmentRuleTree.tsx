@@ -2,8 +2,10 @@
 import { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
-import { SortableTree } from "@/components/custom/dnd/tree/SortableTree";
-import type { TreeNodes } from "@/components/custom/dnd/tree/types";
+import {
+  SortableTree,
+  type TreeNodes,
+} from "@/components/custom/SortableTree";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SupportedLanguage } from "@/lib/application/i18n";

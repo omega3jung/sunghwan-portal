@@ -23,6 +23,11 @@ export type ColorPickerProps = {
   children?: React.ReactNode;
 };
 
+/**
+ * Controlled six-digit hex picker with compound child controls. Invalid or
+ * empty display values fall back to the active theme primary color, which is
+ * recomputed when root theme attributes change.
+ */
 const Root = ({
   value,
   onChange,

@@ -10,6 +10,7 @@ import {
   AttachmentMedia,
   AttachmentTitle,
 } from "@/components/ui/attachment";
+import { NS } from "@/lib/application/i18n";
 import { bytesToKB } from "@/shared/utils/browser";
 
 type FileAttachmentListProps = {
@@ -27,7 +28,10 @@ export const FileAttachmentList = ({
   maxCount,
   maxSizeMB,
 }: FileAttachmentListProps) => {
-  const { t } = useTranslation(["FileAttachment", "common"]);
+  const { t } = useTranslation(NS.component, {
+    keyPrefix: "fileAttachment",
+  });
+  const { t: tCommon } = useTranslation(NS.common);
 
   return (
     <>
@@ -57,7 +61,7 @@ export const FileAttachmentList = ({
                   type="button"
                   size="icon"
                   className="text-destructive"
-                  aria-label={`${t("delete", { ns: "common" })}: ${file.name}`}
+                  aria-label={`${tCommon("action.delete")}: ${file.name}`}
                   onClick={() => onRemove(index)}
                 >
                   <Trash2 />

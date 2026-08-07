@@ -1,4 +1,3 @@
-// src/feature/auth/impersonation/api.ts
 import { ImpersonationInfo } from "@/domain/auth";
 import client from "@/lib/client/api";
 

@@ -21,7 +21,7 @@ Settings.
 
 ## Core Concept
 
-```txt id="category-core"
+```txt
 Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
@@ -32,7 +32,7 @@ configuration boundary. Categories belong to a tenant.
 
 ## Current Domain Shape
 
-```ts id="category-domain-shape"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 
 type CategoryBase = {
@@ -96,7 +96,7 @@ value remains the fallback.
 
 Main categories use this scope union:
 
-```ts id="category-scope"
+```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
 ```
 
@@ -168,14 +168,14 @@ references remain valid.
 Category defaults resolve from the selected subcategory to its parent main
 category.
 
-```txt id="category-default-resolution"
+```txt
 Sub Category default
 -> Main Category default
 ```
 
 For example:
 
-```ts id="category-default-example"
+```ts
 priority = sub.defaultPriority ?? main.defaultPriority;
 riskLevel = sub.defaultRiskLevel ?? main.defaultRiskLevel;
 slaDays = sub.defaultSlaDays ?? main.defaultSlaDays;
@@ -190,7 +190,7 @@ validates the final workflow effect.
 
 Categories are deactivated instead of destructively removed from historical use.
 
-```txt id="category-active-policy"
+```txt
 active = false
 ```
 
@@ -224,7 +224,7 @@ Approval steps are configured against the parent/main category. A selected
 subcategory classifies the ticket, but the approval pipeline is resolved from
 that subcategory's parent/main category.
 
-```txt id="category-approval-flow"
+```txt
 Ticket submitted
 -> selected category
 -> resolve parent/main category
@@ -243,7 +243,7 @@ tickets that are already in progress.
 Assignment rules allow a subcategory override. If the selected subcategory has
 no assignment rule, resolution falls back to the parent/main category rule.
 
-```txt id="category-assignment-flow"
+```txt
 Ticket ready for work
 -> selected category
 -> selected subcategory assignment rule, when present
@@ -261,7 +261,7 @@ employee usernames. It does not use a separate `ruleType` field.
 
 Requester updates are allowed only before active work starts:
 
-```txt id="category-update-statuses"
+```txt
 Approval
 Assigned
 ```
@@ -336,13 +336,13 @@ The current category strategy does not claim:
 
 ## Related Documents
 
-- [`../../service-desk-settings.md`](../../settings.md)
-- [`approval-system.md`](approval-system.md)
-- [`assignment-policy.md`](assignment-policy.md)
-- [`sla-strategy.md`](sla-strategy.md)
-- [`../ticket-lifecycle.md`](../ticket-lifecycle.md)
-- [`../ticket-history.md`](../ticket-history.md)
-- [`../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md`](../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
+- [Service Desk Settings](../../settings.md)
+- [Approval System](approval-system.md)
+- [Assignment Policy](assignment-policy.md)
+- [SLA Strategy](sla-strategy.md)
+- [Ticket Lifecycle](../ticket-lifecycle.md)
+- [Ticket History](../ticket-history.md)
+- [Ticket Routing and Update Policy (2026-07)](../../../../06-decisions/2026-07-ticket-routing-and-update-policy.md)
 
 ---
 

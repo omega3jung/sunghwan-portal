@@ -3,7 +3,6 @@
 export { DatePicker } from "./DatePicker";
 export { DateRangePicker } from "./DateRangePicker";
 export { DateTimePicker } from "./DateTimePicker";
-export { datePickerLocales } from "./locales";
 export { SearchDateFilter } from "./SearchDateFilter";
 export type {
   DatePickerProps,

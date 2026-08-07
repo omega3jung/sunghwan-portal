@@ -12,7 +12,7 @@ aligned with the current domain types, DTOs, and mapper behavior.
 
 ## Core Concept
 
-```txt id="ticket-model-core"
+```txt
 Ticket row = current workflow state
 Ticket DTO = application-facing projection
 History = immutable record of how state changed
@@ -27,7 +27,7 @@ history, and work-session evidence.
 
 Current status union:
 
-```txt id="ticket-status-union"
+```txt
 Draft
 Approval
 Declined
@@ -56,7 +56,7 @@ The current domain read models are `TicketSummary` and `TicketDetail`.
 
 ### Shared Core
 
-```ts id="ticket-core-fields"
+```ts
 type TicketBase = {
   id: string;
   ticketNumber: string;
@@ -80,7 +80,7 @@ reporting and display semantics.
 
 ### Assignment Projection
 
-```ts id="ticket-assignment-projection"
+```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 
 type TicketAssignmentState = {
@@ -94,7 +94,7 @@ type TicketAssignmentState = {
 
 The persisted source of truth is still:
 
-```txt id="assignment-source"
+```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
@@ -103,7 +103,7 @@ The phase-aware fields are DTO/domain projections for UI clarity.
 
 ### Metrics and View State
 
-```ts id="ticket-metric-fields"
+```ts
 type TicketMetrics = {
   workMinutes: number;
   lastCommentAt?: ISODateString;
@@ -125,7 +125,7 @@ authenticated user. They are not global persisted flags.
 
 ### Detail Content
 
-```ts id="ticket-detail-content"
+```ts
 type TicketContent = {
   categoryId: string;
   approvalStepId: string | null;
@@ -151,7 +151,7 @@ payloads.
 
 The REMOTE read path is:
 
-```txt id="ticket-read-boundary"
+```txt
 service_desk view/row
 -> mapper
 -> TicketListItemDto or TicketDetailDto
@@ -190,8 +190,10 @@ Rules:
 - submit reuses the draft row and changes it to `Approval` or `Assigned`
 - draft rows are excluded from operational ticket lists
 
-LOCAL draft uses a simplified demo-safe implementation behind the feature API
-boundary. It is not persistence-equivalent to the REMOTE PostgreSQL draft model.
+LOCAL draft recovery is browser-local `localStorage` state owned by the feature
+draft repository and scoped to the current demo user. It is removed when the
+stored owner does not match the effective user, does not traverse a draft Route
+Handler, and is not persistence-equivalent to the REMOTE PostgreSQL draft model.
 
 ---
 
@@ -208,7 +210,7 @@ field. Notification delivery should resolve assignee emails at send time.
 
 Ticket attachment fields store prepared metadata only.
 
-```ts id="ticket-attachment-metadata"
+```ts
 type TicketAttachmentMetadata = {
   originalName: string;
   replacedName: string;
@@ -223,7 +225,7 @@ type TicketAttachmentMetadata = {
 
 Ticket persistence uses:
 
-```txt id="ticket-attachment-columns"
+```txt
 tk_content -> prepared body
 tk_files   -> TicketAttachmentMetadata[]
 tk_images  -> TicketAttachmentMetadata[]
@@ -232,7 +234,7 @@ tk_images  -> TicketAttachmentMetadata[]
 Raw `File`, binary data, base64 data URLs, blob URLs, and local paths are not
 part of the ticket row or DTO.
 
-Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticket-attachment.md)
+Related document: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
 ---
 
@@ -243,7 +245,7 @@ Related document: [Ticket Attachment Design](../../../04-engineering/forms/ticke
 Ticket actions are command-created timeline entries. They are not the same as
 history. Some actions mutate ticket state and create multiple history records.
 
-Related document: [Ticket Activity Model](./ticket-activity.md)
+Related document: [Ticket Action Model](./ticket-action.md)
 
 ### Ticket History
 
@@ -257,7 +259,7 @@ Related document: [Ticket History](./ticket-history.md)
 Work Session records actual tracked work. The ticket exposes aggregated
 `workMinutes`, while individual sessions remain a separate subresource.
 
-Related document: [Ticket Track Time](./ticket-track-time.md)
+Related document: [Ticket Work Session](./ticket-work-session.md)
 
 ---
 

@@ -2,6 +2,7 @@ import { Priority, RiskLevel } from "@/domain/common";
 import { CategoryScope } from "@/domain/serviceDesk";
 import { LocalizedText } from "@/shared/types";
 
+/** Defines the PostgreSQL category row used only within the repository boundary. */
 export type CategoryRow = {
   cat_id: number;
   cat_tenant_id: number;
@@ -17,6 +18,7 @@ export type CategoryRow = {
   cat_default_sla_days: number | null;
 };
 
+/** Defines the PostgreSQL category context row used only within the repository boundary. */
 export type CategoryContextRow = {
   category_id: number;
   main_category_id: number;
@@ -26,6 +28,7 @@ export type CategoryContextRow = {
   tenant_active: boolean;
 };
 
+/** Defines the PostgreSQL create category row input used only within the repository boundary. */
 export type CreateCategoryRowInput = {
   cat_tenant_id: number;
   cat_parent_id: number | null;
@@ -40,6 +43,7 @@ export type CreateCategoryRowInput = {
   cat_default_sla_days: number | null;
 };
 
+/** Defines the PostgreSQL update category row input used only within the repository boundary. */
 export type UpdateCategoryRowInput = {
   cat_parent_id: number | null;
   cat_scope: CategoryScope | null;

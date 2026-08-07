@@ -13,6 +13,7 @@ import {
   updateTicketDraftRowById,
 } from "./ticketDraftRepository";
 
+/** Loads ticket draft through the server data boundary. */
 export async function getTicketDraft(
   requesterUsername: string,
 ): Promise<TicketDraftDto | null> {
@@ -21,6 +22,7 @@ export async function getTicketDraft(
   return row ? mapTicketDraftRowToDto(row) : null;
 }
 
+/** Creates ticket draft through the server persistence boundary. */
 export async function createTicketDraft(
   requesterUsername: string,
   input: TicketDraftWriteDto,
@@ -52,6 +54,7 @@ export async function createTicketDraft(
   return mapTicketDraftRowToDto(row);
 }
 
+/** Updates ticket draft while preserving server-side validation and persistence rules. */
 export async function updateTicketDraft(
   ticketId: string,
   requesterUsername: string,
@@ -88,6 +91,7 @@ async function requireRequesterDepartmentId(
   return departmentId;
 }
 
+/** Removes or deactivates ticket draft through the server persistence boundary. */
 export async function discardTicketDraft(
   ticketId: string,
   requesterUsername: string,

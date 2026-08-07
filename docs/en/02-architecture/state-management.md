@@ -16,7 +16,7 @@ It aims to:
 
 ## Core Principle
 
-```id="core-principle"
+```txt
 Prefer server state over client state whenever possible
 ```
 
@@ -66,7 +66,7 @@ Managed using **React Query (@tanstack/react-query v5)**
 
 ### Example
 
-```ts id="server-state-example"
+```ts
 export const useFetchTickets = (params) => {
   return useQuery({
     queryKey: ["tickets", params],
@@ -121,7 +121,7 @@ Use Zustand only when the state must be shared across multiple components or fea
 
 ### Example
 
-```ts id="client-state-example"
+```ts
 const useDialogStore = create((set) => ({
   open: false,
   setOpen: (open) => set({ open }),
@@ -176,7 +176,7 @@ Managed through a layered persistence approach:
 
 ### Rule 1
 
-```id="rule-1"
+```txt
 Do not store server data in client state
 ```
 
@@ -184,7 +184,7 @@ Do not store server data in client state
 
 ### Rule 2
 
-```id="rule-2"
+```txt
 Do not use global state for local UI concerns
 ```
 
@@ -192,7 +192,7 @@ Do not use global state for local UI concerns
 
 ### Rule 3
 
-```id="rule-3"
+```txt
 Keep state as close as possible to where it is used
 ```
 
@@ -200,7 +200,7 @@ Keep state as close as possible to where it is used
 
 ### Rule 4
 
-```id="rule-4"
+```txt
 Persist page-level UI state separately from auth/runtime stores
 ```
 
@@ -212,7 +212,7 @@ Persist page-level UI state separately from auth/runtime stores
 
 - Structured and predictable keys
 
-```ts id="query-key"
+```ts
 ["tickets", params][("ticket", id)];
 ```
 
@@ -224,7 +224,7 @@ Persist page-level UI state separately from auth/runtime stores
 
 - Rarely changes (e.g., category)
 
-```ts id="static-query"
+```ts
 staleTime: Infinity;
 ```
 
@@ -235,7 +235,7 @@ staleTime: Infinity;
 - Frequently updated (e.g., ticket list)
 - Includes mutable demo data paths in LOCAL runtime
 
-```ts id="dynamic-query"
+```ts
 refetchOnWindowFocus: true;
 staleTime: 0;
 ```
@@ -247,6 +247,10 @@ orchestrated through the reset endpoint:
 ```txt
 /api/demo/service-desk/reset
 ```
+
+LOCAL ticket draft recovery is a separate browser-local exception: the feature
+draft repository owns its `localStorage` record, while React Query only caches
+and orchestrates access to it.
 
 ---
 
@@ -263,7 +267,7 @@ Mutations are handled through React Query.
 
 ### Example
 
-```ts id="mutation-example"
+```ts
 const mutation = useMutation({
   mutationFn: createTicket,
   onSuccess: () => {
@@ -306,7 +310,7 @@ const mutation = useMutation({
 
 ### Principle
 
-```id="client-principle"
+```txt
 Only globalize state when necessary
 ```
 
@@ -345,7 +349,7 @@ Some state is stored in the URL.
 
 ### Principle
 
-```id="url-state"
+```txt
 If state affects navigation -> store in URL
 ```
 
@@ -476,7 +480,7 @@ Derived state should not be stored explicitly.
 
 ### Example
 
-```ts id="derived-state"
+```ts
 const isOwner = ticket.requesterId === currentUser.id;
 ```
 
@@ -484,7 +488,7 @@ const isOwner = ticket.requesterId === currentUser.id;
 
 ### Principle
 
-```id="derived-rule"
+```txt
 Derive instead of store
 ```
 
@@ -604,4 +608,5 @@ It uses:
 - Zustand or local state for client runtime state
 - URL and `sessionStorage` for page local session persistence
 
-This results in a scalable, maintainable, and production-ready architecture.
+This results in a scalable, maintainable, and production-aligned state model.
+It does not imply that deferred production infrastructure is complete.

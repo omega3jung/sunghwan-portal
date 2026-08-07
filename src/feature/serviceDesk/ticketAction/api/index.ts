@@ -1,4 +1,4 @@
-// src/feature/serviceDesk/ticket/action/api/index.ts
+// src/feature/serviceDesk/ticketAction/api/index.ts
 
 // server-safe export only.
 

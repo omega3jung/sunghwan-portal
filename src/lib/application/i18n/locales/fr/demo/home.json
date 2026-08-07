@@ -1,0 +1,140 @@
+{
+    "hero": {
+      "protectedBadge": "Espace authentifié",
+      "enterpriseBadge": "Service Desk piloté par workflow",
+      "title": "Un prototype de Service Desk aligné sur la production, centré sur des workflows, un routage et un historique d’audit explicites.",
+      "description": {
+        "local": "La démo locale exécute les workflows de tickets et de paramètres implémentés sur un état de démonstration modifiable. ADMIN dispose d’un accès étendu, tandis que les commandes non-ADMIN sont autorisées selon la relation de l’utilisateur avec chaque ticket.",
+        "remote": "La couche de données REMOTE implémente les principaux workflows du Service Desk avec des services côté serveur et PostgreSQL. L’accès direct aux pages Service Desk reste limité dans le mode distant déployé."
+      },
+      "actions": {
+        "openServiceDesk": "Ouvrir le Service Desk",
+        "browseDocumentation": "Parcourir la documentation",
+        "reviewSettings": "Revoir les paramètres"
+      }
+    },
+    "calendar": {
+      "title": "Calendrier"
+    },
+    "about": {
+      "title": "Implémentation actuelle",
+      "description": "Le portail conserve un contrat unique côté fonctionnalités et sélectionne l’exécution LOCAL ou REMOTE à la frontière serveur.",
+      "currentScope": {
+        "title": "Périmètre d’exécution",
+        "description": {
+          "local": "LOCAL fournit un état de démonstration côté serveur réinitialisable pour la recherche, les brouillons, les commandes, l’historique, les sessions de travail et les paramètres par tenant. Il préserve le contrat API sans prétendre offrir la même persistance que PostgreSQL.",
+          "remote": "REMOTE utilise des services de données, dépôts, mappers, DTO et PostgreSQL côté serveur pour les workflows implémentés. Le compte distant déployé conserve un accès restreint aux pages Service Desk."
+        }
+      },
+      "architectureNotes": {
+        "local": {
+          "note1": "L’interface appelle les clients API de fonctionnalité et les Route Handlers Next.js ; le comportement propre au runtime reste dans les adaptateurs LOCAL ou les services REMOTE.",
+          "note2": "Les tickets utilisent des statuts explicites et des commandes contrôlées par le serveur pour les transitions d’approbation, d’assignation, de travail, de résolution et de clôture.",
+          "note3": "L’état LOCAL est volontairement réinitialisable et adapté à la démo. Il reproduit les contrats observables implémentés, pas la durabilité de la persistance REMOTE."
+        },
+        "remote": {
+          "note1": "REMOTE persiste tickets, brouillons, paramètres, actions, historique et sessions de travail via des frontières PostgreSQL côté serveur.",
+          "note2": "Les commandes opérationnelles coordonnent mutation du ticket, persistance de l’action et historique immuable ; les écritures d’arbres de paramètres valident les références dans une transaction.",
+          "note3": "Le garde de routes déployé limite l’accès direct à l’interface Service Desk en mode REMOTE, même si les principales frontières de workflow sont implémentées."
+        }
+      }
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "description": "Ouvrez les principales zones de travail dont vous aurez probablement besoin juste après la connexion.",
+      "openWorkspace": "Ouvrir l’espace de travail",
+      "items": {
+        "serviceDesk": {
+          "title": "Service Desk",
+          "description": "Rechercher des tickets, créer ou reprendre des brouillons, consulter les détails et exécuter les commandes autorisées.",
+          "meta": "Espace de travail principal"
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Parcourir les guides d’architecture, les règles de domaine et les journaux de décision alignés sur l’implémentation.",
+          "meta": "Centre de connaissances"
+        },
+        "systemSettings": {
+          "title": "Paramètres système",
+          "description": "Revoir les paramètres du portail, la navigation et les préférences utilisateur soumis au contrôle d’accès.",
+          "meta": "Administration"
+        },
+        "serviceDeskSetup": {
+          "title": "Configuration du Service Desk",
+          "description": "Gérer les tenants, les arbres de catégories, les étapes d’approbation ordonnées et les règles d’assignation.",
+          "meta": "Configuration de la plateforme"
+        }
+      }
+    },
+    "workSummary": {
+      "title": "Aperçu de l’implémentation",
+      "description": "Un décompte concis des concepts de workflow actuellement représentés dans le code.",
+      "items": {
+        "openTickets": {
+          "label": "Statuts du workflow",
+          "description": "De Draft à Closed, avec des états d’approbation et de travail alignés sur la responsabilité."
+        },
+        "pendingApprovals": {
+          "label": "Actions de ticket",
+          "description": "L’intention utilisateur modélisée par des commandes validées aux effets contrôlés."
+        },
+        "workingItems": {
+          "label": "Zones de paramètres",
+          "description": "Configuration des tenants, catégories, étapes d’approbation et règles d’assignation."
+        },
+        "resolvedThisWeek": {
+          "label": "Chemins d’exécution",
+          "description": "Adaptateurs de démo LOCAL et services PostgreSQL REMOTE derrière un contrat API unique."
+        }
+      }
+    },
+    "highlights": {
+      "title": "Fonctionnalités implémentées",
+      "description": "Les zones qui représentent le mieux la conception et l’implémentation actuelles du Service Desk.",
+      "viewSection": "Voir la section",
+      "items": {
+        "ticketWorkspace": {
+          "title": "Espace de tickets",
+          "description": "Workflows de liste, recherche, détail, création, brouillon, mise à jour par le demandeur et commandes.",
+          "category": "Service Desk",
+          "status": "Implémenté"
+        },
+        "authSessionFlow": {
+          "title": "Exécution des commandes et de l’historique",
+          "description": "Les actions contrôlées par le serveur appliquent des effets validés et créent un historique immuable fondé sur les événements.",
+          "category": "Workflow",
+          "status": "Implémenté"
+        },
+        "serviceDeskSettings": {
+          "title": "Paramètres du Service Desk",
+          "description": "Catégories, étapes d’approbation et règles d’assignation par tenant avec validation des références.",
+          "category": "Administration",
+          "status": "Implémenté"
+        },
+        "documentsHub": {
+          "title": "Espace documents",
+          "description": "Documentation bilingue sur l’architecture, le domaine, l’interface, les données et les décisions, alignée sur l’implémentation.",
+          "category": "Documentation",
+          "status": "Maintenu"
+        }
+      }
+    },
+    "currentFocus": {
+      "title": "Priorités de conception",
+      "description": "Les principes qui guident actuellement l’implémentation du Service Desk.",
+      "panelTitle": "Intégrité du workflow",
+      "panelDescription": "L’état du ticket, la responsabilité actuelle, les commandes et l’historique doivent décrire un résultat opérationnel cohérent.",
+      "primaryGoals": {
+        "title": "Objectifs d’ingénierie actuels",
+        "items": {
+          "goal1": "Résoudre l’approbation et l’assignation pilotées par catégorie avec une responsabilité consciente de la phase",
+          "goal2": "Maintenir la cohérence entre mutation du ticket, actions et historique immuable aux frontières des commandes serveur",
+          "goal3": "Préserver des workflows UI indépendants du runtime grâce à des contrats DTO stables partagés par LOCAL et REMOTE"
+        }
+      },
+      "nextIntegrations": {
+        "title": "Périmètre de production différé",
+        "description": "Le stockage d’objets de production, les notifications, un moteur SLA complet, le temps réel, les routes de minuterie complètes et une infrastructure d’audit de conformité restent volontairement différés."
+      }
+    }
+}

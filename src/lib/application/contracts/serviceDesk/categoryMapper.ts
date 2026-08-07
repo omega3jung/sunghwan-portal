@@ -11,6 +11,7 @@ import { nullToUndefined } from "@/shared/utils/value";
 
 import type { DbCategory, DbSubCategory, DbTenantCategoryTree } from "./category";
 
+/** Maps a database tenant category tree record into the application-facing model. */
 export const camelTenantCategoryTreeMapper: ArrayMapper<
   DbTenantCategoryTree,
   TenantCategoryTree
@@ -33,6 +34,7 @@ export const camelTenantCategoryTreeMapper: ArrayMapper<
   });
 };
 
+/** Maps a database category record into the application-facing model. */
 export const camelCategoryMapper: ArrayMapper<DbCategory, MainCategory> = (
   data,
 ) => {
@@ -83,10 +85,12 @@ const camelSubCategoryMapper: ArrayMapper<DbSubCategory, SubCategory> = (
   });
 };
 
+/** Maps a category collection payload into application models. */
 export const mapCategoryListPayload = createListPayloadMapper(
   camelTenantCategoryTreeMapper,
 );
 
+/** Maps a category tree payload into the application model. */
 export const mapCategoryTreePayload = (payload: unknown) => {
   if (!payload || typeof payload !== "object") {
     return null;

@@ -6,6 +6,7 @@ import { ArrayMapper } from "@/shared/types";
 
 import { DbAssignmentRule } from "./assignmentRule";
 
+/** Maps a database assignment rule record into the application-facing model. */
 export const camelAssignmentRuleMapper: ArrayMapper<
   DbAssignmentRule,
   AssignmentRule
@@ -22,10 +23,12 @@ export const camelAssignmentRuleMapper: ArrayMapper<
   }));
 };
 
+/** Maps a assignment rule collection payload into application models. */
 export const mapAssignmentRuleListPayload = createListPayloadMapper(
   camelAssignmentRuleMapper,
 );
 
+/** Maps a assignment rule tree payload into the application model. */
 export const mapAssignmentRuleTreePayload = (payload: unknown) => {
   if (!Array.isArray(payload)) {
     return payload;

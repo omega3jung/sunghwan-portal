@@ -1,5 +1,6 @@
 import { LocalizedName } from "@/domain/organization";
 
+/** Defines the PostgreSQL db employee row used only within the repository boundary. */
 export interface DbEmployeeRow {
   e_id: number;
   e_username: string;

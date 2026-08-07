@@ -23,7 +23,9 @@ const tenantSchema = z.object({
   active: z.boolean().optional(),
 });
 
+/** Validates create tenant payloads at the Service Desk application boundary. */
 export const createTenantSchema = tenantSchema.omit({ id: true });
+/** Validates update tenant payloads at the Service Desk application boundary. */
 export const updateTenantSchema = tenantSchema.omit({ id: true });
 
 const subCategorySchema = z.object({
@@ -52,6 +54,7 @@ const categorySchema = z.object({
   subCategories: z.array(subCategorySchema),
 });
 
+/** Validates save category tree payloads at the Service Desk application boundary. */
 export const saveCategoryTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(categorySchema.omit({ tenantId: true })),
@@ -88,6 +91,7 @@ const approvalStepSchema = z.object({
   skipAccessLevel: skipAccessLevelSchema.optional(),
 });
 
+/** Validates save approval step tree payloads at the Service Desk application boundary. */
 export const saveApprovalStepTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(
@@ -111,6 +115,7 @@ const assigneeGroupSchema = assignmentRuleAssigneeSchema.refine(
   },
 );
 
+/** Validates save assignment rule tree payloads at the Service Desk application boundary. */
 export const saveAssignmentRuleTreeSchema = z.object({
   tenantId: z.string().min(1),
   categories: z.array(
