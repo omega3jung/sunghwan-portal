@@ -30,6 +30,9 @@ with submitted as (
 ), category_context as (
   select
     target.cat_id as category_id,
+    main.cat_scope as category_scope,
+    tenant.tn_company_id,
+    owner_company.c_id as owner_company_id,
     case
       when own_rule.ar_id is not null then own_rule.ar_assignee
       else parent_rule.ar_assignee
@@ -45,6 +48,18 @@ with submitted as (
     on own_rule.ar_category_id = target.cat_id
   left join service_desk.assignment_rule parent_rule
     on parent_rule.ar_category_id = parent.cat_id
+  join service_desk.category main
+    on main.cat_id = coalesce(target.cat_parent_id, target.cat_id)
+   and main.cat_tenant_id = target.cat_tenant_id
+  join service_desk.tenant tenant
+    on tenant.tn_id = target.cat_tenant_id
+   and tenant.tn_active = true
+  join public.company tenant_company
+    on tenant_company.c_id = tenant.tn_company_id
+   and tenant_company.c_active = true
+  join public.company owner_company
+    on owner_company.c_portal_owner = true
+   and owner_company.c_active = true
 )
 select
   submitted.category_id,
@@ -59,6 +74,15 @@ select
          from jsonb_array_elements_text(
            coalesce(context.effective_assignee -> 'job_field_id', '[]'::jsonb)
          ) field(value)
+       )
+       and (
+         (context.category_scope = 'INTERNAL'
+           and job_field.jf_company_id = context.tn_company_id)
+         or (context.category_scope = 'PORTAL'
+           and job_field.jf_company_id = context.owner_company_id)
+         or (context.category_scope = 'PORTAL'
+           and coalesce((context.effective_assignee ->> 'include_tenant_company')::boolean, false)
+           and job_field.jf_company_id = context.tn_company_id)
        )
       where context.category_id = submitted.category_id
     )
@@ -76,6 +100,15 @@ select
            )
          ) username(value)
        )
+       and (
+         (context.category_scope = 'INTERNAL'
+           and employee.e_company_id = context.tn_company_id)
+         or (context.category_scope = 'PORTAL'
+           and employee.e_company_id = context.owner_company_id)
+         or (context.category_scope = 'PORTAL'
+           and coalesce((context.effective_assignee ->> 'include_tenant_company')::boolean, false)
+           and employee.e_company_id = context.tn_company_id)
+       )
       where context.category_id = submitted.category_id
     ),
     false
@@ -91,7 +124,9 @@ with submitted as (
   select
     submitted.category_id,
     submitted.assignee,
-    tn.tn_company_id
+    tn.tn_company_id,
+    main.cat_scope as category_scope,
+    owner_company.c_id as owner_company_id
   from submitted
   join service_desk.category cat
     on cat.cat_id = submitted.category_id
@@ -101,6 +136,12 @@ with submitted as (
   join service_desk.tenant tn
     on tn.tn_id = cat.cat_tenant_id
    and tn.tn_active = true
+  join public.company tenant_company
+    on tenant_company.c_id = tn.tn_company_id
+   and tenant_company.c_active = true
+  join public.company owner_company
+    on owner_company.c_portal_owner = true
+   and owner_company.c_active = true
 ), invalid_category as (
   select 1
   from submitted
@@ -202,15 +243,25 @@ with submitted as (
   select 1
   from category_context context
   where
-    exists (
+    (context.category_scope <> 'PORTAL'
+      and coalesce((context.assignee->>'include_tenant_company')::boolean, false))
+    or exists (
       select 1
       from jsonb_array_elements_text(context.assignee->'employee_username') username(value)
       where not exists (
         select 1
         from public.vw_employee employee
-        where employee.e_company_id = context.tn_company_id
-          and employee.e_active = true
+        where employee.e_active = true
           and employee.e_username = username.value
+          and (
+            (context.category_scope = 'INTERNAL'
+              and employee.e_company_id = context.tn_company_id)
+            or (context.category_scope = 'PORTAL'
+              and employee.e_company_id = context.owner_company_id)
+            or (context.category_scope = 'PORTAL'
+              and coalesce((context.assignee->>'include_tenant_company')::boolean, false)
+              and employee.e_company_id = context.tn_company_id)
+          )
       )
     )
     or exists (
@@ -221,11 +272,18 @@ with submitted as (
         from public.job_field job_field
         join public.department department
           on department.d_id = job_field.jf_department_id
-         and department.d_company_id = context.tn_company_id
          and department.d_active = true
         where job_field.jf_id = field.value::bigint
-          and job_field.jf_company_id = context.tn_company_id
           and job_field.jf_active = true
+          and (
+            (context.category_scope = 'INTERNAL'
+              and job_field.jf_company_id = context.tn_company_id)
+            or (context.category_scope = 'PORTAL'
+              and job_field.jf_company_id = context.owner_company_id)
+            or (context.category_scope = 'PORTAL'
+              and coalesce((context.assignee->>'include_tenant_company')::boolean, false)
+              and job_field.jf_company_id = context.tn_company_id)
+          )
       )
     )
   limit 1
@@ -326,7 +384,9 @@ function assertValidationResult(
   }
 
   throw Object.assign(
-    new Error("An organization reference is inactive or outside the category policy."),
+    new Error(
+      "An organization reference is inactive or outside the category policy.",
+    ),
     { code: errorCode, status: 400 },
   );
 }

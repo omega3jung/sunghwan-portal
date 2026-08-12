@@ -1,4 +1,7 @@
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import {
   CreateTenantRowInput,
@@ -115,11 +118,11 @@ export async function findTenantRows(): Promise<TenantRow[]> {
 /** Queries PostgreSQL for active tenant row by id without applying presentation concerns. */
 export async function findActiveTenantRowById(
   tenantId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<TenantRow | null> {
-  const rows = await queryPortalApi<TenantRow>(
-    FIND_ACTIVE_TENANT_ROW_BY_ID_QUERY,
-    [Number(tenantId)],
-  );
+  const rows = await query<TenantRow>(FIND_ACTIVE_TENANT_ROW_BY_ID_QUERY, [
+    Number(tenantId),
+  ]);
 
   return rows[0] ?? null;
 }

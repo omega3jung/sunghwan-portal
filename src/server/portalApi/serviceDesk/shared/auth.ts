@@ -152,7 +152,7 @@ export async function resolveOperationalServiceDeskReadTarget({
     principal.companyId,
   );
 
-  if (!ownTenant || !ownTenant.active) {
+  if (!ownTenant || !ownTenant.operational) {
     throw createSettingsAuthorizationError(
       "An active Service Desk tenant is not configured for this company.",
       403,
@@ -182,7 +182,7 @@ export async function resolveOperationalServiceDeskReadTarget({
       ? ownTenant
       : await getServiceDeskSettingsTenantContext(requestedTenantId);
 
-  if (!targetTenant || !targetTenant.active) {
+  if (!targetTenant || !targetTenant.operational) {
     throw createSettingsAuthorizationError(
       "The requested Service Desk tenant was not found.",
       404,
@@ -216,7 +216,8 @@ export async function resolveAuthorizedSettingsTenant({
   request: NextRequest;
   requestedTenantId?: string | number | null;
 }) {
-  const principalContext = await resolveServiceDeskSettingsAdminContext(request);
+  const principalContext =
+    await resolveServiceDeskSettingsAdminContext(request);
   const { adminType, principal } = principalContext;
 
   if (adminType === "TENANT_ADMIN") {
@@ -255,12 +256,13 @@ export async function resolveAuthorizedSettingsTenant({
     };
   }
 
-  const tenant = await getServiceDeskSettingsTenantContext(
-    requestedTenantId,
-  );
+  const tenant = await getServiceDeskSettingsTenantContext(requestedTenantId);
 
   if (!tenant) {
-    throw createSettingsAuthorizationError("Service Desk tenant not found.", 404);
+    throw createSettingsAuthorizationError(
+      "Service Desk tenant not found.",
+      404,
+    );
   }
 
   return {

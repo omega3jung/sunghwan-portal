@@ -18,6 +18,7 @@ import {
   resolveSettingsAccess,
   type ServiceDeskSettingsResource,
 } from "@/lib/application/serviceDesk";
+import { allCompaniesMock } from "@/mocks/domain/organization/companies";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 
 /** Captures the authenticated principal and scope used to authorize settings operations. */
@@ -76,11 +77,17 @@ async function getServiceDeskSettingsTenantContextByCompanyId(
 function toLocalTenantContext(
   tenant: ReturnType<typeof getLocalDemoTenants>[number],
 ): ServiceDeskSettingsTenantContext {
+  const company = allCompaniesMock.find(
+    (item) => String(item.company_id) === String(tenant.tenant_company_id),
+  );
+  const active = tenant.tenant_active !== false;
+
   return {
     id: String(tenant.tenant_id),
     companyId: Number(tenant.tenant_company_id),
     isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
-    active: tenant.tenant_active !== false,
+    active,
+    operational: active && company?.company_active === true,
   };
 }
 
@@ -203,7 +210,7 @@ export async function resolveOperationalServiceDeskReadTarget({
     principal.companyId,
   );
 
-  if (!ownTenant || !ownTenant.active) {
+  if (!ownTenant || !ownTenant.operational) {
     throw createSettingsAuthorizationError(
       "An active Service Desk tenant is not configured for this company.",
       403,
@@ -237,7 +244,7 @@ export async function resolveOperationalServiceDeskReadTarget({
           requestedTenantId,
         );
 
-  if (!targetTenant || !targetTenant.active) {
+  if (!targetTenant || !targetTenant.operational) {
     throw createSettingsAuthorizationError(
       "The requested Service Desk tenant was not found.",
       404,
@@ -267,7 +274,8 @@ export async function resolveAuthorizedSettingsTenant({
   request: NextRequest;
   requestedTenantId?: string | number | null;
 }) {
-  const principalContext = await resolveServiceDeskSettingsAdminContext(request);
+  const principalContext =
+    await resolveServiceDeskSettingsAdminContext(request);
   const { adminType, dataScope, principal } = principalContext;
 
   if (adminType === "TENANT_ADMIN") {
@@ -315,7 +323,10 @@ export async function resolveAuthorizedSettingsTenant({
   );
 
   if (!tenant) {
-    throw createSettingsAuthorizationError("Service Desk tenant not found.", 404);
+    throw createSettingsAuthorizationError(
+      "Service Desk tenant not found.",
+      404,
+    );
   }
 
   return {

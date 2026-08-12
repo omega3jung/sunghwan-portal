@@ -108,11 +108,11 @@ Service Desk Settings has two administrative principal types. They are derived
 from a server-resolved canonical `AppUser`, not from a client claim or role
 hierarchy.
 
-| Settings admin type      | Required trusted fields                               |
-| ------------------------ | ----------------------------------------------------- |
+| Settings admin type      | Required trusted fields                                |
+| ------------------------ | ------------------------------------------------------ |
 | Owner Admin              | `permission >= ADMIN` (`9`) and `userScope = INTERNAL` |
 | Tenant Admin             | `permission >= ADMIN` (`9`) and `userScope = CLIENT`   |
-| no Settings admin access | any lower permission, regardless of `userScope`       |
+| no Settings admin access | any lower permission, regardless of `userScope`        |
 
 Use the canonical access-level constant rather than duplicating the numeric
 value in feature code. `role`, `dataScope`, the focused tenant, request
@@ -549,14 +549,15 @@ subcategory override deletes that rule so parent fallback is restored; it does
 not persist an empty override. Main categories may be inactive while their rule
 is configured, because configuration must precede explicit activation.
 
-Employees and organization references are filtered and validated against the
-selected Tenant company. Employee lookup uses `e_company_id`; department lookup
-uses `d_company_id`; and job-field lookup joins `jf_department_id = d_id` before
-applying `d_company_id`. Client-provided category scope, purpose, owner flags,
-or precomputed allowed-company lists are not organization lookup inputs.
+Assignment candidates, save validation, activation readiness, recommendations,
+and routing use one stored-category policy: Owner `INTERNAL` uses the owner
+company, customer `INTERNAL` uses the Tenant company, `PORTAL` uses the owner
+company by default, and `PORTAL` with `includeTenantCompany` uses both. Employee
+and Job Field references must belong to that eligible set. Client-provided
+category scope, owner flags, or precomputed company lists are not authoritative.
 
-Candidate read APIs receive the selected company ID and choose the corresponding
-repository query before returning departments, job fields, and employees.
+Candidate read APIs derive the same company set before returning departments,
+job fields, and employees.
 On REMOTE save, PostgreSQL resolves the canonical policy from the stored
 category and validates all submitted job-field and employee references in one
 set-based query inside the assignment-tree write transaction. An active Job
@@ -808,19 +809,19 @@ The following items are deferred unless explicitly implemented:
 
 ## Responsibility Matrix
 
-| Area                          | Responsibility                                          |
-| ----------------------------- | ------------------------------------------------------- |
-| Domain model                  | Define application-facing settings shapes               |
-| Feature API client            | Call settings APIs and expose typed operations          |
-| Route handler                 | Parse HTTP and delegate by runtime                      |
-| Settings authorization policy | Resolve trusted principal and resource capability       |
-| LOCAL settings handler        | Provide safe mutable demo behavior                      |
-| REMOTE DTO service            | Map persisted rows to stable DTOs                       |
+| Area                          | Responsibility                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| Domain model                  | Define application-facing settings shapes                                            |
+| Feature API client            | Call settings APIs and expose typed operations                                       |
+| Route handler                 | Parse HTTP and delegate by runtime                                                   |
+| Settings authorization policy | Resolve trusted principal and resource capability                                    |
+| LOCAL settings handler        | Provide safe mutable demo behavior                                                   |
+| REMOTE DTO service            | Map persisted rows to stable DTOs                                                    |
 | Server service/repository     | Atomically validate stored category/organization relations and write REMOTE settings |
-| React Query                   | Own settings server state                               |
-| Settings UI                   | Edit configuration through workflow-shaped forms        |
-| Ticket workflow               | Resolve current settings into ticket behavior           |
-| Ticket history                | Preserve the meaning of executed ticket actions         |
+| React Query                   | Own settings server state                                                            |
+| Settings UI                   | Edit configuration through workflow-shaped forms                                     |
+| Ticket workflow               | Resolve current settings into ticket behavior                                        |
+| Ticket history                | Preserve the meaning of executed ticket actions                                      |
 
 ---
 

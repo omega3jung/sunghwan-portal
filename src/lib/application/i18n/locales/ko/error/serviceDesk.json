@@ -62,6 +62,7 @@
       "delete": "테넌트를 삭제하지 못했습니다.",
       "save": "테넌트 설정을 저장하지 못했습니다.",
       "remoteNotImplemented": "REMOTE 테넌트 설정 변경은 아직 구현되지 않았습니다.",
+      "portalOwnerProtected": "포털 소유자 테넌트는 비활성화하거나 삭제할 수 없습니다.",
       "localDemo": {
         "invalidPayload": "테넌트 설정 payload가 올바르지 않습니다.",
         "companyAlreadyAssigned": "회사 {{companyId}}는 이미 활성 테넌트에 할당되어 있습니다.",

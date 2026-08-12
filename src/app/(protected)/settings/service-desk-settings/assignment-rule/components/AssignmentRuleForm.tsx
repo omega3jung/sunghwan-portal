@@ -42,6 +42,7 @@ type Props = {
   canEdit?: boolean;
   scope: CategoryScope;
   companyId: string | null;
+  ownerCompanyId: string | null;
 };
 
 export function AssignmentRuleForm({
@@ -52,6 +53,7 @@ export function AssignmentRuleForm({
   canEdit = true,
   scope,
   companyId,
+  ownerCompanyId,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue(language);
@@ -65,6 +67,14 @@ export function AssignmentRuleForm({
 
   const organization = useServiceDeskSettingsOrganizationData({
     companyId,
+    companyIds:
+      scope === "PORTAL" && ownerCompanyId
+        ? assignee?.includeTenantCompany && companyId !== ownerCompanyId
+          ? [ownerCompanyId, companyId].filter((id): id is string =>
+              Boolean(id),
+            )
+          : [ownerCompanyId]
+        : undefined,
     enabled: selectedNode !== null,
     includeDepartments: true,
   });
@@ -232,9 +242,7 @@ export function AssignmentRuleForm({
             </Field>
             {!hasAssignmentRuleSelection(assignee) && (
               <p className="text-sm text-destructive">
-                {t(
-                  "serviceDeskSettings.assignmentRuleTab.assigneeRequired",
-                )}
+                {t("serviceDeskSettings.assignmentRuleTab.assigneeRequired")}
               </p>
             )}
             {scope === "PORTAL" && (

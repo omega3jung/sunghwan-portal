@@ -116,10 +116,17 @@ export async function handleTicketPortalApi(
 
   if (TICKET_LIST_PATH_PATTERN.test(context.path)) {
     if (context.method === "POST") {
+      const principal = await getUserProfileDtoByUsername(currentUserName);
+
+      if (!principal) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
       const ticket = await createTicket(
         requireBody<TicketCreateRequestDto>(context.options),
         {
           requesterUsername: currentUserName,
+          principal,
         },
       );
 
@@ -232,8 +239,9 @@ export async function handleTicketPortalApi(
         action,
         currentUserName,
         isAdmin,
-        payload:
-          requireBody<TicketApprovalActionCommandRequest>(context.options),
+        payload: requireBody<TicketApprovalActionCommandRequest>(
+          context.options,
+        ),
       });
 
       return NextResponse.json(actionDto, { status: 201 });
@@ -313,10 +321,17 @@ export async function handleTicketPortalApi(
         throw createStatusError("Invalid request body.", 400);
       }
 
+      const principal = await getUserProfileDtoByUsername(currentUserName);
+
+      if (!principal) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      }
+
       const ticket = await updateRequesterTicket(
         ticketId,
         parsedBody.data,
         currentUserName,
+        principal,
       );
 
       return NextResponse.json(ticket);

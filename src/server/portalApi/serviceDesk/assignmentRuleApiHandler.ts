@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import type { AssignmentRecommendationInput } from "@/lib/application/contracts/serviceDesk";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
+import { canAccessOperationalServiceDeskCategory } from "@/lib/application/serviceDesk";
 import {
   type AssignmentRuleDto,
   createAssignmentRule,
@@ -14,7 +15,10 @@ import {
   updateAssignmentRuleById,
   validateAssignmentRuleTreeMutation,
 } from "@/server/data/serviceDesk/assignmentRule";
-import { getCategoryTreeByTenantId } from "@/server/data/serviceDesk/category";
+import {
+  getCategoryTreeByTenantId,
+  getServiceDeskCategoryContext,
+} from "@/server/data/serviceDesk/category";
 import {
   assertAssignmentReferencesValidForWrite,
   mapSettingsWriteError,
@@ -32,7 +36,10 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
-import { resolveAuthorizedSettingsTenant } from "./shared";
+import {
+  resolveAuthorizedSettingsTenant,
+  resolveServiceDeskRequestContext,
+} from "./shared";
 
 type AssignmentTreeCategoryItem =
   SaveServiceDeskAssignmentRuleTreePayload["categories"][number];
@@ -134,6 +141,21 @@ export async function handleAssignmentRulePortalApi(
     }
 
     const input = requireBody<AssignmentRecommendationInput>(context.options);
+    const [category, principalContext] = await Promise.all([
+      getServiceDeskCategoryContext(input.categoryId),
+      resolveServiceDeskRequestContext(context.request),
+    ]);
+
+    if (
+      !category ||
+      !canAccessOperationalServiceDeskCategory({
+        principal: principalContext.principal,
+        category,
+      })
+    ) {
+      return createNotFoundResponse();
+    }
+
     const body = await getAssignmentRecommendationResponse({
       input,
     });

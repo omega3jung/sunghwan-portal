@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { OWNER_COMPANY_ID } from "@/domain/organization";
 import { canActivateCategory } from "@/domain/serviceDesk";
 import { useServiceDeskAssignmentRuleListQuery } from "@/feature/serviceDesk/assignmentRule/client";
 import { useSaveServiceDeskCategoryTree } from "@/feature/serviceDesk/category/client";
@@ -43,6 +44,12 @@ export function useCategorySettings() {
     useServiceDeskAssignmentRuleListQuery(assignmentRuleParams);
   const organization = useServiceDeskSettingsOrganizationData({
     companyId: context.selectedTenantData?.companyId ?? null,
+    companyIds:
+      context.selectedScope === "PORTAL"
+        ? [OWNER_COMPANY_ID, context.selectedTenantData?.companyId].filter(
+            (id): id is string => Boolean(id),
+          )
+        : undefined,
     enabled: context.canRead,
   });
   const tree = useCategoryTree({
@@ -88,11 +95,16 @@ export function useCategorySettings() {
       mainCategoryId: tree.selectedParentCategory?.id,
       jobFields: organization.jobFields,
       employees: organization.employees,
+      scope: context.selectedScope,
+      tenantCompanyId: context.selectedTenantData?.companyId ?? "",
+      ownerCompanyId: OWNER_COMPANY_ID,
     });
   }, [
     assignmentRuleQuery.data,
     organization.employees,
     organization.jobFields,
+    context.selectedScope,
+    context.selectedTenantData?.companyId,
     tree.selectedNode,
     tree.selectedParentCategory?.id,
   ]);

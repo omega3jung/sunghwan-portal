@@ -67,6 +67,7 @@
       "remoteNotImplemented": "REMOTE tenant settings mutations are not implemented yet.",
       "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
       "companyMismatch": "Tenant does not belong to company {{companyId}}.",
+      "portalOwnerProtected": "The portal-owner tenant cannot be deactivated or deleted.",
       "localDemo": {
         "invalidPayload": "Invalid tenant settings payload.",
         "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",

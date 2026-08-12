@@ -5,10 +5,7 @@ import {
   findActiveTicketViewRowByIdIncludingDraft,
   type TicketRepositoryOptions,
 } from "./ticketRepository";
-import {
-  CreateTicketRowInput,
-  ServiceDeskTicketViewRow,
-} from "./ticketRow";
+import { CreateTicketRowInput, ServiceDeskTicketViewRow } from "./ticketRow";
 import {
   RequesterUpdateCategorySnapshot,
   RequesterUpdateTicketRowInput,
@@ -20,12 +17,22 @@ export type RequesterUpdateTicketRepositoryOptions = TicketRepositoryOptions;
 const FIND_ACTIVE_REQUESTER_UPDATE_CATEGORY_SNAPSHOT_BY_ID_QUERY = `
 select
   child.cat_id,
+  child.cat_tenant_id,
+  coalesce(parent.cat_scope, child.cat_scope) as cat_scope,
+  tenant.tn_company_id as tenant_company_id,
   child.cat_parent_id,
   coalesce(child.cat_default_priority, parent.cat_default_priority) as cat_default_priority,
   coalesce(child.cat_default_risk_level, parent.cat_default_risk_level) as cat_default_risk_level
 from service_desk.category child
 left join service_desk.category parent
   on parent.cat_id = child.cat_parent_id
+ and parent.cat_tenant_id = child.cat_tenant_id
+join service_desk.tenant tenant
+  on tenant.tn_id = child.cat_tenant_id
+ and tenant.tn_active = true
+join public.company company
+  on company.c_id = tenant.tn_company_id
+ and company.c_active = true
 where child.cat_id = $1
   and child.cat_active = true
   and (parent.cat_id is null or parent.cat_active = true)
@@ -35,18 +42,19 @@ limit 1;
 const UPDATE_REQUESTER_TICKET_ROW_BY_ID_QUERY = `
 update service_desk.ticket
 set
-  tk_category_id = $2,
-  tk_subject = $3,
-  tk_content = $4,
-  tk_due_at = $5,
-  tk_email = $6::jsonb,
-  tk_files = $7::jsonb,
-  tk_images = $8::jsonb,
-  tk_priority = $9,
-  tk_risk_level = $10,
-  tk_approval_step_id = $11,
-  tk_assignee_usernames = $12::text[],
-  tk_status = $13,
+  tk_tenant_id = $2,
+  tk_category_id = $3,
+  tk_subject = $4,
+  tk_content = $5,
+  tk_due_at = $6,
+  tk_email = $7::jsonb,
+  tk_files = $8::jsonb,
+  tk_images = $9::jsonb,
+  tk_priority = $10,
+  tk_risk_level = $11,
+  tk_approval_step_id = $12,
+  tk_assignee_usernames = $13::text[],
+  tk_status = $14,
   tk_updated_at = now()
 where tk_id = $1
   and tk_active = true
@@ -240,6 +248,7 @@ export async function updateRequesterTicketRowById(
     UPDATE_REQUESTER_TICKET_ROW_BY_ID_QUERY,
     [
       ticketId,
+      input.tk_tenant_id,
       input.tk_category_id,
       input.tk_subject,
       input.tk_content,

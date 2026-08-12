@@ -1,20 +1,19 @@
 import { ACCESS_LEVEL } from "@/domain/auth";
-import { isOwnerCompany } from "@/domain/organization";
+import { isOwnerCompany, OWNER_COMPANY_ID } from "@/domain/organization";
 import {
   type ApprovalAssigneeType,
   type AssigneeGroup,
   type CategoryScope,
   isCategoryEffectivelyActive,
+  resolveAssignmentEligibleCompanyIds,
 } from "@/domain/serviceDesk";
+import { allCompaniesMock } from "@/mocks/domain/organization/companies";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 
-import {
-  getLocalDemoCategories,
-  getLocalDemoTenants,
-} from "./settings/state";
+import { getLocalDemoCategories, getLocalDemoTenants } from "./settings/state";
 
 /** Describes local service desk tenant context used by the server-side LOCAL demo runtime. */
 export type LocalServiceDeskTenantContext = {
@@ -22,6 +21,7 @@ export type LocalServiceDeskTenantContext = {
   companyId: number;
   isOwnerTenant: boolean;
   active: boolean;
+  operational: boolean;
 };
 
 /** Describes service desk category context used by the server-side LOCAL demo runtime. */
@@ -105,12 +105,15 @@ export async function getServiceDeskCategoryContext(
 
   const match = matches.values().next().value;
   const tenant = match
-    ? getLocalDemoTenants().find(
-        (item) => item.tenant_id === match.tenantId,
-      )
+    ? getLocalDemoTenants().find((item) => item.tenant_id === match.tenantId)
     : null;
 
   if (!match || !tenant) return null;
+
+  const active = tenant.tenant_active !== false;
+  const company = allCompaniesMock.find(
+    (item) => item.company_id === Number(tenant.tenant_company_id),
+  );
 
   return {
     categoryId: String(categoryId),
@@ -121,7 +124,8 @@ export async function getServiceDeskCategoryContext(
       id: String(tenant.tenant_id),
       companyId: Number(tenant.tenant_company_id),
       isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
-      active: tenant.tenant_active !== false,
+      active,
+      operational: active && company?.company_active === true,
     },
   };
 }
@@ -132,8 +136,7 @@ export function getActiveLocalEmployeesByCompanyId(
 ): LocalCompanyEmployee[] {
   return [...employeesMock, ...clientDemoEmployee]
     .filter(
-      (employee) =>
-        employee.e_active && employee.e_company_id === companyId,
+      (employee) => employee.e_active && employee.e_company_id === companyId,
     )
     .map((employee) => ({
       id: employee.e_id,
@@ -231,8 +234,14 @@ export async function assertAssignmentAssigneeEligible({
     );
   }
 
-  const employees = getActiveLocalEmployeesByCompanyId(
-    category.tenant.companyId,
+  const eligibleCompanyIds = resolveAssignmentEligibleCompanyIds({
+    scope: category.scope,
+    tenantCompanyId: category.tenant.companyId,
+    ownerCompanyId: OWNER_COMPANY_ID,
+    includeTenantCompany: assignee.includeTenantCompany,
+  });
+  const employees = eligibleCompanyIds.flatMap((companyId) =>
+    getActiveLocalEmployeesByCompanyId(Number(companyId)),
   );
   const employeesByUsername = new Map(
     employees.map((employee) => [employee.username, employee]),
@@ -250,7 +259,7 @@ export async function assertAssignmentAssigneeEligible({
     const jobField = allJobFieldsMock.find(
       (item) =>
         String(item.jf_id) === jobFieldId &&
-        item.jf_company_id === category.tenant.companyId &&
+        eligibleCompanyIds.includes(String(item.jf_company_id)) &&
         item.jf_active,
     );
     if (!jobField) {

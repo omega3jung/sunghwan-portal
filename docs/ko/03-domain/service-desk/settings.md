@@ -103,11 +103,11 @@ validation, actor-candidate lookup은 두 runtime에서 같은 권한 결과를 
 서비스 데스크 설정에는 두 종류의 관리자 principal이 있다. 이 값은 client claim이나
 role hierarchy가 아니라 서버에서 확인한 canonical `AppUser`로부터 파생한다.
 
-| 설정 관리자 유형 | 필요한 신뢰 필드 |
-| --- | --- |
-| Owner Admin | `permission >= ADMIN` (`9`) 및 `userScope = INTERNAL` |
-| Tenant Admin | `permission >= ADMIN` (`9`) 및 `userScope = CLIENT` |
-| 설정 관리자 권한 없음 | `userScope`와 무관하게 더 낮은 permission |
+| 설정 관리자 유형      | 필요한 신뢰 필드                                      |
+| --------------------- | ----------------------------------------------------- |
+| Owner Admin           | `permission >= ADMIN` (`9`) 및 `userScope = INTERNAL` |
+| Tenant Admin          | `permission >= ADMIN` (`9`) 및 `userScope = CLIENT`   |
+| 설정 관리자 권한 없음 | `userScope`와 무관하게 더 낮은 permission             |
 
 API route의 설정 작업은 먼저 인증된 JWT의 `getUserAccessLevel(request) >= 9`를
 검사한다. 그 다음 서버는 session에서 effective username을 구하고 canonical
@@ -151,18 +151,18 @@ Access 값의 의미는 다음과 같다.
 - `read`: query와 display만 허용
 - `none`: query와 mutation 모두 금지
 
-| 대상 | Resource | Owner Admin | 동일 회사 Tenant Admin | 다른 Tenant Admin |
-| --- | --- | --- | --- | --- |
-| Tenant Settings | Tenant | manage | none | none |
-| Owner Tenant, 양쪽 scope | Category | manage | none | none |
-| Owner Tenant, 양쪽 scope | Approval Step | manage | none | none |
-| Owner Tenant, 양쪽 scope | Assignment Rule | manage | none | none |
-| Customer Tenant, `INTERNAL` | Category | none | manage | none |
-| Customer Tenant, `INTERNAL` | Approval Step | none | manage | none |
-| Customer Tenant, `INTERNAL` | Assignment Rule | none | manage | none |
-| Customer Tenant, `PORTAL` | Category | manage | read | none |
-| Customer Tenant, `PORTAL` | Approval Step | read | manage | none |
-| Customer Tenant, `PORTAL` | Assignment Rule | manage | read | none |
+| 대상                        | Resource        | Owner Admin | 동일 회사 Tenant Admin | 다른 Tenant Admin |
+| --------------------------- | --------------- | ----------- | ---------------------- | ----------------- |
+| Tenant Settings             | Tenant          | manage      | none                   | none              |
+| Owner Tenant, 양쪽 scope    | Category        | manage      | none                   | none              |
+| Owner Tenant, 양쪽 scope    | Approval Step   | manage      | none                   | none              |
+| Owner Tenant, 양쪽 scope    | Assignment Rule | manage      | none                   | none              |
+| Customer Tenant, `INTERNAL` | Category        | none        | manage                 | none              |
+| Customer Tenant, `INTERNAL` | Approval Step   | none        | manage                 | none              |
+| Customer Tenant, `INTERNAL` | Assignment Rule | none        | manage                 | none              |
+| Customer Tenant, `PORTAL`   | Category        | manage      | read                   | none              |
+| Customer Tenant, `PORTAL`   | Approval Step   | read        | manage                 | none              |
+| Customer Tenant, `PORTAL`   | Assignment Rule | manage      | read                   | none              |
 
 Owner Admin은 customer `INTERNAL` 설정에 대한 암묵적인 support/read access가 없다.
 별도의 platform/support capability는 이 정책의 범위에 포함하지 않는다.
@@ -530,14 +530,15 @@ Subcategory override를 제거하면 해당 rule을 삭제하여 parent fallback
 빈 override를 저장하지 않는다. Configuration이 명시적 activation보다 먼저 이루어져야
 하므로 main category가 inactive인 상태에서도 rule을 구성할 수 있다.
 
-Employee와 organization reference는 선택된 Tenant company를 기준으로 filter하고
-검증한다. Employee lookup은 `e_company_id`, department lookup은 `d_company_id`를
-사용한다. Job-field lookup은 `jf_department_id = d_id`로 join한 뒤 `d_company_id`를
-적용한다. Client가 제공한 category scope, purpose, owner flag, 미리 계산한 allowed
-company list는 organization lookup input으로 사용하지 않는다.
+Assignment candidate, 저장 검증, activation readiness, recommendation, routing은 저장된
+category에서 파생한 하나의 정책을 사용한다. Owner `INTERNAL`은 owner company,
+customer `INTERNAL`은 Tenant company, 기본 `PORTAL`은 owner company,
+`includeTenantCompany`가 설정된 `PORTAL`은 두 company를 모두 사용한다. Employee와
+Job Field reference는 이 eligible company 집합에 속해야 한다. Client가 제공한 category
+scope, owner flag, 미리 계산한 company list는 authoritative source가 아니다.
 
-Candidate read API는 선택된 company ID를 받아 해당 repository query를 선택한 뒤
-department, job field, employee를 반환한다. REMOTE save에서는 PostgreSQL이 저장된
+Candidate read API도 같은 company 집합을 파생한 뒤 department, job field, employee를
+반환한다. REMOTE save에서는 PostgreSQL이 저장된
 category로부터 canonical policy를 결정하고 제출된 job-field 및 employee reference
 전체를 assignment-tree write transaction 안에서 set-based query로 검증한다. Active
 Job Field는 현재 active employee가 없더라도 유효한 configuration reference이며, 이를
@@ -785,19 +786,19 @@ defense in depth로 같은 tenant boundary를 보존해야 한다.
 
 ## 책임 매트릭스
 
-| 영역 | 책임 |
-| --- | --- |
-| Domain model | 애플리케이션 설정 형태 정의 |
-| Feature API client | 설정 API 호출과 typed operation 제공 |
-| Route handler | HTTP 파싱과 runtime별 위임 |
-| Settings authorization policy | 신뢰할 수 있는 principal과 resource capability 결정 |
-| LOCAL settings handler | 안전한 mutable demo behavior 제공 |
-| REMOTE DTO service | persisted row를 stable DTO로 매핑 |
-| Server service/repository | 저장된 category/organization 관계를 transaction 안에서 검증하고 REMOTE 설정 저장 |
-| React Query | 설정 server state 소유 |
-| Settings UI | workflow-shaped form으로 구성 편집 |
-| Ticket workflow | 현재 설정을 티켓 동작으로 해석 |
-| Ticket history | 이미 실행된 티켓 action의 의미 보존 |
+| 영역                          | 책임                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| Domain model                  | 애플리케이션 설정 형태 정의                                                      |
+| Feature API client            | 설정 API 호출과 typed operation 제공                                             |
+| Route handler                 | HTTP 파싱과 runtime별 위임                                                       |
+| Settings authorization policy | 신뢰할 수 있는 principal과 resource capability 결정                              |
+| LOCAL settings handler        | 안전한 mutable demo behavior 제공                                                |
+| REMOTE DTO service            | persisted row를 stable DTO로 매핑                                                |
+| Server service/repository     | 저장된 category/organization 관계를 transaction 안에서 검증하고 REMOTE 설정 저장 |
+| React Query                   | 설정 server state 소유                                                           |
+| Settings UI                   | workflow-shaped form으로 구성 편집                                               |
+| Ticket workflow               | 현재 설정을 티켓 동작으로 해석                                                   |
+| Ticket history                | 이미 실행된 티켓 action의 의미 보존                                              |
 
 ---
 

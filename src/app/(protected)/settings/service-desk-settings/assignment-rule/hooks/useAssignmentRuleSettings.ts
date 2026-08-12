@@ -140,6 +140,7 @@ export function useAssignmentRuleSettings() {
     isSaving,
     toolbar: editor.toolbar,
     companyId: context.selectedTenantData?.companyId ?? null,
+    ownerCompanyId: context.ownerCompanyId,
     tree: {
       ...tree,
       errors,

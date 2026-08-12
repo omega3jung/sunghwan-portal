@@ -62,6 +62,7 @@
       "delete": "Impossible de supprimer le tenant.",
       "save": "Impossible d'enregistrer les paramètres du tenant.",
       "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "portalOwnerProtected": "Le tenant propriétaire du portail ne peut pas être désactivé ou supprimé.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres du tenant invalide.",
         "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",

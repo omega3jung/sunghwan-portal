@@ -38,6 +38,7 @@ assignment rule이 없으면 parent/main category rule로 fallback한다.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -64,11 +65,11 @@ Assignment Rule 권한은 저장된 category의 `Category -> Tenant -> Company` 
 해석한다. Persisted rule은 독립적인 authority로 `tenantId`를 중복 저장하지 않으며,
 request company 값도 authorization source가 아니다.
 
-| Category target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
-| --- | --- | --- | --- |
-| Owner Tenant, 모든 scope | manage | none | none |
-| Customer Tenant, `INTERNAL` | none | manage | none |
-| Customer Tenant, `PORTAL` | manage | read | none |
+| Category target             | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
+| --------------------------- | ----------- | ------------------------- | ----------------- |
+| Owner Tenant, 모든 scope    | manage      | none                      | none              |
+| Customer Tenant, `INTERNAL` | none        | manage                    | none              |
+| Customer Tenant, `PORTAL`   | manage      | read                      | none              |
 
 Customer `PORTAL` work routing은 owner/service provider가 관리한다. Tenant Admin의
 read-only view는 현재 참조된 provider assignee의 display data를 포함할 수 있지만,
@@ -84,11 +85,11 @@ Unauthorized API request는 `403`을 반환하며, query response는 access가 `
 
 허용되는 worker는 category context로부터 파생한다.
 
-| Category context | 허용되는 employee company |
-| --- | --- |
-| Owner Tenant의 `INTERNAL` | owner/service-provider company |
-| Customer Tenant의 `INTERNAL` | 해당 customer Tenant company |
-| `PORTAL`, default | owner/service-provider company |
+| Category context                  | 허용되는 employee company                                |
+| --------------------------------- | -------------------------------------------------------- |
+| Owner Tenant의 `INTERNAL`         | owner/service-provider company                           |
+| Customer Tenant의 `INTERNAL`      | 해당 customer Tenant company                             |
+| `PORTAL`, default                 | owner/service-provider company                           |
 | `PORTAL`, explicit joint handling | owner/service-provider company와 category Tenant company |
 
 Explicit `assigneeUsernames`와 `jobFieldIds`로부터 resolve된 employee는 모두 company

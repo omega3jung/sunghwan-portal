@@ -39,6 +39,7 @@ rule.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {

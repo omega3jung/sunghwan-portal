@@ -104,6 +104,12 @@ Ticket Create -> effectively active main/subcategory only
 Ticket routing -> actual worker eligibility is revalidated on the server
 ```
 
+Operational availability requires both the stored Tenant and its backing
+Company to be active. Ticket create/update derives Tenant from the persisted
+Category and applies object-level Category access; payload Tenant IDs are not
+authoritative. `PORTAL` assignment uses the provider company by default and
+adds the category Tenant company only when `includeTenantCompany` is persisted.
+
 Main/subcategory active flags are stored independently; effective subcategory
 availability is `main.active && sub.active`. A subcategory uses its own
 Assignment Rule when one exists and falls back to the main-category rule only

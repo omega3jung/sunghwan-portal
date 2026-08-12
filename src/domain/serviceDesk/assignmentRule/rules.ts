@@ -1,4 +1,6 @@
+import type { CategoryScope } from "../category";
 import type { AssigneeGroup, AssignmentRule } from "./model";
+import { resolveAssignmentEligibleCompanyIds } from "./policy";
 
 export function hasAssignmentRuleSelection(
   assignee: Pick<AssigneeGroup, "jobFieldIds" | "assigneeUsernames">,
@@ -41,7 +43,9 @@ export function hasEffectiveValidWorker(
   employees: readonly { username: string; active: boolean }[],
 ) {
   const activeJobFieldIds = new Set(
-    jobFields.filter((jobField) => jobField.active).map((jobField) => jobField.id),
+    jobFields
+      .filter((jobField) => jobField.active)
+      .map((jobField) => jobField.id),
   );
   const activeEmployeeUsernames = new Set(
     employees
@@ -64,21 +68,45 @@ export function canActivateCategory({
   mainCategoryId,
   jobFields,
   employees,
+  scope,
+  tenantCompanyId,
+  ownerCompanyId,
 }: {
   assignmentRules: readonly AssignmentRule[];
   categoryId: string;
   mainCategoryId?: string;
-  jobFields: readonly { id: string; active: boolean }[];
-  employees: readonly { username: string; active: boolean }[];
+  jobFields: readonly { id: string; active: boolean; companyId: string }[];
+  employees: readonly {
+    username: string;
+    active: boolean;
+    companyId: string;
+  }[];
+  scope: CategoryScope;
+  tenantCompanyId: string;
+  ownerCompanyId: string;
 }) {
   const assignmentRule = resolveEffectiveAssignmentRule(
     assignmentRules,
     categoryId,
     mainCategoryId,
   );
+  const eligibleCompanyIds = new Set(
+    assignmentRule
+      ? resolveAssignmentEligibleCompanyIds({
+          scope,
+          tenantCompanyId,
+          ownerCompanyId,
+          includeTenantCompany: assignmentRule.assignee.includeTenantCompany,
+        })
+      : [],
+  );
 
   return Boolean(
     assignmentRule &&
-      hasEffectiveValidWorker(assignmentRule.assignee, jobFields, employees),
+    hasEffectiveValidWorker(
+      assignmentRule.assignee,
+      jobFields.filter((item) => eligibleCompanyIds.has(item.companyId)),
+      employees.filter((item) => eligibleCompanyIds.has(item.companyId)),
+    ),
   );
 }

@@ -1,6 +1,4 @@
-import {
-  type CategoryScope,
-} from "@/domain/serviceDesk";
+import { type CategoryScope } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
 import {
@@ -100,9 +98,7 @@ export async function getServiceDeskCategoryContext(
     return null;
   }
 
-  const tenant = await getServiceDeskSettingsTenantContext(
-    row.tenant_id,
-  );
+  const tenant = await getServiceDeskSettingsTenantContext(row.tenant_id);
 
   if (!tenant) {
     return null;
@@ -211,12 +207,14 @@ export async function validateCategoryTreeMutation({
   principal,
   tenant,
   payload,
+  query,
 }: {
   principal: ServiceDeskSettingsPrincipal;
   tenant: ServiceDeskSettingsTenantContext;
   payload: SaveServiceDeskCategoryTreePayload;
+  query?: PortalApiQueryExecutor;
 }) {
-  const categories = await getCategoryTreeByTenantId(tenant.id);
+  const categories = await getCategoryTreeByTenantId(tenant.id, query);
 
   assertCategoryTreeMutationAllowed({
     principal,
@@ -234,6 +232,7 @@ export async function validateCategoryTreeMutation({
   await assertCategoriesReadyForActivation(
     tenant.id,
     collectCategoryActivationTargetIds(categories, payload),
+    query,
   );
 }
 
@@ -242,7 +241,10 @@ function collectCategoryActivationTargetIds(
   payload: SaveServiceDeskCategoryTreePayload,
 ) {
   const currentCategoriesById = new Map(
-    currentCategories.map((category) => [String(category.category_id), category]),
+    currentCategories.map((category) => [
+      String(category.category_id),
+      category,
+    ]),
   );
   const categoryIds: string[] = [];
 
@@ -281,7 +283,11 @@ function collectCategoryActivationTargetIds(
         submittedSubCategoryId,
       );
 
-      if (currentSubCategory && !currentSubCategory.category_active && subCategory.active) {
+      if (
+        currentSubCategory &&
+        !currentSubCategory.category_active &&
+        subCategory.active
+      ) {
         categoryIds.push(submittedSubCategoryId);
       }
     }
@@ -327,8 +333,9 @@ export async function getCategorySettingsResponseByTenantId({
 /** Creates category through the server persistence boundary. */
 export async function createCategory(
   input: CreateCategoryInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<CategoryDto> {
-  await assertActiveTenantExists(input.category_tenant_id);
+  await assertActiveTenantExists(input.category_tenant_id, query);
 
   const inactiveInput: CreateCategoryInputDto = {
     ...input,
@@ -341,6 +348,7 @@ export async function createCategory(
 
   const parentRow = await createCategoryRow(
     mapCreateCategoryInputDtoToRowInput(inactiveInput),
+    query,
   );
 
   if (!parentRow) {
@@ -351,6 +359,7 @@ export async function createCategory(
     tenantId: input.category_tenant_id,
     parentRow,
     subCategories: inactiveInput.sub_category,
+    query,
   });
 
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
@@ -361,21 +370,24 @@ export async function updateCategoryById(
   tenantId: string | number,
   categoryId: string | number,
   input: UpdateCategoryInputDto,
+  query?: PortalApiQueryExecutor,
 ): Promise<CategoryDto> {
   const { parentRow: currentParentRow, childRows: currentChildRows } =
-    await getCategoryTreeRowsByTenantIdAndCategoryId(tenantId, categoryId);
+    await getCategoryTreeRowsByTenantIdAndCategoryId(
+      tenantId,
+      categoryId,
+      query,
+    );
 
   if (currentParentRow.cat_scope !== input.category_scope) {
-    throw new ApiError(
-      "serviceDesk.categories.scopeImmutable",
-      400,
-    );
+    throw new ApiError("serviceDesk.categories.scopeImmutable", 400);
   }
 
   const parentRow = await updateCategoryRowById(
     tenantId,
     categoryId,
     mapUpdateCategoryInputDtoToRowInput(input),
+    query,
   );
 
   if (!parentRow) {
@@ -388,6 +400,7 @@ export async function updateCategoryById(
     currentParentRow,
     currentChildRows,
     subCategories: input.sub_category,
+    query,
   });
 
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
@@ -436,8 +449,11 @@ function hasTenantId(value?: string | number | null): value is string | number {
   return String(value).trim().length > 0;
 }
 
-async function assertActiveTenantExists(tenantId: string | number) {
-  const tenant = await getActiveTenantById(tenantId);
+async function assertActiveTenantExists(
+  tenantId: string | number,
+  query?: PortalApiQueryExecutor,
+) {
+  const tenant = await getActiveTenantById(tenantId, query);
 
   if (!tenant) {
     throw new ApiError("serviceDesk.common.notFound", 404);
@@ -449,8 +465,13 @@ async function assertActiveTenantExists(tenantId: string | number) {
 async function getCategoryTreeRowsByTenantIdAndCategoryId(
   tenantId: string | number,
   categoryId: string | number,
+  query?: PortalApiQueryExecutor,
 ) {
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(tenantId, categoryId);
+  const rows = await findCategoryRowsByTenantIdAndCategoryId(
+    tenantId,
+    categoryId,
+    query,
+  );
   const parentRow = rows.find(
     (row) =>
       Number(row.cat_id) === Number(categoryId) && row.cat_parent_id === null,
@@ -473,10 +494,12 @@ async function createSubCategoryRows({
   tenantId,
   parentRow,
   subCategories,
+  query,
 }: {
   tenantId: string | number;
   parentRow: CategoryRow;
   subCategories: CategorySubCategoryInputDto[];
+  query?: PortalApiQueryExecutor;
 }): Promise<CategoryRow[]> {
   const rows: CategoryRow[] = [];
 
@@ -487,6 +510,7 @@ async function createSubCategoryRows({
         parentRow.cat_id,
         subCategory,
       ),
+      query,
     );
 
     if (!row) {
@@ -506,12 +530,14 @@ async function synchronizeSubCategoryRows({
   currentParentRow: _currentParentRow,
   currentChildRows,
   subCategories,
+  query,
 }: {
   tenantId: string | number;
   parentRow: CategoryRow;
   currentParentRow: CategoryRow;
   currentChildRows: CategoryRow[];
   subCategories: CategorySubCategoryInputDto[];
+  query?: PortalApiQueryExecutor;
 }): Promise<CategoryRow[]> {
   const currentChildRowsById = new Map(
     currentChildRows.map((row) => [Number(row.cat_id), row]),
@@ -524,6 +550,7 @@ async function synchronizeSubCategoryRows({
       tenantId,
       subCategoryId: subCategory.category_id,
       currentChildRowsById,
+      query,
     });
 
     if (existingChildRow) {
@@ -534,6 +561,7 @@ async function synchronizeSubCategoryRows({
           parentRow.cat_id,
           subCategory,
         ),
+        query,
       );
 
       if (!updatedChildRow) {
@@ -554,6 +582,7 @@ async function synchronizeSubCategoryRows({
           category_active: false,
         },
       ),
+      query,
     );
 
     if (!createdChildRow) {
@@ -589,6 +618,7 @@ async function synchronizeSubCategoryRows({
         cat_scope: null,
         cat_index: desiredIndex,
       }),
+      query,
     );
 
     if (!updatedPreservedChildRow) {
@@ -606,10 +636,12 @@ async function resolveExistingSubCategoryRow({
   tenantId,
   subCategoryId,
   currentChildRowsById,
+  query,
 }: {
   tenantId: string | number;
   subCategoryId?: number;
   currentChildRowsById: Map<number, CategoryRow>;
+  query?: PortalApiQueryExecutor;
 }): Promise<CategoryRow | null> {
   if (typeof subCategoryId !== "number") {
     return null;
@@ -621,8 +653,14 @@ async function resolveExistingSubCategoryRow({
     return currentChildRow;
   }
 
-  const rows = await findCategoryRowsByTenantIdAndCategoryId(tenantId, subCategoryId);
-  const existingRow = rows.find((row) => Number(row.cat_id) === Number(subCategoryId));
+  const rows = await findCategoryRowsByTenantIdAndCategoryId(
+    tenantId,
+    subCategoryId,
+    query,
+  );
+  const existingRow = rows.find(
+    (row) => Number(row.cat_id) === Number(subCategoryId),
+  );
 
   if (existingRow) {
     throw new ApiError("serviceDesk.common.notFound", 404);

@@ -9,7 +9,9 @@ import {
   getLocalDemoAssignmentRules,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
+import { OWNER_COMPANY_ID } from "@/domain/organization";
 import type { TicketStatus } from "@/domain/serviceDesk";
+import { resolveAssignmentEligibleCompanyIds } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type {
   DbAssignmentRule,
@@ -234,8 +236,14 @@ async function resolveAssignmentAssignees(
     return [];
   }
 
-  const eligibleEmployees = getActiveLocalEmployeesByCompanyId(
-    category.tenant.companyId,
+  const eligibleEmployees = resolveAssignmentEligibleCompanyIds({
+    scope: category.scope,
+    tenantCompanyId: category.tenant.companyId,
+    ownerCompanyId: OWNER_COMPANY_ID,
+    includeTenantCompany:
+      assignmentRule.assignee.include_tenant_company === true,
+  }).flatMap((companyId) =>
+    getActiveLocalEmployeesByCompanyId(Number(companyId)),
   );
 
   const directAssignees = assignmentRule.assignee.employee_username.map(

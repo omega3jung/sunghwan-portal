@@ -1,4 +1,5 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
+import type { AppUser } from "@/domain/user";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
@@ -10,6 +11,7 @@ import {
   createHistoryOfTicketCreate,
 } from "../ticketHistory";
 import { finishRunningWorkSessionsByTicketId } from "../workSession";
+import { resolveAuthoritativeTicketCategory } from "./ticketCategoryAccess";
 import {
   TicketCreateRequestDto,
   TicketDetailDto,
@@ -39,6 +41,7 @@ import {
 } from "./ticketRepository";
 import {
   closeResolvedTicketById,
+  findActiveRequesterUpdateCategorySnapshotById,
   startAssignedTicketWorkById,
   submitDraftTicketRowById,
   updateTicketInitialRoutingById,
@@ -48,6 +51,7 @@ import {
 export type CreateTicketOptions = {
   ticketNo?: string;
   requesterUsername: string;
+  principal: Pick<AppUser, "companyId" | "userScope">;
   query?: TicketRepositoryOptions["query"];
 };
 
@@ -113,7 +117,10 @@ export async function startTicketWork(
         currentUserName,
       )
     ) {
-      throw createStatusError("Only a current work assignee can start work.", 403);
+      throw createStatusError(
+        "Only a current work assignee can start work.",
+        403,
+      );
     }
 
     const updatedTicket = await startAssignedTicketWorkById(
@@ -240,11 +247,25 @@ export async function createTicket(
     throw createStatusError("Requester department was not found.", 422);
   }
 
-  const baseRowInput = mapTicketCreateRequestDtoToRowInput(input, {
-    ticketNo,
-    requesterUsername: options.requesterUsername,
-    requesterDepartmentId,
-  });
+  const category = resolveAuthoritativeTicketCategory(
+    await findActiveRequesterUpdateCategorySnapshotById(
+      input.categoryId,
+      repositoryOptions,
+    ),
+    options.principal,
+  );
+
+  const baseRowInput = mapTicketCreateRequestDtoToRowInput(
+    {
+      ...input,
+      tenantId: category.cat_tenant_id,
+    },
+    {
+      ticketNo,
+      requesterUsername: options.requesterUsername,
+      requesterDepartmentId,
+    },
+  );
   const routing = await resolveInitialTicketRouting(
     {
       requesterUsername: options.requesterUsername,

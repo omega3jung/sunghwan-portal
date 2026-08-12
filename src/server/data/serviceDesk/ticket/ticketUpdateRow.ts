@@ -6,6 +6,7 @@ import type { ServiceDeskTicketEmail } from "./ticketRow";
 
 /** Defines the PostgreSQL requester update ticket row input used only within the repository boundary. */
 export type RequesterUpdateTicketRowInput = {
+  tk_tenant_id: number;
   tk_category_id: number;
   tk_subject: string;
   tk_content: string;
@@ -23,6 +24,9 @@ export type RequesterUpdateTicketRowInput = {
 /** Defines the PostgreSQL requester update category snapshot used only within the repository boundary. */
 export type RequesterUpdateCategorySnapshot = {
   cat_id: number;
+  cat_tenant_id: number;
+  cat_scope: "INTERNAL" | "PORTAL";
+  tenant_company_id: number;
   cat_parent_id: number | null;
   cat_default_priority: Priority | null;
   cat_default_risk_level: RiskLevel | null;

@@ -8,6 +8,7 @@ import {
   parseRuleGroupFilter,
 } from "@/lib/application/api/query";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
+import { canAccessOperationalServiceDeskCategory } from "@/lib/application/serviceDesk";
 import {
   CategorySettingsResponseDto,
   CreateCategoryInputDto,
@@ -20,6 +21,11 @@ import {
   updateCategoryById,
   validateCategoryTreeMutation,
 } from "@/server/data/serviceDesk/category";
+import { mapSettingsWriteError } from "@/server/data/serviceDesk/shared";
+import {
+  type PortalApiQueryExecutor,
+  withPortalApiTransaction,
+} from "@/server/shared/supabase/portalApiClient";
 
 import { getPortalApiQueryValue } from "../utils";
 import {
@@ -29,7 +35,10 @@ import {
   requireBody,
   ServiceDeskPortalApiContext,
 } from "./serviceDeskPortalApiUtils";
-import { resolveAuthorizedSettingsTenant } from "./shared";
+import {
+  resolveAuthorizedSettingsTenant,
+  resolveServiceDeskRequestContext,
+} from "./shared";
 
 type CategoryTreeItem =
   SaveServiceDeskCategoryTreePayload["categories"][number];
@@ -52,6 +61,21 @@ export async function handleCategoryPortalApi(
     const categoryId = decodeURIComponent(categoryContextMatch[1] ?? "");
     const categoryContext =
       await getRemoteServiceDeskCategoryContext(categoryId);
+
+    if (categoryContext) {
+      const { principal } = await resolveServiceDeskRequestContext(
+        context.request,
+      );
+
+      if (
+        !canAccessOperationalServiceDeskCategory({
+          principal,
+          category: categoryContext,
+        })
+      ) {
+        return createNotFoundResponse();
+      }
+    }
 
     return categoryContext
       ? NextResponse.json(categoryContext)
@@ -88,8 +112,7 @@ export async function handleCategoryPortalApi(
       const active =
         parseBooleanQueryValue(
           getPortalApiQueryValue(context.request, context.options, "active"),
-        ) ??
-        getBooleanRuleGroupValue(filter, "active");
+        ) ?? getBooleanRuleGroupValue(filter, "active");
       const scope = getPortalApiQueryValue(
         context.request,
         context.options,
@@ -129,13 +152,21 @@ export async function handleCategoryPortalApi(
         });
       }
 
-      await validateCategoryTreeMutation({
-        principal: authorization.principal,
-        tenant,
-        payload: body,
-      });
+      try {
+        await withPortalApiTransaction(async (query) => {
+          await validateCategoryTreeMutation({
+            principal: authorization.principal,
+            tenant,
+            payload: body,
+            query,
+          });
+          await saveCategoryTreeInTransaction(body, query);
+        });
+      } catch (error) {
+        throw mapSettingsWriteError(error, "categories");
+      }
 
-      const categoryTree = await saveCategoryTree(body);
+      const categoryTree = await loadSavedCategoryTree(body);
 
       return NextResponse.json(categoryTree);
     }
@@ -182,7 +213,10 @@ function filterCategorySettingsByActive(
   }));
 }
 
-async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {
+export async function saveCategoryTreeInTransaction(
+  payload: SaveServiceDeskCategoryTreePayload,
+  query: PortalApiQueryExecutor,
+) {
   const tenantId = Number(payload.tenantId);
 
   for (const [index, category] of payload.categories.entries()) {
@@ -191,6 +225,7 @@ async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {
     if (submittedCategoryId === null) {
       await createCategory(
         mapCategoryTreeItemToCreateInput(tenantId, category, index + 1),
+        query,
       );
       continue;
     }
@@ -199,9 +234,15 @@ async function saveCategoryTree(payload: SaveServiceDeskCategoryTreePayload) {
       tenantId,
       submittedCategoryId,
       mapCategoryTreeItemToUpdateInput(category, index + 1),
+      query,
     );
   }
+}
 
+async function loadSavedCategoryTree(
+  payload: SaveServiceDeskCategoryTreePayload,
+) {
+  const tenantId = Number(payload.tenantId);
   const tenantCategoryTree = (
     await getCategorySettingsResponseByTenantId({
       tenantId,

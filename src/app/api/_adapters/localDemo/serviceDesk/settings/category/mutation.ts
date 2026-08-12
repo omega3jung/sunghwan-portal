@@ -2,10 +2,8 @@ import {
   getLocalDemoAssignmentRules,
   getLocalDemoCategories,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
-import {
-  type AssignmentRule,
-  canActivateCategory,
-} from "@/domain/serviceDesk";
+import { OWNER_COMPANY_ID } from "@/domain/organization";
+import { type AssignmentRule, canActivateCategory } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
@@ -37,11 +35,9 @@ export const localSaveCategoryTree = ({
   const tenantIndex = getTenantIndexById(items, payload.tenantId);
 
   if (tenantIndex === -1) {
-    throw new ApiError(
-      "serviceDesk.categories.localDemo.tenantNotFound",
-      404,
-      { tenantId: payload.tenantId },
-    );
+    throw new ApiError("serviceDesk.categories.localDemo.tenantNotFound", 404, {
+      tenantId: payload.tenantId,
+    });
   }
 
   const targetTenant = items[tenantIndex];
@@ -110,11 +106,14 @@ function assertLocalCategoryActivationReady({
   const jobFields = allJobFieldsMock.map((jobField) => ({
     id: String(jobField.jf_id),
     active: jobField.jf_active,
+    companyId: String(jobField.jf_company_id),
   }));
   const employees = allEmployeesMock.map((employee) => ({
     username: employee.e_username,
     active: employee.e_active,
+    companyId: String(employee.e_company_id),
   }));
+  const tenantCompanyId = String(targetTenant.tenant_company_id);
   const currentCategoriesById = new Map(
     targetTenant.category.map((category) => [
       String(category.category_id),
@@ -139,6 +138,9 @@ function assertLocalCategoryActivationReady({
         assignmentRules,
         jobFields,
         employees,
+        scope: category.scope,
+        tenantCompanyId,
+        ownerCompanyId: OWNER_COMPANY_ID,
       });
     }
 
@@ -156,22 +158,27 @@ function assertLocalCategoryActivationReady({
 
       const currentSubCategory = currentSubCategoriesById.get(subCategory.id);
 
-      if (currentSubCategory && !currentSubCategory.category_active && subCategory.active) {
+      if (
+        currentSubCategory &&
+        !currentSubCategory.category_active &&
+        subCategory.active
+      ) {
         assertCategoryReady({
           categoryId: subCategory.id,
           mainCategoryId: category.id,
           assignmentRules,
           jobFields,
           employees,
+          scope: category.scope,
+          tenantCompanyId,
+          ownerCompanyId: OWNER_COMPANY_ID,
         });
       }
     }
   }
 }
 
-function assertCategoryReady(
-  input: Parameters<typeof canActivateCategory>[0],
-) {
+function assertCategoryReady(input: Parameters<typeof canActivateCategory>[0]) {
   if (canActivateCategory(input)) {
     return;
   }

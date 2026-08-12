@@ -101,6 +101,12 @@ Ticket Create -> 유효하게 활성화된 main/sub category만
 Ticket routing -> 실제 작업자 자격은 서버에서 재검증됨
 ```
 
+Operational availability는 저장된 Tenant와 그 기반 Company가 모두 active여야 한다.
+Ticket create/update는 persisted Category에서 Tenant를 파생하고 object-level Category
+access를 적용하며, payload Tenant ID를 authoritative source로 사용하지 않는다.
+`PORTAL` assignment는 기본적으로 provider company를 사용하고 persisted
+`includeTenantCompany`가 있을 때만 category Tenant company를 추가한다.
+
 Main category와 subcategory의 active flag는 독립적으로 저장하며, subcategory의
 effective availability는 `main.active && sub.active`로 계산한다. Subcategory own
 Assignment Rule이 있으면 이를 사용하고, own rule이 없을 때만 main-category rule로

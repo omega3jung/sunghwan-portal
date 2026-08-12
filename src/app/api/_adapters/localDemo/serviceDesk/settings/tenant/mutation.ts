@@ -1,4 +1,5 @@
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
 import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
 import type {
@@ -29,15 +30,10 @@ const toDbTenant = ({
 });
 
 /** Creates tenant in the server-side LOCAL settings adapter mutable state. */
-export const localCreateTenant = ({
-  input,
-}: {
-  input: CreateTenantInput;
-}) => {
+export const localCreateTenant = ({ input }: { input: CreateTenantInput }) => {
   const items = getLocalDemoTenants();
   const duplicateTenantIndex = items.findIndex(
-    (tenant) =>
-      String(tenant.tenant_company_id) === input.companyId,
+    (tenant) => String(tenant.tenant_company_id) === input.companyId,
   );
 
   if (duplicateTenantIndex >= 0) {
@@ -95,11 +91,16 @@ export const localUpdateTenant = ({
   const targetTenant = items[tenantIndex];
 
   if (String(targetTenant.tenant_company_id) !== input.companyId) {
-    throw new ApiError(
-      "serviceDesk.tenants.localDemo.companyMismatch",
-      400,
-      { companyId: input.companyId },
-    );
+    throw new ApiError("serviceDesk.tenants.localDemo.companyMismatch", 400, {
+      companyId: input.companyId,
+    });
+  }
+
+  if (
+    isOwnerCompany(targetTenant.tenant_company_id) &&
+    input.active === false
+  ) {
+    throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
   }
 
   const nextTenant = toDbTenant({
@@ -122,6 +123,10 @@ export const localSoftDeleteTenant = ({ id }: { id: string }) => {
 
   if (tenantIndex < 0 || items[tenantIndex].tenant_active === false) {
     throw new ApiError("serviceDesk.common.notFound", 404);
+  }
+
+  if (isOwnerCompany(items[tenantIndex].tenant_company_id)) {
+    throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
   }
 
   const nextTenant: DbTenant = {
