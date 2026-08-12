@@ -29,7 +29,6 @@ export function useAssignmentRuleSettings() {
     tenantId: context.selectedTenant,
     scope: context.selectedScope,
     enabled: context.canRead,
-    active: true,
   });
   const assignmentRuleParams = useMemo(
     () =>

@@ -207,6 +207,8 @@ export async function createAssignmentRule(
   input: CreateAssignmentRuleInputDto,
   query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
+  assertAssignmentRuleHasSelection(input.assignee);
+
   const row = await createAssignmentRuleRow(
     mapCreateAssignmentRuleInputDtoToRowInput(input),
     query,
@@ -226,6 +228,8 @@ export async function updateAssignmentRuleById(
   input: UpdateAssignmentRuleInputDto,
   query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
+  assertAssignmentRuleHasSelection(input.assignee);
+
   const currentRow = await findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
     tenantId,
     assignmentRuleId,
@@ -248,6 +252,14 @@ export async function updateAssignmentRuleById(
   }
 
   return mapAssignmentRuleRowToDto(row);
+}
+
+function assertAssignmentRuleHasSelection(
+  assignee: AssignmentRuleDto["assignee"],
+) {
+  if (!hasAssignmentRuleAssigneeSelection(assignee)) {
+    throw new ApiError("serviceDesk.assignmentRules.emptyAssignee", 400);
+  }
 }
 
 /** Removes or deactivates assignment rule by id through the server persistence boundary. */
@@ -351,9 +363,7 @@ function resolveAssignmentRuleWithCategoryFallback(
   categoryId: string,
 ) {
   const exactAssignmentRule = rules.find(
-    (rule) =>
-      String(rule.category_id) === categoryId &&
-      hasAssignmentRuleAssigneeSelection(rule.assignee),
+    (rule) => String(rule.category_id) === categoryId,
   );
 
   if (exactAssignmentRule) {
@@ -367,9 +377,7 @@ function resolveAssignmentRuleWithCategoryFallback(
   }
 
   return rules.find(
-    (rule) =>
-      rule.category_id === mainCategoryId &&
-      hasAssignmentRuleAssigneeSelection(rule.assignee),
+    (rule) => rule.category_id === mainCategoryId,
   );
 }
 

@@ -48,6 +48,12 @@ type AssignmentRule = {
 
 현재 model은 group-based다. 별도의 `ruleType` field를 사용하지 않는다.
 
+Rule이 없는 상태와 empty rule은 서로 다르다. Settings는 rule이 없는 상태를
+`0 Job Fields / 0 Employees`로 표시할 수 있지만, persistence는 두 배열 중 하나 이상이
+비어 있지 않을 때만 rule을 저장한다. Subcategory override를 제거하면 rule을 삭제하고
+parent fallback을 복원하며, 빈 배열을 override로 저장하지 않는다. Category activation
+전에 rule을 준비할 수 있도록 inactive category도 계속 구성할 수 있다.
+
 관련 문서: [Service Desk Settings](../../settings.md)
 
 ---
@@ -94,9 +100,13 @@ Assignment Rule option인 `includeTenantCompany`로만 활성화한다. 기본�
 
 Candidate lookup은 category-centered이며 caller의 Assignment Rule capability와
 purpose별 company boundary를 모두 검사한다. Eligibility는 rule 저장 시점과 submit,
-resubmit 또는 explicit routing recalculation 시점에 다시 검증한다. Employee가
-inactive가 되거나 company를 이동하면 routing 시 거부한다. Valid worker가 0명이면
-routing은 실패하고 unowned `Assigned` ticket을 만들지 않는다.
+resubmit 또는 explicit routing recalculation 시점에 다시 검증한다. Settings save는
+active reference를 검증하지만 active Job Field가 즉시 employee를 resolve할 것을
+요구하지 않는다. Category activation은 active Job Field 또는 active Employee reference가
+있는지 확인한다. Routing은 해당 reference를 실제 worker로 확장하고 더 강한 현재
+employee, company, tenant, category 검증을 적용한다. Employee가 inactive가 되거나
+company를 이동하면 routing 시 거부한다. Valid worker가 0명이면 routing은 실패하고
+unowned `Assigned` ticket을 만들지 않는다.
 
 ---
 
@@ -118,6 +128,10 @@ or final approval complete
 
 Assignment가 최소 한 명의 worker를 resolve할 수 없으면 unowned work를 만들지 않고
 ticket creation 또는 routing이 실패한다.
+
+여기서 fallback 조건은 “subcategory rule이 존재하지 않음”이다. 존재하는 rule이
+empty이거나 invalid하다고 해서 parent로 fallback하지 않는다. Empty rule은 persistence
+전에 거부하거나 제거한다.
 
 ---
 

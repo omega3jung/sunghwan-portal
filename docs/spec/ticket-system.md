@@ -94,6 +94,22 @@ configuration. Approval Step is evaluated from the selected category's
 parent/main category. Assignment Rule checks the selected subcategory first and
 falls back to the parent/main category only when no subcategory rule exists.
 
+Category workflow availability follows these invariants:
+
+```txt
+Category creation -> inactive
+Assignment Rule -> at least one Job Field or Employee reference
+Category activation -> effective rule has an active Job Field or Employee
+Ticket Create -> effectively active main/subcategory only
+Ticket routing -> actual worker eligibility is revalidated on the server
+```
+
+Main/subcategory active flags are stored independently; effective subcategory
+availability is `main.active && sub.active`. A subcategory uses its own
+Assignment Rule when one exists and falls back to the main-category rule only
+when it has no own rule. No Assignment Rule is not represented by a persisted
+empty rule.
+
 See:
 
 - [Service Desk Settings](../en/03-domain/service-desk/settings.md)

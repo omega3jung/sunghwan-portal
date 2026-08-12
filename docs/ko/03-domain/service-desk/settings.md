@@ -303,8 +303,49 @@ category의 scope를 상속한다.
 
 ### Active 정책
 
-비활성 카테고리는 새 티켓 선택지로 제공되지 않는다. 이미 비활성 카테고리를
-참조하는 기존 티켓은 계속 읽을 수 있고 감사 가능해야 한다.
+Category 생성과 활성화는 서로 다른 lifecycle 단계다.
+
+```txt
+create Category
+-> stored active = false
+-> configure Category
+-> configure Assignment Rule
+-> explicitly activate Category
+```
+
+Client가 `active = true`를 제출하더라도 server/application create boundary는 새
+main category와 새 subcategory를 모두 `active = false`로 강제한다. 비활성
+category도 Settings에서는 표시하고 구성할 수 있지만, 새 ticket 선택지로는
+제공하지 않는다.
+
+`inactive -> active` 전환에는 현재 active인 Job Field reference 또는 active인
+Employee reference를 하나 이상 포함한 effective Assignment Rule이 필요하다. Main
+category의 effective rule은 자신의 rule이다. Subcategory는 own rule이 있으면 이를
+우선 사용하고, own rule이 없을 때만 main-category rule을 사용한다. Own rule이
+존재하지만 유효하지 않은 경우 parent로 fallback하지 않는다.
+
+이 activation 검증은 configuration readiness 검사이며 최종 routing 검증이 아니다.
+
+```txt
+Category activation validation
+!=
+Ticket routing-time validation
+```
+
+Activation 시점에는 Job Field를 현재 employee로 확장하지 않는다. Ticket submit,
+resubmit, category-sensitive update, 명시적 rerouting은 더 강한
+employee/company/tenant eligibility policy를 계속 적용하며, 실제 worker를 결정할 수
+없으면 실패한다.
+
+Main category와 subcategory의 stored state는 서로 독립적이다. Main category를
+비활성화해도 child state를 덮어쓰지 않는다.
+
+```ts
+const effectiveActive = mainCategory.active && subCategory.active;
+```
+
+따라서 main category를 다시 활성화하면 각 child의 이전 effective state가 복원된다.
+이미 비활성 category를 참조하는 기존 ticket은 계속 읽을 수 있고 감사 가능해야 한다.
 
 비활성화는 이후 선택과 이후 평가에 영향을 주어야 한다. 기존 티켓 이력을
 지우거나 다시 해석하면 안 된다.
@@ -483,6 +524,12 @@ Selected subcategory
 - 비어 있거나 유효하지 않은 assignee group
 - cross-tenant 또는 inactive reference 사용
 
+빈 form state는 persisted Assignment Rule이 아니다. Rule은
+`jobFieldIds.length > 0 || assigneeUsernames.length > 0`일 때만 저장할 수 있다.
+Subcategory override를 제거하면 해당 rule을 삭제하여 parent fallback을 복원하며,
+빈 override를 저장하지 않는다. Configuration이 명시적 activation보다 먼저 이루어져야
+하므로 main category가 inactive인 상태에서도 rule을 구성할 수 있다.
+
 Employee와 organization reference는 선택된 Tenant company를 기준으로 filter하고
 검증한다. Employee lookup은 `e_company_id`, department lookup은 `d_company_id`를
 사용한다. Job-field lookup은 `jf_department_id = d_id`로 join한 뒤 `d_company_id`를
@@ -492,10 +539,12 @@ company list는 organization lookup input으로 사용하지 않는다.
 Candidate read API는 선택된 company ID를 받아 해당 repository query를 선택한 뒤
 department, job field, employee를 반환한다. REMOTE save에서는 PostgreSQL이 저장된
 category로부터 canonical policy를 결정하고 제출된 job-field 및 employee reference
-전체를 assignment-tree write transaction 안에서 set-based query로 검증한다. Write
-API가 candidate lookup을 재현하지 않는다. Submit, resubmit, 명시적 routing command는
-설정 이후 organization data가 바뀔 수 있으므로 eligibility를 다시 검사한다. 유효한
-worker가 없으면 routing은 owner 없는 `Assigned` ticket을 만드는 대신 실패한다.
+전체를 assignment-tree write transaction 안에서 set-based query로 검증한다. Active
+Job Field는 현재 active employee가 없더라도 유효한 configuration reference이며, 이를
+실제 worker로 확장하는 것은 routing-time validation의 책임이다. Submit, resubmit,
+명시적 routing command는 설정 이후 organization data가 바뀔 수 있으므로 eligibility를
+다시 검사한다. 유효한 worker가 없으면 routing은 owner 없는 `Assigned` ticket을 만드는
+대신 실패한다.
 
 Customer `PORTAL` assignment rule에 read-only access가 있는 Tenant Admin에게는 현재
 참조된 provider assignee의 표시 데이터를 제공할 수 있다. 이것이 owner-company

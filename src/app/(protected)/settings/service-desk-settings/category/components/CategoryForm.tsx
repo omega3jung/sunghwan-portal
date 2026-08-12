@@ -62,6 +62,7 @@ type Props = {
     ) => CategoryData | SubCategoryData,
   ) => void;
   canEdit?: boolean;
+  canActivateCategory: boolean;
 };
 
 export function CategoryForm({
@@ -71,6 +72,7 @@ export function CategoryForm({
   availableScopes,
   onChange,
   canEdit = true,
+  canActivateCategory,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const isCategoryNode = selectedNode?.nodeType === "category";
@@ -448,10 +450,20 @@ export function CategoryForm({
                   id="category-switch-active"
                   className="!disabled:color-primary"
                   checked={selectedNode.active ?? false}
-                  disabled={!canEdit}
+                  disabled={
+                    !canEdit ||
+                    (!selectedNode.active && !canActivateCategory)
+                  }
                   onCheckedChange={updateValue("active")}
                 />
               </span>
+              {!selectedNode.active && !canActivateCategory && (
+                <p className="text-sm text-muted-foreground">
+                  {t(
+                    "serviceDeskSettings.categoryTab.activationRequiresAssignmentRule",
+                  )}
+                </p>
+              )}
             </Field>
           </FieldGroup>
         </FieldSet>

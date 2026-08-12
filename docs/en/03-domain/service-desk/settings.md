@@ -316,8 +316,50 @@ scope for visibility and routing purposes.
 
 ### Active Policy
 
-Inactive categories are not offered for new ticket selection. Existing tickets
-that already reference an inactive category remain readable and auditable.
+Category creation and activation are separate lifecycle steps:
+
+```txt
+create Category
+-> stored active = false
+-> configure Category
+-> configure Assignment Rule
+-> explicitly activate Category
+```
+
+The server/application create boundary forces both new main categories and new
+subcategories to `active = false`, even when a client submits `active = true`.
+An inactive category may still be shown in Settings and configured. It is not
+offered for new ticket selection.
+
+An inactive-to-active transition requires an effective Assignment Rule with at
+least one currently active Job Field reference or active Employee reference.
+For a main category, the effective rule is its own rule. For a subcategory, its
+own rule wins when present; the main-category rule is used only when no own rule
+exists. An existing but invalid own rule never falls back to the parent.
+
+This activation check is configuration readiness, not final routing:
+
+```txt
+Category activation validation
+!=
+Ticket routing-time validation
+```
+
+Activation does not expand a Job Field to current employees. Ticket submit,
+resubmit, category-sensitive update, and explicit rerouting continue to enforce
+the stronger employee/company/tenant eligibility policy and fail if no worker
+can actually be resolved.
+
+Main and subcategory stored states remain independent. A main-category
+deactivation does not overwrite its children:
+
+```ts
+const effectiveActive = mainCategory.active && subCategory.active;
+```
+
+Therefore reactivating a main category restores each child's prior effective
+state. Existing tickets that already reference an inactive category remain
+readable and auditable.
 
 Deactivation should affect future selection and future evaluation. It must not
 erase or reinterpret existing ticket history.
@@ -501,6 +543,12 @@ Assignment-rule mutation must validate:
 - empty or invalid assignment groups
 - cross-tenant or inactive reference usage
 
+The empty form state is not a persisted Assignment Rule. A rule is saveable
+only when `jobFieldIds.length > 0 || assigneeUsernames.length > 0`. Removing a
+subcategory override deletes that rule so parent fallback is restored; it does
+not persist an empty override. Main categories may be inactive while their rule
+is configured, because configuration must precede explicit activation.
+
 Employees and organization references are filtered and validated against the
 selected Tenant company. Employee lookup uses `e_company_id`; department lookup
 uses `d_company_id`; and job-field lookup joins `jf_department_id = d_id` before
@@ -511,11 +559,12 @@ Candidate read APIs receive the selected company ID and choose the corresponding
 repository query before returning departments, job fields, and employees.
 On REMOTE save, PostgreSQL resolves the canonical policy from the stored
 category and validates all submitted job-field and employee references in one
-set-based query inside the assignment-tree write transaction. The write API
-does not reproduce the candidate lookup. Submit, resubmit, and explicit routing
-commands validate eligibility again because organization data may change after
-configuration. Routing fails when no valid worker remains instead of creating
-an unowned `Assigned` ticket.
+set-based query inside the assignment-tree write transaction. An active Job
+Field is a valid configuration reference even when it currently has no active
+employee; expanding it to actual workers belongs to routing-time validation.
+Submit, resubmit, and explicit routing commands validate eligibility again
+because organization data may change after configuration. Routing fails when
+no valid worker remains instead of creating an unowned `Assigned` ticket.
 
 Read-only Tenant Admin access to a customer `PORTAL` assignment rule may
 include display data for its currently referenced provider assignees. It does

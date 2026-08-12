@@ -32,6 +32,7 @@
       "customValue": "Establecer un valor personalizado",
       "daysValue": "{{value}} días",
       "active": "Activo",
+      "activationRequiresAssignmentRule": "La categoría no se puede activar hasta que se configure una regla de asignación válida.",
       "addCategory": "Agregar categoría",
       "empty": "Selecciona un categoría para editar su configuración."
     },
@@ -63,6 +64,7 @@
       "selectAssigneeJobField": "Seleccionar puesto del asignado",
       "employee": "Empleado",
       "selectAssignee": "Seleccionar asignado",
+      "assigneeRequired": "Se requiere al menos un puesto o empleado.",
       "includeTenantCompany": "Incluir la empresa del tenant para gestión conjunta",
       "includeTenantCompanyDescription": "Desactivado de forma predeterminada. Actívalo solo cuando esta regla PORTAL deba ser gestionada conjuntamente por el proveedor y la empresa del tenant de la categoría.",
       "empty": "Selecciona un regla de asignación para editar su configuración."

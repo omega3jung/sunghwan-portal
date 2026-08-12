@@ -108,7 +108,7 @@ async function resolveTicketRouting(
 async function requireLocalCategoryContext(categoryId: string) {
   const category = await getServiceDeskCategoryContext(categoryId);
 
-  if (!category || !category.tenant.active) {
+  if (!category || !category.tenant.active || !category.active) {
     throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
       categoryId,
     });
@@ -260,14 +260,12 @@ function findAssignmentRuleWithMainFallback(
   category: ServiceDeskCategoryContext,
 ) {
   // Subcategory assignment is more specific. The main-category rule is used
-  // only when the selected subcategory has no effective assignee selection.
+  // only when the selected subcategory has no persisted rule at all.
   const categoryCandidates = [category.categoryId, category.mainCategoryId];
 
   for (const categoryCandidate of categoryCandidates) {
     const found = rules.find(
-      (rule) =>
-        String(rule.category_id) === categoryCandidate &&
-        hasDbAssignmentRuleSelection(rule),
+      (rule) => String(rule.category_id) === categoryCandidate,
     );
 
     if (found) {
@@ -276,13 +274,6 @@ function findAssignmentRuleWithMainFallback(
   }
 
   return null;
-}
-
-function hasDbAssignmentRuleSelection(rule: DbAssignmentRule) {
-  return (
-    rule.assignee.job_field_id.length > 0 ||
-    rule.assignee.employee_username.length > 0
-  );
 }
 
 function normalizeAssigneeIds(

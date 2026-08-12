@@ -98,6 +98,7 @@ export function CategoryPage() {
           availableScopes={settings.toolbar.scope.availableScopes}
           onChange={settings.tree.updateSelectedNode}
           canEdit={settings.tree.canEdit}
+          canActivateCategory={settings.tree.canActivateCategory}
         />
       </div>
     </div>

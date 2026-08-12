@@ -196,9 +196,23 @@ active = false
 
 Behavior:
 
+- new main categories and subcategories are always stored inactive
+- activation requires an effective Assignment Rule containing an active Job
+  Field or active Employee reference
 - inactive categories should not be selectable for new requester workflows
 - existing tickets that reference inactive categories remain readable
 - history is not rewritten when category settings change
+
+Main and subcategory active flags are stored independently. A subcategory is
+effectively active only when both flags are active:
+
+```ts
+effectiveActive = mainCategory.active && subCategory.active;
+```
+
+Deactivating a main category must not overwrite the stored flags of its
+subcategories. Activation is only a readiness gate; runtime routing still
+revalidates actual workers and every company/tenant eligibility constraint.
 
 ---
 
@@ -254,6 +268,10 @@ Ticket ready for work
 
 The current assignment rule model is group-based and uses job-field IDs and
 employee usernames. It does not use a separate `ruleType` field.
+
+Fallback is based on rule existence. If a subcategory owns a rule whose
+references later become inactive, activation and routing fail against that own
+rule; the system does not silently switch to the parent rule.
 
 ---
 

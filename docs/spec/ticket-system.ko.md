@@ -91,6 +91,21 @@ Approval Step은 선택된 subcategory의 parent/main category 기준으로 평�
 Assignment Rule은 선택된 subcategory rule을 먼저 적용하고, 없을 때만
 parent/main category rule로 fallback한다.
 
+Category workflow availability는 다음 불변 조건을 따른다.
+
+```txt
+Category creation -> 비활성화
+Assignment Rule -> 적어도 하나 이상의 할당된 직무 또는 직원 필요
+Category activation -> 유효 규칙에 활성된 직무 또는 직원 필요
+Ticket Create -> 유효하게 활성화된 main/sub category만
+Ticket routing -> 실제 작업자 자격은 서버에서 재검증됨
+```
+
+Main category와 subcategory의 active flag는 독립적으로 저장하며, subcategory의
+effective availability는 `main.active && sub.active`로 계산한다. Subcategory own
+Assignment Rule이 있으면 이를 사용하고, own rule이 없을 때만 main-category rule로
+fallback한다. Assignment Rule이 없는 상태를 persisted empty rule로 표현하지 않는다.
+
 관련 문서:
 
 - [Service Desk Settings](../ko/03-domain/service-desk/settings.md)

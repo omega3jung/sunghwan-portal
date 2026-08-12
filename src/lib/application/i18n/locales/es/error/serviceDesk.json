@@ -24,6 +24,7 @@
       "update": "No se pudo actualizar la regla de asignación.",
       "delete": "No se pudo eliminar la regla de asignación.",
       "save": "No se pudo guardar la configuración de las reglas de asignación.",
+      "emptyAssignee": "Se requiere al menos un puesto o empleado.",
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de reglas de asignación no válida.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",
@@ -45,6 +46,7 @@
       "update": "No se pudo actualizar la categoría.",
       "delete": "No se pudo eliminar la categoría.",
       "save": "No se pudo guardar la configuración de categorías.",
+      "activationNotReady": "La categoría {{categoryId}} no se puede activar hasta que se configure una regla de asignación válida.",
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de categorías no válida.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",

@@ -8,7 +8,10 @@ import {
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
 } from "@/lib/application/serviceDesk";
-import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
+import {
+  assertCategoriesReadyForActivation,
+  createServiceDeskStatusError as createStatusError,
+} from "@/server/data/serviceDesk/shared";
 import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
 import {
@@ -132,8 +135,9 @@ export function assertCategoryTreeMutationAllowed({
   const submittedSubCategoryIds = new Set<string>();
 
   for (const category of payload.categories) {
-    const currentCategory = category.id
-      ? currentCategoriesById.get(category.id)
+    const submittedCategoryId = getPersistedCategoryId(category.id);
+    const currentCategory = submittedCategoryId
+      ? currentCategoriesById.get(submittedCategoryId)
       : undefined;
     const scope = currentCategory?.scope ?? category.scope;
     const access = resolveSettingsAccess(principal, {
@@ -150,7 +154,7 @@ export function assertCategoryTreeMutationAllowed({
       );
     }
 
-    if (category.id) {
+    if (submittedCategoryId) {
       if (!currentCategory) {
         throw createStatusError(
           "The submitted category does not belong to the target tenant.",
@@ -158,14 +162,14 @@ export function assertCategoryTreeMutationAllowed({
         );
       }
 
-      if (submittedCategoryIds.has(category.id)) {
+      if (submittedCategoryIds.has(submittedCategoryId)) {
         throw createStatusError(
           "A category cannot be submitted more than once.",
           400,
         );
       }
 
-      submittedCategoryIds.add(category.id);
+      submittedCategoryIds.add(submittedCategoryId);
 
       if (category.scope !== currentCategory.scope) {
         throw createStatusError(
@@ -180,14 +184,16 @@ export function assertCategoryTreeMutationAllowed({
     );
 
     for (const subCategory of category.subCategories) {
-      if (!subCategory.id) {
+      const submittedSubCategoryId = getPersistedCategoryId(subCategory.id);
+
+      if (!submittedSubCategoryId) {
         continue;
       }
 
       if (
         !currentCategory ||
-        !currentSubCategoryIds.has(subCategory.id) ||
-        submittedSubCategoryIds.has(subCategory.id)
+        !currentSubCategoryIds.has(submittedSubCategoryId) ||
+        submittedSubCategoryIds.has(submittedSubCategoryId)
       ) {
         throw createStatusError(
           "A subcategory cannot move to another category or tenant.",
@@ -195,7 +201,7 @@ export function assertCategoryTreeMutationAllowed({
         );
       }
 
-      submittedSubCategoryIds.add(subCategory.id);
+      submittedSubCategoryIds.add(submittedSubCategoryId);
     }
   }
 }
@@ -224,6 +230,76 @@ export async function validateCategoryTreeMutation({
       })),
     })),
   });
+
+  await assertCategoriesReadyForActivation(
+    tenant.id,
+    collectCategoryActivationTargetIds(categories, payload),
+  );
+}
+
+function collectCategoryActivationTargetIds(
+  currentCategories: CategoryDto[],
+  payload: SaveServiceDeskCategoryTreePayload,
+) {
+  const currentCategoriesById = new Map(
+    currentCategories.map((category) => [String(category.category_id), category]),
+  );
+  const categoryIds: string[] = [];
+
+  for (const category of payload.categories) {
+    const submittedCategoryId = getPersistedCategoryId(category.id);
+
+    if (!submittedCategoryId) {
+      continue;
+    }
+
+    const currentCategory = currentCategoriesById.get(submittedCategoryId);
+
+    if (!currentCategory) {
+      continue;
+    }
+
+    if (!currentCategory.category_active && category.active) {
+      categoryIds.push(submittedCategoryId);
+    }
+
+    const currentSubCategoriesById = new Map(
+      currentCategory.sub_category.map((subCategory) => [
+        String(subCategory.category_id),
+        subCategory,
+      ]),
+    );
+
+    for (const subCategory of category.subCategories) {
+      const submittedSubCategoryId = getPersistedCategoryId(subCategory.id);
+
+      if (!submittedSubCategoryId) {
+        continue;
+      }
+
+      const currentSubCategory = currentSubCategoriesById.get(
+        submittedSubCategoryId,
+      );
+
+      if (currentSubCategory && !currentSubCategory.category_active && subCategory.active) {
+        categoryIds.push(submittedSubCategoryId);
+      }
+    }
+  }
+
+  return categoryIds;
+}
+
+function getPersistedCategoryId(id?: string) {
+  if (!id) {
+    return null;
+  }
+
+  const parsedId = Number(id);
+
+  return Number.isSafeInteger(parsedId) && parsedId > 0
+    ? String(parsedId)
+    : null;
 }
 
 /** Loads category settings response by tenant id through the server data boundary. */
@@ -254,8 +330,17 @@ export async function createCategory(
 ): Promise<CategoryDto> {
   await assertActiveTenantExists(input.category_tenant_id);
 
+  const inactiveInput: CreateCategoryInputDto = {
+    ...input,
+    category_active: false,
+    sub_category: input.sub_category.map((subCategory) => ({
+      ...subCategory,
+      category_active: false,
+    })),
+  };
+
   const parentRow = await createCategoryRow(
-    mapCreateCategoryInputDtoToRowInput(input),
+    mapCreateCategoryInputDtoToRowInput(inactiveInput),
   );
 
   if (!parentRow) {
@@ -265,7 +350,7 @@ export async function createCategory(
   const childRows = await createSubCategoryRows({
     tenantId: input.category_tenant_id,
     parentRow,
-    subCategories: input.sub_category,
+    subCategories: inactiveInput.sub_category,
   });
 
   return mapCategoryTreeRowsToDto([parentRow, ...childRows], parentRow.cat_id);
@@ -401,7 +486,6 @@ async function createSubCategoryRows({
         tenantId,
         parentRow.cat_id,
         subCategory,
-        parentRow.cat_active,
       ),
     );
 
@@ -449,7 +533,6 @@ async function synchronizeSubCategoryRows({
         mapCategorySubCategoryInputDtoToUpdateRowInput(
           parentRow.cat_id,
           subCategory,
-          parentRow.cat_active,
         ),
       );
 
@@ -466,8 +549,10 @@ async function synchronizeSubCategoryRows({
       mapCategorySubCategoryInputDtoToCreateRowInput(
         tenantId,
         parentRow.cat_id,
-        subCategory,
-        parentRow.cat_active,
+        {
+          ...subCategory,
+          category_active: false,
+        },
       ),
     );
 
@@ -491,14 +576,7 @@ async function synchronizeSubCategoryRows({
     }
 
     const desiredIndex = nextSubmittedChildRows.length + index + 1;
-    const desiredActive = parentRow.cat_active
-      ? preservedChildRow.cat_active
-      : false;
-
-    if (
-      preservedChildRow.cat_index === desiredIndex &&
-      preservedChildRow.cat_active === desiredActive
-    ) {
+    if (preservedChildRow.cat_index === desiredIndex) {
       nextPreservedChildRows.push(preservedChildRow);
       continue;
     }
@@ -510,7 +588,6 @@ async function synchronizeSubCategoryRows({
         cat_parent_id: parentRow.cat_id,
         cat_scope: null,
         cat_index: desiredIndex,
-        cat_active: desiredActive,
       }),
     );
 

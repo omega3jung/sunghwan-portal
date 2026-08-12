@@ -1,6 +1,15 @@
-import { getLocalDemoCategories } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import {
+  getLocalDemoAssignmentRules,
+  getLocalDemoCategories,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import {
+  type AssignmentRule,
+  canActivateCategory,
+} from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 import {
   createCategoryIdAssigner,
@@ -36,6 +45,13 @@ export const localSaveCategoryTree = ({
   }
 
   const targetTenant = items[tenantIndex];
+
+  assertLocalCategoryActivationReady({
+    isInternal,
+    targetTenant,
+    payload,
+  });
+
   const previousCategoryMap = new Map(
     targetTenant.category.map((category) => [
       String(category.category_id),
@@ -70,3 +86,97 @@ export const localSaveCategoryTree = ({
 
   return normalizeTenantTree(targetTenant);
 };
+
+function assertLocalCategoryActivationReady({
+  isInternal,
+  targetTenant,
+  payload,
+}: {
+  isInternal: boolean;
+  targetTenant: ReturnType<typeof getLocalDemoCategories>[number];
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const assignmentRules: AssignmentRule[] = getLocalDemoAssignmentRules(
+    isInternal,
+  ).map((assignmentRule) => ({
+    categoryId: String(assignmentRule.category_id),
+    assignee: {
+      jobFieldIds: assignmentRule.assignee.job_field_id.map(String),
+      assigneeUsernames: assignmentRule.assignee.employee_username,
+      includeTenantCompany:
+        assignmentRule.assignee.include_tenant_company === true,
+    },
+  }));
+  const jobFields = allJobFieldsMock.map((jobField) => ({
+    id: String(jobField.jf_id),
+    active: jobField.jf_active,
+  }));
+  const employees = allEmployeesMock.map((employee) => ({
+    username: employee.e_username,
+    active: employee.e_active,
+  }));
+  const currentCategoriesById = new Map(
+    targetTenant.category.map((category) => [
+      String(category.category_id),
+      category,
+    ]),
+  );
+
+  for (const category of payload.categories) {
+    if (!category.id) {
+      continue;
+    }
+
+    const currentCategory = currentCategoriesById.get(category.id);
+
+    if (!currentCategory) {
+      continue;
+    }
+
+    if (!currentCategory.category_active && category.active) {
+      assertCategoryReady({
+        categoryId: category.id,
+        assignmentRules,
+        jobFields,
+        employees,
+      });
+    }
+
+    const currentSubCategoriesById = new Map(
+      currentCategory.sub_category.map((subCategory) => [
+        String(subCategory.category_id),
+        subCategory,
+      ]),
+    );
+
+    for (const subCategory of category.subCategories) {
+      if (!subCategory.id) {
+        continue;
+      }
+
+      const currentSubCategory = currentSubCategoriesById.get(subCategory.id);
+
+      if (currentSubCategory && !currentSubCategory.category_active && subCategory.active) {
+        assertCategoryReady({
+          categoryId: subCategory.id,
+          mainCategoryId: category.id,
+          assignmentRules,
+          jobFields,
+          employees,
+        });
+      }
+    }
+  }
+}
+
+function assertCategoryReady(
+  input: Parameters<typeof canActivateCategory>[0],
+) {
+  if (canActivateCategory(input)) {
+    return;
+  }
+
+  throw new ApiError("serviceDesk.categories.activationNotReady", 400, {
+    categoryId: input.categoryId,
+  });
+}

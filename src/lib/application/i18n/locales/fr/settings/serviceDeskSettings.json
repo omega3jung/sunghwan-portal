@@ -32,6 +32,7 @@
       "customValue": "Définir une valeur personnalisée",
       "daysValue": "{{value}} jours",
       "active": "Actif",
+      "activationRequiresAssignmentRule": "La catégorie ne peut pas être activée tant qu’une règle d’attribution valide n’est pas configurée.",
       "addCategory": "Ajouter une catégorie",
       "empty": "Sélectionnez un catégorie pour modifier ses paramètres."
     },
@@ -63,6 +64,7 @@
       "selectAssigneeJobField": "Sélectionner le poste du responsable",
       "employee": "Employé",
       "selectAssignee": "Sélectionner un responsable",
+      "assigneeRequired": "Au moins un poste ou un employé est requis.",
       "includeTenantCompany": "Inclure l’entreprise du tenant pour un traitement conjoint",
       "includeTenantCompanyDescription": "Désactivé par défaut. Activez cette option uniquement lorsque cette règle PORTAL doit être traitée conjointement par le fournisseur et l’entreprise du tenant de la catégorie.",
       "empty": "Sélectionnez un règle d’attribution pour modifier ses paramètres."

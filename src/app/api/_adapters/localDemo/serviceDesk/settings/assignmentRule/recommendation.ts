@@ -8,7 +8,6 @@ import { getLocalCategoryTrees } from "@/app/api/_adapters/localDemo/serviceDesk
 import { getLocalDemoAssignmentRules } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import {
   type AssignmentRule,
-  hasAssignmentRuleSelection,
   type MainCategory,
 } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
@@ -99,9 +98,7 @@ const resolveAssignmentRuleWithCategoryFallback = (
   category: ServiceDeskCategoryContext,
 ) => {
   const exactAssignmentRule = rules.find(
-    (item) =>
-      item.categoryId === category.categoryId &&
-      hasAssignmentRuleSelection(item.assignee),
+    (item) => item.categoryId === category.categoryId,
   );
 
   if (exactAssignmentRule) {
@@ -109,9 +106,7 @@ const resolveAssignmentRuleWithCategoryFallback = (
   }
 
   return rules.find(
-    (item) =>
-      item.categoryId === category.mainCategoryId &&
-      hasAssignmentRuleSelection(item.assignee),
+    (item) => item.categoryId === category.mainCategoryId,
   );
 };
 

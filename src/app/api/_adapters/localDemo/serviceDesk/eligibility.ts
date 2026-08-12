@@ -4,9 +4,11 @@ import {
   type ApprovalAssigneeType,
   type AssigneeGroup,
   type CategoryScope,
+  isCategoryEffectivelyActive,
 } from "@/domain/serviceDesk";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 
 import {
@@ -27,6 +29,7 @@ export type ServiceDeskCategoryContext = {
   categoryId: string;
   mainCategoryId: string;
   scope: CategoryScope;
+  active: boolean;
   tenant: LocalServiceDeskTenantContext;
 };
 
@@ -51,7 +54,12 @@ export async function getServiceDeskCategoryContext(
   // enclosing tenant/main-category/scope relationship must resolve uniquely.
   const matches = new Map<
     string,
-    { tenantId: number; mainCategoryId: string; scope: CategoryScope }
+    {
+      tenantId: number;
+      mainCategoryId: string;
+      scope: CategoryScope;
+      active: boolean;
+    }
   >();
 
   for (const tenantTree of [
@@ -72,6 +80,18 @@ export async function getServiceDeskCategoryContext(
         tenantId: tenantTree.tenant_id,
         mainCategoryId: String(mainCategory.category_id),
         scope: mainCategory.category_scope,
+        active: isCategoryEffectivelyActive(
+          { active: mainCategory.category_active },
+          String(mainCategory.category_id) === String(categoryId)
+            ? undefined
+            : {
+                active:
+                  mainCategory.sub_category.find(
+                    (subCategory) =>
+                      String(subCategory.category_id) === String(categoryId),
+                  )?.category_active ?? false,
+              },
+        ),
       };
 
       matches.set(
@@ -96,6 +116,7 @@ export async function getServiceDeskCategoryContext(
     categoryId: String(categoryId),
     mainCategoryId: match.mainCategoryId,
     scope: match.scope,
+    active: match.active,
     tenant: {
       id: String(tenant.tenant_id),
       companyId: Number(tenant.tenant_company_id),
@@ -216,8 +237,6 @@ export async function assertAssignmentAssigneeEligible({
   const employeesByUsername = new Map(
     employees.map((employee) => [employee.username, employee]),
   );
-  const resolvedUsernames = new Set<string>();
-
   for (const username of assignee.assigneeUsernames) {
     const employee = employeesByUsername.get(username);
     if (!employee) {
@@ -225,25 +244,20 @@ export async function assertAssignmentAssigneeEligible({
         "Assignment employees must be active members of the eligible company.",
       );
     }
-    resolvedUsernames.add(employee.username);
   }
 
   for (const jobFieldId of assignee.jobFieldIds) {
-    const matches = employees.filter(
-      (employee) => String(employee.jobFieldId) === jobFieldId,
+    const jobField = allJobFieldsMock.find(
+      (item) =>
+        String(item.jf_id) === jobFieldId &&
+        item.jf_company_id === category.tenant.companyId &&
+        item.jf_active,
     );
-    if (matches.length === 0) {
+    if (!jobField) {
       throw createEligibilityError(
-        "An assignment job field has no active employee in the eligible company.",
+        "Assignment job fields must be active references in the eligible company.",
       );
     }
-    matches.forEach((employee) => resolvedUsernames.add(employee.username));
-  }
-
-  if (resolvedUsernames.size === 0) {
-    throw createEligibilityError(
-      "Assignment routing must resolve at least one active employee.",
-    );
   }
 }
 

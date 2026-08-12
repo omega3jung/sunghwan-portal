@@ -24,6 +24,7 @@
       "update": "Impossible de mettre à jour la règle d'attribution.",
       "delete": "Impossible de supprimer la règle d'attribution.",
       "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
+      "emptyAssignee": "Au moins un poste ou un employé est requis.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
@@ -45,6 +46,7 @@
       "update": "Impossible de mettre à jour la catégorie.",
       "delete": "Impossible de supprimer la catégorie.",
       "save": "Impossible d'enregistrer les paramètres de catégorie.",
+      "activationNotReady": "La catégorie {{categoryId}} ne peut pas être activée tant qu’une règle d’attribution valide n’est pas configurée.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",

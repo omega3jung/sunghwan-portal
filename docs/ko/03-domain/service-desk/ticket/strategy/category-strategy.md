@@ -188,9 +188,23 @@ active = false
 
 동작:
 
+- 새 main category와 subcategory는 항상 inactive 상태로 저장한다.
+- Activation에는 active Job Field 또는 active Employee reference를 포함한 effective
+  Assignment Rule이 필요하다.
 - inactive category는 새 requester workflow에서 선택할 수 없어야 한다.
 - inactive category를 참조하는 기존 ticket은 계속 읽을 수 있다.
 - category settings가 바뀌어도 history는 다시 쓰지 않는다.
+
+Main category와 subcategory의 active flag는 독립적으로 저장한다. Subcategory는 두
+flag가 모두 active일 때만 effectively active다.
+
+```ts
+effectiveActive = mainCategory.active && subCategory.active;
+```
+
+Main category를 deactivate해도 subcategory의 stored flag를 덮어쓰면 안 된다.
+Activation은 readiness gate일 뿐이며, runtime routing은 실제 worker와 모든
+company/tenant eligibility constraint를 계속 다시 검증한다.
 
 ---
 
@@ -246,6 +260,10 @@ Ticket ready for work
 
 현재 assignment rule model은 group-based이며 job-field ID와 employee username을
 사용한다. 별도의 `ruleType` field를 사용하지 않는다.
+
+Fallback은 rule의 존재 여부를 기준으로 한다. Subcategory own rule의 reference가 이후
+inactive가 되면 activation과 routing은 해당 own rule을 기준으로 실패하며, parent
+rule로 조용히 전환하지 않는다.
 
 ---
 
