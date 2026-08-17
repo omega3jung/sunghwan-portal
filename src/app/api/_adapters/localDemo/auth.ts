@@ -48,6 +48,7 @@ export async function getCurrentLocalTicketAccessContext(
   }
 
   return {
+    username: auth.username,
     userScope: auth.userScope,
     tenantId: String(tenant.tenant_id),
   };

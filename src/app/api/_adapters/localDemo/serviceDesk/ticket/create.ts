@@ -2,6 +2,7 @@ import { ApiError } from "@/lib/application/api";
 import type { TicketMutateRequestPayload } from "@/lib/application/contracts/serviceDesk";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
+import { assertTicketDueAtMeetsSla } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
@@ -47,6 +48,7 @@ export const localCreateTicket = async ({
     categoryId: String(input.categoryId),
   });
   requireLocalDemoCategoryAccess(category, access);
+  assertTicketDueAtMeetsSla(input.dueAt, category.defaultSlaDays);
 
   const routing = await resolveCreateTicketRouting({
     isInternal,

@@ -45,6 +45,11 @@ The current Service Desk model has these SLA-related inputs:
 Category defaults are tenant-scoped. Subcategory defaults override main category
 defaults where provided.
 
+At create time, a valid explicit priority or risk level is preserved. A missing
+value uses the selected subcategory default and then the main-category fallback.
+The server rejects a due date earlier than the category minimum of
+`today + effective defaultSlaDays`; the form is guidance, not authority.
+
 ---
 
 ## Category Default Resolution
@@ -88,6 +93,9 @@ re-evaluates the minimum due date from the new category default SLA days:
 newCategoryMinimumDueAt = today + new category default SLA days
 nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
 ```
+
+The submitted due date also participates in this maximum, so the complete rule
+is `later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)`.
 
 This keeps a later current due date, moves an earlier due date back to the new
 minimum, and never pulls a due date earlier because of category change.

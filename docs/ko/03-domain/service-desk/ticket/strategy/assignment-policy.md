@@ -199,6 +199,8 @@ Assignee notification은 persisted `tk_email` field 밖에서 email을 resolve�
 
 Settings change는 기존 ticket을 retroactively rewrite하지 않는다. 기존 ticket은 ticket
 command가 변경하기 전까지 current assignee를 유지한다.
+따라서 Assignment Rule 변경은 current worker를 보존하며, 이후 workflow transition이
+assignment를 다시 resolve할 때만 새 rule을 사용한다.
 
 현재 generic Admin ticket-action override는 별도의 cross-tenant audit가 필요하다.
 유지한다면 explicit break-glass/platform policy를 정의해야 한다. 이 후속 작업은

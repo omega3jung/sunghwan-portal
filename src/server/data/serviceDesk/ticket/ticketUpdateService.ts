@@ -1,6 +1,7 @@
 import type { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
+import { resolveCategoryChangeDueAt } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import {
   createServiceDeskStatusError as createStatusError,
   normalizePostgresStringArray,
@@ -135,6 +136,16 @@ export async function updateRequesterTicket(
   });
   const categoryChanged =
     preliminaryChangeSet.changedFields.includes("categoryId");
+  const effectiveInput = categoryChanged
+    ? {
+        ...input,
+        dueAt: resolveCategoryChangeDueAt(
+          currentRow.tk_due_at,
+          input.dueAt,
+          category.cat_default_sla_days,
+        ).toISOString(),
+      }
+    : input;
   const routingSensitiveChanged = preliminaryChangeSet.changedFields.some(
     isRoutingSensitiveField,
   );
@@ -154,7 +165,7 @@ export async function updateRequesterTicket(
       )
     : preservedRoutingState;
   const rowInput = mapRequesterUpdateTicketRequestDtoToRowInput(
-    input,
+    effectiveInput,
     routingState,
   );
   const changeSet = buildRequesterUpdateChangeSet({

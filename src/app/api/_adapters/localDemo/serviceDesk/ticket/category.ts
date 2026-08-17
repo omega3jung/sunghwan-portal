@@ -17,6 +17,7 @@ export type ResolvedCategorySnapshot = {
   scope: CategoryScope;
   defaultPriority: Priority | null;
   defaultRiskLevel: RiskLevel | null;
+  defaultSlaDays: number;
 };
 
 /** Resolves category snapshot using the server-side LOCAL ticket adapter policy. */
@@ -44,6 +45,7 @@ export function resolveCategorySnapshot({
           scope: category.category_scope,
           defaultPriority: category.default_priority ?? null,
           defaultRiskLevel: category.default_risk_level ?? null,
+          defaultSlaDays: category.default_sla_days,
         };
       }
 
@@ -71,6 +73,8 @@ export function resolveCategorySnapshot({
             subCategory.default_risk_level ??
             category.default_risk_level ??
             null,
+          defaultSlaDays:
+            subCategory.default_sla_days ?? category.default_sla_days,
         };
       }
     }

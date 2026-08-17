@@ -25,6 +25,7 @@ import {
 import {
   executeTicketAction,
   executeTicketApprovalAction,
+  getTicketActionByTicketIdAndNo,
   getTicketActionsByTicketId,
   softDeleteTicketAction,
 } from "@/server/data/serviceDesk/ticketAction";
@@ -114,14 +115,14 @@ export async function handleTicketPortalApi(
     );
   }
 
+  const principal = await getUserProfileDtoByUsername(currentUserName);
+
+  if (!principal) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
   if (TICKET_LIST_PATH_PATTERN.test(context.path)) {
     if (context.method === "POST") {
-      const principal = await getUserProfileDtoByUsername(currentUserName);
-
-      if (!principal) {
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-      }
-
       const ticket = await createTicket(
         requireBody<TicketCreateRequestDto>(context.options),
         {
@@ -137,7 +138,7 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketListItems(currentUserName);
+    const items = await getTicketListItems(currentUserName, principal);
 
     return NextResponse.json({
       items,
@@ -153,6 +154,7 @@ export async function handleTicketPortalApi(
     const result = await searchTicketListItems(
       getTicketSearchRequest(context),
       currentUserName,
+      principal,
     );
 
     return NextResponse.json(result);
@@ -165,9 +167,13 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketActionsByTicketId(
-      decodePathSegment(actionListMatch[1]),
-    );
+    const ticketId = decodePathSegment(actionListMatch[1]);
+
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+      return createNotFoundResponse();
+    }
+
+    const items = await getTicketActionsByTicketId(ticketId);
 
     return createListResponse(items);
   }
@@ -177,7 +183,7 @@ export async function handleTicketPortalApi(
   );
 
   if (actionDetailMatch) {
-    if (context.method !== "PATCH") {
+    if (context.method !== "GET" && context.method !== "PATCH") {
       return createNotFoundResponse();
     }
 
@@ -187,6 +193,17 @@ export async function handleTicketPortalApi(
       throw createStatusError("Invalid action number.", 400);
     }
 
+    const ticketId = decodePathSegment(actionDetailMatch[1]);
+
+    if (context.method === "GET") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
+      const action = await getTicketActionByTicketIdAndNo(ticketId, actionNo);
+      return action ? NextResponse.json(action) : createNotFoundResponse();
+    }
+
     const body = requireBody<{ active?: boolean }>(context.options);
 
     if (body.active !== false) {
@@ -194,7 +211,7 @@ export async function handleTicketPortalApi(
     }
 
     const actionDto = await softDeleteTicketAction({
-      ticketId: decodePathSegment(actionDetailMatch[1]),
+      ticketId,
       actionNo,
       currentUserName,
     });
@@ -224,12 +241,7 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const currentUserProfile =
-      await getUserProfileDtoByUsername(currentUserName);
-
-    if (currentUserProfile === null) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
+    const currentUserProfile = principal;
 
     const isAdmin = currentUserProfile.role === "ADMIN";
 
@@ -266,9 +278,13 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketHistoriesByTicketId(
-      decodePathSegment(historyListMatch[1]),
-    );
+    const ticketId = decodePathSegment(historyListMatch[1]);
+
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+      return createNotFoundResponse();
+    }
+
+    const items = await getTicketHistoriesByTicketId(ticketId);
 
     return createListResponse(items);
   }
@@ -281,6 +297,10 @@ export async function handleTicketPortalApi(
     const ticketId = decodePathSegment(workSessionListMatch[1]);
 
     if (context.method === "GET") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
       const items = await getWorkSessionsByTicketId(ticketId);
 
       return createListResponse(items);
@@ -307,7 +327,11 @@ export async function handleTicketPortalApi(
     const ticketId = decodePathSegment(detailMatch[1]);
 
     if (context.method === "GET") {
-      const ticket = await getTicketDetail(ticketId, currentUserName);
+      const ticket = await getTicketDetail(
+        ticketId,
+        currentUserName,
+        principal,
+      );
 
       return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
     }
@@ -319,12 +343,6 @@ export async function handleTicketPortalApi(
 
       if (!parsedBody.success) {
         throw createStatusError("Invalid request body.", 400);
-      }
-
-      const principal = await getUserProfileDtoByUsername(currentUserName);
-
-      if (!principal) {
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
       }
 
       const ticket = await updateRequesterTicket(

@@ -30,4 +30,5 @@ export type RequesterUpdateCategorySnapshot = {
   cat_parent_id: number | null;
   cat_default_priority: Priority | null;
   cat_default_risk_level: RiskLevel | null;
+  cat_default_sla_days: number;
 };

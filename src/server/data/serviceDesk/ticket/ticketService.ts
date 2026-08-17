@@ -1,5 +1,6 @@
 import type { TicketStatus } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
+import { assertTicketDueAtMeetsSla } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
@@ -37,6 +38,7 @@ import {
   findNextApprovalStepId,
   findNextTicketNumber,
   hasTicketWorkAssignmentHistory,
+  type TicketReadPrincipal,
   type TicketRepositoryOptions,
 } from "./ticketRepository";
 import {
@@ -73,8 +75,9 @@ type InitialTicketRoutingResult =
 /** Loads active tickets and projects viewer-specific ownership flags for list views. */
 export async function getTicketListItems(
   currentUserName: string | null,
+  principal: TicketReadPrincipal,
 ): Promise<TicketListItemDto[]> {
-  const rows = await findActiveTicketViewRows();
+  const rows = await findActiveTicketViewRows(principal);
 
   return rows.map((row) => toTicketListItemDto(row, currentUserName));
 }
@@ -83,8 +86,9 @@ export async function getTicketListItems(
 export async function getTicketDetail(
   ticketId: string,
   currentUserName: string | null,
+  principal: TicketReadPrincipal,
 ): Promise<TicketDetailDto | null> {
-  const row = await findActiveTicketViewRowById(ticketId);
+  const row = await findActiveTicketViewRowById(ticketId, {}, principal);
 
   return row ? projectTicketDetail(row, currentUserName) : null;
 }
@@ -255,10 +259,15 @@ export async function createTicket(
     options.principal,
   );
 
+  assertTicketDueAtMeetsSla(input.dueAt, category.cat_default_sla_days);
+
   const baseRowInput = mapTicketCreateRequestDtoToRowInput(
     {
       ...input,
       tenantId: category.cat_tenant_id,
+      priority: input.priority ?? category.cat_default_priority ?? "medium",
+      riskLevel:
+        input.riskLevel ?? category.cat_default_risk_level ?? "medium",
     },
     {
       ticketNo,
@@ -361,8 +370,9 @@ export async function createTicket(
 export async function searchTicketListItems(
   request: TicketSearchRequestDto,
   currentUserName: string | null,
+  principal: TicketReadPrincipal,
 ): Promise<TicketSearchResponseDto> {
-  const result = await findActiveTicketViewRowsBySearch(request);
+  const result = await findActiveTicketViewRowsBySearch(request, principal);
 
   return {
     items: result.rows.map((row) => toTicketListItemDto(row, currentUserName)),

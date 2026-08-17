@@ -1,4 +1,5 @@
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
 import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
@@ -103,6 +104,10 @@ export const localUpdateTenant = ({
     throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
   }
 
+  if (input.active === false) {
+    assertNoLiveOperationalTickets(id);
+  }
+
   const nextTenant = toDbTenant({
     ...input,
     id,
@@ -129,6 +134,8 @@ export const localSoftDeleteTenant = ({ id }: { id: string }) => {
     throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
   }
 
+  assertNoLiveOperationalTickets(id);
+
   const nextTenant: DbTenant = {
     ...items[tenantIndex],
     tenant_active: false,
@@ -139,3 +146,20 @@ export const localSoftDeleteTenant = ({ id }: { id: string }) => {
 
   return normalizeTenant(nextTenant);
 };
+
+function assertNoLiveOperationalTickets(tenantId: string) {
+  const hasLiveTickets = getLocalDemoTickets().some(
+    (ticket) =>
+      String(ticket.tenant_id) === tenantId &&
+      ticket.active !== false &&
+      ticket.status !== "Draft" &&
+      ticket.status !== "Closed",
+  );
+
+  if (hasLiveTickets) {
+    throw new ApiError(
+      "serviceDesk.tenants.liveTicketsBlockDeactivation",
+      409,
+    );
+  }
+}

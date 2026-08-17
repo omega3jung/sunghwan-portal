@@ -61,13 +61,17 @@ export async function resolveCreateTicketRouting(
 export async function resolveApprovedTicketRouting(
   input: ApprovedRoutingInput,
 ): Promise<CreateTicketRouting> {
-  return resolveTicketRouting(input);
+  return resolveTicketRouting(input, { allowInactiveCategory: true });
 }
 
 async function resolveTicketRouting(
   input: RoutingInput & { currentApprovalStepId?: string },
+  options: { allowInactiveCategory?: boolean } = {},
 ): Promise<CreateTicketRouting> {
-  const category = await requireLocalCategoryContext(input.categoryId);
+  const category = await requireLocalCategoryContext(
+    input.categoryId,
+    options.allowInactiveCategory === true,
+  );
   const requesterAccessLevel = resolveRequesterAccessLevel(
     input.requesterUsername,
   );
@@ -107,10 +111,17 @@ async function resolveTicketRouting(
   };
 }
 
-async function requireLocalCategoryContext(categoryId: string) {
+async function requireLocalCategoryContext(
+  categoryId: string,
+  allowInactiveCategory: boolean,
+) {
   const category = await getServiceDeskCategoryContext(categoryId);
 
-  if (!category || !category.tenant.active || !category.active) {
+  if (
+    !category ||
+    !category.tenant.active ||
+    (!allowInactiveCategory && !category.active)
+  ) {
     throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
       categoryId,
     });

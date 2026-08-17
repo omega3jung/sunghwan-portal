@@ -69,7 +69,9 @@ export const TicketListMobileItem = ({
       )}
     >
       <div className="space-y-0.5 flex flex-col items-start">
-        <div className="text-xs font-bold text-primary">#{ticket.id}</div>
+        <div className="text-xs font-bold text-primary">
+          #{ticket.ticketNumber}
+        </div>
         <div className="min-w-0 wrap-break-word text-sm font-semibold leading-5 line-clamp-2">
           {ticket.subject}
         </div>
@@ -116,9 +118,9 @@ export const TicketListMobileItem = ({
           ) : null}
 
           <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={ticket.requester.image ?? undefined} />
-                <AvatarFallback>{initials(requesterName)}</AvatarFallback>
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={ticket.requester.image ?? undefined} />
+              <AvatarFallback>{initials(requesterName)}</AvatarFallback>
             </Avatar>
 
             <span className="text-xs text-muted-foreground">

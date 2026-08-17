@@ -818,6 +818,24 @@ defense in depth로 같은 tenant boundary를 보존해야 한다.
 
 ---
 
+## 현재 Workflow 영향 정책
+
+- 고객 Tenant에 `Draft`, `Closed`가 아닌 운영 Ticket이 하나라도 있으면
+  비활성화하거나 삭제할 수 없다. Portal-owner Tenant는 Ticket 유무와 관계없이
+  항상 보호한다.
+- 진행 중인 Ticket이 main/subcategory를 사용 중인 Category를 비활성화할 때는
+  영향 경고와 명시적 확인이 필요하다. 확인 후 비활성화해도 기존 Ticket 상태,
+  routing, History는 변경하지 않고 신규 workflow availability만 변경한다.
+- 일반 Category 수정과 Assignment Rule 수정은 기존 Ticket routing을 자동으로
+  초기화하지 않는다.
+- `Approval` 상태 Ticket에 영향을 주는 Approval Step tree 변경은 force apply가
+  필요하다. Force apply는 새 설정과 모든 재라우팅을 검증한 뒤 설정 저장,
+  첫 단계부터의 routing reset, reason이
+  `APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` History 기록을 하나의
+  transaction으로 처리한다. 하나라도 실패하면 전체를 rollback한다.
+- 이미 진행 중인 approval은 Category가 이후 비활성화되어도 계속할 수 있다.
+  신규, 재제출, 명시적으로 재시작하는 routing은 operational Category를 요구한다.
+
 ## 요약
 
 서비스 데스크 설정은 tenant, category, approval-step, assignment-rule

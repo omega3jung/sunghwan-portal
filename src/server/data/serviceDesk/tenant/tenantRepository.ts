@@ -83,6 +83,16 @@ set
   tn_updated_at = now()
 where
   tn_id = $1
+  and (
+    $4 = true
+    or not exists (
+      select 1
+      from service_desk.ticket
+      where tk_tenant_id = $1
+        and tk_active = true
+        and tk_status not in ('Draft', 'Closed')
+    )
+  )
 returning
 ${TENANT_COLUMNS};
 `;
@@ -95,8 +105,25 @@ set
 where
   tn_id = $1
   and tn_active = true
+  and not exists (
+    select 1
+    from service_desk.ticket
+    where tk_tenant_id = $1
+      and tk_active = true
+      and tk_status not in ('Draft', 'Closed')
+  )
 returning
 ${TENANT_COLUMNS};
+`;
+
+const HAS_LIVE_OPERATIONAL_TICKETS_QUERY = `
+select exists (
+  select 1
+  from service_desk.ticket
+  where tk_tenant_id = $1
+    and tk_active = true
+    and tk_status not in ('Draft', 'Closed')
+) as has_live_tickets;
 `;
 
 /** Queries PostgreSQL for tenant row by id without applying presentation concerns. */
@@ -183,4 +210,15 @@ export async function deactivateTenantRowById(
   );
 
   return rows[0] ?? null;
+}
+
+/** Returns whether tenant deactivation would strand a live workflow. */
+export async function hasLiveOperationalTicketsForTenant(
+  tenantId: string | number,
+): Promise<boolean> {
+  const rows = await queryPortalApi<{ has_live_tickets: boolean }>(
+    HAS_LIVE_OPERATIONAL_TICKETS_QUERY,
+    [Number(tenantId)],
+  );
+  return rows[0]?.has_live_tickets === true;
 }

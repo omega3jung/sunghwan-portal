@@ -76,6 +76,20 @@ export async function getTicketActionsByTicketId(
   return rows.map(mapTicketActionRowToDto);
 }
 
+/** Loads one active ticket action after its parent ticket has been authorized. */
+export async function getTicketActionByTicketIdAndNo(
+  ticketId: string,
+  actionNo: number,
+  options?: TicketActionServiceOptions,
+): Promise<TicketActionDto | null> {
+  const row = await findActiveTicketActionRowByTicketIdAndNo(
+    ticketId,
+    actionNo,
+    options,
+  );
+  return row ? mapTicketActionRowToDto(row) : null;
+}
+
 /** Creates ticket action through the server persistence boundary. */
 export async function createTicketAction(
   input: Omit<CreateTicketActionRowInput, "actionNo">,

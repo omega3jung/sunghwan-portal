@@ -33,6 +33,7 @@
       "daysValue": "{{value}} jours",
       "active": "Actif",
       "activationRequiresAssignmentRule": "La catégorie ne peut pas être activée tant qu’une règle d’attribution valide n’est pas configurée.",
+      "deactivationImpact": "Ces modifications de catégorie affectent des tickets actifs. Les valeurs, le routage et l’historique existants resteront inchangés. Une catégorie désactivée ne sera plus disponible pour les nouveaux workflows. Continuer ?",
       "addCategory": "Ajouter une catégorie",
       "empty": "Sélectionnez un catégorie pour modifier ses paramètres."
     },
@@ -55,6 +56,7 @@
       "employeePlaceholder": "Sélectionner un responsable",
       "skipAccessLevel": "Niveau d’accès pouvant être ignoré",
       "saveUnavailable": "Enregistrement impossible",
+      "configurationImpact": "Cette configuration d’approbation affecte des tickets actifs. L’application forcée redémarrera leur routage depuis la première étape. Continuer ?",
       "created": "Créé",
       "assign": "Attribuer",
       "empty": "Sélectionnez un étape d'approbation pour modifier ses paramètres."

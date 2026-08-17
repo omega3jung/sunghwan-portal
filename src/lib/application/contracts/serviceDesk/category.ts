@@ -69,4 +69,5 @@ export type CategoryTreeSyncCategoryInput = Omit<
 export type SaveServiceDeskCategoryTreePayload = {
   tenantId: string;
   categories: CategoryTreeSyncCategoryInput[];
+  force?: boolean;
 };

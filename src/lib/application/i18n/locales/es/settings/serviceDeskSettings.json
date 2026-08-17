@@ -33,6 +33,7 @@
       "daysValue": "{{value}} días",
       "active": "Activo",
       "activationRequiresAssignmentRule": "La categoría no se puede activar hasta que se configure una regla de asignación válida.",
+      "deactivationImpact": "Estos cambios de categoría afectan a tickets activos. Los valores, el enrutamiento y el historial existentes no cambiarán. Una categoría desactivada dejará de estar disponible para nuevos flujos. ¿Continuar?",
       "addCategory": "Agregar categoría",
       "empty": "Selecciona un categoría para editar su configuración."
     },
@@ -55,6 +56,7 @@
       "employeePlaceholder": "Seleccionar asignado",
       "skipAccessLevel": "Nivel de acceso omitible",
       "saveUnavailable": "No se puede guardar",
+      "configurationImpact": "Esta configuración de aprobación afecta a tickets activos. La aplicación forzada reiniciará su enrutamiento desde el primer paso. ¿Continuar?",
       "created": "Creado",
       "assign": "Asignar",
       "empty": "Selecciona un paso de aprobación para editar su configuración."

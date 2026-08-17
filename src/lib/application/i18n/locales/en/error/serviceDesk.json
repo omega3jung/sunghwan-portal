@@ -68,6 +68,7 @@
       "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
       "companyMismatch": "Tenant does not belong to company {{companyId}}.",
       "portalOwnerProtected": "The portal-owner tenant cannot be deactivated or deleted.",
+      "liveTicketsBlockDeactivation": "A tenant with active operational tickets cannot be deactivated or deleted.",
       "localDemo": {
         "invalidPayload": "Invalid tenant settings payload.",
         "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
@@ -81,6 +82,7 @@
       "fetch": "Failed to fetch ticket.",
       "update": "Failed to update ticket.",
       "delete": "Failed to delete ticket.",
+      "dueBeforeCategorySla": "Due date must be on or after the category minimum {{minimumDueAt}}.",
       "localDemo": {
         "invalidPayload": "Invalid ticket payload.",
         "requesterRequired": "Requester is required.",

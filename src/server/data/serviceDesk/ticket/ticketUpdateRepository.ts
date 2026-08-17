@@ -23,6 +23,7 @@ select
   child.cat_parent_id,
   coalesce(child.cat_default_priority, parent.cat_default_priority) as cat_default_priority,
   coalesce(child.cat_default_risk_level, parent.cat_default_risk_level) as cat_default_risk_level
+  , coalesce(child.cat_default_sla_days, parent.cat_default_sla_days) as cat_default_sla_days
 from service_desk.category child
 left join service_desk.category parent
   on parent.cat_id = child.cat_parent_id

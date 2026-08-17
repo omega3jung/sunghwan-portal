@@ -846,6 +846,23 @@ The following items are deferred unless explicitly implemented:
 Service Desk Settings define future ticket behavior through tenant, category,
 approval-step, and assignment-rule configuration.
 
+Current workflow-impact policy is explicit:
+
+- a customer Tenant cannot be deactivated or deleted while it owns a live
+  ticket whose status is neither `Draft` nor `Closed`; the portal-owner Tenant
+  remains protected unconditionally
+- Category deactivation requires impact acknowledgement when live tickets use
+  the main category or one of its subcategories, but it changes only future
+  workflow availability and does not rewrite existing Ticket or History data
+- ordinary Category and Assignment Rule edits do not reset existing routing
+- an Approval Step tree change that affects `Approval` tickets requires an
+  explicit force apply; force apply saves the valid tree, reroutes every
+  affected ticket from the first step, and appends `ROUTING_RESET` with reason
+  `APPROVAL_CONFIGURATION_CHANGED` in one transaction
+- in-flight approval may continue after Category deactivation, while initial,
+  resubmitted, and explicitly restarted routing still require an operational
+  Category
+
 The current model uses tenant-scoped category trees, category scopes `PORTAL`
 and `INTERNAL`, ordered approval steps with typed assignees, and group-based
 assignment rules. Tenant is the workflow boundary; category-scope authorization

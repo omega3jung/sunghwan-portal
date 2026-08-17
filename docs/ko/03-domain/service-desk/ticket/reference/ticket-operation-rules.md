@@ -233,6 +233,8 @@ Soft delete:
   - `approvalStepId != null`
   - Admin이 아니면 actor가 current approver다.
   - content 필수
+  - Category inactive만으로 진행 중인 approval을 무효화하지 않는다. 다만 참조한
+    approval/assignment configuration은 계속 resolve할 수 있어야 한다.
 - ticket effect:
   - next approval step이 있으면 `Approval` 유지, 다음 approver로 이동
   - next approval step이 없으면 `Assigned`로 이동하고 worker resolve

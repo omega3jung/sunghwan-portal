@@ -2,6 +2,7 @@ import {
   getLocalDemoAssignmentRules,
   getLocalDemoCategories,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import { OWNER_COMPANY_ID } from "@/domain/organization";
 import { type AssignmentRule, canActivateCategory } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
@@ -41,6 +42,8 @@ export const localSaveCategoryTree = ({
   }
 
   const targetTenant = items[tenantIndex];
+
+  assertLocalCategoryChangeImpactAcknowledged(targetTenant, payload);
 
   assertLocalCategoryActivationReady({
     isInternal,
@@ -82,6 +85,57 @@ export const localSaveCategoryTree = ({
 
   return normalizeTenantTree(targetTenant);
 };
+
+function assertLocalCategoryChangeImpactAcknowledged(
+  targetTenant: ReturnType<typeof getLocalDemoCategories>[number],
+  payload: SaveServiceDeskCategoryTreePayload,
+) {
+  if (payload.force === true) return;
+  const changedIds = new Set<string>();
+  for (const category of payload.categories) {
+    const current = targetTenant.category.find(
+      (item) => String(item.category_id) === category.id,
+    );
+    if (!current) continue;
+    const normalizedCurrent = normalizeTenantTree({
+      ...targetTenant,
+      category: [current],
+    }).categories[0];
+    if (
+      JSON.stringify({ ...normalizedCurrent, subCategories: [] }) !==
+      JSON.stringify({ ...category, subCategories: [] })
+    ) {
+      changedIds.add(category.id ?? "");
+      for (const subCategory of current.sub_category) {
+        changedIds.add(String(subCategory.category_id));
+      }
+    }
+    for (const subCategory of category.subCategories) {
+      const normalizedSubCategory = normalizedCurrent.subCategories.find(
+        (item) => item.id === subCategory.id,
+      );
+      if (
+        normalizedSubCategory &&
+        JSON.stringify(normalizedSubCategory) !== JSON.stringify(subCategory)
+      ) {
+        changedIds.add(subCategory.id ?? "");
+      }
+    }
+  }
+  const affected = getLocalDemoTickets().some(
+    (ticket) =>
+      ticket.active !== false &&
+      ticket.status !== "Draft" &&
+      ticket.status !== "Closed" &&
+      changedIds.has(ticket.category_id),
+  );
+  if (affected) {
+    throw Object.assign(
+      new Error("Category changes affect active tickets."),
+      { code: "CATEGORY_CHANGE_IMPACT", status: 409 },
+    );
+  }
+}
 
 function assertLocalCategoryActivationReady({
   isInternal,

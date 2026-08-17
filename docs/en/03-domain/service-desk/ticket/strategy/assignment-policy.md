@@ -206,6 +206,8 @@ Requester `RESUBMIT` after `Declined` or `Rejected` reruns initial routing.
 
 Settings changes do not retroactively rewrite existing tickets. Existing
 tickets keep their current assignees until a ticket command changes them.
+Changing an Assignment Rule therefore preserves the current worker and applies
+the new rule only when a future workflow transition resolves assignment again.
 
 The current generic Admin ticket-action override requires a separate
 cross-tenant audit and, if retained, an explicit break-glass/platform policy.

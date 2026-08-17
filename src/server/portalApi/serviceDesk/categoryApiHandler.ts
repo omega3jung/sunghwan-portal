@@ -17,6 +17,7 @@ import {
 import {
   createCategory,
   getCategorySettingsResponseByTenantId,
+  getCategoryTreeByTenantId,
   getServiceDeskCategoryContext as getRemoteServiceDeskCategoryContext,
   updateCategoryById,
   validateCategoryTreeMutation,
@@ -160,6 +161,7 @@ export async function handleCategoryPortalApi(
             payload: body,
             query,
           });
+          await assertCategoryChangeImpactAcknowledged(body, query);
           await saveCategoryTreeInTransaction(body, query);
         });
       } catch (error) {
@@ -175,6 +177,109 @@ export async function handleCategoryPortalApi(
   }
 
   return createNotFoundResponse();
+}
+
+async function assertCategoryChangeImpactAcknowledged(
+  payload: SaveServiceDeskCategoryTreePayload,
+  query: PortalApiQueryExecutor,
+) {
+  const currentTree = await getCategoryTreeByTenantId(payload.tenantId, query);
+  const changedIds = payload.categories.flatMap((category) => {
+    const current = currentTree.find(
+      (item) => String(item.category_id) === category.id,
+    );
+    if (!current) return [];
+    const ids: number[] = [];
+    if (hasMainCategoryChanged(current, category)) {
+      ids.push(current.category_id);
+    }
+    for (const subCategory of category.subCategories) {
+      const currentSubCategory = current.sub_category.find(
+        (item) => String(item.category_id) === subCategory.id,
+      );
+      if (
+        currentSubCategory &&
+        JSON.stringify({
+          name: currentSubCategory.category_name,
+          description: currentSubCategory.category_description,
+          requestTemplate: currentSubCategory.category_request_template,
+          index: currentSubCategory.category_index,
+          active: currentSubCategory.category_active,
+          defaultPriority: currentSubCategory.default_priority ?? null,
+          defaultRiskLevel: currentSubCategory.default_risk_level ?? null,
+          defaultSlaDays: currentSubCategory.default_sla_days ?? null,
+        }) !==
+          JSON.stringify({
+            name: subCategory.name,
+            description: subCategory.description ?? null,
+            requestTemplate: subCategory.requestTemplate ?? null,
+            index: subCategory.index,
+            active: subCategory.active,
+            defaultPriority: subCategory.defaultPriority ?? null,
+            defaultRiskLevel: subCategory.defaultRiskLevel ?? null,
+            defaultSlaDays: subCategory.defaultSlaDays ?? null,
+          })
+      ) {
+        ids.push(currentSubCategory.category_id);
+      }
+    }
+    return ids;
+  });
+
+  if (changedIds.length === 0 || payload.force === true) return;
+
+  const rows = await query<{ count: number | string }>(
+    `
+select count(*)::int as count
+from service_desk.ticket ticket
+join service_desk.category category
+  on category.cat_id = ticket.tk_category_id
+where ticket.tk_active = true
+  and ticket.tk_status not in ('Draft', 'Closed')
+  and (
+    category.cat_id = any($1::bigint[])
+    or category.cat_parent_id = any($1::bigint[])
+  );
+`,
+    [changedIds],
+  );
+
+  if (Number(rows[0]?.count ?? 0) > 0) {
+    throw Object.assign(new Error("Category changes affect active tickets."), {
+      code: "CATEGORY_CHANGE_IMPACT",
+      status: 409,
+    });
+  }
+}
+
+function hasMainCategoryChanged(
+  current: Awaited<ReturnType<typeof getCategoryTreeByTenantId>>[number],
+  submitted: CategoryTreeItem,
+) {
+  return (
+    JSON.stringify({
+      name: current.category_name,
+      description: current.category_description,
+      requestTemplate: current.category_request_template,
+      scope: current.category_scope,
+      index: current.category_index,
+      active: current.category_active,
+      defaultPriority: current.default_priority,
+      defaultRiskLevel: current.default_risk_level,
+      defaultSlaDays: current.default_sla_days,
+    }) !==
+    JSON.stringify({
+      name: submitted.name,
+      description: submitted.description ?? null,
+      requestTemplate: submitted.requestTemplate ?? null,
+      scope: submitted.scope,
+      index: submitted.index,
+      active: submitted.active,
+      defaultPriority: submitted.defaultPriority,
+      defaultRiskLevel: submitted.defaultRiskLevel,
+      defaultSlaDays: submitted.defaultSlaDays,
+    })
+  );
 }
 function filterCategorySettingsByScope(
   items: CategorySettingsResponseDto[],

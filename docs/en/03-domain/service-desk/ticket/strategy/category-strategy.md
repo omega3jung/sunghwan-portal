@@ -201,6 +201,8 @@ Behavior:
   Field or active Employee reference
 - inactive categories should not be selectable for new requester workflows
 - existing tickets that reference inactive categories remain readable
+- an existing `Approval` workflow may continue to its next approval or work
+  assignment when the referenced configuration can still be resolved
 - history is not rewritten when category settings change
 
 Main and subcategory active flags are stored independently. A subcategory is
@@ -248,7 +250,10 @@ Ticket submitted
 ```
 
 Approval configuration affects future resolution. It does not silently change
-tickets that are already in progress.
+tickets that are already in progress. A tree change that affects tickets in
+`Approval` is the explicit exception: after impact confirmation, force apply
+atomically restarts those tickets from initial routing and appends
+`ROUTING_RESET` history.
 
 ---
 
@@ -294,8 +299,9 @@ When a requester changes category, the ticket update service should:
 - re-evaluate approval or assignment routing
 - record `ROUTING_RESET`
 
-The next due date should be the later of the current due date and the new
-category minimum due date. Category change must not pull the due date earlier.
+The next due date is the latest of the current due date, submitted due date,
+and new category minimum due date. Category change must not pull the due date
+earlier.
 
 If category does not change and only routing-neutral fields change, routing can
 be preserved and `ROUTING_PRESERVED` is recorded.
@@ -331,8 +337,9 @@ Category settings define future behavior.
 | --- | --- |
 | main/subcategory name changed | future display uses new label; existing history remains recorded |
 | defaults changed | future tickets and future routing evaluations use updated defaults |
-| category deactivated | new selection should stop; existing tickets remain readable |
-| approval/assignment settings changed | future resolution uses updated settings |
+| category deactivated | impact confirmation; new selection stops; existing state/routing/history is preserved |
+| approval settings changed | future resolution uses updated settings; force apply may explicitly restart affected `Approval` tickets |
+| assignment settings changed | current workers are preserved; future assignment resolution uses updated settings |
 
 Existing ticket state and history should change only through explicit ticket
 commands.

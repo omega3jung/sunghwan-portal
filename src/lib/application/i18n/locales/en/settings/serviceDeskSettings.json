@@ -33,6 +33,7 @@
       "daysValue": "{{value}} days",
       "active": "Active",
       "activationRequiresAssignmentRule": "Category cannot be activated until a valid Assignment Rule is configured.",
+      "deactivationImpact": "These category changes affect active tickets. Existing ticket values, routing, and history will remain unchanged. A deactivated category will no longer be available for new workflows. Continue?",
       "addCategory": "Add Category",
       "empty": "Select a category to edit settings."
     },
@@ -55,6 +56,7 @@
       "employeePlaceholder": "Select an assignee",
       "skipAccessLevel": "Skippable Access Level",
       "saveUnavailable": "Cannot Save",
+      "configurationImpact": "This approval configuration affects active tickets. Force applying it will restart their routing from the first step. Continue?",
       "created": "Created",
       "assign": "Assign",
       "empty": "Select a approval step to edit settings."

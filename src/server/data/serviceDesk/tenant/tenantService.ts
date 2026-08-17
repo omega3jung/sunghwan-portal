@@ -26,6 +26,7 @@ import {
   findActiveTenantRows,
   findTenantRowById,
   findTenantRows,
+  hasLiveOperationalTicketsForTenant,
   updateTenantRowById,
 } from "./tenantRepository";
 
@@ -175,12 +176,28 @@ export async function updateTenantById(
     input.tenant_active ?? true,
   );
 
+  if (
+    input.tenant_active === false &&
+    (await hasLiveOperationalTicketsForTenant(tenantId))
+  ) {
+    throw new ApiError("serviceDesk.tenants.liveTicketsBlockDeactivation", 409);
+  }
+
   const row = await updateTenantRowById(
     tenantId,
     mapUpdateTenantInputDtoToRowInput(input),
   );
 
   if (!row) {
+    if (
+      input.tenant_active === false &&
+      (await hasLiveOperationalTicketsForTenant(tenantId))
+    ) {
+      throw new ApiError(
+        "serviceDesk.tenants.liveTicketsBlockDeactivation",
+        409,
+      );
+    }
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
@@ -199,9 +216,19 @@ export async function deactivateTenantById(
 
   assertPortalOwnerTenantRemainsActive(currentRow.tn_company_id, false);
 
+  if (await hasLiveOperationalTicketsForTenant(tenantId)) {
+    throw new ApiError("serviceDesk.tenants.liveTicketsBlockDeactivation", 409);
+  }
+
   const row = await deactivateTenantRowById(tenantId);
 
   if (!row) {
+    if (await hasLiveOperationalTicketsForTenant(tenantId)) {
+      throw new ApiError(
+        "serviceDesk.tenants.liveTicketsBlockDeactivation",
+        409,
+      );
+    }
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 

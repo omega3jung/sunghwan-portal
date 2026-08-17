@@ -414,6 +414,32 @@ Deferred item은 current implementation처럼 설명하면 안 된다.
 
 ---
 
+## 현재 Authorization 및 Workflow 영향 불변 조건
+
+REMOTE Ticket read는 `vw_ticket` query에서 저장된 Ticket Tenant, `cat_scope`,
+requester, 현재 approver/worker assignee, effective principal의 company/scope를
+함께 평가한다. List, search, detail, action list, History, Work Session read는 같은
+visibility boundary를 사용하며 list에서 보이지 않는 Ticket을 ID나 subresource로
+조회할 수 없다. LOCAL도 같은 predicate 의미를 사용한다.
+
+Category 비활성화는 신규 workflow availability만 변경한다. 진행 중인 Ticket이
+main/subcategory를 사용하면 impact 확인이 필요하지만, force 확인 후에도 기존
+Ticket routing과 History는 변경하지 않는다. 진행 중인 Approval은 비활성 Category를
+참조해 계속 진행할 수 있지만 신규 또는 재시작 routing은 operational Category를
+요구한다.
+
+`Approval` Ticket에 영향을 주는 Approval Step tree 변경은 force apply가 필요하다.
+서버는 유효한 설정 저장, 모든 영향 Ticket의 초기 routing reset, reason이
+`APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` History 기록을 하나의
+transaction으로 처리하고 중간 실패 시 전체 rollback한다. 고객 Tenant는
+`Draft`, `Closed`가 아닌 Ticket이 있으면 force 없이 비활성화/삭제가 차단된다.
+
+Ticket 생성은 유효한 명시적 priority/risk를 보존하고 누락 값만
+subcategory -> main category default 순서로 결정한다. 서버는 Category SLA 최소값보다
+이른 due date를 거부한다. Category 변경 시 due date는
+`later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)`이며 priority/risk는
+새 Category default를 사용한다.
+
 ## 요약
 
 현재 티켓 시스템은 precise persisted status, REMOTE draft row,
