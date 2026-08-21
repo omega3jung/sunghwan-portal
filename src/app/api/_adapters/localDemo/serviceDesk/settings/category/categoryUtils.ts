@@ -1,6 +1,4 @@
 import type { TenantCategoryTree } from "@/domain/serviceDesk";
-import { createIncrementalIdAssigner } from "@/lib/application/api";
-import { idToNumber } from "@/lib/application/api/mapId";
 import {
   type DbCategory,
   type DbTenantCategoryTree,
@@ -21,30 +19,6 @@ export const sortCategories = (categories: DbCategory[]) => {
         .slice()
         .sort((left, right) => left.category_index - right.category_index),
     }));
-};
-
-const collectCategoryIds = (items: DbTenantCategoryTree[]) => {
-  return items.flatMap((tenant) => [
-    ...tenant.category.map((category) => category.category_id),
-    ...tenant.category.flatMap((category) =>
-      category.sub_category.map((subCategory) => subCategory.category_id),
-    ),
-  ]);
-};
-
-/** Creates category ID assigner for the server-side LOCAL settings adapter. */
-export const createCategoryIdAssigner = (items: DbTenantCategoryTree[]) => {
-  const assignNextId = createIncrementalIdAssigner(collectCategoryIds(items));
-
-  return (value?: string) => {
-    const parsedId = value ? idToNumber(value) : null;
-
-    if (parsedId !== null) {
-      return parsedId;
-    }
-
-    return Number(assignNextId());
-  };
 };
 
 /** Returns tenant index by ID from the server-side LOCAL settings adapter. */

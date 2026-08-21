@@ -1,4 +1,5 @@
 import {
+  allocateLocalDemoCategoryId,
   getLocalDemoAssignmentRules,
   getLocalDemoCategories,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
@@ -11,7 +12,6 @@ import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 import {
-  createCategoryIdAssigner,
   getTenantIndexById,
   normalizeTenantTree,
   sortCategories,
@@ -57,7 +57,6 @@ export const localSaveCategoryTree = ({
       category,
     ]),
   );
-  const assignId = createCategoryIdAssigner(items);
   const synchronizedCategories = payload.categories.map(
     (category, categoryIndex) =>
       buildSynchronizedCategory({
@@ -68,7 +67,7 @@ export const localSaveCategoryTree = ({
         previousCategory: category.id
           ? previousCategoryMap.get(category.id)
           : undefined,
-        assignId,
+        assignId: allocateLocalDemoCategoryId,
       }),
   );
   const submittedIds = new Set(

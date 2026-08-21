@@ -84,6 +84,7 @@ export function CredentialsForm({
                   field.onChange(event);
                   onInputChange();
                 }}
+                autoFocus
               />
             )}
           />
@@ -103,6 +104,7 @@ export function CredentialsForm({
               size="sm"
               className="px-1 tracking-wide hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-ring/40"
               onClick={onOpenPasswordRecovery}
+              tabIndex={-1}
             >
               {t("login.canNotLogin")}
             </Button>

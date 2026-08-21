@@ -66,18 +66,6 @@ export async function getOriginalUserId(req: NextRequest) {
   return token?.id ?? null;
 }
 
-/** Loads impersonated user id through the server data boundary. */
-export async function getImpersonatedUserId(req: NextRequest) {
-  const token = await getAuthToken(req);
-  return token?.impersonation?.impersonatedUser.id ?? null;
-}
-
-/** Loads current user id through the server data boundary. */
-export async function getCurrentUserId(req: NextRequest) {
-  const token = await getAuthToken(req);
-  return token?.impersonation?.impersonatedUser.id ?? token?.id ?? null;
-}
-
 /** Loads current user name through the server data boundary. */
 export async function getCurrentUserName(req: NextRequest) {
   const token = await getAuthToken(req);

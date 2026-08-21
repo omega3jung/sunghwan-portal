@@ -8,7 +8,7 @@ const synchronizeSubCategories = ({
 }: {
   nextSubCategories: SaveServiceDeskCategoryTreePayload["categories"][number]["subCategories"];
   previousSubCategories: DbCategory["sub_category"];
-  assignId: (value?: string) => number;
+  assignId: () => number;
 }) => {
   const previousSubCategoriesById = new Map(
     previousSubCategories.map((subCategory) => [
@@ -18,10 +18,10 @@ const synchronizeSubCategories = ({
   );
   const synchronizedSubCategories = nextSubCategories.map(
     (subCategory, subCategoryIndex) => {
-      const resolvedId = assignId(subCategory.id);
-      const previousSubCategory = previousSubCategoriesById.get(
-        String(resolvedId),
-      );
+      const previousSubCategory = subCategory.id
+        ? previousSubCategoriesById.get(subCategory.id)
+        : undefined;
+      const resolvedId = previousSubCategory?.category_id ?? assignId();
 
       return {
         category_id: resolvedId,
@@ -63,9 +63,9 @@ export const buildSynchronizedCategory = ({
 }: {
   category: SaveServiceDeskCategoryTreePayload["categories"][number];
   previousCategory?: DbCategory;
-  assignId: (value?: string) => number;
+  assignId: () => number;
 }) => {
-  const resolvedId = previousCategory?.category_id ?? assignId(category.id);
+  const resolvedId = previousCategory?.category_id ?? assignId();
   // Creation is a separate lifecycle step from activation. Existing rows keep
   // their submitted stored state; effective child availability is calculated
   // from both parent and child state at workflow read time.

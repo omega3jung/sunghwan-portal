@@ -1,6 +1,10 @@
 import { queryAuthApi } from "@/server/shared/supabase/authApiClient";
 
-import { DbAuthLoginUserRow, DbAuthUserProjectionRow } from "./authAccountRow";
+import {
+  DbAuthImpersonationEmployeeRow,
+  DbAuthImpersonationTargetRow,
+  DbAuthLoginUserRow,
+} from "./authAccountRow";
 
 const FIND_LOGIN_AUTH_USER_QUERY = `
   select
@@ -39,18 +43,39 @@ export async function findLoginAuthUser(
   }
 }
 
-const FIND_IMPERSONATION_TARGET_QUERY = `
+const FIND_ELIGIBLE_IMPERSONATION_EMPLOYEES_BY_COMPANY_ID_QUERY = `
   select
-    aa_id,
-    aa_role,
-    aa_access_level,
-    aa_user_scope,
-    aa_last_login_at,
-
     e_username,
     e_name,
     e_email,
-    e_company_id
+    e_image_url
+  from vw_auth_login_user
+  where e_company_id = $1
+  order by e_id
+`;
+
+/** Queries active employees with an active portal login account by company. */
+export async function findEligibleImpersonationEmployeesByCompanyId(
+  companyId: number,
+): Promise<DbAuthImpersonationEmployeeRow[]> {
+  try {
+    return await queryAuthApi<DbAuthImpersonationEmployeeRow>(
+      FIND_ELIGIBLE_IMPERSONATION_EMPLOYEES_BY_COMPANY_ID_QUERY,
+      [companyId],
+    );
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown database error";
+
+    throw new Error(`Failed to fetch impersonation employees: ${message}`);
+  }
+}
+
+const FIND_IMPERSONATION_TARGET_QUERY = `
+  select
+    aa_access_level,
+    aa_user_scope,
+    e_username
   from vw_auth_login_user
   where e_username = $1
   limit 1
@@ -59,9 +84,9 @@ const FIND_IMPERSONATION_TARGET_QUERY = `
 /** Queries PostgreSQL for impersonation target without applying presentation concerns. */
 export async function findImpersonationTarget(
   employeeUsername: string,
-): Promise<DbAuthUserProjectionRow | null> {
+): Promise<DbAuthImpersonationTargetRow | null> {
   try {
-    const rows = await queryAuthApi<DbAuthUserProjectionRow>(
+    const rows = await queryAuthApi<DbAuthImpersonationTargetRow>(
       FIND_IMPERSONATION_TARGET_QUERY,
       [employeeUsername],
     );

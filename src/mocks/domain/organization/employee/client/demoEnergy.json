@@ -430,5 +430,29 @@
     "e_rf_tag_id": null,
     "e_hour_rate": null,
     "e_end_date": "2026-07-03T18:25:00+09:00"
+  },
+  {
+    "e_id": 439,
+    "e_username": "demo_energy_guest",
+    "e_name": {
+      "en": {
+        "first": "Demo",
+        "middle": "Energy",
+        "last": "Guest"
+      }
+    },
+    "e_phone": "",
+    "e_email": "demo.guest@client-demo-energy.com",
+    "e_image_url": null,
+    "e_department_id": 218,
+    "e_job_field_id": 336,
+    "e_company_id": 13,
+    "e_start_date": "2026-03-27T18:25:00+09:00",
+    "e_work_shift_id": 1,
+    "e_active": true,
+    "e_engineer_id": null,
+    "e_rf_tag_id": null,
+    "e_hour_rate": null,
+    "e_end_date": null
   }
 ]

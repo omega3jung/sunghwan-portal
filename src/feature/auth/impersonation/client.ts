@@ -4,5 +4,6 @@
 // client export only.
 
 export * from "./api";
+export * from "./dto";
 export * from "./hooks/useImpersonation";
 export * from "./queries";
