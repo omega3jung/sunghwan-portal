@@ -10,7 +10,6 @@ import {
   type TicketApprovalActionCommandRequest,
 } from "@/lib/application/contracts/serviceDesk";
 import {
-  closeExpiredResolvedTickets,
   createTicket,
   getTicketDetail,
   getTicketListItems,
@@ -53,8 +52,6 @@ import {
 const TICKET_LIST_PATH_PATTERN = /^\/service-desk\/tickets$/;
 const TICKET_SEARCH_PATH_PATTERN = /^\/service-desk\/tickets\/search$/;
 const TICKET_DRAFT_PATH_PATTERN = /^\/service-desk\/tickets\/draft$/;
-const TICKET_AUTO_CLOSE_PATH_PATTERN =
-  /^\/service-desk\/tickets\/cron\/close-expired-resolved$/;
 const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
 const TICKET_ACTION_LIST_PATH_PATTERN =
@@ -87,14 +84,6 @@ const SORT_DIRECTIONS = new Set<TicketSearchSortDto["direction"]>([
 export async function handleTicketPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
-  if (TICKET_AUTO_CLOSE_PATH_PATTERN.test(context.path)) {
-    if (context.method !== "POST") {
-      return createNotFoundResponse();
-    }
-
-    return NextResponse.json(await closeExpiredResolvedTickets());
-  }
-
   const currentUserName = getCurrentUserName(context);
 
   if (currentUserName === null) {

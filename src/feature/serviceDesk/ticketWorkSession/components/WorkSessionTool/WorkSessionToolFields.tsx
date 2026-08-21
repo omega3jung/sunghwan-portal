@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { ValueLabel } from "@/shared/types";
 import { formatFormDateTime, parseFormDateTime } from "@/shared/utils/format";
 import { cn } from "@/shared/utils/presentation";
 
@@ -54,8 +55,7 @@ type WorkSessionDateTimeFieldProps = {
 type WorkSessionStatusFieldProps = {
   value?: string;
   onValueChange: (value: string) => void;
-  options: readonly string[];
-  getOptionLabel: (value: string) => string;
+  options: readonly ValueLabel[];
   label: ReactNode;
   labelTitle?: string;
   error?: string;
@@ -172,7 +172,6 @@ export function WorkSessionStatusField({
   value,
   onValueChange,
   options,
-  getOptionLabel,
   label,
   labelTitle,
   error,
@@ -185,6 +184,7 @@ export function WorkSessionStatusField({
       error={error}
     >
       <Select
+        items={options}
         value={value}
         onValueChange={(nextValue) => {
           if (nextValue !== null) {
@@ -202,8 +202,8 @@ export function WorkSessionStatusField({
 
         <SelectContent>
           {options.map((status) => (
-            <SelectItem key={status} value={status}>
-              {getOptionLabel(status)}
+            <SelectItem key={status.value} value={status.value}>
+              {status.label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -231,13 +231,13 @@ export function WorkSessionNoteField({
       <CollapsibleTrigger
         render={
           <Button
-          type="button"
-          variant="ghost"
-          className="flex w-full justify-between px-3 text-xs"
+            type="button"
+            variant="ghost"
+            className="flex w-full justify-between px-3 text-xs"
           />
         }
       >
-          {toggleLabel}
+        {toggleLabel}
       </CollapsibleTrigger>
 
       <CollapsibleContent className="space-y-2 px-3 pb-3">

@@ -150,6 +150,7 @@ export function LegacyJobFieldField({
         {t("serviceDeskSettings.approvalStepTab.jobField")}
       </FieldLabel>
       <Select
+        items={jobFieldData}
         value={stepAssignee.jobFieldId}
         disabled={!canEdit || isLoading}
         onValueChange={(value) => {

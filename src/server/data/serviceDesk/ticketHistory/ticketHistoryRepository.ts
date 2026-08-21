@@ -16,12 +16,6 @@ insert into service_desk.ticket_history (
   tkh_source,
   tkh_event,
   tkh_actor_username,
-  (
-    select employee.e_name
-    from public.vw_employee employee
-    where employee.e_username = tkh_actor_username
-    limit 1
-  ) as tkh_actor_name,
   tkh_from_value,
   tkh_to_value,
   tkh_metadata

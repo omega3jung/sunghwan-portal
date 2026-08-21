@@ -14,7 +14,7 @@ type AutoCloseResult = {
   ticketIds: string[];
 };
 
-/** Handles POST /api/service-desk/tickets/cron/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
+/** Handles POST /api/service-desk/cron/tickets/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
   const unauthorized = validateCronSecret(request);
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   if (isRemote) {
     return portalApiJson(request, {
       method: "POST",
-      path: "/service-desk/tickets/cron/close-expired-resolved",
+      path: "/service-desk/cron/tickets/close-expired-resolved",
       body: {},
       errorMessage: resolveApiErrorMessage("serviceDesk.ticketCommand.autoClose"),
     });
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(closeExpiredResolvedTicketsLocal(new Date()));
 }
 
-/** Handles GET /api/service-desk/tickets/cron/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
+/** Handles GET /api/service-desk/cron/tickets/close-expired-resolved; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
   return POST(request);
 }
@@ -73,47 +73,47 @@ function closeExpiredResolvedTicketsLocal(now: Date): AutoCloseResult {
   const histories = getLocalDemoHistories();
 
   tickets.forEach((ticket, index) => {
-      if (ticket.status !== "Resolved") {
-        return;
-      }
+    if (ticket.status !== "Resolved") {
+      return;
+    }
 
-      const resolvedAt = resolveLocalResolvedAt(ticket, histories);
+    const resolvedAt = resolveLocalResolvedAt(ticket, histories);
 
-      if (!resolvedAt || resolvedAt.getTime() > cutoffTime) {
-        return;
-      }
+    if (!resolvedAt || resolvedAt.getTime() > cutoffTime) {
+      return;
+    }
 
-      const updatedTicket: DbTicketDetail = {
-        ...ticket,
-        status: "Closed",
-        close_reason: "Completed",
-        updated_at: now.toISOString(),
-      };
+    const updatedTicket: DbTicketDetail = {
+      ...ticket,
+      status: "Closed",
+      close_reason: "Completed",
+      updated_at: now.toISOString(),
+    };
 
-      tickets.splice(index, 1, updatedTicket);
-      histories.push({
-        ticket_id: ticket.id,
-        history_no:
-          Math.max(
-            0,
-            ...histories
-              .filter((history) => history.ticket_id === ticket.id)
-              .map((history) => history.history_no),
-          ) + 1,
-        type: "STATUS",
-        event: "RESOLUTION_CLOSE",
-        source: "SYSTEM_AUTO",
-        actor_username: null,
-        action_no: null,
-        from_value: { status: "Resolved" },
-        to_value: { status: "Closed", closeReason: "Completed" },
-        metadata: {
-          closeReason: "Completed",
-          resolvedGraceDays: RESOLVED_AUTO_CLOSE_GRACE_DAYS,
-        },
-        created_at: now.toISOString(),
-      });
-      ticketIds.push(ticket.id);
+    tickets.splice(index, 1, updatedTicket);
+    histories.push({
+      ticket_id: ticket.id,
+      history_no:
+        Math.max(
+          0,
+          ...histories
+            .filter((history) => history.ticket_id === ticket.id)
+            .map((history) => history.history_no),
+        ) + 1,
+      type: "STATUS",
+      event: "RESOLUTION_CLOSE",
+      source: "SYSTEM_AUTO",
+      actor_username: null,
+      action_no: null,
+      from_value: { status: "Resolved" },
+      to_value: { status: "Closed", closeReason: "Completed" },
+      metadata: {
+        closeReason: "Completed",
+        resolvedGraceDays: RESOLVED_AUTO_CLOSE_GRACE_DAYS,
+      },
+      created_at: now.toISOString(),
+    });
+    ticketIds.push(ticket.id);
   });
 
   return {
