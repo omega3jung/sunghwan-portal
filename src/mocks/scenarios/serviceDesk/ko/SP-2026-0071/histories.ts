@@ -18,7 +18,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-11T08:13:53Z",
+    tkh_created_at: "2026-08-11T08:13:53Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -34,7 +34,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: initialAssignees },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-11T08:13:54Z",
+    tkh_created_at: "2026-08-11T08:13:54Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -54,7 +54,7 @@ export const histories: TicketHistoryMockInput[] = [
       reason: "Cross-functional review team added",
     },
 
-    tkh_created_at: "2026-07-11T08:18:20Z",
+    tkh_created_at: "2026-08-11T08:18:20Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -70,7 +70,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Working" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-11T08:20:00Z",
+    tkh_created_at: "2026-08-11T08:20:00Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -86,7 +86,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: { reviewArea: "OPERATIONS" },
 
-    tkh_created_at: "2026-07-11T09:05:44Z",
+    tkh_created_at: "2026-08-11T09:05:44Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -102,7 +102,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: { reviewArea: "REPAIR_ENGINEERING" },
 
-    tkh_created_at: "2026-07-11T11:42:08Z",
+    tkh_created_at: "2026-08-11T11:42:08Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -118,7 +118,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: { reviewArea: "QUALITY" },
 
-    tkh_created_at: "2026-07-11T14:18:31Z",
+    tkh_created_at: "2026-08-11T14:18:31Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -134,7 +134,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: { reviewArea: "IT" },
 
-    tkh_created_at: "2026-07-12T01:15:27Z",
+    tkh_created_at: "2026-08-12T01:15:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -150,7 +150,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: { reviewArea: "CONTRACT" },
 
-    tkh_created_at: "2026-07-12T04:32:50Z",
+    tkh_created_at: "2026-08-12T04:32:50Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -168,6 +168,6 @@ export const histories: TicketHistoryMockInput[] = [
       reviewStatus: "WAITING_FOR_MANUFACTURER_INFORMATION",
     },
 
-    tkh_created_at: "2026-07-12T07:42:16Z",
+    tkh_created_at: "2026-08-12T07:42:16Z",
   },
 ];

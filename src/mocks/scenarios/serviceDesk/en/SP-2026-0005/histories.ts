@@ -16,7 +16,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:03:14Z",
+    tkh_created_at: "2026-08-05T06:03:14Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -33,7 +33,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:06:20Z",
+    tkh_created_at: "2026-08-05T06:06:20Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -50,7 +50,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Working" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:10:27Z",
+    tkh_created_at: "2026-08-05T06:10:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -66,7 +66,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:15:48Z",
+    tkh_created_at: "2026-08-05T06:15:48Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -82,7 +82,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:19:36Z",
+    tkh_created_at: "2026-08-05T06:19:36Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -98,7 +98,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T06:52:08Z",
+    tkh_created_at: "2026-08-05T06:52:08Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -118,7 +118,7 @@ export const histories: TicketHistoryMockInput[] = [
       reason: "DB lock released and blocked transactions recovered",
     },
 
-    tkh_created_at: "2026-07-05T07:20:31Z",
+    tkh_created_at: "2026-08-05T07:20:31Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -134,6 +134,6 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T07:21:42Z",
+    tkh_created_at: "2026-08-05T07:21:42Z",
   },
 ];

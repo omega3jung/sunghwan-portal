@@ -16,7 +16,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-04T16:25:38Z",
+    tkh_created_at: "2026-08-04T16:25:38Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -33,7 +33,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: ["evan_seo"] },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-04T16:31:12Z",
+    tkh_created_at: "2026-08-04T16:31:12Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -50,7 +50,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Working" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-04T16:44:05Z",
+    tkh_created_at: "2026-08-04T16:44:05Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -66,7 +66,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-04T17:02:41Z",
+    tkh_created_at: "2026-08-04T17:02:41Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -82,7 +82,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-04T17:06:18Z",
+    tkh_created_at: "2026-08-04T17:06:18Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -99,7 +99,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T00:48:22Z",
+    tkh_created_at: "2026-08-05T00:48:22Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -115,7 +115,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-05T01:26:17Z",
+    tkh_created_at: "2026-08-05T01:26:17Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -141,6 +141,6 @@ export const histories: TicketHistoryMockInput[] = [
       note: "Please escalate correction requests through team leader for validation",
     },
 
-    tkh_created_at: "2026-07-05T03:22:49Z",
+    tkh_created_at: "2026-08-05T03:22:49Z",
   },
 ];

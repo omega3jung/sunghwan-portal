@@ -6,10 +6,10 @@ export const workSessions: DbTicketWorkSession[] = [
     ticket_id: "7a339a66-5b10-45d0-baa3-e3ee3801eb48",
     assignee_username: "evan_seo",
     start_at: null,
-    end_at: "2026-07-02T14:37:05Z",
+    end_at: "2026-08-02T14:37:05Z",
     duration_minutes: 60,
     note: null,
-    created_at: "2026-07-02T14:37:05Z",
+    created_at: "2026-08-02T14:37:05Z",
     updated_at: null,
   },
 ];

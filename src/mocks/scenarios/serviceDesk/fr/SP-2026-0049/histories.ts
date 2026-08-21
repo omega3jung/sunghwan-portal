@@ -13,7 +13,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T08:13:53Z",
+    tkh_created_at: "2026-08-09T08:13:53Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -26,7 +26,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T08:13:54Z",
+    tkh_created_at: "2026-08-09T08:13:54Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -39,7 +39,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T08:29:25Z",
+    tkh_created_at: "2026-08-09T08:29:25Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -63,7 +63,7 @@ export const histories: TicketHistoryMockInput[] = [
       ],
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T08:29:30Z",
+    tkh_created_at: "2026-08-09T08:29:30Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -80,7 +80,7 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Working",
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T08:43:05Z",
+    tkh_created_at: "2026-08-09T08:43:05Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -93,7 +93,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T09:15:53Z",
+    tkh_created_at: "2026-08-09T09:15:53Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -106,7 +106,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T10:01:58Z",
+    tkh_created_at: "2026-08-09T10:01:58Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -119,7 +119,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T10:17:18Z",
+    tkh_created_at: "2026-08-09T10:17:18Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -132,7 +132,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T12:43:05Z",
+    tkh_created_at: "2026-08-09T12:43:05Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -149,6 +149,6 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Resolved",
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-09T12:45:10Z",
+    tkh_created_at: "2026-08-09T12:45:10Z",
   },
 ];

@@ -16,7 +16,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-15T01:13:27Z",
+    tkh_created_at: "2026-08-15T01:13:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -32,6 +32,6 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { approvalStepId: "9" },
     tkh_metadata: { approvalStepId: "9" },
 
-    tkh_created_at: "2026-07-15T01:13:28Z",
+    tkh_created_at: "2026-08-15T01:13:28Z",
   },
 ];

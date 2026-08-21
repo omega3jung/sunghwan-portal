@@ -13,7 +13,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-07T01:13:27Z",
+    tkh_created_at: "2026-08-07T01:13:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -35,7 +35,7 @@ export const histories: TicketHistoryMockInput[] = [
       ],
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-07T01:13:28Z",
+    tkh_created_at: "2026-08-07T01:13:28Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -52,7 +52,7 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Working",
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-07T01:16:00Z",
+    tkh_created_at: "2026-08-07T01:16:00Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -65,7 +65,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-07T01:20:14Z",
+    tkh_created_at: "2026-08-07T01:20:14Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -81,7 +81,7 @@ export const histories: TicketHistoryMockInput[] = [
       accountUsername: "aria_young",
       securityStatus: "ACCOUNT_LOCKED",
     },
-    tkh_created_at: "2026-07-07T02:02:38Z",
+    tkh_created_at: "2026-08-07T02:02:38Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -111,7 +111,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_metadata: {
       reason: "Se solicitó a Recursos Humanos verificar la baja de la empleada",
     },
-    tkh_created_at: "2026-07-07T02:04:12Z",
+    tkh_created_at: "2026-08-07T02:04:12Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -126,7 +126,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_metadata: {
       hrVerificationStatus: "CONFIRMED",
     },
-    tkh_created_at: "2026-07-07T02:34:45Z",
+    tkh_created_at: "2026-08-07T02:34:45Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -141,7 +141,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_metadata: {
       resolution: "OFFBOARDING_ACCOUNT_LOCK_COMPLETED",
     },
-    tkh_created_at: "2026-07-07T02:40:06Z",
+    tkh_created_at: "2026-08-07T02:40:06Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -160,6 +160,6 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_metadata: {
       resolution: "OFFBOARDING_ACCOUNT_LOCK_COMPLETED",
     },
-    tkh_created_at: "2026-07-07T02:41:12Z",
+    tkh_created_at: "2026-08-07T02:41:12Z",
   },
 ];

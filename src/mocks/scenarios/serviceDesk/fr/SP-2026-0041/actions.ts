@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Olivia Johnson a approuvé",
     tka_owner_username: "olivia_johnson",
 
-    tka_created_at: "2026-07-02T08:48:37Z",
+    tka_created_at: "2026-08-02T08:48:37Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -27,7 +27,7 @@ export const actions: TicketActionMockInput[] = [
       "Bonjour, Liam.<br>Je n'ai pas trouvé 84321565 dans le système. Peux-tu vérifier que l'identifiant de l'appareil est correct ?<br> Merci.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T09:15:00Z",
+    tka_created_at: "2026-08-02T09:15:00Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -44,7 +44,7 @@ export const actions: TicketActionMockInput[] = [
       "84321565 est correct. Merci de vérifier la capture d'écran.<br><img src='/_mocks/scenarios/serviceDesk/ticket-2026-1/comment-2_image-1.png' />",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-02T12:55:58Z",
+    tka_created_at: "2026-08-02T12:55:58Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -69,7 +69,7 @@ export const actions: TicketActionMockInput[] = [
       "C'était ' 84321565'. Il y a un espace avant 84321565.<br> J'ai mis à jour l'identifiant de l'appareil à 84321585.<br> Merci, cordialement.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T14:36:47Z",
+    tka_created_at: "2026-08-02T14:36:47Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -85,7 +85,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Merci !!",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-02T15:02:13Z",
+    tka_created_at: "2026-08-02T15:02:13Z",
     tka_updated_at: null,
     tka_active: true,
 
