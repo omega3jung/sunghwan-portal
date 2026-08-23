@@ -1,4 +1,6 @@
 import { getLocalDemoTenants } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
 import type { DbTenant } from "@/lib/application/contracts/serviceDesk";
 import type {
@@ -29,15 +31,10 @@ const toDbTenant = ({
 });
 
 /** Creates tenant in the server-side LOCAL settings adapter mutable state. */
-export const localCreateTenant = ({
-  input,
-}: {
-  input: CreateTenantInput;
-}) => {
+export const localCreateTenant = ({ input }: { input: CreateTenantInput }) => {
   const items = getLocalDemoTenants();
   const duplicateTenantIndex = items.findIndex(
-    (tenant) =>
-      String(tenant.tenant_company_id) === input.companyId,
+    (tenant) => String(tenant.tenant_company_id) === input.companyId,
   );
 
   if (duplicateTenantIndex >= 0) {
@@ -95,11 +92,20 @@ export const localUpdateTenant = ({
   const targetTenant = items[tenantIndex];
 
   if (String(targetTenant.tenant_company_id) !== input.companyId) {
-    throw new ApiError(
-      "serviceDesk.tenants.localDemo.companyMismatch",
-      400,
-      { companyId: input.companyId },
-    );
+    throw new ApiError("serviceDesk.tenants.localDemo.companyMismatch", 400, {
+      companyId: input.companyId,
+    });
+  }
+
+  if (
+    isOwnerCompany(targetTenant.tenant_company_id) &&
+    input.active === false
+  ) {
+    throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
+  }
+
+  if (input.active === false) {
+    assertNoLiveOperationalTickets(id);
   }
 
   const nextTenant = toDbTenant({
@@ -124,6 +130,12 @@ export const localSoftDeleteTenant = ({ id }: { id: string }) => {
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
+  if (isOwnerCompany(items[tenantIndex].tenant_company_id)) {
+    throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
+  }
+
+  assertNoLiveOperationalTickets(id);
+
   const nextTenant: DbTenant = {
     ...items[tenantIndex],
     tenant_active: false,
@@ -134,3 +146,20 @@ export const localSoftDeleteTenant = ({ id }: { id: string }) => {
 
   return normalizeTenant(nextTenant);
 };
+
+function assertNoLiveOperationalTickets(tenantId: string) {
+  const hasLiveTickets = getLocalDemoTickets().some(
+    (ticket) =>
+      String(ticket.tenant_id) === tenantId &&
+      ticket.active !== false &&
+      ticket.status !== "Draft" &&
+      ticket.status !== "Closed",
+  );
+
+  if (hasLiveTickets) {
+    throw new ApiError(
+      "serviceDesk.tenants.liveTicketsBlockDeactivation",
+      409,
+    );
+  }
+}

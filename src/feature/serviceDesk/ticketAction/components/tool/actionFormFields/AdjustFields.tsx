@@ -1,5 +1,5 @@
 import { addDays, startOfToday } from "date-fns";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 
 import { DatePicker } from "@/components/custom/DatePicker";
@@ -11,11 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Priority, RiskLevel } from "@/domain/common";
 import {
   priorityOptions,
   riskLevelOptions,
 } from "@/feature/serviceDesk/shared/options";
 import { NS } from "@/lib/application/i18n";
+import { ValueLabel } from "@/shared/types";
 
 import { TicketActionDraftFormValues } from "../../../forms";
 import { setActionFieldValue, type Translate } from "../utils";
@@ -26,11 +28,43 @@ type AdjustFieldsProps = {
 };
 
 export function AdjustFields({ form, t }: AdjustFieldsProps) {
-  const mindueAt = addDays(startOfToday(), 1);
+  const minDueAt = useMemo(() => addDays(startOfToday(), 1), []);
 
   const priority = useWatch({ control: form.control, name: "priority" });
   const riskLevel = useWatch({ control: form.control, name: "riskLevel" });
   const dueAt = useWatch({ control: form.control, name: "dueAt" });
+
+  useEffect(() => {
+    if (dueAt && dueAt.getTime() >= minDueAt.getTime()) {
+      return;
+    }
+
+    setActionFieldValue(form, "dueAt", minDueAt);
+  }, [dueAt, form, minDueAt]);
+
+  const priorityData = useMemo((): ValueLabel<Priority>[] => {
+    if (!priorityOptions) return [];
+
+    return priorityOptions.map((priority) => {
+      return {
+        value: priority.value,
+        label: t(`enum.priority.options.${priority.value}`, { ns: NS.shared }),
+      };
+    });
+  }, [t]);
+
+  const riskLevelData = useMemo((): ValueLabel<RiskLevel>[] => {
+    if (!riskLevelOptions) return [];
+
+    return riskLevelOptions.map((riskLevel) => {
+      return {
+        value: riskLevel.value,
+        label: t(`enum.riskLevel.options.${riskLevel.value}`, {
+          ns: NS.shared,
+        }),
+      };
+    });
+  }, [t]);
 
   const onPriorityChange = (value: string) => {
     form.clearErrors(["priority", "riskLevel", "dueAt"]);
@@ -42,7 +76,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
     setActionFieldValue(form, "riskLevel", value);
   };
 
-  const ondueAtChange = (value: Date | undefined) => {
+  const onDueAtChange = (value: Date | undefined) => {
     form.clearErrors(["priority", "riskLevel", "dueAt"]);
     setActionFieldValue(form, "dueAt", value);
   };
@@ -70,6 +104,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
       <Field data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.priority", { ns: NS.common })}</FieldLabel>
         <Select
+          items={priorityData}
           value={priority}
           onValueChange={(value) => {
             if (value !== null) {
@@ -81,7 +116,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
             <SelectValue placeholder={t("field.priority", { ns: NS.common })} />
           </SelectTrigger>
           <SelectContent>
-            {priorityOptions.map((option) => (
+            {priorityData.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -93,6 +128,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
       <Field data-invalid={Boolean(adjustError)}>
         <FieldLabel>{t("field.riskLevel", { ns: NS.common })}</FieldLabel>
         <Select
+          items={riskLevelData}
           value={riskLevel}
           onValueChange={(value) => {
             if (value !== null) {
@@ -106,7 +142,7 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
             />
           </SelectTrigger>
           <SelectContent>
-            {riskLevelOptions.map((option) => (
+            {riskLevelData.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -115,14 +151,17 @@ export function AdjustFields({ form, t }: AdjustFieldsProps) {
         </Select>
       </Field>
 
-      <Field className="col-span-full md:col-span-2" data-invalid={Boolean(adjustError)}>
+      <Field
+        className="col-span-full md:col-span-2"
+        data-invalid={Boolean(adjustError)}
+      >
         <FieldLabel>{t("field.dueAt", { ns: NS.common })}</FieldLabel>
         <DatePicker
           id="ticket-action-input-due-date"
           className="h-9"
           value={dueAt}
-          onChange={ondueAtChange}
-          minDate={mindueAt}
+          onChange={onDueAtChange}
+          minDate={minDueAt}
         />
         <FieldError>{adjustError}</FieldError>
       </Field>

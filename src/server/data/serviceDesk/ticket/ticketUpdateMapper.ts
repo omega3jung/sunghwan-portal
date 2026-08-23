@@ -17,6 +17,7 @@ export function mapRequesterUpdateTicketRequestDtoToRowInput(
     | "tk_status"
     | "tk_approval_step_id"
     | "tk_assignee_usernames"
+    | "tk_tenant_id"
   >,
 ): RequesterUpdateTicketRowInput {
   return {

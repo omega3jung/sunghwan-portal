@@ -191,12 +191,17 @@ export async function validateApprovalStepTreeMutation({
   principal,
   tenant,
   payload,
+  query,
 }: {
   principal: ServiceDeskSettingsPrincipal;
   tenant: ServiceDeskSettingsTenantContext;
   payload: SaveServiceDeskApprovalStepTreePayload;
+  query?: PortalApiQueryExecutor;
 }) {
-  const currentSettings = await getCategoryApprovalSettingsByTenantId(tenant.id);
+  const currentSettings = await getCategoryApprovalSettingsByTenantId(
+    tenant.id,
+    query,
+  );
   const currentStepCategoryById = new Map(
     currentSettings.flatMap((category) =>
       category.approval_step.map(

@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Olivia Johnson aprobó",
     tka_owner_username: "olivia_johnson",
 
-    tka_created_at: "2026-07-02T08:07:18Z",
+    tka_created_at: "2026-08-02T08:07:18Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -27,7 +27,7 @@ export const actions: TicketActionMockInput[] = [
       "Hola, Isabella. ¿Podrías darnos más detalles sobre qué información debe incluirse?",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T08:20:00Z",
+    tka_created_at: "2026-08-02T08:20:00Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -44,7 +44,7 @@ export const actions: TicketActionMockInput[] = [
       "Debe incluir el ID de recepción, la fecha de recepción, IMEI, SKU, ID del empleado, estado y ubicación actual.",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-02T08:41:12Z",
+    tka_created_at: "2026-08-02T08:41:12Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -61,7 +61,7 @@ export const actions: TicketActionMockInput[] = [
       "Aquí está el informe. Si necesitan ayuda, por favor avísennos. Gracias.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T09:15:11Z",
+    tka_created_at: "2026-08-02T09:15:11Z",
     tka_updated_at: null,
     tka_active: true,
 

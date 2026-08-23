@@ -15,6 +15,25 @@ const requestSchema = z.object({
   impersonatedUsername: z.string().trim().min(1),
 });
 
+const impersonationTargetSchema = z.object({
+  username: z.string().trim().min(1),
+  permission: z.union([
+    z.literal(0),
+    z.literal(1),
+    z.literal(3),
+    z.literal(5),
+    z.literal(7),
+    z.literal(9),
+  ]),
+  userScope: z.enum(["INTERNAL", "CLIENT"]),
+});
+
+const authResponseSchema = z.object({
+  data: impersonationTargetSchema.nullish(),
+});
+
+type ImpersonationTarget = z.infer<typeof impersonationTargetSchema>;
+
 /** Handles POST /api/auth/impersonation; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(req: NextRequest) {
   const token = await getAuthToken(req);
@@ -72,10 +91,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = (await response.json()) as {
-      data?: AuthUser | null;
-    };
-    const remoteAuth = payload.data ?? null;
+    const parsedResponse = authResponseSchema.safeParse(await response.json());
+
+    if (!parsedResponse.success) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
+
+    const remoteAuth = parsedResponse.data.data ?? null;
 
     // 4-b. validate and return response.
     return validateAuth(originalUser, remoteAuth);
@@ -107,7 +132,7 @@ export async function DELETE(req: NextRequest) {
 
 function validateAuth(
   originalUser: AuthUser,
-  targetUser: AuthUser | null,
+  targetUser: ImpersonationTarget | null,
 ): NextResponse {
   if (!targetUser) {
     return NextResponse.json(
@@ -117,8 +142,8 @@ function validateAuth(
   }
 
   if (
-    originalUser.id === targetUser.id ||
-    originalUser.username === targetUser.username
+    normalizeUsername(originalUser.username) ===
+    normalizeUsername(targetUser.username)
   ) {
     return NextResponse.json(
       { error: "CANNOT_IMPERSONATE_SELF" },
@@ -147,10 +172,13 @@ function validateAuth(
         username: originalUser.username,
       },
       impersonatedUser: {
-        id: targetUser.id,
         username: targetUser.username,
       },
       activatedAt: Date.now(),
     },
   });
+}
+
+function normalizeUsername(username: string) {
+  return username.trim().toLowerCase();
 }

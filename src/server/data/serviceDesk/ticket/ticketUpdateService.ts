@@ -1,5 +1,7 @@
 import type { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata, TicketStatus } from "@/domain/serviceDesk";
+import type { AppUser } from "@/domain/user";
+import { resolveCategoryChangeDueAt } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import {
   createServiceDeskStatusError as createStatusError,
   normalizePostgresStringArray,
@@ -8,6 +10,7 @@ import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHis
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import { createTicketHistory } from "../ticketHistory";
+import { resolveAuthoritativeTicketCategory } from "./ticketCategoryAccess";
 import { TicketDetailDto } from "./ticketDto";
 import { toTicketDetailDto } from "./ticketMapper";
 import {
@@ -38,6 +41,7 @@ type RequesterUpdateRoutingResult =
     };
 
 type RequesterUpdateRoutingState = {
+  tk_tenant_id: number;
   tk_priority: Priority;
   tk_risk_level: RiskLevel;
   tk_status: TicketStatus;
@@ -63,6 +67,7 @@ export async function updateRequesterTicket(
   ticketId: string,
   input: RequesterUpdateTicketRequestDto,
   currentUserName: string | null,
+  principal: Pick<AppUser, "companyId" | "userScope">,
   options: RequesterUpdateTicketRepositoryOptions = {},
 ): Promise<TicketDetailDto> {
   if (!currentUserName) {
@@ -71,7 +76,9 @@ export async function updateRequesterTicket(
 
   if (!options.query) {
     return withPortalApiTransaction((query) =>
-      updateRequesterTicket(ticketId, input, currentUserName, { query }),
+      updateRequesterTicket(ticketId, input, currentUserName, principal, {
+        query,
+      }),
     );
   }
 
@@ -85,7 +92,10 @@ export async function updateRequesterTicket(
   }
 
   if (currentRow.tk_requester_username !== currentUserName) {
-    throw createStatusError("Ticket can only be updated by its requester.", 403);
+    throw createStatusError(
+      "Ticket can only be updated by its requester.",
+      403,
+    );
   }
 
   if (!REQUESTER_EDITABLE_TICKET_STATUSES.includes(currentRow.tk_status)) {
@@ -95,16 +105,16 @@ export async function updateRequesterTicket(
     );
   }
 
-  const category = await findActiveRequesterUpdateCategorySnapshotById(
-    input.categoryId,
-    options,
+  const category = resolveAuthoritativeTicketCategory(
+    await findActiveRequesterUpdateCategorySnapshotById(
+      input.categoryId,
+      options,
+    ),
+    principal,
   );
 
-  if (!category) {
-    throw createStatusError("Ticket category is not available.", 400);
-  }
-
   const preservedRoutingState: RequesterUpdateRoutingState = {
+    tk_tenant_id: category.cat_tenant_id,
     tk_priority: currentRow.tk_priority,
     tk_risk_level: currentRow.tk_risk_level,
     tk_status: currentRow.tk_status,
@@ -126,6 +136,16 @@ export async function updateRequesterTicket(
   });
   const categoryChanged =
     preliminaryChangeSet.changedFields.includes("categoryId");
+  const effectiveInput = categoryChanged
+    ? {
+        ...input,
+        dueAt: resolveCategoryChangeDueAt(
+          currentRow.tk_due_at,
+          input.dueAt,
+          category.cat_default_sla_days,
+        ).toISOString(),
+      }
+    : input;
   const routingSensitiveChanged = preliminaryChangeSet.changedFields.some(
     isRoutingSensitiveField,
   );
@@ -133,6 +153,7 @@ export async function updateRequesterTicket(
     ? await resolveRequesterUpdateRoutingState(
         {
           categoryId: category.cat_id,
+          tenantId: category.cat_tenant_id,
           categoryPriority: category.cat_default_priority,
           categoryRiskLevel: category.cat_default_risk_level,
           currentPriority: currentRow.tk_priority,
@@ -144,7 +165,7 @@ export async function updateRequesterTicket(
       )
     : preservedRoutingState;
   const rowInput = mapRequesterUpdateTicketRequestDtoToRowInput(
-    input,
+    effectiveInput,
     routingState,
   );
   const changeSet = buildRequesterUpdateChangeSet({
@@ -229,7 +250,11 @@ function buildRequesterUpdateChangeSet({
   const fromValue: { [key: string]: TicketHistoryJsonValue } = {};
   const toValue: { [key: string]: TicketHistoryJsonValue } = {};
 
-  addScalarChange("categoryId", String(current.cat_id), String(next.tk_category_id));
+  addScalarChange(
+    "categoryId",
+    String(current.cat_id),
+    String(next.tk_category_id),
+  );
   addScalarChange("subject", current.tk_subject, next.tk_subject);
   addContentChange();
   addDateChange("dueAt", current.tk_due_at, next.tk_due_at);
@@ -266,8 +291,12 @@ function buildRequesterUpdateChangeSet({
     }
 
     changedFields.push(key);
-    fromValue[key] = Number.isFinite(fromTime) ? new Date(fromTime).toISOString() : from;
-    toValue[key] = Number.isFinite(toTime) ? new Date(toTime).toISOString() : to;
+    fromValue[key] = Number.isFinite(fromTime)
+      ? new Date(fromTime).toISOString()
+      : from;
+    toValue[key] = Number.isFinite(toTime)
+      ? new Date(toTime).toISOString()
+      : to;
   }
 
   function addJsonChange(key: string, from: unknown, to: unknown) {
@@ -316,6 +345,7 @@ function buildRequesterUpdateChangeSet({
 async function resolveRequesterUpdateRoutingState(
   params: {
     categoryId: number;
+    tenantId: number;
     categoryPriority: Priority | null;
     categoryRiskLevel: RiskLevel | null;
     currentPriority: Priority;
@@ -334,11 +364,12 @@ async function resolveRequesterUpdateRoutingState(
   );
 
   return {
+    tk_tenant_id: params.tenantId,
     tk_priority: params.shouldDeriveCategoryDefaults
-      ? params.categoryPriority ?? params.currentPriority
+      ? (params.categoryPriority ?? params.currentPriority)
       : params.currentPriority,
     tk_risk_level: params.shouldDeriveCategoryDefaults
-      ? params.categoryRiskLevel ?? params.currentRiskLevel
+      ? (params.categoryRiskLevel ?? params.currentRiskLevel)
       : params.currentRiskLevel,
     tk_status: routing.status,
     tk_approval_step_id: routing.approvalStepId,
@@ -424,7 +455,9 @@ function buildRequesterUpdateHistoryMetadata({
   };
 
   if (routingSensitiveChanged) {
-    metadata.previousApprovalStepId = normalizeNullableId(previousApprovalStepId);
+    metadata.previousApprovalStepId = normalizeNullableId(
+      previousApprovalStepId,
+    );
     metadata.nextApprovalStepId = normalizeNullableId(nextApprovalStepId);
     metadata.previousAssigneeUsernames = previousAssigneeUsernames;
     metadata.nextAssigneeUsernames = nextAssigneeUsernames;

@@ -78,4 +78,5 @@ export type CategoryApprovalStepTreeSyncInput = Pick<
 export type SaveServiceDeskApprovalStepTreePayload = {
   tenantId: string;
   categories: CategoryApprovalStepTreeSyncInput[];
+  force?: boolean;
 };

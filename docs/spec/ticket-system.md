@@ -66,6 +66,13 @@ Important rules:
 - Reopen is a ticket action whose current result is `Resolved -> Working`.
 - GET/read requests must not mutate ticket status.
 
+REMOTE ticket reads are authorized in the `vw_ticket` query using the stored
+ticket Tenant, `cat_scope`, requester, current approver/worker assignees, and
+the effective principal's company/scope. List, search, detail, action list,
+history, and work-session reads share this visibility boundary; an ID or
+subresource path cannot reveal a ticket hidden from the list policy. LOCAL uses
+the same predicate semantics.
+
 See:
 
 - [Ticket Lifecycle](../en/03-domain/service-desk/ticket/ticket-lifecycle.md)
@@ -93,6 +100,28 @@ Tenant is the configuration scope. Category is the central behavior
 configuration. Approval Step is evaluated from the selected category's
 parent/main category. Assignment Rule checks the selected subcategory first and
 falls back to the parent/main category only when no subcategory rule exists.
+
+Category workflow availability follows these invariants:
+
+```txt
+Category creation -> inactive
+Assignment Rule -> at least one Job Field or Employee reference
+Category activation -> effective rule has an active Job Field or Employee
+Ticket Create -> effectively active main/subcategory only
+Ticket routing -> actual worker eligibility is revalidated on the server
+```
+
+Operational availability requires both the stored Tenant and its backing
+Company to be active. Ticket create/update derives Tenant from the persisted
+Category and applies object-level Category access; payload Tenant IDs are not
+authoritative. `PORTAL` assignment uses the provider company by default and
+adds the category Tenant company only when `includeTenantCompany` is persisted.
+
+Main/subcategory active flags are stored independently; effective subcategory
+availability is `main.active && sub.active`. A subcategory uses its own
+Assignment Rule when one exists and falls back to the main-category rule only
+when it has no own rule. No Assignment Rule is not represented by a persisted
+empty rule.
 
 See:
 
@@ -179,7 +208,20 @@ Routing-sensitive changes rerun category-driven routing from the beginning:
 
 On category change, default priority, default risk level, and the minimum due
 date are re-evaluated from the new category. The resulting due date is the later
-of the current due date and the new category minimum.
+of the current due date, submitted due date, and new category minimum. Create
+preserves valid explicit priority/risk overrides, defaults missing values from
+the selected subcategory then main category, and rejects due dates earlier than
+the effective category SLA minimum.
+
+Category deactivation affects future workflow availability only. It is
+impact-gated when live tickets reference the main/subcategory, but forced
+deactivation does not rewrite their stored routing or history. Approval Step
+tree changes that affect tickets in `Approval` require a separate force apply;
+the forced operation atomically saves the valid configuration, restarts every
+affected ticket through initial routing, and records `ROUTING_RESET` with
+`APPROVAL_CONFIGURATION_CHANGED`. In-flight approval continuation may use an
+inactive Category, but initial or restarted routing may not. Customer Tenant
+deactivation has no force path while a non-`Draft`, non-`Closed` ticket is live.
 
 History records the result as `ROUTING_PRESERVED` or `ROUTING_RESET`.
 

@@ -107,7 +107,6 @@ session = {
       username, // internal unique key
     },
     impersonatedUser: {
-      id, // authentication/account identity id
       username, // internal unique key
     },
     activatedAt,
@@ -232,7 +231,7 @@ All actions must remain traceable.
 
 - `originalUser.username` (audit/security key)
 - `impersonatedUser.username` (effective user context key)
-- `originalUser.id` and `impersonatedUser.id` (authentication/account identity ids)
+- `originalUser.id` (original authentication/account identity id)
 
 ---
 

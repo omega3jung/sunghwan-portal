@@ -24,6 +24,7 @@
       "update": "Impossible de mettre à jour la règle d'attribution.",
       "delete": "Impossible de supprimer la règle d'attribution.",
       "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
+      "emptyAssignee": "Au moins un poste ou un employé est requis.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
@@ -45,6 +46,7 @@
       "update": "Impossible de mettre à jour la catégorie.",
       "delete": "Impossible de supprimer la catégorie.",
       "save": "Impossible d'enregistrer les paramètres de catégorie.",
+      "activationNotReady": "La catégorie {{categoryId}} ne peut pas être activée tant qu’une règle d’attribution valide n’est pas configurée.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
@@ -60,6 +62,8 @@
       "delete": "Impossible de supprimer le tenant.",
       "save": "Impossible d'enregistrer les paramètres du tenant.",
       "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "portalOwnerProtected": "Le tenant propriétaire du portail ne peut pas être désactivé ou supprimé.",
+      "liveTicketsBlockDeactivation": "Un tenant avec des tickets opérationnels actifs ne peut pas être désactivé ni supprimé.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres du tenant invalide.",
         "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",
@@ -73,6 +77,7 @@
       "fetch": "Impossible de récupérer le ticket.",
       "update": "Impossible de mettre à jour le ticket.",
       "delete": "Impossible de supprimer le ticket.",
+      "dueBeforeCategorySla": "La date d’échéance doit être postérieure ou égale au minimum de la catégorie {{minimumDueAt}}.",
       "localDemo": {
         "invalidPayload": "Charge utile du ticket invalide.",
         "requesterRequired": "Le demandeur est obligatoire.",

@@ -5,16 +5,23 @@ const synchronizeSubCategories = ({
   nextSubCategories,
   previousSubCategories,
   assignId,
-  parentActive,
 }: {
   nextSubCategories: SaveServiceDeskCategoryTreePayload["categories"][number]["subCategories"];
   previousSubCategories: DbCategory["sub_category"];
-  assignId: (value?: string) => number;
-  parentActive: boolean;
+  assignId: () => number;
 }) => {
+  const previousSubCategoriesById = new Map(
+    previousSubCategories.map((subCategory) => [
+      String(subCategory.category_id),
+      subCategory,
+    ]),
+  );
   const synchronizedSubCategories = nextSubCategories.map(
     (subCategory, subCategoryIndex) => {
-      const resolvedId = assignId(subCategory.id);
+      const previousSubCategory = subCategory.id
+        ? previousSubCategoriesById.get(subCategory.id)
+        : undefined;
+      const resolvedId = previousSubCategory?.category_id ?? assignId();
 
       return {
         category_id: resolvedId,
@@ -22,7 +29,9 @@ const synchronizeSubCategories = ({
         category_description: subCategory.description ?? null,
         category_request_template: subCategory.requestTemplate ?? null,
         category_index: subCategoryIndex + 1,
-        category_active: parentActive ? subCategory.active : false,
+        // New category rows are always born inactive at the authoritative
+        // LOCAL boundary, even if a caller submits active=true.
+        category_active: previousSubCategory ? subCategory.active : false,
         default_priority: subCategory.defaultPriority ?? null,
         default_risk_level: subCategory.defaultRiskLevel ?? null,
         default_sla_days: subCategory.defaultSlaDays ?? null,
@@ -41,7 +50,6 @@ const synchronizeSubCategories = ({
     .map((subCategory, subCategoryIndex) => ({
       ...subCategory,
       category_index: synchronizedSubCategories.length + subCategoryIndex + 1,
-      category_active: parentActive ? subCategory.category_active : false,
     }));
 
   return [...synchronizedSubCategories, ...preservedSubCategories];
@@ -55,12 +63,13 @@ export const buildSynchronizedCategory = ({
 }: {
   category: SaveServiceDeskCategoryTreePayload["categories"][number];
   previousCategory?: DbCategory;
-  assignId: (value?: string) => number;
+  assignId: () => number;
 }) => {
-  // Parent inactivity dominates child flags so LOCAL reads cannot expose an
-  // active subcategory beneath an inactive main category.
-  const resolvedId = previousCategory?.category_id ?? assignId(category.id);
-  const active = category.active;
+  const resolvedId = previousCategory?.category_id ?? assignId();
+  // Creation is a separate lifecycle step from activation. Existing rows keep
+  // their submitted stored state; effective child availability is calculated
+  // from both parent and child state at workflow read time.
+  const active = previousCategory ? category.active : false;
 
   return {
     category_id: resolvedId,
@@ -77,7 +86,6 @@ export const buildSynchronizedCategory = ({
       nextSubCategories: category.subCategories,
       previousSubCategories: previousCategory?.sub_category ?? [],
       assignId,
-      parentActive: active,
     }),
   } satisfies DbCategory;
 };

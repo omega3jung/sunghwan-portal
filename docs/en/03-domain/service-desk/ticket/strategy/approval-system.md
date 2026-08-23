@@ -302,3 +302,11 @@ stored in the same current assignee field used by work routing, with
 `approvalStepId` distinguishing approval phase from work phase. Final approval
 does not create an `Approved` status; it resolves workers and moves the ticket
 to `Assigned`.
+
+An in-flight approval continues against its referenced workflow even when the
+Category is later inactive. Changing an Approval Step tree with affected
+`Approval` tickets is impact-gated: ordinary save returns a conflict, while an
+administrator-confirmed force save validates every new route and atomically
+saves the tree, restarts each affected ticket from initial routing, and records
+`ROUTING_RESET` with reason `APPROVAL_CONFIGURATION_CHANGED`. Any failure rolls
+back the whole operation.

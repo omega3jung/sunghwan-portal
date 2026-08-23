@@ -2,8 +2,8 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { invalidateServiceDeskTenantDependencies } from "../shared/invalidation";
 import { serviceDeskTenantApi } from "./api";
-import { tenantQueryKeys } from "./queryKeys";
 
 export const useCreateServiceDeskTenant = () => {
   const queryTenant = useQueryClient();
@@ -11,7 +11,7 @@ export const useCreateServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.create,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
+      void invalidateServiceDeskTenantDependencies(queryTenant);
     },
   });
 };
@@ -22,7 +22,7 @@ export const useUpdateServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.update,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
+      void invalidateServiceDeskTenantDependencies(queryTenant);
     },
   });
 };
@@ -33,7 +33,7 @@ export const useDeleteServiceDeskTenant = () => {
   return useMutation({
     mutationFn: serviceDeskTenantApi.remove,
     onSuccess: () => {
-      queryTenant.invalidateQueries({ queryKey: tenantQueryKeys.lists() });
+      void invalidateServiceDeskTenantDependencies(queryTenant);
     },
   });
 };

@@ -25,6 +25,7 @@
       "update": "Failed to update assignment rule.",
       "delete": "Failed to delete assignment rule.",
       "save": "Failed to save assignment rule settings.",
+      "emptyAssignee": "At least one Job Field or Employee is required.",
       "categoryNotFound": "Category {{categoryId}} was not found.",
       "localDemo": {
         "invalidPayload": "Invalid assignment rule settings payload.",
@@ -47,6 +48,7 @@
       "update": "Failed to update category.",
       "delete": "Failed to delete category.",
       "save": "Failed to save category settings.",
+      "activationNotReady": "Category {{categoryId}} cannot be activated until a valid Assignment Rule is configured.",
       "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one.",
       "localDemo": {
         "invalidPayload": "Invalid category settings payload.",
@@ -65,6 +67,8 @@
       "remoteNotImplemented": "REMOTE tenant settings mutations are not implemented yet.",
       "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
       "companyMismatch": "Tenant does not belong to company {{companyId}}.",
+      "portalOwnerProtected": "The portal-owner tenant cannot be deactivated or deleted.",
+      "liveTicketsBlockDeactivation": "A tenant with active operational tickets cannot be deactivated or deleted.",
       "localDemo": {
         "invalidPayload": "Invalid tenant settings payload.",
         "companyAlreadyAssigned": "Company {{companyId}} is already assigned to an active tenant.",
@@ -78,6 +82,7 @@
       "fetch": "Failed to fetch ticket.",
       "update": "Failed to update ticket.",
       "delete": "Failed to delete ticket.",
+      "dueBeforeCategorySla": "Due date must be on or after the category minimum {{minimumDueAt}}.",
       "localDemo": {
         "invalidPayload": "Invalid ticket payload.",
         "requesterRequired": "Requester is required.",

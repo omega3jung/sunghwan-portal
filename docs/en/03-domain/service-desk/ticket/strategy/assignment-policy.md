@@ -39,6 +39,7 @@ rule.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -48,6 +49,13 @@ type AssignmentRule = {
 ```
 
 The current model is group-based. It does not use a separate `ruleType` field.
+
+No rule and an empty rule are different states. Settings may render the absent
+state as `0 Job Fields / 0 Employees`, but persistence accepts a rule only when
+at least one of those arrays is non-empty. Removing a subcategory override
+deletes the rule and restores parent fallback; it does not store empty arrays as
+an override. Inactive categories remain configurable so a rule can be prepared
+before Category activation.
 
 Related document: [Service Desk Settings](../../settings.md)
 
@@ -99,9 +107,13 @@ from selected employees or client-supplied company context.
 Candidate lookup is category-centered and checks both the caller's Assignment
 Rule capability and the purpose-specific company boundary. Eligibility is
 validated when a rule is saved and again during submit, resubmit, or another
-explicit routing recalculation. If employees become inactive or move company,
-they are rejected at routing time. Zero valid workers is a routing failure; the
-system does not create an unowned `Assigned` ticket.
+explicit routing recalculation. Settings save validates active references but
+does not require an active Job Field to resolve an employee immediately.
+Category activation checks for an active Job Field or active Employee reference.
+Routing expands those references and applies the stronger current employee,
+company, tenant, and category checks. If employees become inactive or move
+company, they are rejected at routing time. Zero valid workers is a routing
+failure; the system does not create an unowned `Assigned` ticket.
 
 ---
 
@@ -123,6 +135,10 @@ or final approval complete
 
 If assignment cannot resolve at least one worker, ticket creation or routing
 fails instead of creating unowned work.
+
+The fallback step means “no subcategory rule exists.” An existing rule that is
+empty or invalid never falls through to the parent; empty rules are rejected or
+removed before persistence.
 
 ---
 
@@ -190,6 +206,8 @@ Requester `RESUBMIT` after `Declined` or `Rejected` reruns initial routing.
 
 Settings changes do not retroactively rewrite existing tickets. Existing
 tickets keep their current assignees until a ticket command changes them.
+Changing an Assignment Rule therefore preserves the current worker and applies
+the new rule only when a future workflow transition resolves assignment again.
 
 The current generic Admin ticket-action override requires a separate
 cross-tenant audit and, if retained, an explicit break-glass/platform policy.

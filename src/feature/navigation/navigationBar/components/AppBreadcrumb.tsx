@@ -22,11 +22,17 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
     return null;
   }
 
+  const lastDropdownIndex = items.findLastIndex(
+    (item) => !!item.dropdownItems?.length,
+  );
+
   return (
     <Breadcrumb className="min-w-0 flex-1">
       <BreadcrumbList className="flex-nowrap">
         {items.map((item, index) => {
           const isCurrentPage = index === items.length - 1;
+          const isHiddenOnMobile =
+            lastDropdownIndex >= 0 && index !== lastDropdownIndex;
 
           const content = (
             <>
@@ -54,7 +60,12 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
 
           return (
             <Fragment key={index}>
-              <BreadcrumbItem className="min-w-0">
+              <BreadcrumbItem
+                className={cn(
+                  "min-w-0",
+                  isHiddenOnMobile && "hidden md:inline-flex",
+                )}
+              >
                 {!!item.dropdownItems?.length ? (
                   <BreadcrumbDropdown
                     isCurrentPage={isCurrentPage}
@@ -84,7 +95,12 @@ export function AppBreadcrumb({ items }: AppBreadcrumbProps) {
               </BreadcrumbItem>
 
               {!isCurrentPage && (
-                <BreadcrumbSeparator className="text-muted-foreground/70" />
+                <BreadcrumbSeparator
+                  className={cn(
+                    "text-muted-foreground/70",
+                    lastDropdownIndex >= 0 && "hidden md:inline-flex",
+                  )}
+                />
               )}
             </Fragment>
           );

@@ -1,13 +1,18 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { OWNER_COMPANY_ID } from "@/domain/organization";
+import { canActivateCategory } from "@/domain/serviceDesk";
+import { useServiceDeskAssignmentRuleListQuery } from "@/feature/serviceDesk/assignmentRule/client";
 import { useSaveServiceDeskCategoryTree } from "@/feature/serviceDesk/category/client";
 import { NS } from "@/lib/application/i18n";
 import { useMutationToast } from "@/lib/client/toast";
 
 import { useServiceDeskSettingsCategoryListQuery } from "../../hooks/useServiceDeskSettingsCategoryListQuery";
 import { useServiceDeskSettingsEditorState } from "../../hooks/useServiceDeskSettingsEditorState";
+import { useServiceDeskSettingsOrganizationData } from "../../hooks/useServiceDeskSettingsOrganizationData";
 import { useServiceDeskSettingsPageContext } from "../../hooks/useServiceDeskSettingsPageContext";
 import { createCategoryTree } from "../utils/mapper";
 import { buildCategoryTreeSavePayload } from "../utils/tree";
@@ -21,6 +26,30 @@ export function useCategorySettings() {
   const categoryQuery = useServiceDeskSettingsCategoryListQuery({
     tenantId: context.selectedTenant,
     scope: context.selectedScope,
+    enabled: context.canRead,
+  });
+  const assignmentRuleParams = useMemo(
+    () =>
+      context.selectedTenant && context.canRead
+        ? {
+            tenantId: context.selectedTenant,
+            settings: true,
+            context: "settings" as const,
+            scope: context.selectedScope,
+          }
+        : undefined,
+    [context.canRead, context.selectedScope, context.selectedTenant],
+  );
+  const assignmentRuleQuery =
+    useServiceDeskAssignmentRuleListQuery(assignmentRuleParams);
+  const organization = useServiceDeskSettingsOrganizationData({
+    companyId: context.selectedTenantData?.companyId ?? null,
+    companyIds:
+      context.selectedScope === "PORTAL"
+        ? [OWNER_COMPANY_ID, context.selectedTenantData?.companyId].filter(
+            (id): id is string => Boolean(id),
+          )
+        : undefined,
     enabled: context.canRead,
   });
   const tree = useCategoryTree({
@@ -40,8 +69,45 @@ export function useCategorySettings() {
         isLoading: categoryQuery.isLoading,
         isReady: categoryQuery.data !== undefined,
       },
+      {
+        error: assignmentRuleQuery.error,
+        isLoading: assignmentRuleQuery.isLoading,
+        isReady: assignmentRuleQuery.data !== undefined,
+      },
     ],
   });
+  const selectedCategoryCanActivate = useMemo(() => {
+    const selectedNode = tree.selectedNode;
+
+    if (
+      !selectedNode ||
+      selectedNode.isCreated ||
+      !assignmentRuleQuery.data ||
+      !organization.jobFields ||
+      !organization.employees
+    ) {
+      return false;
+    }
+
+    return canActivateCategory({
+      assignmentRules: assignmentRuleQuery.data,
+      categoryId: selectedNode.id,
+      mainCategoryId: tree.selectedParentCategory?.id,
+      jobFields: organization.jobFields,
+      employees: organization.employees,
+      scope: context.selectedScope,
+      tenantCompanyId: context.selectedTenantData?.companyId ?? "",
+      ownerCompanyId: OWNER_COMPANY_ID,
+    });
+  }, [
+    assignmentRuleQuery.data,
+    organization.employees,
+    organization.jobFields,
+    context.selectedScope,
+    context.selectedTenantData?.companyId,
+    tree.selectedNode,
+    tree.selectedParentCategory?.id,
+  ]);
 
   const handleSave = async () => {
     if (
@@ -97,7 +163,10 @@ export function useCategorySettings() {
         })
       : undefined,
     retryLabel: tCommon("action.retry", { defaultValue: "Retry" }),
-    onRetry: () => void categoryQuery.refetch(),
+    onRetry: () => {
+      void categoryQuery.refetch();
+      void assignmentRuleQuery.refetch();
+    },
     canReset: editor.canReset,
     onReset: editor.onReset,
     canSave: editor.canSave,
@@ -108,6 +177,7 @@ export function useCategorySettings() {
     tree: {
       ...tree,
       canEdit: context.canManage,
+      canActivateCategory: selectedCategoryCanActivate,
     },
   };
 }

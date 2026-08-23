@@ -23,7 +23,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-07T01:13:27Z",
+    tkh_created_at: "2026-08-07T01:13:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -39,7 +39,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: securityAssignees },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-07T01:13:28Z",
+    tkh_created_at: "2026-08-07T01:13:28Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -55,7 +55,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Working" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-07T01:16:00Z",
+    tkh_created_at: "2026-08-07T01:16:00Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -71,7 +71,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-07T01:20:14Z",
+    tkh_created_at: "2026-08-07T01:20:14Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -90,7 +90,7 @@ export const histories: TicketHistoryMockInput[] = [
       securityStatus: "ACCOUNT_LOCKED",
     },
 
-    tkh_created_at: "2026-07-07T02:02:38Z",
+    tkh_created_at: "2026-08-07T02:02:38Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -110,7 +110,7 @@ export const histories: TicketHistoryMockInput[] = [
       reason: "HR offboarding verification requested",
     },
 
-    tkh_created_at: "2026-07-07T02:04:12Z",
+    tkh_created_at: "2026-08-07T02:04:12Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -128,7 +128,7 @@ export const histories: TicketHistoryMockInput[] = [
       hrVerificationStatus: "CONFIRMED",
     },
 
-    tkh_created_at: "2026-07-07T02:34:45Z",
+    tkh_created_at: "2026-08-07T02:34:45Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -146,7 +146,7 @@ export const histories: TicketHistoryMockInput[] = [
       resolution: "OFFBOARDING_ACCOUNT_LOCK_COMPLETED",
     },
 
-    tkh_created_at: "2026-07-07T02:40:06Z",
+    tkh_created_at: "2026-08-07T02:40:06Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -164,6 +164,6 @@ export const histories: TicketHistoryMockInput[] = [
       resolution: "OFFBOARDING_ACCOUNT_LOCK_COMPLETED",
     },
 
-    tkh_created_at: "2026-07-07T02:41:12Z",
+    tkh_created_at: "2026-08-07T02:41:12Z",
   },
 ];

@@ -35,6 +35,22 @@ export interface DbAuthUserProjectionRow {
   e_company_id: number;
 }
 
+/** Defines the minimal PostgreSQL row required to validate an impersonation target. */
+export interface DbAuthImpersonationTargetRow {
+  aa_access_level: AuthAccountPermission;
+  aa_user_scope: AuthAccountUserScope;
+
+  e_username: string;
+}
+
+/** Defines the employee fields required by the impersonation candidate list. */
+export interface DbAuthImpersonationEmployeeRow {
+  e_username: string;
+  e_name: LocalizedName;
+  e_email: string;
+  e_image_url: string | null;
+}
+
 /** Defines the PostgreSQL db auth login user row used only within the repository boundary. */
 export interface DbAuthLoginUserRow extends DbAuthUserProjectionRow {
   aa_password_hash: string;

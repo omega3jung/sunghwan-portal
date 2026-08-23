@@ -3,8 +3,8 @@ import { TicketMockInput } from "../../types";
 export const ticket: TicketMockInput = {
   tk_id: "6f5a5a2c-4fc9-493d-b1a9-457b51b9abef",
   tk_ticket_no: "SP-2026-0014",
-  tk_created_at: "2026-07-14T01:13:27Z",
-  tk_updated_at: "2026-07-14T01:18:10Z",
+  tk_created_at: "2026-08-14T01:13:27Z",
+  tk_updated_at: "2026-08-14T01:18:10Z",
   tk_requester_username: "__demo_user__",
   tk_requester: {
     username: "__demo_user__",
@@ -22,9 +22,9 @@ export const ticket: TicketMockInput = {
   tka_last_comment_at: null,
   tka_last_comment_email: null,
 
-  tka_last_user_activity_at: "2026-07-14T01:18:10Z",
+  tka_last_user_activity_at: "2026-08-14T01:18:10Z",
   tka_last_user_activity_email: null,
-  tk_due_at: "2026-07-18T18:00:00Z",
+  tk_due_at: "2026-08-18T18:00:00Z",
   tk_active: true,
   cat_scope: "PORTAL",
   cat_id: "85",

@@ -1,9 +1,17 @@
-import { getLocalDemoCategories } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import {
+  allocateLocalDemoCategoryId,
+  getLocalDemoAssignmentRules,
+  getLocalDemoCategories,
+} from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { getLocalDemoTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { OWNER_COMPANY_ID } from "@/domain/organization";
+import { type AssignmentRule, canActivateCategory } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskCategoryTreePayload } from "@/lib/application/contracts/serviceDesk";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 
 import {
-  createCategoryIdAssigner,
   getTenantIndexById,
   normalizeTenantTree,
   sortCategories,
@@ -28,21 +36,27 @@ export const localSaveCategoryTree = ({
   const tenantIndex = getTenantIndexById(items, payload.tenantId);
 
   if (tenantIndex === -1) {
-    throw new ApiError(
-      "serviceDesk.categories.localDemo.tenantNotFound",
-      404,
-      { tenantId: payload.tenantId },
-    );
+    throw new ApiError("serviceDesk.categories.localDemo.tenantNotFound", 404, {
+      tenantId: payload.tenantId,
+    });
   }
 
   const targetTenant = items[tenantIndex];
+
+  assertLocalCategoryChangeImpactAcknowledged(targetTenant, payload);
+
+  assertLocalCategoryActivationReady({
+    isInternal,
+    targetTenant,
+    payload,
+  });
+
   const previousCategoryMap = new Map(
     targetTenant.category.map((category) => [
       String(category.category_id),
       category,
     ]),
   );
-  const assignId = createCategoryIdAssigner(items);
   const synchronizedCategories = payload.categories.map(
     (category, categoryIndex) =>
       buildSynchronizedCategory({
@@ -53,7 +67,7 @@ export const localSaveCategoryTree = ({
         previousCategory: category.id
           ? previousCategoryMap.get(category.id)
           : undefined,
-        assignId,
+        assignId: allocateLocalDemoCategoryId,
       }),
   );
   const submittedIds = new Set(
@@ -70,3 +84,159 @@ export const localSaveCategoryTree = ({
 
   return normalizeTenantTree(targetTenant);
 };
+
+function assertLocalCategoryChangeImpactAcknowledged(
+  targetTenant: ReturnType<typeof getLocalDemoCategories>[number],
+  payload: SaveServiceDeskCategoryTreePayload,
+) {
+  if (payload.force === true) return;
+  const changedIds = new Set<string>();
+  for (const category of payload.categories) {
+    const current = targetTenant.category.find(
+      (item) => String(item.category_id) === category.id,
+    );
+    if (!current) continue;
+    const normalizedCurrent = normalizeTenantTree({
+      ...targetTenant,
+      category: [current],
+    }).categories[0];
+    if (
+      JSON.stringify({ ...normalizedCurrent, subCategories: [] }) !==
+      JSON.stringify({ ...category, subCategories: [] })
+    ) {
+      changedIds.add(category.id ?? "");
+      for (const subCategory of current.sub_category) {
+        changedIds.add(String(subCategory.category_id));
+      }
+    }
+    for (const subCategory of category.subCategories) {
+      const normalizedSubCategory = normalizedCurrent.subCategories.find(
+        (item) => item.id === subCategory.id,
+      );
+      if (
+        normalizedSubCategory &&
+        JSON.stringify(normalizedSubCategory) !== JSON.stringify(subCategory)
+      ) {
+        changedIds.add(subCategory.id ?? "");
+      }
+    }
+  }
+  const affected = getLocalDemoTickets().some(
+    (ticket) =>
+      ticket.active !== false &&
+      ticket.status !== "Draft" &&
+      ticket.status !== "Closed" &&
+      changedIds.has(ticket.category_id),
+  );
+  if (affected) {
+    throw Object.assign(
+      new Error("Category changes affect active tickets."),
+      { code: "CATEGORY_CHANGE_IMPACT", status: 409 },
+    );
+  }
+}
+
+function assertLocalCategoryActivationReady({
+  isInternal,
+  targetTenant,
+  payload,
+}: {
+  isInternal: boolean;
+  targetTenant: ReturnType<typeof getLocalDemoCategories>[number];
+  payload: SaveServiceDeskCategoryTreePayload;
+}) {
+  const assignmentRules: AssignmentRule[] = getLocalDemoAssignmentRules(
+    isInternal,
+  ).map((assignmentRule) => ({
+    categoryId: String(assignmentRule.category_id),
+    assignee: {
+      jobFieldIds: assignmentRule.assignee.job_field_id.map(String),
+      assigneeUsernames: assignmentRule.assignee.employee_username,
+      includeTenantCompany:
+        assignmentRule.assignee.include_tenant_company === true,
+    },
+  }));
+  const jobFields = allJobFieldsMock.map((jobField) => ({
+    id: String(jobField.jf_id),
+    active: jobField.jf_active,
+    companyId: String(jobField.jf_company_id),
+  }));
+  const employees = allEmployeesMock.map((employee) => ({
+    username: employee.e_username,
+    active: employee.e_active,
+    companyId: String(employee.e_company_id),
+  }));
+  const tenantCompanyId = String(targetTenant.tenant_company_id);
+  const currentCategoriesById = new Map(
+    targetTenant.category.map((category) => [
+      String(category.category_id),
+      category,
+    ]),
+  );
+
+  for (const category of payload.categories) {
+    if (!category.id) {
+      continue;
+    }
+
+    const currentCategory = currentCategoriesById.get(category.id);
+
+    if (!currentCategory) {
+      continue;
+    }
+
+    if (!currentCategory.category_active && category.active) {
+      assertCategoryReady({
+        categoryId: category.id,
+        assignmentRules,
+        jobFields,
+        employees,
+        scope: category.scope,
+        tenantCompanyId,
+        ownerCompanyId: OWNER_COMPANY_ID,
+      });
+    }
+
+    const currentSubCategoriesById = new Map(
+      currentCategory.sub_category.map((subCategory) => [
+        String(subCategory.category_id),
+        subCategory,
+      ]),
+    );
+
+    for (const subCategory of category.subCategories) {
+      if (!subCategory.id) {
+        continue;
+      }
+
+      const currentSubCategory = currentSubCategoriesById.get(subCategory.id);
+
+      if (
+        currentSubCategory &&
+        !currentSubCategory.category_active &&
+        subCategory.active
+      ) {
+        assertCategoryReady({
+          categoryId: subCategory.id,
+          mainCategoryId: category.id,
+          assignmentRules,
+          jobFields,
+          employees,
+          scope: category.scope,
+          tenantCompanyId,
+          ownerCompanyId: OWNER_COMPANY_ID,
+        });
+      }
+    }
+  }
+}
+
+function assertCategoryReady(input: Parameters<typeof canActivateCategory>[0]) {
+  if (canActivateCategory(input)) {
+    return;
+  }
+
+  throw new ApiError("serviceDesk.categories.activationNotReady", 400, {
+    categoryId: input.categoryId,
+  });
+}

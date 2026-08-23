@@ -1,6 +1,9 @@
 import { isOwnerCompany } from "@/domain/organization";
 import { ApiError } from "@/lib/application/api";
 import type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
+import { isOperationalServiceDeskTenant } from "@/lib/application/serviceDesk";
+import { getActiveCompanies } from "@/server/data/organization/company";
+import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiClient";
 
 export type { ServiceDeskSettingsTenantContext } from "@/lib/application/contracts/serviceDesk";
 
@@ -23,6 +26,7 @@ import {
   findActiveTenantRows,
   findTenantRowById,
   findTenantRows,
+  hasLiveOperationalTicketsForTenant,
   updateTenantRowById,
 } from "./tenantRepository";
 
@@ -49,8 +53,9 @@ export async function getTenants(): Promise<TenantDto[]> {
 /** Loads active tenant by id through the server data boundary. */
 export async function getActiveTenantById(
   tenantId: string | number,
+  query?: PortalApiQueryExecutor,
 ): Promise<TenantDto | null> {
-  const row = await findActiveTenantRowById(tenantId);
+  const row = await findActiveTenantRowById(tenantId, query);
 
   if (!row) {
     return null;
@@ -80,15 +85,26 @@ export async function getActiveTenants(): Promise<TenantDto[]> {
 }
 
 /** Loads service desk settings tenant contexts through the server data boundary. */
-export async function getServiceDeskSettingsTenantContexts(
-): Promise<ServiceDeskSettingsTenantContext[]> {
-  const tenants = await getTenants();
+export async function getServiceDeskSettingsTenantContexts(): Promise<
+  ServiceDeskSettingsTenantContext[]
+> {
+  const [tenants, activeCompanies] = await Promise.all([
+    getTenants(),
+    getActiveCompanies(),
+  ]);
+  const activeCompanyIds = new Set(
+    activeCompanies.map((company) => String(company.company_id)),
+  );
 
   return tenants.map((tenant) => ({
     id: String(tenant.tenant_id),
     companyId: Number(tenant.tenant_company_id),
     isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
     active: tenant.tenant_active,
+    operational: isOperationalServiceDeskTenant(
+      tenant.tenant_active,
+      activeCompanyIds.has(String(tenant.tenant_company_id)),
+    ),
   }));
 }
 
@@ -114,7 +130,6 @@ export async function getServiceDeskSettingsTenantContextByCompanyId(
   );
 }
 
-
 /** Creates tenant through the server persistence boundary. */
 export async function createTenant(
   input: CreateTenantInputDto,
@@ -125,11 +140,9 @@ export async function createTenant(
   );
 
   if (duplicateTenant) {
-    throw new ApiError(
-      "serviceDesk.tenants.companyAlreadyAssigned",
-      409,
-      { companyId: input.tenant_company_id },
-    );
+    throw new ApiError("serviceDesk.tenants.companyAlreadyAssigned", 409, {
+      companyId: input.tenant_company_id,
+    });
   }
 
   const row = await createTenantRow(mapCreateTenantInputDtoToRowInput(input));
@@ -153,11 +166,21 @@ export async function updateTenantById(
   }
 
   if (Number(currentRow.tn_company_id) !== Number(input.tenant_company_id)) {
-    throw new ApiError(
-      "serviceDesk.tenants.companyMismatch",
-      400,
-      { companyId: input.tenant_company_id },
-    );
+    throw new ApiError("serviceDesk.tenants.companyMismatch", 400, {
+      companyId: input.tenant_company_id,
+    });
+  }
+
+  assertPortalOwnerTenantRemainsActive(
+    currentRow.tn_company_id,
+    input.tenant_active ?? true,
+  );
+
+  if (
+    input.tenant_active === false &&
+    (await hasLiveOperationalTicketsForTenant(tenantId))
+  ) {
+    throw new ApiError("serviceDesk.tenants.liveTicketsBlockDeactivation", 409);
   }
 
   const row = await updateTenantRowById(
@@ -166,6 +189,15 @@ export async function updateTenantById(
   );
 
   if (!row) {
+    if (
+      input.tenant_active === false &&
+      (await hasLiveOperationalTicketsForTenant(tenantId))
+    ) {
+      throw new ApiError(
+        "serviceDesk.tenants.liveTicketsBlockDeactivation",
+        409,
+      );
+    }
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
@@ -176,11 +208,39 @@ export async function updateTenantById(
 export async function deactivateTenantById(
   tenantId: string | number,
 ): Promise<TenantDto> {
+  const currentRow = await findTenantRowById(tenantId);
+
+  if (!currentRow) {
+    throw new ApiError("serviceDesk.common.notFound", 404);
+  }
+
+  assertPortalOwnerTenantRemainsActive(currentRow.tn_company_id, false);
+
+  if (await hasLiveOperationalTicketsForTenant(tenantId)) {
+    throw new ApiError("serviceDesk.tenants.liveTicketsBlockDeactivation", 409);
+  }
+
   const row = await deactivateTenantRowById(tenantId);
 
   if (!row) {
+    if (await hasLiveOperationalTicketsForTenant(tenantId)) {
+      throw new ApiError(
+        "serviceDesk.tenants.liveTicketsBlockDeactivation",
+        409,
+      );
+    }
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
   return mapTenantRowToDto(row);
+}
+
+/** Preserves the provider tenant required by all PORTAL workflows. */
+export function assertPortalOwnerTenantRemainsActive(
+  companyId: string | number,
+  active: boolean,
+) {
+  if (isOwnerCompany(companyId) && !active) {
+    throw new ApiError("serviceDesk.tenants.portalOwnerProtected", 409);
+  }
 }

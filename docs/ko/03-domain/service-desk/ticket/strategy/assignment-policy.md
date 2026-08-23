@@ -38,6 +38,7 @@ assignment rule이 없으면 parent/main category rule로 fallback한다.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -47,6 +48,12 @@ type AssignmentRule = {
 ```
 
 현재 model은 group-based다. 별도의 `ruleType` field를 사용하지 않는다.
+
+Rule이 없는 상태와 empty rule은 서로 다르다. Settings는 rule이 없는 상태를
+`0 Job Fields / 0 Employees`로 표시할 수 있지만, persistence는 두 배열 중 하나 이상이
+비어 있지 않을 때만 rule을 저장한다. Subcategory override를 제거하면 rule을 삭제하고
+parent fallback을 복원하며, 빈 배열을 override로 저장하지 않는다. Category activation
+전에 rule을 준비할 수 있도록 inactive category도 계속 구성할 수 있다.
 
 관련 문서: [Service Desk Settings](../../settings.md)
 
@@ -58,11 +65,11 @@ Assignment Rule 권한은 저장된 category의 `Category -> Tenant -> Company` 
 해석한다. Persisted rule은 독립적인 authority로 `tenantId`를 중복 저장하지 않으며,
 request company 값도 authorization source가 아니다.
 
-| Category target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
-| --- | --- | --- | --- |
-| Owner Tenant, 모든 scope | manage | none | none |
-| Customer Tenant, `INTERNAL` | none | manage | none |
-| Customer Tenant, `PORTAL` | manage | read | none |
+| Category target             | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
+| --------------------------- | ----------- | ------------------------- | ----------------- |
+| Owner Tenant, 모든 scope    | manage      | none                      | none              |
+| Customer Tenant, `INTERNAL` | none        | manage                    | none              |
+| Customer Tenant, `PORTAL`   | manage      | read                      | none              |
 
 Customer `PORTAL` work routing은 owner/service provider가 관리한다. Tenant Admin의
 read-only view는 현재 참조된 provider assignee의 display data를 포함할 수 있지만,
@@ -78,11 +85,11 @@ Unauthorized API request는 `403`을 반환하며, query response는 access가 `
 
 허용되는 worker는 category context로부터 파생한다.
 
-| Category context | 허용되는 employee company |
-| --- | --- |
-| Owner Tenant의 `INTERNAL` | owner/service-provider company |
-| Customer Tenant의 `INTERNAL` | 해당 customer Tenant company |
-| `PORTAL`, default | owner/service-provider company |
+| Category context                  | 허용되는 employee company                                |
+| --------------------------------- | -------------------------------------------------------- |
+| Owner Tenant의 `INTERNAL`         | owner/service-provider company                           |
+| Customer Tenant의 `INTERNAL`      | 해당 customer Tenant company                             |
+| `PORTAL`, default                 | owner/service-provider company                           |
 | `PORTAL`, explicit joint handling | owner/service-provider company와 category Tenant company |
 
 Explicit `assigneeUsernames`와 `jobFieldIds`로부터 resolve된 employee는 모두 company
@@ -94,9 +101,13 @@ Assignment Rule option인 `includeTenantCompany`로만 활성화한다. 기본�
 
 Candidate lookup은 category-centered이며 caller의 Assignment Rule capability와
 purpose별 company boundary를 모두 검사한다. Eligibility는 rule 저장 시점과 submit,
-resubmit 또는 explicit routing recalculation 시점에 다시 검증한다. Employee가
-inactive가 되거나 company를 이동하면 routing 시 거부한다. Valid worker가 0명이면
-routing은 실패하고 unowned `Assigned` ticket을 만들지 않는다.
+resubmit 또는 explicit routing recalculation 시점에 다시 검증한다. Settings save는
+active reference를 검증하지만 active Job Field가 즉시 employee를 resolve할 것을
+요구하지 않는다. Category activation은 active Job Field 또는 active Employee reference가
+있는지 확인한다. Routing은 해당 reference를 실제 worker로 확장하고 더 강한 현재
+employee, company, tenant, category 검증을 적용한다. Employee가 inactive가 되거나
+company를 이동하면 routing 시 거부한다. Valid worker가 0명이면 routing은 실패하고
+unowned `Assigned` ticket을 만들지 않는다.
 
 ---
 
@@ -118,6 +129,10 @@ or final approval complete
 
 Assignment가 최소 한 명의 worker를 resolve할 수 없으면 unowned work를 만들지 않고
 ticket creation 또는 routing이 실패한다.
+
+여기서 fallback 조건은 “subcategory rule이 존재하지 않음”이다. 존재하는 rule이
+empty이거나 invalid하다고 해서 parent로 fallback하지 않는다. Empty rule은 persistence
+전에 거부하거나 제거한다.
 
 ---
 
@@ -184,6 +199,8 @@ Assignee notification은 persisted `tk_email` field 밖에서 email을 resolve�
 
 Settings change는 기존 ticket을 retroactively rewrite하지 않는다. 기존 ticket은 ticket
 command가 변경하기 전까지 current assignee를 유지한다.
+따라서 Assignment Rule 변경은 current worker를 보존하며, 이후 workflow transition이
+assignment를 다시 resolve할 때만 새 rule을 사용한다.
 
 현재 generic Admin ticket-action override는 별도의 cross-tenant audit가 필요하다.
 유지한다면 explicit break-glass/platform policy를 정의해야 한다. 이 후속 작업은

@@ -13,7 +13,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T05:46:12Z",
+    tkh_created_at: "2026-08-12T05:46:12Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -26,7 +26,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T05:46:13Z",
+    tkh_created_at: "2026-08-12T05:46:13Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -39,7 +39,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T05:54:30Z",
+    tkh_created_at: "2026-08-12T05:54:30Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -56,7 +56,7 @@ export const histories: TicketHistoryMockInput[] = [
       assigneeUsernames: ["adrian_vega", "bianca_davis"],
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T05:54:35Z",
+    tkh_created_at: "2026-08-12T05:54:35Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -73,7 +73,7 @@ export const histories: TicketHistoryMockInput[] = [
       status: "Working",
     },
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T06:01:00Z",
+    tkh_created_at: "2026-08-12T06:01:00Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -86,7 +86,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T06:12:18Z",
+    tkh_created_at: "2026-08-12T06:12:18Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -99,7 +99,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T06:35:42Z",
+    tkh_created_at: "2026-08-12T06:35:42Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -112,7 +112,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-12T07:52:36Z",
+    tkh_created_at: "2026-08-12T07:52:36Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -128,7 +128,7 @@ export const histories: TicketHistoryMockInput[] = [
       relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
-    tkh_created_at: "2026-07-12T08:15:10Z",
+    tkh_created_at: "2026-08-12T08:15:10Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -144,7 +144,7 @@ export const histories: TicketHistoryMockInput[] = [
       relatedTicketId: "a92eed5f-b295-4224-8d26-0c14f79435f3",
       relatedTicketNo: "SP-2026-0013",
     },
-    tkh_created_at: "2026-07-12T08:18:04Z",
+    tkh_created_at: "2026-08-12T08:18:04Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -165,7 +165,7 @@ export const histories: TicketHistoryMockInput[] = [
       relatedTicketNo: "SP-2026-0013",
       reason: "Internal data pipeline verified; portal issue handed off",
     },
-    tkh_created_at: "2026-07-12T08:19:20Z",
+    tkh_created_at: "2026-08-12T08:19:20Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -193,6 +193,6 @@ export const histories: TicketHistoryMockInput[] = [
       reason:
         "Internal data pipeline verified; issue escalated to the portal ticket",
     },
-    tkh_created_at: "2026-07-13T08:20:34Z",
+    tkh_created_at: "2026-08-13T08:20:34Z",
   },
 ];

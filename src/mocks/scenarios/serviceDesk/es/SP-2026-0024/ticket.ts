@@ -3,8 +3,8 @@ import { TicketMockInput } from "../../types";
 export const ticket: TicketMockInput = {
   tk_id: "4b2b61d2-5555-4192-a42e-e0de8a1d4ed1",
   tk_ticket_no: "SP-2026-0024",
-  tk_created_at: "2026-07-04T16:25:38Z",
-  tk_updated_at: "2026-07-05T03:22:49Z",
+  tk_created_at: "2026-08-04T16:25:38Z",
+  tk_updated_at: "2026-08-05T03:22:49Z",
   tk_requester_username: "olivia_johnson",
   tk_requester: {
     username: "olivia_johnson",
@@ -20,12 +20,12 @@ export const ticket: TicketMockInput = {
   tk_risk_level: "medium",
   tk_assignee_usernames: ["evan_seo", "daniel_kim"],
   tk_work_minutes: 95,
-  tka_last_comment_at: "2026-07-05T03:22:49Z",
+  tka_last_comment_at: "2026-08-05T03:22:49Z",
   tka_last_comment_email: "Daniel.Kim@sunghwan-portal.dev",
 
-  tka_last_user_activity_at: "2026-07-05T03:22:49Z",
+  tka_last_user_activity_at: "2026-08-05T03:22:49Z",
   tka_last_user_activity_email: "Daniel.Kim@sunghwan-portal.dev",
-  tk_due_at: "2026-07-08T18:00:00Z",
+  tk_due_at: "2026-08-08T18:00:00Z",
   tk_active: true,
   cat_scope: "INTERNAL",
   cat_id: "72",

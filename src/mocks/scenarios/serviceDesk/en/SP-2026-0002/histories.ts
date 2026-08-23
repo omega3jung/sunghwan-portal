@@ -16,7 +16,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T02:44:33Z",
+    tkh_created_at: "2026-08-02T02:44:33Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -32,7 +32,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T02:44:34Z",
+    tkh_created_at: "2026-08-02T02:44:34Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -48,7 +48,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T08:07:18Z",
+    tkh_created_at: "2026-08-02T08:07:18Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -65,7 +65,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: ["evan_seo"] },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T08:07:19Z",
+    tkh_created_at: "2026-08-02T08:07:19Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -81,7 +81,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T08:20:00Z",
+    tkh_created_at: "2026-08-02T08:20:00Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -97,7 +97,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T08:41:12Z",
+    tkh_created_at: "2026-08-02T08:41:12Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -113,7 +113,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T09:15:11Z",
+    tkh_created_at: "2026-08-02T09:15:11Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -130,6 +130,6 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Resolved" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-02T09:15:28Z",
+    tkh_created_at: "2026-08-02T09:15:28Z",
   },
 ];

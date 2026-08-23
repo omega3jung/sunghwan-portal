@@ -234,6 +234,8 @@ history union reserves `NOTE_UPDATED`.
   - `approvalStepId != null`
   - actor is current approver unless Admin
   - content required
+  - Category inactivity alone does not invalidate this in-flight approval;
+    referenced approval/assignment configuration must still resolve
 - ticket effect:
   - next approval step exists: stay `Approval`, move to next approvers
   - no next approval step: move to `Assigned`, resolve workers

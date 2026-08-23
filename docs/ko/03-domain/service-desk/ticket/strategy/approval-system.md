@@ -288,6 +288,18 @@ Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
 
 ---
 
+## 설정 변경과 진행 중인 Approval
+
+진행 중인 Approval은 Ticket이 참조하는 workflow를 기준으로 계속되므로 Category가
+나중에 비활성화되어도 다음 승인 단계 또는 작업 할당으로 진행할 수 있다.
+
+`Approval` 상태 Ticket에 영향을 주는 Approval Step tree 변경은 일반 저장 시
+conflict를 반환한다. 관리자가 force apply를 확인하면 서버는 새 설정과 모든
+초기 routing을 검증하고, 설정 저장과 영향 Ticket의 첫 단계 routing reset 및
+reason `APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` History를 하나의
+transaction에서 처리한다. 한 Ticket이라도 재라우팅할 수 없으면 전체를
+rollback한다.
+
 ## 요약
 
 Approval은 sequential category-driven routing phase다. Current approver는 work

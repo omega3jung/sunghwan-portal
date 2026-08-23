@@ -8,7 +8,11 @@ import { MultiHierarchicalSelect } from "@/components/custom/HierarchicalSelect"
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import type { AssigneeGroup, CategoryScope } from "@/domain/serviceDesk";
+import {
+  type AssigneeGroup,
+  type CategoryScope,
+  hasAssignmentRuleSelection,
+} from "@/domain/serviceDesk";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText, useLocalizedValue } from "@/lib/client/i18n";
@@ -38,6 +42,7 @@ type Props = {
   canEdit?: boolean;
   scope: CategoryScope;
   companyId: string | null;
+  ownerCompanyId: string | null;
 };
 
 export function AssignmentRuleForm({
@@ -48,6 +53,7 @@ export function AssignmentRuleForm({
   canEdit = true,
   scope,
   companyId,
+  ownerCompanyId,
 }: Props) {
   const { t } = useTranslation(NS.settings);
   const tLocal = useLocalizedValue(language);
@@ -61,6 +67,14 @@ export function AssignmentRuleForm({
 
   const organization = useServiceDeskSettingsOrganizationData({
     companyId,
+    companyIds:
+      scope === "PORTAL" && ownerCompanyId
+        ? assignee?.includeTenantCompany && companyId !== ownerCompanyId
+          ? [ownerCompanyId, companyId].filter((id): id is string =>
+              Boolean(id),
+            )
+          : [ownerCompanyId]
+        : undefined,
     enabled: selectedNode !== null,
     includeDepartments: true,
   });
@@ -226,6 +240,11 @@ export function AssignmentRuleForm({
                 }}
               />
             </Field>
+            {!hasAssignmentRuleSelection(assignee) && (
+              <p className="text-sm text-destructive">
+                {t("serviceDeskSettings.assignmentRuleTab.assigneeRequired")}
+              </p>
+            )}
             {scope === "PORTAL" && (
               <Field orientation="horizontal">
                 <div className="flex flex-1 flex-col gap-1">

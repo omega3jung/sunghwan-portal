@@ -1,7 +1,6 @@
 // src/server/portalApi/index.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { handleEmployeesPortalApi } from "./employees/employeesPortalApiHandler";
 import { handleNavigationPortalApi } from "./navigation/navigationPortalApiHandler";
 import { handleOrganizationPortalApi } from "./organization/organizationPortalApiHandler";
 import { handleServiceDeskPortalApi } from "./serviceDesk/serviceDeskPortalApiHandler";
@@ -16,13 +15,10 @@ export async function dispatchPortalApi(
 ) {
   const path = normalizePath(options.path);
 
-  if (path.startsWith("/employees")) {
-    return handleEmployeesPortalApi(request, { ...options, path });
-  }
-
   if (
     path.startsWith("/company") ||
     path.startsWith("/department") ||
+    path.startsWith("/employees") ||
     path.startsWith("/job-field")
   ) {
     return handleOrganizationPortalApi(request, { ...options, path });

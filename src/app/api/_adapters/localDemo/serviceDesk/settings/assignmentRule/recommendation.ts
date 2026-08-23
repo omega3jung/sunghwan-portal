@@ -6,10 +6,11 @@ import {
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import { getLocalCategoryTrees } from "@/app/api/_adapters/localDemo/serviceDesk/settings/category";
 import { getLocalDemoAssignmentRules } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
+import { OWNER_COMPANY_ID } from "@/domain/organization";
 import {
   type AssignmentRule,
-  hasAssignmentRuleSelection,
   type MainCategory,
+  resolveAssignmentEligibleCompanyIds,
 } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import { camelAssignmentRuleMapper } from "@/lib/application/contracts/serviceDesk";
@@ -99,20 +100,14 @@ const resolveAssignmentRuleWithCategoryFallback = (
   category: ServiceDeskCategoryContext,
 ) => {
   const exactAssignmentRule = rules.find(
-    (item) =>
-      item.categoryId === category.categoryId &&
-      hasAssignmentRuleSelection(item.assignee),
+    (item) => item.categoryId === category.categoryId,
   );
 
   if (exactAssignmentRule) {
     return exactAssignmentRule;
   }
 
-  return rules.find(
-    (item) =>
-      item.categoryId === category.mainCategoryId &&
-      hasAssignmentRuleSelection(item.assignee),
-  );
+  return rules.find((item) => item.categoryId === category.mainCategoryId);
 };
 
 const collectRecommendedUsers = ({
@@ -213,8 +208,13 @@ export const resolveLocalAssignmentRecommendation = async ({
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
-  const companyEmployees = getActiveLocalEmployeesByCompanyId(
-    category.tenant.companyId,
+  const companyEmployees = resolveAssignmentEligibleCompanyIds({
+    scope: category.scope,
+    tenantCompanyId: category.tenant.companyId,
+    ownerCompanyId: OWNER_COMPANY_ID,
+    includeTenantCompany: assignmentRule.assignee.includeTenantCompany,
+  }).flatMap((companyId) =>
+    getActiveLocalEmployeesByCompanyId(Number(companyId)),
   );
 
   return {

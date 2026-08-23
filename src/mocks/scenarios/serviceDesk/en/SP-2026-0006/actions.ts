@@ -11,7 +11,7 @@ export const actions: TicketActionMockInput[] = [
       "Hello, Liam.<br>We are checking this issue with the backend team now.<br>Please confirm which process steps are blocked for the repair team.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-06T06:22:11Z",
+    tka_created_at: "2026-08-06T06:22:11Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -28,7 +28,7 @@ export const actions: TicketActionMockInput[] = [
       "Receiving, repair, and QC are all blocked.<br>Every affected screen keeps showing only the loading icon and users cannot continue.",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-06T06:25:44Z",
+    tka_created_at: "2026-08-06T06:25:44Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -45,7 +45,7 @@ export const actions: TicketActionMockInput[] = [
       "This ticket has been merged into SP-2026-0005 because it is the same incident caused by the same DB lock.<br>Further tracking and communication will continue in the representative ticket.",
     tka_owner_username: "daniel_kim",
 
-    tka_created_at: "2026-07-06T07:13:18Z",
+    tka_created_at: "2026-08-06T07:13:18Z",
     tka_updated_at: null,
     tka_active: true,
 

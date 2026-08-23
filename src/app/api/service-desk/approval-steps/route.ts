@@ -234,8 +234,9 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    const savedSettings = localSaveApprovalStepTree({
+    const savedSettings = await localSaveApprovalStepTree({
       isInternal: useOwnerStore,
+      actorUsername: authorization.effectiveUsername,
       payload: body,
     });
 

@@ -9,15 +9,21 @@ import { getActiveCompanies } from "@/server/data/organization/company";
 import type { DepartmentDto } from "@/server/data/organization/department";
 import { getActiveDepartments } from "@/server/data/organization/department";
 import { getActiveDepartmentsByCompanyId } from "@/server/data/organization/department";
+import {
+  getEmployees,
+  getEmployeesByCompanyId,
+} from "@/server/data/organization/employees";
 import type { JobFieldDto } from "@/server/data/organization/jobField";
 import { getActiveJobFields } from "@/server/data/organization/jobField";
 import { getActiveJobFieldsByCompanyId } from "@/server/data/organization/jobField";
+import { toApiErrorResponse } from "@/server/portalApi/http";
 
 import { PortalApiJsonOptions } from "../types";
 import { getPortalApiQueryValue, normalizePath } from "../utils";
 
 const COMPANIES_PATH_PATTERN = /^\/company$/;
 const DEPARTMENTS_PATH_PATTERN = /^\/department$/;
+const EMPLOYEES_PATH_PATTERN = /^\/employees(?:\/([^/]+))?$/;
 const JOB_FIELDS_PATH_PATTERN = /^\/job-field$/;
 
 /** Handles organization portal api requests and translates domain results into portal API responses. */
@@ -28,6 +34,7 @@ export async function handleOrganizationPortalApi(
   const path = normalizePath(options.path);
   const companiesMatch = COMPANIES_PATH_PATTERN.exec(path);
   const departmentsMatch = DEPARTMENTS_PATH_PATTERN.exec(path);
+  const employeesMatch = EMPLOYEES_PATH_PATTERN.exec(path);
   const jobFieldsMatch = JOB_FIELDS_PATH_PATTERN.exec(path);
   const method = options.method ?? "GET";
 
@@ -61,6 +68,15 @@ export async function handleOrganizationPortalApi(
       });
     }
 
+    if (employeesMatch) {
+      const companyId = resolveCompanyId(request, options);
+      const employees = companyId
+        ? await getEmployeesByCompanyId(true, companyId)
+        : await getEmployees(true);
+
+      return NextResponse.json({ data: employees });
+    }
+
     if (jobFieldsMatch) {
       const companyId = resolveCompanyId(request, options);
       const items = filterJobFieldsByQuery(
@@ -78,7 +94,13 @@ export async function handleOrganizationPortalApi(
     }
 
     return NextResponse.json({ message: "Not found" }, { status: 404 });
-  } catch {
+  } catch (error) {
+    if (employeesMatch) {
+      return toApiErrorResponse(error, {
+        fallbackMessage: options.errorMessage,
+      });
+    }
+
     return NextResponse.json(
       { message: options.errorMessage },
       { status: 500 },

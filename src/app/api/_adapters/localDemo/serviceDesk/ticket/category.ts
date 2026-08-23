@@ -1,6 +1,9 @@
 import { getLocalDemoCategories } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { Priority, RiskLevel } from "@/domain/common";
-import { CategoryScope } from "@/domain/serviceDesk";
+import {
+  CategoryScope,
+  isCategoryEffectivelyActive,
+} from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import { LocalizedText } from "@/shared/types";
 
@@ -14,6 +17,7 @@ export type ResolvedCategorySnapshot = {
   scope: CategoryScope;
   defaultPriority: Priority | null;
   defaultRiskLevel: RiskLevel | null;
+  defaultSlaDays: number;
 };
 
 /** Resolves category snapshot using the server-side LOCAL ticket adapter policy. */
@@ -28,7 +32,10 @@ export function resolveCategorySnapshot({
 
   for (const client of getLocalDemoCategories(isInternal)) {
     for (const category of client.category) {
-      if (String(category.category_id) === normalizedId && category.category_active) {
+      if (
+        String(category.category_id) === normalizedId &&
+        isCategoryEffectivelyActive({ active: category.category_active })
+      ) {
         return {
           id: String(category.category_id),
           tenantId: String(client.tenant_id),
@@ -38,6 +45,7 @@ export function resolveCategorySnapshot({
           scope: category.category_scope,
           defaultPriority: category.default_priority ?? null,
           defaultRiskLevel: category.default_risk_level ?? null,
+          defaultSlaDays: category.default_sla_days,
         };
       }
 
@@ -45,7 +53,13 @@ export function resolveCategorySnapshot({
         (item) => String(item.category_id) === normalizedId,
       );
 
-      if (subCategory && category.category_active && subCategory.category_active) {
+      if (
+        subCategory &&
+        isCategoryEffectivelyActive(
+          { active: category.category_active },
+          { active: subCategory.category_active },
+        )
+      ) {
         return {
           id: String(subCategory.category_id),
           tenantId: String(client.tenant_id),
@@ -59,6 +73,8 @@ export function resolveCategorySnapshot({
             subCategory.default_risk_level ??
             category.default_risk_level ??
             null,
+          defaultSlaDays:
+            subCategory.default_sla_days ?? category.default_sla_days,
         };
       }
     }

@@ -43,6 +43,7 @@ export async function resolveApprovedTicketRouting(
         {
           approvalStepId: nextApprovalStepId,
           requesterUsername: ticket.tk_requester_username,
+          allowInactiveCategory: true,
         },
         { query },
       ),
@@ -61,6 +62,7 @@ export async function resolveApprovedTicketRouting(
       {
         categoryId: ticket.cat_id,
         requesterUsername: ticket.tk_requester_username,
+        allowInactiveCategory: true,
       },
       { query },
     ),

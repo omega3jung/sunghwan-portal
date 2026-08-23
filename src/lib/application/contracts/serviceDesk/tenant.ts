@@ -16,6 +16,8 @@ export type ServiceDeskSettingsTenantContext = {
   companyId: number;
   isOwnerTenant: boolean;
   active: boolean;
+  /** Effective runtime availability; stored tenant active remains unchanged. */
+  operational: boolean;
 };
 
 /** Parameters that configure service desk tenant list behavior in the Service Desk application boundary. */

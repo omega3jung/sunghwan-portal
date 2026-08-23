@@ -4,6 +4,7 @@ import type { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
 /** Describes local ticket access context used by the server-side LOCAL ticket adapter. */
 export type LocalTicketAccessContext = {
+  username: string;
   userScope: UserScope;
   tenantId: string;
 };
@@ -13,9 +14,19 @@ export type LocalTicketAccessContext = {
  * tenant's tickets and PORTAL tickets exposed by customer tenants.
  */
 export function canAccessLocalDemoTicket(
-  ticket: Pick<DbTicketDetail, "tenant_id" | "scope">,
+  ticket: Pick<
+    DbTicketDetail,
+    "tenant_id" | "scope" | "requester_username" | "assignee_usernames"
+  >,
   access: LocalTicketAccessContext,
 ) {
+  if (
+    ticket.requester_username === access.username ||
+    ticket.assignee_usernames.includes(access.username)
+  ) {
+    return true;
+  }
+
   if (String(ticket.tenant_id) === access.tenantId) {
     return true;
   }
@@ -37,14 +48,22 @@ export function canAccessLocalDemoCategory(
   access: LocalTicketAccessContext,
 ) {
   return canAccessLocalDemoTicket(
-    { tenant_id: category.tenantId, scope: category.scope },
+    {
+      tenant_id: category.tenantId,
+      scope: category.scope,
+      requester_username: "",
+      assignee_usernames: [],
+    },
     access,
   );
 }
 
 /** Enforces local demo ticket access before LOCAL state is exposed or mutated. */
 export function requireLocalDemoTicketAccess(
-  ticket: Pick<DbTicketDetail, "tenant_id" | "scope">,
+  ticket: Pick<
+    DbTicketDetail,
+    "tenant_id" | "scope" | "requester_username" | "assignee_usernames"
+  >,
   access: LocalTicketAccessContext,
 ) {
   // Return not-found rather than forbidden so callers cannot probe tickets

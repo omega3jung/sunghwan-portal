@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Olivia Johnson님이 승인했습니다",
     tka_owner_username: "olivia_johnson",
 
-    tka_created_at: "2026-07-02T08:07:18Z",
+    tka_created_at: "2026-08-02T08:07:18Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -27,7 +27,7 @@ export const actions: TicketActionMockInput[] = [
       "안녕하세요, Isabella. 어떤 정보가 포함되어야 하는지 자세히 알려주실 수 있을까요?",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T08:20:00Z",
+    tka_created_at: "2026-08-02T08:20:00Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -44,7 +44,7 @@ export const actions: TicketActionMockInput[] = [
       "입고 ID, 입고일, IMEI, SKU, 직원 ID, 상태, 현재 위치가 포함되어야 합니다.",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-02T08:41:12Z",
+    tka_created_at: "2026-08-02T08:41:12Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -61,7 +61,7 @@ export const actions: TicketActionMockInput[] = [
       "보고서를 첨부했습니다. 도움이 필요하시면 알려주세요. 감사합니다.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-02T09:15:11Z",
+    tka_created_at: "2026-08-02T09:15:11Z",
     tka_updated_at: null,
     tka_active: true,
 
