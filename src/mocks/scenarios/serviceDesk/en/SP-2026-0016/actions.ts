@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Decline action test",
     tka_owner_username: "__demo_manager__",
 
-    tka_created_at: "2026-07-16T01:18:09Z",
+    tka_created_at: "2026-08-16T01:18:09Z",
     tka_updated_at: null,
     tka_active: true,
 

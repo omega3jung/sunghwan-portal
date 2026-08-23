@@ -12,12 +12,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEmployeeListQuery } from "@/feature/organization/employee/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useEligibleImpersonationEmployeeListQuery } from "@/feature/auth/impersonation/client";
+import { useCompanyListQuery } from "@/feature/organization/company/client";
 import { useCurrentPreference } from "@/feature/user/preference/client";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedValue } from "@/lib/client/i18n";
 import type { DbParams } from "@/shared/types";
-import { createFieldFilter } from "@/shared/utils/routing";
 
 type Props = {
   username?: string;
@@ -27,12 +34,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-const activeEmployeeListParams: DbParams = {
-  filter: createFieldFilter({
-    field: "e_active",
-    value: true,
-  }),
-};
+const companyListParams: DbParams = {};
 
 export function UserImpersonation(props: Props) {
   const {
@@ -48,42 +50,57 @@ export function UserImpersonation(props: Props) {
   const { current: userPreference } = useCurrentPreference();
   const tLocal = useLocalizedValue(userPreference.language);
 
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
   const [candidate, setCandidate] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: employees, isFetching } = useEmployeeListQuery(
-    activeEmployeeListParams,
-  );
+  const { data: companies, isFetching: isCompanyFetching } =
+    useCompanyListQuery(companyListParams);
+  const { data: eligibleEmployees, isFetching: isEligibleEmployeeFetching } =
+    useEligibleImpersonationEmployeeListQuery(open ? selectedCompanyId : null);
   const excludedUserSet = useMemo(
     () =>
       new Set(
-        [username, ...excludeUsernames].filter(
-          (value): value is string => !!value,
-        ).map((value) => normalizeUsername(value)),
+        [username, ...excludeUsernames]
+          .filter((value): value is string => !!value)
+          .map((value) => normalizeUsername(value)),
       ),
     [excludeUsernames, username],
   );
 
+  const selectableEmployees = useMemo(
+    () =>
+      (eligibleEmployees ?? []).filter(
+        (employee) =>
+          !excludedUserSet.has(normalizeUsername(employee.username)),
+      ),
+    [eligibleEmployees, excludedUserSet],
+  );
+  const companyOptions = useMemo(() => {
+    return (companies ?? [])
+      .filter((company) => company.active)
+      .map((company) => ({
+        value: company.id,
+        label: tLocal(company.name),
+      }));
+  }, [companies, tLocal]);
   const impersonationCandidates = useMemo(() => {
-    if (!employees) {
+    if (!selectedCompanyId) {
       return [];
     }
 
-    return employees
-      .filter(
-        (employee) =>
-          !excludedUserSet.has(normalizeUsername(employee.username)),
-      )
-      .map((employee) => {
-        const name = tLocal(employee.name);
+    return selectableEmployees.map((employee) => {
+      const name = tLocal(employee.name);
 
-        return {
-          value: employee.username,
-          label: `${name.first} ${name.last}`.trim(),
-          displayName: employee.email,
-          image: employee.imageUrl,
-        };
-      });
-  }, [employees, excludedUserSet, tLocal]);
+      return {
+        value: employee.username,
+        label: `${name.first} ${name.last}`.trim(),
+        displayName: employee.email,
+        image: employee.imageUrl ?? undefined,
+      };
+    });
+  }, [selectableEmployees, selectedCompanyId, tLocal]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
@@ -92,11 +109,40 @@ export function UserImpersonation(props: Props) {
           <DialogTitle>{t("impersonation.label")}</DialogTitle>
         </DialogHeader>
 
+        <Select
+          items={companyOptions}
+          value={selectedCompanyId ?? ""}
+          disabled={isCompanyFetching || companyOptions.length === 0}
+          onValueChange={(companyId) => {
+            setSelectedCompanyId(companyId);
+            setCandidate(null);
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue
+              placeholder={
+                isCompanyFetching ? t("loading") : t("selectCompany")
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {companyOptions.map((company) => (
+              <SelectItem key={company.value} value={company.value}>
+                {company.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <AvatarComboBox
+          badgeVariant={"primary"}
           options={impersonationCandidates}
           value={candidate}
           onChange={setCandidate}
-          placeholder={isFetching ? t("loading") : t("selectUser")}
+          placeholder={
+            isEligibleEmployeeFetching ? t("loading") : t("selectUser")
+          }
+          disabled={!selectedCompanyId || isEligibleEmployeeFetching}
           clearable
         />
 

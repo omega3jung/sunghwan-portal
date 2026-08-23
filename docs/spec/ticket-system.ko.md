@@ -91,6 +91,27 @@ Approval Step은 선택된 subcategory의 parent/main category 기준으로 평�
 Assignment Rule은 선택된 subcategory rule을 먼저 적용하고, 없을 때만
 parent/main category rule로 fallback한다.
 
+Category workflow availability는 다음 불변 조건을 따른다.
+
+```txt
+Category creation -> 비활성화
+Assignment Rule -> 적어도 하나 이상의 할당된 직무 또는 직원 필요
+Category activation -> 유효 규칙에 활성된 직무 또는 직원 필요
+Ticket Create -> 유효하게 활성화된 main/sub category만
+Ticket routing -> 실제 작업자 자격은 서버에서 재검증됨
+```
+
+Operational availability는 저장된 Tenant와 그 기반 Company가 모두 active여야 한다.
+Ticket create/update는 persisted Category에서 Tenant를 파생하고 object-level Category
+access를 적용하며, payload Tenant ID를 authoritative source로 사용하지 않는다.
+`PORTAL` assignment는 기본적으로 provider company를 사용하고 persisted
+`includeTenantCompany`가 있을 때만 category Tenant company를 추가한다.
+
+Main category와 subcategory의 active flag는 독립적으로 저장하며, subcategory의
+effective availability는 `main.active && sub.active`로 계산한다. Subcategory own
+Assignment Rule이 있으면 이를 사용하고, own rule이 없을 때만 main-category rule로
+fallback한다. Assignment Rule이 없는 상태를 persisted empty rule로 표현하지 않는다.
+
 관련 문서:
 
 - [Service Desk Settings](../ko/03-domain/service-desk/settings.md)
@@ -392,6 +413,32 @@ Deferred item은 current implementation처럼 설명하면 안 된다.
 - [2026-07 Ticket Action and History Execution](../ko/06-decisions/2026-07-ticket-action-and-history-execution.md)
 
 ---
+
+## 현재 Authorization 및 Workflow 영향 불변 조건
+
+REMOTE Ticket read는 `vw_ticket` query에서 저장된 Ticket Tenant, `cat_scope`,
+requester, 현재 approver/worker assignee, effective principal의 company/scope를
+함께 평가한다. List, search, detail, action list, History, Work Session read는 같은
+visibility boundary를 사용하며 list에서 보이지 않는 Ticket을 ID나 subresource로
+조회할 수 없다. LOCAL도 같은 predicate 의미를 사용한다.
+
+Category 비활성화는 신규 workflow availability만 변경한다. 진행 중인 Ticket이
+main/subcategory를 사용하면 impact 확인이 필요하지만, force 확인 후에도 기존
+Ticket routing과 History는 변경하지 않는다. 진행 중인 Approval은 비활성 Category를
+참조해 계속 진행할 수 있지만 신규 또는 재시작 routing은 operational Category를
+요구한다.
+
+`Approval` Ticket에 영향을 주는 Approval Step tree 변경은 force apply가 필요하다.
+서버는 유효한 설정 저장, 모든 영향 Ticket의 초기 routing reset, reason이
+`APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` History 기록을 하나의
+transaction으로 처리하고 중간 실패 시 전체 rollback한다. 고객 Tenant는
+`Draft`, `Closed`가 아닌 Ticket이 있으면 force 없이 비활성화/삭제가 차단된다.
+
+Ticket 생성은 유효한 명시적 priority/risk를 보존하고 누락 값만
+subcategory -> main category default 순서로 결정한다. 서버는 Category SLA 최소값보다
+이른 due date를 거부한다. Category 변경 시 due date는
+`later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)`이며 priority/risk는
+새 Category default를 사용한다.
 
 ## 요약
 

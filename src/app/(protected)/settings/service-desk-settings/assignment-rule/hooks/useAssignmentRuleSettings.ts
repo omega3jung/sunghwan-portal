@@ -29,7 +29,6 @@ export function useAssignmentRuleSettings() {
     tenantId: context.selectedTenant,
     scope: context.selectedScope,
     enabled: context.canRead,
-    active: true,
   });
   const assignmentRuleParams = useMemo(
     () =>
@@ -141,6 +140,7 @@ export function useAssignmentRuleSettings() {
     isSaving,
     toolbar: editor.toolbar,
     companyId: context.selectedTenantData?.companyId ?? null,
+    ownerCompanyId: context.ownerCompanyId,
     tree: {
       ...tree,
       errors,

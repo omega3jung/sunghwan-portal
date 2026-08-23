@@ -4,6 +4,7 @@ import type { RequesterUpdateTicketRequestDto } from "@/lib/application/contract
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
+import { resolveCategoryChangeDueAt } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 
 import {
   type LocalTicketAccessContext,
@@ -101,7 +102,16 @@ export const localRequesterUpdateTicket = async ({
     : null;
   const updatedTicket = createUpdatedTicket({
     ticket,
-    input,
+    input: categoryChanged
+      ? {
+          ...input,
+          dueAt: resolveCategoryChangeDueAt(
+            ticket.due_at,
+            input.dueAt,
+            category.defaultSlaDays,
+          ).toISOString(),
+        }
+      : input,
     category,
     approvalStepId: routing?.approvalStepId ?? ticket.approval_step_id,
     assigneeUsernames: routing?.assigneeUsernames ?? ticket.assignee_usernames,

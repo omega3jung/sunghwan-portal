@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 
 import {
+  getEligibleImpersonationEmployeesByCompanyId,
   getImpersonationTargetAuthUser,
   verifyLoginCredentials,
 } from "../data/auth/accounts";
@@ -9,6 +10,8 @@ import { normalizePath } from "../portalApi/utils";
 import { AuthApiJsonOptions } from "./types";
 
 const LOGIN_PATH_PATTERN = /^\/auth\/login$/;
+const IMPERSONATION_EMPLOYEES_PATH_PATTERN =
+  /^\/auth\/impersonation\/employees\/(\d+)$/;
 const IMPERSONATION_PATH_PATTERN = /^\/auth\/impersonation\/([^/]+)$/;
 
 /** Dispatches an in-process authentication API request to the matching server handler. */
@@ -21,6 +24,8 @@ export async function dispatchAuthApi(options: AuthApiJsonOptions) {
   }
 
   const loginMatch = LOGIN_PATH_PATTERN.exec(path);
+  const impersonationEmployeesMatch =
+    IMPERSONATION_EMPLOYEES_PATH_PATTERN.exec(path);
   const impersonationMatch = IMPERSONATION_PATH_PATTERN.exec(path);
 
   const method = options.method ?? "POST";
@@ -28,6 +33,14 @@ export async function dispatchAuthApi(options: AuthApiJsonOptions) {
   try {
     // REST api GET.
     if (method === "GET") {
+      if (impersonationEmployeesMatch) {
+        const companyId = Number(impersonationEmployeesMatch[1]);
+        const employees =
+          await getEligibleImpersonationEmployeesByCompanyId(companyId);
+
+        return NextResponse.json({ data: employees });
+      }
+
       // api/auth/impersonation.
       if (impersonationMatch) {
         const username = impersonationMatch[1] ?? "";

@@ -8,7 +8,7 @@ export const actions: TicketActionMockInput[] = [
     tka_action_type: "APPROVE",
     tka_content: "Adrian Vega a approuvé la demande.",
     tka_owner_username: "adrian_vega",
-    tka_created_at: "2026-07-12T05:54:30Z",
+    tka_created_at: "2026-08-12T05:54:30Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -22,7 +22,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Bonjour Tessa.<br>Nous allons vérifier dans l’ordre le telemetry collector, le message broker, le stockage des données de production et le traitement de génération des rapports de Solar Farm A.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T06:12:18Z",
+    tka_created_at: "2026-08-12T06:12:18Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -36,7 +36,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Les données actuelles continuent d’arriver dans le système de surveillance externe. Seuls Energy Operations Dashboard et le rapport quotidien de production affichent 14:35 comme dernière donnée disponible.",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-12T06:35:42Z",
+    tka_created_at: "2026-08-12T06:35:42Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -50,7 +50,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "La collecte interne de telemetry, le message broker, le stockage des données de production et le traitement de génération des rapports fonctionnent tous normalement, et les données les plus récentes sont bien enregistrées. L’erreur de synchronisation se produit uniquement lors de la requête Refresh du Dashboard ; nous estimons donc que le problème se situe dans la couche d’intégration du portail.<br>Veuillez créer un nouveau ticket de périmètre Portal / System et y joindre le message d’erreur ainsi que les résultats de cette vérification.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T07:52:36Z",
+    tka_created_at: "2026-08-12T07:52:36Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -64,7 +64,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "J’ai créé le ticket Portal / System SP-2026-0053 avec les résultats de la vérification et l’erreur « Unable to synchronize telemetry data ».",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-12T08:15:10Z",
+    tka_created_at: "2026-08-12T08:15:10Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
@@ -81,7 +81,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Les résultats de la vérification ont été transmis via SP-2026-0053. Nous avons confirmé que le traitement interne des données ne présente aucune anomalie ; ce ticket va donc être résolu et le suivi se poursuivra dans le ticket du portail.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T08:18:04Z",
+    tka_created_at: "2026-08-12T08:18:04Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
@@ -98,7 +98,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Le flux de données interne fonctionne normalement et le problème est limité à la synchronisation du portail. Ce ticket est transféré vers le ticket portail SP-2026-0053 pour le suivi.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-13T08:20:34Z",
+    tka_created_at: "2026-08-13T08:20:34Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},

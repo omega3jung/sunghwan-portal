@@ -299,10 +299,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
               {canImpersonate && (
                 <DropdownMenuItem
-                  onSelect={(event) => {
-                    event.preventDefault();
-                    handleOpenImpersonationDialog();
-                  }}
+                  onClick={handleOpenImpersonationDialog}
                 >
                   <UserRoundPlus />
                   {!impersonatedUser
@@ -330,10 +327,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
           {!hasImpersonatedUser && canImpersonate && (
             <DropdownMenuGroup>
               <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                  handleOpenImpersonationDialog();
-                }}
+                onClick={handleOpenImpersonationDialog}
               >
                 <UserRoundPlus />
                 {t("impersonation.label")}

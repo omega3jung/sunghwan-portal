@@ -1,6 +1,6 @@
 import { ApiError } from "@/lib/application/api";
 
-type SettingsWriteResource = "approvalSteps" | "assignmentRules";
+type SettingsWriteResource = "approvalSteps" | "assignmentRules" | "categories";
 
 // Normalizes database write failures shared by Service Desk settings flows.
 export function mapSettingsWriteError(
@@ -21,14 +21,19 @@ export function mapSettingsWriteError(
     case "23503":
     case "22P02":
       return Object.assign(
-        new Error("An organization reference is invalid for this settings context."),
+        new Error(
+          "An organization reference is invalid for this settings context.",
+        ),
         { code: "INVALID_ORGANIZATION_REFERENCE", status: 400 },
       );
     case "23505":
-      return Object.assign(new Error("The submitted settings contain a duplicate."), {
-        code: "DUPLICATE_REFERENCE",
-        status: 409,
-      });
+      return Object.assign(
+        new Error("The submitted settings contain a duplicate."),
+        {
+          code: "DUPLICATE_REFERENCE",
+          status: 409,
+        },
+      );
     case "40001":
     case "40P01":
       return Object.assign(

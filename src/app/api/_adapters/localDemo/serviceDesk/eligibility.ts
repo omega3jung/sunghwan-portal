@@ -1,18 +1,19 @@
 import { ACCESS_LEVEL } from "@/domain/auth";
-import { isOwnerCompany } from "@/domain/organization";
+import { isOwnerCompany, OWNER_COMPANY_ID } from "@/domain/organization";
 import {
   type ApprovalAssigneeType,
   type AssigneeGroup,
   type CategoryScope,
+  isCategoryEffectivelyActive,
+  resolveAssignmentEligibleCompanyIds,
 } from "@/domain/serviceDesk";
+import { allCompaniesMock } from "@/mocks/domain/organization/companies";
 import { employeesMock } from "@/mocks/domain/organization/employee";
 import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
+import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
 import { resolveDemoProfile } from "@/mocks/domain/user";
 
-import {
-  getLocalDemoCategories,
-  getLocalDemoTenants,
-} from "./settings/state";
+import { getLocalDemoCategories, getLocalDemoTenants } from "./settings/state";
 
 /** Describes local service desk tenant context used by the server-side LOCAL demo runtime. */
 export type LocalServiceDeskTenantContext = {
@@ -20,6 +21,7 @@ export type LocalServiceDeskTenantContext = {
   companyId: number;
   isOwnerTenant: boolean;
   active: boolean;
+  operational: boolean;
 };
 
 /** Describes service desk category context used by the server-side LOCAL demo runtime. */
@@ -27,6 +29,7 @@ export type ServiceDeskCategoryContext = {
   categoryId: string;
   mainCategoryId: string;
   scope: CategoryScope;
+  active: boolean;
   tenant: LocalServiceDeskTenantContext;
 };
 
@@ -51,7 +54,12 @@ export async function getServiceDeskCategoryContext(
   // enclosing tenant/main-category/scope relationship must resolve uniquely.
   const matches = new Map<
     string,
-    { tenantId: number; mainCategoryId: string; scope: CategoryScope }
+    {
+      tenantId: number;
+      mainCategoryId: string;
+      scope: CategoryScope;
+      active: boolean;
+    }
   >();
 
   for (const tenantTree of [
@@ -72,6 +80,18 @@ export async function getServiceDeskCategoryContext(
         tenantId: tenantTree.tenant_id,
         mainCategoryId: String(mainCategory.category_id),
         scope: mainCategory.category_scope,
+        active: isCategoryEffectivelyActive(
+          { active: mainCategory.category_active },
+          String(mainCategory.category_id) === String(categoryId)
+            ? undefined
+            : {
+                active:
+                  mainCategory.sub_category.find(
+                    (subCategory) =>
+                      String(subCategory.category_id) === String(categoryId),
+                  )?.category_active ?? false,
+              },
+        ),
       };
 
       matches.set(
@@ -85,22 +105,27 @@ export async function getServiceDeskCategoryContext(
 
   const match = matches.values().next().value;
   const tenant = match
-    ? getLocalDemoTenants().find(
-        (item) => item.tenant_id === match.tenantId,
-      )
+    ? getLocalDemoTenants().find((item) => item.tenant_id === match.tenantId)
     : null;
 
   if (!match || !tenant) return null;
+
+  const active = tenant.tenant_active !== false;
+  const company = allCompaniesMock.find(
+    (item) => item.company_id === Number(tenant.tenant_company_id),
+  );
 
   return {
     categoryId: String(categoryId),
     mainCategoryId: match.mainCategoryId,
     scope: match.scope,
+    active: match.active,
     tenant: {
       id: String(tenant.tenant_id),
       companyId: Number(tenant.tenant_company_id),
       isOwnerTenant: isOwnerCompany(tenant.tenant_company_id),
-      active: tenant.tenant_active !== false,
+      active,
+      operational: active && company?.company_active === true,
     },
   };
 }
@@ -111,8 +136,7 @@ export function getActiveLocalEmployeesByCompanyId(
 ): LocalCompanyEmployee[] {
   return [...employeesMock, ...clientDemoEmployee]
     .filter(
-      (employee) =>
-        employee.e_active && employee.e_company_id === companyId,
+      (employee) => employee.e_active && employee.e_company_id === companyId,
     )
     .map((employee) => ({
       id: employee.e_id,
@@ -210,14 +234,18 @@ export async function assertAssignmentAssigneeEligible({
     );
   }
 
-  const employees = getActiveLocalEmployeesByCompanyId(
-    category.tenant.companyId,
+  const eligibleCompanyIds = resolveAssignmentEligibleCompanyIds({
+    scope: category.scope,
+    tenantCompanyId: category.tenant.companyId,
+    ownerCompanyId: OWNER_COMPANY_ID,
+    includeTenantCompany: assignee.includeTenantCompany,
+  });
+  const employees = eligibleCompanyIds.flatMap((companyId) =>
+    getActiveLocalEmployeesByCompanyId(Number(companyId)),
   );
   const employeesByUsername = new Map(
     employees.map((employee) => [employee.username, employee]),
   );
-  const resolvedUsernames = new Set<string>();
-
   for (const username of assignee.assigneeUsernames) {
     const employee = employeesByUsername.get(username);
     if (!employee) {
@@ -225,25 +253,20 @@ export async function assertAssignmentAssigneeEligible({
         "Assignment employees must be active members of the eligible company.",
       );
     }
-    resolvedUsernames.add(employee.username);
   }
 
   for (const jobFieldId of assignee.jobFieldIds) {
-    const matches = employees.filter(
-      (employee) => String(employee.jobFieldId) === jobFieldId,
+    const jobField = allJobFieldsMock.find(
+      (item) =>
+        String(item.jf_id) === jobFieldId &&
+        eligibleCompanyIds.includes(String(item.jf_company_id)) &&
+        item.jf_active,
     );
-    if (matches.length === 0) {
+    if (!jobField) {
       throw createEligibilityError(
-        "An assignment job field has no active employee in the eligible company.",
+        "Assignment job fields must be active references in the eligible company.",
       );
     }
-    matches.forEach((employee) => resolvedUsernames.add(employee.username));
-  }
-
-  if (resolvedUsernames.size === 0) {
-    throw createEligibilityError(
-      "Assignment routing must resolve at least one active employee.",
-    );
   }
 }
 

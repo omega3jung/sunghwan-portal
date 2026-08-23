@@ -1,4 +1,7 @@
-import { hasAssignmentRuleSelection } from "@/domain/serviceDesk";
+import {
+  hasAssignmentRuleSelection,
+  resolveAssignmentEligibleCompanyIds,
+} from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { SaveServiceDeskAssignmentRuleTreePayload } from "@/lib/application/contracts/serviceDesk";
 import { getLocalizedText } from "@/lib/application/i18n";
@@ -7,6 +10,7 @@ import {
   resolveSettingsAccess,
   type ServiceDeskSettingsPrincipal,
 } from "@/lib/application/serviceDesk";
+import { getPortalOwnerCompany } from "@/server/data/organization/company";
 import type { EmployeeResponseDto } from "@/server/data/organization/employees";
 import { getEmployeesByCompanyId } from "@/server/data/organization/employees";
 import { getServiceDeskCategoryContext } from "@/server/data/serviceDesk/category";
@@ -160,7 +164,7 @@ export async function getAssignmentRecommendationResponse({
 }: GetAssignmentRecommendationResponseParams): Promise<AssignmentRecommendationResultDto> {
   const categoryContext = await getServiceDeskCategoryContext(input.categoryId);
 
-  if (!categoryContext || !categoryContext.tenant.active) {
+  if (!categoryContext || !categoryContext.tenant.operational) {
     throw new ApiError("serviceDesk.common.notFound", 404);
   }
 
@@ -185,10 +189,20 @@ export async function getAssignmentRecommendationResponse({
     return createEmptyRecommendation(selectedCategoryLabel);
   }
 
-  const activeEmployees = await getEmployeesByCompanyId(
-    true,
-    categoryContext.tenant.companyId,
-  );
+  const ownerCompany = await getPortalOwnerCompany();
+  const eligibleCompanyIds = resolveAssignmentEligibleCompanyIds({
+    scope: categoryContext.scope,
+    tenantCompanyId: categoryContext.tenant.companyId,
+    ownerCompanyId: ownerCompany.company_id,
+    includeTenantCompany: assignmentRule.assignee.include_tenant_company,
+  });
+  const activeEmployees = (
+    await Promise.all(
+      eligibleCompanyIds.map((companyId) =>
+        getEmployeesByCompanyId(true, Number(companyId)),
+      ),
+    )
+  ).flat();
 
   return {
     recommendedUsers: collectRecommendedUsers({
@@ -207,6 +221,8 @@ export async function createAssignmentRule(
   input: CreateAssignmentRuleInputDto,
   query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
+  assertAssignmentRuleHasSelection(input.assignee);
+
   const row = await createAssignmentRuleRow(
     mapCreateAssignmentRuleInputDtoToRowInput(input),
     query,
@@ -226,6 +242,8 @@ export async function updateAssignmentRuleById(
   input: UpdateAssignmentRuleInputDto,
   query?: PortalApiQueryExecutor,
 ): Promise<AssignmentRuleDto> {
+  assertAssignmentRuleHasSelection(input.assignee);
+
   const currentRow = await findAssignmentRuleRowByTenantIdAndAssignmentRuleId(
     tenantId,
     assignmentRuleId,
@@ -248,6 +266,14 @@ export async function updateAssignmentRuleById(
   }
 
   return mapAssignmentRuleRowToDto(row);
+}
+
+function assertAssignmentRuleHasSelection(
+  assignee: AssignmentRuleDto["assignee"],
+) {
+  if (!hasAssignmentRuleAssigneeSelection(assignee)) {
+    throw new ApiError("serviceDesk.assignmentRules.emptyAssignee", 400);
+  }
 }
 
 /** Removes or deactivates assignment rule by id through the server persistence boundary. */
@@ -351,9 +377,7 @@ function resolveAssignmentRuleWithCategoryFallback(
   categoryId: string,
 ) {
   const exactAssignmentRule = rules.find(
-    (rule) =>
-      String(rule.category_id) === categoryId &&
-      hasAssignmentRuleAssigneeSelection(rule.assignee),
+    (rule) => String(rule.category_id) === categoryId,
   );
 
   if (exactAssignmentRule) {
@@ -366,11 +390,7 @@ function resolveAssignmentRuleWithCategoryFallback(
     return undefined;
   }
 
-  return rules.find(
-    (rule) =>
-      rule.category_id === mainCategoryId &&
-      hasAssignmentRuleAssigneeSelection(rule.assignee),
-  );
+  return rules.find((rule) => rule.category_id === mainCategoryId);
 }
 
 // Expands rule groups to active employees and de-duplicates direct and group-derived matches.

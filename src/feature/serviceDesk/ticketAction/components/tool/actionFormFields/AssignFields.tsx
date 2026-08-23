@@ -62,6 +62,9 @@ export function AssignFields({
       label: tLocal(subCategory.name),
     })),
   }));
+  const categoryOptions = categoryData.flatMap(
+    (group) => group.subCategories,
+  );
 
   const assigneeUsernames =
     useWatch({ control: form.control, name: "assigneeUsernames" }) ?? [];
@@ -276,6 +279,7 @@ export function AssignFields({
         <Field>
           <FieldLabel>{t("field.category", { ns: NS.common })}</FieldLabel>
           <Select
+            items={categoryOptions}
             value={categoryId}
             onValueChange={(value) => {
               if (value !== null) {

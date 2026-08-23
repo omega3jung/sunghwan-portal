@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { toApiErrorResponse } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
+import { getServiceDeskCategoryContext as getLocalServiceDeskCategoryContext } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import { resolveLocalAssignmentRecommendation } from "@/app/api/_adapters/localDemo/serviceDesk/settings/assignmentRule/recommendation";
 import {
+  canAccessOperationalServiceDeskCategory,
   resolveApiErrorMessage,
   resolveServiceDeskRequestContext,
   toCurrentUsernameProxyHeaders,
@@ -65,6 +67,23 @@ export async function POST(request: NextRequest) {
     }
 
     if (principalContext.dataScope === "LOCAL") {
+      const category = await getLocalServiceDeskCategoryContext(
+        input.categoryId,
+      );
+
+      if (
+        !category ||
+        !canAccessOperationalServiceDeskCategory({
+          principal: principalContext.principal,
+          category,
+        })
+      ) {
+        return NextResponse.json(
+          { message: resolveApiErrorMessage("serviceDesk.common.notFound") },
+          { status: 404 },
+        );
+      }
+
       return NextResponse.json(
         await resolveLocalAssignmentRecommendation({ input }),
       );
@@ -77,11 +96,15 @@ export async function POST(request: NextRequest) {
         principalContext.effectiveUsername,
       ),
       body: input,
-      errorMessage: resolveApiErrorMessage("serviceDesk.assignmentRecommendations.fetch"),
+      errorMessage: resolveApiErrorMessage(
+        "serviceDesk.assignmentRecommendations.fetch",
+      ),
     });
   } catch (error) {
     return toApiErrorResponse(error, {
-      fallbackMessage: resolveApiErrorMessage("serviceDesk.assignmentRecommendations.fetch"),
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.assignmentRecommendations.fetch",
+      ),
     });
   }
 }

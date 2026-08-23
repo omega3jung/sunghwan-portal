@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { TicketDetail } from "@/domain/serviceDesk";
 import { NS } from "@/lib/application/i18n";
 import { useMutationToast } from "@/lib/client/toast";
+import type { ValueLabel } from "@/shared/types";
 import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 
 import { useSubmitTicketWorkSession } from "../../api/client";
@@ -180,6 +181,16 @@ export function WorkSessionToolContent({
 
     return [ticket.status, ...TICKET_WORK_SESSION_STATUS_OPTIONS];
   }, [ticket?.status]);
+  const statusData = useMemo<ValueLabel[]>(() => {
+    return statusOptions.map((status) => {
+      return {
+        value: status,
+        label: isWorkSessionStatus(status)
+          ? t(`option.status.${status.toLowerCase()}`)
+          : status,
+      };
+    });
+  }, [statusOptions, t]);
 
   const noteDescribedBy = noteError
     ? "ticket-track-note-description ticket-track-note-error"
@@ -250,14 +261,8 @@ export function WorkSessionToolContent({
       const promise = submitWorkSession(payload);
       await mutationToast(promise, "update", t("field.workSession"));
       onClose();
-    } catch {
-    }
+    } catch {}
   };
-
-  const getStatusLabel = (status: string) =>
-    isWorkSessionStatus(status)
-      ? t(`option.status.${status.toLowerCase()}`)
-      : status;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 px-4 py-3">
@@ -333,8 +338,7 @@ export function WorkSessionToolContent({
           onValueChange={(value) =>
             setSelectedStatus(isWorkSessionStatus(value) ? value : null)
           }
-          options={statusOptions}
-          getOptionLabel={getStatusLabel}
+          options={statusData}
           label={
             <span className="flex items-center gap-1">
               {t("field.status")}

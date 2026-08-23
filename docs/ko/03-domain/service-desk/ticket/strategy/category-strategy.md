@@ -188,9 +188,25 @@ active = false
 
 동작:
 
+- 새 main category와 subcategory는 항상 inactive 상태로 저장한다.
+- Activation에는 active Job Field 또는 active Employee reference를 포함한 effective
+  Assignment Rule이 필요하다.
 - inactive category는 새 requester workflow에서 선택할 수 없어야 한다.
 - inactive category를 참조하는 기존 ticket은 계속 읽을 수 있다.
+- 필요한 configuration을 계속 resolve할 수 있으면 기존 `Approval` workflow는 다음
+  approval 또는 work assignment로 진행할 수 있다.
 - category settings가 바뀌어도 history는 다시 쓰지 않는다.
+
+Main category와 subcategory의 active flag는 독립적으로 저장한다. Subcategory는 두
+flag가 모두 active일 때만 effectively active다.
+
+```ts
+effectiveActive = mainCategory.active && subCategory.active;
+```
+
+Main category를 deactivate해도 subcategory의 stored flag를 덮어쓰면 안 된다.
+Activation은 readiness gate일 뿐이며, runtime routing은 실제 worker와 모든
+company/tenant eligibility constraint를 계속 다시 검증한다.
 
 ---
 
@@ -226,7 +242,9 @@ Ticket submitted
 ```
 
 Approval configuration은 future resolution에 영향을 준다. 이미 진행 중인 ticket을
-조용히 변경하지 않는다.
+조용히 변경하지 않는다. 단, `Approval` ticket에 영향을 주는 tree 변경은 impact
+확인 후 force apply로 initial routing부터 명시적으로 재시작하고 `ROUTING_RESET`
+History를 하나의 transaction에서 append할 수 있다.
 
 ---
 
@@ -246,6 +264,10 @@ Ticket ready for work
 
 현재 assignment rule model은 group-based이며 job-field ID와 employee username을
 사용한다. 별도의 `ruleType` field를 사용하지 않는다.
+
+Fallback은 rule의 존재 여부를 기준으로 한다. Subcategory own rule의 reference가 이후
+inactive가 되면 activation과 routing은 해당 own rule을 기준으로 실패하며, parent
+rule로 조용히 전환하지 않는다.
 
 ---
 
@@ -268,8 +290,9 @@ Requester가 category를 변경하면 ticket update service는 다음을 수행�
 - approval 또는 assignment routing 재평가
 - `ROUTING_RESET` 기록
 
-다음 due date는 current due date와 새 category minimum due date 중 더 늦은 값이어야
-한다. Category change는 due date를 더 이른 날짜로 당기면 안 된다.
+다음 due date는 current due date, submitted due date, 새 category minimum due date
+중 가장 늦은 값이어야 한다. Category change는 due date를 더 이른 날짜로 당기면
+안 된다.
 
 Category가 바뀌지 않고 routing-neutral field만 바뀌면 routing은 preserve될 수 있고
 `ROUTING_PRESERVED`가 기록된다.
@@ -305,8 +328,9 @@ Category settings는 future behavior를 정의한다.
 | --- | --- |
 | main/subcategory name changed | future display는 새 label 사용; existing history는 기록된 상태 유지 |
 | defaults changed | future ticket과 future routing evaluation은 updated default 사용 |
-| category deactivated | new selection은 중단; existing ticket은 계속 readable |
-| approval/assignment settings changed | future resolution은 updated setting 사용 |
+| category deactivated | impact 확인; new selection 중단; existing state/routing/history 보존 |
+| approval settings changed | future resolution은 updated setting 사용; force apply는 영향받은 `Approval` ticket을 명시적으로 재시작 가능 |
+| assignment settings changed | current worker 보존; future assignment resolution은 updated setting 사용 |
 
 Existing ticket state와 history는 explicit ticket command를 통해서만 변경되어야 한다.
 

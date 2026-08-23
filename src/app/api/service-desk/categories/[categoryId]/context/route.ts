@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAuthToken } from "@/app/api/_adapters";
+import { toApiErrorResponse } from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { RouteContext } from "@/app/api/_adapters/http";
 import { getServiceDeskCategoryContext as getLocalServiceDeskCategoryContext } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
+import {
+  canAccessOperationalServiceDeskCategory,
+  resolveServiceDeskRequestContext,
+} from "@/app/api/_adapters/serviceDesk";
 import { resolveApiErrorMessage } from "@/lib/application/api";
 
 type CategoryContextRouteContext = RouteContext<{ categoryId: string }>;
@@ -13,33 +17,44 @@ export async function GET(
   request: NextRequest,
   context: CategoryContextRouteContext,
 ) {
-  const token = await getAuthToken(request);
+  try {
+    const principalContext = await resolveServiceDeskRequestContext(request);
 
-  if (!token) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { categoryId: rawCategoryId } = await context.params;
+    const categoryId = rawCategoryId.trim();
+
+    if (!categoryId) {
+      return NextResponse.json(
+        { message: "A category id is required." },
+        { status: 400 },
+      );
+    }
+
+    if (principalContext.dataScope === "LOCAL") {
+      const categoryContext =
+        await getLocalServiceDeskCategoryContext(categoryId);
+
+      return categoryContext &&
+        canAccessOperationalServiceDeskCategory({
+          principal: principalContext.principal,
+          category: categoryContext,
+        })
+        ? NextResponse.json(categoryContext)
+        : NextResponse.json(
+            { message: "Category not found." },
+            { status: 404 },
+          );
+    }
+
+    return portalApiJson(request, {
+      path: `/service-desk/categories/${encodeURIComponent(categoryId)}/context`,
+      errorMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
+    });
+  } catch (error) {
+    return toApiErrorResponse(error, {
+      fallbackMessage: resolveApiErrorMessage(
+        "serviceDesk.categories.fetchList",
+      ),
+    });
   }
-
-  const { categoryId: rawCategoryId } = await context.params;
-  const categoryId = rawCategoryId.trim();
-
-  if (!categoryId) {
-    return NextResponse.json(
-      { message: "A category id is required." },
-      { status: 400 },
-    );
-  }
-
-  if (token.dataScope === "LOCAL") {
-    const categoryContext =
-      await getLocalServiceDeskCategoryContext(categoryId);
-
-    return categoryContext
-      ? NextResponse.json(categoryContext)
-      : NextResponse.json({ message: "Category not found." }, { status: 404 });
-  }
-
-  return portalApiJson(request, {
-    path: `/service-desk/categories/${encodeURIComponent(categoryId)}/context`,
-    errorMessage: resolveApiErrorMessage("serviceDesk.categories.fetchList"),
-  });
 }

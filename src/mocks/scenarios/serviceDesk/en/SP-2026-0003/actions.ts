@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Olivia Johnson approved",
     tka_owner_username: "olivia_johnson",
 
-    tka_created_at: "2026-07-03T01:20:05Z",
+    tka_created_at: "2026-08-03T01:20:05Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -27,7 +27,7 @@ export const actions: TicketActionMockInput[] = [
       "Hello, Liam.<br>Please note that this request may take up to 3 days based on the SLA.<br>We need to check the printer setup and validate the label output.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-03T01:23:18Z",
+    tka_created_at: "2026-08-03T01:23:18Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -43,7 +43,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Got it. Just let me know after you finished",
     tka_owner_username: "liam_williams",
 
-    tka_created_at: "2026-07-03T01:40:42Z",
+    tka_created_at: "2026-08-03T01:40:42Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -60,7 +60,7 @@ export const actions: TicketActionMockInput[] = [
       "Hello. Mason Kwon, Could you set a printer to repair team and check it printing correctly?<br>I finished set this barcode up to system and checked it's printing out through PDF file.",
     tka_owner_username: "evan_seo",
 
-    tka_created_at: "2026-07-06T01:12:20Z",
+    tka_created_at: "2026-08-06T01:12:20Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -77,7 +77,7 @@ export const actions: TicketActionMockInput[] = [
       "Hello.<br><br>The barcode itself is correct, but the label width is too small,<br>causing the right side to be cut off during printing.<br><br>I have ordered wider labels and will update once received.",
     tka_owner_username: "mason_kwon",
 
-    tka_created_at: "2026-07-06T01:48:10Z",
+    tka_created_at: "2026-08-06T01:48:10Z",
     tka_updated_at: null,
     tka_active: true,
 

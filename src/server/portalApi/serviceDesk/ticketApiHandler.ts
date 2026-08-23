@@ -10,7 +10,6 @@ import {
   type TicketApprovalActionCommandRequest,
 } from "@/lib/application/contracts/serviceDesk";
 import {
-  closeExpiredResolvedTickets,
   createTicket,
   getTicketDetail,
   getTicketListItems,
@@ -25,6 +24,7 @@ import {
 import {
   executeTicketAction,
   executeTicketApprovalAction,
+  getTicketActionByTicketIdAndNo,
   getTicketActionsByTicketId,
   softDeleteTicketAction,
 } from "@/server/data/serviceDesk/ticketAction";
@@ -52,8 +52,6 @@ import {
 const TICKET_LIST_PATH_PATTERN = /^\/service-desk\/tickets$/;
 const TICKET_SEARCH_PATH_PATTERN = /^\/service-desk\/tickets\/search$/;
 const TICKET_DRAFT_PATH_PATTERN = /^\/service-desk\/tickets\/draft$/;
-const TICKET_AUTO_CLOSE_PATH_PATTERN =
-  /^\/service-desk\/tickets\/cron\/close-expired-resolved$/;
 const TICKET_DRAFT_DETAIL_PATH_PATTERN =
   /^\/service-desk\/tickets\/draft\/([^/]+)$/;
 const TICKET_ACTION_LIST_PATH_PATTERN =
@@ -86,14 +84,6 @@ const SORT_DIRECTIONS = new Set<TicketSearchSortDto["direction"]>([
 export async function handleTicketPortalApi(
   context: ServiceDeskPortalApiContext,
 ): Promise<NextResponseType> {
-  if (TICKET_AUTO_CLOSE_PATH_PATTERN.test(context.path)) {
-    if (context.method !== "POST") {
-      return createNotFoundResponse();
-    }
-
-    return NextResponse.json(await closeExpiredResolvedTickets());
-  }
-
   const currentUserName = getCurrentUserName(context);
 
   if (currentUserName === null) {
@@ -114,12 +104,19 @@ export async function handleTicketPortalApi(
     );
   }
 
+  const principal = await getUserProfileDtoByUsername(currentUserName);
+
+  if (!principal) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
   if (TICKET_LIST_PATH_PATTERN.test(context.path)) {
     if (context.method === "POST") {
       const ticket = await createTicket(
         requireBody<TicketCreateRequestDto>(context.options),
         {
           requesterUsername: currentUserName,
+          principal,
         },
       );
 
@@ -130,7 +127,7 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketListItems(currentUserName);
+    const items = await getTicketListItems(currentUserName, principal);
 
     return NextResponse.json({
       items,
@@ -146,6 +143,7 @@ export async function handleTicketPortalApi(
     const result = await searchTicketListItems(
       getTicketSearchRequest(context),
       currentUserName,
+      principal,
     );
 
     return NextResponse.json(result);
@@ -158,9 +156,13 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketActionsByTicketId(
-      decodePathSegment(actionListMatch[1]),
-    );
+    const ticketId = decodePathSegment(actionListMatch[1]);
+
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+      return createNotFoundResponse();
+    }
+
+    const items = await getTicketActionsByTicketId(ticketId);
 
     return createListResponse(items);
   }
@@ -170,7 +172,7 @@ export async function handleTicketPortalApi(
   );
 
   if (actionDetailMatch) {
-    if (context.method !== "PATCH") {
+    if (context.method !== "GET" && context.method !== "PATCH") {
       return createNotFoundResponse();
     }
 
@@ -180,6 +182,17 @@ export async function handleTicketPortalApi(
       throw createStatusError("Invalid action number.", 400);
     }
 
+    const ticketId = decodePathSegment(actionDetailMatch[1]);
+
+    if (context.method === "GET") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
+      const action = await getTicketActionByTicketIdAndNo(ticketId, actionNo);
+      return action ? NextResponse.json(action) : createNotFoundResponse();
+    }
+
     const body = requireBody<{ active?: boolean }>(context.options);
 
     if (body.active !== false) {
@@ -187,7 +200,7 @@ export async function handleTicketPortalApi(
     }
 
     const actionDto = await softDeleteTicketAction({
-      ticketId: decodePathSegment(actionDetailMatch[1]),
+      ticketId,
       actionNo,
       currentUserName,
     });
@@ -217,12 +230,7 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const currentUserProfile =
-      await getUserProfileDtoByUsername(currentUserName);
-
-    if (currentUserProfile === null) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
+    const currentUserProfile = principal;
 
     const isAdmin = currentUserProfile.role === "ADMIN";
 
@@ -232,8 +240,9 @@ export async function handleTicketPortalApi(
         action,
         currentUserName,
         isAdmin,
-        payload:
-          requireBody<TicketApprovalActionCommandRequest>(context.options),
+        payload: requireBody<TicketApprovalActionCommandRequest>(
+          context.options,
+        ),
       });
 
       return NextResponse.json(actionDto, { status: 201 });
@@ -258,9 +267,13 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketHistoriesByTicketId(
-      decodePathSegment(historyListMatch[1]),
-    );
+    const ticketId = decodePathSegment(historyListMatch[1]);
+
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+      return createNotFoundResponse();
+    }
+
+    const items = await getTicketHistoriesByTicketId(ticketId);
 
     return createListResponse(items);
   }
@@ -273,6 +286,10 @@ export async function handleTicketPortalApi(
     const ticketId = decodePathSegment(workSessionListMatch[1]);
 
     if (context.method === "GET") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
       const items = await getWorkSessionsByTicketId(ticketId);
 
       return createListResponse(items);
@@ -299,7 +316,11 @@ export async function handleTicketPortalApi(
     const ticketId = decodePathSegment(detailMatch[1]);
 
     if (context.method === "GET") {
-      const ticket = await getTicketDetail(ticketId, currentUserName);
+      const ticket = await getTicketDetail(
+        ticketId,
+        currentUserName,
+        principal,
+      );
 
       return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
     }
@@ -317,6 +338,7 @@ export async function handleTicketPortalApi(
         ticketId,
         parsedBody.data,
         currentUserName,
+        principal,
       );
 
       return NextResponse.json(ticket);

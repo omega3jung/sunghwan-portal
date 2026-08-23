@@ -10,7 +10,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content: "Quentin Wilson님이 승인했습니다",
     tka_owner_username: "quentin_wilson",
 
-    tka_created_at: "2026-07-10T17:29:25Z",
+    tka_created_at: "2026-08-10T17:29:25Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -27,7 +27,7 @@ export const actions: TicketActionMockInput[] = [
       "안녕하세요, Sam.<br>portal ticket 권한이 필요한 이유를 알 수 있을까요?",
     tka_owner_username: "adrian_usman",
 
-    tka_created_at: "2026-07-10T18:15:53Z",
+    tka_created_at: "2026-08-10T18:15:53Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -44,7 +44,7 @@ export const actions: TicketActionMockInput[] = [
       "portal 기능 개선과 신규 기능 요청을 위해 필요합니다. 우리가 결정하고 판단하지만 그녀가 요청하고 기록할거에요.",
     tka_owner_username: "samuel_anderson",
 
-    tka_created_at: "2026-07-10T19:01:58Z",
+    tka_created_at: "2026-08-10T19:01:58Z",
     tka_updated_at: null,
     tka_active: true,
 
@@ -61,7 +61,7 @@ export const actions: TicketActionMockInput[] = [
       "알겠습니다, Sam. 권한을 부여했습니다. 문제가 있다면 알려주세요.",
     tka_owner_username: "adrian_usman",
 
-    tka_created_at: "2026-07-10T20:17:18Z",
+    tka_created_at: "2026-08-10T20:17:18Z",
     tka_updated_at: null,
     tka_active: true,
 

@@ -8,7 +8,7 @@ export const actions: TicketActionMockInput[] = [
     tka_action_type: "APPROVE",
     tka_content: "Samuel Baker approved the request.",
     tka_owner_username: "samuel_baker",
-    tka_created_at: "2026-07-13T08:25:10Z",
+    tka_created_at: "2026-08-13T08:25:10Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -21,7 +21,7 @@ export const actions: TicketActionMockInput[] = [
     tka_action_type: "APPROVE",
     tka_content: "Zoe Okafor approved the request.",
     tka_owner_username: "zoe_okafor",
-    tka_created_at: "2026-07-13T08:34:42Z",
+    tka_created_at: "2026-08-13T08:34:42Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -35,7 +35,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Hello, Tessa.<br>External monitoring data is being received normally, but we confirmed that Solar Farm A's telemetry synchronization job has been failing since 14:35. We will review the integration job logs.",
     tka_owner_username: "evan_seo",
-    tka_created_at: "2026-07-13T09:02:18Z",
+    tka_created_at: "2026-08-13T09:02:18Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -49,7 +49,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Thank you for checking, Evan. Please restore the service before the operational status and daily generation report deadlines.",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-13T09:18:36Z",
+    tka_created_at: "2026-08-13T09:18:36Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -63,7 +63,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "We found that updates stopped because the telemetry synchronization worker's authentication token had expired. We renewed the token and are resynchronizing the data for the failed period.",
     tka_owner_username: "evan_seo",
-    tka_created_at: "2026-07-13T10:26:54Z",
+    tka_created_at: "2026-08-13T10:26:54Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -77,7 +77,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "I confirmed that Solar Farm A's generation data is now current and that the Refresh button no longer produces an error.",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-13T10:48:27Z",
+    tka_created_at: "2026-08-13T10:48:27Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -91,7 +91,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Thank you for confirming. We completed the resynchronization of the generation data missing since 14:35 and added monitoring for the telemetry synchronization worker. This ticket will be resolved.",
     tka_owner_username: "evan_seo",
-    tka_created_at: "2026-07-13T11:12:08Z",
+    tka_created_at: "2026-08-13T11:12:08Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},

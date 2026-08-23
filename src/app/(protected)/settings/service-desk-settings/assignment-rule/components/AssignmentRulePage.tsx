@@ -71,6 +71,7 @@ export function AssignmentRulePage() {
           canEdit={settings.tree.canEdit}
           scope={settings.toolbar.scope.value}
           companyId={settings.companyId}
+          ownerCompanyId={settings.ownerCompanyId}
         />
       </div>
     </div>

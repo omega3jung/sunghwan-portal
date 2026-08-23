@@ -9,14 +9,15 @@ import type { DbParams } from "@/shared/types";
 import { combineRuleGroups, createFieldFilter } from "@/shared/utils/routing";
 
 function createActiveCompanyParams(
-  companyId: string,
+  companyIds: string[],
   activeField: string,
 ): DbParams {
   return {
     filter: combineRuleGroups([
       createFieldFilter({
         field: "companyId",
-        value: companyId,
+        operator: "in",
+        value: companyIds.join(","),
       }),
       createFieldFilter({
         field: activeField,
@@ -28,33 +29,39 @@ function createActiveCompanyParams(
 
 export function useServiceDeskSettingsOrganizationData({
   companyId,
+  companyIds,
   enabled,
   includeDepartments = false,
 }: {
   companyId: string | null;
+  companyIds?: string[];
   enabled: boolean;
   includeDepartments?: boolean;
 }) {
+  const effectiveCompanyIds = useMemo(
+    () => companyIds ?? (companyId ? [companyId] : []),
+    [companyId, companyIds],
+  );
   const employeeParams = useMemo(
     () =>
-      companyId && enabled
-        ? createActiveCompanyParams(companyId, "e_active")
+      effectiveCompanyIds.length > 0 && enabled
+        ? createActiveCompanyParams(effectiveCompanyIds, "e_active")
         : undefined,
-    [companyId, enabled],
+    [effectiveCompanyIds, enabled],
   );
   const departmentParams = useMemo(
     () =>
-      companyId && enabled && includeDepartments
-        ? createActiveCompanyParams(companyId, "d_active")
+      effectiveCompanyIds.length > 0 && enabled && includeDepartments
+        ? createActiveCompanyParams(effectiveCompanyIds, "d_active")
         : undefined,
-    [companyId, enabled, includeDepartments],
+    [effectiveCompanyIds, enabled, includeDepartments],
   );
   const jobFieldParams = useMemo(
     () =>
-      companyId && enabled
-        ? createActiveCompanyParams(companyId, "jf_active")
+      effectiveCompanyIds.length > 0 && enabled
+        ? createActiveCompanyParams(effectiveCompanyIds, "jf_active")
         : undefined,
-    [companyId, enabled],
+    [effectiveCompanyIds, enabled],
   );
   const employeeQuery = useEmployeeListQuery(employeeParams);
   const departmentQuery = useDepartmentListQuery(departmentParams);

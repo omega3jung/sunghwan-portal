@@ -9,7 +9,9 @@ import {
   getLocalDemoAssignmentRules,
 } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
+import { OWNER_COMPANY_ID } from "@/domain/organization";
 import type { TicketStatus } from "@/domain/serviceDesk";
+import { resolveAssignmentEligibleCompanyIds } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type {
   DbAssignmentRule,
@@ -59,13 +61,17 @@ export async function resolveCreateTicketRouting(
 export async function resolveApprovedTicketRouting(
   input: ApprovedRoutingInput,
 ): Promise<CreateTicketRouting> {
-  return resolveTicketRouting(input);
+  return resolveTicketRouting(input, { allowInactiveCategory: true });
 }
 
 async function resolveTicketRouting(
   input: RoutingInput & { currentApprovalStepId?: string },
+  options: { allowInactiveCategory?: boolean } = {},
 ): Promise<CreateTicketRouting> {
-  const category = await requireLocalCategoryContext(input.categoryId);
+  const category = await requireLocalCategoryContext(
+    input.categoryId,
+    options.allowInactiveCategory === true,
+  );
   const requesterAccessLevel = resolveRequesterAccessLevel(
     input.requesterUsername,
   );
@@ -105,10 +111,17 @@ async function resolveTicketRouting(
   };
 }
 
-async function requireLocalCategoryContext(categoryId: string) {
+async function requireLocalCategoryContext(
+  categoryId: string,
+  allowInactiveCategory: boolean,
+) {
   const category = await getServiceDeskCategoryContext(categoryId);
 
-  if (!category || !category.tenant.active) {
+  if (
+    !category ||
+    !category.tenant.active ||
+    (!allowInactiveCategory && !category.active)
+  ) {
     throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
       categoryId,
     });
@@ -234,8 +247,14 @@ async function resolveAssignmentAssignees(
     return [];
   }
 
-  const eligibleEmployees = getActiveLocalEmployeesByCompanyId(
-    category.tenant.companyId,
+  const eligibleEmployees = resolveAssignmentEligibleCompanyIds({
+    scope: category.scope,
+    tenantCompanyId: category.tenant.companyId,
+    ownerCompanyId: OWNER_COMPANY_ID,
+    includeTenantCompany:
+      assignmentRule.assignee.include_tenant_company === true,
+  }).flatMap((companyId) =>
+    getActiveLocalEmployeesByCompanyId(Number(companyId)),
   );
 
   const directAssignees = assignmentRule.assignee.employee_username.map(
@@ -260,14 +279,12 @@ function findAssignmentRuleWithMainFallback(
   category: ServiceDeskCategoryContext,
 ) {
   // Subcategory assignment is more specific. The main-category rule is used
-  // only when the selected subcategory has no effective assignee selection.
+  // only when the selected subcategory has no persisted rule at all.
   const categoryCandidates = [category.categoryId, category.mainCategoryId];
 
   for (const categoryCandidate of categoryCandidates) {
     const found = rules.find(
-      (rule) =>
-        String(rule.category_id) === categoryCandidate &&
-        hasDbAssignmentRuleSelection(rule),
+      (rule) => String(rule.category_id) === categoryCandidate,
     );
 
     if (found) {
@@ -276,13 +293,6 @@ function findAssignmentRuleWithMainFallback(
   }
 
   return null;
-}
-
-function hasDbAssignmentRuleSelection(rule: DbAssignmentRule) {
-  return (
-    rule.assignee.job_field_id.length > 0 ||
-    rule.assignee.employee_username.length > 0
-  );
 }
 
 function normalizeAssigneeIds(

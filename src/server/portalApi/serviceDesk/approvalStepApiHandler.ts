@@ -20,6 +20,13 @@ import {
   mapSettingsWriteError,
 } from "@/server/data/serviceDesk/shared";
 import {
+  findActiveTicketViewRowById,
+} from "@/server/data/serviceDesk/ticket/ticketRepository";
+import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
+import { updateTicketInitialRoutingById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
+import { resolveInitialTicketRouting } from "@/server/data/serviceDesk/ticketAction/shared/ticketActionRouting";
+import { createTicketHistory } from "@/server/data/serviceDesk/ticketHistory";
+import {
   type PortalApiQueryExecutor,
   withPortalApiTransaction,
 } from "@/server/shared/supabase/portalApiClient";
@@ -109,12 +116,12 @@ export async function handleApprovalStepPortalApi(
         });
       }
 
-      const submittedScopes = await validateApprovalStepTreeMutation({
-        principal: authorization.principal,
+      const { approvalSettings, submittedScopes } = await saveApprovalStepTree(
+        body,
+        authorization.effectiveUsername,
+        authorization.principal,
         tenant,
-        payload: body,
-      });
-      const approvalSettings = await saveApprovalStepTree(body);
+      );
 
       return NextResponse.json(
         approvalSettings.filter((category) =>
@@ -131,11 +138,25 @@ export async function handleApprovalStepPortalApi(
 
 async function saveApprovalStepTree(
   payload: SaveServiceDeskApprovalStepTreePayload,
+  actorUsername: string,
+  principal: Parameters<typeof validateApprovalStepTreeMutation>[0]["principal"],
+  tenant: Parameters<typeof validateApprovalStepTreeMutation>[0]["tenant"],
 ) {
   try {
-    return await withPortalApiTransaction((query) =>
-      saveApprovalStepTreeInTransaction(payload, query),
-    );
+    return await withPortalApiTransaction(async (query) => {
+      const submittedScopes = await validateApprovalStepTreeMutation({
+        principal,
+        tenant,
+        payload,
+        query,
+      });
+      const approvalSettings = await saveApprovalStepTreeInTransaction(
+        payload,
+        actorUsername,
+        query,
+      );
+      return { approvalSettings, submittedScopes };
+    });
   } catch (error) {
     throw mapSettingsWriteError(error, "approvalSteps");
   }
@@ -143,6 +164,7 @@ async function saveApprovalStepTree(
 
 async function saveApprovalStepTreeInTransaction(
   payload: SaveServiceDeskApprovalStepTreePayload,
+  actorUsername: string,
   query: PortalApiQueryExecutor,
 ) {
   const tenantId = Number(payload.tenantId);
@@ -164,6 +186,24 @@ async function saveApprovalStepTreeInTransaction(
       approvalStep,
     ]),
   );
+  const changedCategoryIds = findChangedApprovalCategoryIds(
+    payload,
+    currentApprovalSettings,
+  );
+  const affectedTickets = await findAffectedApprovalTickets(
+    changedCategoryIds,
+    query,
+  );
+
+  if (affectedTickets.length > 0 && payload.force !== true) {
+    throw Object.assign(
+      new Error("Approval configuration affects active tickets."),
+      {
+        code: "APPROVAL_CONFIGURATION_IMPACT",
+        status: 409,
+      },
+    );
+  }
   const submittedApprovalStepPlans: SubmittedApprovalStepPlan[] =
     payload.categories.flatMap((category) =>
       category.approvalSteps.map((approvalStep, index) => ({
@@ -249,7 +289,138 @@ async function saveApprovalStepTreeInTransaction(
     );
   }
 
+  if (affectedTickets.length > 0) {
+    await resetAffectedApprovalTickets(
+      affectedTickets,
+      actorUsername,
+      query,
+    );
+  }
+
   return getCategoryApprovalSettingsByTenantId(tenantId, query);
+}
+
+function findChangedApprovalCategoryIds(
+  payload: SaveServiceDeskApprovalStepTreePayload,
+  currentSettings: Awaited<
+    ReturnType<typeof getCategoryApprovalSettingsByTenantId>
+  >,
+) {
+  const currentByCategoryId = new Map(
+    currentSettings.map((category) => [
+      String(category.category_id),
+      JSON.stringify(
+        category.approval_step.map((step) => ({
+          id: String(step.approval_step_id),
+          assignee: step.approval_step_assignee,
+          skipAccessLevel: step.skip_access_level,
+        })),
+      ),
+    ]),
+  );
+
+  return payload.categories.flatMap((category) => {
+    const submitted = JSON.stringify(
+      category.approvalSteps.map((step) => ({
+        id: step.id ?? null,
+        assignee: mapApprovalTreeAssignee(step.stepAssignee),
+        skipAccessLevel: step.skipAccessLevel ?? null,
+      })),
+    );
+    return currentByCategoryId.get(category.id) === submitted
+      ? []
+      : [Number(category.id)];
+  });
+}
+
+async function findAffectedApprovalTickets(
+  categoryIds: number[],
+  query: PortalApiQueryExecutor,
+) {
+  if (categoryIds.length === 0) return [];
+
+  return query<{ tk_id: string }>(
+    `
+select ticket.tk_id
+from service_desk.ticket ticket
+join service_desk.category category
+  on category.cat_id = ticket.tk_category_id
+where ticket.tk_active = true
+  and ticket.tk_status = 'Approval'
+  and coalesce(category.cat_parent_id, category.cat_id) = any($1::bigint[])
+order by ticket.tk_id
+for update;
+`,
+    [categoryIds],
+  );
+}
+
+async function resetAffectedApprovalTickets(
+  affectedTickets: Array<{ tk_id: string }>,
+  actorUsername: string,
+  query: PortalApiQueryExecutor,
+) {
+  for (const { tk_id: ticketId } of affectedTickets) {
+    const ticket = await findActiveTicketViewRowById(ticketId, { query });
+
+    if (!ticket) {
+      throw Object.assign(new Error("Affected ticket was not found."), {
+        status: 409,
+      });
+    }
+
+    const routing = await resolveInitialTicketRouting(ticket, { query });
+    const updated = await updateTicketInitialRoutingById(
+      ticketId,
+      {
+        approvalStepId: routing.approvalStepId,
+        assigneeUsernames: routing.assigneeUsernames,
+        status: routing.status,
+      },
+      { query },
+    );
+
+    if (!updated) {
+      throw Object.assign(new Error("Affected ticket could not be rerouted."), {
+        status: 409,
+      });
+    }
+
+    await createTicketHistory(
+      {
+        ticketId,
+        actionNo: null,
+        historyType: "TICKET",
+        source: "APPROVAL_RULE",
+        event: "ROUTING_RESET",
+        actorUsername,
+        fromValue: {
+          approvalStepId:
+            ticket.tk_approval_step_id === null
+              ? null
+              : String(ticket.tk_approval_step_id),
+          assigneeUsernames: normalizeAssignees(ticket),
+        },
+        toValue: {
+          approvalStepId:
+            routing.approvalStepId === null
+              ? null
+              : String(routing.approvalStepId),
+          assigneeUsernames: routing.assigneeUsernames,
+        },
+        metadata: {
+          reason: "APPROVAL_CONFIGURATION_CHANGED",
+        },
+      },
+      { query },
+    );
+  }
+}
+
+function normalizeAssignees(ticket: ServiceDeskTicketViewRow) {
+  return Array.isArray(ticket.tk_assignee_usernames)
+    ? ticket.tk_assignee_usernames.map(String)
+    : [];
 }
 
 async function moveRetainedApprovalStepsToTemporaryIndexes(

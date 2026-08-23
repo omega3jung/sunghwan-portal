@@ -1,3 +1,4 @@
+import { LocalizedName } from "@/domain/organization";
 import { LocalizedText } from "@/shared/types";
 
 import {
@@ -20,4 +21,19 @@ export interface AuthUserDto {
   companyId: number;
   permission: AuthAccountPermission;
   role: AuthAccountRole;
+}
+
+/** Defines the minimal auth projection required to validate impersonation. */
+export interface AuthImpersonationTargetDto {
+  username: string;
+  userScope: AuthAccountUserScope;
+  permission: AuthAccountPermission;
+}
+
+/** Defines a portal-login employee exposed as an impersonation candidate. */
+export interface AuthImpersonationEmployeeDto {
+  username: string;
+  name: LocalizedName;
+  email: string;
+  imageUrl: string | null;
 }

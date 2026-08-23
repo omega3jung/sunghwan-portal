@@ -1,3 +1,4 @@
+import type { AppUser } from "@/domain/user";
 import { normalizePagination } from "@/lib/application/api/query";
 import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
 import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
@@ -9,6 +10,25 @@ type TicketSortField = NonNullable<TicketSearchRequestDto["sort"]>["field"];
 
 /** Lets ticket reads and writes participate in a caller-owned PostgreSQL transaction. */
 export type TicketRepositoryOptions = ServiceDeskRepositoryOptions;
+export type TicketReadPrincipal = Pick<
+  AppUser,
+  "username" | "companyId" | "userScope"
+>;
+
+const TICKET_READ_AUTHORIZATION_PREDICATE = `(
+  ticket_view.tk_requester_username = __USERNAME_PARAM__
+  or __USERNAME_PARAM__ = any(coalesce(ticket_view.tk_assignee_usernames, array[]::text[]))
+  or exists (
+    select 1
+    from service_desk.tenant authorization_tenant
+    where authorization_tenant.tn_id = ticket_view.tk_tenant_id
+      and authorization_tenant.tn_company_id = __COMPANY_ID_PARAM__
+  )
+  or (
+    __USER_SCOPE_PARAM__ = 'INTERNAL'
+    and ticket_view.cat_scope = 'PORTAL'
+  )
+)`;
 
 const TICKET_VIEW_COLUMNS = `
   tk_id,
@@ -54,6 +74,7 @@ ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket ticket_view
 where tk_active = true
   and tk_status != 'Draft'
+  and __AUTHORIZATION_PREDICATE__
 order by tk_ticket_no desc, tk_created_at desc;
 `;
 
@@ -64,6 +85,7 @@ from service_desk.vw_ticket ticket_view
 where tk_active = true
   and tk_status != 'Draft'
   and tk_id = $1
+  and __AUTHORIZATION_PREDICATE__
 limit 1;
 `;
 
@@ -216,24 +238,8 @@ with category_context as (
     on tenant_company.c_id = tenant.tn_company_id
   left join service_desk.assignment_rule exact_rule
     on exact_rule.ar_category_id = category.cat_id
-    and (
-      jsonb_array_length(
-        coalesce(exact_rule.ar_assignee -> 'job_field_id', '[]'::jsonb)
-      ) > 0
-      or jsonb_array_length(
-        coalesce(exact_rule.ar_assignee -> 'employee_username', '[]'::jsonb)
-      ) > 0
-    )
   left join service_desk.assignment_rule parent_rule
     on parent_rule.ar_category_id = parent.cat_id
-    and (
-      jsonb_array_length(
-        coalesce(parent_rule.ar_assignee -> 'job_field_id', '[]'::jsonb)
-      ) > 0
-      or jsonb_array_length(
-        coalesce(parent_rule.ar_assignee -> 'employee_username', '[]'::jsonb)
-      ) > 0
-    )
   where category.cat_id = $1::bigint
     and category.cat_active = true
     and (category.cat_parent_id is null or parent.cat_active = true)
@@ -328,14 +334,18 @@ limit __LIMIT_PARAM__ offset __OFFSET_PARAM__;
 
 const COUNT_ACTIVE_TICKET_VIEW_ROWS_BY_SEARCH_QUERY = `
 select count(*)::int as count
-from service_desk.vw_ticket
+from service_desk.vw_ticket ticket_view
 where __WHERE_CLAUSE__;
 `;
 
 /** Queries PostgreSQL for active ticket view rows without applying presentation concerns. */
-export async function findActiveTicketViewRows() {
+export async function findActiveTicketViewRows(principal: TicketReadPrincipal) {
   return queryPortalApi<ServiceDeskTicketViewRow>(
-    FIND_ACTIVE_TICKET_VIEW_ROWS_QUERY,
+    FIND_ACTIVE_TICKET_VIEW_ROWS_QUERY.replace(
+      "__AUTHORIZATION_PREDICATE__",
+      buildTicketReadAuthorizationPredicate(1),
+    ),
+    toTicketReadAuthorizationValues(principal),
   );
 }
 
@@ -343,11 +353,22 @@ export async function findActiveTicketViewRows() {
 export async function findActiveTicketViewRowById(
   ticketId: string,
   options: TicketRepositoryOptions = {},
+  principal?: TicketReadPrincipal,
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<ServiceDeskTicketViewRow>(
-    FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY,
-    [ticketId],
+    principal
+      ? FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY.replace(
+          "__AUTHORIZATION_PREDICATE__",
+          buildTicketReadAuthorizationPredicate(2),
+        )
+      : FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY.replace(
+          "  and __AUTHORIZATION_PREDICATE__\n",
+          "",
+        ),
+    principal
+      ? [ticketId, ...toTicketReadAuthorizationValues(principal)]
+      : [ticketId],
   );
 
   return rows[0] ?? null;
@@ -469,12 +490,18 @@ export async function findApprovalStepAssigneeUsernames(
   params: {
     approvalStepId: number | string;
     requesterUsername: string;
+    allowInactiveCategory?: boolean;
   },
   options: TicketRepositoryOptions = {},
 ): Promise<string[]> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ assignee_usernames: unknown }>(
-    FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY,
+    params.allowInactiveCategory
+      ? FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY.replace(
+          "    and category.cat_active = true\n",
+          "",
+        )
+      : FIND_APPROVAL_STEP_ASSIGNEE_USERNAMES_QUERY,
     [params.approvalStepId, params.requesterUsername],
   );
 
@@ -486,12 +513,18 @@ export async function findCategoryAssignmentUsernames(
   params: {
     categoryId: number | string;
     requesterUsername: string;
+    allowInactiveCategory?: boolean;
   },
   options: TicketRepositoryOptions = {},
 ): Promise<string[]> {
   const query = options.query ?? queryPortalApi;
   const rows = await query<{ assignee_usernames: unknown }>(
-    FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY,
+    params.allowInactiveCategory
+      ? FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY.replace(
+          "    and category.cat_active = true\n    and (category.cat_parent_id is null or parent.cat_active = true)\n",
+          "",
+        )
+      : FIND_CATEGORY_ASSIGNMENT_USERNAMES_QUERY,
     [params.categoryId, params.requesterUsername],
   );
 
@@ -534,9 +567,10 @@ export async function findExpiredResolvedTicketViewRows(
 /** Queries PostgreSQL for active ticket view rows by search without applying presentation concerns. */
 export async function findActiveTicketViewRowsBySearch(
   request: TicketSearchRequestDto,
+  principal: TicketReadPrincipal,
 ) {
   const pagination = normalizePagination(request);
-  const where = buildTicketSearchWhereClause(request.filter);
+  const where = buildTicketSearchWhereClause(request.filter, principal);
   const orderByClause = resolveTicketOrderBy(request.sort);
   const limitParam = `$${where.values.length + 1}`;
   const offsetParam = `$${where.values.length + 2}`;
@@ -638,6 +672,7 @@ type TicketSearchField = {
 
 const TICKET_SEARCH_FIELDS: Record<string, TicketSearchField> = {
   active: { expression: "tk_active" },
+  cat_scope: { expression: "ticket_view.cat_scope" },
   ticketNumber: { expression: "tk_ticket_no" },
   subject: { expression: "tk_subject" },
   categoryId: { expression: "cat_id::text" },
@@ -675,16 +710,23 @@ function resolveTicketOrderBy(sort: TicketSearchRequestDto["sort"]) {
 }
 
 // Compiles the recursive UI filter model into parameterized SQL plus its bound values.
-function buildTicketSearchWhereClause(filter: unknown): {
+function buildTicketSearchWhereClause(
+  filter: unknown,
+  principal: TicketReadPrincipal,
+): {
   clause: string;
   values: unknown[];
 } {
-  const values: unknown[] = [];
+  const values: unknown[] = toTicketReadAuthorizationValues(principal);
   const filterClause = buildTicketFilterNode(
     filter as TicketFilterNode,
     values,
   );
-  const clauses = ["tk_active = true", "tk_status not in ('Draft')"];
+  const clauses = [
+    "tk_active = true",
+    "tk_status not in ('Draft')",
+    buildTicketReadAuthorizationPredicate(1),
+  ];
 
   if (filterClause) {
     clauses.push(filterClause);
@@ -694,6 +736,19 @@ function buildTicketSearchWhereClause(filter: unknown): {
     clause: clauses.join("\n  and "),
     values,
   };
+}
+
+function buildTicketReadAuthorizationPredicate(firstParameter: number) {
+  return TICKET_READ_AUTHORIZATION_PREDICATE.replaceAll(
+    "__USERNAME_PARAM__",
+    `$${firstParameter}`,
+  )
+    .replace("__COMPANY_ID_PARAM__", `$${firstParameter + 1}`)
+    .replace("__USER_SCOPE_PARAM__", `$${firstParameter + 2}`);
+}
+
+function toTicketReadAuthorizationValues(principal: TicketReadPrincipal) {
+  return [principal.username, principal.companyId, principal.userScope];
 }
 
 function buildTicketFilterNode(

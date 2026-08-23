@@ -3,7 +3,9 @@ import z from "zod";
 import { ACCESS_LEVEL, type AccessLevel } from "@/domain/auth";
 import type { LocalizedText } from "@/shared/types";
 
-const localizedTextSchema = z.object({ en: z.string() }).catchall(z.string());
+export const requiredLocalizedCanonicalNameSchema = z
+  .object({ en: z.string().trim().min(1) })
+  .catchall(z.string());
 const optionalLocalizedTextSchema = z
   .object({})
   .catchall(z.string())
@@ -18,7 +20,7 @@ const optionalLocalizedTextSchema = z
 const tenantSchema = z.object({
   id: z.string().optional(),
   companyId: z.string().min(1),
-  name: localizedTextSchema,
+  name: requiredLocalizedCanonicalNameSchema,
   color: z.string().optional(),
   active: z.boolean().optional(),
 });
@@ -30,7 +32,7 @@ export const updateTenantSchema = tenantSchema.omit({ id: true });
 
 const subCategorySchema = z.object({
   id: z.string().optional(),
-  name: localizedTextSchema,
+  name: requiredLocalizedCanonicalNameSchema,
   description: optionalLocalizedTextSchema.optional(),
   requestTemplate: optionalLocalizedTextSchema.optional(),
   index: z.number().int().nonnegative(),
@@ -42,7 +44,7 @@ const subCategorySchema = z.object({
 const categorySchema = z.object({
   id: z.string().optional(),
   tenantId: z.string().min(1).optional(),
-  name: localizedTextSchema,
+  name: requiredLocalizedCanonicalNameSchema,
   description: optionalLocalizedTextSchema.optional(),
   requestTemplate: optionalLocalizedTextSchema.optional(),
   scope: z.enum(["PORTAL", "INTERNAL"]),
@@ -57,6 +59,7 @@ const categorySchema = z.object({
 /** Validates save category tree payloads at the Service Desk application boundary. */
 export const saveCategoryTreeSchema = z.object({
   tenantId: z.string().min(1),
+  force: z.boolean().optional().default(false),
   categories: z.array(categorySchema.omit({ tenantId: true })),
 });
 
@@ -83,8 +86,8 @@ const skipAccessLevelSchema = z
   );
 const approvalStepSchema = z.object({
   id: z.string().optional(),
-  name: localizedTextSchema,
-  description: localizedTextSchema.optional(),
+  name: requiredLocalizedCanonicalNameSchema,
+  description: optionalLocalizedTextSchema.optional(),
   index: z.number().int().nonnegative(),
   categoryId: z.string().min(1).optional(),
   stepAssignee: approvalAssigneeSchema,
@@ -94,6 +97,7 @@ const approvalStepSchema = z.object({
 /** Validates save approval step tree payloads at the Service Desk application boundary. */
 export const saveApprovalStepTreeSchema = z.object({
   tenantId: z.string().min(1),
+  force: z.boolean().optional().default(false),
   categories: z.array(
     z.object({
       id: z.string().min(1),

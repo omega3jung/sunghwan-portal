@@ -7,6 +7,7 @@ import { normalizePath } from "../utils";
 import { handleApprovalStepPortalApi } from "./approvalStepApiHandler";
 import { handleAssignmentRulePortalApi } from "./assignmentRuleApiHandler";
 import { handleCategoryPortalApi } from "./categoryApiHandler";
+import { handleCronPortalApi } from "./cronApiHandler";
 import {
   createNotFoundResponse,
   type ServiceDeskPortalApiContext,
@@ -47,6 +48,10 @@ export async function handleServiceDeskPortalApi(
 
     if (path.startsWith("/service-desk/assignment-rules")) {
       return await handleAssignmentRulePortalApi(context);
+    }
+
+    if (path.startsWith("/service-desk/cron")) {
+      return await handleCronPortalApi(context);
     }
 
     if (path.startsWith("/service-desk/tickets")) {

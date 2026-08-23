@@ -87,7 +87,15 @@ export function MergeFields({
       ),
     [ticketId, ticketList, ticketScope, ticketTenantId],
   );
-  const hasMergeTicketList = canMergeTicketList.length > 0;
+  const mergeTicketOptions = useMemo(
+    () =>
+      canMergeTicketList.map((ticket) => ({
+        value: ticket.id,
+        label: `#${ticket.ticketNumber} - ${ticket.subject}`,
+      })),
+    [canMergeTicketList],
+  );
+  const hasMergeTicketList = mergeTicketOptions.length > 0;
   const emptyMergeCandidateLabel = `${t("actionTool.form.targetTicketId")}: ${t("empty.noResults", { ns: NS.common })}`;
   const selectPlaceholder = hasMergeTicketList
     ? t("placeholder.select", {
@@ -118,6 +126,7 @@ export function MergeFields({
           <Skeleton className="h-9 w-full" />
       ) : (
         <Select
+          items={mergeTicketOptions}
           value={targetTicketId}
           onValueChange={(value) => {
             if (value !== null) {
@@ -132,9 +141,9 @@ export function MergeFields({
 
           <SelectContent>
             {hasMergeTicketList ? (
-              canMergeTicketList.map((ticket) => (
-                <SelectItem key={ticket.id} value={ticket.id}>
-                  {`#${ticket.ticketNumber} - ${ticket.subject}`}
+              mergeTicketOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))
             ) : (

@@ -16,7 +16,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-06T06:13:27Z",
+    tkh_created_at: "2026-08-06T06:13:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -33,7 +33,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { assigneeUsernames: ["evan_seo", "daniel_kim"] },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-06T06:18:09Z",
+    tkh_created_at: "2026-08-06T06:18:09Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -50,7 +50,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: { status: "Working" },
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-06T06:20:03Z",
+    tkh_created_at: "2026-08-06T06:20:03Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -66,7 +66,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-06T06:22:11Z",
+    tkh_created_at: "2026-08-06T06:22:11Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -82,7 +82,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_to_value: null,
     tkh_metadata: {},
 
-    tkh_created_at: "2026-07-06T06:25:44Z",
+    tkh_created_at: "2026-08-06T06:25:44Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -116,6 +116,6 @@ export const histories: TicketHistoryMockInput[] = [
       note: "Closed as merged child ticket",
     },
 
-    tkh_created_at: "2026-07-06T07:12:34Z",
+    tkh_created_at: "2026-08-06T07:12:34Z",
   },
 ];

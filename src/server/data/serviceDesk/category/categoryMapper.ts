@@ -139,7 +139,6 @@ export function mapCategorySubCategoryInputDtoToCreateRowInput(
   tenantId: string | number,
   parentCategoryId: string | number,
   input: CategorySubCategoryInputDto,
-  parentActive: boolean,
 ): CreateCategoryRowInput {
   return {
     cat_tenant_id: Number(tenantId),
@@ -149,7 +148,7 @@ export function mapCategorySubCategoryInputDtoToCreateRowInput(
     cat_description: input.category_description,
     cat_request_template: input.category_request_template,
     cat_index: input.category_index,
-    cat_active: parentActive ? input.category_active : false,
+    cat_active: input.category_active,
     cat_default_priority: input.default_priority ?? null,
     cat_default_risk_level: input.default_risk_level ?? null,
     cat_default_sla_days: input.default_sla_days ?? null,
@@ -160,7 +159,6 @@ export function mapCategorySubCategoryInputDtoToCreateRowInput(
 export function mapCategorySubCategoryInputDtoToUpdateRowInput(
   parentCategoryId: string | number,
   input: CategorySubCategoryInputDto,
-  parentActive: boolean,
 ): UpdateCategoryRowInput {
   return {
     cat_parent_id: Number(parentCategoryId),
@@ -169,7 +167,7 @@ export function mapCategorySubCategoryInputDtoToUpdateRowInput(
     cat_description: input.category_description,
     cat_request_template: input.category_request_template,
     cat_index: input.category_index,
-    cat_active: parentActive ? input.category_active : false,
+    cat_active: input.category_active,
     cat_default_priority: input.default_priority ?? null,
     cat_default_risk_level: input.default_risk_level ?? null,
     cat_default_sla_days: input.default_sla_days ?? null,

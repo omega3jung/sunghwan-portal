@@ -47,7 +47,7 @@ export const loginApi = async ({
 
     const verifiedUser = payload.data ?? null;
 
-    if (!verifiedUser || verifiedUser.userScope !== "INTERNAL") {
+    if (!verifiedUser) {
       throw new Error("INVALID_CREDENTIALS");
     }
 

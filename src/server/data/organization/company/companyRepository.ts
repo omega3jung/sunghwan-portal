@@ -11,7 +11,7 @@ select
   c_active
 from company
 where c_active = true
-order by c_portal_owner, c_name, c_code, c_id
+order by c_portal_owner desc, c_name, c_code, c_id
 `;
 
 /** Queries PostgreSQL for active company rows without applying presentation concerns. */

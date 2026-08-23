@@ -12,7 +12,7 @@ export const getDefaultCategoryData = (count: number): CategoryData => {
     id: `${newCategoryIdPrefix}${count}`,
     name: { en: `${newCategoryNamePrefix}${count}` },
     index: 1,
-    active: true,
+    active: false,
     scope: "INTERNAL",
     nodeType: "category",
     isCreated: true,
@@ -27,7 +27,7 @@ export const getDefaultSubCategoryData = (count: number): SubCategoryData => {
     id: `${newSubCategoryIdPrefix}${count}`,
     name: { en: `${newSubCategoryNamePrefix}${count}` },
     index: 1,
-    active: true,
+    active: false,
     nodeType: "subCategory",
     isCreated: true,
   };

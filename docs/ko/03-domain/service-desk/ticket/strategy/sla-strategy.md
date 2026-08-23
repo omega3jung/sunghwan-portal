@@ -190,6 +190,23 @@ Resolved-ticket auto close는 lifecycle cleanup rule이지 service-level breach 
 
 ---
 
+## 현재 Default 및 최소 마감일 규칙
+
+Ticket 생성 시 유효한 명시적 priority/risk 값은 그대로 보존한다. 값이 없으면
+선택한 subcategory의 default를 사용하고, 없을 때 main category default로
+fallback한다. 서버는 제출된 due date가
+`today + effective defaultSlaDays`보다 이르면 거부한다.
+
+Requester가 Category를 변경하면 priority/risk는 새 Category default로 다시
+결정한다. due date는 다음 세 값 중 가장 늦은 값이며 Category 변경으로 기존
+마감일을 앞당기지 않는다.
+
+```txt
+nextDueAt = later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)
+```
+
+LOCAL과 REMOTE는 동일한 main/subcategory fallback과 서버 권위 규칙을 사용한다.
+
 ## 요약
 
 현재 SLA model은 의도적으로 작고 구현과 정렬되어 있다. Category settings는 default

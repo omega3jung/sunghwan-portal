@@ -155,8 +155,9 @@ export async function findCategoryRowsByTenantId(
 export async function findCategoryRowsByTenantIdAndCategoryId(
   tenantId: string | number,
   categoryId: string | number,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<CategoryRow[]> {
-  return queryPortalApi<CategoryRow>(
+  return query<CategoryRow>(
     FIND_CATEGORY_ROWS_BY_TENANT_ID_AND_CATEGORY_ID_QUERY,
     [Number(tenantId), Number(categoryId)],
   );
@@ -186,8 +187,9 @@ export async function findCategoryContextRowById(
 /** Creates category row through the server persistence boundary. */
 export async function createCategoryRow(
   input: CreateCategoryRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<CategoryRow | null> {
-  const rows = await queryPortalApi<CategoryRow>(CREATE_CATEGORY_ROW_QUERY, [
+  const rows = await query<CategoryRow>(CREATE_CATEGORY_ROW_QUERY, [
     input.cat_tenant_id,
     input.cat_parent_id,
     input.cat_scope,
@@ -209,24 +211,22 @@ export async function updateCategoryRowById(
   tenantId: string | number,
   categoryId: string | number,
   input: UpdateCategoryRowInput,
+  query: PortalApiQueryExecutor = queryPortalApi,
 ): Promise<CategoryRow | null> {
-  const rows = await queryPortalApi<CategoryRow>(
-    UPDATE_CATEGORY_ROW_BY_ID_QUERY,
-    [
-      Number(tenantId),
-      Number(categoryId),
-      input.cat_parent_id,
-      input.cat_scope,
-      JSON.stringify(input.cat_name),
-      JSON.stringify(input.cat_description),
-      JSON.stringify(input.cat_request_template),
-      input.cat_index,
-      input.cat_active,
-      input.cat_default_priority,
-      input.cat_default_risk_level,
-      input.cat_default_sla_days,
-    ],
-  );
+  const rows = await query<CategoryRow>(UPDATE_CATEGORY_ROW_BY_ID_QUERY, [
+    Number(tenantId),
+    Number(categoryId),
+    input.cat_parent_id,
+    input.cat_scope,
+    JSON.stringify(input.cat_name),
+    JSON.stringify(input.cat_description),
+    JSON.stringify(input.cat_request_template),
+    input.cat_index,
+    input.cat_active,
+    input.cat_default_priority,
+    input.cat_default_risk_level,
+    input.cat_default_sla_days,
+  ]);
 
   return rows[0] ?? null;
 }

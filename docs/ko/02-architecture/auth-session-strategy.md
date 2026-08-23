@@ -203,7 +203,6 @@ session.impersonation = {
     username,
   },
   impersonatedUser: {
-    id,
     username,
   },
   activatedAt,
@@ -392,14 +391,18 @@ impersonation은 auth/session architecture의 일부로 지원된다.
 NextAuth session은 최소한의 impersonation metadata만 담는다.
 
 ```ts
-type UserInfo = {
+type OriginalUserInfo = {
   id: string; // authentication/account identity id
   username: string; // internal unique key
 };
 
+type ImpersonatedUserInfo = {
+  username: string; // effective identity key
+};
+
 type ImpersonationInfo = {
-  originalUser: UserInfo;
-  impersonatedUser: UserInfo;
+  originalUser: OriginalUserInfo;
+  impersonatedUser: ImpersonatedUserInfo;
   activatedAt: number;
 };
 ```

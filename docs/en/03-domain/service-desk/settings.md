@@ -108,11 +108,11 @@ Service Desk Settings has two administrative principal types. They are derived
 from a server-resolved canonical `AppUser`, not from a client claim or role
 hierarchy.
 
-| Settings admin type      | Required trusted fields                               |
-| ------------------------ | ----------------------------------------------------- |
+| Settings admin type      | Required trusted fields                                |
+| ------------------------ | ------------------------------------------------------ |
 | Owner Admin              | `permission >= ADMIN` (`9`) and `userScope = INTERNAL` |
 | Tenant Admin             | `permission >= ADMIN` (`9`) and `userScope = CLIENT`   |
-| no Settings admin access | any lower permission, regardless of `userScope`       |
+| no Settings admin access | any lower permission, regardless of `userScope`        |
 
 Use the canonical access-level constant rather than duplicating the numeric
 value in feature code. `role`, `dataScope`, the focused tenant, request
@@ -316,8 +316,50 @@ scope for visibility and routing purposes.
 
 ### Active Policy
 
-Inactive categories are not offered for new ticket selection. Existing tickets
-that already reference an inactive category remain readable and auditable.
+Category creation and activation are separate lifecycle steps:
+
+```txt
+create Category
+-> stored active = false
+-> configure Category
+-> configure Assignment Rule
+-> explicitly activate Category
+```
+
+The server/application create boundary forces both new main categories and new
+subcategories to `active = false`, even when a client submits `active = true`.
+An inactive category may still be shown in Settings and configured. It is not
+offered for new ticket selection.
+
+An inactive-to-active transition requires an effective Assignment Rule with at
+least one currently active Job Field reference or active Employee reference.
+For a main category, the effective rule is its own rule. For a subcategory, its
+own rule wins when present; the main-category rule is used only when no own rule
+exists. An existing but invalid own rule never falls back to the parent.
+
+This activation check is configuration readiness, not final routing:
+
+```txt
+Category activation validation
+!=
+Ticket routing-time validation
+```
+
+Activation does not expand a Job Field to current employees. Ticket submit,
+resubmit, category-sensitive update, and explicit rerouting continue to enforce
+the stronger employee/company/tenant eligibility policy and fail if no worker
+can actually be resolved.
+
+Main and subcategory stored states remain independent. A main-category
+deactivation does not overwrite its children:
+
+```ts
+const effectiveActive = mainCategory.active && subCategory.active;
+```
+
+Therefore reactivating a main category restores each child's prior effective
+state. Existing tickets that already reference an inactive category remain
+readable and auditable.
 
 Deactivation should affect future selection and future evaluation. It must not
 erase or reinterpret existing ticket history.
@@ -501,21 +543,29 @@ Assignment-rule mutation must validate:
 - empty or invalid assignment groups
 - cross-tenant or inactive reference usage
 
-Employees and organization references are filtered and validated against the
-selected Tenant company. Employee lookup uses `e_company_id`; department lookup
-uses `d_company_id`; and job-field lookup joins `jf_department_id = d_id` before
-applying `d_company_id`. Client-provided category scope, purpose, owner flags,
-or precomputed allowed-company lists are not organization lookup inputs.
+The empty form state is not a persisted Assignment Rule. A rule is saveable
+only when `jobFieldIds.length > 0 || assigneeUsernames.length > 0`. Removing a
+subcategory override deletes that rule so parent fallback is restored; it does
+not persist an empty override. Main categories may be inactive while their rule
+is configured, because configuration must precede explicit activation.
 
-Candidate read APIs receive the selected company ID and choose the corresponding
-repository query before returning departments, job fields, and employees.
+Assignment candidates, save validation, activation readiness, recommendations,
+and routing use one stored-category policy: Owner `INTERNAL` uses the owner
+company, customer `INTERNAL` uses the Tenant company, `PORTAL` uses the owner
+company by default, and `PORTAL` with `includeTenantCompany` uses both. Employee
+and Job Field references must belong to that eligible set. Client-provided
+category scope, owner flags, or precomputed company lists are not authoritative.
+
+Candidate read APIs derive the same company set before returning departments,
+job fields, and employees.
 On REMOTE save, PostgreSQL resolves the canonical policy from the stored
 category and validates all submitted job-field and employee references in one
-set-based query inside the assignment-tree write transaction. The write API
-does not reproduce the candidate lookup. Submit, resubmit, and explicit routing
-commands validate eligibility again because organization data may change after
-configuration. Routing fails when no valid worker remains instead of creating
-an unowned `Assigned` ticket.
+set-based query inside the assignment-tree write transaction. An active Job
+Field is a valid configuration reference even when it currently has no active
+employee; expanding it to actual workers belongs to routing-time validation.
+Submit, resubmit, and explicit routing commands validate eligibility again
+because organization data may change after configuration. Routing fails when
+no valid worker remains instead of creating an unowned `Assigned` ticket.
 
 Read-only Tenant Admin access to a customer `PORTAL` assignment rule may
 include display data for its currently referenced provider assignees. It does
@@ -759,19 +809,19 @@ The following items are deferred unless explicitly implemented:
 
 ## Responsibility Matrix
 
-| Area                          | Responsibility                                          |
-| ----------------------------- | ------------------------------------------------------- |
-| Domain model                  | Define application-facing settings shapes               |
-| Feature API client            | Call settings APIs and expose typed operations          |
-| Route handler                 | Parse HTTP and delegate by runtime                      |
-| Settings authorization policy | Resolve trusted principal and resource capability       |
-| LOCAL settings handler        | Provide safe mutable demo behavior                      |
-| REMOTE DTO service            | Map persisted rows to stable DTOs                       |
+| Area                          | Responsibility                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| Domain model                  | Define application-facing settings shapes                                            |
+| Feature API client            | Call settings APIs and expose typed operations                                       |
+| Route handler                 | Parse HTTP and delegate by runtime                                                   |
+| Settings authorization policy | Resolve trusted principal and resource capability                                    |
+| LOCAL settings handler        | Provide safe mutable demo behavior                                                   |
+| REMOTE DTO service            | Map persisted rows to stable DTOs                                                    |
 | Server service/repository     | Atomically validate stored category/organization relations and write REMOTE settings |
-| React Query                   | Own settings server state                               |
-| Settings UI                   | Edit configuration through workflow-shaped forms        |
-| Ticket workflow               | Resolve current settings into ticket behavior           |
-| Ticket history                | Preserve the meaning of executed ticket actions         |
+| React Query                   | Own settings server state                                                            |
+| Settings UI                   | Edit configuration through workflow-shaped forms                                     |
+| Ticket workflow               | Resolve current settings into ticket behavior                                        |
+| Ticket history                | Preserve the meaning of executed ticket actions                                      |
 
 ---
 
@@ -795,6 +845,23 @@ The following items are deferred unless explicitly implemented:
 
 Service Desk Settings define future ticket behavior through tenant, category,
 approval-step, and assignment-rule configuration.
+
+Current workflow-impact policy is explicit:
+
+- a customer Tenant cannot be deactivated or deleted while it owns a live
+  ticket whose status is neither `Draft` nor `Closed`; the portal-owner Tenant
+  remains protected unconditionally
+- Category deactivation requires impact acknowledgement when live tickets use
+  the main category or one of its subcategories, but it changes only future
+  workflow availability and does not rewrite existing Ticket or History data
+- ordinary Category and Assignment Rule edits do not reset existing routing
+- an Approval Step tree change that affects `Approval` tickets requires an
+  explicit force apply; force apply saves the valid tree, reroutes every
+  affected ticket from the first step, and appends `ROUTING_RESET` with reason
+  `APPROVAL_CONFIGURATION_CHANGED` in one transaction
+- in-flight approval may continue after Category deactivation, while initial,
+  resubmitted, and explicitly restarted routing still require an operational
+  Category
 
 The current model uses tenant-scoped category trees, category scopes `PORTAL`
 and `INTERNAL`, ordered approval steps with typed assignees, and group-based

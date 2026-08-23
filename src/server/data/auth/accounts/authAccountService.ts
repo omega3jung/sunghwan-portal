@@ -1,8 +1,17 @@
 import { comparePasswordHash } from "@/server/shared/security/password";
 
-import { AuthUserDto } from "./authAccountDto";
-import { toAuthUser } from "./authAccountMapper";
 import {
+  AuthImpersonationEmployeeDto,
+  AuthImpersonationTargetDto,
+  AuthUserDto,
+} from "./authAccountDto";
+import {
+  toAuthImpersonationEmployees,
+  toAuthImpersonationTarget,
+  toAuthUser,
+} from "./authAccountMapper";
+import {
+  findEligibleImpersonationEmployeesByCompanyId,
   findImpersonationTarget,
   findLoginAuthUser,
   updateAuthAccountLastLoginAt,
@@ -36,12 +45,22 @@ export async function verifyLoginCredentials(
 /** Loads impersonation target auth user through the server data boundary. */
 export async function getImpersonationTargetAuthUser(
   username: string,
-): Promise<AuthUserDto | null> {
+): Promise<AuthImpersonationTargetDto | null> {
   const account = await findImpersonationTarget(username);
 
   if (!account) {
     return null;
   }
 
-  return toAuthUser(account);
+  return toAuthImpersonationTarget(account);
+}
+
+/** Loads active portal-login employees available to the impersonation UI. */
+export async function getEligibleImpersonationEmployeesByCompanyId(
+  companyId: number,
+): Promise<AuthImpersonationEmployeeDto[]> {
+  const employees =
+    await findEligibleImpersonationEmployeesByCompanyId(companyId);
+
+  return toAuthImpersonationEmployees(employees);
 }

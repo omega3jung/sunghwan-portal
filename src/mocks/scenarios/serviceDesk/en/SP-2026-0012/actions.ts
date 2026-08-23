@@ -8,7 +8,7 @@ export const actions: TicketActionMockInput[] = [
     tka_action_type: "APPROVE",
     tka_content: "Adrian Vega approved the request.",
     tka_owner_username: "adrian_vega",
-    tka_created_at: "2026-07-12T05:54:30Z",
+    tka_created_at: "2026-08-12T05:54:30Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -22,7 +22,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Hello, Tessa.<br>We will check Solar Farm A's telemetry collector, message broker, generation data store, and report data generation job in order.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T06:12:18Z",
+    tka_created_at: "2026-08-12T06:12:18Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -36,7 +36,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "Current data continues to arrive in the external monitoring system. Only the Energy Operations Dashboard and daily generation report show 14:35 as the latest data.",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-12T06:35:42Z",
+    tka_created_at: "2026-08-12T06:35:42Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -50,7 +50,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "The internal telemetry collection, message broker, generation data store, and report data generation job are all operating normally, and the latest data is stored. The synchronization error occurs only on the Dashboard Refresh request, so we believe the issue is in the portal integration layer.<br>Please create a new Portal / System ticket and include the error message and these inspection results.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T07:52:36Z",
+    tka_created_at: "2026-08-12T07:52:36Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},
@@ -64,7 +64,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "I created Portal / System ticket SP-2026-0013 with the inspection results and the “Unable to synchronize telemetry data” error.",
     tka_owner_username: "tessa_ito",
-    tka_created_at: "2026-07-12T08:15:10Z",
+    tka_created_at: "2026-08-12T08:15:10Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
@@ -81,7 +81,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "The inspection results have been handed off through SP-2026-0013. We confirmed that there is no issue in the internal data processing pipeline, so this ticket will be resolved and further progress will be tracked in the portal ticket.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-12T08:18:04Z",
+    tka_created_at: "2026-08-12T08:18:04Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {
@@ -98,7 +98,7 @@ export const actions: TicketActionMockInput[] = [
     tka_content:
       "The internal data pipeline is operating normally and the issue is isolated to portal synchronization. This ticket is escalated to portal ticket SP-2026-0013 for follow-up.",
     tka_owner_username: "bianca_davis",
-    tka_created_at: "2026-07-13T08:20:34Z",
+    tka_created_at: "2026-08-13T08:20:34Z",
     tka_updated_at: null,
     tka_active: true,
     tka_metadata: {},

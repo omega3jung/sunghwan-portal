@@ -12,7 +12,10 @@ import {
 import { useSettingsAccess } from "../../_providers";
 import { useTenantSelection } from "../ServiceDeskSettingsTenantSelectionProvider";
 
-const SETTINGS_SCOPES = ["INTERNAL", "PORTAL"] as const satisfies readonly CategoryScope[];
+const SETTINGS_SCOPES = [
+  "INTERNAL",
+  "PORTAL",
+] as const satisfies readonly CategoryScope[];
 
 export function useServiceDeskSettingsScopeAccess(
   resource: Exclude<ServiceDeskSettingsResource, "TENANT">,
@@ -28,6 +31,9 @@ export function useServiceDeskSettingsScopeAccess(
   );
   const isOwnerTenant =
     selectedTenantData !== null && isOwnerCompany(selectedTenantData.companyId);
+  const ownerCompanyId =
+    tenantData.find((tenant) => isOwnerCompany(tenant.companyId))?.companyId ??
+    null;
 
   const accessByScope = useMemo(
     () =>
@@ -71,6 +77,7 @@ export function useServiceDeskSettingsScopeAccess(
     canManage: canManageServiceDeskSettings(access),
     selectedTenantData,
     isOwnerTenant,
+    ownerCompanyId,
     contextKey: selectedTenant ? `${selectedTenant}:${selectedScope}` : null,
   };
 }

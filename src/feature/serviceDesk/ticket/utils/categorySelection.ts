@@ -1,6 +1,9 @@
 import type { HierarchicalSelectItem } from "@/components/custom/HierarchicalSelect";
 import type { Priority, RiskLevel } from "@/domain/common";
-import type { MainCategory } from "@/domain/serviceDesk";
+import {
+  isCategoryEffectivelyActive,
+  type MainCategory,
+} from "@/domain/serviceDesk";
 import type { LocalizedText } from "@/shared/types";
 
 type LocalizeText = (text: LocalizedText) => string;
@@ -25,10 +28,12 @@ export const mapTicketCategoriesToHierarchicalItems = (
   localizeText: LocalizeText,
 ): HierarchicalSelectItem[] =>
   categories
-    .filter((category) => category.active)
+    .filter((category) => isCategoryEffectivelyActive(category))
     .map((category) => {
       const children = category.subCategories
-        .filter((subCategory) => subCategory.active)
+        .filter((subCategory) =>
+          isCategoryEffectivelyActive(category, subCategory),
+        )
         .map(
           (subCategory): HierarchicalSelectItem => ({
             value: subCategory.id,

@@ -37,6 +37,8 @@ type LocalDemoSettingsState = {
   clientCategories: DbTenantCategoryTree[];
   clientApprovalSteps: DbCategoryApprovalSettings[];
   clientAssignmentRules: DbAssignmentRule[];
+  allCategoryIds: Set<number>;
+  nextCategoryId: number;
 };
 
 type CategoryScopedItem = {
@@ -52,25 +54,68 @@ declare global {
  * Runtime state below may be mutated by local demo handlers.
  */
 function createLocalDemoSettingsState(): LocalDemoSettingsState {
+  const internalCategories = clone<DbTenantCategoryTree[]>(
+    internalCategorySettingsMock,
+  );
+  const clientCategories = clone<DbTenantCategoryTree[]>(
+    clientCategorySettingsMock,
+  );
+  const allCategoryIds = collectCategoryIds([
+    ...internalCategories,
+    ...clientCategories,
+  ]);
+
   return {
     tenants: clone<DbTenant[]>([internalTenantMock, ...clientTenantsMock]),
-    internalCategories: clone<DbTenantCategoryTree[]>(
-      internalCategorySettingsMock,
-    ),
+    internalCategories,
     internalApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       internalApprovalStepSettingsMock,
     ),
     internalAssignmentRules: clone<DbAssignmentRule[]>(
       internalAssignmentRuleSettingsMock,
     ),
-    clientCategories: clone<DbTenantCategoryTree[]>(clientCategorySettingsMock),
+    clientCategories,
     clientApprovalSteps: clone<DbCategoryApprovalSettings[]>(
       clientApprovalStepSettingsMock,
     ),
     clientAssignmentRules: clone<DbAssignmentRule[]>(
       clientAssignmentRuleSettingsMock,
     ),
+    allCategoryIds,
+    nextCategoryId: getNextCategoryId(allCategoryIds),
   };
+}
+
+function collectCategoryIds(items: DbTenantCategoryTree[]) {
+  return new Set(
+    items.flatMap((tenant) =>
+      tenant.category.flatMap((category) => [
+        category.category_id,
+        ...category.sub_category.map(
+          (subCategory) => subCategory.category_id,
+        ),
+      ]),
+    ),
+  );
+}
+
+function getNextCategoryId(categoryIds: Set<number>) {
+  return Math.max(0, ...categoryIds) + 1;
+}
+
+function ensureCategoryIdState(state: LocalDemoSettingsState) {
+  if (!(state.allCategoryIds instanceof Set)) {
+    state.allCategoryIds = collectCategoryIds([
+      ...state.internalCategories,
+      ...state.clientCategories,
+    ]);
+    state.nextCategoryId = getNextCategoryId(state.allCategoryIds);
+    return;
+  }
+
+  if (!Number.isFinite(state.nextCategoryId)) {
+    state.nextCategoryId = getNextCategoryId(state.allCategoryIds);
+  }
 }
 
 // Local demo mutations must survive refetches and route handler module reloads.
@@ -81,7 +126,29 @@ function getLocalDemoSettingsState() {
       createLocalDemoSettingsState();
   }
 
-  return globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
+  const state =
+    globalThis.__SP_LOCAL_DEMO_SETTINGS_STATE__ as LocalDemoSettingsState;
+
+  // Development hot reload can retain state created by an older module shape.
+  ensureCategoryIdState(state);
+
+  return state;
+}
+
+/** Allocates a globally unique category ID in the process-local demo state. */
+export function allocateLocalDemoCategoryId() {
+  const state = getLocalDemoSettingsState();
+
+  while (state.allCategoryIds.has(state.nextCategoryId)) {
+    state.nextCategoryId += 1;
+  }
+
+  const categoryId = state.nextCategoryId;
+
+  state.allCategoryIds.add(categoryId);
+  state.nextCategoryId += 1;
+
+  return categoryId;
 }
 
 /** Returns demo tenants from the server-side LOCAL settings adapter. */

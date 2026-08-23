@@ -126,7 +126,7 @@ purpose-aware해야 한다. Settings capability와 approver/assignee company bou
 /api/service-desk/tickets/[ticketId]/histories
 /api/service-desk/tickets/[ticketId]/work-session
 /api/service-desk/tickets/attachments/prepare
-/api/service-desk/tickets/cron/close-expired-resolved
+/api/service-desk/cron/tickets/close-expired-resolved
 /api/service-desk/tenants
 /api/service-desk/tenants/[id]
 /api/service-desk/categories

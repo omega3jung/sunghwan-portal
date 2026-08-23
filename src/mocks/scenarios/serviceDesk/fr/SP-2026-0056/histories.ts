@@ -13,7 +13,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_from_value: null,
     tkh_to_value: null,
     tkh_metadata: {},
-    tkh_created_at: "2026-07-16T01:13:27Z",
+    tkh_created_at: "2026-08-16T01:13:27Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -30,7 +30,7 @@ export const histories: TicketHistoryMockInput[] = [
     tkh_metadata: {
       approvalStepId: "9",
     },
-    tkh_created_at: "2026-07-16T01:13:28Z",
+    tkh_created_at: "2026-08-16T01:13:28Z",
   },
   {
     tkh_ticket_id: ticket.tk_id,
@@ -53,6 +53,6 @@ export const histories: TicketHistoryMockInput[] = [
       reason: "Test de l'action Refuser",
       closeReason: "Rejected",
     },
-    tkh_created_at: "2026-07-16T01:18:09Z",
+    tkh_created_at: "2026-08-16T01:18:09Z",
   },
 ];
