@@ -153,7 +153,7 @@ export function StepperPage() {
                   {connectorStyleData.map((variant) => (
                     <div key={variant} className="flex items-center space-x-2">
                       <RadioGroupItem value={variant} />
-                      <h6>{t(`options.${variant}`)}</h6>
+                      <h6 className="text-nowrap">{t(`options.${variant}`)}</h6>
                     </div>
                   ))}
                 </RadioGroup>

@@ -564,6 +564,24 @@ export const documentGroups: DocumentGroup[] = [
             relativePath:
               "06-decisions/2026-08-boolean-capability-api-naming.md",
           },
+          {
+            id: "decision-category-activation-and-routing-readiness-2026-08",
+            titleKey:
+              "item.decisionCategoryActivationAndRoutingReadiness202608.title",
+            descriptionKey:
+              "item.decisionCategoryActivationAndRoutingReadiness202608.description",
+            relativePath:
+              "06-decisions/2026-08-category-activation-and-routing-readiness.md",
+          },
+          {
+            id: "decision-settings-change-and-in-flight-ticket-policy-2026-08",
+            titleKey:
+              "item.decisionSettingsChangeAndInFlightTicketPolicy202608.title",
+            descriptionKey:
+              "item.decisionSettingsChangeAndInFlightTicketPolicy202608.description",
+            relativePath:
+              "06-decisions/2026-08-settings-change-and-in-flight-ticket-policy.md",
+          },
         ],
       },
     ],
