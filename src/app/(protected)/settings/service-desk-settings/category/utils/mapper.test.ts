@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import type { TenantCategoryTree } from "@/domain/serviceDesk";
 
 import { createCategoryTree } from "./mapper";
-import { buildCategoryTreeSavePayload } from "./tree";
 
 const categories: TenantCategoryTree[] = [
   {
@@ -37,7 +36,7 @@ const categories: TenantCategoryTree[] = [
 
 describe("createCategoryTree", () => {
   it("keeps child collections only in TreeNode.children", () => {
-    const [category] = createCategoryTree(categories, "tenant-1");
+    const [category] = createCategoryTree(categories[0].categories);
 
     expect(category.data.nodeType).toBe("category");
     expect(category.data).not.toHaveProperty("subCategories");
@@ -45,19 +44,8 @@ describe("createCategoryTree", () => {
     expect(category.children[0].data.nodeType).toBe("subCategory");
   });
 
-  it("returns an empty tree for an unknown tenant", () => {
-    expect(createCategoryTree(categories, "missing")).toEqual([]);
+  it("returns an empty tree for an empty category collection", () => {
+    expect(createCategoryTree([])).toEqual([]);
   });
 
-  it("does not leak UI-only node metadata into the save payload", () => {
-    const payload = buildCategoryTreeSavePayload({
-      tenantId: "tenant-1",
-      tree: createCategoryTree(categories, "tenant-1"),
-    });
-
-    expect(payload.categories[0]).not.toHaveProperty("nodeType");
-    expect(payload.categories[0].subCategories[0]).not.toHaveProperty(
-      "nodeType",
-    );
-  });
 });

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type {
   AssigneeGroup,
   AssignmentRule,
-  TenantCategoryTree,
+  MainCategory,
 } from "@/domain/serviceDesk";
 
 import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
@@ -16,34 +16,28 @@ import {
 
 type UseAssignmentRuleTreeOptions = {
   contextKey: string | null;
-  selectedTenant: string | null;
-  categories: TenantCategoryTree[] | undefined;
+  categories: readonly MainCategory[] | undefined;
   assignmentRules: AssignmentRule[] | undefined;
 };
 
 export function useAssignmentRuleTree({
   contextKey,
-  selectedTenant,
   categories,
   assignmentRules,
 }: UseAssignmentRuleTreeOptions) {
   const source = useMemo(() => {
-    if (!contextKey || !categories || !selectedTenant || !assignmentRules) {
+    if (!contextKey || !categories || !assignmentRules) {
       return undefined;
     }
 
-    const tree = createAssignmentRuleTree(
-      categories,
-      selectedTenant,
-      assignmentRules,
-    );
+    const tree = createAssignmentRuleTree(categories, assignmentRules);
 
     return {
       contextKey,
       tree,
       signature: createAssignmentRuleSettingsSignatureFromTree(tree),
     };
-  }, [assignmentRules, categories, contextKey, selectedTenant]);
+  }, [assignmentRules, categories, contextKey]);
 
   const draft = useServiceDeskSettingsTreeDraft<AssignmentRuleNodeData>({
     contextKey,

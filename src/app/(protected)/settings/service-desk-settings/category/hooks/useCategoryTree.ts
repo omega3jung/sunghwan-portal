@@ -6,7 +6,7 @@ import {
   flattenTree,
   removeItem,
 } from "@/components/custom/SortableTree";
-import type { CategoryScope, TenantCategoryTree } from "@/domain/serviceDesk";
+import type { CategoryScope, MainCategory } from "@/domain/serviceDesk";
 
 import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
 import {
@@ -20,30 +20,28 @@ import { createCategorySettingsSignatureFromTree } from "../utils/tree";
 
 type UseCategoryTreeOptions = {
   contextKey: string | null;
-  selectedTenant: string | null;
-  categories: TenantCategoryTree[] | undefined;
+  categories: readonly MainCategory[] | undefined;
 };
 
 export function useCategoryTree({
   contextKey,
-  selectedTenant,
   categories,
 }: UseCategoryTreeOptions) {
   const newCategoryCountRef = useRef(1);
   const newSubCategoryCountRef = useRef(1);
   const source = useMemo(() => {
-    if (!contextKey || !categories || !selectedTenant) {
+    if (!contextKey || !categories) {
       return undefined;
     }
 
-    const tree = createCategoryTree(categories, selectedTenant);
+    const tree = createCategoryTree(categories);
 
     return {
       contextKey,
       tree,
       signature: createCategorySettingsSignatureFromTree(tree),
     };
-  }, [categories, contextKey, selectedTenant]);
+  }, [categories, contextKey]);
   const draft = useServiceDeskSettingsTreeDraft<
     CategoryData | SubCategoryData
   >({
