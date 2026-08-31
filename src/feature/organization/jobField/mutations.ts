@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { invalidateServiceDeskOrganizationDependencies } from "@/feature/serviceDesk/shared/invalidation";
+import { invalidateAssignmentRuleRecommendations } from "@/feature/serviceDesk/assignmentRule/invalidation";
 
 import { jobFieldApi } from "./api";
 import { jobFieldQueryKeys } from "./queryKeys";
@@ -14,7 +14,7 @@ export const useCreateJobFieldMutation = () => {
     mutationFn: jobFieldApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: jobFieldQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };
@@ -26,7 +26,7 @@ export const useUpdateJobFieldMutation = () => {
     mutationFn: jobFieldApi.update,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: jobFieldQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };
@@ -38,7 +38,7 @@ export const useDeleteJobFieldMutation = () => {
     mutationFn: jobFieldApi.remove,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: jobFieldQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };

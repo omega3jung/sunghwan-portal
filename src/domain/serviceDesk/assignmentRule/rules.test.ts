@@ -129,4 +129,72 @@ describe("assignment readiness", () => {
       }),
     ).toBe(false);
   });
+
+  it("rejects active assignment references outside the INTERNAL tenant company", () => {
+    const rule: AssignmentRule = {
+      categoryId: "1",
+      assignee: { jobFieldIds: ["owner-field"], assigneeUsernames: [] },
+    };
+
+    expect(
+      canActivateCategory({
+        ...internalCategoryContext,
+        assignmentRules: [rule],
+        categoryId: "1",
+        jobFields: [
+          { id: "owner-field", active: true, companyId: ownerCompanyId },
+        ],
+        employees: [],
+      }),
+    ).toBe(false);
+  });
+
+  it("uses provider references by default for PORTAL and includes tenant references only when configured", () => {
+    const providerRule: AssignmentRule = {
+      categoryId: "1",
+      assignee: { jobFieldIds: ["provider-field"], assigneeUsernames: [] },
+    };
+    const tenantRule: AssignmentRule = {
+      categoryId: "1",
+      assignee: { jobFieldIds: ["tenant-field"], assigneeUsernames: [] },
+    };
+    const portalContext = {
+      scope: "PORTAL" as const,
+      tenantCompanyId,
+      ownerCompanyId,
+      categoryId: "1",
+      employees: [],
+      jobFields: [
+        { id: "provider-field", active: true, companyId: ownerCompanyId },
+        { id: "tenant-field", active: true, companyId: tenantCompanyId },
+      ],
+    };
+
+    expect(
+      canActivateCategory({
+        ...portalContext,
+        assignmentRules: [providerRule],
+      }),
+    ).toBe(true);
+    expect(
+      canActivateCategory({
+        ...portalContext,
+        assignmentRules: [tenantRule],
+      }),
+    ).toBe(false);
+    expect(
+      canActivateCategory({
+        ...portalContext,
+        assignmentRules: [
+          {
+            ...tenantRule,
+            assignee: {
+              ...tenantRule.assignee,
+              includeTenantCompany: true,
+            },
+          },
+        ],
+      }),
+    ).toBe(true);
+  });
 });
