@@ -28,6 +28,7 @@ import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
+import { withBasePath } from "@/lib/config/routing";
 import { cn } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
@@ -275,7 +276,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
             )}
             <DropdownMenuItem
               className="text-red-600/80 focus:text-red-500 data-highlighted:text-red-500"
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: withBasePath("/") })}
             >
               <LogOut />
               {t("logOut")}
@@ -298,9 +299,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
               <DropdownMenuSeparator />
 
               {canImpersonate && (
-                <DropdownMenuItem
-                  onClick={handleOpenImpersonationDialog}
-                >
+                <DropdownMenuItem onClick={handleOpenImpersonationDialog}>
                   <UserRoundPlus />
                   {!impersonatedUser
                     ? t("impersonation.start")
@@ -326,9 +325,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
           {!hasImpersonatedUser && canImpersonate && (
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={handleOpenImpersonationDialog}
-              >
+              <DropdownMenuItem onClick={handleOpenImpersonationDialog}>
                 <UserRoundPlus />
                 {t("impersonation.label")}
               </DropdownMenuItem>

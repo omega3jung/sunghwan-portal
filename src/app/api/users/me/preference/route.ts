@@ -1,18 +1,23 @@
 // app/api/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
+import {
+  isRemoteRequest,
+  requireCurrentUserName,
+  toAuthErrorResponse,
+} from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { Preference } from "@/domain/user/preference";
 
 /** Handles GET /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest) {
-  const currentUserName = await getCurrentUserName(req);
+  const auth = await requireCurrentUserName(req);
 
-  if (!currentUserName) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!auth.ok) {
+    return toAuthErrorResponse(auth);
   }
 
+  const currentUserName = auth.username;
   const isRemote = await isRemoteRequest(req);
 
   if (!isRemote) {
@@ -29,12 +34,13 @@ export async function GET(req: NextRequest) {
 
 /** Handles POST /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST<T>(req: NextRequest) {
-  const currentUserName = await getCurrentUserName(req);
+  const auth = await requireCurrentUserName(req);
 
-  if (!currentUserName) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!auth.ok) {
+    return toAuthErrorResponse(auth);
   }
 
+  const currentUserName = auth.username;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as Preference<T>;
@@ -54,12 +60,13 @@ export async function POST<T>(req: NextRequest) {
 
 /** Handles PUT /api/users/me/preference; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT<T>(req: NextRequest) {
-  const currentUserName = await getCurrentUserName(req);
+  const auth = await requireCurrentUserName(req);
 
-  if (!currentUserName) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!auth.ok) {
+    return toAuthErrorResponse(auth);
   }
 
+  const currentUserName = auth.username;
   const isRemote = await isRemoteRequest(req);
 
   const body = (await req.json()) as Preference<T>;

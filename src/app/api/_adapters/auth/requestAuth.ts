@@ -98,9 +98,29 @@ export async function getCurrentEmployeeUserName(
 }
 
 /** Describes the auth result returned across the server boundary. */
+export type AuthFailure =
+  | { ok: false; status: 401 }
+  | { ok: false; status: 403 };
+
 export type AuthResult =
   | { ok: true; token: JWT }
-  | { ok: false; status: 401 | 403 };
+  | AuthFailure;
+
+/** Describes the effective account username required by account-scoped routes. */
+export type CurrentUserNameResult =
+  | { ok: true; username: string }
+  | Extract<AuthFailure, { status: 401 }>;
+
+/** Requires an effective account username without coupling authentication to an HTTP response. */
+export async function requireCurrentUserName(
+  req: NextRequest,
+): Promise<CurrentUserNameResult> {
+  const username = await getCurrentUserName(req);
+
+  return username
+    ? { ok: true, username }
+    : { ok: false, status: 401 };
+}
 
 type AdminCheckUser =
   | {
