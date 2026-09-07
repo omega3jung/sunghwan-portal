@@ -181,7 +181,7 @@ export const resolveLocalAssignmentRecommendation = async ({
 }: LocalRecommendationContext): Promise<AssignmentRecommendationResult> => {
   const category = await getServiceDeskCategoryContext(input.categoryId);
 
-  if (!category || !category.tenant.active) {
+  if (!category || !category.tenant.operational) {
     throw new ApiError("serviceDesk.tickets.localDemo.categoryNotFound", 404, {
       categoryId: input.categoryId,
     });

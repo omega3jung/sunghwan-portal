@@ -3,7 +3,7 @@
 ## 목표
 
 Routing 전략은 주요 workflow를 URL로 접근 가능하게 유지하고, runtime branching은
-API route handler 뒤에 둔다.
+API route handler 뒤에 둡니다.
 
 현재 Service Desk 설계:
 
@@ -24,7 +24,7 @@ API route handler 뒤에 둔다.
 
 ### `/service-desk`
 
-List/search entry point이다.
+List/search entry point입니다.
 
 책임:
 
@@ -35,7 +35,7 @@ List/search entry point이다.
 
 ### `/service-desk/[ticketId]`
 
-Ticket detail page이다.
+Ticket detail page입니다.
 
 책임:
 
@@ -45,7 +45,7 @@ Ticket detail page이다.
 - history와 work evidence 표시
 - 허용되는 update/action dialog open
 
-Ticket detail은 modal route가 아니라 page-level workflow이다.
+Ticket detail은 modal route가 아니라 page-level workflow입니다.
 
 ---
 
@@ -57,13 +57,13 @@ Drawer -> secondary reading or side panel
 Dialog -> atomic action or short form
 ```
 
-복잡한 ticket detail을 nested modal stack 안에 숨기지 않는다.
+복잡한 ticket detail을 nested modal stack 안에 숨기지 않습니다.
 
 ---
 
 ## API Route Handler Boundary
 
-Route handler는 HTTP와 runtime orchestration을 결정한다.
+Route handler는 HTTP와 runtime orchestration을 결정합니다.
 
 ```txt
 route.ts
@@ -75,13 +75,13 @@ route.ts
 -> return DTO response
 ```
 
-Route handler는 domain rule이나 row mapping을 inline으로 구현하지 않는다. 저장된
-resource context를 해석하는 domain policy와 server service를 호출한다.
+Route handler는 domain rule이나 row mapping을 inline으로 구현하지 않습니다. 저장된
+resource context를 해석하는 domain policy와 server service를 호출합니다.
 
 ### Service Desk Settings Authorization
 
 Settings route는 LOCAL/REMOTE로 분기하기 전에 read와 mutation에 같은 policy를
-적용한다.
+적용합니다.
 
 ```txt
 authenticated JWT access level >= ADMIN (9)
@@ -92,22 +92,22 @@ authenticated JWT access level >= ADMIN (9)
 -> LOCAL or REMOTE operation
 ```
 
-Route access-level gate와 effective-user resource resolution은 의도적으로 분리한다.
+Route access-level gate와 effective-user resource resolution은 의도적으로 분리합니다.
 Impersonation 중에는 JWT access-level gate가 Settings operation 진입을 보호하고,
-effective canonical user가 tenant 및 resource capability를 결정한다.
+effective canonical user가 tenant 및 resource capability를 결정합니다.
 
-List/read route는 `none` resource를 제외한다. Mutation route는 `manage`를 요구하고
+List/read route는 `none` resource를 제외합니다. Mutation route는 `manage`를 요구하고
 저장된 category/tenant 관계를 다시 load하며, read-only 또는 boundary 밖의 principal에는
-`403`을 반환한다. Request의 `tenantId`, `companyId`, scope, admin type은 target
-input일 뿐 authorization evidence가 아니다.
+`403`을 반환합니다. Request의 `tenantId`, `companyId`, scope, admin type은 target
+input일 뿐 authorization evidence가 아닙니다.
 
 Settings UI는 사용자 경험을 위해 unauthorized direct page access를 Settings Home으로
-redirect할 수 있다. API route는 authentication이 없으면 `401`, capability가 없는
-authenticated principal에는 `403`을 반환하며 page redirect를 사용하지 않는다.
+redirect할 수 있습니다. API route는 authentication이 없으면 `401`, capability가 없는
+authenticated principal에는 `403`을 반환하며 page redirect를 사용하지 않습니다.
 
 Actor candidate lookup은 API surface에 존재하는 경우 category-centered,
-purpose-aware해야 한다. Settings capability와 approver/assignee company boundary를
-모두 적용하며 global user directory를 반환하지 않는다.
+purpose-aware해야 합니다. Settings capability와 approver/assignee company boundary를
+모두 적용하며 global user directory를 반환하지 않습니다.
 
 ---
 
@@ -136,13 +136,13 @@ purpose-aware해야 한다. Settings capability와 approver/assignee company bou
 ```
 
 Work-session update/delete/timer route는 route handler가 생기기 전까지 completed API로
-문서화하지 않는다.
+문서화하지 않습니다.
 
 ---
 
 ## Command Routes
 
-Ticket operational behavior는 command-style path로 노출된다.
+Ticket operational behavior는 command-style path로 노출됩니다.
 
 ```txt
 /api/service-desk/tickets/[ticketId]/command/start-work
@@ -166,38 +166,38 @@ resubmit
 cancel
 ```
 
-Command route는 action rule과 execution service로 위임한다.
+Command route는 action rule과 execution service로 위임합니다.
 
 ---
 
 ## Draft Routes
 
-Draft route는 create-ticket workflow를 지원한다.
+Draft route는 create-ticket workflow를 지원합니다.
 
 ```txt
 /api/service-desk/tickets/draft
 /api/service-desk/tickets/draft/[ticketId]
 ```
 
-이 경로들은 REMOTE 초안 동작을 소유한다. 생성 다이얼로그는 REMOTE 초안을
-컴포넌트 로컬 상태로 취급하지 않고 PostgreSQL 기반 초안 행에 이 API를 사용한다.
+이 경로들은 REMOTE 초안 동작을 소유합니다. 생성 다이얼로그는 REMOTE 초안을
+컴포넌트 로컬 상태로 취급하지 않고 PostgreSQL 기반 초안 행에 이 API를 사용합니다.
 
-LOCAL 초안 복구는 이 경로를 거치지 않는다. 기능 초안 저장소가 현재 데모 사용자
+LOCAL 초안 복구는 이 경로를 거치지 않습니다. 기능 초안 저장소가 현재 데모 사용자
 범위의 브라우저 `localStorage`를 읽고 쓰며, React Query는 저장소 결과를 조정하고
-캐시하는 역할만 한다.
+캐시하는 역할만 합니다.
 
 ---
 
 ## Attachment Prepare Route
 
-Attachment preparation은 별도 route다.
+Attachment preparation은 별도 route입니다.
 
 ```txt
 POST /api/service-desk/tickets/attachments/prepare
 ```
 
 Create/update/supported action flow는 ticket command payload 제출 전 prepare route를
-호출한다.
+호출합니다.
 
 ---
 
@@ -210,13 +210,13 @@ GET  /api/service-desk/tickets/[ticketId]/work-session
 POST /api/service-desk/tickets/[ticketId]/work-session
 ```
 
-List와 create를 지원한다. 추가 surface는 구현 후 문서화한다.
+List와 create를 지원합니다. 추가 surface는 구현 후 문서화합니다.
 
 ---
 
 ## Query Parameters
 
-Query parameter는 공유/탐색에 유용한 list/search state에 사용한다.
+Query parameter는 공유/탐색에 유용한 list/search state에 사용합니다.
 
 예시:
 
@@ -225,13 +225,13 @@ Query parameter는 공유/탐색에 유용한 list/search state에 사용한다.
 - pagination
 - view tabs
 
-복잡한 search criteria는 dedicated search endpoint로 제출할 수 있다.
+복잡한 search criteria는 dedicated search endpoint로 제출할 수 있습니다.
 
 ---
 
 ## LOCAL/REMOTE Runtime
 
-Page route와 feature component는 storage detail에 깊게 결합하지 않는다.
+Page route와 feature component는 storage detail에 깊게 결합하지 않습니다.
 
 ```txt
 page/component
@@ -255,9 +255,9 @@ page/component
 
 ## 요약
 
-현재 routing 전략은 Service Desk list/detail page를 안정적으로 유지하고, 집중
+현재 routing 전략은 Service Desk list/detail page를 안정적으로 유지하고, 특정 작업에 집중하는
 command는 dialog/API command로 처리하며, LOCAL/REMOTE runtime orchestration은 route
-handler에 둔다. 문서화된 API surface는 실제 route file과 맞아야 한다.
+handler에 둡니다. 문서화된 API surface는 실제 route file과 맞아야 합니다.
 Service Desk Settings route는 추가로 JWT ADMIN access gate를 적용한 다음 effective
 canonical principal과 category-scope capability를 해석하고 두 runtime 중 하나로
-분기한다.
+분기합니다.

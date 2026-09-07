@@ -2,9 +2,9 @@
 
 ## Context
 
-이 문서는 2026년 3월 동안 Service Desk 모듈을 개발하면서 내린 핵심 아키텍처 및 구현 결정을 기록한다.
+이 문서는 2026년 3월 동안 Service Desk 모듈을 개발하면서 내린 핵심 아키텍처 및 구현 결정을 기록합니다.
 
-`docs/` 아래의 최종 설계 문서와 달리, 이 로그는 다음에 초점을 둔다.
+`docs/` 아래의 최종 설계 문서와 달리, 이 로그는 다음에 초점을 둡니다.
 
 - 구현 과정에서 실제로 마주한 실용적인 트레이드오프
 - 실제 코드와 설계 원칙 사이의 정렬
@@ -16,7 +16,7 @@
 
 ### Context
 
-Service Desk 데이터는 자연스럽게 두 가지 범주로 나뉜다.
+Service Desk 데이터는 자연스럽게 두 가지 범주로 나뉩니다.
 
 - **정적 데이터**
   - Category
@@ -30,7 +30,7 @@ Service Desk 데이터는 자연스럽게 두 가지 범주로 나뉜다.
 
 ### Problem
 
-모든 데이터에 하나의 query 전략만 적용하면 다음 문제가 발생한다.
+모든 데이터에 하나의 query 전략만 적용하면 다음 문제가 발생합니다.
 
 - 정적 데이터에 불필요한 refetch 발생
 - 동적인 ticket 데이터에서 UI가 stale 상태가 됨
@@ -39,7 +39,7 @@ Service Desk 데이터는 자연스럽게 두 가지 범주로 나뉜다.
 
 ### Decision
 
-query 전략을 분리한다.
+query 전략을 분리하기로 했습니다.
 
 ```txt
 Static Data  -> STATIC_QUERY_OPTIONS
@@ -59,13 +59,13 @@ refetchOnWindowFocus: true;
 
 ### Notes
 
-- `keepPreviousData`는 선택 사항이며 주로 pagination UX에서 유용하다
-- ticket에서는 UI 연속성보다 최신성이 더 중요하다
+- `keepPreviousData`는 선택 사항이며 주로 pagination UX에서 유용합니다
+- ticket에서는 UI 연속성보다 최신성이 더 중요합니다
 
 ### Impact
 
-- 정적 데이터는 효율적으로 캐시된다
-- ticket 데이터는 stale 시간이 최소화된 상태로 최신성을 유지한다
+- 정적 데이터는 효율적으로 캐시됩니다
+- ticket 데이터는 stale 시간이 최소화된 상태로 최신성을 유지합니다
 
 ---
 
@@ -73,7 +73,7 @@ refetchOnWindowFocus: true;
 
 ### Context
 
-ticket form은 create와 update 작업에서 동일한 입력 필드를 사용한다.
+ticket form은 create와 update 작업에서 동일한 입력 필드를 사용합니다.
 
 ---
 
@@ -85,16 +85,16 @@ ticket form은 create와 update 작업에서 동일한 입력 필드를 사용�
 type?: "create" | "edit";
 ```
 
-다음과 같은 모호성이 생긴다.
+다음과 같은 모호성이 생깁니다.
 
-- 실제 lifecycle이 명확하지 않은데도 `edit`가 사용될 수 있다
-- 이름이 실제 동작 차이를 반영하지 못한다
+- 실제 lifecycle이 명확하지 않은데도 `edit`가 사용될 수 있습니다
+- 이름이 실제 동작 차이를 반영하지 못합니다
 
 ---
 
 ### Decision
 
-명시적인 mode를 정의한다.
+명시적인 mode를 정의했습니다.
 
 ```ts
 type FormMode = "create" | "update" | "view";
@@ -102,8 +102,8 @@ type FormMode = "create" | "update" | "view";
 
 ### Rationale
 
-- `create`와 `update`는 API semantics (`POST` vs `PUT`)가 다르다
-- `view`는 읽기 전용 UI 상태를 표현한다
+- `create`와 `update`는 API semantics (`POST` vs `PUT`)가 다릅니다
+- `view`는 읽기 전용 UI 상태를 표현합니다
 
 ### Insight
 
@@ -113,9 +113,9 @@ type FormMode = "create" | "update" | "view";
 
 ### Impact
 
-- submit 로직이 더 명확해진다
-- 읽기 전용 mode의 권한 처리가 쉬워진다
-- 백엔드 semantics와 더 잘 맞는다
+- submit 로직이 더 명확해집니다
+- 읽기 전용 mode의 권한 처리가 쉬워집니다
+- 백엔드 semantics와 더 잘 맞습니다
 
 ---
 
@@ -123,19 +123,19 @@ type FormMode = "create" | "update" | "view";
 
 ### Context
 
-이전 Page Router 시스템은 다음을 page module 내부에 함께 배치했다.
+이전 Page Router 시스템은 다음을 page module 내부에 함께 배치했습니다.
 
 - UI
 - data fetching
 - business logic
 
-새 구조는 feature-based architecture를 따른다.
+새 구조는 feature-based architecture를 따릅니다.
 
 ---
 
 ### Problem
 
-책임 경계가 불명확했다.
+책임 경계가 불명확했습니다.
 
 - component는 props로만 데이터를 받아야 하는가?
 - 아니면 내부에서 직접 fetch해야 하는가?
@@ -144,7 +144,7 @@ type FormMode = "create" | "update" | "view";
 
 ### Decision
 
-명확한 경계를 정의한다.
+명확한 경계를 정의했습니다.
 
 ```txt
 Feature-level components -> data fetching 담당
@@ -160,20 +160,20 @@ Page layer               -> orchestration만 담당
 </TicketList>
 ```
 
-- `TicketList`가 데이터를 fetch한다
-- `TicketItem`은 presentational component로 유지한다
+- `TicketList`가 데이터를 fetch합니다
+- `TicketItem`은 presentational component로 유지합니다
 
 ### Rationale
 
-- data logic을 domain feature 가까이에 둘 수 있다
-- child component의 재사용성이 좋아진다
-- 불필요한 prop drilling을 막을 수 있다
+- data logic을 domain feature 가까이에 둘 수 있습니다
+- child component의 재사용성이 좋아집니다
+- 불필요한 prop drilling을 막을 수 있습니다
 
 ### Impact
 
-- 관심사 분리가 더 명확해진다
-- component 구조가 확장 가능해진다
-- data access pattern이 일관된다
+- 관심사 분리가 더 명확해집니다
+- component 구조가 확장 가능해집니다
+- data access pattern이 일관됩니다
 
 ---
 
@@ -181,7 +181,7 @@ Page layer               -> orchestration만 담당
 
 ### Context
 
-ticket detail에는 두 가지 주요 접근이 있었다.
+ticket detail에는 두 가지 주요 접근이 있었습니다.
 
 - drawer 또는 modal 기반 UI
 - 전체 page route
@@ -190,7 +190,7 @@ ticket detail에는 두 가지 주요 접근이 있었다.
 
 ### Problem
 
-drawer 기반 접근은 다음 문제를 만든다.
+drawer 기반 접근은 다음 문제를 만듭니다.
 
 - 중첩된 UI 복잡성
 - 더 어려운 state 관리
@@ -207,17 +207,17 @@ Drawer                   -> secondary interaction 전용
 
 ### Rationale
 
-- ticket detail은 primary workflow다
-- 다음을 위해 안정적인 URL이 필요하다
+- ticket detail은 primary workflow입니다
+- 다음을 위해 안정적인 URL이 필요합니다
   - direct access
   - bookmarking
   - debugging
 
 ### Impact
 
-- UI 구조가 단순해진다
-- navigation 일관성이 좋아진다
-- 복잡한 상호작용으로 확장하기 쉬워진다
+- UI 구조가 단순해집니다
+- navigation 일관성이 좋아집니다
+- 복잡한 상호작용으로 확장하기 쉬워집니다
 
 ---
 
@@ -225,7 +225,7 @@ Drawer                   -> secondary interaction 전용
 
 ### Context
 
-다음과 같은 helper abstraction을 고려했다.
+다음과 같은 helper abstraction을 고려했습니다.
 
 ```ts
 fieldLabel(name);
@@ -235,15 +235,15 @@ fieldLabel(name);
 
 ### Problem
 
-- 불필요한 abstraction이 추가된다
-- reviewer 입장에서 가독성이 떨어진다
-- 실제 translation key가 가려진다
+- 불필요한 abstraction이 추가됩니다
+- reviewer 입장에서 가독성이 떨어집니다
+- 실제 translation key가 가려집니다
 
 ---
 
 ### Decision
 
-명시적인 key를 직접 사용한다.
+명시적인 key를 직접 사용하기로 했습니다.
 
 ```ts
 t(`field.${name}.label`, { ns: "common" });
@@ -251,9 +251,9 @@ t(`field.${name}.label`, { ns: "common" });
 
 ### Rationale
 
-- portfolio 맥락에서 더 읽기 쉽다
-- reviewer가 이해하기 쉽다
-- premature abstraction을 피할 수 있다
+- portfolio 맥락에서 더 읽기 쉽습니다
+- reviewer가 이해하기 쉽습니다
+- premature abstraction을 피할 수 있습니다
 
 ### Insight
 
@@ -263,8 +263,8 @@ t(`field.${name}.label`, { ns: "common" });
 
 ### Impact
 
-- 가독성이 좋아진다
-- 리뷰와 인터뷰 맥락에 더 잘 맞는다
+- 가독성이 좋아집니다
+- 리뷰와 인터뷰 맥락에 더 잘 맞습니다
 
 ---
 
@@ -272,7 +272,7 @@ t(`field.${name}.label`, { ns: "common" });
 
 ### Context
 
-ticket 데이터는 다음의 영향을 받는다.
+ticket 데이터는 다음의 영향을 받습니다.
 
 - SLA
 - assignment
@@ -283,7 +283,7 @@ ticket 데이터는 다음의 영향을 받는다.
 
 ### Decision
 
-ticket query는 항상 dynamic data로 취급한다.
+ticket query는 항상 dynamic data로 취급하기로 했습니다.
 
 ```ts
 useQuery({
@@ -293,13 +293,13 @@ useQuery({
 
 ### Rationale
 
-- stale한 ticket 데이터는 잘못된 UI 상태로 이어진다
-- Service Desk 시스템은 준실시간 수준의 정확성이 필요하다
+- stale한 ticket 데이터는 잘못된 UI 상태로 이어집니다
+- Service Desk 시스템은 준실시간 수준의 정확성이 필요합니다
 
 ### Impact
 
-- UI 상태의 일관성과 신뢰성이 높아진다
-- SLA 중심 워크플로우와 더 잘 맞는다
+- UI 상태의 일관성과 신뢰성이 높아집니다
+- SLA 중심 워크플로우와 더 잘 맞습니다
 
 ---
 
@@ -307,7 +307,7 @@ useQuery({
 
 ### Context
 
-시스템에는 언제 page를 쓰고 언제 drawer를 써야 하는지에 대한 명확한 규칙이 필요했다.
+시스템에는 언제 page를 쓰고 언제 drawer를 써야 하는지에 대한 명확한 규칙이 필요했습니다.
 
 ---
 
@@ -339,15 +339,15 @@ drawer는 workflow container가 아니라 interaction surface다.
 
 ### Impact
 
-- UI 계층이 명확해진다
-- 복잡성이 줄어든다
-- 더 예측 가능한 사용자 경험을 제공한다
+- UI 계층이 명확해집니다
+- 복잡성이 줄어듭니다
+- 더 예측 가능한 사용자 경험을 제공합니다
 
 ---
 
 ## Summary
 
-3월의 결정들은 하나의 원칙으로 수렴한다.
+3월의 결정들은 하나의 원칙으로 수렴합니다.
 
 ```txt
 구현을 실제 시스템의 동작 방식에 맞춘다.
@@ -355,23 +355,23 @@ drawer는 workflow container가 아니라 interaction surface다.
 
 ### Key Themes
 
-- 정적 데이터와 동적 데이터를 명확히 분리한다
-- 책임 기준으로 component boundary를 정의한다
-- routing을 domain design의 일부로 다룬다
-- portfolio 맥락에서는 abstraction보다 clarity를 우선한다
-- ticket 데이터는 항상 최신성과 신뢰성을 유지한다
-- 주요 워크플로우와 보조 상호작용을 구분한다
+- 정적 데이터와 동적 데이터를 명확히 분리합니다
+- 책임 기준으로 component boundary를 정의합니다
+- routing을 domain design의 일부로 다룹니다
+- portfolio 맥락에서는 abstraction보다 clarity를 우선합니다
+- ticket 데이터는 항상 최신성과 신뢰성을 유지합니다
+- 주요 워크플로우와 보조 상호작용을 구분합니다
 
 ---
 
 ## Final Note
 
-이 결정들은 이론적인 논의에서 나온 것이 아니다.
-다음과 같은 실제 작업 과정에서 도출되었다.
+이 결정들은 이론적인 논의에서 나온 것이 아닙니다.
+다음과 같은 실제 작업 과정에서 도출되었습니다.
 
 - 실제 시스템 마이그레이션
 - legacy pattern 재구성
 - 문서화된 architecture와 구현 정렬
 
 따라서 이 결정들은 이상화된 설계가 아니라,
-실제 운영 환경에 맞춘 실용적인 트레이드오프를 반영한다.
+실제 운영 환경에 맞춘 실용적인 트레이드오프를 반영합니다.

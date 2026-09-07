@@ -2,7 +2,7 @@
 
 ## 맥락
 
-Service Desk 시스템에는 다음을 지원하는 인증 및 세션 모델이 필요했다.
+Service Desk 시스템에는 다음을 지원하는 인증 및 세션 모델이 필요했습니다.
 
 - 안전한 로그인과 route 보호
 - authentication, session, client state 사이의 명확한 분리
@@ -11,7 +11,7 @@ Service Desk 시스템에는 다음을 지원하는 인증 및 세션 모델이 
 - 추적 가능성과 감사 가능성
 
 이 단계의 목표는 사용자 인증에 그치지 않고 application 전반에서 사용자 맥락에
-의존하는 모든 동작을 위한 안정적인 기반을 만드는 것이었다.
+의존하는 모든 동작을 위한 안정적인 기반을 만드는 것이었습니다.
 
 ---
 
@@ -145,7 +145,7 @@ session = {
 
 ### 이 구성이 중요한 이유
 
-다음을 가능하게 한다.
+다음을 가능하게 합니다.
 
 - 전체 audit trail
 - role-aware UI rendering
@@ -225,7 +225,7 @@ Login -> setOriginalUser
 
 ## 8. UI 통합
 
-Impersonation은 UI에 명시적으로 반영된다.
+Impersonation은 UI에 명시적으로 반영됩니다.
 
 ---
 
@@ -374,15 +374,15 @@ User Login
 
 ## 요약
 
-이 architecture는 다음을 결합한다.
+이 architecture는 다음을 결합합니다.
 
 - NextAuth(authentication)
 - JWT(identity)
 - Session(runtime context)
 - Zustand(client control layer)
 
-이를 통해 secure, scalable, extensible하며 impersonation과 완전히 통합된 시스템을
-만든다.
+이를 통해 secure, scalable, extensible한 특성을 갖추고 impersonation과 완전히 통합된
+시스템을 만듭니다.
 
 단순한 authentication system이 아니라 impersonation, role-based UI, auditability를
-포함한 모든 user-context-dependent behavior의 기반이다.
+포함한 모든 user-context-dependent behavior의 기반입니다.

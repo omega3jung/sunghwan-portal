@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   readSessionStorage,
@@ -39,7 +39,9 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   const [state, setState] = useState<T>(initialValue);
-  const [hydrated, setHydrated] = useState(false);
+  const [hydratedKey, setHydratedKey] = useState<string | null>(null);
+  const removedKeyRef = useRef<string | null>(null);
+  const hydrated = hydratedKey === key;
 
   /*
    * ---------------------------------------------------------
@@ -53,8 +55,9 @@ export function useSessionStorageState<T>({
       migrate,
     });
 
+    removedKeyRef.current = null;
     setState(stored);
-    setHydrated(true);
+    setHydratedKey(key);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
@@ -64,7 +67,7 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || removedKeyRef.current === key) return;
 
     writeSessionStorage(key, state, version);
   }, [hydrated, key, state, version]);
@@ -75,17 +78,20 @@ export function useSessionStorageState<T>({
    * ---------------------------------------------------------
    */
   const set: SetState<T> = useCallback((value) => {
+    removedKeyRef.current = null;
     setState((prev) =>
       typeof value === "function" ? (value as (prev: T) => T)(prev) : value,
     );
   }, []);
 
   const reset = useCallback(() => {
+    removedKeyRef.current = null;
     setState(initialValue);
     writeSessionStorage(key, initialValue, version);
   }, [initialValue, key, version]);
 
   const remove = useCallback(() => {
+    removedKeyRef.current = key;
     removeSessionStorage(key);
     setState(initialValue);
   }, [initialValue, key]);

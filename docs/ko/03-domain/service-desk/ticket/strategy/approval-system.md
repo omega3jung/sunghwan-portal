@@ -2,9 +2,9 @@
 
 ## 목표
 
-이 문서는 Service Desk ticket의 현재 approval routing model을 정의한다.
+이 문서는 Service Desk ticket의 현재 approval routing model을 정의합니다.
 
-Approval은 category-driven, sequential이며 현재 ticket routing field로 표현된다.
+Approval은 category-driven, sequential이며 현재 ticket routing field로 표현됩니다.
 
 ```txt
 tk_approval_step_id
@@ -15,17 +15,17 @@ tk_assignee_usernames
 
 ## 현재 Approval Status
 
-Approval은 persisted ticket status `Approval`을 사용한다.
+Approval은 persisted ticket status `Approval`을 사용합니다.
 
-Persisted `Approved` status는 없다. Approval completion은 history event
-`APPROVAL_APPROVED`로 기록된다. Final approval 이후 ticket은 work assignment를
-resolve하고 `Assigned`로 이동한다.
+Persisted `Approved` status는 없습니다. Approval completion은 history event
+`APPROVAL_APPROVED`로 기록됩니다. Final approval 이후에는 work assignment를
+resolve하고 ticket을 `Assigned`로 이동시킵니다.
 
 ---
 
 ## Approval Phase
 
-Ticket은 다음 상태일 때 approval phase다.
+Ticket은 다음 상태일 때 approval phase입니다.
 
 ```txt
 approvalStepId != null
@@ -33,23 +33,23 @@ assignmentPhase = APPROVAL
 assigneeUsernames = current approvers
 ```
 
-Application DTO는 이를 다음으로 project한다.
+Application DTO는 이를 다음으로 project합니다.
 
 - `assignmentPhase = "APPROVAL"`
 - `approvalAssigneeUsernames`
 - `assignedApprover`
 
-이 값들은 projection이다. 별도의 persisted routing source가 아니다.
+이 값들은 projection입니다. 별도의 persisted routing source가 아닙니다.
 
 ---
 
 ## Approval Step Settings
 
-Approval step은 main category 아래에 설정된다.
+Approval step은 main category 아래에 설정됩니다.
 
-Approval resolution은 항상 선택된 subcategory의 parent/main category를 사용한다.
+Approval resolution은 항상 선택된 subcategory의 parent/main category를 사용합니다.
 선택된 subcategory는 ticket classification으로 남지만 별도의 approval pipeline을
-정의하지 않는다.
+정의하지 않습니다.
 
 ```ts
 type ApprovalStep = {
@@ -72,8 +72,8 @@ JOB_FIELD
 EMPLOYEE
 ```
 
-REMOTE DTO는 `approval_step_assignee`와 `skip_access_level`을 사용한다. LOCAL과
-REMOTE settings는 같은 application-facing behavior로 resolve되어야 한다.
+REMOTE DTO는 `approval_step_assignee`와 `skip_access_level`을 사용합니다. LOCAL과
+REMOTE settings는 같은 application-facing behavior로 resolve되어야 합니다.
 
 관련 문서: [Service Desk Settings](../../settings.md)
 
@@ -82,7 +82,7 @@ REMOTE settings는 같은 application-facing behavior로 resolve되어야 한다
 ## Approval Settings Authorization
 
 Approval Step 권한은 step이나 client-selected company에 중복 저장된 `tenantId`가
-아니라 저장된 main category의 `Category -> Tenant -> Company` 관계로 해석한다.
+아니라 저장된 main category의 `Category -> Tenant -> Company` 관계로 해석합니다.
 
 | Main-category target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
 | --- | --- | --- | --- |
@@ -90,21 +90,21 @@ Approval Step 권한은 step이나 client-selected company에 중복 저장된 `
 | Customer Tenant, `INTERNAL` | none | manage | none |
 | Customer Tenant, `PORTAL` | read | manage | none |
 
-Customer `PORTAL` approval은 customer의 approval system이다. Owner Admin은 현재
-configuration을 조회할 수 있지만 변경할 수 없다. Read-only 조회는 참조된 approver의
+Customer `PORTAL` approval은 customer의 approval system입니다. Owner Admin은 현재
+configuration을 조회할 수 있지만 변경할 수 없습니다. Read-only 조회는 참조된 approver의
 display information을 포함할 수 있지만 customer employee directory 전체의 candidate
-search 권한을 부여하지 않는다.
+search 권한을 부여하지 않습니다.
 
-Read와 mutation path 모두 category 관계를 load하고 shared settings policy를 사용한다.
+Read와 mutation path 모두 category 관계를 load하고 shared settings policy를 사용합니다.
 Unauthorized API request는 `403`을 반환하며, query response는 access가 `none`인
-approval settings를 포함하지 않는다.
+approval settings를 포함하지 않습니다.
 
 ---
 
 ## Approver Eligibility
 
 `INTERNAL`과 `PORTAL` category 모두에서 모든 approval candidate와 최종 resolved
-approver는 category tenant의 company에 속해야 한다.
+approver는 category tenant의 company에 속해야 합니다.
 
 | Assignee type | Company validation |
 | --- | --- |
@@ -113,20 +113,20 @@ approver는 category tenant의 company에 속해야 한다.
 | `JOB_FIELD` | job field가 shared여도 최종 employee resolution에 company filter 적용 |
 | `MANAGER` | resolved manager가 해당 company에 속함 |
 
-Candidate lookup은 category-centered이며 caller의 Approval Step capability도 검사한다.
+Candidate lookup은 category-centered이며 caller의 Approval Step capability도 검사합니다.
 Request의 `categoryId`, `purpose`, `companyId`는 target을 선택할 뿐 권한을 부여하지
-않는다.
+않습니다.
 
 Eligibility는 Approval Step 저장 시점과 submit, resubmit 또는 explicit routing
-command에서 approver를 resolve하는 시점에 다시 검증한다. Configuration 이후 employee가
-inactive가 되거나 다른 company로 이동할 수 있기 때문이다. Valid approver가 0명이면
-routing은 실패하며 unowned `Approval` ticket을 만들지 않는다.
+command에서 approver를 resolve하는 시점에 다시 검증합니다. Configuration 이후 employee가
+inactive가 되거나 다른 company로 이동할 수 있기 때문입니다. Valid approver가 0명이면
+routing은 실패하며 unowned `Approval` ticket을 만들지 않습니다.
 
 ---
 
 ## Initial Approval Routing
 
-Ticket submit과 resubmit은 모두 첫 applicable approval step부터 routing을 시작한다.
+Ticket submit과 resubmit은 모두 첫 applicable approval step부터 routing을 시작합니다.
 
 ```txt
 selected category
@@ -143,21 +143,21 @@ no approval step
 ```
 
 Approval assignee를 resolve할 수 없으면 unowned approval ticket을 만들지 않고 command가
-실패한다.
+실패합니다.
 
 ---
 
 ## Approve
 
-Approve는 ticket action command다.
+Approve는 ticket action command입니다.
 
 - action type: `APPROVE`
 - allowed status: `Approval`
 - actor: current approver 또는 Admin
 - payload: content only
-- file과 inline image를 거부한다.
-- action row가 insert된다.
-- history는 `APPROVAL_APPROVED`를 기록한다.
+- file과 inline image를 거부합니다.
+- action row가 insert됩니다.
+- history는 `APPROVAL_APPROVED`를 기록합니다.
 
 Approve 이후:
 
@@ -179,17 +179,17 @@ no next approval step
 
 ## Decline
 
-Decline은 ticket action command다.
+Decline은 ticket action command입니다.
 
 - action type: `DECLINE`
 - allowed status: `Approval`
 - actor: current approver 또는 Admin
 - payload: content only
-- file과 inline image를 거부한다.
-- action row가 insert된다.
-- history는 `APPROVAL_DECLINED`를 기록한다.
+- file과 inline image를 거부합니다.
+- action row가 insert됩니다.
+- history는 `APPROVAL_DECLINED`를 기록합니다.
 
-Decline은 approval routing을 종료한다.
+Decline은 approval routing을 종료합니다.
 
 ```txt
 status = Declined
@@ -197,30 +197,30 @@ approvalStepId = null
 assigneeUsernames = []
 ```
 
-Requester는 나중에 initial routing으로 resubmit할 수 있다.
+Requester는 나중에 initial routing으로 resubmit할 수 있습니다.
 
 ---
 
 ## Ticket Action Authorization Boundary
 
-Approval Step settings authorization과 ticket action authorization은 별도 policy다.
+Approval Step settings authorization과 ticket action authorization은 별도 policy입니다.
 Settings의 Owner Admin 또는 Tenant Admin이라고 해서 `APPROVE`/`DECLINE`의 current
 approver 조건을 자동으로 만족하지 않으며, settings helper를 action override로 재사용하면
-안 된다.
+안 됩니다.
 
-현재 ticket action matrix에는 generic Admin override가 남아 있다. 별도 후속 작업에서
-cross-tenant behavior를 검토하고 intentional break-glass capability를 정의해야 한다.
-이번 settings decision은 기존 action matrix를 암묵적으로 확장하거나 변경하지 않는다.
+현재 ticket action matrix에는 generic Admin override가 남아 있습니다. 별도 후속 작업에서
+cross-tenant behavior를 검토하고 intentional break-glass capability를 정의해야 합니다.
+이번 settings decision은 기존 action matrix를 암묵적으로 확장하거나 변경하지 않습니다.
 
 ---
 
 ## Skip Rule
 
 `skipAccessLevel`은 requester access level이 설정 threshold를 만족할 때 approval
-step을 skip할 수 있게 한다.
+step을 skip할 수 있게 합니다.
 
-Skip behavior는 approval routing/resolution에 속한다. 모든 approval이 skip되면
-assignment rule이 work owner를 resolve하고 ticket은 `Assigned`로 이동한다.
+Skip behavior는 approval routing/resolution에 속합니다. 모든 approval이 skip되면
+assignment rule이 work owner를 resolve하고 ticket은 `Assigned`로 이동합니다.
 
 ---
 
@@ -235,7 +235,7 @@ APPROVAL_DECLINED
 ASSIGNMENT_RESOLVED
 ```
 
-Approve action은 둘 이상의 history record를 만들 수 있다.
+Approve action은 둘 이상의 history record를 만들 수 있습니다.
 
 ```txt
 APPROVAL_APPROVED
@@ -250,7 +250,7 @@ APPROVAL_APPROVED
 ## Requester Update와의 관계
 
 Requester update는 routing-sensitive field가 실제로 바뀔 때 approval routing을 reset할
-수 있다.
+수 있습니다.
 
 - category
 - subject
@@ -258,14 +258,14 @@ Requester update는 routing-sensitive field가 실제로 바뀔 때 approval rou
 - files
 - images
 
-Routing reset은 approval resolution을 처음부터 시작하고 `ROUTING_RESET`을 기록한다.
-Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
+Routing reset은 approval resolution을 처음부터 시작하고 `ROUTING_RESET`을 기록합니다.
+Routing-neutral change는 `ROUTING_PRESERVED`를 기록합니다.
 
 ---
 
 ## Deferred Scope
 
-현재 approval model은 다음을 구현하지 않는다.
+현재 approval model은 다음을 구현하지 않습니다.
 
 - parallel approval voting
 - quorum approval
@@ -273,7 +273,7 @@ Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
 - approval SLA timers
 - approval notification delivery guarantees
 
-이는 future production extension이다.
+이는 future production extension입니다.
 
 ---
 
@@ -291,18 +291,18 @@ Routing-neutral change는 `ROUTING_PRESERVED`를 기록한다.
 ## 설정 변경과 진행 중인 Approval
 
 진행 중인 Approval은 Ticket이 참조하는 workflow를 기준으로 계속되므로 Category가
-나중에 비활성화되어도 다음 승인 단계 또는 작업 할당으로 진행할 수 있다.
+나중에 비활성화되어도 다음 승인 단계 또는 작업 할당으로 진행할 수 있습니다.
 
 `Approval` 상태 Ticket에 영향을 주는 Approval Step tree 변경은 일반 저장 시
-conflict를 반환한다. 관리자가 force apply를 확인하면 서버는 새 설정과 모든
+conflict를 반환합니다. 관리자가 force apply를 확인하면 서버는 새 설정과 모든
 초기 routing을 검증하고, 설정 저장과 영향 Ticket의 첫 단계 routing reset 및
 reason `APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` History를 하나의
-transaction에서 처리한다. 한 Ticket이라도 재라우팅할 수 없으면 전체를
-rollback한다.
+transaction에서 처리합니다. Ticket 하나라도 재라우팅할 수 없으면 전체를
+rollback합니다.
 
 ## 요약
 
-Approval은 sequential category-driven routing phase다. Current approver는 work
+Approval은 sequential category-driven routing phase입니다. Current approver는 work
 routing에 사용되는 같은 current assignee field에 저장되며, `approvalStepId`가
-approval phase와 work phase를 구분한다. Final approval은 `Approved` status를 만들지
-않고 worker를 resolve한 뒤 ticket을 `Assigned`로 이동한다.
+approval phase와 work phase를 구분합니다. Final approval은 `Approved` status를 만들지
+않고 worker를 resolve한 뒤 ticket을 `Assigned`로 이동합니다.

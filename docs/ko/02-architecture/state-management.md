@@ -3,14 +3,14 @@
 ## 목표
 
 상태 관리 전략은 **서버 상태와 클라이언트 상태를 명확하게 분리**하여,
-프로덕션 환경에서 예측 가능한 데이터 흐름, 확장성, 유지보수성을 확보하는 것을 목표로 한다.
+프로덕션 환경에서 예측 가능한 데이터 흐름, 확장성, 유지보수성을 확보하는 것을 목표로 합니다.
 
-구체적인 목표는 다음과 같다.
+구체적인 목표는 다음과 같습니다.
 
-- 불필요한 전역 상태를 최소화한다.
-- 서버 상태를 기본적인 source of truth로 사용한다.
-- 상태 동기화 복잡도를 줄인다.
-- 성능과 개발자 경험을 함께 개선한다.
+- 불필요한 전역 상태를 최소화합니다.
+- 서버 상태를 기본적인 source of truth로 사용합니다.
+- 상태 동기화 복잡도를 줄입니다.
+- 성능과 개발자 경험을 함께 개선합니다.
 
 ---
 
@@ -24,7 +24,7 @@ Prefer server state over client state whenever possible
 
 ## 상태 분류
 
-시스템은 상태를 세 가지 주요 범주로 나눈다.
+시스템은 상태를 세 가지 주요 범주로 나눕니다.
 
 1. **Server State**
 2. **Client State**
@@ -36,7 +36,7 @@ Prefer server state over client state whenever possible
 
 ### 정의
 
-백엔드에서 비롯되고, 서버와 지속적으로 동기화되어야 하는 데이터다.
+백엔드에서 비롯되고, 서버와 지속적으로 동기화되어야 하는 데이터입니다.
 
 ### 예시
 
@@ -50,7 +50,7 @@ Prefer server state over client state whenever possible
 
 ### 해결 방식
 
-서버 상태는 **React Query (@tanstack/react-query v5)** 로 관리한다.
+서버 상태는 **React Query (@tanstack/react-query v5)** 로 관리합니다.
 
 ---
 
@@ -79,8 +79,8 @@ export const useFetchTickets = (params) => {
 
 ### 핵심 전략
 
-- 서버 상태를 클라이언트 상태에 **중복 저장하지 않는다**.
-- 서버 데이터는 항상 React Query 훅을 통해 접근한다.
+- 서버 상태를 클라이언트 상태에 **중복 저장하지 않습니다**.
+- 서버 데이터는 항상 React Query 훅을 통해 접근합니다.
 
 ---
 
@@ -88,7 +88,7 @@ export const useFetchTickets = (params) => {
 
 ### 정의
 
-클라이언트에만 존재하고, 백엔드와 동기화할 필요가 없는 상태다.
+클라이언트에만 존재하고, 백엔드와 동기화할 필요가 없는 상태입니다.
 
 ---
 
@@ -103,19 +103,19 @@ export const useFetchTickets = (params) => {
 
 ### 해결 방식
 
-클라이언트 상태는 **Zustand** 또는 로컬 컴포넌트 상태로 관리한다.
+클라이언트 상태는 **Zustand** 또는 로컬 컴포넌트 상태로 관리합니다.
 
-상태가 여러 컴포넌트나 feature 경계를 넘어 공유되어야 할 때만 Zustand를 사용한다.
+상태가 여러 컴포넌트나 feature 경계를 넘어 공유되어야 할 때만 Zustand를 사용합니다.
 
 ---
 
 ### Why Zustand?
 
-- 보일러플레이트가 적다.
-- API가 단순하다.
-- Provider가 필요 없다.
-- 세밀한 반응성을 제공한다.
-- 상태 범위를 나누기 쉽다.
+- 보일러플레이트가 적습니다.
+- API가 단순합니다.
+- Provider가 필요 없습니다.
+- 세밀한 반응성을 제공합니다.
+- 상태 범위를 나누기 쉽습니다.
 
 ---
 
@@ -135,11 +135,11 @@ const useDialogStore = create((set) => ({
 ### 정의
 
 백엔드 동기화 없이도, 새로고침이나 내비게이션 이후에
-페이지 수준의 UI 동작을 유지하기 위해 사용하는 상태다.
+페이지 수준의 UI 동작을 유지하기 위해 사용하는 상태입니다.
 
-이 상태는 server state가 아니며, 전역 client state와도 다르다.
+이 상태는 server state가 아니며, 전역 client state와도 다릅니다.
 
-즉, UI가 사용자 맥락을 복원할 수 있도록 돕는 **page local session** 역할을 한다.
+즉, UI가 사용자 맥락을 복원할 수 있도록 돕는 **page local session** 역할을 합니다.
 
 ---
 
@@ -156,15 +156,15 @@ const useDialogStore = create((set) => ({
 
 ### 목적
 
-- 새로고침 이후에도 의미 있는 UI 맥락을 복원한다.
-- 반복적인 사용자 입력을 줄인다.
-- 동일한 브라우징 흐름 안에서 연속성을 유지한다.
+- 새로고침 이후에도 의미 있는 UI 맥락을 복원합니다.
+- 반복적인 사용자 입력을 줄입니다.
+- 동일한 브라우징 흐름 안에서 연속성을 유지합니다.
 
 ---
 
 ### 해결 방식
 
-다음과 같은 계층형 persistence 접근으로 관리한다.
+다음과 같은 계층형 persistence 방식으로 관리합니다.
 
 1. 내비게이션 관련 상태는 **URL**
 2. 일시적인 페이지 로컬 persistence는 **sessionStorage**
@@ -210,7 +210,7 @@ Persist page-level UI state separately from auth/runtime stores
 
 ### Query Key Design
 
-- 구조적이고 예측 가능한 query key를 사용한다.
+- 구조적이고 예측 가능한 query key를 사용합니다.
 
 ```ts
 ["tickets", params][("ticket", id)];
@@ -233,7 +233,7 @@ staleTime: Infinity;
 #### Dynamic Data
 
 - 자주 갱신되는 데이터(예: 티켓 목록)
-- LOCAL runtime의 mutable demo 데이터 경로를 포함한다.
+- LOCAL runtime의 mutable demo 데이터 경로를 포함합니다.
 
 ```ts
 refetchOnWindowFocus: true;
@@ -241,27 +241,27 @@ staleTime: 0;
 ```
 
 LOCAL demo 모드에서는 mutation이 server-side in-memory state를 변경할 수 있으므로,
-React Query cache reset만으로는 상태를 완전히 되돌릴 수 없다.
-demo reset은 아래 endpoint를 통해 orchestration되어야 한다.
+React Query cache reset만으로는 상태를 완전히 되돌릴 수 없습니다.
+demo reset은 아래 endpoint를 통해 orchestration되어야 합니다.
 
 ```txt
 /api/demo/service-desk/reset
 ```
 
-LOCAL 티켓 초안 복구는 별도의 브라우저 로컬 예외다. 기능 초안 저장소가
+LOCAL 티켓 초안 복구는 별도의 브라우저 로컬 예외입니다. 기능 초안 저장소가
 `localStorage` 레코드를 소유하고, React Query는 해당 레코드에 대한 접근을
-캐시하고 조정할 뿐이다.
+캐시하고 조정할 뿐입니다.
 
 ---
 
 ## Mutation 전략
 
-변경 요청(mutation)은 React Query를 통해 처리한다.
+변경 요청(mutation)은 React Query를 통해 처리합니다.
 
 ### 원칙
 
-- mutation 이후에는 refetch 또는 cache update가 이어져야 한다.
-- UI는 mutation 결과에 즉시 반응해야 한다.
+- mutation 이후에는 refetch 또는 cache update가 이어져야 합니다.
+- UI는 mutation 결과에 즉시 반응해야 합니다.
 
 ---
 
@@ -282,8 +282,8 @@ const mutation = useMutation({
 
 ### 목표
 
-- 불필요한 네트워크 요청을 줄인다.
-- UI 반응성을 유지한다.
+- 불필요한 네트워크 요청을 줄입니다.
+- UI 반응성을 유지합니다.
 
 ---
 
@@ -318,26 +318,26 @@ Only globalize state when necessary
 
 ## Form 상태
 
-폼 상태는 **react-hook-form** 으로 별도 관리한다.
+폼 상태는 **react-hook-form** 으로 별도 관리합니다.
 
 ### 이유
 
-- 폼 처리에 최적화되어 있다.
-- 기본적인 검증 지원이 있다.
-- 큰 폼에서도 성능이 좋다.
+- 폼 처리에 최적화되어 있습니다.
+- 기본적인 검증 기능을 지원합니다.
+- 큰 폼에서도 성능이 좋습니다.
 
 ---
 
 ### 규칙
 
-- 폼 상태를 Zustand에 저장하지 않는다.
-- UX 연속성이 꼭 필요할 때만 폼 관련 페이지 맥락을 persistence한다.
+- 폼 상태를 Zustand에 저장하지 않습니다.
+- UX 연속성이 꼭 필요할 때만 폼 관련 페이지 맥락을 persistence합니다.
 
 ---
 
 ## URL 상태
 
-일부 상태는 URL에 저장한다.
+일부 상태는 URL에 저장합니다.
 
 ### 예시
 
@@ -357,13 +357,13 @@ If state affects navigation -> store in URL
 
 ## Page Local Session 전략
 
-Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위한 persistence 계층이다.
+Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위한 persistence 계층입니다.
 
 ### Storage Layers
 
 #### 1. URL (Primary)
 
-내비게이션 관련 상태에 사용한다.
+내비게이션 관련 상태에 사용합니다.
 
 예시:
 
@@ -379,7 +379,7 @@ Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위
 
 #### 2. sessionStorage (Secondary)
 
-현재 브라우저 탭 안에서의 일시적인 UI persistence에 사용한다.
+현재 브라우저 탭 안에서의 일시적인 UI persistence에 사용합니다.
 
 예시:
 
@@ -389,15 +389,15 @@ Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위
 
 특징:
 
-- 브라우저 탭 단위로 범위가 제한된다.
-- 탭이 닫히면 함께 사라진다.
-- 빠르고 단순하다.
+- 브라우저 탭 단위로 범위가 제한됩니다.
+- 탭이 닫히면 함께 사라집니다.
+- 빠르고 단순합니다.
 
 ---
 
 #### 3. Database (Optional)
 
-장기적인 사용자 선호값에 사용한다.
+장기적인 사용자 선호값에 사용합니다.
 
 예시:
 
@@ -406,8 +406,8 @@ Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위
 
 특징:
 
-- 기기 간에도 유지된다.
-- 사용자 계정에 연결된다.
+- 기기 간에도 유지됩니다.
+- 사용자 계정에 연결됩니다.
 
 ---
 
@@ -440,9 +440,9 @@ const { value, setValue, reset } = useTicketSearchCriteriaState();
 
 ### 설계 규칙
 
-- storage 로직이 UI 컴포넌트로 새어 나오면 안 된다.
-- 컴포넌트는 storage API가 아니라 의미 있는 훅을 소비해야 한다.
-- 여러 시스템이 `sessionStorage`를 사용하더라도 논리적으로 분리되어야 한다.
+- storage 로직이 UI 컴포넌트로 새어 나오면 안 됩니다.
+- 컴포넌트는 storage API가 아니라 의미 있는 훅을 소비해야 합니다.
+- 여러 시스템이 `sessionStorage`를 사용하더라도 논리적으로 분리되어야 합니다.
 
 | Purpose          | Owner                    |
 | ---------------- | ------------------------ |
@@ -466,17 +466,17 @@ readSessionStorage("some_key");
 
 ### 복원력
 
-UI persistence는 장애에 강해야 한다.
+UI persistence는 장애에 강해야 합니다.
 
-- parse error가 발생하면 기본값으로 fallback한다.
-- version mismatch를 처리한다.
-- 구조가 바뀔 때 migration을 허용한다.
+- parse error가 발생하면 기본값으로 fallback합니다.
+- version mismatch를 처리합니다.
+- 구조가 바뀔 때 migration을 허용합니다.
 
 ---
 
 ## Derived State
 
-파생 상태는 별도로 저장하지 않는다.
+파생 상태는 별도로 저장하지 않습니다.
 
 ### Example
 
@@ -498,45 +498,45 @@ Derive instead of store
 
 ### 1. Global State Overuse
 
-- 모든 상태를 Zustand에 넣는 방식을 피한다.
+- 모든 상태를 Zustand에 넣지 않습니다.
 
 ---
 
 ### 2. Server State Duplication
 
-- API 데이터를 로컬 상태로 복사하는 방식을 피한다.
+- API 데이터를 로컬 상태로 복사하지 않습니다.
 
 ---
 
 ### 3. Prop Drilling Abuse
 
-- 불필요하게 많은 계층을 통해 상태를 전달하는 방식을 피한다.
+- 상태를 전달하는 계층을 불필요하게 늘리지 않습니다.
 
 ---
 
 ### 4. Uncontrolled Side Effects
 
-- 추상화 없이 컴포넌트 내부에서 직접 데이터를 가져오는 방식을 피한다.
+- 추상화 없이 컴포넌트 내부에서 직접 데이터를 가져오지 않습니다.
 
 ---
 
 ### 5. Mixing Auth and UI State
 
-- 페이지 설정을 `authSessionStore`에 결합하는 방식을 피한다.
+- 페이지 설정을 `authSessionStore`에 결합하지 않습니다.
 
-Auth session과 UI persistence는 분리되어야 한다.
+Auth session과 UI persistence는 분리되어야 합니다.
 
 ---
 
 ### 6. Direct Storage Access in Components
 
-- page 컴포넌트 안에서 `readSessionStorage()`를 직접 호출하는 방식을 피한다.
+- page 컴포넌트 안에서 `readSessionStorage()`를 직접 호출하지 않습니다.
 
 ---
 
 ### 7. Treating UI State as Server State
 
-- 필터를 React Query cache로 관리하는 방식을 피한다.
+- 필터를 React Query cache로 관리하지 않습니다.
 
 ---
 
@@ -544,20 +544,20 @@ Auth session과 UI persistence는 분리되어야 한다.
 
 ### Pros
 
-- 관심사 분리가 명확하다.
-- 데이터 흐름이 예측 가능하다.
-- 상태 동기화 문제에서 생기는 버그를 줄일 수 있다.
-- 확장 가능한 아키텍처를 만들 수 있다.
-- 새로고침 이후에도 UI 연속성을 유지하기 쉽다.
+- 관심사 분리가 명확합니다.
+- 데이터 흐름이 예측 가능합니다.
+- 상태 동기화 문제에서 생기는 버그를 줄일 수 있습니다.
+- 확장 가능한 아키텍처를 만들 수 있습니다.
+- 새로고침 이후에도 UI 연속성을 유지하기 쉽습니다.
 
 ---
 
 ### Cons
 
-- 여러 도구에 대한 이해가 필요하다.
-- 초기 학습 비용이 있다.
-- 설정 복잡도가 다소 증가한다.
-- persistence 규칙에 대한 팀의 규율이 필요하다.
+- 여러 도구에 대한 이해가 필요합니다.
+- 초기 학습 비용이 있습니다.
+- 설정 복잡도가 다소 증가합니다.
+- persistence 규칙에 대한 팀의 규율이 필요합니다.
 
 ---
 
@@ -565,29 +565,29 @@ Auth session과 UI persistence는 분리되어야 한다.
 
 ### 1. Redux
 
-- 강력하고 확장성이 높다.
-- 현재 용도에는 보일러플레이트가 너무 많다.
+- 강력하고 확장성이 높습니다.
+- 현재 용도에는 보일러플레이트가 너무 많습니다.
 
 ---
 
 ### 2. Context API Only
 
-- 내장 기능이라 도입이 쉽다.
-- 잦은 업데이트에는 성능상 불리하다.
+- 내장 기능이라 도입이 쉽습니다.
+- 잦은 업데이트에는 성능상 불리합니다.
 
 ---
 
 ### 3. Single State Store (All in Zustand)
 
-- 정신 모델은 단순할 수 있다.
-- 서버 데이터와의 동기화가 어려워진다.
-- runtime state와 page local session의 경계가 약해진다.
+- 정신 모델은 단순할 수 있습니다.
+- 서버 데이터와의 동기화가 어려워집니다.
+- runtime state와 page local session의 경계가 약해집니다.
 
 ---
 
 ## 설계 원칙과의 정렬
 
-이 전략은 다음 원칙과 정렬된다.
+이 전략은 다음 원칙과 정렬됩니다.
 
 - 관심사 분리
 - Single source of truth
@@ -600,13 +600,13 @@ Auth session과 UI persistence는 분리되어야 한다.
 ## 요약
 
 이 상태 관리 전략은 **server state**, **client state**, 그리고
-**UI persistence state (page local session)** 를 명확하게 분리한다.
+**UI persistence state (page local session)** 를 명확하게 분리합니다.
 
-구체적으로는 다음을 사용한다.
+구체적으로는 다음을 사용합니다.
 
 - 백엔드 동기화에는 React Query
 - 클라이언트 runtime 상태에는 Zustand 또는 local state
 - page local session persistence에는 URL과 `sessionStorage`
 
-그 결과 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 상태 모델을 만든다.
-이는 연기된 프로덕션 인프라가 완성되었다는 의미가 아니다.
+그 결과 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 상태 모델을 만듭니다.
+이는 연기된 프로덕션 인프라가 완성되었다는 의미가 아닙니다.

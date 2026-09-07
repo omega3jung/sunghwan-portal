@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { invalidateServiceDeskOrganizationDependencies } from "@/feature/serviceDesk/shared/invalidation";
+import { invalidateAssignmentRuleRecommendations } from "@/feature/serviceDesk/assignmentRule/invalidation";
 
 import { departmentApi } from "./api";
 import { departmentQueryKeys } from "./queryKeys";
@@ -14,7 +14,7 @@ export const useCreateDepartmentMutation = () => {
     mutationFn: departmentApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: departmentQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };
@@ -26,7 +26,7 @@ export const useUpdateDepartmentMutation = () => {
     mutationFn: departmentApi.update,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: departmentQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };
@@ -38,7 +38,7 @@ export const useDeleteDepartmentMutation = () => {
     mutationFn: departmentApi.remove,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: departmentQueryKeys.all });
-      void invalidateServiceDeskOrganizationDependencies(queryClient);
+      void invalidateAssignmentRuleRecommendations(queryClient);
     },
   });
 };

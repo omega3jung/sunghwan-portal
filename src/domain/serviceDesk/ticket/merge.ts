@@ -90,11 +90,8 @@ export function canMergeTicketInto(
     return false;
   }
 
-  if (source.mergedIntoTicketId) {
-    return false;
-  }
-
-  if (target.mergedIntoTicketId === source.id) {
+  // already merged. mergedIntoTicketId is merged ID info.
+  if (source.mergedIntoTicketId || target.mergedIntoTicketId) {
     return false;
   }
 

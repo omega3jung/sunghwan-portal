@@ -125,7 +125,7 @@ with submitted as (
     submitted.category_id,
     submitted.assignee,
     tn.tn_company_id,
-    main.cat_scope as category_scope,
+    cat.cat_scope as category_scope,
     owner_company.c_id as owner_company_id
   from submitted
   join service_desk.category cat
@@ -222,7 +222,9 @@ with submitted as (
   select
     submitted.category_id,
     submitted.assignee,
-    tn.tn_company_id
+    tn.tn_company_id,
+    main.cat_scope as category_scope,
+    owner_company.c_id as owner_company_id
   from submitted
   join service_desk.category target
     on target.cat_id = submitted.category_id
@@ -233,6 +235,12 @@ with submitted as (
   join service_desk.tenant tn
     on tn.tn_id = target.cat_tenant_id
    and tn.tn_active = true
+  join public.company tenant_company
+    on tenant_company.c_id = tn.tn_company_id
+   and tenant_company.c_active = true
+  join public.company owner_company
+    on owner_company.c_portal_owner = true
+   and owner_company.c_active = true
 ), invalid_category as (
   select 1
   from submitted

@@ -121,6 +121,7 @@ export async function resolveMergeTargetTicket({
     throw createStatusError("A ticket cannot be merged into a draft.", 400);
   }
 
+  // Keep these trusted-state guards for specific errors; the domain predicate also enforces the merge invariant.
   if (ticket.tk_merged_into_ticket_id) {
     throw createStatusError("Ticket has already been merged.", 400);
   }

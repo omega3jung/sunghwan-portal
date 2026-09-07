@@ -29,19 +29,19 @@ Service Desk 시스템은 원래 티켓 안의 사용자 커뮤니케이션과 a
 
 ### 2. Poor Representation of Operational Actions
 
-다음과 같은 핵심 액션은:
+다음과 같은 핵심 액션을
 
 - 사용자 할당
 - priority, risk level, due date 조정
 - ticket 병합
 - 요청 거절
 
-first-class entity로 표현할 수 없었습니다.
+first-class entity로는 표현할 수 없었습니다.
 
-대신 이런 액션들은:
+대신 이런 액션들은 다음 중 한 방식으로 처리해야 했습니다.
 
-- 텍스트 안에 암묵적으로 설명되거나
-- comment timeline과 분리된 방식으로 처리되어야 했습니다.
+- 텍스트 안에 암묵적으로 설명
+- comment timeline과 분리된 방식으로 처리
 
 그 결과 로직이 분절되고 history도 불명확해졌습니다.
 

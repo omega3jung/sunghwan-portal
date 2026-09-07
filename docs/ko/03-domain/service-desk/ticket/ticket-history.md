@@ -2,9 +2,9 @@
 
 ## 목표
 
-Ticket History는 ticket workflow change에 대한 immutable audit event를 기록한다.
+Ticket History는 ticket workflow change에 대한 immutable audit event를 기록합니다.
 
-이 문서는 다음 질문에 답한다.
+이 문서는 다음 질문에 답합니다.
 
 - 무엇이 일어났는가
 - 왜 일어났는가
@@ -22,7 +22,7 @@ History is immutable event evidence.
 ```
 
 Action은 하나의 history record, 여러 history record, 또는 status change 없는 결과를
-만들 수 있다. System operation은 ticket action row 없이 history를 만들 수 있다.
+만들 수 있습니다. System operation은 ticket action row 없이 history를 만들 수 있습니다.
 
 ---
 
@@ -44,14 +44,14 @@ type TicketHistory = {
 };
 ```
 
-`event`는 authoritative event field다. `metadata.event`를 primary event source로
-사용하면 안 된다.
+`event`는 authoritative event field입니다. `metadata.event`를 primary event source로
+사용하면 안 됩니다.
 
 ---
 
 ## Type
 
-`type`은 영향을 받은 domain area를 식별한다.
+`type`은 영향을 받은 domain area를 식별합니다.
 
 ```txt
 TICKET
@@ -64,13 +64,13 @@ NOTE
 PLANNING
 ```
 
-`SYSTEM` history type은 없다. System automation은 `source` field로 표현한다.
+`SYSTEM` history type은 없습니다. System automation은 `source` field로 표현합니다.
 
 ---
 
 ## Source
 
-`source`는 history가 왜 또는 어떤 rule에 의해 만들어졌는지를 식별한다.
+`source`는 history가 왜 또는 어떤 rule에 의해 만들어졌는지를 식별합니다.
 
 ```txt
 USER_ACTION
@@ -124,28 +124,28 @@ ROUTING_RESET
 ROUTING_PRESERVED
 ```
 
-실제 union name을 사용한다. `ASSIGNMENT_CHANGED` 같은 alias를 만들면 안 된다.
+실제 union name을 사용합니다. `ASSIGNMENT_CHANGED` 같은 alias를 만들면 안 됩니다.
 
-일부 event는 현재 route surface가 union 일부만 사용하더라도 model에 예약되어 있다.
+현재 route surface에서는 union의 일부만 사용하며, 나머지 event는 model에 예약되어 있습니다.
 예를 들어 comment/note soft delete는 현재 route가 있지만 comment/note update route는
-없다.
+없습니다.
 
 ---
 
 ## Actor
 
-`actorUsername`은 operation을 시작한 사용자다.
+`actorUsername`은 operation을 시작한 사용자입니다.
 
-- user command는 current employee username을 사용한다.
-- system automation은 `null`을 사용한다.
-- history는 여전히 `actionNo`를 통해 ticket action과 연결될 수 있다.
+- user command는 current employee username을 사용합니다.
+- system automation은 `null`을 사용합니다.
+- history는 여전히 `actionNo`를 통해 ticket action과 연결될 수 있습니다.
 
 ---
 
 ## Action Link
 
 `actionNo`는 event가 action row에 의해 만들어진 경우 history record를 ticket action에
-연결한다.
+연결합니다.
 
 예:
 
@@ -154,15 +154,15 @@ ROUTING_PRESERVED
   `ASSIGNMENT_RESOLVED`
 - resubmit action -> `TICKET_SUBMITTED`, 이후 routing history
 
-`RESOLUTION_CLOSE` 같은 system event는 `actionNo = null`이다.
+`RESOLUTION_CLOSE` 같은 system event는 `actionNo = null`입니다.
 
 ---
 
 ## From and To Values
 
-`fromValue`와 `toValue`는 structured JSON value다.
+`fromValue`와 `toValue`는 structured JSON value입니다.
 
-안정적으로 표시할 수 있는 before/after change를 설명해야 한다.
+안정적으로 표시할 수 있는 before/after change를 설명해야 합니다.
 
 예:
 
@@ -174,13 +174,13 @@ ROUTING_PRESERVED
 ```
 
 Attachment 비교는 raw file data, blob URL, base64 payload가 아니라 count와 name
-같은 summary를 저장해야 한다.
+같은 summary를 저장해야 합니다.
 
 ---
 
 ## Metadata
 
-`metadata`는 보조 display/audit context다.
+`metadata`는 보조 display/audit context입니다.
 
 포함할 수 있는 값:
 
@@ -192,8 +192,8 @@ Attachment 비교는 raw file data, blob URL, base64 payload가 아니라 count�
 - resolved grace days
 - action-specific display context
 
-Persistence metadata와 client-visible display metadata는 분리되어야 한다. Client DTO는
-allowlist된 display metadata만 노출해야 한다.
+Persistence metadata와 client-visible display metadata는 분리되어야 합니다. Client DTO는
+allowlist된 display metadata만 노출해야 합니다.
 
 ---
 
@@ -232,7 +232,7 @@ fromValue = { status: "Resolved" }
 toValue = { status: "Working" }
 ```
 
-`TICKET_REOPENED`는 이 status transition의 authoritative event다.
+`TICKET_REOPENED`는 이 status transition의 authoritative event입니다.
 
 ### Auto Close
 
@@ -247,38 +247,38 @@ metadata.resolvedGraceDays = 7
 ```
 
 Resolved auto-close는 generic ticket `updatedAt` rule이 아니라 resolved-history
-timestamp와 현재 7-day grace period를 기준으로 한다.
+timestamp와 현재 7-day grace period를 기준으로 합니다.
 
 ---
 
 ## History and Ticket Actions
 
-Ticket Action과 Ticket History는 의도적으로 분리되어 있다.
+Ticket Action과 Ticket History는 의도적으로 분리되어 있습니다.
 
 | Area | Purpose |
 | --- | --- |
 | Action | user-facing timeline command or communication |
 | History | immutable event/audit record |
 
-Operational action은 immutable하다. Communication action은 현재 `COMMENT`와 `NOTE`에
-대해 soft delete를 지원하며, `COMMENT_DELETED` 또는 `NOTE_DELETED`를 만든다.
+Operational action은 immutable합니다. Communication action은 현재 `COMMENT`와 `NOTE`에
+대해 soft delete를 지원하며, `COMMENT_DELETED` 또는 `NOTE_DELETED`를 만듭니다.
 
 ---
 
 ## History and Work Sessions
 
 현재 work-session create는 ticket status를 변경할 때 `STATUS_UPDATED`를 만들 수
-있다.
+있습니다.
 
 History union은 work-session-specific event를 포함하지만, 현재 route surface는 별도
-timer start/stop/switch route를 노출하지 않는다. 현재 설계에서 timer stop이 ticket을
-resolve한다고 설명하면 안 된다.
+timer start/stop/switch route를 노출하지 않습니다. 현재 설계에서 timer stop이 ticket을
+resolve한다고 설명하면 안 됩니다.
 
 ---
 
 ## Forbidden Patterns
 
-현재 history를 다음처럼 모델링하면 안 된다.
+현재 history를 다음처럼 모델링하면 안 됩니다.
 
 - authoritative event로서의 `tkh_history_action`
 - authoritative event로서의 `metadata.event`
@@ -300,6 +300,6 @@ resolve한다고 설명하면 안 된다.
 
 ## 요약
 
-Ticket History는 `type`, `source`, `event`로 구성된 immutable event model이다.
+Ticket History는 `type`, `source`, `event`로 구성된 immutable event model입니다.
 Ticket command, routing decision, system automation, work progress의 audit trail을
-보존하면서 ticket action이나 client metadata에 과부하를 주지 않는다.
+보존하면서 ticket action이나 client metadata에 과부하를 주지 않습니다.

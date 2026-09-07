@@ -2,7 +2,7 @@ import type { TreeNodes } from "@/components/custom/SortableTree";
 import {
   type AssignmentRule,
   hasAssignmentRuleSelection,
-  type TenantCategoryTree,
+  type MainCategory,
 } from "@/domain/serviceDesk";
 
 import type { AssignmentRuleNodeData } from "../types";
@@ -14,21 +14,14 @@ const createEmptyAssignee = () => ({
 });
 
 export function createAssignmentRuleTree(
-  categories: TenantCategoryTree[],
-  tenantId: string,
-  assignmentRules: AssignmentRule[],
+  categories: readonly MainCategory[],
+  assignmentRules: readonly AssignmentRule[],
 ): TreeNodes<AssignmentRuleNodeData> {
-  const currentTenant = categories.find((tenant) => tenant.id === tenantId);
-
-  if (!currentTenant) {
-    return [];
-  }
-
   const assigneeByCategoryId = new Map(
     assignmentRules.map((rule) => [rule.categoryId, rule.assignee]),
   );
 
-  return currentTenant.categories.map((category) => {
+  return categories.map((category) => {
     const { subCategories, ...categoryData } = category;
 
     return {

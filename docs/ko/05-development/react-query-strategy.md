@@ -2,13 +2,13 @@
 
 ## 목표
 
-React Query는 Service Desk server state를 관리한다.
+React Query는 Service Desk server state를 관리합니다.
 
 전략:
 
-- fetched data를 global UI store에 복제하지 않는다.
-- deterministic query key를 사용한다.
-- mutation 후 필요한 query family만 invalidate한다.
+- fetched data를 global UI store에 복제하지 않습니다.
+- deterministic query key를 사용합니다.
+- mutation 후 필요한 query family만 invalidate합니다.
 
 ---
 
@@ -20,8 +20,8 @@ UI state는 component state 또는 작은 UI store가 소유한다.
 ```
 
 Service Desk settings, tickets, REMOTE drafts, actions, histories, work sessions는
-server state다. LOCAL 초안 복구는 예외이며, 동일한 query hook으로 노출되는
-브라우저 로컬 저장소 상태다.
+server state입니다. LOCAL 초안 복구는 예외이며, 동일한 query hook으로 노출되는
+브라우저 로컬 저장소 상태입니다.
 
 ---
 
@@ -38,7 +38,7 @@ server state다. LOCAL 초안 복구는 예외이며, 동일한 query hook으로
 - settings에서 사용하는 organization reference lists
 
 Feature가 허용하면 더 긴 stale time을 사용할 수 있지만, settings mutation 후에는
-관련 query를 invalidate해야 한다.
+관련 query를 invalidate해야 합니다.
 
 ### Workflow Queries
 
@@ -51,7 +51,7 @@ Feature가 허용하면 더 긴 stale time을 사용할 수 있지만, settings 
 - ticket histories
 - work sessions
 
-Workflow mutation 이후 invalidate해야 한다.
+Workflow mutation 이후 invalidate해야 합니다.
 
 ---
 
@@ -70,7 +70,7 @@ settings approval steps
 settings assignment rules
 ```
 
-정확한 key builder는 feature/domain code에 둔다. 문서는 family와 ownership을 설명한다.
+정확한 key builder는 feature/domain code에 둡니다. 문서는 family와 ownership을 설명합니다.
 
 ---
 
@@ -85,48 +85,48 @@ settings assignment rules
 | work-session create | work sessions, ticket detail, histories, status 영향 시 list/search |
 | settings mutation | affected settings family |
 
-모든 Service Desk mutation에서 global invalidation을 기본값으로 사용하지 않는다.
+모든 Service Desk mutation에서 global invalidation을 기본값으로 사용하지 않습니다.
 
 ---
 
 ## Draft Query Policy
 
 REMOTE 초안은 PostgreSQL 티켓 행을 기반으로 하며 초안 Route Handler를 통해
-접근하는 server state다. 반면 LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저
+접근하는 server state입니다. 반면 LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저
 `localStorage`에 저장되고, 해당 Route Handler를 호출하지 않고 기능 초안 저장소가
-읽고 쓴다.
+읽고 씁니다.
 
-React Query는 두 data scope 모두에 query와 mutation 조정을 제공한다. React Query
-캐시는 REMOTE 영속 저장소도, LOCAL 복구 저장소도 아니다.
+React Query는 두 data scope 모두에서 query와 mutation을 조정합니다. React Query
+캐시는 REMOTE 영속 저장소도, LOCAL 복구 저장소도 아닙니다.
 
-Create dialog는 draft query family로 active draft를 로드한다. Final submit 또는
-discard 후 active draft query를 invalidate/remove한다.
+Create dialog는 draft query family로 active draft를 로드합니다. Final submit 또는
+discard 후 active draft query를 invalidate/remove합니다.
 
-Attachment input은 durable draft state가 아니다. Raw `File`은 React Query에 저장하지 않는다.
+Attachment input은 durable draft state가 아닙니다. Raw `File`은 React Query에 저장하지 않습니다.
 
 ---
 
 ## Ticket Action Query Policy
 
-Action은 workflow record다.
+Action은 workflow record입니다.
 
 Action query는 ticket의 action list, route가 노출하는 action detail, comment/note의
-soft-delete state에 사용한다.
+soft-delete state에 사용합니다.
 
 Operational action execution 후에는 성공한 command가 history event를 만들기 때문에
-action query와 history query를 함께 invalidate한다.
+action query와 history query를 함께 invalidate합니다.
 
 ---
 
 ## History Query Policy
 
-History는 append-oriented server state다.
+History는 append-oriented server state입니다.
 
-Command 성공 후 해당 ticket history를 invalidate한다. Event contract를 완전히
-통제하지 않는다면 UI에서 history event를 optimistic하게 만들지 않는다.
+Command 성공 후에는 해당 ticket history를 invalidate합니다. Event contract를 완전히
+통제할 수 없다면 UI에서 history event를 optimistic하게 만들지 않습니다.
 
 Server는 `type`, `source`, `event`, previous/current value, actor/timestamp의
-authority다.
+authority입니다.
 
 ---
 
@@ -147,13 +147,13 @@ Work-session create 후 invalidate:
 - next status 변경 시 ticket list/search
 
 Detail/update/delete/timer helper는 matching route가 구현되기 전까지 completed API로
-문서화하지 않는다.
+문서화하지 않습니다.
 
 ---
 
 ## Settings Query Policy
 
-Settings data를 Zustand에 중복 저장하지 않는다.
+Settings data를 Zustand에 중복 저장하지 않습니다.
 
 React Query가 소유:
 
@@ -174,7 +174,7 @@ Local component state가 소유:
 
 ## LOCAL/REMOTE Runtime
 
-Feature UI는 LOCAL/REMOTE storage detail을 깊게 분기하지 않는다.
+Feature UI는 LOCAL/REMOTE storage detail을 깊게 분기하지 않습니다.
 
 ```txt
 feature hook
@@ -183,7 +183,7 @@ feature hook
 -> LOCAL handler or REMOTE service
 ```
 
-Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포함한다.
+Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포함합니다.
 
 ---
 
@@ -192,19 +192,19 @@ Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포
 ### API Data in Zustand
 
 Ticket detail, settings, draft 또는 history를 parallel source of truth로 Zustand에
-복제하지 않는다.
+복제하지 않습니다.
 
 ### Raw Files in Cache
 
-Browser `File` object를 React Query에 저장하지 않는다.
+Browser `File` object를 React Query에 저장하지 않습니다.
 
 ### Fake History
 
-Server에서 성공하지 않은 command에 대해 UI-only history row를 만들지 않는다.
+Server에서 성공하지 않은 command에 대해 UI-only history row를 만들지 않습니다.
 
 ### Overbroad Invalidations
 
-모든 Service Desk mutation 후 모든 query를 invalidate하지 않는다.
+모든 Service Desk mutation 후 모든 query를 invalidate하지 않습니다.
 
 ---
 
@@ -222,7 +222,7 @@ Server에서 성공하지 않은 command에 대해 UI-only history row를 만들
 ## 요약
 
 React Query는 Service Desk server state를 소유하면서 브라우저 로컬 LOCAL 초안
-저장소에 대한 접근도 조정한다. 현재 전략은 tickets, drafts, actions, histories,
+저장소에 대한 접근도 조정합니다. 현재 전략은 tickets, drafts, actions, histories,
 work sessions, tenant-scoped settings의 구조화된 query family와 workflow mutation
 이후의 정밀한 invalidation을 사용하며, UI state·server state·복구 저장소를
-명확히 분리한다.
+명확히 분리합니다.

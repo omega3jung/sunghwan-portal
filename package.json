@@ -1,6 +1,6 @@
 {
   "name": "sunghwan-portal",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,6 +8,8 @@
     "dev:clean": "npm run clean:next && npm run dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
     "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -89,6 +91,7 @@
     "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
+    "jsdom": "^30.0.1",
     "playwright": "^1.57.0",
     "postcss": "^8",
     "shadcn": "^4.14.1",

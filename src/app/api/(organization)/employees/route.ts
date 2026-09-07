@@ -1,7 +1,10 @@
 // app/api/employees/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { isRemoteRequest } from "@/app/api/_adapters";
+import {
+  getAdminErrorResponse,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import {
   createLocalEmployee,
@@ -18,6 +21,9 @@ import {
 
 /** Handles GET /api/employees; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest) {
+  const authError = await getAdminErrorResponse(request);
+  if (authError) return authError;
+
   const isRemote = await isRemoteRequest(request);
 
   // demo mode
@@ -38,6 +44,9 @@ export async function GET(request: NextRequest) {
 
 /** Handles POST /api/employees; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(request: NextRequest) {
+  const authError = await getAdminErrorResponse(request);
+  if (authError) return authError;
+
   const isRemote = await isRemoteRequest(request);
 
   const body = (await request.json()) as CreateEmployeeInput;

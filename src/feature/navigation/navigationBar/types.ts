@@ -36,9 +36,4 @@ export type NavigationBarProps = {
   actions?: ReactNode;
   tabs?: LinkBarItem[];
   userMenuDemoCandidates?: UserMenuDemoCandidates;
-
-  /**
-   * @deprecated Role state is displayed by UserMenu and is not rendered here.
-   */
-  userRoleBadge?: string;
 };

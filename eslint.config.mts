@@ -33,7 +33,11 @@ const architectureSettings = {
     },
     { type: "lib_client", pattern: "src/lib/client", partialMatch: false },
     { type: "lib_config", pattern: "src/lib/config", partialMatch: false },
-    { type: "shared_client", pattern: "src/shared/client", partialMatch: false },
+    {
+      type: "shared_client",
+      pattern: "src/shared/client",
+      partialMatch: false,
+    },
     { type: "app", pattern: "src/app", partialMatch: false },
     { type: "auth", pattern: "src/auth", partialMatch: false },
     { type: "components", pattern: "src/components", partialMatch: false },
@@ -176,7 +180,9 @@ const architectureRules = {
         },
         {
           from: { element: { types: "domain" } },
-          allow: { to: { element: { types: { anyOf: ["domain", "shared"] } } } },
+          allow: {
+            to: { element: { types: { anyOf: ["domain", "shared"] } } },
+          },
         },
         {
           from: { element: { types: "feature" } },
@@ -361,6 +367,17 @@ export default defineConfig([
     },
     settings: architectureSettings,
     rules: architectureRules,
+  },
+  {
+    files: ["src/**/*.{ts,tsx}", "*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-deprecated": "error",
+    },
   },
   globalIgnores([
     ".agents/**",

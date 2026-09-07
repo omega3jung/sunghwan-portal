@@ -5,7 +5,7 @@ import {
   UserRoundMinus,
   UserRoundPlus,
 } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +33,7 @@ import { cn } from "@/shared/utils/presentation";
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
 import { UserImpersonation } from "./UserImpersonation";
+import { signOutToHome } from "./userMenuAuth";
 import {
   getDemoImpersonationCandidates,
   getDemoUserSwitchCandidates,
@@ -275,7 +276,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
             )}
             <DropdownMenuItem
               className="text-red-600/80 focus:text-red-500 data-highlighted:text-red-500"
-              onClick={() => signOut()}
+              onClick={signOutToHome}
             >
               <LogOut />
               {t("logOut")}
@@ -298,9 +299,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
               <DropdownMenuSeparator />
 
               {canImpersonate && (
-                <DropdownMenuItem
-                  onClick={handleOpenImpersonationDialog}
-                >
+                <DropdownMenuItem onClick={handleOpenImpersonationDialog}>
                   <UserRoundPlus />
                   {!impersonatedUser
                     ? t("impersonation.start")
@@ -326,9 +325,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
 
           {!hasImpersonatedUser && canImpersonate && (
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={handleOpenImpersonationDialog}
-              >
+              <DropdownMenuItem onClick={handleOpenImpersonationDialog}>
                 <UserRoundPlus />
                 {t("impersonation.label")}
               </DropdownMenuItem>

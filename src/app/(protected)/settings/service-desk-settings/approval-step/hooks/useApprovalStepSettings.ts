@@ -13,6 +13,7 @@ import { useMutationToast } from "@/lib/client/toast";
 import { useServiceDeskSettingsCategoryListQuery } from "../../hooks/useServiceDeskSettingsCategoryListQuery";
 import { useServiceDeskSettingsEditorState } from "../../hooks/useServiceDeskSettingsEditorState";
 import { useServiceDeskSettingsPageContext } from "../../hooks/useServiceDeskSettingsPageContext";
+import { findTenantCategories } from "../../utils/tenantCategory";
 import { createApprovalStepTree } from "../utils/mapper";
 import {
   buildApprovalStepTreeSavePayload,
@@ -31,6 +32,10 @@ export function useApprovalStepSettings() {
     enabled: context.canRead,
     active: true,
   });
+  const categories = useMemo(
+    () => findTenantCategories(categoryQuery.data, context.selectedTenant),
+    [categoryQuery.data, context.selectedTenant],
+  );
   const approvalStepParams = useMemo(
     () =>
       context.selectedTenant && context.canRead
@@ -47,8 +52,7 @@ export function useApprovalStepSettings() {
     useServiceDeskApprovalStepListQuery(approvalStepParams);
   const tree = useApprovalStepTree({
     contextKey: context.contextKey,
-    selectedTenant: context.selectedTenant,
-    categories: categoryQuery.data,
+    categories,
     approvalSteps: approvalStepQuery.data,
   });
   const errors = useMemo(
@@ -81,7 +85,7 @@ export function useApprovalStepSettings() {
       !editor.canSave ||
       !context.selectedTenant ||
       !context.contextKey ||
-      !categoryQuery.data ||
+      !categories ||
       !tree.isReady
     ) {
       return;
@@ -103,11 +107,7 @@ export function useApprovalStepSettings() {
 
       const savedApprovalSteps = await savePromise;
       tree.acceptSavedTree(
-        createApprovalStepTree(
-          categoryQuery.data,
-          context.selectedTenant,
-          savedApprovalSteps,
-        ),
+        createApprovalStepTree(categories, savedApprovalSteps),
       );
     } catch {
       // Toast is handled by useMutationToast.

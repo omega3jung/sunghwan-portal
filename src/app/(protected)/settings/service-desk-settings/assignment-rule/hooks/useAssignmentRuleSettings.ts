@@ -13,6 +13,7 @@ import { useMutationToast } from "@/lib/client/toast";
 import { useServiceDeskSettingsCategoryListQuery } from "../../hooks/useServiceDeskSettingsCategoryListQuery";
 import { useServiceDeskSettingsEditorState } from "../../hooks/useServiceDeskSettingsEditorState";
 import { useServiceDeskSettingsPageContext } from "../../hooks/useServiceDeskSettingsPageContext";
+import { findTenantCategories } from "../../utils/tenantCategory";
 import { createAssignmentRuleTree } from "../utils/mapper";
 import {
   buildAssignmentRuleTreeSavePayload,
@@ -30,6 +31,10 @@ export function useAssignmentRuleSettings() {
     scope: context.selectedScope,
     enabled: context.canRead,
   });
+  const categories = useMemo(
+    () => findTenantCategories(categoryQuery.data, context.selectedTenant),
+    [categoryQuery.data, context.selectedTenant],
+  );
   const assignmentRuleParams = useMemo(
     () =>
       context.selectedTenant && context.canRead
@@ -46,8 +51,7 @@ export function useAssignmentRuleSettings() {
     useServiceDeskAssignmentRuleListQuery(assignmentRuleParams);
   const tree = useAssignmentRuleTree({
     contextKey: context.contextKey,
-    selectedTenant: context.selectedTenant,
-    categories: categoryQuery.data,
+    categories,
     assignmentRules: assignmentRuleQuery.data,
   });
   const errors = useMemo(
@@ -80,7 +84,7 @@ export function useAssignmentRuleSettings() {
       !editor.canSave ||
       !context.selectedTenant ||
       !context.contextKey ||
-      !categoryQuery.data ||
+      !categories ||
       !tree.isReady
     ) {
       return;
@@ -102,11 +106,7 @@ export function useAssignmentRuleSettings() {
 
       const savedAssignmentRules = await savePromise;
       tree.acceptSavedTree(
-        createAssignmentRuleTree(
-          categoryQuery.data,
-          context.selectedTenant,
-          savedAssignmentRules,
-        ),
+        createAssignmentRuleTree(categories, savedAssignmentRules),
       );
     } catch {
       // Toast is handled by useMutationToast.

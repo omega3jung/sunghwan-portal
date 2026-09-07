@@ -1,18 +1,23 @@
 // src/app/api/navigation/left-menu/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserName, isRemoteRequest } from "@/app/api/_adapters";
+import {
+  isRemoteRequest,
+  requireCurrentUserName,
+  toAuthErrorResponse,
+} from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { getLocalLeftMenu } from "@/app/api/_adapters/localDemo/user";
 
 /** Handles GET /api/navigation/left-menu; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest) {
-  const currentUserName = await getCurrentUserName(req);
+  const auth = await requireCurrentUserName(req);
 
-  if (!currentUserName) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!auth.ok) {
+    return toAuthErrorResponse(auth);
   }
 
+  const currentUserName = auth.username;
   const isRemote = await isRemoteRequest(req);
 
   if (!isRemote) {
