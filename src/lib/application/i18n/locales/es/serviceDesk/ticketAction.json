@@ -67,6 +67,7 @@
       "toggleDetails": "Mostrar u ocultar detalles de la acción",
       "number": "Acción n.º {{number}}",
       "edited": "Editado",
+      "unknownOwner": "Empleado desconocido",
       "searchPlaceholder": "Buscar acciones",
       "countLabel_one": "actividad",
       "countLabel_other": "actividades"

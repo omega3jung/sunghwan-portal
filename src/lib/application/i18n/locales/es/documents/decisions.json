@@ -107,6 +107,14 @@
     "title": "2026-08 Nomenclatura de API de capacidades booleanas",
     "description": "Entrada del registro de decisiones sobre nomenclatura de API de capacidades booleanas."
   },
+  "decisionCategoryActivationAndRoutingReadiness202608": {
+    "title": "2026-08 Activacion de categorias y preparacion del enrutamiento",
+    "description": "Entrada del registro de decisiones sobre activacion de categorias y preparacion del enrutamiento."
+  },
+  "decisionSettingsChangeAndInFlightTicketPolicy202608": {
+    "title": "2026-08 Politica de cambios de configuracion y tickets en curso",
+    "description": "Entrada del registro de decisiones sobre cambios de configuracion y tickets en curso."
+  },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Estrategia de cobertura de Vitest",
     "description": "Entrada del registro de decisiones sobre cobertura de Vitest y pruebas basadas en riesgos."

@@ -11,8 +11,10 @@
       "update": "No se pudo actualizar el paso de aprobación.",
       "delete": "No se pudo eliminar el paso de aprobación.",
       "save": "No se pudo guardar la configuración de los pasos de aprobación.",
+      "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de pasos de aprobación no válida.",
+        "tenantNotFound": "No se encontró el tenant {{tenantId}}.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",
         "categoryNotFound": "No se encontró la categoría {{categoryId}}."
       }
@@ -25,8 +27,10 @@
       "delete": "No se pudo eliminar la regla de asignación.",
       "save": "No se pudo guardar la configuración de las reglas de asignación.",
       "emptyAssignee": "Se requiere al menos un puesto o empleado.",
+      "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de reglas de asignación no válida.",
+        "tenantNotFound": "No se encontró el tenant {{tenantId}}.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",
         "categoryNotFound": "No se encontró la categoría {{categoryId}}.",
         "emptyAssignee": "La regla de asignación requiere al menos una persona asignada."
@@ -47,8 +51,10 @@
       "delete": "No se pudo eliminar la categoría.",
       "save": "No se pudo guardar la configuración de categorías.",
       "activationNotReady": "La categoría {{categoryId}} no se puede activar hasta que se configure una regla de asignación válida.",
+      "scopeImmutable": "El ámbito de una categoría no se puede cambiar. Desactiva esta categoría y crea una nueva.",
       "localDemo": {
         "invalidPayload": "Carga útil de configuración de categorías no válida.",
+        "tenantNotFound": "No se encontró el tenant {{tenantId}}.",
         "clientNotFound": "No se encontró el cliente {{clientId}}.",
         "clientMismatch": "La categoría no pertenece al cliente {{clientId}}.",
         "scopeImmutable": "El ámbito de una categoría no se puede cambiar. Desactiva esta categoría y crea una nueva."
@@ -62,6 +68,8 @@
       "delete": "No se pudo eliminar el tenant.",
       "save": "No se pudo guardar la configuración del tenant.",
       "remoteNotImplemented": "Las mutaciones de configuración de tenants REMOTE aún no están implementadas.",
+      "companyAlreadyAssigned": "La empresa {{companyId}} ya está asignada a un tenant activo.",
+      "companyMismatch": "El tenant no pertenece a la empresa {{companyId}}.",
       "portalOwnerProtected": "El tenant propietario del portal no se puede desactivar ni eliminar.",
       "liveTicketsBlockDeactivation": "Un tenant con tickets operativos activos no se puede desactivar ni eliminar.",
       "localDemo": {
@@ -90,7 +98,11 @@
       "fetchList": "No se pudieron obtener las acciones del ticket.",
       "notFound": "Acción no encontrada.",
       "fetch": "No se pudo obtener la acción del ticket.",
-      "remove": "No se pudo eliminar la acción del ticket."
+      "remove": "No se pudo eliminar la acción del ticket.",
+      "invalidPatch": "Para eliminar una acción del ticket, active debe establecerse en false.",
+      "removeForbiddenByStatus": "No se pueden eliminar acciones de un ticket en estado {{status}}.",
+      "operationalRemoveForbidden": "Solo se pueden eliminar comentarios y notas.",
+      "writerOnly": "Solo el autor puede eliminar esta acción."
     },
     "ticketHistories": {
       "fetchList": "No se pudieron obtener los historiales del ticket."
@@ -102,7 +114,10 @@
         "ticketMismatch": "El ticketId del payload no coincide con el ticketId de la ruta.",
         "invalidStatus": "Estado no válido: {{value}}.",
         "invalidTrackedMinutes": "El tiempo registrado debe ser mayor que 0 minutos.",
-        "statusRequiresTime": "El estado no puede cambiar hasta que el tiempo registrado total sea mayor que 0."
+        "statusRequiresTime": "El estado no puede cambiar hasta que el tiempo registrado total sea mayor que 0.",
+        "invalidStatusTransition": "No se permite el cambio de estado solicitado de {{from}} a {{to}}.",
+        "assigneeForbidden": "Solo una persona asignada actualmente puede modificar esta sesión de trabajo.",
+        "statusTransitionRequired": "Registrar trabajo en el estado {{status}} requiere seleccionar un nuevo estado."
       }
     },
     "ticketCommand": {
@@ -112,13 +127,18 @@
       "actionMismatch": "La ruta de la acción y la carga útil no coinciden.",
       "startWork": "No se pudo iniciar el trabajo del ticket.",
       "execute": "No se pudo ejecutar el comando del ticket.",
+      "autoClose": "No se pudieron cerrar los tickets resueltos vencidos.",
       "localDemo": {
         "createFailed": "No se pudo crear la acción.",
         "ticketNotFound": "No se encontró el ticket {{ticketId}}.",
         "assigneeRequired": "La acción ASSIGN requiere assigneeUsernames.",
         "assigneeUnavailable": "El enrutamiento configurado no encontró responsables activos y elegibles.",
         "assigneeForbidden": "Solo una persona asignada puede iniciar el trabajo en este ticket.",
+        "requesterForbidden": "Solo la persona solicitante puede realizar esta acción en el ticket.",
         "approvalForbidden": "Solo la persona aprobadora asignada puede aprobar o declinar este ticket.",
+        "portalAssignForbidden": "Los cambios de responsables en tickets del portal requieren acceso interno.",
+        "approvalAssignForbidden": "Solo una persona administradora puede cambiar los responsables de aprobación.",
+        "assignSelfRequiresMultipleAssignees": "La autoasignación requiere varios responsables actuales.",
         "cancelForbidden": "Solo la persona solicitante puede cancelar este ticket antes de que comience el trabajo.",
         "targetTicketRequired": "La acción MERGE requiere targetTicketId.",
         "nextStatusUnresolved": "No se pudo resolver el siguiente estado.",
@@ -131,6 +151,8 @@
         "invalidMergeTarget": "Destino de fusión no válido.",
         "invalidPriority": "Prioridad no válida: {{value}}.",
         "invalidRiskLevel": "Nivel de riesgo no válido: {{value}}.",
+        "dueAtCorrectionForbidden": "La fecha límite no se puede cambiar al corregir un ticket resuelto o cerrado.",
+        "noPlanningChanges": "Cambia al menos un campo de planificación antes de enviar.",
         "actionNotAllowed": "La acción {{action}} no está permitida en el estado {{status}}."
       }
     }

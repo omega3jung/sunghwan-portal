@@ -1,4 +1,10 @@
 {
+  "createTicketDialog": {
+    "maximumWarningTitle": "Demasiados archivos adjuntos",
+    "maximumWarningMessage": "Puedes adjuntar hasta ${attachMaxCount} archivos.",
+    "maxSizeWarningTitle": "Los archivos adjuntos son demasiado grandes",
+    "maxSizeWarningMessage": "El tamaño total de los archivos adjuntos no puede superar ${attachMaxSize} MB."
+  },
   "ticketCreate": {
     "category": {
       "placeholder": "Seleccionar categoría",

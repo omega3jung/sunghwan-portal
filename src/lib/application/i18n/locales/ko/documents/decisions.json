@@ -8,8 +8,8 @@
     "description": "세션 아키텍처 결정 기록입니다."
   },
   "decisionImpersonation202512": {
-    "title": "2025-12 가장",
-    "description": "가장 전략 결정 기록입니다."
+    "title": "2025-12 사용자 가장",
+    "description": "사용자 가장 전략 결정 기록입니다."
   },
   "decisionNaming202512": {
     "title": "2025-12 네이밍",
@@ -24,8 +24,8 @@
     "description": "카테고리 설계 결정 기록입니다."
   },
   "decisionImpersonation202601": {
-    "title": "2026-01 가장",
-    "description": "가장 결정 기록입니다."
+    "title": "2026-01 사용자 가장",
+    "description": "사용자 가장 결정 기록입니다."
   },
   "decisionSessionUserBoundary202601": {
     "title": "2026-01 세션 사용자 경계",
@@ -40,8 +40,8 @@
     "description": "Service Desk 구현 결정 기록입니다."
   },
   "decisionTicketFormDialog": {
-    "title": "2026-03 티켓 폼 다이얼로그",
-    "description": "티켓 폼 다이얼로그 결정 기록입니다."
+    "title": "2026-03 티켓 Form Dialog",
+    "description": "티켓 Form Dialog 결정 기록입니다."
   },
   "decisionTicketSession202603": {
     "title": "2026-03 티켓 세션",
@@ -88,8 +88,8 @@
     "description": "Next.js 16 마이그레이션 전략 결정 기록입니다."
   },
   "decisionServiceDeskSettingsReferenceValidationBoundary202607": {
-    "title": "2026-07 Service Desk Settings Reference Validation Boundary",
-    "description": "Settings reference validation boundary 설계 결정 기록입니다."
+    "title": "2026-07 Service Desk 설정 참조 검증 경계",
+    "description": "Service Desk 설정의 참조 데이터 검증 경계를 정한 기록입니다."
   },
   "decisionTicketActionAndHistoryExecution202607": {
     "title": "2026-07 티켓 Action 및 History 실행",
@@ -106,6 +106,14 @@
   "decisionBooleanCapabilityApiNaming202608": {
     "title": "2026-08 Boolean Capability API 명명",
     "description": "Boolean capability API 명명 결정 기록입니다."
+  },
+  "decisionCategoryActivationAndRoutingReadiness202608": {
+    "title": "2026-08 Category 활성화 및 Routing 준비 상태",
+    "description": "Category 활성화 및 Routing 준비 상태 결정 기록입니다."
+  },
+  "decisionSettingsChangeAndInFlightTicketPolicy202608": {
+    "title": "2026-08 Settings 변경 및 진행 중 Ticket 정책",
+    "description": "Settings 변경 및 진행 중 Ticket 정책 결정 기록입니다."
   },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Vitest Coverage 전략",

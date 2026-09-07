@@ -11,8 +11,10 @@
       "update": "Impossible de mettre à jour l'étape d'approbation.",
       "delete": "Impossible de supprimer l'étape d'approbation.",
       "save": "Impossible d'enregistrer les paramètres des étapes d'approbation.",
+      "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres d'étapes d'approbation invalide.",
+        "tenantNotFound": "Le tenant {{tenantId}} est introuvable.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
         "categoryNotFound": "La catégorie {{categoryId}} est introuvable."
       }
@@ -25,8 +27,10 @@
       "delete": "Impossible de supprimer la règle d'attribution.",
       "save": "Impossible d'enregistrer les paramètres des règles d'attribution.",
       "emptyAssignee": "Au moins un poste ou un employé est requis.",
+      "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres des règles d'attribution invalide.",
+        "tenantNotFound": "Le tenant {{tenantId}} est introuvable.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
         "categoryNotFound": "La catégorie {{categoryId}} est introuvable.",
         "emptyAssignee": "La règle d'attribution nécessite au moins une personne assignée."
@@ -47,8 +51,10 @@
       "delete": "Impossible de supprimer la catégorie.",
       "save": "Impossible d'enregistrer les paramètres de catégorie.",
       "activationNotReady": "La catégorie {{categoryId}} ne peut pas être activée tant qu’une règle d’attribution valide n’est pas configurée.",
+      "scopeImmutable": "La portée d'une catégorie ne peut pas être modifiée. Désactivez cette catégorie et créez-en une nouvelle.",
       "localDemo": {
         "invalidPayload": "Charge utile des paramètres de catégorie invalide.",
+        "tenantNotFound": "Le tenant {{tenantId}} est introuvable.",
         "clientNotFound": "Le client {{clientId}} est introuvable.",
         "clientMismatch": "La catégorie n'appartient pas au client {{clientId}}.",
         "scopeImmutable": "La portée d'une catégorie ne peut pas être modifiée. Désactivez cette catégorie et créez-en une nouvelle."
@@ -62,6 +68,8 @@
       "delete": "Impossible de supprimer le tenant.",
       "save": "Impossible d'enregistrer les paramètres du tenant.",
       "remoteNotImplemented": "Les mutations des paramètres du tenant REMOTE ne sont pas encore implémentées.",
+      "companyAlreadyAssigned": "L'entreprise {{companyId}} est déjà assignée à un tenant actif.",
+      "companyMismatch": "Le tenant n'appartient pas à l'entreprise {{companyId}}.",
       "portalOwnerProtected": "Le tenant propriétaire du portail ne peut pas être désactivé ou supprimé.",
       "liveTicketsBlockDeactivation": "Un tenant avec des tickets opérationnels actifs ne peut pas être désactivé ni supprimé.",
       "localDemo": {
@@ -90,7 +98,11 @@
       "fetchList": "Impossible de récupérer les actions du ticket.",
       "notFound": "Action introuvable.",
       "fetch": "Impossible de récupérer l'action du ticket.",
-      "remove": "Impossible de supprimer l'action du ticket."
+      "remove": "Impossible de supprimer l'action du ticket.",
+      "invalidPatch": "La suppression d'une action de ticket nécessite que active soit défini sur false.",
+      "removeForbiddenByStatus": "Les actions ne peuvent pas être supprimées d'un ticket à l'état {{status}}.",
+      "operationalRemoveForbidden": "Seuls les commentaires et les notes peuvent être supprimés.",
+      "writerOnly": "Seul l'auteur peut supprimer cette action."
     },
     "ticketHistories": {
       "fetchList": "Impossible de récupérer les historiques du ticket."
@@ -102,7 +114,10 @@
         "ticketMismatch": "Le ticketId de la charge utile ne correspond pas au ticketId de la route.",
         "invalidStatus": "Statut invalide : {{value}}.",
         "invalidTrackedMinutes": "Le temps suivi doit être supérieur à 0 minute.",
-        "statusRequiresTime": "Le statut ne peut pas changer tant que le temps suivi total n'est pas supérieur à 0."
+        "statusRequiresTime": "Le statut ne peut pas changer tant que le temps suivi total n'est pas supérieur à 0.",
+        "invalidStatusTransition": "Le changement de statut demandé de {{from}} à {{to}} n'est pas autorisé.",
+        "assigneeForbidden": "Seule une personne actuellement assignée peut modifier cette session de travail.",
+        "statusTransitionRequired": "L'enregistrement du travail avec le statut {{status}} nécessite de sélectionner un nouveau statut."
       }
     },
     "ticketCommand": {
@@ -112,13 +127,18 @@
       "actionMismatch": "Le chemin de l'action et la charge utile ne correspondent pas.",
       "startWork": "Impossible de démarrer le travail sur le ticket.",
       "execute": "Impossible d'exécuter la commande du ticket.",
+      "autoClose": "Impossible de fermer les tickets résolus arrivés à expiration.",
       "localDemo": {
         "createFailed": "Impossible de créer l'action.",
         "ticketNotFound": "Ticket {{ticketId}} introuvable.",
         "assigneeRequired": "L'action ASSIGN nécessite assigneeUsernames.",
         "assigneeUnavailable": "Le routage configuré n'a trouvé aucun intervenant actif et éligible.",
         "assigneeForbidden": "Seule une personne assignée peut démarrer le travail sur ce ticket.",
+        "requesterForbidden": "Seule la personne demandeuse peut effectuer cette action sur le ticket.",
         "approvalForbidden": "Seule la personne approbatrice assignée peut approuver ou refuser ce ticket.",
+        "portalAssignForbidden": "La modification des responsables d'un ticket portail nécessite un accès interne.",
+        "approvalAssignForbidden": "Seule une personne administratrice peut modifier les responsables de l'approbation.",
+        "assignSelfRequiresMultipleAssignees": "L'auto-attribution nécessite plusieurs responsables actuels.",
         "cancelForbidden": "Seule la personne demandeuse peut annuler ce ticket avant le début du travail.",
         "targetTicketRequired": "L'action MERGE nécessite targetTicketId.",
         "nextStatusUnresolved": "Le statut suivant n'a pas pu être résolu.",
@@ -131,6 +151,8 @@
         "invalidMergeTarget": "Cible de fusion invalide.",
         "invalidPriority": "Priorité invalide : {{value}}.",
         "invalidRiskLevel": "Niveau de risque invalide : {{value}}.",
+        "dueAtCorrectionForbidden": "La date d'échéance ne peut pas être modifiée lors de la correction d'un ticket résolu ou fermé.",
+        "noPlanningChanges": "Modifiez au moins un champ de planification avant d'envoyer.",
         "actionNotAllowed": "L'action {{action}} n'est pas autorisée dans l'état {{status}}."
       }
     }
