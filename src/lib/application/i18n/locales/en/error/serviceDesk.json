@@ -14,6 +14,7 @@
       "categoryNotFound": "Category {{categoryId}} was not found.",
       "localDemo": {
         "invalidPayload": "Invalid approval step settings payload.",
+        "tenantNotFound": "Tenant {{tenantId}} was not found.",
         "clientNotFound": "Client {{clientId}} was not found.",
         "categoryNotFound": "Category {{categoryId}} was not found."
       }
@@ -29,6 +30,7 @@
       "categoryNotFound": "Category {{categoryId}} was not found.",
       "localDemo": {
         "invalidPayload": "Invalid assignment rule settings payload.",
+        "tenantNotFound": "Tenant {{tenantId}} was not found.",
         "clientNotFound": "Client {{clientId}} was not found.",
         "categoryNotFound": "Category {{categoryId}} was not found.",
         "emptyAssignee": "Assignment rule requires at least one assignee."
@@ -52,6 +54,7 @@
       "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one.",
       "localDemo": {
         "invalidPayload": "Invalid category settings payload.",
+        "tenantNotFound": "Tenant {{tenantId}} was not found.",
         "clientNotFound": "Client {{clientId}} was not found.",
         "clientMismatch": "Category does not belong to client {{clientId}}.",
         "scopeImmutable": "Category scope cannot be changed. Deactivate this category and create a new one."
@@ -95,7 +98,11 @@
       "fetchList": "Failed to fetch ticket actions.",
       "notFound": "Action not found.",
       "fetch": "Failed to fetch ticket action.",
-      "remove": "Failed to remove ticket action."
+      "remove": "Failed to remove ticket action.",
+      "invalidPatch": "Ticket action removal requires active to be false.",
+      "removeForbiddenByStatus": "Actions cannot be removed from a ticket in status {{status}}.",
+      "operationalRemoveForbidden": "Only comments and notes can be removed.",
+      "writerOnly": "Only the author can remove this action."
     },
     "ticketHistories": {
       "fetchList": "Failed to fetch ticket histories."
@@ -107,7 +114,10 @@
         "ticketMismatch": "Work session payload ticketId does not match the route ticketId.",
         "invalidStatus": "Invalid status: {{value}}.",
         "invalidTrackedMinutes": "Work session must be greater than 0 minutes.",
-        "statusRequiresTime": "Status cannot change until total work session is greater than 0."
+        "statusRequiresTime": "Status cannot change until total work session is greater than 0.",
+        "invalidStatusTransition": "The requested status transition from {{from}} to {{to}} is not allowed.",
+        "assigneeForbidden": "Only a current assignee can update this work session.",
+        "statusTransitionRequired": "Recording work in status {{status}} requires selecting a new status."
       }
     },
     "ticketCommand": {
@@ -117,13 +127,18 @@
       "actionMismatch": "Action path and payload do not match.",
       "startWork": "Failed to start ticket work.",
       "execute": "Failed to execute ticket command.",
+      "autoClose": "Failed to close expired resolved tickets.",
       "localDemo": {
         "createFailed": "Failed to create action.",
         "ticketNotFound": "Ticket {{ticketId}} not found.",
         "assigneeRequired": "ASSIGN action requires assigneeUsernames.",
         "assigneeUnavailable": "Configured routing resolved no active eligible assignees.",
         "assigneeForbidden": "Only an assigned user can start work on this ticket.",
+        "requesterForbidden": "Only the requester can perform this action on the ticket.",
         "approvalForbidden": "Only the assigned approver can approve or decline this ticket.",
+        "portalAssignForbidden": "Assignment changes for portal tickets require internal access.",
+        "approvalAssignForbidden": "Only an administrator can change approval assignees.",
+        "assignSelfRequiresMultipleAssignees": "Self-assignment requires multiple current assignees.",
         "cancelForbidden": "Only the requester can cancel this ticket before work starts.",
         "targetTicketRequired": "MERGE action requires targetTicketId.",
         "nextStatusUnresolved": "Next status could not be resolved.",
@@ -136,6 +151,8 @@
         "invalidMergeTarget": "Invalid merge target.",
         "invalidPriority": "Invalid priority: {{value}}.",
         "invalidRiskLevel": "Invalid risk level: {{value}}.",
+        "dueAtCorrectionForbidden": "The due date cannot be changed while correcting a resolved or closed ticket.",
+        "noPlanningChanges": "Change at least one planning field before submitting.",
         "actionNotAllowed": "Action {{action}} is not allowed in status {{status}}."
       }
     }

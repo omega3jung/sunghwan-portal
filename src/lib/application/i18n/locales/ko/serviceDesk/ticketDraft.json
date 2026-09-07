@@ -1,4 +1,10 @@
 {
+  "createTicketDialog": {
+    "maximumWarningTitle": "첨부 파일 개수 초과",
+    "maximumWarningMessage": "파일은 최대 ${attachMaxCount}개까지 첨부할 수 있습니다.",
+    "maxSizeWarningTitle": "첨부 파일 용량 초과",
+    "maxSizeWarningMessage": "전체 첨부 파일 크기는 ${attachMaxSize}MB를 초과할 수 없습니다."
+  },
   "ticketCreate": {
     "category": {
       "placeholder": "카테고리 선택",

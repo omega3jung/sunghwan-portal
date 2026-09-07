@@ -67,6 +67,7 @@
       "toggleDetails": "Toggle action details",
       "number": "Action #{{number}}",
       "edited": "Edited",
+      "unknownOwner": "Unknown employee",
       "searchPlaceholder": "Search actions",
       "countLabel_one": "activity",
       "countLabel_other": "activities"

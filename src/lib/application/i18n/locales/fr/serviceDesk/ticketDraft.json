@@ -1,4 +1,10 @@
 {
+  "createTicketDialog": {
+    "maximumWarningTitle": "Trop de pièces jointes",
+    "maximumWarningMessage": "Vous pouvez joindre jusqu'à ${attachMaxCount} fichiers.",
+    "maxSizeWarningTitle": "Pièces jointes trop volumineuses",
+    "maxSizeWarningMessage": "La taille totale des pièces jointes ne peut pas dépasser ${attachMaxSize} Mo."
+  },
   "ticketCreate": {
     "category": {
       "placeholder": "Sélectionner une catégorie",

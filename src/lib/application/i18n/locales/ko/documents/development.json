@@ -21,7 +21,7 @@
   },
   "testingStrategy": {
     "title": "테스트 전략",
-    "description": "Vitest, Storybook, browser coverage를 위한 위험 기반 테스트 원칙과 경계를 설명합니다."
+    "description": "Vitest, Storybook, 브라우저 테스트에 적용하는 위험 기반 테스트 원칙과 책임 경계를 설명합니다."
   },
   "releaseOverview": {
     "title": "프로덕션 릴리스",

@@ -11,8 +11,10 @@
       "update": "승인 단계를 수정하지 못했습니다.",
       "delete": "승인 단계를 삭제하지 못했습니다.",
       "save": "승인 단계 설정을 저장하지 못했습니다.",
+      "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
       "localDemo": {
         "invalidPayload": "승인 단계 설정 payload가 올바르지 않습니다.",
+        "tenantNotFound": "테넌트 {{tenantId}}를 찾을 수 없습니다.",
         "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
         "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다."
       }
@@ -25,8 +27,10 @@
       "delete": "할당 규칙을 삭제하지 못했습니다.",
       "save": "할당 규칙 설정을 저장하지 못했습니다.",
       "emptyAssignee": "직무 또는 직원이 하나 이상 필요합니다.",
+      "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
       "localDemo": {
         "invalidPayload": "할당 규칙 설정 payload가 올바르지 않습니다.",
+        "tenantNotFound": "테넌트 {{tenantId}}를 찾을 수 없습니다.",
         "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
         "categoryNotFound": "카테고리 {{categoryId}}를 찾을 수 없습니다.",
         "emptyAssignee": "할당 규칙에는 최소 한 명의 담당자가 필요합니다."
@@ -47,8 +51,10 @@
       "delete": "카테고리를 삭제하지 못했습니다.",
       "save": "카테고리 설정을 저장하지 못했습니다.",
       "activationNotReady": "유효한 할당 규칙을 설정해야 카테고리 {{categoryId}}을(를) 활성화할 수 있습니다.",
+      "scopeImmutable": "카테고리 범위는 변경할 수 없습니다. 기존 카테고리를 비활성화하고 새로 생성하세요.",
       "localDemo": {
         "invalidPayload": "카테고리 설정 payload가 올바르지 않습니다.",
+        "tenantNotFound": "테넌트 {{tenantId}}를 찾을 수 없습니다.",
         "clientNotFound": "클라이언트 {{clientId}}를 찾을 수 없습니다.",
         "clientMismatch": "카테고리가 클라이언트 {{clientId}}에 속하지 않습니다.",
         "scopeImmutable": "카테고리 범위는 변경할 수 없습니다. 기존 카테고리를 비활성화하고 새로 생성하세요."
@@ -62,6 +68,8 @@
       "delete": "테넌트를 삭제하지 못했습니다.",
       "save": "테넌트 설정을 저장하지 못했습니다.",
       "remoteNotImplemented": "REMOTE 테넌트 설정 변경은 아직 구현되지 않았습니다.",
+      "companyAlreadyAssigned": "회사 {{companyId}}는 이미 활성 테넌트에 할당되어 있습니다.",
+      "companyMismatch": "테넌트가 회사 {{companyId}}에 속하지 않습니다.",
       "portalOwnerProtected": "포털 소유자 테넌트는 비활성화하거나 삭제할 수 없습니다.",
       "liveTicketsBlockDeactivation": "진행 중인 운영 티켓이 있는 테넌트는 비활성화하거나 삭제할 수 없습니다.",
       "localDemo": {
@@ -90,7 +98,11 @@
       "fetchList": "티켓 액션을 불러오지 못했습니다.",
       "notFound": "액션을 찾을 수 없습니다.",
       "fetch": "티켓 액션을 불러오지 못했습니다.",
-      "remove": "티켓 액션을 삭제하지 못했습니다."
+      "remove": "티켓 액션을 삭제하지 못했습니다.",
+      "invalidPatch": "티켓 액션을 삭제하려면 active를 false로 설정해야 합니다.",
+      "removeForbiddenByStatus": "{{status}} 상태의 티켓에서는 액션을 삭제할 수 없습니다.",
+      "operationalRemoveForbidden": "댓글과 메모만 삭제할 수 있습니다.",
+      "writerOnly": "작성자만 이 액션을 삭제할 수 있습니다."
     },
     "ticketHistories": {
       "fetchList": "티켓 이력을 불러오지 못했습니다."
@@ -102,7 +114,10 @@
         "ticketMismatch": "작업 시간 payload의 ticketId가 경로의 ticketId와 일치하지 않습니다.",
         "invalidStatus": "유효하지 않은 상태입니다: {{value}}.",
         "invalidTrackedMinutes": "작업 시간은 0분보다 커야 합니다.",
-        "statusRequiresTime": "전체 작업 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다."
+        "statusRequiresTime": "전체 작업 시간이 0보다 커질 때까지 상태를 변경할 수 없습니다.",
+        "invalidStatusTransition": "{{from}}에서 {{to}}(으)로의 상태 변경은 허용되지 않습니다.",
+        "assigneeForbidden": "현재 담당자만 이 작업 시간을 수정할 수 있습니다.",
+        "statusTransitionRequired": "{{status}} 상태에서 작업 시간을 기록하려면 새 상태를 선택해야 합니다."
       }
     },
     "ticketCommand": {
@@ -112,13 +127,18 @@
       "actionMismatch": "액션 경로와 payload가 일치하지 않습니다.",
       "startWork": "티켓 작업을 시작하지 못했습니다.",
       "execute": "티켓 명령 실행에 실패했습니다.",
+      "autoClose": "기한이 지난 해결 티켓을 종료하지 못했습니다.",
       "localDemo": {
         "createFailed": "액션 생성에 실패했습니다.",
         "ticketNotFound": "티켓 {{ticketId}}을(를) 찾을 수 없습니다.",
         "assigneeRequired": "ASSIGN 작업에는 assigneeUsernames가 필요합니다.",
         "assigneeUnavailable": "설정된 라우팅에서 활성 상태의 유효한 담당자를 찾을 수 없습니다.",
         "assigneeForbidden": "이 티켓의 작업은 할당된 사용자만 시작할 수 있습니다.",
+        "requesterForbidden": "요청자만 이 티켓에서 해당 작업을 수행할 수 있습니다.",
         "approvalForbidden": "할당된 승인자만 이 티켓을 승인하거나 반려할 수 있습니다.",
+        "portalAssignForbidden": "포털 티켓의 담당자를 변경하려면 내부 접근 권한이 필요합니다.",
+        "approvalAssignForbidden": "관리자만 승인 담당자를 변경할 수 있습니다.",
+        "assignSelfRequiresMultipleAssignees": "현재 담당자가 여러 명인 경우에만 자신에게 할당할 수 있습니다.",
         "cancelForbidden": "작업이 시작되기 전에는 요청자만 이 티켓을 취소할 수 있습니다.",
         "targetTicketRequired": "MERGE 작업에는 targetTicketId가 필요합니다.",
         "nextStatusUnresolved": "다음 상태를 확인할 수 없습니다.",
@@ -131,6 +151,8 @@
         "invalidMergeTarget": "유효하지 않은 병합 대상입니다.",
         "invalidPriority": "유효하지 않은 우선순위입니다: {{value}}.",
         "invalidRiskLevel": "유효하지 않은 위험도입니다: {{value}}.",
+        "dueAtCorrectionForbidden": "해결 또는 종료된 티켓을 정정할 때는 마감일을 변경할 수 없습니다.",
+        "noPlanningChanges": "제출하기 전에 계획 필드를 하나 이상 변경하세요.",
         "actionNotAllowed": "{{status}} 상태에서는 {{action}} 작업을 수행할 수 없습니다."
       }
     }

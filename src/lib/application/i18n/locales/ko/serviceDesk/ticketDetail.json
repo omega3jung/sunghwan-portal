@@ -1,6 +1,8 @@
 {
   "detailAside": {
+    "approvalAssignee": "승인 담당자",
     "recipientsTitle": "수신자",
+    "requesterUnknown": "알 수 없는 요청자",
     "unassigned": "미할당",
     "ticketNo": "티켓 번호",
     "currentUserBadge": "나",

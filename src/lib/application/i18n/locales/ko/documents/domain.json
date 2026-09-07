@@ -1,7 +1,7 @@
 {
   "ticketSystemOverview": {
     "title": "티켓 시스템 개요",
-    "description": "Service Desk 도메인의 상위 수준 개요입니다."
+    "description": "Service Desk 도메인의 전반적인 구조를 설명합니다."
   },
   "serviceDeskSettings": {
     "title": "서비스 데스크 설정",
@@ -17,7 +17,7 @@
   },
   "ticketAction": {
     "title": "Ticket Action",
-    "description": "커뮤니케이션과 운영 command를 위한 first-class action model을 설명합니다."
+    "description": "커뮤니케이션과 운영 명령을 처리하는 핵심 Ticket Action 모델을 설명합니다."
   },
   "ticketHistory": {
     "title": "티켓 이력",
@@ -25,7 +25,7 @@
   },
   "ticketWorkSession": {
     "title": "Ticket Work Session",
-    "description": "작업 시간 근거와 tracked-time model을 설명합니다."
+    "description": "작업 시간의 근거와 시간 추적 모델을 설명합니다."
   },
   "actionStrategy": {
     "title": "액션 전략",
@@ -41,7 +41,7 @@
   },
   "assignmentPolicy": {
     "title": "배정 정책",
-    "description": "배정 로직과 업무 방향성을 설명합니다."
+    "description": "담당자 배정 규칙과 배정 대상을 결정하는 방식을 설명합니다."
   },
   "slaStrategy": {
     "title": "SLA 전략",
