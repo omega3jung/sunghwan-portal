@@ -123,7 +123,9 @@ export function TenantSettingInfo({
                 >
                   <ColorPicker.Trigger />
                   <ColorPicker.HexInput />
-                  <ColorPicker.Reset>{tCommon("reset")}</ColorPicker.Reset>
+                  <ColorPicker.Reset>
+                    {tCommon("action.reset")}
+                  </ColorPicker.Reset>
                 </ColorPicker>
               </Field>
             </FieldGroup>

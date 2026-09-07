@@ -21,15 +21,15 @@ export const useToastMessage = () => {
 
   const saved = (item: string) =>
     toast.add({
-      title: tMessage("saved.title"),
-      description: tMessage("saved.success", { item }),
+      title: tMessage("common.save.title"),
+      description: tMessage("common.save.success", { item }),
       type: "info",
     });
 
   const deleted = (item: string) =>
     toast.add({
-      title: tMessage("deleted.title"),
-      description: tMessage("deleted.success", { item }),
+      title: tMessage("common.delete.title"),
+      description: tMessage("common.delete.success", { item }),
       type: "info",
     });
 

@@ -1,6 +1,8 @@
 {
   "detailAside": {
+    "approvalAssignee": "Responsable de l'approbation",
     "recipientsTitle": "Destinataires",
+    "requesterUnknown": "Demandeur inconnu",
     "unassigned": "Non attribué",
     "ticketNo": "Numéro du ticket",
     "currentUserBadge": "Moi",

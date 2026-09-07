@@ -126,7 +126,7 @@ function ExistingAttachmentSection({
                   type="button"
                   size="icon"
                   className="text-destructive"
-                  aria-label={`${t("delete", { ns: NS.common })}: ${item.originalName}`}
+                  aria-label={`${t("action.delete", { ns: NS.common })}: ${item.originalName}`}
                   onClick={() => onRemove(index)}
                 >
                   <Trash2 />

@@ -1,6 +1,8 @@
 {
   "detailAside": {
+    "approvalAssignee": "Approval assignee",
     "recipientsTitle": "Recipients",
+    "requesterUnknown": "Unknown requester",
     "unassigned": "Unassigned",
     "ticketNo": "Ticket No",
     "currentUserBadge": "Me",

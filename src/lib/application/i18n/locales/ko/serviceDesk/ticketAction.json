@@ -67,6 +67,7 @@
       "toggleDetails": "액션 상세 보기 전환",
       "number": "액션 #{{number}}",
       "edited": "수정됨",
+      "unknownOwner": "알 수 없는 직원",
       "searchPlaceholder": "액션 검색",
       "countLabel_one": "활동",
       "countLabel_other": "활동"
