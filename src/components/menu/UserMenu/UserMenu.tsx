@@ -5,7 +5,7 @@ import {
   UserRoundMinus,
   UserRoundPlus,
 } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -28,12 +28,12 @@ import { useImpersonation } from "@/feature/auth/impersonation/client";
 import { useCurrentSession } from "@/feature/auth/session/client";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { withBasePath } from "@/lib/config/routing";
 import { cn } from "@/shared/utils/presentation";
 
 import { DemoImpersonation } from "./DemoImpersonation";
 import { DemoUserSwitch } from "./DemoUserSwitch";
 import { UserImpersonation } from "./UserImpersonation";
+import { signOutToHome } from "./userMenuAuth";
 import {
   getDemoImpersonationCandidates,
   getDemoUserSwitchCandidates,
@@ -276,7 +276,7 @@ export function UserMenu({ demoCandidates = EMPTY_DEMO_CANDIDATES }: Props) {
             )}
             <DropdownMenuItem
               className="text-red-600/80 focus:text-red-500 data-highlighted:text-red-500"
-              onClick={() => signOut({ callbackUrl: withBasePath("/") })}
+              onClick={signOutToHome}
             >
               <LogOut />
               {t("logOut")}

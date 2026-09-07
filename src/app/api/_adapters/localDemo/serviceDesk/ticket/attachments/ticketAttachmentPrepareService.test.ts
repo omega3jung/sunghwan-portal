@@ -60,7 +60,7 @@ describe("Ticket attachment preparation boundary", () => {
         body: `<img src="${src}">`,
         files: [],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("rejects unsupported inline MIME and selected-file MIME/extension mismatch", () => {
@@ -69,14 +69,14 @@ describe("Ticket attachment preparation boundary", () => {
         body: '<img src="data:image/svg+xml;base64,PHN2Zz4=">',
         files: [],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
 
     expect(() =>
       prepareTicketAttachments({
         body: "",
         files: [createFile("renamed.txt", "image/png", 1)],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("enforces selected-file count, per-file size, and aggregate size", () => {
@@ -88,7 +88,7 @@ describe("Ticket attachment preparation boundary", () => {
           (_, index) => createFile(`${index}.txt`, "text/plain", 1),
         ),
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
 
     expect(() =>
       prepareTicketAttachments({
@@ -101,7 +101,7 @@ describe("Ticket attachment preparation boundary", () => {
           ),
         ],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
 
     expect(() =>
       prepareTicketAttachments({
@@ -114,7 +114,7 @@ describe("Ticket attachment preparation boundary", () => {
           ),
         ),
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("enforces inline-image count and size", () => {
@@ -124,7 +124,7 @@ describe("Ticket attachment preparation boundary", () => {
         body: image.repeat(TICKET_ATTACHMENT_LIMITS.maxInlineImageCount + 1),
         files: [],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
 
     const oversizedBase64 = "A".repeat(
       Math.ceil(((TICKET_ATTACHMENT_LIMITS.maxInlineImageSizeBytes + 1) * 4) / 3),
@@ -134,7 +134,7 @@ describe("Ticket attachment preparation boundary", () => {
         body: `<img src="data:image/png;base64,${oversizedBase64}">`,
         files: [],
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 });
 

@@ -73,7 +73,7 @@ describe("Category settings write service", () => {
         currentCategories,
         payload: createPayload({ id: "99" }),
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("keeps category scope immutable", () => {
@@ -84,7 +84,7 @@ describe("Category settings write service", () => {
         currentCategories,
         payload: createPayload({ id: "10", scope: "INTERNAL" }),
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("rejects moving a persisted subcategory to another tree", () => {
@@ -95,7 +95,7 @@ describe("Category settings write service", () => {
         currentCategories,
         payload: createPayload({ id: "10", subCategoryId: "12" }),
       }),
-    ).toThrowError(expect.objectContaining({ status: 400 }));
+    ).toThrow(expect.objectContaining({ status: 400 }));
   });
 
   it("forces newly created main and subcategories inactive", async () => {
