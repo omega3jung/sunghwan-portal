@@ -27,6 +27,3 @@ const toDbTicketAction = (action: TicketActionMockInput): DbTicketAction => ({
 export const ticketActionsMock: DbTicketAction[] = serviceDeskScenariosMock
   .flatMap((scenario) => scenario.actions)
   .map(toDbTicketAction);
-
-/** @deprecated Use ticketActionsMock. */
-export const internalActionsMock = ticketActionsMock;

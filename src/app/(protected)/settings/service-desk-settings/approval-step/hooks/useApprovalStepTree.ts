@@ -8,7 +8,7 @@ import {
 } from "@/components/custom/SortableTree";
 import type {
   CategoryApprovalSettings,
-  TenantCategoryTree,
+  MainCategory,
 } from "@/domain/serviceDesk";
 
 import { useServiceDeskSettingsTreeDraft } from "../../hooks/useServiceDeskSettingsTreeDraft";
@@ -22,35 +22,29 @@ import { createApprovalStepSettingsSignatureFromTree } from "../utils/tree";
 
 type UseApprovalStepTreeOptions = {
   contextKey: string | null;
-  selectedTenant: string | null;
-  categories: TenantCategoryTree[] | undefined;
+  categories: readonly MainCategory[] | undefined;
   approvalSteps: CategoryApprovalSettings[] | undefined;
 };
 
 export function useApprovalStepTree({
   contextKey,
-  selectedTenant,
   categories,
   approvalSteps,
 }: UseApprovalStepTreeOptions) {
   const newStepCountRef = useRef(1);
   const source = useMemo(() => {
-    if (!contextKey || !categories || !selectedTenant || !approvalSteps) {
+    if (!contextKey || !categories || !approvalSteps) {
       return undefined;
     }
 
-    const tree = createApprovalStepTree(
-      categories,
-      selectedTenant,
-      approvalSteps,
-    );
+    const tree = createApprovalStepTree(categories, approvalSteps);
 
     return {
       contextKey,
       tree,
       signature: createApprovalStepSettingsSignatureFromTree(tree),
     };
-  }, [approvalSteps, categories, contextKey, selectedTenant]);
+  }, [approvalSteps, categories, contextKey]);
   const draft = useServiceDeskSettingsTreeDraft<
     CategoryApprovalStepData | ApprovalStepData
   >({

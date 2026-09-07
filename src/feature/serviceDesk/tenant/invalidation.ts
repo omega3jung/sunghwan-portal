@@ -3,11 +3,11 @@ import type { QueryClient } from "@tanstack/react-query";
 import { approvalStepQueryKeys } from "../approvalStep/queryKeys";
 import { assignmentRuleQueryKeys } from "../assignmentRule/queryKeys";
 import { categoryQueryKeys } from "../category/queryKeys";
-import { tenantQueryKeys } from "../tenant/queryKeys";
+import { tenantQueryKeys } from "./queryKeys";
 
-/** Invalidates only Service Desk families whose target tenant relationship changed. */
-export function invalidateServiceDeskTenantDependencies(
-  queryClient: QueryClient,
+/** Invalidates settings families affected by a tenant relationship change. */
+export function invalidateTenantMutationQueries(
+  queryClient: Pick<QueryClient, "invalidateQueries">,
 ) {
   return Promise.all([
     queryClient.invalidateQueries({ queryKey: tenantQueryKeys.lists() }),
@@ -15,13 +15,4 @@ export function invalidateServiceDeskTenantDependencies(
     queryClient.invalidateQueries({ queryKey: approvalStepQueryKeys.all }),
     queryClient.invalidateQueries({ queryKey: assignmentRuleQueryKeys.all }),
   ]);
-}
-
-/** Organization members and fields affect only assignment recommendations. */
-export function invalidateServiceDeskOrganizationDependencies(
-  queryClient: QueryClient,
-) {
-  return queryClient.invalidateQueries({
-    queryKey: assignmentRuleQueryKeys.recommendations(),
-  });
 }

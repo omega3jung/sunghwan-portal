@@ -19,6 +19,10 @@
     "title": "React Query 전략",
     "description": "데이터 패칭, 캐싱, 클라이언트 경계 지침을 설명합니다."
   },
+  "testingStrategy": {
+    "title": "테스트 전략",
+    "description": "Vitest, Storybook, browser coverage를 위한 위험 기반 테스트 원칙과 경계를 설명합니다."
+  },
   "releaseOverview": {
     "title": "프로덕션 릴리스",
     "description": "main에 병합되어 프로덕션 브랜치에 적용된 변경 기록입니다."

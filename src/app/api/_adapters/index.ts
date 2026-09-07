@@ -1,3 +1,3 @@
 // src/app/api/_adapters/index.ts
-export * from "./auth/requestAuth";
+export * from "./auth";
 export * from "./http";

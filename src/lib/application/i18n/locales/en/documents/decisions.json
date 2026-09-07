@@ -106,5 +106,9 @@
   "decisionBooleanCapabilityApiNaming202608": {
     "title": "2026-08 Boolean Capability API Naming",
     "description": "Boolean capability API naming decision log entry."
+  },
+  "decisionVitestCoverageStrategy202609": {
+    "title": "2026-09 Vitest Coverage Strategy",
+    "description": "Vitest coverage and risk-based testing strategy decision log entry."
   }
 }

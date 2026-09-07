@@ -126,7 +126,7 @@ session = {
 
 ### Strategy
 
-**NextAuth** 를 기본 인증 계층으로 사용하고, 세션에 impersonation 메타데이터를 확장하여 붙입니다.
+**NextAuth** 를 기본 인증 계층으로 사용하고, 세션을 확장해 impersonation 메타데이터를 추가합니다.
 
 ---
 
@@ -226,7 +226,7 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 ### Stored Context
 
 - `originalUser.username` (심사/보안 키)
-- `impersonatedUser.username` (활성된 사용자 컨텍스트 키)
+- `impersonatedUser.username` (활성화된 사용자 컨텍스트 키)
 - `originalUser.id` (원본 인증/계정 식별자)
 
 ---

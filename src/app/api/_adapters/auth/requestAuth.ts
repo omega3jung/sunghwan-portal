@@ -18,7 +18,7 @@ export async function getAuthToken(req: NextRequest) {
 /** Returns the access token from the server-only Auth.js session token. */
 export async function getAccessToken(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.accessToken ?? null;
+  return resolveNonEmptyString(token?.accessToken);
 }
 
 /** Selects the configured remote backend only when the session carries a remote access token. */
@@ -44,31 +44,46 @@ export async function getUserAccessLevel(
   req: NextRequest,
 ): Promise<AccessLevel> {
   const token = await getAuthToken(req);
-  return token ? token.permission : 0;
+  const permission = token?.permission;
+
+  return typeof permission === "number" &&
+    Object.values(ACCESS_LEVEL).includes(permission as AccessLevel)
+    ? (permission as AccessLevel)
+    : ACCESS_LEVEL.NONE;
 }
 
 /** Loads user role through the server data boundary. */
 export async function getUserRole(req: NextRequest): Promise<Role> {
   const token = await getAuthToken(req);
-  return token?.role ?? "NONE";
+  const role = token?.role;
+
+  return typeof role === "string" && role in ACCESS_LEVEL
+    ? (role as Role)
+    : "NONE";
 }
 
 /** Loads company id through the server data boundary. */
 export async function getCompanyId(req: NextRequest): Promise<number> {
   const token = await getAuthToken(req);
-  return token?.companyId ?? 0;
+  const companyId = token?.companyId;
+
+  return typeof companyId === "number" &&
+    Number.isSafeInteger(companyId) &&
+    companyId > 0
+    ? companyId
+    : 0;
 }
 
 // UserId helpers resolve auth/account identity from JWT.
 export async function getOriginalUserId(req: NextRequest) {
   const token = await getAuthToken(req);
-  return token?.id ?? null;
+  return resolveNonEmptyString(token?.id);
 }
 
 /** Returns the effective username, including an authorized impersonation target when present. */
 export async function getCurrentUserName(req: NextRequest) {
   const token = await getAuthToken(req);
-  return (
+  return resolveNonEmptyString(
     token?.impersonation?.impersonatedUser.username ?? token?.username ?? null
   );
 }
@@ -98,9 +113,29 @@ export async function getCurrentEmployeeUserName(
 }
 
 /** Describes the auth result returned across the server boundary. */
+export type AuthFailure =
+  | { ok: false; status: 401 }
+  | { ok: false; status: 403 };
+
 export type AuthResult =
   | { ok: true; token: JWT }
-  | { ok: false; status: 401 | 403 };
+  | AuthFailure;
+
+/** Describes the effective account username required by account-scoped routes. */
+export type CurrentUserNameResult =
+  | { ok: true; username: string }
+  | Extract<AuthFailure, { status: 401 }>;
+
+/** Requires an effective account username without coupling authentication to an HTTP response. */
+export async function requireCurrentUserName(
+  req: NextRequest,
+): Promise<CurrentUserNameResult> {
+  const username = await getCurrentUserName(req);
+
+  return username
+    ? { ok: true, username }
+    : { ok: false, status: 401 };
+}
 
 type AdminCheckUser =
   | {
@@ -177,6 +212,10 @@ export function canImpersonate(
 }
 
 function resolveEmployeeUserName(value: unknown): string | null {
+  return resolveNonEmptyString(value);
+}
+
+function resolveNonEmptyString(value: unknown): string | null {
   if (typeof value !== "string") {
     return null;
   }

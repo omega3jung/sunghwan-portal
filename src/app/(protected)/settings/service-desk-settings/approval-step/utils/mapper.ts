@@ -1,23 +1,16 @@
 import type { TreeNodes } from "@/components/custom/SortableTree";
 import type {
   CategoryApprovalSettings,
-  TenantCategoryTree,
+  MainCategory,
 } from "@/domain/serviceDesk";
 
 import { MAX_APPROVAL_STEP_PER_CATEGORY } from "../constants";
 import type { ApprovalStepData, CategoryApprovalStepData } from "../types";
 
 export function createApprovalStepTree(
-  categories: TenantCategoryTree[],
-  tenantId: string,
-  approvalSettings: CategoryApprovalSettings[],
+  categories: readonly MainCategory[],
+  approvalSettings: readonly CategoryApprovalSettings[],
 ): TreeNodes<CategoryApprovalStepData | ApprovalStepData> {
-  const currentTenant = categories.find((tenant) => tenant.id === tenantId);
-
-  if (!currentTenant) {
-    return [];
-  }
-
   const approvalStepMap = new Map(
     approvalSettings.map((category) => [
       category.id,
@@ -25,7 +18,7 @@ export function createApprovalStepTree(
     ]),
   );
 
-  return currentTenant.categories
+  return categories
     .slice()
     .sort((left, right) => left.index - right.index)
     .map((category) => {

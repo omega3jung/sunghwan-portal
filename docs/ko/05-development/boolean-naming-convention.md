@@ -2,9 +2,9 @@
 
 ## 목표
 
-이 문서는 `sunghwan-portal`의 boolean 명명 규칙을 정의한다.
+이 문서는 `sunghwan-portal`의 boolean 명명 규칙을 정의합니다.
 
-목표는 다음 영역에서 boolean 값이 자신의 책임을 명확히 전달하도록 하는 것이다.
+목표는 다음 영역에서 boolean 값의 책임이 이름에 명확히 드러나도록 하는 것입니다.
 
 * feature 및 application component API
 * capability 및 permission projection
@@ -13,7 +13,7 @@
 * form 및 query state
 * HTML 및 UI primitive prop
 
-프로젝트는 layer의 책임에 따라 서로 다른 명명 방식을 사용한다.
+프로젝트는 layer의 책임에 따라 서로 다른 명명 방식을 사용합니다.
 
 ```txt
 Feature/application capability
@@ -26,10 +26,10 @@ HTML 및 UI presentation state
 -> disabled / readOnly / hidden
 ```
 
-모든 부정형 boolean을 없애는 것이 목표는 아니다.
+모든 부정형 boolean을 없애는 것이 목표는 아닙니다.
 
 사용자가 무엇을 **할 수 있는지**, 시스템이 **현재 어떤 상태인지**, UI control이
-**현재 어떻게 표시되어야 하는지**를 구분하는 것이 목표다.
+**현재 어떻게 표시되어야 하는지**를 구분하는 것이 중요합니다.
 
 ---
 
@@ -55,19 +55,19 @@ const canSave =
 
 이 표현식에서:
 
-* `canSave`는 application capability다.
-* `canManage`는 permission 또는 capability projection이다.
-* `isDirty`는 현재 form state다.
-* `isValid`는 현재 validation state다.
-* `isSaving`은 현재 mutation state다.
+* `canSave`는 application capability입니다.
+* `canManage`는 permission 또는 capability projection입니다.
+* `isDirty`는 현재 form state입니다.
+* `isValid`는 현재 validation state입니다.
+* `isSaving`은 현재 mutation state입니다.
 
-Feature component는 positive capability를 받는다.
+Feature component는 positive capability를 받습니다.
 
 ```tsx
 <ServiceDeskSettingsHeader canSave={canSave} />
 ```
 
-Component는 UI primitive boundary에서 이를 presentation state로 변환한다.
+Component는 UI primitive boundary에서 이를 presentation state로 변환합니다.
 
 ```tsx
 <Button disabled={!canSave}>Save</Button>
@@ -77,7 +77,7 @@ Component는 UI primitive boundary에서 이를 presentation state로 변환한�
 
 ## 명명 범주
 
-Boolean 값은 이름을 정하기 전에 먼저 분류해야 한다.
+Boolean 값은 이름을 정하기 전에 먼저 분류해야 합니다.
 
 ```txt
 CAPABILITY
@@ -104,7 +104,7 @@ EXTERNAL_CONTRACT
 ### 규칙
 
 Boolean이 user, actor 또는 component가 operation을 수행할 수 있는지를 나타내면
-positive `can*` 이름을 사용한다.
+positive `can*` 이름을 사용합니다.
 
 예:
 
@@ -141,7 +141,7 @@ canManageApprovalSteps;
 canManageAssignmentRules;
 ```
 
-가능하면 capability 이름은 구체적인 operation을 설명해야 한다.
+가능하면 capability 이름은 구체적인 operation을 설명해야 합니다.
 
 권장:
 
@@ -151,7 +151,7 @@ canManageCategories;
 canStartWork;
 ```
 
-너무 포괄적인 이름은 피한다.
+너무 포괄적인 이름은 피합니다.
 
 ```ts
 canDo;
@@ -162,13 +162,13 @@ canInteract;
 ```
 
 Domain이 더 넓은 concept을 이미 명확히 정의한 경우에만 포괄적인 capability 이름을
-사용할 수 있다.
+사용할 수 있습니다.
 
 ---
 
 ## Positive Component API
 
-Feature 및 application component는 positive capability prop을 받아야 한다.
+Feature 및 application component는 positive capability prop을 받아야 합니다.
 
 권장:
 
@@ -180,7 +180,7 @@ Feature 및 application component는 positive capability prop을 받아야 한�
 />
 ```
 
-Negative capability prop을 노출하지 않는다.
+Negative capability prop을 노출하지 않습니다.
 
 ```tsx
 <TicketActions
@@ -191,7 +191,7 @@ Negative capability prop을 노출하지 않는다.
 ```
 
 Positive component API를 사용하면 caller가 capability 값을 반전해 전달할 필요가
-없으므로 가독성이 좋아진다.
+없으므로 가독성이 좋아집니다.
 
 ```tsx
 <ServiceDeskSettingsHeader
@@ -200,7 +200,7 @@ Positive component API를 사용하면 caller가 capability 값을 반전해 전
 />
 ```
 
-값을 받는 feature component가 capability를 presentation state로 변환한다.
+값을 받는 feature component가 capability를 presentation state로 변환합니다.
 
 ```tsx
 <Button disabled={!canSave}>Save</Button>
@@ -211,7 +211,7 @@ Positive component API를 사용하면 caller가 capability 값을 반전해 전
 
 ## Capability와 Permission
 
-Capability는 여러 condition을 결합할 수 있다.
+Capability는 여러 condition을 결합할 수 있습니다.
 
 ```ts
 const canReject =
@@ -220,7 +220,7 @@ const canReject =
   !rejectMutation.isPending;
 ```
 
-Capability에는 다음 조건이 포함될 수 있다.
+Capability에는 다음 조건이 포함될 수 있습니다.
 
 * current user role
 * access level
@@ -232,7 +232,7 @@ Capability에는 다음 조건이 포함될 수 있다.
 * form validity
 * current mutation state
 
-그러나 client-side capability는 authorization source of truth가 아니다.
+그러나 client-side capability는 authorization source of truth가 아닙니다.
 
 ```txt
 UI capability
@@ -242,7 +242,7 @@ Server authorization
 -> command가 실제로 허용되는지 검증
 ```
 
-Server는 계속 다음을 검증해야 한다.
+Server는 계속 다음을 검증해야 합니다.
 
 * authentication
 * authorization
@@ -253,7 +253,7 @@ Server는 계속 다음을 검증해야 한다.
 * workflow transition rule
 
 Client component가 이미 `can*` 값을 사용한다는 이유로 server validation을 제거하면
-안 된다.
+안 됩니다.
 
 ---
 
@@ -261,7 +261,7 @@ Client component가 이미 `can*` 값을 사용한다는 이유로 server valida
 
 ### 규칙
 
-Boolean이 현재 condition 또는 lifecycle state를 설명하면 `is*`를 사용한다.
+Boolean이 현재 condition 또는 lifecycle state를 설명하면 `is*`를 사용합니다.
 
 예:
 
@@ -281,7 +281,7 @@ isExpanded;
 isImpersonating;
 ```
 
-이 값을 `can*`으로 바꾸면 안 된다.
+이 값을 `can*`으로 바꾸면 안 됩니다.
 
 잘못된 예:
 
@@ -303,7 +303,7 @@ isOpen;
 
 ### Operation과 State 짝짓기
 
-Capability와 현재 operation state에는 서로 다른 이름을 사용한다.
+Capability와 현재 operation state에는 서로 다른 이름을 사용합니다.
 
 ```ts
 canUpdate;
@@ -319,7 +319,7 @@ canSubmit;
 isSubmitting;
 ```
 
-Capability와 완료된 domain state에도 서로 다른 이름을 사용한다.
+Capability와 완료된 domain state에도 서로 다른 이름을 사용합니다.
 
 ```ts
 canApprove;
@@ -339,7 +339,7 @@ isClosed;
 ### 규칙
 
 Boolean이 value, collection, condition 또는 related object의 존재 여부를 나타내면
-`has*`를 사용한다.
+`has*`를 사용합니다.
 
 예:
 
@@ -354,7 +354,7 @@ hasPermission;
 hasAssignees;
 ```
 
-질문을 다음처럼 자연스럽게 표현할 수 있으면 `has*`를 선호한다.
+질문을 다음처럼 자연스럽게 표현할 수 있으면 `has*`를 선호합니다.
 
 ```txt
 이 object가 무언가를 가지고 있는가?
@@ -368,7 +368,7 @@ const hasAttachments =
   ticket.images.length > 0;
 ```
 
-Operation capability에는 `has*`를 사용하지 않는다.
+Operation capability에는 `has*`를 사용하지 않습니다.
 
 잘못된 예:
 
@@ -390,9 +390,9 @@ canDelete;
 
 ## Domain State 명명
 
-부정적인 단어라고 해서 자동으로 명명 문제가 되는 것은 아니다.
+부정적인 단어라고 해서 자동으로 명명 문제가 되는 것은 아닙니다.
 
-실제 domain state를 나타내는 negative 또는 terminal 이름은 유지한다.
+실제 domain state를 나타내는 negative 또는 terminal 이름은 유지합니다.
 
 예:
 
@@ -406,9 +406,9 @@ isArchived;
 isUnavailable;
 ```
 
-이 이름은 entity가 현재 어떤 상태인지를 설명한다.
+이 이름은 entity가 현재 어떤 상태인지를 설명합니다.
 
-반전된 capability를 뜻하지 않는다.
+반전된 capability를 뜻하지 않습니다.
 
 예:
 
@@ -417,14 +417,14 @@ const isClosed = ticket.status === "Closed";
 const canComment = !isClosed && actorCanComment;
 ```
 
-`isClosed`를 다음과 같은 인위적인 positive 이름으로 바꾸지 않는다.
+`isClosed`를 다음과 같은 인위적인 positive 이름으로 바꾸지 않습니다.
 
 ```ts
 isOperational;
 canRemainOpen;
 ```
 
-Domain 용어는 실제 domain model과 정렬된 상태를 유지해야 한다.
+Domain 용어는 실제 domain model과 정렬된 상태를 유지해야 합니다.
 
 ---
 
@@ -432,7 +432,7 @@ Domain 용어는 실제 domain model과 정렬된 상태를 유지해야 한다.
 
 ### 규칙
 
-Presentation boundary에서는 표준 HTML 및 UI component 용어를 보존한다.
+Presentation boundary에서는 표준 HTML 및 UI component 용어를 보존합니다.
 
 일반적인 presentation prop:
 
@@ -455,7 +455,7 @@ selected;
 <Dialog open={open} />
 ```
 
-표준 presentation prop을 인위적인 capability 이름으로 바꾸지 않는다.
+표준 presentation prop을 인위적인 capability 이름으로 바꾸지 않습니다.
 
 피해야 할 예:
 
@@ -465,9 +465,9 @@ selected;
 <Select canSelect={hasOptions} />
 ```
 
-표준 UI prop은 렌더링된 control이 어떻게 동작하는지를 전달한다.
+표준 UI prop은 렌더링된 control이 어떻게 동작하는지를 전달합니다.
 
-Positive capability는 이 boundary에서 presentation state로 변환해야 한다.
+Positive capability는 이 boundary에서 presentation state로 변환해야 합니다.
 
 ```tsx
 function SaveButton({ canSave }: { canSave: boolean }) {
@@ -479,11 +479,11 @@ function SaveButton({ canSave }: { canSave: boolean }) {
 
 ## Feature Component와 UI Primitive
 
-올바른 이름은 component의 책임에 따라 달라진다.
+올바른 이름은 component의 책임에 따라 달라집니다.
 
 ### Feature 또는 Application Component
 
-Feature component는 business capability를 노출해야 한다.
+Feature component는 business capability를 노출해야 합니다.
 
 ```tsx
 <TicketApproveAction canApprove={canApprove} />
@@ -493,7 +493,7 @@ Feature component는 business capability를 노출해야 한다.
 
 ### Presentational Component
 
-순수 presentational wrapper의 실제 책임이 UI state라면 이를 노출할 수 있다.
+순수 presentational wrapper의 실제 책임이 UI state라면 이를 노출할 수 있습니다.
 
 ```tsx
 <ActionButton disabled={disabled} />
@@ -502,7 +502,7 @@ Feature component는 business capability를 노출해야 한다.
 
 ### UI Primitive
 
-UI primitive는 표준 component 및 HTML semantic을 보존해야 한다.
+UI primitive는 표준 component 및 HTML semantic을 보존해야 합니다.
 
 ```tsx
 <Button disabled />
@@ -510,7 +510,7 @@ UI primitive는 표준 component 및 HTML semantic을 보존해야 한다.
 <Dialog open />
 ```
 
-Boundary를 다음처럼 요약할 수 있다.
+Boundary를 다음처럼 요약할 수 있습니다.
 
 ```txt
 Application 및 feature API
@@ -524,25 +524,25 @@ Presentational 및 primitive API
 
 ## Read-Only 명명
 
-값이 form 또는 input presentation을 직접 제어하면 `readOnly`를 사용한다.
+값이 form 또는 input presentation을 직접 제어하면 `readOnly`를 사용합니다.
 
 ```tsx
 <Input readOnly={readOnly} />
 ```
 
-사용자가 edit operation을 수행할 수 있는지를 나타내면 `canEdit`를 사용한다.
+사용자가 edit operation을 수행할 수 있는지를 나타내면 `canEdit`를 사용합니다.
 
 ```tsx
 <TicketUpdateForm canEdit={canEdit} />
 ```
 
-Form은 내부에서 presentation state를 도출할 수 있다.
+Form은 내부에서 presentation state를 도출할 수 있습니다.
 
 ```tsx
 <Input readOnly={!canEdit} />
 ```
 
-한 값에서 다른 값을 안전하게 도출할 수 있으면 둘을 함께 노출하지 않는다.
+한 값에서 다른 값을 안전하게 도출할 수 있으면 둘을 함께 노출하지 않습니다.
 
 ```tsx
 <TicketUpdateForm
@@ -551,13 +551,13 @@ Form은 내부에서 presentation state를 도출할 수 있다.
 />
 ```
 
-이렇게 하면 같은 decision에 두 source가 생겨 서로 모순된 input을 허용할 수 있다.
+둘을 함께 노출하면 같은 decision에 두 source가 생겨 서로 모순된 input을 허용할 수 있습니다.
 
 ---
 
 ## Visibility 명명
 
-Visibility 이름은 정확한 의미와 일치해야 한다.
+Visibility 이름은 정확한 의미와 일치해야 합니다.
 
 사용 가능한 이름:
 
@@ -569,7 +569,7 @@ canView;
 canAccess;
 ```
 
-책임에 따라 선택한다.
+책임에 따라 선택합니다.
 
 ### Capability
 
@@ -578,7 +578,7 @@ canViewHistory;
 canAccessSettings;
 ```
 
-현재 사용자가 feature에 접근할 수 있는지를 나타낸다.
+현재 사용자가 feature에 접근할 수 있는지를 나타냅니다.
 
 ### Presentation
 
@@ -588,7 +588,7 @@ visible;
 shouldRender;
 ```
 
-UI content를 현재 렌더링해야 하는지를 나타낸다.
+UI content를 현재 렌더링해야 하는지를 나타냅니다.
 
 예:
 
@@ -599,7 +599,7 @@ const shouldRenderNotesPanel =
   ticket.status !== "Draft";
 ```
 
-Context가 의미를 명확히 하지 않는 한 다음과 같은 모호한 이름은 피한다.
+Context가 의미를 명확히 하지 않는 한 다음과 같은 모호한 이름은 피합니다.
 
 ```ts
 show;
@@ -612,7 +612,7 @@ available;
 ## Enabled 명명
 
 Feature, configuration 또는 option이 현재 활성화되어 있는지를 설명할 때는
-`isEnabled`를 사용한다.
+`isEnabled`를 사용합니다.
 
 ```ts
 isDraftRecoveryEnabled;
@@ -621,14 +621,14 @@ isNotificationEnabled;
 ```
 
 현재 사용자가 활성화된 feature를 사용할 수 있는지를 설명할 때는 `canUse*`를
-사용한다.
+사용합니다.
 
 ```ts
 canUseImpersonation;
 canUseSuperUser;
 ```
 
-두 concept은 함께 존재할 수 있다.
+두 concept은 함께 존재할 수 있습니다.
 
 ```ts
 const canUseImpersonation =
@@ -636,13 +636,13 @@ const canUseImpersonation =
   user.canUseImpersonation;
 ```
 
-Configuration state와 user capability를 하나의 모호한 boolean으로 합치지 않는다.
+Configuration state와 user capability를 하나의 모호한 boolean으로 합치지 않습니다.
 
 ---
 
 ## Selection 명명
 
-Entity의 현재 selection state에는 `isSelected`를 사용한다.
+Entity의 현재 selection state에는 `isSelected`를 사용합니다.
 
 ```ts
 isSelected;
@@ -650,7 +650,7 @@ isTenantSelected;
 isCategorySelected;
 ```
 
-선택된 value 또는 collection에는 `selected*`를 사용한다.
+선택된 value 또는 collection에는 `selected*`를 사용합니다.
 
 ```ts
 selectedTenantId;
@@ -728,7 +728,7 @@ disableWhenInactive;
 hideIfUnauthorized;
 ```
 
-값이 permission 또는 ability를 나타내면 positive capability를 선호한다.
+값이 permission 또는 ability를 나타내면 positive capability를 선호합니다.
 
 ```ts
 canEdit;
@@ -739,7 +739,7 @@ isActive;
 canView;
 ```
 
-원래 값이 실제 domain state를 나타낸다면 이름을 기계적으로 반전하지 않는다.
+원래 값이 실제 domain state를 나타낸다면 이름을 기계적으로 반전하지 않습니다.
 
 ---
 
@@ -773,7 +773,7 @@ isPending;
 
 ### 노출된 Business Condition
 
-Feature component의 presentation prop을 통해 큰 permission 표현식을 노출하지 않는다.
+Feature component의 presentation prop을 통해 큰 permission 표현식을 노출하지 않습니다.
 
 ```tsx
 <TicketRejectAction
@@ -785,7 +785,7 @@ Feature component의 presentation prop을 통해 큰 permission 표현식을 노
 />
 ```
 
-먼저 이름이 있는 capability를 계산하는 방식을 선호한다.
+먼저 이름이 있는 capability를 계산하는 방식을 선호합니다.
 
 ```ts
 const canReject =
@@ -799,13 +799,13 @@ const canReject =
 ```
 
 Condition이 재사용 가능한 domain 또는 application policy를 나타내면 JSX caller마다
-표현식을 복제하지 말고 기존 rule, policy 또는 capability projection을 사용한다.
+표현식을 복제하지 말고 기존 rule, policy 또는 capability projection을 사용합니다.
 
 ---
 
 ## 일반적으로 보존해야 하는 이름
 
-다음 이름은 positive `can*` 형식이 아니라는 이유만으로 변경하지 않는다.
+다음 이름은 positive `can*` 형식이 아니라는 이유만으로 변경하지 않습니다.
 
 ### React Query State
 
@@ -854,7 +854,7 @@ status;
 
 ### External Contract
 
-다음에서 정의한 명명은 보존한다.
+다음에서 정의한 명명은 보존합니다.
 
 * third-party library
 * database row
@@ -864,16 +864,16 @@ status;
 * external API
 * generated type
 
-내부 component 명명 선호를 맞추기 위해 external contract를 변경하면 안 된다.
+내부 component의 명명 방식을 맞추기 위해 external contract를 변경하면 안 됩니다.
 
-필요한 경우 application-facing capability 이름으로 mapping한다.
+필요한 경우 application-facing capability 이름으로 mapping합니다.
 
 ---
 
 ## DTO 및 Database Boundary
 
 Database row와 DTO에는 persisted 또는 external state를 설명하는 boolean field가 있을
-수 있다.
+수 있습니다.
 
 예:
 
@@ -884,11 +884,11 @@ assigned_worker;
 assigned_approver;
 ```
 
-이 field를 자동으로 `can*`으로 바꾸지 않는다.
+이 field를 자동으로 `can*`으로 바꾸지 않습니다.
 
-Persisted field와 DTO field는 data를 설명한다.
+Persisted field와 DTO field는 data를 설명합니다.
 
-Application capability는 현재 actor가 무엇을 할 수 있는지를 설명한다.
+Application capability는 현재 actor가 무엇을 할 수 있는지를 설명합니다.
 
 예:
 
@@ -900,15 +900,15 @@ const canStartWork =
 
 여기에서:
 
-* `assignedWorker`는 현재 assignment를 설명하는 DTO projection이다.
-* `canStartWork`는 assignment와 status에서 도출한 application capability다.
+* `assignedWorker`는 현재 assignment를 설명하는 DTO projection입니다.
+* `canStartWork`는 assignment와 status에서 도출한 application capability입니다.
 
 ---
 
 ## Capability Object
 
 Group이 이미 안정적인 application contract를 나타내는 경우 관련 capability를 묶을 수
-있다.
+있습니다.
 
 ```ts
 type TicketCapabilities = {
@@ -920,16 +920,16 @@ type TicketCapabilities = {
 };
 ```
 
-다음과 같은 경우 capability object를 사용한다.
+다음과 같은 경우 capability object를 사용합니다.
 
 * 여러 component가 동일한 capability set을 사용함
 * 값들이 하나의 calculation boundary를 공유함
 * grouping이 ownership을 더 명확하게 함
 * 기존 policy 또는 hook이 이미 group을 반환함
 
-Prop 수를 줄이기 위한 목적으로만 capability object를 도입하지 않는다.
+Prop 수를 줄이기 위한 목적으로만 capability object를 도입하지 않습니다.
 
-다음과 같은 경우 individual prop도 적절하다.
+다음과 같은 경우 individual prop도 적절합니다.
 
 * 필요한 capability가 몇 개뿐임
 * capability들이 서로 독립적임
@@ -939,7 +939,7 @@ Prop 수를 줄이기 위한 목적으로만 capability object를 도입하지 �
 
 ## Hook Return Value
 
-Hook에도 같은 명명 규칙을 적용해야 한다.
+Hook에도 같은 명명 규칙을 적용해야 합니다.
 
 예:
 
@@ -953,7 +953,7 @@ type UseSettingsEditorResult = {
 };
 ```
 
-Application hook에서 반전된 presentation value를 반환하지 않는다.
+Application hook에서 반전된 presentation value를 반환하지 않습니다.
 
 ```ts
 type UseSettingsEditorResult = {
@@ -962,14 +962,14 @@ type UseSettingsEditorResult = {
 };
 ```
 
-Hook은 application capability를 표현해야 한다. Component가 자신의 UI primitive
-state를 도출해야 한다.
+Hook은 application capability를 표현해야 합니다. Component가 자신의 UI primitive
+state를 도출해야 합니다.
 
 ---
 
 ## Context Value
 
-Feature capability를 노출하는 context value에는 positive 이름을 사용해야 한다.
+Feature capability를 노출하는 context value에는 positive 이름을 사용해야 합니다.
 
 ```ts
 type ServiceDeskSettingsContextValue = {
@@ -980,7 +980,7 @@ type ServiceDeskSettingsContextValue = {
 };
 ```
 
-State value는 state 중심 이름을 유지해야 한다.
+State value는 state 중심 이름을 유지해야 합니다.
 
 ```ts
 type ServiceDeskSettingsContextValue = {
@@ -991,13 +991,13 @@ type ServiceDeskSettingsContextValue = {
 };
 ```
 
-Capability와 state를 오해하기 쉬운 prefix 아래 섞지 않는다.
+Capability와 state를 오해하기 쉬운 prefix 아래 섞지 않습니다.
 
 ---
 
 ## Default Value
 
-Optional capability prop은 일반적으로 `false`를 default로 사용해야 한다.
+Optional capability prop은 일반적으로 `false`를 default로 사용해야 합니다.
 
 ```ts
 type ActionProps = {
@@ -1011,7 +1011,7 @@ function TicketApproveAction({
 }
 ```
 
-Caller가 명시적으로 decision을 내려야 한다면 required capability prop을 선호한다.
+Caller가 명시적으로 decision을 내려야 한다면 required capability prop을 선호합니다.
 
 ```ts
 type ActionProps = {
@@ -1019,14 +1019,14 @@ type ActionProps = {
 };
 ```
 
-Operation을 암묵적으로 허용하는 default를 선택하지 않는다.
+Operation을 암묵적으로 허용하는 default를 선택하지 않습니다.
 
 ---
 
 ## 명명 Migration 규칙
 
 Negative capability를 positive capability로 바꿀 때는 boolean logic도 함께 반전해야
-한다.
+합니다.
 
 변경 전:
 
@@ -1040,7 +1040,7 @@ const isSaveDisabled = true;
 const canSave = false;
 ```
 
-영향을 받는 모든 위치를 확인해야 한다.
+영향을 받는 모든 위치를 확인해야 합니다.
 
 * prop type
 * hook result type
@@ -1054,7 +1054,7 @@ const canSave = false;
 * mock value
 * comment
 
-Boolean 의미를 검증하지 않은 기계적인 text replacement를 피한다.
+Boolean 의미를 검증하지 않은 기계적인 text replacement를 피합니다.
 
 예:
 
@@ -1090,47 +1090,47 @@ Boolean 의미를 검증하지 않은 기계적인 text replacement를 피한다
 
 ## Review Checklist
 
-Boolean을 도입하거나 이름을 변경하기 전에 다음을 확인한다.
+Boolean을 도입하거나 이름을 변경하기 전에 다음을 확인합니다.
 
 1. 값이 operation capability를 설명하는가?
 
-   * `can*`을 사용한다.
+   * `can*`을 사용합니다.
 
 2. 현재 state를 설명하는가?
 
-   * `is*`를 사용한다.
+   * `is*`를 사용합니다.
 
 3. 무언가가 존재하는지를 설명하는가?
 
-   * `has*`를 사용한다.
+   * `has*`를 사용합니다.
 
 4. HTML 또는 UI primitive를 직접 제어하는가?
 
-   * 표준 presentation prop을 사용한다.
+   * 표준 presentation prop을 사용합니다.
 
 5. 실제 negative domain state인가?
 
-   * Domain 용어를 보존한다.
+   * Domain 용어를 보존합니다.
 
 6. External contract가 정의한 값인가?
 
-   * Contract를 보존하고 application boundary에서 mapping한다.
+   * Contract를 보존하고 application boundary에서 mapping합니다.
 
 7. Public component API를 사용하기 위해 caller가 값을 반전해야 하는가?
 
-   * Positive capability 노출을 고려한다.
+   * Positive capability 노출을 고려합니다.
 
 8. Capability를 server authorization으로 오해하고 있는가?
 
-   * 독립적인 server validation을 유지한다.
+   * 독립적인 server validation을 유지합니다.
 
 9. 이름이 구체적인 business operation을 전달하는가?
 
-   * 포괄적인 `canUse` 또는 `canDo`보다 구체적인 verb를 선호한다.
+   * 포괄적인 `canUse` 또는 `canDo`보다 구체적인 verb를 선호합니다.
 
 10. 이름 변경에 boolean 반전이 필요한가?
 
-    * 모든 assignment와 caller를 검증한다.
+    * 모든 assignment와 caller를 검증합니다.
 
 ---
 
@@ -1180,8 +1180,8 @@ const isImpersonating =
 
 여기에서:
 
-* `canUseImpersonation`은 feature capability다.
-* `isImpersonating`은 현재 runtime state다.
+* `canUseImpersonation`은 feature capability입니다.
+* `isImpersonating`은 현재 runtime state입니다.
 
 ### Attachment 존재 여부
 
@@ -1257,7 +1257,7 @@ canRemainActive;
 isArchived;
 ```
 
-실제 domain state를 사용한다.
+실제 domain state를 사용합니다.
 
 ### Authorization Truth로 사용한 Client Capability
 
@@ -1268,13 +1268,13 @@ if (payload.canApprove) {
 ```
 
 Server-side approval은 client가 제공한 capability가 아니라 authenticated identity,
-ticket state, assignment 및 domain rule을 기준으로 결정해야 한다.
+ticket state, assignment 및 domain rule을 기준으로 결정해야 합니다.
 
 ---
 
 ## 요약
 
-프로젝트는 다음 명명 boundary를 따른다.
+프로젝트는 다음 명명 boundary를 따릅니다.
 
 ```txt
 Feature 및 application boundary
@@ -1287,7 +1287,7 @@ HTML 및 UI presentation boundary
 -> disabled / readOnly / hidden
 ```
 
-이 규칙은 다음을 개선한다.
+이 규칙은 다음을 개선합니다.
 
 * component API 가독성
 * capability와 state의 분리
@@ -1296,13 +1296,13 @@ HTML 및 UI presentation boundary
 * Storybook 및 test 가독성
 * UI projection과 server authorization의 구분
 
-규칙은 다음을 의미하지 않는다.
+규칙은 다음을 의미하지 않습니다.
 
 ```txt
 모든 negative boolean을 can*으로 변환한다.
 ```
 
-실제 규칙은 다음과 같다.
+실제 규칙은 다음과 같습니다.
 
 ```txt
 Application boundary가 actor가 할 수 있는 일을 설명할 때는

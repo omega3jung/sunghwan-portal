@@ -1,20 +1,13 @@
 import type { TreeNodes } from "@/components/custom/SortableTree";
-import type { TenantCategoryTree } from "@/domain/serviceDesk";
+import type { MainCategory } from "@/domain/serviceDesk";
 
 import { MAX_SUB_CATEGORY_PER_CATEGORY } from "../constants";
 import type { CategoryData, SubCategoryData } from "../types";
 
 export function createCategoryTree(
-  categories: TenantCategoryTree[],
-  tenantId: string,
+  categories: readonly MainCategory[],
 ): TreeNodes<CategoryData | SubCategoryData> {
-  const currentTenant = categories.find((tenant) => tenant.id === tenantId);
-
-  if (!currentTenant) {
-    return [];
-  }
-
-  return currentTenant.categories.map((category) => {
+  return categories.map((category) => {
     const { subCategories, ...categoryData } = category;
 
     return {

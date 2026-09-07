@@ -3,23 +3,23 @@
 ## 목표
 
 이 문서는 `sunghwan-portal`의 Service Desk 시스템에 대한 설계, 아키텍처, 구현
-관점을 설명한다.
+관점을 설명합니다.
 
-문서 책임은 다음처럼 분리한다.
+문서별 역할은 다음과 같이 구분합니다.
 
-- **현재 설계 문서**는 최신 구현과 정렬된 모델을 설명한다.
-- **Decision Log**는 특정 시점의 맥락, 대안, 이유를 보존한다.
-- **README/Overview**는 구조를 요약하고 source-of-truth 문서로 연결한다.
+- **현재 설계 문서**는 최신 구현과 정렬된 모델을 설명합니다.
+- **Decision Log**는 특정 시점의 맥락, 대안, 이유를 보존합니다.
+- **README/Overview**는 구조를 요약하고 source-of-truth 문서로 연결합니다.
 
 ---
 
 ## 현재 Canonical Spec
 
-가장 짧은 현재 시스템 명세:
+현재 시스템을 간략히 정리한 명세:
 
 - [정규 티켓 시스템 명세](../spec/ticket-system.ko.md)
 
-상세 도메인 문서를 읽기 전에 이 문서를 먼저 확인한다.
+상세 도메인 문서를 읽기 전에 이 명세를 먼저 확인하세요.
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## Overview
 
-프로젝트와 Service Desk의 발전 과정을 안내한다.
+프로젝트와 Service Desk의 발전 과정을 안내합니다.
 
 주요 문서:
 
@@ -111,8 +111,8 @@ Page   -> primary workflow
 Dialog -> atomic action or short form
 ```
 
-Ticket detail은 page이다. Create, requester update, ticket action은 focused
-dialog/tool workflow다.
+Ticket detail은 page입니다. Create, requester update, ticket action은 focused
+dialog/tool workflow입니다.
 
 ---
 
@@ -147,19 +147,19 @@ dialog/tool workflow다.
 ## Development
 
 Server-state ownership, 구현 전략, 프로젝트 전반의 convention, documentation
-practice와 release 기록을 설명한다.
+practice와 release 기록을 설명합니다.
 
 ### Data Fetching
 
-React Query는 Service Desk server state를 소유한다.
+React Query는 Service Desk server state를 소유합니다.
 
 주요 문서:
 
 - [React Query Strategy](./05-development/react-query-strategy.md)
 
 현재 query family에는 tickets, drafts, actions, histories, work sessions,
-tenant-scoped settings가 포함된다. REMOTE 초안 query는 server state를 조회하고,
-LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
+tenant-scoped settings가 포함됩니다. REMOTE 초안 query는 server state를 조회하고,
+LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정합니다.
 
 ---
 
@@ -175,7 +175,7 @@ LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정한다.
 ### Convention과 Documentation Practice
 
 프로젝트 전반의 convention과 documentation practice는 feature, application,
-domain 및 UI boundary에 공통으로 적용된다.
+domain 및 UI boundary에 공통으로 적용됩니다.
 
 주요 문서:
 
@@ -187,7 +187,7 @@ domain 및 UI boundary에 공통으로 적용된다.
 ### Releases
 
 버전별 주요 변경 사항, migration 내용, architecture 영향, 검증 결과와
-관련 PR 및 decision 문서를 기록한다.
+관련 PR 및 decision 문서를 기록합니다.
 
 - [Release 문서](./05-development/releases.md)
 
@@ -195,9 +195,9 @@ domain 및 UI boundary에 공통으로 적용된다.
 
 ## Decisions
 
-Decision log는 historical record이다. 당시 맥락에서 오래된 용어가 들어갈 수 있다.
-현재 설계 문서처럼 rewrite하지 않는다. 단, 당시 결정 자체에 대한 사실 오류가 있으면
-수정한다.
+Decision log는 historical record입니다. 당시 사용하던 용어가 남아 있을 수 있습니다.
+현재 설계 문서처럼 rewrite하지 않습니다. 단, 당시 결정 자체에 대한 사실 오류가 있으면
+수정합니다.
 
 - [Decision 문서](./06-decisions/README.md)
 
@@ -232,5 +232,5 @@ Decision log는 historical record이다. 당시 맥락에서 오래된 용어가
 ## 요약
 
 `docs/ko`는 Service Desk를 최신 구현과 정렬된, 추적 가능한 workflow domain으로
-설명한다. 현재 설계 문서는 최신 모델을 설명하고, decision log는 모델이 왜 변했는지
-그 시점의 이유를 보존한다.
+설명합니다. 현재 설계 문서는 최신 모델을 설명하고, decision log는 모델이 왜 변했는지
+그 시점의 이유를 보존합니다.

@@ -2,9 +2,9 @@
 
 ## Context
 
-Ticket Form Dialog는 Service Desk 시스템에서 가장 중요한 컴포넌트 중 하나다.
+Ticket Form Dialog는 Service Desk 시스템에서 가장 중요한 컴포넌트 중 하나입니다.
 
-이 컴포넌트는 다음을 담당한다.
+이 컴포넌트는 다음을 담당합니다.
 
 - ticket 생성
 - ticket 수정
@@ -17,22 +17,22 @@ Ticket Form Dialog는 Service Desk 시스템에서 가장 중요한 컴포넌트
 
 ### Decision
 
-ticket 생성에는 **Dialog**를 사용하고, ticket 상세/수정에는 **Page**를 사용한다.
+ticket 생성에는 **Dialog**를, ticket 상세/수정에는 **Page**를 사용하기로 했습니다.
 
 ---
 
 ### Reason
 
-- ticket 생성은 짧게 끝나는 상호작용이다
-- ticket 상세/수정은 오래 지속되는 workflow다
-- drawer/dialog가 중첩되는 복잡성을 피할 수 있다
+- ticket 생성은 짧게 끝나는 상호작용입니다
+- ticket 상세/수정은 오래 지속되는 workflow입니다
+- drawer/dialog가 중첩되는 복잡성을 피할 수 있습니다
 
 ---
 
 ### Trade-off
 
-- Dialog는 입력 시작이 더 빠르다
-- Page는 복잡한 상호작용으로 확장하기 더 좋다
+- Dialog는 입력 시작이 더 빠릅니다
+- Page는 복잡한 상호작용으로 확장하기 더 좋습니다
 
 ---
 
@@ -40,15 +40,15 @@ ticket 생성에는 **Dialog**를 사용하고, ticket 상세/수정에는 **Pag
 
 ### Decision
 
-**controlled open state** (`open`, `setOpen`)를 사용한다.
+**controlled open state** (`open`, `setOpen`)를 사용하기로 했습니다.
 
 ---
 
 ### Reason
 
-- submit 성공 후 dialog를 닫을 수 있다
-- programmatic control이 가능하다
-- mutation flow와의 연동이 더 좋아진다
+- submit 성공 후 dialog를 닫을 수 있습니다
+- programmatic control이 가능합니다
+- mutation flow와의 연동이 더 좋아집니다
 
 ---
 
@@ -62,21 +62,21 @@ ticket 생성에는 **Dialog**를 사용하고, ticket 상세/수정에는 **Pag
 
 ### Decision
 
-dialog trigger는 **props로 커스터마이즈 가능**하게 둔다.
+dialog trigger는 **props로 커스터마이즈 가능**하도록 설계했습니다.
 
 ---
 
 ### Pattern
 
-- `trigger`가 전달되면 그것을 사용한다
-- 그렇지 않으면 기본 button으로 fallback한다
+- `trigger`가 전달되면 그것을 사용합니다
+- 그렇지 않으면 기본 button으로 fallback합니다
 
 ---
 
 ### Reason
 
-- 재사용성이 좋아진다
-- 다양한 UI 위치에 유연하게 통합할 수 있다
+- 재사용성이 좋아집니다
+- 다양한 UI 위치에 유연하게 통합할 수 있습니다
 
 ---
 
@@ -84,15 +84,15 @@ dialog trigger는 **props로 커스터마이즈 가능**하게 둔다.
 
 ### Decision
 
-dialog 내부에 **multi-step form**을 사용한다.
+dialog 내부에는 **multi-step form**을 사용하기로 했습니다.
 
 ---
 
 ### Reason
 
-- ticket form은 복잡하다
-- 단일 페이지 form은 부담이 크다
-- step 기반 입력이 UX를 개선한다
+- ticket form은 복잡합니다
+- 단일 페이지 form은 부담이 큽니다
+- step 기반 입력이 UX를 개선합니다
 
 ---
 
@@ -109,22 +109,22 @@ dialog 내부에 **multi-step form**을 사용한다.
 
 ### Decision
 
-stepper를 아직 재사용 가능한 공통 컴포넌트로 추상화하지 않는다.
+stepper를 재사용 가능한 공통 컴포넌트로 추상화하는 작업은 미루기로 했습니다.
 
 ---
 
 ### Reason
 
-- 현재 use case가 하나뿐이다
-- step마다 content 구조가 다르다
-- 추상화하려면 props가 과도하게 많아진다
-- premature abstraction 위험이 있다
+- 현재 use case가 하나뿐입니다
+- step마다 content 구조가 다릅니다
+- 추상화하려면 props가 과도하게 많아집니다
+- premature abstraction 위험이 있습니다
 
 ---
 
 ### Future Consideration
 
-- step 기반 dialog가 여러 개 생기면 다시 검토한다
+- step 기반 dialog가 여러 개 생기면 다시 검토합니다
 
 ---
 
@@ -132,15 +132,15 @@ stepper를 아직 재사용 가능한 공통 컴포넌트로 추상화하지 않
 
 ### Decision
 
-모든 step에서 **하나의 react-hook-form instance**를 사용한다.
+모든 step에서 **하나의 react-hook-form instance**를 사용하기로 했습니다.
 
 ---
 
 ### Reason
 
-- single source of truth를 유지할 수 있다
-- 데이터 분산을 피할 수 있다
-- validation과 submit 처리가 단순해진다
+- single source of truth를 유지할 수 있습니다
+- 데이터 분산을 피할 수 있습니다
+- validation과 submit 처리가 단순해집니다
 
 ---
 
@@ -148,15 +148,15 @@ stepper를 아직 재사용 가능한 공통 컴포넌트로 추상화하지 않
 
 ### Decision
 
-**step-level validation + final validation** 전략을 사용한다.
+**step-level validation + final validation** 전략을 선택했습니다.
 
 ---
 
 ### Reason
 
-- 잘못된 데이터 상태로 다음 step으로 진행하는 것을 막는다
-- submit 단계에서 오류가 한꺼번에 쌓이는 문제를 줄인다
-- UX가 더 명확해진다
+- 잘못된 데이터 상태로 다음 step으로 진행하는 것을 막습니다
+- submit 단계에서 오류가 한꺼번에 쌓이는 문제를 줄입니다
+- UX가 더 명확해집니다
 
 ---
 
@@ -164,7 +164,7 @@ stepper를 아직 재사용 가능한 공통 컴포넌트로 추상화하지 않
 
 ### Decision
 
-form 동작은 선택한 category에 따라 달라지도록 설계한다.
+form 동작은 선택한 category에 따라 달라지도록 설계했습니다.
 
 ---
 
@@ -179,9 +179,9 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Reason
 
-- 입력을 domain rule에 맞출 수 있다
-- 잘못된 설정을 줄일 수 있다
-- 사용성이 좋아진다
+- 입력을 domain rule에 맞출 수 있습니다
+- 잘못된 설정을 줄일 수 있습니다
+- 사용성이 좋아집니다
 
 ---
 
@@ -189,16 +189,16 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Decision
 
-- category의 기본값을 적용한다
-- 필요할 때 override를 허용한다
-- SLA는 동적으로 계산한다
+- category의 기본값을 적용합니다
+- 필요할 때 override를 허용합니다
+- SLA는 동적으로 계산합니다
 
 ---
 
 ### Reason
 
-- 실제 Service Desk 동작 방식을 반영할 수 있다
-- 유연한 business rule을 지원할 수 있다
+- 실제 Service Desk 동작 방식을 반영할 수 있습니다
+- 유연한 business rule을 지원할 수 있습니다
 
 ---
 
@@ -206,27 +206,27 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Decision
 
-파일 입력을 관찰하기 위해 `useWatch`를 사용한다.
+파일 입력을 관찰하기 위해 `useWatch`를 사용하기로 했습니다.
 
 ---
 
 ### Issue Encountered
 
-- `defaultValue`와의 type mismatch가 있었다
+- `defaultValue`와의 type mismatch가 있었습니다
 
 ---
 
 ### Solution
 
-- 잘못된 `defaultValue`를 제거한다
-- 필요할 때 type assertion을 사용한다
+- 잘못된 `defaultValue`를 제거했습니다
+- 필요할 때 type assertion을 사용합니다
 
 ---
 
 ### Outcome
 
-- 타입이 안정적으로 유지된다
-- react-hook-form과의 통합이 깔끔해진다
+- 타입이 안정적으로 유지됩니다
+- react-hook-form과의 통합이 깔끔해집니다
 
 ---
 
@@ -242,15 +242,15 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Decision
 
-구현하지 않는다.
+구현하지 않기로 했습니다.
 
 ---
 
 ### Reason
 
-- 추가 API와 state 복잡성이 필요하다
-- MVP에 필수 기능은 아니다
-- 이후 iteration으로 미룬다
+- 추가 API와 state 복잡성이 필요합니다
+- MVP에 필수 기능은 아닙니다
+- 이후 iteration으로 미룹니다
 
 ---
 
@@ -258,21 +258,21 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Decision
 
-필요한 경우가 아니면 dialog 내부에서 data fetching을 하지 않는다.
+필요한 경우가 아니면 dialog 내부에서 data fetching을 하지 않습니다.
 
 ---
 
 ### Strategy
 
-- 필요한 데이터는 props로 전달한다
-- fetch는 feature/container level에서 수행한다
+- 필요한 데이터는 props로 전달합니다
+- fetch는 feature/container level에서 수행합니다
 
 ---
 
 ### Reason
 
-- 중복 요청을 막을 수 있다
-- component boundary를 깔끔하게 유지할 수 있다
+- 중복 요청을 막을 수 있습니다
+- component boundary를 깔끔하게 유지할 수 있습니다
 
 ---
 
@@ -280,15 +280,15 @@ form 동작은 선택한 category에 따라 달라지도록 설계한다.
 
 ### Decision
 
-dashboard는 **form 구현 이후에** 개발한다.
+dashboard는 **form 구현 이후에** 개발하기로 했습니다.
 
 ---
 
 ### Reason
 
-- dashboard는 ticket 데이터에 의존한다
-- 현실적인 dataset이 필요하다
-- 더 의미 있는 visualization이 가능해진다
+- dashboard는 ticket 데이터에 의존합니다
+- 현실적인 dataset이 필요합니다
+- 더 의미 있는 visualization이 가능해집니다
 
 ---
 
@@ -304,15 +304,15 @@ dashboard는 **form 구현 이후에** 개발한다.
 
 ### Reason
 
-- form이 domain structure를 정의한다
-- list가 data flow를 검증한다
-- dashboard는 이미 존재하는 데이터를 시각화한다
+- form이 domain structure를 정의합니다
+- list가 data flow를 검증합니다
+- dashboard는 이미 존재하는 데이터를 시각화합니다
 
 ---
 
 ## Summary
 
-Ticket Form Dialog는 다음에 초점을 두고 개발되었다.
+Ticket Form Dialog는 다음에 초점을 두고 개발되었습니다.
 
 - 가이드된 사용자 입력 (multi-step form)
 - 명확한 관심사 분리 (dialog vs page)
@@ -321,4 +321,4 @@ Ticket Form Dialog는 다음에 초점을 두고 개발되었다.
 - 실용적이고 반복적인 의사결정
 
 이 접근 덕분에 초기 개발 단계에서 불필요한 복잡성을 피하면서도,
-시스템을 **사용 가능하고, 유연하며, 확장 가능하게** 유지할 수 있었다.
+시스템을 **사용 가능하고, 유연하며, 확장 가능하게** 유지할 수 있었습니다.

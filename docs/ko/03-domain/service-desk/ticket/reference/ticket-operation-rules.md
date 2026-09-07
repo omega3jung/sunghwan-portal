@@ -2,13 +2,13 @@
 
 ## 목표
 
-이 문서는 Service Desk ticket operation을 위한 implementation-facing rule matrix다.
+이 문서는 Service Desk ticket operation을 위한 implementation-facing rule matrix입니다.
 
 누가 operation을 실행할 수 있는지, 언제 허용되는지, 어떤 input을 받는지, 어떤
-ticket state를 변경하는지, 어떤 history event가 만들어지는지를 기록한다.
+ticket state를 변경하는지, 어떤 history event가 만들어지는지를 기록합니다.
 
 개념적 status 의미는 [Ticket Lifecycle](../ticket-lifecycle.md)에
-문서화되어 있다.
+문서화되어 있습니다.
 
 ---
 
@@ -41,7 +41,7 @@ POST /api/service-desk/tickets/:ticketId/command/start-work
 POST /api/service-desk/tickets/:ticketId/command/:action
 ```
 
-`:action`은 다음 중 하나다.
+`:action`은 다음 중 하나입니다.
 
 ```txt
 approve
@@ -88,8 +88,8 @@ command request
 ```
 
 Operational action 생성, ticket mutation, history 생성은 하나의 use case로
-취급해야 한다. REMOTE는 server-side service와 transaction을 사용한다. LOCAL은 같은
-DTO 방향을 유지하는 demo-safe local handler를 사용한다.
+취급해야 합니다. REMOTE는 server-side service와 transaction을 사용합니다. LOCAL은 같은
+DTO 방향을 유지하는 demo-safe local handler를 사용합니다.
 
 ---
 
@@ -99,19 +99,19 @@ DTO 방향을 유지하는 demo-safe local handler를 사용한다.
 - allowed status: `Approval`, `Assigned`
 - input: category, subject, content, due date, email, prepared files/images
 - validation:
-  - requester가 ticket을 소유한다.
-  - category가 active이고 available하다.
-  - attachment metadata는 이미 prepare되어 있다.
-  - normalized previous/next value를 비교한다.
+  - requester가 ticket을 소유합니다.
+  - category가 active이고 available합니다.
+  - attachment metadata는 이미 prepare되어 있습니다.
+  - normalized previous/next value를 비교합니다.
 - ticket effect:
-  - routing-neutral change는 status, approval step, assignee를 유지한다.
-  - routing-sensitive change는 첫 approval step부터 routing을 다시 실행한다.
-  - category change는 category default에서 priority와 risk를 다시 파생할 수 있다.
+  - routing-neutral change는 status, approval step, assignee를 유지합니다.
+  - routing-sensitive change는 첫 approval step부터 routing을 다시 실행합니다.
+  - category change는 category default에서 priority와 risk를 다시 파생할 수 있습니다.
   - category change는 새 category SLA default에서 minimum due date를 다시 평가하고
-    current due date와 새 minimum 중 더 늦은 값을 유지한다.
+    current due date와 새 minimum 중 더 늦은 값을 유지합니다.
 - action persistence: ticket action row 없음
 - history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
-- notification boundary: 현재 문서에서는 별도 notification source가 아니다.
+- notification boundary: 현재 문서에서는 별도 notification source가 아닙니다.
 - query invalidation: ticket detail, ticket list/search, history
 
 Routing-neutral fields:
@@ -137,13 +137,13 @@ Routing-sensitive fields:
   - 기존 `Draft`
 - input: prepared body/files/images가 포함된 ticket form value
 - validation:
-  - category가 valid하다.
-  - attachment metadata가 prepare되어 있다.
-  - approval 또는 assignment가 최소 한 명의 assignee를 resolve할 수 있다.
+  - category가 valid합니다.
+  - attachment metadata가 prepare되어 있습니다.
+  - approval 또는 assignment가 최소 한 명의 assignee를 resolve할 수 있습니다.
 - ticket effect:
   - next approval step이 있으면 `Approval`
   - 없으면 `Assigned`
-  - 기존 draft row가 있으면 재사용한다.
+  - 기존 draft row가 있으면 재사용합니다.
 - action persistence: ticket action row 없음
 - history event:
   - `TICKET_SUBMITTED`
@@ -159,13 +159,13 @@ Routing-sensitive fields:
 - input: body 없음
 - validation:
   - `approvalStepId = null`
-  - actor가 current work assignees에 포함된다.
+  - actor가 current work assignees에 포함됩니다.
 - ticket effect: `Assigned -> Working`
 - action persistence: ticket action row 없음
 - history event: `STATUS_UPDATED`
 - query invalidation: ticket detail/list/search, history
 
-GET/read request는 work를 시작하면 안 된다.
+GET/read request는 work를 시작하면 안 됩니다.
 
 ---
 
@@ -176,13 +176,13 @@ GET/read request는 work를 시작하면 안 된다.
 - input: content, 지원되는 경우 prepared action attachment
 - validation:
   - content 필수
-  - action path와 payload type이 일치해야 한다.
-  - attachment payload는 `blob:` 또는 `data:` URL을 포함할 수 없다.
+  - action path와 payload type이 일치해야 합니다.
+  - attachment payload는 `blob:` 또는 `data:` URL을 포함할 수 없습니다.
 - ticket effect: 없음
 - action persistence: `COMMENT`
 - history event: `COMMENT_CREATED`
 - notification boundary: shared communication은 command boundary 밖에서 알림을
-  보낼 수 있다.
+  보낼 수 있습니다.
 - query invalidation: action list, history, ticket recent activity
 
 Soft delete:
@@ -193,10 +193,10 @@ Soft delete:
 - history event: `COMMENT_DELETED`
 
 현재 route surface는 comment update route를 노출하지 않지만 history union은
-`COMMENT_UPDATED`를 예약한다.
+`COMMENT_UPDATED`를 예약합니다.
 
-Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시된다. 이는 timeline
-visibility이지 closed ticket에 새 comment를 만들 수 있다는 권한이 아니다.
+Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시됩니다. 이는 timeline
+visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 뜻하지는 않습니다.
 
 ---
 
@@ -220,7 +220,7 @@ Soft delete:
 - history event: `NOTE_DELETED`
 
 현재 route surface는 note update route를 노출하지 않지만 history union은
-`NOTE_UPDATED`를 예약한다.
+`NOTE_UPDATED`를 예약합니다.
 
 ---
 
@@ -228,13 +228,13 @@ Soft delete:
 
 - who: current approver 또는 Admin
 - allowed status: `Approval`
-- input: content only; approval action은 file과 inline image를 거부한다.
+- input: content only; approval action은 file과 inline image를 거부합니다.
 - validation:
   - `approvalStepId != null`
-  - Admin이 아니면 actor가 current approver다.
+  - Admin이 아니면 actor가 current approver입니다.
   - content 필수
-  - Category inactive만으로 진행 중인 approval을 무효화하지 않는다. 다만 참조한
-    approval/assignment configuration은 계속 resolve할 수 있어야 한다.
+  - Category inactive만으로 진행 중인 approval을 무효화하지 않습니다. 다만 참조한
+    approval/assignment configuration은 계속 resolve할 수 있어야 합니다.
 - ticket effect:
   - next approval step이 있으면 `Approval` 유지, 다음 approver로 이동
   - next approval step이 없으면 `Assigned`로 이동하고 worker resolve
@@ -250,10 +250,10 @@ Soft delete:
 
 - who: current approver 또는 Admin
 - allowed status: `Approval`
-- input: content only; approval action은 file과 inline image를 거부한다.
+- input: content only; approval action은 file과 inline image를 거부합니다.
 - validation:
   - `approvalStepId != null`
-  - Admin이 아니면 actor가 current approver다.
+  - Admin이 아니면 actor가 current approver입니다.
   - content 필수
 - ticket effect:
   - `Approval -> Declined`
@@ -277,7 +277,7 @@ Soft delete:
 - validation:
   - content 필수
   - assignee list 필수
-  - non-Admin actor는 current work assignee여야 한다.
+  - non-Admin actor는 current work assignee여야 합니다.
 - ticket effect:
   - current assignee usernames 교체
   - `Pending -> Working`
@@ -287,7 +287,7 @@ Soft delete:
 - history event: `ASSIGNMENT_UPDATED`
 - query invalidation: ticket detail/list/search, actions, history
 
-파생된 assignee email은 persisted `tk_email`에 쓰면 안 된다.
+파생된 assignee email은 persisted `tk_email`에 쓰면 안 됩니다.
 
 ---
 
@@ -297,8 +297,8 @@ Soft delete:
 - allowed status: `Assigned`, `Working`, `Pending`
 - input: auto-generated content
 - validation:
-  - actor가 이미 current worker 중 하나다.
-  - current work assignee list가 최소 두 명이다.
+  - actor가 이미 current worker 중 하나입니다.
+  - current work assignee list가 최소 두 명입니다.
 - ticket effect:
   - current assignee를 actor 한 명으로 교체
   - status unchanged
@@ -320,8 +320,8 @@ Soft delete:
 - input: content, priority, risk level, due date
 - validation:
   - content 필수
-  - 최소 하나의 planning field가 변경되어야 한다.
-  - resolved/closed Admin correction은 due date를 변경할 수 없다.
+  - 최소 하나의 planning field가 변경되어야 합니다.
+  - resolved/closed Admin correction은 due date를 변경할 수 없습니다.
 - ticket effect:
   - 허용되는 경우 priority, risk, due date 갱신
 - action persistence: `ADJUST`
@@ -337,7 +337,7 @@ Soft delete:
 - input: content
 - validation:
   - content 필수
-  - Admin이 아니면 actor가 work assignee다.
+  - Admin이 아니면 actor가 work assignee입니다.
 - ticket effect:
   - status -> `Rejected`
   - 지원되는 경우 running work session 종료
@@ -353,8 +353,8 @@ Soft delete:
 - allowed status: `Declined`, `Rejected`
 - input: content
 - validation:
-  - actor가 requester다.
-  - initial routing이 approval 또는 worker를 resolve할 수 있다.
+  - actor가 requester입니다.
+  - initial routing이 approval 또는 worker를 resolve할 수 있습니다.
 - ticket effect:
   - initial routing 재실행
   - next approval step: `Approval`
@@ -402,13 +402,13 @@ Soft delete:
   - self-merge 금지
   - draft source 또는 target 금지
   - 이미 merged된 source 또는 target 금지
-  - source와 target은 저장된 category 기준으로 동일 Tenant에 속해야 한다.
-  - 같은 scope 간 merge는 허용한다.
-  - cross-scope merge는 `INTERNAL -> PORTAL`만 허용한다.
-  - `PORTAL -> INTERNAL` 및 cross-Tenant merge는 금지한다.
-  - 서버는 저장된 ticket/category context에서 Tenant와 scope를 파생한다.
-    request field는 authorization 사실로 사용하지 않는다.
-  - domain merge rule이 source/target status pair를 허용해야 한다.
+  - source와 target은 저장된 category 기준으로 동일 Tenant에 속해야 합니다.
+  - 같은 scope 간 merge는 허용합니다.
+  - cross-scope merge는 `INTERNAL -> PORTAL`만 허용합니다.
+  - `PORTAL -> INTERNAL` 및 cross-Tenant merge는 금지합니다.
+  - 서버는 저장된 ticket/category context에서 Tenant와 scope를 파생합니다.
+    request field는 authorization 사실로 사용하지 않습니다.
+  - domain merge rule이 source/target status pair를 허용해야 합니다.
 - ticket effect:
   - source ticket -> `Closed`
   - 같은 scope merge: `closeReason = Merged`
@@ -420,7 +420,7 @@ Soft delete:
 - history metadata: close reason, source/target Tenant, source/target scope,
   merged target id/number, operator reason
 - content policy: merge는 티켓 관계만 연결하며 INTERNAL action, history,
-  attachment 또는 content를 PORTAL target에 복사하지 않는다.
+  attachment 또는 content를 PORTAL target에 복사하지 않습니다.
 - query invalidation: ticket detail/list/search, actions, history, work sessions
 
 ---
@@ -432,7 +432,7 @@ Soft delete:
   `Rejected`
 - input: content
 - validation:
-  - actor가 requester다.
+  - actor가 requester입니다.
   - content 필수
 - ticket effect:
   - status -> `Closed`
@@ -447,8 +447,8 @@ Soft delete:
 ## Work Session Submit
 
 명시적 start-work command route는 work-session row를 만들지 않고
-`Assigned -> Working`으로 이동할 수 있다. Work-session submission은 work-time
-evidence를 기록하고 아래 지원 status transition을 적용할 수 있다.
+`Assigned -> Working`으로 이동할 수 있습니다. Work-session submission은 work-time
+evidence를 기록하고 아래 지원 status transition을 적용할 수 있습니다.
 
 - who: current work assignee
 - allowed status: `Assigned`, `Working`, `Pending`
@@ -458,9 +458,9 @@ evidence를 기록하고 아래 지원 status transition을 적용할 수 있다
   - optional `nextStatus = Working | Pending | Resolved`
   - note
 - validation:
-  - actor가 current work assignee다.
-  - tracked minutes는 positive여야 한다.
-  - `Assigned`와 `Pending`에는 explicit status transition이 필요하다.
+  - actor가 current work assignee입니다.
+  - tracked minutes는 positive여야 합니다.
+  - `Assigned`와 `Pending`에는 explicit status transition이 필요합니다.
   - allowed transitions:
     - `Assigned -> Working`
     - `Working -> Pending | Resolved`
@@ -468,14 +468,14 @@ evidence를 기록하고 아래 지원 status transition을 적용할 수 있다
 - ticket effect:
   - ticket aggregate에 tracked minutes 추가
   - `nextStatus`가 바뀌면 status 갱신
-  - resolving은 지원되는 경우 running session을 종료한다.
+  - resolving은 지원되는 경우 running session을 종료합니다.
 - action persistence: ticket action row 없음
 - history event: status가 바뀌면 `STATUS_UPDATED`
 - query invalidation: ticket detail/list/search, work-session list, history
 
-현재 route surface는 list/create를 지원한다. Work-session detail, update, delete,
+현재 route surface는 list/create를 지원합니다. Work-session detail, update, delete,
 timer start/finish/switch용 feature-client method는 존재하지만 대응 route file은
-현재 없다.
+현재 없습니다.
 
 ---
 
@@ -485,10 +485,10 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 - allowed status: `Resolved`
 - input: cron/system request
 - validation:
-  - resolved-history grace window가 지났다.
+  - resolved-history grace window가 지났습니다.
   - grace window는 generic ticket `updatedAt`이 아니라 티켓을 resolved로 만든 최신
-    history entry를 기준으로 측정한다.
-  - 현재 grace 값은 7일이다.
+    history entry를 기준으로 측정합니다.
+  - 현재 grace 값은 7일입니다.
 - ticket effect:
   - `Resolved -> Closed`
   - `closeReason = Completed`
@@ -516,6 +516,6 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 
 ## 요약
 
-Ticket operation은 command-driven이다. 모든 operation은 actor, status guard,
-payload contract, ticket effect, action persistence rule, history event를 가진다.
-숨은 status mutation은 허용되지 않는다.
+Ticket operation은 command-driven입니다. 모든 operation은 actor, status guard,
+payload contract, ticket effect, action persistence rule, history event를 가집니다.
+숨은 status mutation은 허용되지 않습니다.

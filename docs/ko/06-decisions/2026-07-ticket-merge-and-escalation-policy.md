@@ -2,10 +2,10 @@
 
 ## Context
 
-Service Desk Ticket Action model은 이미 `MERGE`를 operational command로 지원했다.
+Service Desk Ticket Action model은 이미 `MERGE`를 operational command로 지원했습니다.
 
 기존 merge 개념은 주로 동일한 operational scope 안의 중복 또는 관련 ticket을 위해
-설계되었다.
+설계되었습니다.
 
 ```txt
 source ticket
@@ -15,10 +15,10 @@ source ticket
 ```
 
 Ticket model에 Tenant scope가 명시되고 category scope가 `INTERNAL`과 `PORTAL`로
-분리되면서 실질적인 workflow 문제가 생겼다.
+분리되면서 실질적인 workflow 문제가 생겼습니다.
 
 내부에서 생성한 ticket을 나중에 기존 customer-facing PORTAL ticket과 연결해야 할 수
-있다.
+있습니다.
 
 예:
 
@@ -28,17 +28,17 @@ INTERNAL ticket
 -> 기존 PORTAL ticket이 이미 공식 external workflow를 나타냄
 ```
 
-시스템은 이를 다음 중 어떤 방식으로 처리할지 결정해야 했다.
+시스템은 이를 다음 중 어떤 방식으로 처리할지 결정해야 했습니다.
 
 - scope가 다르므로 금지
 - 일반 merge로 처리
 - 새로운 escalation command로 즉시 구현
 - explicit escalation semantic을 적용하여 기존 merge execution으로 표현
 
-이 결정은 일반적인 Ticket Action transaction 설계와 구분된다.
+이 결정은 일반적인 Ticket Action transaction 설계와 구분됩니다.
 
 Action execution 결정은 command, ticket mutation, History의 consistency 유지 방법을
-설명한다. 이 결정은 허용되는 scope transition과 그 의미를 설명한다.
+설명합니다. 이 결정은 허용되는 scope transition과 그 의미를 설명합니다.
 
 ---
 
@@ -46,7 +46,7 @@ Action execution 결정은 command, ticket mutation, History의 consistency 유�
 
 ### 1. 모든 cross-scope merge를 허용하면 scope boundary가 약화됨
 
-다음과 같은 광범위한 rule은 여러 위험을 만든다.
+다음과 같은 광범위한 rule은 여러 위험을 만듭니다.
 
 ```txt
 읽을 수 있는 모든 ticket
@@ -60,15 +60,15 @@ Action execution 결정은 command, ticket mutation, History의 consistency 유�
 - 저장된 Tenant와 scope가 아닌 UI visibility에 기반한 authorization
 - merge가 deduplication인지 escalation인지 설명하기 어려움
 
-Ticket visibility만으로는 두 ticket을 merge할 수 있다는 충분한 근거가 되지 않는다.
+Ticket visibility만으로는 두 ticket을 merge할 수 있다는 충분한 근거가 되지 않습니다.
 
 ---
 
 ### 2. 모든 INTERNAL-to-PORTAL 관계를 금지하면 실제 workflow를 무시함
 
-INTERNAL ticket이 external service process의 일부가 되는 것은 정당한 상황일 수 있다.
+INTERNAL ticket이 external service process의 일부가 되는 것은 정당한 상황일 수 있습니다.
 
-이 관계를 완전히 차단하면 다음과 같은 문제가 생긴다.
+이 관계를 완전히 차단하면 다음과 같은 문제가 생깁니다.
 
 - operational work 중복
 - 분리된 audit trail
@@ -76,13 +76,13 @@ INTERNAL ticket이 external service process의 일부가 되는 것은 정당한
 - 공식 customer-facing ticket의 ownership 불명확
 - INTERNAL source가 종료된 이유를 설명하기 어려움
 
-Model에는 통제된 handoff path가 필요했다.
+Model에는 통제된 handoff path가 필요했습니다.
 
 ---
 
 ### 3. Escalation을 일반적인 same-scope merge로 처리하면 의미가 손실됨
 
-Same-scope merge와 INTERNAL-to-PORTAL handoff는 관련되어 있지만 동일하지 않다.
+Same-scope merge와 INTERNAL-to-PORTAL handoff는 관련되어 있지만 동일하지 않습니다.
 
 ```txt
 same-scope merge
@@ -92,7 +92,7 @@ INTERNAL -> PORTAL
 -> operational escalation 또는 공식 external handoff
 ```
 
-두 경우에 모두 다음만 사용하면 reporting과 UI 설명이 약해진다.
+두 경우에 모두 다음만 사용하면 reporting과 UI 설명이 약해집니다.
 
 ```txt
 closeReason = Merged
@@ -102,13 +102,13 @@ closeReason = Merged
 
 ### 4. 완전한 ESCALATE command를 즉시 도입하면 workflow surface가 확장됨
 
-전용 command는 장기적으로 가장 명확한 semantic을 제공할 수 있다.
+전용 command는 장기적으로 가장 명확한 semantic을 제공할 수 있습니다.
 
 ```txt
 ESCALATE_TO_PORTAL
 ```
 
-하지만 이를 즉시 도입하려면 다음 영역을 함께 변경해야 한다.
+하지만 이를 즉시 도입하려면 다음 영역을 함께 변경해야 합니다.
 
 - Ticket Action union
 - command route validation
@@ -122,7 +122,7 @@ ESCALATE_TO_PORTAL
 - test 및 documentation
 
 당장의 requirement는 완전한 escalation subsystem을 구축하는 것이 아니라 기존 ticket
-간의 통제된 관계를 표현하는 것이었다.
+간의 통제된 관계를 표현하는 것이었습니다.
 
 ---
 
@@ -144,7 +144,7 @@ ESCALATE_TO_PORTAL
 - 역방향 merge와 무관한 customer merge가 가능해짐
 - reporting에서 consolidation과 escalation을 구분할 수 없음
 
-이 option은 기각했다.
+이 option은 기각했습니다.
 
 ---
 
@@ -167,7 +167,7 @@ PORTAL -> PORTAL
 - 수동 cross-reference 동작을 강제함
 - 통제된 closure reason 없이 operational record가 중복됨
 
-이 option만으로는 충분하지 않았다.
+이 option만으로는 충분하지 않았습니다.
 
 ---
 
@@ -193,7 +193,7 @@ INTERNAL ticket
 - escalation-specific requirement가 안정화되기 전에 성급한 abstraction이 될 수 있음
 - 기존 merge transaction behavior의 상당 부분을 중복할 수 있음
 
-이 option은 가능한 향후 방향으로 연기했다.
+이 option은 가능한 향후 방향으로 연기했습니다.
 
 ---
 
@@ -224,13 +224,13 @@ same-Tenant INTERNAL -> PORTAL
 - UI와 report가 `closeReason`을 확인해야 함
 - 향후 escalation-specific behavior에는 별도 command가 필요할 수 있음
 
-이 option을 선택했다.
+이 option을 선택했습니다.
 
 ---
 
 ## Decision
 
-하나의 Service Desk Tenant 안에서 다음 방향의 merge만 허용한다.
+하나의 Service Desk Tenant 안에서 다음 방향의 merge만 허용합니다.
 
 ```txt
 same-Tenant INTERNAL -> INTERNAL
@@ -246,7 +246,7 @@ same-Tenant INTERNAL -> PORTAL
 -> closeReason = Escalated
 ```
 
-다음은 거부한다.
+다음은 거부합니다.
 
 ```txt
 PORTAL -> INTERNAL
@@ -254,10 +254,10 @@ cross-Tenant merge
 Draft source 또는 target
 ```
 
-상세 status 및 actor rule은 현재 Ticket Operation Rules를 따른다.
+상세 status 및 actor rule은 현재 Ticket Operation Rules를 따릅니다.
 
-Admin에게 더 많은 UI capability가 있다는 이유만으로 scope policy가 넓어지지 않는다.
-저장된 Tenant와 scope는 계속 server에서 검증하는 constraint다.
+Admin에게 더 많은 UI capability가 있다는 이유만으로 scope policy가 넓어지지 않습니다.
+저장된 Tenant와 scope는 계속 server에서 검증하는 constraint입니다.
 
 ---
 
@@ -265,37 +265,37 @@ Admin에게 더 많은 UI capability가 있다는 이유만으로 scope policy�
 
 ### 1. MERGE Action 재사용
 
-현재 execution은 다음과 같이 유지한다.
+현재 execution은 다음과 같이 유지합니다.
 
 ```txt
 actionType = MERGE
 historyEvent = TICKET_MERGED
 ```
 
-Close reason이 reporting의 차이를 나타낸다.
+Close reason이 reporting의 차이를 나타냅니다.
 
 ```txt
 Merged
 Escalated
 ```
 
-이를 통해 escalation-specific behavior가 성숙하기 전에 두 번째 command pipeline을
-도입하지 않는다.
+이를 통해 escalation-specific behavior가 충분히 구체화되기 전에 두 번째 command pipeline을
+도입하는 일을 피합니다.
 
 ---
 
 ### 2. Source ticket 종료
 
-Merge 또는 escalation이 성공하면 source ticket을 종료한다.
+Merge 또는 escalation이 성공하면 source ticket을 종료합니다.
 
-Source는 target relationship을 저장한다.
+Source는 target relationship을 저장합니다.
 
 ```txt
 mergedIntoTicketId
 mergedIntoTicketNo
 ```
 
-Close reason은 다음 중 하나다.
+Close reason은 다음 중 하나입니다.
 
 ```txt
 Merged
@@ -303,28 +303,28 @@ Merged
 Escalated
 ```
 
-별도로 persisted된 `Merged` 또는 `Escalated` ticket status는 없다.
+별도로 persisted된 `Merged` 또는 `Escalated` ticket status는 없습니다.
 
 ---
 
 ### 3. 기존 target ticket 사용
 
-현재 action은 source를 기존 target ticket에 연결한다.
+현재 action은 source를 기존 target ticket에 연결합니다.
 
-다음 작업은 수행하지 않는다.
+다음 작업은 수행하지 않습니다.
 
 - 새로운 target ticket 생성
 - source를 새로운 PORTAL ticket으로 clone
 - target approval 또는 assignment 자동 재실행
 - source와 target을 하나의 database row로 처리
 
-향후 target 생성이 필요하면 별도의 workflow로 다룬다.
+향후 target 생성이 필요해지면 별도의 workflow로 다룹니다.
 
 ---
 
 ### 4. Source timeline을 target에 복사하지 않음
 
-Relationship은 다음을 복사하지 않는다.
+Relationship은 다음을 복사하지 않습니다.
 
 - source Ticket Action
 - source Ticket History
@@ -332,16 +332,16 @@ Relationship은 다음을 복사하지 않는다.
 - source rich-text content
 - source Work Session
 
-해당 record는 원래의 Ticket identity와 audit 의미를 유지한다.
+해당 record는 원래의 Ticket identity와 audit 의미를 유지합니다.
 
 UI 또는 DTO가 지원하는 경우 target에서 source와의 relationship을 노출할 수 있지만,
-historical record를 다시 작성하지는 않는다.
+historical record를 다시 작성하지는 않습니다.
 
 ---
 
 ### 5. Server를 authority로 유지
 
-Client는 target ticket ID를 제출할 수 있지만 이것이 다음을 입증하지는 않는다.
+Client는 target ticket ID를 제출할 수 있지만 이것이 다음을 입증하지는 않습니다.
 
 - Tenant equality
 - scope direction
@@ -349,13 +349,13 @@ Client는 target ticket ID를 제출할 수 있지만 이것이 다음을 입증
 - merge permission
 - source status validity
 
-Command service는 trusted data에서 두 ticket을 다시 load하고 검증해야 한다.
+Command service는 trusted data에서 두 ticket을 다시 load하고 검증해야 합니다.
 
 ---
 
 ## INTERNAL에서 PORTAL로만 허용하는 이유
 
-허용 방향은 workflow 의미를 반영한다.
+허용 방향은 workflow 의미를 반영합니다.
 
 ```txt
 INTERNAL
@@ -366,24 +366,24 @@ PORTAL
 ```
 
 External ticket이 공식 workflow record가 될 수 있으므로 INTERNAL source를 기존
-PORTAL target으로 escalate할 수 있다.
+PORTAL target으로 escalate할 수 있습니다.
 
-역방향은 동등하지 않다.
+역방향은 동등하지 않습니다.
 
 ```txt
 PORTAL -> INTERNAL
 ```
 
 이는 customer-facing request를 internal-only workflow로 숨기거나 격하시킬 수 있고,
-visibility expectation을 약화하며 audit 해석을 불명확하게 만들 수 있다.
+visibility expectation을 약화하며 audit 해석을 불명확하게 만들 수 있습니다.
 
-따라서 역방향은 계속 거부한다.
+따라서 역방향은 계속 거부합니다.
 
 ---
 
 ## Action 및 History 의미
 
-Command는 계속 Ticket Action execution boundary를 따른다.
+Command는 계속 Ticket Action execution boundary를 따릅니다.
 
 ```txt
 MERGE Action
@@ -393,11 +393,11 @@ MERGE Action
 -> TICKET_MERGED History 추가
 ```
 
-Action은 actor의 intent와 reason을 기록한다.
+Action은 actor의 intent와 reason을 기록합니다.
 
-History는 발생한 effect를 immutable하게 기록한다.
+History는 발생한 effect를 immutable하게 기록합니다.
 
-Close reason은 다음을 구분한다.
+Close reason은 다음을 구분합니다.
 
 ```txt
 duplicate consolidation
@@ -411,37 +411,37 @@ cross-scope escalation
 
 ### Positive
 
-- Tenant isolation이 명시적으로 유지된다.
-- Same-scope duplicate consolidation을 계속 지원한다.
-- 현실적인 INTERNAL-to-PORTAL handoff를 표현할 수 있다.
-- Reporting에서 `Merged`와 `Escalated`를 구분할 수 있다.
-- 기존 Action, transaction, History infrastructure를 재사용한다.
-- Source record가 원래의 audit identity를 유지한다.
-- 대규모 escalation subsystem을 성급하게 추가하지 않는다.
+- Tenant isolation이 명시적으로 유지됩니다.
+- Same-scope duplicate consolidation을 계속 지원합니다.
+- 현실적인 INTERNAL-to-PORTAL handoff를 표현할 수 있습니다.
+- Reporting에서 `Merged`와 `Escalated`를 구분할 수 있습니다.
+- 기존 Action, transaction, History infrastructure를 재사용합니다.
+- Source record가 원래의 audit identity를 유지합니다.
+- 대규모 escalation subsystem을 성급하게 추가하지 않습니다.
 
 ---
 
 ### Negative / Trade-offs
 
-- `MERGE`가 두 가지 business meaning을 가지게 된다.
-- Consumer는 merge와 escalation을 구분하기 위해 `closeReason`을 확인해야 한다.
-- 두 outcome이 `TICKET_MERGED`를 공유한다.
-- Escalation-specific notification 및 approval behavior는 표현하지 않는다.
+- `MERGE`가 두 가지 business meaning을 가지게 됩니다.
+- Consumer는 merge와 escalation을 구분하기 위해 `closeReason`을 확인해야 합니다.
+- 두 outcome이 `TICKET_MERGED`를 공유합니다.
+- Escalation-specific notification 및 approval behavior는 표현하지 않습니다.
 - 향후 explicit escalation command에는 migration 또는 compatibility 처리가 필요할 수
-  있다.
+  있습니다.
 
 ---
 
 ## Future Direction
 
 Escalation이 merge와 실질적으로 다른 behavior를 가지게 되면 다음과 같은 explicit
-command를 도입한다.
+command를 도입합니다.
 
 ```txt
 ESCALATE_TO_PORTAL
 ```
 
-이 변경을 촉발할 수 있는 requirement는 다음과 같다.
+이 변경을 촉발할 수 있는 requirement는 다음과 같습니다.
 
 - command의 일부로 PORTAL target 생성
 - customer notification 전달
@@ -452,7 +452,7 @@ ESCALATE_TO_PORTAL
 - 별도의 reporting 및 SLA behavior
 - explicit accept/reject handoff workflow
 
-그 시점에는 다음과 같이 구분한다.
+그 시점에는 다음과 같이 구분합니다.
 
 ```txt
 MERGE
@@ -463,7 +463,7 @@ ESCALATE_TO_PORTAL
 ```
 
 이러한 requirement가 생기기 전까지 현재의 `MERGE + Escalated closeReason` 설계를 더
-작고 설명하기 쉬운 구현으로 유지한다.
+작고 설명하기 쉬운 구현으로 유지합니다.
 
 ---
 
@@ -481,16 +481,16 @@ ESCALATE_TO_PORTAL
 
 ## Summary
 
-Ticket merge는 trusted Tenant 및 scope relationship에 따라 제한된다.
+Ticket merge는 trusted Tenant 및 scope relationship에 따라 제한됩니다.
 
-하나의 Tenant 안에 있는 same-scope ticket은 `closeReason = Merged`로 통합할 수 있다.
+하나의 Tenant 안에 있는 same-scope ticket은 `closeReason = Merged`로 통합할 수 있습니다.
 
 INTERNAL ticket은 기존 `MERGE` Action과 `TICKET_MERGED` History를 사용하고
 `closeReason = Escalated`를 설정하여 동일 Tenant 안의 기존 PORTAL ticket에 통제된
-escalation으로 연결할 수 있다.
+escalation으로 연결할 수 있습니다.
 
-PORTAL-to-INTERNAL 및 cross-Tenant merge는 계속 거부한다. Escalation에 현재 merge
-transaction 이상의 behavior가 필요해질 때까지 전용 escalation command 도입은 연기한다.
+PORTAL-to-INTERNAL 및 cross-Tenant merge는 계속 거부합니다. Escalation에 현재 merge
+transaction 이상의 behavior가 필요해질 때까지 전용 escalation command 도입은 연기합니다.
 
 ---
 

@@ -31,6 +31,3 @@ const toDbTicketHistory = (
 export const ticketHistoriesMock: DbTicketHistory[] = serviceDeskScenariosMock
   .flatMap((scenario) => scenario.histories)
   .map(toDbTicketHistory);
-
-/** @deprecated Use ticketHistoriesMock. */
-export const internalHistoriesMock = ticketHistoriesMock;

@@ -2,10 +2,10 @@
 
 ## 목표
 
-이 문서는 Service Desk ticket system의 high-level current design overview다.
+이 문서는 Service Desk ticket system의 high-level current design overview를 제공합니다.
 
-안정된 model을 요약하고 canonical detail 문서로 연결한다. 모든 operation rule을
-반복하지 않는다. 시스템의 형태를 이해한 뒤 실행 세부사항은 링크된 문서를 따른다.
+안정된 model을 요약하고 canonical detail 문서로 연결합니다. 모든 operation rule을
+반복해서 설명하지는 않습니다. 시스템의 형태를 이해한 뒤 실행 세부사항은 링크된 문서를 따릅니다.
 
 ---
 
@@ -20,9 +20,9 @@ Tenant-scoped settings
 -> work-session evidence
 ```
 
-Service Desk ticket domain은 workflow-oriented다. Ticket은 generic CRUD row가 아니다.
+Service Desk ticket domain은 workflow-oriented입니다. Ticket은 generic CRUD row가 아닙니다.
 Current state, current ownership, configuration context, actions, history,
-attachments, work-session records를 가진다.
+attachments, work-session records를 가집니다.
 
 ---
 
@@ -42,13 +42,13 @@ Resolved
 Closed
 ```
 
-`Open`, `Approved`, `Reopen`은 persisted status가 아니다.
+`Open`, `Approved`, `Reopen`은 persisted status가 아닙니다.
 
-- `Open`은 UI grouping/search concept으로만 사용할 수 있다.
-- Approval completion은 `APPROVAL_APPROVED` history로 기록된다.
-- Reopen은 현재 `Resolved`를 `Working`으로 되돌리는 action이다.
+- `Open`은 UI grouping/search concept으로만 사용할 수 있습니다.
+- Approval completion은 `APPROVAL_APPROVED` history로 기록됩니다.
+- Reopen은 현재 `Resolved`를 `Working`으로 되돌리는 action입니다.
 
-Detail read는 status를 변경하면 안 된다. Work start는 explicit command다.
+Detail read는 status를 변경하면 안 됩니다. Work start는 explicit command입니다.
 
 관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
 
@@ -56,19 +56,19 @@ Detail read는 status를 변경하면 안 된다. Work start는 explicit command
 
 ## Draft
 
-REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장된다.
+REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장됩니다.
 
 현재 draft rule:
 
-- requester당 active draft는 하나다.
-- draft는 별도 draft table이 아니라 ticket table을 사용한다.
-- draft save/update는 draft API를 사용한다.
-- final submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 이동시킨다.
-- operational list와 insight는 draft ticket을 제외한다.
+- requester당 active draft는 하나입니다.
+- draft는 별도 draft table이 아니라 ticket table을 사용합니다.
+- draft save/update는 draft API를 사용합니다.
+- final submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 이동시킵니다.
+- operational list와 insight는 draft ticket을 제외합니다.
 - LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저 `localStorage` 상태이며
-  기능 초안 저장소를 통해 접근한다.
+  기능 초안 저장소를 통해 접근합니다.
 - LOCAL 초안 작업은 초안 Route Handler를 거치지 않으며 REMOTE PostgreSQL 초안
-  모델과 영속성 측면에서 동등하지 않다.
+  모델과 영속성 측면에서 동등하지 않습니다.
 
 관련 문서: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
 
@@ -95,7 +95,7 @@ tk_approval_step_id == null
 -> tk_assignee_usernames = current workers
 ```
 
-DTO는 UI 편의를 위해 projection field를 노출한다.
+DTO는 UI 편의를 위해 projection field를 노출합니다.
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -103,7 +103,7 @@ DTO는 UI 편의를 위해 projection field를 노출한다.
 - `assignedApprover`
 - `assignedWorker`
 
-이 값들은 mapper/service projection이며 별도 database source of truth가 아니다.
+이 값들은 mapper/service projection이며 별도 database source of truth가 아닙니다.
 
 관련 문서:
 
@@ -114,7 +114,7 @@ DTO는 UI 편의를 위해 projection field를 노출한다.
 
 ## Initial Routing
 
-Ticket submission은 선택된 category와 requester에서 routing을 resolve한다.
+Ticket submission은 선택된 category와 requester에서 routing을 resolve합니다.
 
 ```txt
 next approval step exists
@@ -129,9 +129,9 @@ no approval step
 ```
 
 Final approval은 다음 approval step으로 이동하거나 work assignment를 resolve하고
-ticket을 `Assigned`로 이동시킨다.
+ticket을 `Assigned`로 이동시킵니다.
 
-Decline은 approval routing을 종료한다.
+Decline은 approval routing을 종료합니다.
 
 ```txt
 status = Declined
@@ -144,7 +144,7 @@ assigneeUsernames = []
 ## Requester Update Routing
 
 Requester update는 현재 구현에서 requester-owned ticket이 `Approval` 또는 `Assigned`
-상태일 때만 허용된다.
+상태일 때만 허용됩니다.
 
 Routing-neutral fields:
 
@@ -159,16 +159,16 @@ Routing-sensitive fields:
 - files
 - images
 
-실제 normalized value change만 routing behavior를 trigger한다. Routing-neutral field만
+실제 normalized value change만 routing behavior를 trigger합니다. Routing-neutral field만
 변경되면 status, approval step, assignee를 유지하고 history는 `ROUTING_PRESERVED`를
-기록한다.
+기록합니다.
 
 Routing-sensitive value가 변경되면 routing을 처음부터 다시 계산하고 history는
-`ROUTING_RESET`을 기록한다.
+`ROUTING_RESET`을 기록합니다.
 
 Category가 변경되면 priority, risk, minimum due date를 새 category default에서 다시
-평가한다. 다음 due date는 현재 due date와 새 category minimum 중 더 늦은 값이며,
-category change는 due date를 더 이른 날짜로 당기면 안 된다.
+평가합니다. 다음 due date는 현재 due date와 새 category minimum 중 더 늦은 값이며,
+category change는 due date를 더 이른 날짜로 당기면 안 됩니다.
 
 관련 문서:
 
@@ -179,7 +179,7 @@ category change는 due date를 더 이른 날짜로 당기면 안 된다.
 
 ## Attachment Boundary
 
-Ticket attachment input은 ticket command가 metadata를 쓰기 전에 prepare된다.
+Ticket attachment input은 ticket command가 metadata를 쓰기 전에 prepare됩니다.
 
 ```txt
 File[] / inline image
@@ -189,11 +189,11 @@ File[] / inline image
 -> tk_content, tk_files, tk_images
 ```
 
-현재 LOCAL/REMOTE behavior는 controlled demo replacement를 사용한다. Production object
-storage를 제공하지 않는다.
+현재 LOCAL/REMOTE behavior는 controlled demo replacement를 사용합니다. Production object
+storage를 제공하지 않습니다.
 
 Raw `File`, binary data, base64 data URL, blob URL, local file path는 ticket row, DTO,
-action metadata, history metadata에 persist하면 안 된다.
+action metadata, history metadata에 persist하면 안 됩니다.
 
 관련 문서: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
@@ -201,7 +201,7 @@ action metadata, history metadata에 persist하면 안 된다.
 
 ## Ticket Action Command Model
 
-Ticket action은 server-controlled command다.
+Ticket action은 server-controlled command입니다.
 
 ```txt
 Action command
@@ -231,12 +231,12 @@ RESUBMIT
 CANCEL
 ```
 
-Communication action은 timeline entry를 만든다. Operational action은 status,
-assignee, planning field, merge state, close reason을 변경할 수 있다. Operational
-action은 normal workflow에서 immutable하다.
+Communication action은 timeline entry를 만듭니다. Operational action은 status,
+assignee, planning field, merge state, close reason을 변경할 수 있습니다. Operational
+action은 normal workflow에서 immutable합니다.
 
-Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시된다. 이 visibility는
-closure 이후 새 comment creation이 허용된다는 뜻이 아니다.
+Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시됩니다. 이 visibility는
+closure 이후 새 comment creation이 허용된다는 뜻이 아닙니다.
 
 관련 문서:
 
@@ -247,7 +247,7 @@ closure 이후 새 comment creation이 허용된다는 뜻이 아니다.
 
 ## Event-Based History
 
-History는 immutable event/audit data다.
+History는 immutable event/audit data입니다.
 
 ```txt
 type   -> changed domain area
@@ -258,11 +258,11 @@ from/to value -> structured JSON change
 metadata -> supplemental display/audit context
 ```
 
-`event`는 authoritative하다. `metadata.event`는 event source of truth가 아니다.
-`SYSTEM_AUTO`는 history source이지 history type이 아니다.
+`event`는 authoritative합니다. `metadata.event`는 event source of truth가 아닙니다.
+`SYSTEM_AUTO`는 history source이지 history type이 아닙니다.
 
-하나의 action은 여러 history record를 만들 수 있다. 일부 system operation은 ticket
-action row 없이 history를 만들 수 있다.
+하나의 action은 여러 history record를 만들 수 있습니다. 일부 system operation은 ticket
+action row 없이 history를 만들 수 있습니다.
 
 관련 문서: [Ticket History](./ticket-history.md)
 
@@ -270,7 +270,7 @@ action row 없이 history를 만들 수 있다.
 
 ## Work Session
 
-Work Session은 실제 work-time evidence를 기록한다. Ticket Action과 분리된다.
+Work Session은 실제 work-time evidence를 기록합니다. Ticket Action과 분리됩니다.
 
 현재 route surface:
 
@@ -281,13 +281,13 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 현재 behavior:
 
-- current work assignee만 work를 track할 수 있다.
-- `Assigned`는 `Working`으로의 transition이 필요하다.
-- `Working`은 `Pending` 또는 `Resolved`로 이동할 수 있다.
-- `Pending`은 `Working` 또는 `Resolved`로 이동할 수 있다.
-- tracked minutes는 ticket work total로 aggregate된다.
-- GET은 status를 변경하지 않는다.
-- timer-style start/finish/switch route는 현재 route surface에 포함되지 않는다.
+- current work assignee만 work를 track할 수 있습니다.
+- `Assigned`는 `Working`으로의 transition이 필요합니다.
+- `Working`은 `Pending` 또는 `Resolved`로 이동할 수 있습니다.
+- `Pending`은 `Working` 또는 `Resolved`로 이동할 수 있습니다.
+- tracked minutes는 ticket work total로 aggregate됩니다.
+- GET은 status를 변경하지 않습니다.
+- timer-style start/finish/switch route는 현재 route surface에 포함되지 않습니다.
 
 관련 문서: [Ticket Work Session](./ticket-work-session.md)
 
@@ -295,7 +295,7 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 ## Settings Relationship
 
-Service Desk settings는 ticket workflow가 사용하는 behavior configuration을 제공한다.
+Service Desk settings는 ticket workflow가 사용하는 behavior configuration을 제공합니다.
 
 ```txt
 Company
@@ -305,9 +305,9 @@ Company
       -> Assignment Rule
 ```
 
-Tenant는 configuration scope다. Category는 central behavior configuration이다.
-Approval Step은 main-category approval routing을 제어한다. Assignment Rule은
-subcategory override와 parent/main fallback으로 work ownership을 resolve한다.
+Tenant는 configuration scope입니다. Category는 central behavior configuration입니다.
+Approval Step은 main-category approval routing을 제어합니다. Assignment Rule은
+subcategory override와 parent/main fallback으로 work ownership을 resolve합니다.
 
 관련 문서: [Service Desk Settings](../settings.md)
 
@@ -315,8 +315,8 @@ subcategory override와 parent/main fallback으로 work ownership을 resolve한�
 
 ## Runtime Boundary
 
-UI는 feature API client를 사용한다. Route handler는 LOCAL 또는 REMOTE behavior를
-선택한다.
+UI는 feature API client를 사용합니다. Route handler는 LOCAL 또는 REMOTE behavior를
+선택합니다.
 
 ```txt
 UI
@@ -327,10 +327,10 @@ UI
 ```
 
 REMOTE는 server-only data access, row/mapper/DTO boundary, repository service,
-workflow change에 atomicity가 필요할 때 transaction을 사용한다.
+workflow change에 atomicity가 필요할 때 transaction을 사용합니다.
 
 LOCAL은 safe portfolio demo behavior를 제공하고, 지원되는 workflow에서는 DTO contract를
-REMOTE와 맞춰 유지해야 한다.
+REMOTE와 맞춰 유지해야 합니다.
 
 ---
 
@@ -355,7 +355,7 @@ REMOTE와 맞춰 유지해야 한다.
 
 현재 Service Desk ticket system은 precise persisted statuses, phase-aware routing,
 REMOTE draft rows, attachment preparation, command-based actions, event-based
-history, work-session evidence, tenant-scoped settings를 중심으로 구성된다.
+history, work-session evidence, tenant-scoped settings를 중심으로 구성됩니다.
 
 설계 목표는 workflow behavior를 명시적이고 감사 가능하게 유지하며, 오래된
-`Open`/`Approved` lifecycle terminology가 아니라 현재 구현과 정렬하는 것이다.
+`Open`/`Approved` lifecycle terminology가 아니라 현재 구현과 정렬하는 것입니다.

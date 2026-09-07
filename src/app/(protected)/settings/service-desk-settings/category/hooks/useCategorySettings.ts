@@ -14,6 +14,7 @@ import { useServiceDeskSettingsCategoryListQuery } from "../../hooks/useServiceD
 import { useServiceDeskSettingsEditorState } from "../../hooks/useServiceDeskSettingsEditorState";
 import { useServiceDeskSettingsOrganizationData } from "../../hooks/useServiceDeskSettingsOrganizationData";
 import { useServiceDeskSettingsPageContext } from "../../hooks/useServiceDeskSettingsPageContext";
+import { findTenantCategories } from "../../utils/tenantCategory";
 import { createCategoryTree } from "../utils/mapper";
 import { buildCategoryTreeSavePayload } from "../utils/tree";
 import { useCategoryTree } from "./useCategoryTree";
@@ -28,6 +29,10 @@ export function useCategorySettings() {
     scope: context.selectedScope,
     enabled: context.canRead,
   });
+  const categories = useMemo(
+    () => findTenantCategories(categoryQuery.data, context.selectedTenant),
+    [categoryQuery.data, context.selectedTenant],
+  );
   const assignmentRuleParams = useMemo(
     () =>
       context.selectedTenant && context.canRead
@@ -54,8 +59,7 @@ export function useCategorySettings() {
   });
   const tree = useCategoryTree({
     contextKey: context.contextKey,
-    selectedTenant: context.selectedTenant,
-    categories: categoryQuery.data,
+    categories,
   });
   const { mutateAsync: saveCategoryTree, isPending: isSaving } =
     useSaveServiceDeskCategoryTree();
@@ -141,9 +145,7 @@ export function useCategorySettings() {
         ),
       };
 
-      tree.acceptSavedTree(
-        createCategoryTree([scopedSavedTenant], scopedSavedTenant.id),
-      );
+      tree.acceptSavedTree(createCategoryTree(scopedSavedTenant.categories));
     } catch {
       // Toast is handled by useMutationToast.
     }

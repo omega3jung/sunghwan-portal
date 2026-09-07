@@ -242,10 +242,14 @@ function normalizePayloadStringArray(value: unknown): string[] {
     return [];
   }
 
-  return value
-    .filter((item): item is string => typeof item === "string")
-    .map((item) => item.trim())
-    .filter(Boolean);
+  return Array.from(
+    new Set(
+      value
+        .filter((item): item is string => typeof item === "string")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
 }
 
 function normalizeOptionalPayloadString(value: unknown): string | undefined {
@@ -513,9 +517,16 @@ export function requireCurrentApprovalStepId(ticket: ServiceDeskTicketViewRow) {
 
 /** Trims and de-duplicates assignee usernames so authorization and persistence use one canonical list. */
 export function normalizeAssigneeUsernames(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter(
-        (item): item is string => typeof item === "string" && item.length > 0,
-      )
-    : [];
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      value
+        .filter((item): item is string => typeof item === "string")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
 }

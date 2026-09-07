@@ -1,7 +1,10 @@
 // app/api/user-profile/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdminOrSelf, isRemoteRequest } from "@/app/api/_adapters";
+import {
+  getAdminOrSelfErrorResponse,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { UserIdRouteContext } from "@/app/api/_adapters/http";
 import { getLocalUserProfile } from "@/app/api/_adapters/localDemo/user";
@@ -10,11 +13,17 @@ import { AppUser } from "@/domain/user";
 /** Handles GET /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
+
+  if (!userId?.trim()) {
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
+  }
+
+  const authError = await getAdminOrSelfErrorResponse(req, userId);
+  if (authError) return authError;
+
   const isRemote = await isRemoteRequest(req);
 
-  // demo mode
   if (!isRemote) {
-    // Return mock user preference.
     const targetProfile = getLocalUserProfile(userId);
 
     if (!targetProfile) {
@@ -23,13 +32,6 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 
     return NextResponse.json({ data: targetProfile });
   }
-
-  if (!userId?.trim()) {
-    return NextResponse.json({ message: "Not found" }, { status: 404 });
-  }
-
-  const authError = await getAdminOrSelfError(req, userId);
-  if (authError) return authError;
 
   return portalApiJson(req, {
     method: "GET",
@@ -41,17 +43,16 @@ export async function GET(req: NextRequest, context: UserIdRouteContext) {
 /** Handles POST /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function POST(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
-  const isRemote = await isRemoteRequest(req);
+  const authError = await getAdminOrSelfErrorResponse(req, userId);
+  if (authError) return authError;
 
   const body = (await req.json()) as AppUser;
+  const isRemote = await isRemoteRequest(req);
 
   // demo mode
   if (!isRemote) {
     return NextResponse.json(body, { status: 201 }); // POST is 201.
   }
-
-  const authError = await getAdminOrSelfError(req, userId);
-  if (authError) return authError;
 
   return portalApiJson(req, {
     method: "POST",
@@ -64,9 +65,11 @@ export async function POST(req: NextRequest, context: UserIdRouteContext) {
 /** Handles PUT /api/users/[userId]/profile; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(req: NextRequest, context: UserIdRouteContext) {
   const { userId } = await context.params;
-  const isRemote = await isRemoteRequest(req);
+  const authError = await getAdminOrSelfErrorResponse(req, userId);
+  if (authError) return authError;
 
   const body = (await req.json()) as AppUser;
+  const isRemote = await isRemoteRequest(req);
 
   // demo mode
 
@@ -74,26 +77,10 @@ export async function PUT(req: NextRequest, context: UserIdRouteContext) {
     return NextResponse.json(body, { status: 200 }); // PUT is 200. (or 204).
   }
 
-  const authError = await getAdminOrSelfError(req, userId);
-  if (authError) return authError;
-
   return portalApiJson(req, {
     method: "PUT",
     path: `/users/${encodeURIComponent(userId)}/profile`,
     body,
     errorMessage: "Failed to update user profile",
   });
-}
-
-async function getAdminOrSelfError(req: NextRequest, userId: string) {
-  const auth = await checkAdminOrSelf(req, userId);
-
-  if (auth.ok) {
-    return null;
-  }
-
-  return NextResponse.json(
-    { message: auth.status === 401 ? "Unauthorized" : "Forbidden" },
-    { status: auth.status },
-  );
 }

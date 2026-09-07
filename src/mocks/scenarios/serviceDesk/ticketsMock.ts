@@ -99,9 +99,6 @@ export const ticketsMock: DbTicketDetail[] = serviceDeskScenariosMock.map(
   (scenario) => toDbTicketDetail(scenario.ticket),
 );
 
-/** @deprecated Use ticketsMock. */
-export const internalTicketsMock = ticketsMock;
-
 function buildCategoryTenantIds() {
   const tenantIdsByCategory = new Map<string, Set<string>>();
 

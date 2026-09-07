@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { checkAdmin, isRemoteRequest } from "@/app/api/_adapters";
+import {
+  getAdminErrorResponse,
+  isRemoteRequest,
+} from "@/app/api/_adapters";
 import { portalApiJson } from "@/app/api/_adapters/backend";
 import { IdRouteContext } from "@/app/api/_adapters/http";
 import {
@@ -15,7 +18,7 @@ import {
 
 /** Handles GET /api/companies/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest, context: IdRouteContext) {
-  const authError = await getAdminError(request);
+  const authError = await getAdminErrorResponse(request);
   if (authError) return authError;
 
   const { id } = await context.params;
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest, context: IdRouteContext) {
 
 /** Handles PUT /api/companies/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function PUT(request: NextRequest, context: IdRouteContext) {
-  const authError = await getAdminError(request);
+  const authError = await getAdminErrorResponse(request);
   if (authError) return authError;
 
   const { id } = await context.params;
@@ -65,7 +68,7 @@ export async function PUT(request: NextRequest, context: IdRouteContext) {
 
 /** Handles DELETE /api/companies/[id]; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function DELETE(request: NextRequest, context: IdRouteContext) {
-  const authError = await getAdminError(request);
+  const authError = await getAdminErrorResponse(request);
   if (authError) return authError;
 
   const { id } = await context.params;
@@ -81,17 +84,4 @@ export async function DELETE(request: NextRequest, context: IdRouteContext) {
     path: `/company/${id}`,
     errorMessage: "Failed to delete company",
   });
-}
-
-async function getAdminError(req: NextRequest) {
-  const auth = await checkAdmin(req);
-
-  if (auth.ok) {
-    return null;
-  }
-
-  return NextResponse.json(
-    { message: auth.status === 401 ? "Unauthorized" : "Forbidden" },
-    { status: auth.status },
-  );
 }
