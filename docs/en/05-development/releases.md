@@ -15,6 +15,52 @@ traceability; this document does not depend on separate PR-description files.
 
 ## Release History
 
+### 2026-09-07 — Risk-based regression coverage and workflow safeguards
+
+test(vitest): strengthen regression coverage and workflow safeguards
+
+- Restored and modernized the Vitest suite, expanding risk-based regression
+  coverage across domain rules, authentication, authorization, Service Desk
+  workflows, server services, route handlers, client state, and protected pages.
+- Strengthened trusted session identity handling, tenant and scope authorization,
+  impersonation safeguards, and fail-closed behavior before LOCAL or REMOTE
+  dispatch.
+- Protected ticket lifecycle, action, approval, assignment, merge, draft,
+  history, Work Session, and settings orchestration contracts, including
+  transaction failures and immutable audit behavior.
+- Added shared contract coverage for LOCAL and REMOTE behavior and for the
+  independently implemented App and server runtime ownership boundaries.
+- Corrected regressions in assignee normalization, settings validation context,
+  session storage persistence, preference synchronization, sign-out routing,
+  and asynchronous cleanup.
+- Published the English and Korean testing strategy and Vitest coverage decision,
+  updated localized Documents Hub navigation, and refined Korean technical
+  documentation.
+- Removed the obsolete remote route guard and deprecated compatibility APIs,
+  enabled ESLint deprecation checks, and released the application as `0.9.9`.
+
+### 2026-08-23 — Workflow integrity and impersonation safeguards
+
+fix(service-desk, auth): strengthen workflow integrity and impersonation
+
+- Strengthened CLIENT-scope login, effective impersonation identity, and
+  company-scoped employee selection while preserving authenticated-session
+  boundaries.
+- Enforced tenant, scope, actor, and object-level authorization consistently
+  across ticket lists, search, details, actions, histories, Work Sessions, and
+  Service Desk settings.
+- Required Category activation readiness for new workflows, preserved effective
+  parent availability, and safely rerouted affected approvals when settings
+  changed without breaking valid in-flight workflows.
+- Aligned PORTAL assignment eligibility, Assignment Rule fallback behavior,
+  Category SLA validation, and LOCAL and REMOTE configuration semantics; made
+  remote Category tree saves atomic.
+- Repaired Ticket History persistence and Work Session status handling, moved
+  automatic closure to the Service Desk cron boundary, and refreshed demo dates
+  and authentication fixtures.
+- Improved impersonation selection, responsive ticket navigation, localized UI
+  feedback, tests, scripts, and implementation-aligned documentation.
+
 ### 2026-08-07 — Frontend modernization and clearer client boundaries
 
 refactor(frontend): complete Base UI migration and strengthen frontend boundaries

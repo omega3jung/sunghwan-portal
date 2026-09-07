@@ -2,8 +2,8 @@
 
 ## 목표
 
-Database 전략은 `sunghwan-portal`이 persisted application data를 server code에서
-어떻게 접근하고, UI contract를 어떻게 안정적으로 유지하는지 정의한다.
+Database 전략은 `sunghwan-portal`이 server code에서 persisted application data에
+어떻게 접근하고 UI contract를 어떻게 안정적으로 유지하는지 정의합니다.
 
 현재 Service Desk 구현 방향:
 
@@ -14,8 +14,8 @@ server-only database access
 + service-owned workflow rules
 ```
 
-UI는 table에 직접 접근하지 않는다. Feature client가 application API를 호출하고,
-server service가 row query, mapping, validation, write를 결정한다.
+UI는 table에 직접 접근하지 않습니다. Feature client가 application API를 호출하고,
+server service가 row query, mapping, validation, write를 결정합니다.
 
 ---
 
@@ -31,14 +31,14 @@ UI
 -> PostgreSQL
 ```
 
-Route handler는 HTTP orchestration boundary다. SQL이나 row mapping logic을
-포함하지 않는다.
+Route handler는 HTTP orchestration boundary입니다. SQL이나 row mapping logic을
+포함하지 않습니다.
 
 ---
 
 ## Role Separation
 
-Database access는 책임에 따라 분리한다.
+Database access는 책임에 따라 분리합니다.
 
 ```txt
 auth_api     -> authentication-only database access
@@ -48,7 +48,7 @@ service_role -> normal application flow에서 사용하지 않음
 
 ### `auth_api`
 
-Login/authentication 관련 data access에 사용한다.
+Login/authentication 관련 data access에 사용합니다.
 
 예시:
 
@@ -58,7 +58,7 @@ Login/authentication 관련 data access에 사용한다.
 
 ### `portal_api`
 
-인증 이후 application data access에 사용한다.
+인증 이후 application data access에 사용합니다.
 
 예시:
 
@@ -70,13 +70,13 @@ Login/authentication 관련 data access에 사용한다.
 ### `service_role`
 
 `service_role`은 routine app flow가 아니라 administrative/platform capability로
-취급한다.
+취급합니다.
 
 ---
 
 ## Row / Mapper / DTO Boundary
 
-Database row와 application DTO는 책임이 다르다.
+Database row와 application DTO는 책임이 다릅니다.
 
 ```txt
 Database Row
@@ -92,13 +92,13 @@ Database Row
 | Repository | parameterized SQL과 persistence logic |
 | Service | workflow rule과 use-case coordination |
 
-UI는 `snake_case` row name이나 database-only column에 의존하지 않는다.
+UI는 `snake_case` row name이나 database-only column에 의존하지 않습니다.
 
 ---
 
 ## Service Desk Schema Boundary
 
-Service Desk data는 `src/server/data/serviceDesk` 경계에 있다.
+Service Desk data는 `src/server/data/serviceDesk` 경계에 있습니다.
 
 중요 영역:
 
@@ -109,13 +109,13 @@ Service Desk data는 `src/server/data/serviceDesk` 경계에 있다.
 - ticket history: event-based audit records
 - work session: work evidence records
 
-Application-facing domain type은 `src/domain/serviceDesk`에 둔다.
+Application-facing domain type은 `src/domain/serviceDesk`에 둡니다.
 
 ---
 
 ## Ticket Persistence
 
-Ticket은 current workflow state와 routing facts를 persist한다.
+Ticket은 current workflow state와 routing facts를 persist합니다.
 
 현재 status:
 
@@ -133,29 +133,29 @@ type TicketStatus =
 ```
 
 Mapper는 older row value를 compatibility 목적으로 normalize할 수 있지만 current
-design과 DTO contract는 현재 status union을 사용한다.
+design과 DTO contract는 현재 status union을 사용합니다.
 
 중요 persistence boundary:
 
-- REMOTE draft는 `Draft` status의 ticket row이다.
-- submitted ticket은 `Approval` 또는 `Assigned`로 이동한다.
-- current approval/work routing은 ticket assignment fields를 사용한다.
-- `tk_approval_step_id`는 필요한 경우 current approval step을 나타낸다.
-- `tk_assignee_usernames`는 current responsible usernames를 나타낸다.
-- attachment fields는 raw file이 아니라 prepared metadata를 저장한다.
+- REMOTE draft는 `Draft` status의 ticket row입니다.
+- submitted ticket은 `Approval` 또는 `Assigned`로 이동합니다.
+- current approval/work routing은 ticket assignment fields를 사용합니다.
+- `tk_approval_step_id`는 필요한 경우 current approval step을 나타냅니다.
+- `tk_assignee_usernames`는 current responsible usernames를 나타냅니다.
+- attachment fields는 raw file이 아니라 prepared metadata를 저장합니다.
 
 ---
 
 ## Routing Persistence
 
-Approval/work routing은 phase-aware이다.
+Approval/work routing은 phase-aware입니다.
 
 ```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
-Database row는 최소 current routing facts를 저장하고 mapper/DTO가 readable
-projection을 만든다.
+Database row에는 최소한의 current routing facts를 저장하고, mapper/DTO가 readable
+projection을 만듭니다.
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -164,21 +164,21 @@ projection을 만든다.
 - `assignedWorker`
 
 Approval-step과 assignment-rule settings는 workflow transition 시 ticket state로
-resolve된다. Settings 변경이 기존 ticket routing/history를 silent rewrite하지 않는다.
+resolve됩니다. Settings 변경이 기존 ticket routing/history를 silent rewrite하지 않습니다.
 
 REMOTE routing boundary는 repository가 사용하는 Service Desk database function에
-approval/assignment resolution을 위임한다:
+approval/assignment resolution을 위임합니다:
 `service_desk.get_next_approval_step`,
 `service_desk.get_approval_step_assignee_usernames`,
 `service_desk.get_category_assignment_usernames`. Design contract는 approval step은
 선택된 category의 parent/main category에서 resolve하고, assignment rule은 선택된
-subcategory override와 parent/main fallback을 사용한다는 것이다.
+subcategory override와 parent/main fallback을 사용한다는 것입니다.
 
 ---
 
 ## Draft Persistence
 
-REMOTE draft는 별도 client-only model이 아니라 ticket persistence를 사용한다.
+REMOTE draft는 별도 client-only model이 아니라 ticket persistence를 사용합니다.
 
 규칙:
 
@@ -192,7 +192,7 @@ REMOTE draft는 별도 client-only model이 아니라 ticket persistence를 사�
 
 ## Attachment Persistence
 
-현재 database strategy는 attachment binary를 persist하지 않는다.
+현재 database strategy는 attachment binary를 persist하지 않습니다.
 
 ```txt
 browser File[] / inline data images
@@ -213,13 +213,13 @@ Prepared metadata 예시:
 - `reason`
 
 미래 object storage는 object key나 signed URL을 도입할 수 있지만 현재는 controlled
-demo metadata만 저장한다.
+demo metadata만 저장합니다.
 
 ---
 
 ## History Persistence
 
-Ticket history는 event-based이다.
+Ticket history는 event-based입니다.
 
 현재 모델:
 
@@ -229,10 +229,10 @@ Ticket history는 event-based이다.
 - previous/current values
 - actor/timestamp
 
-`event`가 authoritative classification이다. `tkh_history_action`이나
-`metadata.event`를 primary event model로 설명하지 않는다.
+`event`가 authoritative classification입니다. `tkh_history_action`이나
+`metadata.event`를 primary event model로 설명하지 않습니다.
 
-History row는 successful command/service가 작성한다.
+History row는 successful command/service가 작성합니다.
 
 - ticket submit
 - requester update
@@ -245,7 +245,7 @@ History row는 successful command/service가 작성한다.
 
 ## Settings Persistence
 
-Service Desk Settings도 row/mapper/DTO rule을 따른다.
+Service Desk Settings도 row/mapper/DTO rule을 따릅니다.
 
 현재 settings:
 
@@ -255,14 +255,14 @@ Service Desk Settings도 row/mapper/DTO rule을 따른다.
 - `ApprovalStep`
 - `AssignmentRule`
 
-Tenant는 Service Desk의 조직/workflow boundary이며, 단일 관리 권한을 의미하지 않는다.
+Tenant는 Service Desk의 조직/workflow boundary이며, 단일 관리 권한을 의미하지 않습니다.
 Category, approval step, assignment rule은 tenant scope에서 평가하지만, 실제
 `manage`, `read`, `none` 권한은 Owner Tenant/customer Tenant, category의
 `INTERNAL`/`PORTAL` scope, resource에 따라 application authorization policy가
-결정한다.
+결정합니다.
 
 Approval Step과 Assignment Rule persistence는 별도의 authorization source를
-중복 저장하지 않고 관계를 통해 tenant/company context를 파생한다.
+중복 저장하지 않고 관계를 통해 tenant/company context를 파생합니다.
 
 ```txt
 Approval Step / Assignment Rule
@@ -272,22 +272,22 @@ Approval Step / Assignment Rule
 ```
 
 DTO가 workflow를 위해 파생된 tenant context를 노출할 수는 있지만, client에 보이는
-값이 authoritative해지는 것은 아니다. Repository query와 mutation은 authorization
-전에 저장된 관계를 join하거나 다시 load한다.
+값이 authoritative해지는 것은 아닙니다. Repository query와 mutation은 authorization
+전에 저장된 관계를 join하거나 다시 load합니다.
 
-Category tenant와 main-category scope는 생성 후 변경할 수 없다. Subcategory는
-tenant/scope boundary를 넘도록 parent를 옮길 수 없다. 가능한 경우 service validation과
-함께 repository 및 database constraint도 이 invariant를 강제해야 한다. Category 제거는
-deactivation을 사용하여 기존 ticket과 history reference를 보존한다.
+Category tenant와 main-category scope는 생성 후 변경할 수 없습니다. Subcategory는
+tenant/scope boundary를 넘도록 parent를 옮길 수 없습니다. 가능한 경우 service validation과
+함께 repository 및 database constraint도 이 invariant를 강제해야 합니다. Category 제거는
+deactivation을 사용하여 기존 ticket과 history reference를 보존합니다.
 
-Settings 변경은 future workflow resolution에 영향을 준다. Existing ticket은 explicit
-ticket command가 없으면 stored state/routing/activity/history를 유지한다.
+Settings 변경은 future workflow resolution에 영향을 줍니다. Existing ticket은 explicit
+ticket command가 없으면 stored state/routing/activity/history를 유지합니다.
 
 ---
 
 ## Query Clients and Environment
 
-Database URL과 privileged credential은 server-only이다.
+Database URL과 privileged credential은 server-only입니다.
 
 | Variable | Purpose | Exposure |
 | --- | --- | --- |
@@ -307,13 +307,13 @@ Database URL과 privileged credential은 server-only이다.
 
 ## RLS and Grants
 
-Effective permission은 grants와 row-level security 조합이다.
+Effective permission은 grants와 row-level security 조합입니다.
 
 ```txt
 effective permission = object grants + RLS policies
 ```
 
-App-facing table/view는 다음을 점검해야 한다.
+App-facing table/view는 다음을 점검해야 합니다.
 
 - schema usage grants
 - table/view/function grants
@@ -321,15 +321,15 @@ App-facing table/view는 다음을 점검해야 한다.
 - least-privilege role behavior
 
 Service Desk Settings에서 RLS/grant와 database function은 tenant 관계를 보호하는
-defense in depth이다. 특히 customer `PORTAL`에서는 category, approval, assignment의
+defense in depth입니다. 특히 customer `PORTAL`에서는 category, approval, assignment의
 관리 주체가 서로 다르므로 resource별 Owner Admin/Tenant Admin capability matrix를
-대체해서는 안 된다.
+대체해서는 안 됩니다.
 
 ---
 
 ## Transaction Policy
 
-여러 record를 함께 변경하는 workflow command는 transaction-aware여야 한다.
+여러 record를 함께 변경하는 workflow command는 transaction-aware여야 합니다.
 
 예시:
 
@@ -338,16 +338,16 @@ defense in depth이다. 특히 customer `PORTAL`에서는 category, approval, as
 - execute action and write action/history/status changes
 - close/cancel/reject/merge 시 running work session finish
 
-Service layer가 use-case boundary를 소유하고 repository가 개별 SQL operation을 소유한다.
+Service layer가 use-case boundary를 소유하고 repository가 개별 SQL operation을 소유합니다.
 
 ---
 
 ## LOCAL and REMOTE Relationship
 
-LOCAL runtime은 server-side mutable demo state를 사용할 수 있다. REMOTE runtime은
-database data layer를 사용한다.
+LOCAL runtime은 server-side mutable demo state를 사용할 수 있습니다. REMOTE runtime은
+database data layer를 사용합니다.
 
-둘 모두 compatible application-facing contract를 노출해야 한다.
+둘 모두 compatible application-facing contract를 노출해야 합니다.
 
 ```txt
 LOCAL state shape or REMOTE row shape
@@ -360,7 +360,7 @@ LOCAL state shape or REMOTE row shape
 
 ## Deferred Scope
 
-현재 database strategy는 다음을 완료된 것으로 주장하지 않는다.
+현재 database strategy는 다음을 완료된 것으로 주장하지 않습니다.
 
 - durable binary attachment storage
 - complete per-table RLS policy catalog
@@ -386,6 +386,6 @@ LOCAL state shape or REMOTE row shape
 ## 요약
 
 Database strategy는 persisted data를 server-only, role-separated access와 stable DTO
-contract 뒤에 둔다. Service Desk의 현재 핵심 경계는 ticket persistence, `Draft`
+contract 뒤에 둡니다. Service Desk의 현재 핵심 경계는 ticket persistence, `Draft`
 ticket으로서의 REMOTE draft, prepared attachment metadata, event-based history,
-phase-aware routing fields, tenant-scoped settings, transaction-aware workflow service이다.
+phase-aware routing fields, tenant-scoped settings, transaction-aware workflow service입니다.

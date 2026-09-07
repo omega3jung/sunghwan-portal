@@ -2,9 +2,9 @@
 
 ## 목표
 
-Category는 Service Desk ticket의 주요 behavior configuration이다.
+Category는 Service Desk ticket의 주요 behavior configuration입니다.
 
-Category는 다음에 영향을 준다.
+Category는 다음에 영향을 줍니다.
 
 - request classification
 - default priority
@@ -14,7 +14,7 @@ Category는 다음에 영향을 준다.
 - assignment-rule resolution
 - requester update routing policy
 
-현재 category model은 tenant-scoped이며 Service Desk Settings와 정렬되어 있다.
+현재 category model은 tenant-scoped이며 Service Desk Settings와 정렬되어 있습니다.
 
 ---
 
@@ -24,8 +24,8 @@ Category는 다음에 영향을 준다.
 Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
-`Company`는 organization reference data로 남는다. `Tenant`는 Service Desk
-configuration boundary다. Category는 tenant에 속한다.
+`Company`는 organization reference data로 남습니다. `Tenant`는 Service Desk
+configuration boundary입니다. Category는 tenant에 속합니다.
 
 ---
 
@@ -58,8 +58,8 @@ type SubCategory = CategoryBase & {
 };
 ```
 
-`Client -> Main Category -> Sub Category` 같은 오래된 용어는 현재 model이 아니다.
-현재 boundary는 tenant-scoped다.
+`Client -> Main Category -> Sub Category` 같은 오래된 용어는 현재 model이 아닙니다.
+현재 boundary는 tenant-scoped입니다.
 
 ---
 
@@ -67,13 +67,13 @@ type SubCategory = CategoryBase & {
 
 ### Tenant
 
-Category tree는 tenant의 Service Desk workflow boundary에 속한다. 여기서 "속한다"는
-scoping을 의미하며, 한 actor가 모든 resource를 관리한다는 뜻이 아니다. 실제 read/manage
-권한은 tenant kind, category scope, settings resource, trusted principal로 결정한다.
+Category tree는 tenant의 Service Desk workflow boundary에 속합니다. 여기서 "속한다"는
+scoping을 의미하며, 한 actor가 모든 resource를 관리한다는 뜻이 아닙니다. 실제 read/manage
+권한은 tenant kind, category scope, settings resource, trusted principal로 결정합니다.
 
 ### Main Category
 
-Main category는 필수 default를 제공한다.
+Main category는 필수 default를 제공합니다.
 
 - scope
 - priority
@@ -84,15 +84,15 @@ Main category는 필수 default를 제공한다.
 
 ### Sub Category
 
-Subcategory는 main category를 refine한다. Default priority, risk level, SLA days를
-override할 수 있다. Subcategory가 값을 제공하지 않으면 main category 값이 fallback으로
-남는다.
+Subcategory는 main category를 refine합니다. Default priority, risk level, SLA days를
+override할 수 있습니다. Subcategory가 값을 제공하지 않으면 main category 값이 fallback으로
+남습니다.
 
 ---
 
 ## Scope
 
-Main category는 다음 scope union을 사용한다.
+Main category는 다음 scope union을 사용합니다.
 
 ```ts
 type CategoryScope = "PORTAL" | "INTERNAL";
@@ -103,15 +103,15 @@ type CategoryScope = "PORTAL" | "INTERNAL";
 | `PORTAL` | portal requester workflow에 제공할 수 있는 category |
 | `INTERNAL` | internal Service Desk operation용 category |
 
-Subcategory는 visibility와 routing 목적에서 main category scope를 상속한다.
+Subcategory는 visibility와 routing 목적에서 main category scope를 상속합니다.
 
 ---
 
 ## Category Settings Authorization
 
-Owner Admin은 trusted `permission >= ADMIN`과 `userScope = INTERNAL`로 식별한다.
+Owner Admin은 trusted `permission >= ADMIN`과 `userScope = INTERNAL`로 식별합니다.
 Tenant Admin은 trusted `permission >= ADMIN`과 `userScope = CLIENT`로 식별하며,
-effective user의 `companyId -> Tenant.companyId` 관계로 tenant를 해석한다.
+effective user의 `companyId -> Tenant.companyId` 관계로 tenant를 해석합니다.
 
 | Target | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
 | --- | --- | --- | --- |
@@ -119,46 +119,46 @@ effective user의 `companyId -> Tenant.companyId` 관계로 tenant를 해석한�
 | Customer Tenant, `INTERNAL` | none | manage | none |
 | Customer Tenant, `PORTAL` | manage | read | none |
 
-Customer `INTERNAL` category에는 Owner Admin support/read 예외가 없다. Owner Admin과
+Customer `INTERNAL` category에는 Owner Admin support/read 예외가 없습니다. Owner Admin과
 Tenant Admin은 상하 관계의 role이 아니며 central settings policy가 resource capability를
-결정한다.
+결정합니다.
 
-Main-category 생성도 같은 boundary를 따른다.
+Main-category 생성도 같은 boundary를 따릅니다.
 
-- Owner Admin은 Owner Tenant에서 두 scope를 모두 생성할 수 있다.
-- Owner Admin은 customer Tenant에서 `PORTAL`만 생성할 수 있다.
-- Tenant Admin은 자신의 customer Tenant에서 `INTERNAL`만 생성할 수 있다.
+- Owner Admin은 Owner Tenant에서 두 scope를 모두 생성할 수 있습니다.
+- Owner Admin은 customer Tenant에서 `PORTAL`만 생성할 수 있습니다.
+- Tenant Admin은 자신의 customer Tenant에서 `INTERNAL`만 생성할 수 있습니다.
 
-Read API는 이 policy에 따라 category tree를 filter한다. Client-selected tenant나 scope는
-권한을 부여하지 않는다.
+Read API는 이 policy에 따라 category tree를 filter합니다. Client-selected tenant나 scope는
+권한을 부여하지 않습니다.
 
 ---
 
 ## Immutable Boundary
 
-다음 값은 생성 후 다른 boundary로 이동할 수 없다.
+다음 값은 생성 후 다른 boundary로 이동할 수 없습니다.
 
 - category tenant
 - main-category scope
 - tenant 또는 scope를 넘는 subcategory parent 변경
 
 Subcategory는 parent main category의 tenant와 scope를 모두 상속하며 독립적인 scope
-management capability를 갖지 않는다.
+management capability를 갖지 않습니다.
 
-Update와 deactivation은 authorization 전에 기존 category를 load한다. Creation은 target
-tenant와 requested scope를 server에서 검증한다. Subcategory 생성 또는 update는 저장된
-parent main category를 load하고 그 관계에서 boundary를 파생한다. Payload의 `tenantId`,
-`scope`, `parentId`는 authorization fact가 아니다.
+Update와 deactivation은 authorization 전에 기존 category를 load합니다. Creation은 target
+tenant와 requested scope를 server에서 검증합니다. Subcategory 생성 또는 update는 저장된
+parent main category를 load하고 그 관계에서 boundary를 파생합니다. Payload의 `tenantId`,
+`scope`, `parentId`는 authorization fact가 아닙니다.
 
-다른 scope가 필요하면 기존 category를 deactivate하고 새 category를 생성한다. Category
+다른 scope가 필요하면 기존 category를 deactivate하고 새 category를 생성합니다. Category
 제거는 hard delete가 아니라 `active = false`를 사용하여 ticket과 history reference를
-보존한다.
+보존합니다.
 
 ---
 
 ## Default Resolution
 
-Category default는 선택된 subcategory에서 parent main category로 resolve된다.
+Category default는 선택된 subcategory에서 parent main category로 resolve됩니다.
 
 ```txt
 Sub Category default
@@ -174,13 +174,13 @@ slaDays = sub.defaultSlaDays ?? main.defaultSlaDays;
 ```
 
 Ticket-level value는 form이나 action payload에 있을 수 있지만, server가 최종 workflow
-effect를 validate한다.
+effect를 validate합니다.
 
 ---
 
 ## Active Policy
 
-Category는 historical use에서 파괴적으로 제거하는 대신 deactivate한다.
+Category는 historical use에서 파괴적으로 제거하는 대신 deactivate합니다.
 
 ```txt
 active = false
@@ -188,38 +188,38 @@ active = false
 
 동작:
 
-- 새 main category와 subcategory는 항상 inactive 상태로 저장한다.
+- 새 main category와 subcategory는 항상 inactive 상태로 저장합니다.
 - Activation에는 active Job Field 또는 active Employee reference를 포함한 effective
-  Assignment Rule이 필요하다.
-- inactive category는 새 requester workflow에서 선택할 수 없어야 한다.
-- inactive category를 참조하는 기존 ticket은 계속 읽을 수 있다.
+  Assignment Rule이 필요합니다.
+- inactive category는 새 requester workflow에서 선택할 수 없어야 합니다.
+- inactive category를 참조하는 기존 ticket은 계속 읽을 수 있습니다.
 - 필요한 configuration을 계속 resolve할 수 있으면 기존 `Approval` workflow는 다음
-  approval 또는 work assignment로 진행할 수 있다.
-- category settings가 바뀌어도 history는 다시 쓰지 않는다.
+  approval 또는 work assignment로 진행할 수 있습니다.
+- category settings가 바뀌어도 history는 다시 쓰지 않습니다.
 
-Main category와 subcategory의 active flag는 독립적으로 저장한다. Subcategory는 두
-flag가 모두 active일 때만 effectively active다.
+Main category와 subcategory의 active flag는 독립적으로 저장합니다. Subcategory는 두
+flag가 모두 active일 때만 effectively active입니다.
 
 ```ts
 effectiveActive = mainCategory.active && subCategory.active;
 ```
 
-Main category를 deactivate해도 subcategory의 stored flag를 덮어쓰면 안 된다.
+Main category를 deactivate해도 subcategory의 stored flag를 덮어쓰면 안 됩니다.
 Activation은 readiness gate일 뿐이며, runtime routing은 실제 worker와 모든
-company/tenant eligibility constraint를 계속 다시 검증한다.
+company/tenant eligibility constraint를 계속 다시 검증합니다.
 
 ---
 
 ## Category and Ticket Creation
 
-Ticket creation에서 category selection은 다음에 참여한다.
+Ticket creation에서 category selection은 다음에 참여합니다.
 
 - priority/risk defaulting
 - UI가 적용하는 경우 category SLA days 기반 due date seeding
 - approval-step lookup
 - work assignment lookup
 
-Ticket service는 최종 workflow status의 authority로 남는다.
+Ticket service는 최종 workflow status의 authority로 남습니다.
 
 - approval이 필요하면 `Approval`
 - work assignment가 바로 resolve되면 `Assigned`
@@ -228,9 +228,9 @@ Ticket service는 최종 workflow status의 authority로 남는다.
 
 ## Category and Approval
 
-Approval step은 parent/main category에 설정된다. 선택된 subcategory는 ticket을
+Approval step은 parent/main category에 설정됩니다. 선택된 subcategory는 ticket을
 classify하지만 approval pipeline은 해당 subcategory의 parent/main category에서
-resolve된다.
+resolve됩니다.
 
 ```txt
 Ticket submitted
@@ -241,17 +241,17 @@ Ticket submitted
 -> ticket enters Approval when needed
 ```
 
-Approval configuration은 future resolution에 영향을 준다. 이미 진행 중인 ticket을
-조용히 변경하지 않는다. 단, `Approval` ticket에 영향을 주는 tree 변경은 impact
+Approval configuration은 future resolution에 영향을 줍니다. 이미 진행 중인 ticket을
+조용히 변경하지 않습니다. 단, `Approval` ticket에 영향을 주는 tree 변경은 impact
 확인 후 force apply로 initial routing부터 명시적으로 재시작하고 `ROUTING_RESET`
-History를 하나의 transaction에서 append할 수 있다.
+History를 하나의 transaction에서 append할 수 있습니다.
 
 ---
 
 ## Category and Assignment
 
-Assignment rule은 subcategory override를 허용한다. 선택된 subcategory에 assignment
-rule이 없으면 parent/main category rule로 fallback한다.
+Assignment rule은 subcategory override를 허용합니다. 선택된 subcategory에 assignment
+rule이 없으면 parent/main category rule로 fallback합니다.
 
 ```txt
 Ticket ready for work
@@ -263,26 +263,26 @@ Ticket ready for work
 ```
 
 현재 assignment rule model은 group-based이며 job-field ID와 employee username을
-사용한다. 별도의 `ruleType` field를 사용하지 않는다.
+사용합니다. 별도의 `ruleType` field를 사용하지 않습니다.
 
-Fallback은 rule의 존재 여부를 기준으로 한다. Subcategory own rule의 reference가 이후
+Fallback은 rule의 존재 여부를 기준으로 합니다. Subcategory own rule의 reference가 이후
 inactive가 되면 activation과 routing은 해당 own rule을 기준으로 실패하며, parent
-rule로 조용히 전환하지 않는다.
+rule로 조용히 전환하지 않습니다.
 
 ---
 
 ## Category and Requester Update
 
-Requester update는 active work가 시작되기 전만 허용된다.
+Requester update는 active work가 시작되기 전에만 허용됩니다.
 
 ```txt
 Approval
 Assigned
 ```
 
-Category change는 routing-sensitive다.
+Category change는 routing-sensitive입니다.
 
-Requester가 category를 변경하면 ticket update service는 다음을 수행해야 한다.
+Requester가 category를 변경하면 ticket update service는 다음을 수행해야 합니다.
 
 - category selection 재검증
 - 필요한 경우 priority/risk default 재파생
@@ -291,17 +291,17 @@ Requester가 category를 변경하면 ticket update service는 다음을 수행�
 - `ROUTING_RESET` 기록
 
 다음 due date는 current due date, submitted due date, 새 category minimum due date
-중 가장 늦은 값이어야 한다. Category change는 due date를 더 이른 날짜로 당기면
-안 된다.
+중 가장 늦은 값이어야 합니다. Category change는 due date를 더 이른 날짜로 당기면
+안 됩니다.
 
 Category가 바뀌지 않고 routing-neutral field만 바뀌면 routing은 preserve될 수 있고
-`ROUTING_PRESERVED`가 기록된다.
+`ROUTING_PRESERVED`가 기록됩니다.
 
 ---
 
 ## UI Responsibilities
 
-UI는 다음을 해야 한다.
+UI가 해야 할 일은 다음과 같습니다.
 
 - tenant-scoped category tree 표시
 - settings access가 `none`인 category tree 숨김
@@ -311,7 +311,7 @@ UI는 다음을 해야 한다.
 - priority, risk, due date에 유용한 default 적용
 - requester update가 routing을 reset할 수 있음을 사용자에게 경고
 
-UI는 다음을 하면 안 된다.
+UI는 다음을 하면 안 됩니다.
 
 - final routing output을 만들어내기
 - category change를 ordinary field edit처럼 숨기기
@@ -322,7 +322,7 @@ UI는 다음을 하면 안 된다.
 
 ## Settings Change Policy
 
-Category settings는 future behavior를 정의한다.
+Category settings는 future behavior를 정의합니다.
 
 | Change | Effect |
 | --- | --- |
@@ -332,13 +332,13 @@ Category settings는 future behavior를 정의한다.
 | approval settings changed | future resolution은 updated setting 사용; force apply는 영향받은 `Approval` ticket을 명시적으로 재시작 가능 |
 | assignment settings changed | current worker 보존; future assignment resolution은 updated setting 사용 |
 
-Existing ticket state와 history는 explicit ticket command를 통해서만 변경되어야 한다.
+Existing ticket state와 history는 explicit ticket command를 통해서만 변경되어야 합니다.
 
 ---
 
 ## Deferred Scope
 
-현재 category strategy는 다음을 current behavior로 주장하지 않는다.
+현재 category strategy는 다음을 current behavior로 주장하지 않습니다.
 
 - settings version publishing
 - scheduled category changes
@@ -363,16 +363,16 @@ Existing ticket state와 history는 explicit ticket command를 통해서만 변�
 
 ## 요약
 
-현재 category model은 tenant-scoped다.
+현재 category model은 tenant-scoped입니다.
 
 ```txt
 Tenant -> Main Category -> Sub Category
 ```
 
-Main category는 required default와 `PORTAL`/`INTERNAL` scope를 제공한다.
-Subcategory는 해당 default를 refine하며 parent의 tenant와 scope를 상속한다. Central
-settings policy는 tenant workflow boundary와 실제 management authority를 분리한다.
+Main category는 required default와 `PORTAL`/`INTERNAL` scope를 제공합니다.
+Subcategory는 해당 default를 refine하며 parent의 tenant와 scope를 상속합니다. Central
+settings policy는 tenant workflow boundary와 실제 management authority를 분리합니다.
 Approval은 parent/main category에서 resolve되고, assignment는 subcategory override와
-parent/main fallback을 사용한다. Category change는 routing-sensitive ticket update이며,
+parent/main fallback을 사용합니다. Category change는 routing-sensitive ticket update이며,
 settings change는 existing ticket을 조용히 다시 쓰지 않고 future workflow resolution에
-영향을 준다.
+영향을 줍니다.

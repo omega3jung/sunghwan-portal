@@ -106,5 +106,9 @@
   "decisionBooleanCapabilityApiNaming202608": {
     "title": "2026-08 Nommage des API de capacite booleenne",
     "description": "Entree du journal des decisions sur le nommage des API de capacite booleenne."
+  },
+  "decisionVitestCoverageStrategy202609": {
+    "title": "2026-09 Strategie de couverture Vitest",
+    "description": "Entree du journal des decisions sur la couverture Vitest et les tests bases sur les risques."
   }
 }

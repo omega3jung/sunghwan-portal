@@ -19,6 +19,10 @@
     "title": "React Query Strategy",
     "description": "Data fetching, caching, and client boundary guidance."
   },
+  "testingStrategy": {
+    "title": "Testing Strategy",
+    "description": "Risk-based testing principles and boundaries for Vitest, Storybook, and browser coverage."
+  },
   "releaseOverview": {
     "title": "Production Releases",
     "description": "Changes merged into main and applied to the production branch."

@@ -2,13 +2,13 @@
 
 ## 맥락
 
-Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증가했다.
+Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증가했습니다.
 
 - 여러 interaction pattern(dialog, drawer, full page)
 - 커지는 feature scope(ticket detail, form, comment, history)
 - 일관된 navigation 및 layout structure의 필요
 
-또한 시스템에는 다음이 필요했다.
+또한 시스템에는 다음이 필요했습니다.
 
 - **primary workflow**와 **secondary interaction**의 명확한 분리
 - 모든 feature를 위한 안정적인 **home layout 기반**
@@ -38,7 +38,7 @@ Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증�
 - 일부 view는 오래 유지되고 탐색할 수 있어 page처럼 동작함
 - 하지만 dialog 또는 drawer로 구현됨
 
-그 결과 UX가 일관되지 않았다.
+그 결과 UX가 일관되지 않았습니다.
 
 ---
 
@@ -46,7 +46,7 @@ Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증�
 
 ### 1. System-Level Layout 정의
 
-Application은 다음 **home layout structure**를 채택한다.
+Application은 다음 **home layout structure**를 채택했습니다.
 
 ```txt
 App Layout
@@ -129,7 +129,7 @@ Dialog -> atomic action
 
 #### 결정
 
-Ticket detail은 dialog나 drawer가 아닌 full page로 구현한다.
+Ticket detail은 dialog나 drawer가 아닌 full page로 구현하기로 했습니다.
 
 #### 이유
 
@@ -180,7 +180,7 @@ Ticket List Page
 
 ### 5. Role-Aware Layout 동작
 
-Layout은 user context에 따라 동적으로 바뀐다.
+Layout은 user context에 따라 동적으로 바뀝니다.
 
 #### 예
 
@@ -197,7 +197,7 @@ Layout은 user context에 따라 동적으로 바뀐다.
 
 ### 6. Impersonation 인식
 
-Layout은 impersonation을 지원하도록 설계한다.
+Layout은 impersonation을 지원하도록 설계합니다.
 
 #### 동작
 
@@ -261,13 +261,13 @@ Layout은 impersonation을 지원하도록 설계한다.
 
 ## 영향
 
-이 결정은 다음을 정의한다.
+이 결정은 다음을 정의합니다.
 
 - 향후 UI 구조
 - navigation pattern
 - feature integration approach
 
-다음 영역에 영향을 준다.
+다음 영역에 영향을 줍니다.
 
 - routing strategy
 - component boundary decision
@@ -278,7 +278,7 @@ Layout은 impersonation을 지원하도록 설계한다.
 
 ## 요약
 
-System layout은 다음으로 정의된다.
+System layout은 다음으로 정의됩니다.
 
 - persistent home layout(sidebar + navbar)
 - page-based primary workflow
@@ -286,7 +286,7 @@ System layout은 다음으로 정의된다.
 - dialog-based atomic action model
 
 이를 통해 predictable, scalable, role-aware하며 domain workflow와 정렬된 UI
-architecture를 만든다.
+architecture를 만듭니다.
 
 시스템이 screen 모음이 아니라 일관되고 구조화된 application interface로 동작하게
-한다.
+합니다.

@@ -22,8 +22,8 @@ Service Desk is not a CRUD board.
 It is a workflow-driven operational system.
 ```
 
-동일한 feature contract와 Next.js Route Handler boundary 뒤에서 독립적으로
-실행 가능한 `LOCAL` 포트폴리오 환경과 PostgreSQL 기반 `REMOTE` 서비스를
+동일한 feature contract와 Next.js Route Handler boundary를 통해 독립적으로
+실행할 수 있는 `LOCAL` 포트폴리오 환경과 PostgreSQL 기반 `REMOTE` 서비스를
 지원합니다. 이 프로젝트는 production-aligned 관점으로 설계했지만 의도적으로
 production-complete 범위까지 구현하지는 않았습니다.
 
@@ -77,7 +77,7 @@ production-complete 범위까지 구현하지는 않았습니다.
 
 ## 현재 상태
 
-LOCAL 포트폴리오 환경은 외부 infrastructure 없이 동작하고 검토할 수 있습니다.
+LOCAL 포트폴리오 환경은 외부 infrastructure 없이 실행하고 살펴볼 수 있습니다.
 Ticket workflow, tenant-scoped settings, role-aware command, history와 work
 session을 위한 변경 가능한 demo data를 제공합니다.
 
@@ -109,7 +109,7 @@ Ticket
 └─ Attachment metadata
 ```
 
-Approval step은 선택한 subcategory의 parent/main category에서 결정합니다.
+Approval step은 선택한 subcategory의 parent/main category를 기준으로 결정합니다.
 Assignment rule은 선택한 subcategory를 먼저 확인하고, subcategory rule이
 없을 때 parent/main category로 fallback합니다.
 
@@ -150,8 +150,8 @@ active draft를 유지하며, final submit은 해당 row를 재사용한 뒤 app
 routing을 결정합니다. Operational list에서는 draft를 제외합니다.
 
 LOCAL draft는 현재 demo user를 기준으로 browser `localStorage`를 사용합니다.
-동일한 UX를 제공하지만 REMOTE draft와 persistence equivalence를 주장하지
-않습니다.
+동일한 UX를 제공하지만 REMOTE draft와의 persistence equivalence를
+주장하는 것은 아닙니다.
 
 Attachment input은 metadata를 쓰기 전에 prepare route를 통과합니다.
 
@@ -299,7 +299,7 @@ behavior 유지와 최신 dependency baseline 정렬에 초점을 맞췄습니�
 | Quality tooling       | ESLint 9, Vitest 4 browser mode, Playwright Chromium provider, Testing Library            |
 | Deployment            | Vercel Analytics, Next.js standalone output                                               |
 
-Version은 `package.json`에 설치된 major version을 설명합니다. 현재 application
+Version은 `package.json`에 명시된 major version을 기준으로 합니다. 현재 application
 data path는 `pg`를 사용하며, 설치된 Supabase JavaScript client는 active data
 path에 포함되지 않습니다.
 
@@ -376,7 +376,7 @@ Automated coverage는 앞으로 개선할 영역입니다.
 - Node.js `24.x`
 - npm `11.x`
 
-이 version은 `package.json`의 `engines` field로 제한합니다.
+이 version 범위는 `package.json`의 `engines` field로 제한합니다.
 
 ### LOCAL Demo 실행
 

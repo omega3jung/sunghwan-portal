@@ -2,7 +2,7 @@
 
 ## 목표
 
-이 문서는 `sunghwan-portal`의 현재 Service Desk 구현 방식을 설명한다.
+이 문서는 `sunghwan-portal`의 현재 Service Desk 구현 방식을 설명합니다.
 
 현재 코드에 존재하는 주요 구현 경계:
 
@@ -17,13 +17,13 @@
 - React Query server-state ownership
 
 개념적 진화는 [`service-desk-evolution.md`](../01-overview/service-desk-evolution.md)에서 다루고,
-당시 의사결정 맥락은 `06-decisions`에 보존한다.
+당시 의사결정 맥락은 `06-decisions`에 보존합니다.
 
 ---
 
 ## Runtime Strategy
 
-Service Desk runtime은 깊은 UI component가 아니라 API/server boundary에서 선택한다.
+Service Desk runtime은 깊은 UI component가 아니라 API/server boundary에서 선택합니다.
 
 ```txt
 UI
@@ -32,18 +32,18 @@ UI
 -> LOCAL handler or REMOTE data service
 ```
 
-UI는 LOCAL demo state와 REMOTE persistence 중 어디서 왔는지와 관계없이 같은
-application-facing DTO shape를 소비해야 한다.
+UI는 데이터가 LOCAL demo state에서 왔는지 REMOTE persistence에서 왔는지와 관계없이
+같은 application-facing DTO shape를 소비해야 합니다.
 
 ### LOCAL Runtime
 
-LOCAL runtime은 portfolio/demo workflow를 위한 경로다. Server-side mutable demo
-state와 reset behavior를 사용할 수 있다.
+LOCAL runtime은 portfolio/demo workflow를 위한 경로입니다. Server-side mutable demo
+state와 reset behavior를 사용할 수 있습니다.
 
 ### REMOTE Runtime
 
 REMOTE runtime은 `src/server/data`의 server data service, repository, row mapper,
-DTO를 사용한다.
+DTO를 사용합니다.
 
 현재 REMOTE 구현 범위:
 
@@ -54,14 +54,14 @@ DTO를 사용한다.
 - work-session list/create
 - expired resolved ticket auto close
 
-REMOTE라고 해서 모든 production infrastructure가 완성된 것은 아니다. Attachment
-binary는 여전히 controlled demo asset으로 대체한다.
+REMOTE라고 해서 모든 production infrastructure가 완성된 것은 아닙니다. Attachment
+binary는 여전히 controlled demo asset으로 대체합니다.
 
 ---
 
 ## Route Handler Boundary
 
-Next.js route handler는 HTTP orchestration boundary다.
+Next.js route handler는 HTTP orchestration boundary입니다.
 
 책임:
 
@@ -102,7 +102,7 @@ Next.js route handler는 HTTP orchestration boundary다.
 
 ## Settings 구현
 
-Service Desk Settings는 tenant-scoped behavior configuration이다.
+Service Desk Settings는 tenant-scoped behavior configuration입니다.
 
 ```txt
 Company reference data
@@ -120,14 +120,14 @@ Company reference data
 - job-field IDs와 employee usernames 기반 group assignment rules
 - settings server state는 React Query가 소유
 
-Settings 변경은 미래 workflow resolution에 영향을 준다. 기존 ticket history의 의미를
-조용히 rewrite하지 않는다.
+Settings 변경은 미래 workflow resolution에 영향을 줍니다. 기존 ticket history의 의미를
+조용히 rewrite하지 않습니다.
 
 ---
 
 ## Draft 구현
 
-REMOTE draft는 `Draft` 상태의 ticket row로 구현된다.
+REMOTE draft는 `Draft` 상태의 ticket row로 구현됩니다.
 
 핵심 동작:
 
@@ -137,20 +137,20 @@ REMOTE draft는 `Draft` 상태의 ticket row로 구현된다.
 - final create가 existing draft row를 재사용 가능
 - discard는 active draft workflow를 제거
 
-LOCAL 초안 복구는 다른 영속성 경계를 따른다. 기능 초안 저장소는 현재 데모
+LOCAL 초안 복구는 다른 영속성 경계를 따릅니다. 기능 초안 저장소는 현재 데모
 사용자 범위의 브라우저 `localStorage` 레코드 하나를 저장하고, 소유자가 다르면
-제거한다. Query hook은 해당 저장소에 대한 접근을 조정하지만 React Query 캐시는
-복구 저장소가 아니다. LOCAL 초안 작업은 초안 Route Handler를 호출하거나
-server-side LOCAL mutable state를 사용하지 않는다.
+제거합니다. Query hook은 해당 저장소에 대한 접근을 조정하지만 React Query 캐시는
+복구 저장소가 아닙니다. LOCAL 초안 작업은 초안 Route Handler를 호출하거나
+server-side LOCAL mutable state를 사용하지 않습니다.
 
-Draft는 durable attachment recovery를 제공하지 않는다. Browser `File` 객체는
-transient이며 production object storage는 현재 범위가 아니다.
+Draft는 durable attachment recovery를 제공하지 않습니다. Browser `File` 객체는
+transient이며 production object storage는 현재 범위가 아닙니다.
 
 ---
 
 ## Attachment 구현
 
-Attachment는 prepare boundary를 사용한다.
+Attachment는 prepare boundary를 사용합니다.
 
 ```txt
 browser File[] and rich-text body
@@ -167,7 +167,7 @@ Prepare API 책임:
 - unsupported image source reject
 - normalized metadata 반환
 
-Ticket write command는 raw binary가 아니라 prepared metadata만 persist한다.
+Ticket write command는 raw binary가 아니라 prepared metadata만 persist합니다.
 
 ---
 
@@ -189,7 +189,7 @@ type TicketStatus =
 ```
 
 Legacy row value는 mapper에서 normalize될 수 있지만 current design docs는
-`Open`, `Approved`, `Reopen`을 active status로 설명하지 않는다.
+`Open`, `Approved`, `Reopen`을 active status로 설명하지 않습니다.
 
 Create/submit:
 
@@ -206,20 +206,20 @@ Requester update:
 
 Explicit work start:
 
-- `start-work`는 current work assignee가 `Assigned`를 `Working`으로 전환한다.
-- status change는 history로 기록된다.
+- `start-work`는 current work assignee가 `Assigned`를 `Working`으로 전환합니다.
+- status change는 history로 기록됩니다.
 
 ---
 
 ## Approval and Work Routing
 
-Routing은 phase-aware이다.
+Routing은 phase-aware입니다.
 
 ```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
-Ticket row는 current routing fact를 저장한다.
+Ticket row는 current routing fact를 저장합니다.
 
 - current approval step ID
 - current assignee usernames
@@ -232,20 +232,20 @@ DTO projection:
 - `assignedApprover`
 - `assignedWorker`
 
-Approval step과 assignment rule은 settings이다. Workflow transition이 필요할 때
-ticket state로 resolve된다. 기존 ticket은 나중에 settings가 바뀌었다는 이유만으로
-조용히 변경되지 않는다.
+Approval step과 assignment rule은 settings이며, Workflow transition이 필요할 때
+ticket state로 resolve됩니다. 기존 ticket은 나중에 settings가 바뀌었다는 이유만으로
+조용히 변경되지 않습니다.
 
-Approval과 assignment는 하나의 generic category inheritance rule을 공유하지 않는다.
-Approval resolution은 선택된 category의 parent/main category approval step을 사용한다.
+Approval과 assignment는 하나의 generic category inheritance rule을 공유하지 않습니다.
+Approval resolution은 선택된 category의 parent/main category approval step을 사용합니다.
 Work assignment resolution은 선택된 subcategory rule을 먼저 확인하고, 필요할 때만
-parent/main category rule로 fallback한다.
+parent/main category rule로 fallback합니다.
 
 ---
 
 ## Ticket Action 구현
 
-Ticket action은 command execution path다.
+Ticket action은 command execution path입니다.
 
 현재 action type:
 
@@ -283,18 +283,18 @@ cancel
 ```
 
 Action rule은 누가 실행할 수 있는지, 어떤 status에서 가능한지, content/reason/
-attachment를 받는지, 어떤 status/routing/history effect가 발생하는지를 소유한다.
+attachment를 받는지, 어떤 status/routing/history effect가 발생하는지를 소유합니다.
 
-Operational action은 실행 후 immutable이다. Comment/note entry는 현재 action detail
-route를 통해 soft delete될 수 있다.
+Operational action은 실행 후 immutable입니다. Comment/note entry는 현재 action detail
+route를 통해 soft delete될 수 있습니다.
 
 ---
 
 ## Event-Based History 구현
 
-History는 event-based이다.
+History는 event-based입니다.
 
-현재 모델은 다음을 분리한다.
+현재 모델은 다음을 분리합니다.
 
 - `type`
 - `source`
@@ -302,10 +302,10 @@ History는 event-based이다.
 - previous/current values
 - actor/timestamp
 
-`event` enum이 authoritative classification이다. `metadata.event`나 legacy action
-name에 의존하는 설명은 현재 모델이 아니다.
+`event` enum이 authoritative classification입니다. `metadata.event`나 legacy action
+name에 의존하는 설명은 현재 모델이 아닙니다.
 
-성공한 command만 history를 만든다.
+성공한 command만 history를 만듭니다.
 
 예시:
 
@@ -323,7 +323,7 @@ name에 의존하는 설명은 현재 모델이 아니다.
 
 ## Work Session 구현
 
-Work session은 operational work evidence이다.
+Work session은 operational work evidence입니다.
 
 현재 route surface:
 
@@ -342,13 +342,13 @@ POST /api/service-desk/tickets/[ticketId]/work-session
 - work-session history event 기록
 
 Feature client에는 detail/update/delete/timer-style helper가 있지만 matching route
-handler가 없으므로 API surface가 구현되기 전까지 extension point로 취급한다.
+handler가 없으므로 API surface가 구현되기 전까지 extension point로 취급합니다.
 
 ---
 
 ## React Query 구현
 
-React Query는 server state를 소유한다.
+React Query는 server state를 소유합니다.
 
 현재 Service Desk query family:
 
@@ -360,7 +360,7 @@ React Query는 server state를 소유한다.
 - settings tenants/categories/approval steps/assignment rules
 
 Mutation은 target query family를 invalidate해야 하며 server state를 Zustand에
-중복 저장하지 않는다.
+중복 저장하지 않습니다.
 
 ---
 
@@ -377,7 +377,7 @@ Mutation은 target query family를 invalidate해야 하며 server state를 Zusta
 - WebSocket/subscription real-time updates
 - enterprise assignment load balancing
 
-Current design docs는 이 항목을 완료된 동작으로 설명하지 않는다.
+Current design docs는 이 항목을 완료된 동작으로 설명하지 않습니다.
 
 ---
 
@@ -397,10 +397,10 @@ Current design docs는 이 항목을 완료된 동작으로 설명하지 않는�
 
 ## 요약
 
-현재 Service Desk 구현은 LOCAL mock 설계에 머무르지 않는다. REMOTE draft,
+현재 Service Desk 구현은 LOCAL mock 설계에 머무르지 않습니다. REMOTE draft,
 attachment preparation, tenant-scoped settings, approval/work routing,
-command-based ticket action, event-based history, work-session recording을 포함한다.
+command-based ticket action, event-based history, work-session recording을 포함합니다.
 
 구현 전략은 UI contract를 안정적으로 유지하고, route handler는 얇게 두며, server
 service를 workflow 권위자로 삼고, production infrastructure의 deferred scope를
-완료된 동작과 분리하는 것이다.
+완료된 동작과 분리하는 것입니다.

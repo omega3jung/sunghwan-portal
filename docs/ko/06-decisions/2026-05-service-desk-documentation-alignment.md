@@ -2,10 +2,10 @@
 
 ## 배경
 
-Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시작되었다.
-구현이 성숙해지면서 프로젝트는 더 구체적이고, 프로덕션 정렬된 포트폴리오 데모가 되었다.
+Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시작되었습니다.
+구현이 구체화되면서 프로젝트는 프로덕션 설계에 더 가까운 포트폴리오 데모로 발전했습니다.
 
-이 시점에서 다음과 같은 영역의 구현 방향이 더 명확해졌다.
+이 시점에서 다음과 같은 영역의 구현 방향이 더 명확해졌습니다.
 
 - LOCAL / REMOTE runtime 분리
 - server-side local demo mutable state
@@ -16,7 +16,7 @@ Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시�
 - action-oriented workflow rules
 - production-grade 인프라에 대한 명시적 deferred scope
 
-일반 문서와 구현 방향 사이에 점차 불일치가 생기기 시작했다.
+일반 문서와 구현 방향 사이에 점차 불일치가 생기기 시작했습니다.
 
 ---
 
@@ -24,14 +24,14 @@ Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시�
 
 ### 1. 일반 문서가 현재 구현을 따라오지 못함
 
-일부 문서는 여전히 오래된 표현 또는 순수 개념 중심 표현을 사용하고 있었다.
-이로 인해 runtime, auth/session 경계, ownership, ticket operation 동작에 대한 오해가 발생할 수 있었다.
+일부 문서는 여전히 오래된 표현 또는 순수 개념 중심 표현을 사용하고 있었습니다.
+이로 인해 runtime, auth/session 경계, ownership, ticket operation 동작에 대한 오해가 발생할 수 있었습니다.
 
 ---
 
 ### 2. 히스토리 로그와 현재 문서는 책임이 다름
 
-문서 집합에는 서로 다른 두 가지 산출물이 존재한다.
+문서 집합에는 서로 다른 두 가지 산출물이 존재합니다.
 
 ```txt
 Current docs  -> 현재 시스템을 설명
@@ -39,21 +39,21 @@ Decision logs -> 당시의 판단 근거를 보존
 ```
 
 히스토리 decision log를 최신 설계에 맞춰 다시 작성하면,
-역사적 맥락이 손실된다.
+역사적 맥락이 손실됩니다.
 
 ---
 
 ### 3. 포트폴리오 신뢰성을 위해 명시적 scope 경계가 필요함
 
-이 프로젝트는 production-aligned이지 production-complete가 아니다.
-문서는 의도적으로 단순화되었거나 deferred된 영역을 과장하지 않아야 했다
+이 프로젝트는 production-aligned이지 production-complete가 아닙니다.
+문서는 의도적으로 단순화되었거나 deferred된 영역을 과장하지 않아야 했습니다
 (예: full enterprise rule engine, full remote persistence, real-time 인프라, full compliance stack).
 
 ---
 
 ### 4. 도메인 문서의 내부 정합성을 강화할 필요가 있었음
 
-Service Desk 동작은 workflow-oriented 모델로 일관되게 설명되어야 했다.
+Service Desk 동작은 workflow-oriented 모델로 일관되게 설명되어야 했습니다.
 
 - `Ticket`: workflow entity 및 현재 상태
 - `Activity`: 의미 있는 사용자/운영 상호작용
@@ -65,18 +65,18 @@ Service Desk 동작은 workflow-oriented 모델로 일관되게 설명되어야 
 
 ## 결정
 
-decision log를 제외한 markdown 문서를 현재 Service Desk 설계/구현 방향에 맞게 정렬한다.
+decision log를 제외한 markdown 문서를 현재 Service Desk 설계/구현 방향에 맞게 정렬하기로 했습니다.
 
-이를 통해 검토자에게 현재 문서의 유용성을 유지하면서, decision log는 히스토리 기록으로 보존한다.
+이를 통해 검토자에게 현재 문서의 유용성을 유지하면서, decision log는 히스토리 기록으로 보존합니다.
 
 ### Scope Rules
 
-- 기존 historical decision log는 수정하지 않는다.
-- 현재 설계를 반영하도록 일반 설계/아키텍처/전략/README 문서를 업데이트한다.
-- 문서 변경은 최소 범위로 집중한다.
-- 정합성 확보에 필요한 경우를 제외하고 전면 재작성은 피한다.
-- 구현된 동작, 단순화된 데모 동작, deferred된 프로덕션 범위를 명확히 구분한다.
-- 현재 전략 문서와 operation rules 문서 간 정합성을 유지한다.
+- 기존 historical decision log는 수정하지 않습니다.
+- 현재 설계를 반영하도록 일반 설계/아키텍처/전략/README 문서를 업데이트합니다.
+- 문서 변경은 최소 범위로 집중합니다.
+- 정합성 확보에 필요한 경우를 제외하고 전면 재작성은 피합니다.
+- 구현된 동작, 단순화된 데모 동작, deferred된 프로덕션 범위를 명확히 구분합니다.
+- 현재 전략 문서와 operation rules 문서 간 정합성을 유지합니다.
 
 ---
 
@@ -251,17 +251,17 @@ Dialog -> atomic action
 
 ## 후속 운영 정책
 
-- 일반 문서는 현재 시스템을 설명해야 한다.
-- decision log는 주요 변경의 맥락과 근거를 보존해야 한다.
-- 문서 정렬 작업이 새로운 아키텍처 의미를 만들었다면 decision log로 기록해야 한다.
-- deferred된 프로덕션 이슈는 future scope로 명시적으로 유지해야 한다.
-- Service Desk 문서는 domain model, implementation strategy, executable rules를 계속 구분해야 한다.
+- 일반 문서는 현재 시스템을 설명해야 합니다.
+- decision log는 주요 변경의 맥락과 근거를 보존해야 합니다.
+- 문서 정렬 작업이 새로운 아키텍처 의미를 만들었다면 decision log로 기록해야 합니다.
+- deferred된 프로덕션 이슈는 future scope로 명시적으로 유지해야 합니다.
+- Service Desk 문서는 domain model, implementation strategy, executable rules를 계속 구분해야 합니다.
 
 ---
 
 ## 요약
 
 decision log를 제외한 Service Desk 문서를 현재 아키텍처/구현 전략에 맞게 정렬했고,
-historical decision log는 원본 그대로 보존했다.
+historical decision log는 원본 그대로 보존했습니다.
 
-이를 통해 히스토리 기록을 훼손하지 않으면서 포트폴리오 문서의 명확성, 정합성, 신뢰성을 개선했다.
+이를 통해 히스토리 기록을 훼손하지 않으면서 포트폴리오 문서의 명확성, 정합성, 신뢰성을 개선했습니다.

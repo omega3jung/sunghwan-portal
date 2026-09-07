@@ -2,15 +2,15 @@
 
 ## 목표
 
-Form은 Service Desk workflow에서 type-safe하고 독립적인 입력 처리를 제공한다.
+Form은 Service Desk workflow에서 type-safe하고 독립적인 입력 처리를 제공합니다.
 
 현재 패턴:
 
-- React Hook Form이 미저장 입력을 소유한다.
-- Zod가 schema validation을 담당한다.
-- React Query가 server state를 소유한다.
-- feature mutation이 제출을 담당한다.
-- server service가 workflow effect를 결정한다.
+- React Hook Form이 미저장 입력을 소유합니다.
+- Zod가 schema validation을 담당합니다.
+- React Query가 server state를 소유합니다.
+- feature mutation이 제출을 담당합니다.
+- server service가 workflow effect를 결정합니다.
 
 ---
 
@@ -21,13 +21,13 @@ Form state는 local input state이다.
 Workflow state는 server state이다.
 ```
 
-Form은 workflow engine이 아니다.
+Form은 workflow engine이 아닙니다.
 
 ---
 
 ## Form Library
 
-Form은 `react-hook-form`을 사용한다.
+Form은 `react-hook-form`을 사용합니다.
 
 장점:
 
@@ -41,7 +41,7 @@ Form은 `react-hook-form`을 사용한다.
 
 ## Validation
 
-Validation은 Zod 같은 schema 기반 규칙을 사용한다.
+Validation은 Zod 같은 schema 기반 규칙을 사용합니다.
 
 Ticket form 예시:
 
@@ -51,13 +51,13 @@ Ticket form 예시:
 - 오늘 이후 due date
 - prepare 전 attachment field는 browser `File[]`
 
-Client validation은 feedback을 개선한다. Server validation은 최종 권위자다.
+Client validation은 feedback을 개선합니다. Server validation은 최종 권위자입니다.
 
 ---
 
 ## Multi-Step Form
 
-복잡한 workflow에서 단계적 노출이 유리하면 multi-step form을 사용한다.
+복잡한 workflow에서 단계적 노출이 유리하면 multi-step form을 사용합니다.
 
 현재 ticket form steps:
 
@@ -69,16 +69,16 @@ review
 
 구현 정책:
 
-- 하나의 React Hook Form instance가 모든 step을 공유한다.
-- step state는 local component/hook state로 관리한다.
-- step 이동은 현재 step을 검증한다.
-- 최종 submit은 전체 payload를 검증한다.
+- 모든 step이 하나의 React Hook Form instance를 공유합니다.
+- step state는 local component/hook state로 관리합니다.
+- step을 이동하기 전에 현재 step을 검증합니다.
+- 최종 submit은 전체 payload를 검증합니다.
 
 ---
 
 ## Create vs Update
 
-Create와 update는 field component를 공유할 수 있지만 workflow 차이를 숨기면 안 된다.
+Create와 update는 field component를 공유할 수 있지만 workflow 차이를 숨기면 안 됩니다.
 
 ### Create
 
@@ -105,7 +105,7 @@ Requester update flow:
 
 ## Attachment Fields
 
-Raw browser `File`은 열린 form 내부에만 존재한다.
+Raw browser `File`은 열린 form 내부에만 존재합니다.
 
 ```txt
 React Hook Form File[]
@@ -114,7 +114,7 @@ React Hook Form File[]
 -> ticket command payload
 ```
 
-Raw file을 다음에 저장하지 않는다.
+Raw file을 다음에 저장하지 않습니다.
 
 - React Query
 - Zustand
@@ -126,23 +126,23 @@ Raw file을 다음에 저장하지 않는다.
 
 ## Draft Forms
 
-Draft는 단순 미저장 component state와 다르다.
+Draft는 단순 미저장 component state와 다릅니다.
 
 REMOTE mode에서 create-ticket draft는 draft API와 React Query를 통해 로드되는
-server state이다. Form은 active draft에서 hydrate하고, form values를 draft
-workflow로 저장할 수 있다.
+server state입니다. Form은 active draft에서 hydrate하고, form values를 draft
+workflow로 저장할 수 있습니다.
 
 LOCAL mode에서는 동일한 기능 수준 초안 hook이 기능 초안 저장소를 통해 브라우저
-`localStorage` 레코드를 읽고 쓴다. React Query가 저장소 결과를 캐시할 수 있지만
-그 캐시는 복구 저장소가 아니며, 초안 Route Handler도 호출하지 않는다.
+`localStorage` 레코드를 읽고 씁니다. React Query가 저장소 결과를 캐시할 수 있지만
+그 캐시는 복구 저장소가 아니며, 초안 Route Handler도 호출하지 않습니다.
 
-Draft는 attachment recovery를 보장하지 않는다.
+Draft는 attachment recovery를 보장하지 않습니다.
 
 ---
 
 ## Field Component Policy
 
-Reusable field component는 UI 일관성을 담당하고 business workflow를 담당하지 않는다.
+Reusable field component는 UI 일관성을 담당하고 business workflow를 담당하지 않습니다.
 
 좋은 field 책임:
 
@@ -152,13 +152,13 @@ Reusable field component는 UI 일관성을 담당하고 business workflow를 �
 - disabled/loading state
 - localized display
 
-Approval routing, assignment rule, history construction을 field component에 넣지 않는다.
+Approval routing, assignment rule, history construction을 field component에 넣지 않습니다.
 
 ---
 
 ## Submission Policy
 
-Form은 feature mutation을 통해 제출한다.
+Form은 feature mutation을 통해 제출합니다.
 
 ```txt
 form validation
@@ -169,34 +169,34 @@ form validation
 ```
 
 Ticket create/update에서는 attachment preparation이 ticket mutation 전 제출
-pipeline에 포함된다.
+pipeline에 포함됩니다.
 
 ---
 
 ## Reset Policy
 
-다음 경우 form state를 reset한다.
+다음 경우 form state를 reset합니다.
 
 - submit 성공 후
 - draft behavior로 input을 보존할 필요 없이 dialog가 닫힐 때
 - update dialog에 최신 ticket detail을 로드할 때
 
 Mutation contract가 optimistic update를 명시적으로 지원하지 않는다면 React Query
-data를 직접 편집해 server state를 reset하지 않는다.
+data를 직접 편집해 server state를 reset하지 않습니다.
 
 ---
 
 ## Error Handling
 
-다음을 사용한다.
+다음을 사용합니다.
 
 - validation에는 inline field message
 - API error에는 form-level message 또는 toast
 - mutation pending 중에는 disabled control
 - 가능한 경우 server error message
 
-Routing reset, attachment rejection 및 permission failure는 generic validation에
-삼키지 말고 workflow feedback으로 표시해야 한다.
+Routing reset, attachment rejection 및 permission failure는 generic validation으로
+뭉뚱그리지 말고 workflow feedback으로 표시해야 합니다.
 
 ---
 
@@ -220,19 +220,19 @@ Routing reset, attachment rejection 및 permission failure는 generic validation
 
 ### Server Data를 Form State에 계속 보관
 
-Form은 server data에서 hydrate할 수 있지만 server state는 React Query가 소유한다.
+Form은 server data에서 hydrate할 수 있지만 server state는 React Query가 소유합니다.
 
 ### Workflow Rules in Field Components
 
-Field가 approval, assignment, status, history를 결정하지 않는다.
+Field가 approval, assignment, status, history를 결정하지 않습니다.
 
 ### 너무 이른 Generic Stepper
 
-여러 workflow가 실제로 같은 구조를 공유하기 전까지 step logic은 workflow 가까이에 둔다.
+여러 workflow가 실제로 같은 구조를 공유하기 전까지 step logic은 workflow 가까이에 둡니다.
 
 ### Silent Routing Changes
 
-Requester update가 routing을 reset한다면 server workflow로 실행되고 history에 기록되어야 한다.
+Requester update가 routing을 reset한다면 server workflow로 실행되고 history에 기록되어야 합니다.
 
 ---
 
@@ -248,5 +248,5 @@ Requester update가 routing을 reset한다면 server workflow로 실행되고 hi
 ## 요약
 
 현재 form pattern은 사용자 입력은 local에, server data는 React Query에,
-workflow effect는 server command에 둔다. 이 구조는 ticket create, requester update,
-draft, attachment preparation을 하나의 과도한 abstraction 없이 일관되게 처리한다.
+workflow effect는 server command에 둡니다. 이 구조는 ticket create, requester update,
+draft, attachment preparation을 하나의 과도한 abstraction 없이 일관되게 처리합니다.

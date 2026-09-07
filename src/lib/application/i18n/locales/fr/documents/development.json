@@ -19,6 +19,10 @@
     "title": "Strategie React Query",
     "description": "Guide de recuperation des donnees, de cache et de limites client."
   },
+  "testingStrategy": {
+    "title": "Strategie de test",
+    "description": "Principes et limites de test bases sur les risques pour Vitest, Storybook et la couverture navigateur."
+  },
   "releaseOverview": {
     "title": "Versions de production",
     "description": "Changements fusionnes dans main et appliques a la branche de production."

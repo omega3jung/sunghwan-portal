@@ -2,8 +2,8 @@
 
 ## Context
 
-Service Desk 모듈 리팩터링 과정에서 `index.ts`를 만능 barrel export처럼 사용했다.
-초기 의도는 import 경로를 짧게 만들고 feature 내부 접근을 편하게 만드는 것이었다.
+Service Desk 모듈 리팩터링 과정에서 `index.ts`를 만능 barrel export처럼 사용했습니다.
+초기 의도는 import 경로를 짧게 만들고 feature 내부 접근을 편하게 만드는 것이었습니다.
 
 예시:
 
@@ -20,9 +20,9 @@ export * from "./utils";
 export * from "./write";
 ```
 
-하지만 Next.js App Router 환경에서는 server/client 경계가 중요하다.
+하지만 Next.js App Router 환경에서는 server/client 경계가 중요합니다.
 API Route, server utility, local demo handler가 feature root barrel을 import하면
-의도하지 않게 client-only module이 서버 번들로 유입될 수 있다.
+의도하지 않게 client-only module이 서버 번들로 유입될 수 있습니다.
 
 실제 빌드 오류:
 
@@ -32,7 +32,7 @@ API Route, server utility, local demo handler가 feature root barrel을 import�
   - `Failed to collect page data for /api/service-desk/tickets/[ticketId]`
 
 원인은 route가 feature root barrel을 통해 `context`, `components`, `hooks`,
-React Query hooks, browser-only wrapper를 간접 import한 것이었다.
+React Query hooks, browser-only wrapper를 간접 import한 것이었습니다.
 
 ---
 
@@ -61,11 +61,11 @@ React Query hooks, browser-only wrapper를 간접 import한 것이었다.
 
 ## Decision
 
-`index.ts`를 만능 export 파일로 사용하지 않는다.
+`index.ts`를 만능 export 파일로 사용하지 않기로 했습니다.
 
-- `index.ts`는 의도된 public API만 제한적으로 export한다
-- feature root `index.ts`는 `server-safe` / `pure` 모듈만 export한다
-- client-only 모듈은 root `index.ts`에서 export하지 않는다
+- `index.ts`는 의도된 public API만 제한적으로 export합니다
+- feature root `index.ts`는 `server-safe` / `pure` 모듈만 export합니다
+- client-only 모듈은 root `index.ts`에서 export하지 않습니다
 
 ---
 
@@ -83,7 +83,7 @@ export * from "./types";
 export * from "./write";
 ```
 
-단, `write.ts`는 React hook, browser API, client-only dependency를 사용하지 않는 pure mapper여야 한다.
+단, `write.ts`는 React hook, browser API, client-only dependency를 사용하지 않는 pure mapper여야 합니다.
 
 ---
 
@@ -153,8 +153,8 @@ export * from "./mutations";
 export * from "./repo";
 ```
 
-주의: `api.ts`가 `@/lib/api` 같은 프론트엔드 HTTP wrapper를 쓰면 server-safe가 아니다.
-이 경우 `api/client.ts`에서 export한다.
+주의: `api.ts`가 `@/lib/api` 같은 프론트엔드 HTTP wrapper를 쓰면 server-safe가 아닙니다.
+이 경우 `api/client.ts`에서 export합니다.
 
 Forms 폴더:
 
@@ -179,15 +179,15 @@ export * from "./useTicketForm";
 
 ### 5. Hooks / Context Barrel Export 최소화
 
-hooks는 대부분 client-only 모듈이다.
-따라서 hooks `index.ts`에서 무분별한 export를 피하고 직접 import를 권장한다.
+hooks는 대부분 client-only 모듈입니다.
+따라서 hooks `index.ts`에서 무분별하게 export하지 말고 직접 import하는 방식을 권장합니다.
 
 ```ts
 import { useTicketDraft } from "@/feature/serviceDesk/ticket/hooks/useTicketDraft";
 ```
 
-context도 `createContext`, `useContext`를 사용하므로 client-only로 본다.
-context는 root `index.ts`에서 export하지 않는다.
+context도 `createContext`, `useContext`를 사용하므로 client-only로 봅니다.
+context는 root `index.ts`에서 export하지 않습니다.
 
 ---
 
@@ -261,7 +261,7 @@ import { useEffect, useMemo, useState } from "react";
 - localDemo handler
 - pure utils
 
-Browser API를 사용하는 유틸은 `"use client"`보다 browser-only 주석으로 의도를 명시한다.
+Browser API를 사용하는 유틸은 `"use client"`보다 browser-only 주석으로 의도를 명시합니다.
 
 ```ts
 /**
@@ -310,28 +310,28 @@ src/feature/serviceDesk/ticket
 
 ### Positive
 
-- API Route에 client-only module이 섞이는 문제를 방지할 수 있다
-- Next.js App Router의 server/client boundary가 명확해진다
-- `createContext is not a function` 류의 서버 번들 오류를 줄일 수 있다
-- import 경로가 다소 길어져도 import 의도가 더 명확해진다
-- Vercel build/production build 안정성이 높아진다
+- API Route에 client-only module이 섞이는 문제를 방지할 수 있습니다
+- Next.js App Router의 server/client boundary가 명확해집니다
+- `createContext is not a function` 류의 서버 번들 오류를 줄일 수 있습니다
+- import 경로가 다소 길어져도 import 의도가 더 명확해집니다
+- Vercel build/production build 안정성이 높아집니다
 
 ---
 
 ### Negative
 
-- feature root import 편의성이 줄어든다
-- 일부 import 경로가 한 단계 길어진다
-- 기존 방식보다 팀 규칙 관리가 더 필요하다
+- feature root import 편의성이 줄어듭니다
+- 일부 import 경로가 한 단계 길어집니다
+- 기존 방식보다 팀 규칙 관리가 더 필요합니다
 
 ---
 
 ## Decision Summary
 
 `index.ts`는 많이 export하기 위한 파일이 아니라,
-의도된 public API를 제한적으로 공개하는 경계 파일이다.
+의도된 public API를 제한적으로 공개하는 경계 파일입니다.
 
-- feature root `index.ts`는 pure/server-safe 모듈만 export한다
-- client-only 모듈은 `client.ts` 또는 직접 import로 접근한다
+- feature root `index.ts`는 pure/server-safe 모듈만 export합니다
+- client-only 모듈은 `client.ts` 또는 직접 import로 접근합니다
 
-이 정책을 통해 Next.js App Router 환경의 server/client boundary를 명확하게 유지한다.
+이 정책을 통해 Next.js App Router 환경의 server/client boundary를 명확하게 유지합니다.

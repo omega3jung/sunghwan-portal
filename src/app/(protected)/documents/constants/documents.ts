@@ -297,6 +297,12 @@ export const documentGroups: DocumentGroup[] = [
         relativePath: "05-development/react-query-strategy.md",
       },
       {
+        id: "testing-strategy",
+        titleKey: "item.testingStrategy.title",
+        descriptionKey: "item.testingStrategy.description",
+        relativePath: "05-development/testing-strategy.md",
+      },
+      {
         id: "release-overview",
         titleKey: "item.releaseOverview.title",
         descriptionKey: "item.releaseOverview.description",
@@ -581,6 +587,21 @@ export const documentGroups: DocumentGroup[] = [
               "item.decisionSettingsChangeAndInFlightTicketPolicy202608.description",
             relativePath:
               "06-decisions/2026-08-settings-change-and-in-flight-ticket-policy.md",
+          },
+        ],
+      },
+      {
+        id: "2026-09",
+        titleKey: "section.decisions.2026-09.title",
+        items: [
+          {
+            id: "decision-vitest-coverage-strategy-2026-09",
+            titleKey:
+              "item.decisionVitestCoverageStrategy202609.title",
+            descriptionKey:
+              "item.decisionVitestCoverageStrategy202609.description",
+            relativePath:
+              "06-decisions/2026-09-vitest-coverage-strategy.md",
           },
         ],
       },
