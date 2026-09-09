@@ -303,6 +303,7 @@ const architectureRules = {
                     "lib_application",
                     "lib_client",
                     "lib_config",
+                    "mocks",
                     "shared",
                     "shared_client",
                     "stories",
