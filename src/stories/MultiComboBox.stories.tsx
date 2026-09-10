@@ -1,9 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
 import { MultiComboBox } from "@/components/custom/MultiComboBox";
-import { multiComboBoxMocks } from "@/mocks/ui/demo";
+import { NS } from "@/lib/application/i18n";
+
+import { multiComboBoxOptions } from "./fixtures/multiComboBox";
 
 const badgeVariants = [
   "default",
@@ -24,9 +28,8 @@ const meta = {
     className: "w-96",
     onRemove: fn(),
     onSelect: fn(),
-    options: multiComboBoxMocks,
+    options: multiComboBoxOptions,
     paletteStart: 1,
-    placeholder: "Select months",
     value: ["January", "March", "September"],
   },
   argTypes: {
@@ -53,10 +56,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "multiComboBox" });
+    const localizedOptions = useMemo(
+      () =>
+        (args.options ?? multiComboBoxOptions).map((option) => ({
+          ...option,
+          label: t(`months.${option.value}`, { defaultValue: option.label }),
+        })),
+      [args.options, t],
+    );
 
     return (
       <MultiComboBox
         {...args}
+        options={localizedOptions}
+        placeholder={args.placeholder ?? t("multiTitle")}
         onRemove={(removed) => {
           updateArgs({ value: args.value.filter((item) => item !== removed) });
           args.onRemove?.(removed);

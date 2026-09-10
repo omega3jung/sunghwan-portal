@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
@@ -9,24 +10,29 @@ import {
   type TreeNodes,
 } from "@/components/custom/SortableTree";
 import { Button } from "@/components/ui/button";
+import { NS } from "@/lib/application/i18n";
 
-type TreeData = { label: string };
+type TreeData = { labelKey: string };
 
 const initialItems: TreeNodes<TreeData> = [
   {
-    id: "support",
-    data: { label: "Support" },
+    id: "workspace",
+    data: { labelKey: "workspace" },
     children: [
-      { id: "triage", data: { label: "Triage" }, children: [] },
-      { id: "resolution", data: { label: "Resolution" }, children: [] },
+      {
+        id: "service-desk",
+        data: { labelKey: "serviceDesk" },
+        children: [
+          { id: "tickets", data: { labelKey: "tickets" }, children: [] },
+          { id: "insights", data: { labelKey: "insights" }, children: [] },
+        ],
+      },
     ],
   },
   {
-    id: "operations",
-    data: { label: "Operations" },
-    children: [
-      { id: "facilities", data: { label: "Facilities" }, children: [] },
-    ],
+    id: "documents",
+    data: { labelKey: "documents" },
+    children: [],
   },
 ];
 
@@ -66,6 +72,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "sortableTree" });
 
     return (
       <div className="grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -76,27 +83,40 @@ export const Default: Story = {
               updateArgs({ items });
               args.onChange(items);
             }}
-            renderItem={(item, params) => (
-              <div className="flex min-h-10 items-center gap-2 rounded-md border bg-background px-3 shadow-sm">
-                <SortableTreeDragHandle
-                  aria-label={`Move ${item.data.label}`}
-                  {...params.dragHandleProps}
-                />
-                {item.children.length > 0 && params.onCollapse ? (
-                  <Button
-                    aria-label={`${item.collapsed ? "Expand" : "Collapse"} ${item.data.label}`}
-                    onClick={() => params.onCollapse?.(item.id)}
-                    size="icon-sm"
-                    variant="ghost"
+            renderItem={(item, params) => {
+              const label = t(`items.${item.data.labelKey}`);
+
+              return (
+                <div className="flex min-h-10 items-center gap-2 rounded-md border bg-background px-3 shadow-sm">
+                  <SortableTreeDragHandle
+                    aria-label={t("dragItem", { label })}
+                    {...params.dragHandleProps}
+                  />
+                  {item.children.length > 0 && params.onCollapse ? (
+                    <Button
+                      aria-label={t(
+                        item.collapsed ? "expandItem" : "collapseItem",
+                        { label },
+                      )}
+                      data-testid={`tree-toggle-${item.id}`}
+                      onClick={() => params.onCollapse?.(item.id)}
+                      size="icon-sm"
+                      variant="ghost"
+                    >
+                      {item.collapsed ? <ChevronRight /> : <ChevronDown />}
+                    </Button>
+                  ) : (
+                    <span className="size-8" />
+                  )}
+                  <span
+                    className="text-sm font-medium"
+                    data-testid={`tree-label-${item.id}`}
                   >
-                    {item.collapsed ? <ChevronRight /> : <ChevronDown />}
-                  </Button>
-                ) : (
-                  <span className="size-8" />
-                )}
-                <span className="text-sm font-medium">{item.data.label}</span>
-              </div>
-            )}
+                    {label}
+                  </span>
+                </div>
+              );
+            }}
           />
         </div>
         <output className="max-h-[32rem] overflow-auto whitespace-pre-wrap rounded-lg border bg-muted/30 p-3 font-mono text-xs">
@@ -131,12 +151,10 @@ export const CollapseInteraction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText("Triage")).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Collapse Support" }),
-    );
+    await expect(canvas.getByTestId("tree-label-tickets")).toBeVisible();
+    await userEvent.click(canvas.getByTestId("tree-toggle-workspace"));
     await waitFor(() => {
-      expect(canvas.queryByText("Triage")).not.toBeInTheDocument();
+      expect(canvas.queryByTestId("tree-label-tickets")).not.toBeInTheDocument();
     });
   },
 };

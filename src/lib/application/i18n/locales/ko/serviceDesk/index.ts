@@ -1,4 +1,5 @@
 import insights from "./insights.json";
+import resetDemo from "./resetDemo.json";
 import shared from "./shared.json";
 import ticket from "./ticket.json";
 import ticketAction from "./ticketAction.json";
@@ -16,6 +17,7 @@ const serviceDesk = {
   ...ticketAction,
   ...ticketSearch,
   ...insights,
+  ...resetDemo,
 };
 
 export default serviceDesk;

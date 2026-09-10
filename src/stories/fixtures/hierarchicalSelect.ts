@@ -1,25 +1,58 @@
+import type { TFunction } from "i18next";
+
 import type { HierarchicalSelectItem } from "@/components/custom/HierarchicalSelect";
 
 export const hierarchicalItems: HierarchicalSelectItem[] = [
   {
-    value: "engineering",
-    label: "Engineering",
+    value: "portal",
+    label: "portal",
     children: [
-      { value: "frontend", label: "Frontend" },
-      { value: "backend", label: "Backend" },
-      { value: "platform", label: "Platform" },
+      {
+        value: "portal-account",
+        label: "account",
+        children: [
+          { value: "portal-account-login", label: "login" },
+          { value: "portal-account-profile", label: "profile" },
+        ],
+      },
+      {
+        value: "portal-notification",
+        label: "notification",
+        children: [
+          { value: "portal-notification-email", label: "email" },
+          { value: "portal-notification-push", label: "push" },
+        ],
+      },
     ],
   },
   {
     value: "operations",
-    label: "Operations",
+    label: "operations",
     children: [
-      { value: "service-desk", label: "Service Desk" },
-      { value: "facilities", label: "Facilities", disabled: true },
+      { value: "operations-approval", label: "approval" },
+      { value: "operations-assignment", label: "assignment" },
+      {
+        value: "operations-reporting",
+        label: "reporting",
+        disabled: true,
+      },
     ],
   },
-  { value: "general", label: "General" },
+  { value: "general", label: "general" },
 ];
+
+export function localizeHierarchicalItems(
+  items: HierarchicalSelectItem[],
+  t: TFunction,
+): HierarchicalSelectItem[] {
+  return items.map((item) => ({
+    ...item,
+    label: t(`items.${item.label}`, { defaultValue: item.label }),
+    children: item.children
+      ? localizeHierarchicalItems(item.children, t)
+      : undefined,
+  }));
+}
 
 export const getHierarchicalPathLabel = (
   _selected: HierarchicalSelectItem,

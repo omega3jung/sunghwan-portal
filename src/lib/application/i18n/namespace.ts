@@ -5,11 +5,11 @@ export const NS = {
   component: "component",
   documents: "documents",
   dashboard: "dashboard",
-  demo: "demo",
   error: "error",
   message: "message",
   serviceDesk: "serviceDesk",
   shared: "shared",
+  storybook: "storybook",
   settings: "settings",
   validation: "validation",
 } as const;

@@ -1,0 +1,148 @@
+{
+  "avatarComboBox": {
+    "selectUser": "Select a user",
+    "selectUsers": "Select users"
+  },
+  "colorPicker": {
+    "title": "Color Picker"
+  },
+  "datePicker": {
+    "cards": {
+      "date": "Single-date selection with a rolling minimum and maximum date.",
+      "dateTime": "Date and 24-hour time selection with configurable minute steps.",
+      "dateRange": "Controlled preset and concrete range ownership.",
+      "search": "Preset resolution and custom-range state synchronization."
+    }
+  },
+  "fileAttachment": {
+    "formState": "Form state",
+    "files": "Files",
+    "totalSize": "Total size",
+    "lastError": "Last error",
+    "errorCount": "Error count",
+    "none": "None",
+    "errors": {
+      "count": "File count limit",
+      "size": "Total size limit",
+      "type": "Unsupported file type"
+    }
+  },
+  "hierarchicalSelect": {
+    "empty": "(empty)",
+    "noCategories": "No categories",
+    "selectCategory": "Select a category",
+    "selectCategories": "Select categories",
+    "back": "Back",
+    "items": {
+      "portal": "Portal",
+      "account": "Account",
+      "login": "Login",
+      "profile": "Profile",
+      "notification": "Notification",
+      "email": "Email",
+      "push": "Push",
+      "operations": "Operations",
+      "approval": "Approval",
+      "assignment": "Assignment",
+      "reporting": "Reporting",
+      "general": "General"
+    }
+  },
+  "multiComboBox": {
+    "multiTitle": "Multi ComboBox",
+    "treeTitle": "Tree Multi ComboBox",
+    "months": {
+      "January": "January",
+      "February": "February",
+      "March": "March",
+      "April": "April",
+      "May": "May",
+      "June": "June",
+      "July": "July",
+      "August": "August",
+      "September": "September",
+      "October": "October",
+      "November": "November",
+      "December": "December"
+    },
+    "items": {
+      "fruit": "Fruit",
+      "apple": "Apple",
+      "banana": "Banana",
+      "grape": "Grape",
+      "orange": "Orange",
+      "peach": "Peach",
+      "vegetable": "Vegetable",
+      "carrot": "Carrot",
+      "onion": "Onion",
+      "garlic": "Garlic",
+      "broccoli": "Broccoli",
+      "meat": "Meat",
+      "beef": "Beef",
+      "pork": "Pork",
+      "chicken": "Chicken",
+      "fish": "Fish",
+      "salmon": "Salmon",
+      "tuna": "Tuna",
+      "dairy": "Dairy",
+      "milk": "Milk",
+      "cheese": "Cheese",
+      "empty": "Empty category"
+    }
+  },
+  "richEditor": {
+    "placeholder": "Describe the request, investigation, and resolution.",
+    "empty": "(empty)",
+    "sample": {
+      "heading": "Service Desk update",
+      "paragraph": "This controlled editor demonstrates formatted operational content.",
+      "review": "Review the reported issue",
+      "record": "Record the resolution evidence"
+    }
+  },
+  "sortableTree": {
+    "collapseItem": "Collapse {{label}}",
+    "expandItem": "Expand {{label}}",
+    "dragItem": "Reorder {{label}}",
+    "items": {
+      "workspace": "Workspace",
+      "serviceDesk": "Service Desk",
+      "tickets": "Tickets",
+      "insights": "Insights",
+      "documents": "Documents"
+    }
+  },
+  "stepper": {
+    "title": "Stepper",
+    "stepLabel": "Step {{order}} - {{label}}",
+    "steps": {
+      "receiving": "Receiving",
+      "triage": "Triage",
+      "estimate": "Estimate",
+      "quote": "Quote"
+    }
+  },
+  "timeline": {
+    "emptyContent": "No timeline items",
+    "items": {
+      "career-2016-bkit": {
+        "title": "Started enterprise software development at BKI IT",
+        "description": "Maintained manufacturing MES platforms and developed in-house MES, asset-management, and data-interface solutions with Java, C# WinForms/WPF, MSSQL, and MariaDB.",
+        "meta": "2016.10 - 2018.12",
+        "badge": "BKI IT"
+      },
+      "career-2019-cynergy": {
+        "title": "Joined Cynergy as a Frontend Developer",
+        "description": "Modernized internal ERP and portal workflows for a US-based mobile-device warranty and remanufacturing business, including 18 months onsite in Dallas and continued global remote collaboration.",
+        "meta": "2019.05 - 2025.03",
+        "badge": "Cynergy"
+      },
+      "project-2022-mobileklink": {
+        "title": "Delivered a customer-specific portal workflow for MobileKlink",
+        "description": "Built a single-screen receiving-to-shipping workflow, connected Samsung device logic through Oracle RESTful Services, validated 10 test cases, and completed the initial nine-month plan in eight months.",
+        "meta": "2022.02 - 2025.03",
+        "badge": "Customer Portal"
+      }
+    }
+  }
+}

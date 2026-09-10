@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
 import { AvatarComboBox } from "@/components/custom/AvatarComboBox";
-import { avatarComboMock } from "@/mocks/ui/demo";
+import { NS } from "@/lib/application/i18n";
+
+import { avatarComboBoxOptions } from "./fixtures/avatarComboBox";
 
 const meta = {
   title: "Custom/AvatarComboBox",
@@ -12,8 +15,7 @@ const meta = {
     clearable: true,
     className: "h-10 w-80",
     onChange: fn(),
-    options: avatarComboMock,
-    placeholder: "Select a user",
+    options: avatarComboBoxOptions,
     value: null as string | null,
   },
   argTypes: {
@@ -40,10 +42,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "avatarComboBox" });
 
     return (
       <AvatarComboBox
         {...args}
+        placeholder={args.placeholder ?? t("selectUser")}
         onChange={(value) => {
           updateArgs({ value });
           args.onChange?.(value);
@@ -54,17 +58,17 @@ export const Default: Story = {
 };
 
 export const WithValue: Story = {
-  args: { value: avatarComboMock[0].value },
+  args: { value: avatarComboBoxOptions[0].value },
   render: Default.render,
 };
 
 export const Empty: Story = {
-  args: { options: [], placeholder: "No users available" },
+  args: { options: [] },
   render: Default.render,
 };
 
 export const Disabled: Story = {
-  args: { disabled: true, value: avatarComboMock[1].value },
+  args: { disabled: true, value: avatarComboBoxOptions[1].value },
   render: Default.render,
 };
 
@@ -74,6 +78,6 @@ export const Loading: Story = {
 };
 
 export const ReadOnly: Story = {
-  args: { readOnly: true, value: avatarComboMock[2].value },
+  args: { readOnly: true, value: avatarComboBoxOptions[2].value },
   render: Default.render,
 };

@@ -1,0 +1,9 @@
+{
+  "resetDemo": {
+    "title": "Restablecer demostración",
+    "message": "¿Restablecer los datos de la demostración local?",
+    "description": "Restablecer los datos de la demostración local y restaurar los datos simulados iniciales.",
+    "error": "No se pudieron restablecer los datos de la demostración.",
+    "resetting": "Restableciendo"
+  }
+}

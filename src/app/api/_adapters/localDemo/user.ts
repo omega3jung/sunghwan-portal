@@ -1,3 +1,4 @@
+import { localLeftMenuItems } from "@/mocks/domain/navigation/leftMenu";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import {
   clientProfiles,
@@ -5,7 +6,6 @@ import {
   demoProfiles,
   resolveDemoAuth,
 } from "@/mocks/domain/user";
-import { leftMenuJsonMock } from "@/mocks/ui/navigation/leftMenu";
 
 const demoAuthUsernames = new Set(demoAuths.map((auth) => auth.username));
 
@@ -36,7 +36,7 @@ export function getLocalLeftMenu(username: string) {
   const auth = resolveDemoAuth(username);
   if (!auth) return null;
 
-  return leftMenuJsonMock.filter(
+  return localLeftMenuItems.filter(
     (item) => item.minAccessLevel <= auth.permission,
   );
 }

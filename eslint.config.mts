@@ -387,6 +387,7 @@ export default defineConfig([
     "coverage/**",
     "node_modules/**",
     "out/**",
+    "public/storybook-static/**",
     "storybook-static/**",
     "next-env.d.ts",
   ]),

@@ -1,0 +1,148 @@
+{
+  "avatarComboBox": {
+    "selectUser": "Sélectionner un utilisateur",
+    "selectUsers": "Sélectionner des utilisateurs"
+  },
+  "colorPicker": {
+    "title": "Sélecteur de couleur"
+  },
+  "datePicker": {
+    "cards": {
+      "date": "Sélection d’une date avec des limites minimale et maximale glissantes.",
+      "dateTime": "Sélection de date et d’heure sur 24 heures avec un pas de minutes configurable.",
+      "dateRange": "Contrôle explicite du préréglage et de la plage concrète.",
+      "search": "Résolution des préréglages et synchronisation de la plage personnalisée."
+    }
+  },
+  "fileAttachment": {
+    "formState": "État du formulaire",
+    "files": "Fichiers",
+    "totalSize": "Taille totale",
+    "lastError": "Dernière erreur",
+    "errorCount": "Nombre d’erreurs",
+    "none": "Aucune",
+    "errors": {
+      "count": "Limite du nombre de fichiers",
+      "size": "Limite de taille totale",
+      "type": "Type de fichier non pris en charge"
+    }
+  },
+  "hierarchicalSelect": {
+    "empty": "(vide)",
+    "noCategories": "Aucune catégorie",
+    "selectCategory": "Sélectionner une catégorie",
+    "selectCategories": "Sélectionner des catégories",
+    "back": "Retour",
+    "items": {
+      "portal": "Portail",
+      "account": "Compte",
+      "login": "Connexion",
+      "profile": "Profil",
+      "notification": "Notification",
+      "email": "E-mail",
+      "push": "Push",
+      "operations": "Opérations",
+      "approval": "Approbation",
+      "assignment": "Affectation",
+      "reporting": "Rapports",
+      "general": "Général"
+    }
+  },
+  "multiComboBox": {
+    "multiTitle": "Liste combinée multiple",
+    "treeTitle": "Liste combinée multiple arborescente",
+    "months": {
+      "January": "Janvier",
+      "February": "Février",
+      "March": "Mars",
+      "April": "Avril",
+      "May": "Mai",
+      "June": "Juin",
+      "July": "Juillet",
+      "August": "Août",
+      "September": "Septembre",
+      "October": "Octobre",
+      "November": "Novembre",
+      "December": "Décembre"
+    },
+    "items": {
+      "fruit": "Fruit",
+      "apple": "Pomme",
+      "banana": "Banane",
+      "grape": "Raisin",
+      "orange": "Orange",
+      "peach": "Pêche",
+      "vegetable": "Légume",
+      "carrot": "Carotte",
+      "onion": "Oignon",
+      "garlic": "Ail",
+      "broccoli": "Brocoli",
+      "meat": "Viande",
+      "beef": "Bœuf",
+      "pork": "Porc",
+      "chicken": "Poulet",
+      "fish": "Poisson",
+      "salmon": "Saumon",
+      "tuna": "Thon",
+      "dairy": "Produits laitiers",
+      "milk": "Lait",
+      "cheese": "Fromage",
+      "empty": "Catégorie vide"
+    }
+  },
+  "richEditor": {
+    "placeholder": "Décrivez la demande, l’investigation et la résolution.",
+    "empty": "(vide)",
+    "sample": {
+      "heading": "Mise à jour du Service Desk",
+      "paragraph": "Cet éditeur contrôlé illustre un contenu opérationnel mis en forme.",
+      "review": "Examiner le problème signalé",
+      "record": "Consigner les preuves de résolution"
+    }
+  },
+  "sortableTree": {
+    "collapseItem": "Replier {{label}}",
+    "expandItem": "Déplier {{label}}",
+    "dragItem": "Réorganiser {{label}}",
+    "items": {
+      "workspace": "Espace de travail",
+      "serviceDesk": "Centre de services",
+      "tickets": "Tickets",
+      "insights": "Analyses",
+      "documents": "Documents"
+    }
+  },
+  "stepper": {
+    "title": "Indicateur d’étapes",
+    "stepLabel": "Étape {{order}} - {{label}}",
+    "steps": {
+      "receiving": "Réception",
+      "triage": "Triage",
+      "estimate": "Estimation",
+      "quote": "Devis"
+    }
+  },
+  "timeline": {
+    "emptyContent": "Aucun élément dans la chronologie",
+    "items": {
+      "career-2016-bkit": {
+        "title": "Début du développement de logiciels d’entreprise chez BKI IT",
+        "description": "Maintenance de plateformes MES industrielles et développement de solutions internes MES, de gestion d’actifs et d’interfaces de données avec Java, C# WinForms/WPF, MSSQL et MariaDB.",
+        "meta": "2016.10 - 2018.12",
+        "badge": "BKI IT"
+      },
+      "career-2019-cynergy": {
+        "title": "Arrivée chez Cynergy comme développeur frontend",
+        "description": "Modernisation des workflows ERP et portail internes d’une entreprise américaine de garantie et de reconditionnement d’appareils mobiles, dont 18 mois sur site à Dallas puis une collaboration mondiale à distance.",
+        "meta": "2019.05 - 2025.03",
+        "badge": "Cynergy"
+      },
+      "project-2022-mobileklink": {
+        "title": "Livraison d’un workflow de portail propre à MobileKlink",
+        "description": "Création d’un workflow de la réception à l’expédition sur un seul écran, connexion de la logique des appareils Samsung via Oracle RESTful Services, validation de 10 cas de test et achèvement en huit mois du plan initial de neuf mois.",
+        "meta": "2022.02 - 2025.03",
+        "badge": "Portail client"
+      }
+    }
+  }
+}

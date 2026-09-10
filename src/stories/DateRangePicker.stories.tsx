@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import type { DateRange } from "react-day-picker";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
 import { DateRangePicker } from "@/components/custom/DatePicker";
+import { NS } from "@/lib/application/i18n";
 import { DEFAULT_DATE_RANGE_PRESETS } from "@/shared/constants";
 
 const initialRange: DateRange = {
@@ -46,6 +48,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "datePicker" });
 
     return (
       <div className="space-y-3">
@@ -66,6 +69,9 @@ export const Default: Story = {
             args.onRangeChange(range);
           }}
         />
+        <p className="max-w-xl text-sm text-muted-foreground">
+          {t("cards.dateRange")}
+        </p>
         <output className="block rounded-md bg-muted px-3 py-2 font-mono text-xs">
           {JSON.stringify({ period: args.period, range: args.range })}
         </output>

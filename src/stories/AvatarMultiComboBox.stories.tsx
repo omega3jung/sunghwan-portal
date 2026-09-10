@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
-import { avatarComboMock } from "@/mocks/ui/demo";
+import { NS } from "@/lib/application/i18n";
+
+import { avatarComboBoxOptions } from "./fixtures/avatarComboBox";
 
 const meta = {
   title: "Custom/AvatarMultiComboBox",
@@ -13,9 +16,8 @@ const meta = {
     maxImages: 3,
     onRemove: fn(),
     onSelect: fn(),
-    options: avatarComboMock,
-    placeholder: "Select users",
-    value: avatarComboMock.slice(0, 4).map((item) => item.value),
+    options: avatarComboBoxOptions,
+    value: avatarComboBoxOptions.slice(0, 4).map((item) => item.value),
   },
   argTypes: {
     badgeVariant: { control: "select", options: ["default", "primary"] },
@@ -42,10 +44,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "avatarComboBox" });
 
     return (
       <AvatarMultiComboBox
         {...args}
+        placeholder={args.placeholder ?? t("selectUsers")}
         onRemove={(removed) => {
           updateArgs({ value: args.value.filter((item) => item !== removed) });
           args.onRemove?.(removed);

@@ -1,9 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { TFunction } from "i18next";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
-import { TreeMultiComboBox } from "@/components/custom/MultiComboBox";
-import { treeMultiComboBoxMocks } from "@/mocks/ui/demo";
+import {
+  TreeMultiComboBox,
+  type TreeMultiComboBoxOption,
+} from "@/components/custom/MultiComboBox";
+import { NS } from "@/lib/application/i18n";
+
+import { treeMultiComboBoxOptions } from "./fixtures/multiComboBox";
 
 const badgeVariants = [
   "default",
@@ -25,9 +33,8 @@ const meta = {
     onChange: fn(),
     onRemove: fn(),
     onSelect: fn(),
-    options: treeMultiComboBoxMocks,
+    options: treeMultiComboBoxOptions,
     paletteStart: 1,
-    placeholder: "Select food groups",
     value: ["apple", "salmon"],
   },
   argTypes: {
@@ -50,21 +57,42 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+function localizeTreeOptions(
+  options: TreeMultiComboBoxOption[],
+  t: TFunction,
+): TreeMultiComboBoxOption[] {
+  return options.map((option) => ({
+    ...option,
+    label: t(`items.${option.value}`, { defaultValue: option.label }),
+    children: option.children.map((child) => ({
+      ...child,
+      label: t(`items.${child.value}`, { defaultValue: child.label }),
+    })),
+  }));
+}
+
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "multiComboBox" });
+    const localizedOptions = useMemo(
+      () => localizeTreeOptions(args.options ?? treeMultiComboBoxOptions, t),
+      [args.options, t],
+    );
 
     return (
       <div className="space-y-3">
         <TreeMultiComboBox
           {...args}
+          options={localizedOptions}
+          placeholder={args.placeholder ?? t("treeTitle")}
           onChange={(value) => {
             updateArgs({ value });
             args.onChange?.(value);
           }}
         />
         <output className="block max-w-96 rounded-md bg-muted px-3 py-2 font-mono text-xs">
-          {args.value.length > 0 ? args.value.join(", ") : "No selection"}
+          {t("treeTitle")}: {args.value.length > 0 ? args.value.join(", ") : "-"}
         </output>
       </div>
     );

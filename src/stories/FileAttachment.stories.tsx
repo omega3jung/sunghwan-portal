@@ -1,13 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { useTranslation } from "react-i18next";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
 import {
   FileAttachment,
   type FileAttachmentErrorType,
   type FileAttachmentLimitBehavior,
 } from "@/components/custom/FileAttachment";
+import { NS } from "@/lib/application/i18n";
 
 type AttachmentForm = { attachments: File[] };
 
@@ -23,6 +25,7 @@ type StoryArgs = {
 };
 
 function FileAttachmentStory(args: StoryArgs) {
+  const { t } = useTranslation(NS.storybook, { keyPrefix: "fileAttachment" });
   const form = useForm<AttachmentForm>({
     defaultValues: { attachments: args.initialFiles },
   });
@@ -50,11 +53,18 @@ function FileAttachmentStory(args: StoryArgs) {
         />
       </div>
       <output className="rounded-lg border bg-muted/30 p-4 text-xs">
-        <span className="block font-semibold">Controlled form state</span>
-        <span className="mt-2 block">Files: {files.length}</span>
-        <span className="block">Total: {totalSizeMB.toFixed(3)} MB</span>
+        <span className="block font-semibold">{t("formState")}</span>
+        <span className="mt-2 block" data-testid="attachment-file-count">
+          {t("files")}: {files.length}
+        </span>
         <span className="block">
-          Errors: {errors.length > 0 ? errors.join(", ") : "none"}
+          {t("totalSize")}: {totalSizeMB.toFixed(3)} MB
+        </span>
+        <span className="block">{t("errorCount")}: {errors.length}</span>
+        <span className="block">
+          {t("lastError")}: {errors.length > 0
+            ? t(`errors.${errors.at(-1)}`)
+            : t("none")}
         </span>
       </output>
     </div>
@@ -137,7 +147,11 @@ export const UploadInteraction: Story = {
       }),
     );
 
-    await expect(await canvas.findByText("Files: 1")).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByTestId("attachment-file-count")).toHaveTextContent(
+        "1",
+      );
+    });
     await expect(await canvas.findByText("storybook-upload.txt")).toBeVisible();
   },
 };

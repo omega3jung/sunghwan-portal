@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
-import { expect, fireEvent, fn, within } from "storybook/test";
+import { expect, fireEvent, fn, waitFor, within } from "storybook/test";
 
 import { ColorPicker } from "@/components/custom/ColorPicker";
+import { NS } from "@/lib/application/i18n";
 
 const meta = {
   title: "Custom/ColorPicker",
@@ -29,6 +31,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "colorPicker" });
 
     return (
       <div className="max-w-md rounded-lg border p-6">
@@ -40,7 +43,7 @@ export const Default: Story = {
           }}
         />
         <output className="mt-4 block text-center text-sm text-muted-foreground">
-          Current value: {args.value}
+          {t("title")}: {args.value}
         </output>
       </div>
     );
@@ -51,9 +54,9 @@ export const Default: Story = {
 
     fireEvent.change(input, { target: { value: "#1d4ed8" } });
 
-    await expect(
-      await canvas.findByText("Current value: #1d4ed8"),
-    ).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByRole("status")).toHaveTextContent("#1d4ed8");
+    });
   },
 };
 
@@ -65,6 +68,7 @@ export const Disabled: Story = {
 export const CompoundControls: Story = {
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
+    const { t } = useTranslation(NS.storybook, { keyPrefix: "colorPicker" });
 
     return (
       <ColorPicker
@@ -74,7 +78,7 @@ export const CompoundControls: Story = {
           args.onChange(value);
         }}
       >
-        <ColorPicker.Trigger aria-label="Choose accent color" />
+        <ColorPicker.Trigger aria-label={t("title")} />
         <ColorPicker.HexInput className="w-36" />
         <ColorPicker.Reset variant="outline" />
       </ColorPicker>

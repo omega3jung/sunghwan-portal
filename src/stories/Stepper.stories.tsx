@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useTranslation } from "react-i18next";
 import { useArgs } from "storybook/preview-api";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
 import { Stepper } from "@/components/custom/Stepper";
+import { NS } from "@/lib/application/i18n";
 
-const steps = ["Request", "Triage", "Work", "Resolution"];
+const stepKeys = ["receiving", "triage", "estimate", "quote"] as const;
 
 const meta = {
   title: "Custom/Stepper",
@@ -56,21 +58,36 @@ function StepperItems({
   numberedLabels?: boolean;
   startIndex?: number;
 }) {
-  return steps.map((label, index) => (
-    <Stepper.Item index={index} key={label} total={steps.length}>
-      <Stepper.Trigger index={index + startIndex}>
-        <Stepper.Label>
-          {numberedLabels ? (
-            <>
-              <span>Step {index + 1}:</span> {label}
-            </>
-          ) : (
-            label
-          )}
-        </Stepper.Label>
-      </Stepper.Trigger>
-    </Stepper.Item>
-  ));
+  const { t } = useTranslation(NS.storybook, { keyPrefix: "stepper" });
+
+  return stepKeys.map((stepKey, index) => {
+    const label = t(`steps.${stepKey}`);
+
+    return (
+      <Stepper.Item index={index} key={stepKey} total={stepKeys.length}>
+        <Stepper.Trigger index={index + startIndex}>
+          <Stepper.Label>
+            {numberedLabels
+              ? t("stepLabel", { label, order: index + 1 })
+              : label}
+          </Stepper.Label>
+        </Stepper.Trigger>
+      </Stepper.Item>
+    );
+  });
+}
+
+function CurrentStepOutput({ currentStep }: { currentStep?: number }) {
+  const { t } = useTranslation(NS.storybook, { keyPrefix: "stepper" });
+
+  return (
+    <output
+      className="block rounded-md bg-muted px-3 py-2 font-mono text-xs"
+      data-testid="current-step"
+    >
+      {t("title")}: {currentStep}
+    </output>
+  );
 }
 
 export const Default: Story = {
@@ -96,17 +113,17 @@ export const Default: Story = {
         >
           <StepperItems />
         </Stepper>
-        <output className="block rounded-md bg-muted px-3 py-2 font-mono text-xs">
-          Current step: {args.currentStep}
-        </output>
+        <CurrentStepOutput currentStep={args.currentStep} />
       </div>
     );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(canvas.getByRole("button", { name: /Work/ }));
-    await expect(await canvas.findByText("Current step: 2")).toBeVisible();
+    await userEvent.click(canvas.getAllByRole("button")[2]);
+    await waitFor(() => {
+      expect(canvas.getByTestId("current-step")).toHaveTextContent("2");
+    });
   },
 };
 
@@ -152,9 +169,7 @@ export const NumberedLabels: Story = {
         >
           <StepperItems numberedLabels />
         </Stepper>
-        <output className="block rounded-md bg-muted px-3 py-2 font-mono text-xs">
-          Current step: {args.currentStep}
-        </output>
+        <CurrentStepOutput currentStep={args.currentStep} />
       </div>
     );
   },
@@ -189,9 +204,7 @@ export const OffsetTriggerIndexes: Story = {
         >
           <StepperItems startIndex={3} />
         </Stepper>
-        <output className="block rounded-md bg-muted px-3 py-2 font-mono text-xs">
-          Current step: {args.currentStep}
-        </output>
+        <CurrentStepOutput currentStep={args.currentStep} />
       </div>
     );
   },
