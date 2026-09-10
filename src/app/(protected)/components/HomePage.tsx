@@ -135,9 +135,7 @@ function QuickActionCard({
   icon: Icon,
   meta,
 }: QuickAction) {
-  const { t } = useTranslation(NS.demo, {
-    keyPrefix: "home",
-  });
+  const { t } = useTranslation(NS.dashboard);
 
   return (
     <Link href={href} className="block h-full">
@@ -192,9 +190,7 @@ function HighlightCard({
   category,
   status,
 }: HighlightItem) {
-  const { t } = useTranslation(NS.demo, {
-    keyPrefix: "home",
-  });
+  const { t } = useTranslation(NS.dashboard);
 
   const content = (
     <Card className="h-full border-border/70">
@@ -234,9 +230,7 @@ function HighlightCard({
 
 export function HomePage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const { t } = useTranslation(NS.demo, {
-    keyPrefix: "home",
-  });
+  const { t } = useTranslation(NS.dashboard);
   const { current } = useCurrentSession();
   const homeModeKey = current.isDemoUser ? "local" : "remote";
 

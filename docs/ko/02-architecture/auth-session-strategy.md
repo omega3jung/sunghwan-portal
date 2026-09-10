@@ -152,7 +152,8 @@ type AppUser = {
 
 `authorize()`는 다음 경로 중 하나로 `AuthUser`를 해석합니다.
 
-- LOCAL demo resolver (`resolveDemoAuth`, `resolveClientAuth`)
+- internal 및 client demo identity를 모두 검색하는 통합 LOCAL demo resolver
+  (`resolveDemoAuth`)
 - 또는 REMOTE API login (`/auth/login`)
 
 ---

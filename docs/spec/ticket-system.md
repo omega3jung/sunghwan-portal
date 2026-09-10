@@ -343,7 +343,8 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 Current behavior:
 
-- only current work assignees can track work
+- current and previous work assignees can record work evidence
+- only current work assignees can change status through a work-session submission
 - tracked minutes aggregate into the ticket
 - work-session submission may apply `Assigned -> Working`
 - `Working -> Pending | Resolved`

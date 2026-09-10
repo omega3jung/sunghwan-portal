@@ -166,9 +166,13 @@ It acts as a **page local session** that helps the UI restore user context.
 
 Managed through a layered persistence approach:
 
-1. **URL** for navigation-related state
-2. **sessionStorage** for temporary page-local persistence
+1. **sessionStorage** for current temporary page-local persistence
+2. **URL** when state must be shareable or bookmarkable
 3. **Database** for long-term user preferences when necessary
+
+The current Service Desk ticket search and Insights pages use
+`sessionStorage`; they do not synchronize filters, sorting, or pagination to
+the URL.
 
 ---
 
@@ -213,32 +217,29 @@ Persist page-level UI state separately from auth/runtime stores
 - Structured and predictable keys
 
 ```ts
-["tickets", params][("ticket", id)];
+ticketQueryKeys.search(request);
+ticketQueryKeys.detail(id);
 ```
 
 ---
 
-### Query Types
+### Query Option Profiles
 
-#### Static Data
+The shared query layer provides two reusable profiles:
 
-- Rarely changes (e.g., category)
+- `STATIC_QUERY_OPTIONS`: five-minute `staleTime`, with focus and reconnect
+  refetch disabled
+- `DYNAMIC_QUERY_OPTIONS`: zero `staleTime`, with focus refetch enabled
 
-```ts
-staleTime: Infinity;
-```
+Current Service Desk queries, including settings and category queries, use the
+runtime-aware `getServiceDeskQueryOptions` profile:
 
----
+- REMOTE uses `DYNAMIC_QUERY_OPTIONS`
+- LOCAL keeps dynamic freshness, retains inactive cache for 24 hours, disables
+  focus/reconnect refetch, and always refetches on mount
 
-#### Dynamic Data
-
-- Frequently updated (e.g., ticket list)
-- Includes mutable demo data paths in LOCAL runtime
-
-```ts
-refetchOnWindowFocus: true;
-staleTime: 0;
-```
+Settings mutations invalidate their affected query families. Service Desk
+reference data is not currently modeled with an infinite `staleTime`.
 
 In LOCAL demo mode, React Query cache reset alone is not enough because
 mutations can change server-side in-memory state. Demo reset should be
@@ -304,7 +305,7 @@ const mutation = useMutation({
 | Component-specific | `useState`                          |
 | Feature-wide       | Zustand                             |
 | App-wide           | Zustand (limited)                   |
-| Page local session | Feature hook + `sessionStorage`/URL |
+| Page local session | Feature/page hook + `sessionStorage`; URL when explicitly implemented |
 
 ---
 
@@ -337,7 +338,8 @@ Form state is managed separately using **react-hook-form**.
 
 ## URL State
 
-Some state is stored in the URL.
+URL state is appropriate when page state must participate in navigation,
+sharing, or bookmarking.
 
 ### Examples
 
@@ -345,13 +347,15 @@ Some state is stored in the URL.
 - Pagination
 - Sorting
 
----
-
 ### Principle
 
 ```txt
 If state affects navigation -> store in URL
 ```
+
+This is an addressability rule, not a claim that every current search page has
+implemented URL synchronization. The current Service Desk ticket search and
+Insights pages persist these values in `sessionStorage` instead.
 
 ---
 
@@ -361,37 +365,41 @@ Page local session is the persistence layer for non-server, page-oriented UI beh
 
 ### Storage Layers
 
-#### 1. URL (Primary)
-
-Used for navigation-related state.
-
-Examples:
-
-- Filters
-- Sorting
-- Pagination
-
-```txt
-/service-desk?status=open&assignee=me&page=2
-```
-
----
-
-#### 2. sessionStorage (Secondary)
+#### 1. sessionStorage (Current Service Desk Implementation)
 
 Used for temporary UI persistence within the current browser tab.
 
-Examples:
+Current examples:
 
-- Advanced filter state
-- Layout preferences
-- Last-used search criteria
+- ticket search criteria
+- ticket list page, scope, sort field, and sort order
+- Insights search criteria and scope
 
 Characteristics:
 
-- Scoped to the browser tab
-- Cleared when the tab closes
-- Fast and simple
+- scoped to the browser tab
+- cleared when the tab closes
+- restored through page-level hooks after hydration
+
+---
+
+#### 2. URL (When Addressability Is Required)
+
+Used when navigation, sharing, or bookmarking requires the state to be visible
+in the route.
+
+Examples:
+
+- shareable filters
+- sortable or pageable views whose URL is part of the public page contract
+
+Characteristics:
+
+- survives copying or bookmarking the URL
+- participates in browser navigation
+- requires explicit route/search-parameter synchronization
+
+The current Service Desk search pages have not implemented this layer.
 
 ---
 
@@ -429,11 +437,7 @@ useSessionStorageState<T>();
 ```
 
 ```ts
-useTicketSearchCriteriaState();
-```
-
-```ts
-const { value, setValue, reset } = useTicketSearchCriteriaState();
+const { page, sort, changePage, changeSort } = useServiceDeskSearchState();
 ```
 
 ---
@@ -448,12 +452,12 @@ const { value, setValue, reset } = useTicketSearchCriteriaState();
 | ---------------- | ------------------------ |
 | Auth session     | `authSessionStore`       |
 | UI persistence   | `useSessionStorageState` |
-| Navigation state | URL                      |
+| Addressable navigation state | URL when the page implements it |
 
 Prefer:
 
 ```ts
-useTicketSearchCriteriaState();
+useServiceDeskSearchState();
 ```
 
 Over:
@@ -606,7 +610,8 @@ It uses:
 
 - React Query for backend synchronization
 - Zustand or local state for client runtime state
-- URL and `sessionStorage` for page local session persistence
+- `sessionStorage` for current page-local persistence and URL state when a page
+  explicitly requires addressability
 
 This results in a scalable, maintainable, and production-aligned state model.
 It does not imply that deferred production infrastructure is complete.

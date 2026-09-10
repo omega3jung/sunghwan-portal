@@ -603,6 +603,15 @@ export const documentGroups: DocumentGroup[] = [
             relativePath:
               "06-decisions/2026-09-vitest-coverage-strategy.md",
           },
+          {
+            id: "decision-storybook-coverage-strategy-2026-09",
+            titleKey:
+              "item.decisionStorybookCoverageStrategy202609.title",
+            descriptionKey:
+              "item.decisionStorybookCoverageStrategy202609.description",
+            relativePath:
+              "06-decisions/2026-09-storybook-coverage-strategy.md",
+          },
         ],
       },
     ],

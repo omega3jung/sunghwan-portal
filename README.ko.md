@@ -48,7 +48,9 @@ production-complete 범위까지 구현하지는 않았습니다.
    어떻게 달라지는지 비교합니다.
 4. **Settings → IT Service Desk Settings**에서 Tenant, Category, Approval
    Steps와 Assignment Rules를 확인합니다.
-5. 설계와 workflow의 자세한 내용은 [Ticket System 표준 명세](./docs/spec/ticket-system.ko.md),
+5. 애플리케이션 메뉴에서 **Storybook**을 열고 reusable custom component,
+   대표적인 application-wide UI, Controls와 interaction을 확인합니다.
+6. 설계와 workflow의 자세한 내용은 [Ticket System 표준 명세](./docs/spec/ticket-system.ko.md),
    [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md),
    [문서 인덱스](./docs/ko/README.md)에서 확인합니다.
 
@@ -62,6 +64,7 @@ production-complete 범위까지 구현하지는 않았습니다.
 - PostgreSQL row, repository, mapper, DTO, service와 HTTP boundary를 명시적으로
   유지
 - 실제 운영 경험을 바탕으로 failure handling, 추적성과 변경 영향 고려
+- risk-based Vitest coverage와 제한된 Storybook UI 검토의 책임 분리
 - 현재 설계 문서와 과거의 decision log를 분리하여 관리
 
 ## 주요 특징
@@ -74,6 +77,7 @@ production-complete 범위까지 구현하지는 않았습니다.
 - requester별 draft 복구와 attachment preparation boundary
 - tracked-minute aggregation을 포함한 work-session evidence
 - responsive dashboard, insights, ticket과 settings 화면
+- 애플리케이션 `/storybook` route에서 접근하는 제한된 Storybook coverage
 
 ## 현재 상태
 
@@ -195,9 +199,11 @@ POST /api/service-desk/tickets/[ticketId]/command/start-work
 
 History는 영향을 받은 domain area(`type`), 원인(`source`), authoritative
 event, actor, 구조화된 before/after value와 보조 metadata를 기록합니다. Work
-session은 ticket action과 분리합니다. 현재 route surface는 list/create behavior와
-지원되는 work-status transition을 제공하며, 완전한 timer 방식의
-start/finish/switch route는 deferred scope입니다.
+session은 ticket action과 분리합니다. 현재와 과거 work assignee는 work evidence를
+기록할 수 있지만 work-session submission을 통해 status를 변경할 수 있는 주체는 현재
+work assignee뿐입니다. 현재 route surface는 list/create behavior와 지원되는
+work-status transition을 제공하며, 완전한 timer 방식의 start/finish/switch route는
+deferred scope입니다.
 
 ## 아키텍처와 상태 소유권
 
@@ -244,9 +250,12 @@ application contract를 사용하며 database row를 전달받지 않습니다.
   사이에서 공유하는 client state를 소유합니다.
 - Component state는 dialog와 form step 같은 일시적인 interaction detail을
   소유합니다.
+- Page-level hook은 현재 tab 안에서 Service Desk ticket-search와 Insights의 조건,
+  scope, 정렬, 페이지네이션을 복원하기 위해 `sessionStorage`를 사용합니다.
 
 Ticket, history, settings와 organization query result를 Zustand에 중복 저장하지
-않습니다.
+않습니다. 현재 Service Desk 검색 페이지는 검색 상태를 URL query parameter와
+동기화하지 않습니다.
 
 ## 프로젝트 발전 과정과 마이그레이션
 
@@ -316,7 +325,7 @@ src/
   mocks/        # LOCAL user, organization data와 Service Desk scenario
   server/       # embedded service, repository, mapper와 DTO
   shared/       # 재사용 가능한 hook, type, constant와 utility
-  stories/      # Storybook example
+  stories/      # 제한된 Storybook state, Control, interaction과 composition
   styles/       # global Tailwind CSS와 theme token
   types/        # global 및 library type augmentation
 docs/
@@ -345,9 +354,10 @@ docs/
 10. [Ticket Form](./docs/ko/04-client-engineering/forms/ticket-form.md)과
    [Attachment 설계](./docs/ko/04-client-engineering/forms/ticket-attachment.md)
 11. [구현 전략](./docs/ko/05-development/service-desk-implementation-strategy.md)
-12. [Boolean 명명 규칙](./docs/ko/05-development/boolean-naming-convention.md)
-13. [README 전략](./docs/ko/05-development/readme-strategy.md)
-14. [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+12. [테스트 전략](./docs/ko/05-development/testing-strategy.md)
+13. [Boolean 명명 규칙](./docs/ko/05-development/boolean-naming-convention.md)
+14. [README 전략](./docs/ko/05-development/readme-strategy.md)
+15. [Ticket 운영 규칙](./docs/ko/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 과거 decision record는
 [Decision 문서](./docs/ko/06-decisions/README.md)에 정리되어 있습니다.
@@ -356,18 +366,21 @@ docs/
 
 현재 repository 수준의 검증 범위는 다음과 같습니다.
 
-- `npm run build`를 통한 Next.js production build와 TypeScript compilation
+- `npm test`의 unit project로 실행하는 source-local Vitest test file 163개
 - `npm run lint`를 통한 ESLint 9 static analysis
 - lint command에 포함된 `eslint-plugin-boundaries`의 architecture dependency
   policy 검사
+- custom component 및 선별한 layout, menu, feature-presentation UI를 포함하는
+  Storybook file 22개와 Story entry 94개
 - `npm run build-storybook`을 통한 Storybook static build 검증
-- Playwright Chromium provider를 사용하는 Storybook/Vitest browser-mode
-  configuration
+- 선별한 `play` interaction file 5개와 headless Playwright Chromium provider를
+  사용하는 별도 Storybook/Vitest browser project
+- Storybook static output을 포함한 뒤 Next.js를 build하는 `npm run build`
 
-현재 Storybook surface는 세 개의 story file과 configuration MDX를 포함합니다.
-Testing Library는 설치되어 있지만 repository에는 독립적인 `*.test` 또는
-`*.spec` suite가 없으며 repository-level `test` script도 제공하지 않습니다.
-Automated coverage는 앞으로 개선할 영역입니다.
+기본 `npm test` command는 unit project만 실행합니다. Storybook browser project는
+남은 interaction failure가 해결되기 전까지 clean하고 강제되는 CI gate가 아니라
+명시적으로 실행하는 diagnostic check입니다. 책임, 범위와 검증 boundary는
+[테스트 전략](./docs/ko/05-development/testing-strategy.md)을 참고하세요.
 
 ## 로컬 개발
 
@@ -392,17 +405,26 @@ PowerShell에서는 필요에 따라 `cp` 대신
 [http://localhost:3000](http://localhost:3000)을 열고 **Try Demo**를
 선택합니다. LOCAL 환경에는 PostgreSQL이나 external API가 필요하지 않습니다.
 
+Next.js와 Storybook을 함께 실행하고 애플리케이션 `/storybook` route를 사용하려면
+`npm run dev:all`을 실행합니다. 이 command는 browser를 자동으로 열지 않고 6006
+port에서 Storybook을 시작합니다.
+
 ### 사용 가능한 Script
 
-| Command                   | 용도                                       |
-| ------------------------- | ------------------------------------------ |
-| `npm run dev`             | Next.js development server 실행            |
-| `npm run dev:clean`       | `.next`를 제거하고 development server 실행 |
-| `npm run build`           | production build 생성                      |
-| `npm run start`           | 미리 build한 production server 실행        |
-| `npm run lint`            | ESLint와 architecture boundary rule 실행   |
-| `npm run storybook`       | 6006 port에서 Storybook 실행               |
-| `npm run build-storybook` | Storybook static build 생성                |
+| Command                       | 용도                                                          |
+| ----------------------------- | ------------------------------------------------------------- |
+| `npm run dev`                 | Next.js development server만 실행                             |
+| `npm run dev:all`             | browser 자동 실행 없이 Next.js와 Storybook을 함께 실행        |
+| `npm run dev:clean`           | `.next`를 제거하고 Next.js development server 실행            |
+| `npm test`                    | 기본 Vitest unit project 실행                                 |
+| `npm run test:watch`          | watch mode로 Vitest unit project 실행                         |
+| `npm run lint`                | ESLint와 architecture boundary rule 실행                      |
+| `npm run storybook`           | 일반 browser-open 동작을 허용하며 6006 port에서 Storybook 실행 |
+| `npm run storybook:no`        | browser를 열지 않고 6006 port에서 Storybook 실행              |
+| `npm run build-storybook`     | standalone static Storybook build 생성                        |
+| `npm run build-storybook:app` | Storybook을 build하여 애플리케이션 public asset으로 복사       |
+| `npm run build`               | Storybook을 포함하고 Next.js production build 생성            |
+| `npm run start`               | 미리 build한 production server 실행                           |
 
 ## 환경 변수
 

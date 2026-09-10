@@ -355,8 +355,10 @@ Current implemented behavior:
 - apply supported work-status transition from `Assigned` to `Working` during
   work-session creation
 - move `Working` or `Pending` tickets to the submitted next status when allowed
-- restrict write behavior to the current work assignee
-- record work-session history events
+- allow current and previous work assignees to record work evidence
+- restrict status-changing behavior to the current work assignee
+- record `STATUS_UPDATED` history only when the work-session submission changes
+  ticket status
 
 The feature client contains helpers for additional work-session operations such
 as detail/update/delete/timer-style flows, but matching route handlers are not

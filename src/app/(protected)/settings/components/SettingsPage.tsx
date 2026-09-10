@@ -8,7 +8,7 @@ import { useRouteLoading } from "@/components/layout/RouteLoading";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
-import { createSettingsCardMock } from "@/mocks/ui/navigation/settingsNavigation";
+import { createSettingsCardItems } from "@/mocks/domain/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 
 import { ENABLED_SETTINGS_ROUTES } from "../constants";
@@ -16,7 +16,7 @@ import { SETTINGS_THEME } from "../constants/style";
 
 export function SettingsPage() {
   const { t } = useTranslation(NS.settings);
-  const settingsCardItems = createSettingsCardMock(t);
+  const settingsCardItems = createSettingsCardItems(t);
 
   const router = useRouter();
   const { startRouteLoadingForHref } = useRouteLoading();

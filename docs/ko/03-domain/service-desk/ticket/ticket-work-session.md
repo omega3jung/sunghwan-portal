@@ -59,23 +59,28 @@ type TicketWorkSessionSubmitPayload = {
   durationMinutes?: number;
   startAt?: string;
   endAt?: string;
-  trackedMinutes: number;
   nextStatus?: "Working" | "Pending" | "Resolved";
   note?: string;
 };
 ```
 
-`trackedMinutes`는 positive여야 합니다. Range와 duration mode는 server-side에서
-normalize됩니다.
+서버는 duration mode에서는 `durationMinutes`로부터, range mode에서는 `startAt`과
+`endAt`으로부터 `trackedMinutes`를 계산합니다. 계산 결과는 양수여야 합니다.
 
 ---
 
 ## Actor Rule
 
-Current work assignee만 work session을 만들 수 있습니다.
+현재와 과거 work assignee는 work session을 만들 수 있습니다. 따라서 재배정 이후에도
+과거 담당자가 누락된 work evidence를 추가할 수 있습니다.
+
+`nextStatus`를 통해 status 변경을 요청할 수 있는 주체는 현재 work assignee뿐입니다.
+과거 work assignee는 ticket의 현재 workflow status를 변경하지 않고 evidence만
+제출해야 합니다.
 
 Approval-phase ticket은 eligible하지 않습니다. 해당 current assignee는 worker가 아니라
-approver이기 때문입니다.
+approver이기 때문입니다. Approval assignment만으로는 현재 또는 과거 work assignment
+조건을 충족하지 않습니다.
 
 ---
 
@@ -104,9 +109,12 @@ Pending -> Resolved
 
 규칙:
 
-- `Assigned`는 `Working`으로의 transition이 필요합니다.
-- `Pending`은 `Working` 또는 `Resolved`로의 transition이 필요합니다.
-- `Working`은 추가 시간을 기록할 때 `Working`으로 남을 수 있습니다.
+- 현재 work assignee가 `Assigned`에서 제출할 때는 `Working`으로 이동해야 합니다.
+- 현재 work assignee가 `Pending`에서 제출할 때는 `Working` 또는 `Resolved`로
+  이동해야 합니다.
+- 현재 work assignee가 `Working`에서 추가 시간을 기록할 때는 `Working`으로 남을
+  수 있습니다.
+- 과거 work assignee는 status를 변경하지 않고 evidence를 기록합니다.
 - GET은 status를 변경하지 않습니다.
 - timer stop은 ticket을 암묵적으로 resolve하지 않습니다.
 
@@ -114,7 +122,8 @@ Pending -> Resolved
 
 ## Work Minutes Aggregate
 
-Work session을 만들면 `trackedMinutes`가 ticket aggregate `workMinutes`에 추가됩니다.
+Work session을 만들면 서버가 계산한 tracked minutes가 ticket aggregate
+`workMinutes`에 추가됩니다.
 
 Aggregate는 ticket list/detail display에 유용합니다. 개별 work-session row가 evidence로
 남습니다.
@@ -184,6 +193,7 @@ System command입니다.
 ## 요약
 
 Work Session은 현재 work-time evidence model입니다. List/create, duration/range input,
-tracked-minute aggregation, explicit work-status transition을 지원합니다. Ticket Action과
-분리되어 있으며 hidden GET-side-effect나 timer-stop resolution mechanism으로 설명하면
-안 됩니다.
+서버에서 계산하는 tracked-minute aggregation, explicit work-status transition을
+지원합니다. 현재와 과거 work assignee는 evidence를 기록할 수 있지만 status는 현재
+work assignee만 변경할 수 있습니다. Ticket Action과 분리되어 있으며 hidden
+GET-side-effect나 timer-stop resolution mechanism으로 설명하면 안 됩니다.

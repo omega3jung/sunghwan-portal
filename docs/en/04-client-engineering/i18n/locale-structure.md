@@ -35,13 +35,13 @@ auth
 common
 component
 dashboard
-demo
 documents
 error
 message
 serviceDesk
 settings
 shared
+storybook
 validation
 ```
 
@@ -65,9 +65,9 @@ src/lib/application/i18n/locales/en/
 ├─ common.json
 ├─ dashboard.json
 ├─ message.json
+├─ storybook.json
 ├─ validation.json
 ├─ component/
-├─ demo/
 ├─ documents/
 ├─ error/
 ├─ serviceDesk/
@@ -153,10 +153,13 @@ Copy owned by reusable application components, such as placeholders, empty
 states, and interaction labels inside DatePicker, RichEditor, or combo-box
 components.
 
-### `demo`
+### `storybook`
 
-Descriptions, fixtures, controls, and explanatory copy owned by pages under
-`src/app/(protected)/demo`.
+Copy used by `src/stories` to describe component states and fixtures. Actual
+application page copy does not belong in this namespace.
+
+The `dashboard` namespace owns home-page copy, while `serviceDesk` owns the
+Service Desk reset action copy.
 
 ### Feature namespaces
 

@@ -118,5 +118,9 @@
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Vitest Coverage 전략",
     "description": "Vitest coverage와 위험 기반 테스트 전략 결정 기록입니다."
+  },
+  "decisionStorybookCoverageStrategy202609": {
+    "title": "2026-09 Storybook Coverage 전략",
+    "description": "Storybook coverage 경계와 component playground 대체 전략 결정 기록입니다."
   }
 }

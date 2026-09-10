@@ -338,8 +338,9 @@ POST /api/service-desk/tickets/[ticketId]/work-session
 - manual duration/range session create
 - `Assigned` -> `Working` start work
 - 허용되는 next status로 `Working`/`Pending` 전환
-- current work assignee만 write 가능
-- work-session history event 기록
+- 현재와 과거 work assignee의 work evidence 기록 허용
+- status 변경은 현재 work assignee로 제한
+- work-session submission이 ticket status를 변경할 때만 `STATUS_UPDATED` history 기록
 
 Feature client에는 detail/update/delete/timer-style helper가 있지만 matching route
 handler가 없으므로 API surface가 구현되기 전까지 extension point로 취급합니다.

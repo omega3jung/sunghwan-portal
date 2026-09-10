@@ -166,9 +166,12 @@ const useDialogStore = create((set) => ({
 
 다음과 같은 계층형 persistence 방식으로 관리합니다.
 
-1. 내비게이션 관련 상태는 **URL**
-2. 일시적인 페이지 로컬 persistence는 **sessionStorage**
+1. 현재의 일시적인 페이지 로컬 persistence는 **sessionStorage**
+2. 상태를 공유하거나 북마크할 수 있어야 할 때는 **URL**
 3. 장기 사용자 선호값이 필요할 때는 **Database**
+
+현재 Service Desk 티켓 검색과 Insights 페이지는 `sessionStorage`를 사용하며 필터,
+정렬, 페이지네이션을 URL과 동기화하지 않습니다.
 
 ---
 
@@ -213,32 +216,28 @@ Persist page-level UI state separately from auth/runtime stores
 - 구조적이고 예측 가능한 query key를 사용합니다.
 
 ```ts
-["tickets", params][("ticket", id)];
+ticketQueryKeys.search(request);
+ticketQueryKeys.detail(id);
 ```
 
 ---
 
-### Query Types
+### Query Option Profile
 
-#### Static Data
+공통 query 계층은 두 가지 재사용 profile을 제공합니다.
 
-- 자주 바뀌지 않는 데이터(예: 카테고리)
+- `STATIC_QUERY_OPTIONS`: `staleTime` 5분, focus 및 reconnect refetch 비활성화
+- `DYNAMIC_QUERY_OPTIONS`: `staleTime` 0, focus refetch 활성화
 
-```ts
-staleTime: Infinity;
-```
+Settings와 category query를 포함한 현재 Service Desk query는 runtime-aware
+`getServiceDeskQueryOptions` profile을 사용합니다.
 
----
+- REMOTE는 `DYNAMIC_QUERY_OPTIONS`를 사용합니다.
+- LOCAL은 dynamic freshness를 유지하면서 inactive cache를 24시간 보존하고,
+  focus/reconnect refetch를 비활성화하며 mount 시 항상 refetch합니다.
 
-#### Dynamic Data
-
-- 자주 갱신되는 데이터(예: 티켓 목록)
-- LOCAL runtime의 mutable demo 데이터 경로를 포함합니다.
-
-```ts
-refetchOnWindowFocus: true;
-staleTime: 0;
-```
+Settings mutation은 영향받는 query family를 invalidate합니다. 현재 Service Desk의
+reference data는 무한 `staleTime`으로 모델링되어 있지 않습니다.
 
 LOCAL demo 모드에서는 mutation이 server-side in-memory state를 변경할 수 있으므로,
 React Query cache reset만으로는 상태를 완전히 되돌릴 수 없습니다.
@@ -304,7 +303,7 @@ const mutation = useMutation({
 | 컴포넌트 전용 상태 | `useState`                          |
 | 기능 범위 상태     | Zustand                             |
 | 앱 전역 상태       | Zustand (제한적으로)                |
-| Page local session | Feature hook + `sessionStorage`/URL |
+| Page local session | Feature/page hook + `sessionStorage`; 명시적으로 구현한 경우 URL |
 
 ---
 
@@ -337,7 +336,7 @@ Only globalize state when necessary
 
 ## URL 상태
 
-일부 상태는 URL에 저장합니다.
+페이지 상태가 내비게이션, 공유 또는 북마크에 참여해야 할 때 URL state가 적합합니다.
 
 ### 예시
 
@@ -353,6 +352,10 @@ Only globalize state when necessary
 If state affects navigation -> store in URL
 ```
 
+이는 모든 현재 검색 페이지가 URL 동기화를 구현했다는 뜻이 아니라 addressability
+원칙입니다. 현재 Service Desk 티켓 검색과 Insights 페이지는 이 값들을
+`sessionStorage`에 저장합니다.
+
 ---
 
 ## Page Local Session 전략
@@ -361,37 +364,40 @@ Page local session은 서버 상태가 아닌, 페이지 지향 UI 동작을 위
 
 ### Storage Layers
 
-#### 1. URL (Primary)
+#### 1. sessionStorage (현재 Service Desk 구현)
 
-내비게이션 관련 상태에 사용합니다.
+현재 브라우저 탭 안에서 일시적인 UI persistence에 사용합니다.
 
-예시:
+현재 예시:
 
-- 필터
-- 정렬
-- 페이지네이션
-
-```txt
-/service-desk?status=open&assignee=me&page=2
-```
-
----
-
-#### 2. sessionStorage (Secondary)
-
-현재 브라우저 탭 안에서의 일시적인 UI persistence에 사용합니다.
-
-예시:
-
-- 고급 필터 상태
-- 레이아웃 선호값
-- 마지막으로 사용한 검색 조건
+- 티켓 검색 조건
+- 티켓 목록의 페이지, scope, sort field, sort order
+- Insights 검색 조건과 scope
 
 특징:
 
 - 브라우저 탭 단위로 범위가 제한됩니다.
 - 탭이 닫히면 함께 사라집니다.
-- 빠르고 단순합니다.
+- hydration 이후 page-level hook을 통해 복원됩니다.
+
+---
+
+#### 2. URL (Addressability가 필요할 때)
+
+내비게이션, 공유 또는 북마크를 위해 상태가 route에 드러나야 할 때 사용합니다.
+
+예시:
+
+- 공유 가능한 필터
+- URL이 공개 page contract에 포함되는 정렬 또는 페이지네이션 view
+
+특징:
+
+- URL을 복사하거나 북마크해도 유지됩니다.
+- 브라우저 내비게이션에 참여합니다.
+- 명시적인 route/search parameter 동기화가 필요합니다.
+
+현재 Service Desk 검색 페이지는 이 계층을 구현하지 않았습니다.
 
 ---
 
@@ -429,11 +435,7 @@ useSessionStorageState<T>();
 ```
 
 ```ts
-useTicketSearchCriteriaState();
-```
-
-```ts
-const { value, setValue, reset } = useTicketSearchCriteriaState();
+const { page, sort, changePage, changeSort } = useServiceDeskSearchState();
 ```
 
 ---
@@ -448,12 +450,12 @@ const { value, setValue, reset } = useTicketSearchCriteriaState();
 | ---------------- | ------------------------ |
 | Auth session     | `authSessionStore`       |
 | UI persistence   | `useSessionStorageState` |
-| Navigation state | URL                      |
+| Addressable navigation state | 페이지에서 구현한 경우 URL |
 
 Prefer:
 
 ```ts
-useTicketSearchCriteriaState();
+useServiceDeskSearchState();
 ```
 
 Over:
@@ -606,7 +608,8 @@ Auth session과 UI persistence는 분리되어야 합니다.
 
 - 백엔드 동기화에는 React Query
 - 클라이언트 runtime 상태에는 Zustand 또는 local state
-- page local session persistence에는 URL과 `sessionStorage`
+- 현재 page local persistence에는 `sessionStorage`, page에서 addressability를
+  명시적으로 요구할 때는 URL state
 
 그 결과 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 상태 모델을 만듭니다.
 이는 연기된 프로덕션 인프라가 완성되었다는 의미가 아닙니다.

@@ -118,5 +118,9 @@
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Strategie de couverture Vitest",
     "description": "Entree du journal des decisions sur la couverture Vitest et les tests bases sur les risques."
+  },
+  "decisionStorybookCoverageStrategy202609": {
+    "title": "2026-09 Strategie de couverture Storybook",
+    "description": "Entree du journal des decisions sur la couverture Storybook et le remplacement du playground de composants."
   }
 }

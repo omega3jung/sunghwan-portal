@@ -32,8 +32,8 @@ The `docs/en` folder is organized by responsibility:
 - `02-architecture`: application and runtime boundaries
 - `03-domain`: current Service Desk domain model and workflow rules
 - `04-client-engineering`: UI, form, and localization implementation patterns
-- `05-development`: data fetching, implementation strategy, conventions,
-  documentation practices, and release records
+- `05-development`: data fetching, implementation and testing strategy,
+  conventions, documentation practices, and release records
 - `06-decisions`: historical decision logs
 
 ---
@@ -159,8 +159,9 @@ Key documents:
 
 ## Development
 
-Development documents cover server-state ownership, implementation strategy,
-project-wide conventions, documentation practices, and release records.
+Development documents cover server-state ownership, implementation and testing
+strategy, project-wide conventions, documentation practices, and release
+records.
 
 ### Data Fetching
 
@@ -185,6 +186,18 @@ Key documents:
 
 - [Development Approach](./05-development/development-approach.md)
 - [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
+
+---
+
+### Testing Strategy
+
+The testing strategy assigns domain, workflow, runtime, and deterministic UI
+behavior to Vitest while keeping isolated reusable-UI inspection within the
+project's focused Storybook boundary.
+
+Key document:
+
+- [Testing Strategy](./05-development/testing-strategy.md)
 
 ---
 
@@ -241,8 +254,9 @@ decided at that time.
 17. [Routing Strategy](./02-architecture/routing-strategy.md)
 18. [Database Strategy](./02-architecture/database-strategy.md)
 19. [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
-20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
-21. [Decision Documentation](./06-decisions/README.md)
+20. [Testing Strategy](./05-development/testing-strategy.md)
+21. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+22. [Decision Documentation](./06-decisions/README.md)
 
 ---
 

@@ -1,0 +1,148 @@
+{
+  "avatarComboBox": {
+    "selectUser": "Seleccionar un usuario",
+    "selectUsers": "Seleccionar usuarios"
+  },
+  "colorPicker": {
+    "title": "Selector de color"
+  },
+  "datePicker": {
+    "cards": {
+      "date": "Selección de una fecha con límites mínimo y máximo móviles.",
+      "dateTime": "Selección de fecha y hora de 24 horas con intervalos de minutos configurables.",
+      "dateRange": "Control explícito del preajuste y del intervalo concreto.",
+      "search": "Resolución de preajustes y sincronización del intervalo personalizado."
+    }
+  },
+  "fileAttachment": {
+    "formState": "Estado del formulario",
+    "files": "Archivos",
+    "totalSize": "Tamaño total",
+    "lastError": "Último error",
+    "errorCount": "Cantidad de errores",
+    "none": "Ninguno",
+    "errors": {
+      "count": "Límite de cantidad de archivos",
+      "size": "Límite de tamaño total",
+      "type": "Tipo de archivo no compatible"
+    }
+  },
+  "hierarchicalSelect": {
+    "empty": "(vacío)",
+    "noCategories": "No hay categorías",
+    "selectCategory": "Seleccionar una categoría",
+    "selectCategories": "Seleccionar categorías",
+    "back": "Atrás",
+    "items": {
+      "portal": "Portal",
+      "account": "Cuenta",
+      "login": "Inicio de sesión",
+      "profile": "Perfil",
+      "notification": "Notificación",
+      "email": "Correo electrónico",
+      "push": "Push",
+      "operations": "Operaciones",
+      "approval": "Aprobación",
+      "assignment": "Asignación",
+      "reporting": "Informes",
+      "general": "General"
+    }
+  },
+  "multiComboBox": {
+    "multiTitle": "Cuadro combinado múltiple",
+    "treeTitle": "Cuadro combinado múltiple en árbol",
+    "months": {
+      "January": "Enero",
+      "February": "Febrero",
+      "March": "Marzo",
+      "April": "Abril",
+      "May": "Mayo",
+      "June": "Junio",
+      "July": "Julio",
+      "August": "Agosto",
+      "September": "Septiembre",
+      "October": "Octubre",
+      "November": "Noviembre",
+      "December": "Diciembre"
+    },
+    "items": {
+      "fruit": "Fruta",
+      "apple": "Manzana",
+      "banana": "Plátano",
+      "grape": "Uva",
+      "orange": "Naranja",
+      "peach": "Melocotón",
+      "vegetable": "Verdura",
+      "carrot": "Zanahoria",
+      "onion": "Cebolla",
+      "garlic": "Ajo",
+      "broccoli": "Brócoli",
+      "meat": "Carne",
+      "beef": "Carne de res",
+      "pork": "Cerdo",
+      "chicken": "Pollo",
+      "fish": "Pescado",
+      "salmon": "Salmón",
+      "tuna": "Atún",
+      "dairy": "Lácteos",
+      "milk": "Leche",
+      "cheese": "Queso",
+      "empty": "Categoría vacía"
+    }
+  },
+  "richEditor": {
+    "placeholder": "Describe la solicitud, la investigación y la resolución.",
+    "empty": "(vacío)",
+    "sample": {
+      "heading": "Actualización de Service Desk",
+      "paragraph": "Este editor controlado muestra contenido operativo con formato.",
+      "review": "Revisar el problema informado",
+      "record": "Registrar la evidencia de la resolución"
+    }
+  },
+  "sortableTree": {
+    "collapseItem": "Plegar {{label}}",
+    "expandItem": "Desplegar {{label}}",
+    "dragItem": "Reordenar {{label}}",
+    "items": {
+      "workspace": "Espacio de trabajo",
+      "serviceDesk": "Mesa de servicio",
+      "tickets": "Tickets",
+      "insights": "Información",
+      "documents": "Documentos"
+    }
+  },
+  "stepper": {
+    "title": "Indicador de pasos",
+    "stepLabel": "Paso {{order}} - {{label}}",
+    "steps": {
+      "receiving": "Recepción",
+      "triage": "Clasificación",
+      "estimate": "Estimación",
+      "quote": "Cotización"
+    }
+  },
+  "timeline": {
+    "emptyContent": "No hay elementos en la línea de tiempo",
+    "items": {
+      "career-2016-bkit": {
+        "title": "Inicio del desarrollo de software empresarial en BKI IT",
+        "description": "Mantenimiento de plataformas MES de fabricación y desarrollo de soluciones internas de MES, gestión de activos e interfaces de datos con Java, C# WinForms/WPF, MSSQL y MariaDB.",
+        "meta": "2016.10 - 2018.12",
+        "badge": "BKI IT"
+      },
+      "career-2019-cynergy": {
+        "title": "Incorporación a Cynergy como desarrollador frontend",
+        "description": "Modernización de flujos internos de ERP y portal para una empresa estadounidense de garantía y remanufactura de dispositivos móviles, incluidos 18 meses presenciales en Dallas y colaboración remota global posterior.",
+        "meta": "2019.05 - 2025.03",
+        "badge": "Cynergy"
+      },
+      "project-2022-mobileklink": {
+        "title": "Entrega de un flujo de portal específico para MobileKlink",
+        "description": "Construcción de un flujo de recepción a envío en una sola pantalla, conexión de la lógica de dispositivos Samsung mediante Oracle RESTful Services, validación de 10 casos de prueba y finalización en ocho meses de un plan inicial de nueve.",
+        "meta": "2022.02 - 2025.03",
+        "badge": "Portal del cliente"
+      }
+    }
+  }
+}

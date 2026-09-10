@@ -1,0 +1,148 @@
+{
+  "avatarComboBox": {
+    "selectUser": "사용자 선택",
+    "selectUsers": "사용자 다중 선택"
+  },
+  "colorPicker": {
+    "title": "색상 선택"
+  },
+  "datePicker": {
+    "cards": {
+      "date": "변동하는 최소·최대 범위 안에서 하나의 날짜를 선택합니다.",
+      "dateTime": "설정 가능한 분 간격으로 날짜와 24시간제 시간을 선택합니다.",
+      "dateRange": "프리셋과 구체적인 날짜 범위를 외부에서 제어합니다.",
+      "search": "프리셋 해석과 사용자 지정 범위 상태를 동기화합니다."
+    }
+  },
+  "fileAttachment": {
+    "formState": "폼 상태",
+    "files": "파일 수",
+    "totalSize": "전체 용량",
+    "lastError": "최근 오류",
+    "errorCount": "오류 횟수",
+    "none": "없음",
+    "errors": {
+      "count": "파일 개수 제한",
+      "size": "전체 용량 제한",
+      "type": "지원하지 않는 파일 형식"
+    }
+  },
+  "hierarchicalSelect": {
+    "empty": "(비어 있음)",
+    "noCategories": "카테고리가 없습니다",
+    "selectCategory": "카테고리 선택",
+    "selectCategories": "카테고리 다중 선택",
+    "back": "뒤로",
+    "items": {
+      "portal": "포털",
+      "account": "계정",
+      "login": "로그인",
+      "profile": "프로필",
+      "notification": "알림",
+      "email": "이메일",
+      "push": "푸시",
+      "operations": "운영",
+      "approval": "승인",
+      "assignment": "배정",
+      "reporting": "보고",
+      "general": "일반"
+    }
+  },
+  "multiComboBox": {
+    "multiTitle": "멀티 콤보 박스",
+    "treeTitle": "트리 멀티 콤보 박스",
+    "months": {
+      "January": "1월",
+      "February": "2월",
+      "March": "3월",
+      "April": "4월",
+      "May": "5월",
+      "June": "6월",
+      "July": "7월",
+      "August": "8월",
+      "September": "9월",
+      "October": "10월",
+      "November": "11월",
+      "December": "12월"
+    },
+    "items": {
+      "fruit": "과일",
+      "apple": "사과",
+      "banana": "바나나",
+      "grape": "포도",
+      "orange": "오렌지",
+      "peach": "복숭아",
+      "vegetable": "채소",
+      "carrot": "당근",
+      "onion": "양파",
+      "garlic": "마늘",
+      "broccoli": "브로콜리",
+      "meat": "육류",
+      "beef": "소고기",
+      "pork": "돼지고기",
+      "chicken": "닭고기",
+      "fish": "생선",
+      "salmon": "연어",
+      "tuna": "참치",
+      "dairy": "유제품",
+      "milk": "우유",
+      "cheese": "치즈",
+      "empty": "빈 카테고리"
+    }
+  },
+  "richEditor": {
+    "placeholder": "요청, 조사 및 해결 내용을 입력하세요.",
+    "empty": "(비어 있음)",
+    "sample": {
+      "heading": "서비스 데스크 업데이트",
+      "paragraph": "이 제어형 에디터는 서식이 적용된 운영 내용을 보여줍니다.",
+      "review": "접수된 문제 검토",
+      "record": "해결 증빙 기록"
+    }
+  },
+  "sortableTree": {
+    "collapseItem": "{{label}} 접기",
+    "expandItem": "{{label}} 펼치기",
+    "dragItem": "{{label}} 재정렬",
+    "items": {
+      "workspace": "워크스페이스",
+      "serviceDesk": "서비스 데스크",
+      "tickets": "티켓",
+      "insights": "인사이트",
+      "documents": "문서"
+    }
+  },
+  "stepper": {
+    "title": "스테퍼",
+    "stepLabel": "{{order}}단계 - {{label}}",
+    "steps": {
+      "receiving": "입고",
+      "triage": "분류",
+      "estimate": "견적 산정",
+      "quote": "견적"
+    }
+  },
+  "timeline": {
+    "emptyContent": "타임라인 항목이 없습니다",
+    "items": {
+      "career-2016-bkit": {
+        "title": "BKI IT에서 엔터프라이즈 소프트웨어 개발 시작",
+        "description": "Java, C# WinForms/WPF, MSSQL, MariaDB를 활용해 제조 MES 플랫폼을 유지보수하고 사내 MES, 자산 관리 및 데이터 인터페이스 솔루션을 개발했습니다.",
+        "meta": "2016.10 - 2018.12",
+        "badge": "BKI IT"
+      },
+      "career-2019-cynergy": {
+        "title": "Cynergy 프론트엔드 개발자로 합류",
+        "description": "미국 모바일 기기 보증 및 재제조 기업의 사내 ERP와 포털 업무 흐름을 현대화했으며, 댈러스에서 18개월간 근무한 뒤 글로벌 원격 협업을 이어갔습니다.",
+        "meta": "2019.05 - 2025.03",
+        "badge": "Cynergy"
+      },
+      "project-2022-mobileklink": {
+        "title": "MobileKlink 고객 맞춤형 포털 업무 흐름 제공",
+        "description": "입고부터 출고까지 한 화면에서 처리하는 업무 흐름을 구축하고 Oracle RESTful Services로 삼성 기기 로직을 연동했으며, 10개 테스트 사례를 검증하고 9개월 계획을 8개월 만에 완료했습니다.",
+        "meta": "2022.02 - 2025.03",
+        "badge": "고객 포털"
+      }
+    }
+  }
+}

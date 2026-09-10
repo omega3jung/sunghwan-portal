@@ -1,7 +1,0 @@
-{
-  "title": "Reset Demo",
-  "message": "Reset local demo data?",
-  "description": "Reset local demo data and restore the initial mock data.",
-  "error": "Failed to reset demo data.",
-  "resetting": "Resetting"
-}

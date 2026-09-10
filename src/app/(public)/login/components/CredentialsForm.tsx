@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { PasswordInput } from "@/components/custom/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -113,13 +114,12 @@ export function CredentialsForm({
             name="password"
             control={form.control}
             render={({ field }) => (
-              <Input
+              <PasswordInput
                 id="login-input-password"
                 disabled={isPending}
                 aria-invalid={Boolean(passwordError)}
                 className={authInputClassName}
                 placeholder={t("common.passwordPlaceholder")}
-                type="password"
                 autoComplete="current-password"
                 {...field}
                 value={field.value ?? ""}

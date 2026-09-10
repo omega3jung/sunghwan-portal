@@ -12,8 +12,8 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   SERVICE_DESK: "/service-desk",
-  DEMO: "/demo",
   SETTINGS: "/settings",
+  STORYBOOK: "/storybook",
 } as const;
 
 /**
