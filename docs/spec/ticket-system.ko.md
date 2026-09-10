@@ -317,7 +317,9 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 현재 동작:
 
-- current work assignee만 work를 기록할 수 있습니다.
+- 현재와 과거 work assignee는 work evidence를 기록할 수 있습니다.
+- work-session submission을 통해 status를 변경할 수 있는 주체는 현재 work
+  assignee뿐입니다.
 - tracked minutes는 ticket aggregate에 반영됩니다.
 - work-session submission은 `Assigned -> Working`을 적용할 수 있습니다.
 - `Working -> Pending | Resolved`

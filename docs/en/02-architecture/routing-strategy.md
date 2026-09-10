@@ -20,6 +20,12 @@ The current Service Desk design uses:
 ```txt
 /service-desk
 /service-desk/[ticketId]
+/service-desk/insights
+/settings/service-desk-settings
+/settings/service-desk-settings/tenant
+/settings/service-desk-settings/category
+/settings/service-desk-settings/approval-step
+/settings/service-desk-settings/assignment-rule
 ```
 
 ### `/service-desk`
@@ -47,6 +53,19 @@ Responsibilities:
 
 Ticket detail is a page-level workflow, not a modal route.
 
+### `/service-desk/insights`
+
+The dedicated Service Desk analysis page. It combines ticket search criteria
+with analytical cards, charts, and supporting ticket results without turning
+the main ticket-list page into a dense reporting surface.
+
+### `/settings/service-desk-settings/*`
+
+Service Desk Settings uses a landing page plus independently addressable pages
+for Tenant, Category, Approval Step, and Assignment Rule management. Page-level
+guards improve navigation UX, while the corresponding API routes remain the
+authorization boundary.
+
 ---
 
 ## Page, Drawer, Dialog Policy
@@ -61,7 +80,7 @@ Examples:
 
 | UI Surface | Use |
 | --- | --- |
-| page | ticket list and ticket detail |
+| page | ticket list, ticket detail, Insights, and Service Desk Settings |
 | dialog | create ticket, requester update, action command forms |
 | drawer/panel | history or secondary inspection where implemented |
 
@@ -144,6 +163,7 @@ Important current API route groups:
 /api/service-desk/tenants
 /api/service-desk/tenants/[id]
 /api/service-desk/categories
+/api/service-desk/categories/[categoryId]/context
 /api/service-desk/approval-steps
 /api/service-desk/assignment-rules
 /api/service-desk/assignment-rules/recommendations
@@ -245,6 +265,10 @@ Examples:
 Search itself may still be submitted to a dedicated search endpoint when the
 criteria are too rich for simple query-string-only handling.
 
+The current Service Desk ticket search and Insights pages persist filters,
+sorting, pagination, and view state in `sessionStorage`; they do not currently
+synchronize that state to query parameters.
+
 ---
 
 ## LOCAL and REMOTE Runtime
@@ -275,9 +299,10 @@ This keeps routing stable as persistence evolves.
 
 ## Summary
 
-The current routing strategy uses stable page routes for Service Desk list and
-detail, dialogs for focused ticket commands, and API route handlers as the
-LOCAL/REMOTE orchestration boundary. The documented API surface should match the
-route files that actually exist. Service Desk Settings routes additionally
-apply the JWT ADMIN access gate, then resolve the effective canonical principal
-and shared category-scope capability before either runtime path.
+The current routing strategy uses stable page routes for the Service Desk list,
+detail, Insights, and settings surfaces, dialogs for focused ticket commands,
+and API route handlers as the LOCAL/REMOTE orchestration boundary. The
+documented API surface should match the route files that actually exist.
+Service Desk Settings routes additionally apply the JWT ADMIN access gate, then
+resolve the effective canonical principal and shared category-scope capability
+before either runtime path.

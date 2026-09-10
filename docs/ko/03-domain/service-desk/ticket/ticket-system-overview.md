@@ -281,10 +281,13 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 현재 behavior:
 
-- current work assignee만 work를 track할 수 있습니다.
-- `Assigned`는 `Working`으로의 transition이 필요합니다.
-- `Working`은 `Pending` 또는 `Resolved`로 이동할 수 있습니다.
-- `Pending`은 `Working` 또는 `Resolved`로 이동할 수 있습니다.
+- 현재와 과거 work assignee는 work evidence를 기록할 수 있습니다.
+- work-session submission을 통해 status를 변경할 수 있는 주체는 현재 work
+  assignee뿐입니다.
+- 현재 work assignee가 `Assigned`에서 제출할 때는 `Working`으로 이동해야 합니다.
+- 현재 work assignee는 `Working`을 `Pending` 또는 `Resolved`로 이동할 수 있습니다.
+- 현재 work assignee가 `Pending`에서 제출할 때는 `Working` 또는 `Resolved`로
+  이동해야 합니다.
 - tracked minutes는 ticket work total로 aggregate됩니다.
 - GET은 status를 변경하지 않습니다.
 - timer-style start/finish/switch route는 현재 route surface에 포함되지 않습니다.

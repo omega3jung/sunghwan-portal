@@ -26,13 +26,13 @@ auth
 common
 component
 dashboard
-demo
 documents
 error
 message
 serviceDesk
 settings
 shared
+storybook
 validation
 ```
 
@@ -55,9 +55,9 @@ src/lib/application/i18n/locales/en/
 ├─ common.json
 ├─ dashboard.json
 ├─ message.json
+├─ storybook.json
 ├─ validation.json
 ├─ component/
-├─ demo/
 ├─ documents/
 ├─ error/
 ├─ serviceDesk/

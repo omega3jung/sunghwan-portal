@@ -285,10 +285,12 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 Current behavior:
 
-- only current work assignees can track work
-- `Assigned` requires transition to `Working`
-- `Working` can move to `Pending` or `Resolved`
-- `Pending` can move to `Working` or `Resolved`
+- current and previous work assignees can record work evidence
+- only current work assignees can change status through a work-session submission
+- a current work assignee submitting from `Assigned` must move to `Working`
+- a current work assignee can move `Working` to `Pending` or `Resolved`
+- a current work assignee submitting from `Pending` must move to `Working` or
+  `Resolved`
 - tracked minutes aggregate into the ticket work total
 - GET does not mutate status
 - timer-style start/finish/switch routes are not part of the current route surface

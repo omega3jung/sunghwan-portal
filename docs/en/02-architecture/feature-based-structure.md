@@ -463,7 +463,7 @@ npm run lint
 ```
 
 `eslint-plugin-boundaries` classifies the project elements under `src` and
-enforces the layer allow-list from `.eslintrc.json`. It analyzes imports,
+enforces the layer allow-list from `eslint.config.mts`. It analyzes imports,
 re-exports, dynamic imports, and `require` calls, and rejects unknown local
 files or dependencies. The deliberate collaboration between adjacent
 Service Desk `ticket*` feature slices remains allowed through the `feature`

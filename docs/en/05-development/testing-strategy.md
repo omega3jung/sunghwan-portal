@@ -16,9 +16,13 @@ Risk
 -> deterministic regression protection
 ```
 
-The current automated test suite is centered on Vitest. Storybook browser tests
-and end-to-end browser workflows have different responsibilities and are kept
-outside the default unit-test boundary.
+The current automated test suite is centered on Vitest. Storybook complements
+that suite as the dedicated browser playground and interaction-review boundary
+for application-owned reusable UI. Its primary scope is
+`src/components/custom`, with selected application-wide layout and menu UI and
+a small number of independently renderable feature presentation components.
+End-to-end browser workflows have a different responsibility and remain outside
+the default unit-test boundary.
 
 ---
 
@@ -94,7 +98,9 @@ The project uses different test boundaries for different responsibilities.
 | `app/api` | HTTP parsing, authentication, authorization context, LOCAL/REMOTE dispatch, error mapping |
 | `app/(protected)` / page composition | Search state, view models, loading/error/data state, capability composition |
 | shared client state | Hydration, persistence, race handling, storage synchronization where behavior is non-trivial |
-| presentational UI | Tested selectively; visual and interaction-heavy coverage belongs primarily to Storybook/browser testing |
+| application-owned reusable UI | `src/components/custom` and selected application-wide layout/menu UI are reviewed primarily through Storybook states, Controls, composition, and browser interaction |
+| feature presentation UI | Added selectively when it is independently renderable and does not require application workflow infrastructure |
+| other presentational UI | Tested selectively; Storybook is not a repository-wide component coverage target |
 
 The same business branch should not be reproduced at every layer.
 
@@ -528,27 +534,231 @@ Complex reusable UI with meaningful visual or interaction behavior is a better
 candidate for Storybook/browser interaction coverage than repeated page-level
 Vitest tests.
 
+In the current project, the primary Storybook boundary is application-owned
+reusable UI under `src/components/custom`, `src/components/layout`, and
+`src/components/menu`. The custom component area is the comprehensive target;
+layout and menu components are selected only when isolated visual inspection is
+valuable. A small number of independently renderable feature presentation
+components may also be included. A component being visual or reusable does not
+by itself make it a Storybook target.
+
 ---
 
 ## Storybook and Browser Test Boundary
 
 Vitest protects application logic and deterministic component behavior.
 
-Storybook is intended to complement it by validating reusable UI states and
-interaction scenarios that are easier to review visually and in a browser
-environment.
+Storybook has a focused responsibility in the current project:
 
-Typical Storybook candidates include:
+```txt
+src/components/custom
+-> reusable UI contract
+-> representative states
+-> configurable public parameters
+-> browser interaction
+-> composition examples
 
-- complex shared components;
-- form controls with multiple states;
-- dialogs and interaction-heavy UI;
-- loading/empty/error/disabled variants;
-- responsive or visual states where DOM assertions alone provide little value.
+selected layout/menu UI
+-> application-wide visual states
+
+selected feature presentation UI
+-> independently renderable domain presentation
+```
+
+Storybook is not used as repository-wide component coverage.
+
+The default Storybook scope excludes:
+
+- `src/components/ui`, which mainly contains shadcn/Base UI primitives and thin
+  project wrappers;
+- feature containers, Route Handler/API-connected UI, and Service Desk workflow
+  controllers, while allowing a small number of independent presentation
+  components such as status or history displays;
+- application pages and route composition;
+- domain, authorization, routing, and persistence behavior already owned by
+  Vitest or server-side tests.
+
+This boundary keeps Storybook focused on UI that the project directly owns and
+that benefits from isolated browser inspection. The current non-custom Stories
+cover `RouteLoadingOverlay`, `PreferencesMenu`, `UserMenu`,
+`TicketStatusBadge`, and `TicketHistoryTimeline`; they are deliberate, bounded
+exceptions rather than a request for repository-wide coverage.
+
+### Relationship with the Previous Demo Playground
+
+The application previously used `src/app/(protected)/demo` as an internal
+playground for `src/components/custom`.
+
+Storybook replaces that responsibility when it provides equivalent or better
+inspection of the public component contract.
+
+The replacement criterion is not merely that a Story exists.
+
+```txt
+representative Story
++ Controls for configurable public parameters
++ args connected to the rendered component
++ browser interaction
++ observable controlled result
+= component playground replacement
+```
+
+Demo-specific control forms should not be copied into Storybook when Storybook
+Controls already represent the same public parameter.
+
+For example:
+
+```txt
+meaningfully different UI state
+-> Story
+
+continuous public parameter variation
+-> Controls
+```
+
+A `Disabled`, `Empty`, or `ReadOnly` state may deserve its own Story. A numeric
+setting such as `maxImages`, or another continuous configuration value, should
+normally remain a Control rather than becoming many near-duplicate Stories.
+
+### Public Contract and Meta Policy
+
+Storybook organization follows public component contracts, not folder size or
+the number of `.tsx` files.
+
+If two exported components in the same family expose materially different
+public APIs, they should normally use separate Storybook Meta definitions so
+their own Controls remain visible and type-safe.
+
+Internal implementation pieces do not require independent Stories when their
+behavior is already exercised through the public component.
+
+Storybook must reuse existing production constants, types, fixtures, and option
+definitions where they represent the real component contract. It should not
+duplicate production option unions or introduce Storybook-only component props
+to make a Story easier to configure.
+
+### Controlled Story Policy
+
+When a component is controlled, Storybook Controls and Canvas interaction
+should observe the same state.
+
+The intended direction is:
+
+```txt
+Controls change
+-> Story args change
+-> rendered component changes
+
+Canvas interaction
+-> component callback
+-> Story args/state change
+-> Controls and Canvas show the same result
+```
+
+`useArgs` or an equivalent Storybook-controlled pattern is preferred when it
+keeps the component's public value contract synchronized in both directions.
+
+Reading an initial value from `args` into local state without responding to
+later arg changes is not considered a complete Controls connection.
+
+### Interaction Policy
+
+Storybook should preserve the meaningful browser interactions that were
+previously useful in the component playground, such as:
+
+- select, remove, and clear;
+- date and range selection;
+- text/editor input;
+- attachment add/remove behavior;
+- tree expand/collapse and supported reordering;
+- step navigation;
+- other interactions exposed by the public custom component API.
+
+Manual Canvas interaction is sufficient when it provides the required
+inspection capability.
+
+Use `play` selectively when automated browser interaction provides meaningful
+regression value and remains stable. Do not add `play` merely to increase test
+counts, and do not force unstable browser behavior such as drag-and-drop into an
+automated path when manual inspection is more reliable.
+
+### Composition Stories
+
+Not every visible difference belongs to a component variant or Control.
+
+When the difference comes from caller-provided content or composition, represent
+it as a composition Story instead of expanding the component API.
+
+For example, a Stepper label such as:
+
+```txt
+Step 1: Request
+```
+
+may be demonstrated as caller-provided step content rather than modeled as a
+Stepper-specific variant when the component does not own that behavior.
+
+### Application Route and Access Boundary
+
+The protected application route `/storybook` is a launcher that renders
+Storybook in an iframe.
+
+- In development, the iframe loads `http://localhost:6006`.
+- In production, the application build copies the static Storybook output to
+  `public/storybook-static`, and the iframe loads
+  `/storybook-static/index.html` under the configured base path.
+
+Authentication protects navigation to the `/storybook` application page. It
+does not make the development server or files under `public/storybook-static`
+an authenticated asset boundary. The static production artifact can be
+requested directly, so the embedded route must not be treated as access
+control for confidential Stories or fixtures.
+
+### Storybook Verification
+
+A Storybook-related change should normally verify:
+
+```txt
+TypeScript
+-> ESLint
+-> Storybook static build
+-> representative browser rendering
+```
+
+When Controls or browser interaction change materially, verify that:
+
+- Controls update the actual rendered component;
+- controlled interaction updates observable state;
+- representative Stories mount without runtime errors;
+- Storybook does not make unintended application API requests.
+
+Selected `play` interactions provide additional regression protection. The
+repository already configures a Storybook Vitest browser project with a
+headless Playwright Chromium provider. It remains separate from the default
+`npm test` command, which runs only the `unit` project. The browser project is
+not currently a clean, enforced CI gate; its remaining `play` failures are a
+known verification gap.
+
+### E2E Boundary
 
 Full user journeys across authentication, navigation, backend persistence, and
 multiple pages belong to an end-to-end browser test boundary such as Playwright
 when that coverage is intentionally added.
+
+Examples include:
+
+```txt
+login
+-> impersonation
+-> ticket creation
+-> approval
+-> assignment
+-> action
+-> history
+-> work session
+```
+
+Storybook should not reproduce those application workflows.
 
 The project should not duplicate the same scenario across Vitest, Storybook, and
 E2E merely to increase test counts. Each layer should own a different failure
@@ -558,7 +768,7 @@ class.
 
 ## Verification
 
-A testing-related change should normally pass:
+A Vitest-related change should normally pass:
 
 ```txt
 targeted Vitest tests
@@ -566,6 +776,26 @@ targeted Vitest tests
 -> TypeScript
 -> ESLint
 ```
+
+A Storybook-related change should normally pass:
+
+```txt
+TypeScript
+-> ESLint
+-> Storybook static build
+-> representative browser rendering
+```
+
+The configured Storybook browser project can be run explicitly when a change
+affects `play` interactions or browser-only behavior:
+
+```bash
+npm exec vitest -- run --project storybook
+```
+
+This browser project is not part of the default `npm test` command and should
+currently be treated as a diagnostic check until its remaining interaction
+failures are resolved.
 
 Additional repository checks may be included when the change affects them.
 
@@ -605,9 +835,12 @@ domain invariants
 -> History and Work Session persistence
 ```
 
-After those boundaries are protected, lower-risk visual and reusable component
-coverage should move to Storybook/browser testing rather than continuing to
-expand Vitest indiscriminately.
+After those boundaries are protected, lower-risk visual coverage should not
+continue to expand Vitest indiscriminately. Reusable UI under
+`src/components/custom` should move to the Storybook boundary when isolated
+states, Controls, interaction, or composition are the more useful form of
+verification. Other visual components do not automatically become Storybook
+targets.
 
 ---
 
@@ -621,6 +854,12 @@ expand Vitest indiscriminately.
 - Reduce shared fixtures when they begin to hide important domain differences.
 - Track unprotected Critical workflow branches before low-coverage file lists.
 - Keep test infrastructure proportional to the risk it protects.
+- Keep comprehensive Storybook coverage scoped to `src/components/custom`.
+  Add layout/menu or feature presentation Stories only when they remain
+  independently renderable and provide clear application-wide inspection
+  value.
+- Keep Storybook Stories aligned with production public APIs and shared option
+  constants instead of duplicating component contracts in Story files.
 
 ---
 
@@ -630,6 +869,7 @@ expand Vitest indiscriminately.
 - [Service Desk Implementation Strategy](./service-desk-implementation-strategy.md)
 - [React Query Strategy](./react-query-strategy.md)
 - [Feature-Based Structure](../02-architecture/feature-based-structure.md)
+- [Storybook Coverage Strategy](../06-decisions/2026-09-storybook-coverage-strategy.md)
 
 ---
 
@@ -646,6 +886,7 @@ Stop when important risks are protected.
 ```
 
 Vitest protects domain rules, workflows, runtime orchestration, and deterministic
-UI/application behavior. Storybook and future browser/E2E tests complement that
-coverage where visual interaction or full-system execution is the more useful
-test boundary.
+UI/application behavior. Storybook owns isolated browser inspection for custom
+reusable UI, selected application-wide layout/menu UI, and a small number of
+independent feature presentation components. Future E2E tests cover full-system
+execution when that becomes the more useful boundary.
