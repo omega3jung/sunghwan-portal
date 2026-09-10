@@ -75,3 +75,26 @@ export const Empty: Story = {
     items: [],
   },
 };
+
+export const MinimalItems: Story = {
+  args: {
+    items: [
+      {
+        id: "created",
+        title: "Ticket submitted",
+      },
+      {
+        id: "assigned",
+        title: "Owner assigned",
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Timeline items only require an id and title; badge, description, meta, palette, and marker icon are optional.",
+      },
+    },
+  },
+};

@@ -2,19 +2,23 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
-import { DatePicker } from "@/components/custom/DatePicker";
+import { DateTimePicker } from "@/components/custom/DatePicker";
 
 const meta = {
-  title: "Custom/DatePicker",
-  component: DatePicker,
+  title: "Custom/DateTimePicker",
+  component: DateTimePicker,
   args: {
-    className: "w-72",
+    className: "w-80",
+    compact: false,
+    minuteStep: 5,
     onChange: fn(),
-    value: undefined,
+    placeholder: "Select date and time",
+    value: new Date(2026, 8, 9, 14, 30),
   },
   argTypes: {
     maxDate: { control: "date" },
     minDate: { control: "date" },
+    minuteStep: { control: "select", options: [1, 5, 10, 15, 30] },
     variant: {
       control: "select",
       options: ["default", "outline", "secondary", "ghost", "link"],
@@ -24,11 +28,11 @@ const meta = {
     docs: {
       description: {
         component:
-          "Controlled single-date picker with configurable calendar bounds.",
+          "Controlled date-time picker with compact layout, bounded dates, and supported minute increments.",
       },
     },
   },
-} satisfies Meta<typeof DatePicker>;
+} satisfies Meta<typeof DateTimePicker>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -42,7 +46,7 @@ export const Default: Story = {
     const [, updateArgs] = useArgs<typeof args>();
 
     return (
-      <DatePicker
+      <DateTimePicker
         {...args}
         maxDate={toDate(args.maxDate)}
         minDate={toDate(args.minDate)}
@@ -56,8 +60,8 @@ export const Default: Story = {
   },
 };
 
-export const WithValue: Story = {
-  args: { value: new Date(2026, 8, 9) },
+export const Compact: Story = {
+  args: { compact: true },
   render: Default.render,
 };
 
@@ -65,12 +69,11 @@ export const Bounded: Story = {
   args: {
     maxDate: new Date(2026, 9, 31),
     minDate: new Date(2026, 8, 1),
-    value: new Date(2026, 8, 9),
   },
   render: Default.render,
 };
 
 export const Disabled: Story = {
-  args: { disabled: true, value: new Date(2026, 8, 9) },
+  args: { disabled: true },
   render: Default.render,
 };

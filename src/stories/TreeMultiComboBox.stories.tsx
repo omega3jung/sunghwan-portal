@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
-import { MultiComboBox } from "@/components/custom/MultiComboBox";
-import { multiComboBoxMocks } from "@/mocks/ui/demo";
+import { TreeMultiComboBox } from "@/components/custom/MultiComboBox";
+import { treeMultiComboBoxMocks } from "@/mocks/ui/demo";
 
 const badgeVariants = [
   "default",
@@ -17,20 +17,20 @@ const badgeVariants = [
 ];
 
 const meta = {
-  title: "Custom/MultiComboBox",
-  component: MultiComboBox,
+  title: "Custom/TreeMultiComboBox",
+  component: TreeMultiComboBox,
   args: {
     badgeVariant: "palette",
     className: "w-96",
+    onChange: fn(),
     onRemove: fn(),
     onSelect: fn(),
-    options: multiComboBoxMocks,
+    options: treeMultiComboBoxMocks,
     paletteStart: 1,
-    placeholder: "Select months",
-    value: ["January", "March", "September"],
+    placeholder: "Select food groups",
+    value: ["apple", "salmon"],
   },
   argTypes: {
-    badgeOrderMap: { control: false },
     badgeVariant: { control: "select", options: badgeVariants },
     palettePick: { control: { type: "number", min: 1, max: 10, step: 1 } },
     paletteStart: { control: { type: "number", min: 1, max: 10, step: 1 } },
@@ -41,11 +41,11 @@ const meta = {
     docs: {
       description: {
         component:
-          "Controlled flat multi-select. Selection, removal, badge style, and palette controls all operate on the public component contract.",
+          "Controlled tree multi-select with compressed parent/child values and independently configurable visual props.",
       },
     },
   },
-} satisfies Meta<typeof MultiComboBox>;
+} satisfies Meta<typeof TreeMultiComboBox>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -55,19 +55,18 @@ export const Default: Story = {
     const [, updateArgs] = useArgs<typeof args>();
 
     return (
-      <MultiComboBox
-        {...args}
-        onRemove={(removed) => {
-          updateArgs({ value: args.value.filter((item) => item !== removed) });
-          args.onRemove?.(removed);
-        }}
-        onSelect={(selected) => {
-          if (!args.value.includes(selected)) {
-            updateArgs({ value: [...args.value, selected] });
-          }
-          args.onSelect?.(selected);
-        }}
-      />
+      <div className="space-y-3">
+        <TreeMultiComboBox
+          {...args}
+          onChange={(value) => {
+            updateArgs({ value });
+            args.onChange?.(value);
+          }}
+        />
+        <output className="block max-w-96 rounded-md bg-muted px-3 py-2 font-mono text-xs">
+          {args.value.length > 0 ? args.value.join(", ") : "No selection"}
+        </output>
+      </div>
     );
   },
 };

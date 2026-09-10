@@ -1,91 +1,79 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { useState } from "react";
+import { useArgs } from "storybook/preview-api";
+import { fn } from "storybook/test";
 
-import {
-  AvatarComboBox,
-  AvatarMultiComboBox,
-} from "@/components/custom/AvatarComboBox";
+import { AvatarComboBox } from "@/components/custom/AvatarComboBox";
 import { avatarComboMock } from "@/mocks/ui/demo";
 
 const meta = {
   title: "Custom/AvatarComboBox",
   component: AvatarComboBox,
+  args: {
+    clearable: true,
+    className: "h-10 w-80",
+    onChange: fn(),
+    options: avatarComboMock,
+    placeholder: "Select a user",
+    value: null as string | null,
+  },
+  argTypes: {
+    badgeVariant: { control: "select", options: ["default", "primary"] },
+    size: { control: "select", options: ["default", "sm", "lg"] },
+    variant: {
+      control: "select",
+      options: ["default", "ghost", "readOnly"],
+    },
+  },
   parameters: {
     docs: {
       description: {
         component:
-          "Single- and multi-user selectors backed by the same image/value/label option contract.",
+          "Controlled single-user selector. Controls and Canvas selection share the same value through Storybook args.",
       },
     },
-  },
-  args: {
-    className: "w-80 h-10",
-    options: avatarComboMock,
-    placeholder: "Select a user",
   },
 } satisfies Meta<typeof AvatarComboBox>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function ControlledSingle({ initialValue }: { initialValue: string | null }) {
-  const [value, setValue] = useState<string | null>(initialValue);
-
-  return (
-    <AvatarComboBox
-      clearable
-      className="w-80 h-10"
-      onChange={setValue}
-      options={avatarComboMock}
-      placeholder="Select a user"
-      value={value}
-    />
-  );
-}
-
-function ControlledMultiple() {
-  const [value, setValue] = useState<string[]>(
-    avatarComboMock.slice(0, 4).map((item) => item.value),
-  );
-
-  return (
-    <AvatarMultiComboBox
-      className="w-80 h-10"
-      maxImages={3}
-      onRemove={(removed) =>
-        setValue((current) => current.filter((item) => item !== removed))
-      }
-      onSelect={(selected) => setValue((current) => [...current, selected])}
-      options={avatarComboMock}
-      placeholder="Select users"
-      value={value}
-    />
-  );
-}
-
 export const Default: Story = {
-  render: () => <ControlledSingle initialValue={null} />,
+  render: function Render(args) {
+    const [, updateArgs] = useArgs<typeof args>();
+
+    return (
+      <AvatarComboBox
+        {...args}
+        onChange={(value) => {
+          updateArgs({ value });
+          args.onChange?.(value);
+        }}
+      />
+    );
+  },
 };
 
 export const WithValue: Story = {
-  render: () => <ControlledSingle initialValue={avatarComboMock[0].value} />,
+  args: { value: avatarComboMock[0].value },
+  render: Default.render,
 };
 
 export const Empty: Story = {
-  args: {
-    options: [],
-    placeholder: "No users available",
-    value: null,
-  },
+  args: { options: [], placeholder: "No users available" },
+  render: Default.render,
 };
 
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-    value: avatarComboMock[1].value,
-  },
+  args: { disabled: true, value: avatarComboMock[1].value },
+  render: Default.render,
 };
 
-export const Multiple: Story = {
-  render: () => <ControlledMultiple />,
+export const Loading: Story = {
+  args: { isLoading: true },
+  render: Default.render,
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true, value: avatarComboMock[2].value },
+  render: Default.render,
 };

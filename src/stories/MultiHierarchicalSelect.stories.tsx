@@ -2,9 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
-import {
-  HierarchicalSelect,
-} from "@/components/custom/HierarchicalSelect";
+import { MultiHierarchicalSelect } from "@/components/custom/HierarchicalSelect";
 
 import {
   getHierarchicalPathLabel,
@@ -12,20 +10,24 @@ import {
 } from "./fixtures/hierarchicalSelect";
 
 const meta = {
-  title: "Custom/HierarchicalSelect",
-  component: HierarchicalSelect,
+  title: "Custom/MultiHierarchicalSelect",
+  component: MultiHierarchicalSelect,
   args: {
     backLabel: "Back",
     emptyText: "No teams available",
     getDisplayLabel: getHierarchicalPathLabel,
     items: hierarchicalItems,
     onValueChange: fn(),
-    placeholder: "Choose a team",
+    placeholder: "Choose teams",
     selectableStrategy: "parent-without-children",
-    triggerClassName: "w-80",
-    value: null as string | null,
+    triggerClassName: "w-96",
+    value: ["frontend", "service-desk"],
   },
   argTypes: {
+    badgeVariant: {
+      control: "select",
+      options: ["default", "secondary", "destructive", "outline"],
+    },
     getDisplayLabel: { control: false },
     selectableStrategy: {
       control: "select",
@@ -36,11 +38,11 @@ const meta = {
     docs: {
       description: {
         component:
-          "Controlled single-value selection through level-by-level tree navigation, including configurable selection strategy and path labels.",
+          "Controlled multi-value hierarchical selector with loading, read-only, and selection-strategy states.",
       },
     },
   },
-} satisfies Meta<typeof HierarchicalSelect>;
+} satisfies Meta<typeof MultiHierarchicalSelect>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -51,37 +53,37 @@ export const Default: Story = {
 
     return (
       <div className="space-y-3">
-        <HierarchicalSelect
+        <MultiHierarchicalSelect
           {...args}
           onValueChange={(value) => {
             updateArgs({ value });
             args.onValueChange(value);
           }}
         />
-        <output className="block max-w-80 rounded-md bg-muted px-3 py-2 font-mono text-xs">
-          {args.value ?? "No selection"}
+        <output className="block max-w-96 rounded-md bg-muted px-3 py-2 font-mono text-xs">
+          {args.value.length > 0 ? args.value.join(", ") : "No selection"}
         </output>
       </div>
     );
   },
 };
 
-export const WithValue: Story = {
-  args: { value: "service-desk" },
-  render: Default.render,
-};
-
 export const Empty: Story = {
-  args: { items: [] },
+  args: { value: [] },
   render: Default.render,
 };
 
 export const Disabled: Story = {
-  args: { disabled: true, value: "frontend" },
+  args: { disabled: true },
   render: Default.render,
 };
 
-export const LeafOnly: Story = {
-  args: { selectableStrategy: "leaf-only" },
+export const Loading: Story = {
+  args: { isLoading: true, value: [] },
+  render: Default.render,
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true },
   render: Default.render,
 };

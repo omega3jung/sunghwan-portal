@@ -2,50 +2,39 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useArgs } from "storybook/preview-api";
 import { fn } from "storybook/test";
 
-import { MultiComboBox } from "@/components/custom/MultiComboBox";
-import { multiComboBoxMocks } from "@/mocks/ui/demo";
-
-const badgeVariants = [
-  "default",
-  "secondary",
-  "destructive",
-  "outline",
-  "ghost",
-  "link",
-  "palette",
-  "overdue",
-];
+import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
+import { avatarComboMock } from "@/mocks/ui/demo";
 
 const meta = {
-  title: "Custom/MultiComboBox",
-  component: MultiComboBox,
+  title: "Custom/AvatarMultiComboBox",
+  component: AvatarMultiComboBox,
   args: {
-    badgeVariant: "palette",
-    className: "w-96",
+    className: "h-10 w-80",
+    maxImages: 3,
     onRemove: fn(),
     onSelect: fn(),
-    options: multiComboBoxMocks,
-    paletteStart: 1,
-    placeholder: "Select months",
-    value: ["January", "March", "September"],
+    options: avatarComboMock,
+    placeholder: "Select users",
+    value: avatarComboMock.slice(0, 4).map((item) => item.value),
   },
   argTypes: {
-    badgeOrderMap: { control: false },
-    badgeVariant: { control: "select", options: badgeVariants },
-    palettePick: { control: { type: "number", min: 1, max: 10, step: 1 } },
-    paletteStart: { control: { type: "number", min: 1, max: 10, step: 1 } },
+    badgeVariant: { control: "select", options: ["default", "primary"] },
+    maxImages: { control: { type: "number", min: 1, step: 1 } },
     size: { control: "select", options: ["default", "sm", "lg"] },
-    variant: { control: "select", options: ["default", "ghost", "grayscale"] },
+    variant: {
+      control: "select",
+      options: ["default", "ghost", "readOnly"],
+    },
   },
   parameters: {
     docs: {
       description: {
         component:
-          "Controlled flat multi-select. Selection, removal, badge style, and palette controls all operate on the public component contract.",
+          "Controlled multi-user selector with configurable avatar overflow and multi-value callbacks.",
       },
     },
   },
-} satisfies Meta<typeof MultiComboBox>;
+} satisfies Meta<typeof AvatarMultiComboBox>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -55,7 +44,7 @@ export const Default: Story = {
     const [, updateArgs] = useArgs<typeof args>();
 
     return (
-      <MultiComboBox
+      <AvatarMultiComboBox
         {...args}
         onRemove={(removed) => {
           updateArgs({ value: args.value.filter((item) => item !== removed) });
@@ -77,11 +66,6 @@ export const Empty: Story = {
   render: Default.render,
 };
 
-export const ReadOnly: Story = {
-  args: { readOnly: true },
-  render: Default.render,
-};
-
 export const Disabled: Story = {
   args: { disabled: true },
   render: Default.render,
@@ -89,5 +73,10 @@ export const Disabled: Story = {
 
 export const Loading: Story = {
   args: { isLoading: true, value: [] },
+  render: Default.render,
+};
+
+export const ReadOnly: Story = {
+  args: { readOnly: true },
   render: Default.render,
 };
