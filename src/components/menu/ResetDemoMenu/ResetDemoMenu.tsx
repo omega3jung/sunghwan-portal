@@ -15,7 +15,7 @@ import { useResetServiceDeskDemo } from "@/feature/serviceDesk/shared/client";
 import { NS } from "@/lib/application/i18n";
 
 export function ResetDemoMenu() {
-  const { t } = useTranslation(NS.demo);
+  const { t } = useTranslation(NS.serviceDesk);
   const [open, setOpen] = useState(false);
 
   const { mutate: resetServiceDeskDemo, isPending } = useResetServiceDeskDemo();

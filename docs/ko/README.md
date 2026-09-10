@@ -31,8 +31,8 @@
 - `02-architecture`: application 및 runtime boundary
 - `03-domain`: 현재 Service Desk domain model과 workflow rule
 - `04-client-engineering`: UI, form, localization 구현 pattern
-- `05-development`: data fetching, 구현 전략, convention, documentation practice,
-  release 기록
+- `05-development`: data fetching, 구현 및 테스트 전략, convention, documentation
+  practice, release 기록
 - `06-decisions`: historical decision log
 
 ---
@@ -146,8 +146,8 @@ dialog/tool workflow입니다.
 
 ## Development
 
-Server-state ownership, 구현 전략, 프로젝트 전반의 convention, documentation
-practice와 release 기록을 설명합니다.
+Server-state ownership, 구현 및 테스트 전략, 프로젝트 전반의 convention,
+documentation practice와 release 기록을 설명합니다.
 
 ### Data Fetching
 
@@ -169,6 +169,17 @@ LOCAL 초안 hook은 브라우저 로컬 저장소 상태를 조정합니다.
 
 - [Development Approach](./05-development/development-approach.md)
 - [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
+
+---
+
+### Testing Strategy
+
+테스트 전략은 domain, workflow, runtime, deterministic UI behavior를 Vitest에
+배정하고, 격리된 reusable UI 검토는 프로젝트의 제한된 Storybook boundary에 둡니다.
+
+주요 문서:
+
+- [Testing Strategy](./05-development/testing-strategy.md)
 
 ---
 
@@ -224,8 +235,9 @@ Decision log는 historical record입니다. 당시 사용하던 용어가 남아
 17. [Routing Strategy](./02-architecture/routing-strategy.md)
 18. [Database Strategy](./02-architecture/database-strategy.md)
 19. [Service Desk Implementation Strategy](./05-development/service-desk-implementation-strategy.md)
-20. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
-21. [Decision 문서](./06-decisions/README.md)
+20. [Testing Strategy](./05-development/testing-strategy.md)
+21. [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+22. [Decision 문서](./06-decisions/README.md)
 
 ---
 

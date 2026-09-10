@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
-import { cleanup, renderHook, waitFor } from "@testing-library/react";
-import { act } from "react";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { addMonths } from "date-fns";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type {
@@ -74,6 +74,8 @@ const existingImage: TicketAttachmentMetadata = {
   reason: "SECURITY_DEMO_REPLACEMENT",
 };
 
+const futureDueAtISOString = addMonths(new Date(), 1).toISOString();
+
 function createTicket(
   overrides: Partial<TicketDetail> = {},
 ): TicketDetail {
@@ -102,7 +104,7 @@ function createTicket(
     isCurrentWorker: true,
     hasBeenWorker: true,
     workMinutes: 15,
-    dueAt: "2026-09-10T00:00:00.000Z",
+    dueAt: futureDueAtISOString,
     owner: true,
     active: true,
     tenantId: "tenant-1",
@@ -242,7 +244,7 @@ describe("useUpdateTicketDialog workflow", () => {
           categoryId: "category-1",
           subject: "Printer issue",
           content: "Prepared body",
-          dueAt: "2026-09-10T00:00:00.000Z",
+          dueAt: futureDueAtISOString,
           email: { to: [], cc: [], bcc: [] },
           files: [preparedFile],
           images: [existingImage, preparedImage],

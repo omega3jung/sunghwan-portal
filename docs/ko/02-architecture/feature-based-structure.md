@@ -422,7 +422,7 @@ npm run lint
 ```
 
 `eslint-plugin-boundaries`가 `src` 아래의 project element를 분류하고
-`.eslintrc.json`의 계층 허용 행렬을 적용합니다. Import, re-export, dynamic import,
+`eslint.config.mts`의 계층 허용 행렬을 적용합니다. Import, re-export, dynamic import,
 `require`를 검사하며 분류되지 않은 local file이나 dependency도 거부합니다. 인접한
 Service Desk `ticket*` feature slice 사이의 의도적인 협업은 `feature` element 정책으로
 허용합니다. Client/server runtime compatibility는 runtime marker와 Next.js build가

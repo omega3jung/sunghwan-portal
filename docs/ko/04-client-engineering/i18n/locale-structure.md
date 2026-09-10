@@ -26,13 +26,13 @@ auth
 common
 component
 dashboard
-demo
 documents
 error
 message
 serviceDesk
 settings
 shared
+storybook
 validation
 ```
 
@@ -55,9 +55,9 @@ src/lib/application/i18n/locales/en/
 ├─ common.json
 ├─ dashboard.json
 ├─ message.json
+├─ storybook.json
 ├─ validation.json
 ├─ component/
-├─ demo/
 ├─ documents/
 ├─ error/
 ├─ serviceDesk/
@@ -131,9 +131,11 @@ const highLabel = t("high");
 
 DatePicker, RichEditor, combo box와 같은 재사용 애플리케이션 component 내부의 placeholder, empty state, interaction label을 소유합니다.
 
-### `demo`
+### `storybook`
 
-`src/app/(protected)/demo` 아래 page가 사용하는 설명, fixture, control, 안내 문구를 소유합니다.
+`src/stories`에서 component 상태와 fixture를 설명하기 위해 사용하는 문구를 소유합니다. 실제 application page 문구는 이 namespace에 두지 않습니다.
+
+홈 화면 문구는 `dashboard`, Service Desk 초기화 문구는 `serviceDesk` namespace가 각각 소유합니다.
 
 ### Feature namespace
 

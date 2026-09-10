@@ -59,23 +59,28 @@ type TicketWorkSessionSubmitPayload = {
   durationMinutes?: number;
   startAt?: string;
   endAt?: string;
-  trackedMinutes: number;
   nextStatus?: "Working" | "Pending" | "Resolved";
   note?: string;
 };
 ```
 
-`trackedMinutes` must be positive. Range and duration modes are normalized
-server-side.
+The server derives `trackedMinutes` from `durationMinutes` in duration mode or
+from `startAt` and `endAt` in range mode. The resulting value must be positive.
 
 ---
 
 ## Actor Rule
 
-Only a current work assignee can create a work session.
+Current and previous work assignees can create a work session so that
+historical workers can add missing work evidence after reassignment.
+
+Only a current work assignee can request a status change through
+`nextStatus`. A previous work assignee must submit evidence without changing
+the ticket's current workflow status.
 
 Approval-phase tickets are not eligible because their current assignees are
-approvers, not workers.
+approvers, not workers. Approval assignment alone does not satisfy the current
+or historical work-assignment rule.
 
 ---
 
@@ -104,9 +109,12 @@ Pending -> Resolved
 
 Rules:
 
-- `Assigned` requires a transition to `Working`
-- `Pending` requires a transition to `Working` or `Resolved`
-- `Working` may stay `Working` when recording additional time
+- a current work assignee submitting from `Assigned` must move to `Working`
+- a current work assignee submitting from `Pending` must move to `Working` or
+  `Resolved`
+- a current work assignee submitting from `Working` may stay `Working` when
+  recording additional time
+- a previous work assignee records evidence without changing status
 - GET never mutates status
 - timer stop does not implicitly resolve a ticket
 
@@ -114,8 +122,8 @@ Rules:
 
 ## Work Minutes Aggregate
 
-Creating a work session adds `trackedMinutes` to the ticket aggregate
-`workMinutes`.
+Creating a work session adds the server-derived tracked minutes to the ticket
+aggregate `workMinutes`.
 
 The aggregate is useful for ticket list/detail display. Individual work-session
 rows remain the evidence.
@@ -187,6 +195,8 @@ It is a system command:
 ## Summary
 
 Work Session is the current work-time evidence model. It supports list/create,
-duration/range input, tracked-minute aggregation, and explicit work-status
-transitions. It is separate from Ticket Action and must not be described as a
-hidden GET-side-effect or timer-stop resolution mechanism.
+duration/range input, server-derived tracked-minute aggregation, and explicit
+work-status transitions. Current and previous work assignees may record
+evidence, while only a current work assignee may change status. It is separate
+from Ticket Action and must not be described as a hidden GET-side-effect or
+timer-stop resolution mechanism.

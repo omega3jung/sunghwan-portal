@@ -118,5 +118,9 @@
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Estrategia de cobertura de Vitest",
     "description": "Entrada del registro de decisiones sobre cobertura de Vitest y pruebas basadas en riesgos."
+  },
+  "decisionStorybookCoverageStrategy202609": {
+    "title": "2026-09 Estrategia de cobertura de Storybook",
+    "description": "Entrada del registro de decisiones sobre cobertura de Storybook y sustitucion del entorno de demostracion de componentes."
   }
 }

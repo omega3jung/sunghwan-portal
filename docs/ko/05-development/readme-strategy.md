@@ -154,13 +154,13 @@ docs/
     02-architecture/ # application 및 runtime boundary
     03-domain/       # 현재 domain model과 workflow rule
     04-client-engineering/ # UI, form, localization pattern
-    05-development/        # 구현, 프로젝트 공통 practice와 release 기록
+    05-development/        # 구현, 테스트, 프로젝트 공통 practice와 release 기록
     06-decisions/          # historical decision record
 ```
 
-현재 설계 문서는 구현과 정렬된 시스템을 설명합니다. Development 문서에는 통합
-release 기록이 포함되고, decision log는 특정 시점의 맥락을 보존합니다. README와
-overview 문서는 독자를 안내하며 적절한 source-of-truth 문서로 연결합니다.
+현재 설계 문서는 구현과 정렬된 시스템을 설명합니다. Development 문서에는 테스트
+전략과 통합 release 기록이 포함되고, decision log는 특정 시점의 맥락을 보존합니다.
+README와 overview 문서는 독자를 안내하며 적절한 source-of-truth 문서로 연결합니다.
 
 ---
 

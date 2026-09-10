@@ -15,8 +15,11 @@ Risk
 -> deterministic regression protection
 ```
 
-현재 자동화 테스트 suite는 Vitest를 중심으로 구성되어 있습니다. Storybook browser test와
-end-to-end browser workflow는 책임이 다르므로 기본 unit-test 경계 밖에 둡니다.
+현재 자동화 테스트 suite는 Vitest를 중심으로 구성되어 있습니다. Storybook은 프로젝트가
+소유한 reusable UI를 위한 전용 browser playground 및 interaction 검토 경계로 이를
+보완합니다. 주요 범위는 `src/components/custom`이며, 선별된 application-wide layout/menu
+UI와 독립적으로 렌더링 가능한 소수의 feature presentation component도 포함합니다.
+End-to-end browser workflow는 책임이 다르므로 기본 unit-test 경계 밖에 둡니다.
 
 ---
 
@@ -90,7 +93,9 @@ npm exec vitest -- run --project unit --coverage
 | `app/api` | HTTP parsing, authentication, authorization context, LOCAL/REMOTE dispatch, error mapping |
 | `app/(protected)` / page composition | search state, view model, loading/error/data state, capability composition |
 | shared client state | hydration, persistence, race 처리, 동작이 단순하지 않은 storage synchronization |
-| 표현 전용 UI | 선택적으로 테스트하며, visual 및 interaction 중심 coverage는 주로 Storybook/browser testing이 담당 |
+| 프로젝트가 소유한 reusable UI | `src/components/custom` 및 선별된 application-wide layout/menu UI는 주로 Storybook의 state, Controls, composition 및 browser interaction으로 검토 |
+| feature presentation UI | 독립적으로 렌더링할 수 있고 application workflow infrastructure가 필요하지 않은 경우에만 선별적으로 추가 |
+| 그 밖의 표현 전용 UI | 선택적으로 테스트하며, Storybook을 repository-wide component coverage 대상으로 사용하지 않음 |
 
 같은 business branch를 모든 계층에서 반복해서는 안 됩니다.
 
@@ -515,26 +520,222 @@ Type-only file, 단순 re-export 또는 도달할 수 없는 defensive branch를
 의미 있는 visual 또는 interaction 동작을 가진 복잡한 reusable UI는 page-level Vitest
 test를 반복하기보다 Storybook/browser interaction coverage에 더 적합합니다.
 
+현재 프로젝트의 주요 Storybook 경계는 `src/components/custom`,
+`src/components/layout`, `src/components/menu` 아래에서 프로젝트가 소유한 reusable
+UI입니다. Custom component 영역은 포괄적인 대상으로 삼고, layout과 menu component는
+독립적인 visual 검토 가치가 있을 때만 선별합니다. 독립적으로 렌더링 가능한 소수의
+feature presentation component도 포함할 수 있습니다. Component가 visual하거나
+reusable하다는 이유만으로 Storybook 대상이 되지는 않습니다.
+
 ---
 
 ## Storybook 및 Browser Test 경계
 
 Vitest는 application logic과 결정적인 component 동작을 보호합니다.
 
-Storybook은 시각적 검토와 browser 실행에 적합한 reusable UI state와
-interaction scenario를 검증해 이를 보완합니다.
+Storybook은 현재 프로젝트에서 다음의 집중된 책임을 가집니다.
 
-일반적인 Storybook 대상은 다음과 같습니다.
+```txt
+src/components/custom
+-> reusable UI contract
+-> representative states
+-> configurable public parameters
+-> browser interaction
+-> composition examples
 
-- 복잡한 shared component
-- 여러 state를 가진 form control
-- dialog 및 interaction 중심 UI
-- loading/empty/error/disabled variant
-- DOM assertion만으로 가치가 적은 responsive 또는 visual state
+selected layout/menu UI
+-> application-wide visual states
+
+selected feature presentation UI
+-> independently renderable domain presentation
+```
+
+Storybook을 repository-wide component coverage 도구로 사용하지 않습니다.
+
+기본 Storybook 범위에서 제외하는 대상은 다음과 같습니다.
+
+- 대부분 shadcn/Base UI primitive와 얇은 project wrapper인 `src/components/ui`
+- feature container, Route Handler/API 연결 UI 및 Service Desk workflow controller. 단,
+  status나 history 표시처럼 독립적인 소수의 presentation component는 허용합니다.
+- application page 및 route composition
+- 이미 Vitest 또는 server-side test가 소유하는 domain, authorization, routing 및
+  persistence 동작
+
+이 경계를 통해 Storybook은 프로젝트가 직접 소유하며 격리된 browser 검토의 가치가 있는
+UI에 집중합니다. 현재 custom 외부 Story는 `RouteLoadingOverlay`, `PreferencesMenu`,
+`UserMenu`, `TicketStatusBadge`, `TicketHistoryTimeline`을 다룹니다. 이는 repository-wide
+coverage를 요구하는 것이 아니라 의도적으로 제한한 예외입니다.
+
+### 이전 Demo Playground와의 관계
+
+애플리케이션은 이전에 `src/components/custom`을 위한 내부 playground로
+`src/app/(protected)/demo`를 사용했습니다.
+
+Storybook은 public component contract를 동일하거나 더 잘 검토할 수 있을 때 그 책임을
+대체합니다.
+
+대체 기준은 단순히 Story가 존재하는지가 아닙니다.
+
+```txt
+representative Story
++ Controls for configurable public parameters
++ args connected to the rendered component
++ browser interaction
++ observable controlled result
+= component playground replacement
+```
+
+Storybook Controls가 같은 public parameter를 표현한다면 demo 전용 control form을
+Storybook으로 복제하지 않습니다.
+
+예:
+
+```txt
+meaningfully different UI state
+-> Story
+
+continuous public parameter variation
+-> Controls
+```
+
+`Disabled`, `Empty`, `ReadOnly` 상태는 별도 Story가 필요할 수 있습니다. `maxImages`와
+같은 숫자 설정이나 그 밖의 연속적인 configuration value는 유사한 Story를 여러 개
+만들기보다 일반적으로 Control로 유지합니다.
+
+### Public Contract 및 Meta 정책
+
+Storybook 구성은 folder 크기나 `.tsx` 파일 수가 아니라 public component contract를
+따릅니다.
+
+같은 family의 두 exported component가 실질적으로 다른 public API를 제공한다면 각각의
+Control을 type-safe하게 표시할 수 있도록 일반적으로 별도 Storybook Meta를 사용합니다.
+
+Public component를 통해 동작을 충분히 검토할 수 있다면 내부 implementation component는
+독립적인 Story가 필요하지 않습니다.
+
+Storybook은 실제 component contract를 나타내는 기존 production constant, type, fixture
+및 option definition을 재사용해야 합니다. Production option union을 중복 정의하거나
+Story 작성을 쉽게 만들기 위한 Storybook 전용 component prop을 추가해서는 안 됩니다.
+
+### Controlled Story 정책
+
+Controlled component에서는 Storybook Controls와 Canvas interaction이 같은 state를
+관찰해야 합니다.
+
+의도한 흐름은 다음과 같습니다.
+
+```txt
+Controls change
+-> Story args change
+-> rendered component changes
+
+Canvas interaction
+-> component callback
+-> Story args/state change
+-> Controls and Canvas show the same result
+```
+
+Component의 public value contract를 양방향으로 동기화할 수 있다면 `useArgs` 또는 이와
+동등한 Storybook-controlled pattern을 사용합니다.
+
+`args`의 initial value를 local state에 한 번만 읽고 이후 args 변경에 반응하지 않는
+구조는 완전한 Controls 연결로 보지 않습니다.
+
+### Interaction 정책
+
+Storybook은 이전 component playground에서 유용했던 다음과 같은 browser interaction을
+유지해야 합니다.
+
+- select, remove 및 clear
+- date 및 range 선택
+- text/editor input
+- attachment add/remove 동작
+- tree expand/collapse 및 지원되는 reordering
+- step navigation
+- 그 밖에 public custom component API가 노출하는 interaction
+
+필요한 inspection capability를 제공한다면 수동 Canvas interaction으로 충분합니다.
+
+자동화된 browser interaction이 의미 있는 regression 가치를 제공하고 안정적으로
+유지될 때 `play`를 선별적으로 사용합니다. Test 수를 늘리기 위해서만 `play`를 추가하지
+않으며, drag-and-drop처럼 불안정한 browser 동작을 수동 검토가 더 신뢰할 만한 경우
+자동화하도록 강제하지 않습니다.
+
+### Composition Story
+
+모든 시각적 차이가 component variant 또는 Control에 속하는 것은 아닙니다.
+
+차이가 caller가 제공한 content나 composition에서 발생한다면 component API를 확장하지
+말고 composition Story로 표현합니다.
+
+예를 들어 다음과 같은 Stepper label은:
+
+```txt
+Step 1: Request
+```
+
+component가 해당 동작을 소유하지 않는 경우 Stepper 전용 variant가 아니라 caller가
+제공하는 step content로 보여줄 수 있습니다.
+
+### 애플리케이션 Route와 Access Boundary
+
+보호된 애플리케이션 route `/storybook`은 Storybook을 iframe으로 렌더링하는
+launcher입니다.
+
+- 개발 환경에서는 iframe이 `http://localhost:6006`을 load합니다.
+- 프로덕션에서는 애플리케이션 build가 Storybook static output을
+  `public/storybook-static`에 복사하고, iframe은 설정된 base path 아래의
+  `/storybook-static/index.html`을 load합니다.
+
+Authentication은 `/storybook` 애플리케이션 page로의 navigation을 보호합니다. 그러나
+development server나 `public/storybook-static` 아래의 파일까지 authenticated asset
+boundary로 만들지는 않습니다. Static production artifact는 직접 요청할 수 있으므로,
+embedded route를 confidential Story나 fixture의 access control로 취급해서는 안 됩니다.
+
+### Storybook 검증
+
+Storybook 관련 변경은 일반적으로 다음을 검증해야 합니다.
+
+```txt
+TypeScript
+-> ESLint
+-> Storybook static build
+-> representative browser rendering
+```
+
+Controls 또는 browser interaction이 실질적으로 변경되면 다음을 확인합니다.
+
+- Controls가 실제 렌더링된 component를 갱신함
+- controlled interaction이 관찰 가능한 state를 갱신함
+- representative Story가 runtime error 없이 mount됨
+- Storybook이 의도하지 않은 application API request를 만들지 않음
+
+선별된 `play` interaction은 추가 regression protection을 제공합니다. 저장소에는 이미
+headless Playwright Chromium provider를 사용하는 Storybook Vitest browser project가
+구성되어 있습니다. 이는 `unit` project만 실행하는 기본 `npm test` command와 분리되어
+있습니다. Browser project는 현재 모든 test가 통과하는 강제 CI gate가 아니며, 남아 있는
+`play` failure는 알려진 verification gap입니다.
+
+### E2E 경계
 
 Authentication, navigation, backend persistence 및 여러 page에 걸친 전체 사용자 여정은
 해당 coverage를 의도적으로 추가할 때 Playwright 같은 end-to-end browser test 경계에
 속합니다.
+
+예:
+
+```txt
+login
+-> impersonation
+-> ticket creation
+-> approval
+-> assignment
+-> action
+-> history
+-> work session
+```
+
+Storybook은 이러한 application workflow를 재현하지 않습니다.
 
 테스트 수를 늘리기 위해 Vitest, Storybook 및 E2E에서 같은 scenario를 중복해서는 안
 됩니다. 각 계층은 서로 다른 failure class를 소유해야 합니다.
@@ -543,7 +744,7 @@ Authentication, navigation, backend persistence 및 여러 page에 걸친 전체
 
 ## 검증
 
-테스트 관련 변경은 일반적으로 다음 검사를 통과해야 합니다.
+Vitest 관련 변경은 일반적으로 다음 검사를 통과해야 합니다.
 
 ```txt
 targeted Vitest tests
@@ -551,6 +752,25 @@ targeted Vitest tests
 -> TypeScript
 -> ESLint
 ```
+
+Storybook 관련 변경은 일반적으로 다음 검사를 통과해야 합니다.
+
+```txt
+TypeScript
+-> ESLint
+-> Storybook static build
+-> representative browser rendering
+```
+
+`play` interaction 또는 browser 전용 동작에 영향을 주는 변경은 구성된 Storybook browser
+project를 명시적으로 실행할 수 있습니다.
+
+```bash
+npm exec vitest -- run --project storybook
+```
+
+이 browser project는 기본 `npm test` command에 포함되지 않습니다. 남아 있는 interaction
+failure를 해결하기 전까지 diagnostic check로 사용합니다.
 
 변경의 영향 범위에 따라 저장소의 다른 검사도 추가할 수 있습니다.
 
@@ -587,8 +807,10 @@ domain invariants
 -> History and Work Session persistence
 ```
 
-이 경계가 보호된 뒤에는 Vitest를 무분별하게 확대하기보다 낮은 위험의 visual 및
-reusable component coverage를 Storybook/browser testing으로 이동해야 합니다.
+이 경계가 보호된 뒤에는 Vitest를 무분별하게 확대하지 않습니다. 격리된 state, Controls,
+interaction 또는 composition이 더 유용한 검증 방식이라면 `src/components/custom`의
+reusable UI coverage를 Storybook 경계로 이동합니다. 다른 visual component가 자동으로
+Storybook 대상이 되는 것은 아닙니다.
 
 ---
 
@@ -601,6 +823,11 @@ reusable component coverage를 Storybook/browser testing으로 이동해야 합�
 - Shared fixture가 중요한 domain 차이를 숨기기 시작하면 축소합니다.
 - Coverage가 낮은 파일 목록보다 보호되지 않은 Critical workflow branch를 먼저 추적합니다.
 - 테스트 infrastructure는 보호하는 위험에 비례하도록 유지합니다.
+- 포괄적인 Storybook coverage는 `src/components/custom`에 유지합니다. Layout/menu 또는
+  feature presentation Story는 독립적으로 렌더링할 수 있고 application-wide inspection
+  가치가 명확할 때만 추가합니다.
+- Storybook Story는 component contract를 중복 정의하지 않고 production public API 및
+  shared option constant와 일치하도록 유지합니다.
 
 ---
 
@@ -610,6 +837,7 @@ reusable component coverage를 Storybook/browser testing으로 이동해야 합�
 - [Service Desk 구현 전략](./service-desk-implementation-strategy.md)
 - [React Query 전략](./react-query-strategy.md)
 - [Feature 기반 구조](../02-architecture/feature-based-structure.md)
+- [Storybook Coverage 전략](../06-decisions/2026-09-storybook-coverage-strategy.md)
 
 ---
 
@@ -626,5 +854,6 @@ Stop when important risks are protected.
 ```
 
 Vitest는 domain rule, workflow, runtime orchestration 및 결정적인 UI/application 동작을
-보호합니다. Storybook과 향후 browser/E2E test는 visual interaction 또는 전체 system
-실행이 더 유용한 테스트 경계인 경우 해당 coverage를 보완합니다.
+보호합니다. Storybook은 custom reusable UI, 선별된 application-wide layout/menu UI 및
+독립적인 소수의 feature presentation component를 격리된 browser 환경에서 검토합니다.
+향후 E2E test는 full-system execution이 더 유용한 경계가 될 때 이를 담당합니다.

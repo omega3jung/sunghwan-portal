@@ -20,6 +20,12 @@ API route handler 뒤에 둡니다.
 ```txt
 /service-desk
 /service-desk/[ticketId]
+/service-desk/insights
+/settings/service-desk-settings
+/settings/service-desk-settings/tenant
+/settings/service-desk-settings/category
+/settings/service-desk-settings/approval-step
+/settings/service-desk-settings/assignment-rule
 ```
 
 ### `/service-desk`
@@ -46,6 +52,18 @@ Ticket detail page입니다.
 - 허용되는 update/action dialog open
 
 Ticket detail은 modal route가 아니라 page-level workflow입니다.
+
+### `/service-desk/insights`
+
+Service Desk 전용 분석 페이지입니다. 메인 ticket-list page를 밀도 높은 reporting
+surface로 만들지 않으면서 ticket search criteria, analytical card, chart, supporting
+ticket result를 결합합니다.
+
+### `/settings/service-desk-settings/*`
+
+Service Desk Settings는 landing page와 Tenant, Category, Approval Step, Assignment
+Rule을 위한 독립적인 addressable page로 구성됩니다. Page-level guard는 navigation
+UX를 개선하고, 대응하는 API route는 authorization boundary를 유지합니다.
 
 ---
 
@@ -130,6 +148,7 @@ purpose-aware해야 합니다. Settings capability와 approver/assignee company 
 /api/service-desk/tenants
 /api/service-desk/tenants/[id]
 /api/service-desk/categories
+/api/service-desk/categories/[categoryId]/context
 /api/service-desk/approval-steps
 /api/service-desk/assignment-rules
 /api/service-desk/assignment-rules/recommendations
@@ -227,6 +246,9 @@ Query parameter는 공유/탐색에 유용한 list/search state에 사용합니�
 
 복잡한 search criteria는 dedicated search endpoint로 제출할 수 있습니다.
 
+현재 Service Desk 티켓 검색과 Insights 페이지는 필터, 정렬, 페이지네이션, view
+state를 `sessionStorage`에 저장하며 query parameter와 동기화하지 않습니다.
+
 ---
 
 ## LOCAL/REMOTE Runtime
@@ -255,9 +277,9 @@ page/component
 
 ## 요약
 
-현재 routing 전략은 Service Desk list/detail page를 안정적으로 유지하고, 특정 작업에 집중하는
-command는 dialog/API command로 처리하며, LOCAL/REMOTE runtime orchestration은 route
-handler에 둡니다. 문서화된 API surface는 실제 route file과 맞아야 합니다.
-Service Desk Settings route는 추가로 JWT ADMIN access gate를 적용한 다음 effective
-canonical principal과 category-scope capability를 해석하고 두 runtime 중 하나로
-분기합니다.
+현재 routing 전략은 Service Desk list, detail, Insights, settings surface를 안정적인
+page route로 유지하고, 특정 작업에 집중하는 command는 dialog/API command로 처리하며,
+LOCAL/REMOTE runtime orchestration은 route handler에 둡니다. 문서화된 API surface는
+실제 route file과 맞아야 합니다. Service Desk Settings route는 추가로 JWT ADMIN
+access gate를 적용한 다음 effective canonical principal과 category-scope capability를
+해석하고 두 runtime 중 하나로 분기합니다.

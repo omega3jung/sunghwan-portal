@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { toast } from "@/components/ui/toast";
 import { NS } from "@/lib/application/i18n";
-import { createSettingsNavigationMock } from "@/mocks/ui/navigation/settingsNavigation";
+import { createSettingsNavigationGroups } from "@/mocks/domain/navigation/settingsNavigation";
 import { cn } from "@/shared/utils/presentation";
 
 import { useSettingsAccess } from "../_providers";
@@ -26,7 +26,7 @@ const SERVICE_DESK_TENANT_SETTINGS_PATH =
 export function SettingsNavigation() {
   const { t } = useTranslation(NS.settings);
   const { type } = useSettingsAccess();
-  const settingsNavigationItems = createSettingsNavigationMock(t).map(
+  const settingsNavigationItems = createSettingsNavigationGroups(t).map(
     (group) => ({
       ...group,
       items:

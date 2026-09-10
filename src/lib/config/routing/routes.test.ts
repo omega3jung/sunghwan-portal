@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { isPublicRoute } from "./routes";
+import { isPublicRoute, ROUTES } from "./routes";
+
+describe("route paths", () => {
+  it("exposes Storybook as an application route", () => {
+    expect(ROUTES.STORYBOOK).toBe("/storybook");
+  });
+});
 
 describe("public route policy", () => {
   it.each(["/login", "/login/reset", "/login/mfa/challenge"])(

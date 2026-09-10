@@ -151,7 +151,8 @@ The project uses `CredentialsProvider`.
 
 `authorize()` resolves an `AuthUser` through:
 
-- LOCAL demo resolvers (`resolveDemoAuth`, `resolveClientAuth`)
+- the unified LOCAL demo resolver (`resolveDemoAuth`), which searches both
+  internal and client demo identities
 - or REMOTE API login (`/auth/login`)
 
 ---

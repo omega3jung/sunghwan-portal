@@ -1,18 +1,21 @@
 {
   "name": "sunghwan-portal",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:all": "concurrently --kill-others-on-fail --names next,storybook --prefix-colors blue,magenta \"npm run dev\" \"npm run storybook:no\"",
     "clean:next": "node -e \"require('node:fs').rmSync('.next', { recursive: true, force: true })\"",
     "dev:clean": "npm run clean:next && npm run dev",
-    "build": "next build",
+    "build": "npm run build-storybook:app && next build",
     "start": "next start",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
     "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook:no": "storybook dev -p 6006 --no-open",
+    "build-storybook": "node scripts/build-storybook.mjs",
+    "build-storybook:app": "node scripts/build-storybook.mjs --app"
   },
   "engines": {
     "node": "24.x",
@@ -68,7 +71,6 @@
     "@eslint/js": "^9.39.2",
     "@storybook/addon-a11y": "^10.5.3",
     "@storybook/addon-docs": "^10.5.3",
-    "@storybook/addon-onboarding": "^10.5.3",
     "@storybook/addon-vitest": "^10.5.3",
     "@storybook/nextjs-vite": "^10.5.3",
     "@tailwindcss/postcss": "^4.3.3",
@@ -81,6 +83,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
+    "concurrently": "^10.0.5",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.2.11",
     "eslint-import-resolver-typescript": "^4.4.5",

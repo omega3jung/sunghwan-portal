@@ -47,7 +47,9 @@ A focused review takes about five minutes:
    demo roles.
 4. Open **Settings → IT Service Desk Settings** and review Tenant, Category,
    Approval Steps, and Assignment Rules.
-5. Review the [canonical ticket specification](./docs/spec/ticket-system.md),
+5. Open **Storybook** from the application menu and inspect reusable custom
+   components, representative application-wide UI, Controls, and interactions.
+6. Review the [canonical ticket specification](./docs/spec/ticket-system.md),
    [operation rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md), or
    [documentation index](./docs/en/README.md) for design and workflow details.
 
@@ -63,6 +65,7 @@ A focused review takes about five minutes:
   explicit
 - accounting for failure handling, traceability, and change impact based on
   operational experience
+- separating risk-based Vitest coverage from focused Storybook UI inspection
 - maintaining current design documents separately from historical decision logs
 
 ## Key Highlights
@@ -77,6 +80,8 @@ A focused review takes about five minutes:
 - per-requester draft recovery and attachment preparation boundaries
 - work-session evidence with tracked-minute aggregation
 - responsive dashboard, insights, ticket, and settings experiences
+- focused Storybook coverage available through the application `/storybook`
+  route
 
 ## Current Status
 
@@ -196,7 +201,9 @@ POST /api/service-desk/tickets/[ticketId]/command/start-work
 
 History records the affected domain area (`type`), cause (`source`),
 authoritative event, actor, structured before/after values, and supplemental
-metadata. Work sessions remain separate from ticket actions. The current route
+metadata. Work sessions remain separate from ticket actions. Current and
+previous work assignees may record work evidence, while only a current work
+assignee may change status through a work-session submission. The current route
 surface supports list/create behavior and supported work-status transitions;
 complete timer-style start/finish/switch routes are deferred.
 
@@ -245,9 +252,12 @@ State ownership follows the same boundary discipline:
   preferences, and sidebar state.
 - Component state owns transient interaction details such as dialogs and form
   steps.
+- Page-level hooks use `sessionStorage` to restore Service Desk ticket-search
+  and Insights criteria, scope, sorting, and pagination within the current tab.
 
 Ticket, history, settings, and organization query results are not mirrored into
-Zustand.
+Zustand. The current Service Desk search pages do not synchronize their search
+state to URL query parameters.
 
 ## Project Evolution and Migration
 
@@ -318,7 +328,7 @@ src/
   mocks/        # LOCAL users, organization data, and Service Desk scenarios
   server/       # embedded services, repositories, mappers, and DTOs
   shared/       # reusable hooks, types, constants, and utilities
-  stories/      # Storybook examples
+  stories/      # focused Storybook states, Controls, interactions, and compositions
   styles/       # global Tailwind CSS and theme tokens
   types/        # global and library type augmentation
 docs/
@@ -347,9 +357,10 @@ Recommended entry points:
 10. [Ticket Form](./docs/en/04-client-engineering/forms/ticket-form.md) and
    [Attachment Design](./docs/en/04-client-engineering/forms/ticket-attachment.md)
 11. [Implementation Strategy](./docs/en/05-development/service-desk-implementation-strategy.md)
-12. [Boolean Naming Convention](./docs/en/05-development/boolean-naming-convention.md)
-13. [README Strategy](./docs/en/05-development/readme-strategy.md)
-14. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
+12. [Testing Strategy](./docs/en/05-development/testing-strategy.md)
+13. [Boolean Naming Convention](./docs/en/05-development/boolean-naming-convention.md)
+14. [README Strategy](./docs/en/05-development/readme-strategy.md)
+15. [Ticket Operation Rules](./docs/en/03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 
 Historical decision records are indexed in
 [Decision Documentation](./docs/en/06-decisions/README.md).
@@ -358,18 +369,24 @@ Historical decision records are indexed in
 
 Current repository-level verification includes:
 
-- Next.js production build and TypeScript compilation through `npm run build`
+- 163 source-local Vitest test files exercised by the unit project through
+  `npm test`
 - ESLint 9 static analysis through `npm run lint`
 - architecture dependency policies enforced by `eslint-plugin-boundaries` as
   part of that lint command
+- 22 Storybook files with 94 Story entries across custom components and
+  selected layout, menu, and feature-presentation UI
 - Storybook static-build verification through `npm run build-storybook`
-- Storybook/Vitest browser-mode configuration with a Playwright Chromium
-  provider
+- a separate Storybook/Vitest browser project with five selected `play`
+  interaction files and a headless Playwright Chromium provider
+- an application production build that embeds the Storybook static output and
+  then builds Next.js through `npm run build`
 
-The current Storybook surface contains three story files and its configuration
-MDX. Testing Library is installed, but the repository contains no standalone
-`*.test` or `*.spec` suites and exposes no repository-level `test` script.
-Automated coverage remains an improvement area.
+The default `npm test` command runs only the unit project. The Storybook browser
+project remains an explicit diagnostic check rather than a clean, enforced CI
+gate while its remaining interaction failures are resolved. See the
+[Testing Strategy](./docs/en/05-development/testing-strategy.md) for ownership,
+scope, and verification boundaries.
 
 ## Local Development
 
@@ -393,17 +410,26 @@ needed. Set `NEXTAUTH_SECRET` in `.env.local` to a non-empty development value,
 then open [http://localhost:3000](http://localhost:3000) and select **Try Demo**.
 The LOCAL experience does not require PostgreSQL or an external API.
 
+To run Next.js and Storybook together and use the application `/storybook`
+route, run `npm run dev:all`. This starts Storybook on port 6006 without opening
+a browser automatically.
+
 ### Available Scripts
 
-| Command                   | Purpose                                         |
-| ------------------------- | ----------------------------------------------- |
-| `npm run dev`             | Start the Next.js development server            |
-| `npm run dev:clean`       | Remove `.next` and start the development server |
-| `npm run build`           | Create a production build                       |
-| `npm run start`           | Start a previously built production server      |
-| `npm run lint`            | Run ESLint and architecture boundary rules      |
-| `npm run storybook`       | Start Storybook on port 6006                    |
-| `npm run build-storybook` | Create a static Storybook build                 |
+| Command                       | Purpose                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `npm run dev`                 | Start only the Next.js development server                                |
+| `npm run dev:all`             | Start Next.js and Storybook together without auto-opening a browser      |
+| `npm run dev:clean`           | Remove `.next` and start the Next.js development server                  |
+| `npm test`                    | Run the default Vitest unit project                                      |
+| `npm run test:watch`          | Run the Vitest unit project in watch mode                                |
+| `npm run lint`                | Run ESLint and architecture boundary rules                               |
+| `npm run storybook`           | Start Storybook on port 6006 and allow its normal browser-open behavior  |
+| `npm run storybook:no`        | Start Storybook on port 6006 without opening a browser                   |
+| `npm run build-storybook`     | Create a standalone static Storybook build                               |
+| `npm run build-storybook:app` | Build Storybook and copy it into the application public assets           |
+| `npm run build`               | Embed Storybook and create the Next.js production build                  |
+| `npm run start`               | Start a previously built production server                               |
 
 ## Environment Variables
 

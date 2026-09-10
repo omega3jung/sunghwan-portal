@@ -118,5 +118,9 @@
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Vitest Coverage Strategy",
     "description": "Vitest coverage and risk-based testing strategy decision log entry."
+  },
+  "decisionStorybookCoverageStrategy202609": {
+    "title": "2026-09 Storybook Coverage Strategy",
+    "description": "Storybook coverage boundary and component playground replacement strategy decision log entry."
   }
 }

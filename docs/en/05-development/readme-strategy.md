@@ -156,14 +156,14 @@ docs/
     02-architecture/ # application and runtime boundaries
     03-domain/       # current domain models and workflow rules
     04-client-engineering/ # UI, form, and localization patterns
-    05-development/        # implementation, project practices, and releases
+    05-development/        # implementation, testing, project practices, and releases
     06-decisions/          # historical decision records
 ```
 
 Current design documents explain the implementation-aligned system. Development
-documents include the consolidated release record, while decision logs preserve
-point-in-time context. README and overview documents orient readers and link to
-the appropriate source-of-truth documents.
+documents include testing strategy and the consolidated release record, while
+decision logs preserve point-in-time context. README and overview documents
+orient readers and link to the appropriate source-of-truth documents.
 
 ---
 
