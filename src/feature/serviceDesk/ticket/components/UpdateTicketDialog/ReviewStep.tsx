@@ -32,6 +32,7 @@ import {
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
 import { bytesToKB, bytesToMB } from "@/shared/utils/browser";
+import { sanitizeRichText } from "@/shared/utils/value";
 
 import { useTicketUpdateFormContext } from "../../context/TicketUpdateFormContext";
 import { RoutingRecalculationNotice } from "./RemoteNotices";
@@ -93,7 +94,7 @@ export function ReviewStep() {
           <div
             className="prose prose-sm min-h-52 min-w-0 max-w-none wrap-break-word rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
             dangerouslySetInnerHTML={{
-              __html: values.body || "<p>-</p>",
+              __html: sanitizeRichText(values.body || "<p>-</p>"),
             }}
           />
         </div>

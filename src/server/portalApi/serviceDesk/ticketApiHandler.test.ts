@@ -111,6 +111,25 @@ describe("Ticket portal API orchestration", () => {
     );
   });
 
+  it.each(["comment", "note"])(
+    "checks ticket visibility before creating a %s action",
+    async (action) => {
+      mocks.ticket.getTicketDetail.mockResolvedValue(null);
+
+      const response = await handleTicketPortalApi(
+        createContext(
+          `/service-desk/tickets/ticket-1/command/${action}`,
+          "POST",
+          { content: "hidden ticket content" },
+          "effective.employee",
+        ),
+      );
+
+      expect(response.status).toBe(404);
+      expect(mocks.action.executeTicketAction).not.toHaveBeenCalled();
+    },
+  );
+
   it("binds draft access directly to the effective username", async () => {
     await handleTicketPortalApi(
       createContext("/service-desk/tickets/draft", "GET", undefined, "effective.employee"),

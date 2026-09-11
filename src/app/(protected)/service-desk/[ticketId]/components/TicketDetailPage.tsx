@@ -16,6 +16,7 @@ import {
 } from "@/feature/serviceDesk/ticketAction/client";
 import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
+import { sanitizeRichText } from "@/shared/utils/value";
 
 import { useTicketDetailData } from "../hooks/useTicketDetailData";
 import { useTicketDetailViewModel } from "../hooks/useTicketDetailViewModel";
@@ -141,7 +142,9 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
                       <div
                         className="prose prose-sm min-w-0 max-w-none wrap-break-word text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-7 prose-pre:max-w-full prose-pre:overflow-x-auto"
                         dangerouslySetInnerHTML={{
-                          __html: ticket.content || "<p>-</p>",
+                          __html: sanitizeRichText(
+                            ticket.content || "<p>-</p>",
+                          ),
                         }}
                       />
                     </div>

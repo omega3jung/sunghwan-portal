@@ -74,7 +74,7 @@ export function NavigationBar(props: NavigationBarProps) {
       <Button
         variant="ghost"
         onClick={openSidebar}
-        className="m-0 p-0 md:hidden"
+        className="p-0 md:hidden"
         aria-label="Open sidebar"
       >
         <Menu />

@@ -149,11 +149,9 @@ export function TicketSearchCriteriaFields({
         </div>
       </div>
       <FieldGroup>
-        <div className="pb-1 border-b-2 border-border/60">
-          <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
-            {t("searchCriteria.additionalFilters")}
-          </h3>
-        </div>
+        <h3 className="border-b-2 border-border/60 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {t("searchCriteria.additionalFilters")}
+        </h3>
         <Field>
           <FieldLabel htmlFor="ticket-search-select-priority">
             {tCommon("field.priority")}
@@ -270,11 +268,9 @@ export function TicketSearchCriteriaFields({
         <div className="pt-4 border-t border-border/60" />
       </FieldGroup>
       <FieldGroup>
-        <div className="pt-2 pb-1 border-b-2 border-border/60">
-          <h3 className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
-            {t("searchCriteria.dateFilters")}
-          </h3>
-        </div>
+        <h3 className="border-b-2 border-border/60 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {t("searchCriteria.dateFilters")}
+        </h3>
         <TicketPeriodField control={form.control} />
         <TicketDueByField control={form.control} />
       </FieldGroup>

@@ -113,11 +113,9 @@ function SectionedDocumentList({
     >
       {sections.map((section) => (
         <section key={section.id} className="space-y-2">
-          <div className="rounded bg-muted-foreground/50">
-            <h4 className="px-2 text-xs font-semibold uppercase tracking-wide text-background">
-              {t(section.titleKey)}
-            </h4>
-          </div>
+          <h4 className="rounded bg-muted-foreground/50 px-2 text-xs font-semibold uppercase tracking-wide text-background">
+            {t(section.titleKey)}
+          </h4>
 
           <div className="space-y-1">
             {section.items.map((item) => (

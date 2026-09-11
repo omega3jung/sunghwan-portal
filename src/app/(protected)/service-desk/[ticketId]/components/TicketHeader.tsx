@@ -63,7 +63,7 @@ export function TicketHeader({
           router.push(href);
         }}
       >
-        <ChevronLeft className="p-0" />
+        <ChevronLeft />
         {t("field.list", { ns: NS.common })}
       </Button>
 

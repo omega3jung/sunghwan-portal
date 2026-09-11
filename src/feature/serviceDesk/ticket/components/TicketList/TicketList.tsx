@@ -45,7 +45,7 @@ export const TicketList = ({
             />
           </div>
 
-          <div className="block md:hidden">
+          <div className="md:hidden">
             <TicketListMobileItem
               ticket={ticket}
               language={language}
