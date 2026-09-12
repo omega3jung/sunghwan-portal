@@ -17,7 +17,7 @@ traceability; this document does not depend on separate PR-description files.
 
 ### 2026-09-12 — Stability safeguards and Service Desk UX polish
 
-fix(service-desk, security, ui): strengthen runtime safeguards and loading feedback
+fix(service-desk, ui): strengthen stability and refine UX polish
 
 - Closed REMOTE ticket-visibility gaps when creating comments and internal notes, and limited LOCAL demo resets to authenticated requests in LOCAL auth mode.
 - Completed LOCAL demo resets by clearing mutable Work Session state, and sanitized persisted rich text before rendering to prevent unsafe HTML.

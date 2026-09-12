@@ -16,7 +16,7 @@ Pull Request의 구현 세부 사항, 배포 체크리스트 또는 스크린샷
 
 ### 2026-09-12 — 안정성 보호 강화 및 Service Desk UX 개선
 
-fix(service-desk, security, ui): strengthen runtime safeguards and loading feedback
+fix(service-desk, ui): strengthen stability and refine UX polish
 
 - REMOTE 환경에서 comment와 internal note를 생성할 때 발생하던 ticket visibility
   검증 누락을 해결하고, LOCAL demo reset을 LOCAL auth mode의 인증된 요청으로
