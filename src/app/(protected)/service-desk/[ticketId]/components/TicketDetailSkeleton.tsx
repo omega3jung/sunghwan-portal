@@ -3,9 +3,17 @@
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function TicketDetailSkeleton() {
+type TicketDetailSkeletonProps = {
+  label: string;
+};
+
+export function TicketDetailSkeleton({ label }: TicketDetailSkeletonProps) {
   return (
-    <div className="rounded-2xl border bg-background p-5 shadow-sm">
+    <div
+      aria-label={label}
+      className="rounded-2xl border bg-background p-5 shadow-sm"
+      role="status"
+    >
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-4 md:flex-row md:justify-between">
           <div className="flex gap-4">
@@ -37,6 +45,17 @@ export function TicketDetailSkeleton() {
           <div className="rounded-xl border p-4 xl:hidden">
             <Skeleton className="h-28 w-full" />
           </div>
+
+          <div className="space-y-3 border-t border-border/50 pt-5">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+
+          <div className="space-y-3 border-t border-border/50 pt-5">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
         </div>
       </div>
     </div>
@@ -45,7 +64,7 @@ export function TicketDetailSkeleton() {
 
 export function TicketDetailsAsideSkeleton() {
   return (
-    <div className="space-y-4">
+    <div aria-hidden="true" className="space-y-4">
       <Skeleton className="h-28 w-full" />
       <Skeleton className="h-32 w-full" />
       <Skeleton className="h-36 w-full" />

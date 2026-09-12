@@ -95,7 +95,7 @@ export function TicketHeader({
         >
           <PanelLeft
             className={cn(
-              "h-4 w-4 transition-transform",
+              "h-4 w-4 transition-transform duration-150 ease-out motion-reduce:transition-none",
               isDetailsAsideOpen && "rotate-180 text-primary",
             )}
           />

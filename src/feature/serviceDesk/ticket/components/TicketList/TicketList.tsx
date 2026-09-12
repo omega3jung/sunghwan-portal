@@ -24,7 +24,13 @@ export const TicketList = ({
 }: TicketListProps) => {
   const { t } = useTranslation(NS.serviceDesk);
 
-  if (isLoading) return <TicketListSkeleton />;
+  if (isLoading && tickets.length === 0) {
+    return (
+      <TicketListSkeleton
+        label={t("table.loading", { ns: NS.common })}
+      />
+    );
+  }
 
   if (!tickets.length)
     return (

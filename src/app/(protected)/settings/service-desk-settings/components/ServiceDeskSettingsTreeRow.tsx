@@ -77,7 +77,7 @@ export function ServiceDeskSettingsTreeRow({
           >
             <ChevronRight
               className={cn(
-                "size-4 transition-transform",
+                "size-4 transition-transform duration-150 ease-out motion-reduce:transition-none",
                 !collapsed && "rotate-90",
               )}
             />

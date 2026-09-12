@@ -15,6 +15,52 @@ traceability; this document does not depend on separate PR-description files.
 
 ## Release History
 
+### 2026-09-12 — Stability safeguards and Service Desk UX polish
+
+fix(service-desk, security, ui): strengthen runtime safeguards and loading feedback
+
+- Closed REMOTE ticket-visibility gaps when creating comments and internal notes, and limited LOCAL demo resets to authenticated requests in LOCAL auth mode.
+- Completed LOCAL demo resets by clearing mutable Work Session state, and sanitized persisted rich text before rendering to prevent unsafe HTML.
+- Applied compatible production dependency security updates while keeping the existing application and workflow contracts unchanged.
+- Simplified a small set of redundant markup and Tailwind styles and added restrained, reduced-motion-aware interaction transitions.
+- Expanded and refined initial-loading Skeleton states across core Service Desk ticket list, detail, action, history, and update workflows while preserving existing data during refetch.
+
+### 2026-09-11 — Integrated Storybook component coverage
+
+feat(storybook): replace demo playground with integrated component coverage
+
+- Replaced the application-internal component demo playground with project-specific
+  Storybook coverage for reusable custom components and their public contracts.
+- Added representative states, Controls, controlled Canvas examples, selected
+  `play` interactions, and global locale and light/dark theme switching.
+- Added the protected `/storybook` route, combined Next.js and Storybook local
+  development, and static Storybook output in production builds and navigation.
+- Removed obsolete demo routes and reorganized their routing, fixtures,
+  localization, and navigation resources after equivalent coverage was verified.
+- Added an accessible, reusable password visibility input based on the existing
+  InputGroup primitives and integrated it into the login form.
+- Localized password visibility actions in English, Korean, French, and Spanish
+  and aligned Storybook-related locale ownership with the new structure.
+- Published English and Korean Storybook coverage decisions and updated testing,
+  routing, state, authentication, README, and development documentation.
+- Stabilized update-ticket tests with Testing Library `act` and a relative due
+  date while preserving Vitest ownership of workflow and application behavior.
+
+### 2026-09-07 — Complete portal localization coverage
+
+fix(i18n): complete locale coverage across the portal
+
+- Added missing translations for document pages, Service Desk workflows, API
+  errors, shared actions, and toast messages across the supported locales.
+- Corrected locale key paths and namespace alignment that could expose fallback
+  text or untranslated keys in user-facing flows.
+- Refined Korean document titles and descriptions to match current project
+  terminology while retaining intentional English technical terms.
+- Widened document navigation to accommodate longer localized labels without
+  unnecessary clipping or wrapping.
+- Completed the localization hotfix without changing Service Desk workflow
+  behavior, authorization policy, or API contracts.
+
 ### 2026-09-07 — Risk-based regression coverage and workflow safeguards
 
 test(vitest): strengthen regression coverage and workflow safeguards
