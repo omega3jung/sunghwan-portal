@@ -72,7 +72,7 @@ export function ApprovalStepPage() {
           >
             <Workflow
               className={cn(
-                "h-4 w-4 transition-transform",
+                "h-4 w-4 transition-colors duration-150",
                 isStepperAsideOpen && "text-primary",
               )}
             />
@@ -112,7 +112,7 @@ export function ApprovalStepPage() {
 
         <div
           className={cn(
-            "hidden overflow-hidden transition-[width] duration-200 ease-linear xl:block",
+            "hidden overflow-hidden transition-[width] duration-200 ease-linear motion-reduce:transition-none xl:block",
             isStepperAsideOpen ? "w-80" : "w-0",
           )}
         >
@@ -120,7 +120,7 @@ export function ApprovalStepPage() {
             id="approval-stepper-aside"
             aria-label={settings.title}
             className={cn(
-              "h-full w-80 shrink-0 pl-4 transition-[opacity,transform] duration-200 ease-linear",
+              "h-full w-80 shrink-0 pl-4 transition-[opacity,transform] duration-200 ease-linear motion-reduce:transition-none",
               isStepperAsideOpen
                 ? "translate-x-0 opacity-100"
                 : "pointer-events-none translate-x-2 opacity-0",

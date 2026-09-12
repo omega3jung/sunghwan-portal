@@ -355,7 +355,7 @@ Recommended entry points:
 8. [Ticket History](./docs/en/03-domain/service-desk/ticket/ticket-history.md)
 9. [Ticket Work Session](./docs/en/03-domain/service-desk/ticket/ticket-work-session.md)
 10. [Ticket Form](./docs/en/04-client-engineering/forms/ticket-form.md) and
-   [Attachment Design](./docs/en/04-client-engineering/forms/ticket-attachment.md)
+    [Attachment Design](./docs/en/04-client-engineering/forms/ticket-attachment.md)
 11. [Implementation Strategy](./docs/en/05-development/service-desk-implementation-strategy.md)
 12. [Testing Strategy](./docs/en/05-development/testing-strategy.md)
 13. [Boolean Naming Convention](./docs/en/05-development/boolean-naming-convention.md)
@@ -416,20 +416,20 @@ a browser automatically.
 
 ### Available Scripts
 
-| Command                       | Purpose                                                                  |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `npm run dev`                 | Start only the Next.js development server                                |
-| `npm run dev:all`             | Start Next.js and Storybook together without auto-opening a browser      |
-| `npm run dev:clean`           | Remove `.next` and start the Next.js development server                  |
-| `npm test`                    | Run the default Vitest unit project                                      |
-| `npm run test:watch`          | Run the Vitest unit project in watch mode                                |
-| `npm run lint`                | Run ESLint and architecture boundary rules                               |
-| `npm run storybook`           | Start Storybook on port 6006 and allow its normal browser-open behavior  |
-| `npm run storybook:no`        | Start Storybook on port 6006 without opening a browser                   |
-| `npm run build-storybook`     | Create a standalone static Storybook build                               |
-| `npm run build-storybook:app` | Build Storybook and copy it into the application public assets           |
-| `npm run build`               | Embed Storybook and create the Next.js production build                  |
-| `npm run start`               | Start a previously built production server                               |
+| Command                       | Purpose                                                                 |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| `npm run dev`                 | Start only the Next.js development server                               |
+| `npm run dev:all`             | Start Next.js and Storybook together without auto-opening a browser     |
+| `npm run dev:clean`           | Remove `.next` and start the Next.js development server                 |
+| `npm test`                    | Run the default Vitest unit project                                     |
+| `npm run test:watch`          | Run the Vitest unit project in watch mode                               |
+| `npm run lint`                | Run ESLint and architecture boundary rules                              |
+| `npm run storybook`           | Start Storybook on port 6006 and allow its normal browser-open behavior |
+| `npm run storybook:no`        | Start Storybook on port 6006 without opening a browser                  |
+| `npm run build-storybook`     | Create a standalone static Storybook build                              |
+| `npm run build-storybook:app` | Build Storybook and copy it into the application public assets          |
+| `npm run build`               | Embed Storybook and create the Next.js production build                 |
+| `npm run start`               | Start a previously built production server                              |
 
 ## Environment Variables
 

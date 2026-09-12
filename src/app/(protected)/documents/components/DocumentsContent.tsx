@@ -54,10 +54,8 @@ export function DocumentsContent({
 
   return (
     <main className="min-h-full p-6">
-      <span>
-        <h1 className="font-semibold tracking-tight">{t("page.title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("page.description")}</p>
-      </span>
+      <h1 className="font-semibold tracking-tight">{t("page.title")}</h1>
+      <p className="text-sm text-muted-foreground">{t("page.description")}</p>
 
       <div className="mt-2 h-1 rounded bg-primary-muted" />
 

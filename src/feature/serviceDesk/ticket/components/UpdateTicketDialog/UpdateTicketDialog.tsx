@@ -1,11 +1,11 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { ticketStep } from "@/feature/serviceDesk/ticket/constants";
 import type { SupportedLanguage } from "@/lib/application/i18n";
@@ -95,10 +95,9 @@ export function UpdateTicketDialog({
 
             <ScrollArea className="min-h-0 min-w-0 flex-1 pr-2 md:pr-3">
               {isLoadingTicket ? (
-                <div className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("ticketUpdate.loadingTicket")}
-                </div>
+                <UpdateTicketDialogSkeleton
+                  label={t("ticketUpdate.loadingTicket")}
+                />
               ) : loadError ? (
                 <div className="rounded-md border border-destructive/40 px-3 py-2 text-sm text-destructive">
                   {loadError}
@@ -127,5 +126,36 @@ export function UpdateTicketDialog({
         />
       </DialogContent>
     </Dialog>
+  );
+}
+
+function UpdateTicketDialogSkeleton({ label }: { label: string }) {
+  return (
+    <div className="space-y-5 py-1" role="status">
+      <span className="sr-only">{label}</span>
+      <div aria-hidden="true" className="space-y-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-4">
+          <div className="min-w-0 flex-1 space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-9 w-full" />
+          </div>
+          <div className="space-y-2 md:w-72 md:shrink-0 lg:w-80">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-9 w-full" />
+          </div>
+          <Skeleton className="h-9 w-full md:w-24" />
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-9 w-full" />
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-52 w-full" />
+        </div>
+      </div>
+    </div>
   );
 }

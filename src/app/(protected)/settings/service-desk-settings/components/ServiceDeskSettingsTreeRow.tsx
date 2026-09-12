@@ -68,7 +68,7 @@ export function ServiceDeskSettingsTreeRow({
             variant="ghost"
             size="icon"
             type="button"
-            className="size-4 shrink-0 rounded-sm"
+            className="size-4 rounded-sm"
             aria-label={collapseLabel}
             onClick={(event) => {
               event.stopPropagation();
@@ -77,7 +77,7 @@ export function ServiceDeskSettingsTreeRow({
           >
             <ChevronRight
               className={cn(
-                "size-4 transition-transform",
+                "size-4 transition-transform duration-150 ease-out motion-reduce:transition-none",
                 !collapsed && "rotate-90",
               )}
             />

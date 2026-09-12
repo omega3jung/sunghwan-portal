@@ -14,6 +14,59 @@ Pull Request의 구현 세부 사항, 배포 체크리스트 또는 스크린샷
 
 ## 릴리스 이력
 
+### 2026-09-12 — 안정성 보호 강화 및 Service Desk UX 개선
+
+fix(service-desk, ui): strengthen stability and refine UX polish
+
+- REMOTE 환경에서 comment와 internal note를 생성할 때 발생하던 ticket visibility
+  검증 누락을 해결하고, LOCAL demo reset을 LOCAL auth mode의 인증된 요청으로
+  제한했습니다.
+- Mutable Work Session state를 초기화하도록 LOCAL demo reset을 완성하고, 저장된
+  rich text를 rendering 전에 sanitize하여 안전하지 않은 HTML이 표시되지 않도록
+  했습니다.
+- 기존 애플리케이션 및 workflow contract를 유지하면서 호환 가능한 production
+  dependency 보안 업데이트를 적용했습니다.
+- 불필요한 markup과 Tailwind style 일부를 단순화하고 reduced motion 설정을 고려한
+  절제된 interaction transition을 추가했습니다.
+- Refetch 중 기존 data를 유지하면서 핵심 Service Desk ticket list, detail, action,
+  history 및 update workflow의 initial loading Skeleton state를 확장하고 개선했습니다.
+
+### 2026-09-11 — 통합 Storybook 컴포넌트 coverage
+
+feat(storybook): replace demo playground with integrated component coverage
+
+- 애플리케이션 내부 component demo playground를 재사용 가능한 custom component와
+  public contract를 위한 프로젝트별 Storybook coverage로 교체했습니다.
+- 대표 상태, Controls, controlled Canvas 예시, 선택적인 `play` interaction 및 전역
+  locale과 light/dark theme 전환을 추가했습니다.
+- Protected `/storybook` route, Next.js와 Storybook을 함께 실행하는 로컬 개발 환경,
+  프로덕션 build 및 내비게이션의 정적 Storybook 출력을 추가했습니다.
+- 동등한 coverage를 검증한 후 더 이상 필요하지 않은 demo route를 제거하고 관련
+  routing, fixture, localization 및 navigation resource를 재구성했습니다.
+- 기존 InputGroup primitive를 기반으로 접근 가능하고 재사용할 수 있는 password
+  visibility input을 추가하고 login form에 통합했습니다.
+- Password visibility action을 영문, 한국어, 프랑스어 및 스페인어로 번역하고
+  Storybook 관련 locale ownership을 새로운 구조에 맞게 정렬했습니다.
+- 영문과 한국어 Storybook coverage 결정 기록을 공개하고 testing, routing, state,
+  authentication, README 및 개발 문서를 업데이트했습니다.
+- Vitest가 workflow와 애플리케이션 동작의 테스트 책임을 유지하면서 Testing Library
+  `act`와 상대적인 due date를 사용해 update-ticket test를 안정화했습니다.
+
+### 2026-09-07 — 포털 localization coverage 완성
+
+fix(i18n): complete locale coverage across the portal
+
+- 지원 locale의 document page, Service Desk workflow, API error, shared action 및
+  toast message에서 누락된 번역을 추가했습니다.
+- 사용자 화면에 fallback text나 번역되지 않은 key가 표시될 수 있던 locale key
+  path와 namespace 정렬을 수정했습니다.
+- 의도적으로 사용하는 영문 기술 용어는 유지하면서 현재 프로젝트 용어에 맞게
+  한국어 document title과 description을 다듬었습니다.
+- 긴 다국어 label이 불필요하게 잘리거나 줄 바꿈되지 않도록 document navigation
+  너비를 확장했습니다.
+- Service Desk workflow 동작, authorization policy 또는 API contract를 변경하지
+  않고 localization hotfix를 완료했습니다.
+
 ### 2026-09-07 — 위험 기반 회귀 테스트 범위와 workflow 보호 강화
 
 test(vitest): strengthen regression coverage and workflow safeguards

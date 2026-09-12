@@ -96,10 +96,10 @@ export function CollapsibleMenu({ items }: CollapsibleMenuProps) {
           >
             <item.icon />
             <span>{tLocal(item.title)}</span>
-            <ChevronRight className="ml-auto size-3.5 transition-transform group-data-open/sub-collapsible:rotate-90" />
+            <ChevronRight className="ml-auto size-3.5 transition-transform duration-150 ease-out group-data-open/sub-collapsible:rotate-90 motion-reduce:transition-none" />
           </CollapsibleTrigger>
 
-          <CollapsibleContent>
+          <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 motion-reduce:transition-none">
             <SidebarMenuSub className="mr-0 px-0 py-1">
               {children.map(renderSubMenuItem)}
             </SidebarMenuSub>
@@ -140,10 +140,10 @@ export function CollapsibleMenu({ items }: CollapsibleMenuProps) {
           >
             <item.icon />
             <span>{title}</span>
-            <ChevronRight className="ml-auto size-4 transition-transform group-data-open/collapsible:rotate-90" />
+            <ChevronRight className="ml-auto size-4 transition-transform duration-150 ease-out group-data-open/collapsible:rotate-90 motion-reduce:transition-none" />
           </CollapsibleTrigger>
 
-          <CollapsibleContent>
+          <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 motion-reduce:transition-none">
             <SidebarMenuSub className="mr-0 p-0 py-1">
               {children.map(renderSubMenuItem)}
             </SidebarMenuSub>

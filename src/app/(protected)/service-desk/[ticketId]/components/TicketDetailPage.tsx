@@ -16,6 +16,7 @@ import {
 } from "@/feature/serviceDesk/ticketAction/client";
 import { NS } from "@/lib/application/i18n";
 import { cn } from "@/shared/utils/presentation";
+import { sanitizeRichText } from "@/shared/utils/value";
 
 import { useTicketDetailData } from "../hooks/useTicketDetailData";
 import { useTicketDetailViewModel } from "../hooks/useTicketDetailViewModel";
@@ -108,7 +109,9 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
           <ScrollArea className="h-full min-h-0 w-full overflow-hidden">
             <div className="mx-auto w-full min-w-0 max-w-260 p-2 pb-10">
               {isTicketLoading ? (
-                <TicketDetailSkeleton />
+                <TicketDetailSkeleton
+                  label={t("table.loading", { ns: NS.common })}
+                />
               ) : ticket ? (
                 <article className="min-w-0 space-y-5 xl:space-y-9">
                   <TicketSummary
@@ -141,7 +144,9 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
                       <div
                         className="prose prose-sm min-w-0 max-w-none wrap-break-word text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-7 prose-pre:max-w-full prose-pre:overflow-x-auto"
                         dangerouslySetInnerHTML={{
-                          __html: ticket.content || "<p>-</p>",
+                          __html: sanitizeRichText(
+                            ticket.content || "<p>-</p>",
+                          ),
                         }}
                       />
                     </div>
@@ -163,7 +168,7 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
                       {t("detailPage.detailsTitle")}
                       <ChevronDown
                         className={cn(
-                          "transition-transform",
+                          "transition-transform duration-150 ease-out motion-reduce:transition-none",
                           isDetailsAsideOpen && "-rotate-90",
                         )}
                       />
@@ -216,13 +221,13 @@ export function TicketDetailPage({ ticketId }: TicketDetailPageProps) {
 
         <div
           className={cn(
-            "hidden h-full min-h-0 overflow-hidden transition-[width] duration-200 ease-linear xl:block",
+            "hidden h-full min-h-0 overflow-hidden transition-[width] duration-200 ease-linear motion-reduce:transition-none xl:block",
             isDetailsAsideOpen ? "w-[320px]" : "w-0",
           )}
         >
           <aside
             className={cn(
-              "h-full min-h-0 w-[320px] shrink-0 overflow-hidden transition-[opacity,transform] duration-200 ease-linear",
+              "h-full min-h-0 w-[320px] shrink-0 overflow-hidden transition-[opacity,transform] duration-200 ease-linear motion-reduce:transition-none",
               isDetailsAsideOpen
                 ? "translate-x-0 opacity-100"
                 : "pointer-events-none translate-x-2 opacity-0",

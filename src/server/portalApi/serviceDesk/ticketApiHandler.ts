@@ -230,6 +230,13 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
+    if (
+      (action === "comment" || action === "note") &&
+      !(await getTicketDetail(ticketId, currentUserName, principal))
+    ) {
+      return createNotFoundResponse();
+    }
+
     const currentUserProfile = principal;
 
     const isAdmin = currentUserProfile.role === "ADMIN";

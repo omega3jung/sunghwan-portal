@@ -68,7 +68,7 @@ export function TicketActionItem({
                 />
               }
             >
-              <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-out" />
+              <ChevronDown className="h-4 w-4 transition-transform duration-200 ease-out motion-reduce:transition-none" />
               <span className="sr-only">
                 {t("actionTool.list.toggleDetails")}
               </span>

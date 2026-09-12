@@ -352,7 +352,7 @@ docs/
 8. [Ticket History](./docs/ko/03-domain/service-desk/ticket/ticket-history.md)
 9. [Ticket Work Session](./docs/ko/03-domain/service-desk/ticket/ticket-work-session.md)
 10. [Ticket Form](./docs/ko/04-client-engineering/forms/ticket-form.md)과
-   [Attachment 설계](./docs/ko/04-client-engineering/forms/ticket-attachment.md)
+    [Attachment 설계](./docs/ko/04-client-engineering/forms/ticket-attachment.md)
 11. [구현 전략](./docs/ko/05-development/service-desk-implementation-strategy.md)
 12. [테스트 전략](./docs/ko/05-development/testing-strategy.md)
 13. [Boolean 명명 규칙](./docs/ko/05-development/boolean-naming-convention.md)
@@ -411,20 +411,20 @@ port에서 Storybook을 시작합니다.
 
 ### 사용 가능한 Script
 
-| Command                       | 용도                                                          |
-| ----------------------------- | ------------------------------------------------------------- |
-| `npm run dev`                 | Next.js development server만 실행                             |
-| `npm run dev:all`             | browser 자동 실행 없이 Next.js와 Storybook을 함께 실행        |
-| `npm run dev:clean`           | `.next`를 제거하고 Next.js development server 실행            |
-| `npm test`                    | 기본 Vitest unit project 실행                                 |
-| `npm run test:watch`          | watch mode로 Vitest unit project 실행                         |
-| `npm run lint`                | ESLint와 architecture boundary rule 실행                      |
+| Command                       | 용도                                                           |
+| ----------------------------- | -------------------------------------------------------------- |
+| `npm run dev`                 | Next.js development server만 실행                              |
+| `npm run dev:all`             | browser 자동 실행 없이 Next.js와 Storybook을 함께 실행         |
+| `npm run dev:clean`           | `.next`를 제거하고 Next.js development server 실행             |
+| `npm test`                    | 기본 Vitest unit project 실행                                  |
+| `npm run test:watch`          | watch mode로 Vitest unit project 실행                          |
+| `npm run lint`                | ESLint와 architecture boundary rule 실행                       |
 | `npm run storybook`           | 일반 browser-open 동작을 허용하며 6006 port에서 Storybook 실행 |
-| `npm run storybook:no`        | browser를 열지 않고 6006 port에서 Storybook 실행              |
-| `npm run build-storybook`     | standalone static Storybook build 생성                        |
+| `npm run storybook:no`        | browser를 열지 않고 6006 port에서 Storybook 실행               |
+| `npm run build-storybook`     | standalone static Storybook build 생성                         |
 | `npm run build-storybook:app` | Storybook을 build하여 애플리케이션 public asset으로 복사       |
-| `npm run build`               | Storybook을 포함하고 Next.js production build 생성            |
-| `npm run start`               | 미리 build한 production server 실행                           |
+| `npm run build`               | Storybook을 포함하고 Next.js production build 생성             |
+| `npm run start`               | 미리 build한 production server 실행                            |
 
 ## 환경 변수
 

@@ -26,6 +26,11 @@ import { hasLocalTicketWorkAssignmentHistory } from "./workerHistory";
 // refetch behavior but are not durable and are not PostgreSQL-equivalent.
 const localWorkSessions: DbTicketWorkSession[] = [];
 
+/** Clears mutable LOCAL work-session state as part of a full demo reset. */
+export function resetLocalTicketWorkSessionState() {
+  localWorkSessions.splice(0, localWorkSessions.length);
+}
+
 /** Returns ticket work sessions from the server-side LOCAL ticket adapter. */
 export function listLocalTicketWorkSessions(ticketId: string) {
   const items = localWorkSessions.filter((item) => item.ticket_id === ticketId);

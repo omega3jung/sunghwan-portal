@@ -8,6 +8,7 @@ import {
   MAX_ATTACH_SIZE,
 } from "@/feature/serviceDesk/ticket/constants";
 import { NS } from "@/lib/application/i18n";
+import { sanitizeRichText } from "@/shared/utils/value";
 
 import { useTicketCreateFormContext } from "../../context/TicketCreateFormContext";
 import { TicketInfoFields } from "./InfoFields";
@@ -30,7 +31,9 @@ export const ReviewStep = () => {
           <div
             id="review-step-body-preview"
             className="prose prose-sm min-h-52 min-w-0 max-w-none wrap-break-word rounded-md border border-input bg-transparent px-3 py-2 text-foreground prose-a:text-primary prose-img:max-w-full prose-img:rounded-lg prose-p:my-3 prose-p:leading-6 prose-pre:max-w-full prose-pre:overflow-x-auto"
-            dangerouslySetInnerHTML={{ __html: bodyValue || "<p>-</p>" }}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeRichText(bodyValue || "<p>-</p>"),
+            }}
           />
         </div>
       </Field>
