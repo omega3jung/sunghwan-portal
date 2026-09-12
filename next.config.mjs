@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  output: process.env.VERCEL ? undefined : "standalone",
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
   transpilePackages: ["lucide-react"],
   outputFileTracingIncludes: {
