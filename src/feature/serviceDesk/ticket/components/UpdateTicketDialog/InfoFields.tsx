@@ -173,11 +173,11 @@ export function UpdateTicketInfoFields() {
             }
           >
               {t("field.email", { ns: NS.common })}
-              <ChevronRight className="transition-transform group-data-open:rotate-90" />
+              <ChevronRight className="transition-transform duration-150 ease-out group-data-open:rotate-90 motion-reduce:transition-none" />
           </CollapsibleTrigger>
         </div>
 
-        <CollapsibleContent className="min-w-0 pt-2">
+        <CollapsibleContent className="h-(--collapsible-panel-height) min-w-0 overflow-hidden pt-2 transition-[height,opacity] duration-200 ease-out data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 motion-reduce:transition-none">
           <Field className="min-w-0">
             {EMAIL_FIELDS.map((fieldName) => (
               <UpdateTicketEmailField

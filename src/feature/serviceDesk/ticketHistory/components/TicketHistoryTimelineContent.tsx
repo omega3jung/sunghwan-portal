@@ -76,7 +76,10 @@ export function TicketHistoryTimelineContent({
   }, [items, t, tCommon, tHistory, tLocal, tStatus]);
 
   return (
-    <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
+    <div
+      aria-busy={isLoading}
+      className={cn("flex min-h-0 flex-1 flex-col", className)}
+    >
       <div className="min-h-0 flex-1">
         <ScrollArea className="h-full">
           <div className="relative flex min-h-full flex-col">
@@ -105,8 +108,10 @@ export function TicketHistoryTimelineContent({
             ) : null}
 
             <div className="px-4 pb-4 pt-4">
-              {isLoading ? (
-                <TicketHistoryTimelineSkeleton />
+              {isLoading && mappedItems.length === 0 ? (
+                <TicketHistoryTimelineSkeleton
+                  label={tCommon("table.loading")}
+                />
               ) : (
                 <Timeline
                   compact={compact}
@@ -123,11 +128,15 @@ export function TicketHistoryTimelineContent({
   );
 }
 
-function TicketHistoryTimelineSkeleton() {
+function TicketHistoryTimelineSkeleton({ label }: { label: string }) {
   const skeletonCount = 3;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div
+      aria-label={label}
+      className="flex flex-col gap-5"
+      role="status"
+    >
       {Array.from({ length: skeletonCount }).map((_, index) => (
         <div className="flex gap-3" key={index}>
           <div className="flex flex-col items-center">

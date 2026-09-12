@@ -1,4 +1,4 @@
-import { Check, ChevronDown, ChevronRight, Minus } from "lucide-react";
+import { Check, ChevronRight, Minus } from "lucide-react";
 
 import { ComboboxItem } from "@/components/ui/combobox";
 import { cn } from "@/shared/utils/presentation";
@@ -65,7 +65,7 @@ export function TreeMultiComboBoxOptionItem({
         ) : (
           <Check
             className={cn(
-              "size-4",
+              "size-4 transition-opacity duration-150 motion-reduce:transition-none",
               checkState === "checked" ? "opacity-100" : "opacity-0",
             )}
           />
@@ -96,11 +96,12 @@ export function TreeMultiComboBoxOptionItem({
               onToggleExpand?.(item.value);
             }}
           >
-            {expanded ? (
-              <ChevronDown className="size-4" />
-            ) : (
-              <ChevronRight className="size-4" />
-            )}
+            <ChevronRight
+              className={cn(
+                "size-4 transition-transform duration-150 ease-out motion-reduce:transition-none",
+                expanded && "rotate-90",
+              )}
+            />
           </button>
         </span>
       ) : null}

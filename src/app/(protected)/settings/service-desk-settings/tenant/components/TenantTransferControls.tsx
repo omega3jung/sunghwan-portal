@@ -28,7 +28,7 @@ export function TenantTransferControls({
     <div
       className={cn("flex items-center justify-center lg:h-full", className)}
     >
-      <div className="flex flex-row gap-2 lg:flex-col">
+      <div className="flex gap-2 lg:flex-col">
         <Button
           type="button"
           size="icon-sm"

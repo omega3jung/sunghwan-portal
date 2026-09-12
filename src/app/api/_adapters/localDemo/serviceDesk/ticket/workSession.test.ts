@@ -10,9 +10,13 @@ import {
 import {
   createLocalTicketWorkSession,
   listLocalTicketWorkSessions,
+  resetLocalTicketWorkSessionState,
 } from "./workSession";
 
-afterEach(resetLocalDemoTicketState);
+afterEach(() => {
+  resetLocalDemoTicketState();
+  resetLocalTicketWorkSessionState();
+});
 
 function installWorkTicket(overrides: Partial<DbTicketDetail> = {}) {
   const ticket: DbTicketDetail = {
@@ -34,6 +38,29 @@ function installWorkTicket(overrides: Partial<DbTicketDetail> = {}) {
 }
 
 describe("LOCAL ticket work-session workflow", () => {
+  it("clears work sessions during a demo reset", () => {
+    const ticket = installWorkTicket();
+
+    createLocalTicketWorkSession({
+      ticketId: ticket.id,
+      currentUserName: "worker",
+      isInternal: true,
+      payload: {
+        ticketId: ticket.id,
+        inputMode: "duration",
+        durationMinutes: 30,
+        nextStatus: "Working",
+      },
+    });
+
+    resetLocalTicketWorkSessionState();
+
+    expect(listLocalTicketWorkSessions(ticket.id)).toMatchObject({
+      items: [],
+      total: 0,
+    });
+  });
+
   it("rejects a user with no current or historical assignment before mutation", () => {
     const ticket = installWorkTicket();
     const ticketBefore = structuredClone(ticket);

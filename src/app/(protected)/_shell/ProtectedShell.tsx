@@ -104,7 +104,7 @@ export function ProtectedShell({ children }: { children: React.ReactNode }) {
                   )
                 }
               >
-                © 2025 Sunghwan Jung.
+                © 2026 Sunghwan Jung.
               </Button>
             </footer>
           </div>

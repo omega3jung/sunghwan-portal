@@ -4,6 +4,7 @@ import type { Locale } from "date-fns";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import type { TicketAction } from "@/domain/serviceDesk";
 import { useCurrentPreference } from "@/feature/user/preference/client";
 import { NS } from "@/lib/application/i18n";
@@ -86,7 +87,7 @@ export function TicketActionList({
   }, [activeActions, deferredQuery, sortOrder, t, tLocal]);
 
   return (
-    <section className="min-w-0 space-y-4">
+    <section aria-busy={isLoading} className="min-w-0 space-y-4">
       <TicketActionListHeader
         count={activeActions.length}
         query={query}
@@ -98,8 +99,10 @@ export function TicketActionList({
         }}
       />
 
-      {isLoading ? (
-        <TicketActionEmpty type="loading" />
+      {isLoading && actions.length === 0 ? (
+        <TicketActionListSkeleton
+          label={t("table.loading", { ns: NS.common })}
+        />
       ) : activeActions.length === 0 ? (
         <TicketActionEmpty type="no-data" />
       ) : visibleActions.length === 0 ? (
@@ -122,5 +125,36 @@ export function TicketActionList({
         </div>
       )}
     </section>
+  );
+}
+
+function TicketActionListSkeleton({ label }: { label: string }) {
+  return (
+    <div aria-label={label} className="min-w-0 space-y-3" role="status">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          className="flex gap-3 rounded-lg border border-border/40 bg-background p-4"
+          key={index}
+        >
+          <Skeleton className="size-10 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                </div>
+                <Skeleton className="h-4 w-36 max-w-full" />
+              </div>
+              <Skeleton className="size-9 shrink-0" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[88%]" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

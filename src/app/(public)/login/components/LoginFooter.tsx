@@ -74,19 +74,17 @@ export function LoginFooter() {
 
   return (
     <footer className="grid grid-cols-2 border-t-2 border-border pt-6 text-center">
-      <div>
-        <nav aria-label={t("login.helpCenter")}>
-          <Button variant="link" className={footerLinkClassName}>
-            {t("login.helpCenter")}
-          </Button>
-          <span className="px-1" aria-hidden="true">
-            &middot;
-          </span>
-          <Button variant="link" className={footerLinkClassName}>
-            {t("login.privacyAndTerms")}
-          </Button>
-        </nav>
-      </div>
+      <nav aria-label={t("login.helpCenter")}>
+        <Button variant="link" className={footerLinkClassName}>
+          {t("login.helpCenter")}
+        </Button>
+        <span className="px-1" aria-hidden="true">
+          &middot;
+        </span>
+        <Button variant="link" className={footerLinkClassName}>
+          {t("login.privacyAndTerms")}
+        </Button>
+      </nav>
       <div className="flex justify-end items-center">
         <Combobox
           items={languageOptions}

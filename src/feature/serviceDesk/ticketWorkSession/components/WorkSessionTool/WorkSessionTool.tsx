@@ -56,11 +56,9 @@ export function WorkSessionTool({ children, ticket }: WorkSessionToolProps) {
       <PopoverTrigger render={children} />
 
       <PopoverContent align="end" className="w-80 p-0">
-        <div className="border-b border-primary-muted px-4 py-3">
-          <h2 className="text-sm font-semibold text-primary">
-            {t("workSessionTool.title")}
-          </h2>
-        </div>
+        <h2 className="border-b border-primary-muted px-4 py-3 text-sm font-semibold text-primary">
+          {t("workSessionTool.title")}
+        </h2>
 
         <WorkSessionToolContent
           key={contentKey}
