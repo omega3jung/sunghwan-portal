@@ -2,7 +2,8 @@
   "ticket": {},
   "serviceDesk": {
     "common": {
-      "notFound": "Not found."
+      "notFound": "Not found.",
+      "concurrentUpdate": "The ticket changed while saving. Refresh and try again."
     },
     "approvalSteps": {
       "fetchList": "Failed to fetch approval steps.",

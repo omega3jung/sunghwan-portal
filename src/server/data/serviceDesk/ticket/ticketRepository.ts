@@ -1,7 +1,10 @@
 import type { AppUser } from "@/domain/user";
 import { normalizePagination } from "@/lib/application/api/query";
 import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";
 import { CreateTicketRowInput, ServiceDeskTicketViewRow } from "./ticketRow";
@@ -14,6 +17,23 @@ export type TicketReadPrincipal = Pick<
   AppUser,
   "username" | "companyId" | "userScope"
 >;
+
+/** Serializes ticket mutations before reading workflow state; multi-ticket locks use a stable order. */
+export async function lockTicketRowsById(
+  ticketIds: string[],
+  query: PortalApiQueryExecutor,
+): Promise<void> {
+  await query(
+    `
+select tk_id
+from service_desk.ticket
+where tk_id = any($1)
+order by tk_id
+for update;
+`,
+    [ticketIds],
+  );
+}
 
 const TICKET_READ_AUTHORIZATION_PREDICATE = `(
   ticket_view.tk_requester_username = __USERNAME_PARAM__
@@ -439,6 +459,13 @@ export async function findNextTicketNumber(
   options: TicketRepositoryOptions = {},
 ): Promise<string> {
   const query = options.query ?? queryPortalApi;
+  if (options.query) {
+    // Hold numbering ownership until creation commits, including the first ticket of a year.
+    await query(
+      "select pg_advisory_xact_lock(hashtext('service_desk.ticket_number'), $1::integer);",
+      [year],
+    );
+  }
   const rows = await query<{ ticket_no: string }>(
     FIND_NEXT_TICKET_NUMBER_QUERY,
     [year],

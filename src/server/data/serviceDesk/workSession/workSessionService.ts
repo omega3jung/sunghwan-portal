@@ -6,6 +6,7 @@ import { normalizeNonNegativeInteger } from "@/shared/utils/value";
 import {
   findActiveTicketViewRowById,
   hasTicketWorkAssignmentHistory,
+  lockTicketRowsById,
 } from "../ticket/ticketRepository";
 import { updateTicketWorkProgressById } from "../ticket/ticketUpdateRepository";
 import { createHistoryOfStatusChange } from "../ticketHistory";
@@ -70,6 +71,7 @@ export async function createWorkSession(
   input: WorkSessionCreateInput,
 ): Promise<WorkSessionDto> {
   return withPortalApiTransaction(async (query) => {
+    await lockTicketRowsById([input.ticketId], query);
     const repositoryOptions: WorkSessionRepositoryOptions = { query };
     const ticket = await findActiveTicketViewRowById(input.ticketId, { query });
 

@@ -29,7 +29,7 @@ export const getMaxHistoryNo = (ticketId: string, _isInternal: boolean) => {
 /** Returns next action no from the server-side LOCAL ticket adapter. */
 export const getNextActionNo = (ticketId: string, _isInternal: boolean) => {
   const items = getLocalDemoActions()
-    .filter((item) => item.ticket_id === ticketId && item.active)
+    .filter((item) => item.ticket_id === ticketId)
     .map((action) => action.action_no);
 
   return items.length ? Math.max(...items) + 1 : 1;
@@ -78,14 +78,22 @@ export const toHistoryMetadata = (
 
 /** Enforces assignee IDs before LOCAL state is exposed or mutated. */
 export const requireAssigneeIds = (content: TicketActionCommandPayload) => {
-  if (!content.assigneeUsernames) {
+  const assigneeUsernames = Array.isArray(content.assigneeUsernames)
+    ? [...new Set(
+        content.assigneeUsernames
+          .filter((value): value is string => typeof value === "string")
+          .map((value) => value.trim())
+          .filter(Boolean),
+      )]
+    : [];
+  if (assigneeUsernames.length === 0) {
     throw new ApiError(
       "serviceDesk.ticketCommand.localDemo.assigneeRequired",
       400,
     );
   }
 
-  return content.assigneeUsernames;
+  return assigneeUsernames;
 };
 
 /** Enforces target ticket ID before LOCAL state is exposed or mutated. */

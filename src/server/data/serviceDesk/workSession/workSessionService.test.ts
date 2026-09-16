@@ -14,6 +14,7 @@ const transaction = vi.hoisted(() => {
   };
 });
 const tickets = vi.hoisted(() => ({
+  lockTicketRowsById: vi.fn(),
   findActiveTicketViewRowById: vi.fn(),
   hasTicketWorkAssignmentHistory: vi.fn(),
 }));
@@ -135,6 +136,23 @@ describe("work session workflow", () => {
     ).rejects.toMatchObject({ status: 409 });
 
     expect(sessions.createWorkSessionRow).not.toHaveBeenCalled();
+  });
+
+  it("checks the committed status after a concurrent cancellation releases the ticket lock", async () => {
+    let releaseLock!: () => void;
+    const pendingLock = new Promise<void>((resolve) => { releaseLock = resolve; });
+    tickets.lockTicketRowsById.mockReturnValueOnce(pendingLock);
+    const result = createWorkSession({
+      ticketId: "ticket-1", inputMode: "duration", durationMinutes: 30,
+      nextStatus: "Working", currentUserName: "worker",
+    });
+    const rejected = expect(result).rejects.toMatchObject({ status: 409 });
+    tickets.findActiveTicketViewRowById.mockResolvedValue(ticketRow({ tk_status: "Closed" }));
+    releaseLock();
+    await rejected;
+    expect(updates.updateTicketWorkProgressById).not.toHaveBeenCalled();
+    expect(sessions.createWorkSessionRow).not.toHaveBeenCalled();
+    expect(history.createHistoryOfStatusChange).not.toHaveBeenCalled();
   });
 
   it("records work, advances status, and creates matching immutable history", async () => {

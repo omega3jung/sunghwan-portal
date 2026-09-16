@@ -451,10 +451,13 @@ impersonation을 종료하면 반대 흐름을 수행하며 session의 impersona
 
 현재 구현 기준 규칙은 다음과 같습니다.
 
-- `INTERNAL` 사용자이면서 최소 `ADMIN` 권한 이상인 경우만 impersonation을 시작할 수 있습니다
-- impersonation 대상은 `CLIENT` 사용자여야 합니다
+- `INTERNAL` 관리자만 impersonation을 시작할 수 있습니다
+- 대상은 내부 데모 계정을 포함한 `INTERNAL` 또는 `CLIENT` 사용자일 수 있습니다
+- 대상은 원래 사용자와 달라야 하며 권한 수준이 더 낮아야 합니다
 
-이 규칙은 UI가 아니라 auth layer에 위치합니다.
+API와 JWT 갱신 콜백은 같은 서버 정책을 사용합니다. 콜백은 토큰을 갱신하기
+직전에 대상을 다시 조회하고 검증하며, 클라이언트가 전달한 원래 사용자 정보와
+활성화 시각 대신 서버에서 구성한 값을 저장합니다.
 
 ---
 

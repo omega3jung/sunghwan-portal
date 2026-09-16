@@ -54,7 +54,7 @@ function accessFor(ticket: DbTicketDetail) {
   };
 }
 
-async function findRoutableClientSetup() {
+async function findRoutableClientSetup(workOnly = false) {
   for (const tenant of getLocalDemoCategories(false)) {
     const requester = allEmployeesMock.find(
       (employee) =>
@@ -94,6 +94,8 @@ async function findRoutableClientSetup() {
                 : String(mainCategory.category_id),
           };
 
+          if (workOnly && routing.approvalStepId !== null) continue;
+
           return { ticket, routing };
         } catch {
           // Some fixtures intentionally represent broken routing.
@@ -106,6 +108,42 @@ async function findRoutableClientSetup() {
 }
 
 describe("LOCAL requester ticket update workflow", () => {
+  it("updates the correct ticket when another ticket is inserted during routing", async () => {
+    const setup = await findRoutableClientSetup();
+    const ticket = installRequesterEditableTicket(setup.ticket);
+    const pendingUpdate = localRequesterUpdateTicket({
+      isInternal: false, access: accessFor(ticket), ticketId: ticket.id,
+      requesterUsername: ticket.requester_username,
+      input: { ...updateInput(ticket), subject: "Updated subject" },
+    });
+    const insertedTicket = { ...structuredClone(ticket), id: "new-ticket" };
+    getLocalDemoTickets().unshift(insertedTicket);
+    await pendingUpdate;
+    expect(getLocalDemoTickets()).toHaveLength(2);
+    expect(getLocalDemoTickets()[0]).toEqual(insertedTicket);
+    expect(getLocalDemoTickets()[1]).toMatchObject({ id: ticket.id, subject: "Updated subject" });
+  });
+
+  it("clears the previous approval step when rerouting directly to workers", async () => {
+    const setup = await findRoutableClientSetup(true);
+    const ticket = installRequesterEditableTicket(setup.ticket);
+    Object.assign(ticket, {
+      status: "Approval", approval_step_id: "old-step", assignment_phase: "APPROVAL",
+      approval_assignee_usernames: ["old-approver"], work_assignee_usernames: [],
+      assignee_usernames: ["old-approver"],
+    });
+    await localRequesterUpdateTicket({
+      isInternal: false, access: accessFor(ticket), ticketId: ticket.id,
+      requesterUsername: ticket.requester_username,
+      input: { ...updateInput(ticket), subject: `${ticket.subject} updated` },
+    });
+    expect(getLocalDemoTickets()[0]).toMatchObject({
+      status: "Assigned", approval_step_id: null, assignment_phase: "WORK",
+      approval_assignee_usernames: [], work_assignee_usernames: setup.routing.assigneeUsernames,
+    });
+    expect(getLocalDemoHistories().at(-1)?.metadata).toMatchObject({ nextApprovalStepId: null });
+  });
+
   it("preserves routing for a due-date-only edit and records that decision", async () => {
     const setup = await findRoutableClientSetup();
     const ticket = installRequesterEditableTicket(setup.ticket);

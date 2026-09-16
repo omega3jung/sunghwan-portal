@@ -47,16 +47,6 @@ export const useRequesterUpdateServiceDeskTicket = () => {
   });
 };
 
-export const useDeleteServiceDeskTicket = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: serviceDeskTicketApi.remove,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
-    },
-  });
-};
-
 export const useStartTicketWorkMutation = () => {
   const queryClient = useQueryClient();
 

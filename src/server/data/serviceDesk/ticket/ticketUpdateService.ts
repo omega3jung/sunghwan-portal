@@ -18,6 +18,7 @@ import {
   findCategoryAssignmentUsernames,
   findNextApprovalStepId,
   hasTicketWorkAssignmentHistory,
+  lockTicketRowsById,
 } from "./ticketRepository";
 import { RequesterUpdateTicketRequestDto } from "./ticketUpdateDto";
 import { mapRequesterUpdateTicketRequestDtoToRowInput } from "./ticketUpdateMapper";
@@ -82,6 +83,7 @@ export async function updateRequesterTicket(
     );
   }
 
+  await lockTicketRowsById([ticketId], options.query);
   const currentRow = await findRequesterUpdateTicketViewRowById(
     ticketId,
     options,

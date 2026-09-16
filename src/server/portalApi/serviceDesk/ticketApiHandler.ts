@@ -218,23 +218,24 @@ export async function handleTicketPortalApi(
     const action = decodePathSegment(commandMatch[2]);
     const ticketId = decodePathSegment(commandMatch[1]);
 
-    if (action === TICKET_START_WORK_COMMAND) {
-      const ticket = await startTicketWork(ticketId, currentUserName);
-
-      return NextResponse.json(ticket);
-    }
-
     const isApprovalAction = isTicketApprovalActionPath(action);
 
-    if (!isApprovalAction && !isTicketGeneralActionPath(action)) {
+    if (
+      action !== TICKET_START_WORK_COMMAND &&
+      !isApprovalAction &&
+      !isTicketGeneralActionPath(action)
+    ) {
       return createNotFoundResponse();
     }
 
-    if (
-      (action === "comment" || action === "note") &&
-      !(await getTicketDetail(ticketId, currentUserName, principal))
-    ) {
+    // Administrator overrides apply only inside the acting user's ticket scope.
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
       return createNotFoundResponse();
+    }
+
+    if (action === TICKET_START_WORK_COMMAND) {
+      const ticket = await startTicketWork(ticketId, currentUserName);
+      return NextResponse.json(ticket);
     }
 
     const currentUserProfile = principal;
@@ -255,11 +256,28 @@ export async function handleTicketPortalApi(
       return NextResponse.json(actionDto, { status: 201 });
     }
 
+    const payload = requireBody<TicketActionCommandRequest>(context.options);
+    if (
+      action === "merge" &&
+      typeof payload.targetTicketId === "string" &&
+      payload.targetTicketId.trim()
+    ) {
+      if (
+        !(await getTicketDetail(
+          payload.targetTicketId.trim(),
+          currentUserName,
+          principal,
+        ))
+      ) {
+        return createNotFoundResponse();
+      }
+    }
+
     const actionDto = await executeTicketAction({
       ticketId,
       action,
       currentUserName,
-      payload: requireBody<TicketActionCommandRequest>(context.options),
+      payload,
       isAdmin,
       isInternal: currentUserProfile.userScope === "INTERNAL",
     });

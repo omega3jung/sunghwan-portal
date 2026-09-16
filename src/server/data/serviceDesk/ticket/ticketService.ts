@@ -38,6 +38,7 @@ import {
   findNextApprovalStepId,
   findNextTicketNumber,
   hasTicketWorkAssignmentHistory,
+  lockTicketRowsById,
   type TicketReadPrincipal,
   type TicketRepositoryOptions,
 } from "./ticketRepository";
@@ -105,6 +106,7 @@ export async function startTicketWork(
   currentUserName: string,
 ): Promise<TicketDetailDto> {
   return withPortalApiTransaction(async (query) => {
+    await lockTicketRowsById([ticketId], query);
     const ticket = await findActiveTicketViewRowById(ticketId, { query });
 
     if (!ticket) {
@@ -175,9 +177,20 @@ export async function closeExpiredResolvedTickets(
       },
       repositoryOptions,
     );
+    const lockedIds = expiredTickets.map((ticket) => ticket.tk_id);
+    await lockTicketRowsById(lockedIds, query);
+    // A reopen/resolution may have committed while this batch waited for locks.
+    const stillExpiredTickets = lockedIds.length > 0
+      ? await findExpiredResolvedTicketViewRows(
+          { now: nowIso, graceDays: RESOLVED_AUTO_CLOSE_GRACE_DAYS },
+          repositoryOptions,
+        )
+      : [];
+    const lockedIdSet = new Set(lockedIds);
     const ticketIds: string[] = [];
 
-    for (const ticket of expiredTickets) {
+    for (const ticket of stillExpiredTickets) {
+      if (!lockedIdSet.has(ticket.tk_id)) continue;
       const closedTicket = await closeResolvedTicketById(
         ticket.tk_id,
         repositoryOptions,

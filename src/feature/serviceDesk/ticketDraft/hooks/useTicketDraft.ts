@@ -65,7 +65,7 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
 
       const { id: _discard, ...rest } = values;
 
-      return updateDraft(
+      return await updateDraft(
         toDraftPayload({
           id: draftId,
           ...(rest as Omit<TicketDraftFormPayload, "id">),

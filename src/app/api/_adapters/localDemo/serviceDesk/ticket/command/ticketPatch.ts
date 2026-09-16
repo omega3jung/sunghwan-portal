@@ -1,8 +1,6 @@
 import type { resolveApprovedTicketRouting } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/createRouting";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 
-import { mergeTicketToEmails } from "./email";
-
 type ApprovedTicketRouting = Awaited<
   ReturnType<typeof resolveApprovedTicketRouting>
 >;
@@ -82,7 +80,6 @@ export const buildAssigneePatch = (
     work_assignee_usernames:
       assignmentPhase === "WORK" ? assigneeUsernames : [],
     assignee_usernames: assigneeUsernames,
-    email: mergeTicketToEmails(ticket, assigneeUsernames),
     assigned_approver: assignmentPhase === "APPROVAL" ? assigned : false,
     assigned_worker: assignmentPhase === "WORK" ? assigned : false,
     assigned,

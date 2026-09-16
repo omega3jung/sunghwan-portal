@@ -151,4 +151,29 @@ describe("useTicketDraft lifecycle", () => {
     expect(draftMocks.discardDraft).toHaveBeenCalledWith("draft-server");
     expect(result.current.draftId).toBeNull();
   });
+
+  it("keeps an update in flight exclusive and permits retry after failure", async () => {
+    const values = createValues({ id: "draft-1", subject: "Saved draft" });
+    draftMocks.useDraftQuery.mockReturnValue({ data: values });
+    let rejectUpdate!: (reason: Error) => void;
+    draftMocks.updateDraft.mockReturnValue(new Promise((_resolve, reject) => {
+      rejectUpdate = reject;
+    }));
+    const { result } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(values) }));
+    await waitFor(() => expect(result.current.draftId).toBe("draft-1"));
+
+    const firstSave = result.current.saveDraftNow();
+    const firstResult = expect(firstSave).rejects.toThrow("Save failed");
+    const secondSave = result.current.saveDraftNow();
+    // Settle both calls before asserting so the failing implementation cannot leave pending tests.
+    rejectUpdate(new Error("Save failed"));
+    const secondResult = await secondSave.catch(() => "overlapping update");
+    await firstResult;
+    expect(secondResult).toBeNull();
+    expect(draftMocks.updateDraft).toHaveBeenCalledOnce();
+
+    draftMocks.updateDraft.mockResolvedValue(values);
+    await expect(result.current.saveDraftNow()).resolves.toEqual(values);
+    expect(draftMocks.updateDraft).toHaveBeenCalledTimes(2);
+  });
 });

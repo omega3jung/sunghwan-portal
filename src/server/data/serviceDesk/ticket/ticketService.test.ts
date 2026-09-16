@@ -13,6 +13,7 @@ const transaction = vi.hoisted(() => {
   };
 });
 const tickets = vi.hoisted(() => ({
+  lockTicketRowsById: vi.fn(),
   createTicketRow: vi.fn(),
   findActiveDraftTicketIdByRequesterUsername: vi.fn(),
   findActiveTicketViewRowById: vi.fn(),
@@ -322,6 +323,15 @@ describe("ticket lifecycle service orchestration", () => {
       },
       { query: transaction.query },
     );
+  });
+
+  it("preserves the new grace period if a ticket was reopened and resolved while awaiting locks", async () => {
+    tickets.findExpiredResolvedTicketViewRows
+      .mockResolvedValueOnce([ticketRow({ tk_status: "Resolved" })])
+      .mockResolvedValueOnce([]);
+    await expect(closeExpiredResolvedTickets()).resolves.toEqual({ closedCount: 0, ticketIds: [] });
+    expect(updates.closeResolvedTicketById).not.toHaveBeenCalled();
+    expect(history.createHistoryOfSystemResolutionClose).not.toHaveBeenCalled();
   });
 
   it("propagates a lifecycle side-effect failure to the transaction boundary", async () => {
