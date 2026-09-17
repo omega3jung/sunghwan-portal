@@ -41,7 +41,7 @@ vi.mock("@/server/data/serviceDesk/ticket/ticketRepository", () => ({
 vi.mock("@/server/data/serviceDesk/ticket/ticketUpdateRepository", () => ({
   updateTicketInitialRoutingById: services.updateTicketInitialRoutingById,
 }));
-vi.mock("@/server/data/serviceDesk/ticketAction/shared/ticketActionRouting", () => ({
+vi.mock("@/server/data/serviceDesk/ticket/ticketRouting", () => ({
   resolveInitialTicketRouting: services.resolveInitialTicketRouting,
 }));
 vi.mock("@/server/data/serviceDesk/ticketHistory", () => ({
@@ -224,6 +224,8 @@ describe("REMOTE approval-step handler", () => {
     query.mockResolvedValue([{ tk_id: "ticket-1" }]);
     services.findActiveTicketViewRowById.mockResolvedValue({
       tk_id: "ticket-1",
+      tk_requester_username: "requester",
+      cat_id: 10,
       tk_approval_step_id: 100,
       tk_assignee_usernames: ["old-approver"],
     });

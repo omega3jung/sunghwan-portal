@@ -1,4 +1,3 @@
-import type { TicketStatus } from "@/domain/serviceDesk";
 import type { AppUser } from "@/domain/user";
 import { assertTicketDueAtMeetsSla } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
@@ -31,17 +30,15 @@ import {
   findActiveTicketViewRowById,
   findActiveTicketViewRows,
   findActiveTicketViewRowsBySearch,
-  findApprovalStepAssigneeUsernames,
-  findCategoryAssignmentUsernames,
   findEmployeeDepartmentIdByUsername,
   findExpiredResolvedTicketViewRows,
-  findNextApprovalStepId,
   findNextTicketNumber,
   hasTicketWorkAssignmentHistory,
   lockTicketRowsById,
   type TicketReadPrincipal,
   type TicketRepositoryOptions,
 } from "./ticketRepository";
+import { resolveInitialTicketRouting } from "./ticketRouting";
 import {
   closeResolvedTicketById,
   findActiveRequesterUpdateCategorySnapshotById,
@@ -60,18 +57,6 @@ export type CreateTicketOptions = {
 
 // Operational cleanup policy after resolution; this is not an SLA deadline.
 const RESOLVED_AUTO_CLOSE_GRACE_DAYS = 7;
-
-type InitialTicketRoutingResult =
-  | {
-      phase: "APPROVAL";
-      approvalStepId: number;
-      assigneeUsernames: string[];
-    }
-  | {
-      phase: "WORK";
-      approvalStepId: null;
-      assigneeUsernames: string[];
-    };
 
 /** Loads active tickets and projects viewer-specific ownership flags for list views. */
 export async function getTicketListItems(
@@ -246,9 +231,7 @@ export async function createTicket(
     );
   }
 
-  const repositoryOptions: TicketRepositoryOptions = options.query
-    ? { query: options.query }
-    : {};
+  const repositoryOptions = { query: options.query };
   const ticketNo =
     options.ticketNo ??
     (await findNextTicketNumber(
@@ -295,12 +278,10 @@ export async function createTicket(
     },
     repositoryOptions,
   );
-  const routedStatus: TicketStatus =
-    routing.phase === "APPROVAL" ? "Approval" : "Assigned";
   const rowInput = {
     ...baseRowInput,
     tk_approval_step_id: routing.approvalStepId,
-    tk_status: routedStatus,
+    tk_status: routing.status,
   };
   const existingDraftTicketId =
     input.id ??
@@ -341,7 +322,7 @@ export async function createTicket(
     {
       approvalStepId: routing.approvalStepId,
       assigneeUsernames: routing.assigneeUsernames,
-      status: routing.phase === "APPROVAL" ? "Approval" : "Assigned",
+      status: routing.status,
     },
     repositoryOptions,
   );
@@ -350,7 +331,7 @@ export async function createTicket(
     throw createStatusError("Unable to route ticket.", 409);
   }
 
-  if (routing.phase === "APPROVAL") {
+  if (routing.status === "Approval") {
     await createHistoryOfApprovalRequested(
       {
         ticketId: row.tk_id,
@@ -410,62 +391,6 @@ async function projectTicketDetail(
     currentUserName,
     hasBeenWorker,
   });
-}
-
-// Approval takes precedence; category assignment is used only when no approval step applies.
-async function resolveInitialTicketRouting(
-  params: {
-    requesterUsername: string;
-    categoryId: number | string;
-  },
-  options?: TicketRepositoryOptions,
-): Promise<InitialTicketRoutingResult> {
-  const nextApprovalStepId = await findNextApprovalStepId(
-    {
-      requesterUsername: params.requesterUsername,
-      categoryId: params.categoryId,
-      currentApprovalStepId: null,
-    },
-    options,
-  );
-
-  if (nextApprovalStepId !== null) {
-    const assigneeUsernames = await findApprovalStepAssigneeUsernames(
-      {
-        approvalStepId: nextApprovalStepId,
-        requesterUsername: params.requesterUsername,
-      },
-      options,
-    );
-
-    if (assigneeUsernames.length === 0) {
-      throw createStatusError("Unable to resolve approval assignees.", 409);
-    }
-
-    return {
-      phase: "APPROVAL",
-      approvalStepId: nextApprovalStepId,
-      assigneeUsernames,
-    };
-  }
-
-  const assigneeUsernames = await findCategoryAssignmentUsernames(
-    {
-      categoryId: params.categoryId,
-      requesterUsername: params.requesterUsername,
-    },
-    options,
-  );
-
-  if (assigneeUsernames.length === 0) {
-    throw createStatusError("Unable to resolve ticket assignees.", 409);
-  }
-
-  return {
-    phase: "WORK",
-    approvalStepId: null,
-    assigneeUsernames,
-  };
 }
 
 function normalizeAssigneeUsernames(value: unknown): string[] {

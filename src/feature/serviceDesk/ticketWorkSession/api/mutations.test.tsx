@@ -64,17 +64,21 @@ describe("Work-session mutation cache coordination", () => {
     async (_label, useHook, apiMock, variables, expectedNo) => {
       apiMock.mockResolvedValue({ workSessionNo: 8 });
       const { queryClient, wrapper } = createContext();
+      const searchKey = ticketQueryKeys.search({ page: 1, pageSize: 20 });
+      queryClient.setQueryData(searchKey, { items: [{ id: "ticket-1", workMinutes: 0 }] });
       const invalidate = vi.spyOn(queryClient, "invalidateQueries");
       const { result } = renderHook(() => useHook(), { wrapper });
 
       await result.current.mutateAsync(variables as never);
 
+      expect(queryClient.getQueryState(searchKey)?.isInvalidated).toBe(true);
       expect(keysOf(invalidate)).toEqual([
         ticketWorkSessionQueryKeys.list("ticket-1"),
         ticketWorkSessionQueryKeys.detail("ticket-1", expectedNo),
         ticketHistoryQueryKeys.list("ticket-1"),
         ticketQueryKeys.detail("ticket-1"),
         ticketQueryKeys.lists(),
+        ticketQueryKeys.searches(),
       ]);
     },
   );

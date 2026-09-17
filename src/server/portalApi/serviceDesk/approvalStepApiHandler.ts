@@ -22,9 +22,9 @@ import {
 import {
   findActiveTicketViewRowById,
 } from "@/server/data/serviceDesk/ticket/ticketRepository";
+import { resolveInitialTicketRouting } from "@/server/data/serviceDesk/ticket/ticketRouting";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import { updateTicketInitialRoutingById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
-import { resolveInitialTicketRouting } from "@/server/data/serviceDesk/ticketAction/shared/ticketActionRouting";
 import { createTicketHistory } from "@/server/data/serviceDesk/ticketHistory";
 import {
   type PortalApiQueryExecutor,
@@ -369,7 +369,10 @@ async function resetAffectedApprovalTickets(
       });
     }
 
-    const routing = await resolveInitialTicketRouting(ticket, { query });
+    const routing = await resolveInitialTicketRouting(
+      { requesterUsername: ticket.tk_requester_username, categoryId: ticket.cat_id },
+      { query },
+    );
     const updated = await updateTicketInitialRoutingById(
       ticketId,
       {

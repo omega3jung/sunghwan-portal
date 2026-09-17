@@ -1,15 +1,7 @@
-import {
-  TicketDetail,
-  TicketStatus,
-  TicketSummary,
-} from "@/domain/serviceDesk";
+import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
-import {
-  CreateTicketInput,
-  DateInput,
-  UpdateTicketInput,
-} from "@/lib/application/contracts/serviceDesk";
+import { DateInput } from "@/lib/application/contracts/serviceDesk";
 
 /**
  * Projects a LOCAL persistence-shaped ticket through the same application DTO
@@ -77,66 +69,6 @@ export function toTicketMockDetailResource(
   return ticket;
 }
 
-/** Projects ticket mock detail for the server-side LOCAL ticket adapter. */
-export function toTicketMockDetail(
-  input: CreateTicketInput | UpdateTicketInput,
-  id = createMockId(),
-): TicketDetail {
-  const now = new Date().toISOString();
-  const status: TicketStatus = "Assigned";
-
-  return {
-    id,
-    tenantId: null,
-    tenantName: null,
-    ticketNumber: `MOCK-${id}`,
-    createdAt: now,
-    updatedAt: now,
-    requesterUsername: input.requester.id,
-    requester: {
-      username: input.requester.id,
-      name: {
-        en: {
-          first: input.requester.name || input.requester.id,
-          middle: "",
-          last: "",
-        },
-      },
-      email: input.requester.email || null,
-      image: null,
-    },
-    requesterDepartmentId: null,
-    requesterDepartmentName: null,
-    status,
-    closeReason: undefined,
-    priority: normalizePriority(input.priority) ?? "medium",
-    riskLevel: "medium",
-    assignmentPhase: "WORK",
-    approvalAssignees: [],
-    workAssignees: [],
-    approvalAssigneeUsernames: [],
-    workAssigneeUsernames: [],
-    isCurrentApprover: false,
-    isCurrentWorker: false,
-    hasBeenWorker: false,
-    mergedIntoTicketId: null,
-    mergedIntoTicketNo: null,
-    workMinutes: 0,
-    dueAt: toIsoString(input.dueAt),
-    owner: true,
-    active: true,
-    scope: "PORTAL",
-    categoryId: input.category ?? "",
-    categoryName: { en: "" },
-    approvalStepId: null,
-    subject: input.subject,
-    content: input.body,
-    email: input.email,
-    files: [],
-    images: [],
-  };
-}
-
 function calculateTicketAge(createdAt: DateInput) {
   const createdTime = new Date(createdAt).getTime();
   const diffInMs = Date.now() - createdTime;
@@ -152,33 +84,4 @@ function isDbTicketDetail(
   ticket: DbTicketDetail | TicketDetail,
 ): ticket is DbTicketDetail {
   return "ticket_number" in ticket;
-}
-
-function normalizePriority(priority: string | null) {
-  if (!priority) {
-    return null;
-  }
-
-  const normalized = priority.toLowerCase();
-
-  if (
-    normalized === "urgent" ||
-    normalized === "high" ||
-    normalized === "medium" ||
-    normalized === "low"
-  ) {
-    return normalized;
-  }
-
-  return null;
-}
-
-function toIsoString(value: DateInput) {
-  return value instanceof Date
-    ? value.toISOString()
-    : new Date(value).toISOString();
-}
-
-function createMockId() {
-  return Date.now().toString();
 }
