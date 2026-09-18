@@ -339,9 +339,9 @@ async function findAffectedApprovalTickets(
 ) {
   if (categoryIds.length === 0) return [];
 
-  return query<{ tk_id: string }>(
+  return query<ApprovalRoutingSnapshot>(
     `
-select ticket.tk_id
+select ticket.tk_id, ticket.tk_approval_step_id, ticket.tk_assignee_usernames
 from service_desk.ticket ticket
 join service_desk.category category
   on category.cat_id = ticket.tk_category_id
@@ -355,12 +355,18 @@ for update;
   );
 }
 
+type ApprovalRoutingSnapshot = Pick<
+  ServiceDeskTicketViewRow,
+  "tk_id" | "tk_approval_step_id" | "tk_assignee_usernames"
+>;
+
 async function resetAffectedApprovalTickets(
-  affectedTickets: Array<{ tk_id: string }>,
+  affectedTickets: ApprovalRoutingSnapshot[],
   actorUsername: string,
   query: PortalApiQueryExecutor,
 ) {
-  for (const { tk_id: ticketId } of affectedTickets) {
+  for (const previous of affectedTickets) {
+    const ticketId = previous.tk_id;
     const ticket = await findActiveTicketViewRowById(ticketId, { query });
 
     if (!ticket) {
@@ -399,10 +405,10 @@ async function resetAffectedApprovalTickets(
         actorUsername,
         fromValue: {
           approvalStepId:
-            ticket.tk_approval_step_id === null
+            previous.tk_approval_step_id === null
               ? null
-              : String(ticket.tk_approval_step_id),
-          assigneeUsernames: normalizeAssignees(ticket),
+              : String(previous.tk_approval_step_id),
+          assigneeUsernames: normalizeAssignees(previous),
         },
         toValue: {
           approvalStepId:
@@ -420,7 +426,7 @@ async function resetAffectedApprovalTickets(
   }
 }
 
-function normalizeAssignees(ticket: ServiceDeskTicketViewRow) {
+function normalizeAssignees(ticket: ApprovalRoutingSnapshot) {
   return Array.isArray(ticket.tk_assignee_usernames)
     ? ticket.tk_assignee_usernames.map(String)
     : [];

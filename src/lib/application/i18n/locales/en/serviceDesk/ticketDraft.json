@@ -13,6 +13,10 @@
     }
   },
   "ticketDraft": {
+    "categoryRequired": "Select a category to save this draft.",
+    "restoreOrDiscard": "Load your saved draft or discard it to start over.",
+    "discard": "Discard Draft",
+    "discardConfirm": "Discard this saved draft? This cannot be undone.",
     "notice": {
       "remoteImagesReplaced": "In remote mode, attached images are replaced with demo images for security reasons.",
       "remoteFilesReplaced": "In remote mode, attached files are replaced with demo files for security reasons."

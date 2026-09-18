@@ -10,6 +10,7 @@ vi.mock("@/server/shared/supabase/portalApiClient", () => ({
 
 import {
   findActiveTicketViewRowById,
+  findActiveTicketViewRowByIdIncludingDraft,
   findActiveTicketViewRows,
   findActiveTicketViewRowsBySearch,
   findNextTicketNumber,
@@ -25,6 +26,13 @@ const principal = {
 describe("REMOTE ticket read predicate", () => {
   beforeEach(() => queryPortalApi.mockClear());
 
+  it("normalizes nullable Draft content only at the internal draft-aware read boundary", async () => {
+    queryPortalApi.mockResolvedValueOnce([{ tk_id: "draft-1", tk_status: "Draft", tk_subject: null, tk_content: null }]);
+    await expect(findActiveTicketViewRowByIdIncludingDraft("draft-1")).resolves.toMatchObject({
+      tk_id: "draft-1", tk_status: "Draft", tk_subject: "", tk_content: "",
+    });
+  });
+
   it("applies requester, assignee, tenant, and cat_scope authorization to list and detail", async () => {
     await findActiveTicketViewRows(principal);
     await findActiveTicketViewRowById("ticket-1", {}, principal);
@@ -34,6 +42,7 @@ describe("REMOTE ticket read predicate", () => {
       expect(sql).toContain("ticket_view.tk_assignee_usernames");
       expect(sql).toContain("authorization_tenant.tn_company_id");
       expect(sql).toContain("ticket_view.cat_scope = 'PORTAL'");
+      expect(sql).toContain("tk_status != 'Draft'");
       expect(values).toEqual(expect.arrayContaining(["reader", 11, "CLIENT"]));
     }
   });
@@ -48,6 +57,7 @@ describe("REMOTE ticket read predicate", () => {
     for (const [sql] of queryPortalApi.mock.calls) {
       expect(sql).toContain("ticket_view.cat_scope = 'PORTAL'");
       expect(sql).toContain("authorization_tenant.tn_company_id");
+      expect(sql).toContain("tk_status not in ('Draft')");
     }
   });
 

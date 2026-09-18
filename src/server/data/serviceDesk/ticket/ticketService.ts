@@ -14,6 +14,7 @@ import { finishRunningWorkSessionsByTicketId } from "../workSession";
 import { resolveAuthoritativeTicketCategory } from "./ticketCategoryAccess";
 import {
   TicketCreateRequestDto,
+  ticketCreateRequestSchema,
   TicketDetailDto,
   TicketListItemDto,
   TicketSearchRequestDto,
@@ -222,6 +223,12 @@ export async function createTicket(
   input: TicketCreateRequestDto,
   options: CreateTicketOptions,
 ): Promise<TicketDetailDto> {
+  const parsed = ticketCreateRequestSchema.safeParse(input);
+  if (!parsed.success) {
+    throw createStatusError("A complete ticket submission is required.", 400);
+  }
+  input = parsed.data;
+
   if (!options.query) {
     return withPortalApiTransaction((query) =>
       createTicket(input, {

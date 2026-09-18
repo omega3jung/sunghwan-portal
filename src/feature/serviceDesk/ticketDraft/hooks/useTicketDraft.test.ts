@@ -13,6 +13,19 @@ const draftMocks = vi.hoisted(() => ({
   updateDraft: vi.fn(),
   discardDraft: vi.fn(),
   useDraftQuery: vi.fn(),
+  prepare: vi.fn(),
+  cancelQueries: vi.fn(),
+  setQueryData: vi.fn(),
+}));
+
+vi.mock("@tanstack/react-query", () => ({
+  useQueryClient: () => ({ cancelQueries: draftMocks.cancelQueries, setQueryData: draftMocks.setQueryData }),
+}));
+vi.mock("../api/repo", () => ({
+  useTicketDraftRepoContext: () => ({ userId: "requester", dataScope: "REMOTE" }),
+}));
+vi.mock("@/feature/serviceDesk/ticket/api/api", () => ({
+  serviceDeskTicketApi: { prepareAttachments: draftMocks.prepare },
 }));
 
 vi.mock("../api/mutations", () => ({
@@ -37,6 +50,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   draftMocks.useDraftQuery.mockReturnValue({ data: null });
   draftMocks.discardDraft.mockResolvedValue(undefined);
+  draftMocks.prepare.mockImplementation(async ({ body }) => ({ body, files: [], images: [] }));
 });
 
 function createValues(
@@ -44,7 +58,7 @@ function createValues(
 ): TicketDraftFormPayload {
   return {
     id: null,
-    category: undefined,
+    category: "10",
     subject: "",
     body: "",
     dueAt: new Date("2026-09-01T00:00:00.000Z"),
@@ -64,9 +78,26 @@ function createForm(values: TicketDraftFormPayload) {
 }
 
 describe("useTicketDraft lifecycle", () => {
+  it.each([undefined, "", "0"])("does not save dirty content without a valid category (%s)", async (category) => {
+    const values = createValues({ category, subject: "Unsaved", body: "<p>Details</p>", attachment: [new File(["raw"], "report.txt")] });
+    const { result } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(values) }));
+    await expect(result.current.saveDraftNow()).resolves.toBeNull();
+    expect(draftMocks.prepare).not.toHaveBeenCalled();
+    expect(draftMocks.createDraft).not.toHaveBeenCalled();
+    expect(draftMocks.updateDraft).not.toHaveBeenCalled();
+  });
+
+  it("saves a category-only draft", async () => {
+    const values = createValues();
+    draftMocks.createDraft.mockResolvedValue({ ...values, id: "draft-1" });
+    const { result } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(values) }));
+    await act(async () => { await result.current.saveDraftNow(); });
+    expect(draftMocks.createDraft).toHaveBeenCalledWith(expect.objectContaining({ category: "10", subject: "", body: "" }));
+  });
+
   it("does not create an empty draft", async () => {
     const { result } = renderHook(() =>
-      useTicketDraft({ mode: "create", form: createForm(createValues()) }),
+      useTicketDraft({ mode: "create", form: createForm(createValues({ category: undefined })) }),
     );
 
     await expect(result.current.saveDraftNow()).resolves.toBeNull();
@@ -150,6 +181,20 @@ describe("useTicketDraft lifecycle", () => {
 
     expect(draftMocks.discardDraft).toHaveBeenCalledWith("draft-server");
     expect(result.current.draftId).toBeNull();
+    expect(draftMocks.setQueryData).toHaveBeenCalledWith(expect.arrayContaining(["REMOTE", "requester"]), null);
+  });
+
+  it("creates a new draft after discard instead of updating the removed row", async () => {
+    const values = createValues({ id: "discarded", subject: "New draft" });
+    draftMocks.useDraftQuery.mockReturnValue({ data: values });
+    draftMocks.createDraft.mockImplementation(async (payload) => ({ ...payload, id: "replacement" }));
+    const { result, rerender } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(values) }));
+    await act(async () => { await result.current.removeDraft(); });
+    draftMocks.useDraftQuery.mockReturnValue({ data: null });
+    rerender();
+    await act(async () => { await result.current.saveDraftNow(); });
+    expect(draftMocks.updateDraft).not.toHaveBeenCalled();
+    expect(result.current.draftId).toBe("replacement");
   });
 
   it("keeps an update in flight exclusive and permits retry after failure", async () => {
@@ -165,6 +210,7 @@ describe("useTicketDraft lifecycle", () => {
     const firstSave = result.current.saveDraftNow();
     const firstResult = expect(firstSave).rejects.toThrow("Save failed");
     const secondSave = result.current.saveDraftNow();
+    await waitFor(() => expect(draftMocks.updateDraft).toHaveBeenCalledOnce());
     // Settle both calls before asserting so the failing implementation cannot leave pending tests.
     rejectUpdate(new Error("Save failed"));
     const secondResult = await secondSave.catch(() => "overlapping update");
@@ -175,5 +221,66 @@ describe("useTicketDraft lifecycle", () => {
     draftMocks.updateDraft.mockResolvedValue(values);
     await expect(result.current.saveDraftNow()).resolves.toEqual(values);
     expect(draftMocks.updateDraft).toHaveBeenCalledTimes(2);
+  });
+
+  it("starts a new draft after REMOTE submission clears the old draft and query", async () => {
+    const values = createValues({ id: "submitted-draft", subject: "Next ticket" });
+    draftMocks.useDraftQuery.mockReturnValue({ data: values });
+    draftMocks.createDraft.mockImplementation(async (payload) => ({ ...payload, id: "new-draft" }));
+    const { result, rerender } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(values) }));
+    await act(async () => { await result.current.clearDraft(); });
+    expect(draftMocks.discardDraft).not.toHaveBeenCalled();
+    expect(draftMocks.setQueryData).toHaveBeenCalledWith(expect.arrayContaining(["REMOTE", "requester"]), null);
+    draftMocks.useDraftQuery.mockReturnValue({ data: null });
+    rerender();
+    await act(async () => { await result.current.saveDraftNow(); });
+    expect(draftMocks.createDraft).toHaveBeenCalledWith(expect.objectContaining({ id: null }));
+    expect(draftMocks.updateDraft).not.toHaveBeenCalled();
+    expect(result.current.draftId).toBe("new-draft");
+  });
+
+  it("clears a stale identifier when the authoritative draft query becomes null", () => {
+    draftMocks.useDraftQuery.mockReturnValue({ data: createValues({ id: "old-draft" }) });
+    const { result, rerender } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(createValues()) }));
+    expect(result.current.draftId).toBe("old-draft");
+    draftMocks.useDraftQuery.mockReturnValue({ data: undefined });
+    rerender();
+    expect(result.current.draftId).toBe("old-draft");
+    draftMocks.useDraftQuery.mockReturnValue({ data: null });
+    rerender();
+    expect(result.current.draftId).toBeNull();
+  });
+
+  it("persists prepared inline images that survive reload and another save", async () => {
+    draftMocks.prepare.mockResolvedValueOnce({ body: '<p>Image</p><img src="/files/demo-image.png">', files: [], images: [] });
+    let stored: TicketDraftFormPayload | null = null;
+    draftMocks.createDraft.mockImplementation(async (payload) => {
+      stored = JSON.parse(JSON.stringify({ ...payload, id: "draft-image" }));
+      return stored;
+    });
+    const first = renderHook(() => useTicketDraft({ mode: "create", form: createForm(createValues({
+      body: '<p>Image</p><img src="data:image/png;base64,aGVsbG8=">',
+    })) }));
+    await act(async () => { await first.result.current.saveDraftNow(); });
+    expect(draftMocks.prepare).toHaveBeenCalledWith({ body: '<p>Image</p><img src="data:image/png;base64,aGVsbG8=">', files: [] });
+    expect(stored!.body).toContain('/files/demo-');
+    expect(stored!.body).not.toMatch(/data:|blob:/);
+    first.unmount();
+
+    draftMocks.useDraftQuery.mockReturnValue({ data: stored });
+    draftMocks.updateDraft.mockImplementation(async (payload) => payload);
+    const reloaded = renderHook(() => useTicketDraft({ mode: "create", form: createForm(stored!) }));
+    await act(async () => { await reloaded.result.current.saveDraftNow(); });
+    expect(draftMocks.updateDraft).toHaveBeenCalledWith(expect.objectContaining({ body: stored!.body }));
+  });
+
+  it("does not persist content when attachment preparation fails and permits retry", async () => {
+    draftMocks.prepare.mockRejectedValueOnce(new Error("Preparation failed"));
+    draftMocks.createDraft.mockResolvedValue(createValues({ id: "new" }));
+    const { result } = renderHook(() => useTicketDraft({ mode: "create", form: createForm(createValues({ subject: "Saved" })) }));
+    await expect(result.current.saveDraftNow()).rejects.toThrow("Preparation failed");
+    expect(draftMocks.createDraft).not.toHaveBeenCalled();
+    await act(async () => { await result.current.saveDraftNow(); });
+    expect(draftMocks.createDraft).toHaveBeenCalledOnce();
   });
 });

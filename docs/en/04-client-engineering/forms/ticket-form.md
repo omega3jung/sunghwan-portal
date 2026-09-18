@@ -162,6 +162,12 @@ See [`ticket-attachment.md`](ticket-attachment.md) for the attachment boundary.
 
 The current draft model supports both LOCAL and REMOTE behavior.
 
+Persistence starts only after a valid Category is selected. Without a category,
+edits remain unsaved React Hook Form state: neither a draft API request nor a
+localStorage write occurs. Closing a dirty form in this state keeps the editor
+open and asks the user to select a category. A category alone is enough to save;
+subject and body do not need to be complete yet.
+
 ### LOCAL Draft
 
 LOCAL draft is browser-local recovery state. The feature draft repository reads
@@ -178,11 +184,19 @@ REMOTE draft behavior stores an active draft through the ticket draft route and
 server DTO boundary. The current REMOTE design treats a draft as a ticket row in
 `Draft` status, with one active draft per requester.
 
+`tk_category_id` stays NOT NULL. The existing category FK and tenant trigger
+continue to determine the draft's domain identity. Empty/whitespace-only subjects
+and semantically empty bodies (such as `<p></p>`) are written as SQL NULL. The
+draft mapper returns empty strings for those values, preserving the public DTO
+and form contracts. Updating only the subject preserves the category and a NULL
+body. The server rejects unavailable categories before saving a draft.
+
 ```txt
 open create dialog
 -> load active draft
 -> user edits form
 -> close while dirty
+-> require selected category (otherwise keep editor open)
 -> save draft
 -> reopen and recover draft values
 -> final submit reuses the draft ticket row
@@ -192,6 +206,8 @@ Draft save is form-data oriented. It does not guarantee attachment recovery:
 
 - browser `File` objects are not restorable after reload
 - draft save intentionally clears transient attachment input
+- inline body images are prepared before saving and recover through their
+  controlled URLs; data/blob image sources cannot cross the persistence boundary
 - final submit prepares the current attachment input
 - production object storage remains future scope
 
@@ -209,6 +225,14 @@ validate form
 -> server resolves approval or work assignment
 -> invalidate ticket and draft queries
 ```
+
+Both the HTTP schema and server create service reject incomplete submissions:
+category must be valid and effectively available, subject must be non-blank, and
+body must contain meaningful text or an inline image. Empty rich-text wrappers
+and whitespace do not count as content. These checks run before the draft row is
+submitted or History is created. Existing SLA, preparation, routing, transaction,
+and ownership checks still apply. A valid submission overwrites the draft's
+nullable fields with complete strings and reuses the same row.
 
 The server decides whether the submitted ticket enters:
 

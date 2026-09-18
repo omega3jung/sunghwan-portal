@@ -103,13 +103,12 @@ returning tk_id;
 `;
 
 const DISCARD_TICKET_DRAFT_ROW_BY_ID_QUERY = `
-select tk_id
-from service_desk.ticket
+delete from service_desk.ticket
 where tk_id = $1
   and tk_requester_username = $2
   and tk_status = 'Draft'
   and tk_active = true
-limit 1;
+returning tk_id;
 `;
 
 /** Queries PostgreSQL for ticket draft row by requester username without applying presentation concerns. */
@@ -185,7 +184,7 @@ export async function updateTicketDraftRowById(
     : null;
 }
 
-/** Removes or deactivates ticket draft row by id through the server persistence boundary. */
+/** Discards only an active draft owned by the authenticated requester. */
 export async function discardTicketDraftRowById(
   ticketId: string,
   requesterUsername: string,

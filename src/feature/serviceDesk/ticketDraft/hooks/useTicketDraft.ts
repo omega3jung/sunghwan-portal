@@ -1,7 +1,11 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { DeepPartial, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
+
+import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/api/api";
+import { hasTicketDraftCategory } from "@/lib/application/serviceDesk/ticketDraft";
 
 import type { TicketDraftFormPayload } from "../api/mapper";
 import {
@@ -10,6 +14,8 @@ import {
   useUpdateServiceDeskTicketDraft,
 } from "../api/mutations";
 import { useServiceDeskTicketDraftQuery } from "../api/queries";
+import { ticketDraftQueryKeys } from "../api/queryKeys";
+import { useTicketDraftRepoContext } from "../api/repo";
 
 type UseTicketDraftOptions = {
   mode: "create" | "update" | "view";
@@ -18,6 +24,8 @@ type UseTicketDraftOptions = {
 
 export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
   const [draftId, setDraftId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const context = useTicketDraftRepoContext();
 
   const savingRef = useRef(false);
 
@@ -27,71 +35,66 @@ export const useTicketDraft = ({ mode, form }: UseTicketDraftOptions) => {
   const { mutateAsync: updateDraft } = useUpdateServiceDeskTicketDraft();
   const { mutateAsync: discardDraft } = useDiscardServiceDeskTicketDraft();
 
-  const hasRequiredTicketContent = (
-    values: DeepPartial<TicketDraftFormPayload>,
-  ) => values.subject?.length || values.body?.length || values.category;
-
-  const hasTicketContent = (values: DeepPartial<TicketDraftFormPayload>) =>
-    hasRequiredTicketContent(values) || values.attachment?.length;
-
-  const toDraftPayload = (
-    values: TicketDraftFormPayload,
-  ): TicketDraftFormPayload => ({
-    ...values,
-    // File objects are browser-session values and are not safe to restore from
-    // either localStorage or a server draft. Attachments are prepared only when
-    // the final ticket is submitted.
-    attachment: [],
-  });
-
   /** Saves at most one create-mode draft operation at a time. */
   const saveDraftNow = async () => {
     if (mode !== "create" || savingRef.current) return null;
 
     const values = form.getValues();
 
-    if (!hasTicketContent(values)) return null;
+    if (!hasTicketDraftCategory(values.category)) return null;
 
     try {
       savingRef.current = true;
+      const prepared = await serviceDeskTicketApi.prepareAttachments({
+        body: values.body,
+        files: [],
+      });
+      const payload = {
+        ...values,
+        body: prepared.body,
+        // Selected File objects cannot be recovered after reload. Inline images
+        // survive through the controlled URLs returned by attachment preparation.
+        attachment: [],
+      };
 
       if (!draftId) {
-        const draft = await createDraft(toDraftPayload(values));
+        const draft = await createDraft({ ...payload, id: null });
         if (draft.id) {
           setDraftId(draft.id);
         }
         return draft;
       }
 
-      const { id: _discard, ...rest } = values;
-
-      return await updateDraft(
-        toDraftPayload({
-          id: draftId,
-          ...(rest as Omit<TicketDraftFormPayload, "id">),
-        }),
-      );
+      return await updateDraft({ ...payload, id: draftId });
     } finally {
       savingRef.current = false;
     }
   };
 
   useEffect(() => {
-    if (ticketDraft?.id) {
-      setDraftId(ticketDraft.id);
+    if (ticketDraft !== undefined) {
+      setDraftId(ticketDraft?.id ?? null);
     }
   }, [ticketDraft]);
 
-  const removeDraft = async () => {
-    if (!ticketDraft && !draftId) return;
-    await discardDraft(ticketDraft?.id ?? draftId);
+  const clearDraft = async () => {
+    const queryKey = ticketDraftQueryKeys.draft(context);
+    await queryClient.cancelQueries({ queryKey });
+    queryClient.setQueryData(queryKey, null);
     setDraftId(null);
+  };
+
+  const removeDraft = async () => {
+    if (!ticketDraft && !draftId && context.dataScope === "REMOTE") return;
+    await discardDraft(ticketDraft?.id ?? draftId);
+    await clearDraft();
   };
 
   return {
     draftId,
     ticketDraft,
     removeDraft,
+    clearDraft,
     saveDraftNow,
   };
 };

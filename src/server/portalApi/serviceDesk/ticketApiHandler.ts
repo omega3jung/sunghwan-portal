@@ -184,11 +184,11 @@ export async function handleTicketPortalApi(
 
     const ticketId = decodePathSegment(actionDetailMatch[1]);
 
-    if (context.method === "GET") {
-      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
-        return createNotFoundResponse();
-      }
+    if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+      return createNotFoundResponse();
+    }
 
+    if (context.method === "GET") {
       const action = await getTicketActionByTicketIdAndNo(ticketId, actionNo);
       return action ? NextResponse.json(action) : createNotFoundResponse();
     }

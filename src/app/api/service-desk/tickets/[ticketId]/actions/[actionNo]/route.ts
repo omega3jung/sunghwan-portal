@@ -16,6 +16,7 @@ import {
   getLocalDemoActions,
   getLocalDemoHistories,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { toCurrentUsernameProxyHeaders } from "@/app/api/_adapters/serviceDesk";
 import {
   ApiError,
   resolveApiErrorMessage,
@@ -37,6 +38,11 @@ export async function GET(
 ) {
   const { ticketId, actionNo } = await context.params;
   const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
+
+  if (currentUserName === null) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   if (!isRemote) {
     const access = await getCurrentLocalTicketAccessContext(request);
@@ -69,6 +75,7 @@ export async function GET(
 
   return portalApiJson(request, {
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
+    headers: toCurrentUsernameProxyHeaders(currentUserName),
     errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.fetch"),
     mapData: mapTicketActionPayload,
   });
@@ -81,16 +88,15 @@ export async function PATCH(
 ) {
   const { ticketId, actionNo } = await context.params;
   const isRemote = await isRemoteRequest(request);
+  const currentUserName = await getCurrentEmployeeUserName(request);
+
+  if (currentUserName === null) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const body = (await request.json()) as { active?: boolean };
 
   if (!isRemote) {
     try {
-      const currentUserName = await getCurrentEmployeeUserName(request);
-
-      if (currentUserName === null) {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-
       if (body.active !== false) {
         throw new ApiError(
           "serviceDesk.ticketActions.invalidPatch",
@@ -191,6 +197,7 @@ export async function PATCH(
   return portalApiJson(request, {
     method: "PATCH",
     path: `/service-desk/tickets/${ticketId}/actions/${actionNo}`,
+    headers: toCurrentUsernameProxyHeaders(currentUserName),
     body,
     errorMessage: resolveApiErrorMessage("serviceDesk.ticketActions.remove"),
   });

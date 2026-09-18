@@ -118,12 +118,11 @@ export async function handleAssignmentRulePortalApi(
         });
       }
 
-      const submittedCategoryIds = await validateAssignmentRuleTreeMutation({
-        principal: authorization.principal,
+      const { assignmentRules, submittedCategoryIds } = await saveAssignmentRuleTree(
+        body,
+        authorization.principal,
         tenant,
-        payload: body,
-      });
-      const assignmentRules = await saveAssignmentRuleTree(body);
+      );
 
       return NextResponse.json(
         assignmentRules.filter((rule) =>
@@ -168,11 +167,17 @@ export async function handleAssignmentRulePortalApi(
 
 async function saveAssignmentRuleTree(
   payload: SaveServiceDeskAssignmentRuleTreePayload,
+  principal: Parameters<typeof validateAssignmentRuleTreeMutation>[0]["principal"],
+  tenant: Parameters<typeof validateAssignmentRuleTreeMutation>[0]["tenant"],
 ) {
   try {
-    return await withPortalApiTransaction((query) =>
-      saveAssignmentRuleTreeInTransaction(payload, query),
-    );
+    return await withPortalApiTransaction(async (query) => {
+      const submittedCategoryIds = await validateAssignmentRuleTreeMutation({
+        principal, tenant, payload, query,
+      });
+      const assignmentRules = await saveAssignmentRuleTreeInTransaction(payload, query);
+      return { assignmentRules, submittedCategoryIds };
+    });
   } catch (error) {
     throw mapSettingsWriteError(error, "assignmentRules");
   }

@@ -1,4 +1,4 @@
-import { Check, StepBack, StepForward } from "lucide-react";
+import { Check, Loader2, StepBack, StepForward } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { cn } from "@/shared/utils/presentation/classnames";
 type CreateTicketDialogFooterProps = {
   currentStep: number;
   canMoveNext: boolean;
+  isSubmitting?: boolean;
   onBack: () => void;
   onNext: () => void;
 };
@@ -17,6 +18,7 @@ type CreateTicketDialogFooterProps = {
 export const CreateTicketDialogFooter = ({
   currentStep,
   canMoveNext,
+  isSubmitting = false,
   onBack,
   onNext,
 }: CreateTicketDialogFooterProps) => {
@@ -32,7 +34,7 @@ export const CreateTicketDialogFooter = ({
           currentStep === ticketStep.info && "md:hidden",
         )}
         onClick={onBack}
-        disabled={currentStep === ticketStep.info}
+        disabled={isSubmitting || currentStep === ticketStep.info}
       >
         <>
           <StepBack />
@@ -44,7 +46,8 @@ export const CreateTicketDialogFooter = ({
         type="button"
         className="w-full gap-2 whitespace-normal sm:w-48"
         onClick={onNext}
-        disabled={!canMoveNext}
+        disabled={isSubmitting || !canMoveNext}
+        aria-busy={isSubmitting}
       >
         {currentStep !== ticketStep.review ? (
           <>
@@ -53,7 +56,7 @@ export const CreateTicketDialogFooter = ({
           </>
         ) : (
           <>
-            <Check />
+            {isSubmitting ? <Loader2 className="animate-spin" /> : <Check />}
             {t("action.submit", { ns: NS.common })}
           </>
         )}

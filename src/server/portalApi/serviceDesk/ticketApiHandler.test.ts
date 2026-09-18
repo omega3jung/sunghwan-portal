@@ -152,6 +152,28 @@ describe("Ticket portal API orchestration", () => {
     expect(mocks.getProfile).not.toHaveBeenCalled();
   });
 
+  it.each(["GET", "PATCH"])("checks parent visibility for an individual action %s", async (method) => {
+    mocks.ticket.getTicketDetail.mockResolvedValue(null);
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/actions/2", method, { active: false }, "effective.employee",
+    ));
+    expect(response.status).toBe(404);
+    expect(mocks.action.getTicketActionByTicketIdAndNo).not.toHaveBeenCalled();
+    expect(mocks.action.softDeleteTicketAction).not.toHaveBeenCalled();
+  });
+
+  it("reads and soft-deletes a visible individual action using the trusted actor", async () => {
+    mocks.action.getTicketActionByTicketIdAndNo.mockResolvedValue({ action_no: 2, active: true });
+    mocks.action.softDeleteTicketAction.mockResolvedValue({ action_no: 2, active: false });
+    const path = "/service-desk/tickets/ticket-1/actions/2";
+    const read = await handleTicketPortalApi(createContext(path, "GET", undefined, "effective.employee"));
+    expect(read.status).toBe(200);
+    const removed = await handleTicketPortalApi(createContext(path, "PATCH", { active: false }, "effective.employee"));
+    expect(removed.status).toBe(200);
+    expect(mocks.action.softDeleteTicketAction).toHaveBeenCalledWith({ ticketId: "ticket-1", actionNo: 2, currentUserName: "effective.employee" });
+  });
+
+
   it("routes start-work with the effective username", async () => {
     await handleTicketPortalApi(
       createContext(

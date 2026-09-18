@@ -2,7 +2,9 @@
 
 import { DataScope } from "@/domain/auth";
 import { useCurrentSession } from "@/feature/auth/session/client";
+import { hasTicketDraftCategory } from "@/lib/application/serviceDesk/ticketDraft";
 
+import { ticketDraftFormSchema } from "../forms/schema";
 import { serviceDeskTicketDraftApi } from "./api";
 import type { TicketDraftFormPayload } from "./mapper";
 
@@ -56,6 +58,7 @@ export const serviceDeskTicketDraftRepo = {
   }: TicketDraftRepoContext & {
     data: TicketDraftFormPayload;
   }) {
+    ticketDraftFormSchema.parse(data);
     if (dataScope === "LOCAL") {
       return ticketDraftLocalStore.set(userId, data);
     }
@@ -70,6 +73,7 @@ export const serviceDeskTicketDraftRepo = {
   }: TicketDraftRepoContext & {
     data: TicketDraftFormPayload;
   }) {
+    ticketDraftFormSchema.parse(data);
     if (dataScope === "LOCAL") {
       return ticketDraftLocalStore.set(userId, data);
     }
@@ -106,7 +110,7 @@ const ticketDraftLocalStore = {
 
     // Never restore a previous effective user's draft after logout or an
     // impersonation switch on the same browser profile.
-    if (draft.ownerUserId !== userId) {
+    if (draft.ownerUserId !== userId || !hasTicketDraftCategory(draft.form.category)) {
       localStorage.removeItem(TICKET_DRAFT_STORAGE_KEY);
       return null;
     }

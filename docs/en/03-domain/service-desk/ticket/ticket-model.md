@@ -186,6 +186,11 @@ Rules:
 
 - `status = Draft`
 - one active draft per requester
+- Category is the minimum persisted identity: `tk_category_id` remains NOT NULL
+  with the existing FK and `enforce_ticket_category_tenant()` trigger
+- `tk_subject` and `tk_content` may be NULL only while Draft; incomplete values
+  are normalized to NULL at the Draft write boundary and to empty strings in the
+  form-facing DTO
 - draft is fetched by requester username
 - submit reuses the draft row and changes it to `Approval` or `Assigned`
 - draft rows are excluded from operational ticket lists
@@ -194,6 +199,14 @@ LOCAL draft recovery is browser-local `localStorage` state owned by the feature
 draft repository and scoped to the current demo user. It is removed when the
 stored owner does not match the effective user, does not traverse a draft Route
 Handler, and is not persistence-equivalent to the REMOTE PostgreSQL draft model.
+Both runtimes require a selected category before persistence and allow a
+category-only draft. Without it, the form is unsaved client state.
+
+Operational Ticket DTOs keep string subject/content fields. Status-aware database
+CHECK constraints require non-null, non-blank subject/content for non-Draft rows;
+server validation additionally rejects semantically empty rich text on submit.
+List/search queries exclude drafts, and submitted History is created only after
+complete validation and the transition to `Approval` or `Assigned`.
 
 ---
 
