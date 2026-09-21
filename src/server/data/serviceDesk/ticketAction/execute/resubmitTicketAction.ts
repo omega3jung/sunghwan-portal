@@ -1,4 +1,5 @@
 import type { ServiceDeskQueryExecutor } from "@/server/data/serviceDesk/shared";
+import { resolveInitialTicketRouting } from "@/server/data/serviceDesk/ticket/ticketRouting";
 import type { ServiceDeskTicketViewRow } from "@/server/data/serviceDesk/ticket/ticketRow";
 import { updateTicketInitialRoutingById } from "@/server/data/serviceDesk/ticket/ticketUpdateRepository";
 
@@ -7,7 +8,6 @@ import {
   createHistoryOfAssignmentResolvedByRule,
 } from "../../ticketHistory/ticketHistoryEventService";
 import { createTicketHistory } from "../../ticketHistory/ticketHistoryService";
-import { resolveInitialTicketRouting } from "../shared/ticketActionRouting";
 import {
   assertRequesterActionAllowed,
   assertTicketUpdated,
@@ -35,7 +35,10 @@ export async function executeResubmitTicketAction({
 }) {
   assertRequesterActionAllowed(ticket, currentUserName);
 
-  const routing = await resolveInitialTicketRouting(ticket, { query });
+  const routing = await resolveInitialTicketRouting(
+    { requesterUsername: ticket.tk_requester_username, categoryId: ticket.cat_id },
+    { query },
+  );
   const updatedTicket = await updateTicketInitialRoutingById(
     ticketId,
     {

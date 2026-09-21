@@ -595,6 +595,15 @@ export const documentGroups: DocumentGroup[] = [
         titleKey: "section.decisions.2026-09.title",
         items: [
           {
+            id: "decision-draft-persistence-minimum-and-partial-content-2026-09",
+            titleKey:
+              "item.decisionDraftPersistenceMinimumAndPartialContent202609.title",
+            descriptionKey:
+              "item.decisionDraftPersistenceMinimumAndPartialContent202609.description",
+            relativePath:
+              "06-decisions/2026-09-draft-persistence-minimum-and-partial-content.md",
+          },
+          {
             id: "decision-vitest-coverage-strategy-2026-09",
             titleKey:
               "item.decisionVitestCoverageStrategy202609.title",

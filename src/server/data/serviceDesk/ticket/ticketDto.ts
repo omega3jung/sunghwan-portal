@@ -11,6 +11,7 @@ import {
   TicketStatus,
   TicketUser,
 } from "@/domain/serviceDesk";
+import { submittedTicketContentSchema } from "@/lib/application/contracts/serviceDesk/ticketContent";
 import { ISODateString, LocalizedText, SortDirection } from "@/shared/types";
 
 import { ServiceDeskTicketEmail } from "./ticketRow";
@@ -56,14 +57,14 @@ export const ticketAttachmentMetadataSchema = z.object({
   reason: z.literal("SECURITY_DEMO_REPLACEMENT"),
 });
 
-/** Validates the fields shared by ticket draft, create, and requester-update payloads. */
+/** Validates complete ticket submissions; partial drafts have a separate write contract. */
 export const ticketMutateRequestSchema = z.object({
   id: z.string().trim().min(1).nullable().optional(),
   tenantId: z.coerce.number().int().positive().nullable().optional(),
   categoryId: z.coerce.number().int().positive(),
   approvalStepId: z.coerce.number().int().positive().nullable().optional(),
   subject: z.string().trim().min(1).max(200),
-  body: z.string().trim().min(1),
+  body: submittedTicketContentSchema,
   dueAt: z.coerce.date(),
   priority: ticketPrioritySchema.nullable().optional(),
   riskLevel: ticketRiskLevelSchema.nullable().optional(),

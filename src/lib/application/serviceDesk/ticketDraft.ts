@@ -1,6 +1,11 @@
 import type { Priority, RiskLevel } from "@/domain/common";
 import type { ISODateString } from "@/shared/types";
 
+/** Category is the minimum identity required to persist a draft in either runtime. */
+export function hasTicketDraftCategory(categoryId: unknown): categoryId is string {
+  return typeof categoryId === "string" && /^[1-9]\d*$/.test(categoryId);
+}
+
 /** Represents ticket email recipients within shared Service Desk policy. */
 export type TicketEmailRecipients = {
   to: string[];

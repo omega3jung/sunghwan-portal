@@ -3,8 +3,8 @@ import { TicketMockInput } from "../../types";
 export const ticket: TicketMockInput = {
   tk_id: "37c196e0-106c-471a-8049-7bc1fa9d8431",
   tk_ticket_no: "SP-2026-0053",
-  tk_created_at: "2026-08-13T08:13:53Z",
-  tk_updated_at: "2026-08-13T11:14:20Z",
+  tk_created_at: "2026-09-13T08:13:53Z",
+  tk_updated_at: "2026-09-13T11:14:20Z",
   tk_requester_username: "tessa_ito",
   tk_requester: {
     username: "tessa_ito",
@@ -26,11 +26,11 @@ export const ticket: TicketMockInput = {
     "evan_seo",
   ],
   tk_work_minutes: 45,
-  tka_last_comment_at: "2026-08-13T11:12:08Z",
+  tka_last_comment_at: "2026-09-13T11:12:08Z",
   tka_last_comment_email: "Evan.Seo@sunghwan-portal.dev",
-  tka_last_user_activity_at: "2026-08-13T11:12:08Z",
+  tka_last_user_activity_at: "2026-09-13T11:12:08Z",
   tka_last_user_activity_email: "Evan.Seo@sunghwan-portal.dev",
-  tk_due_at: "2026-08-14T18:00:00Z",
+  tk_due_at: "2026-09-14T18:00:00Z",
   tk_active: true,
   cat_scope: "PORTAL",
   cat_id: "160",
@@ -44,7 +44,7 @@ export const ticket: TicketMockInput = {
   tk_subject:
     "Erreur de mise à jour des données de production de Solar Farm A dans Energy Operations Dashboard",
   tk_content:
-    "Bonjour. Les données de production de Solar Farm A ne sont pas mises à jour dans Energy Operations Dashboard sur le portail de Client Demo Energy.<br><br>La dernière mise à jour affichée date du 29 juin 2026 à 14:35 et le bouton Refresh génère l’erreur « Unable to synchronize telemetry data ». Les données les plus récentes sont disponibles normalement dans le système de surveillance externe.<br><br>Ce problème affecte l’état opérationnel et les rapports quotidiens de production ; nous demandons donc une vérification rapide.",
+    "Bonjour. Les données de production de Solar Farm A ne sont pas mises à jour dans Energy Operations Dashboard sur le portail de Client Demo Energy.<br><br>La dernière mise à jour affichée date du 29 juillet 2026 à 14:35 et le bouton Refresh génère l’erreur « Unable to synchronize telemetry data ». Les données les plus récentes sont disponibles normalement dans le système de surveillance externe.<br><br>Ce problème affecte l’état opérationnel et les rapports quotidiens de production ; nous demandons donc une vérification rapide.",
   tk_email: {
     to: [
       "Olivia.Park@sunghwan-portal.dev",

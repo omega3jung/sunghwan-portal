@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import type { TicketAttachmentMetadata } from "@/domain/serviceDesk";
 
+import { submittedTicketContentSchema } from "./ticketContent";
+
 const ticketEmailSchema = z
   .object({
     to: z.array(z.string()).default([]),
@@ -33,7 +35,7 @@ export const requesterUpdateTicketRequestSchema = z
   .object({
     categoryId: requesterUpdateCategoryIdSchema,
     subject: z.string().trim().min(1).max(200),
-    content: z.string().trim().min(1),
+    content: submittedTicketContentSchema,
     dueAt: z.iso.datetime(),
     email: ticketEmailSchema,
     files: z.array(ticketAttachmentMetadataSchema).default([]),

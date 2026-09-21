@@ -1,6 +1,7 @@
 {
   "navigation": {
-    "home": "홈"
+    "home": "홈",
+    "loading": "페이지 이동 중…"
   },
   "action": {
     "add": "추가",

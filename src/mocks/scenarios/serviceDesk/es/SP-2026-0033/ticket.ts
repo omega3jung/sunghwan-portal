@@ -3,8 +3,8 @@ import { TicketMockInput } from "../../types";
 export const ticket: TicketMockInput = {
   tk_id: "c1915a85-6ad9-4aa3-87b6-80981951b542",
   tk_ticket_no: "SP-2026-0033",
-  tk_created_at: "2026-08-13T08:13:53Z",
-  tk_updated_at: "2026-08-13T11:14:20Z",
+  tk_created_at: "2026-09-13T08:13:53Z",
+  tk_updated_at: "2026-09-13T11:14:20Z",
   tk_requester_username: "tessa_ito",
   tk_requester: {
     username: "tessa_ito",
@@ -26,11 +26,11 @@ export const ticket: TicketMockInput = {
     "evan_seo",
   ],
   tk_work_minutes: 45,
-  tka_last_comment_at: "2026-08-13T11:12:08Z",
+  tka_last_comment_at: "2026-09-13T11:12:08Z",
   tka_last_comment_email: "Evan.Seo@sunghwan-portal.dev",
-  tka_last_user_activity_at: "2026-08-13T11:12:08Z",
+  tka_last_user_activity_at: "2026-09-13T11:12:08Z",
   tka_last_user_activity_email: "Evan.Seo@sunghwan-portal.dev",
-  tk_due_at: "2026-08-14T18:00:00Z",
+  tk_due_at: "2026-09-14T18:00:00Z",
   tk_active: true,
   cat_scope: "PORTAL",
   cat_id: "160",
@@ -44,7 +44,7 @@ export const ticket: TicketMockInput = {
   tk_subject:
     "Error de actualización de los datos de generación de Solar Farm A en Energy Operations Dashboard",
   tk_content:
-    "Hola. Los datos de generación de Solar Farm A no se actualizan en Energy Operations Dashboard del portal de Client Demo Energy.<br><br>La última actualización se muestra como el 29 de junio de 2026 a las 14:35 y, al seleccionar el botón Refresh, aparece el error “Unable to synchronize telemetry data”. Los datos más recientes se muestran correctamente en el sistema de monitoreo externo.<br><br>Esto afecta al estado operativo y a los informes diarios de generación, por lo que solicitamos una revisión urgente.",
+    "Hola. Los datos de generación de Solar Farm A no se actualizan en Energy Operations Dashboard del portal de Client Demo Energy.<br><br>La última actualización se muestra como el 29 de julio de 2026 a las 14:35 y, al seleccionar el botón Refresh, aparece el error “Unable to synchronize telemetry data”. Los datos más recientes se muestran correctamente en el sistema de monitoreo externo.<br><br>Esto afecta al estado operativo y a los informes diarios de generación, por lo que solicitamos una revisión urgente.",
   tk_email: {
     to: [
       "Olivia.Park@sunghwan-portal.dev",

@@ -1,5 +1,8 @@
 import { Priority, RiskLevel } from "@/domain/common";
 import { Attach } from "@/domain/serviceDesk";
+import { hasMeaningfulTicketContent, persistedTicketContentSchema } from "@/lib/application/contracts/serviceDesk/ticketContent";
+import { hasTicketDraftCategory } from "@/lib/application/serviceDesk/ticketDraft";
+import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 import { normalizePostgresStringArray } from "@/server/data/serviceDesk/shared";
 
 import { ServiceDeskTicketEmail } from "../ticket/ticketRow";
@@ -43,7 +46,7 @@ export function mapTicketDraftRowToDto(
     },
     status: "Draft",
     active: row.tk_active,
-    categoryId: row.tk_category_id === null ? null : String(row.tk_category_id),
+    categoryId: String(row.tk_category_id),
     approvalStepId:
       row.tk_approval_step_id === null
         ? null
@@ -64,17 +67,24 @@ export function mapTicketDraftRowToDto(
 export function mapTicketDraftWriteDtoToRowInput(
   input: TicketDraftWriteDto,
 ): Omit<TicketDraftRowInput, "tk_requester_department_id"> {
+  if (!hasTicketDraftCategory(input.categoryId)) {
+    throw createStatusError("Select a category to save this draft.", 400);
+  }
+  const content = persistedTicketContentSchema.safeParse(input.content ?? "");
+  if (!content.success) {
+    throw createStatusError("Ticket images must be prepared before saving.", 400);
+  }
   const attachments = splitAttachments(input.attachment);
 
   return {
-    tk_category_id: normalizeNumberId(input.categoryId),
+    tk_category_id: Number(input.categoryId),
     tk_approval_step_id: normalizeNumberId(input.approvalStepId),
     tk_priority: input.priority ?? DEFAULT_PRIORITY,
     tk_risk_level: input.riskLevel ?? DEFAULT_RISK_LEVEL,
     tk_assignee_usernames: [],
     tk_due_at: input.dueAt,
-    tk_subject: input.subject,
-    tk_content: input.content,
+    tk_subject: input.subject?.trim() ? input.subject : null,
+    tk_content: hasMeaningfulTicketContent(content.data) ? content.data : null,
     tk_email: normalizeEmail(input.email),
     tk_files: attachments.files,
     tk_images: attachments.images,

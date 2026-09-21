@@ -6,14 +6,16 @@ const meta = {
   title: "Layout/RouteLoading",
   component: RouteLoadingOverlay,
   args: {
-    label: "Loading…",
+    label: "Navigating…",
     visible: true,
+    progress: 0.55,
+    completing: false,
   },
   parameters: {
     docs: {
       description: {
         component:
-          "The user-visible route transition overlay. The provider remains application infrastructure.",
+          "Non-blocking simulated route progress. Destination data loading remains local to each page's skeletons. Progress is not a measured percentage.",
       },
     },
   },
@@ -22,15 +24,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Loading: Story = {};
+export const Completing: Story = {
+  args: { progress: 1, completing: true },
+};
 
-export const WithContent: Story = {
+export const Loading: Story = {
   render: (args) => (
     <div className="grid min-h-[420px] place-items-center rounded-lg border bg-card">
       <div className="max-w-sm space-y-3 text-center">
         <h2 className="text-xl font-semibold">Ticket details</h2>
         <p className="text-sm text-muted-foreground">
-          Existing page content remains visible beneath the transition overlay.
+          Navigation stays usable while the next route loads.
         </p>
       </div>
       <RouteLoadingOverlay {...args} />

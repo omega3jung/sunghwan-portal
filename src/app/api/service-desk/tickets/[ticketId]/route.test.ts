@@ -7,7 +7,6 @@ const mocks = vi.hoisted(() => ({
   toApiErrorResponse: vi.fn(),
   portalApiJson: vi.fn(),
   getLocalAccess: vi.fn(),
-  localDeleteTicket: vi.fn(),
   localGetTicket: vi.fn(),
   localRequesterUpdateTicket: vi.fn(),
   withLocalTicketWorkerHistory: vi.fn(),
@@ -25,7 +24,6 @@ vi.mock("@/app/api/_adapters/localDemo/auth", () => ({
   getCurrentLocalTicketAccessContext: mocks.getLocalAccess,
 }));
 vi.mock("@/app/api/_adapters/localDemo/serviceDesk/ticket", () => ({
-  localDeleteTicket: mocks.localDeleteTicket,
   localGetTicket: mocks.localGetTicket,
   localRequesterUpdateTicket: mocks.localRequesterUpdateTicket,
   withLocalTicketWorkerHistory: mocks.withLocalTicketWorkerHistory,
@@ -43,7 +41,7 @@ vi.mock("@/lib/application/contracts/serviceDesk", async (importOriginal) => {
   return { ...actual, mapTicketDetailPayload: mocks.mapDetail };
 });
 
-import { DELETE, GET, PUT } from "./route";
+import { GET, PUT } from "./route";
 
 const access = {
   username: "worker",
@@ -163,33 +161,9 @@ describe("ticket detail route orchestration", () => {
       }),
     );
   });
-
-  it("deletes a visible LOCAL ticket and returns 204", async () => {
-    const response = await DELETE(request("DELETE"), context());
-
-    expect(response.status).toBe(204);
-    expect(mocks.localDeleteTicket).toHaveBeenCalledWith({ access, ticketId: "ticket-1" });
-  });
-
-  it("forwards REMOTE DELETE and preserves its status", async () => {
-    mocks.isRemoteRequest.mockResolvedValue(true);
-    mocks.portalApiJson.mockResolvedValue(new Response(null, { status: 202 }));
-
-    const response = await DELETE(request("DELETE"), context());
-
-    expect(response.status).toBe(202);
-    expect(mocks.portalApiJson).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        method: "DELETE",
-        path: "/service-desk/tickets/ticket-1",
-        headers: { "X-Current-Username": "worker" },
-      }),
-    );
-  });
 });
 
-function request(method: "GET" | "PUT" | "DELETE", body?: object) {
+function request(method: "GET" | "PUT", body?: object) {
   return new NextRequest("http://localhost/api/service-desk/tickets/ticket-1", {
     method,
     ...(body === undefined

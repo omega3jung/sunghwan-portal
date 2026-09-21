@@ -9,6 +9,7 @@ import { createServiceDeskStatusError as createStatusError } from "@/server/data
 import {
   findActiveTicketViewRowById,
   findActiveTicketViewRowByIdIncludingDraft,
+  lockTicketRowsById,
 } from "@/server/data/serviceDesk/ticket/ticketRepository";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
@@ -161,6 +162,7 @@ export async function softDeleteTicketAction({
   currentUserName,
 }: TicketActionDeleteInput): Promise<TicketActionDto> {
   return withPortalApiTransaction(async (query) => {
+    await lockTicketRowsById([ticketId], query);
     const ticket = await findActiveTicketViewRowByIdIncludingDraft(ticketId, {
       query,
     });
@@ -246,6 +248,7 @@ export async function executeTicketApprovalAction({
   const content = validateApprovalActionPayload(action, payload);
 
   return withPortalApiTransaction(async (query) => {
+    await lockTicketRowsById([ticketId], query);
     const ticket = await findActiveTicketViewRowById(ticketId, { query });
 
     if (!ticket) {
@@ -316,6 +319,12 @@ export async function executeTicketAction({
   }
 
   return withPortalApiTransaction(async (query) => {
+    await lockTicketRowsById(
+      action === "merge" && normalizedPayload.targetTicketId
+        ? [ticketId, normalizedPayload.targetTicketId]
+        : [ticketId],
+      query,
+    );
     const ticket = await findActiveTicketViewRowByIdIncludingDraft(ticketId, {
       query,
     });

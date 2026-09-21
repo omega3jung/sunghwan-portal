@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { applyRuleGroupFilter } from "@/lib/application/api/query";
+
 import type { TicketSearchCriteriaFormValues } from "./forms";
 import {
   mapSearchCriteriaToDbParams,
@@ -29,6 +31,40 @@ const criteria = (
 });
 
 describe("ticket search criteria mapping", () => {
+  it.each([
+    ["period", "createdAt"],
+    ["dueBy", "dueAt"],
+  ] as const)("includes complete calendar days for %s, including restored dates", (criterion, field) => {
+    const values = criteria({
+      [criterion]: {
+        type: "range",
+        dateRange: {
+          from: new Date(2026, 0, 10, 10),
+          to: new Date(2026, 0, 12, 10),
+        },
+      },
+    });
+    const tickets = [
+      new Date(2026, 0, 9, 23, 59, 59, 999),
+      new Date(2026, 0, 10, 0),
+      new Date(2026, 0, 12, 11),
+      new Date(2026, 0, 12, 23, 59, 59, 999),
+      new Date(2026, 0, 13, 0),
+    ].map((date) => ({
+      active: true,
+      cat_scope: "PORTAL",
+      createdAt: new Date(2026, 0, 11, 12).toISOString(),
+      [field]: date.toISOString(),
+    }));
+    const original = JSON.stringify(values);
+    const { filter } = mapSearchCriteriaToDbParams(values);
+
+    expect(applyRuleGroupFilter(tickets, filter)).toEqual(tickets.slice(1, 4));
+    expect(mapSearchCriteriaToDbParams(JSON.parse(original)).filter).toEqual(filter);
+    expect(mapSearchCriteriaToDbParams(values).filter).toEqual(filter);
+    expect(JSON.stringify(values)).toBe(original);
+  });
+
   it("normalizes legacy status values before persistence", () => {
     expect(
       normalizeTicketSearchCriteriaFormValues(

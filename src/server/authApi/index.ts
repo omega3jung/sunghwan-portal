@@ -43,7 +43,7 @@ export async function dispatchAuthApi(options: AuthApiJsonOptions) {
 
       // api/auth/impersonation.
       if (impersonationMatch) {
-        const username = impersonationMatch[1] ?? "";
+        const username = decodeURIComponent(impersonationMatch[1] ?? "");
 
         const impersonatedUser = await getImpersonationTargetAuthUser(username);
 

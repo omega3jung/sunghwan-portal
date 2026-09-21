@@ -115,6 +115,10 @@
     "title": "2026-08 Settings 변경 및 진행 중 Ticket 정책",
     "description": "Settings 변경 및 진행 중 Ticket 정책 결정 기록입니다."
   },
+  "decisionDraftPersistenceMinimumAndPartialContent202609": {
+    "title": "2026-09 Draft 저장의 최소 조건과 불완전한 내용 허용",
+    "description": "Draft 저장의 최소 경계와 불완전한 요청 내용 허용에 관한 결정 기록입니다."
+  },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Vitest Coverage 전략",
     "description": "Vitest coverage와 위험 기반 테스트 전략 결정 기록입니다."

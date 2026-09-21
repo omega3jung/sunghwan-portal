@@ -1,4 +1,6 @@
-﻿import { DbParams } from "@/shared/types";
+﻿import { endOfDay, startOfDay } from "date-fns";
+
+import { DbParams } from "@/shared/types";
 import {
   combineRuleGroups,
   createArrayContainsAnyFilter,
@@ -13,6 +15,14 @@ import {
   expandTicketStatusFilters,
   normalizeTicketStatusFilterValues,
 } from "./statusFilter";
+
+/** Match the date picker's calendar days even before the search dialog is opened. */
+function normalizeSearchDateRange(range?: { from?: Date; to?: Date }) {
+  return {
+    from: range?.from ? startOfDay(range.from) : undefined,
+    to: range?.to ? endOfDay(range.to) : undefined,
+  };
+}
 
 /** Normalizes optional form values before the criteria are persisted or submitted. */
 export const normalizeTicketSearchCriteriaFormValues = (
@@ -76,12 +86,12 @@ export const mapSearchCriteriaToDbParams = (
 
     createDateRangeFilter({
       field: "createdAt",
-      dateRange: values.period.dateRange,
+      dateRange: normalizeSearchDateRange(values.period.dateRange),
     }),
 
     createDateRangeFilter({
       field: "dueAt",
-      dateRange: values.dueBy?.dateRange,
+      dateRange: normalizeSearchDateRange(values.dueBy?.dateRange),
     }),
   ]);
 

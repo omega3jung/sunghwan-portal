@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { AvatarMultiComboBox } from "@/components/custom/AvatarComboBox";
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {

@@ -2,7 +2,8 @@
   "ticket": {},
   "serviceDesk": {
     "common": {
-      "notFound": "No encontrado."
+      "notFound": "No encontrado.",
+      "concurrentUpdate": "El ticket cambió durante el guardado. Actualiza la página e inténtalo de nuevo."
     },
     "approvalSteps": {
       "fetchList": "No se pudieron obtener los pasos de aprobación.",

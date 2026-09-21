@@ -76,57 +76,6 @@ export async function resolveApprovedTicketRouting(
   };
 }
 
-/** Chooses the first approval step or category-based assignment for a submitted ticket. */
-export async function resolveInitialTicketRouting(
-  ticket: ServiceDeskTicketViewRow,
-  { query }: { query: ServiceDeskQueryExecutor },
-): Promise<ApprovalRouting> {
-  const nextApprovalStepId = await findNextApprovalStepId(
-    {
-      requesterUsername: ticket.tk_requester_username,
-      categoryId: ticket.cat_id,
-      currentApprovalStepId: null,
-    },
-    { query },
-  );
-
-  if (nextApprovalStepId !== null) {
-    const assigneeUsernames = requireResolvedRoutingAssignees(
-      await findApprovalStepAssigneeUsernames(
-        {
-          approvalStepId: nextApprovalStepId,
-          requesterUsername: ticket.tk_requester_username,
-        },
-        { query },
-      ),
-      "Unable to resolve approval assignees.",
-    );
-
-    return {
-      approvalStepId: nextApprovalStepId,
-      assigneeUsernames,
-      status: "Approval",
-    };
-  }
-
-  const assigneeUsernames = requireResolvedRoutingAssignees(
-    await findCategoryAssignmentUsernames(
-      {
-        categoryId: ticket.cat_id,
-        requesterUsername: ticket.tk_requester_username,
-      },
-      { query },
-    ),
-    "Unable to resolve ticket assignees.",
-  );
-
-  return {
-    approvalStepId: null,
-    assigneeUsernames,
-    status: "Assigned",
-  };
-}
-
 function requireResolvedRoutingAssignees(
   assigneeUsernames: string[],
   message: string,

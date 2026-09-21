@@ -138,6 +138,7 @@ describe("REMOTE assignment-rule handler", () => {
       principal,
       tenant,
       payload,
+      query,
     });
     expect(services.assertAssignmentReferencesValidForWrite).toHaveBeenCalledWith(
       query,

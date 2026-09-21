@@ -13,6 +13,7 @@ const transaction = vi.hoisted(() => {
   };
 });
 const tickets = vi.hoisted(() => ({
+  lockTicketRowsById: vi.fn(),
   createTicketRow: vi.fn(),
   findActiveDraftTicketIdByRequesterUsername: vi.fn(),
   findActiveTicketViewRowById: vi.fn(),
@@ -322,6 +323,46 @@ describe("ticket lifecycle service orchestration", () => {
       },
       { query: transaction.query },
     );
+  });
+
+  it.each([
+    { subject: null }, { subject: "" }, { subject: " \t" },
+    { body: null }, { body: "" }, { body: "<p></p>" }, { body: "<p>&nbsp;<br></p>" },
+    { body: '<img src="blob:temporary">' },
+  ])("rejects incomplete or unprepared draft submission %j before any writes", async (partial) => {
+    const invalid = { ...input, id: "draft-1", ...partial };
+    await expect(createTicket(invalid as typeof input, {
+      requesterUsername: "requester", principal: { companyId: 22, userScope: "CLIENT" },
+    })).rejects.toMatchObject({ status: 400 });
+    expect(tickets.createTicketRow).not.toHaveBeenCalled();
+    expect(updates.submitDraftTicketRowById).not.toHaveBeenCalled();
+    expect(history.createHistoryOfTicketCreate).not.toHaveBeenCalled();
+    expect(transaction.withPortalApiTransaction).not.toHaveBeenCalled();
+  });
+
+  it.each(["Approval", "Assigned"] as const)("submits the same draft row with complete content and %s routing", async (status) => {
+    tickets.findActiveDraftTicketIdByRequesterUsername.mockResolvedValue("draft-1");
+    tickets.findNextApprovalStepId.mockResolvedValue(status === "Approval" ? 7 : null);
+    tickets.findApprovalStepAssigneeUsernames.mockResolvedValue(["approver"]);
+    tickets.findCategoryAssignmentUsernames.mockResolvedValue(["worker"]);
+    updates.submitDraftTicketRowById.mockResolvedValue(ticketRow({ tk_id: "draft-1", tk_status: status }));
+    updates.updateTicketInitialRoutingById.mockResolvedValue(ticketRow({ tk_id: "draft-1", tk_status: status, tk_approval_step_id: status === "Approval" ? 7 : null }));
+    const result = await createTicket(input, {
+      requesterUsername: "requester", principal: { companyId: 22, userScope: "CLIENT" },
+    });
+    expect(result).toMatchObject({ id: "draft-1", status });
+    expect(tickets.createTicketRow).not.toHaveBeenCalled();
+    expect(updates.submitDraftTicketRowById).toHaveBeenCalledWith("draft-1", expect.objectContaining({ tk_subject: input.subject, tk_content: input.body, tk_status: status }), { query: transaction.query });
+    expect(history.createHistoryOfTicketCreate).toHaveBeenCalledWith(expect.objectContaining({ ticketId: "draft-1" }), { query: transaction.query });
+  });
+
+  it("preserves the new grace period if a ticket was reopened and resolved while awaiting locks", async () => {
+    tickets.findExpiredResolvedTicketViewRows
+      .mockResolvedValueOnce([ticketRow({ tk_status: "Resolved" })])
+      .mockResolvedValueOnce([]);
+    await expect(closeExpiredResolvedTickets()).resolves.toEqual({ closedCount: 0, ticketIds: [] });
+    expect(updates.closeResolvedTicketById).not.toHaveBeenCalled();
+    expect(history.createHistoryOfSystemResolutionClose).not.toHaveBeenCalled();
   });
 
   it("propagates a lifecycle side-effect failure to the transaction boundary", async () => {

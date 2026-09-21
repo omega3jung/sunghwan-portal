@@ -13,7 +13,18 @@ const mocks = vi.hoisted(() => ({
   histories: [] as Array<Record<string, unknown>>,
   camelMapper: vi.fn(),
   mapAction: vi.fn(),
+  getProfile: vi.fn(),
+  getRemoteTicket: vi.fn(),
+  getRemoteAction: vi.fn(),
+  softDeleteRemoteAction: vi.fn(),
 }));
+
+vi.mock("@/server/data/serviceDesk/ticket", () => ({ getTicketDetail: mocks.getRemoteTicket }));
+vi.mock("@/server/data/serviceDesk/ticketAction", () => ({
+  getTicketActionByTicketIdAndNo: mocks.getRemoteAction,
+  softDeleteTicketAction: mocks.softDeleteRemoteAction,
+}));
+vi.mock("@/server/data/users", () => ({ getUserProfileDtoByUsername: mocks.getProfile }));
 
 vi.mock("@/app/api/_adapters", () => ({
   getCurrentEmployeeUserName: mocks.getCurrentEmployeeUserName,
@@ -38,6 +49,8 @@ vi.mock("@/lib/application/contracts/serviceDesk", () => ({
   camelTicketActionMapper: mocks.camelMapper,
   mapTicketActionPayload: mocks.mapAction,
 }));
+
+import { handleTicketPortalApi } from "@/server/portalApi/serviceDesk/ticketApiHandler";
 
 import { GET, PATCH } from "./route";
 
@@ -111,6 +124,7 @@ describe("ticket action detail route orchestration", () => {
       expect.objectContaining({
         path: "/service-desk/tickets/ticket-1/actions/2",
         mapData: mocks.mapAction,
+        headers: { "X-Current-Username": "writer" },
       }),
     );
   });
@@ -177,8 +191,35 @@ describe("ticket action detail route orchestration", () => {
         method: "PATCH",
         path: "/service-desk/tickets/ticket-1/actions/2",
         body: { active: false },
+        headers: { "X-Current-Username": "writer" },
       }),
     );
+  });
+
+  it.each(["GET", "PATCH"] as const)("rejects unauthenticated REMOTE %s before forwarding", async (method) => {
+    mocks.isRemoteRequest.mockResolvedValue(true);
+    mocks.getCurrentEmployeeUserName.mockResolvedValue(null);
+    const handler = method === "GET" ? GET : PATCH;
+    const response = await handler(request(method, method === "PATCH" ? { active: false } : undefined), context());
+    expect(response.status).toBe(401);
+    expect(mocks.portalApiJson).not.toHaveBeenCalled();
+  });
+
+  it.each(["GET", "PATCH"] as const)("propagates server identity from the REMOTE %s route into the embedded handler", async (method) => {
+    mocks.isRemoteRequest.mockResolvedValue(true);
+    const principal = { username: "writer", role: "USER", userScope: "CLIENT" };
+    mocks.getProfile.mockResolvedValue(principal);
+    mocks.getRemoteTicket.mockResolvedValue({ id: "ticket-1" });
+    mocks.getRemoteAction.mockResolvedValue({ action_no: 2, active: true });
+    mocks.softDeleteRemoteAction.mockResolvedValue({ action_no: 2, active: false });
+    mocks.portalApiJson.mockImplementation((request, options) => handleTicketPortalApi({
+      request, options, path: options.path, method: options.method ?? "GET",
+    }));
+    const handler = method === "GET" ? GET : PATCH;
+    const response = await handler(request(method, method === "PATCH" ? { active: false } : undefined), context());
+    expect(response.status).toBe(200);
+    expect(mocks.getProfile).toHaveBeenCalledWith("writer");
+    expect(mocks.getRemoteTicket).toHaveBeenCalledWith("ticket-1", "writer", principal);
   });
 });
 
@@ -186,10 +227,10 @@ function request(method: "GET" | "PATCH", body?: object) {
   return new NextRequest(
     "http://localhost/api/service-desk/tickets/ticket-1/actions/2",
     body === undefined
-      ? { method }
+      ? { method, headers: { "X-Current-Username": "forged-client" } }
       : {
           method,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-Current-Username": "forged-client" },
           body: JSON.stringify(body),
         },
   );

@@ -6,6 +6,7 @@ import {
   type TicketPreparedAttachment,
   type TicketPreparedInlineImage,
 } from "@/lib/application/contracts/serviceDesk";
+import { hasPersistableTicketImages } from "@/lib/application/contracts/serviceDesk/ticketContent";
 
 import {
   getDemoUrlByExtension,
@@ -61,7 +62,7 @@ export function prepareTicketAttachments({
 
   preparedImages.push(...inlineResult.images);
 
-  if (/data:image\//i.test(inlineResult.body)) {
+  if (/data:image\//i.test(inlineResult.body) || !hasPersistableTicketImages(inlineResult.body)) {
     throw createStatusError("Base64 images are not allowed in ticket body.", 400);
   }
 

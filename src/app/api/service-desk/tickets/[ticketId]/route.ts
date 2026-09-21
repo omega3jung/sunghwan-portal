@@ -9,7 +9,6 @@ import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import {
-  localDeleteTicket,
   localGetTicket,
   localRequesterUpdateTicket,
   withLocalTicketWorkerHistory,
@@ -128,47 +127,5 @@ export async function PUT(request: NextRequest, context: TicketIdRouteContext) {
     body,
     errorMessage: resolveApiErrorMessage("serviceDesk.tickets.update"),
     mapData: mapTicketDetailPayload,
-  });
-}
-
-/** Handles DELETE /api/service-desk/tickets/[ticketId]; authorization and runtime adapter selection remain at this HTTP boundary. */
-export async function DELETE(
-  request: NextRequest,
-  context: TicketIdRouteContext,
-) {
-  const { ticketId } = await context.params;
-  const isRemote = await isRemoteRequest(request);
-  const currentUserName = await getCurrentEmployeeUserName(request);
-
-  if (!isRemote) {
-    try {
-      if (currentUserName === null) {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-
-      const access = await getCurrentLocalTicketAccessContext(request);
-
-      if (access === null) {
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-      }
-
-      localDeleteTicket({
-        access,
-        ticketId,
-      });
-
-      return new NextResponse(null, { status: 204 });
-    } catch (error) {
-      return toApiErrorResponse(error, {
-        fallbackMessage: resolveApiErrorMessage("serviceDesk.tickets.delete"),
-      });
-    }
-  }
-
-  return portalApiJson(request, {
-    method: "DELETE",
-    path: `/service-desk/tickets/${ticketId}`,
-    headers: toCurrentUsernameProxyHeaders(currentUserName),
-    errorMessage: resolveApiErrorMessage("serviceDesk.tickets.delete"),
   });
 }

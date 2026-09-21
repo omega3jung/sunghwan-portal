@@ -9,11 +9,6 @@ import {
 
 const demoAuthUsernames = new Set(demoAuths.map((auth) => auth.username));
 
-/** Returns impersonation target from LOCAL demo user resources. */
-export function getLocalImpersonationTarget(username: string) {
-  return resolveDemoAuth(username);
-}
-
 /** Returns active LOCAL employees backed by a demo portal login account. */
 export function listLocalEligibleImpersonationEmployees(companyId: number) {
   return allEmployeesMock

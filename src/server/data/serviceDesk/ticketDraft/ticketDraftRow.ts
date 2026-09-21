@@ -21,7 +21,7 @@ export type ServiceDeskTicketDraftRow = {
   tk_risk_level: RiskLevel | null;
   tk_assignee_usernames: string[] | string | null;
   tk_due_at: ISODateString | null;
-  tk_category_id: number | null;
+  tk_category_id: number;
   tk_approval_step_id: number | null;
   tk_subject: string | null;
   tk_content: string | null;
@@ -34,14 +34,14 @@ export type ServiceDeskTicketDraftRow = {
 /** Defines the PostgreSQL ticket draft row input used only within the repository boundary. */
 export type TicketDraftRowInput = {
   tk_requester_department_id: number;
-  tk_category_id: number | null;
+  tk_category_id: number;
   tk_approval_step_id: number | null;
   tk_priority: Priority;
   tk_risk_level: RiskLevel;
   tk_assignee_usernames: string[];
   tk_due_at: ISODateString;
-  tk_subject: string;
-  tk_content: string;
+  tk_subject: string | null;
+  tk_content: string | null;
   tk_email: ServiceDeskTicketEmail;
   tk_files: Attach[];
   tk_images: Attach[];

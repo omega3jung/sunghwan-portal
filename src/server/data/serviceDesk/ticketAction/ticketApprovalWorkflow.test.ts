@@ -14,6 +14,7 @@ const transaction = vi.hoisted(() => {
   };
 });
 const tickets = vi.hoisted(() => ({
+  lockTicketRowsById: vi.fn(),
   findActiveTicketViewRowById: vi.fn(),
   findActiveTicketViewRowByIdIncludingDraft: vi.fn(),
   findApprovalStepAssigneeUsernames: vi.fn(),

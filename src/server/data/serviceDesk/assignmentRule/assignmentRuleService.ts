@@ -89,11 +89,17 @@ export async function validateAssignmentRuleTreeMutation({
   principal,
   tenant,
   payload,
+  query,
 }: {
   principal: ServiceDeskSettingsPrincipal;
   tenant: ServiceDeskSettingsTenantContext;
   payload: SaveServiceDeskAssignmentRuleTreePayload;
+  query?: PortalApiQueryExecutor;
 }) {
+  const categories = await getCategoryTreeByTenantId(tenant.id, query);
+  const categoriesById = new Map(
+    categories.map((category) => [String(category.category_id), category]),
+  );
   const submittedCategoryIds = new Set<string>();
 
   for (const category of payload.categories) {
@@ -104,12 +110,10 @@ export async function validateAssignmentRuleTreeMutation({
       );
     }
 
-    const categoryContext = await getServiceDeskCategoryContext(category.id);
+    const currentCategory = categoriesById.get(category.id);
 
     if (
-      !categoryContext ||
-      categoryContext.tenant.id !== tenant.id ||
-      categoryContext.mainCategoryId !== category.id ||
+      !currentCategory ||
       submittedCategoryIds.has(category.id)
     ) {
       throw createStatusError(
@@ -122,7 +126,7 @@ export async function validateAssignmentRuleTreeMutation({
       resource: "ASSIGNMENT_RULE",
       tenantCompanyId: tenant.companyId,
       isOwnerTenant: tenant.isOwnerTenant,
-      scope: categoryContext.scope,
+      scope: currentCategory.category_scope,
     });
 
     if (!canManageServiceDeskSettings(access)) {
@@ -134,15 +138,10 @@ export async function validateAssignmentRuleTreeMutation({
 
     submittedCategoryIds.add(category.id);
 
+    const childIds = new Set(currentCategory.sub_category.map((child) => String(child.category_id)));
     for (const subCategory of category.subCategories) {
-      const subCategoryContext = await getServiceDeskCategoryContext(
-        subCategory.id,
-      );
-
       if (
-        !subCategoryContext ||
-        subCategoryContext.tenant.id !== tenant.id ||
-        subCategoryContext.mainCategoryId !== category.id ||
+        !childIds.has(subCategory.id) ||
         submittedCategoryIds.has(subCategory.id)
       ) {
         throw createStatusError(

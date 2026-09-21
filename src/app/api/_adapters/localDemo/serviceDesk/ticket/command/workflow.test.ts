@@ -4,6 +4,7 @@ import type {
   DbTicketDetail,
   TicketActionCommandPayload,
 } from "@/lib/application/contracts/serviceDesk";
+import { employeesMock } from "@/mocks/domain/organization/employee";
 
 import {
   getLocalDemoActions,
@@ -54,6 +55,58 @@ function payload(
 }
 
 describe("LOCAL ticket action workflow", () => {
+  it("rejects a competing command without overwriting the committed ticket or duplicating action numbers", async () => {
+    const ticket = installTicket();
+    const actionCount = getLocalDemoActions().length;
+    const historyCount = getLocalDemoHistories().length;
+    const responses = await Promise.all([
+      localPost({ ticketId: ticket.id, employeeUserName: "requester", action: "cancel", content: payload("CANCEL") }),
+      localPost({ ticketId: ticket.id, employeeUserName: "worker", action: "assign", isInternal: true, content: payload("ASSIGN", { assigneeUsernames: ["peer"] }) }),
+    ]);
+    expect(responses.map((response) => response.status)).toEqual([201, 409]);
+    expect(getLocalDemoTickets()[0].status).toBe("Closed");
+    expect(getLocalDemoActions()).toHaveLength(actionCount + 1);
+    expect(getLocalDemoHistories()).toHaveLength(historyCount + 1);
+  });
+
+  it("preserves requester recipients when assigning an employee with an email", async () => {
+    const employee = employeesMock.find((item) => item.e_email)!;
+    const ticket = installTicket({ email: { to: ["requester@example.com"], cc: [], bcc: [] } });
+    const response = await localPost({
+      ticketId: ticket.id, employeeUserName: "worker", action: "assign", isInternal: true,
+      content: payload("ASSIGN", { assigneeUsernames: [employee.e_username] }),
+    });
+    expect(response.status).toBe(201);
+    expect(getLocalDemoTickets()[0].email).toEqual(ticket.email);
+  });
+
+  it.each([{ assigneeUsernames: [] }, { assigneeUsernames: [" "] }])("rejects an assignment without a non-empty worker", async ({ assigneeUsernames }) => {
+    const ticket = installTicket();
+    const actionsBefore = structuredClone(getLocalDemoActions());
+    const response = await localPost({
+      ticketId: ticket.id, employeeUserName: "worker", action: "assign", isInternal: true,
+      content: payload("ASSIGN", { assigneeUsernames }),
+    });
+    expect(response.status).toBe(400);
+    expect(getLocalDemoTickets()[0]).toEqual(ticket);
+    expect(getLocalDemoActions()).toEqual(actionsBefore);
+  });
+
+  it("does not reuse a soft-deleted action number", async () => {
+    const ticket = installTicket();
+    const command = {
+      ticketId: ticket.id, employeeUserName: "worker", action: "note" as const,
+      content: payload("NOTE"),
+    };
+    const first = await localPost(command);
+    expect(first.status).toBe(201);
+    const previousAction = getLocalDemoActions().at(-1)!;
+    previousAction.active = false;
+    const second = await localPost(command);
+    expect(second.status).toBe(201);
+    expect(getLocalDemoActions().at(-1)!.action_no).toBe(previousAction.action_no + 1);
+  });
+
   it("reassigns Pending work, advances it to Working, and commits one audit unit", async () => {
     const ticket = installTicket({ status: "Pending" });
     const actionCount = getLocalDemoActions().length;
@@ -148,6 +201,7 @@ describe("LOCAL ticket action workflow", () => {
     expect(getLocalDemoTickets()[0]).toMatchObject({
       status: "Closed",
       close_reason: "Canceled",
+      active: true,
     });
     expect(getLocalDemoHistories().at(-1)).toMatchObject({
       event: "TICKET_CANCELED",

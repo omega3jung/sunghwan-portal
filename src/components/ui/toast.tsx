@@ -5,7 +5,7 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon,OctagonXIcon, TriangleAlertIcon,
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import { toast } from "@/shared/client/toast"
+import { toast, type ToastData } from "@/shared/client/toast"
 import { cn } from "@/shared/utils/presentation"
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
@@ -179,7 +179,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 }
 
 function ToastList() {
-  const { toasts } = ToastPrimitive.useToastManager()
+  const { toasts } = ToastPrimitive.useToastManager<ToastData>()
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
@@ -189,7 +189,14 @@ function ToastList() {
           <ToastTitle />
           <ToastDescription />
         </div>
-        <ToastAction />
+        {toastItem.data?.secondaryActionProps ? (
+          <div data-slot="toast-actions" className="flex shrink-0 flex-col items-end gap-2">
+            <ToastAction />
+            <Button type="button" variant="outline" size="sm" {...toastItem.data.secondaryActionProps} />
+          </div>
+        ) : (
+          <ToastAction />
+        )}
         <ToastClose />
       </ToastContent>
     </Toast>

@@ -10,8 +10,11 @@ vi.mock("@/server/shared/supabase/portalApiClient", () => ({
 
 import {
   findActiveTicketViewRowById,
+  findActiveTicketViewRowByIdIncludingDraft,
   findActiveTicketViewRows,
   findActiveTicketViewRowsBySearch,
+  findNextTicketNumber,
+  lockTicketRowsById,
 } from "./ticketRepository";
 
 const principal = {
@@ -23,6 +26,13 @@ const principal = {
 describe("REMOTE ticket read predicate", () => {
   beforeEach(() => queryPortalApi.mockClear());
 
+  it("normalizes nullable Draft content only at the internal draft-aware read boundary", async () => {
+    queryPortalApi.mockResolvedValueOnce([{ tk_id: "draft-1", tk_status: "Draft", tk_subject: null, tk_content: null }]);
+    await expect(findActiveTicketViewRowByIdIncludingDraft("draft-1")).resolves.toMatchObject({
+      tk_id: "draft-1", tk_status: "Draft", tk_subject: "", tk_content: "",
+    });
+  });
+
   it("applies requester, assignee, tenant, and cat_scope authorization to list and detail", async () => {
     await findActiveTicketViewRows(principal);
     await findActiveTicketViewRowById("ticket-1", {}, principal);
@@ -32,6 +42,7 @@ describe("REMOTE ticket read predicate", () => {
       expect(sql).toContain("ticket_view.tk_assignee_usernames");
       expect(sql).toContain("authorization_tenant.tn_company_id");
       expect(sql).toContain("ticket_view.cat_scope = 'PORTAL'");
+      expect(sql).toContain("tk_status != 'Draft'");
       expect(values).toEqual(expect.arrayContaining(["reader", 11, "CLIENT"]));
     }
   });
@@ -46,6 +57,7 @@ describe("REMOTE ticket read predicate", () => {
     for (const [sql] of queryPortalApi.mock.calls) {
       expect(sql).toContain("ticket_view.cat_scope = 'PORTAL'");
       expect(sql).toContain("authorization_tenant.tn_company_id");
+      expect(sql).toContain("tk_status not in ('Draft')");
     }
   });
 
@@ -74,5 +86,25 @@ describe("REMOTE ticket read predicate", () => {
       expect(sql).toContain("ticket_view.cat_scope = $5");
       expect(values).toEqual(expect.arrayContaining(["INTERNAL"]));
     }
+  });
+});
+
+describe("REMOTE ticket mutation serialization", () => {
+  it("locks base ticket rows in a stable order using the caller's transaction", async () => {
+    const query = vi.fn().mockResolvedValue([]);
+    await lockTicketRowsById(["ticket-b", "ticket-a"], query);
+    expect(query).toHaveBeenCalledWith(
+      expect.stringMatching(/from service_desk\.ticket\s+where tk_id = any\(\$1\)\s+order by tk_id\s+for update;/),
+      [["ticket-b", "ticket-a"]],
+    );
+  });
+
+  it("waits for the year-numbering transaction lock before reading the next number", async () => {
+    const query = vi.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([{ ticket_no: "SP-2026-0002" }]);
+    expect(await findNextTicketNumber(2026, { query })).toBe("SP-2026-0002");
+    expect(query.mock.calls[0]).toEqual([
+      expect.stringContaining("pg_advisory_xact_lock"), [2026],
+    ]);
+    expect(query.mock.calls[1][0]).toContain("max(sequence_no)");
   });
 });

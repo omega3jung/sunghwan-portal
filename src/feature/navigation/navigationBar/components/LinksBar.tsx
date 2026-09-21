@@ -1,8 +1,8 @@
 import { LucideProps } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { Fragment, ReactNode } from "react";
 
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import { cn } from "@/shared/utils/presentation";
 
 import { LinkBarItem } from "../types";
