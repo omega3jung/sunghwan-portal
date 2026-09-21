@@ -115,6 +115,10 @@
     "title": "2026-08 Politique de modification des parametres et des tickets en cours",
     "description": "Entree du journal des decisions sur les modifications de parametres et les tickets en cours."
   },
+  "decisionDraftPersistenceMinimumAndPartialContent202609": {
+    "title": "2026-09 Minimum de persistance des brouillons et contenu partiel",
+    "description": "Entree du journal des decisions sur la limite minimale de persistance des brouillons et le contenu incomplet des demandes."
+  },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Strategie de couverture Vitest",
     "description": "Entree du journal des decisions sur la couverture Vitest et les tests bases sur les risques."

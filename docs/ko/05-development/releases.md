@@ -14,6 +14,40 @@ Pull Request의 구현 세부 사항, 배포 체크리스트 또는 스크린샷
 
 ## 릴리스 이력
 
+### 2026-09-21 — v1.0.2 안정성 강화 및 내비게이션 피드백 개선
+
+fix(auth, service-desk, ui): publish v1.0.2 stability hardening
+
+- 서버 측 impersonation 검증과 신뢰할 수 있는 identity 처리를 강화하고, REMOTE
+  command, merge 대상, action 상세 조회 및 action soft deletion에 ticket visibility
+  검증을 일관되게 적용했습니다.
+- REMOTE 티켓 변경과 티켓 번호 할당을 직렬화하고 lock 획득 후 workflow 조건을
+  재검증했으며, 충돌하는 LOCAL update를 거부해 assignment, recipient 및 action
+  numbering 규칙을 보호했습니다.
+- LOCAL/REMOTE Draft persistence contract를 완성했습니다. 유효한 category는 필수이며,
+  REMOTE subject/content는 Draft 상태에서만 null을 허용합니다. 최종 제출 시에는
+  완전한 subject와 의미 있는 content를 요구하고 기존 Draft row를 재사용한 뒤 남은
+  Draft identity를 정리합니다.
+- Requester 소유권을 확인하는 Draft 폐기와 저장 실패 시 입력 보존을 유지하고,
+  저장 전에 inline image를 준비하며 임시 data/blob source를 거부했습니다. 제출된
+  티켓의 삭제는 계속 비활성화하고 cancellation 및 COMMENT/NOTE soft deletion은
+  기존 workflow를 유지했습니다.
+- 초기 approval 및 assignment routing을 통합하고 이전 routing 값을 immutable
+  History에 보존했으며, LOCAL 제출/routing History를 REMOTE와 정렬했습니다.
+  Category validation context를 재사용하고 Assignment Rule 검증을 쓰기 transaction
+  내부에서 수행하도록 했습니다.
+- Workflow 변경 후 검색 cache 갱신과 날짜 단위 검색 범위를 수정해 새 티켓이
+  refetch 이후에도 표시되도록 하고, 중복된 상세 refetch를 제거했습니다.
+- Draft 불러오기/폐기 알림, 자동으로 닫히는 경고 및 category 경고 후 저장 없이
+  닫는 동작을 개선했습니다. 중복 제출과 충돌하는 dialog 작업을 방지하고 mutation
+  toast 오류를 처리하면서 사용자 입력을 보존했습니다.
+- 화면을 차단하던 route-loading overlay를 지연 표시되는 비차단 상단 progress
+  indicator로 교체하고, Next.js Link가 수락한 내비게이션 추적과 timer 정리를
+  개선했습니다. 데이터 로딩은 계속 page/component Skeleton에서 처리합니다.
+- 회귀 테스트와 Storybook coverage를 확장하고 번역과 설계 문서를 구현에 맞췄으며,
+  포트폴리오의 티켓 번호 한계를 문서화하고 데모 날짜를 갱신했습니다. 프로덕션
+  기능 범위를 확장하거나 public DTO shape를 변경하지 않고 `v1.0.2`를 릴리스했습니다.
+
 ### 2026-09-12 — 안정성 보호 강화 및 Service Desk UX 개선
 
 fix(service-desk, ui): strengthen stability and refine UX polish

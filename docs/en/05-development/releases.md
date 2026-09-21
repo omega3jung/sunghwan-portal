@@ -15,6 +15,42 @@ traceability; this document does not depend on separate PR-description files.
 
 ## Release History
 
+### 2026-09-21 — v1.0.2 stability hardening and navigation feedback
+
+fix(auth, service-desk, ui): publish v1.0.2 stability hardening
+
+- Strengthened server-side impersonation validation and trusted identity handling,
+  and enforced ticket visibility across REMOTE commands, merge targets, action
+  detail reads, and action soft deletion.
+- Serialized REMOTE ticket mutations and ticket-number allocation, rechecked
+  workflow conditions after locking, and rejected conflicting LOCAL updates to
+  preserve assignment, recipient, and action-numbering invariants.
+- Completed the LOCAL/REMOTE Draft persistence contract: a valid category is
+  required, REMOTE subject/content may be null only in Draft state, and final
+  submission requires a complete subject and meaningful content, reuses the Draft
+  row, and clears stale Draft identity.
+- Preserved requester-owned Draft discard and input after failed saves, prepared
+  inline images before persistence, and rejected temporary data/blob sources.
+  Submitted ticket deletion remains disabled; cancellation and COMMENT/NOTE soft
+  deletion retain their existing workflows.
+- Consolidated initial approval and assignment routing, preserved prior routing
+  values in immutable History, and added LOCAL submission/routing History parity.
+  Reused category validation context and kept Assignment Rule validation within
+  the write transaction.
+- Corrected mutation-driven search cache refreshes and calendar-day search
+  boundaries so newly created tickets remain visible after refetch, and removed
+  redundant detail refetches.
+- Improved Draft load/discard notifications, timed warnings, and closing without
+  saving after a category warning; prevented duplicate or conflicting dialog
+  operations and handled mutation toast errors without losing user input.
+- Replaced the blocking route-loading overlay with a delayed, non-blocking top
+  progress indicator, improved accepted Next.js Link navigation tracking and
+  timer cleanup, and retained page/component Skeleton ownership of data loading.
+- Expanded regression and Storybook coverage, aligned translations and design
+  documentation, documented the portfolio ticket-numbering limit, and refreshed
+  demo dates. Released `v1.0.2` without expanding production scope or changing
+  public DTO shapes.
+
 ### 2026-09-12 — Stability safeguards and Service Desk UX polish
 
 fix(service-desk, ui): strengthen stability and refine UX polish
