@@ -1,6 +1,7 @@
 {
   "navigation": {
-    "home": "Accueil"
+    "home": "Accueil",
+    "loading": "Changement de page…"
   },
   "action": {
     "add": "Ajouter",

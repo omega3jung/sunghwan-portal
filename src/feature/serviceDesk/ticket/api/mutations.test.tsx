@@ -5,8 +5,13 @@ import { cleanup, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ticketSearchCriteriaFormDefaultValues } from "@/feature/serviceDesk/ticketSearch/forms/defaultValues";
+import { applyRuleGroupFilter } from "@/lib/application/api/query";
+import type { TicketSearchRequest } from "@/lib/application/contracts/serviceDesk";
+
 const api = vi.hoisted(() => ({
   create: vi.fn(),
+  search: vi.fn(),
   update: vi.fn(),
   updateRequester: vi.fn(),
   startWork: vi.fn(),
@@ -15,6 +20,12 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("./api", () => ({ serviceDeskTicketApi: api }));
+vi.mock("@/feature/serviceDesk/shared/client", () => ({
+  useServiceDeskQueryOptions: () => ({
+    dataScope: "LOCAL",
+    queryOptions: { staleTime: Infinity },
+  }),
+}));
 
 import { ticketDraftQueryKeys } from "../../ticketDraft/api";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
@@ -24,12 +35,62 @@ import {
   useStartTicketWorkMutation,
   useUpdateServiceDeskTicket,
 } from "./mutations";
+import { useServiceDeskTicketSearchQuery } from "./queries";
 import { ticketQueryKeys } from "./queryKeys";
 
 afterEach(cleanup);
 beforeEach(() => vi.clearAllMocks());
 
 describe("Ticket mutation cache coordination", () => {
+  it("shows a ticket created later on the search end date after automatic refetch", async () => {
+    const createdTicket = {
+      id: "ticket-new",
+      active: true,
+      cat_scope: "PORTAL",
+      createdAt: new Date(2026, 8, 21, 11).toISOString(),
+    };
+    const tickets: typeof createdTicket[] = [];
+    api.search.mockImplementation(async (request: TicketSearchRequest) => {
+      const items = applyRuleGroupFilter(tickets, request.filter);
+      return { items, totalCount: items.length, page: 1, pageSize: 20 };
+    });
+    api.create.mockImplementation(async () => {
+      tickets.push(createdTicket);
+      return createdTicket;
+    });
+    const { queryClient, wrapper } = createContext();
+    const criteria = {
+      ...ticketSearchCriteriaFormDefaultValues,
+      cat_scope: "PORTAL" as const,
+      period: {
+        type: "last_3month",
+        dateRange: {
+          from: new Date(2026, 5, 21, 10),
+          to: new Date(2026, 8, 21, 10),
+        },
+      },
+    };
+    const { result, unmount } = renderHook(() => ({
+      search: useServiceDeskTicketSearchQuery({
+        criteria, sort: "ticketNumber", order: "desc", page: 1, pageSize: 20,
+      }),
+      create: useCreateServiceDeskTicket(),
+    }), { wrapper });
+
+    try {
+      await waitFor(() => expect(result.current.search.isSuccess).toBe(true));
+      expect(result.current.search.data?.items).toEqual([]);
+
+      await result.current.create.mutateAsync({} as never);
+
+      await waitFor(() => expect(api.search).toHaveBeenCalledTimes(2));
+      await waitFor(() => expect(result.current.search.data?.items).toEqual([createdTicket]));
+    } finally {
+      unmount();
+      queryClient.clear();
+    }
+  });
+
   it("clears ticket and draft families after ticket creation", async () => {
     api.create.mockResolvedValue({ id: "ticket-1" });
     const { queryClient, wrapper } = createContext();

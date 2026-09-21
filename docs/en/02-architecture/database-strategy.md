@@ -340,6 +340,25 @@ Every app-facing table or view should be reviewed for:
 Missing RLS policy can look like an application bug because a query may
 correctly return no rows for an application role.
 
+REMOTE draft discard physically deletes an active `Draft` row. The `portal_api`
+role needs both DELETE permission and a DELETE RLS policy; SELECT/INSERT/UPDATE
+permissions alone are insufficient. Apply the following once as the table owner
+when provisioning the database:
+
+```sql
+BEGIN;
+GRANT DELETE ON TABLE service_desk.ticket TO portal_api;
+CREATE POLICY "portal_api can delete active draft"
+ON service_desk.ticket
+FOR DELETE TO portal_api
+USING (tk_status = 'Draft' AND tk_active = true);
+COMMIT;
+```
+
+The repository additionally matches the authenticated requester and ticket ID.
+The policy does not allow deleting submitted tickets. General ticket cancellation
+continues to use the existing workflow.
+
 For Service Desk Settings, RLS/grants and database functions are defense in
 depth for tenant relationships. They should not replace the resource-specific
 Owner Admin/Tenant Admin capability matrix, especially customer `PORTAL` where

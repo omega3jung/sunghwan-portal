@@ -1,11 +1,10 @@
 "use client";
 
 import { addDays, endOfDay, startOfToday } from "date-fns";
-import { createElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import type { MainCategory } from "@/domain/serviceDesk";
 import { useCurrentSession } from "@/feature/auth/session/client";
@@ -56,6 +55,7 @@ export const useCreateTicketDialog = ({
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const busyRef = useRef(false);
+  const warnedAboutUnsavedDraftRef = useRef(false);
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(ticketStep.info);
 
@@ -141,8 +141,7 @@ export const useCreateTicketDialog = ({
       setIsSubmitting(true);
       try {
         const createPromise = createTicketAsync(data);
-        mutationToast(createPromise, "save", t("field.ticket", { ns: NS.common }));
-        await createPromise;
+        await mutationToast(createPromise, "save", t("field.ticket", { ns: NS.common }));
         try {
           if (isRemoteMode) {
             await ticketDraftState.clearDraft();
@@ -167,23 +166,28 @@ export const useCreateTicketDialog = ({
 
   const handleClose = useCallback(async () => {
     if (busyRef.current) return;
-    if (isDirty && !hasTicketDraftCategory(ticketForm.getValues().category)) {
-      toast.add({ title: t("ticketDraft.categoryRequired"), type: "warning" });
+    const canSaveDraft = hasTicketDraftCategory(ticketForm.getValues().category);
+    if (isDirty && !canSaveDraft && !warnedAboutUnsavedDraftRef.current) {
+      warnedAboutUnsavedDraftRef.current = true;
+      toast.add({
+        title: t("ticketDraft.categoryRequired"),
+        type: "warning",
+        timeout: 5000,
+      });
       return;
     }
     toast.close(TICKET_DRAFT_TOAST_ID);
     setShouldShowDraftToast(false);
     setOpen(false);
 
-    if (!isDirty) {
+    if (!isDirty || !canSaveDraft) {
       return;
     }
 
     busyRef.current = true;
     try {
       const saving = ticketDraftState.saveDraftNow();
-      mutationToast(saving, "save", t("field.draft", { ns: NS.common }));
-      await saving;
+      await mutationToast(saving, "save", t("field.draft", { ns: NS.common }));
     } catch {
       // Keep the editor contents available if image preparation or draft saving fails.
       setOpen(true);
@@ -194,6 +198,7 @@ export const useCreateTicketDialog = ({
 
   const onOpen = useCallback(async () => {
     if (busyRef.current) return;
+    warnedAboutUnsavedDraftRef.current = false;
     ticketForm.reset(createInitialTicketFormValues());
     setShouldShowDraftToast(true);
     setCurrentStep(ticketStep.info);
@@ -329,8 +334,7 @@ export const useCreateTicketDialog = ({
     busyRef.current = true;
     try {
       const discarding = ticketDraftState.removeDraft();
-      mutationToast(discarding, "delete", t("field.draft", { ns: NS.common }));
-      await discarding;
+      await mutationToast(discarding, "delete", t("field.draft", { ns: NS.common }));
       toast.close(TICKET_DRAFT_TOAST_ID);
       setShouldShowDraftToast(false);
     } catch {
@@ -358,19 +362,17 @@ export const useCreateTicketDialog = ({
     toast.add({
       id: TICKET_DRAFT_TOAST_ID,
       title: t("message.foundDraft"),
-      description: createElement("div", { className: "flex flex-col items-start gap-2" },
-        t("ticketDraft.restoreOrDiscard"),
-        createElement(Button, {
-          type: "button",
-          variant: "outline",
-          size: "sm",
-          onClick: () => { void discardDraft(); },
-        }, t("ticketDraft.discard")),
-      ),
+      description: t("ticketDraft.restoreOrDiscard"),
       actionProps: {
         children: t("action.load", { ns: NS.common }),
         onClick: () => {
           loadDraft(ticketDraft);
+        },
+      },
+      data: {
+        secondaryActionProps: {
+          children: t("ticketDraft.discard"),
+          onClick: () => { void discardDraft(); },
         },
       },
       timeout: 30000,

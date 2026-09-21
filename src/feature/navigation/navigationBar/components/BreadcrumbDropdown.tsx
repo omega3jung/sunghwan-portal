@@ -1,9 +1,9 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import {
   DropdownMenu,
   DropdownMenuContent,

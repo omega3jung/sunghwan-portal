@@ -115,12 +115,13 @@ beforeEach(() => {
   dialogMocks.saveDraftNow.mockResolvedValue(null);
   dialogMocks.removeDraft.mockResolvedValue(undefined);
   dialogMocks.mutationToast.mockImplementation(
-    (promise: Promise<unknown>) => { void promise.catch(() => undefined); },
+    // Base UI returns a new promise which rejects after displaying its error toast.
+    (promise: Promise<unknown>) => promise.then((value) => value),
   );
 });
 
 describe("useCreateTicketDialog workflow", () => {
-  it.each(["LOCAL", "REMOTE"])("keeps dirty input open with category feedback in %s mode", async (dataScope) => {
+  it.each(["LOCAL", "REMOTE"])("warns once per opening, then closes without saving categoryless edits in %s mode", async (dataScope) => {
     dialogMocks.isDirty = true;
     dialogMocks.getValues.mockReturnValue({ ...formValues, category: undefined });
     dialogMocks.useCurrentSession.mockReturnValue({ current: { user: null }, data: { user: { dataScope } } });
@@ -133,6 +134,53 @@ describe("useCreateTicketDialog workflow", () => {
     expect(dialogMocks.saveDraftNow).not.toHaveBeenCalled();
     expect(dialogMocks.mutationToast).not.toHaveBeenCalled();
     expect(dialogMocks.toastAdd).toHaveBeenCalledWith(expect.objectContaining({ title: "ticketDraft.categoryRequired", type: "warning" }));
+    await act(async () => { await result.current.handleOpenChange(false); });
+    expect(result.current.open).toBe(false);
+    expect(dialogMocks.saveDraftNow).not.toHaveBeenCalled();
+    expect(dialogMocks.removeDraft).not.toHaveBeenCalled();
+    expect(dialogMocks.mutationToast).not.toHaveBeenCalled();
+    expect(dialogMocks.toastAdd).toHaveBeenCalledOnce();
+    await act(async () => { await result.current.handleOpenChange(true); });
+    await act(async () => { await result.current.handleOpenChange(false); });
+    expect(result.current.open).toBe(true);
+    expect(dialogMocks.toastAdd).toHaveBeenCalledTimes(2);
+  });
+
+  it("saves normally if a category is selected after the first close warning", async () => {
+    dialogMocks.isDirty = true;
+    dialogMocks.getValues.mockReturnValue({ ...formValues, category: undefined });
+    const { result } = renderHook(() => useCreateTicketDialog({ language: "en", categories: [] }));
+    await act(async () => result.current.handleOpenChange(true));
+    await act(async () => result.current.handleOpenChange(false));
+    dialogMocks.getValues.mockReturnValue(formValues);
+    await act(async () => result.current.handleOpenChange(false));
+    expect(dialogMocks.saveDraftNow).toHaveBeenCalledOnce();
+    expect(result.current.open).toBe(false);
+  });
+
+  it("allows retry after discard rejects through the toast promise without clearing the draft", async () => {
+    dialogMocks.removeDraft.mockRejectedValueOnce(new Error("Request failed with status code 500"));
+    dialogMocks.useTicketDraft.mockReturnValue({ ticketDraft: formValues, removeDraft: dialogMocks.removeDraft });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { result } = renderHook(() => useCreateTicketDialog({ language: "en", categories: [] }));
+    await act(async () => result.current.handleOpenChange(true));
+    const notification = dialogMocks.toastAdd.mock.calls.find(([options]) => options.id === "service-desk-ticket-draft")![0];
+    const consoleError = vi.spyOn(console, "error");
+    // ToastPrimitive.Description renders a paragraph. Exercise the actual
+    // description markup inside that element to catch invalid DOM nesting.
+    render(createElement("p", null, notification.description as ReactNode));
+    render(createElement("button", notification.data.secondaryActionProps));
+    expect(consoleError).not.toHaveBeenCalled();
+    dialogMocks.toastClose.mockClear();
+    dialogMocks.resetForm.mockClear();
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "ticketDraft.discard" })); });
+    expect(dialogMocks.removeDraft).toHaveBeenCalledOnce();
+    expect(dialogMocks.toastClose).not.toHaveBeenCalled();
+    expect(dialogMocks.resetForm).not.toHaveBeenCalled();
+    expect(result.current.open).toBe(true);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "ticketDraft.discard" })); });
+    expect(dialogMocks.removeDraft).toHaveBeenCalledTimes(2);
+    expect(dialogMocks.toastClose).toHaveBeenCalledWith("service-desk-ticket-draft");
   });
 
   it("restores a category-only draft with empty string fields", async () => {
@@ -367,7 +415,7 @@ describe("useCreateTicketDialog workflow", () => {
     const { result, rerender } = renderHook(() => useCreateTicketDialog({ language: "en", categories: [] }));
     await act(async () => result.current.handleOpenChange(true));
     const notification = dialogMocks.toastAdd.mock.calls.find(([options]) => options.id === "service-desk-ticket-draft")![0];
-    render(notification.description as ReactNode);
+    render(createElement("button", notification.data.secondaryActionProps));
     fireEvent.click(screen.getByRole("button", { name: "ticketDraft.discard" }));
     dialogMocks.resetForm.mockClear();
     dialogMocks.isDirty = true;
@@ -383,7 +431,7 @@ describe("useCreateTicketDialog workflow", () => {
     await act(async () => result.current.handleOpenChange(true));
     const notification = dialogMocks.toastAdd.mock.calls.find(([options]) => options.id === "service-desk-ticket-draft")![0];
     expect(notification.actionProps.children).toBe("action.load");
-    render(notification.description as ReactNode);
+    render(createElement("button", notification.data.secondaryActionProps));
     fireEvent.click(screen.getByRole("button", { name: "ticketDraft.discard" }));
     expect(dialogMocks.removeDraft).not.toHaveBeenCalled();
     confirm.mockReturnValue(true);

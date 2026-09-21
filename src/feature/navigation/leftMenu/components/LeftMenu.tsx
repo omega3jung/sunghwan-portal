@@ -2,10 +2,10 @@
 
 import { Settings2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import { PreferencesMenu } from "@/components/menu/PreferencesMenu";
 import {
   Sidebar,

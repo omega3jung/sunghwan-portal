@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { cloneElement, Fragment, isValidElement } from "react";
 
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import {
   Breadcrumb,
   BreadcrumbItem,

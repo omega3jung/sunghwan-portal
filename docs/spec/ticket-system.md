@@ -160,8 +160,9 @@ Rules:
   the draft Route Handlers and is not persistence-equivalent to REMOTE
   PostgreSQL draft
 
-Closing a dirty form without a category keeps the editor open with a request to
-select a category. Category-only drafts can be saved. Inline images pass through
+The first close attempt on a dirty form without a category keeps the editor open
+with a warning. A second attempt closes without saving those edits; opening the
+dialog again resets this warning. Category-only drafts can be saved. Inline images pass through
 Attachment Prepare before saving; temporary data/blob sources remain rejected.
 Non-Draft database rows must have non-null, non-blank subject/content through
 status-aware CHECK constraints; semantic HTML validation belongs to the server.

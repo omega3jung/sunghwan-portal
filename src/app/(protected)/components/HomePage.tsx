@@ -13,10 +13,10 @@ import {
   Sparkles,
   Ticket,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

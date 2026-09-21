@@ -28,6 +28,23 @@ const RouteLoadingContext = createContext<RouteLoadingContextValue | null>(
 );
 
 const ROUTE_LOADING_TIMEOUT_MS = 10_000;
+const SHOW_DELAY_MS = 150;
+// Allow 200ms to fill, then 150ms to fade (see RouteLoadingOverlay.module.css).
+const COMPLETION_MS = 350;
+const PROGRESS_STEPS = [
+  [200, 0.35],
+  [600, 0.55],
+  [1_300, 0.7],
+  [2_600, 0.82],
+  [5_000, 0.9],
+] as const;
+
+type ProgressState = {
+  phase: "idle" | "waiting" | "loading" | "completing";
+  progress: number;
+};
+
+const IDLE: ProgressState = { phase: "idle", progress: 0 };
 
 const normalizePathname = (pathname: string) => {
   if (!pathname || pathname === "/") {
@@ -52,14 +69,15 @@ function isInternalRouteNavigation(href: string): boolean {
   const currentPathname = normalizePathname(window.location.pathname);
 
   return !(
-    targetPathname === currentPathname && url.search === window.location.search
+    targetPathname === currentPathname &&
+    url.searchParams.toString() === new URLSearchParams(window.location.search).toString()
   );
 }
 
 /**
- * Tracks client-side transitions started by links, history, or explicit callers.
- * Completion follows committed pathname/search changes, while a fallback timeout
- * prevents an interrupted navigation from leaving the overlay visible.
+ * Client-side navigation feedback; completion means pathname/search commit.
+ * Destination data belongs to local skeletons, mutations to their initiating controls.
+ * Simulated progress is visual feedback, never a measured completion percentage.
  */
 export function RouteLoadingProvider({
   children,
@@ -70,34 +88,76 @@ export function RouteLoadingProvider({
   const searchParams = useSearchParams();
   const searchParamsKey = searchParams.toString();
   const { t } = useTranslation(NS.common);
-  const [isRouteLoading, setIsRouteLoading] = useState(false);
-  const timeoutRef = useRef<number | null>(null);
-  const currentRouteKeyRef = useRef<string>("/");
+  const [state, setState] = useState<ProgressState>(IDLE);
+  const stateRef = useRef<ProgressState>(IDLE);
+  const timersRef = useRef(new Set<number>());
+  const routeKey = `${normalizePathname(pathname)}?${searchParamsKey}`;
+  const currentRouteKeyRef = useRef(routeKey);
+  const isRouteLoading = state.phase === "waiting" || state.phase === "loading";
 
-  const clearFallbackTimeout = useCallback(() => {
-    if (timeoutRef.current === null) {
-      return;
-    }
+  const updateState = useCallback((next: ProgressState) => {
+    stateRef.current = next;
+    setState(next);
+  }, []);
 
-    window.clearTimeout(timeoutRef.current);
-    timeoutRef.current = null;
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(window.clearTimeout);
+    timersRef.current.clear();
+  }, []);
+
+  const schedule = useCallback((callback: () => void, delay: number) => {
+    const timer = window.setTimeout(() => {
+      timersRef.current.delete(timer);
+      callback();
+    }, delay);
+    timersRef.current.add(timer);
   }, []);
 
   const stopRouteLoading = useCallback(() => {
-    clearFallbackTimeout();
-    setIsRouteLoading(false);
-  }, [clearFallbackTimeout]);
+    const { phase } = stateRef.current;
+    if (phase === "idle" || phase === "completing") return;
+
+    clearTimers();
+    if (phase === "waiting") {
+      updateState(IDLE);
+      return;
+    }
+
+    updateState({ phase: "completing", progress: 1 });
+    schedule(() => updateState(IDLE), COMPLETION_MS);
+  }, [clearTimers, schedule, updateState]);
 
   const startRouteLoading = useCallback(() => {
-    clearFallbackTimeout();
-    setIsRouteLoading(true);
+    // Cancel every previous delay, progress step, fade and safety timeout.
+    clearTimers();
+    const previous = stateRef.current;
+    const alreadyVisible = previous.phase === "loading" || previous.phase === "completing";
+    const showProgress = () => {
+      const progress = alreadyVisible ? Math.min(previous.progress, 0.9) : 0.1;
+      updateState({ phase: "loading", progress });
+      for (const [delay, nextProgress] of PROGRESS_STEPS) {
+        schedule(() => {
+          updateState({
+            phase: "loading",
+            progress: Math.max(stateRef.current.progress, nextProgress),
+          });
+        }, delay);
+      }
+    };
 
-    // Navigation errors do not always produce a route-state change to stop the overlay.
-    timeoutRef.current = window.setTimeout(() => {
-      setIsRouteLoading(false);
-      timeoutRef.current = null;
+    if (alreadyVisible) {
+      showProgress();
+    } else {
+      updateState({ phase: "waiting", progress: 0 });
+      schedule(showProgress, SHOW_DELAY_MS);
+    }
+
+    // Stale UI cleanup only: a timeout is not a successful navigation commit.
+    schedule(() => {
+      clearTimers();
+      updateState(IDLE);
     }, ROUTE_LOADING_TIMEOUT_MS);
-  }, [clearFallbackTimeout]);
+  }, [clearTimers, schedule, updateState]);
 
   const startRouteLoadingForHref = useCallback(
     (href: string) => {
@@ -120,54 +180,12 @@ export function RouteLoadingProvider({
   );
 
   useEffect(() => {
-    currentRouteKeyRef.current = `${normalizePathname(pathname)}?${searchParamsKey}`;
-  }, [pathname, searchParamsKey]);
-
-  useEffect(() => {
+    if (routeKey === currentRouteKeyRef.current) return;
+    currentRouteKeyRef.current = routeKey;
     stopRouteLoading();
-  }, [pathname, searchParamsKey, stopRouteLoading]);
+  }, [routeKey, stopRouteLoading]);
 
   useEffect(() => {
-    const handleDocumentClick = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0) {
-        return;
-      }
-
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-        return;
-      }
-
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      const anchor = target.closest("a");
-      if (!anchor) {
-        return;
-      }
-
-      const targetAttr = anchor.getAttribute("target");
-      if (targetAttr && targetAttr.toLowerCase() !== "_self") {
-        return;
-      }
-
-      if (anchor.hasAttribute("download")) {
-        return;
-      }
-
-      if (anchor.getAttribute("aria-disabled") === "true") {
-        return;
-      }
-
-      const hrefAttr = anchor.getAttribute("href");
-      if (!hrefAttr || hrefAttr.startsWith("#")) {
-        return;
-      }
-
-      startRouteLoadingForHref(anchor.href);
-    };
-
     const handlePopState = () => {
       const nextSearchParamsKey = new URLSearchParams(
         window.location.search,
@@ -180,20 +198,14 @@ export function RouteLoadingProvider({
       startRouteLoading();
     };
 
-    document.addEventListener("click", handleDocumentClick);
     window.addEventListener("popstate", handlePopState);
 
     return () => {
-      document.removeEventListener("click", handleDocumentClick);
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [startRouteLoading, startRouteLoadingForHref]);
+  }, [startRouteLoading]);
 
-  useEffect(() => {
-    return () => {
-      clearFallbackTimeout();
-    };
-  }, [clearFallbackTimeout]);
+  useEffect(() => clearTimers, [clearTimers]);
 
   const value = useMemo<RouteLoadingContextValue>(
     () => ({
@@ -214,11 +226,18 @@ export function RouteLoadingProvider({
     <RouteLoadingContext.Provider value={value}>
       {children}
       <RouteLoadingOverlay
-        visible={isRouteLoading}
-        label={t("table.loading", { defaultValue: "Loading..." })}
+        visible={state.phase === "loading" || state.phase === "completing"}
+        progress={state.progress}
+        completing={state.phase === "completing"}
+        label={t("navigation.loading", { defaultValue: "Navigating…" })}
       />
     </RouteLoadingContext.Provider>
   );
+}
+
+// Links also render in isolated stories; navigation remains usable without the provider.
+export function useOptionalRouteLoading() {
+  return useContext(RouteLoadingContext);
 }
 
 export function useRouteLoading() {

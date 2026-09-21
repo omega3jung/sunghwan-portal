@@ -13,7 +13,7 @@
     }
   },
   "ticketDraft": {
-    "categoryRequired": "Select a category to save this draft.",
+    "categoryRequired": "Select a category to save this draft. Close again to leave without saving your changes.",
     "restoreOrDiscard": "Load your saved draft or discard it to start over.",
     "discard": "Discard Draft",
     "discardConfirm": "Discard this saved draft? This cannot be undone.",

@@ -164,8 +164,10 @@ The current draft model supports both LOCAL and REMOTE behavior.
 
 Persistence starts only after a valid Category is selected. Without a category,
 edits remain unsaved React Hook Form state: neither a draft API request nor a
-localStorage write occurs. Closing a dirty form in this state keeps the editor
-open and asks the user to select a category. A category alone is enough to save;
+localStorage write occurs. The first close attempt keeps the editor open and
+asks the user to select a category or close again without saving. The next close
+attempt discards the unsaved edits without changing any previously saved draft.
+The warning resets each time the dialog opens. A category alone is enough to save;
 subject and body do not need to be complete yet.
 
 ### LOCAL Draft
@@ -196,7 +198,7 @@ open create dialog
 -> load active draft
 -> user edits form
 -> close while dirty
--> require selected category (otherwise keep editor open)
+-> require selected category (otherwise warn once, then allow closing without saving)
 -> save draft
 -> reopen and recover draft values
 -> final submit reuses the draft ticket row
