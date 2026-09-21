@@ -1,0 +1,19 @@
+.completing {
+  animation: finish 350ms linear forwards;
+}
+
+@keyframes finish {
+  0%,
+  57% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .completing {
+    animation: none;
+  }
+}

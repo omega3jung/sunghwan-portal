@@ -1,17 +1,23 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { getLocalDemoCategories } from "@/app/api/_adapters/localDemo/serviceDesk/settings/state";
 import { resetLocalDemoTicketState } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 
 import { localCreateTicket } from "./create";
+import * as createRouting from "./createRouting";
 import { localRequesterUpdateTicket } from "./requesterUpdate";
-import { getLocalDemoTickets } from "./state";
+import { getLocalDemoHistories, getLocalDemoTickets } from "./state";
 
-afterEach(resetLocalDemoTicketState);
+afterEach(() => { resetLocalDemoTicketState(); vi.restoreAllMocks(); });
 
 describe("LOCAL ticket create category defaults", () => {
-  it("uses category defaults only when valid explicit values are absent", async () => {
+  it.each(["Approval", "Assigned"] as const)("uses category defaults and publishes submission/routing history for %s", async (status) => {
+    vi.spyOn(createRouting, "resolveCreateTicketRouting").mockResolvedValue({
+      status,
+      approvalStepId: status === "Approval" ? "100" : null,
+      assigneeUsernames: ["initial-assignee"],
+    });
     const tenant = getLocalDemoCategories(false).find((item) =>
       item.category.some((category) => category.category_active),
     )!;
@@ -54,6 +60,24 @@ describe("LOCAL ticket create category defaults", () => {
     expect(defaulted.riskLevel).toBe(
       selectedCategory.default_risk_level ?? category.default_risk_level,
     );
+    const histories = getLocalDemoHistories().filter((item) => item.ticket_id === defaulted.id);
+    expect(histories).toEqual([
+      expect.objectContaining({
+        history_no: 1, event: "TICKET_SUBMITTED", source: "USER_ACTION",
+        actor_username: requester.e_username, action_no: null,
+        from_value: null,
+        to_value: { ticketNumber: defaulted.ticketNumber, categoryId: Number(selectedCategory.category_id), status },
+      }),
+      expect.objectContaining({
+        history_no: 2,
+        event: status === "Approval" ? "APPROVAL_REQUESTED" : "ASSIGNMENT_RESOLVED",
+        source: status === "Approval" ? "APPROVAL_RULE" : "ASSIGNMENT_RULE",
+        actor_username: requester.e_username, action_no: null,
+        to_value: status === "Approval"
+          ? { approvalStepId: 100, assigneeUsernames: ["initial-assignee"] }
+          : { assigneeUsernames: ["initial-assignee"] },
+      }),
+    ]);
 
     const overridden = await localCreateTicket({
       isInternal: false,

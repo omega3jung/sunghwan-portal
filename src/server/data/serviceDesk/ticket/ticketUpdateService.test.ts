@@ -13,6 +13,7 @@ const transaction = vi.hoisted(() => {
   };
 });
 const tickets = vi.hoisted(() => ({
+  lockTicketRowsById: vi.fn(),
   findApprovalStepAssigneeUsernames: vi.fn(),
   findCategoryAssignmentUsernames: vi.fn(),
   findNextApprovalStepId: vi.fn(),

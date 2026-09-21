@@ -214,8 +214,11 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 ### Current Authorization Boundary
 
-- Only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- The impersonation target must be a `CLIENT` user
+- Only `INTERNAL` administrators can start impersonation
+- Targets may be `INTERNAL` or `CLIENT`, including the internal demo candidates
+- The target must differ from the original user and have a lower access level
+- The JWT update callback revalidates the target with the same server policy as
+  the API and constructs the audit identity and activation time itself
 
 ---
 

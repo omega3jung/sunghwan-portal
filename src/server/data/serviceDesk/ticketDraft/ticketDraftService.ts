@@ -1,6 +1,7 @@
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 
 import { findEmployeeDepartmentIdByUsername } from "../ticket/ticketRepository";
+import { findActiveRequesterUpdateCategorySnapshotById } from "../ticket/ticketUpdateRepository";
 import { TicketDraftDto, TicketDraftWriteDto } from "./ticketDraftDto";
 import {
   mapTicketDraftRowToDto,
@@ -27,6 +28,8 @@ export async function createTicketDraft(
   requesterUsername: string,
   input: TicketDraftWriteDto,
 ): Promise<TicketDraftDto> {
+  const rowInput = mapTicketDraftWriteDtoToRowInput(input);
+  await requireDraftCategory(rowInput.tk_category_id);
   let row;
   const requesterDepartmentId =
     await requireRequesterDepartmentId(requesterUsername);
@@ -35,7 +38,7 @@ export async function createTicketDraft(
     row = await createTicketDraftRow(
       requesterUsername,
       {
-        ...mapTicketDraftWriteDtoToRowInput(input),
+        ...rowInput,
         tk_requester_department_id: requesterDepartmentId,
       },
     );
@@ -60,13 +63,15 @@ export async function updateTicketDraft(
   requesterUsername: string,
   input: TicketDraftWriteDto,
 ): Promise<TicketDraftDto> {
+  const rowInput = mapTicketDraftWriteDtoToRowInput(input);
+  await requireDraftCategory(rowInput.tk_category_id);
   const requesterDepartmentId =
     await requireRequesterDepartmentId(requesterUsername);
   const row = await updateTicketDraftRowById(
     ticketId,
     requesterUsername,
     {
-      ...mapTicketDraftWriteDtoToRowInput(input),
+      ...rowInput,
       tk_requester_department_id: requesterDepartmentId,
     },
   );
@@ -76,6 +81,12 @@ export async function updateTicketDraft(
   }
 
   return mapTicketDraftRowToDto(row);
+}
+
+async function requireDraftCategory(categoryId: number): Promise<void> {
+  if (!(await findActiveRequesterUpdateCategorySnapshotById(categoryId))) {
+    throw createStatusError("Ticket draft category is unavailable.", 400);
+  }
 }
 
 async function requireRequesterDepartmentId(

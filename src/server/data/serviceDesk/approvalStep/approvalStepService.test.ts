@@ -69,12 +69,10 @@ describe("Approval settings write validation", () => {
   });
 
   it("rejects a category from another tenant or a subcategory", async () => {
-    mocks.getCategoryContext.mockResolvedValue({
-      categoryId: "10",
-      mainCategoryId: "9",
-      scope: "PORTAL",
-      tenant: { ...tenant, id: "8" },
-    });
+    // The target tenant's tree excludes categories belonging to other tenants.
+    mocks.getCategoryTree.mockResolvedValue([
+      { category_id: 9, category_scope: "PORTAL", sub_category: [{ category_id: 10 }] },
+    ]);
 
     await expect(
       validateApprovalStepTreeMutation({ principal, tenant, payload: createPayload() }),
@@ -88,6 +86,24 @@ describe("Approval settings write validation", () => {
     await expect(
       validateApprovalStepTreeMutation({ principal, tenant, payload }),
     ).rejects.toMatchObject({ status: 400 });
+  });
+
+  it("validates multiple categories with two transaction reads and no per-category tenant lookup", async () => {
+    const query = vi.fn();
+    mocks.getCategoryTree.mockResolvedValue([
+      { category_id: 10, category_scope: "PORTAL", sub_category: [] },
+      { category_id: 20, category_scope: "PORTAL", sub_category: [] },
+    ]);
+    const payload = createPayload();
+    payload.categories.push(createPayload("20").categories[0]);
+    await expect(validateApprovalStepTreeMutation({ principal, tenant, payload, query })).resolves.toEqual(new Set(["PORTAL"]));
+    expect(mocks.getCategoryTree).toHaveBeenCalledExactlyOnceWith("7", query);
+    expect(mocks.findRows).toHaveBeenCalledExactlyOnceWith("7", query);
+    expect(mocks.getCategoryContext).not.toHaveBeenCalled();
+  });
+
+  it("still rejects a principal without approval settings permission", async () => {
+    await expect(validateApprovalStepTreeMutation({ principal: { ...principal, permission: 0 }, tenant, payload: createPayload() })).rejects.toMatchObject({ status: 403 });
   });
 
   it("prevents an existing approval step from moving categories", async () => {

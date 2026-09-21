@@ -1,7 +1,10 @@
 import type { AppUser } from "@/domain/user";
 import { normalizePagination } from "@/lib/application/api/query";
 import type { ServiceDeskRepositoryOptions } from "@/server/data/serviceDesk/shared";
-import { queryPortalApi } from "@/server/shared/supabase/portalApiClient";
+import {
+  type PortalApiQueryExecutor,
+  queryPortalApi,
+} from "@/server/shared/supabase/portalApiClient";
 
 import { TicketSearchRequestDto } from "./ticketDto";
 import { CreateTicketRowInput, ServiceDeskTicketViewRow } from "./ticketRow";
@@ -14,6 +17,23 @@ export type TicketReadPrincipal = Pick<
   AppUser,
   "username" | "companyId" | "userScope"
 >;
+
+/** Serializes ticket mutations before reading workflow state; multi-ticket locks use a stable order. */
+export async function lockTicketRowsById(
+  ticketIds: string[],
+  query: PortalApiQueryExecutor,
+): Promise<void> {
+  await query(
+    `
+select tk_id
+from service_desk.ticket
+where tk_id = any($1)
+order by tk_id
+for update;
+`,
+    [ticketIds],
+  );
+}
 
 const TICKET_READ_AUTHORIZATION_PREDICATE = `(
   ticket_view.tk_requester_username = __USERNAME_PARAM__
@@ -98,6 +118,9 @@ where tk_active = true
 limit 1;
 `;
 
+// Portfolio/demo numbering assumes fewer than 10,000 tickets per year.
+// A production deployment should use a scalable ticket-number strategy
+// instead of extending this display format.
 const FIND_NEXT_TICKET_NUMBER_QUERY = `
 select
   'SP-' || $1::text || '-' || lpad((coalesce(max(sequence_no), 0) + 1)::text, 4, '0') as ticket_no
@@ -380,12 +403,22 @@ export async function findActiveTicketViewRowByIdIncludingDraft(
   options: TicketRepositoryOptions = {},
 ): Promise<ServiceDeskTicketViewRow | null> {
   const query = options.query ?? queryPortalApi;
-  const rows = await query<ServiceDeskTicketViewRow>(
+  const rows = await query<
+    Omit<ServiceDeskTicketViewRow, "tk_subject" | "tk_content"> & {
+      tk_subject: string | null;
+      tk_content: string | null;
+    }
+  >(
     FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_INCLUDING_DRAFT_QUERY,
     [ticketId],
   );
 
-  return rows[0] ?? null;
+  const row = rows[0];
+  // This internal status-check read can see partial Draft rows. Keep their
+  // nullability at this boundary; operational DTOs continue to expose strings.
+  return row
+    ? { ...row, tk_subject: row.tk_subject ?? "", tk_content: row.tk_content ?? "" }
+    : null;
 }
 
 /** Creates ticket row through the server persistence boundary. */
@@ -439,6 +472,13 @@ export async function findNextTicketNumber(
   options: TicketRepositoryOptions = {},
 ): Promise<string> {
   const query = options.query ?? queryPortalApi;
+  if (options.query) {
+    // Hold numbering ownership until creation commits, including the first ticket of a year.
+    await query(
+      "select pg_advisory_xact_lock(hashtext('service_desk.ticket_number'), $1::integer);",
+      [year],
+    );
+  }
   const rows = await query<{ ticket_no: string }>(
     FIND_NEXT_TICKET_NUMBER_QUERY,
     [year],

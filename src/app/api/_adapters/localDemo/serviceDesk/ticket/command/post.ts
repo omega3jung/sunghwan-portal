@@ -29,6 +29,11 @@ export async function localPost({
   isInternal = false,
 }: DbTicketActionLocalContext) {
   try {
+    const ticketSnapshot = getTicketContext(ticketId, isInternal).ticket;
+    const mergeTargetSnapshot =
+      action === "merge" && content.targetTicketId
+        ? getTicketContext(content.targetTicketId, isInternal).ticket
+        : null;
     const actionNo = getNextActionNo(ticketId, isInternal);
     const createdAt = new Date().toISOString();
     const ticketAction = createTicketAction({
@@ -40,15 +45,26 @@ export async function localPost({
     });
     const { histories: createdHistories, updatedTicket } =
       await executeLocalAction({
-      ticketId,
-      employeeUserName,
-      content,
-      actionNo,
-      createdAt,
-      isInternal,
-      isAdmin,
-      action,
+        ticketId,
+        employeeUserName,
+        content,
+        actionNo,
+        createdAt,
+        isInternal,
+        isAdmin,
+        action,
       });
+
+    const currentTicket = getTicketContext(ticketId, isInternal);
+    if (
+      currentTicket.ticket !== ticketSnapshot ||
+      getNextActionNo(ticketId, isInternal) !== actionNo ||
+      (mergeTargetSnapshot &&
+        getTicketContext(mergeTargetSnapshot.id, isInternal).ticket !==
+          mergeTargetSnapshot)
+    ) {
+      throw new ApiError("serviceDesk.common.concurrentUpdate", 409);
+    }
 
     // No expected validation remains after this point. Commit the staged
     // process-memory changes as one synchronous block.
@@ -59,7 +75,7 @@ export async function localPost({
     histories.push(...createdHistories);
 
     if (updatedTicket) {
-      const { targetMock, index } = getTicketContext(ticketId, isInternal);
+      const { targetMock, index } = currentTicket;
       targetMock.splice(index, 1, updatedTicket);
     }
 

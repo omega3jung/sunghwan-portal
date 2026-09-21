@@ -13,6 +13,10 @@
     }
   },
   "ticketDraft": {
+    "categoryRequired": "임시 저장하려면 카테고리를 선택해 주세요. 다시 닫으면 변경 내용을 저장하지 않고 닫습니다.",
+    "restoreOrDiscard": "임시 저장한 내용을 불러오거나 폐기하고 새로 작성할 수 있습니다.",
+    "discard": "임시 저장 폐기",
+    "discardConfirm": "임시 저장한 내용을 폐기할까요? 이 작업은 되돌릴 수 없습니다.",
     "notice": {
       "remoteImagesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 이미지가 데모 이미지로 대체됩니다.",
       "remoteFilesReplaced": "REMOTE 모드에서는 보안상의 이유로 첨부된 파일이 데모 파일로 대체됩니다."

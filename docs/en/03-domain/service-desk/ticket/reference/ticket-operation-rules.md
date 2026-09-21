@@ -23,8 +23,14 @@ POST   /api/service-desk/tickets
 GET    /api/service-desk/tickets/search
 GET    /api/service-desk/tickets/:ticketId
 PUT    /api/service-desk/tickets/:ticketId
-DELETE /api/service-desk/tickets/:ticketId
 ```
+
+Submitted tickets are canceled through
+`POST /api/service-desk/tickets/:ticketId/command/cancel`; general ticket deletion
+is not supported in either LOCAL or REMOTE. The former requester-delete design
+was replaced by `CANCEL` so administrators, assignees, and approvers can continue
+tracing the ticket and its history under the existing visibility rules.
+Cancellation keeps the ticket active rather than setting `tk_active = false`.
 
 ### Draft Routes
 
@@ -34,6 +40,11 @@ POST   /api/service-desk/tickets/draft
 PUT    /api/service-desk/tickets/draft/:ticketId
 DELETE /api/service-desk/tickets/draft/:ticketId
 ```
+
+Draft discard is a separate operation for unsubmitted work. REMOTE uses the
+draft API; LOCAL draft recovery uses the feature's browser storage repository.
+This does not permit deletion of submitted tickets or change the existing
+soft-delete rules for `COMMENT` and `NOTE` actions.
 
 ### Command Routes
 
@@ -428,6 +439,7 @@ Derived assignee emails must not be written into persisted `tk_email`.
 
 ## Cancel
 
+- route: `POST /api/service-desk/tickets/:ticketId/command/cancel`
 - who: requester
 - allowed status: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
   `Rejected`
@@ -438,6 +450,8 @@ Derived assignee emails must not be written into persisted `tk_email`.
 - ticket effect:
   - status -> `Closed`
   - `closeReason = Canceled`
+  - preserve the active ticket and its existing actions/history for continued
+    tracking; cancellation does not grant additional visibility
   - running work sessions are finished where supported
 - action persistence: `CANCEL`
 - history event: `TICKET_CANCELED`

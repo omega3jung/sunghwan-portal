@@ -78,6 +78,8 @@ describe("useTicketActionMutation", () => {
     const newAction = createAction(2);
     apiMock.execute.mockResolvedValue(newAction);
     const { queryClient, wrapper } = createQueryClientTestContext();
+    const searchKey = ticketQueryKeys.search({ page: 1, pageSize: 20 });
+    queryClient.setQueryData(searchKey, { items: [{ id: "ticket-1" }] });
     queryClient.setQueryData(ticketActionQueryKeys.list("ticket-1"), [
       existingAction,
     ]);
@@ -86,6 +88,7 @@ describe("useTicketActionMutation", () => {
 
     await result.current.mutateAsync(command);
 
+    expect(queryClient.getQueryState(searchKey)?.isInvalidated).toBe(true);
     await waitFor(() => {
       expect(
         queryClient.getQueryData(ticketActionQueryKeys.list("ticket-1")),
@@ -104,6 +107,7 @@ describe("useTicketActionMutation", () => {
         ticketActionQueryKeys.detail("ticket-1", "2"),
         ticketQueryKeys.detail("ticket-1"),
         ticketQueryKeys.lists(),
+        ticketQueryKeys.searches(),
         ticketWorkSessionQueryKeys.list("ticket-1"),
         ticketHistoryQueryKeys.list("ticket-1"),
       ]),

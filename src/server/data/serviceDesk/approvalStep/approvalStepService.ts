@@ -10,7 +10,6 @@ import type { PortalApiQueryExecutor } from "@/server/shared/supabase/portalApiC
 
 import {
   getCategoryTreeByTenantId,
-  getServiceDeskCategoryContext,
 } from "../category/categoryService";
 import {
   getActiveTenantById,
@@ -209,6 +208,9 @@ export async function validateApprovalStepTreeMutation({
       ),
     ),
   );
+  const currentCategoriesById = new Map(
+    currentSettings.map((category) => [String(category.category_id), category]),
+  );
   const submittedCategoryIds = new Set<string>();
   const submittedStepIds = new Set<string>();
   const submittedScopes = new Set<string>();
@@ -219,13 +221,9 @@ export async function validateApprovalStepTreeMutation({
     }
     submittedCategoryIds.add(category.id);
 
-    const context = await getServiceDeskCategoryContext(category.id);
+    const currentCategory = currentCategoriesById.get(category.id);
 
-    if (
-      !context ||
-      context.tenant.id !== tenant.id ||
-      context.mainCategoryId !== category.id
-    ) {
+    if (!currentCategory) {
       throw createStatusError(
         "Approval settings must reference a main category in the target tenant.",
         400,
@@ -236,7 +234,7 @@ export async function validateApprovalStepTreeMutation({
       resource: "APPROVAL_STEP",
       tenantCompanyId: tenant.companyId,
       isOwnerTenant: tenant.isOwnerTenant,
-      scope: context.scope,
+      scope: currentCategory.category_scope,
     });
 
     if (!canManageServiceDeskSettings(access)) {
@@ -245,7 +243,7 @@ export async function validateApprovalStepTreeMutation({
         403,
       );
     }
-    submittedScopes.add(context.scope);
+    submittedScopes.add(currentCategory.category_scope);
 
     for (const step of category.approvalSteps) {
       if (

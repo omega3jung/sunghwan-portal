@@ -5,6 +5,7 @@ import { resolveCategoryChangeDueAt } from "@/lib/application/serviceDesk/ticket
 import {
   createServiceDeskStatusError as createStatusError,
   normalizePostgresStringArray,
+  type ServiceDeskQueryExecutor,
 } from "@/server/data/serviceDesk/shared";
 import type { TicketHistoryJsonValue } from "@/server/data/serviceDesk/ticketHistory";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
@@ -14,11 +15,10 @@ import { resolveAuthoritativeTicketCategory } from "./ticketCategoryAccess";
 import { TicketDetailDto } from "./ticketDto";
 import { toTicketDetailDto } from "./ticketMapper";
 import {
-  findApprovalStepAssigneeUsernames,
-  findCategoryAssignmentUsernames,
-  findNextApprovalStepId,
   hasTicketWorkAssignmentHistory,
+  lockTicketRowsById,
 } from "./ticketRepository";
+import { resolveInitialTicketRouting } from "./ticketRouting";
 import { RequesterUpdateTicketRequestDto } from "./ticketUpdateDto";
 import { mapRequesterUpdateTicketRequestDtoToRowInput } from "./ticketUpdateMapper";
 import {
@@ -27,18 +27,6 @@ import {
   RequesterUpdateTicketRepositoryOptions,
   updateRequesterTicketRowById,
 } from "./ticketUpdateRepository";
-
-type RequesterUpdateRoutingResult =
-  | {
-      status: TicketStatus;
-      approvalStepId: number;
-      assigneeUsernames: string[];
-    }
-  | {
-      status: TicketStatus;
-      approvalStepId: null;
-      assigneeUsernames: string[];
-    };
 
 type RequesterUpdateRoutingState = {
   tk_tenant_id: number;
@@ -82,6 +70,7 @@ export async function updateRequesterTicket(
     );
   }
 
+  await lockTicketRowsById([ticketId], options.query);
   const currentRow = await findRequesterUpdateTicketViewRowById(
     ticketId,
     options,
@@ -161,7 +150,7 @@ export async function updateRequesterTicket(
           shouldDeriveCategoryDefaults: categoryChanged,
           requesterUsername: currentUserName,
         },
-        options,
+        { query: options.query },
       )
     : preservedRoutingState;
   const rowInput = mapRequesterUpdateTicketRequestDtoToRowInput(
@@ -353,9 +342,9 @@ async function resolveRequesterUpdateRoutingState(
     shouldDeriveCategoryDefaults: boolean;
     requesterUsername: string;
   },
-  options?: RequesterUpdateTicketRepositoryOptions,
+  options: { query: ServiceDeskQueryExecutor },
 ): Promise<RequesterUpdateRoutingState> {
-  const routing = await resolveInitialRequesterUpdateRouting(
+  const routing = await resolveInitialTicketRouting(
     {
       requesterUsername: params.requesterUsername,
       categoryId: params.categoryId,
@@ -374,61 +363,6 @@ async function resolveRequesterUpdateRoutingState(
     tk_status: routing.status,
     tk_approval_step_id: routing.approvalStepId,
     tk_assignee_usernames: routing.assigneeUsernames,
-  };
-}
-
-async function resolveInitialRequesterUpdateRouting(
-  params: {
-    requesterUsername: string;
-    categoryId: number | string;
-  },
-  options?: RequesterUpdateTicketRepositoryOptions,
-): Promise<RequesterUpdateRoutingResult> {
-  const nextApprovalStepId = await findNextApprovalStepId(
-    {
-      requesterUsername: params.requesterUsername,
-      categoryId: params.categoryId,
-      currentApprovalStepId: null,
-    },
-    options,
-  );
-
-  if (nextApprovalStepId !== null) {
-    const assigneeUsernames = await findApprovalStepAssigneeUsernames(
-      {
-        approvalStepId: nextApprovalStepId,
-        requesterUsername: params.requesterUsername,
-      },
-      options,
-    );
-
-    if (assigneeUsernames.length === 0) {
-      throw createStatusError("Unable to resolve approval assignees.", 409);
-    }
-
-    return {
-      status: "Approval",
-      approvalStepId: nextApprovalStepId,
-      assigneeUsernames,
-    };
-  }
-
-  const assigneeUsernames = await findCategoryAssignmentUsernames(
-    {
-      categoryId: params.categoryId,
-      requesterUsername: params.requesterUsername,
-    },
-    options,
-  );
-
-  if (assigneeUsernames.length === 0) {
-    throw createStatusError("Unable to resolve ticket assignees.", 409);
-  }
-
-  return {
-    status: "Assigned",
-    approvalStepId: null,
-    assigneeUsernames,
   };
 }
 

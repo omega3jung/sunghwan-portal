@@ -38,21 +38,8 @@ export const useRequesterUpdateServiceDeskTicket = () => {
     onSuccess: (_ticket, variables) => {
       queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
       queryClient.invalidateQueries({
-        queryKey: ticketQueryKeys.detail(variables.ticketId),
-      });
-      queryClient.invalidateQueries({
         queryKey: ticketHistoryQueryKeys.list(variables.ticketId),
       });
-    },
-  });
-};
-
-export const useDeleteServiceDeskTicket = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: serviceDeskTicketApi.remove,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
     },
   });
 };
@@ -68,6 +55,9 @@ export const useStartTicketWorkMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ticketQueryKeys.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ticketQueryKeys.searches(),
       });
       queryClient.invalidateQueries({
         queryKey: ticketHistoryQueryKeys.list(variables.ticketId),

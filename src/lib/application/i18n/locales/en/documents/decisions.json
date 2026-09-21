@@ -115,6 +115,10 @@
     "title": "2026-08 Settings Change and In-Flight Ticket Policy",
     "description": "Settings changes and in-flight ticket policy decision log entry."
   },
+  "decisionDraftPersistenceMinimumAndPartialContent202609": {
+    "title": "2026-09 Draft Persistence Minimum and Partial Content",
+    "description": "Decision log entry for the minimum Draft persistence boundary and incomplete request content."
+  },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Vitest Coverage Strategy",
     "description": "Vitest coverage and risk-based testing strategy decision log entry."

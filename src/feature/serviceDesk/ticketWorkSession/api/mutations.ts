@@ -36,6 +36,10 @@ const invalidateTicketWorkSessionQueries = (
   queryClient.invalidateQueries({
     queryKey: ticketQueryKeys.lists(),
   });
+
+  queryClient.invalidateQueries({
+    queryKey: ticketQueryKeys.searches(),
+  });
 };
 
 export const useCreateTicketWorkSessionByRange = () => {

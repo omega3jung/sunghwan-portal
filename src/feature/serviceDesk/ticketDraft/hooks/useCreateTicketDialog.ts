@@ -1,7 +1,7 @@
 "use client";
 
 import { addDays, endOfDay, startOfToday } from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -23,8 +23,10 @@ import {
   type TicketFormValues,
 } from "@/feature/serviceDesk/ticket/forms";
 import { getTicketCategoryParentId } from "@/feature/serviceDesk/ticket/utils/categorySelection";
+import { hasMeaningfulTicketContent } from "@/lib/application/contracts/serviceDesk/ticketContent";
 import { SupportedLanguage } from "@/lib/application/i18n";
 import { NS } from "@/lib/application/i18n";
+import { hasTicketDraftCategory } from "@/lib/application/serviceDesk/ticketDraft";
 import { useLocalizedText } from "@/lib/client/i18n";
 import { useMutationToast } from "@/lib/client/toast";
 import { DbParams } from "@/shared/types";
@@ -51,6 +53,9 @@ export const useCreateTicketDialog = ({
   const isRemoteMode = session?.user.dataScope === "REMOTE";
 
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const busyRef = useRef(false);
+  const warnedAboutUnsavedDraftRef = useRef(false);
   const [shouldShowDraftToast, setShouldShowDraftToast] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(ticketStep.info);
 
@@ -131,52 +136,69 @@ export const useCreateTicketDialog = ({
 
   const onSubmit = useCallback(
     async (data: TicketFormValues) => {
-      const createPromise = createTicketAsync(data);
-
-      mutationToast(
-        createPromise,
-        "save",
-        t("field.ticket", { ns: NS.common }),
-      );
-
+      if (busyRef.current) return;
+      busyRef.current = true;
+      setIsSubmitting(true);
       try {
-        await createPromise;
+        const createPromise = createTicketAsync(data);
+        await mutationToast(createPromise, "save", t("field.ticket", { ns: NS.common }));
+        try {
+          if (isRemoteMode) {
+            await ticketDraftState.clearDraft();
+          } else {
+            await ticketDraftState.removeDraft();
+          }
+        } finally {
+          // A completed ticket must not become retryable if local draft cleanup fails.
+          ticketForm.reset(createInitialTicketFormValues());
+          setShouldShowDraftToast(false);
+          setOpen(false);
+        }
       } catch {
         return;
+      } finally {
+        busyRef.current = false;
+        setIsSubmitting(false);
       }
-
-      if (!isRemoteMode) {
-        await ticketDraftState.removeDraft();
-      }
-
-      setOpen(false);
     },
-    [createTicketAsync, isRemoteMode, mutationToast, t, ticketDraftState],
+    [createInitialTicketFormValues, createTicketAsync, isRemoteMode, mutationToast, t, ticketDraftState, ticketForm],
   );
 
   const handleClose = useCallback(async () => {
+    if (busyRef.current) return;
+    const canSaveDraft = hasTicketDraftCategory(ticketForm.getValues().category);
+    if (isDirty && !canSaveDraft && !warnedAboutUnsavedDraftRef.current) {
+      warnedAboutUnsavedDraftRef.current = true;
+      toast.add({
+        title: t("ticketDraft.categoryRequired"),
+        type: "warning",
+        timeout: 5000,
+      });
+      return;
+    }
     toast.close(TICKET_DRAFT_TOAST_ID);
     setShouldShowDraftToast(false);
     setOpen(false);
 
-    if (!isDirty) {
+    if (!isDirty || !canSaveDraft) {
       return;
     }
 
-    const draft = await ticketDraftState.saveDraftNow();
-
-    if (draft) {
-      toast.add({
-        title: t("common.save.success", {
-          ns: NS.message,
-          item: t("field.draft", { ns: NS.common }),
-        }),
-        type: "success",
-      });
+    busyRef.current = true;
+    try {
+      const saving = ticketDraftState.saveDraftNow();
+      await mutationToast(saving, "save", t("field.draft", { ns: NS.common }));
+    } catch {
+      // Keep the editor contents available if image preparation or draft saving fails.
+      setOpen(true);
+    } finally {
+      busyRef.current = false;
     }
-  }, [isDirty, t, ticketDraftState]);
+  }, [isDirty, mutationToast, t, ticketDraftState, ticketForm]);
 
   const onOpen = useCallback(async () => {
+    if (busyRef.current) return;
+    warnedAboutUnsavedDraftRef.current = false;
     ticketForm.reset(createInitialTicketFormValues());
     setShouldShowDraftToast(true);
     setCurrentStep(ticketStep.info);
@@ -196,6 +218,7 @@ export const useCreateTicketDialog = ({
   );
 
   const moveToBack = useCallback(() => {
+    if (busyRef.current) return;
     if (currentStep === ticketStep.review) {
       setCurrentStep(ticketStep.attachment);
       return;
@@ -210,6 +233,7 @@ export const useCreateTicketDialog = ({
   }, [currentStep, handleClose]);
 
   const moveToNext = useCallback(() => {
+    if (busyRef.current) return;
     if (currentStep === ticketStep.review) {
       void onSubmit(ticketForm.getValues());
       return;
@@ -226,14 +250,15 @@ export const useCreateTicketDialog = ({
   }, [currentStep, onSubmit, ticketForm]);
 
   const hasRequiredTicketContent =
-    !!selectedCategoryId &&
+    hasTicketDraftCategory(selectedCategoryId) &&
     subjectValue.trim().length > 0 &&
-    bodyValue.trim().length > 0;
+    hasMeaningfulTicketContent(bodyValue);
   const canMoveNext =
-    currentStep !== ticketStep.info || hasRequiredTicketContent;
+    !isSubmitting && (currentStep !== ticketStep.info || hasRequiredTicketContent);
 
   const loadDraft = useCallback(
     (ticketDraft: TicketFormValues) => {
+      if (busyRef.current) return;
       const draftRecord = ticketDraft as Record<string, unknown>;
       const schemaShape = ticketFormSchema.shape;
       const nextValues = ticketForm.getValues();
@@ -304,6 +329,21 @@ export const useCreateTicketDialog = ({
     [t, ticketForm],
   );
 
+  const discardDraft = useCallback(async () => {
+    if (busyRef.current || !window.confirm(t("ticketDraft.discardConfirm"))) return;
+    busyRef.current = true;
+    try {
+      const discarding = ticketDraftState.removeDraft();
+      await mutationToast(discarding, "delete", t("field.draft", { ns: NS.common }));
+      toast.close(TICKET_DRAFT_TOAST_ID);
+      setShouldShowDraftToast(false);
+    } catch {
+      return;
+    } finally {
+      busyRef.current = false;
+    }
+  }, [mutationToast, t, ticketDraftState]);
+
   useEffect(() => {
     const ticketDraft = ticketDraftState.ticketDraft;
 
@@ -322,11 +362,17 @@ export const useCreateTicketDialog = ({
     toast.add({
       id: TICKET_DRAFT_TOAST_ID,
       title: t("message.foundDraft"),
-      description: t("message.loadDraft"),
+      description: t("ticketDraft.restoreOrDiscard"),
       actionProps: {
         children: t("action.load", { ns: NS.common }),
         onClick: () => {
           loadDraft(ticketDraft);
+        },
+      },
+      data: {
+        secondaryActionProps: {
+          children: t("ticketDraft.discard"),
+          onClick: () => { void discardDraft(); },
         },
       },
       timeout: 30000,
@@ -336,6 +382,7 @@ export const useCreateTicketDialog = ({
       toast.close(TICKET_DRAFT_TOAST_ID);
     };
   }, [
+    discardDraft,
     isDirty,
     loadDraft,
     open,
@@ -353,11 +400,14 @@ export const useCreateTicketDialog = ({
 
   return {
     open,
+    isSubmitting,
     isRemoteMode,
     handleOpenChange,
     ticketForm,
     currentStep,
-    setCurrentStep,
+    setCurrentStep: (step: number) => {
+      if (!busyRef.current) setCurrentStep(step);
+    },
     canMoveNext,
     createSteps,
     afterSteps,

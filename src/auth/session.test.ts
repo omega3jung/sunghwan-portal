@@ -1,8 +1,12 @@
 import type { Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AuthUser, ImpersonationInfo } from "@/domain/auth";
+
+const mocks = vi.hoisted(() => ({ resolveDemoAuth: vi.fn(), authApiJson: vi.fn() }));
+vi.mock("@/mocks/domain/user", () => ({ resolveDemoAuth: mocks.resolveDemoAuth }));
+vi.mock("./api", () => ({ authApiJson: mocks.authApiJson }));
 
 import { authSession } from "./session";
 
@@ -26,6 +30,56 @@ const impersonation: ImpersonationInfo = {
 };
 
 describe("Auth session identity boundary", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(Date, "now").mockReturnValue(123);
+    const target = { username: "client.user", permission: 3, userScope: "CLIENT" };
+    mocks.resolveDemoAuth.mockReturnValue(target);
+    mocks.authApiJson.mockImplementation(async () =>
+      new Response(JSON.stringify({ data: target })),
+    );
+  });
+
+  it.each(["LOCAL", "REMOTE"] as const)("rejects direct impersonation updates from a non-admin in %s", async (dataScope) => {
+    const token = { ...user, dataScope, permission: 3, role: "USER" } as JWT;
+    await expect(authSession.jwt!({
+      token, trigger: "update", session: { impersonation },
+    } as never)).rejects.toMatchObject({ status: 403 });
+    expect(token).not.toHaveProperty("impersonation");
+    expect(mocks.resolveDemoAuth).not.toHaveBeenCalled();
+    expect(mocks.authApiJson).not.toHaveBeenCalled();
+  });
+
+  it("rejects a client administrator bypassing the impersonation API", async () => {
+    await expect(authSession.jwt!({
+      token: { ...user, userScope: "CLIENT" },
+      trigger: "update", session: { impersonation },
+    } as never)).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("rejects an equal-permission target resolved by the server", async () => {
+    mocks.resolveDemoAuth.mockReturnValue({ username: "other.admin", permission: 9, userScope: "INTERNAL" });
+    await expect(authSession.jwt!({
+      token: { ...user, dataScope: "LOCAL" },
+      trigger: "update", session: { impersonation },
+    } as never)).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("rebuilds audit identity and activation time instead of trusting update metadata", async () => {
+    const token = await authSession.jwt!({
+      token: { ...user, dataScope: "LOCAL" },
+      trigger: "update",
+      session: { impersonation: { ...impersonation, originalUser: { id: "forged", username: "forged" }, activatedAt: -1 } },
+    } as never);
+    expect(token.impersonation).toEqual(impersonation);
+  });
+
+  it("fails closed when the remote target cannot be verified", async () => {
+    mocks.authApiJson.mockResolvedValue(new Response("{}", { status: 503 }));
+    await expect(authSession.jwt!({
+      token: { ...user }, trigger: "update", session: { impersonation },
+    } as never)).rejects.toMatchObject({ status: 500 });
+  });
   it("stores the complete trusted identity on initial sign-in", async () => {
     const token = await authSession.jwt!({ token: {}, user } as never);
 

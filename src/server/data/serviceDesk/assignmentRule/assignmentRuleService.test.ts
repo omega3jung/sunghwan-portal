@@ -66,7 +66,9 @@ describe("Assignment settings validation and recommendation", () => {
     });
     mocks.findRuleRows.mockResolvedValue([]);
     mocks.mapRules.mockReturnValue([]);
-    mocks.getCategoryTree.mockResolvedValue([]);
+    mocks.getCategoryTree.mockResolvedValue([
+      { category_id: 10, category_scope: "PORTAL", sub_category: [] },
+    ]);
     mocks.getOwnerCompany.mockResolvedValue({ company_id: 1 });
     mocks.getEmployees.mockResolvedValue([]);
   });
@@ -90,12 +92,7 @@ describe("Assignment settings validation and recommendation", () => {
       validateAssignmentRuleTreeMutation({ principal, tenant, payload: duplicate }),
     ).rejects.toMatchObject({ status: 400 });
 
-    mocks.getCategoryContext.mockResolvedValue({
-      categoryId: "10",
-      mainCategoryId: "10",
-      scope: "PORTAL",
-      tenant: { ...tenant, id: "8" },
-    });
+    mocks.getCategoryTree.mockResolvedValue([]);
     await expect(
       validateAssignmentRuleTreeMutation({ principal, tenant, payload: createPayload() }),
     ).rejects.toMatchObject({ status: 400 });
@@ -143,6 +140,31 @@ describe("Assignment settings validation and recommendation", () => {
     expect(result.source).toBe("mixed");
     expect(result.selectedCategoryLabel).toBe("Sub");
     expect(result.recommendedUsers.map((user) => user.value)).toEqual(["direct"]);
+  });
+
+  it("reuses one transaction tree for main and child validation without tenant/company lookups", async () => {
+    const query = vi.fn();
+    const payload = createPayload();
+    payload.categories[0].subCategories.push({ id: "11", assignee: { jobFieldIds: [], assigneeUsernames: [] } });
+    payload.categories.push({ ...createPayload().categories[0], id: "20" });
+    mocks.getCategoryTree.mockResolvedValue([
+      { category_id: 10, category_scope: "PORTAL", sub_category: [{ category_id: 11 }] },
+      { category_id: 20, category_scope: "PORTAL", sub_category: [] },
+    ]);
+    await expect(validateAssignmentRuleTreeMutation({ principal, tenant, payload, query })).resolves.toEqual(new Set(["10", "11", "20"]));
+    expect(mocks.getCategoryTree).toHaveBeenCalledExactlyOnceWith("7", query);
+    expect(mocks.getCategoryContext).not.toHaveBeenCalled();
+  });
+
+  it("rejects a child from another parent and preserves authorization checks", async () => {
+    const payload = createPayload();
+    payload.categories[0].subCategories.push({ id: "21", assignee: { jobFieldIds: [], assigneeUsernames: [] } });
+    mocks.getCategoryTree.mockResolvedValue([
+      { category_id: 10, category_scope: "PORTAL", sub_category: [] },
+      { category_id: 20, category_scope: "PORTAL", sub_category: [{ category_id: 21 }] },
+    ]);
+    await expect(validateAssignmentRuleTreeMutation({ principal, tenant, payload })).rejects.toMatchObject({ status: 400 });
+    await expect(validateAssignmentRuleTreeMutation({ principal: { ...principal, permission: 0 }, tenant, payload: createPayload() })).rejects.toMatchObject({ status: 403 });
   });
 
   it("falls back to the main category rule when no exact rule exists", async () => {

@@ -41,7 +41,7 @@ vi.mock("@/server/data/serviceDesk/ticket/ticketRepository", () => ({
 vi.mock("@/server/data/serviceDesk/ticket/ticketUpdateRepository", () => ({
   updateTicketInitialRoutingById: services.updateTicketInitialRoutingById,
 }));
-vi.mock("@/server/data/serviceDesk/ticketAction/shared/ticketActionRouting", () => ({
+vi.mock("@/server/data/serviceDesk/ticket/ticketRouting", () => ({
   resolveInitialTicketRouting: services.resolveInitialTicketRouting,
 }));
 vi.mock("@/server/data/serviceDesk/ticketHistory", () => ({
@@ -220,13 +220,23 @@ describe("REMOTE approval-step handler", () => {
     expect(services.createApprovalStep).not.toHaveBeenCalled();
   });
 
-  it("reroutes affected tickets atomically and records the effective actor when forced", async () => {
-    query.mockResolvedValue([{ tk_id: "ticket-1" }]);
-    services.findActiveTicketViewRowById.mockResolvedValue({
+  it("preserves the locked routing snapshot when deleting a step sets the current FK to null", async () => {
+    query.mockResolvedValue([{ tk_id: "ticket-1", tk_approval_step_id: 100, tk_assignee_usernames: ["old-approver"] }]);
+    const currentTicket = {
       tk_id: "ticket-1",
-      tk_approval_step_id: 100,
+      tk_requester_username: "requester",
+      cat_id: 10,
+      tk_approval_step_id: 100 as number | null,
       tk_assignee_usernames: ["old-approver"],
+    };
+    services.getCategoryApprovalSettingsByTenantId.mockReset();
+    services.getCategoryApprovalSettingsByTenantId.mockResolvedValue([
+      approvalCategory(10, "PORTAL", [step(100, 10)]),
+    ]);
+    services.deleteApprovalStepById.mockImplementation(async () => {
+      currentTicket.tk_approval_step_id = null;
     });
+    services.findActiveTicketViewRowById.mockImplementation(async () => ({ ...currentTicket }));
     services.resolveInitialTicketRouting.mockResolvedValue({
       approvalStepId: 200,
       assigneeUsernames: ["new-approver"],
@@ -237,6 +247,10 @@ describe("REMOTE approval-step handler", () => {
     await handleApprovalStepPortalApi(
       context("PUT", { ...createPayload(), force: true }),
     );
+
+    expect(services.deleteApprovalStepById).toHaveBeenCalledWith(7, 100, query);
+    expect(currentTicket.tk_approval_step_id).toBeNull();
+    expect(query).toHaveBeenCalledWith(expect.stringContaining("for update"), [[10]]);
 
     expect(services.updateTicketInitialRoutingById).toHaveBeenCalledWith(
       "ticket-1",

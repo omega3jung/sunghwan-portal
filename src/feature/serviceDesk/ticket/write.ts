@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Priority, RiskLevel } from "@/domain/common";
 import { TicketAttachmentMetadata } from "@/domain/serviceDesk";
 import type { PrepareTicketAttachmentsResponse } from "@/lib/application/contracts/serviceDesk";
+import { submittedTicketContentSchema } from "@/lib/application/contracts/serviceDesk/ticketContent";
 
 import type { TicketFormValues } from "./forms";
 
@@ -98,7 +99,7 @@ export const ticketMutateRequestPayloadSchema = z.object({
   categoryId: z.number().int().positive(),
   approvalStepId: z.number().int().positive().nullable().optional(),
   subject: z.string().trim().min(1).max(200),
-  body: z.string().trim().min(1),
+  body: submittedTicketContentSchema,
   dueAt: z.iso.datetime(),
   priority: z.enum(["urgent", "high", "medium", "low"]).nullable(),
   riskLevel: z

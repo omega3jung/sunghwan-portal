@@ -111,10 +111,11 @@ describe("Ticket portal API orchestration", () => {
     );
   });
 
-  it.each(["comment", "note"])(
+  it.each(["comment", "note", "approve", "decline", "assign", "assignSelf", "reject", "merge", "adjust", "reopen", "resubmit", "cancel", "start-work"])(
     "checks ticket visibility before creating a %s action",
     async (action) => {
       mocks.ticket.getTicketDetail.mockResolvedValue(null);
+      mocks.getProfile.mockResolvedValue({ ...principal, role: "ADMIN" });
 
       const response = await handleTicketPortalApi(
         createContext(
@@ -127,8 +128,20 @@ describe("Ticket portal API orchestration", () => {
 
       expect(response.status).toBe(404);
       expect(mocks.action.executeTicketAction).not.toHaveBeenCalled();
+      expect(mocks.action.executeTicketApprovalAction).not.toHaveBeenCalled();
+      expect(mocks.ticket.startTicketWork).not.toHaveBeenCalled();
     },
   );
+
+  it("rejects an inaccessible merge target before executing the command", async () => {
+    mocks.ticket.getTicketDetail.mockResolvedValueOnce({ id: "ticket-1" }).mockResolvedValueOnce(null);
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/command/merge", "POST",
+      { content: "merge", targetTicketId: "hidden-target" }, "effective.employee",
+    ));
+    expect(response.status).toBe(404);
+    expect(mocks.action.executeTicketAction).not.toHaveBeenCalled();
+  });
 
   it("binds draft access directly to the effective username", async () => {
     await handleTicketPortalApi(
@@ -138,6 +151,28 @@ describe("Ticket portal API orchestration", () => {
     expect(mocks.draft.getTicketDraft).toHaveBeenCalledWith("effective.employee");
     expect(mocks.getProfile).not.toHaveBeenCalled();
   });
+
+  it.each(["GET", "PATCH"])("checks parent visibility for an individual action %s", async (method) => {
+    mocks.ticket.getTicketDetail.mockResolvedValue(null);
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/actions/2", method, { active: false }, "effective.employee",
+    ));
+    expect(response.status).toBe(404);
+    expect(mocks.action.getTicketActionByTicketIdAndNo).not.toHaveBeenCalled();
+    expect(mocks.action.softDeleteTicketAction).not.toHaveBeenCalled();
+  });
+
+  it("reads and soft-deletes a visible individual action using the trusted actor", async () => {
+    mocks.action.getTicketActionByTicketIdAndNo.mockResolvedValue({ action_no: 2, active: true });
+    mocks.action.softDeleteTicketAction.mockResolvedValue({ action_no: 2, active: false });
+    const path = "/service-desk/tickets/ticket-1/actions/2";
+    const read = await handleTicketPortalApi(createContext(path, "GET", undefined, "effective.employee"));
+    expect(read.status).toBe(200);
+    const removed = await handleTicketPortalApi(createContext(path, "PATCH", { active: false }, "effective.employee"));
+    expect(removed.status).toBe(200);
+    expect(mocks.action.softDeleteTicketAction).toHaveBeenCalledWith({ ticketId: "ticket-1", actionNo: 2, currentUserName: "effective.employee" });
+  });
+
 
   it("routes start-work with the effective username", async () => {
     await handleTicketPortalApi(

@@ -142,14 +142,30 @@ ticket row
 Rules:
 
 - one active draft per requester
+- a valid Category is required to persist a draft in either runtime; without
+  one, edits remain unsaved React Hook Form state (no API or localStorage write)
+- `tk_category_id` remains NOT NULL; the category FK and tenant trigger remain
+  authoritative for category/tenant identity
+- REMOTE draft subject/content may be NULL; empty subject and semantically empty
+  rich text are normalized to NULL, then mapped back to empty form strings
 - draft save/update uses the draft API
 - final submit reuses the same row
+- final submit requires an available category, non-empty subject, meaningful
+  content, and the existing due-date, attachment, and routing validation;
+  server validation runs before persistence
 - submit resolves initial approval/work routing
 - operational ticket lists exclude drafts
 - LOCAL draft recovery is stored in browser `localStorage`, keyed to the current
   demo user and accessed through the feature draft repository; it does not call
   the draft Route Handlers and is not persistence-equivalent to REMOTE
   PostgreSQL draft
+
+The first close attempt on a dirty form without a category keeps the editor open
+with a warning. A second attempt closes without saving those edits; opening the
+dialog again resets this warning. Category-only drafts can be saved. Inline images pass through
+Attachment Prepare before saving; temporary data/blob sources remain rejected.
+Non-Draft database rows must have non-null, non-blank subject/content through
+status-aware CHECK constraints; semantic HTML validation belongs to the server.
 
 See:
 

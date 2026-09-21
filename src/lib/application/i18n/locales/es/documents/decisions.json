@@ -115,6 +115,10 @@
     "title": "2026-08 Politica de cambios de configuracion y tickets en curso",
     "description": "Entrada del registro de decisiones sobre cambios de configuracion y tickets en curso."
   },
+  "decisionDraftPersistenceMinimumAndPartialContent202609": {
+    "title": "2026-09 Persistencia minima de borradores y contenido parcial",
+    "description": "Entrada del registro de decisiones sobre el limite minimo de persistencia de borradores y el contenido incompleto de las solicitudes."
+  },
   "decisionVitestCoverageStrategy202609": {
     "title": "2026-09 Estrategia de cobertura de Vitest",
     "description": "Entrada del registro de decisiones sobre cobertura de Vitest y pruebas basadas en riesgos."

@@ -12,12 +12,14 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/app/api/_adapters", () => ({
   getAuthToken: mocks.getAuthToken,
-  isAdmin: mocks.isAdmin,
-  canImpersonate: mocks.canImpersonate,
   tokenToOriginalAuthUser: mocks.tokenToOriginalAuthUser,
 }));
-vi.mock("@/app/api/_adapters/localDemo/user", () => ({
-  getLocalImpersonationTarget: mocks.getLocalTarget,
+vi.mock("@/server/portalApi/auth/requestAuth", () => ({
+  isAdmin: mocks.isAdmin,
+  canImpersonate: mocks.canImpersonate,
+}));
+vi.mock("@/mocks/domain/user", () => ({
+  resolveDemoAuth: mocks.getLocalTarget,
 }));
 vi.mock("@/auth/api", () => ({ authApiJson: mocks.authApiJson }));
 

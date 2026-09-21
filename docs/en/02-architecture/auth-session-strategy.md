@@ -452,10 +452,13 @@ Stopping impersonation performs the reverse flow and clears session impersonatio
 
 Based on the current implementation:
 
-- only `INTERNAL` users with at least `ADMIN` access can start impersonation
-- the impersonation target must be a `CLIENT` user
+- only `INTERNAL` administrators can start impersonation
+- targets may be `INTERNAL` or `CLIENT`, including the internal demo candidates
+- the target must differ from the original user and have a lower access level
 
-This rule lives in the auth layer, not in the UI.
+The API and JWT update callback share this server-side policy. The callback
+resolves the target again before updating the token; client-provided original
+identity and activation time are replaced with server-derived values.
 
 ---
 

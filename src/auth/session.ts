@@ -4,6 +4,8 @@ import { JWT } from "next-auth/jwt";
 
 import { AuthUser } from "@/domain/auth";
 
+import { resolveAuthorizedImpersonation } from "./impersonation";
+
 /** Keeps original identity in the JWT and exposes impersonation only as explicit session metadata. */
 export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
   /*
@@ -39,7 +41,10 @@ export const authSession: Pick<CallbacksOptions, "jwt" | "session"> = {
      */
     if (trigger === "update") {
       if (session?.impersonation) {
-        token.impersonation = session.impersonation;
+        token.impersonation = await resolveAuthorizedImpersonation(
+          { ...token, email: token.email ?? "" },
+          session.impersonation?.impersonatedUser?.username,
+        );
       }
 
       // stop impersonation

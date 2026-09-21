@@ -117,9 +117,4 @@ export const serviceDeskTicketApi = {
     );
     return res.data;
   },
-
-  remove: async (id: string): Promise<null> => {
-    await client.api.delete(`/api/service-desk/tickets/${id}`);
-    return null;
-  },
 };

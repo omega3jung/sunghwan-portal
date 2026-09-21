@@ -298,7 +298,9 @@ raw browser files forward:
 
 ```txt
 draft save
+-> require selected category
 -> keep request fields
+-> prepare inline body images
 -> clear transient attachment input
 -> final submit prepares current attachment input
 ```
@@ -306,8 +308,12 @@ draft save
 LOCAL draft recovery is stored in browser `localStorage` through the feature
 draft repository and does not call the draft Route Handlers. REMOTE draft
 behavior goes through the draft route and server DTO boundary to a PostgreSQL
-ticket row. In both cases, current draft recovery is form-data oriented and does
-not promise attachment restoration.
+ticket row. Both runtimes require a selected category before persistence.
+Prepared inline images survive through controlled URLs in the body; raw selected
+`File` objects do not survive reload. Data/blob sources are rejected at the
+persistence boundary. An image-only body is meaningful content, while empty
+editor markup is stored as NULL for REMOTE drafts and restored as an empty form
+string.
 
 This is intentional for the current scope because browser `File` objects cannot
 be safely restored after reload and production-grade attachment storage is not

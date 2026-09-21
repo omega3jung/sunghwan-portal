@@ -2,7 +2,8 @@
   "ticket": {},
   "serviceDesk": {
     "common": {
-      "notFound": "Introuvable."
+      "notFound": "Introuvable.",
+      "concurrentUpdate": "Le ticket a changé pendant l'enregistrement. Actualisez la page et réessayez."
     },
     "approvalSteps": {
       "fetchList": "Impossible de récupérer les étapes d'approbation.",

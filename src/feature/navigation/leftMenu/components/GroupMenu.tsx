@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-
+import { RouteLoadingLink as Link } from "@/components/layout/RouteLoading";
 import {
   SidebarContent,
   SidebarGroup,

@@ -22,8 +22,13 @@ POST   /api/service-desk/tickets
 GET    /api/service-desk/tickets/search
 GET    /api/service-desk/tickets/:ticketId
 PUT    /api/service-desk/tickets/:ticketId
-DELETE /api/service-desk/tickets/:ticketId
 ```
+
+제출된 티켓은 `POST /api/service-desk/tickets/:ticketId/command/cancel`로
+취소합니다. 일반 티켓 삭제는 LOCAL과 REMOTE 모두 지원하지 않습니다.
+관리자, 담당자, 승인자가 기존 조회 권한 안에서 티켓과 이력을 계속 추적할 수
+있도록 초기의 작성자 삭제 설계를 `CANCEL`로 대체했습니다. 취소 시에는
+`tk_active = false`로 숨기지 않고 티켓을 활성 상태로 보존합니다.
 
 ### Draft Routes
 
@@ -33,6 +38,11 @@ POST   /api/service-desk/tickets/draft
 PUT    /api/service-desk/tickets/draft/:ticketId
 DELETE /api/service-desk/tickets/draft/:ticketId
 ```
+
+Draft 폐기는 아직 제출하지 않은 작업을 버리는 별도 동작입니다. REMOTE는
+draft API를, LOCAL draft 복구는 feature의 브라우저 저장소 repository를 사용합니다.
+이 동작은 제출된 티켓의 삭제를 허용하지 않으며, 기존 `COMMENT`와 `NOTE`의
+soft delete 규칙에도 영향을 주지 않습니다.
 
 ### Command Routes
 
@@ -427,6 +437,7 @@ Soft delete:
 
 ## Cancel
 
+- route: `POST /api/service-desk/tickets/:ticketId/command/cancel`
 - who: requester
 - allowed status: `Approval`, `Declined`, `Assigned`, `Working`, `Pending`,
   `Rejected`
@@ -437,6 +448,8 @@ Soft delete:
 - ticket effect:
   - status -> `Closed`
   - `closeReason = Canceled`
+  - 티켓의 활성 상태와 기존 action/history를 보존하여 계속 추적할 수 있게 합니다.
+    취소가 추가 조회 권한을 부여하지는 않습니다.
   - 지원되는 경우 running work session 종료
 - action persistence: `CANCEL`
 - history event: `TICKET_CANCELED`

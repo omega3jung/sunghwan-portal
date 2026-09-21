@@ -1,7 +1,7 @@
 import { ApiError } from "@/lib/application/api";
 import type { TicketMutateRequestPayload } from "@/lib/application/contracts/serviceDesk";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
-import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
+import { DbTicketDetail, DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
 import { assertTicketDueAtMeetsSla } from "@/lib/application/serviceDesk/ticketSlaPolicy";
 import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
 import { allEmployeesMock } from "@/mocks/domain/organization/employee";
@@ -11,8 +11,9 @@ import {
   requireLocalDemoCategoryAccess,
 } from "./access";
 import { resolveCategorySnapshot } from "./category";
+import { normalizeApprovalStepId } from "./command/history";
 import { resolveCreateTicketRouting } from "./createRouting";
-import { getLocalDemoTickets } from "./state";
+import { getLocalDemoHistories, getLocalDemoTickets } from "./state";
 import {
   createTicketId,
   createTicketNumber,
@@ -103,7 +104,62 @@ export const localCreateTicket = async ({
     images: input.images,
   };
 
+  const historyBase = {
+    ticket_id: nextTicket.id,
+    actor_username: resolvedRequesterId,
+    actor_name: nextTicket.requester.name,
+    action_no: null,
+    created_at: now,
+  };
+  const histories: DbTicketHistory[] = [
+    {
+      ...historyBase,
+      history_no: 1,
+      type: "TICKET",
+      source: "USER_ACTION",
+      event: "TICKET_SUBMITTED",
+      from_value: null,
+      to_value: {
+        ticketNumber: nextTicket.ticket_number,
+        categoryId: Number(category.id),
+        status: routing.status,
+      },
+      metadata: null,
+    },
+    routing.approvalStepId !== null
+      ? {
+          ...historyBase,
+          history_no: 2,
+          type: "APPROVAL",
+          source: "APPROVAL_RULE",
+          event: "APPROVAL_REQUESTED",
+          from_value: null,
+          to_value: {
+            approvalStepId: normalizeApprovalStepId(routing.approvalStepId),
+            assigneeUsernames: routing.assigneeUsernames,
+          },
+          metadata: {
+            nextApprovalStepId: normalizeApprovalStepId(routing.approvalStepId),
+            nextAssigneeUsernames: routing.assigneeUsernames,
+          },
+        }
+      : {
+          ...historyBase,
+          history_no: 2,
+          type: "ASSIGNMENT",
+          source: "ASSIGNMENT_RULE",
+          event: "ASSIGNMENT_RESOLVED",
+          from_value: { assigneeUsernames: [] },
+          to_value: { assigneeUsernames: routing.assigneeUsernames },
+          metadata: {
+            previousAssigneeUsernames: [],
+            nextAssigneeUsernames: routing.assigneeUsernames,
+          },
+        },
+  ];
+
   targetMock.unshift(nextTicket);
+  getLocalDemoHistories().push(...histories);
 
   return camelTicketDetailMapper([nextTicket])[0];
 };

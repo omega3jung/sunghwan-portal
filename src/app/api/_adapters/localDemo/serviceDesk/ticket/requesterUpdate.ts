@@ -113,7 +113,7 @@ export const localRequesterUpdateTicket = async ({
         }
       : input,
     category,
-    approvalStepId: routing?.approvalStepId ?? ticket.approval_step_id,
+    approvalStepId: routing ? routing.approvalStepId : ticket.approval_step_id,
     assigneeUsernames: routing?.assigneeUsernames ?? ticket.assignee_usernames,
     status: routing?.status ?? ticket.status,
     priority: categoryChanged
@@ -125,7 +125,12 @@ export const localRequesterUpdateTicket = async ({
   });
   const changedFields = resolveChangedFields(ticket, updatedTicket);
 
-  targetMock.splice(ticketIndex, 1, updatedTicket);
+  const currentTickets = getLocalDemoTickets();
+  const currentIndex = currentTickets.findIndex((item) => item.id === ticketId);
+  if (currentTickets[currentIndex] !== ticket) {
+    throw new ApiError("serviceDesk.common.concurrentUpdate", 409);
+  }
+  currentTickets.splice(currentIndex, 1, updatedTicket);
   getLocalDemoHistories().push(
     createUpdateHistory({
       isInternal,

@@ -34,6 +34,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
   const { t } = useTranslation(NS.serviceDesk);
   const {
     open,
+    isSubmitting,
     isRemoteMode,
     handleOpenChange,
     ticketForm,
@@ -93,6 +94,7 @@ export const CreateTicketDialog = (props: CreateTicketDialogProps) => {
           </TicketCreateFormProvider>
         </form>
         <CreateTicketDialogFooter
+          isSubmitting={isSubmitting}
           currentStep={currentStep}
           canMoveNext={canMoveNext}
           onBack={moveToBack}

@@ -44,6 +44,10 @@ const invalidateTicketActionQueries = (
   });
 
   queryClient.invalidateQueries({
+    queryKey: ticketQueryKeys.searches(),
+  });
+
+  queryClient.invalidateQueries({
     queryKey: ticketWorkSessionQueryKeys.list(ticketId),
   });
 };
