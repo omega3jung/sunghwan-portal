@@ -147,6 +147,13 @@ form body and File[]
 
 현재 draft model은 LOCAL과 REMOTE behavior를 모두 지원합니다.
 
+유효한 Category를 선택한 뒤에만 저장할 수 있습니다. Category가 없으면 변경 내용은
+저장되지 않은 React Hook Form state로만 남으며, draft API 요청이나 localStorage
+쓰기를 수행하지 않습니다. 처음 닫으려 하면 editor를 열어 둔 채 Category를 선택하거나
+다시 닫아 저장 없이 종료하도록 안내합니다. 다음 닫기 시도에서는 이전에 저장한 draft를
+변경하지 않고 미저장 입력을 버립니다. 경고는 dialog를 열 때마다 초기화됩니다.
+Category만 있어도 저장할 수 있으며, subject와 body는 아직 완성되지 않아도 됩니다.
+
 ### LOCAL Draft
 
 LOCAL 초안은 브라우저 로컬 복구 상태입니다. 기능 초안 저장소는 현재 데모 사용자에
@@ -161,11 +168,18 @@ LOCAL 초안은 브라우저 로컬 복구 상태입니다. 기능 초안 저장
 REMOTE draft는 `Draft` 상태의 티켓 row이며, 요청자당 하나의 active draft를
 가집니다.
 
+`tk_category_id`는 NOT NULL을 유지하며, 기존 Category FK와 tenant trigger가 draft의
+도메인 식별 관계를 결정합니다. 빈 제목이나 공백뿐인 제목, `<p></p>`처럼 의미상 비어
+있는 본문은 SQL NULL로 저장합니다. Draft mapper는 이를 빈 문자열로 반환하여 public
+DTO와 form 계약을 유지합니다. Subject만 수정하면 Category와 NULL body는 유지됩니다.
+서버는 draft 저장 전에 사용할 수 없는 Category를 거부합니다.
+
 ```txt
 create dialog open
 -> active draft load
 -> edit form
 -> close while dirty
+-> Category 선택 필요 (없으면 한 번 경고한 뒤 저장 없이 닫기 허용)
 -> save draft
 -> reopen and recover values
 -> final submit reuses draft ticket row
@@ -175,6 +189,8 @@ Draft는 폼 데이터 복구에 초점을 두며, 첨부 복구는 보장하지
 
 - 브라우저 `File` 객체는 reload 이후 복구할 수 없습니다.
 - draft save는 transient attachment input을 비웁니다.
+- 본문 inline image는 저장 전에 prepare하고 controlled URL을 통해 복구합니다.
+  data/blob image source는 persistence boundary를 통과할 수 없습니다.
 - 최종 제출 시 현재 첨부 입력을 prepare합니다.
 - production object storage는 미래 범위입니다.
 
@@ -190,6 +206,14 @@ validate form
 -> server resolves approval/work assignment
 -> invalidate ticket and draft queries
 ```
+
+HTTP schema와 server create service 모두 불완전한 제출을 거부합니다. Category는
+유효하고 실제로 사용 가능해야 하며, subject는 공백뿐이어서는 안 되고, body에는
+의미 있는 텍스트나 inline image가 있어야 합니다. 빈 rich-text wrapper와 공백은
+내용으로 인정하지 않습니다. 이 검증은 draft row를 제출 상태로 전환하거나 History를
+생성하기 전에 수행합니다. 기존 SLA, preparation, routing, transaction, ownership
+검증도 그대로 적용됩니다. 유효한 제출은 draft의 nullable field를 완성된 문자열로
+덮어쓰며 같은 row를 재사용합니다.
 
 서버는 제출된 티켓을 다음 중 하나로 이동시킵니다.
 

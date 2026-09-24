@@ -91,7 +91,7 @@ re-evaluates the minimum due date from the new category default SLA days:
 
 ```txt
 newCategoryMinimumDueAt = today + new category default SLA days
-nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
+nextDueAt = later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)
 ```
 
 The submitted due date also participates in this maximum, so the complete rule

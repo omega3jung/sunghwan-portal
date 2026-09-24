@@ -84,8 +84,11 @@ days에서 minimum due date도 다시 평가합니다.
 
 ```txt
 newCategoryMinimumDueAt = today + new category default SLA days
-nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
+nextDueAt = later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)
 ```
+
+제출한 due date도 최댓값 계산에 포함되므로 전체 규칙은
+`later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)`입니다.
 
 이 규칙은 더 늦은 current due date를 유지하고, 더 이른 due date는 새 minimum으로
 되돌리며, category change 때문에 due date를 더 이른 날짜로 당기지 않습니다.

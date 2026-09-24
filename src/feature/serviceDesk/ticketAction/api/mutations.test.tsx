@@ -10,17 +10,18 @@ import type { TicketAction } from "@/domain/serviceDesk";
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
 import { ticketWorkSessionQueryKeys } from "../../ticketWorkSession/api";
-import { useTicketActionMutation } from "./mutations";
+import { useDeleteServiceDeskTicketAction, useTicketActionMutation } from "./mutations";
 import { ticketActionQueryKeys } from "./queryKeys";
 
 const apiMock = vi.hoisted(() => ({
   execute: vi.fn(),
+  remove: vi.fn(),
 }));
 
 vi.mock("./api", () => ({
   serviceDeskTicketActionApi: {
     execute: apiMock.execute,
-    remove: vi.fn(),
+    remove: apiMock.remove,
   },
 }));
 
@@ -132,5 +133,58 @@ describe("useTicketActionMutation", () => {
       queryClient.getQueryData(ticketActionQueryKeys.list("ticket-1")),
     ).toEqual([existingAction]);
     expect(invalidateQueries).not.toHaveBeenCalled();
+  });
+});
+
+describe("useDeleteServiceDeskTicketAction", () => {
+  it("invalidates the ticket history and existing projections without synthesizing cache data", async () => {
+    apiMock.remove.mockResolvedValue(createAction(1, { active: false }));
+    const { queryClient, wrapper } = createQueryClientTestContext();
+    const action = createAction(1);
+    const history = [{ id: "existing-history" }];
+    const entries = [
+      [ticketActionQueryKeys.list("ticket-1"), [action]],
+      [ticketActionQueryKeys.detail("ticket-1", "1"), action],
+      [ticketQueryKeys.detail("ticket-1"), { id: "ticket-1" }],
+      [ticketQueryKeys.lists(), []],
+      [ticketQueryKeys.search({ page: 1, pageSize: 20 }), { items: [] }],
+      [ticketWorkSessionQueryKeys.list("ticket-1"), []],
+      [ticketHistoryQueryKeys.list("ticket-1"), history],
+    ] as const;
+    for (const [key, data] of entries) queryClient.setQueryData(key, data);
+    const otherHistoryKey = ticketHistoryQueryKeys.list("ticket-2");
+    queryClient.setQueryData(otherHistoryKey, []);
+    const { result } = renderHook(() => useDeleteServiceDeskTicketAction(), { wrapper });
+
+    await result.current.mutateAsync({ ticketId: "ticket-1", actionNo: "1" });
+
+    expect(apiMock.remove).toHaveBeenCalledWith({ ticketId: "ticket-1", actionNo: "1" });
+    for (const [key, data] of entries) {
+      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true);
+      expect(queryClient.getQueryData(key)).toEqual(data);
+    }
+    expect(queryClient.getQueryState(otherHistoryKey)?.isInvalidated).toBe(false);
+  });
+
+  it("keeps action and history caches unchanged when soft-delete fails", async () => {
+    apiMock.remove.mockRejectedValue(new Error("delete failed"));
+    const { queryClient, wrapper } = createQueryClientTestContext();
+    const action = createAction(1);
+    const entries = [
+      [ticketActionQueryKeys.list("ticket-1"), [action]],
+      [ticketActionQueryKeys.detail("ticket-1", "1"), action],
+      [ticketHistoryQueryKeys.list("ticket-1"), [{ id: "existing-history" }]],
+    ] as const;
+    for (const [key, data] of entries) queryClient.setQueryData(key, data);
+    const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const { result } = renderHook(() => useDeleteServiceDeskTicketAction(), { wrapper });
+
+    await expect(result.current.mutateAsync({ ticketId: "ticket-1", actionNo: "1" })).rejects.toThrow("delete failed");
+
+    expect(invalidateQueries).not.toHaveBeenCalled();
+    for (const [key, data] of entries) {
+      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false);
+      expect(queryClient.getQueryData(key)).toEqual(data);
+    }
   });
 });

@@ -47,6 +47,7 @@ import { handleTicketPortalApi } from "./ticketApiHandler";
 
 const principal = {
   username: "effective.employee",
+  companyId: 10,
   role: "USER",
   userScope: "CLIENT",
 };
@@ -150,6 +151,71 @@ describe("Ticket portal API orchestration", () => {
 
     expect(mocks.draft.getTicketDraft).toHaveBeenCalledWith("effective.employee");
     expect(mocks.getProfile).not.toHaveBeenCalled();
+  });
+
+  it.each(["POST", "PUT"])("passes the canonical effective principal to draft %s", async (method) => {
+    mocks.draft.createTicketDraft.mockResolvedValue({ id: "draft-1" });
+    mocks.draft.updateTicketDraft.mockResolvedValue({ id: "draft-1" });
+    const body = { categoryId: "10", requesterUsername: "spoofed", principal: { companyId: "20", userScope: "INTERNAL" } };
+    const path = method === "POST" ? "/service-desk/tickets/draft" : "/service-desk/tickets/draft/draft-1";
+
+    const response = await handleTicketPortalApi(createContext(path, method, body, "effective.employee"));
+
+    expect(response.status).toBe(method === "POST" ? 201 : 200);
+    expect(mocks.getProfile).toHaveBeenCalledWith("effective.employee");
+    if (method === "POST") {
+      expect(mocks.draft.createTicketDraft).toHaveBeenCalledWith("effective.employee", body, principal);
+    } else {
+      expect(mocks.draft.updateTicketDraft).toHaveBeenCalledWith("draft-1", "effective.employee", body, principal);
+    }
+  });
+
+  it.each(["POST", "PUT"])("rejects draft %s without a canonical principal", async (method) => {
+    mocks.getProfile.mockResolvedValue(null);
+    const path = method === "POST" ? "/service-desk/tickets/draft" : "/service-desk/tickets/draft/draft-1";
+
+    const response = await handleTicketPortalApi(createContext(path, method, { categoryId: "10" }, "unknown"));
+
+    expect(response.status).toBe(403);
+    expect(mocks.draft.createTicketDraft).not.toHaveBeenCalled();
+    expect(mocks.draft.updateTicketDraft).not.toHaveBeenCalled();
+  });
+
+  it("keeps draft discard bound to the effective requester", async () => {
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/draft/draft-1", "DELETE", { requesterUsername: "spoofed" }, "effective.employee",
+    ));
+
+    expect(response.status).toBe(204);
+    expect(mocks.draft.discardTicketDraft).toHaveBeenCalledWith("draft-1", "effective.employee");
+  });
+
+  it.each([true, false])("requires parent visibility (%s) before work-session creation", async (visible) => {
+    mocks.ticket.getTicketDetail.mockResolvedValue(visible ? { id: "ticket-1" } : null);
+    // A worker accepted by the service must still pass the parent visibility boundary.
+    mocks.work.createWorkSession.mockResolvedValue({ id: "session-1" });
+    const body = { inputMode: "duration", durationMinutes: 30, ticketId: "spoofed-ticket", currentUserName: "spoofed" };
+
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/work-session", "POST", body, "effective.employee",
+    ));
+
+    expect(response.status).toBe(visible ? 201 : 404);
+    expect(mocks.ticket.getTicketDetail).toHaveBeenCalledWith("ticket-1", "effective.employee", principal);
+    if (visible) {
+      expect(mocks.work.createWorkSession).toHaveBeenCalledWith({ ...body, ticketId: "ticket-1", currentUserName: "effective.employee" });
+    } else {
+      expect(mocks.work.createWorkSession).not.toHaveBeenCalled();
+    }
+  });
+
+  it("preserves worker authorization after passing ticket visibility", async () => {
+    mocks.work.createWorkSession.mockRejectedValueOnce(Object.assign(new Error("workerOnly"), { status: 403 }));
+
+    await expect(handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/work-session", "POST", { inputMode: "duration", durationMinutes: 30 }, "effective.employee",
+    ))).rejects.toMatchObject({ status: 403 });
+    expect(mocks.ticket.getTicketDetail).toHaveBeenCalledWith("ticket-1", "effective.employee", principal);
   });
 
   it.each(["GET", "PATCH"])("checks parent visibility for an individual action %s", async (method) => {

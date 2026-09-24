@@ -185,6 +185,11 @@ REMOTE draft는 ticket table을 사용합니다.
 
 - `status = Draft`
 - requester당 active draft는 하나입니다.
+- Category는 저장에 필요한 최소 식별 정보입니다. `tk_category_id`는 기존 FK 및
+  `enforce_ticket_category_tenant()` trigger와 함께 NOT NULL을 유지합니다.
+- `tk_subject`와 `tk_content`는 Draft 상태에서만 NULL일 수 있습니다. 불완전한 값은
+  Draft write boundary에서 NULL로 정규화하고, form-facing DTO에서는 빈 문자열로
+  변환합니다.
 - draft는 requester username으로 조회됩니다.
 - submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 변경합니다.
 - draft row는 operational ticket list에서 제외됩니다.
@@ -193,6 +198,15 @@ LOCAL 초안 복구는 기능 초안 저장소가 소유하고 현재 데모 사
 브라우저 로컬 `localStorage` 상태입니다. 저장된 소유자가 effective user와 다르면
 제거되고, 초안 Route Handler를 거치지 않으며, REMOTE PostgreSQL 초안 모델과
 영속성 측면에서 동등하지 않습니다.
+
+두 runtime 모두 저장 전에 Category를 선택해야 하며, Category만 있는 draft도
+허용합니다. Category가 없으면 form은 저장되지 않은 client state입니다.
+
+Operational Ticket DTO의 subject/content는 문자열 필드를 유지합니다. Status를
+고려한 database CHECK constraint는 Draft가 아닌 row의 subject/content가 NULL이나
+공백이 아니어야 함을 강제합니다. 서버는 제출 시 의미상 비어 있는 rich text도 거부합니다.
+List/search query는 draft를 제외하며, 제출 History는 전체 검증과 `Approval` 또는
+`Assigned`로의 전환이 완료된 뒤에만 생성합니다.
 
 ---
 

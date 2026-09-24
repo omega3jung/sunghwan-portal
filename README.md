@@ -33,8 +33,7 @@ production-complete.
 
 Select **Try Demo** on the login page for the fastest review path. The LOCAL
 experience exercises implemented ticket and settings workflows without database
-credentials. REMOTE service boundaries and workflows are also implemented, but
-the hosted REMOTE account deliberately guards direct Service Desk page access.
+credentials. REMOTE service boundaries and workflows are also implemented.
 
 ## Quick Review
 
@@ -369,15 +368,15 @@ Historical decision records are indexed in
 
 Current repository-level verification includes:
 
-- 163 source-local Vitest test files exercised by the unit project through
-  `npm test`
+- 171 source-local Vitest test/spec files matched by the unit project's include
+  pattern (static file count; `npm test` runs this project)
 - ESLint 9 static analysis through `npm run lint`
 - architecture dependency policies enforced by `eslint-plugin-boundaries` as
   part of that lint command
-- 22 Storybook files with 94 Story entries across custom components and
+- 23 Storybook files with 100 Story entries (static counts) across custom components and
   selected layout, menu, and feature-presentation UI
 - Storybook static-build verification through `npm run build-storybook`
-- a separate Storybook/Vitest browser project with five selected `play`
+- a separate Storybook/Vitest browser project with six selected `play`
   interaction files and a headless Playwright Chromium provider
 - an application production build that embeds the Storybook static output and
   then builds Next.js through `npm run build`

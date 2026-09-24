@@ -33,9 +33,7 @@ production-complete 범위까지 구현하지는 않았습니다.
 
 가장 빠르게 살펴보려면 로그인 화면에서 **Try Demo**를 선택하세요. LOCAL
 환경에서는 database credential 없이 구현된 ticket 및 settings workflow를
-확인할 수 있습니다. REMOTE service boundary와 workflow도 구현되어 있지만,
-호스팅된 REMOTE 계정에서는 Service Desk page 직접 접근을 의도적으로
-제한합니다.
+확인할 수 있습니다. REMOTE service boundary와 workflow도 구현되어 있습니다.
 
 ## 빠른 리뷰
 
@@ -366,14 +364,15 @@ docs/
 
 현재 repository 수준의 검증 범위는 다음과 같습니다.
 
-- `npm test`의 unit project로 실행하는 source-local Vitest test file 163개
+- `npm test`가 실행하는 unit project의 include 패턴에 해당하는 source-local
+  Vitest test/spec file 171개(정적 파일 집계)
 - `npm run lint`를 통한 ESLint 9 static analysis
 - lint command에 포함된 `eslint-plugin-boundaries`의 architecture dependency
   policy 검사
 - custom component 및 선별한 layout, menu, feature-presentation UI를 포함하는
-  Storybook file 22개와 Story entry 94개
+  Storybook file 23개와 Story entry 100개(정적 집계)
 - `npm run build-storybook`을 통한 Storybook static build 검증
-- 선별한 `play` interaction file 5개와 headless Playwright Chromium provider를
+- 선별한 `play` interaction file 6개와 headless Playwright Chromium provider를
   사용하는 별도 Storybook/Vitest browser project
 - Storybook static output을 포함한 뒤 Next.js를 build하는 `npm run build`
 

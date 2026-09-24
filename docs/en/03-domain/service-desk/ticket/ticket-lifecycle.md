@@ -191,9 +191,9 @@ Routing-sensitive changes rerun routing from the beginning.
 History records the result as `ROUTING_PRESERVED` or `ROUTING_RESET`.
 
 When category changes, default priority, default risk level, and the minimum due
-date are re-evaluated from the new category. The next due date is the later of
-the current due date and the new category minimum, so category change never
-pulls the due date earlier.
+date are re-evaluated from the new category. The next due date is the latest of
+the current due date, submitted due date, and new category minimum, so category
+change never pulls the due date earlier.
 
 ---
 

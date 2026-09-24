@@ -291,9 +291,12 @@ and database constraints should enforce these invariants where available, in
 addition to service validation. Category removal uses deactivation so existing
 ticket and history references remain intact.
 
-Settings changes affect future workflow resolution. Existing tickets keep their
-stored state, routing, activity, and history unless an explicit ticket command
-changes them.
+Ordinary Settings changes affect future workflow resolution and preserve existing
+ticket state and routing. An administrator-confirmed Approval Step force apply
+is the controlled exception: it atomically validates and saves the configuration,
+restarts initial routing for affected `Approval` tickets, and appends
+`ROUTING_RESET` with reason `APPROVAL_CONFIGURATION_CHANGED`. Existing History
+is not rewritten.
 
 ---
 

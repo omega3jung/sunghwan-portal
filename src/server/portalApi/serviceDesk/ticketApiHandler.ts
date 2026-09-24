@@ -321,6 +321,10 @@ export async function handleTicketPortalApi(
     }
 
     if (context.method === "POST") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
       const item = await createWorkSession({
         ...requireBody<Parameters<typeof createWorkSession>[0]>(
           context.options,
@@ -395,9 +399,16 @@ async function handleTicketDraftPortalApi(
   }
 
   if (context.method === "POST") {
+    const principal = await getUserProfileDtoByUsername(currentUserName);
+
+    if (!principal) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const draft = await createTicketDraft(
       currentUserName,
       requireBody<TicketDraftWriteDto>(context.options),
+      principal,
     );
 
     return NextResponse.json(draft, { status: 201 });
@@ -412,10 +423,17 @@ async function handleTicketDraftDetailPortalApi(
   ticketId: string,
 ) {
   if (context.method === "PUT") {
+    const principal = await getUserProfileDtoByUsername(currentUserName);
+
+    if (!principal) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const draft = await updateTicketDraft(
       ticketId,
       currentUserName,
       requireBody<TicketDraftWriteDto>(context.options),
+      principal,
     );
 
     return NextResponse.json(draft);

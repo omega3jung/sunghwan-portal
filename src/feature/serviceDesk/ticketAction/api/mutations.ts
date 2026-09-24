@@ -97,6 +97,9 @@ export const useDeleteServiceDeskTicketAction = () => {
         variables.ticketId,
         variables.actionNo,
       );
+      queryClient.invalidateQueries({
+        queryKey: ticketHistoryQueryKeys.list(variables.ticketId),
+      });
     },
   });
 };

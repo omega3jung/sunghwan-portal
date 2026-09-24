@@ -109,6 +109,8 @@ role hierarchy가 아니라 서버에서 확인한 canonical `AppUser`로부터 
 | Tenant Admin          | `permission >= ADMIN` (`9`) 및 `userScope = CLIENT`   |
 | 설정 관리자 권한 없음 | `userScope`와 무관하게 더 낮은 permission             |
 
+숫자 임계값을 여러 곳에 중복하지 않고 canonical access-level constant를 사용합니다.
+
 API route의 설정 작업은 먼저 인증된 JWT의 `getUserAccessLevel(request) >= 9`를
 검사합니다. 그 다음 서버는 session에서 effective username을 구하고 canonical
 application user를 로드하여 `permission`, `userScope`, `companyId`를 신뢰할 수

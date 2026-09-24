@@ -118,7 +118,7 @@ DTO 방향을 유지하는 demo-safe local handler를 사용합니다.
   - routing-sensitive change는 첫 approval step부터 routing을 다시 실행합니다.
   - category change는 category default에서 priority와 risk를 다시 파생할 수 있습니다.
   - category change는 새 category SLA default에서 minimum due date를 다시 평가하고
-    current due date와 새 minimum 중 더 늦은 값을 유지합니다.
+    current due date, 제출한 due date, 새 minimum 중 가장 늦은 값을 유지합니다.
 - action persistence: ticket action row 없음
 - history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
 - notification boundary: 현재 문서에서는 별도 notification source가 아닙니다.

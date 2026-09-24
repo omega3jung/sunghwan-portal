@@ -120,7 +120,7 @@ LOCAL uses demo-safe local handlers with the same DTO direction.
   - routing-sensitive changes rerun routing from the first approval step
   - category changes can rederive priority and risk from category defaults
   - category changes re-evaluate the minimum due date from the new category SLA
-    default and keep the later of current due date and new minimum
+    default and keep the latest of current due date, submitted due date, and new minimum
 - action persistence: no ticket action row
 - history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
 - notification boundary: not a separate notification source in the current docs

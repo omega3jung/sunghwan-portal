@@ -131,12 +131,31 @@ ticket row
 규칙:
 
 - requester당 active draft는 하나입니다.
+- 두 runtime 모두 draft를 저장하려면 유효한 Category가 필요합니다. Category가 없으면
+  변경 내용은 저장되지 않은 React Hook Form state로만 남으며, API 호출이나
+  localStorage 쓰기를 수행하지 않습니다.
+- `tk_category_id`는 NOT NULL을 유지합니다. Category FK와 tenant trigger가
+  Category/Tenant 식별 관계의 authoritative source입니다.
+- REMOTE draft의 subject/content는 NULL일 수 있습니다. 빈 subject와 의미상 비어 있는
+  rich text는 NULL로 정규화하며, form에 전달할 때는 다시 빈 문자열로 매핑합니다.
 - draft save/update는 draft API를 사용합니다.
 - final submit은 같은 row를 재사용합니다.
+- final submit에는 사용 가능한 Category, 비어 있지 않은 subject, 의미 있는 content가
+  필요하며, 기존 due date, attachment, routing 검증도 적용됩니다. 서버 검증은
+  persistence 전에 수행됩니다.
 - submit은 initial approval/work routing을 수행합니다.
 - operational ticket list는 draft를 제외합니다.
-- LOCAL draft는 feature API boundary 뒤의 simplified demo-safe 구현이며
+- LOCAL draft 복구 데이터는 현재 demo user별 key로 browser `localStorage`에 저장하고,
+  feature draft repository를 통해 접근합니다. Draft Route Handler를 호출하지 않으며,
   REMOTE PostgreSQL draft와 persistence가 동일하지 않습니다.
+
+Category 없이 변경 내용이 있는 form을 처음 닫으려 하면 경고를 표시하고 editor를
+열어 둡니다. 두 번째 시도에서는 해당 변경 내용을 저장하지 않고 닫습니다. Dialog를
+다시 열면 이 경고 상태가 초기화됩니다. Category만 있는 draft도 저장할 수 있습니다.
+Inline image는 저장 전에 Attachment Prepare를 거치며, 임시 data/blob source는
+계속 거부합니다. Draft가 아닌 database row의 subject/content는 status를 고려한
+CHECK constraint를 통해 NULL이나 공백일 수 없도록 보장해야 합니다. HTML 내용의
+의미상 유효성 검증은 서버의 책임입니다.
 
 관련 문서:
 
