@@ -71,6 +71,13 @@ type TicketWorkSessionSubmitPayload = {
 
 ## Actor Rule
 
+작업 이력은 approver와 worker를 구분합니다. `ASSIGNMENT_RESOLVED`는 도착 측
+assignee만, WORK `ASSIGNMENT_UPDATED`는 양쪽 assignee를 인정합니다.
+`ROUTING_RESET`도 해당 측 approval-step 필드가 명시적으로 null인 경우 작업
+evidence입니다. requester update는 metadata, settings reset은 from/to snapshot을
+사용합니다. phase 필드가 없으면 작업 이력으로 인정하지 않습니다. 이는 실제 승인
+배정도 포함하는 NOTE의 previous-assignee 관계와 별개입니다.
+
 현재와 과거 work assignee는 work session을 만들 수 있습니다. 따라서 재배정 이후에도
 과거 담당자가 누락된 work evidence를 추가할 수 있습니다.
 

@@ -428,6 +428,15 @@ type ApprovalAssigneeType =
 The server DTO represents the same concept with `approval_step_assignee` and
 `skip_access_level`.
 
+For `MANAGER`, level 1 selects employees in the parent of the requester's Job
+Field; level 2 selects employees in its grandparent. This is organization
+ancestry, not an authentication permission/access level. `skipAccessLevel` is a
+separate routing rule. LOCAL and REMOTE use the persisted Ticket requester.
+Settings writes have no individual Ticket requester: they require a supported
+requester/ancestor/employee combination within the category Tenant company,
+with active employee, Job Field, and department references. Routing then resolves
+the actual requester and rejects an empty eligible approver set.
+
 ### Ordered Pipeline
 
 Approval steps are evaluated in ascending `index` order.

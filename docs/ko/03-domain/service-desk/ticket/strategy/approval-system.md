@@ -75,6 +75,11 @@ EMPLOYEE
 REMOTE DTO는 `approval_step_assignee`와 `skip_access_level`을 사용합니다. LOCAL과
 REMOTE settings는 같은 application-facing behavior로 resolve되어야 합니다.
 
+`MANAGER` level 1은 저장된 requester Job Field의 부모, level 2는 조부모
+Job Field를 의미합니다. 해당 Job Field의 eligible employee가 approver가 됩니다.
+이는 role/access level 7 또는 9를 뜻하지 않습니다. requester의 `skipAccessLevel`
+비교는 별개이며 조직 계층 해석을 바꾸지 않습니다.
+
 관련 문서: [Service Desk Settings](../../settings.md)
 
 ---

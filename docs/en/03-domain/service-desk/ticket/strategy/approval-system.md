@@ -77,6 +77,11 @@ EMPLOYEE
 REMOTE DTOs use `approval_step_assignee` and `skip_access_level`. LOCAL and
 REMOTE settings must resolve to the same application-facing behavior.
 
+`MANAGER` level 1 means the parent of the persisted requester's Job Field;
+level 2 means its grandparent. Eligible employees in that target Job Field are
+the approvers. It does not mean role/access levels 7 or 9. The requester's
+`skipAccessLevel` comparison is separate and does not change this hierarchy.
+
 Related document: [Service Desk Settings](../../settings.md)
 
 ---

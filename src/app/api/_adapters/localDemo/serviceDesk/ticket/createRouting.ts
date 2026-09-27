@@ -2,6 +2,7 @@ import {
   getActiveLocalEmployeesByCompanyId,
   getServiceDeskCategoryContext,
   type LocalCompanyEmployee,
+  resolveLocalManagerJobField,
   type ServiceDeskCategoryContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/eligibility";
 import {
@@ -89,6 +90,7 @@ async function resolveTicketRouting(
     const assigneeUsernames = resolveApprovalStepAssignees({
       approvalStep: nextApprovalStep,
       eligibleEmployees: companyEmployees,
+      requesterUsername: input.requesterUsername,
     });
 
     assertRoutingResolved(assigneeUsernames, input.categoryId);
@@ -186,12 +188,14 @@ function resolveNextApprovalStep({
   );
 }
 
-function resolveApprovalStepAssignees({
+export function resolveApprovalStepAssignees({
   approvalStep,
   eligibleEmployees,
+  requesterUsername,
 }: {
   approvalStep: DbCategoryApprovalSettings["approval_step"][number];
   eligibleEmployees: LocalCompanyEmployee[];
+  requesterUsername: string;
 }) {
   const assignee = approvalStep.approval_step_assignee;
 
@@ -230,12 +234,12 @@ function resolveApprovalStepAssignees({
         return [];
       }
       return normalizeAssigneeIds(
-        resolveManagerAssigneeUsernames(eligibleEmployees, assignee.level),
+        resolveManagerAssigneeUsernames(eligibleEmployees, assignee.level, requesterUsername),
       );
   }
 }
 
-async function resolveAssignmentAssignees(
+export async function resolveAssignmentAssignees(
   category: ServiceDeskCategoryContext,
 ) {
   const assignmentRule = findAssignmentRuleWithMainFallback(
@@ -353,17 +357,13 @@ function resolveCompanyEmployeeUsername(
 function resolveManagerAssigneeUsernames(
   eligibleEmployees: LocalCompanyEmployee[],
   level: 1 | 2,
+  requesterUsername: string,
 ) {
-  const minimumPermission =
-    level === 1 ? ACCESS_LEVEL.MANAGER : ACCESS_LEVEL.ADMIN;
-
-  return eligibleEmployees
-    .filter(
-      (employee) =>
-        (resolveDemoAuth(employee.username)?.permission ?? ACCESS_LEVEL.NONE) >=
-        minimumPermission,
-    )
-    .map((employee) => employee.username);
+  const requester = eligibleEmployees.find((employee) => employee.username === requesterUsername);
+  const target = requester ? resolveLocalManagerJobField(requester, level) : undefined;
+  return target ? eligibleEmployees
+    .filter((employee) => employee.jobFieldId === target.jf_id)
+    .map((employee) => employee.username) : [];
 }
 
 function assertRoutingResolved(

@@ -71,6 +71,14 @@ from `startAt` and `endAt` in range mode. The resulting value must be positive.
 
 ## Actor Rule
 
+Work history distinguishes approvers from workers: `ASSIGNMENT_RESOLVED` uses
+only the destination assignees; a WORK `ASSIGNMENT_UPDATED` uses both sides.
+`ROUTING_RESET` also preserves work evidence when the corresponding persisted
+approval-step field is explicitly null, in requester-update metadata or
+settings-reset from/to snapshots. A missing phase field is not work evidence.
+This is separate from NOTE's previous-assignee relation, which includes actual
+approval assignments as well.
+
 Current and previous work assignees can create a work session so that
 historical workers can add missing work evidence after reassignment.
 

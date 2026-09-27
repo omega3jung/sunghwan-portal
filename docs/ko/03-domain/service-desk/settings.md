@@ -415,6 +415,14 @@ type ApprovalAssigneeType =
 서버 DTO는 같은 개념을 `approval_step_assignee`와 `skip_access_level`로
 표현합니다.
 
+`MANAGER` level 1은 requester Job Field의 부모, level 2는 조부모 Job Field에
+속한 직원을 선택합니다. 인증 permission/access level이 아닌 조직 계층 거리이며,
+`skipAccessLevel`은 별도의 routing 규칙입니다. LOCAL과 REMOTE 모두 Ticket에
+저장된 requester를 기준으로 합니다. 설정 저장 시에는 특정 Ticket requester가
+없으므로 Category Tenant 회사 안에서 지원 가능한 requester·상위 Job Field·직원
+조합과 활성 employee/Job Field/department reference를 검증합니다. 실제 routing은
+해당 requester로 다시 resolve하며 eligible approver가 없으면 실패합니다.
+
 ### 순서 있는 파이프라인
 
 승인 단계는 `index` 오름차순으로 평가됩니다.
