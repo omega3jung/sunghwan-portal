@@ -58,6 +58,9 @@ export interface TicketCurrentAssignmentState {
 }
 
 export interface TicketAssignmentState extends TicketCurrentAssignmentState {
+  /** Server-projected UX capabilities; never accepted as authorization input. */
+  canViewNote?: boolean;
+  canCreateNote?: boolean;
   /** Includes both previous and current work assignments. */
   hasBeenWorker: boolean;
 }

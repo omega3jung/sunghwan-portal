@@ -214,7 +214,8 @@ visibility, not permission to create new comments on closed tickets.
 
 ## Note
 
-- who: user with ticket access
+- who: a Ticket viewer who is a current/past assignee, a current Category
+  approval/assignment participant, or an effective-user Admin; requester always excluded
 - allowed status: all live non-`Draft`, non-`Closed` statuses
 - input: content, prepared action attachments where supported
 - validation: content required
@@ -226,13 +227,33 @@ visibility, not permission to create new comments on closed tickets.
 
 Soft delete:
 
-- who: action writer
+- who: action writer who still has NOTE access
 - disallowed status: `Draft`, `Closed`
 - action type: `NOTE` only
 - history event: `NOTE_DELETED`
 
 The current route surface does not expose a note update route, although the
 history union reserves `NOTE_UPDATED`.
+
+Read/list/detail and NOTE-related History use this same access policy, including
+links to soft-deleted NOTE actions. Read access is not blocked merely by closure.
+Participation uses `Requester > CurrentAssignee > PreviousAssignee > null` plus
+independent approval/assignment flags. Previous relation uses persisted assignee
+snapshots, never the History actor. Approval includes every main-Category step,
+including skipped steps; Assignment uses the selected rule and falls back only
+when an own rule is absent. Category inactivity does not remove participation;
+current configuration changes do. Tenant/Company/Employee eligibility remains.
+REMOTE uses `service_desk.get_ticket_participation`; LOCAL reuses its existing
+candidate resolvers, including requester Job Field ancestry for MANAGER. UI capability
+flags are projections, never accepted as server authorization facts.
+
+The application participation projection adds `isAdmin` from the canonical
+effective-user role, not from SQL or browser input. Action/History and Ticket
+detail caches are partitioned by runtime and effective username; Action/History
+queries do not retain another identity's response during impersonation changes.
+Shared Ticket summaries derive the last comment from COMMENT and the last user
+activity from non-NOTE actions, excluding NOTE timestamps and author emails.
+Authorized NOTE activity remains available through the filtered Action/History APIs.
 
 ---
 

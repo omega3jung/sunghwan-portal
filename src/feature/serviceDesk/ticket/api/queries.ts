@@ -65,12 +65,12 @@ export const useServiceDeskTicketSearchQuery = ({
 };
 
 export const useServiceDeskTicketQuery = (id: string | number) => {
-  const { dataScope, queryOptions } = useServiceDeskQueryOptions();
+  const { dataScope, effectiveUsername, identityKey, queryOptions } = useServiceDeskQueryOptions();
 
   return useQuery({
-    queryKey: ticketQueryKeys.detail(id),
+    queryKey: [...ticketQueryKeys.detail(id), ...identityKey],
     queryFn: () => serviceDeskTicketApi.get(String(id)),
-    enabled: !!id && !!dataScope,
+    enabled: !!id && !!dataScope && !!effectiveUsername,
     ...queryOptions,
   });
 };

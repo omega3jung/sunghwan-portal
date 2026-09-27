@@ -137,7 +137,10 @@ the `MERGE` action and `TICKET_MERGED` event but closes the source with
 
 ### Communication Actions
 
-`COMMENT` and `NOTE` are user-facing communication entries.
+`COMMENT` is shared communication; `NOTE` is internal operational communication.
+NOTE requires Ticket visibility and current operational participation or Admin,
+with requester exclusion taking precedence. The same policy applies to reads
+and author-only soft delete; COMMENT authorization is unchanged.
 
 Existing comments remain visible after a ticket is `Closed`. Visibility of an
 existing row is different from permission to create a new row after closure.

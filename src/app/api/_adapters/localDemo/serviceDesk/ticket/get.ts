@@ -1,10 +1,9 @@
-import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
-
 import {
   canAccessLocalDemoTicket,
   type LocalTicketAccessContext,
 } from "./access";
 import { getLocalDemoTickets } from "./state";
+import { toTicketMockDetailResource } from "./ticketResourceMapper";
 
 /** Returns ticket from the server-side LOCAL ticket adapter. */
 export const localGetTicket = ({
@@ -24,5 +23,5 @@ export const localGetTicket = ({
     return null;
   }
 
-  return camelTicketDetailMapper([ticket])[0];
+  return toTicketMockDetailResource(ticket);
 };

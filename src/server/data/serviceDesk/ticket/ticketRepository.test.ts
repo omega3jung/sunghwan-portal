@@ -33,6 +33,22 @@ describe("REMOTE ticket read predicate", () => {
     });
   });
 
+  it("recomputes shared activity without NOTE instead of exposing legacy view aggregates", async () => {
+    await findActiveTicketViewRows(principal);
+    await findActiveTicketViewRowById("ticket-1", {}, principal);
+    await findActiveTicketViewRowByIdIncludingDraft("ticket-1");
+    await findActiveTicketViewRowsBySearch({ page: 1, pageSize: 20 }, principal);
+    const projections = queryPortalApi.mock.calls.filter(([sql]) => String(sql).includes("as tka_last_comment_at"));
+    expect(projections).toHaveLength(4);
+    for (const [sql] of projections) {
+      expect(sql).toContain("action.tka_action_type = 'COMMENT'");
+      expect(sql).toContain("action.tka_action_type <> 'NOTE'");
+      expect(sql).toContain("shared_comment.tka_created_at as tka_last_comment_at");
+      expect(sql).toContain("shared_activity.e_email as tka_last_user_activity_email");
+      expect(sql).toContain("action.tka_ticket_id = ticket_view.tk_id");
+    }
+  });
+
   it("applies requester, assignee, tenant, and cat_scope authorization to list and detail", async () => {
     await findActiveTicketViewRows(principal);
     await findActiveTicketViewRowById("ticket-1", {}, principal);

@@ -6,6 +6,8 @@ import type {
   TicketActionPath,
 } from "@/lib/application/contracts/serviceDesk";
 
+import type { LocalTicketAccessContext } from "../access";
+
 /** Describes ticket action API type used by the server-side LOCAL ticket adapter. */
 export type TicketActionApiType = TicketActionPath;
 
@@ -68,6 +70,7 @@ export type LocalActionSpec = {
 
 /** Describes database ticket action local context used by the server-side LOCAL ticket adapter. */
 export type DbTicketActionLocalContext = LocalActionBaseContext & {
+  access?: LocalTicketAccessContext;
   action: TicketActionApiType;
   isAdmin?: boolean;
   isInternal?: boolean;

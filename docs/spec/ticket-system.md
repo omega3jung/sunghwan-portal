@@ -304,6 +304,16 @@ The explicit start-work command is implemented separately from the Ticket Action
 union. It moves `Assigned -> Working`, creates `STATUS_UPDATED` history, and
 does not insert a Ticket Action row.
 
+COMMENT remains requester-facing/shared communication. NOTE is internal operational
+communication: existing Ticket visibility is required, the requester is excluded
+(including requester/Admin or requester/participant overlap), and a current/past
+assignee, current Category approval/assignment participant, or effective-user
+Admin may access it. Action list/detail and History apply the same NOTE policy.
+Create/delete retain non-Draft/non-Closed rules; delete also requires authorship.
+Participation never grants Ticket visibility. Category inactivity alone does not
+remove current configuration participation; configuration/category changes are
+re-evaluated, while actual assignment History remains evidence of past relation.
+
 Operational actions are immutable. Communication actions currently support
 soft delete for `COMMENT` and `NOTE` before closure. Existing comments remain
 visible after `Closed`, but new comment creation is blocked by the closed-ticket

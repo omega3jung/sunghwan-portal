@@ -265,6 +265,13 @@ Operational action은 immutable합니다. Communication action은 현재 `COMMEN
 
 ---
 
+NOTE History는 Ticket visibility 검사 후 NOTE Action과 같은 접근 정책을 적용합니다.
+권한이 없는 viewer에게는 NOTE event/type 및 NOTE Action에 연결된 이력을 노출하지
+않으며 soft delete된 Action 연결도 포함합니다. 읽기 시 projection에서 필터링하고
+저장된 immutable History와 COMMENT History는 변경하지 않습니다.
+
+---
+
 ## History and Work Sessions
 
 현재 work-session create는 ticket status를 변경할 때 `STATUS_UPDATED`를 만들 수

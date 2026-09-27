@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { TicketAction } from "@/domain/serviceDesk";
+import { useServiceDeskQueryOptions } from "@/feature/serviceDesk/shared/client";
 
 import { ticketQueryKeys } from "../../ticket/api/queryKeys";
 import { ticketHistoryQueryKeys } from "../../ticketHistory/api";
@@ -54,23 +55,26 @@ const invalidateTicketActionQueries = (
 
 export const useTicketActionMutation = () => {
   const queryClient = useQueryClient();
+  const { identityKey } = useServiceDeskQueryOptions();
 
   return useMutation({
     mutationFn: serviceDeskTicketActionApi.execute,
+    // A response may arrive after impersonation changed the current render.
+    onMutate: () => ({ identityKey }),
 
-    onSuccess: (newAction, variables) => {
+    onSuccess: (newAction, variables, context) => {
       const { ticketId } = variables;
       const actionNo = String(newAction.actionNo);
 
       // Show the committed action immediately, then refetch all affected
       // projections. The server remains authoritative if its mapper differs.
       queryClient.setQueryData<TicketAction[]>(
-        ticketActionQueryKeys.list(ticketId),
+        [...ticketActionQueryKeys.list(ticketId), ...(context?.identityKey ?? identityKey)],
         (old = []) => [...old, newAction],
       );
 
       queryClient.setQueryData(
-        ticketActionQueryKeys.detail(ticketId, actionNo),
+        [...ticketActionQueryKeys.detail(ticketId, actionNo), ...(context?.identityKey ?? identityKey)],
         newAction,
       );
 

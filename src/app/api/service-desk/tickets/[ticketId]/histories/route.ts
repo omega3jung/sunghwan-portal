@@ -8,7 +8,8 @@ import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
-import { getLocalDemoHistories } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { canAccessLocalTicketNote } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/participation";
+import { getLocalDemoActions, getLocalDemoHistories } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import {
   resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
@@ -17,6 +18,7 @@ import {
   camelTicketHistoryMapper,
   mapTicketHistoryListPayload,
 } from "@/lib/application/contracts/serviceDesk";
+import { isNoteRelatedHistory } from "@/lib/application/serviceDesk/ticketNoteAccess";
 
 /** Handles GET /api/service-desk/tickets/[ticketId]/histories; authorization and runtime adapter selection remain at this HTTP boundary. */
 export async function GET(request: NextRequest, context: TicketIdRouteContext) {
@@ -42,8 +44,13 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       );
     }
 
+    const canViewNote = await canAccessLocalTicketNote(ticketId, access);
+    const noteActionNumbers = new Set(getLocalDemoActions()
+      .filter((item) => item.ticket_id === ticketId && item.action_type === "NOTE")
+      .map((item) => item.action_no));
     const items = getLocalDemoHistories().filter(
-      (item) => item.ticket_id === ticketId,
+      (item) => item.ticket_id === ticketId &&
+        (canViewNote || !isNoteRelatedHistory(item, noteActionNumbers)),
     );
 
     return NextResponse.json({

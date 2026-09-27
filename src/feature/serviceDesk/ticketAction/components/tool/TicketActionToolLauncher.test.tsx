@@ -74,6 +74,18 @@ const actionLabel = (action: string) => {
 };
 
 describe("TicketActionToolLauncher capability projection", () => {
+  it("uses the NOTE capability instead of inferring access from Admin or assignment", () => {
+    const { rerender } = render(
+      <TicketActionToolLauncher hidden={false} isAdmin ticket={createTicket({ owner: true, canCreateNote: false })} onOpen={vi.fn()} />,
+    );
+    expect(screen.queryByText(actionLabel("note"))).not.toBeInTheDocument();
+    expect(screen.getByText(actionLabel("comment"))).toBeInTheDocument();
+    rerender(
+      <TicketActionToolLauncher hidden={false} ticket={createTicket({ isCurrentWorker: false, canCreateNote: true })} onOpen={vi.fn()} />,
+    );
+    expect(screen.getByText(actionLabel("note"))).toBeInTheDocument();
+  });
+
   it("shows approval decisions to the current approver", () => {
     render(
       <TicketActionToolLauncher

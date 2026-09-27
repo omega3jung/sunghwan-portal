@@ -267,6 +267,13 @@ delete for `COMMENT` and `NOTE`, producing `COMMENT_DELETED` or `NOTE_DELETED`.
 
 ---
 
+NOTE History is subject to the same access policy as NOTE Actions after Ticket
+visibility is authorized. Unauthorized viewers receive neither NOTE events/type
+nor histories linked to NOTE Actions, including soft-deleted actions. Filtering
+occurs on read; stored immutable History is unchanged. COMMENT History is unchanged.
+
+---
+
 ## History and Work Sessions
 
 Current work-session create can produce `STATUS_UPDATED` when it changes ticket

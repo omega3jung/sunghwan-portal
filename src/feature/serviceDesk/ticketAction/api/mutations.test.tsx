@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, renderHook, waitFor } from "@testing-library/react";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -16,6 +16,7 @@ import { ticketActionQueryKeys } from "./queryKeys";
 const apiMock = vi.hoisted(() => ({
   execute: vi.fn(),
   remove: vi.fn(),
+  username: "agent-1",
 }));
 
 vi.mock("./api", () => ({
@@ -25,10 +26,16 @@ vi.mock("./api", () => ({
   },
 }));
 
+vi.mock("@/feature/serviceDesk/shared/client", () => ({
+  useServiceDeskQueryOptions: () => ({ identityKey: ["LOCAL", apiMock.username] }),
+}));
+const identityKey = ["LOCAL", "agent-1"];
+
 afterEach(cleanup);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  apiMock.username = "agent-1";
 });
 
 function createAction(
@@ -81,7 +88,7 @@ describe("useTicketActionMutation", () => {
     const { queryClient, wrapper } = createQueryClientTestContext();
     const searchKey = ticketQueryKeys.search({ page: 1, pageSize: 20 });
     queryClient.setQueryData(searchKey, { items: [{ id: "ticket-1" }] });
-    queryClient.setQueryData(ticketActionQueryKeys.list("ticket-1"), [
+    queryClient.setQueryData([...ticketActionQueryKeys.list("ticket-1"), ...identityKey], [
       existingAction,
     ]);
     const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
@@ -92,11 +99,11 @@ describe("useTicketActionMutation", () => {
     expect(queryClient.getQueryState(searchKey)?.isInvalidated).toBe(true);
     await waitFor(() => {
       expect(
-        queryClient.getQueryData(ticketActionQueryKeys.list("ticket-1")),
+        queryClient.getQueryData([...ticketActionQueryKeys.list("ticket-1"), ...identityKey]),
       ).toEqual([existingAction, newAction]);
     });
     expect(
-      queryClient.getQueryData(ticketActionQueryKeys.detail("ticket-1", "2")),
+      queryClient.getQueryData([...ticketActionQueryKeys.detail("ticket-1", "2"), ...identityKey]),
     ).toEqual(newAction);
 
     const invalidatedKeys = invalidateQueries.mock.calls.map(
@@ -115,11 +122,27 @@ describe("useTicketActionMutation", () => {
     );
   });
 
+  it("does not publish a late NOTE response into the impersonated requester's cache", async () => {
+    let resolveAction!: (action: TicketAction) => void;
+    apiMock.execute.mockReturnValue(new Promise<TicketAction>((resolve) => { resolveAction = resolve; }));
+    const { queryClient, wrapper } = createQueryClientTestContext();
+    const { result, rerender } = renderHook(() => useTicketActionMutation(), { wrapper });
+    let pending!: Promise<TicketAction>;
+    act(() => { pending = result.current.mutateAsync(command); });
+    await waitFor(() => expect(apiMock.execute).toHaveBeenCalledOnce());
+    apiMock.username = "requester";
+    act(() => rerender());
+    const note = createAction(3, { actionType: "NOTE", content: "internal" });
+    await act(async () => { resolveAction(note); await pending; });
+    expect(queryClient.getQueryData([...ticketActionQueryKeys.list("ticket-1"), "LOCAL", "requester"])).toBeUndefined();
+    expect(queryClient.getQueryData([...ticketActionQueryKeys.list("ticket-1"), ...identityKey])).toEqual([note]);
+  });
+
   it("does not publish or invalidate projections when the command fails", async () => {
     const existingAction = createAction(1);
     apiMock.execute.mockRejectedValue(new Error("command failed"));
     const { queryClient, wrapper } = createQueryClientTestContext();
-    queryClient.setQueryData(ticketActionQueryKeys.list("ticket-1"), [
+    queryClient.setQueryData([...ticketActionQueryKeys.list("ticket-1"), ...identityKey], [
       existingAction,
     ]);
     const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
@@ -130,7 +153,7 @@ describe("useTicketActionMutation", () => {
     );
 
     expect(
-      queryClient.getQueryData(ticketActionQueryKeys.list("ticket-1")),
+      queryClient.getQueryData([...ticketActionQueryKeys.list("ticket-1"), ...identityKey]),
     ).toEqual([existingAction]);
     expect(invalidateQueries).not.toHaveBeenCalled();
   });

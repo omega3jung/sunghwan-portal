@@ -119,6 +119,8 @@ export interface DbTicketDetail {
   assigned_approver?: boolean;
   assigned_worker?: boolean;
   has_been_worker?: boolean;
+  can_view_note?: boolean;
+  can_create_note?: boolean;
 
   assignee_usernames: string[];
   assignees?: TicketUser[];

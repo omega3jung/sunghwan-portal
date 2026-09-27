@@ -212,7 +212,8 @@ visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 �
 
 ## Note
 
-- who: ticket 접근 권한이 있는 user
+- who: Ticket viewer 중 현재/과거 assignee, 현재 Category 승인/배정 participant,
+  effective user의 Admin. Requester는 항상 제외합니다.
 - allowed status: 모든 live non-`Draft`, non-`Closed` status
 - input: content, 지원되는 경우 prepared action attachment
 - validation: content 필수
@@ -224,13 +225,33 @@ visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 �
 
 Soft delete:
 
-- who: action writer
+- who: 현재 NOTE 접근 권한을 유지한 action writer
 - disallowed status: `Draft`, `Closed`
 - action type: `NOTE` only
 - history event: `NOTE_DELETED`
 
 현재 route surface는 note update route를 노출하지 않지만 history union은
 `NOTE_UPDATED`를 예약합니다.
+
+목록·상세와 NOTE 관련 History에도 같은 정책을 적용하며, soft delete된 NOTE의
+연결 이력도 포함합니다. Closed라는 이유만으로 기존 NOTE 읽기를 차단하지 않습니다.
+Participation은 `Requester > CurrentAssignee > PreviousAssignee > null`과 독립적인
+승인/배정 플래그를 사용합니다. 과거 관계는 History actor가 아닌 persisted assignee
+snapshot으로 판정합니다. 승인은 skip된 step을 포함한 main Category의 모든 step,
+배정은 자체 rule이 없을 때만 parent로 fallback하는 현재 rule을 사용합니다.
+Category 비활성화는 participation을 제거하지 않지만 현재 configuration 변경은
+반영합니다. Tenant/Company/Employee eligibility는 유지합니다. REMOTE는
+`service_desk.get_ticket_participation`, LOCAL은 MANAGER의 requester Job Field
+계층 해석을 포함한 기존 후보 resolver를 사용합니다. UI capability는 projection이며
+서버 authorization fact로 받지 않습니다.
+
+Application participation의 `isAdmin`은 SQL이나 browser 입력이 아닌 canonical
+effective-user role에서 결합합니다. Action/History와 Ticket detail 캐시는 runtime과
+effective username별로 구분합니다. Action/History query는 impersonation 전환 중
+이전 identity의 응답을 유지하지 않습니다.
+공유 Ticket 요약의 마지막 comment는 COMMENT, 마지막 사용자 활동은 NOTE가 아닌
+Action에서 계산하여 NOTE 작성 시각과 작성자 이메일을 제외합니다. 권한이 확인된
+NOTE 활동은 filtering된 Action/History API에서 제공합니다.
 
 ---
 

@@ -131,6 +131,7 @@ export function TicketActionToolLauncher({
   const actions = useMemo<TicketActionMode[]>(
     () =>
       ALL_TOOL_ACTIONS.filter((action) => {
+        if (action === "note" && ticket.canCreateNote !== true) return false;
         if (!VISIBLE_STATUSES_BY_ACTION[action].includes(ticket.status)) {
           return false;
         }
@@ -218,6 +219,7 @@ export function TicketActionToolLauncher({
       }),
     [
       ticket.active,
+      ticket.canCreateNote,
       ticket.isCurrentApprover,
       ticket.isCurrentWorker,
       ticket.assignmentPhase,

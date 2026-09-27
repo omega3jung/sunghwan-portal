@@ -94,6 +94,7 @@ describe("Ticket command route orchestration", () => {
     );
 
     expect(mocks.localPost).toHaveBeenCalledWith({
+      access: { username: "effective.employee", userScope: "INTERNAL", tenantId: "tenant-1" },
       ticketId: "ticket-1",
       employeeUserName: "effective.employee",
       action: "comment",

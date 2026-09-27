@@ -6,6 +6,7 @@ import {
 } from "@/lib/application/api";
 import { camelTicketActionMapper } from "@/lib/application/contracts/serviceDesk";
 
+import { canAccessLocalTicketNote } from "../participation";
 import { getLocalDemoActions, getLocalDemoHistories } from "../state";
 import { createTicketAction } from "./actionRecord";
 import { executeLocalAction } from "./execute";
@@ -21,6 +22,7 @@ import { getNextActionNo, getTicketContext } from "./utils";
  * command contract and avoid an activity row without its workflow effect.
  */
 export async function localPost({
+  access,
   ticketId,
   employeeUserName,
   content,
@@ -30,6 +32,13 @@ export async function localPost({
 }: DbTicketActionLocalContext) {
   try {
     const ticketSnapshot = getTicketContext(ticketId, isInternal).ticket;
+    if (
+      action === "note" &&
+      (!access || access.username !== employeeUserName ||
+        !(await canAccessLocalTicketNote(ticketId, access)))
+    ) {
+      return NextResponse.json({ message: "NOTE access denied." }, { status: 403 });
+    }
     const mergeTargetSnapshot =
       action === "merge" && content.targetTicketId
         ? getTicketContext(content.targetTicketId, isInternal).ticket

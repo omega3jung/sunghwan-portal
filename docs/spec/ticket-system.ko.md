@@ -280,6 +280,15 @@ Action command
 `Assigned -> Working`으로 이동시키고 `STATUS_UPDATED` history를 만들며 Ticket
 Action row를 만들지 않습니다.
 
+COMMENT는 requester와 공유하는 communication입니다. NOTE는 내부 operational
+communication으로, 기존 Ticket visibility를 통과한 현재/과거 assignee, 현재 Category의
+승인/배정 participant 또는 effective user의 Admin만 접근할 수 있습니다. Requester는
+participant나 Admin을 겸하더라도 제외합니다. Action 목록·상세와 History에 같은 NOTE
+정책을 적용하며, 생성·삭제는 기존 non-Draft/non-Closed 조건을 유지하고 삭제에는
+작성자 조건도 필요합니다. Participation은 Ticket visibility를 부여하지 않습니다.
+Category 비활성화만으로 현재 configuration participation을 제거하지 않으며,
+configuration/Category 변경은 재계산하고 실제 배정 History는 과거 관계 근거로 유지합니다.
+
 Operational action은 immutable합니다. Communication action은 closure 전
 `COMMENT`와 `NOTE`에 대해 soft delete를 지원합니다. 기존 comment는 `Closed`
 이후에도 표시되지만 closed ticket operation rule은 새 comment 생성을 차단합니다.
