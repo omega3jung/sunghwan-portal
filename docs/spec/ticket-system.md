@@ -305,10 +305,12 @@ union. It moves `Assigned -> Working`, creates `STATUS_UPDATED` history, and
 does not insert a Ticket Action row.
 
 COMMENT remains requester-facing/shared communication. NOTE is internal operational
-communication: existing Ticket visibility is required, the requester is excluded
-(including requester/Admin or requester/participant overlap), and a current/past
-assignee, current Category approval/assignment participant, or effective-user
-Admin may access it. Action list/detail and History apply the same NOTE policy.
+communication: existing Ticket visibility is required. An effective-user Admin
+may access NOTE even when also the requester. Otherwise, the requester is excluded
+even when also an assignee or participant; a non-requester current/past assignee
+or current Category approval/assignment participant may access it. Original Admin
+privileges are not added while impersonating a non-Admin user. Admin does not
+bypass Ticket visibility. Action list/detail and History apply the same NOTE policy.
 Create/delete retain non-Draft/non-Closed rules; delete also requires authorship.
 Participation never grants Ticket visibility. Category inactivity alone does not
 remove current configuration participation; configuration/category changes are

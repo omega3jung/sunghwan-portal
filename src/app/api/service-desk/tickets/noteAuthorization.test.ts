@@ -8,7 +8,10 @@ vi.mock("@/app/api/_adapters", async (importOriginal) => ({
   getCurrentEmployeeUserName: async () => auth.username,
 }));
 vi.mock("@/app/api/_adapters/localDemo/auth", () => ({
-  getCurrentLocalUserRole: async () => "USER",
+  getCurrentLocalUserRole: async () => {
+    const { resolveDemoAuth } = await import("@/mocks/domain/user");
+    return resolveDemoAuth(auth.username)?.role ?? "USER";
+  },
   getCurrentLocalTicketAccessContext: async () => ({ username: auth.username, tenantId: auth.tenantId, userScope: "INTERNAL" }),
 }));
 
@@ -16,11 +19,13 @@ import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket
 import { localListTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/list";
 import { localSearchTickets } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/search";
 import { getLocalDemoActions, getLocalDemoHistories, getLocalDemoTickets, resetLocalDemoTicketState } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
+import { INTERNAL_DEMO_USER_IDS } from "@/mocks/domain/user";
 
 import { GET as getAction, PATCH as deleteAction } from "./[ticketId]/actions/[actionNo]/route";
 import { GET as getActions } from "./[ticketId]/actions/route";
 import { POST as command } from "./[ticketId]/command/[action]/route";
 import { GET as getHistories } from "./[ticketId]/histories/route";
+import { GET as getTicket } from "./[ticketId]/route";
 
 const ticketId = "note-access-test";
 const context = () => ({ params: Promise.resolve({ ticketId }) });
@@ -29,6 +34,14 @@ function request(method = "GET", body?: unknown) {
   return new NextRequest("http://localhost/api/service-desk/tickets/note-access-test", {
     method, ...(body ? { body: JSON.stringify(body), headers: { "Content-Type": "application/json" } } : {}),
   });
+}
+
+function useAdminRequester() {
+  auth.username = INTERNAL_DEMO_USER_IDS.ADMIN.USER_NAME;
+  getLocalDemoTickets()[0].requester_username = auth.username;
+  for (const action of getLocalDemoActions()) {
+    if (action.owner_username === "requester") action.owner_username = auth.username;
+  }
 }
 
 describe("LOCAL NOTE HTTP authorization with real participation and persistence", () => {
@@ -55,6 +68,41 @@ describe("LOCAL NOTE HTTP authorization with real participation and persistence"
     );
   });
   afterEach(resetLocalDemoTicketState);
+
+  it("allows a canonical Admin requester to read/create NOTE and delete only their own NOTE", async () => {
+    useAdminRequester();
+    const originalHistories = structuredClone(getLocalDemoHistories());
+    expect(await (await getTicket(request(), context())).json()).toMatchObject({ owner: true, canViewNote: true, canCreateNote: true });
+    expect((await getAction(request(), actionContext())).status).toBe(200);
+    expect((await (await getActions(request(), context())).json()).total).toBe(2);
+    expect((await (await getHistories(request(), context())).json()).total).toBe(5);
+    expect(getLocalDemoHistories()).toEqual(originalHistories);
+    const response = await command(request("POST", { actionType: "NOTE", content: "Admin requester note", files: [], images: [] }),
+      { params: Promise.resolve({ ticketId, action: "note" }) });
+    expect(response.status).toBe(201);
+    const created = getLocalDemoActions().at(-1)!;
+    expect(created.owner_username).toBe(auth.username);
+    expect((await deleteAction(request("PATCH", { active: false }), actionContext(String(created.action_no)))).status).toBe(200);
+    getLocalDemoActions()[0].owner_username = "other-author";
+    expect((await deleteAction(request("PATCH", { active: false }), actionContext())).status).toBe(403);
+    expect(getLocalDemoActions()[0].active).toBe(true);
+  });
+
+  it.each(["Draft", "Closed"] as const)("keeps Admin requester create/delete blocked in %s", async (status) => {
+    useAdminRequester();
+    getLocalDemoTickets()[0].status = status;
+    expect(await (await getTicket(request(), context())).json()).toMatchObject({ canCreateNote: false });
+    if (status === "Closed") {
+      expect((await getAction(request(), actionContext())).status).toBe(200);
+      expect((await (await getHistories(request(), context())).json()).total).toBe(5);
+    }
+    const response = await command(request("POST", { actionType: "NOTE", content: "Internal work", files: [], images: [] }),
+      { params: Promise.resolve({ ticketId, action: "note" }) });
+    expect(response.status).toBe(409);
+    expect((await deleteAction(request("PATCH", { active: false }), actionContext())).status).toBe(409);
+    expect(getLocalDemoActions()).toHaveLength(3);
+    expect(getLocalDemoHistories()).toHaveLength(5);
+  });
 
   it("hides NOTE list/detail/history including deleted action links from a requester/current assignee", async () => {
     const before = structuredClone(getLocalDemoHistories());

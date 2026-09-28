@@ -214,8 +214,8 @@ visibility, not permission to create new comments on closed tickets.
 
 ## Note
 
-- who: a Ticket viewer who is a current/past assignee, a current Category
-  approval/assignment participant, or an effective-user Admin; requester always excluded
+- who: a Ticket viewer who is an effective-user Admin, including an Admin requester;
+  otherwise a non-requester current/past assignee or current Category approval/assignment participant
 - allowed status: all live non-`Draft`, non-`Closed` statuses
 - input: content, prepared action attachments where supported
 - validation: content required
@@ -238,7 +238,12 @@ history union reserves `NOTE_UPDATED`.
 Read/list/detail and NOTE-related History use this same access policy, including
 links to soft-deleted NOTE actions. Read access is not blocked merely by closure.
 Participation uses `Requester > CurrentAssignee > PreviousAssignee > null` plus
-independent approval/assignment flags. Previous relation uses persisted assignee
+independent approval/assignment flags. This relation precedence is unchanged;
+NOTE authorization applies effective-user Admin override before requester exclusion,
+then operational participation. Non-Admin requesters remain excluded even when
+also assignees or participants. Admin never bypasses Ticket visibility, and an
+original Admin's privileges are not added during impersonation.
+Previous relation uses persisted assignee
 snapshots, never the History actor. Approval includes every main-Category step,
 including skipped steps; Assignment uses the selected rule and falls back only
 when an own rule is absent. Category inactivity does not remove participation;

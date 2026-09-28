@@ -72,6 +72,31 @@ settings assignment rules
 
 정확한 key builder는 feature/domain code에 둡니다. 문서는 family와 ownership을 설명합니다.
 
+### Effective User Cache Isolation
+
+Authorization-sensitive 결과가 effective user에 따라 달라지면 deterministic query
+key에도 runtime에 필요한 effective identity를 포함해야 합니다. 현재 ticket detail,
+ticket action list/detail, ticket history query는 authorization-filtered data,
+NOTE visibility, operation capability projection을 응답에 포함할 수 있으므로
+runtime과 effective user별로 cache scope를 구분합니다.
+
+Impersonation을 포함한 effective user 전환 시 이전 principal의 protected workflow
+응답을 새 principal의 cached data나 placeholder data로 재사용하지 않습니다.
+전환 전에 시작한 request가 늦게 완료되더라도 다른 principal의 cache를 채워서는
+안 됩니다. 이 원칙은 mutation 응답을 직접 cache에 쓰는 경우에도 적용합니다.
+Ticket Action mutation은 시작 시점의 identity scope를 보존하여 해당 scope에 씁니다.
+
+이는 runtime에 필요한 scope를 포함한다는 원칙의 확장이며, 모든 query key에
+username을 요구하는 규칙이 아닙니다. 결과가 identity와 무관한 reference/settings
+data는 impersonation을 지원한다는 이유만으로 user별 key를 가질 필요가 없습니다.
+Mutation 후에는 계속 영향을 받는 query family만 targeted invalidation합니다.
+Cache isolation은 이 원칙을 대체하거나 global invalidation을 요구하지 않습니다.
+
+Cache isolation은 client-side 정보 분리와 UX consistency를 위한 보조 경계이며
+authorization이 아닙니다. 최종 authority는 서버에 있고, 서버가 trusted effective
+principal로 요청 권한을 검증합니다. Effective-user-aware cache와 server-side
+authorization은 서로 보완하는 경계입니다.
+
 ---
 
 ## Mutation Invalidation

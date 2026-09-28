@@ -1,6 +1,6 @@
 import type { TicketParticipation } from "@/lib/application/contracts/serviceDesk/ticketParticipation";
 
-/** Compose only server-resolved facts. Requester exclusion also wins over Admin. */
+/** Require Ticket visibility, then apply effective Admin before requester exclusion. */
 export function canAccessTicketNote({
   canReadTicket,
   participation,
@@ -11,13 +11,17 @@ export function canAccessTicketNote({
   return (
     canReadTicket &&
     participation !== null &&
-    participation.ticketRelation !== "Requester" &&
     (
-      participation.ticketRelation === "CurrentAssignee" ||
-      participation.ticketRelation === "PreviousAssignee" ||
-      participation.isApprovalParticipant ||
-      participation.isAssignmentParticipant ||
-      participation.isAdmin
+      participation.isAdmin ||
+      (
+        participation.ticketRelation !== "Requester" &&
+        (
+          participation.ticketRelation === "CurrentAssignee" ||
+          participation.ticketRelation === "PreviousAssignee" ||
+          participation.isApprovalParticipant ||
+          participation.isAssignmentParticipant
+        )
+      )
     )
   );
 }

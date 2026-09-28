@@ -281,9 +281,11 @@ Action command
 Action row를 만들지 않습니다.
 
 COMMENT는 requester와 공유하는 communication입니다. NOTE는 내부 operational
-communication으로, 기존 Ticket visibility를 통과한 현재/과거 assignee, 현재 Category의
-승인/배정 participant 또는 effective user의 Admin만 접근할 수 있습니다. Requester는
-participant나 Admin을 겸하더라도 제외합니다. Action 목록·상세와 History에 같은 NOTE
+communication이며 기존 Ticket visibility가 선행 조건입니다. Effective user가 Admin이면
+requester여도 NOTE에 접근할 수 있습니다. 그 외 requester는 assignee/participant를
+겸하더라도 제외하며, non-requester인 현재/과거 assignee 또는 현재 Category의 승인/배정
+participant는 허용합니다. non-Admin impersonation 중 original Admin 권한을 합산하지
+않으며 Admin도 Ticket visibility를 우회하지 않습니다. Action 목록·상세와 History에 같은 NOTE
 정책을 적용하며, 생성·삭제는 기존 non-Draft/non-Closed 조건을 유지하고 삭제에는
 작성자 조건도 필요합니다. Participation은 Ticket visibility를 부여하지 않습니다.
 Category 비활성화만으로 현재 configuration participation을 제거하지 않으며,

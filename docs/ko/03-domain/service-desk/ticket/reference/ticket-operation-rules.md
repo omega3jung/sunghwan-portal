@@ -212,8 +212,8 @@ visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 �
 
 ## Note
 
-- who: Ticket viewer 중 현재/과거 assignee, 현재 Category 승인/배정 participant,
-  effective user의 Admin. Requester는 항상 제외합니다.
+- who: Ticket viewer 중 effective user가 Admin이면 requester여도 허용합니다.
+  그 외에는 non-requester인 현재/과거 assignee 또는 현재 Category 승인/배정 participant입니다.
 - allowed status: 모든 live non-`Draft`, non-`Closed` status
 - input: content, 지원되는 경우 prepared action attachment
 - validation: content 필수
@@ -236,7 +236,11 @@ Soft delete:
 목록·상세와 NOTE 관련 History에도 같은 정책을 적용하며, soft delete된 NOTE의
 연결 이력도 포함합니다. Closed라는 이유만으로 기존 NOTE 읽기를 차단하지 않습니다.
 Participation은 `Requester > CurrentAssignee > PreviousAssignee > null`과 독립적인
-승인/배정 플래그를 사용합니다. 과거 관계는 History actor가 아닌 persisted assignee
+승인/배정 플래그를 사용합니다. 이 relation 우선순위는 변경하지 않습니다. NOTE authorization은
+effective-user Admin override, requester 제외, operational participation 순으로 적용합니다.
+non-Admin requester는 assignee/participant를 겸하더라도 제외합니다. Admin도 Ticket visibility를
+우회하지 않으며 impersonation 중 original Admin 권한을 합산하지 않습니다.
+과거 관계는 History actor가 아닌 persisted assignee
 snapshot으로 판정합니다. 승인은 skip된 step을 포함한 main Category의 모든 step,
 배정은 자체 rule이 없을 때만 parent로 fallback하는 현재 rule을 사용합니다.
 Category 비활성화는 participation을 제거하지 않지만 현재 configuration 변경은

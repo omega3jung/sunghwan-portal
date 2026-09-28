@@ -48,9 +48,11 @@ and `resubmit`, but the persisted/action DTO type uses the uppercase union.
 
 ### Note
 
-- internal operational communication; requester excluded even when also Admin or participant
-- requires existing Ticket visibility and a current/past assignee relationship,
-  current Category approval/assignment participation, or effective-user Admin
+- internal operational communication; existing Ticket visibility is required
+- effective-user Admin may access NOTE even when also the requester; otherwise
+  requesters are excluded even when also assignees or participants, and a non-requester
+  current/past assignee or current Category approval/assignment participant may access it
+- impersonation does not add original Admin privileges or bypass Ticket visibility
 - list/detail read access is independent of status; create is blocked in `Draft` and `Closed`
 - creates `NOTE_CREATED`
 - soft delete requires authorship, current NOTE access, and non-`Draft`/non-`Closed` status

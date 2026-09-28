@@ -74,6 +74,25 @@ const actionLabel = (action: string) => {
 };
 
 describe("TicketActionToolLauncher capability projection", () => {
+  it.each([
+    ["Working", true],
+    ["Closed", false],
+    ["Draft", false],
+  ] as const)("uses the Admin requester's server create capability in %s", async (status, canCreateNote) => {
+    const onOpen = vi.fn();
+    render(<TicketActionToolLauncher hidden={false} isAdmin
+      ticket={createTicket({ owner: true, isCurrentWorker: false, status, canViewNote: true, canCreateNote })}
+      onOpen={onOpen} />);
+    const note = screen.queryByText(actionLabel("note"));
+    if (canCreateNote) {
+      expect(note).toBeInTheDocument();
+      await userEvent.setup().click(note!);
+      expect(onOpen).toHaveBeenCalledWith("note");
+    } else {
+      expect(note).not.toBeInTheDocument();
+    }
+  });
+
   it("uses the NOTE capability instead of inferring access from Admin or assignment", () => {
     const { rerender } = render(
       <TicketActionToolLauncher hidden={false} isAdmin ticket={createTicket({ owner: true, canCreateNote: false })} onOpen={vi.fn()} />,

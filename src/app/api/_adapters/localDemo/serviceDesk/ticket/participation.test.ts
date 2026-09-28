@@ -92,15 +92,15 @@ describe("LOCAL participation and NOTE parity", () => {
     expect((await getLocalTicketParticipation("participation", "current"))?.ticketRelation).toBe("CurrentAssignee");
   });
 
-  it("gives requester precedence over current/history/configuration/Admin", async () => {
+  it.each([false, true])("preserves Requester relation while applying effective Admin=%s to NOTE access", async (isAdmin) => {
     getLocalDemoTickets()[0].assignee_usernames = ["requester"];
     mocks.steps.mockReturnValue(approval("requester"));
     mocks.rules.mockReturnValue([rule(101, ["requester"])]);
-    mocks.auth.mockReturnValue({ role: "ADMIN" });
+    mocks.auth.mockReturnValue({ role: isAdmin ? "ADMIN" : "USER" });
     const participation = await getLocalTicketParticipation("participation", "requester");
-    expect(participation).toEqual({ ticketRelation: "Requester", isApprovalParticipant: true, isAssignmentParticipant: true, isAdmin: true });
-    expect(canAccessTicketNote({ canReadTicket: true, participation })).toBe(false);
-    expect(await canAccessLocalTicketNote("participation", { username: "requester", tenantId: "1", userScope: "INTERNAL" })).toBe(false);
+    expect(participation).toEqual({ ticketRelation: "Requester", isApprovalParticipant: true, isAssignmentParticipant: true, isAdmin });
+    expect(canAccessTicketNote({ canReadTicket: true, participation })).toBe(isAdmin);
+    expect(await canAccessLocalTicketNote("participation", { username: "requester", tenantId: "1", userScope: "INTERNAL" })).toBe(isAdmin);
   });
 
   it("falls back only when an own rule is absent, never when it is empty", async () => {
@@ -141,6 +141,7 @@ describe("LOCAL participation and NOTE parity", () => {
     expect((await getLocalTicketParticipation("participation", "previous"))?.ticketRelation).toBe("PreviousAssignee");
     expect((await getLocalTicketParticipation("participation", "current"))?.ticketRelation).toBe("CurrentAssignee");
     expect((await getLocalTicketParticipation("participation", "requester"))?.ticketRelation).toBe("Requester");
+    expect(await canAccessLocalTicketNote("participation", { username: "requester", tenantId: "1", userScope: "INTERNAL" })).toBe(false);
     expect((await getLocalTicketParticipation("participation", "actor"))?.ticketRelation).toBeNull();
   });
 });

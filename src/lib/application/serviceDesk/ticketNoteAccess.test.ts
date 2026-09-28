@@ -18,7 +18,21 @@ describe("NOTE access composition", () => {
   ])("allows operational participation only inside Ticket visibility: %j", (participation) => {
     expect(canAccessTicketNote({ canReadTicket: true, participation })).toBe(true);
     expect(canAccessTicketNote({ canReadTicket: false, participation: { ...participation, isAdmin: true } })).toBe(false);
-    expect(canAccessTicketNote({ canReadTicket: true, participation: { ...participation, ticketRelation: "Requester", isAdmin: true } })).toBe(false);
+    expect(canAccessTicketNote({ canReadTicket: true, participation: { ...participation, ticketRelation: "Requester" } })).toBe(false);
+  });
+
+  it.each(["Requester", "CurrentAssignee", "PreviousAssignee", null] as const)(
+    "allows an effective Admin with relation %s only inside Ticket visibility",
+    (ticketRelation) => {
+      const participation = { ...empty, ticketRelation, isAdmin: true };
+      expect(canAccessTicketNote({ canReadTicket: true, participation })).toBe(true);
+      expect(canAccessTicketNote({ canReadTicket: false, participation })).toBe(false);
+    },
+  );
+
+  it("denies a non-Admin requester without operational participation", () => {
+    expect(canAccessTicketNote({ canReadTicket: true,
+      participation: { ...empty, ticketRelation: "Requester" } })).toBe(false);
   });
 
   it("denies unrelated viewers and missing projections; allows a visible non-requester Admin", () => {

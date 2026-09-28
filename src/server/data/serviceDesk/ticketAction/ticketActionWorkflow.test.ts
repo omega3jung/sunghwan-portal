@@ -167,7 +167,9 @@ describe("ticket action workflow", () => {
   });
 
   it.each([
-    ["Requester", true, true, true, false],
+    ["Requester", true, true, true, true],
+    ["Requester", true, true, false, false],
+    ["Requester", false, false, true, true],
     [null, false, false, false, false],
     ["CurrentAssignee", false, false, false, true],
     ["PreviousAssignee", false, false, false, true],
@@ -176,7 +178,8 @@ describe("ticket action workflow", () => {
     [null, false, false, true, true],
   ] as const)("authorizes NOTE creation from transaction participation (%s/%s/%s/Admin=%s)", async (relation, approval, assignment, isAdmin, allowed) => {
     transaction.query.mockResolvedValue([{ ticket_relation: relation, is_approval_participant: approval, is_assignment_participant: assignment }]);
-    const command = executeTicketAction({ ticketId: "ticket-1", currentUserName: "worker", action: "note", isAdmin,
+    const currentUserName = relation === "Requester" ? "requester" : "worker";
+    const command = executeTicketAction({ ticketId: "ticket-1", currentUserName, action: "note", isAdmin,
       payload: { content: "Internal evidence", isAdmin: true, isApprovalParticipant: true } as never });
     if (allowed) {
       await expect(command).resolves.toMatchObject({ action_type: "NOTE" });
@@ -186,20 +189,31 @@ describe("ticket action workflow", () => {
       expect(actions.createTicketActionRow).not.toHaveBeenCalled();
       expect(history.createHistoryOfNoteCreated).not.toHaveBeenCalled();
     }
-    expect(transaction.query).toHaveBeenCalledWith(expect.stringContaining("get_ticket_participation"), ["ticket-1", "worker"]);
+    expect(transaction.query).toHaveBeenCalledWith(expect.stringContaining("get_ticket_participation"), ["ticket-1", currentUserName]);
+  });
+
+  it.each(["Draft", "Closed"] as const)("rejects Admin requester NOTE create/delete in %s", async (status) => {
+    tickets.findActiveTicketViewRowByIdIncludingDraft.mockResolvedValue(ticketRow({ tk_status: status }));
+    transaction.query.mockResolvedValue([{ ticket_relation: "Requester", is_approval_participant: false, is_assignment_participant: false }]);
+    await expect(executeTicketAction({ ticketId: "ticket-1", currentUserName: "requester", action: "note", isAdmin: true,
+      payload: { content: "Internal" } })).rejects.toMatchObject({ status: 409 });
+    await expect(softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "requester", isAdmin: true })).rejects.toMatchObject({ status: 409 });
+    expect(actions.createTicketActionRow).not.toHaveBeenCalled();
+    expect(actions.softDeleteTicketActionRow).not.toHaveBeenCalled();
   });
 
   it("requires current NOTE access even when the effective user authored it", async () => {
     transaction.query.mockResolvedValue([{ ticket_relation: "Requester", is_approval_participant: true, is_assignment_participant: true }]);
-    actions.findActiveTicketActionRowByTicketIdAndNo.mockResolvedValue(actionRow());
-    await expect(softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "worker", isAdmin: true })).rejects.toMatchObject({ status: 403 });
+    actions.findActiveTicketActionRowByTicketIdAndNo.mockResolvedValue(actionRow({ tka_owner_username: "requester" }));
+    await expect(softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "requester", isAdmin: false })).rejects.toMatchObject({ status: 403 });
     expect(actions.softDeleteTicketActionRow).not.toHaveBeenCalled();
     expect(historyService.createTicketHistory).not.toHaveBeenCalled();
   });
 
-  it("keeps NOTE deletion author-only even for an authorized Admin", async () => {
+  it("keeps NOTE deletion author-only even for an Admin requester", async () => {
+    transaction.query.mockResolvedValue([{ ticket_relation: "Requester", is_approval_participant: false, is_assignment_participant: false }]);
     actions.findActiveTicketActionRowByTicketIdAndNo.mockResolvedValue(actionRow({ tka_owner_username: "other" }));
-    await expect(softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "worker", isAdmin: true })).rejects.toMatchObject({ status: 403 });
+    await expect(softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "requester", isAdmin: true })).rejects.toMatchObject({ status: 403 });
     expect(actions.softDeleteTicketActionRow).not.toHaveBeenCalled();
   });
 
@@ -208,6 +222,15 @@ describe("ticket action workflow", () => {
     actions.softDeleteTicketActionRow.mockResolvedValue(actionRow({ tka_active: false }));
     await softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "worker" });
     expect(historyService.createTicketHistory).toHaveBeenCalledWith(expect.objectContaining({ event: "NOTE_DELETED" }), { query: transaction.query });
+  });
+
+  it("allows an Admin requester to delete their own NOTE within the history transaction", async () => {
+    transaction.query.mockResolvedValue([{ ticket_relation: "Requester", is_approval_participant: false, is_assignment_participant: false }]);
+    actions.findActiveTicketActionRowByTicketIdAndNo.mockResolvedValue(actionRow({ tka_owner_username: "requester" }));
+    actions.softDeleteTicketActionRow.mockResolvedValue(actionRow({ tka_owner_username: "requester", tka_active: false }));
+    await softDeleteTicketAction({ ticketId: "ticket-1", actionNo: 5, currentUserName: "requester", isAdmin: true });
+    expect(actions.softDeleteTicketActionRow).toHaveBeenCalledWith("ticket-1", 5, { query: transaction.query });
+    expect(historyService.createTicketHistory).toHaveBeenCalledWith(expect.objectContaining({ event: "NOTE_DELETED", actorUsername: "requester" }), { query: transaction.query });
   });
 
   it("prevents a tenant user from assigning provider employees on a portal ticket", async () => {

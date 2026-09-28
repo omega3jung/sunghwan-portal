@@ -20,7 +20,8 @@ describe("REMOTE Ticket participation boundary", () => {
     expect((await getTicketParticipation("t", "effective", { query, isAdmin: true }))?.isAdmin).toBe(true);
     query.mockResolvedValue([{ ticket_relation: "Requester",
       is_approval_participant: true, is_assignment_participant: true }]);
-    await expect(canReadAuthorizedTicketNote("t", "effective", true, { query })).resolves.toBe(false);
+    await expect(canReadAuthorizedTicketNote("t", "effective", true, { query })).resolves.toBe(true);
+    await expect(canReadAuthorizedTicketNote("t", "effective", false, { query })).resolves.toBe(false);
   });
 
   it("preserves zero rows as no projection without granting Admin access", async () => {
