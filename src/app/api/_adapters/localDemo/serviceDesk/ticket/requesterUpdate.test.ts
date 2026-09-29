@@ -11,6 +11,7 @@ import {
   getLocalDemoTickets,
   resetLocalDemoTicketState,
 } from "./state";
+import { hasLocalTicketWorkAssignmentHistory } from "./workerHistory";
 
 afterEach(resetLocalDemoTicketState);
 
@@ -142,6 +143,15 @@ describe("LOCAL requester ticket update workflow", () => {
       approval_assignee_usernames: [], work_assignee_usernames: setup.routing.assigneeUsernames,
     });
     expect(getLocalDemoHistories().at(-1)?.metadata).toMatchObject({ nextApprovalStepId: null });
+    // The real requester-update producer writes only ROUTING_RESET for this route.
+    const reset = getLocalDemoHistories().at(-1)!;
+    getLocalDemoHistories().splice(0, getLocalDemoHistories().length, reset);
+    const hasWorked = (username: string) => hasLocalTicketWorkAssignmentHistory({
+      isInternal: false, ticketId: ticket.id, username,
+    });
+    expect(hasWorked("old-approver")).toBe(false);
+    for (const worker of setup.routing.assigneeUsernames) expect(hasWorked(worker)).toBe(true);
+
   });
 
   it("preserves routing for a due-date-only edit and records that decision", async () => {

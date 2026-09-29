@@ -280,8 +280,11 @@ tenant/scope boundary를 넘도록 parent를 옮길 수 없습니다. 가능한 
 함께 repository 및 database constraint도 이 invariant를 강제해야 합니다. Category 제거는
 deactivation을 사용하여 기존 ticket과 history reference를 보존합니다.
 
-Settings 변경은 future workflow resolution에 영향을 줍니다. Existing ticket은 explicit
-ticket command가 없으면 stored state/routing/activity/history를 유지합니다.
+일반적인 Settings 변경은 이후 workflow resolution에 영향을 주며 기존 ticket의 state와
+routing은 유지합니다. 관리자가 확인한 Approval Step force apply는 통제된 예외입니다.
+설정 검증·저장, 영향받는 `Approval` ticket의 initial routing 재시작,
+`APPROVAL_CONFIGURATION_CHANGED`를 reason으로 하는 `ROUTING_RESET` 추가를
+하나의 원자적 작업으로 처리합니다. 기존 History는 다시 쓰지 않습니다.
 
 ---
 
@@ -303,6 +306,9 @@ Database URL과 privileged credential은 server-only입니다.
 편의가 아니라 책임을 기준으로 query client를 선택한다.
 ```
 
+Auth repository는 auth 접근 권한을, portal feature repository는 portal application
+접근 권한을 사용합니다.
+
 ---
 
 ## RLS and Grants
@@ -319,6 +325,27 @@ App-facing table/view는 다음을 점검해야 합니다.
 - table/view/function grants
 - RLS policy coverage
 - least-privilege role behavior
+
+RLS policy가 없으면 application role의 query가 정상적으로도 row를 반환하지 않을 수
+있어 application bug처럼 보일 수 있습니다.
+
+REMOTE draft discard는 active `Draft` row를 물리적으로 삭제합니다. `portal_api`
+role에는 DELETE 권한과 DELETE RLS policy가 모두 필요하며, SELECT/INSERT/UPDATE
+권한만으로는 충분하지 않습니다. Database를 구성할 때 table owner로 다음을 한 번
+적용합니다.
+
+```sql
+BEGIN;
+GRANT DELETE ON TABLE service_desk.ticket TO portal_api;
+CREATE POLICY "portal_api can delete active draft"
+ON service_desk.ticket
+FOR DELETE TO portal_api
+USING (tk_status = 'Draft' AND tk_active = true);
+COMMIT;
+```
+
+Repository는 인증된 requester와 ticket ID도 함께 확인합니다. 이 policy는 제출된
+ticket의 삭제를 허용하지 않습니다. 일반적인 ticket 취소는 기존 workflow를 사용합니다.
 
 Service Desk Settings에서 RLS/grant와 database function은 tenant 관계를 보호하는
 defense in depth입니다. 특히 customer `PORTAL`에서는 category, approval, assignment의

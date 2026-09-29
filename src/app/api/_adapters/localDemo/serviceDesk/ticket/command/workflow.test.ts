@@ -97,6 +97,7 @@ describe("LOCAL ticket action workflow", () => {
     const command = {
       ticketId: ticket.id, employeeUserName: "worker", action: "note" as const,
       content: payload("NOTE"),
+      access: { username: "worker", userScope: "INTERNAL" as const, tenantId: String(ticket.tenant_id) },
     };
     const first = await localPost(command);
     expect(first.status).toBe(201);

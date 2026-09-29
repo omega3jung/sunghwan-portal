@@ -71,8 +71,20 @@ from `startAt` and `endAt` in range mode. The resulting value must be positive.
 
 ## Actor Rule
 
+Work history distinguishes approvers from workers: `ASSIGNMENT_RESOLVED` uses
+only the destination assignees; a WORK `ASSIGNMENT_UPDATED` uses both sides.
+`ROUTING_RESET` also preserves work evidence when the corresponding persisted
+approval-step field is explicitly null, in requester-update metadata or
+settings-reset from/to snapshots. A missing phase field is not work evidence.
+This is separate from NOTE's previous-assignee relation, which includes actual
+approval assignments as well.
+
 Current and previous work assignees can create a work session so that
 historical workers can add missing work evidence after reassignment.
+
+Both require ticket visibility and a current status of `Assigned`, `Working`,
+or `Pending`. Past assignment does not grant visibility or permit recording time
+after resolution or closure.
 
 Only a current work assignee can request a status change through
 `nextStatus`. A previous work assignee must submit evidence without changing
@@ -173,13 +185,18 @@ Resolved auto-close is not a work-session timer operation.
 
 It is a system command:
 
-- finds resolved tickets whose resolved-history timestamp is older than the
-  current 7-day grace window
+- finds tickets still in `Resolved` whose latest resolution History timestamp
+  is at least 168 hours old
 - moves them to `Closed`
 - sets close reason `Completed`
 - finishes running work sessions where supported
 - creates `RESOLUTION_CLOSE` history with source `SYSTEM_AUTO` and
   `actionNo = null`
+
+The verified REMOTE scheduler checks hourly through Supabase Cron; closure can
+occur later than the eligibility boundary. Function, Work Session cleanup, and
+scheduled invocation evidence is recorded in the
+[scheduling decision](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 ---
 

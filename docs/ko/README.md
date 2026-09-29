@@ -5,6 +5,10 @@
 이 문서는 `sunghwan-portal`의 Service Desk 시스템에 대한 설계, 아키텍처, 구현
 관점을 설명합니다.
 
+포트폴리오 범위의 기능 개발은 완료되었습니다. 현재 설계 문서는 최종 범위와 알려진
+제한 사항을 설명합니다. Deferred 또는 향후 production 기능은 가능한 확장 영역을
+뜻하며 예정된 작업이 아닙니다.
+
 문서별 역할은 다음과 같이 구분합니다.
 
 - **현재 설계 문서**는 최신 구현과 정렬된 모델을 설명합니다.
@@ -79,6 +83,10 @@
 - [Ticket 운영 규칙](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [Ticket Action Workflow Matrix](./03-domain/service-desk/ticket/reference/ticket-action-workflow-matrix.xlsx)
 - [직원 참조 범위 매트릭스](./03-domain/service-desk/ticket/reference/restrict-employee-list.xlsx)
+
+Excel workbook은 Markdown 규칙을 보완합니다. Status column의 `PROPOSED`와
+`REVIEW_REQUIRED`는 구현 보장이 아닌 제한 사항이나 미해결 정책을 뜻합니다.
+`Legacy Input` sheet는 과거 참조 자료를 보존하며 현재 명세보다 우선하지 않습니다.
 
 현재 도메인 핵심:
 

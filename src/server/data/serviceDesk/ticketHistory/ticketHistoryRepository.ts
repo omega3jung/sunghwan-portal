@@ -6,7 +6,9 @@ import { TicketHistoryRow } from "./ticketHistoryRow";
 import { TicketHistoryJsonValue } from "./ticketHistoryTypes";
 
 /** Lets history persistence share the transaction that produced the audited change. */
-export type TicketHistoryRepositoryOptions = ServiceDeskRepositoryOptions;
+export type TicketHistoryRepositoryOptions = ServiceDeskRepositoryOptions & {
+  excludeNotes?: boolean;
+};
 
 const CREATE_TICKET_HISTORY_QUERY = `
 insert into service_desk.ticket_history (
@@ -66,6 +68,16 @@ select
   tkh_created_at
 from service_desk.ticket_history
 where tkh_ticket_id = $1
+  and (not $2::boolean or (
+    tkh_history_type <> 'NOTE'
+    and tkh_event not in ('NOTE_CREATED', 'NOTE_UPDATED', 'NOTE_DELETED')
+    and not exists (
+      select 1 from service_desk.ticket_action note_action
+      where note_action.tka_ticket_id = tkh_ticket_id
+        and note_action.tka_action_no = tkh_action_no
+        and note_action.tka_action_type = 'NOTE'
+    )
+  ))
 order by tkh_history_no asc;
 `;
 
@@ -78,6 +90,7 @@ export async function findTicketHistoryRowsByTicketId(
 
   return query<TicketHistoryRow>(FIND_TICKET_HISTORY_ROWS_BY_TICKET_ID_QUERY, [
     ticketId,
+    options.excludeNotes === true,
   ]);
 }
 

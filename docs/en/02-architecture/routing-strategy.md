@@ -172,6 +172,15 @@ Important current API route groups:
 Documentation should not describe additional work-session update/delete/timer
 routes as completed until route handlers exist.
 
+The auto-close maintenance route accepts POST and a GET alias, both guarded by
+`SERVICE_DESK_CRON_SECRET` (or `CRON_SECRET`). Its GET handler executes a system
+command; ordinary ticket/subresource GET requests remain read-only. The selected
+REMOTE schedule calls `service_desk.close_expired_resolved_tickets()` hourly
+through Supabase Cron (`0 * * * *`). Deployment and scheduled invocation have
+been verified. See the
+[scheduling decision](../06-decisions/2026-09-resolved-auto-close-scheduling.md)
+for the execution boundary and verification evidence.
+
 ---
 
 ## Command Routes

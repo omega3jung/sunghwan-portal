@@ -296,15 +296,20 @@ content를 저장할 때 attachment input을 비웁니다.
 
 ```txt
 draft save
+-> require selected category
 -> keep request fields
+-> prepare inline body images
 -> clear transient attachment input
 -> final submit prepares current attachment input
 ```
 
 LOCAL 초안 복구는 기능 초안 저장소를 통해 브라우저 `localStorage`에 저장되며
 초안 Route Handler를 호출하지 않습니다. REMOTE 초안은 초안 경로와 server DTO
-경계를 거쳐 PostgreSQL 티켓 행에 저장됩니다. 두 경우 모두 현재 초안 복구는 폼
-데이터 중심이며 첨부파일 복원을 보장하지 않습니다.
+경계를 거쳐 PostgreSQL 티켓 행에 저장됩니다. 두 runtime 모두 저장 전에 Category를
+선택해야 합니다. Prepare된 inline image는 본문의 controlled URL을 통해 복구되지만,
+선택한 raw `File` 객체는 reload 후 복구되지 않습니다. Data/blob source는 persistence
+boundary에서 거부합니다. 이미지만 있는 본문도 의미 있는 내용으로 인정하며, 빈 editor
+markup은 REMOTE draft에서 NULL로 저장하고 form에는 빈 문자열로 복구합니다.
 
 이는 현재 범위에서 의도된 제약입니다. 브라우저 `File` 객체는 reload 후 안전하게
 복원할 수 없고, production-grade attachment storage가 아직 구현되지 않았기
@@ -396,7 +401,8 @@ UI state에는 사용할 수 있지만, raw file이나 persisted attachment meta
 Attachment preparation만으로는 ticket history가 생성되지 않고 notification도
 발송되지 않습니다.
 
-History와 notification은 성공한 ticket command에 속합니다.
+History는 성공한 ticket command에 속합니다. 이 command는 notification의 의도된
+연동 지점이기도 하지만, 실제 notification delivery는 구현 범위 밖입니다.
 
 - prepared attachment가 포함된 ticket create
 - attachment를 변경하는 requester update

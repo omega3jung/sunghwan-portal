@@ -54,6 +54,11 @@ DTO를 사용합니다.
 - work-session list/create
 - expired resolved ticket auto close
 
+REMOTE auto-close는 Supabase Cron(`0 * * * *`)으로
+`service_desk.close_expired_resolved_tickets()`를 매시간 호출합니다. 함수 배포, 대상
+Ticket 종료, Cron 등록과 시간별 예약 호출은 검증되었습니다. 근거는
+[스케줄링 결정](../06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
+
 REMOTE라고 해서 모든 production infrastructure가 완성된 것은 아닙니다. Attachment
 binary는 여전히 controlled demo asset으로 대체합니다.
 
@@ -314,8 +319,8 @@ name에 의존하는 설명은 현재 모델이 아닙니다.
 - assignment resolution -> `ASSIGNMENT_RESOLVED`
 - requester update with routing reset -> `ROUTING_RESET`
 - requester update with routing preserved -> `ROUTING_PRESERVED`
-- work-session create -> `WORK_SESSION_STARTED`, `WORK_SESSION_STOPPED`,
-  `WORK_SESSION_UPDATED`
+- work-session create -> submission이 ticket status를 실제 변경할 때만 `STATUS_UPDATED`;
+  work-session 전용 event 이름은 model에 예약되어 있음
 - reopen action -> authoritative status event `TICKET_REOPENED`
 - auto close -> `SYSTEM_AUTO` source와 `actionNo = null`인 `RESOLUTION_CLOSE`
 
@@ -367,7 +372,7 @@ Mutation은 target query family를 invalidate해야 하며 server state를 Zusta
 
 ## Deferred Production Scope
 
-현재 구현에서 미래 범위로 남겨둔 항목:
+완료된 포트폴리오 기능 범위에 포함하지 않는 production 확장 항목:
 
 - durable object storage for attachment binaries
 - production notification delivery

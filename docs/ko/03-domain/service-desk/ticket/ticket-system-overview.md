@@ -167,8 +167,8 @@ Routing-sensitive value가 변경되면 routing을 처음부터 다시 계산하
 `ROUTING_RESET`을 기록합니다.
 
 Category가 변경되면 priority, risk, minimum due date를 새 category default에서 다시
-평가합니다. 다음 due date는 현재 due date와 새 category minimum 중 더 늦은 값이며,
-category change는 due date를 더 이른 날짜로 당기면 안 됩니다.
+평가합니다. 다음 due date는 현재 due date, 제출한 due date, 새 category minimum 중
+가장 늦은 값이며, category change는 due date를 더 이른 날짜로 당기면 안 됩니다.
 
 관련 문서:
 

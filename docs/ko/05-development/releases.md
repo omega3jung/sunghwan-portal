@@ -14,6 +14,44 @@ Pull Request의 구현 세부 사항, 배포 체크리스트 또는 스크린샷
 
 ## 릴리스 이력
 
+### 2026-09-29 — v1.1.0 workflow contract 강화 및 문서 정리 완료
+
+fix(auth, service-desk, docs): publish v1.1.0 workflow contract hardening
+
+- Canonical effective principal로 REMOTE Draft의 Category 접근을 검증하고,
+  Work Session 생성 전에 상위 Ticket visibility를 요구하여 impersonation 중에도
+  effective-user identity를 authorization 기준으로 유지했습니다.
+- LOCAL과 REMOTE의 참여 관계 기반 NOTE 접근을 정렬했습니다. Effective-user Admin은
+  requester여도 NOTE에 접근할 수 있지만 non-Admin requester는 계속 제외됩니다.
+  Ticket visibility는 필수이며, impersonated non-Admin 사용자에게 original Admin
+  권한을 합산하지 않습니다. 읽기, 생성, 관련 History와 작성자만 가능한 soft deletion에
+  같은 정책을 적용했습니다.
+- Access-level 의미 대신 requester의 Job Field 상위 계층으로 MANAGER approval
+  level을 결정하고, settings validation을 조직 및 company 경계에 맞췄습니다.
+- 실제 과거 work assignee와 approver를 구분하고 과거 작업 참여를 확인할 routing-reset
+  evidence를 보존했습니다. Transactional Approval Step force apply, `ROUTING_RESET`,
+  현재 due-date 계산 및 automatic routing과 manual `ASSIGN`의 서로 다른 검증 경계에
+  workflow 문서를 맞췄습니다.
+- Authorization에 민감한 cache를 runtime과 effective user별로 분리하고, Action soft
+  deletion 성공 후 Ticket History를 invalidate했습니다. 공유 activity summary에서는
+  NOTE metadata를 제외하면서 권한이 있는 Action/History 접근은 유지했습니다.
+- 검증된 REMOTE auto-close와 시간별 Supabase Cron 실행(`0 * * * *`)을 문서화했습니다.
+  가장 최근 resolution History timestamp에서 168시간이 경과하면 종료 대상이 되며,
+  `Resolved -> Closed`, `Completed`, `SYSTEM_AUTO`와 `actionNo = null`을 사용하는
+  `RESOLUTION_CLOSE` 기록을 유지합니다.
+- 12개 Ticket Action의 loading, success, error toast를 type-safe하게 중앙화하고,
+  action별 feedback과 영어/한국어 번역 일치에 대한 regression coverage를 추가했으며,
+  impersonation company dropdown을 trigger 아래에 배치했습니다.
+- 영어와 한국어 README, 명세, architecture, domain 및 development guide를 최종
+  정리했습니다. Reference workbook을 갱신하고 양 언어의 auto-close 스케줄링 결정을
+  문서 catalog에 추가했습니다. 과거 결정과 릴리스 표현은 보존하고 local database
+  backup artifact는 version control에서 제외했습니다.
+- 포트폴리오 기능 범위를 완료한 `v1.1.0`을 릴리스했습니다. Manual assignment와
+  requester-recipient validation 한계 및 Storybook 검증 한계는 명시적으로 유지합니다.
+  Notification delivery, full SLA breach/escalation 처리, production-grade scheduler
+  monitoring 및 enterprise job infrastructure는 production-aligned 포트폴리오 범위에
+  포함하지 않습니다.
+
 ### 2026-09-21 — v1.0.2 안정성 강화 및 내비게이션 피드백 개선
 
 fix(auth, service-desk, ui): publish v1.0.2 stability hardening

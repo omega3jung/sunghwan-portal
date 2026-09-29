@@ -36,8 +36,8 @@ The current project covers:
 
 The project is production-aligned, not production-complete. Production object
 storage, notification delivery, full SLA engine, real-time updates, and
-compliance-grade audit infrastructure remain deferred unless explicitly
-implemented.
+compliance-grade audit infrastructure are outside the completed portfolio
+feature scope. Deferred items are limitations, not a planned feature roadmap.
 
 ---
 
@@ -64,7 +64,9 @@ Important rules:
 - `Reopen` is not a persisted status.
 - Approval completion is recorded as `APPROVAL_APPROVED` history.
 - Reopen is a ticket action whose current result is `Resolved -> Working`.
-- GET/read requests must not mutate ticket status.
+- Ticket and subresource reads must not mutate ticket status. The protected
+  maintenance endpoint also accepts GET as an alias for its auto-close command;
+  it is a system operation, not a ticket read.
 
 REMOTE ticket reads are authorized in the `vw_ticket` query using the stored
 ticket Tenant, `cat_scope`, requester, current approver/worker assignees, and
@@ -304,6 +306,18 @@ The explicit start-work command is implemented separately from the Ticket Action
 union. It moves `Assigned -> Working`, creates `STATUS_UPDATED` history, and
 does not insert a Ticket Action row.
 
+COMMENT remains requester-facing/shared communication. NOTE is internal operational
+communication: existing Ticket visibility is required. An effective-user Admin
+may access NOTE even when also the requester. Otherwise, the requester is excluded
+even when also an assignee or participant; a non-requester current/past assignee
+or current Category approval/assignment participant may access it. Original Admin
+privileges are not added while impersonating a non-Admin user. Admin does not
+bypass Ticket visibility. Action list/detail and History apply the same NOTE policy.
+Create/delete retain non-Draft/non-Closed rules; delete also requires authorship.
+Participation never grants Ticket visibility. Category inactivity alone does not
+remove current configuration participation; configuration/category changes are
+re-evaluated, while actual assignment History remains evidence of past relation.
+
 Operational actions are immutable. Communication actions currently support
 soft delete for `COMMENT` and `NOTE` before closure. Existing comments remain
 visible after `Closed`, but new comment creation is blocked by the closed-ticket
@@ -335,10 +349,18 @@ metadata -> supplemental display/audit context
 Reopen history uses `type = STATUS`, `source = USER_ACTION`, and
 `event = TICKET_REOPENED` for the `Resolved -> Working` transition.
 
-Resolved auto-close uses the resolved-history timestamp plus a 7-day grace
-period, then sets `status = Closed`, `closeReason = Completed`, finishes running
-work sessions where applicable, and records `RESOLUTION_CLOSE` with
-`SYSTEM_AUTO` and `actionNo = null`.
+Resolved auto-close becomes eligible at the latest resolution History timestamp
+plus 168 elapsed hours. It sets `status = Closed`, `closeReason = Completed`,
+finishes running work sessions where applicable, and records `RESOLUTION_CLOSE`
+with `SYSTEM_AUTO` and `actionNo = null`.
+
+Reopen followed by re-resolution starts a new grace period. REMOTE auto-close
+invokes `service_desk.close_expired_resolved_tickets()` hourly through Supabase
+Cron (`0 * * * *`). Eligibility is exact; the normal wait until the next check is
+less than approximately one hour. Closure requires successful execution; missed
+runs or locked Tickets can be caught up on a later hourly run. The existing HTTP
+maintenance path remains available. See the
+[scheduling decision](../en/06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 See:
 
@@ -409,6 +431,13 @@ See:
 ---
 
 ## Deferred Scope
+
+Known implementation limits also apply within the command surface: manual
+`ASSIGN` validates actor/status and a non-empty username list without rechecking
+category/phase candidate eligibility, and recipient address arrays are accepted
+without employee/company eligibility validation. Category-driven initial routing
+and settings validation have separate eligibility checks. See
+[Assignment Policy](../en/03-domain/service-desk/ticket/strategy/assignment-policy.md).
 
 Deferred production scope includes:
 

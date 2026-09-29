@@ -84,8 +84,11 @@ days에서 minimum due date도 다시 평가합니다.
 
 ```txt
 newCategoryMinimumDueAt = today + new category default SLA days
-nextDueAt = later(currentDueAt, newCategoryMinimumDueAt)
+nextDueAt = later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)
 ```
+
+제출한 due date도 최댓값 계산에 포함되므로 전체 규칙은
+`later(currentDueAt, submittedDueAt, newCategoryMinimumDueAt)`입니다.
 
 이 규칙은 더 늦은 current due date를 유지하고, 더 이른 due date는 새 minimum으로
 되돌리며, category change 때문에 due date를 더 이른 날짜로 당기지 않습니다.
@@ -132,9 +135,14 @@ Resolved ticket grace period close
 != SLA breach/escalation engine
 ```
 
-Auto close는 resolved-history timestamp와 현재 7-day grace period를 사용합니다. Ticket을
+Auto close는 가장 최근 resolution History timestamp에서 168시간이 경과하면 대상이 됩니다. Ticket을
 `Closed`로 이동하고 close reason `Completed`를 설정하며, 지원되는 경우 running work
 session을 종료하고 `RESOLUTION_CLOSE`를 `SYSTEM_AUTO`, `actionNo = null`로 기록합니다.
+
+REMOTE schedule은 Supabase Cron(`0 * * * *`)으로 매시간 검사합니다. 검사 주기는
+eligibility와 별개이며 종료 시각을 보장하지 않습니다. REMOTE 함수 실행과 예약 호출은
+검증되었습니다.
+[스케줄링 결정](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)을 참고하세요.
 
 ---
 

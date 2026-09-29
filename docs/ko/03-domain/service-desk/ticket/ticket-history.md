@@ -246,8 +246,12 @@ toValue = { status: "Closed", closeReason: "Completed" }
 metadata.resolvedGraceDays = 7
 ```
 
-Resolved auto-close는 generic ticket `updatedAt` rule이 아니라 resolved-history
-timestamp와 현재 7-day grace period를 기준으로 합니다.
+Resolved auto-close는 generic ticket `updatedAt`이 아니라 가장 최근 resolution
+History timestamp에서 168시간이 경과하면 대상이 됩니다. 다시 resolve하면 grace
+period도 다시 시작합니다. `RESOLUTION_CLOSE`는 대상 시각 도달이 아닌 실제 종료
+성공을 기록합니다. 검증된 REMOTE 시간별 schedule과 `RESOLUTION_CLOSE` /
+`SYSTEM_AUTO` History 근거는
+[스케줄링 결정](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)을 참고하세요.
 
 ---
 
@@ -262,6 +266,13 @@ Ticket Action과 Ticket History는 의도적으로 분리되어 있습니다.
 
 Operational action은 immutable합니다. Communication action은 현재 `COMMENT`와 `NOTE`에
 대해 soft delete를 지원하며, `COMMENT_DELETED` 또는 `NOTE_DELETED`를 만듭니다.
+
+---
+
+NOTE History는 Ticket visibility 검사 후 NOTE Action과 같은 접근 정책을 적용합니다.
+권한이 없는 viewer에게는 NOTE event/type 및 NOTE Action에 연결된 이력을 노출하지
+않으며 soft delete된 Action 연결도 포함합니다. 읽기 시 projection에서 필터링하고
+저장된 immutable History와 COMMENT History는 변경하지 않습니다.
 
 ---
 

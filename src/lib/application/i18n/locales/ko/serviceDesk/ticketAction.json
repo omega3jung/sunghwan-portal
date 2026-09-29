@@ -59,6 +59,68 @@
       "resubmit": "요청 다시 제출",
       "cancel": "티켓 취소"
     },
+    "toast": {
+      "approve": {
+        "loading": "승인 처리 중",
+        "success": "승인되었습니다.",
+        "error": "승인하지 못했습니다."
+      },
+      "decline": {
+        "loading": "승인 반려 처리 중",
+        "success": "승인이 반려되었습니다.",
+        "error": "승인을 반려하지 못했습니다."
+      },
+      "comment": {
+        "loading": "댓글 작성 중",
+        "success": "댓글이 작성되었습니다.",
+        "error": "댓글을 작성하지 못했습니다."
+      },
+      "note": {
+        "loading": "내부 메모 저장 중",
+        "success": "내부 메모가 저장되었습니다.",
+        "error": "내부 메모를 저장하지 못했습니다."
+      },
+      "assign": {
+        "loading": "할당 변경 중",
+        "success": "할당이 변경되었습니다.",
+        "error": "할당을 변경하지 못했습니다."
+      },
+      "assignSelf": {
+        "loading": "나에게 할당 중",
+        "success": "나에게 할당되었습니다.",
+        "error": "나에게 할당하지 못했습니다."
+      },
+      "reject": {
+        "loading": "티켓 반려 처리 중",
+        "success": "티켓이 반려되었습니다.",
+        "error": "티켓을 반려하지 못했습니다."
+      },
+      "merge": {
+        "loading": "티켓 병합 중",
+        "success": "티켓이 병합되었습니다.",
+        "error": "티켓을 병합하지 못했습니다."
+      },
+      "adjust": {
+        "loading": "계획 업데이트 중",
+        "success": "계획이 업데이트되었습니다.",
+        "error": "계획을 업데이트하지 못했습니다."
+      },
+      "reopen": {
+        "loading": "티켓 다시 여는 중",
+        "success": "티켓이 다시 열렸습니다.",
+        "error": "티켓을 다시 열지 못했습니다."
+      },
+      "resubmit": {
+        "loading": "요청 재제출 중",
+        "success": "요청이 재제출되었습니다.",
+        "error": "요청을 재제출하지 못했습니다."
+      },
+      "cancel": {
+        "loading": "티켓 취소 중",
+        "success": "티켓이 취소되었습니다.",
+        "error": "티켓을 취소하지 못했습니다."
+      }
+    },
     "list": {
       "title": "활동",
       "titleHint": "티켓 액션을 검색하고, 정렬하고, 검토하세요.",

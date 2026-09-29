@@ -48,10 +48,14 @@ and `resubmit`, but the persisted/action DTO type uses the uppercase union.
 
 ### Note
 
-- internal communication
-- not allowed in `Closed`
+- internal operational communication; existing Ticket visibility is required
+- effective-user Admin may access NOTE even when also the requester; otherwise
+  requesters are excluded even when also assignees or participants, and a non-requester
+  current/past assignee or current Category approval/assignment participant may access it
+- impersonation does not add original Admin privileges or bypass Ticket visibility
+- list/detail read access is independent of status; create is blocked in `Draft` and `Closed`
 - creates `NOTE_CREATED`
-- current route supports soft delete by author before `Closed`
+- soft delete requires authorship, current NOTE access, and non-`Draft`/non-`Closed` status
 - soft delete creates `NOTE_DELETED`
 
 The history union reserves update events, but the current route surface does

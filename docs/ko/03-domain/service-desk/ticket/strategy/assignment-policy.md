@@ -174,6 +174,13 @@ Admin override:
 않습니다. Owner Admin 또는 Tenant Admin이라는 사실만으로 current approver/worker가
 되는 것은 아니며 settings authorization helper로 `ASSIGN`을 authorize하면 안 됩니다.
 
+Manual `ASSIGN`의 검증 범위는 automatic routing보다 좁습니다. Actor, status,
+비어 있지 않은 username list를 검증하지만, 제출된 후보를 Category/phase eligibility
+policy나 persisted Assignment Rule에 대해 다시 검증하지 않습니다. UI 후보는 effective
+actor의 company에서 가져옵니다. 이 차이 때문에 reference workbook의
+`REVIEW_REQUIRED`를 유지하며, 위의 automatic-routing 보장은 manual 재배정에
+적용되지 않습니다.
+
 Assignee notification은 persisted `tk_email` field 밖에서 email을 resolve해야 합니다.
 파생된 assignee email은 requester email configuration에 저장하지 않습니다.
 
@@ -202,10 +209,10 @@ command가 변경하기 전까지 current assignee를 유지합니다.
 따라서 Assignment Rule 변경은 current worker를 보존하며, 이후 workflow transition이
 assignment를 다시 resolve할 때만 새 rule을 사용합니다.
 
-현재 generic Admin ticket-action override는 별도의 cross-tenant audit가 필요합니다.
-유지한다면 explicit break-glass/platform policy를 정의해야 합니다. 이 후속 작업은
-category-scope settings policy와 별개이며 기존 ticket action matrix는 여기서 변경하지
-않습니다.
+Admin ticket-action override는 Ticket visibility가 승인된 뒤 effective user의 role을
+사용합니다. Tenant visibility boundary를 우회하거나 impersonation 중 original Admin의
+role을 상속하지 않습니다. Ticket visibility를 우회하는 별도 platform override는
+포트폴리오 범위에 포함하지 않습니다.
 
 ---
 

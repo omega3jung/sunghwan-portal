@@ -11,6 +11,7 @@ import {
   findActiveTicketViewRowByIdIncludingDraft,
   lockTicketRowsById,
 } from "@/server/data/serviceDesk/ticket/ticketRepository";
+import { canReadAuthorizedTicketNote } from "@/server/data/serviceDesk/ticketParticipation/ticketParticipationService";
 import { withPortalApiTransaction } from "@/server/shared/supabase/portalApiClient";
 
 import { createTicketHistory } from "../ticketHistory/ticketHistoryService";
@@ -65,6 +66,7 @@ type TicketActionDeleteInput = {
   ticketId: string;
   actionNo: number;
   currentUserName: string;
+  isAdmin?: boolean;
 };
 
 /** Loads ticket actions by ticket id through the server data boundary. */
@@ -160,6 +162,7 @@ export async function softDeleteTicketAction({
   ticketId,
   actionNo,
   currentUserName,
+  isAdmin = false,
 }: TicketActionDeleteInput): Promise<TicketActionDto> {
   return withPortalApiTransaction(async (query) => {
     await lockTicketRowsById([ticketId], query);
@@ -197,6 +200,13 @@ export async function softDeleteTicketAction({
 
     if (action.tka_owner_username !== currentUserName) {
       throw createStatusError("Only the action writer can remove it.", 403);
+    }
+
+    if (
+      action.tka_action_type === "NOTE" &&
+      !(await canReadAuthorizedTicketNote(ticketId, currentUserName, isAdmin, { query }))
+    ) {
+      throw createStatusError("NOTE access denied.", 403);
     }
 
     const deletedAction = await softDeleteTicketActionRow(ticketId, actionNo, {
@@ -347,6 +357,13 @@ export async function executeTicketAction({
     const actionMode = resolveTicketActionExecutionMode(action, isAdmin);
 
     assertTicketActionAllowed(actionMode, ticket.tk_status);
+
+    if (
+      action === "note" &&
+      !(await canReadAuthorizedTicketNote(ticketId, currentUserName, isAdmin, { query }))
+    ) {
+      throw createStatusError("NOTE access denied.", 403);
+    }
 
     const targetTicket =
       action === "merge"

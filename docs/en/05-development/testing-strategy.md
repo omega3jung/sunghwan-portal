@@ -736,8 +736,8 @@ Selected `play` interactions provide additional regression protection. The
 repository already configures a Storybook Vitest browser project with a
 headless Playwright Chromium provider. It remains separate from the default
 `npm test` command, which runs only the `unit` project. The browser project is
-not currently a clean, enforced CI gate; its remaining `play` failures are a
-known verification gap.
+not currently a clean, enforced CI gate; documented `play` failures remain a
+known verification limitation in the completed portfolio scope.
 
 ### E2E Boundary
 
@@ -794,8 +794,8 @@ npm exec vitest -- run --project storybook
 ```
 
 This browser project is not part of the default `npm test` command and should
-currently be treated as a diagnostic check until its remaining interaction
-failures are resolved.
+be treated as a diagnostic check. Its documented interaction failures are not
+claimed to be resolved by completion of the portfolio feature scope.
 
 Additional repository checks may be included when the change affects them.
 
@@ -888,5 +888,5 @@ Stop when important risks are protected.
 Vitest protects domain rules, workflows, runtime orchestration, and deterministic
 UI/application behavior. Storybook owns isolated browser inspection for custom
 reusable UI, selected application-wide layout/menu UI, and a small number of
-independent feature presentation components. Future E2E tests cover full-system
-execution when that becomes the more useful boundary.
+independent feature presentation components. Full-system E2E coverage remains
+outside the completed portfolio scope.

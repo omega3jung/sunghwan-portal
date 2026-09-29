@@ -66,6 +66,17 @@ Separate Dashboard (overview) and Insight (analysis)
 
 ## 페이지 책임
 
+### 현재 구현 경계
+
+Home dashboard는 포트폴리오의 첫 화면입니다. Summary card는 `HomePage.tsx`의
+고정된 presentation value를 사용하며, 실시간 사용자별 ticket count가 아닙니다.
+Session context는 LOCAL/REMOTE 소개 문구를 선택합니다.
+
+`/service-desk/insights`는 접근이 허용된 ticket search result에서 status, category,
+department, tenant, assignee, due date별 요약을 계산합니다. SLA breakdown은 due
+date를 그룹화하며 계약상 SLA 준수 여부를 측정하거나 breach engine을 실행하지
+않습니다. 아래 role별 내용은 설계 의도이며 추가로 구현된 dashboard query가 아닙니다.
+
 ### Dashboard
 
 - 일상 업무의 진입점

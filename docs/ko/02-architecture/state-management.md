@@ -79,8 +79,13 @@ export const useFetchTickets = (params) => {
 
 ### 핵심 전략
 
-- 서버 상태를 클라이언트 상태에 **중복 저장하지 않습니다**.
-- 서버 데이터는 항상 React Query 훅을 통해 접근합니다.
+- Interactive domain server state는 React Query 훅으로 접근하며 별도의 client
+  store에 중복 저장하지 않습니다.
+- Auth/session facade는 의도적인 예외입니다. Shell을 위해 resolve된 `AppUser`를
+  cache하지만 JWT/session과 profile API가 authoritative source입니다.
+  [Auth & Session Strategy](auth-session-strategy.md)를 참고하세요.
+- Server Component는 React Query 없이 server-safe loader로 server-rendered data를
+  읽을 수 있습니다.
 
 ---
 
@@ -270,7 +275,7 @@ LOCAL 티켓 초안 복구는 별도의 브라우저 로컬 예외입니다. 기
 const mutation = useMutation({
   mutationFn: createTicket,
   onSuccess: () => {
-    queryClient.invalidateQueries(["tickets"]);
+    queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
   },
 });
 ```
@@ -483,7 +488,7 @@ UI persistence는 장애에 강해야 합니다.
 ### Example
 
 ```ts
-const isOwner = ticket.requesterId === currentUser.id;
+const isOwner = ticket.requesterUsername === currentUser.username;
 ```
 
 ---

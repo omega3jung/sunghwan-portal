@@ -15,6 +15,49 @@ traceability; this document does not depend on separate PR-description files.
 
 ## Release History
 
+### 2026-09-29 — v1.1.0 workflow contract hardening and documentation completion
+
+fix(auth, service-desk, docs): publish v1.1.0 workflow contract hardening
+
+- Validated REMOTE Draft category access with the canonical effective principal
+  and required parent-ticket visibility before Work Session creation, preserving
+  effective-user identity as the authorization source during impersonation.
+- Aligned participation-based NOTE access across LOCAL and REMOTE. Effective-user
+  Admin requesters may access NOTE; non-Admin requesters remain excluded. Ticket
+  visibility remains required, original Admin privileges do not carry into an
+  impersonated non-Admin user, and the same policy governs reads, creation,
+  related History, and author-only soft deletion.
+- Resolved MANAGER approval levels through requester Job Field ancestry instead
+  of access-level semantics, and aligned settings validation with organization
+  and company boundaries.
+- Distinguished actual previous work assignees from approvers and preserved
+  routing-reset evidence for historical work participation. Aligned workflow
+  documentation with transactional Approval Step force apply, `ROUTING_RESET`,
+  current due-date calculations, and the separate automatic-routing and manual
+  `ASSIGN` validation boundaries.
+- Partitioned authorization-sensitive caches by runtime and effective user,
+  invalidated Ticket History after successful Action soft deletion, and excluded
+  NOTE metadata from shared activity summaries while preserving authorized
+  Action/History access.
+- Documented verified REMOTE auto-close and hourly Supabase Cron execution
+  (`0 * * * *`). Eligibility starts 168 elapsed hours after the latest resolution
+  History timestamp; closure preserves `Resolved -> Closed`, `Completed`, and
+  `RESOLUTION_CLOSE` with `SYSTEM_AUTO` and `actionNo = null`.
+- Centralized type-safe loading, success, and error toasts for all 12 Ticket
+  Actions, added regression coverage for action-specific feedback and
+  English/Korean translation parity, and positioned the impersonation company
+  dropdown below its trigger.
+- Finalized English and Korean READMEs, specifications, architecture, domain,
+  and development guides; updated reference workbooks and added bilingual
+  auto-close scheduling decisions to the documentation catalog. Preserved
+  historical decisions and release wording, and excluded local database backup
+  artifacts from version control.
+- Released `v1.1.0` with the portfolio feature scope complete. Manual assignment
+  and requester-recipient validation limits and Storybook verification limits
+  remain explicit. Notification delivery, full SLA breach/escalation handling,
+  production-grade scheduler monitoring, and enterprise job infrastructure
+  remain outside the production-aligned portfolio scope.
+
 ### 2026-09-21 — v1.0.2 stability hardening and navigation feedback
 
 fix(auth, service-desk, ui): publish v1.0.2 stability hardening

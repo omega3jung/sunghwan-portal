@@ -54,8 +54,8 @@ README는 전체 문서가 아니라 진입점이다
 ```md
 ## **Languages**
 
-- [English](../../../README.md)
-- [Korean](../../../README.ko.md)
+- [English](./README.md)
+- [Korean](./README.ko.md)
 ```
 
 ---

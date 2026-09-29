@@ -3,7 +3,7 @@
 ## Goal
 
 The impersonation strategy is designed to enable **secure and controlled user context switching**,
-allowing privileged users such as admins or agents to act on behalf of another user.
+allowing authorized INTERNAL administrators to act on behalf of another user.
 
 It aims to:
 
@@ -53,7 +53,7 @@ The system must:
 
 - Allow controlled impersonation
 - Preserve original user identity
-- Ensure all actions remain traceable
+- Preserve original and effective identities in the session/request context for traceability
 
 ---
 
@@ -120,7 +120,7 @@ session = {
 
 - `session.user` stays as the original authenticated projection
 - `currentUser` is used across the UI and authorization flow
-- `originalUser` is used for audit and security checks
+- `originalUser` is retained for session/request traceability and security checks
 - `isImpersonating` is derived from impersonation metadata in the client/runtime layer
 
 The earlier `actor / subject / effective` labels were renamed to
@@ -226,7 +226,11 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 ### Requirement
 
-All actions must remain traceable.
+Original and effective identities are preserved in the session/request context
+for traceability. Workflow authorization uses the effective user, and Ticket
+History records the effective actor according to the current History contract.
+The current implementation does not persist an original/effective identity pair
+in every workflow History row or provide compliance-grade audit infrastructure.
 
 ---
 
@@ -249,8 +253,8 @@ originalUser: admin456
 
 ### Benefit
 
-- Full audit trail
-- Compliance-friendly behavior
+- Session/request identity traceability
+- Effective-actor workflow History
 - Easier debugging and investigation
 
 ---
@@ -376,5 +380,5 @@ This strategy aligns with:
 ## Summary
 
 The impersonation strategy enables **secure and traceable user context switching**,
-allowing administrators and agents to act on behalf of users while preserving
-original identity and maintaining full auditability across the system.
+allowing authorized INTERNAL administrators to act on behalf of users while
+preserving original and effective identities in the session/request context.

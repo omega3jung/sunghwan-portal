@@ -71,8 +71,19 @@ type TicketWorkSessionSubmitPayload = {
 
 ## Actor Rule
 
+작업 이력은 approver와 worker를 구분합니다. `ASSIGNMENT_RESOLVED`는 도착 측
+assignee만, WORK `ASSIGNMENT_UPDATED`는 양쪽 assignee를 인정합니다.
+`ROUTING_RESET`도 해당 측 approval-step 필드가 명시적으로 null인 경우 작업
+evidence입니다. requester update는 metadata, settings reset은 from/to snapshot을
+사용합니다. phase 필드가 없으면 작업 이력으로 인정하지 않습니다. 이는 실제 승인
+배정도 포함하는 NOTE의 previous-assignee 관계와 별개입니다.
+
 현재와 과거 work assignee는 work session을 만들 수 있습니다. 따라서 재배정 이후에도
 과거 담당자가 누락된 work evidence를 추가할 수 있습니다.
+
+두 경우 모두 Ticket visibility와 현재 status가 `Assigned`, `Working`, `Pending` 중
+하나라는 조건이 필요합니다. 과거 배정 관계만으로 visibility를 얻거나 resolve/close
+이후에 작업 시간을 기록할 수는 없습니다.
 
 `nextStatus`를 통해 status 변경을 요청할 수 있는 주체는 현재 work assignee뿐입니다.
 과거 work assignee는 ticket의 현재 workflow status를 변경하지 않고 evidence만
@@ -172,12 +183,16 @@ Resolved auto-close는 work-session timer operation이 아닙니다.
 
 System command입니다.
 
-- current 7-day grace window보다 오래된 resolved-history timestamp를 가진 resolved
-  ticket을 찾습니다.
+- 가장 최근 resolution History timestamp에서 168시간 이상 경과했고 여전히
+  `Resolved`인 ticket을 찾습니다.
 - `Closed`로 이동합니다.
 - close reason `Completed`를 설정합니다.
 - 지원되는 경우 running work session을 종료합니다.
 - `SYSTEM_AUTO` source와 `actionNo = null`로 `RESOLUTION_CLOSE` history를 만듭니다.
+
+검증된 REMOTE scheduler는 Supabase Cron으로 매시간 검사하며, 종료는 eligibility
+시각보다 늦을 수 있습니다. 함수, Work Session 정리, 예약 호출의 검증 근거는
+[스케줄링 결정](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
 
 ---
 

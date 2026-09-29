@@ -38,6 +38,27 @@ function installWorkTicket(overrides: Partial<DbTicketDetail> = {}) {
 }
 
 describe("LOCAL ticket work-session workflow", () => {
+  it("rejects a final approver but accepts a worker recorded only by routing reset", () => {
+    const ticket = installWorkTicket({ status: "Working" });
+    const template = getLocalDemoHistories()[0];
+    getLocalDemoHistories().splice(0, getLocalDemoHistories().length,
+      { ...template, ticket_id: ticket.id, type: "ASSIGNMENT", event: "ASSIGNMENT_RESOLVED",
+        from_value: { assigneeUsernames: ["approver"] }, to_value: { assigneeUsernames: ["worker"] } },
+      { ...template, ticket_id: ticket.id, type: "TICKET", event: "ROUTING_RESET",
+        metadata: { previousApprovalStepId: null, previousAssigneeUsernames: ["reset-worker"],
+          nextApprovalStepId: "7", nextAssigneeUsernames: ["approver"] } },
+    );
+    const submit = (username: string) => createLocalTicketWorkSession({
+      ticketId: ticket.id, currentUserName: username, isInternal: true,
+      payload: { ticketId: ticket.id, inputMode: "duration", durationMinutes: 15 },
+    });
+    expect(() => submit("approver")).toThrow(expect.objectContaining({ status: 403 }));
+    expect(listLocalTicketWorkSessions(ticket.id).total).toBe(0);
+    submit("reset-worker");
+    expect(listLocalTicketWorkSessions(ticket.id).total).toBe(1);
+    expect(getLocalDemoTickets()[0]).toMatchObject({ status: "Working", work_minutes: 25 });
+  });
+
   it("clears work sessions during a demo reset", () => {
     const ticket = installWorkTicket();
 

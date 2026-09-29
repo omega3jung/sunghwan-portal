@@ -66,6 +66,18 @@ Separate Dashboard (overview) and Insight (analysis)
 
 ## Page Responsibilities
 
+### Current Implementation Boundary
+
+The home dashboard is a portfolio landing surface. Its summary cards use fixed
+presentation values from `HomePage.tsx`; they are not live, per-user ticket
+counts. Session context selects LOCAL/REMOTE introductory copy.
+
+`/service-desk/insights` derives status, category, department, tenant, assignee,
+and due-date summaries from the authorized ticket search results. Its SLA
+breakdown groups due dates; it does not measure contractual SLA compliance or
+run a breach engine. The role-oriented content below describes the design
+intent, not additional implemented dashboard queries.
+
 ### Dashboard
 
 - Entry point for daily work

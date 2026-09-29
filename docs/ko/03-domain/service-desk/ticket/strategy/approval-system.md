@@ -75,6 +75,11 @@ EMPLOYEE
 REMOTE DTO는 `approval_step_assignee`와 `skip_access_level`을 사용합니다. LOCAL과
 REMOTE settings는 같은 application-facing behavior로 resolve되어야 합니다.
 
+`MANAGER` level 1은 저장된 requester Job Field의 부모, level 2는 조부모
+Job Field를 의미합니다. 해당 Job Field의 eligible employee가 approver가 됩니다.
+이는 role/access level 7 또는 9를 뜻하지 않습니다. requester의 `skipAccessLevel`
+비교는 별개이며 조직 계층 해석을 바꾸지 않습니다.
+
 관련 문서: [Service Desk Settings](../../settings.md)
 
 ---
@@ -208,9 +213,10 @@ Settings의 Owner Admin 또는 Tenant Admin이라고 해서 `APPROVE`/`DECLINE`�
 approver 조건을 자동으로 만족하지 않으며, settings helper를 action override로 재사용하면
 안 됩니다.
 
-현재 ticket action matrix에는 generic Admin override가 남아 있습니다. 별도 후속 작업에서
-cross-tenant behavior를 검토하고 intentional break-glass capability를 정의해야 합니다.
-이번 settings decision은 기존 action matrix를 암묵적으로 확장하거나 변경하지 않습니다.
+현재 ticket action matrix의 Admin override는 Ticket visibility가 승인된 뒤 effective
+user의 Admin role을 사용합니다. Admin도 action URL로 보이지 않는 티켓에 접근할 수
+없으며, impersonation 중 original Admin의 role을 합산하지 않습니다. Tenant visibility를
+우회하는 별도 platform capability는 포트폴리오 범위에 포함하지 않습니다.
 
 ---
 

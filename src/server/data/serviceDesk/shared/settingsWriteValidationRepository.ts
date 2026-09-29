@@ -75,14 +75,16 @@ select
            coalesce(context.effective_assignee -> 'job_field_id', '[]'::jsonb)
          ) field(value)
        )
+      join public.department department
+        on department.d_id = job_field.jf_department_id
        and (
          (context.category_scope = 'INTERNAL'
-           and job_field.jf_company_id = context.tn_company_id)
+           and department.d_company_id = context.tn_company_id)
          or (context.category_scope = 'PORTAL'
-           and job_field.jf_company_id = context.owner_company_id)
+           and department.d_company_id = context.owner_company_id)
          or (context.category_scope = 'PORTAL'
            and coalesce((context.effective_assignee ->> 'include_tenant_company')::boolean, false)
-           and job_field.jf_company_id = context.tn_company_id)
+           and department.d_company_id = context.tn_company_id)
        )
       where context.category_id = submitted.category_id
     )
@@ -190,19 +192,46 @@ with submitted as (
       where job_field.jf_id = (context.assignee->>'field_id')::bigint
         and job_field.jf_active = true
     )
-    when 'MANAGER' then not exists (
-      select 1
-      from public.vw_employee employee
-      join public.vw_auth_login_user profile
-        on profile.e_username = employee.e_username
-      where employee.e_company_id = context.tn_company_id
-        and employee.e_active = true
-        and profile.aa_access_level >= case context.assignee->>'level'
-          when '1' then 7
-          when '2' then 9
-          else 10
-        end
-    )
+    when 'MANAGER' then
+      coalesce(context.assignee->>'level', '') not in ('1', '2')
+      or not exists (
+        -- A settings write has no Ticket requester. Require at least one
+        -- supported requester/ancestor pair in this tenant company; actual
+        -- requester-specific resolution is revalidated at routing time.
+        select 1
+        from public.vw_employee requester
+        join public.job_field requester_field
+          on requester_field.jf_id = requester.e_job_field_id
+         and requester_field.jf_active = true
+        join public.department requester_department
+          on requester_department.d_id = requester_field.jf_department_id
+         and requester_department.d_company_id = context.tn_company_id
+         and requester_department.d_active = true
+        join public.job_field parent
+          on parent.jf_id = requester_field.jf_parent_id
+         and parent.jf_active = true
+        join public.department parent_department
+          on parent_department.d_id = parent.jf_department_id
+         and parent_department.d_company_id = context.tn_company_id
+         and parent_department.d_active = true
+        left join public.job_field grandparent
+          on grandparent.jf_id = parent.jf_parent_id
+         and grandparent.jf_active = true
+        left join public.department grandparent_department
+          on grandparent_department.d_id = grandparent.jf_department_id
+         and grandparent_department.d_company_id = context.tn_company_id
+         and grandparent_department.d_active = true
+        join public.vw_employee manager
+          on manager.e_job_field_id = case context.assignee->>'level'
+            when '1' then parent.jf_id
+            when '2' then grandparent.jf_id
+          end
+         and manager.e_company_id = context.tn_company_id
+         and manager.e_active = true
+        where requester.e_company_id = context.tn_company_id
+          and requester.e_active = true
+          and (context.assignee->>'level' = '1' or grandparent_department.d_id is not null)
+      )
     else true
   end
   limit 1
@@ -285,12 +314,12 @@ with submitted as (
           and job_field.jf_active = true
           and (
             (context.category_scope = 'INTERNAL'
-              and job_field.jf_company_id = context.tn_company_id)
+              and department.d_company_id = context.tn_company_id)
             or (context.category_scope = 'PORTAL'
-              and job_field.jf_company_id = context.owner_company_id)
+              and department.d_company_id = context.owner_company_id)
             or (context.category_scope = 'PORTAL'
               and coalesce((context.assignee->>'include_tenant_company')::boolean, false)
-              and job_field.jf_company_id = context.tn_company_id)
+              and department.d_company_id = context.tn_company_id)
           )
       )
     )

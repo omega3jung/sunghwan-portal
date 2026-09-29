@@ -20,7 +20,7 @@ vi.mock("@/mocks/domain/organization/companies", () => ({
   ],
 }));
 vi.mock("@/mocks/domain/organization/employee", () => ({
-  employeesMock: [
+  allEmployeesMock: [
     createDbEmployee(1, "owner.worker", 1, 10, 100),
     createDbEmployee(2, "tenant.manager", 2, 20, 200),
     createDbEmployee(3, "tenant.worker", 2, 20, 201),
@@ -33,9 +33,13 @@ vi.mock("@/mocks/domain/organization/employee/demoUser", () => ({
 vi.mock("@/mocks/domain/organization/jobFields", () => ({
   allJobFieldsMock: [
     { jf_id: 100, jf_company_id: 1, jf_active: true },
-    { jf_id: 200, jf_company_id: 2, jf_active: true },
+    { jf_id: 200, jf_company_id: 2, jf_active: true, jf_parent_id: null, jf_department_id: 20 },
+    { jf_id: 201, jf_company_id: 2, jf_active: true, jf_parent_id: 200, jf_department_id: 20 },
     { jf_id: 999, jf_company_id: 2, jf_active: false },
   ],
+}));
+vi.mock("@/mocks/domain/organization/departments", () => ({
+  allDepartmentsMock: [{ d_id: 20, d_company_id: 2, d_active: true }],
 }));
 vi.mock("@/mocks/domain/user", () => ({
   resolveDemoProfile: mocks.resolveDemoProfile,
@@ -89,6 +93,17 @@ describe("LOCAL Service Desk eligibility boundary", () => {
             },
           ],
     );
+  });
+
+  it("validates MANAGER ancestry independently of administrator roles", async () => {
+    mocks.resolveDemoProfile.mockReturnValue({ permission: 1 });
+    await expect(assertApprovalAssigneeEligible({ category: portalCategory,
+      assignee: { type: "MANAGER", managerDistance: 1 } })).resolves.toBeUndefined();
+    mocks.resolveDemoProfile.mockReturnValue({ permission: 9 });
+    await expect(assertApprovalAssigneeEligible({ category: portalCategory,
+      assignee: { type: "MANAGER", managerDistance: 2 } })).rejects.toMatchObject({ status: 400 });
+    await expect(assertApprovalAssigneeEligible({ category: portalCategory,
+      assignee: { type: "MANAGER", managerDistance: 3 } as unknown as ApprovalAssigneeType })).rejects.toMatchObject({ status: 400 });
   });
 
   it("fails closed when a fixture category id resolves to multiple tenant trees", async () => {

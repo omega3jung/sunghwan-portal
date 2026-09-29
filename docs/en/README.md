@@ -5,6 +5,10 @@
 This documentation explains the design, architecture, and implementation
 thinking behind the Service Desk system in `sunghwan-portal`.
 
+Feature development is complete for the portfolio scope. Current design docs
+describe that final scope and its known limitations. References to deferred or
+future production capabilities describe possible extensions, not planned work.
+
 It separates three document responsibilities:
 
 - **Current design docs** describe the implementation-aligned model.
@@ -84,6 +88,11 @@ Key documents:
 - [Ticket Operation Rules](./03-domain/service-desk/ticket/reference/ticket-operation-rules.md)
 - [Ticket Action Workflow Matrix](./03-domain/service-desk/ticket/reference/ticket-action-workflow-matrix.xlsx)
 - [Employee Reference Scope Matrix](./03-domain/service-desk/ticket/reference/restrict-employee-list.xlsx)
+
+The Excel workbooks supplement the Markdown rules. Read their status columns:
+`PROPOSED` and `REVIEW_REQUIRED` describe limitations or unresolved policy,
+not implemented guarantees. `Legacy Input` sheets preserve earlier reference
+material and do not override the current specification.
 
 Current domain themes:
 

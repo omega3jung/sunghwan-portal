@@ -108,6 +108,7 @@ describe("ticket work-session route orchestration", () => {
     const response = await POST(request("POST", payload), context());
 
     expect(response.status).toBe(201);
+    expect(mocks.localGetTicket).toHaveBeenCalledWith({ id: "ticket-1", access });
     expect(mocks.createLocalTicketWorkSession).toHaveBeenCalledWith({
       ticketId: "ticket-1",
       currentUserName: "worker",
@@ -125,6 +126,7 @@ describe("ticket work-session route orchestration", () => {
 
     mocks.localGetTicket.mockReturnValueOnce(null);
     expect((await POST(request("POST", payload), context())).status).toBe(404);
+    expect(mocks.createLocalTicketWorkSession).not.toHaveBeenCalled();
 
     mocks.createLocalTicketWorkSession.mockImplementationOnce(() => {
       throw new ApiError("workerOnly", 403);

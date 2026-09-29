@@ -2,6 +2,9 @@ import { TicketDetail, TicketSummary } from "@/domain/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DateInput } from "@/lib/application/contracts/serviceDesk";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
+
+import { getLocalDemoActions } from "./state";
 
 /**
  * Projects a LOCAL persistence-shaped ticket through the same application DTO
@@ -61,12 +64,20 @@ export function toTicketMockSummaryResource(
 export function toTicketMockDetailResource(
   ticket: DbTicketDetail | TicketDetail,
 ): TicketDetail {
-  // LOCAL handlers may already hold an application DTO; avoid remapping it.
-  if (isDbTicketDetail(ticket)) {
-    return camelTicketDetailMapper([ticket])[0];
-  }
-
-  return ticket;
+  const detail = isDbTicketDetail(ticket) ? camelTicketDetailMapper([ticket])[0] : ticket;
+  const sharedActions = getLocalDemoActions()
+    .filter((action) => action.ticket_id === detail.id && action.active && action.action_type !== "NOTE")
+    .sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime()
+      || right.action_no - left.action_no);
+  const comment = sharedActions.find((action) => action.action_type === "COMMENT");
+  const activity = sharedActions[0];
+  return {
+    ...detail,
+    lastCommentAt: comment?.created_at,
+    lastCommenterEmail: allEmployeesMock.find((employee) => employee.e_username === comment?.owner_username)?.e_email,
+    lastUserActivityAt: activity?.created_at,
+    lastUserActivityEmail: allEmployeesMock.find((employee) => employee.e_username === activity?.owner_username)?.e_email,
+  };
 }
 
 function calculateTicketAge(createdAt: DateInput) {

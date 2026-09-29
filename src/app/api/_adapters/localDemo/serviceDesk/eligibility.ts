@@ -1,4 +1,3 @@
-import { ACCESS_LEVEL } from "@/domain/auth";
 import { isOwnerCompany, OWNER_COMPANY_ID } from "@/domain/organization";
 import {
   type ApprovalAssigneeType,
@@ -8,10 +7,9 @@ import {
   resolveAssignmentEligibleCompanyIds,
 } from "@/domain/serviceDesk";
 import { allCompaniesMock } from "@/mocks/domain/organization/companies";
-import { employeesMock } from "@/mocks/domain/organization/employee";
-import { clientDemoEmployee } from "@/mocks/domain/organization/employee/demoUser";
+import { allDepartmentsMock } from "@/mocks/domain/organization/departments";
+import { allEmployeesMock } from "@/mocks/domain/organization/employee";
 import { allJobFieldsMock } from "@/mocks/domain/organization/jobFields";
-import { resolveDemoProfile } from "@/mocks/domain/user";
 
 import { getLocalDemoCategories, getLocalDemoTenants } from "./settings/state";
 
@@ -37,7 +35,7 @@ export type ServiceDeskCategoryContext = {
 export type LocalCompanyEmployee = {
   id: number;
   username: string;
-  name: (typeof employeesMock)[number]["e_name"];
+  name: (typeof allEmployeesMock)[number]["e_name"];
   email: string;
   imageUrl: string | null;
   departmentId: number;
@@ -134,7 +132,7 @@ export async function getServiceDeskCategoryContext(
 export function getActiveLocalEmployeesByCompanyId(
   companyId: number,
 ): LocalCompanyEmployee[] {
-  return [...employeesMock, ...clientDemoEmployee]
+  return allEmployeesMock
     .filter(
       (employee) => employee.e_active && employee.e_company_id === companyId,
     )
@@ -199,16 +197,14 @@ export async function assertApprovalAssigneeEligible({
       }
       return;
     case "MANAGER": {
-      const minimumPermission =
-        assignee.managerDistance === 1
-          ? ACCESS_LEVEL.MANAGER
-          : ACCESS_LEVEL.ADMIN;
       if (
-        !employees.some(
-          (employee) =>
-            (resolveDemoProfile(employee.username)?.permission ?? 0) >=
-            minimumPermission,
-        )
+        (assignee.managerDistance !== 1 && assignee.managerDistance !== 2) ||
+        !employees.some((requester) => {
+          const target = resolveLocalManagerJobField(
+            requester, assignee.managerDistance, true,
+          );
+          return target && employees.some((employee) => employee.jobFieldId === target.jf_id);
+        })
       ) {
         throw createEligibilityError(
           "The approval manager cannot be resolved inside the category tenant company.",
@@ -216,6 +212,29 @@ export async function assertApprovalAssigneeEligible({
       }
     }
   }
+}
+
+/** Resolves Job Field ancestry; settings additionally require active organization references. */
+export function resolveLocalManagerJobField(
+  requester: LocalCompanyEmployee,
+  level: number,
+  requireActiveReferences = false,
+) {
+  if (level !== 1 && level !== 2) return undefined;
+  let field = allJobFieldsMock.find((item) => item.jf_id === requester.jobFieldId);
+  for (let depth = 0; depth <= level; depth += 1) {
+    if (!field) return undefined;
+    if (requireActiveReferences && (
+      !field.jf_active || field.jf_company_id !== requester.companyId ||
+      !allDepartmentsMock.some((department) =>
+        department.d_id === field!.jf_department_id && department.d_active &&
+        department.d_company_id === requester.companyId)
+    )) return undefined;
+    if (depth === level) return field;
+    const parentId = field.jf_parent_id;
+    field = allJobFieldsMock.find((item) => item.jf_id === parentId);
+  }
+  return undefined;
 }
 
 /** Enforces assignment assignee eligible before LOCAL state is exposed or mutated. */

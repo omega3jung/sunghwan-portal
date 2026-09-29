@@ -465,9 +465,9 @@ API와 JWT 갱신 콜백은 같은 서버 정책을 사용합니다. 콜백은 �
 
 프로젝트는 현재 두 개의 보완적인 보호 레이어를 사용합니다.
 
-### 1. Middleware
+### 1. Next.js Proxy
 
-`middleware.ts`는 다음을 수행합니다.
+`src/proxy.ts`는 다음을 수행합니다.
 
 - public/static/API 트래픽은 무시합니다
 - `getToken()`으로 JWT를 읽습니다
@@ -475,8 +475,11 @@ API와 JWT 갱신 콜백은 같은 서버 정책을 사용합니다. 콜백은 �
 
 현재 caveat:
 
-- middleware는 보수적으로 동작하며 주로 보호된 루트 HTML navigation path를 가드합니다
+- proxy는 중첩 route를 포함한 보호 대상 HTML document navigation을 가드합니다
 - 모든 client-side transition의 유일한 보호 메커니즘으로 설명되지는 않습니다
+
+API route는 각자의 server boundary에서 요청을 authorize합니다. Next.js 16
+migration 이후 proxy가 기존 `middleware.ts` entry를 대체합니다.
 
 ---
 

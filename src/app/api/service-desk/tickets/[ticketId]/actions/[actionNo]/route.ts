@@ -12,6 +12,7 @@ import {
   getMaxHistoryNo,
   getTicketContext,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/command/utils";
+import { canAccessLocalTicketNote } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/participation";
 import {
   getLocalDemoActions,
   getLocalDemoHistories,
@@ -63,7 +64,7 @@ export async function GET(
         candidate.active !== false,
     );
 
-    if (!item) {
+    if (!item || (item.action_type === "NOTE" && !(await canAccessLocalTicketNote(ticketId, access)))) {
       return NextResponse.json(
         { message: resolveApiErrorMessage("serviceDesk.ticketActions.notFound") },
         { status: 404 },
@@ -149,6 +150,20 @@ export async function PATCH(
           "serviceDesk.ticketActions.writerOnly",
           403,
         );
+      }
+
+      if (action.action_type === "NOTE" && !(await canAccessLocalTicketNote(ticketId, access))) {
+        return NextResponse.json({ message: "NOTE access denied." }, { status: 403 });
+      }
+
+      // NOTE authorization awaits current configuration. Do not commit against
+      // a Ticket or Action replaced by a competing command during that await.
+      if (
+        action.action_type === "NOTE" &&
+        (getTicketContext(ticketId, isInternal).ticket !== ticket ||
+          actions[actionIndex] !== action)
+      ) {
+        throw new ApiError("serviceDesk.common.concurrentUpdate", 409);
       }
 
       const updatedAt = new Date().toISOString();

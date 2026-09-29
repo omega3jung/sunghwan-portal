@@ -1,5 +1,4 @@
 import { filterItemsByQuery } from "@/lib/application/api/query";
-import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 
 import {
   filterAccessibleLocalDemoTickets,
@@ -7,6 +6,7 @@ import {
 } from "./access";
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
+import { toTicketMockDetailResource } from "./ticketResourceMapper";
 
 /** Returns tickets from the server-side LOCAL ticket adapter. */
 export const localListTickets = ({
@@ -30,7 +30,7 @@ export const localListTickets = ({
   );
   const items = filterItemsByQuery(
     searchParams,
-    camelTicketDetailMapper(activeTickets).map(withAssigneeFilterField),
+    activeTickets.map(toTicketMockDetailResource).map(withAssigneeFilterField),
   );
 
   return {
