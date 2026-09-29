@@ -34,7 +34,8 @@ workflow entity입니다.
 
 이 프로젝트는 production-aligned이지만 production-complete는 아닙니다. Production
 object storage, notification delivery, full SLA engine, real-time updates,
-compliance-grade audit infrastructure는 명시적으로 구현되기 전까지 deferred scope입니다.
+compliance-grade audit infrastructure는 완료된 포트폴리오 기능 범위 밖입니다.
+Deferred item은 예정된 기능 로드맵이 아닌 제한 사항입니다.
 
 ---
 
@@ -61,7 +62,9 @@ Closed
 - `Reopen`은 persisted status가 아닙니다.
 - Approval 완료는 `APPROVAL_APPROVED` history로 기록됩니다.
 - Reopen은 ticket action이며 현재 결과는 `Resolved -> Working`입니다.
-- GET/read request는 ticket status를 변경하면 안 됩니다.
+- Ticket과 subresource read는 ticket status를 변경하면 안 됩니다. 보호된 maintenance
+  endpoint는 auto-close command의 alias로 GET도 허용하지만, 이는 ticket read가
+  아닌 system operation입니다.
 
 관련 문서:
 
@@ -323,10 +326,18 @@ metadata -> supplemental display/audit context
 Reopen history는 `Resolved -> Working` 전이에 대해 `type = STATUS`,
 `source = USER_ACTION`, `event = TICKET_REOPENED`를 사용합니다.
 
-Resolved auto-close는 resolved-history timestamp와 7-day grace period를 기준으로
-`status = Closed`, `closeReason = Completed`를 설정하고, 필요한 경우 running work
-session을 종료하며, `RESOLUTION_CLOSE` history를 `SYSTEM_AUTO` 및
+Resolved auto-close는 가장 최근 resolution History timestamp에서 168시간이 경과하면
+대상이 됩니다. `status = Closed`, `closeReason = Completed`를 설정하고, 필요한 경우
+running work session을 종료하며, `RESOLUTION_CLOSE` history를 `SYSTEM_AUTO` 및
 `actionNo = null`로 기록합니다.
+
+Reopen 후 다시 resolve하면 새로운 grace period가 시작됩니다. REMOTE auto-close는
+Supabase Cron(`0 * * * *`)으로 `service_desk.close_expired_resolved_tickets()`를 매시간
+호출합니다. Eligibility는 정확한 경과 시간으로 판단하며, 정상 실행 시 다음 검사까지의
+대기 시간은 대략 한 시간 미만입니다. 종료에는 성공적인 실행이 필요하며, 누락된 실행이나
+잠긴 Ticket은 이후 시간별 실행에서 처리할 수 있습니다. 기존 HTTP maintenance 경로도
+유지합니다. [스케줄링 결정](../ko/06-decisions/2026-09-resolved-auto-close-scheduling.md)을
+참고하세요.
 
 관련 문서:
 
@@ -397,6 +408,12 @@ REMOTE service는 지원하는 workflow에서 compatible DTO contract를 유지�
 ---
 
 ## Deferred Scope
+
+Command surface에도 알려진 구현상의 제한이 있습니다. Manual `ASSIGN`은 actor/status와
+비어 있지 않은 username list를 검증하지만 Category/phase 후보 자격을 다시 확인하지
+않으며, recipient address array도 employee/company eligibility 검증 없이 받습니다.
+Category 기반 initial routing과 settings validation은 별도의 eligibility 검증을 수행합니다.
+[Assignment Policy](../ko/03-domain/service-desk/ticket/strategy/assignment-policy.md)를 참고하세요.
 
 Deferred production scope는 다음을 포함합니다.
 

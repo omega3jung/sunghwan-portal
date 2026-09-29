@@ -181,6 +181,13 @@ classification. Owner Admin or Tenant Admin status alone does not make an actor
 a current approver/worker and the settings authorization helper must not be
 used to authorize `ASSIGN`.
 
+Manual `ASSIGN` has a narrower validation boundary than automatic routing: it
+checks actor, status, and a non-empty username list, but does not revalidate
+submitted candidates against the category/phase eligibility policy or the
+persisted Assignment Rule. UI candidates come from the effective actor's company.
+The reference workbook therefore retains `REVIEW_REQUIRED` for this gap; the
+automatic-routing guarantees above do not apply to manual reassignment.
+
 Assignee notification must resolve emails outside the persisted `tk_email`
 field. Derived assignee emails are not stored in requester email configuration.
 
@@ -209,10 +216,10 @@ tickets keep their current assignees until a ticket command changes them.
 Changing an Assignment Rule therefore preserves the current worker and applies
 the new rule only when a future workflow transition resolves assignment again.
 
-The current generic Admin ticket-action override requires a separate
-cross-tenant audit and, if retained, an explicit break-glass/platform policy.
-That follow-up is distinct from the category-scope settings policy; the
-existing ticket action matrix is not otherwise changed here.
+The Admin ticket-action override uses the effective user's role after ticket
+visibility is authorized. It does not bypass the tenant visibility boundary or
+inherit the original Admin's role during impersonation. A separate platform
+override of ticket visibility is outside the portfolio scope.
 
 ---
 

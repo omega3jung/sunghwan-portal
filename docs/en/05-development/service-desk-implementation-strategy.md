@@ -60,6 +60,11 @@ REMOTE implementation currently covers the major Service Desk workflows:
 - work-session list and creation
 - automatic close of expired resolved tickets
 
+REMOTE auto-close calls `service_desk.close_expired_resolved_tickets()` hourly
+through Supabase Cron (`0 * * * *`). Function deployment, eligible Ticket closure,
+Cron registration, and scheduled hourly invocation have been verified. Evidence
+is recorded in the [scheduling decision](../06-decisions/2026-09-resolved-auto-close-scheduling.md).
+
 REMOTE does not mean every production infrastructure concern is complete. For
 example, attachment binaries are still replaced by controlled demo assets.
 
@@ -329,8 +334,8 @@ Examples:
 - assignment resolution -> `ASSIGNMENT_RESOLVED`
 - requester update with routing reset -> `ROUTING_RESET`
 - requester update with routing preserved -> `ROUTING_PRESERVED`
-- work-session creation -> `WORK_SESSION_STARTED`, `WORK_SESSION_STOPPED`, or
-  `WORK_SESSION_UPDATED`
+- work-session creation -> `STATUS_UPDATED` only when the submission changes
+  ticket status; work-session-specific event names are reserved by the model
 - reopen action -> `TICKET_REOPENED` as the authoritative status event
 - automatic resolved-ticket close -> `RESOLUTION_CLOSE` with `SYSTEM_AUTO` and
   `actionNo = null`
@@ -388,7 +393,7 @@ duplicate server state into Zustand.
 
 ## Deferred Production Scope
 
-The current implementation intentionally leaves these as future work:
+These production extensions are outside the completed portfolio feature scope:
 
 - durable object storage for attachment binaries
 - production notification delivery

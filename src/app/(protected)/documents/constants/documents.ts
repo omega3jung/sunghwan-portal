@@ -621,6 +621,15 @@ export const documentGroups: DocumentGroup[] = [
             relativePath:
               "06-decisions/2026-09-storybook-coverage-strategy.md",
           },
+          {
+            id: "decision-resolved-auto-close-scheduling-2026-09",
+            titleKey:
+              "item.decisionResolvedAutoCloseScheduling202609.title",
+            descriptionKey:
+              "item.decisionResolvedAutoCloseScheduling202609.description",
+            relativePath:
+              "06-decisions/2026-09-resolved-auto-close-scheduling.md",
+          },
         ],
       },
     ],

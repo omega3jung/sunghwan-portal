@@ -54,8 +54,8 @@ At the top of the root README:
 ```md
 ## **Languages**
 
-- [English](../../../README.md)
-- [Korean](../../../README.ko.md)
+- [English](./README.md)
+- [Korean](./README.ko.md)
 ```
 
 ---

@@ -62,7 +62,7 @@ reimplement that rule in JSX or event handlers.
 
 ```tsx
 export function TicketList() {
-  const { data } = useFetchTickets();
+  const { data = [] } = useFetchTickets();
 
   return (
     <div>
@@ -108,7 +108,7 @@ Examples of responsibilities that do not belong in a presentational component:
 
 ```tsx
 export function TicketItem({ ticket }) {
-  return <div>{ticket.title}</div>;
+  return <div>{ticket.subject}</div>;
 }
 ```
 
@@ -191,7 +191,7 @@ Pass only what is needed
 ### When Only a Few Fields Are Needed
 
 ```tsx
-<TicketItem title={ticket.title} status={ticket.status} />
+<TicketItem subject={ticket.subject} status={ticket.status} />
 ```
 
 ---

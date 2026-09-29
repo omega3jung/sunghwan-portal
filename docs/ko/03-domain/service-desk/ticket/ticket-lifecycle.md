@@ -224,11 +224,20 @@ Resolved auto-close는 system operation입니다.
 - from: `Resolved`
 - to: `Closed`
 - close reason: `Completed`
-- grace window: 7 days
+- grace window: 가장 최근 resolution History timestamp부터 경과한 168시간
 - action link: `actionNo = null`
 - 지원되는 경우 running work session을 종료합니다.
 
-구현은 generic `updatedAt` rule이 아니라 resolved-history timing을 사용합니다.
+Generic `updatedAt`이나 달력 날짜 차이가 아닌 가장 최근 resolution History를
+사용합니다. Reopen 후 다시 resolve하면 새로운 grace period가 시작됩니다.
+
+REMOTE는 Supabase Cron(`0 * * * *`)으로
+`service_desk.close_expired_resolved_tickets()`를 매시간 호출합니다. 정상 실행 시 다음
+검사까지의 대기 시간은 대략 한 시간 미만입니다. 대상이 되었다고 즉시 종료되는 것은
+아니며, 실행이 필요한 lock을 획득하고 티켓을 재검증해야 합니다. 누락된 실행이나
+잠긴 티켓은 이후 시간별 실행에서 처리할 수 있습니다. REMOTE 종료와 예약 호출은
+검증되었으며, 근거는
+[스케줄링 결정](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
 
 ---
 

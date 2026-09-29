@@ -324,6 +324,11 @@ NOTE 활동은 filtering된 Action/History API에서 제공합니다.
 
 파생된 assignee email은 persisted `tk_email`에 쓰면 안 됩니다.
 
+현재 제한: manual `ASSIGN`은 제출된 username을 Category/phase 후보 자격이나
+persisted Assignment Rule에 대해 다시 검증하지 않습니다. Actor/status guard와
+비어 있지 않은 list 검증만으로 후보 자격까지 보장하지는 않습니다. 이는 Category 기반
+routing validation과 별개입니다.
+
 ---
 
 ## Assign Self
@@ -488,17 +493,20 @@ NOTE 활동은 filtering된 Action/History API에서 제공합니다.
 `Assigned -> Working`으로 이동할 수 있습니다. Work-session submission은 work-time
 evidence를 기록하고 아래 지원 status transition을 적용할 수 있습니다.
 
-- who: current work assignee
+- who: Ticket visibility가 있는 현재 또는 과거 work assignee
 - allowed status: `Assigned`, `Working`, `Pending`
 - input:
   - `inputMode = duration | range`
-  - tracked minutes
+  - `durationMinutes`, 또는 range mode의 `startAt`과 `endAt`
   - optional `nextStatus = Working | Pending | Resolved`
   - note
 - validation:
-  - actor가 current work assignee입니다.
-  - tracked minutes는 positive여야 합니다.
-  - `Assigned`와 `Pending`에는 explicit status transition이 필요합니다.
+  - actor는 current worker이거나 persisted work-assignment history가 있어야 합니다.
+  - 서버가 계산한 tracked minutes는 positive여야 합니다.
+  - 현재 work assignee만 status를 변경할 수 있으며, 과거 worker는 status 변경 없이
+    evidence를 추가할 수 있습니다.
+  - 현재 work assignee가 `Assigned` 또는 `Pending`에서 제출할 때는 explicit status
+    transition이 필요합니다.
   - allowed transitions:
     - `Assigned -> Working`
     - `Working -> Pending | Resolved`
@@ -521,12 +529,12 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 
 - who: system
 - allowed status: `Resolved`
-- input: cron/system request
+- input: maintenance 호출; HTTP endpoint는 설정된 cron secret으로 POST와 GET을 허용
 - validation:
   - resolved-history grace window가 지났습니다.
   - grace window는 generic ticket `updatedAt`이 아니라 티켓을 resolved로 만든 최신
     history entry를 기준으로 측정합니다.
-  - 현재 grace 값은 7일입니다.
+  - 현재 grace 값은 경과 시간 168시간이며, 정확히 도달한 시점부터 대상입니다.
 - ticket effect:
   - `Resolved -> Closed`
   - `closeReason = Completed`
@@ -536,6 +544,13 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 - history source: `SYSTEM_AUTO`
 - history action link: `actionNo = null`
 - query invalidation: user-triggered UI mutation이 아닌 system side effect
+
+REMOTE schedule은 Supabase Cron(`0 * * * *`)으로
+`service_desk.close_expired_resolved_tickets()`를 매시간 호출합니다. 정상 실행 시 다음
+검사까지의 대기 시간은 대략 한 시간 미만입니다. 누락된 실행이나 잠긴 Ticket은 여전히
+대상 조건을 만족하면 이후 실행에서 처리할 수 있습니다. 이 정책은 eligibility 시각에
+정확히 종료됨을 보장하지 않습니다. 함수 배포, 대상 Ticket 종료와 예약 호출은 검증되었으며,
+근거는 [스케줄링 결정](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
 
 ---
 

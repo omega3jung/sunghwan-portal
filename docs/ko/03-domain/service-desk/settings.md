@@ -495,6 +495,7 @@ candidate search 권한을 부여하지는 않습니다.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -650,9 +651,11 @@ priority, risk, due date, assignee, activity, history를 유지합니다.
 
 ### Approval Step 변경
 
-새 승인 해석은 갱신된 승인 단계를 사용합니다. 이미 승인 상태에 있는 티켓은
-명시적인 티켓 action이 다시 계산하거나 갱신하지 않는 한 현재 승인 담당자를
-유지해야 합니다.
+`Approval` 상태의 티켓에 영향을 주는 Approval Step tree 변경에는 명시적인
+force apply가 필요합니다. 일반 저장은 영향이 있으면 conflict를 반환합니다.
+Force apply는 tree 검증·저장, 모든 영향 티켓의 initial routing 재시작,
+reason이 `APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` 기록을 하나의
+transaction으로 처리합니다. 실패하면 설정과 티켓 변경을 모두 rollback합니다.
 
 ### Assignment Rule 변경
 

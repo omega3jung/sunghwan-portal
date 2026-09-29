@@ -327,6 +327,11 @@ Authorized NOTE activity remains available through the filtered Action/History A
 
 Derived assignee emails must not be written into persisted `tk_email`.
 
+Current limitation: manual `ASSIGN` does not revalidate the submitted usernames
+against category/phase candidate eligibility or the persisted Assignment Rule.
+The actor/status guard and non-empty-list validation do not establish those
+candidate guarantees. This is separate from category-driven routing validation.
+
 ---
 
 ## Assign Self
@@ -491,17 +496,20 @@ The explicit start-work command route can move `Assigned -> Working` without
 creating a work-session row. Work-session submission records work-time evidence
 and may apply the supported status transitions below.
 
-- who: current work assignee
+- who: current or previous work assignee with ticket visibility
 - allowed status: `Assigned`, `Working`, `Pending`
 - input:
   - `inputMode = duration | range`
-  - tracked minutes
+  - `durationMinutes`, or `startAt` and `endAt` for range mode
   - optional `nextStatus = Working | Pending | Resolved`
   - note
 - validation:
-  - actor is current work assignee
-  - tracked minutes are positive
-  - `Assigned` and `Pending` require an explicit status transition
+  - actor is a current worker or has persisted work-assignment history
+  - server-derived tracked minutes are positive
+  - only a current work assignee may change status; a previous worker may add
+    evidence without changing status
+  - a current work assignee submitting from `Assigned` or `Pending` must request
+    an explicit status transition
   - allowed transitions:
     - `Assigned -> Working`
     - `Working -> Pending | Resolved`
@@ -524,12 +532,13 @@ not currently have matching route files.
 
 - who: system
 - allowed status: `Resolved`
-- input: cron/system request
+- input: maintenance invocation; the HTTP endpoint accepts POST and GET with a
+  configured cron secret
 - validation:
   - resolved-history grace window has elapsed
   - the grace window is measured from the latest history entry that resolved the
     ticket, not from generic ticket `updatedAt`
-  - current grace value is 7 days
+  - current grace value is 168 elapsed hours; equality is eligible
 - ticket effect:
   - `Resolved -> Closed`
   - `closeReason = Completed`
@@ -539,6 +548,14 @@ not currently have matching route files.
 - history source: `SYSTEM_AUTO`
 - history action link: `actionNo = null`
 - query invalidation: system side effect, not user-triggered UI mutation
+
+The REMOTE schedule calls `service_desk.close_expired_resolved_tickets()` hourly
+through Supabase Cron (`0 * * * *`). The normal wait until the next check is less
+than approximately one hour. Missed runs or locked Tickets can be caught up on
+a later invocation while the ticket remains eligible. This policy does not
+guarantee closure at the exact eligibility time. Function deployment, eligible
+closure, and scheduled invocation have been verified; evidence is recorded in
+the [scheduling decision](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 ---
 

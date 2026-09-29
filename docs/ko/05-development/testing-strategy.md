@@ -713,8 +713,8 @@ Controls 또는 browser interaction이 실질적으로 변경되면 다음을 �
 선별된 `play` interaction은 추가 regression protection을 제공합니다. 저장소에는 이미
 headless Playwright Chromium provider를 사용하는 Storybook Vitest browser project가
 구성되어 있습니다. 이는 `unit` project만 실행하는 기본 `npm test` command와 분리되어
-있습니다. Browser project는 현재 모든 test가 통과하는 강제 CI gate가 아니며, 남아 있는
-`play` failure는 알려진 verification gap입니다.
+있습니다. Browser project는 현재 모든 test가 통과하는 강제 CI gate가 아니며, 문서화된
+`play` failure는 완료된 포트폴리오 범위에서도 알려진 검증상의 제한으로 남아 있습니다.
 
 ### E2E 경계
 
@@ -769,8 +769,9 @@ project를 명시적으로 실행할 수 있습니다.
 npm exec vitest -- run --project storybook
 ```
 
-이 browser project는 기본 `npm test` command에 포함되지 않습니다. 남아 있는 interaction
-failure를 해결하기 전까지 diagnostic check로 사용합니다.
+이 browser project는 기본 `npm test` command에 포함되지 않으며 diagnostic check로
+사용합니다. 포트폴리오 기능 범위의 완료가 문서화된 interaction failure의 해결을 뜻하지는
+않습니다.
 
 변경의 영향 범위에 따라 저장소의 다른 검사도 추가할 수 있습니다.
 
@@ -856,4 +857,4 @@ Stop when important risks are protected.
 Vitest는 domain rule, workflow, runtime orchestration 및 결정적인 UI/application 동작을
 보호합니다. Storybook은 custom reusable UI, 선별된 application-wide layout/menu UI 및
 독립적인 소수의 feature presentation component를 격리된 browser 환경에서 검토합니다.
-향후 E2E test는 full-system execution이 더 유용한 경계가 될 때 이를 담당합니다.
+Full-system E2E coverage는 완료된 포트폴리오 범위에 포함하지 않습니다.

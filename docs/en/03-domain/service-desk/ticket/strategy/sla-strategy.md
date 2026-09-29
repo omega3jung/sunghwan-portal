@@ -143,10 +143,15 @@ Resolved ticket grace period close
 != SLA breach/escalation engine
 ```
 
-Auto close uses the resolved-history timestamp plus the current 7-day grace
-period. It moves the ticket to `Closed`, sets close reason `Completed`,
+Auto close becomes eligible 168 elapsed hours after the latest resolution
+History timestamp. It moves the ticket to `Closed`, sets close reason `Completed`,
 finishes running work sessions where supported, and records `RESOLUTION_CLOSE`
 with `SYSTEM_AUTO` and `actionNo = null`.
+
+The REMOTE schedule checks hourly through Supabase Cron (`0 * * * *`). The check
+interval is separate from eligibility and is not a completion-time guarantee.
+REMOTE function execution and scheduled invocation have been verified; see the
+[scheduling decision](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 ---
 

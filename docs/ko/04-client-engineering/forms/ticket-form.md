@@ -264,8 +264,9 @@ Routing-neutral fields:
 재평가합니다. 라우팅 중립 필드만 바뀌면 `ROUTING_PRESERVED`를 기록합니다.
 
 Category가 변경되면 category default를 기준으로 priority, risk, minimum due date도 다시
-평가합니다. 현재 due date가 새 category minimum보다 늦으면 그대로 유지하고, 더
-이르면 해당 minimum까지 되돌립니다.
+평가합니다. 결과 due date는 현재 due date, 제출된 due date, 새 category minimum 중
+가장 늦은 값입니다. 더 늦게 제출된 날짜는 유지하며 Category 변경으로 due date를
+앞당기지 않습니다.
 
 ---
 

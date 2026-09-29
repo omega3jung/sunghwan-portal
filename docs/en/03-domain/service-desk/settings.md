@@ -513,6 +513,7 @@ work ownership.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -671,9 +672,11 @@ stored category, priority, risk, due date, assignees, activity, and history.
 
 ### Approval Step Changed
 
-New approval resolution uses the updated approval steps. Tickets already in an
-approval state should keep their current approval ownership unless an explicit
-ticket action recalculates or updates it.
+An Approval Step tree change that affects tickets in `Approval` requires an
+explicit force apply. Ordinary save reports the impact as a conflict. Force
+apply validates and saves the tree, restarts initial routing for every affected
+ticket, and records `ROUTING_RESET` with `APPROVAL_CONFIGURATION_CHANGED` in one
+transaction. A failure rolls back both configuration and ticket changes.
 
 ### Assignment Rule Changed
 

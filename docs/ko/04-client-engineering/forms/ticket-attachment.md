@@ -401,7 +401,8 @@ UI state에는 사용할 수 있지만, raw file이나 persisted attachment meta
 Attachment preparation만으로는 ticket history가 생성되지 않고 notification도
 발송되지 않습니다.
 
-History와 notification은 성공한 ticket command에 속합니다.
+History는 성공한 ticket command에 속합니다. 이 command는 notification의 의도된
+연동 지점이기도 하지만, 실제 notification delivery는 구현 범위 밖입니다.
 
 - prepared attachment가 포함된 ticket create
 - attachment를 변경하는 requester update

@@ -226,12 +226,20 @@ Resolved auto-close is a system operation.
 - from: `Resolved`
 - to: `Closed`
 - close reason: `Completed`
-- grace window: 7 days
+- grace window: 168 elapsed hours from the latest resolution History timestamp
 - action link: `actionNo = null`
 - running work sessions are finished where supported
 
-The implementation uses resolved-history timing rather than a generic
-`updatedAt` rule.
+The rule uses the latest resolution History, not generic `updatedAt` or calendar
+date subtraction. Re-resolution after reopen starts a new grace period.
+
+The REMOTE schedule invokes `service_desk.close_expired_resolved_tickets()` hourly
+through Supabase Cron (`0 * * * *`). The normal wait until the next check is less
+than approximately one hour. Eligibility does not guarantee immediate closure:
+a successful run must acquire the necessary locks and revalidate the ticket.
+Missed runs or locked Tickets can be caught up on a later hourly run. REMOTE
+closure and scheduled invocation have been verified; evidence is recorded in the
+[scheduling decision](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 ---
 

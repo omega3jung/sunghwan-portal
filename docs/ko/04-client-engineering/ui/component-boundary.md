@@ -60,7 +60,7 @@ persistence behavior의 source of truth가 되지 않습니다. 규칙의 결과
 
 ```tsx
 export function TicketList() {
-  const { data } = useFetchTickets();
+  const { data = [] } = useFetchTickets();
 
   return (
     <div>
@@ -106,7 +106,7 @@ Presentational component가 소유하면 안 되는 책임의 예:
 
 ```tsx
 export function TicketItem({ ticket }) {
-  return <div>{ticket.title}</div>;
+  return <div>{ticket.subject}</div>;
 }
 ```
 
@@ -188,7 +188,7 @@ Pass only what is needed
 ### 필요한 필드만 사용하는 경우
 
 ```tsx
-<TicketItem title={ticket.title} status={ticket.status} />
+<TicketItem subject={ticket.subject} status={ticket.status} />
 ```
 
 ---

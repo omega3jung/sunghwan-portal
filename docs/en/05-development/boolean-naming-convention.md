@@ -29,6 +29,9 @@ HTML and UI presentation state
 
 The goal is not to eliminate every negative boolean.
 
+Code examples illustrate naming, not complete authorization implementations.
+Use the current domain policies and server guards for actual permissions.
+
 The goal is to distinguish what a user **can do** from what the system **currently
 is** and how a UI control should **currently render**.
 
@@ -799,7 +802,7 @@ Prefer calculating a named capability first:
 ```ts
 const canReject =
   ticket.assignedWorker &&
-  ticket.status !== "Closed" &&
+  REJECTABLE_STATUSES.includes(ticket.status) &&
   !rejectMutation.isPending;
 ```
 
@@ -1187,7 +1190,7 @@ const canUseImpersonation =
   appUser.canUseImpersonation === true;
 
 const isImpersonating =
-  session.impersonation !== null;
+  session.impersonation != null;
 ```
 
 Here:

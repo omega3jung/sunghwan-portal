@@ -218,10 +218,11 @@ separate policies. Being classified as Owner Admin or Tenant Admin for settings
 does not automatically satisfy the current-approver condition for `APPROVE` or
 `DECLINE`, and the settings helper must not be reused as an action override.
 
-The current ticket action matrix documented above still includes a generic
-Admin override. A separate follow-up must audit that override for cross-tenant
-behavior and define any intentional break-glass capability. This settings
-decision does not silently broaden or rewrite the existing action matrix.
+The current ticket action matrix includes an effective-user Admin override
+after ticket visibility is authorized. Admin does not gain access to a hidden
+ticket through an action URL, and impersonation does not add the original
+Admin's role. A separate platform capability that bypasses tenant visibility is
+outside the portfolio scope.
 
 ---
 

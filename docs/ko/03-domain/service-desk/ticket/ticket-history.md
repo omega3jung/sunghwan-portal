@@ -246,8 +246,12 @@ toValue = { status: "Closed", closeReason: "Completed" }
 metadata.resolvedGraceDays = 7
 ```
 
-Resolved auto-close는 generic ticket `updatedAt` rule이 아니라 resolved-history
-timestamp와 현재 7-day grace period를 기준으로 합니다.
+Resolved auto-close는 generic ticket `updatedAt`이 아니라 가장 최근 resolution
+History timestamp에서 168시간이 경과하면 대상이 됩니다. 다시 resolve하면 grace
+period도 다시 시작합니다. `RESOLUTION_CLOSE`는 대상 시각 도달이 아닌 실제 종료
+성공을 기록합니다. 검증된 REMOTE 시간별 schedule과 `RESOLUTION_CLOSE` /
+`SYSTEM_AUTO` History 근거는
+[스케줄링 결정](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)을 참고하세요.
 
 ---
 

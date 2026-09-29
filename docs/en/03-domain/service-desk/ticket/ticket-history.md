@@ -248,8 +248,13 @@ toValue = { status: "Closed", closeReason: "Completed" }
 metadata.resolvedGraceDays = 7
 ```
 
-Resolved auto-close is based on the resolved-history timestamp plus the current
-7-day grace period, not a generic ticket `updatedAt` rule.
+Resolved auto-close is eligible 168 elapsed hours after the latest resolution
+History timestamp, not generic ticket `updatedAt`. Re-resolution restarts the
+grace period. `RESOLUTION_CLOSE` records the actual successful close, not merely
+the time eligibility was reached. See the
+[scheduling decision](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)
+for the verified hourly REMOTE schedule and `RESOLUTION_CLOSE` / `SYSTEM_AUTO`
+History evidence.
 
 ---
 
