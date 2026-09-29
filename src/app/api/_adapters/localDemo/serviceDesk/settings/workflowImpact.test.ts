@@ -18,6 +18,7 @@ import {
 import { ACCESS_LEVEL } from "@/domain/auth";
 import { isOwnerCompany } from "@/domain/organization";
 
+import { getActiveLocalEmployeesByCompanyId, resolveLocalManagerJobField } from "../eligibility";
 import {
   getApprovalStepStore,
   normalizeCategoryApprovalSettings,
@@ -217,8 +218,15 @@ describe("Service Desk settings workflow impacts", () => {
     const targetSubCategory = targetMainCategory.sub_category.find(
       (subCategory) => subCategory.category_active,
     )!;
+    const companyEmployees = getActiveLocalEmployeesByCompanyId(Number(categories.tenant_company_id));
+    const requester = companyEmployees.find((employee) => {
+      const targetField = resolveLocalManagerJobField(employee, 1);
+      return targetField && companyEmployees.some((candidate) => candidate.jobFieldId === targetField.jf_id);
+    });
+    expect(requester).toBeDefined();
     const ticket = {
       ...getLocalDemoTickets()[0],
+      requester_username: requester!.username,
       id: "approval-impact-ticket",
       tenant_id: String(categories.tenant_id),
       category_id: String(targetSubCategory.category_id),

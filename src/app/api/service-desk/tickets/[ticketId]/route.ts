@@ -13,6 +13,7 @@ import {
   localRequesterUpdateTicket,
   withLocalTicketWorkerHistory,
 } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { canAccessLocalTicketNote } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/participation";
 import {
   resolveApiErrorMessage,
   toCurrentUsernameProxyHeaders,
@@ -48,9 +49,12 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       );
     }
 
+    const canViewNote = await canAccessLocalTicketNote(ticketId, access);
     return NextResponse.json(
       withLocalTicketWorkerHistory(
-        withDerivedTicketOwnership(ticket, currentUserName),
+        withDerivedTicketOwnership({ ...ticket, canViewNote,
+          canCreateNote: canViewNote && ticket.status !== "Draft" && ticket.status !== "Closed",
+        }, currentUserName),
         { isInternal, currentUserName },
       ),
     );

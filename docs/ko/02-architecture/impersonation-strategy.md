@@ -2,7 +2,7 @@
 
 ## Goal
 
-impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**을 가능하게 하여, 관리자나 에이전트 같은 권한 있는 사용자가 다른 사용자를 대신해 동작할 수 있도록 설계됩니다.
+impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**을 가능하게 하여, 권한이 허용된 INTERNAL 관리자가 다른 사용자를 대신해 동작할 수 있도록 설계됩니다.
 
 주요 목적은 다음과 같습니다.
 
@@ -10,6 +10,7 @@ impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**
 - 사용자 이슈 재현과 디버깅 지원
 - 엄격한 보안 경계 유지
 - 모든 행동의 감사 추적 가능성 보존
+- client-only override 대신 서버와 세션을 고려한 impersonation 유지
 
 ---
 
@@ -51,7 +52,7 @@ Service Desk 시스템에서는 지원 담당자가 특정 사용자의 실제 �
 
 - 통제된 impersonation 허용
 - 원래 사용자 identity 보존
-- 모든 행동이 추적 가능하도록 보장
+- 추적 가능성을 위해 session/request context에 original 및 effective identity 보존
 
 ---
 
@@ -108,6 +109,7 @@ session = {
       username, // internal unique key
     },
     activatedAt,
+  },
 };
 ```
 
@@ -117,8 +119,11 @@ session = {
 
 - `session.user` 는 original user projection으로 유지됨
 - `currentUser` 는 UI와 권한 판단 전반에서 사용됨
-- `originalUser` 는 감사 및 보안 검증에 사용됨
-- `isImpersonating` 은 현재 세션 상태를 명확히 나타냄
+- `originalUser` 는 session/request 추적 및 보안 검증을 위해 유지됨
+- `isImpersonating` 은 client/runtime 계층에서 impersonation metadata로부터 파생됨
+
+기존 `actor / subject / effective` 명칭은 코드와 문서에서 runtime 의미가 명확하도록
+`originalUser / impersonatedUser / currentUser`로 변경했습니다.
 
 ---
 
@@ -222,7 +227,11 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Requirement
 
-모든 행동은 추적 가능해야 합니다.
+추적 가능성을 위해 session/request context에 original 및 effective identity를
+보존합니다. Workflow authorization은 effective user를 사용하고, Ticket History는
+현재 History 계약에 따라 effective actor를 기록합니다. 현재 구현은 모든 workflow
+History row에 original/effective identity 쌍을 저장하거나 compliance-grade audit
+infrastructure를 제공하지 않습니다.
 
 ---
 
@@ -245,8 +254,8 @@ originalUser: admin456
 
 ### Benefit
 
-- 완전한 감사 추적 기록
-- 컴플라이언스 대응에 유리함
+- Session/request identity 추적 가능성
+- Effective actor 기준 workflow History
 - 디버깅과 조사에 유용함
 
 ---
@@ -371,4 +380,4 @@ impersonation이 활성화되면 UI는 다음을 보여줘야 합니다.
 
 ## Summary
 
-impersonation 전략은 **안전하고 추적 가능한 사용자 컨텍스트 전환**을 가능하게 하며, 관리자와 에이전트가 다른 사용자를 대신해 동작하더라도 original identity를 보존하고 시스템 전반의 감사 가능성을 유지하도록 설계됩니다.
+impersonation 전략은 **안전하고 추적 가능한 사용자 컨텍스트 전환**을 가능하게 하며, 권한이 허용된 INTERNAL 관리자가 다른 사용자를 대신해 동작하는 동안 session/request context에 original 및 effective identity를 보존하도록 설계됩니다.

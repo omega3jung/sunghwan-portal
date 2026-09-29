@@ -1,5 +1,7 @@
+import type { AppUser } from "@/domain/user";
 import { createServiceDeskStatusError as createStatusError } from "@/server/data/serviceDesk/shared";
 
+import { resolveAuthoritativeTicketCategory } from "../ticket/ticketCategoryAccess";
 import { findEmployeeDepartmentIdByUsername } from "../ticket/ticketRepository";
 import { findActiveRequesterUpdateCategorySnapshotById } from "../ticket/ticketUpdateRepository";
 import { TicketDraftDto, TicketDraftWriteDto } from "./ticketDraftDto";
@@ -27,9 +29,10 @@ export async function getTicketDraft(
 export async function createTicketDraft(
   requesterUsername: string,
   input: TicketDraftWriteDto,
+  principal: Pick<AppUser, "companyId" | "userScope">,
 ): Promise<TicketDraftDto> {
   const rowInput = mapTicketDraftWriteDtoToRowInput(input);
-  await requireDraftCategory(rowInput.tk_category_id);
+  await requireDraftCategory(rowInput.tk_category_id, principal);
   let row;
   const requesterDepartmentId =
     await requireRequesterDepartmentId(requesterUsername);
@@ -62,9 +65,10 @@ export async function updateTicketDraft(
   ticketId: string,
   requesterUsername: string,
   input: TicketDraftWriteDto,
+  principal: Pick<AppUser, "companyId" | "userScope">,
 ): Promise<TicketDraftDto> {
   const rowInput = mapTicketDraftWriteDtoToRowInput(input);
-  await requireDraftCategory(rowInput.tk_category_id);
+  await requireDraftCategory(rowInput.tk_category_id, principal);
   const requesterDepartmentId =
     await requireRequesterDepartmentId(requesterUsername);
   const row = await updateTicketDraftRowById(
@@ -83,10 +87,17 @@ export async function updateTicketDraft(
   return mapTicketDraftRowToDto(row);
 }
 
-async function requireDraftCategory(categoryId: number): Promise<void> {
-  if (!(await findActiveRequesterUpdateCategorySnapshotById(categoryId))) {
+async function requireDraftCategory(
+  categoryId: number,
+  principal: Pick<AppUser, "companyId" | "userScope">,
+): Promise<void> {
+  const category = await findActiveRequesterUpdateCategorySnapshotById(categoryId);
+
+  if (!category) {
     throw createStatusError("Ticket draft category is unavailable.", 400);
   }
+
+  resolveAuthoritativeTicketCategory(category, principal);
 }
 
 async function requireRequesterDepartmentId(

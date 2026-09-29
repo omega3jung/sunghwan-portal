@@ -126,5 +126,9 @@
   "decisionStorybookCoverageStrategy202609": {
     "title": "2026-09 Storybook Coverage 전략",
     "description": "Storybook coverage 경계와 component playground 대체 전략 결정 기록입니다."
+  },
+  "decisionResolvedAutoCloseScheduling202609": {
+    "title": "2026-09 Resolved 자동 종료 스케줄링",
+    "description": "해결 후 7일의 유예기간, 시간별 스케줄링, database maintenance 실행 경계에 관한 결정 기록입니다."
   }
 }

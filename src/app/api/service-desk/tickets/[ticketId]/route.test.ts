@@ -85,7 +85,7 @@ describe("ticket detail route orchestration", () => {
 
     expect(mocks.localGetTicket).toHaveBeenCalledWith({ access, id: "ticket-1" });
     expect(mocks.withDerivedTicketOwnership).toHaveBeenCalledWith(
-      { id: "ticket-1" },
+      { id: "ticket-1", canViewNote: false, canCreateNote: false },
       "worker",
     );
     expect(mocks.withLocalTicketWorkerHistory).toHaveBeenCalledWith(

@@ -1,7 +1,6 @@
 import type { TicketAttachmentMetadata } from "@/domain/serviceDesk";
 import { ApiError } from "@/lib/application/api";
 import type { RequesterUpdateTicketRequestDto } from "@/lib/application/contracts/serviceDesk";
-import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketDetail } from "@/lib/application/contracts/serviceDesk";
 import { DbTicketHistory } from "@/lib/application/contracts/serviceDesk";
 import { resolveCategoryChangeDueAt } from "@/lib/application/serviceDesk/ticketSlaPolicy";
@@ -14,6 +13,7 @@ import {
 import { resolveCategorySnapshot } from "./category";
 import { resolveCreateTicketRouting } from "./createRouting";
 import { getLocalDemoHistories, getLocalDemoTickets } from "./state";
+import { toTicketMockDetailResource } from "./ticketResourceMapper";
 import { resolvePriorityValue, resolveRiskLevelValue } from "./ticketValue";
 
 const REQUESTER_EDITABLE_TICKET_STATUSES: readonly DbTicketDetail["status"][] =
@@ -142,7 +142,7 @@ export const localRequesterUpdateTicket = async ({
     }),
   );
 
-  return camelTicketDetailMapper([updatedTicket])[0];
+  return toTicketMockDetailResource(updatedTicket);
 };
 
 function createUpdatedTicket({

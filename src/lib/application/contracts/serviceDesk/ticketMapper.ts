@@ -186,6 +186,8 @@ export const snakeTicketDetailMapper: ArrayMapper<
     assigned_approver: item.isCurrentApprover,
     assigned_worker: item.isCurrentWorker,
     has_been_worker: item.hasBeenWorker,
+    can_view_note: item.canViewNote === true,
+    can_create_note: item.canCreateNote === true,
     assignee_usernames: selectCurrentResponsibleUsernames(item),
     assignees: selectCurrentResponsibleAssignees(item),
     merged_into_ticket_id: item.mergedIntoTicketId ?? null,
@@ -229,11 +231,13 @@ type DbTicketAssignmentSource = Pick<
 >;
 
 function mapTicketAssignment(
-  item: DbTicketAssignmentSource & Pick<DbTicketDetail, "has_been_worker">,
+  item: DbTicketAssignmentSource & Pick<DbTicketDetail, "has_been_worker" | "can_view_note" | "can_create_note">,
 ): TicketAssignmentState {
   return {
     ...mapTicketCurrentAssignment(item),
     hasBeenWorker: item.has_been_worker === true,
+    canViewNote: item.can_view_note === true,
+    canCreateNote: item.can_create_note === true,
   };
 }
 

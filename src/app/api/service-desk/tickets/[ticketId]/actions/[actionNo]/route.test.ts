@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   isRemoteRequest: vi.fn(),
   portalApiJson: vi.fn(),
   getLocalAccess: vi.fn(),
+  canAccessNote: vi.fn(),
   localGetTicket: vi.fn(),
   getMaxHistoryNo: vi.fn(),
   getTicketContext: vi.fn(),
@@ -50,6 +51,8 @@ vi.mock("@/lib/application/contracts/serviceDesk", () => ({
   mapTicketActionPayload: mocks.mapAction,
 }));
 
+vi.mock("@/app/api/_adapters/localDemo/serviceDesk/ticket/participation", () => ({ canAccessLocalTicketNote: mocks.canAccessNote }));
+
 import { handleTicketPortalApi } from "@/server/portalApi/serviceDesk/ticketApiHandler";
 
 import { GET, PATCH } from "./route";
@@ -73,6 +76,7 @@ const action = (overrides: Record<string, unknown> = {}) => ({
 describe("ticket action detail route orchestration", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.canAccessNote.mockResolvedValue(true);
     mocks.actions.splice(0, mocks.actions.length, action());
     mocks.histories.splice(0);
     mocks.isRemoteRequest.mockResolvedValue(false);
@@ -157,6 +161,15 @@ describe("ticket action detail route orchestration", () => {
     expect((await PATCH(request("PATCH", { active: false }), context())).status).toBe(403);
   });
 
+  it("denies direct NOTE reads and author deletion when NOTE access is lost", async () => {
+    mocks.canAccessNote.mockResolvedValue(false);
+    mocks.actions[0] = action({ action_type: "NOTE" });
+    expect((await GET(request("GET"), context())).status).toBe(404);
+    expect((await PATCH(request("PATCH", { active: false }), context())).status).toBe(403);
+    expect(mocks.actions[0].active).toBe(true);
+    expect(mocks.histories).toHaveLength(0);
+  });
+
   it("soft-deletes an authored note and appends immutable audit history", async () => {
     mocks.actions[0] = action({ action_type: "NOTE" });
 
@@ -176,6 +189,17 @@ describe("ticket action detail route orchestration", () => {
         to_value: { active: false },
       }),
     ]);
+  });
+
+  it("does not delete after a competing command closes the Ticket during NOTE authorization", async () => {
+    mocks.actions[0] = action({ action_type: "NOTE" });
+    mocks.canAccessNote.mockImplementationOnce(async () => {
+      mocks.getTicketContext.mockReturnValue({ ticket: { status: "Closed" } });
+      return true;
+    });
+    expect((await PATCH(request("PATCH", { active: false }), context())).status).toBe(409);
+    expect(mocks.actions[0].active).toBe(true);
+    expect(mocks.histories).toHaveLength(0);
   });
 
   it("forwards REMOTE PATCH body and preserves upstream status", async () => {

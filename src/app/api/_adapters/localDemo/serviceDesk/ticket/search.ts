@@ -5,7 +5,6 @@ import {
   normalizePagination,
   paginateItems,
 } from "@/lib/application/api/query";
-import { camelTicketDetailMapper } from "@/lib/application/contracts/serviceDesk";
 import { TicketSearchRequest } from "@/lib/application/contracts/serviceDesk";
 
 import {
@@ -15,6 +14,7 @@ import {
 import { sortTickets } from "./sort";
 import { getLocalDemoTickets } from "./state";
 import { withAssigneeFilterField } from "./ticketAssignment";
+import { toTicketMockDetailResource } from "./ticketResourceMapper";
 
 /**
  * Applies access scope, rule-group filters, sorting, and pagination to LOCAL tickets.
@@ -44,7 +44,7 @@ export function localSearchTickets({
   ).filter(
     (ticket) => ticket.active !== false,
   );
-  const tickets = camelTicketDetailMapper(activeTickets)
+  const tickets = activeTickets.map(toTicketMockDetailResource)
     .map(withAssigneeFilterField)
     .map((ticket) => ({
       ...ticket,

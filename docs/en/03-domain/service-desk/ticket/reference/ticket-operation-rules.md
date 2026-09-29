@@ -120,7 +120,7 @@ LOCAL uses demo-safe local handlers with the same DTO direction.
   - routing-sensitive changes rerun routing from the first approval step
   - category changes can rederive priority and risk from category defaults
   - category changes re-evaluate the minimum due date from the new category SLA
-    default and keep the later of current due date and new minimum
+    default and keep the latest of current due date, submitted due date, and new minimum
 - action persistence: no ticket action row
 - history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
 - notification boundary: not a separate notification source in the current docs
@@ -214,7 +214,8 @@ visibility, not permission to create new comments on closed tickets.
 
 ## Note
 
-- who: user with ticket access
+- who: a Ticket viewer who is an effective-user Admin, including an Admin requester;
+  otherwise a non-requester current/past assignee or current Category approval/assignment participant
 - allowed status: all live non-`Draft`, non-`Closed` statuses
 - input: content, prepared action attachments where supported
 - validation: content required
@@ -226,13 +227,38 @@ visibility, not permission to create new comments on closed tickets.
 
 Soft delete:
 
-- who: action writer
+- who: action writer who still has NOTE access
 - disallowed status: `Draft`, `Closed`
 - action type: `NOTE` only
 - history event: `NOTE_DELETED`
 
 The current route surface does not expose a note update route, although the
 history union reserves `NOTE_UPDATED`.
+
+Read/list/detail and NOTE-related History use this same access policy, including
+links to soft-deleted NOTE actions. Read access is not blocked merely by closure.
+Participation uses `Requester > CurrentAssignee > PreviousAssignee > null` plus
+independent approval/assignment flags. This relation precedence is unchanged;
+NOTE authorization applies effective-user Admin override before requester exclusion,
+then operational participation. Non-Admin requesters remain excluded even when
+also assignees or participants. Admin never bypasses Ticket visibility, and an
+original Admin's privileges are not added during impersonation.
+Previous relation uses persisted assignee
+snapshots, never the History actor. Approval includes every main-Category step,
+including skipped steps; Assignment uses the selected rule and falls back only
+when an own rule is absent. Category inactivity does not remove participation;
+current configuration changes do. Tenant/Company/Employee eligibility remains.
+REMOTE uses `service_desk.get_ticket_participation`; LOCAL reuses its existing
+candidate resolvers, including requester Job Field ancestry for MANAGER. UI capability
+flags are projections, never accepted as server authorization facts.
+
+The application participation projection adds `isAdmin` from the canonical
+effective-user role, not from SQL or browser input. Action/History and Ticket
+detail caches are partitioned by runtime and effective username; Action/History
+queries do not retain another identity's response during impersonation changes.
+Shared Ticket summaries derive the last comment from COMMENT and the last user
+activity from non-NOTE actions, excluding NOTE timestamps and author emails.
+Authorized NOTE activity remains available through the filtered Action/History APIs.
 
 ---
 
@@ -300,6 +326,11 @@ history union reserves `NOTE_UPDATED`.
 - query invalidation: ticket detail/list/search, actions, history
 
 Derived assignee emails must not be written into persisted `tk_email`.
+
+Current limitation: manual `ASSIGN` does not revalidate the submitted usernames
+against category/phase candidate eligibility or the persisted Assignment Rule.
+The actor/status guard and non-empty-list validation do not establish those
+candidate guarantees. This is separate from category-driven routing validation.
 
 ---
 
@@ -465,17 +496,20 @@ The explicit start-work command route can move `Assigned -> Working` without
 creating a work-session row. Work-session submission records work-time evidence
 and may apply the supported status transitions below.
 
-- who: current work assignee
+- who: current or previous work assignee with ticket visibility
 - allowed status: `Assigned`, `Working`, `Pending`
 - input:
   - `inputMode = duration | range`
-  - tracked minutes
+  - `durationMinutes`, or `startAt` and `endAt` for range mode
   - optional `nextStatus = Working | Pending | Resolved`
   - note
 - validation:
-  - actor is current work assignee
-  - tracked minutes are positive
-  - `Assigned` and `Pending` require an explicit status transition
+  - actor is a current worker or has persisted work-assignment history
+  - server-derived tracked minutes are positive
+  - only a current work assignee may change status; a previous worker may add
+    evidence without changing status
+  - a current work assignee submitting from `Assigned` or `Pending` must request
+    an explicit status transition
   - allowed transitions:
     - `Assigned -> Working`
     - `Working -> Pending | Resolved`
@@ -498,12 +532,13 @@ not currently have matching route files.
 
 - who: system
 - allowed status: `Resolved`
-- input: cron/system request
+- input: maintenance invocation; the HTTP endpoint accepts POST and GET with a
+  configured cron secret
 - validation:
   - resolved-history grace window has elapsed
   - the grace window is measured from the latest history entry that resolved the
     ticket, not from generic ticket `updatedAt`
-  - current grace value is 7 days
+  - current grace value is 168 elapsed hours; equality is eligible
 - ticket effect:
   - `Resolved -> Closed`
   - `closeReason = Completed`
@@ -513,6 +548,14 @@ not currently have matching route files.
 - history source: `SYSTEM_AUTO`
 - history action link: `actionNo = null`
 - query invalidation: system side effect, not user-triggered UI mutation
+
+The REMOTE schedule calls `service_desk.close_expired_resolved_tickets()` hourly
+through Supabase Cron (`0 * * * *`). The normal wait until the next check is less
+than approximately one hour. Missed runs or locked Tickets can be caught up on
+a later invocation while the ticket remains eligible. This policy does not
+guarantee closure at the exact eligibility time. Function deployment, eligible
+closure, and scheduled invocation have been verified; evidence is recorded in
+the [scheduling decision](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 ---
 

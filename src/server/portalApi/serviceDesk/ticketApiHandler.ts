@@ -36,6 +36,7 @@ import {
   updateTicketDraft,
 } from "@/server/data/serviceDesk/ticketDraft";
 import { getTicketHistoriesByTicketId } from "@/server/data/serviceDesk/ticketHistory";
+import { canReadAuthorizedTicketNote } from "@/server/data/serviceDesk/ticketParticipation/ticketParticipationService";
 import {
   createWorkSession,
   getWorkSessionsByTicketId,
@@ -162,7 +163,10 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketActionsByTicketId(ticketId);
+    const canViewNote = await canReadAuthorizedTicketNote(ticketId, currentUserName, principal.role === "ADMIN");
+    const items = (await getTicketActionsByTicketId(ticketId)).filter(
+      (item) => item.action_type !== "NOTE" || canViewNote,
+    );
 
     return createListResponse(items);
   }
@@ -190,6 +194,10 @@ export async function handleTicketPortalApi(
 
     if (context.method === "GET") {
       const action = await getTicketActionByTicketIdAndNo(ticketId, actionNo);
+      if (action?.action_type === "NOTE" &&
+        !(await canReadAuthorizedTicketNote(ticketId, currentUserName, principal.role === "ADMIN"))) {
+        return createNotFoundResponse();
+      }
       return action ? NextResponse.json(action) : createNotFoundResponse();
     }
 
@@ -203,6 +211,7 @@ export async function handleTicketPortalApi(
       ticketId,
       actionNo,
       currentUserName,
+      isAdmin: principal.role === "ADMIN",
     });
 
     return NextResponse.json(actionDto);
@@ -298,7 +307,8 @@ export async function handleTicketPortalApi(
       return createNotFoundResponse();
     }
 
-    const items = await getTicketHistoriesByTicketId(ticketId);
+    const canViewNote = await canReadAuthorizedTicketNote(ticketId, currentUserName, principal.role === "ADMIN");
+    const items = await getTicketHistoriesByTicketId(ticketId, { excludeNotes: !canViewNote });
 
     return createListResponse(items);
   }
@@ -321,6 +331,10 @@ export async function handleTicketPortalApi(
     }
 
     if (context.method === "POST") {
+      if (!(await getTicketDetail(ticketId, currentUserName, principal))) {
+        return createNotFoundResponse();
+      }
+
       const item = await createWorkSession({
         ...requireBody<Parameters<typeof createWorkSession>[0]>(
           context.options,
@@ -347,7 +361,13 @@ export async function handleTicketPortalApi(
         principal,
       );
 
-      return ticket ? NextResponse.json(ticket) : createNotFoundResponse();
+      if (!ticket) return createNotFoundResponse();
+      const canViewNote = await canReadAuthorizedTicketNote(ticketId, currentUserName, principal.role === "ADMIN");
+      return NextResponse.json({
+        ...ticket,
+        can_view_note: canViewNote,
+        can_create_note: canViewNote && ticket.status !== "Draft" && ticket.status !== "Closed",
+      });
     }
 
     if (context.method === "PUT") {
@@ -395,9 +415,16 @@ async function handleTicketDraftPortalApi(
   }
 
   if (context.method === "POST") {
+    const principal = await getUserProfileDtoByUsername(currentUserName);
+
+    if (!principal) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const draft = await createTicketDraft(
       currentUserName,
       requireBody<TicketDraftWriteDto>(context.options),
+      principal,
     );
 
     return NextResponse.json(draft, { status: 201 });
@@ -412,10 +439,17 @@ async function handleTicketDraftDetailPortalApi(
   ticketId: string,
 ) {
   if (context.method === "PUT") {
+    const principal = await getUserProfileDtoByUsername(currentUserName);
+
+    if (!principal) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const draft = await updateTicketDraft(
       ticketId,
       currentUserName,
       requireBody<TicketDraftWriteDto>(context.options),
+      principal,
     );
 
     return NextResponse.json(draft);

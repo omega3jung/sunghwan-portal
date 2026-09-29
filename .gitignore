@@ -39,3 +39,9 @@ next-env.d.ts
 *storybook.log
 /storybook-static/
 /public/storybook-static/
+
+# db backups
+/docs/db
+
+# release notes
+/docs/main-pr

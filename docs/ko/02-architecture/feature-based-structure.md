@@ -232,10 +232,11 @@ export default function Page() {
 
 ## Feature Module Structure
 
-각 feature는 일관된 내부 구조를 따릅니다.
+Feature는 책임에 따라 하위 폴더를 나눕니다. Service Desk는 `ticket`, `ticketDraft`,
+`ticketAction`, `category` 등의 slice로 구성되며, 대표적인 slice 구조는 다음과 같습니다.
 
 ```bash
-feature/serviceDesk/
+feature/serviceDesk/ticket/
   components/
   api/
   hooks/
@@ -451,13 +452,13 @@ Service Desk 방향:
 
 ```txt
 feature/serviceDesk/ticket/index.ts
--> constants, mapper, mock, types
+-> client-safe feature contract와 pure export
 
 feature/serviceDesk/ticket/components/index.ts
 -> UI components
 
 feature/serviceDesk/ticket/api/index.ts
--> server-safe API helpers
+-> server-safe query-key export
 
 feature/serviceDesk/ticket/api/client.ts
 -> client-only API exports
@@ -495,7 +496,7 @@ src/lib/client/
 
 ### Route Components
 
-- 특정 route에서만 사용하는 UI는 `app/**/_components`에 colocate
+- 특정 route에서만 사용하는 UI는 해당 route의 `components/` 디렉터리에 colocate
 - 재사용 횟수만으로 shared로 이동하지 않고 비즈니스 소유권을 우선함
 
 ---

@@ -405,7 +405,9 @@ metadata.
 Attachment preparation alone does not create ticket history and does not send a
 notification.
 
-History and notifications belong to successful ticket commands:
+History belongs to successful ticket commands. Those commands are also the
+intended integration point for notifications, but actual notification delivery
+is outside the implemented scope:
 
 - ticket create with prepared attachments
 - requester update that changes attachments

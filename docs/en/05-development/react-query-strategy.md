@@ -72,6 +72,32 @@ settings assignment rules
 The exact key builder lives in feature/domain code. Documentation should
 describe the family and ownership, not invent unrelated key names.
 
+### Effective User Cache Isolation
+
+When an authorization-sensitive result depends on the effective user, its
+deterministic query key must include the runtime-relevant effective identity.
+Current ticket detail, ticket action list/detail, and ticket history queries use
+runtime and effective-user scope because their responses can contain
+authorization-filtered data, NOTE visibility, or operation capability projections.
+
+On an effective-user change, including impersonation, do not reuse the previous
+principal's protected workflow response as cached or placeholder data for the new
+principal. A request started before the switch may complete later, but its
+response must not populate another principal's cache. This also applies to
+explicit cache writes from mutation responses: the Ticket Action mutation keeps
+the identity scope captured at mutation start for those writes.
+
+This extends the runtime-relevant scope rule; it does not require a username in
+every query key. Identity-independent reference/settings data does not need a
+per-user key solely because impersonation is supported. Mutation invalidation
+still targets the affected query families; isolation does not replace that rule
+or require global invalidation.
+
+Cache isolation supports client-side information isolation and UX consistency;
+it is not authorization. The server remains the final authority and authorizes
+requests using the trusted effective principal. Effective-user-aware caching and
+server-side authorization are complementary boundaries.
+
 ---
 
 ## Mutation Invalidation

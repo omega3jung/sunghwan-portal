@@ -104,7 +104,7 @@ export function UserImpersonation(props: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
-      <DialogContent className="sm:max-w-md left-auto right-1 top-[60px] translate-x-0 translate-y-0">
+      <DialogContent className="sm:max-w-md left-auto right-1 top-15 translate-x-0 translate-y-0">
         <DialogHeader>
           <DialogTitle>{t("impersonation.label")}</DialogTitle>
         </DialogHeader>
@@ -125,7 +125,7 @@ export function UserImpersonation(props: Props) {
               }
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false} sideOffset={4}>
             {companyOptions.map((company) => (
               <SelectItem key={company.value} value={company.value}>
                 {company.label}

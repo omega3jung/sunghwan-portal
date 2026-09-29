@@ -466,9 +466,9 @@ identity and activation time are replaced with server-derived values.
 
 The project currently uses two complementary layers:
 
-### 1. Middleware
+### 1. Next.js Proxy
 
-`middleware.ts`:
+`src/proxy.ts`:
 
 - ignores public/static/API traffic
 - reads JWT using `getToken()`
@@ -476,8 +476,11 @@ The project currently uses two complementary layers:
 
 Current caveat:
 
-- middleware is conservative and mainly guards the protected root HTML navigation path
+- the proxy guards protected HTML document navigations, including nested routes
 - it is not presented as the only protection mechanism for every client-side transition
+
+API routes authorize requests at their own server boundaries. The proxy replaces
+the earlier `middleware.ts` entry following the Next.js 16 migration.
 
 ---
 

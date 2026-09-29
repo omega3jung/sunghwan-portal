@@ -30,6 +30,7 @@ const mocks = vi.hoisted(() => ({
     getWorkSessionsByTicketId: vi.fn(),
   },
   getProfile: vi.fn(),
+  participationRow: vi.fn(),
 }));
 
 vi.mock("@/server/data/serviceDesk/ticket", () => mocks.ticket);
@@ -43,10 +44,13 @@ vi.mock("@/server/data/users", () => ({
   getUserProfileDtoByUsername: mocks.getProfile,
 }));
 
+vi.mock("@/server/data/serviceDesk/ticketParticipation/ticketParticipationRepository", () => ({ findTicketParticipationRow: mocks.participationRow }));
+
 import { handleTicketPortalApi } from "./ticketApiHandler";
 
 const principal = {
   username: "effective.employee",
+  companyId: 10,
   role: "USER",
   userScope: "CLIENT",
 };
@@ -54,6 +58,7 @@ const principal = {
 describe("Ticket portal API orchestration", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.participationRow.mockResolvedValue({ ticket_relation: "Requester", is_approval_participant: true, is_assignment_participant: true });
     mocks.getProfile.mockResolvedValue(principal);
     mocks.ticket.getTicketDetail.mockResolvedValue({ id: "ticket-1" });
     mocks.action.getTicketActionsByTicketId.mockResolvedValue([]);
@@ -61,6 +66,70 @@ describe("Ticket portal API orchestration", () => {
     mocks.ticket.startTicketWork.mockResolvedValue({ id: "ticket-1", status: "In Progress" });
     mocks.action.executeTicketAction.mockResolvedValue({ actionNo: 1 });
     mocks.draft.getTicketDraft.mockResolvedValue({ id: "draft-1" });
+  });
+
+  it.each(["USER", "ADMIN"])("applies effective %s requester precedence to NOTE list/detail/history without affecting COMMENT", async (role) => {
+    mocks.getProfile.mockResolvedValue({ ...principal, role });
+    const allowed = role === "ADMIN";
+    const note = { action_no: 2, action_type: "NOTE", content: "secret" };
+    const comment = { action_no: 1, action_type: "COMMENT", content: "shared" };
+    mocks.action.getTicketActionsByTicketId.mockResolvedValue([comment, note]);
+    const response = await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/actions", "GET", undefined, "effective.employee"));
+    expect(await response.json()).toEqual({ items: allowed ? [comment, note] : [comment], total: allowed ? 2 : 1 });
+    mocks.action.getTicketActionByTicketIdAndNo.mockResolvedValue(note);
+    expect((await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/actions/2", "GET", undefined, "effective.employee"))).status).toBe(allowed ? 200 : 404);
+    await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/histories", "GET", undefined, "effective.employee"));
+    expect(mocks.getHistories).toHaveBeenCalledWith("ticket-1", { excludeNotes: !allowed });
+    expect(mocks.participationRow).toHaveBeenCalledWith("ticket-1", "effective.employee", undefined);
+  });
+
+  it.each([
+    ["Requester", true, true, "USER", false],
+    ["Requester", false, false, "ADMIN", true],
+    ["CurrentAssignee", false, false, "USER", true],
+    ["PreviousAssignee", false, false, "USER", true],
+    [null, true, false, "USER", true],
+    [null, false, true, "USER", true],
+    [null, false, false, "ADMIN", true],
+    [null, false, false, "USER", false],
+  ])("projects NOTE read capability using effective participation and canonical role", async (relation, approval, assignment, role, allowed) => {
+    mocks.participationRow.mockResolvedValue({ ticket_relation: relation, is_approval_participant: approval, is_assignment_participant: assignment });
+    mocks.getProfile.mockResolvedValue({ ...principal, role });
+    mocks.ticket.getTicketDetail.mockResolvedValue({ id: "ticket-1", status: "Working" });
+    const response = await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1", "GET", undefined, "effective.employee"));
+    expect(await response.json()).toMatchObject({ can_view_note: allowed, can_create_note: allowed });
+    await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/histories", "GET", undefined, "effective.employee"));
+    expect(mocks.getHistories).toHaveBeenCalledWith("ticket-1", { excludeNotes: !allowed });
+  });
+
+  it("does not query participation or expand visibility for a hidden Ticket", async () => {
+    mocks.getProfile.mockResolvedValue({ ...principal, role: "ADMIN" });
+    mocks.ticket.getTicketDetail.mockResolvedValue(null);
+    const response = await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/actions", "GET", undefined, "effective.employee"));
+    expect(response.status).toBe(404);
+    expect(mocks.participationRow).not.toHaveBeenCalled();
+  });
+
+  it("keeps closed Admin requester NOTE reads available but projects create as false", async () => {
+    mocks.getProfile.mockResolvedValue({ ...principal, role: "ADMIN" });
+    mocks.ticket.getTicketDetail.mockResolvedValue({ id: "ticket-1", status: "Closed" });
+    const response = await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1", "GET", undefined, "effective.employee"));
+    expect(await response.json()).toMatchObject({ can_view_note: true, can_create_note: false });
+    const note = { action_no: 2, action_type: "NOTE" };
+    mocks.action.getTicketActionByTicketIdAndNo.mockResolvedValue(note);
+    expect((await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/actions/2", "GET", undefined, "effective.employee"))).status).toBe(200);
+  });
+
+  it("uses only the effective requester's canonical role even when the original user is Admin", async () => {
+    mocks.getProfile.mockImplementation(async (username: string) => ({ ...principal,
+      username, role: username === "original-admin" ? "ADMIN" : "USER" }));
+    mocks.action.getTicketActionsByTicketId.mockResolvedValue([{ action_no: 2, action_type: "NOTE" }]);
+    const response = await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/actions", "GET", undefined, "effective.employee"));
+    expect(await response.json()).toEqual({ items: [], total: 0 });
+    await handleTicketPortalApi(createContext("/service-desk/tickets/ticket-1/command/note", "POST",
+      { content: "Internal", isAdmin: true, originalUsername: "original-admin" }, "effective.employee"));
+    expect(mocks.getProfile.mock.calls.every(([username]) => username === "effective.employee")).toBe(true);
+    expect(mocks.action.executeTicketAction).toHaveBeenCalledWith(expect.objectContaining({ currentUserName: "effective.employee", isAdmin: false }));
   });
 
   it("rejects a missing effective username before loading a principal", async () => {
@@ -152,6 +221,71 @@ describe("Ticket portal API orchestration", () => {
     expect(mocks.getProfile).not.toHaveBeenCalled();
   });
 
+  it.each(["POST", "PUT"])("passes the canonical effective principal to draft %s", async (method) => {
+    mocks.draft.createTicketDraft.mockResolvedValue({ id: "draft-1" });
+    mocks.draft.updateTicketDraft.mockResolvedValue({ id: "draft-1" });
+    const body = { categoryId: "10", requesterUsername: "spoofed", principal: { companyId: "20", userScope: "INTERNAL" } };
+    const path = method === "POST" ? "/service-desk/tickets/draft" : "/service-desk/tickets/draft/draft-1";
+
+    const response = await handleTicketPortalApi(createContext(path, method, body, "effective.employee"));
+
+    expect(response.status).toBe(method === "POST" ? 201 : 200);
+    expect(mocks.getProfile).toHaveBeenCalledWith("effective.employee");
+    if (method === "POST") {
+      expect(mocks.draft.createTicketDraft).toHaveBeenCalledWith("effective.employee", body, principal);
+    } else {
+      expect(mocks.draft.updateTicketDraft).toHaveBeenCalledWith("draft-1", "effective.employee", body, principal);
+    }
+  });
+
+  it.each(["POST", "PUT"])("rejects draft %s without a canonical principal", async (method) => {
+    mocks.getProfile.mockResolvedValue(null);
+    const path = method === "POST" ? "/service-desk/tickets/draft" : "/service-desk/tickets/draft/draft-1";
+
+    const response = await handleTicketPortalApi(createContext(path, method, { categoryId: "10" }, "unknown"));
+
+    expect(response.status).toBe(403);
+    expect(mocks.draft.createTicketDraft).not.toHaveBeenCalled();
+    expect(mocks.draft.updateTicketDraft).not.toHaveBeenCalled();
+  });
+
+  it("keeps draft discard bound to the effective requester", async () => {
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/draft/draft-1", "DELETE", { requesterUsername: "spoofed" }, "effective.employee",
+    ));
+
+    expect(response.status).toBe(204);
+    expect(mocks.draft.discardTicketDraft).toHaveBeenCalledWith("draft-1", "effective.employee");
+  });
+
+  it.each([true, false])("requires parent visibility (%s) before work-session creation", async (visible) => {
+    mocks.ticket.getTicketDetail.mockResolvedValue(visible ? { id: "ticket-1" } : null);
+    // A worker accepted by the service must still pass the parent visibility boundary.
+    mocks.work.createWorkSession.mockResolvedValue({ id: "session-1" });
+    const body = { inputMode: "duration", durationMinutes: 30, ticketId: "spoofed-ticket", currentUserName: "spoofed" };
+
+    const response = await handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/work-session", "POST", body, "effective.employee",
+    ));
+
+    expect(response.status).toBe(visible ? 201 : 404);
+    expect(mocks.ticket.getTicketDetail).toHaveBeenCalledWith("ticket-1", "effective.employee", principal);
+    if (visible) {
+      expect(mocks.work.createWorkSession).toHaveBeenCalledWith({ ...body, ticketId: "ticket-1", currentUserName: "effective.employee" });
+    } else {
+      expect(mocks.work.createWorkSession).not.toHaveBeenCalled();
+    }
+  });
+
+  it("preserves worker authorization after passing ticket visibility", async () => {
+    mocks.work.createWorkSession.mockRejectedValueOnce(Object.assign(new Error("workerOnly"), { status: 403 }));
+
+    await expect(handleTicketPortalApi(createContext(
+      "/service-desk/tickets/ticket-1/work-session", "POST", { inputMode: "duration", durationMinutes: 30 }, "effective.employee",
+    ))).rejects.toMatchObject({ status: 403 });
+    expect(mocks.ticket.getTicketDetail).toHaveBeenCalledWith("ticket-1", "effective.employee", principal);
+  });
+
   it.each(["GET", "PATCH"])("checks parent visibility for an individual action %s", async (method) => {
     mocks.ticket.getTicketDetail.mockResolvedValue(null);
     const response = await handleTicketPortalApi(createContext(
@@ -170,7 +304,7 @@ describe("Ticket portal API orchestration", () => {
     expect(read.status).toBe(200);
     const removed = await handleTicketPortalApi(createContext(path, "PATCH", { active: false }, "effective.employee"));
     expect(removed.status).toBe(200);
-    expect(mocks.action.softDeleteTicketAction).toHaveBeenCalledWith({ ticketId: "ticket-1", actionNo: 2, currentUserName: "effective.employee" });
+    expect(mocks.action.softDeleteTicketAction).toHaveBeenCalledWith({ ticketId: "ticket-1", actionNo: 2, currentUserName: "effective.employee", isAdmin: false });
   });
 
 

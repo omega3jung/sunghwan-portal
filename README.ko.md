@@ -33,9 +33,7 @@ production-complete 범위까지 구현하지는 않았습니다.
 
 가장 빠르게 살펴보려면 로그인 화면에서 **Try Demo**를 선택하세요. LOCAL
 환경에서는 database credential 없이 구현된 ticket 및 settings workflow를
-확인할 수 있습니다. REMOTE service boundary와 workflow도 구현되어 있지만,
-호스팅된 REMOTE 계정에서는 Service Desk page 직접 접근을 의도적으로
-제한합니다.
+확인할 수 있습니다. REMOTE service boundary와 workflow도 구현되어 있습니다.
 
 ## 빠른 리뷰
 
@@ -76,10 +74,14 @@ production-complete 범위까지 구현하지는 않았습니다.
 - LOCAL 및 REMOTE impersonation을 포함한 role/permission-aware control
 - requester별 draft 복구와 attachment preparation boundary
 - tracked-minute aggregation을 포함한 work-session evidence
-- responsive dashboard, insights, ticket과 settings 화면
+- responsive dashboard, ticket 기반 Insights, ticket과 settings 화면
 - 애플리케이션 `/storybook` route에서 접근하는 제한된 Storybook coverage
 
 ## 현재 상태
+
+포트폴리오 범위의 기능 개발은 완료되었습니다. 이 저장소는 구현된 시스템과 설계를
+포트폴리오 결과물로 제공합니다. 아래 production 확장 항목은 예정된 기능 로드맵이
+아닌 범위상의 제한 사항입니다.
 
 LOCAL 포트폴리오 환경은 외부 infrastructure 없이 실행하고 살펴볼 수 있습니다.
 Ticket workflow, tenant-scoped settings, role-aware command, history와 work
@@ -89,6 +91,13 @@ REMOTE 경로는 주요 ticket 및 settings workflow를 대상으로 server-only
 PostgreSQL repository, DTO mapping, service, transaction과 선택적 external API
 adapter를 구현합니다. 호스팅된 review 경로 밖에서 실행하려면 해당 database
 schema와 credential 또는 호환되는 external service가 필요합니다.
+
+Database provisioning 자료는 Git에서 추적되는 저장소에 포함하지 않으므로,
+reviewer가 독립적으로 실행할 수 있는 구성은 LOCAL 경로입니다.
+
+Resolved-ticket auto-close는 Supabase Cron으로 매시간 실행됩니다. REMOTE database
+function과 예약 호출은 검증되었으며, 검증 근거는
+[스케줄링 결정](./docs/ko/06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
 
 이 시스템은 production-complete가 아니라 production-aligned 범위입니다.
 의도적으로 미룬 production concern은
@@ -144,7 +153,7 @@ Draft
 
 `Open`, `Approved`, `Reopen`은 persisted status가 아닙니다. Approval 완료는
 `APPROVAL_APPROVED` history event이며, reopen은 현재
-`Resolved -> Working`으로 전환하는 action입니다. Read request는 workflow
+`Resolved -> Working`으로 전환하는 action입니다. Ticket과 subresource read는 workflow
 state를 변경하지 않습니다.
 
 ### Draft와 Attachment Boundary
@@ -366,20 +375,21 @@ docs/
 
 현재 repository 수준의 검증 범위는 다음과 같습니다.
 
-- `npm test`의 unit project로 실행하는 source-local Vitest test file 163개
+- `npm test`가 실행하는 unit project의 include 패턴에 해당하는 source-local
+  Vitest test/spec file 178개(정적 파일 집계)
 - `npm run lint`를 통한 ESLint 9 static analysis
 - lint command에 포함된 `eslint-plugin-boundaries`의 architecture dependency
   policy 검사
 - custom component 및 선별한 layout, menu, feature-presentation UI를 포함하는
-  Storybook file 22개와 Story entry 94개
+  Storybook file 23개와 Story entry 100개(정적 집계)
 - `npm run build-storybook`을 통한 Storybook static build 검증
-- 선별한 `play` interaction file 5개와 headless Playwright Chromium provider를
+- 선별한 `play` interaction file 6개와 headless Playwright Chromium provider를
   사용하는 별도 Storybook/Vitest browser project
 - Storybook static output을 포함한 뒤 Next.js를 build하는 `npm run build`
 
 기본 `npm test` command는 unit project만 실행합니다. Storybook browser project는
-남은 interaction failure가 해결되기 전까지 clean하고 강제되는 CI gate가 아니라
-명시적으로 실행하는 diagnostic check입니다. 책임, 범위와 검증 boundary는
+clean하고 강제되는 CI gate가 아니라 명시적으로 실행하는 diagnostic check입니다.
+문서화된 interaction failure는 검증상의 제한으로 남아 있습니다. 책임, 범위와 검증 boundary는
 [테스트 전략](./docs/ko/05-development/testing-strategy.md)을 참고하세요.
 
 ## 로컬 개발
@@ -389,19 +399,23 @@ docs/
 - Node.js `24.x`
 - npm `11.x`
 
-이 version 범위는 `package.json`의 `engines` field로 제한합니다.
+지원하는 version 범위는 `package.json`의 `engines` field에 선언합니다.
 
 ### LOCAL Demo 실행
 
 ```bash
 npm ci
 cp .env.example .env.local
-npm run dev
 ```
 
 PowerShell에서는 필요에 따라 `cp` 대신
 `Copy-Item .env.example .env.local`을 사용하세요. `.env.local`의
-`NEXTAUTH_SECRET`에 비어 있지 않은 development value를 설정한 뒤
+`NEXTAUTH_SECRET`에 비어 있지 않은 development value를 설정한 뒤 실행합니다.
+
+```bash
+npm run dev
+```
+
 [http://localhost:3000](http://localhost:3000)을 열고 **Try Demo**를
 선택합니다. LOCAL 환경에는 PostgreSQL이나 external API가 필요하지 않습니다.
 
@@ -459,7 +473,7 @@ session의 `dataScope`로 결정합니다.
 
 ## 프로젝트 제한 사항
 
-현재 포트폴리오 범위에서는 다음 production 확장 영역을 의도적으로 제외합니다.
+포트폴리오에는 다음 구현상의 제한이 있으며, 아래 production 기능은 범위에서 제외합니다.
 
 - object storage, malware scanning과 signed download URL
 - 실제 notification delivery
@@ -468,6 +482,13 @@ session의 `dataScope`로 결정합니다.
 - 완전한 work-session update/delete 및 timer route surface
 - compliance-grade audit infrastructure
 - 고급 assignment load balancing
+- Dashboard summary card는 고정된 presentation value를 사용하며, Insights는
+  접근이 허용된 ticket search result를 집계합니다.
+- Manual `ASSIGN`은 actor, status, 비어 있지 않은 assignee list를 검증하지만
+  Category routing policy에 따른 후보 자격은 다시 검증하지 않습니다.
+  [Assignment Policy](./docs/ko/03-domain/service-desk/ticket/strategy/assignment-policy.md)를 참고하세요.
+- Recipient address는 employee/company eligibility 검증 없이 저장되며,
+  notification delivery는 구현 범위 밖입니다.
 
 이 boundary는 구현된 workflow behavior와 production-complete service에 추가로
 필요한 infrastructure 및 control을 구분합니다.

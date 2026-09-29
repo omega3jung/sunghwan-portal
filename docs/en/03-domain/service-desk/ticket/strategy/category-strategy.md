@@ -341,8 +341,11 @@ Category settings define future behavior.
 | approval settings changed | future resolution uses updated settings; force apply may explicitly restart affected `Approval` tickets |
 | assignment settings changed | current workers are preserved; future assignment resolution uses updated settings |
 
-Existing ticket state and history should change only through explicit ticket
-commands.
+Ordinary Settings changes preserve existing ticket state and routing. An
+administrator-confirmed Approval Step force apply is the controlled exception:
+it atomically validates and saves the configuration, restarts initial routing
+for affected `Approval` tickets, and appends `ROUTING_RESET` with reason
+`APPROVAL_CONFIGURATION_CHANGED`. Existing History is not rewritten.
 
 ---
 

@@ -332,7 +332,11 @@ Category settings는 future behavior를 정의합니다.
 | approval settings changed | future resolution은 updated setting 사용; force apply는 영향받은 `Approval` ticket을 명시적으로 재시작 가능 |
 | assignment settings changed | current worker 보존; future assignment resolution은 updated setting 사용 |
 
-Existing ticket state와 history는 explicit ticket command를 통해서만 변경되어야 합니다.
+일반적인 Settings 변경은 기존 ticket의 state와 routing을 유지합니다. 관리자가 확인한
+Approval Step force apply는 통제된 예외입니다. 설정 검증·저장, 영향받는 `Approval`
+ticket의 initial routing 재시작, `APPROVAL_CONFIGURATION_CHANGED`를 reason으로
+하는 `ROUTING_RESET` 추가를 하나의 원자적 작업으로 처리합니다. 기존 History는
+다시 쓰지 않습니다.
 
 ---
 

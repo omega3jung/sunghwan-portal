@@ -12,7 +12,7 @@ import { useCurrentSession } from "@/feature/auth/session/client";
 import { serviceDeskTicketApi } from "@/feature/serviceDesk/ticket/client";
 import { NS } from "@/lib/application/i18n";
 import { useLocalizedText } from "@/lib/client/i18n";
-import { useMutationToast } from "@/lib/client/toast";
+import { mutationToast } from "@/lib/client/toast";
 import type { ImageValueLabel } from "@/shared/types";
 
 import { useTicketActionMutation } from "../../api/client";
@@ -26,6 +26,7 @@ import {
   type TicketActionDraftFormValues,
 } from "../../forms";
 import { mapActionModeToActionType } from "../../mapper";
+import { getTicketActionToastMessages } from "../../toastMessages";
 import type { TicketActionMode, TicketActionUIState } from "../../types";
 import { TicketActionForm } from "./TicketActionForm";
 import { TicketActionToolFooter } from "./TicketActionToolFooter";
@@ -119,7 +120,6 @@ export function TicketActionTool({
   const { t, i18n } = useTranslation(NS.serviceDesk);
   const tLocal = useLocalizedText();
   const { current, data: sessionData } = useCurrentSession();
-  const mutationToast = useMutationToast();
   const { mutateAsync: createAction, isPending } = useTicketActionMutation();
   const actionForm = useForm<TicketActionDraftFormValues>({
     resolver: zodResolver(ticketActionDraftFormSchema),
@@ -225,7 +225,7 @@ export function TicketActionTool({
       });
     })();
 
-    await mutationToast(promise, "create", "comment");
+    await mutationToast(promise, getTicketActionToastMessages(values.actionType, t));
     closeMode();
     return true;
   };

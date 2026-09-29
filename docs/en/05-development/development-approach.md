@@ -6,6 +6,10 @@ The development approach is designed to prioritize **functional completeness, it
 when building a production-aligned prototype that remains explicit about
 deferred production infrastructure.
 
+This document records the approach used to build the portfolio. Feature
+development is complete; the iteration principles below explain that work and
+do not commit the project to further feature expansion.
+
 It aims to:
 
 - Deliver a working system as early as possible
@@ -26,7 +30,7 @@ Functional completeness comes before optimization and abstraction
 ## Background
 
 The project is based on an existing system previously implemented in a legacy environment,
-has been migrated to **Next.js 16 App Router**, and continues to be improved on that foundation.
+and was migrated to **Next.js 16 App Router** through incremental refinement.
 
 ---
 

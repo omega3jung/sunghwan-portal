@@ -48,10 +48,14 @@ Route path는 `approve`, `assignSelf`, `resubmit` 같은 lower camel action name
 
 ### Note
 
-- internal communication
-- `Closed`에서는 허용되지 않습니다.
+- 내부 operational communication이며 기존 Ticket visibility가 선행 조건입니다.
+- effective user가 Admin이면 requester여도 허용합니다. 그 외 requester는
+  assignee/participant를 겸해도 제외하며, non-requester인 현재/과거 assignee 또는
+  현재 Category 승인/배정 participant는 허용합니다.
+- impersonation 중 original Admin 권한을 합산하거나 Ticket visibility를 우회하지 않습니다.
+- 목록·상세 읽기 권한은 status와 독립적이며 생성은 `Draft`와 `Closed`에서 차단합니다.
 - `NOTE_CREATED`를 만듭니다.
-- 현재 route는 `Closed` 전 author soft delete를 지원합니다.
+- soft delete에는 작성자, 현재 NOTE 접근 권한, non-`Draft`/non-`Closed` 조건이 모두 필요합니다.
 - soft delete는 `NOTE_DELETED`를 만듭니다.
 
 History union에는 update event가 예약되어 있지만, 현재 route surface는 comment/note

@@ -118,7 +118,7 @@ DTO 방향을 유지하는 demo-safe local handler를 사용합니다.
   - routing-sensitive change는 첫 approval step부터 routing을 다시 실행합니다.
   - category change는 category default에서 priority와 risk를 다시 파생할 수 있습니다.
   - category change는 새 category SLA default에서 minimum due date를 다시 평가하고
-    current due date와 새 minimum 중 더 늦은 값을 유지합니다.
+    current due date, 제출한 due date, 새 minimum 중 가장 늦은 값을 유지합니다.
 - action persistence: ticket action row 없음
 - history event: `ROUTING_PRESERVED` or `ROUTING_RESET`
 - notification boundary: 현재 문서에서는 별도 notification source가 아닙니다.
@@ -212,7 +212,8 @@ visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 �
 
 ## Note
 
-- who: ticket 접근 권한이 있는 user
+- who: Ticket viewer 중 effective user가 Admin이면 requester여도 허용합니다.
+  그 외에는 non-requester인 현재/과거 assignee 또는 현재 Category 승인/배정 participant입니다.
 - allowed status: 모든 live non-`Draft`, non-`Closed` status
 - input: content, 지원되는 경우 prepared action attachment
 - validation: content 필수
@@ -224,13 +225,37 @@ visibility를 의미할 뿐, closed ticket에 새 comment를 만들 권한을 �
 
 Soft delete:
 
-- who: action writer
+- who: 현재 NOTE 접근 권한을 유지한 action writer
 - disallowed status: `Draft`, `Closed`
 - action type: `NOTE` only
 - history event: `NOTE_DELETED`
 
 현재 route surface는 note update route를 노출하지 않지만 history union은
 `NOTE_UPDATED`를 예약합니다.
+
+목록·상세와 NOTE 관련 History에도 같은 정책을 적용하며, soft delete된 NOTE의
+연결 이력도 포함합니다. Closed라는 이유만으로 기존 NOTE 읽기를 차단하지 않습니다.
+Participation은 `Requester > CurrentAssignee > PreviousAssignee > null`과 독립적인
+승인/배정 플래그를 사용합니다. 이 relation 우선순위는 변경하지 않습니다. NOTE authorization은
+effective-user Admin override, requester 제외, operational participation 순으로 적용합니다.
+non-Admin requester는 assignee/participant를 겸하더라도 제외합니다. Admin도 Ticket visibility를
+우회하지 않으며 impersonation 중 original Admin 권한을 합산하지 않습니다.
+과거 관계는 History actor가 아닌 persisted assignee
+snapshot으로 판정합니다. 승인은 skip된 step을 포함한 main Category의 모든 step,
+배정은 자체 rule이 없을 때만 parent로 fallback하는 현재 rule을 사용합니다.
+Category 비활성화는 participation을 제거하지 않지만 현재 configuration 변경은
+반영합니다. Tenant/Company/Employee eligibility는 유지합니다. REMOTE는
+`service_desk.get_ticket_participation`, LOCAL은 MANAGER의 requester Job Field
+계층 해석을 포함한 기존 후보 resolver를 사용합니다. UI capability는 projection이며
+서버 authorization fact로 받지 않습니다.
+
+Application participation의 `isAdmin`은 SQL이나 browser 입력이 아닌 canonical
+effective-user role에서 결합합니다. Action/History와 Ticket detail 캐시는 runtime과
+effective username별로 구분합니다. Action/History query는 impersonation 전환 중
+이전 identity의 응답을 유지하지 않습니다.
+공유 Ticket 요약의 마지막 comment는 COMMENT, 마지막 사용자 활동은 NOTE가 아닌
+Action에서 계산하여 NOTE 작성 시각과 작성자 이메일을 제외합니다. 권한이 확인된
+NOTE 활동은 filtering된 Action/History API에서 제공합니다.
 
 ---
 
@@ -298,6 +323,11 @@ Soft delete:
 - query invalidation: ticket detail/list/search, actions, history
 
 파생된 assignee email은 persisted `tk_email`에 쓰면 안 됩니다.
+
+현재 제한: manual `ASSIGN`은 제출된 username을 Category/phase 후보 자격이나
+persisted Assignment Rule에 대해 다시 검증하지 않습니다. Actor/status guard와
+비어 있지 않은 list 검증만으로 후보 자격까지 보장하지는 않습니다. 이는 Category 기반
+routing validation과 별개입니다.
 
 ---
 
@@ -463,17 +493,20 @@ Soft delete:
 `Assigned -> Working`으로 이동할 수 있습니다. Work-session submission은 work-time
 evidence를 기록하고 아래 지원 status transition을 적용할 수 있습니다.
 
-- who: current work assignee
+- who: Ticket visibility가 있는 현재 또는 과거 work assignee
 - allowed status: `Assigned`, `Working`, `Pending`
 - input:
   - `inputMode = duration | range`
-  - tracked minutes
+  - `durationMinutes`, 또는 range mode의 `startAt`과 `endAt`
   - optional `nextStatus = Working | Pending | Resolved`
   - note
 - validation:
-  - actor가 current work assignee입니다.
-  - tracked minutes는 positive여야 합니다.
-  - `Assigned`와 `Pending`에는 explicit status transition이 필요합니다.
+  - actor는 current worker이거나 persisted work-assignment history가 있어야 합니다.
+  - 서버가 계산한 tracked minutes는 positive여야 합니다.
+  - 현재 work assignee만 status를 변경할 수 있으며, 과거 worker는 status 변경 없이
+    evidence를 추가할 수 있습니다.
+  - 현재 work assignee가 `Assigned` 또는 `Pending`에서 제출할 때는 explicit status
+    transition이 필요합니다.
   - allowed transitions:
     - `Assigned -> Working`
     - `Working -> Pending | Resolved`
@@ -496,12 +529,12 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 
 - who: system
 - allowed status: `Resolved`
-- input: cron/system request
+- input: maintenance 호출; HTTP endpoint는 설정된 cron secret으로 POST와 GET을 허용
 - validation:
   - resolved-history grace window가 지났습니다.
   - grace window는 generic ticket `updatedAt`이 아니라 티켓을 resolved로 만든 최신
     history entry를 기준으로 측정합니다.
-  - 현재 grace 값은 7일입니다.
+  - 현재 grace 값은 경과 시간 168시간이며, 정확히 도달한 시점부터 대상입니다.
 - ticket effect:
   - `Resolved -> Closed`
   - `closeReason = Completed`
@@ -511,6 +544,13 @@ timer start/finish/switch용 feature-client method는 존재하지만 대응 rou
 - history source: `SYSTEM_AUTO`
 - history action link: `actionNo = null`
 - query invalidation: user-triggered UI mutation이 아닌 system side effect
+
+REMOTE schedule은 Supabase Cron(`0 * * * *`)으로
+`service_desk.close_expired_resolved_tickets()`를 매시간 호출합니다. 정상 실행 시 다음
+검사까지의 대기 시간은 대략 한 시간 미만입니다. 누락된 실행이나 잠긴 Ticket은 여전히
+대상 조건을 만족하면 이후 실행에서 처리할 수 있습니다. 이 정책은 eligibility 시각에
+정확히 종료됨을 보장하지 않습니다. 함수 배포, 대상 Ticket 종료와 예약 호출은 검증되었으며,
+근거는 [스케줄링 결정](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)에 기록합니다.
 
 ---
 

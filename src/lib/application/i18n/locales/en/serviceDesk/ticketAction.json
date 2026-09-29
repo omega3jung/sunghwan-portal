@@ -59,6 +59,68 @@
       "resubmit": "Resubmit Request",
       "cancel": "Cancel ticket"
     },
+    "toast": {
+      "approve": {
+        "loading": "Approving request…",
+        "success": "Request approved.",
+        "error": "Could not approve the request."
+      },
+      "decline": {
+        "loading": "Declining approval request…",
+        "success": "Approval request declined.",
+        "error": "Could not decline the approval request."
+      },
+      "comment": {
+        "loading": "Posting comment…",
+        "success": "Comment posted.",
+        "error": "Could not post the comment."
+      },
+      "note": {
+        "loading": "Saving internal note…",
+        "success": "Internal note saved.",
+        "error": "Could not save the internal note."
+      },
+      "assign": {
+        "loading": "Updating assignment…",
+        "success": "Assignment updated.",
+        "error": "Could not update the assignment."
+      },
+      "assignSelf": {
+        "loading": "Assigning ticket to you…",
+        "success": "Ticket assigned to you.",
+        "error": "Could not assign the ticket to you."
+      },
+      "reject": {
+        "loading": "Rejecting ticket…",
+        "success": "Ticket rejected.",
+        "error": "Could not reject the ticket."
+      },
+      "merge": {
+        "loading": "Merging ticket…",
+        "success": "Ticket merged.",
+        "error": "Could not merge the ticket."
+      },
+      "adjust": {
+        "loading": "Updating plan…",
+        "success": "Plan updated.",
+        "error": "Could not update the plan."
+      },
+      "reopen": {
+        "loading": "Reopening ticket…",
+        "success": "Ticket reopened.",
+        "error": "Could not reopen the ticket."
+      },
+      "resubmit": {
+        "loading": "Resubmitting request…",
+        "success": "Request resubmitted.",
+        "error": "Could not resubmit the request."
+      },
+      "cancel": {
+        "loading": "Canceling ticket…",
+        "success": "Ticket canceled.",
+        "error": "Could not cancel the ticket."
+      }
+    },
     "list": {
       "title": "Activity",
       "titleHint": "Search, sort, and review ticket actions.",

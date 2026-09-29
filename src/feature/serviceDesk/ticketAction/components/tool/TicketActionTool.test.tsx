@@ -52,7 +52,7 @@ vi.mock("@/feature/serviceDesk/ticket/client", () => ({
 }));
 
 vi.mock("@/lib/client/toast", () => ({
-  useMutationToast: () => workflowMocks.mutationToast,
+  mutationToast: workflowMocks.mutationToast,
 }));
 
 vi.mock("../../api/client", () => ({
@@ -71,7 +71,7 @@ vi.mock("./TicketActionToolLauncher", () => ({
   }) =>
     hidden ? null : (
       <div>
-        {(["comment", "approve", "adjust", "assignSelf"] as const).map(
+        {(["comment", "note", "approve", "adjust", "assignSelf"] as const).map(
           (mode) => (
             <button
               key={mode}
@@ -270,6 +270,27 @@ beforeEach(() => {
 });
 
 describe("TicketActionTool workflow", () => {
+  it.each(["comment", "note", "approve"] as const)(
+    "uses the submitted %s action for all toast states",
+    async (mode) => {
+      const user = userEvent.setup();
+      render(<TicketActionTool ticketId="ticket-1" ticket={createTicket()} />);
+      await user.click(screen.getByText(`open-${mode}`));
+      await user.click(screen.getByText("set-content"));
+      await user.click(screen.getByText("submit-action"));
+      await waitFor(() =>
+        expect(workflowMocks.mutationToast).toHaveBeenCalledWith(
+          expect.any(Promise),
+          {
+            loading: `actionTool.toast.${mode}.loading`,
+            success: `actionTool.toast.${mode}.success`,
+            error: `actionTool.toast.${mode}.error`,
+          },
+        ),
+      );
+    },
+  );
+
   it("renders nothing until a ticket is available", () => {
     const { container } = render(<TicketActionTool ticketId="ticket-1" />);
 
@@ -383,6 +404,11 @@ describe("TicketActionTool workflow", () => {
       );
     });
     expect(screen.queryByText("form-assignSelf")).not.toBeInTheDocument();
+    expect(workflowMocks.mutationToast).toHaveBeenCalledWith(expect.any(Promise), {
+      loading: "actionTool.toast.assignSelf.loading",
+      success: "actionTool.toast.assignSelf.success",
+      error: "actionTool.toast.assignSelf.error",
+    });
   });
 
   it("blocks submit until the editor is ready", async () => {

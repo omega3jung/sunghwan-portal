@@ -135,7 +135,12 @@ cross-Tenant merge는 거부합니다.
 
 ### Communication Actions
 
-`COMMENT`와 `NOTE`는 user-facing communication entry입니다.
+`COMMENT`는 공유 communication이고 `NOTE`는 내부 운영용 communication입니다.
+NOTE는 먼저 Ticket visibility를 요구합니다. 이후 effective user가 Admin이면
+requester여도 허용하고, 그 외 requester는 assignee/participant를 겸해도 제외하며
+non-requester 운영 참여자는 허용합니다. Impersonation 중 original Admin 권한을
+합산하지 않습니다. 읽기와 author-only soft delete에도 같은 접근 정책을 적용하며
+COMMENT authorization은 변경하지 않습니다.
 
 기존 comment는 ticket이 `Closed`된 뒤에도 계속 표시됩니다. Existing row visibility는
 closure 이후 새 row를 만들 수 있는 권한과 다릅니다. 새 communication row는 closed-ticket

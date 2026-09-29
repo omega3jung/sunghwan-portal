@@ -428,6 +428,15 @@ type ApprovalAssigneeType =
 The server DTO represents the same concept with `approval_step_assignee` and
 `skip_access_level`.
 
+For `MANAGER`, level 1 selects employees in the parent of the requester's Job
+Field; level 2 selects employees in its grandparent. This is organization
+ancestry, not an authentication permission/access level. `skipAccessLevel` is a
+separate routing rule. LOCAL and REMOTE use the persisted Ticket requester.
+Settings writes have no individual Ticket requester: they require a supported
+requester/ancestor/employee combination within the category Tenant company,
+with active employee, Job Field, and department references. Routing then resolves
+the actual requester and rejects an empty eligible approver set.
+
 ### Ordered Pipeline
 
 Approval steps are evaluated in ascending `index` order.
@@ -504,6 +513,7 @@ work ownership.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -662,9 +672,11 @@ stored category, priority, risk, due date, assignees, activity, and history.
 
 ### Approval Step Changed
 
-New approval resolution uses the updated approval steps. Tickets already in an
-approval state should keep their current approval ownership unless an explicit
-ticket action recalculates or updates it.
+An Approval Step tree change that affects tickets in `Approval` requires an
+explicit force apply. Ordinary save reports the impact as a conflict. Force
+apply validates and saves the tree, restarts initial routing for every affected
+ticket, and records `ROUTING_RESET` with `APPROVAL_CONFIGURATION_CHANGED` in one
+transaction. A failure rolls back both configuration and ticket changes.
 
 ### Assignment Rule Changed
 

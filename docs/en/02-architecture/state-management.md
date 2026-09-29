@@ -79,8 +79,13 @@ export const useFetchTickets = (params) => {
 
 ### Key Strategy
 
-- Server state is **never duplicated into client state**
-- Always accessed via React Query hooks
+- Interactive domain server state is accessed through React Query hooks and is
+  not copied into a parallel client store.
+- The auth/session facade is a deliberate exception: it caches the resolved
+  `AppUser` for the shell while JWT/session and profile APIs remain authoritative.
+  See [Auth & Session Strategy](auth-session-strategy.md).
+- Server Components may load server-rendered data through server-safe loaders
+  without using React Query.
 
 ---
 
@@ -272,7 +277,7 @@ Mutations are handled through React Query.
 const mutation = useMutation({
   mutationFn: createTicket,
   onSuccess: () => {
-    queryClient.invalidateQueries(["tickets"]);
+    queryClient.invalidateQueries({ queryKey: ticketQueryKeys.all });
   },
 });
 ```
@@ -485,7 +490,7 @@ Derived state should not be stored explicitly.
 ### Example
 
 ```ts
-const isOwner = ticket.requesterId === currentUser.id;
+const isOwner = ticket.requesterUsername === currentUser.username;
 ```
 
 ---

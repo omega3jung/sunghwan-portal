@@ -28,6 +28,9 @@ HTML 및 UI presentation state
 
 모든 부정형 boolean을 없애는 것이 목표는 아닙니다.
 
+코드 예시는 완전한 authorization 구현이 아닌 명명 방식을 설명합니다. 실제 권한은
+현재 domain policy와 server guard를 따라야 합니다.
+
 사용자가 무엇을 **할 수 있는지**, 시스템이 **현재 어떤 상태인지**, UI control이
 **현재 어떻게 표시되어야 하는지**를 구분하는 것이 중요합니다.
 
@@ -790,7 +793,7 @@ Feature component의 presentation prop을 통해 큰 permission 표현식을 노
 ```ts
 const canReject =
   ticket.assignedWorker &&
-  ticket.status !== "Closed" &&
+  REJECTABLE_STATUSES.includes(ticket.status) &&
   !rejectMutation.isPending;
 ```
 
@@ -1175,7 +1178,7 @@ const canUseImpersonation =
   appUser.canUseImpersonation === true;
 
 const isImpersonating =
-  session.impersonation !== null;
+  session.impersonation != null;
 ```
 
 여기에서:

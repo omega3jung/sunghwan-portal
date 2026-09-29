@@ -8,6 +8,7 @@ import { portalApiJson } from "@/app/api/_adapters/backend";
 import { TicketIdRouteContext } from "@/app/api/_adapters/http";
 import { getCurrentLocalTicketAccessContext } from "@/app/api/_adapters/localDemo/auth";
 import { localGetTicket } from "@/app/api/_adapters/localDemo/serviceDesk/ticket";
+import { canAccessLocalTicketNote } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/participation";
 import { getLocalDemoActions } from "@/app/api/_adapters/localDemo/serviceDesk/ticket/state";
 import {
   resolveApiErrorMessage,
@@ -42,8 +43,10 @@ export async function GET(request: NextRequest, context: TicketIdRouteContext) {
       );
     }
 
+    const canViewNote = await canAccessLocalTicketNote(ticketId, access);
     const items = getLocalDemoActions().filter(
-      (item) => item.ticket_id === ticketId && item.active !== false,
+      (item) => item.ticket_id === ticketId && item.active !== false &&
+        (item.action_type !== "NOTE" || canViewNote),
     );
 
     return NextResponse.json({

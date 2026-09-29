@@ -33,8 +33,7 @@ production-complete.
 
 Select **Try Demo** on the login page for the fastest review path. The LOCAL
 experience exercises implemented ticket and settings workflows without database
-credentials. REMOTE service boundaries and workflows are also implemented, but
-the hosted REMOTE account deliberately guards direct Service Desk page access.
+credentials. REMOTE service boundaries and workflows are also implemented.
 
 ## Quick Review
 
@@ -79,11 +78,16 @@ A focused review takes about five minutes:
 - role/permission-aware controls with LOCAL and REMOTE impersonation flows
 - per-requester draft recovery and attachment preparation boundaries
 - work-session evidence with tracked-minute aggregation
-- responsive dashboard, insights, ticket, and settings experiences
+- responsive dashboard, ticket-backed Insights, ticket, and settings
+  experiences
 - focused Storybook coverage available through the application `/storybook`
   route
 
 ## Current Status
+
+Feature development is complete for the portfolio scope. The repository
+presents the implemented system and its design as a portfolio artifact. The
+production extensions below are scope limitations, not a planned feature roadmap.
 
 The LOCAL portfolio experience is working and can be reviewed without external
 infrastructure. It includes mutable demo data for ticket workflows,
@@ -93,6 +97,13 @@ The REMOTE path implements server-only PostgreSQL repositories, DTO mapping,
 services, transactions, and optional external API adapters for the major ticket
 and settings workflows. Running it outside the hosted review path requires the
 corresponding database schema and credentials or compatible external services.
+Database provisioning assets are not included in the tracked repository, so the
+LOCAL path is the self-contained setup for reviewers.
+
+Resolved-ticket auto-close is scheduled hourly through Supabase Cron.
+The REMOTE database function and scheduled invocation have been verified;
+verification evidence is recorded in the
+[scheduling decision](./docs/en/06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 The system is production-aligned rather than production-complete. Deferred
 production concerns are listed under [Project Limitations](#project-limitations).
@@ -147,7 +158,8 @@ Draft
 
 `Open`, `Approved`, and `Reopen` are not persisted statuses. Approval completion
 is an `APPROVAL_APPROVED` history event; reopen is an action that currently
-transitions `Resolved -> Working`. Read requests do not mutate workflow state.
+transitions `Resolved -> Working`. Ticket and subresource reads do not mutate
+workflow state.
 
 ### Draft and Attachment Boundaries
 
@@ -369,22 +381,22 @@ Historical decision records are indexed in
 
 Current repository-level verification includes:
 
-- 163 source-local Vitest test files exercised by the unit project through
-  `npm test`
+- 178 source-local Vitest test/spec files matched by the unit project's include
+  pattern (static file count; `npm test` runs this project)
 - ESLint 9 static analysis through `npm run lint`
 - architecture dependency policies enforced by `eslint-plugin-boundaries` as
   part of that lint command
-- 22 Storybook files with 94 Story entries across custom components and
+- 23 Storybook files with 100 Story entries (static counts) across custom components and
   selected layout, menu, and feature-presentation UI
 - Storybook static-build verification through `npm run build-storybook`
-- a separate Storybook/Vitest browser project with five selected `play`
+- a separate Storybook/Vitest browser project with six selected `play`
   interaction files and a headless Playwright Chromium provider
 - an application production build that embeds the Storybook static output and
   then builds Next.js through `npm run build`
 
 The default `npm test` command runs only the unit project. The Storybook browser
 project remains an explicit diagnostic check rather than a clean, enforced CI
-gate while its remaining interaction failures are resolved. See the
+gate; documented interaction failures remain a verification limitation. See the
 [Testing Strategy](./docs/en/05-development/testing-strategy.md) for ownership,
 scope, and verification boundaries.
 
@@ -395,19 +407,24 @@ scope, and verification boundaries.
 - Node.js `24.x`
 - npm `11.x`
 
-The versions are enforced through the `engines` field in `package.json`.
+The supported versions are declared in the `engines` field in `package.json`.
 
 ### Run the LOCAL Demo
 
 ```bash
 npm ci
 cp .env.example .env.local
-npm run dev
 ```
 
 On PowerShell, use `Copy-Item .env.example .env.local` instead of `cp` if
 needed. Set `NEXTAUTH_SECRET` in `.env.local` to a non-empty development value,
-then open [http://localhost:3000](http://localhost:3000) and select **Try Demo**.
+then start the application:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) and select **Try Demo**.
 The LOCAL experience does not require PostgreSQL or an external API.
 
 To run Next.js and Storybook together and use the application `/storybook`
@@ -463,8 +480,8 @@ LOCAL versus REMOTE behavior is selected by the authenticated session's
 
 ## Project Limitations
 
-The current portfolio scope deliberately stops before these production
-extensions:
+The portfolio retains these implementation limits and excludes the following
+production capabilities:
 
 - object storage, malware scanning, and signed download URLs
 - real notification delivery
@@ -473,6 +490,13 @@ extensions:
 - complete work-session update/delete and timer route surfaces
 - compliance-grade audit infrastructure
 - advanced assignment load balancing
+- dashboard summary cards use fixed presentation values; Insights aggregates
+  the authorized ticket search results
+- manual `ASSIGN` validates the actor, status, and non-empty assignee list but
+  does not revalidate candidate eligibility against the category routing policy;
+  see the [Assignment Policy](./docs/en/03-domain/service-desk/ticket/strategy/assignment-policy.md)
+- recipient addresses are persisted without employee/company eligibility
+  validation; notification delivery is outside the implemented scope
 
 These boundaries distinguish implemented workflow behavior from the additional
 infrastructure and controls required for a production-complete service.

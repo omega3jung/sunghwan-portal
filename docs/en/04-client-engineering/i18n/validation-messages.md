@@ -25,6 +25,11 @@ Different message types should be separated by purpose, not grouped only by UI l
 
 The system separates feedback messages into **three namespaces**, each with a distinct role.
 
+`validation` and `message` currently use one JSON file per language. The `error`
+namespace is composed from `error/` fragments through `error/index.ts`; namespace
+ownership does not require a same-named JSON file. See
+[Locale Structure](locale-structure.md).
+
 ---
 
 ### Namespace List
@@ -92,10 +97,14 @@ Contains messages directly tied to **input validation rules**.
 
 ```json
 {
-  "required": "This field is required.",
-  "requiredWithField": "{{field}} is required.",
-  "minLength": "Must be at least {{count}} characters.",
-  "maxLength": "Must be less than {{count}} characters."
+  "required": {
+    "default": "This field is required.",
+    "withField": "{{field}} is required."
+  },
+  "length": {
+    "min": "Must be at least {{count}} characters.",
+    "max": "Must be at most {{count}} characters."
+  }
 }
 ```
 
@@ -130,14 +139,16 @@ Contains general application feedback shown after **expected user actions**.
 
 ```json
 {
-  "create": {
-    "success": "Created successfully."
-  },
-  "update": {
-    "success": "Updated successfully."
-  },
-  "delete": {
-    "success": "Deleted successfully."
+  "common": {
+    "create": {
+      "successfully": "Created successfully."
+    },
+    "update": {
+      "successfully": "Updated successfully."
+    },
+    "delete": {
+      "successfully": "Deleted successfully."
+    }
   }
 }
 ```
@@ -173,11 +184,13 @@ Contains **system-level or exceptional** error messages.
 
 ```json
 {
-  "network": "A network error occurred.",
-  "unauthorized": "You are not authorized.",
-  "forbidden": "You do not have permission.",
-  "notFound": "The requested data was not found.",
-  "unknown": "An unexpected error occurred."
+  "common": {
+    "failed": "Failed",
+    "load": {
+      "title": "Failed to load",
+      "message": "Failed to load {{item}}"
+    }
+  }
 }
 ```
 
@@ -205,7 +218,7 @@ Contains **system-level or exceptional** error messages.
 
 ---
 
-### error.json
+### error namespace
 
 - Used for unexpected or system-level failures
 
@@ -242,11 +255,11 @@ Contains **system-level or exceptional** error messages.
 ### validation.json
 
 ```txt
-required
-requiredWithField
-minLength
-maxLength
-invalidEmail
+required.default
+required.withField
+length.min
+length.max
+format.invalid
 ```
 
 ---
@@ -254,22 +267,21 @@ invalidEmail
 ### message.json
 
 ```txt
-create.success
-update.success
-delete.success
-save.success
+common.create.success
+common.update.success
+common.delete.success
+common.save.success
 ```
 
 ---
 
-### error.json
+### error namespace
 
 ```txt
-network
-unauthorized
-forbidden
-notFound
-unknown
+common.failed
+common.load.title
+common.load.message
+serviceDesk.ticketCommand.execute
 ```
 
 ---
@@ -284,7 +296,9 @@ Messages may support interpolation when dynamic context is needed.
 
 ```json
 {
-  "requiredWithField": "{{field}} is required."
+  "required": {
+    "withField": "{{field}} is required."
+  }
 }
 ```
 
@@ -316,9 +330,9 @@ A single message file may look simpler at first, but it introduces long-term pro
 ### Example
 
 ```txt
-validation.required
-message.create.success
-error.network
+validation:required.default
+message:common.create.success
+error:common.load.message
 ```
 
 These are all messages, but they serve fundamentally different roles.
@@ -339,7 +353,7 @@ These are all messages, but they serve fundamentally different roles.
 
 ---
 
-### error.json
+### error namespace
 
 - Reusable across features for shared system errors
 

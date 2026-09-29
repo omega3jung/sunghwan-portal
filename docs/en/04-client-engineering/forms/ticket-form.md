@@ -286,8 +286,9 @@ re-evaluates approval or assignment. If only routing-neutral fields change, it
 records `ROUTING_PRESERVED`.
 
 When category changes, category defaults also re-evaluate priority, risk, and
-the minimum due date. The due date remains unchanged when the current value is
-later than the new category minimum; otherwise it moves back to that minimum.
+the minimum due date. The resulting due date is the latest of the current due
+date, submitted due date, and new category minimum. A later submitted date is
+preserved, and category change never pulls the due date earlier.
 
 ---
 

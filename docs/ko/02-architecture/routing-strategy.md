@@ -157,6 +157,14 @@ purpose-aware해야 합니다. Settings capability와 approver/assignee company 
 Work-session update/delete/timer route는 route handler가 생기기 전까지 completed API로
 문서화하지 않습니다.
 
+Auto-close maintenance route는 POST와 GET alias를 허용하며, 둘 다
+`SERVICE_DESK_CRON_SECRET` 또는 `CRON_SECRET`으로 보호합니다. 이 GET handler는
+system command를 실행하지만 일반 Ticket/subresource GET은 읽기 전용입니다.
+REMOTE schedule은 Supabase Cron(`0 * * * *`)으로
+`service_desk.close_expired_resolved_tickets()`를 매시간 호출합니다. 배포와 예약 호출은
+검증되었습니다. 실행 경계와 검증 근거는
+[스케줄링 결정](../06-decisions/2026-09-resolved-auto-close-scheduling.md)을 참고하세요.
+
 ---
 
 ## Command Routes

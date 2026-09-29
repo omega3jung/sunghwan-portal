@@ -256,10 +256,12 @@ top-level folder without an established responsibility.
 
 ## Feature Module Structure
 
-Each feature follows a consistent structure.
+Features use responsibility-based subfolders. Service Desk is split into slices
+such as `ticket`, `ticketDraft`, `ticketAction`, and `category`; a representative
+slice is:
 
 ```bash
-feature/serviceDesk/
+feature/serviceDesk/ticket/
   components/
   api/
   hooks/
@@ -493,13 +495,13 @@ Service Desk direction:
 
 ```txt
 feature/serviceDesk/ticket/index.ts
--> constants, mapper, mock, types
+-> client-safe feature contracts and pure exports
 
 feature/serviceDesk/ticket/components/index.ts
 -> UI components
 
 feature/serviceDesk/ticket/api/index.ts
--> server-safe API helpers
+-> server-safe query-key exports
 
 feature/serviceDesk/ticket/api/client.ts
 -> client-only API exports
@@ -541,7 +543,7 @@ Generic browser helpers that do not know the domain may still use
 
 ### Route Components
 
-- UI used by one route is colocated under `app/**/_components`
+- UI used by one route is colocated under that route's `components/` directory
 - Ownership takes priority over reuse count when deciding whether to move code
 
 ---

@@ -17,6 +17,7 @@ export * from "./ticketActionCommand";
 export * from "./ticketAttachmentPreparation";
 export * from "./ticketHistory";
 export * from "./ticketMapper";
+export type { TicketParticipation, TicketRelation } from "./ticketParticipation";
 export * from "./ticketRequesterUpdate";
 export * from "./ticketSelectors";
 export * from "./ticketWrite";

@@ -248,8 +248,13 @@ toValue = { status: "Closed", closeReason: "Completed" }
 metadata.resolvedGraceDays = 7
 ```
 
-Resolved auto-close is based on the resolved-history timestamp plus the current
-7-day grace period, not a generic ticket `updatedAt` rule.
+Resolved auto-close is eligible 168 elapsed hours after the latest resolution
+History timestamp, not generic ticket `updatedAt`. Re-resolution restarts the
+grace period. `RESOLUTION_CLOSE` records the actual successful close, not merely
+the time eligibility was reached. See the
+[scheduling decision](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md)
+for the verified hourly REMOTE schedule and `RESOLUTION_CLOSE` / `SYSTEM_AUTO`
+History evidence.
 
 ---
 
@@ -264,6 +269,13 @@ Ticket Action and Ticket History are intentionally separate.
 
 Operational actions are immutable. Communication actions currently support soft
 delete for `COMMENT` and `NOTE`, producing `COMMENT_DELETED` or `NOTE_DELETED`.
+
+---
+
+NOTE History is subject to the same access policy as NOTE Actions after Ticket
+visibility is authorized. Unauthorized viewers receive neither NOTE events/type
+nor histories linked to NOTE Actions, including soft-deleted actions. Filtering
+occurs on read; stored immutable History is unchanged. COMMENT History is unchanged.
 
 ---
 

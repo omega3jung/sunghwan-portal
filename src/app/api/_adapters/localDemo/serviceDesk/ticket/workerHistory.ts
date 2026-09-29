@@ -13,11 +13,6 @@ type LocalTicketWorkerHistoryOptions = {
   currentUserName: string | null;
 };
 
-const WORK_ASSIGNMENT_EVENTS = new Set<DbTicketHistory["event"]>([
-  "ASSIGNMENT_RESOLVED",
-  "ASSIGNMENT_UPDATED",
-]);
-
 /** Projects local ticket worker history for the server-side LOCAL ticket adapter. */
 export function withLocalTicketWorkerHistory<
   T extends LocalTicketWorkerHistoryProjection,
@@ -61,7 +56,6 @@ export function hasLocalTicketWorkAssignmentHistory({
   return getLocalDemoHistories().some(
     (history) =>
       history.ticket_id === ticketId &&
-      isWorkAssignmentHistory(history) &&
       getHistoryAssigneeUsernames(history).includes(normalizedUsername),
   );
 }
@@ -79,43 +73,34 @@ function isCurrentWorkAssignee(
   );
 }
 
-function isWorkAssignmentHistory(history: DbTicketHistory) {
-  if (
-    history.type !== "ASSIGNMENT" ||
-    !WORK_ASSIGNMENT_EVENTS.has(history.event)
-  ) {
-    return false;
+function getHistoryAssigneeUsernames(history: DbTicketHistory): string[] {
+  if (history.type === "ASSIGNMENT") {
+    if (history.event === "ASSIGNMENT_RESOLVED") {
+      // The old assignees can be approvers; only the resolved workers count.
+      return getAssigneeUsernames(history.to_value);
+    }
+    const metadata = asRecord(history.metadata);
+    if (history.event === "ASSIGNMENT_UPDATED" &&
+      (metadata?.assignmentPhase === "WORK" || metadata?.actionType === "ASSIGN_SELF")) {
+      return [...getAssigneeUsernames(history.from_value), ...getAssigneeUsernames(history.to_value)];
+    }
   }
-
+  if (history.type !== "TICKET" || history.event !== "ROUTING_RESET") return [];
+  // Requester updates store routing in metadata; forced settings resets use
+  // from/to snapshots. Explicit JSON null is WORK; an absent key is unknown.
   const metadata = asRecord(history.metadata);
-
-  return metadata?.assignmentPhase !== "APPROVAL";
-}
-
-function getHistoryAssigneeUsernames(history: DbTicketHistory) {
-  return uniqueStrings([
-    ...getAssigneeUsernames(history.from_value),
-    ...getAssigneeUsernames(history.to_value),
-    ...getAssigneeUsernames(history.metadata),
-    ...getMetadataAssigneeUsernames(history.metadata),
-  ]);
+  const from = asRecord(history.from_value);
+  const to = asRecord(history.to_value);
+  return [
+    ...(metadata?.previousApprovalStepId === null ? normalizeStringArray(metadata.previousAssigneeUsernames) : []),
+    ...(metadata?.nextApprovalStepId === null ? normalizeStringArray(metadata.nextAssigneeUsernames) : []),
+    ...(from?.approvalStepId === null ? getAssigneeUsernames(from) : []),
+    ...(to?.approvalStepId === null ? getAssigneeUsernames(to) : []),
+  ];
 }
 
 function getAssigneeUsernames(value: unknown) {
   return normalizeStringArray(asRecord(value)?.assigneeUsernames);
-}
-
-function getMetadataAssigneeUsernames(value: unknown) {
-  const metadata = asRecord(value);
-
-  if (!metadata) {
-    return [];
-  }
-
-  return [
-    ...normalizeStringArray(metadata.previousAssigneeUsernames),
-    ...normalizeStringArray(metadata.nextAssigneeUsernames),
-  ];
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -140,8 +125,4 @@ function normalizeUsername(value: string | null) {
 
   const normalizedValue = value.trim();
   return normalizedValue.length > 0 ? normalizedValue : null;
-}
-
-function uniqueStrings(items: string[]) {
-  return Array.from(new Set(items));
 }

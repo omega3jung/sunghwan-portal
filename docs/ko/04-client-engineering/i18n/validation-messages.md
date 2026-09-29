@@ -26,6 +26,10 @@ Different message types should be separated by purpose, not grouped only by UI l
 
 시스템은 피드백 메시지를 **세 개의 namespace**로 분리하며, 각 namespace는 고유한 역할을 가집니다.
 
+현재 `validation`과 `message`는 언어별 JSON 파일 하나를 사용합니다. `error`
+namespace는 `error/index.ts`에서 `error/`의 fragment를 합성하므로 namespace 소유권이
+같은 이름의 JSON 파일을 요구하지는 않습니다. [Locale 구조](locale-structure.md)를 참고하세요.
+
 ---
 
 ### Namespace 목록
@@ -93,10 +97,14 @@ error
 
 ```json
 {
-  "required": "This field is required.",
-  "requiredWithField": "{{field}} is required.",
-  "minLength": "Must be at least {{count}} characters.",
-  "maxLength": "Must be less than {{count}} characters."
+  "required": {
+    "default": "This field is required.",
+    "withField": "{{field}} is required."
+  },
+  "length": {
+    "min": "Must be at least {{count}} characters.",
+    "max": "Must be at most {{count}} characters."
+  }
 }
 ```
 
@@ -131,14 +139,16 @@ error
 
 ```json
 {
-  "create": {
-    "success": "Created successfully."
-  },
-  "update": {
-    "success": "Updated successfully."
-  },
-  "delete": {
-    "success": "Deleted successfully."
+  "common": {
+    "create": {
+      "successfully": "Created successfully."
+    },
+    "update": {
+      "successfully": "Updated successfully."
+    },
+    "delete": {
+      "successfully": "Deleted successfully."
+    }
   }
 }
 ```
@@ -174,11 +184,13 @@ error
 
 ```json
 {
-  "network": "A network error occurred.",
-  "unauthorized": "You are not authorized.",
-  "forbidden": "You do not have permission.",
-  "notFound": "The requested data was not found.",
-  "unknown": "An unexpected error occurred."
+  "common": {
+    "failed": "Failed",
+    "load": {
+      "title": "Failed to load",
+      "message": "Failed to load {{item}}"
+    }
+  }
 }
 ```
 
@@ -206,7 +218,7 @@ error
 
 ---
 
-### error.json
+### error namespace
 
 - 예상치 못한 실패 또는 시스템 수준 오류에 사용합니다
 
@@ -243,11 +255,11 @@ error
 ### validation.json
 
 ```txt
-required
-requiredWithField
-minLength
-maxLength
-invalidEmail
+required.default
+required.withField
+length.min
+length.max
+format.invalid
 ```
 
 ---
@@ -255,22 +267,21 @@ invalidEmail
 ### message.json
 
 ```txt
-create.success
-update.success
-delete.success
-save.success
+common.create.success
+common.update.success
+common.delete.success
+common.save.success
 ```
 
 ---
 
-### error.json
+### error namespace
 
 ```txt
-network
-unauthorized
-forbidden
-notFound
-unknown
+common.failed
+common.load.title
+common.load.message
+serviceDesk.ticketCommand.execute
 ```
 
 ---
@@ -285,7 +296,9 @@ unknown
 
 ```json
 {
-  "requiredWithField": "{{field}} is required."
+  "required": {
+    "withField": "{{field}} is required."
+  }
 }
 ```
 
@@ -317,9 +330,9 @@ unknown
 ### 예시
 
 ```txt
-validation.required
-message.create.success
-error.network
+validation:required.default
+message:common.create.success
+error:common.load.message
 ```
 
 이들은 모두 메시지이지만, 본질적으로 서로 다른 역할을 가집니다.
@@ -340,7 +353,7 @@ error.network
 
 ---
 
-### error.json
+### error namespace
 
 - 공통 시스템 오류를 위해 여러 기능에서 재사용할 수 있습니다
 

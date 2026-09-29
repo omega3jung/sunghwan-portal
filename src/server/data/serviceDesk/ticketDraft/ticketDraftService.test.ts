@@ -29,6 +29,8 @@ import {
   updateTicketDraft,
 } from "./ticketDraftService";
 
+const principal = { companyId: 10, userScope: "CLIENT" as const };
+
 const input = {
   categoryId: "10",
   approvalStepId: null,
@@ -45,20 +47,20 @@ describe("Ticket draft persistence boundary", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.findDepartment.mockResolvedValue(3);
-    mocks.findCategory.mockResolvedValue({ cat_id: 10 });
+    mocks.findCategory.mockResolvedValue({ cat_id: 10, cat_scope: "PORTAL", tenant_company_id: 10 });
   });
 
   it.each([null, "", "0", "-1", "invalid"])("rejects missing or invalid category %s before persistence", async (categoryId) => {
-    await expect(createTicketDraft("requester", { ...input, categoryId })).rejects.toMatchObject({ status: 400 });
-    await expect(updateTicketDraft("draft-1", "requester", { ...input, categoryId })).rejects.toMatchObject({ status: 400 });
+    await expect(createTicketDraft("requester", { ...input, categoryId }, principal)).rejects.toMatchObject({ status: 400 });
+    await expect(updateTicketDraft("draft-1", "requester", { ...input, categoryId }, principal)).rejects.toMatchObject({ status: 400 });
     expect(mocks.createRow).not.toHaveBeenCalled();
     expect(mocks.updateRow).not.toHaveBeenCalled();
   });
 
   it("rejects an unavailable category for both draft writes", async () => {
     mocks.findCategory.mockResolvedValue(null);
-    await expect(createTicketDraft("requester", input)).rejects.toMatchObject({ status: 400 });
-    await expect(updateTicketDraft("draft-1", "requester", input)).rejects.toMatchObject({ status: 400 });
+    await expect(createTicketDraft("requester", input, principal)).rejects.toMatchObject({ status: 400 });
+    await expect(updateTicketDraft("draft-1", "requester", input, principal)).rejects.toMatchObject({ status: 400 });
     expect(mocks.createRow).not.toHaveBeenCalled();
     expect(mocks.updateRow).not.toHaveBeenCalled();
   });
@@ -71,16 +73,42 @@ describe("Ticket draft persistence boundary", () => {
     ["", "<p>&nbsp;&#160;&#xA0;</p>"],
   ])("persists partial content (%j, %j) as null and returns form strings", async (subject, content) => {
     mocks.createRow.mockResolvedValue({ ...createRow(), tk_subject: null, tk_content: null });
-    const result = await createTicketDraft("requester", { ...input, subject, content });
+    const result = await createTicketDraft("requester", { ...input, subject, content }, principal);
     expect(mocks.createRow).toHaveBeenCalledWith("requester", expect.objectContaining({ tk_category_id: 10, tk_subject: null, tk_content: null }));
     expect(result).toMatchObject({ categoryId: "10", subject: "", content: "" });
+  });
+
+  it.each([
+    ["own tenant", principal, "INTERNAL"],
+    ["provider accessing a customer portal", { companyId: 1, userScope: "INTERNAL" as const }, "PORTAL"],
+  ])("allows both draft writes for %s", async (_label, actor, scope) => {
+    mocks.findCategory.mockResolvedValue({ cat_id: 10, cat_scope: scope, tenant_company_id: 10 });
+    mocks.createRow.mockResolvedValue(createRow());
+    mocks.updateRow.mockResolvedValue(createRow());
+
+    await expect(createTicketDraft("requester", input, actor)).resolves.toMatchObject({ id: "draft-1" });
+    await expect(updateTicketDraft("draft-1", "requester", input, actor)).resolves.toMatchObject({ id: "draft-1" });
+    expect(mocks.updateRow).toHaveBeenCalledWith("draft-1", "requester", expect.objectContaining({ tk_category_id: 10 }));
+  });
+
+  it.each([
+    ["another client's tenant", principal, "PORTAL"],
+    ["a customer's internal scope", { companyId: 1, userScope: "INTERNAL" as const }, "INTERNAL"],
+  ])("rejects both draft writes to %s using stored Category context", async (_label, actor, scope) => {
+    mocks.findCategory.mockResolvedValue({ cat_id: 10, cat_scope: scope, tenant_company_id: 20 });
+    const spoofedInput = { ...input, tenantId: "10", scope: "PORTAL", companyId: actor.companyId };
+
+    await expect(createTicketDraft("requester", spoofedInput, actor)).rejects.toMatchObject({ status: 404 });
+    await expect(updateTicketDraft("draft-1", "requester", spoofedInput, actor)).rejects.toMatchObject({ status: 404 });
+    expect(mocks.createRow).not.toHaveBeenCalled();
+    expect(mocks.updateRow).not.toHaveBeenCalled();
   });
 
   it("normalizes absent internal content without widening the public DTO", async () => {
     mocks.createRow.mockResolvedValue({ ...createRow(), tk_subject: null, tk_content: null });
     const { subject: _subject, content: _content, ...partial } = input;
     // Simulate a malformed internal caller; public form payloads remain strings.
-    await createTicketDraft("requester", partial as typeof input);
+    await createTicketDraft("requester", partial as typeof input, principal);
     expect(mocks.createRow).toHaveBeenCalledWith("requester", expect.objectContaining({ tk_subject: null, tk_content: null }));
   });
 
@@ -91,18 +119,18 @@ describe("Ticket draft persistence boundary", () => {
 
   it("keeps the category and null body when only a subject is added", async () => {
     mocks.updateRow.mockResolvedValue({ ...createRow(), tk_content: null });
-    await updateTicketDraft("draft-1", "requester", { ...input, content: "<p></p>" });
+    await updateTicketDraft("draft-1", "requester", { ...input, content: "<p></p>" }, principal);
     expect(mocks.updateRow).toHaveBeenCalledWith("draft-1", "requester", expect.objectContaining({ tk_category_id: 10, tk_subject: input.subject, tk_content: null }));
   });
 
   it("preserves prepared image-only content but rejects unsafe sources", async () => {
     mocks.createRow.mockResolvedValue(createRow());
     const content = '<p><img src="/files/demo-image.png"></p>';
-    await createTicketDraft("requester", { ...input, content });
+    await createTicketDraft("requester", { ...input, content }, principal);
     expect(mocks.createRow).toHaveBeenCalledWith("requester", expect.objectContaining({ tk_content: content }));
     mocks.createRow.mockClear();
     for (const src of ["data:image/png;base64,aGVsbG8=", "blob:temporary"]) {
-      await expect(createTicketDraft("requester", { ...input, content: `<img src="${src}">` })).rejects.toMatchObject({ status: 400 });
+      await expect(createTicketDraft("requester", { ...input, content: `<img src="${src}">` }, principal)).rejects.toMatchObject({ status: 400 });
     }
     expect(mocks.createRow).not.toHaveBeenCalled();
   });
@@ -110,7 +138,7 @@ describe("Ticket draft persistence boundary", () => {
   it("rejects create before persistence when requester department is absent", async () => {
     mocks.findDepartment.mockResolvedValue(null);
 
-    await expect(createTicketDraft("requester", input)).rejects.toMatchObject({
+    await expect(createTicketDraft("requester", input, principal)).rejects.toMatchObject({
       status: 422,
     });
     expect(mocks.createRow).not.toHaveBeenCalled();
@@ -119,13 +147,13 @@ describe("Ticket draft persistence boundary", () => {
   it("maps the unique requester-draft constraint to 409", async () => {
     mocks.createRow.mockRejectedValue(Object.assign(new Error("duplicate"), { code: "23505" }));
 
-    await expect(createTicketDraft("requester", input)).rejects.toMatchObject({
+    await expect(createTicketDraft("requester", input, principal)).rejects.toMatchObject({
       status: 409,
     });
   });
 
   it.each([
-    ["update", () => updateTicketDraft("draft-1", "other", input), mocks.updateRow],
+    ["update", () => updateTicketDraft("draft-1", "other", input, principal), mocks.updateRow],
     ["discard", () => discardTicketDraft("draft-1", "other"), mocks.discardRow],
   ])("conceals another requester's draft on %s", async (_label, operation, repository) => {
     repository.mockResolvedValue(null);
@@ -146,7 +174,7 @@ describe("Ticket draft persistence boundary", () => {
           ...({ file: rawFile } as object),
         },
       ],
-    });
+    }, principal);
 
     const repositoryInput = mocks.createRow.mock.calls[0][1];
     expect(repositoryInput.tk_files).toEqual([

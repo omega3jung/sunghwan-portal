@@ -67,10 +67,10 @@ const TICKET_VIEW_COLUMNS = `
   tk_assignee_usernames,
   tk_assignees,
   tk_work_minutes,
-  tka_last_comment_at,
-  tka_last_comment_email,
-  tka_last_user_activity_at,
-  tka_last_user_activity_email,
+  shared_comment.tka_created_at as tka_last_comment_at,
+  shared_comment.e_email as tka_last_comment_email,
+  shared_activity.tka_created_at as tka_last_user_activity_at,
+  shared_activity.e_email as tka_last_user_activity_email,
   tk_close_reason,
   tk_merged_into_ticket_id,
   tk_merged_into_ticket_no,
@@ -88,10 +88,35 @@ const TICKET_VIEW_COLUMNS = `
   tk_images
 `;
 
+// Shared Ticket summaries must never disclose NOTE timestamps or author emails.
+// The reference vw_ticket includes NOTE in its legacy aggregates, so project
+// safe activity here for every application read, including mutation responses.
+const TICKET_SHARED_ACTIVITY_JOINS = `
+left join lateral (
+  select action.tka_created_at, employee.e_email
+  from service_desk.ticket_action action
+  left join public.employee employee on employee.e_username = action.tka_owner_username
+  where action.tka_ticket_id = ticket_view.tk_id
+    and action.tka_active = true and action.tka_action_type = 'COMMENT'
+  order by action.tka_created_at desc, action.tka_action_no desc
+  limit 1
+) shared_comment on true
+left join lateral (
+  select action.tka_created_at, employee.e_email
+  from service_desk.ticket_action action
+  left join public.employee employee on employee.e_username = action.tka_owner_username
+  where action.tka_ticket_id = ticket_view.tk_id
+    and action.tka_active = true and action.tka_action_type <> 'NOTE'
+  order by action.tka_created_at desc, action.tka_action_no desc
+  limit 1
+) shared_activity on true
+`;
+
 const FIND_ACTIVE_TICKET_VIEW_ROWS_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket ticket_view
+${TICKET_SHARED_ACTIVITY_JOINS}
 where tk_active = true
   and tk_status != 'Draft'
   and __AUTHORIZATION_PREDICATE__
@@ -102,6 +127,7 @@ const FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket ticket_view
+${TICKET_SHARED_ACTIVITY_JOINS}
 where tk_active = true
   and tk_status != 'Draft'
   and tk_id = $1
@@ -113,6 +139,7 @@ const FIND_ACTIVE_TICKET_VIEW_ROW_BY_ID_INCLUDING_DRAFT_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket ticket_view
+${TICKET_SHARED_ACTIVITY_JOINS}
 where tk_active = true
   and tk_id = $1
 limit 1;
@@ -333,6 +360,7 @@ select
 ${TICKET_VIEW_COLUMNS},
   resolved_history.resolved_at
 from service_desk.vw_ticket ticket_view
+${TICKET_SHARED_ACTIVITY_JOINS}
 cross join lateral (
   select max(tkh_created_at) as resolved_at
   from service_desk.ticket_history
@@ -350,6 +378,7 @@ const FIND_ACTIVE_TICKET_VIEW_ROWS_BY_SEARCH_QUERY = `
 select
 ${TICKET_VIEW_COLUMNS}
 from service_desk.vw_ticket ticket_view
+${TICKET_SHARED_ACTIVITY_JOINS}
 where __WHERE_CLAUSE__
 order by __ORDER_BY_CLAUSE__
 limit __LIMIT_PARAM__ offset __OFFSET_PARAM__;

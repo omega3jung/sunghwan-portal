@@ -109,6 +109,8 @@ role hierarchy가 아니라 서버에서 확인한 canonical `AppUser`로부터 
 | Tenant Admin          | `permission >= ADMIN` (`9`) 및 `userScope = CLIENT`   |
 | 설정 관리자 권한 없음 | `userScope`와 무관하게 더 낮은 permission             |
 
+숫자 임계값을 여러 곳에 중복하지 않고 canonical access-level constant를 사용합니다.
+
 API route의 설정 작업은 먼저 인증된 JWT의 `getUserAccessLevel(request) >= 9`를
 검사합니다. 그 다음 서버는 session에서 effective username을 구하고 canonical
 application user를 로드하여 `permission`, `userScope`, `companyId`를 신뢰할 수
@@ -413,6 +415,14 @@ type ApprovalAssigneeType =
 서버 DTO는 같은 개념을 `approval_step_assignee`와 `skip_access_level`로
 표현합니다.
 
+`MANAGER` level 1은 requester Job Field의 부모, level 2는 조부모 Job Field에
+속한 직원을 선택합니다. 인증 permission/access level이 아닌 조직 계층 거리이며,
+`skipAccessLevel`은 별도의 routing 규칙입니다. LOCAL과 REMOTE 모두 Ticket에
+저장된 requester를 기준으로 합니다. 설정 저장 시에는 특정 Ticket requester가
+없으므로 Category Tenant 회사 안에서 지원 가능한 requester·상위 Job Field·직원
+조합과 활성 employee/Job Field/department reference를 검증합니다. 실제 routing은
+해당 requester로 다시 resolve하며 eligible approver가 없으면 실패합니다.
+
 ### 순서 있는 파이프라인
 
 승인 단계는 `index` 오름차순으로 평가됩니다.
@@ -485,6 +495,7 @@ candidate search 권한을 부여하지는 않습니다.
 type AssigneeGroup = {
   jobFieldIds: string[];
   assigneeUsernames: string[];
+  includeTenantCompany?: boolean;
 };
 
 type AssignmentRule = {
@@ -640,9 +651,11 @@ priority, risk, due date, assignee, activity, history를 유지합니다.
 
 ### Approval Step 변경
 
-새 승인 해석은 갱신된 승인 단계를 사용합니다. 이미 승인 상태에 있는 티켓은
-명시적인 티켓 action이 다시 계산하거나 갱신하지 않는 한 현재 승인 담당자를
-유지해야 합니다.
+`Approval` 상태의 티켓에 영향을 주는 Approval Step tree 변경에는 명시적인
+force apply가 필요합니다. 일반 저장은 영향이 있으면 conflict를 반환합니다.
+Force apply는 tree 검증·저장, 모든 영향 티켓의 initial routing 재시작,
+reason이 `APPROVAL_CONFIGURATION_CHANGED`인 `ROUTING_RESET` 기록을 하나의
+transaction으로 처리합니다. 실패하면 설정과 티켓 변경을 모두 rollback합니다.
 
 ### Assignment Rule 변경
 
