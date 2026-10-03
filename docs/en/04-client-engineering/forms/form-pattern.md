@@ -51,7 +51,8 @@ Ticket form examples:
 - due date later than today
 - attachment field typed as browser `File[]` before preparation
 
-Client validation improves feedback. Server validation remains authoritative.
+Client validation gives users early feedback. The server makes the final
+validation decision.
 
 ---
 
@@ -215,7 +216,7 @@ as workflow feedback rather than swallowed by generic validation.
 | ticket detail | React Query/API |
 | settings/category options | React Query/API |
 | raw files | React Hook Form while open |
-| prepared attachment metadata | API payload and persisted ticket data |
+| prepared attachment metadata | API payload and stored ticket data |
 | global UI chrome | UI store where needed |
 
 ---
@@ -254,7 +255,7 @@ workflow and recorded in history.
 
 ## Summary
 
-The current form pattern keeps user input local, server data in React Query, and
-workflow effects in server commands. This lets ticket create, requester update,
-draft, and attachment preparation share form discipline without collapsing into
-one oversized abstraction.
+The current form pattern keeps user input local, manages server data in React
+Query, and executes workflow changes through server commands. Ticket creation,
+requester updates, drafts, and attachment preparation follow the same ownership
+rules while retaining their distinct workflows.

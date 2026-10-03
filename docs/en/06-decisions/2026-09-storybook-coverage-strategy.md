@@ -281,7 +281,7 @@ Every UI file needs Storybook coverage
 ```
 
 Story count and Story-file count are not quality metrics. Coverage is evaluated
-by whether a public contract can be inspected independently.
+by whether the public API and expected behavior can be inspected independently.
 
 ### 5. Meaningfully Different States Become Stories
 
@@ -446,8 +446,8 @@ behavior can run it explicitly:
 npm exec vitest -- run --project storybook
 ```
 
-The default `npm test` command runs only the `unit` project. The Storybook
-browser project is not currently a clean, enforced CI gate.
+The default `npm test` command runs only the `unit` project. The Storybook browser
+project is not currently a required CI check with all tests passing.
 
 ---
 
@@ -478,8 +478,8 @@ The implementation provides:
 - integration of the Storybook static build into the application production
   build.
 
-The Storybook browser project currently passes 90 of 94 Story tests. Four
-`play` scenarios still fail under the Vitest browser runner:
+At the time of this decision, the Storybook browser project passed 90 of 94 Story
+tests. Four `play` scenarios remained failing under the Vitest browser runner:
 
 ```txt
 ColorPicker / Default

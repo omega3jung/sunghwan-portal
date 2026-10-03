@@ -50,7 +50,7 @@ This resulted in inconsistent UX.
 
 ### 1. Define a System-Level Layout
 
-The application adopts a **home layout structure**:
+The application adopted this **home layout structure**:
 
 ```txt
 App Layout
@@ -296,5 +296,4 @@ This creates a UI architecture that is:
 - Role-aware
 - Aligned with domain workflows
 
-It ensures that the system behaves not as a collection of screens,
-but as a coherent and structured application interface.
+This gives screens a consistent place in the application and its workflows.

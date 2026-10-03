@@ -7,7 +7,7 @@
 `docs/` 아래의 최종 설계 문서와 달리, 이 로그는 다음에 초점을 둡니다.
 
 - 구현 과정에서 실제로 마주한 실용적인 트레이드오프
-- 실제 코드와 설계 원칙 사이의 정렬
+- 실제 코드에 설계 원칙을 적용한 방식
 - 시스템의 명확성, 확장성, 현실성을 높이기 위해 내린 결정
 
 ---
@@ -32,8 +32,8 @@ Service Desk 데이터는 자연스럽게 두 가지 범주로 나뉩니다.
 
 모든 데이터에 하나의 query 전략만 적용하면 다음 문제가 발생합니다.
 
-- 정적 데이터에 불필요한 refetch 발생
-- 동적인 ticket 데이터에서 UI가 stale 상태가 됨
+- 정적 데이터를 불필요하게 다시 조회
+- 변경되는 티켓 데이터를 UI에서 오래된 값으로 표시
 
 ---
 
@@ -73,7 +73,7 @@ refetchOnWindowFocus: true;
 
 ### Context
 
-ticket form은 create와 update 작업에서 동일한 입력 필드를 사용합니다.
+티켓 폼은 생성(`create`)과 수정(`update`) 작업에서 동일한 입력 필드를 사용합니다.
 
 ---
 
@@ -102,7 +102,7 @@ type FormMode = "create" | "update" | "view";
 
 ### Rationale
 
-- `create`와 `update`는 API semantics (`POST` vs `PUT`)가 다릅니다
+- `create`와 `update`는 API의 처리 의미(`POST` vs `PUT`)가 다릅니다
 - `view`는 읽기 전용 UI 상태를 표현합니다
 
 ### Insight
@@ -160,14 +160,14 @@ Page layer               -> orchestration만 담당
 </TicketList>
 ```
 
-- `TicketList`가 데이터를 fetch합니다
-- `TicketItem`은 presentational component로 유지합니다
+- `TicketList`가 데이터를 조회합니다
+- `TicketItem`은 props로 받은 데이터를 표시하는 컴포넌트로 유지합니다
 
 ### Rationale
 
-- data logic을 domain feature 가까이에 둘 수 있습니다
-- child component의 재사용성이 좋아집니다
-- 불필요한 prop drilling을 막을 수 있습니다
+- 데이터 처리 로직을 해당 도메인 기능 안에 둘 수 있습니다
+- 하위 컴포넌트의 재사용성이 좋아집니다
+- 중간 컴포넌트를 거쳐 불필요하게 props를 전달하는 일을 줄일 수 있습니다
 
 ### Impact
 
@@ -237,7 +237,7 @@ fieldLabel(name);
 
 - 불필요한 abstraction이 추가됩니다
 - reviewer 입장에서 가독성이 떨어집니다
-- 실제 translation key가 가려집니다
+- 실제 번역 키가 가려집니다
 
 ---
 
@@ -275,9 +275,9 @@ t(`field.${name}.label`, { ns: "common" });
 ticket 데이터는 다음의 영향을 받습니다.
 
 - SLA
-- assignment
-- status changes
-- approval state
+- 담당자 배정
+- 상태 변경
+- 승인 상태
 
 ---
 
@@ -356,9 +356,9 @@ drawer는 workflow container가 아니라 interaction surface다.
 ### Key Themes
 
 - 정적 데이터와 동적 데이터를 명확히 분리합니다
-- 책임 기준으로 component boundary를 정의합니다
-- routing을 domain design의 일부로 다룹니다
-- portfolio 맥락에서는 abstraction보다 clarity를 우선합니다
+- 각 컴포넌트가 담당할 역할을 기준으로 나눕니다
+- 페이지 이동을 도메인 설계의 일부로 다룹니다
+- 포트폴리오에서는 코드의 의미를 쉽게 확인할 수 있게 합니다
 - ticket 데이터는 항상 최신성과 신뢰성을 유지합니다
 - 주요 워크플로우와 보조 상호작용을 구분합니다
 
@@ -366,12 +366,10 @@ drawer는 workflow container가 아니라 interaction surface다.
 
 ## Final Note
 
-이 결정들은 이론적인 논의에서 나온 것이 아닙니다.
-다음과 같은 실제 작업 과정에서 도출되었습니다.
+이 결정들은 다음 실제 작업에서 도출되었습니다.
 
 - 실제 시스템 마이그레이션
-- legacy pattern 재구성
-- 문서화된 architecture와 구현 정렬
+- 기존 구현 방식 재구성
+- 문서화된 아키텍처와 구현 비교·조정
 
-따라서 이 결정들은 이상화된 설계가 아니라,
-실제 운영 환경에 맞춘 실용적인 트레이드오프를 반영합니다.
+따라서 실제 운영 환경을 고려한 선택과 그에 따른 장단점을 반영합니다.

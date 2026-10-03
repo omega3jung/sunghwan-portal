@@ -10,8 +10,8 @@ The Service Desk system needed an authentication and session model that could su
 - Impersonation as a first-class feature
 - Traceability and auditability
 
-At this stage, the goal was not just to authenticate users, but to establish a stable foundation
-for all user-context-dependent behavior across the application.
+At this stage, the goal was to authenticate users and provide a shared basis for behavior
+that depends on the current user across the application.
 
 ---
 
@@ -388,6 +388,5 @@ to create a system that is:
 - Extensible
 - Fully integrated with impersonation
 
-It is not just an authentication system, but a foundation for all
-user-context-dependent behavior, including impersonation, role-based UI,
-and auditability.
+The same structure supports behavior that depends on the current user, including
+impersonation, role-based UI, and auditability.

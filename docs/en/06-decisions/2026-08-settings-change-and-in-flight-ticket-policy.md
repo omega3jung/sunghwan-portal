@@ -214,7 +214,7 @@ The system therefore needs to distinguish:
 
 ### 5. Tenant changes are fundamentally different from routing recalculation
 
-Tenant is the Service Desk configuration boundary.
+Tenant separates Service Desk settings and limits access to them.
 
 Changing a Category from one Tenant to another would potentially change:
 
@@ -653,9 +653,9 @@ The server remains responsible for determining the actual affected Tickets.
 Approval configuration is especially sensitive because an `Approval` Ticket
 stores its current Approval Step and current approvers.
 
-If a Category or Approval Step change invalidates the current approval routing,
-the Ticket must not continue by pretending that its previous incomplete
-approval pipeline is still authoritative.
+If a Category or Approval Step change invalidates the current approver selection,
+the Ticket must not continue using the previous incomplete approval pipeline as
+though it were still valid.
 
 The selected policy is:
 
@@ -867,8 +867,8 @@ Ticket rerouted
 -> Settings write fails
 ```
 
-Where the supported mutation requires immediate Ticket recalculation, the
-operation should be treated as one application use case.
+When a supported mutation requires immediate Ticket recalculation, process the
+Settings and Ticket changes as one application operation.
 
 Conceptually:
 

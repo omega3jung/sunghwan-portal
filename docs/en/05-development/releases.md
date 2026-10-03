@@ -19,9 +19,10 @@ traceability; this document does not depend on separate PR-description files.
 
 fix(auth, service-desk, docs): publish v1.1.0 workflow contract hardening
 
-- Validated REMOTE Draft category access with the canonical effective principal
+- Validated REMOTE Draft category access with the server-resolved effective user
+  (canonical effective principal)
   and required parent-ticket visibility before Work Session creation, preserving
-  effective-user identity as the authorization source during impersonation.
+  effective-user identity as the basis for authorization during impersonation.
 - Aligned participation-based NOTE access across LOCAL and REMOTE. Effective-user
   Admin requesters may access NOTE; non-Admin requesters remain excluded. Ticket
   visibility remains required, original Admin privileges do not carry into an

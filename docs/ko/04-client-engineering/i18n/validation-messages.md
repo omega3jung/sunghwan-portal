@@ -27,8 +27,9 @@ Different message types should be separated by purpose, not grouped only by UI l
 시스템은 피드백 메시지를 **세 개의 namespace**로 분리하며, 각 namespace는 고유한 역할을 가집니다.
 
 현재 `validation`과 `message`는 언어별 JSON 파일 하나를 사용합니다. `error`
-namespace는 `error/index.ts`에서 `error/`의 fragment를 합성하므로 namespace 소유권이
-같은 이름의 JSON 파일을 요구하지는 않습니다. [Locale 구조](locale-structure.md)를 참고하세요.
+namespace는 `error/index.ts`에서 `error/`의 번역 파일들을 조합합니다. 따라서
+namespace마다 같은 이름의 JSON 파일이 있어야 하는 것은 아닙니다.
+[Locale 구조](locale-structure.md)를 참고하세요.
 
 ---
 
@@ -288,7 +289,8 @@ serviceDesk.ticketCommand.execute
 
 ## Interpolation 전략
 
-메시지에 동적인 맥락을 담아야 할 때는 interpolation을 사용할 수 있습니다.
+메시지에 필드 이름이나 개수처럼 실행 시 정해지는 값을 넣을 때는 보간(interpolation)을
+사용할 수 있습니다.
 
 ---
 
@@ -415,6 +417,6 @@ error:common.load.message
 
 ## 요약
 
-검증 메시지 전략은 **validation**, **일반 애플리케이션 피드백**, **시스템 수준 오류**를
+검증 메시지 전략은 **입력 검증**, **일반 애플리케이션 피드백**, **시스템 수준 오류**를
 각각 별도의 namespace로 분리합니다. 이렇게 하면 메시지 유형별 목적이 분명해지고,
 맥락에 맞게 재사용할 수 있으며, 애플리케이션이 커져도 유지보수하기 쉽습니다.

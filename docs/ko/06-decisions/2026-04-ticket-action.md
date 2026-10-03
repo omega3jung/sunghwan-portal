@@ -2,16 +2,16 @@
 
 ## Context
 
-Service Desk 시스템은 원래 티켓 안의 사용자 커뮤니케이션과 activity를 표현하기 위해
+Service Desk 시스템은 원래 티켓 안의 사용자 소통과 작업 활동을 표현하기 위해
 `TicketComment` 기반 구조를 사용했습니다.
 
 이 접근은 단순한 메시지 교환에는 충분했지만,
 시스템이 발전하면서 추가 요구사항이 드러났습니다.
 
-- assignment, priority 변경, ticket merge 같은 운영 액션 표현
-- ticket 관련 activity를 구조적이고 추적 가능하게 기록
+- 담당자 배정, 우선순위 변경, 티켓 병합 같은 운영 액션 표현
+- 티켓 관련 활동을 구조적이고 추적 가능하게 기록
 - 각 변경의 의도와 책임을 더 분명히 하여 감사 가능성 강화
-- 실제 service desk workflow에 맞도록 UI 동작 정렬
+- 실제 서비스 데스크 업무 흐름에 맞는 UI 동작
 
 이 시점에서 comment-only 모델의 한계가 분명해졌습니다.
 
@@ -29,21 +29,19 @@ Service Desk 시스템은 원래 티켓 안의 사용자 커뮤니케이션과 a
 
 ### 2. Poor Representation of Operational Actions
 
-다음과 같은 핵심 액션을
+다음 핵심 액션을 별도 도메인 엔티티로 표현할 수 없었습니다.
 
 - 사용자 할당
-- priority, risk level, due date 조정
-- ticket 병합
+- 우선순위, 위험도, 기한 조정
+- 티켓 병합
 - 요청 거절
-
-first-class entity로는 표현할 수 없었습니다.
 
 대신 이런 액션들은 다음 중 한 방식으로 처리해야 했습니다.
 
 - 텍스트 안에 암묵적으로 설명
 - comment timeline과 분리된 방식으로 처리
 
-그 결과 로직이 분절되고 history도 불명확해졌습니다.
+그 결과 액션 처리 로직이 여러 곳으로 나뉘고 이력도 불명확해졌습니다.
 
 ---
 
@@ -103,8 +101,8 @@ Action is behavior
 각 action은 다음을 포함합니다.
 
 - `type` (`assign`, `adjust`, `merge`, `reject`, `comment`, `note`)
-- `content` (rich text reason 또는 message)
-- `metadata` (action에 필요한 필드)
+- `content` (서식 있는 텍스트로 작성한 사유 또는 메시지)
+- `metadata` (액션에 필요한 필드)
 - `createdBy`
 - `createdAt`
 
@@ -131,10 +129,10 @@ Action is behavior
 
 - `comment`: 공개 커뮤니케이션
 - `note`: 내부 팀 커뮤니케이션
-- `assign`: assignment 및 category 업데이트
-- `adjust`: priority, risk, due date 변경
-- `merge`: ticket 병합
-- `reject`: reason을 포함한 거절
+- `assign`: 담당자 배정 및 카테고리 업데이트
+- `adjust`: 우선순위, 위험도, 기한 변경
+- `merge`: 티켓 병합
+- `reject`: 사유를 포함한 거절
 
 ---
 
@@ -163,9 +161,9 @@ Action is behavior
 
 각 action은 다음을 명시적으로 담습니다.
 
-- actor
-- intent (reason)
-- effect (metadata)
+- 수행자(actor)
+- 의도·사유(reason)
+- 변경 결과(metadata)
 
 이를 통해 더 신뢰할 수 있는 audit log를 만들 수 있습니다.
 
@@ -223,9 +221,9 @@ Action is behavior
 `TicketComment`에서 `TicketAction`으로의 전환은
 텍스트 중심 모델에서 행동 중심 모델로의 전환이었습니다.
 
-이 변화는:
+이 변화로 다음 결과를 얻었습니다.
 
-- 도메인 명확성을 높였고
-- 구조화된 workflow를 가능하게 했으며
-- 감사 가능성을 강화했고
-- 미래 Service Desk 기능을 위한 확장 가능한 기반을 제공했습니다.
+- 도메인 모델의 의미를 더 명확히 했습니다.
+- 업무 흐름을 구조화해 표현할 수 있게 했습니다.
+- 감사 추적 가능성을 높였습니다.
+- 향후 Service Desk 기능을 추가할 기반을 제공했습니다.

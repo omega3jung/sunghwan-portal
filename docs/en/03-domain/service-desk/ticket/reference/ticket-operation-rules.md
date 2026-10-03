@@ -2,7 +2,7 @@
 
 ## Goal
 
-This document is the implementation-facing rule matrix for Service Desk ticket
+This document lists the rules to follow when implementing Service Desk ticket
 operations.
 
 It captures who can execute an operation, when it is allowed, what input it
@@ -100,8 +100,8 @@ command request
 ```
 
 Operational action creation, ticket mutation, and history creation must be
-treated as one use case. REMOTE uses server-side services and transactions.
-LOCAL uses demo-safe local handlers with the same DTO direction.
+treated as one operation. REMOTE uses server-side services and transactions.
+LOCAL uses demo-safe local handlers with the same DTO response format.
 
 ---
 
@@ -204,7 +204,7 @@ Soft delete:
 - action type: `COMMENT` only
 - history event: `COMMENT_DELETED`
 
-The current route surface does not expose a comment update route, although the
+The current API does not provide a comment update route, although the
 history union reserves `COMMENT_UPDATED`.
 
 Comments created before closure remain visible after `Closed`. This is timeline
@@ -232,7 +232,7 @@ Soft delete:
 - action type: `NOTE` only
 - history event: `NOTE_DELETED`
 
-The current route surface does not expose a note update route, although the
+The current API does not provide a note update route, although the
 history union reserves `NOTE_UPDATED`.
 
 Read/list/detail and NOTE-related History use this same access policy, including
@@ -522,13 +522,16 @@ and may apply the supported status transitions below.
 - history event: `STATUS_UPDATED` when status changes
 - query invalidation: ticket detail/list/search, work-session list, history
 
-Current route surface supports list/create. Feature-client methods for
+The current API supports list/create. Feature-client methods for
 work-session detail, update, delete, and timer start/finish/switch exist but do
 not currently have matching route files.
 
 ---
 
 ## Resolved Auto Close
+
+In REMOTE, Supabase Cron (`0 * * * *`) runs in the database and directly invokes
+`service_desk.close_expired_resolved_tickets()` at the start of every hour.
 
 - who: system
 - allowed status: `Resolved`
@@ -549,8 +552,7 @@ not currently have matching route files.
 - history action link: `actionNo = null`
 - query invalidation: system side effect, not user-triggered UI mutation
 
-The REMOTE schedule calls `service_desk.close_expired_resolved_tickets()` hourly
-through Supabase Cron (`0 * * * *`). The normal wait until the next check is less
+The normal wait until the next check is less
 than approximately one hour. Missed runs or locked Tickets can be caught up on
 a later invocation while the ticket remains eligible. This policy does not
 guarantee closure at the exact eligibility time. Function deployment, eligible
@@ -575,5 +577,5 @@ the [scheduling decision](../../../../06-decisions/2026-09-resolved-auto-close-s
 ## Summary
 
 Ticket operations are command-driven. Every operation has an actor, status
-guard, payload contract, ticket effect, action persistence rule, and history
+guard, input requirements, ticket effect, action persistence rule, and history
 event. Hidden status mutation is not allowed.

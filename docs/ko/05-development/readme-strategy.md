@@ -85,9 +85,9 @@ README는 전체 문서가 아니라 진입점이다
 예시:
 
 - 워크플로 중심의 Ticket, Ticket Action, Ticket History, Ticket Work Session 설계
-- feature, Route Handler, LOCAL/REMOTE, server-data 경계
+- 기능, Route Handler, LOCAL·REMOTE, 서버 데이터 계층의 역할 구분
 - 승인, 할당, 초안, 첨부파일 범위
-- 프로덕션 정렬 상태와 프로덕션 완성 상태의 구분
+- 운영 환경을 고려한 설계와 운영에 필요한 모든 기능의 완성을 구분
 
 ---
 
@@ -115,7 +115,7 @@ See more in: docs/ko/README.md
 다음 내용은 중복하지 않습니다.
 
 - 전체 워크플로 전이 또는 권한 매트릭스
-- DTO, 데이터베이스 행, 필드별 계약
+- DTO, 데이터베이스 행, 필드별 데이터 형식과 규칙
 - 전체 운영 규칙 표
 - 긴 결정 배경이나 검토 후 제외된 대안
 
@@ -158,9 +158,9 @@ docs/
     06-decisions/          # historical decision record
 ```
 
-현재 설계 문서는 구현과 정렬된 시스템을 설명합니다. Development 문서에는 테스트
-전략과 통합 release 기록이 포함되고, decision log는 특정 시점의 맥락을 보존합니다.
-README와 overview 문서는 독자를 안내하며 적절한 source-of-truth 문서로 연결합니다.
+현재 설계 문서는 실제 구현된 시스템을 설명합니다. Development 문서에는 테스트
+전략과 통합 릴리스 기록을 담고, Decision Log는 결정 당시의 맥락을 보존합니다.
+README와 Overview는 독자를 안내하며 정확한 규칙을 정의하는 문서로 연결합니다.
 
 ---
 
@@ -245,7 +245,7 @@ README와 overview 문서는 독자를 안내하며 적절한 source-of-truth �
 - README 파일은 루트 레벨에 둡니다
 - 언어별 파일(`README.md`, `README.ko.md`)을 사용합니다
 - 리뷰어에게 유용한 간결한 도메인 및 아키텍처 요약은 루트 README에 유지합니다
-- 정확한 규칙, 매트릭스, 계약, 확장된 판단 근거는 `docs/`에 둡니다
+- 정확한 규칙, 매트릭스, 데이터 형식과 기대 동작, 상세 판단 근거는 `docs/`에 둡니다
 
 ---
 

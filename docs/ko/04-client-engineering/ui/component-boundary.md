@@ -37,22 +37,22 @@ Components should have a single responsibility
 
 다음 책임을 가지는 컴포넌트입니다.
 
-- 데이터 로딩 또는 mutation orchestration
-- UI와 workflow state 조합
-- permission, domain, API 결과를 presentational prop으로 변환
-- loading, error, empty state 조정
+- 데이터 조회와 변경 요청 처리 순서 조정
+- UI와 업무 상태 조합
+- 권한·도메인 규칙·API 결과를 표시용 컴포넌트의 props로 변환
+- 로딩·오류·빈 결과 상태 관리
 
 ---
 
 ### 특징
 
-- Server Component에서는 server-safe loader/service를, Client Component에서는 feature hook을 호출합니다
-- workflow contract를 알고 domain rule을 소비합니다
+- Server Component에서는 서버에서 실행 가능한 로더·서비스를, Client Component에서는 기능 훅을 호출합니다
+- 업무 흐름의 규칙과 기대 동작을 이해하고 도메인 규칙을 사용합니다
 - props를 통해 하위 컴포넌트에 데이터를 전달합니다
 
-Container는 workflow를 조정하지만 지속되는 domain rule, authorization policy,
-persistence behavior의 source of truth가 되지 않습니다. 규칙의 결과를 선택하고 표시할
-수는 있지만 JSX나 event handler에서 그 규칙을 다시 구현하면 안 됩니다.
+컨테이너는 업무 흐름을 조정하지만 도메인 규칙, 권한 정책, 저장 동작 자체를 정의하지
+않습니다. 규칙의 결과를 선택하고 표시할 수는 있지만 JSX나 이벤트 처리 함수에서
+그 규칙을 다시 구현하면 안 됩니다.
 
 ---
 
@@ -89,16 +89,16 @@ export function TicketList() {
 
 - props를 통해 데이터를 전달받습니다
 - 직접 데이터를 조회하지 않습니다
-- display-only derivation, formatting, badge/variant mapping, accessibility behavior,
-  local open/close state, UI event callback을 가질 수 있습니다
-- 지속되는 workflow, persistence, authorization rule을 소유하지 않습니다
+- 표시용 값 계산, 서식 변환, 배지·스타일 선택, 접근성 동작, 로컬 열림·닫힘 상태,
+  UI 이벤트 콜백을 가질 수 있습니다
+- 업무 흐름, 저장, 권한 규칙 자체는 담당하지 않습니다
 
-Presentational component가 소유하면 안 되는 책임의 예:
+표시용 컴포넌트가 담당하면 안 되는 책임의 예:
 
-- direct API call 또는 persistence mutation
-- source of truth로 사용되는 authorization decision
-- ticket status transition 또는 approval/assignment routing decision
-- React Query server-state ownership
+- 직접 API 호출 또는 저장 데이터 변경
+- 최종 권한 판단
+- 티켓 상태 전환 또는 승인자·작업자 결정
+- React Query 서버 상태 관리
 
 ---
 
@@ -124,10 +124,10 @@ Data flows from container -> presentational components via props
 
 ### 의미
 
-- presentational component는 API를 직접 호출하지 않습니다
-- tree depth만으로 fetching 허용 여부를 결정하지 않습니다
-- nested subtree가 명시적인 독립 container boundary와 자체 query/loading/error
-  lifecycle을 가진 경우에는 data를 소유할 수 있습니다
+- 표시용 컴포넌트는 API를 직접 호출하지 않습니다
+- 컴포넌트 트리의 깊이만으로 데이터 조회 가능 여부를 결정하지 않습니다
+- 중첩된 하위 트리도 독립 컨테이너로 역할이 명확하고 자체 조회·로딩·오류 처리 흐름을
+  가진 경우에는 데이터를 관리할 수 있습니다
 
 ---
 
@@ -160,9 +160,9 @@ TicketList (container)
 
 ### 위치
 
-- Server Component는 server-safe loader/service/use-case 경계를 통해 server-rendered data를 로드할 수 있습니다
-- interactive Client Component container는 feature hook과 React Query를 사용합니다
-- 독립적으로 로딩되는 widget이나 Suspense subtree는 자체 container를 가질 수 있습니다
+- Server Component는 서버에서 실행 가능한 로더·서비스·업무 함수를 통해 렌더링 데이터를 조회할 수 있습니다
+- 사용자 조작을 처리하는 Client Component 컨테이너는 기능 훅과 React Query를 사용합니다
+- 독립적으로 로딩되는 위젯이나 Suspense 하위 트리는 자체 컨테이너를 가질 수 있습니다
 - 프레젠테이셔널 컴포넌트는 직접 API를 호출하지 않습니다
 
 ---
@@ -200,17 +200,17 @@ Pass only what is needed
 ```
 
 객체 prop 자체를 안티패턴으로 보지 않습니다. 하위 컴포넌트에 필요한 필드가
-소수라면 구체적인 prop을 사용하고, domain object 전체가 의미 있는 계약이라면
+소수라면 구체적인 prop을 사용합니다. 도메인 객체 전체가 컴포넌트에 필요한 입력이라면
 객체 prop을 사용할 수 있습니다.
 
 ---
 
 ### 트레이드오프
 
-| Approach       | Pros           | Cons          |
+| 방식 | 장점 | 단점 |
 | -------------- | -------------- | ------------- |
-| Specific props | Clear contract | More verbose  |
-| Object props   | Flexible       | Less explicit |
+| 개별 props | 필요한 입력이 명확함 | 선언이 길어짐 |
+| 객체 props | 입력 구성이 유연함 | 사용하는 필드가 덜 명확함 |
 
 ---
 
@@ -226,14 +226,14 @@ State should live in the lowest common owner that needs it
 
 ### 예시
 
-- 다이얼로그 open 상태 → 기본적으로 local component/container state
-- 필터 상태 → navigation 의미가 있으면 URL, 아니면 owning container
-- form input/validation state → form boundary 안의 React Hook Form
-- interactive server state → 중복 Zustand store가 아니라 React Query
+- 다이얼로그 열림 상태 → 기본적으로 컴포넌트·컨테이너의 로컬 상태
+- 필터 상태 → 화면 이동에 사용하면 URL, 그 외에는 해당 컨테이너
+- 폼 입력·검증 상태 → 해당 폼의 React Hook Form
+- 사용자 조작으로 조회·변경하는 서버 상태 → React Query
 
-서로 무관하거나 멀리 떨어진 client subtree가 같은 runtime state를 공유할 때만
-Zustand를 사용합니다. Callback 하나를 전달하지 않으려고 local dialog state를
-globalize하거나 React Query data를 Zustand에 복사하지 않습니다.
+서로 무관하거나 멀리 떨어진 클라이언트 하위 트리가 같은 실행 중 상태를 공유할 때만
+Zustand를 사용합니다. 콜백 하나를 전달하지 않으려고 다이얼로그 로컬 상태를 전역으로
+옮기거나 React Query 데이터를 Zustand에 복사하지 않습니다.
 
 ---
 
@@ -254,17 +254,17 @@ Next.js page와 layout은 기본적으로 Server Component로 유지합니다.
 - browser API
 - React Query, Zustand, form, translation 등 client hook
 
-`"use client"`는 모든 하위 파일에 반복하는 표시가 아니라 client module graph의
-entry boundary입니다. interactive subtree를 가능한 작게 유지하고, `client-only`와
-`server-only`를 사용해 잘못된 runtime import를 차단합니다.
+`"use client"`는 클라이언트에서 실행할 모듈과 그 의존성의 진입점을 지정합니다.
+모든 하위 파일에 반복할 필요는 없습니다. 사용자 조작을 처리하는 하위 트리를 가능한
+작게 유지하고, `client-only`와 `server-only`로 실행 환경이 맞지 않는 import를 차단합니다.
 
-Server Component에서 Client Component로 넘어가기 전에 runtime-specific value를
-normalize합니다.
+Server Component에서 Client Component로 전달하기 전에 실행 환경에 종속된 값을
+직렬화 가능한 형식으로 변환합니다.
 
 | 경계 값 | 지침 |
 | --- | --- |
 | DTO, string, number, boolean, serializable array/object, ISO date string | 그대로 전달 |
-| `Date`, `Map`, `Set`, database row | application-facing serializable value로 normalize |
+| `Date`, `Map`, `Set`, database row | 애플리케이션에서 사용하는 직렬화 가능한 값으로 변환 |
 | Repository, database client, request/response object, runtime handle | 전달 금지 |
 
 ---
@@ -299,9 +299,9 @@ UI reports interaction, container coordinates the workflow
 - generic composed control은 `components/custom`에 둡니다
 - domain-aware component는 여러 screen이 사용해도 owning feature 또는 application-wide widget에 유지합니다
 
-재사용 횟수만으로 소유권을 정하지 않습니다. Generic button, dialog primitive, table
-shell은 reusable component 경계에 둘 수 있지만 ticket status view, approval editor,
-assignment-rule card는 Service Desk 소유권을 유지합니다.
+재사용 횟수만으로 담당 위치를 정하지 않습니다. 범용 버튼, 다이얼로그 기본 컴포넌트,
+테이블 틀은 공통 컴포넌트에 둘 수 있습니다. 티켓 상태 화면, 승인 편집기, 배정 규칙
+카드는 Service Desk 안에 유지합니다.
 
 ---
 
@@ -328,10 +328,10 @@ assignment-rule card는 Service Desk 소유권을 유지합니다.
 - Presentational → direct persistence 또는 authorization implementation
 - Client component → server-only module
 
-여러 feature를 조합하는 UI는 `app` 또는 전역 `components` widget이 소유합니다.
-서로 밀접한 workflow slice는 `feature-based-structure.md`에 정의된 명시적이고
-runtime-safe한 feature contract를 사용할 수 있습니다. 이것이 명확한 workflow owner 없이
-다른 slice의 internal component나 client hook을 import하도록 허용하지는 않습니다.
+여러 기능을 조합하는 UI는 `app` 또는 전역 `components` 위젯에서 담당합니다.
+밀접한 업무 모듈은 `feature-based-structure.md`에 정의된 공개 형식과 규칙을 실행
+환경에 맞게 사용할 수 있습니다. 다만 업무 담당 기능이 명확하지 않은 상태에서 다른
+모듈의 내부 컴포넌트나 클라이언트 훅을 import하도록 허용하지는 않습니다.
 
 ---
 
@@ -424,7 +424,6 @@ runtime-safe한 feature contract를 사용할 수 있습니다. 이것이 명확
 
 ## 요약
 
-컴포넌트 경계 전략은 **workflow를 조정하는 container**와 **rendering 및 local
-interaction을 담당하는 presentational component**를 구분합니다. Presentational
-component는 display logic을 가질 수 있지만 지속되는 domain, persistence,
-authorization, server-state rule은 이를 소유한 경계에 남습니다.
+이 전략은 **업무 흐름을 조정하는 컨테이너**와 **표시 및 로컬 상호작용을 담당하는
+표시용 컴포넌트**를 구분합니다. 표시용 컴포넌트는 화면 표시 로직을 가질 수 있지만,
+도메인, 저장, 권한, 서버 상태 규칙은 해당 역할을 담당하는 계층에 둡니다.

@@ -59,5 +59,5 @@ and reject invalid references, although their validation implementations differ.
   partially saved settings tree.
 - Read APIs filter in repository SQL instead of loading a global list and
   filtering it in the application layer.
-- Ticket routing still revalidates current eligibility because organization
-  state can change after settings are saved.
+- Ticket approver and worker selection still revalidates current eligibility
+  because organization state can change after settings are saved.

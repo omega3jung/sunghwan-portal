@@ -2,8 +2,8 @@
 
 ## Goal
 
-The routing strategy keeps primary workflows addressable while keeping runtime
-branching behind API route handlers.
+The routing strategy gives primary workflows their own URLs. API route handlers
+select the LOCAL or REMOTE implementation.
 
 The current Service Desk design uses:
 
@@ -90,7 +90,7 @@ Complex ticket detail should not be hidden inside a nested modal stack.
 
 ## API Route Handler Boundary
 
-Route handlers decide HTTP and runtime orchestration.
+Route handlers parse requests, resolve the session and runtime, and delegate processing.
 
 ```txt
 route.ts
@@ -175,8 +175,9 @@ routes as completed until route handlers exist.
 The auto-close maintenance route accepts POST and a GET alias, both guarded by
 `SERVICE_DESK_CRON_SECRET` (or `CRON_SECRET`). Its GET handler executes a system
 command; ordinary ticket/subresource GET requests remain read-only. The selected
-REMOTE schedule calls `service_desk.close_expired_resolved_tickets()` hourly
-through Supabase Cron (`0 * * * *`). Deployment and scheduled invocation have
+REMOTE schedule uses database Supabase Cron (`0 * * * *`) to call
+`service_desk.close_expired_resolved_tickets()` directly at the start of every hour.
+Deployment and scheduled invocation have
 been verified. See the
 [scheduling decision](../06-decisions/2026-09-resolved-auto-close-scheduling.md)
 for the execution boundary and verification evidence.

@@ -2,17 +2,18 @@
 
 ## 배경
 
-Service Desk ticket form은 처음에 다음을 지원할 수 있는 shared form surface로 설계되었습니다.
+Service Desk 티켓 폼은 처음에 다음 작업을 하나의 공통 폼으로 지원하도록 설계했습니다.
 
-- ticket creation
-- ticket update
-- read-only viewing
-- multi-step input
-- category-driven defaults
-- attachments
-- future draft behavior
+- 티켓 생성
+- 티켓 수정
+- 읽기 전용 조회
+- 단계별 입력
+- 카테고리에 따른 기본값
+- 첨부파일
+- 향후 초안 기능
 
-이전 form 설계는 REMOTE ticket data path와 attachment boundary가 충분히 안정적이지 않았기 때문에 server-backed draft persistence를 의도적으로 미뤘습니다.
+이전 폼 설계에서는 REMOTE 티켓 데이터 처리와 첨부 준비·저장의 역할이 충분히
+안정적이지 않아 서버에 초안을 저장하는 기능을 미뤘습니다.
 
 당시의 실용적인 방향은 다음과 같았습니다.
 
@@ -24,19 +25,19 @@ Create / update form first
 
 2026년 6월에는 다음 기반이 준비되었습니다.
 
-- Supabase PostgreSQL ticket persistence
-- server-only DTO and repository layers
-- Next.js Route Handler orchestration
-- requester-aware ticket queries
-- LOCAL / REMOTE runtime separation
-- 최종 ticket write를 위한 attachment preparation
-- category-driven approval and assignment routing
+- Supabase PostgreSQL 티켓 저장
+- 서버 전용 DTO·Repository 계층
+- Next.js Route Handler의 요청 조정
+- 요청자를 고려한 티켓 조회
+- LOCAL / REMOTE 실행 환경 분리
+- 최종 티켓 저장 전 첨부 준비
+- 카테고리에 따른 승인자 결정과 작업자 배정
 
-이로 인해 draft에 대한 trade-off가 달라졌습니다.
+이 기반이 마련되면서 초안 기능을 도입할 때의 장단점도 달라졌습니다.
+REMOTE에서는 초안을 화면의 편의 기능에 그치지 않고 티켓 업무 흐름의 일부로
+다룰 수 있게 되었습니다.
 
-Draft behavior는 더 이상 frontend convenience만이 아니라 REMOTE mode에서 ticket workflow의 일부로 취급할 수 있게 되었습니다.
-
-동시에 구현 과정에서 ticket creation과 ticket update는 일부 field를 공유하더라도 서로 다른 workflow라는 점이 드러났습니다.
+또한 생성과 수정은 일부 필드가 같아도 서로 다른 업무 흐름이라는 점이 드러났습니다.
 
 ---
 
@@ -44,31 +45,31 @@ Draft behavior는 더 이상 frontend convenience만이 아니라 REMOTE mode에
 
 ### 1. Shared form component가 서로 다른 workflow 책임을 숨김
 
-초기 form 방향은 mode를 사용했습니다.
+초기 폼은 모드로 작업을 구분했습니다.
 
 ```ts
 type Mode = "create" | "update" | "view";
 ```
 
-이 방식은 API semantics를 구분했지만, workflow 차이는 mode flag보다 더 컸습니다.
+모드로 API 처리 의미는 구분했지만, 생성과 수정의 역할 차이를 충분히 드러내지는 못했습니다.
 
-Ticket creation의 책임:
+티켓 생성의 역할은 다음과 같습니다.
 
-- 완전한 새 request 수집
-- requester를 multi-step form으로 안내
-- draft load/save
-- final attachment data 준비
-- approval 또는 assignment routing으로 submit
+- 새 요청에 필요한 전체 입력 수집
+- 요청자의 단계별 입력 안내
+- 초안 불러오기·저장
+- 최종 첨부 데이터 준비
+- 승인자 결정 또는 작업자 배정 단계로 제출
 
-Ticket update의 책임:
+티켓 수정의 역할은 다음과 같습니다.
 
-- 이미 submit된 request 수정
-- 현재 editable field만 노출
-- status 및 permission restriction 적용
-- update policy에 따른 routing preserve 또는 recalculate
-- 기존 operational ticket에 대한 change 기록
+- 이미 제출한 요청 수정
+- 현재 수정 가능한 필드만 표시
+- 상태·권한 제한 적용
+- 수정 정책에 따라 기존 승인·배정을 유지하거나 다시 계산
+- 운영 중인 기존 티켓의 변경 기록
 
-하나의 큰 workflow controller는 너무 많은 branch를 축적하게 됩니다.
+전체 흐름을 하나의 큰 컨트롤러에서 처리하면 분기가 지나치게 많아집니다.
 
 ```txt
 if create
@@ -79,30 +80,30 @@ if field is editable
 if routing must reset
 ```
 
-이는 새 request를 준비하는 일과 active workflow entity를 수정하는 일의 차이를 흐립니다.
+그러면 새 요청 준비와 이미 진행 중인 티켓 수정의 차이를 파악하기 어렵습니다.
 
 ---
 
 ### 2. Browser-only draft state는 REMOTE에 충분하지 않음
 
-Draft는 의미 있는 request data를 담을 수 있습니다.
+초안에는 다음 요청 데이터를 담을 수 있습니다.
 
-- category
-- subject
-- rich-text body
-- requested due date
-- email recipients
-- attachment recovery metadata
+- 카테고리
+- 제목
+- 서식 있는 본문
+- 요청 기한
+- 이메일 수신자
+- 첨부 복구용 메타데이터
 
-이를 component state 또는 browser storage에만 두면 REMOTE behavior가 약해집니다.
+이 데이터를 컴포넌트 상태나 브라우저 저장소에만 두면 REMOTE에서 다음 한계가 생깁니다.
 
-- draft가 하나의 browser에 묶입니다
-- storage가 지워지면 사라질 수 있습니다
-- server authorization이 source of truth가 아닙니다
-- validation이 ticket rule과 달라질 수 있습니다
-- submission이 insert/delete coordination을 필요로 할 수 있습니다
+- 초안이 한 브라우저에 묶입니다.
+- 저장소를 지우면 초안이 사라질 수 있습니다.
+- 서버 권한 검사가 초안 접근을 판단하는 기준이 되지 못합니다.
+- 검증 방식이 티켓 규칙과 달라질 수 있습니다.
+- 제출 시 새 티켓 생성과 초안 삭제를 조합해야 할 수 있습니다.
 
-REMOTE persistence가 존재하는 이상, REMOTE draft는 server data source가 소유해야 합니다.
+REMOTE 저장 기능이 마련된 이상, REMOTE 초안은 서버 데이터 저장소에서 관리해야 합니다.
 
 ---
 
@@ -119,26 +120,24 @@ Save temporary draft
 
 이는 불필요한 문제를 만듭니다.
 
-- draft와 submitted ticket이 서로 다른 ID를 가집니다
-- attachment 및 form state를 copy해야 합니다
-- delete와 insert가 부분 실패할 수 있습니다
-- timestamp와 history를 설명하기 어려워집니다
-- duplicate submission이 여러 ticket을 만들 수 있습니다
-- UI가 cleanup을 책임지게 됩니다
+- 초안과 제출된 티켓의 ID가 달라집니다.
+- 첨부와 폼 상태를 복사해야 합니다.
+- 삭제와 삽입 중 일부만 성공할 수 있습니다.
+- 타임스탬프와 이력을 설명하기 어렵습니다.
+- 중복 제출로 여러 티켓이 생길 수 있습니다.
+- UI가 초안 정리를 담당해야 합니다.
 
-Draft는 이미 준비 중인 request 자체를 나타냅니다.
+초안은 이미 준비 중인 요청 자체를 나타냅니다.
 
-Submission은 같은 row를 active workflow로 전환해야 합니다.
+제출할 때는 같은 행을 운영 중인 업무 흐름으로 전환해야 합니다.
 
 ---
 
 ### 4. Draft save에는 application-level upsert 정책이 필요했음
 
-Draft는 한 번 생성된 뒤 반복 저장될 수 있습니다.
-
-UI가 save attempt마다 새 draft를 만들면 duplicate row와 ambiguous submission behavior가 생길 수 있습니다.
-
-따라서 application behavior는 다음이어야 했습니다.
+초안은 생성 후 반복해서 저장할 수 있습니다.
+UI가 저장할 때마다 새 초안을 만들면 행이 중복되고 어떤 초안을 제출하는지 모호해집니다.
+따라서 애플리케이션은 다음과 같이 동작해야 했습니다.
 
 ```txt
 No current Draft
@@ -148,25 +147,24 @@ Current Draft exists
 -> update the existing Draft ticket
 ```
 
-정확한 endpoint shape는 변할 수 있지만, product behavior는 upsert-like로 유지되어야 합니다.
+엔드포인트 형식은 바뀔 수 있지만, 초안이 없으면 생성하고 있으면 갱신하는
+upsert와 같은 동작은 유지해야 합니다.
 
 ---
 
 ## 결정
 
-New-ticket creation과 submitted-ticket update를 분리하기로 했습니다.
+새 티켓 생성과 제출된 티켓의 수정을 분리하기로 했습니다.
+새 요청은 `CreateTicketDialog`에서 처리합니다. 제출된 티켓을 요청자가 수정할 때는
+`UpdateTicketDialog` 같은 별도 수정 흐름을 사용합니다.
 
-새 request workflow에는 `CreateTicketDialog`를 사용합니다.
-
-Submitted ticket의 requester edit에는 `UpdateTicketDialog` 같은 별도 update workflow를 사용합니다.
-
-REMOTE mode에서는 draft를 normal ticket row로 저장합니다.
+REMOTE에서는 초안을 일반 티켓 행으로 저장합니다.
 
 ```txt
 tk_status = 'Draft'
 ```
 
-Requester가 ticket을 submit하면 같은 row를 재사용합니다.
+요청자가 티켓을 제출하면 같은 행을 재사용합니다.
 
 ```txt
 Create draft
@@ -175,9 +173,9 @@ Create draft
 -> resolve approval or work assignment routing
 ```
 
-LOCAL mode는 같은 visible workflow를 가능한 한 유지하되 simplified demo-safe implementation을 사용합니다.
-
-UI는 storage mechanism을 직접 아는 대신 같은 feature-level draft workflow를 소비해야 합니다.
+LOCAL은 사용자가 보는 흐름을 가능한 한 유지하되, 안전하게 시연할 수 있도록
+구현을 단순화합니다. UI는 저장 방식에 직접 의존하지 않고 같은 기능 단위의
+초안 처리 흐름을 사용해야 합니다.
 
 ---
 
@@ -187,27 +185,28 @@ UI는 storage mechanism을 직접 아는 대신 같은 feature-level draft workf
 
 `CreateTicketDialog`의 책임:
 
-- new-ticket workflow 열기
-- current requester draft load
-- form initialize
-- multi-step form 안내
-- 각 step validation
-- draft data save
-- final submission data 준비
-- request submit
-- success 이후 local form state reset
+- 새 티켓 생성 흐름 열기
+- 현재 요청자의 초안 불러오기
+- 폼 초기화
+- 단계별 폼 입력 안내
+- 각 단계 검증
+- 초안 데이터 저장
+- 최종 제출 데이터 준비
+- 요청 제출
+- 성공 후 로컬 폼 상태 초기화
 
-Update workflow의 책임:
+수정 흐름의 역할:
 
-- existing submitted ticket load
-- requester permission 확인
-- editable status 확인
-- allowed field만 노출
-- update-specific validation 적용
-- routing preservation 또는 recalculation 적용
-- update history 기록
+- 이미 제출된 티켓 불러오기
+- 요청자 권한 확인
+- 수정 가능한 상태인지 확인
+- 허용된 필드만 표시
+- 수정 전용 검증 적용
+- 기존 승인·배정 유지 또는 재계산
+- 수정 이력 기록
 
-두 workflow는 low-level UI part를 공유할 수 있지만 하나의 큰 workflow controller를 공유해서는 안 됩니다.
+두 흐름은 작은 UI 요소를 공유할 수 있지만, 전체 흐름을 제어하는 하나의 큰
+컨트롤러를 공유해서는 안 됩니다.
 
 ```txt
 Create = prepare and submit a new request
@@ -218,15 +217,14 @@ Update = revise an existing workflow entity
 
 ### 2. Ticket viewing은 page responsibility로 유지함
 
-Ticket viewing은 page-level workflow로 남습니다.
+티켓 조회는 페이지에서 처리합니다.
 
 ```txt
 /service-desk/[ticketId]
 ```
 
-실제 use case가 없는 별도 form `view` mode는 유지하지 않습니다.
-
-이는 interaction policy를 보존합니다.
+실제 사용 사례가 없는 별도의 폼 `view` 모드는 유지하지 않습니다.
+다음 화면 사용 규칙을 유지합니다.
 
 ```txt
 Page   -> primary workflow
@@ -238,25 +236,24 @@ Dialog -> atomic or focused action
 
 ### 3. REMOTE draft를 ticket table에 저장함
 
-REMOTE draft는 normal ticket table을 사용합니다.
+REMOTE 초안은 일반 티켓 테이블을 사용합니다.
+초안을 처음 생성할 때 데이터베이스가 `tk_id`를 생성합니다.
 
-Draft가 처음 생성될 때 database가 `tk_id`를 생성합니다.
+초안 행은 다음 과정에서도 같은 ID를 유지합니다.
 
-Draft row는 다음 동안 이 ID를 유지합니다.
+- 초안 수정
+- 최종 제출
+- 승인자 결정·작업자 배정
+- 이후 티켓 조회
+- 이력 생성
 
-- draft update
-- final submission
-- routing
-- later ticket read
-- history generation
-
-이 방식은 별도 draft table에서 submitted ticket table로 data를 copy하는 일을 피합니다.
+이 방식으로 별도 초안 테이블에서 제출된 티켓 테이블로 데이터를 복사할 필요가 없습니다.
 
 ---
 
 ### 4. Temporary draft ticket number를 사용함
 
-Normal submitted ticket number가 assign 또는 finalize되기 전 draft는 requester-specific temporary ticket number를 사용합니다.
+제출된 티켓의 일반 번호를 부여하거나 확정하기 전에는 요청자별 임시 초안 번호를 사용합니다.
 
 ```txt
 <requesterUsername>_draft
@@ -268,37 +265,35 @@ Normal submitted ticket number가 assign 또는 finalize되기 전 draft는 requ
 sunghwan_draft
 ```
 
-이 값은 draft state를 위한 internal persistence identifier입니다.
-
-최종 user-facing operational ticket number가 아닙니다.
+이 값은 초안 저장에 사용하는 내부 식별자입니다.
+사용자에게 제공하는 최종 운영 티켓 번호는 아닙니다.
 
 ---
 
 ### 5. Requester당 active draft 하나만 허용함
 
-Requester는 active draft를 최대 하나만 가질 수 있습니다.
+요청자는 활성 초안을 최대 하나만 가질 수 있습니다.
 
 ```txt
 Requester -> zero or one Draft
 ```
 
-이는 database boundary에서 강제하고, application도 save 전에 current draft를 load합니다.
+데이터베이스에서 이 제한을 강제하고, 애플리케이션도 저장 전에 현재 초안을 조회합니다.
+당시 제품에는 여러 초안을 보여주는 일반 초안 목록이 없습니다.
 
-현재 product에는 general draft list가 없습니다.
+여러 초안을 지원하려면 다음 기능이 별도로 필요합니다.
 
-Multiple draft는 별도 product capability가 필요합니다.
-
-- draft title
-- draft list UI
-- explicit deletion
-- expiration policy
-- concurrent request preparation
+- 초안 제목
+- 초안 목록 UI
+- 명시적 삭제
+- 만료 정책
+- 여러 요청의 동시 준비
 
 ---
 
 ### 6. Upsert-like application behavior로 draft를 저장함
 
-`CreateTicketDialog`에서 save할 때 application behavior는 다음과 같습니다.
+`CreateTicketDialog`에서 저장할 때 애플리케이션은 다음과 같이 동작합니다.
 
 ```txt
 No current Draft
@@ -308,24 +303,22 @@ Current Draft exists
 -> update the existing Draft ticket
 ```
 
-Client state가 stale하더라도 server boundary는 invariant를 보호해야 합니다.
+클라이언트 상태가 오래되어도 서버는 요청자당 활성 초안 하나라는 규칙을 지켜야 합니다.
+서버는 다음을 검증합니다.
 
-Server는 다음을 validate합니다.
-
-- authenticated requester
-- draft ownership
+- 인증된 요청자
+- 초안 소유권
 - `status = Draft`
-- active row state
+- 행의 활성 상태
 
-Client는 ID를 전달했다는 이유만으로 다른 requester의 draft를 쓸 수 없습니다.
+클라이언트는 ID를 전달했다는 이유만으로 다른 요청자의 초안을 수정할 수 없습니다.
 
 ---
 
 ### 7. Draft row를 재사용해 submit함
 
-Persisted draft를 submit하면 existing ticket row를 update합니다.
-
-새 ticket을 insert하고 draft를 delete하지 않습니다.
+저장된 초안을 제출하면 기존 티켓 행을 갱신합니다.
+새 티켓을 만든 뒤 초안을 삭제하는 방식은 사용하지 않습니다.
 
 ```txt
 Draft row
@@ -333,15 +326,15 @@ Draft row
 -> same row leaves Draft
 ```
 
-Client는 성공적인 submission 이후 REMOTE draft deletion operation을 호출하면 안 됩니다.
+클라이언트는 제출 성공 후 REMOTE 초안 삭제 작업을 호출하면 안 됩니다.
 
-Row가 더 이상 `status = Draft`가 아니게 되면 requester draft query에서 자연스럽게 사라집니다.
+행이 더 이상 `status = Draft`가 아니면 요청자의 초안 조회 결과에 포함되지 않습니다.
 
 ---
 
 ### 8. Prior draft save 없이 direct submission도 지원함
 
-Server는 다음 submission case를 지원합니다.
+서버는 다음 제출 경우를 지원합니다.
 
 ```txt
 draft ID provided
@@ -361,22 +354,22 @@ no draft ID and no requester draft
 -> insert a new submitted ticket
 ```
 
-이는 stale UI state로부터 workflow를 보호하면서 direct submission도 허용합니다.
+이렇게 하면 오래된 UI 상태로 인한 잘못된 제출을 막으면서 직접 제출도 허용할 수 있습니다.
 
 ---
 
 ### 9. Final routing은 ticket service에 위임함
 
-Form은 최종 operational status를 결정하지 않습니다.
+폼은 제출 후 티켓의 최종 운영 상태를 결정하지 않습니다.
 
-Submission의 의미는 다음과 같습니다.
+제출의 의미는 다음과 같습니다.
 
 ```txt
 Draft preparation completed
 -> request enters active workflow
 ```
 
-Server routing layer가 submitted request가 다음 중 어디로 갈지 결정합니다.
+서버의 담당자 결정 로직이 제출된 요청의 다음 단계를 결정합니다.
 
 ```txt
 Draft -> Approval
@@ -388,21 +381,20 @@ Draft -> Approval
 Draft -> Assigned
 ```
 
-Approval과 assignment rule은 form component가 아니라 ticket routing domain에 속합니다.
+승인과 배정 규칙은 폼 컴포넌트가 아니라 티켓의 담당자 결정 도메인에서 처리합니다.
 
 ---
 
 ### 10. Operational query에서 draft를 제외함
 
-Draft는 active Service Desk work가 아닙니다.
-
-일반 ticket list와 work query는 다음을 제외합니다.
+초안은 진행 중인 Service Desk 작업이 아닙니다.
+일반 티켓 목록과 작업 조회는 다음 상태를 제외합니다.
 
 ```txt
 status = Draft
 ```
 
-Requester draft query는 명시적으로 다음을 찾습니다.
+요청자 초안 조회는 다음 조건에 맞는 행을 명시적으로 찾습니다.
 
 ```txt
 requester = current requester
@@ -410,46 +402,38 @@ status = Draft
 active = true
 ```
 
-Draft는 다음이 아닙니다.
+초안은 다음에 해당하지 않습니다.
 
-- assigned work
-- approval 대기
-- operational insights 포함 대상
-- creation workflow 밖에서 수정할 수 있는 ticket
+- 배정된 작업
+- 승인 대기
+- 운영 분석 포함 대상
+- 생성 흐름 밖에서 수정할 수 있는 티켓
 
 ---
 
 ### 11. LOCAL과 REMOTE runtime boundary를 명확히 함
 
-REMOTE mode는 server data layer를 통해 draft를 persist합니다.
-
-LOCAL mode는 simplified demo-safe implementation을 사용할 수 있습니다.
-
-UI는 draft가 LOCAL demo behavior 기반인지 REMOTE PostgreSQL 기반인지에 의존해서는 안 됩니다.
-
-Runtime-specific persistence는 feature API/repository boundary 뒤에 남습니다.
+REMOTE는 서버 데이터 계층을 통해 초안을 저장합니다.
+LOCAL은 안전하게 시연할 수 있는 단순한 구현을 사용할 수 있습니다.
+UI는 초안이 LOCAL 데모 상태에 있는지 REMOTE PostgreSQL에 있는지에 따라 분기하면 안 됩니다.
+실행 환경별 저장 방식은 기능 API·Repository 내부에서 처리합니다.
 
 ---
 
 ### 12. Attachment persistence boundary를 명시함
 
-Draft persistence는 raw binary data, base64 image data, blob URL을 저장하면 안 됩니다.
-
-Draft와 submitted ticket persistence는 durable ticket boundary를 넘을 때 같은 normalized attachment contract를 공유해야 합니다.
-
-Attachment preparation과 storage behavior는 attachment boundary decision에서 정의합니다.
+초안에는 원본 바이너리 데이터, base64 이미지 데이터, blob URL을 저장하면 안 됩니다.
+초안과 제출된 티켓을 지속적으로 보관할 때는 같은 방식으로 정리한 첨부 형식을 사용해야 합니다.
+첨부 준비·저장 방식은 첨부 처리 역할을 구분한 결정 기록에서 정의합니다.
 
 ---
 
 ### 13. Server state에는 React Query를 사용함
 
-REMOTE mode에서 Draft는 server state입니다.
+REMOTE에서 초안은 서버 상태입니다. React Query는 서버 값과 클라이언트 화면을
+동기화합니다. 저장된 초안의 기준 데이터는 서버 저장소에 있습니다.
 
-React Query는 client synchronization을 제공합니다.
-
-Persistence source of truth가 아닙니다.
-
-권장 behavior:
+권장 동작:
 
 ```txt
 Save draft
@@ -462,7 +446,7 @@ Submit draft
 -> invalidate affected insight/count queries
 ```
 
-Global query reset은 필요하지 않습니다.
+전체 쿼리를 초기화할 필요는 없습니다.
 
 ---
 
@@ -470,33 +454,29 @@ Global query reset은 필요하지 않습니다.
 
 ### 1. Component responsibility
 
-`CreateTicketDialog`는 new-request composition workflow입니다.
-
-Submitted-ticket update rule은 별도 update workflow에서 처리합니다.
+`CreateTicketDialog`는 새 요청을 작성하는 흐름입니다.
+제출된 티켓의 수정 규칙은 별도 수정 흐름에서 처리합니다.
 
 ---
 
 ### 2. REMOTE draft model
 
-REMOTE draft는 `Draft` status를 가진 requester-owned ticket row입니다.
-
-별도 table도 아니고 browser-only state도 아닙니다.
+REMOTE 초안은 요청자가 소유하는 `Draft` 상태의 티켓 행입니다.
+별도 테이블이나 브라우저에만 있는 상태가 아닙니다.
 
 ---
 
 ### 3. Submission identity
 
-Draft가 있으면 submission은 draft row를 재사용합니다.
-
-이는 draft부터 active workflow까지 ticket identity를 안정적으로 유지합니다.
+초안이 있으면 제출 시 해당 행을 재사용합니다.
+이렇게 하면 초안 작성부터 업무 진행까지 같은 티켓 ID를 유지합니다.
 
 ---
 
 ### 4. Runtime boundary
 
-LOCAL과 REMOTE는 서로 다른 persistence mechanism을 사용할 수 있지만 feature workflow는 안정적으로 유지됩니다.
-
-UI는 database-specific draft logic을 포함하면 안 됩니다.
+LOCAL과 REMOTE는 저장 방식이 달라도 같은 기능 흐름을 유지합니다.
+UI에 DB 전용 초안 처리 로직을 넣으면 안 됩니다.
 
 ---
 
@@ -504,40 +484,40 @@ UI는 database-specific draft logic을 포함하면 안 됩니다.
 
 ### 긍정적 영향
 
-- Ticket creation의 component boundary가 더 명확해집니다.
-- REMOTE draft가 server authorization으로 보호됩니다.
-- 같은 ticket ID가 draft부터 submitted ticket까지 이어질 수 있습니다.
-- Submission이 insert/delete coordination을 피합니다.
-- Operational ticket query가 `Draft`를 명시적으로 제외할 수 있습니다.
-- LOCAL은 lightweight하게 유지하면서 REMOTE draft model을 약화시키지 않습니다.
+- 티켓 생성 컴포넌트의 역할이 명확해집니다.
+- REMOTE 초안을 서버 권한 검사로 보호합니다.
+- 초안부터 제출된 티켓까지 같은 티켓 ID를 유지할 수 있습니다.
+- 제출 시 삽입·삭제 작업을 조정할 필요가 없습니다.
+- 운영 티켓 조회에서 `Draft`를 명시적으로 제외할 수 있습니다.
+- LOCAL은 단순하게 유지하면서 REMOTE 초안 모델을 보존합니다.
 
 ---
 
 ### 부정적 영향 / 트레이드오프
 
-- Draft row가 main ticket table에 존재합니다.
-- 현재 product는 requester당 active draft 하나만 지원합니다.
-- Draft save에는 명확한 create/update 또는 upsert-like orchestration이 필요합니다.
-- LOCAL draft behavior는 REMOTE persistence보다 단순할 수 있습니다.
-- Full production draft upload recovery는 future storage concern으로 남습니다.
+- 초안 행이 일반 티켓 테이블에 존재합니다.
+- 당시 제품은 요청자당 활성 초안 하나만 지원합니다.
+- 초안 저장 시 생성·수정 또는 upsert와 유사한 처리를 명확히 조정해야 합니다.
+- LOCAL 초안 동작은 REMOTE 저장보다 단순할 수 있습니다.
+- 프로덕션 수준의 초안 업로드 복구는 향후 저장소 과제로 남습니다.
 
 ---
 
 ## 후속 정책
 
-- `CreateTicketDialog`는 new request composition에 집중시킵니다.
-- Submitted-ticket update behavior는 별도 workflow에 둡니다.
-- REMOTE draft ownership과 status check는 server에서 유지합니다.
-- Product-level draft list design 없이 multiple draft를 추가하지 않습니다.
-- REMOTE draft row는 submission 이후 delete하지 않고 같은 row를 submit합니다.
-- Production storage가 생기기 전까지 draft attachment behavior를 과장하지 않습니다.
-- Server-side draft upsert가 나중에 도입되더라도 one-active-draft invariant를 유지합니다.
+- `CreateTicketDialog`는 새 요청 작성에 집중시킵니다.
+- 제출된 티켓의 수정은 별도 흐름에서 처리합니다.
+- REMOTE 초안의 소유권·상태 검사는 서버에서 수행합니다.
+- 제품의 초안 목록을 설계하기 전에 여러 초안을 지원하지 않습니다.
+- REMOTE 초안은 제출 후 삭제하지 않고 같은 행을 제출된 티켓으로 전환합니다.
+- 프로덕션 저장소가 생기기 전까지 초안 첨부 동작을 과장하지 않습니다.
+- 향후 서버 측 초안 upsert를 도입해도 요청자당 활성 초안 하나라는 규칙을 유지합니다.
 
 ---
 
 ## 요약
 
-Ticket creation workflow는 REMOTE Draft를 실제 ticket workflow state로 취급합니다.
+티켓 생성 흐름은 REMOTE 초안을 실제 티켓 업무 상태로 다룹니다.
 
 핵심 모델은 다음과 같습니다.
 
@@ -555,4 +535,5 @@ Update workflow
 = separate revision flow for submitted tickets
 ```
 
-이 설계는 UI 수준에서 ticket creation을 이해하기 쉽게 유지하면서, REMOTE mode에는 안정적인 server-controlled persistence model을 제공합니다.
+이 설계로 UI의 티켓 생성 흐름을 이해하기 쉽게 유지하고,
+REMOTE에서는 서버가 초안 접근과 저장을 안정적으로 관리합니다.

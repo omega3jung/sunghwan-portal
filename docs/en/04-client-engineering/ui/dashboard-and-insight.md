@@ -2,8 +2,8 @@
 
 ## Goal
 
-The dashboard and insight pages are designed to provide **role-aware, context-driven information visibility**
-for a Service Desk system used by both requesters and assignees.
+The dashboard and insight pages are designed to show information relevant to
+each user's role and search context in Service Desk.
 
 It aims to:
 
@@ -68,7 +68,7 @@ Separate Dashboard (overview) and Insight (analysis)
 
 ### Current Implementation Boundary
 
-The home dashboard is a portfolio landing surface. Its summary cards use fixed
+The home dashboard is the portfolio landing page. Its summary cards use fixed
 presentation values from `HomePage.tsx`; they are not live, per-user ticket
 counts. Session context selects LOCAL/REMOTE introductory copy.
 

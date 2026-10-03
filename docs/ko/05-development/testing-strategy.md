@@ -4,9 +4,9 @@
 
 이 문서는 `sunghwan-portal`에서 자동화 테스트를 선택하고 구성하는 방법을 정의합니다.
 
-목표는 테스트 파일 수를 최대화하거나 저장소 전체의 coverage 비율을 달성하는 것이
-아닙니다. 회귀가 중요한 workflow, security boundary, data contract 또는 사용자에게
-보이는 상태를 깨뜨릴 가능성이 있는 곳에 테스트를 추가합니다.
+테스트는 중요한 업무 흐름, 접근 제한, 데이터 응답 형식, 화면 상태를 회귀로부터
+보호하기 위해 추가합니다. 파일 수나 저장소 전체의 코드 실행 비율(coverage)을
+늘리는 것 자체를 목표로 삼지는 않습니다.
 
 ```txt
 Risk
@@ -15,11 +15,11 @@ Risk
 -> deterministic regression protection
 ```
 
-현재 자동화 테스트 suite는 Vitest를 중심으로 구성되어 있습니다. Storybook은 프로젝트가
-소유한 reusable UI를 위한 전용 browser playground 및 interaction 검토 경계로 이를
-보완합니다. 주요 범위는 `src/components/custom`이며, 선별된 application-wide layout/menu
-UI와 독립적으로 렌더링 가능한 소수의 feature presentation component도 포함합니다.
-End-to-end browser workflow는 책임이 다르므로 기본 unit-test 경계 밖에 둡니다.
+현재 자동화 테스트는 Vitest를 중심으로 구성합니다. Storybook에서는 프로젝트가
+직접 만든 재사용 UI를 브라우저에서 독립적으로 표시하고 조작해 검토합니다. 주요
+범위는 `src/components/custom`입니다. 애플리케이션 공통 레이아웃·메뉴 UI와
+독립적으로 렌더링 가능한 일부 기능 표시 컴포넌트도 선별해 포함합니다. 여러 화면에
+걸친 전체 사용자 흐름을 검증하는 E2E 테스트는 기본 단위 테스트와 구분합니다.
 
 ---
 
@@ -31,17 +31,17 @@ Protect contracts, not implementation details.
 
 테스트는 구현 세부 사항이 바뀌어도 어떤 조건이 계속 성립해야 하는지를 설명해야 합니다.
 
-안정적인 contract의 예는 다음과 같습니다.
+구현이 바뀌어도 지켜야 하는 동작과 응답 규칙의 예는 다음과 같습니다.
 
-- 권한이 없는 사용자는 보호된 operation에 도달할 수 없습니다.
-- request input으로 tenant 및 scope boundary를 우회할 수 없습니다.
-- ticket command는 예상한 workflow effect와 History를 만듭니다.
-- LOCAL과 REMOTE runtime은 application-facing behavior가 동등합니다.
-- mutation은 stale해질 수 있는 server state를 invalidate합니다.
-- page 또는 view model은 입력에 맞는 state와 capability를 노출합니다.
+- 권한이 없는 사용자는 보호된 작업을 실행할 수 없습니다.
+- 요청 입력값으로 테넌트와 접근 범위 제한을 우회할 수 없습니다.
+- 티켓 명령은 예상한 업무 처리 결과와 이력을 만듭니다.
+- LOCAL과 REMOTE는 애플리케이션에서 같은 의미의 동작을 제공합니다.
+- 데이터 변경 후 오래된 값이 될 수 있는 서버 상태의 캐시를 무효화합니다.
+- 페이지나 뷰 모델은 입력에 맞는 상태와 작업 가능 여부를 제공합니다.
 
-내부 helper 호출 순서, component 구조 또는 framework 구현 세부 사항은 그 자체가
-contract인 경우가 아니면 테스트 대상이 아닙니다.
+내부 헬퍼 호출 순서, 컴포넌트 구조, 프레임워크 구현 세부 사항은 그 자체가 반드시
+지켜야 하는 규칙인 경우에만 테스트합니다.
 
 ---
 
@@ -68,13 +68,13 @@ npm run test:watch
 npm exec vitest -- run --project unit --coverage
 ```
 
-기본 Vitest suite는 다음을 증명하려 하지 않습니다.
+기본 Vitest 테스트로는 다음을 검증하지 않습니다.
 
-- 모든 UI state의 시각적 정확성
-- 전체 application에 걸친 실제 browser navigation
-- production database를 대상으로 한 PostgreSQL constraint, grant, RLS 또는
-  infrastructure 동작
-- production object storage, notification 전달 또는 그 밖의 연기된 infrastructure
+- 모든 UI 상태의 시각적 정확성
+- 전체 애플리케이션에서의 실제 브라우저 페이지 이동
+- 프로덕션 데이터베이스의 PostgreSQL 제약 조건, 권한 부여, 행 수준 보안(RLS),
+  인프라 동작
+- 프로덕션 객체 저장소, 알림 전달, 그 밖에 현재 범위에서 제외한 인프라
 
 이러한 관심사가 구현 범위에 포함되면 다른 테스트 환경이 필요합니다.
 
@@ -82,22 +82,22 @@ npm exec vitest -- run --project unit --coverage
 
 ## 계층별 테스트 책임
 
-프로젝트는 책임에 따라 서로 다른 테스트 경계를 사용합니다.
+프로젝트는 각 계층이 담당하는 동작에 맞춰 검증 범위를 나눕니다.
 
 | 계층 | 주요 테스트 책임 |
 | --- | --- |
-| `domain` | 순수 business invariant, status rule, authorization과 독립적인 domain policy |
-| `lib` | application contract, normalization, shared policy, query 및 mapping 동작 |
-| `server` | use-case 조정, persistence rule, transaction 동작, History 및 Work Session effect |
-| `feature` | 사용자-facing workflow orchestration, form/hook 동작, mutation 및 cache 조정 |
-| `app/api` | HTTP parsing, authentication, authorization context, LOCAL/REMOTE dispatch, error mapping |
-| `app/(protected)` / page composition | search state, view model, loading/error/data state, capability composition |
-| shared client state | hydration, persistence, race 처리, 동작이 단순하지 않은 storage synchronization |
-| 프로젝트가 소유한 reusable UI | `src/components/custom` 및 선별된 application-wide layout/menu UI는 주로 Storybook의 state, Controls, composition 및 browser interaction으로 검토 |
-| feature presentation UI | 독립적으로 렌더링할 수 있고 application workflow infrastructure가 필요하지 않은 경우에만 선별적으로 추가 |
-| 그 밖의 표현 전용 UI | 선택적으로 테스트하며, Storybook을 repository-wide component coverage 대상으로 사용하지 않음 |
+| `domain` | 업무에서 항상 성립해야 하는 조건, 상태 규칙, 권한 판단과 독립적인 도메인 정책 |
+| `lib` | 애플리케이션의 응답·동작 규칙, 값 정규화, 공통 정책, 조회·매핑 동작 |
+| `server` | 업무 처리 조정, 저장 규칙, 트랜잭션, History 및 Work Session에 미치는 영향 |
+| `feature` | 사용자 업무 흐름의 처리 조정, 폼·훅 동작, 데이터 변경과 캐시 조정 |
+| `app/api` | HTTP 요청 파싱, 인증, 권한 판단에 필요한 정보, LOCAL/REMOTE 처리 선택, 오류 응답 변환 |
+| `app/(protected)` / page composition | 검색 상태, 뷰 모델, 로딩·오류·데이터 상태, 작업 가능 여부 구성 |
+| shared client state | 저장된 상태 복원(hydration), 상태 저장, 동시 처리 충돌, 단순하지 않은 저장소 동기화 |
+| 프로젝트가 소유한 reusable UI | `src/components/custom`과 선별된 애플리케이션 공통 레이아웃·메뉴 UI의 상태, Controls, 구성, 브라우저 조작을 주로 Storybook에서 검토 |
+| feature presentation UI | 독립적으로 렌더링할 수 있고 애플리케이션의 업무 처리 기반 기능이 필요하지 않은 경우에만 선별적으로 추가 |
+| 그 밖의 표현 전용 UI | 선택적으로 테스트하며, Storybook을 저장소의 모든 컴포넌트를 검증하는 수단으로 사용하지 않음 |
 
-같은 business branch를 모든 계층에서 반복해서는 안 됩니다.
+같은 업무 규칙의 분기를 모든 계층에서 반복해 검증하지 않습니다.
 
 예를 들면 다음과 같습니다.
 
@@ -112,13 +112,13 @@ Page/view model
 -> 결과 capability가 올바르게 표현되는지 증명
 ```
 
-각 테스트는 해당 계층이 소유한 책임을 보호합니다.
+각 테스트는 해당 계층이 담당하는 동작을 보호합니다.
 
 ---
 
 ## 위험 기반 우선순위
 
-테스트 깊이는 파일 크기나 import 횟수가 아니라 실패 영향과 회귀 위험으로 결정합니다.
+테스트 깊이는 파일 크기나 import 횟수보다 실패 영향과 회귀 위험을 기준으로 정합니다.
 
 ### Critical
 
@@ -136,8 +136,8 @@ Page/view model
 - LOCAL/REMOTE contract parity
 - attachment preparation 및 persistence-safe metadata boundary
 
-Critical 변경을 검증할 때는 일반적으로 대표적인 성공, 거부, 경계 및 실패 side-effect
-사례를 포함해야 합니다.
+Critical 변경은 일반적으로 대표적인 성공·거부·경계 조건과 실패 시 부수 효과를
+검증합니다. 실패 후 실행되어서는 안 되는 저장이나 후속 작업도 확인합니다.
 
 ### High
 
@@ -179,8 +179,8 @@ Low-risk 코드는 실제 회귀 위험을 보호하는 경우에만 전용 테�
 
 ### 순수 Unit Test
 
-React, HTTP 또는 database 없이 설명할 수 있는 결정적 로직에는 순수 unit test를
-사용합니다.
+React, HTTP, 데이터베이스 없이 같은 입력에 같은 결과를 내는 로직은 순수 단위
+테스트로 검증합니다.
 
 일반적인 대상:
 
@@ -203,8 +203,7 @@ React, HTTP 또는 database 없이 설명할 수 있는 결정적 로직에는 �
 
 ### Store 및 Hook Test
 
-주요 contract가 렌더링된 markup보다 state transition 또는 side effect인 경우
-hook/store test를 사용합니다.
+표시된 마크업보다 상태 전환이나 부수 효과가 중요한 경우 훅·저장소 테스트를 사용합니다.
 
 일반적인 대상:
 
@@ -228,7 +227,7 @@ hook/store test를 사용합니다.
 
 ### Component 및 Page Composition Test
 
-관찰 가능한 contract가 사용자가 보거나 실행할 수 있는 것이라면 DOM test를 사용합니다.
+사용자가 보거나 실행하는 동작을 확인해야 한다면 DOM 테스트를 사용합니다.
 
 일반적인 대상:
 
@@ -238,7 +237,7 @@ hook/store test를 사용합니다.
 - ticket list/detail/insight composition
 - loading, empty, error, retry 및 capability state
 
-semantic query와 사용자에게 보이는 동작을 우선합니다.
+역할·레이블 등 의미를 기준으로 요소를 찾는 쿼리와 사용자에게 보이는 동작을 우선합니다.
 
 다음 항목만 고정하는 테스트는 피합니다.
 
@@ -247,12 +246,12 @@ semantic query와 사용자에게 보이는 동작을 우선합니다.
 - icon 구현
 - framework primitive 동작
 
-Page-level test는 page-level composition을 검증해야 하며, 하위 계층에서 이미 검증한
-모든 domain 또는 feature rule을 반복해서는 안 됩니다.
+페이지 테스트는 페이지에 상태와 컴포넌트가 올바르게 조합되는지 검증합니다. 하위
+계층에서 이미 검증한 도메인·기능 규칙을 모두 반복하지 않습니다.
 
 ### Route Handler Test
 
-Route test는 HTTP와 runtime orchestration boundary를 보호합니다.
+Route Handler 테스트는 HTTP 요청 처리와 LOCAL/REMOTE 실행 경로 선택을 검증합니다.
 
 일반적인 assertion은 다음과 같습니다.
 
@@ -265,12 +264,12 @@ Route test는 HTTP와 runtime orchestration boundary를 보호합니다.
 - method, query, body 및 trusted identity header forwarding
 - application error에서 HTTP status로의 mapping
 
-Route test는 자신이 사용하는 전체 business policy를 다시 구현해서는 안 됩니다.
+Route Handler 테스트에서 사용 중인 업무 정책 전체를 다시 구현하지 않습니다.
 
 ### Service 및 Workflow Test
 
-여러 persistence operation이 함께 하나의 business result를 구성하는 경우
-service/workflow test를 사용합니다.
+여러 저장 작업이 함께 하나의 업무 결과를 만드는 경우 서비스·업무 흐름 테스트를
+사용합니다.
 
 예:
 
@@ -285,17 +284,17 @@ Ticket Action
 
 중요한 assertion은 다음과 같습니다.
 
-- precondition이 성공한 뒤에만 write가 시작됩니다.
-- 유효하거나 유효하지 않은 state transition
-- 예상한 Action/History metadata
-- 실패 이후 후속 write가 실행되지 않습니다.
-- atomic behavior가 필요한 곳에서 transaction executor가 사용됩니다.
-- cleanup 동작이 lifecycle과 일치합니다.
+- 사전 조건 검증 후에만 저장 시작
+- 허용되는 상태 전환과 거부되는 상태 전환
+- 예상한 Action/History 메타데이터
+- 실패 후 후속 저장이 실행되지 않음
+- 함께 성공하거나 실패해야 하는 작업에서 트랜잭션 실행기 사용
+- 수명 주기에 맞는 정리 동작
 
 ### Repository 및 외부 Adapter Boundary Test
 
-Transport 또는 persistence mapping 자체가 중요한 contract라면 repository와 adapter
-test가 유용합니다.
+통신 방식이나 저장 데이터 변환 자체가 중요한 규칙이라면 저장소·어댑터 테스트가
+유용합니다.
 
 예:
 
@@ -306,9 +305,9 @@ test가 유용합니다.
 - transaction executor 사용
 - 외부 error mapping
 
-Mock 기반 repository test는 PostgreSQL constraint, RLS, grant 또는 database function을
-증명하지 못합니다. 이러한 요소가 중요한 위험이 되면 별도의 database integration-test
-경계가 필요합니다.
+Mock 기반 저장소 테스트는 실제 PostgreSQL 제약 조건, RLS, 권한 부여, 데이터베이스
+함수의 동작을 입증하지 못합니다. 이 요소가 중요한 위험이 되면 별도 데이터베이스
+통합 테스트가 필요합니다.
 
 ### Cross-Runtime Contract Test
 
@@ -326,16 +325,16 @@ Independent implementation B
 -> same behavioral contract
 ```
 
-Runtime 분리가 아키텍처적으로 의미 있다면 테스트를 쉽게 만들기 위해 해당 경계를
-제거하지 않습니다. Shared contract suite는 한 runtime이 다른 runtime을 import하도록
-강제하지 않으면서 behavior parity를 보호할 수 있습니다.
+실행 환경을 분리하는 이유가 있다면 테스트를 쉽게 만들기 위해 두 구현을 합치지
+않습니다. 공통 동작을 검증하는 테스트 묶음을 양쪽에 적용하면 한 구현이 다른
+구현을 import하지 않아도 동작이 일치하는지 확인할 수 있습니다.
 
 ---
 
 ## Authorization 테스트 정책
 
-올바른 성공 경로만으로 boundary의 안전성을 증명할 수 없으므로 authorization test는
-특별히 주의해야 합니다.
+권한 검증은 성공 사례만으로 접근 제한이 안전하다고 판단할 수 없습니다. 거부
+사례와 경계 조건도 주의해서 검증합니다.
 
 해당하는 경우 대표 사례는 다음을 포함해야 합니다.
 
@@ -348,10 +347,11 @@ Runtime 분리가 아키텍처적으로 의미 있다면 테스트를 쉽게 만
 - active 및 inactive resource
 - LOCAL/REMOTE dispatch 또는 repository access 이전 authorization
 
-Server가 canonical source를 소유하는 경우 client가 제공한 tenant, company, scope,
-role 또는 identity 값을 authorization truth로 취급하지 않습니다.
+서버에 판단 기준이 되는 데이터가 있으면 클라이언트가 제공한 테넌트·회사·범위·역할·
+사용자 정보를 권한 판단의 근거로 신뢰하지 않습니다.
 
-잘못된 trusted field는 capability를 조용히 늘리는 대신 fail closed해야 합니다.
+신뢰해야 하는 필드가 잘못되면 작업 권한을 늘리지 않고 요청을 거부해야 합니다
+(fail closed).
 
 ---
 
@@ -376,9 +376,9 @@ same authorized intent
 - REMOTE의 올바른 transport forwarding
 - LOCAL에만 존재하는 authorization 우회가 없음
 
-명시적으로 설계된 infrastructure 차이는 허용됩니다. 예를 들어 LOCAL draft recovery와
-REMOTE persisted draft row는 호환되는 feature behavior를 노출하기 위해 같은 storage
-구현을 공유할 필요가 없습니다.
+설계에서 명시한 인프라 차이는 허용합니다. 예를 들어 LOCAL 초안 복구는 브라우저
+저장소를, REMOTE 초안은 데이터베이스 행을 사용합니다. 사용자에게 호환되는 기능을
+제공하기 위해 저장 구현까지 같게 만들 필요는 없습니다.
 
 ---
 
@@ -408,7 +408,8 @@ reproduce
 
 ## Mocking 전략
 
-Mock은 전체 application을 재현하는 것이 아니라 boundary를 격리해야 합니다.
+Mock은 테스트할 역할을 외부 의존성과 분리하는 데 사용합니다. 전체 애플리케이션을
+재현하지 않습니다.
 
 ### 적절한 Mock 대상
 
@@ -428,14 +429,14 @@ Mock은 전체 application을 재현하는 것이 아니라 boundary를 격리�
 - assertion을 쉽게 만들기 위한 모든 내부 helper
 - 필수 contract field를 숨기는 비현실적으로 축약된 object
 
-Import 시점의 module mock에 필요하면 `vi.hoisted`를 사용하고, 테스트 사이에 mutable
-mock state를 reset합니다.
+모듈을 import하는 시점에 Mock이 필요하면 `vi.hoisted`를 사용합니다. 테스트 사이에는
+변경 가능한 Mock 상태를 초기화합니다.
 
 ---
 
 ## 결정적 테스트 정책
 
-테스트는 실행 순서나 개발자 machine에 의존해서는 안 됩니다.
+테스트는 실행 순서나 개발자 컴퓨터 환경에 의존하지 않아야 합니다.
 
 - 테스트 사이에 mock과 mutable state를 reset합니다.
 - 시간에 민감한 동작에는 fake timer 또는 고정된 날짜를 사용합니다.
@@ -478,7 +479,7 @@ Uncovered code
 -> correct stable test boundary?
 ```
 
-프로젝트는 현재 저장소 전체에 하나의 percentage threshold를 강제하지 않습니다.
+프로젝트는 현재 저장소 전체에 하나의 coverage 비율 기준을 강제하지 않습니다.
 
 하나의 숫자로 평가하면 성격이 매우 다른 다음 코드도 똑같이 취급하게 됩니다.
 
@@ -488,7 +489,7 @@ Uncovered code
 - framework wrapper
 - type-only module
 
-대신 중요한 contract가 보호되는지를 검토합니다.
+대신 중요한 동작과 응답 규칙이 테스트로 보호되는지 검토합니다.
 
 기대하는 결과는 다음과 같습니다.
 
@@ -520,12 +521,11 @@ Type-only file, 단순 re-export 또는 도달할 수 없는 defensive branch를
 의미 있는 visual 또는 interaction 동작을 가진 복잡한 reusable UI는 page-level Vitest
 test를 반복하기보다 Storybook/browser interaction coverage에 더 적합합니다.
 
-현재 프로젝트의 주요 Storybook 경계는 `src/components/custom`,
-`src/components/layout`, `src/components/menu` 아래에서 프로젝트가 소유한 reusable
-UI입니다. Custom component 영역은 포괄적인 대상으로 삼고, layout과 menu component는
-독립적인 visual 검토 가치가 있을 때만 선별합니다. 독립적으로 렌더링 가능한 소수의
-feature presentation component도 포함할 수 있습니다. Component가 visual하거나
-reusable하다는 이유만으로 Storybook 대상이 되지는 않습니다.
+현재 Storybook은 `src/components/custom`, `src/components/layout`,
+`src/components/menu` 아래에서 프로젝트가 직접 만든 재사용 UI를 검토합니다.
+Custom 컴포넌트는 포괄적으로 다루고, 레이아웃·메뉴는 독립적인 시각 검토가 유용한
+항목만 선별합니다. API 없이 렌더링 가능한 일부 기능 표시 컴포넌트도 포함할 수
+있습니다. 시각 요소이거나 재사용 가능하다는 이유만으로 모두 포함하지는 않습니다.
 
 ---
 
@@ -687,10 +687,10 @@ launcher입니다.
   `public/storybook-static`에 복사하고, iframe은 설정된 base path 아래의
   `/storybook-static/index.html`을 load합니다.
 
-Authentication은 `/storybook` 애플리케이션 page로의 navigation을 보호합니다. 그러나
-development server나 `public/storybook-static` 아래의 파일까지 authenticated asset
-boundary로 만들지는 않습니다. Static production artifact는 직접 요청할 수 있으므로,
-embedded route를 confidential Story나 fixture의 access control로 취급해서는 안 됩니다.
+인증은 `/storybook` 애플리케이션 페이지로 이동하는 것을 제한합니다. 개발 서버와
+`public/storybook-static` 아래 파일 자체에는 이 인증이 적용되지 않습니다. 프로덕션
+정적 파일은 직접 요청할 수 있으므로 iframe 페이지의 인증을 기밀 Story나 fixture의
+접근 통제로 취급하지 않습니다.
 
 ### Storybook 검증
 
@@ -710,11 +710,11 @@ Controls 또는 browser interaction이 실질적으로 변경되면 다음을 �
 - representative Story가 runtime error 없이 mount됨
 - Storybook이 의도하지 않은 application API request를 만들지 않음
 
-선별된 `play` interaction은 추가 regression protection을 제공합니다. 저장소에는 이미
-headless Playwright Chromium provider를 사용하는 Storybook Vitest browser project가
-구성되어 있습니다. 이는 `unit` project만 실행하는 기본 `npm test` command와 분리되어
-있습니다. Browser project는 현재 모든 test가 통과하는 강제 CI gate가 아니며, 문서화된
-`play` failure는 완료된 포트폴리오 범위에서도 알려진 검증상의 제한으로 남아 있습니다.
+선별된 `play` 상호작용 테스트는 회귀 방지를 보완합니다. 저장소에는 화면 없이 실행하는
+Playwright Chromium 기반 Storybook Vitest 브라우저 프로젝트가 구성되어 있습니다.
+이는 `unit` 프로젝트만 실행하는 기본 `npm test`와 분리되어 있습니다. 브라우저
+프로젝트는 아직 모든 테스트 통과를 요구하는 CI 필수 검사가 아닙니다. 문서화된
+`play` 실패는 포트폴리오 기능이 완료된 뒤에도 검증상의 제한으로 남아 있습니다.
 
 ### E2E 경계
 
@@ -769,9 +769,9 @@ project를 명시적으로 실행할 수 있습니다.
 npm exec vitest -- run --project storybook
 ```
 
-이 browser project는 기본 `npm test` command에 포함되지 않으며 diagnostic check로
-사용합니다. 포트폴리오 기능 범위의 완료가 문서화된 interaction failure의 해결을 뜻하지는
-않습니다.
+이 브라우저 프로젝트는 기본 `npm test`에 포함되지 않으며 문제를 확인하는 진단
+검사로 사용합니다. 포트폴리오 기능이 완료되었다고 해서 문서화된 상호작용 테스트
+실패까지 해결된 것은 아닙니다.
 
 변경의 영향 범위에 따라 저장소의 다른 검사도 추가할 수 있습니다.
 
@@ -854,7 +854,7 @@ Use coverage to find gaps, not to manufacture confidence.
 Stop when important risks are protected.
 ```
 
-Vitest는 domain rule, workflow, runtime orchestration 및 결정적인 UI/application 동작을
-보호합니다. Storybook은 custom reusable UI, 선별된 application-wide layout/menu UI 및
-독립적인 소수의 feature presentation component를 격리된 browser 환경에서 검토합니다.
-Full-system E2E coverage는 완료된 포트폴리오 범위에 포함하지 않습니다.
+Vitest는 도메인 규칙, 업무 흐름, 실행 경로 조정과 같은 입력에 같은 결과를 내는
+UI·애플리케이션 동작을 검증합니다. Storybook은 custom 재사용 UI, 선별된 공통
+레이아웃·메뉴 UI, 독립적인 일부 기능 표시 컴포넌트를 격리된 브라우저에서 검토합니다.
+전체 시스템 E2E 검증은 완료된 포트폴리오 범위에 포함하지 않습니다.

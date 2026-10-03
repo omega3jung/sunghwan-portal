@@ -116,7 +116,7 @@ the project is significant and how the implemented system is divided.
 Do not duplicate:
 
 - exhaustive workflow transition or permission matrices
-- DTO, database-row, and field-by-field contracts
+- DTO, database-row, and field-by-field data formats and rules
 - full operation-rule tables
 - long decision reasoning or rejected alternatives
 
@@ -160,10 +160,10 @@ docs/
     06-decisions/          # historical decision records
 ```
 
-Current design documents explain the implementation-aligned system. Development
+Current design documents explain the implemented system. Development
 documents include testing strategy and the consolidated release record, while
 decision logs preserve point-in-time context. README and overview documents
-orient readers and link to the appropriate source-of-truth documents.
+orient readers and link to the documents that define the relevant rules.
 
 ---
 

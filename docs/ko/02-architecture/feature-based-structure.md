@@ -2,16 +2,17 @@
 
 ## Goal
 
-이 프로젝트는 프로덕션 수준의 프론트엔드 시스템에서 **확장성, 유지보수성, 관심사의 분리**를 강화하기 위해 **feature-based architecture**를 채택합니다.
+이 프로젝트는 운영 환경을 고려해 **확장성, 유지보수성, 관심사의 분리**를 높이기 위해
+사용자 기능별로 코드를 구성하는 **feature-based architecture**를 채택합니다.
 
-이 문서는 현재 소스 폴더 경계와 의존성 방향의 source of truth입니다. 과거
-decision log는 당시의 판단 근거를 보존하며, 현재 규칙은 이 문서를 따릅니다.
+현재 소스 폴더의 역할과 의존성 방향은 이 문서를 기준으로 판단합니다. 과거
+Decision Log는 당시의 판단 근거를 보존하며, 현재 규칙은 이 문서를 따릅니다.
 
 주요 목표는 다음과 같습니다.
 
-- 지속되는 비즈니스 규칙은 domain module에, workflow logic은 이를 소유한 capability에 두기
+- 지속적으로 적용되는 비즈니스 규칙은 도메인 모듈에, 업무 흐름 로직은 해당 기능에 배치
 - 관련 없는 모듈 간 결합도 줄이기
-- feature ownership과 cross-feature collaboration을 명시적으로 만들기
+- 각 기능의 담당 범위와 기능 간 협업 방식 명시
 - 장기 유지보수성을 높이기
 
 ---
@@ -64,12 +65,12 @@ domain = 비즈니스 개념과 순수 규칙
 feature = 사용자가 수행하는 독립적인 기능 단위
 ```
 
-각 feature는 다음을 함께 포함할 수 있습니다.
+각 기능(feature)은 다음을 함께 포함할 수 있습니다.
 
-- UI components
-- API logic
-- state management
-- feature contracts and workflow logic
+- UI 컴포넌트
+- API 로직
+- 상태 관리
+- 기능별 데이터 형식과 기대 동작, 업무 흐름 로직
 
 도메인 모델과 순수 비즈니스 규칙은 feature가 소유하지 않습니다. 해당 코드는
 `src/domain`에 위치하며 여러 feature와 server use case에서 공유됩니다.
@@ -130,8 +131,8 @@ domain/serviceDesk/ticket/
 
 ### 3. lib/ (Application / Integration Layer)
 
-`lib`은 project infrastructure와 둘 이상의 caller가 공유하는 domain-aware code를
-담지만 하나의 runtime 계층은 아닙니다.
+`lib`에는 프로젝트 공통 기반 코드와 여러 호출부가 공유하는 도메인 관련 코드를
+둡니다. 실행 환경은 하위 폴더별로 구분합니다.
 
 ```txt
 lib/
@@ -146,8 +147,8 @@ lib/
 - `lib` root에는 이 명시적 경계만 두고 runtime이 섞인 root barrel을 만들지 않습니다.
 - Database, secret, filesystem, server use-case 구현은 `server`, `auth`, server-only `app` entry에 둡니다. 현재 `lib/server` 경계는 없습니다.
 
-`lib`은 dumping ground가 아닙니다. 위치와 import를 통해 application policy, client
-integration, framework integration, runtime helper 중 어느 책임인지 드러내야 합니다.
+`lib`에 관련 없는 코드를 모으지 않습니다. 폴더 위치와 import를 통해 애플리케이션
+정책, 클라이언트 연동, 프레임워크 연동, 실행 환경용 보조 함수 중 담당 역할을 드러내야 합니다.
 
 ---
 
@@ -158,15 +159,15 @@ integration, framework integration, runtime helper 중 어느 책임인지 드�
 - client-safe `lib`, `domain`, `shared`, reusable component를 참조할 수 있음
 - `server` 구현을 직접 참조하지 않음
 
-Feature는 사용자 workflow를 조정하고 domain rule과 API contract를 소비하며
-interactive server state에 React Query를 연결합니다. 지속되는 domain rule의 source of
-truth가 되어서는 안 됩니다.
+Feature는 사용자 업무 흐름을 조정하고 도메인 규칙과 API 데이터 형식·기대 동작을
+사용합니다. 사용자 조작에 따라 조회·변경하는 서버 상태는 React Query에 연결합니다.
+지속적으로 적용되는 도메인 규칙의 정의를 feature에 옮기지는 않습니다.
 
-현재 code에는 `feature/serviceDesk`의 인접 slice와 auth/session, user preference처럼
-서로 협업하는 application workflow가 있습니다. 다른 slice의 internal component, hook,
-context를 편의를 위해 참조하기보다 runtime-safe public entry 또는 책임이 명확한
-contract module을 사용합니다. 명확한 feature owner가 없는 조합은 `app` 또는
-application-wide component가 담당합니다.
+현재 코드에는 `feature/serviceDesk`의 인접 기능 모듈(slice), 인증·세션, 사용자 환경
+설정처럼 서로 협업하는 흐름이 있습니다. 다른 모듈의 내부 컴포넌트·훅·컨텍스트를
+편의를 위해 참조하기보다는, 실행 환경에 맞는 공개 진입점이나 역할이 명확한 데이터
+형식·규칙 모듈을 사용합니다. 특정 feature가 담당하지 않는 조합은 `app` 또는
+애플리케이션 공통 컴포넌트에서 처리합니다.
 
 ---
 
@@ -181,9 +182,9 @@ LOCAL demo 구현은 `app/api/_adapters/localDemo`, fixture는 `mocks`가 소유
 웹 adapter와 서버가 함께 사용하는 DTO, schema, 순수 mapper는
 `lib/application/contracts`가 소유하여 서로의 구현을 직접 참조하지 않습니다.
 
-공유 개념은 실제 소유권에 맞는 위치에 둡니다. 지속되는 비즈니스 개념은 `domain`, API
-경계가 소유한 HTTP/DTO contract는 해당 경계, 범용 reusable type은 `shared`에 둡니다.
-Import path를 줄이기 위해 새 application 계층을 만들지 않습니다.
+공유 개념은 실제 담당 역할에 맞는 위치에 둡니다. 비즈니스 개념은 `domain`,
+HTTP·DTO 형식은 해당 API가 담당하는 위치, 범용 재사용 타입은 `shared`에 둡니다.
+Import 경로를 줄이기 위해 새 애플리케이션 계층을 만들지는 않습니다.
 
 ---
 
@@ -203,7 +204,7 @@ Import path를 줄이기 위해 새 application 계층을 만들지 않습니다
 - route handler에서 HTTP parsing, authentication, runtime 분기를 오케스트레이션
 - 지속되는 비즈니스 규칙, data access, client state를 직접 소유하지 않음
 
-Runtime 허용 범위는 단순히 `app` 아래인지가 아니라 entry에 따라 결정합니다.
+실행 가능한 모듈은 단순히 `app` 아래에 있는지가 아니라 진입점의 실행 환경으로 판단합니다.
 
 - Server Component, route handler, server-only loader는 server-safe module을 사용할 수 있습니다.
 - Client Component는 repository, database client, secret, filesystem code 등 server-only module을 참조하지 않습니다.
@@ -319,7 +320,8 @@ export const useFetchTickets = () => {
 
 ## Data Fetching Strategy
 
-Server-rendered data와 interactive client-side server state는 owner가 다릅니다.
+서버 렌더링에 사용하는 데이터와 사용자 조작에 따라 조회·변경하는 클라이언트의 서버
+상태는 관리 주체가 다릅니다.
 
 | Data flow | Owner |
 | --- | --- |
@@ -327,9 +329,9 @@ Server-rendered data와 interactive client-side server state는 owner가 다릅�
 | Interactive client-side server state | Feature hook/container가 React Query로 query cache, refetch, invalidation, mutation state를 관리 |
 | Client/UI state | 기본은 local component state, 멀리 떨어진 consumer가 runtime state를 공유할 때만 Zustand |
 
-현재 documents page는 Server Component에서 Markdown을 읽습니다. Interactive Service
-Desk data는 주로 feature client → route handler → LOCAL/REMOTE server implementation을
-따릅니다. Presentational component는 API를 직접 호출하지 않습니다.
+현재 문서 페이지는 Server Component에서 Markdown을 읽습니다. 사용자가 조작하는
+Service Desk 데이터는 주로 기능 클라이언트 → Route Handler → LOCAL·REMOTE 서버
+구현 순서로 처리합니다. 표시용 컴포넌트는 API를 직접 호출하지 않습니다.
 
 ### Benefits
 
@@ -366,8 +368,8 @@ Desk data는 주로 feature client → route handler → LOCAL/REMOTE server imp
 
 ## Dependency Rules
 
-다음 표는 새 module과 refactoring의 기본 방향입니다. 허용된 dependency 안에서도
-runtime compatibility를 지켜야 합니다.
+다음 표는 새 모듈 작성과 리팩터링의 기본 의존성 방향입니다. 허용된 의존성이라도
+호출부와 대상 모듈의 실행 환경이 맞아야 합니다.
 
 | 출발 계층 | 허용 대상 |
 | --- | --- |
@@ -392,9 +394,9 @@ runtime compatibility를 지켜야 합니다.
 
 ### Cross-Feature 규칙
 
-Feature 간 재사용은 directory depth가 아니라 ownership과 runtime을 기준으로
-판단합니다. 현재 Service Desk workflow는 인접한 `ticket*` slice 사이에서 ticket form,
-query contract, 공용 Service Desk client helper를 의도적으로 재사용합니다.
+Feature 간 재사용은 폴더 깊이보다 담당 역할과 실행 환경을 기준으로 판단합니다.
+현재 Service Desk 흐름은 인접한 `ticket*` 기능 모듈 사이에서 티켓 폼, 쿼리 데이터
+형식과 규칙, 공용 클라이언트 보조 함수를 의도적으로 재사용합니다.
 
 - Runtime이 분명한 stable public entry 또는 focused direct module을 사용합니다.
 - 조합을 피하려는 목적으로 다른 feature의 internal component/context/hook을 import하지 않습니다.
@@ -440,7 +442,7 @@ Service Desk `ticket*` feature slice 사이의 의도적인 협업은 `feature` 
 
 ## Barrel Export Policy
 
-Barrel 파일은 명시적인 public contract로 취급합니다.
+Barrel 파일은 외부에서 사용할 수 있는 모듈을 명시하는 공개 진입점으로 취급합니다.
 
 규칙:
 
@@ -464,10 +466,9 @@ feature/serviceDesk/ticket/api/client.ts
 -> client-only API exports
 ```
 
-여기서 `server-safe`는 전체 module graph가 Server Component, route handler, server
-implementation에서 실행 가능하다는 뜻입니다. Runtime compatibility와 ownership은
-서로 다른 review 항목입니다. Production server와 공유하는 DTO 또는 pure mapper는
-feature나 app 구현 경계가 아니라 `lib/application/contracts`에 둡니다.
+여기서 `server-safe`는 대상 모듈과 그 의존성 전체가 Server Component, Route Handler,
+서버 구현에서 실행 가능하다는 뜻입니다. 실행 환경 호환성과 담당 역할은 별도로 검토합니다.
+운영 서버와 공유하는 DTO 또는 순수 Mapper는 `lib/application/contracts`에 둡니다.
 
 Client-only shared utilities는 다음과 같은 경계로 분리합니다.
 
@@ -567,7 +568,8 @@ src/lib/client/
 
 ## Summary
 
-feature-based structure는 애플리케이션을 **비즈니스 도메인 중심**으로 구성함으로써, 각 기능이 독립 모듈처럼 동작하게 만듭니다.
+기능별 구조는 애플리케이션을 **비즈니스 도메인 중심**으로 구성하여 각 기능이 독립된
+모듈로 동작하게 합니다.
 
-그 결과 프로젝트는 확장 가능하고 유지보수하기 쉬운 프로덕션 정렬 아키텍처를 갖게 됩니다.
-이는 경계 설계를 설명하는 것이며, 프로덕션 완성을 의미하지는 않습니다.
+이 역할 구분은 운영 환경을 고려한 확장과 유지보수에 도움이 됩니다. 운영 환경에 필요한
+모든 기능이 완성되었다는 뜻은 아닙니다.

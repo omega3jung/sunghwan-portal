@@ -78,7 +78,8 @@ When an authorization-sensitive result depends on the effective user, its
 deterministic query key must include the runtime-relevant effective identity.
 Current ticket detail, ticket action list/detail, and ticket history queries use
 runtime and effective-user scope because their responses can contain
-authorization-filtered data, NOTE visibility, or operation capability projections.
+data filtered by authorization, NOTE visibility, or calculated operation
+availability.
 
 On an effective-user change, including impersonation, do not reuse the previous
 principal's protected workflow response as cached or placeholder data for the new
@@ -94,9 +95,9 @@ still targets the affected query families; isolation does not replace that rule
 or require global invalidation.
 
 Cache isolation supports client-side information isolation and UX consistency;
-it is not authorization. The server remains the final authority and authorizes
-requests using the trusted effective principal. Effective-user-aware caching and
-server-side authorization are complementary boundaries.
+it is not authorization. The server authorizes requests using the trusted
+effective principal. Effective-user-aware caching and server-side authorization
+complement each other.
 
 ---
 
@@ -194,7 +195,7 @@ documented as completed API behavior until matching routes exist.
 
 ## Settings Query Policy
 
-Settings data must not be duplicated into Zustand as a second source of truth.
+Settings data must not be duplicated into Zustand as a separate state store.
 
 React Query owns:
 

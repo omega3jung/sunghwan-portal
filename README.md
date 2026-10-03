@@ -12,28 +12,29 @@ Portfolio project by Sunghwan Jung.
 `sunghwan-portal` is a **production-aligned Service Desk prototype** built with
 Next.js 16 App Router, React 19, and TypeScript.
 
-It redesigns workflows learned from an internal IT Help Desk environment as an
-explicit Service Desk domain. Tickets are treated as operational entities that
-move through intake, approval, assignment, work, resolution, closing, and
-traceable history—not as generic CRUD records.
+It adapts workflows learned from an internal IT Help Desk environment into
+defined Service Desk rules. Each ticket moves through intake, approval,
+assignment, work, resolution, and closing, with actions and changes recorded in
+a traceable history.
 
 ```txt
 Service Desk is not a CRUD board.
 It is a workflow-driven operational system.
 ```
 
-The same feature contracts and Next.js Route Handler boundaries support a
-self-contained `LOCAL` portfolio experience and PostgreSQL-backed `REMOTE`
-services. The project is production-aligned, but intentionally not
-production-complete.
+The feature APIs use the same request and response formats for the self-contained
+`LOCAL` demo and PostgreSQL-backed `REMOTE` services. Next.js Route Handlers
+select the appropriate processing path. The project follows production design
+practices, while some capabilities needed for a complete production service are
+outside its scope.
 
 ## Live Demo
 
 [sunghwan-portal.vercel.app](https://sunghwan-portal.vercel.app/)
 
-Select **Try Demo** on the login page for the fastest review path. The LOCAL
-experience exercises implemented ticket and settings workflows without database
-credentials. REMOTE service boundaries and workflows are also implemented.
+Select **Try Demo** on the login page to start reviewing the project. The LOCAL
+demo lets you use the implemented ticket and settings workflows without
+database credentials. REMOTE services and their workflows are also implemented.
 
 ## Quick Review
 
@@ -41,7 +42,7 @@ A focused review takes about five minutes:
 
 1. Open the live demo and select **Try Demo**.
 2. Enter **Service Desk**, open a ticket, and inspect its details, permitted
-   actions, work evidence, and **Ticket History**.
+   actions, work records, and **Ticket History**.
 3. Open the user menu, select **Impersonation**, and compare controls across
    demo roles.
 4. Open **Settings → IT Service Desk Settings** and review Tenant, Category,
@@ -55,13 +56,14 @@ A focused review takes about five minutes:
 ## What This Project Demonstrates
 
 - structuring a complex operational workflow as a maintainable frontend system
-- redesigning a legacy Help Desk concept as an explicit Service Desk domain
-- modeling commands, routing, immutable history, and work evidence beyond CRUD
+- adapting a legacy Help Desk concept into defined Service Desk rules
+- modeling commands, approval and work assignment, immutable history, and work
+  records alongside basic data operations
 - separating UI, server state, form state, client state, and server-only access
 - designing role- and relationship-aware UX for requesters, assignees,
   approvers, and administrators
-- keeping PostgreSQL row, repository, mapper, DTO, service, and HTTP boundaries
-  explicit
+- assigning separate roles to PostgreSQL rows, repositories, mappers, data
+  transfer objects (DTOs), services, and HTTP handlers
 - accounting for failure handling, traceability, and change impact based on
   operational experience
 - separating risk-based Vitest coverage from focused Storybook UI inspection
@@ -72,22 +74,24 @@ A focused review takes about five minutes:
 - end-to-end ticket intake, approval, assignment, work, resolution, and closing
   workflow
 - server-controlled commands paired with event-based immutable history
-- category-derived priority, risk, due date, approval, and assignment behavior
+- deriving priority, risk, due dates, approval, and assignment from category
+  settings
 - LOCAL demo adapters and PostgreSQL-backed REMOTE services behind shared
-  contracts
+  API formats and expected behavior
 - role/permission-aware controls with LOCAL and REMOTE impersonation flows
-- per-requester draft recovery and attachment preparation boundaries
-- work-session evidence with tracked-minute aggregation
+- per-requester draft recovery and attachment preparation before saving
+- separate work-session records with total tracked minutes
 - responsive dashboard, ticket-backed Insights, ticket, and settings
   experiences
-- focused Storybook coverage available through the application `/storybook`
+- focused Storybook UI inspection available through the application `/storybook`
   route
 
 ## Current Status
 
 Feature development is complete for the portfolio scope. The repository
-presents the implemented system and its design as a portfolio artifact. The
-production extensions below are scope limitations, not a planned feature roadmap.
+presents the implemented system and its design for review. The production
+extensions listed below are excluded from this scope and do not describe planned
+work.
 
 The LOCAL portfolio experience is working and can be reviewed without external
 infrastructure. It includes mutable demo data for ticket workflows,
@@ -97,21 +101,22 @@ The REMOTE path implements server-only PostgreSQL repositories, DTO mapping,
 services, transactions, and optional external API adapters for the major ticket
 and settings workflows. Running it outside the hosted review path requires the
 corresponding database schema and credentials or compatible external services.
-Database provisioning assets are not included in the tracked repository, so the
-LOCAL path is the self-contained setup for reviewers.
+Database setup files are not included in the tracked repository, so the LOCAL
+demo is the self-contained setup for reviewers.
 
-Resolved-ticket auto-close is scheduled hourly through Supabase Cron.
-The REMOTE database function and scheduled invocation have been verified;
-verification evidence is recorded in the
+In REMOTE, Supabase Cron directly calls the resolved-ticket auto-close database
+function at the start of every hour. The function and scheduled calls have been
+verified; verification evidence is recorded in the
 [scheduling decision](./docs/en/06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
-The system is production-aligned rather than production-complete. Deferred
-production concerns are listed under [Project Limitations](#project-limitations).
+The design accounts for production structure and rules, while some capabilities
+needed to operate a complete production service remain outside the implemented
+scope. See [Project Limitations](#project-limitations).
 
 ## Domain and Workflow
 
-Tenant is the Service Desk configuration boundary, while category is the central
-behavior configuration.
+Service Desk settings are managed per Tenant. Categories define the rules that
+control ticket behavior within a Tenant.
 
 ```txt
 Company
@@ -131,7 +136,7 @@ Approval steps are resolved from the selected subcategory's parent/main
 category. Assignment rules first check the selected subcategory, then fall back
 to the parent/main category when no subcategory rule exists.
 
-The persisted ticket status union is:
+The ticket status values stored in the system are:
 
 ```txt
 Draft
@@ -156,7 +161,7 @@ Draft
   -> Closed
 ```
 
-`Open`, `Approved`, and `Reopen` are not persisted statuses. Approval completion
+`Open`, `Approved`, and `Reopen` are not stored ticket statuses. Approval completion
 is an `APPROVAL_APPROVED` history event; reopen is an action that currently
 transitions `Resolved -> Working`. Ticket and subresource reads do not mutate
 workflow state.
@@ -164,14 +169,15 @@ workflow state.
 ### Draft and Attachment Boundaries
 
 REMOTE drafts are ordinary ticket rows with `status = Draft`. One active draft
-is retained per requester, and final submission reuses that row before resolving
-approval and work routing. Operational lists exclude drafts.
+is retained per requester. Final submission reuses that row, then determines
+approval and work assignees. Operational ticket lists exclude drafts.
 
-LOCAL drafts use browser `localStorage`, scoped to the current demo user. They
-provide the corresponding UX but do not claim persistence equivalence with
-REMOTE drafts.
+LOCAL drafts are stored in browser `localStorage` for the current demo user.
+They provide the corresponding draft-recovery experience; REMOTE drafts are
+stored in PostgreSQL, so the storage behavior differs.
 
-Attachment input passes through the prepare route before metadata is written:
+Selected files and inline images pass through the prepare route before their
+metadata is saved:
 
 ```txt
 File[] / inline image
@@ -181,9 +187,11 @@ File[] / inline image
   -> metadata persistence
 ```
 
-The current prepare route uses controlled demo-file replacement in both data
-scopes. Raw files, binary data, data URLs, blob URLs, and local paths are not
-persisted in ticket or history metadata.
+The current prepare route replaces selected files and inline images with
+controlled demo files in both LOCAL and REMOTE. It does not upload them to a
+file storage service. For attachments, tickets and history store only the
+prepared metadata. Raw files, binary data, data URLs, blob URLs, and local paths
+are not stored in ticket or history metadata.
 
 ### Action, History, and Work-Session Boundaries
 
@@ -198,31 +206,32 @@ authenticate
   -> append immutable history
 ```
 
-The current action union is:
+The supported ticket action types are:
 
 ```txt
 APPROVE | DECLINE | COMMENT | NOTE | ASSIGN | ASSIGN_SELF
 REJECT | MERGE | ADJUST | REOPEN | RESUBMIT | CANCEL
 ```
 
-The explicit start-work route is separate from that union:
+The explicit start-work route is separate from those ticket action types:
 
 ```txt
 POST /api/service-desk/tickets/[ticketId]/command/start-work
 ```
 
-History records the affected domain area (`type`), cause (`source`),
-authoritative event, actor, structured before/after values, and supplemental
-metadata. Work sessions remain separate from ticket actions. Current and
-previous work assignees may record work evidence, while only a current work
-assignee may change status through a work-session submission. The current route
-surface supports list/create behavior and supported work-status transitions;
-complete timer-style start/finish/switch routes are deferred.
+History records the affected domain area (`type`), cause (`source`), recorded
+event that identifies the change, actor, structured before/after values, and
+supplemental metadata. Work sessions remain separate from ticket actions. Current
+and previous work assignees may submit work records, while only a current work
+assignee may change status through a work-session submission. The current routes
+support listing and creating work sessions and the supported work-status
+transitions. Complete timer-style start/finish/switch routes are outside the
+current scope.
 
 ## Architecture and State Ownership
 
-The codebase separates domain rules, feature workflows, application contracts,
-Route Handler adapters, and server data access.
+The codebase separates domain rules, feature workflows, shared application data
+formats and interfaces, HTTP request handling, and server data access.
 
 ```txt
 Browser UI
@@ -236,8 +245,8 @@ Browser UI
 ```
 
 REMOTE portal and authentication requests use embedded services by default.
-Deployment configuration can replace either boundary with a compatible external
-API adapter.
+Deployment configuration can replace either embedded service with an adapter
+that calls a compatible external API.
 
 The embedded data path is:
 
@@ -252,10 +261,13 @@ PostgreSQL row
   -> UI
 ```
 
-PostgreSQL access and credentials stay server-only. Client components consume
-application contracts and do not receive database rows.
+Repositories query PostgreSQL, and mappers convert database rows into DTOs for
+API responses. Services apply workflow rules, and Route Handlers receive HTTP
+requests and delegate processing to services. PostgreSQL access and credentials
+stay server-only. Client components consume the application response formats
+and do not receive database rows.
 
-State ownership follows the same boundary discipline:
+Each kind of state has a specific owner:
 
 - React Query owns tickets, actions, history, work sessions, settings, and
   organization server state.
@@ -273,8 +285,8 @@ state to URL query parameters.
 
 ## Project Evolution and Migration
 
-This repository was modernized incrementally while preserving the operational
-behavior already represented by the project.
+The framework, tooling, and UI components were updated incrementally while
+preserving the project's existing operational behavior.
 
 ### Framework and Tooling
 
@@ -296,12 +308,12 @@ behavior already represented by the project.
 - moved the styling foundation from Tailwind CSS 3 to Tailwind CSS 4
 - adapted shared primitives and application-specific combobox, date-picker,
   toast, menu, dialog, and form consumers to the changed component APIs
-- followed the primitive migration with targeted adjustments across login,
+- followed the migration with targeted adjustments across login,
   dashboard, ticket, mobile, and settings screens to retain established layout
   and interaction behavior
 
-No performance improvement figures are claimed; the migration work focused on
-compatibility, maintained behavior, and a current dependency baseline.
+The migration focused on compatibility, preserving behavior, and updating the
+dependency baseline. It does not claim measured performance improvements.
 
 ## Tech Stack
 
@@ -351,9 +363,9 @@ docs/
 
 ## Documentation
 
-Documentation is a project deliverable rather than an afterthought. Current
-design documents describe the implementation as it exists; decision logs retain
-the historical context and trade-offs behind earlier choices.
+Documentation is a core project deliverable. Current design documents describe
+the implemented system; decision logs retain the historical context, alternatives,
+and trade-offs behind earlier choices.
 
 Recommended entry points:
 
@@ -386,8 +398,8 @@ Current repository-level verification includes:
 - ESLint 9 static analysis through `npm run lint`
 - architecture dependency policies enforced by `eslint-plugin-boundaries` as
   part of that lint command
-- 23 Storybook files with 100 Story entries (static counts) across custom components and
-  selected layout, menu, and feature-presentation UI
+- 23 Storybook files with 100 Story entries (static counts) across custom
+  components and selected layout, menu, and feature-presentation UI
 - Storybook static-build verification through `npm run build-storybook`
 - a separate Storybook/Vitest browser project with six selected `play`
   interaction files and a headless Playwright Chromium provider
@@ -395,10 +407,10 @@ Current repository-level verification includes:
   then builds Next.js through `npm run build`
 
 The default `npm test` command runs only the unit project. The Storybook browser
-project remains an explicit diagnostic check rather than a clean, enforced CI
-gate; documented interaction failures remain a verification limitation. See the
+project is run explicitly to diagnose UI interactions. It still has documented
+interaction failures and is not enforced as a passing CI requirement. See the
 [Testing Strategy](./docs/en/05-development/testing-strategy.md) for ownership,
-scope, and verification boundaries.
+scope, and what each check verifies.
 
 ## Local Development
 
@@ -440,7 +452,7 @@ a browser automatically.
 | `npm run dev:clean`           | Remove `.next` and start the Next.js development server                 |
 | `npm test`                    | Run the default Vitest unit project                                     |
 | `npm run test:watch`          | Run the Vitest unit project in watch mode                               |
-| `npm run lint`                | Run ESLint and architecture boundary rules                              |
+| `npm run lint`                | Run ESLint and architecture dependency rules                            |
 | `npm run storybook`           | Start Storybook on port 6006 and allow its normal browser-open behavior |
 | `npm run storybook:no`        | Start Storybook on port 6006 without opening a browser                  |
 | `npm run build-storybook`     | Create a standalone static Storybook build                              |
@@ -466,15 +478,16 @@ configuration. Secrets and database connections must remain server-only.
 | `NEXT_PUBLIC_PORTAL_API_URL` | Optional client portal/file API base URL                                            |
 | `NEXT_PUBLIC_NODE_API_URL`   | Optional separate Node API base URL                                                 |
 
-LOCAL versus REMOTE behavior is selected by the authenticated session's
-`dataScope`, not by `NEXT_PUBLIC_CONTEXT`.
+The authenticated session's `dataScope` selects LOCAL or REMOTE processing.
+`NEXT_PUBLIC_CONTEXT` supplies a display/runtime label and does not select that
+processing path.
 
 ### REMOTE Deployment Boundary
 
 - Embedded REMOTE services use server-only authentication and portal database
   connections.
 - External REMOTE adapters use server-only authentication and portal service
-  base URLs instead of embedded dispatch.
+  base URLs to call external services instead of the embedded services.
 - These deployment credentials are intentionally not included in the checked-in
   local example.
 
@@ -487,19 +500,19 @@ production capabilities:
 - real notification delivery
 - a complete SLA calendar, pause/resume clock, breach, and escalation engine
 - real-time updates
-- complete work-session update/delete and timer route surfaces
+- complete work-session update/delete and timer routes
 - compliance-grade audit infrastructure
 - advanced assignment load balancing
-- dashboard summary cards use fixed presentation values; Insights aggregates
+- dashboard summary cards use fixed display values; Insights aggregates
   the authorized ticket search results
 - manual `ASSIGN` validates the actor, status, and non-empty assignee list but
   does not revalidate candidate eligibility against the category routing policy;
   see the [Assignment Policy](./docs/en/03-domain/service-desk/ticket/strategy/assignment-policy.md)
-- recipient addresses are persisted without employee/company eligibility
+- recipient addresses are saved without employee/company eligibility
   validation; notification delivery is outside the implemented scope
 
-These boundaries distinguish implemented workflow behavior from the additional
-infrastructure and controls required for a production-complete service.
+These limits identify the additional infrastructure and controls needed to run
+the implemented workflows as a complete production service.
 
 ## Author
 

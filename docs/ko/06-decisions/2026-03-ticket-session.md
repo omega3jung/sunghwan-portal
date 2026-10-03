@@ -21,8 +21,8 @@ Service Desk 티켓 모듈을 구현하는 과정에서,
 
 ### 결정
 
-`TicketTrackTime`은 집계된 시간 값이 아니라,
-하나의 작업 세션 엔트리로 모델링하기로 했습니다.
+`TicketTrackTime` 하나가 한 번의 작업 세션을 나타내도록 모델링하기로 했습니다.
+집계된 총 작업 시간을 나타내는 모델로는 사용하지 않습니다.
 
 ### 이유
 
@@ -76,8 +76,8 @@ export interface TicketTrackTime {
 
 다음과 같이 사용합니다.
 
-- `TicketTrackTime`: 세션 데이터의 source of truth
-- `TicketHistory`: 시작, 종료 같은 이벤트의 audit trail
+- `TicketTrackTime`: 작업 세션 데이터를 보관하고 판단의 기준으로 사용
+- `TicketHistory`: 시작·종료 같은 이벤트의 감사 추적 기록
 
 ---
 
@@ -129,7 +129,7 @@ POST /tickets/:ticketId/track-time/switch
 ### 이유
 
 - "현재 작업 종료 후 새 작업 시작"이라는 자연스러운 흐름을 지원합니다
-- 여러 단계의 로직이 클라이언트로 새어 나가는 것을 막습니다
+- 종료와 시작을 클라이언트에서 따로 조합하지 않아도 됩니다
 - 서버에서 원자적으로 처리할 수 있습니다
 
 ---
@@ -166,7 +166,7 @@ POST /tickets/:ticketId/track-time/switch
 ### 이유
 
 - 동시에 여러 활성 세션이 생기는 것을 막습니다
-- `finish(ticketId)` 동작을 결정적으로 만듭니다
+- `finish(ticketId)`가 종료할 세션을 명확하게 결정할 수 있습니다
 - 서버 규칙을 단순화할 수 있습니다
 
 ### 영향
@@ -202,7 +202,8 @@ POST /tickets/:ticketId/track-time/switch
 
 ### 결정
 
-현재 사용자의 작업 상태를 경량의 파생 컨텍스트로 표현하기로 했습니다.
+쿼리나 서버 데이터에서 현재 사용자의 작업 상태를 계산해,
+UI에 필요한 작은 컨텍스트로 표현하기로 했습니다.
 
 ### 예시
 
@@ -237,13 +238,13 @@ WHERE ticketId = :ticketId
 ### 기각 이유
 
 - 상태 추론에 의존하는 암묵적 동작이 생깁니다
-- race condition 위험이 커집니다
+- 동시에 요청할 때 상태가 달라지는 경쟁 조건(race condition) 위험이 커집니다
 - 에러 처리가 더 모호해집니다
 
 ### 선호하는 접근
 
 - `start`, `finish`, `switch` 같은 명시적 API 액션을 사용합니다
-- 개수를 세는 대신 실제 활성 세션 row를 조회해 해결합니다
+- 개수를 세는 대신 실제 활성 세션 행을 조회해 처리 대상을 결정합니다
 
 ---
 

@@ -19,9 +19,9 @@ Client -> MainCategory -> SubCategory
 
 with `SubCategory` overriding `MainCategory` values.
 
-During implementation and integration with ticket workflows, several practical questions emerged around:
+Integrating categories with ticket workflows raised three questions:
 
-- how strictly category should act as the source of truth
+- how strictly category settings should determine ticket behavior
 - how much flexibility should be allowed at the ticket level
 - how to balance configuration and runtime overrides
 
@@ -148,7 +148,7 @@ All overrides must:
 - be recorded in history
 - include actor and reason
 
-This keeps override behavior auditable rather than implicit.
+This records who changed a default and why, so the override can be audited.
 
 ---
 

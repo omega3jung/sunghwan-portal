@@ -35,13 +35,13 @@ assignmentPhase = APPROVAL
 assigneeUsernames = current approvers
 ```
 
-Application DTOs project this into:
+Application DTOs calculate these response values from the stored fields:
 
 - `assignmentPhase = "APPROVAL"`
 - `approvalAssigneeUsernames`
 - `assignedApprover`
 
-These are projections. They are not separate persisted routing sources.
+These values are calculated on read; they are not separate stored assignment criteria.
 
 ---
 
@@ -121,8 +121,8 @@ category tenant's company, for both `INTERNAL` and `PORTAL` categories.
 | `JOB_FIELD` | final employee resolution applies the company filter even if job field is shared |
 | `MANAGER` | the resolved manager belongs to that company |
 
-Candidate lookup is category-centered and also checks the caller's Approval
-Step capability. Request `categoryId`, `purpose`, or `companyId` values select
+Candidate lookup uses the category and also checks the caller's permission to
+access Approval Steps. Request `categoryId`, `purpose`, or `companyId` values select
 a target; they do not grant authority.
 
 Eligibility is validated when an Approval Step is saved and again when submit,
@@ -303,7 +303,7 @@ These are future production extensions.
 
 ## Summary
 
-Approval is a sequential category-driven routing phase. Current approvers are
+Approval proceeds in sequence according to category settings. Current approvers are
 stored in the same current assignee field used by work routing, with
 `approvalStepId` distinguishing approval phase from work phase. Final approval
 does not create an `Approved` status; it resolves workers and moves the ticket

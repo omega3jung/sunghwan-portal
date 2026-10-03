@@ -17,7 +17,8 @@ While a user edits the form, the browser may temporarily hold values such as:
 
 These values are useful for editing and previewing, but they are not safe ticket persistence values.
 
-As REMOTE ticket creation, requester update, and draft behavior moved toward a PostgreSQL-backed flow, the project needed a clear boundary between:
+Moving REMOTE ticket creation, requester updates, and drafts to PostgreSQL required
+a clear distinction between:
 
 ```txt
 browser attachment input
@@ -36,7 +37,8 @@ It intentionally does not provide:
 - upload-session recovery
 - orphaned-file cleanup
 
-The implementation still needs to demonstrate a realistic attachment workflow without pretending that demo references are production-grade storage.
+The implementation still needs to show a realistic attachment workflow while clearly
+identifying demo references as demo files.
 
 ---
 
@@ -107,7 +109,7 @@ Ticket command
 != file-processing pipeline
 ```
 
-Ticket commands should receive persistence-safe ticket input.
+Ticket commands should receive input that has already been prepared for storage.
 
 ---
 
@@ -217,7 +219,8 @@ type PrepareTicketAttachmentsResponse = {
 
 `body` represents the rich-text content after image-source normalization.
 
-Ticket create, draft submit, and requester update use the prepared content and metadata when crossing the ticket persistence boundary.
+Ticket creation, draft submission, and requester updates send prepared content and
+metadata to the ticket storage API.
 
 ---
 
@@ -378,7 +381,7 @@ Feature components do not branch on:
 
 ### 9. Treat preparation as the trusted validation boundary
 
-Client-side validation may improve user experience, but it is not the trusted boundary.
+Client-side validation may improve user experience, but it cannot replace server validation.
 
 Server preparation validates and normalizes:
 
@@ -499,6 +502,6 @@ File[] / inline base64 / blob URL
 -> tk_content / tk_files / tk_images
 ```
 
-LOCAL and REMOTE share one application-facing attachment metadata contract.
+LOCAL and REMOTE provide the same attachment metadata format to the UI.
 
 That is deliberate: it preserves a realistic form experience while avoiding false claims about production file storage.

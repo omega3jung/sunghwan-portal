@@ -37,7 +37,7 @@ previous workplace experience
 ## Identity Shift
 
 The name changed from Service Hub to Service Desk because the current module is
-a focused workflow domain, not a broad internal portal bucket.
+a module focused on request intake and processing rather than general portal functions.
 
 Service Desk now means:
 
@@ -209,7 +209,7 @@ Requester category changes are routing-sensitive and can trigger routing reset.
 
 ## Approval and Work Routing
 
-Routing became phase-aware.
+Assignee routing now distinguishes approval from work assignment.
 
 ```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
@@ -219,8 +219,8 @@ The ticket DTO can expose:
 
 - approval assignees
 - work assignees
-- assigned approver projection
-- assigned worker projection
+- whether the current user is an assigned approver, derived from current routing
+- whether the current user is an assigned worker, derived from current routing
 
 This avoids treating every assignee as the same kind of ownership.
 
@@ -270,8 +270,8 @@ browser file input
 -> ticket command
 ```
 
-This keeps the current demo honest: it can persist metadata and controlled demo
-URLs without claiming production object storage.
+The current demo stores attachment metadata and controlled demo URLs. It does
+not store the actual files in production object storage.
 
 ---
 
@@ -288,7 +288,7 @@ Current work-session design records:
 - note
 - optional next status
 
-The implemented route surface currently supports list and create. Additional
+The implemented API routes currently support list and create. Additional
 timer/update/delete APIs are future extension points until matching route
 handlers exist.
 
@@ -296,7 +296,7 @@ handlers exist.
 
 ## SLA Evolution
 
-The design now treats SLA carefully.
+The current SLA implementation has a limited scope.
 
 Current implementation uses:
 
@@ -333,7 +333,7 @@ History should answer what changed, why, who caused it, and when it happened.
 
 ### Current Docs and Decision Logs Have Different Jobs
 
-Current design documents describe the implementation-aligned model. Decision
+Current design documents describe the implemented model. Decision
 logs preserve the context and reasoning of choices made at a point in time.
 
 ---

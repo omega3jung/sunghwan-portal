@@ -2,7 +2,7 @@
 
 ## 배경
 
-Category는 Service Desk ticket 동작을 구성하는 중심 설정입니다.
+Category는 Service Desk 티켓 처리 방식을 정하는 핵심 설정입니다.
 
 Category가 영향을 주는 항목은 다음과 같습니다.
 
@@ -27,11 +27,11 @@ active = false
 
 Service Desk Settings가 구체화되면서 설정 문제가 드러났습니다.
 
-새로 생성된 Category의 Assignment Rule이 work ownership을 만들 준비가 되기 전에
-Category가 active 상태가 될 수 있었습니다.
+새로 생성한 Category에 작업자를 배정할 Assignment Rule이 준비되지 않아도
+Category가 활성화될 수 있었습니다.
 
-이로 인해 Settings에서는 유효해 보이지만 ticket이 work assignment 단계에 도달하면
-실패하는 설정이 만들어질 수 있었습니다.
+그 결과 설정 화면에서는 유효해 보이지만 티켓이 작업자 배정 단계에 도달하면
+실패하는 설정이 생길 수 있었습니다.
 
 Assignment 결정이 다음 두 종류를 모두 지원하기 때문에 이 문제는 더 중요해졌습니다.
 
@@ -49,8 +49,8 @@ and
 Category is ready to participate in ticket routing
 ```
 
-아울러 가벼운 설정 준비 상태와 실제 ticket을 routing할 때 필요한 더 강한 검증을
-구분해야 했습니다.
+설정의 준비 여부를 확인하는 검사와 실제 티켓의 담당자를 결정할 때 필요한 더
+엄격한 검증도 구분해야 했습니다.
 
 ---
 
@@ -87,8 +87,8 @@ Category created
 -> work routing cannot resolve ownership
 ```
 
-기본 record가 성공적으로 생성되었다는 이유만으로 설정 entity가 운영 환경과 같은
-workflow 가능 상태로 진입해서는 안 됩니다.
+기본 레코드를 생성했다는 이유만으로 새 티켓에서 사용할 수 있는 설정이 되어서는
+안 됩니다.
 
 ---
 
@@ -144,10 +144,10 @@ Sub Category own rule exists but is invalid
 -> silently fall back to Main Category rule
 ```
 
-이 방식은 UI를 견고해 보이게 만들지만 잘못된 설정을 숨깁니다.
+이 방식은 UI가 문제없이 동작하는 것처럼 보이게 하지만 잘못된 설정을 숨깁니다.
 
-관리자는 Sub Category에 자체 routing 정책이 있다고 생각하지만 runtime에서는 다른
-정책을 조용히 사용할 수 있습니다.
+관리자는 Sub Category의 자체 배정 정책이 적용된다고 생각하지만, 실제 실행에서는
+다른 정책을 사용할 수 있습니다.
 
 Fallback은 다음을 의미해야 합니다.
 
@@ -165,10 +165,9 @@ the override exists but does not work
 
 ### 4. 활성화 준비 상태와 실제 routing eligibility는 서로 다른 문제임
 
-Settings에서는 설정에 사용할 수 있는 active reference가 포함되어 있는지 판단할 수
-있습니다.
+설정 단계에서는 활성 참조 항목이 포함되어 있는지 판단할 수 있습니다.
 
-하지만 ticket routing은 나중에 더 많은 context와 함께 실행됩니다.
+하지만 실제 티켓의 담당자는 나중에 그 시점의 업무 맥락까지 확인해 결정합니다.
 
 설정 시점과 ticket 실행 시점 사이에 다음이 발생할 수 있습니다.
 
@@ -186,7 +185,7 @@ Category was ready when activated
 -> Category will always resolve a worker later
 ```
 
-활성화 검증은 routing 시점의 검증을 대체할 수 없습니다.
+활성화 검증은 담당자를 결정하는 시점의 검증을 대신하지 못합니다.
 
 ---
 
@@ -204,8 +203,8 @@ Sub Category active = true
 
 계층 구조가 깨집니다.
 
-반면 Main Category를 일시적으로 deactivate할 때 저장된 Sub Category 값을 자동으로
-덮어쓰면 유용한 설정이 손실됩니다.
+Main Category를 일시적으로 비활성화할 때 Sub Category에 저장된 활성 값을
+자동으로 덮어쓰면 기존 설정이 손실됩니다.
 
 따라서 model은 다음을 구분해야 했습니다.
 
@@ -306,7 +305,7 @@ Explicit activation
 
 ## 결정
 
-명시적인 Category 활성화 lifecycle을 도입했습니다.
+Category를 생성한 뒤 별도로 활성화하는 절차를 도입했습니다.
 
 핵심 model은 다음과 같습니다.
 
@@ -329,7 +328,7 @@ active = false
 
 client가 active 값을 전달해도 이 규칙을 적용합니다.
 
-LOCAL과 REMOTE runtime mode 모두에서 server boundary가 이 규칙의 최종 권한을 가집니다.
+LOCAL과 REMOTE 모두 서버에서 이 규칙을 적용합니다.
 
 ---
 
@@ -354,16 +353,16 @@ Active
 -> Inactive
 ```
 
-Deactivate 후에도 과거 ticket reference는 유효하게 유지합니다.
+비활성화한 뒤에도 과거 티켓의 카테고리 참조는 유효하게 유지합니다.
 
-Category가 마지막으로 active 상태였을 때와 달리 reference된 organization data가
-변경되었을 수 있으므로 재활성화할 때 readiness validation을 다시 수행합니다.
+Category가 마지막으로 활성화된 뒤 참조하는 조직 데이터가 바뀌었을 수 있으므로,
+재활성화할 때 준비 상태를 다시 검증합니다.
 
 ---
 
 ## Assignment 준비 상태
 
-Category는 effective Assignment Rule에 active assignment reference가 하나 이상 있을
+Category는 실제 적용할 Assignment Rule에 활성 배정 참조 항목이 하나 이상 있을
 때만 활성화할 수 있습니다.
 
 조건을 만족하는 reference는 다음 중 하나입니다.
@@ -384,19 +383,19 @@ effective Assignment Rule
 -> Category may be activated
 ```
 
-이는 Settings readiness check입니다.
+이 검사는 설정이 준비되었는지 확인합니다.
 
-Routing 설정이 구조적으로 비어 있지 않으며 현재 active 상태인 assignment reference가
-하나 이상 포함되어 있음을 증명합니다.
+배정 설정이 비어 있지 않고, 현재 활성 상태인 배정 참조 항목이 하나 이상 있는지
+확인합니다.
 
-실제 Ticket에서 eligible worker가 항상 하나 이상 결정된다는 것을 증명하지는
-**않습니다**.
+실제 티켓을 처리할 때 자격을 갖춘 작업자가 항상 하나 이상 결정된다는 보장은
+**아닙니다**.
 
 ---
 
 ## 비어 있는 Assignment Rule
 
-비어 있는 Assignment Rule은 유효한 persisted routing configuration이 아닙니다.
+비어 있는 Assignment Rule은 저장할 수 있는 유효한 배정 설정이 아닙니다.
 
 다음 상태를 저장해서는 안 됩니다.
 
@@ -436,7 +435,7 @@ selected Sub Category
 
 Fallback은 Sub Category에 **자체 Assignment Rule이 없을 때만** 발생합니다.
 
-기존 자체 rule이 잘못되었다는 이유로 fallback해서는 안 됩니다.
+자체 규칙이 있지만 잘못되었다면 상위 규칙으로 대신 처리하지 않습니다.
 
 거부하는 동작은 다음과 같습니다.
 
@@ -459,7 +458,7 @@ Sub own rule absent
 
 이 방식은 설정 의도를 명시적으로 유지합니다.
 
-잘못된 override는 설정 오류이지 fallback signal이 아닙니다.
+잘못된 자체 규칙은 설정 오류입니다. 상위 규칙을 적용하라는 신호로 취급하지 않습니다.
 
 ---
 
@@ -480,14 +479,14 @@ Sub Category
 -> otherwise Main Category Assignment Rule
 ```
 
-이를 통해 별도의 상속 rule을 중복 구현하지 않고 활성화 동작을 routing model과
-정렬합니다.
+활성화 검사와 실제 배정에 같은 상속 규칙을 적용해 서로 다른 규칙을 중복 구현하지
+않습니다.
 
 ---
 
 ## 저장된 Active 상태와 Effective Active 상태
 
-Sub Category의 사용 가능 여부는 두 level에서 파생됩니다.
+Sub Category의 사용 가능 여부는 상위·하위 두 카테고리의 활성 상태로 결정합니다.
 
 ```ts
 effectiveActive = mainCategory.active && subCategory.active;
@@ -544,13 +543,13 @@ main.active
 
 기존 Ticket은 나중에 inactive가 된 Category를 계속 표시할 수 있습니다.
 
-Category deactivation이 과거 classification을 파괴해서는 안 됩니다.
+Category를 비활성화해도 과거 티켓의 분류는 유지해야 합니다.
 
 ---
 
 ## 활성화 준비 상태와 Routing 시점 검증
 
-시스템은 의도적으로 두 개의 validation boundary를 유지합니다.
+시스템은 활성화 검사와 실제 담당자 검증을 각각 수행합니다.
 
 ### 활성화 시점 준비 상태
 
@@ -563,11 +562,11 @@ Ticket workflows?
 
 다음과 같은 설정 준비 상태를 검사합니다.
 
-- effective Assignment Rule 존재 여부
-- active Job Field 또는 active Employee reference가 하나 이상 존재하는지
-- Category hierarchy가 유효한지
-- 적용되는 parent state가 활성화를 허용하는지
-- Settings authorization이 mutation을 허용하는지
+- 실제 적용할 Assignment Rule 존재 여부
+- 활성 Job Field 또는 Employee 참조 항목이 하나 이상 존재하는지
+- Category 계층 구조가 유효한지
+- 상위 Category 상태가 활성화를 허용하는지
+- 설정 변경 권한이 있는지
 
 이를 통해 명백히 완료되지 않은 설정이 active 상태가 되는 것을 막습니다.
 
@@ -585,15 +584,15 @@ Routing은 더 강한 검증을 수행해야 합니다.
 
 다음을 계속 검증합니다.
 
-- 현재 Category 및 Tenant 상태
-- 현재 Company boundary
+- 현재 Category와 Tenant 상태
+- 현재 Company에 따른 접근·배정 범위
 - 현재 Assignment Rule
-- reference된 Job Field
-- reference된 Employee
-- employee activity
-- employee company eligibility
-- scope별 assignment rule
-- 최종 결정된 worker 집합
+- 참조하는 Job Field
+- 참조하는 Employee
+- 직원 활성 여부
+- 직원이 해당 회사에 배정될 자격이 있는지
+- 범위별 배정 규칙
+- 최종 결정된 작업자 집합
 
 핵심 invariant는 다음과 같습니다.
 
@@ -601,7 +600,7 @@ Routing은 더 강한 검증을 수행해야 합니다.
 resolved workers.length >= 1
 ```
 
-유효한 worker를 결정할 수 없으면 routing은 실패합니다.
+자격을 갖춘 작업자를 결정할 수 없으면 배정은 실패합니다.
 
 시스템은 다음 상태를 생성해서는 안 됩니다.
 
@@ -610,23 +609,24 @@ status = Assigned
 assigneeUsernames = []
 ```
 
-따라서 활성화는 설정 품질 gate입니다.
+활성화 검사는 새 티켓에 노출할 설정의 준비 상태를 확인합니다.
 
-Routing은 운영상의 source of truth로 유지됩니다.
+실제로 배정할 수 있는지는 티켓 처리 시점의 담당자 검증 결과를 기준으로 판단합니다.
 
 ---
 
 ## 활성화 시 Worker를 결정하고 고정하지 않는 이유
 
-Category 활성화 시 실제 worker username을 결정한 뒤 그 결과를 이후 operability의
-증거로 사용하는 대안이 있습니다.
+Category를 활성화할 때 작업자 사용자명을 결정하고 그 결과를 이후에도 배정 가능하다는
+근거로 사용하는 대안이 있습니다.
 
 이 대안은 채택하지 않았습니다.
 
 Assignment 설정은 Job Field를 reference할 수 있고, 활성화 후 organization data가
 변경될 수 있습니다.
 
-활성화 시점의 worker resolution snapshot을 저장하거나 신뢰하면 stale 상태가 됩니다.
+활성화 시점에 결정한 작업자 목록을 저장하거나 계속 신뢰하면 이후 조직 변경을
+반영하지 못합니다.
 
 의도한 관계는 다음과 같습니다.
 
@@ -661,9 +661,9 @@ canActivateCategory
 - disabled 상태
 - 관리자 안내
 
-이 capability는 UI/application projection입니다.
+이 값은 UI·애플리케이션이 계산한 활성화 가능 여부입니다.
 
-Authorization 또는 validation의 source of truth가 아닙니다.
+권한이나 활성화 조건을 최종 판단하는 근거는 아닙니다.
 
 필요한 boundary는 다음과 같습니다.
 
@@ -675,8 +675,8 @@ Server activation validation
 -> authoritative decision
 ```
 
-일반적으로 client가 control을 disable한다는 이유만으로 조작된 request가 준비되지 않은
-Category를 활성화할 수 있어서는 안 됩니다.
+화면에서 활성화 버튼을 비활성화하는 것만으로는 충분하지 않습니다. 요청을 조작해도
+준비되지 않은 Category를 활성화할 수 없어야 합니다.
 
 ---
 
@@ -718,8 +718,7 @@ UI는 어떤 구현이 결과를 제공했는지 알 필요가 없어야 합니�
 
 Category activation readiness는 주로 work Assignment readiness를 기준으로 제한합니다.
 
-Approval 설정은 Approval Step을 저장할 때와 실제 approval route를 결정할 때 각각
-독립적으로 검증합니다.
+승인 설정은 Approval Step을 저장할 때와 실제 승인자를 결정할 때 각각 검증합니다.
 
 Approval은 선택 사항이므로 Approval Step이 없는 Category도 유효합니다.
 
@@ -736,7 +735,7 @@ Assignment Rule
 -> required path to work ownership
 ```
 
-활성화 준비 상태는 "approval 불필요"와 "worker 불필요"를 혼동해서는 안 됩니다.
+활성화 검사에서 "승인이 필요 없음"을 "작업자가 필요 없음"으로 해석해서는 안 됩니다.
 
 ---
 
@@ -754,8 +753,8 @@ Existing Ticket / Action / History
 -> preserved
 ```
 
-Deactivate하거나 향후 readiness rule을 만족하지 못하더라도 기존 Ticket History를
-다시 작성해서는 안 됩니다.
+비활성화되거나 이후 준비 조건을 충족하지 못하더라도 기존 티켓 이력을 다시 작성하지
+않습니다.
 
 기존 ticket의 상태 변경은 명시적인 Ticket workflow operation과 별도의 Settings 변경
 영향 정책을 계속 따릅니다.
@@ -866,9 +865,9 @@ effectiveAssignmentRule =
   subOwnRule ?? mainRule
 ```
 
-여기서 `subOwnRule`은 유효하게 저장된 override이거나 존재하지 않습니다.
+여기서 `subOwnRule`은 유효하게 저장된 자체 규칙이거나 존재하지 않는 값입니다.
 
-잘못 저장된 override를 부재 상태로 normalize해서는 안 됩니다.
+잘못 저장한 자체 규칙을 규칙이 없는 상태로 변환해서는 안 됩니다.
 
 ---
 
@@ -887,7 +886,8 @@ effectiveAssignmentRule =
 
 ## 요약
 
-Category 활성화는 Category 생성의 side effect가 아니라 명시적인 설정 lifecycle입니다.
+Category는 생성했다고 자동으로 활성화하지 않습니다. 설정을 준비한 뒤 별도로
+활성화합니다.
 
 ```txt
 Create inactive
@@ -916,7 +916,7 @@ Main Category 상태는 effective Sub Category availability도 제어합니다.
 effectiveActive = main.active && sub.active
 ```
 
-활성화 시점의 readiness와 ticket routing 시점의 eligibility는 계속 분리합니다.
+활성화 시점의 설정 준비 상태와 실제 티켓 배정 시점의 작업자 자격은 계속 구분합니다.
 
 ```txt
 Activation
@@ -926,11 +926,11 @@ Routing
 -> current operational validation
 ```
 
-Category가 active라는 것은 새 workflow 선택에 진입할 수 있도록 충분히 설정되었음을
-의미합니다.
+Category가 활성 상태라는 것은 새 티켓에서 선택할 수 있을 만큼 설정이 준비되었다는
+뜻입니다.
 
-실제 Ticket을 routing할 때마다 현재 eligible worker를 결정하고 검증해야 한다는
-요구 사항은 그대로 유지됩니다.
+실제 티켓의 담당자를 결정할 때마다 현재 자격을 갖춘 작업자를 조회하고 검증해야
+한다는 요구사항은 유지합니다.
 
 ---
 

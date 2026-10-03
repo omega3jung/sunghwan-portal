@@ -139,8 +139,8 @@ The project needed a responsibility-based rule rather than a mechanical rename.
 
 ### 5. UI capability must not be confused with server authorization
 
-A `canApprove` prop can improve component semantics, but it is still a
-client/application projection.
+A `canApprove` prop makes the component API clearer, but it is still a value
+calculated by the client or application to show whether approval is available.
 
 It cannot replace server validation of:
 
@@ -338,8 +338,8 @@ canInteract
 
 ## UI Primitive Boundary
 
-A feature component converts capability into presentation state at the UI
-primitive boundary.
+A feature component converts operation availability into presentation state when
+passing it to a UI primitive such as Button.
 
 ```tsx
 function TicketApproveButton({
@@ -436,8 +436,8 @@ application policy, hook, context, or feature container.
 The component should not repeatedly reconstruct the same business condition in
 JSX.
 
-However, this decision does not require creating a new policy layer for every
-boolean. Existing boundaries should be used where they already fit.
+This decision does not require a new policy layer for every boolean. Use the
+existing code that already owns the decision.
 
 ---
 

@@ -2,7 +2,9 @@
 
 ## Goal
 
-impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**을 가능하게 하여, 권한이 허용된 INTERNAL 관리자가 다른 사용자를 대신해 동작할 수 있도록 설계됩니다.
+impersonation(다른 사용자로 동작하기)은 권한이 허용된 `INTERNAL` 관리자가
+다른 사용자의 권한과 화면으로 작업할 수 있도록 설계했습니다. 전환은 서버가
+검증하며, 실제 로그인한 사용자의 정보도 보존합니다.
 
 주요 목적은 다음과 같습니다.
 
@@ -10,7 +12,7 @@ impersonation 전략은 **안전하고 통제된 사용자 컨텍스트 전환**
 - 사용자 이슈 재현과 디버깅 지원
 - 엄격한 보안 경계 유지
 - 모든 행동의 감사 추적 가능성 보존
-- client-only override 대신 서버와 세션을 고려한 impersonation 유지
+- 클라이언트의 값 변경만으로 전환하지 않고 서버와 세션에서 impersonation 관리
 
 ---
 
@@ -52,7 +54,7 @@ Service Desk 시스템에서는 지원 담당자가 특정 사용자의 실제 �
 
 - 통제된 impersonation 허용
 - 원래 사용자 identity 보존
-- 추적 가능성을 위해 session/request context에 original 및 effective identity 보존
+- 누가 대신 작업했는지 추적할 수 있도록 세션과 요청에 원래 사용자 및 현재 사용자 정보 보존
 
 ---
 
@@ -77,7 +79,7 @@ Service Desk 시스템에서는 지원 담당자가 특정 사용자의 실제 �
 ### Impersonated User
 
 - 대신 행동하는 대상 사용자
-- impersonation 동안 시스템에서 실제로 사용되는 current identity
+- impersonation 동안 UI 표시와 업무 권한 판단의 기준이 되는 사용자
 
 ---
 
@@ -117,12 +119,12 @@ session = {
 
 ### Behavior
 
-- `session.user` 는 original user projection으로 유지됨
-- `currentUser` 는 UI와 권한 판단 전반에서 사용됨
-- `originalUser` 는 session/request 추적 및 보안 검증을 위해 유지됨
-- `isImpersonating` 은 client/runtime 계층에서 impersonation metadata로부터 파생됨
+- `session.user`는 원래 인증된 사용자의 정보를 유지합니다
+- `currentUser`는 UI와 업무 권한 판단 전반에 사용합니다
+- `originalUser`는 세션·요청 추적과 보안 검증을 위해 유지합니다
+- `isImpersonating`은 클라이언트 실행 중 impersonation 정보로 계산합니다
 
-기존 `actor / subject / effective` 명칭은 코드와 문서에서 runtime 의미가 명확하도록
+기존 `actor / subject / effective` 명칭은 코드와 문서에서 실행 중 역할이 명확하도록
 `originalUser / impersonatedUser / currentUser`로 변경했습니다.
 
 ---
@@ -163,10 +165,10 @@ session = {
 
 ### Behavior
 
-- 세션의 original user projection은 유지
-- impersonation 이 활성화되면 `impersonatedUser` 로부터 `currentUser` 를 해석
-- original user는 유지
-- `isImpersonating = true` 설정
+- 세션의 원래 사용자 정보 유지
+- impersonation이 활성화되면 `impersonatedUser`로 `currentUser` 구성
+- 원래 사용자 추적 정보 유지
+- impersonation 정보에 따라 `isImpersonating = true`로 판단
 
 ---
 
@@ -183,7 +185,7 @@ impersonation 종료 -> original user 복원
 ### Behavior
 
 - impersonation 컨텍스트 제거
-- 세션을 original user로 초기화
+- 현재 사용자 컨텍스트를 원래 사용자로 복원
 - impersonation 플래그 해제
 
 ---
@@ -200,25 +202,25 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Implication
 
-- 권한 검증은 신중하게 수행되어야 함
-- 시스템은 privilege escalation을 방지해야 함
-- current user가 바뀌더라도 original user는 항상 식별 가능해야 함
+- 서버에서 권한을 검증해야 합니다
+- 허용 범위를 넘어 권한이 높아지는 것을 막아야 합니다
+- 현재 사용자가 바뀌어도 원래 사용자는 항상 식별할 수 있어야 합니다
 - 권한 부여 규칙은 UI 구성 요소가 아닌 인증 계층에서 적용됩니다.
 
 ---
 
 ### Example
 
-- 관리자가 일반 사용자를 impersonate함
-- UI와 동작은 사용자 컨텍스트로 수행됨
-- 시스템은 여전히 original user가 관리자임을 알고 있음
+- 관리자가 일반 사용자로 전환합니다
+- UI와 업무 동작은 일반 사용자의 권한으로 수행합니다
+- 시스템은 전환을 시작한 원래 사용자가 관리자라는 정보를 유지합니다
 
 ---
 
 ### Current Authorization Boundary
 
-- 내부 관리자만 가장을 시작할 수 있습니다.
-- 대상은 내부 데모 계정을 포함한 내부 또는 클라이언트 사용자일 수 있습니다.
+- `INTERNAL` 관리자만 impersonation을 시작할 수 있습니다.
+- 대상은 내부 데모 계정을 포함한 `INTERNAL` 또는 `CLIENT` 사용자일 수 있습니다.
 - 대상은 원래 사용자와 달라야 하며 권한 수준이 더 낮아야 합니다.
 - JWT 갱신 콜백도 API와 같은 서버 정책으로 대상을 다시 검증하고, 원래 사용자
   정보와 활성화 시각을 직접 구성합니다.
@@ -227,19 +229,18 @@ Impersonation은 original user의 권한 범위를 넘어서는 privilege escala
 
 ### Requirement
 
-추적 가능성을 위해 session/request context에 original 및 effective identity를
-보존합니다. Workflow authorization은 effective user를 사용하고, Ticket History는
-현재 History 계약에 따라 effective actor를 기록합니다. 현재 구현은 모든 workflow
-History row에 original/effective identity 쌍을 저장하거나 compliance-grade audit
-infrastructure를 제공하지 않습니다.
+세션과 요청에는 원래 사용자와 현재 사용자 정보를 함께 보존합니다. 업무 권한은
+현재 사용자를 기준으로 판단하며, Ticket History에는 현재 이력 기록 규칙에 따라
+현재 수행자를 기록합니다. 모든 업무 이력 행에 원래 사용자와 현재 사용자의 쌍을
+저장하는 기능이나 규정 준수 수준의 감사 기반 기능은 현재 제공하지 않습니다.
 
 ---
 
 ### Stored Context
 
-- `originalUser.username` (심사/보안 키)
-- `impersonatedUser.username` (활성화된 사용자 컨텍스트 키)
-- `originalUser.id` (원본 인증/계정 식별자)
+- `originalUser.username` (추적·보안 검증에 사용하는 키)
+- `impersonatedUser.username` (현재 사용자 컨텍스트의 키)
+- `originalUser.id` (원래 인증·계정 식별자)
 
 ---
 
@@ -254,8 +255,8 @@ originalUser: admin456
 
 ### Benefit
 
-- Session/request identity 추적 가능성
-- Effective actor 기준 workflow History
+- 세션·요청에서 원래 사용자와 현재 사용자 추적
+- 현재 수행자 기준의 업무 이력
 - 디버깅과 조사에 유용함
 
 ---
@@ -267,7 +268,7 @@ originalUser: admin456
 impersonation이 활성화되면 UI는 다음을 보여줘야 합니다.
 
 - 명확한 배너 또는 상태 표시
-- impersonated user 이름
+- impersonation 대상 사용자 이름
 - 눈에 띄는 `Stop Impersonation` 액션
 
 ---
@@ -286,7 +287,7 @@ impersonation이 활성화되면 UI는 다음을 보여줘야 합니다.
 
 - API 요청
 - UI 렌더링
-- current user 기준 데이터 접근
+- 현재 사용자의 권한에 따른 데이터 접근
 
 ---
 
@@ -374,10 +375,12 @@ impersonation이 활성화되면 UI는 다음을 보여줘야 합니다.
 - 보안 우선 설계
 - 추적 가능성과 감사 가능성
 - 실제 운영 지원 흐름
-- identity와 context의 분리
+- 로그인한 사용자 정보와 대신 작업하는 사용자 컨텍스트의 분리
 
 ---
 
 ## Summary
 
-impersonation 전략은 **안전하고 추적 가능한 사용자 컨텍스트 전환**을 가능하게 하며, 권한이 허용된 INTERNAL 관리자가 다른 사용자를 대신해 동작하는 동안 session/request context에 original 및 effective identity를 보존하도록 설계됩니다.
+impersonation은 권한이 허용된 `INTERNAL` 관리자가 다른 사용자로 동작하게 합니다.
+업무 권한은 현재 사용자를 기준으로 판단하고, 세션과 요청에는 원래 사용자와 현재
+사용자 정보를 함께 보존하도록 설계했습니다.

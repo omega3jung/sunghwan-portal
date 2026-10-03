@@ -239,8 +239,8 @@ domain boundaries.
 
 ## Summary
 
-Namespaces are public translation contracts. Files and directories are
-maintenance details behind those contracts. Keep small namespaces cohesive,
+Namespaces define the public translation keys used by callers. Files and
+directories are internal maintenance details. Keep small namespaces cohesive,
 split growing namespaces by responsibility, reserve `shared` for stable
 value-to-label catalogs, and preserve the same composed shape across every
 supported language.

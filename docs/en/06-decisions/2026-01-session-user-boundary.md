@@ -4,7 +4,7 @@
 
 The project uses **NextAuth (JWT strategy)** for authentication.
 
-Initially, the session user (`session.user`) was considered as a candidate to carry full user information for UI usage.
+Initially, the project considered storing all user information needed by the UI in `session.user`.
 
 At the same time, the application introduced a richer domain model (`AppUser`) that includes:
 
@@ -158,12 +158,12 @@ hydrate client state
 
 ### 3. Strict boundary
 
-- Session NEVER contains:
+- The session must not contain:
   - profile (image)
   - preference
   - feature flags
 
-- AppUser ALWAYS comes from server/API
+- `AppUser` must always come from the server/API
 
 ---
 

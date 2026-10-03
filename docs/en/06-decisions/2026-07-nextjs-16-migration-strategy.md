@@ -31,9 +31,7 @@ React 19
 ESLint 9
 ```
 
-This was not only a package-version update.
-
-The migration affected framework-facing contracts such as:
+The migration changed package versions and affected these framework APIs and conventions:
 
 - asynchronous request and route parameters
 - App Router page and Route Handler signatures
@@ -44,8 +42,8 @@ The migration affected framework-facing contracts such as:
 - Turbopack and build behavior
 - Node.js runtime requirements
 
-The project needed a migration strategy that preserved implemented Service Desk
-behavior while making failures attributable and reviewable.
+The project needed a strategy that preserved implemented Service Desk behavior
+and made failure causes and code changes easier to review.
 
 ---
 
@@ -106,8 +104,8 @@ but it would also:
 - require repeated dependency and compatibility review
 - increase maintenance work for a version that was not the final project target
 
-The project needed the diagnostic value of the Next.js 15 transition without
-turning Next.js 15 into a long-lived release target.
+The project needed to use the Next.js 15 transition to identify version-specific
+problems without maintaining it as a long-lived release target.
 
 ---
 
@@ -439,8 +437,7 @@ APIs.
 
 ## Summary
 
-The project migrated from Next.js 14 to Next.js 16 through staged checkpoints
-rather than one undifferentiated upgrade.
+The project migrated from Next.js 14 to Next.js 16 through staged checkpoints.
 
 Next.js 15 was used as a diagnostic transition, while Node.js 24, npm 11,
 Next.js 16, React 19, and ESLint 9 formed the final baseline.
