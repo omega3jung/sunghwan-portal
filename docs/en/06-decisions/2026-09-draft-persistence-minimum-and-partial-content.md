@@ -15,8 +15,8 @@ Create draft
 The same Ticket identity is therefore preserved from request preparation into the
 operational workflow.
 
-During the v1.0.x stabilization pass, partial Draft persistence exposed a mismatch
-between that workflow model and the database constraints.
+While stabilizing v1.0.x, saving incomplete Drafts exposed a mismatch between
+the workflow model and database constraints.
 
 The Ticket table originally treated the following fields as complete-ticket values:
 
@@ -247,7 +247,7 @@ This option was selected.
 
 ## Decision
 
-Use Category selection as the minimum persistence boundary for a Draft.
+Require a valid Category before creating or updating a stored Draft.
 
 The core model is:
 
@@ -364,8 +364,8 @@ database null
 -> form-facing empty string
 ```
 
-This keeps database meaning explicit without widening the normal form contract
-unnecessarily.
+This makes the stored value's meaning clear without unnecessarily expanding
+the values accepted by the form.
 
 LOCAL Draft persistence stores form values in browser localStorage and may retain
 empty strings. The shared workflow rule is that incomplete request text is
@@ -453,8 +453,8 @@ base64 image
 blob URL
 ```
 
-Draft persistence uses the same normalized attachment preparation boundary as
-submitted Ticket persistence.
+Drafts use the same attachment preparation API and normalized file metadata as
+submitted Tickets.
 
 Allowing `tk_content = NULL` for an incomplete Draft must not reintroduce raw
 base64 or blob persistence.

@@ -3,12 +3,12 @@
 ## Goal
 
 The state management strategy is designed to **clearly separate server state and client state**,
-ensuring predictable data flow, scalability, and maintainability in a production environment.
+ensuring predictable data flow, scalability, and maintainability.
 
 It aims to:
 
 - Minimize unnecessary global state
-- Leverage server state as the primary source of truth
+- Use server state as the primary basis for data decisions
 - Reduce complexity in state synchronization
 - Improve performance and developer experience
 
@@ -358,8 +358,8 @@ sharing, or bookmarking.
 If state affects navigation -> store in URL
 ```
 
-This is an addressability rule, not a claim that every current search page has
-implemented URL synchronization. The current Service Desk ticket search and
+This rule calls for URL access where needed; it does not mean every current
+search page synchronizes its state to the URL. The current Service Desk ticket search and
 Insights pages persist these values in `sessionStorage` instead.
 
 ---
@@ -599,7 +599,7 @@ Auth session and UI persistence must remain separate.
 This strategy aligns with:
 
 - Separation of concerns
-- Single source of truth
+- One authoritative place for each kind of data
 - Minimal global state
 - Performance optimization
 - UX continuity for page workflows

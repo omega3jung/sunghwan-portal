@@ -5,17 +5,17 @@
 프로젝트는 초기에는 Supabase를 편리한 데이터베이스 기반으로 사용했습니다.
 초기 구현 단계에서는 API 중심 접근 패턴과 Supabase client 스타일 사용이 빠른 개발에 유용했습니다.
 
-Service Desk 모듈이 더 프로덕션 정렬된 방향으로 발전하면서,
-데이터베이스 접근 방향은 더 명시적으로 정리될 필요가 있었습니다.
+Service Desk 모듈이 프로덕션 설계를 따르는 방향으로 발전하면서,
+서버에서 데이터베이스에 접근하는 방식도 명확히 정리할 필요가 있었습니다.
 
 이 시점에서 다음 영역의 구현 방향이 더 명확해졌습니다.
 
-- 서버 코드에서의 direct PostgreSQL access
+- 서버 코드에서 PostgreSQL에 직접 접근
 - 인증 데이터와 애플리케이션 데이터를 위한 데이터베이스 역할 분리
 - server-only 데이터베이스 연결 문자열
 - Row / DTO / Mapper / Repository / Service 경계
-- RLS-aware 애플리케이션 데이터 접근
-- route-handler orchestration
+- 행 수준 접근 제한(RLS)을 반영한 애플리케이션 데이터 접근
+- Route Handler의 요청 처리 조정
 - 광범위한 service-level 권한 의존 축소
 - 향후 백엔드 분리 준비성
 
@@ -39,8 +39,8 @@ Supabase API 스타일 접근은 초기 개발에는 편리하지만,
 - 향후 백엔드 분리가 어려워집니다
 - 프로젝트가 프로덕션 정렬 시스템보다 단순 BaaS CRUD 데모에 가까워 보일 수 있습니다
 
-이 포트폴리오 프로젝트의 목표는 단순 저장이 아닙니다.
-현실적인 서버 주도 아키텍처를 보여주는 것을 목표로 합니다.
+이 포트폴리오 프로젝트는 데이터 저장과 함께, 서버가 접근과 처리를 통제하는
+실제 시스템의 아키텍처를 보여주는 것을 목표로 합니다.
 
 ---
 
@@ -88,7 +88,7 @@ Supabase API 스타일 접근은 초기 개발에는 편리하지만,
 
 구현 과정에서 데이터베이스 권한은 단순 테이블 grants만으로 설명되지 않는다는 점이 분명해졌습니다.
 
-role이 테이블 쿼리 권한을 가져도 RLS 정책이 허용하지 않으면 row를 받지 못할 수 있습니다.
+역할에 테이블 조회 권한이 있어도 RLS 정책이 허용하지 않으면 행을 받지 못할 수 있습니다.
 
 유효한 DB 권한 모델은 다음과 같습니다.
 
@@ -102,8 +102,8 @@ Effective database permission = role grants + RLS policies
 
 ### 5. 유지보수 가능한 서버 데이터 접근을 위해 DTO 경계가 필요했다
 
-프로젝트가 direct PostgreSQL query 방향으로 이동하면서,
-데이터베이스 row와 API response의 차이가 더 중요해졌습니다.
+프로젝트가 PostgreSQL에 직접 쿼리하는 방향으로 이동하면서,
+데이터베이스 행과 API 응답 형식을 구분하는 일이 더 중요해졌습니다.
 
 명확한 데이터 계층이 없으면:
 
@@ -143,9 +143,9 @@ Next.js Route Handler
 - 일반 앱 흐름에서 `service_role`을 사용하지 않습니다.
 - 인증 전용 데이터베이스 접근에는 `auth_api`를 사용합니다.
 - 로그인 이후 애플리케이션 데이터 접근에는 `portal_api`를 사용합니다.
-- 데이터베이스 URL과 privileged credential은 server-only로 유지합니다.
+- 데이터베이스 URL과 권한 있는 자격 증명은 서버에서만 사용합니다.
 - SQL은 UI 컴포넌트/페이지 컴포넌트가 아닌 repository에 둡니다.
-- route handler는 HTTP/session/runtime orchestration에 집중해 얇게 유지합니다.
+- Route Handler는 HTTP 요청, 세션, 실행 환경을 확인하고 실제 처리를 서비스에 맡깁니다.
 - 데이터베이스 Row 타입과 응답 DTO를 분리합니다.
 - mapper를 사용해 DB row를 애플리케이션 지향 DTO로 변환합니다.
 - grants와 RLS 정책을 한 쌍으로 다룹니다.
@@ -169,8 +169,8 @@ Route Handler
 -> PostgreSQL
 ```
 
-이 구조는 프론트엔드를 direct DB 접근에서 분리하고,
-서버 계층이 SQL/매핑/응답 contract를 명시적으로 통제하게 해줍니다.
+프런트엔드는 DB에 직접 접근하지 않습니다. 서버 계층이 SQL 실행, 데이터 변환,
+API 응답 형식을 관리합니다.
 
 ---
 
@@ -192,7 +192,7 @@ service_role -> excluded from normal app flow
 
 - 자격 증명 검증
 - 인증 계정 상태 조회
-- 로그인 projection에 필요한 최소 employee/profile 데이터 조회
+- 로그인 응답을 구성하는 데 필요한 최소 직원·프로필 데이터 조회
 - `last_login_at` 같은 로그인 메타데이터 갱신
 
 #### `portal_api`
@@ -211,14 +211,13 @@ service_role -> excluded from normal app flow
 
 일반 애플리케이션 흐름에서는 제외합니다.
 
-이는 기본 앱 동작 role이 아니라,
-광범위한 관리/플랫폼 capability로 유지합니다.
+일반 앱의 기본 역할로 사용하지 않고, 광범위한 관리·플랫폼 작업을 위한 권한으로 유지합니다.
 
 ---
 
 ### 3. 최소 권한 접근 방향
 
-데이터베이스 전략을 least privilege 원칙에 맞게 정렬했습니다.
+작업에 필요한 최소 권한만 사용하도록 데이터베이스 전략을 정리했습니다.
 
 규칙:
 
@@ -299,7 +298,7 @@ Database Row -> Mapper -> DTO
 
 #### Row
 
-DB 결과 shape를 표현합니다.
+DB 쿼리 결과의 구조를 표현합니다.
 
 - SQL에 가깝습니다
 - 보통 `snake_case`
@@ -308,11 +307,11 @@ DB 결과 shape를 표현합니다.
 
 #### DTO
 
-애플리케이션 응답 shape를 표현합니다.
+애플리케이션이 API로 제공하는 응답 형식을 표현합니다.
 
 - 보통 `camelCase`
 - API 소비자에게 안정적입니다
-- DB 특화 naming을 숨깁니다
+- DB에서 사용하는 필드 이름을 외부 응답과 분리합니다
 - 프론트엔드 사용에 안전합니다
 
 #### Mapper
@@ -321,25 +320,25 @@ Row 데이터를 DTO 데이터로 변환합니다.
 
 책임:
 
-- naming 변환
+- 필드 이름 변환
 - null 정규화
-- JSON 파싱/shape 구성
-- response-safe 필드 선택
+- JSON 파싱·응답 구조 구성
+- 응답으로 공개해도 되는 필드 선택
 
 ---
 
 ### 7. Repository와 Service 책임
 
-Repository는 SQL 실행을 소유합니다.
+Repository는 SQL 실행을 담당합니다.
 
 책임:
 
-- parameterized SQL 정의
+- 값을 매개변수로 전달하는 SQL 정의
 - `queryAuthApi` 또는 `queryPortalApi` 호출
 - route handler에서 DB 접근 분리
 - 로컬 컨벤션에 따라 row 또는 DTO-ready 데이터 반환
 
-Service는 유스케이스를 조정합니다.
+Service는 요청한 작업에 필요한 조회와 규칙 적용을 조합합니다.
 
 책임:
 
@@ -401,13 +400,13 @@ REMOTE -> database-backed application behavior
 
 direct PostgreSQL 전략은 주로 REMOTE 동작과 서버 측 애플리케이션 데이터 접근에 적용됩니다.
 
-LOCAL demo 동작은 안전하고 reset 가능한 데모를 위해
-server-side in-memory state module을 계속 사용할 수 있습니다.
+LOCAL 데모는 안전하게 실행하고 초기화할 수 있도록 서버 메모리의 상태 모듈을
+계속 사용할 수 있습니다.
 
 중요한 구분:
 
-- local demo state는 데모 현실성을 위해 mutable합니다.
-- remote 데이터는 database access를 통해 영속화됩니다.
+- LOCAL 데모 상태는 실제 작업처럼 변경할 수 있습니다.
+- REMOTE 데이터는 데이터베이스에 저장됩니다.
 
 ---
 
@@ -415,14 +414,14 @@ server-side in-memory state module을 계속 사용할 수 있습니다.
 
 첨부파일 동작은 범위가 제한된 설계 영역으로 명확히 했습니다.
 
-현재 local demo에서는:
+당시 LOCAL 데모 범위는 다음과 같았습니다.
 
 - 준비된 demo 파일/이미지 자산 사용
 - 제어된 reference를 통한 업로드 동작 시뮬레이션
 - 임의의 비신뢰 파일 영속 저장 회피
 - 데모 경계 내에서만 ticket context에 메타데이터 연결
 
-향후 production에서는:
+향후 프로덕션에서 다룰 항목은 다음과 같았습니다.
 
 - storage bucket 정책
 - 파일 크기 제한
@@ -473,8 +472,8 @@ server-side in-memory state module을 계속 사용할 수 있습니다.
 - route handler에 raw SQL을 두지 않습니다.
 - Row, DTO, Mapper, Repository, Service 경계를 명시적으로 유지합니다.
 - DB URL과 secret은 server-only로 유지합니다.
-- 적절한 guardrail 없이 프로덕션 수준 첨부파일 저장을 현재 범위로 취급하지 않습니다.
-- 데이터베이스 표면적이 충분히 커지면 테이블별 RLS 문서화를 추가합니다.
+- 필요한 보호 조치 없이 프로덕션 수준 첨부파일 저장을 현재 구현 범위로 취급하지 않습니다.
+- 데이터베이스 사용 범위가 충분히 커지면 테이블별 RLS 문서화를 추가합니다.
 
 ---
 

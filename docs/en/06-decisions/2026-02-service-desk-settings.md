@@ -61,7 +61,7 @@ These settings influence how the entire Service Desk operates.
 
 ### Responsibility
 
-The settings module acts as the source of truth for configuration that shapes Service Desk behavior.
+Service Desk behavior is determined by the configuration managed in the settings module.
 
 ---
 
@@ -152,7 +152,8 @@ Avoid over-abstracting settings screens too early.
 
 ### Reason
 
-Changes in settings influence how other modules behave, so the settings module must be treated with system-level importance.
+Settings changes affect other modules. The settings module must therefore be designed
+with those system-wide effects in mind.
 
 ---
 

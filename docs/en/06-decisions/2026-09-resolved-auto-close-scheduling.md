@@ -2,6 +2,11 @@
 
 ## Context
 
+In REMOTE, Supabase Cron directly calls the database auto-close function at the
+start of every hour. The function closes tickets that are still `Resolved` and
+whose latest resolution was at least 168 hours ago. Eligibility time and
+scheduled execution time are distinct.
+
 The Service Desk already defines `Resolved -> Closed` as a system-driven lifecycle
 transition.
 
@@ -179,7 +184,7 @@ The decision prioritizes:
 
 ### 1. Define the grace period as elapsed time
 
-The eligibility boundary is:
+A Ticket becomes eligible under these conditions:
 
 ```txt
 resolvedAt = latest History timestamp that moved the Ticket to Resolved
@@ -239,8 +244,7 @@ for closure.
 
 No separate `closeEligibleAt` Ticket column is introduced for the current scope.
 
-The immutable workflow History already contains the authoritative resolution
-evidence.
+The immutable workflow History already records when the Ticket was resolved.
 
 ---
 
@@ -328,7 +332,8 @@ boundary should be reconsidered.
 
 ### 6. Revalidate after acquiring the Ticket lock
 
-Candidate selection alone is not sufficient authority to close a Ticket.
+Selecting a candidate alone does not justify closing it; the function must
+validate the current state after locking the Ticket.
 
 A Ticket may be reopened or otherwise changed while the scheduler is running.
 

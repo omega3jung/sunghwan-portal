@@ -288,7 +288,8 @@ serviceDesk.ticketCommand.execute
 
 ## Interpolation Strategy
 
-Messages may support interpolation when dynamic context is needed.
+Use interpolation to insert values determined at runtime, such as field names
+or counts, into a message.
 
 ---
 

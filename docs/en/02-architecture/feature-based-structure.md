@@ -3,9 +3,9 @@
 ## Goal
 
 The project adopts a **feature-based architecture** to improve scalability, maintainability,
-and separation of concerns in a production-level frontend system.
+and separation of concerns in a production-aligned frontend architecture.
 
-This document is the source of truth for current source-folder boundaries and
+Use this document to determine current source-folder responsibilities and
 dependency direction. Historical decision logs preserve the rationale at the
 time of each decision; current rules follow this document.
 
@@ -158,9 +158,9 @@ lib/
   implementation currently remain under `server`, `auth`, or a server-only
   `app` entry. There is no current `lib/server` boundary.
 
-`lib` is not a dumping ground. A module should state whether it is an
-application policy, client integration, framework integration, or runtime
-helper through its location and imports.
+A module's location and imports should show whether it provides application
+policy, client integration, framework integration, or runtime helpers. Keep
+unrelated code out of `lib`.
 
 ---
 
@@ -174,7 +174,7 @@ helper through its location and imports.
 
 Features coordinate user-facing workflows, consume domain rules and API
 contracts, and integrate React Query for interactive server state. They do not
-become the source of truth for durable domain rules.
+own the definitions of durable domain rules.
 
 The current code has collaborating feature slices, especially under
 `feature/serviceDesk`, and application workflows such as auth/session and user
@@ -483,7 +483,7 @@ to enforce runtime compatibility separately.
 
 ## Barrel Export Policy
 
-Barrel files are treated as explicit public contracts.
+Barrel files explicitly list the modules available to external callers.
 
 Rule:
 

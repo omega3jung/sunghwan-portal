@@ -369,12 +369,10 @@ Align implementation with real-world system behavior.
 
 ## Final Note
 
-These decisions were not theoretical.
-They emerged from:
+These decisions came from:
 
 - migrating a real-world system
 - restructuring legacy patterns
 - aligning implementation with documented architecture
 
-As a result, they represent practical, production-aligned trade-offs
-rather than idealized design.
+They record practical trade-offs made with production behavior in mind.

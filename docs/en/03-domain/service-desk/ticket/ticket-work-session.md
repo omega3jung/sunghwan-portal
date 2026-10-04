@@ -16,7 +16,7 @@ GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
 
-The current route surface does not include:
+The current API does not provide these routes:
 
 - work-session detail route
 - update route
@@ -172,8 +172,8 @@ Work sessions record actual work evidence:
 
 The current REMOTE create/list implementation records submitted work sessions.
 It includes repository support for finishing running sessions by ticket, but it
-does not expose a full timer route surface or enforce a documented global
-"one active timer per user" route contract.
+does not provide the full timer API or enforce the documented global rule of
+"one active timer per user".
 
 Do not describe timer-style invariants as current implemented behavior.
 
@@ -194,7 +194,7 @@ It is a system command:
   `actionNo = null`
 
 The verified REMOTE scheduler checks hourly through Supabase Cron; closure can
-occur later than the eligibility boundary. Function, Work Session cleanup, and
+occur after a ticket becomes eligible. Function, Work Session cleanup, and
 scheduled invocation evidence is recorded in the
 [scheduling decision](../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 

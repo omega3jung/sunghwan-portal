@@ -4,9 +4,9 @@
 
 `sunghwan-portal`의 Vitest 작업은 2026년 8월 말부터 단계적으로 확대되었습니다.
 
-처음 목표는 오래된 테스트를 현재 구현에 맞게 복구하고, 핵심 Service Desk 동작의
-회귀를 막는 것이었습니다. 그러나 테스트를 추가할수록 중요한 질문은 단순한 테스트 수나
-전체 coverage 비율을 넘어 다음 질문으로 바뀌었습니다.
+처음 목표는 오래된 테스트를 당시 구현에 맞게 복구하고 핵심 Service Desk 동작의
+회귀를 막는 것이었습니다. 테스트가 늘면서 개수나 전체 코드 실행 비율(coverage)보다
+다음 질문이 중요해졌습니다.
 
 ```txt
 어떤 동작이 깨지면 영향이 큰가?
@@ -30,9 +30,9 @@ shared client state
 reusable UI
 ```
 
-또한 포트폴리오 특성상 현재는 App/BFF 성격의 코드와 server/backend 성격의 코드가 한
-저장소에 있지만, 일부 경계는 실제 운영 환경에서 별도 배포 또는 별도 코드베이스로
-분리할 수 있는 구조를 지향합니다.
+포트폴리오 특성상 App/BFF 코드와 서버·백엔드 코드가 한 저장소에 있습니다.
+일부 담당 범위는 실제 운영 환경에서 따로 배포하거나 별도 코드베이스로 분리할
+수 있는 구조를 지향합니다.
 
 따라서 테스트 전략은 다음 두 가지를 동시에 만족해야 했습니다.
 
@@ -95,7 +95,7 @@ Vitest 확대 범위에서 제외했습니다.
 1 todo
 ```
 
-이 숫자는 결과를 보여주는 snapshot일 뿐, 앞으로 유지해야 하는 품질 threshold는 아닙니다.
+이 숫자는 당시 결과를 기록한 값입니다. 이후 반드시 유지해야 하는 품질 기준은 아닙니다.
 
 ---
 
@@ -103,7 +103,7 @@ Vitest 확대 범위에서 제외했습니다.
 
 ### 1. 높은 전체 Coverage가 중요한 Contract를 보장하지 않는다
 
-다음과 같은 page-level happy-path test는 많은 line을 실행할 수 있습니다.
+다음처럼 페이지의 성공 흐름만 확인하는 테스트도 많은 코드 줄을 실행할 수 있습니다.
 
 ```txt
 render page
@@ -121,10 +121,10 @@ render page
 - REMOTE에서 LOCAL과 다른 principal/scope 사용
 - transaction 중간 실패 후 일부 write만 남는 문제
 
-반대로 작은 authorization policy test 하나가 적은 line만 실행하면서도 훨씬 큰 위험을
-보호할 수 있습니다.
+반대로 작은 권한 정책 테스트는 적은 코드 줄만 실행해도 훨씬 큰 위험을 막을 수
+있습니다.
 
-따라서 line coverage만으로 안전성을 판단할 수 없습니다.
+따라서 실행한 코드 줄의 비율만으로 안전성을 판단할 수 없습니다.
 
 ---
 
@@ -152,20 +152,20 @@ app/(protected)
 -> page / view-model / capability composition
 ```
 
-하위 계층에서 이미 검증한 business branch를 상위 계층에서 다시 반복하면 테스트 수는
-늘어나지만 유지보수 비용도 같이 증가합니다.
+하위 계층에서 이미 검증한 업무 조건을 상위 계층에서 반복하면 테스트 수와
+유지보수 비용이 함께 늘어납니다.
 
-반대로 상위 orchestration test 하나에 모든 하위 규칙을 맡기면 실패 원인을 찾기 어렵고,
-중요한 거부 branch가 빠질 수 있습니다.
+상위 처리 흐름 테스트 하나에 모든 하위 규칙을 맡기면 실패 원인을 찾기 어렵고
+중요한 거부 조건을 빠뜨릴 수 있습니다.
 
 ---
 
 ### 3. LOCAL과 REMOTE는 구현이 달라도 Application Contract는 같아야 한다
 
-LOCAL은 demo-safe mutable state 또는 browser-local state를 사용할 수 있고, REMOTE는
-PostgreSQL, repository, transaction, DTO service를 사용합니다.
+LOCAL은 데모용으로 변경 가능한 상태나 브라우저 로컬 상태를 사용할 수 있습니다.
+REMOTE는 PostgreSQL, 저장소, 트랜잭션, DTO 서비스를 사용합니다.
 
-두 runtime의 line coverage가 같을 필요는 없습니다.
+두 실행 환경에서 실행한 코드 줄의 비율까지 같을 필요는 없습니다.
 
 더 중요한 것은 다음입니다.
 
@@ -197,10 +197,10 @@ App/BFF runtime ownership projection
 Server/backend runtime ownership projection
 ```
 
-현재 한 저장소에 있다는 이유만으로 이 구현을 하나로 합치면 테스트는 쉬워지지만,
-실제 운영에서 runtime이 분리될 수 있다는 아키텍처 경계를 약하게 만들 수 있습니다.
+현재 한 저장소에 있다는 이유만으로 두 구현을 합치면 테스트는 쉬워집니다. 하지만
+실제 운영에서 실행 환경을 분리할 수 있도록 정한 역할 구분은 약해질 수 있습니다.
 
-문제는 코드 중복 자체가 아니라 다음 contract drift입니다.
+문제는 코드 중복 자체보다 다음 값의 판단 규칙이 두 구현에서 달라지는 것입니다.
 
 ```txt
 owner
@@ -209,7 +209,7 @@ assignedWorker
 current username normalization
 ```
 
-따라서 독립 구현을 유지하면서 동일한 contract suite를 적용하는 방식이 필요했습니다.
+따라서 독립적인 두 구현에 같은 동작 검증 테스트 묶음을 적용할 필요가 있었습니다.
 
 ---
 
@@ -248,7 +248,7 @@ Storybook browser test나 Playwright E2E는 실제 rendering/navigation을 검�
 - CI image
 - external service fixture
 
-같은 환경 문제로 domain/security regression test까지 막힐 수 있습니다.
+같은 환경 문제로 도메인·보안 회귀 테스트까지 실행하지 못할 수 있습니다.
 
 마찬가지로 mock 기반 repository test만으로는 실제 PostgreSQL의 다음 항목을
 
@@ -260,7 +260,8 @@ Storybook browser test나 Playwright E2E는 실제 rendering/navigation을 검�
 
 완전히 증명하지 못합니다.
 
-Unit test, browser test, database integration test는 서로 다른 실패 책임을 가집니다.
+단위 테스트, 브라우저 테스트, 데이터베이스 통합 테스트는 서로 다른 종류의 실패를
+검증합니다.
 
 ---
 
@@ -450,7 +451,7 @@ Which runtime owns the behavior?
 Which observable result must remain equivalent?
 ```
 
-그 답을 소유한 가장 작은 안정적 테스트 경계를 선택합니다.
+그 판단을 담당하는 가장 작은 안정적인 코드 범위를 테스트합니다.
 
 ---
 
@@ -476,7 +477,7 @@ app/(protected)
 -> page / route state / view-model / capability composition
 ```
 
-동일 business branch를 모든 계층에서 반복하지 않습니다.
+같은 업무 조건을 모든 계층에서 반복해 검증하지 않습니다.
 
 ---
 
@@ -509,7 +510,8 @@ forbidden side effect
 LOCAL / REMOTE when applicable
 ```
 
-특히 authorization은 runtime dispatch나 repository access보다 먼저 실패해야 합니다.
+특히 권한이 없으면 LOCAL/REMOTE 실행 경로를 선택하거나 저장소에 접근하기 전에
+요청을 거부해야 합니다.
 
 ---
 
@@ -517,7 +519,7 @@ LOCAL / REMOTE when applicable
 
 LOCAL과 REMOTE가 저장 구현을 공유할 필요는 없습니다.
 
-그러나 feature가 같은 경우 application-facing 의미는 호환되어야 합니다.
+같은 기능을 제공하는 경우에는 애플리케이션에서 같은 의미의 동작을 제공해야 합니다.
 
 ```txt
 authorized target
@@ -532,8 +534,8 @@ LOCAL의 저장 방식 차이는 허용하지만 권한과 workflow 의미 차�
 
 ### 6. App / Server Runtime의 독립 구현은 Contract Test로 동기화한다
 
-실제 분리 가능한 runtime boundary가 존재하는 경우, 단순 중복 제거를 위해 구현을
-강제로 합치지 않습니다.
+실제로 따로 운영할 수 있도록 실행 환경이 분리되어 있다면 중복을 줄이기 위해
+두 구현을 강제로 합치지 않습니다.
 
 Ticket ownership projection처럼 양쪽에 동일 의미가 필요한 경우:
 
@@ -592,9 +594,9 @@ reproduce
 -> regression test 유지
 ```
 
-잘못된 현재 동작을 단순히 테스트로 고정하지 않습니다.
+잘못된 현재 동작을 테스트의 기대 결과로 고정하지 않습니다.
 
-반대로 fixture를 통과시키기 위해 정상 production behavior를 변경하지 않습니다.
+반대로 fixture를 통과시키기 위해 정상적인 실제 동작을 변경하지 않습니다.
 
 삭제된 요구사항이나 임시 guard가 더 이상 current behavior가 아니라면 관련 테스트도
 같이 제거합니다.
@@ -638,7 +640,7 @@ domain invariants
 -> History / Work Session persistence
 ```
 
-이를 Vitest 확대의 현재 stop condition으로 결정했습니다.
+이 수준을 당시 Vitest 검증 범위 확대의 종료 조건으로 정했습니다.
 
 ---
 
@@ -677,8 +679,8 @@ browser testing이 더 적절합니다.
 - disabled/loading/error variants
 - responsive/visual interaction
 
-전체 인증/navigation/backend persistence를 포함하는 사용자 여정은 필요할 때 Playwright
-E2E 경계에서 다룹니다.
+인증·페이지 이동·백엔드 저장을 포함하는 전체 사용자 여정은 필요한 경우 Playwright
+E2E 테스트로 검증합니다.
 
 같은 scenario를 Vitest, Storybook, E2E에서 반복하여 테스트 수만 늘리지 않습니다.
 
@@ -698,7 +700,8 @@ Mock 기반 repository/service test는 빠른 regression detection에 적합하�
 
 이 위험이 실제 변경 범위가 되면 별도 database integration suite를 검토합니다.
 
-Unit coverage 숫자를 높이는 것으로 database guarantee를 대체하지 않습니다.
+단위 테스트의 coverage 수치를 높이는 것으로 실제 데이터베이스 동작 검증을 대신하지
+않습니다.
 
 ---
 
@@ -715,7 +718,7 @@ ESLint passed
 git diff --check passed
 ```
 
-이 수치는 전략의 성공 조건이 아닙니다.
+이 수치 자체가 전략의 성공 조건은 아닙니다.
 
 의미 있는 변화는 테스트 개수가 아니라 다음과 같은 검증 공백을 해소했다는 점입니다.
 
@@ -799,8 +802,8 @@ Repository mock tests prove database security.
 Keep tests for deleted behavior because more tests are always better.
 ```
 
-이 규칙들은 단순하고 측정하기 쉽지만 실제 contract 누락이나 오래된 요구사항을 숨길 수
-있습니다.
+이 규칙들은 단순하고 측정하기 쉽지만 필요한 동작 검증의 누락이나 오래된 요구사항을
+숨길 수 있습니다.
 
 ---
 
@@ -883,8 +886,8 @@ Database guarantees
 
 ## Summary
 
-The project adopts risk-based layered testing instead of percentage-first
-coverage.
+프로젝트는 코드 실행 비율을 우선하기보다 위험과 각 계층의 담당 역할에 따라 테스트를
+구성합니다.
 
 ```txt
 Critical behavior
@@ -906,17 +909,13 @@ Vitest
 -> stop when important risks are sufficiently protected
 ```
 
-The important outcome is not that every file has a test or that one percentage is
-high.
+중요한 결과는 인증, 권한 검증, 테넌트 분리, 업무 상태 전환, 트랜잭션, 변경 불가능한
+이력, 상태 동기화, 실행 환경 간 동작 일치를 각 담당 계층의 테스트가 보호한다는
+점입니다. 모든 파일에 테스트가 있거나 하나의 비율이 높다는 사실만으로 판단하지
+않습니다.
 
-The important outcome is that authentication, authorization, tenant isolation,
-workflow transitions, transaction behavior, immutable History, state
-synchronization, and runtime parity are protected by assertions at the
-responsibility boundary that owns them.
-
-Lower-risk visual and shared UI behavior remains outside the current Vitest stop
-condition and should be covered by Storybook/browser testing when that boundary
-provides more value.
+위험이 낮은 시각 요소와 공통 UI 동작은 당시 Vitest 확대 종료 범위에서 제외합니다.
+Storybook이나 브라우저에서 검토하는 편이 더 유용하면 그 방식으로 검증합니다.
 
 ---
 

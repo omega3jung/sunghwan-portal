@@ -12,7 +12,7 @@ Impersonation was introduced to support Service Desk workflows such as:
 
 ### Initial Goal
 
-Implement impersonation **quickly** to validate the concept
+The initial goal was to implement impersonation **quickly** and validate the concept
 before introducing complex authentication or session changes.
 
 ---
@@ -140,7 +140,7 @@ The local session storage approach is:
 
 ### Direction
 
-Move impersonation to a **server-controlled session model**.
+The next step was to move impersonation to a **server-controlled session model**.
 
 ---
 

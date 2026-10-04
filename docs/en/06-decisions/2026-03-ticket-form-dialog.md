@@ -2,9 +2,7 @@
 
 ## Context
 
-The Ticket Form Dialog is one of the most critical components in the Service Desk system.
-
-It is responsible for:
+The Ticket Form Dialog collects ticket input and is responsible for:
 
 - Creating tickets
 - Updating tickets
@@ -138,7 +136,7 @@ Use **one react-hook-form instance across all steps**
 
 ### Reason
 
-- Maintain a single source of truth
+- Use the same form state across all steps
 - Avoid data fragmentation
 - Simplify validation and submission
 
@@ -242,7 +240,7 @@ Use `useWatch` to observe file inputs
 
 ### Decision
 
-Not implemented
+The draft feature was not implemented at this stage.
 
 ---
 

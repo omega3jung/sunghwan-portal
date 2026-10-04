@@ -2,10 +2,10 @@
 
 ## 목표
 
-이 문서는 Service Desk ticket system의 high-level current design overview를 제공합니다.
+이 문서는 현재 Service Desk 티켓 시스템의 전체 구조와 업무 흐름을 설명합니다.
 
-안정된 model을 요약하고 canonical detail 문서로 연결합니다. 모든 operation rule을
-반복해서 설명하지는 않습니다. 시스템의 형태를 이해한 뒤 실행 세부사항은 링크된 문서를 따릅니다.
+핵심 모델을 요약하고 상세 규칙의 기준 문서로 연결합니다. 모든 업무 규칙을
+반복해서 설명하지는 않습니다. 전체 구조를 이해한 뒤 실행 세부 사항은 링크된 문서에서 확인합니다.
 
 ---
 
@@ -20,9 +20,8 @@ Tenant-scoped settings
 -> work-session evidence
 ```
 
-Service Desk ticket domain은 workflow-oriented입니다. Ticket은 generic CRUD row가 아닙니다.
-Current state, current ownership, configuration context, actions, history,
-attachments, work-session records를 가집니다.
+Service Desk는 티켓의 업무 흐름을 관리합니다. 티켓에는 현재 상태와 담당자,
+처리에 적용할 설정, 액션, 이력, 첨부 정보, 작업 시간 기록이 포함됩니다.
 
 ---
 
@@ -42,13 +41,13 @@ Resolved
 Closed
 ```
 
-`Open`, `Approved`, `Reopen`은 persisted status가 아닙니다.
+`Open`, `Approved`, `Reopen`은 티켓에 저장하는 상태값이 아닙니다.
 
-- `Open`은 UI grouping/search concept으로만 사용할 수 있습니다.
-- Approval completion은 `APPROVAL_APPROVED` history로 기록됩니다.
-- Reopen은 현재 `Resolved`를 `Working`으로 되돌리는 action입니다.
+- `Open`은 화면의 묶음 표시나 검색 개념으로만 사용할 수 있습니다.
+- 승인 완료는 `APPROVAL_APPROVED` 이력으로 기록합니다.
+- Reopen은 현재 `Resolved`를 `Working`으로 되돌리는 액션입니다.
 
-Detail read는 status를 변경하면 안 됩니다. Work start는 explicit command입니다.
+상세 조회는 상태를 변경하면 안 됩니다. 작업을 시작하려면 별도 명령을 실행해야 합니다.
 
 관련 문서: [Ticket Lifecycle](./ticket-lifecycle.md)
 
@@ -56,19 +55,19 @@ Detail read는 status를 변경하면 안 됩니다. Work start는 explicit comm
 
 ## Draft
 
-REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장됩니다.
+REMOTE 초안은 티켓 테이블에 `status = "Draft"`인 일반 행으로 저장합니다.
 
-현재 draft rule:
+현재 초안 규칙:
 
-- requester당 active draft는 하나입니다.
-- draft는 별도 draft table이 아니라 ticket table을 사용합니다.
-- draft save/update는 draft API를 사용합니다.
-- final submit은 draft row를 재사용하고 `Approval` 또는 `Assigned`로 이동시킵니다.
-- operational list와 insight는 draft ticket을 제외합니다.
+- 요청자당 활성 초안은 하나입니다.
+- 초안은 별도 초안 테이블 없이 티켓 테이블을 사용합니다.
+- 초안 저장·수정은 초안 API를 사용합니다.
+- 최종 제출은 초안 행을 재사용하고 `Approval` 또는 `Assigned`로 이동시킵니다.
+- 업무용 목록과 분석 화면은 초안 티켓을 제외합니다.
 - LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저 `localStorage` 상태이며
   기능 초안 저장소를 통해 접근합니다.
 - LOCAL 초안 작업은 초안 Route Handler를 거치지 않으며 REMOTE PostgreSQL 초안
-  모델과 영속성 측면에서 동등하지 않습니다.
+  모델과 저장 방식이 다릅니다.
 
 관련 문서: [Ticket Form Design](../../../04-client-engineering/forms/ticket-form.md)
 
@@ -76,7 +75,7 @@ REMOTE draft는 `status = "Draft"`인 일반 ticket row로 저장됩니다.
 
 ## Approval and Work Routing
 
-현재 routing source of truth:
+승인 단계와 현재 담당자를 판단하는 기준은 데이터베이스의 다음 두 필드입니다.
 
 ```txt
 tk_approval_step_id
@@ -95,7 +94,7 @@ tk_approval_step_id == null
 -> tk_assignee_usernames = current workers
 ```
 
-DTO는 UI 편의를 위해 projection field를 노출합니다.
+DTO는 이 두 필드에서 승인 단계와 작업 단계를 구분해 계산한 값을 UI에 제공합니다.
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -103,7 +102,7 @@ DTO는 UI 편의를 위해 projection field를 노출합니다.
 - `assignedApprover`
 - `assignedWorker`
 
-이 값들은 mapper/service projection이며 별도 database source of truth가 아닙니다.
+이 값들은 mapper나 service가 계산한 응답 값이며, 데이터베이스에 별도로 저장한 판단 기준이 아닙니다.
 
 관련 문서:
 
@@ -114,7 +113,7 @@ DTO는 UI 편의를 위해 projection field를 노출합니다.
 
 ## Initial Routing
 
-Ticket submission은 선택된 category와 requester에서 routing을 resolve합니다.
+티켓 제출 시 선택한 카테고리와 요청자를 기준으로 승인자 또는 작업자를 결정합니다.
 
 ```txt
 next approval step exists
@@ -128,10 +127,10 @@ no approval step
 -> assigneeUsernames = workers
 ```
 
-Final approval은 다음 approval step으로 이동하거나 work assignment를 resolve하고
-ticket을 `Assigned`로 이동시킵니다.
+승인 처리 시 다음 승인 단계가 있으면 그 단계로 이동합니다. 마지막 승인까지 완료하면
+작업자를 결정하고 티켓을 `Assigned`로 이동시킵니다.
 
-Decline은 approval routing을 종료합니다.
+승인 거절은 승인자 결정 흐름을 종료합니다.
 
 ```txt
 status = Declined
@@ -143,32 +142,31 @@ assigneeUsernames = []
 
 ## Requester Update Routing
 
-Requester update는 현재 구현에서 requester-owned ticket이 `Approval` 또는 `Assigned`
-상태일 때만 허용됩니다.
+현재 구현에서는 요청자가 자신의 티켓을 `Approval` 또는 `Assigned` 상태일 때만 수정할 수 있습니다.
 
-Routing-neutral fields:
+담당자 결정에 영향을 주지 않는 필드:
 
-- due date
-- email recipients
+- 기한
+- 이메일 수신자
 
-Routing-sensitive fields:
+담당자를 다시 결정하는 필드:
 
-- category
-- subject
-- content
-- files
-- images
+- 카테고리
+- 제목
+- 본문
+- 첨부파일
+- 이미지
 
-실제 normalized value change만 routing behavior를 trigger합니다. Routing-neutral field만
-변경되면 status, approval step, assignee를 유지하고 history는 `ROUTING_PRESERVED`를
-기록합니다.
+값을 정규화한 뒤 실제로 달라진 경우에만 담당자 유지·재결정 처리를 적용합니다.
+기한이나 이메일 수신자만 변경되면 상태, 승인 단계, 담당자를 유지하고 이력에
+`ROUTING_PRESERVED`를 기록합니다.
 
-Routing-sensitive value가 변경되면 routing을 처음부터 다시 계산하고 history는
-`ROUTING_RESET`을 기록합니다.
+담당자 결정에 영향을 주는 값이 변경되면 승인자·작업자를 처음부터 다시 계산하고
+이력에 `ROUTING_RESET`을 기록합니다.
 
-Category가 변경되면 priority, risk, minimum due date를 새 category default에서 다시
-평가합니다. 다음 due date는 현재 due date, 제출한 due date, 새 category minimum 중
-가장 늦은 값이며, category change는 due date를 더 이른 날짜로 당기면 안 됩니다.
+카테고리가 변경되면 우선순위, 위험도, 최소 기한을 새 카테고리 기본값에서 다시
+평가합니다. 다음 기한은 현재 기한, 제출한 기한, 새 카테고리의 최소 기한 중
+가장 늦은 값입니다. 카테고리 변경으로 기한을 더 이른 날짜로 당기면 안 됩니다.
 
 관련 문서:
 
@@ -179,7 +177,7 @@ Category가 변경되면 priority, risk, minimum due date를 새 category defaul
 
 ## Attachment Boundary
 
-Ticket attachment input은 ticket command가 metadata를 쓰기 전에 prepare됩니다.
+티켓 명령이 첨부 정보를 저장하기 전에 첨부 준비 API로 입력을 처리합니다.
 
 ```txt
 File[] / inline image
@@ -189,11 +187,11 @@ File[] / inline image
 -> tk_content, tk_files, tk_images
 ```
 
-현재 LOCAL/REMOTE behavior는 controlled demo replacement를 사용합니다. Production object
-storage를 제공하지 않습니다.
+현재 LOCAL과 REMOTE는 선택한 첨부를 정해진 데모 파일로 대체합니다.
+실제 파일을 보관하는 운영용 저장소는 제공하지 않습니다.
 
-Raw `File`, binary data, base64 data URL, blob URL, local file path는 ticket row, DTO,
-action metadata, history metadata에 persist하면 안 됩니다.
+원본 `File`, 바이너리 데이터, base64 data URL, blob URL, 로컬 파일 경로는 티켓 행,
+DTO, 액션 메타데이터, 이력 메타데이터에 저장하면 안 됩니다.
 
 관련 문서: [Ticket Attachment Design](../../../04-client-engineering/forms/ticket-attachment.md)
 
@@ -201,7 +199,7 @@ action metadata, history metadata에 persist하면 안 됩니다.
 
 ## Ticket Action Command Model
 
-Ticket action은 server-controlled command입니다.
+티켓 액션은 서버가 아래 순서로 검증하고 실행하는 명령입니다.
 
 ```txt
 Action command
@@ -231,12 +229,12 @@ RESUBMIT
 CANCEL
 ```
 
-Communication action은 timeline entry를 만듭니다. Operational action은 status,
-assignee, planning field, merge state, close reason을 변경할 수 있습니다. Operational
-action은 normal workflow에서 immutable합니다.
+의사소통 액션은 타임라인에 기록을 만듭니다. 업무 처리 액션은 상태, 담당자,
+계획 필드, 통합 상태, 종료 사유를 변경할 수 있습니다. 일반 업무 흐름에서는
+이미 기록한 업무 처리 액션을 수정하지 않습니다.
 
-Closure 전에 생성된 comment는 `Closed` 이후에도 계속 표시됩니다. 이 visibility는
-closure 이후 새 comment creation이 허용된다는 뜻이 아닙니다.
+종료 전에 생성된 댓글은 `Closed` 이후에도 계속 표시합니다.
+기존 댓글이 보인다고 해서 종료 이후 새 댓글을 만들 수 있는 것은 아닙니다.
 
 관련 문서:
 
@@ -247,7 +245,7 @@ closure 이후 새 comment creation이 허용된다는 뜻이 아닙니다.
 
 ## Event-Based History
 
-History는 immutable event/audit data입니다.
+이력은 발생한 이벤트와 변경 내용을 추적하는 데이터이며, 기록한 내용은 수정하지 않습니다.
 
 ```txt
 type   -> changed domain area
@@ -258,11 +256,11 @@ from/to value -> structured JSON change
 metadata -> supplemental display/audit context
 ```
 
-`event`는 authoritative합니다. `metadata.event`는 event source of truth가 아닙니다.
-`SYSTEM_AUTO`는 history source이지 history type이 아닙니다.
+발생한 일을 판단하는 기준은 `event`이며, `metadata.event`로 판단하지 않습니다.
+`SYSTEM_AUTO`는 이력 유형이 아니라 이력의 출처입니다.
 
-하나의 action은 여러 history record를 만들 수 있습니다. 일부 system operation은 ticket
-action row 없이 history를 만들 수 있습니다.
+하나의 액션은 여러 이력 레코드를 만들 수 있습니다. 일부 시스템 작업은 티켓 액션
+행 없이 이력만 만들 수 있습니다.
 
 관련 문서: [Ticket History](./ticket-history.md)
 
@@ -270,27 +268,26 @@ action row 없이 history를 만들 수 있습니다.
 
 ## Work Session
 
-Work Session은 실제 work-time evidence를 기록합니다. Ticket Action과 분리됩니다.
+Work Session은 실제 작업 시간을 기록하며, Ticket Action과 별도로 관리합니다.
 
-현재 route surface:
+현재 제공하는 API 경로:
 
 ```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
 POST /api/service-desk/tickets/:ticketId/work-session
 ```
 
-현재 behavior:
+현재 동작:
 
-- 현재와 과거 work assignee는 work evidence를 기록할 수 있습니다.
-- work-session submission을 통해 status를 변경할 수 있는 주체는 현재 work
-  assignee뿐입니다.
-- 현재 work assignee가 `Assigned`에서 제출할 때는 `Working`으로 이동해야 합니다.
-- 현재 work assignee는 `Working`을 `Pending` 또는 `Resolved`로 이동할 수 있습니다.
-- 현재 work assignee가 `Pending`에서 제출할 때는 `Working` 또는 `Resolved`로
+- 현재·과거 작업 담당자는 작업 내역을 기록할 수 있습니다.
+- 작업 시간 기록 제출로 상태를 변경할 수 있는 주체는 현재 작업 담당자뿐입니다.
+- 현재 작업 담당자가 `Assigned`에서 제출할 때는 `Working`으로 이동해야 합니다.
+- 현재 작업 담당자는 `Working`을 `Pending` 또는 `Resolved`로 이동할 수 있습니다.
+- 현재 작업 담당자가 `Pending`에서 제출할 때는 `Working` 또는 `Resolved`로
   이동해야 합니다.
-- tracked minutes는 ticket work total로 aggregate됩니다.
-- GET은 status를 변경하지 않습니다.
-- timer-style start/finish/switch route는 현재 route surface에 포함되지 않습니다.
+- 기록된 시간은 티켓의 작업 시간 합계에 반영합니다.
+- GET은 상태를 변경하지 않습니다.
+- 타이머 시작·종료·전환 API 경로는 현재 제공하지 않습니다.
 
 관련 문서: [Ticket Work Session](./ticket-work-session.md)
 
@@ -298,7 +295,7 @@ POST /api/service-desk/tickets/:ticketId/work-session
 
 ## Settings Relationship
 
-Service Desk settings는 ticket workflow가 사용하는 behavior configuration을 제공합니다.
+Service Desk 설정은 티켓 업무 흐름에 적용할 처리 규칙을 제공합니다.
 
 ```txt
 Company
@@ -308,9 +305,9 @@ Company
       -> Assignment Rule
 ```
 
-Tenant는 configuration scope입니다. Category는 central behavior configuration입니다.
-Approval Step은 main-category approval routing을 제어합니다. Assignment Rule은
-subcategory override와 parent/main fallback으로 work ownership을 resolve합니다.
+Tenant는 설정을 구분하는 단위입니다. Category는 처리 방식을 결정하는 핵심 설정입니다.
+승인 단계는 상위 카테고리의 승인자 결정 흐름을 제어합니다. 배정 규칙은 하위 카테고리
+규칙을 우선 적용하고, 없을 때 상위 규칙을 사용해 작업 담당자를 결정합니다.
 
 관련 문서: [Service Desk Settings](../settings.md)
 
@@ -318,8 +315,8 @@ subcategory override와 parent/main fallback으로 work ownership을 resolve합�
 
 ## Runtime Boundary
 
-UI는 feature API client를 사용합니다. Route handler는 LOCAL 또는 REMOTE behavior를
-선택합니다.
+UI는 기능별 API 클라이언트를 사용합니다. Route Handler는 LOCAL 또는 REMOTE
+처리를 선택합니다.
 
 ```txt
 UI
@@ -329,11 +326,12 @@ UI
 -> DTO
 ```
 
-REMOTE는 server-only data access, row/mapper/DTO boundary, repository service,
-workflow change에 atomicity가 필요할 때 transaction을 사용합니다.
+REMOTE에서는 서버만 데이터에 접근하고, 데이터베이스 행을 mapper로 DTO에 변환하며,
+repository와 service가 조회·처리를 담당합니다. 업무 흐름의 여러 변경을 모두 성공시키거나
+모두 되돌려야 할 때는 트랜잭션을 사용합니다.
 
-LOCAL은 safe portfolio demo behavior를 제공하고, 지원되는 workflow에서는 DTO contract를
-REMOTE와 맞춰 유지해야 합니다.
+LOCAL은 안전한 포트폴리오 데모 동작을 제공합니다. 지원하는 업무 흐름에서는
+DTO 응답 형식을 REMOTE와 맞춰 유지해야 합니다.
 
 ---
 
@@ -356,9 +354,9 @@ REMOTE와 맞춰 유지해야 합니다.
 
 ## 요약
 
-현재 Service Desk ticket system은 precise persisted statuses, phase-aware routing,
-REMOTE draft rows, attachment preparation, command-based actions, event-based
-history, work-session evidence, tenant-scoped settings를 중심으로 구성됩니다.
+현재 Service Desk 티켓 시스템은 저장된 상태값, 승인·작업 단계를 구분한 담당자 결정,
+REMOTE 초안 행, 첨부 준비, 명령 기반 액션, 이벤트 이력, 작업 시간 기록,
+Tenant별 설정을 중심으로 구성됩니다.
 
-설계 목표는 workflow behavior를 명시적이고 감사 가능하게 유지하며, 오래된
-`Open`/`Approved` lifecycle terminology가 아니라 현재 구현과 정렬하는 것입니다.
+설계 목표는 업무 동작과 그 변경 과정을 명확하게 추적할 수 있도록 유지하는 것입니다.
+설명은 과거의 `Open`/`Approved` 상태 용어 대신 현재 구현을 기준으로 합니다.

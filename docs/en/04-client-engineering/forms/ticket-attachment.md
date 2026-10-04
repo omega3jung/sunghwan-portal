@@ -3,8 +3,9 @@
 ## Goal
 
 Ticket attachments let requesters and operators add supporting files and
-rich-text images to ticket workflows without pretending that the current demo
-stores raw binary files in production-grade object storage.
+rich-text images to ticket workflows. The current demo stores attachment
+metadata and displays controlled demo files; it does not store the actual files
+in production object storage.
 
 The attachment design aims to:
 
@@ -323,7 +324,7 @@ implemented yet.
 
 ## LOCAL and REMOTE Runtime
 
-LOCAL and REMOTE use the same visible attachment contract.
+LOCAL and REMOTE provide the same attachment response format and visible behavior.
 
 ```txt
 LOCAL  -> controlled demo replacement
@@ -368,7 +369,7 @@ It may check:
 
 ### Server Validation
 
-The Prepare API is the trusted attachment validation boundary.
+The server's Prepare API makes the final attachment validation decision.
 
 It validates:
 
@@ -392,7 +393,7 @@ expected prepared shape.
 
 React Hook Form owns unsaved file input while the form is open.
 
-React Query owns persisted ticket and draft server state.
+React Query manages stored tickets and server-backed draft state.
 
 Zustand should not be used as an attachment source of truth. It may be used for
 unrelated cross-feature UI state, but not for raw files or persisted attachment
@@ -429,8 +430,8 @@ The current security posture is conservative:
 - do not let the client invent trusted metadata
 - do not describe demo replacement as durable storage
 
-This protects the demo from misleading storage behavior and keeps the future
-object-storage boundary explicit.
+This makes the demo replacement behavior clear and leaves a defined role for
+future object storage.
 
 ---
 

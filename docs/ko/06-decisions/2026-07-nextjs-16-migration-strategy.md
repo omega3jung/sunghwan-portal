@@ -2,8 +2,8 @@
 
 ## Context
 
-`sunghwan-portal`은 주요 LOCAL demo와 REMOTE Service Desk workflow boundary 구현을
-완료한 후 Next.js 14 기반에서 안정적인 milestone에 도달했습니다.
+`sunghwan-portal`은 주요 LOCAL 데모와 REMOTE Service Desk 업무 흐름의 역할 분리를
+구현한 뒤, Next.js 14 기반에서 안정적인 단계에 도달했습니다.
 
 프로젝트는 이미 다음을 사용하고 있었습니다.
 
@@ -17,8 +17,8 @@
 - server-only PostgreSQL access
 - LOCAL 및 REMOTE runtime path
 
-다음 주요 기술 단계는 automated test, Storybook coverage, 추가 구조 refactoring을
-확대하기 전에 framework와 runtime baseline을 upgrade하는 것이었습니다.
+다음 기술 과제는 자동화 테스트, Storybook 검토 범위, 구조 개선을 확대하기 전에
+프레임워크와 실행 환경의 기준 버전을 올리는 것이었습니다.
 
 목표 방향은 다음과 같았습니다.
 
@@ -30,21 +30,19 @@ React 19
 ESLint 9
 ```
 
-이는 단순한 package version update가 아니었습니다.
+마이그레이션은 패키지 버전과 함께 다음 프레임워크 API와 사용 규칙에도 영향을 주었습니다.
 
-Migration은 다음과 같은 framework-facing contract에 영향을 주었습니다.
-
-- asynchronous request 및 route parameter
-- App Router page 및 Route Handler signature
+- 비동기 요청 API와 경로 매개변수
+- App Router 페이지와 Route Handler 함수 선언 형식
 - `searchParams`
-- middleware/proxy convention
-- ESLint configuration
-- React 및 ecosystem peer dependency
-- Turbopack 및 build behavior
-- Node.js runtime requirement
+- middleware/proxy 규칙
+- ESLint 설정
+- React와 관련 라이브러리의 peer dependency
+- Turbopack과 빌드 동작
+- Node.js 실행 환경 요구사항
 
-프로젝트에는 구현된 Service Desk 동작을 보존하면서 failure의 원인을 추적하고
-검토할 수 있게 하는 migration 전략이 필요했습니다.
+구현된 Service Desk 동작을 보존하면서 실패 원인을 추적하고 변경 내용을
+검토할 수 있는 마이그레이션 전략이 필요했습니다.
 
 ---
 
@@ -87,11 +85,9 @@ Service Desk domain에는 이미 다음과 같은 복잡한 동작이 있었습�
 - Work Session handling
 - LOCAL 및 REMOTE data path
 
-Framework baseline을 변경하면서 domain 구조까지 바꾸면 regression을 분리하기가
-더 어려워집니다.
-
-Migration은 business behavior를 재설계하지 않고도 기존 architecture가 framework
-upgrade를 견딜 수 있음을 입증해야 했습니다.
+프레임워크 기준 버전과 도메인 구조를 함께 바꾸면 기존 동작이 깨지는 회귀 오류의
+원인을 분리하기 어렵습니다. 업무 동작을 재설계하지 않고도 기존 아키텍처가
+프레임워크 업그레이드 후 동작한다는 점을 확인해야 했습니다.
 
 ---
 
@@ -105,8 +101,8 @@ Next.js 15에서 긴 stabilization phase를 두면 당장의 migration 위험은
 - dependency 및 compatibility review를 반복해야 함
 - 최종 project target이 아닌 version의 maintenance 작업이 증가함
 
-프로젝트에는 Next.js 15 transition이 주는 diagnostic value가 필요했지만, Next.js 15를
-장기 release target으로 만들 필요는 없었습니다.
+Next.js 15를 거치며 버전별 문제 원인을 확인할 필요는 있었지만,
+이를 장기 릴리스 대상으로 유지할 필요는 없었습니다.
 
 ---
 
@@ -208,7 +204,7 @@ Next.js 14
 
 ## Decision
 
-하나의 전용 Next.js 16 migration branch 안에서 단계적 migration을 수행하기로 했습니다.
+전용 Next.js 16 마이그레이션 브랜치 하나에서 단계적으로 전환하기로 했습니다.
 
 Migration 순서는 다음과 같습니다.
 
@@ -226,7 +222,8 @@ Step 4
 Repository-level verification
 ```
 
-중간 Next.js 15 상태는 diagnostic checkpoint이며 장기 product release가 아닙니다.
+중간 Next.js 15 상태는 문제 원인을 확인하는 체크포인트로 사용합니다.
+장기 제품 릴리스로 유지하지 않습니다.
 
 ---
 
@@ -234,8 +231,8 @@ Repository-level verification
 
 ### 1. Dependency change와 application change를 분리
 
-가능한 경우 package 및 runtime baseline change는 application compatibility change와
-별도 commit으로 분리해야 합니다.
+가능한 경우 패키지·실행 환경의 기준 버전 변경은 애플리케이션 호환성 수정과
+별도 커밋으로 나눠야 합니다.
 
 이를 통해 다음을 구분할 수 있습니다.
 
@@ -251,17 +248,17 @@ source-code compatibility
 
 Migration에서는 다음을 재설계하지 않습니다.
 
-- Ticket status
-- approval routing
-- work assignment
-- requester update rule
-- Ticket Action execution
-- History semantic
-- Work Session behavior
-- LOCAL/REMOTE DTO contract
+- 티켓 상태
+- 승인자 결정
+- 작업자 배정
+- 요청자 수정 규칙
+- Ticket Action 실행
+- History의 의미
+- Work Session 동작
+- LOCAL/REMOTE DTO 응답 형식과 규칙
 
-Framework-facing change는 해당 workflow에 도달하는 방식을 조정할 수 있지만 그 의미를
-바꾸어서는 안 됩니다.
+프레임워크에 맞춰 업무 흐름을 호출하는 방식은 조정할 수 있지만,
+그 업무 흐름의 의미를 바꾸어서는 안 됩니다.
 
 ---
 
@@ -269,13 +266,13 @@ Framework-facing change는 해당 workflow에 도달하는 방식을 조정할 �
 
 예상되는 compatibility 작업은 다음과 같습니다.
 
-- asynchronous route `params` await
-- 필요한 경우 page `searchParams`를 asynchronous로 처리
-- request API usage 조정
-- 기존 middleware convention을 현재 proxy convention으로 교체
-- ESLint configuration을 지원되는 flat-config 방향으로 migration
-- framework configuration 및 build-facing code update
-- React 19 및 관련 library compatibility 해결
+- 비동기 경로 `params`를 `await`로 처리
+- 필요한 경우 페이지 `searchParams`를 비동기로 처리
+- 요청 API 사용 방식 조정
+- 기존 middleware 규칙을 proxy 규칙으로 교체
+- ESLint 설정을 지원되는 flat-config 방식으로 전환
+- 프레임워크 설정과 빌드 관련 코드 수정
+- React 19와 관련 라이브러리의 호환성 문제 해결
 
 무관한 UI, domain, feature refactoring은 migration commit 범위 밖에 둡니다.
 
@@ -283,8 +280,7 @@ Framework-facing change는 해당 workflow에 도달하는 방식을 조정할 �
 
 ### 4. 선택적 framework 확장 연기
 
-Migration은 새로운 framework baseline이 제공하는 모든 선택적 feature를 자동으로
-도입하지 않습니다.
+마이그레이션을 이유로 새 프레임워크의 모든 선택 기능을 함께 도입하지 않습니다.
 
 별도의 근거가 필요한 작업의 예는 다음과 같습니다.
 
@@ -295,7 +291,7 @@ Migration은 새로운 framework baseline이 제공하는 모든 선택적 featu
 - automated test 확대
 - Storybook 확대
 
-Upgrade에서는 먼저 안정적인 baseline을 확립합니다.
+업그레이드에서는 먼저 새 기준 버전에서 안정적으로 동작하는 상태를 만듭니다.
 
 ---
 
@@ -352,10 +348,8 @@ Next.js production build
 Turbopack/build compatibility
 ```
 
-Automated test와 Storybook verification을 사용할 수 있게 되면 최종 framework
-baseline에서도 실행해야 합니다.
-
-Version 설치에 성공했다고 해서 migration이 완료된 것은 아닙니다.
+자동화 테스트와 Storybook 검증을 사용할 수 있게 되면 최종 프레임워크 버전에서도
+실행해야 합니다. 버전 설치 성공만으로 마이그레이션 완료를 판단하지 않습니다.
 
 ---
 
@@ -401,16 +395,16 @@ behavioral refactoring
 
 ### 2. Compatibility 입증 후 refactoring
 
-불필요한 `"use client"` boundary 제거, component API modernizing, deprecated
-application pattern 교체와 같은 구조 개선은 framework migration에 직접 필요하지 않은 한
-후속 refactoring 작업에서 처리해야 합니다.
+불필요한 `"use client"` 선언 제거, 컴포넌트 API 개선, 더 이상 권장하지 않는
+애플리케이션 구현 방식 교체는 마이그레이션에 직접 필요하지 않다면
+후속 리팩터링에서 처리해야 합니다.
 
 ---
 
 ### 3. 최종 API surface에서 test 확대
 
-Vitest, Storybook, Playwright coverage는 임시 migration API를 보존하기보다 최종
-Next.js 16 component 및 workflow boundary를 대상으로 해야 합니다.
+Vitest, Storybook, Playwright의 검증 범위는 임시 마이그레이션 API가 아니라
+최종 Next.js 16 컴포넌트와 업무 흐름의 역할을 대상으로 해야 합니다.
 
 ---
 
@@ -426,15 +420,13 @@ Next.js 16 component 및 workflow boundary를 대상으로 해야 합니다.
 
 ## Summary
 
-프로젝트는 구분되지 않은 한 번의 upgrade 대신 단계적 checkpoint를 거쳐 Next.js 14에서
-Next.js 16으로 migration했습니다.
+프로젝트는 단계별 체크포인트를 거쳐 Next.js 14에서 Next.js 16으로 전환했습니다.
+Next.js 15에서는 버전별 문제를 확인했고, Node.js 24, npm 11, Next.js 16,
+React 19, ESLint 9를 최종 기준 버전으로 구성했습니다.
 
-Next.js 15는 diagnostic transition으로 사용했고 Node.js 24, npm 11, Next.js 16,
-React 19, ESLint 9를 최종 baseline으로 구성했습니다.
-
-Dependency change, application compatibility 작업, 후속 refactoring을 분리했습니다. 이를
-통해 기존 Service Desk workflow와 LOCAL/REMOTE architecture를 보존하면서 migration의
-모호성을 줄였습니다.
+의존성 변경, 애플리케이션 호환성 수정, 후속 리팩터링을 나누었습니다.
+기존 Service Desk 업무 흐름과 LOCAL/REMOTE 구조를 보존하면서
+마이그레이션 실패 원인을 구분하기 쉽게 했습니다.
 
 ---
 

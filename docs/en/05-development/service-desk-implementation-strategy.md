@@ -5,13 +5,13 @@
 This document explains how the current Service Desk module is implemented in
 `sunghwan-portal`.
 
-It focuses on implementation boundaries that are now present in the codebase:
+It describes the implemented workflows and the responsibilities of each part:
 
 - LOCAL/REMOTE runtime branching through route handlers
 - tenant-scoped settings
 - browser-local LOCAL ticket draft recovery and REMOTE ticket draft rows
 - attachment preparation
-- approval and work routing
+- approver selection and worker assignment
 - Ticket Action command execution
 - event-based ticket history
 - work sessions
@@ -35,8 +35,8 @@ UI
 -> LOCAL handler or REMOTE data service
 ```
 
-The UI should consume the same application-facing DTO shapes whether the data
-comes from LOCAL demo state or REMOTE persistence.
+The UI uses the same DTO response format whether it reads LOCAL demo state or
+REMOTE database data. A DTO is an object that carries the data needed by the UI.
 
 ### LOCAL Runtime
 
@@ -60,9 +60,12 @@ REMOTE implementation currently covers the major Service Desk workflows:
 - work-session list and creation
 - automatic close of expired resolved tickets
 
-REMOTE auto-close calls `service_desk.close_expired_resolved_tickets()` hourly
-through Supabase Cron (`0 * * * *`). Function deployment, eligible Ticket closure,
-Cron registration, and scheduled hourly invocation have been verified. Evidence
+In REMOTE, Supabase Cron (`0 * * * *`) directly calls
+`service_desk.close_expired_resolved_tickets()` at the start of every hour. The
+function closes tickets that are still `Resolved` and whose latest resolution
+was at least 168 hours ago. A ticket can become eligible before the next
+scheduled run. Function deployment, eligible Ticket closure, Cron registration,
+and scheduled hourly invocation have been verified. Evidence
 is recorded in the [scheduling decision](../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
 REMOTE does not mean every production infrastructure concern is complete. For
@@ -72,7 +75,8 @@ example, attachment binaries are still replaced by controlled demo assets.
 
 ## Route Handler Boundary
 
-Next.js route handlers are orchestration boundaries.
+Next.js Route Handlers receive HTTP requests and delegate processing to service
+functions.
 
 They should:
 
@@ -113,7 +117,7 @@ Important Service Desk route surfaces include:
 
 ## Settings Implementation
 
-Service Desk Settings are tenant-scoped behavior configuration.
+Service Desk Settings define ticket handling separately for each tenant.
 
 ```txt
 Company reference data
@@ -149,7 +153,7 @@ Key behavior:
 - final create can reuse the existing draft row
 - draft discard removes the active draft workflow
 
-LOCAL draft recovery follows a different persistence boundary. The feature
+LOCAL draft recovery uses a different storage location. The feature
 draft repository stores one browser `localStorage` record scoped to the current
 demo user and removes it on an owner mismatch. Query hooks orchestrate access to
 that repository, but the React Query cache is not the recovery store. LOCAL
@@ -164,7 +168,7 @@ scope.
 
 ## Attachment Implementation
 
-Attachment handling uses an explicit preparation boundary.
+Attachments are validated and prepared before a ticket is saved.
 
 ```txt
 browser File[] and rich-text body
@@ -229,7 +233,7 @@ Explicit work start:
 
 ## Approval and Work Routing
 
-Routing is phase-aware.
+Approvers and workers are selected separately for the approval and work phases.
 
 ```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
@@ -240,7 +244,7 @@ The ticket row stores the current routing facts:
 - current approval step ID
 - current assignee usernames
 
-The DTO exposes phase-aware projections:
+The DTO calculates these fields from the stored assignment and current phase:
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -429,6 +433,7 @@ It includes REMOTE drafts, attachment preparation, tenant-scoped settings,
 approval/work routing, command-based ticket actions, event-based history, and
 work-session recording.
 
-The implementation strategy is to keep UI contracts stable, route handlers thin,
-server services authoritative, and deferred production infrastructure explicitly
-separate from completed behavior.
+The strategy keeps UI response formats stable and Route Handlers focused on
+request handling and delegation. Server services decide business rules, and
+production infrastructure excluded from the scope stays distinct from completed
+behavior.

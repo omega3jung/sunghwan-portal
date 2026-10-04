@@ -2,7 +2,7 @@
 
 ## Context
 
-The Service Desk ticket form was initially designed as a shared form surface that could support:
+The Service Desk ticket form was initially designed to use one shared form for:
 
 - ticket creation
 - ticket update
@@ -102,7 +102,7 @@ Keeping this only in component state or browser storage makes REMOTE behavior we
 - validation can diverge from ticket rules
 - submission may need insert/delete coordination
 
-Once REMOTE persistence existed, the server data source needed to own REMOTE drafts.
+Once REMOTE persistence existed, REMOTE drafts needed to be managed in server storage.
 
 ---
 
@@ -148,7 +148,8 @@ Current Draft exists
 -> update the existing Draft ticket
 ```
 
-The exact endpoint shape can evolve, but the product behavior should remain upsert-like.
+The endpoint format can evolve, but saving should continue to create a draft when
+none exists and update the existing draft otherwise.
 
 ---
 
@@ -441,11 +442,8 @@ Attachment preparation and storage behavior are defined by the attachment bounda
 
 ### 13. Use React Query for server state
 
-Draft is server state in REMOTE mode.
-
-React Query provides client synchronization.
-
-It is not the persistence source of truth.
+Draft is server state in REMOTE mode. React Query synchronizes the client with
+that state; server storage remains the basis for persisted draft data.
 
 Recommended behavior:
 

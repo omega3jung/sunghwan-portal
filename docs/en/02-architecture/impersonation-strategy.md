@@ -2,15 +2,16 @@
 
 ## Goal
 
-The impersonation strategy is designed to enable **secure and controlled user context switching**,
-allowing authorized INTERNAL administrators to act on behalf of another user.
+Impersonation allows authorized `INTERNAL` administrators to work in another
+user's context. The server validates the switch and retains the original user's
+identity.
 
 It aims to:
 
 - Support realistic Service Desk workflows
 - Enable debugging and issue reproduction
 - Maintain strict security boundaries
-- Preserve auditability of actions
+- Keep the original and effective user identities traceable
 - Keep impersonation server/session-aware rather than client-only overrides
 
 ---
@@ -183,7 +184,7 @@ Stop impersonation -> Restore original user
 ### Behavior
 
 - Remove impersonation context
-- Reset the session to the original user
+- Restore the current user context to the original user
 - Clear the impersonation flag
 
 ---
@@ -228,7 +229,7 @@ Impersonation must not elevate privileges beyond what the original user is allow
 
 Original and effective identities are preserved in the session/request context
 for traceability. Workflow authorization uses the effective user, and Ticket
-History records the effective actor according to the current History contract.
+History records the effective actor according to the current History rules.
 The current implementation does not persist an original/effective identity pair
 in every workflow History row or provide compliance-grade audit infrastructure.
 

@@ -20,9 +20,9 @@ export * from "./utils";
 export * from "./write";
 ```
 
-However, in the Next.js App Router environment, the server/client boundary is critical.
+Next.js App Router requires a clear separation between server-safe and client-only modules.
 If API Routes, server utilities, or local demo handlers import a feature root barrel,
-client-only modules can unintentionally leak into the server bundle.
+client-only modules can be included in the server bundle unintentionally.
 
 Actual build error:
 
@@ -328,8 +328,7 @@ src/feature/serviceDesk/ticket
 
 ## Decision Summary
 
-`index.ts` is not a file for exporting "as much as possible."
-It is a boundary file that exposes only intended public APIs in a limited way.
+`index.ts` exposes only the APIs intended for use outside the module.
 
 - Feature root `index.ts` exports only pure/server-safe modules
 - Client-only modules are accessed through `client.ts` or direct imports

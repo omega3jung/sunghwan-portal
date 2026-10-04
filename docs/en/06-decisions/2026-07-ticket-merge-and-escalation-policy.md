@@ -264,8 +264,8 @@ Draft source or target
 
 Detailed status and actor rules remain in the current Ticket Operation Rules.
 
-The scope policy does not become broader for Admin merely because Admin has
-more UI capability. Stored Tenant and scope remain server-validated constraints.
+Admin follows the same scope policy even though more UI operations are available.
+The server still validates the stored Tenant and scope.
 
 ---
 
@@ -280,15 +280,15 @@ actionType = MERGE
 historyEvent = TICKET_MERGED
 ```
 
-The close reason carries the reporting distinction:
+Reports distinguish the two outcomes by close reason:
 
 ```txt
 Merged
 Escalated
 ```
 
-This avoids introducing a second command pipeline before escalation-specific
-behavior is mature.
+This avoids adding a second command pipeline before escalation-specific
+requirements are clear.
 
 ---
 

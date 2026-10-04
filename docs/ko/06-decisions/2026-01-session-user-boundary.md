@@ -4,13 +4,13 @@
 
 이 프로젝트는 인증을 위해 **NextAuth (JWT 전략)** 를 사용합니다.
 
-초기에는 세션 사용자(`session.user`)가 UI에서 사용할 전체 사용자 정보를 담을 후보로 검토되었습니다.
+초기에는 UI에서 필요한 전체 사용자 정보를 세션 사용자(`session.user`)에 담는 방식을 검토했습니다.
 
 동시에 애플리케이션은 다음을 포함하는 더 풍부한 도메인 모델(`AppUser`)을 도입했습니다.
 
 - 프로필 데이터(image)
-- preference
-- feature flag(impersonation, super user)
+- 개인 설정(preference)
+- 기능 플래그(impersonation, super user)
 - 확장된 권한 컨텍스트
 
 이로 인해 다음과 같은 핵심 질문이 생겼습니다.
@@ -46,7 +46,7 @@
 ### 3. 클라이언트 타입이 불안정해진다
 
 - `session.user`는 `AppUser`처럼 보입니다
-- 하지만 실제 값은 불완전할 수 있다(`null`)
+- 하지만 실제 값은 불완전하거나 `null`일 수 있습니다
 - 이는 안전하지 않은 가정을 유도합니다
 
 ---
@@ -75,7 +75,7 @@ session.user = AppUser
 
 - 관심사의 분리를 해칩니다
 - 세션 payload가 무거워집니다
-- stale data 위험이 생깁니다
+- 오래된 사용자 데이터를 계속 사용할 위험이 생깁니다
 - 인증과 도메인 사이의 결합이 강해집니다
 
 ---
@@ -96,8 +96,8 @@ AppUser = API를 통해 조회
 
 **단점**
 
-- 추가 fetch가 필요합니다
-- bootstrap 복잡성이 생깁니다
+- 사용자 데이터 추가 조회가 필요합니다
+- 초기 사용자 데이터를 불러오는 bootstrap 과정이 복잡해집니다
 
 ---
 
@@ -158,10 +158,10 @@ hydrate client state
 
 ### 3. 엄격한 경계 유지
 
-- 세션에는 절대 다음이 들어가지 않습니다:
-  - profile (image)
-  - preference
-  - feature flags
+- 세션에는 다음 정보를 넣지 않습니다.
+  - 프로필(image)
+  - 개인 설정(preference)
+  - 기능 플래그(feature flags)
 
 - `AppUser`는 항상 서버/API에서 가져옵니다
 

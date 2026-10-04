@@ -63,7 +63,7 @@ The project needed a clear data boundary.
 
 ### 2. Route Handlers Could Become Too Large
 
-Next.js Route Handlers are useful as HTTP boundaries, but they should not become full domain services.
+Next.js Route Handlers receive HTTP requests and delegate domain processing to services.
 
 If route handlers directly handled:
 
@@ -77,7 +77,7 @@ If route handlers directly handled:
 
 then they would become difficult to read and hard to reuse later.
 
-The project needed route handlers to remain thin and orchestration-focused.
+Route handlers needed to focus on request validation and delegation.
 
 ---
 
@@ -346,10 +346,10 @@ This allows:
 
 ## Authorization Addendum (2026-07)
 
-The DTO/API boundary also carries the category-scope settings authorization
-decision. Authorization is application behavior shared above the LOCAL/REMOTE
-branch; it is not a UI condition and is not delegated independently to two
-runtime implementations.
+DTO/API processing also applies category-scope settings authorization.
+The same authorization checks run before selecting LOCAL or REMOTE.
+UI conditions alone do not enforce these checks, and the two runtimes do not
+decide permissions independently.
 
 ```txt id="settings-authorization-api-flow"
 Route Handler
@@ -497,7 +497,7 @@ Approval steps may be replaced as part of a category configuration update, as lo
 
 ### 5. Assignment Rule API Direction
 
-Assignment rules define current routing behavior for a category.
+Assignment rules define how workers are currently assigned for a category.
 
 Conceptual DTO:
 
@@ -775,15 +775,12 @@ The core decision is:
 Settings API = workflow-oriented route handlers + domain handlers + LOCAL/REMOTE DTO contract
 ```
 
-The UI consumes stable DTOs.
+The UI consumes stable DTOs. Route handlers validate and delegate requests,
+while domain handlers organize settings behavior.
 
-Route handlers remain thin.
-
-Domain handlers organize settings behavior.
-
-REMOTE data access uses row/mapper/DTO boundaries.
-
-LOCAL demo behavior uses server-side mutable mock state while preserving the same API contract.
+REMOTE separates data access and response conversion through rows, mappers,
+and DTOs. LOCAL uses server-side mutable mock state while preserving the same
+API response format and behavior rules.
 
 Unused API paths should be removed instead of kept as speculative CRUD.
 

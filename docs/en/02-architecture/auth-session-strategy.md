@@ -172,7 +172,7 @@ On sign-in, the `jwt` callback stores the trusted auth fields in the token:
 - `permission`
 - `role`
 
-The JWT is the durable authentication source during the session lifecycle.
+The JWT remains the basis for authentication throughout the session lifecycle.
 
 ---
 
@@ -280,7 +280,7 @@ NextAuth session
 
 ### `useCurrentSession()`
 
-`useCurrentSession()` acts as the main frontend session facade.
+`useCurrentSession()` provides the frontend's common entry point for session data.
 
 It combines:
 
@@ -339,8 +339,8 @@ It is used to:
 
 Important limitation:
 
-> `authSessionStore` is **not** the source of truth for authentication.
-> It is a frontend runtime cache/facade.
+> `authSessionStore` caches session data for the frontend at runtime.
+> Authentication decisions remain based on the JWT-backed NextAuth flow.
 > It does not replace server/session-driven impersonation control.
 
 The trusted source remains the JWT-backed NextAuth auth flow.
@@ -357,7 +357,7 @@ Prefer server state over client state whenever possible
 
 This strategy still follows that rule because:
 
-- authentication truth stays in JWT/session
+- authentication data remains in JWT/session
 - `AppUser` still comes from server/API resolution
 - Zustand only caches the runtime shape needed by the frontend shell
 
@@ -429,7 +429,7 @@ Meaning:
 
 - `originalUser`: the real logged-in user
 - `impersonatedUser`: the impersonation target
-- `currentUser`: the user the UI and authz should act as
+- `currentUser`: the user whose context drives the UI and authorization checks
 
 ---
 

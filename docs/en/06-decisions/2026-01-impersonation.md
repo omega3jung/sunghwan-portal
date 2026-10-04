@@ -13,8 +13,8 @@ The initial impersonation implementation based on `sessionStorage` revealed crit
 
 ### Goal
 
-Evolve impersonation into a **production-aligned, secure, and consistent system**
-by integrating it into a server-controlled session.
+The goal was to integrate impersonation into a server-controlled session to make
+user switching **production-aligned, secure, and consistent**.
 
 ---
 
@@ -40,7 +40,7 @@ Client state -> Server session (NextAuth)
 
 - Extend the NextAuth session
 - Inject impersonation context into the session object
-- Use the session as the single source of truth
+- Determine impersonation state from the session
 
 ---
 

@@ -76,7 +76,7 @@ Do not add a separate `TicketTrackLog` table.
 
 Use:
 
-- `TicketTrackTime` as the source of truth for session data
+- `TicketTrackTime` to store session data and determine session state
 - `TicketHistory` as the audit trail for events such as start and finish
 
 ---
@@ -129,7 +129,7 @@ POST /tickets/:ticketId/track-time/switch
 ### Rationale
 
 - Supports a natural "finish current and start new" workflow
-- Prevents multi-step logic from leaking into the client
+- Avoids having the client coordinate separate finish and start requests
 - Keeps the operation atomic on the server
 
 ---
@@ -202,7 +202,7 @@ Sort tickets according to the current user's work state.
 
 ### Decision
 
-Represent the current user's work state as a lightweight derived context.
+Derive a small context for the UI from the current user's query or server data.
 
 ### Example
 

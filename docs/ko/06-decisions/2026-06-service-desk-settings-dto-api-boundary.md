@@ -2,24 +2,26 @@
 
 ## 배경
 
-2026년 6월 Service Desk settings 구현 과정에서 프로젝트는 여러 settings domain을 local mock-only behavior에서 더 명시적인 LOCAL/REMOTE API 구조로 이동시켰습니다.
+2026년 6월에는 여러 Service Desk 설정을 로컬 mock으로만 처리하던 방식에서
+LOCAL/REMOTE API를 구분해 처리하는 구조로 옮겼습니다.
 
-영향을 받은 Service Desk settings domain은 다음과 같습니다.
+변경 대상인 Service Desk 설정은 다음과 같습니다.
 
 - Tenant
 - Category
 - Approval Step
 - Assignment Rule
 
-프로젝트는 다음과 같은 supporting reference data도 연결했습니다.
+다음 참조 데이터도 함께 연결했습니다.
 
 - Company
 - Department
 - Job Field
 
-이 단계에서 Service Desk 모듈은 더 이상 local UI demo에만 머물지 않았습니다. 안전한 local demo 경험을 유지하면서 Supabase PostgreSQL-backed data access와 정렬되고 있었습니다.
+이 단계에서는 안전한 LOCAL 데모를 유지하면서, Service Desk 모듈에서
+Supabase PostgreSQL 데이터에 접근하는 구조를 적용하고 있었습니다.
 
-중요한 architectural direction은 이미 확립되어 있었습니다.
+요청 처리 구조는 이미 다음과 같이 정해져 있었습니다.
 
 ```txt id="wjvgzj"
 UI
@@ -28,7 +30,7 @@ UI
 -> LOCAL handler or REMOTE/Supabase DTO service
 ```
 
-6월 작업은 이 방향을 Service Desk settings에 구체적으로 적용했습니다.
+6월 작업에서는 이 구조를 Service Desk 설정에 구체적으로 적용했습니다.
 
 ---
 
@@ -36,7 +38,7 @@ UI
 
 ### 1. Database Row, Mock Data, DTO, UI Model이 서로 달라질 수 있음
 
-프로젝트에는 같은 conceptual settings data를 위한 여러 data shape가 있었습니다.
+같은 설정 데이터를 저장하거나 전달하는 형식이 여러 가지였습니다.
 
 ```txt id="9jzzs8"
 Database Row
@@ -46,91 +48,88 @@ UI Model
 Form Value
 ```
 
-이 shape들이 서로 독립적으로 발전하도록 두면 시스템 유지보수가 어려워집니다.
+각 형식을 독립적으로 변경하면 서로 맞지 않을 수 있어 유지보수가 어려워집니다.
 
 가능한 문제는 다음과 같습니다.
 
-- database `snake_case` field가 UI model로 새어 나감
-- mock data와 remote data가 서로 다른 shape를 반환함
-- settings form이 database implementation detail에 의존함
-- route handler에 mapping logic이 지나치게 많아짐
-- UI component에 runtime-specific branching이 필요해짐
-- local demo behavior가 remote behavior와 달라짐
+- DB의 `snake_case` 필드가 UI 모델에 노출
+- mock 데이터와 REMOTE 데이터가 서로 다른 응답 형식 반환
+- 설정 폼이 DB 구현 세부 사항에 의존
+- Route Handler에 데이터 변환 로직이 과도하게 집중
+- UI 컴포넌트에서 실행 환경별 분기 필요
+- LOCAL 데모와 REMOTE의 동작 차이 발생
 
-프로젝트에는 명확한 data boundary가 필요했습니다.
+따라서 각 데이터 형식의 용도와 변환 위치를 명확히 구분할 필요가 있었습니다.
 
 ---
 
 ### 2. Route Handler가 너무 커질 수 있음
 
-Next.js Route Handler는 HTTP boundary로 유용하지만 full domain service가 되어서는 안 됩니다.
+Next.js Route Handler는 HTTP 요청을 받고 실제 처리를 서비스 함수에 맡겨야 합니다.
+도메인 처리 전체를 직접 담당해서는 안 됩니다.
 
-route handler가 다음을 직접 처리하면:
+Route Handler가 다음 작업을 모두 직접 처리하면 읽기 어렵고 재사용하기도 어려워집니다.
 
-- request parsing
-- session validation
-- LOCAL/REMOTE branching
-- SQL execution
-- row mapping
-- business rules
-- mock mutation logic
+- 요청 파싱
+- 세션 검증
+- LOCAL/REMOTE 선택
+- SQL 실행
+- DB 행 변환
+- 업무 규칙 적용
+- mock 상태 변경
 
-읽기 어렵고 나중에 재사용하기도 어려워집니다.
-
-프로젝트에서는 route handler를 thin하고 orchestration-focused한 상태로 유지할 필요가 있었습니다.
+따라서 Route Handler는 요청 확인과 처리 위임에 집중할 필요가 있었습니다.
 
 ---
 
 ### 3. Settings는 단순 CRUD Record가 아님
 
-Service Desk settings는 behavior-defining configuration입니다.
+Service Desk 설정은 시스템의 동작을 결정합니다.
 
 예를 들면 다음과 같습니다.
 
-- category는 ticket behavior를 정의합니다.
-- approval step은 validation flow를 정의합니다.
-- assignment rule은 routing behavior를 정의합니다.
-- tenant는 Service Desk configuration boundary를 정의합니다.
+- 카테고리는 티켓 동작을 정의합니다.
+- 승인 단계는 승인 검증 흐름을 정의합니다.
+- 배정 규칙은 담당자 결정 방식을 정의합니다.
+- 테넌트는 Service Desk 설정이 적용되는 범위를 정의합니다.
 
-각 setting을 generic CRUD resource로 취급하면 API surface는 단순해 보이지만, UI가 실제로 settings를 편집하는 방식과 맞지 않습니다.
+각 설정을 일반 CRUD 항목으로 취급하면 API 구성은 단순해 보이지만,
+UI에서 실제로 설정을 편집하는 방식과 맞지 않습니다.
 
-일부 settings는 isolated record가 아니라 configuration tree 또는 grouped policy로 편집하는 것이 더 적합합니다.
+일부 설정은 개별 레코드보다 트리 구조나 관련 정책 묶음으로 편집하는 것이 더 적합합니다.
 
 ---
 
 ### 4. Speculative API Path가 유지보수 비용을 증가시킴
 
-구현 중 일부 API path는 나중에 유용할 수도 있다는 이유만으로 존재했습니다.
+구현 중 일부 API 경로는 나중에 유용할 수 있다는 이유만으로 존재했습니다.
 
-그러나 현재 UI workflow에서 사용하지 않는 path는 여러 문제를 만듭니다.
+현재 UI 흐름에서 사용하지 않는 경로는 다음 문제를 만듭니다.
 
-- test해야 할 surface area가 늘어납니다.
-- 실제로 지원하지 않는 capability를 암시합니다.
-- route-handler structure를 review하기 어렵게 만듭니다.
-- inconsistent LOCAL/REMOTE behavior 가능성을 높입니다.
-- 시스템이 실제보다 넓어 보이게 만들어 portfolio 설명력을 약화합니다.
+- 테스트해야 할 범위 증가
+- 실제로 지원하지 않는 기능이 있는 것처럼 보임
+- Route Handler 구조 검토의 어려움
+- LOCAL과 REMOTE의 동작이 달라질 가능성 증가
+- 실제 구현 범위보다 넓어 보이는 포트폴리오 설명
 
-프로젝트는 실제 workflow와 정렬된 API path만 유지해야 했습니다.
+따라서 실제 업무 흐름에서 사용하는 API 경로만 유지해야 했습니다.
 
 ---
 
 ### 5. LOCAL Demo Mutation에는 Server-Side Consistency가 필요했음
 
-local demo는 단순한 static mock data가 아닙니다.
+LOCAL 데모에서는 포트폴리오를 검토하는 사용자가 Service Desk 설정을 안전하게
+수정할 수 있습니다. 수정 결과는 이후 API 호출에도 반영되어야 하므로
+React Query 캐시만 바꾸는 것으로는 충분하지 않습니다.
 
-demo는 portfolio review 중 사용자가 Service Desk settings를 안전하게 수정할 수 있게 합니다.
-
-local mutation이 API call 전체에 반영되어야 하므로 React Query cache만으로는 이 behavior를 충분히 지원할 수 없습니다.
-
-따라서 local demo에는 lightweight backend처럼 동작하는 server-side local state module 또는 mock handler가 필요했습니다.
-
-이는 LOCAL과 REMOTE settings API가 compatible DTO를 반환해야 한다는 뜻이기도 합니다.
+따라서 작은 백엔드처럼 동작하는 서버 측 LOCAL 상태 모듈 또는 mock 핸들러가
+필요했습니다. LOCAL과 REMOTE 설정 API는 서로 호환되는 DTO를 반환해야 합니다.
 
 ---
 
 ## 결정
 
-Service Desk settings에 DTO-oriented API boundary를 사용하기로 했습니다.
+Service Desk 설정 API가 DTO(데이터 전달 객체)를 기준으로 응답하도록 결정했습니다.
 
 핵심 결정은 다음과 같습니다.
 
@@ -150,7 +149,8 @@ UI
 -> DTO response
 ```
 
-UI는 stable DTO를 소비해야 하며, data가 mock state에서 왔는지 Supabase PostgreSQL에서 왔는지 알 필요가 없어야 합니다.
+UI는 일정한 DTO 응답 형식을 사용해야 합니다. 데이터가 mock 상태에서 왔는지
+Supabase PostgreSQL에서 왔는지에 따라 UI 처리가 달라져서는 안 됩니다.
 
 ---
 
@@ -158,32 +158,32 @@ UI는 stable DTO를 소비해야 하며, data가 mock state에서 왔는지 Supa
 
 ### 1. Route Handler를 Thin하게 유지함
 
-route handler는 다음에 집중해야 합니다.
+Route Handler는 다음 작업에 집중해야 합니다.
 
-- HTTP method handling
-- request parsing
-- 공통 session/principal 및 settings authorization boundary 호출
-- runtime context resolution
-- 올바른 domain handler로 위임
+- HTTP 메서드 처리
+- 요청 파싱
+- 공통 세션·사용자 확인과 설정 권한 검사 호출
+- 실행 환경 결정
+- 해당 도메인 핸들러로 처리 위임
 - `NextResponse` 반환
 
-route handler가 다음을 직접 소유해서는 안 됩니다.
+Route Handler가 다음을 직접 담당해서는 안 됩니다.
 
-- SQL queries
-- row-to-DTO mapping
-- settings mutation rules
-- local demo state mutation details
-- domain-specific branching
+- SQL 쿼리
+- DB 행을 DTO로 변환하는 작업
+- 설정 변경 규칙
+- LOCAL 데모 상태 변경의 세부 처리
+- 도메인별 분기
 
-이렇게 하면 route handler가 읽기 쉬워지고 향후 backend extraction도 쉬워집니다.
+이렇게 하면 Route Handler를 읽기 쉽고, 향후 백엔드를 별도 서비스로 분리하기도 쉽습니다.
 
 ---
 
 ### 2. Domain Handler를 Settings Area별로 집중시킴
 
-Service Desk settings handler는 domain responsibility별로 분리해야 합니다.
+Service Desk 설정 핸들러는 담당 도메인별로 분리해야 합니다.
 
-권장 domain은 다음과 같습니다.
+권장 도메인은 다음과 같습니다.
 
 ```txt id="z3j7x6"
 tenant
@@ -192,15 +192,14 @@ approvalStep
 assignmentRule
 ```
 
-각 domain handler는 자기 settings area의 API behavior를 소유해야 합니다.
-
-이렇게 하면 하나의 거대한 Service Desk settings handler가 서로 관련 없는 logic을 모두 처리하는 central switchboard가 되는 것을 피할 수 있습니다.
+각 도메인 핸들러는 자신이 맡은 설정 영역의 API 동작을 담당해야 합니다.
+이렇게 나누면 서로 관련 없는 로직이 하나의 큰 설정 핸들러에 몰리지 않습니다.
 
 ---
 
 ### 3. Row / DTO / Mapper Boundary를 유지함
 
-database row와 API DTO는 서로 다른 책임을 가집니다.
+DB 행은 저장·조회 결과를 표현하고 API DTO는 응답 형식을 정의합니다.
 
 ```txt id="lznuec"
 Row -> Mapper -> DTO
@@ -208,47 +207,47 @@ Row -> Mapper -> DTO
 
 #### Row
 
-row type은 database result shape를 표현합니다.
+Row 타입은 DB 쿼리 결과의 구조를 표현합니다.
 
 특징:
 
 - SQL에 가깝습니다.
-- database-oriented입니다.
+- DB 저장 구조를 기준으로 합니다.
 - 보통 `snake_case`를 사용합니다.
-- nullable database field를 포함할 수 있습니다.
-- UI component가 직접 소비해서는 안 됩니다.
+- `null`이 허용되는 DB 필드를 포함할 수 있습니다.
+- UI 컴포넌트가 직접 사용해서는 안 됩니다.
 
 #### DTO
 
-DTO는 application-facing API response contract를 표현합니다.
+DTO는 애플리케이션에 제공하는 API 응답 형식을 정의합니다.
 
 특징:
 
-- frontend use에 안정적입니다.
+- 프런트엔드가 안정적으로 사용할 수 있습니다.
 - 보통 `camelCase`를 사용합니다.
-- database naming을 숨깁니다.
-- nullable value를 normalize합니다.
-- LOCAL과 REMOTE response를 맞출 수 있습니다.
+- DB의 필드 이름과 외부 응답 이름을 분리합니다.
+- `null`일 수 있는 값을 일관된 형태로 정리합니다.
+- LOCAL과 REMOTE 응답 형식을 맞출 수 있습니다.
 
 #### Mapper
 
-mapper는 row를 DTO로 변환합니다.
+Mapper는 DB 행을 DTO로 변환합니다.
 
 책임:
 
-- naming conversion
-- JSON shaping
-- null normalization
-- response-safe field selection
-- 필요할 때 local/remote shape alignment
+- 필드 이름 변환
+- JSON 구조 구성
+- `null` 값 정규화
+- 응답으로 공개해도 되는 필드 선택
+- 필요한 경우 LOCAL/REMOTE 응답 형식 맞추기
 
 ---
 
 ### 4. LOCAL과 REMOTE Contract를 정렬함
 
-LOCAL과 REMOTE는 같은 application-facing DTO shape를 반환해야 합니다.
+LOCAL과 REMOTE는 애플리케이션에 같은 DTO 응답 형식을 반환해야 합니다.
 
-UI에 다음과 같은 logic이 필요해서는 안 됩니다.
+UI에서 데이터 형식에 따라 다음과 같이 분기할 필요가 없어야 합니다.
 
 ```ts id="r4a7mk"
 if (runtime === "LOCAL") {
@@ -258,24 +257,22 @@ if (runtime === "LOCAL") {
 }
 ```
 
-대신 runtime-specific behavior는 API boundary 뒤에 숨겨야 합니다.
+실행 환경별 차이는 API 내부에서 처리해야 합니다.
 
 ```txt id="y1vz78"
 LOCAL mock/state -> DTO
 REMOTE row       -> DTO
 ```
 
-이렇게 하면 backend implementation이 변경되어도 frontend를 안정적으로 유지할 수 있습니다.
+이렇게 하면 백엔드 구현이 바뀌어도 프런트엔드의 응답 처리를 유지할 수 있습니다.
 
 ---
 
 ### 5. Generic CRUD보다 Workflow-Oriented Settings API를 선호함
 
-Service Desk settings는 isolated record만이 아니라 configuration workflow입니다.
-
-category, approval step, assignment rule configuration에서 UI는 grouped settings를 편집하는 경우가 많습니다.
-
-따라서 가능한 모든 CRUD route를 노출하는 것보다 list와 save-tree style operation 같은 API가 더 적합할 수 있습니다.
+Service Desk 설정 화면에서는 개별 레코드뿐 아니라 서로 연결된 설정을 편집합니다.
+카테고리, 승인 단계, 배정 규칙은 묶어서 편집하는 경우가 많습니다.
+따라서 가능한 모든 CRUD 경로보다 목록 조회와 설정 트리 저장 API가 더 적합할 수 있습니다.
 
 권장 방향:
 
@@ -284,40 +281,41 @@ GET  settings data needed by the UI
 POST/PUT save the configuration shape used by the UI
 ```
 
-이렇게 하면 API가 실제 workflow와 정렬됩니다.
+이렇게 하면 API가 실제 편집 흐름을 지원합니다.
 
 ---
 
 ### 6. 사용하지 않거나 Speculative한 API Path를 제거함
 
-나중에 유용할 수 있다는 이유만으로 사용하지 않는 API path를 유지하지 않습니다.
+나중에 유용할 수 있다는 이유만으로 사용하지 않는 API 경로를 유지하지 않습니다.
 
-API path는 다음 조건을 만족할 때 유지해야 합니다.
+API 경로는 다음 조건을 만족할 때 유지해야 합니다.
 
 - 현재 UI가 사용합니다.
-- documented workflow를 지원합니다.
-- 명확한 LOCAL 및 REMOTE behavior가 있습니다.
-- test하고 설명할 수 있습니다.
+- 문서에 설명한 업무 흐름을 지원합니다.
+- LOCAL과 REMOTE의 동작이 명확합니다.
+- 테스트하고 설명할 수 있습니다.
 
-API path는 다음 조건에 해당하면 제거하거나 deferred해야 합니다.
+API 경로는 다음 조건에 해당하면 제거하거나 현재 구현 범위에서 제외해야 합니다.
 
 - 현재 UI에서 사용하지 않습니다.
-- speculative CRUD behavior를 나타냅니다.
-- demo 개선 없이 route surface를 늘립니다.
-- inconsistent local/remote behavior를 만듭니다.
-- implementation review를 어렵게 만듭니다.
+- 실제 사용 없이 예상만으로 CRUD 동작을 제공합니다.
+- 데모 개선 없이 경로 수만 늘립니다.
+- LOCAL과 REMOTE의 동작이 달라집니다.
+- 구현 검토를 어렵게 만듭니다.
 
-이렇게 하면 프로젝트를 정직하고 유지보수 가능한 상태로 유지할 수 있습니다.
+이 기준으로 실제 지원 범위를 명확히 하고 유지보수할 수 있습니다.
 
 ---
 
 ### 7. Server Data를 Client State로 중복 저장하지 않음
 
-Service Desk settings data는 server state입니다.
+Service Desk 설정 데이터는 서버가 관리하는 상태입니다.
 
 이는 Zustand에 중복 저장하지 않고 React Query로 관리해야 합니다.
 
-Zustand는 UI/runtime state에 사용할 수 있지만 tenant list, category tree, approval step, assignment rule 같은 settings data는 query-driven 상태로 남아야 합니다.
+Zustand는 UI와 실행 중 필요한 상태에 사용할 수 있습니다. 테넌트 목록, 카테고리 트리,
+승인 단계, 배정 규칙 같은 설정 데이터는 React Query로 조회·관리해야 합니다.
 
 규칙은 다음과 같습니다.
 
@@ -330,25 +328,24 @@ UI state    -> local state or Zustand only when needed
 
 ### 8. Local Demo State를 Server-Side Mutable State로 취급함
 
-local demo는 mock-backed state를 사용할 수 있지만 server data처럼 동작해야 합니다.
-
-local settings mutation은 React Query cache만이 아니라 server-side local state module을 업데이트해야 합니다.
+LOCAL 데모는 mock 상태를 사용할 수 있지만 서버 데이터처럼 동작해야 합니다.
+설정을 변경할 때 React Query 캐시와 함께 서버 측 LOCAL 상태 모듈도 갱신해야 합니다.
 
 이를 통해 다음을 지원할 수 있습니다.
 
-- repeatable demo behavior
-- safe reviewer interaction
-- resettable local state
-- realistic API request flow
-- LOCAL/REMOTE implementation parity
+- 반복할 수 있는 데모 동작
+- 검토자가 안전하게 설정을 변경하는 흐름
+- 초기화할 수 있는 LOCAL 상태
+- 실제와 유사한 API 요청 흐름
+- LOCAL과 REMOTE의 동작 일치
 
 ---
 
 ## 권한 보충 (2026-07)
 
-DTO/API 경계는 category-scope 설정 권한 결정도 전달합니다. 권한은 LOCAL/REMOTE
-분기 위에서 공유하는 application behavior입니다. UI 조건이 아니며 두 runtime
-implementation이 각자 다르게 처리하도록 위임하지 않습니다.
+DTO/API 처리 과정에는 카테고리 범위의 설정 권한 검사도 포함됩니다.
+이 검사는 LOCAL/REMOTE를 선택하기 전에 공통으로 적용합니다.
+UI 표시 조건으로만 처리하거나 두 실행 환경에서 각각 다르게 판단하지 않습니다.
 
 ```txt id="settings-authorization-api-flow"
 Route Handler
@@ -360,19 +357,21 @@ Route Handler
 -> filter된 DTO response 반환
 ```
 
-Canonical principal은 서버가 신뢰하는 `permission`, `userScope`, `companyId`를
-제공합니다. Request body/query의 admin type, tenant/company claim, focused tenant,
-`role`, `dataScope`, client state는 권한을 성립시키지 않습니다. Impersonation 중에는
-effective user의 resource capability를 적용하고 original/effective identity는 감사에
-사용할 수 있도록 유지합니다.
+서버가 확인한 사용자 정보(canonical principal)의 `permission`, `userScope`,
+`companyId`를 권한 판단에 사용합니다. 요청 본문·쿼리의 관리자 유형, 테넌트·회사
+주장 값, 화면에서 선택한 테넌트, `role`, `dataScope`, 클라이언트 상태만으로는
+권한이 생기지 않습니다. Impersonation 중에는 현재 작업 사용자(effective user)의
+리소스 권한을 적용하고, 원래 사용자와 현재 작업 사용자 정보는 감사에 사용할 수
+있도록 유지합니다.
 
-Read API는 `none` resource를 filter해야 합니다. Mutation API는 `manage`를 적용하기
-전에 저장된 category/tenant 관계를 로드하고 read-only 또는 경계 밖 principal에게
-`403`을 반환합니다. Page는 UX를 위해 Settings Home으로 redirect할 수 있지만 API는
-권한 없는 mutation을 redirect하지 않습니다.
+조회 API는 권한이 `none`인 리소스를 응답에서 제외해야 합니다. 변경 API는
+저장된 카테고리·테넌트 관계를 먼저 불러온 뒤 `manage` 권한을 적용합니다.
+읽기 전용 사용자나 접근 범위를 벗어난 사용자에게는 `403`을 반환합니다.
+페이지는 UX를 위해 Settings Home으로 이동할 수 있지만, API는 권한 없는 변경
+요청을 다른 페이지로 보내지 않습니다.
 
-Approval Step과 Assignment Rule DTO는 tenant 권한을 중복 저장하지 않습니다.
-Source relationship은 다음과 같습니다.
+Approval Step과 Assignment Rule DTO는 테넌트 권한을 중복 저장하지 않습니다.
+권한 판단에 사용하는 관계는 다음과 같습니다.
 
 ```txt id="settings-dto-authorization-context"
 Approval Step / Assignment Rule
@@ -381,16 +380,16 @@ Approval Step / Assignment Rule
 -> Company
 ```
 
-Category update DTO validation은 tenant, main-category scope, tenant/scope 경계를
-넘는 subcategory parent 이동을 immutable로 다룹니다. 서버는 update/deactivation에는
-저장된 state에서, subcategory에는 저장된 parent에서 context를 파생하며 payload
-context만 신뢰하지 않습니다.
+카테고리 수정 DTO 검증에서는 테넌트, 메인 카테고리의 scope, 테넌트·scope를
+넘는 서브카테고리 부모 이동을 변경 불가능한 항목으로 다룹니다.
+서버는 수정·비활성화 시 저장된 상태에서, 서브카테고리에서는 저장된 부모에서
+권한 판단 맥락을 구합니다. 요청 payload의 맥락만 신뢰하지 않습니다.
 
-Actor candidate lookup은 category 중심이며 purpose를 구분합니다. Approval candidate는
-category tenant company에서, assignment candidate는 category에 따라 허용된 company에서
-결정합니다. Lookup은 company filter뿐 아니라 caller의 resource capability도 검사합니다.
-Read-only access는 현재 참조된 actor의 표시 데이터를 반환할 수 있지만 employee
-directory search 권한을 부여하지 않습니다.
+담당자 후보 조회는 카테고리를 기준으로 하며 승인자와 작업자 조회를 구분합니다.
+승인자 후보는 해당 카테고리 테넌트의 회사에서, 작업자 후보는 카테고리에 따라
+허용된 회사에서 결정합니다. 회사 필터와 함께 호출자의 리소스 권한도 검사합니다.
+읽기 전용 권한으로 현재 참조된 담당자의 표시 정보는 반환할 수 있지만,
+직원 디렉터리 검색 권한을 부여하지는 않습니다.
 
 ---
 
@@ -398,7 +397,7 @@ directory search 권한을 부여하지 않습니다.
 
 ### 1. Settings API Responsibility
 
-Service Desk settings API를 layered flow 중심으로 정렬했습니다.
+Service Desk 설정 API의 요청 처리를 다음 계층으로 나눴습니다.
 
 ```txt id="ywhp0s"
 Route Handler
@@ -407,15 +406,14 @@ Route Handler
 -> LOCAL or REMOTE implementation
 ```
 
-이를 통해 readability가 개선되고, 관련 없는 settings logic이 하나의 파일에 섞일 위험이 줄었습니다.
+이 구조로 코드를 읽기가 쉬워지고, 관련 없는 설정 로직이 한 파일에 섞일 위험이 줄었습니다.
 
 ---
 
 ### 2. Tenant API와 DTO 방향
 
-Tenant는 Service Desk configuration boundary가 되었습니다.
-
-tenant API는 raw company row 또는 tenant row가 아니라 application-facing DTO를 반환해야 했습니다.
+Tenant는 Service Desk 설정의 적용 범위를 나타냅니다.
+테넌트 API는 원본 회사·테넌트 DB 행 대신 애플리케이션에서 사용할 DTO를 반환해야 했습니다.
 
 현재의 개념적 DTO 방향:
 
@@ -429,15 +427,14 @@ type TenantDto = {
 };
 ```
 
-이렇게 하면 tenant behavior를 company reference data와 분리해서 유지할 수 있습니다.
+이렇게 하면 테넌트 동작과 회사 기준 데이터를 구분해서 유지할 수 있습니다.
 
 ---
 
 ### 3. Category Tree API 방향
 
-Category settings는 tree-shaped configuration입니다.
-
-category는 단순한 flat record가 아닙니다. tenant에 속하고 parent/child relationship을 가질 수 있습니다.
+카테고리 설정은 트리 구조입니다. 카테고리는 테넌트에 속하며 부모·자식 관계도 가질 수
+있으므로, 단순히 개별 레코드를 나열하는 모델만으로는 충분하지 않습니다.
 
 현재의 개념적 DTO 방향:
 
@@ -464,19 +461,18 @@ type MainCategoryDto = {
 };
 ```
 
-`PORTAL`/`INTERNAL`은 workflow scope입니다. Main/subcategory는 hierarchy이므로
-`CategoryScope`의 다른 값으로 표현하면 안 됩니다. Subcategory는 parent main
-category로부터 tenant와 scope를 상속합니다.
+`PORTAL`/`INTERNAL`은 업무 흐름이 적용되는 scope입니다. 메인·서브카테고리는
+계층 구분이므로 `CategoryScope`의 별도 값으로 표현하면 안 됩니다.
+서브카테고리는 부모 메인 카테고리의 테넌트와 scope를 상속합니다.
 
-API는 UI가 여러 관련 없는 CRUD call을 조정하도록 강제하기보다, UI가 category tree를 편집하는 방식을 지원해야 합니다.
+API는 UI가 여러 개별 CRUD 호출을 조정하게 하기보다 카테고리 트리 편집 방식을 지원해야 합니다.
 
 ---
 
 ### 4. Approval Step API 방향
 
-Approval step은 category 아래의 configuration detail입니다.
-
-approval step은 settings UI와 approval strategy에 맞는 DTO로 반환되어야 합니다.
+승인 단계는 카테고리에 속한 세부 설정입니다.
+설정 UI와 승인 전략에서 사용할 수 있는 DTO로 반환해야 합니다.
 
 개념적 DTO:
 
@@ -489,13 +485,14 @@ type ApprovalStepDto = {
 };
 ```
 
-historical ticket approval behavior가 ticket/action/history record를 통해 보존되는 한, approval step은 category configuration update의 일부로 교체될 수 있습니다.
+과거 티켓의 승인 동작이 티켓·액션·이력 기록에 보존된다면,
+카테고리 설정 수정 시 승인 단계 설정을 교체할 수 있습니다.
 
 ---
 
 ### 5. Assignment Rule API 방향
 
-Assignment rule은 category의 현재 routing behavior를 정의합니다.
+배정 규칙은 카테고리의 현재 작업자 배정 방식을 정의합니다.
 
 개념적 DTO:
 
@@ -510,19 +507,19 @@ type AssignmentRuleDto = {
 };
 ```
 
-현재 assignment model은 group 기반이며 별도의 `ruleType`이 없습니다.
+현재 배정 모델은 그룹을 사용하며 별도의 `ruleType`이 없습니다.
 
-assignment rule 변경은 future 또는 newly evaluated behavior에 영향을 줘야 하며, historical ticket assignment record를 조용히 다시 써서는 안 됩니다.
+배정 규칙 변경은 이후 배정 또는 새로 평가하는 배정에 적용해야 합니다.
+과거 티켓의 배정 기록을 변경 사실이 드러나지 않게 다시 써서는 안 됩니다.
 
 ---
 
 ### 6. Reference Data DTO 방향
 
-Company, department, job field data는 Service Desk settings를 지원합니다.
+회사, 부서, 직무 데이터는 Service Desk 설정에 사용하는 참조 데이터입니다.
+이 데이터도 DTO로 전달해야 합니다.
 
-이 data도 DTO boundary를 따라야 합니다.
-
-reference data 사용 예:
+참조 데이터 사용 예:
 
 ```txt id="kwac2p"
 Company     -> tenant selection and tenant creation
@@ -530,19 +527,16 @@ Department  -> approval/assignment configuration
 Job Field   -> approval/assignment configuration
 ```
 
-settings UI는 raw database row가 아니라 response-safe DTO를 소비해야 합니다.
+설정 UI는 원본 DB 행 대신 응답으로 공개해도 되는 DTO를 사용해야 합니다.
 
 ---
 
 ### 7. API Surface Pruning
 
-settings API surface를 실제 UI workflow와 정렬했습니다.
-
-현재 behavior를 지원하지 않는 unused 또는 speculative CRUD path는 제거해야 합니다.
-
-이렇게 하면 future expansion point로만 존재하는 untested route를 프로젝트에 남겨두지 않을 수 있습니다.
-
-future expansion은 사용하지 않는 route file로 암시하지 말고 명시적으로 문서화해야 합니다.
+설정 API가 제공하는 작업을 실제 UI 흐름에 맞췄습니다.
+현재 동작을 지원하지 않는 미사용 CRUD 경로와 예상만으로 만든 경로는 제거해야 합니다.
+이 기준을 따르면 향후 확장을 위해서만 존재하는 미검증 경로를 남기지 않을 수 있습니다.
+향후 확장 계획은 사용하지 않는 경로 파일 대신 문서로 명시해야 합니다.
 
 ---
 
@@ -550,27 +544,27 @@ future expansion은 사용하지 않는 route file로 암시하지 말고 명시
 
 ### 긍정적 영향
 
-- 더 명확한 server/client boundary
-- 더 안정적인 settings API contract
-- 더 나은 LOCAL/REMOTE consistency
-- UI로 database schema가 새어 나갈 위험 감소
-- 더 작고 정직한 API surface
-- Service Desk settings logic 유지보수 용이성 향상
-- 향후 backend extraction이 쉬워짐
-- production-aligned architecture에 대한 portfolio 설명력 향상
-- route handler가 과도하게 커질 위험 감소
-- mock-backed local demo mutation을 더 현실적으로 처리
+- 서버와 클라이언트의 담당 역할 명확화
+- 설정 API 응답 형식 안정화
+- LOCAL과 REMOTE 동작의 일관성 향상
+- UI에 DB 스키마가 노출될 위험 감소
+- 실제 지원 범위에 맞는 API 구성
+- Service Desk 설정 로직의 유지보수 편의 향상
+- 향후 백엔드 서비스 분리 용이
+- 프로덕션 설계에 맞는 구조를 포트폴리오에서 설명하기 쉬움
+- Route Handler가 과도하게 커질 위험 감소
+- mock 기반 LOCAL 데모의 설정 변경을 실제와 유사하게 처리
 
 ---
 
 ### 부정적 영향 / 트레이드오프
 
-- row, DTO, mapper, repository, service, handler를 위한 파일이 더 필요함
-- mapping logic으로 인한 구현 overhead가 추가됨
-- 작은 demo에서 단순 CRUD operation보다 더 많은 구조가 필요할 수 있음
-- future route를 추가할 때 API pruning 규율이 필요함
-- LOCAL과 REMOTE parity에는 추가적인 test 주의가 필요함
-- settings save flow가 pure CRUD shape가 아니라 workflow shape를 따르므로 덜 generic해 보일 수 있음
+- Row, DTO, Mapper, Repository, Service, Handler별 파일 필요
+- 데이터 변환 로직 구현 비용 증가
+- 작은 데모에서도 단순 CRUD보다 많은 구조가 필요할 수 있음
+- 향후 경로 추가 시 실제 사용 여부에 따른 API 정리 필요
+- LOCAL과 REMOTE의 동작 일치를 위한 테스트 필요
+- 설정 저장이 업무 흐름을 따르므로 일반 CRUD보다 범용성이 낮아 보일 수 있음
 
 ---
 
@@ -578,7 +572,7 @@ future expansion은 사용하지 않는 route file로 암시하지 말고 명시
 
 ### Recommended Server Data Structure
 
-remote settings data access를 위한 권장 구조:
+REMOTE 설정 데이터 접근을 위한 권장 구조:
 
 ```txt id="e7w34k"
 src/server/data/serviceDesk/
@@ -611,13 +605,13 @@ src/server/data/serviceDesk/
     assignmentRuleService.ts
 ```
 
-정확한 file structure는 진화할 수 있지만 responsibility boundary는 안정적으로 유지되어야 합니다.
+파일 구조는 바뀔 수 있지만 각 계층이 담당하는 역할은 안정적으로 유지해야 합니다.
 
 ---
 
 ### Recommended API Handler Structure
 
-권장 route/domain handler 방향:
+권장 Route·도메인 핸들러 구조:
 
 ```txt id="ff5hfk"
 src/app/api/service-desk/...
@@ -634,15 +628,14 @@ src/server/portalApi/serviceDesk/
   assignmentRuleApiHandler.ts
 ```
 
-route-level code는 thin하게 유지해야 합니다.
-
-domain handler code는 Service Desk settings behavior에 집중해야 합니다.
+Route 코드는 요청 확인과 처리 위임에 집중해야 합니다.
+도메인 핸들러는 Service Desk 설정 동작을 담당해야 합니다.
 
 ---
 
 ### Recommended Local Demo Structure
 
-local demo settings behavior는 중앙화해야 합니다.
+LOCAL 데모 설정 처리는 공통 모듈에서 관리해야 합니다.
 
 예시 방향:
 
@@ -655,13 +648,13 @@ src/server/serviceDesk/settings/
   assignmentRuleLocalHandler.ts
 ```
 
-정확한 path는 달라질 수 있지만 local mutation logic이 UI component 안에 있어서는 안 됩니다.
+경로는 달라질 수 있지만 LOCAL 상태 변경 로직이 UI 컴포넌트 안에 있어서는 안 됩니다.
 
 ---
 
 ### Recommended API Surface Policy
 
-실제 workflow에 mapping되는 path만 유지합니다.
+실제 업무 흐름에서 사용하는 경로만 유지합니다.
 
 예시 방향:
 
@@ -686,7 +679,7 @@ Avoid:
 
 ## 업데이트할 문서
 
-이 결정은 다음 documentation area에 영향을 줍니다.
+이 결정은 다음 문서에 영향을 줍니다.
 
 ```txt id="r8k14k"
 docs/en/02-architecture/database-strategy.md
@@ -697,9 +690,8 @@ docs/en/08-dev-strategy/decision-log/2026-05-database-role-and-access-strategy.m
 docs/en/README.md
 ```
 
-5월 database role/access decision은 다시 작성할 필요가 없습니다.
-
-대신 이 6월 decision log를 이전 방향을 Service Desk Settings에 구체적으로 적용한 기록으로 다룹니다.
+5월의 DB 역할·접근 결정 기록은 다시 작성할 필요가 없습니다.
+이 6월 결정 기록은 기존 방향을 Service Desk Settings에 구체적으로 적용한 기록으로 다룹니다.
 
 ---
 
@@ -707,51 +699,46 @@ docs/en/README.md
 
 ### 1. Route Handler를 Orchestration Boundary로 유지함
 
-향후 Service Desk settings route는 route file에 domain logic을 직접 쌓아두지 않아야 합니다.
-
-route handler는 server-side handler 또는 service로 위임해야 합니다.
+향후 Service Desk 설정의 Route 파일에 도메인 로직을 직접 쌓아두면 안 됩니다.
+Route Handler는 서버 측 핸들러나 서비스에 처리를 맡겨야 합니다.
 
 ---
 
 ### 2. Database Row가 바뀌어도 DTO는 안정적으로 유지함
 
-database schema는 진화할 수 있습니다.
-
-가능한 경우 DTO는 안정적으로 유지해서 UI component와 feature API client에 불필요한 변경이 생기지 않도록 해야 합니다.
+DB 스키마는 바뀔 수 있습니다. 가능한 경우 DTO 형식을 유지해
+UI 컴포넌트와 기능 API 클라이언트를 불필요하게 변경하지 않도록 해야 합니다.
 
 ---
 
 ### 3. LOCAL과 REMOTE Behavior를 Contract-Compatible하게 유지함
 
-새 settings API는 LOCAL과 REMOTE가 같은 application-facing shape를 어떻게 반환하는지 정의해야 합니다.
+새 설정 API는 LOCAL과 REMOTE에서 같은 응답 형식을 반환하는 방법을 정의해야 합니다.
+UI가 LOCAL mock과 REMOTE DB의 데이터 형식 차이에 따라 분기하게 하면 안 됩니다.
 
-UI가 local mock shape와 remote database shape 차이를 기준으로 branch하도록 허용하지 않습니다.
-
-같은 규칙을 capability와 filtering 결과에도 적용합니다. 같은 effective principal에 대해
-LOCAL mutable state와 REMOTE repository가 서로 다른 tenant/category visibility를
-노출하거나 서로 다른 mutation을 허용하면 안 됩니다.
+같은 규칙을 권한 판단과 응답 필터링에도 적용합니다. 같은 현재 작업 사용자에게
+LOCAL 상태 모듈과 REMOTE Repository가 서로 다른 테넌트·카테고리를 보여주거나
+서로 다른 변경 작업을 허용하면 안 됩니다.
 
 ---
 
 ### 4. Workflow가 요구할 때만 API Path를 추가함
 
-나중에 유용할 수 있다는 이유만으로 nested CRUD path를 추가하지 않습니다.
+나중에 유용할 수 있다는 이유만으로 중첩 CRUD 경로를 추가하지 않습니다.
+새 경로는 다음 조건을 갖춰야 합니다.
 
-새 path는 다음을 가져야 합니다.
-
-- current workflow
-- clear caller
-- clear DTO contract
-- clear LOCAL implementation
-- clear REMOTE implementation 또는 documented deferred behavior
+- 현재 업무 흐름
+- 명확한 호출 주체
+- 명확한 DTO 응답 형식
+- 명확한 LOCAL 구현
+- 명확한 REMOTE 구현 또는 문서화한 미구현 동작
 
 ---
 
 ### 5. Settings가 변경될 때 Historical Meaning을 보존함
 
-settings change가 past ticket meaning을 조용히 다시 써서는 안 됩니다.
-
-category, approval, assignment, tenant settings가 변경되더라도 existing ticket action과 history는 이해 가능해야 합니다.
+설정 변경으로 과거 티켓 기록의 의미를 드러나지 않게 바꾸어서는 안 됩니다.
+카테고리, 승인, 배정, 테넌트 설정이 바뀌어도 기존 티켓 액션과 이력을 이해할 수 있어야 합니다.
 
 ---
 
@@ -773,16 +760,13 @@ Service Desk settings 구현은 더 명시적인 DTO/API boundary를 도입했�
 Settings API = workflow-oriented route handlers + domain handlers + LOCAL/REMOTE DTO contract
 ```
 
-UI는 stable DTO를 소비합니다.
+UI는 일정한 DTO 형식으로 응답을 받습니다. Route Handler는 요청 확인과 처리 위임에
+집중하고, 도메인 핸들러는 설정별 동작을 담당합니다.
 
-route handler는 thin하게 유지합니다.
+REMOTE는 Row·Mapper·DTO로 데이터 조회와 응답 변환을 구분합니다.
+LOCAL 데모는 서버에서 변경 가능한 mock 상태를 사용하면서 같은 API 응답 형식과
+동작 규칙을 유지합니다. 사용하지 않는 API 경로는 향후 사용 가능성만으로
+남겨두지 않고 제거해야 합니다.
 
-domain handler는 settings behavior를 조직화합니다.
-
-REMOTE data access는 row/mapper/DTO boundary를 사용합니다.
-
-LOCAL demo behavior는 같은 API contract를 유지하면서 server-side mutable mock state를 사용합니다.
-
-사용하지 않는 API path는 speculative CRUD로 유지하지 말고 제거해야 합니다.
-
-이렇게 하면 Service Desk Settings module은 production-aligned 상태를 유지하고, 설명하기 쉬우며, 나중에 더 안전하게 확장할 수 있습니다.
+이 구조로 Service Desk Settings를 프로덕션 설계에 맞게 유지하고,
+동작을 쉽게 설명하며 이후 기능을 안전하게 확장할 수 있습니다.

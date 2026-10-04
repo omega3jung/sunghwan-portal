@@ -58,8 +58,8 @@ and `resubmit`, but the persisted/action DTO type uses the uppercase union.
 - soft delete requires authorship, current NOTE access, and non-`Draft`/non-`Closed` status
 - soft delete creates `NOTE_DELETED`
 
-The history union reserves update events, but the current route surface does
-not expose comment/note update behavior.
+The history union reserves update events, but the current API does not support
+comment or note updates.
 
 ---
 
@@ -109,7 +109,8 @@ APPROVE action
 
 ## Action and History Relationship
 
-Action is not the audit source of truth. History is.
+History is the record used to trace changes; Action records user interactions
+and commands.
 
 `actionNo` links history to the action that caused it where applicable.
 
@@ -154,7 +155,7 @@ Related document: [Ticket Attachment Design](../../../04-client-engineering/form
 
 ## Summary
 
-Ticket Action is the first-class model behind the user-facing activity
+Ticket Action is a separate model behind the user-facing activity
 timeline. It records commands and communication, while Ticket History records
 immutable audit events. Keeping the two separate lets the UI explain what users
 did without losing exact event traceability.

@@ -36,8 +36,7 @@ If the project depends too heavily on client-like or Data API access patterns, s
 - future backend extraction becomes harder
 - the project looks closer to a simple BaaS CRUD demo than a production-aligned system
 
-For this portfolio project, the goal was not only to store data.
-The goal was to show a realistic server-controlled architecture.
+The portfolio aimed to demonstrate data storage within a realistic server-controlled architecture.
 
 ---
 
@@ -163,7 +162,8 @@ Route Handler
 -> PostgreSQL
 ```
 
-This keeps the frontend away from direct database access and gives the server layer explicit control over SQL, mapping, and response contracts.
+The frontend does not access the database directly. The server controls SQL execution,
+data mapping, and API response formats.
 
 ---
 
@@ -321,7 +321,7 @@ Responsibilities:
 
 ### 7. Repository and Service Responsibilities
 
-Repositories own SQL execution.
+Repositories handle SQL execution.
 
 Responsibilities:
 
@@ -330,7 +330,7 @@ Responsibilities:
 - keep database access out of route handlers
 - return rows or DTO-ready data based on local convention
 
-Services coordinate use cases.
+Services combine the queries and rules needed to complete a requested operation.
 
 Responsibilities:
 
@@ -404,7 +404,7 @@ Important distinction:
 
 Attachment behavior was clarified as a scoped design area.
 
-For the current local demo:
+For the LOCAL demo at that time:
 
 - use prepared demo file/image assets
 - simulate upload behavior through controlled references
@@ -463,7 +463,7 @@ Rule:
 - Keep Row, DTO, Mapper, Repository, and Service boundaries explicit.
 - Keep database URLs and secrets server-only.
 - Treat production-grade attachment storage as future scope unless implemented with proper guardrails.
-- Add table-specific RLS documentation later if the database surface grows enough to justify it.
+- Add table-specific RLS documentation later if the scope of database use grows enough to justify it.
 
 ---
 

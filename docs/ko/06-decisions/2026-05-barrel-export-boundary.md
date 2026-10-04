@@ -2,8 +2,9 @@
 
 ## Context
 
-Service Desk 모듈 리팩터링 과정에서 `index.ts`를 만능 barrel export처럼 사용했습니다.
-초기 의도는 import 경로를 짧게 만들고 feature 내부 접근을 편하게 만드는 것이었습니다.
+Service Desk 모듈을 리팩터링하면서 `index.ts` 하나로 여러 모듈을 다시 내보내는
+barrel export를 사용했습니다. 초기 의도는 import 경로를 짧게 만들고
+기능 내부 모듈에 쉽게 접근하는 것이었습니다.
 
 예시:
 
@@ -20,9 +21,9 @@ export * from "./utils";
 export * from "./write";
 ```
 
-하지만 Next.js App Router 환경에서는 server/client 경계가 중요합니다.
-API Route, server utility, local demo handler가 feature root barrel을 import하면
-의도하지 않게 client-only module이 서버 번들로 유입될 수 있습니다.
+Next.js App Router에서는 서버에서 사용할 모듈과 클라이언트 전용 모듈을 구분해야 합니다.
+API Route, 서버 유틸리티, LOCAL 데모 핸들러가 기능 루트의 barrel을 import하면
+클라이언트 전용 모듈까지 서버 번들에 포함될 수 있습니다.
 
 실제 빌드 오류:
 
@@ -83,7 +84,8 @@ export * from "./types";
 export * from "./write";
 ```
 
-단, `write.ts`는 React hook, browser API, client-only dependency를 사용하지 않는 pure mapper여야 합니다.
+단, `write.ts`는 React 훅, 브라우저 API, 클라이언트 전용 의존성을 사용하지 않는
+순수 변환 함수(pure mapper)여야 합니다.
 
 ---
 
@@ -119,7 +121,7 @@ export * from "./utils";
 - `ticket/api/index.ts`
 - `ticket/forms/index.ts`
 
-`components/index.ts`는 components만 export:
+`components/index.ts`는 컴포넌트만 export합니다.
 
 ```ts
 export * from "./TicketFormDialog";
@@ -153,8 +155,8 @@ export * from "./mutations";
 export * from "./repo";
 ```
 
-주의: `api.ts`가 `@/lib/api` 같은 프론트엔드 HTTP wrapper를 쓰면 server-safe가 아닙니다.
-이 경우 `api/client.ts`에서 export합니다.
+`api.ts`가 `@/lib/api` 같은 프런트엔드 HTTP 래퍼를 사용하면 서버에서 안전하게
+사용할 수 있는 모듈(server-safe)이 아닙니다. 이 경우 `api/client.ts`에서 export합니다.
 
 Forms 폴더:
 
@@ -179,8 +181,8 @@ export * from "./useTicketForm";
 
 ### 5. Hooks / Context Barrel Export 최소화
 
-hooks는 대부분 client-only 모듈입니다.
-따라서 hooks `index.ts`에서 무분별하게 export하지 말고 직접 import하는 방식을 권장합니다.
+훅은 대부분 클라이언트 전용 모듈입니다.
+따라서 hooks `index.ts`에서 넓게 export하기보다 필요한 파일을 직접 import하는 방식을 권장합니다.
 
 ```ts
 import { useTicketDraft } from "@/feature/serviceDesk/ticket/hooks/useTicketDraft";
@@ -247,7 +249,7 @@ import { useEffect, useMemo, useState } from "react";
 
 ### 2. `"use client"`를 붙이지 않는 파일
 
-아래 파일은 기본적으로 non-client:
+아래 파일은 기본적으로 클라이언트 전용 모듈이 아닙니다.
 
 - `types`
 - `constants`
@@ -328,10 +330,10 @@ src/feature/serviceDesk/ticket
 
 ## Decision Summary
 
-`index.ts`는 많이 export하기 위한 파일이 아니라,
-의도된 public API를 제한적으로 공개하는 경계 파일입니다.
+`index.ts`는 외부에서 사용하도록 정한 API만 제한적으로 공개하는 파일입니다.
 
 - feature root `index.ts`는 pure/server-safe 모듈만 export합니다
 - client-only 모듈은 `client.ts` 또는 직접 import로 접근합니다
 
-이 정책을 통해 Next.js App Router 환경의 server/client boundary를 명확하게 유지합니다.
+이 정책으로 Next.js App Router에서 서버 모듈과 클라이언트 전용 모듈의 사용 범위를
+명확하게 유지합니다.

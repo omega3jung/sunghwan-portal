@@ -2,8 +2,8 @@
 
 ## Goal
 
-The database strategy defines how `sunghwan-portal` accesses persisted
-application data from server code while keeping UI contracts stable.
+The database strategy defines how server code in `sunghwan-portal` accesses
+data stored in the database and preserves the API response format used by the UI.
 
 The current Service Desk implementation uses this direction:
 
@@ -31,8 +31,8 @@ UI
 -> PostgreSQL
 ```
 
-Route handlers are HTTP orchestration boundaries. They should not contain SQL or
-row mapping logic.
+Route handlers receive HTTP requests and delegate processing to server services.
+They should not execute SQL or map database rows into response data.
 
 ---
 
@@ -149,14 +149,14 @@ Important persistence boundaries:
 
 ## Routing Persistence
 
-Approval and work routing are phase-aware.
+Assignee routing distinguishes approval from work assignment.
 
 ```ts
 type TicketAssignmentPhase = "APPROVAL" | "WORK";
 ```
 
-The database row stores the minimal current routing facts. The mapper and DTO
-derive readable projections such as:
+The database row stores the minimum data needed for current assignee routing.
+The mapper uses that data and the current phase to derive DTO fields such as:
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -168,11 +168,11 @@ Approval-step and assignment-rule settings are resolved into ticket state when a
 workflow transition requires it. Settings changes do not silently rewrite
 existing ticket routing or history.
 
-The REMOTE routing boundary delegates approval and assignment resolution to the
+REMOTE delegates approval and assignment resolution to the
 Service Desk database functions used by the repository:
 `service_desk.get_next_approval_step`,
 `service_desk.get_approval_step_assignee_usernames`, and
-`service_desk.get_category_assignment_usernames`. The design contract is:
+`service_desk.get_category_assignment_usernames`. The design rule is:
 approval steps resolve from the selected category's parent/main category, while
 assignment rules use selected subcategory override and parent/main fallback.
 
@@ -191,8 +191,8 @@ Key rules:
 - draft data is form-oriented
 - raw files and durable attachment recovery are not promised
 
-This makes draft behavior available across sessions while keeping attachment
-storage limits honest.
+Draft data is available across sessions, subject to the attachment recovery
+limits above.
 
 ---
 
@@ -327,7 +327,8 @@ application access.
 
 ## RLS and Grants
 
-Effective permission is the combination of grants and row-level security.
+Effective database permission combines object grants and row-level security
+(RLS) policies. RLS limits which rows a role can access.
 
 ```txt
 effective permission = object grants + RLS policies

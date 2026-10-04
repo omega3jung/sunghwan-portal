@@ -2,7 +2,7 @@
 
 ## Context
 
-프로젝트의 여러 layer에 걸쳐 boolean 이름이 누적되어 있었습니다.
+프로젝트의 여러 계층에 boolean 이름이 누적되어 있었습니다.
 
 - feature component prop
 - permission 및 capability projection
@@ -14,7 +14,7 @@
 
 각각의 값은 이해할 수 있었지만 이름에서 그 책임이 항상 드러나지는 않았습니다.
 
-모호하거나 presentation에 치우친 feature API에는 다음과 같은 pattern이 있었습니다.
+의미가 모호하거나 화면 표시 방식에 치우친 기능 API에는 다음 패턴이 있었습니다.
 
 ```ts
 isApproveDisabled
@@ -34,12 +34,13 @@ hideWhenUnauthorized
 
 이 문제는 shadcn/Base UI migration 이후 진행한 8월 refactoring 작업에서 더 분명해졌습니다.
 
-이 refactoring의 목표는 component boundary를 개선하고, 불필요한 client boundary를
-제거하고, deprecated pattern을 교체하고, 더 광범위한 Vitest 및 Storybook coverage를
-추가하기 전에 public component API를 안정화하는 것이었습니다.
+이 리팩터링은 컴포넌트의 담당 역할을 개선하고 불필요한 클라이언트 실행 범위를
+줄이며, 폐기된 패턴을 교체하려는 작업이었습니다. Vitest와 Storybook 검증을
+확대하기 전에 공개 컴포넌트 API도 안정화하려 했습니다.
 
-Naming 논의는 7월에 시작되었지만 application 전체의 capability API 작업은 2026년
-8월 1일에 적용되었습니다. 따라서 이 결정은 8월 결정으로 기록합니다.
+이름에 대한 논의는 7월에 시작했지만, 애플리케이션 전체에서 작업 가능 여부를
+나타내는 API(capability API)는 2026년 8월 1일에 적용했습니다. 따라서 이 결정은
+8월 기록으로 남깁니다.
 
 ---
 
@@ -53,7 +54,7 @@ Feature-level component가 다음을 받는 경우를 살펴봅니다.
 <TicketActions isApproveDisabled={...} />
 ```
 
-이 API는 approval을 사용할 수 없는 이유를 설명하지 않습니다.
+이 API는 승인을 실행할 수 없는 이유를 설명하지 않습니다.
 
 Prop은 다음을 나타낼 수 있습니다.
 
@@ -63,7 +64,7 @@ Prop은 다음을 나타낼 수 있습니다.
 - mutation pending
 - 의도적인 read-only mode
 
-API가 application capability 대신 최종 button presentation을 설명합니다.
+API가 사용자의 작업 가능 여부 대신 최종 버튼 표시 상태를 나타냅니다.
 
 ---
 
@@ -85,7 +86,7 @@ API가 application capability 대신 최종 button presentation을 설명합니�
 !hideWhenUnauthorized
 ```
 
-이런 표현은 review cost를 높이고 boolean mistake를 유발하기 쉽습니다.
+이런 표현은 검토를 어렵게 하고 boolean 값을 잘못 해석하기 쉽게 만듭니다.
 
 ---
 
@@ -126,14 +127,14 @@ readOnly
 `isBlocked` 또는 `isRejected`와 같은 negative domain state 역시 가장 정확한 이름일 수
 있습니다.
 
-프로젝트에는 기계적인 rename이 아닌 책임에 기반한 rule이 필요했습니다.
+프로젝트에는 일괄 이름 변경보다 각 값의 역할에 맞는 규칙이 필요했습니다.
 
 ---
 
 ### 5. UI capability와 server authorization을 혼동해서는 안 됨
 
-`canApprove` prop은 component semantic을 개선할 수 있지만 여전히 client/application
-projection입니다.
+`canApprove` prop은 컴포넌트의 의미를 분명히 하지만, 여전히 클라이언트·
+애플리케이션에서 계산해 표시하는 작업 가능 여부입니다.
 
 이는 다음에 대한 server validation을 대체할 수 없습니다.
 
@@ -145,7 +146,7 @@ projection입니다.
 - current assignee relationship
 - stored resource context
 
-Naming 결정은 이 security boundary를 보존해야 했습니다.
+이름을 바꾸더라도 서버의 접근 권한 검증은 유지해야 했습니다.
 
 ---
 
@@ -212,7 +213,7 @@ Domain state
 External contract
 ```
 
-그런 다음 각 category에 맞는 naming rule을 적용합니다.
+그런 다음 각 분류에 맞는 이름 규칙을 적용합니다.
 
 #### Advantages
 
@@ -272,7 +273,7 @@ Presentation
 
 ## Capability API Rule
 
-Feature 및 application component는 positive capability prop을 받아야 합니다.
+기능·애플리케이션 컴포넌트는 작업 가능 여부를 긍정형 prop으로 받습니다.
 
 다음을 선호합니다.
 
@@ -294,7 +295,7 @@ Feature 및 application component는 positive capability prop을 받아야 합�
 />
 ```
 
-Capability 이름은 구체적인 operation을 설명해야 합니다.
+작업 가능 여부를 나타내는 이름에는 구체적인 작업을 명시합니다.
 
 ```ts
 canCreate
@@ -331,7 +332,8 @@ canInteract
 
 ## UI Primitive Boundary
 
-Feature component는 UI primitive boundary에서 capability를 presentation state로 변환합니다.
+기능 컴포넌트는 Button 같은 기본 UI 컴포넌트에 값을 전달할 때 작업 가능 여부를
+표시 상태로 변환합니다.
 
 ```tsx
 function TicketApproveButton({
@@ -369,7 +371,7 @@ disabled
 
 ## State 및 Presence Rule
 
-현재 condition에는 `is*`를 사용합니다.
+현재 상태에는 `is*`를 사용합니다.
 
 ```ts
 isLoading
@@ -384,7 +386,7 @@ isRejected
 isBlocked
 ```
 
-Boolean이 presence를 나타내면 `has*`를 사용합니다.
+값이나 항목의 존재 여부에는 `has*`를 사용합니다.
 
 ```ts
 hasError
@@ -395,7 +397,7 @@ hasNextApprovalStep
 hasMultipleAssignees
 ```
 
-정확한 domain state를 부정형이라는 이유만으로 rename하지 않습니다.
+도메인 상태를 정확히 나타내는 이름은 부정형이라는 이유만으로 바꾸지 않습니다.
 
 ```ts
 isRejected
@@ -403,13 +405,13 @@ isBlocked
 isBanned
 ```
 
-이는 negative capability API가 아니라 의미 있는 business condition입니다.
+이 값은 작업을 할 수 없다는 표현이 아니라 의미 있는 업무 상태를 나타냅니다.
 
 ---
 
 ## Capability Composition
 
-Capability는 permission, workflow state, ownership, runtime state를 결합할 수 있습니다.
+작업 가능 여부는 권한, 업무 상태, 담당자 관계, 실행 환경의 상태를 함께 고려할 수 있습니다.
 
 예:
 
@@ -421,21 +423,21 @@ const canSave =
   !isSaving;
 ```
 
-최종 capability는 가장 가까운 적절한 application policy, hook, context 또는 feature
-container에서 계산해야 합니다.
+최종 작업 가능 여부는 해당 업무를 담당하는 가장 가까운 정책·훅·컨텍스트·기능
+컨테이너에서 계산합니다.
 
-Component가 JSX에서 동일한 business condition을 반복해서 재구성해서는 안 됩니다.
+컴포넌트의 JSX에서 같은 업무 조건을 반복해서 조합하지 않습니다.
 
-다만 이 결정이 모든 boolean마다 새로운 policy layer를 만들어야 한다는 뜻은 아닙니다.
-이미 책임에 맞는 boundary가 있다면 그대로 사용해야 합니다.
+모든 boolean 값마다 새 정책 계층을 만들 필요는 없습니다. 이미 해당 판단을 맡은
+코드가 있으면 그대로 사용합니다.
 
 ---
 
 ## Server Authorization Boundary
 
-Positive capability naming은 UI 및 application API 개선입니다.
+작업 가능 여부에 긍정형 이름을 쓰면 UI와 애플리케이션 API를 이해하기 쉬워집니다.
 
-Authorization mechanism은 아닙니다.
+이름만으로 접근 권한을 검증할 수는 없습니다.
 
 ```txt
 UI can*
@@ -458,7 +460,7 @@ Server는 계속 다음의 authority입니다.
 - command payload
 - stored resource relationship
 
-위조된 `canApprove = true` 값으로 unauthorized approval이 성공해서는 안 됩니다.
+`canApprove = true`를 위조해도 권한이 없는 승인은 성공해서는 안 됩니다.
 
 ---
 
@@ -512,7 +514,8 @@ isRejected
 active
 ```
 
-External contract naming은 explicit contract migration을 통해서만 변경해야 합니다.
+외부 라이브러리·API가 정한 이름은 해당 규칙을 명시적으로 변경하는 마이그레이션에서만
+바꿉니다.
 
 ---
 
@@ -546,7 +549,7 @@ DOMAIN_STATE
 EXTERNAL_CONTRACT
 ```
 
-책임이 명확해지기 전에는 rename하지 않습니다.
+값의 역할을 확인하기 전에는 이름을 바꾸지 않습니다.
 
 ---
 
@@ -580,7 +583,7 @@ Refactoring은 다음을 변경해서는 안 됩니다.
 - visual design
 - mutation behavior
 
-기대하는 변경은 product behavior가 아닌 semantic clarity입니다.
+사용자 동작은 유지하고 각 값의 의미를 더 분명하게 표현하는 것이 목표입니다.
 
 ---
 
@@ -597,7 +600,7 @@ test
 Storybook build
 ```
 
-Refactoring 시점에 repository에 존재하는 검사를 사용합니다.
+리팩터링 당시 저장소에 있던 검사를 사용합니다.
 
 ---
 
@@ -670,10 +673,10 @@ positive capability API를 사용해야 합니다.
 
 ### 2. Capability projection을 workflow ownership 가까이에 유지
 
-이미 workflow를 소유한 기존 policy, hook, context 또는 container를 선호합니다.
+이미 해당 업무 흐름을 담당하는 정책·훅·컨텍스트·컨테이너에서 계산합니다.
 
-실제 반복적인 필요 없이 global permission store 또는 generic capability framework를
-추가하지 않습니다.
+반복해서 필요한 사례가 확인되지 않으면 전역 권한 저장소나 범용 작업 가능 여부
+프레임워크를 추가하지 않습니다.
 
 ---
 
@@ -713,15 +716,14 @@ relationship validation을 계속 보존해야 합니다.
 
 ## Summary
 
-Boolean이 operation capability를 나타내는 경우 feature 및 application component API는
-positive `can*` 이름을 사용합니다.
+작업을 실행할 수 있는지를 나타내는 boolean에는 기능·애플리케이션 컴포넌트 API에서
+긍정형 `can*` 이름을 사용합니다.
 
-Runtime state는 계속 `is*`, presence는 `has*`를 사용하고 UI primitive는 `disabled`,
-`readOnly`, `hidden`과 같은 표준 이름을 유지합니다.
+현재 상태는 `is*`, 존재 여부는 `has*`를 사용합니다. 기본 UI 컴포넌트는
+`disabled`, `readOnly`, `hidden` 같은 표준 이름을 유지합니다.
 
-이 convention은 무조건적인 positive-boolean rewrite가 아니라 책임에 기반합니다. External
-contract, domain state, server-side authorization을 보존하면서 component semantic을
-개선합니다.
+이 규칙은 각 값의 역할을 기준으로 적용합니다. 외부 API의 이름 규칙, 도메인 상태,
+서버 권한 검증을 유지하면서 컴포넌트 API의 의미를 분명하게 만듭니다.
 
 ---
 

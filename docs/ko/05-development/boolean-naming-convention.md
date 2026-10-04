@@ -4,16 +4,17 @@
 
 이 문서는 `sunghwan-portal`의 boolean 명명 규칙을 정의합니다.
 
-목표는 다음 영역에서 boolean 값의 책임이 이름에 명확히 드러나도록 하는 것입니다.
+Boolean 이름은 작업 가능 여부, 현재 상태, UI 표시 방식 중 무엇을 나타내는지
+드러내야 합니다. 이 규칙은 다음 영역에 적용합니다.
 
-* feature 및 application component API
-* capability 및 permission projection
-* hook 및 context value
-* domain 및 runtime state
-* form 및 query state
-* HTML 및 UI primitive prop
+* 기능·애플리케이션 컴포넌트 API
+* 작업 가능 여부(capability)와 권한에서 계산한 값
+* 훅·컨텍스트 반환값
+* 도메인·실행 중 상태
+* 폼·쿼리 상태
+* HTML·UI 기본 컴포넌트의 prop
 
-프로젝트는 layer의 책임에 따라 서로 다른 명명 방식을 사용합니다.
+프로젝트는 계층별 역할에 따라 서로 다른 명명 방식을 사용합니다.
 
 ```txt
 Feature/application capability
@@ -28,8 +29,8 @@ HTML 및 UI presentation state
 
 모든 부정형 boolean을 없애는 것이 목표는 아닙니다.
 
-코드 예시는 완전한 authorization 구현이 아닌 명명 방식을 설명합니다. 실제 권한은
-현재 domain policy와 server guard를 따라야 합니다.
+코드 예시는 명명 방식을 설명하며 완전한 권한 검증 구현은 아닙니다. 실제 권한은
+현재 도메인 정책과 서버 접근 검사를 따라야 합니다.
 
 사용자가 무엇을 **할 수 있는지**, 시스템이 **현재 어떤 상태인지**, UI control이
 **현재 어떻게 표시되어야 하는지**를 구분하는 것이 중요합니다.
@@ -58,19 +59,19 @@ const canSave =
 
 이 표현식에서:
 
-* `canSave`는 application capability입니다.
-* `canManage`는 permission 또는 capability projection입니다.
-* `isDirty`는 현재 form state입니다.
-* `isValid`는 현재 validation state입니다.
-* `isSaving`은 현재 mutation state입니다.
+* `canSave`는 저장 작업이 가능한지를 나타냅니다.
+* `canManage`는 권한이나 다른 조건에서 계산한 관리 가능 여부입니다.
+* `isDirty`는 현재 폼에 미저장 변경이 있는지를 나타냅니다.
+* `isValid`는 현재 입력이 검증을 통과했는지를 나타냅니다.
+* `isSaving`은 현재 저장 요청을 처리 중인지를 나타냅니다.
 
-Feature component는 positive capability를 받습니다.
+기능 컴포넌트는 작업이 가능한지를 나타내는 긍정형 값을 받습니다.
 
 ```tsx
 <ServiceDeskSettingsHeader canSave={canSave} />
 ```
 
-Component는 UI primitive boundary에서 이를 presentation state로 변환합니다.
+컴포넌트는 버튼 같은 UI 기본 컴포넌트에 전달할 때 이 값을 표시·동작 상태로 변환합니다.
 
 ```tsx
 <Button disabled={!canSave}>Save</Button>
@@ -93,12 +94,12 @@ EXTERNAL_CONTRACT
 
 | 범주 | 의미 | 권장 명명 |
 | --- | --- | --- |
-| Capability | operation을 수행할 수 있음 | `can*` |
-| State | condition이 현재 참임 | `is*` |
-| Presence | value 또는 collection이 존재함 | `has*` |
-| Presentation | UI element가 disabled, hidden 또는 read-only임 | 표준 UI 이름 |
-| Domain state | 의미 있는 business state가 현재 활성 상태임 | domain 중심 `is*` 또는 field 이름 |
-| External contract | library, DTO, database 또는 API contract | contract 명명 보존 |
+| Capability | 작업을 수행할 수 있음 | `can*` |
+| State | 현재 조건이 참임 | `is*` |
+| Presence | 값 또는 컬렉션이 존재함 | `has*` |
+| Presentation | UI 요소의 비활성·숨김·읽기 전용 상태 | 표준 UI 이름 |
+| Domain state | 업무상 의미가 있는 현재 상태 | 도메인 중심 `is*` 또는 필드 이름 |
+| External contract | 라이브러리, DTO, DB 또는 API에서 정의한 형식 | 정의된 명명 보존 |
 
 ---
 
@@ -106,8 +107,8 @@ EXTERNAL_CONTRACT
 
 ### 규칙
 
-Boolean이 user, actor 또는 component가 operation을 수행할 수 있는지를 나타내면
-positive `can*` 이름을 사용합니다.
+사용자, 수행자 또는 컴포넌트가 작업을 수행할 수 있는지를 나타내는 Boolean에는
+긍정형 `can*` 이름을 사용합니다.
 
 예:
 
@@ -144,7 +145,7 @@ canManageApprovalSteps;
 canManageAssignmentRules;
 ```
 
-가능하면 capability 이름은 구체적인 operation을 설명해야 합니다.
+작업 가능 여부의 이름은 가능하면 구체적인 작업을 설명해야 합니다.
 
 권장:
 
@@ -164,14 +165,14 @@ canProcess;
 canInteract;
 ```
 
-Domain이 더 넓은 concept을 이미 명확히 정의한 경우에만 포괄적인 capability 이름을
-사용할 수 있습니다.
+도메인에서 더 넓은 개념을 이미 명확히 정의한 경우에만 포괄적인 작업 가능 여부
+이름을 사용할 수 있습니다.
 
 ---
 
 ## Positive Component API
 
-Feature 및 application component는 positive capability prop을 받아야 합니다.
+기능·애플리케이션 컴포넌트는 작업 가능 여부를 긍정형 prop으로 받아야 합니다.
 
 권장:
 
@@ -183,7 +184,7 @@ Feature 및 application component는 positive capability prop을 받아야 합�
 />
 ```
 
-Negative capability prop을 노출하지 않습니다.
+작업 불가능 여부를 나타내는 부정형 prop은 노출하지 않습니다.
 
 ```tsx
 <TicketActions
@@ -193,8 +194,8 @@ Negative capability prop을 노출하지 않습니다.
 />
 ```
 
-Positive component API를 사용하면 caller가 capability 값을 반전해 전달할 필요가
-없으므로 가독성이 좋아집니다.
+긍정형 컴포넌트 API를 사용하면 호출부가 작업 가능 여부를 반전해 전달할 필요가
+없어 읽기 쉽습니다.
 
 ```tsx
 <ServiceDeskSettingsHeader
@@ -203,7 +204,7 @@ Positive component API를 사용하면 caller가 capability 값을 반전해 전
 />
 ```
 
-값을 받는 feature component가 capability를 presentation state로 변환합니다.
+값을 받는 기능 컴포넌트가 작업 가능 여부를 UI 표시·동작 상태로 변환합니다.
 
 ```tsx
 <Button disabled={!canSave}>Save</Button>
@@ -214,7 +215,7 @@ Positive component API를 사용하면 caller가 capability 값을 반전해 전
 
 ## Capability와 Permission
 
-Capability는 여러 condition을 결합할 수 있습니다.
+작업 가능 여부는 여러 조건을 결합하여 계산할 수 있습니다.
 
 ```ts
 const canReject =
@@ -225,17 +226,17 @@ const canReject =
 
 Capability에는 다음 조건이 포함될 수 있습니다.
 
-* current user role
-* access level
-* ownership
-* approval assignment
-* work assignment
-* ticket status
-* tenant 또는 company scope
-* form validity
-* current mutation state
+* 현재 사용자 역할
+* 접근 수준
+* 소유권
+* 승인자 배정
+* 작업자 배정
+* 티켓 상태
+* Tenant 또는 회사 범위
+* 폼 유효성
+* 현재 변경 요청 상태
 
-그러나 client-side capability는 authorization source of truth가 아닙니다.
+클라이언트에서 계산한 작업 가능 여부는 최종 권한 판단의 기준이 아닙니다.
 
 ```txt
 UI capability
@@ -245,17 +246,17 @@ Server authorization
 -> command가 실제로 허용되는지 검증
 ```
 
-Server는 계속 다음을 검증해야 합니다.
+서버는 계속 다음을 검증해야 합니다.
 
-* authentication
-* authorization
-* ownership
-* current status
-* tenant scope
-* action-specific input
-* workflow transition rule
+* 인증
+* 권한
+* 소유권
+* 현재 상태
+* Tenant 범위
+* 액션별 입력
+* 업무 상태 전환 규칙
 
-Client component가 이미 `can*` 값을 사용한다는 이유로 server validation을 제거하면
+클라이언트 컴포넌트가 이미 `can*` 값을 사용한다는 이유로 서버 검증을 제거하면
 안 됩니다.
 
 ---
@@ -264,7 +265,7 @@ Client component가 이미 `can*` 값을 사용한다는 이유로 server valida
 
 ### 규칙
 
-Boolean이 현재 condition 또는 lifecycle state를 설명하면 `is*`를 사용합니다.
+현재 조건이나 처리 단계의 상태를 나타내는 Boolean에는 `is*`를 사용합니다.
 
 예:
 
@@ -341,8 +342,7 @@ isClosed;
 
 ### 규칙
 
-Boolean이 value, collection, condition 또는 related object의 존재 여부를 나타내면
-`has*`를 사용합니다.
+값, 컬렉션, 조건 또는 관련 객체의 존재 여부를 나타내는 Boolean에는 `has*`를 사용합니다.
 
 예:
 
@@ -395,7 +395,7 @@ canDelete;
 
 부정적인 단어라고 해서 자동으로 명명 문제가 되는 것은 아닙니다.
 
-실제 domain state를 나타내는 negative 또는 terminal 이름은 유지합니다.
+실제 도메인 상태를 나타내는 부정적 표현이나 종료 상태의 이름은 유지합니다.
 
 예:
 
@@ -427,7 +427,7 @@ isOperational;
 canRemainOpen;
 ```
 
-Domain 용어는 실제 domain model과 정렬된 상태를 유지해야 합니다.
+도메인 용어는 실제 도메인 모델과 일치해야 합니다.
 
 ---
 
@@ -435,7 +435,7 @@ Domain 용어는 실제 domain model과 정렬된 상태를 유지해야 합니�
 
 ### 규칙
 
-Presentation boundary에서는 표준 HTML 및 UI component 용어를 보존합니다.
+UI 표시·동작 상태를 전달할 때는 표준 HTML·UI 컴포넌트 용어를 보존합니다.
 
 일반적인 presentation prop:
 
@@ -468,9 +468,9 @@ selected;
 <Select canSelect={hasOptions} />
 ```
 
-표준 UI prop은 렌더링된 control이 어떻게 동작하는지를 전달합니다.
+표준 UI prop은 화면에 표시된 컨트롤이 어떻게 동작하는지를 전달합니다.
 
-Positive capability는 이 boundary에서 presentation state로 변환해야 합니다.
+긍정형 작업 가능 여부는 이 지점에서 UI 표시·동작 상태로 변환해야 합니다.
 
 ```tsx
 function SaveButton({ canSave }: { canSave: boolean }) {
@@ -554,7 +554,7 @@ Form은 내부에서 presentation state를 도출할 수 있습니다.
 />
 ```
 
-둘을 함께 노출하면 같은 decision에 두 source가 생겨 서로 모순된 input을 허용할 수 있습니다.
+둘을 함께 노출하면 같은 판단에 두 입력값을 사용하게 되어 서로 모순된 값을 전달할 수 있습니다.
 
 ---
 
@@ -639,7 +639,7 @@ const canUseImpersonation =
   user.canUseImpersonation;
 ```
 
-Configuration state와 user capability를 하나의 모호한 boolean으로 합치지 않습니다.
+설정의 활성 상태와 사용자의 이용 가능 여부를 하나의 모호한 Boolean으로 합치지 않습니다.
 
 ---
 
@@ -801,8 +801,8 @@ const canReject =
 <TicketRejectAction canReject={canReject} />
 ```
 
-Condition이 재사용 가능한 domain 또는 application policy를 나타내면 JSX caller마다
-표현식을 복제하지 말고 기존 rule, policy 또는 capability projection을 사용합니다.
+조건이 재사용 가능한 도메인·애플리케이션 정책이라면 JSX 호출부마다 표현식을
+복제하지 않습니다. 기존 규칙, 정책 또는 계산된 작업 가능 여부를 사용합니다.
 
 ---
 
@@ -875,8 +875,7 @@ status;
 
 ## DTO 및 Database Boundary
 
-Database row와 DTO에는 persisted 또는 external state를 설명하는 boolean field가 있을
-수 있습니다.
+DB 행과 DTO에는 저장된 상태나 외부 상태를 설명하는 Boolean 필드가 있을 수 있습니다.
 
 예:
 
@@ -889,9 +888,9 @@ assigned_approver;
 
 이 field를 자동으로 `can*`으로 바꾸지 않습니다.
 
-Persisted field와 DTO field는 data를 설명합니다.
+DB에 저장된 필드와 DTO 필드는 데이터를 설명합니다.
 
-Application capability는 현재 actor가 무엇을 할 수 있는지를 설명합니다.
+애플리케이션의 작업 가능 여부는 현재 수행자가 무엇을 할 수 있는지를 설명합니다.
 
 예:
 
@@ -903,15 +902,15 @@ const canStartWork =
 
 여기에서:
 
-* `assignedWorker`는 현재 assignment를 설명하는 DTO projection입니다.
-* `canStartWork`는 assignment와 status에서 도출한 application capability입니다.
+* `assignedWorker`는 현재 배정 정보를 바탕으로 계산한 DTO 값입니다.
+* `canStartWork`는 배정과 상태를 바탕으로 계산한 작업 시작 가능 여부입니다.
 
 ---
 
 ## Capability Object
 
-Group이 이미 안정적인 application contract를 나타내는 경우 관련 capability를 묶을 수
-있습니다.
+이미 일관된 입력·반환 형식으로 사용하는 그룹이 있다면 관련 작업 가능 여부를 묶을
+수 있습니다.
 
 ```ts
 type TicketCapabilities = {
@@ -1000,7 +999,7 @@ Capability와 state를 오해하기 쉬운 prefix 아래 섞지 않습니다.
 
 ## Default Value
 
-Optional capability prop은 일반적으로 `false`를 default로 사용해야 합니다.
+선택적인 작업 가능 여부 prop은 일반적으로 기본값을 `false`로 설정해야 합니다.
 
 ```ts
 type ActionProps = {
@@ -1022,14 +1021,13 @@ type ActionProps = {
 };
 ```
 
-Operation을 암묵적으로 허용하는 default를 선택하지 않습니다.
+작업을 암묵적으로 허용하는 기본값을 선택하지 않습니다.
 
 ---
 
 ## 명명 Migration 규칙
 
-Negative capability를 positive capability로 바꿀 때는 boolean logic도 함께 반전해야
-합니다.
+부정형 작업 가능 여부를 긍정형으로 바꿀 때는 Boolean 논리도 함께 반전해야 합니다.
 
 변경 전:
 
@@ -1057,7 +1055,7 @@ const canSave = false;
 * mock value
 * comment
 
-Boolean 의미를 검증하지 않은 기계적인 text replacement를 피합니다.
+Boolean의 의미를 검증하지 않고 텍스트만 기계적으로 치환하지 않습니다.
 
 예:
 
@@ -1270,14 +1268,14 @@ if (payload.canApprove) {
 }
 ```
 
-Server-side approval은 client가 제공한 capability가 아니라 authenticated identity,
-ticket state, assignment 및 domain rule을 기준으로 결정해야 합니다.
+서버의 승인 처리는 인증된 사용자, 티켓 상태, 배정 정보, 도메인 규칙을 기준으로
+결정해야 합니다. 클라이언트가 보낸 작업 가능 여부를 기준으로 결정하지 않습니다.
 
 ---
 
 ## 요약
 
-프로젝트는 다음 명명 boundary를 따릅니다.
+프로젝트는 역할별로 다음 명명 규칙을 따릅니다.
 
 ```txt
 Feature 및 application boundary
@@ -1292,12 +1290,12 @@ HTML 및 UI presentation boundary
 
 이 규칙은 다음을 개선합니다.
 
-* component API 가독성
-* capability와 state의 분리
+* 컴포넌트 API 가독성
+* 작업 가능 여부와 현재 상태의 구분
 * JSX 명확성
-* hook 및 context value 전반의 일관성
-* Storybook 및 test 가독성
-* UI projection과 server authorization의 구분
+* 훅·컨텍스트 값의 일관성
+* Storybook·테스트 가독성
+* UI에서 계산한 값과 서버 권한 판단의 구분
 
 규칙은 다음을 의미하지 않습니다.
 

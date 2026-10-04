@@ -14,7 +14,8 @@ This was useful during early modeling because the Service Desk module was inspir
 
 However, as the system moved toward a more production-aligned structure with Supabase PostgreSQL, DTO/API boundaries, and Service Desk settings management, the term `Client` became too narrow and ambiguous.
 
-The project needed a clearer concept that could represent the operational boundary for Service Desk configuration without being confused with customer-only meaning.
+The project needed a concept for the operating scope of Service Desk configuration
+that would not imply external customers only.
 
 The updated direction is:
 
@@ -158,11 +159,10 @@ A tenant is mapped to a company, but it is not the same concept as a company.
 
 ### Authorization Clarification (2026-07)
 
-This decision defines the configuration *boundary*, not a single management
-actor. Wording such as "tenant owns configuration" means that categories,
-approval steps, and assignment rules are interpreted within that tenant's
-workflow and company boundary. It does not mean that Tenant Admin manages every
-resource.
+This decision defines the *scope* in which configuration applies. Wording such
+as "tenant owns configuration" means that categories, approval steps, and
+assignment rules are interpreted within that tenant's workflow and company
+scope. It does not mean that Tenant Admin manages every resource.
 
 The category-scope settings policy assigns management separately:
 
@@ -342,9 +342,9 @@ This keeps the settings model practical without over-preserving obsolete configu
 
 ### Assignment Rule
 
-Assignment rules represent current routing policy for a category.
+Assignment rules represent the current worker assignment policy for a category.
 
-They may be updated, replaced, or removed when the category routing strategy changes.
+They may be updated, replaced, or removed when the category's assignment strategy changes.
 
 Hard delete or replacement is acceptable when:
 

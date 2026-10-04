@@ -2,9 +2,10 @@
 
 ## Goal
 
-The development approach is designed to prioritize **functional completeness, iterative improvement, and practical decision-making**
-when building a production-aligned prototype that remains explicit about
-deferred production infrastructure.
+The project prioritized **functional completeness, iterative improvement, and
+practical decision-making** while building a prototype that reflects production
+structure and business rules. Production infrastructure excluded from the scope
+is documented explicitly.
 
 This document records the approach used to build the portfolio. Feature
 development is complete; the iteration principles below explain that work and
@@ -61,7 +62,7 @@ Make it work -> Make it better -> Make it scalable
 
 ### Rationale
 
-- Early working software creates momentum
+- Early working software makes the next improvements easier to pursue
 - Real usage reveals where refinement is actually needed
 - Premature architecture decisions often create waste
 
@@ -91,7 +92,7 @@ Refactoring and design improvements should happen continuously as the system bec
 
 - Better abstractions emerge from repeated usage
 - UI and domain patterns become more obvious over time
-- Technical quality improves when informed by actual implementation pressure
+- Code quality improves when design reflects requirements and constraints found during implementation
 
 ---
 
@@ -108,7 +109,7 @@ Refactoring and design improvements should happen continuously as the system bec
 ### Step 2. Stabilize the Structure
 
 - Identify repeated UI and logic patterns
-- Introduce clearer boundaries
+- Clarify each module's responsibilities and processing scope
 - Reduce obvious duplication
 
 ---
