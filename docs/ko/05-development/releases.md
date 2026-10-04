@@ -14,6 +14,28 @@ Pull Request의 구현 세부 사항, 배포 체크리스트 또는 스크린샷
 
 ## 릴리스 이력
 
+### 2026-10-04 — v1.1.1 문서 명확화 및 standalone 빌드 유지보수
+
+fix(build, docs): restore standalone output and publish v1.1.1
+
+- 영어와 한국어 README, 명세, 설계 문서, 릴리스 기록과 과거 Decision Log의
+  설명과 가독성을 개선했습니다. 기술적 의미, 코드 예제, 링크와 당시 맥락은
+  보존했습니다.
+- 아키텍처, 업무 흐름, 권한, LOCAL·REMOTE 저장 방식, 자동 종료 스케줄링과
+  검증 한계를 명확히 설명했습니다. 현재 설계 문서와 과거 결정 기록의 구분은
+  유지했습니다.
+- 운영 환경을 고려한 설계이지만 실제 운영에 필요한 모든 기능을 구현한 상태는
+  아니라는 포트폴리오 기준에 맞춰 표현을 조정했습니다. 전체 SLA 자동화는 향후
+  개발 약속이 아니라 현재 구현 범위 밖의 기능으로 설명했습니다.
+- 권한이나 impersonation 동작을 바꾸지 않고, 세션·요청 처리 정보에서 원래
+  사용자와 현재 사용자의 식별 정보를 추적하는 범위를 명확히 설명했습니다.
+- `next`와 `eslint-config-next`를 `^16.3.8`로 업데이트하고 lockfile을 갱신했습니다.
+  Vercel 전용 우회를 제거해 `output: "standalone"` 설정을 복원했습니다.
+- 더 이상 필요하지 않은 `docs/db`와 `docs/main-pr`의 ignore 항목을 제거했습니다.
+- 기능 범위를 완료한 `v1.1.0`을 유지하는 유지보수 업데이트로 `v1.1.1`을
+  릴리스했습니다. Service Desk 기능, 데이터 모델, API 형식·규칙, 업무 흐름,
+  DB 동작과 애플리케이션 레이아웃·라우트는 그대로 유지했습니다.
+
 ### 2026-09-29 — v1.1.0 workflow contract 강화 및 문서 정리 완료
 
 fix(auth, service-desk, docs): publish v1.1.0 workflow contract hardening

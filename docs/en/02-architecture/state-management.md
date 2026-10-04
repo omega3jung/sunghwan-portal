@@ -3,7 +3,7 @@
 ## Goal
 
 The state management strategy is designed to **clearly separate server state and client state**,
-ensuring predictable data flow, scalability, and maintainability in a production environment.
+ensuring predictable data flow, scalability, and maintainability.
 
 It aims to:
 

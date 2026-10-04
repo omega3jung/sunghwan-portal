@@ -15,6 +15,28 @@ traceability; this document does not depend on separate PR-description files.
 
 ## Release History
 
+### 2026-10-04 — v1.1.1 documentation clarity and standalone build maintenance
+
+fix(build, docs): restore standalone output and publish v1.1.1
+
+- Improved clarity and readability across English and Korean READMEs,
+  specifications, design documents, release notes, and historical Decision Logs.
+  Preserved technical meaning, code examples, links, and historical context.
+- Clarified architecture, workflows, permissions, LOCAL/REMOTE storage,
+  auto-close scheduling, and verification limits while preserving the distinction
+  between current design documents and historical decisions.
+- Aligned production-scope wording with the production-aligned, not
+  production-complete portfolio baseline. Described full SLA automation as
+  outside the current implemented scope rather than as committed future work.
+- Clarified original and effective user identity traceability within the
+  session/request context without changing authorization or impersonation behavior.
+- Upgraded `next` and `eslint-config-next` to `^16.3.8`, refreshed the lockfile,
+  and restored `output: "standalone"` by removing the Vercel-specific workaround.
+- Removed obsolete ignore entries for `docs/db` and `docs/main-pr`.
+- Published `v1.1.1` as a maintenance update, preserving the completed `v1.1.0`
+  portfolio feature scope. Service Desk features, data models, API contracts,
+  workflows, database behavior, and application layouts and routes remain unchanged.
+
 ### 2026-09-29 — v1.1.0 workflow contract hardening and documentation completion
 
 fix(auth, service-desk, docs): publish v1.1.0 workflow contract hardening

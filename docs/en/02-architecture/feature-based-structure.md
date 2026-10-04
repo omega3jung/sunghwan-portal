@@ -3,7 +3,7 @@
 ## Goal
 
 The project adopts a **feature-based architecture** to improve scalability, maintainability,
-and separation of concerns in a production-level frontend system.
+and separation of concerns in a production-aligned frontend architecture.
 
 Use this document to determine current source-folder responsibilities and
 dependency direction. Historical decision logs preserve the rationale at the

@@ -14,7 +14,7 @@ In the current implementation, SLA is represented mainly through:
 - manual/operator adjustment through ticket actions
 
 A full SLA breach, pause, escalation, calendar, and notification engine is
-future scope.
+outside the current implemented scope.
 
 ---
 

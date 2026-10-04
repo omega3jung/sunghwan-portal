@@ -11,7 +11,7 @@ It aims to:
 - Support realistic Service Desk workflows
 - Enable debugging and issue reproduction
 - Maintain strict security boundaries
-- Preserve auditability of actions
+- Keep the original and effective user identities traceable
 - Keep impersonation server/session-aware rather than client-only overrides
 
 ---
