@@ -29,14 +29,12 @@ At this stage, the limitation of a comment-only model became apparent.
 
 ### 2. Poor Representation of Operational Actions
 
-Key actions such as:
+The model could not represent these key actions as separate domain entities:
 
 - assigning users
 - adjusting priority, risk level, or due date
 - merging tickets
 - rejecting requests
-
-could not be represented as first-class entities.
 
 Instead, they had to be:
 

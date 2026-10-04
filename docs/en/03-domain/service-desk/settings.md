@@ -5,9 +5,8 @@
 Service Desk Settings define the configuration that controls how tickets are
 created, approved, assigned, and displayed.
 
-The goal of this document is to describe the current settings design in a way
-that is aligned with the application model, the API boundary, and the
-LOCAL/REMOTE runtime split.
+This document describes the current settings design, each layer's role, and
+the differences between LOCAL and REMOTE execution.
 
 Service Desk Settings are not generic admin CRUD. They are behavior-defining
 configuration for the Service Desk domain.
@@ -86,9 +85,9 @@ UI
 -> LOCAL state handler or REMOTE DTO service
 ```
 
-Route handlers are HTTP orchestration boundaries. They should parse requests,
-resolve session/runtime context, and delegate. They should not own SQL, mock
-mutation rules, or row-to-DTO mapping.
+Route Handlers parse HTTP requests, resolve the session and runtime, and
+delegate processing to services. They should not handle SQL, mock mutation
+rules, or row-to-DTO mapping directly.
 
 LOCAL settings behavior uses server-side mutable demo state where the demo
 allows mutation. REMOTE behavior uses DTO services and repositories. Both
@@ -713,7 +712,8 @@ Use local component state or small UI stores for:
 - form draft values before mutation
 - transient tree editing state
 
-Do not duplicate settings server data into Zustand as another source of truth.
+Do not duplicate settings server data into Zustand and manage it as a separate
+basis for settings decisions.
 
 ---
 

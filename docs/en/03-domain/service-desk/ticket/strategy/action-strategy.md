@@ -4,8 +4,8 @@
 
 This document defines the current Ticket Action command execution strategy.
 
-Ticket Action is not generic CRUD. It is a server-controlled command pipeline
-that validates status, permissions, input, ticket effects, and history.
+The server processes each Ticket Action as a business command, validating
+status, permissions, input, ticket effects, and history.
 
 ---
 
@@ -92,7 +92,7 @@ The detailed matrix is in
 ## Transaction Boundary
 
 REMOTE command execution groups the action row, ticket mutation, and history
-rows as one use case.
+rows into one operation.
 
 This matters because operational action results must not partially commit:
 
@@ -103,7 +103,7 @@ action row
 = one command result
 ```
 
-LOCAL command execution mirrors the same contract with demo-safe mutable state.
+LOCAL command execution reproduces the same expected behavior with demo-safe mutable state.
 
 ---
 
@@ -185,9 +185,8 @@ resolved auto-close creates `RESOLUTION_CLOSE` with source `SYSTEM_AUTO` and
 
 ## Notification Boundary
 
-Action commands may provide the point where notification should be triggered,
-but persisted ticket fields must not be polluted with derived notification
-recipients.
+Action commands may provide the point where notification should be triggered.
+Do not append calculated notification recipients to the ticket's stored recipient fields.
 
 In particular, assignment commands must not append resolved assignee emails to
 `tk_email`. Assignee emails should be resolved at notification-send time.
@@ -198,7 +197,7 @@ Production notification delivery is deferred unless explicitly implemented.
 
 ## LOCAL and REMOTE Parity
 
-Both runtime paths should expose the same action command surface and DTO shape.
+Both runtime paths should provide the same action commands and DTO response format.
 
 ```txt
 LOCAL command handler

@@ -229,6 +229,6 @@ workflow rules differ.
 
 ## Summary
 
-Dialogs are focused workflow surfaces. The current Service Desk implementation
-uses separate create, update, and action dialog flows while keeping ticket detail
-as a page-level resource.
+Dialogs focus on individual tasks. The current Service Desk implementation
+separates creation, update, and action dialog flows and keeps ticket detail on
+its own page.

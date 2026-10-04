@@ -2,7 +2,7 @@
 
 ## Context
 
-Category is the central behavior configuration for Service Desk tickets.
+Category is the central setting for how Service Desk tickets are handled.
 
 It influences:
 
@@ -621,9 +621,9 @@ status = Assigned
 assigneeUsernames = []
 ```
 
-Activation is therefore a configuration quality gate.
+Activation checks whether the configuration is ready for new tickets.
 
-Routing remains the operational source of truth.
+Routing-time validation decides whether a worker can actually be assigned now.
 
 ---
 
@@ -673,9 +673,8 @@ to control:
 - disabled state
 - administrator guidance
 
-The capability is a UI/application projection.
-
-It is not the authorization or validation source of truth.
+The UI or application calculates this value to show whether activation is
+available. The server still decides authorization and validates activation.
 
 Required boundary:
 

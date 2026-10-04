@@ -2,10 +2,10 @@
 
 ## Goal
 
-This document defines how current work ownership is resolved and changed.
+This document defines how current work assignees are selected and changed.
 
-Assignment is not a generic owner field. It is phase-aware routing state whose
-meaning depends on `approvalStepId`.
+Assignment identifies approvers or workers depending on `approvalStepId`.
+Interpret the assignee list together with its current phase.
 
 ---
 
@@ -19,7 +19,7 @@ tk_assignee_usernames
 When `approvalStepId == null`, the ticket is in work phase and
 `assigneeUsernames` means current workers.
 
-DTO projections:
+Values calculated for the DTO:
 
 - `assignmentPhase = "WORK"`
 - `workAssigneeUsernames`
@@ -181,7 +181,7 @@ classification. Owner Admin or Tenant Admin status alone does not make an actor
 a current approver/worker and the settings authorization helper must not be
 used to authorize `ASSIGN`.
 
-Manual `ASSIGN` has a narrower validation boundary than automatic routing: it
+Manual `ASSIGN` performs fewer checks than automatic routing: it
 checks actor, status, and a non-empty username list, but does not revalidate
 submitted candidates against the category/phase eligibility policy or the
 persisted Assignment Rule. UI candidates come from the effective actor's company.
@@ -267,7 +267,7 @@ They are future extensions.
 
 ## Summary
 
-Assignment is category-driven current work ownership. The database stores one
+Assignment selects current workers according to the category. The database stores one
 current assignee array, and `approvalStepId` determines whether that array means
 approvers or workers. Assignment rules resolve future work ownership; ticket
 actions update current ownership.

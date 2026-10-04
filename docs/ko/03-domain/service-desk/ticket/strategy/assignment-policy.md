@@ -2,10 +2,10 @@
 
 ## 목표
 
-이 문서는 현재 work ownership이 어떻게 resolve되고 변경되는지 정의합니다.
+이 문서는 현재 작업 담당자를 결정하고 변경하는 방식을 정의합니다.
 
-Assignment는 generic owner field가 아닙니다. `approvalStepId`에 따라 의미가 달라지는
-phase-aware routing state입니다.
+배정 정보는 `approvalStepId`에 따라 승인 담당자 또는 작업 담당자를 나타냅니다.
+담당자 목록만 보지 않고 현재 단계를 함께 판단해야 합니다.
 
 ---
 
@@ -16,10 +16,9 @@ tk_approval_step_id
 tk_assignee_usernames
 ```
 
-`approvalStepId == null`이면 티켓은 work phase이며 `assigneeUsernames`는 current
-worker를 의미합니다.
+`approvalStepId == null`이면 티켓은 작업 단계이며, `assigneeUsernames`는 현재 작업자를 의미합니다.
 
-DTO projection:
+DTO로 계산해 제공하는 값:
 
 - `assignmentPhase = "WORK"`
 - `workAssigneeUsernames`
@@ -29,10 +28,10 @@ DTO projection:
 
 ## Assignment Rule Settings
 
-Assignment rule은 category settings 아래에 설정됩니다.
+배정 규칙은 카테고리 설정 아래에 둡니다.
 
-Work assignment resolution은 먼저 선택된 subcategory를 확인합니다. Subcategory
-assignment rule이 없으면 parent/main category rule로 fallback합니다.
+작업자 결정에서는 선택한 하위 카테고리를 먼저 확인합니다.
+하위 카테고리의 배정 규칙이 없으면 상위 카테고리 규칙을 사용합니다.
 
 ```ts
 type AssigneeGroup = {
@@ -47,13 +46,13 @@ type AssignmentRule = {
 };
 ```
 
-현재 model은 group-based입니다. 별도의 `ruleType` field를 사용하지 않습니다.
+현재 모델은 직무와 직원으로 구성한 그룹을 사용합니다. 별도의 `ruleType` 필드는 사용하지 않습니다.
 
-Rule이 없는 상태와 empty rule은 서로 다릅니다. Settings는 rule이 없는 상태를
-`0 Job Fields / 0 Employees`로 표시할 수 있지만, persistence는 두 배열 중 하나 이상이
-비어 있지 않을 때만 rule을 저장합니다. Subcategory override를 제거하면 rule을 삭제하고
-parent fallback을 복원하며, 빈 배열을 override로 저장하지 않습니다. Category activation
-전에 rule을 준비할 수 있도록 inactive category도 계속 구성할 수 있습니다.
+규칙이 없는 상태와 빈 규칙은 서로 다릅니다. 설정 화면은 규칙이 없는 상태를
+`0 Job Fields / 0 Employees`로 표시할 수 있지만, 두 배열 중 하나 이상이 비어 있지
+않을 때만 규칙을 저장합니다. 하위 카테고리의 자체 규칙을 제거하면 규칙을 삭제하고
+상위 규칙을 다시 사용하며, 빈 배열을 자체 규칙으로 저장하지 않습니다.
+활성화 전에 규칙을 준비할 수 있도록 비활성 카테고리도 설정할 수 있습니다.
 
 관련 문서: [Service Desk Settings](../../settings.md)
 
@@ -61,9 +60,9 @@ parent fallback을 복원하며, 빈 배열을 override로 저장하지 않습�
 
 ## Assignment Settings Authorization
 
-Assignment Rule 권한은 저장된 category의 `Category -> Tenant -> Company` 관계로
-해석합니다. Persisted rule은 독립적인 authority로 `tenantId`를 중복 저장하지 않으며,
-request company 값도 authorization source가 아닙니다.
+Assignment Rule 권한은 저장된 카테고리의 `Category -> Tenant -> Company` 관계로
+판단합니다. 규칙에 `tenantId`를 중복 저장해 독립된 권한 기준으로 사용하지 않으며,
+요청의 회사 값도 권한 판단의 근거가 아닙니다.
 
 | Category target             | Owner Admin | 동일 company Tenant Admin | 다른 Tenant Admin |
 | --------------------------- | ----------- | ------------------------- | ----------------- |
@@ -71,19 +70,18 @@ request company 값도 authorization source가 아닙니다.
 | Customer Tenant, `INTERNAL` | none        | manage                    | none              |
 | Customer Tenant, `PORTAL`   | manage      | read                      | none              |
 
-Customer `PORTAL` work routing은 owner/service provider가 관리합니다. Tenant Admin의
-read-only view는 현재 참조된 provider assignee의 display data를 포함할 수 있지만,
-owner-company employee directory 전체의 candidate search 권한을 부여하지 않습니다.
+고객 `PORTAL` 작업자 배정은 소유자·서비스 제공자가 관리합니다. Tenant Admin의 읽기
+전용 화면에는 현재 참조된 제공자 담당자의 표시 정보를 포함할 수 있지만,
+제공자 회사 직원 디렉터리 전체에서 후보를 검색할 권한은 부여하지 않습니다.
 
-Read와 mutation path 모두 category 관계를 load하고 shared settings policy를 호출합니다.
-Unauthorized API request는 `403`을 반환하며, query response는 access가 `none`인 rule을
-포함하지 않습니다.
+조회·변경 경로 모두 카테고리 관계를 불러와 공통 설정 권한 정책을 적용합니다.
+권한이 없는 API 요청은 `403`을 반환하며, 조회 응답에는 access가 `none`인 규칙을 포함하지 않습니다.
 
 ---
 
 ## Assignee Eligibility
 
-허용되는 worker는 category context를 기준으로 결정합니다.
+허용되는 작업자는 카테고리의 Tenant와 scope를 기준으로 결정합니다.
 
 | Category context                  | 허용되는 employee company                                |
 | --------------------------------- | -------------------------------------------------------- |
@@ -92,29 +90,26 @@ Unauthorized API request는 `403`을 반환하며, query response는 access가 `
 | `PORTAL`, default                 | owner/service-provider company                           |
 | `PORTAL`, explicit joint handling | owner/service-provider company와 category Tenant company |
 
-Explicit `assigneeUsernames`와 `jobFieldIds`로부터 resolve된 employee는 모두 company
-filter를 통과해야 합니다. Server는 global employee search, 다른 customer company의
-employee, tenant/company filter가 없는 job field, client-supplied company ID를 사용하면
-안 됩니다. Provider와 category Tenant company의 joint handling은 persisted PORTAL
-Assignment Rule option인 `includeTenantCompany`로만 활성화합니다. 기본값은 `false`이며
-선택된 employee나 client-supplied company context로 추론하지 않습니다.
+명시적인 `assigneeUsernames`와 `jobFieldIds`에서 구한 직원은 모두 회사 필터를 통과해야
+합니다. 서버는 전체 직원 검색, 다른 고객 회사 직원, Tenant·회사 필터가 없는 직무,
+클라이언트가 보낸 회사 ID를 사용하면 안 됩니다. 제공자와 카테고리 Tenant 회사의
+공동 처리는 저장된 PORTAL 배정 규칙의 `includeTenantCompany`로만 활성화합니다.
+기본값은 `false`이며, 선택한 직원이나 클라이언트가 보낸 회사 정보로 추론하지 않습니다.
 
-Candidate lookup은 category-centered이며 caller의 Assignment Rule capability와
-purpose별 company boundary를 모두 검사합니다. Eligibility는 rule 저장 시점과 submit,
-resubmit 또는 explicit routing recalculation 시점에 다시 검증합니다. Settings save는
-active reference를 검증하지만 active Job Field가 즉시 employee를 resolve할 것을
-요구하지 않습니다. Category activation은 active Job Field 또는 active Employee reference가
-있는지 확인합니다. Routing은 해당 reference를 실제 worker로 확장하고 더 강한 현재
-employee, company, tenant, category 검증을 적용합니다. Employee가 inactive가 되거나
-company를 이동하면 routing 시 거부합니다. Valid worker가 0명이면 routing은 실패하고
-unowned `Assigned` ticket을 만들지 않습니다.
+후보 조회는 카테고리를 기준으로 하며, API 요청을 보낸 사용자의 배정 규칙 권한과 purpose별 회사 범위를
+모두 검사합니다. 자격은 규칙 저장 시 검증하고, 제출·재제출 또는 명시적인 담당자
+재결정 시 다시 검증합니다. 설정 저장은 참조 대상의 활성 여부를 검증하지만, 활성
+직무에서 즉시 직원을 찾을 수 있어야 하는 것은 아닙니다. 카테고리 활성화는 활성 직무
+또는 활성 직원 참조가 있는지 확인합니다. 실행 시에는 참조를 실제 작업자로 확장하고,
+현재 직원·회사·Tenant·Category에 대한 더 엄격한 검증을 적용합니다. 직원이 비활성화되거나
+회사를 이동하면 담당자 결정 시 거부합니다. 유효한 작업자가 0명이면 담당자 결정은
+실패하며, 담당자 없는 `Assigned` 티켓을 만들지 않습니다.
 
 ---
 
 ## Initial Work Assignment
 
-Ticket이 approval을 필요로 하지 않거나 final approval이 완료되면 work assignee를
-resolve합니다.
+승인이 필요하지 않거나 마지막 승인이 완료되면 작업 담당자를 결정합니다.
 
 ```txt
 no approval step
@@ -127,12 +122,10 @@ or final approval complete
 -> history = ASSIGNMENT_RESOLVED
 ```
 
-Assignment가 worker를 한 명도 resolve할 수 없으면 unowned work를 만들지 않고
-ticket creation 또는 routing이 실패합니다.
+작업자를 한 명도 결정할 수 없으면 담당자 없는 작업을 만들지 않고 티켓 생성이나 담당자 결정을 실패시킵니다.
 
-여기서 fallback 조건은 “subcategory rule이 존재하지 않음”입니다. 존재하는 rule이
-empty이거나 invalid하다고 해서 parent로 fallback하지 않습니다. Empty rule은 persistence
-전에 거부하거나 제거합니다.
+상위 규칙을 사용하는 조건은 “하위 카테고리 규칙이 존재하지 않음”입니다. 존재하는 규칙이
+비어 있거나 유효하지 않다고 해서 상위 규칙을 사용하지 않습니다. 빈 규칙은 저장 전에 거부하거나 제거합니다.
 
 ---
 
@@ -140,85 +133,82 @@ empty이거나 invalid하다고 해서 parent로 fallback하지 않습니다. Em
 
 `Assigned`와 `Working`은 다른 상태입니다.
 
-- `Assigned`: worker는 정해졌지만 work는 아직 시작되지 않았습니다.
-- `Working`: current worker가 명시적으로 work를 시작했거나 기록했습니다.
+- `Assigned`: 작업자는 정해졌지만 작업은 아직 시작되지 않았습니다.
+- `Working`: 현재 작업자가 명시적으로 작업을 시작했거나 기록했습니다.
 
-`Assigned -> Working`은 explicit start-work command를 통해 일어날 수 있습니다.
-Work-session submission도 지원되는 work-status transition을 적용할 수 있지만, Work
-Session은 별도의 work-evidence model로 남습니다. GET/detail read는 work를 시작하면
-안 됩니다.
+`Assigned -> Working`은 별도 start-work 명령으로 실행할 수 있습니다.
+작업 시간 기록 제출도 지원하는 작업 상태 전이를 적용할 수 있지만, Work Session은
+별도 작업 내역 모델로 유지합니다. GET·상세 조회로 작업을 시작하면 안 됩니다.
 
 ---
 
 ## Assign Action
 
-`ASSIGN`은 current assignee를 변경합니다.
+`ASSIGN`은 현재 담당자를 변경합니다.
 
-Standard work assignment:
+일반 작업자 배정:
 
-- actor: current work assignee
+- actor: 현재 작업 담당자
 - status: `Assigned`, `Working`, `Pending`
-- effect: work assignee 교체
+- effect: 작업 담당자 교체
 - `Pending -> Working`
 - history: `ASSIGNMENT_UPDATED`
 
-Admin override:
+Admin 예외:
 
 - actor: Admin
-- approval assignment: status `Approval`
+- approval assignment: 상태 `Approval`
 - work assignment: `Assigned`, `Working`, `Pending`
-- effect: current approver 또는 worker 교체
+- effect: 현재 승인자 또는 작업자 교체
 - history: `ASSIGNMENT_UPDATED`
 
-이 ticket action override는 Service Desk Settings admin classification에서 파생하지
-않습니다. Owner Admin 또는 Tenant Admin이라는 사실만으로 current approver/worker가
-되는 것은 아니며 settings authorization helper로 `ASSIGN`을 authorize하면 안 됩니다.
+이 티켓 액션의 관리자 예외는 Service Desk 설정의 관리자 구분으로 판단하지 않습니다.
+Owner Admin이나 Tenant Admin이라는 이유만으로 현재 승인자·작업자가 되는 것은
+아니며, 설정 권한 헬퍼로 `ASSIGN`을 허용하면 안 됩니다.
 
-Manual `ASSIGN`의 검증 범위는 automatic routing보다 좁습니다. Actor, status,
-비어 있지 않은 username list를 검증하지만, 제출된 후보를 Category/phase eligibility
-policy나 persisted Assignment Rule에 대해 다시 검증하지 않습니다. UI 후보는 effective
-actor의 company에서 가져옵니다. 이 차이 때문에 reference workbook의
-`REVIEW_REQUIRED`를 유지하며, 위의 automatic-routing 보장은 manual 재배정에
-적용되지 않습니다.
+수동 `ASSIGN`의 검증 범위는 자동 담당자 결정보다 좁습니다. 실행자, 상태, 비어 있지
+않은 username 목록을 검증하지만, 제출한 후보를 Category·단계별 자격 정책이나 저장된
+배정 규칙으로 다시 검증하지 않습니다. UI 후보는 현재 권한 판단 대상 실행자의 회사에서
+가져옵니다. 이 차이 때문에 참조 워크북의 `REVIEW_REQUIRED`를 유지하며,
+앞서 설명한 자동 담당자 결정의 보장은 수동 재배정에 적용되지 않습니다.
 
-Assignee notification은 persisted `tk_email` field 밖에서 email을 resolve해야 합니다.
-파생된 assignee email은 requester email configuration에 저장하지 않습니다.
+담당자 알림은 저장된 `tk_email` 필드와 별도로 이메일을 결정해야 합니다.
+담당자 이메일을 요청자의 이메일 수신자 설정에 저장하지 않습니다.
 
 ---
 
 ## Assign Self
 
-`ASSIGN_SELF`는 current worker가 multi-assignee work를 claim하게 합니다.
+`ASSIGN_SELF`는 여러 담당자가 배정된 작업을 현재 작업자 한 명이 맡도록 변경합니다.
 
 규칙:
 
-- actor는 이미 current work assignee여야 합니다.
-- current work assignee list는 최소 두 명을 포함해야 합니다.
+- 실행자는 이미 현재 작업 담당자여야 합니다.
+- 현재 작업 담당자 목록은 최소 두 명을 포함해야 합니다.
 - 결과는 `[actor]`입니다.
-- status는 변경되지 않습니다.
+- 상태는 변경하지 않습니다.
 - history: `ASSIGNMENT_UPDATED`
 
 ---
 
 ## Resubmission and Reassignment
 
-`Declined` 또는 `Rejected` 이후 requester `RESUBMIT`은 initial routing을 다시 실행합니다.
+`Declined` 또는 `Rejected` 이후 요청자의 `RESUBMIT`은 최초 승인자·작업자 결정을 다시 실행합니다.
 
-Settings change는 기존 ticket을 retroactively rewrite하지 않습니다. 기존 ticket은 ticket
-command가 변경하기 전까지 current assignee를 유지합니다.
-따라서 Assignment Rule 변경은 current worker를 보존하며, 이후 workflow transition이
-assignment를 다시 resolve할 때만 새 rule을 사용합니다.
+설정 변경은 기존 티켓을 소급해서 다시 쓰지 않습니다. 기존 티켓은 티켓 명령으로
+변경하기 전까지 현재 담당자를 유지합니다. 따라서 배정 규칙을 변경해도 현재 작업자는
+보존하며, 이후 업무 전이에서 담당자를 다시 결정할 때만 새 규칙을 사용합니다.
 
-Admin ticket-action override는 Ticket visibility가 승인된 뒤 effective user의 role을
-사용합니다. Tenant visibility boundary를 우회하거나 impersonation 중 original Admin의
-role을 상속하지 않습니다. Ticket visibility를 우회하는 별도 platform override는
+티켓 액션의 Admin 예외는 티켓 조회 권한을 확인한 뒤 현재 권한 판단 대상 사용자의
+역할을 사용합니다. Tenant 조회 제한을 우회하거나 impersonation 중 원래 Admin의
+역할을 상속하지 않습니다. 티켓 조회 제한을 우회하는 별도 플랫폼 권한은
 포트폴리오 범위에 포함하지 않습니다.
 
 ---
 
 ## History
 
-Assignment event:
+배정 이벤트:
 
 ```txt
 ASSIGNMENT_RESOLVED
@@ -227,23 +217,23 @@ ASSIGNMENT_UPDATED
 
 `ASSIGNMENT_CHANGED`가 아니라 `ASSIGNMENT_UPDATED`를 사용합니다.
 
-`ASSIGNMENT_RESOLVED`는 routing/assignment rule이 만듭니다.
-`ASSIGNMENT_UPDATED`는 user/Admin assignment command가 만듭니다.
+`ASSIGNMENT_RESOLVED`는 담당자 결정·배정 규칙이 만듭니다.
+`ASSIGNMENT_UPDATED`는 사용자·Admin의 배정 명령이 만듭니다.
 
 ---
 
 ## Deferred Scope
 
-다음을 현재 behavior로 설명하지 않습니다.
+다음은 현재 구현된 동작으로 설명하지 않습니다.
 
-- round-robin assignment
-- least-loaded assignment
-- calendar-aware assignment
-- capacity balancing
-- settings mutation 이후 automatic reassignment
-- notification delivery guarantees
+- 순환 배정
+- 작업량이 가장 적은 담당자 배정
+- 일정에 따른 배정
+- 처리 용량 분산
+- 설정 변경 이후 자동 재배정
+- 알림 전달 보장
 
-이는 future extension입니다.
+이는 향후 확장할 수 있는 기능입니다.
 
 ---
 
@@ -260,7 +250,6 @@ ASSIGNMENT_UPDATED
 
 ## 요약
 
-Assignment는 category-driven current work ownership입니다. Database는 하나의 current
-assignee array를 저장하고, `approvalStepId`가 그 array가 approver를 의미하는지
-worker를 의미하는지 결정합니다. Assignment rule은 future work ownership을 resolve하고,
-ticket action은 current ownership을 갱신합니다.
+배정은 카테고리에 따라 현재 작업 담당자를 결정합니다. 데이터베이스는 현재 담당자
+배열 하나를 저장하고, `approvalStepId`로 배열이 승인자인지 작업자인지 구분합니다.
+배정 규칙은 이후의 작업 담당자 결정에 사용하고, 티켓 액션은 현재 담당자를 갱신합니다.

@@ -211,8 +211,8 @@ Merging these implementations merely because they currently share a repository
 would make testing easier, but it could weaken an architectural boundary that
 may be separated in production.
 
-The problem is not code duplication itself. It is drift in the following
-contracts:
+The concern is that the two implementations may start applying different
+rules to the following values:
 
 ```txt
 owner
@@ -472,7 +472,7 @@ Which runtime owns the behavior?
 Which observable result must remain equivalent?
 ```
 
-Choose the smallest stable test boundary that owns the answer.
+Test the smallest stable part of the code that makes that decision.
 
 ---
 
@@ -938,13 +938,10 @@ Vitest
 -> stop when important risks are sufficiently protected
 ```
 
-The important outcome is not that every file has a test or that one percentage
-is high.
-
-The important outcome is that authentication, authorization, tenant isolation,
-workflow transitions, transaction behavior, immutable History, state
-synchronization, and runtime parity are protected by assertions at the
-responsibility boundaries that own them.
+The important outcome is that each responsible layer tests authentication,
+authorization, tenant isolation, workflow transitions, transactions, immutable
+History, state synchronization, and runtime parity. Test-file counts and one
+high percentage are not sufficient evidence.
 
 Lower-risk visual and shared UI behavior remains outside the current Vitest stop
 condition and should be covered by Storybook/browser testing when that boundary

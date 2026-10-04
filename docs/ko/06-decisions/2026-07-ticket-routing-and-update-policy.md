@@ -2,15 +2,16 @@
 
 ## 배경
 
-REMOTE ticket creation, approval, assignment, requester update flow가 PostgreSQL에 연결되면서 ticket model은 다음을 더 명확히 표현해야 했습니다.
+REMOTE의 티켓 생성·승인·배정·요청자 수정 처리를 PostgreSQL에 연결하면서,
+티켓 모델에서 다음을 더 명확히 표현해야 했습니다.
 
-- 현재 다음 workflow action을 누가 소유하는가
-- ticket이 approval phase인지 work assignment phase인지
-- approval completion이 어떻게 work assignment로 이동하는가
-- 어떤 requester update가 current routing을 보존하는가
-- 어떤 requester update가 existing approval 또는 assignment를 무효화하는가
+- 다음 업무 작업을 맡은 현재 담당자
+- 티켓이 승인 단계인지 작업 배정 단계인지
+- 승인 완료 후 작업자 배정으로 넘어가는 방식
+- 현재 승인자·작업자를 유지하는 요청자 수정
+- 기존 승인이나 배정을 무효화하는 요청자 수정
 
-이전 ticket model은 다음과 같은 broad workflow status를 사용했습니다.
+이전 티켓 모델은 여러 처리 단계를 포괄하는 다음 상태를 사용했습니다.
 
 ```txt
 Open
@@ -18,7 +19,7 @@ Approved
 Working
 ```
 
-이 값들은 conceptually 이해하기 쉬웠지만 구현 과정에서 의미가 모호해졌습니다.
+이 값들은 개념적으로 이해하기 쉬웠지만 구현 과정에서 의미가 모호해졌습니다.
 
 `Open`은 다음을 의미할 수 있었습니다.
 
@@ -27,25 +28,26 @@ Working
 - submit되었지만 아직 처리되지 않음
 - 일반적으로 active이고 closed가 아님
 
-`Approved`는 completed approval result를 설명했지만, 이후 ticket을 현재 누가 소유하는지는 설명하지 못했습니다.
+`Approved`는 승인이 완료되었다는 결과를 나타냈지만, 그 이후 티켓의 현재 담당자가
+누구인지는 나타내지 못했습니다.
 
 구현 과정에서는 requester update 문제도 드러났습니다.
 
-Submit된 ticket의 모든 edit이 approval과 assignment를 다시 시작해야 하는 것은 아닙니다.
+제출한 티켓을 수정할 때마다 승인과 배정을 처음부터 다시 시작할 필요는 없었습니다.
 
 예시:
 
-- notification recipient 변경은 request 자체를 바꾸지 않습니다
-- requested due date 변경은 반드시 approval을 무효화하지 않습니다
-- category, subject, body, files, images 변경은 request meaning을 바꿀 수 있습니다
+- 알림 수신자 변경은 요청 자체를 바꾸지 않습니다.
+- 요청 기한 변경이 반드시 승인을 무효화하는 것은 아닙니다.
+- 카테고리·제목·본문·파일·이미지 변경은 요청의 의미를 바꿀 수 있습니다.
 
 따라서 시스템에는 다음이 필요했습니다.
 
-1. explicit approval/work routing model
-2. current responsibility와 정렬된 status
-3. requester update를 위한 field-impact policy
-4. server-controlled routing preservation and recalculation
-5. routing effect를 설명하는 history record
+1. 승인자 결정과 작업자 배정을 구분하는 모델
+2. 현재 담당 역할을 나타내는 상태
+3. 요청자 수정이 필드별로 미치는 영향을 정한 정책
+4. 서버에서 담당자 유지 여부 판단과 재계산
+5. 담당자 결정에 생긴 변화를 설명하는 이력
 
 ---
 
@@ -85,7 +87,7 @@ Routing-sensitive field change
 
 ### 1. `Open`은 current responsibility를 표현하지 못함
 
-`Open` 상태의 ticket은 approver, worker 또는 다른 workflow operation을 기다리는 중일 수 있었습니다.
+`Open` 티켓은 승인자나 작업자를 기다리거나 다른 업무 처리를 기다리는 상태일 수 있었습니다.
 
 Status는 중요한 질문에 답하지 못했습니다.
 
@@ -93,7 +95,7 @@ Status는 중요한 질문에 답하지 못했습니다.
 Who is responsible for the next action?
 ```
 
-그 결과 UI와 server가 inference에 의존하게 되었습니다.
+그 결과 UI와 서버가 다른 필드를 함께 보고 처리 단계를 추론하게 되었습니다.
 
 ```ts
 if (ticket.status === "Open" && ticket.approvalStepId) {
@@ -105,19 +107,19 @@ if (ticket.status === "Open" && !ticket.approvalStepId) {
 }
 ```
 
-Status는 unrelated inference 없이 current workflow meaning을 전달해야 합니다.
+상태값만으로 현재 처리 단계를 이해할 수 있어야 합니다.
 
 ---
 
 ### 2. `Approved`는 durable state가 아니라 event였음
 
-Approval completion은 중요하지만 long-lived ticket state로 남을 필요는 없습니다.
+승인 완료는 중요한 결과이지만, 오래 유지하는 티켓 상태로 남길 필요는 없습니다.
 
-Final approval 이후:
+최종 승인 이후:
 
-- approval phase는 끝납니다
-- worker가 resolve됩니다
-- responsibility가 work assignment로 이동합니다
+- 승인 단계 종료
+- 작업 담당자 결정
+- 담당 역할이 작업자 배정으로 이동
 
 따라서 approval completion은 History로 표현하는 것이 더 적절합니다.
 
@@ -138,19 +140,19 @@ approvalAssignees
 workAssignees
 ```
 
-이는 두 group을 모두 노출하지만, 현재 workflow phase를 소유하는 group은 하나뿐입니다.
+이 모델은 두 그룹을 모두 제공하지만 현재 처리 단계를 담당하는 그룹은 하나뿐입니다.
 
-둘 다 persisted current-state column으로 유지하면 stale 또는 contradictory data가 생길 수 있습니다.
+두 그룹을 모두 현재 상태 컬럼으로 저장하면 오래된 값이나 서로 모순되는 값이 생길 수 있습니다.
 
-Previous approval ownership은 action과 history record에 속합니다.
+과거 승인 담당자는 액션과 이력에 기록합니다.
 
-Ticket row는 current responsibility를 표현해야 합니다.
+티켓 행에는 현재 담당 역할을 저장합니다.
 
 ---
 
 ### 4. 모든 update에서 routing reset은 지나치게 공격적임
 
-다음 단순 규칙은 안전하지만 noisy합니다.
+다음 단순 규칙은 안전하지만 불필요한 재처리를 만듭니다.
 
 ```txt
 Any requester update
@@ -158,12 +160,12 @@ Any requester update
 -> resolve routing again
 ```
 
-이는 다음과 같은 harmless edit에도 불필요한 approval loop를 만듭니다.
+이 규칙은 요청 의미를 바꾸지 않는 다음 수정에도 승인을 반복하게 합니다.
 
 - due date changes
 - email recipient changes
 
-그 결과 operator interruption, noisy history, notification volume 증가가 발생합니다.
+그 결과 담당자의 작업이 끊기고 불필요한 이력과 알림이 늘어납니다.
 
 ---
 
@@ -176,24 +178,25 @@ Any requester update
 -> preserve current routing
 ```
 
-Requester가 category, subject, body, files, images를 바꾸면 workflow가 더 이상 request와 맞지 않을 수 있습니다.
+요청자가 카테고리·제목·본문·파일·이미지를 바꾸면 기존 처리 절차가 수정된 요청과
+맞지 않을 수 있습니다.
 
-이전 request version에 대한 approval decision이 materially changed request에 조용히 적용되어서는 안 됩니다.
+이전 요청에 대한 승인을 내용이 크게 달라진 요청에 그대로 적용해서는 안 됩니다.
 
 ---
 
 ## 결정
 
-다음을 기반으로 explicit approval/work routing model을 사용하기로 했습니다.
+다음 필드를 기준으로 승인자 결정과 작업자 배정을 구분하기로 했습니다.
 
 ```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
 
-Ticket row는 current workflow phase를 책임지는 사용자만 저장합니다.
+티켓 행에는 현재 처리 단계를 담당하는 사용자만 저장합니다.
 
-Current responsibility를 설명하는 status를 사용합니다.
+현재 담당 역할을 나타내는 상태를 사용합니다.
 
 ```txt
 Draft
@@ -207,20 +210,21 @@ Resolved
 Closed
 ```
 
-Persisted `TicketStatus` union에서 `Open`과 `Approved`를 제거했습니다.
+저장하는 `TicketStatus` 유니온에서 `Open`과 `Approved`를 제거했습니다.
 
-`Open`은 필요할 때 frontend grouping 또는 search concept로만 사용합니다.
+`Open`은 필요한 경우에만 프런트엔드의 상태 그룹이나 검색 개념으로 사용합니다.
 
-Approval completion은 long-lived status가 아니라 History로 취급합니다.
+승인 완료는 오래 유지하는 상태 대신 이력으로 기록합니다.
 
-Requester-editable field를 다음으로 분류합니다.
+요청자가 수정할 수 있는 필드는 다음 두 종류로 구분합니다.
 
-- routing-neutral
-- routing-sensitive
+- routing-neutral: 현재 승인자·작업자 결정에 영향을 주지 않는 필드
+- routing-sensitive: 요청 내용이나 분류를 바꿔 담당자를 다시 결정해야 하는 필드
 
-Routing-neutral update는 current approval 또는 work assignment를 보존합니다.
+routing-neutral 수정은 현재 승인이나 작업 배정을 유지합니다.
 
-Routing-sensitive update는 category-driven routing을 처음부터 다시 시작합니다.
+routing-sensitive 수정은 카테고리 규칙에 따라 승인자 결정과 작업자 배정을 처음부터
+다시 실행합니다.
 
 ---
 
@@ -228,7 +232,7 @@ Routing-sensitive update는 category-driven routing을 처음부터 다시 시�
 
 ### 1. Approval step으로 phase를 결정함
 
-Current phase는 `tk_approval_step_id`로 결정합니다.
+현재 단계는 `tk_approval_step_id`로 결정합니다.
 
 ```txt
 tk_approval_step_id is not null
@@ -248,13 +252,13 @@ WORK phase
 -> current worker usernames
 ```
 
-Database는 별도 current approval/work assignee array를 persist하지 않습니다.
+데이터베이스에는 현재 승인자 배열과 작업자 배열을 각각 저장하지 않습니다.
 
 ---
 
 ### 2. DTO에서 phase-specific array를 project함
 
-Server mapper는 더 명확한 application-facing assignment field를 노출합니다.
+서버 변환기는 화면에서 담당 역할을 구분할 수 있도록 배정 필드를 제공합니다.
 
 개념적으로:
 
@@ -283,7 +287,8 @@ const workAssigneeUsernames =
   assignmentPhase === "WORK" ? ticket.assigneeUsernames : [];
 ```
 
-이 array들은 projection이며 별도의 persisted source of truth가 아닙니다.
+이 배열은 저장된 담당자와 현재 단계를 바탕으로 계산한 응답 값입니다. 별도로 저장해
+담당자 판단의 기준으로 사용하지 않습니다.
 
 ---
 
@@ -291,13 +296,13 @@ const workAssigneeUsernames =
 
 #### Draft
 
-Requester가 아직 ticket을 준비 중입니다.
+요청자가 티켓을 작성 중입니다.
 
-Routing은 시작되지 않았습니다.
+승인자 결정과 작업자 배정은 시작되지 않았습니다.
 
 #### Approval
 
-Ticket이 current approval step을 기다리고 있습니다.
+티켓이 현재 승인 단계의 처리를 기다립니다.
 
 ```txt
 status = Approval
@@ -307,13 +312,13 @@ assigneeUsernames = current approvers
 
 #### Declined
 
-Approver가 request를 decline했습니다.
+승인자가 요청을 반려했습니다.
 
-Allowed requester revision 또는 resubmission이 발생하기 전까지 routing은 멈춥니다.
+허용된 요청자 수정이나 재제출이 이루어질 때까지 담당자 결정은 중단합니다.
 
 #### Assigned
 
-Approval이 필요 없거나 완료되었고, worker가 resolve되었습니다.
+승인이 필요 없거나 완료되었고 작업자가 결정되었습니다.
 
 ```txt
 status = Assigned
@@ -323,31 +328,31 @@ assigneeUsernames = current workers
 
 #### Working
 
-Assigned worker가 명시적으로 work를 시작했습니다.
+배정된 작업자가 작업 시작을 명시적으로 실행했습니다.
 
-Ticket을 읽는 것만으로 `Working`으로 이동하지 않습니다.
+티켓을 읽는 것만으로 `Working`으로 전환하지 않습니다.
 
 #### Pending
 
-Work가 일시 중지되었거나 waiting 상태입니다.
+작업이 일시 중지되었거나 대기 중입니다.
 
 #### Rejected
 
-Ticket이 현재 형태로는 실행 불가능하다고 reject되었습니다.
+현재 요청 내용으로는 작업할 수 없다고 거부된 티켓입니다.
 
 #### Resolved
 
-Work가 완료되었고 close/review policy를 기다립니다.
+작업이 완료되었고 종료·검토 정책에 따른 처리를 기다립니다.
 
 #### Closed
 
-Lifecycle이 close되었고 normal mutation이 차단됩니다.
+티켓 수명 주기가 끝났으며 일반적인 변경은 차단합니다.
 
 ---
 
 ### 4. Submission 시 initial routing을 resolve함
 
-Draft 또는 new request가 submit되면 server가 다음 workflow phase를 resolve합니다.
+초안이나 새 요청을 제출하면 서버가 다음 처리 단계를 결정합니다.
 
 ```txt
 Submit ticket
@@ -362,7 +367,8 @@ Submit ticket
      assigneeUsernames = workers
 ```
 
-REMOTE implementation은 database function 또는 repository 같은 세부 구현을 server routing boundary 뒤에 둘 수 있습니다.
+REMOTE에서는 데이터베이스 함수나 저장소 같은 세부 구현을 서버의 담당자 결정
+로직 안에 둘 수 있습니다.
 
 ```txt
 get_next_approval_step(...)
@@ -370,7 +376,7 @@ get_approval_step_assignee_usernames(...)
 get_category_assignment_usernames(...)
 ```
 
-UI는 이 function을 직접 호출하지 않습니다.
+UI는 이 함수를 직접 호출하지 않습니다.
 
 ---
 
@@ -401,7 +407,7 @@ approvalStepId = null
 assigneeUsernames = resolved workers
 ```
 
-Final approval은 immutable history에 남습니다.
+최종 승인은 변경할 수 없는 이력에 남깁니다.
 
 ---
 
@@ -424,17 +430,17 @@ assigneeUsernames = []
 - decline event
 - timestamp
 
-Ticket은 자동으로 work assignment로 진행되지 않습니다.
+티켓을 작업자 배정 단계로 자동 진행하지 않습니다.
 
 ---
 
 ### 7. Requester update permission과 routing effect를 분리함
 
-이 정책은 authorization이 성공한 뒤의 requester update effect를 정의합니다.
+이 정책은 권한 검증 후 요청자 수정이 담당자 결정에 미치는 영향을 정의합니다.
 
-Routing policy 자체가 update permission을 부여하지 않습니다.
+담당자 결정 정책 자체가 수정 권한을 부여하지는 않습니다.
 
-Permission check는 ticket operation rule에 남습니다.
+수정 권한은 티켓 운영 규칙에서 검증합니다.
 
 Server는 다음을 validate해야 합니다.
 
@@ -445,7 +451,7 @@ Server는 다음을 validate해야 합니다.
 - editable field scope
 - impersonation restrictions where relevant
 
-Authorization이 성공한 뒤에만 routing policy를 실행합니다.
+권한 검증을 통과한 뒤에만 담당자 결정 정책을 적용합니다.
 
 ---
 
@@ -466,9 +472,9 @@ Due-date-only update는 다음을 바꾸지 않습니다.
 - assigned workers
 - request content
 
-Email metadata는 requester-configured additional recipient를 나타냅니다.
+이메일 메타데이터는 요청자가 설정한 추가 수신자입니다.
 
-Approver나 worker를 결정하지 않습니다.
+승인자나 작업자를 결정하는 데 사용하지 않습니다.
 
 따라서 이 변경들은 다음을 보존합니다.
 
@@ -482,7 +488,7 @@ assigneeUsernames
 
 ### 9. Request meaning field는 routing-sensitive로 취급함
 
-다음 field의 normalized persisted value가 변경되면 routing을 다시 시작합니다.
+다음 필드의 형식을 정리한 저장 값이 변경되면 담당자 결정을 다시 시작합니다.
 
 ```txt
 category
@@ -501,17 +507,17 @@ Category는 다음을 바꿀 수 있습니다.
 - default risk level
 - responsible organization
 
-Subject, body, files, images는 요청 내용 자체를 material하게 바꿀 수 있습니다.
+제목·본문·파일·이미지는 요청 내용 자체를 크게 바꿀 수 있습니다.
 
-따라서 approval과 assignment를 다시 계산해야 합니다.
+따라서 승인자 결정과 작업자 배정을 다시 계산해야 합니다.
 
 ---
 
 ### 10. 실제 변경이 있을 때만 recalculate함
 
-Routing-sensitive recalculation에는 persisted value change가 필요합니다.
+담당자를 다시 계산하려면 routing-sensitive 필드의 저장 값이 실제로 달라져야 합니다.
 
-Update payload에 field가 존재한다는 사실만으로는 충분하지 않습니다.
+수정 요청에 해당 필드가 포함되어 있다는 사실만으로는 다시 계산하지 않습니다.
 
 개념적으로:
 
@@ -571,32 +577,32 @@ Update request content
 -> restart category-driven routing
 ```
 
-Server는 다음을 수행합니다.
+서버는 다음 순서로 처리합니다.
 
-1. update permission validate
-2. next value prepare 및 validate
-3. routing-sensitive change detect
-4. current approval context reset
-5. approval을 처음부터 resolve
-6. approval이 필요 없으면 work assignment resolve
-7. ticket과 routing state persist
-8. reset을 설명하는 history 생성
+1. 수정 권한 검증
+2. 변경 후 값 준비와 검증
+3. routing-sensitive 필드의 실제 변경 확인
+4. 현재 승인 정보 초기화
+5. 승인자 결정을 처음부터 다시 실행
+6. 승인이 필요 없으면 작업 담당자 결정
+7. 티켓과 담당자 결정 결과 저장
+8. 초기화 이유를 설명하는 이력 생성
 
-Previous approval progress는 history에 보존되고 재사용되지 않습니다.
+이전 승인 진행 내용은 이력에 보존하며 새 승인에 재사용하지 않습니다.
 
 ---
 
 ### 13. Category 변경 시 category default를 적용함
 
-Category가 변경되면 category-driven default value를 다시 평가합니다.
+카테고리가 바뀌면 해당 카테고리의 기본값을 다시 평가합니다.
 
 - default priority
 - default risk level
 - minimum SLA-based due date
 
-가능한 경우 new category snapshot에서 가져옵니다.
+값이 있으면 새 카테고리에서 가져옵니다.
 
-이는 old category에서 상속된 value가 new-category default로 오해되는 것을 방지합니다.
+이렇게 하면 이전 카테고리에서 가져온 값을 새 카테고리 기본값으로 오해하지 않습니다.
 
 Requester-facing due date에 대한 정책은 다음과 같습니다.
 
@@ -606,7 +612,8 @@ nextDueAt = later of:
 - new category minimum due date
 ```
 
-이렇게 하면 updated ticket이 new category의 minimum SLA expectation을 위반하지 않으면서 불필요하게 deadline을 앞당기지 않습니다.
+이 규칙은 새 카테고리의 SLA 기준 최소 기한을 지키면서 기존 요청 기한을 불필요하게
+앞당기지 않습니다.
 
 Future SLA model은 다음을 분리할 수 있습니다.
 
@@ -621,7 +628,7 @@ Future SLA model은 다음을 분리할 수 있습니다.
 
 ### 14. Server를 routing authority로 유지함
 
-UI는 predicted warning을 표시할 수 있지만 다음을 결정할 수 없습니다.
+UI는 예상한 영향을 경고로 표시할 수 있지만 다음을 결정할 수 없습니다.
 
 - routing-sensitive value가 변경되었는지
 - 어떤 approval step이 적용되는지
@@ -643,7 +650,7 @@ UpdateTicketDialog
 -> response DTO
 ```
 
-Client는 다음과 같은 trusted routing result를 requester-controlled decision으로 보내면 안 됩니다.
+클라이언트는 다음과 같은 담당자 결정 결과를 요청자가 직접 정한 값으로 보내면 안 됩니다.
 
 ```ts
 {
@@ -657,7 +664,7 @@ Client는 다음과 같은 trusted routing result를 requester-controlled decisi
 
 ### 15. Routing effect를 history에 기록함
 
-모든 requester update는 effect에 맞는 history를 만듭니다.
+모든 요청자 수정은 처리 결과에 맞는 이력을 만듭니다.
 
 Routing-neutral update:
 
@@ -686,13 +693,13 @@ History metadata는 다음을 포함할 수 있습니다.
 
 ### 16. Notification은 ticket email settings와 분리함
 
-Routing-neutral update는 ticket이 edit되었다는 이유만으로 새 approval 또는 assignment notification을 만들면 안 됩니다.
+routing-neutral 수정은 티켓이 수정되었다는 이유만으로 승인·배정 알림을 새로 만들지 않습니다.
 
-Routing-sensitive update는 notification delivery가 구현되었을 때 새 approval 또는 assignment notification을 trigger할 수 있습니다.
+routing-sensitive 수정은 알림 전달 기능을 구현한 뒤 새 승인·배정 알림을 발생시킬 수 있습니다.
 
-Ticket email recipient는 requester-configured metadata로 유지합니다.
+티켓 이메일 수신자는 요청자가 설정한 메타데이터로 유지합니다.
 
-Approver와 worker email address는 notification time에 server가 resolve해야 합니다.
+승인자와 작업자의 이메일 주소는 알림을 보낼 때 서버가 결정해야 합니다.
 
 ---
 
@@ -708,11 +715,11 @@ Routing-sensitive update
 -> recalculate from category rules
 ```
 
-LOCAL은 simplified demo resolver를 사용할 수 있습니다.
+LOCAL은 단순화한 데모용 담당자 결정 로직을 사용할 수 있습니다.
 
-REMOTE는 database-backed category, approval, assignment resolution을 사용합니다.
+REMOTE는 데이터베이스의 카테고리·승인·배정 설정을 사용합니다.
 
-DTO shape는 UI에 대해 동일하게 유지됩니다.
+UI에 제공하는 DTO 형식은 같게 유지합니다.
 
 ---
 
@@ -779,7 +786,7 @@ Routing effect는 `ROUTING_PRESERVED`와 `ROUTING_RESET` history event로 audit 
 
 - `Open` 또는 `Approved`를 persisted status로 다시 도입하지 않습니다.
 - `Open`은 필요할 때만 UI grouping으로 유지합니다.
-- `tk_approval_step_id`와 `tk_assignee_usernames`를 current routing source of truth로 유지합니다.
+- `tk_approval_step_id`와 `tk_assignee_usernames`를 현재 단계와 담당자 판단의 기준으로 유지합니다.
 - 새 requester-editable field는 routing-neutral 또는 routing-sensitive로 분류합니다.
 - 더 좁은 규칙이 문서화되지 않는 한 category, subject, body, files, images는 routing-sensitive로 유지합니다.
 - Product policy가 바뀌지 않는 한 due date와 email은 routing-neutral로 유지합니다.
@@ -826,4 +833,5 @@ category, subject, body, files, or images changed
 -> reset routing from category rules
 ```
 
-이 설계는 request meaning이 바뀔 때 category-driven workflow를 엄격하게 유지하면서, 운영상 harmless한 edit에 대해서는 불필요한 approval/assignment reset을 피합니다.
+이 설계는 요청 의미가 바뀌면 카테고리 규칙에 따라 승인·배정을 다시 실행합니다.
+요청 의미를 바꾸지 않는 수정에는 불필요한 승인·배정 초기화를 적용하지 않습니다.

@@ -21,9 +21,9 @@ Client -> MainCategory -> SubCategory
 
 하지만 구현과 티켓 워크플로 통합 과정에서 다음과 같은 실질적인 질문이 생겼습니다.
 
-- category가 얼마나 엄격하게 source of truth 역할을 해야 하는가
+- 티켓 동작을 판단할 때 category 설정을 어느 정도까지 기준으로 삼을 것인가
 - 티켓 레벨에서 어느 정도의 유연성을 허용해야 하는가
-- 설정 기반 동작과 런타임 재정의를 어떻게 균형 있게 가져갈 것인가
+- 설정에서 정한 기본 동작과 실행 중 티켓별 재정의를 어떻게 함께 적용할 것인가
 
 ---
 
@@ -34,7 +34,7 @@ Client -> MainCategory -> SubCategory
 - 할당, SLA, 승인, 우선순위, 위험도는 모두 category에서 파생됩니다
 - 이는 강한 **category-driven 시스템**을 만듭니다
 
-하지만:
+다만 모델의 엄격함에 따라 다음 문제가 생깁니다.
 
 - 모델이 너무 엄격하면 현실적인 예외를 처리하기 어렵습니다
 - 모델이 너무 유연하면 시스템 일관성이 무너집니다
@@ -111,7 +111,7 @@ Ticket = 제어된 override 계층
 
 ### 2. Override는 허용하되, 통제되어야 한다
 
-티켓 레벨 override는 다음 조건을 만족할 때만 허용합니다.
+티켓별로 기본값을 재정의하는 override는 다음 조건을 만족할 때만 허용합니다.
 
 - 비즈니스 로직상 명시적으로 필요해야 합니다
 - UI에 드러나야 합니다
@@ -133,7 +133,7 @@ Category 계층 구조 자체는 바뀌지 않습니다.
 SubCategory > MainCategory
 ```
 
-여기에 티켓 레벨 override가 도입되면 최종 해석 순서는 다음과 같습니다.
+티켓별 override를 도입하면 최종 값은 다음 우선순위에 따라 결정합니다.
 
 ```txt
 Ticket > SubCategory > MainCategory
@@ -148,7 +148,7 @@ Ticket > SubCategory > MainCategory
 - 히스토리에 기록되어야 합니다
 - 수행자(actor)와 사유(reason)를 포함해야 합니다
 
-이렇게 해야 override 동작이 암묵적이지 않고 감사 가능하게 유지됩니다.
+이 기록으로 누가 어떤 이유로 기본값을 바꿨는지 확인할 수 있어야 합니다.
 
 ---
 
@@ -243,7 +243,7 @@ Ticket > SubCategory > MainCategory
 ### UI/UX에 대한 영향
 
 - 기본값과 override된 값은 명확히 구분되어야 합니다
-- 폼과 상세 화면은 override 상태를 의도적으로 드러내야 합니다
+- 폼과 상세 화면에 override 적용 여부가 드러나야 합니다
 
 ---
 

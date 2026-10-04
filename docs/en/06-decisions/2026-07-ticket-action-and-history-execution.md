@@ -26,7 +26,7 @@ That model allowed the system to represent ticket interactions such as:
 - `MERGE`
 - `CANCEL`
 
-The earlier action decision explained why actions should exist as first-class domain entities.
+The earlier decision explained why actions should be separate domain entities.
 
 The July 2026 work needed to define how actions actually execute against PostgreSQL-backed tickets.
 
@@ -147,7 +147,7 @@ type = APPROVAL
 
 That made filtering, display, and validation ambiguous.
 
-The model needed one first-class semantic event field.
+The model needed one explicit field to identify what happened.
 
 ---
 
@@ -253,7 +253,7 @@ Ticket History
 
 remain consistent.
 
-Use `tkh_event` as the authoritative History event field.
+Determine the History event from `tkh_event`.
 
 Do not use `metadata.event` as the primary event.
 
@@ -286,7 +286,7 @@ The Route Handler is responsible for:
 - delegating to the command layer
 - returning mapped DTOs
 
-It should not own ticket mutation or history rules directly.
+It should not handle ticket mutations or history rules directly.
 
 ---
 
@@ -507,7 +507,7 @@ History metadata may include display and audit context:
 - routing reset details
 - action-specific reason context
 
-Metadata must not become a second authoritative event system.
+Metadata must not become a separate basis for determining the event.
 
 The row-level `tkh_event` remains the required event.
 
@@ -533,7 +533,7 @@ Examples:
 }
 ```
 
-History granularity should follow meaningful domain effects, not raw database column count.
+History should record meaningful domain changes rather than one record per database column.
 
 ---
 

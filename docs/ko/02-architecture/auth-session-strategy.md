@@ -7,10 +7,10 @@
 목표는 다음과 같습니다.
 
 - 인증을 **NextAuth JWT 전략**에 맞게 유지합니다
-- **인증 정체성**과 **애플리케이션 사용자 모델**을 분리합니다
+- **인증에 사용하는 사용자 정보**와 **애플리케이션 사용자 모델**을 분리합니다
 - **LOCAL**과 **REMOTE** 런타임 모드를 모두 지원합니다
-- 인증된 사용자 컨텍스트에 대해 일관된 클라이언트 접근 패턴을 제공합니다
-- 세션 데이터를 전체 도메인 모델로 비대하게 만들지 않으면서 impersonation을 지원합니다
+- 클라이언트가 인증된 사용자 정보에 일관된 방식으로 접근하게 합니다
+- 세션에 전체 도메인 모델을 담지 않으면서 impersonation(다른 사용자로 동작하기)을 지원합니다
 
 ---
 
@@ -26,7 +26,7 @@ Zustand = frontend runtime cache and facade
 중요한 경계는 다음과 같습니다.
 
 > **Session은 전체 사용자 도메인 모델이 아닙니다.**
-> Session은 안정적인 인증 컨텍스트를 제공하고, `AppUser`는 별도로 해석됩니다.
+> Session은 인증 정보와 접근 범위를 전달하고, UI에 필요한 `AppUser`는 별도로 구성합니다.
 
 ---
 
@@ -51,7 +51,8 @@ Zustand = frontend runtime cache and facade
 
 ### 1. `AuthUser`
 
-`AuthUser`는 로그인 후 반환되어 JWT에 저장되는, 서버가 신뢰하는 identity payload입니다.
+`AuthUser`는 로그인 후 반환되어 JWT에 저장되는 사용자 인증 정보이며, 서버가 이를
+기준으로 사용자를 확인합니다.
 
 ```ts
 type AuthUser = {
@@ -73,8 +74,8 @@ type AuthUser = {
 
 - 인증 중심 모델입니다
 - 요청 간 안정적으로 유지됩니다
-- 권한 관련 identity field를 포함합니다
-- `accessToken`을 포함하며, 이 값은 JWT와 서버 측 auth flow에만 남습니다
+- 사용자 식별과 권한 판단에 필요한 필드를 포함합니다
+- `accessToken`을 포함하며, 이 값은 JWT와 서버 측 인증 처리에만 남습니다
 
 ---
 
@@ -86,19 +87,20 @@ NextAuth session은 다음 형태를 노출합니다.
 type SessionUser = Omit<AuthUser, "accessToken">;
 ```
 
-이 점은 중요한 구현 세부사항입니다.
+세션에 제공하는 정보의 범위는 다음과 같습니다.
 
-- session은 identity와 access context를 유지합니다
-- session은 `accessToken`을 노출하지 않습니다
-- session은 추가로 `impersonation` metadata를 담을 수 있습니다
+- 세션은 사용자 식별 정보와 접근 범위를 유지합니다
+- 세션은 `accessToken`을 노출하지 않습니다
+- 세션은 추가로 `impersonation` 정보를 담을 수 있습니다
 
-즉 session은 단순히 "id만 있는 구조"는 아니지만, 여전히 전체 application user model보다 의도적으로 더 작게 유지됩니다.
+세션에는 ID 외에도 인증과 접근에 필요한 정보가 있습니다. 다만 전체 애플리케이션
+사용자 모델보다 작은 범위로 유지합니다.
 
 ---
 
 ### 3. `AppUser`
 
-`AppUser`는 UI가 사용하는 application-facing 사용자 모델입니다.
+`AppUser`는 UI가 사용하는 애플리케이션 사용자 모델입니다.
 
 ```ts
 type AppUser = {
@@ -121,7 +123,7 @@ type AppUser = {
 `AuthUser`와 비교하면 `AppUser`는 다음 성격을 가집니다.
 
 - UI 중심 모델입니다
-- 서버/profile 데이터를 통해 enrichment됩니다
+- 서버의 프로필 데이터로 필요한 정보를 보완합니다
 - 애플리케이션 관점의 요구에 맞춰 확장될 수 있습니다
 
 ---
@@ -132,15 +134,15 @@ type AppUser = {
 
 | Model         | Responsibility                   |
 | ------------- | -------------------------------- |
-| `AuthUser`    | 인증과 신뢰 가능한 identity      |
-| `SessionUser` | session-safe identity projection |
-| `AppUser`     | UI와 application behavior        |
+| `AuthUser`    | 인증과 서버가 신뢰하는 사용자 정보 |
+| `SessionUser` | 세션에 노출할 수 있는 인증 정보 |
+| `AppUser`     | UI 표시와 애플리케이션 동작 |
 
 두 모델을 분리하면 다음과 같은 흔한 문제를 피할 수 있습니다.
 
-- JWT/session에 domain field가 과도하게 들어가는 문제
-- 런타임 UI 관심사를 authentication state와 뒤섞는 문제
-- session 변경이 지나치게 비싸거나 취약해지는 문제
+- JWT와 세션에 도메인 필드가 과도하게 들어가는 문제
+- UI에서 관리하는 상태와 인증 상태가 섞이는 문제
+- 세션 변경 비용이 커지거나 변경에 취약해지는 문제
 
 ---
 
@@ -150,17 +152,17 @@ type AppUser = {
 
 프로젝트는 `CredentialsProvider`를 사용합니다.
 
-`authorize()`는 다음 경로 중 하나로 `AuthUser`를 해석합니다.
+`authorize()`는 다음 경로 중 하나로 `AuthUser`를 구성합니다.
 
-- internal 및 client demo identity를 모두 검색하는 통합 LOCAL demo resolver
+- 내부 및 클라이언트 데모 계정을 모두 검색하는 통합 LOCAL 데모 사용자 조회 함수
   (`resolveDemoAuth`)
-- 또는 REMOTE API login (`/auth/login`)
+- 또는 REMOTE 로그인 API (`/auth/login`)
 
 ---
 
 ### 2. JWT Callback
 
-sign-in 시 `jwt` callback은 다음 신뢰 가능한 auth field를 token에 저장합니다.
+로그인 시 `jwt` 콜백은 다음 인증 필드를 토큰에 저장합니다.
 
 - `id`
 - `username`
@@ -173,13 +175,13 @@ sign-in 시 `jwt` callback은 다음 신뢰 가능한 auth field를 token에 저
 - `permission`
 - `role`
 
-JWT는 session lifecycle 동안 지속되는 인증의 기준 소스입니다.
+세션이 유지되는 동안 인증 판단의 기준은 JWT에 저장된 정보입니다.
 
 ---
 
 ### 3. Session Callback
 
-`session` callback은 JWT로부터 session object를 파생합니다.
+`session` 콜백은 JWT의 값으로 세션 객체를 구성합니다.
 
 ```ts
 session.user = {
@@ -195,7 +197,7 @@ session.user = {
 };
 ```
 
-impersonation이 활성화되어 있다면 callback은 추가로 다음을 노출합니다.
+impersonation이 활성화되어 있으면 콜백은 추가로 다음 정보를 노출합니다.
 
 ```ts
 session.impersonation = {
@@ -214,9 +216,9 @@ session.impersonation = {
 
 ## AppUser 해석 전략
 
-전체 application user data는 JWT/session contract의 일부로 취급하지 않습니다.
+JWT와 세션에 전달하는 정보에는 전체 애플리케이션 사용자 데이터를 포함하지 않습니다.
 
-대신 애플리케이션은 `AppUser`를 별도로 해석합니다.
+애플리케이션은 `AppUser`를 별도로 구성합니다.
 
 ### Server-Side Resolution
 
@@ -232,24 +234,25 @@ getServerSession()
 
 현재 구현은 다음과 같습니다.
 
-- auth identity를 base `AppUser`로 매핑합니다
-- 서버 enhancer를 통해 enrichment합니다
-- 현재는 `withProfile`을 연결하고 있습니다
+- 인증 정보로 기본 `AppUser`를 구성합니다
+- 서버의 보완 함수(enhancer)로 정보를 추가합니다
+- 현재는 프로필을 추가하는 `withProfile`을 연결합니다
 
-이 방식은 authentication을 안정적으로 유지하면서도 application user model이 독립적으로 확장되게 해줍니다.
+따라서 인증 정보의 형식을 유지하면서 애플리케이션 사용자 모델을 독립적으로 확장할 수 있습니다.
 
 ---
 
 ### API Surface
 
-UI는 다음 API를 통해 user profile data에 접근합니다.
+UI는 다음 API로 사용자 프로필 데이터를 조회합니다.
 
 ```txt
 GET /api/users/me/profile
 GET /api/users/[userId]/profile
 ```
 
-이 API들은 session을 profile container로 만들지 않으면서 현재 사용자 혹은 대상 application user를 해석합니다.
+이 API들은 현재 사용자 또는 대상 사용자의 프로필을 구성해 반환합니다. 세션에
+전체 프로필을 담을 필요가 없습니다.
 
 ---
 
@@ -259,10 +262,10 @@ GET /api/users/[userId]/profile
 
 현재 프론트엔드 아키텍처에서는 `useSession()`만으로는 충분하지 않습니다. 이유는 다음과 같습니다.
 
-- NextAuth session projection만 노출합니다
-- React hook consumer에서만 사용할 수 있습니다
-- UI는 enrichment된 `AppUser` data를 필요로 합니다
-- impersonation은 추가적인 런타임 레이어를 도입합니다
+- NextAuth 세션에 포함된 정보만 노출합니다
+- React 훅을 사용할 수 있는 곳에서만 접근할 수 있습니다
+- UI에는 프로필 정보가 보완된 `AppUser`가 필요합니다
+- impersonation에서는 원래 사용자와 현재 사용자를 추가로 관리해야 합니다
 
 ---
 
@@ -281,7 +284,7 @@ NextAuth session
 
 ### `useCurrentSession()`
 
-`useCurrentSession()`은 프론트엔드의 주요 session facade 역할을 합니다.
+`useCurrentSession()`은 프론트엔드가 세션 정보에 접근하는 공통 창구입니다.
 
 이 훅은 다음을 결합합니다.
 
@@ -290,7 +293,7 @@ NextAuth session
 - Zustand `authSessionStore`
 - Zustand `impersonationStore`
 
-목적은 page와 component에 안정적인 UI 지향 session object를 제공하는 것입니다.
+페이지와 컴포넌트에는 UI에 필요한 정보를 모은 세션 객체를 제공합니다.
 
 ```ts
 type CurrentSession = {
@@ -307,16 +310,16 @@ type CurrentSession = {
 };
 ```
 
-실제로 protected UI가 소비하는 것은 이 객체입니다.
+인증이 필요한 UI는 이 객체를 사용합니다.
 
-impersonation 중 `CurrentSession.user`는 항상 effective user를 나타냅니다.
+impersonation 중 `CurrentSession.user`는 항상 대신 동작할 대상인 현재 사용자를 나타냅니다.
 
 ```txt
 impersonated AppUser ?? original logged-in AppUser
 ```
 
 `useCurrentSession()`은 auth/session 작업을 위해 기반 NextAuth 결과도 함께
-노출합니다. 두 사용자 projection의 의미는 의도적으로 다릅니다.
+노출합니다. 원래 인증된 사용자와 UI에서 사용하는 현재 사용자는 아래처럼 구분합니다.
 
 ```ts
 const session = useCurrentSession();
@@ -329,20 +332,21 @@ session.current.user; // UI가 사용하는 effective AppUser
 
 ### `authSessionStore`
 
-`authSessionStore`는 `CurrentSession`을 위한 client-side runtime cache입니다.
+`authSessionStore`는 클라이언트에서 `CurrentSession`을 보관하는 실행 중 캐시입니다.
 
 용도는 다음과 같습니다.
 
 - 현재 `AppUser`를 보관합니다
-- `sessionStorage`에서 hydrate합니다
-- UI 중심 session data에 대해 안정적인 update 경로를 제공합니다
-- sign-out 시 캐시된 데이터를 정리합니다
+- `sessionStorage`에서 저장된 값을 복원합니다
+- UI가 사용하는 세션 데이터를 공통 경로로 갱신합니다
+- 로그아웃 시 캐시된 데이터를 정리합니다
 
 중요한 제한:
 
-> 또한 server/session 기반 impersonation 제어를 대체하지 않습니다.
+> `authSessionStore`는 인증 판단의 기준이 아니라 프론트엔드 캐시입니다.
+> 서버와 세션에서 수행하는 impersonation 제어를 대체하지 않습니다.
 
-신뢰 가능한 기준 소스는 여전히 JWT 기반 NextAuth auth flow입니다.
+인증 판단의 기준은 여전히 JWT를 사용하는 NextAuth 인증 처리입니다.
 
 ---
 
@@ -356,17 +360,18 @@ Prefer server state over client state whenever possible
 
 이 전략은 여전히 그 원칙을 따릅니다. 이유는 다음과 같습니다.
 
-- authentication truth는 JWT/session에 남습니다
-- `AppUser`는 여전히 서버/API 해석 결과에서 옵니다
-- Zustand는 프론트엔드 shell에 필요한 runtime shape만 캐시합니다
+- 인증 판단에 필요한 정보는 JWT와 세션에 남습니다
+- `AppUser`는 서버와 API가 구성한 결과를 사용합니다
+- Zustand는 프론트엔드 셸에 필요한 실행 중 상태만 캐시합니다
 
-즉 이것은 대체 auth source가 아니라, **runtime user-context cache**입니다.
+Zustand의 역할은 **실행 중 사용자 정보를 보관하는 캐시**입니다.
 
 ---
 
 ## 보호 영역의 부트스트랩 흐름
 
-protected shell은 `useCurrentSession()`에 의존하며, `AppUser`가 준비될 때까지 기다립니다.
+인증이 필요한 화면의 셸은 `useCurrentSession()`을 사용하며, `AppUser`가 준비될
+때까지 기다립니다.
 
 런타임 흐름은 다음과 같습니다.
 
@@ -379,17 +384,17 @@ User authenticated
 -> AppUserBootstrap syncs originalUser into impersonation store
 ```
 
-이 흐름을 통해 feature page가 렌더링되기 전에 protected app의 layout-level user context를 안정적으로 준비합니다.
+이 흐름으로 기능 페이지를 렌더링하기 전에 레이아웃에서 사용할 사용자 정보를 준비합니다.
 
 ---
 
 ## Impersonation 통합
 
-impersonation은 auth/session architecture의 일부로 지원됩니다.
+impersonation은 인증·세션 구조에 통합되어 있습니다.
 
 ### Session-Level Shape
 
-NextAuth session은 최소한의 impersonation metadata만 담습니다.
+NextAuth 세션에는 impersonation에 필요한 최소한의 정보만 담습니다.
 
 ```ts
 type OriginalUserInfo = {
@@ -408,7 +413,7 @@ type ImpersonationInfo = {
 };
 ```
 
-이렇게 하면 session mutation을 작고 audit 가능하게 유지할 수 있습니다.
+세션에서 변경하는 값을 줄이고, 누가 언제 impersonation을 시작했는지 추적할 수 있습니다.
 
 ---
 
@@ -443,7 +448,7 @@ startImpersonation(impersonatedUsername)
 -> currentUser switches in UI
 ```
 
-impersonation을 종료하면 반대 흐름을 수행하며 session의 impersonation metadata를 정리합니다.
+impersonation을 종료하면 반대 순서로 처리하며 세션의 impersonation 정보를 정리합니다.
 
 ---
 
@@ -469,29 +474,29 @@ API와 JWT 갱신 콜백은 같은 서버 정책을 사용합니다. 콜백은 �
 
 `src/proxy.ts`는 다음을 수행합니다.
 
-- public/static/API 트래픽은 무시합니다
+- 공개 페이지, 정적 파일, API 요청은 건너뜁니다
 - `getToken()`으로 JWT를 읽습니다
-- 인증되지 않은 접근을 login page로 redirect합니다
+- 인증되지 않은 접근은 로그인 페이지로 이동시킵니다
 
-현재 caveat:
+현재 제한:
 
-- proxy는 중첩 route를 포함한 보호 대상 HTML document navigation을 가드합니다
-- 모든 client-side transition의 유일한 보호 메커니즘으로 설명되지는 않습니다
+- Proxy는 중첩 라우트를 포함해 인증이 필요한 HTML 문서로의 이동을 보호합니다
+- 클라이언트의 모든 화면 이동을 Proxy 하나로 보호한다고 보장하지는 않습니다
 
-API route는 각자의 server boundary에서 요청을 authorize합니다. Next.js 16
-migration 이후 proxy가 기존 `middleware.ts` entry를 대체합니다.
+API 라우트는 각 서버 처리 지점에서 요청 권한을 확인합니다. Next.js 16으로
+마이그레이션한 뒤 Proxy가 기존 `middleware.ts` 진입점을 대체합니다.
 
 ---
 
 ### 2. Protected Shell
 
-`ProtectedShell`은 app layer에서 런타임 보호를 추가합니다.
+`ProtectedShell`은 애플리케이션 계층에서 실행 중 접근을 추가로 보호합니다.
 
-- session loading을 기다립니다
-- 인증되지 않은 사용자를 `/login`으로 redirect합니다
+- 세션 로딩을 기다립니다
+- 인증되지 않은 사용자를 `/login`으로 이동시킵니다
 - `CurrentSession.user`가 준비될 때까지 렌더링을 막습니다
 
-즉 UI는 auth state와 해석된 `AppUser`의 존재를 기준으로 함께 보호됩니다.
+UI는 인증 상태와 구성된 `AppUser`가 있는지를 함께 확인합니다.
 
 ---
 
@@ -510,7 +515,7 @@ auth model은 두 런타임 모드를 지원합니다.
 - API를 통한 backend login
 - backend endpoint에서 profile resolution
 
-같은 auth/session architecture가 공통 `AuthUser` contract를 통해 두 모드를 모두 지원합니다.
+두 모드는 같은 `AuthUser` 형식과 인증·세션 구조를 사용합니다.
 
 ---
 
@@ -545,13 +550,14 @@ auth model은 두 런타임 모드를 지원합니다.
 
 ### Separate Preference Runtime
 
-preference는 `useCurrentPreference()`와 `PreferenceBootstrap`을 통한 별도 bootstrap/store 흐름으로 의도적으로 분리됩니다.
+사용자 환경 설정은 `useCurrentPreference()`와 `PreferenceBootstrap`을 통해
+인증과 별도로 초기화하고 저장소에 반영합니다.
 
 즉 다음을 의미합니다.
 
-- preference는 authentication state가 아닙니다
-- preference는 session contract의 일부가 아닙니다
-- preference hydration은 auth/session에 내장되지 않고 병렬로 수행됩니다
+- 사용자 환경 설정은 인증 상태가 아닙니다
+- 사용자 환경 설정은 세션 데이터에 포함하지 않습니다
+- 환경 설정 복원은 인증·세션 처리와 별도로 병렬 수행합니다
 
 ---
 
@@ -559,23 +565,23 @@ preference는 `useCurrentPreference()`와 `PreferenceBootstrap`을 통한 별도
 
 ### 1. JWT Is the Trust Boundary
 
-- JWT는 신뢰 가능한 authentication payload입니다
-- Session은 JWT로부터 파생됩니다
-- Zustand는 authoritative source가 아닙니다
+- JWT는 서버가 신뢰하는 인증 정보입니다
+- 세션은 JWT의 값으로 구성합니다
+- Zustand의 값은 인증 판단의 기준이 아닙니다
 
 ---
 
 ### 2. No `localStorage` JWT Pattern
 
 - JWT는 `localStorage`에 저장하지 않습니다
-- auth는 NextAuth의 JWT cookie handling에 의존합니다
+- 인증은 NextAuth의 JWT 쿠키 처리를 사용합니다
 
 ---
 
 ### 3. Client Stores Are Runtime Helpers Only
 
 - `authSessionStore`와 `impersonationStore`는 런타임 사용성을 개선합니다
-- 서버 검증은 여전히 JWT/session 기반 auth context를 사용해야 합니다
+- 서버는 JWT와 세션에서 확인한 인증 정보로 검증해야 합니다
 
 ---
 
@@ -600,15 +606,15 @@ preference는 `useCurrentPreference()`와 `PreferenceBootstrap`을 통한 별도
 
 ### Cons
 
-- 단순한 `useSession()`보다 moving part가 많습니다
-- query 결과와 client store 사이의 synchronization이 필요합니다
-- session은 작게 유지하고 AppUser enrichment는 명시적으로 하려는 규율이 필요합니다
+- `useSession()`만 사용하는 방식보다 구성 요소가 많습니다
+- 쿼리 결과와 클라이언트 저장소 사이의 동기화가 필요합니다
+- 세션의 범위를 작게 유지하고 `AppUser` 보완은 별도로 처리해야 합니다
 
 ---
 
 ## 요약
 
-`sunghwan-portal`의 auth/session architecture는 네 개의 레이어를 중심으로 구성됩니다.
+`sunghwan-portal`의 인증·세션 구조는 다음 네 계층으로 구성합니다.
 
 ```txt
 NextAuth JWT
@@ -619,10 +625,10 @@ NextAuth JWT
 
 이 구조는 프로젝트에 다음을 제공합니다.
 
-- 안정적인 인증 코어
-- 분리된 application user model
-- 예측 가능한 protected-shell 동작
-- impersonation과 user-aware UI를 위한 실용적인 클라이언트 런타임 모델
+- 안정적인 인증 처리
+- 별도로 구성하는 애플리케이션 사용자 모델
+- 인증이 필요한 화면의 예측 가능한 셸 동작
+- impersonation과 사용자별 UI를 지원하는 클라이언트 실행 중 상태
 
 요약하면:
 

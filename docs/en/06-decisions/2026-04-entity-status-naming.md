@@ -12,7 +12,7 @@ The naming candidates initially considered were:
 - a dedicated `disabled` boolean flag
 
 At first, these options looked interchangeable.
-During implementation, however, it became clear that they represent different layers of meaning.
+Implementation showed that the names distinguish domain availability from UI interactivity.
 
 ---
 

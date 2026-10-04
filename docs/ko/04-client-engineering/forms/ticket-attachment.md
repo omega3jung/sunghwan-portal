@@ -2,18 +2,17 @@
 
 ## 목표
 
-티켓 첨부는 요청자와 운영자가 티켓 워크플로에 보조 파일과 rich-text 이미지를
-추가할 수 있게 합니다. 동시에 현재 데모가 raw binary file을 production-grade
-object storage에 저장하는 것처럼 보이게 만들지 않습니다.
+티켓 첨부는 요청자와 운영자가 업무에 필요한 파일과 본문 이미지를 추가하게 합니다.
+현재 데모는 첨부 정보를 저장하고 지정된 데모 파일을 보여줍니다. 실제 파일을 운영
+환경용 객체 저장소에 저장하는 기능은 제공하지 않습니다.
 
 첨부 설계의 목표는 다음과 같습니다.
 
-- 브라우저의 raw `File` 객체를 transient 상태로 유지합니다.
-- 티켓 write 전에 첨부를 prepare합니다.
-- normalized metadata와 controlled demo URL만 저장합니다.
-- LOCAL과 REMOTE 동작의 contract를 맞춥니다.
-- 이후 object-storage 통합이 가능하도록 ticket UI contract를 안정적으로
-  유지합니다.
+- 브라우저 원본 `File` 객체는 임시로 보관합니다.
+- 티켓 저장 전에 첨부 정보를 준비합니다.
+- 정해진 형식의 첨부 정보와 지정된 데모 URL만 저장합니다.
+- LOCAL과 REMOTE가 같은 응답 형식과 기대 동작을 제공합니다.
+- 이후 객체 저장소를 연결해도 티켓 UI가 사용하는 형식을 유지할 수 있게 합니다.
 
 ---
 
@@ -24,8 +23,9 @@ Browser file input은 transient하다.
 Ticket persistence는 prepared metadata만 저장한다.
 ```
 
-첨부 계층은 preparation boundary입니다. Ticket create, requester update,
-comment, reject 같은 ticket command와 분리됩니다.
+브라우저에서 선택한 파일은 임시로 보관하고, 티켓에는 준비 API가 반환한 첨부 정보만
+저장합니다. 첨부 준비는 티켓 생성, 요청자 수정, 댓글, 거절 같은 업무 명령과
+분리하여 처리합니다.
 
 ---
 
@@ -39,8 +39,8 @@ Browser input
 -> ticket persistence
 ```
 
-Prepare API는 선택 파일과 rich-text inline image에 대한 안전한 metadata를
-반환합니다. Ticket write command는 그 prepared result를 소비합니다.
+준비 API는 선택 파일과 본문 이미지를 검증한 뒤 첨부 정보를 반환합니다. 티켓 저장
+명령은 이 준비 결과를 사용합니다.
 
 ---
 
@@ -57,16 +57,16 @@ type TicketAttachmentPrepareInput = {
 };
 ```
 
-선택 파일에는 이미지와 일반 파일이 모두 포함될 수 있습니다. 서버는 prepared
-result를 `files`와 `images`로 분류합니다.
+선택 파일에는 이미지와 일반 파일이 모두 포함될 수 있습니다. 서버는 준비 결과를
+`files`와 `images`로 분류합니다.
 
 ### Rich-Text 이미지
 
-Rich-text 이미지는 제출된 body 안에 포함되어 있습니다. Inline `data:image/*`
-source는 preparation 중 controlled demo image URL로 교체됩니다.
+본문 이미지는 제출한 `body`에 포함됩니다. 준비 과정에서 `data:image/*` 주소를
+지정된 데모 이미지 URL로 교체합니다.
 
-임의 remote URL, editor boundary 밖으로 나온 blob URL, file path 같은
-지원되지 않는 image source는 preparation service가 거부합니다.
+임의의 외부 URL, 편집기 밖으로 전달된 blob URL, 파일 경로처럼 지원하지 않는
+이미지 주소는 준비 서비스가 거부합니다.
 
 ---
 
@@ -93,29 +93,28 @@ type PrepareTicketAttachmentsResponseDto = {
 };
 ```
 
-이 response가 새 attachment input에 대해 ticket write command가 신뢰해야 할
-유일한 첨부 형태입니다.
+새 첨부 입력을 저장할 때 티켓 명령은 이 응답 형식의 첨부 정보만 신뢰해야 합니다.
 
 ### 경계 규칙
 
 Prepare API가 소유하는 책임은 다음과 같습니다.
 
-- file name 검증
-- extension 검증
-- file size와 total size limit 검증
-- 선택 파일을 demo asset으로 교체
-- rich-text inline data image를 demo asset으로 교체
-- 지원하지 않는 image source 거부
-- normalized metadata 반환
+- 파일 이름 검증
+- 확장자 검증
+- 파일별 크기와 전체 크기 제한 검증
+- 선택 파일을 데모 파일로 교체
+- 본문의 data 이미지를 데모 이미지로 교체
+- 지원하지 않는 이미지 주소 거부
+- 정해진 형식의 첨부 정보 반환
 
-Ticket create, update, action command는 workflow behavior를 소유합니다. 이들이
-attachment preparation logic을 중복 구현하면 안 됩니다.
+티켓 생성·수정·액션 명령은 업무 동작을 담당합니다. 첨부 준비 로직을 중복해서
+구현하면 안 됩니다.
 
 ---
 
 ## Metadata Contract
 
-현재 저장되는 metadata 형태는 다음과 같습니다.
+현재 저장하는 첨부 정보의 형식은 다음과 같습니다.
 
 ```ts
 type TicketAttachmentMetadata = {
@@ -132,17 +131,16 @@ type TicketAttachmentMetadata = {
 
 ### 필드 의미
 
-- `originalName`: 브라우저 입력 또는 inline image label에서 온 파일 이름
-- `replacedName`: 앱이 노출하는 controlled demo file name
-- `extension`: normalized file extension
-- `size`: 원본 input size in bytes
-- `type`: 가능한 경우 MIME type
-- `demoUrl`: controlled `/files/demo-*` URL
-- `replaced`: 현재 demo replacement model에서는 항상 `true`
-- `reason`: auditability와 UI 설명을 위한 고정 replacement reason
+- `originalName`: 브라우저 입력 또는 본문 이미지 레이블의 파일 이름
+- `replacedName`: 앱이 보여주는 지정된 데모 파일 이름
+- `extension`: 표준 형식으로 정리한 파일 확장자
+- `size`: 원본 입력의 크기(바이트)
+- `type`: 확인할 수 있는 경우 MIME 타입
+- `demoUrl`: 지정된 `/files/demo-*` URL
+- `replaced`: 현재 데모 교체 모델에서는 항상 `true`
+- `reason`: 추적과 UI 설명에 사용하는 고정 교체 사유
 
-Metadata에는 raw bytes, local filesystem path, trusted storage object key가
-들어가지 않습니다.
+첨부 정보에는 원본 바이트, 로컬 파일 경로, 실제 저장소의 객체 키를 넣지 않습니다.
 
 ---
 
@@ -167,13 +165,13 @@ zip, 7z
 - inline image 전체 최대 크기: 20 MB
 - file name 최대 길이: 200자
 
-이 제한은 현재 demo constant입니다. Tenant-level attachment policy는 future scope입니다.
+이 제한은 현재 데모의 상수입니다. Tenant별 첨부 정책은 현재 구현 범위에 포함하지 않습니다.
 
 ---
 
 ## 선택 파일 Preparation
 
-선택 파일 preparation은 다음 과정을 따릅니다.
+선택 파일은 다음 과정으로 준비합니다.
 
 ```txt
 File
@@ -185,7 +183,7 @@ File
 이미지 선택 파일은 prepared `images` 배열로 반환됩니다. 그 외 선택 파일은
 prepared `files` 배열로 반환됩니다.
 
-Raw `File` 객체는 ticket persistence boundary를 넘지 않습니다.
+원본 `File` 객체는 티켓 저장 단계로 전달하지 않습니다.
 
 ---
 
@@ -201,14 +199,13 @@ HTML body
 -> return prepared body and image metadata
 ```
 
-Prepared body가 티켓에 저장되는 값입니다. 이 값에는 inline base64 image payload가
-들어가면 안 됩니다.
+티켓에는 준비된 본문을 저장합니다. 이 값에 base64 이미지 데이터를 포함하면 안 됩니다.
 
 ---
 
 ## 티켓 저장
 
-티켓은 prepared attachment metadata를 file과 image field로 나누어 저장합니다.
+티켓은 준비된 첨부 정보를 파일 필드와 이미지 필드로 나누어 저장합니다.
 
 ```txt
 tk_content -> prepared body
@@ -225,15 +222,13 @@ type TicketAttachmentFields = {
 };
 ```
 
-이 구조는 file attachment display와 inline image display를 명확히 분리하면서
-동일한 metadata contract를 공유하게 합니다.
+파일 첨부와 본문 이미지를 구분해 표시하면서 같은 첨부 정보 형식을 사용합니다.
 
 ---
 
 ## Create와 Update 통합
 
-Ticket create와 requester-owned update 흐름은 최종 ticket mutation 전에
-Prepare API를 호출합니다.
+티켓 생성과 요청자 수정은 최종 티켓 변경 요청 전에 준비 API를 호출합니다.
 
 ```txt
 form values
@@ -249,15 +244,13 @@ form values
 - prepared `images`
 - category, due date, priority, risk, email 같은 일반 ticket field
 
-Ticket mutation schema는 서버 워크플로가 ticket을 쓰기 전에 prepared metadata
-shape를 다시 검증합니다.
+티켓 변경 스키마는 서버가 티켓을 저장하기 전에 준비된 첨부 정보의 형식을 다시 검증합니다.
 
 ---
 
 ## Requester Update 통합
 
-Requester update는 기존 prepared attachment를 유지하면서 새 파일이나 rich-text
-이미지를 추가할 수 있습니다.
+요청자 수정에서는 기존 첨부 정보를 유지하면서 새 파일이나 본문 이미지를 추가할 수 있습니다.
 
 ```txt
 existing attachments
@@ -267,32 +260,28 @@ existing attachments
 -> history comparison
 ```
 
-Requester update layer는 existing metadata와 newly prepared result를 합치는
-책임을 가집니다. 서버는 최종 payload 검증을 계속 담당합니다.
+요청자 수정 계층은 기존 첨부 정보와 새 준비 결과를 병합합니다. 서버는 최종 요청
+데이터를 검증합니다.
 
 ---
 
 ## Ticket Action 통합
 
-Ticket action form은 communication 또는 operator workflow action을 위해
-content와 attachment를 포함할 수 있습니다.
+티켓 액션 폼은 의사소통이나 운영자 업무에 필요한 본문과 첨부파일을 포함할 수 있습니다.
 
-Action이 attachment input을 지원하면 action tool은 action payload를 만들기
-전에 body와 files를 prepare합니다. Approval-only action은 attachment preparation이
-필요하지 않습니다.
+첨부 입력을 지원하는 액션 도구는 요청 데이터를 만들기 전에 본문과 파일을 준비합니다.
+승인만 처리하는 액션은 첨부 준비가 필요하지 않습니다.
 
-Attachment preparation 자체는 여전히 action event가 아닙니다. Ticket command가
-성공했을 때만 history가 생성됩니다.
+첨부 준비 자체는 액션 이벤트가 아닙니다. 티켓 명령이 성공한 경우에만 이력을 생성합니다.
 
 ---
 
 ## Draft 통합
 
-현재 draft 구현은 attachment binary나 prepared attachment metadata를 복구
-보장 대상으로 저장하지 않습니다.
+현재 초안은 첨부파일 바이너리나 준비된 첨부 정보의 복구를 보장하지 않습니다.
 
-Create-ticket draft helper는 raw browser file을 계속 보관하지 않도록 form
-content를 저장할 때 attachment input을 비웁니다.
+티켓 생성 초안의 보조 함수는 브라우저 원본 파일을 계속 보관하지 않도록 폼 내용을
+저장할 때 첨부 입력을 비웁니다.
 
 ```txt
 draft save
@@ -311,25 +300,24 @@ LOCAL 초안 복구는 기능 초안 저장소를 통해 브라우저 `localStor
 boundary에서 거부합니다. 이미지만 있는 본문도 의미 있는 내용으로 인정하며, 빈 editor
 markup은 REMOTE draft에서 NULL로 저장하고 form에는 빈 문자열로 복구합니다.
 
-이는 현재 범위에서 의도된 제약입니다. 브라우저 `File` 객체는 reload 후 안전하게
-복원할 수 없고, production-grade attachment storage가 아직 구현되지 않았기
-때문입니다.
+이는 현재 범위의 의도된 제약입니다. 브라우저 `File` 객체는 새로고침 후 안전하게
+복원할 수 없고, 운영 환경용 첨부 저장소도 구현하지 않았기 때문입니다.
 
 ---
 
 ## LOCAL과 REMOTE 런타임
 
-LOCAL과 REMOTE는 같은 visible attachment contract를 사용합니다.
+LOCAL과 REMOTE는 UI에 같은 첨부 정보 형식과 동작을 제공합니다.
 
 ```txt
 LOCAL  -> controlled demo replacement
 REMOTE -> controlled demo replacement plus ticket row persistence
 ```
 
-REMOTE PostgreSQL persistence가 binary file persistence를 의미하지는 않습니다.
-저장되는 값은 여전히 controlled demo asset을 가리키는 metadata입니다.
+REMOTE가 PostgreSQL에 저장하는 것은 실제 파일의 바이너리가 아니라 지정된 데모
+파일을 가리키는 첨부 정보입니다.
 
-UI는 이를 production file upload가 아니라 demo replacement로 설명해야 합니다.
+UI는 선택한 파일을 데모 파일로 교체한다는 점을 설명해야 합니다.
 
 ---
 
@@ -364,7 +352,7 @@ Client validation은 prepare request 전에 feedback을 개선합니다.
 
 ### Server Validation
 
-Prepare API가 신뢰 가능한 attachment validation boundary입니다.
+첨부 검증의 최종 판단은 서버의 준비 API가 수행합니다.
 
 검증 항목은 다음과 같습니다.
 
@@ -379,37 +367,34 @@ Prepare API가 신뢰 가능한 attachment validation boundary입니다.
 
 ### Ticket Write Validation
 
-Ticket write schema는 저장될 attachment metadata가 expected prepared shape와
-일치하는지 검증합니다.
+티켓 저장 스키마는 저장할 첨부 정보가 준비 API의 예상 형식과 일치하는지 검증합니다.
 
 ---
 
 ## State Management
 
-React Hook Form은 form이 열려 있는 동안 unsaved file input을 소유합니다.
+React Hook Form은 폼이 열려 있는 동안 미저장 파일 입력을 관리합니다.
 
-React Query는 persisted ticket과 draft server state를 소유합니다.
+React Query는 저장된 티켓과 서버에 저장된 초안 상태를 관리합니다.
 
-Zustand는 attachment source of truth로 사용하면 안 됩니다. 관련 없는 cross-feature
-UI state에는 사용할 수 있지만, raw file이나 persisted attachment metadata를
-소유하면 안 됩니다.
+Zustand를 첨부 정보의 기준 저장소로 사용하면 안 됩니다. 첨부와 무관한 기능 간 공유
+UI 상태에는 사용할 수 있지만, 원본 파일이나 저장된 첨부 정보는 관리하지 않습니다.
 
 ---
 
 ## History와 Notification
 
-Attachment preparation만으로는 ticket history가 생성되지 않고 notification도
-발송되지 않습니다.
+첨부 준비만으로는 티켓 이력을 생성하거나 알림을 발송하지 않습니다.
 
-History는 성공한 ticket command에 속합니다. 이 command는 notification의 의도된
-연동 지점이기도 하지만, 실제 notification delivery는 구현 범위 밖입니다.
+이력은 성공한 티켓 명령에서 기록합니다. 이 명령은 알림을 연결하도록 설계한
+지점이기도 하지만, 실제 알림 전달은 구현 범위 밖입니다.
 
 - prepared attachment가 포함된 ticket create
 - attachment를 변경하는 requester update
 - prepared attachment가 포함된 ticket action
 
-History는 `replacedName`, `demoUrl`, `originalName`, `size` 같은 deterministic
-field를 사용해 prepared metadata를 비교해야 합니다.
+이력은 `replacedName`, `demoUrl`, `originalName`, `size`처럼 같은 입력에 같은 값을
+갖는 필드로 준비된 첨부 정보를 비교해야 합니다.
 
 ---
 
@@ -424,14 +409,14 @@ field를 사용해 prepared metadata를 비교해야 합니다.
 - 클라이언트가 trusted metadata를 만들어내게 하지 않습니다.
 - demo replacement를 durable storage로 설명하지 않습니다.
 
-이 방식은 데모가 misleading storage behavior를 보이지 않게 하고, future
-object-storage boundary를 명확하게 유지합니다.
+이 방식은 데모 파일 교체를 실제 파일 저장으로 오해하지 않게 하며, 향후 객체
+저장소가 담당할 역할을 명확하게 남깁니다.
 
 ---
 
 ## Future Object Storage 확장
 
-Production attachment 구현은 내부 preparation mechanism을 object storage로
+향후 운영 환경용 첨부 기능은 내부 준비 처리를 객체 저장소와 연결하는 방식으로
 교체할 수 있습니다.
 
 향후 요구사항은 다음과 같습니다.
@@ -445,8 +430,8 @@ Production attachment 구현은 내부 preparation mechanism을 object storage�
 - signed URL 또는 proxy download behavior
 - demo metadata에서 storage metadata로의 migration
 
-Future metadata가 storage-backed URL이나 object key를 같은 display model 뒤에
-추가한다면 UI contract는 현재 형태와 가깝게 유지될 수 있습니다.
+같은 표시 모델에 실제 저장소의 URL이나 객체 키를 추가한다면 UI가 사용하는 데이터
+형식은 현재와 비슷하게 유지할 수 있습니다.
 
 ---
 
@@ -525,13 +510,11 @@ Attachment test는 다음을 다뤄야 합니다.
 
 ## 요약
 
-티켓 첨부는 명시적인 preparation boundary를 통해 처리됩니다.
+티켓 첨부는 별도의 준비 API로 처리합니다.
 
-Raw browser input은 transient 상태로 남습니다. Prepare API는 선택 파일과
-rich-text image를 검증하고 controlled demo asset으로 교체한 뒤 prepared
-metadata를 반환합니다. Ticket create, requester update, 지원되는 action flow는
-prepared body, `files`, `images`만 저장합니다.
+브라우저 원본 파일은 임시로 보관합니다. 준비 API는 선택 파일과 본문 이미지를
+검증하고 지정된 데모 파일로 교체한 뒤 첨부 정보를 반환합니다. 티켓 생성,
+요청자 수정, 첨부를 지원하는 액션은 준비된 본문, `files`, `images`만 저장합니다.
 
-Draft는 현재 attachment recovery를 보장하지 않습니다. Production object storage는
-future scope이며, 현재 UI는 첨부 동작을 durable upload support가 아니라 demo
-replacement로 표현해야 합니다.
+초안은 현재 첨부파일 복구를 보장하지 않습니다. 운영 환경용 객체 저장소는 현재 구현
+범위에서 제외하며, UI는 첨부 동작을 데모 파일 교체로 설명해야 합니다.

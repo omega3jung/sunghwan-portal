@@ -283,7 +283,8 @@ const workAssigneeUsernames =
   assignmentPhase === "WORK" ? ticket.assigneeUsernames : [];
 ```
 
-These arrays are projections, not separately persisted sources of truth.
+The server calculates these arrays from the stored assignees and current phase.
+They are not stored separately or used as independent assignment records.
 
 ---
 
@@ -509,7 +510,7 @@ Approval and assignment must therefore be recalculated.
 
 ### 10. Recalculate only on actual changes
 
-Routing-sensitive recalculation requires a persisted value change.
+Routing-sensitive recalculation requires an actual change to the stored value.
 
 The mere presence of a field in an update payload is not enough.
 
@@ -781,7 +782,7 @@ Routing effects are auditable through `ROUTING_PRESERVED` and `ROUTING_RESET` hi
 
 - Do not reintroduce `Open` or `Approved` as persisted statuses.
 - Keep `Open` as a UI grouping only when needed.
-- Keep `tk_approval_step_id` and `tk_assignee_usernames` as the current routing source of truth.
+- Use `tk_approval_step_id` and `tk_assignee_usernames` to determine the current phase and assignees.
 - Classify every new requester-editable field as routing-neutral or routing-sensitive.
 - Keep category, subject, body, files, and images routing-sensitive unless a narrower rule is documented.
 - Keep due date and email routing-neutral unless product policy changes.

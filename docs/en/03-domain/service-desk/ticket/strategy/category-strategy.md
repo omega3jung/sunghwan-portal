@@ -2,7 +2,7 @@
 
 ## Goal
 
-Category is the main behavior configuration for Service Desk tickets.
+Category defines how Service Desk tickets are processed.
 
 It influences:
 
@@ -26,7 +26,7 @@ Tenant -> Main Category -> Sub Category -> Ticket behavior
 ```
 
 `Company` remains organization reference data. `Tenant` is the Service Desk
-configuration boundary. Categories belong to a tenant.
+configuration scope. Categories belong to a tenant.
 
 ---
 
@@ -68,8 +68,8 @@ current model. The current boundary is tenant-scoped.
 
 ### Tenant
 
-The category tree belongs to the tenant's Service Desk workflow boundary.
-"Belongs to" is a scoping statement, not a statement that one actor manages
+The category tree groups Service Desk workflow settings by tenant.
+"Belongs to" describes that grouping, not a statement that one actor manages
 every resource. Actual read/manage authority is selected by tenant kind,
 category scope, settings resource, and trusted principal.
 
@@ -213,7 +213,7 @@ effectiveActive = mainCategory.active && subCategory.active;
 ```
 
 Deactivating a main category must not overwrite the stored flags of its
-subcategories. Activation is only a readiness gate; runtime routing still
+subcategories. Activation only checks whether settings are ready; runtime routing still
 revalidates actual workers and every company/tenant eligibility constraint.
 
 ---
@@ -325,7 +325,7 @@ The UI should not:
 - invent final routing output
 - hide category changes as ordinary field edits
 - treat category settings as local-only client state
-- treat a hidden edit control as the authorization boundary
+- treat hiding an edit control as a substitute for authorization checks
 
 ---
 

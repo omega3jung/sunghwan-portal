@@ -2,7 +2,12 @@
 
 ## 배경
 
-Service Desk는 이미 `Resolved -> Closed`를 시스템이 수행하는 lifecycle 전이로
+REMOTE에서는 Supabase Cron이 매시간 정각에 데이터베이스의 자동 종료 함수를
+직접 호출합니다. 함수는 가장 최근 해결 시각부터 168시간이 지났고 현재도
+`Resolved`인 티켓을 `Closed`로 전환합니다. 종료 조건을 충족하는 시각과 실제 예약
+실행 시각은 구분합니다.
+
+Service Desk는 이미 `Resolved -> Closed`를 시스템이 수행하는 수명 주기 전환으로
 정의하고 있습니다.
 
 현재 lifecycle 계약은 다음과 같습니다.
@@ -13,8 +18,8 @@ latest resolution History timestamp
 -> Closed
 ```
 
-자동 종료는 Ticket Action이 아니며, full SLA breach 또는 escalation 모델에
-포함되지 않습니다.
+자동 종료는 Ticket Action이 아니며, SLA 위반 감지나 상위 담당자 전달 전체를
+처리하는 기능에도 포함되지 않습니다.
 
 저장되는 결과는 다음과 같습니다.
 
@@ -32,8 +37,9 @@ actionNo = null
 
 지원되는 경로에서는 실행 중인 Work Session도 종료합니다.
 
-이 결정 이전에도 application에는 멱등성을 갖춘 cron 실행용 자동 종료 경로가
-있었지만, 예약 실행을 어느 경계에서 수행할지는 확정되지 않았습니다.
+이 결정 이전에도 애플리케이션에는 반복 실행해도 같은 결과를 내는 멱등적 자동 종료
+경로가 있었습니다. Cron에서 호출할 수 있었지만 어디서 예약 실행할지는 확정하지
+않았습니다.
 따라서 다음 사항을 결정해야 했습니다.
 
 - "해결 후 7일"의 정확한 의미
@@ -64,11 +70,10 @@ actionNo = null
 -> 다음 03:00 배치에서 약 7일 + 23시간 후 종료
 ```
 
-Timestamp를 비교하면 여전히 최소 7일을 보장하지만, 추가 지연이 거의 24시간에
-이를 수 있습니다.
+시각을 비교하면 최소 7일은 보장하지만, 추가 지연은 거의 24시간에 이를 수 있습니다.
 
-현재 prototype 범위에서는 이 간격을 줄이기 위해 시간별 polling을 선택했습니다.
-이는 스케줄링의 trade-off이며, 측정된 query 성능에 대한 주장은 아닙니다.
+현재 프로토타입에서는 이 간격을 줄이기 위해 매시간 조건을 확인하는 방식을
+선택했습니다. 스케줄링의 절충점이며 쿼리 성능을 측정했다는 뜻은 아닙니다.
 
 ---
 
@@ -87,8 +92,8 @@ resolved date + 7 calendar days
 늦은 시각에 해결된 Ticket은 일곱 번째 달력 날짜의 이른 시각에 종료 조건을
 충족할 수 있으며, 이때는 24시간씩 일곱 번이 모두 경과하지 않았을 수 있습니다.
 
-현재 설계는 일반적인 Ticket 수정 시각이 아니라 해결 History timestamp를
-사용하므로, 스케줄링 규칙도 timestamp에 기반한 의미를 유지해야 합니다.
+현재 설계는 일반적인 티켓 수정 시각 대신 해결 이력의 시각을 사용하므로,
+스케줄링 규칙도 그 시각부터 경과한 시간을 기준으로 해야 합니다.
 
 ---
 
@@ -113,7 +118,8 @@ resolvedAt + 7 days
 
 이러한 운영 장치는 현재 요구사항에 비해 복잡합니다.
 
-Resolved 자동 종료는 lifecycle 정리 규칙이며, 실시간 SLA 마감 처리가 아닙니다.
+Resolved 자동 종료는 티켓 수명 주기를 정리하는 규칙입니다. 실시간 SLA 마감
+처리를 제공하지는 않습니다.
 
 ---
 
@@ -142,17 +148,17 @@ Supabase Cron
 - 실행 중인 Work Session 종료
 - 변경 불가능한 History 추가
 
-현재 이 작업에는 browser state, 사용자 session authorization, notification delivery,
-외부 service가 필요하지 않습니다.
+현재 이 작업에는 브라우저 상태, 사용자 세션 권한 검증, 알림 전달, 외부 서비스가
+필요하지 않습니다.
 
-인증된 HTTP 자동 종료 경로는 이미 존재합니다. Route Handler에서 cron secret을
-검증하고, application service에서 lifecycle 동작을 실행합니다. 이번 결정은 예약된
-REMOTE job에 database 직접 실행을 선택하여, 실행 시 application server에 대한
-의존성을 피합니다.
+인증된 HTTP 자동 종료 경로는 이미 존재합니다. Route Handler에서 Cron 비밀키를
+검증하고 애플리케이션 서비스에서 수명 주기 처리를 실행합니다. 이번 결정에서는
+REMOTE 예약 작업이 데이터베이스를 직접 실행하도록 선택했습니다. 예약 실행이
+애플리케이션 서버의 가동 여부에 의존하지 않게 하기 위해서입니다.
 
-기존 HTTP 경로는 구현된 상태로 남습니다. Database 직접 실행이 이 경로를 제거하거나
-lifecycle 로직을 하나의 구현으로 통합하지는 않습니다. SQL function과 application
-service의 동작 의미를 계속 일치시켜야 합니다.
+기존 HTTP 경로는 구현된 상태로 남깁니다. 데이터베이스 직접 실행을 선택해도 이
+경로를 제거하거나 수명 주기 로직을 하나로 합치지는 않습니다. SQL 함수와
+애플리케이션 서비스의 동작 의미는 계속 일치시켜야 합니다.
 
 ---
 
@@ -189,8 +195,8 @@ AND closeEligibleAt <= now
 ```
 
 이 프로젝트에서 7일의 유예기간은 24시간씩 일곱 번이 경과한 시간을 의미합니다.
-Maintenance SQL function은 timezone을 UTC로 설정하여 `interval '7 days'` 비교가
-168시간의 의미를 유지하도록 합니다.
+유지보수 SQL 함수는 시간대를 UTC로 설정하여 `interval '7 days'` 비교가 168시간의
+의미를 유지하도록 합니다.
 
 다음 값이나:
 
@@ -233,7 +239,7 @@ first resolution
 
 현재 범위에서는 Ticket에 별도의 `closeEligibleAt` column을 추가하지 않습니다.
 
-변경 불가능한 workflow History에 이미 해결 시점을 판단할 수 있는 근거가 있습니다.
+변경 불가능한 업무 이력에 이미 해결 시점을 판단할 근거가 있습니다.
 
 ---
 
@@ -260,18 +266,17 @@ time from eligibility to the next scheduled check
 이는 검사 간격이며, 종료 완료 시간의 보장이 아닙니다. 실행 시간, 잠금 경합,
 누락되거나 실패한 실행으로 인해 종료까지 한 시간을 넘길 수 있습니다.
 
-Scheduler 실행 주기와 업무상 종료 조건은 의도적으로 분리합니다.
+스케줄러 실행 주기와 업무상 종료 조건은 구분합니다.
 
-시간별 job은 Ticket이 매시간 새롭게 종료 자격을 얻는다는 뜻이 아닙니다.
-정확한 timestamp 기반 유예기간이 이미 경과했는지 확인할 뿐입니다.
+매시간 실행한다는 것은 티켓의 종료 조건을 매시간 새로 정한다는 뜻이 아닙니다.
+해결 이력 시각을 기준으로 정확한 유예기간이 이미 지났는지 확인합니다.
 
 ---
 
 ### 4. Supabase Cron을 스케줄링 trigger로 사용합니다
 
-REMOTE에서 선택한 스케줄링 전략은 Supabase Cron / `pg_cron`으로 maintenance
-작업을 호출하는 것입니다. 배포 및 예약 실행 검증은 이 결정의 채택 여부와 별도로
-관리합니다.
+REMOTE에서는 Supabase Cron / `pg_cron`이 유지보수 작업을 호출하도록 선택했습니다.
+배포와 예약 실행이 검증되었는지는 이 결정의 채택 여부와 별도로 기록합니다.
 
 예약할 명령은 다음과 같습니다.
 
@@ -300,19 +305,19 @@ Supabase Cron
 -> Ticket / Work Session / Ticket History
 ```
 
-이 함수는 maintenance 전용 진입점입니다.
+이 함수는 유지보수 작업 전용 진입점입니다.
 
 `SECURITY INVOKER`를 사용하며, browser-facing role에는 실행 권한을 부여하지
 않아야 합니다.
 
-따라서 scheduler는 함수를 통해 임의 호출자의 권한을 높이는 대신, 명시적으로
-권한을 부여받은 database role로 실행합니다.
+따라서 스케줄러는 명시적으로 권한을 부여받은 데이터베이스 역할로 실행합니다.
+함수를 통해 임의 호출자의 권한을 높이지 않습니다.
 
 이 선택은 현재 database 내부에서 끝나는 lifecycle 작업에 한정됩니다.
 이후 모든 예약 workflow가 PostgreSQL 안에서 실행되어야 한다는 규칙은 아닙니다.
 
-향후 예약 workflow에 외부 연동, notification delivery, application 전용 정책 또는
-다른 runtime 의존성이 필요해지면 실행 경계를 다시 검토해야 합니다.
+향후 예약 작업에 외부 연동, 알림 전달, 애플리케이션 전용 정책, 다른 실행 환경이
+필요해지면 어디서 실행할지 다시 검토해야 합니다.
 
 ---
 
@@ -334,14 +339,14 @@ find candidate
 
 잠긴 row는 건너뛰고 다음 시간별 실행에서 다시 확인할 수 있습니다.
 
-이는 다른 workflow가 보유한 Ticket row lock을 기다리지 않도록 합니다.
-배치의 다른 모든 database 작업까지 non-blocking임을 보장하지는 않습니다.
+이 방식은 다른 업무 처리가 보유한 티켓 행 잠금을 기다리지 않게 합니다. 배치의
+다른 모든 데이터베이스 작업도 대기 없이 실행된다는 보장은 아닙니다.
 
 ---
 
 ### 7. Lifecycle 변경을 원자적으로 처리합니다
 
-자동 종료 호출이 성공하면 필요한 효과는 하나의 일관된 시스템 작업으로 반영됩니다.
+자동 종료 호출이 성공하면 필요한 변경은 하나의 일관된 시스템 작업으로 반영합니다.
 
 ```txt
 Resolved -> Closed
@@ -364,8 +369,7 @@ actionNo = null
 
 예상하지 못한 실패를 부분 성공으로 처리하지 않습니다.
 
-여전히 종료 조건을 충족하는 Ticket은 다음 scheduler 실행에서 재시도할 기회를
-얻습니다.
+여전히 종료 조건을 충족하는 티켓은 다음 스케줄러 실행에서 다시 처리할 수 있습니다.
 
 ---
 
@@ -391,9 +395,9 @@ actionNo = null
 
 선택하지 않았습니다.
 
-현재 prototype에서는 Ticket별 job을 도입하지 않으면서 종료 조건 검사 간격을
-줄이기 위해 시간별 polling을 선택했습니다. Query 비용에 대한 benchmark나
-production 부하 검증 결과를 주장하지 않습니다.
+현재 프로토타입에서는 티켓별 예약 작업을 만들지 않고 검사 간격을 줄이기 위해
+매시간 조건을 확인합니다. 쿼리 비용 벤치마크나 프로덕션 부하 검증을 수행했다는
+뜻은 아닙니다.
 
 ---
 
@@ -472,8 +476,8 @@ Supabase Cron
 
 #### 결론
 
-예약된 REMOTE 실행 경로로 선택하지 않았습니다. HTTP 구현은 이미 존재하며
-codebase에 남아 있습니다. 이번 결정은 이를 제거하지 않습니다.
+REMOTE 예약 실행 경로로 선택하지 않았습니다. HTTP 구현은 이미 있으며 코드에
+유지합니다. 이번 결정으로 제거하지 않습니다.
 
 향후 자동 종료가 application 또는 외부 service 동작에 의존하게 되면 이 경계는
 유효한 선택지가 될 수 있습니다.
@@ -507,18 +511,17 @@ codebase에 남아 있습니다. 이번 결정은 이를 제거하지 않습니�
 - SQL function과 기존 application service가 모두 자동 종료를 구현합니다.
   두 구현의 lifecycle 의미를 현재 Ticket 설계와 계속 일치시켜야 합니다.
   예약 진입점을 하나로 선택해도 이 유지보수 비용이 없어지지는 않습니다.
-- 현재 hosted database는 Supabase Free Plan을 사용하므로, project 일시 중단이나
-  인프라 비가용 상태로 인해 예약 실행이 이루어지지 않을 수 있습니다. 이후 실행에서
-  여전히 종료 조건을 충족하는 Ticket을 처리할 수 있지만, 이 배포를 상시 가동되는
-  production scheduler로 표현해서는 안 됩니다.
-- 현재 접근은 enterprise scheduler monitoring, alerting, retry 보장을 제공하지
-  않습니다.
+- 현재 호스팅된 데이터베이스는 Supabase Free Plan을 사용합니다. 프로젝트 일시
+  중단이나 인프라 장애로 예약 실행이 누락될 수 있습니다. 이후 실행에서 여전히
+  종료 조건을 충족하는 티켓을 처리할 수 있지만, 이 배포가 상시 가동되는 프로덕션
+  스케줄러라는 뜻은 아닙니다.
+- 현재 방식은 기업용 스케줄러 모니터링, 경고, 재시도 보장을 제공하지 않습니다.
 
 ---
 
 ## 구현 참고 사항
 
-Maintenance function은 다음 계약을 유지해야 합니다.
+유지보수 함수는 다음 조건과 처리 순서를 유지해야 합니다.
 
 ```txt
 candidate:
@@ -552,7 +555,7 @@ PUBLIC / anon / authenticated
 -> must not execute function
 ```
 
-이 maintenance 작업에 대한 활성 scheduler 등록은 하나만 유지해야 합니다.
+이 유지보수 작업을 예약하는 활성 스케줄러 등록은 하나만 유지해야 합니다.
 
 이후 별도의 결정으로 실행 경계를 명시적으로 변경하지 않는 한, 같은 규칙에 대해
 독립적인 HTTP scheduler 경로를 동시에 활성화하지 않습니다.
@@ -574,7 +577,7 @@ Supabase 배포와 Cron 실행은 별도로 검증되었으며, 아래 상태 �
 
 ## 검증 정책
 
-Cron 등록만으로 전체 lifecycle 동작이 입증되지는 않습니다.
+Cron 등록만으로 전체 수명 주기 동작이 입증되지는 않습니다.
 
 검증에서는 다음을 구분해야 합니다.
 
@@ -589,7 +592,7 @@ Cron 등록만으로 전체 lifecycle 동작이 입증되지는 않습니다.
 - 의도한 maintenance role로 database function을 호출할 수 있습니다.
 - 종료 조건을 충족하지 않은 `Resolved` Ticket은 변경되지 않습니다.
 - 종료 조건을 충족한 `Resolved` Ticket은 `Closed`로 변경됩니다.
-- 종료 사유가 `Completed`로 projection됩니다.
+- 종료 사유를 계산해 응답에 `Completed`로 제공합니다.
 - 지원되는 경로에서는 실행 중인 Work Session이 종료됩니다.
 - `SYSTEM_AUTO`를 source로 하는 `RESOLUTION_CLOSE`가 추가됩니다.
 - Ticket Action row는 생성되지 않습니다.
@@ -600,7 +603,7 @@ Cron 등록만으로 전체 lifecycle 동작이 입증되지는 않습니다.
 자동 종료가 완전히 검증되었다고 설명해서는 안 됩니다.
 
 Cron 등록과 호출 근거는 각각 `cron.job`과 `cron.job_run_details`에서 확인할 수
-있습니다. 호출 성공 기록은 여전히 기대한 lifecycle 효과와 연결하여 확인해야 합니다.
+있습니다. 호출 성공 기록은 기대한 수명 주기 변경 결과와 함께 확인해야 합니다.
 
 ---
 
@@ -619,7 +622,7 @@ Cron 등록과 호출 근거는 각각 `cron.job`과 `cron.job_run_details`에�
 - Tenant별 scheduler 설정
 - production-grade scheduler monitoring 또는 alerting
 
-이 항목들은 별도의 production 관심사로 남습니다.
+이 항목들은 별도의 프로덕션 구현 영역으로 남깁니다.
 
 ---
 
@@ -661,8 +664,8 @@ Cron 등록과 호출 근거는 각각 `cron.job`과 `cron.job_run_details`에�
 
 ## 요약
 
-Resolved 자동 종료는 정확한 업무상 종료 조건의 시점과 scheduler의 실행 간격을
-분리합니다.
+Resolved 자동 종료는 업무상 종료 조건을 충족하는 시점과 스케줄러가 실행하는
+간격을 구분합니다.
 
 ```txt
 latest resolution History
@@ -682,8 +685,8 @@ hourly Supabase Cron
 충족을 감지합니다. 실행 시간, 잠금 경합, 누락되거나 실패한 실행으로 인해 실제
 종료까지는 더 오래 걸릴 수 있습니다.
 
-이는 lifecycle 정리 장치이며, full SLA 또는 production job-processing platform이
-아닙니다.
+이 기능은 티켓 수명 주기를 정리합니다. SLA 전체 처리나 프로덕션 작업 처리
+플랫폼을 제공하지는 않습니다.
 
 ---
 
@@ -695,8 +698,8 @@ hourly Supabase Cron
 
 - Database maintenance function: `service_desk.close_expired_resolved_tickets()`의
   구현, Supabase 배포, 검증이 완료되었습니다.
-- 대상 Resolved Ticket 종료: REMOTE에서 검증되었습니다. 168시간의 grace period가
-  지난 Ticket이 close reason `Completed`와 함께 `Closed`로 전환되었습니다.
+- 대상 Resolved 티켓 종료: REMOTE에서 검증되었습니다. 168시간의 유예기간이
+  지난 티켓이 종료 사유 `Completed`와 함께 `Closed`로 전환되었습니다.
 - Work Session 정리와 `RESOLUTION_CLOSE` History: 검증되었습니다. 로컬 함수
   검증은 지원되는 Work Session 정리를 확인했으며, REMOTE History에서는
   `RESOLUTION_CLOSE`, `SYSTEM_AUTO`, `actionNo = null`과 Ticket Action row가
@@ -713,12 +716,12 @@ hourly Supabase Cron
   | 2026-09-28 14:00 | `succeeded` |
   | 2026-09-28 15:00 | `succeeded` |
 
-  `return_message = '1 row'`는 SQL 호출이 결과 row 하나를 반환했다는 의미이며,
-  Ticket 한 건이 종료되었다는 뜻이 아닙니다. Ticket 종료와 History는 scheduler의
-  반환 메시지와 별도로 검증했습니다.
+  `return_message = '1 row'`는 SQL 호출이 결과 행 하나를 반환했다는 의미입니다.
+  티켓 한 건이 종료되었다는 뜻은 아닙니다. 티켓 종료와 이력은 스케줄러의 반환
+  메시지와 별도로 검증했습니다.
 - Maintenance SQL function을 작성했으며, 백업 DDL과 trigger를 사용해 로컬
   PGlite에서 확인했습니다. 종료 조건, 재해결, 반복 실행, History, Work Session,
   실패 시 rollback을 검증했습니다.
-- 이 검증은 구현된 lifecycle 동작과 관찰된 시간별 실행을 확인합니다. Hosted 환경의
-  동시성 동작, production-grade monitoring, 상시 가동 infrastructure까지 입증하지는
-  않습니다. Supabase Free Plan의 가용성 제한과 위의 나머지 범위 경계는 유지합니다.
+- 이 검증은 구현된 수명 주기 동작과 관찰한 매시간 실행을 확인합니다. 호스팅 환경의
+  동시성 동작, 프로덕션 수준의 모니터링, 상시 가동 인프라까지 입증하지는 않습니다.
+  Supabase Free Plan의 가용성 제한과 위에서 설명한 구현 범위는 유지합니다.

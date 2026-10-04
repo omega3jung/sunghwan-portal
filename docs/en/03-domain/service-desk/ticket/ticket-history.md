@@ -44,8 +44,7 @@ type TicketHistory = {
 };
 ```
 
-`event` is the authoritative event field. Do not use `metadata.event` as the
-primary event source.
+`event` identifies what happened. Do not use `metadata.event` to determine the event.
 
 ---
 
@@ -128,9 +127,8 @@ ROUTING_PRESERVED
 Use the actual union names. Do not introduce aliases such as
 `ASSIGNMENT_CHANGED`.
 
-Some events are reserved by the model even when the current route surface only
-uses part of the union. For example, comment/note soft delete is currently
-routed, while comment/note update routes are not present.
+The model reserves events beyond those used by the current API. For example,
+the API supports comment/note soft delete but has no comment/note update routes.
 
 ---
 
@@ -182,7 +180,7 @@ file data, blob URLs, or base64 payloads.
 
 ## Metadata
 
-`metadata` is supplemental display/audit context.
+`metadata` provides supporting information for display and change tracking.
 
 It may include:
 
@@ -234,7 +232,7 @@ fromValue = { status: "Resolved" }
 toValue = { status: "Working" }
 ```
 
-`TICKET_REOPENED` is the authoritative event for this status transition.
+`TICKET_REOPENED` identifies this status transition.
 
 ### Auto Close
 

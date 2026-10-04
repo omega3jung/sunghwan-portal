@@ -40,7 +40,7 @@ Impersonation을 **클라이언트 상태**에서 **NextAuth 기반 서버 제�
 
 - NextAuth 세션을 확장합니다
 - 세션 객체에 impersonation 컨텍스트를 주입합니다
-- 세션을 단일 source of truth로 사용합니다
+- 사용자 전환 상태는 세션의 값을 기준으로 판단합니다
 
 ---
 
@@ -94,7 +94,7 @@ Impersonation 중지 -> originalUser 복원 -> 세션 초기화
 
 ### Behavior
 
-- UI와 feature authorization은 `currentUser`를 사용합니다
+- UI와 기능별 권한 검사는 `currentUser`를 사용합니다
 - UI는 가장 중인 사용자 신원을 반영합니다
 - 시스템은 감사와 보안 검사를 위해 `originalUser`를 계속 보존합니다
 
@@ -127,7 +127,7 @@ Impersonation 중지 -> originalUser 복원 -> 세션 초기화
 
 ### 4. Auditability
 
-- 원래 사용자와 실효 사용자 신원을 모두 보존합니다
+- 원래 사용자와 현재 작업 사용자 신원을 모두 보존합니다
 - 전체 액션 추적이 가능해집니다
 
 ---
@@ -136,7 +136,7 @@ Impersonation 중지 -> originalUser 복원 -> 세션 초기화
 
 ### Strategy
 
-기본 인증 흐름은 유지하면서 callback을 통해 세션을 확장합니다.
+기본 인증 흐름은 유지하면서 NextAuth 콜백을 통해 세션을 확장합니다.
 
 ---
 
@@ -231,7 +231,7 @@ Impersonation이 활성화되면 UI는 다음을 만족해야 합니다.
 ### After
 
 - NextAuth 기반 서버 세션
-- 풀스택 일관성
+- 클라이언트와 서버에서 일관된 사용자 정보
 - 안전하고 추적 가능한 동작
 
 ---

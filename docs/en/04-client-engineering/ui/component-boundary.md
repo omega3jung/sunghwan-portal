@@ -51,8 +51,8 @@ Components responsible for:
 - Knows the workflow contract and consumes domain rules
 - Passes data down via props
 
-Containers coordinate workflows. They do not become the source of truth for
-durable domain rules, authorization policy, or persistence behavior. A
+Containers coordinate workflows. They do not define durable domain rules,
+authorization policy, or persistence behavior. A
 container may select and present the result of a rule, but it should not
 reimplement that rule in JSX or event handlers.
 
@@ -98,7 +98,7 @@ Components responsible for:
 Examples of responsibilities that do not belong in a presentational component:
 
 - Direct API calls or persistence mutations
-- Authorization decisions used as the source of truth
+- Final authorization decisions
 - Ticket status transitions or approval/assignment routing decisions
 - React Query server-state ownership
 
@@ -434,5 +434,5 @@ This strategy aligns with:
 The component boundary strategy distinguishes **workflow-coordinating
 containers** from **rendering and locally interactive presentational
 components**. Presentational components may contain display logic, while
-durable domain, persistence, authorization, and server-state rules remain with
-their owning boundaries.
+durable domain, persistence, authorization, and server-state rules remain in
+the layers responsible for them.

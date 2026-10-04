@@ -2,19 +2,19 @@
 
 ## 배경
 
-Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시작되었습니다.
+Service Desk 문서는 처음에 도메인과 아키텍처의 큰 구조를 설명하는 노트로 시작되었습니다.
 구현이 구체화되면서 프로젝트는 프로덕션 설계에 더 가까운 포트폴리오 데모로 발전했습니다.
 
 이 시점에서 다음과 같은 영역의 구현 방향이 더 명확해졌습니다.
 
-- LOCAL / REMOTE runtime 분리
-- server-side local demo mutable state
-- route-handler orchestration 경계
+- LOCAL / REMOTE 실행 환경 분리
+- 서버 메모리에서 변경·관리하는 LOCAL 데모 상태
+- Route Handler가 요청을 받아 실제 처리 함수에 맡기는 역할
 - AuthUser / SessionUser / AppUser 분리
-- session-aware impersonation
-- derived ticket ownership
-- action-oriented workflow rules
-- production-grade 인프라에 대한 명시적 deferred scope
+- 세션을 반영한 impersonation
+- 현재 사용자와 티켓 데이터로 계산하는 ownership
+- 액션을 기준으로 실행하는 업무 규칙
+- 현재 구현에서 제외한 프로덕션 인프라 범위 명시
 
 일반 문서와 구현 방향 사이에 점차 불일치가 생기기 시작했습니다.
 
@@ -25,7 +25,8 @@ Service Desk 문서는 처음에 고수준 도메인/아키텍처 노트로 시�
 ### 1. 일반 문서가 현재 구현을 따라오지 못함
 
 일부 문서는 여전히 오래된 표현 또는 순수 개념 중심 표현을 사용하고 있었습니다.
-이로 인해 runtime, auth/session 경계, ownership, ticket operation 동작에 대한 오해가 발생할 수 있었습니다.
+이 때문에 실행 환경, 인증·세션의 역할, ownership 계산, 티켓 작업 동작을
+오해할 수 있었습니다.
 
 ---
 
@@ -45,8 +46,8 @@ Decision logs -> 당시의 판단 근거를 보존
 
 ### 3. 포트폴리오 신뢰성을 위해 명시적 scope 경계가 필요함
 
-이 프로젝트는 production-aligned이지 production-complete가 아닙니다.
-문서는 의도적으로 단순화되었거나 deferred된 영역을 과장하지 않아야 했습니다
+이 프로젝트는 프로덕션 설계를 따르는 포트폴리오 데모이며, 프로덕션 기능을 모두 갖춘 상태는 아닙니다.
+문서는 의도적으로 단순화했거나 구현을 미룬 영역을 과장하지 않아야 했습니다
 (예: full enterprise rule engine, full remote persistence, real-time 인프라, full compliance stack).
 
 ---
@@ -55,17 +56,18 @@ Decision logs -> 당시의 판단 근거를 보존
 
 Service Desk 동작은 workflow-oriented 모델로 일관되게 설명되어야 했습니다.
 
-- `Ticket`: workflow entity 및 현재 상태
-- `Activity`: 의미 있는 사용자/운영 상호작용
-- `History`: 변경으로 생성되는 immutable event record
-- `Rules`: 현재 실행 가능한 동작
-- `Lifecycle`: 유효한 상태 전이 모델
+- `Ticket`: 업무 흐름의 대상과 현재 상태
+- `Activity`: 의미 있는 사용자 소통과 운영 작업
+- `History`: 변경에 따라 생성되며 수정하지 않는 이벤트 기록
+- `Rules`: 현재 실행할 수 있는 동작
+- `Lifecycle`: 허용된 상태 전이 모델
 
 ---
 
 ## 결정
 
-decision log를 제외한 markdown 문서를 현재 Service Desk 설계/구현 방향에 맞게 정렬하기로 했습니다.
+Decision log를 제외한 Markdown 문서를 당시 Service Desk 설계·구현 방향에 맞게
+수정하기로 했습니다.
 
 이를 통해 검토자에게 현재 문서의 유용성을 유지하면서, decision log는 히스토리 기록으로 보존합니다.
 
@@ -100,8 +102,8 @@ UI
 -> LOCAL handler or REMOTE proxy
 ```
 
-- local demo mutable state를 server-side in-memory state로 명확히 함.
-- `/api/demo/service-desk/reset`를 통한 reset 동작을 명확히 함.
+- LOCAL 데모 상태는 서버 메모리에서 변경·관리한다고 명확히 설명했습니다.
+- `/api/demo/service-desk/reset`을 통한 초기화 동작을 명확히 설명했습니다.
 
 ---
 
@@ -128,11 +130,11 @@ SessionUser -> session-safe projection
 AppUser     -> application-facing user model
 ```
 
-- 다음을 명확히 함:
-  - `JWT`는 authentication truth
-  - session은 auth projection
-  - `SessionUser`는 `accessToken`을 제외
-  - Zustand store는 auth truth가 아닌 runtime facade/cache
+- 다음을 명확히 설명했습니다.
+  - 인증 판단은 `JWT`를 기준으로 합니다.
+  - 세션은 인증 정보를 필요한 형식으로 변환해 제공합니다.
+  - `SessionUser`에는 `accessToken`을 포함하지 않습니다.
+  - Zustand store는 실행 중 사용할 값을 제공·캐시하며 인증 판단의 기준은 아닙니다.
 
 ---
 
@@ -148,7 +150,7 @@ AppUser     -> application-facing user model
 
 ### 5. Derived Ownership
 
-- ownership을 고정 저장 필드가 아닌 파생 값으로 명확히 함.
+- ownership은 저장된 고정 필드가 아니라 현재 사용자와 티켓 값으로 계산한다고 설명했습니다.
 
 ```ts
 type Ownership = {
@@ -210,15 +212,15 @@ Dialog -> atomic action
 - React Query 분리를 명확히 함:
   - static/reference 데이터
   - dynamic/mutable Service Desk 데이터
-- route handler를 LOCAL/REMOTE 분기 orchestration 경계로 명확히 함.
+- Route Handler가 LOCAL/REMOTE를 선택해 해당 처리 함수에 요청을 맡긴다고 설명했습니다.
 
 ---
 
 ### 10. Feature 및 Module 경계
 
 - barrel export 정책을 명확히 함:
-  - barrel file은 public contract
-  - server/client export 혼합 dumping을 피함
+  - barrel 파일은 외부에 공개하는 API를 정의합니다.
+  - 서버용·클라이언트 전용 모듈을 섞어 한꺼번에 export하지 않습니다.
 - client-only shared utility 경계를 명확히 함 (예: `src/shared/client/`).
 
 ---
@@ -261,7 +263,7 @@ Dialog -> atomic action
 
 ## 요약
 
-decision log를 제외한 Service Desk 문서를 현재 아키텍처/구현 전략에 맞게 정렬했고,
-historical decision log는 원본 그대로 보존했습니다.
+Decision log를 제외한 Service Desk 문서를 당시 아키텍처·구현 전략에 맞게 수정했고,
+과거 decision log는 원본 그대로 보존했습니다.
 
 이를 통해 히스토리 기록을 훼손하지 않으면서 포트폴리오 문서의 명확성, 정합성, 신뢰성을 개선했습니다.

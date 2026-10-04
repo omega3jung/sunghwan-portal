@@ -2,13 +2,13 @@
 
 ## 목표
 
-React Query는 Service Desk server state를 관리합니다.
+React Query는 Service Desk의 서버 상태를 관리합니다.
 
 전략:
 
-- fetched data를 global UI store에 복제하지 않습니다.
-- deterministic query key를 사용합니다.
-- mutation 후 필요한 query family만 invalidate합니다.
+- 조회한 데이터를 전역 UI 저장소에 복제하지 않습니다.
+- 같은 조회 조건에는 같은 쿼리 키를 사용합니다.
+- 데이터 변경 후 영향을 받은 쿼리 그룹의 캐시만 무효화합니다.
 
 ---
 
@@ -19,8 +19,8 @@ Server state는 React Query가 소유한다.
 UI state는 component state 또는 작은 UI store가 소유한다.
 ```
 
-Service Desk settings, tickets, REMOTE drafts, actions, histories, work sessions는
-server state입니다. LOCAL 초안 복구는 예외이며, 동일한 query hook으로 노출되는
+Service Desk 설정, 티켓, REMOTE 초안, 액션, 이력, 작업 세션은 서버 상태입니다.
+LOCAL 초안 복구는 예외이며, 같은 쿼리 훅으로 제공하는
 브라우저 로컬 저장소 상태입니다.
 
 ---
@@ -29,7 +29,7 @@ server state입니다. LOCAL 초안 복구는 예외이며, 동일한 query hook
 
 ### Reference/Settings-like Queries
 
-자주 바뀌지 않지만 server state인 데이터:
+자주 바뀌지 않지만 서버에서 관리하는 데이터:
 
 - tenants
 - categories
@@ -37,12 +37,12 @@ server state입니다. LOCAL 초안 복구는 예외이며, 동일한 query hook
 - assignment rules
 - settings에서 사용하는 organization reference lists
 
-Feature가 허용하면 더 긴 stale time을 사용할 수 있지만, settings mutation 후에는
-관련 query를 invalidate해야 합니다.
+기능에서 허용하면 데이터를 최신으로 취급하는 시간(`staleTime`)을 늘릴 수 있습니다.
+다만 설정 변경 후에는 관련 쿼리의 캐시를 무효화해야 합니다.
 
 ### Workflow Queries
 
-사용자 action 이후 변경될 수 있는 데이터:
+사용자 작업 후 변경될 수 있는 데이터:
 
 - ticket search/list
 - ticket detail
@@ -51,7 +51,7 @@ Feature가 허용하면 더 긴 stale time을 사용할 수 있지만, settings 
 - ticket histories
 - work sessions
 
-Workflow mutation 이후 invalidate해야 합니다.
+업무 데이터를 변경한 후에는 관련 캐시를 무효화해야 합니다.
 
 ---
 
@@ -70,32 +70,31 @@ settings approval steps
 settings assignment rules
 ```
 
-정확한 key builder는 feature/domain code에 둡니다. 문서는 family와 ownership을 설명합니다.
+정확한 쿼리 키 생성기는 기능·도메인 코드에 둡니다. 이 문서는 쿼리 그룹과 관리
+책임을 설명합니다.
 
 ### Effective User Cache Isolation
 
-Authorization-sensitive 결과가 effective user에 따라 달라지면 deterministic query
-key에도 runtime에 필요한 effective identity를 포함해야 합니다. 현재 ticket detail,
-ticket action list/detail, ticket history query는 authorization-filtered data,
-NOTE visibility, operation capability projection을 응답에 포함할 수 있으므로
-runtime과 effective user별로 cache scope를 구분합니다.
+권한에 따라 조회 결과가 달라지면 쿼리 키에도 해당 실행 환경에서 권한 판단에 쓰는
+현재 사용자 정보를 포함해야 합니다. 현재 티켓 상세, 액션 목록·상세, 이력 응답에는
+권한에 따라 걸러진 데이터, NOTE 조회 가능 여부, 실행 가능한 작업 정보가 포함될 수
+있습니다. 따라서 LOCAL/REMOTE 실행 환경과 현재 사용자별로 캐시를 구분합니다.
 
-Impersonation을 포함한 effective user 전환 시 이전 principal의 protected workflow
-응답을 새 principal의 cached data나 placeholder data로 재사용하지 않습니다.
-전환 전에 시작한 request가 늦게 완료되더라도 다른 principal의 cache를 채워서는
-안 됩니다. 이 원칙은 mutation 응답을 직접 cache에 쓰는 경우에도 적용합니다.
-Ticket Action mutation은 시작 시점의 identity scope를 보존하여 해당 scope에 씁니다.
+Impersonation을 포함해 현재 사용자가 바뀌면 이전 사용자의 보호된 업무 응답을
+새 사용자의 캐시나 임시 표시 데이터로 재사용하지 않습니다. 전환 전에 시작한
+요청이 늦게 완료되어도 다른 사용자의 캐시에 응답을 저장하지 않습니다. 데이터 변경
+응답을 캐시에 직접 기록할 때도 같은 원칙을 적용합니다. Ticket Action 변경은
+시작 시점의 사용자 범위를 보존하고 그 범위의 캐시에 기록합니다.
 
-이는 runtime에 필요한 scope를 포함한다는 원칙의 확장이며, 모든 query key에
-username을 요구하는 규칙이 아닙니다. 결과가 identity와 무관한 reference/settings
-data는 impersonation을 지원한다는 이유만으로 user별 key를 가질 필요가 없습니다.
-Mutation 후에는 계속 영향을 받는 query family만 targeted invalidation합니다.
-Cache isolation은 이 원칙을 대체하거나 global invalidation을 요구하지 않습니다.
+이 규칙은 실행 환경에서 필요한 범위를 쿼리 키에 포함한다는 원칙을 구체화합니다.
+모든 쿼리 키에 사용자명을 넣어야 한다는 뜻은 아닙니다. 사용자에 따라 결과가
+달라지지 않는 참조·설정 데이터는 impersonation을 지원한다는 이유만으로 사용자별
+키를 만들 필요가 없습니다. 데이터 변경 후에는 영향을 받은 쿼리 그룹만 무효화합니다.
+사용자별 캐시 분리가 전체 캐시 무효화를 요구하지는 않습니다.
 
-Cache isolation은 client-side 정보 분리와 UX consistency를 위한 보조 경계이며
-authorization이 아닙니다. 최종 authority는 서버에 있고, 서버가 trusted effective
-principal로 요청 권한을 검증합니다. Effective-user-aware cache와 server-side
-authorization은 서로 보완하는 경계입니다.
+캐시 분리는 클라이언트에서 사용자별 정보를 구분하고 화면을 일관되게 표시하는
+보조 수단입니다. 접근 권한은 서버가 신뢰할 수 있는 현재 사용자 정보로 검증합니다.
+사용자별 캐시와 서버 권한 검증은 서로 보완합니다.
 
 ---
 
@@ -110,48 +109,49 @@ authorization은 서로 보완하는 경계입니다.
 | work-session create | work sessions, ticket detail, histories, status 영향 시 list/search |
 | settings mutation | affected settings family |
 
-모든 Service Desk mutation에서 global invalidation을 기본값으로 사용하지 않습니다.
+Service Desk 데이터를 변경할 때 전체 캐시 무효화를 기본으로 사용하지 않습니다.
 
 ---
 
 ## Draft Query Policy
 
 REMOTE 초안은 PostgreSQL 티켓 행을 기반으로 하며 초안 Route Handler를 통해
-접근하는 server state입니다. 반면 LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저
+접근하는 서버 상태입니다. LOCAL 초안 복구는 현재 데모 사용자 범위의 브라우저
 `localStorage`에 저장되고, 해당 Route Handler를 호출하지 않고 기능 초안 저장소가
 읽고 씁니다.
 
-React Query는 두 data scope 모두에서 query와 mutation을 조정합니다. React Query
-캐시는 REMOTE 영속 저장소도, LOCAL 복구 저장소도 아닙니다.
+React Query는 두 데이터 범위 모두에서 조회와 변경을 조정합니다. REMOTE 초안은
+데이터베이스에, LOCAL 복구 초안은 `localStorage`에 저장하며 React Query 캐시는
+어느 쪽의 저장소도 대신하지 않습니다.
 
-Create dialog는 draft query family로 active draft를 로드합니다. Final submit 또는
-discard 후 active draft query를 invalidate/remove합니다.
+생성 대화상자는 초안 쿼리 그룹을 통해 활성 초안을 불러옵니다. 최종 제출 또는
+폐기 후에는 활성 초안 쿼리의 캐시를 무효화하거나 제거합니다.
 
-Attachment input은 durable draft state가 아닙니다. Raw `File`은 React Query에 저장하지 않습니다.
+첨부파일 입력은 지속적으로 보관하는 초안 상태가 아닙니다. 원본 `File` 객체는
+React Query에 저장하지 않습니다.
 
 ---
 
 ## Ticket Action Query Policy
 
-Action은 workflow record입니다.
+액션은 티켓 처리 중 실행한 작업을 기록합니다.
 
-Action query는 ticket의 action list, route가 노출하는 action detail, comment/note의
-soft-delete state에 사용합니다.
+액션 쿼리는 티켓의 액션 목록, API가 제공하는 액션 상세, 댓글·노트의 소프트 삭제
+상태를 조회합니다.
 
-Operational action execution 후에는 성공한 command가 history event를 만들기 때문에
-action query와 history query를 함께 invalidate합니다.
+운영 액션을 성공적으로 실행하면 이력 이벤트가 생성되므로 액션 쿼리와 이력 쿼리의
+캐시를 함께 무효화합니다.
 
 ---
 
 ## History Query Policy
 
-History는 append-oriented server state입니다.
+이력은 주로 새 기록을 추가하는 서버 상태입니다.
 
-Command 성공 후에는 해당 ticket history를 invalidate합니다. Event contract를 완전히
-통제할 수 없다면 UI에서 history event를 optimistic하게 만들지 않습니다.
+명령 실행 후에는 해당 티켓 이력의 캐시를 무효화합니다. 이벤트 생성 규칙을 완전히
+통제할 수 없다면 서버 응답 전에 UI에서 이력 이벤트를 미리 만들지 않습니다.
 
-Server는 `type`, `source`, `event`, previous/current value, actor/timestamp의
-authority입니다.
+`type`, `source`, `event`, 변경 전·후 값, 실행자·시각은 서버가 결정합니다.
 
 ---
 
@@ -171,14 +171,14 @@ Work-session create 후 invalidate:
 - ticket history
 - next status 변경 시 ticket list/search
 
-Detail/update/delete/timer helper는 matching route가 구현되기 전까지 completed API로
-문서화하지 않습니다.
+상세 조회·수정·삭제·타이머 헬퍼는 대응하는 API 경로를 구현하기 전까지 완료된
+API 기능으로 문서화하지 않습니다.
 
 ---
 
 ## Settings Query Policy
 
-Settings data를 Zustand에 중복 저장하지 않습니다.
+설정 데이터를 Zustand에 중복 저장하지 않습니다.
 
 React Query가 소유:
 
@@ -199,7 +199,7 @@ Local component state가 소유:
 
 ## LOCAL/REMOTE Runtime
 
-Feature UI는 LOCAL/REMOTE storage detail을 깊게 분기하지 않습니다.
+기능 UI는 LOCAL/REMOTE 저장 방식에 따라 내부 로직을 여러 갈래로 나누지 않습니다.
 
 ```txt
 feature hook
@@ -208,7 +208,7 @@ feature hook
 -> LOCAL handler or REMOTE service
 ```
 
-Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포함합니다.
+초안 키처럼 실행 환경과 사용자 범위가 필요한 쿼리 키는 해당 범위를 포함합니다.
 
 ---
 
@@ -216,20 +216,20 @@ Draft key처럼 runtime/user scope가 필요한 query key는 해당 scope를 포
 
 ### API Data in Zustand
 
-Ticket detail, settings, draft 또는 history를 parallel source of truth로 Zustand에
-복제하지 않습니다.
+티켓 상세, 설정, 초안, 이력을 Zustand에 복제해 두 저장소가 각각 판단 기준이 되게
+하지 않습니다.
 
 ### Raw Files in Cache
 
-Browser `File` object를 React Query에 저장하지 않습니다.
+브라우저의 `File` 객체를 React Query에 저장하지 않습니다.
 
 ### Fake History
 
-Server에서 성공하지 않은 command에 대해 UI-only history row를 만들지 않습니다.
+서버에서 성공하지 않은 명령에 대해 UI에서만 존재하는 이력 행을 만들지 않습니다.
 
 ### Overbroad Invalidations
 
-모든 Service Desk mutation 후 모든 query를 invalidate하지 않습니다.
+Service Desk 데이터를 변경할 때마다 모든 쿼리를 무효화하지 않습니다.
 
 ---
 
@@ -246,8 +246,7 @@ Server에서 성공하지 않은 command에 대해 UI-only history row를 만들
 
 ## 요약
 
-React Query는 Service Desk server state를 소유하면서 브라우저 로컬 LOCAL 초안
-저장소에 대한 접근도 조정합니다. 현재 전략은 tickets, drafts, actions, histories,
-work sessions, tenant-scoped settings의 구조화된 query family와 workflow mutation
-이후의 정밀한 invalidation을 사용하며, UI state·server state·복구 저장소를
-명확히 분리합니다.
+React Query는 Service Desk 서버 상태를 관리하고, 브라우저의 LOCAL 초안 저장소에
+대한 접근도 조정합니다. 티켓·초안·액션·이력·작업 세션·테넌트별 설정을 쿼리 그룹으로
+구분하고, 데이터 변경 후에는 영향을 받은 그룹만 무효화합니다. UI 상태, 서버 상태,
+초안 복구 저장소는 각각 구분합니다.

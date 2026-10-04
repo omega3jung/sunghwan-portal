@@ -2,11 +2,10 @@
 
 ## 배경
 
-2026년 9월 프로젝트는 위험 기반 Vitest coverage를 정리한 뒤, reusable UI component의
-visual state와 browser interaction을 어떤 경계에서 검증할지 별도로 결정할 필요가
-있었습니다.
+2026년 9월에는 위험에 따라 Vitest 검증 범위를 정리한 뒤, 재사용 UI 컴포넌트의
+시각 상태와 브라우저 조작을 어디서 검증할지 별도로 결정해야 했습니다.
 
-Vitest는 다음 영역을 중심으로 application correctness를 보호합니다.
+Vitest는 다음 영역을 중심으로 애플리케이션 동작이 올바른지 검증합니다.
 
 ```txt
 domain rule
@@ -17,7 +16,7 @@ domain rule
 -> page/view-model composition
 ```
 
-반면 프로젝트가 직접 소유한 reusable UI는 다음 특성을 독립적인 browser 환경에서
+프로젝트가 직접 만든 재사용 UI는 다음 특성을 독립적인 브라우저 환경에서
 검토할 가치가 있습니다.
 
 - 여러 visual state
@@ -37,9 +36,9 @@ application route
 -> demo-specific control UI
 ```
 
-Storybook coverage가 확장되면서 application route와 Storybook이 같은 component
-inspection 책임을 중복해서 가지게 되었습니다. 따라서 전체 Storybook coverage 범위와
-기존 `/demo` playground를 대체하는 기준을 함께 정리했습니다.
+Storybook 검증 범위가 늘면서 애플리케이션 페이지와 Storybook이 같은 컴포넌트
+검토 역할을 중복해서 맡게 되었습니다. 따라서 Storybook의 전체 검증 범위와
+기존 `/demo` 체험 페이지를 대체하는 기준을 함께 정리했습니다.
 
 ---
 
@@ -47,10 +46,10 @@ inspection 책임을 중복해서 가지게 되었습니다. 따라서 전체 St
 
 ### 1. Story가 존재하는 것만으로 Demo Playground를 대체할 수 없음
 
-Storybook Controls가 존재해도 `args`가 실제 component에 전달되지 않으면 public
-parameter를 변경하며 동작을 확인할 수 없습니다. Controlled component가
-`useState(args.value)`의 initial value만 사용하면 이후 Controls 변경과 Canvas
-interaction도 서로 다른 state를 가질 수 있습니다.
+Storybook Controls가 있어도 `args`가 실제 컴포넌트에 전달되지 않으면 공개 매개변수를
+바꾸며 동작을 확인할 수 없습니다. 외부에서 값을 제어하는 컴포넌트가
+`useState(args.value)`의 초기값만 사용하면 이후 Controls 변경과 Canvas 조작이
+서로 다른 상태를 보여줄 수 있습니다.
 
 ```txt
 Story exists
@@ -80,8 +79,8 @@ SortableTree        -> reorderScope / indentation / collapsible
 Stepper             -> orientation / visual composition
 ```
 
-의미적으로 다른 상태와 연속적인 parameter variation을 구분하지 않으면 유사한 Story가
-불필요하게 증가합니다.
+의미가 다른 상태와 매개변수 값의 연속적인 변화를 구분하지 않으면 비슷한 Story가
+불필요하게 늘어납니다.
 
 ```txt
 meaningfully different state
@@ -102,9 +101,9 @@ HierarchicalSelect / MultiHierarchicalSelect
 MultiComboBox / TreeMultiComboBox
 ```
 
-한 Meta에서 다른 public component를 custom render로만 표현하면 component 고유 prop이
-Controls에 자연스럽게 노출되지 않을 수 있습니다. Storybook hierarchy는 source folder
-grouping보다 public component contract를 반영해야 합니다.
+하나의 Meta에서 다른 공개 컴포넌트를 사용자 정의 render로만 표시하면 해당
+컴포넌트의 prop이 Controls에 드러나지 않을 수 있습니다. Storybook 구성은 소스
+폴더 묶음보다 공개 컴포넌트 API와 기대 동작을 기준으로 해야 합니다.
 
 ### 4. 전체 Storybook 범위와 `/demo` 대체 범위는 같지 않음
 
@@ -135,15 +134,15 @@ overall Storybook boundary
 
 ### 5. Component Variant와 Caller Composition을 구분해야 함
 
-예를 들어 `Step 1: Request`와 같은 Stepper 표현은 Stepper 자체의 variant가 아니라
-caller가 전달하는 label composition입니다. Storybook 편의를 위해 production component
-API에 존재하지 않는 variant를 추가하면 Story가 실제 public contract와 달라집니다.
+예를 들어 `Step 1: Request`는 Stepper 자체의 변형이 아니라 호출자가 전달한 레이블
+구성입니다. Storybook 편의만을 위해 실제 컴포넌트 API에 없는 변형을 추가하면
+Story가 실제 공개 API와 다른 동작을 설명하게 됩니다.
 
 ### 6. Storybook 전용 Contract는 Production과 Drift할 수 있음
 
-Production option constant나 type이 이미 존재한다면 Storybook은 이를 재사용해야 합니다.
-같은 option을 Story에 다시 hard-code하거나 Storybook 전용 production prop을 추가하면 두
-contract가 독립적으로 변경될 수 있습니다.
+실제 코드에 옵션 상수나 타입이 있으면 Storybook도 이를 재사용합니다. 같은 옵션을
+Story에 별도로 하드코딩하거나 Storybook 전용 prop을 실제 컴포넌트에 추가하면
+두 API 정의가 서로 다르게 바뀔 수 있습니다.
 
 ---
 
@@ -165,12 +164,12 @@ contract가 독립적으로 변경될 수 있습니다.
 
 ### 선택지 1. 기존 `/demo`와 Storybook을 모두 유지
 
-두 환경에서 application context와 isolated context를 모두 확인할 수 있지만 동일한
-custom component, fixture 및 control UI를 중복 관리해야 합니다. 두 환경의 variant와
-fixture가 drift할 위험도 있습니다.
+두 환경에서 애플리케이션 맥락과 독립적인 렌더링을 모두 확인할 수 있지만, 같은
+custom 컴포넌트·fixture·조작 UI를 중복 관리해야 합니다. 두 환경의 상태 예시와
+fixture가 서로 달라질 위험도 있습니다.
 
-Storybook이 동일하거나 더 나은 inspection capability를 제공할 수 있으므로 장기 구조로는
-채택하지 않았습니다.
+Storybook에서 같은 수준 이상으로 컴포넌트를 검토할 수 있으므로 이 방식을 장기
+구조로 채택하지 않았습니다.
 
 ### 선택지 2. 대응 Story 존재 여부만 확인하고 `/demo`를 제거
 
@@ -211,8 +210,8 @@ future cross-page browser journey
 -> E2E / Playwright
 ```
 
-이 구조는 `/demo` playground를 대체하면서도 Storybook을 또 하나의 application으로
-확장하지 않습니다.
+이 구조에서는 `/demo` 체험 페이지를 대체하되, Storybook에 또 하나의 애플리케이션을
+구현하지 않습니다.
 
 ---
 
@@ -220,8 +219,8 @@ future cross-page browser journey
 
 ### 1. `src/components/custom`은 포괄적인 Storybook Coverage 대상임
 
-프로젝트가 직접 만든 reusable custom component의 public family는 가능한 한 모두
-Storybook에서 검토합니다. 내부 implementation 파일마다 Story를 만들지는 않습니다.
+프로젝트가 직접 만든 재사용 custom 컴포넌트의 공개 API 묶음은 가능한 한 모두
+Storybook에서 검토합니다. 내부 구현 파일마다 Story를 만들지는 않습니다.
 
 ```txt
 public component contract
@@ -233,9 +232,9 @@ internal implementation detail
 
 ### 2. Layout과 Menu는 선별적으로 포함함
 
-`src/components/layout`과 `src/components/menu`에서는 application-wide visual state를
-독립적으로 확인할 가치가 있고 과도한 runtime 재현이 필요하지 않은 component만
-선별합니다.
+`src/components/layout`과 `src/components/menu`에서는 애플리케이션 공통 시각 상태를
+독립적으로 확인할 가치가 있는 컴포넌트만 선별합니다. 실행 환경을 과도하게
+재현해야 하는 컴포넌트는 제외합니다.
 
 현재 구현된 대상은 다음과 같습니다.
 
@@ -247,9 +246,9 @@ Menu/UserMenu
 
 ### 3. Feature Story는 독립적인 Presentation Component로 제한함
 
-Feature workflow/container 전체는 Storybook으로 옮기지 않습니다. Domain type을
-재사용하면서 API 또는 workflow infrastructure 없이 렌더링할 수 있는 presentation
-component만 소수 허용합니다.
+기능의 업무 흐름이나 컨테이너 전체를 Storybook으로 옮기지 않습니다. 도메인 타입을
+재사용하면서 API나 업무 처리 기반 기능 없이 렌더링할 수 있는 표시 컴포넌트만
+소수 허용합니다.
 
 현재 구현된 예외는 다음과 같습니다.
 
@@ -267,19 +266,20 @@ Every React component needs a Story
 Every UI file needs Storybook coverage
 ```
 
-Story 또는 Story file 수는 품질 지표가 아닙니다. Public contract를 독립적으로 검토할
-수 있는지가 coverage 판단 기준입니다.
+Story나 Story 파일 수는 품질 지표가 아닙니다. 공개 API와 기대 동작을 독립적으로
+검토할 수 있는지가 검증 범위의 판단 기준입니다.
 
 ### 5. 의미적으로 다른 상태는 Story로 표현함
 
 `Default`, `WithValue`, `Empty`, `Disabled`, `ReadOnly`, `Loading`, `Multiple`처럼 사용자가
 구분해서 확인할 가치가 있는 상태는 별도 Story로 표현할 수 있습니다.
 
-값만 연속적으로 달라지는 parameter는 near-duplicate Story로 늘리지 않습니다.
+값만 연속적으로 달라지는 매개변수는 비슷한 Story를 여러 개 만드는 대신 조절할
+수 있도록 제공합니다.
 
 ### 6. Continuous Public Parameter는 Controls로 제공함
 
-다음과 같은 configurable value는 기본적으로 Storybook Controls가 소유합니다.
+다음처럼 조절 가능한 값은 기본적으로 Storybook Controls에서 제공합니다.
 
 ```txt
 maxImages
@@ -291,8 +291,8 @@ indentation
 collapsible
 ```
 
-Demo 전용 `<Input>`, `<Select>`, `<Switch>`는 Controls가 같은 역할을 제공하면 복제하지
-않습니다.
+Controls가 같은 역할을 제공하면 데모 전용 `<Input>`, `<Select>`, `<Switch>`를
+별도로 만들지 않습니다.
 
 ### 7. Controls와 Canvas는 같은 Controlled State를 사용함
 
@@ -307,32 +307,33 @@ Canvas interaction
 -> observable result
 ```
 
-필요한 경우 `useArgs` 또는 동등한 Storybook-controlled pattern을 사용합니다. Initial
-args만 local state로 복사해 이후 Control 변경을 무시하는 구조는 허용하지 않습니다.
+필요하면 `useArgs`나 같은 역할을 하는 Storybook 상태 제어 패턴을 사용합니다.
+초기 args만 로컬 상태에 복사하고 이후 Control 변경을 무시하는 구조는 허용하지
+않습니다.
 
 ### 8. Meta는 Public Component Contract를 기준으로 분리함
 
-같은 source family에 있어도 public API가 실질적으로 다르면 독립 Meta를 사용합니다.
-현재 Avatar, DatePicker, HierarchicalSelect, MultiComboBox family는 public component별로
-분리되어 있습니다.
+같은 소스 묶음에 있어도 공개 API가 실질적으로 다르면 Meta를 분리합니다. 당시
+Avatar, DatePicker, HierarchicalSelect, MultiComboBox 묶음은 공개 컴포넌트별로
+분리되어 있었습니다.
 
 ### 9. Production Contract를 다시 정의하지 않음
 
-Storybook은 production type, option constant, public enum/value definition을 재사용합니다.
-예를 들어 DateRangePicker의 preset Control은 production의
+Storybook은 실제 코드의 타입, 옵션 상수, 공개 enum·값 정의를 재사용합니다.
+예를 들어 DateRangePicker의 preset Control은 실제 코드의
 `DEFAULT_DATE_RANGE_PRESETS`를 사용합니다.
 
-Storybook을 편하게 만들기 위한 production prop은 추가하지 않습니다.
+Storybook 사용 편의만을 위한 prop을 실제 컴포넌트에 추가하지 않습니다.
 
 ### 10. Caller Composition을 Component Variant와 구분함
 
-Stepper의 numbered label은 caller-provided content를 보여주는 composition Story로
-표현합니다. Stepper에 `showStepNumber` 또는 `showStepPrefix` 같은 책임을 추가하지
+Stepper의 숫자 레이블은 호출자가 전달한 콘텐츠를 보여주는 구성 Story로 표현합니다.
+Stepper에 `showStepNumber`나 `showStepPrefix`처럼 호출자가 담당할 역할을 추가하지
 않습니다.
 
 ### 11. Browser Interaction은 Inspection 가치에 따라 검증함
 
-Storybook Canvas에서는 public API가 지원하는 다음 interaction을 확인할 수 있어야 합니다.
+Storybook Canvas에서는 공개 API가 지원하는 다음 조작을 확인할 수 있어야 합니다.
 
 - select, remove 및 clear
 - date/range 선택
@@ -341,13 +342,13 @@ Storybook Canvas에서는 public API가 지원하는 다음 interaction을 확�
 - tree expand/collapse 및 지원되는 reordering
 - step navigation
 
-수동 Canvas interaction으로 충분할 수 있습니다. 안정적이고 regression 가치가 큰 경우에만
+수동 Canvas 조작으로 충분할 수 있습니다. 안정적이고 회귀 방지 효과가 큰 경우에만
 `play`를 추가합니다. 현재 ColorPicker, FileAttachment, RichEditor, SortableTree,
-Stepper Story에 `play` interaction이 있습니다.
+Stepper Story에는 `play` 상호작용이 있습니다.
 
 ### 12. Full Application Workflow는 Storybook으로 이동하지 않음
 
-다음과 같은 전체 workflow는 Vitest와 Live Demo가 각자의 책임 경계에서 검토합니다.
+다음과 같은 전체 업무 흐름은 Vitest와 Live Demo가 각자의 담당 범위에서 검토합니다.
 
 ```txt
 login
@@ -360,16 +361,16 @@ login
 -> work session
 ```
 
-향후 cross-page real-browser regression이 필요하면 Playwright E2E 경계에서 검토합니다.
-Storybook에 application provider/API architecture 전체를 복제하지 않습니다.
+향후 실제 브라우저에서 여러 페이지에 걸친 회귀 검증이 필요하면 Playwright E2E로
+검토합니다. Storybook에 애플리케이션의 provider와 API 구조 전체를 복제하지 않습니다.
 
 ### 13. 기존 `/demo` Playground를 Storybook으로 대체함
 
-`src/app/(protected)/demo`가 제공하던 custom component playground 책임은 Storybook의
-Story, Controls, args connection, interaction 및 observable result로 이전했습니다.
+`src/app/(protected)/demo`에서 custom 컴포넌트를 확인하던 기능은 Storybook의 Story,
+Controls, args 연결, UI 조작과 관찰 가능한 결과 표시로 옮겼습니다.
 
-해당 route에는 Storybook으로 이전하기 어려운 application workflow 책임이 없었으므로
-현재는 삭제되었습니다.
+해당 페이지에는 Storybook으로 옮기기 어려운 업무 처리 역할이 없었으므로
+삭제했습니다.
 
 ```txt
 previous
@@ -381,9 +382,9 @@ current
 -> Storybook
 ```
 
-이는 로그인 화면의 `Try Demo`, LOCAL runtime, mutable demo state 또는 Service Desk Live
-Demo를 제거한 것이 아닙니다. 제거한 것은 custom component를 확인하던 application 내부
-playground route입니다.
+로그인 화면의 `Try Demo`, LOCAL 실행 환경, 변경 가능한 데모 상태, Service Desk Live
+Demo는 유지합니다. 삭제한 것은 custom 컴포넌트를 확인하던 애플리케이션 내부
+체험 페이지입니다.
 
 ### 14. Storybook을 `/storybook` Route로 제공함
 
@@ -424,8 +425,8 @@ Vitest에는 `@storybook/addon-vitest`와 headless Playwright Chromium을 사용
 npm exec vitest -- run --project storybook
 ```
 
-기본 `npm test`는 `unit` project만 실행합니다. Storybook browser project는 현재 CI에서
-모든 test가 통과하는 강제 gate가 아닙니다.
+기본 `npm test`는 `unit` 프로젝트만 실행합니다. Storybook 브라우저 프로젝트는 아직
+모든 테스트 통과를 요구하는 CI 필수 검사가 아닙니다.
 
 ---
 
@@ -453,8 +454,8 @@ npm exec vitest -- run --project storybook
 - protected `/storybook` route에서 개발 및 production Storybook을 제공함
 - Storybook static build를 application production build에 통합함
 
-현재 Storybook browser project는 94개 Story test 중 90개가 통과합니다. 다음 네 개의
-`play` scenario는 Vitest browser runner에서 아직 실패합니다.
+당시 Storybook 브라우저 프로젝트는 Story 테스트 94개 중 90개가 통과했습니다.
+다음 네 개의 `play` 시나리오는 Vitest 브라우저 실행기에서 실패한 상태로 남았습니다.
 
 ```txt
 ColorPicker / Default
@@ -463,9 +464,9 @@ SortableTree / Collapse Interaction
 Stepper / Default
 ```
 
-따라서 browser project는 필수 CI gate가 아니라 diagnostic check로 사용합니다. 이 상태는
-채택한 coverage boundary를 바꾸지 않지만, 해당 failure를 해결하기 전에는 자동 interaction
-coverage가 모두 통과한다고 설명하지 않습니다.
+따라서 브라우저 프로젝트는 필수 CI 검사 대신 문제를 확인하는 진단 검사로 사용합니다.
+이 상태가 채택한 검증 범위를 바꾸지는 않습니다. 해당 실패를 해결하기 전에는
+자동 상호작용 검사가 모두 통과했다고 설명하지 않습니다.
 
 ---
 
@@ -528,8 +529,8 @@ Storybook should recreate the full application provider tree
 - Storybook browser project가 안정적인 CI gate로 정착함
 - custom component가 별도 package 또는 design system으로 추출됨
 
-이 경우에도 repository 전체를 한 번에 확대하지 않고 public ownership과 regression
-risk를 기준으로 범위를 다시 결정합니다.
+이 경우에도 저장소 전체로 한 번에 확대하지 않습니다. 프로젝트가 관리하는 공개 API와
+회귀 위험을 기준으로 범위를 다시 결정합니다.
 
 ---
 
@@ -565,10 +566,10 @@ Full application workflow
 -> Live Demo / future E2E
 ```
 
-기존 `/demo` component playground에서 가능했던 public parameter 조절과 interaction은
-Story, Controls, args connection 및 controlled result로 이전했습니다. Application route는
-실제 product workflow와 embedded Storybook entry에 집중하고, reusable UI의 독립적인
-개발·검토 책임은 Storybook이 담당합니다.
+기존 `/demo` 체험 페이지에서 제공하던 공개 매개변수 조절과 UI 조작은 Story,
+Controls, args 연결, 제어된 결과 표시로 옮겼습니다. 애플리케이션 페이지는 실제
+업무 흐름과 Storybook 진입 화면을 담당하고, 재사용 UI의 독립적인 개발·검토는
+Storybook이 담당합니다.
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## 배경
 
-Service Desk는 이전에 comment 중심 interaction model을 대체하기 위해 `TicketAction`을 도입했습니다.
+Service Desk는 댓글 중심 모델을 대체하기 위해 `TicketAction`을 도입했습니다.
 
 핵심 아이디어는 다음과 같았습니다.
 
@@ -11,7 +11,7 @@ Comment is data.
 Action is behavior.
 ```
 
-이 모델은 다음과 같은 ticket interaction을 표현할 수 있게 했습니다.
+이 모델로 다음 티켓 작업을 표현할 수 있게 되었습니다.
 
 - `COMMENT`
 - `NOTE`
@@ -26,28 +26,28 @@ Action is behavior.
 - `MERGE`
 - `CANCEL`
 
-이전 action decision은 action이 first-class domain entity로 존재해야 하는 이유를 설명했습니다.
+이전 결정에서는 액션을 별도 도메인 엔티티로 표현해야 하는 이유를 설명했습니다.
+2026년 7월에는 PostgreSQL에 저장된 티켓에 액션을 실제로 실행하는 방식을
+정의해야 했습니다.
 
-2026년 7월 작업에서는 action이 PostgreSQL-backed ticket에 대해 실제로 어떻게 실행되어야 하는지 정의해야 했습니다.
+티켓 액션은 타임라인 기록 외에 티켓 상태와 담당자 등에도 영향을 줄 수 있습니다.
 
-Ticket action은 action timeline보다 더 많은 것에 영향을 줄 수 있습니다.
+액션 유형에 따라 하나의 명령이 다음을 수행해야 할 수 있습니다.
 
-Type에 따라 하나의 command가 다음을 수행해야 할 수 있습니다.
+- 현재 사용자 검증
+- 티켓 조회 권한 검증
+- 현재 상태 검증
+- 액션별 입력 검증
+- Ticket Action 기록 생성
+- 티켓 필드 수정
+- 승인자 결정 변경
+- 작업자 배정 변경
+- 티켓 상태 변경
+- 수정하지 않는 History 기록 생성
+- 수명주기 명령에서 요구하는 경우 관련 작업 세션 종료
+- 향후 알림 기능을 연결할 지점 제공
 
-- current user validation
-- ticket visibility validation
-- current status validation
-- action-specific input validation
-- Ticket Action record 생성
-- ticket field update
-- approval routing 변경
-- work assignment 변경
-- ticket status 변경
-- immutable History record 생성
-- lifecycle command가 요구하는 경우 related work session finish
-- future notification integration point 노출
-
-이 과정에서 Ticket Action은 단순히 `ticket_action`에 insert하는 것만으로 구현할 수 없다는 점이 드러났습니다.
+이 과정에서 `ticket_action`에 행을 삽입하는 것만으로 Ticket Action을 구현할 수 없다는 점이 드러났습니다.
 
 ---
 
@@ -76,9 +76,8 @@ Command
 -> return stable DTOs
 ```
 
-Activity row가 insert되었다고 action이 완료된 것은 아닙니다.
-
-Ticket state와 history는 성공적으로 실행된 같은 command를 반영해야 합니다.
+활동 행을 생성하는 것만으로 액션이 완료되지는 않습니다.
+티켓 상태와 이력 모두 같은 명령이 성공한 결과를 반영해야 합니다.
 
 ---
 
@@ -93,25 +92,24 @@ POST action
 -> INSERT ticket_action
 ```
 
-기본 comment에는 동작할 수 있지만 operational action에는 effect가 필요합니다.
+일반 댓글에는 사용할 수 있지만, 운영 액션에는 실제 티켓 변경도 필요합니다.
 
 예시:
 
-- `ASSIGN`은 assignee와 status를 update할 수 있습니다.
-- `APPROVE`는 approval을 진행하거나 work assignment를 resolve할 수 있습니다.
-- `ADJUST`는 priority, risk level, due date를 update할 수 있습니다.
-- `MERGE`는 source ticket을 close하고 merge reference를 저장할 수 있습니다.
-- `CANCEL`은 ticket을 close하고 close reason을 기록할 수 있습니다.
+- `ASSIGN`은 담당자와 상태를 변경할 수 있습니다.
+- `APPROVE`는 승인을 진행하거나 작업자 배정을 결정할 수 있습니다.
+- `ADJUST`는 우선순위, 위험도, 기한을 변경할 수 있습니다.
+- `MERGE`는 원본 티켓을 종료하고 병합 참조를 저장할 수 있습니다.
+- `CANCEL`은 티켓을 종료하고 종료 사유를 기록할 수 있습니다.
 
-Action row는 사용자의 intent를 설명합니다.
-
-Command는 그 결과인 domain effect도 적용해야 합니다.
+액션 행은 사용자가 요청한 작업 의도를 기록합니다.
+명령은 그 요청에 따른 실제 도메인 변경도 적용해야 합니다.
 
 ---
 
 ### 2. Ticket, action, history write가 서로 어긋날 수 있음
 
-하나의 command boundary가 없으면 partial result가 가능합니다.
+관련 처리를 하나의 명령으로 묶지 않으면 일부 변경만 반영될 수 있습니다.
 
 예시:
 
@@ -120,7 +118,7 @@ Insert ASSIGN action succeeds
 -> ticket assignment update fails
 ```
 
-Timeline에는 실제로 일어나지 않은 assignment가 표시됩니다.
+타임라인에는 실제로 적용되지 않은 배정이 표시됩니다.
 
 반대도 안전하지 않습니다.
 
@@ -129,15 +127,15 @@ Ticket update succeeds
 -> action or history insert fails
 ```
 
-Ticket은 변경되었지만 audit trail은 완성되지 않습니다.
+티켓은 변경되었지만 감사 추적 기록은 완성되지 않습니다.
 
-Operational command에는 transactional consistency가 필요합니다.
+운영 명령은 트랜잭션으로 관련 저장을 함께 성공시키거나 모두 되돌려야 합니다.
 
 ---
 
 ### 3. History semantics에는 authoritative event field가 필요했음
 
-이전 history model은 "무엇이 일어났는가"를 여러 곳에 표현할 수 있었습니다.
+이전 이력 모델은 "무엇이 일어났는가"를 여러 곳에 표현할 수 있었습니다.
 
 ```txt
 historyAction = UPDATED
@@ -145,15 +143,15 @@ metadata.event = APPROVAL_APPROVED
 type = APPROVAL
 ```
 
-이는 filtering, display, validation을 모호하게 만들었습니다.
+그러면 필터링, 화면 표시, 검증에서 어느 값을 기준으로 할지 모호해집니다.
 
-Model에는 first-class semantic event field가 필요했습니다.
+무엇이 일어났는지 명확하게 나타내는 별도 이벤트 필드가 필요했습니다.
 
 ---
 
 ### 4. `SYSTEM`은 source와 domain area를 섞었음
 
-History type은 affected area를 설명해야 합니다.
+History의 type은 변경된 도메인 영역을 나타내야 합니다.
 
 - `TICKET`
 - `STATUS`
@@ -163,7 +161,7 @@ History type은 affected area를 설명해야 합니다.
 - `NOTE`
 - `PLANNING`
 
-System-generated behavior는 domain area가 아니라 source를 설명합니다.
+시스템이 생성했다는 정보는 변경 영역이 아니라 이벤트 출처(source)를 설명합니다.
 
 ```txt
 type
@@ -173,7 +171,7 @@ source
 -> which behavior or rule produced it
 ```
 
-System close도 여전히 status event입니다.
+시스템의 자동 종료도 상태 변경 이벤트입니다.
 
 따라서 다음이어야 합니다.
 
@@ -187,34 +185,33 @@ event = RESOLUTION_CLOSE
 
 ### 5. String-only before/after value는 약했음
 
-단순 string은 하나의 status change를 표현할 수 있습니다.
+단순 문자열로도 한 번의 상태 변경을 표현할 수 있습니다.
 
 ```txt
 fromValue = "Open"
 toValue = "Working"
 ```
 
-하지만 더 풍부한 effect를 잘 표현하지 못합니다.
+하지만 다음과 같이 여러 정보가 필요한 변경을 표현하기는 어렵습니다.
 
-- previous and next assignees
-- approval step progression
-- planning changes
-- merge target context
-- routing reset details
+- 이전 담당자와 이후 담당자
+- 승인 단계 진행
+- 계획 변경
+- 병합 대상 정보
+- 담당자 결정 초기화의 세부 정보
 
-Audit와 future reporting을 위해 structured JSON value가 필요합니다.
+감사와 향후 리포트를 위해 구조화된 JSON 값이 필요합니다.
 
 ---
 
 ### 6. LOCAL과 REMOTE는 같은 command meaning이 필요했음
 
-LOCAL은 mutable demo state를 사용합니다.
+LOCAL은 변경 가능한 데모 상태를 사용합니다.
+REMOTE는 PostgreSQL Repository와 트랜잭션을 사용합니다.
 
-REMOTE는 PostgreSQL repository와 transaction을 사용합니다.
+저장 방식은 다르지만 사용자가 확인하는 명령 결과는 같아야 합니다.
 
-Persistence mechanism은 다르지만 observable command behavior가 달라져서는 안 됩니다.
-
-허용할 수 없는 drift 예:
+허용할 수 없는 동작 차이의 예:
 
 ```txt
 LOCAL assign
@@ -224,26 +221,26 @@ REMOTE assign
 -> update assignee and status
 ```
 
-Runtime 차이는 Route Handler와 command boundary 뒤에 남아야 합니다.
+실행 환경의 차이는 Route Handler와 명령 처리 내부에서 다뤄야 합니다.
 
 ---
 
 ## 결정
 
-Ticket Action을 server-controlled command로 실행하기로 했습니다.
+서버가 권한과 상태를 확인한 뒤 Ticket Action 명령을 실행하도록 결정했습니다.
 
-Command boundary는 다음을 포함합니다.
+명령 처리는 다음 작업을 포함합니다.
 
-- authorization
-- current-state validation
-- action-specific validation
-- action persistence
-- ticket mutation
-- history creation
-- 필요한 경우 work-session side effect
-- future notification intent/resolution
+- 권한 검사
+- 현재 상태 검증
+- 액션별 검증
+- 액션 저장
+- 티켓 변경
+- 이력 생성
+- 필요한 경우 작업 세션 후속 처리
+- 향후 알림 요청·수신자 결정
 
-Operational action은 필요한 write를 transaction 안에서 실행하여 다음이 일관되게 유지되도록 합니다.
+운영 액션은 필요한 저장 작업을 트랜잭션 안에서 실행해 다음 결과를 일관되게 유지합니다.
 
 ```txt
 Ticket Action
@@ -251,11 +248,10 @@ Ticket mutation
 Ticket History
 ```
 
-`tkh_event`를 authoritative History event field로 사용하기로 했습니다.
+이력 이벤트 판단은 `tkh_event`를 기준으로 하기로 했습니다.
+`metadata.event`를 기본 이벤트로 사용하지 않습니다.
 
-`metadata.event`를 primary event로 사용하지 않습니다.
-
-History dimension을 분리합니다.
+이력의 각 구분 값을 분리합니다.
 
 ```txt
 type
@@ -268,7 +264,7 @@ source
 -> which action, rule, or system behavior produced it
 ```
 
-`fromValue`와 `toValue`는 structured JSON value로 저장합니다.
+`fromValue`와 `toValue`는 구조화된 JSON 값으로 저장합니다.
 
 ---
 
@@ -278,19 +274,19 @@ source
 
 Route Handler의 책임:
 
-- HTTP input parsing
-- session 및 role context 해석
-- LOCAL 또는 REMOTE execution 선택
-- command layer에 위임
-- mapped DTO 반환
+- HTTP 입력 파싱
+- 세션과 역할 정보 해석
+- LOCAL 또는 REMOTE 실행 선택
+- 명령 계층에 처리 위임
+- 변환한 DTO 반환
 
-Ticket mutation 또는 history rule을 직접 소유하면 안 됩니다.
+티켓 변경이나 이력 규칙을 직접 담당해서는 안 됩니다.
 
 ---
 
 ### 2. Trusted server context로 command를 실행함
 
-Client는 intent와 action-specific input을 보냅니다.
+클라이언트는 수행하려는 작업과 액션별 입력을 보냅니다.
 
 예시:
 
@@ -302,7 +298,7 @@ type AssignTicketActionInput = {
 };
 ```
 
-Client는 다음과 같은 trusted final effect를 보내면 안 됩니다.
+클라이언트는 서버가 검증 없이 신뢰해야 하는 다음 최종 변경 결과를 보내면 안 됩니다.
 
 ```ts
 {
@@ -312,33 +308,34 @@ Client는 다음과 같은 trusted final effect를 보내면 안 됩니다.
 }
 ```
 
-이 값들은 server에서 다음을 기준으로 해석됩니다.
+이 값들은 서버가 다음 정보를 기준으로 결정합니다.
 
-- authenticated user
-- role
-- ticket ownership
-- current status
-- current approval phase
-- current assignees
-- action rules
+- 인증된 사용자
+- 역할
+- 티켓 소유 관계
+- 현재 상태
+- 현재 승인 단계
+- 현재 담당자
+- 액션 규칙
 
 ---
 
 ### 3. Shared validation pipeline을 사용함
 
-모든 command는 common check를 거칩니다.
+모든 명령은 다음 공통 검사를 거칩니다.
 
-- ticket exists
-- ticket is active
-- actor can view or operate on the ticket
-- action path and payload match
-- action content is present when required
-- current status allows the action
-- actor satisfies requester, approver, assignee, or admin rules
-- Draft tickets reject normal operational actions
-- Closed tickets reject normal mutations unless an admin exception is explicit
+- 티켓 존재 여부
+- 티켓 활성 여부
+- 수행자의 티켓 조회 또는 작업 권한
+- 액션 경로와 payload 일치 여부
+- 내용이 필수인 액션에서 내용 존재 여부
+- 현재 상태에서 액션 허용 여부
+- 수행자가 요청자·승인자·작업자·관리자 규칙을 만족하는지 여부
+- Draft 티켓의 일반 운영 액션 거절
+- 명시적인 관리자 예외가 없으면 Closed 티켓의 일반 변경 거절
 
-UI action visibility는 convenience layer일 뿐입니다.
+UI에서 액션을 보여주는 조건은 사용자 편의를 위한 것입니다.
+서버의 권한 검사를 대신하지 않습니다.
 
 ```txt
 Permission-aware UI
@@ -349,7 +346,7 @@ Permission-aware UI
 
 ### 4. Action-specific effect를 명시적으로 유지함
 
-각 action handler는 valid command의 effect를 설명합니다.
+각 액션 핸들러는 유효한 명령이 적용할 변경 결과를 정의합니다.
 
 개념적으로:
 
@@ -362,29 +359,29 @@ type TicketActionEffect = {
 };
 ```
 
-정확한 TypeScript shape는 변할 수 있습니다.
+TypeScript 구조는 바뀔 수 있습니다.
 
-중요한 규칙은 effect가 server-generated이고 explicit하다는 점입니다.
+변경 결과는 서버가 생성하고 명시적으로 표현해야 합니다.
 
 ---
 
 ### 5. Action intent를 persist함
 
-Ticket Action은 user-facing intent와 activity를 저장합니다.
+Ticket Action은 사용자가 요청한 작업 의도와 활동을 저장합니다.
 
 핵심 정보:
 
-- ticket ID
-- ticket별 action number
-- action type
-- content 또는 reason
-- action-specific metadata
-- 지원되는 경우 files 또는 images
-- owner username
-- active flag
-- created timestamp
+- 티켓 ID
+- 티켓별 액션 번호
+- 액션 유형
+- 내용 또는 사유
+- 액션별 메타데이터
+- 지원하는 경우 파일 또는 이미지
+- 작성자 username
+- 활성 플래그
+- 생성 시각
 
-Action number는 ticket별로 scoped됩니다.
+액션 번호는 티켓별로 부여합니다.
 
 ```txt
 ticket A -> action 1, action 2, action 3
@@ -395,21 +392,21 @@ ticket B -> action 1
 
 ### 6. Communication과 operational mutability를 분리함
 
-Communication action:
+의사소통 액션:
 
 - `COMMENT`
 - `NOTE`
 
-이들은 controlled rule 아래에서 edit 또는 soft-delete될 수 있습니다.
+이 액션들은 정해진 규칙에 따라 수정하거나 소프트 삭제할 수 있습니다.
 
-일반 restriction:
+일반 제한:
 
-- author만 change 가능
-- closed ticket은 normal edit 차단
-- deletion은 `active = false` soft deletion
-- change는 History 생성
+- 작성자만 변경 가능
+- 종료된 티켓의 일반 수정 차단
+- 삭제 시 `active = false`로 소프트 삭제
+- 변경 시 History 생성
 
-Operational action:
+운영 액션:
 
 - `ASSIGN`
 - `ASSIGN_SELF`
@@ -422,15 +419,14 @@ Operational action:
 - `MERGE`
 - `CANCEL`
 
-이들은 실행 성공 후 immutable입니다.
-
-잘못된 operational decision은 old action을 rewrite하지 않고 새 command로 교정해야 합니다.
+운영 액션은 실행 성공 후 수정하지 않습니다.
+잘못된 운영 결정은 기존 액션을 다시 쓰지 않고 새 명령으로 바로잡아야 합니다.
 
 ---
 
 ### 7. History를 event-oriented로 유지함
 
-Service-level history type은 다음과 같습니다.
+서비스에서 사용하는 이력 type은 다음과 같습니다.
 
 ```ts
 type TicketHistoryType =
@@ -444,7 +440,7 @@ type TicketHistoryType =
   | "PLANNING";
 ```
 
-현재 source value는 다음과 같습니다.
+당시 source 값은 다음과 같습니다.
 
 ```ts
 type TicketHistorySource =
@@ -455,7 +451,7 @@ type TicketHistorySource =
   | "ASSIGNMENT_RULE";
 ```
 
-현재 event value에는 다음이 포함됩니다.
+당시 event 값에는 다음이 포함됩니다.
 
 ```txt
 TICKET_SUBMITTED
@@ -487,33 +483,31 @@ ROUTING_RESET
 ROUTING_PRESERVED
 ```
 
-Event name은 domain union과 일치해야 합니다.
-
-지원되는 event가 `ASSIGNMENT_UPDATED`일 때 assignment change를 위한 ad hoc event name을 도입하지 않습니다.
+이벤트 이름은 도메인 유니언 타입과 일치해야 합니다.
+배정 변경 이벤트로 `ASSIGNMENT_UPDATED`를 지원한다면 별도의 임의 이벤트 이름을 추가하지 않습니다.
 
 ---
 
 ### 8. Metadata는 supplemental로 유지함
 
-History metadata는 display 및 audit context를 포함할 수 있습니다.
+이력 메타데이터에는 화면 표시와 감사에 필요한 정보를 포함할 수 있습니다.
 
-- changed fields
-- previous and next status labels
-- assignee usernames
-- approval step IDs
-- merge target ID
-- routing reset details
-- action-specific reason context
+- 변경된 필드
+- 이전 상태와 이후 상태의 라벨
+- 담당자 username
+- 승인 단계 ID
+- 병합 대상 ID
+- 담당자 결정 초기화의 세부 정보
+- 액션별 사유 정보
 
-Metadata가 두 번째 authoritative event system이 되면 안 됩니다.
-
-Row-level `tkh_event`가 required event로 남습니다.
+메타데이터를 별도의 이벤트 판단 기준으로 사용하면 안 됩니다.
+행의 `tkh_event`가 필수 이벤트 필드로 남습니다.
 
 ---
 
 ### 9. Structured before/after value를 사용함
 
-`fromValue`와 `toValue`는 change가 하나의 primitive보다 풍부할 때 structured JSON으로 저장해야 합니다.
+변경 내용이 단일 기본형 값보다 복잡하면 `fromValue`와 `toValue`를 구조화된 JSON으로 저장해야 합니다.
 
 예시:
 
@@ -531,40 +525,36 @@ Row-level `tkh_event`가 required event로 남습니다.
 }
 ```
 
-History granularity는 raw database column count가 아니라 meaningful domain effect를 따라야 합니다.
+이력은 DB 열 개수가 아니라 의미 있는 도메인 변경 단위로 기록해야 합니다.
 
 ---
 
 ### 10. Notification recipient를 ticket email settings에 넣지 않음
 
-Ticket email metadata는 requester-configured recipient를 저장합니다.
+티켓 이메일 메타데이터는 요청자가 설정한 수신자를 저장합니다.
+승인·배정에 따라 결정되는 알림 수신자는 별도로 다룹니다.
 
-Routing recipient는 별개입니다.
+- 현재 승인자
+- 현재 작업자
+- 액션별 수신자
 
-- current approvers
-- current workers
-- action-specific recipients
-
-Assignment 또는 approval action은 derived assignee email을 `tk_email`에 영구적으로 append하면 안 됩니다.
-
-Notification delivery는 send time에 trusted employee email address를 server에서 resolve해야 합니다.
-
-Delivery가 deferred 또는 simulated이더라도 ticket email configuration을 훼손해서는 안 됩니다.
+배정 또는 승인 액션에서 계산한 담당자 이메일을 `tk_email`에 영구 추가하면 안 됩니다.
+알림을 보낼 때 서버가 신뢰할 수 있는 직원 이메일 주소를 결정해야 합니다.
+전송 기능이 미구현이거나 시뮬레이션이어도 티켓 이메일 설정을 훼손해서는 안 됩니다.
 
 ---
 
 ### 11. Work session을 Ticket Action과 분리함
 
-Work tracking은 ticket execution과 관련 있지만 normal Ticket Action은 아닙니다.
+작업 시간 추적은 티켓 실행과 관련되지만 일반 Ticket Action은 아닙니다.
+작업 세션 명령은 다음을 포함합니다.
 
-Work-session command는 다음을 포함합니다.
+- 시작
+- 종료
+- 전환
+- 수동 수정
 
-- start
-- finish
-- switch
-- manual update
-
-이들은 work-session record에 적용됩니다.
+이 명령들은 작업 세션 기록에 적용합니다.
 
 ```txt
 Ticket Action
@@ -574,17 +564,15 @@ Work Session
 -> evidence of actual working time
 ```
 
-Ticket을 열거나 읽는 행위가 status를 mutate하면 안 됩니다.
-
-Timer stop이 ticket을 자동 resolve해서도 안 됩니다.
+티켓을 열거나 읽을 때 상태를 변경하면 안 됩니다.
+타이머를 멈추는 것만으로 티켓을 자동 해결 처리해서도 안 됩니다.
 
 ---
 
 ### 12. Automatic close는 system command로 취급함
 
-Resolved ticket은 configured grace period 이후 자동 close될 수 있습니다.
-
-Baseline은 generic `updatedAt`이 아니라 resolution history event timestamp입니다.
+Resolved 티켓은 설정된 유예 기간 후 자동 종료될 수 있습니다.
+시간 기준은 일반 수정 시각 `updatedAt`이 아니라 해결 이력 이벤트의 시각입니다.
 
 현재 방향:
 
@@ -593,7 +581,7 @@ resolution event + 7 days
 -> Closed
 ```
 
-Automatic close는 Ticket Action 없이 History를 생성합니다.
+자동 종료는 Ticket Action 없이 History를 생성합니다.
 
 예시:
 
@@ -605,7 +593,7 @@ actorUsername = null
 actionNo = null
 ```
 
-Read request는 read-only로 유지되어야 합니다.
+조회 요청으로 상태를 변경해서는 안 됩니다.
 
 ---
 
@@ -613,17 +601,15 @@ Read request는 read-only로 유지되어야 합니다.
 
 ### 1. Command execution
 
-Action execution은 generic activity insert가 아니라 server use case입니다.
-
-REMOTE command는 transaction 안에서 PostgreSQL repository를 사용합니다.
-
-LOCAL command는 demo state를 사용하더라도 같은 conceptual command behavior를 따릅니다.
+액션 실행은 활동 행 저장과 함께 업무 규칙을 적용하는 서버 작업입니다.
+REMOTE 명령은 트랜잭션 안에서 PostgreSQL Repository를 사용합니다.
+LOCAL 명령은 데모 상태를 사용해도 같은 의미와 결과를 갖도록 처리합니다.
 
 ---
 
 ### 2. Transaction boundary
 
-Operational action에 필요한 write는 하나로 묶어 처리합니다.
+운영 액션에 필요한 저장 작업은 하나로 묶어 처리합니다.
 
 ```txt
 BEGIN
@@ -636,19 +622,19 @@ BEGIN
 COMMIT
 ```
 
-필수 step이 실패하면 command는 rollback됩니다.
+필수 단계가 실패하면 명령의 변경을 모두 되돌립니다.
 
 ---
 
 ### 3. History model
 
-History는 다음을 중심으로 모델링합니다.
+이력은 다음 값을 중심으로 모델링합니다.
 
 ```txt
 type + event + source + actor + fromValue + toValue + metadata
 ```
 
-이를 통해 history를 audit, filtering, display, reporting에 사용할 수 있습니다.
+이 구조로 이력을 감사, 필터링, 화면 표시, 리포트에 사용할 수 있습니다.
 
 ---
 
@@ -698,45 +684,45 @@ source 및 target 티켓 검증
 
 ### 긍정적 영향
 
-- Action, ticket effect, history가 일관되게 유지됩니다.
-- Server authorization이 실제 command boundary가 됩니다.
-- History가 first-class `type`, `event`, `source`를 사용합니다.
-- Operational action이 auditable하고 immutable해집니다.
-- LOCAL과 REMOTE가 같은 action semantics를 노출합니다.
-- Work tracking과 ticket action이 분리됩니다.
-- Ticket email settings를 mutate하지 않고 notification design을 추가할 수 있습니다.
-- Portfolio가 command handling과 audit-oriented modeling을 보여줍니다.
+- 액션, 티켓 변경 결과, 이력을 일관되게 유지합니다.
+- 서버 권한 검사로 실제 명령 실행을 제한합니다.
+- 이력이 별도 `type`, `event`, `source` 필드를 사용합니다.
+- 운영 액션을 감사할 수 있고 실행 후 수정하지 않습니다.
+- LOCAL과 REMOTE가 같은 의미의 액션 동작을 제공합니다.
+- 작업 시간 추적과 티켓 액션을 분리합니다.
+- 티켓 이메일 설정을 바꾸지 않고 알림 설계를 추가할 수 있습니다.
+- 포트폴리오에서 명령 처리와 감사 중심 모델링을 보여줍니다.
 
 ---
 
 ### 부정적 영향 / 트레이드오프
 
-- Operational action은 generic CRUD보다 더 많은 구조가 필요합니다.
-- Event name을 신중하게 유지해야 합니다.
-- 복잡한 command는 여러 history record를 만들 수 있습니다.
-- Transaction에는 repository coordination이 필요합니다.
-- Notification delivery는 별도의 reliability 문제로 남습니다.
-- LOCAL atomicity는 database infrastructure가 아니라 simulation으로 제공됩니다.
+- 운영 액션은 일반 CRUD보다 많은 구조가 필요합니다.
+- 이벤트 이름을 신중하게 유지해야 합니다.
+- 복잡한 명령은 여러 이력 기록을 만들 수 있습니다.
+- 트랜잭션에서 Repository 작업을 조정해야 합니다.
+- 알림 전달의 신뢰성은 별도 과제로 남습니다.
+- LOCAL에서는 DB 기반 기능 대신 시뮬레이션으로 관련 변경을 함께 반영합니다.
 
 ---
 
 ## 후속 정책
 
-- Operational action을 plain action-row insert로 구현하지 않습니다.
-- Route handler는 얇게 유지하고 command service가 effect를 책임집니다.
-- `tkh_event`를 authoritative event field로 유지합니다.
-- `metadata`는 supplemental로 유지합니다.
-- Domain union의 supported event name을 사용합니다.
-- GET/read flow에서 ticket status를 mutate하지 않습니다.
-- Timer finish를 ticket resolution으로 취급하지 않습니다.
-- Derived notification recipient를 `tk_email`에 넣지 않습니다.
-- 새 action type을 추가할 때 allowed status, permission rule, ticket effect, history event, query invalidation target을 정의합니다.
+- 운영 액션을 액션 행 삽입만으로 구현하지 않습니다.
+- Route Handler는 요청 확인과 위임에 집중하고 명령 서비스가 실제 변경을 담당합니다.
+- 이벤트 판단은 `tkh_event`를 기준으로 합니다.
+- `metadata`는 보충 정보로 유지합니다.
+- 도메인 유니언 타입에서 지원하는 이벤트 이름을 사용합니다.
+- GET·조회 흐름에서 티켓 상태를 변경하지 않습니다.
+- 타이머 종료를 티켓 해결로 취급하지 않습니다.
+- 계산된 알림 수신자를 `tk_email`에 넣지 않습니다.
+- 새 액션 유형을 추가할 때 허용 상태, 권한 규칙, 티켓 변경 결과, 이력 이벤트, 쿼리 무효화 대상을 정의합니다.
 
 ---
 
 ## 요약
 
-Ticket Action은 이제 controlled Service Desk command로 취급됩니다.
+Ticket Action은 서버가 검증하고 실행하는 Service Desk 명령으로 다룹니다.
 
 모델은 다음과 같습니다.
 
@@ -751,7 +737,7 @@ Ticket History
 = immutable event record of what actually changed
 ```
 
-Execution model은 다음과 같습니다.
+실행 모델은 다음과 같습니다.
 
 ```txt
 User submits action
@@ -762,4 +748,5 @@ User submits action
 -> affected client queries refresh
 ```
 
-이 설계는 timeline을 의미 있게 유지하면서 ticket state change를 LOCAL과 REMOTE runtime 모두에서 precise하고 auditable하며 안전하게 만듭니다.
+이 설계로 타임라인에 실제 작업 의미를 유지하고, LOCAL과 REMOTE 모두에서
+티켓 상태를 정확하고 안전하게 변경하며 변경 결과를 추적할 수 있습니다.

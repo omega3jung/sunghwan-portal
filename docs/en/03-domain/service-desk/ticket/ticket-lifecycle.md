@@ -219,7 +219,11 @@ implicitly resolve a ticket. GET requests never start work or mutate status.
 
 ## Auto Close
 
-Resolved auto-close is a system operation.
+In REMOTE, Supabase Cron (`0 * * * *`) runs in the database and directly invokes
+`service_desk.close_expired_resolved_tickets()` at the start of every hour.
+The function closes tickets that are still `Resolved` and whose latest
+resolution History is at least 168 elapsed hours old. Auto-close is a system
+operation recorded with these values:
 
 - source: `SYSTEM_AUTO`
 - event: `RESOLUTION_CLOSE`
@@ -233,8 +237,7 @@ Resolved auto-close is a system operation.
 The rule uses the latest resolution History, not generic `updatedAt` or calendar
 date subtraction. Re-resolution after reopen starts a new grace period.
 
-The REMOTE schedule invokes `service_desk.close_expired_resolved_tickets()` hourly
-through Supabase Cron (`0 * * * *`). The normal wait until the next check is less
+The normal wait until the next check is less
 than approximately one hour. Eligibility does not guarantee immediate closure:
 a successful run must acquire the necessary locks and revalidate the ticket.
 Missed runs or locked Tickets can be caught up on a later hourly run. REMOTE
@@ -271,7 +274,7 @@ Examples:
 
 ## Summary
 
-The current lifecycle is precise and action-driven. Persisted status names
-represent current responsibility. Approval/work ownership is derived from
+Commands drive the current lifecycle. Stored status names represent the current
+processing stage. Approval and work assignees are determined from
 `approvalStepId` and `assigneeUsernames`, and every status transition must come
 from an explicit command, workflow rule, or system operation.

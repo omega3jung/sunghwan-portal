@@ -7,12 +7,13 @@
 
 ## Goal
 
-This specification is the canonical high-level description of the current
+This specification defines the overall structure and core rules of the current
 Service Desk ticket system.
 
-The ticket system is workflow-driven, not CRUD-driven. A ticket is a workflow
-entity that moves through draft, approval, work assignment, execution,
-resolution, audit history, and work-session behavior.
+The system manages how a ticket moves from draft through approval, work
+assignment, execution, and resolution. History and work sessions record that
+process. Ticket operations follow this workflow rather than treating the ticket
+as a generic CRUD record.
 
 Detailed rules live in the linked design documents. Decision logs preserve the
 historical reasoning behind earlier choices and are not rewritten as current
@@ -34,7 +35,8 @@ The current project covers:
 - work-session create/list and tracked-minute aggregation
 - LOCAL demo behavior and REMOTE PostgreSQL/DTO boundaries
 
-The project is production-aligned, not production-complete. Production object
+The project uses a structure intended for production, but does not implement
+all production requirements. Production object
 storage, notification delivery, full SLA engine, real-time updates, and
 compliance-grade audit infrastructure are outside the completed portfolio
 feature scope. Deferred items are limitations, not a planned feature roadmap.
@@ -98,8 +100,8 @@ Ticket
 -> Attachment metadata
 ```
 
-Tenant is the configuration scope. Category is the central behavior
-configuration. Approval Step is evaluated from the selected category's
+Tenant groups settings. Category defines how tickets are handled.
+Approval Step is evaluated from the selected category's
 parent/main category. Assignment Rule checks the selected subcategory first and
 falls back to the parent/main category only when no subcategory rule exists.
 
@@ -177,7 +179,7 @@ See:
 
 ## Approval and Work Routing
 
-The current routing source of truth is:
+Approval phase and current assignees are determined from these stored database fields:
 
 ```txt id="routing-source-of-truth"
 tk_approval_step_id
@@ -196,7 +198,8 @@ approvalStepId == null
 -> assigneeUsernames = current workers
 ```
 
-Application DTOs expose phase-aware projection fields such as
+Application DTOs provide values calculated from those fields to distinguish
+approval assignments from work assignments, including
 `assignmentPhase`, `approvalAssigneeUsernames`, `workAssigneeUsernames`,
 `assignedApprover`, and `assignedWorker`.
 
@@ -257,7 +260,7 @@ File[] / inline image
 -> metadata persistence
 ```
 
-Both LOCAL and REMOTE currently use controlled demo replacement. There is no
+Both LOCAL and REMOTE replace selected attachments with predefined demo files. There is no
 production object storage in the current implementation.
 
 The system must not persist raw `File`, binary data, base64 data URLs, blob
@@ -289,7 +292,7 @@ RESUBMIT
 CANCEL
 ```
 
-Action execution is server-controlled:
+The server validates and executes each action command in this order:
 
 ```txt id="action-command-pipeline"
 Action command
@@ -344,19 +347,21 @@ from/to value -> structured JSON before/after
 metadata -> supplemental display/audit context
 ```
 
-`event` is authoritative. `SYSTEM_AUTO` is a source, not a history type.
+`event` identifies what happened. `SYSTEM_AUTO` identifies the source of the
+history record, rather than its type.
 
 Reopen history uses `type = STATUS`, `source = USER_ACTION`, and
 `event = TICKET_REOPENED` for the `Resolved -> Working` transition.
 
-Resolved auto-close becomes eligible at the latest resolution History timestamp
-plus 168 elapsed hours. It sets `status = Closed`, `closeReason = Completed`,
+In REMOTE, Supabase Cron (`0 * * * *`) runs in the database and directly invokes
+`service_desk.close_expired_resolved_tickets()` at the start of every hour.
+A Resolved ticket becomes eligible for auto-close 168 elapsed hours after its
+latest resolution History timestamp. The function sets `status = Closed`, `closeReason = Completed`,
 finishes running work sessions where applicable, and records `RESOLUTION_CLOSE`
 with `SYSTEM_AUTO` and `actionNo = null`.
 
-Reopen followed by re-resolution starts a new grace period. REMOTE auto-close
-invokes `service_desk.close_expired_resolved_tickets()` hourly through Supabase
-Cron (`0 * * * *`). Eligibility is exact; the normal wait until the next check is
+Reopen followed by re-resolution starts a new grace period. Eligibility uses
+exact elapsed time; the normal wait until the next check is
 less than approximately one hour. Closure requires successful execution; missed
 runs or locked Tickets can be caught up on a later hourly run. The existing HTTP
 maintenance path remains available. See the
@@ -372,7 +377,7 @@ See:
 
 Work Session is separate from Ticket Action.
 
-Current route surface:
+Currently available API routes:
 
 ```txt id="work-session-routes"
 GET  /api/service-desk/tickets/:ticketId/work-session
@@ -419,7 +424,7 @@ DB Row
 ```
 
 UI code must not access Supabase or database rows directly. LOCAL mutable state
-and REMOTE services should keep compatible DTO contracts where a workflow is
+and REMOTE services should return compatible DTO formats where a workflow is
 supported.
 
 See:
@@ -432,7 +437,7 @@ See:
 
 ## Deferred Scope
 
-Known implementation limits also apply within the command surface: manual
+The implemented commands also have known limits: manual
 `ASSIGN` validates actor/status and a non-empty username list without rechecking
 category/phase candidate eligibility, and recipient address arrays are accepted
 without employee/company eligibility validation. Category-driven initial routing
@@ -489,8 +494,8 @@ Deferred items must not be described as current implementation.
 
 ## Summary
 
-The current ticket system uses precise persisted statuses, REMOTE draft rows,
-phase-aware approval/work routing, attachment preparation, server-controlled
+The current ticket system uses stored statuses, REMOTE draft rows,
+separate approval and work assignment decisions, attachment preparation, server-controlled
 ticket actions, immutable event history, and work-session evidence. The spec
 separates current implementation from deferred production infrastructure and
 links detailed rules to the current design documents.

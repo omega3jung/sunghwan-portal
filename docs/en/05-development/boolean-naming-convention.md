@@ -236,7 +236,7 @@ A capability may include:
 * form validity
 * current mutation state
 
-However, a client-side capability is not the authorization source of truth.
+However, a client-side capability is not the basis for final authorization.
 
 ```txt
 UI capability
@@ -914,7 +914,7 @@ const canStartWork =
 
 Here:
 
-* `assignedWorker` is a DTO projection describing current assignment.
+* `assignedWorker` is a DTO value derived from current assignment data.
 * `canStartWork` is an application capability derived from assignment and status.
 
 ---

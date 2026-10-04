@@ -2,8 +2,8 @@
 
 ## Goal
 
-The SLA strategy describes the current time-expectation model for Service Desk
-tickets without overstating future automation.
+The SLA strategy explains how Service Desk tickets currently set and manage
+deadlines, distinguishing implemented behavior from possible future automation.
 
 In the current implementation, SLA is represented mainly through:
 
@@ -14,7 +14,7 @@ In the current implementation, SLA is represented mainly through:
 - manual/operator adjustment through ticket actions
 
 A full SLA breach, pause, escalation, calendar, and notification engine is
-future scope.
+outside the current implemented scope.
 
 ---
 
@@ -62,7 +62,7 @@ selected subcategory defaultSlaDays
 
 The UI may apply category defaults when the requester selects a category.
 
-The server still validates the submitted ticket payload and owns the final
+The server validates the submitted ticket payload and determines the final
 workflow transition.
 
 ---
@@ -149,7 +149,7 @@ finishes running work sessions where supported, and records `RESOLUTION_CLOSE`
 with `SYSTEM_AUTO` and `actionNo = null`.
 
 The REMOTE schedule checks hourly through Supabase Cron (`0 * * * *`). The check
-interval is separate from eligibility and is not a completion-time guarantee.
+interval is separate from the time a ticket becomes eligible and does not guarantee when it closes.
 REMOTE function execution and scheduled invocation have been verified; see the
 [scheduling decision](../../../../06-decisions/2026-09-resolved-auto-close-scheduling.md).
 
@@ -210,7 +210,7 @@ breach rule.
 
 ## Summary
 
-The current SLA model is intentionally modest and implementation-aligned:
+The current SLA model focuses on implemented deadline management:
 category settings provide default SLA days, forms and actions manage due dates
 and planning fields, and history records meaningful changes.
 

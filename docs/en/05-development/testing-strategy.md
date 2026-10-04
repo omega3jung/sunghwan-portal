@@ -5,9 +5,9 @@
 This document defines how automated testing is selected and structured in
 `sunghwan-portal`.
 
-The goal is not to maximize the number of test files or achieve a repository-wide
-coverage percentage. Tests are added where a regression is likely to break an
-important workflow, security boundary, data contract, or user-facing state.
+Tests protect important workflows, access restrictions, data formats, and
+user-facing states from regressions. Increasing test-file counts or a
+repository-wide coverage percentage is not a goal in itself.
 
 ```txt
 Risk
@@ -17,8 +17,8 @@ Risk
 ```
 
 The current automated test suite is centered on Vitest. Storybook complements
-that suite as the dedicated browser playground and interaction-review boundary
-for application-owned reusable UI. Its primary scope is
+it by rendering application-owned reusable UI in isolation for browser
+inspection and interaction review. Its primary scope is
 `src/components/custom`, with selected application-wide layout and menu UI and
 a small number of independently renderable feature presentation components.
 End-to-end browser workflows have a different responsibility and remain outside
@@ -359,8 +359,8 @@ Representative cases should cover, where applicable:
 Client-supplied tenant, company, scope, role, or identity values are never
 treated as authorization truth when the server owns a canonical source.
 
-Invalid trusted fields should fail closed rather than silently increase
-capability.
+Invalid trusted fields should cause denial (fail closed) rather than silently
+increase permission.
 
 ---
 
@@ -736,8 +736,8 @@ Selected `play` interactions provide additional regression protection. The
 repository already configures a Storybook Vitest browser project with a
 headless Playwright Chromium provider. It remains separate from the default
 `npm test` command, which runs only the `unit` project. The browser project is
-not currently a clean, enforced CI gate; documented `play` failures remain a
-known verification limitation in the completed portfolio scope.
+not currently a required CI check with all tests passing. Documented `play`
+failures remain a known verification limitation in the completed portfolio scope.
 
 ### E2E Boundary
 

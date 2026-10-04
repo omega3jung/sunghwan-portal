@@ -2,11 +2,11 @@
 
 ## Goal
 
-This document defines the current ticket entity, DTO projection, and data
-boundary responsibilities.
+This document defines the current ticket entity, values calculated for DTOs,
+and each layer's responsibility for handling data.
 
-It is not a conceptual sketch. Field names and model responsibilities are
-aligned with the current domain types, DTOs, and mapper behavior.
+Field names and model responsibilities describe the current domain types,
+DTOs, and mapper behavior.
 
 ---
 
@@ -92,14 +92,15 @@ type TicketAssignmentState = {
 };
 ```
 
-The persisted source of truth is still:
+Approval phase and assignee decisions still use these stored database fields:
 
 ```txt
 tk_approval_step_id
 tk_assignee_usernames
 ```
 
-The phase-aware fields are DTO/domain projections for UI clarity.
+The mapper or service calculates the phase-specific DTO/domain fields from
+stored values so the UI can distinguish approvers from workers.
 
 ### Metrics and View State
 
@@ -173,7 +174,8 @@ Ticket DTOs expose:
 - `assigned_worker`
 - `assignee_usernames`
 
-`assignee_usernames` is the raw current assignee projection. The phase-specific
+`assignee_usernames` provides the current assignee list without separating approval
+and work phases. The phase-specific
 arrays clarify whether those users are approvers or workers.
 
 ---
@@ -215,7 +217,8 @@ complete validation and the transition to `Approval` or `Assigned`.
 `email` on the ticket is requester-provided notification configuration.
 
 Derived assignee emails must not be appended into the persisted `tk_email`
-field. Notification delivery should resolve assignee emails at send time.
+field. When notification delivery is implemented, it should resolve assignee
+emails at send time.
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## 배경
 
-Service Desk Settings는 ticket workflow에서 사용하는 동작을 정의합니다.
+Service Desk 설정은 티켓을 처리하는 업무 규칙을 정의합니다.
 
 주요 settings 영역은 다음과 같습니다.
 
@@ -23,8 +23,8 @@ Tenant
 - tenant 및 scope boundary
 - routing 동작
 
-이전 설계에서는 Settings를 과거 workflow 상태가 아니라 현재 설정으로 의도적으로
-취급했습니다.
+이전 설계에서는 Settings를 현재 설정으로 다뤘습니다. 과거 처리 당시의 설정 상태를
+보관하는 용도로 사용하지는 않았습니다.
 
 단순화한 정책은 다음과 같았습니다.
 
@@ -36,8 +36,8 @@ Existing Ticket state / History
 -> remains unchanged
 ```
 
-이 정책은 이력 무결성을 보호하고 관리 설정 변경이 이미 실행된 workflow event를
-조용히 다시 작성하는 것을 막았습니다.
+이 정책은 이력 무결성을 보호했습니다. 관리 설정을 변경해도 이미 실행한 업무
+이벤트를 다시 작성하지 않도록 했습니다.
 
 하지만 REMOTE Service Desk 구현이 구체화되면서 다음 사례가 중요해졌습니다.
 
@@ -58,8 +58,8 @@ Admin changes Category / Approval Step configuration
 -> current routing may no longer match the configuration
 ```
 
-기존 ticket을 계속 보존하기만 하면 과거 상태는 보호할 수 있지만, active workflow가
-더 이상 유효하지 않은 설정을 계속 사용하게 될 수 있습니다.
+기존 티켓을 계속 보존하기만 하면 과거 상태는 보호할 수 있습니다. 하지만 진행 중인
+업무에서 더 이상 유효하지 않은 설정을 계속 사용하게 될 수 있습니다.
 
 따라서 프로젝트는 다음을 구분해야 했습니다.
 
@@ -75,8 +75,7 @@ current operational validity
 
 ### 1. "Settings는 향후 Ticket에만 영향을 준다"는 규칙이 너무 포괄적임
 
-Settings가 과거 workflow의 의미를 소급하여 다시 작성해서는 안 되므로 기존 rule은
-유용했습니다.
+설정 변경으로 과거 업무 기록의 의미를 소급해 바꾸면 안 되므로 기존 규칙은 유용했습니다.
 
 하지만 다음 두 가지는 서로 다른데도 같은 것으로 취급했습니다.
 
@@ -95,7 +94,7 @@ Current in-flight workflow state
 - 이전 assignment event
 - 이전 status transition
 
-이 record들은 immutable 상태로 유지해야 합니다.
+이 기록들은 변경할 수 없는 상태로 유지해야 합니다.
 
 현재 진행 중인 상태에는 다음이 포함됩니다.
 
@@ -105,10 +104,10 @@ Current in-flight workflow state
 - 현재 approval responsibility
 - 현재 work responsibility
 
-이 상태는 workflow를 **현재** 누가 소유하는지를 나타냅니다.
+이 상태는 업무를 **현재** 누가 담당하는지 나타냅니다.
 
-설정 변경으로 ownership이 무효화되었는데도 이를 무기한 보존하면 active ticket이 현재
-Service Desk 정책과 일치하지 않을 수 있습니다.
+설정 변경으로 현재 담당자 관계가 유효하지 않게 되었는데도 계속 유지하면 진행 중인
+티켓이 현재 Service Desk 정책과 맞지 않을 수 있습니다.
 
 ---
 
@@ -131,11 +130,9 @@ Settings를 편집하면 예기치 않게 다음이 발생할 수 있습니다.
 - ticket status 변경
 - 여러 Ticket의 운영 responsibility 변경
 
-관리자는 설정을 편집하는 operation이 active Ticket workflow까지 변경한다는 사실을
-인식하지 못할 수 있습니다.
+관리자는 설정을 편집할 때 진행 중인 티켓 처리까지 바뀐다는 사실을 알지 못할 수 있습니다.
 
-따라서 Settings mutation과 Ticket workflow mutation을 보이지 않는 side effect로
-결합해서는 안 됩니다.
+따라서 설정 변경이 티켓 업무 상태를 숨겨진 부수 효과로 변경하도록 해서는 안 됩니다.
 
 ---
 
@@ -158,8 +155,7 @@ userA approved the Ticket under the routing that existed at that time
 
 새 approver가 승인한 것처럼 다시 작성해서는 안 됩니다.
 
-동시에 Ticket이 여전히 `Approval` 상태라면 현재 approval ownership을 재계산해야 할 수
-있습니다.
+동시에 티켓이 여전히 `Approval`이라면 현재 승인 담당자를 다시 계산해야 할 수 있습니다.
 
 따라서 다음 관계가 성립합니다.
 
@@ -212,7 +208,7 @@ Category moved to another Tenant
 
 ### 5. Tenant 변경은 routing 재계산과 근본적으로 다름
 
-Tenant는 Service Desk 설정 boundary입니다.
+Tenant는 Service Desk 설정을 구분하고 접근 범위를 제한하는 기준입니다.
 
 Category를 한 Tenant에서 다른 Tenant로 변경하면 다음이 달라질 수 있습니다.
 
@@ -226,9 +222,9 @@ Category를 한 Tenant에서 다른 Tenant로 변경하면 다음이 달라질 �
 
 이는 단순한 routing refresh가 아닙니다.
 
-Cross-Tenant 이동은 resource 자체의 의미를 변경합니다.
+테넌트 간 이동은 해당 설정 자체의 의미를 바꿉니다.
 
-시스템은 관련 Ticket을 rerouting하여 사후에 이 변경을 복구하려 해서는 안 됩니다.
+관련 티켓의 담당자를 다시 계산해서 사후에 이 변경을 복구하려 해서는 안 됩니다.
 
 ---
 
@@ -347,7 +343,7 @@ mutation requested
 
 ## 결정
 
-Settings 변경은 과거 workflow의 의미를 보존하면서 영향을 받는 진행 중 Ticket을
+설정 변경은 과거 처리 기록의 의미를 보존하면서 영향을 받는 진행 중 티켓을
 명시적으로 처리해야 합니다.
 
 핵심 정책은 다음과 같습니다.
@@ -363,10 +359,10 @@ Tenant / scope identity
 -> immutable after creation
 ```
 
-Settings mutation이 active Ticket workflow를 조용히 다시 작성해서는 안 됩니다.
+설정 변경이 진행 중인 티켓의 업무 상태를 조용히 다시 작성해서는 안 됩니다.
 
-Workflow-sensitive mutation이 진행 중인 Ticket에 영향을 줄 수 있으면 server는 변경을
-완료하기 전에 그 영향을 확인해야 합니다.
+업무 흐름을 바꾸는 설정 변경이 진행 중인 티켓에 영향을 줄 수 있으면 서버는
+변경을 완료하기 전에 영향을 확인해야 합니다.
 
 ---
 
@@ -435,8 +431,8 @@ History immutable
 Ticket current routing immutable
 ```
 
-지원되는 Settings mutation으로 현재 routing이 잘못되면 Ticket을 명시적으로
-rerouting할 수 있으며, 이전 routing은 History를 통해 계속 확인할 수 있습니다.
+지원하는 설정 변경으로 현재 담당자 결정이 유효하지 않게 되면 티켓의 담당자를
+명시적으로 다시 계산할 수 있습니다. 이전 담당자 결정은 이력에서 계속 확인할 수 있습니다.
 
 ---
 
@@ -456,7 +452,7 @@ Settings mutation
 -> apply mutation policy
 ```
 
-영향 확인에는 server에 저장된 relationship을 사용해야 합니다.
+영향을 확인할 때는 서버에 저장된 관계를 사용해야 합니다.
 
 Client가 제공하는 다음 값은
 
@@ -467,7 +463,7 @@ category scope
 affected ticket count
 ```
 
-authorization 또는 impact evidence로 신뢰해서는 안 됩니다.
+권한이나 영향 판단의 근거로 신뢰해서는 안 됩니다.
 
 ---
 
@@ -484,7 +480,7 @@ Working
 Pending
 ```
 
-정확한 대상 status 집합은 변경되는 Settings resource에 따라 달라집니다.
+정확한 대상 상태는 변경하는 설정 항목에 따라 달라집니다.
 
 Terminal 또는 historical state에서 완료된 routing을 다시 작성할 필요는 없습니다.
 
@@ -500,8 +496,7 @@ Closed
 이후 다른 명시적 Ticket operation이 routing에 다시 진입시키지 않는 한 workflow가
 실행되던 당시 설정과 과거 관계를 유지할 수 있습니다.
 
-Draft는 submit할 때 routing을 결정하므로 submit 시점의 현재 유효한 Settings를
-사용합니다.
+초안은 제출할 때 담당자를 결정하므로 제출 시점에 유효한 현재 설정을 사용합니다.
 
 ---
 
@@ -552,7 +547,7 @@ default SLA days
 
 그 자체로 현재 Ticket planning value를 조용히 다시 작성하지는 않습니다.
 
-기본값 변경은 모든 active Ticket에 `ADJUST`를 실행하는 것과 같지 않습니다.
+기본값 변경은 진행 중인 모든 티켓에 `ADJUST`를 실행하는 것과 다릅니다.
 
 ---
 
@@ -640,9 +635,8 @@ UI warning은 관리자의 이해를 돕기 위한 것입니다.
 `Approval` Ticket은 현재 Approval Step과 현재 approver를 저장하므로 Approval 설정은
 특히 민감합니다.
 
-Category 또는 Approval Step 변경으로 현재 approval routing이 무효화되면, 이전의
-완료되지 않은 approval pipeline이 여전히 authoritative한 것처럼 Ticket을 계속
-진행해서는 안 됩니다.
+Category나 Approval Step 변경으로 현재 승인자 결정이 유효하지 않게 되면,
+완료되지 않은 이전 승인 절차를 계속 유효한 판단 기준으로 사용해서는 안 됩니다.
 
 선택한 정책은 다음과 같습니다.
 
@@ -677,9 +671,9 @@ current Approval Ticket
 -> assigneeUsernames = newly resolved approvers
 ```
 
-이전에 완료된 approval은 과거 event로 보존합니다.
+이미 완료된 승인은 과거 이벤트로 보존합니다.
 
-새로 계산한 pipeline의 step이 이미 승인되었다는 증거로 재사용하지 않습니다.
+새로 계산한 승인 절차의 단계가 승인되었다는 근거로 재사용하지 않습니다.
 
 이는 requester routing-sensitive update와 같은 원칙을 따릅니다.
 
@@ -712,7 +706,8 @@ C should remain pending
 D has effectively been skipped
 ```
 
-그러려면 프로젝트에서 현재 구현하지 않는 configuration-version semantic이 필요합니다.
+이렇게 판단하려면 설정 버전별 의미를 구분해야 하지만 프로젝트에는 현재 구현되어
+있지 않습니다.
 
 더 안전하고 설명하기 쉬운 rule은 다음과 같습니다.
 
@@ -729,11 +724,11 @@ History에는 이전 approval이 발생했다는 사실이 계속 표시됩니�
 
 ## Assignment 영향 정책
 
-Assignment Settings는 Ticket이 work routing에 진입하거나 재진입할 때 worker를
+배정 설정은 티켓이 작업자 배정 단계에 진입하거나 다시 진입할 때 작업자를
 결정하는 방식을 설명합니다.
 
-Assignment Rule이 변경되었다는 이유만으로 Settings mutation이 현재 work ownership을
-조용히 다시 작성해서는 안 됩니다.
+Assignment Rule을 변경했다는 이유만으로 설정 변경이 현재 작업 담당자를
+조용히 교체해서는 안 됩니다.
 
 따라서 baseline은 다음과 같습니다.
 
@@ -751,12 +746,10 @@ Assignment Rule 변경은 다음에 영향을 줍니다.
 - requester routing-sensitive update
 - 다른 명시적인 routing recalculation
 
-이를 통해 Assignment Rule 편집이 보이지 않는 bulk `ASSIGN` command로 바뀌는 것을
-막습니다.
+이 규칙은 Assignment Rule 편집이 숨겨진 일괄 `ASSIGN` 명령이 되는 것을 막습니다.
 
-향후 운영 요구 사항으로 영향받는 active Ticket을 관리자가 재할당해야 한다면, 자체
-History semantic을 가진 별도의 명시적인 command 또는 bulk operation으로 modeling해야
-합니다.
+향후 관리자가 영향을 받는 진행 중 티켓을 재배정해야 한다면, 별도 이력 의미를
+가진 명시적 명령이나 일괄 작업으로 설계해야 합니다.
 
 ---
 
@@ -833,8 +826,8 @@ Rerouting 필요 여부도 server가 결정합니다.
 
 ## Transaction Boundary
 
-영향받는 Ticket routing도 변경하는 Settings mutation이 시스템을 부분 상태로
-남겨서는 안 됩니다.
+설정과 영향을 받는 티켓 담당자를 함께 변경할 때 일부 변경만 반영된 상태가
+남아서는 안 됩니다.
 
 안전하지 않은 결과는 다음과 같습니다.
 
@@ -851,8 +844,8 @@ Ticket rerouted
 -> Settings write fails
 ```
 
-지원되는 mutation에 즉시 Ticket 재계산이 필요하면 operation을 하나의 application use
-case로 취급해야 합니다.
+지원하는 설정 변경에 즉시 티켓 재계산이 필요하면 전체 작업을 하나의 애플리케이션
+처리로 다뤄야 합니다.
 
 개념적으로 다음과 같습니다.
 
@@ -866,17 +859,17 @@ validate Settings mutation
 -> commit
 ```
 
-REMOTE 실행은 적절한 database transaction boundary를 사용해야 합니다.
+REMOTE에서는 관련 데이터베이스 변경을 적절한 트랜잭션으로 함께 처리해야 합니다.
 
-LOCAL mutable demo 동작도 외부에 보이는 같은 결과를 제공해야 합니다.
+LOCAL의 변경 가능한 데모 상태도 사용자에게 같은 결과를 제공해야 합니다.
 
 ---
 
 ## Settings로 인한 Rerouting History
 
-Settings mutation은 이전 History를 절대 편집해서는 안 됩니다.
+설정 변경은 이전 이력을 편집해서는 안 됩니다.
 
-Settings 변경으로 현재 Ticket routing을 reset하면 그 reset 자체가 새로운 event가 됩니다.
+설정 변경으로 현재 담당자 결정을 초기화하면 그 초기화 자체를 새 이벤트로 기록합니다.
 
 History model은 다음 두 원인을 명확하게 구분할 수 있어야 합니다.
 
@@ -890,8 +883,8 @@ administrator changed workflow configuration
 
 기존 event/source model이 영향을 정확히 나타낼 수 있으면 재사용합니다.
 
-현재 History contract에서 두 원인을 모호하지 않게 구분할 수 없다면 기존 event를 다시
-작성하는 대신 History metadata 또는 source semantic을 확장하는 편이 낫습니다.
+현재 이력 형식으로 두 원인을 명확히 구분할 수 없다면 기존 이벤트를 다시 쓰는 대신
+이력 메타데이터나 출처의 의미를 확장하는 편이 낫습니다.
 
 중요한 invariant는 다음과 같습니다.
 
@@ -939,8 +932,8 @@ assigneeUsernames = []
 
 workflow에 ownership이 필요한 경우 위 상태는 유효하지 않습니다.
 
-필수 rerouting이 유효한 결과를 만들 수 없으면 mutation이 영향을 받는 Ticket을 부분
-update 상태로 남겨서는 안 됩니다.
+필수 담당자 재계산이 유효한 결과를 만들 수 없으면 영향을 받는 티켓에 일부
+변경만 반영된 상태가 남아서는 안 됩니다.
 
 ---
 
@@ -977,7 +970,7 @@ REMOTE는 다음을 수행해야 합니다.
 - 변경된 Ticket 상태 저장
 - immutable History 추가
 
-UI는 하나의 application-facing contract를 사용해야 합니다.
+UI는 두 실행 환경에서 같은 응답 형식과 업무 규칙을 사용해야 합니다.
 
 ---
 
@@ -1029,8 +1022,7 @@ ticket.approvalConfigVersion
 ticket.assignmentConfigVersion
 ```
 
-따라서 정확한 과거 Settings snapshot을 현재 workflow 정책으로 안전하게 replay할 수
-없습니다.
+따라서 과거의 정확한 설정 상태를 현재 업무 정책으로 안전하게 다시 적용할 수 없습니다.
 
 대신 다음과 같이 역할을 구분합니다.
 
@@ -1193,11 +1185,11 @@ Assignment Rule 변경은 다음과 같이 처리합니다.
 
 ## 요약
 
-Settings는 현재 workflow 설정입니다.
+Settings는 현재 업무 설정입니다.
 
-History는 실행된 workflow에 대한 immutable evidence입니다.
+History는 실제 수행한 업무를 기록한 변경 불가능한 근거입니다.
 
-현재 Ticket routing은 운영 상태입니다.
+현재 티켓 담당자 정보는 현재 운영 상태입니다.
 
 이 책임들은 서로 관련되지만 동일하지는 않습니다.
 
@@ -1232,10 +1224,10 @@ Preserving historical meaning
 does not require preserving invalid current routing.
 ```
 
-영향이 명시적이고 authorized, validated, traceable한 경우 설정 변경으로 현재 workflow
-responsibility를 update할 수 있습니다.
+영향을 명시하고 권한·조건 검증과 추적 기록을 갖춘 경우에는 설정 변경으로 현재
+담당 역할을 바꿀 수 있습니다.
 
-과거 workflow 증거가 실제와 다른 event가 발생한 것처럼 보이게 해서는 안 됩니다.
+과거 업무 기록은 실제와 다른 이벤트가 발생한 것처럼 바꾸지 않습니다.
 
 ---
 

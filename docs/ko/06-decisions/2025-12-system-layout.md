@@ -4,14 +4,14 @@
 
 Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증가했습니다.
 
-- 여러 interaction pattern(dialog, drawer, full page)
-- 커지는 feature scope(ticket detail, form, comment, history)
-- 일관된 navigation 및 layout structure의 필요
+- 여러 화면 조작 방식(dialog, drawer, full page)
+- 기능 범위 확대(티켓 상세, 폼, 댓글, 이력)
+- 일관된 페이지 이동과 레이아웃 구조의 필요
 
 또한 시스템에는 다음이 필요했습니다.
 
-- **primary workflow**와 **secondary interaction**의 명확한 분리
-- 모든 feature를 위한 안정적인 **home layout 기반**
+- **주요 업무 흐름(primary workflow)**과 **보조 작업(secondary interaction)**의 명확한 분리
+- 모든 기능이 사용하는 안정적인 **home layout 기반**
 - 예측 가능하고 확장 가능한 UI 동작
 
 ---
@@ -46,7 +46,7 @@ Service Desk 시스템이 발전하면서 다음 이유로 UI 복잡도가 증�
 
 ### 1. System-Level Layout 정의
 
-Application은 다음 **home layout structure**를 채택했습니다.
+애플리케이션은 다음 **home layout 구조**를 채택했습니다.
 
 ```txt
 App Layout
@@ -180,13 +180,13 @@ Ticket List Page
 
 ### 5. Role-Aware Layout 동작
 
-Layout은 user context에 따라 동적으로 바뀝니다.
+레이아웃은 현재 사용자의 역할과 권한, impersonation 상태에 따라 바뀝니다.
 
 #### 예
 
-- role에 따른 sidebar menu 변경
-- permission에 따른 visible feature 변경
-- impersonation에 따른 current-user UI context 변경
+- 역할에 따른 사이드바 메뉴 변경
+- 권한에 따른 표시 기능 변경
+- impersonation에 따른 현재 사용자 UI 변경
 
 #### 통합
 
@@ -227,9 +227,9 @@ Layout은 impersonation을 지원하도록 설계합니다.
 
 ### 단점
 
-- UI pattern 선택에 discipline 필요
-- page-based approach에 더 많은 routing setup 필요
-- modal-first UX보다 navigation이 약간 무거움
+- UI 방식 선택 기준을 일관되게 적용해야 함
+- 페이지 방식에서는 페이지 이동을 위한 경로 설정이 더 필요함
+- 모달 중심 UX보다 페이지 이동 부담이 약간 큼
 
 ---
 
@@ -285,8 +285,5 @@ System layout은 다음으로 정의됩니다.
 - drawer-based secondary interaction model
 - dialog-based atomic action model
 
-이를 통해 predictable, scalable, role-aware하며 domain workflow와 정렬된 UI
-architecture를 만듭니다.
-
-시스템이 screen 모음이 아니라 일관되고 구조화된 application interface로 동작하게
-합니다.
+이 구조로 사용자가 화면 동작을 예측할 수 있게 하고, 기능이 늘어나도 역할과
+업무 흐름에 맞는 UI를 일관되게 구성합니다.

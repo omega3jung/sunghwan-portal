@@ -5,7 +5,7 @@
 This document is the high-level current design overview for the Service Desk
 ticket system.
 
-It summarizes the stable model and links to the canonical detail documents.
+It summarizes the core model and links to the documents that define detailed rules.
 It does not repeat every operation rule. Use this document to understand the
 shape of the system, then follow the links for execution details.
 
@@ -22,8 +22,8 @@ Tenant-scoped settings
 -> work-session evidence
 ```
 
-The Service Desk ticket domain is workflow-oriented. A ticket is not a generic
-CRUD row. It has current state, current ownership, configuration context,
+Service Desk manages each ticket's workflow. A ticket has current state,
+current assignees, the settings used to process it,
 actions, history, attachments, and work-session records.
 
 ---
@@ -78,7 +78,7 @@ Related document: [Ticket Form Design](../../../04-client-engineering/forms/tick
 
 ## Approval and Work Routing
 
-Current routing source of truth:
+Approval phase and current assignees are determined from these database fields:
 
 ```txt
 tk_approval_step_id
@@ -97,7 +97,7 @@ tk_approval_step_id == null
 -> tk_assignee_usernames = current workers
 ```
 
-DTOs expose projection fields for UI convenience:
+DTOs provide values calculated from those fields for the UI:
 
 - `assignmentPhase`
 - `approvalAssigneeUsernames`
@@ -105,7 +105,8 @@ DTOs expose projection fields for UI convenience:
 - `assignedApprover`
 - `assignedWorker`
 
-These are mapper/service projections, not separate database sources of truth.
+Mappers or services calculate these response values; they are not separate
+stored fields used to determine assignments.
 
 Related documents:
 
@@ -192,8 +193,8 @@ File[] / inline image
 -> tk_content, tk_files, tk_images
 ```
 
-The current LOCAL and REMOTE behavior uses controlled demo replacement. It does
-not provide production object storage.
+LOCAL and REMOTE replace selected attachments with predefined demo files.
+They do not provide production object storage.
 
 Raw `File`, binary data, base64 data URLs, blob URLs, and local file paths must
 not be persisted in ticket rows, DTOs, action metadata, or history metadata.
@@ -261,7 +262,7 @@ from/to value -> structured JSON change
 metadata -> supplemental display/audit context
 ```
 
-`event` is authoritative. `metadata.event` is not the event source of truth.
+`event` identifies what happened; `metadata.event` does not determine the event.
 `SYSTEM_AUTO` is a history source, not a history type.
 
 One action can produce multiple history records. Some system operations can
@@ -276,7 +277,7 @@ Related document: [Ticket History](./ticket-history.md)
 Work Session records actual work-time evidence. It is separate from Ticket
 Action.
 
-Current route surface:
+Currently available API routes:
 
 ```txt
 GET  /api/service-desk/tickets/:ticketId/work-session
@@ -312,8 +313,8 @@ Company
       -> Assignment Rule
 ```
 
-Tenant is the configuration scope. Category is the central behavior
-configuration. Approval Step controls main-category approval routing.
+Tenant groups settings. Category defines how tickets are processed.
+Approval Step controls main-category approval routing.
 Assignment Rule resolves work ownership with subcategory override and
 parent/main fallback.
 
@@ -336,7 +337,7 @@ UI
 REMOTE uses server-only data access, row/mapper/DTO boundaries, repository
 services, and transactions where workflow changes need atomicity.
 
-LOCAL provides safe portfolio demo behavior and must keep DTO contracts aligned
+LOCAL provides safe portfolio demo behavior and must keep DTO response formats aligned
 with REMOTE where a workflow is supported.
 
 ---

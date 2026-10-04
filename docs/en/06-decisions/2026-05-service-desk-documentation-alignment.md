@@ -65,7 +65,7 @@ Service Desk behavior had to be described consistently as a workflow-oriented mo
 
 ## Decision
 
-Align non-decision-log markdown documentation with the current Service Desk design and implementation direction.
+Align non-decision-log Markdown documentation with the Service Desk design and implementation direction at that time.
 
 This keeps current documentation useful for reviewers while preserving decision logs as historical records.
 
@@ -129,8 +129,8 @@ AppUser     -> application-facing user model
 ```
 
 - Clarified:
-  - `JWT` is authentication truth
-  - session is auth projection
+  - authentication is determined from the `JWT`
+  - the session transforms authentication data for runtime use
   - `SessionUser` excludes `accessToken`
   - Zustand store is runtime facade/cache, not auth truth
 
@@ -148,7 +148,7 @@ AppUser     -> application-facing user model
 
 ### 5. Derived Ownership
 
-- Clarified ownership as derived, not fixed persisted fields.
+- Clarified that ownership is calculated from the current user and ticket data rather than stored as fixed fields.
 
 ```ts
 type Ownership = {
@@ -210,15 +210,15 @@ Dialog -> atomic action
 - Clarified React Query segmentation:
   - static/reference data
   - dynamic/mutable Service Desk data
-- Clarified route handlers as orchestration boundary for LOCAL/REMOTE branching.
+- Clarified that route handlers select LOCAL or REMOTE and delegate processing to the corresponding handler.
 
 ---
 
 ### 10. Feature and Module Boundary
 
 - Clarified barrel export policy:
-  - barrel files are public contracts
-  - avoid dumping mixed server/client exports
+  - barrel files define the APIs exposed to other modules
+  - avoid combining server-safe and client-only exports
 - Clarified client-only shared utility boundary (for example `src/shared/client/`).
 
 ---

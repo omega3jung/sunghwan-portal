@@ -5,7 +5,7 @@
 Ticket forms collect the information needed to create or requester-update a
 Service Desk ticket while keeping workflow decisions on the server boundary.
 
-The current design is aligned with the implemented form flow:
+The implemented form flow works as follows:
 
 - `CreateTicketDialog` handles new ticket submission and draft recovery.
 - `UpdateTicketDialog` handles requester-owned updates before work starts.
@@ -132,8 +132,8 @@ Category selection can seed or update:
 - risk level
 - due date defaults based on category SLA days
 
-The form may display and apply these defaults for usability. The server remains
-the source of truth for category validity and routing behavior.
+The form may display and apply these defaults for usability. The server makes
+the final decision on category validity and assignee routing.
 
 When a requester update changes category, the update service re-evaluates
 routing-sensitive fields and records the correct routing history event.
@@ -142,7 +142,7 @@ routing-sensitive fields and records the correct routing history event.
 
 ## Attachment Preparation
 
-Browser file input is transient.
+The form holds browser-selected files temporarily.
 
 ```txt
 form body and File[]
@@ -370,5 +370,5 @@ The current design uses `CreateTicketDialog` and `UpdateTicketDialog`, a
 three-step form flow, browser-local LOCAL draft recovery, REMOTE draft recovery
 through ticket draft APIs, attachment preparation before persistence, and
 server-owned requester update routing. This keeps the UI usable while
-preserving the ticket service as the source of truth for approval, assignment,
-status, and history.
+keeping approval, assignment, status, and history decisions in the ticket
+service.

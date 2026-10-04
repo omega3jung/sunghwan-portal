@@ -2,14 +2,12 @@
 
 ## Context
 
-Ticket Form Dialog는 Service Desk 시스템에서 가장 중요한 컴포넌트 중 하나입니다.
+Ticket Form Dialog는 사용자가 티켓 내용을 입력하는 컴포넌트로, 다음을 담당합니다.
 
-이 컴포넌트는 다음을 담당합니다.
-
-- ticket 생성
-- ticket 수정
+- 티켓 생성
+- 티켓 수정
 - 구조화된 사용자 입력 처리
-- domain logic 통합 (category, SLA, priority 등)
+- 도메인 규칙 적용(category, SLA, priority 등)
 
 ---
 
@@ -40,15 +38,16 @@ ticket 생성에는 **Dialog**를, ticket 상세/수정에는 **Page**를 사용
 
 ### Decision
 
-**controlled open state** (`open`, `setOpen`)를 사용하기로 했습니다.
+Dialog의 열림 상태를 `open`, `setOpen`으로 직접 관리하는
+**controlled open state**를 사용하기로 했습니다.
 
 ---
 
 ### Reason
 
-- submit 성공 후 dialog를 닫을 수 있습니다
-- programmatic control이 가능합니다
-- mutation flow와의 연동이 더 좋아집니다
+- 제출 성공 후 dialog를 닫을 수 있습니다
+- 코드에서 열림 상태를 제어할 수 있습니다
+- 데이터 변경 요청의 처리 흐름과 연결하기 쉽습니다
 
 ---
 
@@ -69,7 +68,7 @@ dialog trigger는 **props로 커스터마이즈 가능**하도록 설계했습�
 ### Pattern
 
 - `trigger`가 전달되면 그것을 사용합니다
-- 그렇지 않으면 기본 button으로 fallback합니다
+- 전달되지 않으면 기본 버튼을 사용합니다
 
 ---
 
@@ -84,7 +83,7 @@ dialog trigger는 **props로 커스터마이즈 가능**하도록 설계했습�
 
 ### Decision
 
-dialog 내부에는 **multi-step form**을 사용하기로 했습니다.
+Dialog 내부에서는 입력 과정을 여러 단계로 나눈 **multi-step form**을 사용하기로 했습니다.
 
 ---
 
@@ -98,10 +97,10 @@ dialog 내부에는 **multi-step form**을 사용하기로 했습니다.
 
 ### Structure
 
-1. Category selection
-2. Basic information
-3. Details / attachments
-4. Review & submit
+1. 카테고리 선택
+2. 기본 정보 입력
+3. 상세 내용·첨부파일 입력
+4. 검토·제출
 
 ---
 
@@ -138,7 +137,7 @@ stepper를 재사용 가능한 공통 컴포넌트로 추상화하는 작업은 
 
 ### Reason
 
-- single source of truth를 유지할 수 있습니다
+- 모든 단계에서 같은 폼 상태를 기준으로 처리할 수 있습니다
 - 데이터 분산을 피할 수 있습니다
 - validation과 submit 처리가 단순해집니다
 
@@ -148,6 +147,7 @@ stepper를 재사용 가능한 공통 컴포넌트로 추상화하는 작업은 
 
 ### Decision
 
+각 단계에서 입력을 검증하고 제출 전에 전체 입력을 다시 검증하는
 **step-level validation + final validation** 전략을 선택했습니다.
 
 ---
@@ -212,14 +212,14 @@ form 동작은 선택한 category에 따라 달라지도록 설계했습니다.
 
 ### Issue Encountered
 
-- `defaultValue`와의 type mismatch가 있었습니다
+- `defaultValue`의 타입이 맞지 않는 문제가 있었습니다
 
 ---
 
 ### Solution
 
 - 잘못된 `defaultValue`를 제거했습니다
-- 필요할 때 type assertion을 사용합니다
+- 필요할 때 타입 단언(type assertion)을 사용합니다
 
 ---
 
@@ -234,9 +234,9 @@ form 동작은 선택한 category에 따라 달라지도록 설계했습니다.
 
 ### Options
 
-1. Local draft (client storage)
-2. Server draft
-3. No draft
+1. 로컬 초안(클라이언트 저장소)
+2. 서버 초안
+3. 초안 미지원
 
 ---
 
@@ -248,9 +248,9 @@ form 동작은 선택한 category에 따라 달라지도록 설계했습니다.
 
 ### Reason
 
-- 추가 API와 state 복잡성이 필요합니다
+- 추가 API가 필요하고 상태 관리가 복잡해집니다
 - MVP에 필수 기능은 아닙니다
-- 이후 iteration으로 미룹니다
+- 이후 개발 단계로 미룹니다
 
 ---
 
@@ -265,7 +265,7 @@ form 동작은 선택한 category에 따라 달라지도록 설계했습니다.
 ### Strategy
 
 - 필요한 데이터는 props로 전달합니다
-- fetch는 feature/container level에서 수행합니다
+- 데이터 조회는 기능 컴포넌트 또는 컨테이너에서 수행합니다
 
 ---
 

@@ -11,9 +11,9 @@ future production capabilities describe possible extensions, not planned work.
 
 It separates three document responsibilities:
 
-- **Current design docs** describe the implementation-aligned model.
+- **Current design docs** describe the implemented structure and behavior.
 - **Decision logs** preserve point-in-time context, alternatives, and reasons.
-- **README/overview docs** summarize structure and link to source-of-truth docs.
+- **README/overview docs** summarize structure and link to the documents that define the rules.
 
 ---
 
@@ -23,7 +23,7 @@ The shortest current system specification is:
 
 - [Canonical Ticket System Specification](../spec/ticket-system.md)
 
-Use it as the top-level ticket-system contract before reading deeper domain
+Read it for the ticket system's main rules before reading detailed domain
 documents.
 
 ---
@@ -98,8 +98,8 @@ Current domain themes:
 
 - statuses are `Draft`, `Approval`, `Declined`, `Assigned`, `Working`,
   `Pending`, `Rejected`, `Resolved`, and `Closed`
-- approval and work assignment are phase-aware
-- requester update can preserve or reset routing
+- approval assignees and work assignees are resolved separately for each phase
+- requester updates can preserve or reset assignee routing
 - Ticket Action commands execute operational workflow
 - ticket history is event-based
 - settings are tenant-scoped behavior configuration
@@ -146,12 +146,12 @@ Key documents:
 
 Current form themes:
 
-- `CreateTicketDialog` and `UpdateTicketDialog` are separate workflow surfaces
+- `CreateTicketDialog` and `UpdateTicketDialog` provide separate creation and update workflows
 - LOCAL draft recovery is browser `localStorage` state scoped to the current
   demo user and accessed through the feature draft repository
 - REMOTE draft is a `Draft` ticket row with one active draft per requester
-- raw browser files are transient
-- the Attachment Prepare API returns prepared metadata before ticket writes
+- browser-selected files are held temporarily
+- the Attachment Prepare API returns attachment metadata before the ticket is saved
 
 ---
 
@@ -271,6 +271,6 @@ decided at that time.
 
 ## Summary
 
-`docs/en` presents the Service Desk system as an implementation-aligned,
-traceable workflow domain. Current design docs describe the latest model.
-Decision logs preserve why the model changed over time.
+`docs/en` describes the implemented Service Desk workflows and their recorded
+changes. Current design docs explain the current structure and behavior.
+Decision logs preserve why the model changed in its historical context.
